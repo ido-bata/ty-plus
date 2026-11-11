@@ -118,6 +118,13 @@ const makeDefines = (): Record<string, string> => {
 
 	return {
 		__APP_VERSION__: JSON.stringify(APP_VERSION),
+		// Numeric CEP version stays independent of the SemVer GitHub tag.
+		__TY_PLUS_RELEASE_VERSION__: JSON.stringify(
+			process.env.TY_PLUS_RELEASE_VERSION || APP_VERSION,
+		),
+		__TY_PLUS_RELEASE_CHANNEL__: JSON.stringify(
+			process.env.TY_PLUS_RELEASE_CHANNEL || "stable",
+		),
 		__TY_PLUS_DEV_ENV__: JSON.stringify(cepDevEnv),
 		// Inline `process.env.NODE_ENV` so the existing production guards
 		// (`if (process.env.NODE_ENV === "production") return;`) get folded
