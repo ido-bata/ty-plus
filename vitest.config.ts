@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import path from "node:path";
 
 import { playwright } from "@vitest/browser-playwright";
@@ -31,6 +32,14 @@ import { storybookTest } from "@storybook/addon-vitest/vitest-plugin";
  * at the top of .storybook/main.ts for the full blacklist.
  */
 export default defineConfig({
+	// The panel reads its own version through __APP_VERSION__ (sourced from
+	// package.json in vite.config.ts). Vitest does not inherit vite's `define`,
+	// so re-declare it here for the same value.
+	define: {
+		__APP_VERSION__: JSON.stringify(
+			JSON.parse(readFileSync("package.json", "utf8")).version,
+		),
+	},
 	resolve: {
 		alias: [
 			{
@@ -138,6 +147,14 @@ export default defineConfig({
 				// aliases, decorators, CEP-plugin stripping) through
 				// `.storybook/main.ts → viteFinal`, so we don't lose
 				// anything by isolating this project.
+				// `define` is re-declared because this project builds its
+				// vite config through the addon's viteFinal and does not
+				// inherit the root define (same value as the root block).
+				define: {
+					__APP_VERSION__: JSON.stringify(
+						JSON.parse(readFileSync("package.json", "utf8")).version,
+					),
+				},
 				plugins: [
 					// storybookTest internally wires up Storybook's viteFinal
 					// (the same one .storybook/main.ts uses) so CEP plugins
