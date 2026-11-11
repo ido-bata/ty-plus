@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import path from "node:path";
 
 import { playwright } from "@vitest/browser-playwright";
@@ -31,6 +32,14 @@ import { storybookTest } from "@storybook/addon-vitest/vitest-plugin";
  * at the top of .storybook/main.ts for the full blacklist.
  */
 export default defineConfig({
+	// The panel reads its own version through __APP_VERSION__ (sourced from
+	// package.json in vite.config.ts). Vitest does not inherit vite's `define`,
+	// so re-declare it here for the same value.
+	define: {
+		__APP_VERSION__: JSON.stringify(
+			JSON.parse(readFileSync("package.json", "utf8")).version,
+		),
+	},
 	resolve: {
 		alias: [
 			{
