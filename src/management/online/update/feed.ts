@@ -1,23 +1,32 @@
 /**
- * Update feed client (Issue #7).
+ * GitHub Releases update provider (Issue #55 / ADR-0004).
  *
- * The feed is a static JSON document (docs/architecture/feeds.md). Fetching
- * never throws to the caller: every failure mode (network down, timeout,
- * malformed body, invalid URL) reads as "unavailable", because the offline
- * core must not depend on the feed being reachable.
+ * This module only checks published releases and links to the official
+ * release page. It never downloads or executes release assets. The core
+ * continues to operate offline, and no GitHub token is stored in a bundle.
  */
+import {
+	acceptsReleaseChannel,
+	isReleaseChannel,
+	type ReleaseChannel,
+} from "./channel";
 
-export const DEFAULT_UPDATE_FEED_URL = "https://ty-plus.app/feeds/update.json";
+export const OFFICIAL_RELEASES_URL =
+	"https://github.com/ido-bata/ty-plus/releases";
+export const DEFAULT_UPDATE_FEED_URL =
+	"https://api.github.com/repos/ido-bata/ty-plus/releases?per_page=100";
+
+export type UpdatePlatform = "windows" | "macos";
 
 export type UpdateFeedAsset = {
-	platform: "windows" | "macos";
+	platform: UpdatePlatform;
 	url: string;
 	sha256: string;
 };
 
 export type UpdateFeed = {
-	schema: "ty-plus.update-feed/1";
-	channel: string;
+	schema: "ty-plus.github-releases/1";
+	channel: ReleaseChannel;
 	version: string;
 	publishedAt: string;
 	releaseNotesUrl: string;
@@ -29,70 +38,148 @@ export type UpdateCheckResult =
 	| { status: "up-to-date" }
 	| { status: "unavailable"; reason: string };
 
-const SHA256_PATTERN = /^[a-fA-F0-9]{64}$/;
-const VERSION_PATTERN = /^\d+\.\d+\.\d+$/;
+type ParsedVersion = {
+	major: number;
+	minor: number;
+	patch: number;
+	channel: ReleaseChannel;
+	sequence: number | null;
+};
+
+/** CEP manifest still uses numeric X.Y.Z; release identity can include a prerelease suffix. */
+const VERSION_PATTERN =
+	/^v?(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-(beta|insider)\.(0|[1-9]\d*))?$/;
+const SHA256_PATTERN = /^[0-9a-f]{64}$/i;
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
 	typeof value === "object" && value !== null && !Array.isArray(value);
 
-/** Compares MAJOR.MINOR.PATCH versions; negative when left is older. */
-export const compareVersions = (left: string, right: string): number => {
-	const parse = (value: string): readonly number[] | undefined => {
-		if (!VERSION_PATTERN.test(value)) return undefined;
-		return value.split(".").map((part) => Number.parseInt(part, 10));
+const parseVersion = (value: string): ParsedVersion | null => {
+	const match = VERSION_PATTERN.exec(value);
+	if (!match) return null;
+	const numbers = [match[1], match[2], match[3]].map(Number);
+	const sequence = match[5] === undefined ? null : Number(match[5]);
+	if (
+		numbers.some((n) => !Number.isSafeInteger(n)) ||
+		(sequence !== null && !Number.isSafeInteger(sequence))
+	) {
+		return null;
+	}
+	return {
+		major: numbers[0],
+		minor: numbers[1],
+		patch: numbers[2],
+		channel: match[4] === "beta" || match[4] === "insider"
+			? match[4]
+			: "stable",
+		sequence,
 	};
-	const l = parse(left);
-	const r = parse(right);
-	if (l === undefined || r === undefined) return 0;
-	for (let index = 0; index < 3; index += 1) {
-		const a = l[index] ?? 0;
-		const b = r[index] ?? 0;
-		if (a !== b) return a < b ? -1 : 1;
+};
+
+/** Compare supported SemVer tags; invalid versions compare as equal. */
+export const compareVersions = (left: string, right: string): number => {
+	const a = parseVersion(left);
+	const b = parseVersion(right);
+	if (!a || !b) return 0;
+	for (const field of ["major", "minor", "patch"] as const) {
+		if (a[field] !== b[field]) return a[field] < b[field] ? -1 : 1;
+	}
+	const rank = (channel: ReleaseChannel): number =>
+		channel === "stable" ? 2 : channel === "insider" ? 1 : 0;
+	if (rank(a.channel) !== rank(b.channel)) {
+		return rank(a.channel) < rank(b.channel) ? -1 : 1;
+	}
+	if (a.sequence !== null && b.sequence !== null && a.sequence !== b.sequence) {
+		return a.sequence < b.sequence ? -1 : 1;
 	}
 	return 0;
 };
 
-/** Strict feed validation. Returns null for anything malformed. */
-export const parseUpdateFeed = (raw: unknown): UpdateFeed | null => {
-	if (!isRecord(raw) || raw.schema !== "ty-plus.update-feed/1") return null;
-	const channel = raw.channel;
-	const version = raw.version;
-	const publishedAt = raw.publishedAt;
-	const releaseNotesUrl = raw.releaseNotesUrl;
-	const assets = raw.assets;
+const officialReleasePage = (url: string, tag: string): boolean => {
+	try {
+		const parsed = new URL(url);
+		return (
+			parsed.protocol === "https:" &&
+			parsed.hostname === "github.com" &&
+			parsed.pathname === "/ido-bata/ty-plus/releases/tag/" + tag &&
+			parsed.search === "" &&
+			parsed.hash === ""
+		);
+	} catch {
+		return false;
+	}
+};
+
+const officialAssetUrl = (url: string, tag: string, name: string): boolean => {
+	try {
+		const parsed = new URL(url);
+		return (
+			parsed.protocol === "https:" &&
+			parsed.hostname === "github.com" &&
+			parsed.pathname ===
+				"/ido-bata/ty-plus/releases/download/" + tag + "/" + name &&
+			parsed.search === "" &&
+			parsed.hash === ""
+		);
+	} catch {
+		return false;
+	}
+};
+
+/**
+ * Converts one GitHub Release into a validated update candidate.
+ * A public release must include an uploaded, content-digested platform
+ * archive; otherwise the UI must not promise an installable update.
+ */
+export const parseGitHubRelease = (raw: unknown): UpdateFeed | null => {
+	if (!isRecord(raw) || raw.draft !== false) return null;
+	const tag = raw.tag_name;
+	if (typeof tag !== "string" || !tag.startsWith("v")) return null;
+	const version = parseVersion(tag);
+	if (!version) return null;
+	if (raw.prerelease !== (version.channel !== "stable")) return null;
 	if (
-		typeof channel !== "string" ||
-		typeof version !== "string" ||
-		!VERSION_PATTERN.test(version) ||
-		typeof publishedAt !== "string" ||
-		typeof releaseNotesUrl !== "string" ||
-		!/^https:\/\//.test(releaseNotesUrl) ||
-		!Array.isArray(assets)
+		typeof raw.html_url !== "string" ||
+		!officialReleasePage(raw.html_url, tag) ||
+		typeof raw.published_at !== "string" ||
+		!Number.isFinite(Date.parse(raw.published_at)) ||
+		!Array.isArray(raw.assets)
 	) {
 		return null;
 	}
-	const parsedAssets: UpdateFeedAsset[] = [];
-	for (const entry of assets) {
-		if (!isRecord(entry)) return null;
-		const { platform, url, sha256 } = entry;
+	const assets: UpdateFeedAsset[] = [];
+	for (const asset of raw.assets) {
+		if (!isRecord(asset) || asset.state !== "uploaded") continue;
+		const { name, browser_download_url: url, digest } = asset;
 		if (
-			(platform !== "windows" && platform !== "macos") ||
+			typeof name !== "string" ||
 			typeof url !== "string" ||
-			!/^https:\/\//.test(url) ||
-			typeof sha256 !== "string" ||
-			!SHA256_PATTERN.test(sha256)
+			typeof digest !== "string" ||
+			!digest.startsWith("sha256:") ||
+			!SHA256_PATTERN.test(digest.slice(7)) ||
+			!officialAssetUrl(url, tag, name)
 		) {
-			return null;
+			continue;
 		}
-		parsedAssets.push({ platform, url, sha256 });
+		for (const platform of ["windows", "macos"] as const) {
+			if (name === "ty-plus-" + tag + "-" + platform + ".zip" ||
+				name === "ty-plus-" + tag + "-" + platform + ".zxp") {
+				assets.push({
+					platform,
+					url,
+					sha256: digest.slice(7).toLowerCase(),
+				});
+			}
+		}
 	}
+	if (assets.length === 0) return null;
 	return {
-		schema: "ty-plus.update-feed/1",
-		channel,
-		version,
-		publishedAt,
-		releaseNotesUrl,
-		assets: parsedAssets,
+		schema: "ty-plus.github-releases/1",
+		channel: version.channel,
+		version: tag.slice(1),
+		publishedAt: raw.published_at,
+		releaseNotesUrl: raw.html_url,
+		assets,
 	};
 };
 
@@ -100,50 +187,74 @@ export type FetchFeedText = (url: string, timeoutMs: number) => Promise<string>;
 
 export const defaultFetchFeedText: FetchFeedText = async (url, timeoutMs) => {
 	const response = await fetch(url, {
-		headers: { Accept: "application/json" },
+		headers: { Accept: "application/vnd.github+json" },
 		signal: AbortSignal.timeout(timeoutMs),
+		cache: "default",
 	});
 	if (!response.ok) {
-		throw new Error(`feed request failed: HTTP ${response.status}`);
+		throw new Error("GitHub release request failed: HTTP " + response.status);
 	}
 	return response.text();
 };
 
-/**
- * Checks the feed once and compares against the running version.
- * `unavailable` covers every failure: unreachable host, timeout,
- * malformed feed, or an invalid (non-HTTPS) URL.
- */
+export const detectUpdatePlatform = (): UpdatePlatform | undefined => {
+	if (typeof navigator === "undefined") return undefined;
+	if (/Win/i.test(navigator.platform)) return "windows";
+	if (/Mac/i.test(navigator.platform)) return "macos";
+	return undefined;
+};
+
+/** Never throws. Public Releases API returns 404 while the repo is private. */
 export const checkForUpdate = async (input: {
 	currentVersion: string;
+	channel?: ReleaseChannel;
+	platform?: UpdatePlatform;
 	feedUrl?: string;
 	timeoutMs?: number;
 	fetchFeedText?: FetchFeedText;
 }): Promise<UpdateCheckResult> => {
-	const feedUrl = input.feedUrl ?? DEFAULT_UPDATE_FEED_URL;
-	const timeoutMs = input.timeoutMs ?? 10_000;
-	const fetchFeedText = input.fetchFeedText ?? defaultFetchFeedText;
-	if (!/^https:\/\//.test(feedUrl)) {
-		return { status: "unavailable", reason: "feed url must be https" };
+	const channel = input.channel ?? "stable";
+	const url = input.feedUrl ?? DEFAULT_UPDATE_FEED_URL;
+	if (!isReleaseChannel(channel) || !parseVersion(input.currentVersion)) {
+		return { status: "unavailable", reason: "invalid update channel or version" };
 	}
-	let text: string;
+	if (!/^https:\/\/api\.github\.com\/repos\/ido-bata\/ty-plus\/releases(?:\?|$)/.test(url)) {
+		return { status: "unavailable", reason: "unsupported release endpoint" };
+	}
+	let body: string;
 	try {
-		text = await fetchFeedText(feedUrl, timeoutMs);
+		body = await (input.fetchFeedText ?? defaultFetchFeedText)(
+			url,
+			input.timeoutMs ?? 10_000,
+		);
 	} catch {
-		return { status: "unavailable", reason: "feed fetch failed" };
+		return { status: "unavailable", reason: "GitHub Releases unavailable" };
 	}
-	let parsed: unknown;
+	let raw: unknown;
 	try {
-		parsed = JSON.parse(text) as unknown;
+		raw = JSON.parse(body) as unknown;
 	} catch {
-		return { status: "unavailable", reason: "feed is not valid JSON" };
+		return { status: "unavailable", reason: "invalid GitHub Releases response" };
 	}
-	const feed = parseUpdateFeed(parsed);
-	if (feed === null) {
-		return { status: "unavailable", reason: "feed failed validation" };
+	if (!Array.isArray(raw)) {
+		return { status: "unavailable", reason: "invalid GitHub Releases response" };
 	}
-	if (compareVersions(feed.version, input.currentVersion) > 0) {
-		return { status: "update-available", feed };
+	const candidates = raw
+		.map(parseGitHubRelease)
+		.filter((item): item is UpdateFeed => item !== null)
+		.filter((item) => acceptsReleaseChannel(channel, item.channel))
+		.filter(
+			(item) =>
+				input.platform === undefined ||
+				item.assets.some((asset) => asset.platform === input.platform),
+		)
+		.sort((a, b) => compareVersions(b.version, a.version));
+	if (candidates.length === 0) {
+		return { status: "unavailable", reason: "no releases for this channel" };
+	}
+	const newest = candidates[0];
+	if (compareVersions(newest.version, input.currentVersion) > 0) {
+		return { status: "update-available", feed: newest };
 	}
 	return { status: "up-to-date" };
 };
