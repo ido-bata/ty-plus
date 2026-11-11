@@ -109,14 +109,15 @@ export function UpdateSection(): JSX.Element {
 				<span className={mutedTextStyle}>Detail</span>
 				<span className={linkRowStyle}>
 					{result?.status === "update-available" ? (
-						<a
+						<button
+							type="button"
 							className={linkStyle}
 							onClick={() =>
 								openUrlInDefaultBrowser(result.feed.releaseNotesUrl)
 							}
 						>
 							Release notes and download
-						</a>
+						</button>
 					) : (
 						<span className={mutedTextStyle}>
 							{result?.status === "unavailable" ? result.reason : "—"}
