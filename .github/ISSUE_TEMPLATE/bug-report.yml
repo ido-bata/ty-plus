@@ -1,0 +1,49 @@
+name: Bug report
+description: Report a problem with ty-plus
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        不具合の報告ありがとうございます。再現に必要な情報を記入してください。
+        Security vulnerability はこちらから報告しないでください（SECURITY.md を参照）。
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: 何が起きたか
+      description: 期待した結果と、実際の結果を書いてください。
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: 再現手順
+      description: 最小の手順を順に書いてください。
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: OS とバージョン
+      placeholder: 例) Windows 11 23H2 / macOS 15.3
+    validations:
+      required: true
+  - type: input
+    id: ae-version
+    attributes:
+      label: After Effects のバージョン
+      placeholder: 例) 25.2 (2025)
+    validations:
+      required: true
+  - type: input
+    id: build-version
+    attributes:
+      label: ty-plus のバージョン
+      description: Settings → 更新 に表示されるバージョン、または manifest の version。
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: エラーメッセージ・ログ
+      description: Debug Console の出力があれば貼ってください。
