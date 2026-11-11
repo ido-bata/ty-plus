@@ -65,7 +65,7 @@ const main = async (): Promise<void> => {
 	const platform = platforms[0] as Platform;
 	const names = resolveReleaseAssetNames(source.releaseVersion, platform);
 	if (names.channel !== source.channel ||
-		!source.releaseVersion.startsWith(source.version)) {
+		source.releaseVersion.split("-")[0] !== source.version) {
 		throw new Error("release channel and version must match the manifest");
 	}
 	const sourceCommit = Bun.spawnSync(["git", "rev-parse", "HEAD"], { stdout: "pipe" })
