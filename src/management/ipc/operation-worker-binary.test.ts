@@ -351,6 +351,119 @@ describe("resolveOperationWorkerBinary", () => {
 		});
 	});
 
+	it("resolves the R0 Windows release shape: unsigned worker, unsigned trust block", async () => {
+		// ADR-0003: on Windows an unsigned release worker is the legitimate R0
+		// shape — integrity is anchored by the sha256 pin, and neither the
+		// artifact nor the trust block carries a signature.
+		manifest = {
+			...manifest,
+			trust: { mode: "release" },
+			workers: {
+				macos: manifest.workers.macos,
+				windows: {
+					relativePath: manifest.workers.windows.relativePath,
+					sha256: manifest.workers.windows.sha256,
+				},
+			},
+		} as unknown as OperationWorkerManifest;
+
+		await expect(
+			resolveOperationWorkerBinary({ ...inputFor("windows") }),
+		).resolves.toEqual({
+			absolutePath: resolve(
+				extensionRoot,
+				manifest.workers.windows.relativePath,
+			),
+			sha256: manifest.workers.windows.sha256,
+			signature: undefined,
+		});
+	});
+
+	it("rejects the unsigned release shape on macOS", async () => {
+		// macOS policy demands the OS signature evidence (ADR-0003) — an
+		// unsigned release artifact is the Windows shape, not a macOS one.
+		manifest = {
+			...manifest,
+			trust: { mode: "release" },
+			workers: {
+				macos: {
+					relativePath: manifest.workers.macos.relativePath,
+					sha256: manifest.workers.macos.sha256,
+				},
+			},
+		} as unknown as OperationWorkerManifest;
+
+		await expect(
+			resolveOperationWorkerBinary({ ...inputFor("macos") }),
+		).rejects.toThrow("binary_manifest_mismatch");
+	});
+
+	it("still validates a malformed signature on a Windows release artifact", async () => {
+		// Optional is not unvalidated: a Windows release artifact that CLAIMS
+		// a signature must carry a well-formed one.
+		manifest = {
+			...manifest,
+			trust: { mode: "release" },
+			workers: {
+				windows: {
+					relativePath: manifest.workers.windows.relativePath,
+					sha256: manifest.workers.windows.sha256,
+					signature: {
+						...signatureFor("authenticode"),
+						certificateSha256: "not-a-fingerprint",
+					} as NonNullable<OperationWorkerArtifact["signature"]>,
+				},
+			},
+		} as unknown as OperationWorkerManifest;
+
+		await expect(
+			resolveOperationWorkerBinary({ ...inputFor("windows") }),
+		).rejects.toThrow("binary_manifest_mismatch");
+	});
+
+	it("rejects a macOS release trust block without signature evidence", async () => {
+		manifest = {
+			...manifest,
+			trust: { mode: "release" },
+		} as unknown as OperationWorkerManifest;
+
+		await expect(
+			resolveOperationWorkerBinary({ ...inputFor("macos") }),
+		).rejects.toThrow("binary_manifest_mismatch");
+	});
+
+	it("resolves a release manifest that ships only the current platform", async () => {
+		// ADR-0003: a per-platform build writes its own entry only — the
+		// distributed manifest is the one the platform's zip carries. The
+		// runtime must not demand the other platform's artifact.
+		manifest = {
+			...manifest,
+			trust: { mode: "release", signature: signatureFor("codesign") },
+			workers: {
+				macos: manifest.workers.macos,
+			},
+		} as unknown as OperationWorkerManifest;
+
+		await expect(
+			resolveOperationWorkerBinary({ ...inputFor("macos") }),
+		).resolves.toMatchObject({
+			sha256: manifest.workers.macos.sha256,
+			signature: expect.objectContaining({ algorithm: "codesign" }),
+		});
+	});
+
+	it("resolves the signed release shape on macOS unchanged", async () => {
+		// The pre-existing macOS contract (signature in the artifact and the
+		// trust block) keeps working — the platform asymmetry did not weaken
+		// the platform that requires signatures.
+		await expect(
+			resolveOperationWorkerBinary({ ...inputFor("macos") }),
+		).resolves.toMatchObject({
+			sha256: manifest.workers.macos.sha256,
+			signature: expect.objectContaining({ algorithm: "codesign" }),
+		});
+	});
+
 	it("rejects development trust when release resolution is expected", async () => {
 		manifest = {
 			...manifest,

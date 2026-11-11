@@ -395,18 +395,23 @@ export async function buildDevelopmentWorker(
 }
 
 /**
- * Build the release-trust worker: the staged binary is signed first, and the
+ * Build the release-trust worker. On platforms whose policy requires an OS
+ * signature (macOS, ADR-0003) the staged binary is signed first and the
  * trust block is written from signature evidence read back from the signed
- * binary. Fails closed — without evidence the release manifest is never
- * generated (`docs/architecture/distribution.md`).
+ * binary — fail-closed, no evidence no manifest. On Windows an unsigned
+ * worker is the legitimate R0 release shape: `sign` may be omitted and the
+ * trust block declares release without a signature block.
  */
 export async function buildReleaseWorker(
-	sign: SignStagedWorker,
+	sign: SignStagedWorker | undefined,
 	distRoot = path.resolve("dist", "cep-dev"),
 ): Promise<ReleaseWorkerBuildResult> {
 	return buildWorker(
 		distRoot,
 		(signature) => {
+			if (sign === undefined) {
+				return { mode: "release" };
+			}
 			if (
 				signature === undefined ||
 				(signature.algorithm !== "authenticode" &&
