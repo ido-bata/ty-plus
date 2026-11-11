@@ -1,51 +1,30 @@
 # Supabase
 
-This document defines the Supabase implementation currently in the repo for
-ty-plus online functionality.
+この文書は本repoにおけるSupabase実装の現状を定義する。
 
-## Source Authority
+## 現状（2026-11-11時点）
 
-Cloud client implementation is under `src/management/online/`. The `supabase/`
-directory in the repo root contains Supabase project configuration (migrations,
-edge functions).
+**本repoにSupabase実装は存在しない。** 旧repo（`rebuildup/ty-plus`、読み取り専用）にあった次の資産は、移植基準ツリーへの取り込み時に除外された（`docs/migration/porting-ledger.md` の #17 除外リスト）。
 
-## Environment Variables
+- `supabase/`（migrations、Edge Function `typlus`）
+- `src/` 側の Supabase gateway client（`createSupabaseGateway`、`SUPABASE_URL` 等の環境変数契約）
 
-Client-side:
+参照が必要な場合は旧repoの当該commitを参照すること。本repoへの再移植は、オンラインプリセット配信の製品方針が確定してから行う（判断事項は製品方針Issueに集約）。
 
-- `SUPABASE_URL`
-- `SUPABASE_PUBLISHABLE_KEY`
-- `SUPABASE_ANON_KEY` (legacy fallback)
-- `TY_PLUS_API_BASE`
-- `TY_PLUS_MEDIA_BASE_URL`
+## 本repoの実際のオンラインsurface
 
-Edge-side:
+- **更新・通知フィード**: 静的JSON（`docs/architecture/feeds.md`）。R0の公式配信契約。バックエンド不要。
+- **cloud gateway（dormant）**: `src/management/online/catalog/runtime-cloud-gateway.ts` に `createFixtureCloudGateway` / `createRuntimeCloudGateway` が存在する。fixture modeは空カタログを返し、remote modeはruntime port経由でのみ成立する。R0ではバックエンドを持たないdormant状態であり、起動失敗・不達はローカルコアを妨げない（`docs/architecture/offline-core.md`）。
 
-- `SUPABASE_URL`
-- `SUPABASE_SERVICE_ROLE_KEY` or publishable/anon
-- `SUPABASE_PUBLISHABLE_KEY`
-- `SUPABASE_ANON_KEY`
-- `SYNC_TOKEN` / `TY_PLUS_SYNC_TOKEN`
-- `TY_PLUS_PRESET_BUCKET`
+## 再移植時の前提
 
-## Current Contract
+Supabase実装を戻す場合に確認する事項:
 
-- Remote mode base URL is `${SUPABASE_URL}/functions/v1/typlus` (Supabase edge function URL path, not legacy `functions/` source path)
-- Edge function endpoints: `health`, `presets/search`, `presets/:id`,
-  `download`, `upload-url`, `reports`, `notifications`,
-  `notifications/:id/blocks`, `admin/sync/presets`
-- If DB and service role are not configured, the edge function operates as
-  an in-memory fixture
-
-## Implementation Status
-
-- Both client and edge exist in the repo, so the design surface is defined
-- Product value requires remote deployment and migrations, not fixture mode
-- Design is complete; operational value requires Supabase project setup and
-  deployment
+- secret schema（`NOTION_TOKEN` / `SYNC_TOKEN` / Supabase keys）は `docs/architecture/cloud/secrets.md` と `docs/architecture/cost-gate.md` のsecret排除契約に再適合させる。
+- Edge Functionのエンドポイント契約は旧repo実装が参照元。fixture mode（DB未設定でin-memory fixture）の挙動も旧実装に準拠する。
+- 配信・課金の方針（無料/有料の境界、aescripts連携の要否）が確定してから着手する。
 
 ## Scope of This Document
 
-- Endpoint shapes are in the implementation paths
-- Business promises are in [`../project.md`](../project.md)
-- Online/offline behavior is in [connectivity.md](connectivity.md)
+- 本repoに存在するコード surface と、再移植の前提だけを記載する。
+- 製品の約束は [`../project.md`](../project.md)、online/offline挙動は [connectivity.md](connectivity.md)。
