@@ -8,7 +8,6 @@ import { ThemeProvider } from "@/management/ae/cep/contexts/ThemeContext";
 import { AfterEffectsFilesGatewayProvider } from "@/management/ae/files/gateway-context";
 import type { AfterEffectsFilesRuntimeGateway } from "@/management/ae/files/runtime-gateway-impl";
 import { I18nProvider } from "@/management/i18n/Context";
-import { LicenseProvider } from "@/management/online/licensing/LicenseContext";
 import { SettingsProvider } from "@/management/setting/context";
 
 export const PanelRoot = ({
@@ -30,15 +29,13 @@ export const PanelRoot = ({
 	<StrictMode>
 		<CepProvider value={value}>
 			<SettingsProvider>
-				<LicenseProvider>
-					<I18nProvider>
-						<AfterEffectsFilesGatewayProvider value={gateway ?? null}>
-							<ThemeProvider panelSurfaceId={value.panelSurfaceId}>
-								{children}
-							</ThemeProvider>
-						</AfterEffectsFilesGatewayProvider>
-					</I18nProvider>
-				</LicenseProvider>
+				<I18nProvider>
+					<AfterEffectsFilesGatewayProvider value={gateway ?? null}>
+						<ThemeProvider panelSurfaceId={value.panelSurfaceId}>
+							{children}
+						</ThemeProvider>
+					</AfterEffectsFilesGatewayProvider>
+				</I18nProvider>
 			</SettingsProvider>
 		</CepProvider>
 	</StrictMode>

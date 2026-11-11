@@ -2274,10 +2274,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "ty-plus-licensing"
-version = "0.1.0"
-
-[[package]]
 name = "ty-plus-online"
 version = "0.1.0"
 dependencies = [
@@ -2323,7 +2319,6 @@ dependencies = [
  "tokio-native-tls",
  "tokio-stream",
  "ty-plus-host-filesystem",
- "ty-plus-licensing",
  "ty-plus-online",
  "ty-plus-protocol",
  "ty-plus-storage",

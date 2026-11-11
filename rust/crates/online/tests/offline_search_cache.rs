@@ -113,13 +113,6 @@ fn offline_matrix_distinguishes_local_cache_and_network_operations() {
         OfflineDecision::NetworkRequired
     );
     assert_eq!(
-        decide(
-            ConnectivityState::Offline,
-            OnlineOperation::LicensingRevalidation
-        ),
-        OfflineDecision::NetworkRequired
-    );
-    assert_eq!(
         decide(ConnectivityState::Offline, OnlineOperation::Unsupported),
         OfflineDecision::Blocked
     );

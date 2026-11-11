@@ -23,7 +23,6 @@ const resolveModuleOwner = (
 		if (
 			specifier.startsWith("@ty-plus/management") ||
 			specifier.startsWith("@ty-plus/workspace") ||
-			specifier.startsWith("@ty-plus/licensing") ||
 			specifier.startsWith("@ty-plus/cloud")
 		) {
 			return "management";

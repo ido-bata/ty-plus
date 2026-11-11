@@ -13,7 +13,6 @@ pub mod session;
 pub mod transport;
 
 use ty_plus_host_filesystem::HostFilesystemBoundary;
-use ty_plus_licensing::LicensingBoundary;
 use ty_plus_online::OnlineBoundary;
 use ty_plus_protocol::ProtocolBoundary;
 use ty_plus_storage::{PersistenceIoHandler, StorageBoundary};
@@ -27,8 +26,6 @@ pub struct RuntimeComposition {
     pub storage: StorageBoundary,
     /// Product network boundary.
     pub online: OnlineBoundary,
-    /// aescripts licensing boundary.
-    pub licensing: LicensingBoundary,
     /// Session-scoped After Effects filesystem boundary.
     pub host_filesystem: HostFilesystemBoundary,
 }
@@ -41,7 +38,6 @@ impl RuntimeComposition {
             protocol: ProtocolBoundary::new(),
             storage: StorageBoundary::new(),
             online: OnlineBoundary::new(),
-            licensing: LicensingBoundary::new(),
             host_filesystem: HostFilesystemBoundary::new(),
         }
     }

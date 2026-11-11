@@ -23,8 +23,6 @@ pub enum OnlineOperation {
     Download,
     /// Search cache read/write; always local.
     SearchCache,
-    /// aescripts licensing revalidation; online-only when due.
-    LicensingRevalidation,
     /// An operation not recognized by this policy.
     Unsupported,
 }
@@ -57,8 +55,7 @@ pub fn decide(state: ConnectivityState, operation: OnlineOperation) -> OfflineDe
         }
         OnlineOperation::CatalogSearch
         | OnlineOperation::ConnectivityCheck
-        | OnlineOperation::Download
-        | OnlineOperation::LicensingRevalidation => OfflineDecision::NetworkRequired,
+        | OnlineOperation::Download => OfflineDecision::NetworkRequired,
     }
 }
 
@@ -222,19 +219,13 @@ pub fn require_online(
     state: ConnectivityState,
     operation: OnlineOperation,
 ) -> Result<(), OfflineError> {
-    if state == ConnectivityState::Offline
-        && matches!(
-            operation,
-            OnlineOperation::Download | OnlineOperation::LicensingRevalidation
-        )
-    {
+    if state == ConnectivityState::Offline && matches!(operation, OnlineOperation::Download) {
         Err(OfflineError {
             operation: match operation {
                 OnlineOperation::Download => "download",
                 OnlineOperation::CatalogSearch => "catalog search",
                 OnlineOperation::ConnectivityCheck => "connectivity check",
                 OnlineOperation::SearchCache => "search cache",
-                OnlineOperation::LicensingRevalidation => "licensing revalidation",
                 OnlineOperation::Unsupported => "unsupported operation",
             },
         })
@@ -249,13 +240,12 @@ mod tests {
     use std::cell::RefCell;
     use std::collections::BTreeMap;
 
-    fn all_operations() -> [OnlineOperation; 5] {
+    fn all_operations() -> [OnlineOperation; 4] {
         [
             OnlineOperation::ConnectivityCheck,
             OnlineOperation::CatalogSearch,
             OnlineOperation::Download,
             OnlineOperation::SearchCache,
-            OnlineOperation::LicensingRevalidation,
         ]
     }
 

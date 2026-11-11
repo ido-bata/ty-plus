@@ -5,16 +5,12 @@
 	# import this file so the two lists cannot drift.
 
 	ManagedNames = @(
-		'NOTION_TOKEN'
-		'SYNC_TOKEN'
 		'ZXP_CERT_PASSWORD'
 		'SUPABASE_URL'
 		'SUPABASE_PUBLISHABLE_KEY'
 	)
 
 	RequiredValues = @(
-		'NOTION_TOKEN'
-		'SYNC_TOKEN'
 		'SUPABASE_URL'
 		'SUPABASE_PUBLISHABLE_KEY'
 	)

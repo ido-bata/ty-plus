@@ -33,7 +33,6 @@ type CheckStep = Readonly<{
 const HOST_INDEPENDENT_CRATES = [
 	"ty-plus-protocol",
 	"ty-plus-online",
-	"ty-plus-licensing",
 ] as const;
 
 const isProductHost = (): boolean =>
@@ -174,8 +173,6 @@ const runSelfTest = (): number => {
 					"ty-plus-protocol",
 					"-p",
 					"ty-plus-online",
-					"-p",
-					"ty-plus-licensing",
 					"--all-targets",
 				],
 				`check args on ${platform}`,
