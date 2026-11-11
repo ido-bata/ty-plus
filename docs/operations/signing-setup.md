@@ -34,8 +34,16 @@
 
 ## 2. Windows（Authenticode署名）
 
-1. コード署名証明書を取得する。選択肢は #32 の判断資料を参照（OV: 低コスト、SmartScreenの評価期間あり / EV: SmartScreen即時評価、ハードウェアトークン必須でCI自動化に工作が必要。価格・個人名義での取得可否は要確認）。
+1. コード署名証明書を取得する。選択肢は #32 の判断資料を参照。**EVのSmartScreen即時回避は2024年に廃止済み**（Microsoft公式、[Code signing options](https://learn.microsoft.com/en-us/windows/apps/package-and-deploy/code-signing-options)、2026-10-29更新）— EVとOVのSmartScreen挙動は同一（評判の蓄積が必要）で、追加費用の根拠にならない。**OV（またはOSS向け割安枠）で十分**。OVは2023-06以降、秘密鍵のHSM/トークン保管がCA/Browser Forumで必須（CertumのクラウドHSM等が該当）。
+   - Azure Artifact Signing（旧Trusted Signing、約$9.99/月）は **個人開発者はUSA/Canada居住者のみ** 対応 — 日本在住の個人では利用不可。
+   - [SignPath Foundation](https://signpath.org) は条件を満たす公開OSSプロジェクトに無料のOV級署名を提供する（リポジトリとバイナリの対応を検証、HSM管理、CI統合）。**公開済みOSSが対象のため、公開前の本projectには使えない** — 公開後の移行候補。署名がSignPathのパイプライン経由になるため、ローカル署名（本docの手順）とは別の統合作業が必要になる。
 2. **推奨: 証明書storeへインポート** し、SHA-1 thumbprintを控える（パスワードがプロセス引数に現れない）:
+
+   > クラウド型HSM（Certum SimplySign等）の場合、storeへの「インポート」は **SimplySign Desktopアプリがクラウドカードをマウントする間だけ有効** な仮想表現である。運用上の制約:
+   > - 署名のたびにSimplySign Desktopの接続と、モバイルアプリで生成するアクセスコードによる認証が必要（完全な無人実行はできない）。
+   > - 署名を実行できるのはSimplySign Desktopが動作するマシンのみ。GitHub hosted runnerでは実行できないため、**署名は本人のマシンでの手順**（`build-release.ts` の設計どおり）であり、CIは拒否検証のみを行う。
+   > - 導入作業はゼロではない: モバイルアプリ + デスクトップアプリ + クラウドアカウントの初期設定が必要。
+
    ```powershell
    certutil -user -importPFX PFX <path-to-pfx>
    certutil -user -store My   # thumbprintを確認
