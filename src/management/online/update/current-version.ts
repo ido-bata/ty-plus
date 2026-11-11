@@ -7,7 +7,8 @@
  */
 declare const __APP_VERSION__: string;
 
-export const currentVersion = __APP_VERSION__;
+export const currentVersion =
+	typeof __APP_VERSION__ === "string" ? __APP_VERSION__ : "0.0.0";
 
 /**
  * A prerelease can share the numeric CEP manifest version with other
