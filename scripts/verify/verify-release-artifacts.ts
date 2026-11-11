@@ -49,7 +49,7 @@ const releaseVersion = manifest.releaseVersion;
 const releaseChannel = manifest.channel;
 const match =
 	typeof releaseVersion === "string"
-		? /^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-(beta|insider)\\.(0|[1-9]\\d*))?$/.exec(
+		? /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-(beta|insider)\.(0|[1-9]\d*))?$/.exec(
 				releaseVersion,
 			)
 		: null;
