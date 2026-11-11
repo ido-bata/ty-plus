@@ -208,5 +208,13 @@
 			"inputs": "输入",
 			"update": "更新"
 		}
+	},
+	"updates": {
+		"channel": "更新通道",
+		"stable": "稳定版",
+		"beta": "测试版",
+		"insider": "内部预览版",
+		"checkNow": "立即检查",
+		"browse": "查看版本"
 	}
 }
