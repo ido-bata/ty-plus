@@ -7,6 +7,8 @@ import {
 	protocolVersion,
 } from "../../src/management/ipc/generated/wire";
 import type {
+	ArtifactSignature,
+	ArtifactTrust,
 	OperationWorkerArtifact,
 	OperationWorkerManifest,
 	OperationWorkerPlatform,
@@ -300,16 +302,32 @@ const artifactPath = (
 ): string =>
 	`worker/versions/${digest}/${platform}/${platform === "windows" ? "operation-worker.exe" : "operation-worker"}`;
 
-export type DevelopmentWorkerBuildResult = Readonly<{
+export type WorkerBuildResult = Readonly<{
 	manifestPath: string;
 	manifest: OperationWorkerManifest;
 	binaryPath: string;
 	sha256: string;
 }>;
 
-export async function buildDevelopmentWorker(
-	distRoot = path.resolve("dist", "cep-dev"),
-): Promise<DevelopmentWorkerBuildResult> {
+export type DevelopmentWorkerBuildResult = WorkerBuildResult;
+
+export type ReleaseWorkerBuildResult = WorkerBuildResult;
+
+/**
+ * A signing hook that runs on the freshly staged binary and returns the
+ * signature evidence read back from the signed bytes. The manifest must
+ * describe the binary as it actually ships, so the hook runs *before* the
+ * content-addressed digest is computed.
+ */
+export type SignStagedWorker = (
+	stagedPath: string,
+) => Promise<ArtifactSignature>;
+
+const buildWorker = async (
+	distRoot: string,
+	buildTrust: (signature: ArtifactSignature | undefined) => ArtifactTrust,
+	sign?: SignStagedWorker,
+): Promise<WorkerBuildResult> => {
 	const platform = platformForHost();
 	const stagingRoot = path.join(distRoot, ".worker-staging");
 	const staged = await stageOperationWorkerTargets(targetsForHost(), {
@@ -319,6 +337,9 @@ export async function buildDevelopmentWorker(
 	if (stagedPath === undefined) {
 		throw new Error(`missing staged ${platform} development worker`);
 	}
+	const signature = sign === undefined ? undefined : await sign(stagedPath);
+	// The digest pins the *signed* bytes: an unsigned release build would
+	// otherwise publish a manifest vouching for bytes it never verified.
 	const bytes = await fileSystem.readFile(stagedPath);
 	const digest = sha256(bytes);
 	const relativePath = artifactPath(platform, digest);
@@ -341,7 +362,7 @@ export async function buildDevelopmentWorker(
 		});
 	if (platform === "macos") await fileSystem.chmod(binaryPath, 0o755);
 	const manifest: OperationWorkerManifest = {
-		trust: { mode: "development-unsigned", buildProfile: "development" },
+		trust: buildTrust(signature),
 		productVersion: await packageVersion(),
 		extensionVersion: await packageVersion(),
 		protocolVersion,
@@ -350,6 +371,7 @@ export async function buildDevelopmentWorker(
 			[platform]: {
 				relativePath,
 				sha256: digest,
+				...(signature === undefined ? {} : { signature }),
 			} as OperationWorkerArtifact,
 		} as OperationWorkerManifest["workers"],
 	};
@@ -361,4 +383,43 @@ export async function buildDevelopmentWorker(
 	);
 	await fileSystem.rm(stagingRoot, { force: true, recursive: true });
 	return { manifestPath, manifest, binaryPath, sha256: digest };
+};
+
+export async function buildDevelopmentWorker(
+	distRoot = path.resolve("dist", "cep-dev"),
+): Promise<DevelopmentWorkerBuildResult> {
+	return buildWorker(distRoot, {
+		mode: "development-unsigned",
+		buildProfile: "development",
+	});
+}
+
+/**
+ * Build the release-trust worker: the staged binary is signed first, and the
+ * trust block is written from signature evidence read back from the signed
+ * binary. Fails closed — without evidence the release manifest is never
+ * generated (`docs/architecture/distribution.md`).
+ */
+export async function buildReleaseWorker(
+	sign: SignStagedWorker,
+	distRoot = path.resolve("dist", "cep-dev"),
+): Promise<ReleaseWorkerBuildResult> {
+	return buildWorker(
+		distRoot,
+		(signature) => {
+			if (
+				signature === undefined ||
+				(signature.algorithm !== "authenticode" &&
+					signature.algorithm !== "codesign") ||
+				signature.value.trim().length === 0 ||
+				!/^[a-fA-F0-9]{64}$/.test(signature.certificateSha256)
+			) {
+				throw new Error(
+					"[operation-worker] release trust requires signature evidence read back from the signed binary — refusing to write the release trust block",
+				);
+			}
+			return { mode: "release", signature };
+		},
+		sign,
+	);
 }
