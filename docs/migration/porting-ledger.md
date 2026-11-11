@@ -13,35 +13,57 @@
 
 | 旧ref | SHA | 状態 |
 | --- | --- | --- |
-| `main` | `a633e246156c` | v0.9.1 |
-| `release-0-10-0` | `05c921d1fb9a` | 旧計画時点でmainより先行。コミット数は最新Git上で再検証する（#228） |
+| `main` | `a633e246156c` | v0.9.1。CIは2026-09以降failureが継続 |
+| `release-0-10-0` | `05c921d1fb9a` | mainより161コミット先行（mainはstrict ancestor）。最終commit 2026-10-03 21:10 +0900、直後のCI実行（2026-10-03 12:21 UTC）がsuccess |
+
+### 基準SHAの比較（2026-11-11再検証）
+
+- `release-0-10-0` の161コミットには旧#131 blocker（#127 PandaCSSレイアウト / #128 online fixture fallback / #129 Debug Console集約 / #130 preset実行: CLOSED）の修正commitを含む。#127〜#129は修正済みだが実機検証が未完了のためIssueはOPEN。
+- `main` はこれらの修正を含まず、CIも赤。**移植基準は `release-0-10-0`（`05c921d1fb9a`）を推奨**（本人判断事項）。
 
 ## OPEN PR棚卸し（2026-11-11時点）
 
-採否・依存DAG・権利状態は移植元選定Issueが確定させる。stacked関係（例: #203 → #211）は依存順に処理する。
+採否の技術評価は #3 が確定させる。権利状態は #2（権利監査）の確定を待つ。stacked関係は `#203 → #211` のみ。
 
-| 旧PR | base | 責務 | R0必須/延期 | 権利状態 | 採否 | 移植元SHA | 再検証 |
+| 旧PR | base | 責務 | R0評価 | 権利状態 | 採否 | 移植元SHA | 再検証 |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| #165 | main | release: v0.10.0（release PR） | - | 未監査 | 未評価 | - | - |
-| #217 | release-0-10-0 | fix(storage): 絶対パスの先頭スラッシュ保持（#216） | 未評価 | 未監査 | 未評価 | - | - |
-| #213 | release-0-10-0 | fix(runtime): modeless dialog起動経路でcloud gateway boot（#171） | 未評価 | 未監査 | 未評価 | - | - |
-| #212 | release-0-10-0 | chore(skills): project-init Skills復元とgate契約のdocs移動 | 未評価 | 未監査 | 未評価 | - | - |
-| #211 | 182 | fix(workspace): 読み込み失敗を空レイアウトに変換せず復元まで書込停止（#204） | 未評価 | 未監査 | 未評価 | - | - |
-| #208 | release-0-10-0 | fix(dev): macOSのAE検出・起動 | 未評価 | 未監査 | 未評価 | - | - |
-| #207 | release-0-10-0 | fix(ci): ゲートが要求するoperation-worker成果物をゲート自身がbuild（#191） | 未評価 | 未監査 | 未評価 | - | - |
-| #206 | release-0-10-0 | fix(preset): boot経路catalogをraw text読み+strict parse | 未評価 | 未監査 | 未評価 | - | - |
-| #205 | release-0-10-0 | fix(workspace): 読めないwidgets.jsonを空に潰さない（#183） | 未評価 | 未監査 | 未評価 | - | - |
-| #203 | release-0-10-0 | fix(workspace): 読めないtarget layoutを上書きしない（#182、データ消失阻止） | 未評価 | 未監査 | 未評価 | - | - |
-| #202 | release-0-10-0 | fix(runtime): host callerをWindow単位で共有しwidget effect無限ループ停止 | 未評価 | 未監査 | 未評価 | - | - |
-| #201 | release-0-10-0 | test(worker): fixture rootをtest thread単位に分離 | 未評価 | 未監査 | 未評価 | - | - |
-| #199 | release-0-10-0 | test(worker): lease test manifest fixtureが全platformを宣言 | 未評価 | 未監査 | 未評価 | - | - |
-| #198 | release-0-10-0 | fix(rust): macOSでcheck:rustが通るようにworkspace整理 | 未評価 | 未監査 | 未評価 | - | - |
-| #196 | release-0-10-0 | fix(cep): getCepHostSupportRootPathのplatform注入可能化 | 未評価 | 未監査 | 未評価 | - | - |
-| #187 | release-0-10-0 | fix(preset): local catalog読み込みをcloud gateway bootから分離 | 未評価 | 未監査 | 未評価 | - | - |
-| #186 | release-0-10-0 | fix(debug): Debug Consoleのカバレッジと上限の反証可能性 | 未評価 | 未監査 | 未評価 | - | - |
-| #178 | release-0-10-0 | fix(workspace): post-onboarding widget placement復旧 | 未評価 | 未監査 | 未評価 | - | - |
-| #177 | release-0-10-0 | fix(settings): right content paneのcanonical inner gutter | 未評価 | 未監査 | 未評価 | - | - |
-| #176 | release-0-10-0 | fix(ci): SKIP検証の所有者定義とrelease gate partition | 未評価 | 未監査 | 未評価 | - | - |
+| #165 | main | release: v0.10.0（release PR） | 対象外 | - | **移植しない** | - | - |
+| #217 | release-0-10-0 | fix(storage): 絶対パスの先頭スラッシュ保持（#216） | **R0必須候補**（macOSでsettings/ui.jsonが書けない） | 権利者確認待ち | 未評価 | `cebaf225b3` | 移植時に回帰テスト |
+| #213 | release-0-10-0 | fix(runtime): modeless dialog起動経路でcloud gateway boot（#171） | 延期候補（cloud依存） | 権利者確認待ち | 未評価 | `eec2dcce83` | - |
+| #212 | release-0-10-0 | chore(skills): project-init Skills復旧 | **移植不要**（本repoはADR-0002で独立に初期化済み） | - | 廃止候補 | `d8b72822e4` | - |
+| #211 | 182 | fix(workspace): 読み込み失敗を空レイアウトに変換せず復元まで書込停止（#204） | **R0必須候補**（データ消失） | 権利者確認待ち | 未評価 | `ad00b42bf1` | #203に依存。行動テスト移植 |
+| #208 | release-0-10-0 | fix(dev): macOSのAE検出・起動 | 延期候補（dev tooling） | 権利者確認待ち | 未評価 | `d2852b1ad0` | - |
+| #207 | release-0-10-0 | fix(ci): ゲートが要求するoperation-worker成果物をゲート自身がbuild（#191） | **R0必須候補**（fresh checkout CI） | 権利者確認待ち | 未評価 | `b7534a3be3` | 新repo CIで再現確認 |
+| #206 | release-0-10-0 | fix(preset): boot経路catalogをraw text読み+strict parse | 延期候補（#187/#213のboot経路に依存） | 権利者確認待ち | 未評価 | `ca5e61010d` | - |
+| #205 | release-0-10-0 | fix(workspace): 読めないwidgets.jsonを空に潰さない（#183） | **R0必須候補**（データ消失） | 権利者確認待ち | 未評価 | `0439366e25` | 行動テスト移植 |
+| #203 | release-0-10-0 | fix(workspace): 読めないtarget layoutを上書きしない（#182、データ消失阻止） | **R0必須候補**（データ消失） | 権利者確認待ち | 未評価 | `673c7c1c90` | #211のbase |
+| #202 | release-0-10-0 | fix(runtime): host callerをWindow単位で共有しwidget effect無限ループ停止 | 採用候補（停止バグ） | 権利者確認待ち | 未評価 | `f002f84dd3` | - |
+| #201 | release-0-10-0 | test(worker): fixture rootをtest thread単位に分離 | R0有効（test安定性） | 権利者確認待ち | 未評価 | `ef24531e36` | - |
+| #199 | release-0-10-0 | test(worker): lease test manifest fixtureが全platformを宣言 | R0有効（test安定性） | 権利者確認待ち | 未評価 | `41f5146596` | - |
+| #198 | release-0-10-0 | fix(rust): macOSでcheck:rustが通るようにworkspace整理 | R0有効（macOS CI） | 権利者確認待ち | 未評価 | `5d8fd8081f` | - |
+| #196 | release-0-10-0 | fix(cep): getCepHostSupportRootPathのplatform注入可能化 | R0有効（test可搬性） | 権利者確認待ち | 未評価 | `a1fc2a63d8` | - |
+| #187 | release-0-10-0 | fix(preset): local catalog読み込みをcloud gateway bootから分離 | 採用候補（offline coreと整合） | 権利者確認待ち | 未評価 | `e7a961f376` | - |
+| #186 | release-0-10-0 | fix(debug): Debug Consoleのカバレッジと上限の反証可能性 | 延期候補 | 権利者確認待ち | 未評価 | `1fac098cf1` | - |
+| #178 | release-0-10-0 | fix(workspace): post-onboarding widget placement復旧 | 採用候補（主要操作） | 権利者確認待ち | 未評価 | `7b40c1ed34` | - |
+| #177 | release-0-10-0 | fix(settings): right content paneのcanonical inner gutter | 延期候補（UI polish） | 権利者確認待ち | 未評価 | `6cda4bc9ca` | - |
+| #176 | release-0-10-0 | fix(ci): SKIP検証の所有者定義とrelease gate partition（#172〜#175） | R0有効（#6/#10のgate基盤） | 権利者確認待ち | 未評価 | `06d76f2bad` | - |
+
+## 移植DAG
+
+```text
+release-0-10-0 (05c921d1) を基準ツリーとして監査・移植
+├─ #203 → #211（stacked。データ消失修正。この順で移植）
+├─ #205 / #217（独立。データ消失・設定書込）
+├─ #207 / #176 / #198 / #201 / #199 / #196（CI・test基盤）
+└─ #202 / #187 / #178（機能修正。採用は本人判断）
+```
+
+移植は基準ツリーの監査済みファイル + 選定PRの変更を新規commitとして再適用する。旧コミットの履歴は持ち込まない。
+
+## 検証ゲート
+
+- 各移植変更は新repoのCI（vitest等の移植後test基盤）で再検証する。データ消失修正（#203/#205/#211/#217）は行動テスト込みで移植する。
+- #10（実機ゲート）が評価するSHAは、本台帳の確定後の新repo commitに限定する。
 
 ## 権利監査との接続
 
