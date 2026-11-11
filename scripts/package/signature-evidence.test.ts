@@ -1,7 +1,9 @@
+import { createHash } from "node:crypto";
 import { describe, expect, it } from "vitest";
 import {
 	parseAuthenticodeEvidence,
-	parseCodesignEvidence,
+	parseCodesignDetail,
+	pemToDer,
 } from "./signature-evidence";
 
 const SHA1 = "a".repeat(40);
@@ -33,7 +35,7 @@ describe("parseAuthenticodeEvidence", () => {
 	});
 });
 
-describe("parseCodesignEvidence", () => {
+describe("parseCodesignDetail", () => {
 	const detail = [
 		"Executable=/tmp/worker",
 		"Identifier=app.ty-plus",
@@ -41,11 +43,9 @@ describe("parseCodesignEvidence", () => {
 		"Authority=Developer ID Application: Ty Plus (TEAMID)",
 	].join("\n");
 
-	it("reads the CDHash and requires a Developer ID + valid staple", () => {
-		expect(parseCodesignEvidence(detail, ["valid"])).toEqual({
-			algorithm: "codesign",
-			value: SHA256.slice(0, 40),
-			certificateSha256: "",
+	it("reads the CDHash when a Developer ID authority is present", () => {
+		expect(parseCodesignDetail(detail)).toEqual({
+			cdHash: SHA256.slice(0, 40),
 		});
 	});
 
@@ -54,20 +54,34 @@ describe("parseCodesignEvidence", () => {
 			"Authority=Developer ID Application: Ty Plus (TEAMID)",
 			"Authority=(unavailable)",
 		);
-		expect(() => parseCodesignEvidence(adHoc, ["valid"])).toThrow(
+		expect(() => parseCodesignDetail(adHoc)).toThrow(
 			/Developer ID Application/,
 		);
 	});
 
-	it("refuses an unstapled binary", () => {
-		expect(() => parseCodesignEvidence(detail, ["code object is not signed at all"])).toThrow(
-			/notarization staple/,
+	it("refuses output without a CDHash", () => {
+		expect(() => parseCodesignDetail("no hash here")).toThrow(/not signed/);
+	});
+});
+
+describe("pemToDer", () => {
+	// DER bytes 0x30 0x03 0x02 0x01 0x05 wrapped in PEM armor.
+	const DER = Buffer.from([0x30, 0x03, 0x02, 0x01, 0x05]);
+	const PEM = [
+		"-----BEGIN CERTIFICATE-----",
+		DER.toString("base64"),
+		"-----END CERTIFICATE-----",
+		"",
+	].join("\n");
+
+	it("decodes the DER body so the fingerprint is computed over DER", () => {
+		expect(pemToDer(PEM).equals(DER)).toBe(true);
+		expect(createHash("sha256").update(pemToDer(PEM)).digest("hex")).toBe(
+			createHash("sha256").update(DER).digest("hex"),
 		);
 	});
 
-	it("refuses output without a CDHash", () => {
-		expect(() => parseCodesignEvidence("no hash here", ["valid"])).toThrow(
-			/not signed/,
-		);
+	it("refuses an empty PEM", () => {
+		expect(() => pemToDer("")).toThrow(/no CERTIFICATE block/);
 	});
 });

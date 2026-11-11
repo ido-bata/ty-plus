@@ -3,17 +3,48 @@ import {
 	buildMacSignArgs,
 	buildSignPlan,
 	buildWindowsSignArgs,
+	redactSignArgs,
 	resolveSignWorkerConfig,
 } from "./sign-worker";
 
 describe("resolveSignWorkerConfig", () => {
-	it("fails closed on Windows when the PFX is unconfigured", () => {
+	it("fails closed on Windows when signing is unconfigured", () => {
 		expect(() => resolveSignWorkerConfig("windows", {})).toThrow(
 			/#32 \/ #2/,
 		);
 	});
 
-	it("resolves the Windows config from the environment", () => {
+	it("prefers the certificate store: no password on the command line", () => {
+		expect(
+			resolveSignWorkerConfig("windows", {
+				TY_PLUS_SIGN_CERT_SHA1: "a".repeat(40),
+			}),
+		).toMatchObject({
+			platform: "windows",
+			certSha1: "a".repeat(40),
+			timestampUrl: "http://timestamp.digicert.com",
+		});
+		expect(
+			buildWindowsSignArgs(
+				resolveSignWorkerConfig("windows", {
+					TY_PLUS_SIGN_CERT_SHA1: "a".repeat(40),
+				}),
+				"worker.exe",
+			),
+		).not.toContain("/p");
+	});
+
+	it("rejects an ambiguous store + PFX configuration", () => {
+		expect(() =>
+			resolveSignWorkerConfig("windows", {
+				TY_PLUS_SIGN_CERT_SHA1: "a".repeat(40),
+				TY_PLUS_SIGN_PFX_PATH: "certs/ty-plus.pfx",
+				TY_PLUS_SIGN_PFX_PASSWORD: "secret",
+			}),
+		).toThrow(/not both/);
+	});
+
+	it("resolves the PFX fallback from the environment", () => {
 		expect(
 			resolveSignWorkerConfig("windows", {
 				TY_PLUS_SIGN_PFX_PATH: "certs/ty-plus.pfx",
@@ -49,10 +80,38 @@ describe("resolveSignWorkerConfig", () => {
 	});
 });
 
+describe("redactSignArgs", () => {
+	it("masks the value after signtool's /p", () => {
+		expect(
+			redactSignArgs([
+				"signtool",
+				"sign",
+				"/f",
+				"certs/ty-plus.pfx",
+				"/p",
+				"s3cret-password",
+				"worker.exe",
+			]),
+		).toEqual([
+			"signtool",
+			"sign",
+			"/f",
+			"certs/ty-plus.pfx",
+			"/p",
+			"***",
+			"worker.exe",
+		]);
+	});
+
+	it("leaves argument vectors without /p untouched", () => {
+		const args = ["codesign", "--sign", "Developer ID Application: X"];
+		expect(redactSignArgs(args)).toEqual(args);
+	});
+});
+
 describe("sign plans", () => {
-	const windowsConfig = resolveSignWorkerConfig("windows", {
-		TY_PLUS_SIGN_PFX_PATH: "certs/ty-plus.pfx",
-		TY_PLUS_SIGN_PFX_PASSWORD: "secret",
+	const windowsStoreConfig = resolveSignWorkerConfig("windows", {
+		TY_PLUS_SIGN_CERT_SHA1: "a".repeat(40),
 	});
 
 	const macConfig = resolveSignWorkerConfig("macos", {
@@ -61,7 +120,7 @@ describe("sign plans", () => {
 	});
 
 	it("signs Windows with an RFC 3161 timestamp in one step", () => {
-		expect(buildWindowsSignArgs(windowsConfig, "worker.exe")).toEqual([
+		expect(buildWindowsSignArgs(windowsStoreConfig, "worker.exe")).toEqual([
 			"signtool",
 			"sign",
 			"/fd",
@@ -70,30 +129,33 @@ describe("sign plans", () => {
 			"sha256",
 			"/tr",
 			"http://timestamp.digicert.com",
-			"/f",
-			"certs/ty-plus.pfx",
-			"/p",
-			"secret",
+			"/sha1",
+			"a".repeat(40),
 			"worker.exe",
 		]);
-		expect(buildSignPlan(windowsConfig, "worker.exe")).toHaveLength(1);
+		expect(buildSignPlan(windowsStoreConfig, "worker.exe", "sub.zip")).toHaveLength(1);
 	});
 
-	it("signs, notarizes, and staples macOS in that order", () => {
-		const plan = buildSignPlan(macConfig, "operation-worker");
+	it("signs, then notarizes a zip submission — not the raw Mach-O", () => {
+		const plan = buildSignPlan(macConfig, "operation-worker", "sub.zip");
 		expect(plan[0]?.slice(0, 2)).toEqual(["codesign", "--force"]);
 		expect(plan[0]).toContain("--options");
 		expect(plan[0]).toContain("runtime");
-		expect(plan[1]).toEqual([
+		// notarytool accepts zip / pkg / dmg — a raw Mach-O is not a submission
+		// format, so the plan zips the binary for submission only.
+		expect(plan[1]).toEqual(["zip", "-j", "-y", "sub.zip", "operation-worker"]);
+		expect(plan[2]).toEqual([
 			"xcrun",
 			"notarytool",
 			"submit",
-			"operation-worker",
+			"sub.zip",
 			"--keychain-profile",
 			"ty-plus-notary",
 			"--wait",
 		]);
-		expect(plan[2]).toEqual(["xcrun", "stapler", "staple", "operation-worker"]);
+		// stapler staples bundles / dmg / pkg — not bare executables — so the
+		// worker plan must not contain one.
+		expect(plan.flat().join(" ")).not.toMatch(/stapler/);
 	});
 
 	it("builds the mac sign args from the resolved identity", () => {
