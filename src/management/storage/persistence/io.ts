@@ -20,6 +20,7 @@
 import {
 	parseJsonObject,
 	readJsonFileText,
+	readJsonFileTextStrict,
 	stringifyJson,
 } from "@/management/storage/read/json-file";
 import {
@@ -108,6 +109,15 @@ export const readJson = async <K extends PersistenceKey>(
  * Read raw text from a persistence key, bypassing JSON parsing.
  * Use this when callers need the JSON text (e.g. to feed into a parser that
  * understands the document's specific shape) rather than a generic object.
+ *
+ * Unlike `readJson`, a local read failure is NOT collapsed into null.
+ * Returns `null` only when nothing was written (missing or blank file). A
+ * file that exists but cannot be read REJECTS — both through the gateway
+ * (the Rust side propagates non-`NotFound` I/O errors) and through the local
+ * fallback below (`readJsonFileTextStrict`). Callers that write back what
+ * they read depend on that distinction: collapsing it into `null` is how an
+ * unreadable layout became an "empty" one and got erased (Issues #183 /
+ * #204).
  */
 export const readJsonText = async <K extends PersistenceKey>(
 	win: Window,
@@ -128,7 +138,10 @@ export const readJsonText = async <K extends PersistenceKey>(
 		root,
 		...args,
 	);
-	return readJsonFileText(win, path);
+	// Strict: a raw-text reader exists precisely so the caller can tell
+	// "no file" from "unreadable file". Swallowing the difference here
+	// would make `readJsonText` no better than `readJson`.
+	return readJsonFileTextStrict(win, path);
 };
 
 /**

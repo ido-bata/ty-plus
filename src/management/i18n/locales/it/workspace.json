@@ -33,5 +33,13 @@
 			"timing": "Tempistica",
 			"layers": "Livelli"
 		}
+	},
+	"restore": {
+		"title": "Impossibile ripristinare il layout della workspace",
+		"corruptBody": "Il file del layout salvato esiste ma non è un layout leggibile, quindi non è stato caricato.",
+		"readFailureBody": "Non è stato possibile leggere il file del layout salvato, quindi non è stato caricato.",
+		"savingPaused": "Il salvataggio è in pausa per non sovrascrivere questo file. Ripara o ripristina il file, poi riprova.",
+		"file": "File: workspace-{{wsIndex}}.json",
+		"retry": "Riprova il ripristino"
 	}
 }

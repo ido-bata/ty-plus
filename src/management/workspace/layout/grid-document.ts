@@ -126,6 +126,78 @@ export const parseLayoutDocument = (
 	return empty();
 };
 
+/**
+ * A persisted layout body that cannot be read back.
+ *
+ * `reason` separates "the bytes are not JSON" from "the JSON is not a layout",
+ * because the two point at different things going wrong. Both are fatal for a
+ * caller that intends to write back what it read: treating either as an empty
+ * panel would destroy every tile already on disk (Issue #182).
+ */
+export class LayoutDocumentParseError extends Error {
+	readonly reason: "json-parse-failed" | "unrecognized-shape";
+
+	constructor(
+		reason: "json-parse-failed" | "unrecognized-shape",
+		message: string,
+	) {
+		super(message);
+		this.name = "LayoutDocumentParseError";
+		this.reason = reason;
+	}
+}
+
+/** A root that `parseLayoutDocument` would silently turn into an empty grid. */
+const hasRecognizedLayoutShape = (value: unknown): boolean => {
+	if (Array.isArray(value)) return true;
+	if (value === null || typeof value !== "object") return false;
+	const obj = value as Record<string, unknown>;
+	return Array.isArray(obj.gridCells) || Array.isArray(obj.items);
+};
+
+/**
+ * Read a persisted layout body, refusing to call anything unreadable "empty".
+ *
+ * No file (or a blank one) is a genuinely untouched panel and parses to an
+ * empty grid. Anything else either parses to a recognized layout or throws
+ * `LayoutDocumentParseError` — it never collapses to `{ gridCells: [] }`,
+ * which is the shape that makes a later write erase the panel.
+ *
+ * The distinction cannot be made through `parseLayoutDocument`: that function
+ * deliberately never throws, so an object that is not a layout at all is
+ * indistinguishable from a panel the user emptied. A caller that only reads
+ * can keep using it; a caller that writes back must use this.
+ */
+export const parseLayoutDocumentJsonText = (
+	raw: string | null | undefined,
+): PersistedLayoutDocument => {
+	if (raw === null || raw === undefined || !raw.trim()) {
+		return { gridCells: [] };
+	}
+	let parsed: unknown;
+	try {
+		parsed = JSON.parse(raw);
+	} catch (error) {
+		throw new LayoutDocumentParseError(
+			"json-parse-failed",
+			`layout is not valid JSON: ${error instanceof Error ? error.message : String(error)}`,
+		);
+	}
+	if (!hasRecognizedLayoutShape(parsed)) {
+		const root =
+			parsed === null
+				? "null"
+				: Array.isArray(parsed)
+					? "array"
+					: typeof parsed;
+		throw new LayoutDocumentParseError(
+			"unrecognized-shape",
+			`layout root must be an array or an object carrying gridCells/items, got ${root}`,
+		);
+	}
+	return parseLayoutDocument(parsed);
+};
+
 export const serializePersistedLayoutDocument = (
 	doc: PersistedLayoutDocument,
 ): string => {

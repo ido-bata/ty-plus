@@ -33,5 +33,13 @@
 			"timing": "Tempo",
 			"layers": "Camadas"
 		}
+	},
+	"restore": {
+		"title": "Não foi possível restaurar o layout do espaço de trabalho",
+		"corruptBody": "O arquivo de layout salvo existe, mas não é um layout legível, então não foi carregado.",
+		"readFailureBody": "Não foi possível ler o arquivo de layout salvo, então não foi carregado.",
+		"savingPaused": "O salvamento está pausado para não sobrescrever este arquivo. Repare ou restaure o arquivo e tente novamente.",
+		"file": "Arquivo: workspace-{{wsIndex}}.json",
+		"retry": "Tentar restaurar novamente"
 	}
 }

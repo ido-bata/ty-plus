@@ -87,8 +87,28 @@ const resolveJsonReadFileSystem = async (
 	};
 };
 
-/** Read file text content. Returns null if the file is missing or unreadable. */
-export const readJsonFileText = async (
+/** True when the error is a missing-file error (ENOENT). */
+const isFileNotFound = (error: unknown): boolean =>
+	typeof error === "object" &&
+	error !== null &&
+	(error as { code?: unknown }).code === "ENOENT";
+
+/**
+ * Read file text, refusing to report an unreadable file as absent.
+ *
+ * `null` means the path genuinely holds nothing (missing file, or a blank
+ * one) — the "never written" case, which no reader can distinguish from
+ * "not created" (Issue #183). Every other failure (EACCES, EISDIR, EIO, …)
+ * rejects, because a caller that writes back what it read must not treat an
+ * unreadable file as "nothing was saved": the next write would erase
+ * whatever was in it (Issue #204; the same distinction the layout restore
+ * classification makes).
+ *
+ * This mirrors the Rust persistence gateway's `read_text`, which maps
+ * `NotFound` to `None` and propagates every other I/O error, so the CEP
+ * fallback and the production gateway agree on where "absent" ends.
+ */
+export const readJsonFileTextStrict = async (
 	win: Window,
 	path: string,
 ): Promise<string | null> => {
@@ -97,6 +117,26 @@ export const readJsonFileText = async (
 		const body = await fs.readFile(path, "utf8");
 		const trimmed = body.trim();
 		return trimmed.length > 0 ? trimmed : null;
+	} catch (error) {
+		if (isFileNotFound(error)) return null;
+		throw error;
+	}
+};
+
+/**
+ * Read file text content. Returns null if the file is missing or unreadable.
+ *
+ * Deliberately lenient: a read side that only renders a default can treat
+ * "unreadable" like "missing". Anything that writes back what it read MUST
+ * use {@link readJsonFileTextStrict} instead — collapsing the two is how a
+ * corrupt file becomes an empty one on the next write.
+ */
+export const readJsonFileText = async (
+	win: Window,
+	path: string,
+): Promise<string | null> => {
+	try {
+		return await readJsonFileTextStrict(win, path);
 	} catch {
 		return null;
 	}

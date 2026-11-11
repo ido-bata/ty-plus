@@ -3,6 +3,14 @@
  * All callers MUST go through this registry; no string concatenation elsewhere.
  *
  * `root` is always the managed root (…/ty-plus), obtained from managed-root.ts.
+ *
+ * This registry covers the persistence-gateway side only. Domain callers that
+ * touch the same files outside the gateway resolve them through
+ * `storage/file.ts` — for overlapping files (`settings/ui.json` above all)
+ * both must return the identical string, which `storage/file.test.ts` pins
+ * (Issue #216: `PATHS` interpolated the absolute root and survived while the
+ * `file.ts` joiner stripped its leading separator, so only one of the two
+ * systems went missing on POSIX).
  */
 
 export const PATHS = {

@@ -25,7 +25,15 @@ vi.mock("@/management/storage/read/json-file", async () => {
 	const actual = await vi.importActual<
 		typeof import("@/management/storage/read/json-file")
 	>("@/management/storage/read/json-file");
-	return { ...actual, readJsonFileText: mockReadJsonFileText };
+	return {
+		...actual,
+		readJsonFileText: mockReadJsonFileText,
+		// `readJsonText` reads through the strict variant so an unreadable
+		// file is never reported as absent (Issues #183 / #204). Both names
+		// share one mock so the round trip below still describes the same
+		// reads.
+		readJsonFileTextStrict: mockReadJsonFileText,
+	};
 });
 
 vi.mock("@/management/storage/write/json-file", () => ({

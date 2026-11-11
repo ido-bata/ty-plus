@@ -1,7 +1,12 @@
 /**
  * Tests for records-file.ts
  * All bytes go through the unified persistence API; these tests mock
- * readJson / writeJson at the persistence boundary.
+ * readJson / readJsonText / writeJson at the persistence boundary.
+ *
+ * `readWidgetRecords` is a read-only view and may degrade to `[]`.
+ * `upsertWidgetRecords` / `ensureWidgetRecordsFile` write back what they
+ * read, so they must refuse an unreadable file instead of merging into an
+ * empty base (Issue #183).
  */
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -10,20 +15,27 @@ import {
 	ensureWidgetRecordsFile,
 	readWidgetRecords,
 	upsertWidgetRecords,
+	WidgetRecordsFileError,
 	writeWidgetRecords,
 } from "./records-file";
 
-const { mockReadJson, mockWriteJson } = vi.hoisted(() => ({
+const { mockReadJson, mockReadJsonText, mockWriteJson } = vi.hoisted(() => ({
 	mockReadJson: vi.fn(),
+	mockReadJsonText: vi.fn(),
 	mockWriteJson: vi.fn(),
 }));
 
 vi.mock("@/management/storage/persistence", () => ({
 	readJson: mockReadJson,
+	readJsonText: mockReadJsonText,
 	writeJson: mockWriteJson,
 }));
 
 const win = {} as Window;
+
+/** Raw text for a canonical records file, as `readJsonText` would return it. */
+const recordsText = (widgets: unknown): string =>
+	JSON.stringify({ version: 1, widgets });
 
 // ── readWidgetRecords ─────────────────────────────────────────────────────────
 
@@ -107,7 +119,19 @@ describe("ensureWidgetRecordsFile", () => {
 	beforeEach(() => vi.clearAllMocks());
 
 	it("creates file with empty structure when missing", async () => {
-		mockReadJson.mockResolvedValue(null);
+		mockReadJsonText.mockResolvedValue(null);
+
+		await ensureWidgetRecordsFile(win);
+
+		expect(mockWriteJson).toHaveBeenCalledTimes(1);
+		expect(mockWriteJson).toHaveBeenCalledWith(win, "widgetRecords", {
+			version: 1,
+			widgets: [],
+		});
+	});
+
+	it("creates file when the existing one is blank (legitimately empty)", async () => {
+		mockReadJsonText.mockResolvedValue("   \n");
 
 		await ensureWidgetRecordsFile(win);
 
@@ -119,12 +143,21 @@ describe("ensureWidgetRecordsFile", () => {
 	});
 
 	it("does not overwrite when file already exists with content", async () => {
-		mockReadJson.mockResolvedValue({
-			version: 1,
-			widgets: [{ id: "existing", type: "quick-actions", param: {} }],
-		});
+		mockReadJsonText.mockResolvedValue(
+			recordsText([{ id: "existing", type: "quick-actions", param: {} }]),
+		);
 
 		await ensureWidgetRecordsFile(win);
+
+		expect(mockWriteJson).not.toHaveBeenCalled();
+	});
+
+	it("refuses to replace an unreadable file with an empty one", async () => {
+		mockReadJsonText.mockResolvedValue('{"version":1,"widgets":[{"id":"tr');
+
+		await expect(ensureWidgetRecordsFile(win)).rejects.toBeInstanceOf(
+			WidgetRecordsFileError,
+		);
 
 		expect(mockWriteJson).not.toHaveBeenCalled();
 	});
@@ -136,7 +169,7 @@ describe("upsertWidgetRecords", () => {
 	beforeEach(() => vi.clearAllMocks());
 
 	it("adds new records when file does not exist", async () => {
-		mockReadJson.mockResolvedValue(null);
+		mockReadJsonText.mockResolvedValue(null);
 
 		const records: WidgetRecord[] = [
 			{ id: "new-widget", type: "quick-actions", param: {} },
@@ -151,13 +184,12 @@ describe("upsertWidgetRecords", () => {
 	});
 
 	it("merges records by id, updating existing entries", async () => {
-		mockReadJson.mockResolvedValue({
-			version: 1,
-			widgets: [
+		mockReadJsonText.mockResolvedValue(
+			recordsText([
 				{ id: "widget-1", type: "quick-actions", param: { query: "old" } },
 				{ id: "widget-2", type: "menu", param: {} },
-			],
-		});
+			]),
+		);
 
 		const records: WidgetRecord[] = [
 			{ id: "widget-1", type: "quick-actions", param: { query: "updated" } },
@@ -186,13 +218,12 @@ describe("upsertWidgetRecords", () => {
 	});
 
 	it("preserves existing records not mentioned in upsert", async () => {
-		mockReadJson.mockResolvedValue({
-			version: 1,
-			widgets: [
+		mockReadJsonText.mockResolvedValue(
+			recordsText([
 				{ id: "widget-1", type: "quick-actions", param: {} },
 				{ id: "widget-2", type: "menu", param: {} },
-			],
-		});
+			]),
+		);
 
 		const records: WidgetRecord[] = [
 			{ id: "widget-1", type: "quick-actions", param: { updated: true } },
@@ -206,5 +237,47 @@ describe("upsertWidgetRecords", () => {
 		const ids = payload.widgets.map((w) => w.id);
 		expect(ids).toContain("widget-1");
 		expect(ids).toContain("widget-2");
+	});
+
+	it("throws and writes nothing when the existing file is not valid JSON", async () => {
+		mockReadJsonText.mockResolvedValue(
+			'{"version":1,"widgets":[{"id":"widget-1","type":"menu"}',
+		);
+
+		const error = await upsertWidgetRecords(win, [
+			{ id: "widget-9", type: "align", param: {} },
+		]).catch((caught: unknown) => caught);
+
+		expect(error).toBeInstanceOf(WidgetRecordsFileError);
+		expect((error as WidgetRecordsFileError).reason).toBe("json-parse-failed");
+		expect(mockWriteJson).not.toHaveBeenCalled();
+	});
+
+	it("throws and writes nothing when the existing file has an unusable shape", async () => {
+		mockReadJsonText.mockResolvedValue('{"version":1}');
+
+		const error = await upsertWidgetRecords(win, [
+			{ id: "widget-9", type: "align", param: {} },
+		]).catch((caught: unknown) => caught);
+
+		expect(error).toBeInstanceOf(WidgetRecordsFileError);
+		expect((error as WidgetRecordsFileError).reason).toBe("unrecognized-shape");
+		expect(mockWriteJson).not.toHaveBeenCalled();
+	});
+
+	it("throws and writes nothing when the file exists but cannot be read", async () => {
+		mockReadJsonText.mockRejectedValue(
+			Object.assign(new Error("EACCES: permission denied"), {
+				code: "EACCES",
+			}),
+		);
+
+		const error = await upsertWidgetRecords(win, [
+			{ id: "widget-9", type: "align", param: {} },
+		]).catch((caught: unknown) => caught);
+
+		expect(error).toBeInstanceOf(WidgetRecordsFileError);
+		expect((error as WidgetRecordsFileError).reason).toBe("read-error");
+		expect(mockWriteJson).not.toHaveBeenCalled();
 	});
 });

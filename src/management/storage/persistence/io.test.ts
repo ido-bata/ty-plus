@@ -18,7 +18,15 @@ vi.mock("@/management/storage/read/json-file", async () => {
 	const actual = await vi.importActual<
 		typeof import("@/management/storage/read/json-file")
 	>("@/management/storage/read/json-file");
-	return { ...actual, readJsonFileText: mockReadJsonFileText };
+	return {
+		...actual,
+		readJsonFileText: mockReadJsonFileText,
+		// `readJsonText` reads through the strict variant so a read failure
+		// is never mistaken for a missing file (Issues #183 / #204). Both
+		// names share one mock so the existing expectations keep describing
+		// the same reads.
+		readJsonFileTextStrict: mockReadJsonFileText,
+	};
 });
 
 vi.mock("@/management/storage/write/json-file", () => ({
@@ -150,6 +158,32 @@ describe("readJsonText", () => {
 			win,
 			"/r/ty-plus/workspaces/workspace-4.json",
 		);
+	});
+
+	it("propagates a read failure instead of reporting a missing file", async () => {
+		// The raw-text reader exists so its caller can tell "there is no file"
+		// from "the file is there but cannot be read" (Issue #183).
+		mockResolveRead.mockResolvedValue("/r/ty-plus");
+		mockReadJsonFileText.mockRejectedValue(
+			Object.assign(new Error("EACCES: permission denied"), {
+				code: "EACCES",
+			}),
+		);
+
+		await expect(readJsonText(win, "workspace", 2)).rejects.toThrow(/EACCES/);
+	});
+
+	it("propagates a read failure instead of collapsing it into null (Issue #204)", async () => {
+		// A file that exists but cannot be read is not the same as a file that
+		// was never written. The CEP fallback used to report both as `null`,
+		// which is how an unreadable `workspace-N.json` became an "empty" one
+		// and got erased by the next write; it now matches the Rust gateway,
+		// which only maps `NotFound` to `None`.
+		mockResolveRead.mockResolvedValue("/r/ty-plus");
+		mockReadJsonFileText.mockRejectedValue(
+			new Error("EISDIR: illegal operation on a directory, read"),
+		);
+		await expect(readJsonText(win, "workspace", 2)).rejects.toThrow("EISDIR");
 	});
 });
 

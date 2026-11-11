@@ -68,7 +68,9 @@ describe("resolveTyPlusManagedRootForPersistence", () => {
 			"./ty-plus-managed-root"
 		);
 		const resolved = await resolveTyPlusManagedRootForPersistence(win);
-		expect(resolved?.replace(/\\/g, "/")).toMatch(/chosen\/ty-plus$/);
+		// Issue #216: this branch used to hand back a root relative to the CEP
+		// process cwd. Support roots are absolute, so the result must be too.
+		expect(resolved).toBe("/chosen/ty-plus");
 	});
 
 	it("reads ty-plus-init from host install root when available", async () => {
@@ -115,6 +117,6 @@ describe("resolveTyPlusManagedRootForPersistence", () => {
 			"./ty-plus-managed-root"
 		);
 		const resolved = await resolveTyPlusManagedRootForPersistence(win);
-		expect(resolved?.replace(/\\/g, "/")).toMatch(/from-locator\/ty-plus$/);
+		expect(resolved).toBe("/from-locator/ty-plus");
 	});
 });

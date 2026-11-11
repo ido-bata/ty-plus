@@ -33,5 +33,13 @@
 	},
 	"widgetSearch": {
 		"placeholder": "Buscar preajustes…"
+	},
+	"restore": {
+		"title": "No se pudo restaurar la disposición del espacio de trabajo",
+		"corruptBody": "El archivo de disposición guardado existe pero no es una disposición legible, así que no se cargó.",
+		"readFailureBody": "No se pudo leer el archivo de disposición guardado, así que no se cargó.",
+		"savingPaused": "El guardado está en pausa para no sobrescribir este archivo. Repara o restaura el archivo y vuelve a intentarlo.",
+		"file": "Archivo: workspace-{{wsIndex}}.json",
+		"retry": "Reintentar la restauración"
 	}
 }

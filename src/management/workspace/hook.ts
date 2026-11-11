@@ -74,6 +74,7 @@ import {
 	PRESET_HOVER_EVENT,
 	type WorkspacePresetHoverDetail,
 } from "@/management/preset/workspace/GridCatalogTile";
+import { ensureUiSettingsFile } from "@/management/setting/persistence/workspace-ui-settings-file";
 import {
 	clearLayoutNJson,
 	clearWorkspacePanelStateFromSettingsJson,
@@ -111,8 +112,14 @@ import {
 	setupExternalPresetDialogListener,
 } from "@/management/workspace/hooks/preset";
 import { packTopLeft } from "@/management/workspace/layout/engine";
-import { parseLayoutDocument } from "@/management/workspace/layout/grid-document";
 import { resolveWorkspacePersistenceManagedRoot } from "@/management/workspace/layout/persistence-root";
+import {
+	isLayoutRestoreBlocked,
+	type LayoutRestoreNotice,
+	type LayoutRestorePlan,
+	planLayoutRestoreFromReadError,
+	planLayoutRestoreFromText,
+} from "@/management/workspace/layout/restore-plan";
 import { startWorkspaceLayoutJsonExternalChangeWatch } from "@/management/workspace/layout/sync-watch";
 import { publishShellMessage } from "@/management/workspace/messaging/publish-shell-message";
 import { subscribeThemeLive } from "@/management/workspace/messaging/subscribe-theme-live";
@@ -121,6 +128,15 @@ import {
 	type LayoutReloadPayload,
 	setLayoutReloadHandler,
 } from "@/management/workspace/onboarding/layout-reload-bridge";
+import {
+	type PersistSurfaceStage,
+	SurfaceWriteError,
+	writeSurfaceState,
+} from "@/management/workspace/persistence/surface-write";
+import {
+	adoptLayoutRestore,
+	createWorkspaceWriteGate,
+} from "@/management/workspace/persistence/write-gate";
 import { applyInterPanelMove } from "@/management/workspace/placement/inter-panel-move";
 import { notifyPanelsAfterPresetSave } from "@/management/workspace/placement/notify-panels-after-preset-save";
 import { mergePresetPlacementIntoState as mergePresetPlacementBusPayloadIntoState } from "@/management/workspace/placement/preset-bus";
@@ -241,10 +257,6 @@ const cpMenuButton = css({
 const persistenceRootAsOptional = (root: string | null): string | undefined =>
 	root ?? undefined;
 
-const trimmedLayoutText = (
-	raw: string | null | undefined,
-): string | undefined => raw?.trim();
-
 const buildMergedTiles = (
 	hasPersistedGeometryRows: boolean,
 	migrated: Tile[],
@@ -262,6 +274,10 @@ const buildMergedTiles = (
 
 const presetExecutionLog = createLogger("preset-execution");
 const workspaceLog = createLogger("workspace");
+
+// `PersistSurfaceStage` (which write `persistSurfaceState` was in flight when
+// it failed) now lives next to the sequence it describes — see
+// `persistence/surface-write.ts`.
 
 const logPresetError = (presetId: string, error: unknown) => {
 	presetExecutionLog.error("[ty-plus:preset-execute] failure", {
@@ -290,13 +306,21 @@ export function useWorkspaceRuntime(root: Element | null): {
 	executeWorkspacePreset: (presetId: string) => Promise<void>;
 	executePreset: (preset: Preset) => Promise<void>;
 	hostCaller: ReturnType<typeof createCepHostExecutor> | null;
+	retryLayoutRestore: () => void;
 } {
 	const [state, setState] = useState<SurfaceState | null>(null);
-	const [ui, setUi] = useState<WorkspaceUi>({
+	const [ui, setUi] = useState<Omit<WorkspaceUi, "layoutRestore">>({
 		canUndo: false,
 		canRedo: false,
 		snapshots: [],
 	});
+	// Kept out of `ui` so the many `setUi({ canUndo, canRedo, snapshots })`
+	// calls below cannot clear a restore failure that is still unresolved.
+	const [layoutRestore, setLayoutRestore] =
+		useState<LayoutRestoreNotice | null>(null);
+	// `reloadLayoutFromStorage` lives inside the mount-once effect; this ref
+	// lets the restore banner re-run it without tearing the panel down.
+	const reloadLayoutRef = useRef<(() => void) | null>(null);
 	const [addWidgetPickerOpen, setAddWidgetPickerOpen] = useState(false);
 	const stateRef = useRef<SurfaceState | null>(null);
 	// Mirror of `ui.snapshots` so the mount-once `useEffect` below can read
@@ -515,7 +539,10 @@ export function useWorkspaceRuntime(root: Element | null): {
 
 		// ── Persistence (F2) ────────────────────────────────────────────────────
 		let lastSavedSurfaceState = "";
-		let workspacePersistenceReady = false;
+		// Writes stay closed until a layout restore classifies the on-disk
+		// `workspace-N.json` as readable. A failed read must never become an
+		// empty layout that the first user edit then persists (Issue #204).
+		const writeGate = createWorkspaceWriteGate();
 		let workspacePersistChain = Promise.resolve();
 		let lastPersistenceManagedRoot: string | null = null;
 		let suppressLocalWorkspaceJsonWriteUntil = 0;
@@ -540,8 +567,21 @@ export function useWorkspaceRuntime(root: Element | null): {
 				bg: cur.bg,
 			});
 
+		/**
+		 * Persist the current surface after a user edit.
+		 *
+		 * The gate is the FIRST statement, before change-detection and before
+		 * the baseline update: a layout restore that could not read
+		 * `workspace-N.json` must leave both untouched, or the next edit would
+		 * either be skipped as "already saved" or write the panel's current
+		 * (unrestored) view over the file (Issue #182 / #204). The write
+		 * sequence below is deliberately left in place — source-level contracts
+		 * such as `hook-persist-fire-and-forget.test.ts` (Issue #183) read this
+		 * function's braces, and the guard above is what makes every write in
+		 * them unreachable while the gate is closed.
+		 */
 		const persistSurfaceState = (): void => {
-			if (!workspacePersistenceReady) {
+			if (!writeGate.isReady()) {
 				return;
 			}
 			const cur = getState();
@@ -584,49 +624,61 @@ export function useWorkspaceRuntime(root: Element | null): {
 								widgetResolutionFromCatalogContext(snapshot),
 							);
 
-							await writeNJson(
-								window,
+							// The order of the four writes (records → layout → ui settings →
+							// background) and the stage a failure is attributed to live in
+							// `persistence/surface-write.ts`, where a partial failure can be
+							// exercised against real files instead of asserted on this source text.
+							await writeSurfaceState({
+								win: window,
+								panelId: snapshot.panelId,
 								wsIndex,
-								serialize(snapshot.surfaceTiles),
-							);
-
-							if (widgetLayouts.length > 0) {
-								const widgetRecords = widgetLayouts.map((w) => ({
+								widgetRecords: widgetLayouts.map((w) => ({
 									id: w.id,
 									type: w.widgetType as WidgetType,
 									param: {} as Record<string, unknown>,
-								}));
-								await upsertWidgetRecords(window, widgetRecords);
-							}
-
-							await writeUiSettings(
-								window,
-								{
+								})),
+								layoutJsonText: serialize(snapshot.surfaceTiles),
+								uiSettings: {
 									version: 1 as const,
 									showGridOverlay: snapshot.showGridOverlay,
 									showPresetLabels: snapshot.showPresetLabels,
 									selectedFont: "",
 								},
 								persistenceRootArg,
-							);
-
-							if (snapshot.bg != null) {
-								await writeBackgroundJson(
-									window,
-									wsIndex,
-									`${JSON.stringify(snapshot.bg, null, 2)}\n`,
-								).catch(() => {
-									/* background write failure is non-fatal */
-								});
-							}
-						} catch {
+								backgroundJsonText:
+									snapshot.bg != null
+										? `${JSON.stringify(snapshot.bg, null, 2)}\n`
+										: null,
+							});
+						} catch (error) {
+							// A failure must be retried, not remembered as saved, and it
+							// must reach the Debug Console — the previous bare `catch`
+							// satisfied neither.
 							if (lastSavedSurfaceState === nextSerialized) {
 								lastSavedSurfaceState = "";
 							}
+							const stage: PersistSurfaceStage =
+								error instanceof SurfaceWriteError
+									? error.stage
+									: "write-widget-records";
+							workspaceLog.error("surface state was not persisted", {
+								action: "persistSurfaceState:failed",
+								context: {
+									panelId: snapshot.panelId,
+									stage,
+									message:
+										error instanceof Error ? error.message : String(error),
+								},
+							});
 						}
 					});
-			} catch {
-				/* noop */
+			} catch (error) {
+				workspaceLog.error("surface persist chain could not be scheduled", {
+					action: "persistSurfaceState:schedule-failed",
+					context: {
+						message: error instanceof Error ? error.message : String(error),
+					},
+				});
 			}
 		};
 
@@ -653,7 +705,7 @@ export function useWorkspaceRuntime(root: Element | null): {
 		 * a separate Promise that observers can await and react to.
 		 */
 		const persistSurfaceStateAwaitable = async (): Promise<void> => {
-			if (!workspacePersistenceReady) {
+			if (!writeGate.isReady()) {
 				throw new Error(
 					"persistSurfaceStateAwaitable: workspace persistence is not ready (persistence disabled)",
 				);
@@ -917,6 +969,15 @@ export function useWorkspaceRuntime(root: Element | null): {
 			layoutReadSupportRoot?: string,
 		): Promise<void> => {
 			let wsIndex: 1 | 2 | 3 | 4 | 5 = 1;
+			// Anything that escapes the body below leaves the restore
+			// unfinished, which is a read failure — never an empty panel.
+			let plan: LayoutRestorePlan = planLayoutRestoreFromReadError(
+				new Error("layout restore did not run"),
+			);
+			// Hoisted so the `settings/ui.json` ensure below still runs when the
+			// restore itself throws: a failed read must not also skip the one
+			// boot-time writer that file has (Issue #216).
+			let uiSettingsSupportRoot: string | undefined;
 			try {
 				wsIndex = indexFromPanelId(getState().panelId);
 				const allowImplicitAllPresetsWhenLayoutEmpty =
@@ -931,6 +992,7 @@ export function useWorkspaceRuntime(root: Element | null): {
 				const persistenceRootArg = persistenceRootAsOptional(
 					persistenceManagedRoot,
 				);
+				uiSettingsSupportRoot = persistenceRootArg;
 
 				const [
 					rawLayout,
@@ -967,102 +1029,140 @@ export function useWorkspaceRuntime(root: Element | null): {
 					presets: presets,
 				};
 
-				let migratedTiles: Tile[] = [];
+				// Issue #204: this classification is the only thing that decides
+				// whether the panel may keep going. A body that is present but
+				// not a layout, or a read that never produced a body, stops the
+				// restore here instead of becoming `migratedTiles = []`.
+				plan = planLayoutRestoreFromText(rawLayout);
 
-				const trimmedRawLayout = trimmedLayoutText(rawLayout);
-				if (trimmedRawLayout) {
-					try {
-						const parsed = JSON.parse(trimmedRawLayout) as unknown;
-						const layoutDoc = parseLayoutDocument(parsed);
-						migratedTiles = tilesFromDocument({
-							layout: layoutDoc,
-							widgetRecords: widgetRecordLite,
-							presets,
+				if (isLayoutRestoreBlocked(plan)) {
+					// No commit, no baseline, no persistence: the surface keeps
+					// whatever it showed before this reload and the on-disk
+					// layout is left byte-for-byte alone.
+				} else {
+					const migratedTiles: Tile[] =
+						plan.status === "not-created"
+							? []
+							: tilesFromDocument({
+									layout: plan.document,
+									widgetRecords: widgetRecordLite,
+									presets,
+									panelPresetIds: panelPresetIdsFromSettings,
+									implicitlyFillAllPresetsWhenLayoutEmpty:
+										allowImplicitAllPresetsWhenLayoutEmpty,
+								});
+
+					const baseState = getState();
+					const widgetRecordById = new Map(widgetRecords.map((r) => [r.id, r]));
+					const hasPersistedWidgetGeometryRows = migratedTiles.some((t) =>
+						widgetRecordById.has(t.id),
+					);
+
+					const mergedTiles = buildMergedTiles(
+						hasPersistedWidgetGeometryRows,
+						migratedTiles,
+						baseState,
+						widgetRecordById,
+					);
+
+					let loadedState: SurfaceState = {
+						...baseState,
+						surfaceTiles: mergedTiles,
+						widgetInstanceTypes: catalogClassifyCtx.widgetInstanceTypes,
+						groupCatalogEntries,
+						presets,
+						selectedSurfaceIndices: clipSelection(
+							baseState.selectedSurfaceIndices,
+							mergedTiles.length,
+						),
+					};
+
+					if (panelPresetIdsFromSettings.length > 0) {
+						loadedState = {
+							...loadedState,
 							panelPresetIds: panelPresetIdsFromSettings,
-							implicitlyFillAllPresetsWhenLayoutEmpty:
-								allowImplicitAllPresetsWhenLayoutEmpty,
-						});
-					} catch {
-						migratedTiles = [];
+						};
 					}
-				}
 
-				const baseState = getState();
-				const widgetRecordById = new Map(widgetRecords.map((r) => [r.id, r]));
-				const hasPersistedWidgetGeometryRows = migratedTiles.some((t) =>
-					widgetRecordById.has(t.id),
-				);
-
-				const mergedTiles = buildMergedTiles(
-					hasPersistedWidgetGeometryRows,
-					migratedTiles,
-					baseState,
-					widgetRecordById,
-				);
-
-				let loadedState: SurfaceState = {
-					...baseState,
-					surfaceTiles: mergedTiles,
-					widgetInstanceTypes: catalogClassifyCtx.widgetInstanceTypes,
-					groupCatalogEntries,
-					presets,
-					selectedSurfaceIndices: clipSelection(
-						baseState.selectedSurfaceIndices,
-						mergedTiles.length,
-					),
-				};
-
-				if (panelPresetIdsFromSettings.length > 0) {
 					loadedState = {
 						...loadedState,
-						panelPresetIds: panelPresetIdsFromSettings,
+						showGridOverlay: uiSettings.showGridOverlay,
+						showPresetLabels: uiSettings.showPresetLabels,
 					};
-				}
 
-				loadedState = {
-					...loadedState,
-					showGridOverlay: uiSettings.showGridOverlay,
-					showPresetLabels: uiSettings.showPresetLabels,
-				};
+					loadedState = CommitReconcile(loadedState, loadedState);
 
-				loadedState = CommitReconcile(loadedState, loadedState);
+					const cur = getState();
+					commit(
+						ensurePrimaryPanelWidgets(
+							normalizeState({ ...cur, ...loadedState }),
+						),
+					);
 
-				const cur = getState();
-				commit(
-					ensurePrimaryPanelWidgets(normalizeState({ ...cur, ...loadedState })),
-				);
-
-				// Load background from file
-				void readBackgroundJson(window, wsIndex).then((bgJson) => {
-					if (bgJson == null) return;
-					let bg: unknown;
-					try {
-						bg = JSON.parse(bgJson);
-					} catch (e) {
-						console.warn("[WorkspaceBackground] file:parse-failed", {
-							panelId: getState().panelId,
-							error: e,
+					// Load background from file
+					void readBackgroundJson(window, wsIndex).then((bgJson) => {
+						if (bgJson == null) return;
+						let bg: unknown;
+						try {
+							bg = JSON.parse(bgJson);
+						} catch (e) {
+							console.warn("[WorkspaceBackground] file:parse-failed", {
+								panelId: getState().panelId,
+								error: e,
+							});
+							return;
+						}
+						const cur2 = getState();
+						commit({
+							...cur2,
+							bg: bg as typeof cur2.bg,
 						});
-						return;
-					}
-					const cur2 = getState();
-					commit({
-						...cur2,
-						bg: bg as typeof cur2.bg,
 					});
-				});
-			} catch {
-				// Error logged by inner catch blocks; surface state unchanged
+				}
+			} catch (error) {
+				// The old version of this catch was bare and its comment claimed
+				// "Error logged by inner catch blocks" while nothing was logged
+				// anywhere. The failure is now classified and recorded below.
+				plan = planLayoutRestoreFromReadError(error);
 			}
-			workspacePersistenceReady = true;
-			lastSavedSurfaceState = serializePersistedSurfaceStateForChangeDetection(
-				getState(),
-			);
-			if (enablePersistenceAfterReload) {
-				logWorkspace("runtime:layout-enable-post-onboarding-persistence", {
+
+			// Issue #216: `settings/ui.json` had no boot-time writer.
+			// `ensureStorageInitialized` — the only caller of
+			// `ensureUiSettingsFile` — lost its production caller when
+			// onboarding was split into per-domain initializers, and the CEP
+			// Add-Widget happy path reloads from disk instead of persisting,
+			// so `writeUiSettings` never runs in a read-only session.
+			// Materialize the defaults on every restore, after the reads so a
+			// failure here cannot abort them; a null root logs its own skip.
+			// The ensure only writes when the file is missing, so it does not
+			// bypass the write gate below.
+			try {
+				await ensureUiSettingsFile(window, uiSettingsSupportRoot);
+			} catch (error) {
+				logWorkspace("runtime:ui-settings-ensure-failed", {
 					wsIndex,
+					message: error instanceof Error ? error.message : String(error),
 				});
 			}
+
+			const restoreDetail = { panelId: getState().panelId, wsIndex };
+			const adoption = adoptLayoutRestore(writeGate, plan, restoreDetail);
+			setLayoutRestore(adoption.notice);
+
+			// A blocked plan leaves the gate closed, so neither the baseline
+			// nor any later edit can reach disk until a retry reads the file
+			// back successfully.
+			if (adoption.enabled) {
+				lastSavedSurfaceState =
+					serializePersistedSurfaceStateForChangeDetection(getState());
+				if (enablePersistenceAfterReload) {
+					logWorkspace("runtime:layout-enable-post-onboarding-persistence", {
+						wsIndex,
+					});
+				}
+			}
+			// The watch stays up either way: replacing or repairing the file
+			// on disk re-enters this function and re-opens the gate.
 			restartWorkspaceLayoutDiskSyncWatch();
 			startCandidatesPreload(window);
 		};
@@ -1080,6 +1180,9 @@ export function useWorkspaceRuntime(root: Element | null): {
 					),
 				)
 				.catch(() => {});
+		};
+		reloadLayoutRef.current = () => {
+			enqueueLayoutReload(false, lastPersistenceManagedRoot ?? undefined);
 		};
 
 		const restartWorkspaceLayoutDiskSyncWatch = (): void => {
@@ -3507,11 +3610,15 @@ export function useWorkspaceRuntime(root: Element | null): {
 		hostCode === "AEFT" ? createCepHostExecutor(window, "after-effects") : null;
 	return {
 		state,
-		ui,
+		ui: { ...ui, layoutRestore },
 		addWidgetPickerOpen,
 		closeAddWidgetPicker: () => setAddWidgetPickerOpen(false),
 		executeWorkspacePreset,
 		executePreset,
 		hostCaller,
+		// Restore path for a blocked layout (Issue #204): re-run the same
+		// read the panel did at boot. A file that now parses opens the write
+		// gate and clears the banner; one that still does not keeps both.
+		retryLayoutRestore: () => reloadLayoutRef.current?.(),
 	};
 }

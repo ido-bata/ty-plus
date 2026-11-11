@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { RuntimeProvider } from "@/function/widget/runtime-context";
 import { StatusBar } from "@/management/panel/control/StatusBar";
 import { Toolbar } from "@/management/panel/control/Toolbar";
+import { LayoutRestoreBanner } from "@/management/panel/LayoutRestoreBanner";
 import { SurfaceErrorBoundary } from "@/management/panel/surfaces/SurfaceErrorBoundary";
 import type { Preset } from "@/management/preset/contract";
 import { WorkspaceCatalogTileBody } from "@/management/preset/group/WorkspaceCatalogTileBody";
@@ -67,6 +68,7 @@ export function Main(): ReactElement {
 		closeAddWidgetPicker,
 		hostCaller,
 		executePreset,
+		retryLayoutRestore,
 	} = useWorkspaceRuntime(mountEl);
 
 	const mountAttached = mountEl !== null;
@@ -102,6 +104,14 @@ export function Main(): ReactElement {
 
 	return (
 		<div ref={setMountEl} data-ty-workspace-panel-root className={panelRoot}>
+			{ui.layoutRestore ? (
+				<SurfaceErrorBoundary surface="layout-restore-banner">
+					<LayoutRestoreBanner
+						notice={ui.layoutRestore}
+						onRetry={retryLayoutRestore}
+					/>
+				</SurfaceErrorBoundary>
+			) : null}
 			{state ? (
 				<RuntimeProvider
 					value={

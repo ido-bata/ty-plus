@@ -1,6 +1,25 @@
 /**
  * Workspace file management path utilities.
  * Centralizes path construction for workspace data, settings, and locator files.
+ *
+ * Division of labour with the persistence registry
+ * (`storage/persistence/paths.ts`). Two systems covering one directory is how
+ * Issue #216 stayed invisible, so the split is spelled out here:
+ *
+ * - `PATHS` (registry) builds every path the persistence gateway owns, keyed
+ *   by `PersistenceKey`. Gateway callers must not build those paths by hand.
+ * - The resolvers here build those same paths for domain callers that touch
+ *   the files outside the gateway (`setting/`, `workspace/`, `i18n/`).
+ *
+ * For any file both systems can address (`settings/ui.json` above all) the
+ * two MUST return the identical string; `file.test.ts` pins that agreement so
+ * one side cannot drift silently again. Neither side may invent a third
+ * spelling of a path — extend `PATHS` and this module together instead.
+ *
+ * `joinPath` preserves the leading separator of an absolute first segment
+ * (Issue #216): stripping it turned POSIX roots into paths relative to the
+ * CEP process cwd, which is why `settings/ui.json` never reached the managed
+ * root while Windows (`C:\…` has no leading separator) looked healthy.
  */
 
 const MANAGED_SUBFOLDER = "ty-plus";
@@ -33,11 +52,28 @@ const LOG_FILE_NAME = "ty-plus.log";
 const WORKSPACE_CSS_PREFIX = "workspace-";
 const WORKSPACE_CSS_SUFFIX = ".css";
 
-const joinPath = (...parts: string[]): string => {
-	const normalized = parts.map((p) =>
-		p.replace(/[\\/]+$/, "").replace(/^[\\/]+/, ""),
-	);
-	return normalized.filter(Boolean).join("/");
+const LEADING_SEPARATORS = /^[\\/]+/;
+const TRAILING_SEPARATORS = /[\\/]+$/;
+
+/**
+ * Joins segments with `/`, keeping an absolute first segment absolute.
+ *
+ * Trailing separators are trimmed from every segment and leading separators
+ * from every segment *after* the first, so `joinPath("/a/", "/b/")` is
+ * `/a/b`. The first segment keeps its leading separator run (`/abs`, `//server`)
+ * — the regression fixed by Issue #216. Exported so `workspace/contracts/paths.ts`
+ * uses this one implementation instead of a copy that can drift.
+ */
+export const joinPath = (...parts: string[]): string => {
+	const [first = "", ...rest] = parts;
+	const leading = first.match(LEADING_SEPARATORS)?.[0] ?? "";
+	const segments = [
+		first.slice(leading.length).replace(TRAILING_SEPARATORS, ""),
+		...rest.map((part) =>
+			part.replace(LEADING_SEPARATORS, "").replace(TRAILING_SEPARATORS, ""),
+		),
+	].filter(Boolean);
+	return segments.length > 0 ? `${leading}${segments.join("/")}` : leading;
 };
 
 /**
