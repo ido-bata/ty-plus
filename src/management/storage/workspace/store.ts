@@ -10,6 +10,7 @@ export {
 	normalizeWorkspacePanelSettingsKey,
 	readPanelPresetIdsFromSettingsJson,
 	readPresetsJson,
+	readPresetsJsonText,
 	readSettings,
 	readThemeCss,
 	saveControlPanelState,

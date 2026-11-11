@@ -401,6 +401,18 @@ export const writeSettings = async (
 export const readPresetsJson = async (win: Window): Promise<string | null> =>
 	readPresetJson(win);
 
+/**
+ * Raw text of `presets/presets.json`.
+ *
+ * `readPresetsJson` round-trips through the parsed object, and the object
+ * reader maps a body it cannot parse to `null` — which is exactly what a
+ * file that does not exist looks like. A caller that has to tell "the
+ * catalog is empty" from "the catalog is broken" reads this instead.
+ */
+export const readPresetsJsonText = async (
+	win: Window,
+): Promise<string | null> => readJsonText(win, "presetCatalog");
+
 export const writePresetsJson = async (
 	win: Window,
 	jsonText: string,

@@ -32,6 +32,7 @@ export {
 	movePresetPlacement,
 	readPanelPresetIdsFromSettingsJson,
 	readPresetsJson,
+	readPresetsJsonText,
 	readSettings,
 	readThemeCss,
 	saveControlPanelState,

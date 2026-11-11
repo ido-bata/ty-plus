@@ -28,6 +28,7 @@ import type { CepMenuPayload } from "@/management/dialog/dialogs/context-menu";
 import { registerCepJsonContextMenuSurface } from "@/management/dialog/dialogs/context-menu";
 import type { ShellProps } from "@/management/dialog/dialogs/shell/Layout";
 import { useDialogClose } from "@/management/dialog/useClose";
+import { useGatewayHealth } from "@/management/online/runtime-gateway-health";
 import { resolvePresetToolSurfaceIdForPreset } from "@/management/preset/authoring/request";
 import {
 	ICON_CELL_BASE_REM,
@@ -605,6 +606,69 @@ const emptyStateClass = css({
 	color: "text.muted",
 });
 
+/**
+ * Cloud status note. Deliberately a sibling of the catalog body, never a
+ * substitute for it: the local catalog renders its own rows (or its own empty
+ * state, or its own load error) regardless of what this says.
+ */
+const cloudNoticeClass = css({
+	display: "flex",
+	minWidth: "0",
+	flexShrink: "0",
+	alignItems: "baseline",
+	gap: "1.5",
+	borderBottomWidth: "1px",
+	borderBottomStyle: "solid",
+	borderColor: "border.default",
+	backgroundColor: "surface.widget/40",
+	paddingBlock: "1",
+	paddingInline: "2",
+	fontSize: "xs",
+	color: "text.muted",
+});
+
+/**
+ * Load-failure body. Must never read like the empty state — "the catalog could
+ * not be read" and "the catalog has no rows" are different facts.
+ */
+const errorStateClass = css({
+	display: "flex",
+	flexDirection: "column",
+	alignItems: "center",
+	gap: "2",
+	paddingBlock: "8",
+	paddingInline: "4",
+	textAlign: "center",
+});
+
+const errorTitleClass = css({
+	fontSize: "shell-text-sm",
+	fontWeight: "medium",
+	color: "red.400",
+});
+
+const errorDetailClass = css({
+	maxWidth: "70ch",
+	fontSize: "xs",
+	color: "text.muted",
+	overflowWrap: "anywhere",
+});
+
+const errorRetryClass = css({
+	height: "6",
+	paddingInline: "3",
+	borderRadius: "shell-sm",
+	borderWidth: "1px",
+	borderStyle: "solid",
+	borderColor: "border.default",
+	backgroundColor: "surface.widget",
+	fontSize: "xs",
+	color: "text.primary",
+	_hover: {
+		backgroundColor: "interactive.hover",
+	},
+});
+
 const iconViewPortClass = css({
 	minWidth: "0",
 });
@@ -804,7 +868,7 @@ function GroupRowActions(props: {
 // ── Extracted sub-components ──────────────────────────────────────────────────
 
 function SearchStatusBar(props: {
-	loadPhase: "idle" | "reading" | "streaming" | "error";
+	loadPhase: LoadPhase;
 	loadError: string | null;
 	streamTotal: number;
 	presetsLength: number;
@@ -819,7 +883,9 @@ function SearchStatusBar(props: {
 		visibleCount,
 		filter,
 	} = props;
-	if (loadPhase === "reading") {
+	// "idle" means the first read has not finished yet — showing a count there
+	// would claim "0 items" about a catalog we have not read.
+	if (loadPhase === "idle" || loadPhase === "reading") {
 		return (
 			<span className={loadingRowClass}>
 				<LoaderCircle className={loadingIconClass} aria-hidden />
@@ -1307,9 +1373,42 @@ function IconViewGroup(props: {
 
 // ── Main component ────────────────────────────────────────────────────────────
 
+/**
+ * Load phase of the **local** catalog.
+ *
+ * `"loaded"` is a distinct terminal phase rather than a return to `"idle"`.
+ * Before this change a successful load and a failed load both ended up in a
+ * state where the body could render "No matching presets", which is how a
+ * gateway failure ended up looking like an empty catalog. The successful
+ * terminal state has to be nameable for the body to be able to tell the two
+ * apart.
+ */
+type LoadPhase = "idle" | "reading" | "streaming" | "loaded" | "error";
+
+/**
+ * Message for an arbitrary rejection reason. `Promise.allSettled` hands back
+ * `unknown`, so every consumer needs this to turn one into something a reader
+ * can be shown.
+ */
+const describeReason = (reason: unknown): string =>
+	reason instanceof Error ? reason.message : String(reason);
+
+/** The message of a settled rejection, or `null` when it fulfilled. */
+const rejectionMessage = (
+	result: PromiseSettledResult<unknown>,
+): string | null =>
+	result.status === "rejected" ? describeReason(result.reason) : null;
+
 type LoadState = {
-	phase: "idle" | "reading" | "streaming" | "error";
-	error: string | null;
+	phase: LoadPhase;
+	/**
+	 * Local catalog read failure. Distinct from "the catalog has no rows":
+	 * `null` with `phase === "loaded"` means an empty catalog, non-null means
+	 * the rows could not be read at all.
+	 */
+	presetsError: string | null;
+	/** Group catalog read failure. Does not invalidate the preset rows. */
+	groupsError: string | null;
 	presets: Preset[];
 	streamTotal: number;
 	groups: readonly GroupEntry[];
@@ -1326,10 +1425,11 @@ type LoadAction =
 			placement: ReadonlyMap<string, readonly string[]>;
 			groupPlacement: ReadonlyMap<string, readonly string[]>;
 			streamTotal: number;
+			groupsError: string | null;
 	  }
 	| { type: "STREAM_APPEND"; presets: Preset[] }
 	| { type: "STREAM_DONE" }
-	| { type: "SET_ERROR"; error: string };
+	| { type: "SET_PRESETS_ERROR"; error: string };
 
 function loadReducer(state: LoadState, action: LoadAction): LoadState {
 	switch (action.type) {
@@ -1337,7 +1437,8 @@ function loadReducer(state: LoadState, action: LoadAction): LoadState {
 			return {
 				...state,
 				phase: "reading",
-				error: null,
+				presetsError: null,
+				groupsError: null,
 				presets: [],
 				streamTotal: 0,
 			};
@@ -1349,14 +1450,15 @@ function loadReducer(state: LoadState, action: LoadAction): LoadState {
 				placement: action.placement,
 				groupPlacement: action.groupPlacement,
 				streamTotal: action.streamTotal,
+				groupsError: action.groupsError,
 				phase: "streaming",
 			};
 		case "STREAM_APPEND":
 			return { ...state, presets: [...state.presets, ...action.presets] };
 		case "STREAM_DONE":
-			return { ...state, phase: "idle" };
-		case "SET_ERROR":
-			return { ...state, phase: "error", error: action.error };
+			return { ...state, phase: "loaded" };
+		case "SET_PRESETS_ERROR":
+			return { ...state, phase: "error", presetsError: action.error };
 	}
 }
 
@@ -1367,7 +1469,8 @@ export function PresetsDialog(): JSX.Element {
 	const [filter, setFilter] = useState("");
 	const [loadState, dispatchLoad] = useReducer(loadReducer, {
 		phase: "idle" as const,
-		error: null,
+		presetsError: null,
+		groupsError: null,
 		presets: [] as Preset[],
 		streamTotal: 0,
 		groups: [] as readonly GroupEntry[],
@@ -1376,13 +1479,18 @@ export function PresetsDialog(): JSX.Element {
 	});
 	const {
 		phase: loadPhase,
-		error: loadError,
+		presetsError: loadError,
+		groupsError,
 		presets,
 		streamTotal,
 		groups,
 		placement,
 		groupPlacement,
 	} = loadState;
+	// Cloud health is tracked separately from the local catalog state on
+	// purpose (Issue #145): the gateway being down is a fact about the online
+	// side and must not decide what the local list renders.
+	const gatewayHealth = useGatewayHealth();
 	const {
 		viewMode,
 		setViewMode,
@@ -1428,47 +1536,76 @@ export function PresetsDialog(): JSX.Element {
 	const loadEverything = useCallback(async () => {
 		dispatchLoad({ type: "START_READING" });
 		fullListRef.current = [];
-		try {
-			const [all, groupText, settingsJson] = await Promise.all([
+		// The group catalog and the settings read are settled independently of
+		// the preset rows. They used to share one `Promise.all`, so a failure
+		// in any of the three wiped the whole body — including the group
+		// catalog, which is file-backed and never needed the cloud at all.
+		const [presetsResult, groupResult, settingsResult] =
+			await Promise.allSettled([
 				listPresets(),
 				readGroupJson(window),
 				readSettings(window),
 			]);
-			const parsedGroups = parseGroupFromText(groupText);
-			const { presetLocations, groupLocations } = await buildPlacementHints(
-				window,
-				settingsJson,
-				all,
-				parsedGroups,
-			);
+
+		if (presetsResult.status === "rejected") {
 			dispatchLoad({
-				type: "DATA_LOADED",
-				presets: all,
-				groups: parsedGroups,
-				placement: presetLocations,
-				groupPlacement: groupLocations,
-				streamTotal: all.length,
+				type: "SET_PRESETS_ERROR",
+				error: describeReason(presetsResult.reason),
 			});
-			fullListRef.current = all;
-			let offset = 0;
-			const step = (): void => {
-				const slice = fullListRef.current.slice(offset, offset + CHUNK);
-				offset += CHUNK;
-				dispatchLoad({ type: "STREAM_APPEND", presets: slice });
-				if (offset < fullListRef.current.length) {
-					streamTimerRef.current = window.requestAnimationFrame(step);
-				} else {
-					dispatchLoad({ type: "STREAM_DONE" });
-					streamTimerRef.current = null;
-				}
-			};
-			streamTimerRef.current = window.requestAnimationFrame(step);
-		} catch (e) {
-			dispatchLoad({
-				type: "SET_ERROR",
-				error: e instanceof Error ? e.message : String(e),
-			});
+			return;
 		}
+
+		const all = presetsResult.value;
+		// A group-catalog failure degrades grouping only; the rows still render.
+		const groupFailure = rejectionMessage(groupResult);
+		const parsedGroups =
+			groupResult.status === "fulfilled"
+				? parseGroupFromText(groupResult.value)
+				: [];
+		const settingsJson =
+			settingsResult.status === "fulfilled" ? settingsResult.value : null;
+
+		const { presetLocations, groupLocations } = await buildPlacementHints(
+			window,
+			settingsJson,
+			all,
+			parsedGroups,
+		).catch((reason: unknown) => {
+			// Placement hints are an annotation on each row ("Workspace: ...").
+			// Losing them is a degraded read, not a failed catalog read — the
+			// rows themselves are already in hand.
+			console.warn(
+				"preset-list: placement hints unavailable",
+				reason instanceof Error ? reason.message : String(reason),
+			);
+			return {
+				presetLocations: new Map<string, readonly string[]>(),
+				groupLocations: new Map<string, readonly string[]>(),
+			};
+		});
+		dispatchLoad({
+			type: "DATA_LOADED",
+			presets: all,
+			groups: parsedGroups,
+			placement: presetLocations,
+			groupPlacement: groupLocations,
+			streamTotal: all.length,
+			groupsError: groupFailure,
+		});
+		fullListRef.current = all;
+		let offset = 0;
+		const step = (): void => {
+			const slice = fullListRef.current.slice(offset, offset + CHUNK);
+			offset += CHUNK;
+			dispatchLoad({ type: "STREAM_APPEND", presets: slice });
+			if (offset < fullListRef.current.length) {
+				streamTimerRef.current = window.requestAnimationFrame(step);
+			} else {
+				dispatchLoad({ type: "STREAM_DONE" });
+				streamTimerRef.current = null;
+			}
+		};
+		streamTimerRef.current = window.requestAnimationFrame(step);
 	}, []);
 
 	useEffect(() => {
@@ -1908,6 +2045,77 @@ export function PresetsDialog(): JSX.Element {
 			? groupBlocks.find((b) => b.group.id === iconBrowse.id)
 			: undefined;
 
+	/**
+	 * Body for the case where no rows are visible.
+	 *
+	 * The three states a reader must be able to tell apart (Issue #145):
+	 *
+	 *   - **not read yet / reading** → still loading; no claim about the catalog.
+	 *   - **load failed** (`presetsError`) → the catalog could not be read. Says
+	 *     so, and offers a retry.
+	 *   - **read succeeded, catalog has no rows** → an empty catalog. A
+	 *     different sentence from the failure above.
+	 *   - **read succeeded, filter matched nothing** → "No matching presets".
+	 *     This sentence is reserved for exactly this case; it is never a
+	 *     stand-in for "we could not read the catalog".
+	 */
+	const emptyBody = (): ReactNode => {
+		if (loadPhase === "error") {
+			return (
+				<div className={errorStateClass} role="alert">
+					<div className={errorTitleClass}>
+						Failed to load the local catalog
+					</div>
+					<div className={errorDetailClass}>{loadError}</div>
+					<button
+						type="button"
+						className={errorRetryClass}
+						onClick={() => void loadEverything()}
+					>
+						Try again
+					</button>
+				</div>
+			);
+		}
+		if (loadPhase === "idle" || loadPhase === "reading") {
+			return <p className={emptyStateClass}>Loading local catalog…</p>;
+		}
+		if (loadPhase !== "loaded") {
+			return null;
+		}
+		if (presets.length === 0) {
+			return <p className={emptyStateClass}>No presets saved locally yet</p>;
+		}
+		return <p className={emptyStateClass}>No matching presets</p>;
+	};
+
+	const cloudNotice =
+		gatewayHealth.state === "live" ? null : (
+			<p className={cloudNoticeClass} data-preset-list-cloud-notice>
+				<span className={css({ fontWeight: "medium", flexShrink: "0" })}>
+					Cloud offline
+				</span>
+				<span>
+					{gatewayHealth.state === "degraded"
+						? gatewayHealth.failure.message
+						: gatewayHealth.reason}{" "}
+					— showing the local catalog only.
+				</span>
+			</p>
+		);
+
+	// A group-catalog read failure degrades grouping only. It is reported next
+	// to the cloud note rather than replacing the body, because the preset rows
+	// did load.
+	const groupsNotice = groupsError ? (
+		<p className={cloudNoticeClass} data-preset-list-groups-notice>
+			<span className={css({ fontWeight: "medium", flexShrink: "0" })}>
+				Groups unavailable
+			</span>
+			<span>{groupsError} — presets are listed without grouping.</span>
+		</p>
+	) : null;
+
 	return (
 		<DialogShell
 			title="Preset List"
@@ -1968,11 +2176,11 @@ export function PresetsDialog(): JSX.Element {
 					</div>
 				}
 			>
+				{cloudNotice}
+				{groupsNotice}
 				{viewMode === "list" ? (
-					visibleCount === 0 &&
-					loadPhase !== "streaming" &&
-					loadPhase !== "reading" ? (
-						<p className={emptyStateClass}>No matching presets</p>
+					visibleCount === 0 && loadPhase !== "streaming" ? (
+						emptyBody()
 					) : (
 						<PresetListTree
 							groupBlocks={groupBlocks}
@@ -1999,10 +2207,8 @@ export function PresetsDialog(): JSX.Element {
 						title="Hold Ctrl and scroll to resize the icon grid"
 					>
 						{iconBrowse === "root" ? (
-							visibleCount === 0 &&
-							loadPhase !== "streaming" &&
-							loadPhase !== "reading" ? (
-								<p className={emptyStateClass}>No matching presets</p>
+							visibleCount === 0 && loadPhase !== "streaming" ? (
+								emptyBody()
 							) : (
 								<IconViewRoot
 									iconRootEntries={iconRootEntries}

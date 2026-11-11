@@ -57,7 +57,7 @@ type WidgetRecordsFileRead =
  * - parseable records document → `loaded`
  * - anything else → throws {@link WidgetRecordsFileError}
  */
-const readWidgetRecordsFileStrict = async (
+export const readWidgetRecordsFileStrict = async (
 	win: Window,
 ): Promise<WidgetRecordsFileRead> => {
 	let raw: string | null;
