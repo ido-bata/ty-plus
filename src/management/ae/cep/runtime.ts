@@ -345,15 +345,23 @@ export const getCepPathReaderFromWindow = (
  * **AE + macOS**: .app parent = version folder (`Support Files` folder does not exist).
  * **Pr**: Directory containing the executable; never touches `userData`.
  */
-export const getCepHostSupportRootPath = (win: Window): string | undefined => {
+export const getCepHostSupportRootPath = (
+	win: Window,
+	options: { platform?: NodeJS.Platform | OperatingSystem } = {},
+): string | undefined => {
 	const cep = getCepPathReaderFromWindow(win);
 	const hostApplication = readSystemPath(cep, "hostApplication");
 	if (!hostApplication) {
 		return undefined;
 	}
 	const hostCode = normalizeCepHostProductCode(detectCepHostCode(win));
+	// `options.platform` keeps the Windows and macOS rules under test on any
+	// host, the same way `resolveCepFileSystemGateway` already takes one.
+	// Reading `process.platform` alone made this function's behaviour a
+	// property of the machine the test ran on (Issue #190).
 	let operatingSystem = normalizeOperatingSystem(
-		typeof process !== "undefined" ? process.platform : undefined,
+		options.platform ??
+			(typeof process !== "undefined" ? process.platform : undefined),
 	);
 	if (operatingSystem === "unknown") {
 		operatingSystem = inferCepOperatingSystemFromHostPath(hostApplication);
