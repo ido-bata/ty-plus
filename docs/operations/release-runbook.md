@@ -45,6 +45,16 @@ bun scripts/package/release-manifest.ts --trust-mode=development-unsigned --arti
 
 ## 4. GitHub Releases用アセット準備（公開しない）
 
+開発中のInsider候補を素早く準備する場合は、同じ手順を1コマンドで実行できる。数値版`package.json.version`を事前に更新しておくこと（例: `0.10.1`）。
+
+```sh
+bun scripts/package/build-github-release.ts --channel=insider --release-version=0.10.1-insider.1
+```
+
+Stable/Betaも同じコマンドで`--channel`と`--release-version`を指定する。WindowsではAuthenticode不要、macOSでは既存Developer ID署名と公証profileが必要。ZXPは継続利用できる署名用証明書（`TY_PLUS_ZXP_CERT_PATH` / `TY_PLUS_ZXP_CERT_PASSWORD`）を明示する。このコマンドは**ビルド・検証・ローカル準備のみ**で、GitHubへのuploadや公開は行わない。
+
+GitHub Actionsで同等のWindows候補を作る場合、`.github/workflows/release.yml` はAdobe公式ZXPSignCmdを固定commitで取得・blob検証する。使い捨て証明書によるCI候補を実公開してはならない。
+
 各platformの正しい署名・公証設定でrelease-trustビルドを実行した後、以下を実行する。
 
 ```sh
