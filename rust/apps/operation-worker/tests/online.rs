@@ -144,10 +144,25 @@ impl DownloadTransport for DownloadBodyTransport {
     }
 }
 
+/// Fixture root scoped to the running test.
+///
+/// Every test in this file used to share one fixed path, so their first-time
+/// directory creation raced and a fresh temp root failed at `OperationLock`
+/// with `ENOENT` (Issue #200). Rust's harness runs each test on its own
+/// thread, which isolates tests from each other while keeping the path stable
+/// *inside* one test — `configured_fresh_search_persists_and_restart_offline_serves_cache`
+/// calls `invocation()` twice and has to see its own earlier writes.
+fn fixture_path(label: &str) -> std::path::PathBuf {
+    std::env::temp_dir().join(format!(
+        "ow-rust-003-{label}-{:?}",
+        std::thread::current().id()
+    ))
+}
+
 fn invocation() -> Invocation {
-    let root = std::env::temp_dir().join("ow-rust-003-online-support");
+    let root = fixture_path("online-support");
     std::fs::create_dir_all(&root).unwrap();
-    let app = std::env::temp_dir().join("ow-rust-003-online-app");
+    let app = fixture_path("online-app");
     std::fs::create_dir_all(&app).unwrap();
     Invocation::for_test(
         InvocationContext {

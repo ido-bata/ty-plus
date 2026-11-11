@@ -4,10 +4,21 @@ use ty_plus_protocol::{
     MethodName, RequestEnvelope, RequestId, RequestMetadata, SessionId,
 };
 
+/// Fixture root scoped to the running test, so parallel tests do not race on
+/// first-time directory creation (Issue #200). The harness runs each test on
+/// its own thread, which separates tests without changing any single test's
+/// own view of its fixture.
+fn fixture_path(label: &str) -> std::path::PathBuf {
+    std::env::temp_dir().join(format!(
+        "ow-rust-003-{label}-{:?}",
+        std::thread::current().id()
+    ))
+}
+
 fn invocation(root: ManagedRootContext) -> Invocation {
     let session_id = SessionId::parse("session-invocation").unwrap();
-    let app_root = std::env::temp_dir().join("ow-rust-003-app");
-    let support_root = std::env::temp_dir().join("ow-rust-003-support");
+    let app_root = fixture_path("app");
+    let support_root = fixture_path("support");
     std::fs::create_dir_all(&app_root).unwrap();
     std::fs::create_dir_all(&support_root).unwrap();
     let mut invocation = Invocation {
