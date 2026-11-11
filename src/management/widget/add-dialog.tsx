@@ -9,6 +9,7 @@ import {
 import type { WidgetType } from "@/function/widget";
 import { useCep } from "@/management/ae/cep/contexts/Context";
 import { createCepSurfaceTransport } from "@/management/ae/cep/transport";
+import { createLogger } from "@/management/debug";
 import { DialogShell } from "@/management/dialog";
 import {
 	type CepMenuPayload,
@@ -18,7 +19,7 @@ import { useDialogClose } from "@/management/dialog/useClose";
 import { AddWidgetCatalogPanel } from "@/management/widget/catalog";
 import { defaultFirstWidgetType } from "@/management/widget/default-first-widget-type";
 import { publishShellMessage } from "@/management/workspace/messaging/publish-shell-message";
-import { tryPersistAppendWidgetFromDialog } from "@/management/workspace/placement/append-widget-from-dialog-disk";
+import { persistAppendWidgetFromDialog } from "@/management/workspace/placement/append-widget-from-dialog-disk";
 import type { LayoutPayload } from "@/management/workspace/surface/contract";
 import { SHELL_CHANNELS } from "@/management/workspace/surface/contract";
 import {
@@ -29,6 +30,7 @@ import { Button } from "@/shared/component/controls/Button";
 import { css } from "@/styled-system/css";
 
 const DIALOG_SURFACE_ID = "dialog-widget-selector" as const;
+const workspaceLog = createLogger("workspace");
 const WIDGET_SELECTOR_CTX = {
 	addSelected: "ty.ctx.widget-selector.add-selected",
 	cancel: "ty.ctx.widget-selector.cancel",
@@ -95,6 +97,14 @@ const catalogIntroPanelStyle = css({
 	color: "text.primary",
 });
 
+const footerErrorStyle = css({
+	minWidth: 0,
+	marginBottom: "2",
+	fontSize: "shell-text-xs",
+	lineHeight: "snug",
+	color: "status.error",
+});
+
 export function AddWidgetDialog(): JSX.Element {
 	const transport = useMemo(() => createCepSurfaceTransport(window), []);
 	const { close } = useDialogClose({});
@@ -126,34 +136,54 @@ export function AddWidgetDialog(): JSX.Element {
 		defaultFirstWidgetType,
 	);
 	const [busy, setBusy] = useState(false);
+	const [addFailure, setAddFailure] = useState<string | null>(null);
 
 	const addForType = useCallback(
 		async (type: WidgetType) => {
 			if (busy) return;
 			setBusy(true);
-			const wroteDisk = await tryPersistAppendWidgetFromDialog(window, {
-				targetPanelId,
-				widgetType: type,
-			});
-			const layoutPayload: LayoutPayload = wroteDisk
-				? {
-						kind: "reloadWorkspaceLayoutFromStorage",
-						sourceSurfaceId: DIALOG_SURFACE_ID,
-						panelIds: [targetPanelId],
-					}
-				: {
-						kind: "addWidget",
-						widgetType: type,
-						sourceSurfaceId: DIALOG_SURFACE_ID,
-						targetPanelId,
-					};
+			setAddFailure(null);
+			// One reset for every exit path. Clearing `busy` on the success path
+			// only is how a failed add leaves the dialog permanently disabled
+			// with no way back short of closing it.
 			try {
-				await publishShellMessage(transport, {
-					channel: SHELL_CHANNELS.layout,
-					kind: "publish",
-					sourceSurfaceId: DIALOG_SURFACE_ID,
-					payload: layoutPayload,
+				// Issue #159: disk persistence is the only durability for widget
+				// creation. A modeless `surfaceMessage` is a refresh hint, never
+				// a substitute — the old `addWidget` bus fallback silently
+				// dropped the add whenever the disk write reported failure.
+				const result = await persistAppendWidgetFromDialog(window, {
+					targetPanelId,
+					widgetType: type,
 				});
+				if (!result.ok) {
+					setAddFailure(`Could not add the widget: ${result.message}`);
+					return;
+				}
+				const layoutPayload: LayoutPayload = {
+					kind: "reloadWorkspaceLayoutFromStorage",
+					sourceSurfaceId: DIALOG_SURFACE_ID,
+					panelIds: [targetPanelId],
+				};
+				try {
+					await publishShellMessage(transport, {
+						channel: SHELL_CHANNELS.layout,
+						kind: "publish",
+						sourceSurfaceId: DIALOG_SURFACE_ID,
+						payload: layoutPayload,
+					});
+				} catch (error) {
+					// The widget is already on disk. The layout file watcher /
+					// panel reload still shows it, so a failed refresh hint is
+					// not an add failure.
+					workspaceLog.warn("add-dialog:layout-refresh-hint-failed", {
+						context: {
+							step: "publishShellMessage",
+							targetPanelId,
+							widgetId: result.widgetId,
+							message: error instanceof Error ? error.message : String(error),
+						},
+					});
+				}
 				close();
 			} finally {
 				setBusy(false);
@@ -282,32 +312,39 @@ export function AddWidgetDialog(): JSX.Element {
 			contentClassName={contentClassName}
 			footerClassName={footerClassName}
 			footer={
-				<div className={footerRowStyle}>
-					<p className={footerHintStyle}>
-						Adds to <span className={footerPanelStyle}>{targetPanelId}</span> at
-						the bottom of the grid.
-					</p>
-					<Button
-						variant="default"
-						uiSize="sm"
-						type="button"
-						fullWidth
-						onClick={() => close()}
-					>
-						Cancel
-					</Button>
-					<Button
-						variant="primary"
-						uiSize="sm"
-						type="button"
-						fullWidth
-						disabled={!selectedType || busy}
-						onClick={() => {
-							if (selectedType) void addForType(selectedType);
-						}}
-					>
-						{busy ? "Adding…" : "Add"}
-					</Button>
+				<div>
+					{addFailure ? (
+						<p className={footerErrorStyle} role="alert">
+							{addFailure}
+						</p>
+					) : null}
+					<div className={footerRowStyle}>
+						<p className={footerHintStyle}>
+							Adds to <span className={footerPanelStyle}>{targetPanelId}</span>{" "}
+							at the bottom of the grid.
+						</p>
+						<Button
+							variant="default"
+							uiSize="sm"
+							type="button"
+							fullWidth
+							onClick={() => close()}
+						>
+							Cancel
+						</Button>
+						<Button
+							variant="primary"
+							uiSize="sm"
+							type="button"
+							fullWidth
+							disabled={!selectedType || busy}
+							onClick={() => {
+								if (selectedType) void addForType(selectedType);
+							}}
+						>
+							{busy ? "Adding…" : "Add"}
+						</Button>
+					</div>
 				</div>
 			}
 		>
