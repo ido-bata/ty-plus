@@ -2,6 +2,14 @@
  * Settings model for management/setting
  */
 
+import {
+	buildReleaseChannel,
+} from "@/management/online/update/current-version";
+import {
+	isReleaseChannel,
+	type ReleaseChannel,
+} from "@/management/online/update/channel";
+
 export type Settings = {
 	version: 2;
 	core: {
@@ -18,6 +26,7 @@ export type Settings = {
 	};
 	ui: {
 		language: "ja" | "en";
+		updateChannel: ReleaseChannel;
 		theme: "system" | "dark" | "light" | "custom";
 		accentColor?: string;
 		textColor?: string;
@@ -63,6 +72,7 @@ export const DEFAULT_SETTINGS: Settings = {
 	},
 	ui: {
 		language: "en",
+		updateChannel: buildReleaseChannel,
 		theme: "system",
 		accentColor: "#5886ff",
 		textColor: "#f0f0f0",
@@ -113,7 +123,13 @@ export const coerceSettings = (v: unknown): Settings => {
 	if (!isRecord(v)) {
 		return DEFAULT_SETTINGS;
 	}
-	return mergeRecordDefaults(DEFAULT_SETTINGS, v);
+	const merged = mergeRecordDefaults(DEFAULT_SETTINGS, v);
+	return isReleaseChannel(merged.ui.updateChannel)
+		? merged
+		: {
+				...merged,
+				ui: { ...merged.ui, updateChannel: buildReleaseChannel },
+			};
 };
 
 export const mergeSettings = (
