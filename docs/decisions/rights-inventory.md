@@ -1,9 +1,16 @@
 # 権利インベントリ決定表
 
-- Status: 本人確認反映済み（第三者コンポーネントの個別監査は継続）
+- Status: LICENSE確定（2026-11-11本人決定）。第三者コンポーネントの個別監査は継続（下記「2026-11-11 監査結果」）
 - Date: 2026-11-11
 - 正本: 本repo #2 / 旧 `rebuildup/ty-plus#219`（監査履歴の参照）
 - 対象: 旧repo `main`（`a633e246156c`）と `release-0-10-0`（`05c921d1fb9a`）のtracked file
+
+## 2026-11-11 監査結果（第三者由来の残存確認）
+
+- **LICENSE確定**: 独自部分は `LICENSE`（MIT, Copyright (c) 2026 361do_sleep）。第三者資産の帰属は `THIRD-PARTY-NOTICES.md` に集約。配布packに両ファイルを同梱する（`package-cep-archive.ts`、`verify-release-artifacts.ts` が検査）。
+- **Bolt CEP boilerplate（MIT / Hyper Brew LLC）の残存**: 旧repoの初期commit（`1f869942`、2025-11-21、Bolt CEP scaffold）と本repoのtracked fileの共通は **構成ファイル8件のみ**（`vite.config.ts` / `vite.es.config.ts` / `cep.config.ts` / `tsconfig.json` / `biome.json` / `package.json` / `.gitignore` / `README.md`）。scaffold由来のデモ資産（`src/js/assets/bolt-cep*` 等）・コンポーネント・スクリプトは本repoに存在しない。上記構成ファイルはboilerplateの現行HEAD（hyperbrew/bolt-cep）と実diffで大きく乖離しているが、雛形の子孫であるためMITの通知義務を `THIRD-PARTY-NOTICES.md` §1で履行する。
+- **`com.typlus`識別子**: `src/cep.config.ts` の `com.typlus.stub` はvitest用stubのみ（実manifestのExtension IDは `app.ty-plus` 確定済み、#32）。`com.typlus.surfaceMessage` はpanel↔hostのwire契約のイベント名であり、Log!N由来でもExtension IDでもないため変更しない（変更はwire protocolの破壊的変更になる）。
+- **`reference/Adobe-CEP/CEP-Resources/`**: tracked fileに存在しない（ビルド時ツール）。配布zip / ZXPには同梱しない（`package-cep-archive.ts` のpack対象外）。
 
 ## 権利関係の確定（2026-11-11 本人確認）
 
@@ -58,7 +65,7 @@
 
 | 資産 | 状態 | 備考 |
 | --- | --- | --- |
-| Extension ID `app.ty-plus`（`cep.config.ts`、`src/management/**` のsurface ID等） | **条件付き** | 新Extension IDへの置換が必要。ID確定は本人判断。変更時は既存インストールとの併存・移行挙動の検証（#6と整合） |
+| Extension ID `app.ty-plus`（`cep.config.ts`、`src/management/**` のsurface ID等） | **解決済み（2026-11-11本人確定、#32）** | `app.ty-plus` を正式採用。実manifest・検証・ドキュメントはこの値で統一済み。既存インストールとの互換性検証は#10の実機ゲートで実施する |
 | `scripts/package/sign-zxp.ts` の署名主体（`ty-plus` / `changeme` 既定値） | **条件付き** | 公開用署名主体・証明書は本人判断（実権利者の確認を含む） |
 | `supabase/`（Edge Functions / migrations / project ref） | **移植しない（除外済み、#17）** | Log!N運営インフラ。#4のcharter上、R0はオフラインcore。将来の配布API方針は#4で決定 |
 | `src/management/online/` のcloud機能（preset catalog等） | **条件付き** | コード権利は本人（移植可）。ただし接続先がLog!N運営infraのため、R0ではバックエンドごと移植せず、オフラインcoreからの切り離しを#5で実施する |
@@ -83,8 +90,8 @@
 
 ## 公開ブロッカー（本人判断が必要）
 
-1. **ライセンス表記**: 新repoの著作権表示・ライセンス種別の決定（Hyper Brew表記の扱いを含む）。実装の移植・検証はこの決定を待たない。
-2. **署名主体・証明書**: 公開用ZXP署名の実権利者と手順。
-3. **Extension ID**: 新IDの決定と、既存インストールからの移行方針（#6と整合）。
+1. ~~**ライセンス表記**~~ **解決済み（2026-11-11本人決定）**: MIT + THIRD-PARTY-NOTICES、著作権表示名義 `361do_sleep`。実装は `LICENSE` / `THIRD-PARTY-NOTICES.md` / READMEに反映済み。
+2. **署名主体・証明書**: 公開用ZXP署名の実権利者と手順（#32に選択肢を提示済み、未決定）。
+3. ~~**Extension ID**~~ **解決済み（2026-11-11本人決定）**: `app.ty-plus` に確定（#32）。実装・検証・ドキュメントは既にこの値で統一済み。既存インストールとの互換性検証は#10の実機ゲートで実施する。
 
 `supabase/`・cloud catalog の扱いは公開ブロッカーではなく、#4のcharterに従う設計判断である。

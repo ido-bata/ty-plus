@@ -8,7 +8,7 @@ After Effects向け拡張 ty-plus の無料OSS再構築リポジトリ。
 
 - 旧 `rebuildup/ty-plus` からはGit履歴を引き継いでいない。監査済み資産のみを移植する（`rebuildup/ty-plus#230`）。
 - 実装の移植は `docs/migration/porting-ledger.md` の台帳に基づいて進める。
-- ライセンスは権利監査の確定まで未定。
+- ライセンス: `LICENSE`（MIT, Copyright (c) 2026 361do_sleep）。第三者資産の帰属と条件は `THIRD-PARTY-NOTICES.md`。個別の第三者監査は `docs/decisions/rights-inventory.md` で継続中。
 
 ## ドキュメント
 
