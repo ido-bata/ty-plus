@@ -63,6 +63,18 @@ const main = async (): Promise<void> => {
 	await mkdir(STAGED, { recursive: true });
 	await cp(DIST_CEP, STAGED, { recursive: true });
 
+	// The distributed pack carries the license and third-party notices (#2):
+	// the worker binary embeds the DejaVu font, so its license text must
+	// accompany the distribution.
+	for (const notice of ["LICENSE", "THIRD-PARTY-NOTICES.md"]) {
+		if (!existsSync(notice)) {
+			throw new Error(
+				`[package-cep-archive] ${notice} not found — the distribution pack must carry the license and third-party notices`,
+			);
+		}
+		await cp(notice, path.join(STAGED, notice));
+	}
+
 	// The operation-worker binary is part of `dist/cep-dev` itself
 	// (`worker/versions/<sha>/…` staged by the CEP build's worker step, with
 	// its trust manifest at `worker/manifest.json`). The former standalone

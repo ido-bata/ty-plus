@@ -79,6 +79,16 @@ const packRoot = path.resolve("dist", "cep-pack");
 if (!existsSync(packRoot)) {
 	fail(`missing ${packRoot} — nothing to audit`);
 }
+// The distribution must carry the license and third-party notices (#2): the
+// worker binary embeds the DejaVu font, whose license requires the notice to
+// accompany redistribution.
+for (const notice of ["LICENSE", "THIRD-PARTY-NOTICES.md"]) {
+	if (!existsSync(path.join(packRoot, "app.ty-plus", notice))) {
+		fail(
+			`the distribution pack does not carry ${notice} — rebuild the pack (package-cep-archive copies it)`,
+		);
+	}
+}
 const secretFindings = scanForSecrets(packRoot);
 if (secretFindings.length > 0) {
 	fail(
