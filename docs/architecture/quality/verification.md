@@ -11,13 +11,39 @@
 | `bun run build` | JSX / CSS / CEP dev bundle を生成 |
 | `bun run host` | build → install → AE launch |
 | `bun run host:deploy` | build → install |
-| `bun run test` | `tests/` の bun test |
+| `bun run test` | Vitest（`unit` + `storybook` の両 project） |
 | `bun run typecheck` | TypeScript 検証 |
 | `bun run lint` | Biome + design token check |
 | `bun run check:workspace-hooks` | Workspace class hook regression guard (separate, not in lint) |
 
 See [workspace-class-hooks-check.md](./workspace-class-hooks-check.md) for integration status.
 | `bun run ci` | build / lint / es3 / bundle size / tests の一括ゲート |
+
+## native host での実行順序
+
+`bun run ci` は fresh checkout から **追加の手順なし**で通ることを前提とする。
+運用手順を暗黙にしない。
+
+- `ci:static` は `build` の直後に `build:cep:worker` を走らせる。
+  `dist/cep-dev/worker/manifest.json` と content-addressed binary を書けるのは
+  `buildDevelopmentWorker()` だけで、従来は `build:cep:dev` の中身にしか存在しなかった
+  （Issue #191）。ゲートが要求する成果物をゲート自身が作る。
+- Windows / macOS では artifact を build する。その他の host では
+  **理由付きで skip** を記録する — `verify:online-gateway:package` の
+  host-artifact probe が同じ条件で SKIP を記録し、
+  `check:rust-workspace` も host-independent crate のみを走らせるため。
+  silent な skip は既有の欠陥クラス（#175 / #179）と同じなので禁止。
+
+## host ごとの所有範囲
+
+| host | 所有する検証 |
+| --- | --- |
+| Linux (GitHub Actions) | host-independent Rust crate、Storybook browser project、Node 側 gate |
+| macOS native | 上記に加えて `ty-plus-host-filesystem` / `ty-plus-operation-worker` の実 host compile と test、CEP dev install |
+| Windows native | 同上（Windows 固有）+ **AE 実機での release 実行確認** |
+
+ある host での green を、別の host の green として扱わない。
+platform 固有の検査は、それが走らない host では「未検証」であって「合格」ではない。
 
 Issue-specific manual / E2E verification procedures live under
 [`docs/verification/`](../../../verification/):
