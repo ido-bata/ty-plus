@@ -8,6 +8,7 @@ import {
 import { useTranslation } from "react-i18next";
 import {
 	currentReleaseVersion,
+	buildReleaseChannel,
 } from "@/management/online/update/current-version";
 import {
 	isReleaseChannel,
@@ -76,7 +77,7 @@ const CHANNELS: ReleaseChannel[] = ["stable", "beta", "insider"];
 export function UpdateSection(): JSX.Element {
 	const { t } = useTranslation("settings");
 	const { settings, updateSettings, isLoaded } = useSettings();
-	const channel = settings.ui.updateChannel;
+	const channel = settings.ui.updateChannel ?? buildReleaseChannel;
 	const [result, setResult] = useState<UpdateCheckResult | null>(null);
 	const [checking, setChecking] = useState(false);
 	const latestRequest = useRef(0);
