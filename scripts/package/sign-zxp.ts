@@ -52,9 +52,6 @@ export const resolveSignZxpConfig = (
 			"ZXP_CERT_PASSWORD is required from the ty-plus Infisical project when signing",
 		);
 	}
-	if (!existsSync(inputDir)) {
-		throw new Error(`Input extension directory not found: ${inputDir}`);
-	}
 
 	return {
 		signCmd,
@@ -64,6 +61,46 @@ export const resolveSignZxpConfig = (
 		certPassword,
 		timestampUrl,
 	};
+};
+
+const SELF_SIGNED_DEFAULT = path.resolve(
+	"dist/certs/ty-plus-self-signed.p12",
+);
+
+/**
+ * Release-trust ZXP signing configuration. Distinct from the development
+ * path: the certificate must be provided explicitly (`TY_PLUS_ZXP_CERT_*`),
+ * must already exist, and must not be the self-signed development default —
+ * a self-signed ZXP is not distribution evidence, and this resolver never
+ * generates a certificate.
+ */
+export const resolveReleaseSignZxpConfig = (
+	env: Partial<Record<string, string | undefined>> = process.env,
+): SignZxpConfig => {
+	const certFile = pick(env.TY_PLUS_ZXP_CERT_PATH);
+	const certPassword = pick(env.TY_PLUS_ZXP_CERT_PASSWORD);
+	if (!certFile || !certPassword) {
+		throw new Error(
+			"[sign-zxp] release-trust ZXP signing is not configured: set TY_PLUS_ZXP_CERT_PATH and TY_PLUS_ZXP_CERT_PASSWORD. " +
+				"The ZXP signing certificate (and its subject) is an unresolved owner decision (#32 / #2) — this build refuses to continue, and never falls back to a self-signed certificate.",
+		);
+	}
+	const config = resolveSignZxpConfig({
+		...env,
+		ZXP_CERT_PATH: certFile,
+		ZXP_CERT_PASSWORD: certPassword,
+	});
+	if (path.resolve(config.certFile) === SELF_SIGNED_DEFAULT) {
+		throw new Error(
+			"[sign-zxp] the self-signed development certificate is not release evidence",
+		);
+	}
+	if (!existsSync(config.certFile)) {
+		throw new Error(
+			`[sign-zxp] release ZXP certificate not found: ${config.certFile} (this build never generates one)`,
+		);
+	}
+	return config;
 };
 
 export const buildSignZxpArgs = (config: SignZxpConfig): string[] => {
@@ -80,11 +117,18 @@ export const buildSignZxpArgs = (config: SignZxpConfig): string[] => {
 	return args;
 };
 
-const ensureCertificate = (config: SignZxpConfig): void => {
+const ensureCertificate = (
+	config: SignZxpConfig,
+	generateIfMissing: boolean,
+): void => {
 	if (existsSync(config.certFile)) {
 		return;
 	}
-
+	if (!generateIfMissing) {
+		throw new Error(
+			`[sign-zxp] release-trust signing never generates a certificate — missing: ${config.certFile}`,
+		);
+	}
 	mkdirSync(path.dirname(config.certFile), { recursive: true });
 	const result = spawnSync(
 		config.signCmd,
@@ -111,8 +155,23 @@ const ensureCertificate = (config: SignZxpConfig): void => {
 	}
 };
 
-export const signZxp = (config: SignZxpConfig): void => {
-	ensureCertificate(config);
+export type SignZxpOptions = Readonly<{
+	/**
+	 * Development signing auto-generates a self-signed certificate when the
+	 * configured one is missing. Release-trust signing must pass `false`:
+	 * a self-signed ZXP is not distribution evidence.
+	 */
+	generateIfMissing?: boolean;
+}>;
+
+export const signZxp = (
+	config: SignZxpConfig,
+	options: SignZxpOptions = {},
+): void => {
+	if (!existsSync(config.inputDir)) {
+		throw new Error(`Input extension directory not found: ${config.inputDir}`);
+	}
+	ensureCertificate(config, options.generateIfMissing ?? true);
 	const args = buildSignZxpArgs(config);
 	const result = spawnSync(config.signCmd, args, {
 		stdio: "inherit",
@@ -124,6 +183,24 @@ export const signZxp = (config: SignZxpConfig): void => {
 		throw new Error(`Signed ZXP not generated: ${config.outputFile}`);
 	}
 	console.log(`Signed ZXP: ${config.outputFile}`);
+};
+
+/**
+ * Verify a signed ZXP against its embedded signature. The password is not
+ * part of verification; the exit status is the only verdict.
+ */
+export const verifyZxp = (config: SignZxpConfig): void => {
+	const result = spawnSync(
+		config.signCmd,
+		["-verify", config.outputFile],
+		{ stdio: "inherit" },
+	);
+	if (result.status !== 0) {
+		throw new Error(
+			`ZXP signature verification failed with exit code ${result.status ?? -1} — the signed ZXP is not trusted distribution evidence`,
+		);
+	}
+	console.log(`Verified ZXP signature: ${config.outputFile}`);
 };
 
 if (import.meta.main) {

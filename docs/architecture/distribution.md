@@ -31,12 +31,32 @@ bun scripts/package/release-manifest.ts --trust-mode=development-unsigned --arti
 
 ## release-trustビルド（実装済み — 証明書確定まで実行しない）
 
-1〜4の要素は未確定（#2の公開ブロッカー）のため、release-trustビルドは **実行していない**。ただしfail-closedの配線は実装済み（#32）:
+証明書・署名主体・Extension IDの最終値は未確定（#2の公開ブロッカー）のため、release-trustビルドは **実行していない**。ただしfail-closedの配線は実装済み（#32）。実行手順は `bun run scripts/package/build-release.ts`。
 
-1. **worker manifestのrelease署名block writer**: `buildReleaseWorker`（`scripts/cep/operation-worker-update.ts`）が、staged binaryをOS署名した後に `scripts/package/signature-evidence.ts` で証拠をbinaryから読み戻し、`trust: { mode: "release", signature }` を書く。証拠なしでrelease manifestを生成しない（fail-closed）。
-2. **OS署名の実装**: `scripts/package/sign-worker.ts`。Windows: `signtool sign /fd sha256 /td sha256 /tr <tsa>`。macOS: `codesign --options runtime --timestamp` + `notarytool submit --wait` + `stapler staple`。設定は `TY_PLUS_SIGN_PFX_PATH` / `TY_PLUS_SIGN_PFX_PASSWORD` / `TY_PLUS_SIGN_IDENTITY` / `TY_PLUS_NOTARY_PROFILE`。
-3. **secret混入検査の自動組み込み**: `scripts/package/secret-scan.ts` がビルド内で `dist/cep-dev` を走査する。事後監査は `scripts/verify/verify-release-artifacts.ts`（manifestのsha256再計算 + HEAD一致 + pack走査）。
+### 2つの署名を混同しない
+
+| 署名 | 対象 | 実装 | 検証 |
+| --- | --- | --- | --- |
+| worker binaryのOS署名 | `operation-worker` 実行体 | `scripts/package/sign-worker.ts`（Windows: signtool / macOS: codesign + notarization） | `scripts/package/signature-evidence.ts` がbinaryから証拠を読み戻す |
+| ZXPのAdobe署名 | ZXPパッケージ | `scripts/package/sign-zxp.ts`（ZXPSignCmd、release設定 `TY_PLUS_ZXP_CERT_*`） | `verifyZxp`（`ZXPSignCmd -verify`） |
+
+### fail-closed配線
+
+1. **worker manifestのrelease署名block writer**: `buildReleaseWorker`（`scripts/cep/operation-worker-update.ts`）が、staged binaryをOS署名した後に証拠をbinaryから読み戻し、`trust: { mode: "release", signature }` を書く。証拠なしでrelease manifestを生成しない。
+2. **secret混入検査はパッケージ化の前**: `scripts/package/secret-scan.ts` が `dist/cep-dev`（zipの中身の素）を走査してからzip / ZXPを生成する。事後監査は `scripts/verify/verify-release-artifacts.ts`（manifestのsha256再計算 + HEAD一致 + pack走査）。
+3. **ZXP署名は自己署名にfallbackしない**: `resolveReleaseSignZxpConfig` は実在する明示的証明書（`TY_PLUS_ZXP_CERT_PATH` / `TY_PLUS_ZXP_CERT_PASSWORD`）のみを受け入れ、証明書を自動生成しない。開発用の自己署名自動生成（`signZxp` の既定動作）はrelease-trustでは無効化する。
 4. **CI**: `.github/workflows/release.yml` の `release-trust-gate-refusal` jobが、署名設定なしでrelease-trustビルドが拒否されることを検証する（未充足をPASSにしない）。
+
+### macOSのnotarization契約（Apple公式の適用範囲に従う）
+
+- `notarytool submit` の受理形式は **zip / pkg / dmg**。bare Mach-Oは提出できないため、worker binaryは提出用に一時zip化する（`buildSignPlan`）。zipは提出carrierであり、配布成果物は署名済みbinaryのまま。
+- `stapler` がstapleできるのは bundle / dmg / pkg で、**bare実行体は対象外**。workerは拡張zip内で配布され、初回起動時にGatekeeperがオンラインで評価するため、notarization証拠は `spctl --assess --type execute` の合否（exit statusベース — 出力テキストのキーワード照合はしない）と `codesign --verify --strict` で判定する。
+- 証明書fingerprintは **DER bytesのSHA-256**（PEMファイルbyte列のハッシュではない）。
+
+### secretの取り扱い
+
+- Windowsの証明書store参照（`TY_PLUS_SIGN_CERT_SHA1`）を優先する。PFX形式（`TY_PLUS_SIGN_PFX_PATH` + `TY_PLUS_SIGN_PFX_PASSWORD`）はsigntoolの仕様上パスワードがプロセス引数に現れる（`ps` で他プロセスから見える）。ログ・例外への出力は `redactSignArgs` でマスクする。
+- ZXP署名のパスワードもZXPSignCmdのCLI仕様上引数に現れる。エラーメッセージに引数を展開しない。
 
 これらが確定するまで、release-trustの成果物を「配布可能」と扱わない。実行は本人の明示的承認ゲートを別途経る。
 

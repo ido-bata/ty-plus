@@ -7,6 +7,13 @@
  * fails closed when the binary is unsigned, ad-hoc signed, or not notarized.
  * A missing certificate is an owner decision (#32), not a condition this
  * module can satisfy — so it refuses with that decision named.
+ *
+ * macOS evidence chain (Apple's contract for a bare Mach-O distributed in a
+ * zip): `codesign -dvvv` for the CDHash and Developer ID authority,
+ * `codesign --verify --strict` for signature integrity, and `spctl --assess
+ * --type execute` for Gatekeeper acceptance — which requires notarization.
+ * `stapler` staples bundles / dmg / pkg, not bare executables, so there is
+ * no staple to validate; the shipped zip is assessed online at first launch.
  */
 
 import { spawnSync } from "node:child_process";
@@ -32,7 +39,7 @@ const defaultRunCommand: RunCommand = (args, options) => {
 		cwd: options?.cwd ?? process.cwd(),
 		encoding: "utf8",
 	});
-	// `codesign -dv` and `stapler validate` report on stderr, so the detail is
+	// `codesign -dv` and `spctl --assess` report on stderr, so the detail is
 	// merged — dropping it would make every signed binary look unsigned.
 	return {
 		status: r.status,
@@ -88,16 +95,10 @@ export const parseAuthenticodeEvidence = (stdout: string): ArtifactSignature => 
 	return { algorithm: "authenticode", value: sha1, certificateSha256: sha256 };
 };
 
-/**
- * Parse `codesign -dv` + `stapler validate` output into signature evidence.
- *
- * `value` is the CDHash of the signed binary; `certificateSha256` is the
- * SHA-256 fingerprint of the leaf (Developer ID) certificate.
- */
-export const parseCodesignEvidence = (
+/** Parse `codesign -dvvv` output into the identity part of the evidence. */
+export const parseCodesignDetail = (
 	detail: string,
-	stapleValidate: readonly string[],
-): ArtifactSignature => {
+): { cdHash: string } => {
 	const cdHash = detail.match(/CDHash=([a-f0-9]{40})/)?.[1];
 	const authorities = [...detail.matchAll(/^Authority=(.+)$/gm)].map(
 		(match) => match[1],
@@ -110,12 +111,24 @@ export const parseCodesignEvidence = (
 			"binary is not signed with a Developer ID Application identity (ad-hoc signatures are not distribution evidence)",
 		);
 	}
-	if (!stapleValidate.includes("valid")) {
+	return { cdHash };
+};
+
+/**
+ * Gatekeeper acceptance is the notarization evidence: `spctl --assess` only
+ * accepts a binary whose Developer ID signature chains and whose notarization
+ * ticket Apple's service can confirm. Status-based — output text is not
+ * matched against keywords ("invalid" contains "valid").
+ */
+const assertGatekeeperAccepts = (
+	spctl: CommandResult,
+): void => {
+	if (spctl.status !== 0) {
 		return fail(
-			`notarization staple is not valid (stapler validate: ${stapleValidate.join(" ").trim() || "no output"})`,
+			`Gatekeeper rejected the binary (spctl --assess exit ${spctl.status}): ${spctl.stdout.trim() || "no output"} — ` +
+				"the signature or its notarization is not valid distribution evidence",
 		);
 	}
-	return { algorithm: "codesign", value: cdHash, certificateSha256: "" };
 };
 
 const extractAuthenticodeEvidence = (
@@ -146,22 +159,29 @@ const extractCodesignEvidence = (
 	if (detail.status !== 0) {
 		return fail(`codesign could not inspect ${binaryPath}`);
 	}
-	const staple = run(["stapler", "validate", binaryPath]);
-	// Identity and notarization are enforced by the parser first — an ad-hoc
-	// binary never reaches certificate extraction.
-	const evidence = parseCodesignEvidence(
-		detail.stdout,
-		staple.stdout.split(/\r?\n/),
-	);
-	if (evidence.certificateSha256.length === 0) {
-		return {
-			...evidence,
-			certificateSha256: leafCertificateSha256(run, binaryPath),
-		};
+	const { cdHash } = parseCodesignDetail(detail.stdout);
+	// Signature integrity: the sealed resources and code directory must
+	// verify against the embedded signature.
+	const strict = run(["codesign", "--verify", "--strict", binaryPath]);
+	if (strict.status !== 0) {
+		return fail(
+			`codesign --verify --strict failed (exit ${strict.status}): ${strict.stdout.trim() || "no output"}`,
+		);
 	}
-	return evidence;
+	assertGatekeeperAccepts(run(["spctl", "--assess", "--type", "execute", binaryPath]));
+	return {
+		algorithm: "codesign",
+		value: cdHash,
+		certificateSha256: leafCertificateSha256(run, binaryPath),
+	};
 };
 
+/**
+ * SHA-256 fingerprint of the leaf (Developer ID) certificate, computed over
+ * the DER bytes — the same value `sha256sum` of an exported .cer or keychain
+ * fingerprint tools report. Hashing the PEM file bytes would produce a
+ * different, non-standard value.
+ */
 const leafCertificateSha256 = (run: RunCommand, binaryPath: string): string => {
 	// Synchronous extraction into a throwaway directory: `codesign -d
 	// --extract-certificates` writes PEM files into its cwd, and the leaf is
@@ -174,10 +194,22 @@ const leafCertificateSha256 = (run: RunCommand, binaryPath: string): string => {
 		if (r.status !== 0) {
 			return fail("codesign could not extract the signing certificate");
 		}
-		return sha256Hex(readFileSync(path.join(workRoot, "codesigncert0.pem")));
+		return sha256Hex(pemToDer(readFileSync(path.join(workRoot, "codesigncert0.pem"), "utf8")));
 	} finally {
 		rmSync(workRoot, { recursive: true, force: true });
 	}
+};
+
+/** Decode the first PEM CERTIFICATE block into its DER bytes. */
+export const pemToDer = (pem: string): Buffer => {
+	const base64 = pem
+		.replace(/-----BEGIN CERTIFICATE-----/, "")
+		.replace(/-----END CERTIFICATE-----/, "")
+		.replace(/\s+/g, "");
+	if (base64.length === 0) {
+		return fail("certificate PEM contains no CERTIFICATE block");
+	}
+	return Buffer.from(base64, "base64");
 };
 
 /**
