@@ -714,7 +714,16 @@ const getHostBundleCoordinator = (win: Window): HostBundleCoordinator => {
 
 let nextExecutorId = 0;
 
-export const createCepHostExecutor = (
+/**
+ * One caller identity per (Window, HostId).
+ *
+ * Widgets depend on this function in effects, and workspace runtime builds
+ * it on every render. Sharing at the factory keeps those effects stable
+ * without requiring each caller to memoize its executor.
+ */
+const hostExecutors = new WeakMap<Window, Map<HostId, HostFunctionCaller>>();
+
+const buildCepHostExecutor = (
 	win: Window,
 	hostId: HostId,
 ): HostFunctionCaller => {
@@ -792,4 +801,22 @@ export const createCepHostExecutor = (
 			value: parsed.value,
 		};
 	};
+};
+
+export const createCepHostExecutor = (
+	win: Window,
+	hostId: HostId,
+): HostFunctionCaller => {
+	let byHost = hostExecutors.get(win);
+	if (byHost === undefined) {
+		byHost = new Map();
+		hostExecutors.set(win, byHost);
+	}
+	const existing = byHost.get(hostId);
+	if (existing !== undefined) {
+		return existing;
+	}
+	const created = buildCepHostExecutor(win, hostId);
+	byHost.set(hostId, created);
+	return created;
 };
