@@ -17,6 +17,8 @@
 
 検証は1つのビルドに固定する。対象は internal build workflow の成果物（`ty-plus-internal-<version>-<platform>-<commit>.zip` と `release-manifest.json`）。検証開始時にmanifestのsha256を記録し、以降の項目はそのビルドに対して判定する。署名済み配布物を追加で検証する場合は、ビルドごとにこの固定をやり直す（manifestのsha256を別途記録）。
 
+Windowsの **release-trust配布候補**（`ty-plus-release-candidate-windows-<sha>`、未署名worker + 署名済みZXP — ADR-0003）は `release-trust-windows-candidate` jobの成果物として取得できる。D-18〜D-20（SmartScreen / SAC / ZXPインストール）はこの配布候補に対して実施する。
+
 ## シナリオ
 
 状態の値: `未実施` / `合格` / `不合格` / `ブロック`（理由を記す）。
@@ -64,6 +66,16 @@
 | --- | --- | --- | --- | --- |
 | D-16 | 旧バージョンでpreset / layout / settingsを作成 → 新バージョンのzipを上書き配置 → 起動 | 作成済みのpreset・layout・settingsが保持される（管理ルートのデータが更新で置換されない） | 更新前後のスクリーンショット + 管理ルートのpath確認 | 未実施 |
 | D-17 | 新バージョンが起動しない等の更新失敗を模擬 → 旧バージョンのzipへ戻す → 起動 | 旧バージョンが起動し、作成済みデータが引き続き使える | スクリーンショット | 未実施 |
+
+### 4c. WindowsのOSセキュリティ機能（未署名R0配布の観察 — ADR-0003）
+
+Windows workerはR0では未署名（ADR-0003）。OSのセキュリティ機能がこの配布をどう扱うかを **観察項目** として記録する。セキュリティ機能の無効化を正常動作の前提にしない。
+
+| ID | 分岐 | 観察内容 | 証拠 | 状態 |
+| --- | --- | --- | --- | --- |
+| D-18 | SmartScreen有効のWindowsで未署名zipを展開しworkerを初回起動 | 「Windows protected your PC」警告の表示と、クリックスルー後の起動可否を記録する（評判は蓄積型 — 消えることを期待しない） | スクリーンショット | 未実施 |
+| D-19 | Smart App Control有効のWindowsで同操作 | 未署名binaryのblock挙動を記録する（SAC有効環境では本配布は動作しない — 文書化された制約） | スクリーンショット | 未実施 |
+| D-20 | 署名済みZXPのインストール（自己署名 / 権限確認） | ZXPインストーラがPlayerDebugModeなしで受け入れられることを記録する（ZXP署名はworkerのOS署名と独立 — ADR-0003） | スクリーンショット | 未実施 |
 
 ### 5. 観察項目（既知の重大不具合）
 

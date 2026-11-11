@@ -152,7 +152,15 @@ export const runReleaseBuild = async (
 			"[build-release] release-trust builds require Windows or macOS",
 		);
 	}
-	const signConfig = resolveSignWorkerConfig(platform, options.env);
+	// Fail-closed before anything is built: on macOS a missing signing
+	// configuration refuses (ADR-0003 — Developer ID + notarization is an OS
+	// requirement). On Windows the worker is unsigned in R0, so no worker
+	// signing configuration exists or is consulted; the ZXP signing
+	// configuration is the independent contract and is still required.
+	const signConfig =
+		platform === "macos"
+			? resolveSignWorkerConfig(platform, options.env)
+			: undefined;
 	const zxpConfig = resolveReleaseSignZxpConfig(options.env);
 	const packageJson = JSON.parse(
 		readFileSync("package.json", "utf8"),
@@ -163,21 +171,34 @@ export const runReleaseBuild = async (
 	}
 
 	const run = options.run ?? runStepWith({ ...process.env, ...options.env });
+	// Fail-closed ordering: the signing config gate runs before anything is
+	// built, the worker is signed before the verify gate (macOS only —
+	// ADR-0003), and the secret scan runs over the exact bytes that ship
+	// before they are packaged.
 	const [panelBuild, verifyGate, packageZip, releaseManifest] =
 		plannedSteps({ productVersion });
 	run(panelBuild);
 
-	// Sign the staged worker and write the release trust manifest. The
-	// evidence is read back from the signed binary — the manifest never
-	// records a signature the binary does not carry.
+	// Sign the staged worker and write the release trust manifest (macOS).
+	// The evidence is read back from the signed binary — the manifest never
+	// records a signature the binary does not carry. On Windows the worker is
+	// legitimately unsigned in R0 and the trust block declares release.
 	const runSign = options.runSign ?? runSignCommandWith;
-	await buildReleaseWorker(async (stagedPath) => {
-		const submissionZipPath = `${stagedPath}.notarization.zip`;
-		for (const args of buildSignPlan(signConfig, stagedPath, submissionZipPath)) {
-			runSign(args);
-		}
-		return extractSignatureEvidence(platform, stagedPath);
-	});
+	await buildReleaseWorker(
+		signConfig === undefined
+			? undefined
+			: async (stagedPath) => {
+					const submissionZipPath = `${stagedPath}.notarization.zip`;
+					for (const args of buildSignPlan(
+						signConfig,
+						stagedPath,
+						submissionZipPath,
+					)) {
+						runSign(args);
+					}
+					return extractSignatureEvidence(platform, stagedPath);
+				},
+	);
 
 	run(verifyGate);
 

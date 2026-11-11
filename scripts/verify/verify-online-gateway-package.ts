@@ -53,6 +53,7 @@ import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { RELEASE_SIGNING_POLICY } from "../../src/management/ipc/operation-worker-binary";
 
 export type TrustMode = "development-unsigned" | "release" | "unknown";
 export type HostPlatform = "windows" | "macos" | "linux";
@@ -344,8 +345,18 @@ export async function runSmokeTest(
 									'release builds must include a trust block with mode:"release"',
 							};
 						}
+						// ADR-0003: the signature evidence is required where the
+						// platform policy demands an OS signature (macOS). The
+						// R0 Windows release shape declares release without one.
 						const signature = ownValue(trust, "signature");
 						if (!isRecord(signature)) {
+							if (!RELEASE_SIGNING_POLICY[platform].requiresOsSignature) {
+								return {
+									ok: true,
+									message:
+										"trust mode matches release (unsigned worker — R0 Windows shape)",
+								};
+							}
 							return {
 								ok: false,
 								message: 'release trust block is missing "signature"',

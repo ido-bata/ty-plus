@@ -32,12 +32,12 @@ bun scripts/package/release-manifest.ts --trust-mode=development-unsigned --arti
 
 ## 3. release-trustビルド（署名）
 
-- 実装は完了（#32）: `bun run scripts/package/build-release.ts` が次の順で実行する。production panel → worker署名 + 署名証拠読み戻し + release trust manifest → verify gate（`--trust-mode=release`）→ **secret混入検査（パッケージ化の前）** → zip → ZXP署名（`ZXPSignCmd`、`-verify`で検証）→ release manifest（zipとZXPの両方のsha256を記録）。
+- 実装は完了（#32、ADR-0003）: `bun run scripts/package/build-release.ts` が次の順で実行する。production panel → **Windows: 未署名worker（R0の正当な形）** / **macOS: worker署名 + 署名証拠読み戻し** + release trust manifest → verify gate（`--trust-mode=release`）→ **secret混入検査（パッケージ化の前）** → zip → ZXP署名（`ZXPSignCmd`、`-verify`で検証）→ release manifest（zipとZXPの両方のsha256を記録）。
+- **Windows**: Authenticode証明書は不要（ADR-0003、2026-11-11本人判断）。**証明書なしで配布候補を生成・検証できる**。制約（SmartScreen警告、SAC block）は `docs/architecture/distribution.md`。
+- **macOS**: Developer ID署名 + 公証が必須。署名identityは既存資産を利用（2026-11-12確認、2027-11-22まで有効）。**公証のnotarytool profileが未設定の場合、ビルドは拒否する**（fail-closed）— 設定手順は `docs/operations/signing-setup.md`。
 - 署名契約の詳細（2つの署名の区別、notarizationの適用範囲、secretの取り扱い）は `docs/architecture/distribution.md`。
-- 実行には証明書が必須: worker署名（`TY_PLUS_SIGN_CERT_SHA1` または `TY_PLUS_SIGN_PFX_PATH` + `TY_PLUS_SIGN_PFX_PASSWORD` / `TY_PLUS_SIGN_IDENTITY` + `TY_PLUS_NOTARY_PROFILE`）とZXP署名（`TY_PLUS_ZXP_CERT_PATH` + `TY_PLUS_ZXP_CERT_PASSWORD`）が無い場合、ビルドは何も生成する前に拒否する（fail-closed）。CIは `.github/workflows/release.yml` の `release-trust-gate-refusal` jobでこの拒否を検証する。
-- EV/OVの選択と証明書の購入は本人判断（#2の公開ブロッカー）。証明書が確定するまで、この手順を実行してPASSにしない。**development-unsignedのリハーサル緑はrelease-trustの完成証拠ではない。**
-- 証明書の取得・設定の具体的な本人操作（Apple Developer Program / Authenticode証明書 / ZXP署名証明書 / notarytool profile）は `docs/operations/signing-setup.md`。
-- 確定後、この節を実際の証明書準備手順で確定させる。
+- CIは `.github/workflows/release.yml` の `release-trust-gate-refusal`（macOS拒否検証）と `release-trust-windows-candidate`（Windows配布候補の実証）で検証する。
+- **development-unsignedのリハーサル緑はrelease-trustの完成証拠ではない。** 公開は本人の明示的承認ゲートを経る（11/30 Go/No-Go）。
 
 ## 4. 公開
 

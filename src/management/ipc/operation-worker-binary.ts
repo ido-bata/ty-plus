@@ -7,7 +7,15 @@ import type {
 export type OperationWorkerPlatform = "windows" | "macos";
 
 export type ArtifactTrust =
-	| { readonly mode: "release"; readonly signature: ArtifactSignature }
+	| {
+			readonly mode: "release";
+			/**
+			 * Required where the platform policy demands an OS signature
+			 * (macOS), absent for the R0 Windows release shape (ADR-0003).
+			 * The requirement is enforced by validation, not by this type.
+			 */
+			readonly signature?: ArtifactSignature;
+	  }
 	| {
 			readonly mode: "development-unsigned";
 			readonly buildProfile: "development";
@@ -207,6 +215,21 @@ const assertManifestMetadata = (
 	}
 };
 
+/**
+ * Release-trust signing policy per platform (ADR-0003). macOS requires an
+ * OS-signed, notarized worker — an OS-level requirement, not a policy
+ * choice. Windows accepts an unsigned worker for R0 (owner decision, #32):
+ * integrity is anchored by the manifest's sha256 pin, publisher identity
+ * comes from the official distribution channel, and Authenticode remains a
+ * future optional enhancement.
+ */
+export const RELEASE_SIGNING_POLICY: Readonly<
+	Record<OperationWorkerPlatform, { readonly requiresOsSignature: boolean }>
+> = {
+	windows: { requiresOsSignature: false },
+	macos: { requiresOsSignature: true },
+};
+
 const validateArtifactSignatureMetadata = (
 	artifact: OperationWorkerArtifact,
 	platform: OperationWorkerPlatform,
@@ -220,10 +243,15 @@ const validateArtifactSignatureMetadata = (
 	if (
 		typeof relativePath !== "string" ||
 		typeof sha256 !== "string" ||
-		!/^[a-fA-F0-9]{64}$/.test(sha256) ||
-		!isRecord(signature)
+		!/^[a-fA-F0-9]{64}$/.test(sha256)
 	) {
 		return false;
+	}
+	// The signature block is what the platform policy makes of it: required
+	// where the OS demands a signature, optional-but-validated where it does
+	// not. A Windows release artifact without one is the R0 shape (ADR-0003).
+	if (!isRecord(signature)) {
+		return !RELEASE_SIGNING_POLICY[platform].requiresOsSignature;
 	}
 
 	const algorithm = ownValue(signature, "algorithm");
@@ -308,6 +336,7 @@ const assertDevelopmentArtifact = (
 const assertTrustMode = (
 	manifest: OperationWorkerManifest,
 	expectedTrustMode: ArtifactTrust["mode"],
+	platform: OperationWorkerPlatform,
 ): void => {
 	const trust = ownValue(manifest, "trust");
 	if (trust === undefined && expectedTrustMode === "release") return;
@@ -321,6 +350,9 @@ const assertTrustMode = (
 	}
 	const signature = ownValue(trust, "signature");
 	if (!isRecord(signature)) {
+		// A release trust block without a signature is the R0 Windows shape
+		// (ADR-0003); macOS policy still demands the signature evidence.
+		if (!RELEASE_SIGNING_POLICY[platform].requiresOsSignature) return;
 		mismatch();
 		return;
 	}
@@ -338,7 +370,15 @@ const assertTrustMode = (
 	}
 };
 
-const assertPairedArtifacts = (manifest: OperationWorkerManifest): void => {
+/**
+ * A release manifest declares the platforms its distribution actually ships
+ * (ADR-0003): a per-platform build writes its own entry only, so requiring
+ * BOTH platforms here would refuse every real distribution at boot while
+ * the verify gate passed. Each PRESENT entry must be well-formed — a
+ * malformed entry for an unshipped platform is still a corrupt manifest —
+ * and two present entries must not alias the same binary.
+ */
+const assertReleaseArtifacts = (manifest: OperationWorkerManifest): void => {
 	if (!isRecord(manifest)) {
 		mismatch();
 	}
@@ -348,8 +388,13 @@ const assertPairedArtifacts = (manifest: OperationWorkerManifest): void => {
 	}
 	const workerRecord = workers as Record<string, unknown>;
 
-	const artifacts = (["windows", "macos"] as const).map((platform) => {
+	const present: { artifact: Record<string, unknown>; relativePath: string }[] =
+		[];
+	for (const platform of ["windows", "macos"] as const) {
 		const artifact = ownValue(workerRecord, platform);
+		if (artifact === undefined) {
+			continue;
+		}
 		if (!isRecord(artifact)) {
 			mismatch();
 		}
@@ -365,12 +410,19 @@ const assertPairedArtifacts = (manifest: OperationWorkerManifest): void => {
 		) {
 			mismatch();
 		}
-		return { artifact: artifactRecord, relativePath };
-	});
+		present.push({
+			artifact: artifactRecord,
+			relativePath: relativePath as string,
+		});
+	}
 
+	if (present.length === 0) {
+		mismatch();
+	}
 	if (
-		artifacts[0].artifact === artifacts[1].artifact ||
-		artifacts[0].relativePath === artifacts[1].relativePath
+		present.length === 2 &&
+		(present[0].artifact === present[1].artifact ||
+			present[0].relativePath === present[1].relativePath)
 	) {
 		mismatch();
 	}
@@ -813,7 +865,7 @@ export const resolveOperationWorkerBinary = async (
 		throw new WorkerBinaryError("binary_missing");
 	}
 	const expectedTrustMode = input.expectedTrustMode;
-	assertTrustMode(input.manifest, expectedTrustMode);
+	assertTrustMode(input.manifest, expectedTrustMode, input.platform);
 
 	assertManifestMetadata(
 		input.manifest,
@@ -823,7 +875,7 @@ export const resolveOperationWorkerBinary = async (
 		input.expectedCapabilities,
 	);
 	if (expectedTrustMode === "release") {
-		assertPairedArtifacts(input.manifest);
+		assertReleaseArtifacts(input.manifest);
 	} else {
 		assertDevelopmentArtifact(input.manifest, input.platform);
 	}
@@ -868,7 +920,11 @@ export const resolveOperationWorkerBinary = async (
 		mismatch();
 	}
 	const signature = ownValue(artifact, "signature");
-	if (expectedTrustMode === "release" && !isRecord(signature)) {
+	if (
+		expectedTrustMode === "release" &&
+		RELEASE_SIGNING_POLICY[input.platform].requiresOsSignature &&
+		!isRecord(signature)
+	) {
 		mismatch();
 	}
 
