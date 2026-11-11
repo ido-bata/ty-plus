@@ -1,6 +1,6 @@
 # 移植台帳（porting ledger）
 
-旧 `rebuildup/ty-plus` から本repoへ移植する実装の正本台帳。判断の正本は `rebuildup/ty-plus#228`（移植元選定）と `rebuildup/ty-plus#230`（移行の暫定正本）。本repo側の進行は移植元選定のIssueが担う。
+旧 `rebuildup/ty-plus` から本repoへ移植する実装の正本台帳。判断の正本は `rebuildup/ty-plus#228`（移植元選定）と `rebuildup/ty-plus#230`（移行の暫定正本）。本repo側の進行は #3 が担う。
 
 ## 規則
 
