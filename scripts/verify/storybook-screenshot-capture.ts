@@ -36,57 +36,24 @@
  *   base64, "base64")` to persist to an arbitrary path.
  * - `node:fs` is not defined in the page context; `Buffer` is not
  *   defined either. Always go through `commands.writeFile`.
+ * - `commands.writeFile` resolves its argument against the Vitest
+ *   project root on the *Node* side, using the host platform's own
+ *   `path.resolve`. So this file must only ever pass a path relative to
+ *   that root; see `screenshot-path.ts` for the path contract.
  */
 
 import { afterEach } from "vitest";
 import { commands, page } from "vitest/browser";
 
-// `node:path` is not available in the page context. We only need
-// two helpers — `dirname` and `resolve` — and only on absolute POSIX
-// paths, so we hand-roll small versions of each.
-const dirname = (p: string): string => {
-	const i = p.lastIndexOf("/");
-	return i <= 0 ? "/" : p.slice(0, i);
-};
-const resolve = (...parts: string[]): string => {
-	let out = "";
-	for (const part of parts) {
-		if (!part) continue;
-		if (part.startsWith("/")) {
-			out = part;
-		} else {
-			out = out.endsWith("/") ? out + part : `${out}/${part}`;
-		}
-	}
-	// Collapse `..` segments by walking.
-	const segments = out.split("/").filter((s) => s.length > 0);
-	const stack: string[] = [];
-	for (const seg of segments) {
-		if (seg === ".") continue;
-		if (seg === "..") {
-			stack.pop();
-			continue;
-		}
-		stack.push(seg);
-	}
-	return "/" + stack.join("/");
-};
+import { screenshotOutputRelativePath } from "./screenshot-path";
 
 // In browser mode `import.meta.dirname` is undefined, `process` is
 // undefined, and `import.meta.url` is `http:` (the page URL, not a
-// file URL). The only anchor we have is the path that
-// `page.screenshot()` itself writes to — by default that's
-// `<test-file-dir>/__screenshots__/<TestName>-<n>.png`. From that
-// we can compute the repo root by stripping `/__screenshots__/...`
-// and walking up. To keep this robust against the Playwright provider
-// changing its default location, we also let `result.path` come back
-// from the screenshot call and just read the bytes from there rather
-// than re-deriving the repo root.
-//
-// Output target is therefore set lazily inside `afterEach`, after we
-// know where Playwright actually wrote the file. We then re-emit it
-// to `.tmp/vitest-screenshots/<storyId>.png` via `commands.writeFile`
-// for the reviewer to inspect.
+// file URL). Rather than recover a filesystem root here — the page
+// context has no `node:path`, and any root derived from the absolute
+// path `page.screenshot()` reports is platform-shaped — the target is
+// expressed relative to the Vitest project root and resolved by the
+// runner. See `screenshot-path.ts`.
 
 // `task.meta.storyId` is set by the addon's `testStory` helper
 // (`node_modules/@storybook/addon-vitest/dist/vitest-plugin/test-utils.js`).
@@ -128,22 +95,11 @@ afterEach(async (ctx) => {
 	);
 
 	const result = await page.screenshot({ base64: true });
-	// eslint-disable-next-line no-console
-	console.log(`[capture] DEBUG ${storyId} result.path=${result.path}`);
 
-	// Derive the repo root from Playwright's own screenshot path. The
-	// provider writes to `<repo>/<test-file-dir>/__screenshots__/<test-name>.png`.
-	// Walking up two directories from the parent of `__screenshots__`
-	// lands at the repo root.
-	const defaultParent = dirname(result.path);
-	const repoRoot = resolve(defaultParent, "..", "..");
-	const outDir = resolve(repoRoot, ".tmp", "vitest-screenshots");
-	const outPath = resolve(outDir, `${storyId}.png`);
-	// eslint-disable-next-line no-console
-	console.log(
-		`[capture] DEBUG ${storyId} defaultParent=${defaultParent} repoRoot=${repoRoot} outPath=${outPath}`,
-	);
-
+	// Relative to the project root; the runner joins it with the host
+	// platform's `path.resolve`. Passing an absolute path built in this
+	// context can produce `C:\C:\...` on Windows.
+	const outPath = screenshotOutputRelativePath(storyId);
 	await commands.writeFile(outPath, result.base64, "base64");
 
 	const byteLength = Math.floor((result.base64.length * 3) / 4);
