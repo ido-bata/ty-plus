@@ -208,5 +208,13 @@
 			"inputs": "입력",
 			"update": "업데이트"
 		}
+	},
+	"updates": {
+		"channel": "업데이트 채널",
+		"stable": "안정",
+		"beta": "베타",
+		"insider": "인사이더",
+		"checkNow": "지금 확인",
+		"browse": "릴리스 보기"
 	}
 }
