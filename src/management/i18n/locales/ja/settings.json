@@ -208,5 +208,13 @@
 			"inputs": "入力",
 			"update": "更新"
 		}
+	},
+	"updates": {
+		"channel": "更新チャンネル",
+		"stable": "安定版",
+		"beta": "ベータ版",
+		"insider": "インサイダー版",
+		"checkNow": "今すぐ確認",
+		"browse": "リリース一覧を見る"
 	}
 }
