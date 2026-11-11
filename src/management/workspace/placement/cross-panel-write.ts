@@ -9,6 +9,7 @@
  */
 
 import { isWidgetType, type WidgetType } from "@/function/widget/contract";
+import { createLogger } from "@/management/debug";
 import type { Preset } from "@/management/preset/contract";
 import type { GroupCatalogEntry } from "@/management/preset/group-catalog";
 import {
@@ -21,7 +22,10 @@ import {
 	writeNJson,
 } from "@/management/storage";
 import type { WidgetRecord } from "@/management/widget/record/types";
-import { parseLayoutDocument } from "@/management/workspace/layout/grid-document";
+import {
+	LayoutDocumentParseError,
+	parseLayoutDocumentJsonText,
+} from "@/management/workspace/layout/grid-document";
 import {
 	DEFAULT_TILE_HEIGHT,
 	DEFAULT_TILE_WIDTH,
@@ -38,6 +42,20 @@ import {
 	tilesFromDocument,
 } from "@/management/workspace/surface/tiles";
 
+const workspaceLog = createLogger("workspace");
+
+/**
+ * Turn a target panel's persisted layout into tiles, or refuse.
+ *
+ * No file returns no tiles — a panel nobody has written yet. A body that
+ * cannot be read **throws** instead of returning `[]`: this value feeds
+ * `persistTargetLayout`, which packs new tiles onto it and overwrites
+ * `workspace-N.json`, so an empty array here is not "nothing to keep", it is
+ * "erase everything that was there" (Issue #182).
+ *
+ * `parseLayoutDocumentJsonText` is what makes the two distinguishable;
+ * `parseLayoutDocument` cannot, because it never throws.
+ */
 const loadTilesFromNJsonRaw = (
 	raw: string | null | undefined,
 	panelId: string,
@@ -48,22 +66,14 @@ const loadTilesFromNJsonRaw = (
 		groupCatalogEntries: readonly GroupCatalogEntry[];
 	},
 ): Tile[] => {
-	if (!raw?.trim()) {
-		return [];
-	}
-	try {
-		const parsed = JSON.parse(raw) as unknown;
-		const layoutDoc = parseLayoutDocument(parsed);
-		return tilesFromDocument({
-			layout: layoutDoc,
-			widgetRecords: ctx.widgetRecordLite,
-			presets: ctx.presets,
-			panelPresetIds: ctx.panelPresetIds,
-			implicitlyFillAllPresetsWhenLayoutEmpty: panelId === "panel-1",
-		});
-	} catch {
-		return [];
-	}
+	const layoutDoc = parseLayoutDocumentJsonText(raw);
+	return tilesFromDocument({
+		layout: layoutDoc,
+		widgetRecords: ctx.widgetRecordLite,
+		presets: ctx.presets,
+		panelPresetIds: ctx.panelPresetIds,
+		implicitlyFillAllPresetsWhenLayoutEmpty: panelId === "panel-1",
+	});
 };
 
 const buildSyntheticSurfaceState = (input: {
@@ -180,12 +190,31 @@ export const persistTargetLayout = async (
 		settingsJson,
 		input.targetPanelId,
 	);
-	const migratedTiles = loadTilesFromNJsonRaw(rawLayout, input.targetPanelId, {
-		presets: input.presets,
-		panelPresetIds: panelPresetIdsFromSettings,
-		widgetRecordLite,
-		groupCatalogEntries: input.groupCatalogEntries,
-	});
+	// Nothing below this point may run when the target layout cannot be read:
+	// the next write is an overwrite of `workspace-N.json`, so a failure here
+	// has to surface (and be visible in the Debug Console) before it, not be
+	// absorbed into an empty grid.
+	let migratedTiles: Tile[];
+	try {
+		migratedTiles = loadTilesFromNJsonRaw(rawLayout, input.targetPanelId, {
+			presets: input.presets,
+			panelPresetIds: panelPresetIdsFromSettings,
+			widgetRecordLite,
+			groupCatalogEntries: input.groupCatalogEntries,
+		});
+	} catch (error) {
+		workspaceLog.error("target layout could not be read", {
+			action: "persistTargetLayout:target-layout-unreadable",
+			context: {
+				targetPanelId: input.targetPanelId,
+				reason:
+					error instanceof LayoutDocumentParseError ? error.reason : "unknown",
+				message: error instanceof Error ? error.message : String(error),
+				consequence: "write aborted; existing tiles left untouched",
+			},
+		});
+		throw error;
+	}
 	const fromRecords: Record<string, WidgetType> = Object.fromEntries(
 		widgetRecords.flatMap((r) =>
 			isWidgetType(String(r.type)) ? [[r.id, r.type as WidgetType]] : [],

@@ -15,7 +15,20 @@
  * the source leaves the source state untouched.
  */
 
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import {
+	afterEach,
+	beforeAll,
+	beforeEach,
+	describe,
+	expect,
+	it,
+	vi,
+} from "vitest";
+import {
+	_resetBusForTests,
+	_setDevConsoleEnabled,
+	getEntries,
+} from "@/management/debug/logger";
 import { movePresetPlacement } from "@/management/storage";
 import { persistTargetLayout } from "./cross-panel-write";
 
@@ -232,5 +245,106 @@ describe("persistTargetLayout (Issue #146 / Blocker 11 — retry idempotency)", 
 		// source (no entry in source.presetIds, no sourceFallbackPresetIds).
 		// This is the actual round-5 / Blocker 11 idempotency contract.
 		expect(after.workspace.workspacePanels["panel-2"]?.presetIds).toEqual([]);
+	});
+});
+
+// Issue #182 — `loadTilesFromNJsonRaw` used to return `[]` for a body it
+// could not read, and `persistTargetLayout` packs new tiles onto that array
+// before overwriting `workspace-N.json`. One unreadable file therefore erased
+// every tile the target panel had.
+describe("persistTargetLayout (Issue #182 — an unreadable target is never overwritten)", () => {
+	beforeAll(() => {
+		_setDevConsoleEnabled(false);
+	});
+
+	beforeEach(() => {
+		storageMocks.readNJson.mockReset();
+		storageMocks.writeNJson.mockReset();
+		storageMocks.readWidgetRecords.mockReset();
+		storageMocks.readSettings.mockReset();
+		storageMocks.upsertWidgetRecords.mockReset();
+		storageMocks.readWidgetRecords.mockResolvedValue([]);
+		storageMocks.readSettings.mockResolvedValue("{}");
+		storageMocks.writeNJson.mockResolvedValue(undefined);
+	});
+
+	afterEach(() => {
+		vi.clearAllMocks();
+		_resetBusForTests();
+	});
+
+	const moveInput = (presetId: string) =>
+		({
+			persistenceRoot: undefined,
+			targetPanelId: "panel-2",
+			catalogIdsToMove: [presetId],
+			widgetTiles: [],
+			widgetTypes: {},
+			presets: [],
+			groupCatalogEntries: [],
+			widgetInstanceTypesOverlay: {},
+		}) as const;
+
+	const serveDisk = (body: string): Map<1 | 2 | 3 | 4 | 5, string> => {
+		const disk = new Map<1 | 2 | 3 | 4 | 5, string>([[2, body]]);
+		storageMocks.readNJson.mockImplementation(
+			async (_w: Window, index: 1 | 2 | 3 | 4 | 5) => disk.get(index) ?? null,
+		);
+		return disk;
+	};
+
+	it("leaves the target file untouched when the body is not valid JSON", async () => {
+		const corrupt = '{ "gridCells": [ { "id": "preset-a"';
+		const disk = serveDisk(corrupt);
+
+		await expect(
+			persistTargetLayout(win, moveInput("preset-b")),
+		).rejects.toThrow(/not valid JSON/);
+
+		expect(storageMocks.writeNJson).not.toHaveBeenCalled();
+		expect(storageMocks.upsertWidgetRecords).not.toHaveBeenCalled();
+		expect(disk.get(2)).toBe(corrupt);
+	});
+
+	it("leaves the target file untouched when the body is JSON but not a layout", async () => {
+		// The dangerous case: `parseLayoutDocument` returns an empty grid for
+		// any unrecognized object and never throws, so the write that follows
+		// would persist "no tiles" over a file it simply failed to understand.
+		const foreign = JSON.stringify({ somethingElse: [1, 2, 3] });
+		const disk = serveDisk(foreign);
+
+		await expect(
+			persistTargetLayout(win, moveInput("preset-b")),
+		).rejects.toThrow(/gridCells\/items/);
+
+		expect(storageMocks.writeNJson).not.toHaveBeenCalled();
+		expect(disk.get(2)).toBe(foreign);
+	});
+
+	it("writes normally when the target panel simply has no file yet", async () => {
+		storageMocks.readNJson.mockResolvedValue(null);
+
+		await persistTargetLayout(win, moveInput("preset-b"));
+
+		expect(storageMocks.writeNJson).toHaveBeenCalledTimes(1);
+	});
+
+	it("records the refusal in the Debug Console", async () => {
+		serveDisk("{ not json");
+		_setDevConsoleEnabled(false);
+
+		await expect(
+			persistTargetLayout(win, moveInput("preset-b")),
+		).rejects.toThrow();
+
+		const entry = getEntries().find(
+			(e) => e.action === "persistTargetLayout:target-layout-unreadable",
+		);
+		expect(entry, "the refusal must be observable, not silent").toBeDefined();
+		expect(entry?.context).toMatchObject({
+			targetPanelId: "panel-2",
+			reason: "json-parse-failed",
+			consequence: "write aborted; existing tiles left untouched",
+		});
 	});
 });
