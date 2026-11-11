@@ -1,51 +1,51 @@
 # Connectivity
 
-This document defines online/offline behavior and fixture/remote switching.
+This document defines online/offline behavior in the current repo.
 
 ## Source Authority
 
-All cloud connectivity implementation is under `src/management/online/`.
+Online surface implementation is under `src/management/online/`. The local core
+(workspace, local presets, preset execution) must not depend on it — see
+[`../offline-core.md`](../offline-core.md).
 
 ## Current Behavior
 
-- `createSupabaseGateway()` selects `remote` when `SUPABASE_URL` and
-  publishable key are both set, otherwise `fixture`.
-- `fixture` mode returns an **empty** preset/notification catalog; no sample fixtures are bundled. The dialog renders an empty-state, and `resolvePreset` for an unknown id throws by design (no fallback rows to mask miss-only behavior).
-- `remote` mode provides `health`, `presets/search`, `download`, `upload-url`,
-  `reports`, `presets` CRUD, `notifications`, `notification blocks`.
-- `GET /presets` returning 404 is treated as empty cloud — continues gracefully.
+- `createFixtureCloudGateway()` returns an **empty** preset/notification
+  catalog; no sample fixtures are bundled. The dialog renders an empty state,
+  and `resolvePreset` for an unknown id throws by design.
+- `createRuntimeCloudGateway()` binds the gateway to a runtime port. Without a
+  deployed backend the gateway stays **dormant**: boot failure and
+  unreachability degrade to a status display and never block the local core
+  (the `cloud-gateway-boot` degraded path, plus the old #128/#187 separation
+  fixes ported into this repo).
+- Update/notification feeds are **static JSON** fetched directly by the panel
+  (`docs/architecture/feeds.md`). They are fail-soft: fetch failure shows as
+  "取得失敗" and does not affect local features.
 
 ## Product Decision
 
 - Offline mode does not block local workspace / local preset execution.
 - Online is additive value over the local route.
-- Fixture mode is the dev/test/unset fallback, not the product value itself.
+- Fixture / dormant mode is the dev/test/unset fallback, not the product value
+  itself.
 
-## Local Persistence Contract (MVP)
-
-The **local persistence and cloud boundary slice (2026-05-02)** established:
+## Local Persistence Contract
 
 | Contract | Implementation |
 | --- | --- |
-| Local persistence is authoritative | `PresetRepository.list()` returns fixture + local store (local first). `localPresetStore` writes with `source: "local"` |
-| Cloud is non-blocking overlay | `createCloudSyncService.syncPresets()` returns `SyncStatus` only. Does not throw |
-| Core AE workflows work offline | `createSupabaseGateway({ mode: "fixture" })` returns always-safe fallback without network |
-| Deferred cloud behavior is non-precedent | Cloud `resolvePreset` is `getById` miss-only. Cloud publish/upload does not overwrite local |
+| Local persistence is authoritative | local preset store writes with `source: "local"`; local catalog read never touches the gateway |
+| Cloud is non-blocking overlay | gateway health and catalog failures surface as status only, never throw into local paths |
+| Core AE workflows work offline | unit suite runs without network; `PanelRoot.offline.test.ts` pins the wiring contract |
 
-## Deferred Cloud Behavior (Non-Blocking / Non-Precedent)
+## Not in This Repo
 
-These cloud behaviors are **deferred**. They are additional value and do not
-block offline core AE operations:
-
-| Behavior | Status | Notes |
-| --- | --- | --- |
-| `cloudSync.syncPresets()` health probe | deferred-to-online | Use `healthCheck` or `searchPresets`. `listPresets()` is not archive-compliant |
-| `searchPresets()` (market browse) | deferred-to-online | Additional search when not found in local store. Non-blocking |
-| `getPresetDownloadUrl()` | deferred-to-online | Download from cloud storage. Non-blocking |
-| `listNotifications()` | deferred-to-online | Fetch notifications. Non-blocking |
-| `submitReport()` | deferred-to-online | Send report. Non-blocking |
+The old repo's Supabase client/edge implementation was excluded from the port.
+See [supabase.md](supabase.md) for the current status and re-porting
+preconditions.
 
 ## See Also
 
-- [supabase.md](supabase.md) — Supabase implementation details
+- [feeds.md](../feeds.md) — static update/notification feed contract
+- [offline-core.md](../offline-core.md) — offline core contract
+- [supabase.md](supabase.md) — Supabase status (not ported)
 - [media-surface.md](media-surface.md) — media surface

@@ -142,7 +142,7 @@ src/management/ae/cep/entry/id.ts
 src/management/storage/
   └─ workspace state, file I/O, settings persistence
 src/management/online/
-  └─ connectivity, catalog, licensing, account
+  └─ connectivity, catalog (dormant), notification, static update feed
 src/function/widget/registry.ts
   └─ widget grid with active-now / implemented-not-exposed entries
 src/function/widget/renderWidget.ts
