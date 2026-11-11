@@ -61,15 +61,42 @@ export const createSharedPresetRepository = (
 ): PresetRepositoryLike => {
 	let localCache = normalizeLocalPresets(base.listLocalPresets());
 
+	/**
+	 * Whether `localCache` still holds the base repository's in-memory seed
+	 * rather than rows that came from (or were written to) the shared file.
+	 *
+	 * The write-back in `readSharedLocals` exists for exactly one case: the
+	 * base repository holds local rows in memory that the shared file has
+	 * never seen, so the first read has to persist them. Once the cache is
+	 * file-derived that reasoning stops applying — the file is the source of
+	 * truth, and an empty file means the rows were removed on purpose. Writing
+	 * the cache back over it would resurrect presets the user deleted, in a
+	 * different window that still holds a warm cache.
+	 *
+	 * Issue #145: this is the local catalog's stale-read decision. The catalog
+	 * is never read "before boot completes" because it does not wait for boot
+	 * at all, so the empty-result-cached-forever race the decoupling removes
+	 * does not exist here. This flag is what keeps the *next* worst thing from
+	 * taking its place.
+	 */
+	let cacheIsBaseSeed = localCache.length > 0;
+
 	const readSharedLocals = async (): Promise<Preset[]> => {
 		const rows = normalizeLocalPresets(await shared.read());
 		if (rows.length > 0) {
 			localCache = rows;
+			cacheIsBaseSeed = false;
 			return rows;
 		}
-		if (localCache.length > 0) {
+		if (cacheIsBaseSeed) {
 			await shared.write(localCache);
+			cacheIsBaseSeed = false;
+			return localCache;
 		}
+		// A successful read that produced no rows is an empty catalog, not a
+		// failed read. Drop the cached rows so a deletion made through another
+		// surface is observable here instead of being overwritten.
+		localCache = [];
 		return localCache;
 	};
 

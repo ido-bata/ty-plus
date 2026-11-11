@@ -28,6 +28,7 @@
  * and returns it directly.
  */
 
+import { useSyncExternalStore } from "react";
 import type { GatewayBootFailure } from "@/management/panel/cloud-gateway-boot";
 
 export type GatewayHealth =
@@ -189,3 +190,23 @@ export const __resetGatewayHealthForTests = (): void => {
 	_listeners.clear();
 	_hostPublisher = null;
 };
+
+/**
+ * React adapter for the gateway health store.
+ *
+ * `useSyncExternalStore` is the right tool here rather than a `useEffect` +
+ * `setState` subscription: the store already owns the state and the snapshot
+ * identity is stable across unchanged reads, so the subscription needs no
+ * effect, no cleanup bookkeeping, and no "did the value change" dependency to
+ * get wrong.
+ *
+ * Issue #145: consumers use this to show a *cloud* status note next to a
+ * surface whose own data is local. Gateway health is about the cloud only —
+ * a non-`live` health must never be the reason a local list renders empty.
+ */
+export const useGatewayHealth = (): GatewayHealth =>
+	useSyncExternalStore(
+		subscribeGatewayHealth,
+		readGatewayHealth,
+		readGatewayHealth,
+	);
