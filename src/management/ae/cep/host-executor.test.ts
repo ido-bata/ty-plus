@@ -290,7 +290,9 @@ describe("createCepHostExecutor", () => {
 // string literal on a code line is indistinguishable from a 3-digit hex colour
 // to check-design-tokens, which flags it as a colour literal.
 describe("host bundle load coordinator", () => {
-	test("an absent bundle is loaded exactly once across three executors", async () => {
+	// Repeated operations share one caller per (Window, HostId); cross-surface
+	// deduplication is covered by the shared-engine cases below.
+	test("an absent bundle is loaded exactly once across three operations", async () => {
 		const host = createFakeHost({ resident: "absent" });
 
 		await anyExecutor(host.win)("ping", []);
@@ -306,6 +308,7 @@ describe("host bundle load coordinator", () => {
 
 	test("20 concurrent first callers share a single probe and load", async () => {
 		const host = createFakeHost({ resident: "absent" });
+		// Twenty handles on one caller exercise concurrent operations.
 		const callers = Array.from({ length: 20 }, () => anyExecutor(host.win));
 
 		const results = await Promise.allSettled(
