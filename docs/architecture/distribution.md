@@ -3,6 +3,7 @@
 - Status: Accepted（release-trust経路は証明書確定まで未実装 — 下記の未充足）
 - Date: 2026-11-11
 - 正本: `rebuildup/ty-plus#222`（旧正本）/ 本repo #6 / 製品charter `docs/architecture/project.md`
+- 実行手順（build → verify → package → 公開）は `docs/operations/release-runbook.md`。本docは契約とtrust modelの定義。
 
 ## trust model
 

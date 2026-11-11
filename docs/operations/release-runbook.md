@@ -13,7 +13,7 @@
 ## 1. version確定
 
 1. `package.json` の `version` を更新する。形式は `MAJOR.MINOR.PATCH`。
-2. `bun run verify:online-gateway:package -- --trust-mode=development-unsigned --product-version=<version>` が通ることを、この時点で確認する（manifestのversion整合はこの値を基準にする）。
+2. このversionが検証probeの基準になる（手順2の `--product-version` に同じ値を渡す）。
 
 ## 2. 内部検証ビルド（development-unsigned trust）
 
