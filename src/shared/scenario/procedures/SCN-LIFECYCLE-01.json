@@ -1,0 +1,419 @@
+{
+	"scenarioId": "SCN-LIFECYCLE-01",
+	"steps": [
+		{
+			"id": "step-1",
+			"gherkinRef": { "scenarioId": "SCN-LIFECYCLE-01", "stepIndex": 0 },
+			"preconditions": [
+				"Onboarding completed (no SetupRequired widget present).",
+				"No preset named HappyPathPreset exists in the local catalog."
+			],
+			"input": { "snapshot": "precondition probe" },
+			"action": "observe_initial_panel_state",
+			"expectedResult": {
+				"uiOracle": {
+					"selector": "[data-preset-gallery]",
+					"attribute": { "name": "data-state", "value": "empty" }
+				},
+				"persistenceOracle": {
+					"storageKey": "preset:HappyPathPreset",
+					"expected": null
+				}
+			},
+			"postconditions": [
+				"Catalog is empty of HappyPathPreset.",
+				"Persisted catalog key for HappyPathPreset returns null."
+			],
+			"mutation": false,
+			"checkpoint": false
+		},
+		{
+			"id": "step-2",
+			"gherkinRef": { "scenarioId": "SCN-LIFECYCLE-01", "stepIndex": 1 },
+			"preconditions": ["Catalog is empty of HappyPathPreset."],
+			"input": {
+				"title": "HappyPathPreset",
+				"type": "expression",
+				"body": "app.alert(\"hello\")",
+				"tags": ["lifecycle"]
+			},
+			"action": "create_local_preset",
+			"expectedResult": {
+				"uiOracle": {
+					"selector": "[data-preset-gallery]",
+					"attribute": { "name": "data-state", "value": "creating" }
+				}
+			},
+			"postconditions": [
+				"Catalog row for HappyPathPreset enters the 'creating' state.",
+				"Pending persisted write has not yet completed."
+			],
+			"mutation": true,
+			"checkpoint": false
+		},
+		{
+			"id": "step-3",
+			"gherkinRef": { "scenarioId": "SCN-LIFECYCLE-01", "stepIndex": 2 },
+			"preconditions": ["Catalog row for HappyPathPreset is 'creating'."],
+			"input": {
+				"probe": "read storage:preset:HappyPathPreset + DOM catalog row"
+			},
+			"action": "checkpoint_re_observe_after_create",
+			"expectedResult": {
+				"uiOracle": {
+					"selector": "[data-directory-browser-entry][data-preset-id=\"HappyPathPreset\"]",
+					"textContent": "HappyPathPreset"
+				},
+				"persistenceOracle": {
+					"storageKey": "preset:HappyPathPreset",
+					"expected": {
+						"id": "HappyPathPreset",
+						"source": "local",
+						"body": "app.alert(\"hello\")"
+					}
+				}
+			},
+			"postconditions": [
+				"Preset appears in the catalog with source=local.",
+				"Preset asset path exists on disk (verifyPresetAsset returns exists=true)."
+			],
+			"mutation": false,
+			"checkpoint": true
+		},
+		{
+			"id": "step-4",
+			"gherkinRef": { "scenarioId": "SCN-LIFECYCLE-01", "stepIndex": 3 },
+			"preconditions": [
+				"Catalog lists preset HappyPathPreset (postcondition of step-3)."
+			],
+			"input": {
+				"selector": "[data-directory-browser-entry][data-preset-id=\"HappyPathPreset\"]",
+				"destinationTileId": "tile-A"
+			},
+			"action": "drag_preset_to_workspace_tile",
+			"expectedResult": {
+				"uiOracle": {
+					"selector": "[data-preset-id=\"HappyPathPreset\"]",
+					"attribute": { "name": "data-state", "value": "placed" }
+				},
+				"persistenceOracle": {
+					"storageKey": "layout:panel-1",
+					"expected": {
+						"version": 1,
+						"surfaceTiles": [
+							{
+								"id": "tile-A",
+								"x": 0,
+								"y": 0,
+								"width": 2,
+								"height": 1,
+								"presetId": "HappyPathPreset"
+							}
+						]
+					}
+				}
+			},
+			"postconditions": [
+				"panel-1 layout has exactly one tile referencing HappyPathPreset."
+			],
+			"mutation": true,
+			"checkpoint": false
+		},
+		{
+			"id": "step-5",
+			"gherkinRef": { "scenarioId": "SCN-LIFECYCLE-01", "stepIndex": 4 },
+			"preconditions": ["tile-A on panel-1 references HappyPathPreset."],
+			"input": { "probe": "read layout:panel-1 + DOM tile elements" },
+			"action": "checkpoint_re_observe_after_placement",
+			"expectedResult": {
+				"persistenceOracle": {
+					"storageKey": "layout:panel-1",
+					"expected": {
+						"version": 1,
+						"surfaceTiles": [
+							{
+								"id": "tile-A",
+								"x": 0,
+								"y": 0,
+								"width": 2,
+								"height": 1,
+								"presetId": "HappyPathPreset"
+							}
+						]
+					}
+				}
+			},
+			"postconditions": ["Re-observe confirms the placement."],
+			"mutation": false,
+			"checkpoint": true
+		},
+		{
+			"id": "step-6",
+			"gherkinRef": { "scenarioId": "SCN-LIFECYCLE-01", "stepIndex": 5 },
+			"preconditions": ["tile-A on panel-1 references HappyPathPreset."],
+			"input": { "fromTileId": "tile-A", "toTileId": "tile-B" },
+			"action": "move_preset_within_workspace",
+			"expectedResult": {
+				"persistenceOracle": {
+					"storageKey": "layout:panel-1",
+					"expected": {
+						"version": 2,
+						"surfaceTiles": [
+							{
+								"id": "tile-B",
+								"x": 2,
+								"y": 0,
+								"width": 2,
+								"height": 1,
+								"presetId": "HappyPathPreset"
+							}
+						]
+					}
+				}
+			},
+			"postconditions": ["tile-B on panel-1 references HappyPathPreset."],
+			"mutation": true,
+			"checkpoint": false
+		},
+		{
+			"id": "step-7",
+			"gherkinRef": { "scenarioId": "SCN-LIFECYCLE-01", "stepIndex": 6 },
+			"preconditions": ["tile-B on panel-1 references HappyPathPreset."],
+			"input": { "probe": "read layout:panel-1 + DOM tile elements" },
+			"action": "checkpoint_re_observe_after_within_workspace_move",
+			"expectedResult": {
+				"persistenceOracle": {
+					"storageKey": "layout:panel-1",
+					"expected": {
+						"version": 2,
+						"surfaceTiles": [
+							{
+								"id": "tile-B",
+								"x": 2,
+								"y": 0,
+								"width": 2,
+								"height": 1,
+								"presetId": "HappyPathPreset"
+							}
+						]
+					}
+				}
+			},
+			"postconditions": ["Re-observe confirms the within-workspace move."],
+			"mutation": false,
+			"checkpoint": true
+		},
+		{
+			"id": "step-8",
+			"gherkinRef": { "scenarioId": "SCN-LIFECYCLE-01", "stepIndex": 7 },
+			"preconditions": ["tile-B on panel-1 references HappyPathPreset."],
+			"input": {
+				"simulate": "panel reload (re-init React tree, rehydrate from JSON)"
+			},
+			"action": "simulate_panel_reload",
+			"expectedResult": {
+				"persistenceOracle": {
+					"storageKey": "layout:panel-1",
+					"expected": {
+						"version": 2,
+						"surfaceTiles": [
+							{
+								"id": "tile-B",
+								"x": 2,
+								"y": 0,
+								"width": 2,
+								"height": 1,
+								"presetId": "HappyPathPreset"
+							}
+						]
+					}
+				}
+			},
+			"postconditions": [
+				"tile-B on panel-1 still references HappyPathPreset post-reload."
+			],
+			"mutation": true,
+			"checkpoint": false
+		},
+		{
+			"id": "step-9",
+			"gherkinRef": { "scenarioId": "SCN-LIFECYCLE-01", "stepIndex": 8 },
+			"preconditions": ["Panel was just reloaded."],
+			"input": {
+				"probe": "read layout:panel-1 + DOM tile elements after reload"
+			},
+			"action": "checkpoint_re_observe_after_reload",
+			"expectedResult": {
+				"persistenceOracle": {
+					"storageKey": "layout:panel-1",
+					"expected": {
+						"version": 2,
+						"surfaceTiles": [
+							{
+								"id": "tile-B",
+								"x": 2,
+								"y": 0,
+								"width": 2,
+								"height": 1,
+								"presetId": "HappyPathPreset"
+							}
+						]
+					}
+				}
+			},
+			"postconditions": ["Reload persisted state matches pre-reload state."],
+			"mutation": false,
+			"checkpoint": true
+		},
+		{
+			"id": "step-10",
+			"gherkinRef": { "scenarioId": "SCN-LIFECYCLE-01", "stepIndex": 9 },
+			"preconditions": [
+				"tile-B on panel-1 references HappyPathPreset (post-reload).",
+				"panel-2 has empty tile tile-X."
+			],
+			"input": {
+				"fromPanel": "panel-1",
+				"fromTileId": "tile-B",
+				"toPanel": "panel-2",
+				"toTileId": "tile-X"
+			},
+			"action": "cross_panel_move_preset",
+			"expectedResult": {
+				"persistenceOracle": {
+					"storageKey": "layout:panel-1",
+					"expected": {
+						"version": 3,
+						"surfaceTiles": []
+					}
+				},
+				"logOracle": {
+					"scope": "workspace",
+					"minLevel": "info",
+					"messageContains": "cross-panel-move",
+					"id": "log-cross-panel-move"
+				}
+			},
+			"postconditions": [
+				"panel-2's tile-X references HappyPathPreset.",
+				"panel-1 has NO surface tile referencing HappyPathPreset (no orphan)."
+			],
+			"mutation": true,
+			"checkpoint": false
+		},
+		{
+			"id": "step-11",
+			"gherkinRef": { "scenarioId": "SCN-LIFECYCLE-01", "stepIndex": 10 },
+			"preconditions": ["panel-2 tile-X references HappyPathPreset."],
+			"input": { "probe": "read layout:panel-1 + layout:panel-2" },
+			"action": "checkpoint_re_observe_after_cross_panel_move",
+			"expectedResult": {
+				"persistenceOracle": {
+					"storageKey": "layout:panel-2",
+					"expected": {
+						"version": 1,
+						"surfaceTiles": [
+							{
+								"id": "tile-X",
+								"x": 0,
+								"y": 0,
+								"width": 2,
+								"height": 1,
+								"presetId": "HappyPathPreset"
+							}
+						]
+					}
+				}
+			},
+			"postconditions": [
+				"Target panel tile renders the preset AND source panel has no orphan tile."
+			],
+			"mutation": false,
+			"checkpoint": true
+		},
+		{
+			"id": "step-12",
+			"gherkinRef": { "scenarioId": "SCN-LIFECYCLE-01", "stepIndex": 11 },
+			"preconditions": ["panel-2 tile-X references HappyPathPreset."],
+			"input": { "simulate": "panel-2 restart (process exit + relaunch)" },
+			"action": "simulate_panel_restart",
+			"expectedResult": {
+				"persistenceOracle": {
+					"storageKey": "layout:panel-2",
+					"expected": {
+						"version": 1,
+						"surfaceTiles": [
+							{
+								"id": "tile-X",
+								"x": 0,
+								"y": 0,
+								"width": 2,
+								"height": 1,
+								"presetId": "HappyPathPreset"
+							}
+						]
+					}
+				}
+			},
+			"postconditions": [
+				"Panel-2 tile-X still references HappyPathPreset post-restart."
+			],
+			"mutation": true,
+			"checkpoint": false
+		},
+		{
+			"id": "step-13",
+			"gherkinRef": { "scenarioId": "SCN-LIFECYCLE-01", "stepIndex": 12 },
+			"preconditions": ["Panel-2 was just restarted."],
+			"input": { "probe": "read layout:panel-2 after restart" },
+			"action": "checkpoint_re_observe_after_panel_restart",
+			"expectedResult": {
+				"persistenceOracle": {
+					"storageKey": "layout:panel-2",
+					"expected": {
+						"version": 1,
+						"surfaceTiles": [
+							{
+								"id": "tile-X",
+								"x": 0,
+								"y": 0,
+								"width": 2,
+								"height": 1,
+								"presetId": "HappyPathPreset"
+							}
+						]
+					}
+				}
+			},
+			"postconditions": [
+				"Persisted state on the target panel only, with no orphaned reference on the source panel.",
+				"Final scenario verdict candidate: PASS, awaiting both oracle families to confirm."
+			],
+			"mutation": false,
+			"checkpoint": true
+		}
+	],
+	"cleanup": [
+		{
+			"id": "cleanup-1",
+			"preconditions": ["Scenario verdict resolved."],
+			"input": {
+				"presetId": "HappyPathPreset",
+				"panels": ["panel-1", "panel-2"]
+			},
+			"action": "delete_local_preset_and_layouts",
+			"expectedResult": {
+				"persistenceOracle": {
+					"storageKey": "preset:HappyPathPreset",
+					"expected": null
+				}
+			},
+			"postconditions": [
+				"storage:preset:HappyPathPreset is null.",
+				"storage:layout:panel-1 and storage:layout:panel-2 have no surface tiles."
+			],
+			"mutation": true,
+			"checkpoint": false
+		}
+	]
+}

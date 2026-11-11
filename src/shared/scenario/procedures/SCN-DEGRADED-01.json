@@ -1,0 +1,149 @@
+{
+	"scenarioId": "SCN-DEGRADED-01",
+	"steps": [
+		{
+			"id": "step-1",
+			"gherkinRef": { "scenarioId": "SCN-DEGRADED-01", "stepIndex": 0 },
+			"preconditions": ["Onboarding completed.", "Cloud gateway is reachable."],
+			"input": { "snapshot": "online state probe" },
+			"action": "observe_online_state",
+			"expectedResult": {
+				"hostStateOracle": {
+					"method": "evalScript",
+					"script": "$.global.__TY_PLUS_HOST__.tyPlusProbeOnlineState()",
+					"expected": { "equals": "online" }
+				}
+			},
+			"postconditions": ["Cloud gateway reports 'online'."],
+			"mutation": false,
+			"checkpoint": false
+		},
+		{
+			"id": "step-2",
+			"gherkinRef": { "scenarioId": "SCN-DEGRADED-01", "stepIndex": 1 },
+			"preconditions": ["Cloud gateway is reachable."],
+			"input": { "simulate": "network probe failure" },
+			"action": "simulate_cloud_gateway_failure",
+			"expectedResult": {
+				"hostStateOracle": {
+					"method": "evalScript",
+					"script": "$.global.__TY_PLUS_HOST__.tyPlusProbeOnlineState()",
+					"expected": { "equals": "degraded" }
+				},
+				"logOracle": {
+					"scope": "online",
+					"minLevel": "warn",
+					"messageContains": "gateway degraded",
+					"id": "log-gateway-degraded"
+				}
+			},
+			"postconditions": [
+				"Cloud gateway reports 'degraded'.",
+				"Log bus records a warn entry with scope 'online'."
+			],
+			"mutation": true,
+			"checkpoint": false
+		},
+		{
+			"id": "step-3",
+			"gherkinRef": { "scenarioId": "SCN-DEGRADED-01", "stepIndex": 2 },
+			"preconditions": ["Cloud gateway has just become unreachable."],
+			"input": { "probe": "read host online state + log bus" },
+			"action": "checkpoint_re_observe_after_degraded_switch",
+			"expectedResult": {
+				"hostStateOracle": {
+					"method": "evalScript",
+					"script": "$.global.__TY_PLUS_HOST__.tyPlusProbeOnlineState()",
+					"expected": { "equals": "degraded" }
+				},
+				"logOracle": {
+					"scope": "online",
+					"minLevel": "warn",
+					"messageContains": "gateway degraded",
+					"id": "log-gateway-degraded-postcheckpoint"
+				}
+			},
+			"postconditions": [
+				"Cloud gateway still reports 'degraded'.",
+				"Log bus carries the 'gateway degraded' warn entry."
+			],
+			"mutation": false,
+			"checkpoint": true
+		},
+		{
+			"id": "step-4",
+			"gherkinRef": { "scenarioId": "SCN-DEGRADED-01", "stepIndex": 4 },
+			"preconditions": ["Cloud is in degraded mode."],
+			"input": {
+				"title": "FallbackPreset",
+				"type": "expression",
+				"body": "app.alert(\"fallback\")"
+			},
+			"action": "create_local_preset_in_degraded_mode",
+			"expectedResult": {
+				"uiOracle": {
+					"selector": "[data-preset-gallery]",
+					"attribute": { "name": "data-state", "value": "creating" }
+				}
+			},
+			"postconditions": ["Local fallback write is dispatched."],
+			"mutation": true,
+			"checkpoint": false
+		},
+		{
+			"id": "step-5",
+			"gherkinRef": { "scenarioId": "SCN-DEGRADED-01", "stepIndex": 5 },
+			"preconditions": ["Local fallback write dispatched."],
+			"input": {
+				"probe": "read storage:preset:FallbackPreset + DOM catalog row + network log"
+			},
+			"action": "checkpoint_re_observe_after_degraded_create",
+			"expectedResult": {
+				"uiOracle": {
+					"selector": "[data-directory-browser-entry][data-preset-id=\"FallbackPreset\"]",
+					"textContent": "FallbackPreset"
+				},
+				"persistenceOracle": {
+					"storageKey": "preset:FallbackPreset",
+					"expected": {
+						"id": "FallbackPreset",
+						"source": "local",
+						"body": "app.alert(\"fallback\")"
+					}
+				},
+				"logOracle": {
+					"scope": "online",
+					"minLevel": "info",
+					"messageContains": "local-fallback-write",
+					"id": "log-local-fallback-write"
+				}
+			},
+			"postconditions": [
+				"Catalog row 'FallbackPreset' is rendered.",
+				"storage:preset:FallbackPreset contains the preset object.",
+				"No online write is attempted (the local-fallback-write log is the only write evidence)."
+			],
+			"mutation": false,
+			"checkpoint": true
+		}
+	],
+	"cleanup": [
+		{
+			"id": "cleanup-1",
+			"preconditions": ["Scenario verdict resolved."],
+			"input": { "presetId": "FallbackPreset" },
+			"action": "delete_local_preset_and_reset_cloud_state",
+			"expectedResult": {
+				"persistenceOracle": {
+					"storageKey": "preset:FallbackPreset",
+					"expected": null
+				}
+			},
+			"postconditions": [
+				"storage:preset:FallbackPreset is null so the next run starts clean."
+			],
+			"mutation": true,
+			"checkpoint": false
+		}
+	]
+}

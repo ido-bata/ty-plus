@@ -1,0 +1,237 @@
+{
+	"codePreset": {
+		"codeType": "Code type",
+		"editor": {
+			"expression": "Expression",
+			"script": "Script code (.jsx)"
+		},
+		"saveLocation": "Save location",
+		"savePreview": "Save preview",
+		"status": {
+			"fileExists": "File already exists — will be overwritten",
+			"success": "Preset saved successfully!"
+		},
+		"type": {
+			"expression": "Expression",
+			"script": "Script"
+		}
+	},
+	"common": {
+		"browseFolder": "Обзор папки",
+		"copyPath": "Копировать путь",
+		"selectFile": "Выбрать файл"
+	},
+	"layerCompPreset": {
+		"desc": {
+			"comp": "Open the composition you want to save. Project must be saved first.",
+			"layer": "Select the layers you want to save. Project must be saved first."
+		},
+		"hint": {
+			"saveButton": "Press \"Create\" at the bottom of the dialog to save."
+		},
+		"savePreview": "Save preview",
+		"step1": {
+			"title": "Preset type"
+		},
+		"step2": {
+			"title": "Prepare in After Effects"
+		},
+		"step3": {
+			"title": "Save location"
+		},
+		"type": {
+			"comp": "Composition",
+			"layer": "Layer"
+		}
+	},
+	"search": {
+		"title": "Поиск пресетов",
+		"placeholder": "Введите для поиска...",
+		"empty": "Пресеты не найдены"
+	},
+	"online": {
+		"loading": "Загрузка...",
+		"empty": "Онлайн-пресеты недоступны"
+	},
+	"presetTool": {
+		"form": {
+			"presetId": "ID пресета",
+			"presetIdPlaceholder": "ID пресета",
+			"displayName": "Отображаемое имя",
+			"displayNamePlaceholder": "Отображаемое имя",
+			"filePath": "Путь к файлу",
+			"description": "Описание",
+			"descriptionPlaceholder": "Описание (необязательно)",
+			"descriptionImage": "Изображение описания",
+			"descriptionImagePlaceholder": "Путь или URL изображения",
+			"descriptionImageBrowse": "Обзор изображения",
+			"details": "Подробности",
+			"presetName": "Имя пресета",
+			"icon": "Значок",
+			"savePath": "Путь сохранения"
+		},
+		"create": "Создать",
+		"status": {
+			"ready": "Готово",
+			"loading": "Загрузка пресета…",
+			"loaded": "Редактирование: {{id}}",
+			"unknownPreset": "Пресет не найден: {{id}}",
+			"loadFailed": "Не удалось загрузить пресет: {{message}}",
+			"invalidId": "Неверный ID пресета",
+			"filePathRequired": "Путь к файлу обязателен",
+			"saved": "Сохранено: {{id}}",
+			"saveFailed": "Ошибка сохранения: {{message}}",
+			"saving": "Сохранение..."
+		},
+		"animation": {
+			"title": "Пресет анимации",
+			"lead": "Значения по умолчанию для ключевых кадров или выражений, упакованные как переиспользуемый анимационный пресет.",
+			"defaultName": "Пресет анимации",
+			"fields": {
+				"saveFolder": "Папка сохранения",
+				"path": "Путь к пресету анимации",
+				"pathPlaceholder": "Необязательный путь к существующему .ffx"
+			}
+		},
+		"footage": {
+			"title": "Пресет footage",
+			"lead": "Ярлыки pipeline footage (импорт, замена, прокси). Реальные файлы импортируются как footage.",
+			"defaultName": "Пресет footage",
+			"fields": {
+				"path": "Путь к футажу",
+				"mode": "Режим импорта"
+			}
+		},
+		"layerComp": {
+			"title": "Пресет слоя / композиции",
+			"lead": "Операции со слоями и композициями (трансформация, дублирование, прекомпоз). Сохранённые скрипты выполняются в After Effects.",
+			"defaultName": "Пресет слоя/композиции"
+		},
+		"import": {
+			"title": "Пресет импорта",
+			"lead": "Пакеты путей импорта или импортёров выделения. Повторно использует pipeline пресета footage, когда ваш рабочий процесс использует эти обработчики.",
+			"defaultName": "Пресет импорта",
+			"fields": {
+				"path": "Путь импорта",
+				"strategy": "Стратегия"
+			}
+		},
+		"code": {
+			"title": "Пресет кода",
+			"lead": "Создать локальный пресет кода/скрипта.",
+			"extra": "Сохранённые скрипты выполняются в After Effects.",
+			"defaultName": "Пресет кода",
+			"editor": {
+				"format": "Format Document",
+				"formatTooltip": "Format the script body",
+				"diagnosticCount": "{{count}} problem",
+				"diagnosticCount_other": "{{count}} problems"
+			}
+		},
+		"easing": {
+			"title": "Пресет сглаживания",
+			"lead": "Создать локальный пресет сглаживания.",
+			"curveHint": "Хостовое сглаживание (cubic-bezier). Эта кривая сохраняется при сохранении из контекста AE.",
+			"openWithSelectionHint": "Откройте этот диалог из рабочей области с выбором сглаживания, чтобы встроить превью кривой.",
+			"ariaPreview": "Превью кривой сглаживания",
+			"editTitle": "Редактировать пресет easing",
+			"defaultName": "Пресет easing",
+			"curve": "Кривая",
+			"invalidCurve": "Кривая должна быть JSON-массивом из четырех чисел."
+		},
+		"addFile": {
+			"title": "Добавить файловый пресет",
+			"lead": "Зарегистрировать локальный пресет с файловой поддержкой из рабочей области. Расширение определяет тип пресета."
+		},
+		"addFolder": {
+			"title": "Добавить папку / группу",
+			"lead": "Зарегистрировать папку или группу для организации плиток."
+		},
+		"localPreset": "Локальный пресет",
+		"groupPreset": "Групповой пресет",
+		"animationLabel": "Анимация",
+		"layerCompLabel": "Слой/Композиция",
+		"codeLabel": "Код",
+		"presetLibrary": "Библиотека пресетов",
+		"messages": "Сообщения",
+		"settings": "Настройки",
+		"debugConsole": "Консоль отладки",
+		"cancel": "Отмена",
+		"boot": {
+			"title": "Диалог пресета",
+			"preparing": "Подготовка диалога пресета...",
+			"handoffError": "Не удалось получить информацию о запуске диалога пресета. Откройте его снова из рабочего пространства."
+		},
+		"generic": {
+			"title": "Создать пресет",
+			"lead": "Создайте локальный пресет из переиспользуемых метаданных.",
+			"defaultName": "Локальный пресет"
+		}
+	},
+	"animationPreset": {
+		"step1": {
+			"title": "Select in After Effects",
+			"desc": "Select properties or layers you want to save as preset"
+		},
+		"step2": {
+			"title": "Save to this folder"
+		},
+		"step3": {
+			"button": "Save Animation Preset",
+			"detecting": "Detecting..."
+		},
+		"status": {
+			"success": "Detected!",
+			"noSelection": "No selection",
+			"noSelectionHint": "Select properties or layers in AE first",
+			"timeout": "Scan timeout",
+			"timeoutHint": "Choose a smaller folder",
+			"error": "Not detected",
+			"errorHint": "Save to the folder above"
+		},
+		"path": {
+			"reset": "Reset to default",
+			"notConfigured": "Not configured"
+		}
+	},
+	"edit": {
+		"title": "Редактировать пресет",
+		"delete": "Удалить",
+		"save": "Сохранить",
+		"cancel": "Отмена",
+		"status": {
+			"loading": "Загрузка пресета…",
+			"saved": "Сохранено",
+			"deleted": "Удалено",
+			"saveFailed": "Ошибка сохранения: {{message}}",
+			"deleteFailed": "Ошибка удаления: {{message}}"
+		},
+		"fields": {
+			"presetName": "Название пресета",
+			"description": "Описание",
+			"icon": "Иконка",
+			"iconText": "Текст",
+			"iconEmoji": "Эмодзи",
+			"iconTextPlaceholder": "Текст (напр. КОД)",
+			"iconEmojiPlaceholder": "Эмодзи (напр. ⚡)",
+			"filePath": "Путь к файлу",
+			"type": "Тип",
+			"presetNamePlaceholder": "Введите имя пресета"
+		},
+		"titleForType": {
+			"preset": "Пресет",
+			"script": "Скрипт-пресет",
+			"plugin": "Плагин-пресет",
+			"footage": "Футаж-пресет"
+		}
+	},
+	"group": {
+		"title": "Создать группу пресетов",
+		"lead": "Объедините несколько пресетов в одну плитку.",
+		"defaultName": "Группа пресетов",
+		"fields": {
+			"groupName": "Имя группы",
+			"groupNamePlaceholder": "Введите имя группы"
+		}
+	}
+}

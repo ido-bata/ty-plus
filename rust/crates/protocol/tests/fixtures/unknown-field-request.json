@@ -1,0 +1,19 @@
+{
+  "kind": "request",
+  "message": {
+    "protocol_version": {
+      "major": 1,
+      "minor": 0
+    },
+    "metadata": {
+      "request_id": "request-fixture",
+      "session_id": "session-fixture",
+      "deadline_unix_ms": 1700000060000,
+      "cancellable": true,
+      "idempotency_key": "write-fixture",
+      "unexpected": true
+    },
+    "method": "storage.write",
+    "payload": null
+  }
+}

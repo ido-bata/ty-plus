@@ -1,0 +1,172 @@
+{
+	"scenarioId": "SCN-PRESET-CRUD-01",
+	"steps": [
+		{
+			"id": "step-1",
+			"gherkinRef": { "scenarioId": "SCN-PRESET-CRUD-01", "stepIndex": 0 },
+			"preconditions": ["Onboarding completed.", "Catalog is empty."],
+			"input": { "snapshot": "empty-catalog-and-workspace probe" },
+			"action": "observe_empty_catalog_and_workspace",
+			"expectedResult": {
+				"persistenceOracle": {
+					"storageKey": "preset:QuickPreset",
+					"expected": null
+				}
+			},
+			"postconditions": ["storage:preset:QuickPreset is null."],
+			"mutation": false,
+			"checkpoint": false
+		},
+		{
+			"id": "step-2",
+			"gherkinRef": { "scenarioId": "SCN-PRESET-CRUD-01", "stepIndex": 1 },
+			"preconditions": ["storage:preset:QuickPreset is null."],
+			"input": {
+				"title": "QuickPreset",
+				"type": "expression",
+				"body": "app.alert(\"ok\")"
+			},
+			"action": "create_local_preset",
+			"expectedResult": {
+				"uiOracle": {
+					"selector": "[data-preset-gallery]",
+					"attribute": { "name": "data-state", "value": "creating" }
+				}
+			},
+			"postconditions": [
+				"Preset gallery enters the 'creating' state for QuickPreset."
+			],
+			"mutation": true,
+			"checkpoint": false
+		},
+		{
+			"id": "step-3",
+			"gherkinRef": { "scenarioId": "SCN-PRESET-CRUD-01", "stepIndex": 2 },
+			"preconditions": ["Preset gallery is in 'creating' state."],
+			"input": {
+				"probe": "read storage:preset:QuickPreset + DOM directory browser entry"
+			},
+			"action": "checkpoint_re_observe_after_create",
+			"expectedResult": {
+				"uiOracle": {
+					"selector": "[data-directory-browser-entry][data-preset-id=\"QuickPreset\"]",
+					"textContent": "QuickPreset"
+				},
+				"persistenceOracle": {
+					"storageKey": "preset:QuickPreset",
+					"expected": {
+						"id": "QuickPreset",
+						"source": "local",
+						"body": "app.alert(\"ok\")"
+					}
+				}
+			},
+			"postconditions": [
+				"Catalog row 'QuickPreset' is rendered.",
+				"Asset file exists on disk for QuickPreset."
+			],
+			"mutation": false,
+			"checkpoint": true
+		},
+		{
+			"id": "step-4",
+			"gherkinRef": { "scenarioId": "SCN-PRESET-CRUD-01", "stepIndex": 3 },
+			"preconditions": ["Catalog row 'QuickPreset' is rendered."],
+			"input": { "presetId": "QuickPreset", "body": "app.alert(\"updated\")" },
+			"action": "edit_preset_body",
+			"expectedResult": {
+				"uiOracle": {
+					"selector": "[data-directory-browser-entry][data-preset-id=\"QuickPreset\"]",
+					"attribute": { "name": "data-state", "value": "editing" }
+				}
+			},
+			"postconditions": ["Pending persisted write for the preset body edit."],
+			"mutation": true,
+			"checkpoint": false
+		},
+		{
+			"id": "step-5",
+			"gherkinRef": { "scenarioId": "SCN-PRESET-CRUD-01", "stepIndex": 4 },
+			"preconditions": ["Edit dispatch is in-flight."],
+			"input": {
+				"probe": "read storage:preset:QuickPreset + asset file content"
+			},
+			"action": "checkpoint_re_observe_after_edit",
+			"expectedResult": {
+				"persistenceOracle": {
+					"storageKey": "preset:QuickPreset",
+					"expected": {
+						"id": "QuickPreset",
+						"source": "local",
+						"body": "app.alert(\"updated\")"
+					}
+				}
+			},
+			"postconditions": [
+				"Catalog row body is updated.",
+				"Asset file content matches the new body."
+			],
+			"mutation": false,
+			"checkpoint": true
+		},
+		{
+			"id": "step-6",
+			"gherkinRef": { "scenarioId": "SCN-PRESET-CRUD-01", "stepIndex": 5 },
+			"preconditions": ["QuickPreset body is updated."],
+			"input": { "presetId": "QuickPreset" },
+			"action": "delete_preset",
+			"expectedResult": {
+				"uiOracle": {
+					"selector": "[data-directory-browser-entry][data-preset-id=\"QuickPreset\"]",
+					"attribute": { "name": "data-state", "value": "deleting" }
+				}
+			},
+			"postconditions": ["Pending persisted write for the preset delete."],
+			"mutation": true,
+			"checkpoint": false
+		},
+		{
+			"id": "step-7",
+			"gherkinRef": { "scenarioId": "SCN-PRESET-CRUD-01", "stepIndex": 6 },
+			"preconditions": ["Delete dispatch is in-flight."],
+			"input": { "probe": "read storage:preset:QuickPreset + asset file" },
+			"action": "checkpoint_re_observe_after_delete",
+			"expectedResult": {
+				"persistenceOracle": {
+					"storageKey": "preset:QuickPreset",
+					"expected": null
+				},
+				"uiOracle": {
+					"selector": "[data-directory-browser-entry][data-preset-id=\"QuickPreset\"]",
+					"attribute": { "name": "data-state", "value": "absent" }
+				}
+			},
+			"postconditions": [
+				"Catalog list does not contain QuickPreset.",
+				"Asset file is removed from disk."
+			],
+			"mutation": false,
+			"checkpoint": true
+		}
+	],
+	"cleanup": [
+		{
+			"id": "cleanup-1",
+			"preconditions": ["Scenario verdict resolved."],
+			"input": { "presetId": "QuickPreset" },
+			"action": "delete_local_preset_and_asset",
+			"expectedResult": {
+				"persistenceOracle": {
+					"storageKey": "preset:QuickPreset",
+					"expected": null
+				}
+			},
+			"postconditions": [
+				"storage:preset:QuickPreset is null.",
+				"Asset file is removed."
+			],
+			"mutation": true,
+			"checkpoint": false
+		}
+	]
+}

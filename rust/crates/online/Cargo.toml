@@ -1,0 +1,18 @@
+[package]
+name = "ty-plus-online"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+chrono = "0.4"
+reqwest = { version = "0.12", features = ["blocking", "rustls-tls"], default-features = false }
+serde = { version = "1.0.217", features = ["derive"] }
+serde_json = "1.0.138"
+sha2 = "0.10"
+url = "2.5"
+
+[lints]
+workspace = true

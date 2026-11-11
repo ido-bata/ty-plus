@@ -1,0 +1,37 @@
+{
+	"widgets": {
+		"align": {
+			"alignLeft": "左对齐",
+			"alignCenterH": "水平居中对齐",
+			"alignRight": "右对齐",
+			"alignTop": "顶部对齐",
+			"alignCenterV": "垂直居中对齐",
+			"alignBottom": "底部对齐"
+		},
+		"layoutLock": {
+			"lock": "锁定布局",
+			"unlock": "解锁布局"
+		},
+		"projectInfo": {
+			"dimensions": "尺寸",
+			"timing": "时间",
+			"layers": "图层"
+		}
+	},
+	"controlPanel": {
+		"expand": "展开",
+		"collapse": "折叠",
+		"position": "位置",
+		"orientation": "方向"
+	},
+	"context": {
+		"lock": "锁定",
+		"unlock": "解锁",
+		"addWidget": "添加小组件",
+		"deleteWidget": "删除小组件",
+		"refresh": "刷新"
+	},
+	"widgetSearch": {
+		"placeholder": "搜索预设…"
+	}
+}

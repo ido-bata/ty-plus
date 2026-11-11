@@ -1,10 +1,43 @@
 node_modules/
 dist/
-build/
 coverage/
-.env
-.env.*
-!.env.example
-*.zxp
+artifacts/
+*.local
+*.log
+*.tsbuildinfo
 .DS_Store
+.rnd
+.worktrees/
+ty-plus-worktrees/
+.tmp/
+*.zxp
 .mise/
+
+# Dotenv files are local-only. `.env.example` is a documentation-only schema
+# with no real values. Every other `.env.*` variant stays ignored.
+.env*
+!.env.example
+
+reference/
+.vscode/
+
+src/**/*.d.ts.map
+src/**/*.d.ts
+!src/management/preset/editor/monaco-initialize.d.ts
+!src/management/preset/editor/vite-env.d.ts
+!src/vite-env.d.ts
+src/management/ae/jsx/*.bundle.js
+
+# Test runs that accidentally resolve a real write root may drop files into
+# `./undefined/...` (path is the literal string "undefined"). Never commit
+# this directory; it is never a valid support-root output.
+/undefined/
+
+# Storybook static build output. Regenerated locally; never commit.
+storybook-static/
+
+# Storybook browser-test screenshot output (regenerated on every run).
+src/**/__screenshots__/
+
+# PandaCSS generated runtime (regenerated on `bun install` via `prepare`).
+styled-system/

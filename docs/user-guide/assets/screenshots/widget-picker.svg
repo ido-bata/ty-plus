@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-label="ty-plus widget picker placeholder">
+  <rect width="1280" height="720" fill="#17191f"/>
+  <rect x="220" y="80" width="840" height="560" rx="12" fill="#252a34" stroke="#596276"/>
+  <text x="270" y="138" fill="#f2f4f8" font-family="Arial, sans-serif" font-size="30">Add Widget</text>
+  <rect x="270" y="170" width="740" height="48" rx="8" fill="#323948"/>
+  <text x="295" y="201" fill="#b8c0cc" font-family="Arial, sans-serif" font-size="18">Search by name or description...</text>
+  <g fill="#303746" stroke="#596276">
+    <rect x="270" y="250" width="220" height="120" rx="8"/>
+    <rect x="530" y="250" width="220" height="120" rx="8"/>
+    <rect x="790" y="250" width="220" height="120" rx="8"/>
+    <rect x="270" y="400" width="220" height="120" rx="8"/>
+    <rect x="530" y="400" width="220" height="120" rx="8"/>
+    <rect x="790" y="400" width="220" height="120" rx="8"/>
+  </g>
+  <g fill="#f2f4f8" font-family="Arial, sans-serif" font-size="19">
+    <text x="310" y="315">Easing</text>
+    <text x="570" y="315">Menu</text>
+    <text x="830" y="315">Quick Actions</text>
+    <text x="310" y="465">Directory</text>
+    <text x="570" y="465">Font Viewer</text>
+    <text x="830" y="465">Info</text>
+  </g>
+</svg>

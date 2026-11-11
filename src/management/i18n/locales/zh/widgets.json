@@ -1,0 +1,269 @@
+{
+	"selector": {
+		"search": "搜索小组件",
+		"addWidget": "添加小组件",
+		"searchPlaceholder": "按名称或描述搜索…",
+		"hintShortcuts": "方向键：移动 · Enter（搜索中）：添加 · 双击：添加 · Esc：关闭",
+		"listView": "列表视图",
+		"iconView": "卡片视图",
+		"fieldsetLegend": "小组件浏览器布局",
+		"descriptions": {
+			"easing": "编辑并应用预设和图层动画的缓动曲线。",
+			"menu": "从一个图块打开工作区命令、布局操作和对话框。",
+			"align": "将选定的预设或图层对齐到网格上的常用位置。",
+			"anchor-point": "为布局参考和捕捉工作流放置命名锚点。",
+			"layout-lock": "在您排列工作区网格时防止意外移动。",
+			"info": "在宽摘要图块中显示预设元数据、路径和状态。",
+			"quick-actions": "从紧凑命令面板运行脚本、效果和文件操作。",
+			"directory-browser": "从面板内浏览磁盘文件夹和预设。",
+			"font-viewer": "在工作区中预览字体系列、样式和示例文本。"
+		}
+	},
+	"types": {
+		"align": "对齐",
+		"preset": "预设选择器"
+	},
+	"categories": {
+		"core": "核心",
+		"utility": "实用工具",
+		"media": "媒体",
+		"phase4": "实验性"
+	},
+	"search": {
+		"name": "搜索"
+	},
+	"easing": {
+		"name": "Easing",
+		"apply": "Apply",
+		"copyFromSelection": "Copy from selection",
+		"reverse": "Reverse",
+		"mode": {
+			"curve": "Curve",
+			"loop": "Loop",
+			"bounce": "Bounce",
+			"elastic": "Elastic"
+		},
+		"loop": {
+			"cycles": "循环",
+			"decrement": "减少循环",
+			"increment": "增加循环"
+		},
+		"options": {
+			"mode": "Mode",
+			"grid": "Grid",
+			"label": "Label"
+		},
+		"background": {
+			"dots": "Dots",
+			"grid": "Grid"
+		},
+		"label": {
+			"none": "None"
+		},
+		"applyMode": {
+			"single": "Single",
+			"pair": "Each"
+		},
+		"status": {
+			"applying": "Applying",
+			"applied": "Applied",
+			"failed": "Failed"
+		},
+		"presets": {
+			"linear": "Linear",
+			"easeOut": "Ease out",
+			"easeIn": "Ease in",
+			"easeInOut": "Ease in/out"
+		}
+	},
+	"menu": {
+		"name": "菜单",
+		"createPreset": "创建预设",
+		"addWidget": "添加小组件",
+		"saveLayout": "保存布局",
+		"reload": "重新加载",
+		"lockLayout": "锁定布局",
+		"unlockLayout": "解锁布局",
+		"packToTopLeft": "收起至左上",
+		"background": "背景...",
+		"undo": "撤销",
+		"redo": "重做",
+		"selectedPresets": "选中的预设",
+		"groupSelectedItems": "将选中项目分组",
+		"moveToPanel": "移动到面板",
+		"deleteSelectedPresets": "删除 {{count}} 个预设",
+		"layout": "布局"
+	},
+	"align": {
+		"name": "对齐"
+	},
+	"anchorPoint": {
+		"name": "Anchor point"
+	},
+	"info": {
+		"name": "Info"
+	},
+	"layoutLock": {
+		"name": "Layout lock"
+	},
+	"projectInfo": {
+		"name": "项目信息"
+	},
+	"quickActions": {
+		"name": "Quick actions",
+		"palettePlaceholder": "Search presets, scripts, plugins, effects, and files under roots…",
+		"paletteEmpty": "No matching presets or effects.",
+		"effectRowKind": "Effect",
+		"rootFileRowKind": "Disk"
+	},
+	"fxSearch": "FX search",
+	"directoryBrowser": {
+		"name": "目录浏览器",
+		"anchors": {
+			"defaultUserData": "用户数据",
+			"presetRoot": "预设",
+			"scriptRoot": "脚本",
+			"pluginRoot": "插件"
+		},
+		"actions": {
+			"importFailed": "导入失败: {{message}}",
+			"runSuccess": "已执行: {{presetId}}",
+			"runFailed": "失败: {{message}}",
+			"run": "运行",
+			"importRun": "导入并运行",
+			"openFolder": "打开文件夹",
+			"openEntry": "打开",
+			"importOnly": "导入",
+			"selectFile": "选择",
+			"deselect": "取消选择",
+			"runBlockedMissingAsset": "预设资源在磁盘上不存在 — 运行已禁用。"
+		},
+		"path": {
+			"pickFolderPrompt": "选择文件夹",
+			"pickFolderAria": "浏览文件夹",
+			"inputPlaceholder": "输入路径…",
+			"inputTitle": "按 Enter 键导航"
+		},
+		"pathDisplay": {
+			"anchorTemplate": "{rootLabel}/{relativePath}"
+		},
+		"search": {
+			"placeholderCatalog": "搜索预设…",
+			"placeholderFolder": "搜索文件…",
+			"resultsCount": "{{count}} 项",
+			"resultsCountFiltered": "{{count}} 个匹配"
+		},
+		"thumbnail": {
+			"loading": "正在加载预览...",
+			"error": "预览不可用"
+		},
+		"toolbar": {
+			"detailedFilters": "过滤器",
+			"viewModeLegend": "视图模式",
+			"listView": "列表视图",
+			"iconView": "图标视图"
+		},
+		"browseMode": {
+			"filesystem": "文件",
+			"anchors": "锚点",
+			"presetsCatalog": "目录"
+		},
+		"browseModeSelectAria": "浏览模式",
+		"catalog": {
+			"ungroupedHeading": "未分组"
+		},
+		"filters": {
+			"typeList": "类型:",
+			"quickFilterAria": "快速过滤",
+			"optionAll": "全部",
+			"optionMedia": "媒体",
+			"optionPresets": "预设",
+			"optionScripts": "脚本",
+			"optionFonts": "字体",
+			"extensionHide": "隐藏:",
+			"fileTypeHide": "类型:",
+			"recursiveSearch": "递归: {{state}}",
+			"recursiveOn": "开",
+			"recursiveOff": "关",
+			"catalogPresetTypesHide": "隐藏:",
+			"anchorsNoFilters": "锚点无过滤器"
+		},
+		"empty": {
+			"catalogNeedsFolder": "请选择文件夹以浏览预设。",
+			"noAnchors": "未配置锚点。",
+			"noCatalogPresets": "此文件夹中没有预设。",
+			"noItems": "无项目"
+		},
+		"entry": {
+			"defaultFolderSubtitle": "默认",
+			"parentRowName": "上一级",
+			"browseDrives": "浏览驱动器",
+			"kindFolder": "文件夹",
+			"kindFile": "文件"
+		},
+		"hints": {
+			"iconGridWheel": "Ctrl+滚轮 调整大小"
+		}
+	},
+	"textEditor": {
+		"name": "文本编辑器"
+	},
+	"fontViewer": {
+		"name": "Font viewer",
+		"searchPlaceholder": "Search family, PostScript, style…",
+		"searchAria": "Search fonts",
+		"listView": "List view",
+		"iconView": "Icon cards",
+		"layoutLegend": "Font layout",
+		"reload": "Reload font list",
+		"samplePresets": "Sample",
+		"sampleCustom": "Custom",
+		"samplePresetAria": "Preview sample preset",
+		"previewTextAria": "Preview text",
+		"samplePlaceholder": "Preview text (CJK / emoji / Latin)",
+		"ctxMenuHeading": "Display options",
+		"ctxTileSquare": "Tile aspect 1:1",
+		"ctxTileWide": "Tile aspect 16:9",
+		"ctxShowResolved": "Show resolved-font match column (list)",
+		"ctxHideResolved": "Hide resolved-font match column (list)",
+		"showResolved": "Resolved font check (list)",
+		"loadError": "Could not load fonts.",
+		"loading": "Loading…",
+		"statsLine": "{{families}} families · {{faces}} typefaces ({{total}} loaded)",
+		"familySummary": "{{count}} typefaces",
+		"expandFamily": "Expand family",
+		"collapseFamily": "Collapse family",
+		"backToFamilies": "All font families",
+		"openFamilyIcon": "Open family",
+		"noMatches": "No matching fonts",
+		"phaseAeHost": "Querying After Effects for fonts (evalScript)…",
+		"phaseBrowser": "Reading browser font sources…",
+		"aeHostErrorLabel": "After Effects host:",
+		"previewSectionSummary": "Preview",
+		"sampleCollapsedPlaceholder": "Open to edit sample text and options",
+		"viaLocalApi": "Local Font Access API",
+		"viaAfterEffects": "After Effects (app.fonts)",
+		"viaDocumentFonts": "document.fonts (subset)",
+		"fallbackBadge": "swap",
+		"primaryBadge": "match",
+		"hintNeedUserGesture": "Installed fonts need a button click (Chromium Local Font Access). Until then, this catalog lists only fonts already registered on document.fonts for this panel.",
+		"loadAllSystemFonts": "Load all system fonts…",
+		"hintNoLocalApi": "This Chromium build does not expose queryLocalFonts — only fonts registered on document.fonts are listed.",
+		"localAccessErrorPrefix": "Local font access:",
+		"emptyList": "No fonts loaded yet. Use “Load all system fonts” if available, or reload after the panel finishes loading styles."
+	},
+	"folderDirectoryPicker": {
+		"label": "文件夹浏览器",
+		"tab": {
+			"presets": "预设",
+			"scripts": "脚本",
+			"plugins": "插件",
+			"other": "其他"
+		},
+		"loading": "加载中…",
+		"emptyFolders": "未找到文件夹",
+		"emptyItems": "未找到项目",
+		"goUp": "上一级",
+		"cepNodeRequired": "文件夹浏览器需要 CEP Node"
+	}
+}

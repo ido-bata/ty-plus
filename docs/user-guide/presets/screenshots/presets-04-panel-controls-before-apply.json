@@ -1,0 +1,1080 @@
+[
+  {
+    "i": 0,
+    "tag": "INPUT",
+    "text": "",
+    "title": "",
+    "aria": "",
+    "cls": "min-h-0 min-w-0 flex-1 border-none bg-transparent py-(--ty-space-1) font-inherit",
+    "rect": {
+      "x": 33,
+      "y": 5,
+      "w": 168,
+      "h": 46
+    }
+  },
+  {
+    "i": 1,
+    "tag": "BUTTON",
+    "text": "",
+    "title": "Lock Layout",
+    "aria": "",
+    "cls": "flex h-full w-full cursor-pointer items-center justify-center rounded-(--ty-spac",
+    "rect": {
+      "x": 212,
+      "y": 4,
+      "w": 48,
+      "h": 48
+    }
+  },
+  {
+    "i": 2,
+    "tag": "BUTTON",
+    "text": "",
+    "title": "メニュー",
+    "aria": "メニュー",
+    "cls": "flex h-full w-full min-h-0 min-w-0 cursor-pointer items-center justify-center ro",
+    "rect": {
+      "x": 264,
+      "y": 4,
+      "w": 48,
+      "h": 48
+    }
+  },
+  {
+    "i": 3,
+    "tag": "BUTTON",
+    "text": "カーブ",
+    "title": "",
+    "aria": "",
+    "cls": "h-7 min-w-0 flex-1 rounded-shell-sm px-2 text-(length:--ty-shell-text-size-sm) l",
+    "rect": {
+      "x": 11,
+      "y": 63,
+      "w": 61,
+      "h": 28
+    }
+  },
+  {
+    "i": 4,
+    "tag": "BUTTON",
+    "text": "バウンス",
+    "title": "",
+    "aria": "",
+    "cls": "h-7 min-w-0 flex-1 rounded-shell-sm px-2 text-(length:--ty-shell-text-size-sm) l",
+    "rect": {
+      "x": 76,
+      "y": 63,
+      "w": 61,
+      "h": 28
+    }
+  },
+  {
+    "i": 5,
+    "tag": "BUTTON",
+    "text": "エラスティック",
+    "title": "",
+    "aria": "",
+    "cls": "h-7 min-w-0 flex-1 rounded-shell-sm px-2 text-(length:--ty-shell-text-size-sm) l",
+    "rect": {
+      "x": 140,
+      "y": 63,
+      "w": 61,
+      "h": 28
+    }
+  },
+  {
+    "i": 6,
+    "tag": "BUTTON",
+    "text": "",
+    "title": "",
+    "aria": "選択からコピー",
+    "cls": "inline-flex items-center justify-center gap-1.5 select-none whitespace-nowrap cu",
+    "rect": {
+      "x": 8,
+      "y": 282,
+      "w": 34,
+      "h": 28
+    }
+  },
+  {
+    "i": 7,
+    "tag": "BUTTON",
+    "text": "",
+    "title": "",
+    "aria": "反転",
+    "cls": "inline-flex items-center justify-center gap-1.5 select-none whitespace-nowrap cu",
+    "rect": {
+      "x": 46,
+      "y": 282,
+      "w": 34,
+      "h": 28
+    }
+  },
+  {
+    "i": 8,
+    "tag": "BUTTON",
+    "text": "失敗",
+    "title": "",
+    "aria": "",
+    "cls": "inline-flex items-center justify-center gap-1.5 select-none whitespace-nowrap cu",
+    "rect": {
+      "x": 84,
+      "y": 282,
+      "w": 82,
+      "h": 28
+    }
+  },
+  {
+    "i": 9,
+    "tag": "BUTTON",
+    "text": "",
+    "title": "",
+    "aria": "プリセットを作成",
+    "cls": "inline-flex items-center justify-center gap-1.5 select-none whitespace-nowrap cu",
+    "rect": {
+      "x": 170,
+      "y": 282,
+      "w": 34,
+      "h": 28
+    }
+  },
+  {
+    "i": 14,
+    "tag": "BUTTON",
+    "text": "",
+    "title": "align-left",
+    "aria": "",
+    "cls": "flex items-center justify-center bg-transparent border-none rounded-sm text-(--t",
+    "rect": {
+      "x": 215,
+      "y": 177,
+      "w": 30,
+      "h": 32
+    }
+  },
+  {
+    "i": 15,
+    "tag": "BUTTON",
+    "text": "",
+    "title": "align-center-h",
+    "aria": "",
+    "cls": "flex items-center justify-center bg-transparent border-none rounded-sm text-(--t",
+    "rect": {
+      "x": 247,
+      "y": 177,
+      "w": 30,
+      "h": 32
+    }
+  },
+  {
+    "i": 16,
+    "tag": "BUTTON",
+    "text": "",
+    "title": "align-right",
+    "aria": "",
+    "cls": "flex items-center justify-center bg-transparent border-none rounded-sm text-(--t",
+    "rect": {
+      "x": 279,
+      "y": 177,
+      "w": 30,
+      "h": 32
+    }
+  },
+  {
+    "i": 17,
+    "tag": "BUTTON",
+    "text": "",
+    "title": "align-top",
+    "aria": "",
+    "cls": "flex items-center justify-center bg-transparent border-none rounded-sm text-(--t",
+    "rect": {
+      "x": 215,
+      "y": 211,
+      "w": 30,
+      "h": 32
+    }
+  },
+  {
+    "i": 18,
+    "tag": "BUTTON",
+    "text": "",
+    "title": "align-center-v",
+    "aria": "",
+    "cls": "flex items-center justify-center bg-transparent border-none rounded-sm text-(--t",
+    "rect": {
+      "x": 247,
+      "y": 211,
+      "w": 30,
+      "h": 32
+    }
+  },
+  {
+    "i": 19,
+    "tag": "BUTTON",
+    "text": "",
+    "title": "align-bottom",
+    "aria": "",
+    "cls": "flex items-center justify-center bg-transparent border-none rounded-sm text-(--t",
+    "rect": {
+      "x": 279,
+      "y": 211,
+      "w": 30,
+      "h": 32
+    }
+  },
+  {
+    "i": 20,
+    "tag": "BUTTON",
+    "text": "",
+    "title": "distribute-left",
+    "aria": "",
+    "cls": "flex items-center justify-center bg-transparent border-none rounded-sm text-(--t",
+    "rect": {
+      "x": 215,
+      "y": 258,
+      "w": 30,
+      "h": 32
+    }
+  },
+  {
+    "i": 21,
+    "tag": "BUTTON",
+    "text": "",
+    "title": "distribute-center-h",
+    "aria": "",
+    "cls": "flex items-center justify-center bg-transparent border-none rounded-sm text-(--t",
+    "rect": {
+      "x": 247,
+      "y": 258,
+      "w": 30,
+      "h": 32
+    }
+  },
+  {
+    "i": 22,
+    "tag": "BUTTON",
+    "text": "",
+    "title": "distribute-right",
+    "aria": "",
+    "cls": "flex items-center justify-center bg-transparent border-none rounded-sm text-(--t",
+    "rect": {
+      "x": 279,
+      "y": 258,
+      "w": 30,
+      "h": 32
+    }
+  },
+  {
+    "i": 23,
+    "tag": "BUTTON",
+    "text": "",
+    "title": "distribute-top",
+    "aria": "",
+    "cls": "flex items-center justify-center bg-transparent border-none rounded-sm text-(--t",
+    "rect": {
+      "x": 215,
+      "y": 292,
+      "w": 30,
+      "h": 32
+    }
+  },
+  {
+    "i": 24,
+    "tag": "BUTTON",
+    "text": "",
+    "title": "distribute-center-v",
+    "aria": "",
+    "cls": "flex items-center justify-center bg-transparent border-none rounded-sm text-(--t",
+    "rect": {
+      "x": 247,
+      "y": 292,
+      "w": 30,
+      "h": 32
+    }
+  },
+  {
+    "i": 25,
+    "tag": "BUTTON",
+    "text": "",
+    "title": "distribute-bottom",
+    "aria": "",
+    "cls": "flex items-center justify-center bg-transparent border-none rounded-sm text-(--t",
+    "rect": {
+      "x": 279,
+      "y": 292,
+      "w": 30,
+      "h": 32
+    }
+  },
+  {
+    "i": 26,
+    "tag": "BUTTON",
+    "text": "",
+    "title": "Align to Selection",
+    "aria": "",
+    "cls": "flex-auto flex items-center justify-center bg-transparent border-none rounded-sm",
+    "rect": {
+      "x": 215,
+      "y": 331,
+      "w": 21,
+      "h": 32
+    }
+  },
+  {
+    "i": 27,
+    "tag": "BUTTON",
+    "text": "",
+    "title": "Align to Composition",
+    "aria": "",
+    "cls": "flex-auto flex items-center justify-center bg-transparent border-none rounded-sm",
+    "rect": {
+      "x": 239,
+      "y": 331,
+      "w": 21,
+      "h": 32
+    }
+  },
+  {
+    "i": 28,
+    "tag": "BUTTON",
+    "text": "",
+    "title": "Align to Key Object",
+    "aria": "",
+    "cls": "flex-auto flex items-center justify-center bg-transparent border-none rounded-sm",
+    "rect": {
+      "x": 264,
+      "y": 331,
+      "w": 21,
+      "h": 32
+    }
+  },
+  {
+    "i": 29,
+    "tag": "BUTTON",
+    "text": "",
+    "title": "Time Alignment",
+    "aria": "",
+    "cls": "flex-auto flex items-center justify-center bg-transparent border-none rounded-sm",
+    "rect": {
+      "x": 288,
+      "y": 331,
+      "w": 21,
+      "h": 32
+    }
+  },
+  {
+    "i": 30,
+    "tag": "BUTTON",
+    "text": "",
+    "title": "top-left",
+    "aria": "",
+    "cls": "group relative cursor-pointer bg-transparent p-0 transition-colors duration-150 ",
+    "rect": {
+      "x": 219,
+      "y": 63,
+      "w": 29,
+      "h": 29
+    }
+  },
+  {
+    "i": 31,
+    "tag": "BUTTON",
+    "text": "",
+    "title": "top-center",
+    "aria": "",
+    "cls": "group relative cursor-pointer bg-transparent p-0 transition-colors duration-150 ",
+    "rect": {
+      "x": 248,
+      "y": 63,
+      "w": 29,
+      "h": 29
+    }
+  },
+  {
+    "i": 32,
+    "tag": "BUTTON",
+    "text": "",
+    "title": "top-right",
+    "aria": "",
+    "cls": "group relative cursor-pointer bg-transparent p-0 transition-colors duration-150 ",
+    "rect": {
+      "x": 277,
+      "y": 63,
+      "w": 29,
+      "h": 29
+    }
+  },
+  {
+    "i": 33,
+    "tag": "BUTTON",
+    "text": "",
+    "title": "center-left",
+    "aria": "",
+    "cls": "group relative cursor-pointer bg-transparent p-0 transition-colors duration-150 ",
+    "rect": {
+      "x": 219,
+      "y": 92,
+      "w": 29,
+      "h": 29
+    }
+  },
+  {
+    "i": 34,
+    "tag": "BUTTON",
+    "text": "",
+    "title": "center",
+    "aria": "",
+    "cls": "group relative cursor-pointer bg-transparent p-0 transition-colors duration-150 ",
+    "rect": {
+      "x": 248,
+      "y": 92,
+      "w": 29,
+      "h": 29
+    }
+  },
+  {
+    "i": 35,
+    "tag": "BUTTON",
+    "text": "",
+    "title": "center-right",
+    "aria": "",
+    "cls": "group relative cursor-pointer bg-transparent p-0 transition-colors duration-150 ",
+    "rect": {
+      "x": 277,
+      "y": 92,
+      "w": 29,
+      "h": 29
+    }
+  },
+  {
+    "i": 36,
+    "tag": "BUTTON",
+    "text": "",
+    "title": "bottom-left",
+    "aria": "",
+    "cls": "group relative cursor-pointer bg-transparent p-0 transition-colors duration-150 ",
+    "rect": {
+      "x": 219,
+      "y": 121,
+      "w": 29,
+      "h": 29
+    }
+  },
+  {
+    "i": 37,
+    "tag": "BUTTON",
+    "text": "",
+    "title": "bottom-center",
+    "aria": "",
+    "cls": "group relative cursor-pointer bg-transparent p-0 transition-colors duration-150 ",
+    "rect": {
+      "x": 248,
+      "y": 121,
+      "w": 29,
+      "h": 29
+    }
+  },
+  {
+    "i": 38,
+    "tag": "BUTTON",
+    "text": "",
+    "title": "bottom-right",
+    "aria": "",
+    "cls": "group relative cursor-pointer bg-transparent p-0 transition-colors duration-150 ",
+    "rect": {
+      "x": 277,
+      "y": 121,
+      "w": 29,
+      "h": 29
+    }
+  },
+  {
+    "i": 39,
+    "tag": "BUTTON",
+    "text": "FF\nX",
+    "title": "",
+    "aria": "",
+    "cls": "block shrink-0 cursor-pointer select-none border-0 bg-transparent p-0 disabled:c",
+    "rect": {
+      "x": 4,
+      "y": 420,
+      "w": 48,
+      "h": 48
+    }
+  },
+  {
+    "i": 40,
+    "tag": "BUTTON",
+    "text": "FF\nX",
+    "title": "",
+    "aria": "",
+    "cls": "block shrink-0 cursor-pointer select-none border-0 bg-transparent p-0 disabled:c",
+    "rect": {
+      "x": 56,
+      "y": 420,
+      "w": 48,
+      "h": 48
+    }
+  },
+  {
+    "i": 41,
+    "tag": "BUTTON",
+    "text": "FF\nX",
+    "title": "",
+    "aria": "",
+    "cls": "block shrink-0 cursor-pointer select-none border-0 bg-transparent p-0 disabled:c",
+    "rect": {
+      "x": 108,
+      "y": 420,
+      "w": 48,
+      "h": 48
+    }
+  },
+  {
+    "i": 42,
+    "tag": "BUTTON",
+    "text": "FF\nX",
+    "title": "",
+    "aria": "",
+    "cls": "block shrink-0 cursor-pointer select-none border-0 bg-transparent p-0 disabled:c",
+    "rect": {
+      "x": 4,
+      "y": 472,
+      "w": 48,
+      "h": 48
+    }
+  },
+  {
+    "i": 43,
+    "tag": "BUTTON",
+    "text": "FF\nX",
+    "title": "",
+    "aria": "",
+    "cls": "block shrink-0 cursor-pointer select-none border-0 bg-transparent p-0 disabled:c",
+    "rect": {
+      "x": 56,
+      "y": 472,
+      "w": 48,
+      "h": 48
+    }
+  },
+  {
+    "i": 44,
+    "tag": "BUTTON",
+    "text": "FF\nX",
+    "title": "",
+    "aria": "",
+    "cls": "block shrink-0 cursor-pointer select-none border-0 bg-transparent p-0 disabled:c",
+    "rect": {
+      "x": 108,
+      "y": 472,
+      "w": 48,
+      "h": 48
+    }
+  },
+  {
+    "i": 45,
+    "tag": "BUTTON",
+    "text": "FF\nX",
+    "title": "",
+    "aria": "",
+    "cls": "block shrink-0 cursor-pointer select-none border-0 bg-transparent p-0 disabled:c",
+    "rect": {
+      "x": 4,
+      "y": 524,
+      "w": 48,
+      "h": 48
+    }
+  },
+  {
+    "i": 46,
+    "tag": "BUTTON",
+    "text": "FF\nX",
+    "title": "",
+    "aria": "",
+    "cls": "block shrink-0 cursor-pointer select-none border-0 bg-transparent p-0 disabled:c",
+    "rect": {
+      "x": 56,
+      "y": 524,
+      "w": 48,
+      "h": 48
+    }
+  },
+  {
+    "i": 47,
+    "tag": "BUTTON",
+    "text": "FF\nX",
+    "title": "",
+    "aria": "",
+    "cls": "block shrink-0 cursor-pointer select-none border-0 bg-transparent p-0 disabled:c",
+    "rect": {
+      "x": 108,
+      "y": 524,
+      "w": 48,
+      "h": 48
+    }
+  },
+  {
+    "i": 48,
+    "tag": "BUTTON",
+    "text": "FF\nX",
+    "title": "",
+    "aria": "",
+    "cls": "block shrink-0 cursor-pointer select-none border-0 bg-transparent p-0 disabled:c",
+    "rect": {
+      "x": 4,
+      "y": 576,
+      "w": 48,
+      "h": 48
+    }
+  },
+  {
+    "i": 49,
+    "tag": "BUTTON",
+    "text": "FF\nX",
+    "title": "",
+    "aria": "",
+    "cls": "block shrink-0 cursor-pointer select-none border-0 bg-transparent p-0 disabled:c",
+    "rect": {
+      "x": 56,
+      "y": 576,
+      "w": 48,
+      "h": 48
+    }
+  },
+  {
+    "i": 50,
+    "tag": "BUTTON",
+    "text": "FF\nX",
+    "title": "",
+    "aria": "",
+    "cls": "block shrink-0 cursor-pointer select-none border-0 bg-transparent p-0 disabled:c",
+    "rect": {
+      "x": 108,
+      "y": 576,
+      "w": 48,
+      "h": 48
+    }
+  },
+  {
+    "i": 51,
+    "tag": "BUTTON",
+    "text": "FF\nX",
+    "title": "",
+    "aria": "",
+    "cls": "block shrink-0 cursor-pointer select-none border-0 bg-transparent p-0 disabled:c",
+    "rect": {
+      "x": 4,
+      "y": 628,
+      "w": 48,
+      "h": 48
+    }
+  },
+  {
+    "i": 52,
+    "tag": "BUTTON",
+    "text": "FF\nX",
+    "title": "",
+    "aria": "",
+    "cls": "block shrink-0 cursor-pointer select-none border-0 bg-transparent p-0 disabled:c",
+    "rect": {
+      "x": 56,
+      "y": 628,
+      "w": 48,
+      "h": 48
+    }
+  },
+  {
+    "i": 53,
+    "tag": "BUTTON",
+    "text": "FF\nX",
+    "title": "",
+    "aria": "",
+    "cls": "block shrink-0 cursor-pointer select-none border-0 bg-transparent p-0 disabled:c",
+    "rect": {
+      "x": 108,
+      "y": 628,
+      "w": 48,
+      "h": 48
+    }
+  },
+  {
+    "i": 54,
+    "tag": "BUTTON",
+    "text": "FF\nX",
+    "title": "",
+    "aria": "",
+    "cls": "block shrink-0 cursor-pointer select-none border-0 bg-transparent p-0 disabled:c",
+    "rect": {
+      "x": 4,
+      "y": 680,
+      "w": 48,
+      "h": 48
+    }
+  },
+  {
+    "i": 55,
+    "tag": "BUTTON",
+    "text": "FF\nX",
+    "title": "",
+    "aria": "",
+    "cls": "block shrink-0 cursor-pointer select-none border-0 bg-transparent p-0 disabled:c",
+    "rect": {
+      "x": 56,
+      "y": 680,
+      "w": 48,
+      "h": 48
+    }
+  },
+  {
+    "i": 56,
+    "tag": "BUTTON",
+    "text": "FF\nX",
+    "title": "",
+    "aria": "",
+    "cls": "block shrink-0 cursor-pointer select-none border-0 bg-transparent p-0 disabled:c",
+    "rect": {
+      "x": 108,
+      "y": 680,
+      "w": 48,
+      "h": 48
+    }
+  },
+  {
+    "i": 57,
+    "tag": "BUTTON",
+    "text": "FF\nX",
+    "title": "",
+    "aria": "",
+    "cls": "block shrink-0 cursor-pointer select-none border-0 bg-transparent p-0 disabled:c",
+    "rect": {
+      "x": 4,
+      "y": 732,
+      "w": 48,
+      "h": 48
+    }
+  },
+  {
+    "i": 58,
+    "tag": "BUTTON",
+    "text": "FF\nX",
+    "title": "",
+    "aria": "",
+    "cls": "block shrink-0 cursor-pointer select-none border-0 bg-transparent p-0 disabled:c",
+    "rect": {
+      "x": 56,
+      "y": 732,
+      "w": 48,
+      "h": 48
+    }
+  },
+  {
+    "i": 59,
+    "tag": "BUTTON",
+    "text": "FF\nX",
+    "title": "",
+    "aria": "",
+    "cls": "block shrink-0 cursor-pointer select-none border-0 bg-transparent p-0 disabled:c",
+    "rect": {
+      "x": 108,
+      "y": 732,
+      "w": 48,
+      "h": 48
+    }
+  },
+  {
+    "i": 60,
+    "tag": "BUTTON",
+    "text": "FF\nX",
+    "title": "",
+    "aria": "",
+    "cls": "block shrink-0 cursor-pointer select-none border-0 bg-transparent p-0 disabled:c",
+    "rect": {
+      "x": 4,
+      "y": 784,
+      "w": 48,
+      "h": 48
+    }
+  },
+  {
+    "i": 61,
+    "tag": "BUTTON",
+    "text": "FF\nX",
+    "title": "",
+    "aria": "",
+    "cls": "block shrink-0 cursor-pointer select-none border-0 bg-transparent p-0 disabled:c",
+    "rect": {
+      "x": 56,
+      "y": 784,
+      "w": 48,
+      "h": 48
+    }
+  },
+  {
+    "i": 62,
+    "tag": "BUTTON",
+    "text": "FF\nX",
+    "title": "",
+    "aria": "",
+    "cls": "block shrink-0 cursor-pointer select-none border-0 bg-transparent p-0 disabled:c",
+    "rect": {
+      "x": 108,
+      "y": 784,
+      "w": 48,
+      "h": 48
+    }
+  },
+  {
+    "i": 63,
+    "tag": "BUTTON",
+    "text": "FF\nX",
+    "title": "",
+    "aria": "",
+    "cls": "block shrink-0 cursor-pointer select-none border-0 bg-transparent p-0 disabled:c",
+    "rect": {
+      "x": 4,
+      "y": 836,
+      "w": 48,
+      "h": 48
+    }
+  },
+  {
+    "i": 64,
+    "tag": "BUTTON",
+    "text": "FF\nX",
+    "title": "",
+    "aria": "",
+    "cls": "block shrink-0 cursor-pointer select-none border-0 bg-transparent p-0 disabled:c",
+    "rect": {
+      "x": 56,
+      "y": 836,
+      "w": 48,
+      "h": 48
+    }
+  },
+  {
+    "i": 65,
+    "tag": "BUTTON",
+    "text": "FF\nX",
+    "title": "",
+    "aria": "",
+    "cls": "block shrink-0 cursor-pointer select-none border-0 bg-transparent p-0 disabled:c",
+    "rect": {
+      "x": 108,
+      "y": 836,
+      "w": 48,
+      "h": 48
+    }
+  },
+  {
+    "i": 66,
+    "tag": "BUTTON",
+    "text": "",
+    "title": "Local Preset",
+    "aria": "",
+    "cls": "inline-flex items-center justify-center select-none rounded-shell-sm outline-non",
+    "rect": {
+      "x": 188,
+      "y": 903,
+      "w": 24,
+      "h": 24
+    }
+  },
+  {
+    "i": 67,
+    "tag": "BUTTON",
+    "text": "",
+    "title": "Group Preset",
+    "aria": "",
+    "cls": "inline-flex items-center justify-center select-none rounded-shell-sm outline-non",
+    "rect": {
+      "x": 214,
+      "y": 903,
+      "w": 24,
+      "h": 24
+    }
+  },
+  {
+    "i": 68,
+    "tag": "BUTTON",
+    "text": "",
+    "title": "Animation Preset",
+    "aria": "",
+    "cls": "inline-flex items-center justify-center select-none rounded-shell-sm outline-non",
+    "rect": {
+      "x": 240,
+      "y": 903,
+      "w": 24,
+      "h": 24
+    }
+  },
+  {
+    "i": 69,
+    "tag": "BUTTON",
+    "text": "",
+    "title": "Layer/Comp Preset",
+    "aria": "",
+    "cls": "inline-flex items-center justify-center select-none rounded-shell-sm outline-non",
+    "rect": {
+      "x": 266,
+      "y": 903,
+      "w": 24,
+      "h": 24
+    }
+  },
+  {
+    "i": 70,
+    "tag": "BUTTON",
+    "text": "",
+    "title": "Code Preset",
+    "aria": "",
+    "cls": "inline-flex items-center justify-center select-none rounded-shell-sm outline-non",
+    "rect": {
+      "x": 292,
+      "y": 903,
+      "w": 24,
+      "h": 24
+    }
+  },
+  {
+    "i": 71,
+    "tag": "BUTTON",
+    "text": "",
+    "title": "Add Widget",
+    "aria": "",
+    "cls": "inline-flex items-center justify-center select-none rounded-shell-sm outline-non",
+    "rect": {
+      "x": 318,
+      "y": 903,
+      "w": 24,
+      "h": 24
+    }
+  },
+  {
+    "i": 72,
+    "tag": "BUTTON",
+    "text": "",
+    "title": "Undo (Ctrl+Z)",
+    "aria": "",
+    "cls": "inline-flex items-center justify-center select-none rounded-shell-sm outline-non",
+    "rect": {
+      "x": 123,
+      "y": 953,
+      "w": 24,
+      "h": 24
+    }
+  },
+  {
+    "i": 73,
+    "tag": "BUTTON",
+    "text": "",
+    "title": "Redo (Ctrl+Y)",
+    "aria": "",
+    "cls": "inline-flex items-center justify-center select-none rounded-shell-sm outline-non",
+    "rect": {
+      "x": 149,
+      "y": 953,
+      "w": 24,
+      "h": 24
+    }
+  },
+  {
+    "i": 74,
+    "tag": "BUTTON",
+    "text": "",
+    "title": "Save layout snapshot",
+    "aria": "",
+    "cls": "inline-flex items-center justify-center select-none rounded-shell-sm outline-non",
+    "rect": {
+      "x": 175,
+      "y": 953,
+      "w": 24,
+      "h": 24
+    }
+  },
+  {
+    "i": 75,
+    "tag": "BUTTON",
+    "text": "",
+    "title": "Saved layouts (none)",
+    "aria": "",
+    "cls": "inline-flex items-center justify-center select-none rounded-shell-sm outline-non",
+    "rect": {
+      "x": 201,
+      "y": 953,
+      "w": 24,
+      "h": 24
+    }
+  },
+  {
+    "i": 76,
+    "tag": "BUTTON",
+    "text": "",
+    "title": "Local Preset",
+    "aria": "",
+    "cls": "inline-flex items-center justify-center select-none rounded-shell-sm outline-non",
+    "rect": {
+      "x": 227,
+      "y": 953,
+      "w": 24,
+      "h": 24
+    }
+  },
+  {
+    "i": 77,
+    "tag": "BUTTON",
+    "text": "",
+    "title": "Preset Library (Online)",
+    "aria": "",
+    "cls": "inline-flex items-center justify-center select-none rounded-shell-sm outline-non",
+    "rect": {
+      "x": 253,
+      "y": 953,
+      "w": 24,
+      "h": 24
+    }
+  },
+  {
+    "i": 78,
+    "tag": "BUTTON",
+    "text": "",
+    "title": "Debug console (Ctrl+`)",
+    "aria": "",
+    "cls": "inline-flex items-center justify-center select-none rounded-shell-sm outline-non",
+    "rect": {
+      "x": 279,
+      "y": 953,
+      "w": 24,
+      "h": 24
+    }
+  },
+  {
+    "i": 79,
+    "tag": "BUTTON",
+    "text": "",
+    "title": "Messages",
+    "aria": "",
+    "cls": "inline-flex items-center justify-center select-none rounded-shell-sm outline-non",
+    "rect": {
+      "x": 305,
+      "y": 953,
+      "w": 24,
+      "h": 24
+    }
+  },
+  {
+    "i": 80,
+    "tag": "BUTTON",
+    "text": "",
+    "title": "Settings",
+    "aria": "",
+    "cls": "inline-flex items-center justify-center select-none rounded-shell-sm outline-non",
+    "rect": {
+      "x": 331,
+      "y": 953,
+      "w": 24,
+      "h": 24
+    }
+  }
+]

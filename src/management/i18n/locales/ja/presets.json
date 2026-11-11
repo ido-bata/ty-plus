@@ -1,0 +1,237 @@
+{
+	"codePreset": {
+		"codeType": "Code type",
+		"editor": {
+			"expression": "Expression",
+			"script": "Script code (.jsx)"
+		},
+		"saveLocation": "Save location",
+		"savePreview": "Save preview",
+		"status": {
+			"fileExists": "File already exists — will be overwritten",
+			"success": "Preset saved successfully!"
+		},
+		"type": {
+			"expression": "Expression",
+			"script": "Script"
+		}
+	},
+	"common": {
+		"browseFolder": "フォルダを参照",
+		"copyPath": "パスをコピー",
+		"selectFile": "ファイルを選択"
+	},
+	"layerCompPreset": {
+		"desc": {
+			"comp": "Open the composition you want to save. Project must be saved first.",
+			"layer": "Select the layers you want to save. Project must be saved first."
+		},
+		"hint": {
+			"saveButton": "Press \"Create\" at the bottom of the dialog to save."
+		},
+		"savePreview": "Save preview",
+		"step1": {
+			"title": "Preset type"
+		},
+		"step2": {
+			"title": "Prepare in After Effects"
+		},
+		"step3": {
+			"title": "Save location"
+		},
+		"type": {
+			"comp": "Composition",
+			"layer": "Layer"
+		}
+	},
+	"search": {
+		"title": "プリセットを検索",
+		"placeholder": "検索ワードを入力…",
+		"empty": "該当するプリセットがありません"
+	},
+	"online": {
+		"loading": "読み込み中…",
+		"empty": "オンラインのプリセットはありません"
+	},
+	"presetTool": {
+		"form": {
+			"presetId": "プリセット ID",
+			"presetIdPlaceholder": "プリセット ID",
+			"displayName": "表示名",
+			"displayNamePlaceholder": "表示名",
+			"filePath": "ファイルパス",
+			"description": "説明",
+			"descriptionPlaceholder": "説明（任意）",
+			"descriptionImage": "説明画像",
+			"descriptionImagePlaceholder": "画像パスまたはURL",
+			"descriptionImageBrowse": "画像を選択",
+			"details": "詳細",
+			"presetName": "プリセット名",
+			"icon": "アイコン",
+			"savePath": "保存先パス"
+		},
+		"create": "作成",
+		"status": {
+			"ready": "準備完了",
+			"loading": "プリセットを読み込み中…",
+			"loaded": "編集中: {{id}}",
+			"unknownPreset": "プリセットが見つかりません: {{id}}",
+			"loadFailed": "読み込みに失敗しました: {{message}}",
+			"invalidId": "プリセット ID が不正です",
+			"filePathRequired": "ファイルパスは必須です",
+			"saved": "保存しました: {{id}}",
+			"saveFailed": "保存に失敗しました: {{message}}",
+			"saving": "保存中..."
+		},
+		"animation": {
+			"title": "アニメーションプリセット",
+			"lead": "キーフレームやエクスプレッションの既定を、再利用可能なアニメーションプリセットとしてまとめます。",
+			"defaultName": "アニメーションプリセット",
+			"fields": {
+				"saveFolder": "保存フォルダ",
+				"path": "アニメーション・プリセットのパス",
+				"pathPlaceholder": "任意の既存 .ffx パス"
+			}
+		},
+		"footage": {
+			"title": "フッテージプリセット",
+			"lead": "インポート・置換・プロキシなどフッテージ周りのショートカット。実ファイルをフッテージとして読み込みます。",
+			"defaultName": "フッテージプリセット",
+			"fields": {
+				"path": "フッテージのパス",
+				"mode": "インポートモード"
+			}
+		},
+		"layerComp": {
+			"title": "レイヤー / コンププリセット",
+			"lead": "レイヤー・コンポジション操作（変形・複製・プリコンポーズなど）。保存されたスクリプトファイルを実行します。",
+			"defaultName": "レイヤー／コンポジションプリセット"
+		},
+		"import": {
+			"title": "インポートプリセット",
+			"lead": "インポートパスや選択範囲のインポータをまとめたプリセット。フッテージプリセットと同じパイプラインを共有するワークフロー向けです。",
+			"defaultName": "インポートプリセット",
+			"fields": {
+				"path": "インポートパス",
+				"strategy": "戦略"
+			}
+		},
+		"code": {
+			"title": "コードプリセット",
+			"lead": "ローカルのコード／スクリプト用プリセットを作成します。",
+			"extra": "保存済みスクリプトファイルを After Effects 側で実行します。",
+			"defaultName": "コードプリセット",
+			"editor": {
+				"format": "Format Document",
+				"formatTooltip": "Format the script body",
+				"diagnosticCount": "{{count}} problem",
+				"diagnosticCount_other": "{{count}} problems"
+			}
+		},
+		"easing": {
+			"title": "イージングプリセット",
+			"lead": "ローカルのイージングプリセットを作成します。",
+			"curveHint": "ホストのイージング（cubic-bezier）。AE から保存するときにこの曲線が記録されます。",
+			"openWithSelectionHint": "ワークスペースでイージングを選んだ状態から開くと、曲線プレビューを埋め込めます。",
+			"ariaPreview": "イージング曲線のプレビュー",
+			"editTitle": "イージングプリセットを編集",
+			"defaultName": "イージングプリセット",
+			"curve": "カーブ",
+			"invalidCurve": "カーブは4つの数値を含むJSON配列である必要があります。"
+		},
+		"addFile": {
+			"title": "ファイルプリセットを追加",
+			"lead": "ファイル由来のローカルプリセットを登録します。拡張子からプリセット種別を判定します。"
+		},
+		"addFolder": {
+			"title": "フォルダ／グループプリセットを追加",
+			"lead": "フォルダやグループを登録し、タイル整理に使います。"
+		},
+		"localPreset": "ローカルプリセット",
+		"groupPreset": "グループプリセット",
+		"animationLabel": "アニメーション",
+		"layerCompLabel": "レイヤー/コンプ",
+		"codeLabel": "コード",
+		"presetLibrary": "プリセットライブラリ",
+		"messages": "メッセージ",
+		"settings": "設定",
+		"debugConsole": "デバッグコンソール",
+		"cancel": "キャンセル",
+		"boot": {
+			"title": "プリセットダイアログ",
+			"preparing": "プリセットダイアログを準備中...",
+			"handoffError": "プリセットダイアログの起動情報を取得できませんでした。ワークスペースから再度開いてください。"
+		},
+		"generic": {
+			"title": "プリセットを作成",
+			"lead": "再利用可能なメタデータからローカルプリセットを作成します。",
+			"defaultName": "ローカルプリセット"
+		}
+	},
+	"animationPreset": {
+		"step1": {
+			"title": "After Effects で選択",
+			"desc": "プリセットとして保存するプロパティまたはレイヤーを選択"
+		},
+		"step2": {
+			"title": "このフォルダに保存"
+		},
+		"step3": {
+			"button": "アニメーションプリセットを保存",
+			"detecting": "検出中..."
+		},
+		"status": {
+			"success": "検出しました!",
+			"noSelection": "選択なし",
+			"noSelectionHint": "まず AE でプロパティまたはレイヤーを選択",
+			"timeout": "スキャンタイムアウト",
+			"timeoutHint": "より小さいフォルダを選択",
+			"error": "検出されませんでした",
+			"errorHint": "上のフォルダに保存"
+		},
+		"path": {
+			"reset": "デフォルトに戻す",
+			"notConfigured": "Not configured"
+		}
+	},
+	"edit": {
+		"title": "プリセットを編集",
+		"delete": "削除",
+		"save": "保存",
+		"cancel": "キャンセル",
+		"status": {
+			"loading": "プリセットを読み込み中…",
+			"saved": "保存しました",
+			"deleted": "削除しました",
+			"saveFailed": "保存に失敗しました: {{message}}",
+			"deleteFailed": "削除に失敗しました: {{message}}"
+		},
+		"fields": {
+			"presetName": "プリセット名",
+			"description": "説明",
+			"icon": "アイコン",
+			"iconText": "テキスト",
+			"iconEmoji": "絵文字",
+			"iconTextPlaceholder": "テキスト（例: CODE）",
+			"iconEmojiPlaceholder": "絵文字（例: ⚡）",
+			"filePath": "ファイルパス",
+			"type": "種類",
+			"presetNamePlaceholder": "プリセット名を入力"
+		},
+		"titleForType": {
+			"preset": "プリセット",
+			"script": "スクリプト・プリセット",
+			"plugin": "プラグイン・プリセット",
+			"footage": "フッテージ・プリセット"
+		}
+	},
+	"group": {
+		"title": "プリセットグループを作成",
+		"lead": "複数のプリセットを 1 つのタイルにまとめます。",
+		"defaultName": "グループプリセット",
+		"fields": {
+			"groupName": "グループ名",
+			"groupNamePlaceholder": "グループ名を入力"
+		}
+	}
+}

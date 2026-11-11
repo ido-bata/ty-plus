@@ -1,0 +1,16 @@
+{
+	"extends": "./tsconfig.base.json",
+	"compilerOptions": {
+		"target": "ES2015",
+		"lib": ["ES2015"],
+		"strict": true,
+		"module": "ESNext",
+		"moduleResolution": "bundler",
+		"types": [
+			"types-for-adobe/AfterEffects/22.0",
+			"types-for-adobe/shared/global",
+			"types-for-adobe/shared/PlugPlugExternalObject"
+		]
+	},
+	"include": ["src/**/*.ext.ts"]
+}

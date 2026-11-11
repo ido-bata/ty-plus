@@ -1,0 +1,184 @@
+{
+	"app": {
+		"name": "ty-plus",
+		"version": "Version {{version}}",
+		"loading": "Chargement...",
+		"ready": "Prêt"
+	},
+	"buttons": {
+		"save": "Enregistrer",
+		"cancel": "Annuler",
+		"delete": "Supprimer",
+		"edit": "Modifier",
+		"close": "Fermer"
+	},
+	"actions": {
+		"run": "Exécuter",
+		"duplicate": "Dupliquer",
+		"save": "Enregistrer",
+		"cancel": "Annuler",
+		"close": "Fermer",
+		"reset": "Réinitialiser",
+		"delete": "Supprimer",
+		"apply": "Appliquer",
+		"search": "Rechercher",
+		"import": "Importer",
+		"export": "Exporter",
+		"create": "Créer",
+		"edit": "Modifier",
+		"rename": "Renommer",
+		"remove": "Retirer",
+		"refresh": "Actualiser",
+		"reload": "Recharger",
+		"undo": "Annuler",
+		"redo": "Rétablir",
+		"copy": "Copier",
+		"paste": "Coller",
+		"cut": "Couper",
+		"selectAll": "Tout sélectionner",
+		"clear": "Effacer",
+		"ok": "OK",
+		"yes": "Oui",
+		"no": "Non",
+		"confirm": "Confirmer",
+		"browse": "Parcourir",
+		"upload": "Téléverser",
+		"download": "Télécharger"
+	},
+	"status": {
+		"loading": "Chargement...",
+		"saving": "Enregistrement...",
+		"saved": "Enregistré",
+		"error": "Erreur",
+		"success": "Succès",
+		"warning": "Avertissement",
+		"info": "Information",
+		"pending": "En attente",
+		"processing": "Traitement",
+		"complete": "Terminé",
+		"failed": "Échoué",
+		"ready": "Prêt",
+		"offline": "Hors ligne",
+		"online": "En ligne",
+		"syncing": "Synchronisation...",
+		"synced": "Synchronisé"
+	},
+	"settings": {
+		"optional": "facultatif",
+		"sections": {
+			"general": "Général",
+			"theme": "Thème",
+			"paths": "Chemins",
+			"gridLayout": "Disposition en grille",
+			"feedbackSupport": "Retours et support",
+			"workspaceBackup": "Sauvegarde de l'espace",
+			"advanced": "Avancé",
+			"workspaceBackground": "Fond de l'espace"
+		},
+		"labels": {
+			"language": "Langue",
+			"theme": "Thème",
+			"accentColor": "Couleur d'accent",
+			"textColor": "Couleur du texte",
+			"widgetBackground": "Fond du widget",
+			"widgetOpacity": "Opacité du widget",
+			"panelBackground": "Fond du panneau",
+			"panelOpacity": "Opacité du panneau",
+			"backgroundColor": "Couleur de fond",
+			"supportRoot": "Racine de support",
+			"presetRoot": "Racine des presets",
+			"scriptRoot": "Racine des scripts",
+			"pluginRoot": "Racine des plugins",
+			"cellSize": "Taille de cellule",
+			"gap": "Espacement",
+			"cornerRadius": "Rayon d'angle",
+			"category": "Catégorie",
+			"subject": "Sujet",
+			"presetId": "ID de preset",
+			"description": "Description",
+			"attachments": "Pièces jointes",
+			"backupRestore": "Sauvegarde et restauration",
+			"scanTimeout": "Délai d'analyse",
+			"maxFiles": "Fichiers max"
+		},
+		"themes": {
+			"system": "Système",
+			"dark": "Sombre",
+			"light": "Clair",
+			"custom": "Personnalisé"
+		},
+		"languages": {
+			"japanese": "Japonais",
+			"english": "Anglais"
+		},
+		"buttons": {
+			"advancedSettings": "Paramètres avancés",
+			"selectSupportRoot": "Choisir la racine de support",
+			"selectPresetRoot": "Choisir la racine des presets",
+			"selectScriptRoot": "Choisir la racine des scripts",
+			"selectPluginRoot": "Choisir la racine des plugins",
+			"sendReport": "Envoyer le rapport",
+			"sending": "Envoi...",
+			"exporting": "Exportation...",
+			"importing": "Importation...",
+			"exportWorkspace": "Exporter l'espace",
+			"importWorkspace": "Importer l'espace",
+			"resetting": "Réinitialisation...",
+			"resetOnboarding": "Réinitialiser l'intégration"
+		},
+		"messages": {
+			"filesSelected": "{{count}} fichier(s) sélectionné(s)",
+			"resetOnboardingConfirm": "Réinitialiser l'intégration ?",
+			"exportSuccess": "Espace exporté vers {{path}}",
+			"exportFailed": "Échec de l'exportation : {{error}}",
+			"exportCancelled": "Exportation annulée",
+			"importSuccess": "{{count}} élément(s) importé(s)",
+			"importFailed": "Échec de l'importation : {{error}}",
+			"importCancelled": "Importation annulée",
+			"reportSentSuccess": "Rapport envoyé avec succès",
+			"reportSendFailed": "Échec de l'envoi : {{error}}"
+		}
+	},
+	"quickActions": {
+		"presets": "Presets",
+		"settings": "Paramètres",
+		"messages": "Messages",
+		"newNote": "Nouvelle note",
+		"newScript": "Nouveau script",
+		"newEasing": "Nouvel easing",
+		"toggleGrid": "Basculer la grille",
+		"toggleLabels": "Basculer les étiquettes",
+		"documentation": "Documentation",
+		"sendFeedback": "Envoyer des commentaires",
+		"category": {
+			"file": "Fichier",
+			"edit": "Édition",
+			"view": "Affichage",
+			"help": "Aide"
+		}
+	},
+	"sidePanel": {
+		"presets": "Presets",
+		"debugConsole": "Console de débogage",
+		"messages": "Messages",
+		"settings": "Paramètres",
+		"reloadPanel": "Recharger le panneau",
+		"closePanel": "Fermer le panneau"
+	},
+	"statusBar": {
+		"presets": "Presets",
+		"debug": "Débogage",
+		"message": "Messages",
+		"settings": "Paramètres"
+	},
+	"panel": {
+		"errorBoundary": {
+			"surface": "Échec du rendu de {{surface}}",
+			"title": "Une erreur est survenue",
+			"retry": "Réessayer",
+			"copyError": "Copier les détails de l'erreur",
+			"copied": "Copié dans le presse-papier",
+			"digest": "ID d'erreur"
+		}
+	}
+}

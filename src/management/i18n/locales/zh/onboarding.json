@@ -1,0 +1,99 @@
+{
+	"step": {
+		"intro": {
+			"label": "欢迎",
+			"title": "欢迎使用 ty-plus",
+			"body": "让我们开始吧"
+		},
+		"language": {
+			"label": "语言",
+			"title": "选择语言",
+			"body": "选择您的首选语言"
+		},
+		"support": {
+			"label": "位置",
+			"title": "选择 AE 文件夹",
+			"body": "选择 After Effects 应用程序文件夹。在 Windows 上，这是 Support Files 目录；在 macOS 上，它是包含 Presets 的应用文件夹。"
+		},
+		"subfolders": {
+			"label": "文件夹",
+			"title": "调整子文件夹",
+			"body": "当您更改默认路径时会显示此步骤。如有需要，可自定义 Presets/Scripts/Plug-ins。"
+		},
+		"presets": {
+			"label": "预设",
+			"title": "选择预设",
+			"body": "从 Presets 文件夹中选择预设文件（.ffx）作为初始预设。\n您稍后可以通过 + 菜单添加/导入更多。文件夹选择将自动分组。"
+		},
+		"scripts": {
+			"label": "脚本",
+			"title": "选择脚本",
+			"body": "从 Scripts 文件夹中选择脚本文件（.jsx、.jsxbin）作为初始预设。\n您也可以稍后从代码预设创建脚本/表达式预设。"
+		},
+		"plugins": {
+			"label": "插件",
+			"title": "选择插件",
+			"body": "从 Plug-ins 文件夹中选择效果文件（.aex/.plugin）作为初始预设。\n如有需要，您可以稍后导入更多。"
+		},
+		"workspace": {
+			"label": "工作区",
+			"title": "工作区基础",
+			"body": "拖动以移动和调整预设及小组件。\n\n- Ctrl/Cmd+拖动以移动\n- 使用布局锁定防止编辑\n- 搜索会淡化非匹配项\n- 右键点击进行编辑/分组操作"
+		},
+		"adding-presets": {
+			"label": "预设",
+			"title": "添加预设",
+			"body": "使用 + 菜单添加预设、组和小组件。\n\n- 切换侧面板查看预设列表\n- 下载的在线预设会自动放置"
+		},
+		"finish": {
+			"label": "完成",
+			"title": "准备开始！",
+			"body": "按完成以保存您的设置。\n\n让我们开始吧！"
+		}
+	},
+	"fields": {
+		"presetRoot": "预设文件夹",
+		"scriptRoot": "脚本文件夹",
+		"pluginRoot": "插件文件夹",
+		"supportPlaceholder": "Support Files 或应用文件夹路径"
+	},
+	"filePick": {
+		"selected": "已选择：{{count}}"
+	},
+	"secondaryPanel": {
+		"title": "需要设置",
+		"description": "请先在面板1中完成引导。",
+		"userManual": "用户手册",
+		"openMainPanel": "打开主面板",
+		"linkUnavailable": "手册链接不可用"
+	},
+	"browse": "浏览",
+	"browseAriaLabel": "浏览文件夹",
+	"defaultLabel": "默认",
+	"customLabel": "自定义",
+	"empty": "无项目",
+	"goUp": "向上",
+	"selectedFiles": "{{files}} 个文件",
+	"selectedFolders": "{{folders}} 个文件夹",
+	"selectedSuffix": "已选择",
+	"errors": {
+		"supportRequired": "需要 AE 文件夹路径。",
+		"subfoldersRequired": "需要 Presets、Scripts 和 Plug-ins 文件夹路径。",
+		"folderPickerCep": "文件夹选择器需要 CEP。",
+		"finishErrorTitle": "无法保存设置",
+		"finishErrorPathLabel": "路径",
+		"finishErrorReasonLabel": "原因",
+		"finishErrorNextActionLabel": "下一步",
+		"finishErrorNextActionChooseTrusted": "引导设置文件中未包含 Support Root。请在 After Effects 中重新开始引导。",
+		"finishErrorNextActionAdjust": "无法在 AE Support Root 保存设置。请确认路径可访问且 After Effects 拥有写入权限,然后重试。",
+		"finishErrorNextActionRetry": "已请求 Windows UAC,但提权写入仍然失败。请点击 Retry 重新触发 UAC 对话框,或以管理员身份运行 After Effects。",
+		"finishErrorRetryWithElevation": "以管理员身份重试"
+	},
+	"actions": {
+		"back": "返回",
+		"next": "下一步",
+		"finish": "完成",
+		"toggleFullscreen": "切换到全屏",
+		"toggleModal": "返回模态框"
+	}
+}

@@ -1,0 +1,11 @@
+# Cargo build artifacts
+target/
+Cargo.lock.bak
+
+# Build outputs staged for `bun run build` to copy into `dist/cep-dev/bin/`.
+dist/
+
+# Local dev overrides
+.env
+.env.local
+*.log

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>ty-plus</title>
+	</head>
+	<body>
+		<div id="app"></div>
+		<script src="../../vendor/CSInterface.js"></script>
+		<script>
+			(() => {
+				try {
+					if (typeof CSInterface === "undefined") return;
+					var ext = new CSInterface().getExtensionID() || "";
+					var mDot = /^app\.ty-plus\.panel\.(\d+)$/i.exec(ext);
+					var mCompact = /^app\.ty-plus\.panel(\d+)$/i.exec(ext);
+					var m = mDot || mCompact;
+					if (m) window.__TY_PLUS_PANEL_SURFACE_ID__ = `panel-${m[1]}`;
+				} catch (_e) {
+					/* CEP not ready yet — resolvePanelSurfaceId() will fall back to getExtensionID() at boot */
+				}
+			})();
+		</script>
+		<script type="module" src="../../entry/panel.tsx"></script>
+	</body>
+</html>

@@ -1,0 +1,242 @@
+{
+	"scenarioId": "SCN-FAILURE-01",
+	"steps": [
+		{
+			"id": "step-1",
+			"gherkinRef": { "scenarioId": "SCN-FAILURE-01", "stepIndex": 0 },
+			"preconditions": [
+				"Onboarding completed (no SetupRequired widget present).",
+				"No preset named FailurePreset exists in the local catalog."
+			],
+			"input": { "snapshot": "precondition probe" },
+			"action": "observe_initial_panel_state",
+			"expectedResult": {
+				"persistenceOracle": {
+					"storageKey": "preset:FailurePreset",
+					"expected": null
+				}
+			},
+			"postconditions": [
+				"Catalog is empty of FailurePreset.",
+				"Persisted catalog key for FailurePreset returns null."
+			],
+			"mutation": false,
+			"checkpoint": false
+		},
+		{
+			"id": "step-2",
+			"gherkinRef": { "scenarioId": "SCN-FAILURE-01", "stepIndex": 1 },
+			"preconditions": ["Catalog is empty of FailurePreset."],
+			"input": {
+				"title": "FailurePreset",
+				"type": "expression",
+				"body": "app.alert(\"failure\")",
+				"tags": ["lifecycle"]
+			},
+			"action": "create_local_preset",
+			"expectedResult": {
+				"uiOracle": {
+					"selector": "[data-preset-gallery]",
+					"attribute": { "name": "data-state", "value": "creating" }
+				}
+			},
+			"postconditions": [
+				"Catalog row for FailurePreset enters the 'creating' state.",
+				"Pending persisted write has not yet completed."
+			],
+			"mutation": true,
+			"checkpoint": false
+		},
+		{
+			"id": "step-3",
+			"gherkinRef": { "scenarioId": "SCN-FAILURE-01", "stepIndex": 2 },
+			"preconditions": ["Catalog row for FailurePreset is 'creating'."],
+			"input": {
+				"probe": "read storage:preset:FailurePreset + DOM catalog row"
+			},
+			"action": "checkpoint_re_observe_after_create",
+			"expectedResult": {
+				"uiOracle": {
+					"selector": "[data-directory-browser-entry][data-preset-id=\"FailurePreset\"]",
+					"textContent": "FailurePreset"
+				},
+				"persistenceOracle": {
+					"storageKey": "preset:FailurePreset",
+					"expected": {
+						"id": "FailurePreset",
+						"source": "local",
+						"body": "app.alert(\"failure\")"
+					}
+				}
+			},
+			"postconditions": [
+				"Preset appears in the catalog with source=local.",
+				"Preset asset path exists on disk."
+			],
+			"mutation": false,
+			"checkpoint": true
+		},
+		{
+			"id": "step-4",
+			"gherkinRef": { "scenarioId": "SCN-FAILURE-01", "stepIndex": 3 },
+			"preconditions": [
+				"Catalog lists preset FailurePreset (postcondition of step-3)."
+			],
+			"input": {
+				"selector": "[data-directory-browser-entry][data-preset-id=\"FailurePreset\"]",
+				"destinationTileId": "tile-A"
+			},
+			"action": "drag_preset_to_workspace_tile",
+			"expectedResult": {
+				"persistenceOracle": {
+					"storageKey": "layout:panel-1",
+					"expected": {
+						"version": 1,
+						"surfaceTiles": [
+							{
+								"id": "tile-A",
+								"x": 0,
+								"y": 0,
+								"width": 2,
+								"height": 1,
+								"presetId": "FailurePreset"
+							}
+						]
+					}
+				}
+			},
+			"postconditions": [
+				"panel-1 layout has exactly one tile referencing FailurePreset."
+			],
+			"mutation": true,
+			"checkpoint": false
+		},
+		{
+			"id": "step-5",
+			"gherkinRef": { "scenarioId": "SCN-FAILURE-01", "stepIndex": 4 },
+			"preconditions": ["tile-A on panel-1 references FailurePreset."],
+			"input": { "probe": "read layout:panel-1" },
+			"action": "checkpoint_re_observe_after_placement",
+			"expectedResult": {
+				"persistenceOracle": {
+					"storageKey": "layout:panel-1",
+					"expected": {
+						"version": 1,
+						"surfaceTiles": [
+							{
+								"id": "tile-A",
+								"x": 0,
+								"y": 0,
+								"width": 2,
+								"height": 1,
+								"presetId": "FailurePreset"
+							}
+						]
+					}
+				}
+			},
+			"postconditions": ["Re-observe confirms the placement."],
+			"mutation": false,
+			"checkpoint": true
+		},
+		{
+			"id": "step-6",
+			"gherkinRef": { "scenarioId": "SCN-FAILURE-01", "stepIndex": 5 },
+			"preconditions": [
+				"tile-A on panel-1 references FailurePreset.",
+				"panel-2 has empty tile tile-X.",
+				"target.applyMove is injected to throw StorageError."
+			],
+			"input": {
+				"fromPanel": "panel-1",
+				"fromTileId": "tile-A",
+				"toPanel": "panel-2",
+				"toTileId": "tile-X"
+			},
+			"action": "cross_panel_move_preset_with_target_failure",
+			"expectedResult": {
+				"logOracle": {
+					"scope": "workspace",
+					"minLevel": "warn",
+					"messageContains": "applyMove failed",
+					"id": "log-apply-move-failed"
+				}
+			},
+			"postconditions": [
+				"Cross-panel move dispatch is in-flight with target write failing."
+			],
+			"mutation": true,
+			"checkpoint": false
+		},
+		{
+			"id": "step-7",
+			"gherkinRef": { "scenarioId": "SCN-FAILURE-01", "stepIndex": 6 },
+			"preconditions": ["Cross-panel move target write failed."],
+			"input": {
+				"probe": "read layout:panel-1 + layout:panel-2 + log bus"
+			},
+			"action": "checkpoint_re_observe_after_target_write_failure",
+			"expectedResult": {
+				"persistenceOracle": {
+					"storageKey": "layout:panel-1",
+					"expected": {
+						"version": 1,
+						"surfaceTiles": [
+							{
+								"id": "tile-A",
+								"x": 0,
+								"y": 0,
+								"width": 2,
+								"height": 1,
+								"presetId": "FailurePreset"
+							}
+						]
+					}
+				},
+				"persistenceOracle_target": {
+					"storageKey": "layout:panel-2",
+					"expected": {
+						"version": 0,
+						"surfaceTiles": []
+					}
+				},
+				"logOracle": {
+					"scope": "workspace",
+					"minLevel": "warn",
+					"messageContains": "applyMove failed",
+					"id": "log-apply-move-failed"
+				}
+			},
+			"postconditions": [
+				"Source panel still holds the preset (no data loss).",
+				"Target panel state did not gain the preset.",
+				"Log-bus carries the workspace-scoped warn entry."
+			],
+			"mutation": false,
+			"checkpoint": true
+		}
+	],
+	"cleanup": [
+		{
+			"id": "cleanup-1",
+			"preconditions": ["Scenario verdict resolved."],
+			"input": {
+				"presetId": "FailurePreset",
+				"panels": ["panel-1", "panel-2"]
+			},
+			"action": "delete_local_preset_and_layouts",
+			"expectedResult": {
+				"persistenceOracle": {
+					"storageKey": "preset:FailurePreset",
+					"expected": null
+				}
+			},
+			"postconditions": [
+				"storage:preset:FailurePreset is null.",
+				"storage:layout:panel-1 and storage:layout:panel-2 have no surface tiles."
+			],
+			"mutation": true,
+			"checkpoint": false
+		}
+	]
+}

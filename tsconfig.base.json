@@ -1,0 +1,42 @@
+{
+	"compilerOptions": {
+		"target": "ES2022",
+		"lib": ["ES2022"],
+		"module": "ESNext",
+		"moduleResolution": "Bundler",
+		"strict": true,
+		"noEmit": true,
+		"esModuleInterop": true,
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"skipLibCheck": true,
+		"paths": {
+			"@/*": ["./src/*"],
+			"@/styled-system/*": ["./styled-system/*"],
+			"@styled-system/*": ["./styled-system/*"],
+			"@ty-plus/shared": ["./src/shared/index.ts"],
+			"@ty-plus/workspace": ["./src/management/workspace/index.ts"],
+			"@ty-plus/management/workspaces": ["./src/management/workspace/index.ts"],
+			"@ty-plus/management/preset/registry": [
+				"./src/management/preset/registry.ts"
+			],
+			"@ty-plus/management/ae/cep/runtime": [
+				"./src/management/ae/cep/runtime.ts"
+			],
+			"@ty-plus/management/ae/cep/host-executor": [
+				"./src/management/ae/cep/host-executor.ts"
+			],
+			"@ty-plus/management/ae/cep/transport/transport": [
+				"./src/management/ae/cep/transport/transport.ts"
+			],
+			"@ty-plus/management/ae/cep/shared-storage": [
+				"./src/management/ae/cep/shared-storage.ts"
+			],
+			"@ty-plus/cep-shell": ["./src/management/ae/cep/entry/panel.tsx"],
+			"@ty-plus/management/online/licensing": [
+				"./src/management/online/licensing/index.ts"
+			],
+			"@ty-plus/licensing": ["./src/management/online/licensing/index.ts"]
+		}
+	}
+}

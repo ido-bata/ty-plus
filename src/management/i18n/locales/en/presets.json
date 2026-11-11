@@ -1,0 +1,237 @@
+{
+	"codePreset": {
+		"codeType": "Code type",
+		"editor": {
+			"expression": "Expression",
+			"script": "Script code (.jsx)"
+		},
+		"saveLocation": "Save location",
+		"savePreview": "Save preview",
+		"status": {
+			"fileExists": "File already exists — will be overwritten",
+			"success": "Preset saved successfully!"
+		},
+		"type": {
+			"expression": "Expression",
+			"script": "Script"
+		}
+	},
+	"common": {
+		"browseFolder": "Browse Folder",
+		"copyPath": "Copy Path",
+		"selectFile": "Select File"
+	},
+	"layerCompPreset": {
+		"desc": {
+			"comp": "Open the composition you want to save. Project must be saved first.",
+			"layer": "Select the layers you want to save. Project must be saved first."
+		},
+		"hint": {
+			"saveButton": "Press \"Create\" at the bottom of the dialog to save."
+		},
+		"savePreview": "Save preview",
+		"step1": {
+			"title": "Preset type"
+		},
+		"step2": {
+			"title": "Prepare in After Effects"
+		},
+		"step3": {
+			"title": "Save location"
+		},
+		"type": {
+			"comp": "Composition",
+			"layer": "Layer"
+		}
+	},
+	"search": {
+		"title": "Search Presets",
+		"placeholder": "Type to search...",
+		"empty": "No presets found"
+	},
+	"online": {
+		"loading": "Loading...",
+		"empty": "No online presets available"
+	},
+	"presetTool": {
+		"form": {
+			"presetId": "Preset ID",
+			"presetIdPlaceholder": "Preset ID",
+			"displayName": "Display name",
+			"displayNamePlaceholder": "Display name",
+			"filePath": "File path",
+			"description": "Description",
+			"descriptionPlaceholder": "Description (optional)",
+			"descriptionImage": "Description image",
+			"descriptionImagePlaceholder": "Image path or URL",
+			"descriptionImageBrowse": "Browse image",
+			"details": "Details",
+			"presetName": "Preset name",
+			"icon": "Icon",
+			"savePath": "Save path"
+		},
+		"create": "Create",
+		"status": {
+			"ready": "Ready",
+			"loading": "Loading preset…",
+			"loaded": "Editing: {{id}}",
+			"unknownPreset": "Preset not found: {{id}}",
+			"loadFailed": "Failed to load preset: {{message}}",
+			"invalidId": "Preset ID is invalid",
+			"filePathRequired": "File path is required",
+			"saved": "Saved: {{id}}",
+			"saveFailed": "Save failed: {{message}}",
+			"saving": "Saving..."
+		},
+		"animation": {
+			"title": "Animation Preset",
+			"lead": "Keyframe or expression defaults packaged as a reusable animation preset.",
+			"defaultName": "Animation Preset",
+			"fields": {
+				"saveFolder": "Save folder",
+				"path": "Animation preset path",
+				"pathPlaceholder": "Optional existing .ffx path"
+			}
+		},
+		"footage": {
+			"title": "Footage Preset",
+			"lead": "Footage pipeline shortcuts (import, replace, proxy). Real files are imported as footage.",
+			"defaultName": "Footage Preset",
+			"fields": {
+				"path": "Footage path",
+				"mode": "Import mode"
+			}
+		},
+		"layerComp": {
+			"title": "Layer / Comp Preset",
+			"lead": "Layer and comp operations (transform, duplicate, precompose). Saved script files run in After Effects.",
+			"defaultName": "Layer / Comp Preset"
+		},
+		"import": {
+			"title": "Import Preset",
+			"lead": "Import-path or selection-importer bundles. Reuses the footage preset pipeline when your workflow shares those handlers.",
+			"defaultName": "Import Preset",
+			"fields": {
+				"path": "Import path",
+				"strategy": "Strategy"
+			}
+		},
+		"code": {
+			"title": "Code Preset",
+			"lead": "Create a local code/script preset.",
+			"defaultName": "Code Preset",
+			"extra": "Saved script files run in After Effects.",
+			"editor": {
+				"format": "Format Document",
+				"formatTooltip": "Format the script body",
+				"diagnosticCount": "{{count}} problem",
+				"diagnosticCount_other": "{{count}} problems"
+			}
+		},
+		"easing": {
+			"title": "Easing Preset",
+			"lead": "Create a local easing preset.",
+			"curveHint": "Host easing (cubic-bezier). This curve is stored when you save from AE context.",
+			"openWithSelectionHint": "Open this dialog from the workspace with an easing selection to embed a curve preview.",
+			"ariaPreview": "Easing curve preview",
+			"editTitle": "Edit Easing Preset",
+			"defaultName": "Easing Preset",
+			"curve": "Curve",
+			"invalidCurve": "Curve must be a JSON array with four numbers."
+		},
+		"addFile": {
+			"title": "Add file preset",
+			"lead": "Register a file-backed local preset from the workspace. The extension determines the preset type."
+		},
+		"addFolder": {
+			"title": "Add folder / group preset",
+			"lead": "Register a folder or group for organizing tiles."
+		},
+		"localPreset": "Local Preset",
+		"groupPreset": "Group Preset",
+		"animationLabel": "Animation",
+		"layerCompLabel": "Layer/Comp",
+		"codeLabel": "Code",
+		"presetLibrary": "Preset Library",
+		"messages": "Messages",
+		"settings": "Settings",
+		"debugConsole": "Debug Console",
+		"cancel": "Cancel",
+		"boot": {
+			"title": "Preset Dialog",
+			"preparing": "Preparing preset dialog...",
+			"handoffError": "Could not retrieve preset dialog launch info. Open again from the workspace."
+		},
+		"generic": {
+			"title": "Create Preset",
+			"lead": "Create a local preset from reusable metadata.",
+			"defaultName": "Local Preset"
+		}
+	},
+	"animationPreset": {
+		"step1": {
+			"title": "Select in After Effects",
+			"desc": "Select properties or layers you want to save as preset"
+		},
+		"step2": {
+			"title": "Save to this folder"
+		},
+		"step3": {
+			"button": "Save Animation Preset",
+			"detecting": "Detecting..."
+		},
+		"status": {
+			"success": "Detected!",
+			"noSelection": "No selection",
+			"noSelectionHint": "Select properties or layers in AE first",
+			"timeout": "Scan timeout",
+			"timeoutHint": "Choose a smaller folder",
+			"error": "Not detected",
+			"errorHint": "Save to the folder above"
+		},
+		"path": {
+			"reset": "Reset to default",
+			"notConfigured": "Not configured"
+		}
+	},
+	"edit": {
+		"title": "Edit Preset",
+		"titleForType": {
+			"preset": "Preset",
+			"script": "Script Preset",
+			"plugin": "Plugin Preset",
+			"footage": "Footage Preset"
+		},
+		"delete": "Delete",
+		"save": "Save",
+		"cancel": "Cancel",
+		"status": {
+			"loading": "Loading preset…",
+			"saved": "Saved",
+			"deleted": "Deleted",
+			"saveFailed": "Save failed: {{message}}",
+			"deleteFailed": "Delete failed: {{message}}"
+		},
+		"fields": {
+			"presetName": "Preset name",
+			"presetNamePlaceholder": "Enter preset name",
+			"description": "Description",
+			"icon": "Icon",
+			"iconText": "Text",
+			"iconEmoji": "Emoji",
+			"iconTextPlaceholder": "Text (e.g. CODE)",
+			"iconEmojiPlaceholder": "Emoji (e.g. ⚡)",
+			"filePath": "File path",
+			"type": "Type"
+		}
+	},
+	"group": {
+		"title": "Create preset group",
+		"lead": "Group multiple presets under a single tile.",
+		"defaultName": "Group Preset",
+		"fields": {
+			"groupName": "Group name",
+			"groupNamePlaceholder": "Enter group name"
+		}
+	}
+}

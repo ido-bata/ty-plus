@@ -1,0 +1,184 @@
+{
+	"app": {
+		"name": "ty-plus",
+		"version": "Version {{version}}",
+		"loading": "Loading...",
+		"ready": "Ready"
+	},
+	"buttons": {
+		"save": "Save",
+		"cancel": "Cancel",
+		"delete": "Delete",
+		"edit": "Edit",
+		"close": "Close"
+	},
+	"actions": {
+		"run": "Run",
+		"duplicate": "Duplicate",
+		"save": "Save",
+		"cancel": "Cancel",
+		"close": "Close",
+		"reset": "Reset",
+		"delete": "Delete",
+		"apply": "Apply",
+		"search": "Search",
+		"import": "Import",
+		"export": "Export",
+		"create": "Create",
+		"edit": "Edit",
+		"rename": "Rename",
+		"remove": "Remove",
+		"refresh": "Refresh",
+		"reload": "Reload",
+		"undo": "Undo",
+		"redo": "Redo",
+		"copy": "Copy",
+		"paste": "Paste",
+		"cut": "Cut",
+		"selectAll": "Select All",
+		"clear": "Clear",
+		"ok": "OK",
+		"yes": "Yes",
+		"no": "No",
+		"confirm": "Confirm",
+		"browse": "Browse",
+		"upload": "Upload",
+		"download": "Download"
+	},
+	"status": {
+		"loading": "Loading...",
+		"saving": "Saving...",
+		"saved": "Saved",
+		"error": "Error",
+		"success": "Success",
+		"warning": "Warning",
+		"info": "Information",
+		"pending": "Pending",
+		"processing": "Processing",
+		"complete": "Complete",
+		"failed": "Failed",
+		"ready": "Ready",
+		"offline": "Offline",
+		"online": "Online",
+		"syncing": "Syncing...",
+		"synced": "Synced"
+	},
+	"settings": {
+		"optional": "optional",
+		"sections": {
+			"general": "General",
+			"theme": "Theme",
+			"paths": "Paths",
+			"gridLayout": "Grid Layout",
+			"feedbackSupport": "Feedback & Support",
+			"workspaceBackup": "Workspace Backup",
+			"advanced": "Advanced",
+			"workspaceBackground": "Workspace Background"
+		},
+		"labels": {
+			"language": "Language",
+			"theme": "Theme",
+			"accentColor": "Accent Color",
+			"textColor": "Text Color",
+			"widgetBackground": "Widget Background",
+			"widgetOpacity": "Widget Opacity",
+			"panelBackground": "Panel Background",
+			"panelOpacity": "Panel Opacity",
+			"backgroundColor": "Background Color",
+			"supportRoot": "Support Root",
+			"presetRoot": "Preset Root",
+			"scriptRoot": "Script Root",
+			"pluginRoot": "Plugin Root",
+			"cellSize": "Cell Size",
+			"gap": "Gap",
+			"cornerRadius": "Corner Radius",
+			"category": "Category",
+			"subject": "Subject",
+			"presetId": "Preset ID",
+			"description": "Description",
+			"attachments": "Attachments",
+			"backupRestore": "Backup & Restore",
+			"scanTimeout": "Scan Timeout",
+			"maxFiles": "Max Files"
+		},
+		"themes": {
+			"system": "System",
+			"dark": "Dark",
+			"light": "Light",
+			"custom": "Custom"
+		},
+		"languages": {
+			"japanese": "Japanese",
+			"english": "English"
+		},
+		"buttons": {
+			"advancedSettings": "Advanced Settings",
+			"selectSupportRoot": "Select Support Root",
+			"selectPresetRoot": "Select Preset Root",
+			"selectScriptRoot": "Select Script Root",
+			"selectPluginRoot": "Select Plugin Root",
+			"sendReport": "Send Report",
+			"sending": "Sending...",
+			"exporting": "Exporting...",
+			"importing": "Importing...",
+			"exportWorkspace": "Export Workspace",
+			"importWorkspace": "Import Workspace",
+			"resetting": "Resetting...",
+			"resetOnboarding": "Reset Onboarding"
+		},
+		"messages": {
+			"filesSelected": "{{count}} file(s) selected",
+			"resetOnboardingConfirm": "Are you sure you want to reset onboarding?",
+			"exportSuccess": "Workspace exported to {{path}}",
+			"exportFailed": "Export failed: {{error}}",
+			"exportCancelled": "Export cancelled",
+			"importSuccess": "{{count}} item(s) imported",
+			"importFailed": "Import failed: {{error}}",
+			"importCancelled": "Import cancelled",
+			"reportSentSuccess": "Report sent successfully",
+			"reportSendFailed": "Failed to send report: {{error}}"
+		}
+	},
+	"quickActions": {
+		"presets": "Presets",
+		"settings": "Settings",
+		"messages": "Messages",
+		"newNote": "New Note",
+		"newScript": "New Script",
+		"newEasing": "New Easing",
+		"toggleGrid": "Toggle Grid",
+		"toggleLabels": "Toggle Labels",
+		"documentation": "Documentation",
+		"sendFeedback": "Send Feedback",
+		"category": {
+			"file": "File",
+			"edit": "Edit",
+			"view": "View",
+			"help": "Help"
+		}
+	},
+	"sidePanel": {
+		"presets": "Presets",
+		"debugConsole": "Debug Console",
+		"messages": "Messages",
+		"settings": "Settings",
+		"reloadPanel": "Reload Panel",
+		"closePanel": "Close Panel"
+	},
+	"statusBar": {
+		"presets": "Presets",
+		"debug": "Debug",
+		"message": "Messages",
+		"settings": "Settings"
+	},
+	"panel": {
+		"errorBoundary": {
+			"surface": "{{surface}} failed to render",
+			"title": "Something went wrong",
+			"retry": "Retry",
+			"copyError": "Copy error details",
+			"copied": "Copied to clipboard",
+			"digest": "Error ID"
+		}
+	}
+}

@@ -1,0 +1,237 @@
+{
+	"codePreset": {
+		"codeType": "Code type",
+		"editor": {
+			"expression": "Expression",
+			"script": "Script code (.jsx)"
+		},
+		"saveLocation": "Save location",
+		"savePreview": "Save preview",
+		"status": {
+			"fileExists": "File already exists — will be overwritten",
+			"success": "Preset saved successfully!"
+		},
+		"type": {
+			"expression": "Expression",
+			"script": "Script"
+		}
+	},
+	"common": {
+		"browseFolder": "Examinar carpeta",
+		"copyPath": "Copiar ruta",
+		"selectFile": "Seleccionar archivo"
+	},
+	"layerCompPreset": {
+		"desc": {
+			"comp": "Open the composition you want to save. Project must be saved first.",
+			"layer": "Select the layers you want to save. Project must be saved first."
+		},
+		"hint": {
+			"saveButton": "Press \"Create\" at the bottom of the dialog to save."
+		},
+		"savePreview": "Save preview",
+		"step1": {
+			"title": "Preset type"
+		},
+		"step2": {
+			"title": "Prepare in After Effects"
+		},
+		"step3": {
+			"title": "Save location"
+		},
+		"type": {
+			"comp": "Composition",
+			"layer": "Layer"
+		}
+	},
+	"search": {
+		"title": "Buscar preajustes",
+		"placeholder": "Escribe para buscar...",
+		"empty": "No se encontraron preajustes"
+	},
+	"online": {
+		"loading": "Cargando...",
+		"empty": "No hay preajustes en línea disponibles"
+	},
+	"presetTool": {
+		"form": {
+			"presetId": "ID del preajuste",
+			"presetIdPlaceholder": "ID del preajuste",
+			"displayName": "Nombre para mostrar",
+			"displayNamePlaceholder": "Nombre para mostrar",
+			"filePath": "Ruta del archivo",
+			"description": "Descripción",
+			"descriptionPlaceholder": "Descripción (opcional)",
+			"descriptionImage": "Imagen de descripción",
+			"descriptionImagePlaceholder": "Ruta o URL de la imagen",
+			"descriptionImageBrowse": "Examinar imagen",
+			"details": "Detalles",
+			"presetName": "Nombre del preset",
+			"icon": "Icono",
+			"savePath": "Ruta de guardado"
+		},
+		"create": "Crear",
+		"status": {
+			"ready": "Listo",
+			"loading": "Cargando preajuste…",
+			"loaded": "Editando: {{id}}",
+			"unknownPreset": "Preajuste no encontrado: {{id}}",
+			"loadFailed": "Error al cargar preajuste: {{message}}",
+			"invalidId": "El ID del preajuste no es válido",
+			"filePathRequired": "La ruta del archivo es requerida",
+			"saved": "Guardado: {{id}}",
+			"saveFailed": "Error al guardar: {{message}}",
+			"saving": "Guardando..."
+		},
+		"animation": {
+			"title": "Preajuste de animación",
+			"lead": "Fotogramas clave o valores predeterminados de expresión empaquetados como un preajuste de animación reutilizable.",
+			"defaultName": "Preajuste de animación",
+			"fields": {
+				"saveFolder": "Carpeta de guardado",
+				"path": "Ruta del preset de animación",
+				"pathPlaceholder": "Ruta .ffx existente opcional"
+			}
+		},
+		"footage": {
+			"title": "Preajuste de metraje",
+			"lead": "Atajos de flujo de metraje (importar, reemplazar, proxy). Los archivos reales se importan como metraje.",
+			"defaultName": "Preajuste de metraje",
+			"fields": {
+				"path": "Ruta del footage",
+				"mode": "Modo de importación"
+			}
+		},
+		"layerComp": {
+			"title": "Preajuste de capa/comp",
+			"lead": "Operaciones de capa y comp (transformar, duplicar, precomponer). Los archivos de script guardados se ejecutan en After Effects.",
+			"defaultName": "Preajuste de capa/comp"
+		},
+		"import": {
+			"title": "Preajuste de importación",
+			"lead": "Paquetes de importación o importador de selección. Reutiliza el flujo de preajustes de metraje cuando tu flujo de trabajo comparte esos controladores.",
+			"defaultName": "Preajuste de importación",
+			"fields": {
+				"path": "Ruta de importación",
+				"strategy": "Estrategia"
+			}
+		},
+		"code": {
+			"title": "Preajuste de código",
+			"lead": "Crea un preajuste local de código/script.",
+			"extra": "Los archivos de script guardados se ejecutan en After Effects.",
+			"defaultName": "Preajuste de código",
+			"editor": {
+				"format": "Format Document",
+				"formatTooltip": "Format the script body",
+				"diagnosticCount": "{{count}} problem",
+				"diagnosticCount_other": "{{count}} problems"
+			}
+		},
+		"easing": {
+			"title": "Preajuste de easing",
+			"lead": "Crea un preajuste de easing local.",
+			"curveHint": "Easing del host (cubic-bezier). Esta curva se almacena cuando guardas desde el contexto de AE.",
+			"openWithSelectionHint": "Abre este diálogo desde el espacio de trabajo con una selección de easing para incrustar una vista previa de curva.",
+			"ariaPreview": "Vista previa de curva de easing",
+			"editTitle": "Editar preset de easing",
+			"defaultName": "Preset de easing",
+			"curve": "Curva",
+			"invalidCurve": "La curva debe ser un array JSON con cuatro números."
+		},
+		"addFile": {
+			"title": "Añadir preajuste de archivo",
+			"lead": "Registra un preajuste local respaldado por archivo desde el espacio de trabajo. La extensión determina el tipo de preajuste."
+		},
+		"addFolder": {
+			"title": "Añadir carpeta/grupo de preajustes",
+			"lead": "Registra una carpeta o grupo para organizar baldosas."
+		},
+		"localPreset": "Preajuste local",
+		"groupPreset": "Preajuste de grupo",
+		"animationLabel": "Animación",
+		"layerCompLabel": "Capa/Comp",
+		"codeLabel": "Código",
+		"presetLibrary": "Biblioteca de preajustes",
+		"messages": "Mensajes",
+		"settings": "Configuración",
+		"debugConsole": "Consola de depuración",
+		"cancel": "Cancelar",
+		"boot": {
+			"title": "Diálogo de preajuste",
+			"preparing": "Preparando el diálogo de preajuste...",
+			"handoffError": "No se pudo recuperar la información de inicio del diálogo de preajuste. Ábrelo de nuevo desde el espacio de trabajo."
+		},
+		"generic": {
+			"title": "Crear preset",
+			"lead": "Crea un preset local a partir de metadatos reutilizables.",
+			"defaultName": "Preset local"
+		}
+	},
+	"animationPreset": {
+		"step1": {
+			"title": "Select in After Effects",
+			"desc": "Select properties or layers you want to save as preset"
+		},
+		"step2": {
+			"title": "Save to this folder"
+		},
+		"step3": {
+			"button": "Save Animation Preset",
+			"detecting": "Detecting..."
+		},
+		"status": {
+			"success": "Detected!",
+			"noSelection": "No selection",
+			"noSelectionHint": "Select properties or layers in AE first",
+			"timeout": "Scan timeout",
+			"timeoutHint": "Choose a smaller folder",
+			"error": "Not detected",
+			"errorHint": "Save to the folder above"
+		},
+		"path": {
+			"reset": "Reset to default",
+			"notConfigured": "Not configured"
+		}
+	},
+	"edit": {
+		"title": "Editar preset",
+		"delete": "Eliminar",
+		"save": "Guardar",
+		"cancel": "Cancelar",
+		"status": {
+			"loading": "Cargando preset…",
+			"saved": "Guardado",
+			"deleted": "Eliminado",
+			"saveFailed": "Error al guardar: {{message}}",
+			"deleteFailed": "Error al eliminar: {{message}}"
+		},
+		"fields": {
+			"presetName": "Nombre del preset",
+			"description": "Descripción",
+			"icon": "Icono",
+			"iconText": "Texto",
+			"iconEmoji": "Emoji",
+			"iconTextPlaceholder": "Texto (p. ej. CODE)",
+			"iconEmojiPlaceholder": "Emoji (p. ej. ⚡)",
+			"filePath": "Ruta del archivo",
+			"type": "Tipo",
+			"presetNamePlaceholder": "Introduce el nombre del preset"
+		},
+		"titleForType": {
+			"preset": "Preset",
+			"script": "Preset de script",
+			"plugin": "Preset de plugin",
+			"footage": "Preset de footage"
+		}
+	},
+	"group": {
+		"title": "Crear grupo de presets",
+		"lead": "Agrupa varios presets bajo un único mosaico.",
+		"defaultName": "Preset de grupo",
+		"fields": {
+			"groupName": "Nombre del grupo",
+			"groupNamePlaceholder": "Introduce el nombre del grupo"
+		}
+	}
+}

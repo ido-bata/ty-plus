@@ -1,0 +1,37 @@
+{
+	"widgets": {
+		"align": {
+			"alignLeft": "Выровнять влево",
+			"alignCenterH": "Выровнять по центру горизонтально",
+			"alignRight": "Выровнять вправо",
+			"alignTop": "Выровнять вверх",
+			"alignCenterV": "Выровнять по центру вертикально",
+			"alignBottom": "Выровнять вниз"
+		},
+		"layoutLock": {
+			"lock": "Заблокировать макет",
+			"unlock": "Разблокировать макет"
+		},
+		"projectInfo": {
+			"dimensions": "Размеры",
+			"timing": "Время",
+			"layers": "Слои"
+		}
+	},
+	"controlPanel": {
+		"expand": "Развернуть",
+		"collapse": "Свернуть",
+		"position": "Позиция",
+		"orientation": "Ориентация"
+	},
+	"context": {
+		"lock": "Заблокировать",
+		"unlock": "Разблокировать",
+		"addWidget": "Добавить виджет",
+		"deleteWidget": "Удалить виджет",
+		"refresh": "Обновить"
+	},
+	"widgetSearch": {
+		"placeholder": "Поиск пресетов…"
+	}
+}

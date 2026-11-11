@@ -1,0 +1,136 @@
+/* CEP Shell - Main styles entry */
+/* PandaCSS layer order — required for `styled-system/styles.css` to interleave correctly with @layer base content below. */
+@layer reset, base, tokens, recipes, utilities;
+
+/* Generated PandaCSS reset, tokens, recipes, and utilities. */
+@import "../../../../styled-system/styles.css";
+
+/* Custom theme tokens (CSS variables) injected by mergePanelTheme. */
+@import "../../style/theme.css";
+
+@layer base {
+	*,
+	*::before,
+	*::after {
+		scrollbar-width: thin;
+	}
+
+	::-webkit-scrollbar {
+		width: var(--scrollbar-width, 4px);
+		height: var(--scrollbar-width, 4px);
+	}
+
+	::-webkit-scrollbar-track {
+		background: var(--scrollbar-track-bg, transparent);
+	}
+
+	::-webkit-scrollbar-thumb {
+		background: var(--scrollbar-thumb-bg, var(--ty-text-muted));
+		border-radius: var(--scrollbar-thumb-radius, 2px);
+		visibility: hidden;
+		transition: visibility 0ms linear
+			var(--scrollbar-transition-duration, 150ms);
+	}
+
+	::-webkit-scrollbar-corner {
+		background: var(--scrollbar-track-bg, transparent);
+	}
+
+	*:hover::-webkit-scrollbar-thumb {
+		visibility: visible;
+		transition-delay: 0ms;
+	}
+
+	/* Workspace scroll containers - always show scrollbar, no hover behavior */
+	.ws-scroll,
+	.ws-scroll-inner {
+		scrollbar-width: var(--ty-ws-scrollbar-width, 4px);
+		scrollbar-color: rgba(
+				var(--text-r),
+				var(--text-g),
+				var(--text-b),
+				var(--ty-opacity-ws-scrollbar-thumb)
+			)
+			transparent;
+	}
+
+	.ws-scroll::-webkit-scrollbar,
+	.ws-scroll-inner::-webkit-scrollbar {
+		width: var(--ty-ws-scrollbar-width, 4px);
+		height: var(--ty-ws-scrollbar-width, 4px);
+	}
+
+	.ws-scroll::-webkit-scrollbar-track,
+	.ws-scroll-inner::-webkit-scrollbar-track {
+		background: transparent;
+	}
+
+	.ws-scroll::-webkit-scrollbar-thumb,
+	.ws-scroll-inner::-webkit-scrollbar-thumb {
+		background: rgba(
+			var(--text-r),
+			var(--text-g),
+			var(--text-b),
+			var(--ty-opacity-ws-scrollbar-thumb)
+		);
+		border-radius: var(--ty-radius-full);
+		visibility: visible;
+		opacity: 1;
+	}
+
+	.ws-scroll:hover::-webkit-scrollbar-thumb,
+	.ws-scroll-inner:hover::-webkit-scrollbar-thumb {
+		background: rgba(
+			var(--text-r),
+			var(--text-g),
+			var(--text-b),
+			var(--ty-opacity-ws-scrollbar-hover)
+		);
+	}
+
+	/* Workspace scroll exclude - hide scrollbar entirely (incl. horizontal gutter) */
+	.ws-scroll-exclude {
+		scrollbar-width: none;
+		-ms-overflow-style: none;
+	}
+
+	.ws-scroll-exclude::-webkit-scrollbar {
+		display: none;
+		width: 0;
+		height: 0;
+	}
+
+	.ws-scroll-exclude::-webkit-scrollbar-thumb {
+		visibility: hidden;
+		opacity: 0;
+	}
+
+	.ws-scroll-exclude:hover::-webkit-scrollbar-thumb {
+		visibility: hidden;
+	}
+
+	/*
+	 * CEP only (this bundle loads in panel/dialog shells): before the host assigns
+	 * panel geometry, percentage heights can resolve to 0×0 and the surface stays blank.
+	 * Motion Tools–style extensions rely on a non-zero minimum until layout settles.
+	 */
+	html,
+	body {
+		min-width: var(--ty-cep-shell-min-width, 280px);
+		min-height: var(--ty-cep-shell-min-height, 360px);
+		height: 100%;
+		margin: 0;
+		/* Fixed chrome (e.g. control panel) + rounding must not grow the document; workspace scrolls inside .ws-scroll */
+		overflow: hidden;
+	}
+
+	/* CEP panel root: single flex column so workspace + status bar fill the host rect */
+	#app {
+		box-sizing: border-box;
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+		min-height: 0;
+		overflow: hidden;
+	}
+}

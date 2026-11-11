@@ -1,0 +1,32 @@
+[package]
+name = "ty-plus-runtime"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+async-trait = "0.1"
+serde = { version = "1.0.217", features = ["derive"] }
+serde_json = "1.0.138"
+tokio = { version = "1", features = ["net", "io-util", "sync", "macros", "rt-multi-thread"] }
+ty-plus-host-filesystem = { path = "../../crates/host-filesystem" }
+ty-plus-licensing = { path = "../../crates/licensing" }
+ty-plus-online = { path = "../../crates/online" }
+ty-plus-protocol = { path = "../../crates/protocol" }
+ty-plus-storage = { path = "../../crates/storage" }
+
+[target.'cfg(windows)'.dependencies]
+tokio-native-tls = "0.3"
+windows-sys = { version = "0.61", features = ["Win32_System_Threading", "Win32_Foundation"] }
+
+[target.'cfg(unix)'.dependencies]
+libc = "0.2"
+tokio-stream = "0.1"
+
+[dev-dependencies]
+sha2 = "0.10"
+
+[lints]
+workspace = true
