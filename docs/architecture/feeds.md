@@ -10,6 +10,7 @@
 - クライアントは起動ごとの高頻度ポーリングをしない。HTTPキャッシュ（`Cache-Control` / `ETag`）を利用し、再取得は手動再読込または起動時の1回まで。
 - 取得に失敗してもローカル機能を妨げない。フィード系の失敗は状態表示に現れるだけで、例外をUIの外へ投げない。
 - バイナリの自動実行・自動インストールは行わない。更新は公式配布ページへの導線を示すだけ。
+- **fetchはpanel側から直接行う**（Rust workerのtransportを経由しない）。workerが壊れたinstallこそ更新情報を必要とするため、feed取得をworkerに依存させない。その代わり、配信ホストは **CORSヘッダ（`Access-Control-Allow-Origin`）を送ること** を契約に含める。panel側の直接fetchはruntime boundary guardのpermanent boundary（owner: `static-feed-client`）として登録済みで、feed client以外の追加をguardが検出する。
 
 ## 更新フィード（update feed）
 
