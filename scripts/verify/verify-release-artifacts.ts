@@ -31,6 +31,8 @@ if (!existsSync(manifestPath)) {
 
 const manifest = JSON.parse(readFileSync(manifestPath, "utf8")) as {
 	version?: unknown;
+	releaseVersion?: unknown;
+	channel?: unknown;
 	sourceCommit?: unknown;
 	trustMode?: unknown;
 	artifacts?: ReadonlyArray<{ file?: unknown; sha256?: unknown }>;
@@ -41,6 +43,19 @@ if (manifest.trustMode !== "release") {
 		`manifest trustMode is "${String(manifest.trustMode)}", expected "release" — ` +
 			"development-unsigned artifacts are not distribution evidence",
 	);
+}
+
+const releaseVersion = manifest.releaseVersion;
+const releaseChannel = manifest.channel;
+const match =
+	typeof releaseVersion === "string"
+		? /^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-(beta|insider)\\.(0|[1-9]\\d*))?$/.exec(
+				releaseVersion,
+			)
+		: null;
+if (!match || manifest.version !== match[1] + "." + match[2] + "." + match[3] ||
+	releaseChannel !== (match[4] ?? "stable")) {
+	fail("release version/channel must match the CEP numeric version and tag");
 }
 
 const head = Bun.spawnSync(["git", "rev-parse", "HEAD"], {
