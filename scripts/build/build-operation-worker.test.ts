@@ -3,7 +3,6 @@ import { promises as fileSystem } from "node:fs";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { version as productVersion } from "../../package.json";
-import { main as buildCliMain } from "./build-cli";
 import {
 	type BuildCommand,
 	buildOperationWorkerArtifacts,
@@ -219,10 +218,6 @@ describe("buildOperationWorkerArtifacts", () => {
 			),
 		).toThrow(/target/i);
 		expect(() => resolveBuildTargets([], "linux")).toThrow(/native platform/i);
-	});
-
-	it("exposes a callable build-cli compatibility entrypoint", () => {
-		expect(buildCliMain).toBeTypeOf("function");
 	});
 
 	it("rejects empty, duplicate, and partial macOS staging target sets", async () => {

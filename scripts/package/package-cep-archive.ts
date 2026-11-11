@@ -10,7 +10,6 @@ import { spawnSync } from "node:child_process";
 import { existsSync } from "node:fs";
 import { cp, mkdir, rename, rm } from "node:fs/promises";
 import path from "node:path";
-import { resolveStagedCliBinary } from "../lib/cli-paths";
 import { resolveSignZxpConfig, signZxp } from "./sign-zxp";
 
 const EXTENSION_ID = "app.ty-plus";
@@ -64,28 +63,11 @@ const main = async (): Promise<void> => {
 	await mkdir(STAGED, { recursive: true });
 	await cp(DIST_CEP, STAGED, { recursive: true });
 
-	// Stage the Rust CLI binary under `bin/<platform>/`. Built artifacts
-	// live at `tools/ty-plus-cli/dist/<platform>/ty-plus[.exe]`. We copy
-	// both platforms when available so the same ZXP works on either OS.
-	for (const platform of ["Win", "Mac"] as const) {
-		const staged = resolveStagedCliBinary(platform);
-		if (!staged) {
-			console.warn(
-				`[package-cep-archive] CLI binary for ${platform} not found. ` +
-					`Run \`bun run build:cli${platform === "Win" ? ":win" : ":mac"}\` to build it. ` +
-					`Skipping (the extension will fall back to ExtendScript for unsupported operations).`,
-			);
-			continue;
-		}
-		const destDir = path.join(STAGED, "bin", platform);
-		await mkdir(destDir, { recursive: true });
-		const destFile = path.join(
-			destDir,
-			platform === "Win" ? "ty-plus.exe" : "ty-plus",
-		);
-		await cp(staged, destFile);
-		console.log(`[package-cep-archive] staged CLI: ${destFile}`);
-	}
+	// The operation-worker binary is part of `dist/cep-dev` itself
+	// (`worker/versions/<sha>/…` staged by the CEP build's worker step, with
+	// its trust manifest at `worker/manifest.json`). The former standalone
+	// CLI crate (`tools/ty-plus-cli`) was removed upstream; nothing consumes
+	// a `bin/<platform>/` copy in the pack anymore.
 
 	if (format === "zxp") {
 		const outFile = path.resolve("dist", `${EXTENSION_ID}.zxp`);

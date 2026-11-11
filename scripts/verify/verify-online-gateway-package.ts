@@ -196,9 +196,31 @@ export async function runSmokeTest(
 		!staticOnly && (platform === "windows" || platform === "macos");
 
 	const manifestPath = path.join(cepRoot, "worker", "manifest.json");
-	const binaryRelativePath =
-		platform === "windows" ? "operation-worker.exe" : "operation-worker";
-	const binaryPath = path.join(cepRoot, binaryRelativePath);
+
+	// The binary lives at the content-addressed path the manifest declares
+	// (`worker/versions/<sha>/<platform>/operation-worker`). The runtime
+	// resolves it through the manifest (`resolveOperationWorkerBinary`), so
+	// this gate reads the same source instead of assuming a flat layout that
+	// no build stage produces.
+	const manifestDeclaredBinaryPath = await (async (): Promise<
+		string | undefined
+	> => {
+		if (!existsSync(manifestPath)) return undefined;
+		const parsed: unknown = JSON.parse(await readFile(manifestPath, "utf8"));
+		if (!isRecord(parsed)) return undefined;
+		const workers = ownValue(parsed, "workers");
+		if (!isRecord(workers)) return undefined;
+		const artifact = ownValue(workers, platform);
+		if (!isRecord(artifact)) return undefined;
+		const relativePath = ownValue(artifact, "relativePath");
+		return typeof relativePath === "string" ? relativePath : undefined;
+	})();
+	const binaryPath = manifestDeclaredBinaryPath
+		? path.join(cepRoot, manifestDeclaredBinaryPath)
+		: path.join(
+				cepRoot,
+				platform === "windows" ? "operation-worker.exe" : "operation-worker",
+			);
 
 	const probes: ProbeResult[] = [];
 
@@ -508,7 +530,7 @@ const main = async (): Promise<number> => {
 	// silently downgraded to development-unsigned, which would let an
 	// unsigned release pass the smoke test.
 	const trustMode: TrustMode =
-		(trustModeArg as TrustMode | undefined) ??
+		(trustModeArg?.split("=")[1] as TrustMode | undefined) ??
 		(trustModeFromEnv === "release" ? "release" : "unknown");
 
 	try {
