@@ -1,0 +1,440 @@
+[
+	{
+		"from": "src/management/dialog/DialogRoot.tsx",
+		"to": "../../function/dialog-routes",
+		"specifier": "../../function/dialog-routes",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/dialog/DialogRoot.tsx",
+		"to": "../../function/preset/list/PresetListDialog",
+		"specifier": "../../function/preset/list/PresetListDialog",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/dialog/dialogs/unified-context-menu.ts",
+		"to": "../../../function/widget",
+		"specifier": "../../../function/widget",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/dialog/modeless/modeless-boot.tsx",
+		"to": "../../../function/preset/modeless/PresetToolModelessHost",
+		"specifier": "../../../function/preset/modeless/PresetToolModelessHost",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/panel/panel-boot.tsx",
+		"to": "../../function/onboarding/OnboardingView",
+		"specifier": "../../function/onboarding/OnboardingView",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/panel/PanelMain.tsx",
+		"to": "../../function/widget/runtime-context",
+		"specifier": "../../function/widget/runtime-context",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/preset/index.ts",
+		"to": "../../function/preset/list/catalog-browser-shell",
+		"specifier": "../../function/preset/list/catalog-browser-shell",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/preset/index.ts",
+		"to": "../../function/preset/list/catalog-browser-layout",
+		"specifier": "../../function/preset/list/catalog-browser-layout",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/preset/index.ts",
+		"to": "../../function/preset/list/catalog-browser-view-mode-toggle",
+		"specifier": "../../function/preset/list/catalog-browser-view-mode-toggle",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/preset/onboarding-service.ts",
+		"to": "../../function/widget",
+		"specifier": "../../function/widget",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/setting/onboarding/complete-onboarding.ts",
+		"to": "../../../function/widget",
+		"specifier": "../../../function/widget",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/setting/onboarding/complete-onboarding.ts",
+		"to": "../../../function/widget/layout/layout-types",
+		"specifier": "../../../function/widget/layout/layout-types",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/storage/contract.test.ts",
+		"to": "../../function/widget/layout/layout-types",
+		"specifier": "../../function/widget/layout/layout-types",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/storage/contract.test.ts",
+		"to": "../../function/widget/layout/layout-types",
+		"specifier": "../../function/widget/layout/layout-types",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/storage/initialization.test.ts",
+		"to": "../../function/widget/layout/layout-types",
+		"specifier": "../../function/widget/layout/layout-types",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/storage/initialization.ts",
+		"to": "../../function/widget/layout/layout-types",
+		"specifier": "../../function/widget/layout/layout-types",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/storage/layout-store.test.ts",
+		"to": "../../function/widget/layout/layout-types",
+		"specifier": "../../function/widget/layout/layout-types",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/storage/layout-store.test.ts",
+		"to": "../../function/widget/layout/layout-types",
+		"specifier": "../../function/widget/layout/layout-types",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/storage/storage-migration.ts",
+		"to": "../../function/widget/layout/layout-types",
+		"specifier": "../../function/widget/layout/layout-types",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/storage/store.test.ts",
+		"to": "../../function/widget",
+		"specifier": "../../function/widget",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/storage/store.test.ts",
+		"to": "../../function/widget/layout/layout-types",
+		"specifier": "../../function/widget/layout/layout-types",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/widget/add-widget-dialog.tsx",
+		"to": "../../function/widget",
+		"specifier": "../../function/widget",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/widget/add-widget-picker-overlay.tsx",
+		"to": "../../function/widget",
+		"specifier": "../../function/widget",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/widget/initialize.ts",
+		"to": "../../function/widget",
+		"specifier": "../../function/widget",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/widget/initialize.ts",
+		"to": "../../function/widget/layout/layout-types",
+		"specifier": "../../function/widget/layout/layout-types",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/widget/persistence/directory-browser-state-catalog.ts",
+		"to": "../../../function/widget/file-browser/build-file-browser-catalog",
+		"specifier": "../../../function/widget/file-browser/build-file-browser-catalog",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/widget/persistence/directory-browser-state-catalog.ts",
+		"to": "../../../function/widget/layout/layout-types",
+		"specifier": "../../../function/widget/layout/layout-types",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/widget/persistence/easing-state-catalog.ts",
+		"to": "../../../function/widget",
+		"specifier": "../../../function/widget",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/widget/persistence/easing-state-catalog.ts",
+		"to": "../../../function/widget/layout/layout-types",
+		"specifier": "../../../function/widget/layout/layout-types",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/widget/record/types.ts",
+		"to": "../../../function/widget",
+		"specifier": "../../../function/widget",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/widget/registry/index.ts",
+		"to": "../../../function/widget",
+		"specifier": "../../../function/widget",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/widget/workspace/Widget.tsx",
+		"to": "../../../function/widget",
+		"specifier": "../../../function/widget",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/widget/workspace/Widget.tsx",
+		"to": "../../../function/widget/align/align-widget",
+		"specifier": "../../../function/widget/align/align-widget",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/widget/workspace/Widget.tsx",
+		"to": "../../../function/widget/anchor-point/anchor-point-widget",
+		"specifier": "../../../function/widget/anchor-point/anchor-point-widget",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/widget/workspace/Widget.tsx",
+		"to": "../../../function/widget/directory-browser/directory-browser-widget",
+		"specifier": "../../../function/widget/directory-browser/directory-browser-widget",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/widget/workspace/Widget.tsx",
+		"to": "../../../function/widget/info/preset-info-widget",
+		"specifier": "../../../function/widget/info/preset-info-widget",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/widget/workspace/Widget.tsx",
+		"to": "../../../function/widget/layout-lock/layout-lock-widget",
+		"specifier": "../../../function/widget/layout-lock/layout-lock-widget",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/widget/workspace/Widget.tsx",
+		"to": "../../../function/widget/menu/menu-widget",
+		"specifier": "../../../function/widget/menu/menu-widget",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/widget/workspace/Widget.tsx",
+		"to": "../../../function/widget/quick-actions/quick-actions-widget",
+		"specifier": "../../../function/widget/quick-actions/quick-actions-widget",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/workspace/events/handler.ts",
+		"to": "../../../function/widget",
+		"specifier": "../../../function/widget",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/workspace/events/handler.ts",
+		"to": "../../../function/widget/align/align-script",
+		"specifier": "../../../function/widget/align/align-script",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/workspace/events/handler.ts",
+		"to": "../../../function/widget/align/time-align-script",
+		"specifier": "../../../function/widget/align/time-align-script",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/workspace/events/handler.ts",
+		"to": "../../../function/widget/anchor-point/anchor-point-script",
+		"specifier": "../../../function/widget/anchor-point/anchor-point-script",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/workspace/hook.ts",
+		"to": "../../function/widget",
+		"specifier": "../../function/widget",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/workspace/hook.ts",
+		"to": "../../function/widget/layout/layout-types",
+		"specifier": "../../function/widget/layout/layout-types",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/workspace/initialize.ts",
+		"to": "../../function/widget/layout/layout-types",
+		"specifier": "../../function/widget/layout/layout-types",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/workspace/layout/default-layout.ts",
+		"to": "../../../function/widget",
+		"specifier": "../../../function/widget",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/workspace/layout/default-layout.ts",
+		"to": "../../../function/widget/layout/layout-types",
+		"specifier": "../../../function/widget/layout/layout-types",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/workspace/layout/engine.ts",
+		"to": "../../../function/widget/layout/layout-types",
+		"specifier": "../../../function/widget/layout/layout-types",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/workspace/layout/layout-persistence.ts",
+		"to": "../../../function/widget/layout/layout-types",
+		"specifier": "../../../function/widget/layout/layout-types",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/workspace/layout/layout-persistence.ts",
+		"to": "../../../function/widget/layout/layout-types",
+		"specifier": "../../../function/widget/layout/layout-types",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/workspace/layout/types.test.ts",
+		"to": "../../../function/widget/layout/layout-types",
+		"specifier": "../../../function/widget/layout/layout-types",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/workspace/persistence/store.ts",
+		"to": "../../../function/widget",
+		"specifier": "../../../function/widget",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/workspace/persistence/store.ts",
+		"to": "../../../function/widget/layout/layout-types",
+		"specifier": "../../../function/widget/layout/layout-types",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/workspace/placement/cross-panel-write.ts",
+		"to": "../../../function/widget",
+		"specifier": "../../../function/widget",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/workspace/placement/cross-panel-write.ts",
+		"to": "../../../function/widget/layout/layout-types",
+		"specifier": "../../../function/widget/layout/layout-types",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/workspace/placement/gateway.ts",
+		"to": "../../../function/widget/layout/layout-types",
+		"specifier": "../../../function/widget/layout/layout-types",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/workspace/placement/placement-resolve.ts",
+		"to": "../../../function/widget",
+		"specifier": "../../../function/widget",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/workspace/placement/placement-resolve.ts",
+		"to": "../../../function/widget/layout/layout-types",
+		"specifier": "../../../function/widget/layout/layout-types",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/workspace/placement/widget-placement-bus.ts",
+		"to": "../../../function/widget",
+		"specifier": "../../../function/widget",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/workspace/selection.ts",
+		"to": "../../function/widget/layout/layout-types",
+		"specifier": "../../function/widget/layout/layout-types",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/workspace/state/normalize.ts",
+		"to": "../../../function/widget",
+		"specifier": "../../../function/widget",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/workspace/state/normalize.ts",
+		"to": "../../../function/widget/layout/layout-types",
+		"specifier": "../../../function/widget/layout/layout-types",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/workspace/state.ts",
+		"to": "../../function/widget",
+		"specifier": "../../function/widget",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/workspace/state.ts",
+		"to": "../../function/widget/layout/layout-types",
+		"specifier": "../../function/widget/layout/layout-types",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/workspace/state.ts",
+		"to": "../../function/widget/layout/layout-types",
+		"specifier": "../../function/widget/layout/layout-types",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/workspace/state.ts",
+		"to": "../../function/widget/layout/layout-types",
+		"specifier": "../../function/widget/layout/layout-types",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/workspace/state.ts",
+		"to": "../../function/widget/layout/layout-types",
+		"specifier": "../../function/widget/layout/layout-types",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/workspace/surface/Grid.tsx",
+		"to": "../../../function/widget/layout/layout-types",
+		"specifier": "../../../function/widget/layout/layout-types",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/workspace/surface/tiles.test.ts",
+		"to": "../../../function/widget/layout/layout-types",
+		"specifier": "../../../function/widget/layout/layout-types",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/workspace/surface/tiles.ts",
+		"to": "../../../function/widget",
+		"specifier": "../../../function/widget",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/workspace/surface/tiles.ts",
+		"to": "../../../function/widget/layout/layout-types",
+		"specifier": "../../../function/widget/layout/layout-types",
+		"reason": "management must not import function implementation directly"
+	},
+	{
+		"from": "src/management/workspace/undo/history.ts",
+		"to": "../../../function/widget/layout/layout-types",
+		"specifier": "../../../function/widget/layout/layout-types",
+		"reason": "management must not import function implementation directly"
+	}
+]

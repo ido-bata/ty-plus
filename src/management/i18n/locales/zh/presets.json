@@ -1,0 +1,237 @@
+{
+	"codePreset": {
+		"codeType": "Code type",
+		"editor": {
+			"expression": "Expression",
+			"script": "Script code (.jsx)"
+		},
+		"saveLocation": "Save location",
+		"savePreview": "Save preview",
+		"status": {
+			"fileExists": "File already exists — will be overwritten",
+			"success": "Preset saved successfully!"
+		},
+		"type": {
+			"expression": "Expression",
+			"script": "Script"
+		}
+	},
+	"common": {
+		"browseFolder": "浏览文件夹",
+		"copyPath": "复制路径",
+		"selectFile": "选择文件"
+	},
+	"layerCompPreset": {
+		"desc": {
+			"comp": "Open the composition you want to save. Project must be saved first.",
+			"layer": "Select the layers you want to save. Project must be saved first."
+		},
+		"hint": {
+			"saveButton": "Press \"Create\" at the bottom of the dialog to save."
+		},
+		"savePreview": "Save preview",
+		"step1": {
+			"title": "Preset type"
+		},
+		"step2": {
+			"title": "Prepare in After Effects"
+		},
+		"step3": {
+			"title": "Save location"
+		},
+		"type": {
+			"comp": "Composition",
+			"layer": "Layer"
+		}
+	},
+	"search": {
+		"title": "搜索预设",
+		"placeholder": "输入以搜索…",
+		"empty": "未找到预设"
+	},
+	"online": {
+		"loading": "加载中…",
+		"empty": "无在线预设"
+	},
+	"presetTool": {
+		"form": {
+			"presetId": "预设 ID",
+			"presetIdPlaceholder": "预设 ID",
+			"displayName": "显示名称",
+			"displayNamePlaceholder": "显示名称",
+			"filePath": "文件路径",
+			"description": "描述",
+			"descriptionPlaceholder": "描述（可选）",
+			"descriptionImage": "描述图片",
+			"descriptionImagePlaceholder": "图片路径或 URL",
+			"descriptionImageBrowse": "浏览图片",
+			"details": "详情",
+			"presetName": "预设名称",
+			"icon": "图标",
+			"savePath": "保存路径"
+		},
+		"create": "创建",
+		"status": {
+			"ready": "就绪",
+			"loading": "正在加载预设…",
+			"loaded": "正在编辑：{{id}}",
+			"unknownPreset": "未找到预设：{{id}}",
+			"loadFailed": "加载预设失败：{{message}}",
+			"invalidId": "预设 ID 无效",
+			"filePathRequired": "需要文件路径",
+			"saved": "已保存：{{id}}",
+			"saveFailed": "保存失败：{{message}}",
+			"saving": "正在保存..."
+		},
+		"animation": {
+			"title": "动画预设",
+			"lead": "关键帧或表达式默认值打包为可重用的动画预设。",
+			"defaultName": "动画预设",
+			"fields": {
+				"saveFolder": "保存文件夹",
+				"path": "动画预设路径",
+				"pathPlaceholder": "可选的现有 .ffx 路径"
+			}
+		},
+		"footage": {
+			"title": " footage 预设",
+			"lead": " footage 管道快捷方式（导入、替换、代理）。真实文件作为 footage 导入。",
+			"defaultName": "素材预设",
+			"fields": {
+				"path": "素材路径",
+				"mode": "导入模式"
+			}
+		},
+		"layerComp": {
+			"title": "图层/合成预设",
+			"lead": "图层和合成操作（变换、复制、预合成）。保存的脚本文件在 After Effects 中运行。",
+			"defaultName": "图层/合成预设"
+		},
+		"import": {
+			"title": "导入预设",
+			"lead": "导入路径或选择导入器捆绑包。当您的工作流共享这些处理器时，重用 footage 预设管道。",
+			"defaultName": "导入预设",
+			"fields": {
+				"path": "导入路径",
+				"strategy": "策略"
+			}
+		},
+		"code": {
+			"title": "代码预设",
+			"lead": "创建本地代码/脚本预设。",
+			"extra": "保存的脚本文件在 After Effects 中运行。",
+			"defaultName": "代码预设",
+			"editor": {
+				"format": "Format Document",
+				"formatTooltip": "Format the script body",
+				"diagnosticCount": "{{count}} problem",
+				"diagnosticCount_other": "{{count}} problems"
+			}
+		},
+		"easing": {
+			"title": "缓动预设",
+			"lead": "创建本地缓动预设。",
+			"curveHint": "主机缓动（cubic-bezier）。当您从 AE 上下文保存时存储此曲线。",
+			"openWithSelectionHint": "从工作区打开此对话框并选择缓动以嵌入曲线预览。",
+			"ariaPreview": "缓动曲线预览",
+			"editTitle": "编辑缓动预设",
+			"defaultName": "缓动预设",
+			"curve": "曲线",
+			"invalidCurve": "曲线必须是包含四个数字的 JSON 数组。"
+		},
+		"addFile": {
+			"title": "添加文件预设",
+			"lead": "从工作区注册基于文件的本地预设。扩展名决定预设类型。"
+		},
+		"addFolder": {
+			"title": "添加文件夹/分组预设",
+			"lead": "注册用于整理磁贴的文件夹或分组。"
+		},
+		"localPreset": "本地预设",
+		"groupPreset": "分组预设",
+		"animationLabel": "动画",
+		"layerCompLabel": "图层/合成",
+		"codeLabel": "代码",
+		"presetLibrary": "预设库",
+		"messages": "消息",
+		"settings": "设置",
+		"debugConsole": "调试控制台",
+		"cancel": "取消",
+		"boot": {
+			"title": "预设对话框",
+			"preparing": "正在准备预设对话框...",
+			"handoffError": "无法获取预设对话框的启动信息。请从工作区重新打开。"
+		},
+		"generic": {
+			"title": "创建预设",
+			"lead": "根据可复用元数据创建本地预设。",
+			"defaultName": "本地预设"
+		}
+	},
+	"animationPreset": {
+		"step1": {
+			"title": "Select in After Effects",
+			"desc": "Select properties or layers you want to save as preset"
+		},
+		"step2": {
+			"title": "Save to this folder"
+		},
+		"step3": {
+			"button": "Save Animation Preset",
+			"detecting": "Detecting..."
+		},
+		"status": {
+			"success": "Detected!",
+			"noSelection": "No selection",
+			"noSelectionHint": "Select properties or layers in AE first",
+			"timeout": "Scan timeout",
+			"timeoutHint": "Choose a smaller folder",
+			"error": "Not detected",
+			"errorHint": "Save to the folder above"
+		},
+		"path": {
+			"reset": "Reset to default",
+			"notConfigured": "Not configured"
+		}
+	},
+	"edit": {
+		"title": "编辑预设",
+		"delete": "删除",
+		"save": "保存",
+		"cancel": "取消",
+		"status": {
+			"loading": "正在加载预设…",
+			"saved": "已保存",
+			"deleted": "已删除",
+			"saveFailed": "保存失败：{{message}}",
+			"deleteFailed": "删除失败：{{message}}"
+		},
+		"fields": {
+			"presetName": "预设名称",
+			"description": "描述",
+			"icon": "图标",
+			"iconText": "文本",
+			"iconEmoji": "表情符号",
+			"iconTextPlaceholder": "文本（例如 CODE）",
+			"iconEmojiPlaceholder": "表情符号（例如 ⚡）",
+			"filePath": "文件路径",
+			"type": "类型",
+			"presetNamePlaceholder": "输入预设名称"
+		},
+		"titleForType": {
+			"preset": "预设",
+			"script": "脚本预设",
+			"plugin": "插件预设",
+			"footage": "素材预设"
+		}
+	},
+	"group": {
+		"title": "创建预设组",
+		"lead": "将多个预设合并到一个磁贴下。",
+		"defaultName": "组预设",
+		"fields": {
+			"groupName": "组名称",
+			"groupNamePlaceholder": "输入组名称"
+		}
+	}
+}

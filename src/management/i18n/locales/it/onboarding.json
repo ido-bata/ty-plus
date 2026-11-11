@@ -1,0 +1,99 @@
+{
+	"step": {
+		"intro": {
+			"label": "Introduzione",
+			"title": "Benvenuto",
+			"body": "Benvenuto! ty-plus crea un'area di lavoro personale per lavorare piu velocemente.\nPosiziona preimpostazioni/widget e semplifica il flusso di lavoro. Iniziamo la configurazione!"
+		},
+		"language": {
+			"label": "Lingua",
+			"title": "Seleziona Lingua",
+			"body": "Scegli la lingua preferita. L'interfaccia si aggiornerà immediatamente dopo la selezione."
+		},
+		"support": {
+			"label": "Posizione",
+			"title": "Seleziona Cartella AE",
+			"body": "Scegli la cartella dell'applicazione After Effects. Su Windows è la directory Support Files; su macOS è la cartella dell'app contenente Presets."
+		},
+		"subfolders": {
+			"label": "Cartelle",
+			"title": "Regola Sotto-cartelle",
+			"body": "Questo passaggio appare quando modifichi i percorsi dai valori predefiniti. Personalizza Presets/Scripts/Plug-ins se necessario."
+		},
+		"presets": {
+			"label": "Preimpostazioni",
+			"title": "Seleziona Preimpostazioni",
+			"body": "Scegli i file preimpostazioni (.ffx) dalla tua cartella Presets da aggiungere come preimpostazioni iniziali.\nPuoi aggiungere/importare altre poi dal menu +. La selezione cartelle sarà raggruppata automaticamente."
+		},
+		"scripts": {
+			"label": "Script",
+			"title": "Seleziona Script",
+			"body": "Scegli i file script (.jsx, .jsxbin) dalla tua cartella Scripts da aggiungere come preimpostazioni iniziali.\nPuoi anche creare preimpostazioni Script/Expression poi da Code Preset."
+		},
+		"plugins": {
+			"label": "Plug-in",
+			"title": "Seleziona Plug-in",
+			"body": "Scegli i file effetto (.aex/.plugin) dalla tua cartella Plug-ins da aggiungere come preimpostazioni iniziali.\nPuoi importare altri poi se necessario."
+		},
+		"workspace": {
+			"label": "Area di lavoro",
+			"title": "Base dell'Area di Lavoro",
+			"body": "Trascina per spostare e ridimensionare preimpostazioni e widget.\n\n- Ctrl/Cmd+trascina per spostare\n- Usa Blocco Layout per prevenire modifiche\n- La ricerca oscura gli elementi non corrispondenti\n- Click destro per azioni di modifica/gruppo"
+		},
+		"adding-presets": {
+			"label": "Preimpostazioni",
+			"title": "Aggiungere Preimpostazioni",
+			"body": "Usa il menu + per aggiungere preimpostazioni, gruppi e widget.\n\n- Cambia pannelli laterali per l'elenco preimpostazioni\n- Le preimpostazioni scaricate online si posizionano automaticamente"
+		},
+		"finish": {
+			"label": "Fine",
+			"title": "Pronto per Iniziare!",
+			"body": "Premi Fine per salvare le impostazioni.\n\nIniziamo!"
+		}
+	},
+	"fields": {
+		"presetRoot": "Cartella Preimpostazioni",
+		"scriptRoot": "Cartella Script",
+		"pluginRoot": "Cartella Plug-in",
+		"supportPlaceholder": "Percorso Support Files o cartella app"
+	},
+	"filePick": {
+		"selected": "Selezionati: {{count}}"
+	},
+	"secondaryPanel": {
+		"title": "Configurazione richiesta",
+		"description": "Completa prima l'onboarding nel pannello-1.",
+		"userManual": "Manuale utente",
+		"openMainPanel": "Apri pannello principale",
+		"linkUnavailable": "Collegamento al manuale non disponibile"
+	},
+	"browse": "Sfoglia",
+	"browseAriaLabel": "Sfoglia cartella",
+	"defaultLabel": "Predefinito",
+	"customLabel": "Personalizzato",
+	"empty": "Nessun elemento",
+	"goUp": "Su",
+	"selectedFiles": "{{files}} file",
+	"selectedFolders": "{{folders}} cartella(e)",
+	"selectedSuffix": " selezionati",
+	"errors": {
+		"supportRequired": "Il percorso della cartella AE è richiesto.",
+		"subfoldersRequired": "Sono richiesti i percorsi delle cartelle Presets, Scripts e Plug-ins.",
+		"folderPickerCep": "Il selettore cartelle richiede CEP.",
+		"finishErrorTitle": "Impossibile salvare le impostazioni",
+		"finishErrorPathLabel": "Percorso",
+		"finishErrorReasonLabel": "Motivo",
+		"finishErrorNextActionLabel": "Passaggio successivo",
+		"finishErrorNextActionChooseTrusted": "Il file delle impostazioni di onboarding non conteneva un Support Root. Riavvia l'onboarding in After Effects.",
+		"finishErrorNextActionAdjust": "Non è stato possibile salvare le impostazioni nel Support Root di AE. Verifica che il percorso sia raggiungibile e che After Effects abbia i permessi di scrittura, quindi riprova.",
+		"finishErrorNextActionRetry": "L'UAC di Windows è stato richiesto ma la scrittura con privilegi elevati non è riuscita. Fai clic su Retry per richiamare di nuovo la finestra UAC, oppure esegui After Effects come amministratore.",
+		"finishErrorRetryWithElevation": "Riprova come amministratore"
+	},
+	"actions": {
+		"back": "Indietro",
+		"next": "Avanti",
+		"finish": "Fine",
+		"toggleFullscreen": "Espandi a schermo intero",
+		"toggleModal": "Torna alla finestra"
+	}
+}

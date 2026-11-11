@@ -1,0 +1,269 @@
+{
+	"selector": {
+		"search": "위젯 검색",
+		"addWidget": "위젯 추가",
+		"searchPlaceholder": "이름 또는 설명으로 검색…",
+		"hintShortcuts": "화살표: 이동 · Enter(검색 시): 추가 · 더블클릭: 추가 · Esc: 닫기",
+		"listView": "목록 보기",
+		"iconView": "카드 보기",
+		"fieldsetLegend": "위젯 브라우저 레이아웃",
+		"descriptions": {
+			"easing": "프리셋 및 레이어 애니메이션의 이징 커브를 편집하고 적용합니다.",
+			"menu": "하나의 타일에서 워크스페이스 명령, 레이아웃 작업, 대화상자를 엽니다.",
+			"align": "선택한 프리셋 또는 레이어를 그리드의 일반 위치로 정렬합니다.",
+			"anchor-point": "레이아웃 참조 및 스냅핑 워크플로우를 위한 명명된 앵커를 배치합니다.",
+			"layout-lock": "워크스페이스 그리드를 배치하는 동안 실수를 의한 이동을 방지합니다.",
+			"info": "프리셋 메타데이터, 경로, 상태를 넓은 요약 타일에 표시합니다.",
+			"quick-actions": "컴팩트 명령 팔레트에서 스크립트, 이펙트, 파일 작업을 실행합니다.",
+			"directory-browser": "패널 내부에서 디스크 폴더 및 프리셋을 브라우즈합니다.",
+			"font-viewer": "워크스페이스에서 글꼴 제품군, 스타일, 샘플 텍스트를 미리보기합니다."
+		}
+	},
+	"types": {
+		"align": "정렬",
+		"preset": "프리셋 선택기"
+	},
+	"categories": {
+		"core": "코어",
+		"utility": "유틸리티",
+		"media": "미디어",
+		"phase4": "실험적"
+	},
+	"search": {
+		"name": "검색"
+	},
+	"easing": {
+		"name": "Easing",
+		"apply": "Apply",
+		"copyFromSelection": "Copy from selection",
+		"reverse": "Reverse",
+		"mode": {
+			"curve": "Curve",
+			"loop": "Loop",
+			"bounce": "Bounce",
+			"elastic": "Elastic"
+		},
+		"loop": {
+			"cycles": "사이클",
+			"decrement": "사이클 줄이기",
+			"increment": "사이클 늘리기"
+		},
+		"options": {
+			"mode": "Mode",
+			"grid": "Grid",
+			"label": "Label"
+		},
+		"background": {
+			"dots": "Dots",
+			"grid": "Grid"
+		},
+		"label": {
+			"none": "None"
+		},
+		"applyMode": {
+			"single": "Single",
+			"pair": "Each"
+		},
+		"status": {
+			"applying": "Applying",
+			"applied": "Applied",
+			"failed": "Failed"
+		},
+		"presets": {
+			"linear": "Linear",
+			"easeOut": "Ease out",
+			"easeIn": "Ease in",
+			"easeInOut": "Ease in/out"
+		}
+	},
+	"menu": {
+		"name": "메뉴",
+		"createPreset": "프리셋 만들기",
+		"addWidget": "위젯 추가",
+		"saveLayout": "레이아웃 저장",
+		"reload": "새로고침",
+		"lockLayout": "레이아웃 잠금",
+		"unlockLayout": "레이아웃 잠금 해제",
+		"packToTopLeft": "왼쪽 상단에 담기",
+		"background": "배경...",
+		"undo": "실행 취소",
+		"redo": "다시 실행",
+		"selectedPresets": "선택한 프리셋",
+		"groupSelectedItems": "선택 항목 그룹화",
+		"moveToPanel": "패널로 이동",
+		"deleteSelectedPresets": "{{count}}개 프리셋 삭제",
+		"layout": "레이아웃"
+	},
+	"align": {
+		"name": "정렬"
+	},
+	"anchorPoint": {
+		"name": "앵커 포인트"
+	},
+	"info": {
+		"name": "정보"
+	},
+	"layoutLock": {
+		"name": "레이아웃 잠금"
+	},
+	"projectInfo": {
+		"name": "프로젝트 정보"
+	},
+	"quickActions": {
+		"name": "Quick actions",
+		"palettePlaceholder": "Search presets, scripts, plugins, effects, and files under roots…",
+		"paletteEmpty": "No matching presets or effects.",
+		"effectRowKind": "Effect",
+		"rootFileRowKind": "Disk"
+	},
+	"fxSearch": "FX 검색",
+	"directoryBrowser": {
+		"name": "디렉터리 브라우저",
+		"anchors": {
+			"defaultUserData": "사용자 데이터",
+			"presetRoot": "프리셋",
+			"scriptRoot": "스크립트",
+			"pluginRoot": "플러그인"
+		},
+		"actions": {
+			"importFailed": "가져오기 실패: {{message}}",
+			"runSuccess": "실행 완료: {{presetId}}",
+			"runFailed": "실패: {{message}}",
+			"run": "실행",
+			"importRun": "가져오기 후 실행",
+			"openFolder": "폴더 열기",
+			"openEntry": "열기",
+			"importOnly": "가져오기",
+			"selectFile": "선택",
+			"deselect": "선택 해제",
+			"runBlockedMissingAsset": "프리셋 자산이 디스크에 없습니다 — 실행이 비활성화되었습니다."
+		},
+		"path": {
+			"pickFolderPrompt": "폴더 선택",
+			"pickFolderAria": "폴더 찾아보기",
+			"inputPlaceholder": "경로 입력…",
+			"inputTitle": "Enter 키를 눌러 이동"
+		},
+		"pathDisplay": {
+			"anchorTemplate": "{rootLabel}/{relativePath}"
+		},
+		"search": {
+			"placeholderCatalog": "프리셋 검색…",
+			"placeholderFolder": "파일 검색…",
+			"resultsCount": "{{count}}개 항목",
+			"resultsCountFiltered": "{{count}}개 일치"
+		},
+		"thumbnail": {
+			"loading": "미리보기 로드 중...",
+			"error": "미리보기 사용 불가"
+		},
+		"toolbar": {
+			"detailedFilters": "필터",
+			"viewModeLegend": "보기 모드",
+			"listView": "목록 보기",
+			"iconView": "아이콘 보기"
+		},
+		"browseMode": {
+			"filesystem": "파일",
+			"anchors": "앵커",
+			"presetsCatalog": "카탈로그"
+		},
+		"browseModeSelectAria": "탐색 모드",
+		"catalog": {
+			"ungroupedHeading": "그룹 해제됨"
+		},
+		"filters": {
+			"typeList": "유형:",
+			"quickFilterAria": "빠른 필터",
+			"optionAll": "전체",
+			"optionMedia": "미디어",
+			"optionPresets": "프리셋",
+			"optionScripts": "스크립트",
+			"optionFonts": "글꼴",
+			"extensionHide": "숨기기:",
+			"fileTypeHide": "유형:",
+			"recursiveSearch": "하위 폴더 포함: {{state}}",
+			"recursiveOn": "켜짐",
+			"recursiveOff": "꺼짐",
+			"catalogPresetTypesHide": "숨기기:",
+			"anchorsNoFilters": "앵커에는 필터가 없습니다"
+		},
+		"empty": {
+			"catalogNeedsFolder": "프리셋을 보려면 폴더를 선택하세요.",
+			"noAnchors": "설정된 앵커가 없습니다.",
+			"noCatalogPresets": "이 폴더에 프리셋이 없습니다.",
+			"noItems": "항목 없음"
+		},
+		"entry": {
+			"defaultFolderSubtitle": "기본",
+			"parentRowName": "상위",
+			"browseDrives": "드라이브 찾아보기",
+			"kindFolder": "폴더",
+			"kindFile": "파일"
+		},
+		"hints": {
+			"iconGridWheel": "Ctrl+스크롤로 크기 조절"
+		}
+	},
+	"textEditor": {
+		"name": "텍스트 편집기"
+	},
+	"fontViewer": {
+		"name": "Font viewer",
+		"searchPlaceholder": "Search family, PostScript, style…",
+		"searchAria": "Search fonts",
+		"listView": "List view",
+		"iconView": "Icon cards",
+		"layoutLegend": "Font layout",
+		"reload": "Reload font list",
+		"samplePresets": "Sample",
+		"sampleCustom": "Custom",
+		"samplePresetAria": "Preview sample preset",
+		"previewTextAria": "Preview text",
+		"samplePlaceholder": "Preview text (CJK / emoji / Latin)",
+		"ctxMenuHeading": "Display options",
+		"ctxTileSquare": "Tile aspect 1:1",
+		"ctxTileWide": "Tile aspect 16:9",
+		"ctxShowResolved": "Show resolved-font match column (list)",
+		"ctxHideResolved": "Hide resolved-font match column (list)",
+		"showResolved": "Resolved font check (list)",
+		"loadError": "Could not load fonts.",
+		"loading": "Loading…",
+		"statsLine": "{{families}} families · {{faces}} typefaces ({{total}} loaded)",
+		"familySummary": "{{count}} typefaces",
+		"expandFamily": "Expand family",
+		"collapseFamily": "Collapse family",
+		"backToFamilies": "All font families",
+		"openFamilyIcon": "Open family",
+		"noMatches": "No matching fonts",
+		"phaseAeHost": "Querying After Effects for fonts (evalScript)…",
+		"phaseBrowser": "Reading browser font sources…",
+		"aeHostErrorLabel": "After Effects host:",
+		"previewSectionSummary": "Preview",
+		"sampleCollapsedPlaceholder": "Open to edit sample text and options",
+		"viaLocalApi": "Local Font Access API",
+		"viaAfterEffects": "After Effects (app.fonts)",
+		"viaDocumentFonts": "document.fonts (subset)",
+		"fallbackBadge": "swap",
+		"primaryBadge": "match",
+		"hintNeedUserGesture": "Installed fonts need a button click (Chromium Local Font Access). Until then, this catalog lists only fonts already registered on document.fonts for this panel.",
+		"loadAllSystemFonts": "Load all system fonts…",
+		"hintNoLocalApi": "This Chromium build does not expose queryLocalFonts — only fonts registered on document.fonts are listed.",
+		"localAccessErrorPrefix": "Local font access:",
+		"emptyList": "No fonts loaded yet. Use “Load all system fonts” if available, or reload after the panel finishes loading styles."
+	},
+	"folderDirectoryPicker": {
+		"label": "폴더 탐색기",
+		"tab": {
+			"presets": "프리셋",
+			"scripts": "스크립트",
+			"plugins": "플러그인",
+			"other": "기타"
+		},
+		"loading": "불러오는 중…",
+		"emptyFolders": "폴더를 찾을 수 없음",
+		"emptyItems": "항목을 찾을 수 없음",
+		"goUp": "상위로",
+		"cepNodeRequired": "폴더 탐색기에는 CEP Node가 필요합니다"
+	}
+}

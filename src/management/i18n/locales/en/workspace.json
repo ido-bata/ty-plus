@@ -1,0 +1,37 @@
+{
+	"widgets": {
+		"align": {
+			"alignLeft": "Align Left",
+			"alignCenterH": "Align Center Horizontal",
+			"alignRight": "Align Right",
+			"alignTop": "Align Top",
+			"alignCenterV": "Align Center Vertical",
+			"alignBottom": "Align Bottom"
+		},
+		"layoutLock": {
+			"lock": "Lock Layout",
+			"unlock": "Unlock Layout"
+		},
+		"projectInfo": {
+			"dimensions": "Dimensions",
+			"timing": "Timing",
+			"layers": "Layers"
+		}
+	},
+	"controlPanel": {
+		"expand": "Expand",
+		"collapse": "Collapse",
+		"position": "Position",
+		"orientation": "Orientation"
+	},
+	"context": {
+		"lock": "Lock",
+		"unlock": "Unlock",
+		"addWidget": "Add Widget",
+		"deleteWidget": "Delete Widget",
+		"refresh": "Refresh"
+	},
+	"widgetSearch": {
+		"placeholder": "Search presets…"
+	}
+}

@@ -1,0 +1,181 @@
+[
+  {
+    "name": "workspaceBlank",
+    "ok": true,
+    "prevented": false,
+    "text": "カーブ\nバウンス\nエラスティック\n適用\nALIGN\nDISTRIBUTE\n?\nNo preset selected\nhover\nFF\nX\n27",
+    "attrs": {
+      "data-workspace-grid": ""
+    },
+    "captures": [
+      {
+        "kind": "xml",
+        "menu": "<Menu><MenuItem Id=\"ty.ctx.undo\" Label=\"Undo\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.redo\" Label=\"Redo\" Enabled=\"true\" Checked=\"false\"/><MenuItem Label=\"---\" /><MenuItem Id=\"ty.ctx.layout-menu-root\" Label=\"Layout\" Enabled=\"true\" Checked=\"false\"><MenuItem Id=\"ty.ctx.save-snapshot\" Label=\"Save Layout\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.reload-presets\" Label=\"Reload\" Enabled=\"true\" Checked=\"false\"/><MenuItem Label=\"---\" /><MenuItem Id=\"ty.ctx.toggle-layout-lock\" Label=\"Lock Layout\" Enabled=\"true\" Checkable=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.pack-top-left\" Label=\"Pack to Top-Left\" Enabled=\"true\" Checked=\"false\"/><MenuItem Label=\"---\" /><MenuItem Id=\"ty.ctx.open-background\" Label=\"Background\" Enabled=\"true\" Checked=\"false\"/></MenuItem><MenuItem Label=\"---\" /><MenuItem Id=\"ty.ctx.add-widget\" Label=\"Add Widget\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.create-presets-menu-root\" Label=\"Create Preset\" Enabled=\"true\" Checked=\"false\"><MenuItem Id=\"ty.ctx.create-file-preset\" Label=\"Local Preset\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.create-folder-preset\" Label=\"Group Preset\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.create-animation-preset\" Label=\"Animation\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.create-layer-comp-preset\" Label=\"Layer/Comp\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.create-code-preset\" Label=\"Code\" Enabled=\"true\" Checked=\"false\"/></MenuItem></Menu>",
+        "at": 1780486434501
+      },
+      {
+        "kind": "xml",
+        "menu": "<Menu><MenuItem Id=\"ty.ctx.undo\" Label=\"Undo\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.redo\" Label=\"Redo\" Enabled=\"true\" Checked=\"false\"/><MenuItem Label=\"---\" /><MenuItem Id=\"ty.ctx.layout-menu-root\" Label=\"Layout\" Enabled=\"true\" Checked=\"false\"><MenuItem Id=\"ty.ctx.save-snapshot\" Label=\"Save Layout\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.reload-presets\" Label=\"Reload\" Enabled=\"true\" Checked=\"false\"/><MenuItem Label=\"---\" /><MenuItem Id=\"ty.ctx.toggle-layout-lock\" Label=\"Lock Layout\" Enabled=\"true\" Checkable=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.pack-top-left\" Label=\"Pack to Top-Left\" Enabled=\"true\" Checked=\"false\"/><MenuItem Label=\"---\" /><MenuItem Id=\"ty.ctx.open-background\" Label=\"Background\" Enabled=\"true\" Checked=\"false\"/></MenuItem><MenuItem Label=\"---\" /><MenuItem Id=\"ty.ctx.add-widget\" Label=\"Add Widget\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.create-presets-menu-root\" Label=\"Create Preset\" Enabled=\"true\" Checked=\"false\"><MenuItem Id=\"ty.ctx.create-file-preset\" Label=\"Local Preset\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.create-folder-preset\" Label=\"Group Preset\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.create-animation-preset\" Label=\"Animation\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.create-layer-comp-preset\" Label=\"Layer/Comp\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.create-code-preset\" Label=\"Code\" Enabled=\"true\" Checked=\"false\"/></MenuItem></Menu>",
+        "at": 1780486434501
+      }
+    ]
+  },
+  {
+    "name": "presetTile",
+    "ok": true,
+    "prevented": false,
+    "text": "FF\nX",
+    "attrs": {
+      "data-preset-id": "e9be26f7-fa9b-49cc-9bc7-db24ea3d03b5"
+    },
+    "captures": [
+      {
+        "kind": "xml",
+        "menu": "<Menu><MenuItem Id=\"ty.ctx.run-preset\" Label=\"Open\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.edit-preset\" Label=\"Edit\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.move-preset-to-panel-root\" Label=\"Move to panel\" Enabled=\"true\" Checked=\"false\"><MenuItem Id=\"ty.ctx.move-presets-to-panel.2\" Label=\"ty-plus 2\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.move-presets-to-panel.3\" Label=\"ty-plus 3\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.move-presets-to-panel.4\" Label=\"ty-plus 4\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.move-presets-to-panel.5\" Label=\"ty-plus 5\" Enabled=\"true\" Checked=\"false\"/></MenuItem><MenuItem Label=\"---\" /><MenuItem Id=\"ty.ctx.delete-preset\" Label=\"Delete\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.release-group-preset\" Label=\"Release Group\" Enabled=\"true\" Checked=\"false\"/></Menu>",
+        "at": 1780486434501
+      },
+      {
+        "kind": "xml",
+        "menu": "<Menu><MenuItem Id=\"ty.ctx.run-preset\" Label=\"Open\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.edit-preset\" Label=\"Edit\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.move-preset-to-panel-root\" Label=\"Move to panel\" Enabled=\"true\" Checked=\"false\"><MenuItem Id=\"ty.ctx.move-presets-to-panel.2\" Label=\"ty-plus 2\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.move-presets-to-panel.3\" Label=\"ty-plus 3\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.move-presets-to-panel.4\" Label=\"ty-plus 4\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.move-presets-to-panel.5\" Label=\"ty-plus 5\" Enabled=\"true\" Checked=\"false\"/></MenuItem><MenuItem Label=\"---\" /><MenuItem Id=\"ty.ctx.delete-preset\" Label=\"Delete\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.release-group-preset\" Label=\"Release Group\" Enabled=\"true\" Checked=\"false\"/></Menu>",
+        "at": 1780486434501
+      }
+    ]
+  },
+  {
+    "name": "quickWidget",
+    "ok": true,
+    "prevented": false,
+    "text": "",
+    "attrs": {
+      "data-workspace-surface-index": "0",
+      "data-workspace-widget-tile": "",
+      "data-widget-instance-id": "cdeacd50-6c9f-402f-a08d-a5b5cf5b85e1"
+    },
+    "captures": [
+      {
+        "kind": "xml",
+        "menu": "<Menu><MenuItem Id=\"ty.ctx.move-widget-to-panel-root\" Label=\"Move to panel\" Enabled=\"true\" Checked=\"false\"><MenuItem Id=\"ty.ctx.move-presets-to-panel.2\" Label=\"ty-plus 2\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.move-presets-to-panel.3\" Label=\"ty-plus 3\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.move-presets-to-panel.4\" Label=\"ty-plus 4\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.move-presets-to-panel.5\" Label=\"ty-plus 5\" Enabled=\"true\" Checked=\"false\"/></MenuItem><MenuItem Label=\"---\" /><MenuItem Id=\"ty.ctx.delete-workspace-widget\" Label=\"Delete\" Enabled=\"true\" Checked=\"false\"/></Menu>",
+        "at": 1780486434502
+      },
+      {
+        "kind": "xml",
+        "menu": "<Menu><MenuItem Id=\"ty.ctx.move-widget-to-panel-root\" Label=\"Move to panel\" Enabled=\"true\" Checked=\"false\"><MenuItem Id=\"ty.ctx.move-presets-to-panel.2\" Label=\"ty-plus 2\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.move-presets-to-panel.3\" Label=\"ty-plus 3\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.move-presets-to-panel.4\" Label=\"ty-plus 4\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.move-presets-to-panel.5\" Label=\"ty-plus 5\" Enabled=\"true\" Checked=\"false\"/></MenuItem><MenuItem Label=\"---\" /><MenuItem Id=\"ty.ctx.delete-workspace-widget\" Label=\"Delete\" Enabled=\"true\" Checked=\"false\"/></Menu>",
+        "at": 1780486434502
+      }
+    ]
+  },
+  {
+    "name": "easingWidget",
+    "ok": true,
+    "prevented": false,
+    "text": "カーブ\nバウンス\nエラスティック\n適用",
+    "attrs": {
+      "data-workspace-surface-index": "3",
+      "data-workspace-widget-tile": "",
+      "data-widget-instance-id": "dfd4677a-ca36-4eff-8130-ae7fc46d7135"
+    },
+    "captures": [
+      {
+        "kind": "xml",
+        "menu": "<Menu><MenuItem Id=\"ty.ctx.easing.apply-current\" Label=\"Apply\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.easing.copy-from-selection\" Label=\"Copy from selection\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.easing.reverse-curve\" Label=\"Reverse / Convert to Curve\" Enabled=\"true\" Checked=\"false\"/><MenuItem Label=\"---\" /><MenuItem Id=\"ty.ctx.easing.presets\" Label=\"Preset\" Enabled=\"true\" Checked=\"false\"><MenuItem Id=\"ty.ctx.easing.preset-linear\" Label=\"Linear\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.easing.preset-ease-out\" Label=\"Ease Out\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.easing.preset-ease-in\" Label=\"Ease In\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.easing.preset-ease-in-out\" Label=\"Ease In Out\" Enabled=\"true\" Checked=\"false\"/></MenuItem><MenuItem Label=\"---\" /><MenuItem Id=\"ty.ctx.easing.background\" Label=\"Background\" Enabled=\"true\" Checked=\"false\"><MenuItem Id=\"ty.ctx.easing.background-dot\" Label=\"Dots\" Enabled=\"true\" Checkable=\"true\" Checked=\"true\"/><MenuItem Id=\"ty.ctx.easing.background-grid\" Label=\"Grid\" Enabled=\"true\" Checkable=\"true\" Checked=\"false\"/></MenuItem><MenuItem Id=\"ty.ctx.easing.applyMode\" Label=\"Apply Mode\" Enabled=\"true\" Checked=\"false\"><MenuItem Id=\"ty.ctx.easing.apply-mode-single\" Label=\"Single\" Enabled=\"true\" Checkable=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.easing.apply-mode-pair\" Label=\"Each Segment\" Enabled=\"true\" Checkable=\"true\" Checked=\"true\"/></MenuItem><MenuItem Id=\"ty.ctx.easing.labels\" Label=\"Label Color\" Enabled=\"true\" Checked=\"false\"><MenuItem Id=\"ty.ctx.easing.label-none\" Label=\"None\" Enabled=\"true\" Checkable=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.easing.label-9\" Label=\"Archive default\" Enabled=\"true\" Checkable=\"true\" Checked=\"true\"/><MenuItem Id=\"ty.ctx.easing.label-10\" Label=\"Alternate 1\" Enabled=\"true\" Checkable=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.easing.label-11\" Label=\"Alternate 2\" Enabled=\"true\" Checkable=\"true\" Checked=\"false\"/></MenuItem><MenuItem Label=\"---\" /><MenuItem Id=\"ty.ctx.move-widget-to-panel-root\" Label=\"Move to panel\" Enabled=\"true\" Checked=\"false\"><MenuItem Id=\"ty.ctx.move-presets-to-panel.2\" Label=\"ty-plus 2\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.move-presets-to-panel.3\" Label=\"ty-plus 3\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.move-presets-to-panel.4\" Label=\"ty-plus 4\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.move-presets-to-panel.5\" Label=\"ty-plus 5\" Enabled=\"true\" Checked=\"false\"/></MenuItem><MenuItem Label=\"---\" /><MenuItem Id=\"ty.ctx.delete-workspace-widget\" Label=\"Delete\" Enabled=\"true\" Checked=\"false\"/></Menu>",
+        "at": 1780486434503
+      },
+      {
+        "kind": "xml",
+        "menu": "<Menu><MenuItem Id=\"ty.ctx.easing.apply-current\" Label=\"Apply\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.easing.copy-from-selection\" Label=\"Copy from selection\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.easing.reverse-curve\" Label=\"Reverse / Convert to Curve\" Enabled=\"true\" Checked=\"false\"/><MenuItem Label=\"---\" /><MenuItem Id=\"ty.ctx.easing.presets\" Label=\"Preset\" Enabled=\"true\" Checked=\"false\"><MenuItem Id=\"ty.ctx.easing.preset-linear\" Label=\"Linear\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.easing.preset-ease-out\" Label=\"Ease Out\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.easing.preset-ease-in\" Label=\"Ease In\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.easing.preset-ease-in-out\" Label=\"Ease In Out\" Enabled=\"true\" Checked=\"false\"/></MenuItem><MenuItem Label=\"---\" /><MenuItem Id=\"ty.ctx.easing.background\" Label=\"Background\" Enabled=\"true\" Checked=\"false\"><MenuItem Id=\"ty.ctx.easing.background-dot\" Label=\"Dots\" Enabled=\"true\" Checkable=\"true\" Checked=\"true\"/><MenuItem Id=\"ty.ctx.easing.background-grid\" Label=\"Grid\" Enabled=\"true\" Checkable=\"true\" Checked=\"false\"/></MenuItem><MenuItem Id=\"ty.ctx.easing.applyMode\" Label=\"Apply Mode\" Enabled=\"true\" Checked=\"false\"><MenuItem Id=\"ty.ctx.easing.apply-mode-single\" Label=\"Single\" Enabled=\"true\" Checkable=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.easing.apply-mode-pair\" Label=\"Each Segment\" Enabled=\"true\" Checkable=\"true\" Checked=\"true\"/></MenuItem><MenuItem Id=\"ty.ctx.easing.labels\" Label=\"Label Color\" Enabled=\"true\" Checked=\"false\"><MenuItem Id=\"ty.ctx.easing.label-none\" Label=\"None\" Enabled=\"true\" Checkable=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.easing.label-9\" Label=\"Archive default\" Enabled=\"true\" Checkable=\"true\" Checked=\"true\"/><MenuItem Id=\"ty.ctx.easing.label-10\" Label=\"Alternate 1\" Enabled=\"true\" Checkable=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.easing.label-11\" Label=\"Alternate 2\" Enabled=\"true\" Checkable=\"true\" Checked=\"false\"/></MenuItem><MenuItem Label=\"---\" /><MenuItem Id=\"ty.ctx.move-widget-to-panel-root\" Label=\"Move to panel\" Enabled=\"true\" Checked=\"false\"><MenuItem Id=\"ty.ctx.move-presets-to-panel.2\" Label=\"ty-plus 2\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.move-presets-to-panel.3\" Label=\"ty-plus 3\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.move-presets-to-panel.4\" Label=\"ty-plus 4\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.move-presets-to-panel.5\" Label=\"ty-plus 5\" Enabled=\"true\" Checked=\"false\"/></MenuItem><MenuItem Label=\"---\" /><MenuItem Id=\"ty.ctx.delete-workspace-widget\" Label=\"Delete\" Enabled=\"true\" Checked=\"false\"/></Menu>",
+        "at": 1780486434503
+      }
+    ]
+  },
+  {
+    "name": "alignWidget",
+    "ok": true,
+    "prevented": false,
+    "text": "ALIGN\nDISTRIBUTE",
+    "attrs": {
+      "data-workspace-surface-index": "4",
+      "data-workspace-widget-tile": "",
+      "data-widget-instance-id": "05188540-64a4-4207-9642-ae8694765b4a"
+    },
+    "captures": [
+      {
+        "kind": "xml",
+        "menu": "<Menu><MenuItem Id=\"ty.ctx.align.align\" Label=\"Align\" Enabled=\"true\" Checked=\"false\"><MenuItem Id=\"ty.ctx.align.action.align-left\" Label=\"Left\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.align.action.align-center-h\" Label=\"Center H\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.align.action.align-right\" Label=\"Right\" Enabled=\"true\" Checked=\"false\"/><MenuItem Label=\"---\" /><MenuItem Id=\"ty.ctx.align.action.align-top\" Label=\"Top\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.align.action.align-center-v\" Label=\"Center V\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.align.action.align-bottom\" Label=\"Bottom\" Enabled=\"true\" Checked=\"false\"/></MenuItem><MenuItem Id=\"ty.ctx.align.distribute\" Label=\"Distribute\" Enabled=\"true\" Checked=\"false\"><MenuItem Id=\"ty.ctx.align.action.distribute-left\" Label=\"Left\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.align.action.distribute-center-h\" Label=\"Center H\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.align.action.distribute-right\" Label=\"Right\" Enabled=\"true\" Checked=\"false\"/><MenuItem Label=\"---\" /><MenuItem Id=\"ty.ctx.align.action.distribute-top\" Label=\"Top\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.align.action.distribute-center-v\" Label=\"Center V\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.align.action.distribute-bottom\" Label=\"Bottom\" Enabled=\"true\" Checked=\"false\"/></MenuItem><MenuItem Id=\"ty.ctx.align.spacing\" Label=\"Spacing\" Enabled=\"true\" Checked=\"false\"><MenuItem Id=\"ty.ctx.align.action.distribute-spacing-h\" Label=\"Spacing H\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.align.action.distribute-h\" Label=\"Distribute H\" Enabled=\"true\" Checked=\"false\"/><MenuItem Label=\"---\" /><MenuItem Id=\"ty.ctx.align.action.distribute-spacing-v\" Label=\"Spacing V\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.align.action.distribute-v\" Label=\"Distribute V\" Enabled=\"true\" Checked=\"false\"/></MenuItem><MenuItem Id=\"ty.ctx.align.time\" Label=\"Time\" Enabled=\"true\" Checked=\"false\"><MenuItem Id=\"ty.ctx.align.action.align-start\" Label=\"Start\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.align.action.align-end\" Label=\"End\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.align.action.align-duration\" Label=\"Duration\" Enabled=\"true\" Checked=\"false\"/><MenuItem Label=\"---\" /><MenuItem Id=\"ty.ctx.align.action.distribute-start\" Label=\"Distribute Start\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.align.action.distribute-end\" Label=\"Distribute End\" Enabled=\"true\" Checked=\"false\"/></MenuItem><MenuItem Label=\"---\" /><MenuItem Id=\"ty.ctx.align.target.selection\" Label=\"Selection\" Enabled=\"true\" Checkable=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.align.target.comp\" Label=\"Comp\" Enabled=\"true\" Checkable=\"true\" Checked=\"true\"/><MenuItem Id=\"ty.ctx.align.target.key-object\" Label=\"Key Object\" Enabled=\"true\" Checkable=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.align.target.time\" Label=\"Time\" Enabled=\"true\" Checkable=\"true\" Checked=\"false\"/><MenuItem Label=\"---\" /><MenuItem Id=\"ty.ctx.move-widget-to-panel-root\" Label=\"Move to panel\" Enabled=\"true\" Checked=\"false\"><MenuItem Id=\"ty.ctx.move-presets-to-panel.2\" Label=\"ty-plus 2\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.move-presets-to-panel.3\" Label=\"ty-plus 3\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.move-presets-to-panel.4\" Label=\"ty-plus 4\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.move-presets-to-panel.5\" Label=\"ty-plus 5\" Enabled=\"true\" Checked=\"false\"/></MenuItem><MenuItem Label=\"---\" /><MenuItem Id=\"ty.ctx.delete-workspace-widget\" Label=\"Delete\" Enabled=\"true\" Checked=\"false\"/></Menu>",
+        "at": 1780486434504
+      },
+      {
+        "kind": "xml",
+        "menu": "<Menu><MenuItem Id=\"ty.ctx.align.align\" Label=\"Align\" Enabled=\"true\" Checked=\"false\"><MenuItem Id=\"ty.ctx.align.action.align-left\" Label=\"Left\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.align.action.align-center-h\" Label=\"Center H\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.align.action.align-right\" Label=\"Right\" Enabled=\"true\" Checked=\"false\"/><MenuItem Label=\"---\" /><MenuItem Id=\"ty.ctx.align.action.align-top\" Label=\"Top\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.align.action.align-center-v\" Label=\"Center V\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.align.action.align-bottom\" Label=\"Bottom\" Enabled=\"true\" Checked=\"false\"/></MenuItem><MenuItem Id=\"ty.ctx.align.distribute\" Label=\"Distribute\" Enabled=\"true\" Checked=\"false\"><MenuItem Id=\"ty.ctx.align.action.distribute-left\" Label=\"Left\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.align.action.distribute-center-h\" Label=\"Center H\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.align.action.distribute-right\" Label=\"Right\" Enabled=\"true\" Checked=\"false\"/><MenuItem Label=\"---\" /><MenuItem Id=\"ty.ctx.align.action.distribute-top\" Label=\"Top\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.align.action.distribute-center-v\" Label=\"Center V\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.align.action.distribute-bottom\" Label=\"Bottom\" Enabled=\"true\" Checked=\"false\"/></MenuItem><MenuItem Id=\"ty.ctx.align.spacing\" Label=\"Spacing\" Enabled=\"true\" Checked=\"false\"><MenuItem Id=\"ty.ctx.align.action.distribute-spacing-h\" Label=\"Spacing H\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.align.action.distribute-h\" Label=\"Distribute H\" Enabled=\"true\" Checked=\"false\"/><MenuItem Label=\"---\" /><MenuItem Id=\"ty.ctx.align.action.distribute-spacing-v\" Label=\"Spacing V\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.align.action.distribute-v\" Label=\"Distribute V\" Enabled=\"true\" Checked=\"false\"/></MenuItem><MenuItem Id=\"ty.ctx.align.time\" Label=\"Time\" Enabled=\"true\" Checked=\"false\"><MenuItem Id=\"ty.ctx.align.action.align-start\" Label=\"Start\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.align.action.align-end\" Label=\"End\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.align.action.align-duration\" Label=\"Duration\" Enabled=\"true\" Checked=\"false\"/><MenuItem Label=\"---\" /><MenuItem Id=\"ty.ctx.align.action.distribute-start\" Label=\"Distribute Start\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.align.action.distribute-end\" Label=\"Distribute End\" Enabled=\"true\" Checked=\"false\"/></MenuItem><MenuItem Label=\"---\" /><MenuItem Id=\"ty.ctx.align.target.selection\" Label=\"Selection\" Enabled=\"true\" Checkable=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.align.target.comp\" Label=\"Comp\" Enabled=\"true\" Checkable=\"true\" Checked=\"true\"/><MenuItem Id=\"ty.ctx.align.target.key-object\" Label=\"Key Object\" Enabled=\"true\" Checkable=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.align.target.time\" Label=\"Time\" Enabled=\"true\" Checkable=\"true\" Checked=\"false\"/><MenuItem Label=\"---\" /><MenuItem Id=\"ty.ctx.move-widget-to-panel-root\" Label=\"Move to panel\" Enabled=\"true\" Checked=\"false\"><MenuItem Id=\"ty.ctx.move-presets-to-panel.2\" Label=\"ty-plus 2\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.move-presets-to-panel.3\" Label=\"ty-plus 3\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.move-presets-to-panel.4\" Label=\"ty-plus 4\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.move-presets-to-panel.5\" Label=\"ty-plus 5\" Enabled=\"true\" Checked=\"false\"/></MenuItem><MenuItem Label=\"---\" /><MenuItem Id=\"ty.ctx.delete-workspace-widget\" Label=\"Delete\" Enabled=\"true\" Checked=\"false\"/></Menu>",
+        "at": 1780486434504
+      }
+    ]
+  },
+  {
+    "name": "anchorWidget",
+    "ok": true,
+    "prevented": false,
+    "text": "",
+    "attrs": {
+      "data-workspace-surface-index": "5",
+      "data-workspace-widget-tile": "",
+      "data-widget-instance-id": "dc9c80a5-eb93-4bee-927b-dba5e2c0a93b"
+    },
+    "captures": [
+      {
+        "kind": "xml",
+        "menu": "<Menu><MenuItem Id=\"ty.ctx.anchor-point.reset-center\" Label=\"Reset to Center\" Enabled=\"true\" Checked=\"false\"/><MenuItem Label=\"---\" /><MenuItem Id=\"ty.ctx.anchor-point.apply-all-layers\" Label=\"Apply to All Selected Layers\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.anchor-point.apply-active-comp\" Label=\"Apply to Active Composition\" Enabled=\"true\" Checked=\"false\"/><MenuItem Label=\"---\" /><MenuItem Id=\"ty.ctx.anchor-point.positions\" Label=\"Position\" Enabled=\"true\" Checked=\"false\"><MenuItem Id=\"ty.ctx.anchor-point.top-left\" Label=\"Top Left\" Enabled=\"true\" Checkable=\"true\" Checked=\"true\"/><MenuItem Id=\"ty.ctx.anchor-point.top-center\" Label=\"Top Center\" Enabled=\"true\" Checkable=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.anchor-point.top-right\" Label=\"Top Right\" Enabled=\"true\" Checkable=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.anchor-point.center-left\" Label=\"Center Left\" Enabled=\"true\" Checkable=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.anchor-point.center\" Label=\"Center\" Enabled=\"true\" Checkable=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.anchor-point.center-right\" Label=\"Center Right\" Enabled=\"true\" Checkable=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.anchor-point.bottom-left\" Label=\"Bottom Left\" Enabled=\"true\" Checkable=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.anchor-point.bottom-center\" Label=\"Bottom Center\" Enabled=\"true\" Checkable=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.anchor-point.bottom-right\" Label=\"Bottom Right\" Enabled=\"true\" Checkable=\"true\" Checked=\"false\"/></MenuItem></Menu>",
+        "at": 1780486434505
+      },
+      {
+        "kind": "xml",
+        "menu": "<Menu><MenuItem Id=\"ty.ctx.anchor-point.reset-center\" Label=\"Reset to Center\" Enabled=\"true\" Checked=\"false\"/><MenuItem Label=\"---\" /><MenuItem Id=\"ty.ctx.anchor-point.apply-all-layers\" Label=\"Apply to All Selected Layers\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.anchor-point.apply-active-comp\" Label=\"Apply to Active Composition\" Enabled=\"true\" Checked=\"false\"/><MenuItem Label=\"---\" /><MenuItem Id=\"ty.ctx.anchor-point.positions\" Label=\"Position\" Enabled=\"true\" Checked=\"false\"><MenuItem Id=\"ty.ctx.anchor-point.top-left\" Label=\"Top Left\" Enabled=\"true\" Checkable=\"true\" Checked=\"true\"/><MenuItem Id=\"ty.ctx.anchor-point.top-center\" Label=\"Top Center\" Enabled=\"true\" Checkable=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.anchor-point.top-right\" Label=\"Top Right\" Enabled=\"true\" Checkable=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.anchor-point.center-left\" Label=\"Center Left\" Enabled=\"true\" Checkable=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.anchor-point.center\" Label=\"Center\" Enabled=\"true\" Checkable=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.anchor-point.center-right\" Label=\"Center Right\" Enabled=\"true\" Checkable=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.anchor-point.bottom-left\" Label=\"Bottom Left\" Enabled=\"true\" Checkable=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.anchor-point.bottom-center\" Label=\"Bottom Center\" Enabled=\"true\" Checkable=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.anchor-point.bottom-right\" Label=\"Bottom Right\" Enabled=\"true\" Checkable=\"true\" Checked=\"false\"/></MenuItem></Menu>",
+        "at": 1780486434505
+      }
+    ]
+  },
+  {
+    "name": "infoWidget",
+    "ok": true,
+    "prevented": false,
+    "text": "?\nNo preset selected\nhover",
+    "attrs": {
+      "data-workspace-surface-index": "6",
+      "data-workspace-widget-tile": "",
+      "data-widget-instance-id": "326ca2b5-4b87-4fb9-ba12-341b5b5fb495"
+    },
+    "captures": [
+      {
+        "kind": "xml",
+        "menu": "<Menu><MenuItem Id=\"ty.ctx.edit-preset\" Label=\"Edit\" Enabled=\"true\" Checked=\"false\"/><MenuItem Label=\"---\" /><MenuItem Id=\"ty.ctx.move-widget-to-panel-root\" Label=\"Move to panel\" Enabled=\"true\" Checked=\"false\"><MenuItem Id=\"ty.ctx.move-presets-to-panel.2\" Label=\"ty-plus 2\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.move-presets-to-panel.3\" Label=\"ty-plus 3\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.move-presets-to-panel.4\" Label=\"ty-plus 4\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.move-presets-to-panel.5\" Label=\"ty-plus 5\" Enabled=\"true\" Checked=\"false\"/></MenuItem><MenuItem Label=\"---\" /><MenuItem Id=\"ty.ctx.delete-workspace-widget\" Label=\"Delete\" Enabled=\"true\" Checked=\"false\"/></Menu>",
+        "at": 1780486434505
+      },
+      {
+        "kind": "xml",
+        "menu": "<Menu><MenuItem Id=\"ty.ctx.edit-preset\" Label=\"Edit\" Enabled=\"true\" Checked=\"false\"/><MenuItem Label=\"---\" /><MenuItem Id=\"ty.ctx.move-widget-to-panel-root\" Label=\"Move to panel\" Enabled=\"true\" Checked=\"false\"><MenuItem Id=\"ty.ctx.move-presets-to-panel.2\" Label=\"ty-plus 2\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.move-presets-to-panel.3\" Label=\"ty-plus 3\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.move-presets-to-panel.4\" Label=\"ty-plus 4\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.move-presets-to-panel.5\" Label=\"ty-plus 5\" Enabled=\"true\" Checked=\"false\"/></MenuItem><MenuItem Label=\"---\" /><MenuItem Id=\"ty.ctx.delete-workspace-widget\" Label=\"Delete\" Enabled=\"true\" Checked=\"false\"/></Menu>",
+        "at": 1780486434505
+      }
+    ]
+  },
+  {
+    "name": "menuButton",
+    "ok": true,
+    "prevented": false,
+    "text": "",
+    "attrs": {
+      "data-ws-action": "open-widget-menu-context",
+      "data-widget-instance-id": "ea83c13f-c486-42ad-9817-35098767b4d2"
+    },
+    "captures": [
+      {
+        "kind": "xml",
+        "menu": "<Menu><MenuItem Id=\"ty.ctx.undo\" Label=\"Undo\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.redo\" Label=\"Redo\" Enabled=\"true\" Checked=\"false\"/><MenuItem Label=\"---\" /><MenuItem Id=\"ty.ctx.layout-menu-root\" Label=\"Layout\" Enabled=\"true\" Checked=\"false\"><MenuItem Id=\"ty.ctx.save-snapshot\" Label=\"Save Layout\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.reload-presets\" Label=\"Reload\" Enabled=\"true\" Checked=\"false\"/><MenuItem Label=\"---\" /><MenuItem Id=\"ty.ctx.toggle-layout-lock\" Label=\"Lock Layout\" Enabled=\"true\" Checkable=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.pack-top-left\" Label=\"Pack to Top-Left\" Enabled=\"true\" Checked=\"false\"/><MenuItem Label=\"---\" /><MenuItem Id=\"ty.ctx.open-background\" Label=\"Background\" Enabled=\"true\" Checked=\"false\"/></MenuItem><MenuItem Label=\"---\" /><MenuItem Id=\"ty.ctx.add-widget\" Label=\"Add Widget\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.create-presets-menu-root\" Label=\"Create Preset\" Enabled=\"true\" Checked=\"false\"><MenuItem Id=\"ty.ctx.create-file-preset\" Label=\"Local Preset\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.create-folder-preset\" Label=\"Group Preset\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.create-animation-preset\" Label=\"Animation\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.create-layer-comp-preset\" Label=\"Layer/Comp\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.create-code-preset\" Label=\"Code\" Enabled=\"true\" Checked=\"false\"/></MenuItem><MenuItem Label=\"---\" /><MenuItem Id=\"ty.ctx.open-presets\" Label=\"Presets\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.open-preset-library\" Label=\"Preset Library\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.open-messages\" Label=\"Messages\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.open-settings\" Label=\"Settings\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.open-debug\" Label=\"Debug Console\" Enabled=\"true\" Checked=\"false\"/></Menu>",
+        "at": 1780486434506
+      },
+      {
+        "kind": "xml",
+        "menu": "<Menu><MenuItem Id=\"ty.ctx.undo\" Label=\"Undo\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.redo\" Label=\"Redo\" Enabled=\"true\" Checked=\"false\"/><MenuItem Label=\"---\" /><MenuItem Id=\"ty.ctx.layout-menu-root\" Label=\"Layout\" Enabled=\"true\" Checked=\"false\"><MenuItem Id=\"ty.ctx.save-snapshot\" Label=\"Save Layout\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.reload-presets\" Label=\"Reload\" Enabled=\"true\" Checked=\"false\"/><MenuItem Label=\"---\" /><MenuItem Id=\"ty.ctx.toggle-layout-lock\" Label=\"Lock Layout\" Enabled=\"true\" Checkable=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.pack-top-left\" Label=\"Pack to Top-Left\" Enabled=\"true\" Checked=\"false\"/><MenuItem Label=\"---\" /><MenuItem Id=\"ty.ctx.open-background\" Label=\"Background\" Enabled=\"true\" Checked=\"false\"/></MenuItem><MenuItem Label=\"---\" /><MenuItem Id=\"ty.ctx.add-widget\" Label=\"Add Widget\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.create-presets-menu-root\" Label=\"Create Preset\" Enabled=\"true\" Checked=\"false\"><MenuItem Id=\"ty.ctx.create-file-preset\" Label=\"Local Preset\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.create-folder-preset\" Label=\"Group Preset\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.create-animation-preset\" Label=\"Animation\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.create-layer-comp-preset\" Label=\"Layer/Comp\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.create-code-preset\" Label=\"Code\" Enabled=\"true\" Checked=\"false\"/></MenuItem><MenuItem Label=\"---\" /><MenuItem Id=\"ty.ctx.open-presets\" Label=\"Presets\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.open-preset-library\" Label=\"Preset Library\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.open-messages\" Label=\"Messages\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.open-settings\" Label=\"Settings\" Enabled=\"true\" Checked=\"false\"/><MenuItem Id=\"ty.ctx.open-debug\" Label=\"Debug Console\" Enabled=\"true\" Checked=\"false\"/></Menu>",
+        "at": 1780486434506
+      }
+    ]
+  }
+]

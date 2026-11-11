@@ -1,0 +1,432 @@
+{
+	"scenarioId": "SCN-LIFECYCLE-02",
+	"steps": [
+		{
+			"id": "step-1",
+			"gherkinRef": { "scenarioId": "SCN-LIFECYCLE-02", "stepIndex": 0 },
+			"preconditions": [
+				"Onboarding completed.",
+				"Cloud gateway boot is configured to return null.",
+				"No preset named OfflinePreset exists in the local catalog."
+			],
+			"input": { "snapshot": "precondition probe with cloud disabled" },
+			"action": "observe_initial_panel_state_with_cloud_unavailable",
+			"expectedResult": {
+				"persistenceOracle": {
+					"storageKey": "preset:OfflinePreset",
+					"expected": null
+				},
+				"logOracle": {
+					"scope": "online",
+					"minLevel": "warn",
+					"messageContains": "getDataServices returned null",
+					"id": "log-cloud-unavailable"
+				}
+			},
+			"postconditions": [
+				"Persisted catalog key for OfflinePreset returns null.",
+				"Cloud gateway is unavailable."
+			],
+			"mutation": false,
+			"checkpoint": false
+		},
+		{
+			"id": "step-2",
+			"gherkinRef": { "scenarioId": "SCN-LIFECYCLE-02", "stepIndex": 1 },
+			"preconditions": [
+				"Cloud gateway boot returned null.",
+				"Catalog is empty of OfflinePreset."
+			],
+			"input": {
+				"title": "OfflinePreset",
+				"type": "expression",
+				"body": "app.alert(\"offline\")",
+				"tags": ["lifecycle", "offline"]
+			},
+			"action": "create_local_preset_via_local_fallback",
+			"expectedResult": {
+				"logOracle": {
+					"scope": "online",
+					"minLevel": "info",
+					"messageContains": "local-fallback-create",
+					"id": "log-local-fallback-create"
+				}
+			},
+			"postconditions": [
+				"Catalog row for OfflinePreset enters the 'creating' state via local-fallback.",
+				"Pending persisted write has not yet completed."
+			],
+			"mutation": true,
+			"checkpoint": false
+		},
+		{
+			"id": "step-3",
+			"gherkinRef": { "scenarioId": "SCN-LIFECYCLE-02", "stepIndex": 2 },
+			"preconditions": [
+				"Catalog row for OfflinePreset is 'creating' via fallback."
+			],
+			"input": {
+				"probe": "read storage:preset:OfflinePreset + DOM catalog row"
+			},
+			"action": "checkpoint_re_observe_after_create_offline",
+			"expectedResult": {
+				"uiOracle": {
+					"selector": "[data-directory-browser-entry][data-preset-id=\"OfflinePreset\"]",
+					"textContent": "OfflinePreset"
+				},
+				"persistenceOracle": {
+					"storageKey": "preset:OfflinePreset",
+					"expected": {
+						"id": "OfflinePreset",
+						"source": "local",
+						"body": "app.alert(\"offline\")"
+					}
+				}
+			},
+			"postconditions": [
+				"Preset appears in the catalog with source=local.",
+				"Preset asset path exists on disk (verifyPresetAsset returns exists=true)."
+			],
+			"mutation": false,
+			"checkpoint": true
+		},
+		{
+			"id": "step-4",
+			"gherkinRef": { "scenarioId": "SCN-LIFECYCLE-02", "stepIndex": 3 },
+			"preconditions": [
+				"Catalog lists preset OfflinePreset (postcondition of step-3)."
+			],
+			"input": {
+				"selector": "[data-directory-browser-entry][data-preset-id=\"OfflinePreset\"]",
+				"destinationTileId": "tile-A"
+			},
+			"action": "drag_preset_to_workspace_tile_offline",
+			"expectedResult": {
+				"persistenceOracle": {
+					"storageKey": "layout:panel-1",
+					"expected": {
+						"version": 1,
+						"surfaceTiles": [
+							{
+								"id": "tile-A",
+								"x": 0,
+								"y": 0,
+								"width": 2,
+								"height": 1,
+								"presetId": "OfflinePreset"
+							}
+						]
+					}
+				}
+			},
+			"postconditions": [
+				"panel-1 layout has exactly one tile referencing OfflinePreset."
+			],
+			"mutation": true,
+			"checkpoint": false
+		},
+		{
+			"id": "step-5",
+			"gherkinRef": { "scenarioId": "SCN-LIFECYCLE-02", "stepIndex": 4 },
+			"preconditions": ["tile-A on panel-1 references OfflinePreset."],
+			"input": { "probe": "read layout:panel-1" },
+			"action": "checkpoint_re_observe_after_placement_offline",
+			"expectedResult": {
+				"persistenceOracle": {
+					"storageKey": "layout:panel-1",
+					"expected": {
+						"version": 1,
+						"surfaceTiles": [
+							{
+								"id": "tile-A",
+								"x": 0,
+								"y": 0,
+								"width": 2,
+								"height": 1,
+								"presetId": "OfflinePreset"
+							}
+						]
+					}
+				}
+			},
+			"postconditions": ["Re-observe confirms the offline placement."],
+			"mutation": false,
+			"checkpoint": true
+		},
+		{
+			"id": "step-6",
+			"gherkinRef": { "scenarioId": "SCN-LIFECYCLE-02", "stepIndex": 5 },
+			"preconditions": ["tile-A on panel-1 references OfflinePreset."],
+			"input": { "fromTileId": "tile-A", "toTileId": "tile-B" },
+			"action": "move_preset_within_workspace_offline",
+			"expectedResult": {
+				"persistenceOracle": {
+					"storageKey": "layout:panel-1",
+					"expected": {
+						"version": 2,
+						"surfaceTiles": [
+							{
+								"id": "tile-B",
+								"x": 2,
+								"y": 0,
+								"width": 2,
+								"height": 1,
+								"presetId": "OfflinePreset"
+							}
+						]
+					}
+				}
+			},
+			"postconditions": ["tile-B on panel-1 references OfflinePreset."],
+			"mutation": true,
+			"checkpoint": false
+		},
+		{
+			"id": "step-7",
+			"gherkinRef": { "scenarioId": "SCN-LIFECYCLE-02", "stepIndex": 6 },
+			"preconditions": ["tile-B on panel-1 references OfflinePreset."],
+			"input": { "probe": "read layout:panel-1" },
+			"action": "checkpoint_re_observe_after_within_workspace_move_offline",
+			"expectedResult": {
+				"persistenceOracle": {
+					"storageKey": "layout:panel-1",
+					"expected": {
+						"version": 2,
+						"surfaceTiles": [
+							{
+								"id": "tile-B",
+								"x": 2,
+								"y": 0,
+								"width": 2,
+								"height": 1,
+								"presetId": "OfflinePreset"
+							}
+						]
+					}
+				}
+			},
+			"postconditions": ["Re-observe confirms the within-workspace move."],
+			"mutation": false,
+			"checkpoint": true
+		},
+		{
+			"id": "step-8",
+			"gherkinRef": { "scenarioId": "SCN-LIFECYCLE-02", "stepIndex": 7 },
+			"preconditions": ["tile-B on panel-1 references OfflinePreset."],
+			"input": {
+				"simulate": "panel reload (re-init React tree, rehydrate from JSON, cloud still unavailable)"
+			},
+			"action": "simulate_panel_reload_offline",
+			"expectedResult": {
+				"persistenceOracle": {
+					"storageKey": "layout:panel-1",
+					"expected": {
+						"version": 2,
+						"surfaceTiles": [
+							{
+								"id": "tile-B",
+								"x": 2,
+								"y": 0,
+								"width": 2,
+								"height": 1,
+								"presetId": "OfflinePreset"
+							}
+						]
+					}
+				}
+			},
+			"postconditions": [
+				"tile-B on panel-1 still references OfflinePreset post-reload."
+			],
+			"mutation": true,
+			"checkpoint": false
+		},
+		{
+			"id": "step-9",
+			"gherkinRef": { "scenarioId": "SCN-LIFECYCLE-02", "stepIndex": 8 },
+			"preconditions": ["Panel was just reloaded (cloud still unavailable)."],
+			"input": { "probe": "read layout:panel-1 after offline reload" },
+			"action": "checkpoint_re_observe_after_offline_reload",
+			"expectedResult": {
+				"persistenceOracle": {
+					"storageKey": "layout:panel-1",
+					"expected": {
+						"version": 2,
+						"surfaceTiles": [
+							{
+								"id": "tile-B",
+								"x": 2,
+								"y": 0,
+								"width": 2,
+								"height": 1,
+								"presetId": "OfflinePreset"
+							}
+						]
+					}
+				}
+			},
+			"postconditions": ["Reload persisted state matches pre-reload state."],
+			"mutation": false,
+			"checkpoint": true
+		},
+		{
+			"id": "step-10",
+			"gherkinRef": { "scenarioId": "SCN-LIFECYCLE-02", "stepIndex": 9 },
+			"preconditions": [
+				"tile-B on panel-1 references OfflinePreset (post-reload).",
+				"panel-2 has empty tile tile-X."
+			],
+			"input": {
+				"fromPanel": "panel-1",
+				"fromTileId": "tile-B",
+				"toPanel": "panel-2",
+				"toTileId": "tile-X"
+			},
+			"action": "cross_panel_move_preset_via_local_fallback",
+			"expectedResult": {
+				"persistenceOracle": {
+					"storageKey": "layout:panel-1",
+					"expected": {
+						"version": 3,
+						"surfaceTiles": []
+					}
+				},
+				"logOracle": {
+					"scope": "workspace",
+					"minLevel": "info",
+					"messageContains": "cross-panel-move-local-fallback",
+					"id": "log-cross-panel-move-offline"
+				}
+			},
+			"postconditions": [
+				"panel-2's tile-X references OfflinePreset.",
+				"panel-1 has NO surface tile referencing OfflinePreset (no orphan)."
+			],
+			"mutation": true,
+			"checkpoint": false
+		},
+		{
+			"id": "step-11",
+			"gherkinRef": { "scenarioId": "SCN-LIFECYCLE-02", "stepIndex": 10 },
+			"preconditions": ["panel-2 tile-X references OfflinePreset."],
+			"input": { "probe": "read layout:panel-1 + layout:panel-2" },
+			"action": "checkpoint_re_observe_after_cross_panel_move_offline",
+			"expectedResult": {
+				"persistenceOracle": {
+					"storageKey": "layout:panel-2",
+					"expected": {
+						"version": 1,
+						"surfaceTiles": [
+							{
+								"id": "tile-X",
+								"x": 0,
+								"y": 0,
+								"width": 2,
+								"height": 1,
+								"presetId": "OfflinePreset"
+							}
+						]
+					}
+				}
+			},
+			"postconditions": [
+				"Target panel tile renders the preset AND source panel has no orphan tile."
+			],
+			"mutation": false,
+			"checkpoint": true
+		},
+		{
+			"id": "step-12",
+			"gherkinRef": { "scenarioId": "SCN-LIFECYCLE-02", "stepIndex": 11 },
+			"preconditions": ["panel-2 tile-X references OfflinePreset."],
+			"input": {
+				"simulate": "panel-2 restart (process exit + relaunch, cloud still unavailable)"
+			},
+			"action": "simulate_panel_restart_offline",
+			"expectedResult": {
+				"persistenceOracle": {
+					"storageKey": "layout:panel-2",
+					"expected": {
+						"version": 1,
+						"surfaceTiles": [
+							{
+								"id": "tile-X",
+								"x": 0,
+								"y": 0,
+								"width": 2,
+								"height": 1,
+								"presetId": "OfflinePreset"
+							}
+						]
+					}
+				}
+			},
+			"postconditions": [
+				"Panel-2 tile-X still references OfflinePreset post-restart."
+			],
+			"mutation": true,
+			"checkpoint": false
+		},
+		{
+			"id": "step-13",
+			"gherkinRef": { "scenarioId": "SCN-LIFECYCLE-02", "stepIndex": 12 },
+			"preconditions": ["Panel-2 was just restarted."],
+			"input": { "probe": "read layout:panel-2 after restart" },
+			"action": "checkpoint_re_observe_after_panel_restart_offline",
+			"expectedResult": {
+				"persistenceOracle": {
+					"storageKey": "layout:panel-2",
+					"expected": {
+						"version": 1,
+						"surfaceTiles": [
+							{
+								"id": "tile-X",
+								"x": 0,
+								"y": 0,
+								"width": 2,
+								"height": 1,
+								"presetId": "OfflinePreset"
+							}
+						]
+					}
+				},
+				"logOracle": {
+					"scope": "online",
+					"minLevel": "info",
+					"messageContains": "local-fallback-completed",
+					"id": "log-local-fallback-completed"
+				}
+			},
+			"postconditions": [
+				"Persisted state on the target panel only, with no orphaned reference on the source panel.",
+				"local-fallback-completed log is emitted.",
+				"Final scenario verdict candidate: PASS, awaiting both oracle families to confirm."
+			],
+			"mutation": false,
+			"checkpoint": true
+		}
+	],
+	"cleanup": [
+		{
+			"id": "cleanup-1",
+			"preconditions": ["Scenario verdict resolved."],
+			"input": {
+				"presetId": "OfflinePreset",
+				"panels": ["panel-1", "panel-2"]
+			},
+			"action": "delete_local_preset_and_layouts",
+			"expectedResult": {
+				"persistenceOracle": {
+					"storageKey": "preset:OfflinePreset",
+					"expected": null
+				}
+			},
+			"postconditions": [
+				"storage:preset:OfflinePreset is null.",
+				"storage:layout:panel-1 and storage:layout:panel-2 have no surface tiles."
+			],
+			"mutation": true,
+			"checkpoint": false
+		}
+	]
+}

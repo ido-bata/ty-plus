@@ -1,0 +1,99 @@
+{
+	"step": {
+		"intro": {
+			"label": "Introdução",
+			"title": "Bem-vindo ao ty-plus",
+			"body": "Vamos começar a configuração"
+		},
+		"language": {
+			"label": "Language",
+			"title": "Choose Language",
+			"body": "Select your preferred language"
+		},
+		"support": {
+			"label": "Localização",
+			"title": "Selecionar pasta do AE",
+			"body": "Escolha a pasta do aplicativo After Effects. No Windows, este é o diretório Support Files; no macOS, é a pasta do aplicativo que contém Presets."
+		},
+		"subfolders": {
+			"label": "Pastas",
+			"title": "Ajustar sub-pastas",
+			"body": "Esta etapa aparece quando você altera caminhos dos padrões. Personalize Presets/Scripts/Plug-ins se necessário."
+		},
+		"presets": {
+			"label": "Predefinições",
+			"title": "Selecionar predefinições",
+			"body": "Escolha arquivos de predefinição (.ffx) da sua pasta Presets para adicionar como predefinições iniciais.\nVocê pode adicionar/importar mais posteriormente pelo menu +. A seleção de pastas será agrupada automaticamente."
+		},
+		"scripts": {
+			"label": "Scripts",
+			"title": "Selecionar scripts",
+			"body": "Escolha arquivos de script (.jsx, .jsxbin) da sua pasta Scripts para adicionar como predefinições iniciais.\nVocê também pode criar predefinições de Script/Expressão posteriormente a partir da Predefinição de código."
+		},
+		"plugins": {
+			"label": "Plug-ins",
+			"title": "Selecionar plug-ins",
+			"body": "Escolha arquivos de efeito (.aex/.plugin) da sua pasta Plug-ins para adicionar como predefinições iniciais.\nVocê pode importar mais posteriormente se necessário."
+		},
+		"workspace": {
+			"label": "Área de trabalho",
+			"title": "Noções básicas da área de trabalho",
+			"body": "Arraste para mover e redimensionar predefinições e widgets.\n\n- Ctrl/Cmd+arrastar para mover\n- Use o bloqueio de layout para impedir edições\n- A pesquisa escurece itens não correspondentes\n- Clique com o botão direito para editar/agrupar ações"
+		},
+		"adding-presets": {
+			"label": "Predefinições",
+			"title": "Adicionar predefinições",
+			"body": "Use o menu + para adicionar predefinições, grupos e widgets.\n\n- Alterne os painéis laterais para a lista de predefinições\n- Predefinições online baixadas são colocadas automaticamente"
+		},
+		"finish": {
+			"label": "Concluir",
+			"title": "Tudo pronto!",
+			"body": "Você está pronto para começar"
+		}
+	},
+	"fields": {
+		"presetRoot": "Pasta de predefinições",
+		"scriptRoot": "Pasta de scripts",
+		"pluginRoot": "Pasta de plug-ins",
+		"supportPlaceholder": "Support Files ou caminho da pasta do app"
+	},
+	"filePick": {
+		"selected": "Selecionado: {{count}}"
+	},
+	"secondaryPanel": {
+		"title": "Configuração necessária",
+		"description": "Complete a configuração no painel-1 primeiro.",
+		"userManual": "Manual do usuário",
+		"openMainPanel": "Abrir painel principal",
+		"linkUnavailable": "Link do manual indisponível"
+	},
+	"browse": "Procurar",
+	"browseAriaLabel": "Procurar pasta",
+	"defaultLabel": "Padrão",
+	"customLabel": "Personalizado",
+	"empty": "Nenhum item",
+	"goUp": "Acima",
+	"selectedFiles": "{{files}} arquivo(s)",
+	"selectedFolders": "{{folders}} pasta(s)",
+	"selectedSuffix": " selecionado",
+	"errors": {
+		"supportRequired": "O caminho da pasta do AE é obrigatório.",
+		"subfoldersRequired": "São necessários os caminhos das pastas Presets, Scripts e Plug-ins.",
+		"folderPickerCep": "O seletor de pastas requer CEP.",
+		"finishErrorTitle": "Não foi possível salvar as configurações",
+		"finishErrorPathLabel": "Caminho",
+		"finishErrorReasonLabel": "Motivo",
+		"finishErrorNextActionLabel": "Próximo passo",
+		"finishErrorNextActionChooseTrusted": "O arquivo de configurações de onboarding não incluía um Support Root. Reinicie o onboarding dentro do After Effects.",
+		"finishErrorNextActionAdjust": "Não foi possível salvar as configurações no Support Root do AE. Verifique se o caminho está acessível e se o After Effects tem permissão de gravação e tente novamente.",
+		"finishErrorNextActionRetry": "O UAC do Windows foi solicitado, mas a gravação com privilégios elevados falhou. Clique em Retry para reabrir a caixa do UAC, ou execute o After Effects como administrador.",
+		"finishErrorRetryWithElevation": "Tentar novamente como administrador"
+	},
+	"actions": {
+		"back": "Voltar",
+		"next": "Avançar",
+		"finish": "Concluir",
+		"toggleFullscreen": "Expandir para tela cheia",
+		"toggleModal": "Voltar para modal"
+	}
+}

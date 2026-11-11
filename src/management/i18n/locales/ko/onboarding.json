@@ -1,0 +1,99 @@
+{
+	"step": {
+		"intro": {
+			"label": "소개",
+			"title": "환영합니다",
+			"body": "환영합니다! ty-plus는 더 빠르게 작업할 수 있는 개인 워크스페이스를 만들어줍니다.\n프리셋/위젯을 배치하고 워크플로우를 간소화합니다. 설정을 시작하세요!"
+		},
+		"language": {
+			"label": "언어",
+			"title": "언어 선택",
+			"body": "선호하는 언어를 선택하세요. 선택 후 인터페이스가 즉시 업데이트됩니다."
+		},
+		"support": {
+			"label": "위치",
+			"title": "AE 폴더 선택",
+			"body": "After Effects 애플리케이션 폴더를 선택하세요. Windows에서는 Support Files 디렉터리이고, macOS에서는 Presets를 포함한 앱 폴더입니다."
+		},
+		"subfolders": {
+			"label": "폴더",
+			"title": "하위 폴더 조정",
+			"body": "기본값에서 경로를 변경할 때 이 단계가 나타납니다. 필요하면 Presets/Scripts/Plug-ins를_customize하세요."
+		},
+		"presets": {
+			"label": "프리셋",
+			"title": "프리셋 선택",
+			"body": "Presets 폴더에서 초기 프리셋으로 추가할 프리셋 파일(.ffx)을 선택하세요.\n나중에 + 메뉴에서 더 추가/가져오기할 수 있습니다. 폴더 선택은 자동으로 그룹화됩니다."
+		},
+		"scripts": {
+			"label": "스크립트",
+			"title": "스크립트 선택",
+			"body": "Scripts 폴더에서 초기 프리셋으로 추가할 스크립트 파일(.jsx, .jsxbin)을 선택하세요.\n나중에 코드 프리셋에서 스크립트/표현식 프리셋을 생성할 수도 있습니다."
+		},
+		"plugins": {
+			"label": "플러그인",
+			"title": "플러그인 선택",
+			"body": "Plug-ins 폴더에서 초기 프리셋으로 추가할 이펙트 파일(.aex/.plugin)을 선택하세요.\n필요하면 나중에 더 가져올 수 있습니다."
+		},
+		"workspace": {
+			"label": "워크스페이스",
+			"title": "워크스페이스 기본",
+			"body": "드래그하여 프리셋과 위젯을 이동하고 크기를 조정하세요.\n\n- Ctrl/Cmd+드래그로 이동\n- 레이아웃 잠금을 사용하여 편집 방지\n- 검색은 일치하지 않는 항목을 흐리게 표시\n- 우클릭으로 편집/그룹 작업"
+		},
+		"adding-presets": {
+			"label": "프리셋",
+			"title": "프리셋 추가",
+			"body": "+ 메뉴를 사용하여 프리셋, 그룹, 위젯을 추가하세요.\n\n- 사이드 패널을 전환하여 프리셋 목록 표시\n- 다운로드한 온라인 프리셋은 자동 배치"
+		},
+		"finish": {
+			"label": "완료",
+			"title": "시작할 준비가 되었습니다!",
+			"body": "저장을 누르세요.\n\n시작하세요!"
+		}
+	},
+	"fields": {
+		"presetRoot": "프리셋 폴더",
+		"scriptRoot": "스크립트 폴더",
+		"pluginRoot": "플러그인 폴더",
+		"supportPlaceholder": "Support Files 또는 앱 폴더 경로"
+	},
+	"filePick": {
+		"selected": "선택됨: {{count}}"
+	},
+	"secondaryPanel": {
+		"title": "설정 필요",
+		"description": "먼저 패널-1에서 온보딩을 완료하세요.",
+		"userManual": "사용자 매뉴얼",
+		"openMainPanel": "메인 패널 열기",
+		"linkUnavailable": "매뉴얼 링크를 사용할 수 없습니다"
+	},
+	"browse": "찾아보기",
+	"browseAriaLabel": "폴더 찾아보기",
+	"defaultLabel": "기본",
+	"customLabel": "사용자 정의",
+	"empty": "항목 없음",
+	"goUp": "위로",
+	"selectedFiles": "{{files}}개 파일",
+	"selectedFolders": "{{folders}}개 폴더",
+	"selectedSuffix": "개 선택됨",
+	"errors": {
+		"supportRequired": "AE 폴더 경로가 필요합니다.",
+		"subfoldersRequired": "Presets, Scripts 및 Plug-ins 폴더 경로가 필요합니다.",
+		"folderPickerCep": "폴더 선택에는 CEP가 필요합니다.",
+		"finishErrorTitle": "설정을 저장할 수 없습니다",
+		"finishErrorPathLabel": "경로",
+		"finishErrorReasonLabel": "이유",
+		"finishErrorNextActionLabel": "다음 단계",
+		"finishErrorNextActionChooseTrusted": "온보딩 설정 파일에 Support Root가 포함되어 있지 않습니다. After Effects에서 온보딩을 다시 시작하세요.",
+		"finishErrorNextActionAdjust": "AE Support Root에 설정을 저장할 수 없습니다. 경로가 접근 가능한지, After Effects에 쓰기 권한이 있는지 확인한 후 다시 시도하세요.",
+		"finishErrorNextActionRetry": "Windows UAC가 요청되었지만 상승된 쓰기가 실패했습니다. Retry를 눌러 UAC 대화상자를 다시 띄우거나 After Effects를 관리자로 실행하세요.",
+		"finishErrorRetryWithElevation": "관리자로 다시 시도"
+	},
+	"actions": {
+		"back": "뒤로",
+		"next": "다음",
+		"finish": "완료",
+		"toggleFullscreen": "전체 화면으로 확장",
+		"toggleModal": "모달로 돌아가기"
+	}
+}

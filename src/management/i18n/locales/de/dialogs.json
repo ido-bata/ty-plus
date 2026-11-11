@@ -1,0 +1,79 @@
+{
+	"title": "Dialogs",
+	"close": "Schließen",
+	"save": "Speichern",
+	"cancel": "Abbrechen",
+	"workspaceShell": {
+		"backgroundPanel": {
+			"title": "Hintergrundebene",
+			"lead": "Solid-, Bild- und Musterschichten hinter dem Arbeitsbereich-Raster stapeln. Klicken Sie auf Anwenden, um mit dem Panel zu synchronisieren und zu speichern.",
+			"applyToWorkspace": "Auf Arbeitsbereich anwenden",
+			"clearAll": "Alle löschen",
+			"emptyLayers": "Noch keine Ebenen — fügen Sie eine mit den Schaltflächen links hinzu.",
+			"selectLayer": "Wählen Sie eine Ebene in der Liste zum Bearbeiten.",
+			"enabled": "Sichtbar",
+			"opacity": "Deckkraft",
+			"color": "Farbe",
+			"imagePath": "Dateipfad",
+			"imagePathPlaceholder": "Bildpfad oder URL",
+			"browseImage": "Bild suchen",
+			"selectImage": "Bild auswählen",
+			"imageUrl": "Bild-URL",
+			"applyUrl": "URL verwenden",
+			"imageFit": "Anpassung",
+			"imageRepeat": "Wiederholung",
+			"imageScale": "Skalierung %",
+			"shiftX": "Verschiebung X (px)",
+			"shiftY": "Verschiebung Y (px)",
+			"pattern": "Muster",
+			"patternSize": "Größe",
+			"patternColor": "Vordergrund",
+			"patternBg": "Hintergrund",
+			"moveUp": "Nach oben",
+			"moveDown": "Nach unten",
+			"remove": "Ebene entfernen",
+			"types": {
+				"color": "Farbe",
+				"image": "Bild",
+				"pattern": "Muster"
+			},
+			"patterns": {
+				"dots": "Punkte",
+				"grid": "Raster",
+				"lines": "Linien"
+			},
+			"imageFits": {
+				"cover": "Füllen",
+				"contain": "Einpassen",
+				"stretch": "Strecken",
+				"auto": "Skalieren"
+			},
+			"imageRepeats": {
+				"no-repeat": "Keine",
+				"repeat": "Kacheln",
+				"repeat-x": "X",
+				"repeat-y": "Y"
+			},
+			"tooltips": {
+				"addColor": "Solidfarbe hinzufügen",
+				"addPattern": "Musterebene hinzufügen",
+				"addImage": "Bild hinzufügen"
+			},
+			"titleWithPanel": "Hintergrundebene - Panel {{panel}}",
+			"loading": "Wird geladen...",
+			"saving": "Wird gespeichert...",
+			"saved": "Gespeichert",
+			"loadFailed": "Laden fehlgeschlagen: {{message}}",
+			"saveFailed": "Speichern fehlgeschlagen",
+			"preview": "Vorschau"
+		},
+		"widgetSelector": {
+			"title": "Widget hinzufügen",
+			"lead": "Typ wählen und an das Haupt-Arbeitsbereich-Panel senden. Unterstützte Elemente fügen eine Kachel unten im Raster hinzu.",
+			"add": "Hinzufügen",
+			"addToPanelHint": "Dieses Widget zum Haupt-Panel-Raster hinzufügen (untere Reihe).",
+			"notInPanelYet": "Dieser Widget-Typ hat noch keine Panel-UI — es kann nicht platziert werden.",
+			"footerHint": "Ausgegraute Elemente sind noch nicht im Panel-Renderer implementiert. Andere schließen diesen Dialog nach dem Senden der Anfrage."
+		}
+	}
+}

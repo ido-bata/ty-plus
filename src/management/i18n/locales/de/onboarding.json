@@ -1,0 +1,99 @@
+{
+	"step": {
+		"intro": {
+			"label": "Intro",
+			"title": "Willkommen",
+			"body": "Willkommen! ty-plus erstellt einen persönlichen Arbeitsbereich für schnelleres Arbeiten.\nPlatzieren Sie Voreinstellungen/Widgets und optimieren Sie Ihren Workflow. Beginnen wir mit der Einrichtung!"
+		},
+		"language": {
+			"label": "Sprache",
+			"title": "Sprache auswählen",
+			"body": "Wählen Sie Ihre bevorzugte Sprache. Die Oberfläche wird sofort nach der Auswahl aktualisiert."
+		},
+		"support": {
+			"label": "Speicherort",
+			"title": "AE-Ordner auswählen",
+			"body": "Wählen Sie Ihren After Effects Programmordner. Unter Windows ist dies das Support Files-Verzeichnis; unter macOS ist es der App-Ordner, der Voreinstellungen enthält."
+		},
+		"subfolders": {
+			"label": "Ordner",
+			"title": "Unterordner anpassen",
+			"body": "Dieser Schritt erscheint, wenn Sie Pfade von den Standardeinstellungen ändern. Passen Sie Voreinstellungen/Skripte/Plugins bei Bedarf an."
+		},
+		"presets": {
+			"label": "Voreinstellungen",
+			"title": "Voreinstellungen auswählen",
+			"body": "Wählen Sie Voreinstellungsdateien (.ffx) aus Ihrem Voreinstellungsordner, um sie als initiale Voreinstellungen hinzuzufügen.\nSie können später über das + Menü weitere hinzufügen/importieren. Ordner-Auswahl wird automatisch gruppiert."
+		},
+		"scripts": {
+			"label": "Skripte",
+			"title": "Skripte auswählen",
+			"body": "Skriptdateien (.jsx, .jsxbin) aus Ihrem Skript-Ordner als initiale Voreinstellungen hinzufügen.\nSie können auch später Script/Expression-Voreinstellungen aus Code-Voreinstellung erstellen."
+		},
+		"plugins": {
+			"label": "Plugins",
+			"title": "Plugins auswählen",
+			"body": "Effektdateien (.aex/.plugin) aus Ihrem Plugin-Ordner als initiale Voreinstellungen hinzufügen.\nSie können bei Bedarf später weitere importieren."
+		},
+		"workspace": {
+			"label": "Arbeitsbereich",
+			"title": "Arbeitsbereich-Grundlagen",
+			"body": "Ziehen zum Verschieben und Skalieren von Voreinstellungen und Widgets.\n\n- Strg/Cmd+Ziehen zum Verschieben\n- Layout-Sperre verwenden, um Bearbeitungen zu verhindern\n- Suche dimmt nicht passende Elemente\n- Rechtsklick für Bearbeiten/Gruppieren-Aktionen"
+		},
+		"adding-presets": {
+			"label": "Voreinstellungen",
+			"title": "Voreinstellungen hinzufügen",
+			"body": "Verwenden Sie das + Menü, um Voreinstellungen, Gruppen und Widgets hinzuzufügen.\n\n- Seitenleisten für Voreinstellungsliste umschalten\n- Heruntergeladene Online-Voreinstellungen werden automatisch platziert"
+		},
+		"finish": {
+			"label": "Fertig",
+			"title": "Bereit zum Starten!",
+			"body": "Drücken Sie Fertig, um Ihre Einstellungen zu speichern.\n\nLass uns loslegen!"
+		}
+	},
+	"fields": {
+		"presetRoot": "Voreinstellungsordner",
+		"scriptRoot": "Skriptordner",
+		"pluginRoot": "Plugin-Ordner",
+		"supportPlaceholder": "Support Files oder App-Ordnerpfad"
+	},
+	"filePick": {
+		"selected": "Ausgewählt: {{count}}"
+	},
+	"secondaryPanel": {
+		"title": "Einrichtung erforderlich",
+		"description": "Onboarding in Panel-1 zuerst abschließen.",
+		"userManual": "Benutzerhandbuch",
+		"openMainPanel": "Hauptpanel öffnen",
+		"linkUnavailable": "Handbuch-Link nicht verfügbar"
+	},
+	"browse": "Durchsuchen",
+	"browseAriaLabel": "Ordner durchsuchen",
+	"defaultLabel": "Standard",
+	"customLabel": "Benutzerdefiniert",
+	"empty": "Keine Elemente",
+	"goUp": "Nach oben",
+	"selectedFiles": "{{files}} Datei(en)",
+	"selectedFolders": "{{folders}} Ordner",
+	"selectedSuffix": " ausgewählt",
+	"errors": {
+		"supportRequired": "AE-Ordnerpfad ist erforderlich.",
+		"subfoldersRequired": "Presets-, Scripts- und Plug-ins-Ordnerpfade sind erforderlich.",
+		"folderPickerCep": "Ordnerauswahl erfordert CEP.",
+		"finishErrorTitle": "Einstellungen konnten nicht gespeichert werden",
+		"finishErrorPathLabel": "Pfad",
+		"finishErrorReasonLabel": "Ursache",
+		"finishErrorNextActionLabel": "Nächster Schritt",
+		"finishErrorNextActionChooseTrusted": "Die Onboarding-Einstellungsdatei enthielt keinen Support Root. Starte das Onboarding in After Effects neu.",
+		"finishErrorNextActionAdjust": "Die Einstellungen konnten nicht am AE Support Root gespeichert werden. Überprüfe, dass der Pfad erreichbar ist und After Effects Schreibzugriff hat, und versuche es erneut.",
+		"finishErrorNextActionRetry": "Die Windows-UAC-Abfrage wurde angefordert, aber der erhöhte Schreibvorgang ist fehlgeschlagen. Klicke auf Retry, um die UAC-Abfrage erneut auszulösen, oder führe After Effects als Administrator aus.",
+		"finishErrorRetryWithElevation": "Als Administrator erneut versuchen"
+	},
+	"actions": {
+		"back": "Zurück",
+		"next": "Weiter",
+		"finish": "Fertig",
+		"toggleFullscreen": "Auf Vollbild erweitern",
+		"toggleModal": "Zum Modal zurückkehren"
+	}
+}

@@ -1,0 +1,13 @@
+{
+	"preset": {
+		"run": "Ejecutar",
+		"edit": "Editar",
+		"duplicate": "Duplicar",
+		"delete": "Eliminar"
+	},
+	"widget": {
+		"edit": "Editar widget",
+		"delete": "Eliminar widget",
+		"refresh": "Actualizar"
+	}
+}

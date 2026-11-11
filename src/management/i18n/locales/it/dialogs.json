@@ -1,0 +1,79 @@
+{
+	"title": "Dialoghi",
+	"close": "Chiudi",
+	"save": "Salva",
+	"cancel": "Annulla",
+	"workspaceShell": {
+		"backgroundPanel": {
+			"title": "Livello sfondo",
+			"lead": "Sovrapponi livelli solidi, immagini e pattern dietro la griglia dell'area di lavoro. Clicca Applica per sincronizzare e salvare.",
+			"applyToWorkspace": "Applica all'area di lavoro",
+			"clearAll": "Cancella tutto",
+			"emptyLayers": "Nessun livello — aggiungine uno con i pulsanti a sinistra.",
+			"selectLayer": "Seleziona un livello nell'elenco per modificarlo.",
+			"enabled": "Visibile",
+			"opacity": "Opacità",
+			"color": "Colore",
+			"imagePath": "Percorso file",
+			"imagePathPlaceholder": "Percorso immagine o URL",
+			"browseImage": "Sfoglia immagine",
+			"selectImage": "Seleziona immagine",
+			"imageUrl": "URL immagine",
+			"applyUrl": "Usa URL",
+			"imageFit": "Adatta",
+			"imageRepeat": "Ripeti",
+			"imageScale": "Scala %",
+			"shiftX": "Shift X (px)",
+			"shiftY": "Shift Y (px)",
+			"pattern": "Pattern",
+			"patternSize": "Dimensione",
+			"patternColor": "Primo piano",
+			"patternBg": "Sfondo",
+			"moveUp": "Sposta su",
+			"moveDown": "Sposta giu",
+			"remove": "Rimuovi livello",
+			"types": {
+				"color": "Colore",
+				"image": "Immagine",
+				"pattern": "Pattern"
+			},
+			"patterns": {
+				"dots": "Puntini",
+				"grid": "Griglia",
+				"lines": "Linee"
+			},
+			"imageFits": {
+				"cover": "Copri",
+				"contain": "Contieni",
+				"stretch": "Allunga",
+				"auto": "Scala"
+			},
+			"imageRepeats": {
+				"no-repeat": "Nessuno",
+				"repeat": "Tessera",
+				"repeat-x": "X",
+				"repeat-y": "Y"
+			},
+			"tooltips": {
+				"addColor": "Aggiungi livello colore solido",
+				"addPattern": "Aggiungi livello pattern",
+				"addImage": "Aggiungi livello immagine"
+			},
+			"titleWithPanel": "Livello sfondo - Pannello {{panel}}",
+			"loading": "Caricamento...",
+			"saving": "Salvataggio...",
+			"saved": "Salvato",
+			"loadFailed": "Caricamento non riuscito: {{message}}",
+			"saveFailed": "Salvataggio non riuscito",
+			"preview": "Anteprima"
+		},
+		"widgetSelector": {
+			"title": "Aggiungi widget",
+			"lead": "Scegli un tipo e invialo al pannello principale. Gli elementi supportati aggiungono una tile in fondo alla griglia.",
+			"add": "Aggiungi",
+			"addToPanelHint": "Aggiungi questo widget alla griglia principale (riga inferiore).",
+			"notInPanelYet": "Questo tipo di widget non ha ancora un'interfaccia nel pannello — non può essere posizionato.",
+			"footerHint": "Le voci disattivate non sono ancora implementate nel renderer. Le altre chiudono il dialogo dopo l'invio."
+		}
+	}
+}

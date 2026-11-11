@@ -1,0 +1,79 @@
+{
+	"title": "대화상자",
+	"close": "닫기",
+	"save": "저장",
+	"cancel": "취소",
+	"workspaceShell": {
+		"backgroundPanel": {
+			"title": "배경 레이어",
+			"lead": "워크스페이스 그리드 뒤에 솔리드, 이미지, 패턴 레이어를 쌓습니다. 적용을 클릭하여 패널에 동기화하고 저장합니다.",
+			"applyToWorkspace": "워크스페이스에 적용",
+			"clearAll": "모두 지우기",
+			"emptyLayers": "아직 레이어가 없습니다. 왼쪽 버튼으로 추가하세요.",
+			"selectLayer": "편집하려면 목록에서 레이어를 선택하세요.",
+			"enabled": "표시",
+			"opacity": "불투명도",
+			"color": "색상",
+			"imagePath": "파일 경로",
+			"imagePathPlaceholder": "이미지 경로 또는 URL",
+			"browseImage": "이미지 찾아보기",
+			"selectImage": "이미지 선택",
+			"imageUrl": "이미지 URL",
+			"applyUrl": "URL 사용",
+			"imageFit": "맞춤",
+			"imageRepeat": "반복",
+			"imageScale": "배율 %",
+			"shiftX": "이동 X (px)",
+			"shiftY": "이동 Y (px)",
+			"pattern": "패턴",
+			"patternSize": "크기",
+			"patternColor": "전경",
+			"patternBg": "배경",
+			"moveUp": "위로 이동",
+			"moveDown": "아래로 이동",
+			"remove": "레이어 제거",
+			"types": {
+				"color": "색상",
+				"image": "이미지",
+				"pattern": "패턴"
+			},
+			"patterns": {
+				"dots": "점",
+				"grid": "그리드",
+				"lines": "선"
+			},
+			"imageFits": {
+				"cover": "채우기",
+				"contain": "맞추기",
+				"stretch": "늘이기",
+				"auto": "배율"
+			},
+			"imageRepeats": {
+				"no-repeat": "없음",
+				"repeat": "타일",
+				"repeat-x": "X",
+				"repeat-y": "Y"
+			},
+			"tooltips": {
+				"addColor": "솔리드 색상 레이어 추가",
+				"addPattern": "패턴 레이어 추가",
+				"addImage": "이미지 레이어 추가"
+			},
+			"titleWithPanel": "배경 레이어 - 패널 {{panel}}",
+			"loading": "로드 중...",
+			"saving": "저장 중...",
+			"saved": "저장됨",
+			"loadFailed": "로드 실패: {{message}}",
+			"saveFailed": "저장 실패",
+			"preview": "미리보기"
+		},
+		"widgetSelector": {
+			"title": "위젯 추가",
+			"lead": "유형을 선택하여 메인 워크스페이스 패널로 보냅니다. 지원되는 항목은 그리드 하단에 타일을 추가합니다.",
+			"add": "추가",
+			"addToPanelHint": "이 위젯을 메인 패널 그리드(하단 행)에 추가합니다.",
+			"notInPanelYet": "이 위젯 유형에는 패널 UI가 아직 없습니다 — 배치할 수 없습니다.",
+			"footerHint": "회색 항목은 패널 렌더러에서 아직 구현되지 않았습니다. 다른 항목은 요청을 보낸 후 이 대화상자를 닫습니다."
+		}
+	}
+}

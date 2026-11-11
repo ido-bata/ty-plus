@@ -1,0 +1,237 @@
+{
+	"codePreset": {
+		"codeType": "Code type",
+		"editor": {
+			"expression": "Expression",
+			"script": "Script code (.jsx)"
+		},
+		"saveLocation": "Save location",
+		"savePreview": "Save preview",
+		"status": {
+			"fileExists": "File already exists — will be overwritten",
+			"success": "Preset saved successfully!"
+		},
+		"type": {
+			"expression": "Expression",
+			"script": "Script"
+		}
+	},
+	"common": {
+		"browseFolder": "Procurar pasta",
+		"copyPath": "Copiar caminho",
+		"selectFile": "Selecionar arquivo"
+	},
+	"layerCompPreset": {
+		"desc": {
+			"comp": "Open the composition you want to save. Project must be saved first.",
+			"layer": "Select the layers you want to save. Project must be saved first."
+		},
+		"hint": {
+			"saveButton": "Press \"Create\" at the bottom of the dialog to save."
+		},
+		"savePreview": "Save preview",
+		"step1": {
+			"title": "Preset type"
+		},
+		"step2": {
+			"title": "Prepare in After Effects"
+		},
+		"step3": {
+			"title": "Save location"
+		},
+		"type": {
+			"comp": "Composition",
+			"layer": "Layer"
+		}
+	},
+	"search": {
+		"title": "Pesquisar predefinições",
+		"placeholder": "Digite para pesquisar...",
+		"empty": "Nenhuma predefinição encontrada"
+	},
+	"online": {
+		"loading": "Carregando...",
+		"empty": "Nenhuma predefinição online disponível"
+	},
+	"presetTool": {
+		"form": {
+			"presetId": "ID da predefinição",
+			"presetIdPlaceholder": "ID da predefinição",
+			"displayName": "Nome de exibição",
+			"displayNamePlaceholder": "Nome de exibição",
+			"filePath": "Caminho do arquivo",
+			"description": "Descrição",
+			"descriptionPlaceholder": "Descrição (opcional)",
+			"descriptionImage": "Imagem de descrição",
+			"descriptionImagePlaceholder": "Caminho ou URL da imagem",
+			"descriptionImageBrowse": "Procurar imagem",
+			"details": "Detalhes",
+			"presetName": "Nome do preset",
+			"icon": "Icone",
+			"savePath": "Caminho de salvamento"
+		},
+		"create": "Criar",
+		"status": {
+			"ready": "Pronto",
+			"loading": "Carregando predefinição…",
+			"loaded": "Editando: {{id}}",
+			"unknownPreset": "Predefinição não encontrada: {{id}}",
+			"loadFailed": "Falha ao carregar predefinição: {{message}}",
+			"invalidId": "ID da predefinição inválido",
+			"filePathRequired": "Caminho do arquivo é obrigatório",
+			"saved": "Salvo: {{id}}",
+			"saveFailed": "Falha ao salvar: {{message}}",
+			"saving": "Salvando..."
+		},
+		"animation": {
+			"title": "Predefinição de animação",
+			"lead": "Defaults de keyframe ou expressão embalados como uma predefinição de animação reutilizável.",
+			"defaultName": "Predefinição de animação",
+			"fields": {
+				"saveFolder": "Pasta de salvamento",
+				"path": "Caminho do preset de animação",
+				"pathPlaceholder": "Caminho .ffx existente opcional"
+			}
+		},
+		"footage": {
+			"title": "Predefinição de footage",
+			"lead": "Atalhos de pipeline de footage (importar, substituir, proxy). Arquivos reais são importados como footage.",
+			"defaultName": "Predefinição de footage",
+			"fields": {
+				"path": "Caminho do footage",
+				"mode": "Modo de importação"
+			}
+		},
+		"layerComp": {
+			"title": "Predefinição de camada/comp",
+			"lead": "Operações de camada e comp (transformar, duplicar, precompor). Arquivos de script salvos são executados no After Effects.",
+			"defaultName": "Predefinição de layer/comp"
+		},
+		"import": {
+			"title": "Predefinição de importação",
+			"lead": "Pacotes de importador de caminho ou seleção. Reutiliza o pipeline de predefinição de footage quando seu fluxo de trabalho compartilha esses manipuladores.",
+			"defaultName": "Predefinição de importação",
+			"fields": {
+				"path": "Caminho de importação",
+				"strategy": "Estratégia"
+			}
+		},
+		"code": {
+			"title": "Predefinição de código",
+			"lead": "Crie uma predefinição local de código/script.",
+			"extra": "Arquivos de script salvos são executados no After Effects.",
+			"defaultName": "Predefinição de código",
+			"editor": {
+				"format": "Format Document",
+				"formatTooltip": "Format the script body",
+				"diagnosticCount": "{{count}} problem",
+				"diagnosticCount_other": "{{count}} problems"
+			}
+		},
+		"easing": {
+			"title": "Predefinição de easing",
+			"lead": "Crie uma predefinição de easing local.",
+			"curveHint": "Easing do host (cubic-bezier). Esta curva é armazenada quando você salva a partir do contexto do AE.",
+			"openWithSelectionHint": "Abra este diálogo da área de trabalho com uma seleção de easing para incorporar uma visualização de curva.",
+			"ariaPreview": "Visualização da curva de easing",
+			"editTitle": "Editar predefinição de easing",
+			"defaultName": "Predefinição de easing",
+			"curve": "Curva",
+			"invalidCurve": "A curva deve ser uma matriz JSON com quatro números."
+		},
+		"addFile": {
+			"title": "Adicionar predefinição de arquivo",
+			"lead": "Registre uma predefinição local com suporte de arquivo a partir da área de trabalho. A extensão determina o tipo de predefinição."
+		},
+		"addFolder": {
+			"title": "Adicionar pasta/grupo de predefinição",
+			"lead": "Registre uma pasta ou grupo para organizar tiles."
+		},
+		"localPreset": "Predefinição local",
+		"groupPreset": "Predefinição de grupo",
+		"animationLabel": "Animação",
+		"layerCompLabel": "Camada/Comp",
+		"codeLabel": "Código",
+		"presetLibrary": "Biblioteca de predefinições",
+		"messages": "Mensagens",
+		"settings": "Configurações",
+		"debugConsole": "Console de depuração",
+		"cancel": "Cancelar",
+		"boot": {
+			"title": "Caixa de diálogo de predefinição",
+			"preparing": "Preparando caixa de diálogo de predefinição...",
+			"handoffError": "Não foi possível recuperar as informações de inicialização da caixa de diálogo de predefinição. Abra novamente a partir da área de trabalho."
+		},
+		"generic": {
+			"title": "Criar predefinição",
+			"lead": "Crie uma predefinição local a partir de metadados reutilizáveis.",
+			"defaultName": "Predefinição local"
+		}
+	},
+	"animationPreset": {
+		"step1": {
+			"title": "Select in After Effects",
+			"desc": "Select properties or layers you want to save as preset"
+		},
+		"step2": {
+			"title": "Save to this folder"
+		},
+		"step3": {
+			"button": "Save Animation Preset",
+			"detecting": "Detecting..."
+		},
+		"status": {
+			"success": "Detected!",
+			"noSelection": "No selection",
+			"noSelectionHint": "Select properties or layers in AE first",
+			"timeout": "Scan timeout",
+			"timeoutHint": "Choose a smaller folder",
+			"error": "Not detected",
+			"errorHint": "Save to the folder above"
+		},
+		"path": {
+			"reset": "Reset to default",
+			"notConfigured": "Not configured"
+		}
+	},
+	"edit": {
+		"title": "Editar predefinição",
+		"delete": "Excluir",
+		"save": "Salvar",
+		"cancel": "Cancelar",
+		"status": {
+			"loading": "Carregando predefinição…",
+			"saved": "Salvo",
+			"deleted": "Excluído",
+			"saveFailed": "Falha ao salvar: {{message}}",
+			"deleteFailed": "Falha ao excluir: {{message}}"
+		},
+		"fields": {
+			"presetName": "Nome da predefinição",
+			"description": "Descrição",
+			"icon": "Ícone",
+			"iconText": "Texto",
+			"iconEmoji": "Emoji",
+			"iconTextPlaceholder": "Texto (ex. CÓDIGO)",
+			"iconEmojiPlaceholder": "Emoji (ex. ⚡)",
+			"filePath": "Caminho do arquivo",
+			"type": "Tipo",
+			"presetNamePlaceholder": "Digite o nome do preset"
+		},
+		"titleForType": {
+			"preset": "Preset",
+			"script": "Preset de script",
+			"plugin": "Preset de plugin",
+			"footage": "Preset de footage"
+		}
+	},
+	"group": {
+		"title": "Criar grupo de presets",
+		"lead": "Agrupe vários presets em um único bloco.",
+		"defaultName": "Preset de grupo",
+		"fields": {
+			"groupName": "Nome do grupo",
+			"groupNamePlaceholder": "Digite o nome do grupo"
+		}
+	}
+}

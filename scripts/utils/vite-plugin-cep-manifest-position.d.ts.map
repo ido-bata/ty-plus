@@ -1,0 +1,1 @@
+{"version":3,"file":"vite-plugin-cep-manifest-position.d.ts","sourceRoot":"","sources":["vite-plugin-cep-manifest-position.ts"],"names":[],"mappings":"AAEA,OAAO,KAAK,EAAE,MAAM,EAAE,MAAM,MAAM,CAAC;AAEnC,KAAK,OAAO,GAAG;IACb,OAAO,CAAC,EAAE,MAAM,CAAC;IACjB,CAAC,CAAC,EAAE,MAAM,CAAC;IACX,CAAC,CAAC,EAAE,MAAM,CAAC;CACZ,CAAC;AAIF,wBAAgB,yBAAyB,CAAC,IAAI,GAAE,OAAY,GAAG,MAAM,CAsDpE"}

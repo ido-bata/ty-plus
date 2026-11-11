@@ -1,0 +1,79 @@
+{
+	"title": "对话框",
+	"close": "关闭",
+	"save": "保存",
+	"cancel": "取消",
+	"workspaceShell": {
+		"backgroundPanel": {
+			"title": "背景图层",
+			"lead": "在 workspace 网格后面堆叠纯色、图片和图案图层。点击应用以同步到面板并保存。",
+			"applyToWorkspace": "应用到 workspace",
+			"clearAll": "清除全部",
+			"emptyLayers": "暂无图层 — 使用左侧按钮添加。",
+			"selectLayer": "在列表中选择图层以编辑。",
+			"enabled": "可见",
+			"opacity": "不透明度",
+			"color": "颜色",
+			"imagePath": "文件路径",
+			"imagePathPlaceholder": "图片路径或 URL",
+			"browseImage": "浏览图片",
+			"selectImage": "选择图片",
+			"imageUrl": "图片 URL",
+			"applyUrl": "使用 URL",
+			"imageFit": "适应",
+			"imageRepeat": "重复",
+			"imageScale": "缩放 %",
+			"shiftX": "X偏移 (px)",
+			"shiftY": "Y偏移 (px)",
+			"pattern": "图案",
+			"patternSize": "大小",
+			"patternColor": "前景色",
+			"patternBg": "背景色",
+			"moveUp": "上移",
+			"moveDown": "下移",
+			"remove": "移除图层",
+			"types": {
+				"color": "颜色",
+				"image": "图片",
+				"pattern": "图案"
+			},
+			"patterns": {
+				"dots": "点",
+				"grid": "网格",
+				"lines": "线条"
+			},
+			"imageFits": {
+				"cover": "覆盖",
+				"contain": "包含",
+				"stretch": "拉伸",
+				"auto": "缩放"
+			},
+			"imageRepeats": {
+				"no-repeat": "无",
+				"repeat": "平铺",
+				"repeat-x": "X",
+				"repeat-y": "Y"
+			},
+			"tooltips": {
+				"addColor": "添加纯色图层",
+				"addPattern": "添加图案图层",
+				"addImage": "添加图片图层"
+			},
+			"titleWithPanel": "背景图层 - 面板 {{panel}}",
+			"loading": "正在加载...",
+			"saving": "正在保存...",
+			"saved": "已保存",
+			"loadFailed": "加载失败：{{message}}",
+			"saveFailed": "保存失败",
+			"preview": "预览"
+		},
+		"widgetSelector": {
+			"title": "添加小部件",
+			"lead": "选择类型并将其发送到主 workspace 面板。支持的项会在网格底部添加一个图块。",
+			"add": "添加",
+			"addToPanelHint": "将此小部件添加到主面板网格（底行）。",
+			"notInPanelYet": "此小部件类型尚无面板 UI — 无法放置。",
+			"footerHint": "灰色的项目尚未在面板渲染器中实现。其他项会在发送请求后关闭此对话框。"
+		}
+	}
+}

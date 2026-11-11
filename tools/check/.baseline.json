@@ -1,0 +1,10 @@
+{
+	"src/management/widget/workspace/TileContent.test.tsx:13 :: management -> function (management may import only from function minimal index)": [
+		{
+			"file": "C:\\Users\\rebui\\Desktop\\ty-plus\\src\\management\\widget\\workspace\\TileContent.test.tsx",
+			"reason": "management -> function (management may import only from function minimal index)",
+			"line": "vi,",
+			"lineNumber": 13
+		}
+	]
+}

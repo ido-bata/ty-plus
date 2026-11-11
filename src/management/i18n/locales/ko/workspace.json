@@ -1,0 +1,37 @@
+{
+	"widgets": {
+		"align": {
+			"alignLeft": "왼쪽 정렬",
+			"alignCenterH": "가운데 수평 정렬",
+			"alignRight": "오른쪽 정렬",
+			"alignTop": "위쪽 정렬",
+			"alignCenterV": "가운데 수직 정렬",
+			"alignBottom": "아래쪽 정렬"
+		},
+		"layoutLock": {
+			"lock": "레이아웃 잠금",
+			"unlock": "레이아웃 잠금 해제"
+		},
+		"projectInfo": {
+			"dimensions": "크기",
+			"timing": "타이밍",
+			"layers": "레이어"
+		}
+	},
+	"controlPanel": {
+		"expand": "펼치기",
+		"collapse": "접기",
+		"position": "위치",
+		"orientation": "방향"
+	},
+	"context": {
+		"lock": "잠금",
+		"unlock": "잠금 해제",
+		"addWidget": "위젯 추가",
+		"deleteWidget": "위젯 삭제",
+		"refresh": "새로고침"
+	},
+	"widgetSearch": {
+		"placeholder": "프리셋 검색…"
+	}
+}

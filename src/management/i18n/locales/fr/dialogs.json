@@ -1,0 +1,79 @@
+{
+	"title": "Boîte de dialogue",
+	"close": "Fermer",
+	"save": "Enregistrer",
+	"cancel": "Annuler",
+	"workspaceShell": {
+		"backgroundPanel": {
+			"title": "Calque d'arrière-plan",
+			"lead": "Empilez les calques solides, images et motifs derrière la grille de l'espace de travail. Cliquez sur Appliquer pour synchroniser avec le panneau et enregistrer.",
+			"applyToWorkspace": "Appliquer à l'espace de travail",
+			"clearAll": "Tout effacer",
+			"emptyLayers": "Aucun calque — ajoutez-en avec les boutons à gauche.",
+			"selectLayer": "Sélectionnez un calque dans la liste pour le modifier.",
+			"enabled": "Visible",
+			"opacity": "Opacité",
+			"color": "Couleur",
+			"imagePath": "Chemin du fichier",
+			"imagePathPlaceholder": "Chemin d'image ou URL",
+			"browseImage": "Parcourir l'image",
+			"selectImage": "Sélectionner une image",
+			"imageUrl": "URL de l'image",
+			"applyUrl": "Utiliser l'URL",
+			"imageFit": "Ajustement",
+			"imageRepeat": "Répétition",
+			"imageScale": "Échelle %",
+			"shiftX": "Décalage X (px)",
+			"shiftY": "Décalage Y (px)",
+			"pattern": "Motif",
+			"patternSize": "Taille",
+			"patternColor": "Premier plan",
+			"patternBg": "Arrière-plan",
+			"moveUp": "Monter",
+			"moveDown": "Descendre",
+			"remove": "Supprimer le calque",
+			"types": {
+				"color": "Couleur",
+				"image": "Image",
+				"pattern": "Motif"
+			},
+			"patterns": {
+				"dots": "Points",
+				"grid": "Grille",
+				"lines": "Lignes"
+			},
+			"imageFits": {
+				"cover": "Couvrir",
+				"contain": "Contenir",
+				"stretch": "Étirer",
+				"auto": "Échelle"
+			},
+			"imageRepeats": {
+				"no-repeat": "Aucune",
+				"repeat": "Mosaïque",
+				"repeat-x": "X",
+				"repeat-y": "Y"
+			},
+			"tooltips": {
+				"addColor": "Ajouter un calque couleur unie",
+				"addPattern": "Ajouter un calque motif",
+				"addImage": "Ajouter un calque image"
+			},
+			"titleWithPanel": "Calque d'arrière-plan - Panneau {{panel}}",
+			"loading": "Chargement...",
+			"saving": "Enregistrement...",
+			"saved": "Enregistré",
+			"loadFailed": "Échec du chargement : {{message}}",
+			"saveFailed": "Échec de l'enregistrement",
+			"preview": "Aperçu"
+		},
+		"widgetSelector": {
+			"title": "Ajouter un widget",
+			"lead": "Choisissez un type et envoyez-le au panneau principal de l'espace de travail. Les éléments pris en charge ajoutent une tuile en bas de la grille.",
+			"add": "Ajouter",
+			"addToPanelHint": "Ajouter ce widget à la grille du panneau principal (rangée inférieure).",
+			"notInPanelYet": "Ce type de widget n'a pas encore d'interface de panneau — il ne peut pas être placé.",
+			"footerHint": "Les éléments grisés ne sont pas encore implémentés dans le moteur du panneau. Les autres ferment ce dialogue après l'envoi de la requête."
+		}
+	}
+}

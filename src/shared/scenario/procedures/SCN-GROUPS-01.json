@@ -1,0 +1,171 @@
+{
+	"scenarioId": "SCN-GROUPS-01",
+	"steps": [
+		{
+			"id": "step-1",
+			"gherkinRef": { "scenarioId": "SCN-GROUPS-01", "stepIndex": 0 },
+			"preconditions": [
+				"Onboarding completed.",
+				"Catalog contains 'PresetA' and 'PresetB'."
+			],
+			"input": { "snapshot": "two-preset-catalog probe" },
+			"action": "observe_two_preset_catalog",
+			"expectedResult": {
+				"persistenceOracle": {
+					"storageKey": "storage:catalog-list",
+					"expected": [{ "name": "PresetA" }, { "name": "PresetB" }]
+				}
+			},
+			"postconditions": ["storage:catalog-list contains PresetA and PresetB."],
+			"mutation": false,
+			"checkpoint": false
+		},
+		{
+			"id": "step-2",
+			"gherkinRef": { "scenarioId": "SCN-GROUPS-01", "stepIndex": 1 },
+			"preconditions": ["PresetA and PresetB are rendered."],
+			"input": { "presetIds": ["PresetA", "PresetB"], "groupName": "Group-1" },
+			"action": "group_selected_presets",
+			"expectedResult": {
+				"uiOracle": {
+					"selector": "[data-directory-browser-entry][data-entry-kind=\"dir\"]",
+					"attribute": { "name": "data-state", "value": "creating" }
+				}
+			},
+			"postconditions": ["Pending persisted write for the group node."],
+			"mutation": true,
+			"checkpoint": false
+		},
+		{
+			"id": "step-3",
+			"gherkinRef": { "scenarioId": "SCN-GROUPS-01", "stepIndex": 2 },
+			"preconditions": ["Group dispatch is in-flight."],
+			"input": {
+				"probe": "read storage:catalog-list + DOM directory browser body"
+			},
+			"action": "checkpoint_re_observe_after_group",
+			"expectedResult": {
+				"uiOracle": {
+					"selector": "[data-directory-browser-entry][data-entry-path=\"Group-1\"]",
+					"attribute": { "name": "data-entry-path", "value": "Group-1" }
+				},
+				"persistenceOracle": {
+					"storageKey": "storage:catalog-list",
+					"expected": [{ "name": "Group-1", "members": ["PresetA", "PresetB"] }]
+				}
+			},
+			"postconditions": [
+				"Group 'Group-1' is rendered containing PresetA and PresetB.",
+				"storage:catalog-list contains the group node."
+			],
+			"mutation": false,
+			"checkpoint": true
+		},
+		{
+			"id": "step-4",
+			"gherkinRef": { "scenarioId": "SCN-GROUPS-01", "stepIndex": 4 },
+			"preconditions": ["Group 'Group-1' is rendered."],
+			"input": { "from": "Group-1", "to": "My Group" },
+			"action": "rename_group",
+			"expectedResult": {
+				"uiOracle": {
+					"selector": "[data-directory-browser-entry][data-entry-path=\"Group-1\"]",
+					"attribute": { "name": "data-state", "value": "renaming" }
+				}
+			},
+			"postconditions": ["Pending persisted write for the rename."],
+			"mutation": true,
+			"checkpoint": false
+		},
+		{
+			"id": "step-5",
+			"gherkinRef": { "scenarioId": "SCN-GROUPS-01", "stepIndex": 5 },
+			"preconditions": ["Rename dispatch is in-flight."],
+			"input": {
+				"probe": "read storage:catalog-list + DOM directory browser body"
+			},
+			"action": "checkpoint_re_observe_after_rename",
+			"expectedResult": {
+				"uiOracle": {
+					"selector": "[data-directory-browser-entry][data-entry-path=\"My Group\"]",
+					"attribute": { "name": "data-entry-path", "value": "My Group" }
+				},
+				"persistenceOracle": {
+					"storageKey": "storage:catalog-list",
+					"expected": [
+						{ "name": "My Group", "members": ["PresetA", "PresetB"] }
+					]
+				}
+			},
+			"postconditions": [
+				"Group 'My Group' is rendered.",
+				"storage:catalog-list reflects the rename."
+			],
+			"mutation": false,
+			"checkpoint": true
+		},
+		{
+			"id": "step-6",
+			"gherkinRef": { "scenarioId": "SCN-GROUPS-01", "stepIndex": 6 },
+			"preconditions": ["Group 'My Group' is rendered."],
+			"input": { "groupName": "My Group" },
+			"action": "ungroup",
+			"expectedResult": {
+				"uiOracle": {
+					"selector": "[data-directory-browser-entry][data-entry-path=\"My Group\"]",
+					"attribute": { "name": "data-state", "value": "ungrouping" }
+				}
+			},
+			"postconditions": ["Pending persisted write for the ungroup."],
+			"mutation": true,
+			"checkpoint": false
+		},
+		{
+			"id": "step-7",
+			"gherkinRef": { "scenarioId": "SCN-GROUPS-01", "stepIndex": 7 },
+			"preconditions": ["Ungroup dispatch is in-flight."],
+			"input": {
+				"probe": "read storage:catalog-list + DOM directory browser body"
+			},
+			"action": "checkpoint_re_observe_after_ungroup",
+			"expectedResult": {
+				"persistenceOracle": {
+					"storageKey": "storage:catalog-list",
+					"expected": [{ "name": "PresetA" }, { "name": "PresetB" }]
+				},
+				"uiOracle": {
+					"selector": "[data-directory-browser-entry][data-entry-path=\"My Group\"]",
+					"attribute": { "name": "data-state", "value": "absent" }
+				}
+			},
+			"postconditions": [
+				"'My Group' is removed from the catalog.",
+				"PresetA and PresetB are restored to the catalog root."
+			],
+			"mutation": false,
+			"checkpoint": true
+		}
+	],
+	"cleanup": [
+		{
+			"id": "cleanup-1",
+			"preconditions": ["Scenario verdict resolved."],
+			"input": {
+				"key": "storage:catalog-list",
+				"presetIds": ["PresetA", "PresetB"]
+			},
+			"action": "delete_presets_and_reset_catalog",
+			"expectedResult": {
+				"persistenceOracle": {
+					"storageKey": "storage:catalog-list",
+					"expected": []
+				}
+			},
+			"postconditions": [
+				"storage:catalog-list is empty so the next run starts clean."
+			],
+			"mutation": true,
+			"checkpoint": false
+		}
+	]
+}

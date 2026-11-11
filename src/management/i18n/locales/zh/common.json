@@ -1,0 +1,184 @@
+{
+	"app": {
+		"name": "ty-plus",
+		"version": "版本 {{version}}",
+		"loading": "加载中...",
+		"ready": "就绪"
+	},
+	"buttons": {
+		"save": "保存",
+		"cancel": "取消",
+		"delete": "删除",
+		"edit": "编辑",
+		"close": "关闭"
+	},
+	"actions": {
+		"run": "运行",
+		"duplicate": "复制",
+		"save": "保存",
+		"cancel": "取消",
+		"close": "关闭",
+		"reset": "重置",
+		"delete": "删除",
+		"apply": "应用",
+		"search": "搜索",
+		"import": "导入",
+		"export": "导出",
+		"create": "创建",
+		"edit": "编辑",
+		"rename": "重命名",
+		"remove": "移除",
+		"refresh": "刷新",
+		"reload": "重新加载",
+		"undo": "撤销",
+		"redo": "重做",
+		"copy": "复制",
+		"paste": "粘贴",
+		"cut": "剪切",
+		"selectAll": "全选",
+		"clear": "清除",
+		"ok": "确定",
+		"yes": "是",
+		"no": "否",
+		"confirm": "确认",
+		"browse": "浏览",
+		"upload": "上传",
+		"download": "下载"
+	},
+	"status": {
+		"loading": "加载中...",
+		"saving": "保存中...",
+		"saved": "已保存",
+		"error": "错误",
+		"success": "成功",
+		"warning": "警告",
+		"info": "信息",
+		"pending": "等待中",
+		"processing": "处理中",
+		"complete": "完成",
+		"failed": "失败",
+		"ready": "就绪",
+		"offline": "离线",
+		"online": "在线",
+		"syncing": "同步中...",
+		"synced": "已同步"
+	},
+	"settings": {
+		"optional": "可选",
+		"sections": {
+			"general": "常规",
+			"theme": "主题",
+			"paths": "路径",
+			"gridLayout": "网格布局",
+			"feedbackSupport": "反馈与支持",
+			"workspaceBackup": "工作区备份",
+			"advanced": "高级",
+			"workspaceBackground": "工作区背景"
+		},
+		"labels": {
+			"language": "语言",
+			"theme": "主题",
+			"accentColor": "强调色",
+			"textColor": "文字颜色",
+			"widgetBackground": "部件背景",
+			"widgetOpacity": "部件不透明度",
+			"panelBackground": "面板背景",
+			"panelOpacity": "面板不透明度",
+			"backgroundColor": "背景颜色",
+			"supportRoot": "支持根目录",
+			"presetRoot": "预设根目录",
+			"scriptRoot": "脚本根目录",
+			"pluginRoot": "插件根目录",
+			"cellSize": "单元格大小",
+			"gap": "间距",
+			"cornerRadius": "圆角半径",
+			"category": "类别",
+			"subject": "主题",
+			"presetId": "预设 ID",
+			"description": "描述",
+			"attachments": "附件",
+			"backupRestore": "备份与恢复",
+			"scanTimeout": "扫描超时",
+			"maxFiles": "最大文件数"
+		},
+		"themes": {
+			"system": "跟随系统",
+			"dark": "深色",
+			"light": "浅色",
+			"custom": "自定义"
+		},
+		"languages": {
+			"japanese": "日语",
+			"english": "英语"
+		},
+		"buttons": {
+			"advancedSettings": "高级设置",
+			"selectSupportRoot": "选择支持根目录",
+			"selectPresetRoot": "选择预设根目录",
+			"selectScriptRoot": "选择脚本根目录",
+			"selectPluginRoot": "选择插件根目录",
+			"sendReport": "发送报告",
+			"sending": "发送中...",
+			"exporting": "导出中...",
+			"importing": "导入中...",
+			"exportWorkspace": "导出工作区",
+			"importWorkspace": "导入工作区",
+			"resetting": "重置中...",
+			"resetOnboarding": "重置引导"
+		},
+		"messages": {
+			"filesSelected": "已选择 {{count}} 个文件",
+			"resetOnboardingConfirm": "确定要重置引导吗?",
+			"exportSuccess": "工作区已导出到 {{path}}",
+			"exportFailed": "导出失败: {{error}}",
+			"exportCancelled": "导出已取消",
+			"importSuccess": "已导入 {{count}} 项",
+			"importFailed": "导入失败: {{error}}",
+			"importCancelled": "导入已取消",
+			"reportSentSuccess": "报告已发送",
+			"reportSendFailed": "发送报告失败: {{error}}"
+		}
+	},
+	"quickActions": {
+		"presets": "预设",
+		"settings": "设置",
+		"messages": "消息",
+		"newNote": "新建笔记",
+		"newScript": "新建脚本",
+		"newEasing": "新建缓动",
+		"toggleGrid": "切换网格",
+		"toggleLabels": "切换标签",
+		"documentation": "文档",
+		"sendFeedback": "发送反馈",
+		"category": {
+			"file": "文件",
+			"edit": "编辑",
+			"view": "视图",
+			"help": "帮助"
+		}
+	},
+	"sidePanel": {
+		"presets": "预设",
+		"debugConsole": "调试控制台",
+		"messages": "消息",
+		"settings": "设置",
+		"reloadPanel": "重新加载面板",
+		"closePanel": "关闭面板"
+	},
+	"statusBar": {
+		"presets": "预设",
+		"debug": "调试",
+		"message": "消息",
+		"settings": "设置"
+	},
+	"panel": {
+		"errorBoundary": {
+			"surface": "{{surface}} 渲染失败",
+			"title": "出现错误",
+			"retry": "重试",
+			"copyError": "复制错误详情",
+			"copied": "已复制到剪贴板",
+			"digest": "错误 ID"
+		}
+	}
+}

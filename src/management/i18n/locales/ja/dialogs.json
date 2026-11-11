@@ -1,0 +1,79 @@
+{
+	"title": "ダイアログ",
+	"close": "閉じる",
+	"save": "保存",
+	"cancel": "キャンセル",
+	"workspaceShell": {
+		"backgroundPanel": {
+			"title": "背景レイヤー",
+			"lead": "格子の背面に色・画像・パターンのレイヤーを重ねます。「ワークスペースへ適用」でパネルに反映・保存されます。",
+			"applyToWorkspace": "ワークスペースへ適用",
+			"clearAll": "すべてクリア",
+			"emptyLayers": "レイヤーがありません。左のボタンから追加してください。",
+			"selectLayer": "一覧からレイヤーを選んで編集します。",
+			"enabled": "表示",
+			"opacity": "不透明度",
+			"color": "色",
+			"imagePath": "ファイルパス",
+			"imagePathPlaceholder": "画像パスまたは URL",
+			"browseImage": "画像を参照",
+			"selectImage": "画像を選択",
+			"imageUrl": "画像 URL",
+			"applyUrl": "URL を使う",
+			"imageFit": "表示",
+			"imageRepeat": "繰り返し",
+			"imageScale": "スケール %",
+			"shiftX": "シフト X (px)",
+			"shiftY": "シフト Y (px)",
+			"pattern": "パターン",
+			"patternSize": "サイズ",
+			"patternColor": "前景",
+			"patternBg": "背景",
+			"moveUp": "上へ",
+			"moveDown": "下へ",
+			"remove": "レイヤーを削除",
+			"types": {
+				"color": "色",
+				"image": "画像",
+				"pattern": "パターン"
+			},
+			"patterns": {
+				"dots": "ドット",
+				"grid": "グリッド",
+				"lines": "ライン"
+			},
+			"imageFits": {
+				"cover": "カバー",
+				"contain": "収める",
+				"stretch": "引き伸ばし",
+				"auto": "スケール"
+			},
+			"imageRepeats": {
+				"no-repeat": "なし",
+				"repeat": "タイル",
+				"repeat-x": "横",
+				"repeat-y": "縦"
+			},
+			"tooltips": {
+				"addColor": "単色レイヤーを追加",
+				"addPattern": "パターンを追加",
+				"addImage": "画像レイヤーを追加"
+			},
+			"titleWithPanel": "背景レイヤー - パネル {{panel}}",
+			"loading": "読み込み中...",
+			"saving": "保存中...",
+			"saved": "保存しました",
+			"loadFailed": "読み込みに失敗しました: {{message}}",
+			"saveFailed": "保存に失敗しました",
+			"preview": "プレビュー"
+		},
+		"widgetSelector": {
+			"title": "ウィジェットを追加",
+			"lead": "種類を選び、メインパネルのワークスペースへ送ります。対応している型はグリッド最下行にタイルを追加します。",
+			"add": "追加",
+			"addToPanelHint": "メインパネルのグリッド末尾にこのウィジェットを追加します。",
+			"notInPanelYet": "この型はパネル側の UI が未実装のため配置できません。",
+			"footerHint": "グレー表示はパネル描画が未対応です。対応タイプは送信後にこのダイアログを閉じます。"
+		}
+	}
+}

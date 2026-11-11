@@ -1,0 +1,9 @@
+# Pin the toolchain so CI and developer machines agree. Bump intentionally.
+#
+# 1.85.x = the floor for this project: lets us use `clap` derive macros with
+# the latest stable edition features. Cargo will refuse to build with an older
+# toolchain, which is what we want for reproducibility.
+[toolchain]
+channel = "1.85.0"
+components = ["rustfmt", "clippy"]
+profile = "minimal"

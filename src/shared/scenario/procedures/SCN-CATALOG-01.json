@@ -1,0 +1,165 @@
+{
+	"scenarioId": "SCN-CATALOG-01",
+	"steps": [
+		{
+			"id": "step-1",
+			"gherkinRef": { "scenarioId": "SCN-CATALOG-01", "stepIndex": 0 },
+			"preconditions": ["Onboarding completed.", "Catalog is empty."],
+			"input": { "snapshot": "empty-catalog probe" },
+			"action": "observe_empty_catalog",
+			"expectedResult": {
+				"persistenceOracle": {
+					"storageKey": "storage:catalog-list",
+					"expected": []
+				}
+			},
+			"postconditions": ["storage:catalog-list is an empty array."],
+			"mutation": false,
+			"checkpoint": false
+		},
+		{
+			"id": "step-2",
+			"gherkinRef": { "scenarioId": "SCN-CATALOG-01", "stepIndex": 1 },
+			"preconditions": ["storage:catalog-list is empty."],
+			"input": { "name": "Sample Catalog" },
+			"action": "add_catalog_entry",
+			"expectedResult": {
+				"uiOracle": {
+					"selector": "[data-directory-browser-entry][data-entry-kind=\"dir\"]",
+					"attribute": { "name": "data-state", "value": "creating" }
+				}
+			},
+			"postconditions": ["Pending persisted write for the new catalog entry."],
+			"mutation": true,
+			"checkpoint": false
+		},
+		{
+			"id": "step-3",
+			"gherkinRef": { "scenarioId": "SCN-CATALOG-01", "stepIndex": 2 },
+			"preconditions": ["Catalog add dispatch is in-flight."],
+			"input": {
+				"probe": "read storage:catalog-list + DOM directory browser body"
+			},
+			"action": "checkpoint_re_observe_after_add",
+			"expectedResult": {
+				"uiOracle": {
+					"selector": "[data-directory-browser-entry][data-entry-path]",
+					"attribute": { "name": "data-entry-path", "value": "Sample Catalog" }
+				},
+				"persistenceOracle": {
+					"storageKey": "storage:catalog-list",
+					"expected": [{ "name": "Sample Catalog" }]
+				}
+			},
+			"postconditions": [
+				"Catalog list contains 'Sample Catalog'.",
+				"storage:catalog-list contains the entry."
+			],
+			"mutation": false,
+			"checkpoint": true
+		},
+		{
+			"id": "step-4",
+			"gherkinRef": { "scenarioId": "SCN-CATALOG-01", "stepIndex": 3 },
+			"preconditions": ["Catalog list contains 'Sample Catalog'."],
+			"input": { "from": "Sample Catalog", "to": "Renamed Catalog" },
+			"action": "rename_catalog_entry",
+			"expectedResult": {
+				"uiOracle": {
+					"selector": "[data-directory-browser-entry][data-entry-path=\"Sample Catalog\"]",
+					"attribute": { "name": "data-state", "value": "renaming" }
+				}
+			},
+			"postconditions": ["Pending persisted write for the rename."],
+			"mutation": true,
+			"checkpoint": false
+		},
+		{
+			"id": "step-5",
+			"gherkinRef": { "scenarioId": "SCN-CATALOG-01", "stepIndex": 4 },
+			"preconditions": ["Rename dispatch is in-flight."],
+			"input": {
+				"probe": "read storage:catalog-list + DOM directory browser body"
+			},
+			"action": "checkpoint_re_observe_after_rename",
+			"expectedResult": {
+				"uiOracle": {
+					"selector": "[data-directory-browser-entry][data-entry-path=\"Renamed Catalog\"]",
+					"attribute": { "name": "data-entry-path", "value": "Renamed Catalog" }
+				},
+				"persistenceOracle": {
+					"storageKey": "storage:catalog-list",
+					"expected": [{ "name": "Renamed Catalog" }]
+				}
+			},
+			"postconditions": [
+				"Catalog list contains 'Renamed Catalog'.",
+				"'Sample Catalog' is absent from the catalog list."
+			],
+			"mutation": false,
+			"checkpoint": true
+		},
+		{
+			"id": "step-6",
+			"gherkinRef": { "scenarioId": "SCN-CATALOG-01", "stepIndex": 5 },
+			"preconditions": ["Catalog list contains 'Renamed Catalog'."],
+			"input": {
+				"selector": "[data-directory-browser-entry][data-entry-path=\"Renamed Catalog\"]"
+			},
+			"action": "delete_catalog_entry",
+			"expectedResult": {
+				"uiOracle": {
+					"selector": "[data-directory-browser-entry][data-entry-path=\"Renamed Catalog\"]",
+					"attribute": { "name": "data-state", "value": "deleting" }
+				}
+			},
+			"postconditions": ["Pending persisted write for the delete."],
+			"mutation": true,
+			"checkpoint": false
+		},
+		{
+			"id": "step-7",
+			"gherkinRef": { "scenarioId": "SCN-CATALOG-01", "stepIndex": 6 },
+			"preconditions": ["Delete dispatch is in-flight."],
+			"input": {
+				"probe": "read storage:catalog-list + DOM directory browser body"
+			},
+			"action": "checkpoint_re_observe_after_delete",
+			"expectedResult": {
+				"persistenceOracle": {
+					"storageKey": "storage:catalog-list",
+					"expected": []
+				},
+				"uiOracle": {
+					"selector": "[data-directory-browser-body]",
+					"attribute": { "name": "data-state", "value": "empty" }
+				}
+			},
+			"postconditions": [
+				"Catalog list is empty.",
+				"storage:catalog-list does not contain the entry."
+			],
+			"mutation": false,
+			"checkpoint": true
+		}
+	],
+	"cleanup": [
+		{
+			"id": "cleanup-1",
+			"preconditions": ["Scenario verdict resolved."],
+			"input": { "key": "storage:catalog-list" },
+			"action": "reset_catalog_list",
+			"expectedResult": {
+				"persistenceOracle": {
+					"storageKey": "storage:catalog-list",
+					"expected": []
+				}
+			},
+			"postconditions": [
+				"storage:catalog-list is empty so the next run starts from a clean catalog."
+			],
+			"mutation": true,
+			"checkpoint": false
+		}
+	]
+}

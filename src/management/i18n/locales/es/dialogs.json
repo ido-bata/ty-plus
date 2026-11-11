@@ -1,0 +1,79 @@
+{
+	"title": "Diálogos",
+	"close": "Cerrar",
+	"save": "Guardar",
+	"cancel": "Cancelar",
+	"workspaceShell": {
+		"backgroundPanel": {
+			"title": "Capa de fondo",
+			"lead": "Apila capas sólidas, de imagen y de patrón detrás de la cuadrícula del espacio de trabajo. Haz clic en Aplicar para sincronizar con el panel y guardar.",
+			"applyToWorkspace": "Aplicar al espacio de trabajo",
+			"clearAll": "Borrar todo",
+			"emptyLayers": "Sin capas aún — añade una con los botones de la izquierda.",
+			"selectLayer": "Selecciona una capa en la lista para editarla.",
+			"enabled": "Visible",
+			"opacity": "Opacidad",
+			"color": "Color",
+			"imagePath": "Ruta del archivo",
+			"imagePathPlaceholder": "Ruta de imagen o URL",
+			"browseImage": "Buscar imagen",
+			"selectImage": "Seleccionar imagen",
+			"imageUrl": "URL de imagen",
+			"applyUrl": "Usar URL",
+			"imageFit": "Ajuste",
+			"imageRepeat": "Repetir",
+			"imageScale": "Escala %",
+			"shiftX": "Desplazar X (px)",
+			"shiftY": "Desplazar Y (px)",
+			"pattern": "Patrón",
+			"patternSize": "Tamaño",
+			"patternColor": "Primer plano",
+			"patternBg": "Fondo",
+			"moveUp": "Subir",
+			"moveDown": "Bajar",
+			"remove": "Eliminar capa",
+			"types": {
+				"color": "Color",
+				"image": "Imagen",
+				"pattern": "Patrón"
+			},
+			"patterns": {
+				"dots": "Puntos",
+				"grid": "Cuadrícula",
+				"lines": "Líneas"
+			},
+			"imageFits": {
+				"cover": "Cubrir",
+				"contain": "Contener",
+				"stretch": "Estirar",
+				"auto": "Escala"
+			},
+			"imageRepeats": {
+				"no-repeat": "Ninguno",
+				"repeat": "Mosaico",
+				"repeat-x": "X",
+				"repeat-y": "Y"
+			},
+			"tooltips": {
+				"addColor": "Añadir capa de color sólido",
+				"addPattern": "Añadir capa de patrón",
+				"addImage": "Añadir capa de imagen"
+			},
+			"titleWithPanel": "Capa de fondo - Panel {{panel}}",
+			"loading": "Cargando...",
+			"saving": "Guardando...",
+			"saved": "Guardado",
+			"loadFailed": "Error al cargar: {{message}}",
+			"saveFailed": "Error al guardar",
+			"preview": "Vista previa"
+		},
+		"widgetSelector": {
+			"title": "Añadir widget",
+			"lead": "Elige un tipo y envíalo al panel principal del espacio de trabajo. Los elementos soportados añaden una baldosa en la parte inferior de la cuadrícula.",
+			"add": "Añadir",
+			"addToPanelHint": "Añade este widget a la cuadrícula del panel principal (fila inferior).",
+			"notInPanelYet": "Este tipo de widget aún no tiene interfaz en el panel — no se puede colocar.",
+			"footerHint": "Los elementos en gris aún no están implementados en el renderizador del panel. Otros cierran este diálogo después de enviar la solicitud."
+		}
+	}
+}

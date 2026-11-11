@@ -1,0 +1,185 @@
+{
+	"scenarioId": "SCN-BOOT-01",
+	"steps": [
+		{
+			"id": "step-1",
+			"gherkinRef": { "scenarioId": "SCN-BOOT-01", "stepIndex": 0 },
+			"preconditions": [
+				"Panel has not been launched before.",
+				"storage:onboarding is absent."
+			],
+			"input": { "snapshot": "first-boot precondition probe" },
+			"action": "observe_first_boot_panel_state",
+			"expectedResult": {
+				"uiOracle": {
+					"selector": "[data-surface-id=\"dialog-setup-required\"]",
+					"attribute": { "name": "data-state", "value": "initial" }
+				},
+				"persistenceOracle": {
+					"storageKey": "storage:onboarding",
+					"expected": null
+				}
+			},
+			"postconditions": [
+				"Panel surface id is dialog-setup-required (first-boot).",
+				"storage:onboarding is null."
+			],
+			"mutation": false,
+			"checkpoint": false
+		},
+		{
+			"id": "step-2",
+			"gherkinRef": { "scenarioId": "SCN-BOOT-01", "stepIndex": 1 },
+			"preconditions": ["Panel boot probes have started."],
+			"input": { "waitFor": "panel-boot-finished event" },
+			"action": "wait_for_boot_probes_to_complete",
+			"expectedResult": {
+				"uiOracle": {
+					"selector": "[data-testid=\"setup-required\"]",
+					"attribute": { "name": "data-state", "value": "post-probes" }
+				}
+			},
+			"postconditions": ["Panel boot probes have finished."],
+			"mutation": false,
+			"checkpoint": false
+		},
+		{
+			"id": "step-3",
+			"gherkinRef": { "scenarioId": "SCN-BOOT-01", "stepIndex": 2 },
+			"preconditions": ["Panel boot probes have finished."],
+			"input": {
+				"probe": "read DOM setup-required + storage:onboarding"
+			},
+			"action": "checkpoint_re_observe_after_boot_probes",
+			"expectedResult": {
+				"uiOracle": {
+					"selector": "[data-testid=\"setup-required\"]",
+					"attribute": { "name": "data-state", "value": "rendered" }
+				},
+				"persistenceOracle": {
+					"storageKey": "storage:onboarding",
+					"expected": null
+				}
+			},
+			"postconditions": [
+				"SetupRequired widget is rendered.",
+				"Catalog and workspace widgets are hidden."
+			],
+			"mutation": false,
+			"checkpoint": true
+		},
+		{
+			"id": "step-4",
+			"gherkinRef": { "scenarioId": "SCN-BOOT-01", "stepIndex": 4 },
+			"preconditions": ["SetupRequired widget is rendered."],
+			"input": {
+				"selector": "[data-testid=\"setup-required\"] [data-testid=\"onboarding-view-mode-toggle\"]"
+			},
+			"action": "click_onboarding_view_mode_toggle",
+			"expectedResult": {
+				"uiOracle": {
+					"selector": "[data-testid=\"setup-required\"]",
+					"attribute": { "name": "data-state", "value": "clicked" }
+				}
+			},
+			"postconditions": [
+				"Onboarding view-mode toggle click is dispatched.",
+				"Pending persisted write for onboarding flag."
+			],
+			"mutation": true,
+			"checkpoint": false
+		},
+		{
+			"id": "step-5",
+			"gherkinRef": { "scenarioId": "SCN-BOOT-01", "stepIndex": 5 },
+			"preconditions": ["Onboarding view-mode toggle click dispatched."],
+			"input": {
+				"probe": "read storage:onboarding + DOM onboarding-shell"
+			},
+			"action": "checkpoint_re_observe_after_setup",
+			"expectedResult": {
+				"uiOracle": {
+					"selector": "[data-testid=\"onboarding-shell\"]",
+					"attribute": { "name": "data-state", "value": "completed" }
+				},
+				"persistenceOracle": {
+					"storageKey": "storage:onboarding",
+					"expected": "completed"
+				}
+			},
+			"postconditions": [
+				"SetupRequired widget is no longer rendered.",
+				"Onboarding shell reports completion.",
+				"storage:onboarding equals 'completed'."
+			],
+			"mutation": false,
+			"checkpoint": true
+		},
+		{
+			"id": "step-6",
+			"gherkinRef": { "scenarioId": "SCN-BOOT-01", "stepIndex": 7 },
+			"preconditions": ["Onboarding is completed."],
+			"input": {
+				"simulate": "panel reload (re-init React tree, rehydrate from JSON)"
+			},
+			"action": "simulate_panel_reload",
+			"expectedResult": {
+				"uiOracle": {
+					"selector": "[data-testid=\"onboarding-shell\"]",
+					"attribute": { "name": "data-state", "value": "completed" }
+				},
+				"persistenceOracle": {
+					"storageKey": "storage:onboarding",
+					"expected": "completed"
+				}
+			},
+			"postconditions": ["Panel boot is post-onboarding."],
+			"mutation": true,
+			"checkpoint": false
+		},
+		{
+			"id": "step-7",
+			"gherkinRef": { "scenarioId": "SCN-BOOT-01", "stepIndex": 8 },
+			"preconditions": ["Panel was just reloaded."],
+			"input": {
+				"probe": "read storage:onboarding + DOM setup-required"
+			},
+			"action": "checkpoint_re_observe_after_post_onboarding_reload",
+			"expectedResult": {
+				"uiOracle": {
+					"selector": "[data-testid=\"setup-required\"]",
+					"attribute": { "name": "data-state", "value": "absent" }
+				},
+				"persistenceOracle": {
+					"storageKey": "storage:onboarding",
+					"expected": "completed"
+				}
+			},
+			"postconditions": [
+				"SetupRequired widget does not reappear after reload.",
+				"storage:onboarding persists as 'completed'."
+			],
+			"mutation": false,
+			"checkpoint": true
+		}
+	],
+	"cleanup": [
+		{
+			"id": "cleanup-1",
+			"preconditions": ["Scenario verdict resolved."],
+			"input": { "key": "storage:onboarding" },
+			"action": "reset_onboarding_state",
+			"expectedResult": {
+				"persistenceOracle": {
+					"storageKey": "storage:onboarding",
+					"expected": null
+				}
+			},
+			"postconditions": [
+				"storage:onboarding is null so the next boot returns to first-launch state."
+			],
+			"mutation": true,
+			"checkpoint": false
+		}
+	]
+}

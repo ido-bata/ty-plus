@@ -1,0 +1,220 @@
+{
+	"$schema": "https://biomejs.dev/schemas/2.5.7/schema.json",
+	"files": {
+		"includes": [
+			"**",
+			"!**/node_modules/**",
+			"!**/.worktrees/**",
+			"!**/dist/**",
+			"!**/docs/no-use/**",
+			"!**/archive/**",
+			"!**/reference/**",
+			"!**/src/management/ae/jsx/**",
+			"!**/src/management/ae/cep/vendor/**",
+			"!**/src/management/preset/jsx-presets.ts",
+			"!**/src/management/preset/editor/themes/**",
+			"!**/src-tmp/**",
+			"!**/src/function/widget/align/tile.tsx",
+			"!**/src/function/widget/workspace/components/LayoutLockWidget.tsx",
+			"!**/src/function/widget/workspace/components/MenuWidget.tsx",
+			"!**/src/management/workspace/hooks/**",
+			"!**/src/function/widget/state-slice-contract.ts"
+		]
+	},
+	"css": {
+		"parser": {
+			"cssModules": false
+		},
+		"linter": {
+			"enabled": false
+		},
+		"formatter": {
+			"enabled": false
+		}
+	},
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"preset": "recommended",
+			"correctness": {
+				"noUnusedFunctionParameters": "off",
+				"noUnusedVariables": "off",
+				"noInnerDeclarations": "off",
+				"noInvalidUseBeforeDeclaration": "off",
+				"useHookAtTopLevel": "off"
+			},
+			"suspicious": {
+				"noTemplateCurlyInString": "off",
+				"noArrayIndexKey": "off"
+			},
+			"a11y": {
+				"noStaticElementInteractions": "off",
+				"useSemanticElements": "off",
+				"useAriaPropsForRole": "off",
+				"useAriaPropsSupportedByRole": "off"
+			}
+		}
+	},
+	"overrides": [
+		{
+			"includes": ["**/src/shared/component/fields/ListSelect.tsx"],
+			"linter": {
+				"rules": {
+					"a11y": {
+						"useSemanticElements": "off"
+					}
+				}
+			}
+		},
+		{
+			"includes": [
+				"**/src/management/preset/catalog-add/ArchiveDetailsSection.tsx"
+			],
+			"linter": {
+				"rules": {
+					"a11y": {
+						"noLabelWithoutControl": "off"
+					}
+				}
+			}
+		},
+		{
+			"includes": ["**/*.test.ts", "**/*.test.tsx"],
+			"linter": {
+				"rules": {
+					"style": {
+						"noNonNullAssertion": "off"
+					}
+				}
+			}
+		},
+		{
+			"includes": ["**/src/management/ipc/request.test.ts"],
+			"linter": {
+				"rules": {
+					"correctness": {
+						"noConstantCondition": "off"
+					}
+				}
+			}
+		},
+		{
+			"includes": ["**/src/management/i18n/preference/storage.ts"],
+			"linter": {
+				"rules": {
+					"style": {
+						"noNonNullAssertion": "off"
+					}
+				}
+			}
+		},
+		{
+			"includes": [
+				"**/src/management/workspace/selection.ts",
+				"**/src/management/workspace/events.ts"
+			],
+			"linter": {
+				"rules": {
+					"style": {
+						"noNonNullAssertion": "off"
+					}
+				}
+			}
+		},
+		{
+			"includes": [
+				"**/src/management/preset/group/Dialog.tsx",
+				"**/src/management/setting/dialog/sections/ComponentPreviewSection.tsx"
+			],
+			"linter": {
+				"rules": {
+					"suspicious": {
+						"noArrayIndexKey": "off"
+					}
+				}
+			}
+		},
+		{
+			"includes": ["**/src/function/widget/align/widget.tsx"],
+			"linter": {
+				"rules": {
+					"correctness": {
+						"useExhaustiveDependencies": "off"
+					},
+					"suspicious": {
+						"noArrayIndexKey": "off"
+					}
+				}
+			}
+		},
+		{
+			"includes": [
+				"**/src/management/preset/tool-shell/FolderDirectoryPicker.tsx"
+			],
+			"linter": {
+				"rules": {
+					"correctness": {
+						"useExhaustiveDependencies": "off"
+					}
+				}
+			}
+		},
+		{
+			"includes": ["**/src/function/widget/font-viewer/font-viewer.tsx"],
+			"linter": {
+				"rules": {
+					"style": {
+						"noNonNullAssertion": "off"
+					}
+				}
+			}
+		},
+		{
+			"includes": ["**/src/shared/component/feedback/LoadingSpinner.tsx"],
+			"linter": {
+				"rules": {
+					"a11y": {
+						"useSemanticElements": "off",
+						"noRedundantRoles": "off"
+					}
+				}
+			}
+		},
+		{
+			"includes": ["**/src/management/preset/editor/CodeEditor.tsx"],
+			"linter": {
+				"rules": {
+					"style": {
+						"noNonNullAssertion": "off"
+					}
+				}
+			}
+		},
+		{
+			"includes": ["**/src/management/preset/markdown/render.ts"],
+			"linter": {
+				"rules": {
+					"style": {
+						"noUselessElse": "off"
+					}
+				}
+			}
+		},
+		{
+			"includes": ["**/src/management/preset/markdown/LiveEditor.tsx"],
+			"linter": {
+				"rules": {
+					"a11y": {
+						"useSemanticElements": "off"
+					},
+					"correctness": {
+						"useExhaustiveDependencies": "off"
+					},
+					"suspicious": {
+						"noArrayIndexKey": "off"
+					}
+				}
+			}
+		}
+	]
+}

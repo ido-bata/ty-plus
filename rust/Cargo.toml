@@ -1,0 +1,25 @@
+[workspace]
+resolver = "2"
+members = [
+    "apps/operation-worker",
+    "apps/runtime",
+    "crates/host-filesystem",
+    "crates/licensing",
+    "crates/online",
+    "crates/protocol",
+    "crates/storage",
+]
+
+[workspace.package]
+edition = "2021"
+rust-version = "1.85"
+license = "Proprietary"
+publish = false
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+
+[profile.release]
+codegen-units = 1
+lto = true
+strip = "symbols"

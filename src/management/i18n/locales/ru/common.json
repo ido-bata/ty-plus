@@ -1,0 +1,184 @@
+{
+	"app": {
+		"name": "ty-plus",
+		"version": "Версия {{version}}",
+		"loading": "Загрузка...",
+		"ready": "Готово"
+	},
+	"buttons": {
+		"save": "Сохранить",
+		"cancel": "Отмена",
+		"delete": "Удалить",
+		"edit": "Изменить",
+		"close": "Закрыть"
+	},
+	"actions": {
+		"run": "Запустить",
+		"duplicate": "Дублировать",
+		"save": "Сохранить",
+		"cancel": "Отмена",
+		"close": "Закрыть",
+		"reset": "Сбросить",
+		"delete": "Удалить",
+		"apply": "Применить",
+		"search": "Поиск",
+		"import": "Импорт",
+		"export": "Экспорт",
+		"create": "Создать",
+		"edit": "Изменить",
+		"rename": "Переименовать",
+		"remove": "Убрать",
+		"refresh": "Обновить",
+		"reload": "Перезагрузить",
+		"undo": "Отменить",
+		"redo": "Повторить",
+		"copy": "Копировать",
+		"paste": "Вставить",
+		"cut": "Вырезать",
+		"selectAll": "Выделить всё",
+		"clear": "Очистить",
+		"ok": "ОК",
+		"yes": "Да",
+		"no": "Нет",
+		"confirm": "Подтвердить",
+		"browse": "Обзор",
+		"upload": "Загрузить",
+		"download": "Скачать"
+	},
+	"status": {
+		"loading": "Загрузка...",
+		"saving": "Сохранение...",
+		"saved": "Сохранено",
+		"error": "Ошибка",
+		"success": "Успех",
+		"warning": "Предупреждение",
+		"info": "Информация",
+		"pending": "Ожидание",
+		"processing": "Обработка",
+		"complete": "Завершено",
+		"failed": "Не удалось",
+		"ready": "Готово",
+		"offline": "Офлайн",
+		"online": "Онлайн",
+		"syncing": "Синхронизация...",
+		"synced": "Синхронизировано"
+	},
+	"settings": {
+		"optional": "необязательно",
+		"sections": {
+			"general": "Общие",
+			"theme": "Тема",
+			"paths": "Пути",
+			"gridLayout": "Сетка",
+			"feedbackSupport": "Обратная связь и поддержка",
+			"workspaceBackup": "Резервная копия",
+			"advanced": "Дополнительно",
+			"workspaceBackground": "Фон рабочей области"
+		},
+		"labels": {
+			"language": "Язык",
+			"theme": "Тема",
+			"accentColor": "Акцентный цвет",
+			"textColor": "Цвет текста",
+			"widgetBackground": "Фон виджета",
+			"widgetOpacity": "Прозрачность виджета",
+			"panelBackground": "Фон панели",
+			"panelOpacity": "Прозрачность панели",
+			"backgroundColor": "Цвет фона",
+			"supportRoot": "Корень поддержки",
+			"presetRoot": "Корень пресетов",
+			"scriptRoot": "Корень скриптов",
+			"pluginRoot": "Корень плагинов",
+			"cellSize": "Размер ячейки",
+			"gap": "Отступ",
+			"cornerRadius": "Радиус угла",
+			"category": "Категория",
+			"subject": "Тема",
+			"presetId": "ID пресета",
+			"description": "Описание",
+			"attachments": "Вложения",
+			"backupRestore": "Резервное копирование",
+			"scanTimeout": "Тайм-аут сканирования",
+			"maxFiles": "Макс. файлов"
+		},
+		"themes": {
+			"system": "Системная",
+			"dark": "Тёмная",
+			"light": "Светлая",
+			"custom": "Пользовательская"
+		},
+		"languages": {
+			"japanese": "Японский",
+			"english": "Английский"
+		},
+		"buttons": {
+			"advancedSettings": "Дополнительные настройки",
+			"selectSupportRoot": "Выбрать корень поддержки",
+			"selectPresetRoot": "Выбрать корень пресетов",
+			"selectScriptRoot": "Выбрать корень скриптов",
+			"selectPluginRoot": "Выбрать корень плагинов",
+			"sendReport": "Отправить отчёт",
+			"sending": "Отправка...",
+			"exporting": "Экспорт...",
+			"importing": "Импорт...",
+			"exportWorkspace": "Экспорт рабочей области",
+			"importWorkspace": "Импорт рабочей области",
+			"resetting": "Сброс...",
+			"resetOnboarding": "Сбросить онбординг"
+		},
+		"messages": {
+			"filesSelected": "Выбрано файлов: {{count}}",
+			"resetOnboardingConfirm": "Сбросить онбординг?",
+			"exportSuccess": "Рабочая область экспортирована в {{path}}",
+			"exportFailed": "Ошибка экспорта: {{error}}",
+			"exportCancelled": "Экспорт отменён",
+			"importSuccess": "Импортировано элементов: {{count}}",
+			"importFailed": "Ошибка импорта: {{error}}",
+			"importCancelled": "Импорт отменён",
+			"reportSentSuccess": "Отчёт успешно отправлен",
+			"reportSendFailed": "Не удалось отправить отчёт: {{error}}"
+		}
+	},
+	"quickActions": {
+		"presets": "Пресеты",
+		"settings": "Настройки",
+		"messages": "Сообщения",
+		"newNote": "Новая заметка",
+		"newScript": "Новый скрипт",
+		"newEasing": "Новый Easing",
+		"toggleGrid": "Показать/скрыть сетку",
+		"toggleLabels": "Показать/скрыть подписи",
+		"documentation": "Документация",
+		"sendFeedback": "Отправить отзыв",
+		"category": {
+			"file": "Файл",
+			"edit": "Правка",
+			"view": "Вид",
+			"help": "Справка"
+		}
+	},
+	"sidePanel": {
+		"presets": "Пресеты",
+		"debugConsole": "Отладочная консоль",
+		"messages": "Сообщения",
+		"settings": "Настройки",
+		"reloadPanel": "Перезагрузить панель",
+		"closePanel": "Закрыть панель"
+	},
+	"statusBar": {
+		"presets": "Пресеты",
+		"debug": "Отладка",
+		"message": "Сообщения",
+		"settings": "Настройки"
+	},
+	"panel": {
+		"errorBoundary": {
+			"surface": "Не удалось отобразить {{surface}}",
+			"title": "Что-то пошло не так",
+			"retry": "Повторить",
+			"copyError": "Скопировать сведения об ошибке",
+			"copied": "Скопировано в буфер обмена",
+			"digest": "Идентификатор ошибки"
+		}
+	}
+}

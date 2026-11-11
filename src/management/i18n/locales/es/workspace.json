@@ -1,0 +1,37 @@
+{
+	"widgets": {
+		"align": {
+			"alignLeft": "Alinear a la izquierda",
+			"alignCenterH": "Alinear al centro horizontal",
+			"alignRight": "Alinear a la derecha",
+			"alignTop": "Alinear arriba",
+			"alignCenterV": "Alinear al centro vertical",
+			"alignBottom": "Alinear abajo"
+		},
+		"layoutLock": {
+			"lock": "Bloquear diseño",
+			"unlock": "Desbloquear diseño"
+		},
+		"projectInfo": {
+			"dimensions": "Dimensiones",
+			"timing": "Tiempo",
+			"layers": "Capas"
+		}
+	},
+	"controlPanel": {
+		"expand": "Expandir",
+		"collapse": "Contraer",
+		"position": "Posición",
+		"orientation": "Orientación"
+	},
+	"context": {
+		"lock": "Bloquear",
+		"unlock": "Desbloquear",
+		"addWidget": "Añadir widget",
+		"deleteWidget": "Eliminar widget",
+		"refresh": "Actualizar"
+	},
+	"widgetSearch": {
+		"placeholder": "Buscar preajustes…"
+	}
+}

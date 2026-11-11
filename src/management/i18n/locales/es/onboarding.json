@@ -1,0 +1,99 @@
+{
+	"step": {
+		"intro": {
+			"label": "Bienvenida",
+			"title": "Bienvenido",
+			"body": "¡Bienvenido! ty-plus crea un espacio de trabajo personal para trabajar más rápido.\nColoca preajustes/widgets y optimiza tu flujo de trabajo. ¡Comencemos!"
+		},
+		"language": {
+			"label": "Idioma",
+			"title": "Seleccionar idioma",
+			"body": "Elige tu idioma preferido. La interfaz se actualizará inmediatamente después de la selección."
+		},
+		"support": {
+			"label": "Ubicación",
+			"title": "Seleccionar carpeta de AE",
+			"body": "Elige la carpeta de aplicación de After Effects. En Windows es el directorio de Support Files; en macOS es la carpeta de la app que contiene Presets."
+		},
+		"subfolders": {
+			"label": "Carpetas",
+			"title": "Ajustar subcarpetas",
+			"body": "Este paso aparece cuando cambias las rutas de los valores predeterminados. Personaliza Presets/Scripts/Plugins si es necesario."
+		},
+		"presets": {
+			"label": "Preajustes",
+			"title": "Seleccionar preajustes",
+			"body": "Elige archivos de preajuste (.ffx) de tu carpeta de Presets para añadir como preajustes iniciales.\nPuedes añadir/importar más después desde el menú +. La selección de carpetas se agrupará automáticamente."
+		},
+		"scripts": {
+			"label": "Scripts",
+			"title": "Seleccionar scripts",
+			"body": "Elige archivos de script (.jsx, .jsxbin) de tu carpeta de Scripts para añadir como preajustes iniciales.\nTambién puedes crear preajustes de Script/Expresión más tarde desde Code Preset."
+		},
+		"plugins": {
+			"label": "Plugins",
+			"title": "Seleccionar plugins",
+			"body": "Elige archivos de efecto (.aex/.plugin) de tu carpeta de Plugins para añadir como preajustes iniciales.\nPuedes importar más después si es necesario."
+		},
+		"workspace": {
+			"label": "Espacio de trabajo",
+			"title": "Conceptos básicos del espacio de trabajo",
+			"body": "Arrastra para mover y redimensionar preajustes y widgets.\n\n- Ctrl/Cmd+arrastra para mover\n- Usa Bloqueo de diseño para prevenir ediciones\n- La búsqueda atenúa los elementos que no coinciden\n- Clic derecho para editar/agrupar acciones"
+		},
+		"adding-presets": {
+			"label": "Preajustes",
+			"title": "Añadir preajustes",
+			"body": "Usa el menú + para añadir preajustes, grupos y widgets.\n\n- Cambia los paneles laterales para la lista de preajustes\n- Los preajustes descargados en línea se colocan automáticamente"
+		},
+		"finish": {
+			"label": "Finalizar",
+			"title": "¡Listo para comenzar!",
+			"body": "Presiona Finalizar para guardar tu configuración.\n\n¡Comencemos!"
+		}
+	},
+	"fields": {
+		"presetRoot": "Carpeta de preajustes",
+		"scriptRoot": "Carpeta de scripts",
+		"pluginRoot": "Carpeta de plugins",
+		"supportPlaceholder": "Ruta de Support Files o carpeta de app"
+	},
+	"filePick": {
+		"selected": "Seleccionados: {{count}}"
+	},
+	"secondaryPanel": {
+		"title": "Configuración requerida",
+		"description": "Completa la incorporación en el panel-1 primero.",
+		"userManual": "Manual de usuario",
+		"openMainPanel": "Abrir panel principal",
+		"linkUnavailable": "Enlace al manual no disponible"
+	},
+	"browse": "Examinar",
+	"browseAriaLabel": "Examinar carpeta",
+	"defaultLabel": "Predeterminado",
+	"customLabel": "Personalizado",
+	"empty": "Sin elementos",
+	"goUp": "Arriba",
+	"selectedFiles": "{{files}} archivo(s)",
+	"selectedFolders": "{{folders}} carpeta(s)",
+	"selectedSuffix": " seleccionados",
+	"errors": {
+		"supportRequired": "La ruta de la carpeta de AE es requerida.",
+		"subfoldersRequired": "Se requieren rutas de carpetas de Presets, Scripts y Plug-ins.",
+		"folderPickerCep": "El selector de carpetas requiere CEP.",
+		"finishErrorTitle": "No se pudieron guardar los ajustes",
+		"finishErrorPathLabel": "Ruta",
+		"finishErrorReasonLabel": "Motivo",
+		"finishErrorNextActionLabel": "Siguiente paso",
+		"finishErrorNextActionChooseTrusted": "El archivo de ajustes del onboarding no incluía un Support Root. Reinicia el onboarding dentro de After Effects.",
+		"finishErrorNextActionAdjust": "No se pudieron guardar los ajustes en el Support Root de AE. Verifica que la ruta sea accesible y que After Effects tenga permisos de escritura, e inténtalo de nuevo.",
+		"finishErrorNextActionRetry": "Se solicitó el UAC de Windows pero la escritura elevada falló. Pulsa Retry para volver a mostrar el cuadro de UAC, o ejecuta After Effects como administrador.",
+		"finishErrorRetryWithElevation": "Reintentar como administrador"
+	},
+	"actions": {
+		"back": "Atrás",
+		"next": "Siguiente",
+		"finish": "Finalizar",
+		"toggleFullscreen": "Expandir a pantalla completa",
+		"toggleModal": "Volver al modal"
+	}
+}

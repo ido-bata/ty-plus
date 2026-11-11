@@ -1,0 +1,117 @@
+{
+	"scenarioId": "SCN-HOST-01",
+	"steps": [
+		{
+			"id": "step-1",
+			"gherkinRef": { "scenarioId": "SCN-HOST-01", "stepIndex": 0 },
+			"preconditions": [
+				"Onboarding completed.",
+				"Panel is at the post-onboarding home screen."
+			],
+			"input": { "snapshot": "home-screen probe" },
+			"action": "observe_post_onboarding_home_screen",
+			"expectedResult": {
+				"uiOracle": {
+					"selector": "[data-ty-workspace-panel-root]",
+					"variant": { "kind": "presence" }
+				}
+			},
+			"postconditions": [
+				"Workspace panel root is mounted (post-onboarding home screen anchor)."
+			],
+			"mutation": false,
+			"checkpoint": false
+		},
+		{
+			"id": "step-2",
+			"gherkinRef": { "scenarioId": "SCN-HOST-01", "stepIndex": 1 },
+			"preconditions": ["Home screen is rendered."],
+			"input": {
+				"selector": "[data-ws-action=\"open-dialog\"][data-dialog-kind=\"settings\"]"
+			},
+			"action": "click_status_bar_settings_button",
+			"expectedResult": {
+				"logOracle": {
+					"scope": "modeless",
+					"minLevel": "info",
+					"messageContains": "workspace shell dialog boot started",
+					"id": "log-modeless-shell-dialog-boot"
+				}
+			},
+			"postconditions": [
+				"Workspace shell dialog (Settings) boot started.",
+				"Log bus records a modeless entry."
+			],
+			"mutation": true,
+			"noCleanupReason": "Status-bar host-menu interactions are ephemeral and host-owned. The ty-plus CEP Settings dialog is mounted on top of the panel; closing it returns control to the home screen without panel-persisted state changes, so no scenario-level cleanup is needed.",
+			"checkpoint": false
+		},
+		{
+			"id": "step-3",
+			"gherkinRef": { "scenarioId": "SCN-HOST-01", "stepIndex": 2 },
+			"preconditions": ["Workspace shell dialog boot started."],
+			"input": {
+				"probe": "read DOM [data-settings-sidebar] to confirm the ty-plus CEP Settings dialog mounted"
+			},
+			"action": "checkpoint_re_observe_after_open_settings_dialog",
+			"expectedResult": {
+				"uiOracle": {
+					"selector": "[data-settings-sidebar]",
+					"variant": { "kind": "presence" }
+				}
+			},
+			"postconditions": [
+				"ty-plus CEP Settings dialog is mounted.",
+				"[data-settings-sidebar] element is present in the DOM (panel-state-oracle presence variant)."
+			],
+			"mutation": false,
+			"checkpoint": true
+		},
+		{
+			"id": "step-4",
+			"gherkinRef": { "scenarioId": "SCN-HOST-01", "stepIndex": 4 },
+			"preconditions": ["ty-plus CEP Settings dialog is mounted."],
+			"input": {
+				"closeSelector": "[data-settings-footer-action=\"cancel\"]",
+				"screenshotAnchor": "screenshot:settings-dialog-closed"
+			},
+			"action": "close_ty_plus_settings_dialog",
+			"expectedResult": {
+				"uiOracle": {
+					"selector": "[data-settings-sidebar]",
+					"variant": { "kind": "absence" }
+				}
+			},
+			"postconditions": [
+				"Dialog close dispatch landed.",
+				"[data-settings-sidebar] element is no longer present in the DOM (panel-state-oracle absence variant) — production code UNMOUNTS the dialog rather than toggling a data-state attribute.",
+				"A 'screenshot:settings-dialog-closed' visual anchor is captured by the runner to confirm the dialog is no longer visible."
+			],
+			"mutation": true,
+			"noCleanupReason": "Closing the ty-plus CEP Settings dialog returns control to the panel home screen without persisting any panel state. The dialog lifecycle is panel-internal; the runner captures the visual anchor as evidence but no further cleanup is needed.",
+			"checkpoint": false
+		},
+		{
+			"id": "step-5",
+			"gherkinRef": { "scenarioId": "SCN-HOST-01", "stepIndex": 5 },
+			"preconditions": ["Dialog close dispatch landed."],
+			"input": {
+				"probe": "read DOM settings tabs + workspace panel root"
+			},
+			"action": "checkpoint_re_observe_after_dialog_close",
+			"expectedResult": {
+				"uiOracle": {
+					"selector": "[data-ty-workspace-panel-root]",
+					"variant": { "kind": "presence" }
+				}
+			},
+			"postconditions": [
+				"Workspace panel root is mounted (panel returned to home screen).",
+				"No dialog is rendered on the panel."
+			],
+			"mutation": false,
+			"checkpoint": true
+		}
+	],
+	"cleanup": []
+}

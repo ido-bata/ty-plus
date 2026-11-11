@@ -1,0 +1,184 @@
+{
+	"app": {
+		"name": "ty-plus",
+		"version": "버전 {{version}}",
+		"loading": "불러오는 중...",
+		"ready": "준비됨"
+	},
+	"buttons": {
+		"save": "저장",
+		"cancel": "취소",
+		"delete": "삭제",
+		"edit": "편집",
+		"close": "닫기"
+	},
+	"actions": {
+		"run": "실행",
+		"duplicate": "복제",
+		"save": "저장",
+		"cancel": "취소",
+		"close": "닫기",
+		"reset": "재설정",
+		"delete": "삭제",
+		"apply": "적용",
+		"search": "검색",
+		"import": "가져오기",
+		"export": "내보내기",
+		"create": "만들기",
+		"edit": "편집",
+		"rename": "이름 바꾸기",
+		"remove": "제거",
+		"refresh": "새로 고침",
+		"reload": "다시 불러오기",
+		"undo": "실행 취소",
+		"redo": "다시 실행",
+		"copy": "복사",
+		"paste": "붙여넣기",
+		"cut": "잘라내기",
+		"selectAll": "모두 선택",
+		"clear": "지우기",
+		"ok": "확인",
+		"yes": "예",
+		"no": "아니오",
+		"confirm": "확인",
+		"browse": "찾아보기",
+		"upload": "업로드",
+		"download": "다운로드"
+	},
+	"status": {
+		"loading": "불러오는 중...",
+		"saving": "저장 중...",
+		"saved": "저장됨",
+		"error": "오류",
+		"success": "성공",
+		"warning": "경고",
+		"info": "정보",
+		"pending": "대기 중",
+		"processing": "처리 중",
+		"complete": "완료",
+		"failed": "실패",
+		"ready": "준비됨",
+		"offline": "오프라인",
+		"online": "온라인",
+		"syncing": "동기화 중...",
+		"synced": "동기화됨"
+	},
+	"settings": {
+		"optional": "선택 사항",
+		"sections": {
+			"general": "일반",
+			"theme": "테마",
+			"paths": "경로",
+			"gridLayout": "그리드 레이아웃",
+			"feedbackSupport": "피드백 및 지원",
+			"workspaceBackup": "작업 영역 백업",
+			"advanced": "고급",
+			"workspaceBackground": "작업 영역 배경"
+		},
+		"labels": {
+			"language": "언어",
+			"theme": "테마",
+			"accentColor": "강조 색상",
+			"textColor": "텍스트 색상",
+			"widgetBackground": "위젯 배경",
+			"widgetOpacity": "위젯 불투명도",
+			"panelBackground": "패널 배경",
+			"panelOpacity": "패널 불투명도",
+			"backgroundColor": "배경 색상",
+			"supportRoot": "지원 루트",
+			"presetRoot": "프리셋 루트",
+			"scriptRoot": "스크립트 루트",
+			"pluginRoot": "플러그인 루트",
+			"cellSize": "셀 크기",
+			"gap": "간격",
+			"cornerRadius": "모서리 반경",
+			"category": "카테고리",
+			"subject": "제목",
+			"presetId": "프리셋 ID",
+			"description": "설명",
+			"attachments": "첨부 파일",
+			"backupRestore": "백업 및 복원",
+			"scanTimeout": "검색 시간 제한",
+			"maxFiles": "최대 파일"
+		},
+		"themes": {
+			"system": "시스템",
+			"dark": "다크",
+			"light": "라이트",
+			"custom": "사용자 지정"
+		},
+		"languages": {
+			"japanese": "일본어",
+			"english": "영어"
+		},
+		"buttons": {
+			"advancedSettings": "고급 설정",
+			"selectSupportRoot": "지원 루트 선택",
+			"selectPresetRoot": "프리셋 루트 선택",
+			"selectScriptRoot": "스크립트 루트 선택",
+			"selectPluginRoot": "플러그인 루트 선택",
+			"sendReport": "보고서 보내기",
+			"sending": "보내는 중...",
+			"exporting": "내보내는 중...",
+			"importing": "가져오는 중...",
+			"exportWorkspace": "작업 영역 내보내기",
+			"importWorkspace": "작업 영역 가져오기",
+			"resetting": "재설정 중...",
+			"resetOnboarding": "온보딩 재설정"
+		},
+		"messages": {
+			"filesSelected": "{{count}}개 파일 선택됨",
+			"resetOnboardingConfirm": "온보딩을 재설정하시겠습니까?",
+			"exportSuccess": "작업 영역이 {{path}}로 내보내졌습니다",
+			"exportFailed": "내보내기 실패: {{error}}",
+			"exportCancelled": "내보내기 취소됨",
+			"importSuccess": "{{count}}개 항목 가져옴",
+			"importFailed": "가져오기 실패: {{error}}",
+			"importCancelled": "가져오기 취소됨",
+			"reportSentSuccess": "보고서 전송 완료",
+			"reportSendFailed": "보고서 전송 실패: {{error}}"
+		}
+	},
+	"quickActions": {
+		"presets": "프리셋",
+		"settings": "설정",
+		"messages": "메시지",
+		"newNote": "새 메모",
+		"newScript": "새 스크립트",
+		"newEasing": "새 이징",
+		"toggleGrid": "그리드 토글",
+		"toggleLabels": "라벨 토글",
+		"documentation": "문서",
+		"sendFeedback": "피드백 보내기",
+		"category": {
+			"file": "파일",
+			"edit": "편집",
+			"view": "보기",
+			"help": "도움말"
+		}
+	},
+	"sidePanel": {
+		"presets": "프리셋",
+		"debugConsole": "디버그 콘솔",
+		"messages": "메시지",
+		"settings": "설정",
+		"reloadPanel": "패널 새로 고침",
+		"closePanel": "패널 닫기"
+	},
+	"statusBar": {
+		"presets": "프리셋",
+		"debug": "디버그",
+		"message": "메시지",
+		"settings": "설정"
+	},
+	"panel": {
+		"errorBoundary": {
+			"surface": "{{surface}} 렌더링 실패",
+			"title": "오류가 발생했습니다",
+			"retry": "재시도",
+			"copyError": "오류 세부 정보 복사",
+			"copied": "클립보드에 복사됨",
+			"digest": "오류 ID"
+		}
+	}
+}
