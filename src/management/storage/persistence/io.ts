@@ -20,6 +20,7 @@
 import {
 	parseJsonObject,
 	readJsonFileText,
+	readJsonFileTextStrict,
 	stringifyJson,
 } from "@/management/storage/read/json-file";
 import {
@@ -108,6 +109,13 @@ export const readJson = async <K extends PersistenceKey>(
  * Read raw text from a persistence key, bypassing JSON parsing.
  * Use this when callers need the JSON text (e.g. to feed into a parser that
  * understands the document's specific shape) rather than a generic object.
+ *
+ * Unlike `readJson`, a local read failure is NOT collapsed into null: a
+ * missing file is null, an unreadable one throws. The gateway already made
+ * that distinction (`read_text` maps NotFound to null and propagates I/O
+ * errors), so this only brings the local fallback in line. Callers that
+ * parse-then-write back depend on it to avoid destroying an unreadable file
+ * (Issue #183; same contract PR #211 introduced for Issue #204).
  */
 export const readJsonText = async <K extends PersistenceKey>(
 	win: Window,
@@ -128,7 +136,10 @@ export const readJsonText = async <K extends PersistenceKey>(
 		root,
 		...args,
 	);
-	return readJsonFileText(win, path);
+	// Strict: a raw-text reader exists precisely so the caller can tell
+	// "no file" from "unreadable file". Swallowing the difference here
+	// would make `readJsonText` no better than `readJson`.
+	return readJsonFileTextStrict(win, path);
 };
 
 /**

@@ -18,7 +18,13 @@ vi.mock("@/management/storage/read/json-file", async () => {
 	const actual = await vi.importActual<
 		typeof import("@/management/storage/read/json-file")
 	>("@/management/storage/read/json-file");
-	return { ...actual, readJsonFileText: mockReadJsonFileText };
+	return {
+		...actual,
+		readJsonFileText: mockReadJsonFileText,
+		// `readJsonText` uses the strict reader so a read failure is not
+		// mistaken for a missing file (Issue #183).
+		readJsonFileTextStrict: mockReadJsonFileText,
+	};
 });
 
 vi.mock("@/management/storage/write/json-file", () => ({
@@ -150,6 +156,19 @@ describe("readJsonText", () => {
 			win,
 			"/r/ty-plus/workspaces/workspace-4.json",
 		);
+	});
+
+	it("propagates a read failure instead of reporting a missing file", async () => {
+		// The raw-text reader exists so its caller can tell "there is no file"
+		// from "the file is there but cannot be read" (Issue #183).
+		mockResolveRead.mockResolvedValue("/r/ty-plus");
+		mockReadJsonFileText.mockRejectedValue(
+			Object.assign(new Error("EACCES: permission denied"), {
+				code: "EACCES",
+			}),
+		);
+
+		await expect(readJsonText(win, "workspace", 2)).rejects.toThrow(/EACCES/);
 	});
 });
 

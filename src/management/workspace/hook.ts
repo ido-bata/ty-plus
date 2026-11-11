@@ -121,6 +121,11 @@ import {
 	type LayoutReloadPayload,
 	setLayoutReloadHandler,
 } from "@/management/workspace/onboarding/layout-reload-bridge";
+import {
+	type PersistSurfaceStage,
+	SurfaceWriteError,
+	writeSurfaceState,
+} from "@/management/workspace/persistence/surface-write";
 import { applyInterPanelMove } from "@/management/workspace/placement/inter-panel-move";
 import { notifyPanelsAfterPresetSave } from "@/management/workspace/placement/notify-panels-after-preset-save";
 import { mergePresetPlacementIntoState as mergePresetPlacementBusPayloadIntoState } from "@/management/workspace/placement/preset-bus";
@@ -262,6 +267,10 @@ const buildMergedTiles = (
 
 const presetExecutionLog = createLogger("preset-execution");
 const workspaceLog = createLogger("workspace");
+
+// `PersistSurfaceStage` (which write `persistSurfaceState` was in flight when
+// it failed) now lives next to the sequence it describes — see
+// `persistence/surface-write.ts`.
 
 const logPresetError = (presetId: string, error: unknown) => {
 	presetExecutionLog.error("[ty-plus:preset-execute] failure", {
@@ -584,49 +593,61 @@ export function useWorkspaceRuntime(root: Element | null): {
 								widgetResolutionFromCatalogContext(snapshot),
 							);
 
-							await writeNJson(
-								window,
+							// The order of the four writes (records → layout → ui settings →
+							// background) and the stage a failure is attributed to live in
+							// `persistence/surface-write.ts`, where a partial failure can be
+							// exercised against real files instead of asserted on this source text.
+							await writeSurfaceState({
+								win: window,
+								panelId: snapshot.panelId,
 								wsIndex,
-								serialize(snapshot.surfaceTiles),
-							);
-
-							if (widgetLayouts.length > 0) {
-								const widgetRecords = widgetLayouts.map((w) => ({
+								widgetRecords: widgetLayouts.map((w) => ({
 									id: w.id,
 									type: w.widgetType as WidgetType,
 									param: {} as Record<string, unknown>,
-								}));
-								await upsertWidgetRecords(window, widgetRecords);
-							}
-
-							await writeUiSettings(
-								window,
-								{
+								})),
+								layoutJsonText: serialize(snapshot.surfaceTiles),
+								uiSettings: {
 									version: 1 as const,
 									showGridOverlay: snapshot.showGridOverlay,
 									showPresetLabels: snapshot.showPresetLabels,
 									selectedFont: "",
 								},
 								persistenceRootArg,
-							);
-
-							if (snapshot.bg != null) {
-								await writeBackgroundJson(
-									window,
-									wsIndex,
-									`${JSON.stringify(snapshot.bg, null, 2)}\n`,
-								).catch(() => {
-									/* background write failure is non-fatal */
-								});
-							}
-						} catch {
+								backgroundJsonText:
+									snapshot.bg != null
+										? `${JSON.stringify(snapshot.bg, null, 2)}\n`
+										: null,
+							});
+						} catch (error) {
+							// A failure must be retried, not remembered as saved, and it
+							// must reach the Debug Console — the previous bare `catch`
+							// satisfied neither.
 							if (lastSavedSurfaceState === nextSerialized) {
 								lastSavedSurfaceState = "";
 							}
+							const stage: PersistSurfaceStage =
+								error instanceof SurfaceWriteError
+									? error.stage
+									: "write-widget-records";
+							workspaceLog.error("surface state was not persisted", {
+								action: "persistSurfaceState:failed",
+								context: {
+									panelId: snapshot.panelId,
+									stage,
+									message:
+										error instanceof Error ? error.message : String(error),
+								},
+							});
 						}
 					});
-			} catch {
-				/* noop */
+			} catch (error) {
+				workspaceLog.error("surface persist chain could not be scheduled", {
+					action: "persistSurfaceState:schedule-failed",
+					context: {
+						message: error instanceof Error ? error.message : String(error),
+					},
+				});
 			}
 		};
 

@@ -87,8 +87,23 @@ const resolveJsonReadFileSystem = async (
 	};
 };
 
-/** Read file text content. Returns null if the file is missing or unreadable. */
-export const readJsonFileText = async (
+/** True when the error is a missing-file error (ENOENT). */
+const isFileNotFound = (error: unknown): boolean =>
+	typeof error === "object" &&
+	error !== null &&
+	(error as { code?: unknown }).code === "ENOENT";
+
+/**
+ * Read file text content, keeping "there is no file" apart from "the file
+ * is there but cannot be read".
+ *
+ * Returns null only for a missing file (and for a blank one, which no
+ * reader can distinguish from "not created"). Any other read failure
+ * propagates, so a caller that merges-and-writes can refuse to turn an
+ * unreadable file into an empty one (Issue #183; the same distinction the
+ * layout restore classification makes for Issue #204).
+ */
+export const readJsonFileTextStrict = async (
 	win: Window,
 	path: string,
 ): Promise<string | null> => {
@@ -97,6 +112,26 @@ export const readJsonFileText = async (
 		const body = await fs.readFile(path, "utf8");
 		const trimmed = body.trim();
 		return trimmed.length > 0 ? trimmed : null;
+	} catch (error) {
+		if (isFileNotFound(error)) return null;
+		throw error;
+	}
+};
+
+/**
+ * Read file text content. Returns null if the file is missing or unreadable.
+ *
+ * Deliberately lenient: a read side that only renders a default can treat
+ * "unreadable" like "missing". Anything that writes back what it read MUST
+ * use {@link readJsonFileTextStrict} instead — collapsing the two is how a
+ * corrupt file becomes an empty one on the next write.
+ */
+export const readJsonFileText = async (
+	win: Window,
+	path: string,
+): Promise<string | null> => {
+	try {
+		return await readJsonFileTextStrict(win, path);
 	} catch {
 		return null;
 	}

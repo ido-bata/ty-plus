@@ -25,7 +25,12 @@ vi.mock("@/management/storage/read/json-file", async () => {
 	const actual = await vi.importActual<
 		typeof import("@/management/storage/read/json-file")
 	>("@/management/storage/read/json-file");
-	return { ...actual, readJsonFileText: mockReadJsonFileText };
+	return {
+		...actual,
+		readJsonFileText: mockReadJsonFileText,
+		// `readJsonText` routes through the strict reader (Issue #183).
+		readJsonFileTextStrict: mockReadJsonFileText,
+	};
 });
 
 vi.mock("@/management/storage/write/json-file", () => ({

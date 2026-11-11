@@ -79,6 +79,11 @@ export async function notifyPanelsAfterPresetSave(
 	// notify-local phase — always succeeds (modulo genuine write failures,
 	// which propagate to the caller as before). Cloud-independent.
 	if (input.isDeletion) {
+		// The result carries the stage that failed; the removal itself logs it
+		// to the Debug Console, so the reload broadcast below stays
+		// unconditional — a failed removal still wants a refresh, and the
+		// previous `Promise<boolean>` gave this call site nothing to act on
+		// either way (Issue #183).
 		await tryPersistRemovePresetFromDialog(win, {
 			targetPanelId,
 			catalogRefIds: ids,

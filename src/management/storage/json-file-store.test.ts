@@ -4,6 +4,8 @@
  */
 
 import { describe, expect, it } from "vitest";
+
+import { readJsonFileTextStrict } from "@/management/storage/read/json-file";
 import {
 	parseJsonObject,
 	readJsonFileText,
@@ -183,6 +185,78 @@ describe("readJsonFileText", () => {
 		});
 		const result = await readJsonFileText(win, "/test/sync.json");
 		expect(result).toBe('{"sync": true}');
+	});
+
+	it("swallows a read failure, which is why it must not feed a write-back", async () => {
+		const win = fakeWindowWithNodeFs({
+			promises: {
+				readFile: async (_path: string) => {
+					throw Object.assign(new Error("EACCES: permission denied"), {
+						code: "EACCES",
+					});
+				},
+			},
+		});
+		const result = await readJsonFileText(win, "/locked/file.json");
+		expect(result).toBeNull();
+	});
+});
+
+// ── readJsonFileTextStrict ───────────────────────────────────────────────────
+// Same reader, but a failure is a failure: only "there is no file" (and a
+// blank file, which no reader can tell apart) maps to null. This is what a
+// parse-then-write-back caller uses, so an unreadable file can never be
+// replaced by an empty one (Issue #183).
+
+describe("readJsonFileTextStrict", () => {
+	it("returns trimmed text content when file exists and is non-empty", async () => {
+		const win = fakeWindowWithNodeFs({
+			promises: {
+				readFile: async (_path: string) => `  {"key":"value"}  \n  `,
+			},
+		});
+		await expect(readJsonFileTextStrict(win, "/test/path.json")).resolves.toBe(
+			'{"key":"value"}',
+		);
+	});
+
+	it("returns null for a missing file (ENOENT)", async () => {
+		const win = fakeWindowWithNodeFs({
+			promises: {
+				readFile: async (_path: string) => {
+					throw Object.assign(new Error("ENOENT"), { code: "ENOENT" });
+				},
+			},
+		});
+		await expect(
+			readJsonFileTextStrict(win, "/nonexistent/file.json"),
+		).resolves.toBeNull();
+	});
+
+	it("returns null for a blank file", async () => {
+		const win = fakeWindowWithNodeFs({
+			promises: {
+				readFile: async (_path: string) => "   \n",
+			},
+		});
+		await expect(
+			readJsonFileTextStrict(win, "/test/blank.json"),
+		).resolves.toBeNull();
+	});
+
+	it("rejects for a file that exists but cannot be read", async () => {
+		const win = fakeWindowWithNodeFs({
+			promises: {
+				readFile: async (_path: string) => {
+					throw Object.assign(new Error("EACCES: permission denied"), {
+						code: "EACCES",
+					});
+				},
+			},
+		});
+		await expect(
+			readJsonFileTextStrict(win, "/locked/file.json"),
+		).rejects.toThrow(/EACCES/);
 	});
 });
 
