@@ -13,6 +13,7 @@ import {
 	registerCepJsonContextMenuSurface,
 } from "@/management/dialog/dialogs/context-menu";
 import type { NotificationSummary } from "@/management/online/contract";
+import { fetchNotificationFeed } from "@/management/online/notification/feed";
 import {
 	loadNotificationsStore,
 	saveNotificationsStore,
@@ -759,14 +760,27 @@ export function NotificationCenter(): JSX.Element {
 	);
 
 	const syncRemote = useCallback(async () => {
-		const { gateway } = getDataServices();
-		if (!gateway.listNotifications) return;
+		// R0 remote source: the static notification feed (Issue #8). The cloud
+		// gateway's listNotifications, when present, still wins — the feed is
+		// the backend-free fallback, not a second server.
 		setLoading(true);
-		const result = await _loadNotifications(gateway);
-		setLoading(false);
-		if (result.ok) {
-			setItems(result.remote);
-			await saveLocalStore({ items: result.remote, readAtById });
+		try {
+			const { gateway } = getDataServices();
+			if (gateway.listNotifications) {
+				const result = await _loadNotifications(gateway);
+				if (result.ok) {
+					setItems(result.remote);
+					await saveLocalStore({ items: result.remote, readAtById });
+					return;
+				}
+			}
+			const feedItems = await fetchNotificationFeed();
+			if (feedItems !== null) {
+				setItems(feedItems);
+				await saveLocalStore({ items: feedItems, readAtById });
+			}
+		} finally {
+			setLoading(false);
 		}
 	}, [readAtById]);
 

@@ -2,13 +2,17 @@
 
 import type { Preset, PresetType } from "@/management/preset/contract";
 
-/** Archive `listNotifications` / Ty Plus Edge notification list row */
+/** Archive `listNotifications` / Ty Plus Edge notification list row.
+ *  `severity` / `url` are carried by the R0 static notification feed
+ *  (docs/architecture/feeds.md); the backend path leaves them undefined. */
 export type NotificationSummary = {
 	notificationId: string;
 	name: string;
 	summary?: string;
 	category?: string;
 	publishedAt?: string;
+	severity?: "info" | "warning" | "critical";
+	url?: string;
 };
 
 /** `GET /preset/search`  Earchive `presets-api-port` equivalent query */
