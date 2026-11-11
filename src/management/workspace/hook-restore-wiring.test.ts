@@ -86,9 +86,7 @@ describe("persistSurfaceState routes user edits through the write gate", () => {
 		// exercised against real files by
 		// `persistence/surface-write.fault-injection.test.ts` — here we pin
 		// only that the hook's write entry point is gated.
-		expect(body.indexOf("await writeSurfaceState(")).toBeGreaterThan(
-			guardIdx,
-		);
+		expect(body.indexOf("await writeSurfaceState(")).toBeGreaterThan(guardIdx);
 	});
 
 	it("keeps the awaitable variant gated on writeGate.isReady()", () => {
