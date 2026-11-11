@@ -7,8 +7,7 @@
  *   CepMockDecorator
  *     → CepContextDecorator
  *       → SettingsProviderDecorator
- *         → LicenseProviderDecorator
- *           → I18nDecorator
+ *         → I18nDecorator
  *             → FilesGatewayProviderDecorator
  *               → ThemeDecorator
  *                 → SurfaceProviderDecorator
@@ -21,7 +20,6 @@ export { CepContextDecorator } from "./CepContextDecorator";
 export { CepMockDecorator } from "./CepMockDecorator";
 export { FilesGatewayProviderDecorator } from "./FilesGatewayProviderDecorator";
 export { I18nDecorator } from "./I18nDecorator";
-export { LicenseProviderDecorator } from "./LicenseProviderDecorator";
 export { SettingsProviderDecorator } from "./SettingsProviderDecorator";
 export { SurfaceProviderDecorator } from "./SurfaceProviderDecorator";
 export { ThemeDecorator } from "./ThemeDecorator";

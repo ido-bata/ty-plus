@@ -4,7 +4,6 @@ members = [
     "apps/operation-worker",
     "apps/runtime",
     "crates/host-filesystem",
-    "crates/licensing",
     "crates/online",
     "crates/protocol",
     "crates/storage",
