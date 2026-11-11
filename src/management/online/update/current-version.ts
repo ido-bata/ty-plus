@@ -8,3 +8,26 @@
 declare const __APP_VERSION__: string;
 
 export const currentVersion = __APP_VERSION__;
+
+/**
+ * A prerelease can share the numeric CEP manifest version with other
+ * prereleases. The release identity must therefore be injected separately.
+ */
+declare const __TY_PLUS_RELEASE_VERSION__: string;
+declare const __TY_PLUS_RELEASE_CHANNEL__: string;
+
+import {
+	isReleaseChannel,
+	type ReleaseChannel,
+} from "./channel";
+
+export const currentReleaseVersion =
+	typeof __TY_PLUS_RELEASE_VERSION__ === "string"
+		? __TY_PLUS_RELEASE_VERSION__
+		: currentVersion;
+
+export const buildReleaseChannel: ReleaseChannel =
+	typeof __TY_PLUS_RELEASE_CHANNEL__ === "string" &&
+	isReleaseChannel(__TY_PLUS_RELEASE_CHANNEL__)
+		? __TY_PLUS_RELEASE_CHANNEL__
+		: "stable";
