@@ -74,6 +74,7 @@ import {
 	PRESET_HOVER_EVENT,
 	type WorkspacePresetHoverDetail,
 } from "@/management/preset/workspace/GridCatalogTile";
+import { ensureUiSettingsFile } from "@/management/setting/persistence/workspace-ui-settings-file";
 import {
 	clearLayoutNJson,
 	clearWorkspacePanelStateFromSettingsJson,
@@ -973,6 +974,10 @@ export function useWorkspaceRuntime(root: Element | null): {
 			let plan: LayoutRestorePlan = planLayoutRestoreFromReadError(
 				new Error("layout restore did not run"),
 			);
+			// Hoisted so the `settings/ui.json` ensure below still runs when the
+			// restore itself throws: a failed read must not also skip the one
+			// boot-time writer that file has (Issue #216).
+			let uiSettingsSupportRoot: string | undefined;
 			try {
 				wsIndex = indexFromPanelId(getState().panelId);
 				const allowImplicitAllPresetsWhenLayoutEmpty =
@@ -987,6 +992,7 @@ export function useWorkspaceRuntime(root: Element | null): {
 				const persistenceRootArg = persistenceRootAsOptional(
 					persistenceManagedRoot,
 				);
+				uiSettingsSupportRoot = persistenceRootArg;
 
 				const [
 					rawLayout,
@@ -1118,6 +1124,25 @@ export function useWorkspaceRuntime(root: Element | null): {
 				// "Error logged by inner catch blocks" while nothing was logged
 				// anywhere. The failure is now classified and recorded below.
 				plan = planLayoutRestoreFromReadError(error);
+			}
+
+			// Issue #216: `settings/ui.json` had no boot-time writer.
+			// `ensureStorageInitialized` — the only caller of
+			// `ensureUiSettingsFile` — lost its production caller when
+			// onboarding was split into per-domain initializers, and the CEP
+			// Add-Widget happy path reloads from disk instead of persisting,
+			// so `writeUiSettings` never runs in a read-only session.
+			// Materialize the defaults on every restore, after the reads so a
+			// failure here cannot abort them; a null root logs its own skip.
+			// The ensure only writes when the file is missing, so it does not
+			// bypass the write gate below.
+			try {
+				await ensureUiSettingsFile(window, uiSettingsSupportRoot);
+			} catch (error) {
+				logWorkspace("runtime:ui-settings-ensure-failed", {
+					wsIndex,
+					message: error instanceof Error ? error.message : String(error),
+				});
 			}
 
 			const restoreDetail = { panelId: getState().panelId, wsIndex };

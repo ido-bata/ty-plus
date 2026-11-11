@@ -1,25 +1,24 @@
 /**
  * Workspace file path contracts.
- * Self-contained within workspace/ — storage layer uses these through domain APIs.
+ * Workspace-owned layout/background paths, built on the shared `joinPath`
+ * from the storage layer.
  *
  * NOTE: Infrastructure constants (ty-plus folder, data/settings dirs) are NOT
  * defined here. They are provided by the host/settings layer and passed as
  * parameters to path resolution functions.
+ *
+ * `joinPath` is imported rather than copied: this file used to carry its own
+ * regex clone of it, and a second copy of the Issue #216 path bug is exactly
+ * the kind of drift that hides a data-loss defect (the clone fed `fs.watch`
+ * relative layout/background paths on POSIX).
  */
+
+import { joinPath } from "@/management/storage/file";
 
 // ── Workspace-only constants ─────────────────────────────────────────────────
 
 const WORKSPACES_DIR = "workspaces";
 const BACKGROUNDS_SUBDIR = "background";
-
-// ── Path helper ───────────────────────────────────────────────────────────────
-
-const joinPath = (...parts: string[]): string => {
-	const normalized = parts.map((p) =>
-		p.replace(/[\\/]+$/, "").replace(/^[\\/]+/, ""),
-	);
-	return normalized.filter(Boolean).join("/");
-};
 
 // ── Workspace panel paths ─────────────────────────────────────────────────────
 
