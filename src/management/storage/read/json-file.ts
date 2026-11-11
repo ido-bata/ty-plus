@@ -94,14 +94,19 @@ const isFileNotFound = (error: unknown): boolean =>
 	(error as { code?: unknown }).code === "ENOENT";
 
 /**
- * Read file text content, keeping "there is no file" apart from "the file
- * is there but cannot be read".
+ * Read file text, refusing to report an unreadable file as absent.
  *
- * Returns null only for a missing file (and for a blank one, which no
- * reader can distinguish from "not created"). Any other read failure
- * propagates, so a caller that merges-and-writes can refuse to turn an
- * unreadable file into an empty one (Issue #183; the same distinction the
- * layout restore classification makes for Issue #204).
+ * `null` means the path genuinely holds nothing (missing file, or a blank
+ * one) — the "never written" case, which no reader can distinguish from
+ * "not created" (Issue #183). Every other failure (EACCES, EISDIR, EIO, …)
+ * rejects, because a caller that writes back what it read must not treat an
+ * unreadable file as "nothing was saved": the next write would erase
+ * whatever was in it (Issue #204; the same distinction the layout restore
+ * classification makes).
+ *
+ * This mirrors the Rust persistence gateway's `read_text`, which maps
+ * `NotFound` to `None` and propagates every other I/O error, so the CEP
+ * fallback and the production gateway agree on where "absent" ends.
  */
 export const readJsonFileTextStrict = async (
 	win: Window,

@@ -21,8 +21,10 @@ vi.mock("@/management/storage/read/json-file", async () => {
 	return {
 		...actual,
 		readJsonFileText: mockReadJsonFileText,
-		// `readJsonText` uses the strict reader so a read failure is not
-		// mistaken for a missing file (Issue #183).
+		// `readJsonText` reads through the strict variant so a read failure
+		// is never mistaken for a missing file (Issues #183 / #204). Both
+		// names share one mock so the existing expectations keep describing
+		// the same reads.
 		readJsonFileTextStrict: mockReadJsonFileText,
 	};
 });
@@ -169,6 +171,19 @@ describe("readJsonText", () => {
 		);
 
 		await expect(readJsonText(win, "workspace", 2)).rejects.toThrow(/EACCES/);
+	});
+
+	it("propagates a read failure instead of collapsing it into null (Issue #204)", async () => {
+		// A file that exists but cannot be read is not the same as a file that
+		// was never written. The CEP fallback used to report both as `null`,
+		// which is how an unreadable `workspace-N.json` became an "empty" one
+		// and got erased by the next write; it now matches the Rust gateway,
+		// which only maps `NotFound` to `None`.
+		mockResolveRead.mockResolvedValue("/r/ty-plus");
+		mockReadJsonFileText.mockRejectedValue(
+			new Error("EISDIR: illegal operation on a directory, read"),
+		);
+		await expect(readJsonText(win, "workspace", 2)).rejects.toThrow("EISDIR");
 	});
 });
 

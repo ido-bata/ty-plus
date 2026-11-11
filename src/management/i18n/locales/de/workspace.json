@@ -33,5 +33,13 @@
 	},
 	"widgetSearch": {
 		"placeholder": "Voreinstellungen suchen…"
+	},
+	"restore": {
+		"title": "Workspace-Layout konnte nicht wiederhergestellt werden",
+		"corruptBody": "Die gespeicherte Layout-Datei ist vorhanden, aber kein lesbares Layout, und wurde deshalb nicht geladen.",
+		"readFailureBody": "Die gespeicherte Layout-Datei konnte nicht gelesen werden und wurde deshalb nicht geladen.",
+		"savingPaused": "Das Speichern ist pausiert, damit die Datei nicht überschrieben wird. Repariere oder stelle die Datei wieder her und versuche es erneut.",
+		"file": "Datei: workspace-{{wsIndex}}.json",
+		"retry": "Wiederherstellung erneut versuchen"
 	}
 }

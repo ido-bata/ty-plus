@@ -33,5 +33,13 @@
 	},
 	"widgetSearch": {
 		"placeholder": "Search presets…"
+	},
+	"restore": {
+		"title": "Workspace layout could not be restored",
+		"corruptBody": "The saved layout file exists but is not a readable layout, so it was not loaded.",
+		"readFailureBody": "The saved layout file could not be read, so it was not loaded.",
+		"savingPaused": "Saving is paused so this file is not overwritten. Repair or restore the file, then retry.",
+		"file": "File: workspace-{{wsIndex}}.json",
+		"retry": "Retry restore"
 	}
 }

@@ -110,13 +110,17 @@ const extractAwaitableBody = (): string => {
 describe("persistSurfaceStateAwaitable (Issue #146 / Blocker 8)", () => {
 	const body = extractAwaitableBody();
 
-	it("rejects with a 'not ready' message when workspacePersistenceReady is false", () => {
+	it("rejects with a 'not ready' message when the write gate is closed", () => {
 		// The exact branch:
-		//   if (!workspacePersistenceReady) {
+		//   if (!writeGate.isReady()) {
 		//     throw new Error("...persistence is not ready...");
 		//   }
+		// Issue #204 replaced the old `workspacePersistenceReady` boolean with
+		// the write gate, which a failed layout restore deliberately leaves
+		// closed — so this rejection is also the cross-panel-move rollback
+		// signal when the boot restore never succeeded.
 		const match = body.match(
-			/if\s*\(\s*!workspacePersistenceReady\s*\)\s*\{([\s\S]*?)\}/,
+			/if\s*\(\s*!writeGate\.isReady\(\)\s*\)\s*\{([\s\S]*?)\}/,
 		);
 		expect(match).not.toBeNull();
 		expect(match?.[1]).toMatch(/throw\s+new\s+Error\s*\(/);

@@ -110,12 +110,14 @@ export const readJson = async <K extends PersistenceKey>(
  * Use this when callers need the JSON text (e.g. to feed into a parser that
  * understands the document's specific shape) rather than a generic object.
  *
- * Unlike `readJson`, a local read failure is NOT collapsed into null: a
- * missing file is null, an unreadable one throws. The gateway already made
- * that distinction (`read_text` maps NotFound to null and propagates I/O
- * errors), so this only brings the local fallback in line. Callers that
- * parse-then-write back depend on it to avoid destroying an unreadable file
- * (Issue #183; same contract PR #211 introduced for Issue #204).
+ * Unlike `readJson`, a local read failure is NOT collapsed into null.
+ * Returns `null` only when nothing was written (missing or blank file). A
+ * file that exists but cannot be read REJECTS — both through the gateway
+ * (the Rust side propagates non-`NotFound` I/O errors) and through the local
+ * fallback below (`readJsonFileTextStrict`). Callers that write back what
+ * they read depend on that distinction: collapsing it into `null` is how an
+ * unreadable layout became an "empty" one and got erased (Issues #183 /
+ * #204).
  */
 export const readJsonText = async <K extends PersistenceKey>(
 	win: Window,

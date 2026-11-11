@@ -33,5 +33,13 @@
 	},
 	"widgetSearch": {
 		"placeholder": "搜索预设…"
+	},
+	"restore": {
+		"title": "无法恢复工作区布局",
+		"corruptBody": "保存的布局文件存在，但不是可读的布局，因此未加载。",
+		"readFailureBody": "无法读取保存的布局文件，因此未加载。",
+		"savingPaused": "保存已暂停，以避免覆盖该文件。请修复或恢复该文件后重试。",
+		"file": "文件: workspace-{{wsIndex}}.json",
+		"retry": "重试恢复"
 	}
 }

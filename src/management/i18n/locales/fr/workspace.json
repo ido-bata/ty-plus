@@ -33,5 +33,13 @@
 	},
 	"widgetSearch": {
 		"placeholder": "Rechercher des préréglages…"
+	},
+	"restore": {
+		"title": "Impossible de restaurer la disposition de l'espace de travail",
+		"corruptBody": "Le fichier de disposition enregistré existe mais n'est pas une disposition lisible ; il n'a donc pas été chargé.",
+		"readFailureBody": "Le fichier de disposition enregistré n'a pas pu être lu ; il n'a donc pas été chargé.",
+		"savingPaused": "La sauvegarde est suspendue afin de ne pas écraser ce fichier. Réparez ou restaurez le fichier, puis réessayez.",
+		"file": "Fichier : workspace-{{wsIndex}}.json",
+		"retry": "Réessayer la restauration"
 	}
 }

@@ -28,7 +28,10 @@ vi.mock("@/management/storage/read/json-file", async () => {
 	return {
 		...actual,
 		readJsonFileText: mockReadJsonFileText,
-		// `readJsonText` routes through the strict reader (Issue #183).
+		// `readJsonText` reads through the strict variant so an unreadable
+		// file is never reported as absent (Issues #183 / #204). Both names
+		// share one mock so the round trip below still describes the same
+		// reads.
 		readJsonFileTextStrict: mockReadJsonFileText,
 	};
 });

@@ -33,5 +33,13 @@
 	},
 	"widgetSearch": {
 		"placeholder": "프리셋 검색…"
+	},
+	"restore": {
+		"title": "워크スペース 레이아웃을 복원하지 못했습니다",
+		"corruptBody": "저장된 레이아웃 파일이 존재하지만 읽을 수 있는 레이아웃이 아니므로 불러오지 않았습니다.",
+		"readFailureBody": "저장된 레이아웃 파일을 읽을 수 없어 불러오지 않았습니다.",
+		"savingPaused": "이 파일이 덮어쓰이지 않도록 저장이 일시 중지되었습니다. 파일을 복구하거나 복원한 후 다시 시도하세요.",
+		"file": "파일: workspace-{{wsIndex}}.json",
+		"retry": "복원 다시 시도"
 	}
 }
