@@ -77,6 +77,8 @@ release-0-10-0 (05c921d1) を基準ツリーとして監査・移植
 
 ## 移植中に発見・修正した事項
 
+- **DejaVu fontのLICENSEが移植から漏落（2026-11-11発見・復元）**: 権利インベントリB節の「LICENSE同梱を維持する」契約に反し、#17の移植で `rust/crates/host-filesystem/assets/LICENSE`（Bitstream Vera license）が欠落していた。旧repo `release-0-10-0` から原文を復元。配布zipには同梱される必要がある（#6の成果物検証で確認）。
+
 - **wire名がvalidation契約に違反（旧repoに存在した実欠陥）**: canonical method `host.thumbnail.lookup_or_generate` はセグメントに `_` を含み `validate_qualified_name` に拒否されるため、wire経由で呼び出せなかった。旧CIはLinuxのHOST_INDEPENDENT subsetでoperation-workerのtestを除外していたため未検出。`host.thumbnail.lookup-or-generate` へ改名し、schema / TS生成のidentifier派生に `-` → `_` を追加（#17 → PR #22）。
 - **rust toolchain pinの所在**: `rust/rust-toolchain.toml` をrepo rootへ移動。miseのidiomatic version file検出がroot基準のため、`rust/` 配下では `RUSTUP_TOOLCHAIN` がpinを上書きしていた（#17 → PR #22）。
 - **旧#205（branch 183）と旧#203→#211（branch 182）は旧repoで未統合の並行stacked**: storage読取契約・write pathで重複し、手動統合が必要だった（#18 → PR #23）。#211が廃止したreadiness flagは#217側の参照も含め除去。
