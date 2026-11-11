@@ -172,14 +172,22 @@ export const parseGitHubRelease = (raw: unknown): UpdateFeed | null => {
 			}
 		}
 	}
-	if (assets.length === 0) return null;
+	// A standalone ZIP is not a normally installable CEP package.
+	// Require an uploaded ZXP for each advertised platform.
+	const signedPlatforms = new Set(
+		assets.filter((asset) => asset.url.endsWith(".zxp")).map((asset) => asset.platform),
+	);
+	if (signedPlatforms.size === 0) return null;
+	const publishableAssets = assets.filter((asset) =>
+		signedPlatforms.has(asset.platform),
+	);
 	return {
 		schema: "ty-plus.github-releases/1",
 		channel: version.channel,
 		version: tag.slice(1),
 		publishedAt: raw.published_at,
 		releaseNotesUrl: raw.html_url,
-		assets,
+		assets: publishableAssets,
 	};
 };
 
@@ -239,16 +247,38 @@ export const checkForUpdate = async (input: {
 	if (!Array.isArray(raw)) {
 		return { status: "unavailable", reason: "invalid GitHub Releases response" };
 	}
-	const candidates = raw
-		.map(parseGitHubRelease)
-		.filter((item): item is UpdateFeed => item !== null)
-		.filter((item) => acceptsReleaseChannel(channel, item.channel))
-		.filter(
-			(item) =>
-				input.platform === undefined ||
-				item.assets.some((asset) => asset.platform === input.platform),
-		)
-		.sort((a, b) => compareVersions(b.version, a.version));
+	const select = (releases: unknown[]): UpdateFeed[] =>
+		releases
+			.map(parseGitHubRelease)
+			.filter((item): item is UpdateFeed => item !== null)
+			.filter((item) => acceptsReleaseChannel(channel, item.channel))
+			.filter(
+				(item) =>
+					input.platform === undefined ||
+					item.assets.some((asset) => asset.platform === input.platform),
+			)
+			.sort((a, b) => compareVersions(b.version, a.version));
+
+	let candidates = select(raw);
+	// GitHub's first release page can be saturated by Insider snapshots.
+	// Page only if no release is eligible for this channel, with a bounded
+	// number of anonymous API requests; do not loop indefinitely.
+	let pageSize = raw.length;
+	for (let page = 2; candidates.length === 0 && pageSize === 100 && page <= 5; page += 1) {
+		let pageBody: string;
+		try {
+			pageBody = await (input.fetchFeedText ?? defaultFetchFeedText)(
+				DEFAULT_UPDATE_FEED_URL + "&page=" + page,
+				input.timeoutMs ?? 10_000,
+			);
+			const pageData: unknown = JSON.parse(pageBody) as unknown;
+			if (!Array.isArray(pageData)) break;
+			pageSize = pageData.length;
+			candidates = select(pageData);
+		} catch {
+			break;
+		}
+	}
 	if (candidates.length === 0) {
 		return { status: "unavailable", reason: "no releases for this channel" };
 	}
