@@ -26,20 +26,34 @@ const makeRoot = async (): Promise<string> => {
 	return root;
 };
 
-const manifest = (digest: string): OperationWorkerManifest =>
-	({
-		trust: { mode: "development-unsigned", buildProfile: "development" },
-		productVersion: "0.10.0",
-		extensionVersion: "0.10.0",
-		protocolVersion: { major: 1, minor: 0 },
-		capabilities: ["storage"],
-		workers: {
-			windows: {
-				relativePath: `worker/versions/${digest}/windows/operation-worker.exe`,
-				sha256: digest,
-			},
+/**
+ * Declares an artifact for **every** platform.
+ *
+ * `OperationWorkerManifest.workers` is `Record<OperationWorkerPlatform, …>` —
+ * the contract is "all platforms", not "the one this host runs". This fixture
+ * used to declare `windows` only and cast its way past the type, so on macOS
+ * `pair.workers["macos"]` was `undefined`, `replaceBundleUnderLease` fell back
+ * to `"unknown"`, and the digest-named previous tree the tests assert on never
+ * came into existence. Linux never saw it: those two tests are skipped there,
+ * and Windows has the entry it always had (Issue #192).
+ */
+const manifest = (digest: string): OperationWorkerManifest => ({
+	trust: { mode: "development-unsigned", buildProfile: "development" },
+	productVersion: "0.10.0",
+	extensionVersion: "0.10.0",
+	protocolVersion: { major: 1, minor: 0 },
+	capabilities: ["storage"],
+	workers: {
+		windows: {
+			relativePath: `worker/versions/${digest}/windows/operation-worker.exe`,
+			sha256: digest,
 		},
-	}) as unknown as OperationWorkerManifest;
+		macos: {
+			relativePath: `worker/versions/${digest}/macos/operation-worker`,
+			sha256: digest,
+		},
+	},
+});
 
 const realDevelopmentWorker = async (): Promise<{
 	root: string;
@@ -438,4 +452,19 @@ describe("updateExtension", () => {
 			await lease.release();
 		},
 	);
+});
+
+describe("manifest fixture", () => {
+	it("declares an artifact for every platform the contract requires", () => {
+		const digest = "a".repeat(64);
+		const pair = manifest(digest);
+
+		// Narrowing this back to one platform is exactly what made the
+		// previous-tree assertions macOS-red and Linux-green (Issue #192).
+		expect(Object.keys(pair.workers).sort()).toEqual(["macos", "windows"]);
+		for (const artifact of Object.values(pair.workers)) {
+			expect(artifact.sha256).toBe(digest);
+			expect(artifact.relativePath).toContain(digest);
+		}
+	});
 });
