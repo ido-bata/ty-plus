@@ -26,7 +26,7 @@ export type Settings = {
 	};
 	ui: {
 		language: "ja" | "en";
-		updateChannel: ReleaseChannel;
+		updateChannel?: ReleaseChannel;
 		theme: "system" | "dark" | "light" | "custom";
 		accentColor?: string;
 		textColor?: string;
