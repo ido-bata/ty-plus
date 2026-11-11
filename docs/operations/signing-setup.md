@@ -34,7 +34,7 @@
 
 ## 2. Windows（Authenticode署名 — 将来の任意拡張、R0では不要）
 
-> **ADR-0003（2026-11-11本人判断）: R0の配布にAuthenticode署名は不要。** 未署名workerはR0の正当なrelease形であり、証明書の購入・取得は公開ブロッカーから除外された。この節は将来Authenticodeを採用する場合の手順を残すもので、R0の実行経路・CI・リリース判定には影響しない。
+> **ADR-0003（2026-11-12本人判断）: R0の配布にAuthenticode署名は不要。** 未署名workerはR0の正当なrelease形であり、証明書の購入・取得は公開ブロッカーから除外された。この節は将来Authenticodeを採用する場合の手順を残すもので、R0の実行経路・CI・リリース判定には影響しない。
 
 1. コード署名証明書を取得する。選択肢は #32 の判断資料を参照。**EVのSmartScreen即時回避は2024年に廃止済み**（Microsoft公式、[Code signing options](https://learn.microsoft.com/en-us/windows/apps/package-and-deploy/code-signing-options)、2026-10-29更新）— EVとOVのSmartScreen挙動は同一（評判の蓄積が必要）で、追加費用の根拠にならない。**OV（またはOSS向け割安枠）で十分**。OVは2023-06以降、秘密鍵のHSM/トークン保管がCA/Browser Forumで必須（CertumのクラウドHSM等が該当）。
    - Azure Artifact Signing（旧Trusted Signing、約$9.99/月）は **個人開発者はUSA/Canada居住者のみ** 対応 — 日本在住の個人では利用不可。

@@ -33,7 +33,7 @@ bun scripts/package/release-manifest.ts --trust-mode=development-unsigned --arti
 ## 3. release-trustビルド（署名）
 
 - 実装は完了（#32、ADR-0003）: `bun run scripts/package/build-release.ts` が次の順で実行する。production panel → **Windows: 未署名worker（R0の正当な形）** / **macOS: worker署名 + 署名証拠読み戻し** + release trust manifest → verify gate（`--trust-mode=release`）→ **secret混入検査（パッケージ化の前）** → zip → ZXP署名（`ZXPSignCmd`、`-verify`で検証）→ release manifest（zipとZXPの両方のsha256を記録）。
-- **Windows**: Authenticode証明書は不要（ADR-0003、2026-11-11本人判断）。**証明書なしで配布候補を生成・検証できる**。制約（SmartScreen警告、SAC block）は `docs/architecture/distribution.md`。
+- **Windows**: Authenticode証明書は不要（ADR-0003、2026-11-12本人判断）。**証明書なしで配布候補を生成・検証できる**。制約（SmartScreen警告、SAC block）は `docs/architecture/distribution.md`。
 - **macOS**: Developer ID署名 + 公証が必須。署名identityは既存資産を利用（2026-11-12確認、2027-11-22まで有効）。**公証のnotarytool profileが未設定の場合、ビルドは拒否する**（fail-closed）— 設定手順は `docs/operations/signing-setup.md`。
 - 署名契約の詳細（2つの署名の区別、notarizationの適用範囲、secretの取り扱い）は `docs/architecture/distribution.md`。
 - CIは `.github/workflows/release.yml` の `release-trust-gate-refusal`（macOS拒否検証）と `release-trust-windows-candidate`（Windows配布候補の実証）で検証する。

@@ -14,7 +14,7 @@ CEP panelとoperation-worker binaryの組は、worker manifest（`dist/cep-dev/w
 | `development-unsigned` | `NODE_ENV != production`（または `TY_PLUS_CEP_BUILD_MODE=development`） | release profile（`stageOperationWorkerTargets` が `cargo build --release`） | なし（存在してはならない） | **内部検証ビルド**。実機検証（#10）と社内テスト用 |
 | `release` | `NODE_ENV=production` | release profile + **OSレベル署名（macOSのみ — ADR-0003）** | macOS: 必須 / Windows: 任意（存在すれば検証） | **配布ビルド**。公開の前提 |
 
-**Platform非対称（ADR-0003、2026-11-11本人判断）**: Windows workerのAuthenticode署名はR0では不要 — 未署名のrelease workerはR0の正当な形であり、整合性はmanifestのsha256 pin（content-addressed path + `binary_manifest_mismatch`）が保証する。発行元の真正性は公式配布チャネル（GitHub Release over TLS）+ 並置されたsha256が提供する。Authenticodeは将来の任意拡張（署名blockの書き込み経路は実装済み）。macOSはOS要件によりDeveloper ID署名 + 公証が必須。**ZXP署名はworkerのOS署名とは独立した契約**（下記）。
+**Platform非対称（ADR-0003、2026-11-12本人判断）**: Windows workerのAuthenticode署名はR0では不要 — 未署名のrelease workerはR0の正当な形であり、整合性はmanifestのsha256 pin（content-addressed path + `binary_manifest_mismatch`）が保証する。発行元の真正性は公式配布チャネル（GitHub Release over TLS）+ 並置されたsha256が提供する。Authenticodeは将来の任意拡張（署名blockの書き込み経路は実装済み）。macOSはOS要件によりDeveloper ID署名 + 公証が必須。**ZXP署名はworkerのOS署名とは独立した契約**（下記）。
 
 ## 内部検証ビルド（現時点で再現可能）
 
@@ -33,7 +33,7 @@ bun scripts/package/release-manifest.ts --trust-mode=development-unsigned --arti
 
 ## release-trustビルド（実装済み — Windowsは署名なしで実行可能、macOSは公証設定まで）
 
-- **Windows**: AuthenticodeはR0では不要（ADR-0003、2026-11-11本人判断）。`bun run scripts/package/build-release.ts` が **証明書なしで実行可能** — 未署名worker + 署名済みZXP + manifestの配布候補を生成する。CIの `release-trust-windows-candidate` jobが全工程を実証する。
+- **Windows**: AuthenticodeはR0では不要（ADR-0003、2026-11-12本人判断）。`bun run scripts/package/build-release.ts` が **証明書なしで実行可能** — 未署名worker + 署名済みZXP + manifestの配布候補を生成する。CIの `release-trust-windows-candidate` jobが全工程を実証する。
 - **macOS**: Developer ID署名は既存identityで可能（2026-11-11確認、2027-11-22まで有効）。**公証のみ notarytool profileが未設定**（本人操作1コマンド — `docs/operations/signing-setup.md`）。設定がない場合、ビルドはfail-closedで拒否する（未充足をPASSにしない）。
 - ZXP署名主体の最終値は未確定（#32）。CIの配布候補jobは使い捨ての自己署名証明書で機構のみを実証する（公開しない）。
 

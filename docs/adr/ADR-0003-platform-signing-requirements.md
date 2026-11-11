@@ -1,7 +1,7 @@
 # ADR-0003: Platform別のrelease-trust署名要件
 
 - Status: Accepted
-- Date: 2026-11-11
+- Date: 2026-11-12
 - 正本: 本doc / `docs/architecture/distribution.md`（trust model）/ #32（判断）
 - 関連: ADR-0002（Agent Skillの選定）
 
@@ -12,7 +12,7 @@
 - **本人判断（2026-11-11）**: Windows workerのAuthenticode署名はR0では不要。証明書の購入・取得を公開ブロッカーから除外する。macOSのDeveloper ID署名・公証は現行の公開条件を維持。ZXP署名は両OSで維持し、workerのOS署名とは独立した契約として扱う。
 - Windowsの公式制約: 未署名binaryはSmartScreenの評判警告（"Windows protected your PC" — クリックスルー可能）を受ける。**Smart App Control（Win11）は署名なしbinaryを完全にblockする**（新規Win11では評価モードで既定有効）。
 - macOSの公式制約: 未署名・未公証binaryはGatekeeperがblockする（OS要件であり方針の選択ではない）。
-- macOSの既存資産（2026-11-11確認）: Developer ID Application identityが **keychainに存在し有効（2027-11-22まで）**、署名能力を実証済み。notarytool profileのみ未設定（本人操作1コマンド）。
+- macOSの既存資産（2026-11-12確認）: Developer ID Application identityが **keychainに存在し有効（2027-11-22まで）**、署名能力を実証済み。notarytool profileのみ未設定（本人操作1コマンド）。
 - SHA-256による整合性と発行元の真正性は別の保証である。公式配布元とZXP署名の信頼境界を明確にする。
 
 ## Decision
