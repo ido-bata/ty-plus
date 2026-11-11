@@ -99,6 +99,15 @@ describe("GitHub Release validation", () => {
 				browser_download_url: "https://evil.test/download",
 			}],
 		}],
+		["zip-only release", {
+			...release("v0.11.0"),
+			assets: [{
+				...release("v0.11.0").assets[0],
+				name: "ty-plus-v0.11.0-windows.zip",
+				browser_download_url:
+					"https://github.com/ido-bata/ty-plus/releases/download/v0.11.0/ty-plus-v0.11.0-windows.zip",
+			}],
+		}],
 		["wrong asset name", {
 			...release("v0.11.0"),
 			assets: [{
@@ -168,6 +177,29 @@ describe("checkForUpdate via GitHub Releases API", () => {
 		}
 	});
 
+
+	it("finds a stable release behind one full page of insider snapshots", async () => {
+		const requested: string[] = [];
+		const checked = await checkForUpdate({
+			currentVersion: "0.10.0",
+			channel: "stable",
+			fetchFeedText: async (url) => {
+				requested.push(url);
+				return JSON.stringify(
+					url.includes("page=2")
+						? [release("v0.10.1")]
+						: Array.from({ length: 100 }, (_, index) =>
+							release("v0.11.0-insider." + (index + 1)),
+						),
+				);
+			},
+		});
+		expect(requested).toHaveLength(2);
+		expect(checked.status).toBe("update-available");
+		if (checked.status === "update-available") {
+			expect(checked.feed.version).toBe("0.10.1");
+		}
+	});
 	it("does not offer a downgrade when switching from insider to stable", async () => {
 		const checked = await checkForUpdate({
 			currentVersion: "0.11.0-insider.4",
