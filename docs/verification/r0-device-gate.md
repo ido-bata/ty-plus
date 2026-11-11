@@ -11,10 +11,11 @@
 - 未実施・未確認をPASSにしない。非表示のエラー・ゼロ件テスト・既知失敗を実施済みと誤記しない。
 - Fail時はリリースを止める。判定日（11/30 19:00〜20:30）に試験を繰り越さない。
 - 各項目の証拠: スクリーンショットまたはログ + 対象ビルドの `release-manifest.json`（commit SHA・sha256）+ AE / OSのバージョン。
+- **内部検証ビルドのPASSは、署名済み正式配布物のPASSを意味しない。** 署名済みrelease-trustビルド（#32、`docs/operations/signing-setup.md`）が準備できた時点で、導入・起動（D-01〜D-03相当）と署名・公証の実機確認（SmartScreen / Gatekeeper / ZXPインストール）を **その配布物に対しても実施し、結果を#10に記録する**。準備できなければ、その事実を公開判断の未充足項目として#1に記録する。
 
 ## ビルドの固定
 
-検証は1つのビルドに固定する。対象は internal build workflow の成果物（`ty-plus-internal-<version>-<platform>-<commit>.zip` と `release-manifest.json`）。検証開始時にmanifestのsha256を記録し、以降の項目はそのビルドに対して判定する。
+検証は1つのビルドに固定する。対象は internal build workflow の成果物（`ty-plus-internal-<version>-<platform>-<commit>.zip` と `release-manifest.json`）。検証開始時にmanifestのsha256を記録し、以降の項目はそのビルドに対して判定する。署名済み配布物を追加で検証する場合は、ビルドごとにこの固定をやり直す（manifestのsha256を別途記録）。
 
 ## シナリオ
 
