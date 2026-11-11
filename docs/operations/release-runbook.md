@@ -82,6 +82,22 @@ bun run scripts/package/prepare-github-release.ts
 
 GitHub APIの`make_latest`はStable以外で使用しない。Releaseにはアプリのインストール手順、サポート対象OS、変更内容、既知の制約を記載する。インストールは現時点では手動。アプリ内の「Release notes and download」は公開GitHub Releaseページを開く。
 
+Insiderの発行時は、上記確認と明示承認のあとでGitHub CLIを使う。次の例は**実行した場合にGitHub Releaseを公開する**（このタスクでは実行していない）。`<merge-commit-SHA>`を最終的なrelease merge commitに置き換え、必要なOSの3ファイルだけ指定する。
+
+```sh
+gh release create v0.10.1-insider.1 \
+  dist/github-release/ty-plus-v0.10.1-insider.1-windows.zip \
+  dist/github-release/ty-plus-v0.10.1-insider.1-windows.zxp \
+  dist/github-release/ty-plus-v0.10.1-insider.1-windows-release-manifest.json \
+  --repo ido-bata/ty-plus \
+  --target <merge-commit-SHA> \
+  --title "ty-plus 0.10.1 Insider 1" \
+  --notes "Insider preview; see installation guide and known limitations." \
+  --prerelease
+```
+
+macOSも用意できた場合はmacOSの3ファイルを同じReleaseへ含める。リリース済みtagが別SHAを指す場合は上書きしない。既存releaseへ追加する場合も同一tag・sourceCommitの証拠を照合してから行う。
+
 **公開操作（Draft作成、公開、タグ作成、repo public化、アップロード）は本人の別途明示承認が必要。** このrunbookを読むことは公開許可ではない。特にPrivate repoのReleasesは一般ユーザーから匿名取得できないため、アプリ内の更新確認は公開後に初めて有効になる。
 
 ## 6. 事後検証
