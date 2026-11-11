@@ -462,7 +462,7 @@ describe("generated canonical operation policy", () => {
 				idempotencyKey: "optional",
 				retryClass: "idempotent",
 				retryCrashBeforeAccept: false,
-				wireName: "host.thumbnail.lookup_or_generate",
+				wireName: "host.thumbnail.lookup-or-generate",
 			},
 			host_thumbnail_batch: {
 				cancellable: true,

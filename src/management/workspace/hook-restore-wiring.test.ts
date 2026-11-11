@@ -81,18 +81,14 @@ describe("persistSurfaceState routes user edits through the write gate", () => {
 		// Every disk write sits after the guard, which is what makes the
 		// "edits do not destroy a corrupt fixture" scenario in
 		// `boot-restore-fault-injection.test.ts` the hook's own behaviour.
-		for (const write of [
-			"await writeNJson(",
-			"await upsertWidgetRecords(",
-			"await writeUiSettings(",
-		]) {
-			const idx = body.indexOf(write);
-			expect(
-				idx,
-				`${write} must sit inside persistSurfaceState`,
-			).toBeGreaterThan(-1);
-			expect(idx).toBeGreaterThan(guardIdx);
-		}
+		// The ordered writes themselves (records → layout → ui settings →
+		// background) live in `persistence/surface-write.ts` and are
+		// exercised against real files by
+		// `persistence/surface-write.fault-injection.test.ts` — here we pin
+		// only that the hook's write entry point is gated.
+		expect(body.indexOf("await writeSurfaceState(")).toBeGreaterThan(
+			guardIdx,
+		);
 	});
 
 	it("keeps the awaitable variant gated on writeGate.isReady()", () => {
