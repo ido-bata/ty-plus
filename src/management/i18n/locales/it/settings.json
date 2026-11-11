@@ -205,7 +205,8 @@
 			"design-tokens": "Token di design",
 			"workspace-backup": "Backup dell'area di lavoro",
 			"feedback": "Feedback",
-			"inputs": "Ingressi"
+			"inputs": "Ingressi",
+			"update": "Aggiornamenti"
 		}
 	}
 }

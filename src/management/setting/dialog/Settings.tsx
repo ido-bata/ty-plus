@@ -26,6 +26,7 @@ import { NetworkSection } from "@/management/setting/dialog/sections/NetworkSect
 import { PathsSection } from "@/management/setting/dialog/sections/PathsSection";
 import { StyleSection } from "@/management/setting/dialog/sections/StyleSection";
 import { TokensSection } from "@/management/setting/dialog/sections/TokensSection";
+import { UpdateSection } from "@/management/setting/dialog/sections/UpdateSection";
 import { WorkspaceBackupSection } from "@/management/setting/dialog/sections/WorkspaceBackupSection";
 import { useSettingsDialogContextMenu } from "@/management/setting/dialog/useSettingsDialogContextMenu";
 import { Button } from "@/shared/component/controls/Button";
@@ -163,6 +164,12 @@ const SETTINGS_SECTIONS: SettingsSidebarSectionDef[] = [
 		groupId: "data",
 		labelKey: "tabs.section.network",
 		render: () => <NetworkSection />,
+	},
+	{
+		sectionId: "update",
+		groupId: "data",
+		labelKey: "tabs.section.update",
+		render: () => <UpdateSection />,
 	},
 	{
 		sectionId: "component-preview",

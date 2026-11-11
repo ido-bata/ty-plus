@@ -205,7 +205,8 @@
 			"design-tokens": "Jetons de design",
 			"workspace-backup": "Sauvegarde de l'espace de travail",
 			"feedback": "Retour",
-			"inputs": "Entrées"
+			"inputs": "Entrées",
+			"update": "Mises à jour"
 		}
 	}
 }

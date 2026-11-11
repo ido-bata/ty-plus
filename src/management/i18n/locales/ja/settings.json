@@ -205,7 +205,8 @@
 			"design-tokens": "デザイントークン",
 			"workspace-backup": "ワークスペースバックアップ",
 			"feedback": "フィードバック",
-			"inputs": "入力"
+			"inputs": "入力",
+			"update": "更新"
 		}
 	}
 }
