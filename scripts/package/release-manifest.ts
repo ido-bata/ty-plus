@@ -51,6 +51,22 @@ if (typeof packageJson.version !== "string" || !packageJson.version) {
 	fail("package.json has no version");
 }
 
+// CEP needs X.Y.Z, but preview release identity uses the full SemVer tag.
+const releaseVersion =
+	process.env.TY_PLUS_RELEASE_VERSION?.trim() || packageJson.version;
+const releaseChannel = process.env.TY_PLUS_RELEASE_CHANNEL?.trim() || "stable";
+const match = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-(beta|insider)\.(0|[1-9]\d*))?$/.exec(
+	releaseVersion,
+);
+const coreVersion = match ? match[1] + "." + match[2] + "." + match[3] : null;
+if (!match || coreVersion !== packageJson.version) {
+	fail("TY_PLUS_RELEASE_VERSION must share package.json's numeric X.Y.Z");
+}
+const expectedChannel = match[4] ?? "stable";
+if (releaseChannel !== expectedChannel) {
+	fail("release channel and tag disagree: expected " + expectedChannel);
+}
+
 const commitResult = Bun.spawnSync(["git", "rev-parse", "HEAD"], {
 	stdout: "pipe",
 });
@@ -88,6 +104,8 @@ for (const artifact of artifacts) {
 
 const manifest = {
 	version: packageJson.version,
+	releaseVersion,
+	channel: releaseChannel,
 	extensionId: "app.ty-plus",
 	sourceCommit,
 	trustMode,
