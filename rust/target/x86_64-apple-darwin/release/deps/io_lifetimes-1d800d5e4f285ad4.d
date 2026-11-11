@@ -1,0 +1,11 @@
+/Users/rebui/work/ty-plus/rust/target/x86_64-apple-darwin/release/deps/io_lifetimes-1d800d5e4f285ad4.d: /Users/rebui/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/io-lifetimes-2.0.4/src/lib.rs /Users/rebui/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/io-lifetimes-2.0.4/src/portability.rs /Users/rebui/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/io-lifetimes-2.0.4/src/traits.rs /Users/rebui/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/io-lifetimes-2.0.4/src/raw.rs /Users/rebui/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/io-lifetimes-2.0.4/src/views.rs
+
+/Users/rebui/work/ty-plus/rust/target/x86_64-apple-darwin/release/deps/libio_lifetimes-1d800d5e4f285ad4.rlib: /Users/rebui/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/io-lifetimes-2.0.4/src/lib.rs /Users/rebui/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/io-lifetimes-2.0.4/src/portability.rs /Users/rebui/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/io-lifetimes-2.0.4/src/traits.rs /Users/rebui/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/io-lifetimes-2.0.4/src/raw.rs /Users/rebui/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/io-lifetimes-2.0.4/src/views.rs
+
+/Users/rebui/work/ty-plus/rust/target/x86_64-apple-darwin/release/deps/libio_lifetimes-1d800d5e4f285ad4.rmeta: /Users/rebui/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/io-lifetimes-2.0.4/src/lib.rs /Users/rebui/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/io-lifetimes-2.0.4/src/portability.rs /Users/rebui/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/io-lifetimes-2.0.4/src/traits.rs /Users/rebui/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/io-lifetimes-2.0.4/src/raw.rs /Users/rebui/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/io-lifetimes-2.0.4/src/views.rs
+
+/Users/rebui/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/io-lifetimes-2.0.4/src/lib.rs:
+/Users/rebui/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/io-lifetimes-2.0.4/src/portability.rs:
+/Users/rebui/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/io-lifetimes-2.0.4/src/traits.rs:
+/Users/rebui/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/io-lifetimes-2.0.4/src/raw.rs:
+/Users/rebui/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/io-lifetimes-2.0.4/src/views.rs:

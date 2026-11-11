@@ -1,0 +1,14 @@
+/Users/rebui/work/ty-plus/rust/target/aarch64-apple-darwin/release/deps/serde-880ff92f06b94012.d: /Users/rebui/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/lib.rs /Users/rebui/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/integer128.rs /Users/rebui/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/private/mod.rs /Users/rebui/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/private/de.rs /Users/rebui/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/private/ser.rs /Users/rebui/work/ty-plus/rust/target/aarch64-apple-darwin/release/build/serde-b386f3d885ea4380/out/private.rs
+
+/Users/rebui/work/ty-plus/rust/target/aarch64-apple-darwin/release/deps/libserde-880ff92f06b94012.rlib: /Users/rebui/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/lib.rs /Users/rebui/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/integer128.rs /Users/rebui/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/private/mod.rs /Users/rebui/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/private/de.rs /Users/rebui/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/private/ser.rs /Users/rebui/work/ty-plus/rust/target/aarch64-apple-darwin/release/build/serde-b386f3d885ea4380/out/private.rs
+
+/Users/rebui/work/ty-plus/rust/target/aarch64-apple-darwin/release/deps/libserde-880ff92f06b94012.rmeta: /Users/rebui/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/lib.rs /Users/rebui/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/integer128.rs /Users/rebui/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/private/mod.rs /Users/rebui/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/private/de.rs /Users/rebui/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/private/ser.rs /Users/rebui/work/ty-plus/rust/target/aarch64-apple-darwin/release/build/serde-b386f3d885ea4380/out/private.rs
+
+/Users/rebui/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/lib.rs:
+/Users/rebui/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/integer128.rs:
+/Users/rebui/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/private/mod.rs:
+/Users/rebui/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/private/de.rs:
+/Users/rebui/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/private/ser.rs:
+/Users/rebui/work/ty-plus/rust/target/aarch64-apple-darwin/release/build/serde-b386f3d885ea4380/out/private.rs:
+
+# env-dep:OUT_DIR=/Users/rebui/work/ty-plus/rust/target/aarch64-apple-darwin/release/build/serde-b386f3d885ea4380/out

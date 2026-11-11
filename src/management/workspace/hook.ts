@@ -2449,8 +2449,7 @@ export function useWorkspaceRuntime(root: Element | null): {
 					})();
 					if (!catalogId || !isCep) return;
 					void (async () => {
-						const presetEditExtensionId =
-							"app.ty-plus.dialog-preset-edit";
+						const presetEditExtensionId = "app.ty-plus.dialog-preset-edit";
 						const payload = { presetId: catalogId };
 						try {
 							await writePresetToolHandoff(

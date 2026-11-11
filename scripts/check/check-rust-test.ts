@@ -20,12 +20,12 @@ import { spawnSync } from "node:child_process";
 import { dirname, resolve } from "node:path";
 import { platform } from "node:process";
 import { fileURLToPath } from "node:url";
+import { rustFixtureEnv } from "./rust-fixture-env.ts";
 import {
 	assertLinuxSafeCratesMatch,
 	fetchCargoMetadata,
 	LINUX_SAFE_CRATES,
 } from "./rust-linux-safe-crates.ts";
-import { rustFixtureEnv } from "./rust-fixture-env.ts";
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const rustRoot = resolve(repoRoot, "rust");

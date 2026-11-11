@@ -17,14 +17,14 @@ describe("preset add dialog pool", () => {
 	});
 
 	it("detects pool extension ids", () => {
-		expect(
-			isPresetAddPoolExtensionId("app.ty-plus.dialog-preset-add"),
-		).toBe(true);
-		expect(
-			isPresetAddPoolExtensionId("app.ty-plus.dialog-preset-add-3"),
-		).toBe(true);
-		expect(
-			isPresetAddPoolExtensionId("app.ty-plus.dialog-presets"),
-		).toBe(false);
+		expect(isPresetAddPoolExtensionId("app.ty-plus.dialog-preset-add")).toBe(
+			true,
+		);
+		expect(isPresetAddPoolExtensionId("app.ty-plus.dialog-preset-add-3")).toBe(
+			true,
+		);
+		expect(isPresetAddPoolExtensionId("app.ty-plus.dialog-presets")).toBe(
+			false,
+		);
 	});
 });
