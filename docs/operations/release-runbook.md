@@ -32,8 +32,10 @@ bun scripts/package/release-manifest.ts --trust-mode=development-unsigned --arti
 
 ## 3. release-trustビルド（署名）
 
-- 未実装（#32）。証明書の準備と署名手順が確定した時点で、この節を手順として確定させる。
-- 確定までの間、`development-unsigned` の成果物を **配布に使わない**（`docs/architecture/distribution.md` のtrust model契約）。
+- 実装は完了（#32）: `bun run scripts/package/build-release.ts` が trust model契約に従い、production panel → worker署名（`scripts/package/sign-worker.ts`）→ 署名済みbinaryからの署名証拠抽出（`scripts/package/signature-evidence.ts`）→ release trust manifest → verify gate → secret混入検査（`scripts/package/secret-scan.ts`）→ zip → release manifestの順に実行する。
+- 実行には証明書が必須: 署名設定（`TY_PLUS_SIGN_PFX_PATH` / `TY_PLUS_SIGN_PFX_PASSWORD` / `TY_PLUS_SIGN_IDENTITY` / `TY_PLUS_NOTARY_PROFILE`）が無い場合、ビルドは何も生成する前に拒否する（fail-closed）。CIは `.github/workflows/release.yml` の `release-trust-gate-refusal` jobでこの拒否を検証する。
+- EV/OVの選択と証明書の購入は本人判断（#2の公開ブロッカー）。証明書が確定するまで、この手順を実行してPASSにしない。**development-unsignedのリハーサル緑はrelease-trustの完成証拠ではない。**
+- 確定後、この節を実際の証明書準備手順で確定させる。
 
 ## 4. 公開
 
@@ -53,3 +55,7 @@ bun scripts/package/release-manifest.ts --trust-mode=development-unsigned --arti
 
 - 署名・公証の詳細手順（#32確定後に本docへ追記する）
 - 自動更新（feed契約により、更新は手動配置で行う）
+
+## 関連
+
+- 依存関係・脆弱性の継続メンテナンス運用: `docs/operations/dependency-maintenance.md`（#46）

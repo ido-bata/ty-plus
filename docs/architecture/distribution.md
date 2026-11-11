@@ -1,6 +1,6 @@
 # 配布ビルド契約（Issue #6）
 
-- Status: Accepted（release-trust経路は証明書確定まで未実装 — 下記の未充足）
+- Status: Accepted（fail-closed配線は実装済み — release-trust実行は証明書確定まで保留、下記参照）
 - Date: 2026-11-11
 - 正本: `rebuildup/ty-plus#222`（旧正本）/ 本repo #6 / 製品charter `docs/architecture/project.md`
 - 実行手順（build → verify → package → 公開）は `docs/operations/release-runbook.md`。本docは契約とtrust modelの定義。
@@ -29,16 +29,16 @@ bun scripts/package/release-manifest.ts --trust-mode=development-unsigned --arti
 - `dist/release-manifest.json`: version / extensionId / sourceCommit / trustMode / 各成果物のsha256（機械可読）。
 - CI: GitHub Actionsの **internal build** workflow（`.github/workflows/release.yml`、workflow_dispatch）がWindows / macOSの両方で同じ工程を実行し、成果物+manifestをartifactとして残す。実行名は `ty-plus-internal-<version>-<platform>-<commit7>.zip`。
 
-## release-trustビルド（未充足 — 公開ブロッカー）
+## release-trustビルド（実装済み — 証明書確定まで実行しない）
 
-配布に必要な次の要素が未確定のため、release-trustビルドは実装・実行していない:
+1〜4の要素は未確定（#2の公開ブロッカー）のため、release-trustビルドは **実行していない**。ただしfail-closedの配線は実装済み（#32）:
 
-1. **Windows**: Authenticode証明書（コード署名）の取得と、EV/OVの選択（SmartScreen対策の要否を含む）。
-2. **macOS**: Apple Developer ID Application証明書 + notarization（`notarytool` / `stapler`）の実行権限。
-3. **ZXP署名**: `scripts/package/sign-zxp.ts` の署名主体（暫定値 `ty-plus`）と証明書の実権利者の確定（#2の公開ブロッカー）。
-4. **worker manifestのrelease署名block**: `buildDevelopmentWorker` は `development-unsigned` のみを書く。release modeではbinaryのOS署名から algorithm / value / certificateSha256 を記録するwriterが未実装。証明書確定後に #6 で実装する（fail-closed: 署名証拠なしでrelease manifestを生成しない）。
+1. **worker manifestのrelease署名block writer**: `buildReleaseWorker`（`scripts/cep/operation-worker-update.ts`）が、staged binaryをOS署名した後に `scripts/package/signature-evidence.ts` で証拠をbinaryから読み戻し、`trust: { mode: "release", signature }` を書く。証拠なしでrelease manifestを生成しない（fail-closed）。
+2. **OS署名の実装**: `scripts/package/sign-worker.ts`。Windows: `signtool sign /fd sha256 /td sha256 /tr <tsa>`。macOS: `codesign --options runtime --timestamp` + `notarytool submit --wait` + `stapler staple`。設定は `TY_PLUS_SIGN_PFX_PATH` / `TY_PLUS_SIGN_PFX_PASSWORD` / `TY_PLUS_SIGN_IDENTITY` / `TY_PLUS_NOTARY_PROFILE`。
+3. **secret混入検査の自動組み込み**: `scripts/package/secret-scan.ts` がビルド内で `dist/cep-dev` を走査する。事後監査は `scripts/verify/verify-release-artifacts.ts`（manifestのsha256再計算 + HEAD一致 + pack走査）。
+4. **CI**: `.github/workflows/release.yml` の `release-trust-gate-refusal` jobが、署名設定なしでrelease-trustビルドが拒否されることを検証する（未充足をPASSにしない）。
 
-これらが確定するまで、release-trustの成果物を「配布可能」と扱わない。公開手続き（GitHub Release等）は本人の明示的承認ゲートを別途経る。
+これらが確定するまで、release-trustの成果物を「配布可能」と扱わない。実行は本人の明示的承認ゲートを別途経る。
 
 ## 検証の対応関係
 
