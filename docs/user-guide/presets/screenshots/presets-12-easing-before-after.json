@@ -1,0 +1,54 @@
+{
+  "before": {
+    "keys": [
+      {
+        "index": 1,
+        "time": 0,
+        "inType": "6612",
+        "outType": "6612",
+        "inSpeed": 0,
+        "inInfluence": 16.666666667,
+        "outSpeed": 640,
+        "outInfluence": 16.666666667,
+        "selected": true
+      },
+      {
+        "index": 2,
+        "time": 1,
+        "inType": "6612",
+        "outType": "6612",
+        "inSpeed": 640,
+        "inInfluence": 16.666666667,
+        "outSpeed": 0,
+        "outInfluence": 16.666666667,
+        "selected": true
+      }
+    ]
+  },
+  "after": {
+    "keys": [
+      {
+        "index": 1,
+        "time": 0,
+        "inType": "6613",
+        "outType": "6613",
+        "inSpeed": 0,
+        "inInfluence": 16.666666667,
+        "outSpeed": 0,
+        "outInfluence": 40,
+        "selected": true
+      },
+      {
+        "index": 2,
+        "time": 1,
+        "inType": "6613",
+        "outType": "6613",
+        "inSpeed": 0,
+        "inInfluence": 40,
+        "outSpeed": 0,
+        "outInfluence": 16.666666667,
+        "selected": true
+      }
+    ]
+  }
+}

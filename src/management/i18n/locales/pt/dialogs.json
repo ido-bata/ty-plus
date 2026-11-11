@@ -1,0 +1,79 @@
+{
+	"title": "Diálogos",
+	"close": "Fechar",
+	"save": "Salvar",
+	"cancel": "Cancelar",
+	"workspaceShell": {
+		"backgroundPanel": {
+			"title": "Camada de fundo",
+			"lead": "Empilhe camadas sólidas, de imagem e de padrão atrás da grade da área de trabalho. Clique em Aplicar para sincronizar com o painel e salvar.",
+			"applyToWorkspace": "Aplicar à área de trabalho",
+			"clearAll": "Limpar tudo",
+			"emptyLayers": "Nenhuma camada ainda — adicione uma com os botões à esquerda.",
+			"selectLayer": "Selecione uma camada na lista para editá-la.",
+			"enabled": "Visível",
+			"opacity": "Opacidade",
+			"color": "Cor",
+			"imagePath": "Caminho do arquivo",
+			"imagePathPlaceholder": "Caminho da imagem ou URL",
+			"browseImage": "Procurar imagem",
+			"selectImage": "Selecionar imagem",
+			"imageUrl": "URL da imagem",
+			"applyUrl": "Usar URL",
+			"imageFit": "Ajuste",
+			"imageRepeat": "Repetir",
+			"imageScale": "Escala %",
+			"shiftX": "Deslocar X (px)",
+			"shiftY": "Deslocar Y (px)",
+			"pattern": "Padrão",
+			"patternSize": "Tamanho",
+			"patternColor": "Primeiro plano",
+			"patternBg": "Plano de fundo",
+			"moveUp": "Mover para cima",
+			"moveDown": "Mover para baixo",
+			"remove": "Remover camada",
+			"types": {
+				"color": "Cor",
+				"image": "Imagem",
+				"pattern": "Padrão"
+			},
+			"patterns": {
+				"dots": "Pontos",
+				"grid": "Grade",
+				"lines": "Linhas"
+			},
+			"imageFits": {
+				"cover": "Cobrir",
+				"contain": "Conter",
+				"stretch": "Esticar",
+				"auto": "Escala"
+			},
+			"imageRepeats": {
+				"no-repeat": "Nenhum",
+				"repeat": "Ladrilho",
+				"repeat-x": "X",
+				"repeat-y": "Y"
+			},
+			"tooltips": {
+				"addColor": "Adicionar camada de cor sólida",
+				"addPattern": "Adicionar camada de padrão",
+				"addImage": "Adicionar camada de imagem"
+			},
+			"titleWithPanel": "Camada de fundo - Painel {{panel}}",
+			"loading": "Carregando...",
+			"saving": "Salvando...",
+			"saved": "Salvo",
+			"loadFailed": "Falha ao carregar: {{message}}",
+			"saveFailed": "Falha ao salvar",
+			"preview": "Pré-visualização"
+		},
+		"widgetSelector": {
+			"title": "Adicionar widget",
+			"lead": "Escolha um tipo e envie-o para o painel principal da área de trabalho. Itens suportados adicionam um tile na parte inferior da grade.",
+			"add": "Adicionar",
+			"addToPanelHint": "Adicionar este widget à grade do painel principal (linha inferior).",
+			"notInPanelYet": "Este tipo de widget ainda não tem interface de painel — não pode ser colocado.",
+			"footerHint": "Itens acinzentados ainda não estão implementados no renderizador do painel. Os outros fecham este diálogo após enviar a solicitação."
+		}
+	}
+}

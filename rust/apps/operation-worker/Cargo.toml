@@ -1,0 +1,12 @@
+[package]
+name = "ty-plus-operation-worker"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+serde_json = "1"
+url = "2.5.4"
+ty-plus-protocol = { path = "../../crates/protocol" }
+ty-plus-host-filesystem = { path = "../../crates/host-filesystem" }
+ty-plus-online = { path = "../../crates/online" }
+ty-plus-storage = { path = "../../crates/storage" }

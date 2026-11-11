@@ -1,0 +1,37 @@
+{
+	"widgets": {
+		"align": {
+			"alignLeft": "Aligner à gauche",
+			"alignCenterH": "Aligner au centre horizontal",
+			"alignRight": "Aligner à droite",
+			"alignTop": "Aligner en haut",
+			"alignCenterV": "Aligner au centre vertical",
+			"alignBottom": "Aligner en bas"
+		},
+		"layoutLock": {
+			"lock": "Verrouiller la disposition",
+			"unlock": "Déverrouiller la disposition"
+		},
+		"projectInfo": {
+			"dimensions": "Dimensions",
+			"timing": "Timing",
+			"layers": "Calques"
+		}
+	},
+	"controlPanel": {
+		"expand": "Développer",
+		"collapse": "Réduire",
+		"position": "Position",
+		"orientation": "Orientation"
+	},
+	"context": {
+		"lock": "Verrouiller",
+		"unlock": "Déverrouiller",
+		"addWidget": "Ajouter un widget",
+		"deleteWidget": "Supprimer le widget",
+		"refresh": "Actualiser"
+	},
+	"widgetSearch": {
+		"placeholder": "Rechercher des préréglages…"
+	}
+}

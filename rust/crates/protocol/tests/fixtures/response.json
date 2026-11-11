@@ -1,0 +1,21 @@
+{
+  "kind": "response",
+  "message": {
+    "protocol_version": {
+      "major": 1,
+      "minor": 0
+    },
+    "request_id": "request-fixture",
+    "session_id": "session-fixture",
+    "outcome": {
+      "status": "success",
+      "payload": null,
+      "warnings": [
+        {
+          "code": "result.partial",
+          "user_safe_detail": "Some optional entries were unavailable."
+        }
+      ]
+    }
+  }
+}

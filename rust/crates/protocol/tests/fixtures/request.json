@@ -1,0 +1,26 @@
+{
+  "kind": "request",
+  "message": {
+    "protocol_version": {
+      "major": 1,
+      "minor": 0
+    },
+    "metadata": {
+      "request_id": "request-fixture",
+      "session_id": "session-fixture",
+      "deadline_unix_ms": 1700000060000,
+      "cancellable": true,
+      "idempotency_key": "write-fixture"
+    },
+    "context": {
+      "host_context": {
+        "app_root": "C:\\Program Files\\Adobe\\After Effects 2024",
+        "support_root": "C:\\Users\\test\\AppData\\Roaming\\Adobe",
+        "session_id": "session-fixture"
+      },
+      "managed_root": "session_default"
+    },
+    "method": "storage.write",
+    "payload": null
+  }
+}

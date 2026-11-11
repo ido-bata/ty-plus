@@ -1,0 +1,37 @@
+{
+	"widgetSearch": {
+		"placeholder": "Pesquisar predefinições…"
+	},
+	"context": {
+		"addWidget": "Adicionar widget",
+		"deleteWidget": "Excluir widget",
+		"lock": "Bloquear",
+		"refresh": "Atualizar",
+		"unlock": "Desbloquear"
+	},
+	"controlPanel": {
+		"expand": "Expandir",
+		"collapse": "Recolher",
+		"position": "Posição",
+		"orientation": "Orientação"
+	},
+	"widgets": {
+		"align": {
+			"alignLeft": "Alinhar à esquerda",
+			"alignCenterH": "Alinhar ao centro horizontal",
+			"alignRight": "Alinhar à direita",
+			"alignTop": "Alinhar ao topo",
+			"alignCenterV": "Alinhar ao centro vertical",
+			"alignBottom": "Alinhar embaixo"
+		},
+		"layoutLock": {
+			"lock": "Bloquear layout",
+			"unlock": "Desbloquear layout"
+		},
+		"projectInfo": {
+			"dimensions": "Dimensões",
+			"timing": "Tempo",
+			"layers": "Camadas"
+		}
+	}
+}

@@ -1,0 +1,1421 @@
+{
+	"bindings": [
+		{
+			"scenarioId": "SCN-LIFECYCLE-01",
+			"featureFile": "src/shared/scenario/features/lifecycle.feature",
+			"procedureFile": "src/shared/scenario/procedures/SCN-LIFECYCLE-01.json",
+			"scenarioName": "SCN-LIFECYCLE-01 — preset lifecycle happy path",
+			"title": "preset lifecycle happy path: create → catalog → place → move → reload → cross-panel move → restart",
+			"description": "A freshly-created local preset survives the full surface lifecycle (creation → catalog registration → workspace placement → same-workspace move → reload → cross-panel move → panel restart) with the persisted state on the target panel only and no orphan reference on the source panel.",
+			"evidenceLevel": "simulated_e2e",
+			"oracles": {
+				"ui": {
+					"selector": "[data-preset-id=\"HappyPathPreset\"]",
+					"attribute": {
+						"name": "data-state",
+						"value": "placed"
+					}
+				},
+				"persistence": {
+					"storageKey": "layout:panel-2",
+					"expected": {
+						"version": 1,
+						"surfaceTiles": [
+							{
+								"id": "tile-X",
+								"x": 0,
+								"y": 0,
+								"width": 2,
+								"height": 1,
+								"presetId": "HappyPathPreset"
+							}
+						]
+					}
+				},
+				"dual": true
+			},
+			"evidence": {
+				"screenshotSelectors": ["[data-preset-id=\"HappyPathPreset\"]"],
+				"computedStyleSnapshots": [
+					"computed-style: [data-preset-id=\"HappyPathPreset\"]"
+				],
+				"persistedStateDumps": [
+					"storage:preset:HappyPathPreset",
+					"storage:layout:panel-1",
+					"storage:layout:panel-2"
+				],
+				"logAssertions": [
+					{
+						"scope": "workspace",
+						"minLevel": "info",
+						"messageContains": "cross-panel-move",
+						"id": "log-cross-panel-move"
+					}
+				]
+			},
+			"environment": {
+				"os": "windows",
+				"hostVersionRange": ">=26.5.0 <27.0.0",
+				"aeRequired": true,
+				"panelState": "post-onboarding"
+			},
+			"fixtures": [
+				{
+					"id": "project:SCN-LIFECYCLE-01",
+					"kind": "settings",
+					"identifier": "project:SCN-LIFECYCLE-01",
+					"initialState": null,
+					"projectPath": "validation.host.aep_root/SCN-LIFECYCLE-01.aep"
+				},
+				{
+					"id": "preset:HappyPathPreset",
+					"kind": "preset",
+					"identifier": "preset:HappyPathPreset",
+					"initialState": null
+				},
+				{
+					"id": "layout:panel-1",
+					"kind": "workspace-layout",
+					"identifier": "layout:panel-1",
+					"initialState": {
+						"version": 0,
+						"surfaceTiles": []
+					}
+				},
+				{
+					"id": "layout:panel-2",
+					"kind": "workspace-layout",
+					"identifier": "layout:panel-2",
+					"initialState": {
+						"version": 0,
+						"surfaceTiles": []
+					}
+				}
+			],
+			"requirementRefs": [
+				{
+					"type": "issue",
+					"id": "147",
+					"note": "Scenario spec for AE real-machine + Computer Use."
+				},
+				{
+					"type": "issue",
+					"id": "146",
+					"note": "Lifecycle that this spec formalises."
+				}
+			],
+			"stopConditions": [
+				{
+					"trigger": "selector-multimatch",
+					"description": "Multiple tile elements resolve the same selector — abort."
+				},
+				{
+					"trigger": "modal-unexpected",
+					"description": "An AE dialog appears that the scenario does not anticipate — abort."
+				},
+				{
+					"trigger": "state-inconsistent",
+					"description": "Persisted layout and DOM tile disagree — abort."
+				}
+			],
+			"onFailure": {
+				"capture": ["screenshot", "log-bus-tail", "persisted-state-dump"],
+				"doNot": ["send-to-network", "modify-preset-asset"]
+			},
+			"automation": {
+				"requiredCapabilities": [
+					"click",
+					"drag",
+					"selector-resolve",
+					"persisted-state-read",
+					"computed-style-snapshot",
+					"log-bus-read",
+					"panel-reload",
+					"process-restart",
+					"cross-panel-bus"
+				]
+			},
+			"postconditions": [
+				"Persisted state on the target panel only, with no orphaned reference on the source panel.",
+				"Verdict candidate is PASS, awaiting both oracle families to confirm."
+			],
+			"requirement_id": "boot-stability",
+			"verification_rows": ["boot-stability"]
+		},
+		{
+			"scenarioId": "SCN-LIFECYCLE-02",
+			"featureFile": "src/shared/scenario/features/lifecycle.feature",
+			"procedureFile": "src/shared/scenario/procedures/SCN-LIFECYCLE-02.json",
+			"scenarioName": "SCN-LIFECYCLE-02 — cloud gateway unavailable, lifecycle still completes",
+			"title": "cloud gateway unavailable: lifecycle still completes via local fallback",
+			"description": "Same lifecycle as SCN-LIFECYCLE-01 but with the cloud-gateway boot stubbed to return null. The lifecycle MUST still complete via the local fallback path.",
+			"evidenceLevel": "simulated_e2e",
+			"oracles": {
+				"ui": {
+					"selector": "[data-preset-id=\"OfflinePreset\"]",
+					"attribute": {
+						"name": "data-state",
+						"value": "placed"
+					}
+				},
+				"persistence": {
+					"storageKey": "layout:panel-2",
+					"expected": {
+						"version": 1,
+						"surfaceTiles": [
+							{
+								"id": "tile-X",
+								"x": 0,
+								"y": 0,
+								"width": 2,
+								"height": 1,
+								"presetId": "OfflinePreset"
+							}
+						]
+					}
+				},
+				"dual": true
+			},
+			"evidence": {
+				"screenshotSelectors": ["[data-preset-id=\"OfflinePreset\"]"],
+				"computedStyleSnapshots": [
+					"computed-style: [data-preset-id=\"OfflinePreset\"]"
+				],
+				"persistedStateDumps": [
+					"storage:preset:OfflinePreset",
+					"storage:layout:panel-1",
+					"storage:layout:panel-2"
+				],
+				"logAssertions": [
+					{
+						"scope": "online",
+						"minLevel": "warn",
+						"messageContains": "getDataServices returned null",
+						"id": "log-cloud-unavailable"
+					},
+					{
+						"scope": "workspace",
+						"minLevel": "info",
+						"messageContains": "cross-panel-move-local-fallback",
+						"id": "log-cross-panel-move-offline"
+					},
+					{
+						"scope": "online",
+						"minLevel": "info",
+						"messageContains": "local-fallback-completed",
+						"id": "log-local-fallback-completed"
+					}
+				]
+			},
+			"environment": {
+				"os": "windows",
+				"hostVersionRange": ">=26.5.0 <27.0.0",
+				"aeRequired": true,
+				"panelState": "post-onboarding",
+				"notes": "getDataServices() returns null at boot."
+			},
+			"fixtures": [
+				{
+					"id": "project:SCN-LIFECYCLE-02",
+					"kind": "settings",
+					"identifier": "project:SCN-LIFECYCLE-02",
+					"initialState": null,
+					"projectPath": "validation.host.aep_root/SCN-LIFECYCLE-02.aep"
+				},
+				{
+					"id": "preset:OfflinePreset",
+					"kind": "preset",
+					"identifier": "preset:OfflinePreset",
+					"initialState": null
+				},
+				{
+					"id": "online-state",
+					"kind": "online-state",
+					"identifier": "online-state",
+					"initialState": {
+						"dataServices": null
+					}
+				},
+				{
+					"id": "layout:panel-1",
+					"kind": "workspace-layout",
+					"identifier": "layout:panel-1",
+					"initialState": {
+						"version": 0,
+						"surfaceTiles": []
+					}
+				},
+				{
+					"id": "layout:panel-2",
+					"kind": "workspace-layout",
+					"identifier": "layout:panel-2",
+					"initialState": {
+						"version": 0,
+						"surfaceTiles": []
+					}
+				}
+			],
+			"requirementRefs": [
+				{
+					"type": "issue",
+					"id": "147"
+				},
+				{
+					"type": "issue",
+					"id": "146",
+					"note": "Local-fallback lifecycle."
+				}
+			],
+			"stopConditions": [
+				{
+					"trigger": "selector-multimatch",
+					"description": "Multiple tile elements resolve the same selector — abort."
+				},
+				{
+					"trigger": "modal-unexpected",
+					"description": "An AE dialog appears that the scenario does not anticipate — abort."
+				},
+				{
+					"trigger": "state-inconsistent",
+					"description": "Persisted layout and DOM tile disagree — abort."
+				}
+			],
+			"onFailure": {
+				"capture": ["screenshot", "log-bus-tail", "persisted-state-dump"],
+				"doNot": ["send-to-network", "modify-preset-asset"]
+			},
+			"automation": {
+				"requiredCapabilities": [
+					"click",
+					"drag",
+					"selector-resolve",
+					"persisted-state-read",
+					"computed-style-snapshot",
+					"log-bus-read",
+					"panel-reload",
+					"process-restart",
+					"cross-panel-bus"
+				]
+			},
+			"postconditions": [
+				"Local fallback lifecycle completed.",
+				"Persisted state on panel-2 still references the preset."
+			],
+			"requirement_id": "boot-stability",
+			"verification_rows": ["boot-stability"]
+		},
+		{
+			"scenarioId": "SCN-FAILURE-01",
+			"featureFile": "src/shared/scenario/features/lifecycle.feature",
+			"procedureFile": "src/shared/scenario/procedures/SCN-FAILURE-01.json",
+			"scenarioName": "SCN-FAILURE-01 — cross-panel move with target write failure",
+			"title": "cross-panel move with target write failure: source must retain preset, target must remain empty, warn must be logged",
+			"description": "Same lifecycle as SCN-LIFECYCLE-01 up to the cross-panel move, but target.applyMove is injected to throw. The cross-panel move MUST fail-safe: the preset MUST stay on the source panel, the target panel MUST NOT list the preset, and a workspace-scoped warn entry MUST be emitted.",
+			"evidenceLevel": "simulated_e2e",
+			"oracles": {
+				"ui": {
+					"selector": "[data-preset-id=\"FailurePreset\"]",
+					"attribute": {
+						"name": "data-state",
+						"value": "preserved"
+					}
+				},
+				"persistence": {
+					"storageKey": "layout:panel-1",
+					"expected": {
+						"version": 1,
+						"surfaceTiles": [
+							{
+								"id": "tile-A",
+								"x": 0,
+								"y": 0,
+								"width": 2,
+								"height": 1,
+								"presetId": "FailurePreset"
+							}
+						]
+					}
+				},
+				"dual": true
+			},
+			"evidence": {
+				"screenshotSelectors": ["[data-preset-id=\"FailurePreset\"]"],
+				"computedStyleSnapshots": [
+					"computed-style: [data-preset-id=\"FailurePreset\"]"
+				],
+				"persistedStateDumps": [
+					"storage:layout:panel-1",
+					"storage:layout:panel-2"
+				],
+				"logAssertions": [
+					{
+						"scope": "workspace",
+						"minLevel": "warn",
+						"messageContains": "applyMove failed",
+						"id": "log-apply-move-failed"
+					}
+				]
+			},
+			"environment": {
+				"os": "windows",
+				"hostVersionRange": ">=26.5.0 <27.0.0",
+				"aeRequired": true,
+				"panelState": "post-onboarding",
+				"notes": "target.applyMove is injected to throw StorageError."
+			},
+			"fixtures": [
+				{
+					"id": "project:SCN-FAILURE-01",
+					"kind": "settings",
+					"identifier": "project:SCN-FAILURE-01",
+					"initialState": null,
+					"projectPath": "validation.host.aep_root/SCN-FAILURE-01.aep"
+				},
+				{
+					"id": "preset:FailurePreset",
+					"kind": "preset",
+					"identifier": "preset:FailurePreset",
+					"initialState": null
+				},
+				{
+					"id": "layout:panel-1",
+					"kind": "workspace-layout",
+					"identifier": "layout:panel-1",
+					"initialState": {
+						"version": 0,
+						"surfaceTiles": []
+					}
+				},
+				{
+					"id": "layout:panel-2",
+					"kind": "workspace-layout",
+					"identifier": "layout:panel-2",
+					"initialState": {
+						"version": 0,
+						"surfaceTiles": []
+					}
+				}
+			],
+			"requirementRefs": [
+				{
+					"type": "issue",
+					"id": "147"
+				},
+				{
+					"type": "issue",
+					"id": "146",
+					"note": "Failure-path semantics."
+				}
+			],
+			"stopConditions": [
+				{
+					"trigger": "selector-multimatch",
+					"description": "Multiple tile elements resolve the same selector — abort."
+				},
+				{
+					"trigger": "state-inconsistent",
+					"description": "Persisted layout and DOM tile disagree — abort."
+				}
+			],
+			"onFailure": {
+				"capture": ["screenshot", "log-bus-tail", "persisted-state-dump"],
+				"doNot": [
+					"send-to-network",
+					"modify-preset-asset",
+					"retry-cross-panel-move"
+				]
+			},
+			"automation": {
+				"requiredCapabilities": [
+					"click",
+					"drag",
+					"selector-resolve",
+					"persisted-state-read",
+					"computed-style-snapshot",
+					"log-bus-read",
+					"cross-panel-bus",
+					"modal-detect"
+				]
+			},
+			"postconditions": [
+				"Source panel still holds the preset (no data loss).",
+				"Target panel state did not gain the preset.",
+				"Log-bus carries the workspace-scoped warn entry."
+			],
+			"requirement_id": "boot-stability",
+			"verification_rows": ["boot-stability"]
+		},
+		{
+			"scenarioId": "SCN-BOOT-01",
+			"featureFile": "src/shared/scenario/features/boot-onboarding.feature",
+			"procedureFile": "src/shared/scenario/procedures/SCN-BOOT-01.json",
+			"scenarioName": "SCN-BOOT-01 — first boot renders SetupRequired widget",
+			"title": "first boot: SetupRequired widget → onboarding completion → reload preserves completed state",
+			"description": "A freshly-launched panel renders the SetupRequired widget until the user completes onboarding; after reload, the SetupRequired widget does not reappear.",
+			"evidenceLevel": "scenario_spec",
+			"oracles": {
+				"ui": {
+					"selector": "[data-testid=\"setup-required\"]",
+					"attribute": {
+						"name": "data-state",
+						"value": "absent"
+					}
+				},
+				"persistence": {
+					"storageKey": "storage:onboarding",
+					"expected": "completed"
+				},
+				"dual": true
+			},
+			"evidence": {
+				"screenshotSelectors": ["[data-testid=\"setup-required\"]"],
+				"computedStyleSnapshots": [
+					"computed-style: [data-testid=\"setup-required\"]"
+				],
+				"persistedStateDumps": ["storage:onboarding"],
+				"logAssertions": []
+			},
+			"environment": {
+				"os": "windows",
+				"hostVersionRange": ">=26.5.0 <27.0.0",
+				"aeRequired": true,
+				"panelState": "first-boot"
+			},
+			"fixtures": [
+				{
+					"id": "project:SCN-BOOT-01",
+					"kind": "settings",
+					"identifier": "project:SCN-BOOT-01",
+					"initialState": null,
+					"projectPath": "validation.host.aep_root/SCN-BOOT-01.aep"
+				},
+				{
+					"id": "storage:onboarding",
+					"kind": "settings",
+					"identifier": "storage:onboarding",
+					"initialState": null
+				}
+			],
+			"requirementRefs": [
+				{
+					"type": "issue",
+					"id": "147"
+				},
+				{
+					"type": "adr",
+					"id": "docs/architecture/onboarding.md"
+				}
+			],
+			"stopConditions": [
+				{
+					"trigger": "selector-missing",
+					"description": "SetupRequired widget fails to render — abort."
+				},
+				{
+					"trigger": "state-inconsistent",
+					"description": "Persisted onboarding flag and DOM disagree — abort."
+				}
+			],
+			"onFailure": {
+				"capture": ["screenshot", "log-bus-tail", "persisted-state-dump"],
+				"doNot": ["send-to-network", "modify-panel-state"]
+			},
+			"automation": {
+				"requiredCapabilities": [
+					"click",
+					"selector-resolve",
+					"persisted-state-read",
+					"computed-style-snapshot",
+					"panel-reload"
+				]
+			},
+			"postconditions": [
+				"storage:onboarding equals 'completed'.",
+				"SetupRequired widget does not reappear after reload."
+			],
+			"requirement_id": "boot-stability",
+			"verification_rows": ["boot-stability"]
+		},
+		{
+			"scenarioId": "SCN-CATALOG-01",
+			"featureFile": "src/shared/scenario/features/catalog-presets.feature",
+			"procedureFile": "src/shared/scenario/procedures/SCN-CATALOG-01.json",
+			"scenarioName": "SCN-CATALOG-01 — catalog CRUD round-trip",
+			"title": "catalog CRUD round-trip: add → rename → delete keeps catalog list and persisted state in sync",
+			"description": "Adding, renaming, and deleting a catalog entry keeps the catalog widget and storage:catalog-list in sync at every step.",
+			"evidenceLevel": "scenario_spec",
+			"oracles": {
+				"persistence": {
+					"storageKey": "storage:catalog-list",
+					"expected": []
+				},
+				"dual": false
+			},
+			"evidence": {
+				"screenshotSelectors": ["[data-directory-browser-body]"],
+				"computedStyleSnapshots": [
+					"computed-style: [data-directory-browser-entry][data-entry-kind=\"dir\"]"
+				],
+				"persistedStateDumps": ["storage:catalog-list"],
+				"logAssertions": []
+			},
+			"environment": {
+				"os": "windows",
+				"hostVersionRange": ">=26.5.0 <27.0.0",
+				"aeRequired": true,
+				"panelState": "post-onboarding"
+			},
+			"fixtures": [
+				{
+					"id": "project:SCN-CATALOG-01",
+					"kind": "settings",
+					"identifier": "project:SCN-CATALOG-01",
+					"initialState": null,
+					"projectPath": "validation.host.aep_root/SCN-CATALOG-01.aep"
+				},
+				{
+					"id": "storage:catalog-list",
+					"kind": "catalog-entry",
+					"identifier": "storage:catalog-list",
+					"initialState": []
+				}
+			],
+			"requirementRefs": [
+				{
+					"type": "issue",
+					"id": "147"
+				},
+				{
+					"type": "issue",
+					"id": "130",
+					"note": "Catalog and preset CRUD."
+				}
+			],
+			"stopConditions": [
+				{
+					"trigger": "selector-multimatch",
+					"description": "Multiple catalog rows resolve the same selector — abort."
+				},
+				{
+					"trigger": "state-inconsistent",
+					"description": "Catalog widget and storage:catalog-list disagree — abort."
+				}
+			],
+			"onFailure": {
+				"capture": ["screenshot", "log-bus-tail", "persisted-state-dump"],
+				"doNot": ["send-to-network", "modify-preset-asset"]
+			},
+			"automation": {
+				"requiredCapabilities": [
+					"click",
+					"type",
+					"selector-resolve",
+					"persisted-state-read",
+					"computed-style-snapshot"
+				]
+			},
+			"postconditions": [
+				"Catalog list is empty.",
+				"storage:catalog-list is an empty array."
+			],
+			"requirement_id": "catalog-crud",
+			"verification_rows": ["catalog-crud"]
+		},
+		{
+			"scenarioId": "SCN-PRESET-CRUD-01",
+			"featureFile": "src/shared/scenario/features/catalog-presets.feature",
+			"procedureFile": "src/shared/scenario/procedures/SCN-PRESET-CRUD-01.json",
+			"scenarioName": "SCN-PRESET-CRUD-01 — preset CRUD round-trip",
+			"title": "preset CRUD round-trip: create → edit body → delete preserves asset-on-disk and blocks ghost presets",
+			"description": "Creating, editing, and deleting a local preset preserves the asset on disk at every step. Ghost-preset creation is refused by the asset-existence assertion.",
+			"evidenceLevel": "scenario_spec",
+			"oracles": {
+				"persistence": {
+					"storageKey": "preset:QuickPreset",
+					"expected": null
+				},
+				"dual": false
+			},
+			"evidence": {
+				"screenshotSelectors": [
+					"[data-directory-browser-entry][data-preset-id=\"QuickPreset\"]"
+				],
+				"computedStyleSnapshots": [
+					"computed-style: [data-directory-browser-entry][data-preset-id=\"QuickPreset\"]"
+				],
+				"persistedStateDumps": ["preset:QuickPreset", "asset:QuickPreset"],
+				"logAssertions": []
+			},
+			"environment": {
+				"os": "windows",
+				"hostVersionRange": ">=26.5.0 <27.0.0",
+				"aeRequired": true,
+				"panelState": "post-onboarding"
+			},
+			"fixtures": [
+				{
+					"id": "project:SCN-PRESET-CRUD-01",
+					"kind": "settings",
+					"identifier": "project:SCN-PRESET-CRUD-01",
+					"initialState": null,
+					"projectPath": "validation.host.aep_root/SCN-PRESET-CRUD-01.aep"
+				},
+				{
+					"id": "preset:QuickPreset",
+					"kind": "preset",
+					"identifier": "preset:QuickPreset",
+					"initialState": null
+				},
+				{
+					"id": "asset:QuickPreset",
+					"kind": "preset",
+					"identifier": "asset:QuickPreset",
+					"initialState": null
+				}
+			],
+			"requirementRefs": [
+				{
+					"type": "issue",
+					"id": "147"
+				},
+				{
+					"type": "issue",
+					"id": "130",
+					"note": "Preset CRUD + ghost-preset block."
+				}
+			],
+			"stopConditions": [
+				{
+					"trigger": "fixture-missing",
+					"description": "Asset file is absent before the create write completes — abort."
+				},
+				{
+					"trigger": "state-inconsistent",
+					"description": "Catalog row and storage:preset:QuickPreset disagree — abort."
+				}
+			],
+			"onFailure": {
+				"capture": ["screenshot", "log-bus-tail", "persisted-state-dump"],
+				"doNot": ["send-to-network", "leave-asset-on-disk"]
+			},
+			"automation": {
+				"requiredCapabilities": [
+					"click",
+					"type",
+					"selector-resolve",
+					"persisted-state-read",
+					"computed-style-snapshot"
+				]
+			},
+			"postconditions": [
+				"storage:preset:QuickPreset is null.",
+				"Asset file is removed."
+			],
+			"requirement_id": "catalog-crud",
+			"verification_rows": ["catalog-crud"]
+		},
+		{
+			"scenarioId": "SCN-GROUPS-01",
+			"featureFile": "src/shared/scenario/features/groups.feature",
+			"procedureFile": "src/shared/scenario/procedures/SCN-GROUPS-01.json",
+			"scenarioName": "SCN-GROUPS-01 — group creation and ungroup",
+			"title": "group CRUD round-trip: group → rename → ungroup preserves member presets",
+			"description": "Selecting two presets and grouping them creates a group node in the catalog; renaming and ungrouping round-trips cleanly.",
+			"evidenceLevel": "scenario_spec",
+			"oracles": {
+				"persistence": {
+					"storageKey": "storage:catalog-list",
+					"expected": [
+						{
+							"name": "PresetA"
+						},
+						{
+							"name": "PresetB"
+						}
+					]
+				},
+				"dual": false
+			},
+			"evidence": {
+				"screenshotSelectors": ["[data-directory-browser-body]"],
+				"computedStyleSnapshots": [
+					"computed-style: [data-directory-browser-entry][data-entry-kind=\"dir\"]"
+				],
+				"persistedStateDumps": ["storage:catalog-list"],
+				"logAssertions": []
+			},
+			"environment": {
+				"os": "windows",
+				"hostVersionRange": ">=26.5.0 <27.0.0",
+				"aeRequired": true,
+				"panelState": "post-onboarding"
+			},
+			"fixtures": [
+				{
+					"id": "project:SCN-GROUPS-01",
+					"kind": "settings",
+					"identifier": "project:SCN-GROUPS-01",
+					"initialState": null,
+					"projectPath": "validation.host.aep_root/SCN-GROUPS-01.aep"
+				},
+				{
+					"id": "preset:PresetA",
+					"kind": "preset",
+					"identifier": "preset:PresetA",
+					"initialState": {
+						"id": "PresetA",
+						"source": "local",
+						"body": ""
+					}
+				},
+				{
+					"id": "preset:PresetB",
+					"kind": "preset",
+					"identifier": "preset:PresetB",
+					"initialState": {
+						"id": "PresetB",
+						"source": "local",
+						"body": ""
+					}
+				}
+			],
+			"requirementRefs": [
+				{
+					"type": "issue",
+					"id": "147"
+				},
+				{
+					"type": "issue",
+					"id": "130",
+					"note": "Group CRUD semantics."
+				}
+			],
+			"stopConditions": [
+				{
+					"trigger": "selector-multimatch",
+					"description": "Multiple group rows resolve the same selector — abort."
+				},
+				{
+					"trigger": "state-inconsistent",
+					"description": "Group widget and storage:catalog-list disagree — abort."
+				}
+			],
+			"onFailure": {
+				"capture": ["screenshot", "log-bus-tail", "persisted-state-dump"],
+				"doNot": ["send-to-network", "modify-preset-asset"]
+			},
+			"automation": {
+				"requiredCapabilities": [
+					"click",
+					"selector-resolve",
+					"persisted-state-read",
+					"computed-style-snapshot"
+				]
+			},
+			"postconditions": [
+				"storage:catalog-list contains PresetA and PresetB.",
+				"'My Group' is removed."
+			],
+			"requirement_id": "catalog-crud",
+			"verification_rows": ["catalog-crud"]
+		},
+		{
+			"scenarioId": "SCN-HOST-01",
+			"featureFile": "src/shared/scenario/features/host.feature",
+			"procedureFile": "src/shared/scenario/procedures/SCN-HOST-01.json",
+			"scenarioName": "SCN-HOST-01 — open ty-plus CEP Settings dialog through the panel's workspace shell",
+			"title": "host bridge: panel-originated openSettings dispatch mounts the ty-plus CEP Settings dialog (presence/absence oracle)",
+			"description": "A panel-originated click on the host-menu Settings item dispatches openSettings through the canonical host bridge; the panel MOUNTS the ty-plus CEP Settings dialog (app.ty-plus.dialog-settings) in front of the home screen, then UNMOUNTS it on close. Verification anchors on the panel-state-oracle via the [data-settings-sidebar] DOM presence (open) and absence (closed) — NOT on a synthetic data-state attribute, because production code UNMOUNTS the dialog rather than toggling data-state. AE's native Settings dialog has no CEP-side handle and is intentionally out of scope; the host bridge here is the panel-originated openSettings dispatch into the CEP host-mirror. The dialog open path emits a modeless-scoped log entry from src/management/ae/cep/entry/dialog-bootstrap.tsx::dialogBootstrapLog; the home screen anchor is [data-ty-workspace-panel-root] (src/management/panel/Main.tsx:104).",
+			"evidenceLevel": "scenario_spec",
+			"oracles": {
+				"ui": {
+					"selector": "[data-settings-sidebar]",
+					"variant": {
+						"kind": "absence"
+					}
+				},
+				"dual": false
+			},
+			"evidence": {
+				"screenshotSelectors": [
+					"screenshot:settings-dialog-open",
+					"screenshot:settings-dialog-closed",
+					"[data-settings-sidebar]",
+					"[data-ty-workspace-panel-root]"
+				],
+				"computedStyleSnapshots": ["computed-style: [data-settings-sidebar]"],
+				"persistedStateDumps": [],
+				"logAssertions": [
+					{
+						"scope": "modeless",
+						"minLevel": "info",
+						"messageContains": "workspace shell dialog boot started",
+						"id": "log-modeless-shell-dialog-boot"
+					}
+				]
+			},
+			"environment": {
+				"os": "windows",
+				"hostVersionRange": ">=26.5.0 <27.0.0",
+				"aeRequired": true,
+				"panelState": "post-onboarding"
+			},
+			"fixtures": [
+				{
+					"id": "project:SCN-HOST-01",
+					"kind": "settings",
+					"identifier": "project:SCN-HOST-01",
+					"initialState": null,
+					"projectPath": "validation.host.aep_root/SCN-HOST-01.aep"
+				},
+				{
+					"id": "host-bridge",
+					"kind": "settings",
+					"identifier": "host-bridge",
+					"initialState": {
+						"method": null
+					}
+				}
+			],
+			"requirementRefs": [
+				{
+					"type": "issue",
+					"id": "147"
+				},
+				{
+					"type": "issue",
+					"id": "130",
+					"note": "Host-bridge canonical pipeline."
+				}
+			],
+			"stopConditions": [
+				{
+					"trigger": "modal-detect",
+					"description": "An unexpected AE modal is rendered — abort."
+				},
+				{
+					"trigger": "capability-missing",
+					"description": "The host bridge is not registered — abort."
+				}
+			],
+			"onFailure": {
+				"capture": ["screenshot", "log-bus-tail"],
+				"doNot": ["send-to-network", "dismiss-modal"]
+			},
+			"automation": {
+				"requiredCapabilities": [
+					"click",
+					"selector-resolve",
+					"computed-style-snapshot",
+					"log-bus-read",
+					"modal-detect",
+					"persisted-state-read"
+				]
+			},
+			"postconditions": [
+				"ty-plus CEP Settings dialog is no longer mounted (panel-state-oracle absence variant on [data-settings-sidebar]).",
+				"No modal is rendered on the panel."
+			],
+			"requirement_id": "host-bridge",
+			"verification_rows": ["host-bridge"]
+		},
+		{
+			"scenarioId": "SCN-SETTINGS-01",
+			"featureFile": "src/shared/scenario/features/settings.feature",
+			"procedureFile": "src/shared/scenario/procedures/SCN-SETTINGS-01.json",
+			"scenarioName": "SCN-SETTINGS-01 — settings dialog round-trip",
+			"title": "settings dialog round-trip: open → toggle → save → close persists the new value",
+			"description": "Opening the settings dialog, toggling 'autoVerify' to true, saving, and closing persists the new value to storage:settings and the dialog is no longer rendered.",
+			"evidenceLevel": "scenario_spec",
+			"oracles": {
+				"persistence": {
+					"storageKey": "storage:settings",
+					"expected": {
+						"autoVerify": "true"
+					}
+				},
+				"dual": false
+			},
+			"evidence": {
+				"screenshotSelectors": ["[data-settings-sidebar]"],
+				"computedStyleSnapshots": [
+					"computed-style: [data-settings-sidebar]",
+					"computed-style: [data-settings-section=\"autoVerify\"]"
+				],
+				"persistedStateDumps": ["storage:settings"],
+				"logAssertions": []
+			},
+			"environment": {
+				"os": "windows",
+				"hostVersionRange": ">=26.5.0 <27.0.0",
+				"aeRequired": true,
+				"panelState": "post-onboarding"
+			},
+			"fixtures": [
+				{
+					"id": "project:SCN-SETTINGS-01",
+					"kind": "settings",
+					"identifier": "project:SCN-SETTINGS-01",
+					"initialState": null,
+					"projectPath": "validation.host.aep_root/SCN-SETTINGS-01.aep"
+				},
+				{
+					"id": "storage:settings",
+					"kind": "settings",
+					"identifier": "storage:settings",
+					"initialState": {
+						"autoVerify": null
+					}
+				}
+			],
+			"requirementRefs": [
+				{
+					"type": "issue",
+					"id": "147"
+				},
+				{
+					"type": "issue",
+					"id": "130",
+					"note": "Settings dialog persistence."
+				}
+			],
+			"stopConditions": [
+				{
+					"trigger": "selector-missing",
+					"description": "Settings dialog fails to render — abort."
+				},
+				{
+					"trigger": "state-inconsistent",
+					"description": "Toggle preview and persisted setting disagree — abort."
+				}
+			],
+			"onFailure": {
+				"capture": ["screenshot", "log-bus-tail", "persisted-state-dump"],
+				"doNot": ["send-to-network"]
+			},
+			"automation": {
+				"requiredCapabilities": [
+					"click",
+					"selector-resolve",
+					"persisted-state-read",
+					"computed-style-snapshot",
+					"modal-detect"
+				]
+			},
+			"postconditions": [
+				"storage:settings contains 'autoVerify' equal to 'true'.",
+				"Dialog is no longer rendered."
+			],
+			"requirement_id": "settings-dialog",
+			"verification_rows": ["settings-dialog"]
+		},
+		{
+			"scenarioId": "SCN-DEGRADED-01",
+			"featureFile": "src/shared/scenario/features/online-degraded.feature",
+			"procedureFile": "src/shared/scenario/procedures/SCN-DEGRADED-01.json",
+			"scenarioName": "SCN-DEGRADED-01 — degraded cloud switches the panel to local fallback",
+			"title": "degraded cloud: gateway failure flips the panel to local fallback without blocking the user",
+			"description": "When the cloud gateway becomes unreachable after boot, the cloud-status widget switches to 'degraded' and a preset creation is routed through the local fallback path.",
+			"evidenceLevel": "scenario_spec",
+			"oracles": {
+				"persistence": {
+					"storageKey": "preset:FallbackPreset",
+					"expected": {
+						"id": "FallbackPreset",
+						"source": "local",
+						"body": "app.alert(\"fallback\")"
+					}
+				},
+				"dual": false
+			},
+			"evidence": {
+				"screenshotSelectors": ["[data-preset-gallery]"],
+				"computedStyleSnapshots": ["computed-style: [data-preset-gallery]"],
+				"persistedStateDumps": ["preset:FallbackPreset"],
+				"logAssertions": [
+					{
+						"scope": "online",
+						"minLevel": "warn",
+						"messageContains": "gateway degraded",
+						"id": "log-gateway-degraded"
+					}
+				]
+			},
+			"environment": {
+				"os": "windows",
+				"hostVersionRange": ">=26.5.0 <27.0.0",
+				"aeRequired": true,
+				"panelState": "post-onboarding",
+				"notes": "Network probe failure mid-scenario."
+			},
+			"fixtures": [
+				{
+					"id": "project:SCN-DEGRADED-01",
+					"kind": "settings",
+					"identifier": "project:SCN-DEGRADED-01",
+					"initialState": null,
+					"projectPath": "validation.host.aep_root/SCN-DEGRADED-01.aep"
+				},
+				{
+					"id": "preset:FallbackPreset",
+					"kind": "preset",
+					"identifier": "preset:FallbackPreset",
+					"initialState": null
+				},
+				{
+					"id": "online-state",
+					"kind": "online-state",
+					"identifier": "online-state",
+					"initialState": {
+						"dataServices": "reachable"
+					}
+				}
+			],
+			"requirementRefs": [
+				{
+					"type": "issue",
+					"id": "147"
+				},
+				{
+					"type": "issue",
+					"id": "146",
+					"note": "Local fallback path."
+				}
+			],
+			"stopConditions": [
+				{
+					"trigger": "log-error-spike",
+					"description": "Multiple online-scope errors without the degraded-switch log entry — abort."
+				},
+				{
+					"trigger": "state-inconsistent",
+					"description": "Cloud-status widget and online-state disagree — abort."
+				}
+			],
+			"onFailure": {
+				"capture": ["screenshot", "log-bus-tail", "persisted-state-dump"],
+				"doNot": ["retry-online-write", "modify-preset-asset"]
+			},
+			"automation": {
+				"requiredCapabilities": [
+					"click",
+					"selector-resolve",
+					"persisted-state-read",
+					"computed-style-snapshot",
+					"log-bus-read"
+				]
+			},
+			"postconditions": [
+				"storage:preset:FallbackPreset contains the preset object.",
+				"Cloud gateway reports 'degraded' state."
+			],
+			"requirement_id": "online-degraded",
+			"verification_rows": ["online-degraded"]
+		},
+		{
+			"scenarioId": "SCN-DIAGNOSTICS-01",
+			"featureFile": "src/shared/scenario/features/diagnostics.feature",
+			"procedureFile": "src/shared/scenario/procedures/SCN-DIAGNOSTICS-01.json",
+			"scenarioName": "SCN-DIAGNOSTICS-01 — diagnostics capture bundle",
+			"title": "diagnostics capture bundle: log-bus tail + persisted-state dump + computed-style snapshot",
+			"description": "Triggering diagnostics capture produces a deterministic bundle of evidence (log-bus tail, persisted-state dump, computed-style snapshot) and the diagnostics viewer lists the captured entries.",
+			"evidenceLevel": "scenario_spec",
+			"oracles": {
+				"persistence": {
+					"storageKey": "storage:diagnostics",
+					"expected": {
+						"capturedAt": "TIMESTAMP",
+						"logBusTail": ["..."],
+						"persistedStateDump": ["..."],
+						"computedStyleSnapshots": ["..."]
+					}
+				},
+				"dual": false
+			},
+			"evidence": {
+				"screenshotSelectors": ["[data-debug-msg-id]"],
+				"computedStyleSnapshots": ["computed-style: [data-debug-msg-id]"],
+				"persistedStateDumps": ["storage:diagnostics"],
+				"logAssertions": []
+			},
+			"environment": {
+				"os": "windows",
+				"hostVersionRange": ">=26.5.0 <27.0.0",
+				"aeRequired": true,
+				"panelState": "post-onboarding"
+			},
+			"fixtures": [
+				{
+					"id": "project:SCN-DIAGNOSTICS-01",
+					"kind": "settings",
+					"identifier": "project:SCN-DIAGNOSTICS-01",
+					"initialState": null,
+					"projectPath": "validation.host.aep_root/SCN-DIAGNOSTICS-01.aep"
+				},
+				{
+					"id": "storage:diagnostics",
+					"kind": "settings",
+					"identifier": "storage:diagnostics",
+					"initialState": null
+				}
+			],
+			"requirementRefs": [
+				{
+					"type": "issue",
+					"id": "147"
+				},
+				{
+					"type": "runbook",
+					"id": "docs/architecture/diagnostics.md"
+				}
+			],
+			"stopConditions": [
+				{
+					"trigger": "selector-missing",
+					"description": "Diagnostics viewer fails to render — abort."
+				},
+				{
+					"trigger": "state-inconsistent",
+					"description": "Viewer entry count and bundle entries disagree — abort."
+				}
+			],
+			"onFailure": {
+				"capture": ["screenshot", "log-bus-tail", "persisted-state-dump"],
+				"doNot": ["send-to-network", "modify-persisted-state"]
+			},
+			"automation": {
+				"requiredCapabilities": [
+					"click",
+					"selector-resolve",
+					"persisted-state-read",
+					"computed-style-snapshot",
+					"log-bus-read"
+				]
+			},
+			"postconditions": [
+				"storage:diagnostics contains the bundle.",
+				"Diagnostics viewer lists the captured entries."
+			],
+			"requirement_id": "diagnostics",
+			"verification_rows": ["diagnostics"]
+		},
+		{
+			"scenarioId": "SCN-RUNTIME-01",
+			"featureFile": "src/shared/scenario/features/runtime-lifecycle.feature",
+			"procedureFile": "src/shared/scenario/procedures/SCN-RUNTIME-01.json",
+			"scenarioName": "SCN-RUNTIME-01 — host bundle reuse and worker attempt correlation",
+			"title": "host bundle reuse and worker attempt correlation: one probe, one load, one logical job",
+			"description": "Opening the Debug Console surfaces the host bundle action this panel run performed without starting a probe, a bundle load, or a worker spawn of its own, and a follow-up worker operation shows a queued attempt whose spawned child carries the same logical operation id — so four concurrent children are distinguishable from one job dispatched four times.",
+			"evidenceLevel": "scenario_spec",
+			"oracles": {
+				"ui": {
+					"selector": "[data-ty-workspace-panel-root]",
+					"variant": {
+						"kind": "presence"
+					}
+				},
+				"dual": false
+			},
+			"evidence": {
+				"screenshotSelectors": ["[data-debug-msg-id]"],
+				"computedStyleSnapshots": ["computed-style: [data-debug-msg-id]"],
+				"persistedStateDumps": ["storage:diagnostics"],
+				"logAssertions": [
+					{
+						"scope": "host-bridge",
+						"minLevel": "info",
+						"messageContains": "host bundle",
+						"id": "log-host-bundle-action"
+					},
+					{
+						"scope": "operation-worker",
+						"minLevel": "info",
+						"messageContains": "operation queued",
+						"id": "log-scheduler-enqueue"
+					},
+					{
+						"scope": "operation-worker",
+						"minLevel": "info",
+						"messageContains": "operation attempt started",
+						"id": "log-scheduler-start"
+					},
+					{
+						"scope": "operation-worker",
+						"minLevel": "info",
+						"messageContains": "spawning worker child",
+						"id": "log-worker-spawn"
+					}
+				]
+			},
+			"environment": {
+				"os": "windows",
+				"hostVersionRange": ">=26.5.0 <27.0.0",
+				"aeRequired": true,
+				"panelState": "post-onboarding"
+			},
+			"fixtures": [
+				{
+					"id": "project:SCN-RUNTIME-01",
+					"kind": "settings",
+					"identifier": "project:SCN-RUNTIME-01",
+					"initialState": null,
+					"projectPath": "validation.host.aep_root/SCN-RUNTIME-01.aep"
+				},
+				{
+					"id": "storage:diagnostics",
+					"kind": "settings",
+					"identifier": "storage:diagnostics",
+					"initialState": null
+				}
+			],
+			"requirementRefs": [
+				{
+					"type": "issue",
+					"id": "158"
+				},
+				{
+					"type": "issue",
+					"id": "138",
+					"note": "Debug Console contract: retained replay, no mount-time probe."
+				}
+			],
+			"stopConditions": [
+				{
+					"trigger": "selector-missing",
+					"description": "Debug Console or the preset library control is not mounted — abort."
+				},
+				{
+					"trigger": "log-error-spike",
+					"description": "Host bundle load failures repeat within one panel run — abort."
+				}
+			],
+			"onFailure": {
+				"capture": ["screenshot", "log-bus-tail", "persisted-state-dump"],
+				"doNot": ["send-to-network", "modify-persisted-state"]
+			},
+			"automation": {
+				"requiredCapabilities": [
+					"click",
+					"selector-resolve",
+					"persisted-state-read",
+					"computed-style-snapshot",
+					"log-bus-read"
+				]
+			},
+			"postconditions": [
+				"The Debug Console lists the host bundle action for this panel run.",
+				"One queued operation maps to one spawned child through the shared logical operation id."
+			],
+			"requirement_id": "runtime-lifecycle",
+			"verification_rows": ["runtime-lifecycle"]
+		},
+		{
+			"scenarioId": "SCN-AUTHOR-01",
+			"featureFile": "src/shared/scenario/features/preset-authoring.feature",
+			"procedureFile": "src/shared/scenario/procedures/SCN-AUTHOR-01.json",
+			"scenarioName": "SCN-AUTHOR-01 — preset authoring under protected AE Support Files",
+			"title": "preset authoring under protected AE Support Files: one permission failure escalates to the privileged write and the catalog commit happens only after read-back verification",
+			"description": "Authoring a preset into the protected AE Support Files root fails the normal native write with a permission error; the authoring orchestration escalates once to the privileged write adapter, verifies the asset by read-back, and only then commits the catalog record, so a dismissed elevation prompt leaves no catalog or workspace record behind.",
+			"evidenceLevel": "scenario_spec",
+			"oracles": {
+				"persistence": {
+					"storageKey": "preset:AuthoredPreset",
+					"expected": null
+				},
+				"dual": false
+			},
+			"evidence": {
+				"screenshotSelectors": [
+					"[data-directory-browser-entry][data-preset-id=\"AuthoredPreset\"]"
+				],
+				"computedStyleSnapshots": [
+					"computed-style: [data-directory-browser-entry][data-preset-id=\"AuthoredPreset\"]"
+				],
+				"persistedStateDumps": [
+					"preset:AuthoredPreset",
+					"asset:AuthoredPreset"
+				],
+				"logAssertions": [
+					{
+						"scope": "preset-execution",
+						"minLevel": "info",
+						"messageContains": "[ty-plus:preset-authoring] preset.asset.write",
+						"id": "log-preset-authoring-write"
+					}
+				]
+			},
+			"environment": {
+				"os": "windows",
+				"hostVersionRange": ">=26.5.0 <27.0.0",
+				"aeRequired": true,
+				"panelState": "post-onboarding"
+			},
+			"fixtures": [
+				{
+					"id": "project:SCN-AUTHOR-01",
+					"kind": "settings",
+					"identifier": "project:SCN-AUTHOR-01",
+					"initialState": null,
+					"projectPath": "validation.host.aep_root/SCN-AUTHOR-01.aep"
+				},
+				{
+					"id": "preset:AuthoredPreset",
+					"kind": "preset",
+					"identifier": "preset:AuthoredPreset",
+					"initialState": null
+				},
+				{
+					"id": "asset:AuthoredPreset",
+					"kind": "preset",
+					"identifier": "asset:AuthoredPreset",
+					"initialState": null
+				}
+			],
+			"requirementRefs": [
+				{
+					"type": "issue",
+					"id": "147"
+				},
+				{
+					"type": "issue",
+					"id": "160",
+					"note": "Preset authoring privileged-write path under protected roots."
+				}
+			],
+			"stopConditions": [
+				{
+					"trigger": "modal-unexpected",
+					"description": "An unexpected modal blocks the authoring dialog mid-save — abort."
+				},
+				{
+					"trigger": "state-inconsistent",
+					"description": "A catalog record exists without a verified asset on disk — abort."
+				},
+				{
+					"trigger": "capability-missing",
+					"description": "The runner cannot confirm the privileged write outcome — abort."
+				}
+			],
+			"onFailure": {
+				"capture": ["screenshot", "log-bus-tail", "persisted-state-dump"],
+				"doNot": ["send-to-network", "modify-preset-asset"]
+			},
+			"automation": {
+				"requiredCapabilities": [
+					"click",
+					"type",
+					"selector-resolve",
+					"persisted-state-read",
+					"computed-style-snapshot",
+					"log-bus-read"
+				]
+			},
+			"postconditions": [
+				"asset:AuthoredPreset is removed during cleanup.",
+				"storage:preset:AuthoredPreset is null."
+			],
+			"requirement_id": "preset-authoring",
+			"verification_rows": ["preset-authoring"]
+		}
+	]
+}

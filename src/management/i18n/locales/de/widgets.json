@@ -1,0 +1,269 @@
+{
+	"selector": {
+		"search": "Widgets suchen",
+		"addWidget": "Widget hinzufügen",
+		"searchPlaceholder": "Nach Name oder Beschreibung suchen…",
+		"hintShortcuts": "Pfeile: bewegen · Enter (Suche): hinzufügen · Doppelklick: hinzufügen · Esc: schließen",
+		"listView": "Listenansicht",
+		"iconView": "Kartenansicht",
+		"fieldsetLegend": "Widget-Browser-Layout",
+		"descriptions": {
+			"easing": "Easing-Kurven für Presets und Layer-Animation bearbeiten und anwenden.",
+			"menu": "Arbeitsbereich-Befehle, Layout-Aktionen und Dialoge von einer Kachel aus öffnen.",
+			"align": "Ausgewählte Presets oder Layer auf gemeinsame Positionen im Raster ausrichten.",
+			"anchor-point": "Benannte Anker für Layout-Referenzen und Snapping-Workflows platzieren.",
+			"layout-lock": "Versehentliche Bewegungen verhindern, während Sie das Arbeitsbereich-Raster anordnen.",
+			"info": "Preset-Metadaten, Pfade und Status in einer breiten Übersichts-Kachel anzeigen.",
+			"quick-actions": "Skripte, Effekte und Dateiaktionen von einer kompakten Befehlspalette aus ausführen.",
+			"directory-browser": "Festplattenordner und Presets innerhalb des Panels durchsuchen.",
+			"font-viewer": "Schriftfamilien, Stile und Beispieltext in der Arbeitsfläche in der Vorschau anzeigen."
+		}
+	},
+	"types": {
+		"align": "Ausrichten",
+		"preset": "Preset-Auswahl"
+	},
+	"categories": {
+		"core": "Kern",
+		"utility": "Werkzeug",
+		"media": "Medien",
+		"phase4": "Experimentell"
+	},
+	"search": {
+		"name": "Suche"
+	},
+	"easing": {
+		"name": "Easing",
+		"apply": "Apply",
+		"copyFromSelection": "Copy from selection",
+		"reverse": "Reverse",
+		"mode": {
+			"curve": "Curve",
+			"loop": "Loop",
+			"bounce": "Bounce",
+			"elastic": "Elastic"
+		},
+		"loop": {
+			"cycles": "Zyklen",
+			"decrement": "Zyklen verringern",
+			"increment": "Zyklen erhöhen"
+		},
+		"options": {
+			"mode": "Mode",
+			"grid": "Grid",
+			"label": "Label"
+		},
+		"background": {
+			"dots": "Dots",
+			"grid": "Grid"
+		},
+		"label": {
+			"none": "None"
+		},
+		"applyMode": {
+			"single": "Single",
+			"pair": "Each"
+		},
+		"status": {
+			"applying": "Applying",
+			"applied": "Applied",
+			"failed": "Failed"
+		},
+		"presets": {
+			"linear": "Linear",
+			"easeOut": "Ease out",
+			"easeIn": "Ease in",
+			"easeInOut": "Ease in/out"
+		}
+	},
+	"menu": {
+		"name": "Menü",
+		"createPreset": "Voreinstellung erstellen",
+		"addWidget": "Widget hinzufügen",
+		"saveLayout": "Layout speichern",
+		"reload": "Neu laden",
+		"lockLayout": "Layout sperren",
+		"unlockLayout": "Layout entsperren",
+		"packToTopLeft": "Nach oben-links packen",
+		"background": "Hintergrund...",
+		"undo": "Rückgängig",
+		"redo": "Wiederholen",
+		"selectedPresets": "Ausgewählte Voreinstellungen",
+		"groupSelectedItems": "Ausgewählte Elemente gruppieren",
+		"moveToPanel": "In Panel verschieben",
+		"deleteSelectedPresets": "{{count}} Voreinstellungen löschen",
+		"layout": "Layout"
+	},
+	"align": {
+		"name": "Ausrichten"
+	},
+	"anchorPoint": {
+		"name": "Anchor point"
+	},
+	"info": {
+		"name": "Info"
+	},
+	"layoutLock": {
+		"name": "Layout lock"
+	},
+	"projectInfo": {
+		"name": "Projekt-Info"
+	},
+	"quickActions": {
+		"name": "Quick actions",
+		"palettePlaceholder": "Search presets, scripts, plugins, effects, and files under roots…",
+		"paletteEmpty": "No matching presets or effects.",
+		"effectRowKind": "Effect",
+		"rootFileRowKind": "Disk"
+	},
+	"fxSearch": "FX search",
+	"directoryBrowser": {
+		"name": "Verzeichnis-Browser",
+		"anchors": {
+			"defaultUserData": "Benutzerdaten",
+			"presetRoot": "Voreinstellungen",
+			"scriptRoot": "Skripte",
+			"pluginRoot": "Plug-ins"
+		},
+		"actions": {
+			"importFailed": "Import fehlgeschlagen: {{message}}",
+			"runSuccess": "Ausgeführt: {{presetId}}",
+			"runFailed": "Fehlgeschlagen: {{message}}",
+			"run": "Ausführen",
+			"importRun": "Importieren & Ausführen",
+			"openFolder": "Ordner öffnen",
+			"openEntry": "Öffnen",
+			"importOnly": "Importieren",
+			"selectFile": "Auswählen",
+			"deselect": "Auswahl aufheben",
+			"runBlockedMissingAsset": "Das Preset-Asset fehlt auf der Festplatte — Ausführung ist deaktiviert."
+		},
+		"path": {
+			"pickFolderPrompt": "Ordner auswählen",
+			"pickFolderAria": "Ordner durchsuchen",
+			"inputPlaceholder": "Pfad eingeben…",
+			"inputTitle": "Enter zum Navigieren"
+		},
+		"pathDisplay": {
+			"anchorTemplate": "{rootLabel}/{relativePath}"
+		},
+		"search": {
+			"placeholderCatalog": "Voreinstellungen suchen…",
+			"placeholderFolder": "Dateien suchen…",
+			"resultsCount": "{{count}} Elemente",
+			"resultsCountFiltered": "{{count}} Treffer"
+		},
+		"thumbnail": {
+			"loading": "Vorschau wird geladen...",
+			"error": "Vorschau nicht verfügbar"
+		},
+		"toolbar": {
+			"detailedFilters": "Filter",
+			"viewModeLegend": "Ansichtsmodus",
+			"listView": "Listenansicht",
+			"iconView": "Symbolansicht"
+		},
+		"browseMode": {
+			"filesystem": "Dateien",
+			"anchors": "Anker",
+			"presetsCatalog": "Katalog"
+		},
+		"browseModeSelectAria": "Browse-Modus",
+		"catalog": {
+			"ungroupedHeading": "Nicht gruppiert"
+		},
+		"filters": {
+			"typeList": "Typ:",
+			"quickFilterAria": "Schnellfilter",
+			"optionAll": "Alle",
+			"optionMedia": "Medien",
+			"optionPresets": "Voreinstellungen",
+			"optionScripts": "Skripte",
+			"optionFonts": "Schriften",
+			"extensionHide": "Ausblenden:",
+			"fileTypeHide": "Typ:",
+			"recursiveSearch": "Rekursiv: {{state}}",
+			"recursiveOn": "Ein",
+			"recursiveOff": "Aus",
+			"catalogPresetTypesHide": "Ausblenden:",
+			"anchorsNoFilters": "Keine Filter für Anker"
+		},
+		"empty": {
+			"catalogNeedsFolder": "Ordner auswählen, um Voreinstellungen zu durchsuchen.",
+			"noAnchors": "Keine Anker konfiguriert.",
+			"noCatalogPresets": "Keine Voreinstellungen in diesem Ordner.",
+			"noItems": "Keine Elemente"
+		},
+		"entry": {
+			"defaultFolderSubtitle": "Standard",
+			"parentRowName": "Aufwärts",
+			"browseDrives": "Laufwerke durchsuchen",
+			"kindFolder": "Ordner",
+			"kindFile": "Datei"
+		},
+		"hints": {
+			"iconGridWheel": "Strg+Scrollen zum Skalieren"
+		}
+	},
+	"textEditor": {
+		"name": "Text-Editor"
+	},
+	"fontViewer": {
+		"name": "Font viewer",
+		"searchPlaceholder": "Search family, PostScript, style…",
+		"searchAria": "Search fonts",
+		"listView": "List view",
+		"iconView": "Icon cards",
+		"layoutLegend": "Font layout",
+		"reload": "Reload font list",
+		"samplePresets": "Sample",
+		"sampleCustom": "Custom",
+		"samplePresetAria": "Preview sample preset",
+		"previewTextAria": "Preview text",
+		"samplePlaceholder": "Preview text (CJK / emoji / Latin)",
+		"ctxMenuHeading": "Display options",
+		"ctxTileSquare": "Tile aspect 1:1",
+		"ctxTileWide": "Tile aspect 16:9",
+		"ctxShowResolved": "Show resolved-font match column (list)",
+		"ctxHideResolved": "Hide resolved-font match column (list)",
+		"showResolved": "Resolved font check (list)",
+		"loadError": "Could not load fonts.",
+		"loading": "Loading…",
+		"statsLine": "{{families}} families · {{faces}} typefaces ({{total}} loaded)",
+		"familySummary": "{{count}} typefaces",
+		"expandFamily": "Expand family",
+		"collapseFamily": "Collapse family",
+		"backToFamilies": "All font families",
+		"openFamilyIcon": "Open family",
+		"noMatches": "No matching fonts",
+		"phaseAeHost": "Querying After Effects for fonts (evalScript)…",
+		"phaseBrowser": "Reading browser font sources…",
+		"aeHostErrorLabel": "After Effects host:",
+		"previewSectionSummary": "Preview",
+		"sampleCollapsedPlaceholder": "Open to edit sample text and options",
+		"viaLocalApi": "Local Font Access API",
+		"viaAfterEffects": "After Effects (app.fonts)",
+		"viaDocumentFonts": "document.fonts (subset)",
+		"fallbackBadge": "swap",
+		"primaryBadge": "match",
+		"hintNeedUserGesture": "Installed fonts need a button click (Chromium Local Font Access). Until then, this catalog lists only fonts already registered on document.fonts for this panel.",
+		"loadAllSystemFonts": "Load all system fonts…",
+		"hintNoLocalApi": "This Chromium build does not expose queryLocalFonts — only fonts registered on document.fonts are listed.",
+		"localAccessErrorPrefix": "Local font access:",
+		"emptyList": "No fonts loaded yet. Use “Load all system fonts” if available, or reload after the panel finishes loading styles."
+	},
+	"folderDirectoryPicker": {
+		"label": "Ordner-Browser",
+		"tab": {
+			"presets": "Voreinstellungen",
+			"scripts": "Skripte",
+			"plugins": "Plug-ins",
+			"other": "Andere"
+		},
+		"loading": "Wird geladen…",
+		"emptyFolders": "Keine Ordner gefunden",
+		"emptyItems": "Keine Elemente gefunden",
+		"goUp": "Eine Ebene hoch",
+		"cepNodeRequired": "Ordner-Browser benötigt CEP Node"
+	}
+}

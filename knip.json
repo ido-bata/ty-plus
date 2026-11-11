@@ -1,0 +1,68 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "entry": [
+    "package.json",
+    "vite.es.config.ts",
+    "cep.config.ts",
+    "doctor.config.ts",
+    "src/management/ae/cep/entry/panel.tsx",
+    "src/management/ae/cep/entry/dialog.tsx",
+    "src/management/ae/cep/entry/dialog-bootstrap.tsx",
+    "src/management/ae/cep/entry/dialogs.tsx",
+    "src/management/workspace/extendscript/ae-text-layer-scripts.ts",
+    "scripts/generate/generate-rust-protocol-schema.ts",
+    "scripts/generate/generate-typescript-protocol.ts",
+    "src/management/ae/files/runtime-gateway.ts",
+    "src/management/storage/runtime-gateway.ts",
+    "src/management/ipc/index.ts",
+    "src/management/ipc/generated/index.ts",
+    "vitest.scenario-spec.config.ts"
+  ],
+  "project": [
+    "src/**/*.{ts,tsx}",
+    "scripts/**/*.ts",
+    "tools/**/*.ts",
+    "*.ts"
+  ],
+  "ignore": [
+    "**/*.d.ts",
+    "**/node_modules/**"
+  ],
+  "ignoreBinaries": [
+    "reg",
+    "rustc",
+    "pwsh"
+  ],
+  "ignoreFiles": [
+    "src/management/ae/cep/vendor/**",
+    "src/management/ae/jsx/**",
+    "scripts/cep/cep-uninstall.ts",
+    "scripts/demo/markdown-editor/vite.config.ts",
+    "scripts/lib/cep-bundle.ts",
+    ".storybook/**",
+    "**/*.stories.tsx",
+    "storybook-static/**",
+    "archive/**",
+    "docs/no-use/**"
+  ],
+  "ignoreIssues": {
+    "archive/**": ["files", "unlisted", "unresolved", "exports", "types"],
+    "docs/no-use/**": ["files", "unlisted", "unresolved", "exports", "types"]
+  },
+  "ignoreDependencies": [
+    "@babel/plugin-transform-class-properties",
+    "@babel/plugin-transform-private-methods",
+    "@babel/plugin-transform-private-property-in-object",
+    "@babel/preset-env",
+    "@babel/preset-typescript",
+    "@rollup/pluginutils",
+    "@storybook/react",
+    "@storybook/react-vite"
+  ],
+  "vite": {
+    "config": "vite.config.ts"
+  },
+  "vitest": {
+    "config": "vitest.config.ts"
+  }
+}

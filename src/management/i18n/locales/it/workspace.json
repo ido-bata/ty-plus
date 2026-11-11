@@ -1,0 +1,37 @@
+{
+	"widgetSearch": {
+		"placeholder": "Cerca preset…"
+	},
+	"context": {
+		"addWidget": "Aggiungi widget",
+		"deleteWidget": "Rimuovi widget",
+		"lock": "Blocca",
+		"refresh": "Aggiorna",
+		"unlock": "Sblocca"
+	},
+	"controlPanel": {
+		"expand": "Espandi",
+		"collapse": "Comprimi",
+		"position": "Posizione",
+		"orientation": "Orientamento"
+	},
+	"widgets": {
+		"align": {
+			"alignLeft": "Allinea a sinistra",
+			"alignCenterH": "Allinea al centro orizzontalmente",
+			"alignRight": "Allinea a destra",
+			"alignTop": "Allinea in alto",
+			"alignCenterV": "Allinea al centro verticalmente",
+			"alignBottom": "Allinea in basso"
+		},
+		"layoutLock": {
+			"lock": "Blocca layout",
+			"unlock": "Sblocca layout"
+		},
+		"projectInfo": {
+			"dimensions": "Dimensioni",
+			"timing": "Tempistica",
+			"layers": "Livelli"
+		}
+	}
+}

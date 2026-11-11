@@ -1,0 +1,141 @@
+{
+	"scenarioId": "SCN-AUTHOR-01",
+	"steps": [
+		{
+			"id": "step-1",
+			"gherkinRef": { "scenarioId": "SCN-AUTHOR-01", "stepIndex": 0 },
+			"preconditions": [
+				"Onboarding completed.",
+				"The authoring dialog resolves its save root to the protected AE Support Files preset root.",
+				"storage:catalog-list is empty."
+			],
+			"input": { "snapshot": "protected-root precondition probe" },
+			"action": "observe_authoring_preconditions",
+			"expectedResult": {
+				"persistenceOracle": {
+					"storageKey": "preset:AuthoredPreset",
+					"expected": null
+				}
+			},
+			"postconditions": [
+				"storage:preset:AuthoredPreset is null and the save root is the protected AE Support Files root."
+			],
+			"mutation": false,
+			"checkpoint": false
+		},
+		{
+			"id": "step-2",
+			"gherkinRef": { "scenarioId": "SCN-AUTHOR-01", "stepIndex": 1 },
+			"preconditions": [
+				"The authoring dialog targets the protected AE Support Files root."
+			],
+			"input": {
+				"title": "AuthoredPreset",
+				"type": "expression",
+				"body": "app.alert(\"authored\")",
+				"rootClass": "ae-support"
+			},
+			"action": "create_local_preset_under_protected_root",
+			"expectedResult": {
+				"logOracle": {
+					"scope": "preset-execution",
+					"minLevel": "info",
+					"messageContains": "[ty-plus:preset-authoring] preset.asset.write",
+					"id": "log-preset-authoring-write"
+				}
+			},
+			"postconditions": [
+				"The permission failure routed the save to the privileged write adapter."
+			],
+			"mutation": true,
+			"checkpoint": false
+		},
+		{
+			"id": "step-3",
+			"gherkinRef": { "scenarioId": "SCN-AUTHOR-01", "stepIndex": 2 },
+			"preconditions": [
+				"The privileged write adapter has been requested for the protected root."
+			],
+			"input": {
+				"probe": "read asset:AuthoredPreset + storage:preset:AuthoredPreset + DOM directory browser entry"
+			},
+			"action": "checkpoint_re_observe_after_read_back_verification",
+			"expectedResult": {
+				"uiOracle": {
+					"selector": "[data-directory-browser-entry][data-preset-id=\"AuthoredPreset\"]",
+					"variant": { "kind": "presence" }
+				},
+				"persistenceOracle": {
+					"storageKey": "asset:AuthoredPreset",
+					"expected": { "present": true, "rootClass": "ae-support" }
+				}
+			},
+			"postconditions": [
+				"The asset file is present under the protected root after read-back verification.",
+				"The catalog row is rendered only after that verification."
+			],
+			"mutation": false,
+			"checkpoint": true
+		},
+		{
+			"id": "step-4",
+			"gherkinRef": { "scenarioId": "SCN-AUTHOR-01", "stepIndex": 4 },
+			"preconditions": ["The catalog row for AuthoredPreset is rendered."],
+			"input": { "presetId": "AuthoredPreset" },
+			"action": "delete_local_preset",
+			"expectedResult": {
+				"uiOracle": {
+					"selector": "[data-directory-browser-entry][data-preset-id=\"AuthoredPreset\"]",
+					"variant": { "kind": "presence" }
+				}
+			},
+			"postconditions": ["The delete action for AuthoredPreset is in-flight."],
+			"mutation": true,
+			"checkpoint": false
+		},
+		{
+			"id": "step-5",
+			"gherkinRef": { "scenarioId": "SCN-AUTHOR-01", "stepIndex": 5 },
+			"preconditions": ["The delete action for AuthoredPreset is in-flight."],
+			"input": {
+				"probe": "read storage:preset:AuthoredPreset + DOM directory browser body"
+			},
+			"action": "checkpoint_re_observe_after_delete",
+			"expectedResult": {
+				"uiOracle": {
+					"selector": "[data-directory-browser-entry][data-preset-id=\"AuthoredPreset\"]",
+					"variant": { "kind": "absence" }
+				},
+				"persistenceOracle": {
+					"storageKey": "preset:AuthoredPreset",
+					"expected": null
+				}
+			},
+			"postconditions": [
+				"The catalog list does not contain AuthoredPreset.",
+				"The asset file is removed from the protected root."
+			],
+			"mutation": false,
+			"checkpoint": true
+		}
+	],
+	"cleanup": [
+		{
+			"id": "cleanup-1",
+			"preconditions": ["Scenario verdict resolved."],
+			"input": { "presetId": "AuthoredPreset" },
+			"action": "delete_authored_preset_and_reset_catalog",
+			"expectedResult": {
+				"persistenceOracle": {
+					"storageKey": "preset:AuthoredPreset",
+					"expected": null
+				}
+			},
+			"postconditions": [
+				"The authored asset is removed from the protected root and storage:preset:AuthoredPreset is null for the next run."
+			],
+			"mutation": true,
+			"checkpoint": false
+		}
+	]
+}

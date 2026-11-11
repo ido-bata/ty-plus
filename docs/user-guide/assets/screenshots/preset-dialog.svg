@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-label="ty-plus preset dialog placeholder">
+  <rect width="1280" height="720" fill="#17191f"/>
+  <rect x="180" y="60" width="920" height="600" rx="12" fill="#252a34" stroke="#596276"/>
+  <text x="240" y="122" fill="#f2f4f8" font-family="Arial, sans-serif" font-size="30">Create / Edit Preset</text>
+  <rect x="240" y="160" width="640" height="48" rx="8" fill="#323948"/>
+  <rect x="240" y="230" width="640" height="48" rx="8" fill="#323948"/>
+  <rect x="240" y="300" width="640" height="48" rx="8" fill="#323948"/>
+  <rect x="240" y="370" width="640" height="120" rx="8" fill="#323948"/>
+  <rect x="910" y="160" width="130" height="130" rx="8" fill="#303746" stroke="#596276"/>
+  <text x="270" y="191" fill="#b8c0cc" font-family="Arial, sans-serif" font-size="18">Name</text>
+  <text x="270" y="261" fill="#b8c0cc" font-family="Arial, sans-serif" font-size="18">File path</text>
+  <text x="270" y="331" fill="#b8c0cc" font-family="Arial, sans-serif" font-size="18">Type</text>
+  <text x="270" y="405" fill="#b8c0cc" font-family="Arial, sans-serif" font-size="18">Description</text>
+  <text x="950" y="232" fill="#f2f4f8" font-family="Arial, sans-serif" font-size="20">Icon</text>
+  <rect x="740" y="545" width="140" height="56" rx="8" fill="#303746" stroke="#596276"/>
+  <rect x="900" y="545" width="140" height="56" rx="8" fill="#4f7cff"/>
+  <text x="783" y="580" fill="#f2f4f8" font-family="Arial, sans-serif" font-size="20">Cancel</text>
+  <text x="948" y="580" fill="#ffffff" font-family="Arial, sans-serif" font-size="20">Save</text>
+</svg>

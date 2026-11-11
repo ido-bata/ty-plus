@@ -1,0 +1,7 @@
+/**
+ * No literals here. All CSS variables here are only `var(--ty-...)` injected by `mergePanelTheme`.
+ * Fixed default values live in `management/style/literals/design-tokens-defaults.ts`.
+ *
+ * Tailwind v4 `@theme { ... }` block was retired when migrating to PandaCSS — Panda
+ * reads the same `--ty-*` variables from `panda.config.ts` instead.
+ */

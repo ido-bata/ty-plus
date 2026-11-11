@@ -1,0 +1,26 @@
+{
+  "capturedAt": "2026-06-03T09:39:16.934Z",
+  "page": {
+    "description": "",
+    "devtoolsFrontendUrl": "/devtools/inspector.html?ws=127.0.0.1:8970/devtools/page/212C15C2895CF834B9380B51991CA23F",
+    "id": "212C15C2895CF834B9380B51991CA23F",
+    "title": "ty-plus",
+    "type": "page",
+    "url": "file:///Library/Application%20Support/Adobe/CEP/extensions/ty-plus/panel/index.html",
+    "webSocketDebuggerUrl": "ws://127.0.0.1:8970/devtools/page/212C15C2895CF834B9380B51991CA23F"
+  },
+  "bodyText": "カーブ\nバウンス\nエラスティック\n適用\nALIGN\nDISTRIBUTE\n?\nNo preset selected\nhover\n[ty-plus:onboarding→workspace] ensurePrimaryPanelWidgets:reset-default-widgets {\"panelId\":\"panel-1\",\"priorWidgetCount\":0}\n1. ようこそ\n1 / 10\n\nty-plus は、プリセットやウィジェットを置いて作業を速くするための個人用ワークスペースです。\nさっそくセットアップを始めましょう。\n\n戻る\n次へ",
+  "appChildren": 1,
+  "localStorage": {
+    "ty-plus.workspace.backgroundDialog.supportRoot": "Applications/Adobe After Effects 2026/ty-plus"
+  },
+  "topElement": {
+    "tag": "DIV",
+    "text": "1. ようこそ1 / 10ty-plus は、プリセットやウィジェットを置いて作業を速くするための個人用ワークスペースです。\nさっそくセットアップを始めましょう。戻る次へ",
+    "className": "fixed inset-0 z-2147483647 flex items-center justify-center bg-black/40",
+    "color": "rgb(0, 0, 0)",
+    "backgroundColor": "rgba(0, 0, 0, 0.4)",
+    "display": "flex",
+    "opacity": "1"
+  }
+}

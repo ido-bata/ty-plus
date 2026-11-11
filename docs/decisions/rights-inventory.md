@@ -33,7 +33,7 @@
 | --- | --- | --- | --- | --- |
 | `src/`（panel / modeless / ExtendScript host） | 1,043件 | 本人（本人確認済み） | **再利用可** | Log!N由来の識別子・署名設定は置換対象（D）。`docs/user-guide/installation/` は個人パス・旧Extension IDを含むため移植時に書き直す（#9） |
 | `rust/`（host-filesystem等のRust crate） | 143件 | 同上 | **再利用可** | `licensing` crateは#5の切断対象。font assetは下記B |
-| `scripts/` / `tools/`（build・検証・CLI） | 134件 | 同上 | **条件付き** | `scripts/package/sign-zxp.ts` の署名主体（`Log-!N`）は置換要 |
+| `scripts/` / `tools/`（build・検証・CLI） | 134件 | 同上 | **条件付き** | `scripts/package/sign-zxp.ts` の署名主体（`ty-plus`）は置換要 |
 | `docs/architecture/` ほか現行docs | 550件の一部 | 同上 | **再利用可** | Log!N運営固有の記述は移植時に除外・書き直す |
 | build / tsconfig / biome等の設定 | - | 同上 | **再利用可** | - |
 
@@ -58,8 +58,8 @@
 
 | 資産 | 状態 | 備考 |
 | --- | --- | --- |
-| Extension ID `org.loginc.ty-plus`（`cep.config.ts`、`src/management/**` のsurface ID等） | **条件付き** | 新Extension IDへの置換が必要。ID確定は本人判断。変更時は既存インストールとの併存・移行挙動の検証（#6と整合） |
-| `scripts/package/sign-zxp.ts` の署名主体（`Log-!N` / `changeme` 既定値） | **条件付き** | 公開用署名主体・証明書は本人判断（実権利者の確認を含む） |
+| Extension ID `app.ty-plus`（`cep.config.ts`、`src/management/**` のsurface ID等） | **条件付き** | 新Extension IDへの置換が必要。ID確定は本人判断。変更時は既存インストールとの併存・移行挙動の検証（#6と整合） |
+| `scripts/package/sign-zxp.ts` の署名主体（`ty-plus` / `changeme` 既定値） | **条件付き** | 公開用署名主体・証明書は本人判断（実権利者の確認を含む） |
 | `supabase/`（Edge Functions / migrations / project ref） | **移植しない** | Log!N運営インフラ。#4のcharter上、R0はオフラインcore。将来の配布API方針は#4で決定 |
 | `src/management/online/` のcloud機能（preset catalog等） | **条件付き** | コード権利は本人（移植可）。ただし接続先がLog!N運営infraのため、R0ではバックエンドごと移植せず、オフラインcoreからの切り離しを#5で実施する |
 | `src/management/online/licensing/` + `rust/crates/licensing/` | **条件付き** | ライセンスゲート。#5でローカルcoreから除去する |

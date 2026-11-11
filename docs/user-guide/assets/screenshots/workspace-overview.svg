@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-label="ty-plus workspace overview placeholder">
+  <rect width="1280" height="720" fill="#17191f"/>
+  <rect x="40" y="40" width="1200" height="56" rx="8" fill="#242833"/>
+  <text x="70" y="76" fill="#f2f4f8" font-family="Arial, sans-serif" font-size="24">ty-plus Workspace</text>
+  <rect x="40" y="124" width="1200" height="500" rx="8" fill="#20242d" stroke="#3a4150"/>
+  <g fill="#303746" stroke="#596276">
+    <rect x="80" y="164" width="150" height="110" rx="8"/>
+    <rect x="250" y="164" width="150" height="110" rx="8"/>
+    <rect x="420" y="164" width="150" height="110" rx="8"/>
+    <rect x="80" y="300" width="320" height="130" rx="8"/>
+    <rect x="420" y="300" width="150" height="130" rx="8"/>
+    <rect x="590" y="164" width="300" height="266" rx="8"/>
+  </g>
+  <g fill="#f2f4f8" font-family="Arial, sans-serif" font-size="18">
+    <text x="112" y="225">Preset Tile</text>
+    <text x="282" y="225">Script</text>
+    <text x="452" y="225">Easing</text>
+    <text x="112" y="370">Widget Area</text>
+    <text x="452" y="370">Menu</text>
+    <text x="682" y="300">Inspector / Browser</text>
+  </g>
+  <rect x="40" y="648" width="1200" height="36" rx="8" fill="#242833"/>
+  <text x="70" y="672" fill="#b8c0cc" font-family="Arial, sans-serif" font-size="16">Replace this placeholder with an After Effects screenshot before release.</text>
+</svg>

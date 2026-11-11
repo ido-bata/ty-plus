@@ -57,8 +57,8 @@ release-0-10-0 (05c921d1) を基準ツリーとして監査・移植
 │    除外: archive/ docs/no-use/ .obsidian/ supabase/ 旧.claude/skills/
 │          .github/(旧CI) .infisical.json LICENSE docs/user-guide/installation/
 │          HAP-log.txt等の作業残骸
-│    置換: org.loginc.ty-plus → app.ty-plus（暫定・本人承認待ち）
-│          com.loginc.typlus → com.typlus（暫定）
+│    置換: app.ty-plus → app.ty-plus（暫定・本人承認待ち）
+│          com.typlus → com.typlus（暫定）
 │    含む: 旧#196/#198/#199/#201（test安定化）
 │
 ├─ #18 データ消失修正の移植（#203 → #211 の順、#205、#217）

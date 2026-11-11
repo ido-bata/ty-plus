@@ -1,0 +1,166 @@
+{
+	"scenarioId": "SCN-SETTINGS-01",
+	"steps": [
+		{
+			"id": "step-1",
+			"gherkinRef": { "scenarioId": "SCN-SETTINGS-01", "stepIndex": 0 },
+			"preconditions": [
+				"Onboarding completed.",
+				"storage:settings has no 'autoVerify' key."
+			],
+			"input": { "snapshot": "settings-store probe" },
+			"action": "observe_empty_settings_store",
+			"expectedResult": {
+				"persistenceOracle": {
+					"storageKey": "storage:settings",
+					"expected": { "autoVerify": null }
+				}
+			},
+			"postconditions": ["storage:settings has no 'autoVerify' value."],
+			"mutation": false,
+			"checkpoint": false
+		},
+		{
+			"id": "step-2",
+			"gherkinRef": { "scenarioId": "SCN-SETTINGS-01", "stepIndex": 1 },
+			"preconditions": ["Settings store is empty."],
+			"input": {
+				"selector": "[data-ws-action=\"open-dialog\"][data-dialog-kind=\"settings\"]"
+			},
+			"action": "open_settings_dialog",
+			"expectedResult": {
+				"uiOracle": {
+					"selector": "[data-settings-sidebar]",
+					"attribute": { "name": "data-state", "value": "open" }
+				}
+			},
+			"postconditions": [
+				"Settings dialog is rendered.",
+				"'autoVerify' defaults to false."
+			],
+			"mutation": true,
+			"checkpoint": false
+		},
+		{
+			"id": "step-3",
+			"gherkinRef": { "scenarioId": "SCN-SETTINGS-01", "stepIndex": 2 },
+			"preconditions": ["Settings dialog is rendered."],
+			"input": { "probe": "read DOM settings tabs" },
+			"action": "checkpoint_re_observe_after_open_settings",
+			"expectedResult": {
+				"uiOracle": {
+					"selector": "[data-settings-sidebar]",
+					"attribute": { "name": "data-state", "value": "open" }
+				},
+				"persistenceOracle": {
+					"storageKey": "storage:settings",
+					"expected": { "autoVerify": null }
+				}
+			},
+			"postconditions": [
+				"Settings dialog is rendered.",
+				"'autoVerify' is still null in storage:settings."
+			],
+			"mutation": false,
+			"checkpoint": true
+		},
+		{
+			"id": "step-4",
+			"gherkinRef": { "scenarioId": "SCN-SETTINGS-01", "stepIndex": 3 },
+			"preconditions": ["Settings dialog is open."],
+			"input": {
+				"selector": "[data-settings-section=\"autoVerify\"]"
+			},
+			"action": "toggle_auto_verify_section",
+			"expectedResult": {
+				"uiOracle": {
+					"selector": "[data-settings-section=\"autoVerify\"]",
+					"attribute": { "name": "data-checked", "value": "true" }
+				}
+			},
+			"postconditions": [
+				"Settings dialog preview shows 'autoVerify' as true.",
+				"Pending persisted write for the new value."
+			],
+			"mutation": true,
+			"checkpoint": false
+		},
+		{
+			"id": "step-5",
+			"gherkinRef": { "scenarioId": "SCN-SETTINGS-01", "stepIndex": 4 },
+			"preconditions": ["'autoVerify' toggle is true in the preview."],
+			"input": { "probe": "read DOM settings section + storage:settings" },
+			"action": "checkpoint_re_observe_after_toggle",
+			"expectedResult": {
+				"uiOracle": {
+					"selector": "[data-settings-section=\"autoVerify\"]",
+					"attribute": { "name": "data-checked", "value": "true" }
+				}
+			},
+			"postconditions": ["Preview reflects the toggled value."],
+			"mutation": false,
+			"checkpoint": true
+		},
+		{
+			"id": "step-6",
+			"gherkinRef": { "scenarioId": "SCN-SETTINGS-01", "stepIndex": 5 },
+			"preconditions": ["Preview shows 'autoVerify' = true."],
+			"input": {
+				"saveSelector": "[data-settings-footer-action=\"save\"]",
+				"closeSelector": "[data-settings-footer-action=\"cancel\"]"
+			},
+			"action": "click_save_and_close",
+			"expectedResult": {
+				"uiOracle": {
+					"selector": "[data-settings-footer-action=\"save\"]",
+					"attribute": { "name": "data-state", "value": "clicked" }
+				}
+			},
+			"postconditions": ["Pending persisted write for storage:settings."],
+			"mutation": true,
+			"checkpoint": false
+		},
+		{
+			"id": "step-7",
+			"gherkinRef": { "scenarioId": "SCN-SETTINGS-01", "stepIndex": 6 },
+			"preconditions": ["Save and close dispatched."],
+			"input": { "probe": "read storage:settings + DOM settings tabs" },
+			"action": "checkpoint_re_observe_after_save_close",
+			"expectedResult": {
+				"persistenceOracle": {
+					"storageKey": "storage:settings",
+					"expected": { "autoVerify": "true" }
+				},
+				"uiOracle": {
+					"selector": "[data-settings-sidebar]",
+					"attribute": { "name": "data-state", "value": "closed" }
+				}
+			},
+			"postconditions": [
+				"storage:settings contains 'autoVerify' equal to 'true'.",
+				"Dialog is no longer rendered."
+			],
+			"mutation": false,
+			"checkpoint": true
+		}
+	],
+	"cleanup": [
+		{
+			"id": "cleanup-1",
+			"preconditions": ["Scenario verdict resolved."],
+			"input": { "key": "storage:settings", "field": "autoVerify" },
+			"action": "reset_settings_store",
+			"expectedResult": {
+				"persistenceOracle": {
+					"storageKey": "storage:settings",
+					"expected": { "autoVerify": null }
+				}
+			},
+			"postconditions": [
+				"storage:settings has no 'autoVerify' so the next run starts clean."
+			],
+			"mutation": true,
+			"checkpoint": false
+		}
+	]
+}

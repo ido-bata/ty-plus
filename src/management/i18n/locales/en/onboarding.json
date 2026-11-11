@@ -1,0 +1,99 @@
+{
+	"step": {
+		"intro": {
+			"label": "Intro",
+			"title": "Welcome",
+			"body": "Welcome! ty-plus creates a personal workspace for faster work.\nPlace presets/widgets and streamline your workflow. Let's begin setup!"
+		},
+		"language": {
+			"label": "Language",
+			"title": "Select Language",
+			"body": "Choose your preferred language. The interface will update immediately after selection."
+		},
+		"support": {
+			"label": "Location",
+			"title": "Select AE Folder",
+			"body": "Choose your After Effects application folder. On Windows this is the Support Files directory; on macOS it's the app folder containing Presets."
+		},
+		"subfolders": {
+			"label": "Folders",
+			"title": "Adjust Sub-folders",
+			"body": "This step appears when you change paths away from defaults. Customize Presets/Scripts/Plug-ins if needed."
+		},
+		"presets": {
+			"label": "Presets",
+			"title": "Select Presets",
+			"body": "Pick preset files (.ffx) from your Presets folder to add as initial presets.\nYou can add/import more later from the + menu. Folder selection will be grouped automatically."
+		},
+		"scripts": {
+			"label": "Scripts",
+			"title": "Select Scripts",
+			"body": "Pick script files (.jsx, .jsxbin) from your Scripts folder to add as initial presets.\nYou can also create Script/Expression presets later from Code Preset."
+		},
+		"plugins": {
+			"label": "Plug-ins",
+			"title": "Select Plug-ins",
+			"body": "Pick effect files (.aex/.plugin) from your Plug-ins folder to add as initial presets.\nYou can import more later if needed."
+		},
+		"workspace": {
+			"label": "Workspace",
+			"title": "Workspace Basics",
+			"body": "Drag to move and resize presets and widgets.\n\n- Ctrl/Cmd+drag to move\n- Use Layout Lock to prevent edits\n- Search dims non-matching items\n- Right-click for edit/group actions"
+		},
+		"adding-presets": {
+			"label": "Presets",
+			"title": "Adding Presets",
+			"body": "Use the + menu to add presets, groups, and widgets.\n\n- Switch side panels for presets list\n- Downloaded online presets auto-place"
+		},
+		"finish": {
+			"label": "Finish",
+			"title": "Ready to Start!",
+			"body": "Press Finish to save your settings.\n\nLet's get started!"
+		}
+	},
+	"fields": {
+		"presetRoot": "Presets folder",
+		"scriptRoot": "Scripts folder",
+		"pluginRoot": "Plug-ins folder",
+		"supportPlaceholder": "Support Files or app folder path"
+	},
+	"filePick": {
+		"selected": "Selected: {{count}}"
+	},
+	"secondaryPanel": {
+		"title": "Setup required",
+		"description": "Complete onboarding in panel-1 first.",
+		"userManual": "User Manual",
+		"openMainPanel": "Open main panel",
+		"linkUnavailable": "Manual link unavailable"
+	},
+	"browse": "Browse",
+	"browseAriaLabel": "Browse folder",
+	"defaultLabel": "Default",
+	"customLabel": "Custom",
+	"empty": "No items",
+	"goUp": "Up",
+	"selectedFiles": "{{files}} file(s)",
+	"selectedFolders": "{{folders}} folder(s)",
+	"selectedSuffix": " selected",
+	"errors": {
+		"supportRequired": "AE folder path is required.",
+		"subfoldersRequired": "Presets, Scripts, and Plug-ins folder paths are required.",
+		"folderPickerCep": "Folder picker requires CEP.",
+		"finishErrorTitle": "Could not save settings",
+		"finishErrorPathLabel": "Path",
+		"finishErrorReasonLabel": "Why",
+		"finishErrorNextActionLabel": "Next step",
+		"finishErrorNextActionChooseTrusted": "The onboarding settings file did not include a Support Root. Restart onboarding inside After Effects.",
+		"finishErrorNextActionAdjust": "Settings could not be saved at the AE Support Root. Verify the path is reachable and that the After Effects process has write permission, then try again.",
+		"finishErrorNextActionRetry": "Windows UAC was requested but the elevated write still failed. Click Retry to re-trigger the UAC dialog and confirm the prompt, or run After Effects as Administrator.",
+		"finishErrorRetryWithElevation": "Retry with administrator"
+	},
+	"actions": {
+		"back": "Back",
+		"next": "Next",
+		"finish": "Finish",
+		"toggleFullscreen": "Expand to fullscreen",
+		"toggleModal": "Return to modal"
+	}
+}

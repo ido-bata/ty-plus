@@ -1,0 +1,184 @@
+{
+	"app": {
+		"name": "ty-plus",
+		"version": "Version {{version}}",
+		"loading": "Wird geladen...",
+		"ready": "Bereit"
+	},
+	"buttons": {
+		"save": "Speichern",
+		"cancel": "Abbrechen",
+		"delete": "Löschen",
+		"edit": "Bearbeiten",
+		"close": "Schließen"
+	},
+	"actions": {
+		"run": "Ausführen",
+		"duplicate": "Duplizieren",
+		"save": "Speichern",
+		"cancel": "Abbrechen",
+		"close": "Schließen",
+		"reset": "Zurücksetzen",
+		"delete": "Löschen",
+		"apply": "Anwenden",
+		"search": "Suchen",
+		"import": "Importieren",
+		"export": "Exportieren",
+		"create": "Erstellen",
+		"edit": "Bearbeiten",
+		"rename": "Umbenennen",
+		"remove": "Entfernen",
+		"refresh": "Aktualisieren",
+		"reload": "Neu laden",
+		"undo": "Rückgängig",
+		"redo": "Wiederherstellen",
+		"copy": "Kopieren",
+		"paste": "Einfügen",
+		"cut": "Ausschneiden",
+		"selectAll": "Alles auswählen",
+		"clear": "Leeren",
+		"ok": "OK",
+		"yes": "Ja",
+		"no": "Nein",
+		"confirm": "Bestätigen",
+		"browse": "Durchsuchen",
+		"upload": "Hochladen",
+		"download": "Herunterladen"
+	},
+	"status": {
+		"loading": "Wird geladen...",
+		"saving": "Wird gespeichert...",
+		"saved": "Gespeichert",
+		"error": "Fehler",
+		"success": "Erfolg",
+		"warning": "Warnung",
+		"info": "Information",
+		"pending": "Ausstehend",
+		"processing": "Wird verarbeitet",
+		"complete": "Abgeschlossen",
+		"failed": "Fehlgeschlagen",
+		"ready": "Bereit",
+		"offline": "Offline",
+		"online": "Online",
+		"syncing": "Wird synchronisiert...",
+		"synced": "Synchronisiert"
+	},
+	"settings": {
+		"optional": "optional",
+		"sections": {
+			"general": "Allgemein",
+			"theme": "Design",
+			"paths": "Pfade",
+			"gridLayout": "Rasterlayout",
+			"feedbackSupport": "Feedback & Unterstützung",
+			"workspaceBackup": "Arbeitsbereich-Sicherung",
+			"advanced": "Erweitert",
+			"workspaceBackground": "Arbeitsbereich-Hintergrund"
+		},
+		"labels": {
+			"language": "Sprache",
+			"theme": "Design",
+			"accentColor": "Akzentfarbe",
+			"textColor": "Textfarbe",
+			"widgetBackground": "Widget-Hintergrund",
+			"widgetOpacity": "Widget-Deckkraft",
+			"panelBackground": "Panel-Hintergrund",
+			"panelOpacity": "Panel-Deckkraft",
+			"backgroundColor": "Hintergrundfarbe",
+			"supportRoot": "Support-Wurzel",
+			"presetRoot": "Preset-Wurzel",
+			"scriptRoot": "Skript-Wurzel",
+			"pluginRoot": "Plugin-Wurzel",
+			"cellSize": "Zellengröße",
+			"gap": "Abstand",
+			"cornerRadius": "Eckenradius",
+			"category": "Kategorie",
+			"subject": "Betreff",
+			"presetId": "Preset-ID",
+			"description": "Beschreibung",
+			"attachments": "Anhänge",
+			"backupRestore": "Sicherung & Wiederherstellung",
+			"scanTimeout": "Scan-Zeitüberschreitung",
+			"maxFiles": "Maximale Dateien"
+		},
+		"themes": {
+			"system": "System",
+			"dark": "Dunkel",
+			"light": "Hell",
+			"custom": "Benutzerdefiniert"
+		},
+		"languages": {
+			"japanese": "Japanisch",
+			"english": "Englisch"
+		},
+		"buttons": {
+			"advancedSettings": "Erweiterte Einstellungen",
+			"selectSupportRoot": "Support-Wurzel wählen",
+			"selectPresetRoot": "Preset-Wurzel wählen",
+			"selectScriptRoot": "Skript-Wurzel wählen",
+			"selectPluginRoot": "Plugin-Wurzel wählen",
+			"sendReport": "Bericht senden",
+			"sending": "Wird gesendet...",
+			"exporting": "Wird exportiert...",
+			"importing": "Wird importiert...",
+			"exportWorkspace": "Arbeitsbereich exportieren",
+			"importWorkspace": "Arbeitsbereich importieren",
+			"resetting": "Wird zurückgesetzt...",
+			"resetOnboarding": "Onboarding zurücksetzen"
+		},
+		"messages": {
+			"filesSelected": "{{count}} Datei(en) ausgewählt",
+			"resetOnboardingConfirm": "Möchten Sie das Onboarding wirklich zurücksetzen?",
+			"exportSuccess": "Arbeitsbereich exportiert nach {{path}}",
+			"exportFailed": "Export fehlgeschlagen: {{error}}",
+			"exportCancelled": "Export abgebrochen",
+			"importSuccess": "{{count}} Element(e) importiert",
+			"importFailed": "Import fehlgeschlagen: {{error}}",
+			"importCancelled": "Import abgebrochen",
+			"reportSentSuccess": "Bericht erfolgreich gesendet",
+			"reportSendFailed": "Bericht konnte nicht gesendet werden: {{error}}"
+		}
+	},
+	"quickActions": {
+		"presets": "Voreinstellungen",
+		"settings": "Einstellungen",
+		"messages": "Nachrichten",
+		"newNote": "Neue Notiz",
+		"newScript": "Neues Skript",
+		"newEasing": "Neues Easing",
+		"toggleGrid": "Raster umschalten",
+		"toggleLabels": "Beschriftungen umschalten",
+		"documentation": "Dokumentation",
+		"sendFeedback": "Feedback senden",
+		"category": {
+			"file": "Datei",
+			"edit": "Bearbeiten",
+			"view": "Ansicht",
+			"help": "Hilfe"
+		}
+	},
+	"sidePanel": {
+		"presets": "Voreinstellungen",
+		"debugConsole": "Debug-Konsole",
+		"messages": "Nachrichten",
+		"settings": "Einstellungen",
+		"reloadPanel": "Panel neu laden",
+		"closePanel": "Panel schließen"
+	},
+	"statusBar": {
+		"presets": "Voreinstellungen",
+		"debug": "Debug",
+		"message": "Nachrichten",
+		"settings": "Einstellungen"
+	},
+	"panel": {
+		"errorBoundary": {
+			"surface": "{{surface}} konnte nicht gerendert werden",
+			"title": "Ein Fehler ist aufgetreten",
+			"retry": "Wiederholen",
+			"copyError": "Fehlerdetails kopieren",
+			"copied": "In die Zwischenablage kopiert",
+			"digest": "Fehler-ID"
+		}
+	}
+}

@@ -1,0 +1,8 @@
+[
+	{
+		"from": "src/management/widget/workspace/TileContent.test.tsx",
+		"to": "../../../function/widget/core/align/Component",
+		"specifier": "../../../function/widget/core/align/Component",
+		"reason": "management must not import function implementation directly"
+	}
+]

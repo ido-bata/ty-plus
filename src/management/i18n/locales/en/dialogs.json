@@ -1,0 +1,79 @@
+{
+	"title": "Dialogs",
+	"close": "Close",
+	"save": "Save",
+	"cancel": "Cancel",
+	"workspaceShell": {
+		"backgroundPanel": {
+			"title": "Background layer",
+			"lead": "Stack solid, image, and pattern layers behind the workspace grid. Click Apply to sync to the panel and save.",
+			"applyToWorkspace": "Apply to workspace",
+			"clearAll": "Clear all",
+			"emptyLayers": "No layers yet — add one with the buttons on the left.",
+			"selectLayer": "Select a layer in the list to edit it.",
+			"enabled": "Visible",
+			"opacity": "Opacity",
+			"color": "Color",
+			"imagePath": "File path",
+			"imagePathPlaceholder": "Image path or URL",
+			"browseImage": "Browse image",
+			"selectImage": "Select image",
+			"imageUrl": "Image URL",
+			"applyUrl": "Use URL",
+			"imageFit": "Fit",
+			"imageRepeat": "Repeat",
+			"imageScale": "Scale %",
+			"shiftX": "Shift X (px)",
+			"shiftY": "Shift Y (px)",
+			"pattern": "Pattern",
+			"patternSize": "Size",
+			"patternColor": "Foreground",
+			"patternBg": "Background",
+			"moveUp": "Move up",
+			"moveDown": "Move down",
+			"remove": "Remove layer",
+			"types": {
+				"color": "Color",
+				"image": "Image",
+				"pattern": "Pattern"
+			},
+			"patterns": {
+				"dots": "Dots",
+				"grid": "Grid",
+				"lines": "Lines"
+			},
+			"imageFits": {
+				"cover": "Cover",
+				"contain": "Contain",
+				"stretch": "Stretch",
+				"auto": "Scale"
+			},
+			"imageRepeats": {
+				"no-repeat": "None",
+				"repeat": "Tile",
+				"repeat-x": "X",
+				"repeat-y": "Y"
+			},
+			"tooltips": {
+				"addColor": "Add solid color layer",
+				"addPattern": "Add pattern layer",
+				"addImage": "Add image layer"
+			},
+			"titleWithPanel": "Background layer - Panel {{panel}}",
+			"loading": "Loading...",
+			"saving": "Saving...",
+			"saved": "Saved",
+			"loadFailed": "Failed to load: {{message}}",
+			"saveFailed": "Save failed",
+			"preview": "Preview"
+		},
+		"widgetSelector": {
+			"title": "Add widget",
+			"lead": "Choose a type and send it to the main workspace panel. Supported items add a tile at the bottom of the grid.",
+			"add": "Add",
+			"addToPanelHint": "Add this widget to the main panel grid (bottom row).",
+			"notInPanelYet": "This widget type does not have a panel UI yet — it cannot be placed.",
+			"footerHint": "Grayed items are not yet implemented in the panel renderer. Others close this dialog after sending the request."
+		}
+	}
+}

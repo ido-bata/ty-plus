@@ -1,0 +1,847 @@
+{
+  "canonicalMethods": [
+    "online_catalog_search",
+    "online_connectivity_check",
+    "online_download",
+    "online_catalog_cache_read",
+    "online_catalog_cache_write",
+    "online_catalog_cache_delete",
+    "online_catalog_cache_clear",
+    "host_plugin_effect_scan",
+    "host_thumbnail_lookup",
+    "host_thumbnail_generate",
+    "host_thumbnail_lookup_or_generate",
+    "host_thumbnail_batch"
+  ],
+  "canonicalOperationPolicies": {
+    "host_plugin_effect_scan": {
+      "cancellable": true,
+      "idempotencyKey": "optional",
+      "retryClass": "idempotent",
+      "retryCrashBeforeAccept": false,
+      "wireName": "host.plugin.effect.scan"
+    },
+    "host_thumbnail_batch": {
+      "cancellable": true,
+      "idempotencyKey": "optional",
+      "retryClass": "idempotent",
+      "retryCrashBeforeAccept": false,
+      "wireName": "host.thumbnail.batch"
+    },
+    "host_thumbnail_generate": {
+      "cancellable": true,
+      "idempotencyKey": "optional",
+      "retryClass": "idempotent",
+      "retryCrashBeforeAccept": false,
+      "wireName": "host.thumbnail.generate"
+    },
+    "host_thumbnail_lookup": {
+      "cancellable": true,
+      "idempotencyKey": "optional",
+      "retryClass": "idempotent",
+      "retryCrashBeforeAccept": false,
+      "wireName": "host.thumbnail.lookup"
+    },
+    "host_thumbnail_lookup_or_generate": {
+      "cancellable": true,
+      "idempotencyKey": "optional",
+      "retryClass": "idempotent",
+      "retryCrashBeforeAccept": false,
+      "wireName": "host.thumbnail.lookup-or-generate"
+    },
+    "online_catalog_cache_clear": {
+      "cancellable": true,
+      "idempotencyKey": "forbidden",
+      "retryClass": "non-idempotent",
+      "retryCrashBeforeAccept": false,
+      "wireName": "online.catalog.cache.clear"
+    },
+    "online_catalog_cache_delete": {
+      "cancellable": true,
+      "idempotencyKey": "forbidden",
+      "retryClass": "non-idempotent",
+      "retryCrashBeforeAccept": false,
+      "wireName": "online.catalog.cache.delete"
+    },
+    "online_catalog_cache_read": {
+      "cancellable": true,
+      "idempotencyKey": "optional",
+      "retryClass": "idempotent",
+      "retryCrashBeforeAccept": false,
+      "wireName": "online.catalog.cache.read"
+    },
+    "online_catalog_cache_write": {
+      "cancellable": true,
+      "idempotencyKey": "forbidden",
+      "retryClass": "non-idempotent",
+      "retryCrashBeforeAccept": false,
+      "wireName": "online.catalog.cache.write"
+    },
+    "online_catalog_search": {
+      "cancellable": true,
+      "idempotencyKey": "optional",
+      "retryClass": "idempotent",
+      "retryCrashBeforeAccept": false,
+      "wireName": "online.catalog.search"
+    },
+    "online_connectivity_check": {
+      "cancellable": true,
+      "idempotencyKey": "optional",
+      "retryClass": "idempotent",
+      "retryCrashBeforeAccept": false,
+      "wireName": "online.connectivity.check"
+    },
+    "online_download": {
+      "cancellable": true,
+      "idempotencyKey": "forbidden",
+      "retryClass": "non-idempotent",
+      "retryCrashBeforeAccept": false,
+      "wireName": "online.download"
+    }
+  },
+  "catalogFormat": "ty-plus.protocol-schema-catalog/1",
+  "documents": {
+    "cancelRequest": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "additionalProperties": false,
+      "properties": {
+        "target_request_id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "target_request_id"
+      ],
+      "title": "CancelRequest",
+      "type": "object"
+    },
+    "capabilitySet": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "items": {
+        "type": "string"
+      },
+      "title": "CapabilitySet",
+      "type": "array",
+      "uniqueItems": true
+    },
+    "connectivityStatusDto": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "additionalProperties": false,
+      "description": "Connectivity status payload for `online.connectivity.check`.\n\nMirrors the typed `ConnectivityStatus` from `ty_plus_online::connectivity`\nbut uses snake_case wire fields and an `error_message` option so it can be\nserialized as part of the generated schema and re-imported by the\nTypeScript runtime gateway.",
+      "properties": {
+        "checked_at": {
+          "type": "string"
+        },
+        "error_message": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "label": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "state",
+        "label",
+        "checked_at"
+      ],
+      "title": "ConnectivityStatusDto",
+      "type": "object"
+    },
+    "generateThumbnailRequest": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "additionalProperties": false,
+      "description": "Thumbnail-generation request payload for the host thumbnail resolver.\n\nMirrors `LookupThumbnailRequest` so callers can route lookup and generate\nthrough the same identity triple.",
+      "properties": {
+        "file_type": {
+          "type": "string"
+        },
+        "mtime_ms": {
+          "format": "int64",
+          "type": "integer"
+        },
+        "size_bytes": {
+          "format": "uint64",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "source_path": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_path",
+        "mtime_ms",
+        "size_bytes",
+        "file_type"
+      ],
+      "title": "GenerateThumbnailRequest",
+      "type": "object"
+    },
+    "generateThumbnailResponse": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "additionalProperties": false,
+      "description": "Thumbnail-generation response payload for the host thumbnail resolver.\n\n`cache_path` is always populated after a successful generation. The\ngeneration is idempotent over `(mtime, size, sha256)`, so a retry that\nobserves the same identity triple writes the same bytes back.",
+      "properties": {
+        "animated_source_path": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "cache_path": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "cache_path"
+      ],
+      "title": "GenerateThumbnailResponse",
+      "type": "object"
+    },
+    "lookupThumbnailRequest": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "additionalProperties": false,
+      "description": "Cache-lookup request payload for the host thumbnail resolver.\n\nIdentifies the source media by its host-stable identity triple so the\nruntime can answer whether a cached thumbnail exists without re-reading\nthe source bytes.",
+      "properties": {
+        "file_type": {
+          "type": "string"
+        },
+        "mtime_ms": {
+          "format": "int64",
+          "type": "integer"
+        },
+        "size_bytes": {
+          "format": "uint64",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "source_path": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_path",
+        "mtime_ms",
+        "size_bytes",
+        "file_type"
+      ],
+      "title": "LookupThumbnailRequest",
+      "type": "object"
+    },
+    "lookupThumbnailResponse": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "additionalProperties": false,
+      "description": "Cache-lookup response payload for the host thumbnail resolver.\n\n`cache_path` is `None` when no cached thumbnail exists yet for the\nrequested identity. `animated_source_path` is set when the source is an\nanimated media file that the caller may render directly.",
+      "properties": {
+        "animated_source_path": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "cache_path": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "title": "LookupThumbnailResponse",
+      "type": "object"
+    },
+    "pluginEffectScanRequest": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "additionalProperties": false,
+      "description": "Plugin/effect scan request payload.\n\nThis payload is sent from the client to the runtime to request\na scan of plugin/effect files under the specified roots.",
+      "properties": {
+        "roots": {
+          "description": "Root directories to scan for plugins/effects.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "roots"
+      ],
+      "title": "PluginEffectScanRequest",
+      "type": "object"
+    },
+    "wireMessage": {
+      "$defs": {
+        "AcceptedEvent": {
+          "additionalProperties": false,
+          "properties": {
+            "request_id": {
+              "type": "string"
+            },
+            "session_id": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "request_id",
+            "session_id"
+          ],
+          "type": "object"
+        },
+        "CancelRequest": {
+          "additionalProperties": false,
+          "properties": {
+            "target_request_id": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "target_request_id"
+          ],
+          "type": "object"
+        },
+        "CancellationAcknowledgement": {
+          "additionalProperties": false,
+          "properties": {
+            "decision": {
+              "$ref": "#/$defs/CancellationDecision"
+            },
+            "target_request_id": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "target_request_id",
+            "decision"
+          ],
+          "type": "object"
+        },
+        "CancellationDecision": {
+          "enum": [
+            "accepted",
+            "rejected_not_cancellable",
+            "rejected_commit_in_progress",
+            "already_finished"
+          ],
+          "type": "string"
+        },
+        "EventEnvelope": {
+          "additionalProperties": false,
+          "properties": {
+            "payload": {
+              "$ref": "#/$defs/EventPayload"
+            },
+            "protocol_version": {
+              "$ref": "#/$defs/ProtocolVersion"
+            },
+            "request_id": {
+              "type": "string"
+            },
+            "session_id": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "protocol_version",
+            "session_id",
+            "request_id",
+            "payload"
+          ],
+          "type": "object"
+        },
+        "EventPayload": {
+          "oneOf": [
+            {
+              "additionalProperties": false,
+              "properties": {
+                "data": {
+                  "$ref": "#/$defs/AcceptedEvent"
+                },
+                "event": {
+                  "const": "accepted",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "event",
+                "data"
+              ],
+              "type": "object"
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "data": {
+                  "$ref": "#/$defs/ProgressEvent"
+                },
+                "event": {
+                  "const": "progress",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "event",
+                "data"
+              ],
+              "type": "object"
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "data": {
+                  "$ref": "#/$defs/CancellationAcknowledgement"
+                },
+                "event": {
+                  "const": "cancellation_acknowledged",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "event",
+                "data"
+              ],
+              "type": "object"
+            }
+          ]
+        },
+        "HostContext": {
+          "additionalProperties": false,
+          "description": "Host context payload from After Effects ExtendScript.\n\nThis payload is sent from the host to the runtime during session registration.\nIt contains the application root and support root paths derived from\nExtendScript's `app.path`.",
+          "properties": {
+            "app_root": {
+              "description": "Application root path from ExtendScript's `app.path`.",
+              "type": "string"
+            },
+            "session_id": {
+              "description": "Session identifier for this AE instance.",
+              "type": "string"
+            },
+            "support_root": {
+              "description": "Application support root path.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "app_root",
+            "support_root",
+            "session_id"
+          ],
+          "type": "object"
+        },
+        "InvocationContext": {
+          "additionalProperties": false,
+          "properties": {
+            "host_context": {
+              "$ref": "#/$defs/HostContext"
+            },
+            "managed_root": {
+              "$ref": "#/$defs/ManagedRootContext"
+            }
+          },
+          "required": [
+            "host_context",
+            "managed_root"
+          ],
+          "type": "object"
+        },
+        "ManagedRootContext": {
+          "oneOf": [
+            {
+              "enum": [
+                "session_default"
+              ],
+              "type": "string"
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "explicit_shared": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "root": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "root"
+                  ],
+                  "type": "object"
+                }
+              },
+              "required": [
+                "explicit_shared"
+              ],
+              "type": "object"
+            }
+          ]
+        },
+        "ProgressEvent": {
+          "additionalProperties": false,
+          "properties": {
+            "completed_units": {
+              "format": "uint64",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "sequence": {
+              "format": "uint64",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "stage": {
+              "$ref": "#/$defs/ProgressStage"
+            },
+            "total_units": {
+              "format": "uint64",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "user_safe_detail": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "sequence",
+            "stage"
+          ],
+          "type": "object"
+        },
+        "ProgressStage": {
+          "enum": [
+            "preparing",
+            "discovering",
+            "downloading",
+            "reading",
+            "writing",
+            "verifying",
+            "committing",
+            "finished"
+          ],
+          "type": "string"
+        },
+        "ProtocolError": {
+          "additionalProperties": false,
+          "properties": {
+            "code": {
+              "$ref": "#/$defs/StableErrorCode"
+            },
+            "diagnostic_id": {
+              "type": "string"
+            },
+            "retryable": {
+              "type": "boolean"
+            },
+            "user_safe_detail": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "retryable",
+            "user_safe_detail",
+            "diagnostic_id"
+          ],
+          "type": "object"
+        },
+        "ProtocolVersion": {
+          "additionalProperties": false,
+          "properties": {
+            "major": {
+              "format": "uint16",
+              "maximum": 65535,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "minor": {
+              "format": "uint16",
+              "maximum": 65535,
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "major",
+            "minor"
+          ],
+          "type": "object"
+        },
+        "RequestEnvelope": {
+          "additionalProperties": false,
+          "properties": {
+            "context": {
+              "$ref": "#/$defs/InvocationContext"
+            },
+            "metadata": {
+              "$ref": "#/$defs/RequestMetadata"
+            },
+            "method": {
+              "type": "string"
+            },
+            "payload": true,
+            "protocol_version": {
+              "$ref": "#/$defs/ProtocolVersion"
+            }
+          },
+          "required": [
+            "protocol_version",
+            "metadata",
+            "context",
+            "method",
+            "payload"
+          ],
+          "type": "object"
+        },
+        "RequestMetadata": {
+          "additionalProperties": false,
+          "properties": {
+            "cancellable": {
+              "type": "boolean"
+            },
+            "deadline_unix_ms": {
+              "format": "uint64",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "idempotency_key": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "request_id": {
+              "type": "string"
+            },
+            "session_id": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "request_id",
+            "session_id",
+            "deadline_unix_ms",
+            "cancellable"
+          ],
+          "type": "object"
+        },
+        "ResponseEnvelope": {
+          "additionalProperties": false,
+          "properties": {
+            "outcome": {
+              "$ref": "#/$defs/ResponseOutcome"
+            },
+            "protocol_version": {
+              "$ref": "#/$defs/ProtocolVersion"
+            },
+            "request_id": {
+              "type": "string"
+            },
+            "session_id": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "protocol_version",
+            "request_id",
+            "session_id",
+            "outcome"
+          ],
+          "type": "object"
+        },
+        "ResponseOutcome": {
+          "oneOf": [
+            {
+              "additionalProperties": false,
+              "properties": {
+                "payload": true,
+                "status": {
+                  "const": "success",
+                  "type": "string"
+                },
+                "warnings": {
+                  "items": {
+                    "$ref": "#/$defs/Warning"
+                  },
+                  "type": "array"
+                }
+              },
+              "required": [
+                "status",
+                "payload"
+              ],
+              "type": "object"
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "error": {
+                  "$ref": "#/$defs/ProtocolError"
+                },
+                "status": {
+                  "const": "failure",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "status",
+                "error"
+              ],
+              "type": "object"
+            }
+          ]
+        },
+        "StableErrorCode": {
+          "enum": [
+            "invalid_request",
+            "incompatible_protocol",
+            "protocol_violation",
+            "worker_crashed",
+            "worker_forced_termination",
+            "host_context_missing",
+            "host_context_stale",
+            "not_found",
+            "already_exists",
+            "permission_denied",
+            "elevation_declined",
+            "path_outside_allowed_scope",
+            "network_unavailable",
+            "timeout",
+            "remote_rejected",
+            "integrity_mismatch",
+            "storage_corrupt",
+            "migration_required",
+            "busy",
+            "conflict",
+            "cancelled",
+            "internal_error"
+          ],
+          "type": "string"
+        },
+        "Warning": {
+          "additionalProperties": false,
+          "properties": {
+            "code": {
+              "type": "string"
+            },
+            "user_safe_detail": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "user_safe_detail"
+          ],
+          "type": "object"
+        }
+      },
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "request",
+              "type": "string"
+            },
+            "message": {
+              "$ref": "#/$defs/RequestEnvelope"
+            }
+          },
+          "required": [
+            "kind",
+            "message"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "cancel",
+              "type": "string"
+            },
+            "message": {
+              "$ref": "#/$defs/CancelRequest"
+            }
+          },
+          "required": [
+            "kind",
+            "message"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "response",
+              "type": "string"
+            },
+            "message": {
+              "$ref": "#/$defs/ResponseEnvelope"
+            }
+          },
+          "required": [
+            "kind",
+            "message"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "event",
+              "type": "string"
+            },
+            "message": {
+              "$ref": "#/$defs/EventEnvelope"
+            }
+          },
+          "required": [
+            "kind",
+            "message"
+          ],
+          "type": "object"
+        }
+      ],
+      "title": "WireMessage"
+    }
+  },
+  "generator": {
+    "formatVersion": 1,
+    "name": "ty-plus-protocol-schema",
+    "protocolCrateVersion": "0.1.0",
+    "schemarsVersion": "1.0.4"
+  },
+  "limits": {
+    "maxCapabilities": 128,
+    "maxCapabilityNameBytes": 128,
+    "maxDeadlineHorizonMs": 86400000,
+    "maxFrameBytes": 1048576,
+    "maxIdempotencyKeyBytes": 256,
+    "maxIdentifierBytes": 128,
+    "maxJsonDepth": 32,
+    "maxMethodNameBytes": 128,
+    "maxPendingRequests": 128,
+    "maxStringBytes": 16384,
+    "maxUnknownMethodsPerSession": 8,
+    "maxWarnings": 32
+  },
+  "protocolVersion": {
+    "major": 1,
+    "minor": 0
+  }
+}

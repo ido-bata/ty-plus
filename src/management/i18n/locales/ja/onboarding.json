@@ -1,0 +1,99 @@
+{
+	"step": {
+		"intro": {
+			"label": "はじめに",
+			"title": "ようこそ",
+			"body": "ty-plus は、プリセットやウィジェットを置いて作業を速くするための個人用ワークスペースです。\nさっそくセットアップを始めましょう。"
+		},
+		"language": {
+			"label": "言語",
+			"title": "言語を選ぶ",
+			"body": "表示言語を選んでください。選択後すぐにインターフェースが切り替わります。"
+		},
+		"support": {
+			"label": "場所",
+			"title": "After Effects フォルダ",
+			"body": "After Effects のアプリケーションフォルダを指定してください。Windows では「Support Files」、macOS では Presets を含むアプリフォルダです。"
+		},
+		"subfolders": {
+			"label": "サブフォルダ",
+			"title": "サブフォルダの調整",
+			"body": "既定からパスを変えたときに表示されます。必要なら Presets / Scripts / Plug-ins の場所を個別に指定してください。"
+		},
+		"presets": {
+			"label": "プリセット",
+			"title": "プリセットを選ぶ",
+			"body": "Presets フォルダから .ffx を選び、初期プリセットとして登録します。\nあとから + メニューで追加・インポートできます。フォルダ選択は自動でグループ化されます。"
+		},
+		"scripts": {
+			"label": "スクリプト",
+			"title": "スクリプトを選ぶ",
+			"body": "Scripts フォルダから .jsx / .jsxbin を選び、初期プリセットとして登録します。\nコードプリセットから式用プリセットを後から作ることもできます。"
+		},
+		"plugins": {
+			"label": "プラグイン",
+			"title": "プラグインを選ぶ",
+			"body": "Plug-ins フォルダから .aex / .plugin を選び、初期プリセットとして登録します。\n必要ならあとからインポートできます。"
+		},
+		"workspace": {
+			"label": "ワークスペース",
+			"title": "ワークスペースの基本",
+			"body": "プリセットやウィジェットをドラッグして移動・リサイズできます。\n\n- 中央マウスボタンまたは Ctrl/Cmd + 左クリックで移動開始\n- Shift + 左ドラッグで複数選択（矩形）\n- 右クリックで編集・グループ操作"
+		},
+		"adding-presets": {
+			"label": "追加",
+			"title": "プリセットの追加",
+			"body": "+ メニューからプリセット・グループ・ウィジェットを追加できます。\n\n- サイドパネルでプリセット一覧を切り替え\n- オンラインで取得したプリセットは自動配置されます"
+		},
+		"finish": {
+			"label": "完了",
+			"title": "準備完了",
+			"body": "「完了」で設定を保存します。\n\nさあ、はじめましょう。"
+		}
+	},
+	"fields": {
+		"presetRoot": "プリセットフォルダ",
+		"scriptRoot": "スクリプトフォルダ",
+		"pluginRoot": "プラグインフォルダ",
+		"supportPlaceholder": "Support Files またはアプリフォルダのパス"
+	},
+	"filePick": {
+		"selected": "選択: {{count}}"
+	},
+	"secondaryPanel": {
+		"title": "セットアップが必要です",
+		"description": "先に panel-1 でオンボーディングを完了してください。",
+		"userManual": "ユーザーマニュアル",
+		"openMainPanel": "メインパネルを開く",
+		"linkUnavailable": "マニュアルのリンクが利用できません"
+	},
+	"browse": "参照",
+	"browseAriaLabel": "フォルダを参照",
+	"defaultLabel": "既定",
+	"customLabel": "カスタム",
+	"empty": "項目がありません",
+	"goUp": "上へ",
+	"selectedFiles": "{{files}} 件のファイル",
+	"selectedFolders": "{{folders}} 件のフォルダ",
+	"selectedSuffix": " を選択",
+	"errors": {
+		"supportRequired": "AE フォルダのパスが必要です。",
+		"subfoldersRequired": "Presets / Scripts / Plug-ins の各フォルダを指定してください。",
+		"folderPickerCep": "フォルダの選択には CEP が必要です。",
+		"finishErrorTitle": "設定を保存できませんでした",
+		"finishErrorPathLabel": "パス",
+		"finishErrorReasonLabel": "理由",
+		"finishErrorNextActionLabel": "次の手順",
+		"finishErrorNextActionChooseTrusted": "オンボーディング設定ファイルに Support Root が含まれていません。After Effects 内でオンボーディングを最初からやり直してください。",
+		"finishErrorNextActionAdjust": "AE の Support Root に設定を保存できませんでした。パスにアクセスでき、After Effects に書き込み権限があるか確認してから、もう一度お試しください。",
+		"finishErrorNextActionRetry": "Windows UAC を要求しましたが昇格した書き込みが失敗しました。Retry を押して UAC を再表示するか、After Effects を管理者として実行してください。",
+		"finishErrorRetryWithElevation": "管理者として再試行"
+	},
+	"actions": {
+		"back": "戻る",
+		"next": "次へ",
+		"finish": "完了",
+		"toggleFullscreen": "全画面表示に切り替え",
+		"toggleModal": "モーダル表示に戻る"
+	}
+}

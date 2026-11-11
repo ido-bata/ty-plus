@@ -1,0 +1,237 @@
+{
+	"codePreset": {
+		"codeType": "Code type",
+		"editor": {
+			"expression": "Expression",
+			"script": "Script code (.jsx)"
+		},
+		"saveLocation": "Save location",
+		"savePreview": "Save preview",
+		"status": {
+			"fileExists": "File already exists — will be overwritten",
+			"success": "Preset saved successfully!"
+		},
+		"type": {
+			"expression": "Expression",
+			"script": "Script"
+		}
+	},
+	"common": {
+		"browseFolder": "Ordner durchsuchen",
+		"copyPath": "Pfad kopieren",
+		"selectFile": "Datei auswählen"
+	},
+	"layerCompPreset": {
+		"desc": {
+			"comp": "Open the composition you want to save. Project must be saved first.",
+			"layer": "Select the layers you want to save. Project must be saved first."
+		},
+		"hint": {
+			"saveButton": "Press \"Create\" at the bottom of the dialog to save."
+		},
+		"savePreview": "Save preview",
+		"step1": {
+			"title": "Preset type"
+		},
+		"step2": {
+			"title": "Prepare in After Effects"
+		},
+		"step3": {
+			"title": "Save location"
+		},
+		"type": {
+			"comp": "Composition",
+			"layer": "Layer"
+		}
+	},
+	"search": {
+		"title": "Voreinstellungen suchen",
+		"placeholder": "Tippen zum Suchen…",
+		"empty": "Keine Voreinstellungen gefunden"
+	},
+	"online": {
+		"loading": "Wird geladen…",
+		"empty": "Keine Online-Voreinstellungen verfügbar"
+	},
+	"presetTool": {
+		"form": {
+			"presetId": "Preset-ID",
+			"presetIdPlaceholder": "Preset-ID",
+			"displayName": "Anzeigename",
+			"displayNamePlaceholder": "Anzeigename",
+			"filePath": "Dateipfad",
+			"description": "Beschreibung",
+			"descriptionPlaceholder": "Beschreibung (optional)",
+			"descriptionImage": "Beschreibungsbild",
+			"descriptionImagePlaceholder": "Bildpfad oder URL",
+			"descriptionImageBrowse": "Bild durchsuchen",
+			"details": "Details",
+			"presetName": "Preset-Name",
+			"icon": "Symbol",
+			"savePath": "Speicherpfad"
+		},
+		"create": "Erstellen",
+		"status": {
+			"ready": "Bereit",
+			"loading": "Preset wird geladen…",
+			"loaded": "Wird bearbeitet: {{id}}",
+			"unknownPreset": "Preset nicht gefunden: {{id}}",
+			"loadFailed": "Preset konnte nicht geladen werden: {{message}}",
+			"invalidId": "Preset-ID ist ungültig",
+			"filePathRequired": "Dateipfad ist erforderlich",
+			"saved": "Gespeichert: {{id}}",
+			"saveFailed": "Speichern fehlgeschlagen: {{message}}",
+			"saving": "Wird gespeichert..."
+		},
+		"animation": {
+			"title": "Animations-Voreinstellung",
+			"lead": "Keyframe- oder Expressions-Standards als wiederverwendbare Animations-Voreinstellung verpackt.",
+			"defaultName": "Animation-Preset",
+			"fields": {
+				"saveFolder": "Speicherordner",
+				"path": "Animations-Preset-Pfad",
+				"pathPlaceholder": "Optional vorhandener .ffx-Pfad"
+			}
+		},
+		"footage": {
+			"title": "Footage-Voreinstellung",
+			"lead": "Footage-Pipeline-Verknüpfungen (Import, Ersetzen, Proxy). Echte Dateien werden als Footage importiert.",
+			"defaultName": "Footage-Voreinstellung",
+			"fields": {
+				"path": "Footage-Pfad",
+				"mode": "Import-Modus"
+			}
+		},
+		"layerComp": {
+			"title": "Ebene / Komposition-Voreinstellung",
+			"lead": "Ebene- und Kompositions-Operationen (Transform, Duplizieren, Precompose). Gespeicherte Skriptdateien werden in After Effects ausgeführt.",
+			"defaultName": "Layer/Comp-Voreinstellung"
+		},
+		"import": {
+			"title": "Import-Voreinstellung",
+			"lead": "Importpfad- oder Auswahl-Importeure-Bündel. Verwendet die Footage-Preset-Pipeline, wenn Ihr Arbeitsablauf diese Handler teilt.",
+			"defaultName": "Import-Voreinstellung",
+			"fields": {
+				"path": "Importpfad",
+				"strategy": "Strategie"
+			}
+		},
+		"code": {
+			"title": "Code-Voreinstellung",
+			"lead": "Erstellt eine lokale Code/Skript-Voreinstellung.",
+			"extra": "Gespeicherte Skriptdateien werden in After Effects ausgeführt.",
+			"defaultName": "Code-Voreinstellung",
+			"editor": {
+				"format": "Format Document",
+				"formatTooltip": "Format the script body",
+				"diagnosticCount": "{{count}} problem",
+				"diagnosticCount_other": "{{count}} problems"
+			}
+		},
+		"easing": {
+			"title": "Easing-Preset",
+			"lead": "Erstellt ein lokales Easing-Preset.",
+			"curveHint": "Host-Easing (cubic-bezier). Diese Kurve wird gespeichert, wenn Sie im AE-Kontext speichern.",
+			"openWithSelectionHint": "Öffnen Sie diesen Dialog aus dem Arbeitsbereich mit einer Easing-Auswahl, um eine Kurven-Vorschau einzubetten.",
+			"ariaPreview": "Easing-Kurven-Vorschau",
+			"editTitle": "Easing-Preset bearbeiten",
+			"defaultName": "Easing-Preset",
+			"curve": "Kurve",
+			"invalidCurve": "Die Kurve muss ein JSON-Array mit vier Zahlen sein."
+		},
+		"addFile": {
+			"title": "Datei-Preset hinzufügen",
+			"lead": "Registriert ein dateibasiertes lokales Preset aus dem Arbeitsbereich. Die Erweiterung bestimmt den Preset-Typ."
+		},
+		"addFolder": {
+			"title": "Ordner/Gruppe hinzufügen",
+			"lead": "Ordner oder Gruppe zur Organisation von Kacheln registrieren."
+		},
+		"localPreset": "Lokales Voreinstellung",
+		"groupPreset": "Gruppen-Voreinstellung",
+		"animationLabel": "Animation",
+		"layerCompLabel": "Ebene/Komposition",
+		"codeLabel": "Code",
+		"presetLibrary": "Voreinstellungs-Bibliothek",
+		"messages": "Nachrichten",
+		"settings": "Einstellungen",
+		"debugConsole": "Debug-Konsole",
+		"cancel": "Abbrechen",
+		"boot": {
+			"title": "Preset-Dialog",
+			"preparing": "Preset-Dialog wird vorbereitet...",
+			"handoffError": "Startinformationen für den Preset-Dialog konnten nicht abgerufen werden. Bitte erneut aus dem Workspace öffnen."
+		},
+		"generic": {
+			"title": "Preset erstellen",
+			"lead": "Erstelle ein lokales Preset aus wiederverwendbaren Metadaten.",
+			"defaultName": "Lokales Preset"
+		}
+	},
+	"animationPreset": {
+		"step1": {
+			"title": "Select in After Effects",
+			"desc": "Select properties or layers you want to save as preset"
+		},
+		"step2": {
+			"title": "Save to this folder"
+		},
+		"step3": {
+			"button": "Save Animation Preset",
+			"detecting": "Detecting..."
+		},
+		"status": {
+			"success": "Detected!",
+			"noSelection": "No selection",
+			"noSelectionHint": "Select properties or layers in AE first",
+			"timeout": "Scan timeout",
+			"timeoutHint": "Choose a smaller folder",
+			"error": "Not detected",
+			"errorHint": "Save to the folder above"
+		},
+		"path": {
+			"reset": "Reset to default",
+			"notConfigured": "Not configured"
+		}
+	},
+	"edit": {
+		"title": "Preset bearbeiten",
+		"delete": "Löschen",
+		"save": "Speichern",
+		"cancel": "Abbrechen",
+		"status": {
+			"loading": "Preset wird geladen…",
+			"saved": "Gespeichert",
+			"deleted": "Gelöscht",
+			"saveFailed": "Speichern fehlgeschlagen: {{message}}",
+			"deleteFailed": "Löschen fehlgeschlagen: {{message}}"
+		},
+		"fields": {
+			"presetName": "Preset-Name",
+			"description": "Beschreibung",
+			"icon": "Symbol",
+			"iconText": "Text",
+			"iconEmoji": "Emoji",
+			"iconTextPlaceholder": "Text (z. B. CODE)",
+			"iconEmojiPlaceholder": "Emoji (z. B. ⚡)",
+			"filePath": "Dateipfad",
+			"type": "Typ",
+			"presetNamePlaceholder": "Preset-Name eingeben"
+		},
+		"titleForType": {
+			"preset": "Preset",
+			"script": "Skript-Preset",
+			"plugin": "Plugin-Preset",
+			"footage": "Footage-Preset"
+		}
+	},
+	"group": {
+		"title": "Preset-Gruppe erstellen",
+		"lead": "Mehrere Voreinstellungen unter einer einzigen Kachel gruppieren.",
+		"defaultName": "Gruppen-Preset",
+		"fields": {
+			"groupName": "Gruppenname",
+			"groupNamePlaceholder": "Gruppenname eingeben"
+		}
+	}
+}

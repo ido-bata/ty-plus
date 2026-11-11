@@ -1,0 +1,45 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/core",
+    "crates/host",
+    "crates/cli",
+]
+
+[workspace.package]
+edition = "2021"
+rust-version = "1.85"
+license = "Proprietary"
+publish = false
+
+# Same dependency version across all workspace crates. This guarantees that
+# `serde_json` produces identical JSON for a given shape, no matter which
+# crate is doing the serialization. Cross-crate type sharing depends on this.
+[workspace.dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["preserve_order"] }
+thiserror = "1"
+blake3 = "1"
+walkdir = "2"
+dirs = "5"
+clap = { version = "4", features = ["derive"] }
+ty-plus-core = { path = "crates/core" }
+ty-plus-host = { path = "crates/host", default-features = false }
+
+# Release profile tuned for a CLI that ships in a CEP extension:
+# - LTO + 1 codegen unit to keep the binary small (we ship per-platform).
+# - strip = "symbols" to drop the symbol table on Windows (Mac/Linux strip by default).
+# - opt-level "z" reduces size further at a small runtime cost; the CLI is
+#   rarely called in a hot loop (ty-plus spawns it per invocation), so size wins.
+[profile.release]
+lto = "fat"
+codegen-units = 1
+strip = "symbols"
+opt-level = "z"
+panic = "abort"
+
+# Keep the dev profile fast to compile. The CLI is for development iteration,
+# so we sacrifice release optimizations for short rebuild cycles.
+[profile.dev]
+opt-level = 0
+debug = true

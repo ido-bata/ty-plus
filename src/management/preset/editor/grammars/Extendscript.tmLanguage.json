@@ -1,0 +1,32 @@
+{
+	"scopeName": "source.jsx.extendscript",
+	"name": "ExtendScript",
+	"fileTypes": ["jsx", "extendscript"],
+	"firstLineMatch": "^#target\\s+\\w+",
+	"patterns": [
+		{ "include": "#preprocessor" },
+		{ "include": "#extendscript-globals" },
+		{ "include": "source.js" }
+	],
+	"repository": {
+		"preprocessor": {
+			"patterns": [
+				{
+					"match": "^(\\s*)(#target|#include|#script|#strict|#persistent)(\\s+([^/\\s][^\\s]*))?",
+					"captures": {
+						"2": { "name": "keyword.control.preprocessor.extendscript" },
+						"4": { "name": "string.unquoted.preprocessor.extendscript" }
+					}
+				}
+			]
+		},
+		"extendscript-globals": {
+			"patterns": [
+				{
+					"match": "\\b(?:app|system|clearOutput|currentFormatToTime|timeToCurrentFormat|write|writeLn|isValid|BridgeTalk)\\b",
+					"name": "support.type.extendscript"
+				}
+			]
+		}
+	}
+}

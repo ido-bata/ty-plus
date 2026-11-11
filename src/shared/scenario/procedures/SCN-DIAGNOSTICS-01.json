@@ -1,0 +1,126 @@
+{
+	"scenarioId": "SCN-DIAGNOSTICS-01",
+	"steps": [
+		{
+			"id": "step-1",
+			"gherkinRef": { "scenarioId": "SCN-DIAGNOSTICS-01", "stepIndex": 0 },
+			"preconditions": [
+				"Onboarding completed.",
+				"Log bus has at least one info entry.",
+				"storage:diagnostics is empty."
+			],
+			"input": { "snapshot": "diagnostics-precondition probe" },
+			"action": "observe_diagnostics_preconditions",
+			"expectedResult": {
+				"persistenceOracle": {
+					"storageKey": "storage:diagnostics",
+					"expected": null
+				}
+			},
+			"postconditions": ["storage:diagnostics is empty."],
+			"mutation": false,
+			"checkpoint": false
+		},
+		{
+			"id": "step-2",
+			"gherkinRef": { "scenarioId": "SCN-DIAGNOSTICS-01", "stepIndex": 1 },
+			"preconditions": ["Diagnostics preconditions are satisfied."],
+			"input": {
+				"selector": "[data-ws-action=\"toggle-console\"]"
+			},
+			"action": "trigger_diagnostics_capture",
+			"expectedResult": {
+				"logOracle": {
+					"scope": "diagnostics",
+					"minLevel": "info",
+					"messageContains": "diagnostics capture started",
+					"id": "log-diagnostics-capture-started"
+				}
+			},
+			"postconditions": ["Diagnostics capture step is in-flight."],
+			"mutation": true,
+			"checkpoint": false
+		},
+		{
+			"id": "step-3",
+			"gherkinRef": { "scenarioId": "SCN-DIAGNOSTICS-01", "stepIndex": 2 },
+			"preconditions": ["Diagnostics capture is in-flight."],
+			"input": { "probe": "read storage:diagnostics" },
+			"action": "checkpoint_re_observe_after_capture",
+			"expectedResult": {
+				"persistenceOracle": {
+					"storageKey": "storage:diagnostics",
+					"expected": { "capturedAt": "TIMESTAMP", "logBusTail": ["..."] }
+				}
+			},
+			"postconditions": [
+				"Diagnostics capture records the current log-bus tail into the bundle."
+			],
+			"mutation": false,
+			"checkpoint": true
+		},
+		{
+			"id": "step-4",
+			"gherkinRef": { "scenarioId": "SCN-DIAGNOSTICS-01", "stepIndex": 5 },
+			"preconditions": ["Diagnostics capture has recorded the log-bus tail."],
+			"input": { "selector": "[data-ws-action=\"toggle-console\"]" },
+			"action": "open_diagnostics_viewer",
+			"expectedResult": {
+				"uiOracle": {
+					"selector": "[data-debug-msg-id]",
+					"attribute": { "name": "data-state", "value": "open" }
+				}
+			},
+			"postconditions": ["Debug console is rendered."],
+			"mutation": true,
+			"checkpoint": false
+		},
+		{
+			"id": "step-5",
+			"gherkinRef": { "scenarioId": "SCN-DIAGNOSTICS-01", "stepIndex": 6 },
+			"preconditions": ["Debug console is rendered."],
+			"input": { "probe": "read storage:diagnostics + DOM debug-msg-id" },
+			"action": "checkpoint_re_observe_after_open_viewer",
+			"expectedResult": {
+				"persistenceOracle": {
+					"storageKey": "storage:diagnostics",
+					"expected": {
+						"capturedAt": "TIMESTAMP",
+						"logBusTail": ["..."],
+						"persistedStateDump": ["..."],
+						"computedStyleSnapshots": ["..."]
+					}
+				},
+				"uiOracle": {
+					"selector": "[data-debug-msg-id]",
+					"attribute": { "name": "data-message-count", "value": "3" }
+				}
+			},
+			"postconditions": [
+				"storage:diagnostics contains the bundle (log-bus tail + persisted state dump + computed-style snapshot).",
+				"Debug console lists the captured messages."
+			],
+			"mutation": false,
+			"checkpoint": true
+		}
+	],
+	"cleanup": [
+		{
+			"id": "cleanup-1",
+			"preconditions": ["Scenario verdict resolved."],
+			"input": { "key": "storage:diagnostics" },
+			"action": "reset_diagnostics_store",
+			"expectedResult": {
+				"persistenceOracle": {
+					"storageKey": "storage:diagnostics",
+					"expected": null
+				}
+			},
+			"postconditions": [
+				"storage:diagnostics is null so the next run starts clean."
+			],
+			"mutation": true,
+			"checkpoint": false
+		}
+	]
+}

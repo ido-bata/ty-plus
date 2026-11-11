@@ -1,0 +1,237 @@
+{
+	"codePreset": {
+		"codeType": "Code type",
+		"editor": {
+			"expression": "Expression",
+			"script": "Script code (.jsx)"
+		},
+		"saveLocation": "Save location",
+		"savePreview": "Save preview",
+		"status": {
+			"fileExists": "File already exists — will be overwritten",
+			"success": "Preset saved successfully!"
+		},
+		"type": {
+			"expression": "Expression",
+			"script": "Script"
+		}
+	},
+	"common": {
+		"browseFolder": "폴더 찾아보기",
+		"copyPath": "경로 복사",
+		"selectFile": "파일 선택"
+	},
+	"layerCompPreset": {
+		"desc": {
+			"comp": "Open the composition you want to save. Project must be saved first.",
+			"layer": "Select the layers you want to save. Project must be saved first."
+		},
+		"hint": {
+			"saveButton": "Press \"Create\" at the bottom of the dialog to save."
+		},
+		"savePreview": "Save preview",
+		"step1": {
+			"title": "Preset type"
+		},
+		"step2": {
+			"title": "Prepare in After Effects"
+		},
+		"step3": {
+			"title": "Save location"
+		},
+		"type": {
+			"comp": "Composition",
+			"layer": "Layer"
+		}
+	},
+	"search": {
+		"title": "프리셋 검색",
+		"placeholder": "입력하여 검색...",
+		"empty": "프리셋을 찾을 수 없습니다"
+	},
+	"online": {
+		"loading": "로드 중...",
+		"empty": "온라인 프리셋이 없습니다"
+	},
+	"presetTool": {
+		"form": {
+			"presetId": "프리셋 ID",
+			"presetIdPlaceholder": "프리셋 ID",
+			"displayName": "표시 이름",
+			"displayNamePlaceholder": "표시 이름",
+			"filePath": "파일 경로",
+			"description": "설명",
+			"descriptionPlaceholder": "설명 (선택사항)",
+			"descriptionImage": "설명 이미지",
+			"descriptionImagePlaceholder": "이미지 경로 또는 URL",
+			"descriptionImageBrowse": "이미지 찾아보기",
+			"details": "상세",
+			"presetName": "프리셋 이름",
+			"icon": "아이콘",
+			"savePath": "저장 경로"
+		},
+		"create": "생성",
+		"status": {
+			"ready": "준비됨",
+			"loading": "프리셋 로드 중…",
+			"loaded": "편집 중: {{id}}",
+			"unknownPreset": "프리셋을 찾을 수 없습니다: {{id}}",
+			"loadFailed": "프리셋 로드 실패: {{message}}",
+			"invalidId": "프리셋 ID가 올바르지 않습니다",
+			"filePathRequired": "파일 경로가 필요합니다",
+			"saved": "저장됨: {{id}}",
+			"saveFailed": "저장 실패: {{message}}",
+			"saving": "저장 중..."
+		},
+		"animation": {
+			"title": "애니메이션 프리셋",
+			"lead": "키프레임 또는 표현식 기본값을 재사용 가능한 애니메이션 프리셋으로 패키징합니다.",
+			"defaultName": "애니메이션 프리셋",
+			"fields": {
+				"saveFolder": "저장 폴더",
+				"path": "애니메이션 프리셋 경로",
+				"pathPlaceholder": "선택적 기존 .ffx 경로"
+			}
+		},
+		"footage": {
+			"title": "푸트리지 프리셋",
+			"lead": "푸트리지 파이프라인 바로가기(가져오기, 교체, 프록시). 실제 파일은 푸트리지로 가져옵니다.",
+			"defaultName": "푸트리지 프리셋",
+			"fields": {
+				"path": "푸트에이지 경로",
+				"mode": "가져오기 모드"
+			}
+		},
+		"layerComp": {
+			"title": "레이어 / 컴프 프리셋",
+			"lead": "레이어 및 컴프 작업(변환, 복제, 프리컴포즈). 저장된 스크립트 파일은 After Effects에서 실행됩니다.",
+			"defaultName": "레이어/컴프 프리셋"
+		},
+		"import": {
+			"title": "가져오기 프리셋",
+			"lead": "가져오기 경로 또는 선택 가져오기 번들입니다. 워크플로우가 해당 핸들러를 공유할 때 푸트리지 프리셋 파이프라인을 재사용합니다.",
+			"defaultName": "가져오기 프리셋",
+			"fields": {
+				"path": "가져오기 경로",
+				"strategy": "전략"
+			}
+		},
+		"code": {
+			"title": "코드 프리셋",
+			"lead": "로컬 코드/스크립트 프리셋을 생성합니다.",
+			"extra": "저장된 스크립트 파일은 After Effects에서 실행됩니다.",
+			"defaultName": "코드 프리셋",
+			"editor": {
+				"format": "Format Document",
+				"formatTooltip": "Format the script body",
+				"diagnosticCount": "{{count}} problem",
+				"diagnosticCount_other": "{{count}} problems"
+			}
+		},
+		"easing": {
+			"title": "이징 프리셋",
+			"lead": "로컬 이징 프리셋을 생성합니다.",
+			"curveHint": "호스트 이징(cubic-bezier). 이 커브는 AE 컨텍스트에서 저장할 때 저장됩니다.",
+			"openWithSelectionHint": "이징 선택으로 워크스페이스에서 이 대화상자를 열면 커브 미리보기를 임베드할 수 있습니다.",
+			"ariaPreview": "이징 커브 미리보기",
+			"editTitle": "이징 프리셋 편집",
+			"defaultName": "이징 프리셋",
+			"curve": "커브",
+			"invalidCurve": "커브는 숫자 4개가 있는 JSON 배열이어야 합니다."
+		},
+		"addFile": {
+			"title": "파일 프리셋 추가",
+			"lead": "워크스페이스에서 파일 기반 로컬 프리셋을 등록합니다. 확장자가 프리셋 유형을 결정합니다."
+		},
+		"addFolder": {
+			"title": "폴더 / 그룹 프리셋 추가",
+			"lead": "타일 정리를 위한 폴더 또는 그룹을 등록합니다."
+		},
+		"localPreset": "로컬 프리셋",
+		"groupPreset": "그룹 프리셋",
+		"animationLabel": "애니메이션",
+		"layerCompLabel": "레이어/컴프",
+		"codeLabel": "코드",
+		"presetLibrary": "프리셋 라이브러리",
+		"messages": "메시지",
+		"settings": "설정",
+		"debugConsole": "디버그 콘솔",
+		"cancel": "취소",
+		"boot": {
+			"title": "프리셋 대화상자",
+			"preparing": "프리셋 대화상자 준비 중...",
+			"handoffError": "프리셋 대화상자 시작 정보를 가져올 수 없습니다. 작업 영역에서 다시 열어 주세요."
+		},
+		"generic": {
+			"title": "프리셋 만들기",
+			"lead": "재사용 가능한 메타데이터로 로컬 프리셋을 만듭니다.",
+			"defaultName": "로컬 프리셋"
+		}
+	},
+	"animationPreset": {
+		"step1": {
+			"title": "Select in After Effects",
+			"desc": "Select properties or layers you want to save as preset"
+		},
+		"step2": {
+			"title": "Save to this folder"
+		},
+		"step3": {
+			"button": "Save Animation Preset",
+			"detecting": "Detecting..."
+		},
+		"status": {
+			"success": "Detected!",
+			"noSelection": "No selection",
+			"noSelectionHint": "Select properties or layers in AE first",
+			"timeout": "Scan timeout",
+			"timeoutHint": "Choose a smaller folder",
+			"error": "Not detected",
+			"errorHint": "Save to the folder above"
+		},
+		"path": {
+			"reset": "Reset to default",
+			"notConfigured": "Not configured"
+		}
+	},
+	"edit": {
+		"title": "프리셋 편집",
+		"delete": "삭제",
+		"save": "저장",
+		"cancel": "취소",
+		"status": {
+			"loading": "프리셋 로드 중…",
+			"saved": "저장됨",
+			"deleted": "삭제됨",
+			"saveFailed": "저장 실패: {{message}}",
+			"deleteFailed": "삭제 실패: {{message}}"
+		},
+		"fields": {
+			"presetName": "프리셋 이름",
+			"description": "설명",
+			"icon": "아이콘",
+			"iconText": "텍스트",
+			"iconEmoji": "이모지",
+			"iconTextPlaceholder": "텍스트 (예: CODE)",
+			"iconEmojiPlaceholder": "이모지 (예: ⚡)",
+			"filePath": "파일 경로",
+			"type": "유형",
+			"presetNamePlaceholder": "프리셋 이름 입력"
+		},
+		"titleForType": {
+			"preset": "프리셋",
+			"script": "스크립트 프리셋",
+			"plugin": "플러그인 프리셋",
+			"footage": "푸트에이지 프리셋"
+		}
+	},
+	"group": {
+		"title": "프리셋 그룹 만들기",
+		"lead": "여러 프리셋을 하나의 타일로 묶습니다.",
+		"defaultName": "그룹 프리셋",
+		"fields": {
+			"groupName": "그룹 이름",
+			"groupNamePlaceholder": "그룹 이름 입력"
+		}
+	}
+}

@@ -1,0 +1,21 @@
+[package]
+name = "ty-plus-host"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+description = "After Effects host path resolution (appRoot, plugin/script/preset roots). Replaces ExtendScript appRoot probe with a Rust equivalent."
+
+[features]
+# Win-only dependency: `winreg` is meaningless on macOS. Default off so the
+# crate builds on macOS CI without the registry feature.
+default = []
+
+[target.'cfg(target_os = "windows")'.dependencies]
+winreg = "0.52"
+
+[dependencies]
+ty-plus-core = { workspace = true }
+thiserror.workspace = true
+serde.workspace = true

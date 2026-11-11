@@ -1,0 +1,99 @@
+{
+	"step": {
+		"intro": {
+			"label": "Intro",
+			"title": "Bienvenue",
+			"body": "Bienvenue ! ty-plus crée un espace de travail personnel pour accélérer votre travail.\nPlacez des préréglages/widgets et optimisez votre flux. Commençons la configuration !"
+		},
+		"language": {
+			"label": "Langue",
+			"title": "Sélectionner la langue",
+			"body": "Choisissez votre langue préférée. L'interface se met à jour immédiatement après la sélection."
+		},
+		"support": {
+			"label": "Emplacement",
+			"title": "Sélectionner le dossier AE",
+			"body": "Choisissez votre dossier After Effects. Sur Windows, c'est le répertoire Support Files ; sur macOS c'est le dossier de l'application contenant Presets."
+		},
+		"subfolders": {
+			"label": "Dossiers",
+			"title": "Ajuster les sous-dossiers",
+			"body": "Cette étape apparaît quand vous modifiez les chemins par défaut. Personnalisez Presets/Scripts/Plug-ins si nécessaire."
+		},
+		"presets": {
+			"label": "Préréglages",
+			"title": "Sélectionner les préréglages",
+			"body": "Choisissez les fichiers de préréglage (.ffx) de votre dossier Presets à ajouter comme préréglages initiaux.\nVous pouvez en ajouter/importer d'autres plus tard depuis le menu +. La sélection de dossier sera groupée automatiquement."
+		},
+		"scripts": {
+			"label": "Scripts",
+			"title": "Sélectionner les scripts",
+			"body": "Choisissez les fichiers de script (.jsx, .jsxbin) de votre dossier Scripts à ajouter comme préréglages initiaux.\nVous pouvez aussi créer des préréglages Script/Expression plus tard depuis le Préréglage de code."
+		},
+		"plugins": {
+			"label": "Plug-ins",
+			"title": "Sélectionner les plug-ins",
+			"body": "Choisissez les fichiers d'effet (.aex/.plugin) de votre dossier Plug-ins à ajouter comme préréglages initiaux.\nVous pouvez en importer d'autres plus tard si nécessaire."
+		},
+		"workspace": {
+			"label": "Espace de travail",
+			"title": "Bases de l'espace de travail",
+			"body": "Glissez pour déplacer et redimensionner les préréglages et widgets.\n\n- Ctrl/Cmd+glisser pour déplacer\n- Utilisez le verrouillage de disposition pour empêcher les modifications\n- La recherche masque les éléments non correspondants\n- Clic droit pour les actions d'édition/groupe"
+		},
+		"adding-presets": {
+			"label": "Préréglages",
+			"title": "Ajouter des préréglages",
+			"body": "Utilisez le menu + pour ajouter des préréglages, groupes et widgets.\n\n- Basculez les panneaux latéraux pour la liste des préréglages\n- Les préréglages en ligne téléchargés se placent automatiquement"
+		},
+		"finish": {
+			"label": "Terminer",
+			"title": "Prêt à démarrer !",
+			"body": "Appuyez sur Terminer pour enregistrer vos paramètres.\n\nC'est parti !"
+		}
+	},
+	"fields": {
+		"presetRoot": "Dossier Préréglages",
+		"scriptRoot": "Dossier Scripts",
+		"pluginRoot": "Dossier Plug-ins",
+		"supportPlaceholder": "Chemin Support Files ou dossier app"
+	},
+	"filePick": {
+		"selected": "Sélectionné(s) : {{count}}"
+	},
+	"secondaryPanel": {
+		"title": "Configuration requise",
+		"description": "Terminez d'abord l'onboarding dans le panneau-1.",
+		"userManual": "Manuel utilisateur",
+		"openMainPanel": "Ouvrir le panneau principal",
+		"linkUnavailable": "Lien du manuel indisponible"
+	},
+	"browse": "Parcourir",
+	"browseAriaLabel": "Parcourir le dossier",
+	"defaultLabel": "Par défaut",
+	"customLabel": "Personnalisé",
+	"empty": "Aucun élément",
+	"goUp": "Haut",
+	"selectedFiles": "{{files}} fichier(s)",
+	"selectedFolders": "{{folders}} dossier(s)",
+	"selectedSuffix": " sélectionné(s)",
+	"errors": {
+		"supportRequired": "Le chemin du dossier AE est requis.",
+		"subfoldersRequired": "Les chemins des dossiers Presets, Scripts et Plug-ins sont requis.",
+		"folderPickerCep": "Le sélecteur de dossier requiert CEP.",
+		"finishErrorTitle": "Impossible d'enregistrer les paramètres",
+		"finishErrorPathLabel": "Chemin",
+		"finishErrorReasonLabel": "Pourquoi",
+		"finishErrorNextActionLabel": "Prochaine étape",
+		"finishErrorNextActionChooseTrusted": "Le fichier de paramètres d'onboarding ne contenait pas de Support Root. Redémarrez l'onboarding dans After Effects.",
+		"finishErrorNextActionAdjust": "Les paramètres n'ont pas pu être enregistrés dans le Support Root d'AE. Vérifiez que le chemin est accessible et qu'After Effects dispose des droits d'écriture, puis réessayez.",
+		"finishErrorNextActionRetry": "L'invite UAC de Windows a été demandée mais l'écriture en mode élevé a échoué. Cliquez sur Retry pour relancer l'invite UAC, ou exécutez After Effects en tant qu'administrateur.",
+		"finishErrorRetryWithElevation": "Réessayer en tant qu'administrateur"
+	},
+	"actions": {
+		"back": "Retour",
+		"next": "Suivant",
+		"finish": "Terminer",
+		"toggleFullscreen": "Passer en plein écran",
+		"toggleModal": "Revenir à la fenêtre"
+	}
+}

@@ -1,0 +1,3 @@
+# Matches the text-format `bun.lock` committed at the repo root.
+[install]
+saveTextLockfile = true

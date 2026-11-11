@@ -1,0 +1,928 @@
+{
+  "workspaceBlank": [
+    {
+      "id": "ty.ctx.undo",
+      "label": "Undo",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.redo",
+      "label": "Redo",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.layout-menu-root",
+      "label": "Layout",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.save-snapshot",
+      "label": "Save Layout",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.reload-presets",
+      "label": "Reload",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.toggle-layout-lock",
+      "label": "Lock Layout",
+      "enabled": "true",
+      "checkable": "true",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.pack-top-left",
+      "label": "Pack to Top-Left",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.open-background",
+      "label": "Background",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.add-widget",
+      "label": "Add Widget",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.create-presets-menu-root",
+      "label": "Create Preset",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.create-file-preset",
+      "label": "Local Preset",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.create-folder-preset",
+      "label": "Group Preset",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.create-animation-preset",
+      "label": "Animation",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.create-layer-comp-preset",
+      "label": "Layer/Comp",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.create-code-preset",
+      "label": "Code",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    }
+  ],
+  "presetTile": [
+    {
+      "id": "ty.ctx.run-preset",
+      "label": "Open",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.edit-preset",
+      "label": "Edit",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.move-preset-to-panel-root",
+      "label": "Move to panel",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.move-presets-to-panel.2",
+      "label": "ty-plus 2",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.move-presets-to-panel.3",
+      "label": "ty-plus 3",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.move-presets-to-panel.4",
+      "label": "ty-plus 4",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.move-presets-to-panel.5",
+      "label": "ty-plus 5",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.delete-preset",
+      "label": "Delete",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.release-group-preset",
+      "label": "Release Group",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    }
+  ],
+  "quickWidget": [
+    {
+      "id": "ty.ctx.move-widget-to-panel-root",
+      "label": "Move to panel",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.move-presets-to-panel.2",
+      "label": "ty-plus 2",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.move-presets-to-panel.3",
+      "label": "ty-plus 3",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.move-presets-to-panel.4",
+      "label": "ty-plus 4",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.move-presets-to-panel.5",
+      "label": "ty-plus 5",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.delete-workspace-widget",
+      "label": "Delete",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    }
+  ],
+  "easingWidget": [
+    {
+      "id": "ty.ctx.easing.apply-current",
+      "label": "Apply",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.easing.copy-from-selection",
+      "label": "Copy from selection",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.easing.reverse-curve",
+      "label": "Reverse / Convert to Curve",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.easing.presets",
+      "label": "Preset",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.easing.preset-linear",
+      "label": "Linear",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.easing.preset-ease-out",
+      "label": "Ease Out",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.easing.preset-ease-in",
+      "label": "Ease In",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.easing.preset-ease-in-out",
+      "label": "Ease In Out",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.easing.background",
+      "label": "Background",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.easing.background-dot",
+      "label": "Dots",
+      "enabled": "true",
+      "checkable": "true",
+      "checked": "true"
+    },
+    {
+      "id": "ty.ctx.easing.background-grid",
+      "label": "Grid",
+      "enabled": "true",
+      "checkable": "true",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.easing.applyMode",
+      "label": "Apply Mode",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.easing.apply-mode-single",
+      "label": "Single",
+      "enabled": "true",
+      "checkable": "true",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.easing.apply-mode-pair",
+      "label": "Each Segment",
+      "enabled": "true",
+      "checkable": "true",
+      "checked": "true"
+    },
+    {
+      "id": "ty.ctx.easing.labels",
+      "label": "Label Color",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.easing.label-none",
+      "label": "None",
+      "enabled": "true",
+      "checkable": "true",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.easing.label-9",
+      "label": "Archive default",
+      "enabled": "true",
+      "checkable": "true",
+      "checked": "true"
+    },
+    {
+      "id": "ty.ctx.easing.label-10",
+      "label": "Alternate 1",
+      "enabled": "true",
+      "checkable": "true",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.easing.label-11",
+      "label": "Alternate 2",
+      "enabled": "true",
+      "checkable": "true",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.move-widget-to-panel-root",
+      "label": "Move to panel",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.move-presets-to-panel.2",
+      "label": "ty-plus 2",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.move-presets-to-panel.3",
+      "label": "ty-plus 3",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.move-presets-to-panel.4",
+      "label": "ty-plus 4",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.move-presets-to-panel.5",
+      "label": "ty-plus 5",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.delete-workspace-widget",
+      "label": "Delete",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    }
+  ],
+  "alignWidget": [
+    {
+      "id": "ty.ctx.align.align",
+      "label": "Align",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.align.action.align-left",
+      "label": "Left",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.align.action.align-center-h",
+      "label": "Center H",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.align.action.align-right",
+      "label": "Right",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.align.action.align-top",
+      "label": "Top",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.align.action.align-center-v",
+      "label": "Center V",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.align.action.align-bottom",
+      "label": "Bottom",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.align.distribute",
+      "label": "Distribute",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.align.action.distribute-left",
+      "label": "Left",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.align.action.distribute-center-h",
+      "label": "Center H",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.align.action.distribute-right",
+      "label": "Right",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.align.action.distribute-top",
+      "label": "Top",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.align.action.distribute-center-v",
+      "label": "Center V",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.align.action.distribute-bottom",
+      "label": "Bottom",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.align.spacing",
+      "label": "Spacing",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.align.action.distribute-spacing-h",
+      "label": "Spacing H",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.align.action.distribute-h",
+      "label": "Distribute H",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.align.action.distribute-spacing-v",
+      "label": "Spacing V",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.align.action.distribute-v",
+      "label": "Distribute V",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.align.time",
+      "label": "Time",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.align.action.align-start",
+      "label": "Start",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.align.action.align-end",
+      "label": "End",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.align.action.align-duration",
+      "label": "Duration",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.align.action.distribute-start",
+      "label": "Distribute Start",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.align.action.distribute-end",
+      "label": "Distribute End",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.align.target.selection",
+      "label": "Selection",
+      "enabled": "true",
+      "checkable": "true",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.align.target.comp",
+      "label": "Comp",
+      "enabled": "true",
+      "checkable": "true",
+      "checked": "true"
+    },
+    {
+      "id": "ty.ctx.align.target.key-object",
+      "label": "Key Object",
+      "enabled": "true",
+      "checkable": "true",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.align.target.time",
+      "label": "Time",
+      "enabled": "true",
+      "checkable": "true",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.move-widget-to-panel-root",
+      "label": "Move to panel",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.move-presets-to-panel.2",
+      "label": "ty-plus 2",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.move-presets-to-panel.3",
+      "label": "ty-plus 3",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.move-presets-to-panel.4",
+      "label": "ty-plus 4",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.move-presets-to-panel.5",
+      "label": "ty-plus 5",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.delete-workspace-widget",
+      "label": "Delete",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    }
+  ],
+  "anchorWidget": [
+    {
+      "id": "ty.ctx.anchor-point.reset-center",
+      "label": "Reset to Center",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.anchor-point.apply-all-layers",
+      "label": "Apply to All Selected Layers",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.anchor-point.apply-active-comp",
+      "label": "Apply to Active Composition",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.anchor-point.positions",
+      "label": "Position",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.anchor-point.top-left",
+      "label": "Top Left",
+      "enabled": "true",
+      "checkable": "true",
+      "checked": "true"
+    },
+    {
+      "id": "ty.ctx.anchor-point.top-center",
+      "label": "Top Center",
+      "enabled": "true",
+      "checkable": "true",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.anchor-point.top-right",
+      "label": "Top Right",
+      "enabled": "true",
+      "checkable": "true",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.anchor-point.center-left",
+      "label": "Center Left",
+      "enabled": "true",
+      "checkable": "true",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.anchor-point.center",
+      "label": "Center",
+      "enabled": "true",
+      "checkable": "true",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.anchor-point.center-right",
+      "label": "Center Right",
+      "enabled": "true",
+      "checkable": "true",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.anchor-point.bottom-left",
+      "label": "Bottom Left",
+      "enabled": "true",
+      "checkable": "true",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.anchor-point.bottom-center",
+      "label": "Bottom Center",
+      "enabled": "true",
+      "checkable": "true",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.anchor-point.bottom-right",
+      "label": "Bottom Right",
+      "enabled": "true",
+      "checkable": "true",
+      "checked": "false"
+    }
+  ],
+  "infoWidget": [
+    {
+      "id": "ty.ctx.edit-preset",
+      "label": "Edit",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.move-widget-to-panel-root",
+      "label": "Move to panel",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.move-presets-to-panel.2",
+      "label": "ty-plus 2",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.move-presets-to-panel.3",
+      "label": "ty-plus 3",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.move-presets-to-panel.4",
+      "label": "ty-plus 4",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.move-presets-to-panel.5",
+      "label": "ty-plus 5",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.delete-workspace-widget",
+      "label": "Delete",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    }
+  ],
+  "menuButton": [
+    {
+      "id": "ty.ctx.undo",
+      "label": "Undo",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.redo",
+      "label": "Redo",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.layout-menu-root",
+      "label": "Layout",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.save-snapshot",
+      "label": "Save Layout",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.reload-presets",
+      "label": "Reload",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.toggle-layout-lock",
+      "label": "Lock Layout",
+      "enabled": "true",
+      "checkable": "true",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.pack-top-left",
+      "label": "Pack to Top-Left",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.open-background",
+      "label": "Background",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.add-widget",
+      "label": "Add Widget",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.create-presets-menu-root",
+      "label": "Create Preset",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.create-file-preset",
+      "label": "Local Preset",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.create-folder-preset",
+      "label": "Group Preset",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.create-animation-preset",
+      "label": "Animation",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.create-layer-comp-preset",
+      "label": "Layer/Comp",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.create-code-preset",
+      "label": "Code",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.open-presets",
+      "label": "Presets",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.open-preset-library",
+      "label": "Preset Library",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.open-messages",
+      "label": "Messages",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.open-settings",
+      "label": "Settings",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    },
+    {
+      "id": "ty.ctx.open-debug",
+      "label": "Debug Console",
+      "enabled": "true",
+      "checkable": "",
+      "checked": "false"
+    }
+  ]
+}

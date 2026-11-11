@@ -1,0 +1,269 @@
+{
+	"selector": {
+		"search": "ウィジェットを検索",
+		"addWidget": "ウィジェットを追加",
+		"searchPlaceholder": "名前や説明で検索…",
+		"hintShortcuts": "矢印: 移動 · Enter（検索欄）: 追加 · ダブルクリック: 追加 · Esc: 閉じる",
+		"listView": "リスト表示",
+		"iconView": "カード表示",
+		"fieldsetLegend": "ウィジェット一覧の表示",
+		"descriptions": {
+			"easing": "プリセットやレイヤーアニメーション用のイージングカーブを編集・適用します。",
+			"menu": "ワークスペースのコマンド、レイアウト操作、各種ダイアログをまとめて開きます。",
+			"align": "選択したプリセットやレイヤーをグリッド上の定位置に揃えます。",
+			"anchor-point": "レイアウト参照やスナップ用の名前付きアンカーを置きます。",
+			"layout-lock": "グリッドを整えている間の誤操作移動を防ぎます。",
+			"info": "プリセットのメタデータ、パス、状態を広いタイルで表示します。",
+			"quick-actions": "スクリプト、エフェクト、ファイル操作をコンパクトなパレットから実行します。",
+			"directory-browser": "パネル内からディスク上のフォルダやプリセットを参照します。",
+			"font-viewer": "フォントファミリー、スタイル、サンプル文をワークスペースでプレビューします。"
+		}
+	},
+	"types": {
+		"align": "整列",
+		"preset": "プリセット選択"
+	},
+	"categories": {
+		"core": "コア",
+		"utility": "ユーティリティ",
+		"media": "メディア",
+		"phase4": "試験的"
+	},
+	"search": {
+		"name": "検索"
+	},
+	"easing": {
+		"name": "イージング",
+		"apply": "適用",
+		"copyFromSelection": "選択からコピー",
+		"reverse": "反転",
+		"mode": {
+			"curve": "カーブ",
+			"loop": "ループ",
+			"bounce": "バウンス",
+			"elastic": "エラスティック"
+		},
+		"loop": {
+			"cycles": "サイクル",
+			"decrement": "サイクルを減らす",
+			"increment": "サイクルを増やす"
+		},
+		"options": {
+			"mode": "モード",
+			"grid": "グリッド",
+			"label": "ラベル"
+		},
+		"background": {
+			"dots": "ドット",
+			"grid": "グリッド"
+		},
+		"label": {
+			"none": "なし"
+		},
+		"applyMode": {
+			"single": "単一",
+			"pair": "各区間"
+		},
+		"status": {
+			"applying": "適用中",
+			"applied": "適用済み",
+			"failed": "失敗"
+		},
+		"presets": {
+			"linear": "リニア",
+			"easeOut": "イーズアウト",
+			"easeIn": "イーズイン",
+			"easeInOut": "イーズイン/アウト"
+		}
+	},
+	"menu": {
+		"name": "メニュー",
+		"createPreset": "プリセットを作成",
+		"addWidget": "ウィジェットを追加",
+		"saveLayout": "レイアウトを保存",
+		"reload": "再読み込み",
+		"lockLayout": "レイアウトを固定",
+		"unlockLayout": "レイアウトを固定解除",
+		"packToTopLeft": "左上へまとめる",
+		"background": "背景...",
+		"undo": "元に戻す",
+		"redo": "やり直し",
+		"selectedPresets": "選択したプリセット",
+		"groupSelectedItems": "選択項目をグループ化",
+		"moveToPanel": "パネルに移動",
+		"deleteSelectedPresets": "{{count}}件のプリセットを削除",
+		"layout": "レイアウト"
+	},
+	"align": {
+		"name": "整列"
+	},
+	"anchorPoint": {
+		"name": "アンカーポイント"
+	},
+	"info": {
+		"name": "情報"
+	},
+	"layoutLock": {
+		"name": "レイアウトロック"
+	},
+	"projectInfo": {
+		"name": "プロジェクト情報"
+	},
+	"quickActions": {
+		"name": "クイックアクション",
+		"palettePlaceholder": "プリセット・スクリプト・プラグイン・エフェクト・ルート配下のファイルを検索…",
+		"paletteEmpty": "一致するプリセットやエフェクトがありません。",
+		"effectRowKind": "エフェクト",
+		"rootFileRowKind": "ディスク"
+	},
+	"fxSearch": "FX 検索",
+	"directoryBrowser": {
+		"name": "ディレクトリブラウザ",
+		"anchors": {
+			"defaultUserData": "ユーザーデータ",
+			"presetRoot": "プリセット",
+			"scriptRoot": "スクリプト",
+			"pluginRoot": "プラグイン"
+		},
+		"actions": {
+			"importFailed": "インポート失敗: {{message}}",
+			"runSuccess": "実行完了: {{presetId}}",
+			"runFailed": "失敗: {{message}}",
+			"run": "実行",
+			"importRun": "インポートして実行",
+			"openFolder": "フォルダを開く",
+			"openEntry": "開く",
+			"importOnly": "インポート",
+			"selectFile": "選択",
+			"deselect": "選択解除",
+			"runBlockedMissingAsset": "プリセットのアセットがディスク上に存在しないため、実行は無効です。"
+		},
+		"path": {
+			"pickFolderPrompt": "フォルダを選択",
+			"pickFolderAria": "フォルダを参照",
+			"inputPlaceholder": "パスを入力…",
+			"inputTitle": "Enterで移動"
+		},
+		"pathDisplay": {
+			"anchorTemplate": "{rootLabel}/{relativePath}"
+		},
+		"search": {
+			"placeholderCatalog": "プリセットを検索…",
+			"placeholderFolder": "ファイルを検索…",
+			"resultsCount": "{{count}} 件",
+			"resultsCountFiltered": "{{count}} 件一致"
+		},
+		"thumbnail": {
+			"loading": "読み込み中...",
+			"error": "プレビューを表示できません"
+		},
+		"toolbar": {
+			"detailedFilters": "フィルター",
+			"viewModeLegend": "表示モード",
+			"listView": "リスト表示",
+			"iconView": "アイコン表示"
+		},
+		"browseMode": {
+			"filesystem": "ファイル",
+			"anchors": "アンカー",
+			"presetsCatalog": "カタログ"
+		},
+		"browseModeSelectAria": "ブラウズモード",
+		"catalog": {
+			"ungroupedHeading": "未分類"
+		},
+		"filters": {
+			"typeList": "種類:",
+			"quickFilterAria": "クイックフィルター",
+			"optionAll": "すべて",
+			"optionMedia": "メディア",
+			"optionPresets": "プリセット",
+			"optionScripts": "スクリプト",
+			"optionFonts": "フォント",
+			"extensionHide": "非表示:",
+			"fileTypeHide": "種類:",
+			"recursiveSearch": "再帰: {{state}}",
+			"recursiveOn": "オン",
+			"recursiveOff": "オフ",
+			"catalogPresetTypesHide": "非表示:",
+			"anchorsNoFilters": "アンカーにはフィルターがありません"
+		},
+		"empty": {
+			"catalogNeedsFolder": "フォルダを選択してプリセットを閲覧。",
+			"noAnchors": "アンカーが設定されていません。",
+			"noCatalogPresets": "このフォルダにはプリセットがありません。",
+			"noItems": "項目なし"
+		},
+		"entry": {
+			"defaultFolderSubtitle": "デフォルト",
+			"parentRowName": "上へ",
+			"browseDrives": "ドライブを表示",
+			"kindFolder": "フォルダ",
+			"kindFile": "ファイル"
+		},
+		"hints": {
+			"iconGridWheel": "Ctrl+スクロールでサイズ変更"
+		}
+	},
+	"folderDirectoryPicker": {
+		"label": "フォルダブラウザ",
+		"tab": {
+			"presets": "プリセット",
+			"scripts": "スクリプト",
+			"plugins": "プラグイン",
+			"other": "その他"
+		},
+		"loading": "読み込み中…",
+		"emptyFolders": "フォルダが見つかりません",
+		"emptyItems": "項目が見つかりません",
+		"goUp": "上へ",
+		"cepNodeRequired": "フォルダブラウザには CEP Node が必要です"
+	},
+	"textEditor": {
+		"name": "テキストエディタ"
+	},
+	"fontViewer": {
+		"name": "フォントビューア",
+		"searchPlaceholder": "ファミリー名・PostScript・スタイルで検索…",
+		"searchAria": "フォントを検索",
+		"listView": "リスト表示",
+		"iconView": "カード表示",
+		"layoutLegend": "フォント一覧のレイアウト",
+		"reload": "フォント一覧を再読み込み",
+		"samplePresets": "サンプル",
+		"sampleCustom": "カスタム",
+		"samplePresetAria": "プレビュー用サンプルプリセット",
+		"previewTextAria": "プレビュー用テキスト",
+		"samplePlaceholder": "プレビュー用テキスト（漢字・絵文字・欧文など）",
+		"ctxMenuHeading": "表示オプション",
+		"ctxTileSquare": "タイルを 1:1",
+		"ctxTileWide": "タイルを 16:9",
+		"ctxShowResolved": "リストで解決フォントの一致を表示",
+		"ctxHideResolved": "リストで解決フォントの一致を隠す",
+		"showResolved": "解決フォントの一致チェック（リスト）",
+		"loadError": "フォントを読み込めませんでした。",
+		"loading": "読み込み中…",
+		"statsLine": "{{families}} ファミリー · {{faces}} 面 / 読み込み {{total}} 件",
+		"familySummary": "{{count}} 面",
+		"expandFamily": "ファミリーを展開",
+		"collapseFamily": "ファミリーを折りたたむ",
+		"backToFamilies": "フォントファミリー一覧へ",
+		"openFamilyIcon": "ファミリーを開く",
+		"noMatches": "一致するフォントがありません",
+		"phaseAeHost": "After Effects からフォント一覧を取得しています（evalScript）…",
+		"phaseBrowser": "ブラウザ側のフォント情報を読み込んでいます…",
+		"aeHostErrorLabel": "After Effects ホスト:",
+		"previewSectionSummary": "プレビュー",
+		"sampleCollapsedPlaceholder": "開いてサンプル文・表示オプションを編集",
+		"viaLocalApi": "Local Font Access API",
+		"viaAfterEffects": "After Effects（app.fonts）",
+		"viaDocumentFonts": "document.fonts（一部のみ）",
+		"fallbackBadge": "置換",
+		"primaryBadge": "一致",
+		"hintNeedUserGesture": "OS の全フォントは Chromium の Local Font Access の許可と、通常はこのボタンからの取得（ユーザー操作）が必要です。取得までは、このパネルで既に読み込まれている document.fonts のみが一覧に表示されます。",
+		"loadAllSystemFonts": "システムの全フォントを読み込む…",
+		"hintNoLocalApi": "この Chromium では queryLocalFonts が使えません。document.fonts に登録されたフォントのみ表示されます。",
+		"localAccessErrorPrefix": "ローカルフォントアクセス:",
+		"emptyList": "まだフォントがありません。利用可能なら「システムの全フォントを読み込む」を押すか、スタイル読み込み後に再読み込みしてください。"
+	}
+}

@@ -1,0 +1,128 @@
+{
+	"scenarioId": "SCN-RUNTIME-01",
+	"steps": [
+		{
+			"id": "step-1",
+			"gherkinRef": { "scenarioId": "SCN-RUNTIME-01", "stepIndex": 0 },
+			"preconditions": [
+				"Onboarding completed.",
+				"Debug Console is closed.",
+				"Panel is at the post-onboarding home screen."
+			],
+			"input": { "snapshot": "runtime-precondition probe" },
+			"action": "observe_runtime_preconditions",
+			"expectedResult": {
+				"uiOracle": {
+					"selector": "[data-ty-workspace-panel-root]",
+					"variant": { "kind": "presence" }
+				}
+			},
+			"postconditions": [
+				"Workspace panel root is mounted at the post-onboarding home screen."
+			],
+			"mutation": false,
+			"checkpoint": false
+		},
+		{
+			"id": "step-2",
+			"gherkinRef": { "scenarioId": "SCN-RUNTIME-01", "stepIndex": 1 },
+			"preconditions": ["Panel is at the post-onboarding home screen."],
+			"input": { "selector": "[data-ws-action=\"toggle-console\"]" },
+			"action": "open_debug_console",
+			"expectedResult": {
+				"uiOracle": {
+					"selector": "[data-debug-msg-id]",
+					"variant": { "kind": "presence" }
+				}
+			},
+			"postconditions": ["Debug Console is mounted."],
+			"mutation": true,
+			"checkpoint": false,
+			"noCleanupReason": "Opening the Debug Console is a view action. It writes no catalog or workspace record, and the retained log it reads is cleared only by an explicit Clear."
+		},
+		{
+			"id": "step-3",
+			"gherkinRef": { "scenarioId": "SCN-RUNTIME-01", "stepIndex": 2 },
+			"preconditions": ["Debug Console is mounted."],
+			"input": { "probe": "read the log bus for the host-bridge source" },
+			"action": "checkpoint_re_observe_after_console_open",
+			"expectedResult": {
+				"logOracle": {
+					"scope": "host-bridge",
+					"minLevel": "info",
+					"messageContains": "host bundle",
+					"id": "log-host-bundle-action"
+				}
+			},
+			"postconditions": [
+				"The Debug Console lists a host bundle action produced by this panel run.",
+				"Opening the Debug Console did not itself start a probe, a bundle load, or a worker spawn."
+			],
+			"mutation": false,
+			"checkpoint": true
+		},
+		{
+			"id": "step-4",
+			"gherkinRef": { "scenarioId": "SCN-RUNTIME-01", "stepIndex": 3 },
+			"preconditions": ["Debug Console is mounted."],
+			"input": {
+				"selector": "[data-ws-action=\"open-dialog\"][data-dialog-kind=\"presetLibrary\"]"
+			},
+			"action": "open_online_preset_library",
+			"expectedResult": {
+				"logOracle": {
+					"scope": "operation-worker",
+					"minLevel": "info",
+					"messageContains": "operation queued",
+					"id": "log-scheduler-enqueue"
+				}
+			},
+			"postconditions": [
+				"A catalog lookup is queued on the operation worker scheduler."
+			],
+			"mutation": true,
+			"checkpoint": false,
+			"noCleanupReason": "Opening the library issues a read-only catalog lookup. It writes no local record, and the queue drains when the operation settles."
+		},
+		{
+			"id": "step-5",
+			"gherkinRef": { "scenarioId": "SCN-RUNTIME-01", "stepIndex": 4 },
+			"preconditions": ["A catalog lookup is queued on the scheduler."],
+			"input": { "probe": "read the log bus for the operation-worker source" },
+			"action": "checkpoint_re_observe_after_enqueue",
+			"expectedResult": {
+				"logOracle": {
+					"scope": "operation-worker",
+					"minLevel": "info",
+					"messageContains": "operation attempt started",
+					"id": "log-scheduler-start"
+				}
+			},
+			"postconditions": [
+				"The scheduler records one attempt with its operation, logical operation id, request id, and attempt number."
+			],
+			"mutation": false,
+			"checkpoint": true
+		},
+		{
+			"id": "step-6",
+			"gherkinRef": { "scenarioId": "SCN-RUNTIME-01", "stepIndex": 5 },
+			"preconditions": ["The scheduler started one attempt."],
+			"input": { "probe": "read the log bus for the operation-worker source" },
+			"action": "checkpoint_re_observe_after_spawn",
+			"expectedResult": {
+				"logOracle": {
+					"scope": "operation-worker",
+					"minLevel": "info",
+					"messageContains": "spawning worker child",
+					"id": "log-worker-spawn"
+				}
+			},
+			"postconditions": [
+				"The spawned child carries the same logical operation id, request id, and attempt number as the scheduler record."
+			],
+			"mutation": false,
+			"checkpoint": true
+		}
+	]
+}

@@ -1,0 +1,132 @@
+/**
+ * Widget **state-slice** contract — how a widget owns its body keyed by UUID.
+ *
+ * - Each widget **instance** owns its feature body under its own UUID.
+ * - The body is stored via `management/storage/widget-state-store` (UUID-keyed catalog).
+ * - Workspace files hold only **context** (geometry, refs) — never feature bodies.
+ *
+ * Rationale (INV-4): each unit (preset, widget instance, group, …) owns its body
+ * under its own UUID, in one place. A widget instance's state lives in its own
+ * state file, not in the workspace SurfaceState.
+ *
+ * ## UUID-keyed ownership model
+ *
+ * ```
+ * Widget instance id (UUID)
+ *     │
+ *     └── owns → widget state body (stored in widgets/state/<name>/<id>.json)
+ *                    via readWidgetStateJson / writeWidgetStateJson
+ * ```
+ *
+ * ## What is NOT a widget state slice
+ *
+ * - Host-derived data (`layerInfoSummary`, `compInfo`) — belongs to a sync/observation layer,
+ *   not widget-owned state.
+ * - Selection state (`selectedSurfaceIndices`) — belongs to workspace context.
+ * - Preset catalog data (`presets`, `panelPresetIds`) — belongs to the preset management layer.
+ * - View toggles (`showGridOverlay`, etc.) — belong to workspace context or a dedicated
+ *   view-preferences slice.
+ *
+ * ## Widgets that own state
+ *
+ * The following widgets are known to have active UUID-keyed state bodies:
+ *
+ * | Widget | State file subdirectory | Notes |
+ * |--------|-------------------------|-------|
+ * | `easing` | `easing` | Curve points, mode, applyMode, backgroundPattern |
+ * | `directory-browser` | `directory-browser` | Catalog cache |
+ *
+ * Other widgets are stateless (pure UI driven by host/preset data) or will gain
+ * state bodies in Wave 2 via E1–E6 tasks.
+ */
+
+import type { WidgetStateName } from "@/management/storage/widget-state-store";
+
+// ── Widget state slice types ────────────────────────────────────────────────────
+
+/**
+ * Marker type: a widget feature body lives under a widget instance UUID.
+ * Never store actual feature bodies in workspace state files.
+ *
+ * Usage in widget components:
+ * ```ts
+ * const body = await readWidgetStateJson(win, "easing", { instanceId });
+ * ```
+ */
+export type WidgetInstanceId = string;
+
+/**
+ * Discriminated union of known widget state subdirectories.
+ * Extensible: add new entries as new widgets gain state bodies.
+ */
+export type WidgetStateSliceName = WidgetStateName;
+
+/**
+ * Metadata row written into the widget state catalog file (`widgets/state/<name>/catalog.json`).
+ */
+export type WidgetStateCatalogRow = {
+	/** Widget instance UUID — primary key. */
+	id: string;
+} & Record<string, unknown>;
+
+/**
+ * The catalog format used by `management/storage/widget-state-store`.
+ */
+export type WidgetStateCatalog = {
+	instances: readonly WidgetStateCatalogRow[];
+	/** Legacy flat object (pre-catalog format, for migration only). */
+	legacyFlat: Record<string, unknown> | null
+};
+
+// -- Storage contract --
+
+/**
+ * Read access to a widget instance's state body.
+ * Returns the row value WITHOUT the `id` field, or null if not found.
+ */
+export type ReadWidgetState$ = (
+	instanceId: string
+) => Promise<Record<string, unknown> | null
+
+/**
+ * Write access to a widget instance's state body.
+ * Upserts the row in the catalog or replaces the legacy flat file.
+ */
+export type WriteWidgetState$ = (
+	instanceId: string
+	value: unknown
+) => Promise<void>;
+
+// -- Rule: what belongs --
+
+/**
+ * Validation: returns true if the given `SurfaceState` field name is a
+ * **feature body** (widget-owned) and must NOT live in workspace context.
+ *
+ * This exists as a static check to help catch INV-4 violations during review.
+ */
+export const IS_WIDGET_BODY_FIELD: readonly string[] = [
+	// Easing widget
+	"easingMode",
+	"easingCurve",
+	"easingApplyMode",
+	"easingBackgroundPattern",
+	"easingPoints",
+	"easingProceduralHandle",
+	"easingLabelColor",
+	// Directory browser widget
+	"directoryBrowserPath",
+	"directoryBrowserExpansionState",
+	// ... more as Wave 2 E1–E6 add state slices
+];
+
+/** Static assertion that a string is a recognized widget body field name. */
+export function assertWidgetBodyField(field: string): void {
+	if (!IS_WIDGET_BODY_FIELD.includes(field)) {
+		throw new Error(
+			`[INV-4] Field "${field}" is not a recognized widget body field. ` +
+				`Widget-owned states must not live in WorkspaceContext. ` +
+				`Did you add a new widget state without updating IS_WIDGET_BODY_FIELD?`,
+		);
+	}
+}

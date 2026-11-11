@@ -1,0 +1,237 @@
+{
+	"codePreset": {
+		"codeType": "Code type",
+		"editor": {
+			"expression": "Expression",
+			"script": "Script code (.jsx)"
+		},
+		"saveLocation": "Save location",
+		"savePreview": "Save preview",
+		"status": {
+			"fileExists": "File already exists — will be overwritten",
+			"success": "Preset saved successfully!"
+		},
+		"type": {
+			"expression": "Expression",
+			"script": "Script"
+		}
+	},
+	"common": {
+		"browseFolder": "Parcourir le dossier",
+		"copyPath": "Copier le chemin",
+		"selectFile": "Sélectionner un fichier"
+	},
+	"layerCompPreset": {
+		"desc": {
+			"comp": "Open the composition you want to save. Project must be saved first.",
+			"layer": "Select the layers you want to save. Project must be saved first."
+		},
+		"hint": {
+			"saveButton": "Press \"Create\" at the bottom of the dialog to save."
+		},
+		"savePreview": "Save preview",
+		"step1": {
+			"title": "Preset type"
+		},
+		"step2": {
+			"title": "Prepare in After Effects"
+		},
+		"step3": {
+			"title": "Save location"
+		},
+		"type": {
+			"comp": "Composition",
+			"layer": "Layer"
+		}
+	},
+	"search": {
+		"title": "Rechercher des préréglages",
+		"placeholder": "Tapez pour rechercher…",
+		"empty": "Aucun préréglage trouvé"
+	},
+	"online": {
+		"loading": "Chargement…",
+		"empty": "Aucun préréglage en ligne disponible"
+	},
+	"presetTool": {
+		"form": {
+			"presetId": "ID du préréglage",
+			"presetIdPlaceholder": "ID du préréglage",
+			"displayName": "Nom d'affichage",
+			"displayNamePlaceholder": "Nom d'affichage",
+			"filePath": "Chemin du fichier",
+			"description": "Description",
+			"descriptionPlaceholder": "Description (facultatif)",
+			"descriptionImage": "Image de description",
+			"descriptionImagePlaceholder": "Chemin ou URL de l'image",
+			"descriptionImageBrowse": "Parcourir l'image",
+			"details": "Détails",
+			"presetName": "Nom du preset",
+			"icon": "Icone",
+			"savePath": "Chemin de sauvegarde"
+		},
+		"create": "Créer",
+		"status": {
+			"ready": "Prêt",
+			"loading": "Chargement du préréglage…",
+			"loaded": "Modification : {{id}}",
+			"unknownPreset": "Préréglage introuvable : {{id}}",
+			"loadFailed": "Échec du chargement du préréglage : {{message}}",
+			"invalidId": "L'ID du préréglage est invalide",
+			"filePathRequired": "Le chemin du fichier est requis",
+			"saved": "Enregistré : {{id}}",
+			"saveFailed": "Échec de l'enregistrement : {{message}}",
+			"saving": "Enregistrement..."
+		},
+		"animation": {
+			"title": "Préréglage d'animation",
+			"lead": "Valeurs par défaut d'image clé ou d'expression, packagées en un préréglage d'animation réutilisable.",
+			"defaultName": "Préréglage d'animation",
+			"fields": {
+				"saveFolder": "Dossier d'enregistrement",
+				"path": "Chemin du preset d'animation",
+				"pathPlaceholder": "Chemin .ffx existant facultatif"
+			}
+		},
+		"footage": {
+			"title": "Préréglage de footage",
+			"lead": "Raccourcis du pipeline footage (import, remplacer, proxy). Les vrais fichiers sont importés comme footage.",
+			"defaultName": "Préréglage de métrage",
+			"fields": {
+				"path": "Chemin du footage",
+				"mode": "Mode d'importation"
+			}
+		},
+		"layerComp": {
+			"title": "Préréglage de calque/comp",
+			"lead": "Opérations de calque et de comp (transformer, dupliquer, précomposer). Les fichiers de script enregistrés s'exécutent dans After Effects.",
+			"defaultName": "Préréglage de calque/comp"
+		},
+		"import": {
+			"title": "Préréglage d'import",
+			"lead": "Lots d'import par chemin ou sélecteur. Réutilise le pipeline footage quand votre flux partage ces gestionnaires.",
+			"defaultName": "Préréglage d'importation",
+			"fields": {
+				"path": "Chemin d'importation",
+				"strategy": "Stratégie"
+			}
+		},
+		"code": {
+			"title": "Préréglage de code",
+			"lead": "Créer un préréglage local de code/script.",
+			"extra": "Les fichiers de script enregistrés s'exécutent dans After Effects.",
+			"defaultName": "Préréglage de code",
+			"editor": {
+				"format": "Format Document",
+				"formatTooltip": "Format the script body",
+				"diagnosticCount": "{{count}} problem",
+				"diagnosticCount_other": "{{count}} problems"
+			}
+		},
+		"easing": {
+			"title": "Préréglage d'easing",
+			"lead": "Créer un préréglage d'easing local.",
+			"curveHint": "Easing de l'hôte (cubic-bezier). Cette courbe est stockée quand vous enregistrez depuis le contexte AE.",
+			"openWithSelectionHint": "Ouvrir ce dialogue depuis l'espace de travail avec une sélection d'easing pour intégrer un aperçu de courbe.",
+			"ariaPreview": "Aperçu de la courbe d'easing",
+			"editTitle": "Modifier le preset easing",
+			"defaultName": "Preset easing",
+			"curve": "Courbe",
+			"invalidCurve": "La courbe doit être un tableau JSON contenant quatre nombres."
+		},
+		"addFile": {
+			"title": "Ajouter un préréglage de fichier",
+			"lead": "Enregistrer un préréglage local à support fichier depuis l'espace de travail. L'extension détermine le type de préréglage."
+		},
+		"addFolder": {
+			"title": "Ajouter un préréglage de dossier/groupe",
+			"lead": "Enregistrer un dossier ou groupe pour organiser les tuiles."
+		},
+		"localPreset": "Préréglage local",
+		"groupPreset": "Préréglage de groupe",
+		"animationLabel": "Animation",
+		"layerCompLabel": "Calque/Comp",
+		"codeLabel": "Code",
+		"presetLibrary": "Bibliothèque de préréglages",
+		"messages": "Messages",
+		"settings": "Paramètres",
+		"debugConsole": "Console de débogage",
+		"cancel": "Annuler",
+		"boot": {
+			"title": "Dialogue de preset",
+			"preparing": "Préparation du dialogue de preset...",
+			"handoffError": "Impossible de récupérer les informations de lancement du dialogue de preset. Ouvrez-le à nouveau depuis l'espace de travail."
+		},
+		"generic": {
+			"title": "Créer un preset",
+			"lead": "Créez un preset local à partir de métadonnées réutilisables.",
+			"defaultName": "Preset local"
+		}
+	},
+	"animationPreset": {
+		"step1": {
+			"title": "Select in After Effects",
+			"desc": "Select properties or layers you want to save as preset"
+		},
+		"step2": {
+			"title": "Save to this folder"
+		},
+		"step3": {
+			"button": "Save Animation Preset",
+			"detecting": "Detecting..."
+		},
+		"status": {
+			"success": "Detected!",
+			"noSelection": "No selection",
+			"noSelectionHint": "Select properties or layers in AE first",
+			"timeout": "Scan timeout",
+			"timeoutHint": "Choose a smaller folder",
+			"error": "Not detected",
+			"errorHint": "Save to the folder above"
+		},
+		"path": {
+			"reset": "Reset to default",
+			"notConfigured": "Not configured"
+		}
+	},
+	"edit": {
+		"title": "Modifier le préréglage",
+		"delete": "Supprimer",
+		"save": "Enregistrer",
+		"cancel": "Annuler",
+		"status": {
+			"loading": "Chargement du préréglage…",
+			"saved": "Enregistré",
+			"deleted": "Supprimé",
+			"saveFailed": "Échec de l'enregistrement : {{message}}",
+			"deleteFailed": "Échec de la suppression : {{message}}"
+		},
+		"fields": {
+			"presetName": "Nom du préréglage",
+			"description": "Description",
+			"icon": "Icône",
+			"iconText": "Texte",
+			"iconEmoji": "Emoji",
+			"iconTextPlaceholder": "Texte (ex. CODE)",
+			"iconEmojiPlaceholder": "Emoji (ex. ⚡)",
+			"filePath": "Chemin du fichier",
+			"type": "Type",
+			"presetNamePlaceholder": "Saisissez le nom du preset"
+		},
+		"titleForType": {
+			"preset": "Preset",
+			"script": "Preset de script",
+			"plugin": "Preset de plugin",
+			"footage": "Preset de footage"
+		}
+	},
+	"group": {
+		"title": "Créer un groupe de presets",
+		"lead": "Regroupez plusieurs presets sous une seule tuile.",
+		"defaultName": "Preset de groupe",
+		"fields": {
+			"groupName": "Nom du groupe",
+			"groupNamePlaceholder": "Saisissez le nom du groupe"
+		}
+	}
+}
