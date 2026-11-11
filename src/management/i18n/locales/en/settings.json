@@ -208,5 +208,13 @@
 			"inputs": "Inputs",
 			"update": "Updates"
 		}
+	},
+	"updates": {
+		"channel": "Release channel",
+		"stable": "Stable",
+		"beta": "Beta",
+		"insider": "Insider",
+		"checkNow": "Check now",
+		"browse": "Browse releases"
 	}
 }
