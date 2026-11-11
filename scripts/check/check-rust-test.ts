@@ -25,6 +25,7 @@ import {
 	fetchCargoMetadata,
 	LINUX_SAFE_CRATES,
 } from "./rust-linux-safe-crates.ts";
+import { rustFixtureEnv } from "./rust-fixture-env.ts";
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const rustRoot = resolve(repoRoot, "rust");
@@ -54,6 +55,10 @@ const runTests = (): number => {
 		cwd: rustRoot,
 		stdio: "inherit",
 		shell: false,
+		// Same fixture root as `check-rust-workspace`: without it this script
+		// alone redoes the symlinked-TMPDIR failure the other one avoids
+		// (Issue #189).
+		env: rustFixtureEnv(),
 	});
 
 	if (result.error) {

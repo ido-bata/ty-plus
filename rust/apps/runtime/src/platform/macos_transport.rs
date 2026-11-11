@@ -4,9 +4,7 @@ use tokio::net::UnixListener;
 use tokio::net::UnixStream;
 
 use super::permission::{cleanup_stale_endpoint, set_socket_permissions, PermissionConfig};
-use crate::codec::FrameReader;
-use crate::codec::FrameWriter;
-use crate::transport::{EndpointConfig, Listener, TransportError, TransportStream};
+use crate::transport::{EndpointConfig, Listener, TransportError};
 
 /// macOS Unix domain socket server with permission support.
 pub struct UdsListener {
@@ -53,11 +51,7 @@ impl Listener for UdsListener {
 
     async fn accept(&self) -> Result<Self::Stream, TransportError> {
         let (stream, _addr) = self.listener.accept().await?;
-        Ok(UdsStream {
-            inner: stream,
-            reader: FrameReader::new(),
-            writer: FrameWriter::new(),
-        })
+        Ok(UdsStream { inner: stream })
     }
 
     fn local_addr(&self) -> Result<String, TransportError> {
@@ -68,8 +62,6 @@ impl Listener for UdsListener {
 /// macOS Unix domain socket client stream.
 pub struct UdsStream {
     inner: UnixStream,
-    reader: FrameReader,
-    writer: FrameWriter,
 }
 
 impl UdsStream {
@@ -80,11 +72,7 @@ impl UdsStream {
     /// Returns `Err` if the connection fails.
     pub async fn connect(endpoint: &str) -> Result<Self, TransportError> {
         let stream = UnixStream::connect(endpoint).await?;
-        Ok(Self {
-            inner: stream,
-            reader: FrameReader::new(),
-            writer: FrameWriter::new(),
-        })
+        Ok(Self { inner: stream })
     }
 }
 
@@ -125,6 +113,9 @@ impl tokio::io::AsyncWrite for UdsStream {
 #[cfg(test)]
 mod tests {
     use super::*;
+    // `Permissions::mode` lives behind this trait; without it the permission
+    // assertion below does not compile on macOS (Issue #189).
+    use std::os::unix::fs::PermissionsExt;
 
     #[tokio::test]
     async fn uds_listener_bind() {

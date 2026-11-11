@@ -9,9 +9,11 @@
 
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { readFileSync } from "node:fs";
-import { dirname, resolve } from "node:path";
+import { lstatSync, readFileSync } from "node:fs";
+import { dirname, isAbsolute, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+
+import { rustFixtureEnv } from "./rust-fixture-env.ts";
 
 type CheckStep = Readonly<{
 	label: string;
@@ -108,6 +110,7 @@ const runChecks = (): number => {
 			cwd: rustRoot,
 			stdio: "inherit",
 			shell: false,
+			env: rustFixtureEnv(),
 		});
 
 		if (result.error) {
@@ -194,6 +197,27 @@ const runSelfTest = (): number => {
 	} finally {
 		restorePlatform();
 	}
+	// The fixture root is a pure function of the platform argument, so it is
+	// asserted directly rather than by rewriting `process.platform`.
+	const darwinRoot = rustFixtureEnv("darwin")?.TMPDIR;
+	assert.ok(darwinRoot !== undefined, "darwin must supply a fixture root");
+	assert.ok(isAbsolute(darwinRoot), "fixture root must be absolute");
+	assert.match(darwinRoot, /rust-tests$/);
+	for (
+		let ancestor: string = resolve(darwinRoot);
+		ancestor !== dirname(ancestor);
+		ancestor = dirname(ancestor)
+	) {
+		assert.ok(
+			!lstatSync(ancestor).isSymbolicLink(),
+			`fixture root ancestor must not be a symlink: ${ancestor}`,
+		);
+	}
+	assert.equal(
+		rustFixtureEnv("linux"),
+		process.env,
+		"non-product hosts keep the inherited temp root",
+	);
 	console.log("[rust-check] self-test complete");
 	return 0;
 };

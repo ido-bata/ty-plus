@@ -52,9 +52,11 @@ mod capability_tests {
         );
     }
 
-    #[cfg(target_os = "windows")]
     #[test]
     fn host_scan_root_stops_at_the_depth_cap() {
+        // The cap is enforced on macOS too (`scan/macos.rs`), but the test was
+        // windows-only, so on a macOS host `MAX_SCAN_DEPTH` had no user and
+        // clippy rejected the import — a lint no CI job could see (Issue #189).
         let temp = tempfile::tempdir().expect("temporary app root");
         let mut current = temp.path().join("Plugins");
         std::fs::create_dir_all(&current).unwrap();
@@ -62,7 +64,7 @@ mod capability_tests {
             current = current.join(format!("level-{index}"));
             std::fs::create_dir(&current).unwrap();
         }
-        std::fs::write(current.join("too-deep.aex"), b"plugin").unwrap();
+        std::fs::write(current.join(plugin_file("too-deep")), b"plugin").unwrap();
 
         let capability = HostScanRoot::open(temp.path()).expect("open host root");
         let result = scan_roots(&capability, &[PathBuf::from("Plugins")]).unwrap();

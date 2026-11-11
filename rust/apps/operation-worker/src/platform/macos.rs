@@ -21,6 +21,9 @@ pub(crate) fn acquire(path: &Path, shared: bool) -> io::Result<RawLease> {
         .read(true)
         .write(true)
         .create(true)
+        // The lease file is an empty sentinel: reopening an existing one must
+        // leave its contents alone, and clippy requires saying so explicitly.
+        .truncate(false)
         .open(path)?;
     let operation = if shared { LOCK_SH } else { LOCK_EX } | LOCK_NB;
     let result = unsafe { flock(file.as_raw_fd(), operation) };

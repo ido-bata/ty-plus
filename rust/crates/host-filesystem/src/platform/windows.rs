@@ -235,10 +235,11 @@ pub fn list_journals(managed_root: &Path, directory: &Path) -> io::Result<Vec<(S
             let mut options = OpenOptions::new();
             options.read(true).follow(FollowSymlinks::No);
             let file = current.open_with(name, &options)?;
-            journals.push((
-                name.to_owned(),
-                file.into_std().bytes().collect::<io::Result<Vec<_>>>()?,
-            ));
+            let mut file = file.into_std();
+            // Whole-file read: `.bytes()` would make one syscall per byte.
+            let mut contents = Vec::new();
+            file.read_to_end(&mut contents)?;
+            journals.push((name.to_owned(), contents));
         }
     }
     Ok(journals)

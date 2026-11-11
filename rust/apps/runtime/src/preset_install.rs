@@ -295,9 +295,13 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::cell::RefCell;
     use std::io::Cursor;
     use std::rc::Rc;
-    use std::{cell::RefCell, fs, path::Path};
+    // Every consumer of `fs` in this module is `#[cfg(windows)]`, so importing
+    // it unconditionally made the import dead on macOS (Issue #189).
+    #[cfg(windows)]
+    use std::fs;
     use ty_plus_online::download::DownloadResponse;
 
     fn sha256_hex(bytes: &[u8]) -> String {

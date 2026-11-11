@@ -5,8 +5,7 @@ use crate::thumbnails::test_fixtures::fixture_bytes;
 use std::future::Future;
 use std::path::Path;
 use std::pin::Pin;
-use std::sync::Arc;
-use std::task::{Context, Poll, Wake, Waker};
+use std::task::{Context, Poll, Waker};
 use tempfile::TempDir;
 
 /// Minimal synchronous executor.
@@ -17,13 +16,7 @@ use tempfile::TempDir;
 /// a noop waker is sufficient and avoids adding `tokio` (or `futures`) as a
 /// dev-dependency, keeping this task's file scope to the four named files.
 fn block_on<F: Future>(fut: F) -> F::Output {
-    struct NoopWake;
-    impl Wake for NoopWake {
-        fn wake(self: Arc<Self>) {}
-        fn wake_by_ref(self: &Arc<Self>) {}
-    }
-    let waker: Waker = Arc::new(NoopWake).into();
-    let mut cx = Context::from_waker(&waker);
+    let mut cx = Context::from_waker(Waker::noop());
     let mut fut: Pin<Box<F>> = Box::pin(fut);
     loop {
         match fut.as_mut().poll(&mut cx) {

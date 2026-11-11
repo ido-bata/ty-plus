@@ -78,8 +78,8 @@ pub const WEBP_QUALITY: f32 = 80.0;
 /// payload:
 ///
 /// - GIF (animated) → `Animated` with every frame as an `RgbaImage`.
-/// - SVG / SVGZ     → `SvgSource` carrying the raw markup (rasterized by
-///                    a later step via `resvg`).
+/// - SVG / SVGZ     → `SvgSource` carrying the raw markup
+///   (rasterized by a later step via `resvg`).
 /// - Anything else  → `Static` as a single `RgbaImage`.
 ///
 /// Returns [`DecodeError::Unsupported`] when the format cannot be guessed.
