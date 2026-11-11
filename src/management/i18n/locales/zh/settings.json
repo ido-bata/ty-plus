@@ -205,7 +205,8 @@
 			"design-tokens": "设计令牌",
 			"workspace-backup": "工作区备份",
 			"feedback": "反馈",
-			"inputs": "输入"
+			"inputs": "输入",
+			"update": "更新"
 		}
 	}
 }

@@ -43,8 +43,13 @@ type AllowlistEntry = ExactBoundaryEntry & {
 	removalTask: MigrationTaskId;
 };
 
+type PermanentBoundaryOwner =
+	| "cep-binary-resolution"
+	| "cep-operation-worker-runner"
+	| "static-feed-client";
+
 type PermanentBoundaryEntry = ExactBoundaryEntry & {
-	owner: "cep-binary-resolution" | "cep-operation-worker-runner";
+	owner: PermanentBoundaryOwner;
 };
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
@@ -271,6 +276,23 @@ const PERMANENT_BOUNDARIES: readonly PermanentBoundaryEntry[] = [
 		rule: "child-process",
 		expectedMatches: 1,
 		owner: "cep-operation-worker-runner",
+	},
+	// The static feed clients (docs/architecture/feeds.md) fetch public JSON
+	// feeds from the panel on purpose: an install whose operation-worker is
+	// broken is exactly the one that must still learn about updates and
+	// official notices. Requiring the worker transport for the feed would be
+	// circular. Feed hosts must send CORS headers; the contract documents it.
+	{
+		file: "src/management/online/update/feed.ts",
+		rule: "product-network",
+		expectedMatches: 1,
+		owner: "static-feed-client",
+	},
+	{
+		file: "src/management/online/notification/feed.ts",
+		rule: "product-network",
+		expectedMatches: 1,
+		owner: "static-feed-client",
 	},
 ];
 

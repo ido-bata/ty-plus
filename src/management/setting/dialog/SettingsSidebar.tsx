@@ -50,6 +50,7 @@ export type SettingsSidebarSectionId =
 	| "grid"
 	| "paths"
 	| "network"
+	| "update"
 	| "component-preview"
 	| "design-tokens"
 	| "workspace-backup"
