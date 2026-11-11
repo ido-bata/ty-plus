@@ -60,10 +60,10 @@
 | --- | --- | --- |
 | Extension ID `app.ty-plus`（`cep.config.ts`、`src/management/**` のsurface ID等） | **条件付き** | 新Extension IDへの置換が必要。ID確定は本人判断。変更時は既存インストールとの併存・移行挙動の検証（#6と整合） |
 | `scripts/package/sign-zxp.ts` の署名主体（`ty-plus` / `changeme` 既定値） | **条件付き** | 公開用署名主体・証明書は本人判断（実権利者の確認を含む） |
-| `supabase/`（Edge Functions / migrations / project ref） | **移植しない** | Log!N運営インフラ。#4のcharter上、R0はオフラインcore。将来の配布API方針は#4で決定 |
+| `supabase/`（Edge Functions / migrations / project ref） | **移植しない（除外済み、#17）** | Log!N運営インフラ。#4のcharter上、R0はオフラインcore。将来の配布API方針は#4で決定 |
 | `src/management/online/` のcloud機能（preset catalog等） | **条件付き** | コード権利は本人（移植可）。ただし接続先がLog!N運営infraのため、R0ではバックエンドごと移植せず、オフラインcoreからの切り離しを#5で実施する |
-| `src/management/online/licensing/` + `rust/crates/licensing/` | **条件付き** | ライセンスゲート。#5でローカルcoreから除去する |
-| `.env.example` 群のLog!N運営schema（`NOTION_TOKEN` 等を含む旧定義） | **条件付き** | 実値はtracked fileに存在しないことを確認済み。新repoのschemaはオフラインcoreに必要な範囲へ縮小する |
+| `src/management/online/licensing/` + `rust/crates/licensing/` | **除去済み（#5 → PR #24）** | ライセンスゲートと機能tierを削除。全機能が無条件・オフラインで利用可能。契約は `docs/architecture/offline-core.md` |
+| `.env.example` のLog!N運営schema（`NOTION_TOKEN` / `SYNC_TOKEN`） | **除去済み（#5 → PR #24）** | 実値は最初からtracked fileに存在しない（#2スキャン済み）。secret schemaはZXP署名とdormantなfeed用に縮小 |
 
 ### E. 非移植（新repoへ持ち込まない）
 
