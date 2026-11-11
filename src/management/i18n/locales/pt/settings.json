@@ -208,5 +208,13 @@
 			"inputs": "Entradas",
 			"update": "Atualizações"
 		}
+	},
+	"updates": {
+		"channel": "Canal de atualização",
+		"stable": "Estável",
+		"beta": "Beta",
+		"insider": "Insider",
+		"checkNow": "Verificar agora",
+		"browse": "Ver versões"
 	}
 }
