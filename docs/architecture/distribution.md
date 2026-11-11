@@ -58,7 +58,7 @@ bun scripts/package/release-manifest.ts --trust-mode=development-unsigned --arti
 - Windowsの証明書store参照（`TY_PLUS_SIGN_CERT_SHA1`）を優先する。PFX形式（`TY_PLUS_SIGN_PFX_PATH` + `TY_PLUS_SIGN_PFX_PASSWORD`）はsigntoolの仕様上パスワードがプロセス引数に現れる（`ps` で他プロセスから見える）。ログ・例外への出力は `redactSignArgs` でマスクする。
 - ZXP署名のパスワードもZXPSignCmdのCLI仕様上引数に現れる。エラーメッセージに引数を展開しない。
 
-これらが確定するまで、release-trustの成果物を「配布可能」と扱わない。実行は本人の明示的承認ゲートを別途経る。
+これらが確定するまで、release-trustの成果物を「配布可能」と扱わない。実行は本人の明示的承認ゲートを別途経る。証明書の取得・設定の具体的な本人操作は `docs/operations/signing-setup.md`。
 
 ## 検証の対応関係
 
