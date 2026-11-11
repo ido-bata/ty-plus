@@ -147,6 +147,14 @@ export default defineConfig({
 				// aliases, decorators, CEP-plugin stripping) through
 				// `.storybook/main.ts → viteFinal`, so we don't lose
 				// anything by isolating this project.
+				// `define` is re-declared because this project builds its
+				// vite config through the addon's viteFinal and does not
+				// inherit the root define (same value as the root block).
+				define: {
+					__APP_VERSION__: JSON.stringify(
+						JSON.parse(readFileSync("package.json", "utf8")).version,
+					),
+				},
 				plugins: [
 					// storybookTest internally wires up Storybook's viteFinal
 					// (the same one .storybook/main.ts uses) so CEP plugins
