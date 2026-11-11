@@ -13,8 +13,10 @@ After Effects向け拡張 ty-plus の無料OSS再構築リポジトリ。
 ## ドキュメント
 
 - `AGENTS.md` — 開発の入口。正本へのroutingと境界
+- `docs/architecture/project.md` — 製品charter（無料OSS方針・R0ユーザーフロー・非目標）
 - `docs/adr/` — 決定記録
 - `docs/migration/porting-ledger.md` — 旧実装からの移植台帳
+- `docs/decisions/rights-inventory.md` — 権利インベントリ決定表
 
 ## 開発
 
