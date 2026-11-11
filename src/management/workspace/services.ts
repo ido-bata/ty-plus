@@ -5,12 +5,12 @@ import { createCloudSyncService } from "@/management/online/catalog/sync";
 import type { CloudGateway } from "@/management/online/contract";
 import { markGatewayNotBooted } from "@/management/online/runtime-gateway-health";
 import {
-	parsePresetCatalogJsonText,
+	parsePresetCatalogJsonTextStrict,
 	serializePresetCatalogJsonText,
 } from "@/management/preset/catalog-json-text";
 import type { Preset } from "@/management/preset/contract";
 import { createSharedPresetRepository } from "@/management/preset/repository/shared";
-import { readPresetsJson, writePresetsJson } from "@/management/storage";
+import { readPresetsJsonText, writePresetsJson } from "@/management/storage";
 import { catalogJsonMayContainLegacyIdPrefixes } from "@/management/storage/ids";
 
 /** Local alias for the shape used by resolveSystemPaths (matches shared/contract HostFileSystemPaths). */
@@ -127,21 +127,31 @@ const shouldUseSharedPresetRepository = (): boolean => {
 	);
 };
 
+/**
+ * Read raw catalog text so malformed JSON reaches the strict parser.
+ * Missing or blank files represent an empty catalog; corrupt files throw
+ * `PresetCatalogParseError` so the Preset List can show a load error.
+ */
+export const readLocalPresetCatalog = async (
+	win: Window,
+): Promise<Preset[]> => {
+	const raw = await readPresetsJsonText(win);
+	if (raw === null || !raw.trim()) {
+		return [];
+	}
+	const rows = parsePresetCatalogJsonTextStrict(raw);
+	if (rows.length > 0 && catalogJsonMayContainLegacyIdPrefixes(raw)) {
+		await writePresetsJson(win, serializePresetCatalogJsonText(rows));
+	}
+	return rows;
+};
+
 const wrapFilePresetRepository = (
 	base: ReturnType<typeof createPresetRepository>,
 ): ReturnType<typeof createPresetRepository> =>
 	createSharedPresetRepository(base, {
 		async read() {
-			const raw = await readPresetsJson(window);
-			const rows = parsePresetCatalogJsonText(raw);
-			if (
-				rows.length > 0 &&
-				typeof raw === "string" &&
-				catalogJsonMayContainLegacyIdPrefixes(raw)
-			) {
-				await writePresetsJson(window, serializePresetCatalogJsonText(rows));
-			}
-			return rows;
+			return readLocalPresetCatalog(window);
 		},
 		async write(presets: Preset[]) {
 			await writePresetsJson(window, serializePresetCatalogJsonText(presets));
