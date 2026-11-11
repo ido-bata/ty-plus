@@ -91,6 +91,11 @@ describe("coerceSettings", () => {
 
 		expect(result.gestures).toEqual({ anchorPoint: false, alignment: true });
 	});
+	it("preserves a stored channel and rejects invalid values", () => {
+		expect(coerceSettings({ ui: { updateChannel: "insider" } }).ui.updateChannel).toBe("insider");
+		expect(coerceSettings({ ui: { updateChannel: "unknown" } }).ui.updateChannel).toBe("stable");
+	});
+
 });
 
 describe("mergeSettings", () => {
