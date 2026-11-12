@@ -1,5 +1,12 @@
 import { createHash } from "node:crypto";
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import {
+	mkdirSync,
+	mkdtempSync,
+	readdirSync,
+	readFileSync,
+	rmSync,
+	writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
@@ -138,5 +145,19 @@ describe("GitHub release staging", () => {
 		await expect(stage({ manifest: changed })).rejects.toThrow(
 			/different bytes/,
 		);
+	});
+
+	it("clears stale assets from a previous channel or version", async () => {
+		// The upload step uploads whatever is in the staging directory, so a
+		// leftover insider build next to a new stable build would be published
+		// with the wrong tag.
+		await stage();
+		const staleDir = path.join(distRoot, "github-release");
+		const leftover = path.join(staleDir, "ty-plus-v0.9.0-insider.7-macos.zxp");
+		writeFileSync(leftover, "old");
+		await stage();
+		const remaining = readdirSync(staleDir);
+		expect(remaining).not.toContain("ty-plus-v0.9.0-insider.7-macos.zxp");
+		expect(remaining).toHaveLength(3);
 	});
 });

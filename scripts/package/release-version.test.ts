@@ -5,7 +5,6 @@ import {
 	parseReleaseTag,
 	parseReleaseVersion,
 	releaseAssetNames,
-	releaseAssetNamesFor,
 } from "./release-version";
 
 describe("release version contract", () => {
@@ -54,11 +53,9 @@ describe("release asset naming", () => {
 			"ty-plus-v0.11.0-insider.3-windows-release-manifest.json",
 		);
 		expect(macos.zip).not.toBe(windows.zip);
-		expect(releaseAssetNamesFor(version, "windows")).toEqual([
-			windows.zip,
-			windows.zxp,
-			windows.manifest,
-		]);
+		expect(Object.values(windows).sort()).toEqual(
+			[windows.zip, windows.zxp, windows.manifest].sort(),
+		);
 	});
 
 	it("keeps every asset name of one release distinct from another's", () => {
@@ -66,8 +63,8 @@ describe("release asset naming", () => {
 		const second = parseReleaseVersion("0.11.0-beta.2");
 		if (!first || !second) throw new Error("fixtures must parse");
 		const names = new Set([
-			...releaseAssetNamesFor(first, "windows"),
-			...releaseAssetNamesFor(second, "windows"),
+			...Object.values(releaseAssetNames(first, "windows")),
+			...Object.values(releaseAssetNames(second, "windows")),
 		]);
 		expect(names.size).toBe(6);
 	});

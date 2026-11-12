@@ -84,15 +84,6 @@ export const releaseAssetNames = (
 	};
 };
 
-/** Every asset name a release of `version` on `platform` may publish. */
-export const releaseAssetNamesFor = (
-	version: ReleaseVersion,
-	platform: ReleasePlatform,
-): readonly string[] => {
-	const names = releaseAssetNames(version, platform);
-	return [names.zip, names.zxp, names.manifest];
-};
-
 /**
  * Verifies that the build-time release identity agrees with the numeric CEP
  * version in `package.json` and with the requested channel.

@@ -11,10 +11,11 @@
  */
 import { createHash } from "node:crypto";
 import { existsSync, readFileSync, statSync } from "node:fs";
-import { copyFile, mkdir, writeFile } from "node:fs/promises";
+import { copyFile, mkdir, readdir, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import {
 	assertReleaseIdentity,
+	isReleasePlatform,
 	type ReleaseChannel,
 	type ReleasePlatform,
 	releaseAssetNames,
@@ -71,14 +72,16 @@ export const stageGitHubRelease = async (
 	if (manifest.trustMode !== "release" || !Array.isArray(manifest.artifacts)) {
 		throw new Error("only release-trust manifests may be staged");
 	}
-	if (
-		input.workerPlatforms.length !== 1 ||
-		(input.workerPlatforms[0] !== "windows" &&
-			input.workerPlatforms[0] !== "macos")
-	) {
+	if (input.workerPlatforms.length !== 1) {
 		throw new Error("expected exactly one platform in this release bundle");
 	}
-	const platform = input.workerPlatforms[0] as ReleasePlatform;
+	const [declaredPlatform] = input.workerPlatforms;
+	if (!isReleasePlatform(declaredPlatform)) {
+		throw new Error(
+			`unsupported release platform "${String(declaredPlatform)}" in this bundle`,
+		);
+	}
+	const platform: ReleasePlatform = declaredPlatform;
 	// Re-derive the identity from the manifest rather than trusting it: the
 	// channel and the numeric core must both agree with the release version.
 	const version = assertReleaseIdentity({
@@ -93,6 +96,16 @@ export const stageGitHubRelease = async (
 
 	const prepared = path.join(input.distRoot, "github-release");
 	await mkdir(prepared, { recursive: true });
+	// Clear the staging directory before writing. Keeping it lets assets from
+	// a previous channel or version survive alongside the new ones, and the
+	// operator would upload whichever files happen to be present.
+	// The per-file equality guards below only cover *same-named* assets.
+	const stale = new Set([names.zip, names.zxp, names.manifest]);
+	for (const entry of await readdir(prepared)) {
+		if (!stale.has(entry)) {
+			await rm(path.join(prepared, entry), { force: true, recursive: true });
+		}
+	}
 	const rename = new Map([
 		["app.ty-plus.zip", names.zip],
 		["app.ty-plus.zxp", names.zxp],
@@ -146,11 +159,16 @@ const main = async (): Promise<void> => {
 	const worker = JSON.parse(readFileSync(workerManifestPath, "utf8")) as {
 		workers?: Record<string, unknown>;
 	};
-	const sourceCommit = Bun.spawnSync(["git", "rev-parse", "HEAD"], {
+	const revParse = Bun.spawnSync(["git", "rev-parse", "HEAD"], {
 		stdout: "pipe",
-	})
-		.stdout.toString()
-		.trim();
+		stderr: "pipe",
+	});
+	const sourceCommit = revParse.stdout.toString().trim();
+	if (revParse.exitCode !== 0 || !/^[a-f0-9]{40}$/.test(sourceCommit)) {
+		throw new Error(
+			"cannot resolve the source commit — run this from a git checkout of the release",
+		);
+	}
 	const staged = await stageGitHubRelease({
 		distRoot: dist,
 		manifest: JSON.parse(

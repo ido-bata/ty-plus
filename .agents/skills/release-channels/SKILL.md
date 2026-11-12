@@ -37,11 +37,10 @@ ty-plusの配布は**GitHub Releasesを唯一の正本**とする（ADR-0004）�
 1コマンドでビルド・監査・stagingまで進む（公開はしない）。
 
 ```sh
-bun run scripts/package/build-github-release.ts \
-  --channel=insider --release-version=0.11.0-insider.1
+bun run release:candidate --channel=insider --release-version=0.10.1-insider.1
 ```
 
-このコマンドは `build-release.ts` → `verify-release-artifacts.ts` → `prepare-github-release.ts` を順に実行し、途中で失敗したら止まる。channelとtagが食い違う、数値コアが `package.json` と違う、hostがWindows/macOSでない、のいずれでも**ビルドを始める前に**拒否する。
+内部では `build-release.ts` → `verify-release-artifacts.ts` → `prepare-github-release.ts` を順に実行し、途中で失敗したら止まる。`release:verify` と `release:stage` で個別に再実行できる。channelとtagが食い違う、数値コアが `package.json` と違う、hostがWindows/macOSでない、のいずれでも**ビルドを始める前に**拒否する。
 
 ## 2. platformごとの前提を確認する
 
@@ -65,10 +64,12 @@ bun run scripts/package/build-github-release.ts \
 - packに `LICENSE` / `THIRD-PARTY-NOTICES.md` があること
 - packに `jsx/ty-plus-host.jsx` があること（無いと全host操作が実行時に失敗する）
 - packの `ExtensionBundleVersion` がmanifestの `version` と一致すること
-- panel bundleが更新contractと `releaseVersion` / `channel` を埋め込んでいること
+- panel bundleの**注入binding**（`currentReleaseVersion` / `buildReleaseChannel`）が `releaseVersion` / `channel` と一致すること
+- ZXPが存在し、`ZXPSignCmd -verify` が通ること（検証に署名パスワードは不要。signerが無い場合は「このマシンでは監査できない」という別のエラーになる）
+- worker manifestが存在し `trust.mode=release` であること。Windows以外のworkerはOS署名証拠（algorithm / value / certificateSha256）を満たすこと
 - packにsecretパターンが無いこと
 
-失敗したら**成果物を再生成する**。manifestだけ書き換えない。
+**証拠の欠落はskipではなく失敗**である。ZXPやworker manifestを書かなければ通る、という抜け道を作らない。失敗したら成果物を再生成する。manifestだけ書き換えない。
 
 ## 4. 公開前の確認
 

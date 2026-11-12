@@ -46,6 +46,7 @@ jobs:
             rust_targets: aarch64-apple-darwin,x86_64-apple-darwin
             artifact_suffix: macos
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
 
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -128,6 +129,7 @@ jobs:
   # unsigned build and has no publish step.
   release-trust-gate-refusal:
     runs-on: macos-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
 
@@ -154,6 +156,7 @@ jobs:
   # subject remains an owner decision (#32). No publish step exists.
   release-trust-windows-candidate:
     runs-on: windows-latest
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
 
