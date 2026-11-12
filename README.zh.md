@@ -57,7 +57,7 @@ ty-plus 是免费、开源的 After Effects CEP 扩展，可集中管理常用�
 - [用户指南](docs/user-guide/index.md) (日语) · [安装指南](docs/user-guide/installation/index.md) (日语)
 - [报告问题或提出改进建议](https://github.com/ido-bata/ty-plus/issues/new/choose)
 - [参与贡献](CONTRIBUTING.md) · [安全政策](SECURITY.md)
-- [CI 实际状态](https://github.com/ido-bata/ty-plus/actions/workflows/ci.yml). 徽章显示 GitHub Actions 的实际执行状态，并不表示测试已通过。因账单问题导致任务启动前失败的情况记录在[问题 #59](https://github.com/ido-bata/ty-plus/issues/59)。
+- [CI 实际状态](https://github.com/ido-bata/ty-plus/actions/workflows/ci.yml). 徽章显示 GitHub Actions 的实际执行状态，并不表示测试已通过。因账单问题导致任务启动前失败的情况记录在[问题 #59](https://github.com/ido-bata/ty-plus/issues/61)。
 
 开发准备：执行 `mise install`，然后执行 `bun install --frozen-lockfile --ignore-scripts`。详情参见[贡献指南](CONTRIBUTING.md)。
 
