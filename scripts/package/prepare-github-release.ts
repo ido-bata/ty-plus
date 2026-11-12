@@ -96,13 +96,15 @@ export const stageGitHubRelease = async (
 
 	const prepared = path.join(input.distRoot, "github-release");
 	await mkdir(prepared, { recursive: true });
-	// Clear the staging directory before writing. Keeping it lets assets from
-	// a previous channel or version survive alongside the new ones, and the
-	// operator would upload whichever files happen to be present.
-	// The per-file equality guards below only cover *same-named* assets.
-	const stale = new Set([names.zip, names.zxp, names.manifest]);
-	for (const entry of await readdir(prepared)) {
-		if (!stale.has(entry)) {
+	// Clear everything this release owns before writing. Two distinct stale
+	// cases must not survive into upload:
+	//   - other versions' assets (a previous channel/version build), and
+	//   - *this* version's assets from an earlier build, whose bytes differ.
+	// Uploading whatever happens to be in the directory would publish a mix.
+	// The manifest is the authority for what "this release" means, so the whole
+	// staging directory is rewritten from the verified build.
+	if (existsSync(prepared)) {
+		for (const entry of await readdir(prepared)) {
 			await rm(path.join(prepared, entry), { force: true, recursive: true });
 		}
 	}
@@ -123,21 +125,12 @@ export const stageGitHubRelease = async (
 		) {
 			throw new Error(`missing or invalid release artifact: ${sourceName}`);
 		}
-		if (existsSync(targetPath) && digest(targetPath) !== original.sha256) {
-			throw new Error(`staged GitHub asset has different bytes: ${name}`);
-		}
 		await copyFile(sourcePath, targetPath);
 		assets.push({ ...original, file: name });
 	}
 	const finalManifest: ReleaseManifest = { ...manifest, artifacts: assets };
 	const targetManifest = path.join(prepared, names.manifest);
 	const manifestBytes = `${JSON.stringify(finalManifest, null, 2)}\n`;
-	if (
-		existsSync(targetManifest) &&
-		readFileSync(targetManifest, "utf8") !== manifestBytes
-	) {
-		throw new Error(`staged manifest has different contents: ${names.manifest}`);
-	}
 	await writeFile(targetManifest, manifestBytes);
 	return { directory: prepared, version, platform, assets, names };
 };

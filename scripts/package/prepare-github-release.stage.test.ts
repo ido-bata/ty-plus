@@ -128,22 +128,40 @@ describe("GitHub release staging", () => {
 		).rejects.toThrow(/numeric version/);
 	});
 
-	it("is idempotent for identical bytes and refuses changed bytes", async () => {
+	it("is idempotent for identical bytes", async () => {
 		const first = manifest();
 		await stage({ manifest: first });
-		await expect(stage({ manifest: first })).resolves.toBeDefined();
-		// A different build for the same tag must not silently overwrite an
-		// already-staged asset: the operator would upload two different files.
-		writeFileSync(path.join(distRoot, "app.ty-plus.zip"), "different-bytes");
-		const changed = {
+		const again = await stage({ manifest: first });
+		expect(again.assets.map((a) => a.file)).toEqual(
+			first.artifacts.map((a) =>
+				a.file === "app.ty-plus.zip"
+					? "ty-plus-v0.11.0-insider.2-macos.zip"
+					: "ty-plus-v0.11.0-insider.2-macos.zxp",
+			),
+		);
+	});
+
+	it("replaces this version's assets when the build changed", async () => {
+		// Rebuilding the same version must be possible: the staging directory
+		// describes one build, so it is rewritten rather than merged. Merging
+		// would leave the operator with two candidate files for one filename.
+		const first = manifest();
+		await stage({ manifest: first });
+		const rebuilt = {
 			...first,
 			artifacts: [
-				writeArtifact("app.ty-plus.zip", "different-bytes"),
+				writeArtifact("app.ty-plus.zip", "rebuilt-bytes"),
 				first.artifacts[1],
 			],
 		};
-		await expect(stage({ manifest: changed })).rejects.toThrow(
-			/different bytes/,
+		const staged = await stage({ manifest: rebuilt });
+		const onDisk = readFileSync(
+			path.join(distRoot, "github-release", "ty-plus-v0.11.0-insider.2-macos.zip"),
+			"utf8",
+		);
+		expect(onDisk).toBe("rebuilt-bytes");
+		expect(staged.assets[0]?.sha256).toBe(
+			createHash("sha256").update("rebuilt-bytes").digest("hex"),
 		);
 	});
 
