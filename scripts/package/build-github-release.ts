@@ -42,12 +42,13 @@ export const planCandidate = (input: {
 	readonly packageVersion: string;
 	readonly hostPlatform: NodeJS.Platform;
 }): CandidatePlan => {
-	const platform: ReleasePlatform | null =
-		input.hostPlatform === "win32"
-			? "windows"
-			: input.hostPlatform === "darwin"
-				? "macos"
-				: null;
+	// A lookup keeps host→platform in one place instead of growing a ternary
+	// chain when another host is supported.
+	const platformsByHost: Partial<Record<NodeJS.Platform, ReleasePlatform>> = {
+		win32: "windows",
+		darwin: "macos",
+	};
+	const platform = platformsByHost[input.hostPlatform];
 	if (!platform) {
 		throw new Error("GitHub Release packaging requires Windows or macOS");
 	}

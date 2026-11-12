@@ -428,6 +428,12 @@ const verifyReleaseZxpSignature = (zxpPath: string): void => {
 	}
 };
 
+/** Flattens either failure shape into the list of messages to print. */
+const toFailures = (error: unknown): readonly string[] => {
+	if (error instanceof ArtifactAuditError) return error.failures;
+	return [error instanceof Error ? error.message : String(error)];
+};
+
 const main = (): void => {
 	const distRoot = path.resolve("dist");
 	const manifestPath = path.join(distRoot, "release-manifest.json");
@@ -437,9 +443,17 @@ const main = (): void => {
 		);
 		process.exit(1);
 	}
-	const head = Bun.spawnSync(["git", "rev-parse", "HEAD"], { stdout: "pipe" })
-		.stdout.toString()
-		.trim();
+	const revParse = Bun.spawnSync(["git", "rev-parse", "HEAD"], {
+		stdout: "pipe",
+		stderr: "pipe",
+	});
+	const head = revParse.stdout.toString().trim();
+	if (revParse.exitCode !== 0 || !/^[a-f0-9]{40}$/.test(head)) {
+		console.error(
+			"[verify-release-artifacts] cannot resolve HEAD — run this from a git checkout of the release",
+		);
+		process.exit(1);
+	}
 	const workerManifestPath = path.join(
 		distRoot,
 		"cep-dev",
@@ -478,10 +492,7 @@ const main = (): void => {
 				: {}),
 		});
 	} catch (error) {
-		const failures =
-			error instanceof ArtifactAuditError
-				? error.failures
-				: [error instanceof Error ? error.message : String(error)];
+		const failures = toFailures(error);
 		console.error(
 			`[verify-release-artifacts] FAILED:\n  ${failures.join("\n  ")}`,
 		);
