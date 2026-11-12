@@ -26,7 +26,7 @@ Organisez vos presets et scripts sous forme de tuiles, ajoutez des widgets et ad
 ## Installation
 
 1. Ouvrez la **[dernière version Stable](https://github.com/ido-bata/ty-plus/releases/latest)**.
-2. Téléchargez `ty-plus-<version>-windows.zxp` ou `ty-plus-<version>-macos.zxp` selon votre système.
+2. Téléchargez `ty-plus-<tag>-windows.zxp` ou `ty-plus-<tag>-macos.zxp` selon votre système.
 3. Installez le ZXP avec un installateur compatible CEP, puis redémarrez After Effects.
 4. Ouvrez **Fenêtre → Extensions → ty-plus**.
 
