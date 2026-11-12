@@ -163,4 +163,63 @@ describe("mergeSettings", () => {
 			expect(["stable", "beta", "insider"]).toContain(coerced.ui.updateChannel);
 		}
 	});
+
+	it("preserves keys that settings.json shares with the workspace layer", () => {
+		// `settings/app.json` is written by both layers. `workspacePanels` and
+		// `snapshots` hold group/preset placement and named layouts; a coercion
+		// that kept only DEFAULT_SETTINGS keys would delete them on the next
+		// settings save — including a save caused by changing the update channel.
+		const coerced = coerceSettings({
+			version: 2,
+			core: { paths: { supportRoot: "/support" } },
+			workspace: {
+				grid: { cellSize: 96, gap: 8, radius: 12 },
+				workspacePanels: { "panel-1": { presetIds: ["a", "b"] } },
+				snapshots: { "panel-1": [{ id: "s1" }] },
+			},
+			controlPanel: { position: "right", orientation: "vertical" },
+		});
+		const workspace = coerced.workspace as unknown as Record<string, unknown>;
+		expect(workspace.workspacePanels).toEqual({
+			"panel-1": { presetIds: ["a", "b"] },
+		});
+		expect(workspace.snapshots).toEqual({ "panel-1": [{ id: "s1" }] });
+		expect(
+			(coerced as unknown as Record<string, unknown>).controlPanel,
+		).toEqual({
+			position: "right",
+			orientation: "vertical",
+		});
+	});
+
+	it("keeps workspace layout data through a channel change", () => {
+		const stored = coerceSettings({
+			version: 2,
+			core: { paths: { supportRoot: "/support" } },
+			ui: { language: "en", theme: "dark" },
+			workspace: {
+				workspacePanels: { "panel-1": { presetIds: ["a"] } },
+			},
+		});
+		const afterChannelChange = mergeSettings(stored, {
+			ui: { updateChannel: "insider" },
+		});
+		expect(afterChannelChange.ui.updateChannel).toBe("insider");
+		expect(
+			(afterChannelChange.workspace as unknown as Record<string, unknown>)
+				.workspacePanels,
+		).toEqual({ "panel-1": { presetIds: ["a"] } });
+	});
+
+	it("lets a patch introduce a key with no default", () => {
+		// `workspace.background` is optional and absent from DEFAULT_SETTINGS,
+		// so a one-way merge silently dropped it.
+		const merged = mergeSettings(DEFAULT_SETTINGS, {
+			workspace: { background: { type: "color", value: "#000" } },
+		});
+		expect(merged.workspace.background).toEqual({
+			type: "color",
+			value: "#000",
+		});
+	});
 });

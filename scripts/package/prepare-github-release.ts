@@ -33,6 +33,102 @@ type ReleaseManifest = {
 const digest = (file: string): string =>
 	createHash("sha256").update(readFileSync(file)).digest("hex");
 
+export type StageInput = Readonly<{
+	/** Directory holding the verified build artifacts. */
+	distRoot: string;
+	manifest: ReleaseManifest;
+	workerPlatforms: readonly string[];
+	head: string;
+}>;
+
+export type StagedAsset = Readonly<{
+	file: string;
+	sha256: string;
+	bytes: number;
+}>;
+
+export type StagedRelease = Readonly<{
+	directory: string;
+	version: ReturnType<typeof assertReleaseIdentity>;
+	platform: ReleasePlatform;
+	assets: readonly StagedAsset[];
+	names: ReturnType<typeof releaseAssetNames>;
+}>;
+
+/**
+ * Stages the verified build's zip/ZXP under the public GitHub asset names.
+ *
+ * Pure with respect to the network and to git state (the caller supplies
+ * `head`), so it can be exercised against real bytes. Every claim is
+ * re-derived: the manifest must be release-trust, the bundle must hold exactly
+ * one platform, and each copied artifact's bytes must still hash to what the
+ * manifest recorded.
+ */
+export const stageGitHubRelease = async (
+	input: StageInput,
+): Promise<StagedRelease> => {
+	const { manifest } = input;
+	if (manifest.trustMode !== "release" || !Array.isArray(manifest.artifacts)) {
+		throw new Error("only release-trust manifests may be staged");
+	}
+	if (
+		input.workerPlatforms.length !== 1 ||
+		(input.workerPlatforms[0] !== "windows" &&
+			input.workerPlatforms[0] !== "macos")
+	) {
+		throw new Error("expected exactly one platform in this release bundle");
+	}
+	const platform = input.workerPlatforms[0] as ReleasePlatform;
+	// Re-derive the identity from the manifest rather than trusting it: the
+	// channel and the numeric core must both agree with the release version.
+	const version = assertReleaseIdentity({
+		releaseVersion: manifest.releaseVersion,
+		packageVersion: manifest.version,
+		channel: String(manifest.channel),
+	});
+	if (input.head !== manifest.sourceCommit) {
+		throw new Error("source SHA differs from the verified release manifest");
+	}
+	const names = releaseAssetNames(version, platform);
+
+	const prepared = path.join(input.distRoot, "github-release");
+	await mkdir(prepared, { recursive: true });
+	const rename = new Map([
+		["app.ty-plus.zip", names.zip],
+		["app.ty-plus.zxp", names.zxp],
+	]);
+	const assets: StagedAsset[] = [];
+	for (const [sourceName, name] of rename) {
+		const original = manifest.artifacts.find((a) => a.file === sourceName);
+		const sourcePath = path.join(input.distRoot, sourceName);
+		const targetPath = path.join(prepared, name);
+		if (
+			!original ||
+			!existsSync(sourcePath) ||
+			digest(sourcePath) !== original.sha256 ||
+			statSync(sourcePath).size !== original.bytes
+		) {
+			throw new Error(`missing or invalid release artifact: ${sourceName}`);
+		}
+		if (existsSync(targetPath) && digest(targetPath) !== original.sha256) {
+			throw new Error(`staged GitHub asset has different bytes: ${name}`);
+		}
+		await copyFile(sourcePath, targetPath);
+		assets.push({ ...original, file: name });
+	}
+	const finalManifest: ReleaseManifest = { ...manifest, artifacts: assets };
+	const targetManifest = path.join(prepared, names.manifest);
+	const manifestBytes = `${JSON.stringify(finalManifest, null, 2)}\n`;
+	if (
+		existsSync(targetManifest) &&
+		readFileSync(targetManifest, "utf8") !== manifestBytes
+	) {
+		throw new Error(`staged manifest has different contents: ${names.manifest}`);
+	}
+	await writeFile(targetManifest, manifestBytes);
+	return { directory: prepared, version, platform, assets, names };
+};
+
 const main = async (): Promise<void> => {
 	const dist = path.resolve("dist");
 	const sourceManifestPath = path.join(dist, "release-manifest.json");
@@ -47,88 +143,32 @@ const main = async (): Promise<void> => {
 			"run a verified release-trust build before preparing GitHub assets",
 		);
 	}
-	const source = JSON.parse(
-		readFileSync(sourceManifestPath, "utf8"),
-	) as ReleaseManifest;
 	const worker = JSON.parse(readFileSync(workerManifestPath, "utf8")) as {
 		workers?: Record<string, unknown>;
 	};
-	if (source.trustMode !== "release" || !Array.isArray(source.artifacts)) {
-		throw new Error("only release-trust manifests may be staged");
-	}
-	const platforms = Object.keys(worker.workers ?? {});
-	if (
-		platforms.length !== 1 ||
-		(platforms[0] !== "windows" && platforms[0] !== "macos")
-	) {
-		throw new Error("expected exactly one platform in this release bundle");
-	}
-	const platform = platforms[0] as ReleasePlatform;
-	// Re-derive the identity from the manifest rather than trusting it: the
-	// channel and the numeric core must both agree with the release version.
-	const version = assertReleaseIdentity({
-		releaseVersion: source.releaseVersion,
-		packageVersion: source.version,
-		channel: source.channel,
-	});
-	const names = releaseAssetNames(version, platform);
 	const sourceCommit = Bun.spawnSync(["git", "rev-parse", "HEAD"], {
 		stdout: "pipe",
 	})
 		.stdout.toString()
 		.trim();
-	if (sourceCommit !== source.sourceCommit) {
-		throw new Error("source SHA differs from the verified release manifest");
-	}
+	const staged = await stageGitHubRelease({
+		distRoot: dist,
+		manifest: JSON.parse(
+			readFileSync(sourceManifestPath, "utf8"),
+		) as ReleaseManifest,
+		workerPlatforms: Object.keys(worker.workers ?? {}),
+		head: sourceCommit,
+	});
 
-	const prepared = path.join(dist, "github-release");
-	await mkdir(prepared, { recursive: true });
-	const rename = new Map([
-		["app.ty-plus.zip", names.zip],
-		["app.ty-plus.zxp", names.zxp],
-	]);
-	const artifacts: ArtifactRecord[] = [];
-	for (const [sourceName, name] of rename) {
-		const original = source.artifacts.find(
-			(asset) => asset.file === sourceName,
-		);
-		const sourcePath = path.join(dist, sourceName);
-		const targetPath = path.join(prepared, name);
-		if (
-			!original ||
-			!existsSync(sourcePath) ||
-			digest(sourcePath) !== original.sha256 ||
-			statSync(sourcePath).size !== original.bytes
-		) {
-			throw new Error(`missing or invalid release artifact: ${sourceName}`);
-		}
-		if (existsSync(targetPath) && digest(targetPath) !== original.sha256) {
-			throw new Error(`staged GitHub asset has different bytes: ${name}`);
-		}
-		await copyFile(sourcePath, targetPath);
-		artifacts.push({ ...original, file: name });
-	}
-	const finalManifest: ReleaseManifest = { ...source, artifacts };
-	const targetManifest = path.join(prepared, names.manifest);
-	const manifestBytes = `${JSON.stringify(finalManifest, null, 2)}\n`;
-	if (
-		existsSync(targetManifest) &&
-		readFileSync(targetManifest, "utf8") !== manifestBytes
-	) {
-		throw new Error(
-			`staged manifest has different contents: ${names.manifest}`,
-		);
-	}
-	await writeFile(targetManifest, manifestBytes);
-
-	console.log(`[github-release] prepared assets: ${prepared}`);
-	console.log(`[github-release] tag: ${version.tag} (${version.channel})`);
+	console.log(`[github-release] prepared assets: ${staged.directory}`);
+	console.log(
+		`[github-release] tag: ${staged.version.tag} (${staged.version.channel})`,
+	);
 	console.log(
 		"[github-release] SHA-256 and source commit checked; publication not performed",
 	);
 	console.log(
-		"[github-release] files: " +
-			[names.zip, names.zxp, names.manifest].join(", "),
+		`[github-release] files: ${staged.assets.map((a) => a.file).join(", ")}`,
 	);
 	console.log(
 		"[github-release] create a DRAFT release only after the owner's explicit authorization",

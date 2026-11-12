@@ -99,6 +99,17 @@ export const DEFAULT_SETTINGS: Settings = {
 const isRecord = (v: unknown): v is Record<string, unknown> =>
 	typeof v === "object" && v !== null && !Array.isArray(v);
 
+/**
+ * Fills `defaults` into `value`, **preserving keys the defaults do not know
+ * about**.
+ *
+ * Preserving unknown keys is load-bearing, not defensive: `settings/app.json`
+ * is shared with the workspace layer, which writes `workspace.workspacePanels`
+ * and `workspace.snapshots` (group/preset placement and named layout
+ * snapshots) into the same file. A projection that kept only the keys in
+ * `DEFAULT_SETTINGS` would delete that user data on the next settings save —
+ * including a save triggered by merely changing the update channel.
+ */
 const mergeRecordDefaults = <T extends Record<string, unknown>>(
 	defaults: T,
 	value: unknown,
@@ -106,7 +117,7 @@ const mergeRecordDefaults = <T extends Record<string, unknown>>(
 	if (!isRecord(value)) {
 		return defaults;
 	}
-	const merged = { ...defaults } as Record<string, unknown>;
+	const merged: Record<string, unknown> = { ...value };
 	for (const [key, defaultValue] of Object.entries(defaults)) {
 		const incomingValue = value[key];
 		merged[key] =
@@ -158,9 +169,12 @@ export const mergeSettings = (
 	for (const [key, value] of Object.entries(patch)) {
 		if (value === undefined) continue;
 		const existing = (current as Record<string, unknown>)[key];
+		// Merge both directions: `mergeRecordDefaults(existing, value)` would
+		// iterate only `existing` and drop a key the patch introduces (e.g.
+		// `workspace.background`, which has no default).
 		merged[key] =
 			isRecord(existing) && isRecord(value)
-				? mergeRecordDefaults(existing, value)
+				? mergeRecordDefaults(value, mergeRecordDefaults(existing, value))
 				: value;
 	}
 	return coerceSettings(merged);

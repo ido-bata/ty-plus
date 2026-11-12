@@ -48,19 +48,16 @@ bun scripts/package/release-manifest.ts --trust-mode=development-unsigned --arti
 開発中のInsider候補を素早く準備する場合は、同じ手順を1コマンドで実行できる。数値版`package.json.version`を事前に更新しておくこと（例: `0.10.1`）。
 
 ```sh
-bun scripts/package/build-github-release.ts --channel=insider --release-version=0.10.1-insider.1
+bun run release:candidate --channel=insider --release-version=0.10.1-insider.1
 ```
+
+このコマンドは `build-release.ts` → `verify-release-artifacts.ts` → `prepare-github-release.ts` を順に実行する。途中で失敗したらそこで停止し、`dist/github-release/` は完成しない。channelとtagの不一致、数値コアの不一致、非対応hostは**ビルド開始前**に拒否される。tag・channel・asset名の定義は `scripts/package/release-version.ts` が唯一の正本であり、runbookへ文法を写さない。
 
 Stable/Betaも同じコマンドで`--channel`と`--release-version`を指定する。WindowsではAuthenticode不要、macOSでは既存Developer ID署名と公証profileが必要。ZXPは継続利用できる署名用証明書（`TY_PLUS_ZXP_CERT_PATH` / `TY_PLUS_ZXP_CERT_PASSWORD`）を明示する。このコマンドは**ビルド・検証・ローカル準備のみ**で、GitHubへのuploadや公開は行わない。
 
+`verify-release-artifacts.ts` は次を実測する: `trustMode=release`、`sourceCommit`と`HEAD`の一致、各artifactのsha256、pack内のLICENSE/THIRD-PARTY-NOTICES、`jsx/ty-plus-host.jsx`の存在、CEP `ExtensionBundleVersion`とmanifest `version`の一致、panel bundleに埋め込まれた`releaseVersion`/`channel`、secretパターンの不在。失敗時は成果物を再生成する（manifestだけ書き換えない）。
+
 GitHub Actionsで同等のWindows候補を作る場合、`.github/workflows/release.yml` はAdobe公式ZXPSignCmdを固定commitで取得・blob検証する。使い捨て証明書によるCI候補を実公開してはならない。
-
-各platformの正しい署名・公証設定でrelease-trustビルドを実行した後、以下を実行する。
-
-```sh
-bun run scripts/verify/verify-release-artifacts.ts
-bun run scripts/package/prepare-github-release.ts
-```
 
 `dist/github-release/` に以下が出力される（Windows/macOSは各ホストで準備する）。
 

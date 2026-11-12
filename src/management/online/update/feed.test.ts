@@ -231,10 +231,10 @@ describe("checkForUpdate via GitHub Releases API", () => {
 		}
 	});
 
-	// Regression: GitHub orders releases by creation time, not version. A
-	// newer eligible release can sit behind an older one, so stopping at the
-	// first page that has *any* candidate misses the actual update.
-	it("keeps paging when the first page only holds an older eligible release", async () => {
+	// Regression: a newer release can sit behind an older one because GitHub
+	// orders by creation time. Stopping at the first page that holds *any*
+	// newer candidate would offer a stale version and never see the real one.
+	it("keeps paging when a newer release hides behind an older one", async () => {
 		const requested: string[] = [];
 		const checked = await checkForUpdate({
 			currentVersion: "0.10.0",
@@ -242,39 +242,57 @@ describe("checkForUpdate via GitHub Releases API", () => {
 			fetchFeedText: async (url) => {
 				requested.push(url);
 				if (new URL(url).searchParams.has("page")) {
-					return JSON.stringify([release("v0.10.5")]);
+					return JSON.stringify([release("v0.11.0")]);
 				}
-				// A full page of honest but older stable releases.
-				return JSON.stringify(
-					Array.from({ length: 100 }, (_, index) =>
+				return JSON.stringify([
+					// Newer than installed, and published most recently.
+					release("v0.10.1"),
+					...Array.from({ length: 99 }, (_, index) =>
 						release(`v0.9.${index + 1}`),
 					),
-				);
+				]);
 			},
 		});
 		expect(requested).toHaveLength(2);
 		expect(checked.status).toBe("update-available");
 		if (checked.status === "update-available") {
-			expect(checked.feed.version).toBe("0.10.5");
+			expect(checked.feed.version).toBe("0.11.0");
 		}
 	});
 
-	it("stops paging once a candidate newer than the installed version is found", async () => {
+	it("pages only while the previous page was full", async () => {
 		const requested: string[] = [];
 		const checked = await checkForUpdate({
 			currentVersion: "0.10.0",
 			channel: "stable",
 			fetchFeedText: async (url) => {
 				requested.push(url);
-				return JSON.stringify(
-					Array.from({ length: 100 }, (_, index) =>
-						index === 0 ? release("v0.11.0") : release(`v0.10.${index + 1}`),
-					),
-				);
+				// A short page cannot have a successor.
+				return JSON.stringify([release("v0.11.0")]);
 			},
 		});
 		expect(requested).toHaveLength(1);
 		expect(checked.status).toBe("update-available");
+	});
+
+	it("stays bounded and gives up when a page request fails", async () => {
+		const requested: string[] = [];
+		const checked = await checkForUpdate({
+			currentVersion: "0.10.0",
+			channel: "stable",
+			fetchFeedText: async (url) => {
+				requested.push(url);
+				if (new URL(url).searchParams.has("page")) {
+					throw new Error("rate limited");
+				}
+				return JSON.stringify(
+					Array.from({ length: 100 }, () => release("v0.9.1")),
+				);
+			},
+		});
+		// One failed page request, then give up rather than retrying forever.
+		expect(requested).toHaveLength(2);
+		expect(checked.status).toBe("up-to-date");
 	});
 
 	it("adds the page parameter without corrupting the per_page query", async () => {

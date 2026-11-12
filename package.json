@@ -27,6 +27,9 @@
 		"zxp": "bun run build && bun run scripts/package/package-cep-archive.ts zxp",
 		"sign": "bun run secrets:run -- bun run scripts/package/sign-zxp.ts",
 		"release:zxp": "bun run zxp",
+		"release:candidate": "bun run scripts/package/build-github-release.ts",
+		"release:verify": "bun run scripts/verify/verify-release-artifacts.ts",
+		"release:stage": "bun run scripts/package/prepare-github-release.ts",
 		"zip": "bun run build && bun run scripts/package/package-cep-archive.ts zip",
 		"serve": "bunx vite preview --config vite.config.ts",
 		"storybook": "bunx storybook dev -p 6006",
@@ -63,7 +66,7 @@
 		"test:coverage": "cross-env NODE_OPTIONS=--max-old-space-size=28672 bun run vitest run --coverage",
 		"test:scenario-spec": "cross-env NODE_OPTIONS=--max-old-space-size=28672 bun run vitest run --config vitest.scenario-spec.config.ts",
 		"check:coverage": "cross-env NODE_OPTIONS=--max-old-space-size=28672 bun run vitest run --coverage",
-		"typecheck": "cross-env NODE_OPTIONS=--max-old-space-size=28672 bun run typecheck:main && bun run typecheck:test && bun run typecheck:extendscript",
+		"typecheck": "cross-env NODE_OPTIONS=--max-old-space-size=28672 bun run typecheck:main && bun run typecheck:test && bun run typecheck:extendscript && bun run typecheck:release",
 		"typecheck:main": "cross-env NODE_OPTIONS=--max-old-space-size=28672 tsc -p tsconfig.json --noEmit",
 		"typecheck:test": "cross-env NODE_OPTIONS=--max-old-space-size=28672 tsc -p tsconfig.test.json --noEmit",
 		"typecheck:extendscript": "cross-env NODE_OPTIONS=--max-old-space-size=28672 tsc -p tsconfig.extendscript.json --noEmit",
@@ -89,7 +92,8 @@
 		"doctor": "bunx --no-install react-doctor",
 		"agent:snapshot": "bun run scripts/agent/supervisor.ts snapshot .tmp/agent-snapshots/current.json",
 		"agent:verify-result": "bun run scripts/agent/supervisor.ts verify-result",
-		"agent:recovery-drill": "bun run vitest run scripts/agent/supervisor.test.ts"
+		"agent:recovery-drill": "bun run vitest run scripts/agent/supervisor.test.ts",
+		"typecheck:release": "cross-env NODE_OPTIONS=--max-old-space-size=28672 tsc -p tsconfig.scripts.json --noEmit"
 	},
 	"devDependencies": {
 		"@babel/core": "^8.0.1",

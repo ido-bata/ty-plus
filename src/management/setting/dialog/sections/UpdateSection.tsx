@@ -80,14 +80,22 @@ export function UpdateSection(): JSX.Element {
 		const request = ++latestRequest.current;
 		setResult(null);
 		setChecking(true);
-		const response = await checkForUpdate({
-			currentVersion: currentReleaseVersion,
-			channel,
-			platform: detectUpdatePlatform(),
-		});
-		if (request === latestRequest.current) {
-			setResult(response);
-			setChecking(false);
+		try {
+			const response = await checkForUpdate({
+				currentVersion: currentReleaseVersion,
+				channel,
+				platform: detectUpdatePlatform(),
+			});
+			if (request === latestRequest.current) setResult(response);
+		} catch {
+			// `checkForUpdate` is documented not to throw, but a stuck
+			// "Checking…" state with a permanently disabled button is worse
+			// than reporting an unavailable check, so never depend on it.
+			if (request === latestRequest.current) {
+				setResult({ status: "unavailable", reason: "update check failed" });
+			}
+		} finally {
+			if (request === latestRequest.current) setChecking(false);
 		}
 	}, [channel]);
 

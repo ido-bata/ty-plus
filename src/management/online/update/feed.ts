@@ -323,23 +323,18 @@ export const checkForUpdate = async (input: {
 	};
 
 	/**
-	 * GitHub orders releases by creation time, not by version. A newer version
-	 * can therefore sit behind a hotfix of an older one, and an Insider-heavy
-	 * first page can hide the only stable release. Keep paging only while no
-	 * candidate is actually newer than what is installed, bounded to a handful
-	 * of anonymous requests so a misconfigured repository cannot loop.
+	 * GitHub orders releases by creation time, not by version, so the newest
+	 * eligible release can sit behind an older one — an old-line hotfix
+	 * published later, or a page saturated by Insider snapshots. Page while
+	 * the previous page was full (bounded to a handful of anonymous requests)
+	 * and keep the highest version seen, instead of stopping at the first
+	 * page that happens to hold *something* newer.
 	 */
 	const best = (releases: unknown[]): UpdateFeed | undefined =>
 		select(releases)[0];
 	let candidate = best(raw);
 	let pageSize = raw.length;
 	for (let page = 2; page <= 5 && pageSize === 100; page += 1) {
-		if (
-			candidate !== undefined &&
-			compareVersions(candidate.version, input.currentVersion) > 0
-		) {
-			break;
-		}
 		let pageBody: string;
 		try {
 			pageBody = await (input.fetchFeedText ?? defaultFetchFeedText)(

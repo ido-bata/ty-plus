@@ -133,6 +133,13 @@
       "sourceType": "github",
       "skillPath": "skills/engineering/diagnosing-bugs",
       "computedHash": "ede7254edbd22fcab97a0941511f7d440d8f9a249348fea97c50987ad5501674"
+    },
+    "release-channels": {
+      "source": "project",
+      "ref": "local",
+      "sourceType": "local",
+      "skillPath": "skills/release-channels",
+      "computedHash": "356fca2c41b79620ef77149915bfb0297498f19e66bae04ec1cf68ff0b2e7cb6"
     }
   }
 }

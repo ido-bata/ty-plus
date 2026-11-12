@@ -51,23 +51,25 @@ const packageJson = JSON.parse(readFileSync("package.json", "utf8")) as {
 if (typeof packageJson.version !== "string" || !packageJson.version) {
 	fail("package.json has no version");
 }
+const packageVersion: string = packageJson.version as string;
 
 // CEP needs X.Y.Z, but preview release identity uses the full SemVer tag.
 // The channel is derived from the version, never taken from the environment
 // independently: an operator cannot label an insider build as stable.
-const releaseVersion =
-	process.env.TY_PLUS_RELEASE_VERSION?.trim() || packageJson.version;
+const releaseVersion: string =
+	process.env.TY_PLUS_RELEASE_VERSION?.trim() || packageVersion;
 const requestedChannel = process.env.TY_PLUS_RELEASE_CHANNEL?.trim();
-let identity: ReturnType<typeof assertReleaseIdentity>;
-try {
-	identity = assertReleaseIdentity({
-		releaseVersion,
-		packageVersion: packageJson.version,
-		...(requestedChannel ? { channel: requestedChannel } : {}),
-	});
-} catch (error) {
-	fail(error instanceof Error ? error.message : String(error));
-}
+const identity = (() => {
+	try {
+		return assertReleaseIdentity({
+			releaseVersion,
+			packageVersion,
+			...(requestedChannel ? { channel: requestedChannel } : {}),
+		});
+	} catch (error) {
+		return fail(error instanceof Error ? error.message : String(error));
+	}
+})();
 const releaseChannel = identity.channel;
 
 const commitResult = Bun.spawnSync(["git", "rev-parse", "HEAD"], {
