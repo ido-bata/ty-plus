@@ -1,6 +1,6 @@
 # リリース候補の検証記録（v0.10.1 / Stable）
 
-- Status: **Windows配布候補は release-trust で完成 / macOSは公証未設定のため未完成**
+- Status: **Windows・macOSともに release-trust で完成**（macOSは未公証、ADR-0003 Amendment 1）
 - 対象: #58（進行正本）/ PR #57 / `release-0-10-1`
 - 正本: `.agents/skills/release-channels/SKILL.md`、`docs/operations/release-runbook.md`、ADR-0003/0004
 - この記録は**公開の承認ではない**。GitHub Release作成・tag作成・repo public化は本人の明示承認まで実行しない。
@@ -33,32 +33,35 @@ bun run release:candidate --channel=stable --release-version=0.10.1
 
 | 項目 | 実測値 |
 | --- | --- |
-| sourceCommit | `40791874c2633b3c13a89ad63d4ca3037dd29dfd` |
+| sourceCommit | `d52e06315eaed2df11e6d001b4c9d8fbe26be643` |
 | trustMode | `release` |
-| ZIP | `ty-plus-v0.10.1-windows.zip` / sha256 `bef0cf3badef1d8b10b965f9eb3acc168b83dc2ea936a5b17829721dfd1392a2` / 11,026,352 bytes |
-| ZXP | `ty-plus-v0.10.1-windows.zxp` / sha256 `7c0bd96c4cf5aa5f69808e1d6b8fa1068d64716720997d97a3a9d12fe3a769a0` / 11,044,912 bytes |
+| ZIP | `ty-plus-v0.10.1-windows.zip` / sha256 `7aee2dc6a396a410ab4f1541af6d4d53c67bd7f3161945b07440e9cd460fc999` / 11,026,352 bytes |
+| ZIP | `ty-plus-v0.10.1-macos.zip` / sha256 `0af62a5acbb09f37ad67f77d7e06efdc50ae86caf8fbe4d3b0627bac79333a45` / 14,145,767 bytes |
+| ZXP | `ty-plus-v0.10.1-windows.zxp` / sha256 `7b7ef9e79ef77f0c5b68739afa74e1add890b10173befe72bc380c4731391960` / 11,044,905 bytes |
+| ZXP | `ty-plus-v0.10.1-macos.zxp` / sha256 `0335319b6528665aa0bb7a7159c5138a1b63c8c3269ba5dfeca0041e9c72a463` / 14,163,719 bytes |
 | worker | `windows/operation-worker.exe`（PE32+ x86-64、7,907,328 bytes、sha256 `d73edf6d23c3e6890583377dbf964c02c9575ba7b1c9967eaa32b1e79d99291a`） |
-| ZXP署名 | `ZXPSignCmd -verify` → `Signature verified successfully` |
+| worker | `macos/operation-worker`（Mach-O universal x86_64+arm64、13,160,080 bytes、sha256 `96222073a00177b4888e487cebdf9281645f1106faa632f365067499d257c97a`、`flags=0x10000(runtime)`、hardened runtime、Developer ID署名） |
+| ZXP署名（両platform） | `ZXPSignCmd -verify` → `Signature verified successfully` |
 
 実測で確認した内容:
 
-- ZIP: `LICENSE` / `THIRD-PARTY-NOTICES.md` / `jsx/ty-plus-host.jsx` / `CSXS/manifest.xml`（`ExtensionBundleVersion="0.10.1"`）/ `windows/operation-worker.exe`
-- ZXP: **Windows workerのみ**（macOS workerを含まない）。ZIPとハッシュが異なる
+- 各ZIPは `LICENSE` / `THIRD-PARTY-NOTICES.md` / `jsx/ty-plus-host.jsx` / `CSXS/manifest.xml`（`ExtensionBundleVersion="0.10.1"`）+ 当該platformのworkerのみを含む。cross-platform workerは含まない（`pruneUndeclaredWorkers` で宣言外のworker版を除去）
+- 各ZXPは**当該platformのworkerのみ**を含む。ZIPとハッシュが異なる
 - panel bundleの注入binding: `currentReleaseVersion=0.10.1` / `buildReleaseChannel=stable`
-- 監査（`verify-release-artifacts.ts`）全項目PASS
+- 監査（`verify-release-artifacts.ts`）全項目PASS（両platform）
 
-> **tag target**: この成果物の `sourceCommit` は `40791874c2633b3c13a89ad63d4ca3037dd29dfd`。GitHub Release作成時は `--target 40791874c2633b3c13a89ad63d4ca3037dd29dfd` を指定し、**tagと成果物の `sourceCommit` を一致させる**。この記録docの後続commitはdocsのみで、成果物のバイトに影響しない。
+> **tag target**: この成果物の `sourceCommit` は `d52e06315eaed2df11e6d001b4c9d8fbe26be643`。GitHub Release作成時は `--target d52e06315eaed2df11e6d001b4c9d8fbe26be643` を指定し、**tagと成果物の `sourceCommit` を一致させる**。この記録docの後続commitはdocsのみで、成果物のバイトに影響しない（`git diff --stat d52e06315..HEAD` がdocsのみであることを確認する）。
 
-## 3. macOS（未完成 — 公証資格情報が無い）
+## 3. macOS（完成 — Developer ID署名 / 未公証）
 
-| 段階 | 結果 |
-| --- | --- |
-| Developer ID署名（`codesign`） | **成功**。`Authority=Developer ID Application: Yusuke Kimura (JK49RJ2CK2)`、hardened runtime |
-| `codesign --verify --strict` | **成功** |
-| 公証（`notarytool submit`） | **失敗**。`No Keychain password item found for profile: ty-plus-notary` |
-| `spctl --assess --type execute` | `rejected`（Unnotarized Developer ID） |
+- ADR-0003 Amendment 1（2026-11-12 本人決定）: **公証はR0では行わない**。Developer ID署名をreleaseの証拠とする。`spctl` は未公証を示すが、それはAmendment上の正しい状態。
+- `codesign -dv` は `Authority=Developer ID Application: Yusuke Kimura (JK49RJ2CK2)` と `Authority=Developer ID Certification Authority` を示す。`flags=0x10000(runtime)`、hardened runtime 有効。
+- `codesign --verify --strict` 成功。`signature-evidence.ts` がCDHash `cd9eab...` 形式の evidence と証明書fingerprintを読み戻した（`value=8c9eab50010d498eae3567bf5f58843631b40737`）。
+- `spctl --assess --type execute` は従来とおり `rejected (Unnotarized Developer ID)` を返すが、**Amendment 1によりこれは配布の障害ではない**。
+- 公証を有効化する場合は `TY_PLUS_NOTARY_PROFILE` を設定するだけでよい（コード変更不要）。
 
-`signature-evidence.ts` は公証（`spctl`）を証拠の一部として要求するため、未公証ではrelease manifestを書けない（fail-closed、意図どおり）。**macOSのrelease-trust成果物は存在しない。**
+- `signature-evidence.ts` は ADR-0003 Amendment 1 に従い、未公証でも Developer ID 署名があれば証拠を生成できる（`codesign --verify --strict` + CDHash + 証明書fingerprint）。`spctl` を証拠に要求する場合のみ `TY_PLUS_NOTARY_PROFILE` が必要であり、本リリースでは設定していない。
+
 
 解除に必要な本人操作は1つ: `xcrun notarytool store-credentials ty-plus-notary`（Apple ID + app-specific password、または App Store Connect API key）。
 
@@ -125,6 +128,6 @@ GitHub Actionsは課金停止で全jobが起動しない。**CI緑は主張し�
 
 ## 8. 公開までに必要な本人操作
 
-1. **macOS公証**（macOSを今回のReleaseに含める場合のみ）: `xcrun notarytool store-credentials ty-plus-notary` を実行する。実行後、macOS候補を生成・監査できる。
-2. **Windows実機スモーク**（任意）: 生成済みZIP/ZXPをWindowsに導入し、起動とworker動作を確認する。未実施ならリリースノートに明記する（記載済み）。
-3. **明示承認**: 対象releaseを名指しして、PR #57 のmerge / GitHub Release公開 / repo public化を承認する。
+1. **Windows/macOS実機スモーク**（任意）: 生成済みZIP/ZXPを各OSに導入し、パネル起動とworker動作を確認する。未実施ならリリースノートに明記する（記載済み）。
+2. **明示承認**: 対象releaseを名指しして、PR #57 のmerge / GitHub Release公開 / repo public化を承認する。
+3. **公証を有効化する場合**（任意・コード変更不要）: `xcrun notarytool store-credentials ty-plus-notary` を実行し、`TY_PLUS_NOTARY_PROFILE` を設定して再ビルドする。`signature-evidence.ts` はそれを証拠に含める。

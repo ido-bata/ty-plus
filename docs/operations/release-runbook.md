@@ -1,7 +1,7 @@
 # リリース手順（release runbook）
 
 - Status: Accepted
-- 正本: 本doc。関連: #39（本手順の整備Issue）/ `docs/architecture/distribution.md`（trust model）/ `docs/architecture/feeds.md`（更新フィード契約）/ #32（署名・公証）
+- 正本: 本doc。関連: #39（本手順の整備Issue）/ `docs/architecture/distribution.md`（trust model）/ `docs/architecture/feeds.md`（更新フィード契約）/ #32（署名）
 - この手順は1リリース（1 releaseVersion）につき実行する。R0の公開更新元はGitHub Releases（ADR-0004）。失敗した工程から先へ進まず、成果物を再生成・再検証する。
 
 ## 前提
@@ -12,7 +12,7 @@
 
 ## 初回公開のベースライン（#58）
 
-初回公開は **Stable `v0.10.1`**（`releaseVersion=0.10.1`、`channel=stable`、GitHub Releases `prerelease=false`）。先行実証に使った `v0.10.1-insider.1` の成果物は流用せず、最終ソースSHAから署名・検証済みのStable成果物を作り直す。既存の継続利用ZXP自己署名証明書を使用し、macOS native workerのDeveloper ID署名・公証は独立して維持する。詳細は #58。
+初回公開は **Stable `v0.10.1`**（`releaseVersion=0.10.1`、`channel=stable`、GitHub Releases `prerelease=false`）。先行実証に使った `v0.10.1-insider.1` の成果物は流用せず、最終ソースSHAから署名・検証済みのStable成果物を作り直す。既存の継続利用ZXP自己署名証明書を使用し、macOS native workerのDeveloper ID署名は従来どおり独立して維持する。**公証はR0では行わない**（ADR-0003 Amendment 1、2026-11-12 本人決定）。詳細は #58。
 
 ## 1. version確定
 
@@ -42,8 +42,8 @@ bun scripts/package/release-manifest.ts --trust-mode=development-unsigned --arti
 
 - 実装は完了（#32、ADR-0003）: `bun run scripts/package/build-release.ts` が次の順で実行する。production panel → **Windows: 未署名worker（R0の正当な形）** / **macOS: worker署名 + 署名証拠読み戻し** + release trust manifest → verify gate（`--trust-mode=release`）→ **secret混入検査（パッケージ化の前）** → zip → ZXP署名（`ZXPSignCmd`、`-verify`で検証）→ release manifest（zipとZXPの両方のsha256を記録）。
 - **Windows**: Authenticode証明書は不要（ADR-0003、2026-11-12本人判断）。**証明書なしで配布候補を生成・検証できる**。制約（SmartScreen警告、SAC block）は `docs/architecture/distribution.md`。
-- **macOS**: Developer ID署名 + 公証が必須。署名identityは既存資産を利用（2026-11-12確認、2027-11-22まで有効）。**公証のnotarytool profileが未設定の場合、ビルドは拒否する**（fail-closed）— 設定手順は `docs/operations/signing-setup.md`。
-- 署名契約の詳細（2つの署名の区別、notarizationの適用範囲、secretの取り扱い）は `docs/architecture/distribution.md`。
+- **macOS**: Developer ID署名は既存資産を利用（2027-11-22まで有効）。**公証はR0では行わない**（ADR-0003 Amendment 1）。署名identityが無い場合はビルド前に拒否する（fail-closed）。公証を有効化する場合は `TY_PLUS_NOTARY_PROFILE` を設定すればよい（コード変更不要）— 手順は `docs/operations/signing-setup.md`。
+- 署名契約の詳細（2つの署名の区別、コード署名と公証の適用範囲、secretの取り扱い）は `docs/architecture/distribution.md`。
 - CIは `.github/workflows/release.yml` の `release-trust-gate-refusal`（macOS拒否検証）と `release-trust-windows-candidate`（Windows配布候補の実証）で検証する。
 - **development-unsignedのリハーサル緑はrelease-trustの完成証拠ではない。** 公開は本人の明示的承認ゲートを経る（11/30 Go/No-Go）。
 
@@ -57,7 +57,7 @@ bun run release:candidate --channel=insider --release-version=0.10.1-insider.1
 
 このコマンドは `build-release.ts` → `verify-release-artifacts.ts` → `prepare-github-release.ts` を順に実行する。途中で失敗したらそこで停止し、`dist/github-release/` は完成しない。channelとtagの不一致、数値コアの不一致、非対応hostは**ビルド開始前**に拒否される。tag・channel・asset名の定義は `scripts/package/release-version.ts` が唯一の正本であり、runbookへ文法を写さない。
 
-Stable/Betaも同じコマンドで`--channel`と`--release-version`を指定する。WindowsではAuthenticode不要、macOSでは既存Developer ID署名と公証profileが必要。ZXPは継続利用できる署名用証明書（`TY_PLUS_ZXP_CERT_PATH` / `TY_PLUS_ZXP_CERT_PASSWORD`）を明示する。このコマンドは**ビルド・検証・ローカル準備のみ**で、GitHubへのuploadや公開は行わない。
+Stable/Betaも同じコマンドで`--channel`と`--release-version`を指定する。WindowsではAuthenticode不要、macOSでは既存Developer ID署名が必要（公証profileは任意。`TY_PLUS_NOTARY_PROFILE` があれば公証経路が有効になる）。ZXPは継続利用できる署名用証明書（`TY_PLUS_ZXP_CERT_PATH` / `TY_PLUS_ZXP_CERT_PASSWORD`）を明示する。このコマンドは**ビルド・検証・ローカル準備のみ**で、GitHubへのuploadや公開は行わない。
 
 `verify-release-artifacts.ts` は次を実測する: `trustMode=release`、`sourceCommit`と`HEAD`の一致、各artifactのsha256、pack内のLICENSE/THIRD-PARTY-NOTICES、`jsx/ty-plus-host.jsx`の存在、CEP `ExtensionBundleVersion`とmanifest `version`の一致、panel bundleに埋め込まれた`releaseVersion`/`channel`、secretパターンの不在。失敗時は成果物を再生成する（manifestだけ書き換えない）。
 
@@ -136,7 +136,7 @@ gh release view v0.10.1 --json tagName,isPrerelease,assets \
 
 ## 非目標
 
-- 署名・公証の詳細手順（#32確定後に本docへ追記する）
+- 署名の詳細手順（公証はR0では行わない — ADR-0003 Amendment 1）
 - 自動更新（feed契約により、更新は手動配置で行う）
 
 ## 関連
