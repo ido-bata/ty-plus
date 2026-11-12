@@ -22,9 +22,12 @@ afterEach(() => {
 
 describe("resolveReleaseSignZxpConfig", () => {
 	it("refuses when no ZXP certificate is configured", () => {
-		expect(() => resolveReleaseSignZxpConfig({})).toThrow(
-			/#32 \/ #2/,
-		);
+		// The message names the required configuration and the fact that no
+		// certificate is generated automatically (the owner decision recorded in
+		// #32 is settled: a persistent self-signed cert is the release identity).
+		const run = () => resolveReleaseSignZxpConfig({});
+		expect(run).toThrow(/TY_PLUS_ZXP_CERT_PATH/);
+		expect(run).toThrow(/automatic development certificate generation is disabled/);
 	});
 
 	it("refuses the self-signed development certificate", () => {
@@ -33,7 +36,7 @@ describe("resolveReleaseSignZxpConfig", () => {
 				TY_PLUS_ZXP_CERT_PATH: "dist/certs/ty-plus-self-signed.p12",
 				TY_PLUS_ZXP_CERT_PASSWORD: "secret",
 			}),
-		).toThrow(/self-signed development certificate/);
+		).toThrow(/disposable development certificate must not be used/);
 	});
 
 	it("refuses a certificate that does not exist — never generates one", () => {
