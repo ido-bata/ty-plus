@@ -57,7 +57,7 @@ Die erste Stable-Version ist die **Basis des Update-Kanals**, nicht die Zusicher
 - [Benutzerhandbuch](docs/user-guide/index.md) (Japanisch) · [Installationsanleitung](docs/user-guide/installation/index.md) (Japanisch)
 - [Fehler melden oder Verbesserung vorschlagen](https://github.com/ido-bata/ty-plus/issues/new/choose)
 - [Mitwirken](CONTRIBUTING.md) · [Sicherheitsrichtlinie](SECURITY.md)
-- [Tatsächlicher CI-Status](https://github.com/ido-bata/ty-plus/actions/workflows/ci.yml). Das Badge zeigt den tatsächlichen Status von GitHub Actions, keinen behaupteten Testerfolg. Abrechnungsbedingte Startfehler sind in [Issue #59](https://github.com/ido-bata/ty-plus/issues/59) dokumentiert.
+- [Tatsächlicher CI-Status](https://github.com/ido-bata/ty-plus/actions/workflows/ci.yml). Das Badge zeigt den tatsächlichen Status von GitHub Actions, keinen behaupteten Testerfolg. Abrechnungsbedingte Startfehler sind in [Issue #59](https://github.com/ido-bata/ty-plus/issues/61) dokumentiert.
 
 Entwicklungsumgebung: `mise install`, dann `bun install --frozen-lockfile --ignore-scripts`. Weitere Hinweise unter [Contributing](CONTRIBUTING.md).
 
