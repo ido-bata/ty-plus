@@ -165,9 +165,18 @@ const buildTarget = async (
 	target: RustTarget,
 	runCommand: BuildCommandRunner,
 ): Promise<string> => {
+	// A Windows target on a non-Windows host needs the MSVC toolchain and the
+	// Windows SDK, which plain `cargo build` cannot supply. `cargo xwin` runs
+	// the same cargo invocation against a downloaded SDK, so the artifact is a
+	// genuine MSVC binary rather than a best-effort cross build.
+	const crossCompiled =
+		target === WINDOWS_TARGET && process.platform !== "win32";
+	const cargoCommand = crossCompiled
+		? crossCompileCommand(buildRoot)
+		: ["cargo"];
 	await runCommand({
 		args: [
-			"cargo",
+			...cargoCommand,
 			"build",
 			"-p",
 			"ty-plus-operation-worker",
@@ -188,6 +197,19 @@ const buildTarget = async (
 		throw new Error(`missing native operation-worker artifact: ${artifact}`);
 	}
 	return artifact;
+};
+
+/**
+ * The cargo invocation to use for a Windows cross-build.
+ *
+ * `cargo xwin` (installed via `cargo install cargo-xwin`) is preferred because
+ * it manages the SDK/toolchain. `CROSS_COMPILE_CARGO` lets an operator pin a
+ * different one (e.g. `cargo +1.89.0 xwin`) without editing this file.
+ */
+const crossCompileCommand = (_buildRoot: string): readonly string[] => {
+	const configured = process.env.CROSS_COMPILE_CARGO?.trim();
+	if (configured) return configured.split(/\s+/);
+	return ["cargo", "xwin"];
 };
 
 const fileExists = async (filePath: string): Promise<boolean> => {

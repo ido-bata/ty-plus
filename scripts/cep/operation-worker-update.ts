@@ -260,7 +260,23 @@ export async function updateExtension(
 	}
 }
 
+/**
+ * The target platform for this build.
+ *
+ * Normally the host platform. `TY_PLUS_BUILD_PLATFORM` allows producing one
+ * platform's artifact on another host — needed to build the unsigned Windows
+ * candidate from macOS (Windows needs no Authenticode per ADR-0003, and the
+ * worker is cross-compiled with an MSVC toolchain). The override is explicit
+ * so a build can never silently label one platform's binary as another's.
+ */
 const platformForHost = (): OperationWorkerPlatform => {
+	const override = process.env.TY_PLUS_BUILD_PLATFORM?.trim();
+	if (override === "windows" || override === "macos") return override;
+	if (override) {
+		throw new Error(
+			`unsupported TY_PLUS_BUILD_PLATFORM "${override}" (expected windows or macos)`,
+		);
+	}
 	if (process.platform === "win32") return "windows";
 	if (process.platform === "darwin") return "macos";
 	throw new Error(
@@ -269,6 +285,9 @@ const platformForHost = (): OperationWorkerPlatform => {
 };
 
 const targetsForHost = (): readonly RustTarget[] => {
+	if (process.env.TY_PLUS_BUILD_PLATFORM?.trim() === "windows") {
+		return ["x86_64-pc-windows-msvc"];
+	}
 	if (process.platform === "win32") return ["x86_64-pc-windows-msvc"];
 	if (process.platform === "darwin") {
 		return ["aarch64-apple-darwin", "x86_64-apple-darwin"];

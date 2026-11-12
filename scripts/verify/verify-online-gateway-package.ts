@@ -113,6 +113,11 @@ const sha256Hex = async (filePath: string): Promise<string> => {
 };
 
 export const hostPlatform = (): HostPlatform => {
+	// A cross-built artifact (TY_PLUS_BUILD_PLATFORM) must be verified as its
+	// target platform, not as the host — otherwise a Windows build on macOS is
+	// probed for a macOS worker and fails for the wrong reason.
+	const override = process.env.TY_PLUS_BUILD_PLATFORM?.trim();
+	if (override === "windows" || override === "macos") return override;
 	if (process.platform === "win32") return "windows";
 	if (process.platform === "darwin") return "macos";
 	return "linux";

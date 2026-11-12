@@ -1,6 +1,6 @@
 # インストール
 
-- Status: Draft（公開配布の部分は #32 の確定待ち。確定まで公開しない）
+- Status: GitHub Releases更新経路へ移行（#55）。公開配布物の実証と本人承認は別途必要
 - Date: 2026-11-11
 - 正本: 本repo #9 / `rebuildup/ty-plus#225`（旧正本）
 
@@ -23,17 +23,28 @@
 
 > **この手順は現時点では内部検証用**である。第三者への配布には署名済みZXPが必要で、署名主体・証明書が確定するまで公開しない（#32 / 公開ブロッカー）。
 
-## インストール（署名済みZXP — #32確定後に記述）
+## GitHub Releasesからのインストール（公開後）
 
-未確定。ZXP Installer経由の手順を、配布成果物と署名の確定後に追記する。
+公式配布先: https://github.com/ido-bata/ty-plus/releases
+
+1. ReleaseのタグでStable（`vX.Y.Z`）/ Beta（`vX.Y.Z-beta.N`）/ Insider（`vX.Y.Z-insider.N`）を確認する。
+2. 利用中のOSに対応する `ty-plus-<tag>-<platform>.zxp` を取得する（`platform` = `windows` / `macos`）。GitHub Releaseの添付manifestで対応版・checksumを確認できる。
+3. ZXP対応インストーラで拡張を導入し、After Effectsを再起動する。Windows workerはR0ではAuthenticode未署名のため、WindowsのSmart App Controlが有効な環境では起動がブロックされる場合がある。
+4. `Window > Extensions` からty-plusを開く。
+
+ZIPは手動設置・検証用に同梱する。**ZIP内のCEP拡張はZXP署名の恩恵を受けないため、未署名拡張の起動にはCEP開発者モードが必要になる環境がある。** 通常の利用には署名済みZXPを推奨する。
 
 ## 更新
 
-1. パネルの **Settings → 更新** を開く。
-2. 「新しいバージョンあり」と表示された場合、**Release notes and download** をクリックして公式の配布ページへ移動する。
-3. 自動インストールは行われない。新しいzipを同じ手順で上書き配置する。
+1. Settings → Updates で**Stable / Beta / Insider**を選ぶ（選択内容はローカル設定に保存される）。
+   - Stable：安定版のみ。
+   - Beta：安定版＋ベータ版。
+   - Insider：すべてのリリース。
+2. `Check now` で手動確認する。新しいリリースがあれば`Release notes and download`から該当GitHub Releaseを開く。
+3. 同じ数値版のPreviewでも、`-beta.1`→`-beta.2`や`-insider.1`→`-insider.2`は別の更新として判定する。
+4. ダウンロードしたZXPを再インストールする。自動ダウンロード・自動更新はしない。チャンネルを変更しても旧版へ自動的に戻さない。
 
-更新確認は起動時に1回だけ行われ、オフライン・フィード不達時は「取得失敗」と表示されるだけで、他の機能に影響しない。
+公式リポジトリがprivateの間は匿名のGitHub Releases APIへアクセスできないため、更新確認は「利用不可」と表示される。オフライン・API制限時もローカル機能と保存データには影響しない。
 
 ## アンインストール
 

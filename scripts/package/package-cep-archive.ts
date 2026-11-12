@@ -7,7 +7,7 @@
  * `bun run build:cli`; we look up its staged path here rather than re-building.
  */
 import { spawnSync } from "node:child_process";
-import { existsSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { cp, mkdir, rename, rm } from "node:fs/promises";
 import path from "node:path";
 import { resolveSignZxpConfig, signZxp } from "./sign-zxp";
@@ -16,6 +16,51 @@ const EXTENSION_ID = "app.ty-plus";
 const DIST_CEP = path.resolve("dist", "cep-dev");
 const PACK_ROOT = path.resolve("dist", "cep-pack");
 const STAGED = path.join(PACK_ROOT, EXTENSION_ID);
+
+/**
+ * Removes every content-addressed worker version the manifest does not name.
+ *
+ * The pack must contain exactly the worker the panel expects. Silent extras
+ * are not harmless: they ship another platform's executable and its licence
+ * obligations inside this platform's artifact, and they make the zip's size
+ * platform-dependent in a way that is hard to explain during review.
+ */
+export const pruneUndeclaredWorkers = async (
+	workerRoot: string,
+	log: (message: string) => void = console.log,
+): Promise<string[]> => {
+	const manifestPath = path.join(workerRoot, "manifest.json");
+	if (!existsSync(manifestPath)) return [];
+	const parsed = JSON.parse(readFileSync(manifestPath, "utf8")) as {
+		workers?: Record<string, { relativePath?: string }>;
+	};
+	const declared = new Set(
+		Object.values(parsed.workers ?? {})
+			.map((artifact) => artifact.relativePath)
+			.filter((value): value is string => typeof value === "string")
+			.map((relative) => {
+				// `worker/versions/<sha>/<platform>/<binary>` → `<sha>`
+				const parts = relative.split("/");
+				return parts[0] === "worker" && parts[1] === "versions"
+					? (parts[2] ?? "")
+					: "";
+			})
+			.filter((digest) => digest.length > 0),
+	);
+	const versionsRoot = path.join(workerRoot, "versions");
+	if (declared.size === 0 || !existsSync(versionsRoot)) return [];
+	const pruned: string[] = [];
+	for (const entry of readdirSync(versionsRoot, { withFileTypes: true })) {
+		if (!entry.isDirectory() || declared.has(entry.name)) continue;
+		await rm(path.join(versionsRoot, entry.name), {
+			recursive: true,
+			force: true,
+		});
+		pruned.push(entry.name);
+		log(`[package-cep-archive] pruned undeclared worker version ${entry.name}`);
+	}
+	return pruned;
+};
 
 const tryTarZip = async (outFile: string): Promise<boolean> => {
 	const useTempZip = outFile.endsWith(".zxp");
@@ -63,6 +108,13 @@ const main = async (): Promise<void> => {
 	await mkdir(STAGED, { recursive: true });
 	await cp(DIST_CEP, STAGED, { recursive: true });
 
+	// Ship only the worker this build declares. Content-addressed versions
+	// accumulate in `dist/cep-dev` across builds, so a previous platform's
+	// binary would otherwise be packaged beside the current one — inflating the
+	// artifact and shipping another platform's executable (and its licence
+	// obligations) inside this platform's zip.
+	await pruneUndeclaredWorkers(path.join(STAGED, "worker"));
+
 	// The distributed pack carries the license and third-party notices (#2):
 	// the worker binary embeds the DejaVu font, so its license text must
 	// accompany the distribution.
@@ -108,4 +160,6 @@ const main = async (): Promise<void> => {
 	console.log(`Wrote ${outFile}`);
 };
 
-await main();
+if (import.meta.main) {
+	await main();
+}

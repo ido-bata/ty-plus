@@ -8,7 +8,7 @@
 
 - 署名は環境変数で設定する。コードは設定を読むだけで、証明書の値を持たない。
 - **worker binaryのOS署名はmacOSのみ必須（ADR-0003）**: `scripts/package/sign-worker.ts`（証明書store参照 `TY_PLUS_SIGN_CERT_SHA1` を優先、PFXは代替。設定なしでは何も生成する前に拒否する）。**WindowsのworkerはR0では未署名が正当な形** — 署名設定は存在せず、参照もしない。
-- ZXP署名: `scripts/package/sign-zxp.ts`（`TY_PLUS_ZXP_CERT_PATH` / `TY_PLUS_ZXP_CERT_PASSWORD`、release-trustでは自己署名へのfallbackを拒否）。**workerのOS署名とは独立した契約**。
+- ZXP署名: `scripts/package/sign-zxp.ts`（`TY_PLUS_ZXP_CERT_PATH` / `TY_PLUS_ZXP_CERT_PASSWORD`）。**継続利用する自己署名P12は正式配布に使用できる**。release-trustでは開発用の使い捨て証明書への自動fallbackのみ拒否する。初回Stableは`docs/operations/zxp-signing-identity.md`の既存署名主体を使用。**workerのOS署名とは独立した契約**。
 - notarization: `notarytool submit`（zip提出 — bare Mach-Oは受理形式外）+ `spctl --assess --type execute` で証拠取得。
 - 検証: `bun run scripts/package/build-release.ts` が全工程を実行する。macOSでの拒否はCIの `release-trust-gate-refusal` jobが、Windowsでの署名なし実行は `release-trust-windows-candidate` jobが検証する。
 
@@ -66,7 +66,7 @@
 
 ## 3. ZXP署名
 
-1. ZXP署名証明書を用意する（自己署名でもZXPインストーラは受け入れる — PlayerDebugMode不要。発行者表示は検証されない。認証局署名は費用に見合う信頼性表示）。
+1. ZXP署名証明書は既に用意済み。初回Stableと以後の更新では`docs/operations/zxp-signing-identity.md`の**継続利用する自己署名証明書**を使う（ZXPSignCmdによる自己署名で通常配布可能）。使い捨ての開発証明書は使わない。
 2. 環境変数の設定:
    ```sh
    export TY_PLUS_ZXP_CERT_PATH="<path-to-p12>"
@@ -89,7 +89,7 @@
 | 項目 | 判断内容 | R0公開との関係 |
 | --- | --- | --- |
 | macOS notarytool profile | `xcrun notarytool store-credentials ty-plus-notary` の実行（App Store Connect API key または Apple ID） | **macOS配布のブロッカー**（署名identityは既存資産で解決済み） |
-| ZXP署名主体 | 自己署名で開始するか、認証局署名を取得するか、発行者名義 | 配布には署名済みZXPが必須。機構は実装済み（CIで実証済み） |
+| ZXP署名主体 | **既存の継続利用する自己署名P12に確定済み** | 再取得・購入不要。署名と`-verify`を実証済み。初回Stableも同一certを使用 |
 | Windows Authenticode | 将来の任意拡張（ADR-0003） — R0では不要 | **R0公開ブロッカーから除外** |
 
 証明書の購入・取得は **本人の承認と実行** に委ねる。この文書の手順は、取得後に同じコード経路で実行できる状態を保証する。

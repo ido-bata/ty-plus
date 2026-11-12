@@ -45,12 +45,21 @@ describe("scanForSecrets", () => {
 		expect(names).toEqual(["legacy-loginc-identifier", "private-key-header"]);
 	});
 
-	it("ignores binary-looking files and clean text", () => {
-		const root = makeTree({
-			"worker.bin": "ghp_ABCDEFGHIJKLMNOPQRSTUVWXYZ12345",
-			"clean.ts": "export const version = '0.10.0';\n",
-		});
-		expect(scanForSecrets(root)).toHaveLength(0);
+	it("ignores binary payloads but still scans text that happens to be named .bin", () => {
+		// Detection is by content, not filename. A text file named `.bin` is
+		// scanned (a secret there would ship); a real binary is skipped.
+		const root = mkdtempSync(path.join(tmpdir(), "secret-scan-bin-"));
+		try {
+			writeFileSync(path.join(root, "clean.ts"), "export const version = '0.10.0';\n");
+			writeFileSync(
+				path.join(root, "worker.bin"),
+				Buffer.from([0x4d, 0x5a, 0x00, 0x01, 0x02, 0x03]),
+			);
+			const findings = scanForSecrets(root);
+			expect(findings).toHaveLength(0);
+		} finally {
+			rmSync(root, { recursive: true, force: true });
+		}
 	});
 });
 
@@ -65,5 +74,43 @@ describe("assertNoSecrets", () => {
 			"leak.ts": "const aws = 'AKIAIOSFODNN7EXAMPLE';\n",
 		});
 		expect(() => assertNoSecrets(root)).toThrow(/aws-access-key/);
+	});
+});
+
+describe("files that actually ship are scanned", () => {
+	it("scans extensionless files and sourcemaps", () => {
+		// Regression: an allowlist of text extensions skipped LICENSE, .debug and
+		// *.map — files that do ship — so a secret in them reached the release.
+		const root = mkdtempSync(path.join(tmpdir(), "ty-plus-scan-ship-"));
+		try {
+			writeFileSync(path.join(root, "LICENSE"), "text\nghp_" + "A".repeat(36) + "\n");
+			writeFileSync(path.join(root, ".debug"), "<x/>\nNOTION_TOKEN=abc\n");
+			writeFileSync(
+				path.join(root, "panel.cjs.map"),
+				'{"x":"ghp_' + "B".repeat(36) + '"}',
+			);
+			const findings = scanForSecrets(root);
+			const files = findings.map((f) => path.basename(f.file));
+			expect(files).toContain("LICENSE");
+			expect(files).toContain(".debug");
+			expect(files).toContain("panel.cjs.map");
+		} finally {
+			rmSync(root, { recursive: true, force: true });
+		}
+	});
+
+	it("skips known binary payloads instead of reading them as text", () => {
+		const root = mkdtempSync(path.join(tmpdir(), "ty-plus-scan-bin-"));
+		try {
+			// A token-shaped byte sequence inside a binary must not be reported as
+			// a text finding, and must not crash the scan.
+			writeFileSync(
+				path.join(root, "worker.exe"),
+				Buffer.from("MZghp_" + "C".repeat(36), "utf8"),
+			);
+			expect(scanForSecrets(root)).toHaveLength(0);
+		} finally {
+			rmSync(root, { recursive: true, force: true });
+		}
 	});
 });

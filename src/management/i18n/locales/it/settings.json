@@ -208,5 +208,24 @@
 			"inputs": "Ingressi",
 			"update": "Aggiornamenti"
 		}
+	},
+	"updates": {
+		"channel": "Canale aggiornamenti",
+		"stable": "Stabile",
+		"beta": "Beta",
+		"insider": "Insider",
+		"checkNow": "Verifica ora",
+		"browse": "Vedi le versioni",
+		"installed": "Versione installata",
+		"status": "Stato aggiornamento",
+		"detail": "Dettaglio",
+		"description": "Gli aggiornamenti provengono dalle GitHub Releases ufficiali. Non viene installato nulla automaticamente; le funzioni locali funzionano offline.",
+		"checking": "Verifica…",
+		"notChecked": "Non verificato",
+		"upToDate": "Aggiornato",
+		"unavailable": "Verifica aggiornamenti non disponibile",
+		"available": "Nuova versione disponibile: {{version}}",
+		"releaseNotes": "Note di rilascio e download",
+		"channelPlaceholder": "Scegli un canale"
 	}
 }

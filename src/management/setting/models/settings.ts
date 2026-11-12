@@ -2,6 +2,12 @@
  * Settings model for management/setting
  */
 
+import {
+	isReleaseChannel,
+	type ReleaseChannel,
+} from "@/management/online/update/channel";
+import { buildReleaseChannel } from "@/management/online/update/current-version";
+
 export type Settings = {
 	version: 2;
 	core: {
@@ -18,6 +24,7 @@ export type Settings = {
 	};
 	ui: {
 		language: "ja" | "en";
+		updateChannel?: ReleaseChannel;
 		theme: "system" | "dark" | "light" | "custom";
 		accentColor?: string;
 		textColor?: string;
@@ -63,6 +70,7 @@ export const DEFAULT_SETTINGS: Settings = {
 	},
 	ui: {
 		language: "en",
+		updateChannel: buildReleaseChannel,
 		theme: "system",
 		accentColor: "#5886ff",
 		textColor: "#f0f0f0",
@@ -88,17 +96,28 @@ export const DEFAULT_SETTINGS: Settings = {
 	},
 };
 
-const isRecord = (v: unknown): v is Record<string, unknown> =>
+export const isRecord = (v: unknown): v is Record<string, unknown> =>
 	typeof v === "object" && v !== null && !Array.isArray(v);
 
-const mergeRecordDefaults = <T extends Record<string, unknown>>(
+/**
+ * Fills `defaults` into `value`, **preserving keys the defaults do not know
+ * about**.
+ *
+ * Preserving unknown keys is load-bearing, not defensive: `settings/app.json`
+ * is shared with the workspace layer, which writes `workspace.workspacePanels`
+ * and `workspace.snapshots` (group/preset placement and named layout
+ * snapshots) into the same file. A projection that kept only the keys in
+ * `DEFAULT_SETTINGS` would delete that user data on the next settings save —
+ * including a save triggered by merely changing the update channel.
+ */
+export const mergeRecordDefaults = <T extends Record<string, unknown>>(
 	defaults: T,
 	value: unknown,
 ): T => {
 	if (!isRecord(value)) {
 		return defaults;
 	}
-	const merged = { ...defaults } as Record<string, unknown>;
+	const merged: Record<string, unknown> = { ...value };
 	for (const [key, defaultValue] of Object.entries(defaults)) {
 		const incomingValue = value[key];
 		merged[key] =
@@ -113,10 +132,50 @@ export const coerceSettings = (v: unknown): Settings => {
 	if (!isRecord(v)) {
 		return DEFAULT_SETTINGS;
 	}
-	return mergeRecordDefaults(DEFAULT_SETTINGS, v);
+	const merged = mergeRecordDefaults(DEFAULT_SETTINGS, v);
+	return isReleaseChannel(merged.ui.updateChannel)
+		? merged
+		: {
+				...merged,
+				ui: { ...merged.ui, updateChannel: buildReleaseChannel },
+			};
 };
 
+/**
+ * A patch may update a single nested field without restating its siblings.
+ * `Partial<Settings>` is shallow, which forced every caller to spread
+ * `settings.ui` by hand; making the group levels recursively optional lets
+ * the merge do what the type already promised.
+ */
+export type SettingsPatch = {
+	[K in keyof Settings]?: Settings[K] extends object
+		? Partial<Settings[K]>
+		: Settings[K];
+};
+
+/**
+ * Applies a patch without dropping sibling fields inside a group.
+ *
+ * A shallow `{ ...current, ...patch }` replaces a whole group, so a caller
+ * that patches one `ui` field would silently reset the others (theme,
+ * language, widget colours). `undefined` still means "leave unchanged";
+ * explicit resets go through `resetSettings`/`DEFAULT_SETTINGS`.
+ */
 export const mergeSettings = (
 	current: Settings,
-	patch: Partial<Settings>,
-): Settings => coerceSettings({ ...current, ...patch });
+	patch: SettingsPatch,
+): Settings => {
+	const merged: Record<string, unknown> = { ...current };
+	for (const [key, value] of Object.entries(patch)) {
+		if (value === undefined) continue;
+		const existing = (current as Record<string, unknown>)[key];
+		// Merge both directions: `mergeRecordDefaults(existing, value)` would
+		// iterate only `existing` and drop a key the patch introduces (e.g.
+		// `workspace.background`, which has no default).
+		merged[key] =
+			isRecord(existing) && isRecord(value)
+				? mergeRecordDefaults(value, mergeRecordDefaults(existing, value))
+				: value;
+	}
+	return coerceSettings(merged);
+};

@@ -1,15 +1,27 @@
-import { type JSX, useCallback, useEffect, useState } from "react";
-import { currentVersion } from "@/management/online/update/current-version";
+import { type JSX, useCallback, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
+import {
+	isReleaseChannel,
+	type ReleaseChannel,
+} from "@/management/online/update/channel";
+import {
+	buildReleaseChannel,
+	currentReleaseVersion,
+} from "@/management/online/update/current-version";
 import {
 	checkForUpdate,
+	detectUpdatePlatform,
+	OFFICIAL_RELEASES_URL,
 	type UpdateCheckResult,
 } from "@/management/online/update/feed";
 import { useSettings } from "@/management/setting/context";
 import {
 	SettingsField,
+	SettingsFieldLabel,
 	SettingsGrid,
 } from "@/management/setting/dialog/layout/SettingsGrid";
 import { openUrlInDefaultBrowser } from "@/management/workspace/hooks/helpers";
+import { ListSelect } from "@/shared/component/fields/ListSelect";
 import { css } from "@/styled-system/css";
 
 const mutedTextStyle = css({
@@ -48,42 +60,72 @@ const linkRowStyle = css({
 	alignItems: "center",
 });
 
+const CHANNELS: ReleaseChannel[] = ["stable", "beta", "insider"];
+
 /**
- * Update status (Issue #7). Reads the static update feed once on mount and
- * reports "update available / up to date / unavailable". Never installs or
- * executes anything — the release-notes link is the only action, and it
- * opens the user's browser.
+ * Official GitHub Releases update channel selection (Issue #55).
+ * A channel change persists through the existing file-backed settings.
+ * Checking never installs or runs code; a user opens the official release
+ * page in their browser and installs manually.
  */
 export function UpdateSection(): JSX.Element {
-	const { isLoaded } = useSettings();
+	const { t } = useTranslation("settings");
+	const { settings, updateSettings, isLoaded } = useSettings();
+	const channel = settings.ui.updateChannel ?? buildReleaseChannel;
 	const [result, setResult] = useState<UpdateCheckResult | null>(null);
 	const [checking, setChecking] = useState(false);
+	const latestRequest = useRef(0);
 
 	const runCheck = useCallback(async () => {
+		const request = ++latestRequest.current;
+		setResult(null);
 		setChecking(true);
 		try {
-			setResult(await checkForUpdate({ currentVersion }));
+			const response = await checkForUpdate({
+				currentVersion: currentReleaseVersion,
+				channel,
+				platform: detectUpdatePlatform(),
+			});
+			if (request === latestRequest.current) setResult(response);
+		} catch {
+			// `checkForUpdate` is documented not to throw, but a stuck
+			// "Checking…" state with a permanently disabled button is worse
+			// than reporting an unavailable check, so never depend on it.
+			if (request === latestRequest.current) {
+				setResult({ status: "unavailable", reason: "update check failed" });
+			}
 		} finally {
-			setChecking(false);
+			if (request === latestRequest.current) setChecking(false);
 		}
-	}, []);
+	}, [channel]);
 
 	useEffect(() => {
-		if (!isLoaded) {
-			return;
-		}
+		if (!isLoaded) return;
 		void runCheck();
+		return () => {
+			latestRequest.current += 1;
+		};
 	}, [isLoaded, runCheck]);
 
+	const handleChannelChange = useCallback(
+		(value: string) => {
+			if (!isReleaseChannel(value)) return;
+			updateSettings({
+				ui: { ...settings.ui, updateChannel: value },
+			});
+		},
+		[settings.ui, updateSettings],
+	);
+
 	const label = checking
-		? "Checking…"
+		? t("updates.checking")
 		: result === null
-			? "Not checked"
+			? t("updates.notChecked")
 			: result.status === "update-available"
-				? `New version available: ${result.feed.version}`
+				? t("updates.available", { version: result.feed.version })
 				: result.status === "up-to-date"
-					? "Up to date"
-					: "Update check unavailable";
+					? t("updates.upToDate")
+					: t("updates.unavailable");
 
 	const tone = checking
 		? statusMutedStyle
@@ -96,17 +138,38 @@ export function UpdateSection(): JSX.Element {
 	return (
 		<SettingsGrid>
 			<SettingsField span={6}>
-				<p className={mutedTextStyle}>
-					Checks the official update feed once. Nothing is installed
-					automatically; the panel stays fully usable offline.
-				</p>
+				<p className={mutedTextStyle}>{t("updates.description")}</p>
 			</SettingsField>
 			<SettingsField span={3}>
-				<span className={mutedTextStyle}>Update status</span>
+				<SettingsFieldLabel>{t("updates.channel")}</SettingsFieldLabel>
+				<ListSelect
+					options={CHANNELS.map((value) => ({
+						value,
+						label: t(`updates.${value}`),
+					}))}
+					value={channel}
+					onChange={handleChannelChange}
+					placeholder={t("updates.channelPlaceholder")}
+				/>
+			</SettingsField>
+			<SettingsField span={3}>
+				<SettingsFieldLabel>{t("updates.installed")}</SettingsFieldLabel>
+				<span className={mutedTextStyle}>{currentReleaseVersion}</span>
+				<button
+					type="button"
+					className={linkStyle}
+					onClick={() => void runCheck()}
+					disabled={checking}
+				>
+					{t("updates.checkNow")}
+				</button>
+			</SettingsField>
+			<SettingsField span={3}>
+				<span className={mutedTextStyle}>{t("updates.status")}</span>
 				<span className={tone}>{label}</span>
 			</SettingsField>
 			<SettingsField span={3}>
-				<span className={mutedTextStyle}>Detail</span>
+				<span className={mutedTextStyle}>{t("updates.detail")}</span>
 				<span className={linkRowStyle}>
 					{result?.status === "update-available" ? (
 						<button
@@ -116,7 +179,7 @@ export function UpdateSection(): JSX.Element {
 								openUrlInDefaultBrowser(result.feed.releaseNotesUrl)
 							}
 						>
-							Release notes and download
+							{t("updates.releaseNotes")}
 						</button>
 					) : (
 						<span className={mutedTextStyle}>
@@ -124,6 +187,13 @@ export function UpdateSection(): JSX.Element {
 						</span>
 					)}
 				</span>
+				<button
+					type="button"
+					className={linkStyle}
+					onClick={() => openUrlInDefaultBrowser(OFFICIAL_RELEASES_URL)}
+				>
+					{t("updates.browse")}
+				</button>
 			</SettingsField>
 		</SettingsGrid>
 	);

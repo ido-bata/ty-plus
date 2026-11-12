@@ -25,6 +25,7 @@
 import { createHash } from "node:crypto";
 import { existsSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
+import { assertReleaseIdentity } from "./release-version";
 
 const fail = (message: string): never => {
 	console.error(`[release-manifest] ${message}`);
@@ -50,6 +51,26 @@ const packageJson = JSON.parse(readFileSync("package.json", "utf8")) as {
 if (typeof packageJson.version !== "string" || !packageJson.version) {
 	fail("package.json has no version");
 }
+const packageVersion: string = packageJson.version as string;
+
+// CEP needs X.Y.Z, but preview release identity uses the full SemVer tag.
+// The channel is derived from the version, never taken from the environment
+// independently: an operator cannot label an insider build as stable.
+const releaseVersion: string =
+	process.env.TY_PLUS_RELEASE_VERSION?.trim() || packageVersion;
+const requestedChannel = process.env.TY_PLUS_RELEASE_CHANNEL?.trim();
+const identity = (() => {
+	try {
+		return assertReleaseIdentity({
+			releaseVersion,
+			packageVersion,
+			...(requestedChannel ? { channel: requestedChannel } : {}),
+		});
+	} catch (error) {
+		return fail(error instanceof Error ? error.message : String(error));
+	}
+})();
+const releaseChannel = identity.channel;
 
 const commitResult = Bun.spawnSync(["git", "rev-parse", "HEAD"], {
 	stdout: "pipe",
@@ -88,6 +109,8 @@ for (const artifact of artifacts) {
 
 const manifest = {
 	version: packageJson.version,
+	releaseVersion,
+	channel: releaseChannel,
 	extensionId: "app.ty-plus",
 	sourceCommit,
 	trustMode,

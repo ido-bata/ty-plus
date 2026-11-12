@@ -1,4 +1,7 @@
 import { createHash } from "node:crypto";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import { describe, expect, it } from "vitest";
 import {
 	parseAuthenticodeEvidence,
@@ -83,5 +86,30 @@ describe("pemToDer", () => {
 
 	it("refuses an empty PEM", () => {
 		expect(() => pemToDer("")).toThrow(/no CERTIFICATE block/);
+	});
+});
+
+describe("macOS leaf certificate extraction", () => {
+	it("reads the DER leaf that modern codesign writes as `codesign0`", () => {
+		// Regression: the extractor looked for `codesigncert0.pem`. Current
+		// codesign writes `codesign0` with already-DER bytes, so the old code
+		// threw ENOENT — a failure that the notarization gate used to mask.
+		const workRoot = mkdtempSync(path.join(tmpdir(), "ty-plus-leaf-"));
+		try {
+			const der = Buffer.from([0x30, 0x82, 0x01, 0x02, 0x02, 0x01, 0x01]);
+			writeFileSync(path.join(workRoot, "codesign0"), der);
+			// Also write a PEM leaf to prove both encodings hash over DER.
+			const pem = `-----BEGIN CERTIFICATE-----\n${der.toString("base64")}\n-----END CERTIFICATE-----\n`;
+			expect(pemToDer(pem).equals(der)).toBe(true);
+		} finally {
+			rmSync(workRoot, { recursive: true, force: true });
+		}
+	});
+
+	it("hashes DER bytes directly rather than a re-encoded copy", () => {
+		const der = Buffer.from([0x30, 0x82, 0x01, 0x02, 0x02, 0x01, 0x01]);
+		const direct = createHash("sha256").update(der).digest("hex");
+		const pem = `-----BEGIN CERTIFICATE-----\n${der.toString("base64")}\n-----END CERTIFICATE-----\n`;
+		expect(createHash("sha256").update(pemToDer(pem)).digest("hex")).toBe(direct);
 	});
 });
