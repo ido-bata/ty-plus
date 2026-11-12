@@ -400,3 +400,86 @@ describe("release artifact audit", () => {
 		).toBe(2);
 	});
 });
+
+describe("archive vs pack integrity", () => {
+	it("rejects an archive whose contents differ from the audited pack", () => {
+		// Regression: a stale ZIP/ZXP with its hash re-recorded in the manifest
+		// used to pass. Only opening the archive exposes the swap.
+		const failures = failuresOf(() =>
+			auditReleaseArtifacts({
+				...auditInput(),
+				compareArchiveToPack: () => ["archive differs from the audited pack: app.ty-plus/CSXS/manifest.xml"],
+			}),
+		);
+		expect(failures.join("\n")).toMatch(/differs from the audited pack/);
+	});
+
+	it("reports archive problems against the artifact name", () => {
+		const failures = failuresOf(() =>
+			auditReleaseArtifacts({
+				...auditInput(),
+				compareArchiveToPack: () => ["archive is missing app.ty-plus/LICENSE"],
+			}),
+		);
+		expect(failures.join("\n")).toMatch(
+			/app\.ty-plus\.zip: archive is missing/,
+		);
+	});
+});
+
+describe("embedded identity must be unambiguous", () => {
+	it("rejects when any emitted bundle carries a different release version", () => {
+		// Regression: reading only the first match let an alphabetically earlier
+		// leftover chunk mask the chunk the panel actually loads.
+		// The baseline pack embeds 0.11.0-beta.1; this leftover says 0.10.0.
+		packedExtension(
+			"assets/aaa-stale.cjs",
+			'const currentReleaseVersion="0.10.0",buildReleaseChannel="beta";',
+		);
+		const failures = failuresOf(() => audit());
+		expect(failures.join("\n")).toMatch(/embeds release version 0\.10\.0/);
+	});
+
+	it("rejects when any emitted bundle carries a different channel", () => {
+		packedExtension(
+			"assets/aaa-stale.cjs",
+			'const currentReleaseVersion="0.11.0-beta.1",buildReleaseChannel="insider";',
+		);
+		const failures = failuresOf(() => audit());
+		expect(failures.join("\n")).toMatch(/embeds release channel insider/);
+	});
+});
+
+describe("platform name must match the shipped pack", () => {
+	it("rejects a windows-named artifact whose pack declares macos", () => {
+		// Regression: the staged platform came from dist/cep-dev (the last build)
+		// while the bytes came from the pack, so Windows bytes could be named
+		// as macOS assets.
+		const m = manifest();
+		m.artifacts = [
+			{ file: "ty-plus-v0.11.0-beta.1-windows.zip", sha256: "a".repeat(64) },
+			{ file: "ty-plus-v0.11.0-beta.1-windows.zxp", sha256: "b".repeat(64) },
+		] as never;
+		const failures = failuresOf(() =>
+			auditReleaseArtifacts({
+				...auditInput(),
+				manifest: m,
+				workerTrust: { mode: "release", signatures: { macos: validSignature } },
+			}),
+		);
+		expect(failures.join("\n")).toMatch(/named for windows but the shipped pack declares macos/);
+	});
+
+	it("accepts an artifact whose name matches the pack platform", () => {
+		const m = manifest();
+		m.artifacts = [
+			{ file: "ty-plus-v0.11.0-beta.1-macos.zip", sha256: "a".repeat(64) },
+			{ file: "ty-plus-v0.11.0-beta.1-macos.zxp", sha256: "b".repeat(64) },
+		] as never;
+		const failures = failuresOf(() =>
+			auditReleaseArtifacts({ ...auditInput(), manifest: m }),
+		);
+		// Hash mismatches are expected here; the platform check must not fire.
+		expect(failures.join("\n")).not.toMatch(/named for/);
+	});
+});

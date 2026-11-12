@@ -46,6 +46,18 @@ export type ArtifactAuditInput = Readonly<{
 	 * artifact can be replaced between build and upload.
 	 */
 	verifyZxpSignature?: (zxpPath: string) => void;
+	/**
+	 * Compares an archive's contents with the audited pack directory.
+	 *
+	 * A hash match only proves the manifest describes these bytes; it does not
+	 * prove the bytes are this build. A stale ZIP/ZXP from an earlier version
+	 * hashes consistently with a manifest regenerated after the swap, so the
+	 * archive must be opened and compared against the pack.
+	 */
+	compareArchiveToPack?: (
+		archivePath: string,
+		packRoot: string,
+	) => readonly string[];
 	/** Declared `trust.mode` and per-platform signature blocks of the worker manifest. */
 	workerTrust?: {
 		mode?: unknown;
@@ -134,6 +146,16 @@ export const auditReleaseArtifacts = (
 				`${String(artifact.file)}: manifest sha256 ${String(artifact.sha256)} != actual ${actual}`,
 			);
 		}
+		if (
+			input.compareArchiveToPack &&
+			(/\.zip$|\.zxp$/i.test(String(artifact.file)))
+		) {
+			failures.push(
+				...input
+					.compareArchiveToPack(file, input.packRoot)
+					.map((problem) => `${String(artifact.file)}: ${problem}`),
+			);
+		}
 	}
 
 	const extensionRoot = path.join(input.packRoot, "app.ty-plus");
@@ -211,17 +233,26 @@ export const auditReleaseArtifacts = (
 			// channel names also appear in `isReleaseChannel`'s guard for all
 			// three channels, and the CEP version also appears in unrelated
 			// literals, so a substring search can never fail on a real bundle.
-			const version = readInjectedBinding(embedded, "currentReleaseVersion");
-			if (version !== releaseVersion.releaseVersion) {
+			// Every occurrence must agree. Taking only the first match let a
+			// leftover chunk (alphabetically earlier) mask the chunk the panel
+			// actually loads.
+			const versionValues = readInjectedBindings(embedded, "currentReleaseVersion");
+			const wrongVersion = versionValues.find(
+				(v) => v !== releaseVersion.releaseVersion,
+			);
+			if (versionValues.length === 0 || wrongVersion !== undefined) {
 				failures.push(
-					`the packaged panel embeds release version ${String(version)}, expected ${releaseVersion.releaseVersion} — ` +
+					`the packaged panel embeds release version ${String(wrongVersion ?? versionValues[0])}, expected ${releaseVersion.releaseVersion} — ` +
 						"build with TY_PLUS_RELEASE_VERSION set to the tag you are releasing",
 				);
 			}
-			const channel = readInjectedBinding(embedded, "buildReleaseChannel");
-			if (channel !== releaseVersion.channel) {
+			const channelValues = readInjectedBindings(embedded, "buildReleaseChannel");
+			const wrongChannel = channelValues.find(
+				(v) => v !== releaseVersion.channel,
+			);
+			if (channelValues.length === 0 || wrongChannel !== undefined) {
 				failures.push(
-					`the packaged panel embeds release channel ${String(channel)}, expected ${releaseVersion.channel} — ` +
+					`the packaged panel embeds release channel ${String(wrongChannel ?? channelValues[0])}, expected ${releaseVersion.channel} — ` +
 						"build with TY_PLUS_RELEASE_CHANNEL set to the tag's channel",
 				);
 			}
@@ -287,6 +318,19 @@ export const auditReleaseArtifacts = (
 		}
 		const signatures = input.workerTrust.signatures ?? {};
 		const platforms = Object.keys(signatures);
+		// The artifact names encode the platform. If a pack is assembled for one
+		// platform but staged under another name, users download the wrong bytes.
+		if (releaseVersion) {
+			for (const artifact of manifest.artifacts ?? []) {
+				const name = String(artifact.file);
+				const named = /-(windows|macos)\.(zip|zxp)$/.exec(name)?.[1];
+				if (named && !platforms.includes(named)) {
+					failures.push(
+						`${name} is named for ${named} but the shipped pack declares ${platforms.join(", ") || "no platform"}`,
+					);
+				}
+			}
+		}
 		if (platforms.length === 0) {
 			failures.push(
 				"the built worker manifest declares no platform — no worker is shipping",
@@ -372,22 +416,26 @@ function describeInvalidSignature(signature: unknown): string | undefined {
  * also occur in `isReleaseChannel`'s three-way guard, so a substring search
  * accepted every channel on a real build.
  */
-function readInjectedBinding(bundle: string, name: string): string | undefined {
+function readInjectedBindings(bundle: string, name: string): string[] {
 	const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 	const literal = `(?:"([^"]*)"|'([^']*)'|\`([^\`]*)\`)`;
 	const prefix = `(?:^|[^\\w$.])${escaped}\\s*=\\s*`;
-	// Direct define: `x="value"` / `x=\`value\``.
-	const direct = new RegExp(`${prefix}${literal}`).exec(bundle);
-	// Minified guard: the runtime validator folds the define into
-	// `x=isReleaseChannel(\`value\`)?\`value\`:\`stable\``, so the value is the
-	// validator's argument rather than the assignment's right-hand side.
-	const guarded = new RegExp(`${prefix}isReleaseChannel\\(\\s*${literal}`).exec(
-		bundle,
-	);
-	const match = direct ?? guarded;
-	if (!match) return undefined;
-	const values = match.slice(1, 4).filter((v): v is string => v !== undefined);
-	return values[0];
+	const patterns = [
+		// Direct define: `x="value"` / `x=\`value\``.
+		new RegExp(`${prefix}${literal}`, "g"),
+		// Minified guard: the runtime validator folds the define into
+		// `x=isReleaseChannel(\`value\`)?\`value\`:\`stable\``, so the value is
+		// the validator's argument rather than the assignment's right-hand side.
+		new RegExp(`${prefix}isReleaseChannel\\(\\s*${literal}`, "g"),
+	];
+	const values: string[] = [];
+	for (const pattern of patterns) {
+		for (const match of bundle.matchAll(pattern)) {
+			const value = match.slice(1, 4).find((v) => v !== undefined);
+			if (value !== undefined) values.push(value);
+		}
+	}
+	return values;
 }
 
 /**
@@ -429,6 +477,126 @@ const verifyReleaseZxpSignature = (zxpPath: string): void => {
 };
 
 /** Flattens either failure shape into the list of messages to print. */
+
+/**
+ * Compares an archive's payload with the audited pack.
+ *
+ * Both ZIP and ZXP are zip containers holding `app.ty-plus/...` (the ZXP adds
+ * `mimetype` / `META-INF`). Every pack file must be present with identical
+ * bytes, and the archive must not carry extra payload files. This is what
+ * catches a stale archive whose hash was recorded after the fact.
+ */
+export const compareArchiveToPackContents = (
+	archivePath: string,
+	packRoot: string,
+): readonly string[] => {
+	const problems: string[] = [];
+	const list = Bun.spawnSync(["unzip", "-Z1", archivePath], {
+		stdout: "pipe",
+		stderr: "pipe",
+	});
+	if (list.exitCode !== 0) {
+		return [
+			`cannot read archive (unzip exit ${list.exitCode}) — the artifact is not a valid package`,
+		];
+	}
+	const entries = list.stdout
+		.toString()
+		.split("\n")
+		.map((line) => line.trim())
+		.filter((line) => line.length > 0 && !line.endsWith("/"));
+
+	// Two layouts exist for the same payload:
+	//   - ZIP: every file is under `app.ty-plus/` (manual-install form)
+	//   - ZXP: the extension sits at the archive root, with `mimetype` and
+	//     `META-INF/` added by the signer
+	// Normalise both to pack-relative paths, then compare byte for byte.
+	const PREFIX = "app.ty-plus/";
+	const usesZipLayout = entries.some((entry) => entry.startsWith(PREFIX));
+	const archiveFiles = new Map<string, string>();
+	for (const entry of entries) {
+		if (entry.startsWith("META-INF/") || entry === "mimetype") continue;
+		if (usesZipLayout) {
+			if (!entry.startsWith(PREFIX)) continue;
+			archiveFiles.set(entry.slice(PREFIX.length), entry);
+		} else {
+			archiveFiles.set(entry, entry);
+		}
+	}
+
+	const packFiles: string[] = [];
+	const walk = (dir: string, prefix: string): void => {
+		for (const dirent of readdirSync(dir, { withFileTypes: true })) {
+			const rel = prefix ? `${prefix}/${dirent.name}` : dirent.name;
+			if (dirent.isDirectory()) walk(path.join(dir, dirent.name), rel);
+			else packFiles.push(rel);
+		}
+	};
+	walk(path.join(packRoot, "app.ty-plus"), "");
+
+	for (const rel of packFiles) {
+		if (!archiveFiles.has(rel)) {
+			problems.push(`archive is missing app.ty-plus/${rel}`);
+		}
+	}
+	if (problems.length > 0) return problems;
+
+	// Byte comparison: extract and hash both sides for every pack file.
+	const extracted = path.join(
+		path.dirname(archivePath),
+		`.audit-${path.basename(archivePath)}`,
+	);
+	const unpack = Bun.spawnSync(
+		["unzip", "-qq", "-o", archivePath, "-d", extracted],
+		{ stdout: "pipe", stderr: "pipe" },
+	);
+	if (unpack.exitCode !== 0) {
+		return [`cannot extract archive (unzip exit ${unpack.exitCode})`];
+	}
+	try {
+		for (const rel of packFiles) {
+			const fromArchive = path.join(
+				extracted,
+				usesZipLayout ? "app.ty-plus" : "",
+				rel,
+			);
+			const fromPack = path.join(packRoot, "app.ty-plus", rel);
+			if (!existsSync(fromArchive)) {
+				problems.push(`archive is missing app.ty-plus/${rel}`);
+				continue;
+			}
+			if (sha256(fromArchive) !== sha256(fromPack)) {
+				problems.push(`archive differs from the audited pack: app.ty-plus/${rel}`);
+			}
+		}
+		// The archive must not advertise a different extension version.
+		const manifestXml = path.join(
+			extracted,
+			usesZipLayout ? "app.ty-plus" : "",
+			"CSXS",
+			"manifest.xml",
+		);
+		if (existsSync(manifestXml)) {
+			const version =
+				/ExtensionBundleVersion="([^"]*)"/.exec(
+					readFileSync(manifestXml, "utf8"),
+				)?.[1];
+			const packVersion =
+				/ExtensionBundleVersion="([^"]*)"/.exec(
+					readFileSync(path.join(packRoot, "app.ty-plus", "CSXS", "manifest.xml"), "utf8"),
+				)?.[1];
+			if (version !== packVersion) {
+				problems.push(
+					`archive advertises ExtensionBundleVersion ${String(version)}, pack has ${String(packVersion)}`,
+				);
+			}
+		}
+	} finally {
+		Bun.spawnSync(["rm", "-rf", extracted], { stdout: "pipe", stderr: "pipe" });
+	}
+	return problems;
+};
+
 const toFailures = (error: unknown): readonly string[] => {
 	if (error instanceof ArtifactAuditError) return error.failures;
 	return [error instanceof Error ? error.message : String(error)];
@@ -473,6 +641,7 @@ const main = (): void => {
 			packRoot: path.join(distRoot, "cep-pack"),
 			manifest: JSON.parse(readFileSync(manifestPath, "utf8")) as ReleaseManifest,
 			head,
+			compareArchiveToPack: compareArchiveToPackContents,
 			// Publication-time signature evidence: the artifact can be replaced
 			// after the build that signed it.
 			verifyZxpSignature: verifyReleaseZxpSignature,

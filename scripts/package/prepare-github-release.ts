@@ -138,9 +138,14 @@ export const stageGitHubRelease = async (
 const main = async (): Promise<void> => {
 	const dist = path.resolve("dist");
 	const sourceManifestPath = path.join(dist, "release-manifest.json");
+	// The platform must come from the manifest *inside the shipped pack*, not
+	// from dist/cep-dev. Those can disagree: cep-dev is rewritten by whichever
+	// build ran last, while the zip/ZXP were built from dist/cep-pack earlier.
+	// Reading the wrong one named Windows bytes as macOS assets.
 	const workerManifestPath = path.join(
 		dist,
-		"cep-dev",
+		"cep-pack",
+		"app.ty-plus",
 		"worker",
 		"manifest.json",
 	);

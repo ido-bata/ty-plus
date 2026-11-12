@@ -7,7 +7,14 @@
  * audit refuses to bless the artifact.
  */
 
-import { readdirSync, readFileSync, statSync } from "node:fs";
+import {
+	closeSync,
+	openSync,
+	readSync,
+	readdirSync,
+	readFileSync,
+	statSync,
+} from "node:fs";
 import path from "node:path";
 
 export type SecretPattern = Readonly<{
@@ -34,14 +41,27 @@ export type SecretFinding = Readonly<{
 	line: number;
 }>;
 
-const TEXT_EXTENSIONS = new Set([
-	".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs", ".json", ".xml", ".html",
-	".css", ".scss", ".md", ".txt", ".yml", ".yaml", ".sh", ".ps1", ".env",
-	".pem", ".plist", ".rb", ".py", ".rs", ".toml", ".ini", ".cfg",
-]);
-
-const isTextFile = (file: string): boolean =>
-	TEXT_EXTENSIONS.has(path.extname(file).toLowerCase());
+/**
+ * Whether a file is binary, decided by its bytes rather than its name.
+ *
+ * An extension allowlist silently skipped files that genuinely ship — `LICENSE`,
+ * `.debug` and `*.cjs.map` have no or unlisted extensions — so a secret in them
+ * reached the release. Extension *ex*clusion is no better: the macOS worker has
+ * no extension at all and would be read as text.
+ *
+ * A NUL byte in the first 8 KiB is the standard, cheap binary signal; it also
+ * keeps multi-megabyte executables out of the text scan.
+ */
+const isBinaryFile = (file: string): boolean => {
+	const fd = openSync(file, "r");
+	try {
+		const buffer = Buffer.alloc(8192);
+		const read = readSync(fd, buffer, 0, buffer.length, 0);
+		return buffer.subarray(0, read).includes(0);
+	} finally {
+		closeSync(fd);
+	}
+};
 
 const listFiles = (root: string): string[] => {
 	const out: string[] = [];
@@ -62,7 +82,7 @@ const listFiles = (root: string): string[] => {
 export const scanForSecrets = (root: string): readonly SecretFinding[] => {
 	const findings: SecretFinding[] = [];
 	for (const file of listFiles(root)) {
-		if (!isTextFile(file)) continue;
+		if (isBinaryFile(file)) continue;
 		const content = readFileSync(file, "utf8");
 		for (const { name, pattern } of SECRET_PATTERNS) {
 			const lines = content.split(/\r?\n/);
