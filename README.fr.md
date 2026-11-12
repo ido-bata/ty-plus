@@ -57,7 +57,7 @@ La première version Stable constitue une **référence de canal**, pas une gara
 - [Guide utilisateur](docs/user-guide/index.md) (japonais) · [Guide d’installation](docs/user-guide/installation/index.md) (japonais)
 - [Signaler un bug ou proposer une amélioration](https://github.com/ido-bata/ty-plus/issues/new/choose)
 - [Contribuer](CONTRIBUTING.md) · [Politique de sécurité](SECURITY.md)
-- [État réel de la CI](https://github.com/ido-bata/ty-plus/actions/workflows/ci.yml). Le badge reflète l’état de GitHub Actions, sans prétendre que les tests ont réussi. Les échecs avant démarrage liés à la facturation sont suivis dans [l’issue #59](https://github.com/ido-bata/ty-plus/issues/59).
+- [État réel de la CI](https://github.com/ido-bata/ty-plus/actions/workflows/ci.yml). Le badge reflète l’état de GitHub Actions, sans prétendre que les tests ont réussi. Les échecs avant démarrage liés à la facturation sont suivis dans [l’issue #59](https://github.com/ido-bata/ty-plus/issues/61).
 
 Pour développer : `mise install`, puis `bun install --frozen-lockfile --ignore-scripts`. Voir le [guide de contribution](CONTRIBUTING.md).
 
