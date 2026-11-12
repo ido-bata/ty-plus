@@ -26,7 +26,7 @@ Organizza preset e script in riquadri, aggiungi widget e disponi i pannelli seco
 ## Installazione
 
 1. Apri l'**[ultima versione Stable](https://github.com/ido-bata/ty-plus/releases/latest)**.
-2. Scarica `ty-plus-<version>-windows.zxp` oppure `ty-plus-<version>-macos.zxp` per il tuo sistema.
+2. Scarica `ty-plus-<tag>-windows.zxp` oppure `ty-plus-<tag>-macos.zxp` per il tuo sistema.
 3. Installa il file ZXP con un programma compatibile con CEP e riavvia After Effects.
 4. Apri **Finestra → Estensioni → ty-plus**.
 
