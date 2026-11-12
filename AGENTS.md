@@ -28,7 +28,7 @@ Issue本文の詳細を伝言・再定義せず、正本Issueを直接参照す�
 
 ## bootstrap / validation
 
-- `mise install` — bun 1.4.4（`mise.toml`）
+- `mise install` — bun 1.3.10（`mise.toml`）
 - `mise run check:skills` — vendored skillsと `skills-lock.json` の整合検査
 
 ## 作業開始
