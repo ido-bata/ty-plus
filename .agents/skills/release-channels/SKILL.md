@@ -15,6 +15,7 @@ ty-plusの配布は**GitHub Releasesを唯一の正本**とする（ADR-0004）�
 | 実行手順の正本 | `docs/operations/release-runbook.md` |
 | 署名・公証の環境設定 | `docs/operations/signing-setup.md` |
 | 実機ゲートのシナリオ | `docs/verification/r0-device-gate.md`（#10） |
+| 直近の候補の検証記録（雛形として使う） | `docs/verification/release-candidate-0-10-0-insider-3.md` |
 | 配布・更新のユーザー向け説明 | `docs/user-guide/installation/index.md` |
 
 このSkillが持つのは**判断の順序と、そこで止める条件**だけである。tag文法・asset命名・channel購読規則は `scripts/package/release-version.ts` と `src/management/online/update/channel.ts` が実装する唯一の定義であり、Skillやrunbookへコピーしない。
@@ -115,6 +116,18 @@ bun run release:candidate --channel=insider --release-version=0.10.1-insider.1
 | CIが課金等で実行できない | ローカルの再現可能な検証を進め、**未実施のCIだけを明示**する。緑と主張しない |
 
 復旧後は、どのReleaseが有効かをリリースノートとIssueへ記録する。
+
+## 9. 検証記録を残す
+
+候補を作ったら `docs/verification/` に記録を書く。最低限、次を**実測値**で残す。
+
+- `sourceCommit` / `version` / `releaseVersion` / `channel` / `trustMode`
+- 各artifactのsha256とサイズ
+- 実行した監査と結果（PASS/FAIL）
+- 未実施の項目（署名・公証・実機・CI）とその理由
+- 公開までに必要な本人操作
+
+`docs/verification/release-candidate-0-10-0-insider-3.md` を雛形にする。**未実施をPASSと呼ばない。** CIが実行できない場合は、ローカルで何を実行したかと、実行できなかったCI jobを明記する。
 
 ## 8. 配布先・インストーラを増やすとき
 
