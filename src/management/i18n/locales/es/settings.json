@@ -215,6 +215,17 @@
 		"beta": "Beta",
 		"insider": "Insider",
 		"checkNow": "Comprobar ahora",
-		"browse": "Ver versiones"
+		"browse": "Ver versiones",
+		"installed": "Versión instalada",
+		"status": "Estado de actualización",
+		"detail": "Detalle",
+		"description": "Las actualizaciones provienen de los GitHub Releases oficiales. No se instala nada automáticamente; las funciones locales funcionan sin conexión.",
+		"checking": "Comprobando…",
+		"notChecked": "Sin comprobar",
+		"upToDate": "Actualizado",
+		"unavailable": "No se pudo comprobar la actualización",
+		"available": "Nueva versión disponible: {{version}}",
+		"releaseNotes": "Notas de la versión y descarga",
+		"channelPlaceholder": "Elige un canal"
 	}
 }

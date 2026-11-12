@@ -1,53 +1,93 @@
 #!/usr/bin/env bun
 /**
- * One-command GitHub Release candidate creation.
- * Builds, audits and stages platform artifacts; never publishes.
+ * One-command GitHub Release candidate creation (Issue #55).
+ *
+ * This is the operator entry point used by the release runbook and the
+ * `release-channels` Skill. It builds, audits and stages platform artifacts
+ * for one channel; it never creates a tag, a GitHub Release or any public
+ * upload. Publication is a separate, explicitly authorized action.
+ *
+ * Channel semantics live in `release-version.ts`. Do not re-implement them
+ * here or in another script — a new channel or distribution provider must be
+ * added to that module (and to the panel's subscription contract) instead.
  */
 import { spawnSync } from "node:child_process";
 import { readFileSync } from "node:fs";
-import { resolveReleaseAssetNames } from "./prepare-github-release";
+import {
+	assertReleaseIdentity,
+	isPrereleaseChannel,
+	type ReleasePlatform,
+	releaseAssetNames,
+} from "./release-version";
 
 const option = (name: string): string | undefined =>
-	process.argv.slice(2).find((arg) => arg.startsWith("--" + name + "="))
+	process.argv
+		.slice(2)
+		.find((arg) => arg.startsWith(`--${name}=`))
 		?.slice(name.length + 3);
 
-const main = (): void => {
-	const channel = option("channel");
-	const releaseVersion = option("release-version");
-	if (
-		(channel !== "stable" && channel !== "beta" && channel !== "insider") ||
-		!releaseVersion
-	) {
-		throw new Error(
-			"Usage: bun scripts/package/build-github-release.ts " +
-				"--channel=stable|beta|insider --release-version=X.Y.Z[-beta.N|-insider.N]",
-		);
-	}
-	const platform =
-		process.platform === "win32"
+export type CandidatePlan = Readonly<{
+	releaseVersion: string;
+	channel: string;
+	platform: ReleasePlatform;
+	prerelease: boolean;
+	stagedDirectory: string;
+	assetNames: readonly string[];
+}>;
+
+/** Pure planning step: everything the command will do, without doing it. */
+export const planCandidate = (input: {
+	readonly channel: string | undefined;
+	readonly releaseVersion: string | undefined;
+	readonly packageVersion: string;
+	readonly hostPlatform: NodeJS.Platform;
+}): CandidatePlan => {
+	const platform: ReleasePlatform | null =
+		input.hostPlatform === "win32"
 			? "windows"
-			: process.platform === "darwin"
+			: input.hostPlatform === "darwin"
 				? "macos"
 				: null;
 	if (!platform) {
 		throw new Error("GitHub Release packaging requires Windows or macOS");
 	}
-	const metadata = resolveReleaseAssetNames(releaseVersion, platform);
-	if (metadata.channel !== channel) {
-		throw new Error("channel and prerelease tag disagree");
-	}
-	const pkg = JSON.parse(readFileSync("package.json", "utf8")) as { version: string };
-	const coreVersion = releaseVersion.split("-")[0];
-	if (pkg.version !== coreVersion) {
+	if (!input.releaseVersion) {
 		throw new Error(
-			"package.json.version must be " + coreVersion + " (actual: " + pkg.version + ")",
+			"Usage: bun scripts/package/build-github-release.ts " +
+				"--channel=stable|beta|insider --release-version=X.Y.Z[-beta.N|-insider.N]",
 		);
 	}
+	const version = assertReleaseIdentity({
+		releaseVersion: input.releaseVersion,
+		packageVersion: input.packageVersion,
+		channel: input.channel,
+	});
+	const names = releaseAssetNames(version, platform);
+	return {
+		releaseVersion: version.releaseVersion,
+		channel: version.channel,
+		platform,
+		prerelease: isPrereleaseChannel(version.channel),
+		stagedDirectory: "dist/github-release",
+		assetNames: [names.zip, names.zxp, names.manifest],
+	};
+};
+
+const main = (): void => {
+	const pkg = JSON.parse(readFileSync("package.json", "utf8")) as {
+		version: string;
+	};
+	const plan = planCandidate({
+		channel: option("channel"),
+		releaseVersion: option("release-version"),
+		packageVersion: pkg.version,
+		hostPlatform: process.platform,
+	});
 
 	const env = {
 		...process.env,
-		TY_PLUS_RELEASE_VERSION: releaseVersion,
-		TY_PLUS_RELEASE_CHANNEL: channel,
+		TY_PLUS_RELEASE_VERSION: plan.releaseVersion,
+		TY_PLUS_RELEASE_CHANNEL: plan.channel,
 	};
 	for (const script of [
 		"scripts/package/build-release.ts",
@@ -61,14 +101,30 @@ const main = (): void => {
 		});
 		if (result.status !== 0) {
 			throw new Error(
-				"GitHub release candidate stopped at " + script +
-					" (exit " + (result.status ?? "unknown") + ")",
+				"GitHub release candidate stopped at " +
+					script +
+					" (exit " +
+					(result.status ?? "unknown") +
+					")",
 			);
 		}
 	}
 	console.log(
-		"[github-release] " + metadata.tag +
-			" (" + channel + ") prepared; no tag, release or public upload created",
+		"[github-release] v" +
+			plan.releaseVersion +
+			" (" +
+			plan.channel +
+			", " +
+			plan.platform +
+			", prerelease=" +
+			plan.prerelease +
+			") prepared under " +
+			plan.stagedDirectory,
+	);
+	console.log(`[github-release] assets: ${plan.assetNames.join(", ")}`);
+	console.log(
+		"[github-release] no tag, release or public upload was created — " +
+			"publication needs the owner's explicit authorization",
 	);
 };
 

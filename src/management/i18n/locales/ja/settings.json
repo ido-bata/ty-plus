@@ -215,6 +215,17 @@
 		"beta": "ベータ版",
 		"insider": "インサイダー版",
 		"checkNow": "今すぐ確認",
-		"browse": "リリース一覧を見る"
+		"browse": "リリース一覧を見る",
+		"installed": "インストール済みリリース",
+		"status": "更新状態",
+		"detail": "詳細",
+		"description": "更新は公式のGitHub Releasesから取得します。自動ではインストールされず、ローカル機能はオフラインでも動作します。",
+		"checking": "確認中…",
+		"notChecked": "未確認",
+		"upToDate": "最新です",
+		"unavailable": "更新を確認できません",
+		"available": "新しいバージョンがあります: {{version}}",
+		"releaseNotes": "リリースノートとダウンロード",
+		"channelPlaceholder": "チャンネルを選択"
 	}
 }

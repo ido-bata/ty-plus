@@ -12,7 +12,7 @@
  */
 
 import { createHash } from "node:crypto";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { scanForSecrets } from "../package/secret-scan";
 
@@ -53,8 +53,11 @@ const match =
 				releaseVersion,
 			)
 		: null;
-if (!match || manifest.version !== match[1] + "." + match[2] + "." + match[3] ||
-	releaseChannel !== (match[4] ?? "stable")) {
+if (
+	!match ||
+	manifest.version !== match[1] + "." + match[2] + "." + match[3] ||
+	releaseChannel !== (match[4] ?? "stable")
+) {
 	fail("release version/channel must match the CEP numeric version and tag");
 }
 
@@ -103,6 +106,75 @@ for (const notice of ["LICENSE", "THIRD-PARTY-NOTICES.md"]) {
 			`the distribution pack does not carry ${notice} — rebuild the pack (package-cep-archive copies it)`,
 		);
 	}
+}
+
+// The panel loads the ExtendScript host from the pack at runtime
+// (`host-executor.ts` → `jsx/ty-plus-host.jsx`). A pack without it boots and
+// then fails every host operation, so its absence is a release blocker, not a
+// packaging preference.
+const hostBundle = path.join(
+	packRoot,
+	"app.ty-plus",
+	"jsx",
+	"ty-plus-host.jsx",
+);
+if (!existsSync(hostBundle)) {
+	fail(
+		"the distribution pack does not carry jsx/ty-plus-host.jsx — " +
+			"run `build:extendscript-host` before packaging (build-release.ts does)",
+	);
+}
+
+// The installed extension manifest must advertise exactly the release's
+// numeric version. CEP cannot express a prerelease suffix, so a mismatch here
+// means the panel and the release tag describe different builds.
+const cepManifestPath = path.join(
+	packRoot,
+	"app.ty-plus",
+	"CSXS",
+	"manifest.xml",
+);
+if (!existsSync(cepManifestPath)) {
+	fail("the distribution pack does not carry CSXS/manifest.xml");
+}
+const cepManifest = readFileSync(cepManifestPath, "utf8");
+const bundleVersion = /ExtensionBundleVersion="([^"]*)"/.exec(cepManifest)?.[1];
+if (bundleVersion !== manifest.version) {
+	fail(
+		`CEP ExtensionBundleVersion ${String(bundleVersion)} does not match the manifest version ${String(manifest.version)} — ` +
+			"the packaged panel would report a different version than the release tag",
+	);
+}
+
+// The release identity embedded in the panel bundle is what the update client
+// compares against. If it drifted from the manifest, the app would offer an
+// update it is already running (or miss the next prerelease).
+const panelBundles = readdirSync(path.join(packRoot, "app.ty-plus", "assets"))
+	.filter((name) => name.endsWith(".cjs"))
+	.map((name) => path.join(packRoot, "app.ty-plus", "assets", name))
+	.filter((file) =>
+		readFileSync(file, "utf8").includes("ty-plus.github-releases/1"),
+	);
+if (panelBundles.length === 0) {
+	fail(
+		"no panel bundle embeds the GitHub Releases update contract — " +
+			"the packaged panel cannot check for updates",
+	);
+}
+const embedded = panelBundles
+	.map((file) => readFileSync(file, "utf8"))
+	.join("\n");
+if (!embedded.includes(String(releaseVersion))) {
+	fail(
+		`the packaged panel does not embed release version ${String(releaseVersion)} — ` +
+			"build with TY_PLUS_RELEASE_VERSION set to the tag you are releasing",
+	);
+}
+if (!embedded.includes('"' + String(releaseChannel) + '"')) {
+	fail(
+		`the packaged panel does not embed release channel ${String(releaseChannel)} — ` +
+			"build with TY_PLUS_RELEASE_CHANNEL set to the tag's channel",
+	);
 }
 const secretFindings = scanForSecrets(packRoot);
 if (secretFindings.length > 0) {

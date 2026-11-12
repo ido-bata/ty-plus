@@ -69,14 +69,24 @@ const parseVersion = (value: string): ParsedVersion | null => {
 		major: numbers[0],
 		minor: numbers[1],
 		patch: numbers[2],
-		channel: match[4] === "beta" || match[4] === "insider"
-			? match[4]
-			: "stable",
+		channel:
+			match[4] === "beta" || match[4] === "insider" ? match[4] : "stable",
 		sequence,
 	};
 };
 
-/** Compare supported SemVer tags; invalid versions compare as equal. */
+/**
+ * Compares supported release versions with SemVer precedence.
+ *
+ * The prerelease is `<channel>.<sequence>`, so SemVer's rule applies
+ * directly: compare the prerelease identifiers left to right, numeric
+ * identifiers numerically and alphanumeric ones in ASCII order, and a
+ * version with **no** prerelease outranks any prerelease of the same core.
+ * Deriving this from the identifiers instead of a hardcoded channel ranking
+ * means a new channel orders correctly without another table to update.
+ *
+ * Invalid versions compare as equal; callers validate before comparing.
+ */
 export const compareVersions = (left: string, right: string): number => {
 	const a = parseVersion(left);
 	const b = parseVersion(right);
@@ -84,14 +94,14 @@ export const compareVersions = (left: string, right: string): number => {
 	for (const field of ["major", "minor", "patch"] as const) {
 		if (a[field] !== b[field]) return a[field] < b[field] ? -1 : 1;
 	}
-	const rank = (channel: ReleaseChannel): number =>
-		channel === "stable" ? 2 : channel === "insider" ? 1 : 0;
-	if (rank(a.channel) !== rank(b.channel)) {
-		return rank(a.channel) < rank(b.channel) ? -1 : 1;
-	}
-	if (a.sequence !== null && b.sequence !== null && a.sequence !== b.sequence) {
-		return a.sequence < b.sequence ? -1 : 1;
-	}
+	// No prerelease outranks any prerelease (SemVer §11.3).
+	if (a.sequence === null && b.sequence === null) return 0;
+	if (a.sequence === null) return 1;
+	if (b.sequence === null) return -1;
+	// Compare the channel identifier as an ASCII string (SemVer §11.4.3).
+	if (a.channel !== b.channel) return a.channel < b.channel ? -1 : 1;
+	// Identical channel: the numeric sequence decides (§11.4.1).
+	if (a.sequence !== b.sequence) return a.sequence < b.sequence ? -1 : 1;
 	return 0;
 };
 
@@ -101,7 +111,7 @@ const officialReleasePage = (url: string, tag: string): boolean => {
 		return (
 			parsed.protocol === "https:" &&
 			parsed.hostname === "github.com" &&
-			parsed.pathname === "/ido-bata/ty-plus/releases/tag/" + tag &&
+			parsed.pathname === `/ido-bata/ty-plus/releases/tag/${tag}` &&
 			parsed.search === "" &&
 			parsed.hash === ""
 		);
@@ -117,7 +127,7 @@ const officialAssetUrl = (url: string, tag: string, name: string): boolean => {
 			parsed.protocol === "https:" &&
 			parsed.hostname === "github.com" &&
 			parsed.pathname ===
-				"/ido-bata/ty-plus/releases/download/" + tag + "/" + name &&
+				`/ido-bata/ty-plus/releases/download/${tag}/${name}` &&
 			parsed.search === "" &&
 			parsed.hash === ""
 		);
@@ -162,8 +172,10 @@ export const parseGitHubRelease = (raw: unknown): UpdateFeed | null => {
 			continue;
 		}
 		for (const platform of ["windows", "macos"] as const) {
-			if (name === "ty-plus-" + tag + "-" + platform + ".zip" ||
-				name === "ty-plus-" + tag + "-" + platform + ".zxp") {
+			if (
+				name === `ty-plus-${tag}-${platform}.zip` ||
+				name === `ty-plus-${tag}-${platform}.zxp`
+			) {
 				assets.push({
 					platform,
 					url,
@@ -175,7 +187,9 @@ export const parseGitHubRelease = (raw: unknown): UpdateFeed | null => {
 	// A standalone ZIP is not a normally installable CEP package.
 	// Require an uploaded ZXP for each advertised platform.
 	const signedPlatforms = new Set(
-		assets.filter((asset) => asset.url.endsWith(".zxp")).map((asset) => asset.platform),
+		assets
+			.filter((asset) => asset.url.endsWith(".zxp"))
+			.map((asset) => asset.platform),
 	);
 	if (signedPlatforms.size === 0) return null;
 	const publishableAssets = assets.filter((asset) =>
@@ -193,22 +207,52 @@ export const parseGitHubRelease = (raw: unknown): UpdateFeed | null => {
 
 export type FetchFeedText = (url: string, timeoutMs: number) => Promise<string>;
 
-export const defaultFetchFeedText: FetchFeedText = async (url, timeoutMs) => {
-	const response = await fetch(url, {
-		headers: { Accept: "application/vnd.github+json" },
-		signal: AbortSignal.timeout(timeoutMs),
-		cache: "default",
-	});
-	if (!response.ok) {
-		throw new Error("GitHub release request failed: HTTP " + response.status);
+/**
+ * Runs `fetch` with a deadline without relying on `AbortSignal.timeout`, which
+ * is absent in the CEP host Chromium versions After Effects ships. An
+ * abandoned request is aborted so a hung connection cannot outlive the check.
+ */
+const fetchWithDeadline = async (
+	url: string,
+	timeoutMs: number,
+): Promise<string> => {
+	const controller =
+		typeof AbortController === "function" ? new AbortController() : undefined;
+	let timer: ReturnType<typeof setTimeout> | undefined;
+	try {
+		const deadline = new Promise<never>((_, reject) => {
+			timer = setTimeout(() => {
+				controller?.abort();
+				reject(new Error("GitHub release request timed out"));
+			}, timeoutMs);
+		});
+		const request = fetch(url, {
+			headers: { Accept: "application/vnd.github+json" },
+			...(controller ? { signal: controller.signal } : {}),
+			cache: "default",
+		});
+		const response = await Promise.race([request, deadline]);
+		if (!response.ok) {
+			throw new Error(`GitHub release request failed: HTTP ${response.status}`);
+		}
+		return await Promise.race([response.text(), deadline]);
+	} finally {
+		if (timer !== undefined) clearTimeout(timer);
 	}
-	return response.text();
 };
 
+export const defaultFetchFeedText: FetchFeedText = fetchWithDeadline;
+
+/**
+ * The host platform of the running panel. `navigator.platform` is deprecated
+ * but is the only signal CEP exposes consistently; the user-agent string is
+ * the fallback when it is empty.
+ */
 export const detectUpdatePlatform = (): UpdatePlatform | undefined => {
 	if (typeof navigator === "undefined") return undefined;
-	if (/Win/i.test(navigator.platform)) return "windows";
-	if (/Mac/i.test(navigator.platform)) return "macos";
+	const hint = navigator.platform || navigator.userAgent || "";
+	if (/Win/i.test(hint)) return "windows";
+	if (/Mac/i.test(hint)) return "macos";
 	return undefined;
 };
 
@@ -224,9 +268,16 @@ export const checkForUpdate = async (input: {
 	const channel = input.channel ?? "stable";
 	const url = input.feedUrl ?? DEFAULT_UPDATE_FEED_URL;
 	if (!isReleaseChannel(channel) || !parseVersion(input.currentVersion)) {
-		return { status: "unavailable", reason: "invalid update channel or version" };
+		return {
+			status: "unavailable",
+			reason: "invalid update channel or version",
+		};
 	}
-	if (!/^https:\/\/api\.github\.com\/repos\/ido-bata\/ty-plus\/releases(?:\?|$)/.test(url)) {
+	if (
+		!/^https:\/\/api\.github\.com\/repos\/ido-bata\/ty-plus\/releases(?:\?|$)/.test(
+			url,
+		)
+	) {
 		return { status: "unavailable", reason: "unsupported release endpoint" };
 	}
 	let body: string;
@@ -242,10 +293,16 @@ export const checkForUpdate = async (input: {
 	try {
 		raw = JSON.parse(body) as unknown;
 	} catch {
-		return { status: "unavailable", reason: "invalid GitHub Releases response" };
+		return {
+			status: "unavailable",
+			reason: "invalid GitHub Releases response",
+		};
 	}
 	if (!Array.isArray(raw)) {
-		return { status: "unavailable", reason: "invalid GitHub Releases response" };
+		return {
+			status: "unavailable",
+			reason: "invalid GitHub Releases response",
+		};
 	}
 	const select = (releases: unknown[]): UpdateFeed[] =>
 		releases
@@ -259,32 +316,61 @@ export const checkForUpdate = async (input: {
 			)
 			.sort((a, b) => compareVersions(b.version, a.version));
 
-	let candidates = select(raw);
-	// GitHub's first release page can be saturated by Insider snapshots.
-	// Page only if no release is eligible for this channel, with a bounded
-	// number of anonymous API requests; do not loop indefinitely.
+	const pageUrl = (page: number): string => {
+		const target = new URL(url);
+		target.searchParams.set("page", String(page));
+		return target.toString();
+	};
+
+	/**
+	 * GitHub orders releases by creation time, not by version. A newer version
+	 * can therefore sit behind a hotfix of an older one, and an Insider-heavy
+	 * first page can hide the only stable release. Keep paging only while no
+	 * candidate is actually newer than what is installed, bounded to a handful
+	 * of anonymous requests so a misconfigured repository cannot loop.
+	 */
+	const best = (releases: unknown[]): UpdateFeed | undefined =>
+		select(releases)[0];
+	let candidate = best(raw);
 	let pageSize = raw.length;
-	for (let page = 2; candidates.length === 0 && pageSize === 100 && page <= 5; page += 1) {
+	for (let page = 2; page <= 5 && pageSize === 100; page += 1) {
+		if (
+			candidate !== undefined &&
+			compareVersions(candidate.version, input.currentVersion) > 0
+		) {
+			break;
+		}
 		let pageBody: string;
 		try {
 			pageBody = await (input.fetchFeedText ?? defaultFetchFeedText)(
-				DEFAULT_UPDATE_FEED_URL + "&page=" + page,
+				pageUrl(page),
 				input.timeoutMs ?? 10_000,
 			);
-			const pageData: unknown = JSON.parse(pageBody) as unknown;
-			if (!Array.isArray(pageData)) break;
-			pageSize = pageData.length;
-			candidates = select(pageData);
 		} catch {
 			break;
 		}
+		let pageData: unknown;
+		try {
+			pageData = JSON.parse(pageBody) as unknown;
+		} catch {
+			break;
+		}
+		if (!Array.isArray(pageData)) break;
+		pageSize = pageData.length;
+		const next = best(pageData);
+		if (
+			next !== undefined &&
+			(candidate === undefined ||
+				compareVersions(next.version, candidate.version) > 0)
+		) {
+			candidate = next;
+		}
 	}
-	if (candidates.length === 0) {
+	if (candidate === undefined) {
 		return { status: "unavailable", reason: "no releases for this channel" };
 	}
-	const newest = candidates[0];
-	if (compareVersions(newest.version, input.currentVersion) > 0) {
-		return { status: "update-available", feed: newest };
+	if (compareVersions(candidate.version, input.currentVersion) > 0) {
+		return { status: "update-available", feed: candidate };
 	}
 	return { status: "up-to-date" };
 };

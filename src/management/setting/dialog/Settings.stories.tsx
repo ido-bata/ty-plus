@@ -5,6 +5,7 @@ import {
 	DEFAULT_SETTINGS,
 	mergeSettings,
 	type Settings,
+	type SettingsPatch,
 } from "@/management/setting/models/settings";
 import { css } from "@/styled-system/css";
 
@@ -33,7 +34,7 @@ const smallFrameStyle = css({
 type SettingsBag = {
 	settings: Settings;
 	updateSettings: (
-		patch: Partial<Settings>,
+		patch: SettingsPatch,
 		options?: { skipPathPersist?: boolean },
 	) => void;
 	refreshPathsFromDisk: () => Promise<void>;

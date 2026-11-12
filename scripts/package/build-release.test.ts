@@ -65,16 +65,33 @@ const env = {
 };
 
 describe("plannedSteps", () => {
-	it("runs the release gate over the built bundle and has no publish step", () => {
-		const steps = plannedSteps({ productVersion: "0.10.1" });
-		expect(steps.map((s) => s.name)).toEqual([
+	it("builds the ExtendScript host before the panel that loads it", () => {
+		const plan = plannedSteps({ productVersion: "0.10.1" });
+		expect(plan.steps.map((s) => s.name)).toEqual([
+			"build:extendscript-host (panel host bundle)",
 			"build:cep (production panel trust)",
 			"verify packaged bundle (release trust)",
 			"package zip",
 			"generate release manifest (release trust)",
 		]);
+		// Regression: the pack must contain `jsx/ty-plus-host.jsx`, which only
+		// `build:extendscript-host` emits. A plan without it produced artifacts
+		// that packaged and verified but failed every host operation at runtime.
+		expect(plan.hostBundle.args).toContain("build:extendscript-host");
+		expect(plan.steps.indexOf(plan.hostBundle)).toBeLessThan(
+			plan.steps.indexOf(plan.panel),
+		);
+	});
+
+	it("exposes steps by role so a longer plan cannot shift them", () => {
+		const plan = plannedSteps({ productVersion: "0.10.1" });
+		expect(plan.verifyGate.args).toContain("--trust-mode=release");
+		expect(plan.packageZip.args).toContain("zip");
+		expect(plan.releaseManifest.args).toContain(
+			"--artifact=dist/app.ty-plus.zxp",
+		);
 		expect(
-			steps.some((s) => /gh release|publish/i.test(s.args.join(" "))),
+			plan.steps.some((s) => /gh release|publish/i.test(s.args.join(" "))),
 		).toBe(false);
 	});
 });

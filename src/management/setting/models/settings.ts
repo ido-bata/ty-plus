@@ -3,12 +3,10 @@
  */
 
 import {
-	buildReleaseChannel,
-} from "@/management/online/update/current-version";
-import {
 	isReleaseChannel,
 	type ReleaseChannel,
 } from "@/management/online/update/channel";
+import { buildReleaseChannel } from "@/management/online/update/current-version";
 
 export type Settings = {
 	version: 2;
@@ -132,7 +130,38 @@ export const coerceSettings = (v: unknown): Settings => {
 			};
 };
 
+/**
+ * A patch may update a single nested field without restating its siblings.
+ * `Partial<Settings>` is shallow, which forced every caller to spread
+ * `settings.ui` by hand; making the group levels recursively optional lets
+ * the merge do what the type already promised.
+ */
+export type SettingsPatch = {
+	[K in keyof Settings]?: Settings[K] extends object
+		? Partial<Settings[K]>
+		: Settings[K];
+};
+
+/**
+ * Applies a patch without dropping sibling fields inside a group.
+ *
+ * A shallow `{ ...current, ...patch }` replaces a whole group, so a caller
+ * that patches one `ui` field would silently reset the others (theme,
+ * language, widget colours). `undefined` still means "leave unchanged";
+ * explicit resets go through `resetSettings`/`DEFAULT_SETTINGS`.
+ */
 export const mergeSettings = (
 	current: Settings,
-	patch: Partial<Settings>,
-): Settings => coerceSettings({ ...current, ...patch });
+	patch: SettingsPatch,
+): Settings => {
+	const merged: Record<string, unknown> = { ...current };
+	for (const [key, value] of Object.entries(patch)) {
+		if (value === undefined) continue;
+		const existing = (current as Record<string, unknown>)[key];
+		merged[key] =
+			isRecord(existing) && isRecord(value)
+				? mergeRecordDefaults(existing, value)
+				: value;
+	}
+	return coerceSettings(merged);
+};

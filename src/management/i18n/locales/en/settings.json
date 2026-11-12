@@ -215,6 +215,17 @@
 		"beta": "Beta",
 		"insider": "Insider",
 		"checkNow": "Check now",
-		"browse": "Browse releases"
+		"browse": "Browse releases",
+		"installed": "Installed release",
+		"status": "Update status",
+		"detail": "Detail",
+		"description": "Updates come from official GitHub Releases. Nothing is installed automatically; local features work offline.",
+		"checking": "Checking…",
+		"notChecked": "Not checked",
+		"upToDate": "Up to date",
+		"unavailable": "Update check unavailable",
+		"available": "New version available: {{version}}",
+		"releaseNotes": "Release notes and download",
+		"channelPlaceholder": "Choose a channel"
 	}
 }

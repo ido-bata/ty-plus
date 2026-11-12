@@ -25,6 +25,7 @@
 import { createHash } from "node:crypto";
 import { existsSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
+import { assertReleaseIdentity } from "./release-version";
 
 const fail = (message: string): never => {
 	console.error(`[release-manifest] ${message}`);
@@ -52,20 +53,22 @@ if (typeof packageJson.version !== "string" || !packageJson.version) {
 }
 
 // CEP needs X.Y.Z, but preview release identity uses the full SemVer tag.
+// The channel is derived from the version, never taken from the environment
+// independently: an operator cannot label an insider build as stable.
 const releaseVersion =
 	process.env.TY_PLUS_RELEASE_VERSION?.trim() || packageJson.version;
-const releaseChannel = process.env.TY_PLUS_RELEASE_CHANNEL?.trim() || "stable";
-const match = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-(beta|insider)\.(0|[1-9]\d*))?$/.exec(
-	releaseVersion,
-);
-const coreVersion = match ? match[1] + "." + match[2] + "." + match[3] : null;
-if (!match || coreVersion !== packageJson.version) {
-	fail("TY_PLUS_RELEASE_VERSION must share package.json's numeric X.Y.Z");
+const requestedChannel = process.env.TY_PLUS_RELEASE_CHANNEL?.trim();
+let identity: ReturnType<typeof assertReleaseIdentity>;
+try {
+	identity = assertReleaseIdentity({
+		releaseVersion,
+		packageVersion: packageJson.version,
+		...(requestedChannel ? { channel: requestedChannel } : {}),
+	});
+} catch (error) {
+	fail(error instanceof Error ? error.message : String(error));
 }
-const expectedChannel = match[4] ?? "stable";
-if (releaseChannel !== expectedChannel) {
-	fail("release channel and tag disagree: expected " + expectedChannel);
-}
+const releaseChannel = identity.channel;
 
 const commitResult = Bun.spawnSync(["git", "rev-parse", "HEAD"], {
 	stdout: "pipe",

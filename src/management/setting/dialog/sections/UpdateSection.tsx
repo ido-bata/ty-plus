@@ -1,19 +1,13 @@
-import {
-	type JSX,
-	useCallback,
-	useEffect,
-	useRef,
-	useState,
-} from "react";
+import { type JSX, useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-	currentReleaseVersion,
-	buildReleaseChannel,
-} from "@/management/online/update/current-version";
 import {
 	isReleaseChannel,
 	type ReleaseChannel,
 } from "@/management/online/update/channel";
+import {
+	buildReleaseChannel,
+	currentReleaseVersion,
+} from "@/management/online/update/current-version";
 import {
 	checkForUpdate,
 	detectUpdatePlatform,
@@ -26,8 +20,8 @@ import {
 	SettingsFieldLabel,
 	SettingsGrid,
 } from "@/management/setting/dialog/layout/SettingsGrid";
-import { ListSelect } from "@/shared/component/fields/ListSelect";
 import { openUrlInDefaultBrowser } from "@/management/workspace/hooks/helpers";
+import { ListSelect } from "@/shared/component/fields/ListSelect";
 import { css } from "@/styled-system/css";
 
 const mutedTextStyle = css({
@@ -116,14 +110,14 @@ export function UpdateSection(): JSX.Element {
 	);
 
 	const label = checking
-		? "Checking…"
+		? t("updates.checking")
 		: result === null
-			? "Not checked"
+			? t("updates.notChecked")
 			: result.status === "update-available"
-				? "New version available: " + result.feed.version
+				? t("updates.available", { version: result.feed.version })
 				: result.status === "up-to-date"
-					? "Up to date"
-					: "Update check unavailable";
+					? t("updates.upToDate")
+					: t("updates.unavailable");
 
 	const tone = checking
 		? statusMutedStyle
@@ -136,25 +130,22 @@ export function UpdateSection(): JSX.Element {
 	return (
 		<SettingsGrid>
 			<SettingsField span={6}>
-				<p className={mutedTextStyle}>
-					Updates come from official GitHub Releases. Nothing is
-					installed automatically; local features work offline.
-				</p>
+				<p className={mutedTextStyle}>{t("updates.description")}</p>
 			</SettingsField>
 			<SettingsField span={3}>
 				<SettingsFieldLabel>{t("updates.channel")}</SettingsFieldLabel>
 				<ListSelect
 					options={CHANNELS.map((value) => ({
 						value,
-						label: t("updates." + value),
+						label: t(`updates.${value}`),
 					}))}
 					value={channel}
 					onChange={handleChannelChange}
-					placeholder="Choose a channel"
+					placeholder={t("updates.channelPlaceholder")}
 				/>
 			</SettingsField>
 			<SettingsField span={3}>
-				<SettingsFieldLabel>Installed release</SettingsFieldLabel>
+				<SettingsFieldLabel>{t("updates.installed")}</SettingsFieldLabel>
 				<span className={mutedTextStyle}>{currentReleaseVersion}</span>
 				<button
 					type="button"
@@ -166,11 +157,11 @@ export function UpdateSection(): JSX.Element {
 				</button>
 			</SettingsField>
 			<SettingsField span={3}>
-				<span className={mutedTextStyle}>Update status</span>
+				<span className={mutedTextStyle}>{t("updates.status")}</span>
 				<span className={tone}>{label}</span>
 			</SettingsField>
 			<SettingsField span={3}>
-				<span className={mutedTextStyle}>Detail</span>
+				<span className={mutedTextStyle}>{t("updates.detail")}</span>
 				<span className={linkRowStyle}>
 					{result?.status === "update-available" ? (
 						<button
@@ -180,7 +171,7 @@ export function UpdateSection(): JSX.Element {
 								openUrlInDefaultBrowser(result.feed.releaseNotesUrl)
 							}
 						>
-							Release notes and download
+							{t("updates.releaseNotes")}
 						</button>
 					) : (
 						<span className={mutedTextStyle}>

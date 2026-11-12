@@ -92,10 +92,13 @@ describe("coerceSettings", () => {
 		expect(result.gestures).toEqual({ anchorPoint: false, alignment: true });
 	});
 	it("preserves a stored channel and rejects invalid values", () => {
-		expect(coerceSettings({ ui: { updateChannel: "insider" } }).ui.updateChannel).toBe("insider");
-		expect(coerceSettings({ ui: { updateChannel: "unknown" } }).ui.updateChannel).toBe("stable");
+		expect(
+			coerceSettings({ ui: { updateChannel: "insider" } }).ui.updateChannel,
+		).toBe("insider");
+		expect(
+			coerceSettings({ ui: { updateChannel: "unknown" } }).ui.updateChannel,
+		).toBe("stable");
 	});
-
 });
 
 describe("mergeSettings", () => {
@@ -125,5 +128,39 @@ describe("mergeSettings", () => {
 		expect(result.gestures.anchorPoint).toBe(false);
 		expect(result.gestures.alignment).toBe(DEFAULT_SETTINGS.gestures.alignment);
 		expect(result.ui).toEqual(DEFAULT_SETTINGS.ui);
+	});
+});
+
+describe("mergeSettings", () => {
+	it("preserves sibling ui fields when a patch updates one field", () => {
+		// A partial `ui` patch must not reset theme/language: the settings file
+		// is the only durable copy, so a dropped field looks like data loss.
+		const current = coerceSettings({
+			version: 2,
+			core: { paths: { supportRoot: "/support" } },
+			ui: { language: "ja", theme: "dark" },
+		});
+		const merged = mergeSettings(current, {
+			ui: { updateChannel: "insider" },
+		});
+		expect(merged.ui.updateChannel).toBe("insider");
+		expect(merged.ui.theme).toBe("dark");
+		expect(merged.ui.language).toBe("ja");
+		expect(merged.core.paths.supportRoot).toBe("/support");
+	});
+
+	it("ignores undefined values instead of erasing the current setting", () => {
+		const merged = mergeSettings(DEFAULT_SETTINGS, {
+			ui: { theme: undefined, updateChannel: "beta" },
+		});
+		expect(merged.ui.theme).toBe(DEFAULT_SETTINGS.ui.theme);
+		expect(merged.ui.updateChannel).toBe("beta");
+	});
+
+	it("falls back to the build channel when a stored channel is unknown", () => {
+		for (const value of ["nightly", "", 0, null, true]) {
+			const coerced = coerceSettings({ ui: { updateChannel: value } });
+			expect(["stable", "beta", "insider"]).toContain(coerced.ui.updateChannel);
+		}
 	});
 });

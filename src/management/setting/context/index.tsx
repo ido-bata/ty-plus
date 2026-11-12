@@ -18,6 +18,7 @@ import {
 	DEFAULT_SETTINGS,
 	mergeSettings,
 	type Settings,
+	type SettingsPatch,
 } from "@/management/setting/models/settings";
 import { mergeSettingsPathsFromDisk } from "@/management/setting/persistence/merge-settings-paths";
 import {
@@ -33,7 +34,7 @@ type UpdateSettingsOptions = {
 type SettingsContextValue = {
 	settings: Settings;
 	updateSettings: (
-		patch: Partial<Settings>,
+		patch: SettingsPatch,
 		options?: UpdateSettingsOptions,
 	) => void;
 	refreshPathsFromDisk: () => Promise<void>;
@@ -132,7 +133,7 @@ export function SettingsProvider({
 	}, []);
 
 	const updateSettings = useCallback(
-		(patch: Partial<Settings>, _options?: UpdateSettingsOptions) => {
+		(patch: SettingsPatch, _options?: UpdateSettingsOptions) => {
 			setSettings((prev) => {
 				const updated = mergeSettings(prev, patch);
 				if (!patch.core?.paths) {

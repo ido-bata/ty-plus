@@ -17,10 +17,7 @@ export const currentVersion =
 declare const __TY_PLUS_RELEASE_VERSION__: string;
 declare const __TY_PLUS_RELEASE_CHANNEL__: string;
 
-import {
-	isReleaseChannel,
-	type ReleaseChannel,
-} from "./channel";
+import { isReleaseChannel, type ReleaseChannel } from "./channel";
 
 export const currentReleaseVersion =
 	typeof __TY_PLUS_RELEASE_VERSION__ === "string"
