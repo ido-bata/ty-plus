@@ -33,10 +33,10 @@ bun run release:candidate --channel=insider --release-version=0.10.1-insider.1
 
 | 項目 | 実測値 |
 | --- | --- |
-| sourceCommit | `4181a5015be226354b2f404b9561a438dd44e2b1` |
+| sourceCommit | `12fd5c3f791b475647339a95f7f2cad097749202` |
 | trustMode | `release` |
-| ZIP | `ty-plus-v0.10.1-insider.1-windows.zip` / sha256 `1ccb76fdd52357a89da7abb5ff260330d4e81c884bc46f86e15419c83f8eb448` / 11,026,376 bytes |
-| ZXP | `ty-plus-v0.10.1-insider.1-windows.zxp` / sha256 `548be9af769c9ea4d5054f25377e325988f86fd58d076940bfcfa6e57befc98d` / 11,044,917 bytes |
+| ZIP | `ty-plus-v0.10.1-insider.1-windows.zip` / sha256 `c40d19ecb73f825c356cbe9d192d51d9f57dafe1135b2d17b70ffbe2c4fc6705` / 11,026,376 bytes |
+| ZXP | `ty-plus-v0.10.1-insider.1-windows.zxp` / sha256 `90d02115b83d1acdf6cad21510c1a571516245b2ee2f747ea79e3751ef122b1f` / 11,044,915 bytes |
 | worker | `windows/operation-worker.exe`（PE32+ x86-64、7,907,328 bytes、sha256 `d73edf6d23c3e6890583377dbf964c02c9575ba7b1c9967eaa32b1e79d99291a`） |
 | ZXP署名 | `ZXPSignCmd -verify` → `Signature verified successfully` |
 
