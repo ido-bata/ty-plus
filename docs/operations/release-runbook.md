@@ -10,6 +10,10 @@
 - 実行環境: Bun（`mise install` 済み）、Rust toolchain（`rust-toolchain.toml` 準拠）。
 - 公開操作（GitHub Releaseの作成・push等）は **本人の明示的承認ゲート** を経る。手順内の承認チェックポイントを通さずに公開しない。
 
+## 初回公開のベースライン（#58）
+
+初回公開は **Stable `v0.10.1`**（`releaseVersion=0.10.1`、`channel=stable`、GitHub Releases `prerelease=false`）。先行実証に使った `v0.10.1-insider.1` の成果物は流用せず、最終ソースSHAから署名・検証済みのStable成果物を作り直す。既存の継続利用ZXP自己署名証明書を使用し、macOS native workerのDeveloper ID署名・公証は独立して維持する。詳細は #58。
+
 ## 1. version確定
 
 1. `package.json` の `version` はCEPの数値版 `MAJOR.MINOR.PATCH`。同じ数値版でBeta/Insiderの連番更新を行う場合、数値版は変えず配布版を別管理する。
