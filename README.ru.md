@@ -26,7 +26,7 @@ ty-plus — бесплатное CEP-расширение с открытым и
 ## Установка
 
 1. Откройте **[последний Stable-релиз](https://github.com/ido-bata/ty-plus/releases/latest)**.
-2. Скачайте `ty-plus-<version>-windows.zxp` либо `ty-plus-<version>-macos.zxp` для своей ОС.
+2. Скачайте `ty-plus-<tag>-windows.zxp` либо `ty-plus-<tag>-macos.zxp` для своей ОС.
 3. Установите ZXP с помощью совместимого с CEP установщика и перезапустите After Effects.
 4. Откройте **Window → Extensions → ty-plus**.
 
