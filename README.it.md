@@ -57,7 +57,7 @@ La prima versione Stable è il **riferimento del canale aggiornamenti**, non una
 - [Guida utente](docs/user-guide/index.md) (giapponese) · [Guida all'installazione](docs/user-guide/installation/index.md) (giapponese)
 - [Segnala bug o proponi miglioramenti](https://github.com/ido-bata/ty-plus/issues/new/choose)
 - [Come contribuire](CONTRIBUTING.md) · [Politica di sicurezza](SECURITY.md)
-- [Stato reale della CI](https://github.com/ido-bata/ty-plus/actions/workflows/ci.yml). Il badge mostra lo stato effettivo di GitHub Actions; non implica che i test siano passati. I blocchi di avvio dovuti alla fatturazione sono tracciati nella [issue #59](https://github.com/ido-bata/ty-plus/issues/59).
+- [Stato reale della CI](https://github.com/ido-bata/ty-plus/actions/workflows/ci.yml). Il badge mostra lo stato effettivo di GitHub Actions; non implica che i test siano passati. I blocchi di avvio dovuti alla fatturazione sono tracciati nella [issue #59](https://github.com/ido-bata/ty-plus/issues/61).
 
 Per lo sviluppo: `mise install`, poi `bun install --frozen-lockfile --ignore-scripts`. Vedi [Contributing](CONTRIBUTING.md).
 
