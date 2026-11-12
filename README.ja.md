@@ -57,7 +57,7 @@ ty-plusは、Adobe After Effects向けの無料・オープンソースのCEP拡
 - [ユーザーガイド](docs/user-guide/index.md) (日本語) · [インストールガイド](docs/user-guide/installation/index.md) (日本語)
 - [不具合報告・改善提案](https://github.com/ido-bata/ty-plus/issues/new/choose)
 - [開発への参加](CONTRIBUTING.md) · [セキュリティ方針](SECURITY.md)
-- [CIの実際の状態](https://github.com/ido-bata/ty-plus/actions/workflows/ci.yml). バッジはGitHub Actionsの実行結果をそのまま示すもので、テスト成功を保証する表示ではありません。請求設定によるジョブ開始前の失敗は[Issue #59](https://github.com/ido-bata/ty-plus/issues/59)で追跡しています。
+- [CIの実際の状態](https://github.com/ido-bata/ty-plus/actions/workflows/ci.yml). バッジはGitHub Actionsの実行結果をそのまま示すもので、テスト成功を保証する表示ではありません。請求設定によるジョブ開始前の失敗は[Issue #59](https://github.com/ido-bata/ty-plus/issues/61)で追跡しています。
 
 開発環境は `mise install` と `bun install --frozen-lockfile --ignore-scripts` から準備できます。詳しくは[貢献ガイド](CONTRIBUTING.md)を参照してください。
 
