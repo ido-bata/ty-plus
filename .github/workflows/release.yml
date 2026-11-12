@@ -46,6 +46,7 @@ jobs:
             rust_targets: aarch64-apple-darwin,x86_64-apple-darwin
             artifact_suffix: macos
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
 
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -128,6 +129,7 @@ jobs:
   # unsigned build and has no publish step.
   release-trust-gate-refusal:
     runs-on: macos-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
 
@@ -154,6 +156,7 @@ jobs:
   # subject remains an owner decision (#32). No publish step exists.
   release-trust-windows-candidate:
     runs-on: windows-latest
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
 
@@ -173,6 +176,23 @@ jobs:
       # install step uses `--ignore-scripts` which skips the `prepare` hook.
       - name: Generate PandaCSS runtime + styles
         run: bunx panda codegen --silent && bunx panda cssgen --silent
+
+      # The repo intentionally ignores reference/. Fetch the official signer
+      # from a pinned Adobe CEP-Resources commit and verify its Git blob hash
+      # before running it. No third-party SDK binaries are redistributed.
+      - name: Fetch pinned Adobe ZXPSignCmd
+        shell: pwsh
+        run: |
+          $directory = Join-Path $PWD "reference/Adobe-CEP/CEP-Resources/ZXPSignCMD/4.1.3/x64"
+          New-Item -ItemType Directory -Path $directory -Force | Out-Null
+          $tool = Join-Path $directory "ZXPSignCmd.exe"
+          $source = "https://raw.githubusercontent.com/Adobe-CEP/CEP-Resources/ab5e4e3e53a42fad08e1225a22a991bb1ffe73f6/ZXPSignCMD/4.1.3/x64/ZXPSignCmd.exe"
+          Invoke-WebRequest -Uri $source -OutFile $tool
+          if ((Get-Item $tool).Length -ne 4542464) { throw "Unexpected signer size" }
+          $blob = (& git hash-object $tool).Trim()
+          if ($LASTEXITCODE -ne 0 -or $blob -ne "f5df2ed805e04a4d3c6adc722f602d4df6c762f7") {
+            throw "ZXPSignCmd digest mismatch — refusing to execute"
+          }
 
       # Ephemeral mechanism-demonstration certificate: generated here, used
       # for this job's ZXP signature only, discarded with the runner. The

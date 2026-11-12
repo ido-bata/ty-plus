@@ -67,6 +67,29 @@ const pkg = JSON.parse(readFileSync("./package.json", "utf-8")) as {
 };
 const APP_VERSION = pkg.version;
 
+/**
+ * Release identity for the panel bundle.
+ *
+ * `TY_PLUS_RELEASE_VERSION` is the full SemVer release identity (e.g.
+ * `0.11.0-insider.2`); `APP_VERSION` is the numeric CEP version. The channel
+ * is always **derived from the version** rather than read from its own env
+ * var: an operator who sets only one of the two cannot then ship an insider
+ * build labelled `stable` (which the update client would compare as a
+ * downgrade and never offer). An unrecognised suffix is a build error, not a
+ * silent fallback.
+ */
+const releaseVersion = (process.env.TY_PLUS_RELEASE_VERSION ?? "").trim() || APP_VERSION;
+const releaseChannelFromVersion =
+	/(?:-(beta|insider)\.\d+)?$/.exec(releaseVersion)?.[1] ?? "stable";
+const releaseChannelEnv = (process.env.TY_PLUS_RELEASE_CHANNEL ?? "").trim();
+if (releaseChannelEnv && releaseChannelEnv !== releaseChannelFromVersion) {
+	throw new Error(
+		`[vite] TY_PLUS_RELEASE_CHANNEL=${releaseChannelEnv} disagrees with ` +
+			`TY_PLUS_RELEASE_VERSION=${releaseVersion} (${releaseChannelFromVersion})`,
+	);
+}
+const releaseChannel = releaseChannelFromVersion;
+
 const devDist = "dist";
 /** CEP bundle folder (must match `scripts/cep/install-cep-dev.ts` and packaging scripts). */
 const cepDist = "cep-dev";
@@ -118,6 +141,12 @@ const makeDefines = (): Record<string, string> => {
 
 	return {
 		__APP_VERSION__: JSON.stringify(APP_VERSION),
+		// Numeric CEP version stays independent of the SemVer GitHub tag.
+		// Both release defines are derived here, once, from the same inputs:
+		// taking the channel straight from its own env var would let a
+		// misconfigured prerelease build silently ship as `stable`.
+		__TY_PLUS_RELEASE_VERSION__: JSON.stringify(releaseVersion),
+		__TY_PLUS_RELEASE_CHANNEL__: JSON.stringify(releaseChannel),
 		__TY_PLUS_DEV_ENV__: JSON.stringify(cepDevEnv),
 		// Inline `process.env.NODE_ENV` so the existing production guards
 		// (`if (process.env.NODE_ENV === "production") return;`) get folded

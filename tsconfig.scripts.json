@@ -1,0 +1,17 @@
+{
+	"extends": "./tsconfig.json",
+	"compilerOptions": {
+		"noEmit": true,
+		"types": ["node", "bun"],
+		"skipLibCheck": true,
+		"allowImportingTsExtensions": true,
+		"strict": true
+	},
+	"include": [
+		"scripts/package/release-version.ts",
+		"scripts/package/release-manifest.ts",
+		"scripts/package/prepare-github-release.ts",
+		"scripts/package/build-github-release.ts",
+		"scripts/verify/verify-release-artifacts.ts"
+	]
+}

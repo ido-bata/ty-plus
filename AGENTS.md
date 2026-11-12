@@ -56,6 +56,7 @@ Issue本文の詳細を伝言・再定義せず、正本Issueを直接参照す�
 | estimation | agent-delivery-estimation | release計画の見積もり |
 | onboarding | onboarding | 会話履歴なしで始められるdocs整備 |
 | interaction-style | interaction-discipline | userとのやりとり、blockerの見せ方 |
+| release | release-channels | Stable/Beta/Insider候補のビルド・署名・監査・公開・復旧 |
 | workspace-lifecycle | worktree-workflow | worktreeの作成・掃除 |
 | skill-selection | skill-selection | Skill導入・更新の判断。手動起動: `.agents/skills/skill-selection/SKILL.md` |
 
