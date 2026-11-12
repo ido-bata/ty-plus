@@ -57,7 +57,7 @@ O primeiro lançamento Stable é a **base do canal de atualizações**, não uma
 - [Guia do utilizador](docs/user-guide/index.md) (japonês) · [Guia de instalação](docs/user-guide/installation/index.md) (japonês)
 - [Reportar problemas ou sugerir melhorias](https://github.com/ido-bata/ty-plus/issues/new/choose)
 - [Contribuir](CONTRIBUTING.md) · [Política de segurança](SECURITY.md)
-- [Estado real do CI](https://github.com/ido-bata/ty-plus/actions/workflows/ci.yml). O distintivo mostra o estado real do GitHub Actions e não afirma que os testes passaram. Os erros antes do início das tarefas por problemas de faturação são acompanhados na [issue #59](https://github.com/ido-bata/ty-plus/issues/59).
+- [Estado real do CI](https://github.com/ido-bata/ty-plus/actions/workflows/ci.yml). O distintivo mostra o estado real do GitHub Actions e não afirma que os testes passaram. Os erros antes do início das tarefas por problemas de faturação são acompanhados na [issue #59](https://github.com/ido-bata/ty-plus/issues/61).
 
 Para desenvolver: `mise install` e depois `bun install --frozen-lockfile --ignore-scripts`. Consulte [Contributing](CONTRIBUTING.md).
 
