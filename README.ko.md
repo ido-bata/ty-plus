@@ -57,7 +57,7 @@ ty-plus는 자주 쓰는 작업을 정리하고 작업 공간을 꾸밀 수 있�
 - [사용자 가이드](docs/user-guide/index.md) (일본어) · [설치 가이드](docs/user-guide/installation/index.md) (일본어)
 - [버그 제보 또는 개선 제안](https://github.com/ido-bata/ty-plus/issues/new/choose)
 - [기여 안내](CONTRIBUTING.md) · [보안 정책](SECURITY.md)
-- [실제 CI 상태](https://github.com/ido-bata/ty-plus/actions/workflows/ci.yml). 배지는 GitHub Actions의 실제 상태를 보여 주며 테스트 통과를 의미하지 않습니다. 결제 문제로 작업 시작 전에 실패한 사례는 [이슈 #59](https://github.com/ido-bata/ty-plus/issues/59)에서 추적합니다.
+- [실제 CI 상태](https://github.com/ido-bata/ty-plus/actions/workflows/ci.yml). 배지는 GitHub Actions의 실제 상태를 보여 주며 테스트 통과를 의미하지 않습니다. 결제 문제로 작업 시작 전에 실패한 사례는 [이슈 #59](https://github.com/ido-bata/ty-plus/issues/61)에서 추적합니다.
 
 개발 환경은 `mise install`과 `bun install --frozen-lockfile --ignore-scripts`로 준비합니다. 자세한 내용은 [기여 가이드](CONTRIBUTING.md)를 참고하세요.
 
