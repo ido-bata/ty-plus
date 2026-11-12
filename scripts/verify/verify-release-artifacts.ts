@@ -374,12 +374,20 @@ function describeInvalidSignature(signature: unknown): string | undefined {
  */
 function readInjectedBinding(bundle: string, name: string): string | undefined {
 	const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-	const pattern = new RegExp(
-		`(?:^|[^\\w$.])${escaped}\\s*=\\s*(?:"([^"]*)"|'([^']*)'|\`([^\`]*)\`)`,
+	const literal = `(?:"([^"]*)"|'([^']*)'|\`([^\`]*)\`)`;
+	const prefix = `(?:^|[^\\w$.])${escaped}\\s*=\\s*`;
+	// Direct define: `x="value"` / `x=\`value\``.
+	const direct = new RegExp(`${prefix}${literal}`).exec(bundle);
+	// Minified guard: the runtime validator folds the define into
+	// `x=isReleaseChannel(\`value\`)?\`value\`:\`stable\``, so the value is the
+	// validator's argument rather than the assignment's right-hand side.
+	const guarded = new RegExp(`${prefix}isReleaseChannel\\(\\s*${literal}`).exec(
+		bundle,
 	);
-	const match = pattern.exec(bundle);
+	const match = direct ?? guarded;
 	if (!match) return undefined;
-	return match[1] ?? match[2] ?? match[3];
+	const values = match.slice(1, 4).filter((v): v is string => v !== undefined);
+	return values[0];
 }
 
 /**

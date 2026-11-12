@@ -221,6 +221,26 @@ describe("release artifact audit", () => {
 		expect(audit().channel).toBe("beta");
 	});
 
+	it("reads the channel from the minified validator guard", () => {
+		// Real Vite output folds the define into a call:
+		//   buildReleaseChannel=isReleaseChannel(`insider`)?`insider`:`stable`
+		// which is neither a plain literal nor a bare identifier.
+		packedExtension(
+			"assets/style.aaaa.cjs",
+			"const isReleaseChannel=n=>n===`stable`||n===`beta`||n===`insider`," +
+				"currentReleaseVersion=`0.11.0-insider.1`," +
+				"buildReleaseChannel=isReleaseChannel(`insider`)?`insider`:`stable`;",
+		);
+		// The fixture's CEP manifest advertises 0.11.0, so the base version
+		// and the release identity must share that numeric core.
+		const result = audit({
+			version: "0.11.0",
+			releaseVersion: "0.11.0-insider.1",
+			channel: "insider",
+		});
+		expect(result.channel).toBe("insider");
+	});
+
 	it("rejects a pack with no update contract at all", () => {
 		packedExtension("assets/js/modeless.entry.cjs", "// nothing to see");
 		const failures = failuresOf(() => audit());
