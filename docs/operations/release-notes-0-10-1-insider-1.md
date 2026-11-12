@@ -38,7 +38,8 @@ ZIPは手動設置・検証用です。ZIP内のCEP拡張はZXP署名の恩恵�
 ## 既知の制約
 
 - 署名済みZXPは継続利用する自己署名証明書で署名しています（発行者表示は検証されません）。将来の更新でも同じ主体を維持します（`docs/operations/zxp-signing-identity.md`）。
-- Windows版は未署名workerのため、Smart App Control有効環境では動作しません。
+- Windows版は未署名workerのため、Smart App Control 有効環境では動作しません。
+- **Windows実機での起動確認は未実施です**（ビルド・監査・署名検証は完了しています）。不具合があれば `docs/user-guide/` の不具合報告手順で知らせてください。
 - macOS版は本リリースに含みません（公証未設定）。
 - 自動更新は行いません。更新確認はGitHub Releases APIへの読み取りのみで、ダウンロード・インストールは手動です。
 
