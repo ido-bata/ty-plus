@@ -2,7 +2,10 @@
 	"extends": "./tsconfig.json",
 	"compilerOptions": {
 		"noEmit": true,
-		"types": ["node", "bun"],
+		"types": [
+			"node",
+			"bun"
+		],
 		"skipLibCheck": true,
 		"allowImportingTsExtensions": true,
 		"strict": true
@@ -12,6 +15,9 @@
 		"scripts/package/release-manifest.ts",
 		"scripts/package/prepare-github-release.ts",
 		"scripts/package/build-github-release.ts",
-		"scripts/verify/verify-release-artifacts.ts"
+		"scripts/verify/verify-release-artifacts.ts",
+		"scripts/verify/device-smoke.ts",
+		"scripts/verify/device-smoke-cdp.ts",
+		"scripts/package/build-platform.ts"
 	]
 }
