@@ -26,7 +26,7 @@ ty-plus turns part of your After Effects workspace into a customizable home for 
 ## Install
 
 1. Open **[the latest Stable release](https://github.com/ido-bata/ty-plus/releases/latest)**.
-2. Download `ty-plus-<version>-windows.zxp` or `ty-plus-<version>-macos.zxp` for your operating system.
+2. Download `ty-plus-<tag>-windows.zxp` or `ty-plus-<tag>-macos.zxp` for your operating system.
 3. Install the ZXP using a CEP-compatible ZXP installer, then restart Adobe After Effects.
 4. Open **Window → Extensions → ty-plus**.
 
