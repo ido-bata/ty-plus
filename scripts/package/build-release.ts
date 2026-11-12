@@ -220,7 +220,11 @@ export const runReleaseBuild = async (
 					)) {
 						runSign(args);
 					}
-					return extractSignatureEvidence(platform, stagedPath);
+					// `spctl` only passes for a notarized binary; require it only
+					// when a notary profile is actually configured (ADR-0003 Amd 1).
+					return extractSignatureEvidence(platform, stagedPath, undefined, {
+						requireNotarization: Boolean(signConfig?.notaryProfile),
+					});
 				},
 	);
 

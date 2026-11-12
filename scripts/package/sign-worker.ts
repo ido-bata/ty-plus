@@ -100,13 +100,11 @@ export const resolveSignWorkerConfig = (
 			`[sign-worker] TY_PLUS_SIGN_IDENTITY must be a "Developer ID Application" identity, got: ${macIdentity}`,
 		);
 	}
+	// Notarization is optional (ADR-0003 Amendment 1, owner decision
+	// 2026-11-12): the Developer ID signature alone is the release evidence.
+	// `spctl` remains load-bearing only when a notary profile is configured.
+	// Codesigning itself is still mandatory — a missing identity refuses above.
 	const notaryProfile = pick(env.TY_PLUS_NOTARY_PROFILE);
-	if (!notaryProfile) {
-		throw new Error(
-			"[sign-worker] macOS notarization is not configured: set TY_PLUS_NOTARY_PROFILE to a notarytool keychain profile. " +
-				"An unstapled Developer ID signature is not distribution evidence — this build refuses to continue.",
-		);
-	}
 	return { platform, macIdentity, notaryProfile, timestampUrl, signToolPath };
 };
 
@@ -201,8 +199,14 @@ export const buildSignPlan = (
 	if (config.platform === "windows") {
 		return [buildWindowsSignArgs(config, binaryPath)];
 	}
+	const sign = buildMacSignArgs(config, binaryPath);
+	// Without a notary profile the signature is the whole evidence chain: sign,
+	// verify locally, and ship (ADR-0003 Amendment 1).
+	if (!config.notaryProfile) {
+		return [sign, ["codesign", "--verify", "--strict", "--verbose=2", binaryPath]];
+	}
 	return [
-		buildMacSignArgs(config, binaryPath),
+		sign,
 		// zip -y keeps symlinks; the archive holds exactly one file.
 		["zip", "-j", "-y", submissionZipPath, binaryPath],
 		[
@@ -211,7 +215,7 @@ export const buildSignPlan = (
 			"submit",
 			submissionZipPath,
 			"--keychain-profile",
-			config.notaryProfile ?? "",
+			config.notaryProfile,
 			"--wait",
 		],
 	];

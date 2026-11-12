@@ -37,3 +37,17 @@ release-trustの署名要件をplatform非対称にする:
 - 実装側の型契約: release trustの署名blockをoptionalにし、要件はplatform別のvalidationが強制する（型レベルの保証をvalidationへ移す — ADR本文に記録）。
 - 将来Authenticodeを採用する場合: 署名blockの書き込み経路（`buildReleaseWorker` のsign hook + `signature-evidence.ts`）は既に実装済みで、証明書の設定のみで有効化できる（R0の実行経路・CI・リリース判定を妨げない）。
 - **release manifestのplatform契約**: 配布zipが運ぶmanifestは、その配布が同梱するplatformのentryのみを持つ（per-platform buildの実出力）。runtimeのrelease pathは「存在するentryの検証」に変え、両platformの同梱を要求しない（`assertPairedArtifacts` → `assertReleaseArtifacts`）。この変更がないと、verify gateがPASSしてもruntimeが起動を拒否する（gate/runtimeの乖離 — 実機で初回起動が必ず失敗する欠陥を事前に発見）。
+
+## Amendment 1（2026-11-12 本人決定）: macOS公証をR0の要件から外す
+
+初回Stable `v0.10.1` の準備中、本人が **「公証は不要。Windows/macOSを同時に出す」** と決定した。これにより上表のmacOS要件を次のとおり改める。
+
+| platform | worker binary | manifest署名block | 整合性の保証 |
+| --- | --- | --- | --- |
+| macOS | codesign（Developer ID Application）— **公証は行わない** | **必須** | OS署名 + sha256 |
+| Windows | 未署名を許容（R0） | 任意（存在すれば検証） | sha256 + manifest束縛 |
+
+- **理由**: Apple Developer Programの公証資格情報を用意しない運用判断。Developer ID署名は既存資産で実施でき、改ざん検知と発行元identity（Team ID）は署名で確保される。公証はGatekeeperの初回起動体験を改善するが、拡張の真正性判定を置き換えるものではない。
+- **受容する制約（隠さない）**: 未公証のworker binaryは、Gatekeeperが隔離属性付きで評価した場合に `spctl --assess` で `rejected (Unnotarized Developer ID)` となる。CEP拡張内のworkerは通常ブラウザ経由のquarantineを受けないが、`xattr -w com.apple.quarantine` 等で隔離された場合や、macOSのポリシー変更時には初回起動が拒否され得る。この制約は `docs/architecture/distribution.md` と リリースノートに記載する。
+- **fail-closed契約の変更点は1つだけ**: release trustの根拠を「`spctl` が受理した」から「`codesign --verify --strict` が通り、Developer ID identityとCDHash・証明書fingerprintが読み戻せた」へ変える。**署名なし・アドホック署名・自己署名は引き続き拒否する**（未署名をPASSにしない）。
+- **将来公証を有効化する場合**: `TY_PLUS_NOTARY_PROFILE` を設定すれば、既存の `notarytool` 経路（zip提出 + `spctl` 検証）がそのまま使える。コード変更は不要で、`RELEASE_REQUIRE_NOTARIZATION` を真にすることで `spctl` 要件を戻せる。

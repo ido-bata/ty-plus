@@ -71,12 +71,40 @@ describe("resolveSignWorkerConfig", () => {
 		).toThrow(/Developer ID Application/);
 	});
 
-	it("requires a notarization profile for macOS", () => {
-		expect(() =>
-			resolveSignWorkerConfig("macos", {
-				TY_PLUS_SIGN_IDENTITY: "Developer ID Application: Ty Plus (TEAM)",
-			}),
-		).toThrow(/notarytool keychain profile/);
+	it("accepts macOS signing without a notarization profile (ADR-0003 Amendment 1)", () => {
+		// The owner decided notarization is not an R0 requirement: the Developer
+		// ID signature is the evidence chain. Signing must work without it.
+		const config = resolveSignWorkerConfig("macos", {
+			TY_PLUS_SIGN_IDENTITY: "Developer ID Application: Ty Plus (TEAM)",
+		});
+		expect(config.macIdentity).toBe("Developer ID Application: Ty Plus (TEAM)");
+		expect(config.notaryProfile).toBeUndefined();
+	});
+
+	it("still refuses macOS signing with no Developer ID identity", () => {
+		// Notarization being optional must not make signing optional.
+		expect(() => resolveSignWorkerConfig("macos", {})).toThrow(
+			/Developer ID Application/,
+		);
+	});
+
+	it("plans no notarization submission without a profile", () => {
+		const config = resolveSignWorkerConfig("macos", {
+			TY_PLUS_SIGN_IDENTITY: "Developer ID Application: Ty Plus (TEAM)",
+		});
+		const plan = buildSignPlan(config, "/tmp/worker", "/tmp/worker.zip");
+		expect(plan.some((args) => args.includes("notarytool"))).toBe(false);
+		// Signature verification is still part of the plan.
+		expect(plan.some((args) => args.includes("--verify"))).toBe(true);
+	});
+
+	it("includes the notarization submission when a profile is configured", () => {
+		const config = resolveSignWorkerConfig("macos", {
+			TY_PLUS_SIGN_IDENTITY: "Developer ID Application: Ty Plus (TEAM)",
+			TY_PLUS_NOTARY_PROFILE: "ty-plus-notary",
+		});
+		const plan = buildSignPlan(config, "/tmp/worker", "/tmp/worker.zip");
+		expect(plan.some((args) => args.includes("notarytool"))).toBe(true);
 	});
 });
 

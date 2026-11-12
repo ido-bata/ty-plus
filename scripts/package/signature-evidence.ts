@@ -17,7 +17,7 @@
  */
 
 import { spawnSync } from "node:child_process";
-import { mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { mkdtempSync, readdirSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import type { ArtifactSignature } from "../../src/management/ipc/operation-worker-binary";
@@ -153,6 +153,7 @@ const extractAuthenticodeEvidence = (
 const extractCodesignEvidence = (
 	binaryPath: string,
 	run: RunCommand,
+	options: { readonly requireNotarization: boolean },
 ): ArtifactSignature => {
 	// -dvvv: CDHash is only printed from the third verbosity level on.
 	const detail = run(["codesign", "-dvvv", binaryPath]);
@@ -168,7 +169,15 @@ const extractCodesignEvidence = (
 			`codesign --verify --strict failed (exit ${strict.status}): ${strict.stdout.trim() || "no output"}`,
 		);
 	}
-	assertGatekeeperAccepts(run(["spctl", "--assess", "--type", "execute", binaryPath]));
+	// Notarization is optional (ADR-0003 Amendment 1). `spctl` only passes for a
+	// notarized binary, so it is load-bearing exactly when the caller expects
+	// notarization; otherwise the Developer ID signature + strict verification
+	// above is the evidence. An unsigned or ad-hoc binary still fails there.
+	if (options.requireNotarization) {
+		assertGatekeeperAccepts(
+			run(["spctl", "--assess", "--type", "execute", binaryPath]),
+		);
+	}
 	return {
 		algorithm: "codesign",
 		value: cdHash,
@@ -183,9 +192,11 @@ const extractCodesignEvidence = (
  * different, non-standard value.
  */
 const leafCertificateSha256 = (run: RunCommand, binaryPath: string): string => {
-	// Synchronous extraction into a throwaway directory: `codesign -d
-	// --extract-certificates` writes PEM files into its cwd, and the leaf is
-	// `codesigncert0.pem`.
+	// Synchronous extraction into a throwaway directory. `codesign -d
+	// --extract-certificates` writes the chain into its cwd: the leaf is the
+	// first certificate, named `codesign0` on current macOS (older/other
+	// builds used `codesigncert0.pem`). The bytes are already DER, so hash them
+	// directly — decoding as PEM would either fail or hash a re-encoded copy.
 	const workRoot = mkdtempSync(path.join(tmpdir(), "ty-plus-certs-"));
 	try {
 		const r = run(["codesign", "-d", "--extract-certificates", binaryPath], {
@@ -194,7 +205,22 @@ const leafCertificateSha256 = (run: RunCommand, binaryPath: string): string => {
 		if (r.status !== 0) {
 			return fail("codesign could not extract the signing certificate");
 		}
-		return sha256Hex(pemToDer(readFileSync(path.join(workRoot, "codesigncert0.pem"), "utf8")));
+		const leaf = readdirSync(workRoot)
+			.filter((name) => /^codesign(cert)?0(\.pem)?$/.test(name))
+			.sort()[0];
+		if (!leaf) {
+			return fail(
+				`codesign wrote no leaf certificate (found: ${readdirSync(workRoot).join(", ") || "nothing"})`,
+			);
+		}
+		const bytes = readFileSync(path.join(workRoot, leaf));
+		// A PEM-encoded leaf would contain a CERTIFICATE block; DER starts with
+		// an ASN.1 SEQUENCE. Handle both so the fingerprint is always over DER.
+		const text = bytes.toString("utf8");
+		const der = text.includes("-----BEGIN CERTIFICATE-----")
+			? pemToDer(text)
+			: bytes;
+		return sha256Hex(der);
 	} finally {
 		rmSync(workRoot, { recursive: true, force: true });
 	}
@@ -220,6 +246,7 @@ export const extractSignatureEvidence = (
 	platform: SignaturePlatform,
 	rawBinaryPath: string,
 	run: RunCommand = defaultRunCommand,
+	options: { readonly requireNotarization?: boolean } = {},
 ): ArtifactSignature => {
 	// Absolute from the start: the certificate extraction switches cwd, and a
 	// relative binary path would silently point elsewhere there.
@@ -227,5 +254,7 @@ export const extractSignatureEvidence = (
 	if (platform === "windows") {
 		return extractAuthenticodeEvidence(binaryPath, run);
 	}
-	return extractCodesignEvidence(binaryPath, run);
+	return extractCodesignEvidence(binaryPath, run, {
+		requireNotarization: Boolean(options.requireNotarization),
+	});
 };
