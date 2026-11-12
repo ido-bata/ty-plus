@@ -19,6 +19,7 @@ R0の更新情報と配布物の正本は**同一リポジトリのGitHub Releas
 - URLは`github.com/ido-bata/ty-plus/releases/tag/<tag>`の公式リリースページに限定する。アプリは自動ダウンロード/実行/インストールを行わない。
 - Settingsの選択値は既存のfile-backed settingsに保存し、旧形式のsettingsは初期channelへ移行する。
 - ネットワーク不達、GitHub APIの制限、invalid releaseは更新チェックだけ`unavailable`になり、ローカル機能は使い続けられる。HTTPキャッシュを利用し、起動ごとの連続ポーリングをしない。
+- GitHubはreleaseを**作成日時順**で返すため、古い版のhotfixが新しい版より前に来る。クライアントは最新候補が更新対象より新しくなるまで、またはpageが満杯でなくなるまでページを進める。匿名APIのrate limitを守るため**最大5ページ**で打ち切る。6ページ目以降にしか存在しない最新版は検出しない（既知の制約。`docs/architecture/feeds.md`）。
 - 現repoはprivateであり、匿名APIの結果は404。公開前の検証ではfixtureを使用し、ユーザーのGitHubアクセストークンをCEPのコードやconfigへ埋め込まない。
 - 後日の別インストール経路は配布先アダプタの追加で対応する。チャンネルは配布先を意味しない。
 

@@ -68,16 +68,18 @@ beforeEach(() => {
 		"CSXS/manifest.xml",
 		'<ExtensionManifest ExtensionBundleVersion="0.11.0" />',
 	);
-	// Mirrors what Vite actually emits: the schema literal sits in the
-	// lazily-loaded entry, and the injected identity sits in a shared chunk.
-	// Channel literals are template strings after minification.
+	// Mirrors what Vite actually emits. The channel guard contains all three
+	// channel literals, so a substring-based check could never fail; the
+	// identity is a distinct injected binding.
 	packedExtension(
 		"assets/js/modeless.entry.cjs",
 		'const schema="ty-plus.github-releases/1";',
 	);
 	packedExtension(
 		"assets/style.aaaa.cjs",
-		"const currentReleaseVersion=`0.11.0-beta.1`,buildReleaseChannel=`beta`;",
+		"const isReleaseChannel=n=>n===`stable`||n===`beta`||n===`insider`," +
+			"appVersion=`0.11.0`,currentReleaseVersion=`0.11.0-beta.1`," +
+			"buildReleaseChannel=`beta`;",
 	);
 });
 
@@ -85,8 +87,29 @@ afterEach(() => {
 	rmSync(root, { recursive: true, force: true });
 });
 
+const validSignature = {
+	algorithm: "codesign",
+	value: "c".repeat(40),
+	certificateSha256: "d".repeat(64),
+};
+
+/**
+ * Baseline input with all evidence present, so each case can vary exactly one
+ * thing. Publication now requires ZXP + worker evidence, so a helper that
+ * omitted them would test a state that can never pass.
+ */
+const auditInput = (overrides: Partial<ReleaseManifest> = {}) => ({
+	distRoot,
+	packRoot,
+	manifest: manifest(overrides),
+	head,
+	verifyZxpSignature: () => undefined,
+	workerTrust: { mode: "release", signatures: { macos: validSignature } },
+	unsignedWorkerPlatforms: ["windows"] as const,
+});
+
 const audit = (overrides: Partial<ReleaseManifest> = {}) =>
-	auditReleaseArtifacts({ distRoot, packRoot, manifest: manifest(overrides), head });
+	auditReleaseArtifacts(auditInput(overrides));
 
 const failuresOf = (fn: () => unknown): readonly string[] => {
 	try {
@@ -158,26 +181,42 @@ describe("release artifact audit", () => {
 	it("rejects a panel bundle that does not embed the release version", () => {
 		packedExtension(
 			"assets/style.aaaa.cjs",
-			"const currentReleaseVersion=`0.10.0`,buildReleaseChannel=`beta`;",
+			"const isReleaseChannel=n=>n===`stable`," +
+				"appVersion=`0.11.0`,currentReleaseVersion=`0.10.0`," +
+				"buildReleaseChannel=`beta`;",
 		);
 		const failures = failuresOf(() => audit());
-		expect(failures.join("\n")).toMatch(/does not embed release version/);
+		expect(failures.join("\n")).toMatch(/embeds release version 0\.10\.0/);
 	});
 
-	it("rejects a panel bundle that does not embed the channel", () => {
+	it("rejects a panel bundle that drifted to another channel", () => {
+		// Regression: the channel guard contains every channel literal, so a
+		// substring search accepted an insider-labelled stable release.
 		packedExtension(
 			"assets/style.aaaa.cjs",
-			"const currentReleaseVersion=`0.11.0-beta.1`,buildReleaseChannel=`stable`;",
+			"const isReleaseChannel=n=>n===`stable`||n===`beta`||n===`insider`," +
+				"appVersion=`0.11.0`,currentReleaseVersion=`0.11.0-beta.1`," +
+				"buildReleaseChannel=`insider`;",
 		);
 		const failures = failuresOf(() => audit());
-		expect(failures.join("\n")).toMatch(/does not embed release channel/);
+		expect(failures.join("\n")).toMatch(/embeds release channel insider/);
+	});
+
+	it("rejects a panel bundle with no injected identity at all", () => {
+		packedExtension(
+			"assets/style.aaaa.cjs",
+			"const isReleaseChannel=n=>n===`stable`||n===`beta`||n===`insider`;",
+		);
+		const failures = failuresOf(() => audit());
+		expect(failures.join("\n")).toMatch(/embeds release version undefined/);
 	});
 
 	it("accepts the quoted channel form as well as the template form", () => {
 		// A non-minified or differently-configured build emits "beta".
 		packedExtension(
 			"assets/style.aaaa.cjs",
-			'const currentReleaseVersion="0.11.0-beta.1",buildReleaseChannel="beta";',
+			'const appVersion="0.11.0",currentReleaseVersion="0.11.0-beta.1",' +
+				'buildReleaseChannel="beta";',
 		);
 		expect(audit().channel).toBe("beta");
 	});
@@ -223,13 +262,7 @@ describe("release artifact audit", () => {
 	});
 
 	it("accepts a verified ZXP signature", () => {
-		const result = auditReleaseArtifacts({
-			distRoot,
-			packRoot,
-			manifest: manifest(),
-			head,
-			verifyZxpSignature: () => undefined,
-		});
+		const result = auditReleaseArtifacts(auditInput());
 		expect(result.artifacts).toBe(2);
 	});
 
@@ -246,6 +279,73 @@ describe("release artifact audit", () => {
 		expect(failures.join("\n")).toMatch(/trust mode development-unsigned/);
 	});
 
+	it("rejects a ZIP-only release as not installable", () => {
+		const zipOnly = { ...manifest() };
+		zipOnly.artifacts = [artifact("app.ty-plus.zip")] as never;
+		const failures = failuresOf(() =>
+			auditReleaseArtifacts({
+				distRoot,
+				packRoot,
+				manifest: zipOnly,
+				head,
+				verifyZxpSignature: () => undefined,
+				workerTrust: { mode: "release", signatures: { macos: validSignature } },
+			}),
+		);
+		expect(failures.join("\n")).toMatch(/no \.zxp artifact/);
+	});
+
+	it("rejects a manifest that omits the worker signature evidence", () => {
+		// Fail-open regression: omitting the worker manifest used to skip every
+		// evidence check and still report OK.
+		const failures = failuresOf(() =>
+			auditReleaseArtifacts({
+				distRoot,
+				packRoot,
+				manifest: manifest(),
+				head,
+				verifyZxpSignature: () => undefined,
+			}),
+		);
+		expect(failures.join("\n")).toMatch(/worker manifest is missing/);
+	});
+
+	it("rejects an empty signature object instead of treating it as evidence", () => {
+		for (const signature of [
+			{},
+			null,
+			{ algorithm: "codesign" },
+			{ algorithm: "codesign", value: "  ", certificateSha256: "z".repeat(64) },
+			{ algorithm: "unknown", value: "v", certificateSha256: "a".repeat(64) },
+		]) {
+			const failures = failuresOf(() =>
+				auditReleaseArtifacts({
+					distRoot,
+					packRoot,
+					manifest: manifest(),
+					head,
+					verifyZxpSignature: () => undefined,
+					workerTrust: { mode: "release", signatures: { macos: signature } },
+				}),
+			);
+			expect(failures.length).toBeGreaterThan(0);
+		}
+	});
+
+	it("rejects a worker manifest that declares no platform", () => {
+		const failures = failuresOf(() =>
+			auditReleaseArtifacts({
+				distRoot,
+				packRoot,
+				manifest: manifest(),
+				head,
+				verifyZxpSignature: () => undefined,
+				workerTrust: { mode: "release", signatures: {} },
+			}),
+		);
+		expect(failures.join("\n")).toMatch(/declares no platform/);
+	});
+
 	it("requires signature evidence on every non-allowlisted worker", () => {
 		const failures = failuresOf(() =>
 			auditReleaseArtifacts({
@@ -253,6 +353,7 @@ describe("release artifact audit", () => {
 				packRoot,
 				manifest: manifest(),
 				head,
+				verifyZxpSignature: () => undefined,
 				workerTrust: { mode: "release", signatures: { macos: undefined } },
 				unsignedWorkerPlatforms: ["windows"],
 			}),
@@ -269,9 +370,10 @@ describe("release artifact audit", () => {
 				packRoot,
 				manifest: manifest(),
 				head,
+				verifyZxpSignature: () => undefined,
 				workerTrust: {
 					mode: "release",
-					signatures: { windows: undefined, macos: { algorithm: "codesign" } },
+					signatures: { windows: undefined, macos: validSignature },
 				},
 				unsignedWorkerPlatforms: ["windows"],
 			}).artifacts,

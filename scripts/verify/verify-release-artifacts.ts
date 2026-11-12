@@ -207,15 +207,21 @@ export const auditReleaseArtifacts = (
 						"the packaged panel cannot check for updates",
 				);
 			}
-			if (!embedded.includes(releaseVersion.releaseVersion)) {
+			// Anchor on the injected *bindings*, never bare substrings: the
+			// channel names also appear in `isReleaseChannel`'s guard for all
+			// three channels, and the CEP version also appears in unrelated
+			// literals, so a substring search can never fail on a real bundle.
+			const version = readInjectedBinding(embedded, "currentReleaseVersion");
+			if (version !== releaseVersion.releaseVersion) {
 				failures.push(
-					`the packaged panel does not embed release version ${releaseVersion.releaseVersion} — ` +
+					`the packaged panel embeds release version ${String(version)}, expected ${releaseVersion.releaseVersion} — ` +
 						"build with TY_PLUS_RELEASE_VERSION set to the tag you are releasing",
 				);
 			}
-			if (!includesChannelLiteral(embedded, releaseVersion.channel)) {
+			const channel = readInjectedBinding(embedded, "buildReleaseChannel");
+			if (channel !== releaseVersion.channel) {
 				failures.push(
-					`the packaged panel does not embed release channel ${releaseVersion.channel} — ` +
+					`the packaged panel embeds release channel ${String(channel)}, expected ${releaseVersion.channel} — ` +
 						"build with TY_PLUS_RELEASE_CHANNEL set to the tag's channel",
 				);
 			}
@@ -235,12 +241,26 @@ export const auditReleaseArtifacts = (
 	// chains at publication time, because the artifact can be swapped after
 	// the build that signed it: a hash-consistent replacement would otherwise
 	// sail through this audit.
+	//
+	// Missing evidence is a failure, not a skip. A manifest that simply omits
+	// its ZXP or its worker manifest must not be certifiable, or the audit
+	// reduces to "the JSON said release".
 	const zxpArtifact = (manifest.artifacts ?? []).find((a) =>
 		String(a.file).endsWith(".zxp"),
 	);
-	if (zxpArtifact && input.verifyZxpSignature) {
+	if (!zxpArtifact) {
+		failures.push(
+			"the release manifest lists no .zxp artifact — a ZIP-only release is not installable",
+		);
+	} else {
 		const zxpPath = path.join(input.distRoot, String(zxpArtifact.file));
-		if (existsSync(zxpPath)) {
+		if (!existsSync(zxpPath)) {
+			failures.push(`${String(zxpArtifact.file)}: missing from dist`);
+		} else if (!input.verifyZxpSignature) {
+			failures.push(
+				"the ZXP signature was not verified — publication requires signature evidence",
+			);
+		} else {
 			try {
 				input.verifyZxpSignature(zxpPath);
 			} catch (error) {
@@ -253,22 +273,32 @@ export const auditReleaseArtifacts = (
 		}
 	}
 
-	if (input.workerTrust) {
+	// The worker manifest is the only place the OS signature evidence lives.
+	// Absent, unreadable, or non-release trust all block publication.
+	if (!input.workerTrust) {
+		failures.push(
+			"the built worker manifest is missing — worker signature evidence cannot be audited",
+		);
+	} else {
 		if (input.workerTrust.mode !== "release") {
 			failures.push(
 				`the worker manifest declares trust mode ${String(input.workerTrust.mode)}, expected "release"`,
 			);
 		}
+		const signatures = input.workerTrust.signatures ?? {};
+		const platforms = Object.keys(signatures);
+		if (platforms.length === 0) {
+			failures.push(
+				"the built worker manifest declares no platform — no worker is shipping",
+			);
+		}
 		// Windows is legitimately unsigned in R0 (ADR-0003); every other
 		// platform must carry signature evidence before it may be published.
-		for (const [platform, signature] of Object.entries(
-			input.workerTrust.signatures ?? {},
-		)) {
+		for (const [platform, signature] of Object.entries(signatures)) {
 			if ((input.unsignedWorkerPlatforms ?? []).includes(platform)) continue;
-			if (signature === undefined || signature === null) {
-				failures.push(
-					`the ${platform} worker has no OS signature evidence but is not on the unsigned-platform allowlist`,
-				);
+			const problem = describeInvalidSignature(signature);
+			if (problem) {
+				failures.push(`the ${platform} worker ${problem}`);
 			}
 		}
 	}
@@ -302,36 +332,87 @@ function collectPanelBundles(extensionRoot: string): string[] {
 }
 
 /**
- * Matches a channel literal in the forms the bundler can emit: a plain string
- * (`"beta"`, `'beta'`) or a template literal (`` `beta` ``). Comparing against
- * one quoting style reported a false failure on every real build.
+ * Mirrors the build-time release-trust guard (`operation-worker-update.ts`):
+ * a signature block only counts when it names a real algorithm, carries a
+ * value, and pins a 64-hex certificate fingerprint. Anything else — including
+ * `{}` — is not evidence.
  */
-function includesChannelLiteral(bundle: string, channel: string): boolean {
-	return (
-		bundle.includes(`"${channel}"`) ||
-		bundle.includes(`'${channel}'`) ||
-		bundle.includes(`\`${channel}\``)
+function describeInvalidSignature(signature: unknown): string | undefined {
+	if (signature === undefined || signature === null) {
+		return "has no OS signature evidence but is not on the unsigned-platform allowlist";
+	}
+	if (typeof signature !== "object" || Array.isArray(signature)) {
+		return "has malformed OS signature evidence";
+	}
+	const record = signature as Record<string, unknown>;
+	const algorithm = record.algorithm;
+	const value = record.value;
+	const certificateSha256 = record.certificateSha256;
+	if (algorithm !== "authenticode" && algorithm !== "codesign") {
+		return "has OS signature evidence with no recognised algorithm";
+	}
+	if (typeof value !== "string" || value.trim().length === 0) {
+		return "has OS signature evidence with an empty signature value";
+	}
+	if (
+		typeof certificateSha256 !== "string" ||
+		!/^[a-fA-F0-9]{64}$/.test(certificateSha256)
+	) {
+		return "has OS signature evidence without a 64-hex certificate fingerprint";
+	}
+	return undefined;
+}
+
+/**
+ * Reads an injected Vite define (`currentReleaseVersion=…`) out of a bundle.
+ *
+ * Vite emits `name=[string]`, `name:'string'` or `name:`string``, sometimes
+ * inside an export or destructuring. Matching the **binding** rather than a
+ * bare literal is what makes the check load-bearing: the bare channel names
+ * also occur in `isReleaseChannel`'s three-way guard, so a substring search
+ * accepted every channel on a real build.
+ */
+function readInjectedBinding(bundle: string, name: string): string | undefined {
+	const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+	const pattern = new RegExp(
+		`(?:^|[^\\w$.])${escaped}\\s*=\\s*(?:"([^"]*)"|'([^']*)'|\`([^\`]*)\`)`,
 	);
+	const match = pattern.exec(bundle);
+	if (!match) return undefined;
+	return match[1] ?? match[2] ?? match[3];
 }
 
 /**
  * Verifies the ZXP's embedded Adobe signature with `ZXPSignCmd -verify`.
  *
- * The release pipeline already does this at build time; repeating it at audit
- * time means a swapped artifact cannot inherit the earlier verdict. The signer
- * is the one configured for release builds (`ZXP_SIGN_CMD`, or the pinned
- * Adobe binary), never a self-signed fallback.
+ * Verification does not use the certificate or its password, so this must not
+ * demand them: an auditor on another machine has neither and should still be
+ * able to check the artifact. Repeating the check at audit time means a
+ * swapped artifact cannot inherit the earlier build's verdict.
+ *
+ * A missing signer binary is reported as a distinct error: it means "this
+ * machine cannot audit", not "the signature is bad".
  */
 const verifyReleaseZxpSignature = (zxpPath: string): void => {
 	const signCommand = resolveSignZxpConfig({
 		...process.env,
-		ZXP_CERT_PASSWORD: process.env.TY_PLUS_ZXP_CERT_PASSWORD ?? "",
+		// Any non-empty placeholder: only the binary path is read here.
+		ZXP_CERT_PASSWORD: process.env.TY_PLUS_ZXP_CERT_PASSWORD ?? "unused",
 		ZXP_SIGN_OUTPUT: zxpPath,
 	}).signCmd;
-	const result = Bun.spawnSync([signCommand, "-verify", zxpPath], {
-		stdout: "pipe",
-		stderr: "pipe",
-	});
+	let result: ReturnType<typeof Bun.spawnSync>;
+	try {
+		result = Bun.spawnSync([signCommand, "-verify", zxpPath], {
+			stdout: "pipe",
+			stderr: "pipe",
+		});
+	} catch (error) {
+		throw new Error(
+			`cannot run ZXPSignCmd (${signCommand}): ${
+				error instanceof Error ? error.message : String(error)
+			}. Set ZXP_SIGN_CMD to a local ZXPSignCmd to audit on this machine.`,
+		);
+	}
 	if (result.exitCode !== 0) {
 		throw new Error(
 			`ZXPSignCmd -verify exited ${result.exitCode} — the ZXP is not trusted distribution evidence`,

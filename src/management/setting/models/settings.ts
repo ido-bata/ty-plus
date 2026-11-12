@@ -96,7 +96,7 @@ export const DEFAULT_SETTINGS: Settings = {
 	},
 };
 
-const isRecord = (v: unknown): v is Record<string, unknown> =>
+export const isRecord = (v: unknown): v is Record<string, unknown> =>
 	typeof v === "object" && v !== null && !Array.isArray(v);
 
 /**
@@ -110,7 +110,7 @@ const isRecord = (v: unknown): v is Record<string, unknown> =>
  * `DEFAULT_SETTINGS` would delete that user data on the next settings save —
  * including a save triggered by merely changing the update channel.
  */
-const mergeRecordDefaults = <T extends Record<string, unknown>>(
+export const mergeRecordDefaults = <T extends Record<string, unknown>>(
 	defaults: T,
 	value: unknown,
 ): T => {

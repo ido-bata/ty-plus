@@ -16,6 +16,8 @@ import {
 import {
 	coerceSettings,
 	DEFAULT_SETTINGS,
+	isRecord,
+	mergeRecordDefaults,
 	mergeSettings,
 	type Settings,
 	type SettingsPatch,
@@ -84,12 +86,118 @@ async function loadSettingsFromStorage(): Promise<Settings> {
 }
 
 /**
- * Save settings to settings.json file.
+ * The key paths this layer owns — i.e. everything reachable from `Settings`.
+ *
+ * `settings/app.json` is shared: the workspace layer writes
+ * `workspace.workspacePanels`, `workspace.snapshots` and `controlPanel` into
+ * the same file. The settings layer must write back only its own keys, or it
+ * will either delete that data (when it projects the file) or resurrect it
+ * (when it re-serialises a stale in-memory copy after the workspace layer
+ * cleared it). Ownership is therefore an explicit allowlist derived from the
+ * `Settings` type, kept next to it so the two cannot drift silently.
+ */
+type OwnedKeySpec = true | { readonly [key: string]: OwnedKeySpec };
+
+const SETTINGS_OWNED_KEYS: Readonly<Record<string, OwnedKeySpec>> = {
+	version: true,
+	core: {
+		paths: {
+			supportRoot: true,
+			presetRoot: true,
+			scriptRoot: true,
+			pluginRoot: true,
+		},
+		presetScan: { timeoutMs: true, maxFiles: true },
+	},
+	ui: {
+		language: true,
+		updateChannel: true,
+		theme: true,
+		accentColor: true,
+		textColor: true,
+		widget: true,
+		panel: true,
+	},
+	workspace: {
+		grid: true,
+		background: true,
+	},
+	gestures: true,
+};
+
+/**
+ * Projects a settings object onto the keys this layer owns, dropping values
+ * that are absent so they are not written back as `null`.
+ */
+function pickOwnedSettings(value: unknown): Record<string, unknown> {
+	if (!isRecord(value)) return {};
+	const picked: Record<string, unknown> = {};
+	for (const [key, spec] of Object.entries(SETTINGS_OWNED_KEYS)) {
+		const current = value[key];
+		if (current === undefined) continue;
+		if (spec === true) {
+			picked[key] = current;
+			continue;
+		}
+		if (!isRecord(current)) continue;
+		const nested: Record<string, unknown> = {};
+		for (const [childKey, childSpec] of Object.entries(spec)) {
+			const child = current[childKey];
+			if (child === undefined) continue;
+			if (childSpec === true) {
+				nested[childKey] = child;
+				continue;
+			}
+			if (!isRecord(child)) continue;
+			const leaves: Record<string, unknown> = {};
+			for (const leafKey of Object.keys(childSpec)) {
+				const leaf = child[leafKey];
+				if (leaf !== undefined) leaves[leafKey] = leaf;
+			}
+			nested[childKey] = leaves;
+		}
+		picked[key] = nested;
+	}
+	return picked;
+}
+
+/**
+ * Computes the document to write: the on-disk contents with this layer's keys
+ * replaced by `settings`, leaving every other key untouched.
+ *
+ * Pure so the ownership boundary can be tested directly.
+ */
+export function mergeOwnedSettingsIntoSettingsJson(
+	onDisk: unknown,
+	settings: Settings,
+): Record<string, unknown> {
+	const base = isRecord(onDisk) ? onDisk : {};
+	const merged: Record<string, unknown> = { ...base };
+	for (const [key, value] of Object.entries(pickOwnedSettings(settings))) {
+		// On-disk is the *default*; the settings object is authoritative for
+		// its own keys, so a channel change actually lands.
+		merged[key] =
+			isRecord(base[key]) && isRecord(value)
+				? mergeRecordDefaults(base[key] as Record<string, unknown>, value)
+				: value;
+	}
+	return merged;
+}
+
+/**
+ * Writes the settings layer's keys while preserving everything the workspace
+ * layer owns in the same file.
+ *
+ * This is a read-modify-write against the current file on purpose: a blind
+ * overwrite from memory would restore workspace keys the workspace layer has
+ * deleted since this panel loaded them.
  */
 async function saveSettingsToStorage(settings: Settings): Promise<void> {
 	try {
-		const jsonText = `${JSON.stringify(settings, null, 2)}\n`;
-		await writeSettings(window, jsonText);
+		const raw = await readSettings(window);
+		const onDisk = raw?.trim() ? (JSON.parse(raw) as unknown) : {};
+		const merged = mergeOwnedSettingsIntoSettingsJson(onDisk, settings);
+		await writeSettings(window, `${JSON.stringify(merged, null, 2)}\n`);
 	} catch (error) {
 		console.error("[Settings] Failed to save settings:", error);
 	}
