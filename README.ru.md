@@ -57,7 +57,7 @@ ty-plus — бесплатное CEP-расширение с открытым и
 - [Руководство пользователя](docs/user-guide/index.md) (на японском) · [Инструкция по установке](docs/user-guide/installation/index.md) (на японском)
 - [Сообщить об ошибке или предложить улучшение](https://github.com/ido-bata/ty-plus/issues/new/choose)
 - [Участие в разработке](CONTRIBUTING.md) · [Политика безопасности](SECURITY.md)
-- [Реальный статус CI](https://github.com/ido-bata/ty-plus/actions/workflows/ci.yml). Значок показывает фактическое состояние GitHub Actions, но не гарантирует прохождение тестов. Сбои до запуска заданий из-за оплаты отмечены в [задаче #59](https://github.com/ido-bata/ty-plus/issues/59).
+- [Реальный статус CI](https://github.com/ido-bata/ty-plus/actions/workflows/ci.yml). Значок показывает фактическое состояние GitHub Actions, но не гарантирует прохождение тестов. Сбои до запуска заданий из-за оплаты отмечены в [задаче #59](https://github.com/ido-bata/ty-plus/issues/61).
 
 Для разработки выполните `mise install`, затем `bun install --frozen-lockfile --ignore-scripts`. Подробнее: [Contributing](CONTRIBUTING.md).
 
