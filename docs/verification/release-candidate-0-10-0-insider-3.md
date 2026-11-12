@@ -20,14 +20,23 @@ TY_PLUS_RELEASE_VERSION=0.10.0-insider.3 TY_PLUS_RELEASE_CHANNEL=insider \
 
 | 項目 | 実測値 |
 | --- | --- |
-| sourceCommit | `66b184164f442f00cd293fc8a351c7e9d5d29a89` |
+| sourceCommit | `b1e920471d11278285956974cc176cad1de4d879` |
 | version（CEP数値版） | `0.10.0` |
 | releaseVersion（配布版） | `0.10.0-insider.3` |
 | channel | `insider` |
 | trustMode | `development-unsigned`（**release-trustではない**） |
-| zip | `dist/app.ty-plus.zip` / sha256 `3f2207074f532dee2aaa3f33b3cd3c1367a07b96916a3673cd4dc9df7cc0c1c8` / 14,108,205 bytes |
+| zip | `dist/app.ty-plus.zip` / sha256 `00ee92fdc5127047e27094f30de3d3b038862dabcb3eda90c039f3688d07428a` / 14,108,205 bytes |
 
 zip内の確認（実バイト）: `app.ty-plus/jsx/ty-plus-host.jsx`、`LICENSE`、`THIRD-PARTY-NOTICES.md`、`CSXS/manifest.xml`（`ExtensionBundleVersion="0.10.0"`）、`worker/versions/<sha>/macos/operation-worker`（13,079,664 bytes）。
+
+> この記録自体はdocs-onlyの後続commitである。成果物は `b1e920471d11…` のコード状態に対してビルドした。
+>
+> **再現性の実測**: 同じ `dist/cep-pack` から `package-cep-archive.ts zip` を再実行すると、zipのsha256は**変化する**（アーカイブがファイルのmtimeを格納するため。実測: `00ee92fd…` → `d27f37c5…`、サイズは同一）。したがって再現条件は「sha256が一致すること」ではなく、次の2点である。
+>
+> 1. `dist/cep-pack/` の内容が同じであること（`release-manifest.json` の `sourceCommit` と `HEAD` の一致、pack内の各ファイルが同一）。
+> 2. 同じ `TY_PLUS_RELEASE_VERSION` / `TY_PLUS_RELEASE_CHANNEL` でビルドしたこと（注入bindingの一致は `verify-release-artifacts.ts` が検査する）。
+>
+> バイト単位の同一性が必要な場面（再ダウンロード検証）では、**公開したzipそのもの**を基準にする。`release-manifest.json` のsha256は、その公開物の同一性を確認するために使う。
 
 ## 2. 配布物監査（release信頼に読み替えた場合の機構確認）
 
