@@ -1,19 +1,17 @@
 # Security Policy
 
-## Reporting a vulnerability
+## Private vulnerability reporting
 
-If you find a security vulnerability in ty-plus, please report it privately:
+If you find a security vulnerability in ty-plus, please **report it privately** through [GitHub Security Advisories](https://github.com/ido-bata/ty-plus/security/advisories/new).
 
-1. Open a **private vulnerability report** via [GitHub Security Advisories](https://github.com/ido-bata/ty-plus/security/advisories/new) for this repository.
-2. Include: the affected version or commit, reproduction steps, and the impact you observed.
+Provide the affected version/commit, the smallest safe reproduction, expected and observed behavior, and the potential impact. Do not attach API keys, credentials, user files or other sensitive data to public issues.
 
-Please do not open a public issue or pull request for an unresolved vulnerability.
+Please do **not** post an unresolved vulnerability as a public issue or pull request.
 
-## What to expect
+## Supported release and scope
 
-- We will acknowledge the report and share an assessment.
-- Confirmed vulnerabilities will be fixed and released as a patch release; the fix will be noted in the release notes.
+The latest [Stable GitHub Release](https://github.com/ido-bata/ty-plus/releases/latest) is the public baseline. The security scope includes the After Effects CEP panel, local native operation worker, packaging/build tools, and the GitHub Releases-based update flow.
 
-## Scope
+ty-plus uses GitHub Releases as its official update and distribution source; notification content may still use an independent static feed. Problems involving compromised release assets, signing keys, update metadata or notification feeds may be reported privately here.
 
-The ty-plus extension (panel, operation worker, build tooling in this repository). The update and notification feeds are served as static JSON; reports about compromise of the distribution host itself should also be reported here.
+Maintainers will assess reports and, when appropriate, provide a patch release with release notes. No fixed response-time commitment is currently published.
