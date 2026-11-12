@@ -74,9 +74,9 @@ const SELF_SIGNED_DEFAULT = path.resolve(
 /**
  * Release-trust ZXP signing configuration. Distinct from the development
  * path: the certificate must be provided explicitly (`TY_PLUS_ZXP_CERT_*`),
- * must already exist, and must not be the self-signed development default —
- * a self-signed ZXP is not distribution evidence, and this resolver never
- * generates a certificate.
+ * must already exist, and must not be the disposable development default.
+ * A persistent, explicitly configured self-signed P12 is valid for Adobe CEP
+ * ZXP distribution. This resolver deliberately never generates a certificate.
  */
 export const resolveReleaseSignZxpConfig = (
 	env: Partial<Record<string, string | undefined>> = process.env,
@@ -86,7 +86,7 @@ export const resolveReleaseSignZxpConfig = (
 	if (!certFile || !certPassword) {
 		throw new Error(
 			"[sign-zxp] release-trust ZXP signing is not configured: set TY_PLUS_ZXP_CERT_PATH and TY_PLUS_ZXP_CERT_PASSWORD. " +
-				"The ZXP signing certificate (and its subject) is an unresolved owner decision (#32 / #2) — this build refuses to continue, and never falls back to a self-signed certificate.",
+				"This build requires the persistent release signing identity; automatic development certificate generation is disabled.",
 		);
 	}
 	const config = resolveSignZxpConfig({
@@ -96,7 +96,7 @@ export const resolveReleaseSignZxpConfig = (
 	});
 	if (path.resolve(config.certFile) === SELF_SIGNED_DEFAULT) {
 		throw new Error(
-			"[sign-zxp] the self-signed development certificate is not release evidence",
+			"[sign-zxp] the disposable development certificate must not be used for releases",
 		);
 	}
 	if (!existsSync(config.certFile)) {
@@ -161,9 +161,9 @@ const ensureCertificate = (
 
 export type SignZxpOptions = Readonly<{
 	/**
-	 * Development signing auto-generates a self-signed certificate when the
-	 * configured one is missing. Release-trust signing must pass `false`:
-	 * a self-signed ZXP is not distribution evidence.
+	 * Development signing auto-generates a disposable self-signed certificate
+	 * when missing. Release-trust must pass `false` and use an explicitly
+	 * configured persistent certificate; a self-signed release cert is valid.
 	 */
 	generateIfMissing?: boolean;
 }>;
