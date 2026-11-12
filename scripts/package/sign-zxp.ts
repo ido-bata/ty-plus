@@ -1,5 +1,5 @@
 import { spawnSync } from "node:child_process";
-import { existsSync, mkdirSync } from "node:fs";
+import { existsSync, mkdirSync, rmSync } from "node:fs";
 import path from "node:path";
 
 export type SignZxpConfig = {
@@ -176,6 +176,13 @@ export const signZxp = (
 		throw new Error(`Input extension directory not found: ${config.inputDir}`);
 	}
 	ensureCertificate(config, options.generateIfMissing ?? true);
+	// Remove any previous output first. ZXPSignCmd can leave an existing file
+	// in place when it fails partway, and a stale ZXP would then be packaged
+	// and hash-verified as if it were the current build — it can even contain
+	// a different platform's worker.
+	if (existsSync(config.outputFile)) {
+		rmSync(config.outputFile, { force: true });
+	}
 	const args = buildSignZxpArgs(config);
 	const result = spawnSync(config.signCmd, args, {
 		stdio: "inherit",

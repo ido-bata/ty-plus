@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildSignZxpArgs, resolveSignZxpConfig } from "./sign-zxp";
+import { buildSignZxpArgs, resolveSignZxpConfig, signZxp } from "./sign-zxp";
 
 /**
  * ZXP timestamp-server contract.
@@ -46,5 +46,40 @@ describe("ZXP timestamp server", () => {
 		// falling back to an unverifiable server.
 		const args = buildSignZxpArgs({ ...config(), timestampUrl: undefined });
 		expect(args).not.toContain("-tsa");
+	});
+});
+
+describe("ZXP output freshness", () => {
+	it("removes a previous output before signing", async () => {
+		// Regression: a stale ZXP left from an earlier build was packaged and
+		// hash-verified as the current one — it even contained another
+		// platform's worker.
+		const { mkdtempSync, mkdirSync, writeFileSync, existsSync, rmSync } =
+			await import("node:fs");
+		const { tmpdir } = await import("node:os");
+		const path = await import("node:path");
+		const root = mkdtempSync(path.join(tmpdir(), "ty-plus-zxp-"));
+		const inputDir = path.join(root, "input");
+		mkdirSync(inputDir, { recursive: true });
+		const outputFile = path.join(root, "out.zxp");
+		writeFileSync(outputFile, "stale");
+		// A real (dummy) certificate file so the cert gate passes and the
+		// behaviour under test — clearing the output — is actually reached.
+		writeFileSync(path.join(root, "cert.p12"), "not-a-real-p12");
+		try {
+			// A signer that fails must not leave the stale output behind.
+			expect(() =>
+				signZxp({
+					signCmd: "false",
+					inputDir,
+					outputFile,
+					certFile: path.join(root, "cert.p12"),
+					certPassword: "pw",
+				}),
+			).toThrow(/ZXP signing failed/);
+			expect(existsSync(outputFile)).toBe(false);
+		} finally {
+			rmSync(root, { recursive: true, force: true });
+		}
 	});
 });
