@@ -98,7 +98,20 @@ async function loadSettingsFromStorage(): Promise<Settings> {
  */
 type OwnedKeySpec = true | { readonly [key: string]: OwnedKeySpec };
 
-const SETTINGS_OWNED_KEYS: Readonly<Record<string, OwnedKeySpec>> = {
+/**
+ * The allowlist shape implied by `Settings`, so the compiler rejects a
+ * missing entry. `true` means "this whole subtree is owned"; an object lists
+ * the owned child keys. Optional fields are required here on purpose: they
+ * must still be written when set, and listing them forces a conscious choice
+ * when a new field is added.
+ */
+type OwnedSpecFor<T> = {
+	readonly [K in keyof T]-?: NonNullable<T[K]> extends object
+		? true | OwnedSpecFor<NonNullable<T[K]>>
+		: true;
+};
+
+const SETTINGS_OWNED_KEYS = {
 	version: true,
 	core: {
 		paths: {
@@ -123,7 +136,7 @@ const SETTINGS_OWNED_KEYS: Readonly<Record<string, OwnedKeySpec>> = {
 		background: true,
 	},
 	gestures: true,
-};
+} satisfies OwnedSpecFor<Settings>;
 
 /**
  * Projects a settings object onto the keys this layer owns, dropping values
