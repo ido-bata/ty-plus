@@ -50,6 +50,10 @@ jobs:
         with:
           bun-version: 1.3.10
       - run: bun scripts/check/vendored-skills.ts
+      # README languages come from the app's SUPPORTED_LOCALES. This test is
+      # included in the release gate (skills is one of its required partitions).
+      - name: Validate public README languages and links
+        run: bun scripts/check/check-readme-locales.ts
 
   # lint, build, the artifact verifiers, typecheck, boundaries,
   # react-doctor, rust and knip. No browser, so it needs neither
