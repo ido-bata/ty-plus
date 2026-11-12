@@ -57,7 +57,7 @@ This is the first public Stable-*channel* baseline of an actively developed open
 - [User guide](docs/user-guide/index.md) (Japanese) · [Installation and troubleshooting](docs/user-guide/installation/index.md) (Japanese)
 - [Report a bug or request an improvement](https://github.com/ido-bata/ty-plus/issues/new/choose)
 - [Contributing](CONTRIBUTING.md) · [Security policy](SECURITY.md)
-- [CI workflow and actual status](https://github.com/ido-bata/ty-plus/actions/workflows/ci.yml). The badge reports GitHub Actions state, not a claim of passing tests; the recorded billing-related job-start failures are tracked in [#59](https://github.com/ido-bata/ty-plus/issues/59).
+- [CI workflow and actual status](https://github.com/ido-bata/ty-plus/actions/workflows/ci.yml). The badge reports GitHub Actions state, not a claim of passing tests; the recorded billing-related job-start failures are tracked in [#59](https://github.com/ido-bata/ty-plus/issues/61).
 
 Contributors can get started with `mise install`, `bun install --frozen-lockfile --ignore-scripts`, and the [development instructions](CONTRIBUTING.md).
 
