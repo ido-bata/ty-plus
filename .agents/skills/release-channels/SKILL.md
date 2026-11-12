@@ -32,20 +32,20 @@ ty-plusの配布は**GitHub Releasesを唯一の正本**とする（ADR-0004）�
 数値CEP版と配布版を分けて決める。
 
 - `package.json.version` は数値 `X.Y.Z` のまま。CEP `ExtensionBundleVersion` はこれしか表現できない。
-- 配布版 `releaseVersion` は `X.Y.Z` / `X.Y.Z-beta.N` / `X.Y.Z-insider.N`。数値コアは必ず `package.json.version` と一致させる。
+- 配布版 `releaseVersion` は `X.Y.Z` / `X.Y.Z-beta.N` / `X.Y.Z-insider.N`。数値コアは必ず `package.json.version` と一致させる。**したがって配布版を先に変えるなら、先に `package.json.version` を対象の数値コアへ更新する**（runbook §4）。更新を忘れるとビルドは数値コア不一致で拒否される。
 - Insiderを繰り返すときは**数値コアを据え置き、連番だけ進める**（`0.11.0-insider.1` → `.2`）。これが「同じ数値版でも次のPreviewを検出できる」条件である。
 
 1コマンドでビルド・監査・stagingまで進む（公開はしない）。
 
 ```sh
-bun run release:candidate --channel=insider --release-version=0.10.1-insider.1
+bun run release:candidate --channel=insider --release-version=0.10.0-insider.1
 ```
 
-内部では `build-release.ts` → `verify-release-artifacts.ts` → `prepare-github-release.ts` を順に実行し、途中で失敗したら止まる。`release:verify` と `release:stage` で個別に再実行できる。channelとtagが食い違う、数値コアが `package.json` と違う、hostがWindows/macOSでない、のいずれでも**ビルドを始める前に**拒否する。
+内部では `build-release.ts` → `verify-release-artifacts.ts` → `prepare-github-release.ts` を順に実行し、途中で失敗したら止まる。`release:verify` と `release:stage` で個別に再実行できる。channelとtagが食い違う、数値コアが `package.json` と違う、hostがWindows/macOSでない、のいずれでも**ビルドを始める前に**拒否する。`--channel` は省略できる（versionから導出する）。
 
 ## 2. platformごとの前提を確認する
 
-同じreleaseでもplatformで要求が違う（ADR-0003）。**片方の成功をもう片方の証拠にしない。**
+同じreleaseでもplatformで要求が違う（`docs/adr/ADR-0003-platform-signing-requirements.md`）。**片方の成功をもう片方の証拠にしない。**
 
 | | Windows | macOS |
 | --- | --- | --- |
@@ -57,20 +57,24 @@ bun run release:candidate --channel=insider --release-version=0.10.1-insider.1
 
 ## 3. 成果物を監査する
 
-`verify-release-artifacts.ts` が次を実測で確認する。ここを飛ばして「ビルドが通った」を成果物の証拠にしない。
+`verify-release-artifacts.ts` が実バイトに対して検査する。**証拠の欠落はskipではなく失敗**である。以下は代表例であり、**全項目の正本はスクリプト**（`scripts/verify/verify-release-artifacts.ts`）とする。
 
 - manifestの `trustMode` が `release` であること
 - `sourceCommit` が現在の `HEAD` と一致すること（別のバイトを保証していないこと）
 - 各artifactのsha256がディスク上の実バイトと一致すること
-- packに `LICENSE` / `THIRD-PARTY-NOTICES.md` があること
+- `releaseVersion` が解釈可能で、`manifest.version` がその数値コア、`channel` がversion由来のchannelと一致すること
+- packの存在、`CSXS/manifest.xml`、pack内の `LICENSE` / `THIRD-PARTY-NOTICES.md`
 - packに `jsx/ty-plus-host.jsx` があること（無いと全host操作が実行時に失敗する）
 - packの `ExtensionBundleVersion` がmanifestの `version` と一致すること
-- panel bundleの**注入binding**（`currentReleaseVersion` / `buildReleaseChannel`）が `releaseVersion` / `channel` と一致すること
-- ZXPが存在し、`ZXPSignCmd -verify` が通ること（検証に署名パスワードは不要。signerが無い場合は「このマシンでは監査できない」という別のエラーになる）
-- worker manifestが存在し `trust.mode=release` であること。Windows以外のworkerはOS署名証拠（algorithm / value / certificateSha256）を満たすこと
+- panel bundleが**更新contract**（`ty-plus.github-releases/1`）を埋め込んでいること。無いと更新確認が動かないまま出荷される
+- panel bundleの**注入binding**（`currentReleaseVersion` / `buildReleaseChannel`）が `releaseVersion` / `channel` と一致すること（minified形 `isReleaseChannel(\`x\`)?...` も読む）
+- worker manifestが存在し `trust.mode=release`、かつ1つ以上のplatformを宣言すること。Windows以外のworkerはOS署名証拠（algorithm / value / certificateSha256）を満たすこと
+- ZXPが存在し、`ZXPSignCmd -verify` が通ること
 - packにsecretパターンが無いこと
 
-**証拠の欠落はskipではなく失敗**である。ZXPやworker manifestを書かなければ通る、という抜け道を作らない。失敗したら成果物を再生成する。manifestだけ書き換えない。
+ZXP署名は監査時に**再実行**する（ビルド後にartifactを差し替えても前の判定を継承しない）。workerのOS署名はmanifestに記録された証拠の**形**を検査する（`spctl` / `codesign` の再実行は行わない）。
+
+signerが見つからない場合、監査は「署名不正」ではなく「このマシンでは監査できない」という別のエラーで止まる。その場合は `ZXP_SIGN_CMD` にローカルの `ZXPSignCmd` を指定する（`docs/operations/signing-setup.md` §3-4）。署名証明書は不要（`-verify` はパスワードを使わない）。失敗したら成果物を再生成し、manifestだけ書き換えない。
 
 ## 4. 公開前の確認
 
@@ -117,7 +121,7 @@ bun run release:candidate --channel=insider --release-version=0.10.1-insider.1
 
 復旧後は、どのReleaseが有効かをリリースノートとIssueへ記録する。
 
-## 9. 検証記録を残す
+## 8. 検証記録を残す
 
 候補を作ったら `docs/verification/` に記録を書く。最低限、次を**実測値**で残す。
 
@@ -129,7 +133,7 @@ bun run release:candidate --channel=insider --release-version=0.10.1-insider.1
 
 `docs/verification/release-candidate-0-10-0-insider-3.md` を雛形にする。**未実施をPASSと呼ばない。** CIが実行できない場合は、ローカルで何を実行したかと、実行できなかったCI jobを明記する。
 
-## 8. 配布先・インストーラを増やすとき
+## 9. 配布先・インストーラを増やすとき
 
 channelの概念を再実装しない。拡張点は2つだけである。
 
