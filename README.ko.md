@@ -26,7 +26,7 @@ ty-plus는 자주 쓰는 작업을 정리하고 작업 공간을 꾸밀 수 있�
 ## 설치
 
 1. **[최신 Stable 릴리스](https://github.com/ido-bata/ty-plus/releases/latest)**를 엽니다.
-2. 운영체제에 맞는 `ty-plus-<version>-windows.zxp` 또는 `ty-plus-<version>-macos.zxp`를 다운로드합니다.
+2. 운영체제에 맞는 `ty-plus-<tag>-windows.zxp` 또는 `ty-plus-<tag>-macos.zxp`를 다운로드합니다.
 3. CEP 호환 ZXP 설치 프로그램으로 설치한 뒤 After Effects를 다시 시작합니다.
 4. **Window → Extensions → ty-plus**에서 실행합니다.
 
