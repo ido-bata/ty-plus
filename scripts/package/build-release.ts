@@ -27,6 +27,7 @@ import { spawnSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { buildReleaseWorker } from "../cep/operation-worker-update";
+import { resolveBuildPlatform } from "./build-platform";
 import { assertNoSecrets } from "./secret-scan";
 import {
 	buildSignPlan,
@@ -168,12 +169,7 @@ export const runReleaseBuild = async (
 	}> = {},
 ): Promise<void> => {
 	const platform =
-		options.platform ??
-		(process.platform === "win32"
-			? "windows"
-			: process.platform === "darwin"
-				? "macos"
-				: null);
+		options.platform ?? resolveBuildPlatform(process.platform, options.env);
 	if (platform === null) {
 		throw new Error(
 			"[build-release] release-trust builds require Windows or macOS",
