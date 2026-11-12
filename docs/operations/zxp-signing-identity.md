@@ -1,12 +1,12 @@
 # ZXP署名の長期運用（ty-plus release signing）
 
-- Status: 初回Insider用の署名主体を確立済み（2026-11-12）
+- Status: **初回Stable v0.10.1を含む正式配布用の署名主体を確立済み**（2026-11-12）
 - 正本: 本doc / `docs/operations/signing-setup.md`（設定手順）/ `docs/architecture/distribution.md`（trust model）
 - 対象: GitHub Releasesで配布するZXPのAdobe署名。worker binaryのOS署名とは独立した契約（ADR-0003）。
 
 ## 1. 決定
 
-初回無料OSS Insider以降、**同じ自己署名証明書を継続利用する**。更新のたびに作り直さない。
+初回無料OSS Stable（v0.10.1）および以降のStable / Beta / Insiderで、**同じ自己署名証明書を継続利用する**。更新のたびに作り直さない。
 理由: Adobe ZXP署名の発行者表示は検証されないが、更新で主体が変わると利用者側の信頼判断の材料が失われ、
 将来認証局署名へ移行する際の比較基準もなくなるため。
 
