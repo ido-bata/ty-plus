@@ -40,6 +40,8 @@ bun run release:candidate --channel=insider --release-version=0.10.1-insider.1
 | worker | `windows/operation-worker.exe`（PE32+ x86-64、7,907,328 bytes、sha256 `d73edf6d23c3e6890583377dbf964c02c9575ba7b1c9967eaa32b1e79d99291a`） |
 | ZXP署名 | `ZXPSignCmd -verify` → `Signature verified successfully` |
 
+> **tag target**: この成果物の `sourceCommit` は `12fd5c3f791b475647339a95f7f2cad097749202`。GitHub Release作成時は `--target 12fd5c3f791b475647339a95f7f2cad097749202` を指定し、**tagと成果物の `sourceCommit` を一致させる**。この記録docの後続commitはdocsのみであり、成果物のバイトには影響しない（`git diff --stat 12fd5c3f..<docs commit>` がdocs 1ファイルだけであることを確認済み）。
+
 ZIP/ZXPの内容を実測で確認:
 
 - ZIP: `LICENSE` / `THIRD-PARTY-NOTICES.md` / `jsx/ty-plus-host.jsx` / `CSXS/manifest.xml`（`ExtensionBundleVersion="0.10.1"`）/ `windows/operation-worker.exe`
