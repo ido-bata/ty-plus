@@ -97,7 +97,33 @@ gh release create v0.10.1-insider.1 \
   --prerelease
 ```
 
+**Stable** の場合は `--prerelease` を付けない。付けるとクライアントは `prerelease === (channel !== "stable")` の検証でその release を捨てるため、利用者に更新が一切提示されない（エラーにならず静かに無効化される）。
+
+```sh
+gh release create v0.10.1 \
+  dist/github-release/ty-plus-v0.10.1-windows.zip \
+  dist/github-release/ty-plus-v0.10.1-windows.zxp \
+  dist/github-release/ty-plus-v0.10.1-windows-release-manifest.json \
+  --repo ido-bata/ty-plus \
+  --target <release-manifest.json の sourceCommit> \
+  --title "ty-plus 0.10.1" \
+  --notes-file docs/operations/release-notes-0-10-1.md \
+  --latest
+```
+
+`--target` は**添付manifestの `sourceCommit`** にする（成果物とtagの対応を一致させる）。Stableのみ `--latest` を使ってよい。
+
 macOSも用意できた場合はmacOSの3ファイルを同じReleaseへ含める。リリース済みtagが別SHAを指す場合は上書きしない。既存releaseへ追加する場合も同一tag・sourceCommitの証拠を照合してから行う。
+
+**公開前の最終確認**（`--prerelease` の付け忘れ・付け過ぎを機械的に防ぐ）:
+
+```sh
+# tagとprereleaseがchannel契約に一致するか（Stableはfalse）
+gh release view v0.10.1 --json tagName,isPrerelease,assets \
+  --jq '{tag:.tagName, prerelease:.isPrerelease, assets:[.assets[].name]}'
+```
+
+`isPrerelease` が期待値と違う場合は公開を止める。
 
 **公開操作（Draft作成、公開、タグ作成、repo public化、アップロード）は本人の別途明示承認が必要。** このrunbookを読むことは公開許可ではない。特にPrivate repoのReleasesは一般ユーザーから匿名取得できないため、アプリ内の更新確認は公開後に初めて有効になる。
 

@@ -33,10 +33,10 @@ bun run release:candidate --channel=stable --release-version=0.10.1
 
 | 項目 | 実測値 |
 | --- | --- |
-| sourceCommit | `06fb3b8eea0e5b32e8ea0208ca1e9b22966df613` |
+| sourceCommit | `40791874c2633b3c13a89ad63d4ca3037dd29dfd` |
 | trustMode | `release` |
-| ZIP | `ty-plus-v0.10.1-windows.zip` / sha256 `51273fb83456cb7894a00ba70e0f09aee13a1b297bd23925c189059b62d1389f` / 11,026,352 bytes |
-| ZXP | `ty-plus-v0.10.1-windows.zxp` / sha256 `747a91ba70e6d2a6c9c72cedad644a691e10a83b12b761205391456c81846d86` / 11,044,903 bytes |
+| ZIP | `ty-plus-v0.10.1-windows.zip` / sha256 `bef0cf3badef1d8b10b965f9eb3acc168b83dc2ea936a5b17829721dfd1392a2` / 11,026,352 bytes |
+| ZXP | `ty-plus-v0.10.1-windows.zxp` / sha256 `7c0bd96c4cf5aa5f69808e1d6b8fa1068d64716720997d97a3a9d12fe3a769a0` / 11,044,912 bytes |
 | worker | `windows/operation-worker.exe`（PE32+ x86-64、7,907,328 bytes、sha256 `d73edf6d23c3e6890583377dbf964c02c9575ba7b1c9967eaa32b1e79d99291a`） |
 | ZXP署名 | `ZXPSignCmd -verify` → `Signature verified successfully` |
 
@@ -47,7 +47,7 @@ bun run release:candidate --channel=stable --release-version=0.10.1
 - panel bundleの注入binding: `currentReleaseVersion=0.10.1` / `buildReleaseChannel=stable`
 - 監査（`verify-release-artifacts.ts`）全項目PASS
 
-> **tag target**: この成果物の `sourceCommit` は `06fb3b8eea0e5b32e8ea0208ca1e9b22966df613`。GitHub Release作成時は `--target 06fb3b8eea0e5b32e8ea0208ca1e9b22966df613` を指定し、**tagと成果物の `sourceCommit` を一致させる**。この記録docの後続commitはdocsのみで、成果物のバイトに影響しない。
+> **tag target**: この成果物の `sourceCommit` は `40791874c2633b3c13a89ad63d4ca3037dd29dfd`。GitHub Release作成時は `--target 40791874c2633b3c13a89ad63d4ca3037dd29dfd` を指定し、**tagと成果物の `sourceCommit` を一致させる**。この記録docの後続commitはdocsのみで、成果物のバイトに影響しない。
 
 ## 3. macOS（未完成 — 公証資格情報が無い）
 
@@ -101,6 +101,17 @@ development-unsignedビルドを実AEに導入して実施。**release-trust成�
 - `operation-worker` が `Mach-O universal binary (x86_64 + arm64)` で実行可能。
 
 **未実施**: プリセット適用・レイヤー操作などの操作系シナリオ、Windows実機、AE再起動後のレイアウト復元の反復確認。これらは #10 のシナリオとして残る。
+
+## 5b. 独立レビューで見つけて修正した欠陥（再現テスト付き）
+
+リリース前に独立レビューを実施し、監査の抜けを4件修正した。いずれも「壊れた成果物がPASSする」方向の欠陥。
+
+1. **古いZIP/ZXPが監査を通過** — 監査はartifactのハッシュだけを検証し、中身が監査済みpackと同一かを見ていなかった。**有効な署名を持つ古いZXP**を差し替え、manifestのハッシュを記録し直すとPASSしていた。アーカイブを開いてpackと1ファイルずつバイト比較するよう修正（実測: `archive differs from the audited pack: app.ty-plus/CSXS/manifest.xml` で拒否）。
+2. **platform名と中身の不一致** — staging時のplatformを `dist/cep-dev`（最後に走ったビルド）から読んでいたため、packがWindowsでも`-macos`名で配置され得た。**出荷するpack内のmanifest**から読むよう修正し、artifact名とpackのplatformが一致することを監査で検証。
+3. **埋め込みidentityが最初の一致しか見ていなかった** — 古いchunkが先頭にあると、実際に読み込まれるchunkの不一致を隠せた。全出現が一致することを要求するよう修正。
+4. **secret scanが出荷ファイルを飛ばしていた** — 拡張子allowlistのため `LICENSE` / `.debug` / `*.map` が対象外だった。ファイル名ではなく**内容**（先頭8KiBのNULバイト）でbinaryを判定するよう修正。
+
+回帰テストを追加し、実artifactに対して修正が効くことを確認済み。
 
 ## 6. 署名基盤（継続利用）
 
