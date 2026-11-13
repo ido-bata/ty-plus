@@ -343,6 +343,26 @@ export function useAnchorGesture<T extends string>({
 		],
 	);
 
+	const onPointerDownRef = useRef(onPointerDown);
+	useEffect(() => {
+		onPointerDownRef.current = onPointerDown;
+	}, [onPointerDown]);
+
+	// Mouse fallback for CEP/CEF paths that deliver mousedown without
+	// pointerdown. Attached natively on the target element so consumers do
+	// not need a second JSX handler. When pointerdown did fire, the gesture
+	// is already active (or was rejected by the same guards) and the shared
+	// handler returns early via `activeRef`.
+	useEffect(() => {
+		const el = targetRef.current;
+		if (!el) return;
+		const handleMouseDown = (e: MouseEvent): void => {
+			onPointerDownRef.current(e as unknown as SyntheticPointerEvent);
+		};
+		el.addEventListener("mousedown", handleMouseDown);
+		return () => el.removeEventListener("mousedown", handleMouseDown);
+	}, [targetRef]);
+
 	useEffect(() => {
 		if (!isActive) return;
 		const target = targetRef.current;
@@ -350,9 +370,9 @@ export function useAnchorGesture<T extends string>({
 
 		// Some CEP/CEF input paths synthesize pointermove but never deliver
 		// pointerdown/pointerup, so the gesture may be started by a mouse
-		// event (consumers wire `onMouseDown` to the same handler). Accept
-		// mousemove/mouseup here as fallback and skip the twin of any
-		// pointer event that arrived within the same gesture.
+		// event (see the mousedown listener above). Accept mousemove/mouseup
+		// here as fallback and skip the twin of any pointer event that
+		// arrived within the same gesture.
 		let lastPointerMoveTs = 0;
 		let lastPointerEndTs = 0;
 

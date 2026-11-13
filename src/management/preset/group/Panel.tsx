@@ -1,33 +1,14 @@
-import {
-	type JSX,
-	type MouseEvent as ReactMouseEvent,
-	type ReactNode,
-	type PointerEvent as ReactPointerEvent,
-	useEffect,
-	useMemo,
-	useRef,
-	useState,
-} from "react";
+import type { JSX, ReactNode } from "react";
 import type { Preset } from "@/management/preset/contract";
 import { dispatchWorkspacePresetHover } from "@/management/preset/group/hover";
 import type { GroupPanelFrame } from "@/management/preset/group/panel-layout";
-import {
-	removePresetFromGroupEntry,
-	reorderPresetInGroupEntry,
-} from "@/management/preset/group-catalog";
 import { Tile } from "@/management/preset/workspace/Tile";
 import type { GridSettings } from "@/management/workspace/layout/grid-document";
-import { gridClientPointToCell } from "@/management/workspace/placement/grid-coords";
-import { notifyPanelsAfterPresetSave } from "@/management/workspace/placement/notify-panels-after-preset-save";
-import {
-	ATTR_GRID,
-	ATTR_GROUP_PANEL,
-} from "@/management/workspace/placement/types";
+import { ATTR_GROUP_PANEL } from "@/management/workspace/placement/types";
 import { css, cx } from "@/styled-system/css";
+import { useGroupPanelDrag } from "./use-group-panel-drag";
 
 const ATTR_GROUP_PANEL_ITEM = "data-workspace-group-panel-item";
-/** Window for treating a mouse event as the twin of a pointer event. */
-const POINTER_MOUSE_DEDUP_MS = 16;
 
 const gridCellOuterClass = css({
 	position: "relative",
@@ -120,16 +101,6 @@ const srOnlyClass = css({
 	borderWidth: "0",
 });
 
-type GroupDragState = {
-	presetId: string;
-	startIndex: number;
-	overIndex: number;
-	lastX: number;
-	lastY: number;
-	offsetX: number;
-	offsetY: number;
-};
-
 function GroupPanelPresetCell({
 	cellSizePx,
 	children,
@@ -175,180 +146,22 @@ export function GroupPanel({
 }): JSX.Element {
 	const cellSizePx = grid.cellSize;
 	const gapPx = grid.gap;
-	const gridRef = useRef<HTMLDivElement | null>(null);
-	const dragMovedRef = useRef(false);
-	const suppressClickRef = useRef(false);
-	const lastPointerTsRef = useRef({ down: 0, move: 0, up: 0 });
-	const [groupDrag, setGroupDrag] = useState<GroupDragState | null>(null);
-
-	const orderedMemberPresets = useMemo(() => {
-		if (!groupDrag) return memberPresets;
-		const next = [...memberPresets];
-		const [item] = next.splice(groupDrag.startIndex, 1);
-		if (!item) return memberPresets;
-		next.splice(groupDrag.overIndex, 0, item);
-		return next;
-	}, [groupDrag, memberPresets]);
-
-	// Shared by onPointerDown and onMouseDown: CEP/CEF paths that never
-	// deliver pointerdown still deliver mousedown for the same press.
-	const beginGroupDrag = (
-		e:
-			| ReactPointerEvent<HTMLButtonElement>
-			| ReactMouseEvent<HTMLButtonElement>,
-		meta: { id: string; label: string },
-		index: number,
-	): void => {
-		if (layoutLocked) return;
-		const isMoveClick =
-			e.button === 1 || (e.button === 0 && (e.ctrlKey || e.metaKey));
-		if (!isMoveClick) return;
-		e.preventDefault();
-		e.stopPropagation();
-		dragMovedRef.current = false;
-		const rect = e.currentTarget.getBoundingClientRect();
-		setGroupDrag({
-			presetId: meta.id,
-			startIndex: memberPresets.findIndex((p) => p.id === meta.id),
-			overIndex: index,
-			lastX: e.clientX,
-			lastY: e.clientY,
-			offsetX: e.clientX - rect.left,
-			offsetY: e.clientY - rect.top,
-		});
-	};
-
-	useEffect(() => {
-		if (!groupDrag) return;
-
-		// Some CEP/CEF input paths synthesize pointermove but never deliver
-		// pointerdown/pointerup, so accept mouse events as fallback and skip
-		// the twin of any pointer event that arrived within the same gesture.
-		const onPointerMove = (event: PointerEvent | MouseEvent): void => {
-			if (event.type === "pointermove") {
-				lastPointerTsRef.current.move = event.timeStamp;
-			} else if (
-				event.timeStamp - lastPointerTsRef.current.move <
-				POINTER_MOUSE_DEDUP_MS
-			) {
-				return;
-			}
-			const dx = event.clientX - groupDrag.lastX;
-			const dy = event.clientY - groupDrag.lastY;
-			if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
-				dragMovedRef.current = true;
-			}
-
-			let nextOver = groupDrag.overIndex;
-			const gridEl = gridRef.current;
-			if (gridEl) {
-				const rect = gridEl.getBoundingClientRect();
-				const localX = event.clientX - rect.left + gridEl.scrollLeft;
-				const localY = event.clientY - rect.top + gridEl.scrollTop;
-				if (localX >= 0 && localY >= 0) {
-					const col = Math.max(
-						0,
-						Math.min(
-							Math.max(1, frame.memberGridCols) - 1,
-							Math.floor(localX / (cellSizePx + gapPx)),
-						),
-					);
-					const row = Math.max(0, Math.floor(localY / (cellSizePx + gapPx)));
-					const idx = row * Math.max(1, frame.memberGridCols) + col;
-					nextOver = Math.min(idx, Math.max(0, memberPresets.length - 1));
-				}
-			}
-
-			setGroupDrag((prev) =>
-				prev
-					? {
-							...prev,
-							overIndex: nextOver,
-							lastX: event.clientX,
-							lastY: event.clientY,
-						}
-					: prev,
-			);
-		};
-
-		const onPointerUp = (event: PointerEvent | MouseEvent): void => {
-			if (event.type === "pointerup") {
-				lastPointerTsRef.current.up = event.timeStamp;
-			} else if (
-				event.timeStamp - lastPointerTsRef.current.up <
-				POINTER_MOUSE_DEDUP_MS
-			) {
-				return;
-			}
-			void (async () => {
-				if (dragMovedRef.current) {
-					suppressClickRef.current = true;
-					window.setTimeout(() => {
-						suppressClickRef.current = false;
-					}, 0);
-				}
-
-				const gridEl = gridRef.current;
-				const droppedInside =
-					gridEl !== null &&
-					event.clientX >= gridEl.getBoundingClientRect().left &&
-					event.clientX <= gridEl.getBoundingClientRect().right &&
-					event.clientY >= gridEl.getBoundingClientRect().top &&
-					event.clientY <= gridEl.getBoundingClientRect().bottom;
-
-				if (droppedInside) {
-					await reorderPresetInGroupEntry(
-						window,
-						groupId,
-						groupDrag.startIndex,
-						groupDrag.overIndex,
-					);
-					await notifyPanelsAfterPresetSave(window, {
-						sourceSurfaceId: panelId,
-						catalogRefIds: [groupId],
-					});
-				} else {
-					await removePresetFromGroupEntry(window, groupId, groupDrag.presetId);
-					const workspaceGrid =
-						gridRef.current?.closest<HTMLElement>(`[${ATTR_GRID}]`) ?? null;
-					const dropPlacement = gridClientPointToCell(
-						event.clientX,
-						event.clientY,
-						workspaceGrid,
-						grid,
-					);
-					await notifyPanelsAfterPresetSave(window, {
-						sourceSurfaceId: panelId,
-						catalogRefIds: [groupDrag.presetId],
-						dropPlacement: dropPlacement ?? undefined,
-					});
-				}
-
-				dragMovedRef.current = false;
-				setGroupDrag(null);
-			})();
-		};
-
-		window.addEventListener("pointermove", onPointerMove);
-		window.addEventListener("pointerup", onPointerUp);
-		window.addEventListener("mousemove", onPointerMove);
-		window.addEventListener("mouseup", onPointerUp);
-		return () => {
-			window.removeEventListener("pointermove", onPointerMove);
-			window.removeEventListener("pointerup", onPointerUp);
-			window.removeEventListener("mousemove", onPointerMove);
-			window.removeEventListener("mouseup", onPointerUp);
-		};
-	}, [
-		cellSizePx,
-		frame.memberGridCols,
-		gapPx,
-		grid,
+	const {
 		groupDrag,
+		orderedMemberPresets,
+		gridRef,
+		beginGroupDrag,
+		clickSuppressedRef,
+	} = useGroupPanelDrag({
 		groupId,
 		memberPresets,
+		layoutLocked,
+		cellSizePx,
+		gapPx,
+		memberGridCols: frame.memberGridCols,
+		grid,
 		panelId,
-	]);
+	});
 
 	return (
 		<div
@@ -390,32 +203,10 @@ export function GroupPanel({
 								opacity: groupDrag?.presetId === meta.id ? 0 : 1,
 							}}
 							disabled={layoutLocked}
-							onPointerDown={(e) => {
-								lastPointerTsRef.current.down = e.timeStamp;
-								beginGroupDrag(e, meta, index);
-							}}
-							onMouseDown={(e) => {
-								if (
-									e.timeStamp - lastPointerTsRef.current.down <
-									POINTER_MOUSE_DEDUP_MS
-								) {
-									// The pointerdown twin already ran; keep the
-									// legacy suppression without restarting.
-									if (!layoutLocked) {
-										const isMoveClick =
-											e.button === 1 ||
-											(e.button === 0 && (e.ctrlKey || e.metaKey));
-										if (isMoveClick) {
-											e.preventDefault();
-											e.stopPropagation();
-										}
-									}
-									return;
-								}
-								beginGroupDrag(e, meta, index);
-							}}
+							onPointerDown={(e) => beginGroupDrag(e, meta, index)}
+							onMouseDown={(e) => beginGroupDrag(e, meta, index)}
 							onClick={() => {
-								if (suppressClickRef.current) return;
+								if (clickSuppressedRef.current) return;
 								if (preset) onRunPreset?.(preset);
 							}}
 						>

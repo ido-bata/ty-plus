@@ -530,7 +530,6 @@ export function Align({
 			})}
 			onFocusCapture={() => setActiveWidgetInstanceId(widgetInstanceId)}
 			onPointerDown={gesture.onPointerDown}
-			onMouseDown={gesture.onPointerDown}
 			onContextMenu={(e) => gesture.isActive && e.preventDefault()}
 			data-two-groups={showTwoGroups}
 		>

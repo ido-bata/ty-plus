@@ -182,7 +182,6 @@ export function AnchorPointWidget({
 				padding: 0,
 			})}
 			onPointerDown={gesture.onPointerDown}
-			onMouseDown={gesture.onPointerDown}
 		>
 			<div
 				className={css({
