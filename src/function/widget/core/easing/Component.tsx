@@ -31,7 +31,7 @@ import { ATTR_WIDGET_INSTANCE_ID } from "@/management/workspace/placement/types"
 import { Button, SegmentedControl } from "@/shared/component";
 import { isIMEComposing } from "@/shared/util/keyboard";
 import { css } from "@/styled-system/css";
-import { type Camera, computeCamera } from "./camera";
+import { type Camera, computeCamera, handleDotScreenPos } from "./camera";
 import {
 	type CurveCategory,
 	detectCurveCategory,
@@ -1079,10 +1079,7 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 			state.points.forEach((point, index) => {
 				const screen = worldToScreen(point, state.camera);
 				if (index > 0) {
-					const hIn = worldToScreen(
-						{ x: point.x + point.hIn.x, y: point.y + point.hIn.y },
-						state.camera,
-					);
+					const hIn = handleDotScreenPos(point, "hIn", state.camera);
 					ctx.beginPath();
 					ctx.moveTo(screen.x, screen.y);
 					ctx.lineTo(hIn.x, hIn.y);
@@ -1095,10 +1092,7 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 					);
 				}
 				if (index < state.points.length - 1) {
-					const hOut = worldToScreen(
-						{ x: point.x + point.hOut.x, y: point.y + point.hOut.y },
-						state.camera,
-					);
+					const hOut = handleDotScreenPos(point, "hOut", state.camera);
 					ctx.beginPath();
 					ctx.moveTo(screen.x, screen.y);
 					ctx.lineTo(hOut.x, hOut.y);
@@ -1292,10 +1286,7 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 						}
 					}
 					if (index > 0) {
-						const hIn = worldToScreen(
-							{ x: point.x + point.hIn.x, y: point.y + point.hIn.y },
-							state.camera,
-						);
+						const hIn = handleDotScreenPos(point, "hIn", state.camera);
 						const distance = Math.hypot(hIn.x - screen.x, hIn.y - screen.y);
 						if (distance < minDistance) {
 							minDistance = distance;
@@ -1303,10 +1294,7 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 						}
 					}
 					if (index < state.points.length - 1) {
-						const hOut = worldToScreen(
-							{ x: point.x + point.hOut.x, y: point.y + point.hOut.y },
-							state.camera,
-						);
+						const hOut = handleDotScreenPos(point, "hOut", state.camera);
 						const distance = Math.hypot(hOut.x - screen.x, hOut.y - screen.y);
 						if (distance < minDistance) {
 							minDistance = distance;
@@ -1315,8 +1303,18 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 					}
 				});
 			} else {
+				// Procedural modes have a single draggable handle dot; hit
+				// test it at its real screen position so drags that start
+				// away from the dot pan instead of teleporting the handle.
+				const handleScreen = worldToScreen(
+					state.procedural.handle,
+					state.camera,
+				);
 				closest = { type: "procedural" };
-				minDistance = 0;
+				minDistance = Math.hypot(
+					handleScreen.x - screen.x,
+					handleScreen.y - screen.y,
+				);
 			}
 			return { target: closest, distance: minDistance };
 		},
@@ -1731,7 +1729,7 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 				return;
 			}
 
-			const { target } = findClosestWithDistance(screen);
+			const target = findClosest(screen);
 			if (!target) {
 				// Plain left-click on empty canvas area: pan. Required for
 				// Mac trackpad / single-button mice that have no middle
@@ -1801,6 +1799,7 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 			activate,
 			autoApply,
 			canvasPoint,
+			findClosest,
 			findClosestWithDistance,
 			persistState,
 			updateDrag,
