@@ -25,12 +25,24 @@ import type { Preset } from "@/management/preset/contract";
  * `fetch` anywhere in this module — a network-capable gateway is only ever
  * constructed from a runtime port. The fixture gateway exists so the product
  * stays functional with no runtime (the documented no-network fallback).
+ *
+ * R0 dormancy (Issue #82): the shipped worker binary is built without
+ * `TY_PLUS_WORKER_SUPABASE_*`, so every remote method fails closed offline.
+ * Surfaces that would otherwise present fixture payloads as real data are
+ * therefore not implemented here:
+ *
+ * - `listNotifications` / `getNotificationBlocks` are absent, so the
+ *   notification center falls through to the official static feed
+ *   (`ty-plus.notification-feed/1`, docs/architecture/feeds.md) instead of
+ *   showing fabricated "Update available" / "Maintenance notice" rows.
+ * - `getPublicLink` resolves only build-time bundled links (the repo-hosted
+ *   user guide). There is no backend to refresh them from.
  */
 
 export const FALLBACK_RECORDS: Preset[] = [];
 
-const FIXTURE_USER_MANUAL_URL =
-	"https://www.notion.so/ty-plus-User-Manual-fixture";
+const USER_MANUAL_DOCS_URL =
+	"https://github.com/ido-bata/ty-plus/blob/main/docs/user-guide/index.md";
 
 const FALLBACK_NOTIFICATIONS: NotificationSummary[] = [
 	{
@@ -58,11 +70,11 @@ const FALLBACK_NOTIFICATIONS: NotificationSummary[] = [
 	},
 ];
 
-const getFixturePublicLink = (key: string) => {
+const getBundledPublicLink = (key: string) => {
 	if (key === "user-manual") {
 		return {
 			key,
-			url: FIXTURE_USER_MANUAL_URL,
+			url: USER_MANUAL_DOCS_URL,
 			label: "User Manual",
 		};
 	}
@@ -106,8 +118,10 @@ const toDownloadRequest = (
 
 /**
  * Network-free cloud gateway used when no runtime port has been initialized.
- * Search returns an empty catalog, notifications / public links return the
- * fixture payloads, and preset install is unavailable (there is no transport).
+ * Search returns an empty catalog, notifications return the documented
+ * offline-mock payload, public links resolve to the same build-time bundled
+ * URLs as the runtime gateway, and preset install is unavailable (there is
+ * no transport).
  */
 export const createFixtureCloudGateway = (): CloudGateway => ({
 	provider: "supabase",
@@ -128,7 +142,7 @@ export const createFixtureCloudGateway = (): CloudGateway => ({
 		return [];
 	},
 	async getPublicLink(key) {
-		return getFixturePublicLink(key);
+		return getBundledPublicLink(key);
 	},
 	async resolvePreset(presetId) {
 		throw new Error(`Unknown preset: ${presetId}`);
@@ -137,8 +151,10 @@ export const createFixtureCloudGateway = (): CloudGateway => ({
 
 /**
  * Runtime-backed cloud gateway. Catalog search, connectivity health, and
- * preset install are dispatched to the Rust runtime; notifications and public
- * links stay fixture/local so their surfaces work without a network.
+ * preset install are dispatched to the Rust runtime. Notifications are
+ * intentionally absent (see the module header): the notification center
+ * falls back to the official static feed, which is the R0 source of truth.
+ * Public links resolve to build-time bundled URLs only.
  */
 export const createRuntimeCloudGateway = (
 	port: OnlineRuntimeGatewayPort,
@@ -170,14 +186,8 @@ export const createRuntimeCloudGateway = (
 			destination: response.destination,
 		};
 	},
-	async listNotifications() {
-		return [...FALLBACK_NOTIFICATIONS];
-	},
-	async getNotificationBlocks() {
-		return [];
-	},
 	async getPublicLink(key) {
-		return getFixturePublicLink(key);
+		return getBundledPublicLink(key);
 	},
 	async resolvePreset(presetId) {
 		throw new Error(
