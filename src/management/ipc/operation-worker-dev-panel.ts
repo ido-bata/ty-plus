@@ -364,17 +364,17 @@ const installOperationWorkerDevPanelInternal = (
 						diagnostic?: unknown;
 						diagnosticId?: unknown;
 					};
-					verifyLog.warn("worker attempt failure", {
-						context: {
-							code: typeof e.code === "string" ? e.code : "unknown",
-							diagnosticId:
-								typeof e.diagnosticId === "string" ? e.diagnosticId : undefined,
-							detail:
-								typeof e.diagnostic === "string"
-									? e.diagnostic.slice(0, 300)
-									: undefined,
-						},
-					});
+					const code =
+						typeof e.code === "string" ? e.code : "unknown";
+					const detail =
+						typeof e.diagnostic === "string"
+							? e.diagnostic.slice(0, 200)
+							: "";
+					const diagnosticId =
+						typeof e.diagnosticId === "string" ? e.diagnosticId : "";
+					verifyLog.warn(
+						`worker attempt failure ${code}${diagnosticId ? ` ${diagnosticId}` : ""}${detail ? `: ${detail}` : ""}`,
+					);
 				}
 			} catch {
 				// Diagnostics must never break verification.
