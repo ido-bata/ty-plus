@@ -5,8 +5,8 @@ import {
 	TIME_ALIGN_ACTIONS,
 } from "@/function/widget/core/align";
 import {
-	buildAnchorScript,
 	isValidAnchorPosition,
+	runAnchorScript,
 } from "@/function/widget/core/anchor-point";
 import { createCepHostExecutor } from "@/management/ae/cep/host-executor";
 import type { Preset } from "@/management/preset/contract";
@@ -126,6 +126,18 @@ const getEdge = (
 	const r = el.getBoundingClientRect();
 	const x = pointerX - r.left;
 	const y = pointerY - r.top;
+	// A point outside the element (plus the margin) cannot be near an
+	// edge. Without this bound a zero-size rect reports EVERY point as an
+	// edge hit, which let `selectionMove` swallow resizes on selected
+	// tiles (Issue #64) and made unlaid-out test geometry meaningless.
+	if (
+		x < -RESIZE_MARGIN ||
+		x > r.width + RESIZE_MARGIN ||
+		y < -RESIZE_MARGIN ||
+		y > r.height + RESIZE_MARGIN
+	) {
+		return null;
+	}
 	const n = y < RESIZE_MARGIN;
 	const s = y > r.height - RESIZE_MARGIN;
 	const ew = x < RESIZE_MARGIN;
@@ -349,6 +361,12 @@ export const setupInteractionEvents = (
 
 	const handledPointerMoves = new WeakSet<Event>();
 	const handledPointerUps = new WeakSet<Event>();
+	// Some CEP/CEF input paths deliver mouse events without the matching
+	// pointerdown/pointerup (only pointermove is synthesized). The mouse
+	// fallbacks below delegate to the pointer handlers, and these
+	// timestamps deduplicate the pair so a normal browser never runs both.
+	const lastPointerTs = { down: 0, move: 0, up: 0 };
+	const POINTER_MOUSE_DEDUP_MS = 16;
 	const _aeExecutor =
 		opts?.hostCode === "AEFT"
 			? createCepHostExecutor(window, "after-effects")
@@ -424,6 +442,7 @@ export const setupInteractionEvents = (
 	// ── Pointer events ──────────────────────────────────────────────────
 
 	const onPointerDown = (ev: PointerEvent): void => {
+		lastPointerTs.down = ev.timeStamp;
 		// Allow button 0 (left) and button 1 (middle); ignore right-click etc.
 		if (
 			ev.button !== 0 &&
@@ -577,13 +596,17 @@ export const setupInteractionEvents = (
 			surfaceIndexStrForTile !== null &&
 			Number.isFinite(hitIdx) &&
 			state.selectedSurfaceIndices.includes(hitIdx);
-		/** Plain left-drag on any selected shell moves the whole selection (no modifier). */
+		/** Plain left-drag on any selected shell moves the whole selection (no modifier).
+		 *  An edge hit still wins: the resize margin is the more specific
+		 *  affordance, and without this exclusion a selected tile could
+		 *  never be resized by plain left-drag (Issue #64). */
 		const selectionMove =
 			ev.button === 0 &&
 			!ev.ctrlKey &&
 			!ev.metaKey &&
 			!ev.shiftKey &&
-			clickedOnSelectedTile;
+			clickedOnSelectedTile &&
+			!edge;
 		/** Ctrl/Cmd + drag on a selected shell moves the whole selection together. */
 		const selectionMoveViaModifier =
 			isMoveClick && totalSelectedPlacements > 1 && clickedOnSelectedTile;
@@ -664,6 +687,7 @@ export const setupInteractionEvents = (
 	};
 
 	const onPointerMove = (ev: PointerEvent): void => {
+		lastPointerTs.move = ev.timeStamp;
 		if (handledPointerMoves.has(ev)) return;
 		handledPointerMoves.add(ev);
 
@@ -943,6 +967,7 @@ export const setupInteractionEvents = (
 
 	const onPointerUp = (ev?: PointerEvent | MouseEvent): void => {
 		if (ev) {
+			lastPointerTs.up = ev.timeStamp;
 			if (handledPointerUps.has(ev)) return;
 			handledPointerUps.add(ev);
 		}
@@ -1445,27 +1470,27 @@ export const setupInteractionEvents = (
 				statusMessage: `Applying anchor point: ${pos}...`,
 			});
 			rerender();
-			runCep(buildAnchorScript(pos));
+			runAnchorScript(pos);
 			setState({
 				...getState(),
-				statusMessage: `Anchor point applied: ${pos}`,
+				statusMessage: `Anchor point requested: ${pos}`,
 			});
 			return;
 		}
 	};
 
 	const onMouseDown = (ev: MouseEvent): void => {
-		if (typeof window.PointerEvent !== "undefined") return;
+		if (ev.timeStamp - lastPointerTs.down < POINTER_MOUSE_DEDUP_MS) return;
 		onPointerDown(ev as unknown as PointerEvent);
 	};
 
 	const onMouseMove = (ev: MouseEvent): void => {
-		if (typeof window.PointerEvent !== "undefined") return;
+		if (ev.timeStamp - lastPointerTs.move < POINTER_MOUSE_DEDUP_MS) return;
 		onPointerMove(ev as unknown as PointerEvent);
 	};
 
 	const onMouseUp = (ev: MouseEvent): void => {
-		if (typeof window.PointerEvent !== "undefined") return;
+		if (ev.timeStamp - lastPointerTs.up < POINTER_MOUSE_DEDUP_MS) return;
 		onPointerUp(ev);
 	};
 

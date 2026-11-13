@@ -20,7 +20,7 @@ R0の更新情報と配布物の正本は**同一リポジトリのGitHub Releas
 - Settingsの選択値は既存のfile-backed settingsに保存し、旧形式のsettingsは初期channelへ移行する。
 - ネットワーク不達、GitHub APIの制限、invalid releaseは更新チェックだけ`unavailable`になり、ローカル機能は使い続けられる。HTTPキャッシュを利用し、起動ごとの連続ポーリングをしない。
 - GitHubはreleaseを**作成日時順**で返すため、古い版のhotfixが新しい版より前に来る。クライアントは最新候補が更新対象より新しくなるまで、またはpageが満杯でなくなるまでページを進める。匿名APIのrate limitを守るため**最大5ページ**で打ち切る。6ページ目以降にしか存在しない最新版は検出しない（既知の制約。`docs/architecture/feeds.md`）。
-- 現repoはprivateであり、匿名APIの結果は404。公開前の検証ではfixtureを使用し、ユーザーのGitHubアクセストークンをCEPのコードやconfigへ埋め込まない。
+- 本repoは2026-11-12にPublic化され、初回Stable `v0.10.1` を公開済み。匿名GitHub Releases APIが更新の正規経路であり、CEPコードやconfigへGitHubアクセストークンを埋め込まない。Private時代の404検証は履歴証拠として保持する。
 - 後日の別インストール経路は配布先アダプタの追加で対応する。チャンネルは配布先を意味しない。
 
 ## 通知（当面は独立した静的feed）

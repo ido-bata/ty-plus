@@ -18,10 +18,7 @@ import {
 	loadNotificationsStore,
 	saveNotificationsStore,
 } from "@/management/online/notification/notifications";
-import {
-	getDataServices,
-	tryGetDataServices,
-} from "@/management/workspace/services";
+import { tryGetDataServices } from "@/management/workspace/services";
 import { IconButton } from "@/shared/component/controls/IconButton";
 import { Icon } from "@/shared/component/icons/Icon";
 import { cx } from "@/shared/util/cx";
@@ -417,13 +414,13 @@ const _loadNotifications = async (
 };
 
 const _loadBlocks = async (
-	gateway: NotificationsGateway,
+	gateway: NotificationsGateway | undefined,
 	notificationId: string,
 ): Promise<
 	{ ok: true; blocks: NotificationBlock[] } | { ok: false; error: unknown }
 > => {
 	try {
-		if (!gateway.getNotificationBlocks) {
+		if (!gateway?.getNotificationBlocks) {
 			return {
 				ok: false,
 				error: new Error("getNotificationBlocks unavailable"),
@@ -765,8 +762,12 @@ export function NotificationCenter(): JSX.Element {
 		// the backend-free fallback, not a second server.
 		setLoading(true);
 		try {
-			const { gateway } = getDataServices();
-			if (gateway.listNotifications) {
+			// Issue #69: `getDataServices()` throws `GatewayBootRequiredError`
+			// when the cloud gateway never booted (R0 offline default). The
+			// gateway is optional here — the static feed is the fallback —
+			// so use the non-throwing variant and skip straight to the feed.
+			const gateway = tryGetDataServices()?.gateway;
+			if (gateway?.listNotifications) {
 				const result = await _loadNotifications(gateway);
 				if (result.ok) {
 					setItems(result.remote);
@@ -823,7 +824,7 @@ export function NotificationCenter(): JSX.Element {
 				await saveLocalStore({ items, readAtById: next });
 			}
 
-			const { gateway } = getDataServices();
+			const gateway = tryGetDataServices()?.gateway;
 			setBlocksLoading(true);
 			setBlocks([]);
 			const result = await _loadBlocks(gateway, item.notificationId);

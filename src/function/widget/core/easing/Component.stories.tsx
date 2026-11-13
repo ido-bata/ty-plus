@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { expect } from "storybook/test";
 
 import { EasingWidget } from "@/function/widget/core/easing/Component";
 import type { Layout } from "@/management/workspace/layout/grid-document";
@@ -66,5 +67,41 @@ export const LoopMode: Story = {
 				break;
 			}
 		}
+	},
+};
+
+// Some CEP/CEF input paths emit mousedown/mousemove/mouseup without the
+// matching pointerdown/pointerup — only pointermove is synthesized. This
+// story replays a drag using MouseEvent alone (no PointerEvent) to prove
+// the canvas still pans/drags through the mouse fallback handlers.
+export const MouseOnlyDrag: Story = {
+	args: { widthPx: 240, heightPx: 240 },
+	play: async ({ canvasElement }) => {
+		const canvas = canvasElement.querySelector<HTMLCanvasElement>(
+			"[data-ws-easing-editor-canvas]",
+		);
+		if (!canvas) throw new Error("easing canvas not found");
+		const before = canvas.toDataURL();
+		const rect = canvas.getBoundingClientRect();
+		const fire = (type: string, dx: number, dy: number) => {
+			canvas.dispatchEvent(
+				new MouseEvent(type, {
+					bubbles: true,
+					cancelable: true,
+					button: 0,
+					buttons: type === "mouseup" ? 0 : 1,
+					clientX: rect.left + rect.width * 0.5 + dx,
+					clientY: rect.top + rect.height * 0.5 + dy,
+				}),
+			);
+		};
+		// Center of the canvas is empty space in the default linear curve,
+		// so this gesture exercises the pan path.
+		fire("mousedown", 0, 0);
+		fire("mousemove", 20, 20);
+		fire("mousemove", 45, 45);
+		fire("mouseup", 45, 45);
+		await new Promise((resolve) => setTimeout(resolve, 300));
+		await expect(canvas.toDataURL()).not.toBe(before);
 	},
 };

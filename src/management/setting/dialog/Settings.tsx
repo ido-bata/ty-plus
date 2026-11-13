@@ -22,7 +22,6 @@ import { FeedbackSection } from "@/management/setting/dialog/sections/FeedbackSe
 import { GridSection } from "@/management/setting/dialog/sections/GridSection";
 import { InputsSection } from "@/management/setting/dialog/sections/InputsSection";
 import { LanguageSection } from "@/management/setting/dialog/sections/LanguageSection";
-import { NetworkSection } from "@/management/setting/dialog/sections/NetworkSection";
 import { PathsSection } from "@/management/setting/dialog/sections/PathsSection";
 import { StyleSection } from "@/management/setting/dialog/sections/StyleSection";
 import { TokensSection } from "@/management/setting/dialog/sections/TokensSection";
@@ -159,12 +158,10 @@ const SETTINGS_SECTIONS: SettingsSidebarSectionDef[] = [
 		labelKey: "tabs.section.paths",
 		render: () => <PathsSection />,
 	},
-	{
-		sectionId: "network",
-		groupId: "data",
-		labelKey: "tabs.section.network",
-		render: () => <NetworkSection />,
-	},
+	// Issue #82: the cloud-sync "network" section is dormant in R0 — there is
+	// no backend, and mounting it fired a worker connectivity check on every
+	// dialog open. The section is not registered here; restore it together
+	// with a real backend.
 	{
 		sectionId: "update",
 		groupId: "data",

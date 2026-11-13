@@ -2,6 +2,7 @@ import {
 	getCepPathReaderFromWindow,
 	normalizeCepSystemPath,
 } from "@/management/ae/cep/runtime";
+import { createLogger } from "@/management/debug/logger";
 import type { PluginEffectScanRequest } from "./generated";
 import {
 	compiledOperationWorkerTrustMode,
@@ -23,6 +24,8 @@ import {
 import type { WorkerLifecycleEvent } from "./operation-worker-runner";
 
 declare const __APP_VERSION__: string;
+
+const verifyLog = createLogger("operation-worker");
 
 const DEV_GLOBAL = "__TY_PLUS_OPERATION_WORKER_VERIFY__" as const;
 const VERIFY_ROOTS = ["Plug-ins"] as const;
@@ -230,6 +233,24 @@ const installOperationWorkerDevPanelInternal = (
 			};
 		};
 		const onLifecycle = (event: WorkerLifecycleEvent): void => {
+			// Structured, secret-safe diagnostics for device verification
+			// (Issue #73): event kind plus numeric/enum fields only. Raw
+			// stderr and payloads must never reach the log.
+			try {
+				const detail: Record<string, unknown> = { kind: event.kind };
+				if ("pid" in event && typeof event.pid === "number")
+					detail.pid = event.pid;
+				if ("exitCode" in event) detail.exitCode = event.exitCode;
+				if ("bytes" in event && typeof event.bytes === "number")
+					detail.stderrBytes = event.bytes;
+				if ("truncated" in event) detail.stderrTruncated = event.truncated;
+				if ("status" in event) detail.status = event.status;
+				if ("stage" in event && typeof event.stage === "string")
+					detail.stage = event.stage;
+				verifyLog.info(`lifecycle ${event.kind}`, { context: detail });
+			} catch {
+				// Diagnostics must never break verification.
+			}
 			switch (event.kind) {
 				case "spawned":
 					worker.pid = event.pid;
@@ -334,6 +355,27 @@ const installOperationWorkerDevPanelInternal = (
 				closeExitCode: 0,
 			});
 		} catch (error) {
+			// Protocol failure outcomes carry user_safe_detail and a
+			// diagnostic_id by design; surface them for device triage.
+			try {
+				if (error && typeof error === "object" && "code" in error) {
+					const e = error as {
+						code?: unknown;
+						diagnostic?: unknown;
+						diagnosticId?: unknown;
+					};
+					const code = typeof e.code === "string" ? e.code : "unknown";
+					const detail =
+						typeof e.diagnostic === "string" ? e.diagnostic.slice(0, 200) : "";
+					const diagnosticId =
+						typeof e.diagnosticId === "string" ? e.diagnosticId : "";
+					verifyLog.warn(
+						`worker attempt failure ${code}${diagnosticId ? ` ${diagnosticId}` : ""}${detail ? `: ${detail}` : ""}`,
+					);
+				}
+			} catch {
+				// Diagnostics must never break verification.
+			}
 			return { ok: false, error: errorCode(error, worker) };
 		}
 	};

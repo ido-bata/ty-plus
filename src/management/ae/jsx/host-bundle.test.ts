@@ -90,14 +90,21 @@ afterAll(() => {
 const createGeneratedBundleWindow = (
 	appRoot: unknown,
 	supportRoot: unknown,
+	options?: Readonly<{ os?: string; appPackageParent?: unknown }>,
 ) => {
 	const sandbox = {
 		$: {
 			fileName: "C:/Ty Plus/extension/jsx/ty-plus-host.jsx",
 			global: {},
+			...(options?.os ? { os: options.os } : {}),
 		},
 		Folder: {
-			appPackage: { fsName: appRoot },
+			appPackage: {
+				fsName: appRoot,
+				...(options?.appPackageParent
+					? { parent: options.appPackageParent }
+					: {}),
+			},
 			userData: { fsName: supportRoot },
 		},
 		alert: () => undefined,
@@ -226,21 +233,14 @@ describe("ExtendScript host bundle command wrappers", () => {
 		expect(source).toContain("$.global.__TY_PLUS_HOST__ = hostBundle;");
 	});
 
-	test("alerts before returning a structured wrapper failure", () => {
-		const alertIndex = source.indexOf("showExecutionFailureAlert(message);");
-		const failureIndex = source.indexOf("code: \"AE_EVAL_FAILED\"");
-		const alertedIndex = source.indexOf("alerted: true");
-
-		expect(alertIndex).toBeGreaterThan(-1);
+	test("returns a structured wrapper failure without a modal alert", () => {
+		// Issue #72: CEP-mediated calls must not raise ExtendScript alert();
+		// the JS side surfaces the failure as a thrown error plus a
+		// non-modal notification. Standalone .jsx generation keeps alert().
+		expect(source).not.toContain("showExecutionFailureAlert");
+		const failureIndex = source.indexOf('code: "AE_EVAL_FAILED"');
 		expect(failureIndex).toBeGreaterThan(-1);
-		expect(alertedIndex).toBeGreaterThan(-1);
-		expect(alertIndex).toBeLessThan(failureIndex);
-	});
-
-	test("keeps alert copy user-facing and strips ExtendScript diagnostics", () => {
-		expect(source).toContain("Ty Plus could not complete the action.");
-		expect(source).toContain("replace(/^Error:");
-		expect(source).toContain("replace(/\\s+line=\\S+.*$/");
+		expect(source).not.toContain("alerted: true");
 	});
 
 	test("does not reject animation presets only because no layer is selected", () => {
@@ -645,6 +645,23 @@ describe("ExtendScript host bundle command wrappers", () => {
 			"/Applications/Adobe After Effects 2026/Adobe After Effects.app/Contents",
 		);
 		expect(context).not.toHaveProperty("aeVersion");
+	});
+
+	test("resolves macOS appRoot to the .app parent so worker scan roots resolve", async () => {
+		const fixture = createGeneratedBundleWindow(
+			"/Applications/Adobe After Effects 2026/Adobe After Effects 2026.app",
+			"/Users/example/Library/Application Support/Ty Plus",
+			{
+				os: "Mac OS",
+				appPackageParent: {
+					fsName: "/Applications/Adobe After Effects 2026",
+					name: "Adobe After Effects 2026",
+				},
+			},
+		);
+		const context = await createOperationWorkerContextProvider(fixture.win)();
+
+		expect(context.appRoot).toBe("/Applications/Adobe After Effects 2026");
 	});
 
 	test.each([

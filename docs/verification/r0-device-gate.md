@@ -19,6 +19,15 @@
 
 Windowsの **release-trust配布候補**（`ty-plus-release-candidate-windows-<sha>`、未署名worker + 署名済みZXP — ADR-0003）は `release-trust-windows-candidate` jobの成果物として取得できる。D-18〜D-20（SmartScreen / SAC / ZXPインストール）はこの配布候補に対して実施する。
 
+## dev build と配布物の識別（#80）
+
+dev build（`bun run build:cep:dev` → `dist/cep-dev`、`org.loginc.ty-plus` として配置）と配布物（`app.ty-plus`）は、manifest 上同じ Extension Id（`app.ty-plus.panel1` / `app.ty-plus.dialog-*`）を名乗る。CEP は extensions ディレクトリ全体から Extension Id を解決するため、**両者が同居するとどちらのコードがロードされるか一意に決まらない**。これは R0 の既知の制約であり、dev 用に別 Extension Id を発行する根本対応は #86 で追跡する。
+
+検証時のルール:
+
+- 実機検証の前に、対象ビルド以外の ty-plus フォルダ（`app.ty-plus` / `org.loginc.ty-plus` / 旧 `ty-plus` 等）を extensions ディレクトリから取り除くか、symlink を対象へ付け替える。両方を残したまま「どのビルドを検証したか」を判定しない。
+- 判定証拠として、対象 surface の `location.href`（install フォルダ名を含む `file://` URL）を CDP 等で記録し、どのフォルダのコードがロードされたかを証跡化する。folder 名と `CSXS/manifest.xml` の `ExtensionBundleVersion`、および `release-manifest.json` の sha256 をセットで残す。
+
 ## シナリオ
 
 状態の値: `未実施` / `合格` / `不合格` / `ブロック`（理由を記す）。

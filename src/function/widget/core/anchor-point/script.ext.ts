@@ -69,15 +69,14 @@ const ANCHOR_SCRIPT_TEMPLATE = `(function(){
     var detail = scope + ": " + String(err);
     if (err && err.line) detail += " @ line " + err.line;
     $.writeln("[anchor] ERROR " + detail);
-    alert("ty-plus anchor error\\n" + detail);
   }
 
   try {
     var POS = "__POSITION__";
     var comp = app.project.activeItem;
-    if (!(comp instanceof CompItem)) { alert("ty-plus anchor: no active comp"); return "no comp"; }
+    if (!(comp instanceof CompItem)) { return "no comp"; }
     var selected = comp.selectedLayers;
-    if (!selected || selected.length < 1) { alert("ty-plus anchor: no layer selected"); return "no layer"; }
+    if (!selected || selected.length < 1) { return "no layer"; }
     app.beginUndoGroup("ty-plus anchor (anim-safe)");
     var results = [];
     var hadError = false;
@@ -120,8 +119,7 @@ const ANCHOR_SCRIPT_TEMPLATE = `(function(){
         }
       }
     } finally { app.endUndoGroup(); }
-    var finalResult = "ok n=" + selected.length + " " + results.join(" | ");
-    if (hadError) alert("ty-plus anchor completed with errors\\n" + finalResult);
+    var finalResult = (hadError ? "partial " : "ok ") + "n=" + selected.length + " " + results.join(" | ");
     return finalResult;
   } catch (e) {
     showError("top-level", e);
