@@ -4,7 +4,6 @@ import type {
 	HostAdapter,
 	HostContext,
 	HostFunctionCaller,
-	InstalledEffectRow,
 	PrepareAnimationPresetTargetInput,
 	PrepareCodePresetScriptInput,
 	PrepareEasingPresetScriptInput,
@@ -126,17 +125,6 @@ export const createAdapter = (
 				return v as { pairs: number };
 			}
 			return { pairs: 0 };
-		},
-		getInstalledEffects: async () => {
-			const v = await call("getInstalledEffects", []);
-			if (
-				v &&
-				typeof v === "object" &&
-				Array.isArray((v as { rows?: unknown }).rows)
-			) {
-				return v as { rows: InstalledEffectRow[] };
-			}
-			return { rows: [] as InstalledEffectRow[] };
 		},
 		alignLayers: (input: { action: string; target: string }) =>
 			call("alignLayers", [input]),

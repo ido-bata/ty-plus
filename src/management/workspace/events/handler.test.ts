@@ -94,6 +94,38 @@ const createTestContainer = (): Element => {
 	return container;
 };
 
+/**
+ * jsdom reports a zero rect for every element, which makes `getEdge`
+ * treat any point as an edge hit. Derive the rect from the inline
+ * geometry instead so pointer coordinates mean what they say (Issue #64).
+ * Reads `style` live so drag previews that rewrite it stay consistent.
+ */
+const mockTileRect = (el: Element): void => {
+	const htmlEl = el as HTMLElement;
+	const inlinePx = (value: string): number => Number.parseFloat(value) || 0;
+	Object.defineProperties(htmlEl, {
+		clientWidth: { get: () => inlinePx(htmlEl.style.width) },
+		clientHeight: { get: () => inlinePx(htmlEl.style.height) },
+	});
+	htmlEl.getBoundingClientRect = () => {
+		const left = Number.parseFloat(htmlEl.style.left) || 0;
+		const top = Number.parseFloat(htmlEl.style.top) || 0;
+		const width = Number.parseFloat(htmlEl.style.width) || 0;
+		const height = Number.parseFloat(htmlEl.style.height) || 0;
+		return {
+			x: left,
+			y: top,
+			left,
+			top,
+			width,
+			height,
+			right: left + width,
+			bottom: top + height,
+			toJSON: () => ({}),
+		} as DOMRect;
+	};
+};
+
 const createWidgetElement = (
 	container: Element,
 	surfaceIndex: number,
@@ -110,6 +142,7 @@ const createWidgetElement = (
 	el.style.top = `${top}px`;
 	el.style.width = `${width}px`;
 	el.style.height = `${height}px`;
+	mockTileRect(el);
 	container.querySelector("[data-workspace-grid]")?.appendChild(el);
 	return el;
 };
@@ -132,6 +165,7 @@ const createPresetElement = (
 	el.style.top = `${top}px`;
 	el.style.width = `${width}px`;
 	el.style.height = `${height}px`;
+	mockTileRect(el);
 	container.querySelector("[data-workspace-grid]")?.appendChild(el);
 	return el;
 };
@@ -155,6 +189,7 @@ const createOpaquePresetPlacementElement = (
 	el.style.top = `${top}px`;
 	el.style.width = `${width}px`;
 	el.style.height = `${height}px`;
+	mockTileRect(el);
 	container.querySelector("[data-workspace-grid]")?.appendChild(el);
 	return el;
 };
@@ -952,13 +987,13 @@ describe("workspace interaction events", () => {
 			)?.width;
 
 			simulatePointerDown(actionBtn, rect.right - 5, rect.top + 10, 0);
-			simulatePointerMove(actionBtn, rect.right + 20, rect.top + 10, 0);
-			simulatePointerUp(actionBtn, rect.right + 20, rect.top + 10);
+			simulatePointerMove(actionBtn, rect.right + 60, rect.top + 10, 0);
+			simulatePointerUp(actionBtn, rect.right + 60, rect.top + 10);
 
 			expect(
 				layoutsFromState(currentState).find((w) => w.id === WIDGET_INFO_ID)
 					?.width,
-			).not.toBe(initialWidth);
+			).toBeGreaterThan(initialWidth ?? 0);
 		});
 
 		it("resizes from corner handles", () => {
@@ -999,6 +1034,44 @@ describe("workspace interaction events", () => {
 				layoutsFromState(currentState).find((w) => w.id === WIDGET_INFO_ID)
 					?.width,
 			).toBe(initialWidth);
+		});
+
+		// Regression for Issue #64: `selectionMove` used to win over the
+		// edge hit, so once a tile was selected a plain left-drag on its
+		// resize margin moved the selection instead of resizing it.
+		it("resizes a selected tile on plain left-drag at the edge", () => {
+			const state = createMinimalState({ selectedSurfaceIndices: [0] });
+			setup(state);
+
+			const widgetEl = container.querySelector<HTMLElement>(
+				`[data-workspace-surface-index="0"]`,
+			)!;
+			const rect = widgetEl.getBoundingClientRect();
+			const before = layoutsFromState(currentState).find(
+				(w) => w.id === WIDGET_INFO_ID,
+			)!;
+
+			simulatePointerDown(
+				widgetEl,
+				rect.right - 5,
+				rect.top + rect.height / 2,
+				0,
+			);
+			simulatePointerMove(
+				widgetEl,
+				rect.right + 60,
+				rect.top + rect.height / 2,
+				0,
+			);
+			simulatePointerUp(widgetEl, rect.right + 60, rect.top + rect.height / 2);
+
+			const after = layoutsFromState(currentState).find(
+				(w) => w.id === WIDGET_INFO_ID,
+			)!;
+			expect(after.width).toBeGreaterThan(before.width);
+			// A move would shift x/y; a resize must leave the origin alone.
+			expect(after.x).toBe(before.x);
+			expect(after.y).toBe(before.y);
 		});
 	});
 
@@ -1264,15 +1337,24 @@ describe("workspace interaction events", () => {
 
 			simulatePointerDown(
 				widgetEl,
-				rect.left + 5,
-				rect.top + 5,
+				rect.left + rect.width / 2,
+				rect.top + rect.height / 2,
 				0,
 				false,
 				false,
 				false,
 			);
-			simulatePointerMove(widgetEl, rect.left + 50, rect.top + 50, 0);
-			simulatePointerUp(widgetEl, rect.left + 50, rect.top + 50);
+			simulatePointerMove(
+				widgetEl,
+				rect.left + rect.width / 2 + 50,
+				rect.top + rect.height / 2 + 50,
+				0,
+			);
+			simulatePointerUp(
+				widgetEl,
+				rect.left + rect.width / 2 + 50,
+				rect.top + rect.height / 2 + 50,
+			);
 
 			expect(
 				layoutsFromState(currentState).find((w) => w.id === WIDGET_INFO_ID)!.x,
@@ -1368,15 +1450,24 @@ describe("workspace interaction events", () => {
 
 			simulatePointerDown(
 				presetEl,
-				rect.left + 10,
-				rect.top + 10,
+				rect.left + rect.width / 2,
+				rect.top + rect.height / 2,
 				0,
 				false,
 				false,
 				false,
 			);
-			simulatePointerMove(presetEl, rect.left + 50, rect.top + 50, 0);
-			simulatePointerUp(presetEl, rect.left + 50, rect.top + 50);
+			simulatePointerMove(
+				presetEl,
+				rect.left + rect.width / 2 + 50,
+				rect.top + rect.height / 2 + 50,
+				0,
+			);
+			simulatePointerUp(
+				presetEl,
+				rect.left + rect.width / 2 + 50,
+				rect.top + rect.height / 2 + 50,
+			);
 
 			const presetAfter = currentState.surfaceTiles[2] as {
 				x: number;
@@ -1488,15 +1579,24 @@ describe("workspace interaction events", () => {
 
 			simulatePointerDown(
 				widgetEl,
-				rect.left + 5,
-				rect.top + 5,
+				rect.left + rect.width / 2,
+				rect.top + rect.height / 2,
 				0,
 				false,
 				false,
 				false,
 			);
-			simulatePointerMove(widgetEl, rect.left + 50, rect.top + 50, 0);
-			simulatePointerUp(widgetEl, rect.left + 50, rect.top + 50);
+			simulatePointerMove(
+				widgetEl,
+				rect.left + rect.width / 2 + 50,
+				rect.top + rect.height / 2 + 50,
+				0,
+			);
+			simulatePointerUp(
+				widgetEl,
+				rect.left + rect.width / 2 + 50,
+				rect.top + rect.height / 2 + 50,
+			);
 
 			expect(
 				layoutsFromState(currentState).find((w) => w.id === WIDGET_INFO_ID)!.x,
@@ -1622,15 +1722,24 @@ describe("workspace interaction events", () => {
 
 			simulatePointerDown(
 				presetEl,
-				rect.left + 10,
-				rect.top + 10,
+				rect.left + rect.width / 2,
+				rect.top + rect.height / 2,
 				0,
 				false,
 				false,
 				false,
 			);
-			simulatePointerMove(presetEl, rect.left + 50, rect.top + 50, 0);
-			simulatePointerUp(presetEl, rect.left + 50, rect.top + 50);
+			simulatePointerMove(
+				presetEl,
+				rect.left + rect.width / 2 + 50,
+				rect.top + rect.height / 2 + 50,
+				0,
+			);
+			simulatePointerUp(
+				presetEl,
+				rect.left + rect.width / 2 + 50,
+				rect.top + rect.height / 2 + 50,
+			);
 
 			const moved1 = currentState.surfaceTiles[1] as {
 				x: number;
@@ -1760,15 +1869,24 @@ describe("workspace interaction events", () => {
 
 			simulatePointerDown(
 				widgetEl,
-				rect.left + 5,
-				rect.top + 5,
+				rect.left + rect.width / 2,
+				rect.top + rect.height / 2,
 				0,
 				false,
 				false,
 				false,
 			);
-			simulatePointerMove(widgetEl, rect.left + 100, rect.top + 100, 0);
-			simulatePointerUp(widgetEl, rect.left + 100, rect.top + 100);
+			simulatePointerMove(
+				widgetEl,
+				rect.left + rect.width / 2 + 100,
+				rect.top + rect.height / 2 + 100,
+				0,
+			);
+			simulatePointerUp(
+				widgetEl,
+				rect.left + rect.width / 2 + 100,
+				rect.top + rect.height / 2 + 100,
+			);
 
 			const movedWidget = layoutsFromState(currentState).find(
 				(w) => w.id === WIDGET_INFO_ID,

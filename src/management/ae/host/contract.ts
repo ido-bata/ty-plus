@@ -63,13 +63,6 @@ export type AexEffectScanRow = {
 	displayName: string;
 };
 
-/** One row from `getInstalledEffects` — mirrors AE's internal effect registry. */
-export type InstalledEffectRow = {
-	displayName: string;
-	matchName: string;
-	category: string;
-};
-
 export type AfterEffectsHostApi = {
 	/** Returns the host context (app.path, support root, and session ID). */
 	getHostContext(): Promise<HostContext>;
@@ -88,8 +81,6 @@ export type AfterEffectsHostApi = {
 	): Promise<{ exists: boolean; path: string }>;
 	/** Scan `.aex` under the given folders (typically `pluginRoot`) for effect match names. */
 	scanPluginEffectRoots(roots: string[]): Promise<{ rows: AexEffectScanRow[] }>;
-	/** Return all effects installed in AE (via app.effects). */
-	getInstalledEffects(): Promise<{ rows: InstalledEffectRow[] }>;
 	/** Apply an effect to selected layers by AE match name (from PiPL / manifest scan). */
 	applyEffectByMatchName(matchName: string): Promise<unknown>;
 	applyEasing(payload: Record<string, unknown>): Promise<unknown>;

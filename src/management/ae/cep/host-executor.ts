@@ -26,7 +26,7 @@ type CepWindowWithEvalScript = {
 const HOST_BUNDLE_NAMESPACE = "__TY_PLUS_HOST__";
 const HOST_BUNDLE_GLOBAL_REF = `$.global['${HOST_BUNDLE_NAMESPACE}']`;
 const HOST_BUNDLE_RELATIVE_PATH = "jsx/ty-plus-host.jsx";
-const ALLOWED_HOST_METHODS = new Set<keyof AfterEffectsHostApi>([
+export const ALLOWED_HOST_METHODS = new Set<keyof AfterEffectsHostApi>([
 	"getHostContext",
 	"ping",
 	"runScriptFile",

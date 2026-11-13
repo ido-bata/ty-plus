@@ -126,6 +126,18 @@ const getEdge = (
 	const r = el.getBoundingClientRect();
 	const x = pointerX - r.left;
 	const y = pointerY - r.top;
+	// A point outside the element (plus the margin) cannot be near an
+	// edge. Without this bound a zero-size rect reports EVERY point as an
+	// edge hit, which let `selectionMove` swallow resizes on selected
+	// tiles (Issue #64) and made unlaid-out test geometry meaningless.
+	if (
+		x < -RESIZE_MARGIN ||
+		x > r.width + RESIZE_MARGIN ||
+		y < -RESIZE_MARGIN ||
+		y > r.height + RESIZE_MARGIN
+	) {
+		return null;
+	}
 	const n = y < RESIZE_MARGIN;
 	const s = y > r.height - RESIZE_MARGIN;
 	const ew = x < RESIZE_MARGIN;
@@ -577,13 +589,17 @@ export const setupInteractionEvents = (
 			surfaceIndexStrForTile !== null &&
 			Number.isFinite(hitIdx) &&
 			state.selectedSurfaceIndices.includes(hitIdx);
-		/** Plain left-drag on any selected shell moves the whole selection (no modifier). */
+		/** Plain left-drag on any selected shell moves the whole selection (no modifier).
+		 *  An edge hit still wins: the resize margin is the more specific
+		 *  affordance, and without this exclusion a selected tile could
+		 *  never be resized by plain left-drag (Issue #64). */
 		const selectionMove =
 			ev.button === 0 &&
 			!ev.ctrlKey &&
 			!ev.metaKey &&
 			!ev.shiftKey &&
-			clickedOnSelectedTile;
+			clickedOnSelectedTile &&
+			!edge;
 		/** Ctrl/Cmd + drag on a selected shell moves the whole selection together. */
 		const selectionMoveViaModifier =
 			isMoveClick && totalSelectedPlacements > 1 && clickedOnSelectedTile;
