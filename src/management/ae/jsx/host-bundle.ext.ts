@@ -322,6 +322,59 @@ const aeSupportFilesRoot = (): string => {
 };
 
 /**
+ * Base directory the operation worker resolves relative scan roots
+ * against. On macOS `Folder.appPackage.fsName` is the `.app` bundle
+ * itself, but plug-in folders (`Plug-ins`, `Support Files/Plug-ins`)
+ * live next to it, so the parent is the correct root. Mirrors the
+ * traversal `aeSupportFilesRoot` performs, without lowercasing the
+ * path. Returns "" when the host exposes nothing usable.
+ */
+const aeWorkerAppRoot = (): string => {
+	try {
+		const appPackage = Folder.appPackage as unknown as
+			| {
+					fsName?: unknown;
+					parent?: { fsName?: unknown; name?: unknown; parent?: unknown };
+			  }
+			| undefined;
+		if (!appPackage || typeof appPackage.fsName !== "string") {
+			return "";
+		}
+		const fallback = String(appPackage.fsName);
+		const osName = typeof $.os === "string" ? String($.os) : "";
+		if (/mac/i.test(osName)) {
+			const parent = appPackage.parent;
+			return parent && typeof parent.fsName === "string"
+				? String(parent.fsName)
+				: fallback;
+		}
+		let current = appPackage.parent as
+			| { fsName?: unknown; name?: unknown; parent?: unknown }
+			| undefined;
+		let baseFs = "";
+		while (current) {
+			const name = typeof current.name === "string" ? current.name : "";
+			if (
+				/support files/i.test(name) &&
+				typeof current.fsName === "string"
+			) {
+				return String(current.fsName);
+			}
+			if (!baseFs && typeof current.fsName === "string") {
+				baseFs = String(current.fsName);
+			}
+			current = current.parent as typeof current;
+		}
+		if (baseFs) {
+			return `${baseFs}/support files`;
+		}
+		return fallback;
+	} catch (_appRootError) {
+		return "";
+	}
+};
+
+/**
  * Root classification for authoring targets.
  *
  * The vocabulary is deliberately identical to the roots
@@ -2138,11 +2191,11 @@ const hostBundle = {
 	ping: wrapCallable(() => ({ ok: true, value: HOST_BUNDLE_VERSION })),
 	getHostContext: wrapCallable(() => {
 		const appPackage = Folder.appPackage;
-		const appRoot =
-			appPackage &&
+		const appRoot = aeWorkerAppRoot() ||
+			(appPackage &&
 			typeof (appPackage as { fsName?: unknown }).fsName === "string"
 				? (appPackage as { fsName: string }).fsName
-				: undefined;
+				: undefined);
 		const supportRoot = Folder.userData.fsName;
 		return {
 			appRoot,
