@@ -150,14 +150,18 @@ const createSurfaceLink = (win: Window): SurfaceTransport => {
 			if (csFactory) {
 				const cs = new csFactory();
 				const appId = cs.getApplicationID?.() ?? null;
+				// Issue #67: CEP rejects dispatchEvent with
+				// `PlugPlugErrorCode_invalidParam` when extensionId is empty.
+				// The sender's own extension id is required on every scope.
+				const extensionId = cs.getExtensionID?.() ?? null;
 				for (const scope of scopes) {
 					const event: CepDispatchEvent = eventFactory
-						? new eventFactory(SURFACE_MESSAGE_EVENT, scope, appId, "")
+						? new eventFactory(SURFACE_MESSAGE_EVENT, scope, appId, extensionId)
 						: {
 								type: SURFACE_MESSAGE_EVENT,
 								scope,
 								appId,
-								extensionId: "",
+								extensionId,
 								data: "",
 							};
 					event.data = payload;
