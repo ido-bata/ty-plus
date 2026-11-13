@@ -117,11 +117,6 @@ export const DataPaths: Story = {
 	render: renderDialog("paths"),
 };
 
-/** データ → Network. Hash = #network. */
-export const DataNetwork: Story = {
-	render: renderDialog("network"),
-};
-
 /** データ → ComponentPreview. Hash = #component-preview. */
 export const DataComponentPreview: Story = {
 	render: renderDialog("component-preview"),
