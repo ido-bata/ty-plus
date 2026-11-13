@@ -1,49 +1,73 @@
-name: Bug report
-description: Report a problem with ty-plus
+name: Bug report / 不具合報告
+description: Report a reproducible ty-plus problem / ty-plusの不具合を報告
 labels: ["bug"]
 body:
   - type: markdown
     attributes:
       value: |
-        不具合の報告ありがとうございます。再現に必要な情報を記入してください。
-        Security vulnerability はこちらから報告しないでください（SECURITY.md を参照）。
+        Thanks for helping improve ty-plus. 日本語でも英語でも報告できます。
+
+        Check the [installation guide](https://github.com/ido-bata/ty-plus/blob/main/docs/user-guide/installation/index.md) and [existing issues](https://github.com/ido-bata/ty-plus/issues) first.
+
+        **Do not use this form for security vulnerabilities.** Use [private reporting](https://github.com/ido-bata/ty-plus/security/advisories/new).
+        Never include credentials, personal data or private project files in logs.
   - type: textarea
     id: what-happened
     attributes:
-      label: 何が起きたか
-      description: 期待した結果と、実際の結果を書いてください。
+      label: What happened? / 発生した現象
+      description: Expected and actual results / 期待した結果と実際の結果
     validations:
       required: true
   - type: textarea
     id: reproduce
     attributes:
-      label: 再現手順
-      description: 最小の手順を順に書いてください。
+      label: Steps to reproduce / 再現手順
+      description: Include a minimal sequence of actions / 最小の再現手順
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system / OS
+      options:
+        - Windows 11
+        - Windows 10
+        - macOS
+        - Other
     validations:
       required: true
   - type: input
-    id: os
+    id: os-version
     attributes:
-      label: OS とバージョン
-      placeholder: 例) Windows 11 23H2 / macOS 15.3
-    validations:
-      required: true
+      label: OS version / OSのバージョン
+      placeholder: "e.g. Windows 11 24H2 / macOS 15"
   - type: input
     id: ae-version
     attributes:
-      label: After Effects のバージョン
-      placeholder: 例) 25.2 (2025)
+      label: After Effects version / After Effectsのバージョン
+      placeholder: "e.g. 26.5.3"
     validations:
       required: true
   - type: input
     id: build-version
     attributes:
-      label: ty-plus のバージョン
-      description: Settings → 更新 に表示されるバージョン、または manifest の version。
+      label: ty-plus version and channel / バージョンと更新チャンネル
+      placeholder: "e.g. v0.10.1 Stable"
+    validations:
+      required: true
+  - type: dropdown
+    id: source
+    attributes:
+      label: Installation method / インストール方法
+      options:
+        - ZXP from GitHub Releases
+        - ZIP from GitHub Releases
+        - Development build
+        - Other
     validations:
       required: true
   - type: textarea
     id: logs
     attributes:
-      label: エラーメッセージ・ログ
-      description: Debug Console の出力があれば貼ってください。
+      label: Logs or screenshots / ログ・スクリーンショット
+      description: Redact secrets and personal data / 秘密情報や個人情報を除去してください
