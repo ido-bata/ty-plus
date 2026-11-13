@@ -247,7 +247,7 @@ const installOperationWorkerDevPanelInternal = (
 				if ("status" in event) detail.status = event.status;
 				if ("stage" in event && typeof event.stage === "string")
 					detail.stage = event.stage;
-				verifyLog.info("lifecycle", { context: detail });
+				verifyLog.info(`lifecycle ${event.kind}`, { context: detail });
 			} catch {
 				// Diagnostics must never break verification.
 			}
@@ -355,6 +355,30 @@ const installOperationWorkerDevPanelInternal = (
 				closeExitCode: 0,
 			});
 		} catch (error) {
+			// Protocol failure outcomes carry user_safe_detail and a
+			// diagnostic_id by design; surface them for device triage.
+			try {
+				if (error && typeof error === "object" && "code" in error) {
+					const e = error as {
+						code?: unknown;
+						diagnostic?: unknown;
+						diagnosticId?: unknown;
+					};
+					const code =
+						typeof e.code === "string" ? e.code : "unknown";
+					const detail =
+						typeof e.diagnostic === "string"
+							? e.diagnostic.slice(0, 200)
+							: "";
+					const diagnosticId =
+						typeof e.diagnosticId === "string" ? e.diagnosticId : "";
+					verifyLog.warn(
+						`worker attempt failure ${code}${diagnosticId ? ` ${diagnosticId}` : ""}${detail ? `: ${detail}` : ""}`,
+					);
+				}
+			} catch {
+				// Diagnostics must never break verification.
+			}
 			return { ok: false, error: errorCode(error, worker) };
 		}
 	};
