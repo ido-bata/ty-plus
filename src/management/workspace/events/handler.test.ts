@@ -598,7 +598,9 @@ describe("workspace interaction events", () => {
 			const rect = anchorBtn.getBoundingClientRect();
 			simulateClick(anchorBtn, rect.left + 2, rect.top + 2);
 
-			expect(currentState.statusMessage).toBe("Anchor point applied: top-left");
+			expect(currentState.statusMessage).toBe(
+				"Anchor point requested: top-left",
+			);
 		});
 
 		it("does not execute group placement shells as presets", () => {
