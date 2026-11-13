@@ -364,12 +364,9 @@ const installOperationWorkerDevPanelInternal = (
 						diagnostic?: unknown;
 						diagnosticId?: unknown;
 					};
-					const code =
-						typeof e.code === "string" ? e.code : "unknown";
+					const code = typeof e.code === "string" ? e.code : "unknown";
 					const detail =
-						typeof e.diagnostic === "string"
-							? e.diagnostic.slice(0, 200)
-							: "";
+						typeof e.diagnostic === "string" ? e.diagnostic.slice(0, 200) : "";
 					const diagnosticId =
 						typeof e.diagnosticId === "string" ? e.diagnosticId : "";
 					verifyLog.warn(
