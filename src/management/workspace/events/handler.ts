@@ -5,8 +5,8 @@ import {
 	TIME_ALIGN_ACTIONS,
 } from "@/function/widget/core/align";
 import {
-	buildAnchorScript,
 	isValidAnchorPosition,
+	runAnchorScript,
 } from "@/function/widget/core/anchor-point";
 import { createCepHostExecutor } from "@/management/ae/cep/host-executor";
 import type { Preset } from "@/management/preset/contract";
@@ -1461,10 +1461,10 @@ export const setupInteractionEvents = (
 				statusMessage: `Applying anchor point: ${pos}...`,
 			});
 			rerender();
-			runCep(buildAnchorScript(pos));
+			runAnchorScript(pos);
 			setState({
 				...getState(),
-				statusMessage: `Anchor point applied: ${pos}`,
+				statusMessage: `Anchor point requested: ${pos}`,
 			});
 			return;
 		}

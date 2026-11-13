@@ -16,6 +16,7 @@ import {
 	setEasingClipboard,
 	setValuesClipboard,
 } from "@/management/dialog/dialogs/unified-context-menu";
+import { notificationStore } from "@/management/online/notification/service";
 import {
 	loadClipboard,
 	saveEasing,
@@ -804,6 +805,9 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 	const lastClickTimeRef = useRef(0);
 	const stateLoadedRef = useRef(false);
 	const applyTargetingRef = useRef<"both" | "in" | "out">("both");
+	// Set by the explicit Apply action only, so the empty-selection notice
+	// fires once per user-initiated apply and never during curve auto-apply.
+	const notifyEmptySelectionRef = useRef(false);
 	const [mode, setModeState] = useState<Mode>("curve");
 	const [applyMode, setApplyMode] = useState<ApplyMode>("pair");
 	const [backgroundPattern, setBackgroundPattern] =
@@ -1495,6 +1499,17 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 			const pairs = extractSelectionPairCount(selResult);
 			if (pairs <= 0) {
 				setStatus("idle");
+				// Explicit applies used to fail silently, which read as
+				// "the widget does nothing". Auto-apply stays quiet so
+				// curve editing never spams notifications.
+				if (notifyEmptySelectionRef.current) {
+					notifyEmptySelectionRef.current = false;
+					notificationStore.add(
+						"Ty Plus easing: no keyframes selected — select keyframes in the AE timeline first",
+						"warning",
+						{ duration: 6000 },
+					);
+				}
 				return;
 			}
 		} catch (_err) {
@@ -1502,6 +1517,7 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 			// existing apply path surface the error. We never silently
 			// swallow a real failure.
 		}
+		notifyEmptySelectionRef.current = false;
 		setStatus("busy");
 		const state = stateRef.current;
 		// Loop mode uses the curve-mode points as a single-cycle template;
@@ -2072,7 +2088,10 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 			}
 			if (detail.action === "copy") void handlers.copyFromSelection();
 			if (detail.action === "reverse") handlers.reverseCurve();
-			if (detail.action === "apply") void handlers.applyCurve();
+			if (detail.action === "apply") {
+				notifyEmptySelectionRef.current = true;
+				void handlers.applyCurve();
+			}
 			if (detail.action === "background") {
 				const next = detail.value === "grid" ? "grid" : "dot";
 				setBackgroundPattern(next);

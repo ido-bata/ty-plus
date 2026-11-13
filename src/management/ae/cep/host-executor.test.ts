@@ -11,6 +11,7 @@ import {
 	_setDevConsoleEnabled,
 	getEntries,
 } from "@/management/debug/logger";
+import { notificationStore } from "@/management/online/notification/service";
 import { createCepHostExecutor } from "./host-executor";
 
 const isAlertOnlyScript = (script: string) =>
@@ -256,7 +257,8 @@ describe("createCepHostExecutor", () => {
 		expect(host.scripts[2]).toContain("['getLabelColorNames']");
 	});
 
-	test("alerts through ExtendScript when host returns an unalerted execution failure", async () => {
+	test("surfaces a non-modal notification when host returns an execution failure", async () => {
+		notificationStore.clear();
 		const host = createFakeHost({
 			methodResult: () => ({
 				ok: false,
@@ -267,14 +269,20 @@ describe("createCepHostExecutor", () => {
 		await expect(
 			anyExecutor(host.win)("runScriptFile", ["C:/missing.jsx"]),
 		).rejects.toThrow("Script file not found");
-		expect(host.scripts.some(isAlertOnlyScript)).toBe(true);
+		// Issue #72: no ExtendScript alert() script may be emitted; the
+		// failure reaches the user through the in-panel notification store.
+		expect(host.scripts.some(isAlertOnlyScript)).toBe(false);
+		const entries = notificationStore.getNotifications();
+		expect(entries).toHaveLength(1);
+		expect(entries[0]?.type).toBe("error");
+		expect(entries[0]?.message).toContain("Script file not found");
 	});
 
-	test("does not send a duplicate alert when the host already alerted", async () => {
+	test("notifies on host failure without any modal alert path", async () => {
+		notificationStore.clear();
 		const host = createFakeHost({
 			methodResult: () => ({
 				ok: false,
-				alerted: true,
 				error: { message: "Preset file not found: C:/missing.ffx" },
 			}),
 		});
@@ -283,6 +291,7 @@ describe("createCepHostExecutor", () => {
 			anyExecutor(host.win)("applyPreset", ["C:/missing.ffx"]),
 		).rejects.toThrow("Preset file not found");
 		expect(host.scripts.filter(isAlertOnlyScript)).toHaveLength(0);
+		expect(notificationStore.getNotifications()).toHaveLength(1);
 	});
 });
 

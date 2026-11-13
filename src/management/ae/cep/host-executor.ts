@@ -6,6 +6,7 @@ import {
 	type HostId,
 } from "@/management/ae/host/contract";
 import { createLogger } from "@/management/debug/logger";
+import { notificationStore } from "@/management/online/notification/service";
 
 const hostBridgeLog = createLogger("host-bridge");
 
@@ -64,14 +65,6 @@ const escapeScriptString = (value: string) =>
 		.replaceAll("\n", "\\n")
 		.replaceAll("\u2028", "\\u2028")
 		.replaceAll("\u2029", "\\u2029");
-
-const hostAlertScript = (message: string) => `
-(function() {
-  try {
-    alert('Ty Plus execution failed:\\n${escapeScriptString(message)}');
-  } catch (_alertError) {}
-})();
-`;
 
 const normalizeCepPath = (value: string) =>
 	value.replaceAll("\\", "/").replace(/\/+$/, "");
@@ -134,11 +127,18 @@ const runEvalScript = (win: Window, script: string) =>
 		});
 	});
 
-const alertHostExecutionFailure = async (win: Window, message: string) => {
+// Issue #72: host execution failures must never raise a modal ExtendScript
+// `alert()` — it blocks the AE main thread and every CEP surface until a
+// human dismisses it. Failures are already propagated to callers as thrown
+// errors; this adds a non-modal in-panel notification as the user-visible
+// surface. Standalone generated `.jsx` keeps `alert()` (see Issue #72).
+const notifyHostExecutionFailure = (message: string) => {
 	try {
-		await runEvalScript(win, hostAlertScript(message));
-	} catch (_alertError) {
-		// The original execution failure is more important than alert delivery.
+		notificationStore.add(`Ty Plus: ${message.slice(0, 300)}`, "error", {
+			duration: 8000,
+		});
+	} catch (_notifyError) {
+		// Notification delivery must never mask the original failure.
 	}
 };
 
@@ -339,10 +339,8 @@ const buildHostBundleLoadScript = (jsxPath: string): string => `
     var loadedBundleVersion = bundle && typeof bundle.__bundleVersion === "string" ? bundle.__bundleVersion : "";
     return JSON.stringify({ ok: true, loaded: true, schemaVersion: schema, bundleVersion: loadedBundleVersion });
   } catch (error) {
-    try { alert('Ty Plus execution failed:\\nHost bundle load failed: ' + String(error)); } catch (_alertError) {}
     return JSON.stringify({
       ok: false,
-      alerted: true,
       error: { message: "Host bundle load failed: " + String(error) }
     });
   }
@@ -430,7 +428,6 @@ const runHostBundleLoad = async (
 		schemaVersion?: number;
 		bundleVersion?: string;
 		error?: { message?: string };
-		alerted?: boolean;
 	};
 	try {
 		parsed = parseHostJsonResult<{
@@ -439,18 +436,15 @@ const runHostBundleLoad = async (
 			schemaVersion?: number;
 			bundleVersion?: string;
 			error?: { message?: string };
-			alerted?: boolean;
 		}>(result, "Host bundle load");
 	} catch (error) {
 		const message = error instanceof Error ? error.message : String(error);
-		await alertHostExecutionFailure(win, message);
+		notifyHostExecutionFailure(message);
 		throw error;
 	}
 	if (!parsed.ok) {
 		const message = parsed.error?.message ?? "Failed to load host bundle";
-		if (!parsed.alerted) {
-			await alertHostExecutionFailure(win, message);
-		}
+		notifyHostExecutionFailure(message);
 		throw new Error(message);
 	}
 	return {
@@ -758,13 +752,10 @@ const buildCepHostExecutor = (
     if (hostMethod) {
       return hostMethod('${rawArgs}');
     }
-    try { alert('Ty Plus execution failed:\\n__TY_PLUS_HOST__.${escapedMethod} is not available'); } catch (_alertError) {}
-    return JSON.stringify({ ok: false, alerted: true, error: { message: "__TY_PLUS_HOST__.${escapedMethod} is not available" } });
+    return JSON.stringify({ ok: false, error: { message: "__TY_PLUS_HOST__.${escapedMethod} is not available" } });
   } catch (error) {
-    try { alert('Ty Plus execution failed:\\nHost function wrapper failed for ${escapedMethod}: ' + String(error)); } catch (_alertError) {}
     return JSON.stringify({
       ok: false,
-      alerted: true,
       error: {
         message: "Host function wrapper failed for ${escapedMethod}: " + String(error)
       }
@@ -775,23 +766,21 @@ const buildCepHostExecutor = (
 		);
 		let parsed:
 			| { ok: true; hostId?: HostId; value?: unknown }
-			| { ok: false; alerted?: boolean; error?: { message?: string } };
+			| { ok: false; error?: { message?: string } };
 		try {
 			parsed = parseHostJsonResult<
 				| { ok: true; hostId?: HostId; value?: unknown }
-				| { ok: false; alerted?: boolean; error?: { message?: string } }
+				| { ok: false; error?: { message?: string } }
 			>(result, `Host function ${String(method)}`);
 		} catch (error) {
 			const message = error instanceof Error ? error.message : String(error);
-			await alertHostExecutionFailure(win, message);
+			notifyHostExecutionFailure(message);
 			throw error;
 		}
 
 		if (!parsed.ok) {
 			const message = parsed.error?.message ?? "Host execution failed";
-			if (!parsed.alerted) {
-				await alertHostExecutionFailure(win, message);
-			}
+			notifyHostExecutionFailure(message);
 			throw new Error(message);
 		}
 

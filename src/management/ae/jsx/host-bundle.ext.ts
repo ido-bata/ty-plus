@@ -225,17 +225,6 @@ const trimStr = (value: string): string => {
 	return value.replace(/^\s+|\s+$/g, "");
 };
 
-const showExecutionFailureAlert = (message: string): void => {
-	try {
-		const userMessage = String(message)
-			.replace(/^Error:\s*/, "")
-			.replace(/\s+line=\S+.*$/, "");
-		alert(`Ty Plus could not complete the action.\n\n${userMessage}`);
-	} catch (_alertError) {
-		// Some host states can reject modal UI; keep returning the structured error.
-	}
-};
-
 const wrapCallable =
 	(fn: (...args: any[]) => unknown) =>
 	(rawArgs: string | undefined) => {
@@ -254,14 +243,12 @@ const wrapCallable =
 				((error as { fileName?: unknown }).fileName
 					? ` file=${String((error as { fileName?: unknown }).fileName)}`
 					: "");
-			showExecutionFailureAlert(message);
 			return JSON.stringify({
 				ok: false,
 				error: {
 					message,
 					code: "AE_EVAL_FAILED",
 				},
-				alerted: true,
 			});
 		}
 	};
