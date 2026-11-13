@@ -5,11 +5,8 @@ import {
 	useAnchorGesture,
 } from "@/shared/component/interaction/use-anchor-gesture";
 import { css } from "@/styled-system/css";
-import {
-	type AnchorPosition,
-	isValidAnchorPosition,
-	runAnchorScript,
-} from "./index";
+import { runAnchorScript } from "./run";
+import { type AnchorPosition, isValidAnchorPosition } from "./script";
 
 const ANCHOR_POSITIONS: readonly (readonly [AnchorPosition, string, string])[] =
 	[
