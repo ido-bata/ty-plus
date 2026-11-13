@@ -247,7 +247,7 @@ const installOperationWorkerDevPanelInternal = (
 				if ("status" in event) detail.status = event.status;
 				if ("stage" in event && typeof event.stage === "string")
 					detail.stage = event.stage;
-				verifyLog.info("lifecycle", { context: detail });
+				verifyLog.info(`lifecycle ${event.kind}`, { context: detail });
 			} catch {
 				// Diagnostics must never break verification.
 			}
