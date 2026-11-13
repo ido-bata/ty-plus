@@ -7,17 +7,16 @@
  */
 import { cleanup, render, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-
+import {
+	__resetDataServicesForTests,
+	setDataServicesBootMode,
+} from "@/management/workspace/services";
 import { NotificationCenter } from "./Center";
 import { fetchNotificationFeed } from "./feed";
 import {
 	loadNotificationsStore,
 	saveNotificationsStore,
 } from "./notifications";
-import {
-	__resetDataServicesForTests,
-	setDataServicesBootMode,
-} from "@/management/workspace/services";
 
 vi.mock("./feed", () => ({
 	fetchNotificationFeed: vi.fn(async () => null),
