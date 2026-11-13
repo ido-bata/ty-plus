@@ -993,7 +993,7 @@ describe("workspace interaction events", () => {
 			expect(
 				layoutsFromState(currentState).find((w) => w.id === WIDGET_INFO_ID)
 					?.width,
-			).toBeGreaterThan(initialWidth);
+			).toBeGreaterThan(initialWidth ?? 0);
 		});
 
 		it("resizes from corner handles", () => {
