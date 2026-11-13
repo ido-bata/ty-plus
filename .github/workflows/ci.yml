@@ -18,7 +18,11 @@ on:
   # means anything on its own.
   pull_request:
   push:
-    branches: [main]
+    # `release-*` must be listed: the operation-worker jobs below gate on
+    # `refs/heads/release-*` push refs, and without this trigger the only
+    # way to run native verification was workflow_dispatch or the
+    # `native-build` PR label — release branches never got it (Issue #61).
+    branches: [main, 'release-*']
   workflow_dispatch:
     inputs:
       product_version:
