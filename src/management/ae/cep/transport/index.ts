@@ -1,3 +1,4 @@
+import { tyPlusExtensionId } from "@/management/ae/cep/extension-id";
 import {
 	SHELL_CHANNELS,
 	type SurfaceMessageEnvelope,
@@ -276,4 +277,4 @@ export { readOpenParams as readCepOpenParams };
 
 /** CEP extension id for ty-plus workspace surfaces (panel-1 is the docked primary). */
 export const tyPlusWorkspaceExtensionId = (panelIndex: number): string =>
-	`app.ty-plus.panel${panelIndex}`;
+	tyPlusExtensionId(`panel${panelIndex}`);

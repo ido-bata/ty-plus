@@ -12,16 +12,19 @@ declare global {
 	}
 }
 
+// Suffix match, not prefix-bound: the physical Extension Id carries the
+// build's bundle id (`app.ty-plus.panelN` release, `app.ty-plus.dev.panelN`
+// dev — #86), and only ty-plus panel surfaces load this entry.
 const panelIndexFromTyPlusExtensionId = (
 	extensionId: string,
 ): number | null => {
 	const trimmed = extensionId.trim();
-	const dotted = /^app\.ty-plus\.panel\.(\d+)$/i.exec(trimmed);
+	const dotted = /\.panel\.(\d+)$/i.exec(trimmed);
 	if (dotted) {
 		const n = Number.parseInt(dotted[1], 10);
 		if (n >= 1 && n <= 5) return n;
 	}
-	const compact = /^app\.ty-plus\.panel(\d+)$/i.exec(trimmed);
+	const compact = /\.panel(\d+)$/i.exec(trimmed);
 	if (compact) {
 		const n = Number.parseInt(compact[1], 10);
 		if (n >= 1 && n <= 5) return n;

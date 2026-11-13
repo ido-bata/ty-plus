@@ -4,6 +4,11 @@ import process from "node:process";
 import type { OperationWorkerDevVerificationResult } from "../../src/management/ipc/operation-worker-dev-panel";
 
 const DEV_GLOBAL = "__TY_PLUS_OPERATION_WORKER_VERIFY__";
+/**
+ * Fallback Extension Id when the caller does not derive one from `.debug`.
+ * Dev bundles use `app.ty-plus.dev.panel1` (#86); prefer
+ * `parseCepPanel1Mapping` so both build flavors resolve.
+ */
 export const DEFAULT_EXTENSION_ID = "app.ty-plus.panel1";
 const CDP_TIMEOUT_MS = 5_000;
 const CDP_OPERATION_TIMEOUT_MS = 120_000;
@@ -29,28 +34,28 @@ type CdpConnection = {
 };
 type Connect = (webSocketDebuggerUrl: string) => Promise<CdpConnection>;
 
-const escapeRegex = (value: string): string =>
-	value.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&");
-
-export const parseCepDebugPort = (xml: string): number => {
-	const escapedId = escapeRegex(DEFAULT_EXTENSION_ID);
-	const extensionPattern = new RegExp(
-		`<Extension\\s+Id="${escapedId}"\\s*>[\\s\\S]*?<Host\\s+Name="AEFT"\\s+Port="(\\d+)"\\s*/?>[\\s\\S]*?<\\/Extension\\s*>`,
-		"gu",
-	);
+export const parseCepPanel1Mapping = (
+	xml: string,
+): { readonly extensionId: string; readonly port: number } => {
+	const extensionPattern =
+		/<Extension\s+Id="([^"]*\.panel1)"\s*>[\s\S]*?<Host\s+Name="AEFT"\s+Port="(\d+)"\s*\/?>[\s\S]*?<\/Extension\s*>/gu;
 	const matches = [...xml.matchAll(extensionPattern)];
 	if (matches.length !== 1) throw new Error("cep_debug_mapping_invalid");
-	const port = Number(matches[0]?.[1]);
+	const port = Number(matches[0]?.[2]);
 	if (!Number.isInteger(port) || port < 1 || port > 65_535) {
 		throw new Error("cep_debug_mapping_invalid");
 	}
-	return port;
+	return { extensionId: matches[0][1] as string, port };
 };
+
+export const parseCepDebugPort = (xml: string): number =>
+	parseCepPanel1Mapping(xml).port;
 
 export const findCepTarget = async (
 	port: number,
 	fetchTargets: FetchTargets,
 	connect: Connect,
+	extensionId: string = DEFAULT_EXTENSION_ID,
 ): Promise<{ readonly target: CepTarget; readonly cdp: CdpConnection }> => {
 	const targets = await fetchTargets(port);
 	const owned: Array<{ target: CepTarget; cdp: CdpConnection }> = [];
@@ -69,7 +74,7 @@ export const findCepTarget = async (
 		if (
 			marker &&
 			typeof marker === "object" &&
-			(marker as { extensionId?: unknown }).extensionId === DEFAULT_EXTENSION_ID
+			(marker as { extensionId?: unknown }).extensionId === extensionId
 		) {
 			owned.push({ target, cdp });
 		} else {
@@ -178,6 +183,7 @@ const assertSafeResult = (
 
 export const verifyCepOperationWorker = async (options: {
 	readonly port: number;
+	readonly extensionId?: string;
 	readonly fetchTargets: FetchTargets;
 	readonly connect: Connect;
 	readonly outputPath?: string;
@@ -199,6 +205,7 @@ export const verifyCepOperationWorker = async (options: {
 			options.port,
 			options.fetchTargets,
 			options.connect,
+			options.extensionId ?? DEFAULT_EXTENSION_ID,
 		);
 		const connection = found.cdp;
 		cdp = connection;
@@ -384,16 +391,20 @@ const connect: Connect = async (url) => {
 	return client;
 };
 
-const readPort = async (): Promise<number> => {
+const readPort = async (): Promise<{
+	port: number;
+	extensionId: string;
+}> => {
 	const xml = await readFile(path.resolve("dist/cep-dev/.debug"), "utf8");
-	return parseCepDebugPort(xml);
+	return parseCepPanel1Mapping(xml);
 };
 
 if (import.meta.main) {
-	const port = await readPort();
+	const { port, extensionId } = await readPort();
 	try {
 		const evidence = await verifyCepOperationWorker({
 			port,
+			extensionId,
 			fetchTargets,
 			connect,
 			outputPath: DEFAULT_EVIDENCE_PATH,

@@ -9,6 +9,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { WidgetType } from "@/function/widget";
 import { useCep } from "@/management/ae/cep/contexts/Context";
+import { tyPlusExtensionId } from "@/management/ae/cep/extension-id";
 import { createCepHostExecutor } from "@/management/ae/cep/host-executor";
 import { detectCepHostCode } from "@/management/ae/cep/runtime";
 import {
@@ -2559,7 +2560,8 @@ export function useWorkspaceRuntime(root: Element | null): {
 					})();
 					if (!catalogId || !isCep) return;
 					void (async () => {
-						const presetEditExtensionId = "app.ty-plus.dialog-preset-edit";
+						const presetEditExtensionId =
+							tyPlusExtensionId("dialog-preset-edit");
 						const payload = { presetId: catalogId };
 						try {
 							await writePresetToolHandoff(

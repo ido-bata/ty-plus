@@ -40,6 +40,18 @@ describe("resolvePanelSurfaceId", () => {
 		expect(resolvePanelSurfaceId()).toBe("panel-4");
 	});
 
+	it("derives from dev extension id app.ty-plus.dev.panelN", () => {
+		vi.stubGlobal(
+			"CSInterface",
+			class {
+				getExtensionID() {
+					return "app.ty-plus.dev.panel3";
+				}
+			},
+		);
+		expect(resolvePanelSurfaceId()).toBe("panel-3");
+	});
+
 	it("falls back to panel-1", () => {
 		vi.stubGlobal(
 			"CSInterface",
