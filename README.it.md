@@ -21,7 +21,9 @@ Organizza preset e script in riquadri, aggiungi widget e disponi i pannelli seco
 - **Approccio locale:** le funzioni principali lavorano offline, senza account né abbonamento.
 - **Canali di aggiornamento:** scegli Stable, Beta o Insider in Impostazioni → Updates; installazione manuale.
 
-[Visualizza una precedente schermata dello spazio di lavoro in After Effects](docs/user-guide/main-screen/screenshots/main-06-after-onboarding-workspace.png) (build di sviluppo; l'interfaccia pubblicata potrebbe differire).
+![ty-plus v0.10.1 in esecuzione dentro Adobe After Effects 2026 su macOS](docs/user-guide/assets/screenshots/v0.10.1-hero.png)
+
+*ty-plus v0.10.1 (Stable) in Adobe After Effects 2026 su macOS — la versione reale pubblicata.*
 
 ## Installazione
 
@@ -34,7 +36,7 @@ Ogni versione comprende anche ZIP e manifest specifici per piattaforma per l'ins
 
 ## Compatibilità e limitazioni note
 
-- **Windows x64 / macOS:** un build di sviluppo è stato sottoposto a un controllo di avvio in After Effects 2026, ma **lo ZXP pubblico v0.10.1 non è ancora stato verificato completamente su dispositivi reali**. Vedi [issue #10](https://github.com/ido-bata/ty-plus/issues/10).
+- **Windows x64 / macOS:** lo ZXP pubblico v0.10.1 si avvia su macOS (After Effects 2026, 26.5.3) e il pannello si apre e si renderizza; la copertura E2E completa tra sistemi operativi e versioni di After Effects è ancora in sospeso. Vedi [issue #10](https://github.com/ido-bata/ty-plus/issues/10).
 - **Windows:** il worker nativo non ha firma Authenticode. Smart App Control può bloccarlo. Non disattivare le protezioni del sistema per installare ty-plus.
 - **macOS:** il worker nativo v0.10.1 è firmato con Developer ID, ma **non è notarizzato**. Quarantena o policy di sicurezza potrebbero impedirne l'avvio.
 - **ZXP:** il pacchetto usa un certificato autofirmato persistente. La firma ZXP non equivale alla notarizzazione macOS.

@@ -21,7 +21,9 @@ ty-plus는 자주 쓰는 작업을 정리하고 작업 공간을 꾸밀 수 있�
 - **로컬 우선:** 핵심 기능은 오프라인에서 동작하며 계정이나 구독이 필요하지 않습니다.
 - **업데이트 채널:** 설정 → Updates에서 Stable, Beta, Insider를 선택합니다. 업데이트 설치는 수동입니다.
 
-[이전 개발 빌드의 After Effects 작업 공간 캡처 보기](docs/user-guide/main-screen/screenshots/main-06-after-onboarding-workspace.png) (배포 버전의 화면과 다를 수 있습니다).
+![macOS의 Adobe After Effects 2026에서 ty-plus v0.10.1 실행 중](docs/user-guide/assets/screenshots/v0.10.1-hero.png)
+
+*ty-plus v0.10.1(Stable)이 macOS의 Adobe After Effects 2026에서 실행 중인 실제 화면입니다.*
 
 ## 설치
 
@@ -34,7 +36,7 @@ ty-plus는 자주 쓰는 작업을 정리하고 작업 공간을 꾸밀 수 있�
 
 ## 호환성 및 알려진 제한 사항
 
-- **Windows x64 / macOS:** After Effects 2026에서 개발 빌드의 기본 실행을 확인했지만, **공개된 v0.10.1 ZXP 자체는 실제 기기에서 전체 검증을 마치지 않았습니다.** [검증 이슈 #10](https://github.com/ido-bata/ty-plus/issues/10)을 참고하세요.
+- **Windows x64 / macOS:** 공개된 v0.10.1 ZXP는 macOS(After Effects 2026, 26.5.3)에서 실행에 성공했으며 패널이 열리고 표시됩니다. OS 및 After Effects 버전 전반의 E2E 검증은 아직 진행 중입니다. [검증 이슈 #10](https://github.com/ido-bata/ty-plus/issues/10)을 참고하세요.
 - **Windows:** 네이티브 worker에 Authenticode 서명이 없습니다. Smart App Control이 실행을 차단할 수 있습니다. 설치를 위해 OS 보안 기능을 끄지 마세요.
 - **macOS:** v0.10.1의 네이티브 worker는 Developer ID 서명이 있지만 **공증되지 않았습니다.** 격리 속성이나 보안 정책으로 실행이 차단될 수 있습니다.
 - **ZXP:** 지속적으로 사용하는 자체 서명 인증서로 서명했습니다. ZXP 서명과 macOS 실행 파일 공증은 별개입니다.

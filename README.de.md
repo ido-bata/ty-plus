@@ -21,7 +21,9 @@ Ordne Presets und Skripte als Kacheln an, füge Widgets hinzu und passe Panels a
 - **Lokal zuerst:** Kernfunktionen funktionieren offline, ohne Konto oder Abo.
 - **Update-Kanäle:** Stable, Beta und Insider unter Einstellungen → Updates auswählen; die Installation erfolgt manuell.
 
-[Frühere Aufnahme des After-Effects-Arbeitsbereichs ansehen](docs/user-guide/main-screen/screenshots/main-06-after-onboarding-workspace.png) (Entwicklungsbuild; die veröffentlichte Oberfläche kann abweichen).
+![ty-plus v0.10.1 in Adobe After Effects 2026 unter macOS](docs/user-guide/assets/screenshots/v0.10.1-hero.png)
+
+*ty-plus v0.10.1 (Stable) in Adobe After Effects 2026 unter macOS — der echte, veröffentlichte Build.*
 
 ## Installation
 
@@ -34,7 +36,7 @@ Jede Version enthält auch ZIP-Archive und plattformspezifische Manifeste für d
 
 ## Kompatibilität und bekannte Einschränkungen
 
-- **Windows x64 / macOS:** Ein Entwicklungsbuild wurde unter After Effects 2026 kurz geprüft. Die **veröffentlichte ZXP v0.10.1 wurde noch nicht vollständig auf echten Geräten getestet**. Siehe [Issue #10](https://github.com/ido-bata/ty-plus/issues/10).
+- **Windows x64 / macOS:** Das veröffentlichte ZXP v0.10.1 wurde unter macOS (After Effects 2026, 26.5.3) gestartet und das Panel öffnet und rendert korrekt; eine vollständige E2E-Abdeckung über Betriebssysteme und After-Effects-Versionen hinweg steht noch aus. Siehe [Issue #10](https://github.com/ido-bata/ty-plus/issues/10).
 - **Windows:** Der native Worker besitzt keine Authenticode-Signatur. Windows Smart App Control kann ihn blockieren. Deaktiviere dafür nicht den Schutz deines Betriebssystems.
 - **macOS:** Der native Worker in v0.10.1 ist mit einer Developer ID signiert, aber **nicht notarisiert**. Quarantäne oder Sicherheitsrichtlinien können den Start verhindern.
 - **ZXP:** Das Paket ist mit einem dauerhaft genutzten selbstsignierten Zertifikat signiert. ZXP-Signatur und macOS-Notarisierung sind nicht dasselbe.

@@ -21,7 +21,9 @@ ty-plusは、Adobe After Effects向けの無料・オープンソースのCEP拡
 - **ローカル優先：** 主要機能はオフラインで利用でき、ログインやサブスクリプションは不要。
 - **更新チャンネル：** 設定 → 更新からStable / Beta / Insiderを選択。インストールは手動。
 
-[過去の開発ビルドのワークスペース画像を見る](docs/user-guide/main-screen/screenshots/main-06-after-onboarding-workspace.png) (公開版の画面とは異なる可能性があります).
+![Adobe After Effects 2026で ty-plus v0.10.1 が動作している様子](docs/user-guide/assets/screenshots/v0.10.1-hero.png)
+
+*公開済みの ty-plus v0.10.1（Stable）を Adobe After Effects 2026 上（macOS）で実際に起動した実画面です。*
 
 ## インストール
 
@@ -34,7 +36,7 @@ ty-plusは、Adobe After Effects向けの無料・オープンソースのCEP拡
 
 ## 対応環境と既知の制約
 
-- **Windows x64 / macOS：** After Effects 2026では開発ビルドの簡易起動確認を実施済みですが、**公開済みv0.10.1のZXP自体は実機E2E検証が未完了**です。[検証Issue #10](https://github.com/ido-bata/ty-plus/issues/10)をご覧ください。
+- **Windows x64 / macOS：** 公開済みv0.10.1のmacOS版は、After Effects 2026（26.5.3）で実機起動およびパネル表示を確認済みです。OS・After Effects バージョン全体でのE2Eカバレッジは未完了のままです。[検証Issue #10](https://github.com/ido-bata/ty-plus/issues/10)をご覧ください。
 - **Windows：** ネイティブworkerはAuthenticode未署名です。Smart App Controlが有効な環境では起動がブロックされます。導入のためにOSの保護機能を無効化しないでください。
 - **macOS：** v0.10.1のネイティブworkerはDeveloper IDで署名されていますが、**公証は未実施**です。隔離属性やOSのセキュリティポリシーによって起動が拒否される場合があります。
 - **ZXP：** 継続利用する自己署名証明書で署名しています。ZXP署名とmacOS実行ファイルの公証は異なります。

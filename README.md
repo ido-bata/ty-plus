@@ -21,7 +21,9 @@ ty-plus turns part of your After Effects workspace into a customizable home for 
 - **Local-first:** core functions work offline, without signing in or paying a subscription.
 - **Release channels:** opt into Stable, Beta or Insider updates from **Settings → Updates**. Installation remains manual.
 
-[See an earlier After Effects workspace capture](docs/user-guide/main-screen/screenshots/main-06-after-onboarding-workspace.png) (development build; the released interface may differ).
+![ty-plus v0.10.1 running inside Adobe After Effects 2026 on macOS](docs/user-guide/assets/screenshots/v0.10.1-hero.png)
+
+*ty-plus v0.10.1 (Stable) in Adobe After Effects 2026 (macOS) — the real, released build.*
 
 ## Install
 
@@ -34,7 +36,7 @@ If you are installing manually, ZIP archives and platform-specific release manif
 
 ## Compatibility and known limitations
 
-- **Platforms:** Windows x64 and macOS. After Effects 2026 has undergone development-build smoke checks; the **published v0.10.1 ZXP has not yet passed end-to-end device testing**. See [verification issue #10](https://github.com/ido-bata/ty-plus/issues/10).
+- **Platforms:** Windows x64 and macOS. The published v0.10.1 ZXP has launched on macOS (After Effects 2026, 26.5.3) and the panel opens and renders; end-to-end smoke coverage across operating systems and After Effects versions is still pending. See [verification issue #10](https://github.com/ido-bata/ty-plus/issues/10).
 - **Windows:** the native worker is not Authenticode-signed. Windows Smart App Control can block it; do not disable OS security protections just to install ty-plus.
 - **macOS:** the native worker is Developer ID-signed but **not notarized** in v0.10.1. macOS quarantine or security policies may prevent it from launching.
 - **ZXP:** distributions use a persistent self-signed CEP signing certificate. Signing a ZXP is not the same as notarizing a macOS executable.

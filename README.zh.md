@@ -21,7 +21,9 @@ ty-plus 是免费、开源的 After Effects CEP 扩展，可集中管理常用�
 - **本地优先：** 核心功能可离线使用，无须登录或订阅。
 - **更新频道：** 在设置 → Updates 中选择 Stable、Beta 或 Insider；更新需手动安装。
 
-[查看早期开发版的 After Effects 工作区截图](docs/user-guide/main-screen/screenshots/main-06-after-onboarding-workspace.png) (正式发布版的界面可能有所不同).
+![ty-plus v0.10.1 在 macOS 的 Adobe After Effects 2026 中运行](docs/user-guide/assets/screenshots/v0.10.1-hero.png)
+
+*ty-plus v0.10.1（Stable）在 macOS 的 Adobe After Effects 2026 中实际运行的界面。*
 
 ## 安装
 
@@ -34,7 +36,7 @@ ty-plus 是免费、开源的 After Effects CEP 扩展，可集中管理常用�
 
 ## 兼容性与已知限制
 
-- **Windows x64 / macOS：** 已在 After Effects 2026 上对开发版进行基本启动检查，但**公开的 v0.10.1 ZXP 尚未完成真实设备端到端测试**。参见[问题 #10](https://github.com/ido-bata/ty-plus/issues/10)。
+- **Windows x64 / macOS：** 公开的 v0.10.1 ZXP 已在 macOS（After Effects 2026，26.5.3）上启动，且面板可正常打开并渲染；跨操作系统和 After Effects 版本的端到端验证仍在进行中。参见[问题 #10](https://github.com/ido-bata/ty-plus/issues/10)。
 - **Windows：** 原生 worker 未使用 Authenticode 签名，Smart App Control 可能阻止运行。请勿为安装而关闭系统安全保护。
 - **macOS：** v0.10.1 的原生 worker 已使用 Developer ID 签名，但**尚未公证**。隔离属性或系统安全策略可能阻止启动。
 - **ZXP：** 使用长期保留的自签名证书签署。ZXP 签名不同于 macOS 可执行文件公证。
