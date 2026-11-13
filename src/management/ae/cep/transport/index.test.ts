@@ -9,7 +9,10 @@
  */
 import { describe, expect, it } from "vitest";
 
-import { isSurfaceMessageEnvelope } from "@/management/ae/cep/transport/index";
+import {
+	createCepSurfaceTransport,
+	isSurfaceMessageEnvelope,
+} from "@/management/ae/cep/transport/index";
 import {
 	SHELL_CHANNELS,
 	type SurfaceMessageEnvelope,
@@ -101,5 +104,77 @@ describe("isSurfaceMessageEnvelope — channel set", () => {
 		expect(isSurfaceMessageEnvelope(baseEnvelope({ messageId: "" }))).toBe(
 			false,
 		);
+	});
+});
+
+describe("createCepSurfaceTransport — publish dispatch (Issue #67)", () => {
+	it("sends the sender's own extensionId on every dispatched scope", async () => {
+		const dispatched: Array<Record<string, unknown>> = [];
+		const win = {
+			CSInterface: class {
+				getApplicationID() {
+					return "AEFT";
+				}
+				getExtensionID() {
+					return "app.ty-plus.panel1";
+				}
+				dispatchEvent(event: Record<string, unknown>) {
+					dispatched.push(event);
+				}
+			},
+			CSEvent: class {
+				type: string;
+				scope: string;
+				appId: string | null;
+				extensionId: string | null;
+				data = "";
+				constructor(
+					type: string,
+					scope: string,
+					appId?: string | null,
+					extensionId?: string | null,
+				) {
+					this.type = type;
+					this.scope = scope;
+					this.appId = appId ?? null;
+					this.extensionId = extensionId ?? null;
+				}
+			},
+		} as unknown as Window;
+
+		const transport = createCepSurfaceTransport(win);
+		await transport.publish(baseEnvelope());
+
+		// APPLICATION + GLOBAL scopes, one event each.
+		expect(dispatched).toHaveLength(2);
+		for (const event of dispatched) {
+			expect(event.extensionId).toBe("app.ty-plus.panel1");
+			expect(event.extensionId).not.toBe("");
+		}
+	});
+
+	it("still publishes when CSEvent factory is absent", async () => {
+		const dispatched: Array<Record<string, unknown>> = [];
+		const win = {
+			CSInterface: class {
+				getApplicationID() {
+					return "AEFT";
+				}
+				getExtensionID() {
+					return "app.ty-plus.panel2";
+				}
+				dispatchEvent(event: Record<string, unknown>) {
+					dispatched.push(event);
+				}
+			},
+		} as unknown as Window;
+
+		const transport = createCepSurfaceTransport(win);
+		await transport.publish(baseEnvelope());
+
+		expect(dispatched).toHaveLength(2);
+		for (const event of dispatched) {
+			expect(event.extensionId).toBe("app.ty-plus.panel2");
+		}
 	});
 });
