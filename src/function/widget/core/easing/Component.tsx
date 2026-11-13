@@ -31,6 +31,7 @@ import { ATTR_WIDGET_INSTANCE_ID } from "@/management/workspace/placement/types"
 import { Button, SegmentedControl } from "@/shared/component";
 import { isIMEComposing } from "@/shared/util/keyboard";
 import { css } from "@/styled-system/css";
+import { type Camera, computeCamera } from "./camera";
 import {
 	type CurveCategory,
 	detectCurveCategory,
@@ -57,7 +58,6 @@ type DragTarget =
 	| { type: "procedural" }
 	| { type: "pan" }
 	| null;
-type Camera = { x: number; y: number; zoom: number };
 type EditorState = {
 	mode: Mode;
 	width: number;
@@ -201,16 +201,6 @@ const getBounceValue = (t: number, handle: Point): number => {
 
 const proceduralValue = (mode: Mode, t: number, handle: Point): number =>
 	mode === "elastic" ? getElasticValue(t, handle) : getBounceValue(t, handle);
-
-const computeCamera = (width: number, height: number): Camera => {
-	const margin = 40;
-	const box = Math.max(1, Math.min(width, height) - margin * 2);
-	return {
-		zoom: box,
-		x: width / 2 - box / 2,
-		y: height / 2 + box / 2,
-	};
-};
 
 const createInitialState = (): EditorState => ({
 	mode: "curve",
