@@ -586,7 +586,11 @@ function EasingLoopControls({
 	// Loop only makes sense with curve mode; bounce/elastic disable the
 	// cycle-count input because the host's multi-point replication is
 	// keyed on the curve-mode points array.
-	if (mode !== "loop") return null;
+	// NOTE: this component must always render an element. The parent grid
+	// declares four rows ("auto auto 1fr auto") and relies on auto-placement;
+	// returning null shifts the canvas into the "auto" row and the action bar
+	// into the "1fr" row, collapsing the editor (issue #78 follow-up).
+	if (mode !== "loop") return <div aria-hidden="true" />;
 	const decrement = (): void => {
 		onLoopCountChange(Math.max(MIN_LOOP_COUNT, loopCount - 1));
 	};
