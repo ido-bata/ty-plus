@@ -103,6 +103,8 @@ export type AnchorGestureConfig<T extends string> = {
 /** Public default constants so tests and widgets reference the same numbers. */
 const DEFAULT_GESTURE_THRESHOLD = 25;
 const DEFAULT_CLICK_THRESHOLD = 5;
+/** Window for treating a mouse event as the twin of a pointer event. */
+const POINTER_MOUSE_DEDUP_MS = 16;
 
 /** Default action-control selector for the legacy alignment convention. */
 const DEFAULT_ACTION_SELECTOR = "[data-ws-action]";
@@ -341,12 +343,45 @@ export function useAnchorGesture<T extends string>({
 		],
 	);
 
+	const onPointerDownRef = useRef(onPointerDown);
+	useEffect(() => {
+		onPointerDownRef.current = onPointerDown;
+	}, [onPointerDown]);
+
+	// Mouse fallback for CEP/CEF paths that deliver mousedown without
+	// pointerdown. Attached natively on the target element so consumers do
+	// not need a second JSX handler. When pointerdown did fire, the gesture
+	// is already active (or was rejected by the same guards) and the shared
+	// handler returns early via `activeRef`.
+	useEffect(() => {
+		const el = targetRef.current;
+		if (!el) return;
+		const handleMouseDown = (e: MouseEvent): void => {
+			onPointerDownRef.current(e as unknown as SyntheticPointerEvent);
+		};
+		el.addEventListener("mousedown", handleMouseDown);
+		return () => el.removeEventListener("mousedown", handleMouseDown);
+	}, [targetRef]);
+
 	useEffect(() => {
 		if (!isActive) return;
 		const target = targetRef.current;
 		if (!target) return;
 
-		const handleMove = (e: PointerEvent): void => {
+		// Some CEP/CEF input paths synthesize pointermove but never deliver
+		// pointerdown/pointerup, so the gesture may be started by a mouse
+		// event (see the mousedown listener above). Accept mousemove/mouseup
+		// here as fallback and skip the twin of any pointer event that
+		// arrived within the same gesture.
+		let lastPointerMoveTs = 0;
+		let lastPointerEndTs = 0;
+
+		const handleMove = (e: PointerEvent | MouseEvent): void => {
+			if (e.type === "pointermove") {
+				lastPointerMoveTs = e.timeStamp;
+			} else if (e.timeStamp - lastPointerMoveTs < POINTER_MOUSE_DEDUP_MS) {
+				return;
+			}
 			const last = lastSegmentPoint.current;
 			if (!last) return;
 			const rect = target.getBoundingClientRect();
@@ -374,7 +409,12 @@ export function useAnchorGesture<T extends string>({
 			}
 		};
 
-		const handleEnd = (e: PointerEvent): void => {
+		const handleEnd = (e: PointerEvent | MouseEvent): void => {
+			if (e.type === "pointerup" || e.type === "pointercancel") {
+				lastPointerEndTs = e.timeStamp;
+			} else if (e.timeStamp - lastPointerEndTs < POINTER_MOUSE_DEDUP_MS) {
+				return;
+			}
 			const start = mouseDownPoint.current;
 			const final = recognizedRef.current;
 			if (start && final) {
@@ -394,10 +434,14 @@ export function useAnchorGesture<T extends string>({
 		document.addEventListener("pointermove", handleMove);
 		document.addEventListener("pointerup", handleEnd);
 		document.addEventListener("pointercancel", handleEnd);
+		document.addEventListener("mousemove", handleMove);
+		document.addEventListener("mouseup", handleEnd);
 		return () => {
 			document.removeEventListener("pointermove", handleMove);
 			document.removeEventListener("pointerup", handleEnd);
 			document.removeEventListener("pointercancel", handleEnd);
+			document.removeEventListener("mousemove", handleMove);
+			document.removeEventListener("mouseup", handleEnd);
 		};
 	}, [
 		isActive,

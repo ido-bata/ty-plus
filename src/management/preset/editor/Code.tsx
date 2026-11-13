@@ -11,17 +11,17 @@ import "monaco-editor/esm/vs/basic-languages/javascript/javascript.contribution.
 import "monaco-editor/esm/vs/basic-languages/typescript/typescript.contribution.js";
 import EditorWorker from "monaco-editor/esm/vs/editor/editor.worker?worker";
 import monacoEditorCss from "monaco-editor/min/vs/editor/editor.main.css?raw";
-import { type JSX, useCallback, useEffect, useRef, useState } from "react";
+import { type JSX, useEffect, useRef, useState } from "react";
 import { css, cx } from "@/styled-system/css";
 import { ensureExtendscriptLanguage, initTextMate } from "./textmate";
 import TsVolarWorker from "./typescript-worker?worker";
+import { type ResizeGestureEvent, useEditorResize } from "./use-editor-resize";
 
 const MONACO_STYLE_ID = "ty-plus-monaco-library-theme";
 const EXTENDSCRIPT_THEME_ID = "ty-plus-extendscript";
 
 const RESIZE_MIN_HEIGHT = 200;
 const RESIZE_MAX_HEIGHT = 800;
-const DEFAULT_EDITOR_HEIGHT = RESIZE_MIN_HEIGHT;
 
 let extendscriptThemeDefined = false;
 
@@ -433,11 +433,18 @@ const editorErrorClass = css({
 
 function ResizeHandle(props: {
 	editorHeight: number;
-	onResizeStart: (event: React.PointerEvent<HTMLDivElement>) => void;
-	onResizeMove: (event: React.PointerEvent<HTMLDivElement>) => void;
-	onResizeEnd: (event: React.PointerEvent<HTMLDivElement>) => void;
+	onResizeStart: (event: ResizeGestureEvent) => void;
+	onResizeMove: (event: ResizeGestureEvent) => void;
+	onResizeEnd: (event: ResizeGestureEvent) => void;
+	onResizeMouseStart: (event: React.MouseEvent<HTMLDivElement>) => void;
 }): JSX.Element {
-	const { editorHeight, onResizeStart, onResizeMove, onResizeEnd } = props;
+	const {
+		editorHeight,
+		onResizeStart,
+		onResizeMove,
+		onResizeEnd,
+		onResizeMouseStart,
+	} = props;
 	return (
 		<div
 			role="separator"
@@ -451,6 +458,7 @@ function ResizeHandle(props: {
 			onPointerMove={onResizeMove}
 			onPointerUp={onResizeEnd}
 			onPointerCancel={onResizeEnd}
+			onMouseDown={onResizeMouseStart}
 			className={resizeHandleClass}
 			style={{ cursor: "ns-resize" }}
 			data-ty-code-resize-handle=""
@@ -474,12 +482,16 @@ export function CodeEditor(props: CodeEditorProps): JSX.Element {
 	const onChangeRef = useRef(onChange);
 	const valueRef = useRef(value);
 	const [volarError, setVolarError] = useState<string | null>(null);
-	const [editorHeight, setEditorHeight] = useState(DEFAULT_EDITOR_HEIGHT);
-	const resizeOriginRef = useRef<{
-		startY: number;
-		startHeight: number;
-		pointerId: number;
-	} | null>(null);
+	const {
+		editorHeight,
+		onResizeStart,
+		onResizeMove,
+		onResizeEnd,
+		onResizeMouseStart,
+	} = useEditorResize({
+		minHeight: RESIZE_MIN_HEIGHT,
+		maxHeight: RESIZE_MAX_HEIGHT,
+	});
 
 	// Update refs after render to avoid React Compiler warning
 	useEffect(() => {
@@ -489,45 +501,6 @@ export function CodeEditor(props: CodeEditorProps): JSX.Element {
 	useEffect(() => {
 		valueRef.current = value;
 	}, [value]);
-
-	const handleResizeStart = useCallback(
-		(event: React.PointerEvent<HTMLDivElement>) => {
-			event.preventDefault();
-			resizeOriginRef.current = {
-				startY: event.clientY,
-				startHeight: editorHeight,
-				pointerId: event.pointerId,
-			};
-			event.currentTarget.setPointerCapture(event.pointerId);
-		},
-		[editorHeight],
-	);
-
-	const handleResizeMove = useCallback(
-		(event: React.PointerEvent<HTMLDivElement>) => {
-			const origin = resizeOriginRef.current;
-			if (!origin) return;
-			const dy = event.clientY - origin.startY;
-			const nextHeight = Math.max(
-				RESIZE_MIN_HEIGHT,
-				Math.min(RESIZE_MAX_HEIGHT, origin.startHeight + dy),
-			);
-			setEditorHeight(nextHeight);
-		},
-		[],
-	);
-
-	const handleResizeEnd = useCallback(
-		(event: React.PointerEvent<HTMLDivElement>) => {
-			const origin = resizeOriginRef.current;
-			if (!origin) return;
-			resizeOriginRef.current = null;
-			if (event.currentTarget.hasPointerCapture(origin.pointerId)) {
-				event.currentTarget.releasePointerCapture(origin.pointerId);
-			}
-		},
-		[],
-	);
 
 	useEffect(() => {
 		if (!containerRef.current) return () => {};
@@ -743,9 +716,10 @@ export function CodeEditor(props: CodeEditorProps): JSX.Element {
 			/>
 			<ResizeHandle
 				editorHeight={editorHeight}
-				onResizeStart={handleResizeStart}
-				onResizeMove={handleResizeMove}
-				onResizeEnd={handleResizeEnd}
+				onResizeStart={onResizeStart}
+				onResizeMove={onResizeMove}
+				onResizeEnd={onResizeEnd}
+				onResizeMouseStart={onResizeMouseStart}
 			/>
 		</div>
 	);

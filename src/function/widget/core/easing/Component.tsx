@@ -31,7 +31,7 @@ import { ATTR_WIDGET_INSTANCE_ID } from "@/management/workspace/placement/types"
 import { Button, SegmentedControl } from "@/shared/component";
 import { isIMEComposing } from "@/shared/util/keyboard";
 import { css } from "@/styled-system/css";
-import { type Camera, computeCamera } from "./camera";
+import { type Camera, computeCamera, handleDotScreenPos } from "./camera";
 import {
 	type CurveCategory,
 	detectCurveCategory,
@@ -103,6 +103,7 @@ const MAX_LOOP_COUNT = 16;
 const DEFAULT_LOOP_COUNT = 3;
 
 const PREVIEW_DURATION_MS = 900;
+const POINTER_MOUSE_DEDUP_MS = 16;
 const PRESET_CURVES: Record<string, Cubic> = {
 	linear: [0, 0, 1, 1],
 	easeOut: [0, 0, 0.58, 1],
@@ -586,7 +587,11 @@ function EasingLoopControls({
 	// Loop only makes sense with curve mode; bounce/elastic disable the
 	// cycle-count input because the host's multi-point replication is
 	// keyed on the curve-mode points array.
-	if (mode !== "loop") return null;
+	// NOTE: this component must always render an element. The parent grid
+	// declares four rows ("auto auto 1fr auto") and relies on auto-placement;
+	// returning null shifts the canvas into the "auto" row and the action bar
+	// into the "1fr" row, collapsing the editor (issue #78 follow-up).
+	if (mode !== "loop") return <div aria-hidden="true" />;
 	const decrement = (): void => {
 		onLoopCountChange(Math.max(MIN_LOOP_COUNT, loopCount - 1));
 	};
@@ -1075,10 +1080,7 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 			state.points.forEach((point, index) => {
 				const screen = worldToScreen(point, state.camera);
 				if (index > 0) {
-					const hIn = worldToScreen(
-						{ x: point.x + point.hIn.x, y: point.y + point.hIn.y },
-						state.camera,
-					);
+					const hIn = handleDotScreenPos(point, "hIn", state.camera);
 					ctx.beginPath();
 					ctx.moveTo(screen.x, screen.y);
 					ctx.lineTo(hIn.x, hIn.y);
@@ -1091,10 +1093,7 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 					);
 				}
 				if (index < state.points.length - 1) {
-					const hOut = worldToScreen(
-						{ x: point.x + point.hOut.x, y: point.y + point.hOut.y },
-						state.camera,
-					);
+					const hOut = handleDotScreenPos(point, "hOut", state.camera);
 					ctx.beginPath();
 					ctx.moveTo(screen.x, screen.y);
 					ctx.lineTo(hOut.x, hOut.y);
@@ -1288,10 +1287,7 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 						}
 					}
 					if (index > 0) {
-						const hIn = worldToScreen(
-							{ x: point.x + point.hIn.x, y: point.y + point.hIn.y },
-							state.camera,
-						);
+						const hIn = handleDotScreenPos(point, "hIn", state.camera);
 						const distance = Math.hypot(hIn.x - screen.x, hIn.y - screen.y);
 						if (distance < minDistance) {
 							minDistance = distance;
@@ -1299,10 +1295,7 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 						}
 					}
 					if (index < state.points.length - 1) {
-						const hOut = worldToScreen(
-							{ x: point.x + point.hOut.x, y: point.y + point.hOut.y },
-							state.camera,
-						);
+						const hOut = handleDotScreenPos(point, "hOut", state.camera);
 						const distance = Math.hypot(hOut.x - screen.x, hOut.y - screen.y);
 						if (distance < minDistance) {
 							minDistance = distance;
@@ -1311,8 +1304,18 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 					}
 				});
 			} else {
+				// Procedural modes have a single draggable handle dot; hit
+				// test it at its real screen position so drags that start
+				// away from the dot pan instead of teleporting the handle.
+				const handleScreen = worldToScreen(
+					state.procedural.handle,
+					state.camera,
+				);
 				closest = { type: "procedural" };
-				minDistance = 0;
+				minDistance = Math.hypot(
+					handleScreen.x - screen.x,
+					handleScreen.y - screen.y,
+				);
 			}
 			return { target: closest, distance: minDistance };
 		},
@@ -1606,8 +1609,15 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 		}
 	}, [activate, applyMode, customColors, host, labelColor, loopCount]);
 
+	// Some CEP/CEF input paths deliver mouse events without the matching
+	// pointerdown/pointerup (only pointermove is synthesized). The mouse
+	// fallback handlers below mirror the pointer handlers, and these
+	// timestamps deduplicate the pair so a normal browser never runs both.
+	const lastPointerTsRef = useRef({ down: 0, move: 0, up: 0 });
+
 	const handlePointerDown = useCallback(
 		(event: ReactPointerEvent<HTMLCanvasElement>) => {
+			lastPointerTsRef.current.down = event.timeStamp;
 			if (event.button === 0 && (event.ctrlKey || event.metaKey)) {
 				event.preventDefault();
 				event.stopPropagation();
@@ -1632,7 +1642,9 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 				event.stopPropagation();
 				state.isDragging = true;
 				state.dragTarget = { type: "pan" };
-				canvas.setPointerCapture(event.pointerId);
+				if (typeof event.pointerId === "number") {
+					canvas.setPointerCapture(event.pointerId);
+				}
 				return;
 			}
 
@@ -1727,7 +1739,7 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 				return;
 			}
 
-			const { target } = findClosestWithDistance(screen);
+			const target = findClosest(screen);
 			if (!target) {
 				// Plain left-click on empty canvas area: pan. Required for
 				// Mac trackpad / single-button mice that have no middle
@@ -1742,7 +1754,9 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 				state.altHeld = false;
 				state.mirrorHeld = false;
 				state.handleLink = null;
-				canvas.setPointerCapture(event.pointerId);
+				if (typeof event.pointerId === "number") {
+					canvas.setPointerCapture(event.pointerId);
+				}
 				return;
 			}
 			event.preventDefault();
@@ -1790,13 +1804,16 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 			} else {
 				state.handleLink = null;
 			}
-			canvas.setPointerCapture(event.pointerId);
+			if (typeof event.pointerId === "number") {
+				canvas.setPointerCapture(event.pointerId);
+			}
 			updateDrag(screen, event.ctrlKey || event.metaKey, event.shiftKey);
 		},
 		[
 			activate,
 			autoApply,
 			canvasPoint,
+			findClosest,
 			findClosestWithDistance,
 			persistState,
 			updateDrag,
@@ -1806,6 +1823,7 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 
 	const handlePointerMove = useCallback(
 		(event: ReactPointerEvent<HTMLCanvasElement>) => {
+			lastPointerTsRef.current.move = event.timeStamp;
 			const screen = canvasPoint(event);
 			if (!screen) return;
 			const state = stateRef.current;
@@ -1835,8 +1853,12 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 
 	const handlePointerUp = useCallback(
 		(event: ReactPointerEvent<HTMLCanvasElement>) => {
+			lastPointerTsRef.current.up = event.timeStamp;
 			const canvas = canvasRef.current;
-			if (canvas?.hasPointerCapture(event.pointerId)) {
+			if (
+				typeof event.pointerId === "number" &&
+				canvas?.hasPointerCapture(event.pointerId)
+			) {
 				canvas.releasePointerCapture(event.pointerId);
 			}
 			const state = stateRef.current;
@@ -1876,6 +1898,53 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 			persistState();
 		},
 		[autoApply, persistState, applyCurve],
+	);
+
+	// Mouse fallbacks for CEP/CEF input paths that emit mousedown/mousemove/
+	// mouseup without pointerdown/pointerup. Each wrapper delegates to the
+	// pointer handler and skips when the matching pointer event arrived
+	// within the same gesture, so normal browsers never double-handle.
+	const handleMouseDown = useCallback(
+		(event: ReactMouseEvent<HTMLCanvasElement>) => {
+			if (
+				event.timeStamp - lastPointerTsRef.current.down <
+				POINTER_MOUSE_DEDUP_MS
+			) {
+				return;
+			}
+			handlePointerDown(
+				event as unknown as ReactPointerEvent<HTMLCanvasElement>,
+			);
+		},
+		[handlePointerDown],
+	);
+
+	const handleMouseMove = useCallback(
+		(event: ReactMouseEvent<HTMLCanvasElement>) => {
+			if (
+				event.timeStamp - lastPointerTsRef.current.move <
+				POINTER_MOUSE_DEDUP_MS
+			) {
+				return;
+			}
+			handlePointerMove(
+				event as unknown as ReactPointerEvent<HTMLCanvasElement>,
+			);
+		},
+		[handlePointerMove],
+	);
+
+	const handleMouseUp = useCallback(
+		(event: ReactMouseEvent<HTMLCanvasElement>) => {
+			if (
+				event.timeStamp - lastPointerTsRef.current.up <
+				POINTER_MOUSE_DEDUP_MS
+			) {
+				return;
+			}
+			handlePointerUp(event as unknown as ReactPointerEvent<HTMLCanvasElement>);
+		},
+		[handlePointerUp],
 	);
 
 	// A4: Double-click on empty area resets the curve to Linear.
@@ -2273,6 +2342,9 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 					onPointerMove={handlePointerMove}
 					onPointerUp={handlePointerUp}
 					onPointerCancel={handlePointerUp}
+					onMouseDown={handleMouseDown}
+					onMouseMove={handleMouseMove}
+					onMouseUp={handleMouseUp}
 					onDoubleClick={handleDoubleClick}
 				/>
 			</div>

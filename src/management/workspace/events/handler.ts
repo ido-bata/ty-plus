@@ -361,6 +361,12 @@ export const setupInteractionEvents = (
 
 	const handledPointerMoves = new WeakSet<Event>();
 	const handledPointerUps = new WeakSet<Event>();
+	// Some CEP/CEF input paths deliver mouse events without the matching
+	// pointerdown/pointerup (only pointermove is synthesized). The mouse
+	// fallbacks below delegate to the pointer handlers, and these
+	// timestamps deduplicate the pair so a normal browser never runs both.
+	const lastPointerTs = { down: 0, move: 0, up: 0 };
+	const POINTER_MOUSE_DEDUP_MS = 16;
 	const _aeExecutor =
 		opts?.hostCode === "AEFT"
 			? createCepHostExecutor(window, "after-effects")
@@ -436,6 +442,7 @@ export const setupInteractionEvents = (
 	// ── Pointer events ──────────────────────────────────────────────────
 
 	const onPointerDown = (ev: PointerEvent): void => {
+		lastPointerTs.down = ev.timeStamp;
 		// Allow button 0 (left) and button 1 (middle); ignore right-click etc.
 		if (
 			ev.button !== 0 &&
@@ -680,6 +687,7 @@ export const setupInteractionEvents = (
 	};
 
 	const onPointerMove = (ev: PointerEvent): void => {
+		lastPointerTs.move = ev.timeStamp;
 		if (handledPointerMoves.has(ev)) return;
 		handledPointerMoves.add(ev);
 
@@ -959,6 +967,7 @@ export const setupInteractionEvents = (
 
 	const onPointerUp = (ev?: PointerEvent | MouseEvent): void => {
 		if (ev) {
+			lastPointerTs.up = ev.timeStamp;
 			if (handledPointerUps.has(ev)) return;
 			handledPointerUps.add(ev);
 		}
@@ -1471,17 +1480,17 @@ export const setupInteractionEvents = (
 	};
 
 	const onMouseDown = (ev: MouseEvent): void => {
-		if (typeof window.PointerEvent !== "undefined") return;
+		if (ev.timeStamp - lastPointerTs.down < POINTER_MOUSE_DEDUP_MS) return;
 		onPointerDown(ev as unknown as PointerEvent);
 	};
 
 	const onMouseMove = (ev: MouseEvent): void => {
-		if (typeof window.PointerEvent !== "undefined") return;
+		if (ev.timeStamp - lastPointerTs.move < POINTER_MOUSE_DEDUP_MS) return;
 		onPointerMove(ev as unknown as PointerEvent);
 	};
 
 	const onMouseUp = (ev: MouseEvent): void => {
-		if (typeof window.PointerEvent !== "undefined") return;
+		if (ev.timeStamp - lastPointerTs.up < POINTER_MOUSE_DEDUP_MS) return;
 		onPointerUp(ev);
 	};
 
