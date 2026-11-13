@@ -355,6 +355,30 @@ const installOperationWorkerDevPanelInternal = (
 				closeExitCode: 0,
 			});
 		} catch (error) {
+			// Protocol failure outcomes carry user_safe_detail and a
+			// diagnostic_id by design; surface them for device triage.
+			try {
+				if (error && typeof error === "object" && "code" in error) {
+					const e = error as {
+						code?: unknown;
+						diagnostic?: unknown;
+						diagnosticId?: unknown;
+					};
+					verifyLog.warn("worker attempt failure", {
+						context: {
+							code: typeof e.code === "string" ? e.code : "unknown",
+							diagnosticId:
+								typeof e.diagnosticId === "string" ? e.diagnosticId : undefined,
+							detail:
+								typeof e.diagnostic === "string"
+									? e.diagnostic.slice(0, 300)
+									: undefined,
+						},
+					});
+				}
+			} catch {
+				// Diagnostics must never break verification.
+			}
 			return { ok: false, error: errorCode(error, worker) };
 		}
 	};
