@@ -1653,12 +1653,14 @@ export function useWorkspaceRuntime(root: Element | null): {
 					});
 				return Promise.resolve();
 			}
-			const { cloudSync, presetRepository } = getDataServices();
+			// Issue #88: R0 has no cloud backend, so preset refresh must not
+			// fire `cloudSync.syncPresets()` — it only performed a worker
+			// connectivity check whose status no consumer reads (the presets
+			// bus subscriber ignores `syncStatus`). Emit the same idle
+			// "Local Update" status the other snapshot producers use.
+			const { presetRepository } = getDataServices();
 			return (async () => {
-				const [syncResult, presets] = await Promise.all([
-					cloudSync.syncPresets(),
-					presetRepository.list(),
-				]);
+				const presets = await presetRepository.list();
 				const cur = getState();
 				commit(
 					withPresetInfoSnapshot({
@@ -1669,7 +1671,12 @@ export function useWorkspaceRuntime(root: Element | null): {
 				const presetPayload: PresetsPayload = {
 					kind: "snapshot",
 					presets,
-					syncStatus: syncResult.status,
+					syncStatus: {
+						provider: "supabase",
+						state: "idle",
+						label: "Local Update",
+						checkedAt: new Date().toISOString(),
+					},
 					sourceSurfaceId: panelId,
 				};
 				await publishShellMessage(cepSurfaceTransport, {
