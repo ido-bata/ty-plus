@@ -230,6 +230,27 @@ const installOperationWorkerDevPanelInternal = (
 			};
 		};
 		const onLifecycle = (event: WorkerLifecycleEvent): void => {
+			// Structured, secret-safe diagnostics for device verification
+			// (Issue #73): event kind plus numeric/enum fields only. Raw
+			// stderr and payloads must never reach the log.
+			try {
+				const detail: Record<string, unknown> = { kind: event.kind };
+				if ("pid" in event && typeof event.pid === "number")
+					detail.pid = event.pid;
+				if ("exitCode" in event) detail.exitCode = event.exitCode;
+				if ("bytes" in event && typeof event.bytes === "number")
+					detail.stderrBytes = event.bytes;
+				if ("truncated" in event) detail.stderrTruncated = event.truncated;
+				if ("status" in event) detail.status = event.status;
+				if ("stage" in event && typeof event.stage === "string")
+					detail.stage = event.stage;
+				console.info(
+					"[ty-plus:operation-worker-verify] lifecycle",
+					JSON.stringify(detail),
+				);
+			} catch {
+				// Diagnostics must never break verification.
+			}
 			switch (event.kind) {
 				case "spawned":
 					worker.pid = event.pid;
