@@ -102,6 +102,11 @@ const createTestContainer = (): Element => {
  */
 const mockTileRect = (el: Element): void => {
 	const htmlEl = el as HTMLElement;
+	const inlinePx = (value: string): number => Number.parseFloat(value) || 0;
+	Object.defineProperties(htmlEl, {
+		clientWidth: { get: () => inlinePx(htmlEl.style.width) },
+		clientHeight: { get: () => inlinePx(htmlEl.style.height) },
+	});
 	htmlEl.getBoundingClientRect = () => {
 		const left = Number.parseFloat(htmlEl.style.left) || 0;
 		const top = Number.parseFloat(htmlEl.style.top) || 0;
@@ -982,13 +987,13 @@ describe("workspace interaction events", () => {
 			)?.width;
 
 			simulatePointerDown(actionBtn, rect.right - 5, rect.top + 10, 0);
-			simulatePointerMove(actionBtn, rect.right + 20, rect.top + 10, 0);
-			simulatePointerUp(actionBtn, rect.right + 20, rect.top + 10);
+			simulatePointerMove(actionBtn, rect.right + 60, rect.top + 10, 0);
+			simulatePointerUp(actionBtn, rect.right + 60, rect.top + 10);
 
 			expect(
 				layoutsFromState(currentState).find((w) => w.id === WIDGET_INFO_ID)
 					?.width,
-			).not.toBe(initialWidth);
+			).toBeGreaterThan(initialWidth);
 		});
 
 		it("resizes from corner handles", () => {
@@ -1054,16 +1059,16 @@ describe("workspace interaction events", () => {
 			);
 			simulatePointerMove(
 				widgetEl,
-				rect.right + 20,
+				rect.right + 60,
 				rect.top + rect.height / 2,
 				0,
 			);
-			simulatePointerUp(widgetEl, rect.right + 20, rect.top + rect.height / 2);
+			simulatePointerUp(widgetEl, rect.right + 60, rect.top + rect.height / 2);
 
 			const after = layoutsFromState(currentState).find(
 				(w) => w.id === WIDGET_INFO_ID,
 			)!;
-			expect(after.width).not.toBe(before.width);
+			expect(after.width).toBeGreaterThan(before.width);
 			// A move would shift x/y; a resize must leave the origin alone.
 			expect(after.x).toBe(before.x);
 			expect(after.y).toBe(before.y);
