@@ -2,6 +2,7 @@ import {
 	getCepPathReaderFromWindow,
 	normalizeCepSystemPath,
 } from "@/management/ae/cep/runtime";
+import { createLogger } from "@/management/debug/logger";
 import type { PluginEffectScanRequest } from "./generated";
 import {
 	compiledOperationWorkerTrustMode,
@@ -23,6 +24,8 @@ import {
 import type { WorkerLifecycleEvent } from "./operation-worker-runner";
 
 declare const __APP_VERSION__: string;
+
+const verifyLog = createLogger("operation-worker");
 
 const DEV_GLOBAL = "__TY_PLUS_OPERATION_WORKER_VERIFY__" as const;
 const VERIFY_ROOTS = ["Plug-ins"] as const;
@@ -244,10 +247,7 @@ const installOperationWorkerDevPanelInternal = (
 				if ("status" in event) detail.status = event.status;
 				if ("stage" in event && typeof event.stage === "string")
 					detail.stage = event.stage;
-				console.info(
-					"[ty-plus:operation-worker-verify] lifecycle",
-					JSON.stringify(detail),
-				);
+				verifyLog.info("lifecycle", { context: detail });
 			} catch {
 				// Diagnostics must never break verification.
 			}
