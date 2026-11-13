@@ -186,7 +186,7 @@ export const HOST_BUNDLE_SCHEMA_VERSION = 1;
  * on the resident global. It is a standalone ES3 bundle and cannot import
  * this module, so `host-executor.test.ts` pins the two declarations.
  */
-export const HOST_BUNDLE_VERSION = "workspace-preset-scriptui-panel-v3";
+export const HOST_BUNDLE_VERSION = "workspace-preset-scriptui-panel-v4";
 
 type HostCode = "AEFT";
 

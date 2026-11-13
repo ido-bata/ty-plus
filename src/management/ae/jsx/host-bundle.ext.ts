@@ -203,7 +203,7 @@ const isArrayValue = (value: unknown): value is unknown[] =>
  * `HOST_BUNDLE_SCHEMA_VERSION` too. It is not the package version: an
  * unrelated packaging or UI bump must not force a host reload.
  */
-const HOST_BUNDLE_VERSION = "workspace-preset-scriptui-panel-v3";
+const HOST_BUNDLE_VERSION = "workspace-preset-scriptui-panel-v4";
 
 /**
  * Host API contract revision exported on the resident global so the CEP
