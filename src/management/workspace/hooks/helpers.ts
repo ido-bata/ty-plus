@@ -9,6 +9,7 @@ import {
 	filterLogsByClearedAt,
 	getClearedAt,
 } from "@/management/debug/console/shared-bridge";
+import { tyPlusExtensionId } from "@/management/ae/cep/extension-id";
 import { openCepDialogSurface } from "@/management/ae/cep/transport";
 
 /**
@@ -38,7 +39,7 @@ export const openDebugConsole = (win: Window): void => {
 			void getClearedAt(win)
 				.then((clearedAt) =>
 					openCepDialogSurface(win, {
-						extensionId: "app.ty-plus.debug-console",
+						extensionId: tyPlusExtensionId("debug-console"),
 						params: toOpenParams(
 							filterLogsByClearedAt(getMessages(), clearedAt),
 						),
@@ -46,7 +47,7 @@ export const openDebugConsole = (win: Window): void => {
 				)
 				.catch(() => {
 					openCepDialogSurface(win, {
-						extensionId: "app.ty-plus.debug-console",
+						extensionId: tyPlusExtensionId("debug-console"),
 						params: toOpenParams(getMessages()),
 					});
 				});

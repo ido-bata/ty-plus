@@ -6,6 +6,7 @@ import { Dialog as AnimationDialog } from "@/function/preset/animation/Dialog";
 import { Dialog as CodeDialog } from "@/function/preset/code/Dialog";
 import { Dialog as FootageDialog } from "@/function/preset/footage/Dialog";
 import { Dialog as LayerCompDialog } from "@/function/preset/layer-comp/Dialog";
+import { tyPlusExtensionId } from "@/management/ae/cep/extension-id";
 import { readCepOpenParams } from "@/management/ae/cep/transport";
 import { TY_PLUS_DIALOG_EXTENSION } from "@/management/dialog/dialogs/ids";
 import { DeferredDialogBody } from "@/management/dialog/lazy-body";
@@ -126,7 +127,7 @@ function PresetEditDialogRoute(): ReactNode {
 	useEffect(() => {
 		let cancelled = false;
 		let watcher: { close: () => void } | null = null;
-		const EXTENSION_ID = "app.ty-plus.dialog-preset-edit";
+		const EXTENSION_ID = tyPlusExtensionId("dialog-preset-edit");
 		const cepWindow = window as CepWindow;
 
 		void (async () => {

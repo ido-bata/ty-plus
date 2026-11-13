@@ -21,4 +21,19 @@ describe("resolveDialogSurfaceId", () => {
 
 		expect(resolveDialogSurfaceId()).toBe("debug-console");
 	});
+
+	test("resolves surface ids for dev-prefixed physical extension ids", async () => {
+		vi.stubGlobal("__TY_PLUS_EXTENSION_BUNDLE_ID__", "app.ty-plus.dev");
+		vi.resetModules();
+		const { resolveDialogSurfaceId: resolveDev } = await import("./surface-id");
+		vi.stubGlobal("window", {
+			CSInterface: class {
+				getExtensionID() {
+					return "app.ty-plus.dev.dialog-settings";
+				}
+			},
+		});
+
+		expect(resolveDev()).toBe("dialog-settings");
+	});
 });

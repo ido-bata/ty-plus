@@ -5,6 +5,7 @@
  * external dialog request setup).
  */
 
+import { tyPlusExtensionId } from "@/management/ae/cep/extension-id";
 import { allocatePresetAddToolExtensionId } from "@/management/preset/add-dialog-pool";
 import { writePresetToolHandoff } from "@/management/preset/tool-handoff-file";
 import { openCepDialogSurface } from "@/management/ae/cep/transport";
@@ -87,7 +88,7 @@ export const openPresetEditSurface = async (
 	panelId: string,
 	presetId: string,
 ): Promise<void> => {
-	const extensionId = "app.ty-plus.dialog-preset-edit";
+	const extensionId = tyPlusExtensionId("dialog-preset-edit");
 	const payload = { openerSurfaceId: panelId, presetId: presetId.trim() };
 	try {
 		await writePresetToolHandoff(win, extensionId, payload);
