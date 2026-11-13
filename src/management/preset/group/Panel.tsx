@@ -1,6 +1,8 @@
 import {
 	type JSX,
+	type MouseEvent as ReactMouseEvent,
 	type ReactNode,
+	type PointerEvent as ReactPointerEvent,
 	useEffect,
 	useMemo,
 	useRef,
@@ -24,6 +26,8 @@ import {
 import { css, cx } from "@/styled-system/css";
 
 const ATTR_GROUP_PANEL_ITEM = "data-workspace-group-panel-item";
+/** Window for treating a mouse event as the twin of a pointer event. */
+const POINTER_MOUSE_DEDUP_MS = 16;
 
 const gridCellOuterClass = css({
 	position: "relative",
@@ -174,6 +178,7 @@ export function GroupPanel({
 	const gridRef = useRef<HTMLDivElement | null>(null);
 	const dragMovedRef = useRef(false);
 	const suppressClickRef = useRef(false);
+	const lastPointerTsRef = useRef({ down: 0, move: 0, up: 0 });
 	const [groupDrag, setGroupDrag] = useState<GroupDragState | null>(null);
 
 	const orderedMemberPresets = useMemo(() => {
@@ -185,10 +190,49 @@ export function GroupPanel({
 		return next;
 	}, [groupDrag, memberPresets]);
 
+	// Shared by onPointerDown and onMouseDown: CEP/CEF paths that never
+	// deliver pointerdown still deliver mousedown for the same press.
+	const beginGroupDrag = (
+		e:
+			| ReactPointerEvent<HTMLButtonElement>
+			| ReactMouseEvent<HTMLButtonElement>,
+		meta: { id: string; label: string },
+		index: number,
+	): void => {
+		if (layoutLocked) return;
+		const isMoveClick =
+			e.button === 1 || (e.button === 0 && (e.ctrlKey || e.metaKey));
+		if (!isMoveClick) return;
+		e.preventDefault();
+		e.stopPropagation();
+		dragMovedRef.current = false;
+		const rect = e.currentTarget.getBoundingClientRect();
+		setGroupDrag({
+			presetId: meta.id,
+			startIndex: memberPresets.findIndex((p) => p.id === meta.id),
+			overIndex: index,
+			lastX: e.clientX,
+			lastY: e.clientY,
+			offsetX: e.clientX - rect.left,
+			offsetY: e.clientY - rect.top,
+		});
+	};
+
 	useEffect(() => {
 		if (!groupDrag) return;
 
-		const onPointerMove = (event: PointerEvent): void => {
+		// Some CEP/CEF input paths synthesize pointermove but never deliver
+		// pointerdown/pointerup, so accept mouse events as fallback and skip
+		// the twin of any pointer event that arrived within the same gesture.
+		const onPointerMove = (event: PointerEvent | MouseEvent): void => {
+			if (event.type === "pointermove") {
+				lastPointerTsRef.current.move = event.timeStamp;
+			} else if (
+				event.timeStamp - lastPointerTsRef.current.move <
+				POINTER_MOUSE_DEDUP_MS
+			) {
+				return;
+			}
 			const dx = event.clientX - groupDrag.lastX;
 			const dy = event.clientY - groupDrag.lastY;
 			if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
@@ -227,7 +271,15 @@ export function GroupPanel({
 			);
 		};
 
-		const onPointerUp = (event: PointerEvent): void => {
+		const onPointerUp = (event: PointerEvent | MouseEvent): void => {
+			if (event.type === "pointerup") {
+				lastPointerTsRef.current.up = event.timeStamp;
+			} else if (
+				event.timeStamp - lastPointerTsRef.current.up <
+				POINTER_MOUSE_DEDUP_MS
+			) {
+				return;
+			}
 			void (async () => {
 				if (dragMovedRef.current) {
 					suppressClickRef.current = true;
@@ -279,9 +331,13 @@ export function GroupPanel({
 
 		window.addEventListener("pointermove", onPointerMove);
 		window.addEventListener("pointerup", onPointerUp);
+		window.addEventListener("mousemove", onPointerMove);
+		window.addEventListener("mouseup", onPointerUp);
 		return () => {
 			window.removeEventListener("pointermove", onPointerMove);
 			window.removeEventListener("pointerup", onPointerUp);
+			window.removeEventListener("mousemove", onPointerMove);
+			window.removeEventListener("mouseup", onPointerUp);
 		};
 	}, [
 		cellSizePx,
@@ -335,33 +391,28 @@ export function GroupPanel({
 							}}
 							disabled={layoutLocked}
 							onPointerDown={(e) => {
-								if (layoutLocked) return;
-								const isMoveClick =
-									e.button === 1 ||
-									(e.button === 0 && (e.ctrlKey || e.metaKey));
-								if (!isMoveClick) return;
-								e.preventDefault();
-								e.stopPropagation();
-								dragMovedRef.current = false;
-								const rect = e.currentTarget.getBoundingClientRect();
-								setGroupDrag({
-									presetId: meta.id,
-									startIndex: memberPresets.findIndex((p) => p.id === meta.id),
-									overIndex: index,
-									lastX: e.clientX,
-									lastY: e.clientY,
-									offsetX: e.clientX - rect.left,
-									offsetY: e.clientY - rect.top,
-								});
+								lastPointerTsRef.current.down = e.timeStamp;
+								beginGroupDrag(e, meta, index);
 							}}
 							onMouseDown={(e) => {
-								if (layoutLocked) return;
-								const isMoveClick =
-									e.button === 1 ||
-									(e.button === 0 && (e.ctrlKey || e.metaKey));
-								if (!isMoveClick) return;
-								e.preventDefault();
-								e.stopPropagation();
+								if (
+									e.timeStamp - lastPointerTsRef.current.down <
+									POINTER_MOUSE_DEDUP_MS
+								) {
+									// The pointerdown twin already ran; keep the
+									// legacy suppression without restarting.
+									if (!layoutLocked) {
+										const isMoveClick =
+											e.button === 1 ||
+											(e.button === 0 && (e.ctrlKey || e.metaKey));
+										if (isMoveClick) {
+											e.preventDefault();
+											e.stopPropagation();
+										}
+									}
+									return;
+								}
+								beginGroupDrag(e, meta, index);
 							}}
 							onClick={() => {
 								if (suppressClickRef.current) return;

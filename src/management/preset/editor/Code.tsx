@@ -22,6 +22,8 @@ const EXTENDSCRIPT_THEME_ID = "ty-plus-extendscript";
 const RESIZE_MIN_HEIGHT = 200;
 const RESIZE_MAX_HEIGHT = 800;
 const DEFAULT_EDITOR_HEIGHT = RESIZE_MIN_HEIGHT;
+/** Window for treating a mouse event as the twin of a pointer event. */
+const POINTER_MOUSE_DEDUP_MS = 16;
 
 let extendscriptThemeDefined = false;
 
@@ -431,13 +433,24 @@ const editorErrorClass = css({
 	color: "status.error",
 });
 
+type ResizeGestureEvent =
+	| React.PointerEvent<HTMLDivElement>
+	| React.MouseEvent<HTMLDivElement>;
+
 function ResizeHandle(props: {
 	editorHeight: number;
-	onResizeStart: (event: React.PointerEvent<HTMLDivElement>) => void;
-	onResizeMove: (event: React.PointerEvent<HTMLDivElement>) => void;
-	onResizeEnd: (event: React.PointerEvent<HTMLDivElement>) => void;
+	onResizeStart: (event: ResizeGestureEvent) => void;
+	onResizeMove: (event: ResizeGestureEvent) => void;
+	onResizeEnd: (event: ResizeGestureEvent) => void;
+	onResizeMouseStart: (event: React.MouseEvent<HTMLDivElement>) => void;
 }): JSX.Element {
-	const { editorHeight, onResizeStart, onResizeMove, onResizeEnd } = props;
+	const {
+		editorHeight,
+		onResizeStart,
+		onResizeMove,
+		onResizeEnd,
+		onResizeMouseStart,
+	} = props;
 	return (
 		<div
 			role="separator"
@@ -451,6 +464,7 @@ function ResizeHandle(props: {
 			onPointerMove={onResizeMove}
 			onPointerUp={onResizeEnd}
 			onPointerCancel={onResizeEnd}
+			onMouseDown={onResizeMouseStart}
 			className={resizeHandleClass}
 			style={{ cursor: "ns-resize" }}
 			data-ty-code-resize-handle=""
@@ -478,8 +492,11 @@ export function CodeEditor(props: CodeEditorProps): JSX.Element {
 	const resizeOriginRef = useRef<{
 		startY: number;
 		startHeight: number;
-		pointerId: number;
+		pointerId?: number;
 	} | null>(null);
+	// Timestamps of the last pointer events, used to skip the mouse-event
+	// twin in CEP/CEF paths that deliver both (or only mouse events).
+	const lastPointerTsRef = useRef({ down: 0, move: 0, up: 0 });
 
 	// Update refs after render to avoid React Compiler warning
 	useEffect(() => {
@@ -491,42 +508,80 @@ export function CodeEditor(props: CodeEditorProps): JSX.Element {
 	}, [value]);
 
 	const handleResizeStart = useCallback(
-		(event: React.PointerEvent<HTMLDivElement>) => {
+		(event: ResizeGestureEvent) => {
+			if (event.type === "pointerdown") {
+				lastPointerTsRef.current.down = event.timeStamp;
+			}
 			event.preventDefault();
+			const pointerId = (event as { pointerId?: number }).pointerId;
 			resizeOriginRef.current = {
 				startY: event.clientY,
 				startHeight: editorHeight,
-				pointerId: event.pointerId,
+				pointerId,
 			};
-			event.currentTarget.setPointerCapture(event.pointerId);
+			if (typeof pointerId === "number") {
+				event.currentTarget.setPointerCapture(pointerId);
+			}
 		},
 		[editorHeight],
 	);
 
-	const handleResizeMove = useCallback(
-		(event: React.PointerEvent<HTMLDivElement>) => {
-			const origin = resizeOriginRef.current;
-			if (!origin) return;
-			const dy = event.clientY - origin.startY;
-			const nextHeight = Math.max(
-				RESIZE_MIN_HEIGHT,
-				Math.min(RESIZE_MAX_HEIGHT, origin.startHeight + dy),
-			);
-			setEditorHeight(nextHeight);
-		},
-		[],
-	);
+	const handleResizeMove = useCallback((event: ResizeGestureEvent) => {
+		if (event.type === "pointermove") {
+			lastPointerTsRef.current.move = event.timeStamp;
+		}
+		const origin = resizeOriginRef.current;
+		if (!origin) return;
+		const dy = event.clientY - origin.startY;
+		const nextHeight = Math.max(
+			RESIZE_MIN_HEIGHT,
+			Math.min(RESIZE_MAX_HEIGHT, origin.startHeight + dy),
+		);
+		setEditorHeight(nextHeight);
+	}, []);
 
-	const handleResizeEnd = useCallback(
-		(event: React.PointerEvent<HTMLDivElement>) => {
-			const origin = resizeOriginRef.current;
-			if (!origin) return;
-			resizeOriginRef.current = null;
-			if (event.currentTarget.hasPointerCapture(origin.pointerId)) {
-				event.currentTarget.releasePointerCapture(origin.pointerId);
+	const handleResizeEnd = useCallback((event: ResizeGestureEvent) => {
+		if (event.type === "pointerup" || event.type === "pointercancel") {
+			lastPointerTsRef.current.up = event.timeStamp;
+		}
+		const origin = resizeOriginRef.current;
+		if (!origin) return;
+		resizeOriginRef.current = null;
+		const el = event.currentTarget as HTMLElement | null;
+		if (
+			typeof origin.pointerId === "number" &&
+			el &&
+			typeof el.hasPointerCapture === "function" &&
+			el.hasPointerCapture(origin.pointerId)
+		) {
+			el.releasePointerCapture(origin.pointerId);
+		}
+	}, []);
+
+	// Mouse fallback for CEP/CEF paths that never deliver pointerdown/up.
+	// Mouse events have no pointer capture, so the drag is tracked on
+	// window to keep resizing when the cursor leaves the handle.
+	const handleResizeMouseStart = useCallback(
+		(event: React.MouseEvent<HTMLDivElement>) => {
+			if (
+				event.timeStamp - lastPointerTsRef.current.down <
+				POINTER_MOUSE_DEDUP_MS
+			) {
+				return;
 			}
+			handleResizeStart(event);
+			const onWinMove = (ev: MouseEvent): void => {
+				handleResizeMove(ev as unknown as ResizeGestureEvent);
+			};
+			const onWinUp = (ev: MouseEvent): void => {
+				handleResizeEnd(ev as unknown as ResizeGestureEvent);
+				window.removeEventListener("mousemove", onWinMove);
+				window.removeEventListener("mouseup", onWinUp);
+			};
+			window.addEventListener("mousemove", onWinMove);
+			window.addEventListener("mouseup", onWinUp);
 		},
-		[],
+		[handleResizeStart, handleResizeMove, handleResizeEnd],
 	);
 
 	useEffect(() => {
@@ -746,6 +801,7 @@ export function CodeEditor(props: CodeEditorProps): JSX.Element {
 				onResizeStart={handleResizeStart}
 				onResizeMove={handleResizeMove}
 				onResizeEnd={handleResizeEnd}
+				onResizeMouseStart={handleResizeMouseStart}
 			/>
 		</div>
 	);

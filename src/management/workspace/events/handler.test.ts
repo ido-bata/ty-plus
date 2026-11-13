@@ -1014,6 +1014,41 @@ describe("workspace interaction events", () => {
 			expect(rerender).toHaveBeenCalled();
 		});
 
+		// Some CEP/CEF input paths emit mousedown/mousemove/mouseup without
+		// pointerdown/pointerup. The mouse fallback must still drive resize.
+		it("resizes via mouse events when pointer events are unavailable", () => {
+			setup();
+
+			const widgetEl = container.querySelector<HTMLElement>(
+				`[data-workspace-surface-index="0"]`,
+			)!;
+			const rect = widgetEl.getBoundingClientRect();
+			const initialWidth = layoutsFromState(currentState).find(
+				(w) => w.id === WIDGET_INFO_ID,
+			)?.width;
+
+			const fire = (type: string, x: number, y: number) =>
+				widgetEl.dispatchEvent(
+					new MouseEvent(type, {
+						clientX: x,
+						clientY: y,
+						button: 0,
+						buttons: type === "mouseup" ? 0 : 1,
+						bubbles: true,
+						composed: true,
+					}),
+				);
+
+			fire("mousedown", rect.right - 5, rect.top + 10);
+			fire("mousemove", rect.right + 60, rect.top + 10);
+			fire("mouseup", rect.right + 60, rect.top + 10);
+
+			expect(
+				layoutsFromState(currentState).find((w) => w.id === WIDGET_INFO_ID)
+					?.width,
+			).toBeGreaterThan(initialWidth ?? 0);
+		});
+
 		it("does not resize when Ctrl key is held", () => {
 			setup();
 
