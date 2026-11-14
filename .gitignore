@@ -41,3 +41,4 @@ src/**/__screenshots__/
 
 # PandaCSS generated runtime (regenerated on `bun install` via `prepare`).
 styled-system/
+node_modules

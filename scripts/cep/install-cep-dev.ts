@@ -24,7 +24,12 @@ import {
 } from "./operation-worker-update";
 
 const DIST_ROOT = path.resolve("dist", "cep-dev");
-const EXTENSION_ID = "app.ty-plus";
+/**
+ * Dev bundles install under their own folder name, matching the
+ * `app.ty-plus.dev` Extension Bundle Id (#86), so this folder must not
+ * collide with a release install at `app.ty-plus`.
+ */
+const INSTALL_DIR_NAME = "app.ty-plus.dev";
 
 export type InstallCepDevBundleOptions = {
 	mode?: "copy" | "junction";
@@ -138,7 +143,7 @@ export const installCepDevBundle = async ({
 	mode = "junction",
 }: InstallCepDevBundleOptions = {}) => {
 	const dstRoot = resolveCepExtensionsRoot("user");
-	const dst = path.join(dstRoot, EXTENSION_ID);
+	const dst = path.join(dstRoot, INSTALL_DIR_NAME);
 
 	if (!existsSync(DIST_ROOT)) {
 		throw new Error(
@@ -183,11 +188,25 @@ export const installCepDevBundle = async ({
 		// ignore
 	}
 
-	const commonDup = path.join(resolveCepExtensionsRoot("common"), EXTENSION_ID);
+	const commonDup = path.join(
+		resolveCepExtensionsRoot("common"),
+		INSTALL_DIR_NAME,
+	);
 	if (existsSync(commonDup)) {
 		console.warn(
 			`[ty-plus] Another copy exists at:\n  ${commonDup}\nIf manifest changes never show up, remove/rename that folder — AE may prefer it over the user dev install.`,
 		);
+	}
+
+	const releaseDup = path.join(dstRoot, "app.ty-plus");
+	try {
+		if (realpathSync(releaseDup) === realpathSync(DIST_ROOT)) {
+			console.warn(
+				`[ty-plus] ${releaseDup} resolves into the dev bundle. Rename or remove it — the release install folder must stay free for release builds.`,
+			);
+		}
+	} catch {
+		// release folder absent or unreadable — nothing to warn about
 	}
 
 	if (mode === "copy") {

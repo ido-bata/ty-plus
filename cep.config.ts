@@ -7,7 +7,18 @@ import {
 	SHELL_MODELESS_FRAME,
 } from "./src/management/panel/setting/geometry.js";
 
-const startingDebugPort = Number(process.env.CEP_DEBUG_BASE ?? 8970);
+const isDevelopmentBuild =
+	process.env.TY_PLUS_CEP_BUILD_MODE === "development" ||
+	process.env.NODE_ENV !== "production";
+
+/**
+ * Dev and release bundles can be installed side by side (#86), so their
+ * CEP debug ports must not collide: dev builds default to the 91xx band
+ * while release keeps 89xx. `CEP_DEBUG_BASE` still overrides both.
+ */
+const startingDebugPort = Number(
+	process.env.CEP_DEBUG_BASE ?? (isDevelopmentBuild ? 9170 : 8970),
+);
 const disableGpu = /^(1|true|yes)$/i.test(
 	String(process.env.CEP_DISABLE_GPU ?? ""),
 );
@@ -39,11 +50,19 @@ const CEP_MODELESS_HTML = "./modeless/index.html";
 
 const DEVELOPMENT_UNSIGNED_TRUST_MODE = "development-unsigned" as const;
 const RELEASE_TRUST_MODE = "release" as const;
-export const OPERATION_WORKER_EXPECTED_TRUST_MODE =
-	process.env.TY_PLUS_CEP_BUILD_MODE === "development" ||
-	process.env.NODE_ENV !== "production"
-		? DEVELOPMENT_UNSIGNED_TRUST_MODE
-		: RELEASE_TRUST_MODE;
+
+/**
+ * Development bundles get their own Extension Bundle Id (`app.ty-plus.dev`)
+ * so they can be installed next to a release build without Extension Id
+ * collisions (see #86 / docs/adr/ADR-0005-dev-extension-id.md).
+ */
+export const CEP_EXTENSION_BUNDLE_ID = isDevelopmentBuild
+	? "app.ty-plus.dev"
+	: "app.ty-plus";
+
+export const OPERATION_WORKER_EXPECTED_TRUST_MODE = isDevelopmentBuild
+	? DEVELOPMENT_UNSIGNED_TRUST_MODE
+	: RELEASE_TRUST_MODE;
 
 /**
  * Resolve the ZXP signing password from the canonical Infisical env var.
@@ -93,7 +112,7 @@ const optionalCefFlags = [
 
 const config: CEP_Config = {
 	version,
-	id: "app.ty-plus",
+	id: CEP_EXTENSION_BUNDLE_ID,
 	displayName: "ty-plus",
 	symlink: "local",
 	port: 3000,
