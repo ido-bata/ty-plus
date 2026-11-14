@@ -232,7 +232,9 @@ function scanWorkspaceHooks(filePath: string, content: string) {
 		while (m !== null) {
 			const attrValue = m[1];
 			for (const hook of PROTECTED_HOOKS) {
-				const tokenPattern = new RegExp(`\\b${hook}\\b`);
+				const tokenPattern = new RegExp(
+					`(?<![A-Za-z0-9_-])${hook}(?![A-Za-z0-9_-])`,
+				);
 				if (tokenPattern.test(attrValue)) {
 					violations.push({
 						line: li + 1,
@@ -252,7 +254,9 @@ function scanWorkspaceHooks(filePath: string, content: string) {
 			const str = m2[1] ?? m2[2];
 			if (str) {
 				for (const hook of PROTECTED_HOOKS) {
-					const tokenPattern = new RegExp(`\\b${hook}\\b`);
+					const tokenPattern = new RegExp(
+					`(?<![A-Za-z0-9_-])${hook}(?![A-Za-z0-9_-])`,
+				);
 					if (tokenPattern.test(str)) {
 						violations.push({
 							line: li + 1,
