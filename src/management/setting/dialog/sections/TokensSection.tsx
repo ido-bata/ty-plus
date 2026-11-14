@@ -10,9 +10,11 @@ import {
 import { applyCepShellTheme } from "@/management/panel/inject-styles";
 import {
 	loadCepShellThemeFromCss,
+	loadCepShellThemeOverridesForWrite,
 	sanitizeCepShellThemeOverrides,
 	saveCepShellThemeToCss,
 } from "@/management/panel/theme/storage";
+import { enqueueThemeWrite } from "@/management/panel/theme/write-queue";
 import { ColorTokenEditor } from "@/management/setting/dialog/components/ColorTokenEditor";
 import { NumberTokenEditor } from "@/management/setting/dialog/components/NumberTokenEditor";
 import { TokenEditor } from "@/management/setting/dialog/components/TokenEditor";
@@ -217,25 +219,29 @@ export function TokensSection(): JSX.Element {
 		const cleaned = sanitizeCepShellThemeOverrides(values);
 		// theme.css is shared with other token domains (e.g. workspace grid
 		// metrics). Replace only the keys this editor owns so Apply does not
-		// drop overrides written by GridSection or backup restores.
-		const fromCss = (await loadCepShellThemeFromCss(window)) ?? {};
-		const merged: Record<string, string> = {};
-		for (const [key, value] of Object.entries(fromCss)) {
-			if (typeof value === "string") {
-				merged[key] = value;
-			}
+		// drop overrides written by GridSection or backup restores. The
+		// read-modify-write runs inside the shared per-window queue and uses
+		// the strict reader so an I/O failure aborts instead of erasing the
+		// file (Issue #91 review).
+		try {
+			await enqueueThemeWrite(window, async () => {
+				const fromCss = await loadCepShellThemeOverridesForWrite(window);
+				const merged: Record<string, string> = { ...fromCss };
+				for (const key of tokenKeys) {
+					delete merged[key];
+				}
+				for (const [key, value] of Object.entries(cleaned)) {
+					if (typeof value === "string") {
+						merged[key] = value;
+					}
+				}
+				await saveCepShellThemeToCss(window, merged);
+				applyCepShellTheme(document, { themeOverrides: merged });
+			});
+			setStatus("Applied and saved tokens to theme.css.");
+		} catch {
+			setStatus("Failed to save tokens: theme.css could not be written.");
 		}
-		for (const key of tokenKeys) {
-			delete merged[key];
-		}
-		for (const [key, value] of Object.entries(cleaned)) {
-			if (typeof value === "string") {
-				merged[key] = value;
-			}
-		}
-		await saveCepShellThemeToCss(window, merged);
-		applyCepShellTheme(document, { themeOverrides: merged });
-		setStatus("Applied and saved tokens to theme.css.");
 	}, [values, tokenKeys]);
 
 	const handleResetAll = useCallback(() => {

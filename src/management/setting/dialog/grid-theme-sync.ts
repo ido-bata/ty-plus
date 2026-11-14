@@ -1,9 +1,10 @@
 import { createCepSurfaceTransport } from "@/management/ae/cep/transport";
 import { applyCepShellTheme } from "@/management/panel/inject-styles";
 import {
-	loadCepShellThemeFromCss,
+	loadCepShellThemeOverridesForWrite,
 	saveCepShellThemeToCss,
 } from "@/management/panel/theme/storage";
+import { enqueueThemeWrite } from "@/management/panel/theme/write-queue";
 import type { Settings } from "@/management/setting/models/settings";
 import { DEFAULT_THEME } from "@/management/style/default-values";
 import { publishShellMessage } from "@/management/workspace/messaging/publish-shell-message";
@@ -78,28 +79,6 @@ export const metricsFromSettingsGrid = (
 	radius: grid?.radius ?? 2,
 });
 
-/**
- * theme.css read-modify-write must not interleave: NumberField commits on
- * every keystroke, so concurrent `applyGridMetricsLive` calls would otherwise
- * complete out of order and let an earlier commit's values win the file
- * (Issue #91 follow-up). Serialize per window; callers still get live
- * preview + `themeLive` broadcast immediately.
- */
-const themeWriteQueues = new WeakMap<Window, Promise<unknown>>();
-
-const enqueueThemeWrite = <T>(
-	win: Window,
-	task: () => Promise<T>,
-): Promise<T> => {
-	const prev = themeWriteQueues.get(win) ?? Promise.resolve();
-	const next = prev.then(task, task);
-	themeWriteQueues.set(
-		win,
-		next.catch(() => {}),
-	);
-	return next;
-};
-
 /** Persist settings + shell theme tokens and broadcast live preview to panels. */
 export const applyGridMetricsLive = (
 	win: Window,
@@ -108,7 +87,9 @@ export const applyGridMetricsLive = (
 ): Promise<Record<string, string>> =>
 	enqueueThemeWrite(win, async () => {
 		const overrides = gridMetricsToThemeOverrides(metrics);
-		const fromCss = (await loadCepShellThemeFromCss(win)) ?? {};
+		// Strict read: an unreadable theme.css must abort the write, not
+		// merge against an empty record and erase persisted overrides.
+		const fromCss = await loadCepShellThemeOverridesForWrite(win);
 		const merged = { ...fromCss, ...overrides };
 		await saveCepShellThemeToCss(win, merged);
 		applyCepShellTheme(win.document, { themeOverrides: merged });

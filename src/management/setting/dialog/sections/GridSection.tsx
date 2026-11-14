@@ -5,7 +5,6 @@ import { WorkspaceGridPreview } from "@/management/setting/dialog/components/Wor
 import {
 	applyGridMetricsLive,
 	metricsFromSettingsGrid,
-	readGridMetricsFromTheme,
 } from "@/management/setting/dialog/grid-theme-sync";
 import {
 	SettingsField,
@@ -17,8 +16,11 @@ import { NumberField } from "@/shared/component/fields/NumberField";
 export function GridSection(): JSX.Element {
 	const { settings, updateSettings } = useSettings();
 	const { panelSurfaceId } = useCep();
+	// settings.workspace.grid is the committed source for this dialog; theme
+	// vars can lag the serialized theme.css write queue, so they must not
+	// seed the metrics the next keystroke commit merges against (Issue #91).
 	const [metrics, setMetrics] = useState(() =>
-		readGridMetricsFromTheme(metricsFromSettingsGrid(settings.workspace.grid)),
+		metricsFromSettingsGrid(settings.workspace.grid),
 	);
 	// NumberField commits per keystroke; React state updates lag, so rapid
 	// successive commits must merge against the latest metrics, not a stale
@@ -51,7 +53,11 @@ export function GridSection(): JSX.Element {
 					grid: merged,
 				},
 			});
-			void applyGridMetricsLive(window, panelSurfaceId, merged);
+			void applyGridMetricsLive(window, panelSurfaceId, merged).catch(
+				(error) => {
+					console.error("[GridSection] Failed to persist grid metrics:", error);
+				},
+			);
 		},
 		[panelSurfaceId, settings.workspace, updateSettings],
 	);
