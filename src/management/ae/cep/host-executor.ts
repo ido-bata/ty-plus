@@ -467,6 +467,7 @@ type HostBundleFailureReason =
 	| "probe-failed"
 	| "extension-root-unresolved"
 	| "eval-file-failed"
+	| "post-load-unverifiable"
 	| "schema-mismatch"
 	| "implementation-mismatch"
 	| "incompatible-not-reloaded";
@@ -489,6 +490,20 @@ class HostBundleCoordinator {
 	/** Test/diagnostic visibility into the state machine. */
 	get currentState(): HostBundleCoordinatorState {
 		return this.state;
+	}
+
+	/**
+	 * Drop the terminal `ready` state so the next `ensure` re-probes the
+	 * host global. Used when a host call reports the resident bundle
+	 * missing: `$.global` outlives this window and can be corrupted by an
+	 * abnormal teardown after this coordinator already went `ready`
+	 * (Issue #104). `loadedFor` is kept — it records what the bundle on
+	 * disk produces, which a resident-global reset does not invalidate.
+	 */
+	reset(): void {
+		if (this.state === "ready") {
+			this.state = "idle";
+		}
 	}
 
 	ensure(executorId: string): Promise<void> {
@@ -643,9 +658,35 @@ class HostBundleCoordinator {
 			);
 		}
 
-		this.loadedFor.add(observedKey);
 		const postLoadSchema = postLoad.schemaVersion;
 		const postLoadBundle = postLoad.bundleVersion;
+		// `$.evalFile` returned without a thrown error but the resident
+		// global still carries no readable contract markers: the script
+		// never reached its tail assignment. That is an engine-level
+		// transient — the same class as a thrown evalFile — seen when an
+		// abnormal surface teardown leaves ExtendScript globals
+		// half-initialized (Issue #104). Recording `loadedFor` here would
+		// make every later operation on this window fail fast forever, so
+		// this flight fails without poisoning anything and the next
+		// operation retries the load.
+		if (postLoadSchema === null || postLoadSchema === -1) {
+			return this.fail(
+				executorId,
+				"post-load-unverifiable",
+				{
+					expectedSchema: HOST_BUNDLE_SCHEMA_VERSION,
+					expectedBundleVersion: HOST_BUNDLE_VERSION,
+					observedSchema: postLoadSchema,
+					observedBundleVersion: postLoadBundle,
+					elapsedMs: Date.now() - loadStartedAt,
+				},
+				new Error(
+					"Host bundle load returned no readable contract after $.evalFile",
+				),
+				"idle",
+			);
+		}
+		this.loadedFor.add(observedKey);
 		if (!isCompatible(postLoadSchema, postLoadBundle)) {
 			// Record what the disk actually produced as well: a stale
 			// on-disk implementation must fail fast on the next operation
@@ -734,25 +775,27 @@ const buildCepHostExecutor = (
 		if (!ALLOWED_HOST_METHODS.has(method)) {
 			throw new Error(`Host method is not allowed: ${String(method)}`);
 		}
-		await coordinator.ensure(executorId);
-
 		const rawArgs = escapeScriptString(JSON.stringify(args));
 		const escapedMethod = escapeScriptString(String(method));
-		const result = await runEvalScript(
-			win,
-			`
+		const callScript = `
 (function() {
   try {
     var hostBundle = $.global && typeof ${HOST_BUNDLE_GLOBAL_REF} === "object"
       ? ${HOST_BUNDLE_GLOBAL_REF}
       : (typeof __TY_PLUS_HOST__ === "object" ? __TY_PLUS_HOST__ : null);
-    var hostMethod = hostBundle && typeof hostBundle['${escapedMethod}'] === "function"
+    if (!hostBundle) {
+      return JSON.stringify({
+        ok: false,
+        error: { message: "Host bundle is not resident", code: "host_bundle_missing" }
+      });
+    }
+    var hostMethod = typeof hostBundle['${escapedMethod}'] === "function"
       ? hostBundle['${escapedMethod}']
       : null;
     if (hostMethod) {
       return hostMethod('${rawArgs}');
     }
-    return JSON.stringify({ ok: false, error: { message: "__TY_PLUS_HOST__.${escapedMethod} is not available" } });
+    return JSON.stringify({ ok: false, error: { message: "__TY_PLUS_HOST__.${escapedMethod} is not available", code: "host_method_missing" } });
   } catch (error) {
     return JSON.stringify({
       ok: false,
@@ -762,21 +805,45 @@ const buildCepHostExecutor = (
     });
   }
 })();
-`,
-		);
-		let parsed:
+`;
+		// A `ready` coordinator trusts its earlier probe, but `$.global` is
+		// shared engine state that an abnormal teardown can corrupt after
+		// the fact (Issue #104). When the call reports the bundle missing,
+		// drop the terminal state and run one ensure+call cycle again so
+		// the coordinator re-probes and reloads instead of failing every
+		// later operation on this window.
+		type HostCallResult =
 			| { ok: true; hostId?: HostId; value?: unknown }
-			| { ok: false; error?: { message?: string } };
-		try {
-			parsed = parseHostJsonResult<
-				| { ok: true; hostId?: HostId; value?: unknown }
-				| { ok: false; error?: { message?: string } }
-			>(result, `Host function ${String(method)}`);
-		} catch (error) {
-			const message = error instanceof Error ? error.message : String(error);
-			notifyHostExecutionFailure(message);
-			throw error;
-		}
+			| { ok: false; error?: { message?: string; code?: string } };
+		const invokeHostMethod = async (): Promise<HostCallResult> => {
+			for (let attempt = 0; attempt < 2; attempt += 1) {
+				await coordinator.ensure(executorId);
+				const result = await runEvalScript(win, callScript);
+				let parsed: HostCallResult;
+				try {
+					parsed = parseHostJsonResult<HostCallResult>(
+						result,
+						`Host function ${String(method)}`,
+					);
+				} catch (error) {
+					const message =
+						error instanceof Error ? error.message : String(error);
+					notifyHostExecutionFailure(message);
+					throw error;
+				}
+				if (
+					attempt === 0 &&
+					parsed.ok === false &&
+					parsed.error?.code === "host_bundle_missing"
+				) {
+					coordinator.reset();
+					continue;
+				}
+				return parsed;
+			}
+			throw new Error("Host function retry loop exhausted");
+		};
+		const parsed = await invokeHostMethod();
 
 		if (!parsed.ok) {
 			const message = parsed.error?.message ?? "Host execution failed";

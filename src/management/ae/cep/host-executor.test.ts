@@ -47,6 +47,12 @@ type FakeHostOptions = {
 	readonly methodResult?: () => Record<string, unknown>;
 	/** Make `$.evalFile` fail (simulates a broken / locked bundle). */
 	readonly failLoad?: boolean;
+	/**
+	 * `$.evalFile` returns without throwing but leaves the resident global
+	 * unreadable — the engine-level transient seen when an abnormal
+	 * teardown interrupts the bundle mid-load (Issue #104).
+	 */
+	readonly silentLoadFailure?: boolean;
 };
 
 type FakeHost = {
@@ -56,7 +62,10 @@ type FakeHost = {
 	loadCount(): number;
 	/** Mutate the resident global after construction (e.g. panel reload). */
 	setResident(resident: "absent" | "present", schema?: number): void;
+	/** Leave the key present with an undefined value — the #104 residue. */
+	corruptResident(): void;
 	setFailLoad(value: boolean): void;
+	setSilentLoadFailure(value: boolean): void;
 };
 
 /**
@@ -72,6 +81,7 @@ type FakeEngine = {
 	fileSchema: number;
 	fileBundleVersion: string;
 	failLoad: boolean;
+	silentLoadFailure: boolean;
 	probes: number;
 	loads: number;
 };
@@ -82,6 +92,7 @@ const createFakeEngine = (options: FakeHostOptions = {}): FakeEngine => {
 		fileSchema: options.fileSchema ?? HOST_BUNDLE_SCHEMA_VERSION,
 		fileBundleVersion: options.fileBundleVersion ?? HOST_BUNDLE_VERSION,
 		failLoad: options.failLoad ?? false,
+		silentLoadFailure: options.silentLoadFailure ?? false,
 		probes: 0,
 		loads: 0,
 	};
@@ -137,6 +148,13 @@ const createFakeHost = (
 						if (state.failLoad) {
 							throw new Error("Host bundle load failed: simulated");
 						}
+						if (state.silentLoadFailure) {
+							// The evalFile'd script never reaches its tail
+							// assignment: the global key exists but stays
+							// undefined, exactly the #104 residue.
+							state.global.__TY_PLUS_HOST__ = undefined;
+							return;
+						}
 						state.global.__TY_PLUS_HOST__ = {
 							__schemaVersion: state.fileSchema,
 							__bundleVersion: state.fileBundleVersion,
@@ -187,6 +205,34 @@ const createFakeHost = (
 					callback?.("null");
 					return;
 				}
+				if (script.includes("host_bundle_missing")) {
+					// Host method call script: the resident check mirrors the
+					// real ExtendScript side closely enough to exercise the
+					// coordinator's self-heal path.
+					const bundle = state.global.__TY_PLUS_HOST__;
+					if (bundle === null || typeof bundle !== "object") {
+						callback?.(
+							JSON.stringify({
+								ok: false,
+								error: {
+									message: "Host bundle is not resident",
+									code: "host_bundle_missing",
+								},
+							}),
+						);
+						return;
+					}
+					callback?.(
+						JSON.stringify(
+							options.methodResult?.() ?? {
+								ok: true,
+								hostId: "after-effects",
+								value: "pong",
+							},
+						),
+					);
+					return;
+				}
 				callback?.(
 					JSON.stringify(
 						options.methodResult?.() ?? {
@@ -217,6 +263,12 @@ const createFakeHost = (
 		},
 		setFailLoad: (value) => {
 			state.failLoad = value;
+		},
+		corruptResident: () => {
+			state.global.__TY_PLUS_HOST__ = undefined;
+		},
+		setSilentLoadFailure: (value) => {
+			state.silentLoadFailure = value;
 		},
 	};
 };
@@ -642,5 +694,70 @@ describe("host bundle load coordinator", () => {
 			"__schemaVersion: HOST_BUNDLE_SCHEMA_VERSION",
 		);
 		expect(bundleSource).toContain("__bundleVersion: HOST_BUNDLE_VERSION");
+	});
+
+	// Issue #104 — after an abnormal teardown the resident global can be
+	// left half-initialized (`$.global.__TY_PLUS_HOST__` present but
+	// undefined). A `ready` coordinator must not keep trusting it, and a
+	// load that produces no readable contract must not poison retries.
+	test("a resident bundle lost after ready is reloaded once and the call heals", async () => {
+		const host = createFakeHost({
+			resident: "present",
+			residentSchema: HOST_BUNDLE_SCHEMA_VERSION,
+		});
+
+		await anyExecutor(host.win)("ping", []);
+		expect(host.loadCount()).toBe(0);
+
+		// The shared `$.global` is corrupted after this window's
+		// coordinator already went `ready`: the key remains, the value is
+		// undefined. The next call must re-probe, reload, and succeed.
+		host.corruptResident();
+		const result = await anyExecutor(host.win)("ping", []);
+
+		expect(result.value).toBe("pong");
+		expect(host.loadCount()).toBe(1);
+		expect(host.probeCount()).toBe(2);
+	});
+
+	test("a silently incomplete $.evalFile does not poison retries for an absent bundle", async () => {
+		const host = createFakeHost({
+			resident: "absent",
+			silentLoadFailure: true,
+		});
+
+		await expect(anyExecutor(host.win)("ping", [])).rejects.toThrow(
+			/no readable contract/,
+		);
+		expect(host.loadCount()).toBe(1);
+
+		// The failed flight recorded nothing: the next operation gets a
+		// fresh probe + load instead of failing fast forever.
+		host.setSilentLoadFailure(false);
+		const result = await anyExecutor(host.win)("ping", []);
+
+		expect(result.value).toBe("pong");
+		expect(host.loadCount()).toBe(2);
+	});
+
+	test("a second host_bundle_missing report fails the call instead of looping", async () => {
+		const host = createFakeHost({
+			resident: "present",
+			residentSchema: HOST_BUNDLE_SCHEMA_VERSION,
+		});
+
+		await anyExecutor(host.win)("ping", []);
+		// Corrupt the resident AND break the disk bundle: the self-heal
+		// reload runs but still cannot produce a callable host, so the
+		// call must surface the failure rather than retry forever.
+		host.corruptResident();
+		host.setSilentLoadFailure(true);
+
+		await expect(anyExecutor(host.win)("ping", [])).rejects.toThrow(
+			/no readable contract|not resident/,
+		);
+		// probe + load for the reset flight; the method call then reports
+		// the still-missing bundle and stops after one retry.
+		expect(host.loadCount()).toBe(1);
 	});
 });
