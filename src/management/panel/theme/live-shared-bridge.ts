@@ -1,5 +1,6 @@
 import { applyCepShellTheme } from "@/management/panel/inject-styles";
 import { sanitizeCepShellThemeOverrides } from "@/management/panel/theme/storage";
+import { mergeThemeOverrideCache } from "@/management/style/theme-overrides-cache";
 
 /** Key on ExtendScript `$__TYPLUS_BRIDGE_V1` (shared by all extensions within the host) */
 const _THEME_LIVE_SHARED_KEY = "ty-plus.theme-live.v1";
@@ -87,8 +88,10 @@ export const subscribeThemeLiveSharedBridge = (
 		);
 		lastFingerprint = decision.nextFingerprint;
 		if (decision.apply) {
+			const overrides = sanitizeCepShellThemeOverrides(decision.overrides);
+			mergeThemeOverrideCache(overrides);
 			applyCepShellTheme(targetDoc, {
-				themeOverrides: decision.overrides,
+				themeOverrides: overrides,
 			});
 		}
 	};

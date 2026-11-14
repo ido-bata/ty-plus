@@ -1,6 +1,13 @@
-import { readThemeCss, writeThemeCss } from "@/management/storage";
+import {
+	readThemeCss,
+	readThemeCssStrict,
+	writeThemeCss,
+} from "@/management/storage";
 import { DEFAULT_THEME } from "@/management/style/default-values";
-import { themeVarsToCssBlock } from "@/management/style/merge";
+import {
+	getThemeOverrideCacheRevision,
+	setThemeOverrideCache,
+} from "@/management/style/theme-overrides-cache";
 
 const allowedKeys = new Set(Object.keys(DEFAULT_THEME));
 
@@ -62,6 +69,8 @@ const parseCepShellThemeCssText = (
 /**
  * Generate CSS text in `:root { --key: val; ... }` format from overrides record.
  * Saves pruned form with values equal to DEFAULT omitted.
+ * Only user token declarations are persisted — the semantic `--color-*` bridge
+ * is injected at apply time (`themeVarsToCssBlock`), not stored in the file.
  */
 const buildCepShellThemeCssText = (
 	overrides: Partial<Record<string, string>>,
@@ -70,24 +79,91 @@ const buildCepShellThemeCssText = (
 	if (Object.keys(pruned).length === 0) {
 		return "";
 	}
-	return `:root {\n${themeVarsToCssBlock(pruned)}\n}`;
+	const declarations = Object.entries(pruned)
+		.map(([key, val]) => `  --${key}: ${val};`)
+		.join("\n");
+	return `:root {\n${declarations}\n}`;
+};
+
+/** Parse + sanitize + prune `theme.css` text into the persisted override record. */
+const overridesFromThemeCssText = (cssText: string): Record<string, string> =>
+	buildPrunedCepShellThemeRecord(
+		sanitizeCepShellThemeOverrides(parseCepShellThemeCssText(cssText)),
+	);
+
+/**
+ * Apply a disk snapshot to the sync cache only when no save/live merge
+ * landed while the host read was in flight; otherwise the snapshot is
+ * stale and would clobber newer state (Issue #91 review).
+ */
+const cacheSnapshotIfCurrent = (
+	revisionAtRead: number,
+	pruned: Record<string, string>,
+): void => {
+	if (getThemeOverrideCacheRevision() === revisionAtRead) {
+		setThemeOverrideCache(pruned);
+	}
 };
 
 export const loadCepShellThemeFromCss = async (
 	win: Window,
 ): Promise<Partial<Record<string, string>> | null> => {
+	const revisionAtRead = getThemeOverrideCacheRevision();
 	try {
 		const cssText = await readThemeCss(win);
-		if (!cssText) {
+		if (cssText === null || cssText === undefined) {
 			return null;
 		}
-		const parsed = parseCepShellThemeCssText(cssText);
-		return buildPrunedCepShellThemeRecord(
-			sanitizeCepShellThemeOverrides(parsed),
-		);
+		if (cssText.trim() === "") {
+			cacheSnapshotIfCurrent(revisionAtRead, {});
+			return {};
+		}
+		const pruned = overridesFromThemeCssText(cssText);
+		cacheSnapshotIfCurrent(revisionAtRead, pruned);
+		return pruned;
 	} catch {
 		return null;
 	}
+};
+
+/**
+ * Strict variant for read-modify-write callers (grid metrics, token editor).
+ * Unlike {@link loadCepShellThemeFromCss}, I/O errors reject instead of
+ * returning `null`: treating an unreadable `theme.css` as empty would make
+ * the next write erase every persisted override (Issue #91 review).
+ * Returns `{}` only when the file is genuinely absent or blank.
+ */
+export const loadCepShellThemeOverridesForWrite = async (
+	win: Window,
+): Promise<Record<string, string>> => {
+	const revisionAtRead = getThemeOverrideCacheRevision();
+	const cssText = await readThemeCssStrict(win);
+	if (!cssText || cssText.trim() === "") {
+		cacheSnapshotIfCurrent(revisionAtRead, {});
+		return {};
+	}
+	const pruned = overridesFromThemeCssText(cssText);
+	cacheSnapshotIfCurrent(revisionAtRead, pruned);
+	return pruned;
+};
+
+/**
+ * Update the sync override cache from raw `theme.css` text without a host
+ * round-trip. Used by restore paths that write the file directly
+ * (workspace backup import) so subsequent theme re-injection sees the
+ * restored values.
+ */
+export const cacheCepShellThemeOverridesFromCssText = (
+	cssText: string,
+): void => {
+	if (!cssText || cssText.trim() === "") {
+		setThemeOverrideCache({});
+		return;
+	}
+	const pruned = buildPrunedCepShellThemeRecord(
+		sanitizeCepShellThemeOverrides(parseCepShellThemeCssText(cssText)),
+	);
+	setThemeOverrideCache(pruned);
 };
 
 export const saveCepShellThemeToCss = async (
@@ -95,7 +171,13 @@ export const saveCepShellThemeToCss = async (
 	overrides: Partial<Record<string, string>>,
 ): Promise<void> => {
 	const cssText = buildCepShellThemeCssText(overrides);
+	// The cache must never run ahead of the file: update it only after the
+	// write is durable, so a rejected write cannot leave re-injection
+	// applying values that were never persisted (Issue #91 review).
 	await writeThemeCss(win, cssText);
+	setThemeOverrideCache(
+		buildPrunedCepShellThemeRecord(sanitizeCepShellThemeOverrides(overrides)),
+	);
 };
 
 /** Save overrides (keys equal to DEFAULT are not persisted) */

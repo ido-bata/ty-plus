@@ -1,6 +1,10 @@
 import { applyCepShellTheme } from "@/management/panel/inject-styles";
 import { subscribeThemeLiveSharedBridge } from "@/management/panel/theme/live-shared-bridge";
 import { sanitizeCepShellThemeOverrides } from "@/management/panel/theme/storage";
+import {
+	mergeThemeOverrideCache,
+	setThemeOverrideCache,
+} from "@/management/style/theme-overrides-cache";
 import type {
 	SettingsPayload,
 	SurfaceMessageEnvelope,
@@ -31,8 +35,18 @@ export const subscribeThemeLive = (
 		if (pl.sourceSurfaceId === surfaceId) {
 			return;
 		}
+		const overrides = sanitizeCepShellThemeOverrides(pl.overrides);
+		// Keep the sync cache in step so boot/resize re-injection does not
+		// revert the live-applied overrides (Issue #91). `replace` payloads
+		// carry the full persisted set, so the cache is swapped wholesale —
+		// a merge would resurrect keys the sender deleted (Issue #94).
+		if (pl.replace) {
+			setThemeOverrideCache(overrides);
+		} else {
+			mergeThemeOverrideCache(overrides);
+		}
 		applyCepShellTheme(targetDoc, {
-			themeOverrides: sanitizeCepShellThemeOverrides(pl.overrides),
+			themeOverrides: overrides,
 		});
 	});
 
