@@ -720,6 +720,25 @@ describe("host bundle load coordinator", () => {
 		expect(host.probeCount()).toBe(2);
 	});
 
+	test("an absent fingerprint recorded at boot does not block self-heal", async () => {
+		const host = createFakeHost({ resident: "absent" });
+
+		// First operation probes absent, loads, and goes ready. The
+		// pre-load "absent" fingerprint must NOT be recorded in
+		// `loadedFor`: it is not a contract, and keeping it made the
+		// post-corruption re-probe fail `incompatible-not-reloaded`
+		// without ever reaching `$.evalFile` again.
+		const first = await anyExecutor(host.win)("ping", []);
+		expect(first.value).toBe("pong");
+		expect(host.loadCount()).toBe(1);
+
+		host.corruptResident();
+		const second = await anyExecutor(host.win)("ping", []);
+
+		expect(second.value).toBe("pong");
+		expect(host.loadCount()).toBe(2);
+	});
+
 	test("a silently incomplete $.evalFile does not poison retries for an absent bundle", async () => {
 		const host = createFakeHost({
 			resident: "absent",

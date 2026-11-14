@@ -686,7 +686,14 @@ class HostBundleCoordinator {
 				"idle",
 			);
 		}
-		this.loadedFor.add(observedKey);
+		// Record the pre-load fingerprint only when a resident bundle was
+		// actually observed. "absent" is not a contract: recording it would
+		// make the post-corruption self-heal probe (Issue #104) hit
+		// `incompatible-not-reloaded` and never reach `$.evalFile` again.
+		// The stale-disk case is still covered by `postLoadKey` below —
+		// a disk bundle that installs a wrong contract leaves a present,
+		// mismatched resident the next probe can match.
+		if (probe.present) this.loadedFor.add(observedKey);
 		if (!isCompatible(postLoadSchema, postLoadBundle)) {
 			// Record what the disk actually produced as well: a stale
 			// on-disk implementation must fail fast on the next operation
