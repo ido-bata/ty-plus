@@ -124,8 +124,8 @@ import {
 } from "@/management/workspace/layout/restore-plan";
 import { startWorkspaceLayoutJsonExternalChangeWatch } from "@/management/workspace/layout/sync-watch";
 import { publishShellMessage } from "@/management/workspace/messaging/publish-shell-message";
-import { subscribeSettingsSaveNotices } from "@/management/workspace/messaging/subscribe-settings-save-notice";
 import { subscribeWorkspaceGridLive } from "@/management/workspace/messaging/subscribe-grid-live";
+import { subscribeSettingsSaveNotices } from "@/management/workspace/messaging/subscribe-settings-save-notice";
 import { subscribeThemeLive } from "@/management/workspace/messaging/subscribe-theme-live";
 import { logWorkspace } from "@/management/workspace/onboarding/flow-log";
 import {
