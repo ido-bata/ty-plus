@@ -122,6 +122,7 @@ import {
 } from "@/management/workspace/layout/restore-plan";
 import { startWorkspaceLayoutJsonExternalChangeWatch } from "@/management/workspace/layout/sync-watch";
 import { publishShellMessage } from "@/management/workspace/messaging/publish-shell-message";
+import { subscribeSettingsSaveNotices } from "@/management/workspace/messaging/subscribe-settings-save-notice";
 import { subscribeThemeLive } from "@/management/workspace/messaging/subscribe-theme-live";
 import { logWorkspace } from "@/management/workspace/onboarding/flow-log";
 import {
@@ -472,6 +473,10 @@ export function useWorkspaceRuntime(root: Element | null): {
 
 		const cepSurfaceTransport = createCepSurfaceTransport(window);
 		subscribeThemeLive(cepSurfaceTransport, panelId);
+		// Settings write failures broadcast `saveNotice` so a failure landing
+		// after the settings dialog closed still surfaces on the primary
+		// panel (Issue #96).
+		subscribeSettingsSaveNotices(cepSurfaceTransport, panelId);
 
 		let nextState: SurfaceState = createInitialSurfaceState({
 			grid: gridOverride as Record<string, unknown>,

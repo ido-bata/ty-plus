@@ -249,15 +249,25 @@ function SettingsContent(): JSX.Element {
 }
 
 function SettingsDialogBody(): JSX.Element {
-	const { resetSettings, reloadSettingsFromDisk } = useSettings();
+	const { resetSettings, reloadSettingsFromDisk, persistSettingsNow } =
+		useSettings();
 	const { close } = useDialogClose({});
 	const [saving, setSaving] = useState(false);
 
 	const handleSave = useCallback(async () => {
 		setSaving(true);
-		close();
-		setSaving(false);
-	}, [close]);
+		try {
+			// Settings commits persist asynchronously; only close once every
+			// in-flight write has settled successfully. On failure the dialog
+			// stays open and the saveError banner explains why (#96).
+			const ok = await persistSettingsNow();
+			if (ok) {
+				close();
+			}
+		} finally {
+			setSaving(false);
+		}
+	}, [close, persistSettingsNow]);
 
 	const handleReset = useCallback(() => {
 		const message =

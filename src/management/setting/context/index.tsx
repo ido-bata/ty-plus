@@ -11,8 +11,11 @@ import {
 	useContext,
 	useEffect,
 	useMemo,
+	useRef,
 	useState,
 } from "react";
+import { resolvePanelSurfaceId } from "@/management/ae/cep/entry/id";
+import { createCepSurfaceTransport } from "@/management/ae/cep/transport";
 import {
 	coerceSettings,
 	DEFAULT_SETTINGS,
@@ -27,6 +30,8 @@ import {
 	readSettings,
 	writeSettings,
 } from "@/management/storage/workspace/store";
+import { publishShellMessage } from "@/management/workspace/messaging/publish-shell-message";
+import { SHELL_CHANNELS } from "@/management/workspace/surface/contract";
 
 type UpdateSettingsOptions = {
 	/** Skip paths.json / locator / relocation when hydrating from disk. */
@@ -50,6 +55,13 @@ type SettingsContextValue = {
 	 * successful save (Device Gate D-12).
 	 */
 	saveError: string | null;
+	/**
+	 * Wait for in-flight settings writes, then persist the current settings
+	 * once more and resolve with that write's outcome. The settings dialog's
+	 * Save action uses this so the dialog only closes after persistence has
+	 * actually settled (#96).
+	 */
+	persistSettingsNow: () => Promise<boolean>;
 };
 
 const SettingsContext = createContext<SettingsContextValue | null>(null);
@@ -215,6 +227,36 @@ export function mergeOwnedSettingsIntoSettingsJson(
 const SETTINGS_SAVE_FAILED_MESSAGE =
 	"Failed to save settings. The settings folder may be read-only.";
 
+/**
+ * Best-effort broadcast of a settings write failure on the shell bus so the
+ * persistent workspace panel can show a toast even after the settings dialog
+ * (the only surface rendering `saveError`) has closed (#96).
+ */
+function publishSettingsSaveFailure(win: Window): void {
+	try {
+		const dialogSurfaceId = win.__TY_PLUS_DIALOG_SURFACE_ID__;
+		const sourceSurfaceId =
+			typeof dialogSurfaceId === "string" && dialogSurfaceId.trim().length > 0
+				? dialogSurfaceId.trim()
+				: resolvePanelSurfaceId();
+		const transport = createCepSurfaceTransport(win);
+		void publishShellMessage(transport, {
+			channel: SHELL_CHANNELS.settings,
+			kind: "publish",
+			sourceSurfaceId,
+			payload: {
+				kind: "saveNotice",
+				sourceSurfaceId,
+				at: new Date().toISOString(),
+				ok: false,
+				message: SETTINGS_SAVE_FAILED_MESSAGE,
+			},
+		}).catch(() => {});
+	} catch {
+		/* notification is best-effort; the in-surface banner still applies */
+	}
+}
+
 async function saveSettingsToStorage(settings: Settings): Promise<boolean> {
 	try {
 		const raw = await readSettings(window);
@@ -237,6 +279,53 @@ export function SettingsProvider({
 	const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
 	const [isLoaded, setIsLoaded] = useState(false);
 	const [saveError, setSaveError] = useState<string | null>(null);
+	const settingsRef = useRef(settings);
+	const saveQueueRef = useRef<Promise<void>>(Promise.resolve());
+
+	useEffect(() => {
+		settingsRef.current = settings;
+	}, [settings]);
+
+	/**
+	 * Settings writes are read-modify-write against `settings/app.json`, so
+	 * they must be serialized: concurrent commits would otherwise interleave
+	 * read/write and lose each other's keys.
+	 */
+	const enqueueSettingsSave = useCallback(
+		(snapshot: Settings): Promise<boolean> => {
+			const run = saveQueueRef.current.then(() =>
+				saveSettingsToStorage(snapshot),
+			);
+			saveQueueRef.current = run.then(
+				() => undefined,
+				() => undefined,
+			);
+			return run;
+		},
+		[],
+	);
+
+	/**
+	 * Run a settings write with the shared outcome handling: `saveError` is
+	 * set/cleared and a `saveNotice` is broadcast on failure so the failure
+	 * stays visible even if the settings dialog has already closed (#96).
+	 */
+	const runSettingsSave = useCallback(
+		(snapshot: Settings): Promise<boolean> =>
+			enqueueSettingsSave(snapshot).then((ok) => {
+				setSaveError(ok ? null : SETTINGS_SAVE_FAILED_MESSAGE);
+				if (!ok) {
+					publishSettingsSaveFailure(window);
+				}
+				return ok;
+			}),
+		[enqueueSettingsSave],
+	);
+
+	const persistSettingsNow = useCallback(
+		(): Promise<boolean> => runSettingsSave(settingsRef.current),
+		[runSettingsSave],
+	);
 
 	useEffect(() => {
 		let cancelled = false;
@@ -271,14 +360,12 @@ export function SettingsProvider({
 			setSettings((prev) => {
 				const updated = mergeSettings(prev, patch);
 				if (!patch.core?.paths) {
-					void saveSettingsToStorage(updated).then((ok) => {
-						setSaveError(ok ? null : SETTINGS_SAVE_FAILED_MESSAGE);
-					});
+					void runSettingsSave(updated);
 				}
 				return updated;
 			});
 		},
-		[],
+		[runSettingsSave],
 	);
 
 	const refreshPathsFromDisk = useCallback(async () => {
@@ -299,9 +386,9 @@ export function SettingsProvider({
 
 	const resetSettings = useCallback(async () => {
 		setSettings(DEFAULT_SETTINGS);
-		const ok = await saveSettingsToStorage(DEFAULT_SETTINGS);
+		const ok = await runSettingsSave(DEFAULT_SETTINGS);
 		setSaveError(ok ? null : SETTINGS_SAVE_FAILED_MESSAGE);
-	}, []);
+	}, [runSettingsSave]);
 
 	const reloadSettingsFromDisk = useCallback(async () => {
 		const loaded = await loadSettingsFromStorage();
@@ -317,6 +404,7 @@ export function SettingsProvider({
 			resetSettings,
 			isLoaded,
 			saveError,
+			persistSettingsNow,
 		}),
 		[
 			settings,
@@ -326,6 +414,7 @@ export function SettingsProvider({
 			resetSettings,
 			isLoaded,
 			saveError,
+			persistSettingsNow,
 		],
 	);
 
