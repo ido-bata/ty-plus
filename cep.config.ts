@@ -7,7 +7,18 @@ import {
 	SHELL_MODELESS_FRAME,
 } from "./src/management/panel/setting/geometry.js";
 
-const startingDebugPort = Number(process.env.CEP_DEBUG_BASE ?? 8970);
+const isDevelopmentBuild =
+	process.env.TY_PLUS_CEP_BUILD_MODE === "development" ||
+	process.env.NODE_ENV !== "production";
+
+/**
+ * Dev and release bundles can be installed side by side (#86), so their
+ * CEP debug ports must not collide: dev builds default to the 91xx band
+ * while release keeps 89xx. `CEP_DEBUG_BASE` still overrides both.
+ */
+const startingDebugPort = Number(
+	process.env.CEP_DEBUG_BASE ?? (isDevelopmentBuild ? 9170 : 8970),
+);
 const disableGpu = /^(1|true|yes)$/i.test(
 	String(process.env.CEP_DISABLE_GPU ?? ""),
 );
@@ -45,9 +56,6 @@ const RELEASE_TRUST_MODE = "release" as const;
  * so they can be installed next to a release build without Extension Id
  * collisions (see #86 / docs/adr/ADR-0005-dev-extension-id.md).
  */
-const isDevelopmentBuild =
-	process.env.TY_PLUS_CEP_BUILD_MODE === "development" ||
-	process.env.NODE_ENV !== "production";
 export const CEP_EXTENSION_BUNDLE_ID = isDevelopmentBuild
 	? "app.ty-plus.dev"
 	: "app.ty-plus";
