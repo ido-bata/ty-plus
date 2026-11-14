@@ -1,5 +1,6 @@
 import { type JSX, useCallback, useEffect, useRef, useState } from "react";
 import { cacheCepShellThemeOverridesFromCssText } from "@/management/panel/theme/storage";
+import { enqueueThemeWrite } from "@/management/panel/theme/write-queue";
 import { SettingsGrid } from "@/management/setting/dialog/layout/SettingsGrid";
 import {
 	readBackgroundJson,
@@ -109,8 +110,14 @@ export function WorkspaceBackupSection(): JSX.Element {
 				await writePresetsJson(window, parsed.presetsJson);
 			}
 			if (typeof parsed.themeCss === "string") {
-				await writeThemeCss(window, parsed.themeCss);
-				cacheCepShellThemeOverridesFromCssText(parsed.themeCss);
+				// theme.css is shared with the settings dialog's token/grid
+				// writers; serialize through the same per-window queue so a
+				// restore cannot interleave with an in-flight read-modify-write
+				// (Issue #91 review).
+				await enqueueThemeWrite(window, async () => {
+					await writeThemeCss(window, parsed.themeCss as string);
+					cacheCepShellThemeOverridesFromCssText(parsed.themeCss as string);
+				});
 			}
 			const indices = [1, 2, 3, 4, 5] as const;
 			await Promise.all(

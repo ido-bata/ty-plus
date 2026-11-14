@@ -3,10 +3,12 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const readThemeCssMock = vi.hoisted(() => vi.fn());
+const readThemeCssStrictMock = vi.hoisted(() => vi.fn());
 const writeThemeCssMock = vi.hoisted(() => vi.fn());
 
 vi.mock("@/management/storage", () => ({
 	readThemeCss: readThemeCssMock,
+	readThemeCssStrict: readThemeCssStrictMock,
 	writeThemeCss: writeThemeCssMock,
 }));
 
@@ -14,6 +16,7 @@ import { applyCepShellTheme } from "@/management/panel/inject-styles";
 import {
 	cacheCepShellThemeOverridesFromCssText,
 	loadCepShellThemeFromCss,
+	loadCepShellThemeOverridesForWrite,
 	saveCepShellThemeToCss,
 } from "@/management/panel/theme/storage";
 import { loadThemeOverrides } from "@/management/style/load-overrides";
@@ -32,6 +35,7 @@ const themeStyleText = (): string =>
 beforeEach(() => {
 	clearThemeOverrideCache();
 	readThemeCssMock.mockReset();
+	readThemeCssStrictMock.mockReset();
 	writeThemeCssMock.mockReset();
 	document.getElementById(THEME_STYLE_ID)?.remove();
 });
@@ -111,5 +115,66 @@ describe("cep shell theme persistence lifecycle (Issue #91)", () => {
 		expect(getThemeOverrideCache()).toEqual({ "ty-ws-grid-radius": "9px" });
 		cacheCepShellThemeOverridesFromCssText("");
 		expect(getThemeOverrideCache()).toEqual({});
+	});
+
+	it("does not update the cache when the theme.css write fails", async () => {
+		setThemeOverrideCache({ "ty-ws-cell": "48px" });
+		writeThemeCssMock.mockRejectedValue(new Error("EACCES"));
+		await expect(
+			saveCepShellThemeToCss(window, { "ty-ws-cell": "96px" }),
+		).rejects.toThrow("EACCES");
+		// Cache must not run ahead of the file: re-injection keeps the last
+		// durable values, not the unsaved ones.
+		expect(getThemeOverrideCache()).toEqual({ "ty-ws-cell": "48px" });
+	});
+
+	it("strict loader rejects on I/O errors instead of reporting empty", async () => {
+		readThemeCssStrictMock.mockRejectedValue(new Error("EACCES"));
+		await expect(loadCepShellThemeOverridesForWrite(window)).rejects.toThrow(
+			"EACCES",
+		);
+		// Genuinely absent/blank file is the only "empty" case.
+		readThemeCssStrictMock.mockResolvedValue(null);
+		await expect(loadCepShellThemeOverridesForWrite(window)).resolves.toEqual(
+			{},
+		);
+		readThemeCssStrictMock.mockResolvedValue("");
+		await expect(loadCepShellThemeOverridesForWrite(window)).resolves.toEqual(
+			{},
+		);
+	});
+
+	it("strict loader returns persisted overrides for read-modify-write", async () => {
+		readThemeCssStrictMock.mockResolvedValue(
+			":root {\n  --ty-ws-cell: 96px;\n  --ty-ws-grid-gap: 12px;\n}",
+		);
+		const loaded = await loadCepShellThemeOverridesForWrite(window);
+		expect(loaded).toMatchObject({
+			"ty-ws-cell": "96px",
+			"ty-ws-grid-gap": "12px",
+		});
+		expect(getThemeOverrideCache()).toMatchObject({
+			"ty-ws-cell": "96px",
+			"ty-ws-grid-gap": "12px",
+		});
+	});
+
+	it("a slow disk load does not clobber a newer cache update", async () => {
+		let resolveRead: ((v: string) => void) | undefined;
+		readThemeCssMock.mockImplementation(
+			() =>
+				new Promise<string>((resolve) => {
+					resolveRead = resolve;
+				}),
+		);
+		const pending = loadCepShellThemeFromCss(window);
+		// A save/live merge lands while the host read is still in flight.
+		setThemeOverrideCache({ "ty-ws-cell": "64px" });
+		resolveRead?.(":root {\n  --ty-ws-cell: 96px;\n}");
+		const loaded = await pending;
+		// Return value still reflects the disk snapshot for the caller, but
+		// the sync cache keeps the newer value.
+		expect(loaded).toMatchObject({ "ty-ws-cell": "96px" });
+		expect(getThemeOverrideCache()).toEqual({ "ty-ws-cell": "64px" });
 	});
 });

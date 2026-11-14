@@ -26,19 +26,36 @@ const toCleanRecord = (overrides: ThemeOverrides): Record<string, string> => {
 
 let cachedOverrides: Record<string, string> = {};
 
+/**
+ * Bumped on every cache mutation. Async loaders capture the revision before
+ * their host read and skip the cache update when it changed mid-flight, so a
+ * slow disk snapshot cannot overwrite a newer live/save update (Issue #91
+ * review).
+ */
+let cacheRevision = 0;
+
+export const getThemeOverrideCacheRevision = (): number => cacheRevision;
+
+const bumpRevision = (): void => {
+	cacheRevision += 1;
+};
+
 export const getThemeOverrideCache = (): ThemeOverrides => ({
 	...cachedOverrides,
 });
 
 export const setThemeOverrideCache = (overrides: ThemeOverrides): void => {
 	cachedOverrides = toCleanRecord(overrides);
+	bumpRevision();
 };
 
 /** Merge a delta (e.g. a `themeLive` payload) into the cached overrides. */
 export const mergeThemeOverrideCache = (patch: ThemeOverrides): void => {
 	cachedOverrides = { ...cachedOverrides, ...toCleanRecord(patch) };
+	bumpRevision();
 };
 
 export const clearThemeOverrideCache = (): void => {
 	cachedOverrides = {};
+	bumpRevision();
 };
