@@ -103,6 +103,7 @@ import { openWidgetAddDialogSurface } from "@/management/widget/open-add-dialog"
 import { registry } from "@/management/widget/registry";
 import { dispatchWorkspaceWsActionClick } from "@/management/workspace/events/dispatch-ws-action-click";
 import { setupInteractionEvents } from "@/management/workspace/events/handler";
+import { gridSettingsFromSettingsJson } from "@/management/workspace/grid-settings";
 import {
 	resolveDuplicateHit,
 	runDuplicatePreset,
@@ -123,6 +124,7 @@ import {
 } from "@/management/workspace/layout/restore-plan";
 import { startWorkspaceLayoutJsonExternalChangeWatch } from "@/management/workspace/layout/sync-watch";
 import { publishShellMessage } from "@/management/workspace/messaging/publish-shell-message";
+import { subscribeWorkspaceGridLive } from "@/management/workspace/messaging/subscribe-grid-live";
 import { subscribeThemeLive } from "@/management/workspace/messaging/subscribe-theme-live";
 import { logWorkspace } from "@/management/workspace/onboarding/flow-log";
 import {
@@ -473,6 +475,20 @@ export function useWorkspaceRuntime(root: Element | null): {
 
 		const cepSurfaceTransport = createCepSurfaceTransport(window);
 		subscribeThemeLive(cepSurfaceTransport, panelId);
+		// Settings → グリッド edits broadcast grid metrics as themeLive
+		// tokens; keep state.grid in step so tile geometry follows the
+		// setting on every panel (Issue #95).
+		subscribeWorkspaceGridLive(cepSurfaceTransport, panelId, (grid) => {
+			const cur = getState();
+			if (
+				cur.grid.cellSize === grid.cellSize &&
+				cur.grid.gap === grid.gap &&
+				cur.grid.radius === grid.radius
+			) {
+				return;
+			}
+			commit({ ...cur, grid });
+		});
 
 		let nextState: SurfaceState = createInitialSurfaceState({
 			grid: gridOverride as Record<string, unknown>,
@@ -1090,6 +1106,15 @@ export function useWorkspaceRuntime(root: Element | null): {
 						showGridOverlay: uiSettings.showGridOverlay,
 						showPresetLabels: uiSettings.showPresetLabels,
 					};
+
+					// settings.workspace.grid is the user-facing grid setting;
+					// it is authoritative over any stale per-panel persisted
+					// grid so the Settings dialog actually changes tile
+					// geometry (Issue #95).
+					const settingsGrid = gridSettingsFromSettingsJson(settingsJson);
+					if (settingsGrid) {
+						loadedState = { ...loadedState, grid: settingsGrid };
+					}
 
 					loadedState = CommitReconcile(loadedState, loadedState);
 
