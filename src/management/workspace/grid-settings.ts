@@ -69,7 +69,8 @@ const parsePxValue = (raw: unknown): number | null => {
 	const trimmed = raw.trim();
 	const pxMatch = trimmed.match(/^(\d+(?:\.\d+)?)px$/i);
 	if (pxMatch) {
-		return Math.round(Number(pxMatch[1]));
+		const px = Number(pxMatch[1]);
+		return Number.isFinite(px) ? Math.round(px) : null;
 	}
 	const n = Number(trimmed);
 	if (!Number.isFinite(n)) {

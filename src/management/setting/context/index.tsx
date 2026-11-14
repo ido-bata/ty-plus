@@ -56,6 +56,14 @@ type SettingsContextValue = {
 	 */
 	saveError: string | null;
 	/**
+	 * Record a persistence-side failure that did not come from
+	 * `persistSettingsNow` — e.g. the async theme.css projection behind a
+	 * Style/Grid edit. Surfaces it through the same `saveError` banner and
+	 * `saveNotice` broadcast so the failure cannot pass silently (#94
+	 * review).
+	 */
+	reportSaveError: (message: string) => void;
+	/**
 	 * Wait for in-flight settings writes, then persist the current settings
 	 * once more and resolve with that write's outcome. The settings dialog's
 	 * Save action uses this so the dialog only closes after persistence has
@@ -232,7 +240,7 @@ const SETTINGS_SAVE_FAILED_MESSAGE =
  * persistent workspace panel can show a toast even after the settings dialog
  * (the only surface rendering `saveError`) has closed (#96).
  */
-function publishSettingsSaveFailure(win: Window): void {
+function publishSettingsSaveFailure(win: Window, message: string): void {
 	try {
 		const dialogSurfaceId = win.__TY_PLUS_DIALOG_SURFACE_ID__;
 		const sourceSurfaceId =
@@ -249,7 +257,7 @@ function publishSettingsSaveFailure(win: Window): void {
 				sourceSurfaceId,
 				at: new Date().toISOString(),
 				ok: false,
-				message: SETTINGS_SAVE_FAILED_MESSAGE,
+				message,
 			},
 		}).catch(() => {});
 	} catch {
@@ -315,12 +323,17 @@ export function SettingsProvider({
 			enqueueSettingsSave(snapshot).then((ok) => {
 				setSaveError(ok ? null : SETTINGS_SAVE_FAILED_MESSAGE);
 				if (!ok) {
-					publishSettingsSaveFailure(window);
+					publishSettingsSaveFailure(window, SETTINGS_SAVE_FAILED_MESSAGE);
 				}
 				return ok;
 			}),
 		[enqueueSettingsSave],
 	);
+
+	const reportSaveError = useCallback((message: string) => {
+		setSaveError(message);
+		publishSettingsSaveFailure(window, message);
+	}, []);
 
 	const persistSettingsNow = useCallback(
 		(): Promise<boolean> => runSettingsSave(settingsRef.current),
@@ -338,6 +351,7 @@ export function SettingsProvider({
 		Promise.race([loadSettingsFromStorage(), timeoutPromise])
 			.then((loaded) => {
 				if (!cancelled) {
+					settingsRef.current = loaded;
 					setSettings(loaded);
 					setIsLoaded(true);
 				}
@@ -345,6 +359,7 @@ export function SettingsProvider({
 			.catch((error) => {
 				console.error("[Settings] Load failed, using defaults:", error);
 				if (!cancelled) {
+					settingsRef.current = DEFAULT_SETTINGS;
 					setSettings(DEFAULT_SETTINGS);
 					setIsLoaded(true);
 				}
@@ -387,6 +402,10 @@ export function SettingsProvider({
 	}, [updateSettings]);
 
 	const resetSettings = useCallback(async () => {
+		// Keep the ref in sync synchronously: a persistSettingsNow call in
+		// the same handler must write the reset values, not the pre-reset
+		// snapshot the effect has not flushed yet.
+		settingsRef.current = DEFAULT_SETTINGS;
 		setSettings(DEFAULT_SETTINGS);
 		const ok = await runSettingsSave(DEFAULT_SETTINGS);
 		setSaveError(ok ? null : SETTINGS_SAVE_FAILED_MESSAGE);
@@ -394,6 +413,7 @@ export function SettingsProvider({
 
 	const reloadSettingsFromDisk = useCallback(async () => {
 		const loaded = await loadSettingsFromStorage();
+		settingsRef.current = loaded;
 		setSettings(loaded);
 	}, []);
 
@@ -406,6 +426,7 @@ export function SettingsProvider({
 			resetSettings,
 			isLoaded,
 			saveError,
+			reportSaveError,
 			persistSettingsNow,
 		}),
 		[
@@ -416,6 +437,7 @@ export function SettingsProvider({
 			resetSettings,
 			isLoaded,
 			saveError,
+			reportSaveError,
 			persistSettingsNow,
 		],
 	);

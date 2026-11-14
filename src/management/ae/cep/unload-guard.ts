@@ -138,7 +138,9 @@ export const installUnloadGuard = (win: Window): void => {
 				(...cbArgs: unknown[]) => {
 					pendingTimeouts.delete(id);
 					if (unloading) return;
-					handler(...cbArgs);
+					// Native timers invoke callbacks with the window as `this`;
+					// preserve the receiver for strict-mode handlers.
+					handler.apply(win, cbArgs);
 				},
 				timeout,
 				...args,
@@ -162,7 +164,7 @@ export const installUnloadGuard = (win: Window): void => {
 			typeof handler === "function"
 				? (...cbArgs: unknown[]) => {
 						if (unloading) return;
-						handler(...cbArgs);
+						handler.apply(win, cbArgs);
 					}
 				: handler,
 			timeout,
@@ -189,7 +191,7 @@ export const installUnloadGuard = (win: Window): void => {
 			id = originalRequestAnimationFrame((time) => {
 				pendingAnimationFrames.delete(id);
 				if (unloading) return;
-				callback(time);
+				callback.call(win, time);
 			});
 			pendingAnimationFrames.add(id);
 			return id;

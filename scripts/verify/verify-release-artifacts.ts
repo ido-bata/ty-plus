@@ -16,9 +16,9 @@ import { createHash } from "node:crypto";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import {
+	parseReleaseVersion,
 	type ReleaseChannel,
 	type ReleaseVersion,
-	parseReleaseVersion,
 } from "../package/release-version";
 import { scanForSecrets } from "../package/secret-scan";
 import { resolveSignZxpConfig } from "../package/sign-zxp";
@@ -148,7 +148,7 @@ export const auditReleaseArtifacts = (
 		}
 		if (
 			input.compareArchiveToPack &&
-			(/\.zip$|\.zxp$/i.test(String(artifact.file)))
+			/\.zip$|\.zxp$/i.test(String(artifact.file))
 		) {
 			failures.push(
 				...input
@@ -195,8 +195,17 @@ export const auditReleaseArtifacts = (
 	if (!existsSync(cepManifestPath)) {
 		failures.push("the distribution pack does not carry CSXS/manifest.xml");
 	} else {
-		const bundleVersion =
-			/ExtensionBundleVersion="([^"]*)"/.exec(readTextFile(cepManifestPath))?.[1];
+		const cepManifestText = readTextFile(cepManifestPath);
+		const bundleId = /ExtensionBundleId="([^"]*)"/.exec(cepManifestText)?.[1];
+		if (bundleId !== "app.ty-plus") {
+			failures.push(
+				`CEP ExtensionBundleId ${String(bundleId)} is not "app.ty-plus" — ` +
+					"a development-flavored bundle must never ship in a release pack (#86)",
+			);
+		}
+		const bundleVersion = /ExtensionBundleVersion="([^"]*)"/.exec(
+			cepManifestText,
+		)?.[1];
 		if (bundleVersion !== manifest.version) {
 			failures.push(
 				`CEP ExtensionBundleVersion ${String(bundleVersion)} does not match the manifest version ` +
@@ -236,7 +245,10 @@ export const auditReleaseArtifacts = (
 			// Every occurrence must agree. Taking only the first match let a
 			// leftover chunk (alphabetically earlier) mask the chunk the panel
 			// actually loads.
-			const versionValues = readInjectedBindings(embedded, "currentReleaseVersion");
+			const versionValues = readInjectedBindings(
+				embedded,
+				"currentReleaseVersion",
+			);
 			const wrongVersion = versionValues.find(
 				(v) => v !== releaseVersion.releaseVersion,
 			);
@@ -246,7 +258,10 @@ export const auditReleaseArtifacts = (
 						"build with TY_PLUS_RELEASE_VERSION set to the tag you are releasing",
 				);
 			}
-			const channelValues = readInjectedBindings(embedded, "buildReleaseChannel");
+			const channelValues = readInjectedBindings(
+				embedded,
+				"buildReleaseChannel",
+			);
 			const wrongChannel = channelValues.find(
 				(v) => v !== releaseVersion.channel,
 			);
@@ -348,7 +363,8 @@ export const auditReleaseArtifacts = (
 	}
 
 	if (failures.length > 0) throw new ArtifactAuditError(failures);
-	if (!releaseVersion) throw new ArtifactAuditError(["release version is invalid"]);
+	if (!releaseVersion)
+		throw new ArtifactAuditError(["release version is invalid"]);
 	return {
 		artifacts: (manifest.artifacts ?? []).length,
 		releaseVersion,
@@ -566,7 +582,9 @@ export const compareArchiveToPackContents = (
 				continue;
 			}
 			if (sha256(fromArchive) !== sha256(fromPack)) {
-				problems.push(`archive differs from the audited pack: app.ty-plus/${rel}`);
+				problems.push(
+					`archive differs from the audited pack: app.ty-plus/${rel}`,
+				);
 			}
 		}
 		// The archive must not advertise a different extension version.
@@ -577,14 +595,15 @@ export const compareArchiveToPackContents = (
 			"manifest.xml",
 		);
 		if (existsSync(manifestXml)) {
-			const version =
-				/ExtensionBundleVersion="([^"]*)"/.exec(
-					readFileSync(manifestXml, "utf8"),
-				)?.[1];
-			const packVersion =
-				/ExtensionBundleVersion="([^"]*)"/.exec(
-					readFileSync(path.join(packRoot, "app.ty-plus", "CSXS", "manifest.xml"), "utf8"),
-				)?.[1];
+			const version = /ExtensionBundleVersion="([^"]*)"/.exec(
+				readFileSync(manifestXml, "utf8"),
+			)?.[1];
+			const packVersion = /ExtensionBundleVersion="([^"]*)"/.exec(
+				readFileSync(
+					path.join(packRoot, "app.ty-plus", "CSXS", "manifest.xml"),
+					"utf8",
+				),
+			)?.[1];
 			if (version !== packVersion) {
 				problems.push(
 					`archive advertises ExtensionBundleVersion ${String(version)}, pack has ${String(packVersion)}`,
@@ -639,7 +658,9 @@ const main = (): void => {
 		result = auditReleaseArtifacts({
 			distRoot,
 			packRoot: path.join(distRoot, "cep-pack"),
-			manifest: JSON.parse(readFileSync(manifestPath, "utf8")) as ReleaseManifest,
+			manifest: JSON.parse(
+				readFileSync(manifestPath, "utf8"),
+			) as ReleaseManifest,
 			head,
 			compareArchiveToPack: compareArchiveToPackContents,
 			// Publication-time signature evidence: the artifact can be replaced

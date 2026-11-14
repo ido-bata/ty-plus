@@ -7,6 +7,13 @@
  * concurrent tasks would complete out of order and let an earlier write's
  * values win (Issue #91 follow-up / review). Route every mutation through
  * {@link enqueueThemeWrite}.
+ *
+ * The queue is keyed by `Window`, which is only safe while every writer
+ * runs inside the same surface. theme.css itself lives under one managed
+ * root shared by all surfaces, so a future writer mounted in a different
+ * window (e.g. a panel-side theme apply) would race this queue and lose
+ * updates — extend the key to the resolved managed root before adding
+ * such a caller.
  */
 
 const themeWriteQueues = new WeakMap<Window, Promise<unknown>>();

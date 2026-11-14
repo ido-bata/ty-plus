@@ -475,25 +475,40 @@ export function useWorkspaceRuntime(root: Element | null): {
 		const panelId = panelSurfaceId;
 
 		const cepSurfaceTransport = createCepSurfaceTransport(window);
-		subscribeThemeLive(cepSurfaceTransport, panelId);
+		const unsubscribeThemeLive = subscribeThemeLive(
+			cepSurfaceTransport,
+			panelId,
+		);
 		// Settings write failures broadcast `saveNotice` so a failure landing
 		// after the settings dialog closed still surfaces on the primary
 		// panel (Issue #96).
-		subscribeSettingsSaveNotices(cepSurfaceTransport, panelId);
+		const unsubscribeSaveNotices = subscribeSettingsSaveNotices(
+			cepSurfaceTransport,
+			panelId,
+		);
 		// Settings → グリッド edits broadcast grid metrics as themeLive
 		// tokens; keep state.grid in step so tile geometry follows the
-		// setting on every panel (Issue #95).
-		subscribeWorkspaceGridLive(cepSurfaceTransport, panelId, (grid) => {
-			const cur = getState();
-			if (
-				cur.grid.cellSize === grid.cellSize &&
-				cur.grid.gap === grid.gap &&
-				cur.grid.radius === grid.radius
-			) {
-				return;
-			}
-			commit({ ...cur, grid });
-		});
+		// setting on every panel (Issue #95). `liveGridRevision` lets the
+		// async boot restore detect a live commit that landed while its
+		// reads were in flight and skip overwriting it with the older
+		// on-disk snapshot.
+		let liveGridRevision = 0;
+		const unsubscribeGridLive = subscribeWorkspaceGridLive(
+			cepSurfaceTransport,
+			panelId,
+			(grid) => {
+				liveGridRevision += 1;
+				const cur = getState();
+				if (
+					cur.grid.cellSize === grid.cellSize &&
+					cur.grid.gap === grid.gap &&
+					cur.grid.radius === grid.radius
+				) {
+					return;
+				}
+				commit({ ...cur, grid });
+			},
+		);
 
 		let nextState: SurfaceState = createInitialSurfaceState({
 			grid: gridOverride as Record<string, unknown>,
@@ -1005,6 +1020,11 @@ export function useWorkspaceRuntime(root: Element | null): {
 				const allowImplicitAllPresetsWhenLayoutEmpty =
 					getState().panelId === "panel-1";
 
+				// Snapshot the live-grid revision before the async reads: a
+				// themeLive grid commit landing mid-restore is newer than the
+				// settingsJson snapshot and must not be overwritten by it.
+				const liveGridRevisionAtRead = liveGridRevision;
+
 				const persistenceManagedRoot =
 					await resolveWorkspacePersistenceManagedRoot(
 						window,
@@ -1117,7 +1137,7 @@ export function useWorkspaceRuntime(root: Element | null): {
 					// grid so the Settings dialog actually changes tile
 					// geometry (Issue #95).
 					const settingsGrid = gridSettingsFromSettingsJson(settingsJson);
-					if (settingsGrid) {
+					if (settingsGrid && liveGridRevision === liveGridRevisionAtRead) {
 						loadedState = { ...loadedState, grid: settingsGrid };
 					}
 
@@ -3607,6 +3627,9 @@ export function useWorkspaceRuntime(root: Element | null): {
 			layoutSyncWatchDisposer?.();
 			layoutSyncWatchDisposer = null;
 			lastLayoutSyncWatchKey = "";
+			unsubscribeThemeLive();
+			unsubscribeSaveNotices();
+			unsubscribeGridLive();
 			unsubscribePresets();
 			unsubscribeLayout();
 			unsubscribeBackground();

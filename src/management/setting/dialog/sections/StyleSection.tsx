@@ -21,7 +21,7 @@ const colorRowStyle = css({
 });
 
 export function StyleSection(): JSX.Element {
-	const { settings, updateSettings } = useSettings();
+	const { settings, updateSettings, reportSaveError } = useSettings();
 	const { panelSurfaceId } = useCep();
 
 	// `settings.ui.*` is write-only unless projected into the theme token
@@ -33,10 +33,16 @@ export function StyleSection(): JSX.Element {
 			void applyUiSettingsTheme(window, panelSurfaceId, nextUi).catch(
 				(error) => {
 					console.error("[StyleSection] Failed to apply UI theme:", error);
+					// app.json committed but the theme.css projection failed:
+					// surface the persistence failure through the same banner
+					// and saveNotice broadcast as settings writes (#94 review).
+					reportSaveError(
+						"Failed to save UI theme. The theme file may be read-only.",
+					);
 				},
 			);
 		},
-		[panelSurfaceId, updateSettings],
+		[panelSurfaceId, reportSaveError, updateSettings],
 	);
 
 	const handleAccentColorChange = useCallback(

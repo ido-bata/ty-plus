@@ -8,9 +8,13 @@ const manifestPath = path.resolve("dist", "cep-dev", "CSXS", "manifest.xml");
 
 if (!existsSync(manifestPath)) {
 	console.log(
-		"[ty-plus] dist/cep-dev に manifest がありません。`bun run build` を先に実行します。",
+		"[ty-plus] dist/cep-dev に manifest がありません。`bun run build:cep:dev` を先に実行します。",
 	);
-	const r = spawnSync("bun", ["run", "build"], {
+	// Must build the *development* flavor: `bun run build` produces a
+	// production manifest (ExtensionBundleId `app.ty-plus`, release debug
+	// port) which must never be installed into the `app.ty-plus.dev` slot
+	// (#86).
+	const r = spawnSync("bun", ["run", "build:cep:dev"], {
 		cwd: process.cwd(),
 		stdio: "inherit",
 		shell: true,

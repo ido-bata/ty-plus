@@ -257,9 +257,13 @@ function SettingsDialogBody(): JSX.Element {
 	const handleSave = useCallback(async () => {
 		setSaving(true);
 		try {
-			// Settings commits persist asynchronously; only close once every
-			// in-flight write has settled successfully. On failure the dialog
-			// stays open and the saveError banner explains why (#96).
+			// Settings commits persist asynchronously; persistSettingsNow
+			// waits for every write already queued behind the shared save
+			// queue and then re-persists the current snapshot, so the dialog
+			// only closes after persistence has actually settled. Writes
+			// triggered *after* this call (e.g. a later keystroke commit) are
+			// a new save cycle, not covered by this close. On failure the
+			// dialog stays open and the saveError banner explains why (#96).
 			const ok = await persistSettingsNow();
 			if (ok) {
 				close();

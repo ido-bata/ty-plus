@@ -229,8 +229,7 @@ export function TokensSection(): JSX.Element {
 				const merged: Record<string, string> = { ...fromCss };
 				for (const key of tokenKeys) {
 					delete merged[key];
-				}
-				for (const [key, value] of Object.entries(cleaned)) {
+					const value = cleaned[key];
 					if (typeof value === "string") {
 						merged[key] = value;
 					}

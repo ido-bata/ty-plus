@@ -42,6 +42,7 @@ type SettingsBag = {
 	resetSettings: () => void;
 	isLoaded: boolean;
 	saveError: string | null;
+	reportSaveError: (message: string) => void;
 	persistSettingsNow: () => Promise<boolean>;
 };
 
@@ -62,6 +63,7 @@ const StorySettingsProvider = ({
 			resetSettings: () => undefined,
 			isLoaded: true,
 			saveError: null,
+			reportSaveError: () => undefined,
 			persistSettingsNow: async () => true,
 		};
 	}, []);

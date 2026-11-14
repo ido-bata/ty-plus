@@ -157,6 +157,16 @@ export const installCepDevBundle = async ({
 			`[ty-plus] Incomplete CEP bundle (no ${manifestPath}). Run \`bun run build:cep\` first.`,
 		);
 	}
+	// The dev slot is named after the development Extension Bundle Id; a
+	// production-flavored dist/cep-dev (e.g. left over from `bun run build`)
+	// would install release Extension Ids under the dev folder name (#86).
+	const manifestXml = await readFile(manifestPath, "utf8");
+	const bundleIdMatch = manifestXml.match(/ExtensionBundleId="([^"]+)"/);
+	if (bundleIdMatch?.[1] !== "app.ty-plus.dev") {
+		throw new Error(
+			`[ty-plus] dist/cep-dev manifest ExtensionBundleId is "${bundleIdMatch?.[1] ?? "<missing>"}", expected "app.ty-plus.dev". Rebuild with \`bun run build:cep:dev\`.`,
+		);
+	}
 
 	await mkdir(dstRoot, { recursive: true });
 

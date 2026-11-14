@@ -14,7 +14,7 @@ import {
 import { NumberField } from "@/shared/component/fields/NumberField";
 
 export function GridSection(): JSX.Element {
-	const { settings, updateSettings } = useSettings();
+	const { settings, updateSettings, reportSaveError } = useSettings();
 	const { panelSurfaceId } = useCep();
 	// settings.workspace.grid is the committed source for this dialog; theme
 	// vars can lag the serialized theme.css write queue, so they must not
@@ -47,19 +47,28 @@ export function GridSection(): JSX.Element {
 			};
 			metricsRef.current = merged;
 			setMetrics(merged);
+			// Patch only `workspace.grid`: spreading the render-time
+			// `settings.workspace` would write back stale siblings
+			// (e.g. `background`) changed by another section since this
+			// render. `mergeSettings` deep-merges the patch.
 			updateSettings({
 				workspace: {
-					...settings.workspace,
 					grid: merged,
 				},
 			});
 			void applyGridMetricsLive(window, panelSurfaceId, merged).catch(
 				(error) => {
 					console.error("[GridSection] Failed to persist grid metrics:", error);
+					// app.json committed but the theme.css projection failed:
+					// surface it through the shared saveError banner and
+					// saveNotice broadcast instead of console-only (#91 review).
+					reportSaveError(
+						"Failed to save workspace grid. The theme file may be read-only.",
+					);
 				},
 			);
 		},
-		[panelSurfaceId, settings.workspace, updateSettings],
+		[panelSurfaceId, reportSaveError, updateSettings],
 	);
 
 	return (

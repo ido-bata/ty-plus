@@ -112,6 +112,11 @@ export const loadCepShellThemeFromCss = async (
 	try {
 		const cssText = await readThemeCss(win);
 		if (cssText === null || cssText === undefined) {
+			// The lenient reader collapses "absent" and "unreadable" into
+			// null; either way the durable file no longer backs the cached
+			// overrides, so converge the sync cache to empty instead of
+			// re-injecting values that are gone from disk (Issue #91 review).
+			cacheSnapshotIfCurrent(revisionAtRead, {});
 			return null;
 		}
 		if (cssText.trim() === "") {
