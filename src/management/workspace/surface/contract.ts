@@ -138,6 +138,19 @@ export type SettingsPayload =
 			 * everywhere (Issue #94).
 			 */
 			replace?: boolean;
+	  }
+	| {
+			/**
+			 * Settings persistence outcome notice (#96). Published by whichever
+			 * surface's SettingsProvider saw the write settle, so a failure that
+			 * lands after the settings dialog closed is still surfaced on the
+			 * persistent workspace panel instead of being hidden.
+			 */
+			kind: "saveNotice";
+			sourceSurfaceId: string;
+			at: string;
+			ok: boolean;
+			message?: string;
 	  };
 
 /** Widget add to workspace grid (from dialog etc. to panel) */
