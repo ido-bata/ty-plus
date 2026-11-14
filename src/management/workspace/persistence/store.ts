@@ -21,7 +21,10 @@ import {
 	resolveWriteManagedRoot,
 	writeJson,
 } from "@/management/storage/persistence";
-import { readJsonFileText } from "@/management/storage/read/json-file";
+import {
+	readJsonFileText,
+	readJsonFileTextStrict,
+} from "@/management/storage/read/json-file";
 import { writeJsonFileText } from "@/management/storage/write/json-file";
 import { parse } from "@/management/workspace/background/parse";
 import {
@@ -1183,6 +1186,21 @@ export const readThemeCss = async (win: Window): Promise<string | null> => {
 	const root = await resolveReadManagedRoot(win);
 	if (!root) return null;
 	return readJsonFileText(win, resolveStylesThemeCssPath(root));
+};
+
+/**
+ * Strict variant for read-modify-write callers: rejects on I/O errors
+ * (EACCES, EIO, …) instead of reporting them as "file absent". A caller
+ * that writes back what it read must not treat an unreadable theme.css as
+ * empty — the next write would erase every persisted override (Issue #91
+ * review; same contract as `readJsonFileTextStrict`, Issue #204).
+ */
+export const readThemeCssStrict = async (
+	win: Window,
+): Promise<string | null> => {
+	const root = await resolveReadManagedRoot(win);
+	if (!root) return null;
+	return readJsonFileTextStrict(win, resolveStylesThemeCssPath(root));
 };
 
 export const writeThemeCss = async (

@@ -1,9 +1,10 @@
 import { createCepSurfaceTransport } from "@/management/ae/cep/transport";
 import { applyCepShellTheme } from "@/management/panel/inject-styles";
 import {
-	loadCepShellThemeFromCss,
+	loadCepShellThemeOverridesForWrite,
 	saveCepShellThemeToCss,
 } from "@/management/panel/theme/storage";
+import { enqueueThemeWrite } from "@/management/panel/theme/write-queue";
 import type { Settings } from "@/management/setting/models/settings";
 import { DEFAULT_THEME } from "@/management/style/default-values";
 import { publishShellMessage } from "@/management/workspace/messaging/publish-shell-message";
@@ -79,27 +80,30 @@ export const metricsFromSettingsGrid = (
 });
 
 /** Persist settings + shell theme tokens and broadcast live preview to panels. */
-export const applyGridMetricsLive = async (
+export const applyGridMetricsLive = (
 	win: Window,
 	sourceSurfaceId: string,
 	metrics: GridMetrics,
-): Promise<Record<string, string>> => {
-	const overrides = gridMetricsToThemeOverrides(metrics);
-	const fromCss = (await loadCepShellThemeFromCss(win)) ?? {};
-	const merged = { ...fromCss, ...overrides };
-	await saveCepShellThemeToCss(win, merged);
-	applyCepShellTheme(win.document, { themeOverrides: merged });
-	const transport = createCepSurfaceTransport(win);
-	await publishShellMessage(transport, {
-		channel: SHELL_CHANNELS.settings,
-		kind: "publish",
-		sourceSurfaceId,
-		payload: {
-			kind: "themeLive",
+): Promise<Record<string, string>> =>
+	enqueueThemeWrite(win, async () => {
+		const overrides = gridMetricsToThemeOverrides(metrics);
+		// Strict read: an unreadable theme.css must abort the write, not
+		// merge against an empty record and erase persisted overrides.
+		const fromCss = await loadCepShellThemeOverridesForWrite(win);
+		const merged = { ...fromCss, ...overrides };
+		await saveCepShellThemeToCss(win, merged);
+		applyCepShellTheme(win.document, { themeOverrides: merged });
+		const transport = createCepSurfaceTransport(win);
+		await publishShellMessage(transport, {
+			channel: SHELL_CHANNELS.settings,
+			kind: "publish",
 			sourceSurfaceId,
-			at: new Date().toISOString(),
-			overrides,
-		},
+			payload: {
+				kind: "themeLive",
+				sourceSurfaceId,
+				at: new Date().toISOString(),
+				overrides,
+			},
+		});
+		return overrides;
 	});
-	return overrides;
-};
