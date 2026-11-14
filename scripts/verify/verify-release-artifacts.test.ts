@@ -66,7 +66,7 @@ beforeEach(() => {
 	packedExtension("jsx/ty-plus-host.jsx", "// host");
 	packedExtension(
 		"CSXS/manifest.xml",
-		'<ExtensionManifest ExtensionBundleVersion="0.11.0" />',
+		'<ExtensionManifest ExtensionBundleId="app.ty-plus" ExtensionBundleVersion="0.11.0" />',
 	);
 	// Mirrors what Vite actually emits. The channel guard contains all three
 	// channel literals, so a substring-based check could never fail; the
@@ -172,7 +172,7 @@ describe("release artifact audit", () => {
 	it("rejects a pack whose CEP manifest version differs from the release", () => {
 		packedExtension(
 			"CSXS/manifest.xml",
-			'<ExtensionManifest ExtensionBundleVersion="0.10.0" />',
+			'<ExtensionManifest ExtensionBundleId="app.ty-plus" ExtensionBundleVersion="0.10.0" />',
 		);
 		const failures = failuresOf(() => audit());
 		expect(failures.join("\n")).toMatch(/ExtensionBundleVersion 0\.10\.0/);
