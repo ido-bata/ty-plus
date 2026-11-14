@@ -78,28 +78,51 @@ export const metricsFromSettingsGrid = (
 	radius: grid?.radius ?? 2,
 });
 
+/**
+ * theme.css read-modify-write must not interleave: NumberField commits on
+ * every keystroke, so concurrent `applyGridMetricsLive` calls would otherwise
+ * complete out of order and let an earlier commit's values win the file
+ * (Issue #91 follow-up). Serialize per window; callers still get live
+ * preview + `themeLive` broadcast immediately.
+ */
+const themeWriteQueues = new WeakMap<Window, Promise<unknown>>();
+
+const enqueueThemeWrite = <T>(
+	win: Window,
+	task: () => Promise<T>,
+): Promise<T> => {
+	const prev = themeWriteQueues.get(win) ?? Promise.resolve();
+	const next = prev.then(task, task);
+	themeWriteQueues.set(
+		win,
+		next.catch(() => {}),
+	);
+	return next;
+};
+
 /** Persist settings + shell theme tokens and broadcast live preview to panels. */
-export const applyGridMetricsLive = async (
+export const applyGridMetricsLive = (
 	win: Window,
 	sourceSurfaceId: string,
 	metrics: GridMetrics,
-): Promise<Record<string, string>> => {
-	const overrides = gridMetricsToThemeOverrides(metrics);
-	const fromCss = (await loadCepShellThemeFromCss(win)) ?? {};
-	const merged = { ...fromCss, ...overrides };
-	await saveCepShellThemeToCss(win, merged);
-	applyCepShellTheme(win.document, { themeOverrides: merged });
-	const transport = createCepSurfaceTransport(win);
-	await publishShellMessage(transport, {
-		channel: SHELL_CHANNELS.settings,
-		kind: "publish",
-		sourceSurfaceId,
-		payload: {
-			kind: "themeLive",
+): Promise<Record<string, string>> =>
+	enqueueThemeWrite(win, async () => {
+		const overrides = gridMetricsToThemeOverrides(metrics);
+		const fromCss = (await loadCepShellThemeFromCss(win)) ?? {};
+		const merged = { ...fromCss, ...overrides };
+		await saveCepShellThemeToCss(win, merged);
+		applyCepShellTheme(win.document, { themeOverrides: merged });
+		const transport = createCepSurfaceTransport(win);
+		await publishShellMessage(transport, {
+			channel: SHELL_CHANNELS.settings,
+			kind: "publish",
 			sourceSurfaceId,
-			at: new Date().toISOString(),
-			overrides,
-		},
+			payload: {
+				kind: "themeLive",
+				sourceSurfaceId,
+				at: new Date().toISOString(),
+				overrides,
+			},
+		});
+		return overrides;
 	});
-	return overrides;
-};
