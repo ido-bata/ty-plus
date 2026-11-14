@@ -49,12 +49,7 @@ export const gridSettingsFromSettingsJson = (
 	const cellSize = toNonNegativeInt(record.cellSize);
 	const gap = toNonNegativeInt(record.gap);
 	const radius = toNonNegativeInt(record.radius);
-	if (
-		cellSize === null ||
-		cellSize <= 0 ||
-		gap === null ||
-		radius === null
-	) {
+	if (cellSize === null || cellSize <= 0 || gap === null || radius === null) {
 		return null;
 	}
 	return { cellSize, gap, radius };

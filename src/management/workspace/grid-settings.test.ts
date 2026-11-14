@@ -46,9 +46,7 @@ describe("gridSettingsFromThemeOverrides", () => {
 	});
 
 	it("returns null unless all three tokens are present and valid", () => {
-		expect(
-			gridSettingsFromThemeOverrides({ "ty-ws-cell": "80px" }),
-		).toBeNull();
+		expect(gridSettingsFromThemeOverrides({ "ty-ws-cell": "80px" })).toBeNull();
 		expect(
 			gridSettingsFromThemeOverrides({
 				"ty-ws-cell": "80px",
