@@ -280,7 +280,7 @@ export function SettingsProvider({
 	const [isLoaded, setIsLoaded] = useState(false);
 	const [saveError, setSaveError] = useState<string | null>(null);
 	const settingsRef = useRef(settings);
-	const saveQueueRef = useRef<Promise<void>>(Promise.resolve());
+	const saveQueueRef = useRef<Promise<void> | null>(null);
 
 	useEffect(() => {
 		settingsRef.current = settings;
@@ -293,7 +293,7 @@ export function SettingsProvider({
 	 */
 	const enqueueSettingsSave = useCallback(
 		(snapshot: Settings): Promise<boolean> => {
-			const run = saveQueueRef.current.then(() =>
+			const run = (saveQueueRef.current ?? Promise.resolve()).then(() =>
 				saveSettingsToStorage(snapshot),
 			);
 			saveQueueRef.current = run.then(
@@ -357,13 +357,15 @@ export function SettingsProvider({
 
 	const updateSettings = useCallback(
 		(patch: SettingsPatch, _options?: UpdateSettingsOptions) => {
-			setSettings((prev) => {
-				const updated = mergeSettings(prev, patch);
-				if (!patch.core?.paths) {
-					void runSettingsSave(updated);
-				}
-				return updated;
-			});
+			// Compute outside the state updater: updaters must stay pure
+			// (react-doctor no-impure-state-updater), and the save side
+			// effect must run exactly once per committed value.
+			const updated = mergeSettings(settingsRef.current, patch);
+			settingsRef.current = updated;
+			setSettings(updated);
+			if (!patch.core?.paths) {
+				void runSettingsSave(updated);
+			}
 		},
 		[runSettingsSave],
 	);
