@@ -52,6 +52,19 @@ const errorStackStyle = css({
 	color: "text.muted",
 });
 
+const saveErrorBannerStyle = css({
+	margin: "2",
+	marginBottom: "0",
+	borderRadius: "1",
+	borderWidth: "1px",
+	borderStyle: "solid",
+	borderColor: "colorMix(in srgb, status.error 30%, transparent)",
+	backgroundColor: "colorMix(in srgb, status.error 10%, transparent)",
+	padding: "2",
+	fontSize: "text-xs",
+	color: "status.error",
+});
+
 const loadingContainerStyle = css({
 	display: "flex",
 	flex: "1",
@@ -204,6 +217,18 @@ const SETTINGS_SECTIONS: SettingsSidebarSectionDef[] = [
 	},
 ];
 
+function SettingsSaveErrorBanner(): JSX.Element | null {
+	const { saveError } = useSettings();
+	if (!saveError) {
+		return null;
+	}
+	return (
+		<div className={saveErrorBannerStyle} role="alert">
+			{saveError}
+		</div>
+	);
+}
+
 function SettingsContent(): JSX.Element {
 	const { isLoaded } = useSettings();
 
@@ -304,6 +329,7 @@ function SettingsDialogBody(): JSX.Element {
 				</DialogFooterActions>
 			}
 		>
+			<SettingsSaveErrorBanner />
 			<SettingsContent />
 		</DialogShell>
 	);

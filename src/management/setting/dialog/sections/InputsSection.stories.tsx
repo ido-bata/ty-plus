@@ -36,6 +36,7 @@ type SettingsBag = {
 	reloadSettingsFromDisk: () => Promise<void>;
 	resetSettings: () => void;
 	isLoaded: boolean;
+	saveError: string | null;
 };
 
 const StorySettingsProvider = ({
@@ -54,6 +55,7 @@ const StorySettingsProvider = ({
 			reloadSettingsFromDisk: async () => undefined,
 			resetSettings: () => undefined,
 			isLoaded: true,
+			saveError: null,
 		};
 	}, [gestures]);
 	return (

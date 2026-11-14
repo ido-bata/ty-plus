@@ -43,6 +43,13 @@ type SettingsContextValue = {
 	reloadSettingsFromDisk: () => Promise<void>;
 	resetSettings: () => void;
 	isLoaded: boolean;
+	/**
+	 * Set when the last settings write to disk failed (e.g. read-only
+	 * directory). Cleared by the next successful write. Surfaced in the
+	 * settings dialog so a silent persistence failure cannot look like a
+	 * successful save (Device Gate D-12).
+	 */
+	saveError: string | null;
 };
 
 const SettingsContext = createContext<SettingsContextValue | null>(null);
@@ -205,14 +212,19 @@ export function mergeOwnedSettingsIntoSettingsJson(
  * overwrite from memory would restore workspace keys the workspace layer has
  * deleted since this panel loaded them.
  */
-async function saveSettingsToStorage(settings: Settings): Promise<void> {
+const SETTINGS_SAVE_FAILED_MESSAGE =
+	"Failed to save settings. The settings folder may be read-only.";
+
+async function saveSettingsToStorage(settings: Settings): Promise<boolean> {
 	try {
 		const raw = await readSettings(window);
 		const onDisk = raw?.trim() ? (JSON.parse(raw) as unknown) : {};
 		const merged = mergeOwnedSettingsIntoSettingsJson(onDisk, settings);
 		await writeSettings(window, `${JSON.stringify(merged, null, 2)}\n`);
+		return true;
 	} catch (error) {
 		console.error("[Settings] Failed to save settings:", error);
+		return false;
 	}
 }
 
@@ -224,6 +236,7 @@ export function SettingsProvider({
 }: SettingsProviderProps): JSX.Element {
 	const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
 	const [isLoaded, setIsLoaded] = useState(false);
+	const [saveError, setSaveError] = useState<string | null>(null);
 
 	useEffect(() => {
 		let cancelled = false;
@@ -258,7 +271,9 @@ export function SettingsProvider({
 			setSettings((prev) => {
 				const updated = mergeSettings(prev, patch);
 				if (!patch.core?.paths) {
-					void saveSettingsToStorage(updated);
+					void saveSettingsToStorage(updated).then((ok) => {
+						setSaveError(ok ? null : SETTINGS_SAVE_FAILED_MESSAGE);
+					});
 				}
 				return updated;
 			});
@@ -284,7 +299,8 @@ export function SettingsProvider({
 
 	const resetSettings = useCallback(async () => {
 		setSettings(DEFAULT_SETTINGS);
-		await saveSettingsToStorage(DEFAULT_SETTINGS);
+		const ok = await saveSettingsToStorage(DEFAULT_SETTINGS);
+		setSaveError(ok ? null : SETTINGS_SAVE_FAILED_MESSAGE);
 	}, []);
 
 	const reloadSettingsFromDisk = useCallback(async () => {
@@ -300,6 +316,7 @@ export function SettingsProvider({
 			reloadSettingsFromDisk,
 			resetSettings,
 			isLoaded,
+			saveError,
 		}),
 		[
 			settings,
@@ -308,6 +325,7 @@ export function SettingsProvider({
 			reloadSettingsFromDisk,
 			resetSettings,
 			isLoaded,
+			saveError,
 		],
 	);
 
