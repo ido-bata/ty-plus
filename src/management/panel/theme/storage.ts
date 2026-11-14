@@ -1,6 +1,6 @@
 import { readThemeCss, writeThemeCss } from "@/management/storage";
 import { DEFAULT_THEME } from "@/management/style/default-values";
-import { themeVarsToCssBlock } from "@/management/style/merge";
+import { setThemeOverrideCache } from "@/management/style/theme-overrides-cache";
 
 const allowedKeys = new Set(Object.keys(DEFAULT_THEME));
 
@@ -62,6 +62,8 @@ const parseCepShellThemeCssText = (
 /**
  * Generate CSS text in `:root { --key: val; ... }` format from overrides record.
  * Saves pruned form with values equal to DEFAULT omitted.
+ * Only user token declarations are persisted — the semantic `--color-*` bridge
+ * is injected at apply time (`themeVarsToCssBlock`), not stored in the file.
  */
 const buildCepShellThemeCssText = (
 	overrides: Partial<Record<string, string>>,
@@ -70,7 +72,10 @@ const buildCepShellThemeCssText = (
 	if (Object.keys(pruned).length === 0) {
 		return "";
 	}
-	return `:root {\n${themeVarsToCssBlock(pruned)}\n}`;
+	const declarations = Object.entries(pruned)
+		.map(([key, val]) => `  --${key}: ${val};`)
+		.join("\n");
+	return `:root {\n${declarations}\n}`;
 };
 
 export const loadCepShellThemeFromCss = async (
@@ -78,16 +83,41 @@ export const loadCepShellThemeFromCss = async (
 ): Promise<Partial<Record<string, string>> | null> => {
 	try {
 		const cssText = await readThemeCss(win);
-		if (!cssText) {
+		if (cssText === null || cssText === undefined) {
 			return null;
 		}
+		if (cssText.trim() === "") {
+			setThemeOverrideCache({});
+			return {};
+		}
 		const parsed = parseCepShellThemeCssText(cssText);
-		return buildPrunedCepShellThemeRecord(
+		const pruned = buildPrunedCepShellThemeRecord(
 			sanitizeCepShellThemeOverrides(parsed),
 		);
+		setThemeOverrideCache(pruned);
+		return pruned;
 	} catch {
 		return null;
 	}
+};
+
+/**
+ * Update the sync override cache from raw `theme.css` text without a host
+ * round-trip. Used by restore paths that write the file directly
+ * (workspace backup import) so subsequent theme re-injection sees the
+ * restored values.
+ */
+export const cacheCepShellThemeOverridesFromCssText = (
+	cssText: string,
+): void => {
+	if (!cssText || cssText.trim() === "") {
+		setThemeOverrideCache({});
+		return;
+	}
+	const pruned = buildPrunedCepShellThemeRecord(
+		sanitizeCepShellThemeOverrides(parseCepShellThemeCssText(cssText)),
+	);
+	setThemeOverrideCache(pruned);
 };
 
 export const saveCepShellThemeToCss = async (
@@ -95,6 +125,10 @@ export const saveCepShellThemeToCss = async (
 	overrides: Partial<Record<string, string>>,
 ): Promise<void> => {
 	const cssText = buildCepShellThemeCssText(overrides);
+	const pruned = buildPrunedCepShellThemeRecord(
+		sanitizeCepShellThemeOverrides(overrides),
+	);
+	setThemeOverrideCache(pruned);
 	await writeThemeCss(win, cssText);
 };
 

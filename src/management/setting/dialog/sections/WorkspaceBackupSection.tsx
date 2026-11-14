@@ -1,4 +1,5 @@
 import { type JSX, useCallback, useEffect, useRef, useState } from "react";
+import { cacheCepShellThemeOverridesFromCssText } from "@/management/panel/theme/storage";
 import { SettingsGrid } from "@/management/setting/dialog/layout/SettingsGrid";
 import {
 	readBackgroundJson,
@@ -109,6 +110,7 @@ export function WorkspaceBackupSection(): JSX.Element {
 			}
 			if (typeof parsed.themeCss === "string") {
 				await writeThemeCss(window, parsed.themeCss);
+				cacheCepShellThemeOverridesFromCssText(parsed.themeCss);
 			}
 			const indices = [1, 2, 3, 4, 5] as const;
 			await Promise.all(

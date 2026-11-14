@@ -215,10 +215,28 @@ export function TokensSection(): JSX.Element {
 
 	const handleApply = useCallback(async () => {
 		const cleaned = sanitizeCepShellThemeOverrides(values);
-		await saveCepShellThemeToCss(window, cleaned);
-		applyCepShellTheme(document, { themeOverrides: cleaned });
+		// theme.css is shared with other token domains (e.g. workspace grid
+		// metrics). Replace only the keys this editor owns so Apply does not
+		// drop overrides written by GridSection or backup restores.
+		const fromCss = (await loadCepShellThemeFromCss(window)) ?? {};
+		const merged: Record<string, string> = {};
+		for (const [key, value] of Object.entries(fromCss)) {
+			if (typeof value === "string") {
+				merged[key] = value;
+			}
+		}
+		for (const key of tokenKeys) {
+			delete merged[key];
+		}
+		for (const [key, value] of Object.entries(cleaned)) {
+			if (typeof value === "string") {
+				merged[key] = value;
+			}
+		}
+		await saveCepShellThemeToCss(window, merged);
+		applyCepShellTheme(document, { themeOverrides: merged });
 		setStatus("Applied and saved tokens to theme.css.");
-	}, [values]);
+	}, [values, tokenKeys]);
 
 	const handleResetAll = useCallback(() => {
 		const next: Record<string, string> = {};
