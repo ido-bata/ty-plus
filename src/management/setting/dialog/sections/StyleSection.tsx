@@ -1,21 +1,16 @@
 import { type JSX, useCallback } from "react";
+import { useCep } from "@/management/ae/cep/contexts/Context";
 import { useSettings } from "@/management/setting/context";
 import {
 	SettingsField,
 	SettingsGrid,
 	SettingsSectionHeading,
 } from "@/management/setting/dialog/layout/SettingsGrid";
-import { SegmentedControl } from "@/shared/component/controls/SegmentedControl";
+import type { Settings } from "@/management/setting/models/settings";
+import { applyUiSettingsTheme } from "@/management/setting/ui-theme-sync";
 import { ColorField } from "@/shared/component/fields/ColorField";
 import { RangeField } from "@/shared/component/fields/RangeField";
 import { css } from "@/styled-system/css";
-
-const THEME_OPTIONS = [
-	{ value: "system", label: "System" },
-	{ value: "dark", label: "Dark" },
-	{ value: "light", label: "Light" },
-	{ value: "custom", label: "Custom" },
-];
 
 const colorRowStyle = css({
 	display: "grid",
@@ -27,95 +22,87 @@ const colorRowStyle = css({
 
 export function StyleSection(): JSX.Element {
 	const { settings, updateSettings } = useSettings();
+	const { panelSurfaceId } = useCep();
 
-	const handleThemeChange = useCallback(
-		(theme: string) => {
-			updateSettings({
-				ui: {
-					...settings.ui,
-					theme: theme as "system" | "dark" | "light" | "custom",
+	// `settings.ui.*` is write-only unless projected into the theme token
+	// pipeline; `applyUiSettingsTheme` persists it to theme.css and
+	// broadcasts `themeLive` so every surface converges (Issue #94).
+	const commitUi = useCallback(
+		(nextUi: Settings["ui"]) => {
+			updateSettings({ ui: nextUi });
+			void applyUiSettingsTheme(window, panelSurfaceId, nextUi).catch(
+				(error) => {
+					console.error("[StyleSection] Failed to apply UI theme:", error);
 				},
-			});
+			);
 		},
-		[settings.ui, updateSettings],
+		[panelSurfaceId, updateSettings],
 	);
 
 	const handleAccentColorChange = useCallback(
 		(color: string) => {
-			updateSettings({
-				ui: { ...settings.ui, accentColor: color },
-			});
+			commitUi({ ...settings.ui, accentColor: color });
 		},
-		[settings.ui, updateSettings],
+		[settings.ui, commitUi],
 	);
 
 	const handleTextColorChange = useCallback(
 		(color: string) => {
-			updateSettings({
-				ui: { ...settings.ui, textColor: color },
-			});
+			commitUi({ ...settings.ui, textColor: color });
 		},
-		[settings.ui, updateSettings],
+		[settings.ui, commitUi],
 	);
 
 	const handleWidgetBgColorChange = useCallback(
 		(color: string) => {
-			updateSettings({
-				ui: {
-					...settings.ui,
-					widget: {
-						backgroundColor: color,
-						opacity: settings.ui.widget?.opacity ?? 80,
-					},
+			commitUi({
+				...settings.ui,
+				widget: {
+					backgroundColor: color,
+					opacity: settings.ui.widget?.opacity ?? 80,
 				},
 			});
 		},
-		[settings.ui, updateSettings],
+		[settings.ui, commitUi],
 	);
 
 	const handleWidgetOpacityChange = useCallback(
 		(opacity: number) => {
-			updateSettings({
-				ui: {
-					...settings.ui,
-					widget: {
-						backgroundColor: settings.ui.widget?.backgroundColor ?? "#1a1a1a",
-						opacity,
-					},
+			commitUi({
+				...settings.ui,
+				widget: {
+					backgroundColor: settings.ui.widget?.backgroundColor ?? "#1a1a1a",
+					opacity,
 				},
 			});
 		},
-		[settings.ui, updateSettings],
+		[settings.ui, commitUi],
 	);
 
 	const handlePanelBgColorChange = useCallback(
 		(color: string) => {
-			updateSettings({
-				ui: {
-					...settings.ui,
-					panel: {
-						backgroundColor: color,
-						opacity: settings.ui.panel?.opacity ?? 95,
-					},
+			commitUi({
+				...settings.ui,
+				panel: {
+					backgroundColor: color,
+					opacity: settings.ui.panel?.opacity ?? 95,
 				},
 			});
 		},
-		[settings.ui, updateSettings],
+		[settings.ui, commitUi],
 	);
 
 	const handlePanelOpacityChange = useCallback(
 		(opacity: number) => {
-			updateSettings({
-				ui: {
-					...settings.ui,
-					panel: {
-						backgroundColor: settings.ui.panel?.backgroundColor ?? "#0f0f0f",
-						opacity,
-					},
+			commitUi({
+				...settings.ui,
+				panel: {
+					backgroundColor: settings.ui.panel?.backgroundColor ?? "#0f0f0f",
+					opacity,
 				},
 			});
 		},
-		[settings.ui, updateSettings],
+		[settings.ui, commitUi],
 	);
 
 	const widgetBg = settings.ui.widget?.backgroundColor ?? "#1a1a1a";
@@ -125,16 +112,9 @@ export function StyleSection(): JSX.Element {
 
 	return (
 		<SettingsGrid>
-			<SettingsSectionHeading>Theme</SettingsSectionHeading>
-			<SettingsField span={6}>
-				<SegmentedControl
-					options={THEME_OPTIONS}
-					value={settings.ui.theme}
-					onChange={handleThemeChange}
-					aria-label="Theme selection"
-				/>
-			</SettingsField>
-
+			{/* `ui.theme` has no second palette to switch to; the selector is
+			    hidden until light/system themes exist (Issue #94). */}
+			<SettingsSectionHeading>Colors</SettingsSectionHeading>
 			<SettingsField span={3}>
 				<ColorField
 					label="Accent"
