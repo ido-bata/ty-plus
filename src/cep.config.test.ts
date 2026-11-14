@@ -4,9 +4,7 @@ import config from "../cep.config";
 
 const originalEnv = { ...process.env };
 
-const loadConfigWithEnv = async (
-	env: Record<string, string | undefined>,
-) => {
+const loadConfigWithEnv = async (env: Record<string, string | undefined>) => {
 	for (const [key, value] of Object.entries(env)) {
 		if (value === undefined) {
 			delete process.env[key];
