@@ -131,6 +131,13 @@ export type SettingsPayload =
 			sourceSurfaceId: string;
 			at: string;
 			overrides: Partial<Record<string, string>>;
+			/**
+			 * When true, `overrides` is the complete persisted override set:
+			 * receivers replace their cache instead of merging, so keys the
+			 * sender removed (e.g. ui.* values reset to defaults) disappear
+			 * everywhere (Issue #94).
+			 */
+			replace?: boolean;
 	  };
 
 /** Widget add to workspace grid (from dialog etc. to panel) */
