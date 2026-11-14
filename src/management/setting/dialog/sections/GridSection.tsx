@@ -26,9 +26,11 @@ export function GridSection(): JSX.Element {
 	const metricsRef = useRef(metrics);
 
 	useEffect(() => {
-		const next = readGridMetricsFromTheme(
-			metricsFromSettingsGrid(settings.workspace.grid),
-		);
+		// settings.workspace.grid is the committed source for this dialog.
+		// Reading theme vars here races the serialized theme.css write queue:
+		// the computed style can still show pre-commit values and poison
+		// metricsRef for the next keystroke commit (Issue #91 follow-up).
+		const next = metricsFromSettingsGrid(settings.workspace.grid);
 		metricsRef.current = next;
 		setMetrics(next);
 	}, [settings.workspace.grid]);
