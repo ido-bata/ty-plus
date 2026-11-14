@@ -1,4 +1,4 @@
-import { type JSX, useCallback, useEffect, useState } from "react";
+import { type JSX, useCallback, useEffect, useRef, useState } from "react";
 import { useCep } from "@/management/ae/cep/contexts/Context";
 import { useSettings } from "@/management/setting/context";
 import { WorkspaceGridPreview } from "@/management/setting/dialog/components/WorkspaceGridPreview";
@@ -20,22 +20,28 @@ export function GridSection(): JSX.Element {
 	const [metrics, setMetrics] = useState(() =>
 		readGridMetricsFromTheme(metricsFromSettingsGrid(settings.workspace.grid)),
 	);
+	// NumberField commits per keystroke; React state updates lag, so rapid
+	// successive commits must merge against the latest metrics, not a stale
+	// render snapshot (Issue #91 follow-up).
+	const metricsRef = useRef(metrics);
 
 	useEffect(() => {
-		setMetrics(
-			readGridMetricsFromTheme(
-				metricsFromSettingsGrid(settings.workspace.grid),
-			),
+		const next = readGridMetricsFromTheme(
+			metricsFromSettingsGrid(settings.workspace.grid),
 		);
+		metricsRef.current = next;
+		setMetrics(next);
 	}, [settings.workspace.grid]);
 
 	const commit = useCallback(
 		(next: { cellSize?: number; gap?: number; radius?: number }) => {
+			const base = metricsRef.current;
 			const merged = {
-				cellSize: next.cellSize ?? metrics.cellSize,
-				gap: next.gap ?? metrics.gap,
-				radius: next.radius ?? metrics.radius,
+				cellSize: next.cellSize ?? base.cellSize,
+				gap: next.gap ?? base.gap,
+				radius: next.radius ?? base.radius,
 			};
+			metricsRef.current = merged;
 			setMetrics(merged);
 			updateSettings({
 				workspace: {
@@ -45,7 +51,7 @@ export function GridSection(): JSX.Element {
 			});
 			void applyGridMetricsLive(window, panelSurfaceId, merged);
 		},
-		[metrics, panelSurfaceId, settings.workspace, updateSettings],
+		[panelSurfaceId, settings.workspace, updateSettings],
 	);
 
 	return (
