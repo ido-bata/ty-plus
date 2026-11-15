@@ -71,6 +71,56 @@ const CEP_SCRIPT_MAX_SET_TEMPLATE = `(function() {
   return JSON.stringify({ ok: true, value: next, previous: existingNum });
 })();`;
 
+/**
+ * Issue #106: atomic cross-surface mutex acquire. The single evalScript
+ * block reads the lock record, treats it as free when absent, stale
+ * (older than `staleMs`), or already owned by the caller, and otherwise
+ * returns 'held' without touching it. Because evalScript blocks are
+ * serialized on the AE main thread, no other surface can interleave
+ * between the check and the write — the same guarantee
+ * `CEP_SCRIPT_MAX_SET_TEMPLATE` relies on.
+ *
+ * Returns 'acquired' or 'held'.
+ */
+const CEP_SCRIPT_LOCK_ACQUIRE_TEMPLATE = `(function() {
+  if (typeof ${STORAGE_NAMESPACE} === 'undefined') {
+    ${STORAGE_NAMESPACE} = {};
+  }
+  if (typeof ${STORAGE_OBJECT} === 'undefined') {
+    ${STORAGE_OBJECT} = {};
+  }
+  var key = '__KEY_ESCAPED__';
+  var owner = '__OWNER_ESCAPED__';
+  var staleMs = __STALE_MS__;
+  var now = (new Date()).getTime();
+  var current = ${STORAGE_OBJECT}[key];
+  if (current && typeof current === 'object' && current.owner !== owner) {
+    var heldAt = typeof current.at === 'number' ? current.at : 0;
+    if (now - heldAt < staleMs) {
+      return 'held';
+    }
+  }
+  ${STORAGE_OBJECT}[key] = { owner: owner, at: now };
+  return 'acquired';
+})();`;
+
+/**
+ * Owner-checked lock release. A surface may only clear a lock it still
+ * owns, so a late release from a stale-takeover loser cannot free the
+ * winner's lock.
+ */
+const CEP_SCRIPT_LOCK_RELEASE_TEMPLATE = `(function() {
+  if (typeof ${STORAGE_NAMESPACE} !== 'undefined' && typeof ${STORAGE_OBJECT} !== 'undefined') {
+    var key = '__KEY_ESCAPED__';
+    var owner = '__OWNER_ESCAPED__';
+    var current = ${STORAGE_OBJECT}[key];
+    if (current && typeof current === 'object' && current.owner === owner) {
+      delete ${STORAGE_OBJECT}[key];
+    }
+  }
+  return 'released';
+})();`;
+
 export const buildSetScript = (
 	keyEscaped: string,
 	valueEscaped: string,
@@ -94,3 +144,21 @@ export const buildMaxSetScript = (
 		/__INCOMING_ESCAPED__/g,
 		incomingEscaped,
 	);
+
+export const buildLockAcquireScript = (
+	keyEscaped: string,
+	ownerEscaped: string,
+	staleMs: number,
+): string =>
+	CEP_SCRIPT_LOCK_ACQUIRE_TEMPLATE.replace(/__KEY_ESCAPED__/g, keyEscaped)
+		.replace(/__OWNER_ESCAPED__/g, ownerEscaped)
+		.replace(/__STALE_MS__/g, String(Math.max(0, Math.floor(staleMs))));
+
+export const buildLockReleaseScript = (
+	keyEscaped: string,
+	ownerEscaped: string,
+): string =>
+	CEP_SCRIPT_LOCK_RELEASE_TEMPLATE.replace(
+		/__KEY_ESCAPED__/g,
+		keyEscaped,
+	).replace(/__OWNER_ESCAPED__/g, ownerEscaped);
