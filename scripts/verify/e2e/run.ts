@@ -17,6 +17,7 @@ import path from "node:path";
 import { catalogCases } from "./cases/catalog";
 import { debugCases } from "./cases/debug";
 import { hostCases } from "./cases/host";
+import { journeyCases } from "./cases/journey";
 import { resilienceCases } from "./cases/resilience";
 import { settingsCases } from "./cases/settings";
 import { smokeCases } from "./cases/smoke";
@@ -40,6 +41,55 @@ const SUITES: Record<string, E2ECase[]> = {
 	catalog: catalogCases,
 	debug: debugCases,
 	host: hostCases,
+	journey: journeyCases,
+};
+
+/**
+ * Managed root candidates for a specific AE release year. The running
+ * panels belong to exactly one AE install; with several versions installed
+ * (e.g. AE 2026 + AE 2027 side by side) "newest dir wins" picks the wrong
+ * managed root, so prefer the install matching the live `app.version`.
+ */
+const aeInitCandidates = (year: number): string[] => {
+	const roots =
+		process.platform === "darwin"
+			? ["/Applications"]
+			: [
+					"C:/Program Files/Adobe",
+					"C:/Program Files (x86)/Adobe",
+					process.env.ProgramFiles ?? "C:/Program Files",
+				];
+	const out: string[] = [];
+	for (const base of roots) {
+		out.push(
+			path.join(base, `Adobe After Effects ${year}`, "ty-plus-init.json"),
+		);
+		out.push(
+			path.join(
+				base,
+				`Adobe After Effects ${year}`,
+				`Adobe After Effects ${year}`,
+				"ty-plus-init.json",
+			),
+		);
+	}
+	return out;
+};
+
+const managedRootFromInit = async (
+	candidate: string,
+): Promise<string | undefined> => {
+	try {
+		const locator = JSON.parse(await readFile(candidate, "utf8")) as {
+			supportRoot?: string;
+		};
+		if (locator.supportRoot) {
+			return path.join(locator.supportRoot, "ty-plus");
+		}
+	} catch {
+		// next candidate
+	}
+	return undefined;
 };
 
 /** Locate the managed root via the newest AE install's ty-plus-init.json. */
@@ -72,20 +122,36 @@ const detectManagedRoot = async (): Promise<string | undefined> => {
 					"ty-plus-init.json",
 				),
 			]) {
-				try {
-					const locator = JSON.parse(await readFile(candidate, "utf8")) as {
-						supportRoot?: string;
-					};
-					if (locator.supportRoot) {
-						return path.join(locator.supportRoot, "ty-plus");
-					}
-				} catch {
-					// next candidate
-				}
+				const root = await managedRootFromInit(candidate);
+				if (root) return root;
 			}
 		}
 	}
 	return undefined;
+};
+
+/**
+ * Resolve the managed root for the AE install actually hosting the live
+ * panels. `app.version` reports e.g. `26.5.3x9`; AE release year =
+ * 2000 + major version (AE 2026 ↔ v26). Falls back to newest-install
+ * detection when no panel is live or the version probe fails.
+ */
+const detectManagedRootForLiveAe = async (
+	ctx: E2EContext,
+): Promise<string | undefined> => {
+	try {
+		const version = String(await ctx.evalScriptOnPanel1("app.version"));
+		const major = Number.parseInt(version.trim(), 10);
+		if (Number.isFinite(major) && major > 0) {
+			for (const candidate of aeInitCandidates(2000 + major)) {
+				const root = await managedRootFromInit(candidate);
+				if (root) return root;
+			}
+		}
+	} catch {
+		// no live panel / evalScript unavailable — fall through
+	}
+	return detectManagedRoot();
 };
 
 const main = async (): Promise<void> => {
@@ -100,19 +166,24 @@ const main = async (): Promise<void> => {
 	if (!extensionDir) {
 		throw new Error("--extension-dir is required");
 	}
-	const managedRoot = option("managed-root") ?? (await detectManagedRoot());
-	if (!managedRoot) {
-		throw new Error("managed root not found — pass --managed-root");
-	}
 	const stamp = new Date().toISOString().replace(/[:.]/g, "-");
 	const outDir = path.resolve(option("out") ?? `.tmp/e2e/${stamp}`);
 	await mkdir(outDir, { recursive: true });
 
 	const ctx = new E2EContext({
 		extensionDir: path.resolve(extensionDir),
-		managedRoot,
+		managedRoot: option("managed-root"),
 		evidenceDir: outDir,
 	});
+	// Resolve against the live AE when --managed-root is not explicit: with
+	// several AE versions installed, newest-dir detection can point at an
+	// install that is not hosting the panels.
+	const managedRoot =
+		option("managed-root") ?? (await detectManagedRootForLiveAe(ctx));
+	if (!managedRoot) {
+		throw new Error("managed root not found — pass --managed-root");
+	}
+	ctx.options.managedRoot = managedRoot;
 
 	console.log(`suite=${suiteName} cases=${cases.length}`);
 	console.log(`extensionDir=${extensionDir}`);

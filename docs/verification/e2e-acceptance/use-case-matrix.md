@@ -18,7 +18,7 @@
 
 | ID | ユースケース | 主な確認対象 | 自動化 | OS | 状態 | 証跡/Issue |
 | --- | --- | --- | --- | --- | --- | --- |
-| UC-B01 | preset を tile として配置（toolbar/catalog/drag）| workspace-N.json の gridCells に追加、tile DOM | auto | both | 未実施 | |
+| UC-B01 | preset を tile として配置（toolbar/catalog/drag）| workspace-N.json の gridCells に追加、tile DOM | auto | both | mac:自動PASS（作成dialog経路のみ。catalog/drag は未カバー） / win:未実施 | results/2026-11-15-device-macos-ae2026-dev-journey/run.json |
 | UC-B02 | widget を Add Widget dialog から追加 | widgets.json record、tile 描画、layout reload | auto | both | 未実施 | |
 | UC-B03 | tile 移動・リサイズ・削除・複製 | workspace-N.json の座標/サイズ更新、DOM 反映 | semi | both | 未実施 | |
 | UC-B04 | grid 設定（cell/gap/radius）変更 → live 反映 → reload 後維持 | theme.css `--ty-ws-*`、app.json `workspace.grid`、computed style、実セルサイズ | auto | both | win:自動PASS / mac:自動PASS(#112修正済) | #95 / results/2026-11-15-device-windows-ae2027-dev-smoke-run.json / results/macos-ae2026-dev/run.json / results/2026-11-15-device-windows-ae2027-dev-extended/smoke/run.json |
@@ -43,8 +43,8 @@
 | UC-C07 | Easing preset 作成（カーブ→`.jsx`）| .jsx 生成、presets.json | semi | both | 未実施 | |
 | UC-C08 | preset 編集（名前/説明/icon/メンバー）| presets.json 更新、tile/一覧反映 | semi | both | 未実施 | |
 | UC-C09 | preset 複製・削除 | presets.json、workspace/group/search から消える | semi | both | 未実施 | |
-| UC-C10 | `.ffx` preset を選択レイヤーへ実行 | AE Effect Controls/レイヤーに効果適用 | semi | both | 未実施 | #10 D-06 |
-| UC-C11 | `.jsx` script preset 実行 | AE 側の実行結果（例: レイヤー/テキスト変化）| semi | both | 未実施 | #10 D-05 |
+| UC-C10 | `.ffx` preset を選択レイヤーへ実行 | AE Effect Controls/レイヤーに効果適用 | semi | both | mac:自動PASS / win:未実施 | #10 D-06 / results/2026-11-15-device-macos-ae2026-dev-journey/run.json |
+| UC-C11 | `.jsx` script preset 実行 | AE 側の実行結果（例: レイヤー/テキスト変化）| semi | both | mac:自動PASS / win:未実施 | #10 D-05 / results/2026-11-15-device-macos-ae2026-dev-journey/run.json |
 | UC-C12 | footage preset 実行（PNG sequence 含む）| AE project への import | semi | both | 未実施 | |
 | UC-C13 | `.aex` plugin preset 実行 | matchName で effect 適用 | manual | both | 未実施 | |
 | UC-C14 | 実行失敗時の構造化エラー（alert 非モーダル）| モーダルでなく通知/エラー表示、AE 非ブロック | semi | both | 未実施 | #72 |
@@ -109,7 +109,7 @@
 | ID | ユースケース | 主な確認対象 | 自動化 | OS | 状態 | 証跡/Issue |
 | --- | --- | --- | --- | --- | --- | --- |
 | UC-H01 | host context 取得（getHostContext/ping）| host 応答、app.version | auto | both | win:自動PASS / mac:自動PASS | results/2026-11-15-device-windows-ae2027-dev-smoke-run.json / results/macos-ae2026-dev/run.json / results/2026-11-15-device-windows-ae2027-dev-extended/smoke/run.json |
-| UC-H02 | 複数機能連続操作（preset 作成→配置→実行→保存→reload→再実行）| 各段階の永続化 + AE 状態 | semi | both | 未実施 | ユーザー作業単位 |
+| UC-H02 | 複数機能連続操作（preset 作成→配置→実行→保存→reload→再実行）| 各段階の永続化 + AE 状態 | semi | both | mac:自動PASS / win:未実施 | ユーザー作業単位 / results/2026-11-15-device-macos-ae2026-dev-journey/run.json |
 | UC-H03 | 日本語 IME ON/OFF でのテキスト入力 | IME 変換中の入力破壊なし | manual | both | 未実施 | |
 | UC-H04 | 日本語・空白・記号・長いパスでの preset/設定 | パス解決・書込成功 | semi | both | 未実施 | |
 | UC-H05 | 表示倍率 100/125/150%・4K でのレイアウト | 崩れなし | manual | win主 | 未実施 | |
@@ -139,7 +139,7 @@
 | ID | ジャーニー | 構成 UC | 状態 |
 | --- | --- | --- | --- |
 | UC-J01 | 初めて使う：インストール→起動→onboarding→preset 取込→最初の preset 実行 | A01, C10/C11 | 未実施 |
-| UC-J02 | preset を作って使う：作成→配置→実行→編集→削除 | C01-C09, B01, C10 | 未実施 |
+| UC-J02 | preset を作って使う：作成→配置→実行→編集→削除 | C01-C09, B01, C10 | 未実施（mac で作成→配置→実行→reload→再実行まで確認。編集・削除は未カバー） |
 | UC-J03 | レイアウトを作る：widget 追加→tile 配置→背景→snapshot→reload 復元 | B02,B03,B05,B08,B09,D01 | 未実施 |
 | UC-J04 | 外観を整える：Style/Tokens/Grid/言語変更→live 反映→reload 維持 | E01-E03,B04 | 未実施 |
 | UC-J05 | トラブルから復旧：破損検知→backup import→動作確認 | I01-I05,E06 | 未実施 |
