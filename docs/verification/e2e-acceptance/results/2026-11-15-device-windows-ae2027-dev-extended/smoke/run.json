@@ -1,0 +1,152 @@
+{
+  "schema": "ty-plus.e2e-run/1",
+  "suite": "smoke",
+  "capturedAt": "2026-11-15T12:01:33.663Z",
+  "extensionDir": "C:/Users/rebui/AppData/Roaming/Adobe/CEP/extensions/app.ty-plus.dev",
+  "managedRoot": "D:/4_apps/adobe/Adobe After Effects 2027/Support Files/ty-plus",
+  "totals": {
+    "PASS": 6,
+    "FAIL": 0,
+    "BLOCKED": 0,
+    "SKIP": 0
+  },
+  "results": [
+    {
+      "uc": "UC-A03",
+      "title": "live surfaces boot with CEP bridge and extension origin",
+      "status": "PASS",
+      "detail": "1 live surfaces checked",
+      "checks": [
+        {
+          "name": "at least one surface is live",
+          "ok": true,
+          "detail": "1 live surfaces"
+        },
+        {
+          "name": "panel-1 is live",
+          "ok": true,
+          "detail": "panel-1"
+        },
+        {
+          "name": "panel-1 boots",
+          "ok": true,
+          "detail": "readyState=complete body=49840 cs=true"
+        },
+        {
+          "name": "panel-1 loads from CEP extensions",
+          "ok": true,
+          "detail": "file:///C:/Users/rebui/AppData/Roaming/Adobe/CEP/extensions/app.ty-plus.dev/panel/index.html"
+        }
+      ],
+      "evidence": [
+        "D:\\ty-plus\\docs\\verification\\e2e-acceptance\\results\\2026-11-15-device-windows-ae2027-dev-extended\\smoke\\smoke-panel-1.png"
+      ],
+      "durationMs": 194
+    },
+    {
+      "uc": "UC-H01",
+      "title": "ExtendScript host responds and host bundle contract is callable",
+      "status": "PASS",
+      "detail": "AE 27.0x78",
+      "checks": [
+        {
+          "name": "app.version responds",
+          "ok": true,
+          "detail": "27.0x78"
+        },
+        {
+          "name": "host bundle exposes callable contract",
+          "ok": true,
+          "detail": "contract-ok"
+        }
+      ],
+      "evidence": [],
+      "durationMs": 281
+    },
+    {
+      "uc": "UC-A02",
+      "title": "persisted settings/layout/theme files exist and parse",
+      "status": "PASS",
+      "detail": "managed root files",
+      "checks": [
+        {
+          "name": "settings/app.json parses",
+          "ok": true,
+          "detail": "ok"
+        },
+        {
+          "name": "workspaces/workspace-1.json parses",
+          "ok": true,
+          "detail": "ok"
+        },
+        {
+          "name": "presets/presets.json parses",
+          "ok": true,
+          "detail": "ok"
+        },
+        {
+          "name": "styles/theme.css state consistent with overrides",
+          "ok": true,
+          "detail": "37 bytes"
+        }
+      ],
+      "evidence": [],
+      "durationMs": 2
+    },
+    {
+      "uc": "UC-B04",
+      "title": "grid settings persisted value reaches panel CSS variables",
+      "status": "PASS",
+      "detail": "grid token convergence",
+      "checks": [
+        {
+          "name": "settings.workspace.grid.cellSize present",
+          "ok": true,
+          "detail": "cellSize=48"
+        },
+        {
+          "name": "--ty-ws-cell reflects persisted grid",
+          "ok": true,
+          "detail": "computed=48px expected=48px"
+        }
+      ],
+      "evidence": [],
+      "durationMs": 2
+    },
+    {
+      "uc": "UC-E02",
+      "title": "ui accent color persisted in app.json reaches theme.css tokens",
+      "status": "PASS",
+      "detail": "ui.* → theme pipeline",
+      "checks": [
+        {
+          "name": "ui.accentColor present in app.json",
+          "ok": true,
+          "detail": "accent=#5886ff"
+        },
+        {
+          "name": "theme.css accent token matches ui.* projection",
+          "ok": true,
+          "detail": "no token (default — no override expected)"
+        }
+      ],
+      "evidence": [],
+      "durationMs": 6
+    },
+    {
+      "uc": "UC-G01",
+      "title": "debug console surface aggregates logs and evaluates JS",
+      "status": "PASS",
+      "detail": "debug console",
+      "checks": [
+        {
+          "name": "debug console DOM mounted",
+          "ok": true,
+          "detail": "body=8021 msgs=1"
+        }
+      ],
+      "evidence": [],
+      "durationMs": 2630
+    }
+  ]
+}
