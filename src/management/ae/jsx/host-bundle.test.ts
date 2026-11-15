@@ -11,6 +11,7 @@ import { transformSync } from "@babel/core";
 import { build } from "esbuild";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import { createOperationWorkerContextProvider } from "@/management/ipc/operation-worker-context";
+import { ALLOWED_HOST_METHODS } from "../cep/host-executor";
 
 const source = readFileSync(
 	new URL("./host-bundle.ext.ts", import.meta.url),
@@ -144,6 +145,24 @@ const createGeneratedBundleWindow = (
 					const value = readResidentMarker("__bundleVersion");
 					return typeof value === "string" ? value : null;
 				};
+				// Issue #107: the probe and the post-load verify now also
+				// require every contract method to be callable, so the fake
+				// has to answer `contractComplete` from the resident bundle
+				// it actually installed — not a literal.
+				const readContractComplete = (): boolean => {
+					const resident = (
+						sandbox.$.global as {
+							__TY_PLUS_HOST__?: Record<string, unknown>;
+						}
+					).__TY_PLUS_HOST__;
+					if (resident === null || typeof resident !== "object") {
+						return false;
+					}
+					for (const method of ALLOWED_HOST_METHODS) {
+						if (typeof resident[method] !== "function") return false;
+					}
+					return true;
+				};
 				if (script.includes("$.evalFile")) {
 					runInNewContext(generatedBundle, sandbox, {
 						filename: "ty-plus-host.jsx",
@@ -154,6 +173,7 @@ const createGeneratedBundleWindow = (
 							loaded: true,
 							schemaVersion: readResidentSchema() ?? -1,
 							bundleVersion: readResidentBundleVersion() ?? "",
+							contractComplete: readContractComplete(),
 						}),
 					);
 					return;
@@ -163,12 +183,13 @@ const createGeneratedBundleWindow = (
 					callback?.(
 						JSON.stringify(
 							schema === null
-								? { ok: true, present: false }
+								? { ok: true, present: false, contractComplete: false }
 								: {
 										ok: true,
 										present: true,
 										schemaVersion: schema,
 										bundleVersion: readResidentBundleVersion() ?? "",
+										contractComplete: readContractComplete(),
 									},
 						),
 					);
@@ -629,8 +650,15 @@ describe("ExtendScript host bundle command wrappers", () => {
 			sessionId: expect.stringMatching(/^ae-\d+$/u),
 		});
 		expect(context).not.toHaveProperty("aeVersion");
+		// Exactly one host *call* script: the probe and the conditional
+		// load block also name `getHostContext` (Issue #107 contract
+		// check), so the filter must key on the call wrapper itself.
 		expect(
-			fixture.scripts.filter((script) => script.includes("getHostContext")),
+			fixture.scripts.filter(
+				(script) =>
+					script.includes("host_bundle_missing") &&
+					script.includes("getHostContext"),
+			),
 		).toHaveLength(1);
 	});
 
