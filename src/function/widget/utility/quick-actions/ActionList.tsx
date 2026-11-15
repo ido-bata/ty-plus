@@ -699,8 +699,11 @@ export function QuickActionsWidget({
 	// row kinds (`apply-effect`, `quick-action-root-file`) keep their
 	// own semantics; only `run-preset` is bound here.
 	useEffect(() => {
+		// The portal div only mounts while `paletteOpen` is true, so the ref
+		// is null on first render. Re-run when the palette opens so the
+		// delegated `run-preset` click handler actually attaches.
 		const portalEl = portalRef.current;
-		if (!portalEl) return;
+		if (!portalEl || !paletteOpen) return;
 		const handler = (event: Event): void => {
 			const target = event.target;
 			if (!(target instanceof Element)) return;
@@ -716,7 +719,7 @@ export function QuickActionsWidget({
 		return () => {
 			portalEl.removeEventListener("click", handler);
 		};
-	}, []);
+	}, [paletteOpen]);
 
 	const placeholder = t("quickActions.palettePlaceholder");
 

@@ -115,7 +115,7 @@ export const connect = async (
 			socket.send(JSON.stringify({ id, method, params }));
 		});
 
-	const evaluate: Evaluate = async (expression, evalTimeoutMs = 20_000) => {
+	const evaluate: Evaluate = async (expression, evalTimeoutMs = 45_000) => {
 		const result = (await send(
 			"Runtime.evaluate",
 			{

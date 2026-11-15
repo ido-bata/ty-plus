@@ -22,6 +22,7 @@ import { resilienceCases } from "./cases/resilience";
 import { settingsCases } from "./cases/settings";
 import { smokeCases } from "./cases/smoke";
 import { widgetCases } from "./cases/widgets";
+import { workspaceCases } from "./cases/workspace";
 import { E2EContext } from "./ctx";
 import type { CaseResult, E2ECase } from "./report";
 
@@ -42,6 +43,7 @@ const SUITES: Record<string, E2ECase[]> = {
 	debug: debugCases,
 	host: hostCases,
 	journey: journeyCases,
+	workspace: workspaceCases,
 };
 
 /**
@@ -139,17 +141,23 @@ const detectManagedRoot = async (): Promise<string | undefined> => {
 const detectManagedRootForLiveAe = async (
 	ctx: E2EContext,
 ): Promise<string | undefined> => {
-	try {
-		const version = String(await ctx.evalScriptOnPanel1("app.version"));
-		const major = Number.parseInt(version.trim(), 10);
-		if (Number.isFinite(major) && major > 0) {
-			for (const candidate of aeInitCandidates(2000 + major)) {
-				const root = await managedRootFromInit(candidate);
-				if (root) return root;
+	// The panel can still be booting when the suite starts; retry the
+	// version probe before giving up, because the newest-install fallback
+	// picks the wrong AE when several versions are installed.
+	for (let attempt = 0; attempt < 5; attempt++) {
+		try {
+			const version = String(await ctx.evalScriptOnPanel1("app.version"));
+			const major = Number.parseInt(version.trim(), 10);
+			if (Number.isFinite(major) && major > 0) {
+				for (const candidate of aeInitCandidates(2000 + major)) {
+					const root = await managedRootFromInit(candidate);
+					if (root) return root;
+				}
 			}
+		} catch {
+			// panel not ready yet — retry
 		}
-	} catch {
-		// no live panel / evalScript unavailable — fall through
+		await new Promise((r) => setTimeout(r, 2_000));
 	}
 	return detectManagedRoot();
 };

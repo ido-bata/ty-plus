@@ -34,6 +34,7 @@ import {
 	updateAlignTargetCache,
 } from "@/management/dialog/dialogs/unified-context-menu";
 import { i18n } from "@/management/i18n/index";
+import { notificationStore } from "@/management/online/notification/service";
 import {
 	CP_POSITION_LAYOUT_CLASS_NAMES,
 	type CpOrientation,
@@ -3600,6 +3601,11 @@ export function useWorkspaceRuntime(root: Element | null): {
 						...getState(),
 						statusMessage: "Preset asset is missing on disk — run is disabled.",
 					});
+					notificationStore.add(
+						"Preset asset is missing on disk — run is disabled.",
+						"warning",
+						{ duration: 8000 },
+					);
 					return;
 				}
 				const { presetRepository } = getDataServices();

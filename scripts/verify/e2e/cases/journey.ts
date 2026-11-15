@@ -26,6 +26,7 @@ import { listLiveSurfaces } from "../surfaces";
 import {
 	managedFilePath,
 	reloadPanel1,
+	reloadSurface,
 	sleep,
 	waitForDom,
 	withManagedRootSnapshot,
@@ -38,7 +39,7 @@ import {
 const freshLive = (ctx: E2EContext) =>
 	ctx.surfaces().then((s) => listLiveSurfaces(s));
 
-const findLive = async (
+export const findLive = async (
 	ctx: E2EContext,
 	match: (s: LiveSurface) => boolean,
 	timeoutMs = 30_000,
@@ -54,7 +55,7 @@ const findLive = async (
 };
 
 /** Click the first element matching `selector`; returns the JS result. */
-const clickFirst = async (
+export const clickFirst = async (
 	ctx: E2EContext,
 	surface: LiveSurface,
 	selector: string,
@@ -70,7 +71,7 @@ const clickFirst = async (
 	);
 
 /** Set a React-controlled input value (native setter + input event). */
-const setInputValue = async (
+export const setInputValue = async (
 	ctx: E2EContext,
 	surface: LiveSurface,
 	selector: string,
@@ -91,7 +92,7 @@ const setInputValue = async (
 	);
 
 /** Evaluate a selector that picks an element by text content. */
-const clickButtonByText = async (
+export const clickButtonByText = async (
 	ctx: E2EContext,
 	surface: LiveSurface,
 	text: string,
@@ -109,7 +110,9 @@ const clickButtonByText = async (
 	);
 
 /** Open the preset catalog browser (StatusBar "presets" tool). */
-const openPresetCatalog = async (ctx: E2EContext): Promise<LiveSurface> => {
+export const openPresetCatalog = async (
+	ctx: E2EContext,
+): Promise<LiveSurface> => {
 	const panel = await ctx.requireSurface({ surfaceId: "panel-1" });
 	await clickFirst(ctx, panel, '[data-dialog-kind="presets"]');
 	const dialog = await findLive(
@@ -118,6 +121,10 @@ const openPresetCatalog = async (ctx: E2EContext): Promise<LiveSurface> => {
 		30_000,
 	);
 	if (!dialog) throw new Error("dialog-presets surface did not open");
+	// dialog-presets is a pooled modeless surface: requestOpenExtension may
+	// just refocus an instance booted before the catalog changed. Reload it
+	// so the preset list reflects the current presets.json.
+	await reloadSurface(ctx, dialog, 30_000);
 	await waitForDom(
 		ctx,
 		dialog,
@@ -129,7 +136,7 @@ const openPresetCatalog = async (ctx: E2EContext): Promise<LiveSurface> => {
 };
 
 /** Click Run on a catalog row/card for `presetId` inside dialog-presets. */
-const runPresetFromCatalog = async (
+export const runPresetFromCatalog = async (
 	ctx: E2EContext,
 	dialog: LiveSurface,
 	presetId: string,
@@ -149,7 +156,7 @@ const runPresetFromCatalog = async (
 	);
 
 /** userData dir on the AE host (allowed root for script/preset files). */
-const aeUserDataDir = async (ctx: E2EContext): Promise<string> => {
+export const aeUserDataDir = async (ctx: E2EContext): Promise<string> => {
 	const panel = await ctx.requireSurface({ surfaceId: "panel-1" });
 	const out = await ctx.evalScriptOnPanel1("Folder.userData.fsName");
 	const dir = String(out ?? "").trim();
@@ -159,10 +166,10 @@ const aeUserDataDir = async (ctx: E2EContext): Promise<string> => {
 	return dir;
 };
 
-const e2eFixtureDir = (userData: string): string =>
+export const e2eFixtureDir = (userData: string): string =>
 	path.join(userData, "ty-plus-e2e");
 
-const writeFixtureScript = async (
+export const writeFixtureScript = async (
 	dir: string,
 	name: string,
 	markerName: string,
@@ -182,7 +189,9 @@ const writeFixtureScript = async (
 	return { jsxPath, markerPath };
 };
 
-const readMarker = async (markerPath: string): Promise<string | null> => {
+export const readMarker = async (
+	markerPath: string,
+): Promise<string | null> => {
 	try {
 		return await readFile(markerPath, "utf8");
 	} catch {
@@ -190,7 +199,7 @@ const readMarker = async (markerPath: string): Promise<string | null> => {
 	}
 };
 
-const waitForFile = async (
+export const waitForFile = async (
 	file: string,
 	timeoutMs = 20_000,
 ): Promise<string | null> => {

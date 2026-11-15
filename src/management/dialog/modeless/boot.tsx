@@ -27,6 +27,7 @@ import {
 	resolveDialogSurfaceIdForBoot,
 } from "@/management/dialog/modeless/surface-id";
 import { initializeI18n } from "@/management/i18n";
+import { NotificationContainer } from "@/management/online/notification/Container";
 import {
 	bootstrapCepShellThemeHydration,
 	installCepShellStyleRecoveryOnResize,
@@ -128,6 +129,7 @@ export async function bootTyPlusModelessDialog(): Promise<void> {
 			) : (
 				<ModelessDialogRoot surfaceId={surfaceId} />
 			)}
+			<NotificationContainer />
 		</PanelRoot>,
 	);
 }

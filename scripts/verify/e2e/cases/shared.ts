@@ -142,6 +142,14 @@ export const withManagedRootSnapshot = async <T>(
 		return await fn();
 	} finally {
 		await ctx.restoreManagedRoot(snapshotDir);
+		// The live panel still holds the mutated in-memory layout and will
+		// re-persist it over the restored files. Reload so it resyncs from
+		// disk; best-effort — suites without a live panel skip this.
+		try {
+			await reloadPanel1(ctx, 30_000);
+		} catch {
+			// no panel-1 surface or still booting
+		}
 	}
 };
 
