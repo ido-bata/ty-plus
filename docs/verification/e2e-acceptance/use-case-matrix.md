@@ -9,9 +9,9 @@
 | ID | ユースケース | 主な確認対象 | 自動化 | OS | 状態 | 証跡/Issue |
 | --- | --- | --- | --- | --- | --- | --- |
 | UC-A01 | 初回起動 → onboarding 10 ステップ完了 → workspace 表示 | managed root 生成、`settings/app.json`、`workspaces/workspace-1.json`、`presets.json`、panel DOM | semi | both | 未実施 | |
-| UC-A02 | 既存データでの起動 → layout/settings/theme 復元 | workspace-N.json・app.json・theme.css の内容が起動後 UI に反映 | auto | both | win:自動PASS / mac:自動PASS | results/2026-11-15-device-windows-ae2027-dev-smoke-run.json / results/macos-ae2026-dev/run.json |
-| UC-A03 | panel-1〜5 の開閉と独立性 | 各 panel が別 surface として応答、layout が panel 毎に独立 | auto | both | win:自動PASS / mac:自動PASS | results/2026-11-15-device-windows-ae2027-dev-smoke-run.json / results/macos-ae2026-dev/run.json |
-| UC-A04 | AE 再起動をまたぐ host bundle 常駐/self-heal | `$.global.__TY_PLUS_HOST__` contract、worker verify ok | auto | both | mac:自動PASS / win:未実施 | results/2026-11-15-device-macos-ae2026-dev-extended.md / #107修正済(PR #116) |
+| UC-A02 | 既存データでの起動 → layout/settings/theme 復元 | workspace-N.json・app.json・theme.css の内容が起動後 UI に反映 | auto | both | win:自動PASS / mac:自動PASS | results/2026-11-15-device-windows-ae2027-dev-smoke-run.json / results/macos-ae2026-dev/run.json / results/2026-11-15-device-windows-ae2027-dev-extended/smoke/run.json |
+| UC-A03 | panel-1〜5 の開閉と独立性 | 各 panel が別 surface として応答、layout が panel 毎に独立 | auto | both | win:自動PASS / mac:自動PASS | results/2026-11-15-device-windows-ae2027-dev-smoke-run.json / results/macos-ae2026-dev/run.json / results/2026-11-15-device-windows-ae2027-dev-extended/smoke/run.json |
+| UC-A04 | AE 再起動をまたぐ host bundle 常駐/self-heal | `$.global.__TY_PLUS_HOST__` contract、worker verify ok | auto | both | mac:自動PASS / win:自動PASS | results/2026-11-15-device-macos-ae2026-dev-extended.md / results/2026-11-15-device-windows-ae2027-dev-extended/host/run.json / #107修正済(PR #116) |
 | UC-A05 | パネルを閉じて再度開く（10 回連続）| クラッシュなし、状態保持 | semi | both | 未実施 | |
 
 ## B. ワークスペース操作
@@ -21,7 +21,7 @@
 | UC-B01 | preset を tile として配置（toolbar/catalog/drag）| workspace-N.json の gridCells に追加、tile DOM | auto | both | 未実施 | |
 | UC-B02 | widget を Add Widget dialog から追加 | widgets.json record、tile 描画、layout reload | auto | both | 未実施 | |
 | UC-B03 | tile 移動・リサイズ・削除・複製 | workspace-N.json の座標/サイズ更新、DOM 反映 | semi | both | 未実施 | |
-| UC-B04 | grid 設定（cell/gap/radius）変更 → live 反映 → reload 後維持 | theme.css `--ty-ws-*`、app.json `workspace.grid`、computed style、実セルサイズ | auto | both | win:自動PASS / mac:自動PASS(#112修正済) | #95 / results/2026-11-15-device-windows-ae2027-dev-smoke-run.json / results/macos-ae2026-dev/run.json |
+| UC-B04 | grid 設定（cell/gap/radius）変更 → live 反映 → reload 後維持 | theme.css `--ty-ws-*`、app.json `workspace.grid`、computed style、実セルサイズ | auto | both | win:自動PASS / mac:自動PASS(#112修正済) | #95 / results/2026-11-15-device-windows-ae2027-dev-smoke-run.json / results/macos-ae2026-dev/run.json / results/2026-11-15-device-windows-ae2027-dev-extended/smoke/run.json |
 | UC-B05 | レイアウトスナップショット保存→変更→復元→削除 | snapshots.json、全パネル layout 復元 | auto | both | 未実施 | |
 | UC-B06 | Undo/Redo | 操作の巻き戻し/やり直しが layout に反映 | semi | both | 未実施 | |
 | UC-B07 | 複数パネル間の preset 配置移動 | workspacePanels roster、対象 panel の tile | semi | both | 未実施 | |
@@ -48,8 +48,8 @@
 | UC-C12 | footage preset 実行（PNG sequence 含む）| AE project への import | semi | both | 未実施 | |
 | UC-C13 | `.aex` plugin preset 実行 | matchName で effect 適用 | manual | both | 未実施 | |
 | UC-C14 | 実行失敗時の構造化エラー（alert 非モーダル）| モーダルでなく通知/エラー表示、AE 非ブロック | semi | both | 未実施 | #72 |
-| UC-C15 | preset asset 欠落時の検出 | verifyPresetAsset の typed failure、起動時 stale 検査 | auto | both | mac:自動PASS / win:未実施 | results/2026-11-15-device-macos-ae2026-dev-extended.md |
-| UC-C16 | 破損 presets.json で起動・編集 | 既存 record を消さない | auto | both | mac:自動PASS / win:未実施 | results/2026-11-15-device-macos-ae2026-dev-extended.md |
+| UC-C15 | preset asset 欠落時の検出 | verifyPresetAsset の typed failure、起動時 stale 検査 | auto | both | mac:自動PASS / win:自動PASS | results/2026-11-15-device-macos-ae2026-dev-extended.md / results/2026-11-15-device-windows-ae2027-dev-extended/catalog/run.json |
+| UC-C16 | 破損 presets.json で起動・編集 | 既存 record を消さない | auto | both | mac:自動PASS / win:自動PASS | results/2026-11-15-device-macos-ae2026-dev-extended.md / results/2026-11-15-device-windows-ae2027-dev-extended/resilience/run.json |
 | UC-C17 | preset catalog browser（list/icon・検索・group 展開・hover actions）| DOM 状態、実行/編集/削除の動作 | semi | both | 未実施 | |
 
 ## D. ウィジェット
@@ -66,15 +66,15 @@
 | UC-D08 | font-viewer：フォント一覧・選択テキストへ適用 | font 一覧取得、AE text font 変化 | semi | both | 未実施 | |
 | UC-D09 | directory-browser：遷移・filter・選択・preset 実行 | DOM、選択ファイルの preset 実行 | semi | both | 未実施 | |
 | UC-D10 | menu/quick-actions：クイック実行 | preset 実行結果 | semi | both | 未実施 | |
-| UC-D11 | widget state 永続化（widgets/state/*.json）| reload 後の widget 状態復元 | auto | both | mac:自動PASS / win:未実施 | results/2026-11-15-device-macos-ae2026-dev-extended.md |
+| UC-D11 | widget state 永続化（widgets/state/*.json）| reload 後の widget 状態復元 | auto | both | mac:自動PASS / win:BLOCKED（managed root 復元の EPERM）| results/2026-11-15-device-macos-ae2026-dev-extended.md / results/2026-11-15-device-windows-ae2027-dev-extended/widgets/run.json |
 | UC-D12 | 破損 widgets.json で起動・編集 | 既存 record 非破壊 | auto | both | mac:自動PASS / win:未実施 | results/2026-11-15-device-macos-ae2026-dev-extended.md（UC-I02 と同一ファイル・同一契約） |
 
 ## E. 設定
 
 | ID | ユースケース | 主な確認対象 | 自動化 | OS | 状態 | 証跡/Issue |
 | --- | --- | --- | --- | --- | --- | --- |
-| UC-E01 | 言語切替 → 全 surface 反映 → reload 後維持 | ui.json locale、`documentElement.lang`、文言 DOM | auto | both | mac:自動PASS / win:未実施 | results/2026-11-15-device-macos-ae2026-dev-extended.md |
-| UC-E02 | 外観色変更（accent/text/widget/panel）→ live → reload 維持 | app.json `ui.*`、theme.css token、computed style | auto | both | win:自動PASS / mac:自動PASS(#112修正済) | #94 / results/2026-11-15-device-windows-ae2027-dev-smoke-run.json / results/macos-ae2026-dev/run.json |
+| UC-E01 | 言語切替 → 全 surface 反映 → reload 後維持 | ui.json locale、`documentElement.lang`、文言 DOM | auto | both | mac:自動PASS / win:BLOCKED（managed root 復元の EPERM）| results/2026-11-15-device-macos-ae2026-dev-extended.md / results/2026-11-15-device-windows-ae2027-dev-extended/settings/run.json |
+| UC-E02 | 外観色変更（accent/text/widget/panel）→ live → reload 維持 | app.json `ui.*`、theme.css token、computed style | auto | both | win:自動PASS / mac:自動PASS(#112修正済) | #94 / results/2026-11-15-device-windows-ae2027-dev-smoke-run.json / results/macos-ae2026-dev/run.json / results/2026-11-15-device-windows-ae2027-dev-extended/smoke/run.json |
 | UC-E03 | theme tokens 編集（Apply/Export/Import/reset）| theme.css、export/import round-trip | semi | both | 未実施 | #91 |
 | UC-E04 | support root 変更 → relocation/copy/delete → 全パネル reload | app.json paths、managed root 移動、layout 復元 | semi | both | 未実施 | |
 | UC-E05 | preset/script/plugin root 変更 | app.json paths、preset scan 反映 | semi | both | 未実施 | |
@@ -99,16 +99,16 @@
 
 | ID | ユースケース | 主な確認対象 | 自動化 | OS | 状態 | 証跡/Issue |
 | --- | --- | --- | --- | --- | --- | --- |
-| UC-G01 | debug console：ログ集約・filter・eval・clear | debug-console DOM、eval 結果、clear 同期 | auto | both | win:自動PASS / mac:自動PASS | #10 D-07, W-03 / results/2026-11-15-device-windows-ae2027-dev-smoke-run.json / results/macos-ae2026-dev/run.json |
-| UC-G02 | console reopen で replay | 過去ログ表示 | auto | both | mac:自動PASS / win:未実施 | results/2026-11-15-device-macos-ae2026-dev-extended.md |
-| UC-G03 | operation worker verify（spawn→accept→result→exit）| verify JSON（rowCount/exit code）| auto | both | mac:自動PASS / win:未実施 | results/2026-11-15-device-macos-ae2026-dev-extended.md |
+| UC-G01 | debug console：ログ集約・filter・eval・clear | debug-console DOM、eval 結果、clear 同期 | auto | both | win:自動PASS / mac:自動PASS | #10 D-07, W-03 / results/2026-11-15-device-windows-ae2027-dev-smoke-run.json / results/macos-ae2026-dev/run.json / results/2026-11-15-device-windows-ae2027-dev-extended/smoke/run.json |
+| UC-G02 | console reopen で replay | 過去ログ表示 | auto | both | mac:自動PASS / win:自動FAIL（debug console surface を閉じられない）| results/2026-11-15-device-macos-ae2026-dev-extended.md / results/2026-11-15-device-windows-ae2027-dev-extended/debug/run.json |
+| UC-G03 | operation worker verify（spawn→accept→result→exit）| verify JSON（rowCount/exit code）| auto | both | mac:自動PASS / win:自動PASS | results/2026-11-15-device-macos-ae2026-dev-extended.md / results/2026-11-15-device-windows-ae2027-dev-extended/debug/run.json |
 | UC-G04 | panel surface の unhandled error が console に出る | #71/#69/#67 系の回帰観測 | auto | both | 未実施 | #71,#69,#67 |
 
 ## H. ホスト・AE 連携・環境
 
 | ID | ユースケース | 主な確認対象 | 自動化 | OS | 状態 | 証跡/Issue |
 | --- | --- | --- | --- | --- | --- | --- |
-| UC-H01 | host context 取得（getHostContext/ping）| host 応答、app.version | auto | both | win:自動PASS / mac:自動PASS | results/2026-11-15-device-windows-ae2027-dev-smoke-run.json / results/macos-ae2026-dev/run.json |
+| UC-H01 | host context 取得（getHostContext/ping）| host 応答、app.version | auto | both | win:自動PASS / mac:自動PASS | results/2026-11-15-device-windows-ae2027-dev-smoke-run.json / results/macos-ae2026-dev/run.json / results/2026-11-15-device-windows-ae2027-dev-extended/smoke/run.json |
 | UC-H02 | 複数機能連続操作（preset 作成→配置→実行→保存→reload→再実行）| 各段階の永続化 + AE 状態 | semi | both | 未実施 | ユーザー作業単位 |
 | UC-H03 | 日本語 IME ON/OFF でのテキスト入力 | IME 変換中の入力破壊なし | manual | both | 未実施 | |
 | UC-H04 | 日本語・空白・記号・長いパスでの preset/設定 | パス解決・書込成功 | semi | both | 未実施 | |
@@ -123,11 +123,11 @@
 
 | ID | ユースケース | 主な確認対象 | 自動化 | OS | 状態 | 証跡/Issue |
 | --- | --- | --- | --- | --- | --- | --- |
-| UC-I01 | 破損 workspace-N.json 起動（D-09）| 既存データ非破壊 | auto | both | mac:自動PASS / win:未実施 | results/2026-11-15-device-macos-ae2026-dev-extended.md |
-| UC-I02 | 破損 widgets.json 起動・編集（D-10）| 同上 | auto | both | mac:自動PASS / win:未実施 | results/2026-11-15-device-macos-ae2026-dev-extended.md（UC-D12 alias） |
+| UC-I01 | 破損 workspace-N.json 起動（D-09）| 既存データ非破壊 | auto | both | mac:自動PASS / win:BLOCKED（managed root 復元の EPERM）| results/2026-11-15-device-macos-ae2026-dev-extended.md / results/2026-11-15-device-windows-ae2027-dev-extended/resilience/run.json |
+| UC-I02 | 破損 widgets.json 起動・編集（D-10）| 同上 | auto | both | mac:自動PASS / win:自動PASS | results/2026-11-15-device-macos-ae2026-dev-extended.md（UC-D12 alias） / results/2026-11-15-device-windows-ae2027-dev-extended/resilience/run.json |
 | UC-I03 | 権限不足ディレクトリでの保存（D-12）| 失敗可視化 + 非破壊 | auto | both | 未実施 | |
-| UC-I04 | theme.css 破損で起動 | fallback/復旧、他設定への影響 | auto | both | mac:自動PASS / win:未実施 | results/2026-11-15-device-macos-ae2026-dev-extended.md |
-| UC-I05 | settings/app.json 破損で起動 | defaults への安全な退避 or 復旧 | auto | both | mac:自動PASS / win:未実施 | results/2026-11-15-device-macos-ae2026-dev-extended.md |
+| UC-I04 | theme.css 破損で起動 | fallback/復旧、他設定への影響 | auto | both | mac:自動PASS / win:BLOCKED（managed root 復元の EPERM）| results/2026-11-15-device-macos-ae2026-dev-extended.md / results/2026-11-15-device-windows-ae2027-dev-extended/resilience/run.json |
+| UC-I05 | settings/app.json 破損で起動 | defaults への安全な退避 or 復旧 | auto | both | mac:自動PASS / win:自動PASS | results/2026-11-15-device-macos-ae2026-dev-extended.md / results/2026-11-15-device-windows-ae2027-dev-extended/resilience/run.json |
 | UC-I06 | surface teardown/reload 連続（10 回）| CEPHtmlEngine crash なし | semi | both | 未実施 | #71, W-04 |
 | UC-I07 | AE 強制終了後の再起動 → 状態復元 | 未保存操作の扱い、データ整合 | manual | both | 未実施 | |
 | UC-I08 | preset scan timeout/大量ファイル | presetScan 設定、UI 応答 | semi | both | 未実施 | |
