@@ -1,0 +1,40 @@
+{
+  "schema": "ty-plus.e2e-run/1",
+  "suite": "widgets",
+  "capturedAt": "2026-11-15T10:58:04.505Z",
+  "extensionDir": "/Users/rebui/Library/Application Support/Adobe/CEP/extensions/app.ty-plus.dev",
+  "managedRoot": "/Applications/Adobe After Effects 2026/ty-plus",
+  "totals": {
+    "PASS": 1,
+    "FAIL": 0,
+    "BLOCKED": 0,
+    "SKIP": 0
+  },
+  "results": [
+    {
+      "uc": "UC-D11",
+      "title": "easing widget state file restores mode/loopCount after reload",
+      "status": "PASS",
+      "detail": "instance=5aaaf392-4a28-4cf8-a89e-0f7e414b41d4 loopCount=7",
+      "checks": [
+        {
+          "name": "easing widget tile mounted after reload",
+          "ok": true,
+          "detail": "mounted"
+        },
+        {
+          "name": "loop mode + loopCount restored from widgets/state/easing.json",
+          "ok": true,
+          "detail": "loopCount input=7 expected=7"
+        },
+        {
+          "name": "widgets/state/easing.json restored after case",
+          "ok": true,
+          "detail": "/Applications/Adobe After Effects 2026/ty-plus/widgets/state/easing.json"
+        }
+      ],
+      "evidence": [],
+      "durationMs": 6385
+    }
+  ]
+}
