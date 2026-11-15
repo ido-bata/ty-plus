@@ -29,8 +29,13 @@
 自動化ハーネスは `scripts/verify/e2e/` にある。前提: 対象ビルドが CEP extensions にインストール済みで、After Effects が起動し対象パネルが開いていること（パネルを開く操作自体が UC の対象になる場合を除く）。
 
 ```sh
-# パネル1の CDP エンドポイント（dev build 既定 9170、release 8970）
-bun run scripts/verify/e2e/run.ts --suite smoke --port 9170
+# dev build の例。managed root は AE インストール内の ty-plus-init.json から自動検出する
+bun run scripts/verify/e2e/run.ts \
+  --extension-dir "$HOME/Library/Application Support/Adobe/CEP/extensions/app.ty-plus.dev" \
+  --suite smoke \
+  --out docs/verification/e2e-acceptance/results
+
+# 別の場所へインストールした場合は --managed-root / --extension-dir を明示する
 ```
 
 実行結果は `results/` 配下へ JSON 証跡とともに記録し、`use-case-matrix.md` の状態列を更新する。

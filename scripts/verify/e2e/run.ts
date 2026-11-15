@@ -142,7 +142,7 @@ const main = async (): Promise<void> => {
 				uc: testCase.uc,
 				title: testCase.title,
 				status: "BLOCKED",
-				 detail: error instanceof Error ? error.message : String(error),
+				detail: error instanceof Error ? error.message : String(error),
 				checks: [],
 				evidence: [],
 				durationMs: Date.now() - started,

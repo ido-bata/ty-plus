@@ -48,7 +48,7 @@
 | UC-C12 | footage preset 実行（PNG sequence 含む）| AE project への import | semi | both | 未実施 | |
 | UC-C13 | `.aex` plugin preset 実行 | matchName で effect 適用 | manual | both | 未実施 | |
 | UC-C14 | 実行失敗時の構造化エラー（alert 非モーダル）| モーダルでなく通知/エラー表示、AE 非ブロック | semi | both | 未実施 | #72 |
-| UC-C15 | preset asset 欠落時の検出 | verifyPresetAsset の typed failure、起動時 stale 検査 | auto | both | 未実施 | #130 |
+| UC-C15 | preset asset 欠落時の検出 | verifyPresetAsset の typed failure、起動時 stale 検査 | auto | both | 未実施 | preset-asset-consistency.md |
 | UC-C16 | 破損 presets.json で起動・編集 | 既存 record を消さない | auto | both | 未実施 | #10 D-10 |
 | UC-C17 | preset catalog browser（list/icon・検索・group 展開・hover actions）| DOM 状態、実行/編集/削除の動作 | semi | both | 未実施 | |
 
