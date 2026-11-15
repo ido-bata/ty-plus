@@ -1159,10 +1159,7 @@ export function useWorkspaceRuntime(root: Element | null): {
 					if (panelSurfaceId === "panel-1") {
 						void reconcileSettingsThemeOverrides(window, panelSurfaceId).catch(
 							(error) => {
-								console.warn(
-									"[settings-theme] boot reconcile failed",
-									error,
-								);
+								console.warn("[settings-theme] boot reconcile failed", error);
 							},
 						);
 					}

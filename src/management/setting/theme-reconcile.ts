@@ -16,8 +16,8 @@ import {
 } from "@/management/setting/ui-theme-sync";
 import { gridSettingsFromSettingsJson } from "@/management/workspace/grid-settings";
 import { publishShellMessage } from "@/management/workspace/messaging/publish-shell-message";
-import { SHELL_CHANNELS } from "@/management/workspace/surface/contract";
 import { readSettings } from "@/management/workspace/persistence/store";
+import { SHELL_CHANNELS } from "@/management/workspace/surface/contract";
 
 /**
  * Boot-time reconcile between `settings/app.json` and `styles/theme.css`
