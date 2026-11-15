@@ -62,7 +62,7 @@ type FakeHost = {
 	loadCount(): number;
 	/** Mutate the resident global after construction (e.g. panel reload). */
 	setResident(resident: "absent" | "present", schema?: number): void;
-	/** Leave the key present with an undefined value — the #104 residue. */
+	/** Leave the key present with an undefined value — the Issue 104 residue. */
 	corruptResident(): void;
 	setFailLoad(value: boolean): void;
 	setSilentLoadFailure(value: boolean): void;

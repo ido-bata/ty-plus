@@ -823,7 +823,7 @@ const buildCepHostExecutor = (
 			| { ok: true; hostId?: HostId; value?: unknown }
 			| { ok: false; error?: { message?: string; code?: string } };
 		const invokeHostMethod = async (): Promise<HostCallResult> => {
-			for (let attempt = 0; attempt < 2; attempt += 1) {
+			const attempt = async (): Promise<HostCallResult> => {
 				await coordinator.ensure(executorId);
 				const result = await runEvalScript(win, callScript);
 				let parsed: HostCallResult;
@@ -838,17 +838,14 @@ const buildCepHostExecutor = (
 					notifyHostExecutionFailure(message);
 					throw error;
 				}
-				if (
-					attempt === 0 &&
-					parsed.ok === false &&
-					parsed.error?.code === "host_bundle_missing"
-				) {
-					coordinator.reset();
-					continue;
-				}
 				return parsed;
+			};
+			const first = await attempt();
+			if (first.ok === false && first.error?.code === "host_bundle_missing") {
+				coordinator.reset();
+				return attempt();
 			}
-			throw new Error("Host function retry loop exhausted");
+			return first;
 		};
 		const parsed = await invokeHostMethod();
 
