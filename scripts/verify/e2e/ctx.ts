@@ -219,13 +219,18 @@ export class E2EContext {
 		await this.assertManagedRootSafe();
 		const root = this.managedRoot();
 		const transient = new Set(["EPERM", "EACCES", "EBUSY", "ENOTEMPTY"]);
-		const maxAttempts = 8;
+		const maxAttempts = 10;
 		let lastError: unknown;
 		for (let attempt = 1; attempt <= maxAttempts; attempt++) {
 			try {
 				// Give watchers a beat to release handles before the swap.
-				if (attempt > 1) await sleep(400 * attempt);
-				await rm(root, { recursive: true, force: true });
+				if (attempt > 1) await sleep(500 * attempt);
+				await rm(root, {
+					recursive: true,
+					force: true,
+					maxRetries: 5,
+					retryDelay: 250,
+				});
 				await cp(snapshotDir, root, { recursive: true });
 				return;
 			} catch (error) {
