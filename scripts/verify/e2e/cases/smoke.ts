@@ -92,8 +92,14 @@ export const smokeCases: E2ECase[] = [
 					appVersion,
 				),
 			);
+			// The host bundle is installed lazily on first host call, so a
+			// fresh AE has no resident contract. Load it explicitly (same as
+			// scripts/verify/device-smoke.ts) before probing the contract.
+			const hostPath = `${ctx.options.extensionDir}/jsx/ty-plus-host.jsx`;
 			const contract = await ctx.evalScriptOnPanel1(
 				`(function(){
+					try { $.evalFile(${JSON.stringify(hostPath)}); }
+					catch (e) { return "evalfile-error:" + e.toString(); }
 					var h = $.global && $.global.__TY_PLUS_HOST__;
 					return h && typeof h.getHostContext === "function"
 						? "contract-ok"
