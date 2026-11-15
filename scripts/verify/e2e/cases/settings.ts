@@ -48,7 +48,7 @@ const readAppJson = async (ctx: E2EContext): Promise<AppJson | null> => {
 const expectedTablistAriaLabel = (locale: string): string =>
 	locale === "ja" ? "設定セクション" : "Settings sections";
 
-const openSettingsDialog = async (
+export const openSettingsDialog = async (
 	ctx: E2EContext,
 ): Promise<LiveSurface | null> => {
 	const panel = await ctx.requireSurface({ surfaceId: "panel-1" });

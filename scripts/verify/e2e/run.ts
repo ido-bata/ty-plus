@@ -18,6 +18,7 @@ import { catalogCases } from "./cases/catalog";
 import { debugCases } from "./cases/debug";
 import { hostCases } from "./cases/host";
 import { journeyCases } from "./cases/journey";
+import { journeySuiteCases } from "./cases/journeys";
 import { resilienceCases } from "./cases/resilience";
 import { settingsCases } from "./cases/settings";
 import { smokeCases } from "./cases/smoke";
@@ -31,6 +32,7 @@ import {
 	type SandboxSession,
 	teardownSandbox,
 } from "./sandbox";
+import { listLiveSurfaces } from "./surfaces";
 
 const option = (name: string): string | undefined =>
 	process.argv
@@ -49,6 +51,7 @@ const SUITES: Record<string, E2ECase[]> = {
 	debug: debugCases,
 	host: hostCases,
 	journey: journeyCases,
+	journeys: journeySuiteCases,
 	workspace: workspaceCases,
 };
 
@@ -189,6 +192,17 @@ const main = async (): Promise<void> => {
 		managedRoot: option("managed-root"),
 		evidenceDir: outDir,
 	});
+	// With no live surfaces the managed-root probe cannot identify the
+	// hosting AE and falls back to "newest install wins" — which can point
+	// at a different AE version entirely. Fail fast instead of sandboxing
+	// or mutating the wrong install.
+	const liveNow = await listLiveSurfaces(await ctx.surfaces());
+	if (liveNow.length === 0) {
+		throw new Error(
+			"no live CEP surfaces — start After Effects and open a ty-plus panel first",
+		);
+	}
+
 	// Resolve against the live AE when --managed-root is not explicit: with
 	// several AE versions installed, newest-dir detection can point at an
 	// install that is not hosting the panels.

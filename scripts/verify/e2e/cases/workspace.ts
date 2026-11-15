@@ -23,7 +23,6 @@ import type { LiveSurface } from "../surfaces";
 import { listLiveSurfaces } from "../surfaces";
 import {
 	aeUserDataDir,
-	clickButtonByText,
 	clickFirst,
 	e2eFixtureDir,
 	findLive,
@@ -125,7 +124,7 @@ const openAddWidgetDialog = async (ctx: E2EContext): Promise<LiveSurface> => {
  * Add a widget of `type` through the selector dialog. Returns the new
  * widget instance id by diffing widgets/widgets.json.
  */
-const addWidgetViaDialog = async (
+export const addWidgetViaDialog = async (
 	ctx: E2EContext,
 	type: string,
 ): Promise<{ instanceId: string }> => {
@@ -209,7 +208,7 @@ const addWidgetViaDialog = async (
 };
 
 /** Create a local file preset through toolbar → PathDialog; returns id. */
-const createFilePresetViaDialog = async (
+export const createFilePresetViaDialog = async (
 	ctx: E2EContext,
 	filePath: string,
 	title: string,
@@ -242,7 +241,25 @@ const createFilePresetViaDialog = async (
 		'input[placeholder="Enter name..."]',
 		title,
 	);
-	const created = await clickButtonByText(ctx, addDialog, "Create");
+	// The Create button enables only after React validates path+title;
+	// on a busy host a single click attempt can land while it is still
+	// disabled. Poll for an enabled button, then click.
+	let created: unknown = "missing-button:Create";
+	const createDeadline = Date.now() + 20_000;
+	while (Date.now() < createDeadline) {
+		created = await ctx.evalJs(
+			addDialog,
+			`(() => {
+				const btn = [...document.querySelectorAll("button")].find(
+					(b) => (b.textContent || "").trim() === "Create" && !b.disabled);
+				if (!btn) return "missing-or-disabled";
+				btn.click();
+				return "clicked";
+			})()`,
+		);
+		if (created === "clicked") break;
+		await sleep(800);
+	}
 	if (created !== "clicked") {
 		throw new Error(`Create not clickable: ${String(created)}`);
 	}

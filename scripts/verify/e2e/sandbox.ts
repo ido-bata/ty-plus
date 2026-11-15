@@ -76,7 +76,7 @@ export type SandboxSession = {
 const normalizeSlashes = (p: string): string => p.replace(/\\/g, "/");
 
 const managedRootOf = (supportRoot: string): string =>
-	normalizeSlashes(supportRoot).replace(/\/+$/, "") + `/${MANAGED_LEAF}`;
+	`${normalizeSlashes(supportRoot).replace(/\/+$/, "")}/${MANAGED_LEAF}`;
 
 /**
  * Locate the locator file that governs `managedRoot`. The locator sits in
@@ -545,37 +545,56 @@ export const prepareSandbox = async (
 	await writeState(statePath, state);
 
 	// 4. Repoint the locator, then reload every surface onto the sandbox.
+	//    EVERYTHING past this point must restore the locator on failure —
+	//    a throw here with the locator redirected strands the install on a
+	//    temp root (observed when AE quit mid-prepare and the probe could
+	//    not reach a panel).
 	const sandboxLocator = {
 		...(JSON.parse(locator.raw) as Record<string, unknown>),
 		supportRoot: normalizeSlashes(sandboxParent),
 		updatedAt: new Date().toISOString(),
 	};
+	const abortSandbox = async (reason: string): Promise<never> => {
+		try {
+			await writeFile(locator.initPath, locator.raw);
+		} catch {
+			// best-effort; state file still marks the session for recovery
+		}
+		await writeState(statePath, { ...state, active: false }).catch(() => {});
+		throw new Error(reason);
+	};
 	await writeFile(
 		locator.initPath,
 		`${JSON.stringify(sandboxLocator, null, 2)}\n`,
 	);
-	await reloadAllSurfaces(ctx);
+	try {
+		await reloadAllSurfaces(ctx);
 
-	// 5. Prove a panel resolved the sandbox: the marker accent color is
-	//    only present if boot read the sandbox's settings/theme. A file-
-	//    existence probe cannot distinguish roots — both see the same fs.
-	const panel = await ctx.requireSurface({ surfaceId: "panel-1" });
-	const probe = await ctx.evalJs(
-		panel,
-		`(() => {
-			const v = getComputedStyle(document.documentElement)
-				.getPropertyValue("--color-ty-accent") || "";
-			return v.trim().toLowerCase().includes("e2b701") ? "sandbox" : "real:" + v.trim();
-		})()`,
-		15_000,
-	);
-	if (probe !== "sandbox") {
-		// Restore immediately — do not leave the locator redirected.
-		await writeFile(locator.initPath, locator.raw);
-		await writeState(statePath, { ...state, active: false });
-		throw new Error(
-			`panel did not resolve sandbox root (probe=${String(probe)}, ` +
-				`expected accent ${SANDBOX_ACCENT})`,
+		// 5. Prove a panel resolved the sandbox: the marker accent color is
+		//    only present if boot read the sandbox's settings/theme. A file-
+		//    existence probe cannot distinguish roots — both see the same fs.
+		const panel = await ctx.requireSurface({ surfaceId: "panel-1" });
+		const probe = await ctx.evalJs(
+			panel,
+			`(() => {
+				const v = getComputedStyle(document.documentElement)
+					.getPropertyValue("--color-ty-accent") || "";
+				return v.trim().toLowerCase().includes("e2b701") ? "sandbox" : "real:" + v.trim();
+			})()`,
+			15_000,
+		);
+		if (probe !== "sandbox") {
+			return await abortSandbox(
+				`panel did not resolve sandbox root (probe=${String(probe)}, ` +
+					`expected accent ${SANDBOX_ACCENT})`,
+			);
+		}
+	} catch (error) {
+		if (error instanceof Error && error.message.startsWith("panel did not")) {
+			throw error;
+		}
+		return await abortSandbox(
+			`sandbox activation failed: ${error instanceof Error ? error.message : String(error)}`,
 		);
 	}
 
