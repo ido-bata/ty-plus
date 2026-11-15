@@ -1,0 +1,163 @@
+{
+  "schema": "ty-plus.e2e-run/1",
+  "suite": "smoke",
+  "capturedAt": "2026-11-15T10:34:49.943Z",
+  "extensionDir": "/Users/rebui/Library/Application Support/Adobe/CEP/extensions/app.ty-plus.dev",
+  "managedRoot": "/Applications/Adobe After Effects 2026/ty-plus",
+  "totals": {
+    "PASS": 6,
+    "FAIL": 0,
+    "BLOCKED": 0,
+    "SKIP": 0
+  },
+  "results": [
+    {
+      "uc": "UC-A03",
+      "title": "live surfaces boot with CEP bridge and extension origin",
+      "status": "PASS",
+      "detail": "2 live surfaces checked",
+      "checks": [
+        {
+          "name": "at least one surface is live",
+          "ok": true,
+          "detail": "2 live surfaces"
+        },
+        {
+          "name": "panel-1 is live",
+          "ok": true,
+          "detail": "panel-1"
+        },
+        {
+          "name": "panel-1 boots",
+          "ok": true,
+          "detail": "readyState=complete body=60129 cs=true"
+        },
+        {
+          "name": "panel-1 loads from CEP extensions",
+          "ok": true,
+          "detail": "file:///Users/rebui/Library/Application%20Support/Adobe/CEP/extensions/app.ty-plus.dev/panel/index.html"
+        },
+        {
+          "name": "debug-console boots",
+          "ok": true,
+          "detail": "readyState=complete body=29726 cs=true"
+        },
+        {
+          "name": "debug-console loads from CEP extensions",
+          "ok": true,
+          "detail": "file:///Users/rebui/Library/Application%20Support/Adobe/CEP/extensions/app.ty-plus.dev/modeless/index.html"
+        }
+      ],
+      "evidence": [
+        "/Users/rebui/work/ty-plus/.tmp/e2e/baseline2/smoke-panel-1.png",
+        "/Users/rebui/work/ty-plus/.tmp/e2e/baseline2/smoke-debug-console.png"
+      ],
+      "durationMs": 643
+    },
+    {
+      "uc": "UC-H01",
+      "title": "ExtendScript host responds and host bundle contract is callable",
+      "status": "PASS",
+      "detail": "AE 26.5.3x9",
+      "checks": [
+        {
+          "name": "app.version responds",
+          "ok": true,
+          "detail": "26.5.3x9"
+        },
+        {
+          "name": "host bundle exposes callable contract",
+          "ok": true,
+          "detail": "contract-ok"
+        }
+      ],
+      "evidence": [],
+      "durationMs": 60
+    },
+    {
+      "uc": "UC-A02",
+      "title": "persisted settings/layout/theme files exist and parse",
+      "status": "PASS",
+      "detail": "managed root files",
+      "checks": [
+        {
+          "name": "settings/app.json parses",
+          "ok": true,
+          "detail": "ok"
+        },
+        {
+          "name": "workspaces/workspace-1.json parses",
+          "ok": true,
+          "detail": "ok"
+        },
+        {
+          "name": "presets/presets.json parses",
+          "ok": true,
+          "detail": "ok"
+        },
+        {
+          "name": "styles/theme.css state consistent with overrides",
+          "ok": true,
+          "detail": "169 bytes"
+        }
+      ],
+      "evidence": [],
+      "durationMs": 13
+    },
+    {
+      "uc": "UC-B04",
+      "title": "grid settings persisted value reaches panel CSS variables",
+      "status": "PASS",
+      "detail": "grid token convergence",
+      "checks": [
+        {
+          "name": "settings.workspace.grid.cellSize present",
+          "ok": true,
+          "detail": "cellSize=80"
+        },
+        {
+          "name": "--ty-ws-cell reflects persisted grid",
+          "ok": true,
+          "detail": "computed=80px expected=80px"
+        }
+      ],
+      "evidence": [],
+      "durationMs": 4
+    },
+    {
+      "uc": "UC-E02",
+      "title": "ui accent color persisted in app.json reaches theme.css tokens",
+      "status": "PASS",
+      "detail": "ui.* → theme pipeline",
+      "checks": [
+        {
+          "name": "ui.accentColor present in app.json",
+          "ok": true,
+          "detail": "accent=#12ab34"
+        },
+        {
+          "name": "theme.css accent token matches ui.* projection",
+          "ok": true,
+          "detail": "--color-ty-accent: #12ab34"
+        }
+      ],
+      "evidence": [],
+      "durationMs": 3
+    },
+    {
+      "uc": "UC-G01",
+      "title": "debug console surface aggregates logs and evaluates JS",
+      "status": "PASS",
+      "detail": "debug console",
+      "checks": [
+        {
+          "name": "debug console DOM mounted",
+          "ok": true,
+          "detail": "body=29726 msgs=30"
+        }
+      ],
+      "evidence": [],
+      "durationMs": 2561
+    }
+  ]
+}
