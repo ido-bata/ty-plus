@@ -27,7 +27,13 @@ const fakeWindow = (responses: HostPayload[]) => {
 					script.includes("__schemaVersion") &&
 					!script.includes("$.evalFile")
 				) {
-					callback?.(JSON.stringify({ ok: true, present: false }));
+					callback?.(
+						JSON.stringify({
+							ok: true,
+							present: false,
+							contractComplete: false,
+						}),
+					);
 					return;
 				}
 				if (script.includes("$.evalFile")) {
@@ -37,6 +43,7 @@ const fakeWindow = (responses: HostPayload[]) => {
 							loaded: true,
 							schemaVersion: HOST_BUNDLE_SCHEMA_VERSION,
 							bundleVersion: HOST_BUNDLE_VERSION,
+							contractComplete: true,
 						}),
 					);
 					return;
@@ -87,7 +94,10 @@ describe("operation worker host context", () => {
 		expect(Object.isFrozen(first)).toBe(true);
 		expect(Object.isFrozen(second)).toBe(true);
 		expect(
-			fixture.scripts.filter((script) => script.includes("getHostContext")),
+			fixture.scripts.filter(
+				(script) =>
+					script.includes("hostMethod(") && script.includes("getHostContext"),
+			),
 		).toHaveLength(2);
 	});
 
