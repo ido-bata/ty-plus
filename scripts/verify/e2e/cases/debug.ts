@@ -32,20 +32,48 @@ const closeSurface = async (
 	ctx: E2EContext,
 	surface: LiveSurface,
 ): Promise<boolean> => {
-	try {
-		const conn = await ctx.cdp(surface);
-		await conn.send("Page.close", {}, 5_000);
-	} catch {
-		try {
+	// CEP surfaces do not all honour the same close path: `Page.close`
+	// works on macOS CEF but leaves the Windows target alive, `window.close()`
+	// is ignored for host-opened windows, and `closeExtension()` is the
+	// CEP-native shutdown the host itself uses. Try each in turn and verify
+	// the target actually disappears before moving on.
+	const attempts: Array<() => Promise<unknown>> = [
+		async () => {
+			const conn = await ctx.cdp(surface);
+			await conn.send("Page.close", {}, 5_000);
+		},
+		async () => {
 			await ctx.evalJs(surface, "window.close()");
+		},
+		async () => {
+			await ctx.evalJs(
+				surface,
+				`(() => {
+					try {
+						if (typeof CSInterface === "function") {
+							new CSInterface().closeExtension();
+							return "csinterface";
+						}
+					} catch (e) { /* fall through */ }
+					try {
+						window.__adobe_cep__?.closeExtension?.();
+						return "adobe_cep";
+					} catch (e) { return "failed"; }
+				})()`,
+			);
+		},
+	];
+	for (const attempt of attempts) {
+		try {
+			await attempt();
 		} catch {
-			return false;
+			// try the next close path
 		}
-	}
-	const deadline = Date.now() + 10_000;
-	while (Date.now() < deadline) {
-		await sleep(500);
-		if ((await findConsole(ctx)) === null) return true;
+		const deadline = Date.now() + 4_000;
+		while (Date.now() < deadline) {
+			await sleep(400);
+			if ((await findConsole(ctx)) === null) return true;
+		}
 	}
 	return false;
 };
