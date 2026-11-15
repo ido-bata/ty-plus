@@ -1,0 +1,188 @@
+{
+  "schema": "ty-plus.e2e-run/1",
+  "suite": "workspace",
+  "capturedAt": "2026-11-15T15:06:50.090Z",
+  "extensionDir": "/Users/rebui/Library/Application Support/Adobe/CEP/extensions/app.ty-plus.dev",
+  "managedRoot": "/Applications/Adobe After Effects 2026/ty-plus",
+  "totals": {
+    "PASS": 1,
+    "FAIL": 3,
+    "BLOCKED": 1,
+    "SKIP": 0
+  },
+  "results": [
+    {
+      "uc": "UC-B02",
+      "title": "Add Widget dialog places an info tile",
+      "status": "FAIL",
+      "detail": "widget=174bb980-5174-429a-a7b9-eb4e5cb111ef cells 15→15",
+      "checks": [
+        {
+          "name": "widgets.json gained info record",
+          "ok": true,
+          "detail": "id=174bb980-5174-429a-a7b9-eb4e5cb111ef"
+        },
+        {
+          "name": "info tile mounted on panel",
+          "ok": false,
+          "detail": "null \"diag-failed\""
+        },
+        {
+          "name": "workspace-1.json gridCells grew",
+          "ok": true,
+          "detail": "before=15 after=16"
+        },
+        {
+          "name": "layout restored after case",
+          "ok": true,
+          "detail": "before=15 restored=15"
+        }
+      ],
+      "evidence": [
+        "/Applications/Adobe After Effects 2026/ty-plus/widgets/widgets.json",
+        "/Applications/Adobe After Effects 2026/ty-plus/workspaces/workspace-1.json"
+      ],
+      "durationMs": 157969
+    },
+    {
+      "uc": "UC-B05",
+      "title": "layout snapshot save → mutate → restore → delete round-trip",
+      "status": "FAIL",
+      "detail": "snapshot=1794754919717 cells 15",
+      "checks": [
+        {
+          "name": "save-snapshot clicked",
+          "ok": true,
+          "detail": "clicked"
+        },
+        {
+          "name": "snapshots.json gained a new entry",
+          "ok": true,
+          "detail": "id=1794754919717"
+        },
+        {
+          "name": "snapshot row rendered in dropdown",
+          "ok": false,
+          "detail": "false"
+        },
+        {
+          "name": "layout mutated (widget tile added)",
+          "ok": true,
+          "detail": "cells 15→16 widget=6ba34b7c-7ee1-40da-a530-6622c51af509"
+        },
+        {
+          "name": "restore-snapshot clicked",
+          "ok": false,
+          "detail": "missing-restore"
+        },
+        {
+          "name": "gridCells restored to snapshot state",
+          "ok": false,
+          "detail": "before=15 mutated=16 restored=16"
+        },
+        {
+          "name": "added widget tile removed by restore",
+          "ok": false,
+          "detail": "tile=6ba34b7c-7ee1-40da-a530-6622c51af509"
+        },
+        {
+          "name": "delete-snapshot clicked",
+          "ok": false,
+          "detail": "missing-delete"
+        },
+        {
+          "name": "snapshot removed from snapshots.json",
+          "ok": true,
+          "detail": "snapId=1794754919717"
+        }
+      ],
+      "evidence": [
+        "/Applications/Adobe After Effects 2026/ty-plus/workspaces/history/snapshots.json"
+      ],
+      "durationMs": 135947
+    },
+    {
+      "uc": "UC-D10",
+      "title": "quick-actions palette runs script preset twice consecutively",
+      "status": "FAIL",
+      "detail": "quick-actions runs=2 marker=script preset executed",
+      "checks": [
+        {
+          "name": "quick-actions search focused + query typed",
+          "ok": true,
+          "detail": "focused:DG"
+        },
+        {
+          "name": "palette lists dg-script-marker run action",
+          "ok": false,
+          "detail": "null"
+        },
+        {
+          "name": "palette run clicked",
+          "ok": true,
+          "detail": "clicked"
+        },
+        {
+          "name": "run #1 produced AE-side marker",
+          "ok": true,
+          "detail": "script preset executed"
+        },
+        {
+          "name": "run #2 consecutive re-execution produced new marker",
+          "ok": true,
+          "detail": "m1=script preset executed m2=script preset executed"
+        }
+      ],
+      "evidence": [
+        "/Users/rebui/Library/Application Support/ty-plus/dg-presets/marker.txt"
+      ],
+      "durationMs": 72604
+    },
+    {
+      "uc": "UC-C12",
+      "title": "footage preset (.png) created via dialog → run imports into AE project",
+      "status": "PASS",
+      "detail": "footage preset=0a72b8ac-7bc3-4b53-9f64-49f89b4ee92e",
+      "checks": [
+        {
+          "name": "footage preset record persisted",
+          "ok": true,
+          "detail": "id=0a72b8ac-7bc3-4b53-9f64-49f89b4ee92e"
+        },
+        {
+          "name": "preset type inferred as footage",
+          "ok": true,
+          "detail": "type=footage"
+        },
+        {
+          "name": "catalog lists footage preset",
+          "ok": true,
+          "detail": "true"
+        },
+        {
+          "name": "catalog Run clicked",
+          "ok": true,
+          "detail": "clicked"
+        },
+        {
+          "name": "AE project gained footage item",
+          "ok": true,
+          "detail": "itemsBefore=1 hits=[\"e2e-footage.png|フッテージ\"]"
+        }
+      ],
+      "evidence": [
+        "/Users/rebui/Library/Application Support/ty-plus-e2e/e2e-footage.png"
+      ],
+      "durationMs": 8360
+    },
+    {
+      "uc": "UC-C14",
+      "title": "run preset with deleted asset fails without blocking modal",
+      "status": "BLOCKED",
+      "detail": "CDP timeout: Runtime.evaluate",
+      "checks": [],
+      "evidence": [],
+      "durationMs": 74091
+    }
+  ]
+}
