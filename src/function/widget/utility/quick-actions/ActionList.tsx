@@ -713,7 +713,13 @@ export function QuickActionsWidget({
 			if (!btn) return;
 			const presetId = btn.getAttribute("data-preset-id") ?? "";
 			if (!presetId.trim()) return;
-			void executeQuickActionPreset(window, presetId.trim());
+			// Execution failures already raise an error toast inside
+			// `executeWorkspacePresetForWindow`; this catch only keeps a
+			// rejected lookup/trace promise from surfacing as an unhandled
+			// rejection (Issue #126).
+			void executeQuickActionPreset(window, presetId.trim()).catch(
+				() => undefined,
+			);
 		};
 		portalEl.addEventListener("click", handler);
 		return () => {
