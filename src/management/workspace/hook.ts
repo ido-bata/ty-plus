@@ -76,6 +76,7 @@ import {
 	type WorkspacePresetHoverDetail,
 } from "@/management/preset/workspace/GridCatalogTile";
 import { ensureUiSettingsFile } from "@/management/setting/persistence/workspace-ui-settings-file";
+import { reconcileSettingsThemeOverrides } from "@/management/setting/theme-reconcile";
 import {
 	clearLayoutNJson,
 	clearWorkspacePanelStateFromSettingsJson,
@@ -1149,6 +1150,19 @@ export function useWorkspaceRuntime(root: Element | null): {
 							normalizeState({ ...cur, ...loadedState }),
 						),
 					);
+
+					// Re-project app.json ui.*/workspace.grid into theme.css on
+					// boot (Issue #112). Gated to panel-1: theme.css is shared
+					// across surfaces and the write queue is per-window, so a
+					// single surface must own the reconcile. Idempotent — a
+					// converged store writes nothing and broadcasts nothing.
+					if (panelSurfaceId === "panel-1") {
+						void reconcileSettingsThemeOverrides(window, panelSurfaceId).catch(
+							(error) => {
+								console.warn("[settings-theme] boot reconcile failed", error);
+							},
+						);
+					}
 
 					// Load background from file
 					void readBackgroundJson(window, wsIndex).then((bgJson) => {
