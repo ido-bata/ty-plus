@@ -1,12 +1,12 @@
 {
   "schema": "ty-plus.e2e-run/1",
   "suite": "smoke",
-  "capturedAt": "2026-11-15T05:17:05.408Z",
+  "capturedAt": "2026-11-15T05:52:54.206Z",
   "extensionDir": "/Users/rebui/Library/Application Support/Adobe/CEP/extensions/app.ty-plus.dev",
   "managedRoot": "/Applications/Adobe After Effects 2026/ty-plus",
   "totals": {
-    "PASS": 4,
-    "FAIL": 2,
+    "PASS": 6,
+    "FAIL": 0,
     "BLOCKED": 0,
     "SKIP": 0
   },
@@ -40,7 +40,7 @@
         {
           "name": "debug-console boots",
           "ok": true,
-          "detail": "readyState=complete body=30481 cs=true"
+          "detail": "readyState=complete body=50748 cs=true"
         },
         {
           "name": "debug-console loads from CEP extensions",
@@ -52,7 +52,7 @@
         "/Users/rebui/work/ty-plus/docs/verification/e2e-acceptance/results/macos-ae2026-dev/smoke-panel-1.png",
         "/Users/rebui/work/ty-plus/docs/verification/e2e-acceptance/results/macos-ae2026-dev/smoke-debug-console.png"
       ],
-      "durationMs": 1003
+      "durationMs": 473
     },
     {
       "uc": "UC-H01",
@@ -72,7 +72,7 @@
         }
       ],
       "evidence": [],
-      "durationMs": 125
+      "durationMs": 12
     },
     {
       "uc": "UC-A02",
@@ -98,16 +98,16 @@
         {
           "name": "styles/theme.css state consistent with overrides",
           "ok": true,
-          "detail": "85 bytes"
+          "detail": "169 bytes"
         }
       ],
       "evidence": [],
-      "durationMs": 32
+      "durationMs": 4
     },
     {
       "uc": "UC-B04",
       "title": "grid settings persisted value reaches panel CSS variables",
-      "status": "FAIL",
+      "status": "PASS",
       "detail": "grid token convergence",
       "checks": [
         {
@@ -117,17 +117,17 @@
         },
         {
           "name": "--ty-ws-cell reflects persisted grid",
-          "ok": false,
-          "detail": "computed=81px expected=80px"
+          "ok": true,
+          "detail": "computed=80px expected=80px"
         }
       ],
       "evidence": [],
-      "durationMs": 4
+      "durationMs": 1
     },
     {
       "uc": "UC-E02",
       "title": "ui accent color persisted in app.json reaches theme.css tokens",
-      "status": "FAIL",
+      "status": "PASS",
       "detail": "ui.* → theme pipeline",
       "checks": [
         {
@@ -137,12 +137,12 @@
         },
         {
           "name": "theme.css accent token matches ui.* projection",
-          "ok": false,
-          "detail": "no token"
+          "ok": true,
+          "detail": "--color-ty-accent: #12ab34"
         }
       ],
       "evidence": [],
-      "durationMs": 6
+      "durationMs": 0
     },
     {
       "uc": "UC-G01",
@@ -153,11 +153,11 @@
         {
           "name": "debug console DOM mounted",
           "ok": true,
-          "detail": "body=30481 msgs=31"
+          "detail": "body=50748 msgs=58"
         }
       ],
       "evidence": [],
-      "durationMs": 2734
+      "durationMs": 2514
     }
   ]
 }

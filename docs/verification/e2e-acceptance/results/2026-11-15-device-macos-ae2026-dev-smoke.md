@@ -16,11 +16,12 @@
 | UC-A03 | live surfaces boot with CEP bridge and extension origin | PASS |
 | UC-H01 | ExtendScript host responds and host bundle contract is callable | PASS（`app.version` 応答、`jsx/ty-plus-host.jsx` evalFile 後に `getHostContext` contract 確認） |
 | UC-A02 | persisted settings/layout/theme files exist and parse | PASS |
-| UC-B04 | grid settings persisted value reaches panel CSS variables | **FAIL** — app.json `workspace.grid.cellSize=80` に対し theme.css は `--ty-ws-cell: 81px`、computed も 81px |
-| UC-E02 | ui accent color persisted in app.json reaches theme.css tokens | **FAIL** — app.json `ui.accentColor="#12ab34"`（非デフォルト）だが theme.css に accent token なし、computed `--color-ty-accent` はデフォルト `#58a6ff` |
+| UC-B04 | grid settings persisted value reaches panel CSS variables | **FAIL→PASS** — 修正前: app.json `cellSize=80` vs theme.css `81px`。#112 修正後の再実行で PASS（`--ty-ws-cell: 80px` に収束） |
+| UC-E02 | ui accent color persisted in app.json reaches theme.css tokens | **FAIL→PASS** — 修正前: accent `#12ab34` が theme.css/computed に未反映。#112 修正後の再実行で PASS（`--color-ty-accent: #12ab34` が computed に反映） |
 | UC-G01 | debug console surface aggregates logs and evaluates JS | PASS（StatusBar トグルで debug-console surface が live 化） |
 
-合計: PASS=4 / FAIL=2 / BLOCKED=0 / SKIP=0
+初回実行: PASS=4 / FAIL=2 / BLOCKED=0 / SKIP=0
+#112 修正 + dev bundle 再ビルド + panel 再読込後の再実行: **PASS=6 / FAIL=0 / BLOCKED=0 / SKIP=0**
 
 ## FAIL の評価
 
@@ -39,4 +40,4 @@ Windows AE2027 の smoke（6/6 PASS）は managed root が共有かつ accent �
 ## 備考
 
 - この結果は smoke 範囲に限る。preset 実行など AE 側の最終効果を伴う UC は別 suite で実施する。
-- UC-B04/UC-E02 の FAIL は Issue #112 として起票済み。修正後に本 suite を再実行して PASS 化を確認する。
+- UC-B04/UC-E02 の FAIL は Issue #112 として起票し、`theme-reconcile.ts`（panel-1 boot 時の app.json→theme.css 再投影）で修正。dev bundle 実機検証で 6/6 PASS を確認済み（PR #114）。
