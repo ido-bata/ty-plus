@@ -63,7 +63,7 @@ export const readGridMetricsFromTheme = (
 	};
 };
 
-const gridMetricsToThemeOverrides = (
+export const gridMetricsToThemeOverrides = (
 	metrics: GridMetrics,
 ): Record<string, string> => ({
 	[GRID_THEME_TOKEN_KEYS.cellSize]: `${metrics.cellSize}px`,
