@@ -1,3 +1,6 @@
+// The unload guard must be the first import so no module below can
+// schedule timers before teardown tracking is installed (#71).
+import "@/management/ae/cep/install-unload-guard";
 import "@/management/panel/appearance-boot";
 
 import type { JSX, ReactNode } from "react";

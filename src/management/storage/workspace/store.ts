@@ -13,6 +13,7 @@ export {
 	readPresetsJsonText,
 	readSettings,
 	readThemeCss,
+	readThemeCssStrict,
 	saveControlPanelState,
 	writePresetsJson,
 	writeSettings,

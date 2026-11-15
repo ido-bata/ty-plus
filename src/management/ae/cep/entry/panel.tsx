@@ -1,3 +1,4 @@
+import "@/management/ae/cep/install-unload-guard";
 import "@/management/panel/appearance-boot";
 
 import type { JSX } from "react";

@@ -52,6 +52,19 @@ const errorStackStyle = css({
 	color: "text.muted",
 });
 
+const saveErrorBannerStyle = css({
+	margin: "2",
+	marginBottom: "0",
+	borderRadius: "1",
+	borderWidth: "1px",
+	borderStyle: "solid",
+	borderColor: "colorMix(in srgb, status.error 30%, transparent)",
+	backgroundColor: "colorMix(in srgb, status.error 10%, transparent)",
+	padding: "2",
+	fontSize: "text-xs",
+	color: "status.error",
+});
+
 const loadingContainerStyle = css({
 	display: "flex",
 	flex: "1",
@@ -204,6 +217,18 @@ const SETTINGS_SECTIONS: SettingsSidebarSectionDef[] = [
 	},
 ];
 
+function SettingsSaveErrorBanner(): JSX.Element | null {
+	const { saveError } = useSettings();
+	if (!saveError) {
+		return null;
+	}
+	return (
+		<div className={saveErrorBannerStyle} role="alert">
+			{saveError}
+		</div>
+	);
+}
+
 function SettingsContent(): JSX.Element {
 	const { isLoaded } = useSettings();
 
@@ -224,15 +249,29 @@ function SettingsContent(): JSX.Element {
 }
 
 function SettingsDialogBody(): JSX.Element {
-	const { resetSettings, reloadSettingsFromDisk } = useSettings();
+	const { resetSettings, reloadSettingsFromDisk, persistSettingsNow } =
+		useSettings();
 	const { close } = useDialogClose({});
 	const [saving, setSaving] = useState(false);
 
 	const handleSave = useCallback(async () => {
 		setSaving(true);
-		close();
-		setSaving(false);
-	}, [close]);
+		try {
+			// Settings commits persist asynchronously; persistSettingsNow
+			// waits for every write already queued behind the shared save
+			// queue and then re-persists the current snapshot, so the dialog
+			// only closes after persistence has actually settled. Writes
+			// triggered *after* this call (e.g. a later keystroke commit) are
+			// a new save cycle, not covered by this close. On failure the
+			// dialog stays open and the saveError banner explains why (#96).
+			const ok = await persistSettingsNow();
+			if (ok) {
+				close();
+			}
+		} finally {
+			setSaving(false);
+		}
+	}, [close, persistSettingsNow]);
 
 	const handleReset = useCallback(() => {
 		const message =
@@ -304,6 +343,7 @@ function SettingsDialogBody(): JSX.Element {
 				</DialogFooterActions>
 			}
 		>
+			<SettingsSaveErrorBanner />
 			<SettingsContent />
 		</DialogShell>
 	);

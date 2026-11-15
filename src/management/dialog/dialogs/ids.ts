@@ -17,6 +17,7 @@
  * @see preset-registry.ts::TOOL_DIALOG_REGISTRY  Eauthority for preset tool surfaces
  */
 
+import { tyPlusExtensionId } from "@/management/ae/cep/extension-id";
 import { allocatePresetAddToolExtensionId } from "@/management/preset/add-dialog-pool";
 import {
 	getPresetToolDialogEntry,
@@ -25,14 +26,14 @@ import {
 
 /** CEP Extension Id (matches the `Extension Id` in `CSXS/manifest.xml`) */
 export const TY_PLUS_DIALOG_EXTENSION = {
-	probe: "app.ty-plus.dialog-probe",
-	presets: "app.ty-plus.dialog-presets",
-	presetLibrary: "app.ty-plus.dialog-preset-library",
-	messages: "app.ty-plus.dialog-messages",
-	settings: "app.ty-plus.dialog-settings",
-	debugConsole: "app.ty-plus.debug-console",
-	widgetSelector: "app.ty-plus.dialog-widget-selector",
-	backgroundPanel: "app.ty-plus.dialog-background-panel",
+	probe: tyPlusExtensionId("dialog-probe"),
+	presets: tyPlusExtensionId("dialog-presets"),
+	presetLibrary: tyPlusExtensionId("dialog-preset-library"),
+	messages: tyPlusExtensionId("dialog-messages"),
+	settings: tyPlusExtensionId("dialog-settings"),
+	debugConsole: tyPlusExtensionId("debug-console"),
+	widgetSelector: tyPlusExtensionId("dialog-widget-selector"),
+	backgroundPanel: tyPlusExtensionId("dialog-background-panel"),
 } as const;
 
 export type ToolDialogKind =

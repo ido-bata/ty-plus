@@ -158,6 +158,9 @@ const makeDefines = (): Record<string, string> => {
 		__TY_PLUS_OPERATION_WORKER_EXPECTED_TRUST_MODE__: JSON.stringify(
 			cepConfig.OPERATION_WORKER_EXPECTED_TRUST_MODE,
 		),
+		// Matches `cepConfig.id`: dev bundles ship `app.ty-plus.dev.*` Extension
+		// Ids so they can coexist with a release install (#86).
+		__TY_PLUS_EXTENSION_BUNDLE_ID__: JSON.stringify(cepConfig.id),
 	};
 };
 
