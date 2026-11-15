@@ -101,7 +101,13 @@ describe("operation worker dev panel production wiring", () => {
 							script.includes("__schemaVersion") &&
 							!script.includes("$.evalFile")
 						) {
-							callback(JSON.stringify({ ok: true, present: false }));
+							callback(
+								JSON.stringify({
+									ok: true,
+									present: false,
+									contractComplete: false,
+								}),
+							);
 							return;
 						}
 						if (script.includes("$.evalFile")) {
@@ -111,6 +117,7 @@ describe("operation worker dev panel production wiring", () => {
 									loaded: true,
 									schemaVersion: HOST_BUNDLE_SCHEMA_VERSION,
 									bundleVersion: HOST_BUNDLE_VERSION,
+									contractComplete: true,
 								}),
 							);
 							return;
