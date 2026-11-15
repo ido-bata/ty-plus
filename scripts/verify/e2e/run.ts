@@ -25,6 +25,12 @@ import { widgetCases } from "./cases/widgets";
 import { workspaceCases } from "./cases/workspace";
 import { E2EContext } from "./ctx";
 import type { CaseResult, E2ECase } from "./report";
+import {
+	prepareSandbox,
+	recoverInterruptedSandbox,
+	type SandboxSession,
+	teardownSandbox,
+} from "./sandbox";
 
 const option = (name: string): string | undefined =>
 	process.argv
@@ -186,16 +192,39 @@ const main = async (): Promise<void> => {
 	// Resolve against the live AE when --managed-root is not explicit: with
 	// several AE versions installed, newest-dir detection can point at an
 	// install that is not hosting the panels.
-	const managedRoot =
+	const realManagedRoot =
 		option("managed-root") ?? (await detectManagedRootForLiveAe(ctx));
-	if (!managedRoot) {
+	if (!realManagedRoot) {
 		throw new Error("managed root not found — pass --managed-root");
 	}
-	ctx.options.managedRoot = managedRoot;
+
+	// Put the locator back if a previous run died mid-sandbox.
+	const recovery = await recoverInterruptedSandbox(ctx);
+	if (recovery) console.log(`sandbox: ${recovery}`);
+
+	// Sandbox mode (default): run the whole suite against a throwaway copy
+	// of the managed root so real user data is never the write target.
+	// --no-sandbox opts out for runs that must exercise the real root.
+	const sandboxEnabled = !process.argv.includes("--no-sandbox");
+	let sandbox: SandboxSession | null = null;
+	if (sandboxEnabled) {
+		sandbox = await prepareSandbox(ctx, realManagedRoot, outDir);
+		ctx.options.managedRoot = sandbox.sandboxRoot;
+	}
+	if (!sandbox) {
+		ctx.options.managedRoot = realManagedRoot;
+	}
+	const managedRoot = ctx.options.managedRoot;
+	if (!managedRoot) {
+		throw new Error("managed root not configured");
+	}
 
 	console.log(`suite=${suiteName} cases=${cases.length}`);
 	console.log(`extensionDir=${extensionDir}`);
 	console.log(`managedRoot=${managedRoot}`);
+	if (sandbox) {
+		console.log(`realManagedRoot=${sandbox.realRoot} (untouched)`);
+	}
 	console.log(`evidence=${outDir}`);
 
 	const results: CaseResult[] = [];
@@ -249,12 +278,43 @@ const main = async (): Promise<void> => {
 		}
 	}
 
+	// Leave sandbox mode before writing the summary so the integrity
+	// report is part of the evidence. Teardown never throws for drift —
+	// it repairs and reports — but a locator-restore failure must surface.
+	let integrity: unknown = null;
+	if (sandbox) {
+		try {
+			integrity = await teardownSandbox(ctx, sandbox, outDir);
+			if (
+				integrity &&
+				(integrity as { cleanAfterRepair?: boolean }).cleanAfterRepair === false
+			) {
+				console.warn(
+					"sandbox: real managed root still differs after repair — see sandbox-integrity.json",
+				);
+			}
+		} catch (error) {
+			integrity = {
+				error: error instanceof Error ? error.message : String(error),
+			};
+			console.error(`sandbox teardown failed: ${String(integrity)}`);
+		}
+	}
+
 	const summary = {
 		schema: "ty-plus.e2e-run/1",
 		suite: suiteName,
 		capturedAt: new Date().toISOString(),
 		extensionDir,
 		managedRoot,
+		realManagedRoot: sandbox?.realRoot ?? managedRoot,
+		sandbox: sandbox
+			? {
+					enabled: true,
+					sandboxRoot: sandbox.sandboxRoot,
+					integrity,
+				}
+			: { enabled: false },
 		totals: {
 			PASS: results.filter((r) => r.status === "PASS").length,
 			FAIL: results.filter((r) => r.status === "FAIL").length,
