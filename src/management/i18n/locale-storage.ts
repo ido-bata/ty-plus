@@ -19,20 +19,6 @@ export type CepShellLocale =
 
 export const DEFAULT_CEP_SHELL_LOCALE: CepShellLocale = "ja";
 
-/** For `document.documentElement.lang` (BCP 47) */
-const CEP_SHELL_LOCALE_HTML_LANG: Record<CepShellLocale, string> = {
-	en: "en",
-	de: "de",
-	fr: "fr",
-	ja: "ja",
-	zh: "zh-Hans",
-	es: "es",
-	ko: "ko",
-	pt: "pt-BR",
-	it: "it",
-	ru: "ru",
-};
-
 /**
  * Synchronous load - returns cached/default.
  * Call loadPreferenceFromFile and cache result if sync access is needed during early boot.
@@ -53,11 +39,4 @@ export const saveCepShellLocale = async (
 	} catch {
 		/* noop */
 	}
-};
-
-export const applyCepShellLocaleToDocument = (
-	doc: Document,
-	locale: CepShellLocale,
-): void => {
-	doc.documentElement.lang = CEP_SHELL_LOCALE_HTML_LANG[locale] ?? "en";
 };

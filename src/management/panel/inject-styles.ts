@@ -1,8 +1,4 @@
 import {
-	applyCepShellLocaleToDocument,
-	loadCepShellLocale,
-} from "@/management/i18n/locale-storage";
-import {
 	loadCepShellThemeFromCss,
 	sanitizeCepShellThemeOverrides,
 } from "@/management/panel/theme/storage";
@@ -183,14 +179,8 @@ export function installCepShellStyleRecoveryOnResize(
 	return cleanup;
 }
 
-function injectCepShellLocaleAndThemeStorageHooks(
-	target: Document = document,
-): void {
-	applyCepShellLocaleToDocument(target, loadCepShellLocale());
-}
-
 /**
- * For panel/Modeless boot. Appearance (vars + bundle) -> locale -> full re-apply after host mirror completes.
+ * For panel/Modeless boot. Appearance (vars + bundle) -> full re-apply after host mirror completes.
  */
 export function bootstrapCepShellThemeHydration(win: Window): void {
 	const doc = win.document;
@@ -199,14 +189,6 @@ export function bootstrapCepShellThemeHydration(win: Window): void {
 	} catch (error) {
 		console.warn(
 			"[ty-plus] injectCepShellAppearanceOnly (initial) failed:",
-			error,
-		);
-	}
-	try {
-		injectCepShellLocaleAndThemeStorageHooks(doc);
-	} catch (error) {
-		console.warn(
-			"[ty-plus] injectCepShellLocaleAndThemeStorageHooks failed:",
 			error,
 		);
 	}
@@ -226,13 +208,11 @@ export function bootstrapCepShellThemeHydration(win: Window): void {
 
 /**
  * 1) Theme variables (initial + loadThemeOverrides + themeOverrides)
- * 2) locale / storage sync
- * 3) Tailwind / component CSS bundle
+ * 2) Tailwind / component CSS bundle
  */
 export const injectCepShellStyles = (
 	target: Document = document,
 	options: InjectCepShellStylesOptions = {},
 ): void => {
 	injectCepShellAppearanceOnly(target, options);
-	injectCepShellLocaleAndThemeStorageHooks(target);
 };
