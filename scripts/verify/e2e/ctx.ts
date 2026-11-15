@@ -6,15 +6,15 @@
  * a case needs to prove "the feature actually did the thing" is reachable
  * from here: DOM state, persisted files, and AE-side state via evalScript.
  */
-import { readFile, writeFile, mkdir, cp, rm } from "node:fs/promises";
+import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 
-import { connect, type Cdp } from "./cdp";
+import { type Cdp, connect } from "./cdp";
 import {
 	findDebugFile,
+	type LiveSurface,
 	listLiveSurfaces,
 	parseDebugFile,
-	type LiveSurface,
 	type SurfaceRef,
 } from "./surfaces";
 
@@ -58,17 +58,14 @@ export class E2EContext {
 		const live = await this.liveSurfaces();
 		const found = live.find(
 			(s) =>
-				(match.surfaceId === undefined ||
-					s.surfaceId === match.surfaceId) &&
+				(match.surfaceId === undefined || s.surfaceId === match.surfaceId) &&
 				(match.extensionId === undefined ||
 					s.extensionId === match.extensionId) &&
 				(match.port === undefined || s.port === match.port) &&
 				(match.kind === undefined || s.kind === match.kind),
 		);
 		if (!found) {
-			const known = live
-				.map((s) => `${s.surfaceId}@${s.port}`)
-				.join(", ");
+			const known = live.map((s) => `${s.surfaceId}@${s.port}`).join(", ");
 			throw new Error(
 				`surface not live: ${JSON.stringify(match)} (live: ${known || "none"})`,
 			);
@@ -77,7 +74,14 @@ export class E2EContext {
 	}
 
 	async cdp(surface: LiveSurface): Promise<Cdp> {
-		const key = surface.extensionId;
+		// Cache per CDP target, not per extension: closing a modeless surface
+		// (Page.close / window.close) destroys the target, and reopening spawns
+		// a fresh one with a new webSocketDebuggerUrl. Keying by extensionId
+		// would hand back a dead socket after any close → reopen cycle.
+		const key =
+			surface.target.id ??
+			surface.target.webSocketDebuggerUrl ??
+			surface.extensionId;
 		const cached = this.connections.get(key);
 		if (cached) return cached;
 		const wsUrl = surface.target.webSocketDebuggerUrl;
@@ -138,9 +142,7 @@ export class E2EContext {
 		}
 	}
 
-	async readManagedJson<T = unknown>(
-		...segments: string[]
-	): Promise<T | null> {
+	async readManagedJson<T = unknown>(...segments: string[]): Promise<T | null> {
 		const text = await this.readManagedText(...segments);
 		if (text === null) return null;
 		try {
