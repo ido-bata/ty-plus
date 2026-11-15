@@ -8,7 +8,7 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 
-import { listTargets, type CdpTarget } from "./cdp";
+import { type CdpTarget, listTargets } from "./cdp";
 
 export type SurfaceKind = "panel" | "dialog" | "debug-console" | "unknown";
 
@@ -57,9 +57,7 @@ export const parseDebugFile = async (
  * Returns the `.debug` file for an installed bundle directory. Dev bundles
  * ship `dist/<flavor>/.debug`; the CEP install dir may be a symlink to it.
  */
-export const findDebugFile = async (
-	extensionDir: string,
-): Promise<string> => {
+export const findDebugFile = async (extensionDir: string): Promise<string> => {
 	for (const candidate of [".debug", ".debugPanel"]) {
 		const p = path.join(extensionDir, candidate);
 		try {

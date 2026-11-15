@@ -2,8 +2,9 @@
  * Smoke suite: proves every reachable surface is alive and the persisted
  * state + host bridge are intact. Maps to UC-A02/A03/A04, UC-G01, UC-H01.
  */
-import { check, type E2ECase } from "../report";
+
 import type { E2EContext } from "../ctx";
+import { check, type E2ECase } from "../report";
 import { listLiveSurfaces } from "../surfaces";
 
 const bootExpression = `(() => {
@@ -121,10 +122,9 @@ export const smokeCases: E2ECase[] = [
 		title: "persisted settings/layout/theme files exist and parse",
 		async run(ctx: E2EContext) {
 			const checks = [];
-			const appJson = await ctx.readManagedJson<{ core?: { paths?: { supportRoot?: string } } }>(
-				"settings",
-				"app.json",
-			);
+			const appJson = await ctx.readManagedJson<{
+				core?: { paths?: { supportRoot?: string } };
+			}>("settings", "app.json");
 			checks.push(
 				check(
 					"settings/app.json parses",
@@ -149,14 +149,16 @@ export const smokeCases: E2ECase[] = [
 			// theme.css is written lazily: it only exists once a non-default
 			// theme/ui override has been persisted. Absence is valid while
 			// settings/ui.* still equals the shipped defaults.
-			const appSettings = (await ctx.readManagedJson<{
-				ui?: {
-					accentColor?: string;
-					textColor?: string;
-					widget?: { backgroundColor?: string; opacity?: number };
-					panel?: { backgroundColor?: string; opacity?: number };
-				};
-			}>("settings", "app.json"))?.ui;
+			const appSettings = (
+				await ctx.readManagedJson<{
+					ui?: {
+						accentColor?: string;
+						textColor?: string;
+						widget?: { backgroundColor?: string; opacity?: number };
+						panel?: { backgroundColor?: string; opacity?: number };
+					};
+				}>("settings", "app.json")
+			)?.ui;
 			const defaults = {
 				accentColor: "#5886ff",
 				textColor: "#f0f0f0",
@@ -167,18 +169,18 @@ export const smokeCases: E2ECase[] = [
 			};
 			const hasOverrides = Boolean(
 				appSettings &&
-					(appSettings.accentColor !== undefined &&
+					((appSettings.accentColor !== undefined &&
 						appSettings.accentColor !== defaults.accentColor) ||
-					(appSettings.textColor !== undefined &&
-						appSettings.textColor !== defaults.textColor) ||
-					(appSettings.widget?.backgroundColor !== undefined &&
-						appSettings.widget.backgroundColor !== defaults.widgetBg) ||
-					(appSettings.widget?.opacity !== undefined &&
-						appSettings.widget.opacity !== defaults.widgetOpacity) ||
-					(appSettings.panel?.backgroundColor !== undefined &&
-						appSettings.panel.backgroundColor !== defaults.panelBg) ||
-					(appSettings.panel?.opacity !== undefined &&
-						appSettings.panel.opacity !== defaults.panelOpacity),
+						(appSettings.textColor !== undefined &&
+							appSettings.textColor !== defaults.textColor) ||
+						(appSettings.widget?.backgroundColor !== undefined &&
+							appSettings.widget.backgroundColor !== defaults.widgetBg) ||
+						(appSettings.widget?.opacity !== undefined &&
+							appSettings.widget.opacity !== defaults.widgetOpacity) ||
+						(appSettings.panel?.backgroundColor !== undefined &&
+							appSettings.panel.backgroundColor !== defaults.panelBg) ||
+						(appSettings.panel?.opacity !== undefined &&
+							appSettings.panel.opacity !== defaults.panelOpacity)),
 			);
 			checks.push(
 				check(
@@ -224,8 +226,7 @@ export const smokeCases: E2ECase[] = [
 			checks.push(
 				check(
 					"--ty-ws-cell reflects persisted grid",
-					typeof cellSize === "number" &&
-						computed.cell === `${cellSize}px`,
+					typeof cellSize === "number" && computed.cell === `${cellSize}px`,
 					`computed=${computed.cell} expected=${cellSize}px`,
 				),
 			);
@@ -261,9 +262,8 @@ export const smokeCases: E2ECase[] = [
 					"theme.css accent token matches ui.* projection",
 					expectsOverride ? hasAccentToken : true,
 					accent && themeCss
-						? (themeCss.match(/--color-ty-accent:[^;]+/)?.[0] ??
-							"no token") +
-							(expectsOverride ? "" : " (default — no override expected)")
+						? (themeCss.match(/--color-ty-accent:[^;]+/)?.[0] ?? "no token") +
+								(expectsOverride ? "" : " (default — no override expected)")
 						: "theme.css missing",
 				),
 			);

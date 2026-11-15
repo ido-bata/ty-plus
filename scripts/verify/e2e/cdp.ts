@@ -126,7 +126,10 @@ export const connect = async (
 			evalTimeoutMs,
 		)) as {
 			result?: { value?: unknown };
-			exceptionDetails?: { text?: string; exception?: { description?: string } };
+			exceptionDetails?: {
+				text?: string;
+				exception?: { description?: string };
+			};
 		};
 		if (result.exceptionDetails) {
 			throw new Error(

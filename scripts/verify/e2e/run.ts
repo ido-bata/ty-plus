@@ -14,10 +14,15 @@
  */
 import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
-
+import { catalogCases } from "./cases/catalog";
+import { debugCases } from "./cases/debug";
+import { hostCases } from "./cases/host";
+import { resilienceCases } from "./cases/resilience";
+import { settingsCases } from "./cases/settings";
+import { smokeCases } from "./cases/smoke";
+import { widgetCases } from "./cases/widgets";
 import { E2EContext } from "./ctx";
 import type { CaseResult, E2ECase } from "./report";
-import { smokeCases } from "./cases/smoke";
 
 const option = (name: string): string | undefined =>
 	process.argv
@@ -29,6 +34,12 @@ const option = (name: string): string | undefined =>
 
 const SUITES: Record<string, E2ECase[]> = {
 	smoke: smokeCases,
+	resilience: resilienceCases,
+	settings: settingsCases,
+	widgets: widgetCases,
+	catalog: catalogCases,
+	debug: debugCases,
+	host: hostCases,
 };
 
 /** Locate the managed root via the newest AE install's ty-plus-init.json. */
@@ -54,7 +65,12 @@ const detectManagedRoot = async (): Promise<string | undefined> => {
 		for (const dir of aeDirs) {
 			for (const candidate of [
 				path.join(base, dir, "ty-plus-init.json"),
-				path.join(base, dir, "Adobe After Effects " + dir.split(" ").pop(), "ty-plus-init.json"),
+				path.join(
+					base,
+					dir,
+					"Adobe After Effects " + dir.split(" ").pop(),
+					"ty-plus-init.json",
+				),
 			]) {
 				try {
 					const locator = JSON.parse(await readFile(candidate, "utf8")) as {
@@ -84,15 +100,12 @@ const main = async (): Promise<void> => {
 	if (!extensionDir) {
 		throw new Error("--extension-dir is required");
 	}
-	const managedRoot =
-		option("managed-root") ?? (await detectManagedRoot());
+	const managedRoot = option("managed-root") ?? (await detectManagedRoot());
 	if (!managedRoot) {
 		throw new Error("managed root not found — pass --managed-root");
 	}
 	const stamp = new Date().toISOString().replace(/[:.]/g, "-");
-	const outDir = path.resolve(
-		option("out") ?? `.tmp/e2e/${stamp}`,
-	);
+	const outDir = path.resolve(option("out") ?? `.tmp/e2e/${stamp}`);
 	await mkdir(outDir, { recursive: true });
 
 	const ctx = new E2EContext({
