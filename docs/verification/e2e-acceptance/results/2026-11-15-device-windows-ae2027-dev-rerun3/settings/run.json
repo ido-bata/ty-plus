@@ -1,0 +1,45 @@
+{
+  "schema": "ty-plus.e2e-run/1",
+  "suite": "settings",
+  "capturedAt": "2026-11-15T12:59:13.626Z",
+  "extensionDir": "D:/ty-plus/dist/cep-dev",
+  "managedRoot": "D:/4_apps/adobe/Adobe After Effects 2027/Support Files/ty-plus",
+  "totals": {
+    "PASS": 1,
+    "FAIL": 0,
+    "BLOCKED": 0,
+    "SKIP": 0
+  },
+  "results": [
+    {
+      "uc": "UC-E01",
+      "title": "ui.language in app.json drives panel locale across reload",
+      "status": "PASS",
+      "detail": "locale en → ja → restored",
+      "checks": [
+        {
+          "name": "settings/app.json ui.language set to ja",
+          "ok": true,
+          "detail": "language=ja"
+        },
+        {
+          "name": "document.documentElement.lang reflects locale",
+          "ok": true,
+          "detail": "lang=ja expected=ja"
+        },
+        {
+          "name": "settings dialog renders ja strings",
+          "ok": true,
+          "detail": "tablist aria-label=\"設定セクション\" expected=\"設定セクション\""
+        },
+        {
+          "name": "settings/app.json restored after case",
+          "ok": true,
+          "detail": "D:\\4_apps\\adobe\\Adobe After Effects 2027\\Support Files\\ty-plus\\settings\\app.json 1132 bytes"
+        }
+      ],
+      "evidence": [],
+      "durationMs": 12131
+    }
+  ]
+}
