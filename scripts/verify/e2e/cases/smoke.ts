@@ -4,6 +4,7 @@
  */
 import { check, type E2ECase } from "../report";
 import type { E2EContext } from "../ctx";
+import { listLiveSurfaces } from "../surfaces";
 
 const bootExpression = `(() => {
 	const root = document.querySelector("#root, [data-ty-shell], body");
@@ -139,11 +140,49 @@ export const smokeCases: E2ECase[] = [
 				);
 			}
 			const themeCss = await ctx.readManagedText("styles", "theme.css");
+			// theme.css is written lazily: it only exists once a non-default
+			// theme/ui override has been persisted. Absence is valid while
+			// settings/ui.* still equals the shipped defaults.
+			const appSettings = (await ctx.readManagedJson<{
+				ui?: {
+					accentColor?: string;
+					textColor?: string;
+					widget?: { backgroundColor?: string; opacity?: number };
+					panel?: { backgroundColor?: string; opacity?: number };
+				};
+			}>("settings", "app.json"))?.ui;
+			const defaults = {
+				accentColor: "#5886ff",
+				textColor: "#f0f0f0",
+				widgetBg: "#1a1a1a",
+				widgetOpacity: 80,
+				panelBg: "#0f0f0f",
+				panelOpacity: 95,
+			};
+			const hasOverrides = Boolean(
+				appSettings &&
+					(appSettings.accentColor !== undefined &&
+						appSettings.accentColor !== defaults.accentColor) ||
+					(appSettings.textColor !== undefined &&
+						appSettings.textColor !== defaults.textColor) ||
+					(appSettings.widget?.backgroundColor !== undefined &&
+						appSettings.widget.backgroundColor !== defaults.widgetBg) ||
+					(appSettings.widget?.opacity !== undefined &&
+						appSettings.widget.opacity !== defaults.widgetOpacity) ||
+					(appSettings.panel?.backgroundColor !== undefined &&
+						appSettings.panel.backgroundColor !== defaults.panelBg) ||
+					(appSettings.panel?.opacity !== undefined &&
+						appSettings.panel.opacity !== defaults.panelOpacity),
+			);
 			checks.push(
 				check(
-					"styles/theme.css readable",
-					themeCss !== null,
-					themeCss === null ? "missing" : `${themeCss.length} bytes`,
+					"styles/theme.css state consistent with overrides",
+					themeCss !== null || !hasOverrides,
+					themeCss !== null
+						? `${themeCss.length} bytes`
+						: hasOverrides
+							? "missing despite non-default ui.* settings"
+							: "absent (defaults only — written on first override)",
 				),
 			);
 			return { detail: "managed root files", checks };
@@ -203,6 +242,9 @@ export const smokeCases: E2ECase[] = [
 					`accent=${accent}`,
 				),
 			);
+			// ui.* values equal to DEFAULT_SETTINGS.ui emit no override, so
+			// theme.css only carries the accent token when it differs.
+			const expectsOverride = accent !== "#5886ff";
 			const themeCss = await ctx.readManagedText("styles", "theme.css");
 			const hasAccentToken =
 				typeof accent === "string" &&
@@ -210,11 +252,13 @@ export const smokeCases: E2ECase[] = [
 				themeCss.includes(`--color-ty-accent: ${accent}`);
 			checks.push(
 				check(
-					"theme.css carries accent override",
-					hasAccentToken,
+					"theme.css accent token matches ui.* projection",
+					expectsOverride ? hasAccentToken : true,
 					accent && themeCss
-						? themeCss.match(/--color-ty-accent:[^;]+/)?.[0] ?? "no token"
-						: "missing",
+						? (themeCss.match(/--color-ty-accent:[^;]+/)?.[0] ??
+							"no token") +
+							(expectsOverride ? "" : " (default — no override expected)")
+						: "theme.css missing",
 				),
 			);
 			return { detail: "ui.* → theme pipeline", checks };
@@ -225,16 +269,29 @@ export const smokeCases: E2ECase[] = [
 		title: "debug console surface aggregates logs and evaluates JS",
 		async run(ctx: E2EContext) {
 			const checks = [];
-			const live = await ctx.liveSurfaces();
+			// The console is a Modeless surface opened from the StatusBar
+			// toggle (or Ctrl+`). Click it, then re-resolve live targets.
+			const panel = await ctx.requireSurface({ surfaceId: "panel-1" });
+			await ctx.evalJs(
+				panel,
+				`(() => {
+					const btn = document.querySelector('[data-ws-action="toggle-console"]');
+					if (!btn) return "no-toggle";
+					btn.click();
+					return "clicked";
+				})()`,
+			);
+			await new Promise((r) => setTimeout(r, 2500));
+			const live = await listLiveSurfaces(await ctx.surfaces());
 			const consoleSurface = live.find(
 				(s) => s.kind === "debug-console" || s.surfaceId.includes("debug"),
 			);
 			if (!consoleSurface) {
 				checks.push(
-					check("debug console surface open", false, "not live"),
+					check("debug console surface open", false, "not live after toggle"),
 				);
 				return {
-					detail: "debug-console surface not open — open it from StatusBar",
+					detail: "debug-console surface did not open — open it from StatusBar",
 					checks,
 				};
 			}

@@ -45,7 +45,9 @@ export const parseDebugFile = async (
 				: extensionId.includes("dialog") || extensionId.endsWith(".dialog")
 					? "dialog"
 					: "unknown";
-		const surfaceId = extensionId.replace(/^app\.ty-plus(\.dev)?\./, "");
+		const surfaceId = extensionId
+			.replace(/^app\.ty-plus(\.dev)?\./, "")
+			.replace(/^panel(\d+)$/, "panel-$1");
 		surfaces.push({ extensionId, port, surfaceId, kind });
 	}
 	return surfaces;
