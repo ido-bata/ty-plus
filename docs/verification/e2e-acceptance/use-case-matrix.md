@@ -19,10 +19,10 @@
 | ID | ユースケース | 主な確認対象 | 自動化 | OS | 状態 | 証跡/Issue |
 | --- | --- | --- | --- | --- | --- | --- |
 | UC-B01 | preset を tile として配置（toolbar/catalog/drag）| workspace-N.json の gridCells に追加、tile DOM | auto | both | mac:自動PASS（作成dialog経路のみ。catalog/drag は未カバー） / win:未実施 | results/2026-11-15-device-macos-ae2026-dev-journey/run.json |
-| UC-B02 | widget を Add Widget dialog から追加 | widgets.json record、tile 描画、layout reload | auto | both | 未実施 | |
+| UC-B02 | widget を Add Widget dialog から追加 | widgets.json record、tile 描画、layout reload | auto | both | mac:自動PASS(sandbox) / win:未実施 | results/2026-11-16-device-macos-ae2026-dev-workspace-sandbox/run.json |
 | UC-B03 | tile 移動・リサイズ・削除・複製 | workspace-N.json の座標/サイズ更新、DOM 反映 | semi | both | 未実施 | |
 | UC-B04 | grid 設定（cell/gap/radius）変更 → live 反映 → reload 後維持 | theme.css `--ty-ws-*`、app.json `workspace.grid`、computed style、実セルサイズ | auto | both | win:自動PASS / mac:自動PASS(#112修正済) | #95 / results/2026-11-15-device-windows-ae2027-dev-smoke-run.json / results/macos-ae2026-dev/run.json / results/2026-11-15-device-windows-ae2027-dev-extended/smoke/run.json |
-| UC-B05 | レイアウトスナップショット保存→変更→復元→削除 | snapshots.json、全パネル layout 復元 | auto | both | 未実施 | |
+| UC-B05 | レイアウトスナップショット保存→変更→復元→削除 | snapshots.json、全パネル layout 復元 | auto | both | mac:自動PASS(sandbox, 単一run完走) / win:未実施 | results/2026-11-16-device-macos-ae2026-dev-workspace-sandbox/run.json |
 | UC-B06 | Undo/Redo | 操作の巻き戻し/やり直しが layout に反映 | semi | both | 未実施 | |
 | UC-B07 | 複数パネル間の preset 配置移動 | workspacePanels roster、対象 panel の tile | semi | both | 未実施 | |
 | UC-B08 | 背景エディタで color/pattern/image レイヤー編集 | background-N.json、panel 背景描画 | semi | both | 未実施 | |
@@ -45,9 +45,9 @@
 | UC-C09 | preset 複製・削除 | presets.json、workspace/group/search から消える | semi | both | 未実施 | |
 | UC-C10 | `.ffx` preset を選択レイヤーへ実行 | AE Effect Controls/レイヤーに効果適用 | semi | both | mac:自動PASS / win:未実施 | #10 D-06 / results/2026-11-15-device-macos-ae2026-dev-journey/run.json |
 | UC-C11 | `.jsx` script preset 実行 | AE 側の実行結果（例: レイヤー/テキスト変化）| semi | both | mac:自動PASS / win:未実施 | #10 D-05 / results/2026-11-15-device-macos-ae2026-dev-journey/run.json |
-| UC-C12 | footage preset 実行（PNG sequence 含む）| AE project への import | semi | both | 未実施 | |
+| UC-C12 | footage preset 実行（PNG sequence 含む）| AE project への import | semi | both | mac:BLOCKED(dialog Create button hydration、poll修正済・再実行待ち) / win:未実施 | results/2026-11-16-device-macos-ae2026-dev-workspace-sandbox/run.json |
 | UC-C13 | `.aex` plugin preset 実行 | matchName で effect 適用 | manual | both | 未実施 | |
-| UC-C14 | 実行失敗時の構造化エラー（alert 非モーダル）| モーダルでなく通知/エラー表示、AE 非ブロック | semi | both | 未実施 | #72 |
+| UC-C14 | 実行失敗時の構造化エラー（alert 非モーダル）| モーダルでなく通知/エラー表示、AE 非ブロック | semi | both | mac:BLOCKED(UC-C12と同前段で停止。toast発生/観測分離は実装済・未検証) / win:未実施 | #72 / results/2026-11-16-device-macos-ae2026-dev-workspace-sandbox/run.json |
 | UC-C15 | preset asset 欠落時の検出 | verifyPresetAsset の typed failure、起動時 stale 検査 | auto | both | mac:自動PASS / win:自動PASS | results/2026-11-15-device-macos-ae2026-dev-extended.md / results/2026-11-15-device-windows-ae2027-dev-extended/catalog/run.json |
 | UC-C16 | 破損 presets.json で起動・編集 | 既存 record を消さない | auto | both | mac:自動PASS / win:自動PASS | results/2026-11-15-device-macos-ae2026-dev-extended.md / results/2026-11-15-device-windows-ae2027-dev-extended/resilience/run.json |
 | UC-C17 | preset catalog browser（list/icon・検索・group 展開・hover actions）| DOM 状態、実行/編集/削除の動作 | semi | both | 未実施 | |
@@ -65,7 +65,7 @@
 | UC-D07 | info widget：comp/project 情報表示 | DOM 内容が AE 状態と一致 | auto | both | 未実施 | |
 | UC-D08 | font-viewer：フォント一覧・選択テキストへ適用 | font 一覧取得、AE text font 変化 | semi | both | 未実施 | |
 | UC-D09 | directory-browser：遷移・filter・選択・preset 実行 | DOM、選択ファイルの preset 実行 | semi | both | 未実施 | |
-| UC-D10 | menu/quick-actions：クイック実行 | preset 実行結果 | semi | both | 未実施 | |
+| UC-D10 | menu/quick-actions：クイック実行 | preset 実行結果 | semi | both | mac:自動PASS(sandbox, 連続2回でAE marker確認) / win:未実施 | #125修正済 / results/2026-11-16-device-macos-ae2026-dev-workspace-sandbox/run.json |
 | UC-D11 | widget state 永続化（widgets/state/*.json）| reload 後の widget 状態復元 | auto | both | mac:自動PASS / win:自動PASS | results/2026-11-15-device-macos-ae2026-dev-extended.md / results/2026-11-15-device-windows-ae2027-dev-rerun/widgets/run.json |
 | UC-D12 | 破損 widgets.json で起動・編集 | 既存 record 非破壊 | auto | both | mac:自動PASS / win:未実施 | results/2026-11-15-device-macos-ae2026-dev-extended.md（UC-I02 と同一ファイル・同一契約） |
 

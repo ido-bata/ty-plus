@@ -40,6 +40,21 @@ bun run scripts/verify/e2e/run.ts \
 
 実行結果は `results/` 配下へ JSON 証跡とともに記録し、`use-case-matrix.md` の状態列を更新する。
 
+### データ隔離（sandbox モード・既定）
+
+ハーネスは既定で **sandbox モード** で動作し、実ユーザーデータを一切変更しない。
+
+1. live AE が解決する実 managed root（`ty-plus-init.json` の `supportRoot` 配下）を検出し、全量を OS temp 配下へコピーする。
+2. sandbox 側の `settings/app.json` / `paths.json` の絶対パスを書き換え、catalog fixture（`dg-*` preset 等）を sandbox 内に再 seed する。
+3. `ty-plus-init.json` の `supportRoot` を sandbox へ向け、全 surface を reload する。panel-1 の accent sentinel（`#e2b701`）で sandbox 解決を probe する。probe 失敗・パネル未検出など locator 書換後のあらゆる失敗では locator を即座に復元する。
+4. suite は sandbox root に対して実行される（`run.json` の `managedRoot` が sandbox、`realManagedRoot` が実 root）。
+5. 終了時（成功・失敗・中断を問わず `finally`）に locator を復元し、reload 後に実 root を backup manifest と byte 比較する。差分は repair し、再検証して `sandbox-integrity.json` に記録する。
+6. 中断・クラッシュで locator が sandbox を指したまま残った場合、次回実行時に state file（`ty-plus-e2e-sandbox-state.json`）から `recoverInterruptedSandbox` が復旧する。
+
+例外的に実 root へ直接書き込む検証が必要な場合のみ `--no-sandbox` を明示する（その場合も各ケースの `withManagedRootSnapshot` による snapshot/restore は有効）。
+
+sandbox が有効な実行では、`run.json` の `sandbox.integrity` に `driftBeforeRepair` / `filesRepaired` / `cleanAfterRepair` が記録される。`cleanAfterRepair: true` でない場合は実ユーザーデータへの影響が残っているため、結果を PASS 扱いせず原因を調査する。
+
 ## 更新ルール
 
 - 機能追加・仕様変更があったら `feature-inventory.md` と `use-case-matrix.md` を同じ変更で更新する。
