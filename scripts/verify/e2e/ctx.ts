@@ -6,7 +6,7 @@
  * a case needs to prove "the feature actually did the thing" is reachable
  * from here: DOM state, persisted files, and AE-side state via evalScript.
  */
-import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { cp, mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 import { type Cdp, connect } from "./cdp";
@@ -17,6 +17,9 @@ import {
 	parseDebugFile,
 	type SurfaceRef,
 } from "./surfaces";
+
+const sleep = (ms: number): Promise<void> =>
+	new Promise((resolve) => setTimeout(resolve, ms));
 
 export type E2EOptions = {
 	extensionDir: string;
@@ -166,16 +169,74 @@ export class E2EContext {
 		return file;
 	}
 
-	/** Snapshot the managed root so destructive cases can restore it. */
+	/**
+	 * Guard against destructive operations on a path that is not a ty-plus
+	 * managed root. A mistyped `--managed-root` once caused the runner to
+	 * `rm -rf` the shared Adobe settings directory on Windows; require the
+	 * basename `ty-plus` or at least one known managed subdirectory before
+	 * any `rm`/`cp` that can overwrite user data.
+	 */
+	async assertManagedRootSafe(): Promise<void> {
+		const root = this.managedRoot();
+		if (path.basename(root) === "ty-plus") return;
+		const markers = [
+			"settings",
+			"presets",
+			"workspaces",
+			"styles",
+			"widgets",
+			"cache",
+		];
+		let entries: string[] = [];
+		try {
+			entries = await readdir(root);
+		} catch {
+			entries = [];
+		}
+		if (markers.some((m) => entries.includes(m))) return;
+		throw new Error(
+			`refusing destructive managed-root operation on ${root}: ` +
+				"basename is not 'ty-plus' and no managed subdirectory found",
+		);
+	}
+
+	/**
+	 * Snapshot the managed root so destructive cases can restore it.
+	 */
 	async snapshotManagedRoot(snapshotDir: string): Promise<void> {
 		await rm(snapshotDir, { recursive: true, force: true });
 		await mkdir(snapshotDir, { recursive: true });
 		await cp(this.managedRoot(), snapshotDir, { recursive: true });
 	}
 
+	/**
+	 * Restore the managed root from a snapshot. Live panels keep watchers
+	 * and writers open on files under the root, so on Windows `rm`/`cp`
+	 * can hit transient EPERM/EACCES/EBUSY locks. Retry with backoff; the
+	 * operation is idempotent (`force: true` on both sides).
+	 */
 	async restoreManagedRoot(snapshotDir: string): Promise<void> {
-		await rm(this.managedRoot(), { recursive: true, force: true });
-		await cp(snapshotDir, this.managedRoot(), { recursive: true });
+		await this.assertManagedRootSafe();
+		const root = this.managedRoot();
+		const transient = new Set(["EPERM", "EACCES", "EBUSY", "ENOTEMPTY"]);
+		const maxAttempts = 8;
+		let lastError: unknown;
+		for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+			try {
+				// Give watchers a beat to release handles before the swap.
+				if (attempt > 1) await sleep(400 * attempt);
+				await rm(root, { recursive: true, force: true });
+				await cp(snapshotDir, root, { recursive: true });
+				return;
+			} catch (error) {
+				lastError = error;
+				const code = (error as NodeJS.ErrnoException)?.code;
+				if (!code || !transient.has(code) || attempt === maxAttempts) {
+					throw error;
+				}
+			}
+		}
+		throw lastError;
 	}
 
 	async close(): Promise<void> {
