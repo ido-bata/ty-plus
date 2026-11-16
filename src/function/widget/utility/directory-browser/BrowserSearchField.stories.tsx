@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { createRef, type ReactNode, type RefObject } from "react";
+import { expect } from "storybook/test";
 import { BrowserSearchField } from "./BrowserSearchField";
 
 type Args = {
@@ -63,4 +64,30 @@ export const WithTrailing: Story = {
 
 export const CustomPlaceholder: Story = {
 	args: { placeholder: "Filter by name…" },
+};
+
+// Issue #146: focus-state capture. A real-pointer click moves DOM focus
+// into the input; the wrapper's `:focus-within` ring is the post-play
+// state the screenshot pipeline captures.
+export const Focused: Story = {
+	play: async ({ canvasElement }) => {
+		const input = canvasElement.querySelector<HTMLInputElement>(
+			"[data-directory-browser-search] input",
+		);
+		if (!input) throw new Error("search input not found");
+		const wrapper = input.parentElement;
+		if (!wrapper) throw new Error("search field wrapper not found");
+		const restingBorderColor = getComputedStyle(wrapper).borderTopColor;
+
+		const { userEvent } = await import("vitest/browser");
+		await userEvent.click(input);
+		await expect(document.activeElement).toBe(input);
+		await expect(wrapper.matches(":focus-within")).toBe(true);
+		// The wrapper transitions border-color/box-shadow — wait for the
+		// transition to settle before comparing computed styles.
+		await new Promise((resolve) => setTimeout(resolve, 300));
+		await expect(getComputedStyle(wrapper).borderTopColor).not.toBe(
+			restingBorderColor,
+		);
+	},
 };
