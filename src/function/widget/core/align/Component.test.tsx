@@ -26,7 +26,7 @@ const baseProps = {
 } as unknown as WidgetRenderProps;
 
 function renderAlign(
-	host = vi.fn(async (method: string) => ({
+	host = vi.fn(async (method: string, _args?: unknown) => ({
 		value: method === "getSelectionCount" ? { count: 3 } : undefined,
 	})),
 ) {
