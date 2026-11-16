@@ -588,9 +588,18 @@ export function DirectoryBrowserWidget({
 		useState<string>("");
 	// Single-click focus for directory rows (Issue #142). Kept separate from
 	// `fileBrowserSelectedPath` so file selection and directory focus are
-	// independent single-select cues; selecting one clears the other.
-	const [fileBrowserFocusedDirPath, setFileBrowserFocusedDirPath] =
-		useState<string>("");
+	// independent single-select cues; selecting one clears the other. The
+	// focus is recorded together with the directory it was made in so it
+	// automatically stops applying after navigation — no reset effect.
+	const [fileBrowserDirFocus, setFileBrowserDirFocus] = useState<{
+		dir: string;
+		path: string;
+	} | null>(null);
+	const fileBrowserFocusedDirPath =
+		fileBrowserDirFocus !== null &&
+		fileBrowserDirFocus.dir === fileBrowserCurrentDir
+			? fileBrowserDirFocus.path
+			: "";
 	const [fileBrowserError, setFileBrowserError] = useState<string | null>(null);
 	const [fileBrowserFilter, setFileBrowserFilter] =
 		useState<FileBrowserFilter>("all");
@@ -800,29 +809,24 @@ export function DirectoryBrowserWidget({
 
 	const handleSelectFile = useCallback((path: string): void => {
 		setFileBrowserSelectedPath(path);
-		setFileBrowserFocusedDirPath("");
+		setFileBrowserDirFocus(null);
 	}, []);
 
 	const handleSelectEntry = useCallback(
 		(entry: { path: string; isDirectory: boolean }): void => {
 			if (entry.isDirectory) {
-				setFileBrowserFocusedDirPath(entry.path);
+				setFileBrowserDirFocus({
+					dir: fileBrowserCurrentDir,
+					path: entry.path,
+				});
 				setFileBrowserSelectedPath("");
 			} else {
 				setFileBrowserSelectedPath(entry.path);
-				setFileBrowserFocusedDirPath("");
+				setFileBrowserDirFocus(null);
 			}
 		},
-		[],
+		[fileBrowserCurrentDir],
 	);
-
-	// Directory focus is scoped to the current listing — drop it whenever
-	// the browser navigates so a stale path cannot highlight a same-named
-	// entry in another directory.
-	// biome-ignore lint/correctness/useExhaustiveDependencies: fileBrowserCurrentDir is the trigger, not a value read inside the effect.
-	useEffect(() => {
-		setFileBrowserFocusedDirPath("");
-	}, [fileBrowserCurrentDir]);
 
 	const handleDeselectFile = useCallback((): void => {
 		setFileBrowserSelectedPath("");
@@ -1009,7 +1013,7 @@ export function DirectoryBrowserWidget({
 			const path = (ev as CustomEvent).detail?.["data-file-path"];
 			if (typeof path === "string" && path.trim()) {
 				setFileBrowserSelectedPath(path.trim());
-				setFileBrowserFocusedDirPath("");
+				setFileBrowserDirFocus(null);
 			}
 		};
 		const handleImport = (ev: Event) => {
@@ -1448,7 +1452,7 @@ export function DirectoryBrowserWidget({
 
 	const activateCatalogPresetRow = useCallback((filePath: string): void => {
 		setFileBrowserSelectedPath(filePath);
-		setFileBrowserFocusedDirPath("");
+		setFileBrowserDirFocus(null);
 	}, []);
 
 	const iconToolBtnBase = css({
