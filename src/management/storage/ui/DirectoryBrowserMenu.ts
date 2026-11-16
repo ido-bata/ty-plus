@@ -1,5 +1,6 @@
 import type { CepMenuPayload } from "@/management/dialog/dialogs/context-menu";
 import type {
+	DirectoryBrowserEntry,
 	DirectoryBrowserSelectionKind,
 	DirectoryBrowserShellSelectionMode,
 	DirectoryBrowserViewMode,
@@ -56,6 +57,19 @@ const isSelectionKindAllowed = (
 	}
 	return selectionMode === (kind === "file" ? "files" : "folders");
 };
+
+/**
+ * `data-entry-file-type` value for the unified workspace context menu.
+ * Only the media kinds the menu understands (image / video / audio) are
+ * emitted; directories and every other file type leave the attribute off.
+ */
+export function directoryBrowserMenuFileType(
+	entry: DirectoryBrowserEntry,
+): "image" | "video" | "audio" | undefined {
+	if (entry.isDirectory) return undefined;
+	const ft = entry.fileType;
+	return ft === "image" || ft === "video" || ft === "audio" ? ft : undefined;
+}
 
 const encodePath = (path: string): string => encodeURIComponent(path);
 

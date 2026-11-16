@@ -6,6 +6,7 @@ import type {
 	DirectoryBrowserAspect,
 	DirectoryBrowserEntry,
 } from "./DirectoryBrowser";
+import { directoryBrowserMenuFileType } from "./DirectoryBrowserMenu";
 import {
 	EntryIcon,
 	MediaCardContent,
@@ -198,6 +199,7 @@ export function DirectoryBrowserIconCard({
 				data-directory-browser-entry=""
 				data-entry-kind={entry.isDirectory ? "dir" : "file"}
 				data-entry-path={entry.path}
+				data-entry-file-type={directoryBrowserMenuFileType(entry)}
 				className={cardButtonClass}
 				onClick={entry.isDirectory ? onSelect : onClick}
 				onDoubleClick={onDoubleClick}
