@@ -275,6 +275,14 @@ describe("DirectoryBrowserWidget inline row click", () => {
 		// and `alpha`'s own children were never listed in its place.
 		expect(container.querySelector(ROW_ALPHA)).not.toBeNull();
 		expect(container.querySelector(ROW_ALPHA_CHILD)).toBeNull();
+
+		// Issue #142: single-click focuses/selects the directory row — the
+		// shared kit marks it via data-row-selected on the row inner.
+		const rowSelected = dirRow
+			?.closest("[data-row-state]")
+			?.querySelector("[data-row-selected]")
+			?.getAttribute("data-row-selected");
+		expect(rowSelected).toBe("true");
 	});
 
 	it("selects a file on single-click (does not navigate)", async () => {
@@ -365,12 +373,11 @@ describe("DirectoryBrowserWidget inline row click", () => {
 		expect(goUpButton?.disabled).toBe(false);
 	});
 
-	it("does NOT navigate when single-clicking the Open Folder affordance on a directory row", async () => {
-		// Regression: the per-row "Open folder" icon button used to navigate
-		// into the directory on single-click, breaking the
-		// "single-click selects, double-click navigates" contract that
-		// governs the rest of the row. The button now just stops event
-		// propagation; navigation requires double-click on the row.
+	it("navigates into the directory when the Open Folder affordance is clicked", async () => {
+		// Issue #142: the per-row "Open folder" icon button is an explicit
+		// navigate affordance — it is not the row's ambiguous single-click,
+		// so it may navigate directly while the row itself keeps the
+		// "single-click selects, double-click navigates" contract.
 		const { container } = render(<DirectoryBrowserWidget state={baseState} />);
 
 		await waitFor(() => {
@@ -387,11 +394,9 @@ describe("DirectoryBrowserWidget inline row click", () => {
 
 		fireEvent.click(openFolderButton as HTMLElement);
 
-		await settle();
-
-		// Still the parent's listing — the affordance selected nothing and
-		// navigated nowhere.
-		expect(container.querySelector(ROW_ALPHA)).not.toBeNull();
-		expect(container.querySelector(ROW_ALPHA_CHILD)).toBeNull();
+		await waitFor(() => {
+			expect(container.querySelector(ROW_ALPHA_CHILD)).not.toBeNull();
+		});
+		expect(container.querySelector(ROW_ALPHA)).toBeNull();
 	});
 });

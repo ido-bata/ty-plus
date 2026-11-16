@@ -58,6 +58,9 @@ export function CatalogPresetListRow({
 							boxShadow: "0 0 0 2px var(--color-interactive-focus)",
 						},
 					})}
+					onClick={() => {
+						activateCatalogPresetRow(p.filePath);
+					}}
 					onDoubleClick={() => {
 						activateCatalogPresetRow(p.filePath);
 					}}

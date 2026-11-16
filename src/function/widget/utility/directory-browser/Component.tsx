@@ -586,6 +586,20 @@ export function DirectoryBrowserWidget({
 		useState<string>("");
 	const [fileBrowserSelectedPath, setFileBrowserSelectedPath] =
 		useState<string>("");
+	// Single-click focus for directory rows (Issue #142). Kept separate from
+	// `fileBrowserSelectedPath` so file selection and directory focus are
+	// independent single-select cues; selecting one clears the other. The
+	// focus is recorded together with the directory it was made in so it
+	// automatically stops applying after navigation — no reset effect.
+	const [fileBrowserDirFocus, setFileBrowserDirFocus] = useState<{
+		dir: string;
+		path: string;
+	} | null>(null);
+	const fileBrowserFocusedDirPath =
+		fileBrowserDirFocus !== null &&
+		fileBrowserDirFocus.dir === fileBrowserCurrentDir
+			? fileBrowserDirFocus.path
+			: "";
 	const [fileBrowserError, setFileBrowserError] = useState<string | null>(null);
 	const [fileBrowserFilter, setFileBrowserFilter] =
 		useState<FileBrowserFilter>("all");
@@ -795,7 +809,24 @@ export function DirectoryBrowserWidget({
 
 	const handleSelectFile = useCallback((path: string): void => {
 		setFileBrowserSelectedPath(path);
+		setFileBrowserDirFocus(null);
 	}, []);
+
+	const handleSelectEntry = useCallback(
+		(entry: { path: string; isDirectory: boolean }): void => {
+			if (entry.isDirectory) {
+				setFileBrowserDirFocus({
+					dir: fileBrowserCurrentDir,
+					path: entry.path,
+				});
+				setFileBrowserSelectedPath("");
+			} else {
+				setFileBrowserSelectedPath(entry.path);
+				setFileBrowserDirFocus(null);
+			}
+		},
+		[fileBrowserCurrentDir],
+	);
 
 	const handleDeselectFile = useCallback((): void => {
 		setFileBrowserSelectedPath("");
@@ -982,6 +1013,7 @@ export function DirectoryBrowserWidget({
 			const path = (ev as CustomEvent).detail?.["data-file-path"];
 			if (typeof path === "string" && path.trim()) {
 				setFileBrowserSelectedPath(path.trim());
+				setFileBrowserDirFocus(null);
 			}
 		};
 		const handleImport = (ev: Event) => {
@@ -1420,6 +1452,7 @@ export function DirectoryBrowserWidget({
 
 	const activateCatalogPresetRow = useCallback((filePath: string): void => {
 		setFileBrowserSelectedPath(filePath);
+		setFileBrowserDirFocus(null);
 	}, []);
 
 	const iconToolBtnBase = css({
@@ -2282,26 +2315,23 @@ export function DirectoryBrowserWidget({
 							loading={false}
 							canGoUp={canGoUpFromCurrent}
 							onGoUp={handleGoUp}
-							onEntryClick={(entry) => {
-								if (entry.isDirectory) {
-									setFileBrowserCurrentDir(entry.path);
-								} else {
-									setFileBrowserSelectedPath(entry.path);
-								}
-							}}
+							onEntryClick={handleSelectEntry}
+							onEntrySelect={handleSelectEntry}
 							onEntryActivate={(entry) => {
 								if (entry.isDirectory) {
 									setFileBrowserCurrentDir(entry.path);
 								} else {
-									setFileBrowserSelectedPath(entry.path);
+									handleSelectEntry(entry);
 								}
 							}}
 							selectionMode="both"
-							isSelected={(path) =>
-								isFileSelected(path) || fileBrowserSelectedPath === path
+							isSelected={(path, kind) =>
+								isFileSelected(path) ||
+								fileBrowserSelectedPath === path ||
+								(kind === "folder" && fileBrowserFocusedDirPath === path)
 							}
 							onToggleSelected={(path) => toggleFileSelected(path)}
-							activePath={fileBrowserSelectedPath}
+							activePath={fileBrowserFocusedDirPath || fileBrowserSelectedPath}
 							selectedSummary={null}
 							viewMode={viewMode}
 							onViewModeChange={setViewMode}
@@ -2445,6 +2475,7 @@ export function DirectoryBrowserWidget({
 										})}
 										onClick={(ev) => {
 											ev.stopPropagation();
+											setFileBrowserCurrentDir(entry.path);
 										}}
 										aria-label={t("directoryBrowser.actions.openFolder")}
 										title={t("directoryBrowser.actions.openFolder")}
