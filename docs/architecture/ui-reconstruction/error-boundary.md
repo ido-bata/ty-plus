@@ -21,6 +21,8 @@ CEP パネルは単一 CEF プロセスで動く。React component 境界 (= Err
 
 | surface | 失敗モード | 検出点 | 縮退先 | recovery | 影響範囲 |
 | --- | --- | --- | --- | --- | --- |
+| `panel` (root) | `PanelApp` 配下（`Main` / `NotificationContainer` / `OnboardingView` / `SetupRequired`）が throw | `<ErrorBoundary name="panel">`（`boot.tsx`、Issue #140） | パネル全体が「panel failed to render」カード + Retry | Retry / panel reload | パネル全体（最終 bulkhead） |
+| `modeless-dialog` | `ModelessDialogRoot` / `ToolHost` / `DebugDialogRoot` が throw | `<ErrorBoundary name={surfaceId}>`（`entry/dialogs.tsx` / `dialog/modeless/boot.tsx`、Issue #140） | dialog surface 内の fallback + Retry | Retry / dialog reopen | 該当 dialog のみ |
 | `workspace-grid` | Grid 内の widget が throw | `<SurfaceErrorBoundary>` 配下の widget `ErrorBoundary` | 失敗 widget の tile 内に「Widget failed to render」 + Retry | tile 内の Retry ボタン | 失敗 widget 1 tile のみ。他 tile は無傷 |
 | `workspace-grid` | resize / grid layout 計算が throw | `Grid` component | 「Configuration could not be loaded」+ retry (既存挙動を保持) | Retry | grid chrome 全体 |
 | `workspace-group-layer` | group overlay が throw | `<SurfaceErrorBoundary>` 配下 | 空 group layer (透明) | layer Retry | group の chrome は消えるが他 surface は無傷 |
@@ -68,6 +70,13 @@ CEP パネルは単一 CEF プロセスで動く。React component 境界 (= Err
 
 1. `console.error("[ErrorBoundary:<surface|widget>] render failed:", error, info)` (default)
 2. `props.onError?.(error, info)` (拡張 hook、Storybook / E2E で利用)
+
+boundary を通らない失敗（event handler / async / CEP callback 由来の uncaught
+error と unhandled rejection）は `installGlobalErrorReporting`
+（`src/management/debug/global-error-reporter.ts`、Issue #140）が `window` の
+`error` / `unhandledrejection` を捕捉し、`global:error` /
+`global:unhandledrejection` action 付きで debug log bus へ流す。panel /
+modeless dialog の boot で install 済み。
 
 将来 notifier / debug 面に切り替える場合は、`ErrorBoundary.tsx` の
 `reportCaughtError` 1 箇所を差し替えるだけで全 surface / widget に伝播する。
