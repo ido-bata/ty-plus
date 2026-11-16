@@ -22,10 +22,7 @@ import {
 	SettingsGrid,
 } from "@/management/setting/dialog/layout/SettingsGrid";
 import { openUrlInDefaultBrowser } from "@/management/workspace/hooks/helpers";
-import {
-	getUpdateInstaller,
-	type UpdateInstaller,
-} from "@/management/workspace/services";
+import { getUpdateInstaller } from "@/management/workspace/services";
 import { ListSelect } from "@/shared/component/fields/ListSelect";
 import { css } from "@/styled-system/css";
 
@@ -109,8 +106,6 @@ export function UpdateSection(): JSX.Element {
 		kind: "idle",
 	});
 	const latestRequest = useRef(0);
-	const installerRef = useRef<UpdateInstaller | null>(null);
-	installerRef.current = getUpdateInstaller();
 
 	const runCheck = useCallback(async () => {
 		const request = ++latestRequest.current;
@@ -146,7 +141,7 @@ export function UpdateSection(): JSX.Element {
 
 	const runInstall = useCallback(async () => {
 		if (result?.status !== "update-available") return;
-		const installer = installerRef.current;
+		const installer = getUpdateInstaller();
 		const platform = detectUpdatePlatform();
 		const asset = installableZipAsset(result.feed, platform);
 		if (installer === null || asset === null) {
