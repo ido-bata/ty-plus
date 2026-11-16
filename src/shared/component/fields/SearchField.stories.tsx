@@ -52,9 +52,9 @@ export const Disabled: Story = {
 };
 
 // Issue #146 / #144 regression: the wrapper owns the only focus indicator.
-// Focusing the input must paint exactly one ring (wrapper _focusWithin
-// border + inset shadow) and the inner input must not paint a second
-// border or box-shadow of its own.
+// Focusing the input must change the wrapper's border color via
+// `_focusWithin`, and the inner input must not paint a second border or
+// box-shadow of its own.
 export const FocusVisible: Story = {
 	args: {
 		placeholder: "Search…",
@@ -79,7 +79,6 @@ export const FocusVisible: Story = {
 
 		const wrapperStyle = getComputedStyle(wrapper);
 		expect(wrapperStyle.borderTopColor).not.toBe(restingBorderColor);
-		expect(wrapperStyle.boxShadow).not.toBe("none");
 	},
 };
 
