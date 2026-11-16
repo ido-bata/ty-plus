@@ -2,7 +2,10 @@ import { FolderOpen } from "lucide-react";
 import type { JSX, ReactNode } from "react";
 import type { PresetIcon } from "@/management/preset/contract";
 import type { FileBrowserFileType } from "@/management/storage/file-browser-service";
-import { DirectoryBrowserIconCard } from "@/management/storage/ui/DirectoryBrowserIconCard";
+import {
+	DirectoryBrowserIconCard,
+	directoryBrowserMenuFileType,
+} from "@/management/storage/ui/DirectoryBrowserIconCard";
 import { EntryIcon } from "@/management/storage/ui/DirectoryBrowserShell.entry-icon";
 import {
 	type DirectoryBrowserViewMode,
@@ -551,6 +554,7 @@ export const DirectoryBrowser = ({
 						data-directory-browser-entry=""
 						data-entry-kind={entry.isDirectory ? "dir" : "file"}
 						data-entry-path={entry.path}
+						data-entry-file-type={directoryBrowserMenuFileType(entry)}
 						className={cx(shellRowBtn, rowBtnFlex1Class)}
 						onClick={
 							isUpRow || !entry.isDirectory

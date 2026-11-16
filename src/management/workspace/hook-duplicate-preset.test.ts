@@ -97,6 +97,32 @@ describe("resolveDuplicateHit", () => {
 		const result = resolveDuplicateHit(hit, baseSurfaceState);
 		expect(result?.catalogId).toBe("source-1");
 	});
+
+	it("resolves directory-browser preset catalog rows via presetId (Issue #141)", () => {
+		const hit = {
+			zone: "directory-browser",
+			entryKind: "preset",
+			presetId: "source-1",
+			entryPath: "/preset/root/source.ffx",
+		} as const;
+		const result = resolveDuplicateHit(hit, baseSurfaceState);
+		expect(result).not.toBeNull();
+		expect(result?.catalogId).toBe("source-1");
+		expect(result?.source.id).toBe("source-1");
+		// No source tile geometry inside the browser — auto-pack.
+		expect(result?.dropPlacement).toBeUndefined();
+	});
+
+	it("returns null for directory-browser dir/file rows", () => {
+		for (const entryKind of ["dir", "file"] as const) {
+			const hit = {
+				zone: "directory-browser",
+				entryKind,
+				entryPath: "/some/path",
+			} as const;
+			expect(resolveDuplicateHit(hit, baseSurfaceState)).toBeNull();
+		}
+	});
 });
 
 describe("computeNextPresetSelectedIds", () => {

@@ -1936,35 +1936,44 @@ export function useWorkspaceRuntime(root: Element | null): {
 			}
 
 			if (hit.zone === "directory-browser") {
+				// Bridge to the directory-browser widget: the widget listens for
+				// `browser-*` CustomEvents on the panel root (Component.tsx).
+				// Synthesizing `data-ws-action` button clicks does NOT work here —
+				// `onActionClick` would re-route them as control-panel actions.
+				const dispatchBrowserEvent = (
+					name: string,
+					detail?: Record<string, string>,
+				): void => {
+					root.dispatchEvent(new CustomEvent(name, { detail }));
+				};
 				if (id === CTX_MENU_IDS.dirBrowserRefresh) {
-					dispatchWorkspaceWsActionClick(root, "browser-refresh");
+					dispatchBrowserEvent("browser-refresh");
+					return;
+				}
+				if (id === CTX_MENU_IDS.dirBrowserGoUp) {
+					dispatchBrowserEvent("browser-go-up");
+					return;
+				}
+				if (id === CTX_MENU_IDS.dirBrowserBrowseDrives) {
+					dispatchBrowserEvent("browser-browse-drives");
 					return;
 				}
 				if (id === CTX_MENU_IDS.dirBrowserToggleFilters) {
-					dispatchWorkspaceWsActionClick(
-						root,
-						"browser-toggle-directory-filters",
-					);
+					dispatchBrowserEvent("browser-toggle-directory-filters");
 					return;
 				}
 				if (id === CTX_MENU_IDS.dirBrowserClearSearch) {
-					const input = root.querySelector<HTMLInputElement>(
-						'input[data-ws-action="directory-browser-query"]',
-					);
-					if (input) {
-						input.value = "";
-						input.dispatchEvent(new Event("input", { bubbles: true }));
-					}
+					dispatchBrowserEvent("browser-clear-search");
 					return;
 				}
 				if (id === CTX_MENU_IDS.dirBrowserDefaultDir) {
-					dispatchWorkspaceWsActionClick(root, "browser-default-dir");
+					dispatchBrowserEvent("browser-default-dir");
 					return;
 				}
 				const openPref = CTX_MENU_IDS.dirBrowserOpenDirPrefix;
 				if (id.startsWith(openPref)) {
 					const filePath = decodeURIComponent(id.slice(openPref.length));
-					dispatchWorkspaceWsActionClick(root, "browser-open-dir", {
+					dispatchBrowserEvent("browser-open-dir", {
 						"data-file-path": filePath,
 					});
 					return;
@@ -1972,7 +1981,7 @@ export function useWorkspaceRuntime(root: Element | null): {
 				const selPref = CTX_MENU_IDS.dirBrowserSelectPrefix;
 				if (id.startsWith(selPref)) {
 					const filePath = decodeURIComponent(id.slice(selPref.length));
-					dispatchWorkspaceWsActionClick(root, "browser-select", {
+					dispatchBrowserEvent("browser-select", {
 						"data-file-path": filePath,
 					});
 					return;
@@ -1980,19 +1989,23 @@ export function useWorkspaceRuntime(root: Element | null): {
 				const impPref = CTX_MENU_IDS.dirBrowserImportPrefix;
 				if (id.startsWith(impPref)) {
 					const filePath = decodeURIComponent(id.slice(impPref.length));
-					dispatchWorkspaceWsActionClick(root, "browser-import", {
+					dispatchBrowserEvent("browser-import", {
 						"data-file-path": filePath,
 					});
 					return;
 				}
-				const runPref = CTX_MENU_IDS.dirBrowserRunPresetPrefix;
-				if (id.startsWith(runPref)) {
-					const presetId = decodeURIComponent(id.slice(runPref.length));
-					dispatchWorkspaceWsActionClick(root, "run-preset", {
-						"data-preset-id": presetId,
+				const audioPref = CTX_MENU_IDS.dirBrowserAudioPreviewPrefix;
+				if (id.startsWith(audioPref)) {
+					const filePath = decodeURIComponent(id.slice(audioPref.length));
+					dispatchBrowserEvent("browser-audio-preview", {
+						"data-file-path": filePath,
 					});
 					return;
 				}
+				// Preset catalog rows reuse the preset-row menu ids
+				// (runPreset / editPreset / duplicatePreset / deletePreset /
+				// movePresetsToPanelPrefix); they fall through to the shared
+				// switch below which resolves `hit.presetId` for this zone.
 			}
 
 			if (hit.zone === "control-panel") {
@@ -2022,6 +2035,27 @@ export function useWorkspaceRuntime(root: Element | null): {
 			}
 
 			const cur = getState();
+			// Run a catalog preset from a context-menu pick. Mirrors the
+			// `data-ws-action="run-preset"` path: missing assets are blocked
+			// up-front (Issue #130), failures surface as notifications.
+			const runCtxPreset = (presetId: string): void => {
+				if (isPresetAssetMissing(presetId)) {
+					notificationStore.add(
+						"Preset asset is missing on disk — run is disabled.",
+						"warning",
+						{ duration: 8000 },
+					);
+					return;
+				}
+				void executeWorkspacePreset(presetId).catch((error) => {
+					notificationStore.add(
+						`Preset failed: ${
+							error instanceof Error ? error.message : String(error)
+						}`,
+						"error",
+					);
+				});
+			};
 			const placementIndexFromHit = (): number | null => {
 				const raw =
 					hit.zone === "workspace-placement"
@@ -2466,6 +2500,14 @@ export function useWorkspaceRuntime(root: Element | null): {
 							const t = cur.surfaceTiles[i];
 							return t?.id?.trim() ?? "";
 						}
+						// Directory-browser preset catalog rows carry `data-preset-id`;
+						// deleting must target the preset, not the widget tile.
+						if (
+							hit.zone === "directory-browser" &&
+							hit.entryKind === "preset"
+						) {
+							return hit.presetId?.trim() ?? "";
+						}
 						return "";
 					})();
 					if (!catalogId || !isCep) return;
@@ -2628,6 +2670,14 @@ export function useWorkspaceRuntime(root: Element | null): {
 							}
 							return "";
 						}
+						// Directory-browser preset catalog rows: edit the preset
+						// itself (`hit.presetId`), not the widget tile.
+						if (
+							hit.zone === "directory-browser" &&
+							hit.entryKind === "preset"
+						) {
+							return hit.presetId?.trim() ?? "";
+						}
 						return "";
 					})();
 					if (!catalogId || !isCep) return;
@@ -2694,9 +2744,22 @@ export function useWorkspaceRuntime(root: Element | null): {
 							});
 							return;
 						}
+						// Preset tiles run the preset; widget tiles have no Run.
+						if (tileId && cur.presets.some((p) => p.id === tileId)) {
+							runCtxPreset(tileId);
+						}
+						return;
 					}
-					// Fall through to existing preset-run logic for non-group tiles
-					break;
+					// preset-row and directory-browser preset catalog rows both
+					// carry the catalog preset id — Run executes that preset.
+					const presetId =
+						hit.zone === "preset-row" ||
+						(hit.zone === "directory-browser" && hit.entryKind === "preset")
+							? (hit.presetId?.trim() ?? "")
+							: "";
+					if (!presetId) return;
+					runCtxPreset(presetId);
+					return;
 				}
 				case CTX_MENU_IDS.groupSelectedPresets: {
 					const gridPresetRefIds: string[] = [];
@@ -2929,6 +2992,17 @@ export function useWorkspaceRuntime(root: Element | null): {
 								return t?.id?.trim() || null;
 							}
 							if (hit.zone === "directory-browser") {
+								// Preset catalog rows move the PRESET to the target
+								// panel's catalog placement (same semantics as
+								// zone:"preset-row"). Body/chrome hits have no
+								// entryKind and fall through to the widget tile.
+								if (
+									hit.entryKind === "preset" &&
+									typeof hit.presetId === "string"
+								) {
+									const pid = hit.presetId.trim();
+									if (pid) return pid;
+								}
 								const idx =
 									typeof hit.placementId === "string"
 										? Number.parseInt(hit.placementId.trim(), 10)

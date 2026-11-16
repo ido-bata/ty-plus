@@ -64,6 +64,10 @@ export const resolveDuplicateHit = (
 		if (Number.isFinite(placementIndex) && placementIndex >= 0) {
 			catalogId = cur.surfaceTiles[placementIndex]?.id?.trim() ?? "";
 		}
+	} else if (hit.zone === "directory-browser" && hit.entryKind === "preset") {
+		// Directory-browser preset catalog rows carry `data-preset-id`; the
+		// duplicate lands via auto-pack (no source tile geometry).
+		catalogId = hit.presetId?.trim() ?? "";
 	}
 	if (!catalogId) return null;
 	const source = cur.presets.find((p) => p.id === catalogId);

@@ -18,7 +18,7 @@ import {
 /**
  * Right-click menu for the MarkdownLiveEditor.
  *
- * Project rule (mirrored from `useDirectoryBrowserContextMenu`):
+ * Project rule (the directory-browser widget used to mirror this):
  *   "右クリックメニューはCEPのコンテキストメニューを書き換える形で実装する。
  *    独自では作成しない。また、先にかかっている項目は置き換えて消さずに上書きして継承する"
  *
@@ -32,7 +32,7 @@ import {
  *     browser/CEP default. No React DOM menu is rendered, and no
  *     `preventDefault()` is called on the editor wrapper.
  *   - Labels are hardcoded English — the right-click menu must stay English
- *     regardless of UI locale (matches `useDirectoryBrowserContextMenu`'s
+ *     regardless of UI locale (the directory-browser widget's former
  *     contract). No `useTranslation` here.
  *
  * Note on separators: the JSON path (`context-menu.ts`) does NOT serialize

@@ -11,6 +11,19 @@ import {
 	MediaCardContent,
 } from "./DirectoryBrowserShell.entry-icon";
 
+/**
+ * `data-entry-file-type` value for the unified workspace context menu.
+ * Only the media kinds the menu understands (image / video / audio) are
+ * emitted; directories and every other file type leave the attribute off.
+ */
+export function directoryBrowserMenuFileType(
+	entry: DirectoryBrowserEntry,
+): "image" | "video" | "audio" | undefined {
+	if (entry.isDirectory) return undefined;
+	const ft = entry.fileType;
+	return ft === "image" || ft === "video" || ft === "audio" ? ft : undefined;
+}
+
 export type DirectoryBrowserIconCardProps = {
 	entry: DirectoryBrowserEntry;
 	isSelected: boolean;
@@ -198,6 +211,7 @@ export function DirectoryBrowserIconCard({
 				data-directory-browser-entry=""
 				data-entry-kind={entry.isDirectory ? "dir" : "file"}
 				data-entry-path={entry.path}
+				data-entry-file-type={directoryBrowserMenuFileType(entry)}
 				className={cardButtonClass}
 				onClick={entry.isDirectory ? onSelect : onClick}
 				onDoubleClick={onDoubleClick}
