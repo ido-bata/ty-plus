@@ -424,7 +424,7 @@ mod tests {
         // Production break caught: a missing or duplicate Rust-owned policy entry
         // would leave generated retry metadata ambiguous for a canonical method.
         let methods = CanonicalMethod::all();
-        assert_eq!(methods.len(), 12);
+        assert_eq!(methods.len(), 13);
         assert_eq!(
             methods
                 .iter()
@@ -443,6 +443,7 @@ mod tests {
                 "online.catalog.search",
                 "online.connectivity.check",
                 "online.download",
+                "update.install",
             ]
             .into_iter()
             .collect()
@@ -506,5 +507,14 @@ mod tests {
             );
             assert!(!method.operation_policy().retry_crash_before_accept);
         }
+        assert_eq!(
+            CanonicalMethod::UpdateInstall.operation_policy(),
+            CanonicalOperationPolicy {
+                idempotency_key: IdempotencyPolicy::Forbidden,
+                retry_class: RetryClass::NonIdempotent,
+                cancellable: true,
+                retry_crash_before_accept: false,
+            }
+        );
     }
 }
