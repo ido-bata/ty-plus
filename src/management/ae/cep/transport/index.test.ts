@@ -181,10 +181,7 @@ describe("createCepSurfaceTransport — publish dispatch (Issue #67)", () => {
 
 describe("createCepSurfaceTransport — subscribe (Issue #139)", () => {
 	const createListeningWindow = () => {
-		const listeners = new Map<
-			string,
-			(ev: { data: string }) => void
-		>();
+		const listeners = new Map<string, (ev: { data: string }) => void>();
 		const win = {
 			__adobe_cep__: {
 				addEventListener: (
@@ -216,9 +213,9 @@ describe("createCepSurfaceTransport — subscribe (Issue #139)", () => {
 		const seen: SurfaceMessageEnvelope[] = [];
 		transport.subscribe((msg) => seen.push(msg));
 
-		listeners
-			.get("com.typlus.surfaceMessage")
-			?.({ data: JSON.stringify({ hello: "world" }) });
+		listeners.get("com.typlus.surfaceMessage")?.({
+			data: JSON.stringify({ hello: "world" }),
+		});
 		expect(seen).toHaveLength(0);
 	});
 
@@ -229,9 +226,9 @@ describe("createCepSurfaceTransport — subscribe (Issue #139)", () => {
 		transport.subscribe((msg) => seen.push(msg));
 
 		const envelope = baseEnvelope();
-		listeners
-			.get("com.typlus.surfaceMessage")
-			?.({ data: JSON.stringify(envelope) });
+		listeners.get("com.typlus.surfaceMessage")?.({
+			data: JSON.stringify(envelope),
+		});
 		expect(seen).toEqual([envelope]);
 	});
 
@@ -244,9 +241,9 @@ describe("createCepSurfaceTransport — subscribe (Issue #139)", () => {
 
 		const envelope = baseEnvelope();
 		expect(() =>
-			listeners
-				.get("com.typlus.surfaceMessage")
-				?.({ data: JSON.stringify(envelope) }),
+			listeners.get("com.typlus.surfaceMessage")?.({
+				data: JSON.stringify(envelope),
+			}),
 		).toThrow("placement merge failed");
 	});
 });

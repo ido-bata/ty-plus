@@ -56,7 +56,9 @@ describe("persistFolderGroupPreset — offline-core (Issue #139)", () => {
 		expect(persistFolderGroupSource).toMatch(
 			/import\s*\{[^}]*\bgetLocalPresetCatalog\b[^}]*\}\s*from\s*["']@\/management\/preset\/repository\/local-catalog["']/,
 		);
-		expect(persistFolderGroupSource).toMatch(/\bgetLocalPresetCatalog\s*\(\s*win\s*\)/);
+		expect(persistFolderGroupSource).toMatch(
+			/\bgetLocalPresetCatalog\s*\(\s*win\s*\)/,
+		);
 	});
 });
 
