@@ -73,7 +73,13 @@ export const LoopMode: Story = {
 // Some CEP/CEF input paths emit mousedown/mousemove/mouseup without the
 // matching pointerdown/pointerup — only pointermove is synthesized. This
 // story replays a drag using MouseEvent alone (no PointerEvent) to prove
-// the canvas still pans/drags through the mouse fallback handlers.
+// the canvas still edits through the mouse fallback handlers.
+//
+// Issue #145 contract: a plain left-drag ANYWHERE selects the nearest
+// handle/point (no distance cap, no empty-area pan). The canvas center is
+// empty space in the default linear curve, so this gesture grabs the
+// nearest handle, snaps it to the pointer, and follows it — the redraw
+// differs because the curve changed, not because the camera panned.
 export const MouseOnlyDrag: Story = {
 	args: { widthPx: 240, heightPx: 240 },
 	play: async ({ canvasElement }) => {
@@ -95,12 +101,53 @@ export const MouseOnlyDrag: Story = {
 				}),
 			);
 		};
-		// Center of the canvas is empty space in the default linear curve,
-		// so this gesture exercises the pan path.
 		fire("mousedown", 0, 0);
 		fire("mousemove", 20, 20);
 		fire("mousemove", 45, 45);
 		fire("mouseup", 45, 45);
+		await new Promise((resolve) => setTimeout(resolve, 300));
+		await expect(canvas.toDataURL()).not.toBe(before);
+	},
+};
+
+// Pan is an explicit gesture only (issue #145): middle-button drag or
+// Space+left-drag. This story holds Space, then drags with plain mouse
+// events to prove the explicit pan path still moves the camera — and that
+// it does NOT edit the curve.
+export const SpacePanDrag: Story = {
+	args: { widthPx: 240, heightPx: 240 },
+	play: async ({ canvasElement }) => {
+		const canvas = canvasElement.querySelector<HTMLCanvasElement>(
+			"[data-ws-easing-editor-canvas]",
+		);
+		if (!canvas) throw new Error("easing canvas not found");
+		const before = canvas.toDataURL();
+		const rect = canvas.getBoundingClientRect();
+		const fire = (type: string, dx: number, dy: number) => {
+			canvas.dispatchEvent(
+				new MouseEvent(type, {
+					bubbles: true,
+					cancelable: true,
+					button: 0,
+					buttons: type === "mouseup" ? 0 : 1,
+					clientX: rect.left + rect.width * 0.5 + dx,
+					clientY: rect.top + rect.height * 0.5 + dy,
+				}),
+			);
+		};
+		window.dispatchEvent(
+			new KeyboardEvent("keydown", { code: "Space", bubbles: true }),
+		);
+		try {
+			fire("mousedown", 0, 0);
+			fire("mousemove", 30, 30);
+			fire("mousemove", 60, 60);
+			fire("mouseup", 60, 60);
+		} finally {
+			window.dispatchEvent(
+				new KeyboardEvent("keyup", { code: "Space", bubbles: true }),
+			);
+		}
 		await new Promise((resolve) => setTimeout(resolve, 300));
 		await expect(canvas.toDataURL()).not.toBe(before);
 	},
