@@ -611,7 +611,7 @@ libnss3 / libasound2 in the system path — same trick used by
 ## なぜ CEP cache を疑わなくていいか
 
 CEP panel は CEP host の file:// origin + Symlinks で cache が効くが、
-Storybook は完全に独立した Vite dev server (port 6006) で動く。Storybook
+Storybook は完全に独立した Vite dev server (port 6006、worktreeでは `TY_PLUS_STORYBOOK_PORT`) で動く。Storybook
 更新時はブラウザの Storybook UI を reload するだけで反映される。**CEP
 panel の Reload は Storybook 変更では不要** (CEP build を巻き込んでいない
 ため)。

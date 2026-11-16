@@ -9,7 +9,7 @@
 - `<issue-number>`: top-level ticket branch
 - GitHub Issue / Project: durable work state、priority、依存、target version
 - GitHub Pull Request: review と integration evidence
-- `AGENTS.md`、`docs/architecture/`、`docs/decisions/`、`.claude/skills/`: repository-controlled policy
+- `AGENTS.md`、`docs/architecture/`、`docs/decisions/`、`.agents/skills/`: repository-controlled policy
 - Git commit SHA / content digest: worker input と result の immutable identity
 - Supervisor: transient execution state と lifecycle。canonical project stateではない
 

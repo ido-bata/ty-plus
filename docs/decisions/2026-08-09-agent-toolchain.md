@@ -98,6 +98,8 @@ gate (`lint && build && check:es3 && check:bundle-size && check`).
 
 ### Agent Skills
 
+> **Revised 2026-11-16:** この節は旧repo時代の記録である。本repoは公開repoとして再初期化され、Skill配置は `.agents/skills/`（ADR-0002）、選定は `rebuildup/project-init` の skill-selection 手順へ移行した。`react-doctor` Skill自体は存在せず、React regression scanは `bun run check:react-doctor` のbaseline gateとして残る。以下は履歴として残す。
+
 - **Canonical home:** `.claude/skills/` — single project-local
   directory. AGENTS.md and CLAUDE.md treat this as the only
   authoritative placement; any other agent surfaces (Codex, Copilot,
