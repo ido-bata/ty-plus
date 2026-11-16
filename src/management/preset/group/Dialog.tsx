@@ -22,7 +22,10 @@ import {
 import { Dialog } from "@/management/preset/tool-shell/Dialog";
 import { FolderDirectoryPicker } from "@/management/preset/tool-shell/FolderDirectoryPicker";
 import { listPresets } from "@/management/preset/use-cases";
-import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
+import {
+	FramedPresetGlyph,
+	glyphBoxFillClass,
+} from "@/management/preset/workspace/glyph";
 import { AccordionSection } from "@/management/setting/dialog/sections/AccordionSection";
 import { Icon } from "@/shared/component";
 import { Button } from "@/shared/component/controls/Button";
@@ -427,7 +430,7 @@ export function GroupDialog(): JSX.Element {
 															) ?? { type: "text", param: { text: "?" } },
 														} satisfies Preset
 													}
-													boxClass="h-full w-full"
+													boxClass={glyphBoxFillClass}
 												/>
 											}
 										/>

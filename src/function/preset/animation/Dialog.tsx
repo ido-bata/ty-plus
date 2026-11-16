@@ -36,7 +36,10 @@ import {
 	AuthoringSection,
 } from "@/management/preset/tool-shell/archive-layout";
 import { upsertLocalPreset } from "@/management/preset/use-cases";
-import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
+import {
+	FramedPresetGlyph,
+	glyphBoxFillClass,
+} from "@/management/preset/workspace/glyph";
 import {
 	createCepNodeFileBrowserService,
 	type FileBrowserEntry,
@@ -919,7 +922,7 @@ export function Dialog(): JSX.Element {
 							preview={
 								<FramedPresetGlyph
 									preset={previewPreset}
-									boxClass="h-full w-full"
+									boxClass={glyphBoxFillClass}
 								/>
 							}
 						/>

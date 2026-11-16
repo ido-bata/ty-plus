@@ -26,6 +26,11 @@ export {
 	upsertLocalPreset,
 } from "@/management/preset/use-cases";
 export {
+	glyphBoxCompactClass,
+	glyphBoxCompactPadClass,
+	glyphBoxFillClass,
+	glyphBoxFlushClass,
+	glyphEmojiProminentClass,
 	PresetGlyphById,
 	WorkspacePresetGlyph,
 } from "@/management/preset/workspace/glyph";

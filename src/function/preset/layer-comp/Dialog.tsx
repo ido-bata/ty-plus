@@ -20,7 +20,10 @@ import {
 	AuthoringSegment,
 } from "@/management/preset/tool-shell/archive-layout";
 import { upsertLocalPreset } from "@/management/preset/use-cases";
-import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
+import {
+	FramedPresetGlyph,
+	glyphBoxFillClass,
+} from "@/management/preset/workspace/glyph";
 import { createInstanceId } from "@/management/storage/ids";
 import { readSettings } from "@/management/workspace/persistence/store";
 import { notifyPanelsAfterPresetSave } from "@/management/workspace/placement/notify-panels-after-preset-save";
@@ -397,7 +400,7 @@ export function Dialog(): JSX.Element {
 							preview={
 								<FramedPresetGlyph
 									preset={previewPreset}
-									boxClass="h-full w-full"
+									boxClass={glyphBoxFillClass}
 								/>
 							}
 						/>
