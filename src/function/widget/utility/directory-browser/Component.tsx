@@ -29,6 +29,8 @@ import { notificationStore } from "@/management/online/notification/service";
 import {
 	CatalogBrowserShell,
 	CatalogBrowserViewModeToggle,
+	glyphBoxFlushClass,
+	glyphEmojiProminentClass,
 	ICON_CELL_BASE_REM,
 	ICON_GRID_CLASS,
 	ICON_GRID_SCALE_LS_KEY,
@@ -2766,20 +2768,8 @@ function CatalogPresetIconTile({
 						<PresetGlyphById
 							presetId={p.id}
 							preset={p}
-							boxClass={css({
-								height: "full",
-								width: "full",
-								maxHeight: "full",
-								maxWidth: "full",
-								borderWidth: 0,
-								padding: "0.5",
-							})}
-							emojiClass={css({
-								"& .ws-preset-icon--emoji": { fontSize: "3xl" },
-								"& .ws-preset-icon--text:not([data-ws-preset-text-fit])": {
-									fontSize: "shell-text-sm",
-								},
-							})}
+							boxClass={glyphBoxFlushClass}
+							emojiClass={glyphEmojiProminentClass}
 							{...presetGlyphSiblingProps}
 						/>
 					</div>

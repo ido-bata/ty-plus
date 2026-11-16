@@ -5,6 +5,7 @@ import { iconDraftToPresetIcon } from "@/management/preset/catalog-add/archive-i
 import { PresetIconEditor } from "@/management/preset/components/IconEditor";
 import type { Preset } from "@/management/preset/contract";
 import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
+import { glyphBoxFillClass } from "@/management/preset/workspace/glyph-classes";
 
 export function PathDialogIconSection(props: {
 	draft: ArchiveIconDraft;
@@ -32,7 +33,7 @@ export function PathDialogIconSection(props: {
 							},
 						} satisfies Preset
 					}
-					boxClass="h-full w-full"
+					boxClass={glyphBoxFillClass}
 				/>
 			}
 		/>
