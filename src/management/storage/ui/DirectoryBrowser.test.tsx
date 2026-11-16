@@ -77,6 +77,35 @@ describe("DirectoryBrowser kit click contract", () => {
 		expect(onEntryActivate).not.toHaveBeenCalled();
 	});
 
+	it("fires onEntrySelect on single-click of a directory row when provided (Issue #142)", () => {
+		const onEntryClick = vi.fn();
+		const onEntrySelect = vi.fn();
+
+		const { container } = render(
+			<DirectoryBrowser
+				{...baseProps}
+				onEntryClick={onEntryClick}
+				onEntrySelect={onEntrySelect}
+			/>,
+		);
+
+		const dirRow = container.querySelector(
+			'[data-entry-kind="dir"][data-entry-path="/preset/root/a"]',
+		);
+		expect(dirRow).not.toBeNull();
+
+		fireEvent.click(dirRow as HTMLElement);
+
+		expect(onEntrySelect).toHaveBeenCalledTimes(1);
+		expect(onEntrySelect).toHaveBeenCalledWith(
+			expect.objectContaining({
+				path: "/preset/root/a",
+				isDirectory: true,
+			}),
+		);
+		expect(onEntryClick).not.toHaveBeenCalled();
+	});
+
 	it("fires onGoUp on single-click of the up row (up is single-click even for directories)", () => {
 		const onGoUp = vi.fn();
 		const onEntryClick = vi.fn();
