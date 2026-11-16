@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { expect, userEvent } from "storybook/test";
+import { expect } from "storybook/test";
 import type { SiblingListingEntry } from "@/management/preset/sibling-thumbnail";
 
 import type { DirectoryBrowserEntry } from "./DirectoryBrowser";
@@ -114,6 +114,11 @@ export const HoverUnselected: Story = {
 		);
 		if (!card) throw new Error("icon card not found");
 		const resting = getComputedStyle(card).backgroundColor;
+		// `storybook/test`'s userEvent does not move the real pointer in the
+		// vitest browser project, so CSS :hover never engages. Drive real
+		// input through vitest browser's userEvent instead (dynamic import
+		// keeps Storybook dev/build from evaluating the browser-only module).
+		const { userEvent } = await import("vitest/browser");
 		await userEvent.hover(card);
 		await expect(card.matches(":hover")).toBe(true);
 		// The card transitions colors — wait for the transition to settle
@@ -135,6 +140,7 @@ export const HoverSelected: Story = {
 		);
 		if (!card) throw new Error("icon card not found");
 		const resting = getComputedStyle(card).backgroundColor;
+		const { userEvent } = await import("vitest/browser");
 		await userEvent.hover(card);
 		await expect(card.matches(":hover")).toBe(true);
 		await new Promise((resolve) => setTimeout(resolve, 300));

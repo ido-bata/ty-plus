@@ -62,9 +62,13 @@ export const FocusVisible: Story = {
 	play: async ({ canvasElement }) => {
 		const input = canvasElement.querySelector<HTMLInputElement>("input");
 		if (!input) throw new Error("search input not found");
+		const wrapper = input.parentElement;
+		if (!wrapper) throw new Error("search field wrapper not found");
+		const restingBorderColor = getComputedStyle(wrapper).borderTopColor;
+
 		input.focus();
 		await expect(document.activeElement).toBe(input);
-		await expect(input.parentElement?.matches(":focus-within")).toBe(true);
+		await expect(wrapper.matches(":focus-within")).toBe(true);
 		// The wrapper transitions border-color/box-shadow — wait for the
 		// transition to settle before reading computed styles.
 		await new Promise((resolve) => setTimeout(resolve, 300));
@@ -73,9 +77,8 @@ export const FocusVisible: Story = {
 		expect(innerStyle.boxShadow).toBe("none");
 		expect(innerStyle.borderTopWidth).toBe("0px");
 
-		const wrapper = input.parentElement;
-		if (!wrapper) throw new Error("search field wrapper not found");
 		const wrapperStyle = getComputedStyle(wrapper);
+		expect(wrapperStyle.borderTopColor).not.toBe(restingBorderColor);
 		expect(wrapperStyle.boxShadow).not.toBe("none");
 	},
 };

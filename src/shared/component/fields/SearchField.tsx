@@ -53,7 +53,7 @@ const root = css({
 	transitionProperty: "border-color,box-shadow",
 	_focusWithin: {
 		borderColor: "interactive.focus",
-		boxShadow: "inset 0 0 0 1px var(--color-interactive-focus)",
+		boxShadow: "inset 0 0 0 1px var(--colors-interactive-focus)",
 	},
 });
 
