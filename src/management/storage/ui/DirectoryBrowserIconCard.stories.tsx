@@ -113,12 +113,19 @@ export const HoverUnselected: Story = {
 			"[data-card-selected]",
 		);
 		if (!card) throw new Error("icon card not found");
-		const resting = getComputedStyle(card).backgroundColor;
 		// `storybook/test`'s userEvent does not move the real pointer in the
 		// vitest browser project, so CSS :hover never engages. Drive real
 		// input through vitest browser's userEvent instead (dynamic import
 		// keeps Storybook dev/build from evaluating the browser-only module).
 		const { userEvent } = await import("vitest/browser");
+		// The pointer may already sit over the centered card from a previous
+		// story — park it on a corner spacer so the resting style is real.
+		const spacer = document.createElement("div");
+		spacer.style.cssText = "position:fixed;top:0;left:0;width:8px;height:8px;";
+		document.body.appendChild(spacer);
+		await userEvent.hover(spacer);
+		await new Promise((resolve) => setTimeout(resolve, 300));
+		const resting = getComputedStyle(card).backgroundColor;
 		await userEvent.hover(card);
 		await expect(card.matches(":hover")).toBe(true);
 		// The card transitions colors — wait for the transition to settle
@@ -126,6 +133,7 @@ export const HoverUnselected: Story = {
 		await new Promise((resolve) => setTimeout(resolve, 300));
 		await expect(getComputedStyle(card).backgroundColor).not.toBe(resting);
 		await userEvent.unhover(card);
+		spacer.remove();
 	},
 };
 
@@ -139,12 +147,18 @@ export const HoverSelected: Story = {
 			"[data-card-selected]",
 		);
 		if (!card) throw new Error("icon card not found");
-		const resting = getComputedStyle(card).backgroundColor;
 		const { userEvent } = await import("vitest/browser");
+		const spacer = document.createElement("div");
+		spacer.style.cssText = "position:fixed;top:0;left:0;width:8px;height:8px;";
+		document.body.appendChild(spacer);
+		await userEvent.hover(spacer);
+		await new Promise((resolve) => setTimeout(resolve, 300));
+		const resting = getComputedStyle(card).backgroundColor;
 		await userEvent.hover(card);
 		await expect(card.matches(":hover")).toBe(true);
 		await new Promise((resolve) => setTimeout(resolve, 300));
 		await expect(getComputedStyle(card).backgroundColor).toBe(resting);
 		await userEvent.unhover(card);
+		spacer.remove();
 	},
 };

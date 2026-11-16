@@ -43,7 +43,6 @@ const cardBaseClass = css({
 	borderWidth: "1px",
 	borderStyle: "solid",
 	transitionProperty: "colors",
-	_hover: { backgroundColor: "interactive.hover" },
 	minWidth: 0,
 	maxWidth: "full",
 });
@@ -52,13 +51,12 @@ const cardBaseClass = css({
  * option (interactive.hover) plus a stronger border so the card pops
  * out of the icon grid.  No typography change: see `labelBaseClass`.
  *
- * `cardBaseClass._hover` always paints `interactive.hover` so an
- * unselected card lifts on hover.  When the card is *also* selected,
- * the hover would clobber the `surface.widget` selection fill and the
- * user would lose the visual distinction between "selected" and
- * "hovered-unselected" (review #148 inline).  Override `_hover` here
- * so a selected card keeps its surface on hover and the selection
- * cue (border + box-shadow) stays the dominant signal.
+ * `cardUnselectedClass._hover` lifts unselected cards to
+ * `interactive.hover`.  Selected cards must not pick that up: the hover
+ * would clobber the `surface.widget` selection fill and the user would
+ * lose the visual distinction between "selected" and "hovered-unselected"
+ * (review #148 inline).  The explicit `_hover` here keeps the selection
+ * surface even if a shared hover rule is reintroduced upstream.
  */
 const cardSelectedClass = css({
 	borderColor: "border.strong",
@@ -69,6 +67,10 @@ const cardSelectedClass = css({
 const cardUnselectedClass = css({
 	borderColor: "border.default",
 	backgroundColor: "surface.dialog",
+	// Hover lift lives on the unselected variant only: a `_hover` rule on
+	// the shared base would tie on specificity with the selected override
+	// and lose on stylesheet order, stripping the selection surface.
+	_hover: { backgroundColor: "interactive.hover" },
 });
 
 const cardButtonClass = css({
