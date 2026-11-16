@@ -191,7 +191,7 @@ const createSurfaceLink = (win: Window): SurfaceTransport => {
 				if (!isSurfaceMessageEnvelope(parsed)) {
 					return;
 				}
-				// Issue #139: handler errors must not be swallowed here — a
+				// issue 139: handler errors must not be swallowed here — a
 				// throwing subscriber (e.g. preset placement merge) used to fail
 				// silently, which made drops "not place" with zero diagnostics.
 				// Letting the error propagate surfaces it through the global

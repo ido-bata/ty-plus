@@ -1,5 +1,5 @@
 /**
- * Window-level drag/drop guard (Issue #139).
+ * Window-level drag/drop guard (issue 139).
  *
  * The CEP panel is a Chromium surface: an OS file dragged onto it and
  * released triggers the browser default — navigating the panel document

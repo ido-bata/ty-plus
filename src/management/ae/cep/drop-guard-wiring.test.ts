@@ -1,5 +1,5 @@
 /**
- * Source-level wiring for the drop guard (Issue #139).
+ * Source-level wiring for the drop guard (issue 139).
  *
  * Every CEP surface is a separate window/document, so the guard must be
  * installed by each entry shim — a panel-only install would leave the

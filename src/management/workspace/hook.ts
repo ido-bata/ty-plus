@@ -1009,7 +1009,7 @@ export function useWorkspaceRuntime(root: Element | null): {
 			});
 
 		// ── Layout reload ─────────────────────────────────────────────────────
-		// Issue #139: the strict local catalog parser rejects on a corrupt
+		// issue 139: the strict local catalog parser rejects on a corrupt
 		// `presets/presets.json`. That must not classify the whole layout
 		// restore as a read failure — the layout file itself may be fine,
 		// and closing the write gate would refuse every later persist.
@@ -1761,7 +1761,7 @@ export function useWorkspaceRuntime(root: Element | null): {
 			// connectivity check whose status no consumer reads (the presets
 			// bus subscriber ignores `syncStatus`). Emit the same idle
 			// "Local Update" status the other snapshot producers use.
-			// Issue #139: the row source is the local catalog — file-backed and
+			// issue 139: the row source is the local catalog — file-backed and
 			// independent of cloud gateway boot (offline-core contract).
 			// Every caller uses `void refreshPresets()`, so a rejection here
 			// would surface as an unhandled rejection; log and resolve instead.

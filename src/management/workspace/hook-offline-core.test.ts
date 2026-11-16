@@ -1,5 +1,5 @@
 /**
- * Source-level contract checks for Issue #139 (offline-core).
+ * Source-level contract checks for issue 139 (offline-core).
  *
  * Local preset reads/writes in the workspace hook must go through the
  * file-backed local catalog (`listPresets` / `getPreset` from
@@ -27,7 +27,7 @@ const onboardingViewSource = fs.readFileSync(
 	"utf8",
 );
 
-describe("useWorkspaceRuntime hook — offline-core preset access (Issue #139)", () => {
+describe("useWorkspaceRuntime hook — offline-core preset access (issue 139)", () => {
 	it("does not call getDataServices() — the cloud boot boundary", () => {
 		expect(hookSource).not.toMatch(/\bgetDataServices\s*\(/);
 		expect(hookSource).not.toMatch(
@@ -47,7 +47,7 @@ describe("useWorkspaceRuntime hook — offline-core preset access (Issue #139)",
 	});
 });
 
-describe("persistFolderGroupPreset — offline-core (Issue #139)", () => {
+describe("persistFolderGroupPreset — offline-core (issue 139)", () => {
 	it("does not call getDataServices() on the folder-scan path", () => {
 		expect(persistFolderGroupSource).not.toMatch(/\bgetDataServices\s*\(/);
 	});
@@ -62,7 +62,7 @@ describe("persistFolderGroupPreset — offline-core (Issue #139)", () => {
 	});
 });
 
-describe("onboarding preset import — offline-core (Issue #139)", () => {
+describe("onboarding preset import — offline-core (issue 139)", () => {
 	it("does not require the cloud gateway for preset import", () => {
 		expect(onboardingViewSource).not.toMatch(/\bgetDataServices\s*\(/);
 		expect(onboardingViewSource).toMatch(
@@ -71,7 +71,7 @@ describe("onboarding preset import — offline-core (Issue #139)", () => {
 	});
 });
 
-describe("useWorkspaceRuntime hook — Issue #139 residual failure paths", () => {
+describe("useWorkspaceRuntime hook — issue 139 residual failure paths", () => {
 	const reloadStart = hookSource.indexOf(
 		"const reloadLayoutFromStorage = async",
 	);

@@ -1,5 +1,5 @@
 /**
- * First-import side effect for every CEP surface entry (Issue #139).
+ * First-import side effect for every CEP surface entry (issue 139).
  *
  * Installed alongside the unload guard so no CEP window — panel or
  * modeless dialog — can be navigated away by an OS file drop before

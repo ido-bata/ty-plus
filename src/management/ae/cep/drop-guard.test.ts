@@ -14,7 +14,7 @@ afterEach(() => {
 	__resetDropGuardForTests();
 });
 
-describe("installDropGuard (Issue #139)", () => {
+describe("installDropGuard (issue 139)", () => {
 	it("prevents the default action for window-level dragover", () => {
 		installDropGuard(window);
 		const event = dispatchCancelable(window, "dragover");
