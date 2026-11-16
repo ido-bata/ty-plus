@@ -6,6 +6,9 @@
  * explicit output. No React, no DOM, no `state` access.
  */
 
+import type { Camera, HandleAnchor } from "./camera";
+import { handleDotScreenPos } from "./camera";
+
 export type Vec2 = { x: number; y: number };
 
 /**
@@ -82,7 +85,7 @@ export function resolvePullOutHandle(args: PullOutArgs): Vec2 {
 	return { x: dx * scale, y: dy * scale };
 }
 
-type DragTargetLike =
+export type DragTarget =
 	| { type: "point"; index: number }
 	| { type: "hIn"; index: number }
 	| { type: "hOut"; index: number }
@@ -91,15 +94,15 @@ type DragTargetLike =
 	| null;
 
 export type HitTestArgs = {
-	target: DragTargetLike;
+	target: DragTarget;
 	threshold?: number;
 };
 
 /**
  * Returns true if the closest drag target is a point or a handle.
  * The `threshold` parameter is accepted for future distance-based hit testing
- * but is currently unused — the target is already a closest-within-threshold
- * result from `findClosestWithDistance` in `Component.tsx`.
+ * but is currently unused — callers pass the `target` half of a
+ * `findNearestDragTarget` result, which is already the nearest candidate.
  */
 export function isPointOrHandleHit(args: HitTestArgs): boolean {
 	const { target } = args;
@@ -109,54 +112,93 @@ export function isPointOrHandleHit(args: HitTestArgs): boolean {
 	);
 }
 
-export type DragStartArgs = {
-	button: number;
-	altKey: boolean;
-	ctrlKey: boolean;
-	metaKey: boolean;
-	spacePressed: boolean;
-	mode: "curve" | "bounce" | "elastic";
-	hitTarget: DragTargetLike;
+const worldToScreenPoint = (point: Vec2, camera: Camera): Vec2 => ({
+	x: camera.x + point.x * camera.zoom,
+	y: camera.y - point.y * camera.zoom,
+});
+
+export type NearestDragTargetArgs = {
+	/** Click position in canvas (screen) pixels. */
+	screen: Vec2;
+	/**
+	 * Curve keyframe points; only consulted when `useCurvePoints` is true.
+	 * Structurally compatible with the widget's `CurvePoint`.
+	 */
+	points: readonly HandleAnchor[];
+	/** Procedural-mode handle position in world coordinates. */
+	proceduralHandle: Vec2;
+	camera: Camera;
+	/**
+	 * True for curve/loop modes (hit-test interior points and handles);
+	 * false for procedural modes (bounce/elastic), where the single handle
+	 * dot is the only draggable target.
+	 */
+	useCurvePoints: boolean;
 };
 
-export type DragStartKind =
-	| "pan"
-	| "pullOutHandle"
-	| "addOrDeletePoint"
-	| "dragElement"
-	| "none";
+export type NearestDragTargetResult = {
+	target: DragTarget;
+	distance: number;
+};
 
 /**
- * Decide what drag gesture to start on canvas pointer-down.
+ * Find the draggable element nearest to a canvas-space click position.
  *
- * Gesture priority (matching the order in `Component.tsx:handlePointerDown`):
- * 1. middle-click OR Space+left         → "pan"
- * 2. plain left-click on empty area      → "pan" (user-facing expectation:
- *    left-drag pans the canvas; on Mac trackpads / single-button mice there
- *    is no reliable middle button, so plain left-drag is the only way to
- *    pan when no keyboard is available)
- * 3. Alt+left in curve mode              → "pullOutHandle"
- * 4. Ctrl/Cmd+left in curve mode         → "addOrDeletePoint"
- * 5. left-click on point/handle hit      → "dragElement"
- * 6. otherwise (e.g. middle, no targets) → "none"
+ * There is intentionally NO distance cap: any plain left-click selects the
+ * nearest handle/point and the drag snaps that element to the pointer
+ * (issue #145). Panning is an explicit gesture only — middle-button drag or
+ * Space+left-drag — and is handled by the caller before this lookup runs,
+ * so this function never returns a "pan" target itself.
+ *
+ * Endpoint anchors (index 0 and the last point) are fixed and are never
+ * returned as "point" targets; their inner handles remain grabbable.
  */
-export function resolveDragStart(args: DragStartArgs): DragStartKind {
-	const { button, altKey, ctrlKey, metaKey, spacePressed, mode, hitTarget } =
-		args;
-
-	if (button === 1 || (button === 0 && spacePressed)) return "pan";
-
-	if (button !== 0) return "none";
-
-	if (mode === "curve" && altKey && !ctrlKey && !metaKey) {
-		return "pullOutHandle";
+export function findNearestDragTarget(
+	args: NearestDragTargetArgs,
+): NearestDragTargetResult {
+	const { screen, points, proceduralHandle, camera, useCurvePoints } = args;
+	let closest: DragTarget = null;
+	let minDistance = Number.POSITIVE_INFINITY;
+	if (useCurvePoints) {
+		points.forEach((point, index) => {
+			const pointScreen = worldToScreenPoint(point, camera);
+			if (index > 0 && index < points.length - 1) {
+				const distance = Math.hypot(
+					pointScreen.x - screen.x,
+					pointScreen.y - screen.y,
+				);
+				if (distance < minDistance) {
+					minDistance = distance;
+					closest = { type: "point", index };
+				}
+			}
+			if (index > 0) {
+				const hIn = handleDotScreenPos(point, "hIn", camera);
+				const distance = Math.hypot(hIn.x - screen.x, hIn.y - screen.y);
+				if (distance < minDistance) {
+					minDistance = distance;
+					closest = { type: "hIn", index };
+				}
+			}
+			if (index < points.length - 1) {
+				const hOut = handleDotScreenPos(point, "hOut", camera);
+				const distance = Math.hypot(hOut.x - screen.x, hOut.y - screen.y);
+				if (distance < minDistance) {
+					minDistance = distance;
+					closest = { type: "hOut", index };
+				}
+			}
+		});
+	} else {
+		// Procedural modes have a single draggable handle dot; it is always
+		// the target regardless of click distance so the drag snaps the
+		// handle to the pointer instead of panning.
+		const handleScreen = worldToScreenPoint(proceduralHandle, camera);
+		closest = { type: "procedural" };
+		minDistance = Math.hypot(
+			handleScreen.x - screen.x,
+			handleScreen.y - screen.y,
+		);
 	}
-
-	if (mode === "curve" && (ctrlKey || metaKey)) {
-		return "addOrDeletePoint";
-	}
-
-	if (!hitTarget) return "pan";
-
-	return "dragElement";
+	return { target: closest, distance: minDistance };
 }
