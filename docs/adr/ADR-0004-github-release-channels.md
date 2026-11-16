@@ -19,7 +19,7 @@
 - バージョンはSemVerとして比較し、同一コア版での`beta.1`→`beta.2`、`insider.1`→`insider.2`を見逃さない。チャンネル変更は自動ダウングレードを行わない。正式安定版が同じコア版のプレリリースより新しいのはSemVerの規則どおり。
 - `package.json.version`とCEP `ExtensionBundleVersion`は数値版（例: `0.11.0`）を保ち、GitHub releaseのタグ・更新比較は別の`releaseVersion`（例: `0.11.0-beta.2`）をビルド時に埋め込む。整合しない組合せをrelease前に拒否する。
 - GitHub Releaseに`ty-plus-<tag>-<platform>.zxp`と`ty-plus-<tag>-<platform>.zip`、各platformのrelease manifestを添付する。asset名は一意で、tagと版が一致する。GitHubのアセット`digest`（sha256）とローカルmanifestの値を照合する。
-- アプリはリリースノート・配布ページを標準ブラウザーで開くだけ。自動ダウンロード・自動インストールはしない。利用者のローカルデータは従来の管理rootに残す。
+- アプリはリリースノート・配布ページを標準ブラウザーで開くだけ。自動ダウンロード・自動インストールはしない。利用者のローカルデータは従来の管理rootに残す。（Issue #135のAmendmentを参照: 利用者の明示操作による`update.install`は許可する。）
 - ユーザーが設定画面でchannelを変更でき、選択を既存のfile-backed settingsに保存する。既定はstable。ただし明示されたpreviewビルドはそのビルドのchannelを初期値とする。
 - APIエラー、匿名rate limit、オフライン時は更新チェックだけが失敗する。core起動・保存・プリセット操作には影響させない。
 
@@ -36,3 +36,7 @@
 - beta/insiderをGitHubの`prerelease` flagのみで識別する：GitHubにその二者を区別する標準fieldがない。
 - 固定の更新用JSONをReleaseとは別に発行する：更新正本を重複させ、公開手順を増やす。
 - 通知feedまで同時に置換する：今回の更新経路の決定範囲を超える。
+
+## Amendment（Issue #135, 2026-12）
+
+利用者がSettingsで明示的に「アップデートをインストール」を実行した場合に限り、operation workerがplatform別`.zip`アセットを取得・sha256照合・展開・配置する`update.install`操作を追加した。自動ダウンロード・自動インストールの禁止は維持する（チェックは従来どおり手動開始）。ZIPは署名されないため真正性はHTTPS+GitHub Releaseに依存し、sha256はintegrity証明であってpublisher identityの証明ではない。手動ZXP経路と`manual_required`フォールバックは残す。詳細契約は`docs/architecture/feeds.md`の「アプリ内インストール」節。

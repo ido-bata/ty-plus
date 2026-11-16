@@ -50,7 +50,10 @@ import {
 	readBootProbeFlag,
 } from "@/management/panel/boot-feature-flags";
 import { runCepEvalScript } from "@/management/storage/cep";
-import { initCloudGateway } from "@/management/workspace/services";
+import {
+	initCloudGateway,
+	initUpdateInstaller,
+} from "@/management/workspace/services";
 
 declare const __APP_VERSION__: string;
 
@@ -589,6 +592,9 @@ export const tryBuildCloudGateway = (
 		const port = bindOnlineRuntimeGatewayPort(dispatcher);
 		const gateway = createRuntimeCloudGateway(port);
 		initCloudGateway(gateway);
+		initUpdateInstaller({
+			installUpdate: (request) => composition.installUpdate(request),
+		});
 		cloudGatewayLog.info(
 			"[ty-plus] cloud gateway: initCloudGateway registered",
 			{

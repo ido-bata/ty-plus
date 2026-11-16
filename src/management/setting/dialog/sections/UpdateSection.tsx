@@ -13,6 +13,7 @@ import {
 	detectUpdatePlatform,
 	OFFICIAL_RELEASES_URL,
 	type UpdateCheckResult,
+	type UpdateFeed,
 } from "@/management/online/update/feed";
 import { useSettings } from "@/management/setting/context";
 import {
@@ -21,6 +22,10 @@ import {
 	SettingsGrid,
 } from "@/management/setting/dialog/layout/SettingsGrid";
 import { openUrlInDefaultBrowser } from "@/management/workspace/hooks/helpers";
+import {
+	getUpdateInstaller,
+	type UpdateInstaller,
+} from "@/management/workspace/services";
 import { ListSelect } from "@/shared/component/fields/ListSelect";
 import { css } from "@/styled-system/css";
 
@@ -62,6 +67,32 @@ const linkRowStyle = css({
 
 const CHANNELS: ReleaseChannel[] = ["stable", "beta", "insider"];
 
+type InstallState =
+	| { kind: "idle" }
+	| { kind: "installing" }
+	| { kind: "done"; status: "installed" | "pending" | "manual_required" }
+	| { kind: "failed" };
+
+/**
+ * Pick the platform ZIP asset the worker installer consumes. The feed
+ * carries both `.zip` and `.zxp` entries per platform; only the ZIP is
+ * installable in-app (the ZXP remains the manual fallback).
+ */
+const installableZipAsset = (
+	feed: UpdateFeed,
+	platform: ReturnType<typeof detectUpdatePlatform>,
+): { url: string; fileName: string; sha256: string } | null => {
+	if (platform === undefined) return null;
+	const tag = `v${feed.version}`;
+	for (const asset of feed.assets) {
+		if (asset.platform !== platform || !asset.url.endsWith(".zip")) continue;
+		const fileName = asset.url.split("/").pop() ?? "";
+		if (fileName !== `ty-plus-${tag}-${platform}.zip`) continue;
+		return { url: asset.url, fileName, sha256: asset.sha256 };
+	}
+	return null;
+};
+
 /**
  * Official GitHub Releases update channel selection (Issue #55).
  * A channel change persists through the existing file-backed settings.
@@ -74,11 +105,17 @@ export function UpdateSection(): JSX.Element {
 	const channel = settings.ui.updateChannel ?? buildReleaseChannel;
 	const [result, setResult] = useState<UpdateCheckResult | null>(null);
 	const [checking, setChecking] = useState(false);
+	const [installState, setInstallState] = useState<InstallState>({
+		kind: "idle",
+	});
 	const latestRequest = useRef(0);
+	const installerRef = useRef<UpdateInstaller | null>(null);
+	installerRef.current = getUpdateInstaller();
 
 	const runCheck = useCallback(async () => {
 		const request = ++latestRequest.current;
 		setResult(null);
+		setInstallState({ kind: "idle" });
 		setChecking(true);
 		try {
 			const response = await checkForUpdate({
@@ -106,6 +143,40 @@ export function UpdateSection(): JSX.Element {
 			latestRequest.current += 1;
 		};
 	}, [isLoaded, runCheck]);
+
+	const runInstall = useCallback(async () => {
+		if (result?.status !== "update-available") return;
+		const installer = installerRef.current;
+		const platform = detectUpdatePlatform();
+		const asset = installableZipAsset(result.feed, platform);
+		if (installer === null || asset === null) {
+			setInstallState({ kind: "done", status: "manual_required" });
+			return;
+		}
+		setInstallState({ kind: "installing" });
+		try {
+			const installed = await installer.installUpdate({
+				release_version: result.feed.version,
+				tag: `v${result.feed.version}`,
+				asset: {
+					url: asset.url,
+					file_name: asset.fileName,
+					sha256: asset.sha256,
+				},
+			});
+			setInstallState({
+				kind: "done",
+				status:
+					installed.status === "installed" ||
+					installed.status === "pending" ||
+					installed.status === "manual_required"
+						? installed.status
+						: "manual_required",
+			});
+		} catch {
+			setInstallState({ kind: "failed" });
+		}
+	}, [result]);
 
 	const handleChannelChange = useCallback(
 		(value: string) => {
@@ -172,21 +243,53 @@ export function UpdateSection(): JSX.Element {
 				<span className={mutedTextStyle}>{t("updates.detail")}</span>
 				<span className={linkRowStyle}>
 					{result?.status === "update-available" ? (
-						<button
-							type="button"
-							className={linkStyle}
-							onClick={() =>
-								openUrlInDefaultBrowser(result.feed.releaseNotesUrl)
-							}
-						>
-							{t("updates.releaseNotes")}
-						</button>
+						<>
+							<button
+								type="button"
+								className={linkStyle}
+								onClick={() =>
+									openUrlInDefaultBrowser(result.feed.releaseNotesUrl)
+								}
+							>
+								{t("updates.releaseNotes")}
+							</button>
+							{installState.kind !== "done" ||
+							installState.status === "manual_required" ? (
+								<button
+									type="button"
+									className={linkStyle}
+									onClick={() => void runInstall()}
+									disabled={installState.kind === "installing"}
+								>
+									{installState.kind === "installing"
+										? t("updates.installing")
+										: t("updates.install")}
+								</button>
+							) : null}
+						</>
 					) : (
 						<span className={mutedTextStyle}>
 							{result?.status === "unavailable" ? result.reason : "—"}
 						</span>
 					)}
 				</span>
+				{installState.kind === "done" || installState.kind === "failed" ? (
+					<span
+						className={
+							installState.kind === "failed"
+								? statusAttentionStyle
+								: statusReadyStyle
+						}
+					>
+						{installState.kind === "failed"
+							? t("updates.installFailed")
+							: installState.status === "installed"
+								? t("updates.installDone")
+								: installState.status === "pending"
+									? t("updates.installPending")
+									: t("updates.installManual")}
+					</span>
+				) : null}
 				<button
 					type="button"
 					className={linkStyle}

@@ -173,6 +173,20 @@ impl OperationExecutor for ProductionOperationExecutor {
                     .map(|result| serde_json::to_value(result).expect("batch result serializes"))
                     .map_err(|error| error.to_string())
             }
+            CanonicalMethod::UpdateInstall => {
+                let payload: crate::UpdateInstallRequest =
+                    match serde_json::from_value(request.payload.clone()) {
+                        Ok(p) => p,
+                        Err(_error) => {
+                            return failure(
+                                request,
+                                StableErrorCode::InvalidRequest,
+                                "invalid update install payload",
+                            );
+                        }
+                    };
+                crate::dispatch_update_install(request, payload, cancellation, events)
+            }
         };
 
         match result {
@@ -215,6 +229,11 @@ fn validate_payload(method: CanonicalMethod, payload: &Value) -> Result<(), Stri
         | CanonicalMethod::HostThumbnailBatch => {
             // All thumbnail methods share compatible wire payload shapes.
             Ok(())
+        }
+        CanonicalMethod::UpdateInstall => {
+            serde_json::from_value::<crate::UpdateInstallRequest>(payload.clone())
+                .map(|_| ())
+                .map_err(|error| error.to_string())
         }
     }
 }
@@ -887,6 +906,15 @@ mod tests {
                         }]
                     })
                 }
+                CanonicalMethod::UpdateInstall => serde_json::json!({
+                    "release_version": "9.9.9",
+                    "tag": "v9.9.9",
+                    "asset": {
+                        "url": "https://github.com/ido-bata/ty-plus/releases/download/v9.9.9/ty-plus-v9.9.9-macos.zip",
+                        "file_name": "ty-plus-v9.9.9-macos.zip",
+                        "sha256": "583ba8e34b17e8323faabb4399899e8ac3fc6b6383cfcec31664c41772e4bf7e"
+                    }
+                }),
             };
             assert!(
                 validate_payload(*method, &payload).is_ok(),
@@ -894,7 +922,7 @@ mod tests {
                 method.wire_name()
             );
         }
-        assert_eq!(CanonicalMethod::all().len(), 12);
+        assert_eq!(CanonicalMethod::all().len(), 13);
     }
 
     #[test]
@@ -994,7 +1022,22 @@ mod tests {
                         }]
                     })
                 }
+                CanonicalMethod::UpdateInstall => serde_json::json!({
+                    "release_version": "9.9.9",
+                    "tag": "v9.9.9",
+                    "asset": {
+                        "url": "https://github.com/ido-bata/ty-plus/releases/download/v9.9.9/ty-plus-v9.9.9-macos.zip",
+                        "file_name": "ty-plus-v9.9.9-macos.zip",
+                        "sha256": "583ba8e34b17e8323faabb4399899e8ac3fc6b6383cfcec31664c41772e4bf7e"
+                    }
+                }),
             };
+            // `update.install` mutates the extension install tree and hits
+            // the network; it is covered by `update_install` unit tests,
+            // not by this every-method executor sweep.
+            if matches!(method, CanonicalMethod::UpdateInstall) {
+                continue;
+            }
             let cache_root = root.join("support/ty-plus/cache/search");
             let write_key = SearchCacheKey::from_query(&CatalogQuery {
                 q: Some("executor-write-unique".to_owned()),
@@ -1217,6 +1260,9 @@ mod tests {
                     let results = payload["results"].as_array().unwrap();
                     assert_eq!(results.len(), 1);
                     assert!(results[0]["error"].as_str().is_some());
+                }
+                CanonicalMethod::UpdateInstall => {
+                    unreachable!("update install is skipped by the sweep above")
                 }
             }
         }

@@ -34,6 +34,7 @@ export const canonicalMethods = [
 	"host_thumbnail_generate",
 	"host_thumbnail_lookup_or_generate",
 	"host_thumbnail_batch",
+	"update_install",
 ] as const;
 
 export type CanonicalMethod = (typeof canonicalMethods)[number];
@@ -132,6 +133,13 @@ export const canonicalOperationPolicies: Readonly<
 		cancellable: true,
 		retryCrashBeforeAccept: false,
 		wireName: "host.thumbnail.batch",
+	}),
+	update_install: Object.freeze({
+		idempotencyKey: "forbidden",
+		retryClass: "non-idempotent",
+		cancellable: true,
+		retryCrashBeforeAccept: false,
+		wireName: "update.install",
 	}),
 });
 

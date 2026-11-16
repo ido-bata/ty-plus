@@ -226,6 +226,12 @@
 		"unavailable": "更新を確認できません",
 		"available": "新しいバージョンがあります: {{version}}",
 		"releaseNotes": "リリースノートとダウンロード",
-		"channelPlaceholder": "チャンネルを選択"
+		"channelPlaceholder": "チャンネルを選択",
+		"install": "アップデートをインストール",
+		"installing": "インストール中…",
+		"installDone": "インストールしました。After Effectsを再起動すると反映されます。",
+		"installPending": "ステージ済みです。次回ty-plus起動時に適用されます。",
+		"installManual": "この環境では自動インストールできません。ダウンロードページから手動でインストールしてください。",
+		"installFailed": "インストールに失敗しました。再試行するか手動でインストールしてください。"
 	}
 }

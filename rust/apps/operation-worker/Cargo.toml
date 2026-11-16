@@ -10,3 +10,7 @@ ty-plus-protocol = { path = "../../crates/protocol" }
 ty-plus-host-filesystem = { path = "../../crates/host-filesystem" }
 ty-plus-online = { path = "../../crates/online" }
 ty-plus-storage = { path = "../../crates/storage" }
+reqwest = { version = "0.12", features = ["blocking", "rustls-tls"], default-features = false }
+serde = { version = "1.0.217", features = ["derive"] }
+sha2 = "0.10"
+zip = { version = "=2.2.2", default-features = false, features = ["deflate"] }

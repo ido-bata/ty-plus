@@ -1,12 +1,10 @@
 use std::io::{self, Read};
 use std::path::Path;
 
+use ty_plus_operation_worker::install_lease;
 use ty_plus_operation_worker::{
     ProductionOperationExecutor, WorkerDependencies, build_product_online_config, run_once,
 };
-
-mod install_lease;
-mod platform;
 
 fn main() {
     if std::env::args().nth(1).as_deref() == Some("--install-lease-exclusive") {
@@ -19,6 +17,9 @@ fn main() {
         Ok(lease) => lease,
         Err(_) => std::process::exit(1),
     };
+    if let Ok(exe) = std::env::current_exe() {
+        ty_plus_operation_worker::update_install::apply_pending_update(&exe);
+    }
     let reader = io::stdin();
     let writer = io::stdout();
     let executor =

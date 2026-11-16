@@ -37,6 +37,7 @@ const cloudGatewayModule = vi.hoisted(() => ({
 }));
 const servicesModule = vi.hoisted(() => ({
 	initCloudGateway: vi.fn(),
+	initUpdateInstaller: vi.fn(),
 }));
 const healthStoreModule = vi.hoisted(() => ({
 	publish: vi.fn(),
@@ -92,6 +93,7 @@ vi.mock("@/management/online/catalog/runtime-cloud-gateway", () => ({
 
 vi.mock("@/management/workspace/services", () => ({
 	initCloudGateway: servicesModule.initCloudGateway,
+	initUpdateInstaller: servicesModule.initUpdateInstaller,
 }));
 
 vi.mock("@/management/online/runtime-gateway-health", () => ({

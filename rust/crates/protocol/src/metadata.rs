@@ -208,6 +208,14 @@ canonical_methods!(
         true,
         false
     ),
+    (
+        UpdateInstall,
+        "update.install",
+        IdempotencyPolicy::Forbidden,
+        RetryClass::NonIdempotent,
+        true,
+        false
+    ),
 );
 
 impl MethodName {

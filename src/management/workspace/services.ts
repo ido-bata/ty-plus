@@ -1,4 +1,8 @@
 import { resolveCepFileSystemGateway } from "@/management/ae/cep/runtime";
+import type {
+	UpdateInstallRequestDTO,
+	UpdateInstallResultDTO,
+} from "@/management/ipc/operation-worker-composition";
 import { createPresetRepository } from "@/management/online/catalog/repository";
 import { createFixtureCloudGateway } from "@/management/online/catalog/runtime-cloud-gateway";
 import { createCloudSyncService } from "@/management/online/catalog/sync";
@@ -80,6 +84,27 @@ export const initCloudGateway = (gateway: CloudGateway): void => {
 };
 
 /**
+ * In-app update installer surface (Issue #135). Registered by the
+ * cloud-gateway boot path with the live `OperationWorkerComposition`;
+ * `null` until boot succeeds, which the settings UI renders as "manual
+ * install only".
+ */
+export type UpdateInstaller = Readonly<{
+	readonly installUpdate: (
+		request: UpdateInstallRequestDTO,
+	) => Promise<UpdateInstallResultDTO>;
+}>;
+
+let updateInstaller: UpdateInstaller | null = null;
+
+export const initUpdateInstaller = (installer: UpdateInstaller): void => {
+	updateInstaller = installer;
+};
+
+/** Non-throwing accessor; `null` means the worker composition is not live. */
+export const getUpdateInstaller = (): UpdateInstaller | null => updateInstaller;
+
+/**
  * Flip the boot mode for the data-services singleton. The mode is
  * independent of the singleton instance and the cloudGateway module-level
  * variable: tests use this to exercise the developer-only fixture path.
@@ -111,6 +136,7 @@ export const __resetDataServicesForTests = (): void => {
 	singleton = null;
 	singletonUsesSharedPresetRepository = false;
 	cloudGateway = null;
+	updateInstaller = null;
 };
 
 const shouldUseSharedPresetRepository = (): boolean => {
