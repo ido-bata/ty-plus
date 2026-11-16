@@ -375,18 +375,25 @@ function usePresetsCatalog(opts: PresetsCatalogOptions): PresetsCatalogApi {
 
 	const onEdit = useCallback(
 		async (id: string) => {
-			const isGroup = groups.some((g) => g.id === id);
-			if (isGroup) {
-				await openPresetEditSurface(window, surfaceId, id);
-				return;
-			}
-			const preset = await getPreset(id);
-			if (!preset) {
-				return;
-			}
-			const toolSurface = resolvePresetToolSurfaceIdForPreset(preset);
-			if (!getPresetToolDialogEntry(toolSurface)) {
-				return;
+			try {
+				const isGroup = groups.some((g) => g.id === id);
+				if (isGroup) {
+					await openPresetEditSurface(window, surfaceId, id);
+					return;
+				}
+				const preset = await getPreset(id);
+				if (!preset) {
+					return;
+				}
+				const toolSurface = resolvePresetToolSurfaceIdForPreset(preset);
+				if (!getPresetToolDialogEntry(toolSurface)) {
+					return;
+				}
+			} catch (error) {
+				console.warn(
+					"preset-catalog: edit failed",
+					error instanceof Error ? error.message : String(error),
+				);
 			}
 		},
 		[groups, surfaceId],
@@ -394,8 +401,15 @@ function usePresetsCatalog(opts: PresetsCatalogOptions): PresetsCatalogApi {
 
 	const onDelete = useCallback(
 		async (id: string) => {
-			await removeLocalPreset(id);
-			await loadEverything();
+			try {
+				await removeLocalPreset(id);
+				await loadEverything();
+			} catch (error) {
+				console.warn(
+					"preset-catalog: delete failed",
+					error instanceof Error ? error.message : String(error),
+				);
+			}
 		},
 		[loadEverything],
 	);
