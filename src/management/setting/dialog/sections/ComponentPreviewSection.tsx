@@ -9,10 +9,8 @@ import {
 	presetIconDraftToPresetIcon,
 } from "@/management/preset/icon-editor";
 import { MarkdownLiveEditor } from "@/management/preset/markdown/LiveEditor";
-import {
-	FramedPresetGlyph,
-	glyphBoxFillClass,
-} from "@/management/preset/workspace/glyph";
+import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
+import { glyphBoxFillClass } from "@/management/preset/workspace/glyph-classes";
 import { ColorTokenEditor } from "@/management/setting/dialog/components/ColorTokenEditor";
 import { NumberTokenEditor } from "@/management/setting/dialog/components/NumberTokenEditor";
 import { TokenEditor } from "@/management/setting/dialog/components/TokenEditor";

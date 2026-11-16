@@ -37,10 +37,8 @@ import {
 	PRESET_TOOL_CTX,
 } from "@/management/preset/tool-shell/context-menu";
 import { upsertLocalPreset } from "@/management/preset/use-cases";
-import {
-	FramedPresetGlyph,
-	glyphBoxFillClass,
-} from "@/management/preset/workspace/glyph";
+import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
+import { glyphBoxFillClass } from "@/management/preset/workspace/glyph-classes";
 import { createInstanceId } from "@/management/storage/ids";
 import { notifyPanelsAfterPresetSave } from "@/management/workspace/placement/notify-panels-after-preset-save";
 import { Icon } from "@/shared/component";

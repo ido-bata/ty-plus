@@ -44,11 +44,11 @@ import {
 	type PresetIconEditorDraft,
 	presetIconDraftToPresetIcon,
 } from "@/management/preset/icon-editor";
+import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
 import {
-	FramedPresetGlyph,
 	glyphBoxCompactPadClass,
 	glyphBoxFillClass,
-} from "@/management/preset/workspace/glyph";
+} from "@/management/preset/workspace/glyph-classes";
 import { readTextFile } from "@/management/storage";
 import { openPresetEditSurface } from "@/management/workspace/hooks/preset";
 import { notifyPanelsAfterPresetSave } from "@/management/workspace/placement/notify-panels-after-preset-save";

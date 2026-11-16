@@ -36,10 +36,8 @@ import {
 	AuthoringSection,
 } from "@/management/preset/tool-shell/archive-layout";
 import { upsertLocalPreset } from "@/management/preset/use-cases";
-import {
-	FramedPresetGlyph,
-	glyphBoxFillClass,
-} from "@/management/preset/workspace/glyph";
+import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
+import { glyphBoxFillClass } from "@/management/preset/workspace/glyph-classes";
 import {
 	createCepNodeFileBrowserService,
 	type FileBrowserEntry,

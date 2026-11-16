@@ -53,13 +53,13 @@ import {
 	listPresets,
 	removeLocalPreset,
 } from "@/management/preset/use-cases";
+import { PresetGlyphById } from "@/management/preset/workspace/glyph";
 import {
 	glyphBoxCompactClass,
 	glyphBoxCompactPadClass,
 	glyphBoxFlushClass,
 	glyphEmojiProminentClass,
-	PresetGlyphById,
-} from "@/management/preset/workspace/glyph";
+} from "@/management/preset/workspace/glyph-classes";
 import { stripKnownIdPrefixes } from "@/management/storage/ids";
 import { readSettings } from "@/management/storage/workspace/store";
 import { openPresetEditSurface } from "@/management/workspace/hooks/preset";

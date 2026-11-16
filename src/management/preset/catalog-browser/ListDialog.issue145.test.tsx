@@ -128,6 +128,9 @@ vi.mock("@/management/preset/catalog-browser/view-mode-toggle", () => ({
 
 vi.mock("@/management/preset/workspace/glyph", () => ({
 	PresetGlyphById: () => <span data-testid="preset-glyph" />,
+}));
+
+vi.mock("@/management/preset/workspace/glyph-classes", () => ({
 	glyphBoxCompactClass: "glyph-box-compact",
 	glyphBoxCompactPadClass: "glyph-box-compact-pad",
 	glyphBoxFillClass: "glyph-box-fill",

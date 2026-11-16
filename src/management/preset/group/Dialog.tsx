@@ -22,10 +22,8 @@ import {
 import { Dialog } from "@/management/preset/tool-shell/Dialog";
 import { FolderDirectoryPicker } from "@/management/preset/tool-shell/FolderDirectoryPicker";
 import { listPresets } from "@/management/preset/use-cases";
-import {
-	FramedPresetGlyph,
-	glyphBoxFillClass,
-} from "@/management/preset/workspace/glyph";
+import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
+import { glyphBoxFillClass } from "@/management/preset/workspace/glyph-classes";
 import { AccordionSection } from "@/management/setting/dialog/sections/AccordionSection";
 import { Icon } from "@/shared/component";
 import { Button } from "@/shared/component/controls/Button";

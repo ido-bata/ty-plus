@@ -4,10 +4,8 @@ import { PresetIconEditor } from "@/management/preset/components/IconEditor";
 import type { Preset } from "@/management/preset/contract";
 import type { PresetIconEditorDraft } from "@/management/preset/icon-editor";
 import { presetIconDraftToPresetIcon } from "@/management/preset/icon-editor";
-import {
-	FramedPresetGlyph,
-	glyphBoxFillClass,
-} from "@/management/preset/workspace/glyph";
+import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
+import { glyphBoxFillClass } from "@/management/preset/workspace/glyph-classes";
 import { css } from "@/styled-system/css";
 
 const cardClass = css({
