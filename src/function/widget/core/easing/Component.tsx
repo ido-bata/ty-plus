@@ -1172,7 +1172,9 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 				: "default"
 			: spacePressedRef.current
 				? "grab"
-				: "default";
+				: state.hoverTarget
+					? "pointer"
+					: "default";
 	}, [backgroundPattern]);
 
 	useEffect(() => {
