@@ -2,6 +2,8 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 
 import {
+	CAPTURE_METADATA_DIRECTORY,
+	captureMetadataRelativePath,
 	SCREENSHOT_OUTPUT_DIRECTORY,
 	screenshotFileName,
 	screenshotOutputRelativePath,
@@ -133,5 +135,41 @@ describe("screenshotFileName", () => {
 				/cannot name a file for story id/,
 			);
 		}
+	});
+});
+
+describe("captureMetadataRelativePath", () => {
+	it("pairs each story id with a JSON sidecar in the metadata directory", () => {
+		expect(captureMetadataRelativePath("button--primary")).toBe(
+			".tmp/storybook-captures/button--primary.json",
+		);
+	});
+
+	it("shares the PNG stem so one story id maps to one file pair", () => {
+		const storyId = "onboarding-completioninput--default";
+		expect(screenshotOutputRelativePath(storyId)).toBe(
+			`${SCREENSHOT_OUTPUT_DIRECTORY}/${storyId}.png`,
+		);
+		expect(captureMetadataRelativePath(storyId)).toBe(
+			`${CAPTURE_METADATA_DIRECTORY}/${storyId}.json`,
+		);
+	});
+
+	it("applies the same traversal guards as the PNG path", () => {
+		for (const hostile of ["../../etc/passwd", "a/b", "a b"]) {
+			const out = captureMetadataRelativePath(hostile);
+			for (const [flavour, root] of [
+				["win32", WINDOWS_ROOT],
+				["posix", POSIX_ROOT],
+			] as const) {
+				const resolved = path[flavour].resolve(root, out);
+				expect(resolved.startsWith(root), `${hostile} on ${flavour}`).toBe(
+					true,
+				);
+			}
+		}
+		expect(() => captureMetadataRelativePath("..")).toThrow(
+			/cannot name a file/,
+		);
 	});
 });

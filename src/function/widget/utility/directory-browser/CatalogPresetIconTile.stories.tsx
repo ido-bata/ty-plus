@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { expect } from "storybook/test";
 import type { Preset } from "@/management/preset/contract";
 import { css } from "@/styled-system/css";
 import { CatalogPresetIconTile } from "./CatalogPresetIconTile";
@@ -72,5 +73,27 @@ export const LongTitle: Story = {
 			title: "Glow Pulse with Extra Long Display Name",
 			filePath: "/preset/root/glow-extended-title.ffx",
 		}),
+	},
+};
+
+// Issue #146: hover-state capture. The tile has no selected state of its
+// own (selection lives in the parent browser via
+// `setFileBrowserSelectedPath`), so hover is the interaction state this
+// story exercises: a real-pointer hover must lift the tile button to
+// `interactive.hover`, and the post-play state is what gets captured.
+export const Hover: Story = {
+	play: async ({ canvasElement }) => {
+		const tile = canvasElement.querySelector<HTMLElement>(
+			"[data-preset-id] button",
+		);
+		if (!tile) throw new Error("preset icon tile not found");
+		const { userEvent } = await import("vitest/browser");
+		const resting = getComputedStyle(tile).backgroundColor;
+		await userEvent.hover(tile);
+		await expect(tile.matches(":hover")).toBe(true);
+		// The button transitions colors — wait for it to settle before
+		// comparing computed styles.
+		await new Promise((resolve) => setTimeout(resolve, 300));
+		await expect(getComputedStyle(tile).backgroundColor).not.toBe(resting);
 	},
 };
