@@ -2,10 +2,8 @@ import { FolderOpen } from "lucide-react";
 import type { JSX, ReactNode } from "react";
 import type { PresetIcon } from "@/management/preset/contract";
 import type { FileBrowserFileType } from "@/management/storage/file-browser-service";
-import {
-	DirectoryBrowserIconCard,
-	directoryBrowserMenuFileType,
-} from "@/management/storage/ui/DirectoryBrowserIconCard";
+import { DirectoryBrowserIconCard } from "@/management/storage/ui/DirectoryBrowserIconCard";
+import { directoryBrowserMenuFileType } from "@/management/storage/ui/DirectoryBrowserMenu";
 import { EntryIcon } from "@/management/storage/ui/DirectoryBrowserShell.entry-icon";
 import {
 	type DirectoryBrowserViewMode,
