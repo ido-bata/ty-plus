@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Search } from "lucide-react";
 import { useState } from "react";
+import { expect } from "storybook/test";
 import { SearchField } from "./SearchField";
 
 const meta = {
@@ -47,6 +48,37 @@ export const WithInlineTrailing: Story = {
 export const Disabled: Story = {
 	args: {
 		disabled: true,
+	},
+};
+
+// Issue #146 / #144 regression: the wrapper owns the only focus indicator.
+// Focusing the input must change the wrapper's border color via
+// `_focusWithin`, and the inner input must not paint a second border or
+// box-shadow of its own.
+export const FocusVisible: Story = {
+	args: {
+		placeholder: "Search…",
+	},
+	play: async ({ canvasElement }) => {
+		const input = canvasElement.querySelector<HTMLInputElement>("input");
+		if (!input) throw new Error("search input not found");
+		const wrapper = input.parentElement;
+		if (!wrapper) throw new Error("search field wrapper not found");
+		const restingBorderColor = getComputedStyle(wrapper).borderTopColor;
+
+		input.focus();
+		await expect(document.activeElement).toBe(input);
+		await expect(wrapper.matches(":focus-within")).toBe(true);
+		// The wrapper transitions border-color/box-shadow — wait for the
+		// transition to settle before reading computed styles.
+		await new Promise((resolve) => setTimeout(resolve, 300));
+
+		const innerStyle = getComputedStyle(input);
+		expect(innerStyle.boxShadow).toBe("none");
+		expect(innerStyle.borderTopWidth).toBe("0px");
+
+		const wrapperStyle = getComputedStyle(wrapper);
+		expect(wrapperStyle.borderTopColor).not.toBe(restingBorderColor);
 	},
 };
 
