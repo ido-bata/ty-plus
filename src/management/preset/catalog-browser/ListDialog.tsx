@@ -1737,18 +1737,25 @@ export function PresetsDialog(): JSX.Element {
 
 	const onEdit = useCallback(
 		async (id: string) => {
-			const isGroup = groups.some((g) => g.id === id);
-			if (isGroup) {
-				await openPresetEditSurface(window, PRESETS_DIALOG_SURFACE_ID, id);
-				return;
-			}
-			const preset = await getPreset(id);
-			if (!preset) {
-				return;
-			}
-			const toolSurface = resolvePresetToolSurfaceIdForPreset(preset);
-			if (!getPresetToolDialogEntry(toolSurface)) {
-				return;
+			try {
+				const isGroup = groups.some((g) => g.id === id);
+				if (isGroup) {
+					await openPresetEditSurface(window, PRESETS_DIALOG_SURFACE_ID, id);
+					return;
+				}
+				const preset = await getPreset(id);
+				if (!preset) {
+					return;
+				}
+				const toolSurface = resolvePresetToolSurfaceIdForPreset(preset);
+				if (!getPresetToolDialogEntry(toolSurface)) {
+					return;
+				}
+			} catch (error) {
+				console.warn(
+					"preset-list: edit failed",
+					error instanceof Error ? error.message : String(error),
+				);
 			}
 		},
 		[groups],
@@ -1756,8 +1763,15 @@ export function PresetsDialog(): JSX.Element {
 
 	const onDelete = useCallback(
 		async (id: string) => {
-			await removeLocalPreset(id);
-			await loadEverything();
+			try {
+				await removeLocalPreset(id);
+				await loadEverything();
+			} catch (error) {
+				console.warn(
+					"preset-list: delete failed",
+					error instanceof Error ? error.message : String(error),
+				);
+			}
 		},
 		[loadEverything],
 	);

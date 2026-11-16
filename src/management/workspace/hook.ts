@@ -999,9 +999,40 @@ export function useWorkspaceRuntime(root: Element | null): {
 					}),
 				);
 			})
-			.catch(() => {});
+			.catch((error) => {
+				workspaceLog.warn("[Workspace] initial preset list load failed", {
+					context: {
+						panelId,
+						error: error instanceof Error ? error.message : String(error),
+					},
+				});
+			});
 
 		// ── Layout reload ─────────────────────────────────────────────────────
+		// issue 139: the strict local catalog parser rejects on a corrupt
+		// `presets/presets.json`. That must not classify the whole layout
+		// restore as a read failure — the layout file itself may be fine,
+		// and closing the write gate would refuse every later persist.
+		// Log the catalog failure and continue the restore with an empty
+		// preset list; genuine layout-file read failures still classify
+		// through `planLayoutRestoreFromReadError` below.
+		const readPresetsForLayoutRestore = async (): Promise<Preset[]> => {
+			try {
+				return await listPresets();
+			} catch (error) {
+				workspaceLog.warn(
+					"[Workspace] preset catalog read failed during layout restore",
+					{
+						context: {
+							panelId: getState().panelId,
+							error: error instanceof Error ? error.message : String(error),
+						},
+					},
+				);
+				return [];
+			}
+		};
+
 		const reloadLayoutFromStorage = async (
 			enablePersistenceAfterReload?: boolean,
 			layoutReadSupportRoot?: string,
@@ -1049,7 +1080,7 @@ export function useWorkspaceRuntime(root: Element | null): {
 					readWidgetRecords(window),
 					readUiSettings(window, persistenceRootArg),
 					readSettings(window),
-					listPresets(),
+					readPresetsForLayoutRestore(),
 					readGroupJson(window),
 				]);
 				const panelPresetIdsFromSettings = readPanelPresetIdsFromSettingsJson(
@@ -1730,34 +1761,45 @@ export function useWorkspaceRuntime(root: Element | null): {
 			// connectivity check whose status no consumer reads (the presets
 			// bus subscriber ignores `syncStatus`). Emit the same idle
 			// "Local Update" status the other snapshot producers use.
-			// Issue #139: the row source is the local catalog — file-backed and
+			// issue 139: the row source is the local catalog — file-backed and
 			// independent of cloud gateway boot (offline-core contract).
+			// Every caller uses `void refreshPresets()`, so a rejection here
+			// would surface as an unhandled rejection; log and resolve instead.
 			return (async () => {
-				const presets = await listPresets();
-				const cur = getState();
-				commit(
-					withPresetInfoSnapshot({
-						...cur,
-						presets: presets,
-					}),
-				);
-				const presetPayload: PresetsPayload = {
-					kind: "snapshot",
-					presets,
-					syncStatus: {
-						provider: "supabase",
-						state: "idle",
-						label: "Local Update",
-						checkedAt: new Date().toISOString(),
-					},
-					sourceSurfaceId: panelId,
-				};
-				await publishShellMessage(cepSurfaceTransport, {
-					channel: SHELL_CHANNELS.presets,
-					kind: "publish",
-					sourceSurfaceId: panelId,
-					payload: presetPayload,
-				});
+				try {
+					const presets = await listPresets();
+					const cur = getState();
+					commit(
+						withPresetInfoSnapshot({
+							...cur,
+							presets: presets,
+						}),
+					);
+					const presetPayload: PresetsPayload = {
+						kind: "snapshot",
+						presets,
+						syncStatus: {
+							provider: "supabase",
+							state: "idle",
+							label: "Local Update",
+							checkedAt: new Date().toISOString(),
+						},
+						sourceSurfaceId: panelId,
+					};
+					await publishShellMessage(cepSurfaceTransport, {
+						channel: SHELL_CHANNELS.presets,
+						kind: "publish",
+						sourceSurfaceId: panelId,
+						payload: presetPayload,
+					});
+				} catch (error) {
+					workspaceLog.warn("[Workspace] preset list refresh failed", {
+						context: {
+							panelId,
+							error: error instanceof Error ? error.message : String(error),
+						},
+					});
+				}
 			})();
 		};
 
@@ -2480,30 +2522,34 @@ export function useWorkspaceRuntime(root: Element | null): {
 						: (cur.presets.find((p) => p.id === catalogId)?.title ?? "");
 
 					void (async () => {
-						const confirmed = await askHostDeleteConfirm(
-							window,
-							presetTitle,
-							isGroupTile,
-						);
-						if (!confirmed) return;
-
 						try {
-							if (isGroupTile) {
-								await removeGroupEntry(window, catalogId);
-							} else {
-								await removeLocalPreset(catalogId);
-							}
-						} catch (error) {
-							console.warn("[ty-plus] delete preset/group failed", error);
-							return;
-						}
+							const confirmed = await askHostDeleteConfirm(
+								window,
+								presetTitle,
+								isGroupTile,
+							);
+							if (!confirmed) return;
 
-						// Use unified delete path: updates layout + broadcasts to all panels
-						await notifyPanelsAfterPresetSave(window, {
-							sourceSurfaceId: cur.panelId,
-							catalogRefIds: [catalogId],
-							isDeletion: true,
-						});
+							try {
+								if (isGroupTile) {
+									await removeGroupEntry(window, catalogId);
+								} else {
+									await removeLocalPreset(catalogId);
+								}
+							} catch (error) {
+								console.warn("[ty-plus] delete preset/group failed", error);
+								return;
+							}
+
+							// Use unified delete path: updates layout + broadcasts to all panels
+							await notifyPanelsAfterPresetSave(window, {
+								sourceSurfaceId: cur.panelId,
+								catalogRefIds: [catalogId],
+								isDeletion: true,
+							});
+						} catch (error) {
+							console.warn("[ty-plus] preset delete flow failed", error);
+						}
 					})();
 					return;
 				}
