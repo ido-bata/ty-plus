@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { expect } from "storybook/test";
+import { expect, waitFor } from "storybook/test";
 
 import { Align } from "@/function/widget/core/align/Component";
 import type { SurfaceState } from "@/management/workspace/state";
@@ -65,12 +65,29 @@ export const Compact: Story = {
 // the only place hover and click states can be exercised. Hovering an
 // inactive target must lift its background; the post-play state is what
 // the screenshot pipeline captures.
+// The target-selector row only renders once the widget's ResizeObserver
+// has reported a height large enough for `showTarget` — `size.h` starts
+// at 0, so the row is absent during the first frames. Poll for it
+// instead of asserting synchronously (CI timing differs from local).
+const waitForAlignButton = async (
+	canvasElement: HTMLElement,
+	selector: string,
+): Promise<HTMLElement> => {
+	let button: HTMLElement | null = null;
+	await waitFor(() => {
+		button = canvasElement.querySelector<HTMLElement>(selector);
+		expect(button).not.toBeNull();
+	});
+	if (!button) throw new Error(`align button not found: ${selector}`);
+	return button;
+};
+
 export const HoverTarget: Story = {
 	play: async ({ canvasElement }) => {
-		const button = canvasElement.querySelector<HTMLElement>(
+		const button = await waitForAlignButton(
+			canvasElement,
 			"[data-ws-action='align-target-key-object']",
 		);
-		if (!button) throw new Error("align target button not found");
 		// `storybook/test`'s userEvent does not move the real pointer in
 		// the vitest browser project; drive real input via vitest/browser
 		// (dynamic import keeps Storybook dev/build from evaluating the
@@ -91,10 +108,10 @@ export const HoverTarget: Story = {
 // the capture pipeline screenshots automatically.
 export const SelectTimeTarget: Story = {
 	play: async ({ canvasElement }) => {
-		const button = canvasElement.querySelector<HTMLElement>(
+		const button = await waitForAlignButton(
+			canvasElement,
 			"[data-ws-action='align-target-time']",
 		);
-		if (!button) throw new Error("time target button not found");
 		const { userEvent } = await import("vitest/browser");
 		await userEvent.click(button);
 		await expect(
