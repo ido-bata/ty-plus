@@ -47,7 +47,7 @@ import {
 	importOnboardingPresets,
 	type OnboardingImportOptions,
 } from "@/management/preset/onboarding-service";
-import { createCatalogRootPinnedPresetRepository } from "@/management/preset/repository/catalog-root-pinned";
+import { getLocalPresetCatalog } from "@/management/preset/repository/local-catalog";
 import { completeOnboardingStorage } from "@/management/setting/onboarding/complete";
 import {
 	OnboardingFinishError,
@@ -82,7 +82,6 @@ import type { Layout } from "@/management/workspace/layout/grid-document";
 import { publishShellMessage } from "@/management/workspace/messaging/publish-shell-message";
 import { logWorkspace } from "@/management/workspace/onboarding/flow-log";
 import { buildOnboardingLayoutItems } from "@/management/workspace/placement/gateway";
-import { getDataServices } from "@/management/workspace/services";
 import { createInitialSurfaceState } from "@/management/workspace/state";
 import { SHELL_CHANNELS } from "@/management/workspace/surface/contract";
 import {
@@ -1143,13 +1142,11 @@ function useOnboardingFinish(input: OnboardingFinishInput): {
 				selectedFolders,
 				canScanFolders: hasSelectedFolders && canUseCepNodeFileBrowser(window),
 			};
-			const services = getDataServices();
-			const importPresetRepository = createCatalogRootPinnedPresetRepository(
-				window,
-				{
-					cloud: services.gateway,
-				},
-			);
+			// Issue #139: preset import is a local file-backed operation and must
+			// not require the cloud gateway to be booted (offline-core contract).
+			// `getLocalPresetCatalog` reads/writes the same `presets/presets.json`
+			// the pinned repository used, without consulting the gateway.
+			const importPresetRepository = getLocalPresetCatalog(window);
 			const {
 				presets,
 				addedPresets,

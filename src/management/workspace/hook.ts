@@ -70,6 +70,7 @@ import { PRESET_TOOL_OPEN_BUS_CHANNEL } from "@/management/preset/tool-open-chan
 import {
 	duplicatePreset,
 	getPreset,
+	listPresets,
 	removeLocalPreset,
 } from "@/management/preset/use-cases";
 import {
@@ -153,7 +154,6 @@ import {
 import { mergeWidgetPlacementIntoState } from "@/management/workspace/placement/widget-bus";
 import { CommitReconcile } from "@/management/workspace/reconcile-stub";
 import { executeWorkspacePresetForWindow } from "@/management/workspace/runtime";
-import { getDataServices } from "@/management/workspace/services";
 import type { SurfaceState } from "@/management/workspace/state";
 import {
 	createInitialSurfaceState,
@@ -989,8 +989,7 @@ export function useWorkspaceRuntime(root: Element | null): {
 			persistSurfaceState();
 		});
 
-		void getDataServices()
-			.presetRepository.list()
+		void listPresets()
 			.then((presets) => {
 				const cur = getState();
 				commit(
@@ -1050,7 +1049,7 @@ export function useWorkspaceRuntime(root: Element | null): {
 					readWidgetRecords(window),
 					readUiSettings(window, persistenceRootArg),
 					readSettings(window),
-					getDataServices().presetRepository.list(),
+					listPresets(),
 					readGroupJson(window),
 				]);
 				const panelPresetIdsFromSettings = readPanelPresetIdsFromSettingsJson(
@@ -1706,8 +1705,7 @@ export function useWorkspaceRuntime(root: Element | null): {
 		// ── Preset refresh (F3) ───────────────────────────────────────────────
 		const refreshPresets = (): Promise<void> => {
 			if (!isCep) {
-				void getDataServices()
-					.presetRepository.list()
+				void listPresets()
 					.then((presets) => {
 						const cur = getState();
 						commit(
@@ -1716,6 +1714,14 @@ export function useWorkspaceRuntime(root: Element | null): {
 								presets: presets,
 							}),
 						);
+					})
+					.catch((error) => {
+						workspaceLog.warn("[Workspace] preset list refresh failed", {
+							context: {
+								panelId,
+								error: error instanceof Error ? error.message : String(error),
+							},
+						});
 					});
 				return Promise.resolve();
 			}
@@ -1724,9 +1730,10 @@ export function useWorkspaceRuntime(root: Element | null): {
 			// connectivity check whose status no consumer reads (the presets
 			// bus subscriber ignores `syncStatus`). Emit the same idle
 			// "Local Update" status the other snapshot producers use.
-			const { presetRepository } = getDataServices();
+			// Issue #139: the row source is the local catalog — file-backed and
+			// independent of cloud gateway boot (offline-core contract).
 			return (async () => {
-				const presets = await presetRepository.list();
+				const presets = await listPresets();
 				const cur = getState();
 				commit(
 					withPresetInfoSnapshot({
@@ -3608,8 +3615,7 @@ export function useWorkspaceRuntime(root: Element | null): {
 					);
 					return;
 				}
-				const { presetRepository } = getDataServices();
-				void presetRepository.getById(id).then((presetRecord) => {
+				void getPreset(id).then((presetRecord) => {
 					if (!presetRecord) return;
 					void executePreset(presetRecord).catch((error) => {
 						setState({

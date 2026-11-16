@@ -178,3 +178,75 @@ describe("createCepSurfaceTransport — publish dispatch (Issue #67)", () => {
 		}
 	});
 });
+
+describe("createCepSurfaceTransport — subscribe (Issue #139)", () => {
+	const createListeningWindow = () => {
+		const listeners = new Map<
+			string,
+			(ev: { data: string }) => void
+		>();
+		const win = {
+			__adobe_cep__: {
+				addEventListener: (
+					type: string,
+					handler: (ev: { data: string }) => void,
+				) => {
+					listeners.set(type, handler);
+				},
+				removeEventListener: () => {},
+				dispatchEvent: () => {},
+			},
+		} as unknown as Window;
+		return { win, listeners };
+	};
+
+	it("ignores payloads that are not valid JSON", () => {
+		const { win, listeners } = createListeningWindow();
+		const transport = createCepSurfaceTransport(win);
+		const seen: SurfaceMessageEnvelope[] = [];
+		transport.subscribe((msg) => seen.push(msg));
+
+		listeners.get("com.typlus.surfaceMessage")?.({ data: "{not json" });
+		expect(seen).toHaveLength(0);
+	});
+
+	it("ignores payloads that fail envelope validation", () => {
+		const { win, listeners } = createListeningWindow();
+		const transport = createCepSurfaceTransport(win);
+		const seen: SurfaceMessageEnvelope[] = [];
+		transport.subscribe((msg) => seen.push(msg));
+
+		listeners
+			.get("com.typlus.surfaceMessage")
+			?.({ data: JSON.stringify({ hello: "world" }) });
+		expect(seen).toHaveLength(0);
+	});
+
+	it("delivers valid envelopes to the handler", () => {
+		const { win, listeners } = createListeningWindow();
+		const transport = createCepSurfaceTransport(win);
+		const seen: SurfaceMessageEnvelope[] = [];
+		transport.subscribe((msg) => seen.push(msg));
+
+		const envelope = baseEnvelope();
+		listeners
+			.get("com.typlus.surfaceMessage")
+			?.({ data: JSON.stringify(envelope) });
+		expect(seen).toEqual([envelope]);
+	});
+
+	it("propagates handler errors instead of swallowing them", () => {
+		const { win, listeners } = createListeningWindow();
+		const transport = createCepSurfaceTransport(win);
+		transport.subscribe(() => {
+			throw new Error("placement merge failed");
+		});
+
+		const envelope = baseEnvelope();
+		expect(() =>
+			listeners
+				.get("com.typlus.surfaceMessage")
+				?.({ data: JSON.stringify(envelope) }),
+		).toThrow("placement merge failed");
+	});
+});
