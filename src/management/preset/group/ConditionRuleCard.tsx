@@ -7,6 +7,7 @@ import type { PresetIconEditorDraft } from "@/management/preset/icon-editor";
 import { presetIconDraftToPresetIcon } from "@/management/preset/icon-editor";
 import { AuthoringSegment } from "@/management/preset/tool-shell/archive-layout";
 import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
+import { glyphBoxFillClass } from "@/management/preset/workspace/glyph-classes";
 import { DirectoryBrowser } from "@/management/storage/ui/DirectoryBrowser";
 import { Button } from "@/shared/component/controls/Button";
 import { Input } from "@/shared/component/fields/Input";
@@ -288,7 +289,7 @@ export function ConditionRuleCard({
 								},
 							} satisfies Preset
 						}
-						boxClass="h-full w-full"
+						boxClass={glyphBoxFillClass}
 					/>
 				}
 			/>

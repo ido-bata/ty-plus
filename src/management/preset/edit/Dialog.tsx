@@ -45,6 +45,10 @@ import {
 	presetIconDraftToPresetIcon,
 } from "@/management/preset/icon-editor";
 import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
+import {
+	glyphBoxCompactPadClass,
+	glyphBoxFillClass,
+} from "@/management/preset/workspace/glyph-classes";
 import { readTextFile } from "@/management/storage";
 import { openPresetEditSurface } from "@/management/workspace/hooks/preset";
 import { notifyPanelsAfterPresetSave } from "@/management/workspace/placement/notify-panels-after-preset-save";
@@ -549,7 +553,7 @@ const GroupMemberItem = ({
 			<div aria-hidden />
 			{/* Icon */}
 			<div className={memberIconCenterClass}>
-				<FramedPresetGlyph preset={member} boxClass="h-7 w-7 p-0.5" />
+				<FramedPresetGlyph preset={member} boxClass={glyphBoxCompactPadClass} />
 			</div>
 			{/* Title + type */}
 			<div className={memberTitleColumnClass}>
@@ -740,7 +744,7 @@ const PresetEditFormFields = ({
 									},
 								} satisfies Preset
 							}
-							boxClass="h-full w-full"
+							boxClass={glyphBoxFillClass}
 						/>
 					}
 				/>
@@ -881,7 +885,7 @@ const PresetEditFormFields = ({
 								},
 							} satisfies Preset
 						}
-						boxClass="h-full w-full"
+						boxClass={glyphBoxFillClass}
 					/>
 				}
 			/>

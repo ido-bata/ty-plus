@@ -130,6 +130,14 @@ vi.mock("@/management/preset/workspace/glyph", () => ({
 	PresetGlyphById: () => <span data-testid="preset-glyph" />,
 }));
 
+vi.mock("@/management/preset/workspace/glyph-classes", () => ({
+	glyphBoxCompactClass: "glyph-box-compact",
+	glyphBoxCompactPadClass: "glyph-box-compact-pad",
+	glyphBoxFillClass: "glyph-box-fill",
+	glyphBoxFlushClass: "glyph-box-flush",
+	glyphEmojiProminentClass: "glyph-emoji-prominent",
+}));
+
 vi.mock("@/shared/component", () => ({
 	Icon: () => <span data-testid="icon" />,
 	IconButton: ({

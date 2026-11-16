@@ -395,6 +395,19 @@ const CLASS_STRING_PATTERN =
 const CLASS_TEMPLATE_PATTERN = /(?:className|class)\s*=\s*`([^`]*)`/g;
 
 /**
+ * Class-carrying props that are not named `className`/`class` but still land
+ * on `class` attributes through `cx()` (e.g. `boxClass`, `emojiClass`,
+ * `iconClassName`). Raw Tailwind literals in these props are equally dead in
+ * the Panda-only bundle — this is the #143 escape hatch the original
+ * `className`-only scan missed.
+ */
+const CLASS_PROP_STRING_PATTERN =
+	/\b(?:[A-Za-z]*Class(?:Name)?|[a-z][A-Za-z]*class)\s*=\s*(?:"([^"]*)"|'([^']*)')/g;
+
+const CLASS_PROP_TEMPLATE_PATTERN =
+	/\b(?:[A-Za-z]*Class(?:Name)?|[a-z][A-Za-z]*class)\s*=\s*`([^`]*)`/g;
+
+/**
  * Imperative DOM updates that add/remove/toggle Tailwind utility classes by
  * name. They must use PandaCSS recipe class strings instead — Tailwind tokens
  * silently no-op against a Panda-only bundle.
@@ -455,9 +468,12 @@ function scanFile(filePath: string): Violation[] {
 	const text = stripComments(readFileSync(filePath, "utf8"));
 
 	const scanMatch = (raw: string, pattern: RegExp): void => {
-		let match: RegExpExecArray | null;
 		pattern.lastIndex = 0;
-		while ((match = pattern.exec(raw)) !== null) {
+		for (
+			let match = pattern.exec(raw);
+			match !== null;
+			match = pattern.exec(raw)
+		) {
 			const value = match[1] ?? match[2] ?? "";
 			if (!value) continue;
 			const tokens = value.split(/\s+/);
@@ -484,6 +500,8 @@ function scanFile(filePath: string): Violation[] {
 
 	scanMatch(text, CLASS_STRING_PATTERN);
 	scanMatch(text, CLASS_TEMPLATE_PATTERN);
+	scanMatch(text, CLASS_PROP_STRING_PATTERN);
+	scanMatch(text, CLASS_PROP_TEMPLATE_PATTERN);
 	scanMatch(text, CLASSLIST_LITERAL_PATTERN);
 	return violations;
 }

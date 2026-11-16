@@ -56,6 +56,8 @@ vi.mock("@/management/preset", () => ({
 	ICON_GRID_SCALE_LS_KEY: "ty-plus.iconGridScale",
 	ICON_TILE_ASPECT_LS_KEY: "ty-plus.iconTileAspect",
 	LIST_ROW_GRID: "list-row-grid",
+	glyphBoxFlushClass: "glyph-box-flush",
+	glyphEmojiProminentClass: "glyph-emoji-prominent",
 	PresetGlyphById: () => <div data-testid="preset-glyph" />,
 	iconTileMediaClass: () => "icon-tile",
 	readIconGridScale: () => 1,

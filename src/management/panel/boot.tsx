@@ -23,6 +23,7 @@ import {
 	flushOnAEPanelClose,
 	initializeLogRetention,
 } from "@/management/debug/console/interceptor";
+import { installGlobalErrorReporting } from "@/management/debug/global-error-reporter";
 import { createLogger } from "@/management/debug/logger";
 import { installCepJsonContextMenuRewrite } from "@/management/dialog/dialogs/context-menu";
 import { initializeI18n } from "@/management/i18n";
@@ -38,6 +39,7 @@ import {
 	labelOfGatewayBootFailureReason,
 	tryBuildCloudGateway,
 } from "@/management/panel/cloud-gateway-boot";
+import { ErrorBoundary } from "@/management/panel/ErrorBoundary";
 import { bootstrapCepShellThemeHydration } from "@/management/panel/inject-styles";
 import { Main } from "@/management/panel/Main";
 import { tryBuildThumbnailGateway } from "@/management/panel/thumbnail-gateway-boot";
@@ -150,24 +152,30 @@ function PanelApp({
 
 	return (
 		<div className={panelAppRoot}>
-			{!hasInitCompleted && !isPrimaryPanel ? (
-				<SetupRequired />
-			) : (
-				<>
-					<Main />
-					<NotificationContainer />
-					{showOnboarding && isPrimaryPanel ? (
-						<OnboardingView
-							onCompleted={(detail: { layoutReadSupportRoot: string }) => {
-								requestLayoutReload({
-									layoutReadSupportRoot: detail.layoutReadSupportRoot,
-								});
-								setShowOnboarding(false);
-							}}
-						/>
-					) : null}
-				</>
-			)}
+			{/* Issue #140: the panel is a single CEF process — a render throw
+			    above the per-surface boundaries used to unmount the whole React
+			    root and leave the panel blank until restart. This top-level
+			    boundary keeps a failed subtree inside a retryable fallback. */}
+			<ErrorBoundary name="panel">
+				{!hasInitCompleted && !isPrimaryPanel ? (
+					<SetupRequired />
+				) : (
+					<>
+						<Main />
+						<NotificationContainer />
+						{showOnboarding && isPrimaryPanel ? (
+							<OnboardingView
+								onCompleted={(detail: { layoutReadSupportRoot: string }) => {
+									requestLayoutReload({
+										layoutReadSupportRoot: detail.layoutReadSupportRoot,
+									});
+									setShowOnboarding(false);
+								}}
+							/>
+						) : null}
+					</>
+				)}
+			</ErrorBoundary>
 		</div>
 	);
 }
@@ -230,6 +238,10 @@ export async function bootPanel(): Promise<void> {
 	bootstrapCepShellThemeHydration(window);
 	enableInterceptor();
 	enableCepBroadcast(window);
+	// Issue #140: route window `error` / `unhandledrejection` into the debug
+	// log bus so exceptions that escape every React boundary are still
+	// diagnosable instead of silently killing the panel.
+	installGlobalErrorReporting(window, "panel");
 	// Issue #79: capture AE shutdown / panel-reload flush for the workspace
 	// panel. The hook is idempotent; `useWorkspaceRuntime` (which also calls
 	// `enableInterceptor`) is a separate mount-once effect inside the React

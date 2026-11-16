@@ -10,16 +10,6 @@ export type ColorSwatchProps = {
 	"aria-label"?: string;
 };
 
-const COLOR_SWATCH_CLASS = cx(
-	"h-8 w-8 shrink-0 cursor-pointer appearance-none rounded-shell",
-	"border border-border-default bg-surface-widget p-0",
-	"transition-colors hover:border-interactive-focus",
-	"focus-visible:border-interactive-focus focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-interactive-focus/30",
-	"[&::-webkit-color-swatch-wrapper]:p-0.5",
-	"[&::-webkit-color-swatch]:rounded-[length:var(--radius-shell-sm)]",
-	"[&::-webkit-color-swatch]:border-0",
-);
-
 const swatch = css({
 	height: "8",
 	width: "8",

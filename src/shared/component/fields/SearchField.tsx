@@ -53,7 +53,6 @@ const root = css({
 	transitionProperty: "border-color,box-shadow",
 	_focusWithin: {
 		borderColor: "interactive.focus",
-		boxShadow: "inset 0 0 0 1px var(--colors-interactive-focus)",
 	},
 });
 
@@ -64,9 +63,17 @@ const innerInput = css({
 	width: "full",
 	flex: 1,
 	border: 0,
+	borderWidth: "0",
+	borderColor: "transparent",
 	backgroundColor: "transparent",
 	boxShadow: "none",
-	_focusVisible: { boxShadow: "none" },
+	// Issue #144: the inner input must never paint its own focus border —
+	// the wrapper's `_focusWithin` ring is the single focus indicator.
+	_focus: { borderColor: "transparent" },
+	_focusVisible: {
+		borderColor: "transparent",
+		boxShadow: "none",
+	},
 });
 
 const inlineTrailingCls = css({

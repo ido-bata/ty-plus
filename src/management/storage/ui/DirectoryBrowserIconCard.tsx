@@ -15,6 +15,11 @@ export type DirectoryBrowserIconCardProps = {
 	entry: DirectoryBrowserEntry;
 	isSelected: boolean;
 	onClick: () => void;
+	/**
+	 * Single-click handler for directory cards (select/focus). Files keep
+	 * using `onClick`. Issue #142.
+	 */
+	onSelect?: () => void;
 	onDoubleClick: () => void;
 	onToggle: (event?: React.MouseEvent) => void;
 	showCheckbox: boolean;
@@ -167,6 +172,7 @@ export function DirectoryBrowserIconCard({
 	entry,
 	isSelected,
 	onClick,
+	onSelect,
 	onDoubleClick,
 	onToggle,
 	showCheckbox,
@@ -191,7 +197,7 @@ export function DirectoryBrowserIconCard({
 				data-entry-kind={entry.isDirectory ? "dir" : "file"}
 				data-entry-path={entry.path}
 				className={cardButtonClass}
-				onClick={entry.isDirectory ? undefined : onClick}
+				onClick={entry.isDirectory ? onSelect : onClick}
 				onDoubleClick={onDoubleClick}
 			>
 				<div className={mediaBandClass(aspect)}>

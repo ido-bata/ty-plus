@@ -5,6 +5,7 @@ import type { Preset } from "@/management/preset/contract";
 import type { PresetIconEditorDraft } from "@/management/preset/icon-editor";
 import { presetIconDraftToPresetIcon } from "@/management/preset/icon-editor";
 import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
+import { glyphBoxFillClass } from "@/management/preset/workspace/glyph-classes";
 import { css } from "@/styled-system/css";
 
 const cardClass = css({
@@ -67,7 +68,7 @@ export function BaseIconCard({
 									},
 								} satisfies Preset
 							}
-							boxClass="h-full w-full"
+							boxClass={glyphBoxFillClass}
 						/>
 					}
 				/>
