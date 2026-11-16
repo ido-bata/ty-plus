@@ -117,6 +117,17 @@ export function useDirectoryBrowserContextMenu({
 					return staticMenu;
 				}
 
+				// Preset catalog rows are owned by the unified workspace
+				// context menu (`buildPresetRowMenu`: Run / Edit / Duplicate /
+				// Move to panel / Delete). Returning `null` keeps that menu
+				// instead of overwriting it with the reduced file-browser
+				// menu. Directory and file rows keep this local menu until
+				// the unified builder grows a directory-browser zone.
+				// Issue #141.
+				if (kind === "preset") {
+					return null;
+				}
+
 				if (kind === "dir") {
 					return {
 						menu: [
