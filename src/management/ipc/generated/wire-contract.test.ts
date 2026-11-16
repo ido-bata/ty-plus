@@ -471,6 +471,13 @@ describe("generated canonical operation policy", () => {
 				retryCrashBeforeAccept: false,
 				wireName: "host.thumbnail.batch",
 			},
+			update_install: {
+				cancellable: true,
+				idempotencyKey: "forbidden",
+				retryClass: "non-idempotent",
+				retryCrashBeforeAccept: false,
+				wireName: "update.install",
+			},
 		});
 		expect(Object.keys(canonicalOperationPolicies).sort()).toEqual(
 			[...canonicalMethods].sort(),
