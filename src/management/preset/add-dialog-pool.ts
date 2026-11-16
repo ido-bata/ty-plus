@@ -5,10 +5,12 @@
  * @see cep.config.ts panels `dialog-preset-add`, `dialog-preset-add-2`, …
  */
 
+import { tyPlusExtensionId } from "@/management/ae/cep/extension-id";
+
 /** Includes `dialog-preset-add` (slot 1) and `dialog-preset-add-2` … (manifest names). */
 const PRESET_ADD_DIALOG_POOL_SIZE = 8 as const;
 
-const BASE_EXTENSION_ID = "app.ty-plus.dialog-preset-add";
+const BASE_EXTENSION_ID = tyPlusExtensionId("dialog-preset-add");
 
 export const PRESET_ADD_TOOL_POOL_EXTENSION_IDS: readonly string[] = (() => {
 	const ids: string[] = [BASE_EXTENSION_ID];

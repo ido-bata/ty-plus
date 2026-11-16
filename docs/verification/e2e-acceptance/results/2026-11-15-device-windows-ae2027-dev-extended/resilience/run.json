@@ -1,0 +1,123 @@
+{
+  "schema": "ty-plus.e2e-run/1",
+  "suite": "resilience",
+  "capturedAt": "2026-11-15T12:03:20.772Z",
+  "extensionDir": "C:/Users/rebui/AppData/Roaming/Adobe/CEP/extensions/app.ty-plus.dev",
+  "managedRoot": "D:/4_apps/adobe/Adobe After Effects 2027/Support Files/ty-plus",
+  "totals": {
+    "PASS": 3,
+    "FAIL": 0,
+    "BLOCKED": 2,
+    "SKIP": 0
+  },
+  "results": [
+    {
+      "uc": "UC-I01",
+      "title": "corrupt workspaces/workspace-1.json: banner shown, bytes preserved",
+      "status": "BLOCKED",
+      "detail": "EPERM: operation not permitted, rm 'D:/4_apps/adobe/Adobe After Effects 2027/Support Files/ty-plus'",
+      "checks": [],
+      "evidence": [],
+      "durationMs": 1533
+    },
+    {
+      "uc": "UC-I02",
+      "title": "corrupt widgets/widgets.json: boots, bytes preserved (UC-D12 alias)",
+      "status": "PASS",
+      "detail": "D:\\4_apps\\adobe\\Adobe After Effects 2027\\Support Files\\ty-plus\\widgets\\widgets.json",
+      "checks": [
+        {
+          "name": "widgets/widgets.json overwritten with corrupt bytes",
+          "ok": true,
+          "detail": "39 bytes"
+        },
+        {
+          "name": "panel boots with non-trivial DOM after corrupt file",
+          "ok": true,
+          "detail": "body=49830 grid=true tiles=7"
+        },
+        {
+          "name": "workspace grid still rendered",
+          "ok": true,
+          "detail": "present"
+        },
+        {
+          "name": "widgets/widgets.json not silently destroyed on boot",
+          "ok": true,
+          "detail": "corrupt bytes preserved"
+        }
+      ],
+      "evidence": [],
+      "durationMs": 1623
+    },
+    {
+      "uc": "UC-I04",
+      "title": "corrupt styles/theme.css: defaults fallback, file preserved or repaired",
+      "status": "BLOCKED",
+      "detail": "EPERM: operation not permitted, copyfile 'C:\\Users\\rebui\\AppData\\Local\\Temp\\ty-plus-e2e-snapshots\\11452\\uc-i04-theme-css\\cache\\layout-undo\\panel-1\\stack.json' -> 'D:\\4_apps\\adobe\\Adobe After Effects 2027\\Support Files\\ty-plus\\cache\\layout-undo\\panel-1\\stack.json'",
+      "checks": [],
+      "evidence": [],
+      "durationMs": 839
+    },
+    {
+      "uc": "UC-I05",
+      "title": "corrupt settings/app.json: defaults fallback, bytes preserved",
+      "status": "PASS",
+      "detail": "D:\\4_apps\\adobe\\Adobe After Effects 2027\\Support Files\\ty-plus\\settings\\app.json",
+      "checks": [
+        {
+          "name": "settings/app.json overwritten with corrupt bytes",
+          "ok": true,
+          "detail": "50 bytes"
+        },
+        {
+          "name": "panel boots with non-trivial DOM after corrupt file",
+          "ok": true,
+          "detail": "body=49830 grid=true tiles=7"
+        },
+        {
+          "name": "workspace grid still rendered",
+          "ok": true,
+          "detail": "present"
+        },
+        {
+          "name": "settings/app.json not silently destroyed on boot",
+          "ok": true,
+          "detail": "corrupt bytes preserved"
+        }
+      ],
+      "evidence": [],
+      "durationMs": 1628
+    },
+    {
+      "uc": "UC-C16",
+      "title": "corrupt presets/presets.json: boots, records preserved",
+      "status": "PASS",
+      "detail": "D:\\4_apps\\adobe\\Adobe After Effects 2027\\Support Files\\ty-plus\\presets\\presets.json",
+      "checks": [
+        {
+          "name": "presets/presets.json overwritten with corrupt bytes",
+          "ok": true,
+          "detail": "39 bytes"
+        },
+        {
+          "name": "panel boots with non-trivial DOM after corrupt file",
+          "ok": true,
+          "detail": "body=49826 grid=true tiles=7"
+        },
+        {
+          "name": "workspace grid still rendered",
+          "ok": true,
+          "detail": "present"
+        },
+        {
+          "name": "presets/presets.json not silently destroyed on boot",
+          "ok": true,
+          "detail": "corrupt bytes preserved"
+        }
+      ],
+      "evidence": [],
+      "durationMs": 1888
+    }
+  ]
+}

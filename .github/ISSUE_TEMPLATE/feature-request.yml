@@ -1,0 +1,28 @@
+name: Feature request / 機能提案
+description: Suggest a feature or usability improvement / 機能や使いやすさの改善を提案
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Describe the user problem first, not just the implementation.
+        実装方法より先に、解決したい作業上の問題を教えてください。
+        Please check [existing issues](https://github.com/ido-bata/ty-plus/issues) before posting.
+  - type: textarea
+    id: context
+    attributes:
+      label: Problem and use case / 課題と利用場面
+      description: What is difficult today, and when does it happen?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Desired behavior / 期待する動作
+      description: Describe what success would look like, not only the design.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Workarounds or alternatives / 代替策
+      description: Optional examples, references, or screenshots / 任意

@@ -6,6 +6,7 @@ import {
 	type HostId,
 } from "@/management/ae/host/contract";
 import { createLogger } from "@/management/debug/logger";
+import { notificationStore } from "@/management/online/notification/service";
 
 const hostBridgeLog = createLogger("host-bridge");
 
@@ -26,7 +27,7 @@ type CepWindowWithEvalScript = {
 const HOST_BUNDLE_NAMESPACE = "__TY_PLUS_HOST__";
 const HOST_BUNDLE_GLOBAL_REF = `$.global['${HOST_BUNDLE_NAMESPACE}']`;
 const HOST_BUNDLE_RELATIVE_PATH = "jsx/ty-plus-host.jsx";
-const ALLOWED_HOST_METHODS = new Set<keyof AfterEffectsHostApi>([
+export const ALLOWED_HOST_METHODS = new Set<keyof AfterEffectsHostApi>([
 	"getHostContext",
 	"ping",
 	"runScriptFile",
@@ -64,14 +65,6 @@ const escapeScriptString = (value: string) =>
 		.replaceAll("\n", "\\n")
 		.replaceAll("\u2028", "\\u2028")
 		.replaceAll("\u2029", "\\u2029");
-
-const hostAlertScript = (message: string) => `
-(function() {
-  try {
-    alert('Ty Plus execution failed:\\n${escapeScriptString(message)}');
-  } catch (_alertError) {}
-})();
-`;
 
 const normalizeCepPath = (value: string) =>
 	value.replaceAll("\\", "/").replace(/\/+$/, "");
@@ -134,11 +127,18 @@ const runEvalScript = (win: Window, script: string) =>
 		});
 	});
 
-const alertHostExecutionFailure = async (win: Window, message: string) => {
+// Issue #72: host execution failures must never raise a modal ExtendScript
+// `alert()` — it blocks the AE main thread and every CEP surface until a
+// human dismisses it. Failures are already propagated to callers as thrown
+// errors; this adds a non-modal in-panel notification as the user-visible
+// surface. Standalone generated `.jsx` keeps `alert()` (see Issue #72).
+const notifyHostExecutionFailure = (message: string) => {
 	try {
-		await runEvalScript(win, hostAlertScript(message));
-	} catch (_alertError) {
-		// The original execution failure is more important than alert delivery.
+		notificationStore.add(`Ty Plus: ${message.slice(0, 300)}`, "error", {
+			duration: 8000,
+		});
+	} catch (_notifyError) {
+		// Notification delivery must never mask the original failure.
 	}
 };
 
@@ -230,6 +230,12 @@ type HostBundleProbe = {
 	readonly present: boolean;
 	readonly schemaVersion: number | null;
 	readonly bundleVersion: string | null;
+	/**
+	 * Every contract method is callable on the resident object. Markers
+	 * can match while the methods are absent (present-but-empty residue,
+	 * Issue #107); such a resident is heal-worthy, not reusable.
+	 */
+	readonly contractComplete: boolean;
 };
 
 /**
@@ -278,19 +284,37 @@ const compatibilityMismatch = (
 	return parts.join("; ");
 };
 
+/**
+ * Contract completeness check shared by the JS probe AND the host-side
+ * conditional-load re-check (Issue #107): the compatibility markers
+ * alone cannot prove the resident object IS the bundle — a
+ * present-but-empty residue can carry `__schemaVersion` /
+ * `__bundleVersion` yet expose no callable methods. Every script that
+ * judges the resident contract must apply this same method-presence
+ * check or the two sides would disagree about whether `$.evalFile` is
+ * needed, and a surface that loses the probe race would either skip a
+ * required reload or restart one the winner just satisfied.
+ */
+const HOST_CONTRACT_METHODS = [...ALLOWED_HOST_METHODS];
+const hostContractMethodCheckJs = (target: string): string =>
+	HOST_CONTRACT_METHODS.map(
+		(method) => `typeof ${target}['${method}'] === "function"`,
+	).join(" && ");
+
 /** Probe distinguishes "not resident" from "unreadable". */
 const HOST_BUNDLE_PROBE_SCRIPT = `
 (function() {
   try {
     var bundle = $.global && $.global.__TY_PLUS_HOST__;
     if (!bundle || typeof bundle !== "object") {
-      return JSON.stringify({ ok: true, present: false });
+      return JSON.stringify({ ok: true, present: false, contractComplete: false });
     }
     return JSON.stringify({
       ok: true,
       present: true,
       schemaVersion: typeof bundle.__schemaVersion === "number" ? bundle.__schemaVersion : -1,
-      bundleVersion: typeof bundle.__bundleVersion === "string" ? bundle.__bundleVersion : ""
+      bundleVersion: typeof bundle.__bundleVersion === "string" ? bundle.__bundleVersion : "",
+      contractComplete: ${hostContractMethodCheckJs("bundle")}
     });
   } catch (_error) {
     return JSON.stringify({ ok: false });
@@ -330,19 +354,19 @@ const buildHostBundleLoadScript = (jsxPath: string): string => `
     var resident = $.global && $.global.__TY_PLUS_HOST__;
     var residentSchema = resident && typeof resident.__schemaVersion === "number" ? resident.__schemaVersion : -1;
     var residentBundleVersion = resident && typeof resident.__bundleVersion === "string" ? resident.__bundleVersion : "";
-    if (resident && residentSchema === expectedSchema && residentBundleVersion === expectedBundleVersion) {
-      return JSON.stringify({ ok: true, loaded: false, schemaVersion: residentSchema, bundleVersion: residentBundleVersion });
+    var residentComplete = !!(resident && typeof resident === "object" && (${hostContractMethodCheckJs("resident")}));
+    if (residentComplete && residentSchema === expectedSchema && residentBundleVersion === expectedBundleVersion) {
+      return JSON.stringify({ ok: true, loaded: false, schemaVersion: residentSchema, bundleVersion: residentBundleVersion, contractComplete: true });
     }
     $.evalFile('${jsxPath}');
     var bundle = $.global && $.global.__TY_PLUS_HOST__;
     var schema = bundle && typeof bundle.__schemaVersion === "number" ? bundle.__schemaVersion : -1;
     var loadedBundleVersion = bundle && typeof bundle.__bundleVersion === "string" ? bundle.__bundleVersion : "";
-    return JSON.stringify({ ok: true, loaded: true, schemaVersion: schema, bundleVersion: loadedBundleVersion });
+    var contractComplete = !!(bundle && typeof bundle === "object" && (${hostContractMethodCheckJs("bundle")}));
+    return JSON.stringify({ ok: true, loaded: true, schemaVersion: schema, bundleVersion: loadedBundleVersion, contractComplete: contractComplete });
   } catch (error) {
-    try { alert('Ty Plus execution failed:\\nHost bundle load failed: ' + String(error)); } catch (_alertError) {}
     return JSON.stringify({
       ok: false,
-      alerted: true,
       error: { message: "Host bundle load failed: " + String(error) }
     });
   }
@@ -353,6 +377,7 @@ const buildHostBundleLoadScript = (jsxPath: string): string => `
 type HostBundleLoadResult = {
 	readonly schemaVersion: number | null;
 	readonly bundleVersion: string | null;
+	readonly contractComplete: boolean;
 	readonly loaded: boolean;
 };
 
@@ -388,6 +413,7 @@ const readHostBundleProbe = async (win: Window): Promise<HostBundleProbe> => {
 		present?: unknown;
 		schemaVersion?: unknown;
 		bundleVersion?: unknown;
+		contractComplete?: unknown;
 	};
 	if (value.ok !== true) {
 		throw new Error("Host bundle probe failed");
@@ -398,6 +424,7 @@ const readHostBundleProbe = async (win: Window): Promise<HostBundleProbe> => {
 			typeof value.schemaVersion === "number" ? value.schemaVersion : null,
 		bundleVersion:
 			typeof value.bundleVersion === "string" ? value.bundleVersion : null,
+		contractComplete: value.contractComplete === true,
 	};
 };
 
@@ -429,8 +456,8 @@ const runHostBundleLoad = async (
 		loaded?: boolean;
 		schemaVersion?: number;
 		bundleVersion?: string;
+		contractComplete?: boolean;
 		error?: { message?: string };
-		alerted?: boolean;
 	};
 	try {
 		parsed = parseHostJsonResult<{
@@ -438,19 +465,17 @@ const runHostBundleLoad = async (
 			loaded?: boolean;
 			schemaVersion?: number;
 			bundleVersion?: string;
+			contractComplete?: boolean;
 			error?: { message?: string };
-			alerted?: boolean;
 		}>(result, "Host bundle load");
 	} catch (error) {
 		const message = error instanceof Error ? error.message : String(error);
-		await alertHostExecutionFailure(win, message);
+		notifyHostExecutionFailure(message);
 		throw error;
 	}
 	if (!parsed.ok) {
 		const message = parsed.error?.message ?? "Failed to load host bundle";
-		if (!parsed.alerted) {
-			await alertHostExecutionFailure(win, message);
-		}
+		notifyHostExecutionFailure(message);
 		throw new Error(message);
 	}
 	return {
@@ -458,6 +483,9 @@ const runHostBundleLoad = async (
 			typeof parsed.schemaVersion === "number" ? parsed.schemaVersion : null,
 		bundleVersion:
 			typeof parsed.bundleVersion === "string" ? parsed.bundleVersion : null,
+		// Fail closed: a load block that cannot prove every contract
+		// method is callable is not a usable bundle (Issue #107).
+		contractComplete: parsed.contractComplete === true,
 		loaded: parsed.loaded !== false,
 	};
 };
@@ -473,9 +501,33 @@ type HostBundleFailureReason =
 	| "probe-failed"
 	| "extension-root-unresolved"
 	| "eval-file-failed"
+	| "post-load-unverifiable"
 	| "schema-mismatch"
 	| "implementation-mismatch"
+	| "contract-mismatch"
 	| "incompatible-not-reloaded";
+
+/**
+ * Bound on the silent-failure retry loop (Issue #107). A flight that
+ * fails WITHOUT recording a contract — the probe cannot run, `$.evalFile`
+ * throws, or it returns with no readable markers — returns the
+ * coordinator to `idle` so the next operation may retry. That transient
+ * intent is preserved, but after this many consecutive failures the
+ * coordinator refuses new flights until the cooldown elapses: a
+ * *persistent* failure (locked extension dir, half-initialized engine)
+ * would otherwise rerun probe+`$.evalFile` on every operation of every
+ * surface, forever.
+ */
+const MAX_CONSECUTIVE_LOAD_FAILURES = 3;
+const LOAD_FAILURE_COOLDOWN_MS = 30_000;
+
+/** Failure reasons that feed the backoff counter above. */
+const LOAD_BACKOFF_REASONS = new Set<HostBundleFailureReason>([
+	"probe-failed",
+	"extension-root-unresolved",
+	"eval-file-failed",
+	"post-load-unverifiable",
+]);
 
 class HostBundleCoordinator {
 	private state: HostBundleCoordinatorState = "idle";
@@ -489,6 +541,20 @@ class HostBundleCoordinator {
 	 * collapsed with "current".
 	 */
 	private readonly loadedFor = new Set<string>();
+	/**
+	 * Compatibility fingerprints (`schema|bundleVersion`) that a
+	 * COMPLETED `$.evalFile` proved contract-incomplete — markers
+	 * compatible but contract methods missing (Issue #107). Kept apart
+	 * from `loadedFor` on purpose: an incomplete resident carrying the
+	 * EXPECTED fingerprint must still be reloaded once, because the disk
+	 * bundle may be intact and only the resident was corrupted. Only a
+	 * disk bundle that keeps installing without methods is recorded
+	 * here, and then the next probe fails fast instead of reloading.
+	 */
+	private readonly incompleteFor = new Set<string>();
+	/** See `LOAD_BACKOFF_REASONS`: consecutive unrecorded load failures. */
+	private consecutiveLoadFailures = 0;
+	private lastLoadFailureAt = 0;
 
 	constructor(private readonly win: Window) {}
 
@@ -497,9 +563,62 @@ class HostBundleCoordinator {
 		return this.state;
 	}
 
+	/**
+	 * Drop the terminal `ready` state so the next `ensure` re-probes the
+	 * host global. Used when a host call reports the resident bundle
+	 * missing: `$.global` outlives this window and can be corrupted by an
+	 * abnormal teardown after this coordinator already went `ready`
+	 * (Issue #104). `loadedFor` is kept — it records what the bundle on
+	 * disk produces, which a resident-global reset does not invalidate.
+	 */
+	reset(): void {
+		if (this.state === "ready") {
+			this.state = "idle";
+		}
+	}
+
+	/**
+	 * A host call reported the resident bundle missing — or present but
+	 * method-less — even after the self-heal cycle reloaded it (Issue
+	 * #107). That is the same persistent silent-failure class as
+	 * `post-load-unverifiable`: `$.evalFile` appears to succeed yet no
+	 * callable host ever materializes. Counted toward the load backoff
+	 * so repeated operations cannot keep paying probe+load for a bundle
+	 * that never becomes callable.
+	 */
+	recordResidentLoss(): void {
+		this.consecutiveLoadFailures += 1;
+		this.lastLoadFailureAt = Date.now();
+	}
+
+	/**
+	 * The host answered a call — the resident bundle is present AND
+	 * callable, which is the only proof that clears the load backoff.
+	 * Reaching `ready` alone is not enough: `$.evalFile` can verify the
+	 * contract and the global can still be empty by the time the method
+	 * call runs.
+	 */
+	recordCallSuccess(): void {
+		this.consecutiveLoadFailures = 0;
+	}
+
 	ensure(executorId: string): Promise<void> {
 		if (this.state === "ready") return Promise.resolve();
 		if (this.inFlight !== null) return this.inFlight;
+		if (
+			this.consecutiveLoadFailures >= MAX_CONSECUTIVE_LOAD_FAILURES &&
+			Date.now() - this.lastLoadFailureAt < LOAD_FAILURE_COOLDOWN_MS
+		) {
+			// Persistent failure: fail fast instead of paying another
+			// probe + `$.evalFile` round-trip per operation. The counters
+			// are deliberately NOT cleared here — only a flight that
+			// reaches `ready` proves the host recovered.
+			return Promise.reject(
+				new Error(
+					`Host bundle load is in backoff after ${this.consecutiveLoadFailures} consecutive failures`,
+				),
+			);
+		}
 		const flight = this.runOnce(executorId);
 		this.inFlight = flight;
 		const settle = (): void => {
@@ -519,6 +638,10 @@ class HostBundleCoordinator {
 		nextState: HostBundleCoordinatorState,
 	): never {
 		this.state = nextState;
+		if (LOAD_BACKOFF_REASONS.has(reason)) {
+			this.consecutiveLoadFailures += 1;
+			this.lastLoadFailureAt = Date.now();
+		}
 		hostBridgeLog.error(`[ty-plus] host bundle ${reason}`, {
 			action: "host-bundle-load-failed",
 			context: {
@@ -560,11 +683,13 @@ class HostBundleCoordinator {
 				observedSchema: observed,
 				observedBundleVersion: observedBundle,
 				resident: probe.present,
+				contractComplete: probe.contractComplete,
 				elapsedMs: Date.now() - startedAt,
 			},
 		});
 
-		if (probe.present && isCompatible(observed, observedBundle)) {
+		const markersCompatible = isCompatible(observed, observedBundle);
+		if (probe.present && markersCompatible && probe.contractComplete) {
 			this.state = "ready";
 			hostBridgeLog.info("[ty-plus] host bundle reused", {
 				action: "host-bundle-reuse",
@@ -581,6 +706,18 @@ class HostBundleCoordinator {
 		}
 
 		const observedKey = compatibilityFingerprint(observed, observedBundle);
+		// Present-but-empty residue (Issue #107): the markers can match the
+		// expected contract while no method is callable. Such a resident is
+		// heal-worthy — the disk bundle may be intact and only `$.global`
+		// was corrupted — so `loadedFor` (which proves what a past load
+		// produced) must NOT block the reload. It is blocked only when a
+		// COMPLETED load already proved the disk bundle installs without
+		// methods (`incompleteFor`).
+		const residentIncomplete = probe.present && !probe.contractComplete;
+		const unfixable =
+			residentIncomplete && markersCompatible
+				? this.incompleteFor.has(observedKey)
+				: this.loadedFor.has(observedKey);
 		if (probe.present) {
 			hostBridgeLog.warn("[ty-plus] host bundle contract changed; reloading", {
 				action: "host-bundle-reload-incompatible",
@@ -590,26 +727,32 @@ class HostBundleCoordinator {
 					expectedBundleVersion: HOST_BUNDLE_VERSION,
 					observedSchema: observed,
 					observedBundleVersion: observedBundle,
+					contractComplete: probe.contractComplete,
 					elapsedMs: Date.now() - startedAt,
 				},
 			});
 		}
-		if (this.loadedFor.has(observedKey)) {
-			// A successful load already produced this contract and it still
+		if (probe.present && unfixable) {
+			// A completed load already produced this contract and it still
 			// does not satisfy the caller. Reloading again would restart the
 			// storm this coordinator exists to stop.
 			return this.fail(
 				executorId,
-				"incompatible-not-reloaded",
+				residentIncomplete && markersCompatible
+					? "contract-mismatch"
+					: "incompatible-not-reloaded",
 				{
 					expectedSchema: HOST_BUNDLE_SCHEMA_VERSION,
 					expectedBundleVersion: HOST_BUNDLE_VERSION,
 					observedSchema: observed,
 					observedBundleVersion: observedBundle,
+					contractComplete: probe.contractComplete,
 					elapsedMs: Date.now() - startedAt,
 				},
 				new Error(
-					`Host bundle ${compatibilityMismatch(observed, observedBundle)}`,
+					residentIncomplete && markersCompatible
+						? "Host bundle resident is missing contract methods"
+						: `Host bundle ${compatibilityMismatch(observed, observedBundle)}`,
 				),
 				"idle",
 			);
@@ -649,23 +792,21 @@ class HostBundleCoordinator {
 			);
 		}
 
-		this.loadedFor.add(observedKey);
 		const postLoadSchema = postLoad.schemaVersion;
 		const postLoadBundle = postLoad.bundleVersion;
-		if (!isCompatible(postLoadSchema, postLoadBundle)) {
-			// Record what the disk actually produced as well: a stale
-			// on-disk implementation must fail fast on the next operation
-			// instead of loading again.
-			const postLoadKey = compatibilityFingerprint(
-				postLoadSchema,
-				postLoadBundle,
-			);
-			if (postLoadSchema !== null) this.loadedFor.add(postLoadKey);
+		// `$.evalFile` returned without a thrown error but the resident
+		// global still carries no readable contract markers: the script
+		// never reached its tail assignment. That is an engine-level
+		// transient — the same class as a thrown evalFile — seen when an
+		// abnormal surface teardown leaves ExtendScript globals
+		// half-initialized (Issue #104). Recording `loadedFor` here would
+		// make every later operation on this window fail fast forever, so
+		// this flight fails without poisoning anything and the next
+		// operation retries the load.
+		if (postLoadSchema === null || postLoadSchema === -1) {
 			return this.fail(
 				executorId,
-				postLoadSchema === HOST_BUNDLE_SCHEMA_VERSION
-					? "implementation-mismatch"
-					: "schema-mismatch",
+				"post-load-unverifiable",
 				{
 					expectedSchema: HOST_BUNDLE_SCHEMA_VERSION,
 					expectedBundleVersion: HOST_BUNDLE_VERSION,
@@ -674,7 +815,54 @@ class HostBundleCoordinator {
 					elapsedMs: Date.now() - loadStartedAt,
 				},
 				new Error(
-					`Host bundle ${compatibilityMismatch(postLoadSchema, postLoadBundle)} after load`,
+					"Host bundle load returned no readable contract after $.evalFile",
+				),
+				"idle",
+			);
+		}
+		// Record the pre-load fingerprint only when a resident bundle was
+		// actually observed. "absent" is not a contract: recording it would
+		// make the post-corruption self-heal probe (Issue #104) hit
+		// `incompatible-not-reloaded` and never reach `$.evalFile` again.
+		// The stale-disk case is still covered by `postLoadKey` below —
+		// a disk bundle that installs a wrong contract leaves a present,
+		// mismatched resident the next probe can match.
+		if (probe.present) this.loadedFor.add(observedKey);
+		const postLoadCompatible = isCompatible(postLoadSchema, postLoadBundle);
+		if (!postLoadCompatible || !postLoad.contractComplete) {
+			// Record what the disk actually produced as well: a stale
+			// on-disk implementation must fail fast on the next operation
+			// instead of loading again. A disk bundle whose markers match
+			// but whose methods are missing goes to `incompleteFor` — the
+			// resident it leaves behind carries the EXPECTED fingerprint,
+			// so only that set can recognize it as unfixable (Issue #107).
+			const postLoadKey = compatibilityFingerprint(
+				postLoadSchema,
+				postLoadBundle,
+			);
+			if (postLoadSchema !== null) {
+				if (postLoadCompatible) this.incompleteFor.add(postLoadKey);
+				else this.loadedFor.add(postLoadKey);
+			}
+			return this.fail(
+				executorId,
+				postLoadCompatible
+					? "contract-mismatch"
+					: postLoadSchema === HOST_BUNDLE_SCHEMA_VERSION
+						? "implementation-mismatch"
+						: "schema-mismatch",
+				{
+					expectedSchema: HOST_BUNDLE_SCHEMA_VERSION,
+					expectedBundleVersion: HOST_BUNDLE_VERSION,
+					observedSchema: postLoadSchema,
+					observedBundleVersion: postLoadBundle,
+					contractComplete: postLoad.contractComplete,
+					elapsedMs: Date.now() - loadStartedAt,
+				},
+				new Error(
+					postLoadCompatible
+						? "Host bundle is missing contract methods after load"
+						: `Host bundle ${compatibilityMismatch(postLoadSchema, postLoadBundle)} after load`,
 				),
 				"idle",
 			);
@@ -683,6 +871,10 @@ class HostBundleCoordinator {
 		this.loadedFor.add(
 			compatibilityFingerprint(postLoadSchema, postLoadBundle),
 		);
+		// NOTE: reaching `ready` does NOT clear the backoff counter — the
+		// load verified markers and methods, but the bundle can still
+		// vanish before the call script runs (Issue #107). Only an
+		// actual host response (`recordCallSuccess`) proves recovery.
 		this.state = "ready";
 		hostBridgeLog.info("[ty-plus] host bundle loaded", {
 			action: "host-bundle-load-success",
@@ -740,58 +932,95 @@ const buildCepHostExecutor = (
 		if (!ALLOWED_HOST_METHODS.has(method)) {
 			throw new Error(`Host method is not allowed: ${String(method)}`);
 		}
-		await coordinator.ensure(executorId);
-
 		const rawArgs = escapeScriptString(JSON.stringify(args));
 		const escapedMethod = escapeScriptString(String(method));
-		const result = await runEvalScript(
-			win,
-			`
+		const callScript = `
 (function() {
   try {
     var hostBundle = $.global && typeof ${HOST_BUNDLE_GLOBAL_REF} === "object"
       ? ${HOST_BUNDLE_GLOBAL_REF}
       : (typeof __TY_PLUS_HOST__ === "object" ? __TY_PLUS_HOST__ : null);
-    var hostMethod = hostBundle && typeof hostBundle['${escapedMethod}'] === "function"
+    if (!hostBundle) {
+      return JSON.stringify({
+        ok: false,
+        error: { message: "Host bundle is not resident", code: "host_bundle_missing" }
+      });
+    }
+    var hostMethod = typeof hostBundle['${escapedMethod}'] === "function"
       ? hostBundle['${escapedMethod}']
       : null;
     if (hostMethod) {
       return hostMethod('${rawArgs}');
     }
-    try { alert('Ty Plus execution failed:\\n__TY_PLUS_HOST__.${escapedMethod} is not available'); } catch (_alertError) {}
-    return JSON.stringify({ ok: false, alerted: true, error: { message: "__TY_PLUS_HOST__.${escapedMethod} is not available" } });
+    return JSON.stringify({ ok: false, error: { message: "__TY_PLUS_HOST__.${escapedMethod} is not available", code: "host_method_missing" } });
   } catch (error) {
-    try { alert('Ty Plus execution failed:\\nHost function wrapper failed for ${escapedMethod}: ' + String(error)); } catch (_alertError) {}
     return JSON.stringify({
       ok: false,
-      alerted: true,
       error: {
         message: "Host function wrapper failed for ${escapedMethod}: " + String(error)
       }
     });
   }
 })();
-`,
-		);
-		let parsed:
+`;
+		// A `ready` coordinator trusts its earlier probe, but `$.global` is
+		// shared engine state that an abnormal teardown can corrupt after
+		// the fact (Issue #104). When the call reports the bundle missing —
+		// or present but without the requested method, the present-but-empty
+		// residue of Issue #107 — drop the terminal state and run one
+		// ensure+call cycle again so the coordinator re-probes and reloads
+		// instead of failing every later operation on this window. If the
+		// retried call STILL cannot reach a method, the failure is
+		// persistent: count it toward the load backoff so the next
+		// operations fail fast rather than paying probe+load each time.
+		type HostCallResult =
 			| { ok: true; hostId?: HostId; value?: unknown }
-			| { ok: false; alerted?: boolean; error?: { message?: string } };
-		try {
-			parsed = parseHostJsonResult<
-				| { ok: true; hostId?: HostId; value?: unknown }
-				| { ok: false; alerted?: boolean; error?: { message?: string } }
-			>(result, `Host function ${String(method)}`);
-		} catch (error) {
-			const message = error instanceof Error ? error.message : String(error);
-			await alertHostExecutionFailure(win, message);
-			throw error;
+			| { ok: false; error?: { message?: string; code?: string } };
+		const isHealWorthy = (code: string | undefined): boolean =>
+			code === "host_bundle_missing" || code === "host_method_missing";
+		const invokeHostMethod = async (): Promise<HostCallResult> => {
+			const attempt = async (): Promise<HostCallResult> => {
+				await coordinator.ensure(executorId);
+				const result = await runEvalScript(win, callScript);
+				let parsed: HostCallResult;
+				try {
+					parsed = parseHostJsonResult<HostCallResult>(
+						result,
+						`Host function ${String(method)}`,
+					);
+				} catch (error) {
+					const message =
+						error instanceof Error ? error.message : String(error);
+					notifyHostExecutionFailure(message);
+					throw error;
+				}
+				return parsed;
+			};
+			const first = await attempt();
+			if (first.ok === false && isHealWorthy(first.error?.code)) {
+				coordinator.reset();
+				const second = await attempt();
+				if (second.ok === false && isHealWorthy(second.error?.code)) {
+					coordinator.recordResidentLoss();
+				}
+				return second;
+			}
+			return first;
+		};
+		const parsed = await invokeHostMethod();
+		if (parsed.ok === false && isHealWorthy(parsed.error?.code)) {
+			// Still unreachable after the self-heal cycle — already
+			// counted via `recordResidentLoss`; do not clear the counter.
+		} else {
+			// Any definitive host response — success or a method-level
+			// error — proves the bundle is resident and callable, which
+			// is what clears the load backoff (Issue #107).
+			coordinator.recordCallSuccess();
 		}
 
 		if (!parsed.ok) {
 			const message = parsed.error?.message ?? "Host execution failed";
-			if (!parsed.alerted) {
-				await alertHostExecutionFailure(win, message);
-			}
+			notifyHostExecutionFailure(message);
 			throw new Error(message);
 		}
 

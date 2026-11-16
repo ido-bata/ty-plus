@@ -41,6 +41,9 @@ type SettingsBag = {
 	reloadSettingsFromDisk: () => Promise<void>;
 	resetSettings: () => void;
 	isLoaded: boolean;
+	saveError: string | null;
+	reportSaveError: (message: string) => void;
+	persistSettingsNow: () => Promise<boolean>;
 };
 
 const StorySettingsProvider = ({
@@ -59,6 +62,9 @@ const StorySettingsProvider = ({
 			reloadSettingsFromDisk: async () => undefined,
 			resetSettings: () => undefined,
 			isLoaded: true,
+			saveError: null,
+			reportSaveError: () => undefined,
+			persistSettingsNow: async () => true,
 		};
 	}, []);
 	return (
@@ -115,11 +121,6 @@ export const DisplayGrid: Story = {
 /** データ → Paths. Hash = #paths. */
 export const DataPaths: Story = {
 	render: renderDialog("paths"),
-};
-
-/** データ → Network. Hash = #network. */
-export const DataNetwork: Story = {
-	render: renderDialog("network"),
 };
 
 /** データ → ComponentPreview. Hash = #component-preview. */

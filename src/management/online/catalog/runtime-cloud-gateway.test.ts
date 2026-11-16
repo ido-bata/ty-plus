@@ -64,7 +64,9 @@ describe("createFixtureCloudGateway", () => {
 	it("resolves the user-manual public link and rejects unknown keys", async () => {
 		const gateway = createFixtureCloudGateway();
 		const link = await gateway.getPublicLink?.("user-manual");
-		expect(link?.url).toBe("https://www.notion.so/ty-plus-User-Manual-fixture");
+		expect(link?.url).toBe(
+			"https://github.com/ido-bata/ty-plus/blob/main/docs/user-guide/index.md",
+		);
 		await expect(gateway.getPublicLink?.("unknown")).rejects.toThrow(
 			/Unknown public link/,
 		);
@@ -185,13 +187,22 @@ describe("createRuntimeCloudGateway", () => {
 		});
 	});
 
-	it("serves fixture notifications / public links and rejects detail resolution", async () => {
+	it("exposes no fixture notifications so the static feed stays authoritative", async () => {
+		// Issue #82: the runtime gateway must not return FALLBACK_NOTIFICATIONS
+		// — the notification center prefers gateway.listNotifications over the
+		// official static feed, so a fixture payload here would masquerade as
+		// real notifications in R0.
 		const gateway = createRuntimeCloudGateway(fakePort(vi.fn()));
-		const notifications = await gateway.listNotifications?.();
-		expect(notifications?.[0]?.notificationId).toBe("msg-1");
-		await expect(gateway.getNotificationBlocks?.("msg-1")).resolves.toEqual([]);
+		expect(gateway.listNotifications).toBeUndefined();
+		expect(gateway.getNotificationBlocks).toBeUndefined();
+	});
+
+	it("resolves the bundled user-manual link and rejects detail resolution", async () => {
+		const gateway = createRuntimeCloudGateway(fakePort(vi.fn()));
 		const link = await gateway.getPublicLink?.("user-manual");
-		expect(link?.url).toBe("https://www.notion.so/ty-plus-User-Manual-fixture");
+		expect(link?.url).toBe(
+			"https://github.com/ido-bata/ty-plus/blob/main/docs/user-guide/index.md",
+		);
 		await expect(gateway.resolvePreset("p1")).rejects.toThrow(
 			/Runtime gateway cannot resolve preset details/,
 		);

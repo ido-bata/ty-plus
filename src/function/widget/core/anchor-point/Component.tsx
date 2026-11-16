@@ -5,34 +5,8 @@ import {
 	useAnchorGesture,
 } from "@/shared/component/interaction/use-anchor-gesture";
 import { css } from "@/styled-system/css";
-import {
-	type AnchorPosition,
-	buildAnchorScript,
-	isValidAnchorPosition,
-} from "./index";
-
-type EvalScriptFn = (
-	script: string,
-	callback?: (result: string) => void,
-) => void;
-
-const getEvalScript = (): EvalScriptFn | null => {
-	if (typeof window === "undefined") return null;
-	const w = window as unknown as {
-		__adobe_cep__?: { evalScript?: EvalScriptFn };
-	};
-	return w.__adobe_cep__?.evalScript ?? null;
-};
-
-const runCep = (jsx: string): void => {
-	const ev = getEvalScript();
-	if (!ev) return;
-	ev(jsx, (result) => {
-		if (typeof console !== "undefined") {
-			console.log("[anchor-point] evalScript result:", result);
-		}
-	});
-};
+import { runAnchorScript } from "./run";
+import { type AnchorPosition, isValidAnchorPosition } from "./script";
 
 const ANCHOR_POSITIONS: readonly (readonly [AnchorPosition, string, string])[] =
 	[
@@ -166,7 +140,7 @@ export function AnchorPointWidget({
 				const pos = id.slice("anchor-point:".length);
 				if (isValidAnchorPosition(pos)) {
 					setCurrentAnchor(pos);
-					runCep(buildAnchorScript(pos));
+					runAnchorScript(pos);
 				}
 			} else if (
 				id === "ty.ctx.anchor-point.reset-center" ||
@@ -174,7 +148,7 @@ export function AnchorPointWidget({
 				id === "ty.ctx.anchor-point.apply-active-comp"
 			) {
 				setCurrentAnchor("center");
-				runCep(buildAnchorScript("center"));
+				runAnchorScript("center");
 			}
 		};
 		window.addEventListener("ty-plus:anchor-point-context-menu", handler);
@@ -186,7 +160,7 @@ export function AnchorPointWidget({
 
 	const recognizeAnchor = React.useCallback((pos: AnchorPosition): void => {
 		setCurrentAnchor(pos);
-		runCep(buildAnchorScript(pos));
+		runAnchorScript(pos);
 	}, []);
 
 	const gesture = useAnchorGesture<AnchorPosition>({
@@ -238,7 +212,7 @@ export function AnchorPointWidget({
 								}
 								e.stopPropagation();
 								setCurrentAnchor(pos);
-								runCep(buildAnchorScript(pos));
+								runAnchorScript(pos);
 							}}
 							className={css({
 								position: "relative",

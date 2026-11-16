@@ -9,6 +9,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { WidgetType } from "@/function/widget";
 import { useCep } from "@/management/ae/cep/contexts/Context";
+import { tyPlusExtensionId } from "@/management/ae/cep/extension-id";
 import { createCepHostExecutor } from "@/management/ae/cep/host-executor";
 import { detectCepHostCode } from "@/management/ae/cep/runtime";
 import {
@@ -33,6 +34,7 @@ import {
 	updateAlignTargetCache,
 } from "@/management/dialog/dialogs/unified-context-menu";
 import { i18n } from "@/management/i18n/index";
+import { notificationStore } from "@/management/online/notification/service";
 import {
 	CP_POSITION_LAYOUT_CLASS_NAMES,
 	type CpOrientation,
@@ -75,6 +77,7 @@ import {
 	type WorkspacePresetHoverDetail,
 } from "@/management/preset/workspace/GridCatalogTile";
 import { ensureUiSettingsFile } from "@/management/setting/persistence/workspace-ui-settings-file";
+import { reconcileSettingsThemeOverrides } from "@/management/setting/theme-reconcile";
 import {
 	clearLayoutNJson,
 	clearWorkspacePanelStateFromSettingsJson,
@@ -102,6 +105,7 @@ import { openWidgetAddDialogSurface } from "@/management/widget/open-add-dialog"
 import { registry } from "@/management/widget/registry";
 import { dispatchWorkspaceWsActionClick } from "@/management/workspace/events/dispatch-ws-action-click";
 import { setupInteractionEvents } from "@/management/workspace/events/handler";
+import { gridSettingsFromSettingsJson } from "@/management/workspace/grid-settings";
 import {
 	resolveDuplicateHit,
 	runDuplicatePreset,
@@ -122,6 +126,8 @@ import {
 } from "@/management/workspace/layout/restore-plan";
 import { startWorkspaceLayoutJsonExternalChangeWatch } from "@/management/workspace/layout/sync-watch";
 import { publishShellMessage } from "@/management/workspace/messaging/publish-shell-message";
+import { subscribeWorkspaceGridLive } from "@/management/workspace/messaging/subscribe-grid-live";
+import { subscribeSettingsSaveNotices } from "@/management/workspace/messaging/subscribe-settings-save-notice";
 import { subscribeThemeLive } from "@/management/workspace/messaging/subscribe-theme-live";
 import { logWorkspace } from "@/management/workspace/onboarding/flow-log";
 import {
@@ -471,7 +477,40 @@ export function useWorkspaceRuntime(root: Element | null): {
 		const panelId = panelSurfaceId;
 
 		const cepSurfaceTransport = createCepSurfaceTransport(window);
-		subscribeThemeLive(cepSurfaceTransport, panelId);
+		const unsubscribeThemeLive = subscribeThemeLive(
+			cepSurfaceTransport,
+			panelId,
+		);
+		// Settings write failures broadcast `saveNotice` so a failure landing
+		// after the settings dialog closed still surfaces on the primary
+		// panel (Issue #96).
+		const unsubscribeSaveNotices = subscribeSettingsSaveNotices(
+			cepSurfaceTransport,
+			panelId,
+		);
+		// Settings → グリッド edits broadcast grid metrics as themeLive
+		// tokens; keep state.grid in step so tile geometry follows the
+		// setting on every panel (Issue #95). `liveGridRevision` lets the
+		// async boot restore detect a live commit that landed while its
+		// reads were in flight and skip overwriting it with the older
+		// on-disk snapshot.
+		let liveGridRevision = 0;
+		const unsubscribeGridLive = subscribeWorkspaceGridLive(
+			cepSurfaceTransport,
+			panelId,
+			(grid) => {
+				liveGridRevision += 1;
+				const cur = getState();
+				if (
+					cur.grid.cellSize === grid.cellSize &&
+					cur.grid.gap === grid.gap &&
+					cur.grid.radius === grid.radius
+				) {
+					return;
+				}
+				commit({ ...cur, grid });
+			},
+		);
 
 		let nextState: SurfaceState = createInitialSurfaceState({
 			grid: gridOverride as Record<string, unknown>,
@@ -983,6 +1022,11 @@ export function useWorkspaceRuntime(root: Element | null): {
 				const allowImplicitAllPresetsWhenLayoutEmpty =
 					getState().panelId === "panel-1";
 
+				// Snapshot the live-grid revision before the async reads: a
+				// themeLive grid commit landing mid-restore is newer than the
+				// settingsJson snapshot and must not be overwritten by it.
+				const liveGridRevisionAtRead = liveGridRevision;
+
 				const persistenceManagedRoot =
 					await resolveWorkspacePersistenceManagedRoot(
 						window,
@@ -1090,6 +1134,15 @@ export function useWorkspaceRuntime(root: Element | null): {
 						showPresetLabels: uiSettings.showPresetLabels,
 					};
 
+					// settings.workspace.grid is the user-facing grid setting;
+					// it is authoritative over any stale per-panel persisted
+					// grid so the Settings dialog actually changes tile
+					// geometry (Issue #95).
+					const settingsGrid = gridSettingsFromSettingsJson(settingsJson);
+					if (settingsGrid && liveGridRevision === liveGridRevisionAtRead) {
+						loadedState = { ...loadedState, grid: settingsGrid };
+					}
+
 					loadedState = CommitReconcile(loadedState, loadedState);
 
 					const cur = getState();
@@ -1098,6 +1151,19 @@ export function useWorkspaceRuntime(root: Element | null): {
 							normalizeState({ ...cur, ...loadedState }),
 						),
 					);
+
+					// Re-project app.json ui.*/workspace.grid into theme.css on
+					// boot (Issue #112). Gated to panel-1: theme.css is shared
+					// across surfaces and the write queue is per-window, so a
+					// single surface must own the reconcile. Idempotent — a
+					// converged store writes nothing and broadcasts nothing.
+					if (panelSurfaceId === "panel-1") {
+						void reconcileSettingsThemeOverrides(window, panelSurfaceId).catch(
+							(error) => {
+								console.warn("[settings-theme] boot reconcile failed", error);
+							},
+						);
+					}
 
 					// Load background from file
 					void readBackgroundJson(window, wsIndex).then((bgJson) => {
@@ -1653,12 +1719,14 @@ export function useWorkspaceRuntime(root: Element | null): {
 					});
 				return Promise.resolve();
 			}
-			const { cloudSync, presetRepository } = getDataServices();
+			// Issue #88: R0 has no cloud backend, so preset refresh must not
+			// fire `cloudSync.syncPresets()` — it only performed a worker
+			// connectivity check whose status no consumer reads (the presets
+			// bus subscriber ignores `syncStatus`). Emit the same idle
+			// "Local Update" status the other snapshot producers use.
+			const { presetRepository } = getDataServices();
 			return (async () => {
-				const [syncResult, presets] = await Promise.all([
-					cloudSync.syncPresets(),
-					presetRepository.list(),
-				]);
+				const presets = await presetRepository.list();
 				const cur = getState();
 				commit(
 					withPresetInfoSnapshot({
@@ -1669,7 +1737,12 @@ export function useWorkspaceRuntime(root: Element | null): {
 				const presetPayload: PresetsPayload = {
 					kind: "snapshot",
 					presets,
-					syncStatus: syncResult.status,
+					syncStatus: {
+						provider: "supabase",
+						state: "idle",
+						label: "Local Update",
+						checkedAt: new Date().toISOString(),
+					},
 					sourceSurfaceId: panelId,
 				};
 				await publishShellMessage(cepSurfaceTransport, {
@@ -2552,7 +2625,8 @@ export function useWorkspaceRuntime(root: Element | null): {
 					})();
 					if (!catalogId || !isCep) return;
 					void (async () => {
-						const presetEditExtensionId = "app.ty-plus.dialog-preset-edit";
+						const presetEditExtensionId =
+							tyPlusExtensionId("dialog-preset-edit");
 						const payload = { presetId: catalogId };
 						try {
 							await writePresetToolHandoff(
@@ -3527,6 +3601,11 @@ export function useWorkspaceRuntime(root: Element | null): {
 						...getState(),
 						statusMessage: "Preset asset is missing on disk — run is disabled.",
 					});
+					notificationStore.add(
+						"Preset asset is missing on disk — run is disabled.",
+						"warning",
+						{ duration: 8000 },
+					);
 					return;
 				}
 				const { presetRepository } = getDataServices();
@@ -3568,6 +3647,9 @@ export function useWorkspaceRuntime(root: Element | null): {
 			layoutSyncWatchDisposer?.();
 			layoutSyncWatchDisposer = null;
 			lastLayoutSyncWatchKey = "";
+			unsubscribeThemeLive();
+			unsubscribeSaveNotices();
+			unsubscribeGridLive();
 			unsubscribePresets();
 			unsubscribeLayout();
 			unsubscribeBackground();

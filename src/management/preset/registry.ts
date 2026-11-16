@@ -6,6 +6,8 @@
  * actual opens use `allocatePresetAddToolExtensionId()` so multiple modeless
  * windows are possible. @see add-dialog-pool.ts
  */
+import { tyPlusExtensionId } from "@/management/ae/cep/extension-id";
+
 export type ToolDialogEntry = {
 	surfaceId: string;
 	extensionId: string;
@@ -20,7 +22,7 @@ export type ToolDialogEntry = {
 export const TOOL_DIALOG_REGISTRY: readonly ToolDialogEntry[] = [
 	{
 		surfaceId: "dialog-preset-add",
-		extensionId: "app.ty-plus.dialog-preset-add",
+		extensionId: tyPlusExtensionId("dialog-preset-add"),
 		titleEn: "Add catalog preset from path",
 		labelEn: "Catalog path",
 		leadEn:
@@ -28,7 +30,7 @@ export const TOOL_DIALOG_REGISTRY: readonly ToolDialogEntry[] = [
 	},
 	{
 		surfaceId: "dialog-preset-add-folder",
-		extensionId: "app.ty-plus.dialog-preset-add",
+		extensionId: tyPlusExtensionId("dialog-preset-add"),
 		titleEn: "Add preset group",
 		labelEn: "Group",
 		leadEn:
@@ -36,7 +38,7 @@ export const TOOL_DIALOG_REGISTRY: readonly ToolDialogEntry[] = [
 	},
 	{
 		surfaceId: "dialog-animation-preset",
-		extensionId: "app.ty-plus.dialog-preset-add",
+		extensionId: tyPlusExtensionId("dialog-preset-add"),
 		titleEn: "Add Animation Preset",
 		labelEn: "Animation",
 		leadEn:
@@ -44,21 +46,21 @@ export const TOOL_DIALOG_REGISTRY: readonly ToolDialogEntry[] = [
 	},
 	{
 		surfaceId: "dialog-layer-comp-preset",
-		extensionId: "app.ty-plus.dialog-preset-add",
+		extensionId: tyPlusExtensionId("dialog-preset-add"),
 		titleEn: "Add Layer/Comp Preset",
 		labelEn: "Layer/Comp",
 		leadEn: "Create a layer or composition preset.",
 	},
 	{
 		surfaceId: "dialog-code-preset",
-		extensionId: "app.ty-plus.dialog-preset-add",
+		extensionId: tyPlusExtensionId("dialog-preset-add"),
 		titleEn: "Add Code Preset",
 		labelEn: "Code",
 		leadEn: "Create a code-based preset with ExtendScript or expression.",
 	},
 	{
 		surfaceId: "dialog-preset-create",
-		extensionId: "app.ty-plus.dialog-preset-add",
+		extensionId: tyPlusExtensionId("dialog-preset-add"),
 		titleEn: "Create Preset",
 		labelEn: "Create",
 		leadEn:
@@ -66,14 +68,14 @@ export const TOOL_DIALOG_REGISTRY: readonly ToolDialogEntry[] = [
 	},
 	{
 		surfaceId: "dialog-footage-preset",
-		extensionId: "app.ty-plus.dialog-preset-add",
+		extensionId: tyPlusExtensionId("dialog-preset-add"),
 		titleEn: "Add Footage Preset",
 		labelEn: "Footage",
 		leadEn: "Create a footage import preset.",
 	},
 	{
 		surfaceId: "dialog-import-preset",
-		extensionId: "app.ty-plus.dialog-preset-add",
+		extensionId: tyPlusExtensionId("dialog-preset-add"),
 		titleEn: "Add Import Preset",
 		labelEn: "Import",
 		leadEn: "Create an import preset for file ingestion.",

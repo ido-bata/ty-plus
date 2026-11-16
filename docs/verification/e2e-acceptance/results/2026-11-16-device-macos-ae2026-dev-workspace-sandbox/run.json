@@ -1,0 +1,176 @@
+{
+  "schema": "ty-plus.e2e-run/1",
+  "suite": "workspace",
+  "capturedAt": "2026-11-15T15:45:47.378Z",
+  "extensionDir": "/Users/rebui/Library/Application Support/Adobe/CEP/extensions/app.ty-plus.dev",
+  "managedRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-15T15-40-45-060Z-99341/ty-plus",
+  "realManagedRoot": "/Applications/Adobe After Effects 2026/ty-plus",
+  "sandbox": {
+    "enabled": true,
+    "sandboxRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-15T15-40-45-060Z-99341/ty-plus",
+    "integrity": {
+      "realRoot": "/Applications/Adobe After Effects 2026/ty-plus",
+      "checkedAt": "2026-11-15T15:45:47.374Z",
+      "driftBeforeRepair": {
+        "changed": 1,
+        "added": 0,
+        "removed": 0
+      },
+      "filesRepaired": [
+        "cache/layout-undo/panel-1/stack.json"
+      ],
+      "cleanAfterRepair": true
+    }
+  },
+  "totals": {
+    "PASS": 3,
+    "FAIL": 0,
+    "BLOCKED": 2,
+    "SKIP": 0
+  },
+  "results": [
+    {
+      "uc": "UC-B02",
+      "title": "Add Widget dialog places an info tile",
+      "status": "PASS",
+      "detail": "widget=ad44abfa-be65-4daa-8b0e-4aa3ddc27f2a cells 13→13",
+      "checks": [
+        {
+          "name": "widgets.json gained info record",
+          "ok": true,
+          "detail": "id=ad44abfa-be65-4daa-8b0e-4aa3ddc27f2a"
+        },
+        {
+          "name": "info tile mounted on panel",
+          "ok": true,
+          "detail": "true \"\""
+        },
+        {
+          "name": "workspace-1.json gridCells grew",
+          "ok": true,
+          "detail": "before=13 after=14"
+        },
+        {
+          "name": "layout restored after case",
+          "ok": true,
+          "detail": "before=13 restored=13"
+        }
+      ],
+      "evidence": [
+        "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-15T15-40-45-060Z-99341/ty-plus/widgets/widgets.json",
+        "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-15T15-40-45-060Z-99341/ty-plus/workspaces/workspace-1.json"
+      ],
+      "durationMs": 121931
+    },
+    {
+      "uc": "UC-B05",
+      "title": "layout snapshot save → mutate → restore → delete round-trip",
+      "status": "PASS",
+      "detail": "snapshot=1794757389969 cells 13",
+      "checks": [
+        {
+          "name": "save-snapshot clicked",
+          "ok": true,
+          "detail": "clicked"
+        },
+        {
+          "name": "snapshots.json gained a new entry",
+          "ok": true,
+          "detail": "id=1794757389969"
+        },
+        {
+          "name": "snapshot row rendered in dropdown",
+          "ok": true,
+          "detail": "true"
+        },
+        {
+          "name": "layout mutated (widget tile added)",
+          "ok": true,
+          "detail": "cells 13→14 widget=ab7acaa1-06b1-4dfe-975f-91f9d4909639"
+        },
+        {
+          "name": "restore-snapshot clicked",
+          "ok": true,
+          "detail": "clicked"
+        },
+        {
+          "name": "gridCells restored to snapshot state",
+          "ok": true,
+          "detail": "before=13 mutated=14 restored=13"
+        },
+        {
+          "name": "added widget tile removed by restore",
+          "ok": true,
+          "detail": "tile=ab7acaa1-06b1-4dfe-975f-91f9d4909639"
+        },
+        {
+          "name": "delete-snapshot clicked",
+          "ok": true,
+          "detail": "clicked"
+        },
+        {
+          "name": "snapshot removed from snapshots.json",
+          "ok": true,
+          "detail": "snapId=1794757389969"
+        }
+      ],
+      "evidence": [
+        "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-15T15-40-45-060Z-99341/ty-plus/workspaces/history/snapshots.json"
+      ],
+      "durationMs": 49776
+    },
+    {
+      "uc": "UC-D10",
+      "title": "quick-actions palette runs script preset twice consecutively",
+      "status": "PASS",
+      "detail": "quick-actions runs=2 marker=",
+      "checks": [
+        {
+          "name": "quick-actions search focused + query typed",
+          "ok": true,
+          "detail": "focused:DG"
+        },
+        {
+          "name": "palette lists dg-script-marker run action",
+          "ok": true,
+          "detail": "true"
+        },
+        {
+          "name": "palette run clicked",
+          "ok": true,
+          "detail": "clicked"
+        },
+        {
+          "name": "run #1 produced AE-side marker",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "run #2 consecutive re-execution produced new marker",
+          "ok": true,
+          "detail": "m1= m2="
+        }
+      ],
+      "evidence": [],
+      "durationMs": 24271
+    },
+    {
+      "uc": "UC-C12",
+      "title": "footage preset (.png) created via dialog → run imports into AE project",
+      "status": "BLOCKED",
+      "detail": "Create not clickable: missing-button:Create",
+      "checks": [],
+      "evidence": [],
+      "durationMs": 34902
+    },
+    {
+      "uc": "UC-C14",
+      "title": "run preset with deleted asset fails without blocking modal",
+      "status": "BLOCKED",
+      "detail": "Create not clickable: missing-button:Create",
+      "checks": [],
+      "evidence": [],
+      "durationMs": 41089
+    }
+  ]
+}

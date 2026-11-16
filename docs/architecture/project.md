@@ -1,6 +1,6 @@
 # Project Charter（無料OSS方針）
 
-- Status: Accepted（R0の正本仕様）
+- Status: Accepted（R0設計の履歴正本。初回Stable `v0.10.1`は2026-11-12公開済み）
 - Date: 2026-11-11
 - 正本: `rebuildup/ty-plus#218`（R0計画）/ `rebuildup/ty-plus#220`（本charterの元Issue）/ `rebuildup/ty-plus#230`（移行の暫定正本）
 
@@ -42,4 +42,4 @@ ty-plus を、誰でも無料で導入・利用できる public beta として�
 
 ## リリース判定
 
-リリース条件・Go/No-Go判定は `rebuildup/ty-plus#218` に従う（判定日 2026-11-30、実機検証枠 2026-11-29、本人）。公開・リリース・関係者への連絡は本人の明示的承認を必要とする。
+初回Stable `v0.10.1` は2026-11-12にGitHub Releasesで公開済み（公開リポジトリ）。既存のR0計画 `rebuildup/ty-plus#218` の期日は当初の計画値として残す。公開済みZXPの実機E2E検証は [本repo #10](https://github.com/ido-bata/ty-plus/issues/10) で継続し、今後の新しいリリースも本人の公開承認を必要とする。

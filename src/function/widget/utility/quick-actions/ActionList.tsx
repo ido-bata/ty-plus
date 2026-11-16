@@ -699,8 +699,11 @@ export function QuickActionsWidget({
 	// row kinds (`apply-effect`, `quick-action-root-file`) keep their
 	// own semantics; only `run-preset` is bound here.
 	useEffect(() => {
+		// The portal div only mounts while `paletteOpen` is true, so the ref
+		// is null on first render. Re-run when the palette opens so the
+		// delegated `run-preset` click handler actually attaches.
 		const portalEl = portalRef.current;
-		if (!portalEl) return;
+		if (!portalEl || !paletteOpen) return;
 		const handler = (event: Event): void => {
 			const target = event.target;
 			if (!(target instanceof Element)) return;
@@ -710,13 +713,19 @@ export function QuickActionsWidget({
 			if (!btn) return;
 			const presetId = btn.getAttribute("data-preset-id") ?? "";
 			if (!presetId.trim()) return;
-			void executeQuickActionPreset(window, presetId.trim());
+			// Execution failures already raise an error toast inside
+			// `executeWorkspacePresetForWindow`; this catch only keeps a
+			// rejected lookup/trace promise from surfacing as an unhandled
+			// rejection (Issue #126).
+			void executeQuickActionPreset(window, presetId.trim()).catch(
+				() => undefined,
+			);
 		};
 		portalEl.addEventListener("click", handler);
 		return () => {
 			portalEl.removeEventListener("click", handler);
 		};
-	}, []);
+	}, [paletteOpen]);
 
 	const placeholder = t("quickActions.palettePlaceholder");
 

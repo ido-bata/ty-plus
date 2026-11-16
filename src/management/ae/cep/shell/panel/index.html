@@ -13,8 +13,9 @@
 				try {
 					if (typeof CSInterface === "undefined") return;
 					var ext = new CSInterface().getExtensionID() || "";
-					var mDot = /^app\.ty-plus\.panel\.(\d+)$/i.exec(ext);
-					var mCompact = /^app\.ty-plus\.panel(\d+)$/i.exec(ext);
+					// Prefix-agnostic: release `app.ty-plus.panelN`, dev `app.ty-plus.dev.panelN`.
+					var mDot = /\.panel\.(\d+)$/i.exec(ext);
+					var mCompact = /\.panel(\d+)$/i.exec(ext);
 					var m = mDot || mCompact;
 					if (m) window.__TY_PLUS_PANEL_SURFACE_ID__ = `panel-${m[1]}`;
 				} catch (_e) {

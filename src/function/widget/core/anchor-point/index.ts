@@ -7,6 +7,7 @@
  * management/workspace/events/handler.ts imports from HERE, not from anchor-point/script.ts directly.
  */
 
+export { runAnchorScript } from "./run";
 export type { AnchorPosition } from "./script";
 export {
 	ANCHOR_KEYS,

@@ -1,6 +1,8 @@
 import {
 	buildDeleteScript,
 	buildGetScript,
+	buildLockAcquireScript,
+	buildLockReleaseScript,
 	buildMaxSetScript,
 	buildSetScript,
 } from "@/management/storage/extendscript/cep.ext";
@@ -177,6 +179,90 @@ export const setCepSharedDataMax = async (
 type MaxSetResult =
 	| { ok: true; value: number; previous: number | null }
 	| { ok: false };
+
+/**
+ * Issue #106: cross-surface mutex over the ExtendScript shared store.
+ *
+ * `theme.css` is one file under the managed root, but every CEP surface
+ * (panels, modeless dialogs) has its own JS realm — a per-`Window` queue
+ * cannot serialize read-modify-write across them. The ExtendScript engine
+ * IS shared: all surfaces resolve to the same global scope, and each
+ * `evalScript` block runs atomically on the AE main thread. The acquire
+ * script therefore performs check-and-set in a single round trip, which
+ * is what makes the mutex real rather than a file lock.
+ *
+ * `owner` must be unique per acquisition; `staleMs` bounds how long a
+ * dead holder's lock blocks others before takeover.
+ */
+type CepSharedLockStatus = "acquired" | "held";
+
+export const tryAcquireCepSharedLock = async (
+	win: Window,
+	key: string,
+	owner: string,
+	staleMs: number,
+): Promise<CepSharedLockStatus> => {
+	if (cepEvalScriptAvailable(win)) {
+		const result = await runCepEvalScript(
+			win,
+			buildLockAcquireScript(
+				escapeScriptString(key),
+				escapeScriptString(owner),
+				staleMs,
+			),
+		);
+		return result.trim() === "acquired" ? "acquired" : "held";
+	}
+	// In-memory fallback (Vite preview / unit tests): the check-and-set
+	// below runs synchronously on the JS event loop, so it is atomic
+	// within this realm — the same guarantee the evalScript block gives
+	// across surfaces in the CEP host.
+	const now = Date.now();
+	const current = sharedMemoryStore.get(key);
+	if (current && typeof current === "object") {
+		const record = current as { owner?: unknown; at?: unknown };
+		const heldAt = typeof record.at === "number" ? record.at : 0;
+		if (record.owner !== owner && now - heldAt < staleMs) {
+			return "held";
+		}
+	}
+	sharedMemoryStore.set(key, { owner, at: now });
+	return "acquired";
+};
+
+/**
+ * Owner-checked release. Best-effort by contract: a missed release is
+ * recovered by the stale timeout, so transport failures are swallowed
+ * rather than masking the caller's result.
+ */
+export const releaseCepSharedLock = async (
+	win: Window,
+	key: string,
+	owner: string,
+): Promise<void> => {
+	try {
+		if (cepEvalScriptAvailable(win)) {
+			await runCepEvalScript(
+				win,
+				buildLockReleaseScript(
+					escapeScriptString(key),
+					escapeScriptString(owner),
+				),
+			);
+			return;
+		}
+		const current = sharedMemoryStore.get(key);
+		if (
+			current &&
+			typeof current === "object" &&
+			(current as { owner?: unknown }).owner === owner
+		) {
+			sharedMemoryStore.delete(key);
+		}
+	} catch {
+		/* stale timeout recovers a missed release */
+	}
+};
 
 const parseMaxSetResult = (raw: string): MaxSetResult => {
 	const normalized = typeof raw === "string" ? raw.trim() : "";

@@ -1,7 +1,7 @@
 {
 	"name": "ty-plus",
 	"private": true,
-	"version": "0.10.1",
+	"version": "0.10.2",
 	"packageManager": "bun@1.3.10",
 	"type": "module",
 	"scripts": {
@@ -18,6 +18,7 @@
 		"verify:operation-worker:process": "bun run scripts/verify/verify-operation-worker-process.ts",
 		"verify:operation-worker:cep": "bun run scripts/verify/verify-operation-worker-cep.ts",
 		"verify:online-gateway:package": "bun run scripts/verify/verify-online-gateway-package.ts",
+		"check:e2e-coverage": "bun run scripts/verify/e2e/coverage.ts",
 		"install:git-hooks": "bun run scripts/install-git-hooks.ts",
 		"build:operation-worker": "bun run scripts/build/build-operation-worker.ts",
 		"secrets:doctor": "pwsh -NoProfile -File scripts/infisical/secrets-doctor.ps1",

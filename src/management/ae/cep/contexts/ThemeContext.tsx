@@ -8,11 +8,12 @@ import {
 } from "react";
 
 import {
-	buildPrunedCepShellThemeRecord,
 	clearCepShellThemeStorage,
+	loadCepShellThemeOverridesForWrite,
 	sanitizeCepShellThemeOverrides,
 	saveCepShellThemeToCss,
 } from "@/management/panel/theme/storage";
+import { enqueueThemeWrite } from "@/management/panel/theme/write-queue";
 
 export type ThemeContextValue = {
 	themeOverrides: Record<string, string>;
@@ -89,29 +90,40 @@ export const ThemeProvider = ({
 		};
 	}, []);
 
-	const applyTheme = useCallback(
-		async (overrides: Record<string, string>) => {
+	const applyTheme = useCallback((overrides: Record<string, string>) => {
+		void enqueueThemeWrite(window, async () => {
+			// Merge the patch over the durable file, not in-memory state:
+			// theme.css is shared with grid/token writers, and a stale
+			// base would erase their overrides (Issue #91 review).
+			const disk = await loadCepShellThemeOverridesForWrite(window);
 			const merged = {
-				...buildPrunedCepShellThemeRecord(
-					sanitizeCepShellThemeOverrides(themeOverrides),
-				),
+				...disk,
 				...sanitizeCepShellThemeOverrides(overrides),
 			};
 			await saveCepShellThemeToCss(window, merged);
-			const next = await syncOverridesState(window);
-			const fp = fingerprintOverrides(next);
-			setThemeOverrides(next);
-			setBaselineFingerprint(fp);
-		},
-		[themeOverrides],
-	);
+		})
+			.then(async () => {
+				const next = await syncOverridesState(window);
+				const fp = fingerprintOverrides(next);
+				setThemeOverrides(next);
+				setBaselineFingerprint(fp);
+			})
+			.catch((error) => {
+				console.error("[ThemeContext] Failed to apply theme:", error);
+			});
+	}, []);
 
-	const resetTheme = useCallback(async () => {
-		await clearCepShellThemeStorage(window);
-		const next = await syncOverridesState(window);
-		const fp = fingerprintOverrides(next);
-		setThemeOverrides(next);
-		setBaselineFingerprint(fp);
+	const resetTheme = useCallback(() => {
+		void enqueueThemeWrite(window, () => clearCepShellThemeStorage(window))
+			.then(async () => {
+				const next = await syncOverridesState(window);
+				const fp = fingerprintOverrides(next);
+				setThemeOverrides(next);
+				setBaselineFingerprint(fp);
+			})
+			.catch((error) => {
+				console.error("[ThemeContext] Failed to reset theme:", error);
+			});
 	}, []);
 
 	const rebaselineTheme = useCallback(async () => {

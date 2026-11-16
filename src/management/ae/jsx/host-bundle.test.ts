@@ -11,6 +11,7 @@ import { transformSync } from "@babel/core";
 import { build } from "esbuild";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import { createOperationWorkerContextProvider } from "@/management/ipc/operation-worker-context";
+import { ALLOWED_HOST_METHODS } from "../cep/host-executor";
 
 const source = readFileSync(
 	new URL("./host-bundle.ext.ts", import.meta.url),
@@ -90,14 +91,21 @@ afterAll(() => {
 const createGeneratedBundleWindow = (
 	appRoot: unknown,
 	supportRoot: unknown,
+	options?: Readonly<{ os?: string; appPackageParent?: unknown }>,
 ) => {
 	const sandbox = {
 		$: {
 			fileName: "C:/Ty Plus/extension/jsx/ty-plus-host.jsx",
 			global: {},
+			...(options?.os ? { os: options.os } : {}),
 		},
 		Folder: {
-			appPackage: { fsName: appRoot },
+			appPackage: {
+				fsName: appRoot,
+				...(options?.appPackageParent
+					? { parent: options.appPackageParent }
+					: {}),
+			},
 			userData: { fsName: supportRoot },
 		},
 		alert: () => undefined,
@@ -137,6 +145,24 @@ const createGeneratedBundleWindow = (
 					const value = readResidentMarker("__bundleVersion");
 					return typeof value === "string" ? value : null;
 				};
+				// Issue #107: the probe and the post-load verify now also
+				// require every contract method to be callable, so the fake
+				// has to answer `contractComplete` from the resident bundle
+				// it actually installed — not a literal.
+				const readContractComplete = (): boolean => {
+					const resident = (
+						sandbox.$.global as {
+							__TY_PLUS_HOST__?: Record<string, unknown>;
+						}
+					).__TY_PLUS_HOST__;
+					if (resident === null || typeof resident !== "object") {
+						return false;
+					}
+					for (const method of ALLOWED_HOST_METHODS) {
+						if (typeof resident[method] !== "function") return false;
+					}
+					return true;
+				};
 				if (script.includes("$.evalFile")) {
 					runInNewContext(generatedBundle, sandbox, {
 						filename: "ty-plus-host.jsx",
@@ -147,6 +173,7 @@ const createGeneratedBundleWindow = (
 							loaded: true,
 							schemaVersion: readResidentSchema() ?? -1,
 							bundleVersion: readResidentBundleVersion() ?? "",
+							contractComplete: readContractComplete(),
 						}),
 					);
 					return;
@@ -156,12 +183,13 @@ const createGeneratedBundleWindow = (
 					callback?.(
 						JSON.stringify(
 							schema === null
-								? { ok: true, present: false }
+								? { ok: true, present: false, contractComplete: false }
 								: {
 										ok: true,
 										present: true,
 										schemaVersion: schema,
 										bundleVersion: readResidentBundleVersion() ?? "",
+										contractComplete: readContractComplete(),
 									},
 						),
 					);
@@ -226,21 +254,14 @@ describe("ExtendScript host bundle command wrappers", () => {
 		expect(source).toContain("$.global.__TY_PLUS_HOST__ = hostBundle;");
 	});
 
-	test("alerts before returning a structured wrapper failure", () => {
-		const alertIndex = source.indexOf("showExecutionFailureAlert(message);");
-		const failureIndex = source.indexOf("code: \"AE_EVAL_FAILED\"");
-		const alertedIndex = source.indexOf("alerted: true");
-
-		expect(alertIndex).toBeGreaterThan(-1);
+	test("returns a structured wrapper failure without a modal alert", () => {
+		// Issue #72: CEP-mediated calls must not raise ExtendScript alert();
+		// the JS side surfaces the failure as a thrown error plus a
+		// non-modal notification. Standalone .jsx generation keeps alert().
+		expect(source).not.toContain("showExecutionFailureAlert");
+		const failureIndex = source.indexOf('code: "AE_EVAL_FAILED"');
 		expect(failureIndex).toBeGreaterThan(-1);
-		expect(alertedIndex).toBeGreaterThan(-1);
-		expect(alertIndex).toBeLessThan(failureIndex);
-	});
-
-	test("keeps alert copy user-facing and strips ExtendScript diagnostics", () => {
-		expect(source).toContain("Ty Plus could not complete the action.");
-		expect(source).toContain("replace(/^Error:");
-		expect(source).toContain("replace(/\\s+line=\\S+.*$/");
+		expect(source).not.toContain("alerted: true");
 	});
 
 	test("does not reject animation presets only because no layer is selected", () => {
@@ -629,8 +650,15 @@ describe("ExtendScript host bundle command wrappers", () => {
 			sessionId: expect.stringMatching(/^ae-\d+$/u),
 		});
 		expect(context).not.toHaveProperty("aeVersion");
+		// Exactly one host *call* script: the probe and the conditional
+		// load block also name `getHostContext` (Issue #107 contract
+		// check), so the filter must key on the call wrapper itself.
 		expect(
-			fixture.scripts.filter((script) => script.includes("getHostContext")),
+			fixture.scripts.filter(
+				(script) =>
+					script.includes("host_bundle_missing") &&
+					script.includes("getHostContext"),
+			),
 		).toHaveLength(1);
 	});
 
@@ -645,6 +673,23 @@ describe("ExtendScript host bundle command wrappers", () => {
 			"/Applications/Adobe After Effects 2026/Adobe After Effects.app/Contents",
 		);
 		expect(context).not.toHaveProperty("aeVersion");
+	});
+
+	test("resolves macOS appRoot to the .app parent so worker scan roots resolve", async () => {
+		const fixture = createGeneratedBundleWindow(
+			"/Applications/Adobe After Effects 2026/Adobe After Effects 2026.app",
+			"/Users/example/Library/Application Support/Ty Plus",
+			{
+				os: "Mac OS",
+				appPackageParent: {
+					fsName: "/Applications/Adobe After Effects 2026",
+					name: "Adobe After Effects 2026",
+				},
+			},
+		);
+		const context = await createOperationWorkerContextProvider(fixture.win)();
+
+		expect(context.appRoot).toBe("/Applications/Adobe After Effects 2026");
 	});
 
 	test.each([

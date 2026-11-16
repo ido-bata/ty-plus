@@ -1,6 +1,6 @@
 # AGENTS.md — ty-plus
 
-After Effects拡張 ty-plus の無料OSS再構築リポジトリ。旧 `rebuildup/ty-plus` からはGit履歴を引き継がず、権利監査を通過した資産だけを新規commitとして移植する。権利監査と本人の公開承認を経るまでPrivateを維持する。
+After Effects拡張 ty-plus の公開済み無料OSSリポジトリ（初回Stable: v0.10.1）。旧 `rebuildup/ty-plus` からはGit履歴を引き継がず、権利監査を通過した資産だけを新規commitとして移植する。初回公開は完了しており、リポジトリはPublic。今後のリリースや外部連絡は引き続き本人の承認に従う。
 
 この文書はdispatcherである。判断の詳細は正本とSkillへ従い、ここに再定義しない。
 
@@ -21,14 +21,14 @@ Issue本文の詳細を伝言・再定義せず、正本Issueを直接参照す�
 
 - 旧repoのGit履歴・PRをmerge / cherry-pick / mirrorで持ち込まない。
 - 権利未確認のコード・素材・ブランド・Extension ID・署名証明書・秘密値を移植しない。
-- `LICENSE` は権利監査が確定するまで作成しない。MITと決め打ちしない。
-- 本repoは将来public化される。秘密値・個人情報・Log!N契約の詳細をIssue / docs / commitに書かない。機微な内容は旧repoのIssueへ置き、本repoからは番号参照する。
+- `LICENSE` はMITで確定済み。第三者資産には `THIRD-PARTY-NOTICES.md` の個別条件を維持する。
+- 本repoはPublic。秘密値・個人情報・Log!N契約の詳細をIssue / docs / commitに書かない。機微な内容は旧repoのIssueへ置き、本repoからは番号参照する。
 - public化・release公開・関係者への連絡は本人の明示的承認が必要。
 - 旧repoは読み取り専用として扱う。
 
 ## bootstrap / validation
 
-- `mise install` — bun 1.4.4（`mise.toml`）
+- `mise install` — bun 1.3.10（`mise.toml`）
 - `mise run check:skills` — vendored skillsと `skills-lock.json` の整合検査
 
 ## 作業開始

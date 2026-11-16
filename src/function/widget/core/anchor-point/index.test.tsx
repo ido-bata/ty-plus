@@ -16,6 +16,7 @@
 import { cleanup, fireEvent, render } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { WidgetRenderProps } from "@/function/widget/define";
+import { notificationStore } from "@/management/online/notification/service";
 import { AnchorPointWidget } from "./Component";
 
 const baseProps = {
@@ -85,5 +86,37 @@ describe("AnchorPointWidget button onClick", () => {
 		const { getByTitle } = render(<AnchorPointWidget {...baseProps} />);
 		fireEvent.click(getByTitle("top-center"));
 		expect(mockEvalScript).toHaveBeenCalledTimes(1);
+	});
+
+	it("surfaces a non-modal notification when the host reports no selection", async () => {
+		notificationStore.clear();
+		mockEvalScript.mockImplementation(
+			(_script: string, callback?: (result: string) => void) => {
+				callback?.("no layer");
+			},
+		);
+		const { getByTitle } = render(<AnchorPointWidget {...baseProps} />);
+		fireEvent.click(getByTitle("center"));
+		await vi.waitFor(() => {
+			expect(notificationStore.getNotifications()).toHaveLength(1);
+		});
+		const entry = notificationStore.getNotifications()[0];
+		expect(entry?.type).toBe("warning");
+		expect(entry?.message).toContain("no layer selected");
+	});
+
+	it("stays silent on a successful anchor result", async () => {
+		notificationStore.clear();
+		mockEvalScript.mockImplementation(
+			(_script: string, callback?: (result: string) => void) => {
+				callback?.("ok n=1 0:layer pos=center");
+			},
+		);
+		const { getByTitle } = render(<AnchorPointWidget {...baseProps} />);
+		fireEvent.click(getByTitle("center"));
+		await vi.waitFor(() => {
+			expect(mockEvalScript).toHaveBeenCalledTimes(1);
+		});
+		expect(notificationStore.getNotifications()).toHaveLength(0);
 	});
 });

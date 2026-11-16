@@ -1,11 +1,10 @@
-import { type JSX, useCallback, useEffect, useState } from "react";
+import { type JSX, useCallback, useEffect, useRef, useState } from "react";
 import { useCep } from "@/management/ae/cep/contexts/Context";
 import { useSettings } from "@/management/setting/context";
 import { WorkspaceGridPreview } from "@/management/setting/dialog/components/WorkspaceGridPreview";
 import {
 	applyGridMetricsLive,
 	metricsFromSettingsGrid,
-	readGridMetricsFromTheme,
 } from "@/management/setting/dialog/grid-theme-sync";
 import {
 	SettingsField,
@@ -15,37 +14,61 @@ import {
 import { NumberField } from "@/shared/component/fields/NumberField";
 
 export function GridSection(): JSX.Element {
-	const { settings, updateSettings } = useSettings();
+	const { settings, updateSettings, reportSaveError } = useSettings();
 	const { panelSurfaceId } = useCep();
+	// settings.workspace.grid is the committed source for this dialog; theme
+	// vars can lag the serialized theme.css write queue, so they must not
+	// seed the metrics the next keystroke commit merges against (Issue #91).
 	const [metrics, setMetrics] = useState(() =>
-		readGridMetricsFromTheme(metricsFromSettingsGrid(settings.workspace.grid)),
+		metricsFromSettingsGrid(settings.workspace.grid),
 	);
+	// NumberField commits per keystroke; React state updates lag, so rapid
+	// successive commits must merge against the latest metrics, not a stale
+	// render snapshot (Issue #91 follow-up).
+	const metricsRef = useRef(metrics);
 
 	useEffect(() => {
-		setMetrics(
-			readGridMetricsFromTheme(
-				metricsFromSettingsGrid(settings.workspace.grid),
-			),
-		);
+		// settings.workspace.grid is the committed source for this dialog.
+		// Reading theme vars here races the serialized theme.css write queue:
+		// the computed style can still show pre-commit values and poison
+		// metricsRef for the next keystroke commit (Issue #91 follow-up).
+		const next = metricsFromSettingsGrid(settings.workspace.grid);
+		metricsRef.current = next;
+		setMetrics(next);
 	}, [settings.workspace.grid]);
 
 	const commit = useCallback(
 		(next: { cellSize?: number; gap?: number; radius?: number }) => {
+			const base = metricsRef.current;
 			const merged = {
-				cellSize: next.cellSize ?? metrics.cellSize,
-				gap: next.gap ?? metrics.gap,
-				radius: next.radius ?? metrics.radius,
+				cellSize: next.cellSize ?? base.cellSize,
+				gap: next.gap ?? base.gap,
+				radius: next.radius ?? base.radius,
 			};
+			metricsRef.current = merged;
 			setMetrics(merged);
+			// Patch only `workspace.grid`: spreading the render-time
+			// `settings.workspace` would write back stale siblings
+			// (e.g. `background`) changed by another section since this
+			// render. `mergeSettings` deep-merges the patch.
 			updateSettings({
 				workspace: {
-					...settings.workspace,
 					grid: merged,
 				},
 			});
-			void applyGridMetricsLive(window, panelSurfaceId, merged);
+			void applyGridMetricsLive(window, panelSurfaceId, merged).catch(
+				(error) => {
+					console.error("[GridSection] Failed to persist grid metrics:", error);
+					// app.json committed but the theme.css projection failed:
+					// surface it through the shared saveError banner and
+					// saveNotice broadcast instead of console-only (#91 review).
+					reportSaveError(
+						"Failed to save workspace grid. The theme file may be read-only.",
+					);
+				},
+			);
 		},
-		[metrics, panelSurfaceId, settings.workspace, updateSettings],
+		[panelSurfaceId, reportSaveError, updateSettings],
 	);
 
 	return (

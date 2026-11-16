@@ -1,0 +1,13 @@
+{
+  "realRoot": "/Applications/Adobe After Effects 2026/ty-plus",
+  "checkedAt": "2026-11-15T15:37:33.883Z",
+  "driftBeforeRepair": {
+    "changed": 1,
+    "added": 0,
+    "removed": 0
+  },
+  "filesRepaired": [
+    "tool-handoff/app.ty-plus.dev.dialog-preset-add.json"
+  ],
+  "cleanAfterRepair": false
+}

@@ -10,6 +10,7 @@
 
 - ライセンスゲートは実装から除去済み（旧 `src/management/online/licensing/` と `rust/crates/licensing` は削除）。機能へのtier制限は存在しない。
 - オンラインsurface（catalog / notification / cloud gateway）はコード上存在するが、R0ではバックエンドを持たないdormant状態である。gatewayの起動失敗・不達はローカルコアを妨げない（`cloud-gateway-boot` のdegraded経路と、旧#128/#187の分離修正に基づく）。
+- dormantであることはUIにも適用する（#82）。fixture payloadを実データとして提示しない: runtime gatewayは`listNotifications`/`getNotificationBlocks`を実装せず、通知センターは公式静的feed（`docs/architecture/feeds.md`）だけをremote sourceとする。backendを持たないcloud-sync確認を発火するSettings「network」セクションは登録しない。public linkはbuild時同梱の実URL（repo内user guide）のみを返す。
 - 将来の有料機能・配布APIは `docs/architecture/project.md` のcharterに従い、R0の実装はその拡張を妨げない設計に留める。R0で設計・実装しきらない。
 
 ## 検証

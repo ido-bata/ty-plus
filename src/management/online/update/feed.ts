@@ -186,11 +186,10 @@ export const parseGitHubRelease = (raw: unknown): UpdateFeed | null => {
 	}
 	// A standalone ZIP is not a normally installable CEP package.
 	// Require an uploaded ZXP for each advertised platform.
-	const signedPlatforms = new Set(
-		assets
-			.filter((asset) => asset.url.endsWith(".zxp"))
-			.map((asset) => asset.platform),
-	);
+	const signedPlatforms = new Set<UpdatePlatform>();
+	for (const asset of assets) {
+		if (asset.url.endsWith(".zxp")) signedPlatforms.add(asset.platform);
+	}
 	if (signedPlatforms.size === 0) return null;
 	const publishableAssets = assets.filter((asset) =>
 		signedPlatforms.has(asset.platform),
@@ -304,17 +303,23 @@ export const checkForUpdate = async (input: {
 			reason: "invalid GitHub Releases response",
 		};
 	}
-	const select = (releases: unknown[]): UpdateFeed[] =>
-		releases
-			.map(parseGitHubRelease)
-			.filter((item): item is UpdateFeed => item !== null)
-			.filter((item) => acceptsReleaseChannel(channel, item.channel))
-			.filter(
-				(item) =>
-					input.platform === undefined ||
-					item.assets.some((asset) => asset.platform === input.platform),
+	// Fold the eligibility checks into one pass so the common path is not
+	// split across short-circuited filter stages.
+	const select = (releases: unknown[]): UpdateFeed[] => {
+		const eligible: UpdateFeed[] = [];
+		for (const release of releases) {
+			const item = parseGitHubRelease(release);
+			if (item === null) continue;
+			if (!acceptsReleaseChannel(channel, item.channel)) continue;
+			if (
+				input.platform !== undefined &&
+				!item.assets.some((asset) => asset.platform === input.platform)
 			)
-			.sort((a, b) => compareVersions(b.version, a.version));
+				continue;
+			eligible.push(item);
+		}
+		return eligible.sort((a, b) => compareVersions(b.version, a.version));
+	};
 
 	const pageUrl = (page: number): string => {
 		const target = new URL(url);
@@ -332,25 +337,30 @@ export const checkForUpdate = async (input: {
 	 */
 	const best = (releases: unknown[]): UpdateFeed | undefined =>
 		select(releases)[0];
-	let candidate = best(raw);
-	let pageSize = raw.length;
-	for (let page = 2; page <= 5 && pageSize === 100; page += 1) {
+	const fetchFeedText = input.fetchFeedText ?? defaultFetchFeedText;
+	const timeoutMs = input.timeoutMs ?? 10_000;
+	// Recurrence rather than a for-loop with await: the next page is only
+	// fetched once the previous page is known to be full, so the calls are
+	// inherently sequential and cannot be batched with Promise.all.
+	const paginate = async (
+		page: number,
+		pass: [UpdateFeed | undefined, number],
+	): Promise<[UpdateFeed | undefined, number]> => {
+		let [candidate, pageSize] = pass;
+		if (pageSize !== 100 || page > 5) return pass;
 		let pageBody: string;
 		try {
-			pageBody = await (input.fetchFeedText ?? defaultFetchFeedText)(
-				pageUrl(page),
-				input.timeoutMs ?? 10_000,
-			);
+			pageBody = await fetchFeedText(pageUrl(page), timeoutMs);
 		} catch {
-			break;
+			return pass;
 		}
 		let pageData: unknown;
 		try {
 			pageData = JSON.parse(pageBody) as unknown;
 		} catch {
-			break;
+			return pass;
 		}
-		if (!Array.isArray(pageData)) break;
+		if (!Array.isArray(pageData)) return pass;
 		pageSize = pageData.length;
 		const next = best(pageData);
 		if (
@@ -360,7 +370,9 @@ export const checkForUpdate = async (input: {
 		) {
 			candidate = next;
 		}
-	}
+		return paginate(page + 1, [candidate, pageSize]);
+	};
+	const [candidate] = await paginate(2, [best(raw), raw.length]);
 	if (candidate === undefined) {
 		return { status: "unavailable", reason: "no releases for this channel" };
 	}

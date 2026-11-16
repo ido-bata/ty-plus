@@ -1,68 +1,59 @@
-# インストール
+# インストール・更新・アンインストール
 
-- Status: GitHub Releases更新経路へ移行（#55）。公開配布物の実証と本人承認は別途必要
-- Date: 2026-11-11
-- 正本: 本repo #9 / `rebuildup/ty-plus#225`（旧正本）
+**公開中のStable版:** [ty-plus GitHub Releases](https://github.com/ido-bata/ty-plus/releases/latest)  
+ty-plusは無料・アカウント不要で、ローカルの主要機能をオフラインで利用できます。
 
-## 要件
+## 動作環境と注意事項
 
-| 項目 | 要件 |
+| 項目 | 状態 |
 | --- | --- |
-| ホスト | Adobe After Effects（検証対象: AE 2026 / CEP 12。他バージョンは未検証） |
-| OS | Windows 10/11 または macOS |
-| ネットワーク | 不要（ローカル機能はオフラインで完全動作する） |
-| アカウント | 不要 |
+| ホスト | Adobe After Effects（CEP拡張） |
+| 配布OS | Windows x64 / macOS |
+| 初期動作確認 | AE 2026の開発ビルドでスモーク検証。公開済み`v0.10.1`のZXP実機E2Eは[Issue #10](https://github.com/ido-bata/ty-plus/issues/10)で継続 |
+| Windows | native workerはAuthenticode未署名。**Smart App Controlが有効な環境では起動がブロックされます** |
+| macOS | Developer IDでworkerを署名済みですが、`v0.10.1`は**未公証**です。隔離属性やmacOSポリシーによって起動できない場合があります |
+| ZXP | 継続利用する自己署名のCEP証明書で署名。macOS workerの公証とは独立 |
+| ネットワーク | 更新確認時のみ必要。オフラインで主要機能を利用可能 |
 
-## インストール（手動zip形式 — 現行の内部検証ビルド）
+インストールのためにWindowsやmacOSの保護機能を無効化しないでください。ブロックされる場合は、OS・AEのバージョンと状況を[Issues](https://github.com/ido-bata/ty-plus/issues/new/choose)へ報告してください。
 
-1. 配布zip（`ty-plus-internal-<version>-<platform>-<commit>.zip`）を取得する。
-2. zipを展開し、中の `app.ty-plus/` フォルダを次の拡張フォルダへ置く:
-   - Windows: `C:\Program Files (x86)\Common Files\Adobe\CEP\extensions\app.ty-plus`
-   - macOS: `/Library/Application Support/Adobe/CEP/extensions/app.ty-plus`
-3. After Effectsを起動（起動中の場合は再起動）し、**Window > Extensions** から ty-plus を開く。
+## 公式ZXPをインストール
 
-> **この手順は現時点では内部検証用**である。第三者への配布には署名済みZXPが必要で、署名主体・証明書が確定するまで公開しない（#32 / 公開ブロッカー）。
+1. **[最新のStableリリース](https://github.com/ido-bata/ty-plus/releases/latest)**を開きます。
+2. Windowsなら`ty-plus-<tag>-windows.zxp`、macOSなら`ty-plus-<tag>-macos.zxp`を取得します。対応するZIPと`-release-manifest.json`もリリースに含まれます。
+3. CEP対応のZXPインストーラを使って導入します。初回起動時にはOSのセキュリティ設定によって拒否される場合があります。
+4. After Effectsを再起動し、**Window → Extensions → ty-plus** を開きます。
 
-## GitHub Releasesからのインストール（公開後）
+正常に開けない場合、[トラブルシューティング](../troubleshooting/index.md)を参照してください。
 
-公式配布先: https://github.com/ido-bata/ty-plus/releases
+## 手動ZIP導入（開発・検証用）
 
-1. ReleaseのタグでStable（`vX.Y.Z`）/ Beta（`vX.Y.Z-beta.N`）/ Insider（`vX.Y.Z-insider.N`）を確認する。
-2. 利用中のOSに対応する `ty-plus-<tag>-<platform>.zxp` を取得する（`platform` = `windows` / `macos`）。GitHub Releaseの添付manifestで対応版・checksumを確認できる。
-3. ZXP対応インストーラで拡張を導入し、After Effectsを再起動する。Windows workerはR0ではAuthenticode未署名のため、WindowsのSmart App Controlが有効な環境では起動がブロックされる場合がある。
-4. `Window > Extensions` からty-plusを開く。
+署名済みZXPが使えない場合は、同じリリースのZIPを展開し、`app.ty-plus/`フォルダを以下へ配置できます。
 
-ZIPは手動設置・検証用に同梱する。**ZIP内のCEP拡張はZXP署名の恩恵を受けないため、未署名拡張の起動にはCEP開発者モードが必要になる環境がある。** 通常の利用には署名済みZXPを推奨する。
+- Windows: `C:\Program Files (x86)\Common Files\Adobe\CEP\extensions\app.ty-plus`
+- macOS: `/Library/Application Support/Adobe/CEP/extensions/app.ty-plus`
 
-## 更新
+**ZIPの直接配置ではZXPの署名を利用できません。** CEP開発者モードが必要になる環境があるため、通常の利用にはZXPを推奨します。
 
-1. Settings → Updates で**Stable / Beta / Insider**を選ぶ（選択内容はローカル設定に保存される）。
-   - Stable：安定版のみ。
-   - Beta：安定版＋ベータ版。
-   - Insider：すべてのリリース。
-2. `Check now` で手動確認する。新しいリリースがあれば`Release notes and download`から該当GitHub Releaseを開く。
-3. 同じ数値版のPreviewでも、`-beta.1`→`-beta.2`や`-insider.1`→`-insider.2`は別の更新として判定する。
-4. ダウンロードしたZXPを再インストールする。自動ダウンロード・自動更新はしない。チャンネルを変更しても旧版へ自動的に戻さない。
+## 更新チャンネル
 
-公式リポジトリがprivateの間は匿名のGitHub Releases APIへアクセスできないため、更新確認は「利用不可」と表示される。オフライン・API制限時もローカル機能と保存データには影響しない。
+Settings → Updatesで更新チャンネルを変更できます。
 
-## アンインストール
+| チャンネル | 受信対象 |
+| --- | --- |
+| Stable | 通常の安定版リリースのみ |
+| Beta | StableとBeta |
+| Insider | Stable、Beta、Insiderのすべて |
 
-拡張フォルダから `app.ty-plus/` を削除し、After Effectsを再起動する。ユーザーデータ（レイアウト・プリセットキャッシュ）は管理ルート配下に残る。完全に消す場合は削除する（場所は Settings > Paths で確認できる）。
+アプリは公開GitHub Releasesの最新版を読み取り、リリースページを開きます。**自動ダウンロードや自動インストールは行いません**。チャンネルを変更しても自動的に旧版へ戻しません。
 
-## 不具合報告
+## アンインストールとデータ
 
-1. 公式リポジトリのIssuesから報告する（URLは公開時に案内する。現時点ではrepo自体がPrivate）。
-2. 報告に含めるもの:
-   - OSとバージョン、After Effectsのバージョン
-   - インストールしたビルドのバージョン（Settings > 更新 または manifestのversion）
-   - 再現手順と、期待した結果 / 実際の結果
-   - Debug Consoleに表示されたエラー（あれば）
-3. クラッシュ（AE全体が落ちる）の場合: OSのcrash reportのファイル名を添える。
+CEP拡張`app.ty-plus/`をアンインストールしてAfter Effectsを再起動します。ローカルの設定・ワークスペース情報はサポートルートに残る場合があります。場所はSettings → Pathsを参照してください。削除前に必要なデータをバックアップしてください。
 
-> Settings の Feedback セクションは現状、入力内容を送信しない（バックエンドはR0で削除済み）。報告はリポジトリのIssuesへ直接行う。
+## 不具合・セキュリティ報告
 
-## 既知の未検証 / 既知の問題
+- 通常の不具合や改善提案：[GitHub Issues](https://github.com/ido-bata/ty-plus/issues/new/choose)
+- 未公開の脆弱性：[Private vulnerability reporting](https://github.com/ido-bata/ty-plus/security/advisories/new)（公開Issueでは報告しない）
 
-- macOSでのAE 2026クラッシュ（旧#209 / #214、原因未確定）— 実機検証（#10）で観察する。
-- 実機検証の進捗は `docs/verification/r0-device-gate.md` の状態列が正本である。
+不具合報告にはOS・AE・ty-plusのバージョン、再現手順、期待値/実結果、エラーがあればログを添えてください。認証情報、個人データ、機密ファイルは公開しないでください。

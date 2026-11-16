@@ -4,6 +4,7 @@ import {
 	SettingsFieldLabel,
 	SettingsGrid,
 } from "@/management/setting/dialog/layout/SettingsGrid";
+import { openUrlInDefaultBrowser } from "@/management/workspace/hooks/helpers";
 import { Button } from "@/shared/component/controls/Button";
 import { Input } from "@/shared/component/fields/Input";
 import { ListSelect } from "@/shared/component/fields/ListSelect";
@@ -24,7 +25,7 @@ type FeedbackState = {
 	subject: string;
 	presetId: string;
 	description: string;
-	status: "idle" | "submitting" | "success" | "error";
+	status: "idle" | "success" | "error";
 	message: string;
 };
 
@@ -36,7 +37,7 @@ type FeedbackAction =
 	  }
 	| {
 			type: "SET_STATUS";
-			status: "idle" | "submitting" | "success" | "error";
+			status: "idle" | "success" | "error";
 			message?: string;
 	  }
 	| { type: "SUBMIT_SUCCESS"; message: string }
@@ -95,28 +96,36 @@ const mutedTextStyle = css({
 	color: "text.muted",
 });
 
+const GITHUB_ISSUES_NEW_URL = "https://github.com/ido-bata/ty-plus/issues/new";
+
 export function FeedbackSection(): JSX.Element {
 	const [state, dispatch] = useReducer(feedbackReducer, INITIAL_STATE);
 	const { category, subject, presetId, description, status, message } = state;
 
+	// Issue #83: there is no feedback backend — the previous implementation
+	// only console.logged the report and then claimed "Report sent
+	// successfully!". The honest path is to hand the composed report to the
+	// project's public issue tracker and let the user submit it there.
 	const handleSubmit = useCallback(() => {
 		if (!subject.trim() || !description.trim()) return;
 
-		dispatch({ type: "SET_STATUS", status: "submitting" });
-
-		console.log("[FeedbackSection] Submit:", {
-			category,
-			subject,
-			presetId,
-			description,
+		const params = new URLSearchParams({
+			title: subject.trim(),
+			body: [
+				`Category: ${category}`,
+				presetId.trim() ? `Preset ID: ${presetId.trim()}` : null,
+				"",
+				description.trim(),
+			]
+				.filter((line): line is string => line !== null)
+				.join("\n"),
 		});
-
-		setTimeout(() => {
-			dispatch({
-				type: "SUBMIT_SUCCESS",
-				message: "Report sent successfully! Thank you for your feedback.",
-			});
-		}, 1000);
+		openUrlInDefaultBrowser(`${GITHUB_ISSUES_NEW_URL}?${params.toString()}`);
+		dispatch({
+			type: "SUBMIT_SUCCESS",
+			message:
+				"GitHub issue page opened in your browser — review and submit there to send the report.",
+		});
 	}, [category, subject, presetId, description]);
 
 	const clearForm = useCallback(() => {
@@ -147,7 +156,6 @@ export function FeedbackSection(): JSX.Element {
 						dispatch({ type: "SET_FIELD", field: "category", value: v })
 					}
 					placeholder="Select category"
-					disabled={status === "submitting"}
 				/>
 			</SettingsField>
 
@@ -164,7 +172,6 @@ export function FeedbackSection(): JSX.Element {
 						})
 					}
 					placeholder="Brief summary"
-					disabled={status === "submitting"}
 				/>
 			</SettingsField>
 
@@ -181,7 +188,6 @@ export function FeedbackSection(): JSX.Element {
 						})
 					}
 					placeholder="e.g. TY-001 (if related to a preset)"
-					disabled={status === "submitting"}
 				/>
 			</SettingsField>
 
@@ -198,7 +204,6 @@ export function FeedbackSection(): JSX.Element {
 					}
 					placeholder="Details about what happened..."
 					rows={4}
-					disabled={status === "submitting"}
 				/>
 			</SettingsField>
 
@@ -220,16 +225,16 @@ export function FeedbackSection(): JSX.Element {
 					onClick={handleSubmit}
 					variant="primary"
 					uiSize="sm"
-					disabled={status === "submitting" || !subject || !description}
+					disabled={!subject.trim() || !description.trim()}
 				>
-					{status === "submitting" ? "Sending..." : "Submit"}
+					Open GitHub issue
 				</Button>
 			</SettingsField>
 
 			<SettingsField span={6}>
 				<p className={mutedTextStyle}>
-					Reports are sent securely to our team. Please include as much detail
-					as possible.
+					Opens a prefilled issue on the public GitHub tracker — nothing is sent
+					until you submit it there. Please include as much detail as possible.
 				</p>
 			</SettingsField>
 		</SettingsGrid>
