@@ -64,6 +64,10 @@ export const FocusVisible: Story = {
 		if (!input) throw new Error("search input not found");
 		input.focus();
 		await expect(document.activeElement).toBe(input);
+		await expect(input.parentElement?.matches(":focus-within")).toBe(true);
+		// The wrapper transitions border-color/box-shadow — wait for the
+		// transition to settle before reading computed styles.
+		await new Promise((resolve) => setTimeout(resolve, 300));
 
 		const innerStyle = getComputedStyle(input);
 		expect(innerStyle.boxShadow).toBe("none");

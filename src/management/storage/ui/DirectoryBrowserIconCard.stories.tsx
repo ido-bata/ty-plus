@@ -115,6 +115,10 @@ export const HoverUnselected: Story = {
 		if (!card) throw new Error("icon card not found");
 		const resting = getComputedStyle(card).backgroundColor;
 		await userEvent.hover(card);
+		await expect(card.matches(":hover")).toBe(true);
+		// The card transitions colors — wait for the transition to settle
+		// before comparing computed backgrounds.
+		await new Promise((resolve) => setTimeout(resolve, 300));
 		await expect(getComputedStyle(card).backgroundColor).not.toBe(resting);
 		await userEvent.unhover(card);
 	},
@@ -132,6 +136,8 @@ export const HoverSelected: Story = {
 		if (!card) throw new Error("icon card not found");
 		const resting = getComputedStyle(card).backgroundColor;
 		await userEvent.hover(card);
+		await expect(card.matches(":hover")).toBe(true);
+		await new Promise((resolve) => setTimeout(resolve, 300));
 		await expect(getComputedStyle(card).backgroundColor).toBe(resting);
 		await userEvent.unhover(card);
 	},
