@@ -577,6 +577,19 @@ usable as a UI-reconstruction image source. Failure to satisfy any of
 (8)–(10) means the capture is not maintainable — every change to the
 pipeline will require hand-checking output.
 
+**Status (implemented on the #146 branch):** the capture hook is
+`scripts/verify/storybook-screenshot-capture.ts` (Vitest `setupFiles`
+entry, runs inside the official addon lifecycle). It writes PNGs to
+`.tmp/vitest-screenshots/` and JSON sidecars to
+`.tmp/storybook-captures/`; `scripts/verify/storybook-capture-merge.ts`
+diffs sidecars against `storybook-static/index.json` into
+`.tmp/storybook-captures/report.json`;
+`scripts/verify/storybook-capture-gallery.ts` renders the gallery from
+metadata. CI uploads per-shard artifacts and runs the merge in a
+separate `storybook-capture-report` job that is deliberately outside
+`release-gate.needs`. Pixel-diff / visual-quality gating (reg-suit or
+equivalent) remains a separate decision.
+
 ### Reproducing the 78-story A/B locally
 
 ```bash

@@ -38,6 +38,8 @@
 		"snapshot:storybook": "bun scripts/verify/sb-snapshot-all.ts",
 		"snapshot:storybook:capture": "bun scripts/verify/sb-snapshot-all.ts --skip-build",
 		"snapshot:storybook:gallery": "bun scripts/verify/sb-snapshot-gallery.ts",
+		"capture:storybook:merge": "bun scripts/verify/storybook-capture-merge.ts",
+		"capture:storybook:gallery": "bun scripts/verify/storybook-capture-gallery.ts",
 		"test:storybook": "cross-env LD_LIBRARY_PATH=~/chrome-libs/usr/lib/x86_64-linux-gnu NODE_OPTIONS=--max-old-space-size=4096 bun run vitest --project storybook",
 		"test:storybook:headed": "cross-env LD_LIBRARY_PATH=~/chrome-libs/usr/lib/x86_64-linux-gnu NODE_OPTIONS=--max-old-space-size=4096 bun run vitest --project storybook --browser.headless=false",
 		"symlink": "bun run scripts/cep/symlink.ts",

@@ -176,7 +176,18 @@ export default defineConfig({
 					environment: "happy-dom",
 					browser: {
 						enabled: true,
-						provider: playwright({}),
+						// `contextOptions.viewport` pins the browser window so
+						// the tester iframe (resized per-test by
+						// `page.viewport()` in the capture setup file) is
+						// never clipped by a smaller viewport — requirement
+						// 4 of docs/architecture/ui-reconstruction/storybook.md.
+						// Keep in sync with CAPTURE_VIEWPORT in
+						// scripts/verify/storybook-screenshot-capture.ts.
+						provider: playwright({
+							contextOptions: {
+								viewport: { width: 1280, height: 720 },
+							},
+						}),
 						headless: true,
 						instances: [{ browser: "chromium" }],
 					},

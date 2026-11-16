@@ -9,6 +9,7 @@ name: CI
 #   dtolnay/rust-toolchain  stable   -> 6bed0761d98439e5a578e2877258200ad565ba87 (tracks stable HEAD; bump when rust toolchain moves)
 #   swatinem/rust-cache     tag v2   -> 49a0bdc70d2e1b713ca9e2869b211fcce03d3c1c
 #   actions/upload-artifact tag v4   -> ea165f8d65b6e75b540449e92b4886f43607fa02
+#   actions/download-artifact tag v4 -> d3f86a106a0bac45b974a628896c90dbdf5c8093
 
 on:
   # The release gate is `bun run ci` partitioned across the jobs below. Every
@@ -193,6 +194,76 @@ jobs:
           # at the reclaimed directory keeps the space attributable and off
           # the runner's default /tmp.
           TMPDIR: /mnt/gate-tmp
+
+      # Per-story screenshot PNGs + JSON metadata sidecars written by
+      # scripts/verify/storybook-screenshot-capture.ts. `if: always()` so a
+      # failing shard still contributes its captures — the merge job
+      # classifies render-failed/capture-error/missing buckets from them.
+      # Filenames derive only from storyId, so the four shards never collide.
+      - name: Upload storybook capture artifacts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: storybook-captures-${{ matrix.shard }}
+          path: |
+            .tmp/storybook-captures
+            .tmp/vitest-screenshots
+          if-no-files-found: warn
+          retention-days: 14
+
+  # Merges the four shards' capture sidecars into one coverage report and
+  # rebuilds the gallery. Deliberately NOT in `release-gate.needs`: a
+  # capture-pipeline problem must be visible (this job goes red) without
+  # blocking the release gate, whose signal stays "the story tests
+  # themselves passed". Whether capture health should become gating is a
+  # separate decision once pixel-diff/reg-suit lands.
+  storybook-capture-report:
+    needs: storybook
+    if: always() && needs.storybook.result != 'cancelled'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6
+        with:
+          bun-version: 1.3.10
+
+      - name: Install
+        run: bun install --frozen-lockfile --ignore-scripts
+
+      - name: Generate PandaCSS runtime + styles
+        run: bunx panda codegen --silent && bunx panda cssgen --silent
+
+      # index.json is the coverage reference for requirement 1 — every
+      # entry must produce a capture sidecar.
+      - name: Build Storybook static index
+        run: bunx storybook build
+
+      - name: Download shard capture artifacts
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          pattern: storybook-captures-*
+          path: .tmp
+          merge-multiple: true
+
+      - name: Merge capture metadata
+        run: bun run capture:storybook:merge
+
+      # `if: always()` so a non-ok merge verdict still produces the gallery
+      # and the uploaded report artifact — the failure stays visible in
+      # the job conclusion either way.
+      - name: Build capture gallery
+        if: always()
+        run: bun run capture:storybook:gallery
+
+      - name: Upload merged capture report
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: storybook-capture-report-${{ github.sha }}
+          path: .tmp/storybook-captures
+          if-no-files-found: warn
+          retention-days: 14
 
   # Build and verify the real operation-worker binary on the platform that
   # owns it. The ubuntu `static` job compiles the platform-specific
