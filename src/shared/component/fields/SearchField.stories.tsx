@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Search } from "lucide-react";
 import { useState } from "react";
+import { expect } from "storybook/test";
 import { SearchField } from "./SearchField";
 
 const meta = {
@@ -47,6 +48,31 @@ export const WithInlineTrailing: Story = {
 export const Disabled: Story = {
 	args: {
 		disabled: true,
+	},
+};
+
+// Issue #146 / #144 regression: the wrapper owns the only focus indicator.
+// Focusing the input must paint exactly one ring (wrapper _focusWithin
+// border + inset shadow) and the inner input must not paint a second
+// border or box-shadow of its own.
+export const FocusVisible: Story = {
+	args: {
+		placeholder: "Search…",
+	},
+	play: async ({ canvasElement }) => {
+		const input = canvasElement.querySelector<HTMLInputElement>("input");
+		if (!input) throw new Error("search input not found");
+		input.focus();
+		await expect(document.activeElement).toBe(input);
+
+		const innerStyle = getComputedStyle(input);
+		expect(innerStyle.boxShadow).toBe("none");
+		expect(innerStyle.borderTopWidth).toBe("0px");
+
+		const wrapper = input.parentElement;
+		if (!wrapper) throw new Error("search field wrapper not found");
+		const wrapperStyle = getComputedStyle(wrapper);
+		expect(wrapperStyle.boxShadow).not.toBe("none");
 	},
 };
 

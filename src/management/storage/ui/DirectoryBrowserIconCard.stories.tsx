@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { expect, userEvent } from "storybook/test";
 import type { SiblingListingEntry } from "@/management/preset/sibling-thumbnail";
 
 import type { DirectoryBrowserEntry } from "./DirectoryBrowser";
@@ -100,4 +101,38 @@ export const ImageWithPreview: Story = {
 
 export const NoCheckbox: Story = {
 	args: { showCheckbox: false },
+};
+
+// Issue #146: hover must lift an unselected card to interactive.hover.
+// Assert the computed background actually changes on hover — a static
+// screenshot cannot distinguish "hover style missing" from "hover style
+// identical to resting state".
+export const HoverUnselected: Story = {
+	play: async ({ canvasElement }) => {
+		const card = canvasElement.querySelector<HTMLElement>(
+			"[data-card-selected]",
+		);
+		if (!card) throw new Error("icon card not found");
+		const resting = getComputedStyle(card).backgroundColor;
+		await userEvent.hover(card);
+		await expect(getComputedStyle(card).backgroundColor).not.toBe(resting);
+		await userEvent.unhover(card);
+	},
+};
+
+// Issue #146: a selected card must keep its selection surface on hover —
+// the hover affordance is overridden so selected vs hovered-unselected
+// stay visually distinct (see cardSelectedClass comment).
+export const HoverSelected: Story = {
+	args: { isSelected: true },
+	play: async ({ canvasElement }) => {
+		const card = canvasElement.querySelector<HTMLElement>(
+			"[data-card-selected]",
+		);
+		if (!card) throw new Error("icon card not found");
+		const resting = getComputedStyle(card).backgroundColor;
+		await userEvent.hover(card);
+		await expect(getComputedStyle(card).backgroundColor).toBe(resting);
+		await userEvent.unhover(card);
+	},
 };
