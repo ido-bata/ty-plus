@@ -179,7 +179,7 @@ describe("createCepSurfaceTransport — publish dispatch (Issue #67)", () => {
 	});
 });
 
-describe("createCepSurfaceTransport — subscribe (Issue #139)", () => {
+describe("createCepSurfaceTransport — subscribe (issue 139)", () => {
 	const createListeningWindow = () => {
 		const listeners = new Map<string, (ev: { data: string }) => void>();
 		const win = {
