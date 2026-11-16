@@ -129,8 +129,11 @@ class SettingsDialogErrorBoundary extends Component<
 			>
 				<div className={errorFallbackStyle}>
 					<div className={errorHeadingStyle}>Settings UI failed to render</div>
+					{/* Issue #140: never render a raw stack trace into the panel
+					    UI — name + message only; the full error is already in the
+					    diagnostic channel via componentDidCatch. */}
 					<pre className={errorStackStyle}>
-						{this.state.error.stack ?? this.state.error.message}
+						{`${this.state.error.name}: ${this.state.error.message}`}
 					</pre>
 				</div>
 			</DialogShell>

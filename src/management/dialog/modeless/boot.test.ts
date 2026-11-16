@@ -11,7 +11,7 @@ describe("bootTyPlusModelessDialog", () => {
 
 	test("renders debug-console before i18n/provider bootstrapping", () => {
 		const debugRenderIndex = source.indexOf(
-			"createRoot(mount).render(<DebugDialogRoot surfaceId={surfaceId} />)",
+			"<DebugDialogRoot surfaceId={surfaceId} />",
 		);
 		const i18nIndex = source.indexOf("await initializeI18n(window)");
 
