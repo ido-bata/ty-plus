@@ -105,6 +105,7 @@ impl StorageBoundary {
             }
             Some(CanonicalMethod::HostPluginEffectScan) => Ok(()),
             Some(CanonicalMethod::OnlineConnectivityCheck) => Ok(()),
+            Some(CanonicalMethod::UpdateInstall) => Ok(()),
             Some(CanonicalMethod::HostThumbnailLookup)
             | Some(CanonicalMethod::HostThumbnailGenerate)
             | Some(CanonicalMethod::HostThumbnailLookupOrGenerate)

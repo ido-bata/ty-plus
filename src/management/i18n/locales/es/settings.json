@@ -226,6 +226,12 @@
 		"unavailable": "No se pudo comprobar la actualización",
 		"available": "Nueva versión disponible: {{version}}",
 		"releaseNotes": "Notas de la versión y descarga",
-		"channelPlaceholder": "Elige un canal"
+		"channelPlaceholder": "Elige un canal",
+		"install": "Instalar actualización",
+		"installing": "Instalando…",
+		"installDone": "Instalado. Reinicia After Effects para finalizar.",
+		"installPending": "Preparado. Se aplicará la próxima vez que se inicie ty-plus.",
+		"installManual": "La instalación automática no está disponible aquí. Usa la página de descarga.",
+		"installFailed": "Error de instalación. Inténtalo de nuevo o instala manualmente."
 	}
 }

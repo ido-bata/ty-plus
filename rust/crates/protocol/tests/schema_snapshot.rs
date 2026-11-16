@@ -14,7 +14,7 @@ fn schema_snapshot_contains_rust_owned_canonical_policy_registry() {
     let policies = catalog["canonicalOperationPolicies"]
         .as_object()
         .expect("canonical policies must be an object");
-    assert_eq!(methods.len(), 12);
+    assert_eq!(methods.len(), 13);
     assert_eq!(policies.len(), methods.len());
     for method in methods {
         let method = method.as_str().expect("method names must be strings");

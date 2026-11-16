@@ -4,10 +4,13 @@ mod context;
 mod executor;
 mod host_filesystem_dispatch;
 mod host_filesystem_thumbnail_dispatch;
+pub mod install_lease;
 mod lifecycle;
 mod online_dispatch;
+mod platform;
 mod product_online_config;
 mod storage_dispatch;
+pub mod update_install;
 
 pub use cancellation::CancellationToken;
 pub use codec::{CodecError, read_message, write_message};
@@ -33,3 +36,6 @@ pub use product_online_config::{
     ProductOnlineConfig, build_product_online_config, product_online_config_from_inputs,
 };
 pub use storage_dispatch::{StorageBoundary, StorageError};
+pub use update_install::{
+    UpdateInstallError, UpdateInstallRequest, UpdateInstallResult, dispatch_update_install,
+};
