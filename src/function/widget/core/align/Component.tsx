@@ -159,6 +159,7 @@ function AlignButtonGrid({
 						)}
 						title={action}
 						disabled={isDisabled(action, selectionCount)}
+						data-ws-action={action}
 						onClick={(e) => {
 							if (!isGestureActive && !isDisabled(action, selectionCount)) {
 								e.stopPropagation();
@@ -282,6 +283,7 @@ function TargetSelectorRow({
 			<button
 				type="button"
 				className={btnClass("selection")}
+				data-ws-action="align-target-selection"
 				onClick={pickTarget("selection")}
 				title="Align to Selection"
 			>
@@ -290,6 +292,7 @@ function TargetSelectorRow({
 			<button
 				type="button"
 				className={btnClass("comp")}
+				data-ws-action="align-target-comp"
 				onClick={pickTarget("comp")}
 				title="Align to Composition"
 			>
@@ -298,6 +301,7 @@ function TargetSelectorRow({
 			<button
 				type="button"
 				className={btnClass("key-object")}
+				data-ws-action="align-target-key-object"
 				onClick={pickTarget("key-object")}
 				title="Align to Key Object"
 			>
@@ -306,6 +310,7 @@ function TargetSelectorRow({
 			<button
 				type="button"
 				className={btnClass("time")}
+				data-ws-action="align-target-time"
 				onClick={pickTarget("time")}
 				title="Time Alignment"
 			>
