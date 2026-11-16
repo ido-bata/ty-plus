@@ -66,6 +66,26 @@ describe("useDirectoryBrowserContextMenu", () => {
 		expect(labels).toEqual(["Refresh", "Go up", "Browse drives"]);
 	});
 
+	it("returns null for preset rows so the unified preset menu survives (Issue #141)", () => {
+		mocks.register.mockClear();
+		renderHook(() => useDirectoryBrowserContextMenu(createOptions()));
+		const registration = vi.mocked(registerCepJsonContextMenuSurface).mock
+			.calls[0]?.[1];
+		expect(registration).toBeDefined();
+		if (!registration) throw new Error("context menu was not registered");
+		const host = document.createElement("div");
+		host.setAttribute("data-directory-browser-body", "");
+		const row = document.createElement("button");
+		row.setAttribute("data-directory-browser-entry", "");
+		row.setAttribute("data-entry-kind", "preset");
+		row.setAttribute("data-entry-path", "/preset/root/foo.jsx");
+		row.setAttribute("data-preset-id", "preset-1");
+		host.appendChild(row);
+		const event = new MouseEvent("contextmenu", { bubbles: true });
+		Object.defineProperty(event, "target", { value: row });
+		expect(registration.buildPayload(event)).toBeNull();
+	});
+
 	it("does not import or call useTranslation (right-click menu labels must stay English)", async () => {
 		// Static guard: prevent a future patch from re-introducing the
 		// translation-key path that previously leaked the Japanese
