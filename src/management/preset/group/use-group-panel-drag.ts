@@ -7,6 +7,7 @@ import {
 	useRef,
 	useState,
 } from "react";
+import { createLogger } from "@/management/debug/logger";
 import {
 	removePresetFromGroupEntry,
 	reorderPresetInGroupEntry,
@@ -47,6 +48,8 @@ const POINTER_MOUSE_DEDUP_MS = 16;
 
 const isMoveClickEvent = (e: GroupDragEvent): boolean =>
 	e.button === 1 || (e.button === 0 && (e.ctrlKey || e.metaKey));
+
+const groupDragLog = createLogger("preset-execution");
 
 export function useGroupPanelDrag({
 	groupId,
@@ -190,51 +193,69 @@ export function useGroupPanelDrag({
 				return;
 			}
 			void (async () => {
-				if (dragMovedRef.current) {
-					suppressClickRef.current = true;
-					window.setTimeout(() => {
-						suppressClickRef.current = false;
-					}, 0);
-				}
+				try {
+					if (dragMovedRef.current) {
+						suppressClickRef.current = true;
+						window.setTimeout(() => {
+							suppressClickRef.current = false;
+						}, 0);
+					}
 
-				const gridEl = gridRef.current;
-				const droppedInside =
-					gridEl !== null &&
-					event.clientX >= gridEl.getBoundingClientRect().left &&
-					event.clientX <= gridEl.getBoundingClientRect().right &&
-					event.clientY >= gridEl.getBoundingClientRect().top &&
-					event.clientY <= gridEl.getBoundingClientRect().bottom;
+					const gridEl = gridRef.current;
+					const droppedInside =
+						gridEl !== null &&
+						event.clientX >= gridEl.getBoundingClientRect().left &&
+						event.clientX <= gridEl.getBoundingClientRect().right &&
+						event.clientY >= gridEl.getBoundingClientRect().top &&
+						event.clientY <= gridEl.getBoundingClientRect().bottom;
 
-				if (droppedInside) {
-					await reorderPresetInGroupEntry(
-						window,
-						groupId,
-						groupDrag.startIndex,
-						groupDrag.overIndex,
-					);
-					await notifyPanelsAfterPresetSave(window, {
-						sourceSurfaceId: panelId,
-						catalogRefIds: [groupId],
+					if (droppedInside) {
+						await reorderPresetInGroupEntry(
+							window,
+							groupId,
+							groupDrag.startIndex,
+							groupDrag.overIndex,
+						);
+						await notifyPanelsAfterPresetSave(window, {
+							sourceSurfaceId: panelId,
+							catalogRefIds: [groupId],
+						});
+					} else {
+						await removePresetFromGroupEntry(
+							window,
+							groupId,
+							groupDrag.presetId,
+						);
+						const workspaceGrid =
+							gridRef.current?.closest<HTMLElement>(`[${ATTR_GRID}]`) ?? null;
+						const dropPlacement = gridClientPointToCell(
+							event.clientX,
+							event.clientY,
+							workspaceGrid,
+							grid,
+						);
+						await notifyPanelsAfterPresetSave(window, {
+							sourceSurfaceId: panelId,
+							catalogRefIds: [groupDrag.presetId],
+							dropPlacement: dropPlacement ?? undefined,
+						});
+					}
+				} catch (error) {
+					// Issue #139: a failed drop used to leave `groupDrag` set (stuck
+					// ghost) and surface only as an unhandled rejection. Log it and
+					// always release the drag state below.
+					groupDragLog.error("group panel drag drop failed", {
+						action: "group-panel-drag:drop-failed",
+						context: {
+							groupId,
+							presetId: groupDrag.presetId,
+							message: error instanceof Error ? error.message : String(error),
+						},
 					});
-				} else {
-					await removePresetFromGroupEntry(window, groupId, groupDrag.presetId);
-					const workspaceGrid =
-						gridRef.current?.closest<HTMLElement>(`[${ATTR_GRID}]`) ?? null;
-					const dropPlacement = gridClientPointToCell(
-						event.clientX,
-						event.clientY,
-						workspaceGrid,
-						grid,
-					);
-					await notifyPanelsAfterPresetSave(window, {
-						sourceSurfaceId: panelId,
-						catalogRefIds: [groupDrag.presetId],
-						dropPlacement: dropPlacement ?? undefined,
-					});
+				} finally {
+					dragMovedRef.current = false;
+					setGroupDrag(null);
 				}
-
-				dragMovedRef.current = false;
-				setGroupDrag(null);
 			})();
 		};
 

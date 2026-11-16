@@ -61,6 +61,7 @@ export type LocalPresetCatalog = {
 	getById(presetId: string): Promise<Preset | undefined>;
 	listLocalPresets(): Preset[];
 	upsertLocalPreset(preset: Preset): Promise<void>;
+	upsertLocalPresets?(presets: Preset[]): Promise<void>;
 	removeLocalPreset(presetId: string): Promise<void>;
 };
 
