@@ -16,15 +16,12 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { Preset } from "@/management/preset/contract";
 
-const { storage, gatewayResolve, cloudMode, bootBoundaryCalls } = vi.hoisted(
+const { storage } = vi.hoisted(
 	() => ({
 		storage: {
 			readJsonText: vi.fn(),
 			writePresetsJson: vi.fn(),
 		},
-		gatewayResolve: vi.fn(),
-		cloudMode: { value: "unavailable" as "unavailable" | "available" },
-		bootBoundaryCalls: { count: 0 },
 	}),
 );
 
@@ -35,31 +32,6 @@ vi.mock("@/management/storage", () => ({
 
 vi.mock("@/management/storage/persistence", () => ({
 	readJsonText: storage.readJsonText,
-}));
-
-/**
- * The cloud boot boundary. `getDataServices` throws the same error class the
- * live boot path raises when no runtime gateway has been registered, so a
- * regression that reintroduces the precondition is loud.
- */
-vi.mock("@/management/workspace/services", () => ({
-	getDataServices: () => {
-		bootBoundaryCalls.count += 1;
-		const error = new Error("Cloud gateway was not booted (Issue #128)");
-		error.name = "GatewayBootRequiredError";
-		throw error;
-	},
-	tryGetDataServices: () => {
-		bootBoundaryCalls.count += 1;
-		return cloudMode.value === "available"
-			? {
-					gateway: {
-						provider: "supabase" as const,
-						resolvePreset: gatewayResolve,
-					},
-				}
-			: null;
-	},
 }));
 
 import { __resetLocalPresetCatalogForTests } from "@/management/preset/repository/local-catalog";
@@ -94,9 +66,6 @@ beforeEach(() => {
 	storage.readJsonText.mockReset();
 	storage.writePresetsJson.mockReset();
 	storage.writePresetsJson.mockResolvedValue(undefined);
-	gatewayResolve.mockReset();
-	cloudMode.value = "unavailable";
-	bootBoundaryCalls.count = 0;
 });
 
 describe("duplicatePreset", () => {
@@ -153,7 +122,7 @@ describe("duplicatePreset", () => {
 
 		// `bootBoundaryCalls` counts both the throwing and the non-throwing
 		// entry point. Neither may be touched for a local write.
-		expect(bootBoundaryCalls.count).toBe(0);
+		
 	});
 });
 
@@ -169,7 +138,7 @@ describe("local CRUD with the gateway not booted (#145)", () => {
 		const rows = await listPresets();
 
 		expect(rows.map((row) => row.id)).toEqual(["src-1", "src-2"]);
-		expect(bootBoundaryCalls.count).toBe(0);
+		
 	});
 
 	it("upserts a local row", async () => {
@@ -178,7 +147,7 @@ describe("local CRUD with the gateway not booted (#145)", () => {
 		await upsertLocalPreset(basePreset);
 
 		expect(lastWritten().presets.map((row) => row.id)).toEqual(["src-1"]);
-		expect(bootBoundaryCalls.count).toBe(0);
+		
 	});
 
 	it("removes a local row", async () => {
@@ -189,7 +158,7 @@ describe("local CRUD with the gateway not booted (#145)", () => {
 		await removeLocalPreset("src-1");
 
 		expect(lastWritten().presets.map((row) => row.id)).toEqual(["src-2"]);
-		expect(bootBoundaryCalls.count).toBe(0);
+		
 	});
 
 	it("reads back a row it just wrote", async () => {
@@ -228,46 +197,16 @@ describe("empty catalog vs load failure (#145)", () => {
 	});
 });
 
-describe("getPreset resolves local-first and only then remotely (#145)", () => {
-	it("returns a local hit without asking the gateway", async () => {
+describe("getPreset — local catalog only", () => {
+	it("returns a local hit", async () => {
 		storage.readJsonText.mockResolvedValue(catalogText([basePreset]));
 
 		await expect(getPreset("src-1")).resolves.toMatchObject({ id: "src-1" });
-		expect(gatewayResolve).not.toHaveBeenCalled();
-		expect(bootBoundaryCalls.count).toBe(0);
 	});
 
-	it("returns undefined on a local miss when the gateway is unavailable", async () => {
+	it("returns undefined on a local miss — there is no remote preset source", async () => {
 		storage.readJsonText.mockResolvedValue(catalogText([basePreset]));
-		cloudMode.value = "unavailable";
 
 		await expect(getPreset("nope")).resolves.toBeUndefined();
-	});
-
-	it("falls back to a remote resolve on a local miss when the gateway is up", async () => {
-		storage.readJsonText.mockResolvedValue(catalogText([basePreset]));
-		cloudMode.value = "available";
-		gatewayResolve.mockResolvedValue({ ...basePreset, id: "remote-1" });
-
-		await expect(getPreset("remote-1")).resolves.toMatchObject({
-			id: "remote-1",
-		});
-		expect(gatewayResolve).toHaveBeenCalledWith("remote-1");
-	});
-
-	it("treats a failing remote resolve as a miss, not as a failed read", async () => {
-		storage.readJsonText.mockResolvedValue(catalogText([basePreset]));
-		cloudMode.value = "available";
-		gatewayResolve.mockRejectedValue(new Error("network down"));
-
-		await expect(getPreset("nope")).resolves.toBeUndefined();
-	});
-});
-
-describe("use-cases module re-exports", () => {
-	it("exposes getPreset and upsertLocalPreset as public functions", () => {
-		// Smoke check: the public API surface the workspace hook imports.
-		expect(typeof getPreset).toBe("function");
-		expect(typeof upsertLocalPreset).toBe("function");
 	});
 });

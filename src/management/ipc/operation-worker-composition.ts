@@ -1,11 +1,4 @@
 import { createLogger } from "@/management/debug/logger";
-import type {
-	CatalogSearchRequestDTO,
-	CatalogSearchResultDTO,
-	ConnectivityStatusDTO,
-	DownloadRequestDTO,
-	DownloadResponseDTO,
-} from "@/management/online/runtime-gateway";
 import {
 	type CanonicalMethod,
 	canonicalMethods,
@@ -175,18 +168,6 @@ export type OperationWorkerComposition = Readonly<{
 		request: GenerateThumbnailRequest,
 		options?: HostPluginEffectScanOptions,
 	) => Promise<HostThumbnailGenerateResult>;
-	readonly lookupCatalog: (
-		request: CatalogSearchRequestDTO,
-		options?: HostPluginEffectScanOptions,
-	) => Promise<CatalogSearchResultDTO>;
-	readonly downloadPreset: (
-		request: DownloadRequestDTO,
-		options?: HostPluginEffectScanOptions,
-	) => Promise<DownloadResponseDTO>;
-	readonly checkConnectivity: (
-		request: undefined,
-		options?: HostPluginEffectScanOptions,
-	) => Promise<ConnectivityStatusDTO>;
 	readonly installUpdate: (
 		request: UpdateInstallRequestDTO,
 		options?: HostPluginEffectScanOptions,
@@ -275,12 +256,6 @@ const hostThumbnailLookupWireName =
 const hostThumbnailGenerateWireName =
 	canonicalOperationPolicies.host_thumbnail_generate.wireName;
 
-const onlineCatalogSearchWireName =
-	canonicalOperationPolicies.online_catalog_search.wireName;
-const onlineConnectivityCheckWireName =
-	canonicalOperationPolicies.online_connectivity_check.wireName;
-const onlineDownloadWireName =
-	canonicalOperationPolicies.online_download.wireName;
 const updateInstallWireName =
 	canonicalOperationPolicies.update_install.wireName;
 
@@ -445,8 +420,8 @@ const createThumbnailFactory = <Req, Res>(
 });
 
 /**
- * Build a factory for the online catalog-search, connectivity-check, or
- * download methods. All three share payload-encode rules:
+ * Build a factory for the update-install method. It shares the
+ * payload-encode rules:
  *
  * - the request body is a plain JSON object matching the wire DTO shape
  *   (snake_case keys as the Rust client expects),
@@ -458,11 +433,7 @@ const createThumbnailFactory = <Req, Res>(
  * the policy table.
  */
 const createOnlineFactory = <Req, Res>(
-	methodName:
-		| "online_catalog_search"
-		| "online_connectivity_check"
-		| "online_download"
-		| "update_install",
+	methodName: "update_install",
 	wireName: string,
 	request: Req,
 	context: ImmutableHostContext,
@@ -870,45 +841,6 @@ export const createOperationWorkerComposition = (
 						"host_thumbnail_generate",
 						hostThumbnailGenerateWireName,
 						request,
-						context,
-						manifest.productVersion,
-						manifest.capabilities,
-					),
-			),
-		lookupCatalog: (request, scanOptions) =>
-			enqueueAttempt(
-				"online_catalog_search",
-				scanOptions,
-				(context, manifest) =>
-					createOnlineFactory<CatalogSearchRequestDTO, CatalogSearchResultDTO>(
-						"online_catalog_search",
-						onlineCatalogSearchWireName,
-						request,
-						context,
-						manifest.productVersion,
-						manifest.capabilities,
-					),
-			),
-		downloadPreset: (request, scanOptions) =>
-			enqueueAttempt("online_download", scanOptions, (context, manifest) =>
-				createOnlineFactory<DownloadRequestDTO, DownloadResponseDTO>(
-					"online_download",
-					onlineDownloadWireName,
-					request,
-					context,
-					manifest.productVersion,
-					manifest.capabilities,
-				),
-			),
-		checkConnectivity: (_request, scanOptions) =>
-			enqueueAttempt(
-				"online_connectivity_check",
-				scanOptions,
-				(context, manifest) =>
-					createOnlineFactory<undefined, ConnectivityStatusDTO>(
-						"online_connectivity_check",
-						onlineConnectivityCheckWireName,
-						undefined,
 						context,
 						manifest.productVersion,
 						manifest.capabilities,

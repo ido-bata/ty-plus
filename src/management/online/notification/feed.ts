@@ -7,7 +7,7 @@
  * "no remote items" and the local cache stays authoritative.
  */
 
-import type { NotificationSummary } from "@/management/online/contract";
+import type { NotificationSummary } from "@/management/online/notification/notifications";
 
 export const DEFAULT_NOTIFICATION_FEED_URL =
 	"https://ty-plus.app/feeds/notifications.json";

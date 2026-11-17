@@ -28,7 +28,6 @@ import type { CepMenuPayload } from "@/management/dialog/dialogs/context-menu";
 import { registerCepJsonContextMenuSurface } from "@/management/dialog/dialogs/context-menu";
 import type { ShellProps } from "@/management/dialog/dialogs/shell/Layout";
 import { useDialogClose } from "@/management/dialog/useClose";
-import { useGatewayHealth } from "@/management/online/runtime-gateway-health";
 import { resolvePresetToolSurfaceIdForPreset } from "@/management/preset/authoring/request";
 import {
 	ICON_CELL_BASE_REM,
@@ -1493,10 +1492,6 @@ export function PresetsDialog(): JSX.Element {
 		placement,
 		groupPlacement,
 	} = loadState;
-	// Cloud health is tracked separately from the local catalog state on
-	// purpose (Issue #145): the gateway being down is a fact about the online
-	// side and must not decide what the local list renders.
-	const gatewayHealth = useGatewayHealth();
 	const {
 		viewMode,
 		setViewMode,
@@ -2109,24 +2104,10 @@ export function PresetsDialog(): JSX.Element {
 		return <p className={emptyStateClass}>No matching presets</p>;
 	};
 
-	const cloudNotice =
-		gatewayHealth.state === "live" ? null : (
-			<p className={cloudNoticeClass} data-preset-list-cloud-notice>
-				<span className={css({ fontWeight: "medium", flexShrink: "0" })}>
-					Cloud offline
-				</span>
-				<span>
-					{gatewayHealth.state === "degraded"
-						? gatewayHealth.failure.message
-						: gatewayHealth.reason}{" "}
-					— showing the local catalog only.
-				</span>
-			</p>
-		);
 
-	// A group-catalog read failure degrades grouping only. It is reported next
-	// to the cloud note rather than replacing the body, because the preset rows
-	// did load.
+	// A group-catalog read failure degrades grouping only. It is reported
+	// above the body rather than replacing it, because the preset rows did
+	// load.
 	const groupsNotice = groupsError ? (
 		<p className={cloudNoticeClass} data-preset-list-groups-notice>
 			<span className={css({ fontWeight: "medium", flexShrink: "0" })}>
@@ -2196,7 +2177,6 @@ export function PresetsDialog(): JSX.Element {
 					</div>
 				}
 			>
-				{cloudNotice}
 				{groupsNotice}
 				{viewMode === "list" ? (
 					visibleCount === 0 && loadPhase !== "streaming" ? (

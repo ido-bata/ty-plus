@@ -98,8 +98,8 @@ export default defineConfig({
 			// untested files kept out of the include list do not impact the
 			// gate at all.
 			include: [
-				"src/management/online/catalog/composition-runtime-dispatcher.ts",
-				"src/management/panel/cloud-gateway-boot.ts",
+				"src/management/workspace/placement/append-preset-from-dialog-disk.ts",
+				"src/management/preset/use-cases.ts",
 			],
 			perFile: true,
 			exclude: [

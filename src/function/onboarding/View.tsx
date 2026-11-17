@@ -1179,12 +1179,6 @@ function useOnboardingFinish(input: OnboardingFinishInput): {
 					payload: {
 						kind: "snapshot" as const,
 						presets,
-						syncStatus: {
-							provider: "supabase",
-							state: "idle" as const,
-							label: "Local Update",
-							checkedAt: new Date().toISOString(),
-						},
 						sourceSurfaceId: panelSurfaceId,
 					},
 				}),

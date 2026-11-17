@@ -95,7 +95,6 @@ export type PresetsPayload =
 	| {
 			kind: "snapshot";
 			presets: import("../../preset/contract").Preset[];
-			syncStatus: import("../../../management/online/contract").SyncStatus;
 			sourceSurfaceId: string;
 	  }
 	| {

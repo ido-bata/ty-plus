@@ -19,13 +19,9 @@
  *   - the rows come from `presets/presets.json` through the STRICT parser;
  *   - a missing file is an EMPTY catalog, a corrupt file is a LOAD FAILURE.
  *
- * The last point is deliberate. The boot-path store in
- * `workspace/services.ts` and `repository/catalog-root-pinned.ts` both use the
- * lenient parser, which returns `[]` for corrupt input — a corrupt catalog
- * rendered as "no presets", which is the same empty-success lie this issue is
- * about. The Preset List reads through this module, so it can tell the two
- * apart. Those two boot-path callers keep their lenient contract; reconciling
- * them is a separate change with its own blast radius.
+ * The last point is deliberate: a corrupt catalog rendered as "no presets"
+ * is the same empty-success lie this issue is about. The Preset List reads
+ * through this module, so it can tell the two apart.
  *
  * ## Caching / staleness
  *

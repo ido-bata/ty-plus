@@ -16,7 +16,6 @@ export {
 	writeUiSettings,
 } from "@/management/setting/persistence/workspace-ui-settings-file";
 // Re-export cache-store (notifications / remote-presets / public-links)
-export { writePublicLinks } from "@/management/storage/cache-store";
 // Re-export id utilities for tests
 export { isOpaqueInstanceId } from "@/management/storage/ids";
 // Re-export text file read

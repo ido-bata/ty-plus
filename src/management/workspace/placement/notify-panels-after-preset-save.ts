@@ -167,12 +167,6 @@ export async function notifyPanelsAfterPresetSave(
 	const snapshot: PresetsPayload = {
 		kind: "snapshot",
 		presets,
-		syncStatus: {
-			provider: "supabase",
-			state: "idle",
-			label: "Local Update",
-			checkedAt: new Date().toISOString(),
-		},
 		sourceSurfaceId: input.sourceSurfaceId,
 	};
 	await publishShellMessage(transport, {

@@ -5,7 +5,6 @@
 
 import type { Preset } from "@/management/preset/contract";
 import { getLocalPresetCatalog } from "@/management/preset/repository/local-catalog";
-import { tryGetDataServices } from "@/management/workspace/services";
 
 export type { Preset };
 
@@ -28,10 +27,8 @@ const hostWindow = (): Window => {
 /**
  * List the local preset catalog.
  *
- * Issue #145: this used to be `getDataServices().presetRepository.list()`,
- * which made a purely local read fail with `GatewayBootRequiredError` whenever
- * the cloud gateway had not booted. The rows are file-backed, so they are read
- * through the local catalog and the gateway is not consulted at all.
+ * The rows are file-backed, so they are read through the local catalog —
+ * the single owner of `presets/presets.json`.
  *
  * Rejects (rather than resolving to `[]`) when `presets/presets.json` cannot be
  * read or is corrupt, so the caller can tell a load failure from a genuinely
@@ -42,40 +39,13 @@ export const listPresets = async (): Promise<Preset[]> => {
 };
 
 /**
- * Get a single preset by ID, local first.
- *
- * A local hit never touches the cloud. Only a local miss asks the gateway for a
- * remote resolve, and that ask is best-effort: an un-booted or offline gateway
- * resolves to `undefined` (a miss) rather than throwing, so a cloud problem
- * cannot turn a local read into a failure.
+ * Get a single preset by ID from the local catalog. There is no remote
+ * preset source in this product — a miss is a miss.
  */
 export const getPreset = async (
 	presetId: string,
 ): Promise<Preset | undefined> => {
-	const local = await getLocalPresetCatalog(hostWindow()).getById(presetId);
-	if (local) {
-		return local;
-	}
-	return resolvePresetFromCloud(presetId);
-};
-
-/**
- * Remote resolve, attempted only after a local miss. Returns `undefined` when
- * the gateway is unavailable or the resolve fails — both are "not found
- * remotely", not "the local read failed".
- */
-const resolvePresetFromCloud = async (
-	presetId: string,
-): Promise<Preset | undefined> => {
-	const services = tryGetDataServices();
-	if (!services) {
-		return undefined;
-	}
-	try {
-		return await services.gateway.resolvePreset(presetId);
-	} catch {
-		return undefined;
-	}
+	return getLocalPresetCatalog(hostWindow()).getById(presetId);
 };
 
 /**

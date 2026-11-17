@@ -1756,13 +1756,10 @@ export function useWorkspaceRuntime(root: Element | null): {
 					});
 				return Promise.resolve();
 			}
-			// Issue #88: R0 has no cloud backend, so preset refresh must not
-			// fire `cloudSync.syncPresets()` — it only performed a worker
-			// connectivity check whose status no consumer reads (the presets
-			// bus subscriber ignores `syncStatus`). Emit the same idle
-			// "Local Update" status the other snapshot producers use.
+			// Issue #88: R0 has no cloud backend, so preset refresh is a
+			// local catalog read only — there is no sync status to emit.
 			// issue 139: the row source is the local catalog — file-backed and
-			// independent of cloud gateway boot (offline-core contract).
+			// independent of any gateway boot (offline-core contract).
 			// Every caller uses `void refreshPresets()`, so a rejection here
 			// would surface as an unhandled rejection; log and resolve instead.
 			return (async () => {
@@ -1778,12 +1775,6 @@ export function useWorkspaceRuntime(root: Element | null): {
 					const presetPayload: PresetsPayload = {
 						kind: "snapshot",
 						presets,
-						syncStatus: {
-							provider: "supabase",
-							state: "idle",
-							label: "Local Update",
-							checkedAt: new Date().toISOString(),
-						},
 						sourceSurfaceId: panelId,
 					};
 					await publishShellMessage(cepSurfaceTransport, {
