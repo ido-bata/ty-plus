@@ -256,63 +256,7 @@ export function usePresetSiblingImageSrc(
 	const siblingHintParentDir = options?.siblingHintParentDir ?? null;
 	const siblingHintEntries = options?.siblingHintEntries ?? null;
 	const thumbnailListDirectory = options?.thumbnailListDirectory;
-	const siblingThumbSrc = usePresetSiblingImageSrc(record, {
-		siblingHintParentDir,
-		siblingHintEntries,
-		thumbnailListDirectory,
-	});
-
-	return siblingThumbSrc;
-}
-
-/**
- * Displays an icon by preset id alone. Lookup is contained in `getPreset`.
- */
-export function PresetGlyphById(props: PresetGlyphByIdProps): JSX.Element {
-	const {
-		presetId,
-		preset: cache,
-		boxClass,
-		emojiClass = DEFAULT_EMOJI_CLASS,
-		className,
-		surface = "catalog",
-		siblingHintParentDir = null,
-		siblingHintEntries = null,
-		thumbnailListDirectory,
-	} = props;
-
-	const [record, setRecord] = useState<Preset | undefined>(() =>
-		cache?.id === presetId ? cache : undefined,
-	);
-	const [phase, setPhase] = useState<"ready" | "loading" | "missing">(() =>
-		cache?.id === presetId ? "ready" : "loading",
-	);
 	const [siblingThumbSrc, setSiblingThumbSrc] = useState<string | null>(null);
-
-	useEffect(() => {
-		if (cache && cache.id === presetId) {
-			setRecord(cache);
-			setPhase("ready");
-			return;
-		}
-		let cancelled = false;
-		setPhase("loading");
-		setRecord(undefined);
-		void getPreset(presetId).then((p) => {
-			if (cancelled) {
-				return;
-			}
-			if (p) {
-				setRecord(p);
-				setPhase("ready");
-			} else {
-				setPhase("missing");
-			}
-		});
-		return () => {
-			cancelled = true;
-		};
-	}, [presetId, cache]);
 
 	useEffect(() => {
 		setSiblingThumbSrc(null);
@@ -365,6 +309,63 @@ export function PresetGlyphById(props: PresetGlyphByIdProps): JSX.Element {
 		siblingHintParentDir,
 		thumbnailListDirectory,
 	]);
+
+	return siblingThumbSrc;
+}
+
+/**
+ * Displays an icon by preset id alone. Lookup is contained in `getPreset`.
+ */
+export function PresetGlyphById(props: PresetGlyphByIdProps): JSX.Element {
+	const {
+		presetId,
+		preset: cache,
+		boxClass,
+		emojiClass = DEFAULT_EMOJI_CLASS,
+		className,
+		surface = "catalog",
+		siblingHintParentDir = null,
+		siblingHintEntries = null,
+		thumbnailListDirectory,
+	} = props;
+
+	const [record, setRecord] = useState<Preset | undefined>(() =>
+		cache?.id === presetId ? cache : undefined,
+	);
+	const [phase, setPhase] = useState<"ready" | "loading" | "missing">(() =>
+		cache?.id === presetId ? "ready" : "loading",
+	);
+
+	useEffect(() => {
+		if (cache && cache.id === presetId) {
+			setRecord(cache);
+			setPhase("ready");
+			return;
+		}
+		let cancelled = false;
+		setPhase("loading");
+		setRecord(undefined);
+		void getPreset(presetId).then((p) => {
+			if (cancelled) {
+				return;
+			}
+			if (p) {
+				setRecord(p);
+				setPhase("ready");
+			} else {
+				setPhase("missing");
+			}
+		});
+		return () => {
+			cancelled = true;
+		};
+	}, [presetId, cache]);
+
+	const siblingThumbSrc = usePresetSiblingImageSrc(record, {
+		siblingHintParentDir,
+		siblingHintEntries,
+		thumbnailListDirectory,
+	});
 
 	if (phase === "loading" && !record) {
 		return renderPresetGlyphShell(
