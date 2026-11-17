@@ -208,11 +208,6 @@ export const downloadAndInstallPreset = async (
 	return { preset };
 };
 
-const listPresetsForSnapshot = async (): Promise<Preset[]> => {
-	const { presetRepository } = getDataServices();
-	return presetRepository.list();
-};
-
 /**
  * Check if a preset is already downloaded locally.
  * Returns true when a local row has `data.sourceCatalogId === presetId`.

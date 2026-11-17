@@ -1683,11 +1683,8 @@ function buildWorkspacePlacementWidgetMenu(
 				label: "Presets",
 				enabled: opts.isCep,
 			},
-			{
-				id: CTX_MENU_IDS.openPresetLibrary,
-				label: "Preset Library",
-				enabled: opts.isCep,
-			},
+			// Preset Library is intentionally absent (Issue #170): the online
+			// catalog has no R0 backend, so the entry was a dead affordance.
 			{
 				id: CTX_MENU_IDS.openMessages,
 				label: "Messages",
