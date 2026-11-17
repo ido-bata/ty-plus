@@ -8,12 +8,15 @@ import {
 	Music,
 } from "lucide-react";
 import type { JSX } from "react";
+import { useMemo } from "react";
+import { useThumbnail } from "@/function/widget/utility/directory-browser/hooks/useThumbnail";
 
 import type { PresetIcon } from "@/management/preset/contract";
 import { imageSrcForBrowser } from "@/management/preset/image-src-for-browser";
 import {
 	findSiblingImagePathForPresetFile,
 	type SiblingListingEntry,
+	siblingThumbnailEntryFor,
 } from "@/management/preset/sibling-thumbnail";
 import { cx } from "@/shared/util/cx";
 import { css } from "@/styled-system/css";
@@ -84,6 +87,28 @@ export function EntryIcon({
 	allEntries?: readonly SiblingListingEntry[];
 	fill?: boolean;
 }): JSX.Element {
+	// Sidecar sibling lookup runs before the early returns so the
+	// `useThumbnail` hook below is called unconditionally (rules of hooks).
+	const sidekickPath =
+		!entry.isDirectory && allEntries
+			? findSiblingImagePathForPresetFile(entry.path, allEntries)
+			: null;
+	const sidekickEntry = useMemo(
+		() => (sidekickPath ? siblingThumbnailEntryFor(sidekickPath) : null),
+		[sidekickPath],
+	);
+	const sidekickThumb = useThumbnail(
+		sidekickEntry ?? {
+			name: "",
+			path: "",
+			isDirectory: false,
+			size: 0,
+			modifiedAt: "",
+			extension: "",
+			fileType: "image" as const,
+		},
+	);
+
 	if (entry.path === "" && entry.isDirectory) {
 		const s = size ?? 24;
 		return (
@@ -106,13 +131,30 @@ export function EntryIcon({
 			</IconFrame>
 		);
 	}
-	if (!entry.isDirectory && allEntries) {
-		const sidekick = findSiblingImagePathForPresetFile(entry.path, allEntries);
+	if (sidekickPath) {
+		// Prefer the thumbnail pipeline (Rust WebP cache + gateway
+		// allow-list) like `EntryThumb` / `SiblingThumbnail` do. While the
+		// pipeline has no resolved URL — or no gateway exists in this
+		// context — fall back to the raw `file://` path, and finally to
+		// the type icon when the path is not browser-resolvable.
+		if (sidekickThumb.staticUrl) {
+			return (
+				<IconFrame size={s} fill={fill}>
+					<img
+						src={sidekickThumb.staticUrl}
+						alt=""
+						decoding="async"
+						draggable={false}
+						className={coverImageClass}
+					/>
+				</IconFrame>
+			);
+		}
 		// `imageSrcForBrowser` rejects non-absolute / non-URL paths and returns
 		// "" — rendering `<img src="">` logs a console error, so fall through
 		// to the type icon instead.
-		const sidekickSrc = sidekick ? imageSrcForBrowser(sidekick) : "";
-		if (sidekick && sidekickSrc) {
+		const sidekickSrc = imageSrcForBrowser(sidekickPath);
+		if (sidekickSrc) {
 			return (
 				<IconFrame size={s} fill={fill}>
 					<img

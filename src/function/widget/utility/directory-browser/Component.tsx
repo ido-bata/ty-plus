@@ -52,7 +52,9 @@ import {
 	parseGroupFromText,
 } from "@/management/preset/group-catalog";
 import {
+	PRESET_SIDEKICK_SOURCE_EXTENSIONS,
 	parentDirectoryOf,
+	SIBLING_IMAGE_NAME_RE,
 	siblingPathKey,
 	stemWithoutExtension,
 } from "@/management/preset/sibling-thumbnail";
@@ -118,25 +120,11 @@ function normPathKey(p: string): string {
 	return p.replace(/\\/g, "/").replace(/\/+$/, "").toLowerCase();
 }
 
-/** Preset / script / project files that may pair with a same-stem thumbnail image. */
-const PRESET_SIDEKICK_SOURCE_EXT = new Set([
-	".ffx",
-	".jsx",
-	".jsxbin",
-	".aep",
-	".aepx",
-	".aet",
-	".mogrt",
-	".zxp",
-]);
-
-const COMPANION_IMAGE_FILE_RE = /\.(png|jpe?g|gif|webp|svg)$/i;
-
 function isCompanionThumbnailImageEntry(entry: FileBrowserEntry): boolean {
 	if (entry.isDirectory) {
 		return false;
 	}
-	return COMPANION_IMAGE_FILE_RE.test(entry.name);
+	return SIBLING_IMAGE_NAME_RE.test(entry.name);
 }
 
 function buildSidekickByParent(
@@ -164,7 +152,7 @@ function buildSidekickByParent(
 			continue;
 		}
 		const ext = (fp.match(/\.[^./\\]+$/)?.[0] ?? "").toLowerCase();
-		if (!PRESET_SIDEKICK_SOURCE_EXT.has(ext)) {
+		if (!PRESET_SIDEKICK_SOURCE_EXTENSIONS.has(ext)) {
 			continue;
 		}
 		const par = parentDirectoryOf(fp);
@@ -179,7 +167,7 @@ function buildSidekickByParent(
 			continue;
 		}
 		const ext = (e.extension ?? "").toLowerCase();
-		if (!PRESET_SIDEKICK_SOURCE_EXT.has(ext)) {
+		if (!PRESET_SIDEKICK_SOURCE_EXTENSIONS.has(ext)) {
 			continue;
 		}
 		const par = parentDirectoryOf(e.path);

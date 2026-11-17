@@ -3,8 +3,8 @@ import { useThumbnail } from "@/function/widget/utility/directory-browser/hooks/
 import {
 	findSiblingImagePathForPresetFile,
 	type SiblingListingEntry,
+	siblingThumbnailEntryFor,
 } from "@/management/preset/sibling-thumbnail";
-import type { FileBrowserEntry } from "@/management/storage/file-browser-service";
 import { cx } from "@/shared/util/cx";
 import { css } from "@/styled-system/css";
 
@@ -23,23 +23,6 @@ import { css } from "@/styled-system/css";
  * bypassed the Rust WebP pipeline and (b) could blow past CEP's
  * `file://` / `http(s)` allow-list on managed paths.
  */
-
-// Sentinel timestamp shared with `GlyphCachedImage` so the
-// panel-side dedup map stays stable across renders for the same
-// sibling path.
-const SYNTHETIC_TIMESTAMP = "2026-01-01T00:00:00.000Z";
-
-function siblingEntryFor(sidekickPath: string): FileBrowserEntry {
-	return {
-		name: sidekickPath.replace(/\\/g, "/").split("/").pop() ?? sidekickPath,
-		path: sidekickPath,
-		isDirectory: false,
-		size: 0,
-		modifiedAt: SYNTHETIC_TIMESTAMP,
-		extension: ".png",
-		fileType: "image",
-	};
-}
 
 const wrapperClass = css({
 	display: "flex",
@@ -89,8 +72,8 @@ export function SiblingThumbnail(props: {
 		? findSiblingImagePathForPresetFile(entry.path, allEntries)
 		: null;
 	const synthetic = sidekickPath
-		? siblingEntryFor(sidekickPath)
-		: { ...siblingEntryFor(""), path: "" };
+		? siblingThumbnailEntryFor(sidekickPath)
+		: { ...siblingThumbnailEntryFor(""), path: "" };
 	const { staticUrl, animatedUrl } = useThumbnail(synthetic);
 	if (!sidekickPath || !staticUrl) {
 		return null;

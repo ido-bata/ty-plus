@@ -12,7 +12,9 @@ import {
 
 import { stripKnownIdPrefixes } from "@/management/storage/ids";
 
-const typeFallbackText = (type: Preset["type"] | undefined): string | null => {
+export const presetTypeFallbackText = (
+	type: Preset["type"] | undefined,
+): string | null => {
 	switch (type) {
 		case "script":
 			return "SCRIPT";
@@ -31,7 +33,7 @@ const typeFallbackText = (type: Preset["type"] | undefined): string | null => {
 export const defaultPresetIconForKind = (
 	type: Preset["type"] | undefined,
 ): PresetIcon => {
-	const label = typeFallbackText(type);
+	const label = presetTypeFallbackText(type);
 	if (label) {
 		return presetIconText(label);
 	}
@@ -48,6 +50,24 @@ export const tryParsePresetIconValue = (
 		return null;
 	}
 	return coercePresetCatalogIcon(icon);
+};
+
+/**
+ * True when `icon` parses to exactly the type-default icon produced by
+ * {@link defaultPresetIconForKind}. Used by icon resolution to tell a
+ * user-set icon apart from the materialized default.
+ */
+export const isDefaultPresetIcon = (
+	type: Preset["type"] | undefined,
+	icon: Preset["icon"] | undefined,
+): boolean => {
+	const parsed = tryParsePresetIconValue(icon);
+	if (!parsed) {
+		return false;
+	}
+	return (
+		JSON.stringify(parsed) === JSON.stringify(defaultPresetIconForKind(type))
+	);
 };
 
 /** Always returns a structured icon suitable for persisting in `presets.json`. */

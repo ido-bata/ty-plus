@@ -1,9 +1,11 @@
 import type { CSSProperties, HTMLAttributes, JSX, ReactNode } from "react";
-import { useEffect, useMemo, useState } from "react";
-import { resolveWorkspaceGlyphIconVisual } from "@/management/preset/assets/icons";
+import { useEffect, useState } from "react";
+import {
+	hasCustomPresetIcon,
+	resolveWorkspaceGlyphIconVisual,
+} from "@/management/preset/assets/icons";
 import type { Preset } from "@/management/preset/contract";
 import { presetIconText } from "@/management/preset/contract";
-import { tryParsePresetIconValue } from "@/management/preset/icon-data";
 import {
 	findSiblingImagePathForPresetFile,
 	normalizeSiblingDirPath,
@@ -186,22 +188,6 @@ export type PresetGlyphByIdProps = {
 	) => Promise<ReadonlyArray<SiblingListingEntry>>;
 };
 
-/** Skip sibling lookup only when `icon` already pins a loadable absolute / remote image. */
-function isStrongPresetImageIconSrc(raw: string): boolean {
-	const t = raw.trim();
-	if (!t) {
-		return false;
-	}
-	if (/^(https?:|file:|data:)/i.test(t)) {
-		return true;
-	}
-	const n = t.replaceAll("\\", "/");
-	if (/^[a-zA-Z]:\//.test(n)) {
-		return true;
-	}
-	return n.startsWith("/") && !n.startsWith("//");
-}
-
 function renderPresetGlyphShell(
 	surface: "catalog" | "framed",
 	boxClass: string,
@@ -305,11 +291,7 @@ export function PresetGlyphById(props: PresetGlyphByIdProps): JSX.Element {
 		if (record.descriptionImage?.trim()) {
 			return;
 		}
-		const structured = tryParsePresetIconValue(record.icon);
-		if (
-			structured?.type === "image" &&
-			isStrongPresetImageIconSrc(structured.param.src)
-		) {
+		if (hasCustomPresetIcon(record)) {
 			return;
 		}
 
@@ -353,17 +335,6 @@ export function PresetGlyphById(props: PresetGlyphByIdProps): JSX.Element {
 		thumbnailListDirectory,
 	]);
 
-	const displayPreset = useMemo((): Preset | null => {
-		if (!record) {
-			return null;
-		}
-		const t = siblingThumbSrc?.trim();
-		if (!t) {
-			return record;
-		}
-		return { ...record, descriptionImage: t };
-	}, [record, siblingThumbSrc]);
-
 	if (phase === "loading" && !record) {
 		return renderPresetGlyphShell(
 			surface,
@@ -375,7 +346,7 @@ export function PresetGlyphById(props: PresetGlyphByIdProps): JSX.Element {
 		);
 	}
 
-	if (phase === "missing" || !displayPreset) {
+	if (phase === "missing" || !record) {
 		const placeholder: Preset = {
 			id: presetId,
 			type: "preset",
@@ -397,7 +368,7 @@ export function PresetGlyphById(props: PresetGlyphByIdProps): JSX.Element {
 		boxClass,
 		className,
 		emojiClass,
-		<WorkspacePresetGlyph preset={displayPreset} />,
+		<WorkspacePresetGlyph preset={record} siblingImageSrc={siblingThumbSrc} />,
 	);
 }
 
@@ -471,12 +442,17 @@ const wsPresetTextLineClass = css({
 const textInheritClass = css({ color: "inherit" });
 const textPrimaryClass = css({ color: "text.primary" });
 
-export function WorkspacePresetGlyph({
-	preset,
-}: {
+export function WorkspacePresetGlyph(props: {
 	preset: Preset;
+	/**
+	 * Display-time derived sibling image (e.g. `Foo.png` next to `Foo.ffx`),
+	 * resolved by the caller. Passed through to the icon resolver; never
+	 * written back to the preset.
+	 */
+	siblingImageSrc?: string | null;
 }): JSX.Element {
-	const visual = resolveWorkspaceGlyphIconVisual(preset);
+	const { preset, siblingImageSrc } = props;
+	const visual = resolveWorkspaceGlyphIconVisual(preset, { siblingImageSrc });
 	if (visual.kind === "image") {
 		return <GlyphCachedImage imagePath={visual.value} />;
 	}
