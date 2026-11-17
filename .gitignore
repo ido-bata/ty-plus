@@ -42,3 +42,6 @@ src/**/__screenshots__/
 # PandaCSS generated runtime (regenerated on `bun install` via `prepare`).
 styled-system/
 node_modules
+
+# Per-worktree port/env file written by scripts/worktree/setup.sh
+.worktree.env

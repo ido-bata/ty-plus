@@ -1,6 +1,6 @@
 # AGENTS.md — ty-plus
 
-After Effects拡張 ty-plus の公開済み無料OSSリポジトリ（初回Stable: v0.10.1）。旧 `rebuildup/ty-plus` からはGit履歴を引き継がず、権利監査を通過した資産だけを新規commitとして移植する。初回公開は完了しており、リポジトリはPublic。今後のリリースや外部連絡は引き続き本人の承認に従う。
+After Effects拡張 ty-plus の公開済み無料OSSリポジトリ（初回Stable: v0.10.1、最新Stable: v0.10.2）。旧 `rebuildup/ty-plus` からはGit履歴を引き継がず、権利監査を通過した資産だけを新規commitとして移植する。初回公開は完了しており、リポジトリはPublic。今後のリリースや外部連絡は引き続き本人の承認に従う。
 
 この文書はdispatcherである。判断の詳細は正本とSkillへ従い、ここに再定義しない。
 
@@ -30,6 +30,7 @@ Issue本文の詳細を伝言・再定義せず、正本Issueを直接参照す�
 
 - `mise install` — bun 1.3.10（`mise.toml`）
 - `mise run check:skills` — vendored skillsと `skills-lock.json` の整合検査
+- worktree作成・削除はfrontend（Worktrunk `wt` / Orca / plain git）を問わず `mise run worktree:setup` / `mise run worktree:teardown` を入口にする。port等のworktree別値はbranch名から `.worktree.env` へ決定的に書き出され、`mise.toml` の `[env] _.file` 経由で `mise` 配下の全commandへ注入される（OS envよりfileが優先。main checkoutにはfileがなく既定値を使う）
 
 ## 作業開始
 
@@ -58,6 +59,14 @@ Issue本文の詳細を伝言・再定義せず、正本Issueを直接参照す�
 | interaction-style | interaction-discipline | userとのやりとり、blockerの見せ方 |
 | release | release-channels | Stable/Beta/Insider候補のビルド・署名・監査・公開・復旧 |
 | workspace-lifecycle | worktree-workflow | worktreeの作成・掃除 |
+| workspace-frontend | orca-frontend | Orcaをfrontendとしてworktree / agent terminalを扱う時 |
+| execution-isolation | sandbox-runtime | 並行implementation workerの独立runtime・mutable state分離 |
+| web-platform | modern-web-guidance | HTML/CSS・DOM・ブラウザ側JS（CEP/CEF panel含む）のWeb API・互換性確認。CEFは固定ChromiumなのでBaseline前提にせずversionで判断する |
+| framework-react | vercel-react-best-practices | React実装・review時の性能指針（Next.js / RSC / Server Actions系ruleは対象外） |
+| visual-design | design-intent | visual directionが未確定の新規UI（既存Panda token体系がある場合は通常不要） |
+| tdd | tdd | bug fixのregression test等、安いtest経路がある時だけ。手動起動: `.agents/skills/tdd/SKILL.md` |
+| skill-authoring | skill-authoring | repositoryでSkillを書く・育てる時 |
+| policy-evaluation | policy-evaluation | Skill / policy変更の評価と検証 |
 | skill-selection | skill-selection | Skill導入・更新の判断。手動起動: `.agents/skills/skill-selection/SKILL.md` |
 
 ## House rule
