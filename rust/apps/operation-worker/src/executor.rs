@@ -82,6 +82,14 @@ impl OperationExecutor for ProductionOperationExecutor {
         }
         cancellation.checkpoint()?;
 
+        // `update.install` reports typed failures (integrity, download,
+        // permission, contention) that must reach the wire as stable
+        // error codes instead of collapsing into `internal_error`
+        // (Issue #169).
+        if canonical == CanonicalMethod::UpdateInstall {
+            return execute_update_install(request, cancellation, events);
+        }
+
         let result = match canonical {
             CanonicalMethod::HostPluginEffectScan => {
                 let payload: PluginEffectScanRequest =
@@ -174,18 +182,7 @@ impl OperationExecutor for ProductionOperationExecutor {
                     .map_err(|error| error.to_string())
             }
             CanonicalMethod::UpdateInstall => {
-                let payload: crate::UpdateInstallRequest =
-                    match serde_json::from_value(request.payload.clone()) {
-                        Ok(p) => p,
-                        Err(_error) => {
-                            return failure(
-                                request,
-                                StableErrorCode::InvalidRequest,
-                                "invalid update install payload",
-                            );
-                        }
-                    };
-                crate::dispatch_update_install(request, payload, cancellation, events)
+                unreachable!("update install returns early above")
             }
         };
 
@@ -203,6 +200,45 @@ impl OperationExecutor for ProductionOperationExecutor {
                 Err(WorkerError::Protocol(StableErrorCode::Cancelled))
             }
             Err(_error) => failure(request, StableErrorCode::InternalError, "operation failed"),
+        }
+    }
+}
+
+/// `update.install` dispatch with per-variant wire error mapping. Kept
+/// out of the shared `Result<Value, String>` path so `UpdateInstallError`
+/// survives to `StableErrorCode` classification (Issue #169).
+fn execute_update_install(
+    request: &RequestEnvelope,
+    cancellation: &CancellationToken,
+    events: &mut dyn EventSink,
+) -> Result<ResponseEnvelope, WorkerError> {
+    let payload: crate::UpdateInstallRequest = match serde_json::from_value(request.payload.clone())
+    {
+        Ok(payload) => payload,
+        Err(_error) => {
+            return failure(
+                request,
+                StableErrorCode::InvalidRequest,
+                "invalid update install payload",
+            );
+        }
+    };
+    match crate::dispatch_update_install(request, payload, cancellation, events) {
+        Ok(payload) => Ok(ResponseEnvelope {
+            protocol_version: CURRENT_PROTOCOL_VERSION,
+            request_id: request.metadata.request_id.clone(),
+            session_id: request.metadata.session_id.clone(),
+            outcome: ResponseOutcome::Success {
+                payload,
+                warnings: Vec::<Warning>::new(),
+            },
+        }),
+        Err(_) if cancellation.is_cancelled() => {
+            Err(WorkerError::Protocol(StableErrorCode::Cancelled))
+        }
+        Err(error) => {
+            let (code, retryable, detail) = crate::update_install::update_error_wire(&error);
+            failure_with_retryable(request, code, retryable, &detail)
         }
     }
 }
@@ -243,9 +279,18 @@ fn failure(
     code: StableErrorCode,
     detail: &str,
 ) -> Result<ResponseEnvelope, WorkerError> {
+    failure_with_retryable(request, code, false, detail)
+}
+
+fn failure_with_retryable(
+    request: &RequestEnvelope,
+    code: StableErrorCode,
+    retryable: bool,
+    detail: &str,
+) -> Result<ResponseEnvelope, WorkerError> {
     let error = ProtocolError::new(
         code,
-        false,
+        retryable,
         detail,
         DiagnosticId::parse("worker-operation-failed").map_err(WorkerError::Validation)?,
     )
