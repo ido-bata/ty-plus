@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { FolderOpen } from "lucide-react";
 import { useState } from "react";
+import { expect } from "storybook/test";
 import { Icon } from "@/shared/component/icons/Icon";
 import { PathField } from "./PathField";
 
@@ -74,5 +75,27 @@ export const Interactive: Story = {
 	},
 	args: {
 		browseSlot: BrowseIcon,
+	},
+};
+
+// Issue #166: focus state — the path input repaints its border to
+// `interactive.focus` on `:focus` while the browse button stays put.
+export const Focused: Story = {
+	args: {
+		browseSlot: BrowseIcon,
+	},
+	play: async ({ canvasElement }) => {
+		const input = canvasElement.querySelector<HTMLInputElement>(
+			"[data-path-field] input",
+		);
+		if (!input) throw new Error("path input not found");
+		const restingBorderColor = getComputedStyle(input).borderTopColor;
+		input.focus();
+		await expect(document.activeElement).toBe(input);
+		await expect(input.matches(":focus")).toBe(true);
+		await new Promise((resolve) => setTimeout(resolve, 300));
+		await expect(getComputedStyle(input).borderTopColor).not.toBe(
+			restingBorderColor,
+		);
 	},
 };

@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
+import { expect } from "storybook/test";
 import { ListSelect } from "./ListSelect";
 
 const sampleOptions = [
@@ -65,4 +66,44 @@ export const WithState: Story = {
 		);
 	},
 	args: {},
+};
+
+// Issue #166: open + select interaction — clicking the trigger must open the
+// listbox (`aria-expanded`), and picking an option must commit the value and
+// close the list. Driven with real pointer input so the post-play state is
+// what the capture pipeline screenshots.
+export const OpenAndSelect: Story = {
+	render: () => {
+		const [value, setValue] = useState("en");
+		return (
+			<div style={{ width: 220 }}>
+				<ListSelect
+					options={sampleOptions}
+					value={value}
+					onChange={setValue}
+					aria-label="Language"
+				/>
+			</div>
+		);
+	},
+	args: {},
+	play: async ({ canvasElement }) => {
+		const { userEvent } = await import("vitest/browser");
+		const trigger = canvasElement.querySelector<HTMLButtonElement>(
+			'button[aria-haspopup="listbox"]',
+		);
+		if (!trigger) throw new Error("listbox trigger not found");
+		await expect(trigger.getAttribute("aria-expanded")).toBe("false");
+		await userEvent.click(trigger);
+		await expect(trigger.getAttribute("aria-expanded")).toBe("true");
+		const optionByText = Array.from(
+			canvasElement.querySelectorAll<HTMLButtonElement>(
+				'button[role="option"]',
+			),
+		).find((el) => el.textContent === "Deutsch");
+		if (!optionByText) throw new Error("Deutsch option not found");
+		await userEvent.click(optionByText);
+		await expect(trigger.getAttribute("aria-expanded")).toBe("false");
+		await expect(trigger.textContent).toContain("Deutsch");
+	},
 };
