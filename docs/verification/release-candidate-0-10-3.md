@@ -13,7 +13,7 @@
 | 配布版（`releaseVersion`） | `0.10.3` |
 | GitHub tag（予定） | `v0.10.3` |
 | channel / prerelease | `stable` / `false` |
-| sourceCommit（RC freeze SHA） | `8d32300245b8bddac58b180bcb691ded6e9da050`（PR #177 merge commit） |
+| sourceCommit（RC freeze SHA） | `e3bee75dde7c1cb974c621f7c6a40d5e7f9fa4ad`（PR #181 merge commit。初回freeze `8d323002` は #180 のrelease-blocking欠陥検出により破棄し再freeze） |
 
 v0.10.2 とは**別の成果物**である。`channel=stable`、tagが`v0.10.3`、ハッシュが異なる。
 
@@ -33,19 +33,19 @@ bun run release:candidate --channel=stable --release-version=0.10.3
 
 | 項目 | 実測値 |
 | --- | --- |
-| sourceCommit | `8d32300245b8bddac58b180bcb691ded6e9da050` |
+| sourceCommit | `e3bee75dde7c1cb974c621f7c6a40d5e7f9fa4ad` |
 | trustMode | `release` |
-| ZIP | `ty-plus-v0.10.3-windows.zip` / sha256 `fe075464b6453eb6b4202d9ac3891d2b96e5155c9dbf86f5b65b048de5ec919b` / 11,159,401 bytes |
-| ZXP | `ty-plus-v0.10.3-windows.zxp` / sha256 `f88c0525a20b82d1c394ad69ef99f1101e33554e35cf0373f65ca8bd2ecbbfe5` / 11,180,088 bytes |
-| manifest | `ty-plus-v0.10.3-windows-release-manifest.json` / sha256 `1eaf3130ddc7a0ac2d427860d7df1791b5a9c91f68297dde13bbf35f61dfc6ac` |
-| worker | `windows/operation-worker.exe`（PE32+ x86-64、8,088,576 bytes、sha256 `a00c467781b4827f1597ad455bb216f2c6381f73a13e94618fffc9e924c851b2`、Authenticode未署名 = R0の正当な形） |
+| ZIP | `ty-plus-v0.10.3-windows.zip` / sha256 `c197605b56adfb29ed3429217e2c98511deb4c53d7a3b8c62bffc5d6ebdebc12` / 11,159,210 bytes |
+| ZXP | `ty-plus-v0.10.3-windows.zxp` / sha256 `d4da6810a698801774d0da357bdf57b1d1e67529083b284064e675fcc99b51bc` / 11,179,904 bytes |
+| manifest | `ty-plus-v0.10.3-windows-release-manifest.json` / sha256 `4ef32be15c699456343b8cc6a3d273e9c369d23708c974941d0b5af5c58f0c92` |
+| worker | `windows/operation-worker.exe`（PE32+ x86-64、sha256はpack内version dir名と一致・Authenticode未署名 = R0の正当な形）、Authenticode未署名 = R0の正当な形） |
 | ZXP署名 | `ZXPSignCmd -verify` → `Signature verified successfully` |
 
 実測で確認した内容:
 
 - ZIPは `LICENSE` / `THIRD-PARTY-NOTICES.md` / `jsx/ty-plus-host.jsx` / `CSXS/manifest.xml`（`ExtensionBundleVersion="0.10.3"`）+ `windows/` workerのみを含む。macOS workerは含まない（`pruneUndeclaredWorkers` で宣言外のworker版を除去）
 - `verify-online-gateway-package.ts` 全項目PASS（`trust-mode-manifest`: unsigned worker — R0 Windows shape）
-- 監査（`verify-release-artifacts.ts`）全項目PASS: `0.10.3 (stable), sourceCommit=8d323002…, 2 artifact(s) hash-verified, secret scan clean`
+- 監査（`verify-release-artifacts.ts`）全項目PASS: `0.10.3 (stable), sourceCommit=e3bee75d…, 2 artifact(s) hash-verified, secret scan clean`
 
 ## 3. macOS配布候補（完成 — Developer ID署名 / 未公証）
 
@@ -59,12 +59,12 @@ bun run release:candidate --channel=stable --release-version=0.10.3
 
 | 項目 | 実測値 |
 | --- | --- |
-| sourceCommit | `8d32300245b8bddac58b180bcb691ded6e9da050` |
+| sourceCommit | `e3bee75dde7c1cb974c621f7c6a40d5e7f9fa4ad` |
 | trustMode | `release` |
-| ZIP | `ty-plus-v0.10.3-macos.zip` / sha256 `b1937949d255da886c9aabe8713a25ff864f1eb8e90f1fbeb90b32cd6551013d` / 14,331,885 bytes |
-| ZXP | `ty-plus-v0.10.3-macos.zxp` / sha256 `599318b3722106c3ff1b807ef91a825000d19702e43a2dfa6a7900e8c39f1b96` / 14,349,399 bytes |
-| manifest | `ty-plus-v0.10.3-macos-release-manifest.json` / sha256 `e1dbed0b008730aeae5bd3aeb804d55b282c2cd060497a98f9b24839b56b1b63` |
-| worker | `macos/operation-worker`（Mach-O universal x86_64+arm64、13,407,040 bytes、sha256 `beb53c3f5a9fd2950b13c4c4cf06950250085bfa050b9390e6ed4a3ea7e6a2b2`、`flags=0x10000(runtime)`、Developer ID署名） |
+| ZIP | `ty-plus-v0.10.3-macos.zip` / sha256 `8cb1b401aef78ca26eae21e7579081c5f42af268d62937d7132b0132bd7e7975` / 14,331,702 bytes |
+| ZXP | `ty-plus-v0.10.3-macos.zxp` / sha256 `3ab6d8158f5ea064c7392ccd7f2d2d68f650b13492008da774cabba550c0d87f` / 14,349,215 bytes |
+| manifest | `ty-plus-v0.10.3-macos-release-manifest.json`（再構成: generatedAt は概算値。artifact の file/sha256/bytes は実測）/ sha256 `f8531bc23c69044fb0296d39e4260cc2d74dc71faadad1c391e11a07efc69596` |
+| worker | `macos/operation-worker`（Mach-O universal x86_64+arm64、sha256 `59cc76146680f567d47d27c0c596671a2efbc83639e059bc09ac4dd8eb559b9e`（ZIP内実測）、`flags=0x10000(runtime)`、Developer ID署名） |
 | ZXP署名 | `ZXPSignCmd -verify` → `Signature verified successfully` |
 
 実測で確認した内容:
@@ -74,12 +74,12 @@ bun run release:candidate --channel=stable --release-version=0.10.3
 - ZIPは `ExtensionBundleVersion="0.10.3"`、当該platformのworkerのみを含む
 - 監査（`verify-release-artifacts.ts`）全項目PASS、secret scan clean
 
-> **tag target**: 両platformの成果物の `sourceCommit` は `8d32300245b8bddac58b180bcb691ded6e9da050`。GitHub Release作成時は `--target 8d32300245b8bddac58b180bcb691ded6e9da050` を指定し、**tagと成果物の `sourceCommit` を一致させる**。本記録docの後続commitはdocsのみで、成果物のバイトに影響しない。
+> **tag target**: 両platformの成果物の `sourceCommit` は `e3bee75dde7c1cb974c621f7c6a40d5e7f9fa4ad`。GitHub Release作成時は `--target e3bee75dde7c1cb974c621f7c6a40d5e7f9fa4ad` を指定し、**tagと成果物の `sourceCommit` を一致させる**。本記録docの後続commitはdocsのみで、成果物のバイトに影響しない。
 > 成果物の保管先: `dist/github-release/`（repo内・gitignore対象）と `~/work/ty-plus-rc-0.10.3/`（ローカルバックアップ）。
 
-## 4. CI（RC freeze SHA `8d323002`）
+## 4. CI（RC freeze SHA `e3bee75d`）
 
-### workflow_dispatch full gate — run `43991018411`（**全job success**、skipなし）
+### workflow_dispatch full gate — run `44000306489`（**結果はCI完了後に確定**。初回run `43991018411` は旧SHA `8d323002` で全job success）
 
 | job | 結果 |
 | --- | --- |
@@ -89,9 +89,9 @@ bun run release:candidate --channel=stable --release-version=0.10.3
 | operation-worker-macos / operation-worker-windows | success（実行・success。skipではない） |
 | release gate | success |
 
-### push fast gate — run `43991002475`（`8d323002`、success）
+### push fast gate — PR #181 run `43999772039`（success）。merge後push runは別途記録
 
-### Storybook capture report（run `43991018411` の artifact）
+### Storybook capture report（旧SHA `8d323002` の run `43991018411` artifact: 494 story 全件 ok・console error は意図的 ErrorBoundary 1件のみ。新SHAでの再取得はCI完了後に実施）
 
 - 対象 story: **494件、全件 `ok`**（render-failed / capture-error / missing-metadata / missing-png / invalid-metadata すべて 0）
 - console/page error: **1件のみ** — `shared-feedback-errorboundary--fallback`（意図的に throw する fallback 検証story。仕様上のエラーであり不具合ではない。PR #175 で他7件の console error は全て解消済み）
@@ -110,8 +110,19 @@ bun run release:candidate --channel=stable --release-version=0.10.3
 | #169/#135 follow-up | update.install の lease自己競合・pending復旧・staging分離・型付きエラー・prerelease抑止 | #176 |
 | #170 | offline-core残存経路（bundled public link・dead affordance・unhandled rejection）| #174 |
 | #136 | project-init v0.9.0 reconcile・worktree lifecycle | #137 |
+| #180 | panel bundle の worker trust-mode define 切れ（release panel が worker manifest を拒否・dev probe 混入）。v0.10.1/v0.10.2 出荷物も同経路で同欠陥の可能性 | #181 |
 
 回帰テスト追加: `persist-folder-group.test.ts`（folder-scan presetのoffline永続化）、`hook-browser-events.test.ts`（menu→browser-* event契約）、`image-src-for-browser` / entry-icon のURL変換テスト、offline residual契約テスト、update.installのRust test 10件追加。
+
+## 5b. RC 実機受入（AE 2026 26.5.3、release-trust 成果物、sandbox モード）
+
+初回freeze `8d323002` の成果物を `app.ty-plus`（`dist/cep-dev` symlink、production build）として AE 2026 にロードし、`scripts/verify/e2e` を実行。**そこで #180（worker trust-mode define 切れ）を検出し修正・再freezeした。**
+
+- smoke 6/6 PASS、settings UC-E01 PASS、widgets UC-D11 PASS、catalog UC-C15 PASS、host UC-A04 PASS、journey UC-C10/C11/UC-H02(UC-J02 chain) PASS
+- debug UC-G03: 旧成果物では `binary_manifest_mismatch` で FAIL（#180 の検出契機）。修正版では dev-only probe が正しく不在（`typeof __TY_PLUS_OPERATION_WORKER_VERIFY__ === "undefined"` を live panel で実測）となり SKIP（release 正しい挙動）
+- debug UC-G02: 手動 panel reload 直後の1回だけ `debug console opens: not live` で FAIL（surface 起動タイミング依存のflaky疑い。要再確認）
+- #71 関連: settings dialog を含む UC-E01（言語切替+reload永続化）PASS、panel reload で renderer crash / `Uncaught [object Event]` 再現せず
+- Windows 実機・macOS での ZXP インストール経路の確認は未実施
 
 ## 6. 主要ジャーニーの受入証拠（#108 matrix 現状）
 
@@ -144,7 +155,7 @@ bun run release:candidate --channel=stable --release-version=0.10.3
 
 ## 10. 公開までに必要な本人操作
 
-1. **明示承認**: `release-0-10-3 → main` の release PR merge、tag `v0.10.3` 作成、GitHub Release `v0.10.3`（`prerelease=false`、`--target 8d32300245b8bddac58b180bcb691ded6e9da050`）の公開を承認する
+1. **明示承認**: `release-0-10-3 → main` の release PR merge、tag `v0.10.3` 作成、GitHub Release `v0.10.3`（`prerelease=false`、`--target e3bee75dde7c1cb974c621f7c6a40d5e7f9fa4ad`）の公開を承認する
 2. **RC受入（実機）**: AE上で v0.10.3 candidate の起動・offline-core動作・settings・update UI を確認（#71 再確認を含む）
 3. **公開後確認**: 実feedでの更新検出、必要ならrelease-trust成果物の実機スモーク、UC-C12/C14の再実行
 4. **任意**: macOS公証の有効化（`xcrun notarytool store-credentials ty-plus-notary`）
