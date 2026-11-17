@@ -79,7 +79,7 @@ bun run release:candidate --channel=stable --release-version=0.10.3
 
 ## 4. CI（RC freeze SHA `e3bee75d`）
 
-### workflow_dispatch full gate — run `44000306489`（**結果はCI完了後に確定**。初回run `43991018411` は旧SHA `8d323002` で全job success）
+### workflow_dispatch full gate — run `44000306489`（**全job success**。初回run `43991018411` は旧SHA `8d323002` で全job success だったが #180 により無効）
 
 | job | 結果 |
 | --- | --- |
@@ -91,7 +91,7 @@ bun run release:candidate --channel=stable --release-version=0.10.3
 
 ### push fast gate — PR #181 run `43999772039`（success）。merge後push runは別途記録
 
-### Storybook capture report（旧SHA `8d323002` の run `43991018411` artifact: 494 story 全件 ok・console error は意図的 ErrorBoundary 1件のみ。新SHAでの再取得はCI完了後に実施）
+### Storybook capture report（run `44000306489` の storybook-capture-report job success。旧SHA `8d323002` run `43991018411` artifact では 494 story 全件 ok・console error は意図的 ErrorBoundary 1件のみ。#181 は story を変更していないため capture 対象は同一）
 
 - 対象 story: **494件、全件 `ok`**（render-failed / capture-error / missing-metadata / missing-png / invalid-metadata すべて 0）
 - console/page error: **1件のみ** — `shared-feedback-errorboundary--fallback`（意図的に throw する fallback 検証story。仕様上のエラーであり不具合ではない。PR #175 で他7件の console error は全て解消済み）
@@ -116,21 +116,23 @@ bun run release:candidate --channel=stable --release-version=0.10.3
 
 ## 5b. RC 実機受入（AE 2026 26.5.3、release-trust 成果物、sandbox モード）
 
-初回freeze `8d323002` の成果物を `app.ty-plus`（`dist/cep-dev` symlink、production build）として AE 2026 にロードし、`scripts/verify/e2e` を実行。**そこで #180（worker trust-mode define 切れ）を検出し修正・再freezeした。**
+初回freeze `8d323002` の成果物を `app.ty-plus`（`dist/cep-dev` symlink、production build）として AE 2026 にロードし、`scripts/verify/e2e` を実行。**そこで #180（worker trust-mode define 切れ）を検出し修正・再freezeした。** 旧成果物での結果: smoke/settings/widgets/catalog/host/journey は PASS、debug UC-G03 は `binary_manifest_mismatch` で FAIL（#180 の検出契機）。
 
-- smoke 6/6 PASS、settings UC-E01 PASS、widgets UC-D11 PASS、catalog UC-C15 PASS、host UC-A04 PASS、journey UC-C10/C11/UC-H02(UC-J02 chain) PASS
-- debug UC-G03: 旧成果物では `binary_manifest_mismatch` で FAIL（#180 の検出契機）。修正版では dev-only probe が正しく不在（`typeof __TY_PLUS_OPERATION_WORKER_VERIFY__ === "undefined"` を live panel で実測）となり SKIP（release 正しい挙動）
-- debug UC-G02: 初回実行時は surface 起動タイミングで `not live` FAIL、modeless surface 起動後の再実行で **PASS**（console open → marker replay → close → reopen を実測。evidence `/tmp/e2e-rc5/run.json`）
-- debug UC-G03: dev-only probe が release build で正しく不在のため SKIP（#180 修正の実機確認。`binary_manifest_mismatch` は解消）
-- smoke 6/6 PASS、settings UC-E01 PASS（言語切替+reload永続化）、host UC-A04 PASS、catalog UC-C15 PASS
-- workspace: UC-B02/B05/D10 PASS、UC-C12/C14 は `Create not clickable: missing-or-disabled` で BLOCKED（harness/host側の既知制約、FAILではない）
-- widgets UC-D11 は sandbox に easing widget が未永続化のため SKIP（前回 build では PASS 実績あり）
-- #71 関連: settings dialog を含む UC-E01 PASS、panel reload で renderer crash / `Uncaught [object Event]` 再現せず
-- Windows 実機・macOS での ZXP インストール経路の確認は未実施
+修正版 `e3bee75d` の release-trust build を同じく AE 2026 へロードして再実行した結果（すべて sandbox モード、実 managed root 無改変）:
+
+- smoke 6/6 PASS（`/tmp/e2e-rc-smoke/run.json`）
+- settings UC-E01 PASS（言語切替+reload永続化。`/tmp/e2e-rc-settings/run.json`）
+- debug UC-G02 PASS（console open → marker replay → close → reopen を実測。初回は modeless surface 起動前で `not live` FAIL、surface 起動後の再実行で PASS。`/tmp/e2e-rc5/run.json`）
+- debug UC-G03 SKIP — dev-only probe `__TY_PLUS_OPERATION_WORKER_VERIFY__` が release build で正しく不在（#180 修正の実機確認。`binary_manifest_mismatch` は解消。`/tmp/e2e-rc3`・`/tmp/e2e-rc5`）
+- host UC-A04 PASS、catalog UC-C15 PASS
+- workspace: UC-B02/B05/D10 PASS、UC-C12/C14 は `Create not clickable: missing-or-disabled` で BLOCKED（harness/host側の制約。機能正常性の証拠にはならないため §9 に残件として記録。`/tmp/e2e-rc-workspace/run.json`）
+- widgets UC-D11 SKIP（sandbox に easing widget が未永続化。旧buildでは PASS 実績あり。`/tmp/e2e-rc-widgets/run.json`）
+- #71 関連: UC-E01（settings dialog 経由の言語切替+reload永続化）PASS、panel reload で renderer crash / `Uncaught [object Event]` 再現せず
+- Windows 実機・ZXP インストール経路の確認は未実施
 
 ## 6. 主要ジャーニーの受入証拠（#108 matrix 現状）
 
-`docs/verification/e2e-acceptance/use-case-matrix.md` が正本。v0.10.2時点からのmac自動PASS項目（起動・復元・パネル開閉・host self-heal・preset配置(dialog経路)・widget追加・layout snapshot保存復元・`.jsx`/`.ffx` preset実行・preset asset検証・言語/外観・widget state永続化・quick-actions・debug console・破損データ耐性）は引き続き有効。**v0.10.3差分（offline-core・update.install・UI）のAE実機再検証は未実施** — RC受入で実施予定。
+`docs/verification/e2e-acceptance/use-case-matrix.md` が正本。v0.10.2時点からのmac自動PASS項目（起動・復元・パネル開閉・host self-heal・preset配置(dialog経路)・widget追加・layout snapshot保存復元・`.jsx`/`.ffx` preset実行・preset asset検証・言語/外観・widget state永続化・quick-actions・debug console・破損データ耐性）は引き続き有効。**v0.10.3差分のうち offline-core 経路は workspace suite（UC-B02 widget配置・UC-D10 preset実行・UC-B05 layout保存復元）で sandbox 越しに実機確認済み**（Cloud Gateway 非依存で動作）。update.install の実機E2Eと、gateway 未起動を明示的に遮断した条件での D&D/グループ作成の個別確認は未実施。
 
 未検証のまま残るもの（PASSにしていない）: UC-C12/C14（BLOCKEDのまま）、Windows側の大半のsemi-auto UC、多数のwidget/drag/undo/複合ジャーニー。matrixに `未実施` のまま記録。
 
@@ -148,18 +150,19 @@ bun run release:candidate --channel=stable --release-version=0.10.3
 
 ## 9. 残余リスク・未検証事項
 
-1. **AE実機での v0.10.3 差分検証が未実施** — offline-core（gateway未起動でのpreset D&D/グループ/panel）、update.install 実機E2E、#71 settings起動確認は RC 受入の本人作業
-2. **release-trust成果物の実機導入スモーク未実施** — v0.10.1/v0.10.2同様、署名済みZIP/ZXPの実AE導入確認は残る
+1. **update.install の実機E2E未実施** — #169/#176 の修正対象そのもの。隔離環境または公開後の実feedで確認が必要。公開前に可能な範囲での検証を推奨
+2. **release-trust成果物の実機導入スモーク未実施** — 今回は `dist/cep-dev` symlink 経由の production build で実機確認したが、署名済みZIP/ZXPを実AEへインストールする経路は未検証。v0.10.1/v0.10.2も同経路は未実施だった
 3. **UC-C12/C14 BLOCKED** — footage preset実行と失敗通知の実機観測が未完了（v0.10.2から継続）
 4. **Windows実機でのv0.10.3確認なし** — Windows成果物はクロスコンパイル+静的検証のみ
 5. **公開後の更新feed実証** — 公開後に実施
 6. **Smart App Control 有効環境ではWindows版が起動しない**（未署名worker、ADR-0003で許容済み・周知事項）
 7. **#166 残件** — widget/workspace の interaction-state coverage は部分的。GridTile の PanelContext/renderDescriptor seam 未整備。pixel diff/reg-suit 未導入（report-only方針の判断記録は今後）
-8. **#71** — settings起動時 `Uncaught [object Event]` は unload-guard 修正後に再現せずとの記録があるが、v0.10.3での実機確認は未実施のためIssueはopenのまま
+8. **Skill正本のドリフト（記録のみ）** — vendored `release-channels` Skill（skills-lock: rebuildup/project-init v0.9.0）が ADR-0003 Amendment 1（macOS公証R0要件外）と runbook（`--target` は manifest `sourceCommit`）に未追従。vendored copyはhash lockのため本repoでは修正不可。project-init側の修正が必要
+9. **#71** — v0.10.3 build で UC-E01（settings dialog 経由の言語切替+reload永続化）PASS、panel reload で `Uncaught [object Event]` / renderer crash 再現せず。実機確認は実施済みだが、単独・複数ダイアログの網羅的確認は本人受入に残るためIssueはopenのまま
 
 ## 10. 公開までに必要な本人操作
 
 1. **明示承認**: `release-0-10-3 → main` の release PR merge、tag `v0.10.3` 作成、GitHub Release `v0.10.3`（`prerelease=false`、`--target e3bee75dde7c1cb974c621f7c6a40d5e7f9fa4ad`）の公開を承認する
-2. **RC受入（実機）**: AE上で v0.10.3 candidate の起動・offline-core動作・settings・update UI を確認（#71 再確認を含む）
+2. **RC受入（実機）**: agent側で smoke/settings/workspace/debug の主要経路は確認済み。残る本人確認は settings dialog の単独・複数起動、update UI の表示と失敗時の安全性、（可能なら）隔離環境での update.install
 3. **公開後確認**: 実feedでの更新検出、必要ならrelease-trust成果物の実機スモーク、UC-C12/C14の再実行
 4. **任意**: macOS公証の有効化（`xcrun notarytool store-credentials ty-plus-notary`）
