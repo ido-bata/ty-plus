@@ -12,7 +12,10 @@
 import fs from "node:fs";
 import { describe, expect, it } from "vitest";
 
-const hookSource = fs.readFileSync(new URL("./hook.ts", import.meta.url), "utf8");
+const hookSource = fs.readFileSync(
+	new URL("./hook.ts", import.meta.url),
+	"utf8",
+);
 const componentSource = fs.readFileSync(
 	new URL(
 		"../../function/widget/utility/directory-browser/Component.tsx",
