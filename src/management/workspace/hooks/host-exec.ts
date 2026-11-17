@@ -1,4 +1,5 @@
-import { fileStemFromPath } from "@/shared/util/path";
+import { getCandidatesSnapshot } from "@/management/storage/candidates-cache/runtime";
+import { resolveEffectMatchName } from "@/management/storage/candidates-cache/plugin-match-name";
 
 import { fileNameFromPath } from "./state";
 
@@ -29,11 +30,15 @@ export const importFile = async (
 		return `Applied preset: ${fileName}`;
 	}
 	if (lowerPath.endsWith(".aex") || lowerPath.endsWith(".plugin")) {
-		const effectId = fileStemFromPath(filePath).trim();
-		if (!effectId) {
-			throw new Error(`effectId is required for plugin: ${fileName}`);
-		}
-		await hostExecutor("applyEffectByMatchName", [effectId]);
+		// The filename stem is NOT a reliable matchName — After Effects
+		// stores it in the plugin's PICA resource. Resolve through the
+		// candidates cache like the preset pipeline does (issue #191).
+		const snapshot = getCandidatesSnapshot();
+		const matchName = resolveEffectMatchName(
+			filePath,
+			snapshot?.pluginEffects ?? [],
+		);
+		await hostExecutor("applyEffectByMatchName", [matchName]);
 		return `Applied effect: ${fileName}`;
 	}
 	await hostExecutor("addFootage", [{ filePath, toComp: true }]);

@@ -19,7 +19,7 @@ import {
 	useState,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { resolveEffectMatchName } from "@/function/widget/utility/directory-browser/plugin-match-name";
+import { resolveEffectMatchName } from "@/management/storage/candidates-cache/plugin-match-name";
 import { useCep } from "@/management/ae/cep/contexts/Context";
 import { selectFolder } from "@/management/ae/cep/dialog-shim/bolt";
 import { createCepHostExecutor } from "@/management/ae/cep/host-executor";
