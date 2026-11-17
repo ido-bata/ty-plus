@@ -40,9 +40,7 @@ vi.mock("@/management/preset/icon-editor", () => ({
 	presetIconDraftToPresetIcon: vi.fn(() => null),
 }));
 
-const { persistFolderGroupPreset } = await import(
-	"./persist-folder-group"
-);
+const { persistFolderGroupPreset } = await import("./persist-folder-group");
 
 const win = {} as Window;
 
