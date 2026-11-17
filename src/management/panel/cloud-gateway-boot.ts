@@ -323,10 +323,9 @@ const readExtensionRootForComposition = (win: Window): string | undefined => {
 
 /**
  * Classified reason a cloud-gateway boot attempt failed. UI surfaces
- * (`PresetLibraryEmptyState`, the notification center, retained logs)
- * branch on these strings to render non-silent, human-readable error
- * copy. Adding a new branch means adding a new label below and an
- * empty-state sub-line in `PresetLibraryEmptyState`.
+ * (the notification center, retained logs) branch on these strings to
+ * render non-silent, human-readable error copy. Adding a new branch
+ * means adding a new label below and matching empty-state copy.
  */
 export type GatewayBootFailureReason =
 	| "unsupported-trust-mode"
@@ -385,8 +384,8 @@ const registerTyPlusHostOnlineStatePublisher = (win: Window): void => {
 
 /**
  * Human-readable label for each failure reason. Used by the panel
- * boot error log and the `data-gateway-boot-reason` attribute on the
- * preset-library empty state.
+ * boot error log and the `data-gateway-boot-reason` attribute on
+ * online empty states.
  */
 export const labelOfGatewayBootFailureReason = (
 	reason: GatewayBootFailureReason,

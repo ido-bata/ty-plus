@@ -10,7 +10,8 @@
 
 - ライセンスゲートは実装から除去済み（旧 `src/management/online/licensing/` と `rust/crates/licensing` は削除）。機能へのtier制限は存在しない。
 - オンラインsurface（catalog / notification / cloud gateway）はコード上存在するが、R0ではバックエンドを持たないdormant状態である。gatewayの起動失敗・不達はローカルコアを妨げない（`cloud-gateway-boot` のdegraded経路と、旧#128/#187の分離修正に基づく）。
-- dormantであることはUIにも適用する（#82）。fixture payloadを実データとして提示しない: runtime gatewayは`listNotifications`/`getNotificationBlocks`を実装せず、通知センターは公式静的feed（`docs/architecture/feeds.md`）だけをremote sourceとする。backendを持たないcloud-sync確認を発火するSettings「network」セクションは登録しない。public linkはbuild時同梱の実URL（repo内user guide）のみを返す。
+- dormantであることはUIにも適用する（#82, #193）。fixture payloadを実データとして提示しない: runtime gatewayは`listNotifications`/`getNotificationBlocks`を実装せず、通知センターは公式静的feed（`docs/architecture/feeds.md`）だけをremote sourceとする。backendを持たないcloud-sync確認を発火するSettings「network」セクションは登録しない。public linkはbuild時同梱の実URL（repo内user guide）のみを返す。
+- Preset Library（オンラインcatalog）のUI surfaceは #193 で撤去した。status bar・context menu・tool dialog kind・dialog route・CEP manifest entryのいずれからも到達できない。`online/catalog/` 配下には将来backend接続用のdormant service層（repository / runtime-cloud-gateway / sync / composition dispatcher）のみを残し、UI componentとUI専用logic（Dialog / PresetLibrary* / PresetMarket* / use-cases / download-* / gateway-retry）は削除した。再導入する場合はbackend契約と合わせてsurfaceを新規に設計する。
 - 将来の有料機能・配布APIは `docs/architecture/project.md` のcharterに従い、R0の実装はその拡張を妨げない設計に留める。R0で設計・実装しきらない。
 
 ## 検証

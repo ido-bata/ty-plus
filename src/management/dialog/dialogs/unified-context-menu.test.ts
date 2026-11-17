@@ -706,16 +706,17 @@ describe("buildWorkspaceContextMenuPayload (menu widget, Issue #170)", () => {
 		widgetInstanceTypes: { "widget-menu": "menu" },
 	};
 
-	it("does not offer the dormant Preset Library dialog", () => {
+	it("does not offer the removed Preset Library dialog", () => {
 		const payload = buildWorkspaceContextMenuPayload(
 			{ zone: "workspace-placement", id: "0" },
 			baseState,
 			{ canUndo: false, canRedo: false },
 			{ isCep: true, hostCode: "AEFT" },
 		);
-		const ids = payload.menu.map((entry) => entry.id);
-		// R0 has no catalog backend, so the entry was a dead affordance.
-		expect(ids).not.toContain(CTX_MENU_IDS.openPresetLibrary);
+		const ids = payload.menu.map((entry) => entry.id ?? "");
+		// R0 has no catalog backend; the surface was removed in #193, so no
+		// `ty.ctx.*` id may reference it.
+		expect(ids.some((id) => id.includes("preset-library"))).toBe(false);
 		// The offline-capable dialog entries stay.
 		expect(ids).toContain(CTX_MENU_IDS.openPresets);
 		expect(ids).toContain(CTX_MENU_IDS.openMessages);

@@ -28,7 +28,6 @@ import {
 export const TY_PLUS_DIALOG_EXTENSION = {
 	probe: tyPlusExtensionId("dialog-probe"),
 	presets: tyPlusExtensionId("dialog-presets"),
-	presetLibrary: tyPlusExtensionId("dialog-preset-library"),
 	messages: tyPlusExtensionId("dialog-messages"),
 	settings: tyPlusExtensionId("dialog-settings"),
 	debugConsole: tyPlusExtensionId("debug-console"),
@@ -36,11 +35,7 @@ export const TY_PLUS_DIALOG_EXTENSION = {
 	backgroundPanel: tyPlusExtensionId("dialog-background-panel"),
 } as const;
 
-export type ToolDialogKind =
-	| "presets"
-	| "presetLibrary"
-	| "messages"
-	| "settings";
+export type ToolDialogKind = "presets" | "messages" | "settings";
 
 /** Presets / Messages / Settings / Preset library surfaceId -> Extension Id */
 export function resolveWorkspaceShellDialogExtensionId(
@@ -49,8 +44,6 @@ export function resolveWorkspaceShellDialogExtensionId(
 	switch (surfaceId) {
 		case "dialog-presets":
 			return TY_PLUS_DIALOG_EXTENSION.presets;
-		case "dialog-preset-library":
-			return TY_PLUS_DIALOG_EXTENSION.presetLibrary;
 		case "dialog-messages":
 			return TY_PLUS_DIALOG_EXTENSION.messages;
 		case "dialog-settings":
@@ -74,8 +67,6 @@ export function tyPlusWorkspaceToolDialogId(kind: ToolDialogKind): string {
 	switch (kind) {
 		case "presets":
 			return TY_PLUS_DIALOG_EXTENSION.presets;
-		case "presetLibrary":
-			return TY_PLUS_DIALOG_EXTENSION.presetLibrary;
 		case "messages":
 			return TY_PLUS_DIALOG_EXTENSION.messages;
 		case "settings":
@@ -90,8 +81,6 @@ export function tyPlusWorkspaceToolDialogId(kind: ToolDialogKind): string {
 /** Maps surfaceId passed by widgets etc. in `dialog.xxx` format to manifest id */
 const WIDGET_DIALOG_SURFACE_ALIASES: Record<string, string> = {
 	"dialog.presets": "dialog-presets",
-	"dialog.presetLibrary": "dialog-preset-library",
-	"dialog.preset-library": "dialog-preset-library",
 	"dialog.messages": "dialog-messages",
 	"dialog.settings": "dialog-settings",
 };

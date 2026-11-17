@@ -2177,15 +2177,6 @@ export function useWorkspaceRuntime(root: Element | null): {
 						window,
 					);
 					return;
-				case CTX_MENU_IDS.openPresetLibrary:
-					requestOpenWorkspaceShellTool(
-						"presetLibrary",
-						undefined,
-						panelId,
-						isCep,
-						window,
-					);
-					return;
 				case CTX_MENU_IDS.openMessages:
 					requestOpenWorkspaceShellTool(
 						"messages",
