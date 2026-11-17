@@ -49,9 +49,9 @@ bun run release:candidate --channel=insider --release-version=0.10.0-insider.1
 
 | | Windows | macOS |
 | --- | --- | --- |
-| worker binaryのOS署名 | **不要**（未署名がR0の正当な形。整合性はmanifestのsha256 pin） | **必須**（Developer ID署名 + 公証） |
-| 必要な環境変数 | `TY_PLUS_ZXP_CERT_PATH` / `TY_PLUS_ZXP_CERT_PASSWORD` | 上記 + `TY_PLUS_SIGN_IDENTITY` / `TY_PLUS_NOTARY_PROFILE` |
-| 未設定時の挙動 | ZXP未設定なら拒否 | 署名・公証いずれか未設定なら**ビルド前に**拒否 |
+| worker binaryのOS署名 | **不要**（未署名がR0の正当な形。整合性はmanifestのsha256 pin） | **必須**（Developer ID署名。公証はR0要件外 — ADR-0003 Amendment 1。`TY_PLUS_NOTARY_PROFILE` 設定時のみ公証経路が有効） |
+| 必要な環境変数 | `TY_PLUS_ZXP_CERT_PATH` / `TY_PLUS_ZXP_CERT_PASSWORD` | 上記 + `TY_PLUS_SIGN_IDENTITY`（`TY_PLUS_NOTARY_PROFILE` は任意） |
+| 未設定時の挙動 | ZXP未設定なら拒否 | 署名identity未設定なら**ビルド前に**拒否（公証profileは任意） |
 
 環境変数の作り方は `docs/operations/signing-setup.md`。**secret値をSkill・Issue・commit・ログへ書かない。**
 
@@ -94,7 +94,7 @@ signerが見つからない場合、監査は「署名不正」ではなく「�
 `docs/operations/release-runbook.md` §5 の手順に従う。守ること。
 
 - Draftで作り、`prerelease` はchannelから導出した値（stable=false / beta・insider=true）を使う。
-- `--target` は**release merge commitのSHA**。tagが別SHAを指したら上書きしない。
+- `--target` は**release manifestの `sourceCommit`**（成果物とtagの対応を一致させる。runbook §5）。tagが別SHAを指したら上書きしない。
 - `make_latest` はStable以外で使わない。
 - 既存tagを付け替えない。同じtagへ追加する場合も `sourceCommit` を照合する。
 - Private repoのままでは匿名APIが404になり、利用者の更新確認は動かない。**公開順序（repo public化 → Release公開）を意識する。**
@@ -114,7 +114,7 @@ signerが見つからない場合、監査は「署名不正」ではなく「�
 | --- | --- |
 | assetのsha256がmanifestと違う | そのReleaseを更新対象から外す（draftへ戻す／asset削除）。同じtagで再uploadしない。修正版を**新しい連番**で出す |
 | ZXP署名検証が落ちた | 公開しない。証明書設定を確認し、成果物を再生成する |
-| macOS公証が未設定 | ビルドは拒否される。`signing-setup.md` の本人操作を待つ。**公証なしを配布可と呼ばない** |
+| macOS公証が未設定 | R0では公証は要件外（ADR-0003 Amendment 1）のため拒否されない。未公証である事実は成果物記録とリリースノートへ明記する。署名identity未設定の場合はビルド前に拒否される |
 | manifestの `sourceCommit` がHEADと違う | ビルド後にcommitした。成果物を再生成する |
 | channelとtagが食い違う | 環境変数の取り違え。ビルド前に拒否されるので、正しい `releaseVersion` で再実行する |
 | CIが課金等で実行できない | ローカルの再現可能な検証を進め、**未実施のCIだけを明示**する。緑と主張しない |
