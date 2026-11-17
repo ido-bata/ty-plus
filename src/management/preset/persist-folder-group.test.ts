@@ -20,6 +20,7 @@ const mergeGroupEntries = vi.fn();
 const upsertGroupEntry = vi.fn();
 const canUseCepNodeFileBrowser = vi.fn();
 const createCepNodeFileBrowserService = vi.fn();
+const mockListDirectory = vi.fn();
 
 vi.mock("@/management/preset/use-cases", () => ({ listPresets }));
 vi.mock("@/management/preset/repository/local-catalog", () => ({
@@ -56,8 +57,9 @@ describe("persistFolderGroupPreset — folder-scan path (issue #139)", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		canUseCepNodeFileBrowser.mockReturnValue(true);
+		mockListDirectory.mockResolvedValue([]);
 		createCepNodeFileBrowserService.mockReturnValue({
-			listDirectory: vi.fn(async () => []),
+			listDirectory: mockListDirectory,
 		});
 		getLocalPresetCatalog.mockReturnValue({ kind: "local-catalog" });
 		importOnboardingPresets.mockResolvedValue({
@@ -85,14 +87,64 @@ describe("persistFolderGroupPreset — folder-scan path (issue #139)", () => {
 		expect(result.catalogRefIds).toEqual(["grp-1"]);
 	});
 
-	it("passes the group id/name overrides to the importer", async () => {
+	it("passes pre-collected candidates and the group id/name overrides to the importer", async () => {
 		await persistFolderGroupPreset(win, baseInput);
 
 		const [options] = importOnboardingPresets.mock.calls[0];
 		expect(options.folderGroupIdOverride).toBe("grp-1");
 		expect(options.folderGroupNameOverride).toBe("Root Group");
-		expect(options.canScanFolders).toBe(true);
-		expect([...options.selectedFolders.presets]).toEqual(["/presets/root"]);
+		expect(options.canScanFolders).toBe(false);
+		expect(options.candidates).toEqual([
+			expect.objectContaining({ type: "group", filePath: "/presets/root" }),
+		]);
+	});
+
+	it("collects script presets (.jsx/.jsxbin) under scanned folders as candidates", async () => {
+		mockListDirectory.mockResolvedValue([
+			{ name: "a.ffx", path: "/presets/root/a.ffx", isDirectory: false },
+			{ name: "b.jsx", path: "/presets/root/b.jsx", isDirectory: false },
+			{
+				name: "c.jsxbin",
+				path: "/presets/root/c.jsxbin",
+				isDirectory: false,
+			},
+			{
+				name: "ignore.txt",
+				path: "/presets/root/ignore.txt",
+				isDirectory: false,
+			},
+		]);
+
+		await persistFolderGroupPreset(win, baseInput);
+
+		const [options] = importOnboardingPresets.mock.calls[0];
+		const fileCandidates = options.candidates.filter(
+			(c: { type: string }) => c.type !== "group",
+		);
+		expect(fileCandidates).toEqual([
+			expect.objectContaining({
+				filePath: "/presets/root/a.ffx",
+				type: "preset",
+			}),
+			expect.objectContaining({
+				filePath: "/presets/root/b.jsx",
+				type: "script",
+			}),
+			expect.objectContaining({
+				filePath: "/presets/root/c.jsxbin",
+				type: "script",
+			}),
+		]);
+	});
+
+	it("does not scan folders when recursive is false", async () => {
+		await persistFolderGroupPreset(win, { ...baseInput, recursive: false });
+
+		expect(mockListDirectory).not.toHaveBeenCalled();
+		const [options] = importOnboardingPresets.mock.calls[0];
+		expect(options.candidates).toEqual([
+			expect.objectContaining({ type: "group", filePath: "/presets/root" }),
+		]);
 	});
 
 	it("fails with a clear error when the CEP file browser is unavailable", async () => {

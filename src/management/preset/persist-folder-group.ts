@@ -7,6 +7,10 @@ import {
 	type PresetIconEditorDraft,
 	presetIconDraftToPresetIcon,
 } from "@/management/preset/icon-editor";
+import {
+	collectFilePresetCandidates,
+	collectFolderPresetCandidates,
+} from "@/management/preset/onboarding-import";
 import { importOnboardingPresets } from "@/management/preset/onboarding-service";
 import { getLocalPresetCatalog } from "@/management/preset/repository/local-catalog";
 import { listPresets } from "@/management/preset/use-cases";
@@ -112,7 +116,17 @@ export const persistFolderGroupPreset = async (
 	// Issue #139: group creation must not depend on cloud gateway boot. The
 	// imported presets are local file-backed rows, so they go through the
 	// local catalog — the same owner `listPresets`/`upsertLocalPreset` use.
+	// Folder paths are kind-agnostic: the scan collects every preset-able
+	// file type (ffx/jsx/jsxbin/js/aex/plugin), not just `.ffx`.
 	const repo = getLocalPresetCatalog(win);
+	const candidates = input.recursive
+		? await collectFolderPresetCandidates(folderPaths, listDirectory)
+		: collectFilePresetCandidates({
+				presets: new Set(),
+				scripts: new Set(),
+				plugins: new Set(),
+				folders: new Set(folderPaths),
+			});
 	const result = await importOnboardingPresets(
 		{
 			selectedFiles: {
@@ -121,11 +135,12 @@ export const persistFolderGroupPreset = async (
 				plugins: new Set(),
 			},
 			selectedFolders: {
-				presets: new Set(folderPaths),
+				presets: new Set(),
 				scripts: new Set(),
 				plugins: new Set(),
 			},
-			canScanFolders: input.recursive,
+			canScanFolders: false,
+			candidates,
 			folderGroupIdOverride: input.groupId.trim(),
 			folderGroupNameOverride: input.groupName.trim(),
 		},
@@ -134,7 +149,7 @@ export const persistFolderGroupPreset = async (
 	);
 
 	if (result.addedGroupCatalogEntries.length === 0) {
-		throw new Error("No preset files (.ffx) found in folder.");
+		throw new Error("No preset files found in folder.");
 	}
 
 	// Build icon rules from base icon and condition rules
