@@ -73,7 +73,7 @@ import {
 	DirectoryBrowser,
 	type DirectoryBrowserEntry,
 } from "@/management/storage/ui/DirectoryBrowser";
-import { importFile as runWorkspaceFileImport } from "@/management/workspace/hooks/host-exec";
+import { importFile as runWorkspaceFileImport } from "@/management/ae/file-import";
 import { executeWorkspacePresetForWindow } from "@/management/workspace/runtime";
 import type { SurfaceState } from "@/management/workspace/state";
 import { CollapsibleGroupHeader } from "./CollapsibleGroupHeader";

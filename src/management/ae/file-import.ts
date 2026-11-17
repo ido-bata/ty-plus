@@ -1,12 +1,17 @@
-import { getCandidatesSnapshot } from "@/management/storage/candidates-cache/runtime";
-import { resolveEffectMatchName } from "@/management/storage/candidates-cache/plugin-match-name";
-
-import { fileNameFromPath } from "./state";
-
 /**
  * Imports a file into After Effects via the host executor.
  * Handles .jsx/.jsxbin scripts, .ffx presets, plugin effects, and footage.
+ *
+ * Plugin effects resolve their matchName through the candidates cache
+ * (PICA resource) — the filename stem is not a reliable matchName.
  */
+
+import { getCandidatesSnapshot } from "@/management/storage/candidates-cache/runtime";
+import { resolveEffectMatchName } from "@/management/storage/candidates-cache/plugin-match-name";
+
+const fileNameFromPath = (value: string): string =>
+	value.split(/[\\/]/).pop() ?? value;
+
 export const importFile = async (
 	filePath: string,
 	hostCode: string,
@@ -30,9 +35,6 @@ export const importFile = async (
 		return `Applied preset: ${fileName}`;
 	}
 	if (lowerPath.endsWith(".aex") || lowerPath.endsWith(".plugin")) {
-		// The filename stem is NOT a reliable matchName — After Effects
-		// stores it in the plugin's PICA resource. Resolve through the
-		// candidates cache like the preset pipeline does (issue #191).
 		const snapshot = getCandidatesSnapshot();
 		const matchName = resolveEffectMatchName(
 			filePath,

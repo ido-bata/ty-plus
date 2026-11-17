@@ -191,7 +191,7 @@ import {
 } from "./hooks/dialogs";
 import { openDebugConsole, openUrlInDefaultBrowser } from "./hooks/helpers";
 
-import { importFile } from "./hooks/host-exec";
+import { importFile } from "@/management/ae/file-import";
 import {
 	ensurePrimaryPanelWidgets,
 	remapSurfaceSelectionByPreservedTileIds,
