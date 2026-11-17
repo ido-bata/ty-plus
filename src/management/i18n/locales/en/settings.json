@@ -232,6 +232,11 @@
 		"installDone": "Installed. Restart After Effects to finish.",
 		"installPending": "Staged. It will be applied the next time ty-plus starts.",
 		"installManual": "Automatic install is unavailable here. Use the download page instead.",
-		"installFailed": "Install failed. Try again or install manually."
+		"installFailed": "Install failed. Try again or install manually.",
+		"installFailedDownload": "Download failed. Check your connection and try again.",
+		"installFailedIntegrity": "The downloaded file failed its integrity check. Try again later.",
+		"installFailedArchive": "The downloaded update is invalid. Try again later or install manually.",
+		"installFailedPermission": "Permission denied. Install manually from the download page.",
+		"installFailedBusy": "Another install is in progress. Try again shortly."
 	}
 }

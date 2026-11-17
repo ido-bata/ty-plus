@@ -1,5 +1,6 @@
 import { type JSX, useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { OperationWorkerAttemptError } from "@/management/ipc/operation-worker-runner";
 import {
 	isReleaseChannel,
 	type ReleaseChannel,
@@ -68,7 +69,31 @@ type InstallState =
 	| { kind: "idle" }
 	| { kind: "installing" }
 	| { kind: "done"; status: "installed" | "pending" | "manual_required" }
-	| { kind: "failed" };
+	| { kind: "failed"; code?: string };
+
+/**
+ * Map the worker's stable error code onto a localized failure message.
+ * `update.install` reports `integrity_mismatch`, `network_unavailable`,
+ * `remote_rejected` (archive), `permission_denied`, and `busy` distinctly
+ * (Issue #169); anything else falls back to the generic failure text.
+ */
+const installFailureKey = (code: string | undefined): string => {
+	switch (code) {
+		case "integrity_mismatch":
+			return "installFailedIntegrity";
+		case "network_unavailable":
+		case "timeout":
+			return "installFailedDownload";
+		case "remote_rejected":
+			return "installFailedArchive";
+		case "permission_denied":
+			return "installFailedPermission";
+		case "busy":
+			return "installFailedBusy";
+		default:
+			return "installFailed";
+	}
+};
 
 /**
  * Pick the platform ZIP asset the worker installer consumes. The feed
@@ -168,8 +193,12 @@ export function UpdateSection(): JSX.Element {
 						? installed.status
 						: "manual_required",
 			});
-		} catch {
-			setInstallState({ kind: "failed" });
+		} catch (error) {
+			setInstallState({
+				kind: "failed",
+				code:
+					error instanceof OperationWorkerAttemptError ? error.code : undefined,
+			});
 		}
 	}, [result]);
 
@@ -182,6 +211,11 @@ export function UpdateSection(): JSX.Element {
 		},
 		[settings.ui, updateSettings],
 	);
+
+	// R0 distributes stable builds only: the worker rejects prerelease
+	// assets, so non-stable channels get release notes but no install
+	// button (Issue #169).
+	const installAllowed = channel === "stable";
 
 	const label = checking
 		? t("updates.checking")
@@ -248,8 +282,9 @@ export function UpdateSection(): JSX.Element {
 							>
 								{t("updates.releaseNotes")}
 							</button>
-							{installState.kind !== "done" ||
-							installState.status === "manual_required" ? (
+							{installAllowed &&
+							(installState.kind !== "done" ||
+								installState.status === "manual_required") ? (
 								<button
 									type="button"
 									className={linkStyle}
@@ -277,7 +312,7 @@ export function UpdateSection(): JSX.Element {
 						}
 					>
 						{installState.kind === "failed"
-							? t("updates.installFailed")
+							? t(`updates.${installFailureKey(installState.code)}`)
 							: installState.status === "installed"
 								? t("updates.installDone")
 								: installState.status === "pending"
