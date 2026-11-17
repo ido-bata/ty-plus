@@ -137,12 +137,27 @@ describe("persistFolderGroupPreset — folder-scan path (issue #139)", () => {
 		]);
 	});
 
-	it("does not scan folders when recursive is false", async () => {
+	it("scans only the folder roots when recursive is false", async () => {
+		mockListDirectory.mockResolvedValue([
+			{ name: "a.ffx", path: "/presets/root/a.ffx", isDirectory: false },
+			{
+				name: "nested",
+				path: "/presets/root/nested",
+				isDirectory: true,
+			},
+		]);
+
 		await persistFolderGroupPreset(win, { ...baseInput, recursive: false });
 
-		expect(mockListDirectory).not.toHaveBeenCalled();
+		// The root is listed once; the scan does not descend into subdirs.
+		expect(mockListDirectory).toHaveBeenCalledTimes(1);
+		expect(mockListDirectory).toHaveBeenCalledWith("/presets/root");
 		const [options] = importOnboardingPresets.mock.calls[0];
 		expect(options.candidates).toEqual([
+			expect.objectContaining({
+				filePath: "/presets/root/a.ffx",
+				type: "preset",
+			}),
 			expect.objectContaining({ type: "group", filePath: "/presets/root" }),
 		]);
 	});

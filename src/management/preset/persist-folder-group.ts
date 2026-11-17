@@ -119,14 +119,15 @@ export const persistFolderGroupPreset = async (
 	// Folder paths are kind-agnostic: the scan collects every preset-able
 	// file type (ffx/jsx/jsxbin/js/aex/plugin), not just `.ffx`.
 	const repo = getLocalPresetCatalog(win);
-	const candidates = input.recursive
-		? await collectFolderPresetCandidates(folderPaths, listDirectory)
-		: collectFilePresetCandidates({
-				presets: new Set(),
-				scripts: new Set(),
-				plugins: new Set(),
-				folders: new Set(folderPaths),
-			});
+	// `recursive: false` means a flat scan of the folder roots themselves —
+	// top-level preset-able files only, no descent into subdirectories.
+	// It previously produced zero file candidates and only grouped
+	// already-registered presets (issue #191 audit).
+	const candidates = await collectFolderPresetCandidates(
+		folderPaths,
+		listDirectory,
+		{ recursive: input.recursive ?? true },
+	);
 	const result = await importOnboardingPresets(
 		{
 			selectedFiles: {

@@ -88,6 +88,7 @@ const walkFolderForExtensions = async (
 	rootPath: string,
 	extensions: readonly string[],
 	listDirectory: (dirPath: string) => Promise<OnboardingFileBrowserEntry[]>,
+	recursive = true,
 ): Promise<string[]> => {
 	const collected: string[] = [];
 	const queue = [rootPath];
@@ -110,7 +111,7 @@ const walkFolderForExtensions = async (
 				collected.push(entry.path);
 				continue;
 			}
-			if (!entry.isDirectory) {
+			if (!entry.isDirectory || !recursive) {
 				continue;
 			}
 			queue.push(entry.path);
@@ -212,7 +213,9 @@ export const collectFilePresetCandidates = (
 export const collectFolderPresetCandidates = async (
 	folderPaths: readonly string[],
 	listDirectory: (dirPath: string) => Promise<OnboardingFileBrowserEntry[]>,
+	options?: { recursive?: boolean },
 ): Promise<OnboardingPresetCandidate[]> => {
+	const recursive = options?.recursive ?? true;
 	const roots = folderPaths.map((p) => p.trim()).filter(Boolean);
 	if (roots.length === 0) {
 		return [];
@@ -223,6 +226,7 @@ export const collectFolderPresetCandidates = async (
 			root,
 			ONBOARDING_ALL_FOLDER_EXTENSIONS,
 			listDirectory,
+			recursive,
 		);
 		for (const filePath of files) {
 			scannedFiles.add(filePath);
