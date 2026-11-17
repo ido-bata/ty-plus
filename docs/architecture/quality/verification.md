@@ -72,6 +72,19 @@ Issue-specific manual / E2E verification procedures live under
 4. cloud を商品価値として使う場合、Supabase remote path が fixture ではなく deployment 前提で確認されていること
 5. Claude / Codex の最終レビューに耐える説明責務と test coverage があること
 
+## CI gate の階層（Issue #167）
+
+`.github/workflows/ci.yml` は変更riskに応じて2つのgateを使い分ける。重い検証を毎回のpushで繰り返さない。
+
+| gate | 対象 | 内容 |
+| --- | --- | --- |
+| ticket gate（高速） | `pull_request`、`push` to `release-*` | `skills` / `static` / `unit` / `coverage`。local相当は `bun run ci:pr` |
+| full gate（包括） | `push` to `main`、`workflow_dispatch`、PR label opt-in | 上記 + `storybook`×4 shard、`storybook-capture-report`、`operation-worker-windows/macos` |
+
+- PRで Storybook 系を個別に回す場合は `full-ci` label、native worker を回す場合は `native-build` label を付ける。
+- RC freeze時は対象の固定SHAに対して `workflow_dispatch` で full gate を実行する。freeze後にSHAが変わった場合、以前の結果を流用せず新SHAで再実行する。
+- `release-gate` jobは両gateで共通のverdictを返し、skipped partitionを許容する。「release gate success」は実行されたpartitionの成功を意味し、full gateを実施したことを意味しない。full gateの実施有無はjob一覧で確認する。
+
 ## docs と verification の関係
 
 - docs は test の代替ではない。
