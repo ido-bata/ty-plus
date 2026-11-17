@@ -101,6 +101,23 @@ describe("presetIconToDraft / draftToIcon round-trip (issue #191)", () => {
 		expect(draftToIcon(draft)).toEqual(icon);
 	});
 
+	it("round-trips a multi-segment canvas icon without dropping points", () => {
+		const points: [number, number, number, number, number, number][] = [
+			[0, 0, 0.1, 0.1, 0.2, 0.2],
+			[0.5, 1, 0.4, 0.9, 0.6, 0.8],
+			[1, 0, 0.9, 0.1, 0.8, 0.2],
+		];
+		const icon = presetIconCanvas({
+			cubic: [0.1, 0.2, 0.3, 0.4],
+			points,
+			color: "#aabbcc",
+			backgroundColor: "#001122",
+		});
+		const draft = presetIconToDraft(icon);
+		expect(draft.canvasPoints).toEqual(points);
+		expect(draftToIcon(draft)).toEqual(icon);
+	});
+
 	it("round-trips a text icon with colors", () => {
 		const icon = presetIconText("FFX", {
 			color: "#ffffff",

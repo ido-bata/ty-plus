@@ -15,6 +15,9 @@ export type PresetIconEditorDraft = {
 	color: string;
 	/** For canvas type: stores the original cubic for round-trip */
 	canvasCubic?: [number, number, number, number];
+	/** For canvas type: stores the original multi-segment points so an
+	 *  unrelated edit does not silently drop multi-ease data. */
+	canvasPoints?: [number, number, number, number, number, number][];
 };
 
 export const PRESET_ICON_TEXT_MAX = 6;
@@ -44,6 +47,7 @@ export const presetIconToDraft = (icon: PresetIcon): PresetIconEditorDraft => {
 			bgColor: icon.param.backgroundColor ?? "#2b2b2b",
 			color: icon.param.color ?? "#ffffff",
 			canvasCubic: icon.param.cubic,
+			canvasPoints: icon.param.points,
 		};
 	}
 	if (icon.type === "emoji") {
@@ -82,6 +86,7 @@ export const draftToIcon = (
 	if (draft.type === "canvas" && draft.canvasCubic) {
 		return presetIconCanvas({
 			cubic: draft.canvasCubic,
+			...(draft.canvasPoints ? { points: draft.canvasPoints } : {}),
 			color: draft.color,
 			backgroundColor: draft.bgColor,
 		});
