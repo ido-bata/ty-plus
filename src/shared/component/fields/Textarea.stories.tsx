@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
+import { expect } from "storybook/test";
 import { Textarea } from "./Textarea";
 
 const meta = {
@@ -11,7 +12,7 @@ const meta = {
 		disabled: { control: "boolean" },
 		readOnly: { control: "boolean" },
 		rows: { control: "number" },
-		value: { control: "text" },
+		defaultValue: { control: "text" },
 	},
 	args: {
 		placeholder: "Write a description…",
@@ -35,7 +36,7 @@ export const LargeSize: Story = {
 export const Disabled: Story = {
 	args: {
 		disabled: true,
-		value: "Read-only content here.",
+		defaultValue: "Read-only content here.",
 	},
 };
 
@@ -55,5 +56,28 @@ export const Controlled: Story = {
 				/>
 			</div>
 		);
+	},
+};
+
+// Issue #166: focus-visible state — the textarea repaints its border and
+// paints the inset focus ring only under `:focus-visible`. Text fields
+// match `:focus-visible` even on programmatic focus in Chromium, so a
+// plain `.focus()` exercises the real path.
+export const Focused: Story = {
+	args: {
+		"aria-label": "Notes",
+	},
+	play: async ({ canvasElement }) => {
+		const textarea = canvasElement.querySelector("textarea");
+		if (!textarea) throw new Error("textarea not found");
+		const restingBorderColor = getComputedStyle(textarea).borderTopColor;
+		const restingBoxShadow = getComputedStyle(textarea).boxShadow;
+		textarea.focus();
+		await expect(document.activeElement).toBe(textarea);
+		await expect(textarea.matches(":focus-visible")).toBe(true);
+		await new Promise((resolve) => setTimeout(resolve, 300));
+		const focused = getComputedStyle(textarea);
+		await expect(focused.borderTopColor).not.toBe(restingBorderColor);
+		await expect(focused.boxShadow).not.toBe(restingBoxShadow);
 	},
 };

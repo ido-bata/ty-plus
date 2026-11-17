@@ -108,11 +108,15 @@ export function EntryIcon({
 	}
 	if (!entry.isDirectory && allEntries) {
 		const sidekick = findSiblingImagePathForPresetFile(entry.path, allEntries);
-		if (sidekick) {
+		// `imageSrcForBrowser` rejects non-absolute / non-URL paths and returns
+		// "" — rendering `<img src="">` logs a console error, so fall through
+		// to the type icon instead.
+		const sidekickSrc = sidekick ? imageSrcForBrowser(sidekick) : "";
+		if (sidekick && sidekickSrc) {
 			return (
 				<IconFrame size={s} fill={fill}>
 					<img
-						src={imageSrcForBrowser(sidekick)}
+						src={sidekickSrc}
 						alt=""
 						decoding="async"
 						draggable={false}
@@ -217,7 +221,8 @@ function renderPresetIcon(
 		);
 	}
 	if (icon.type === "image") {
-		const src = icon.param.src;
+		const src = icon.param.src.trim();
+		if (!src) return null;
 		return (
 			<IconFrame size={size} fill={fill}>
 				<img
@@ -239,9 +244,13 @@ export function MediaCardContent({
 	entry: DirectoryBrowserEntry;
 }): JSX.Element | null {
 	if (entry.fileType === "image" && entry.previewUrl?.trim()) {
+		// `previewUrl` is already a browser-ready URL (`file:` from
+		// file-browser-service, `data:` in previews) — pass it through like
+		// `EntryIcon` does instead of re-validating it as a file path, which
+		// would reject `data:` URIs and collapse to `src=""`.
 		return (
 			<img
-				src={imageSrcForBrowser(entry.previewUrl.trim())}
+				src={entry.previewUrl.trim()}
 				alt=""
 				className={coverImageClass}
 				decoding="async"
@@ -251,6 +260,7 @@ export function MediaCardContent({
 	}
 	if (entry.fileType === "video") {
 		const src = imageSrcForBrowser(entry.path);
+		if (!src) return null;
 		return (
 			<video
 				src={src}

@@ -41,6 +41,9 @@ const effect: PluginEffectIndexRow = {
 	displayName: "Glow",
 };
 
+// Rows must carry unique identities — the dropdown keys each row by
+// preset id / root-file path / effect matchName, so reusing one fixture
+// object across rows produces duplicate-key console errors.
 const buildRows = (count: number) =>
 	Array.from({ length: count }).map((_, i) => {
 		const kind = i % 3;
@@ -49,7 +52,11 @@ const buildRows = (count: number) =>
 		if (kind === 0) {
 			return {
 				kind: "preset" as const,
-				preset,
+				preset: {
+					...preset,
+					id: `preset-${i}`,
+					filePath: `/presets/glow-${i}.ffx`,
+				},
 				score,
 				typeOrder,
 			};
@@ -57,14 +64,22 @@ const buildRows = (count: number) =>
 		if (kind === 1) {
 			return {
 				kind: "rootFile" as const,
-				rootFile,
+				rootFile: {
+					...rootFile,
+					id: `root-${i}`,
+					filePath: `/presets/studio-color-${i}.ffx`,
+				},
 				score,
 				typeOrder,
 			};
 		}
 		return {
 			kind: "effect" as const,
-			effect,
+			effect: {
+				...effect,
+				filePath: `/effects/glow-${i}.aex`,
+				matchName: `ADBE Glow ${i}`,
+			},
 			score,
 			typeOrder,
 		};
