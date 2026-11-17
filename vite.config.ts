@@ -6,7 +6,9 @@ import Icons from "unplugin-icons/vite";
 import { type Plugin, defineConfig, loadEnv } from "vite";
 import { type CepOptions, cep, runAction } from "vite-cep-plugin";
 import { LOGGER_MODULE_PATH_SUFFIX } from "./src/management/debug/logger.js";
-import cepConfig from "./cep.config.js";
+import cepConfig, {
+	OPERATION_WORKER_EXPECTED_TRUST_MODE,
+} from "./cep.config.js";
 import { cepManifestPositionPlugin } from "./scripts/utils/vite-plugin-cep-manifest-position.js";
 import { inlineOnigurumaWasmPlugin } from "./scripts/utils/vite-plugin-inline-oniguruma-wasm.js";
 import {
@@ -156,7 +158,7 @@ const makeDefines = (): Record<string, string> => {
 			isProduction ? "production" : "development",
 		),
 		__TY_PLUS_OPERATION_WORKER_EXPECTED_TRUST_MODE__: JSON.stringify(
-			cepConfig.OPERATION_WORKER_EXPECTED_TRUST_MODE,
+			OPERATION_WORKER_EXPECTED_TRUST_MODE,
 		),
 		// Matches `cepConfig.id`: dev bundles ship `app.ty-plus.dev.*` Extension
 		// Ids so they can coexist with a release install (#86).

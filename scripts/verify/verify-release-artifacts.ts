@@ -271,6 +271,21 @@ export const auditReleaseArtifacts = (
 						"build with TY_PLUS_RELEASE_CHANNEL set to the tag's channel",
 				);
 			}
+			// The worker trust mode is injected by the same define mechanism.
+			// A pack whose panel still carries the development fallback resolves
+			// the release worker manifest as a mismatch and every worker-backed
+			// feature fails at runtime (#180).
+			const trustModeValues = readInjectedBindings(
+				embedded,
+				"compiledOperationWorkerTrustMode",
+			);
+			const wrongTrustMode = trustModeValues.find((v) => v !== "release");
+			if (trustModeValues.length === 0 || wrongTrustMode !== undefined) {
+				failures.push(
+					`the packaged panel embeds operation-worker trust mode ${String(wrongTrustMode ?? trustModeValues[0])}, expected "release" — ` +
+						"the worker trust define did not reach the panel bundle",
+				);
+			}
 		}
 	}
 

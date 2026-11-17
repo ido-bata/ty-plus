@@ -79,7 +79,8 @@ beforeEach(() => {
 		"assets/style.aaaa.cjs",
 		"const isReleaseChannel=n=>n===`stable`||n===`beta`||n===`insider`," +
 			"appVersion=`0.11.0`,currentReleaseVersion=`0.11.0-beta.1`," +
-			"buildReleaseChannel=`beta`;",
+			"buildReleaseChannel=`beta`," +
+			"compiledOperationWorkerTrustMode=`release`;",
 	);
 });
 
@@ -202,6 +203,24 @@ describe("release artifact audit", () => {
 		expect(failures.join("\n")).toMatch(/embeds release channel insider/);
 	});
 
+	it("rejects a panel bundle whose worker trust mode stayed on the dev fallback", () => {
+		// Regression (#180): the trust-mode define silently resolved to
+		// undefined, so every build — including release packs — embedded
+		// `development-unsigned` and the panel refused the release worker
+		// manifest at runtime.
+		packedExtension(
+			"assets/style.aaaa.cjs",
+			"const isReleaseChannel=n=>n===`stable`||n===`beta`||n===`insider`," +
+				"appVersion=`0.11.0`,currentReleaseVersion=`0.11.0-beta.1`," +
+				"buildReleaseChannel=`beta`," +
+				"compiledOperationWorkerTrustMode=`development-unsigned`;",
+		);
+		const failures = failuresOf(() => audit());
+		expect(failures.join("\n")).toMatch(
+			/embeds operation-worker trust mode development-unsigned/,
+		);
+	});
+
 	it("rejects a panel bundle with no injected identity at all", () => {
 		packedExtension(
 			"assets/style.aaaa.cjs",
@@ -216,7 +235,8 @@ describe("release artifact audit", () => {
 		packedExtension(
 			"assets/style.aaaa.cjs",
 			'const appVersion="0.11.0",currentReleaseVersion="0.11.0-beta.1",' +
-				'buildReleaseChannel="beta";',
+				'buildReleaseChannel="beta",' +
+				'compiledOperationWorkerTrustMode="release";',
 		);
 		expect(audit().channel).toBe("beta");
 	});
@@ -229,7 +249,8 @@ describe("release artifact audit", () => {
 			"assets/style.aaaa.cjs",
 			"const isReleaseChannel=n=>n===`stable`||n===`beta`||n===`insider`," +
 				"currentReleaseVersion=`0.11.0-insider.1`," +
-				"buildReleaseChannel=isReleaseChannel(`insider`)?`insider`:`stable`;",
+				"buildReleaseChannel=isReleaseChannel(`insider`)?`insider`:`stable`," +
+				"compiledOperationWorkerTrustMode=`release`;",
 		);
 		// The fixture's CEP manifest advertises 0.11.0, so the base version
 		// and the release identity must share that numeric core.
