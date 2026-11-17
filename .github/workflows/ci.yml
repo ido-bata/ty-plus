@@ -12,17 +12,28 @@ name: CI
 #   actions/download-artifact tag v4 -> d3f86a106a0bac45b974a628896c90dbdf5c8093
 
 on:
+  # Gate tiers (Issue #167, quality-gate §8.3):
+  #
+  # - pull_request: fast ticket gate only — skills / static / unit / coverage.
+  #   The `full-ci` label opts a PR into the storybook partitions and
+  #   `native-build` opts into the operation-worker partitions.
+  # - push to release-*: same fast gate (validates the merge commit cheaply).
+  # - push to main / workflow_dispatch: every partition, including the
+  #   storybook matrix, capture report, and both native worker jobs. This is
+  #   also the RC freeze gate: dispatch this workflow on the frozen SHA.
+  #
   # The release gate is `bun run ci` partitioned across the jobs below. Every
   # job calls one of the `ci:*` scripts in package.json; individual lint /
   # build / check commands are never restated here, so the partition cannot
   # drift from the local gate. `release-gate` is the only job whose result
-  # means anything on its own.
+  # means anything on its own; skipped partitions are tolerated so the fast
+  # gate and the full gate share one verdict job.
   pull_request:
   push:
-    # `release-*` must be listed: the operation-worker jobs below gate on
-    # `refs/heads/release-*` push refs, and without this trigger the only
-    # way to run native verification was workflow_dispatch or the
-    # `native-build` PR label — release branches never got it (Issue #61).
+    # `release-*` must be listed: it carries the fast gate for merge commits.
+    # The operation-worker jobs no longer key off this ref — native
+    # verification runs on main pushes, dispatch, and the `native-build`
+    # label (Issue #61 / #167).
     branches: [main, 'release-*']
   workflow_dispatch:
     inputs:
@@ -58,7 +69,7 @@ jobs:
       # README languages come from the app's SUPPORTED_LOCALES. This test is
       # included in the release gate (skills is one of its required partitions).
       - name: Validate public README languages and links
-        run: bun scripts/check/check-readme-locales.ts
+        run: bun run check:readme-locales
 
   # lint, build, the artifact verifiers, typecheck, boundaries,
   # react-doctor, rust and knip. No browser, so it needs neither
@@ -152,7 +163,16 @@ jobs:
   # toolchains to make room; a tmpfs was tried and is the wrong tool (it is
   # RAM, so it doubled the charge instead of buying disk).
   storybook:
+    # Full storybook matrix is an expensive gate: it runs on main pushes,
+    # on workflow_dispatch (the RC freeze path), and on PRs that opt in with
+    # the `full-ci` label. Ordinary ticket PRs and release-* pushes get the
+    # fast gate only (Issue #167).
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'full-ci'))
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
@@ -219,7 +239,11 @@ jobs:
   # separate decision once pixel-diff/reg-suit lands.
   storybook-capture-report:
     needs: storybook
-    if: always() && needs.storybook.result != 'cancelled'
+    if: >-
+      always() && needs.storybook.result != 'cancelled' &&
+      (github.event_name == 'workflow_dispatch' ||
+       (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+       (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'full-ci')))
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -268,14 +292,18 @@ jobs:
   # Build and verify the real operation-worker binary on the platform that
   # owns it. The ubuntu `static` job compiles the platform-specific
   # host-filesystem tests out, so these jobs are the only place the native
-  # behaviour runs in CI. Skipped on ordinary PRs (label `native-build` opts
-  # in); they always run on main and on dispatch.
+  # behaviour runs in CI. They are an expensive gate: they run on main
+  # pushes, on workflow_dispatch (the RC freeze path), and on PRs carrying
+  # the `native-build` label — not on every release-* merge (Issue #167;
+  # release-* previously relied on this trigger per Issue #61, which the
+  # freeze-time dispatch now covers).
   operation-worker-windows:
     if: |
       github.event_name == 'workflow_dispatch' ||
-      (github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release-'))) ||
+      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
       (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'native-build'))
     runs-on: windows-latest
+    timeout-minutes: 45
 
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -324,9 +352,10 @@ jobs:
   operation-worker-macos:
     if: |
       github.event_name == 'workflow_dispatch' ||
-      (github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release-'))) ||
+      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
       (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'native-build'))
     runs-on: macos-latest
+    timeout-minutes: 45
 
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
