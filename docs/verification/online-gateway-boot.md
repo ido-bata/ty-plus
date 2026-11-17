@@ -24,7 +24,7 @@
 3. 期待：**「No online catalog.」と 0 件表示**（修正前は fixture の `createFixtureCloudGateway()` が暗黙で適用され、Notifications 側に `Welcome to ty-plus` / `Update available` / `Maintenance notice` の fixture が並ぶ）。
 4. Debug Console に `[ty-plus] cloud gateway unavailable, falling back to fixture:` の warn が出る（修正前はここで silent 化していた）。
 
-修正前は `bun run verify:online-gateway:package` は「[PASS]」を出し、検証ログには痕跡が残らない。これは「テストが green なのに fixture に落ちる」状態である。修正後は smoke test が `worker-composition-failed` 等の理由を console.error に上げ、Debug Console と UI の両方で可視化する。
+修正前は `bun run verify:operation-worker:package` は「[PASS]」を出し、検証ログには痕跡が残らない。これは「テストが green なのに fixture に落ちる」状態である。修正後は smoke test が `worker-composition-failed` 等の理由を console.error に上げ、Debug Console と UI の両方で可視化する。
 
 ## 4. ローカル再現手順（修正後）
 
@@ -73,7 +73,7 @@ vitest の storybook browser プロジェクトが WSL で失敗する場合は 
 
 ```bash
 bun run build               # bun run build:cep + extendscript host を経由
-bun run verify:online-gateway:package
+bun run verify:operation-worker:package
 ```
 
 期待出力：
@@ -94,7 +94,7 @@ Online gateway package smoke test (Issue #128)
 - `[FAIL] trust-mode-manifest: manifest has no "trust" block but build is "release"` — release build が trust metadata を含めていない
 - `[FAIL] binary-sha256-matches-manifest: manifest sha256 does not match the binary on disk` — Rust build と bun run build の組合せ不整合
 
-スクリプトは `.tmp/online-gateway-package.json` を生成する。CI でアーティファクトとして保持できる。
+スクリプトは `.tmp/operation-worker-package.json` を生成する。CI でアーティファクトとして保持できる。
 
 ### 5.3 lint / typecheck / build / es3 / bundle-size / coverage
 

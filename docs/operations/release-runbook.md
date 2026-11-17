@@ -29,7 +29,7 @@
 bun install --frozen-lockfile --ignore-scripts
 bunx panda codegen --silent && bunx panda cssgen --silent
 bun run build:cep:dev
-bun run verify:online-gateway:package -- --trust-mode=development-unsigned --product-version=<version>
+bun run verify:operation-worker:package -- --trust-mode=development-unsigned --product-version=<version>
 bun run scripts/package/package-cep-archive.ts zip
 bun scripts/package/release-manifest.ts --trust-mode=development-unsigned --artifact=dist/app.ty-plus.zip
 ```

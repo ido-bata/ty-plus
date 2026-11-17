@@ -59,7 +59,6 @@
 		"failed": "실패",
 		"ready": "준비됨",
 		"offline": "오프라인",
-		"online": "온라인",
 		"syncing": "동기화 중...",
 		"synced": "동기화됨"
 	},

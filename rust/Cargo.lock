@@ -2322,18 +2322,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "ty-plus-online"
-version = "0.1.0"
-dependencies = [
- "chrono",
- "reqwest",
- "serde",
- "serde_json",
- "sha2",
- "url",
-]
-
-[[package]]
 name = "ty-plus-operation-worker"
 version = "0.1.0"
 dependencies = [
@@ -2342,7 +2330,6 @@ dependencies = [
  "serde_json",
  "sha2",
  "ty-plus-host-filesystem",
- "ty-plus-online",
  "ty-plus-protocol",
  "ty-plus-storage",
  "url",
@@ -2371,7 +2358,6 @@ dependencies = [
  "tokio-native-tls",
  "tokio-stream",
  "ty-plus-host-filesystem",
- "ty-plus-online",
  "ty-plus-protocol",
  "ty-plus-storage",
  "windows-sys 0.61.2",

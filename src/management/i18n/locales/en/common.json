@@ -59,7 +59,6 @@
 		"failed": "Failed",
 		"ready": "Ready",
 		"offline": "Offline",
-		"online": "Online",
 		"syncing": "Syncing...",
 		"synced": "Synced"
 	},

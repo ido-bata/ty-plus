@@ -78,8 +78,6 @@ const PATTERNS: readonly RegExp[] = [
 	attr("data-catalog-preset-type"),
 
 	// Preset gallery / cards / tiles.
-	attr("data-preset-gallery"),
-	attr("data-preset-cards"),
 	attr("data-preset-tool-surface"),
 	attr("data-preset-id"),
 

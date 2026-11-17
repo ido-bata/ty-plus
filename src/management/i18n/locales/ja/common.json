@@ -59,7 +59,6 @@
 		"failed": "失敗",
 		"ready": "準備完了",
 		"offline": "オフライン",
-		"online": "オンライン",
 		"syncing": "同期中...",
 		"synced": "同期済み"
 	},

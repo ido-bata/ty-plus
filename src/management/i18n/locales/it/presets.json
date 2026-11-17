@@ -49,10 +49,6 @@
 		"placeholder": "Scrivi per cercare...",
 		"empty": "Nessuna preimpostazione trovata"
 	},
-	"online": {
-		"loading": "Caricamento...",
-		"empty": "Nessuna preimpostazione online disponibile"
-	},
 	"presetTool": {
 		"form": {
 			"presetId": "ID Preimpostazione",

@@ -29,7 +29,7 @@ See [workspace-class-hooks-check.md](./workspace-class-hooks-check.md) for integ
   `buildDevelopmentWorker()` だけで、従来は `build:cep:dev` の中身にしか存在しなかった
   （Issue #191）。ゲートが要求する成果物をゲート自身が作る。
 - Windows / macOS では artifact を build する。その他の host では
-  **理由付きで skip** を記録する — `verify:online-gateway:package` の
+  **理由付きで skip** を記録する — `verify:operation-worker:package` の
   host-artifact probe が同じ条件で SKIP を記録し、
   `check:rust-workspace` も host-independent crate のみを走らせるため。
   silent な skip は既有の欠陥クラス（#175 / #179）と同じなので禁止。

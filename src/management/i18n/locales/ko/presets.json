@@ -49,10 +49,6 @@
 		"placeholder": "입력하여 검색...",
 		"empty": "프리셋을 찾을 수 없습니다"
 	},
-	"online": {
-		"loading": "로드 중...",
-		"empty": "온라인 프리셋이 없습니다"
-	},
 	"presetTool": {
 		"form": {
 			"presetId": "프리셋 ID",

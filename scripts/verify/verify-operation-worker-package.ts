@@ -19,10 +19,10 @@
  *
  * Usage:
  *
- *   bun run scripts/verify/verify-online-gateway-package.ts
- *   bun run scripts/verify/verify-online-gateway-package.ts --cep-root=dist/cep-dev
- *   bun run scripts/verify/verify-online-gateway-package.ts --product-version=0.10.0
- *   bun run scripts/verify/verify-online-gateway-package.ts --static
+ *   bun run scripts/verify/verify-operation-worker-package.ts
+ *   bun run scripts/verify/verify-operation-worker-package.ts --cep-root=dist/cep-dev
+ *   bun run scripts/verify/verify-operation-worker-package.ts --product-version=0.10.0
+ *   bun run scripts/verify/verify-operation-worker-package.ts --static
  *
  * `--product-version` is the *expected* version and must be supplied by the
  * caller. The script deliberately does not fall back to `package.json`:
@@ -46,7 +46,7 @@
  * and printed as `SKIP`, never as a pass.
  *
  * The script exits with code 0 when every probe succeeds and writes
- * `.tmp/online-gateway-package.json` as an evidence record.
+ * `.tmp/operation-worker-package.json` as an evidence record.
  */
 
 import { createHash } from "node:crypto";
@@ -95,7 +95,7 @@ export interface SmokeTestOptions {
 	readonly evidencePath?: string;
 }
 
-export const EVIDENCE_PATH = path.resolve(".tmp/online-gateway-package.json");
+export const EVIDENCE_PATH = path.resolve(".tmp/operation-worker-package.json");
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
 	typeof value === "object" && value !== null && !Array.isArray(value);
@@ -560,7 +560,7 @@ const main = async (): Promise<number> => {
 		printReport(report, EVIDENCE_PATH);
 		return report.ok ? 0 : 2;
 	} catch (err) {
-		console.error("[verify-online-gateway-package] crashed:", err);
+		console.error("[verify-operation-worker-package] crashed:", err);
 		return 2;
 	}
 };

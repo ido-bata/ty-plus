@@ -59,7 +59,6 @@
 		"failed": "失败",
 		"ready": "就绪",
 		"offline": "离线",
-		"online": "在线",
 		"syncing": "同步中...",
 		"synced": "已同步"
 	},

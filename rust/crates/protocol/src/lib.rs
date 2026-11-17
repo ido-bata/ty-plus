@@ -26,11 +26,9 @@ pub use limits::{
 };
 pub use message::{
     AcceptedEvent, BatchThumbnailRequest, BatchThumbnailResponse, BatchThumbnailResult,
-    ConnectivityStatusDto, EventEnvelope, EventPayload, GenerateThumbnailRequest,
-    GenerateThumbnailResponse, LookupOrGenerateThumbnailRequest, LookupOrGenerateThumbnailResponse,
-    LookupThumbnailRequest, LookupThumbnailResponse, OnlineCacheWriteRequest, OnlineCatalogQuery,
-    OnlineCatalogSearchItem, OnlineCatalogSearchResult, OnlineDownloadRequest,
-    OnlineSignedDownload, RequestEnvelope, ResponseEnvelope, ResponseOutcome, Warning,
+    EventEnvelope, EventPayload, GenerateThumbnailRequest, GenerateThumbnailResponse,
+    LookupOrGenerateThumbnailRequest, LookupOrGenerateThumbnailResponse, LookupThumbnailRequest,
+    LookupThumbnailResponse, RequestEnvelope, ResponseEnvelope, ResponseOutcome, Warning,
     WireDecodeError, WireMessage,
 };
 pub use metadata::{

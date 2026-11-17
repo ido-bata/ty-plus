@@ -86,7 +86,7 @@ describe("operation worker correlation (Issue #158)", () => {
 				activeCount?: number;
 				elapsedMs?: number;
 			};
-			expect(context.operation).toBe("online_catalog_search");
+			expect(context.operation).toBe("host_plugin_effect_scan");
 			expect(context.attempt).toBe(1);
 			expect(typeof context.queueDepth).toBe("number");
 			expect(context.activeCount).toBeLessThanOrEqual(4);
@@ -191,7 +191,7 @@ describe("operation worker correlation (Issue #158)", () => {
 			}),
 		});
 
-		// `online_catalog_search` is idempotent, so a plain Error (not an
+		// `host_plugin_effect_scan` is idempotent, so a plain Error (not an
 		// `OperationWorkerAttemptError`) is terminal — no retry.
 		await expect(scheduler.enqueue(invocationFactory(seen))).rejects.toThrow(
 			"child crashed before the handshake",
@@ -223,7 +223,7 @@ describe("operation worker correlation (Issue #158)", () => {
 		// Logged after the push and before `pump()`, so the queue already
 		// holds this job while `active` still reflects the previous pump.
 		expect(enqueued[0]?.context).toMatchObject({
-			operation: "online_catalog_search",
+			operation: "host_plugin_effect_scan",
 			queueDepth: 1,
 			activeCount: 0,
 		});

@@ -49,10 +49,6 @@
 		"placeholder": "Tippen zum Suchen…",
 		"empty": "Keine Voreinstellungen gefunden"
 	},
-	"online": {
-		"loading": "Wird geladen…",
-		"empty": "Keine Online-Voreinstellungen verfügbar"
-	},
 	"presetTool": {
 		"form": {
 			"presetId": "Preset-ID",

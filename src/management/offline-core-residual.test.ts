@@ -128,3 +128,73 @@ describe("dead cloud-sync code stays removed (issue 170)", () => {
 		expect(presetUseCasesSource).not.toMatch(/\b_syncPresets\b/);
 	});
 });
+
+describe("unprovided online wire/Rust structure stays removed (issue 193)", () => {
+	const repoRoot = srcRoot;
+	const rustRoot = path.join(repoRoot, "rust");
+
+	const collectRustFiles = (dir: string): string[] => {
+		const out: string[] = [];
+		for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+			const full = path.join(dir, entry.name);
+			if (entry.isDirectory()) {
+				if (entry.name === "target") continue;
+				out.push(...collectRustFiles(full));
+			} else if (/\.(rs|toml)$/.test(entry.name)) {
+				out.push(full);
+			}
+		}
+		return out;
+	};
+
+	it("the online crate and its workspace wiring are gone", () => {
+		expect(fs.existsSync(path.join(rustRoot, "crates", "online"))).toBe(false);
+		const workspaceManifest = fs.readFileSync(
+			path.join(rustRoot, "Cargo.toml"),
+			"utf8",
+		);
+		expect(workspaceManifest).not.toMatch(/crates\/online|ty-plus-online/);
+		for (const manifest of [
+			"apps/runtime/Cargo.toml",
+			"apps/operation-worker/Cargo.toml",
+		]) {
+			const text = fs.readFileSync(path.join(rustRoot, manifest), "utf8");
+			expect(text, manifest).not.toMatch(/ty-plus-online|ty_plus_online/);
+		}
+	});
+
+	it("no Rust source references the removed online dispatch surface", () => {
+		const offenders: string[] = [];
+		for (const file of collectRustFiles(rustRoot)) {
+			const text = fs.readFileSync(file, "utf8");
+			if (
+				/ty_plus_online|OnlineBoundary|online_dispatch|OnlineComposition|OnlineCatalog|OnlineDownload|OnlineConnectivity/.test(
+					text,
+				)
+			) {
+				offenders.push(path.relative(repoRoot, file));
+			}
+		}
+		expect(offenders).toEqual([]);
+	});
+
+	it("the generated wire contract carries no online.* canonical methods", () => {
+		const schema = JSON.parse(
+			fs.readFileSync(
+				path.join(
+					rustRoot,
+					"crates",
+					"protocol",
+					"generated",
+					"wire.schema.json",
+				),
+				"utf8",
+			),
+		) as { canonicalMethods?: unknown };
+		const methods = schema.canonicalMethods;
+		expect(Array.isArray(methods)).toBe(true);
+		for (const method of methods as string[]) {
+			expect(method, method).not.toMatch(/^online\./);
+		}
+	});
+});

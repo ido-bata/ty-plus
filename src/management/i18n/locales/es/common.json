@@ -59,7 +59,6 @@
 		"failed": "Fallido",
 		"ready": "Listo",
 		"offline": "Sin conexión",
-		"online": "En línea",
 		"syncing": "Sincronizando...",
 		"synced": "Sincronizado"
 	},

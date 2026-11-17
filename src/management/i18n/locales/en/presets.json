@@ -49,10 +49,6 @@
 		"placeholder": "Type to search...",
 		"empty": "No presets found"
 	},
-	"online": {
-		"loading": "Loading...",
-		"empty": "No online presets available"
-	},
 	"presetTool": {
 		"form": {
 			"presetId": "Preset ID",

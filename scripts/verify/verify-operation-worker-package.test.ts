@@ -14,10 +14,10 @@ import {
 	runSmokeTest,
 	type SmokeTestOptions,
 	type SmokeTestReport,
-} from "./verify-online-gateway-package";
+} from "./verify-operation-worker-package";
 
 /**
- * Contract for the online-gateway package smoke test.
+ * Contract for the operation-worker package smoke test.
  *
  * Each case builds a synthetic CEP root on disk and asserts on the probe
  * report, so the probe behaviour is exercised against real files rather than

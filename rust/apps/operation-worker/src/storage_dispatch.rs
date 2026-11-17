@@ -66,45 +66,15 @@ impl StorageBoundary {
         self.lock.managed_root()
     }
 
-    /// Recovers journals for a directory that the current operation is about
-    /// to touch, using the already-held root lock.
-    pub(crate) fn recover_directory(&self, directory: &str) -> Result<(), StorageError> {
-        let directory =
-            ty_plus_storage::RegisteredPath::new(directory).map_err(StorageError::Path)?;
-        ty_plus_storage::Transaction::recover(&self.lock, directory)
-            .map(|_| ())
-            .map_err(StorageError::Recovery)
-    }
-
     /// Recovers the transaction journal for every worker-owned mutating
     /// operation before its adapter touches the managed tree.
     pub(crate) fn recover_for_operation(
         &self,
         method: &MethodName,
-        payload: &Value,
+        _payload: &Value,
     ) -> Result<(), StorageError> {
         match method.canonical() {
-            Some(
-                CanonicalMethod::OnlineCatalogSearch
-                | CanonicalMethod::OnlineCatalogCacheRead
-                | CanonicalMethod::OnlineCatalogCacheWrite
-                | CanonicalMethod::OnlineCatalogCacheDelete
-                | CanonicalMethod::OnlineCatalogCacheClear,
-            ) => self.recover_directory("cache/search"),
-            Some(CanonicalMethod::OnlineDownload) => {
-                if let Some(destination) = payload.get("destination").and_then(Value::as_str) {
-                    if let Ok(destination) = ty_plus_storage::RegisteredPath::new(destination) {
-                        if let Some(parent) = destination.as_path().parent() {
-                            if !parent.as_os_str().is_empty() {
-                                return self.recover_directory(&parent.to_string_lossy());
-                            }
-                        }
-                    }
-                }
-                Ok(())
-            }
             Some(CanonicalMethod::HostPluginEffectScan) => Ok(()),
-            Some(CanonicalMethod::OnlineConnectivityCheck) => Ok(()),
             Some(CanonicalMethod::UpdateInstall) => Ok(()),
             Some(CanonicalMethod::HostThumbnailLookup)
             | Some(CanonicalMethod::HostThumbnailGenerate)

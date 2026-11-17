@@ -44,7 +44,7 @@ bun run release:candidate --channel=stable --release-version=0.10.2
 
 - ZIPは `LICENSE` / `THIRD-PARTY-NOTICES.md` / `jsx/ty-plus-host.jsx` / `CSXS/manifest.xml`（`ExtensionBundleVersion="0.10.2"`）+ `windows/` workerのみを含む。macOS workerは含まない（`pruneUndeclaredWorkers` で宣言外のworker版を除去）
 - ZXPも当該platformのworkerのみを含む
-- `verify-online-gateway-package.ts` 全項目PASS（`trust-mode-manifest`: unsigned worker — R0 Windows shape）
+- `verify-operation-worker-package.ts` 全項目PASS（`trust-mode-manifest`: unsigned worker — R0 Windows shape）
 - 監査（`verify-release-artifacts.ts`）全項目PASS: `0.10.2 (stable), sourceCommit=78f95de2…, 2 artifact(s) hash-verified, secret scan clean`
 
 ## 3. macOS配布候補（完成 — Developer ID署名 / 未公証）

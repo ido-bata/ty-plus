@@ -53,7 +53,7 @@ export const invocationFactory = (
 	response: unknown = { ok: true },
 	methodName:
 		| keyof typeof canonicalOperationPolicies
-		| "fixture.operation" = "online_catalog_search",
+		| "fixture.operation" = "host_plugin_effect_scan",
 	value = "fixture",
 ): OperationInvocationFactory<{ value: string }, unknown> => {
 	const wireMethodName = canonicalWireMethodName(methodName) ?? methodName;
@@ -95,7 +95,7 @@ export const invocationFactory = (
 								cancellable: false,
 								deadline_unix_ms: 4_000_000_000,
 								...(identity.idempotencyKey === undefined ||
-								methodName === "online_download"
+								methodName === "update_install"
 									? {}
 									: { idempotency_key: identity.idempotencyKey }),
 							},

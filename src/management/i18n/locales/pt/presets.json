@@ -49,10 +49,6 @@
 		"placeholder": "Digite para pesquisar...",
 		"empty": "Nenhuma predefinição encontrada"
 	},
-	"online": {
-		"loading": "Carregando...",
-		"empty": "Nenhuma predefinição online disponível"
-	},
 	"presetTool": {
 		"form": {
 			"presetId": "ID da predefinição",

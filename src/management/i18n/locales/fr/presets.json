@@ -49,10 +49,6 @@
 		"placeholder": "Tapez pour rechercher…",
 		"empty": "Aucun préréglage trouvé"
 	},
-	"online": {
-		"loading": "Chargement…",
-		"empty": "Aucun préréglage en ligne disponible"
-	},
 	"presetTool": {
 		"form": {
 			"presetId": "ID du préréglage",

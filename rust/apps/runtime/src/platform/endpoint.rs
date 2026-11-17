@@ -121,11 +121,6 @@ pub mod endpoints {
         EndpointName::new("host-filesystem").expect("valid endpoint name")
     }
 
-    /// Online/network operations endpoint.
-    pub fn online() -> EndpointName {
-        EndpointName::new("online").expect("valid endpoint name")
-    }
-
     /// Licensing operations endpoint.
     pub fn licensing() -> EndpointName {
         EndpointName::new("licensing").expect("valid endpoint name")
@@ -142,7 +137,6 @@ mod tests {
             "runtime.health",
             "storage",
             "host-filesystem",
-            "online",
             "licensing",
             "my-endpoint",
             "my_endpoint",
@@ -215,7 +209,6 @@ mod tests {
         assert!(!endpoints::runtime_health().as_str().is_empty());
         assert!(!endpoints::storage().as_str().is_empty());
         assert!(!endpoints::host_filesystem().as_str().is_empty());
-        assert!(!endpoints::online().as_str().is_empty());
         assert!(!endpoints::licensing().as_str().is_empty());
     }
 }
