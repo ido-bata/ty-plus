@@ -232,6 +232,11 @@
 		"installDone": "Installiert. Starten Sie After Effects neu, um abzuschließen.",
 		"installPending": "Bereitgestellt. Wird beim nächsten Start von ty-plus angewendet.",
 		"installManual": "Automatische Installation ist hier nicht verfügbar. Bitte über die Download-Seite installieren.",
-		"installFailed": "Installation fehlgeschlagen. Erneut versuchen oder manuell installieren."
+		"installFailed": "Installation fehlgeschlagen. Erneut versuchen oder manuell installieren.",
+		"installFailedDownload": "Download fehlgeschlagen. Prüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
+		"installFailedIntegrity": "Die Integritätsprüfung der heruntergeladenen Datei ist fehlgeschlagen. Versuchen Sie es später erneut.",
+		"installFailedArchive": "Das heruntergeladene Update ist ungültig. Versuchen Sie es später erneut oder installieren Sie es manuell.",
+		"installFailedPermission": "Zugriff verweigert. Installieren Sie es manuell über die Download-Seite.",
+		"installFailedBusy": "Eine andere Installation läuft. Versuchen Sie es in Kürze erneut."
 	}
 }

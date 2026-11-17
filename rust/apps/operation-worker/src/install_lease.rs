@@ -70,13 +70,24 @@ pub fn acquire_exclusive(
     installation_root: &Path,
     deadline: Duration,
 ) -> Result<InstallLease, InstallLeaseError> {
-    let path = installation_lock_path(installation_root);
-    if let Some(parent) = path.parent() {
+    acquire_exclusive_file(&installation_lock_path(installation_root), deadline)
+}
+
+/// Exclusive lease on an explicit lock file. Used by `update.install`,
+/// which serializes swaps on a dedicated file (`update_swap_lease_path`)
+/// because the worker already holds the shared install lease for its whole
+/// lifetime: an exclusive request on the install-lease file would always
+/// contend with this process's own shared hold (Issue #169).
+pub fn acquire_exclusive_file(
+    lock_path: &Path,
+    deadline: Duration,
+) -> Result<InstallLease, InstallLeaseError> {
+    if let Some(parent) = lock_path.parent() {
         fs::create_dir_all(parent)?;
     }
     let end = Instant::now() + deadline;
     loop {
-        match platform::acquire(&path, false) {
+        match platform::acquire(lock_path, false) {
             Ok(raw) => return Ok(InstallLease { raw: Some(raw) }),
             Err(error) if Instant::now() < end => {
                 if !is_contention(&error) {
