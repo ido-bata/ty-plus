@@ -84,6 +84,8 @@
 		"knip:report": "cross-env NODE_OPTIONS=--max-old-space-size=28672 knip --no-exit-code --no-config-hints",
 		"ci": "bun run ci:static && bun run ci:unit && bun run ci:storybook && bun run ci:coverage",
 		"check:skills": "bun scripts/check/vendored-skills.ts",
+		"check:readme-locales": "bun scripts/check/check-readme-locales.ts",
+		"ci:pr": "bun run ci:static && bun run ci:unit && bun run ci:coverage && bun run check:readme-locales",
 		"ci:static": "cross-env NODE_OPTIONS=--max-old-space-size=28672 bun run lint && bun run build && bun run build:cep:worker && bun run verify:online-gateway:package && bun run check:debug-logger && bun run check:cep-artifacts && bun run check:es3 && cross-env TY_PLUS_PANEL_GZIP_MAX_BYTES=3500000 bun run check:bundle-size && bun run typecheck && bun run check:boundaries && bun run check:react-doctor && bun run check:rust && bun run knip && bun run check:skills",
 		"ci:unit": "cross-env NODE_OPTIONS=--max-old-space-size=28672 SKIP_OPERATION_WORKER_VERIFICATION=1 bun run vitest run --project=unit",
 		"ci:storybook": "cross-env NODE_OPTIONS=--max-old-space-size=28672 bun run vitest run --project=storybook",
