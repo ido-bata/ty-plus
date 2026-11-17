@@ -157,7 +157,8 @@ bun run release:candidate --channel=stable --release-version=0.10.3
 5. **公開後の更新feed実証** — 公開後に実施
 6. **Smart App Control 有効環境ではWindows版が起動しない**（未署名worker、ADR-0003で許容済み・周知事項）
 7. **#166 残件** — widget/workspace の interaction-state coverage は部分的。GridTile の PanelContext/renderDescriptor seam 未整備。pixel diff/reg-suit 未導入（report-only方針の判断記録は今後）
-8. **#71** — v0.10.3 build で UC-E01（settings dialog 経由の言語切替+reload永続化）PASS、panel reload で `Uncaught [object Event]` / renderer crash 再現せず。実機確認は実施済みだが、単独・複数ダイアログの網羅的確認は本人受入に残るためIssueはopenのまま
+8. **Skill正本のドリフト（記録のみ）** — vendored `release-channels` Skill（skills-lock: rebuildup/project-init v0.9.0）が ADR-0003 Amendment 1（macOS公証R0要件外）と runbook（`--target` は manifest `sourceCommit`）に未追従。vendored copyはhash lockのため本repoでは修正不可。project-init側の修正が必要
+9. **#71** — v0.10.3 build で UC-E01（settings dialog 経由の言語切替+reload永続化）PASS、panel reload で `Uncaught [object Event]` / renderer crash 再現せず。実機確認は実施済みだが、単独・複数ダイアログの網羅的確認は本人受入に残るためIssueはopenのまま
 
 ## 10. 公開までに必要な本人操作
 
