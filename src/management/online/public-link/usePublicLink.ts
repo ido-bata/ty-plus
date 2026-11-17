@@ -1,19 +1,26 @@
 /**
  * React hook for resolving documentation URLs by stable key.
  *
- * Reads the public-links cache synchronously on mount so the UI can open the
- * URL immediately, then refreshes from the Supabase gateway in the background
- * and writes the full cache back on success. Network errors are swallowed to
- * keep the offline path working.
+ * Offline-core contract (docs/architecture/offline-core.md): public links
+ * resolve only to build-time bundled URLs, so resolution goes through
+ * `resolveBundledPublicLink` and never touches the throwing data-services
+ * accessor — the cloud boot boundary that raises
+ * `GatewayBootRequiredError` before the gateway boots.
+ *
+ * Reads the persisted public-links cache on mount so the UI can open a
+ * previously resolved URL immediately, then resolves the bundled link and
+ * writes the cache back. Cache read/write failures are swallowed to keep the
+ * offline path working.
  */
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import type { PublicLink } from "@/management/online/contract";
-import { writePublicLinks } from "@/management/storage";
+import { resolveBundledPublicLink } from "@/management/online/public-link/bundled";
+import { readPublicLinks } from "@/management/storage/read/cache-store";
 import { resolveSettingsRoot } from "@/management/storage/workspace/store";
+import { writePublicLinks } from "@/management/storage/write/cache-store";
 import { openUrlInDefaultBrowser } from "@/management/workspace/hooks/helpers";
-import { getDataServices } from "@/management/workspace/services";
 
 type PublicLinkStatus = "idle" | "loading" | "ready" | "error";
 
@@ -37,8 +44,28 @@ const isSafePublicLinkUrl = (value: string): boolean => {
 };
 
 const readCacheEntry = async (key: string): Promise<PublicLink | undefined> => {
-	const link = verifiedLinks.get(key);
-	return link && isSafePublicLinkUrl(link.url) ? link : undefined;
+	const memory = verifiedLinks.get(key);
+	if (memory && isSafePublicLinkUrl(memory.url)) {
+		return memory;
+	}
+	try {
+		const cache = await readPublicLinks(window);
+		const entry = cache?.links[key];
+		if (!entry || !isSafePublicLinkUrl(entry.url)) {
+			return undefined;
+		}
+		const link: PublicLink = {
+			key,
+			url: entry.url,
+			label: entry.label,
+			updatedAt: entry.updatedAt,
+		};
+		verifiedLinks.set(key, link);
+		return link;
+	} catch {
+		// An unreadable cache file is not fatal — the bundled link still resolves.
+		return undefined;
+	}
 };
 
 const writeCacheEntry = async (link: PublicLink): Promise<void> => {
@@ -70,15 +97,9 @@ export function usePublicLink(key: string): UsePublicLinkResult {
 			setError("support_root_unresolved");
 			return;
 		}
-		const gateway = getDataServices().gateway;
-		if (!gateway.getPublicLink) {
-			setStatus("error");
-			setError("gateway_unavailable");
-			return;
-		}
 		setStatus("loading");
 		try {
-			const link = await gateway.getPublicLink(key);
+			const link = resolveBundledPublicLink(key);
 			if (!isSafePublicLinkUrl(link.url)) {
 				throw new Error("unsupported_public_link_url");
 			}

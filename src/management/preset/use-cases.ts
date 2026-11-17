@@ -3,13 +3,9 @@
  * Exposes explicit preset operations while hiding repository plumbing.
  */
 
-import type { SyncStatus } from "@/management/online/contract";
 import type { Preset } from "@/management/preset/contract";
 import { getLocalPresetCatalog } from "@/management/preset/repository/local-catalog";
-import {
-	getDataServices,
-	tryGetDataServices,
-} from "@/management/workspace/services";
+import { tryGetDataServices } from "@/management/workspace/services";
 
 export type { Preset };
 
@@ -120,13 +116,4 @@ export const duplicatePreset = async (
 	};
 	await upsertLocalPreset(duplicate);
 	return duplicate;
-};
-
-/**
- * Sync presets with cloud (returns sync status).
- */
-const _syncPresets = async (): Promise<SyncStatus> => {
-	const { cloudSync } = getDataServices();
-	const result = await cloudSync.syncPresets();
-	return result.status;
 };

@@ -6,6 +6,7 @@ import type {
 	PresetSearchParams,
 	TyPlusHealthResponse,
 } from "@/management/online/contract";
+import { resolveBundledPublicLink } from "@/management/online/public-link/bundled";
 import {
 	CatalogSearchMethod,
 	type CatalogSearchRequestDTO,
@@ -41,9 +42,6 @@ import type { Preset } from "@/management/preset/contract";
 
 export const FALLBACK_RECORDS: Preset[] = [];
 
-const USER_MANUAL_DOCS_URL =
-	"https://github.com/ido-bata/ty-plus/blob/main/docs/user-guide/index.md";
-
 const FALLBACK_NOTIFICATIONS: NotificationSummary[] = [
 	{
 		notificationId: "msg-1",
@@ -69,17 +67,6 @@ const FALLBACK_NOTIFICATIONS: NotificationSummary[] = [
 		publishedAt: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
 	},
 ];
-
-const getBundledPublicLink = (key: string) => {
-	if (key === "user-manual") {
-		return {
-			key,
-			url: USER_MANUAL_DOCS_URL,
-			label: "User Manual",
-		};
-	}
-	throw new Error(`Unknown public link: ${key}`);
-};
 
 const toCatalogSearchRequest = (
 	params: PresetSearchParams,
@@ -142,7 +129,7 @@ export const createFixtureCloudGateway = (): CloudGateway => ({
 		return [];
 	},
 	async getPublicLink(key) {
-		return getBundledPublicLink(key);
+		return resolveBundledPublicLink(key);
 	},
 	async resolvePreset(presetId) {
 		throw new Error(`Unknown preset: ${presetId}`);
@@ -187,7 +174,7 @@ export const createRuntimeCloudGateway = (
 		};
 	},
 	async getPublicLink(key) {
-		return getBundledPublicLink(key);
+		return resolveBundledPublicLink(key);
 	},
 	async resolvePreset(presetId) {
 		throw new Error(

@@ -40,7 +40,7 @@ import {
 import type { GatewayBootFailureReason } from "@/management/panel/cloud-gateway-boot";
 import { openUrlInDefaultBrowser } from "@/management/workspace/hooks/helpers";
 import { notifyPanelsAfterPresetSave } from "@/management/workspace/placement/notify-panels-after-preset-save";
-import { getDataServices } from "@/management/workspace/services";
+import { tryGetDataServices } from "@/management/workspace/services";
 import { Button } from "@/shared/component/controls/Button";
 import { IconButton } from "@/shared/component/controls/IconButton";
 import { SearchField } from "@/shared/component/fields/SearchField";
@@ -1373,7 +1373,11 @@ export function PresetLibrary(): JSX.Element {
 	useEffect(() => {
 		if (catalog.length === 0) return;
 		const checkDownloaded = async () => {
-			const { presetRepository } = getDataServices();
+			// tryGetDataServices returns null while the gateway has not booted
+			// (Issue #170); there is simply nothing downloaded to mark then.
+			const services = tryGetDataServices();
+			if (!services) return;
+			const { presetRepository } = services;
 			const locals = presetRepository.listLocalPresets();
 			const downloadedSources = new Set(
 				locals

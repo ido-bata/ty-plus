@@ -677,3 +677,49 @@ describe("buildWorkspaceContextMenuPayload (directory-browser zone, Issue #141)"
 		expect(ids).toContain(CTX_MENU_IDS.deleteWorkspaceWidget);
 	});
 });
+
+describe("buildWorkspaceContextMenuPayload (menu widget, Issue #170)", () => {
+	const baseState: Pick<
+		SurfaceState,
+		| "layoutLocked"
+		| "presets"
+		| "surfaceTiles"
+		| "selectedSurfaceIndices"
+		| "presetSelectedIds"
+		| "presetHoverId"
+		| "panelPresetIds"
+		| "panelId"
+		| "openedGroupPresetId"
+		| "groupCatalogEntries"
+		| "widgetInstanceTypes"
+	> = {
+		layoutLocked: false,
+		presets: [],
+		surfaceTiles: [{ id: "widget-menu", x: 0, y: 0, width: 1, height: 1 }],
+		selectedSurfaceIndices: [],
+		presetSelectedIds: [],
+		presetHoverId: null,
+		panelPresetIds: [],
+		panelId: "panel-1",
+		openedGroupPresetId: null,
+		groupCatalogEntries: [],
+		widgetInstanceTypes: { "widget-menu": "menu" },
+	};
+
+	it("does not offer the dormant Preset Library dialog", () => {
+		const payload = buildWorkspaceContextMenuPayload(
+			{ zone: "workspace-placement", id: "0" },
+			baseState,
+			{ canUndo: false, canRedo: false },
+			{ isCep: true, hostCode: "AEFT" },
+		);
+		const ids = payload.menu.map((entry) => entry.id);
+		// R0 has no catalog backend, so the entry was a dead affordance.
+		expect(ids).not.toContain(CTX_MENU_IDS.openPresetLibrary);
+		// The offline-capable dialog entries stay.
+		expect(ids).toContain(CTX_MENU_IDS.openPresets);
+		expect(ids).toContain(CTX_MENU_IDS.openMessages);
+		expect(ids).toContain(CTX_MENU_IDS.openSettings);
+		expect(ids).toContain(CTX_MENU_IDS.openDebug);
+	});
+});

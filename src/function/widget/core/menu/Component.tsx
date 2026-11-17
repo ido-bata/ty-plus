@@ -317,10 +317,8 @@ export function MenuWidget({
 	];
 	const dialogItems: Item[] = [
 		{ action: CTX_MENU_IDS.openPresets, label: t("presets:search.title") },
-		{
-			action: CTX_MENU_IDS.openPresetLibrary,
-			label: t("presets:presetTool.presetLibrary"),
-		},
+		// Preset Library is intentionally absent (Issue #170): the online
+		// catalog has no R0 backend, so the entry was a dead affordance.
 		{
 			action: CTX_MENU_IDS.openMessages,
 			label: t("presets:presetTool.messages"),
