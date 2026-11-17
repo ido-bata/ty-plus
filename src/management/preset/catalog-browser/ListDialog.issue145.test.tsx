@@ -198,9 +198,7 @@ vi.mock("@/management/preset/registry", () => ({
 	getPresetToolDialogEntry: vi.fn(),
 }));
 
-vi.mock("@/management/preset/authoring/request", () => ({
-	resolvePresetToolSurfaceIdForPreset: vi.fn(() => "tool"),
-}));
+vi.mock("@/management/preset/authoring/request", () => ({}));
 
 vi.mock("@/management/preset/execution/lifecycle-trace", () => ({
 	traceExecute: vi.fn((_preset: unknown, _where: string, run: () => unknown) =>

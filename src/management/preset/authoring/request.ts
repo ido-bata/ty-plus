@@ -45,7 +45,3 @@ export const createPresetFromFile = (input: {
 		...(input.data ? { data: input.data } : {}),
 	};
 };
-
-const resolveToolSurfaceId = (_preset: Preset): string => "dialog-preset-add";
-
-export { resolveToolSurfaceId as resolvePresetToolSurfaceIdForPreset };

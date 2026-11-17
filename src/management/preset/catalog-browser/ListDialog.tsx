@@ -29,7 +29,6 @@ import { registerCepJsonContextMenuSurface } from "@/management/dialog/dialogs/c
 import type { ShellProps } from "@/management/dialog/dialogs/shell/Layout";
 import { useDialogClose } from "@/management/dialog/useClose";
 import { useGatewayHealth } from "@/management/online/runtime-gateway-health";
-import { resolvePresetToolSurfaceIdForPreset } from "@/management/preset/authoring/request";
 import {
 	ICON_CELL_BASE_REM,
 	ICON_GRID_CLASS,
@@ -47,7 +46,6 @@ import { traceExecute } from "@/management/preset/execution/lifecycle-trace";
 import type { GroupEntry } from "@/management/preset/group-catalog";
 import { parseGroupFromText } from "@/management/preset/group-catalog";
 import { tryParsePresetIconValue } from "@/management/preset/icon-data";
-import { getPresetToolDialogEntry } from "@/management/preset/registry";
 import {
 	getPreset,
 	listPresets,
@@ -1747,10 +1745,7 @@ export function PresetsDialog(): JSX.Element {
 				if (!preset) {
 					return;
 				}
-				const toolSurface = resolvePresetToolSurfaceIdForPreset(preset);
-				if (!getPresetToolDialogEntry(toolSurface)) {
-					return;
-				}
+				await openPresetEditSurface(window, PRESETS_DIALOG_SURFACE_ID, id);
 			} catch (error) {
 				console.warn(
 					"preset-list: edit failed",

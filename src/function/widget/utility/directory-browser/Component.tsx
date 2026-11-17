@@ -19,7 +19,6 @@ import {
 	useState,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { resolveEffectMatchName } from "@/management/storage/candidates-cache/plugin-match-name";
 import { useCep } from "@/management/ae/cep/contexts/Context";
 import { selectFolder } from "@/management/ae/cep/dialog-shim/bolt";
 import { createCepHostExecutor } from "@/management/ae/cep/host-executor";
@@ -64,7 +63,6 @@ import {
 	useIsPresetAssetUnverifiable,
 } from "@/management/preset/use-preset-asset-health";
 import { readSettings } from "@/management/storage";
-import { getCandidatesSnapshot } from "@/management/storage/candidates-cache/runtime";
 import {
 	canUseCepNodeFileBrowser,
 	createCepNodeFileBrowserService,
@@ -75,6 +73,7 @@ import {
 	DirectoryBrowser,
 	type DirectoryBrowserEntry,
 } from "@/management/storage/ui/DirectoryBrowser";
+import { importFile as runWorkspaceFileImport } from "@/management/workspace/hooks/host-exec";
 import { executeWorkspacePresetForWindow } from "@/management/workspace/runtime";
 import type { SurfaceState } from "@/management/workspace/state";
 import { CollapsibleGroupHeader } from "./CollapsibleGroupHeader";
@@ -872,35 +871,13 @@ export function DirectoryBrowserWidget({
 			hostCode === "AEFT"
 				? createCepHostExecutor(window, "after-effects")
 				: null;
-		if (hostCode !== "AEFT" || !hostExecutorForAlign) {
-			throw new Error(
-				"File import is currently available only in After Effects.",
-			);
-		}
-		const lowerPath = filePath.toLowerCase();
-		const fileName = filePath.split(/[\\/]/).pop() ?? filePath;
-		if (lowerPath.endsWith(".jsx") || lowerPath.endsWith(".jsxbin")) {
-			await hostExecutorForAlign("runScriptFile", [filePath]);
-			return `Ran script: ${fileName}`;
-		}
-		if (lowerPath.endsWith(".ffx")) {
-			await hostExecutorForAlign("applyPreset", [filePath]);
-			return `Applied preset: ${fileName}`;
-		}
-		if (lowerPath.endsWith(".aex") || lowerPath.endsWith(".plugin")) {
-			// Look up the catalog matchName from the candidates cache. The
-			// filename stem is NOT a reliable matchName — After Effects stores
-			// matchName in the plugin's PICA resource, not the filename.
-			const snapshot = getCandidatesSnapshot();
-			const matchName = resolveEffectMatchName(
-				filePath,
-				snapshot?.pluginEffects ?? [],
-			);
-			await hostExecutorForAlign("applyEffectByMatchName", [matchName]);
-			return `Applied effect: ${fileName}`;
-		}
-		await hostExecutorForAlign("addFootage", [{ filePath, toComp: true }]);
-		return `Imported footage: ${fileName}`;
+		return runWorkspaceFileImport(
+			filePath,
+			hostCode,
+			hostExecutorForAlign as
+				| ((method: string, args: unknown[]) => Promise<{ value?: unknown }>)
+				| null,
+		);
 	}, []);
 
 	const handleImportFile = useCallback(
