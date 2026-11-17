@@ -20,9 +20,11 @@ import { isDefaultPresetIcon } from "@/management/preset/icon-data";
 import { imageSrcForBrowser } from "@/management/preset/image-src-for-browser";
 import {
 	findSiblingImagePathForPresetFile,
+	isPresetSidekickSourcePath,
 	type SiblingListingEntry,
 	siblingThumbnailEntryFor,
 } from "@/management/preset/sibling-thumbnail";
+import { CanvasEasingIcon } from "@/management/preset/workspace/CanvasEasingIcon";
 import { cx } from "@/shared/util/cx";
 import { css } from "@/styled-system/css";
 import type { DirectoryBrowserEntry } from "./DirectoryBrowser";
@@ -103,7 +105,7 @@ export function EntryIcon({
 	// Sidecar sibling lookup runs before the early returns so the
 	// `useThumbnail` hook below is called unconditionally (rules of hooks).
 	const sidekickPath =
-		!entry.isDirectory && allEntries
+		!entry.isDirectory && allEntries && isPresetSidekickSourcePath(entry.path)
 			? findSiblingImagePathForPresetFile(entry.path, allEntries)
 			: null;
 	const sidekickEntry = useMemo(
@@ -269,19 +271,55 @@ function renderPresetIcon(
 	if (icon.type === "image") {
 		const src = icon.param.src.trim();
 		if (!src) return null;
+		return <EntryPresetIconImage src={src} size={size} fill={fill} />;
+	}
+	if (icon.type === "canvas" && icon.param.cubic) {
 		return (
 			<IconFrame size={size} fill={fill}>
-				<img
-					src={src}
-					alt=""
-					decoding="async"
-					draggable={false}
-					className={coverImageClass}
+				<CanvasEasingIcon
+					cubic={icon.param.cubic}
+					points={icon.param.points}
+					color={icon.param.color ?? "currentColor"}
 				/>
 			</IconFrame>
 		);
 	}
 	return null;
+}
+
+/**
+ * Renders a persisted image icon through the thumbnail pipeline
+ * (Rust WebP cache + gateway) — the same route sidecar images take.
+ * There is intentionally no raw `file://`/path `<img>` fallback: when
+ * the pipeline has no resolved URL the caller falls through to the
+ * next icon priority (issue #191).
+ */
+function EntryPresetIconImage({
+	src,
+	size,
+	fill,
+}: {
+	src: string;
+	size: number;
+	fill?: boolean;
+}): JSX.Element | null {
+	const thumbEntry = useMemo(() => siblingThumbnailEntryFor(src), [src]);
+	const thumb = useThumbnail(thumbEntry);
+	const url = thumb.staticUrl;
+	if (!url) {
+		return null;
+	}
+	return (
+		<IconFrame size={size} fill={fill}>
+			<img
+				src={url}
+				alt=""
+				decoding="async"
+				draggable={false}
+				className={coverImageClass}
+			/>
+		</IconFrame>
+	);
 }
 
 export function MediaCardContent({

@@ -1,6 +1,4 @@
-import { Wand2 } from "lucide-react";
 import {
-	type CSSProperties,
 	type JSX,
 	useCallback,
 	useEffect,
@@ -9,42 +7,8 @@ import {
 	useRef,
 	useState,
 } from "react";
-import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 import type { Preset, PresetType } from "@/management/preset/contract";
-import {
-	usePresetSiblingImageSrc,
-	WorkspacePresetGlyph,
-} from "@/management/preset/workspace/glyph";
-import type {
-	GridSettings,
-	Layout,
-} from "@/management/workspace/layout/grid-document";
-import { ATTR_WIDGET_INSTANCE_ID } from "@/management/workspace/placement/types";
-import type { SurfaceState } from "@/management/workspace/state";
-import { isIMEComposing } from "@/shared/util/keyboard";
-
-type PluginEffectIndexRow = {
-	filePath: string;
-	matchName: string;
-	displayName: string;
-};
-
-type QuickActionRootSourceKind = "preset" | "script" | "plugin";
-
-type QuickActionRootFileRow = {
-	id: string;
-	type: PresetType;
-	title: string;
-	filePath: string;
-	description?: string;
-	descriptionImage?: string;
-	icon?: Preset["icon"];
-	siblingImagePath?: string | null;
-	data?: Record<string, unknown>;
-};
-
-import type { SiblingListingEntry } from "@/management/preset/sibling-thumbnail";
 import {
 	getCandidatesSnapshot,
 	subscribeCandidatesSnapshot,
@@ -53,410 +17,33 @@ import {
 	canUseCepNodeFileBrowser,
 	createCepNodeFileBrowserService,
 } from "@/management/storage/file-browser-service";
+import type {
+	GridSettings,
+	Layout,
+} from "@/management/workspace/layout/grid-document";
+import { ATTR_WIDGET_INSTANCE_ID } from "@/management/workspace/placement/types";
+import type { SurfaceState } from "@/management/workspace/state";
 import { SearchIcon } from "@/management/workspace/surface/widget-grid-icons";
+import { isIMEComposing } from "@/shared/util/keyboard";
 import { css } from "@/styled-system/css";
 import { executeQuickActionPreset } from "./execute";
-
-const PRESET_TYPE_ORDER: PresetType[] = [
-	"preset",
-	"script",
-	"plugin",
-	"footage",
-];
-
-/** Sort key after catalog preset types (used for `.aex` effect rows). */
-const EFFECT_SORT_ORDER = 100;
-
-const rootFilePresetType = (row: QuickActionRootFileRow): PresetType =>
-	row.type === "script" || row.type === "plugin" ? row.type : "preset";
-
-const isGroupFolderRow = (p: Preset): boolean =>
-	Array.isArray((p.data as { presetIds?: unknown } | undefined)?.presetIds);
-
-function presetHaystack(p: Preset, typeLabel: string): string {
-	return `${p.title}\n${p.filePath}\n${p.type}\n${typeLabel}`.toLowerCase();
-}
-
-function effectHaystack(e: PluginEffectIndexRow): string {
-	return `${e.displayName}\n${e.matchName}\n${e.filePath}`.toLowerCase();
-}
-
-function fileHaystack(rf: QuickActionRootFileRow, anchorLabel: string): string {
-	return `${rf.title}\n${rf.filePath}\n${anchorLabel}`.toLowerCase();
-}
-
-function scoreHaystack(hay: string, q: string): number {
-	if (!q) return 1;
-	if (hay.includes(q)) return 2;
-	const parts = q.split(/\s+/).filter(Boolean);
-	if (parts.length === 0) return 1;
-	const hayTokens = new Set(hay.split(/\s+/).filter(Boolean));
-	let s = 0;
-	for (const w of parts) {
-		if (hayTokens.has(w)) s += 1;
-	}
-	return s;
-}
-
-type PaletteRow =
-	| { kind: "preset"; preset: Preset }
-	| { kind: "rootFile"; rootFile: QuickActionRootFileRow }
-	| { kind: "effect"; effect: PluginEffectIndexRow };
-
-type ScoredPaletteRow = PaletteRow & {
-	score: number;
-	typeOrder: number;
-};
-
-// ── Palette row sub-components ─────────────────────────────────────────────────
-
-const rowContainerBase = css({
-	borderBottomWidth: "1px",
-	borderBottomStyle: "solid",
-	borderColor: "border.default",
-	_last: { borderBottomWidth: 0 },
-});
-
-const rowButtonClass = css({
-	display: "flex",
-	width: "full",
-	cursor: "pointer",
-	alignItems: "stretch",
-	gap: "var(--ty-space-1-5)",
-	paddingInline: "var(--ty-space-1-5)",
-	paddingBlock: "var(--ty-space-1)",
-	textAlign: "left",
-	fontFamily: "inherit",
-	fontSize: "text-xs",
-	color: "text.primary",
-});
-
-const rowIconBoxClass = css({
-	display: "flex",
-	height: "9",
-	width: "9",
-	flexShrink: 0,
-	alignItems: "center",
-	justifyContent: "center",
-	borderRadius: "var(--ty-space-1)",
-	borderWidth: "1px",
-	borderStyle: "solid",
-	borderColor: "border.default",
-	backgroundColor: "surface.panel",
-	color: "text.muted",
-});
-
-const rowIconGlyphClass = css({ position: "relative", overflow: "hidden" });
-
-const rowTextBlockClass = css({
-	display: "flex",
-	minWidth: 0,
-	flex: 1,
-	flexDirection: "column",
-	gap: "px",
-});
-
-const rowTitleClass = css({
-	truncate: true,
-	fontWeight: "medium",
-	color: "text.primary",
-});
-
-const rowSubtitleClass = css({
-	truncate: true,
-	fontSize: "text-2xs",
-	color: "text.muted",
-});
-
-function EffectRow(props: {
-	effect: PluginEffectIndexRow;
-	idx: number;
-	selected: boolean;
-	widgetInstanceId: string;
-	t: (key: string) => string;
-	onSelect: (idx: number) => void;
-}): JSX.Element {
-	const { effect, idx, selected, widgetInstanceId, t, onSelect } = props;
-	return (
-		<div
-			key={`${widgetInstanceId}-fx-${effect.matchName}`}
-			data-palette-index={idx}
-			className={`${rowContainerBase} ${selected ? css({ backgroundColor: "interactive.hover" }) : ""}`}
-		>
-			<button
-				type="button"
-				className={rowButtonClass}
-				data-ws-action="apply-effect"
-				data-effect-match={effect.matchName}
-				onMouseEnter={() => onSelect(idx)}
-				onFocus={() => onSelect(idx)}
-			>
-				<span className={rowIconBoxClass} aria-hidden>
-					<Wand2 className={css({ height: "4", width: "4" })} strokeWidth={2} />
-				</span>
-				<span className={rowTextBlockClass}>
-					<span className={rowTitleClass}>{effect.displayName}</span>
-					<span className={rowSubtitleClass}>
-						{t("quickActions.effectRowKind")}
-						{effect.filePath ? ` · ${effect.filePath}` : ""}
-					</span>
-				</span>
-			</button>
-		</div>
-	);
-}
-
-function RootFileRow(props: {
-	rootFile: QuickActionRootFileRow;
-	idx: number;
-	selected: boolean;
-	widgetInstanceId: string;
-	t: (key: string) => string;
-	typeLabel: (ty: PresetType) => string;
-	onSelect: (idx: number) => void;
-}): JSX.Element {
-	const { rootFile, idx, selected, widgetInstanceId, t, typeLabel, onSelect } =
-		props;
-	const anchor = typeLabel(rootFilePresetType(rootFile));
-	return (
-		<div
-			key={`${widgetInstanceId}-rf-${rootFile.filePath}`}
-			data-palette-index={idx}
-			className={`${rowContainerBase} ${selected ? css({ backgroundColor: "interactive.hover" }) : ""}`}
-		>
-			<button
-				type="button"
-				className={rowButtonClass}
-				data-ws-action="quick-action-root-file"
-				data-file-path={rootFile.filePath}
-				onMouseEnter={() => onSelect(idx)}
-				onFocus={() => onSelect(idx)}
-			>
-				<span
-					className={`${rowIconBoxClass} ${rowIconGlyphClass}`}
-					style={
-						{
-							containerType: "size",
-						} as CSSProperties
-					}
-				>
-					<WorkspacePresetGlyph
-						preset={rootFile}
-						siblingImageSrc={rootFile.siblingImagePath}
-					/>
-				</span>
-				<span className={rowTextBlockClass}>
-					<span className={rowTitleClass}>{rootFile.title}</span>
-					<span className={rowSubtitleClass}>
-						{t("quickActions.rootFileRowKind")} · {anchor}
-						{rootFile.filePath ? ` · ${rootFile.filePath}` : ""}
-					</span>
-				</span>
-			</button>
-		</div>
-	);
-}
-
-type ThumbnailListDirectory = (
-	dirPath: string,
-) => Promise<ReadonlyArray<SiblingListingEntry>>;
-
-function PresetRow(props: {
-	preset: Preset;
-	idx: number;
-	selected: boolean;
-	widgetInstanceId: string;
-	tl: string;
-	thumbnailListDirectory?: ThumbnailListDirectory;
-	onSelect: (idx: number) => void;
-}): JSX.Element {
-	const {
-		preset,
-		idx,
-		selected,
-		widgetInstanceId,
-		tl,
-		thumbnailListDirectory,
-		onSelect,
-	} = props;
-	const siblingImageSrc = usePresetSiblingImageSrc(preset, {
-		thumbnailListDirectory,
-	});
-	return (
-		<div
-			key={`${widgetInstanceId}-p-${preset.id}`}
-			data-palette-index={idx}
-			className={`${rowContainerBase} ${selected ? css({ backgroundColor: "interactive.hover" }) : ""}`}
-		>
-			<button
-				type="button"
-				className={rowButtonClass}
-				data-ws-action="run-preset"
-				data-preset-id={preset.id}
-				onMouseEnter={() => onSelect(idx)}
-				onFocus={() => onSelect(idx)}
-			>
-				<span
-					className={`${rowIconBoxClass} ${rowIconGlyphClass}`}
-					style={
-						{
-							containerType: "size",
-						} as CSSProperties
-					}
-				>
-					<WorkspacePresetGlyph
-						preset={preset}
-						siblingImageSrc={siblingImageSrc}
-					/>
-				</span>
-				<span className={rowTextBlockClass}>
-					<span className={rowTitleClass}>
-						{preset.title.trim() || preset.id}
-					</span>
-					<span className={rowSubtitleClass}>
-						{tl}
-						{preset.filePath ? ` · ${preset.filePath}` : ""}
-					</span>
-				</span>
-			</button>
-		</div>
-	);
-}
-
-function PaletteRowsList(props: {
-	paletteRows: ScoredPaletteRow[];
-	clampedActiveIdx: number;
-	widgetInstanceId: string;
-	t: (key: string) => string;
-	typeLabel: (ty: PresetType) => string;
-	onSelect: (idx: number) => void;
-}): JSX.Element {
-	const {
-		paletteRows,
-		clampedActiveIdx,
-		widgetInstanceId,
-		t,
-		typeLabel,
-		onSelect,
-	} = props;
-	// Display-time sibling image resolution for catalog presets: sidecar
-	// images are derived at render time through the shared matcher and the
-	// thumbnail pipeline, never persisted into `Preset.icon` (issue #191).
-	const thumbnailListDirectory = useMemo<
-		ThumbnailListDirectory | undefined
-	>(() => {
-		if (typeof window === "undefined") {
-			return undefined;
-		}
-		if (!canUseCepNodeFileBrowser(window)) {
-			return undefined;
-		}
-		try {
-			const svc = createCepNodeFileBrowserService({ win: window });
-			return (dirPath: string) => svc.listDirectory(dirPath);
-		} catch {
-			return undefined;
-		}
-	}, []);
-	return (
-		<>
-			{paletteRows.map((row, idx) => {
-				const selected = idx === clampedActiveIdx;
-				if (row.kind === "effect") {
-					return (
-						<EffectRow
-							key={`${widgetInstanceId}-fx-${row.effect.matchName}`}
-							effect={row.effect}
-							idx={idx}
-							selected={selected}
-							widgetInstanceId={widgetInstanceId}
-							t={t}
-							onSelect={onSelect}
-						/>
-					);
-				}
-				if (row.kind === "rootFile") {
-					return (
-						<RootFileRow
-							key={`${widgetInstanceId}-rf-${row.rootFile.filePath}`}
-							rootFile={row.rootFile}
-							idx={idx}
-							selected={selected}
-							widgetInstanceId={widgetInstanceId}
-							t={t}
-							typeLabel={typeLabel}
-							onSelect={onSelect}
-						/>
-					);
-				}
-				const tl = typeLabel(row.preset.type);
-				return (
-					<PresetRow
-						key={`${widgetInstanceId}-p-${row.preset.id}`}
-						preset={row.preset}
-						idx={idx}
-						selected={selected}
-						widgetInstanceId={widgetInstanceId}
-						tl={tl}
-						thumbnailListDirectory={thumbnailListDirectory}
-						onSelect={onSelect}
-					/>
-				);
-			})}
-		</>
-	);
-}
-
-function PaletteDropdownContent({
-	listRef,
-	onPaletteMouseDown,
-	paletteRows,
-	clampedActiveIdx,
-	widgetInstanceId,
-	t,
-	typeLabel,
-	onSelect,
-}: {
-	listRef: React.RefObject<HTMLDivElement | null>;
-	onPaletteMouseDown: (ev: React.MouseEvent) => void;
-	paletteRows: ScoredPaletteRow[];
-	clampedActiveIdx: number;
-	widgetInstanceId: string;
-	t: (key: string) => string;
-	typeLabel: (ty: PresetType) => string;
-	onSelect: (idx: number) => void;
-}): JSX.Element {
-	return (
-		<div
-			ref={listRef}
-			role="presentation"
-			className={css({ maxHeight: "min(50vh,22rem)", overflow: "auto" })}
-			onMouseDown={onPaletteMouseDown}
-		>
-			{paletteRows.length === 0 ? (
-				<div
-					className={css({
-						paddingInline: "var(--ty-space-2)",
-						paddingBlock: "var(--ty-space-2)",
-						fontSize: "text-xs",
-						color: "text.muted",
-					})}
-				>
-					{t("quickActions.paletteEmpty")}
-				</div>
-			) : (
-				<PaletteRowsList
-					paletteRows={paletteRows}
-					clampedActiveIdx={clampedActiveIdx}
-					widgetInstanceId={widgetInstanceId}
-					t={t}
-					typeLabel={typeLabel}
-					onSelect={onSelect}
-				/>
-			)}
-		</div>
-	);
-}
+import { PaletteDropdown } from "./palette-dropdown";
+import {
+	EFFECT_SORT_ORDER,
+	effectHaystack,
+	fileHaystack,
+	isGroupFolderRow,
+	PRESET_TYPE_ORDER,
+	presetHaystack,
+	rootFilePresetType,
+	scoreHaystack,
+} from "./scoring";
+import type {
+	PluginEffectIndexRow,
+	QuickActionRootFileRow,
+	ScoredPaletteRow,
+	ThumbnailListDirectory,
+} from "./types";
 
 // ── Main widget ────────────────────────────────────────────────────────────────
 
@@ -784,46 +371,43 @@ export function QuickActionsWidget({
 			? { [ATTR_WIDGET_INSTANCE_ID]: widgetInstanceId }
 			: {};
 
-	const dropdown =
-		paletteOpen && typeof document !== "undefined"
-			? createPortal(
-					<div
-						ref={portalRef}
-						className={css({
-							pointerEvents: "auto",
-							zIndex: 100000,
-							maxHeight: "min(50vh,22rem)",
-							overflow: "hidden",
-							borderRadius: "var(--ty-space-1)",
-							borderWidth: "1px",
-							borderStyle: "solid",
-							borderColor: "border.default",
-							backgroundColor: "surface.widget",
-							boxShadow: "control-panel",
-						})}
-						style={{
-							position: "fixed",
-							top: dropdownBox.top,
-							left: dropdownBox.left,
-							width: Math.max(dropdownBox.width, 160),
-							maxWidth: "calc(100vw - 12px)",
-						}}
-						{...instanceAttr}
-					>
-						<PaletteDropdownContent
-							listRef={listRef}
-							onPaletteMouseDown={onPaletteMouseDown}
-							paletteRows={paletteRows}
-							clampedActiveIdx={clampedActiveIdx}
-							widgetInstanceId={widgetInstanceId}
-							t={t}
-							typeLabel={typeLabel}
-							onSelect={onSelect}
-						/>
-					</div>,
-					document.body,
-				)
-			: null;
+	// Display-time sibling image resolution for catalog presets: sidecar
+	// images are derived at render time through the shared matcher and the
+	// thumbnail pipeline, never persisted into `Preset.icon` (issue #191).
+	const thumbnailListDirectory = useMemo<
+		ThumbnailListDirectory | undefined
+	>(() => {
+		if (typeof window === "undefined") {
+			return undefined;
+		}
+		if (!canUseCepNodeFileBrowser(window)) {
+			return undefined;
+		}
+		try {
+			const svc = createCepNodeFileBrowserService({ win: window });
+			return (dirPath: string) => svc.listDirectory(dirPath);
+		} catch {
+			return undefined;
+		}
+	}, []);
+
+	const dropdown = (
+		<PaletteDropdown
+			open={paletteOpen}
+			portalRef={portalRef}
+			listRef={listRef}
+			paletteRows={paletteRows}
+			clampedActiveIdx={clampedActiveIdx}
+			widgetInstanceId={widgetInstanceId}
+			dropdownBox={dropdownBox}
+			t={t}
+			typeLabel={typeLabel}
+			thumbnailListDirectory={thumbnailListDirectory}
+			instanceAttr={instanceAttr}
+			onSelect={onSelect}
+			onPaletteMouseDown={onPaletteMouseDown}
+		/>
+	);
 
 	return (
 		<div

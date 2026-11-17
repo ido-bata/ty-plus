@@ -133,21 +133,3 @@ export const siblingThumbnailEntryFor = (
 		fileType: "image" as const,
 	};
 };
-
-export async function resolveSiblingImageIconSrc(
-	filePath: string,
-	listDirectoryFn: (dirPath: string) => Promise<SiblingListingEntry[]>,
-	dirCache: Map<string, SiblingListingEntry[]>,
-): Promise<string | null> {
-	const parent = normalizeSiblingDirPath(parentDirectoryOf(filePath));
-	if (!parent) {
-		return null;
-	}
-	const cacheKey = siblingPathKey(parent);
-	let bucket = dirCache.get(cacheKey);
-	if (!bucket) {
-		bucket = await listDirectoryFn(parent);
-		dirCache.set(cacheKey, bucket);
-	}
-	return findSiblingImagePathForPresetFile(filePath, bucket);
-}

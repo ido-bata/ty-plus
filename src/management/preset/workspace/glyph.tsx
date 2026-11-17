@@ -8,6 +8,7 @@ import type { Preset } from "@/management/preset/contract";
 import { presetIconText } from "@/management/preset/contract";
 import {
 	findSiblingImagePathForPresetFile,
+	isPresetSidekickSourcePath,
 	normalizeSiblingDirPath,
 	parentDirectoryOf,
 	type SiblingListingEntry,
@@ -270,6 +271,9 @@ export function usePresetSiblingImageSrc(
 			return;
 		}
 
+		if (!isPresetSidekickSourcePath(record.filePath)) {
+			return;
+		}
 		let parent = normalizeSiblingDirPath(parentDirectoryOf(record.filePath));
 		if (!parent.trim() && siblingHintParentDir?.trim()) {
 			parent = normalizeSiblingDirPath(siblingHintParentDir.trim());

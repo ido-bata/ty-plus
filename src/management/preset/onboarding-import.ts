@@ -24,7 +24,11 @@ const ONBOARDING_FOLDER_EXTENSIONS: Record<
 	"presets" | "scripts" | "plugins",
 	readonly string[]
 > = {
-	presets: [".ffx"],
+	// `.mogrt` is collected with presets: it is a template asset, and the
+	// candidate `type` is still inferred from the file path downstream
+	// (`inferPresetTypeFromFilePath`), matching the quick-action root
+	// scan's `allowExt` set.
+	presets: [".ffx", ".mogrt"],
 	scripts: [".jsx", ".jsxbin", ".js"],
 	plugins: [".aex", ".plugin"],
 };

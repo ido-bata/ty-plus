@@ -2,6 +2,7 @@ import type { JSX } from "react";
 import { useMemo } from "react";
 import {
 	findSiblingImagePathForPresetFile,
+	isPresetSidekickSourcePath,
 	siblingThumbnailEntryFor,
 } from "@/management/preset/sibling-thumbnail";
 import {
@@ -69,9 +70,10 @@ export function EntryThumb(props: {
 	// Sidecar sibling lookup is cheap and runs in render; we keep it
 	// outside of `useThumbnail` because `useThumbnail` is keyed off the
 	// `entry` argument, not an inline lookup result.
-	const sidekickPath = !entry.isDirectory
-		? findSiblingImagePathForPresetFile(entry.path, siblingSourceEntries)
-		: null;
+	const sidekickPath =
+		!entry.isDirectory && isPresetSidekickSourcePath(entry.path)
+			? findSiblingImagePathForPresetFile(entry.path, siblingSourceEntries)
+			: null;
 	const sidekickEntry = useMemo(() => {
 		if (!sidekickPath) {
 			return null;
