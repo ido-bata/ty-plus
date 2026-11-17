@@ -577,6 +577,19 @@ usable as a UI-reconstruction image source. Failure to satisfy any of
 (8)–(10) means the capture is not maintainable — every change to the
 pipeline will require hand-checking output.
 
+**Status (implemented on the #146 branch):** the capture hook is
+`scripts/verify/storybook-screenshot-capture.ts` (Vitest `setupFiles`
+entry, runs inside the official addon lifecycle). It writes PNGs to
+`.tmp/vitest-screenshots/` and JSON sidecars to
+`.tmp/storybook-captures/`; `scripts/verify/storybook-capture-merge.ts`
+diffs sidecars against `storybook-static/index.json` into
+`.tmp/storybook-captures/report.json`;
+`scripts/verify/storybook-capture-gallery.ts` renders the gallery from
+metadata. CI uploads per-shard artifacts and runs the merge in a
+separate `storybook-capture-report` job that is deliberately outside
+`release-gate.needs`. Pixel-diff / visual-quality gating (reg-suit or
+equivalent) remains a separate decision.
+
 ### Reproducing the 78-story A/B locally
 
 ```bash
@@ -611,7 +624,7 @@ libnss3 / libasound2 in the system path — same trick used by
 ## なぜ CEP cache を疑わなくていいか
 
 CEP panel は CEP host の file:// origin + Symlinks で cache が効くが、
-Storybook は完全に独立した Vite dev server (port 6006) で動く。Storybook
+Storybook は完全に独立した Vite dev server (port 6006、worktreeでは `TY_PLUS_STORYBOOK_PORT`) で動く。Storybook
 更新時はブラウザの Storybook UI を reload するだけで反映される。**CEP
 panel の Reload は Storybook 変更では不要** (CEP build を巻き込んでいない
 ため)。

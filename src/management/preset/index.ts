@@ -29,3 +29,10 @@ export {
 	PresetGlyphById,
 	WorkspacePresetGlyph,
 } from "@/management/preset/workspace/glyph";
+export {
+	glyphBoxCompactClass,
+	glyphBoxCompactPadClass,
+	glyphBoxFillClass,
+	glyphBoxFlushClass,
+	glyphEmojiProminentClass,
+} from "@/management/preset/workspace/glyph-classes";

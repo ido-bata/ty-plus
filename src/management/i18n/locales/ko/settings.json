@@ -226,6 +226,17 @@
 		"unavailable": "업데이트를 확인할 수 없음",
 		"available": "새 버전 사용 가능: {{version}}",
 		"releaseNotes": "릴리스 노트 및 다운로드",
-		"channelPlaceholder": "채널 선택"
+		"channelPlaceholder": "채널 선택",
+		"install": "업데이트 설치",
+		"installing": "설치 중…",
+		"installDone": "설치되었습니다. After Effects를 다시 시작하면 적용됩니다.",
+		"installPending": "준비되었습니다. 다음 ty-plus 시작 시 적용됩니다.",
+		"installManual": "이 환경에서는 자동 설치를 사용할 수 없습니다. 다운로드 페이지에서 수동으로 설치하세요.",
+		"installFailed": "설치에 실패했습니다. 다시 시도하거나 수동으로 설치하세요.",
+		"installFailedDownload": "다운로드에 실패했습니다. 연결을 확인하고 다시 시도하세요.",
+		"installFailedIntegrity": "다운로드한 파일의 무결성 검사에 실패했습니다. 나중에 다시 시도하세요.",
+		"installFailedArchive": "다운로드한 업데이트가 올바르지 않습니다. 나중에 다시 시도하거나 수동으로 설치하세요.",
+		"installFailedPermission": "권한이 없습니다. 다운로드 페이지에서 수동으로 설치하세요.",
+		"installFailedBusy": "다른 설치가 진행 중입니다. 잠시 후 다시 시도하세요."
 	}
 }

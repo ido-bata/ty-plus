@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { expect } from "storybook/test";
 import { css } from "@/styled-system/css";
 
 import { Button } from "./Button";
@@ -44,6 +45,21 @@ export const Default: Story = {};
 
 export const Disabled: Story = {
 	args: { disabled: true },
+};
+
+// Issue #146: hover-state capture — a real-pointer hover must lift the
+// button to `interactive.hover`; the post-play state is screenshotted.
+export const Hovered: Story = {
+	play: async ({ canvasElement }) => {
+		const button = canvasElement.querySelector("button");
+		if (!button) throw new Error("button not found");
+		const { userEvent } = await import("vitest/browser");
+		const resting = getComputedStyle(button).backgroundColor;
+		await userEvent.hover(button);
+		await expect(button.matches(":hover")).toBe(true);
+		await new Promise((resolve) => setTimeout(resolve, 300));
+		await expect(getComputedStyle(button).backgroundColor).not.toBe(resting);
+	},
 };
 
 export const AllVariants: Story = {

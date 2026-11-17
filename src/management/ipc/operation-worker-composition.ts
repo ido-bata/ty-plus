@@ -89,6 +89,34 @@ export type HostPluginEffectScanResult = Readonly<{
 	readonly warnings?: readonly string[];
 }>;
 
+/**
+ * `update.install` request: the panel forwards the release asset metadata
+ * it read from the update feed. The worker re-validates every field
+ * (official URL prefix, platform file name, sha256 shape, tag/version
+ * agreement) before touching the network.
+ */
+export type UpdateInstallRequestDTO = Readonly<{
+	readonly release_version: string;
+	readonly tag: string;
+	readonly asset: Readonly<{
+		readonly url: string;
+		readonly file_name: string;
+		readonly sha256: string;
+	}>;
+}>;
+
+export type UpdateInstallStatusDTO =
+	| "installed"
+	| "pending"
+	| "manual_required";
+
+export type UpdateInstallResultDTO = Readonly<{
+	readonly status: UpdateInstallStatusDTO;
+	readonly version: string;
+	readonly restart_required: boolean;
+	readonly reason?: string | null;
+}>;
+
 export type OperationWorkerChildObserver = (
 	child: WorkerChild,
 	path: string,
@@ -159,6 +187,10 @@ export type OperationWorkerComposition = Readonly<{
 		request: undefined,
 		options?: HostPluginEffectScanOptions,
 	) => Promise<ConnectivityStatusDTO>;
+	readonly installUpdate: (
+		request: UpdateInstallRequestDTO,
+		options?: HostPluginEffectScanOptions,
+	) => Promise<UpdateInstallResultDTO>;
 	readonly resolveCurrentBinary: () => Promise<ResolvedWorkerBinary>;
 	readonly resolveCurrentManifest: () => Promise<OperationWorkerManifest>;
 	readonly stopAccepting: () => void;
@@ -249,6 +281,8 @@ const onlineConnectivityCheckWireName =
 	canonicalOperationPolicies.online_connectivity_check.wireName;
 const onlineDownloadWireName =
 	canonicalOperationPolicies.online_download.wireName;
+const updateInstallWireName =
+	canonicalOperationPolicies.update_install.wireName;
 
 const createHostPluginEffectScanFactory = (
 	request: PluginEffectScanRequest,
@@ -427,12 +461,14 @@ const createOnlineFactory = <Req, Res>(
 	methodName:
 		| "online_catalog_search"
 		| "online_connectivity_check"
-		| "online_download",
+		| "online_download"
+		| "update_install",
 	wireName: string,
 	request: Req,
 	context: ImmutableHostContext,
 	buildId: string,
 	capabilities: readonly string[],
+	idempotent = true,
 ): OperationInvocationFactory<Req, Res> => ({
 	methodName,
 	create: (identity): WorkerInvocation<Req, Res> => ({
@@ -442,7 +478,7 @@ const createOnlineFactory = <Req, Res>(
 		capabilities,
 		method: {
 			name: wireName,
-			idempotency: "idempotent",
+			idempotency: idempotent ? "idempotent" : "non-idempotent",
 			cancellable: true,
 			encode: (payload, encodedContext): WireMessage => ({
 				kind: "request",
@@ -877,6 +913,18 @@ export const createOperationWorkerComposition = (
 						manifest.productVersion,
 						manifest.capabilities,
 					),
+			),
+		installUpdate: (request, scanOptions) =>
+			enqueueAttempt("update_install", scanOptions, (context, manifest) =>
+				createOnlineFactory<UpdateInstallRequestDTO, UpdateInstallResultDTO>(
+					"update_install",
+					updateInstallWireName,
+					request,
+					context,
+					manifest.productVersion,
+					manifest.capabilities,
+					false,
+				),
 			),
 		stopAccepting: () => scheduler.stopAccepting(),
 		drain: (deadlineMs) => scheduler.drain(deadlineMs),

@@ -24,6 +24,7 @@ const makeComposition = () => {
 		checkConnectivity: checkConnectivity as unknown as CheckConnectivity,
 		lookupCatalog: lookupCatalog as unknown as LookupCatalog,
 		downloadPreset: downloadPreset as unknown as DownloadPreset,
+		installUpdate: vi.fn(),
 		resolveCurrentBinary: vi.fn(),
 		resolveCurrentManifest: vi.fn(),
 		stopAccepting: vi.fn(),

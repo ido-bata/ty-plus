@@ -15,7 +15,7 @@ ty-plus は単一の shared working tree で複数 agent を実行すると、Gi
 3. implementer と reviewer は clean snapshot を介して分離する。worker は shared mutable runtime を持たない。
 4. execution lifecycle は外部 Supervisor の責務とする。repository は protocol、result schema、checkpoint schema、fencing policy を定義するが、Docker socket や credential を worker に渡す runtime は実装しない。
 5. recovery checkpoint は private reasoning を含めず、Issue、PR、branch、snapshot、generation、validation、children、side effects、blocker の外部化可能 state だけを保存する。
-6. project-local operational contract は [`docs/architecture/agent-operations.md`](../architecture/agent-operations.md) と `.claude/skills/` に置く。
+6. project-local operational contract は [`docs/architecture/agent-operations.md`](../architecture/agent-operations.md) と `.agents/skills/` に置く。
 
 ## Checkpoint Schema
 

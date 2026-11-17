@@ -82,6 +82,14 @@ impl OperationExecutor for ProductionOperationExecutor {
         }
         cancellation.checkpoint()?;
 
+        // `update.install` reports typed failures (integrity, download,
+        // permission, contention) that must reach the wire as stable
+        // error codes instead of collapsing into `internal_error`
+        // (Issue #169).
+        if canonical == CanonicalMethod::UpdateInstall {
+            return execute_update_install(request, cancellation, events);
+        }
+
         let result = match canonical {
             CanonicalMethod::HostPluginEffectScan => {
                 let payload: PluginEffectScanRequest =
@@ -173,6 +181,9 @@ impl OperationExecutor for ProductionOperationExecutor {
                     .map(|result| serde_json::to_value(result).expect("batch result serializes"))
                     .map_err(|error| error.to_string())
             }
+            CanonicalMethod::UpdateInstall => {
+                unreachable!("update install returns early above")
+            }
         };
 
         match result {
@@ -189,6 +200,45 @@ impl OperationExecutor for ProductionOperationExecutor {
                 Err(WorkerError::Protocol(StableErrorCode::Cancelled))
             }
             Err(_error) => failure(request, StableErrorCode::InternalError, "operation failed"),
+        }
+    }
+}
+
+/// `update.install` dispatch with per-variant wire error mapping. Kept
+/// out of the shared `Result<Value, String>` path so `UpdateInstallError`
+/// survives to `StableErrorCode` classification (Issue #169).
+fn execute_update_install(
+    request: &RequestEnvelope,
+    cancellation: &CancellationToken,
+    events: &mut dyn EventSink,
+) -> Result<ResponseEnvelope, WorkerError> {
+    let payload: crate::UpdateInstallRequest = match serde_json::from_value(request.payload.clone())
+    {
+        Ok(payload) => payload,
+        Err(_error) => {
+            return failure(
+                request,
+                StableErrorCode::InvalidRequest,
+                "invalid update install payload",
+            );
+        }
+    };
+    match crate::dispatch_update_install(request, payload, cancellation, events) {
+        Ok(payload) => Ok(ResponseEnvelope {
+            protocol_version: CURRENT_PROTOCOL_VERSION,
+            request_id: request.metadata.request_id.clone(),
+            session_id: request.metadata.session_id.clone(),
+            outcome: ResponseOutcome::Success {
+                payload,
+                warnings: Vec::<Warning>::new(),
+            },
+        }),
+        Err(_) if cancellation.is_cancelled() => {
+            Err(WorkerError::Protocol(StableErrorCode::Cancelled))
+        }
+        Err(error) => {
+            let (code, retryable, detail) = crate::update_install::update_error_wire(&error);
+            failure_with_retryable(request, code, retryable, &detail)
         }
     }
 }
@@ -216,6 +266,11 @@ fn validate_payload(method: CanonicalMethod, payload: &Value) -> Result<(), Stri
             // All thumbnail methods share compatible wire payload shapes.
             Ok(())
         }
+        CanonicalMethod::UpdateInstall => {
+            serde_json::from_value::<crate::UpdateInstallRequest>(payload.clone())
+                .map(|_| ())
+                .map_err(|error| error.to_string())
+        }
     }
 }
 
@@ -224,9 +279,18 @@ fn failure(
     code: StableErrorCode,
     detail: &str,
 ) -> Result<ResponseEnvelope, WorkerError> {
+    failure_with_retryable(request, code, false, detail)
+}
+
+fn failure_with_retryable(
+    request: &RequestEnvelope,
+    code: StableErrorCode,
+    retryable: bool,
+    detail: &str,
+) -> Result<ResponseEnvelope, WorkerError> {
     let error = ProtocolError::new(
         code,
-        false,
+        retryable,
         detail,
         DiagnosticId::parse("worker-operation-failed").map_err(WorkerError::Validation)?,
     )
@@ -887,6 +951,15 @@ mod tests {
                         }]
                     })
                 }
+                CanonicalMethod::UpdateInstall => serde_json::json!({
+                    "release_version": "9.9.9",
+                    "tag": "v9.9.9",
+                    "asset": {
+                        "url": "https://github.com/ido-bata/ty-plus/releases/download/v9.9.9/ty-plus-v9.9.9-macos.zip",
+                        "file_name": "ty-plus-v9.9.9-macos.zip",
+                        "sha256": "583ba8e34b17e8323faabb4399899e8ac3fc6b6383cfcec31664c41772e4bf7e"
+                    }
+                }),
             };
             assert!(
                 validate_payload(*method, &payload).is_ok(),
@@ -894,7 +967,7 @@ mod tests {
                 method.wire_name()
             );
         }
-        assert_eq!(CanonicalMethod::all().len(), 12);
+        assert_eq!(CanonicalMethod::all().len(), 13);
     }
 
     #[test]
@@ -994,7 +1067,22 @@ mod tests {
                         }]
                     })
                 }
+                CanonicalMethod::UpdateInstall => serde_json::json!({
+                    "release_version": "9.9.9",
+                    "tag": "v9.9.9",
+                    "asset": {
+                        "url": "https://github.com/ido-bata/ty-plus/releases/download/v9.9.9/ty-plus-v9.9.9-macos.zip",
+                        "file_name": "ty-plus-v9.9.9-macos.zip",
+                        "sha256": "583ba8e34b17e8323faabb4399899e8ac3fc6b6383cfcec31664c41772e4bf7e"
+                    }
+                }),
             };
+            // `update.install` mutates the extension install tree and hits
+            // the network; it is covered by `update_install` unit tests,
+            // not by this every-method executor sweep.
+            if matches!(method, CanonicalMethod::UpdateInstall) {
+                continue;
+            }
             let cache_root = root.join("support/ty-plus/cache/search");
             let write_key = SearchCacheKey::from_query(&CatalogQuery {
                 q: Some("executor-write-unique".to_owned()),
@@ -1217,6 +1305,9 @@ mod tests {
                     let results = payload["results"].as_array().unwrap();
                     assert_eq!(results.len(), 1);
                     assert!(results[0]["error"].as_str().is_some());
+                }
+                CanonicalMethod::UpdateInstall => {
+                    unreachable!("update install is skipped by the sweep above")
                 }
             }
         }

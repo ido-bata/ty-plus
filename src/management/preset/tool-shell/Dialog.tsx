@@ -38,6 +38,7 @@ import {
 } from "@/management/preset/tool-shell/context-menu";
 import { upsertLocalPreset } from "@/management/preset/use-cases";
 import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
+import { glyphBoxFillClass } from "@/management/preset/workspace/glyph-classes";
 import { createInstanceId } from "@/management/storage/ids";
 import { notifyPanelsAfterPresetSave } from "@/management/workspace/placement/notify-panels-after-preset-save";
 import { Icon } from "@/shared/component";
@@ -755,7 +756,10 @@ export function Dialog(props: PresetToolDialogProps): JSX.Element {
 				browseDir={props.resolveBrowseStartDir?.()}
 				label={t("presetTool.form.icon")}
 				preview={
-					<FramedPresetGlyph preset={previewPreset} boxClass="h-full w-full" />
+					<FramedPresetGlyph
+						preset={previewPreset}
+						boxClass={glyphBoxFillClass}
+					/>
 				}
 				showCanvasTab={iconDraft.type === "canvas"}
 			/>

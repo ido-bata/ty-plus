@@ -10,6 +10,7 @@ import {
 } from "@/management/preset/icon-editor";
 import { MarkdownLiveEditor } from "@/management/preset/markdown/LiveEditor";
 import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
+import { glyphBoxFillClass } from "@/management/preset/workspace/glyph-classes";
 import { ColorTokenEditor } from "@/management/setting/dialog/components/ColorTokenEditor";
 import { NumberTokenEditor } from "@/management/setting/dialog/components/NumberTokenEditor";
 import { TokenEditor } from "@/management/setting/dialog/components/TokenEditor";
@@ -490,7 +491,7 @@ export function ComponentPreviewSection(): JSX.Element {
 							iconPreviewPreset ? (
 								<FramedPresetGlyph
 									preset={iconPreviewPreset}
-									boxClass="h-full w-full"
+									boxClass={glyphBoxFillClass}
 								/>
 							) : (
 								<div className={iconEditorEmptyStyle}>—</div>

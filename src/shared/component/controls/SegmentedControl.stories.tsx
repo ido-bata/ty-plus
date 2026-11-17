@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
+import { expect } from "storybook/test";
 
 import {
 	SegmentedControl,
@@ -69,4 +70,51 @@ export const CustomColors: Story = {
 			"bg-surface-widget text-text-muted hover:bg-interactive-hover hover:text-text-primary",
 	},
 	render: (args) => <ControlledSegmentedControl {...args} />,
+};
+
+// Issue #166: hover must lift an unselected segment to
+// `interactive.hover` — a real-pointer hover is what the capture
+// pipeline screenshots.
+export const HoveredSegment: Story = {
+	render: (args) => <ControlledSegmentedControl {...args} />,
+	play: async ({ canvasElement }) => {
+		const buttons = Array.from(
+			canvasElement.querySelectorAll<HTMLButtonElement>("button"),
+		);
+		const target = buttons.find((b) => b.textContent === "Archived");
+		if (!target) throw new Error("Archived segment not found");
+		const { userEvent } = await import("vitest/browser");
+		const spacer = document.createElement("div");
+		spacer.style.cssText = "position:fixed;top:0;left:0;width:8px;height:8px;";
+		document.body.appendChild(spacer);
+		await userEvent.hover(spacer);
+		await new Promise((resolve) => setTimeout(resolve, 300));
+		const resting = getComputedStyle(target).backgroundColor;
+		await userEvent.hover(target);
+		await expect(target.matches(":hover")).toBe(true);
+		await new Promise((resolve) => setTimeout(resolve, 300));
+		await expect(getComputedStyle(target).backgroundColor).not.toBe(resting);
+		await userEvent.unhover(target);
+		spacer.remove();
+	},
+};
+
+// Issue #166: clicking a segment selects it — `aria-pressed` flips and the
+// selected surface replaces the unselected one.
+export const SelectedOnClick: Story = {
+	render: (args) => <ControlledSegmentedControl {...args} />,
+	play: async ({ canvasElement }) => {
+		const buttons = Array.from(
+			canvasElement.querySelectorAll<HTMLButtonElement>("button"),
+		);
+		const target = buttons.find((b) => b.textContent === "Active");
+		if (!target) throw new Error("Active segment not found");
+		const { userEvent } = await import("vitest/browser");
+		await expect(target.getAttribute("aria-pressed")).toBe("false");
+		const resting = getComputedStyle(target).backgroundColor;
+		await userEvent.click(target);
+		await expect(target.getAttribute("aria-pressed")).toBe("true");
+		await new Promise((resolve) => setTimeout(resolve, 300));
+		await expect(getComputedStyle(target).backgroundColor).not.toBe(resting);
+	},
 };

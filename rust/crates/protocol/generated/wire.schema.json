@@ -11,7 +11,8 @@
     "host_thumbnail_lookup",
     "host_thumbnail_generate",
     "host_thumbnail_lookup_or_generate",
-    "host_thumbnail_batch"
+    "host_thumbnail_batch",
+    "update_install"
   ],
   "canonicalOperationPolicies": {
     "host_plugin_effect_scan": {
@@ -97,6 +98,13 @@
       "retryClass": "non-idempotent",
       "retryCrashBeforeAccept": false,
       "wireName": "online.download"
+    },
+    "update_install": {
+      "cancellable": true,
+      "idempotencyKey": "forbidden",
+      "retryClass": "non-idempotent",
+      "retryCrashBeforeAccept": false,
+      "wireName": "update.install"
     }
   },
   "catalogFormat": "ty-plus.protocol-schema-catalog/1",

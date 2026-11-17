@@ -70,6 +70,7 @@ import { PRESET_TOOL_OPEN_BUS_CHANNEL } from "@/management/preset/tool-open-chan
 import {
 	duplicatePreset,
 	getPreset,
+	listPresets,
 	removeLocalPreset,
 } from "@/management/preset/use-cases";
 import {
@@ -153,7 +154,6 @@ import {
 import { mergeWidgetPlacementIntoState } from "@/management/workspace/placement/widget-bus";
 import { CommitReconcile } from "@/management/workspace/reconcile-stub";
 import { executeWorkspacePresetForWindow } from "@/management/workspace/runtime";
-import { getDataServices } from "@/management/workspace/services";
 import type { SurfaceState } from "@/management/workspace/state";
 import {
 	createInitialSurfaceState,
@@ -989,8 +989,7 @@ export function useWorkspaceRuntime(root: Element | null): {
 			persistSurfaceState();
 		});
 
-		void getDataServices()
-			.presetRepository.list()
+		void listPresets()
 			.then((presets) => {
 				const cur = getState();
 				commit(
@@ -1000,9 +999,40 @@ export function useWorkspaceRuntime(root: Element | null): {
 					}),
 				);
 			})
-			.catch(() => {});
+			.catch((error) => {
+				workspaceLog.warn("[Workspace] initial preset list load failed", {
+					context: {
+						panelId,
+						error: error instanceof Error ? error.message : String(error),
+					},
+				});
+			});
 
 		// ── Layout reload ─────────────────────────────────────────────────────
+		// issue 139: the strict local catalog parser rejects on a corrupt
+		// `presets/presets.json`. That must not classify the whole layout
+		// restore as a read failure — the layout file itself may be fine,
+		// and closing the write gate would refuse every later persist.
+		// Log the catalog failure and continue the restore with an empty
+		// preset list; genuine layout-file read failures still classify
+		// through `planLayoutRestoreFromReadError` below.
+		const readPresetsForLayoutRestore = async (): Promise<Preset[]> => {
+			try {
+				return await listPresets();
+			} catch (error) {
+				workspaceLog.warn(
+					"[Workspace] preset catalog read failed during layout restore",
+					{
+						context: {
+							panelId: getState().panelId,
+							error: error instanceof Error ? error.message : String(error),
+						},
+					},
+				);
+				return [];
+			}
+		};
+
 		const reloadLayoutFromStorage = async (
 			enablePersistenceAfterReload?: boolean,
 			layoutReadSupportRoot?: string,
@@ -1050,7 +1080,7 @@ export function useWorkspaceRuntime(root: Element | null): {
 					readWidgetRecords(window),
 					readUiSettings(window, persistenceRootArg),
 					readSettings(window),
-					getDataServices().presetRepository.list(),
+					readPresetsForLayoutRestore(),
 					readGroupJson(window),
 				]);
 				const panelPresetIdsFromSettings = readPanelPresetIdsFromSettingsJson(
@@ -1706,8 +1736,7 @@ export function useWorkspaceRuntime(root: Element | null): {
 		// ── Preset refresh (F3) ───────────────────────────────────────────────
 		const refreshPresets = (): Promise<void> => {
 			if (!isCep) {
-				void getDataServices()
-					.presetRepository.list()
+				void listPresets()
 					.then((presets) => {
 						const cur = getState();
 						commit(
@@ -1716,6 +1745,14 @@ export function useWorkspaceRuntime(root: Element | null): {
 								presets: presets,
 							}),
 						);
+					})
+					.catch((error) => {
+						workspaceLog.warn("[Workspace] preset list refresh failed", {
+							context: {
+								panelId,
+								error: error instanceof Error ? error.message : String(error),
+							},
+						});
 					});
 				return Promise.resolve();
 			}
@@ -1724,33 +1761,45 @@ export function useWorkspaceRuntime(root: Element | null): {
 			// connectivity check whose status no consumer reads (the presets
 			// bus subscriber ignores `syncStatus`). Emit the same idle
 			// "Local Update" status the other snapshot producers use.
-			const { presetRepository } = getDataServices();
+			// issue 139: the row source is the local catalog — file-backed and
+			// independent of cloud gateway boot (offline-core contract).
+			// Every caller uses `void refreshPresets()`, so a rejection here
+			// would surface as an unhandled rejection; log and resolve instead.
 			return (async () => {
-				const presets = await presetRepository.list();
-				const cur = getState();
-				commit(
-					withPresetInfoSnapshot({
-						...cur,
-						presets: presets,
-					}),
-				);
-				const presetPayload: PresetsPayload = {
-					kind: "snapshot",
-					presets,
-					syncStatus: {
-						provider: "supabase",
-						state: "idle",
-						label: "Local Update",
-						checkedAt: new Date().toISOString(),
-					},
-					sourceSurfaceId: panelId,
-				};
-				await publishShellMessage(cepSurfaceTransport, {
-					channel: SHELL_CHANNELS.presets,
-					kind: "publish",
-					sourceSurfaceId: panelId,
-					payload: presetPayload,
-				});
+				try {
+					const presets = await listPresets();
+					const cur = getState();
+					commit(
+						withPresetInfoSnapshot({
+							...cur,
+							presets: presets,
+						}),
+					);
+					const presetPayload: PresetsPayload = {
+						kind: "snapshot",
+						presets,
+						syncStatus: {
+							provider: "supabase",
+							state: "idle",
+							label: "Local Update",
+							checkedAt: new Date().toISOString(),
+						},
+						sourceSurfaceId: panelId,
+					};
+					await publishShellMessage(cepSurfaceTransport, {
+						channel: SHELL_CHANNELS.presets,
+						kind: "publish",
+						sourceSurfaceId: panelId,
+						payload: presetPayload,
+					});
+				} catch (error) {
+					workspaceLog.warn("[Workspace] preset list refresh failed", {
+						context: {
+							panelId,
+							error: error instanceof Error ? error.message : String(error),
+						},
+					});
+				}
 			})();
 		};
 
@@ -1929,35 +1978,44 @@ export function useWorkspaceRuntime(root: Element | null): {
 			}
 
 			if (hit.zone === "directory-browser") {
+				// Bridge to the directory-browser widget: the widget listens for
+				// `browser-*` CustomEvents on the panel root (Component.tsx).
+				// Synthesizing `data-ws-action` button clicks does NOT work here —
+				// `onActionClick` would re-route them as control-panel actions.
+				const dispatchBrowserEvent = (
+					name: string,
+					detail?: Record<string, string>,
+				): void => {
+					root.dispatchEvent(new CustomEvent(name, { detail }));
+				};
 				if (id === CTX_MENU_IDS.dirBrowserRefresh) {
-					dispatchWorkspaceWsActionClick(root, "browser-refresh");
+					dispatchBrowserEvent("browser-refresh");
+					return;
+				}
+				if (id === CTX_MENU_IDS.dirBrowserGoUp) {
+					dispatchBrowserEvent("browser-go-up");
+					return;
+				}
+				if (id === CTX_MENU_IDS.dirBrowserBrowseDrives) {
+					dispatchBrowserEvent("browser-browse-drives");
 					return;
 				}
 				if (id === CTX_MENU_IDS.dirBrowserToggleFilters) {
-					dispatchWorkspaceWsActionClick(
-						root,
-						"browser-toggle-directory-filters",
-					);
+					dispatchBrowserEvent("browser-toggle-directory-filters");
 					return;
 				}
 				if (id === CTX_MENU_IDS.dirBrowserClearSearch) {
-					const input = root.querySelector<HTMLInputElement>(
-						'input[data-ws-action="directory-browser-query"]',
-					);
-					if (input) {
-						input.value = "";
-						input.dispatchEvent(new Event("input", { bubbles: true }));
-					}
+					dispatchBrowserEvent("browser-clear-search");
 					return;
 				}
 				if (id === CTX_MENU_IDS.dirBrowserDefaultDir) {
-					dispatchWorkspaceWsActionClick(root, "browser-default-dir");
+					dispatchBrowserEvent("browser-default-dir");
 					return;
 				}
 				const openPref = CTX_MENU_IDS.dirBrowserOpenDirPrefix;
 				if (id.startsWith(openPref)) {
 					const filePath = decodeURIComponent(id.slice(openPref.length));
-					dispatchWorkspaceWsActionClick(root, "browser-open-dir", {
+					dispatchBrowserEvent("browser-open-dir", {
 						"data-file-path": filePath,
 					});
 					return;
@@ -1965,7 +2023,7 @@ export function useWorkspaceRuntime(root: Element | null): {
 				const selPref = CTX_MENU_IDS.dirBrowserSelectPrefix;
 				if (id.startsWith(selPref)) {
 					const filePath = decodeURIComponent(id.slice(selPref.length));
-					dispatchWorkspaceWsActionClick(root, "browser-select", {
+					dispatchBrowserEvent("browser-select", {
 						"data-file-path": filePath,
 					});
 					return;
@@ -1973,19 +2031,23 @@ export function useWorkspaceRuntime(root: Element | null): {
 				const impPref = CTX_MENU_IDS.dirBrowserImportPrefix;
 				if (id.startsWith(impPref)) {
 					const filePath = decodeURIComponent(id.slice(impPref.length));
-					dispatchWorkspaceWsActionClick(root, "browser-import", {
+					dispatchBrowserEvent("browser-import", {
 						"data-file-path": filePath,
 					});
 					return;
 				}
-				const runPref = CTX_MENU_IDS.dirBrowserRunPresetPrefix;
-				if (id.startsWith(runPref)) {
-					const presetId = decodeURIComponent(id.slice(runPref.length));
-					dispatchWorkspaceWsActionClick(root, "run-preset", {
-						"data-preset-id": presetId,
+				const audioPref = CTX_MENU_IDS.dirBrowserAudioPreviewPrefix;
+				if (id.startsWith(audioPref)) {
+					const filePath = decodeURIComponent(id.slice(audioPref.length));
+					dispatchBrowserEvent("browser-audio-preview", {
+						"data-file-path": filePath,
 					});
 					return;
 				}
+				// Preset catalog rows reuse the preset-row menu ids
+				// (runPreset / editPreset / duplicatePreset / deletePreset /
+				// movePresetsToPanelPrefix); they fall through to the shared
+				// switch below which resolves `hit.presetId` for this zone.
 			}
 
 			if (hit.zone === "control-panel") {
@@ -2015,6 +2077,27 @@ export function useWorkspaceRuntime(root: Element | null): {
 			}
 
 			const cur = getState();
+			// Run a catalog preset from a context-menu pick. Mirrors the
+			// `data-ws-action="run-preset"` path: missing assets are blocked
+			// up-front (Issue #130), failures surface as notifications.
+			const runCtxPreset = (presetId: string): void => {
+				if (isPresetAssetMissing(presetId)) {
+					notificationStore.add(
+						"Preset asset is missing on disk — run is disabled.",
+						"warning",
+						{ duration: 8000 },
+					);
+					return;
+				}
+				void executeWorkspacePreset(presetId).catch((error) => {
+					notificationStore.add(
+						`Preset failed: ${
+							error instanceof Error ? error.message : String(error)
+						}`,
+						"error",
+					);
+				});
+			};
 			const placementIndexFromHit = (): number | null => {
 				const raw =
 					hit.zone === "workspace-placement"
@@ -2459,6 +2542,14 @@ export function useWorkspaceRuntime(root: Element | null): {
 							const t = cur.surfaceTiles[i];
 							return t?.id?.trim() ?? "";
 						}
+						// Directory-browser preset catalog rows carry `data-preset-id`;
+						// deleting must target the preset, not the widget tile.
+						if (
+							hit.zone === "directory-browser" &&
+							hit.entryKind === "preset"
+						) {
+							return hit.presetId?.trim() ?? "";
+						}
 						return "";
 					})();
 					if (!catalogId || !isCep) return;
@@ -2473,30 +2564,34 @@ export function useWorkspaceRuntime(root: Element | null): {
 						: (cur.presets.find((p) => p.id === catalogId)?.title ?? "");
 
 					void (async () => {
-						const confirmed = await askHostDeleteConfirm(
-							window,
-							presetTitle,
-							isGroupTile,
-						);
-						if (!confirmed) return;
-
 						try {
-							if (isGroupTile) {
-								await removeGroupEntry(window, catalogId);
-							} else {
-								await removeLocalPreset(catalogId);
-							}
-						} catch (error) {
-							console.warn("[ty-plus] delete preset/group failed", error);
-							return;
-						}
+							const confirmed = await askHostDeleteConfirm(
+								window,
+								presetTitle,
+								isGroupTile,
+							);
+							if (!confirmed) return;
 
-						// Use unified delete path: updates layout + broadcasts to all panels
-						await notifyPanelsAfterPresetSave(window, {
-							sourceSurfaceId: cur.panelId,
-							catalogRefIds: [catalogId],
-							isDeletion: true,
-						});
+							try {
+								if (isGroupTile) {
+									await removeGroupEntry(window, catalogId);
+								} else {
+									await removeLocalPreset(catalogId);
+								}
+							} catch (error) {
+								console.warn("[ty-plus] delete preset/group failed", error);
+								return;
+							}
+
+							// Use unified delete path: updates layout + broadcasts to all panels
+							await notifyPanelsAfterPresetSave(window, {
+								sourceSurfaceId: cur.panelId,
+								catalogRefIds: [catalogId],
+								isDeletion: true,
+							});
+						} catch (error) {
+							console.warn("[ty-plus] preset delete flow failed", error);
+						}
 					})();
 					return;
 				}
@@ -2621,6 +2716,14 @@ export function useWorkspaceRuntime(root: Element | null): {
 							}
 							return "";
 						}
+						// Directory-browser preset catalog rows: edit the preset
+						// itself (`hit.presetId`), not the widget tile.
+						if (
+							hit.zone === "directory-browser" &&
+							hit.entryKind === "preset"
+						) {
+							return hit.presetId?.trim() ?? "";
+						}
 						return "";
 					})();
 					if (!catalogId || !isCep) return;
@@ -2687,9 +2790,22 @@ export function useWorkspaceRuntime(root: Element | null): {
 							});
 							return;
 						}
+						// Preset tiles run the preset; widget tiles have no Run.
+						if (tileId && cur.presets.some((p) => p.id === tileId)) {
+							runCtxPreset(tileId);
+						}
+						return;
 					}
-					// Fall through to existing preset-run logic for non-group tiles
-					break;
+					// preset-row and directory-browser preset catalog rows both
+					// carry the catalog preset id — Run executes that preset.
+					const presetId =
+						hit.zone === "preset-row" ||
+						(hit.zone === "directory-browser" && hit.entryKind === "preset")
+							? (hit.presetId?.trim() ?? "")
+							: "";
+					if (!presetId) return;
+					runCtxPreset(presetId);
+					return;
 				}
 				case CTX_MENU_IDS.groupSelectedPresets: {
 					const gridPresetRefIds: string[] = [];
@@ -2922,6 +3038,17 @@ export function useWorkspaceRuntime(root: Element | null): {
 								return t?.id?.trim() || null;
 							}
 							if (hit.zone === "directory-browser") {
+								// Preset catalog rows move the PRESET to the target
+								// panel's catalog placement (same semantics as
+								// zone:"preset-row"). Body/chrome hits have no
+								// entryKind and fall through to the widget tile.
+								if (
+									hit.entryKind === "preset" &&
+									typeof hit.presetId === "string"
+								) {
+									const pid = hit.presetId.trim();
+									if (pid) return pid;
+								}
 								const idx =
 									typeof hit.placementId === "string"
 										? Number.parseInt(hit.placementId.trim(), 10)
@@ -3608,8 +3735,7 @@ export function useWorkspaceRuntime(root: Element | null): {
 					);
 					return;
 				}
-				const { presetRepository } = getDataServices();
-				void presetRepository.getById(id).then((presetRecord) => {
+				void getPreset(id).then((presetRecord) => {
 					if (!presetRecord) return;
 					void executePreset(presetRecord).catch((error) => {
 						setState({

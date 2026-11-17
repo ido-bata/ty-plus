@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
+import { expect } from "storybook/test";
 import { RangeField } from "./RangeField";
 
 const meta = {
@@ -69,4 +70,40 @@ export const Interactive: Story = {
 		);
 	},
 	args: {},
+};
+
+// Issue #166: keyboard interaction — arrow keys on the focused range input
+// must commit a new value through `onChange` (drives both the slider and
+// the paired numeric field from one state source).
+export const KeyboardAdjust: Story = {
+	render: () => {
+		const [value, setValue] = useState(60);
+		return (
+			<div style={{ width: 280 }}>
+				<RangeField
+					label="Opacity"
+					value={value}
+					onChange={setValue}
+					min={0}
+					max={100}
+					step={1}
+					unit="%"
+				/>
+			</div>
+		);
+	},
+	args: {},
+	play: async ({ canvasElement }) => {
+		const range = canvasElement.querySelector<HTMLInputElement>(
+			'input[type="range"]',
+		);
+		if (!range) throw new Error("range input not found");
+		const { userEvent } = await import("vitest/browser");
+		range.focus();
+		await expect(document.activeElement).toBe(range);
+		const before = Number(range.value);
+		await userEvent.keyboard("{ArrowRight}");
+		await new Promise((resolve) => setTimeout(resolve, 300));
+		await expect(Number(range.value)).toBe(before + 1);
+	},
 };

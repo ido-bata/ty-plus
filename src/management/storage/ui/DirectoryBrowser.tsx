@@ -3,6 +3,7 @@ import type { JSX, ReactNode } from "react";
 import type { PresetIcon } from "@/management/preset/contract";
 import type { FileBrowserFileType } from "@/management/storage/file-browser-service";
 import { DirectoryBrowserIconCard } from "@/management/storage/ui/DirectoryBrowserIconCard";
+import { directoryBrowserMenuFileType } from "@/management/storage/ui/DirectoryBrowserMenu";
 import { EntryIcon } from "@/management/storage/ui/DirectoryBrowserShell.entry-icon";
 import {
 	type DirectoryBrowserViewMode,
@@ -56,6 +57,13 @@ type DirectoryBrowserProps = {
 	 * Up-row always calls onGoUp on single-click.
 	 */
 	onEntryActivate?: (entry: DirectoryBrowserEntry) => void;
+	/**
+	 * Called on single-click for directory rows/cards. Files keep using
+	 * `onEntryClick` for single-click selection. When omitted, directory
+	 * single-click remains a no-op (double-click/Enter still activates via
+	 * `onEntryActivate`). Issue #142.
+	 */
+	onEntrySelect?: (entry: DirectoryBrowserEntry) => void;
 	selectionMode: DirectoryBrowserShellSelectionMode;
 	isSelected: (
 		entryPath: string,
@@ -440,6 +448,7 @@ export const DirectoryBrowser = ({
 	onGoUp,
 	onEntryClick,
 	onEntryActivate,
+	onEntrySelect,
 	selectionMode,
 	isSelected,
 	onToggleSelected,
@@ -543,8 +552,15 @@ export const DirectoryBrowser = ({
 						data-directory-browser-entry=""
 						data-entry-kind={entry.isDirectory ? "dir" : "file"}
 						data-entry-path={entry.path}
+						data-entry-file-type={directoryBrowserMenuFileType(entry)}
 						className={cx(shellRowBtn, rowBtnFlex1Class)}
-						onClick={isUpRow || !entry.isDirectory ? entryOnClick : undefined}
+						onClick={
+							isUpRow || !entry.isDirectory
+								? entryOnClick
+								: onEntrySelect
+									? () => onEntrySelect(entry)
+									: undefined
+						}
 						onDoubleClick={entryOnActivate}
 						onKeyDown={(ev) => {
 							if (isIMEComposing(ev)) return;
@@ -697,6 +713,9 @@ export const DirectoryBrowser = ({
 										isSelected={isSelected(entry.path, kindOfEntry(entry))}
 										onClick={() => handleRowClick(entry)}
 										onDoubleClick={() => handleRowActivate(entry)}
+										onSelect={
+											onEntrySelect ? () => onEntrySelect(entry) : undefined
+										}
 										onToggle={handleToggle(entry)}
 										showCheckbox={showCheckbox(entry)}
 										aspect={aspect}

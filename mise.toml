@@ -1,6 +1,19 @@
 [tools]
 bun = "1.3.10"
 
+# Per-worktree values written by scripts/worktree/setup.sh. Missing file is a
+# no-op, so the main checkout keeps the built-in defaults.
+[env]
+_.file = ".worktree.env"
+
 [tasks."check:skills"]
 description = "Verify vendored Agent Skills against skills-lock.json"
 run = "bun scripts/check/vendored-skills.ts"
+
+[tasks."worktree:setup"]
+description = "Prepare this worktree; every worktree frontend calls this"
+run = "bash scripts/worktree/setup.sh"
+
+[tasks."worktree:teardown"]
+description = "Release out-of-tree resources before this worktree is removed"
+run = "bash scripts/worktree/teardown.sh"

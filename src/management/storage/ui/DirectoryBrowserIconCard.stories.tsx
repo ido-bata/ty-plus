@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { expect } from "storybook/test";
 import type { SiblingListingEntry } from "@/management/preset/sibling-thumbnail";
 
 import type { DirectoryBrowserEntry } from "./DirectoryBrowser";
@@ -100,4 +101,64 @@ export const ImageWithPreview: Story = {
 
 export const NoCheckbox: Story = {
 	args: { showCheckbox: false },
+};
+
+// Issue #146: hover must lift an unselected card to interactive.hover.
+// Assert the computed background actually changes on hover — a static
+// screenshot cannot distinguish "hover style missing" from "hover style
+// identical to resting state".
+export const HoverUnselected: Story = {
+	play: async ({ canvasElement }) => {
+		const card = canvasElement.querySelector<HTMLElement>(
+			"[data-card-selected]",
+		);
+		if (!card) throw new Error("icon card not found");
+		// `storybook/test`'s userEvent does not move the real pointer in the
+		// vitest browser project, so CSS :hover never engages. Drive real
+		// input through vitest browser's userEvent instead (dynamic import
+		// keeps Storybook dev/build from evaluating the browser-only module).
+		const { userEvent } = await import("vitest/browser");
+		// The pointer may already sit over the centered card from a previous
+		// story — park it on a corner spacer so the resting style is real.
+		const spacer = document.createElement("div");
+		spacer.style.cssText = "position:fixed;top:0;left:0;width:8px;height:8px;";
+		document.body.appendChild(spacer);
+		await userEvent.hover(spacer);
+		await new Promise((resolve) => setTimeout(resolve, 300));
+		const resting = getComputedStyle(card).backgroundColor;
+		await userEvent.hover(card);
+		await expect(card.matches(":hover")).toBe(true);
+		// The card transitions colors — wait for the transition to settle
+		// before comparing computed backgrounds.
+		await new Promise((resolve) => setTimeout(resolve, 300));
+		await expect(getComputedStyle(card).backgroundColor).not.toBe(resting);
+		await userEvent.unhover(card);
+		spacer.remove();
+	},
+};
+
+// Issue #146: a selected card must keep its selection surface on hover —
+// the hover affordance is overridden so selected vs hovered-unselected
+// stay visually distinct (see cardSelectedClass comment).
+export const HoverSelected: Story = {
+	args: { isSelected: true },
+	play: async ({ canvasElement }) => {
+		const card = canvasElement.querySelector<HTMLElement>(
+			"[data-card-selected]",
+		);
+		if (!card) throw new Error("icon card not found");
+		const { userEvent } = await import("vitest/browser");
+		const spacer = document.createElement("div");
+		spacer.style.cssText = "position:fixed;top:0;left:0;width:8px;height:8px;";
+		document.body.appendChild(spacer);
+		await userEvent.hover(spacer);
+		await new Promise((resolve) => setTimeout(resolve, 300));
+		const resting = getComputedStyle(card).backgroundColor;
+		await userEvent.hover(card);
+		await expect(card.matches(":hover")).toBe(true);
+		await new Promise((resolve) => setTimeout(resolve, 300));
+		await expect(getComputedStyle(card).backgroundColor).toBe(resting);
+		await userEvent.unhover(card);
+		spacer.remove();
+	},
 };

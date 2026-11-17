@@ -115,8 +115,10 @@ const config: CEP_Config = {
 	id: CEP_EXTENSION_BUNDLE_ID,
 	displayName: "ty-plus",
 	symlink: "local",
-	port: 3000,
-	servePort: 5000,
+	// Per-worktree overrides come from .worktree.env via mise `[env] _.file`;
+	// unset (main checkout) keeps the shared defaults.
+	port: Number(process.env.TY_PLUS_VITE_PORT ?? 3000),
+	servePort: Number(process.env.TY_PLUS_PREVIEW_PORT ?? 5000),
 	startingDebugPort,
 	extensionManifestVersion: 6.0,
 	// Match shipping multi-panel CEP extensions (e.g. Motion Tools Pro): CSXS 6.0+.

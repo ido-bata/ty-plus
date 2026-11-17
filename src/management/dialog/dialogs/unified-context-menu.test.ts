@@ -500,3 +500,226 @@ describe("buildWorkspaceContextMenuPayload (preset-row Duplicate entry)", () => 
 		expect(unknownRow?.enabled).toBe(false);
 	});
 });
+
+describe("buildWorkspaceContextMenuPayload (directory-browser zone, Issue #141)", () => {
+	const baseState: Pick<
+		SurfaceState,
+		| "layoutLocked"
+		| "presets"
+		| "surfaceTiles"
+		| "selectedSurfaceIndices"
+		| "presetSelectedIds"
+		| "presetHoverId"
+		| "panelPresetIds"
+		| "panelId"
+		| "openedGroupPresetId"
+		| "groupCatalogEntries"
+		| "widgetInstanceTypes"
+	> = {
+		layoutLocked: false,
+		presets: [
+			{
+				id: "p-1",
+				type: "preset",
+				title: "Sample",
+				filePath: "/preset/root/sample.ffx",
+			},
+		],
+		surfaceTiles: [
+			{ id: "widget-directory-browser", x: 0, y: 0, width: 1, height: 1 },
+		],
+		selectedSurfaceIndices: [],
+		presetSelectedIds: [],
+		presetHoverId: null,
+		panelPresetIds: [],
+		panelId: "panel-1",
+		openedGroupPresetId: null,
+		groupCatalogEntries: [],
+		widgetInstanceTypes: { "widget-directory-browser": "directory-browser" },
+	};
+
+	const build = (hit: Parameters<typeof buildWorkspaceContextMenuPayload>[0]) =>
+		buildWorkspaceContextMenuPayload(
+			hit,
+			baseState,
+			{ canUndo: false, canRedo: false },
+			{
+				isCep: true,
+				hostCode: "AEFT",
+			},
+		);
+
+	it("dir row: Open / Refresh / Go up", () => {
+		const payload = build({
+			zone: "directory-browser",
+			placementId: "0",
+			entryKind: "dir",
+			entryPath: "C:/demo/folder",
+			canGoUp: true,
+		});
+		const ids = payload.menu.map((e) => e.id);
+		expect(ids).toEqual([
+			`${CTX_MENU_IDS.dirBrowserOpenDirPrefix}${encodeURIComponent("C:/demo/folder")}`,
+			CTX_MENU_IDS.dirBrowserRefresh,
+			CTX_MENU_IDS.dirBrowserGoUp,
+		]);
+	});
+
+	it("dir row: disables Go up when the widget reports canGoUp=false", () => {
+		const payload = build({
+			zone: "directory-browser",
+			entryKind: "dir",
+			entryPath: "C:/demo/folder",
+			canGoUp: false,
+		});
+		const goUp = payload.menu.find((e) => e.id === CTX_MENU_IDS.dirBrowserGoUp);
+		expect(goUp?.enabled).toBe(false);
+	});
+
+	it("up-row (empty dir path): no Open item", () => {
+		const payload = build({
+			zone: "directory-browser",
+			entryKind: "dir",
+			entryPath: "",
+		});
+		const ids = payload.menu.map((e) => e.id);
+		expect(
+			ids.some((id) => id?.startsWith(CTX_MENU_IDS.dirBrowserOpenDirPrefix)),
+		).toBe(false);
+		expect(ids).toContain(CTX_MENU_IDS.dirBrowserRefresh);
+		expect(ids).toContain(CTX_MENU_IDS.dirBrowserGoUp);
+	});
+
+	it("file row: Select / Import / Refresh / Go up, no audio preview for non-audio", () => {
+		const payload = build({
+			zone: "directory-browser",
+			entryKind: "file",
+			entryPath: "C:/demo/preset.ffx",
+			fileType: "image",
+		});
+		const ids = payload.menu.map((e) => e.id);
+		expect(ids).toEqual([
+			`${CTX_MENU_IDS.dirBrowserSelectPrefix}${encodeURIComponent("C:/demo/preset.ffx")}`,
+			`${CTX_MENU_IDS.dirBrowserImportPrefix}${encodeURIComponent("C:/demo/preset.ffx")}`,
+			CTX_MENU_IDS.dirBrowserRefresh,
+			CTX_MENU_IDS.dirBrowserGoUp,
+		]);
+		const select = payload.menu.find((e) =>
+			e.id?.startsWith(CTX_MENU_IDS.dirBrowserSelectPrefix),
+		);
+		expect(select?.label).toBe("Select");
+	});
+
+	it("file row: shows Deselect when the path is the widget's selected file", () => {
+		const payload = build({
+			zone: "directory-browser",
+			entryKind: "file",
+			entryPath: "C:/demo/preset.ffx",
+			selectedFilePath: "C:/demo/preset.ffx",
+		});
+		const select = payload.menu.find((e) =>
+			e.id?.startsWith(CTX_MENU_IDS.dirBrowserSelectPrefix),
+		);
+		expect(select?.label).toBe("Deselect");
+	});
+
+	it("audio file row: adds Play audio preview", () => {
+		const payload = build({
+			zone: "directory-browser",
+			entryKind: "file",
+			entryPath: "C:/demo/take.wav",
+			fileType: "audio",
+		});
+		const ids = payload.menu.map((e) => e.id);
+		expect(ids).toContain(
+			`${CTX_MENU_IDS.dirBrowserAudioPreviewPrefix}${encodeURIComponent("C:/demo/take.wav")}`,
+		);
+	});
+
+	it("preset catalog row: reuses the preset-row menu (Run/Edit/Duplicate/Delete/Move to panel)", () => {
+		const payload = build({
+			zone: "directory-browser",
+			placementId: "0",
+			entryKind: "preset",
+			entryPath: "/preset/root/sample.ffx",
+			presetId: "p-1",
+		});
+		const ids = payload.menu.map((e) => e.id);
+		expect(ids).toContain(CTX_MENU_IDS.runPreset);
+		expect(ids).toContain(CTX_MENU_IDS.editPreset);
+		expect(ids).toContain(CTX_MENU_IDS.duplicatePreset);
+		expect(ids).toContain(CTX_MENU_IDS.deletePreset);
+		expect(ids).toContain(CTX_MENU_IDS.movePresetToPanelMenuRoot);
+		// Row ops must NOT leak widget/browser chrome items.
+		expect(ids).not.toContain(CTX_MENU_IDS.dirBrowserRefresh);
+		expect(ids).not.toContain(CTX_MENU_IDS.dirBrowserGoUp);
+	});
+
+	it("body hit: browser chrome ops + widget Move to panel / Delete", () => {
+		const payload = build({
+			zone: "directory-browser",
+			placementId: "0",
+			canGoUp: true,
+		});
+		const ids = payload.menu.map((e) => e.id);
+		for (const id of [
+			CTX_MENU_IDS.dirBrowserRefresh,
+			CTX_MENU_IDS.dirBrowserGoUp,
+			CTX_MENU_IDS.dirBrowserBrowseDrives,
+			CTX_MENU_IDS.dirBrowserToggleFilters,
+			CTX_MENU_IDS.dirBrowserClearSearch,
+			CTX_MENU_IDS.dirBrowserDefaultDir,
+		]) {
+			expect(ids).toContain(id);
+		}
+		// Widget-level ops: Move to panel targets the widget tile, Delete the widget.
+		expect(ids).toContain(CTX_MENU_IDS.moveWidgetToPanelMenuRoot);
+		expect(ids).toContain(CTX_MENU_IDS.deleteWorkspaceWidget);
+	});
+});
+
+describe("buildWorkspaceContextMenuPayload (menu widget, Issue #170)", () => {
+	const baseState: Pick<
+		SurfaceState,
+		| "layoutLocked"
+		| "presets"
+		| "surfaceTiles"
+		| "selectedSurfaceIndices"
+		| "presetSelectedIds"
+		| "presetHoverId"
+		| "panelPresetIds"
+		| "panelId"
+		| "openedGroupPresetId"
+		| "groupCatalogEntries"
+		| "widgetInstanceTypes"
+	> = {
+		layoutLocked: false,
+		presets: [],
+		surfaceTiles: [{ id: "widget-menu", x: 0, y: 0, width: 1, height: 1 }],
+		selectedSurfaceIndices: [],
+		presetSelectedIds: [],
+		presetHoverId: null,
+		panelPresetIds: [],
+		panelId: "panel-1",
+		openedGroupPresetId: null,
+		groupCatalogEntries: [],
+		widgetInstanceTypes: { "widget-menu": "menu" },
+	};
+
+	it("does not offer the dormant Preset Library dialog", () => {
+		const payload = buildWorkspaceContextMenuPayload(
+			{ zone: "workspace-placement", id: "0" },
+			baseState,
+			{ canUndo: false, canRedo: false },
+			{ isCep: true, hostCode: "AEFT" },
+		);
+		const ids = payload.menu.map((entry) => entry.id);
+		// R0 has no catalog backend, so the entry was a dead affordance.
+		expect(ids).not.toContain(CTX_MENU_IDS.openPresetLibrary);
+		// The offline-capable dialog entries stay.
+		expect(ids).toContain(CTX_MENU_IDS.openPresets);
+		expect(ids).toContain(CTX_MENU_IDS.openMessages);
+		expect(ids).toContain(CTX_MENU_IDS.openSettings);
+		expect(ids).toContain(CTX_MENU_IDS.openDebug);
+	});
+});

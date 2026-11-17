@@ -226,6 +226,17 @@
 		"unavailable": "更新を確認できません",
 		"available": "新しいバージョンがあります: {{version}}",
 		"releaseNotes": "リリースノートとダウンロード",
-		"channelPlaceholder": "チャンネルを選択"
+		"channelPlaceholder": "チャンネルを選択",
+		"install": "アップデートをインストール",
+		"installing": "インストール中…",
+		"installDone": "インストールしました。After Effectsを再起動すると反映されます。",
+		"installPending": "ステージ済みです。次回ty-plus起動時に適用されます。",
+		"installManual": "この環境では自動インストールできません。ダウンロードページから手動でインストールしてください。",
+		"installFailed": "インストールに失敗しました。再試行するか手動でインストールしてください。",
+		"installFailedDownload": "ダウンロードに失敗しました。接続を確認して再試行してください。",
+		"installFailedIntegrity": "ダウンロードしたファイルの整合性チェックに失敗しました。時間をおいて再試行してください。",
+		"installFailedArchive": "ダウンロードしたアップデートが無効です。再試行するか手動でインストールしてください。",
+		"installFailedPermission": "権限がありません。ダウンロードページから手動でインストールしてください。",
+		"installFailedBusy": "別のインストールが進行中です。しばらくしてから再試行してください。"
 	}
 }

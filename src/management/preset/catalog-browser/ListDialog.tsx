@@ -54,6 +54,12 @@ import {
 	removeLocalPreset,
 } from "@/management/preset/use-cases";
 import { PresetGlyphById } from "@/management/preset/workspace/glyph";
+import {
+	glyphBoxCompactClass,
+	glyphBoxCompactPadClass,
+	glyphBoxFlushClass,
+	glyphEmojiProminentClass,
+} from "@/management/preset/workspace/glyph-classes";
 import { stripKnownIdPrefixes } from "@/management/storage/ids";
 import { readSettings } from "@/management/storage/workspace/store";
 import { openPresetEditSurface } from "@/management/workspace/hooks/preset";
@@ -784,7 +790,7 @@ function GroupHeaderGlyph(props: { group: GroupEntry }): JSX.Element {
 				presetId={group.id}
 				preset={fake}
 				surface="framed"
-				boxClass="h-7 w-7"
+				boxClass={glyphBoxCompactClass}
 			/>
 		);
 	}
@@ -946,7 +952,7 @@ function PresetListTreeItem(props: {
 					presetId={preset.id}
 					preset={preset}
 					surface="framed"
-					boxClass="h-7 w-7 p-0.5"
+					boxClass={glyphBoxCompactPadClass}
 				/>
 			</div>
 			<div className={presetRowTitleMinWidthClass}>
@@ -1229,8 +1235,8 @@ function IconPresetCard(props: {
 					<PresetGlyphById
 						presetId={preset.id}
 						preset={preset}
-						boxClass="h-full w-full max-h-full max-w-full border-0 p-0.5"
-						emojiClass="[&_.ws-preset-icon--emoji]:text-3xl [&_.ws-preset-icon--text:not([data-ws-preset-text-fit])]:text-(length:--ty-shell-text-size-sm)"
+						boxClass={glyphBoxFlushClass}
+						emojiClass={glyphEmojiProminentClass}
 					/>
 				</div>
 			</button>
@@ -1731,18 +1737,25 @@ export function PresetsDialog(): JSX.Element {
 
 	const onEdit = useCallback(
 		async (id: string) => {
-			const isGroup = groups.some((g) => g.id === id);
-			if (isGroup) {
-				await openPresetEditSurface(window, PRESETS_DIALOG_SURFACE_ID, id);
-				return;
-			}
-			const preset = await getPreset(id);
-			if (!preset) {
-				return;
-			}
-			const toolSurface = resolvePresetToolSurfaceIdForPreset(preset);
-			if (!getPresetToolDialogEntry(toolSurface)) {
-				return;
+			try {
+				const isGroup = groups.some((g) => g.id === id);
+				if (isGroup) {
+					await openPresetEditSurface(window, PRESETS_DIALOG_SURFACE_ID, id);
+					return;
+				}
+				const preset = await getPreset(id);
+				if (!preset) {
+					return;
+				}
+				const toolSurface = resolvePresetToolSurfaceIdForPreset(preset);
+				if (!getPresetToolDialogEntry(toolSurface)) {
+					return;
+				}
+			} catch (error) {
+				console.warn(
+					"preset-list: edit failed",
+					error instanceof Error ? error.message : String(error),
+				);
 			}
 		},
 		[groups],
@@ -1750,8 +1763,15 @@ export function PresetsDialog(): JSX.Element {
 
 	const onDelete = useCallback(
 		async (id: string) => {
-			await removeLocalPreset(id);
-			await loadEverything();
+			try {
+				await removeLocalPreset(id);
+				await loadEverything();
+			} catch (error) {
+				console.warn(
+					"preset-list: delete failed",
+					error instanceof Error ? error.message : String(error),
+				);
+			}
 		},
 		[loadEverything],
 	);

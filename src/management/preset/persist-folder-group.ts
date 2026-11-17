@@ -8,12 +8,12 @@ import {
 	presetIconDraftToPresetIcon,
 } from "@/management/preset/icon-editor";
 import { importOnboardingPresets } from "@/management/preset/onboarding-service";
+import { getLocalPresetCatalog } from "@/management/preset/repository/local-catalog";
 import { listPresets } from "@/management/preset/use-cases";
 import {
 	canUseCepNodeFileBrowser,
 	createCepNodeFileBrowserService,
 } from "@/management/storage/file-browser-service";
-import { getDataServices } from "@/management/workspace/services";
 
 export type PersistFolderGroupPresetInput = {
 	folderPaths?: string[];
@@ -109,7 +109,10 @@ export const persistFolderGroupPreset = async (
 		}));
 	};
 
-	const repo = getDataServices().presetRepository;
+	// Issue #139: group creation must not depend on cloud gateway boot. The
+	// imported presets are local file-backed rows, so they go through the
+	// local catalog — the same owner `listPresets`/`upsertLocalPreset` use.
+	const repo = getLocalPresetCatalog(win);
 	const result = await importOnboardingPresets(
 		{
 			selectedFiles: {

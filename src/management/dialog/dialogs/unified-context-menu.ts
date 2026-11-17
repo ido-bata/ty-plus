@@ -71,6 +71,10 @@ export type ContextHit =
 			entryPath?: string;
 			presetId?: string;
 			fileType?: "image" | "video" | "audio";
+			/** Whether the browser can navigate up (mirrors the widget's Go up button). */
+			canGoUp?: boolean;
+			/** Currently single-selected file path, for Select/Deselect labels. */
+			selectedFilePath?: string;
 	  }
 	| {
 			/** Anchor-point widget buttons inside a placement tile */
@@ -176,13 +180,29 @@ function parseDirectoryBrowserHit(
 	el: Element,
 	placementId?: string,
 ): ContextHit {
+	// Widget-owned menu state lives on the widget root
+	// (`data-directory-browser-can-go-up` / `-selected-file`), outside the
+	// shared `data-directory-browser-body` markers emitted by the kit.
+	const menuStateEl = el.closest("[data-directory-browser-can-go-up]");
+	const canGoUpAttr = menuStateEl?.getAttribute(
+		"data-directory-browser-can-go-up",
+	);
+	const selectedFilePath = menuStateEl
+		?.getAttribute("data-directory-browser-selected-file")
+		?.trim();
+	const shared = {
+		placementId,
+		...(canGoUpAttr !== null &&
+			canGoUpAttr !== undefined && { canGoUp: canGoUpAttr !== "false" }),
+		...(selectedFilePath && { selectedFilePath }),
+	};
 	const body = el.closest("[data-directory-browser-body]");
 	if (!body) {
-		return { zone: "directory-browser", placementId };
+		return { zone: "directory-browser", ...shared };
 	}
 	const row = el.closest("[data-directory-browser-entry]");
 	if (!row || !body.contains(row)) {
-		return { zone: "directory-browser", placementId };
+		return { zone: "directory-browser", ...shared };
 	}
 	const kind = row.getAttribute("data-entry-kind")?.trim();
 	const entryPath = row.getAttribute("data-entry-path")?.trim() ?? "";
@@ -195,14 +215,14 @@ function parseDirectoryBrowserHit(
 	if (kind === "dir" || kind === "file" || kind === "preset") {
 		return {
 			zone: "directory-browser",
-			placementId,
+			...shared,
 			entryKind: kind,
 			entryPath,
 			presetId,
 			...(fileTypeAttr && { fileType: fileTypeAttr }),
 		};
 	}
-	return { zone: "directory-browser", placementId };
+	return { zone: "directory-browser", ...shared };
 }
 
 function isNativeTextEditTarget(target: EventTarget | null): boolean {
@@ -1422,6 +1442,127 @@ function buildPresetRowMenu(
 }
 
 /**
+ * Directory-browser row menu (dir / file entries inside
+ * `data-directory-browser-body`). Preset catalog rows reuse
+ * {@link buildPresetRowMenu} instead — they are catalog presets, not
+ * filesystem entries.
+ *
+ * Picks are bridged back to the widget as `browser-*` CustomEvents on the
+ * panel root (see `handleUnifiedCtxSelect` in workspace/hook.ts and the
+ * listeners in the directory-browser Component).
+ */
+function buildDirectoryBrowserEntryMenu(
+	hit: Extract<ContextHit, { zone: "directory-browser" }>,
+	includeCep: boolean,
+): CepMenuEntry[] {
+	const path = hit.entryPath?.trim() ?? "";
+	const goUp: CepMenuEntry = {
+		id: CTX_MENU_IDS.dirBrowserGoUp,
+		label: "Go up",
+		enabled: includeCep && hit.canGoUp !== false,
+	};
+	const refresh: CepMenuEntry = {
+		id: CTX_MENU_IDS.dirBrowserRefresh,
+		label: "Refresh",
+		enabled: includeCep,
+	};
+
+	if (hit.entryKind === "dir") {
+		const rows: CepMenuEntry[] = [];
+		// The ".." up-row carries an empty path — it only gets navigation ops.
+		if (path) {
+			rows.push({
+				id: `${CTX_MENU_IDS.dirBrowserOpenDirPrefix}${encodeURIComponent(path)}`,
+				label: "Open",
+				enabled: includeCep,
+			});
+		}
+		rows.push(refresh, goUp);
+		return rows;
+	}
+
+	// File row: Select toggles the widget's single file selection (the same
+	// id is emitted for both directions; the widget flips state on receipt).
+	const isSelected =
+		hit.selectedFilePath !== undefined && hit.selectedFilePath === path;
+	const rows: CepMenuEntry[] = [
+		{
+			id: `${CTX_MENU_IDS.dirBrowserSelectPrefix}${encodeURIComponent(path)}`,
+			label: isSelected ? "Deselect" : "Select",
+			enabled: includeCep && path.length > 0,
+		},
+		{
+			id: `${CTX_MENU_IDS.dirBrowserImportPrefix}${encodeURIComponent(path)}`,
+			label: "Import",
+			enabled: includeCep && path.length > 0,
+		},
+	];
+	if (hit.fileType === "audio") {
+		rows.push({
+			id: `${CTX_MENU_IDS.dirBrowserAudioPreviewPrefix}${encodeURIComponent(path)}`,
+			label: "Play audio preview",
+			enabled: includeCep && path.length > 0,
+		});
+	}
+	rows.push(refresh, goUp);
+	return rows;
+}
+
+/**
+ * Directory-browser body menu (empty areas, toolbar, filters panel — any
+ * hit inside `data-directory-browser-body` that is not a catalog row).
+ *
+ * Combines the widget-placement ops (Move to panel moves the WIDGET tile,
+ * Delete removes the widget) with the browser chrome ops (Refresh / Go up /
+ * Browse drives / Toggle filters / Clear search / Default dir). Row hits
+ * get row ops only via {@link buildDirectoryBrowserEntryMenu}, which keeps
+ * widget-level "Move to panel" cleanly separated from file/preset ops.
+ */
+function buildDirectoryBrowserBodyMenu(
+	hit: Extract<ContextHit, { zone: "directory-browser" }>,
+	state: Pick<SurfaceState, "layoutLocked" | "panelId">,
+	includeCep: boolean,
+): CepMenuEntry[] {
+	const rows: CepMenuEntry[] = [
+		{
+			id: CTX_MENU_IDS.dirBrowserRefresh,
+			label: "Refresh",
+			enabled: includeCep,
+		},
+		{
+			id: CTX_MENU_IDS.dirBrowserGoUp,
+			label: "Go up",
+			enabled: includeCep && hit.canGoUp !== false,
+		},
+		{
+			id: CTX_MENU_IDS.dirBrowserBrowseDrives,
+			label: "Browse drives",
+			enabled: includeCep,
+		},
+		{
+			id: CTX_MENU_IDS.dirBrowserToggleFilters,
+			label: "Toggle filters",
+			enabled: includeCep,
+		},
+		{
+			id: CTX_MENU_IDS.dirBrowserClearSearch,
+			label: "Clear search",
+			enabled: includeCep,
+		},
+		{
+			id: CTX_MENU_IDS.dirBrowserDefaultDir,
+			label: "Default directory",
+			enabled: includeCep,
+		},
+		sep(),
+		...buildWorkspacePlacementBaseMenu(hit.placementId?.trim() ?? "", state, {
+			isCep: includeCep,
+		}),
+	];
+	return rows;
+}
+
+/**
  * Context menu for a **group tile** in the workspace grid (not a preset row).
  * Shows Open, Edit, Release Group, and Delete.
  */
@@ -1542,11 +1683,8 @@ function buildWorkspacePlacementWidgetMenu(
 				label: "Presets",
 				enabled: opts.isCep,
 			},
-			{
-				id: CTX_MENU_IDS.openPresetLibrary,
-				label: "Preset Library",
-				enabled: opts.isCep,
-			},
+			// Preset Library is intentionally absent (Issue #170): the online
+			// catalog has no R0 backend, so the entry was a dead affordance.
 			{
 				id: CTX_MENU_IDS.openMessages,
 				label: "Messages",
@@ -1681,14 +1819,19 @@ export function buildWorkspaceContextMenuPayload(
 		return { menu: buildPresetRowMenu(hit, state, includeCep) };
 	}
 
-	if (
-		hit.zone === "directory-browser" &&
-		hit.entryKind === "preset" &&
-		hit.presetId
-	) {
-		return {
-			menu: buildPresetRowMenu({ presetId: hit.presetId }, state, includeCep),
-		};
+	if (hit.zone === "directory-browser") {
+		// Preset catalog rows are catalog presets — reuse the preset-row menu
+		// so Run / Edit / Duplicate / Move to panel / Delete operate on the
+		// preset (resolved via `hit.presetId`), not the widget tile.
+		if (hit.entryKind === "preset" && hit.presetId) {
+			return {
+				menu: buildPresetRowMenu({ presetId: hit.presetId }, state, includeCep),
+			};
+		}
+		if (hit.entryKind === "dir" || hit.entryKind === "file") {
+			return { menu: buildDirectoryBrowserEntryMenu(hit, includeCep) };
+		}
+		return { menu: buildDirectoryBrowserBodyMenu(hit, state, includeCep) };
 	}
 
 	if (hit.zone === "anchor-point") {

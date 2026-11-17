@@ -65,6 +65,11 @@ function makeComposition(
 			label: "",
 			checked_at: "",
 		})) as unknown as OperationWorkerComposition["checkConnectivity"],
+		installUpdate: vi.fn(async () => ({
+			status: "installed",
+			version: "0.0.0",
+			restart_required: true,
+		})) as unknown as OperationWorkerComposition["installUpdate"],
 		resolveCurrentBinary: vi.fn(async () => ({}) as never),
 		resolveCurrentManifest: vi.fn(async () => ({}) as never),
 		stopAccepting: vi.fn(),

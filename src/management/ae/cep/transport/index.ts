@@ -181,12 +181,22 @@ const createSurfaceLink = (win: Window): SurfaceTransport => {
 		},
 		subscribe(handler: (message: SurfaceMessageEnvelope) => void) {
 			return addListener((event) => {
+				let parsed: unknown;
 				try {
-					const parsed: unknown = JSON.parse(event.data);
-					if (isSurfaceMessageEnvelope(parsed)) handler(parsed);
+					parsed = JSON.parse(event.data);
 				} catch {
 					/* invalid payload */
+					return;
 				}
+				if (!isSurfaceMessageEnvelope(parsed)) {
+					return;
+				}
+				// issue 139: handler errors must not be swallowed here — a
+				// throwing subscriber (e.g. preset placement merge) used to fail
+				// silently, which made drops "not place" with zero diagnostics.
+				// Letting the error propagate surfaces it through the global
+				// error path instead of eating it inside the transport.
+				handler(parsed);
 			});
 		},
 	};

@@ -1,7 +1,12 @@
 import { Play } from "lucide-react";
 import type { JSX } from "react";
 import type { IconTileAspect } from "@/management/preset";
-import { iconTileMediaClass, PresetGlyphById } from "@/management/preset";
+import {
+	glyphBoxFlushClass,
+	glyphEmojiProminentClass,
+	iconTileMediaClass,
+	PresetGlyphById,
+} from "@/management/preset";
 import type { Preset } from "@/management/preset/contract";
 import { Icon } from "@/shared/component";
 import { cx } from "@/shared/util/cx";
@@ -87,20 +92,8 @@ export function CatalogPresetIconTile({
 						<PresetGlyphById
 							presetId={p.id}
 							preset={p}
-							boxClass={css({
-								height: "full",
-								width: "full",
-								maxHeight: "full",
-								maxWidth: "full",
-								borderWidth: 0,
-								padding: "0.5",
-							})}
-							emojiClass={css({
-								"& .ws-preset-icon--emoji": { fontSize: "3xl" },
-								"& .ws-preset-icon--text:not([data-ws-preset-text-fit])": {
-									fontSize: "shell-text-sm",
-								},
-							})}
+							boxClass={glyphBoxFlushClass}
+							emojiClass={glyphEmojiProminentClass}
 							{...presetGlyphSiblingProps}
 						/>
 					</div>

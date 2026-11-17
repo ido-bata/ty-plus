@@ -226,6 +226,17 @@
 		"unavailable": "Vérification des mises à jour indisponible",
 		"available": "Nouvelle version disponible : {{version}}",
 		"releaseNotes": "Notes de version et téléchargement",
-		"channelPlaceholder": "Choisir un canal"
+		"channelPlaceholder": "Choisir un canal",
+		"install": "Installer la mise à jour",
+		"installing": "Installation…",
+		"installDone": "Installée. Redémarrez After Effects pour terminer.",
+		"installPending": "Préparée. Elle sera appliquée au prochain démarrage de ty-plus.",
+		"installManual": "L'installation automatique n'est pas disponible ici. Utilisez la page de téléchargement.",
+		"installFailed": "Échec de l'installation. Réessayez ou installez manuellement.",
+		"installFailedDownload": "Échec du téléchargement. Vérifiez votre connexion et réessayez.",
+		"installFailedIntegrity": "Le fichier téléchargé a échoué au contrôle d'intégrité. Réessayez plus tard.",
+		"installFailedArchive": "La mise à jour téléchargée est invalide. Réessayez plus tard ou installez-la manuellement.",
+		"installFailedPermission": "Permission refusée. Installez-la manuellement depuis la page de téléchargement.",
+		"installFailedBusy": "Une autre installation est en cours. Réessayez dans un instant."
 	}
 }

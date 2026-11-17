@@ -8,8 +8,16 @@
  * `/C:/...`, which the runner resolves to an invalid doubled drive.
  */
 
-/** Output directory, relative to the Vitest project root. */
+/** Output directory for PNGs, relative to the Vitest project root. */
 export const SCREENSHOT_OUTPUT_DIRECTORY = ".tmp/vitest-screenshots";
+
+/**
+ * Output directory for per-story capture metadata (JSON sidecars),
+ * relative to the Vitest project root. Kept separate from the PNG
+ * directory so the merge/gallery steps can consume metadata without
+ * depending on PNG byte layout.
+ */
+export const CAPTURE_METADATA_DIRECTORY = ".tmp/storybook-captures";
 
 /**
  * Characters a story id may contribute. Storybook derives ids from the
@@ -32,7 +40,7 @@ const IS_NOT_A_FILE_NAME = /^\.*$/;
  *   is about to write a file under an ambiguous name. Failing loudly
  *   beats silently overwriting a neighbour.
  */
-export const screenshotFileName = (storyId: string): string => {
+const captureFileStem = (storyId: string): string => {
 	const segment = storyId.replace(DISALLOWED_CHARACTERS, "-");
 	if (IS_NOT_A_FILE_NAME.test(segment)) {
 		throw new Error(
@@ -41,15 +49,18 @@ export const screenshotFileName = (storyId: string): string => {
 	}
 	// Belt and braces: every separator was folded above, so this can only
 	// fire if the pattern above is loosened later. A capture that wrote
-	// outside `.tmp/vitest-screenshots/` would be invisible in review, so
-	// the invariant is asserted rather than assumed.
+	// outside the output directory would be invisible in review, so the
+	// invariant is asserted rather than assumed.
 	if (segment.includes("/") || segment.includes("\\")) {
 		throw new Error(
 			`screenshot capture produced a path separator in ${JSON.stringify(segment)}`,
 		);
 	}
-	return `${segment}.png`;
+	return segment;
 };
+
+export const screenshotFileName = (storyId: string): string =>
+	`${captureFileStem(storyId)}.png`;
 
 /**
  * The path handed to `commands.writeFile`, relative to the Vitest
@@ -62,3 +73,11 @@ export const screenshotFileName = (storyId: string): string => {
  */
 export const screenshotOutputRelativePath = (storyId: string): string =>
 	`${SCREENSHOT_OUTPUT_DIRECTORY}/${screenshotFileName(storyId)}`;
+
+/**
+ * The metadata sidecar path handed to `commands.writeFile`, relative to
+ * the Vitest project root. Same sanitization contract as the PNG path —
+ * the stem is shared so a story id maps to exactly one PNG/JSON pair.
+ */
+export const captureMetadataRelativePath = (storyId: string): string =>
+	`${CAPTURE_METADATA_DIRECTORY}/${captureFileStem(storyId)}.json`;

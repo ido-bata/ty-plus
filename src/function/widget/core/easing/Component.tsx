@@ -40,6 +40,8 @@ import {
 } from "./curve-category";
 import { decideReverseAction } from "./curve-ops";
 import {
+	type DragTarget,
+	findNearestDragTarget,
 	isPointOrHandleHit,
 	resolveHandleMove,
 	resolvePullOutHandle,
@@ -51,13 +53,6 @@ type ApplyMode = "single" | "pair";
 type BackgroundPattern = "dot" | "grid";
 type Point = { x: number; y: number };
 type CurvePoint = { x: number; y: number; hIn: Point; hOut: Point };
-type DragTarget =
-	| { type: "point"; index: number }
-	| { type: "hIn"; index: number }
-	| { type: "hOut"; index: number }
-	| { type: "procedural" }
-	| { type: "pan" }
-	| null;
 type EditorState = {
 	mode: Mode;
 	width: number;
@@ -1172,7 +1167,9 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 				: "default"
 			: spacePressedRef.current
 				? "grab"
-				: "default";
+				: state.hoverTarget
+					? "pointer"
+					: "default";
 	}, [backgroundPattern]);
 
 	useEffect(() => {
@@ -1268,56 +1265,18 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 	const findClosestWithDistance = useCallback(
 		(screen: Point): { target: DragTarget; distance: number } => {
 			const state = stateRef.current;
-			let closest: DragTarget = null;
-			let minDistance = Number.POSITIVE_INFINITY;
 			// Loop mode renders the curve editor (the points array is the
 			// single-cycle template), so hit testing uses the curve path
-			// exactly as in curve mode.
-			if (state.mode === "curve" || state.mode === "loop") {
-				state.points.forEach((point, index) => {
-					const pointScreen = worldToScreen(point, state.camera);
-					if (index > 0 && index < state.points.length - 1) {
-						const distance = Math.hypot(
-							pointScreen.x - screen.x,
-							pointScreen.y - screen.y,
-						);
-						if (distance < minDistance) {
-							minDistance = distance;
-							closest = { type: "point", index };
-						}
-					}
-					if (index > 0) {
-						const hIn = handleDotScreenPos(point, "hIn", state.camera);
-						const distance = Math.hypot(hIn.x - screen.x, hIn.y - screen.y);
-						if (distance < minDistance) {
-							minDistance = distance;
-							closest = { type: "hIn", index };
-						}
-					}
-					if (index < state.points.length - 1) {
-						const hOut = handleDotScreenPos(point, "hOut", state.camera);
-						const distance = Math.hypot(hOut.x - screen.x, hOut.y - screen.y);
-						if (distance < minDistance) {
-							minDistance = distance;
-							closest = { type: "hOut", index };
-						}
-					}
-				});
-			} else {
-				// Procedural modes have a single draggable handle dot; hit
-				// test it at its real screen position so drags that start
-				// away from the dot pan instead of teleporting the handle.
-				const handleScreen = worldToScreen(
-					state.procedural.handle,
-					state.camera,
-				);
-				closest = { type: "procedural" };
-				minDistance = Math.hypot(
-					handleScreen.x - screen.x,
-					handleScreen.y - screen.y,
-				);
-			}
-			return { target: closest, distance: minDistance };
+			// exactly as in curve mode. The lookup itself is uncapped —
+			// plain left-click always selects the nearest draggable element
+			// (issue #145); pan is an explicit gesture handled before this.
+			return findNearestDragTarget({
+				screen,
+				points: state.points,
+				proceduralHandle: state.procedural.handle,
+				camera: state.camera,
+				useCurvePoints: state.mode === "curve" || state.mode === "loop",
+			});
 		},
 		[],
 	);
@@ -1739,26 +1698,14 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 				return;
 			}
 
-			const target = findClosest(screen);
-			if (!target) {
-				// Plain left-click on empty canvas area: pan. Required for
-				// Mac trackpad / single-button mice that have no middle
-				// button — without this, dragging does nothing at all on
-				// empty space.
-				event.preventDefault();
-				event.stopPropagation();
-				state.isDragging = true;
-				state.dragTarget = { type: "pan" };
-				state.hoverTarget = null;
-				state.dragChanged = false;
-				state.altHeld = false;
-				state.mirrorHeld = false;
-				state.handleLink = null;
-				if (typeof event.pointerId === "number") {
-					canvas.setPointerCapture(event.pointerId);
-				}
-				return;
-			}
+			// Plain left-click ALWAYS grabs the nearest draggable element —
+			// the lookup has no distance cap and `updateDrag` below snaps it
+			// to the click position, then it follows the pointer (issue
+			// #145). There is deliberately no empty-area pan branch: pan is
+			// an explicit gesture only (middle-button or Space+left, handled
+			// above).
+			const target = findClosestWithDistance(screen).target;
+			if (!target) return;
 			event.preventDefault();
 			event.stopPropagation();
 			state.isDragging = true;
@@ -1813,7 +1760,6 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 			activate,
 			autoApply,
 			canvasPoint,
-			findClosest,
 			findClosestWithDistance,
 			persistState,
 			updateDrag,

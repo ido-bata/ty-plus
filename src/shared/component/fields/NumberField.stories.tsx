@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
+import { expect } from "storybook/test";
 import { NumberField } from "./NumberField";
 
 const meta = {
@@ -74,4 +75,22 @@ export const Interactive: Story = {
 		);
 	},
 	args: {},
+};
+
+// Issue #166: focus state — the inner Input repaints its border to
+// `interactive.focus` on `:focus` (and reveals the WebKit spinners).
+export const Focused: Story = {
+	args: {},
+	play: async ({ canvasElement }) => {
+		const input = canvasElement.querySelector<HTMLInputElement>("input");
+		if (!input) throw new Error("number input not found");
+		const restingBorderColor = getComputedStyle(input).borderTopColor;
+		input.focus();
+		await expect(document.activeElement).toBe(input);
+		await expect(input.matches(":focus")).toBe(true);
+		await new Promise((resolve) => setTimeout(resolve, 300));
+		await expect(getComputedStyle(input).borderTopColor).not.toBe(
+			restingBorderColor,
+		);
+	},
 };

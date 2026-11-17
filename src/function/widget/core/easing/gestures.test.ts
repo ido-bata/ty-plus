@@ -1,8 +1,12 @@
 import { describe, expect, it } from "vitest";
 import {
+	computeCamera,
+	handleDotScreenPos,
+} from "@/function/widget/core/easing/camera";
+import {
 	applyMirror,
+	findNearestDragTarget,
 	isPointOrHandleHit,
-	resolveDragStart,
 	resolveHandleMove,
 	resolvePullOutHandle,
 } from "@/function/widget/core/easing/gestures";
@@ -158,98 +162,73 @@ describe("isPointOrHandleHit", () => {
 	});
 });
 
-describe("resolveDragStart", () => {
-	const baseArgs = {
-		button: 0,
-		altKey: false,
-		ctrlKey: false,
-		metaKey: false,
-		spacePressed: false,
-		mode: "curve" as const,
-		hitTarget: null as null,
-	};
+describe("findNearestDragTarget", () => {
+	const camera = computeCamera(400, 400);
+	// Same skeleton as `createInitialState`: a 2-point ease-out curve.
+	const points = [
+		{ x: 0, y: 0, hIn: { x: 0, y: 0 }, hOut: { x: 0.4, y: 0 } },
+		{ x: 1, y: 1, hIn: { x: -0.4, y: 0 }, hOut: { x: 0, y: 0 } },
+	];
+	const proceduralHandle = { x: 0.4, y: 0.6 };
 
-	it("middle-click starts a pan regardless of mode or target", () => {
-		expect(
-			resolveDragStart({
-				...baseArgs,
-				button: 1,
-				hitTarget: { type: "point", index: 0 },
-			}),
-		).toBe("pan");
-		expect(resolveDragStart({ ...baseArgs, button: 1, mode: "bounce" })).toBe(
-			"pan",
+	const nearest = (
+		screen: { x: number; y: number },
+		overrides: Partial<Parameters<typeof findNearestDragTarget>[0]> = {},
+	) =>
+		findNearestDragTarget({
+			screen,
+			points,
+			proceduralHandle,
+			camera,
+			useCurvePoints: true,
+			...overrides,
+		});
+
+	it("returns the nearest handle even when the click is arbitrarily far away (no distance cap, #145)", () => {
+		const { target, distance } = nearest({ x: 100_000, y: 100_000 });
+		expect(target).not.toBeNull();
+		expect(target?.type === "hIn" || target?.type === "hOut").toBe(true);
+		expect(distance).toBeGreaterThan(24);
+	});
+
+	it("selects the exact nearest element on an on-target click", () => {
+		const hInDot = handleDotScreenPos(points[1], "hIn", camera);
+		const { target } = nearest({ x: hInDot.x + 1, y: hInDot.y - 1 });
+		expect(target).toEqual({ type: "hIn", index: 1 });
+	});
+
+	it("never returns an endpoint anchor as a point target", () => {
+		// Click right on top of the (0,0) endpoint anchor: the nearest
+		// grabbable element is its hOut handle dot, never a "point".
+		const anchorScreen = {
+			x: camera.x + points[0].x * camera.zoom,
+			y: camera.y - points[0].y * camera.zoom,
+		};
+		const { target } = nearest(anchorScreen);
+		expect(target).not.toBeNull();
+		expect(target?.type).not.toBe("point");
+	});
+
+	it("selects an interior point when it is the closest element", () => {
+		const threePoints = [
+			points[0],
+			{ x: 0.5, y: 0.2, hIn: { x: -0.1, y: 0 }, hOut: { x: 0.1, y: 0 } },
+			points[1],
+		];
+		const midScreen = {
+			x: camera.x + 0.5 * camera.zoom,
+			y: camera.y - 0.2 * camera.zoom,
+		};
+		const { target } = nearest(midScreen, { points: threePoints });
+		expect(target).toEqual({ type: "point", index: 1 });
+	});
+
+	it("procedural mode always returns the procedural handle regardless of distance", () => {
+		const { target, distance } = nearest(
+			{ x: -50_000, y: 50_000 },
+			{ useCurvePoints: false },
 		);
-	});
-
-	it("Space+left starts a pan regardless of target", () => {
-		expect(
-			resolveDragStart({
-				...baseArgs,
-				spacePressed: true,
-				hitTarget: { type: "hIn", index: 1 },
-			}),
-		).toBe("pan");
-	});
-
-	it("plain left-click on empty area starts a pan (Mac trackpad friendly)", () => {
-		expect(resolveDragStart({ ...baseArgs, hitTarget: null })).toBe("pan");
-	});
-
-	it("plain left-click on a hit point/handle drags that element", () => {
-		expect(
-			resolveDragStart({
-				...baseArgs,
-				hitTarget: { type: "point", index: 2 },
-			}),
-		).toBe("dragElement");
-		expect(
-			resolveDragStart({ ...baseArgs, hitTarget: { type: "hIn", index: 1 } }),
-		).toBe("dragElement");
-		expect(
-			resolveDragStart({ ...baseArgs, hitTarget: { type: "hOut", index: 1 } }),
-		).toBe("dragElement");
-	});
-
-	it("Alt+left in curve mode starts pullOutHandle even when no hit", () => {
-		expect(
-			resolveDragStart({ ...baseArgs, altKey: true, hitTarget: null }),
-		).toBe("pullOutHandle");
-	});
-
-	it("Ctrl+left in curve mode starts addOrDeletePoint", () => {
-		expect(
-			resolveDragStart({
-				...baseArgs,
-				ctrlKey: true,
-				hitTarget: { type: "point", index: 1 },
-			}),
-		).toBe("addOrDeletePoint");
-	});
-
-	it("Cmd+left in curve mode starts addOrDeletePoint", () => {
-		expect(
-			resolveDragStart({
-				...baseArgs,
-				metaKey: true,
-				hitTarget: null,
-			}),
-		).toBe("addOrDeletePoint");
-	});
-
-	it("non-left, non-middle button (e.g. right-click) returns none", () => {
-		expect(resolveDragStart({ ...baseArgs, button: 2 })).toBe("none");
-		expect(resolveDragStart({ ...baseArgs, button: 3 })).toBe("none");
-	});
-
-	it("Alt+Ctrl+left in curve mode still starts addOrDeletePoint (Ctrl wins over Alt)", () => {
-		expect(
-			resolveDragStart({
-				...baseArgs,
-				altKey: true,
-				ctrlKey: true,
-				hitTarget: { type: "point", index: 1 },
-			}),
-		).toBe("addOrDeletePoint");
+		expect(target).toEqual({ type: "procedural" });
+		expect(distance).toBeGreaterThan(0);
 	});
 });

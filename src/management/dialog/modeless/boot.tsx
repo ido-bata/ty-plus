@@ -15,6 +15,7 @@ import {
 	setLastCtxMessageId,
 } from "@/management/debug/console/ui/ctx-state";
 import { DebugDialogRoot } from "@/management/debug/console/ui/dialog-root";
+import { installGlobalErrorReporting } from "@/management/debug/global-error-reporter";
 import { createLogger } from "@/management/debug/logger";
 import {
 	installCepJsonContextMenuRewrite,
@@ -28,6 +29,7 @@ import {
 } from "@/management/dialog/modeless/surface-id";
 import { initializeI18n } from "@/management/i18n";
 import { NotificationContainer } from "@/management/online/notification/Container";
+import { ErrorBoundary } from "@/management/panel/ErrorBoundary";
 import {
 	bootstrapCepShellThemeHydration,
 	installCepShellStyleRecoveryOnResize,
@@ -44,6 +46,8 @@ export async function bootTyPlusModelessDialog(): Promise<void> {
 	installCepShellStyleRecoveryOnResize(window);
 	enableInterceptor();
 	enableCepBroadcast(window);
+	// Issue #140: route uncaught errors / rejections into the debug log bus.
+	installGlobalErrorReporting(window, "modeless");
 	// Issue #79: wire `panel_before_close` / `panel_destroyed` on the modeless
 	// (debug-console) surface so the in-memory log buffer is flushed and the
 	// session marker is written before AE destroys the panel.
@@ -100,7 +104,11 @@ export async function bootTyPlusModelessDialog(): Promise<void> {
 				win.__tyPlusDebugCtxHandler?.(menuId);
 			},
 		});
-		createRoot(mount).render(<DebugDialogRoot surfaceId={surfaceId} />);
+		createRoot(mount).render(
+			<ErrorBoundary name={surfaceId || "debug-console"}>
+				<DebugDialogRoot surfaceId={surfaceId} />
+			</ErrorBoundary>,
+		);
 		return;
 	}
 
@@ -124,12 +132,16 @@ export async function bootTyPlusModelessDialog(): Promise<void> {
 				openerWorkspacePanelId,
 			}}
 		>
-			{isPresetToolPool ? (
-				<ToolHost />
-			) : (
-				<ModelessDialogRoot surfaceId={surfaceId} />
-			)}
-			<NotificationContainer />
+			{/* Issue #140: keep a render failure inside this dialog surface
+			    instead of blanking the whole modeless window. */}
+			<ErrorBoundary name={surfaceId || "modeless"}>
+				{isPresetToolPool ? (
+					<ToolHost />
+				) : (
+					<ModelessDialogRoot surfaceId={surfaceId} />
+				)}
+				<NotificationContainer />
+			</ErrorBoundary>
 		</PanelRoot>,
 	);
 }

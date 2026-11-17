@@ -403,7 +403,8 @@ pub fn dispatch_online(
             | CanonicalMethod::HostThumbnailLookup
             | CanonicalMethod::HostThumbnailGenerate
             | CanonicalMethod::HostThumbnailLookupOrGenerate
-            | CanonicalMethod::HostThumbnailBatch => Err(OperationError::Unsupported(
+            | CanonicalMethod::HostThumbnailBatch
+            | CanonicalMethod::UpdateInstall => Err(OperationError::Unsupported(
                 operation.wire_name().to_string(),
             )),
         };
@@ -620,6 +621,9 @@ pub fn validate_online_payload(
         }
         CanonicalMethod::HostPluginEffectScan => Err(OperationError::Unsupported(
             "host operation is not owned by online adapter".to_owned(),
+        )),
+        CanonicalMethod::UpdateInstall => Err(OperationError::Unsupported(
+            "update install is not owned by online adapter".to_owned(),
         )),
         CanonicalMethod::HostThumbnailLookup
         | CanonicalMethod::HostThumbnailGenerate

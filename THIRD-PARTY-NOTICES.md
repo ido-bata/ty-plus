@@ -167,3 +167,19 @@ from Tavmjong Bah. For further information, contact: tavmjong @ free
 ## 4. ビルド時ツール（配布物には同梱しない）
 
 - `reference/Adobe-CEP/CEP-Resources/`（ZXPSignCmd等）: Adobe提供のビルド時ツール。リポジトリにはtracked fileとして存在せず、配布zip / ZXPにも同梱しない（`package-cep-archive.ts` のpack対象外）。
+
+## 5. Agent Skills（開発用・配布物には同梱しない）
+
+`.agents/skills/` にvendoredされたAgent Skillは、いずれも開発・保守作業専用であり、ビルド成果物・配布ZXP/ZIPには含まれない。出所とライセンスは次のとおり（pinは `skills-lock.json` が正本）。
+
+| Skill | 出所 | License |
+| --- | --- | --- |
+| github-delivery, agent-recovery, parallel-orchestration, quality-gate, design-refinement, engineering-decisions, correctness-assurance, code-naming, security-maintenance, security-audit, secrets-management, agent-delivery-estimation, onboarding, interaction-discipline, worktree-workflow, skill-selection, orca-frontend, sandbox-runtime, policy-evaluation | [rebuildup/project-init](https://github.com/rebuildup/project-init) | MIT |
+| writing-discipline, natural-japanese, skill-authoring | [rebuildup/writing-skills](https://github.com/rebuildup/writing-skills) | MIT |
+| diagnosing-bugs | [mattpocock/skills](https://github.com/mattpocock/skills) | MIT |
+| modern-web-guidance | [GoogleChrome/modern-web-guidance](https://github.com/GoogleChrome/modern-web-guidance) | Apache-2.0（guide contentはCC-BY-4.0） |
+| vercel-react-best-practices | [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills) | MIT |
+| design-intent | [rebuildup/design-skills](https://github.com/rebuildup/design-skills) | MIT |
+| tdd | [cursor/plugins](https://github.com/cursor/plugins)（`pstack/skills/tdd`） | MIT |
+
+各ライセンスの全文は上記upstream repositoryを参照。`release-channels` は本repo独自のSkillであり第三者資産ではない。

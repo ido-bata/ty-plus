@@ -29,6 +29,8 @@ import { notificationStore } from "@/management/online/notification/service";
 import {
 	CatalogBrowserShell,
 	CatalogBrowserViewModeToggle,
+	glyphBoxFlushClass,
+	glyphEmojiProminentClass,
 	ICON_CELL_BASE_REM,
 	ICON_GRID_CLASS,
 	ICON_GRID_SCALE_LS_KEY,
@@ -86,7 +88,6 @@ import {
 	type GroupedCatalogPresets,
 	partitionCatalogPresetsByGroup,
 } from "./partition-catalog-presets";
-import { useDirectoryBrowserContextMenu } from "./useContextMenu";
 
 type FileBrowserFilter = "all" | "media" | "presets" | "scripts" | "fonts";
 
@@ -586,6 +587,20 @@ export function DirectoryBrowserWidget({
 		useState<string>("");
 	const [fileBrowserSelectedPath, setFileBrowserSelectedPath] =
 		useState<string>("");
+	// Single-click focus for directory rows (Issue #142). Kept separate from
+	// `fileBrowserSelectedPath` so file selection and directory focus are
+	// independent single-select cues; selecting one clears the other. The
+	// focus is recorded together with the directory it was made in so it
+	// automatically stops applying after navigation — no reset effect.
+	const [fileBrowserDirFocus, setFileBrowserDirFocus] = useState<{
+		dir: string;
+		path: string;
+	} | null>(null);
+	const fileBrowserFocusedDirPath =
+		fileBrowserDirFocus !== null &&
+		fileBrowserDirFocus.dir === fileBrowserCurrentDir
+			? fileBrowserDirFocus.path
+			: "";
 	const [fileBrowserError, setFileBrowserError] = useState<string | null>(null);
 	const [fileBrowserFilter, setFileBrowserFilter] =
 		useState<FileBrowserFilter>("all");
@@ -612,6 +627,12 @@ export function DirectoryBrowserWidget({
 	const handleImportFileRef = useRef<((p: string) => Promise<void>) | null>(
 		null,
 	);
+	// Latest-callback refs for the unified context-menu `browser-*` event
+	// bridge. The listener effect below mounts once per widget, so handlers
+	// that depend on navigation state must be read through refs.
+	const handleGoUpRef = useRef<() => void>(() => {});
+	const handleBrowseDrivesRef = useRef<() => void>(() => {});
+	const playAudioPreviewRef = useRef<(filePath: string) => void>(() => {});
 
 	// Create file browser service
 	const fileBrowserService = useMemo(() => {
@@ -649,7 +670,7 @@ export function DirectoryBrowserWidget({
 		setAudioPreviewPath(null);
 	}, []);
 
-	const _playAudioPreview = useCallback(
+	const playAudioPreview = useCallback(
 		(filePath: string): void => {
 			stopAudioPreview();
 			const normalized = filePath.replace(/\\/g, "/");
@@ -789,17 +810,21 @@ export function DirectoryBrowserWidget({
 		setFileBrowserCurrentDir(DRIVES_SENTINEL);
 	}, []);
 
-	const handleOpenEntry = useCallback((path: string): void => {
-		setFileBrowserCurrentDir(path);
-	}, []);
-
-	const handleSelectFile = useCallback((path: string): void => {
-		setFileBrowserSelectedPath(path);
-	}, []);
-
-	const handleDeselectFile = useCallback((): void => {
-		setFileBrowserSelectedPath("");
-	}, []);
+	const handleSelectEntry = useCallback(
+		(entry: { path: string; isDirectory: boolean }): void => {
+			if (entry.isDirectory) {
+				setFileBrowserDirFocus({
+					dir: fileBrowserCurrentDir,
+					path: entry.path,
+				});
+				setFileBrowserSelectedPath("");
+			} else {
+				setFileBrowserSelectedPath(entry.path);
+				setFileBrowserDirFocus(null);
+			}
+		},
+		[fileBrowserCurrentDir],
+	);
 
 	// `handleGoUp` already routes drive roots (e.g. "C:/") to the drive list,
 	// so the "Go up" affordance must stay enabled at the drive root — the
@@ -809,17 +834,6 @@ export function DirectoryBrowserWidget({
 	const canGoUpFromCurrent =
 		Boolean(fileBrowserCurrentDir.trim()) &&
 		fileBrowserCurrentDir.trim() !== DRIVES_SENTINEL;
-
-	useDirectoryBrowserContextMenu({
-		onRefresh: refreshFileBrowser,
-		onGoUp: handleGoUp,
-		onBrowseDrives: handleBrowseDrives,
-		onOpenEntry: handleOpenEntry,
-		onSelectFile: handleSelectFile,
-		onDeselectFile: handleDeselectFile,
-		fileSelectedPath: fileBrowserSelectedPath,
-		canGoUp: canGoUpFromCurrent,
-	});
 
 	const getSearchDir = useCallback(
 		() =>
@@ -959,7 +973,17 @@ export function DirectoryBrowserWidget({
 		[t],
 	);
 
-	// Listen for global unified context menu events
+	// Keep the context-menu bridge refs pointed at the latest callbacks.
+	useEffect(() => {
+		handleGoUpRef.current = handleGoUp;
+		handleBrowseDrivesRef.current = handleBrowseDrives;
+		playAudioPreviewRef.current = playAudioPreview;
+	}, [handleGoUp, handleBrowseDrives, playAudioPreview]);
+
+	// Listen for global unified context menu events. The workspace context
+	// menu (unified-context-menu.ts) dispatches `browser-*` CustomEvents on
+	// the panel root for directory-browser hits; see `handleUnifiedCtxSelect`
+	// in management/workspace/hook.ts for the producer side.
 	useEffect(() => {
 		const root = widgetPanelRef.current?.closest(
 			"[data-ty-workspace-panel-root]",
@@ -968,6 +992,22 @@ export function DirectoryBrowserWidget({
 
 		const handleRefresh = () => {
 			void refreshFileBrowserRef.current?.();
+		};
+		const handleGoUpEvent = () => {
+			handleGoUpRef.current();
+		};
+		const handleBrowseDrivesEvent = () => {
+			handleBrowseDrivesRef.current();
+		};
+		const handleClearSearch = () => {
+			setSearchDraft("");
+			setFileBrowserQuery("");
+		};
+		const handleAudioPreview = (ev: Event) => {
+			const path = (ev as CustomEvent).detail?.["data-file-path"];
+			if (typeof path === "string" && path.trim()) {
+				playAudioPreviewRef.current(path.trim());
+			}
 		};
 		const handleOpenDir = (ev: Event) => {
 			const path = (ev as CustomEvent).detail?.["data-file-path"];
@@ -981,7 +1021,11 @@ export function DirectoryBrowserWidget({
 		const handleSelect = (ev: Event) => {
 			const path = (ev as CustomEvent).detail?.["data-file-path"];
 			if (typeof path === "string" && path.trim()) {
-				setFileBrowserSelectedPath(path.trim());
+				const trimmed = path.trim();
+				// Select/Deselect toggle: the context menu emits the same
+				// `browser-select` event for both directions.
+				setFileBrowserSelectedPath((prev) => (prev === trimmed ? "" : trimmed));
+				setFileBrowserDirFocus(null);
 			}
 		};
 		const handleImport = (ev: Event) => {
@@ -1039,6 +1083,10 @@ export function DirectoryBrowserWidget({
 		};
 
 		root.addEventListener("browser-refresh", handleRefresh);
+		root.addEventListener("browser-go-up", handleGoUpEvent);
+		root.addEventListener("browser-browse-drives", handleBrowseDrivesEvent);
+		root.addEventListener("browser-clear-search", handleClearSearch);
+		root.addEventListener("browser-audio-preview", handleAudioPreview);
 		root.addEventListener("browser-open-dir", handleOpenDir);
 		root.addEventListener(
 			"browser-toggle-directory-filters",
@@ -1064,6 +1112,13 @@ export function DirectoryBrowserWidget({
 
 		return () => {
 			root.removeEventListener("browser-refresh", handleRefresh);
+			root.removeEventListener("browser-go-up", handleGoUpEvent);
+			root.removeEventListener(
+				"browser-browse-drives",
+				handleBrowseDrivesEvent,
+			);
+			root.removeEventListener("browser-clear-search", handleClearSearch);
+			root.removeEventListener("browser-audio-preview", handleAudioPreview);
 			root.removeEventListener("browser-open-dir", handleOpenDir);
 			root.removeEventListener(
 				"browser-toggle-directory-filters",
@@ -1420,6 +1475,7 @@ export function DirectoryBrowserWidget({
 
 	const activateCatalogPresetRow = useCallback((filePath: string): void => {
 		setFileBrowserSelectedPath(filePath);
+		setFileBrowserDirFocus(null);
 	}, []);
 
 	const iconToolBtnBase = css({
@@ -1450,6 +1506,11 @@ export function DirectoryBrowserWidget({
 	return (
 		<div
 			ref={widgetPanelRef}
+			// Read by the unified workspace context menu
+			// (parseDirectoryBrowserHit) for Go up enabled-state and the
+			// Select/Deselect label on file rows.
+			data-directory-browser-can-go-up={canGoUpFromCurrent ? "true" : "false"}
+			data-directory-browser-selected-file={fileBrowserSelectedPath}
 			className={css({
 				display: "flex",
 				height: "full",
@@ -2282,26 +2343,23 @@ export function DirectoryBrowserWidget({
 							loading={false}
 							canGoUp={canGoUpFromCurrent}
 							onGoUp={handleGoUp}
-							onEntryClick={(entry) => {
-								if (entry.isDirectory) {
-									setFileBrowserCurrentDir(entry.path);
-								} else {
-									setFileBrowserSelectedPath(entry.path);
-								}
-							}}
+							onEntryClick={handleSelectEntry}
+							onEntrySelect={handleSelectEntry}
 							onEntryActivate={(entry) => {
 								if (entry.isDirectory) {
 									setFileBrowserCurrentDir(entry.path);
 								} else {
-									setFileBrowserSelectedPath(entry.path);
+									handleSelectEntry(entry);
 								}
 							}}
 							selectionMode="both"
-							isSelected={(path) =>
-								isFileSelected(path) || fileBrowserSelectedPath === path
+							isSelected={(path, kind) =>
+								isFileSelected(path) ||
+								fileBrowserSelectedPath === path ||
+								(kind === "folder" && fileBrowserFocusedDirPath === path)
 							}
 							onToggleSelected={(path) => toggleFileSelected(path)}
-							activePath={fileBrowserSelectedPath}
+							activePath={fileBrowserFocusedDirPath || fileBrowserSelectedPath}
 							selectedSummary={null}
 							viewMode={viewMode}
 							onViewModeChange={setViewMode}
@@ -2445,6 +2503,7 @@ export function DirectoryBrowserWidget({
 										})}
 										onClick={(ev) => {
 											ev.stopPropagation();
+											setFileBrowserCurrentDir(entry.path);
 										}}
 										aria-label={t("directoryBrowser.actions.openFolder")}
 										title={t("directoryBrowser.actions.openFolder")}
@@ -2735,20 +2794,8 @@ function CatalogPresetIconTile({
 						<PresetGlyphById
 							presetId={p.id}
 							preset={p}
-							boxClass={css({
-								height: "full",
-								width: "full",
-								maxHeight: "full",
-								maxWidth: "full",
-								borderWidth: 0,
-								padding: "0.5",
-							})}
-							emojiClass={css({
-								"& .ws-preset-icon--emoji": { fontSize: "3xl" },
-								"& .ws-preset-icon--text:not([data-ws-preset-text-fit])": {
-									fontSize: "shell-text-sm",
-								},
-							})}
+							boxClass={glyphBoxFlushClass}
+							emojiClass={glyphEmojiProminentClass}
 							{...presetGlyphSiblingProps}
 						/>
 					</div>
