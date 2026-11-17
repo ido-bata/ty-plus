@@ -21,6 +21,10 @@ import {
 	upsertWidgetRecords,
 	writeNJson,
 } from "@/management/storage";
+import {
+	resolvePersistenceLockRoot,
+	withPersistenceLock,
+} from "@/management/storage/lock/persistence-lock";
 import type { WidgetRecord } from "@/management/widget/record/types";
 import {
 	LayoutDocumentParseError,
@@ -176,131 +180,152 @@ export const persistTargetLayout = async (
 	if (input.catalogIdsToMove.length === 0 && input.widgetTiles.length === 0) {
 		return;
 	}
-	const targetIndex = indexFromPanelId(input.targetPanelId);
-	const [rawLayout, widgetRecords, settingsJson] = await Promise.all([
-		readNJson(win, targetIndex),
-		readWidgetRecords(win),
-		readSettings(win),
-	]);
-	const widgetRecordLite = widgetRecords.map((r) => ({
-		id: r.id,
-		type: r.type as WidgetType,
-	}));
-	const panelPresetIdsFromSettings = readPanelPresetIdsFromSettingsJson(
-		settingsJson,
-		input.targetPanelId,
-	);
-	// Nothing below this point may run when the target layout cannot be read:
-	// the next write is an overwrite of `workspace-N.json`, so a failure here
-	// has to surface (and be visible in the Debug Console) before it, not be
-	// absorbed into an empty grid.
-	let migratedTiles: Tile[];
-	try {
-		migratedTiles = loadTilesFromNJsonRaw(rawLayout, input.targetPanelId, {
+	// ADR-0006: the whole read→merge→write runs inside the managed-root
+	// persistence lock. Every read that feeds the write happens inside the
+	// hold so a concurrent owner persist or sibling dialog write cannot
+	// interleave between our read and our write. Nested calls (e.g. from
+	// `applyInterPanelMove` or the dialog append wrappers) join the outer
+	// hold via AsyncLocalStorage.
+	const lockRoot = await resolvePersistenceLockRoot(win);
+	if (!lockRoot) {
+		throw new Error(
+			"persistTargetLayout: no managed persistence root (onboarding incomplete)",
+		);
+	}
+	await withPersistenceLock(win, lockRoot, async () => {
+		const targetIndex = indexFromPanelId(input.targetPanelId);
+		const [rawLayout, widgetRecords, settingsJson] = await Promise.all([
+			readNJson(win, targetIndex),
+			readWidgetRecords(win),
+			readSettings(win),
+		]);
+		const widgetRecordLite = widgetRecords.map((r) => ({
+			id: r.id,
+			type: r.type as WidgetType,
+		}));
+		const panelPresetIdsFromSettings = readPanelPresetIdsFromSettingsJson(
+			settingsJson,
+			input.targetPanelId,
+		);
+		// Nothing below this point may run when the target layout cannot be read:
+		// the next write is an overwrite of `workspace-N.json`, so a failure here
+		// has to surface (and be visible in the Debug Console) before it, not be
+		// absorbed into an empty grid.
+		let migratedTiles: Tile[];
+		try {
+			migratedTiles = loadTilesFromNJsonRaw(rawLayout, input.targetPanelId, {
+				presets: input.presets,
+				panelPresetIds: panelPresetIdsFromSettings,
+				widgetRecordLite,
+				groupCatalogEntries: input.groupCatalogEntries,
+			});
+		} catch (error) {
+			workspaceLog.error("target layout could not be read", {
+				action: "persistTargetLayout:target-layout-unreadable",
+				context: {
+					targetPanelId: input.targetPanelId,
+					reason:
+						error instanceof LayoutDocumentParseError
+							? error.reason
+							: "unknown",
+					message: error instanceof Error ? error.message : String(error),
+					consequence: "write aborted; existing tiles left untouched",
+				},
+			});
+			throw error;
+		}
+		const fromRecords: Record<string, WidgetType> = Object.fromEntries(
+			widgetRecords.flatMap((r) =>
+				isWidgetType(String(r.type)) ? [[r.id, r.type as WidgetType]] : [],
+			),
+		);
+		const widgetInstanceTypes: Record<string, WidgetType> = { ...fromRecords };
+		for (const [id, wt] of Object.entries(input.widgetInstanceTypesOverlay)) {
+			const k = id.trim();
+			if (!k || !isWidgetType(wt)) continue;
+			widgetInstanceTypes[k] = wt;
+		}
+		let working = buildSyntheticSurfaceState({
+			panelId: input.targetPanelId,
+			surfaceTiles: migratedTiles,
 			presets: input.presets,
-			panelPresetIds: panelPresetIdsFromSettings,
-			widgetRecordLite,
 			groupCatalogEntries: input.groupCatalogEntries,
+			widgetInstanceTypes,
+			panelPresetIds: panelPresetIdsFromSettings,
 		});
-	} catch (error) {
-		workspaceLog.error("target layout could not be read", {
-			action: "persistTargetLayout:target-layout-unreadable",
-			context: {
+		if (input.catalogIdsToMove.length > 0) {
+			const dp = input.dropPlacement;
+			const explicitPlacements =
+				dp &&
+				Number.isFinite(dp.x) &&
+				Number.isFinite(dp.y) &&
+				input.catalogIdsToMove.length > 0
+					? [
+							{
+								x: Math.max(0, Math.floor(dp.x)),
+								y: Math.max(0, Math.floor(dp.y)),
+								width: Math.max(1, Math.floor(dp.width ?? DEFAULT_TILE_WIDTH)),
+								height: Math.max(
+									1,
+									Math.floor(dp.height ?? DEFAULT_TILE_HEIGHT),
+								),
+							},
+						]
+					: undefined;
+			const patch = mergePresetPlacementIntoState(working, {
+				kind: "presetPlacement",
+				sourcePanelId: "",
 				targetPanelId: input.targetPanelId,
-				reason:
-					error instanceof LayoutDocumentParseError ? error.reason : "unknown",
-				message: error instanceof Error ? error.message : String(error),
-				consequence: "write aborted; existing tiles left untouched",
-			},
-		});
-		throw error;
-	}
-	const fromRecords: Record<string, WidgetType> = Object.fromEntries(
-		widgetRecords.flatMap((r) =>
-			isWidgetType(String(r.type)) ? [[r.id, r.type as WidgetType]] : [],
-		),
-	);
-	const widgetInstanceTypes: Record<string, WidgetType> = { ...fromRecords };
-	for (const [id, wt] of Object.entries(input.widgetInstanceTypesOverlay)) {
-		const k = id.trim();
-		if (!k || !isWidgetType(wt)) continue;
-		widgetInstanceTypes[k] = wt;
-	}
-	let working = buildSyntheticSurfaceState({
-		panelId: input.targetPanelId,
-		surfaceTiles: migratedTiles,
-		presets: input.presets,
-		groupCatalogEntries: input.groupCatalogEntries,
-		widgetInstanceTypes,
-		panelPresetIds: panelPresetIdsFromSettings,
-	});
-	if (input.catalogIdsToMove.length > 0) {
-		const dp = input.dropPlacement;
-		const explicitPlacements =
-			dp &&
-			Number.isFinite(dp.x) &&
-			Number.isFinite(dp.y) &&
-			input.catalogIdsToMove.length > 0
-				? [
-						{
-							x: Math.max(0, Math.floor(dp.x)),
-							y: Math.max(0, Math.floor(dp.y)),
-							width: Math.max(1, Math.floor(dp.width ?? DEFAULT_TILE_WIDTH)),
-							height: Math.max(1, Math.floor(dp.height ?? DEFAULT_TILE_HEIGHT)),
-						},
-					]
-				: undefined;
-		const patch = mergePresetPlacementIntoState(working, {
-			kind: "presetPlacement",
-			sourcePanelId: "",
-			targetPanelId: input.targetPanelId,
-			presetIds: [...input.catalogIdsToMove],
-			...(explicitPlacements ? { explicitPlacements } : { auto: { axis: -1 } }),
-		});
-		working = { ...working, ...patch };
-	}
-	if (input.widgetTiles.length > 0) {
-		const wt: Record<string, string> = { ...input.widgetTypes };
-		for (const row of input.widgetTiles) {
-			const id = row.id.trim();
-			if (!id) continue;
-			if (!wt[id]) {
-				const w = working.widgetInstanceTypes[id];
-				if (w) wt[id] = w;
+				presetIds: [...input.catalogIdsToMove],
+				...(explicitPlacements
+					? { explicitPlacements }
+					: { auto: { axis: -1 } }),
+			});
+			working = { ...working, ...patch };
+		}
+		if (input.widgetTiles.length > 0) {
+			const wt: Record<string, string> = { ...input.widgetTypes };
+			for (const row of input.widgetTiles) {
+				const id = row.id.trim();
+				if (!id) continue;
+				if (!wt[id]) {
+					const w = working.widgetInstanceTypes[id];
+					if (w) wt[id] = w;
+				}
+			}
+			const patch = mergeWidgetPlacementIntoState(working, {
+				kind: "widgetPlacement",
+				sourcePanelId: "",
+				targetPanelId: input.targetPanelId,
+				tiles: input.widgetTiles.map((t) => ({
+					id: t.id,
+					x: 0,
+					y: 0,
+					width: t.width,
+					height: t.height,
+				})),
+				widgetTypes: wt,
+				auto: { axis: -1 },
+			});
+			working = { ...working, ...patch };
+		}
+		await writeNJson(win, targetIndex, serialize(working.surfaceTiles));
+
+		// Round-5 / Blocker 12: upsert the widget records to
+		// `widgets/widgets.json` so the moved tiles are recognized by the
+		// target panel after a reload. Without this the read-back will fail
+		// (the records are not present) and `applyInterPanelMove` rolls the
+		// whole move back.
+		if (input.widgetTiles.length > 0) {
+			const recordsToUpsert = buildWidgetRecordsForMove({
+				widgetTiles: input.widgetTiles,
+				widgetTypes: input.widgetTypes,
+				overlay: input.widgetInstanceTypesOverlay,
+				existing: widgetRecords,
+			});
+			if (recordsToUpsert.length > 0) {
+				await upsertWidgetRecords(win, recordsToUpsert);
 			}
 		}
-		const patch = mergeWidgetPlacementIntoState(working, {
-			kind: "widgetPlacement",
-			sourcePanelId: "",
-			targetPanelId: input.targetPanelId,
-			tiles: input.widgetTiles.map((t) => ({
-				id: t.id,
-				x: 0,
-				y: 0,
-				width: t.width,
-				height: t.height,
-			})),
-			widgetTypes: wt,
-			auto: { axis: -1 },
-		});
-		working = { ...working, ...patch };
-	}
-	await writeNJson(win, targetIndex, serialize(working.surfaceTiles));
-
-	// Round-5 / Blocker 12: upsert the widget records to
-	// `widgets/widgets.json` so the moved tiles are recognized by the
-	// target panel after a reload. Without this the read-back will fail
-	// (the records are not present) and `applyInterPanelMove` rolls the
-	// whole move back.
-	if (input.widgetTiles.length > 0) {
-		const recordsToUpsert = buildWidgetRecordsForMove({
-			widgetTiles: input.widgetTiles,
-			widgetTypes: input.widgetTypes,
-			overlay: input.widgetInstanceTypesOverlay,
-			existing: widgetRecords,
-		});
-		if (recordsToUpsert.length > 0) {
-			await upsertWidgetRecords(win, recordsToUpsert);
-		}
-	}
+	});
 };

@@ -54,6 +54,10 @@ import type { Preset } from "@/management/preset/contract";
 import { parseGroupFromText } from "@/management/preset/group-catalog";
 import { indexFromPanelId, readPresetsJson } from "@/management/storage";
 import {
+	resolvePersistenceLockRoot,
+	withPersistenceLock,
+} from "@/management/storage/lock/persistence-lock";
+import {
 	readWidgetRecordsFileStrict,
 	writeWidgetRecords,
 } from "@/management/widget/persistence/records-file";
@@ -89,6 +93,8 @@ export type AppendWidgetFailureReason =
 	| "local-group-read-failed"
 	/** Reading the target `workspace-N.json` / `widgets.json` snapshot failed. */
 	| "local-layout-read-failed"
+	/** The managed-root persistence lock could not be acquired in time. */
+	| "persistence-lock-unavailable"
 	/** `workspace-N.json` could not be written. */
 	| "target-layout-write-failed"
 	/** `widgets/widgets.json` could not be written (layout already rolled back). */
@@ -216,112 +222,147 @@ export async function persistAppendWidgetFromDialog(
 		);
 	}
 
-	// Snapshot both files before the first write so a partial add can be undone
-	// (Issue #159 / C).
+	// ADR-0006: snapshot, layout write, record write and rollback are ONE
+	// transaction inside the managed-root persistence lock. Nested
+	// `persistTargetLayout` joins the same hold via AsyncLocalStorage, so no
+	// other CEP process can interleave between our reads and our writes —
+	// which is what makes the preimage rollback below safe.
+	const lockRoot = await resolvePersistenceLockRoot(win);
+	if (!lockRoot) {
+		return fail(
+			"persistence-root-unavailable",
+			"The managed ty-plus persistence root could not be resolved.",
+		);
+	}
 	const targetIndex = indexFromPanelId(targetPanelId);
-	let rawLayoutBefore: string | null;
-	let widgetRecordsSnapshot: Awaited<
-		ReturnType<typeof readWidgetRecordsFileStrict>
-	>;
+	let transactionResult: AppendWidgetResult | null;
 	try {
-		[rawLayoutBefore, widgetRecordsSnapshot] = await Promise.all([
-			readNJson(win, targetIndex),
-			readWidgetRecordsFileStrict(win),
-		]);
+		transactionResult = await withPersistenceLock(
+			win,
+			lockRoot,
+			async (): Promise<AppendWidgetResult | null> => {
+				// Snapshot both files before the first write so a partial add can be
+				// undone (Issue #159 / C).
+				let rawLayoutBefore: string | null;
+				let widgetRecordsSnapshot: Awaited<
+					ReturnType<typeof readWidgetRecordsFileStrict>
+				>;
+				try {
+					[rawLayoutBefore, widgetRecordsSnapshot] = await Promise.all([
+						readNJson(win, targetIndex),
+						readWidgetRecordsFileStrict(win),
+					]);
+				} catch (error) {
+					return fail(
+						"local-layout-read-failed",
+						`The existing workspace state for ${targetPanelId} could not be read: ${messageOf(
+							error,
+						)}`,
+						{ cause: messageOf(error) },
+					);
+				}
+				const widgetRecordsBefore =
+					widgetRecordsSnapshot.status === "loaded"
+						? widgetRecordsSnapshot.records
+						: [];
+
+				const restoreLayout = async (): Promise<string | null> => {
+					try {
+						if (rawLayoutBefore === null) {
+							await removeNJson(win, targetIndex);
+						} else {
+							await writeNJson(win, targetIndex, rawLayoutBefore);
+						}
+						return null;
+					} catch (error) {
+						return messageOf(error);
+					}
+				};
+
+				/**
+				 * Remove the just-written widget record, but only when it is actually
+				 * on disk. Re-reading first keeps a concurrent writer's record from
+				 * being clobbered by the rollback.
+				 */
+				const removeOrphanedWidgetRecord = async (): Promise<string | null> => {
+					try {
+						const current = await readWidgetRecordsFileStrict(win);
+						if (
+							current.status === "missing" ||
+							!current.records.some((record) => record.id === id)
+						) {
+							return null;
+						}
+						await writeWidgetRecords(
+							win,
+							current.records.filter((record) => record.id !== id),
+						);
+						return null;
+					} catch (error) {
+						return messageOf(error);
+					}
+				};
+
+				try {
+					await persistTargetLayout(win, {
+						persistenceRoot: root,
+						targetPanelId,
+						catalogIdsToMove: [],
+						widgetTiles: [{ id, width: cols, height: rows }],
+						widgetTypes: { [id]: input.widgetType },
+						presets,
+						groupCatalogEntries,
+						widgetInstanceTypesOverlay: {},
+					});
+				} catch (error) {
+					return fail(
+						"target-layout-write-failed",
+						`The layout for ${targetPanelId} could not be written: ${messageOf(error)}`,
+						{ cause: messageOf(error) },
+					);
+				}
+
+				try {
+					await writeWidgetRecords(win, [
+						...widgetRecordsBefore.filter((record) => record.id !== id),
+						{ id, type: input.widgetType, param: {} },
+					]);
+				} catch (error) {
+					// The layout row is already on disk and references a widget id
+					// that has no record. Undo both writes so the panel reload does
+					// not resurrect a tile whose type cannot be resolved. The whole
+					// transaction still holds the persistence lock, so no other
+					// writer can land between our write and this rollback.
+					const rollbackErrors = [
+						await restoreLayout(),
+						await removeOrphanedWidgetRecord(),
+					].filter((value): value is string => value !== null);
+					return fail(
+						"widget-record-write-failed",
+						`The widget record for ${id} could not be written: ${messageOf(error)}`,
+						{
+							cause: messageOf(error),
+							rolledBack: true,
+							...(rollbackErrors.length > 0
+								? { rollbackErrors: [...rollbackErrors] }
+								: {}),
+						},
+					);
+				}
+				return null;
+			},
+		);
 	} catch (error) {
 		return fail(
-			"local-layout-read-failed",
-			`The existing workspace state for ${targetPanelId} could not be read: ${messageOf(
+			"persistence-lock-unavailable",
+			`The managed-root persistence lock could not be acquired: ${messageOf(
 				error,
 			)}`,
 			{ cause: messageOf(error) },
 		);
 	}
-	const widgetRecordsBefore =
-		widgetRecordsSnapshot.status === "loaded"
-			? widgetRecordsSnapshot.records
-			: [];
-
-	const restoreLayout = async (): Promise<string | null> => {
-		try {
-			if (rawLayoutBefore === null) {
-				await removeNJson(win, targetIndex);
-			} else {
-				await writeNJson(win, targetIndex, rawLayoutBefore);
-			}
-			return null;
-		} catch (error) {
-			return messageOf(error);
-		}
-	};
-
-	/**
-	 * Remove the just-written widget record, but only when it is actually on
-	 * disk. Re-reading first keeps a concurrent writer's record from being
-	 * clobbered by the rollback.
-	 */
-	const removeOrphanedWidgetRecord = async (): Promise<string | null> => {
-		try {
-			const current = await readWidgetRecordsFileStrict(win);
-			if (
-				current.status === "missing" ||
-				!current.records.some((record) => record.id === id)
-			) {
-				return null;
-			}
-			await writeWidgetRecords(
-				win,
-				current.records.filter((record) => record.id !== id),
-			);
-			return null;
-		} catch (error) {
-			return messageOf(error);
-		}
-	};
-
-	try {
-		await persistTargetLayout(win, {
-			persistenceRoot: root,
-			targetPanelId,
-			catalogIdsToMove: [],
-			widgetTiles: [{ id, width: cols, height: rows }],
-			widgetTypes: { [id]: input.widgetType },
-			presets,
-			groupCatalogEntries,
-			widgetInstanceTypesOverlay: {},
-		});
-	} catch (error) {
-		return fail(
-			"target-layout-write-failed",
-			`The layout for ${targetPanelId} could not be written: ${messageOf(error)}`,
-			{ cause: messageOf(error) },
-		);
-	}
-
-	try {
-		await writeWidgetRecords(win, [
-			...widgetRecordsBefore.filter((record) => record.id !== id),
-			{ id, type: input.widgetType, param: {} },
-		]);
-	} catch (error) {
-		// The layout row is already on disk and references a widget id that has
-		// no record. Undo both writes so the panel reload does not resurrect a
-		// tile whose type cannot be resolved.
-		const rollbackErrors = [
-			await restoreLayout(),
-			await removeOrphanedWidgetRecord(),
-		].filter((value): value is string => value !== null);
-		return fail(
-			"widget-record-write-failed",
-			`The widget record for ${id} could not be written: ${messageOf(error)}`,
-			{
-				cause: messageOf(error),
-				rolledBack: true,
-				...(rollbackErrors.length > 0
-					? { rollbackErrors: [...rollbackErrors] }
-					: {}),
-			},
-		);
+	if (transactionResult) {
+		return transactionResult;
 	}
 
 	workspaceLog.info("append-widget-from-dialog-disk:placement-written", {

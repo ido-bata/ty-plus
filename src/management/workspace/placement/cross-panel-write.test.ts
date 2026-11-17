@@ -30,6 +30,16 @@ import {
 	getEntries,
 } from "@/management/debug/logger";
 import { movePresetPlacement } from "@/management/storage";
+
+vi.mock("@/management/storage/lock/persistence-lock", () => ({
+	PersistenceLockTimeoutError: class PersistenceLockTimeoutError extends Error {},
+	PersistenceLockUnavailableError: class PersistenceLockUnavailableError extends Error {},
+	resolvePersistenceLockRoot: vi.fn(async () => "/test/managed-root"),
+	withPersistenceLock: vi.fn(
+		async (_win: Window, _root: string, fn: () => Promise<unknown>) => fn(),
+	),
+}));
+
 import { persistTargetLayout } from "./cross-panel-write";
 
 const storageMocks = vi.hoisted(() => ({

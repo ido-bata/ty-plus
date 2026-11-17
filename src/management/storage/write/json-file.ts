@@ -14,6 +14,7 @@ type JsonWriteFileSystem = {
 		options: { recursive: true },
 	): Promise<string | undefined>;
 	unlink(path: string): Promise<void>;
+	rename?(from: string, to: string): Promise<void>;
 };
 
 type CepNodeRequire = (id: string) => unknown;
@@ -43,7 +44,10 @@ const resolveJsonWriteFileSystem = async (
 			mkdirSync?: (path: string, options: { recursive: true }) => void;
 		};
 		if (fsMod.promises) {
-			return fsMod.promises;
+			return {
+				...fsMod.promises,
+				rename: fsMod.promises.rename?.bind(fsMod.promises),
+			};
 		}
 		if (fsMod.writeFileSync && fsMod.mkdirSync) {
 			const writeFileSync = fsMod.writeFileSync;
@@ -79,7 +83,18 @@ const resolveJsonWriteFileSystem = async (
 			fsPromises.writeFile(path, data, encoding),
 		mkdir: (path, options) => fsPromises.mkdir(path, options),
 		unlink: (path) => fsPromises.unlink(path),
+		rename: (from, to) => fsPromises.rename(from, to),
 	};
+};
+
+let tmpCounter = 0;
+const nextTmpPath = (path: string): string => {
+	tmpCounter += 1;
+	const rand =
+		typeof globalThis.crypto?.randomUUID === "function"
+			? globalThis.crypto.randomUUID()
+			: `${Date.now()}-${Math.random()}`;
+	return `${path}.tmp-${process.pid ?? "x"}-${tmpCounter}-${rand}`;
 };
 
 /**
@@ -97,6 +112,20 @@ export const writeJsonFileText = async (
 	const dir = normalizedPath.split("/").slice(0, -1).join("/");
 	if (dir) {
 		await fs.mkdir(dir, { recursive: true });
+	}
+	// Atomic publish (ADR-0006 §6): write a sibling tmp file then rename
+	// over the target so a crash mid-write never leaves a torn JSON file
+	// for readers or the persistence lock's transaction boundaries.
+	if (typeof fs.rename === "function") {
+		const tmpPath = nextTmpPath(path);
+		try {
+			await fs.writeFile(tmpPath, normalizedText, "utf8");
+			await fs.rename(tmpPath, path);
+		} catch (error) {
+			await fs.unlink(tmpPath).catch(() => {});
+			throw error;
+		}
+		return;
 	}
 	await fs.writeFile(path, normalizedText, "utf8");
 };

@@ -54,13 +54,25 @@ describe("persistSurfaceState (Issue #183 — a failed persist is observable and
 		hookSource,
 		"const persistSurfaceState = (): void => {",
 	);
+	// ADR-0006: the write sequence itself lives in the shared locked helper
+	// `persistLatestSurfaceStateLocked`, which both persist variants call
+	// inside `withPersistenceLock`.
+	const lockedBody = extractBody(
+		hookSource,
+		"const persistLatestSurfaceStateLocked = async (",
+	);
+
+	it("routes the write through the managed-root persistence lock", () => {
+		expect(body).toContain("withPersistenceLock(window, lockRoot");
+		expect(body).toContain("persistLatestSurfaceStateLocked(");
+	});
 
 	it("delegates the writes to the extracted, order-owning sequence", () => {
-		expect(body).toContain("await writeSurfaceState({");
+		expect(lockedBody).toContain("await writeSurfaceState({");
 		// The hook must not re-grow its own write sequence next to the call.
-		expect(body).not.toContain("await upsertWidgetRecords(");
-		expect(body).not.toContain("await writeNJson(");
-		expect(body).not.toContain("await writeUiSettings(");
+		expect(lockedBody).not.toContain("await upsertWidgetRecords(");
+		expect(lockedBody).not.toContain("await writeNJson(");
+		expect(lockedBody).not.toContain("await writeUiSettings(");
 	});
 
 	it("reports the failure instead of swallowing it", () => {

@@ -144,19 +144,33 @@ export const createHistoryManager = (panelIdArg: string, win: Window) => {
 				});
 			}
 
+			// ADR-0006: snapshots.json is shared across panels — the
+			// read→append→write runs inside the managed-root persistence
+			// lock so two panels saving at once cannot lose each other's
+			// snapshot.
 			const { readSnapshots, writeSnapshots } = await import(
 				"../../storage/snapshot-store"
 			);
-			const existing = await readSnapshots(win, panelIdArg);
-
-			const full: WorkspaceSnapshot = {
-				id: String(ts.getTime()),
-				label: label ?? defaultLabel,
-				createdAt: ts.toISOString(),
-				panels: panelLayouts,
-			};
-			const next = [...existing, full].slice(-MAX_SNAPSHOTS);
-			await writeSnapshots(win, panelIdArg, next);
+			const { resolvePersistenceLockRoot, withPersistenceLock } = await import(
+				"@/management/storage/lock/persistence-lock"
+			);
+			const lockRoot = await resolvePersistenceLockRoot(win);
+			if (!lockRoot) {
+				throw new Error(
+					"saveSnapshot: no managed persistence root for the persistence lock",
+				);
+			}
+			await withPersistenceLock(win, lockRoot, async () => {
+				const existing = await readSnapshots(win, panelIdArg);
+				const full: WorkspaceSnapshot = {
+					id: String(ts.getTime()),
+					label: label ?? defaultLabel,
+					createdAt: ts.toISOString(),
+					panels: panelLayouts,
+				};
+				const next = [...existing, full].slice(-MAX_SNAPSHOTS);
+				await writeSnapshots(win, panelIdArg, next);
+			});
 		},
 
 		async listSnapshots(): Promise<Snapshot[]> {
@@ -182,9 +196,20 @@ export const createHistoryManager = (panelIdArg: string, win: Window) => {
 			const { readSnapshots, writeSnapshots } = await import(
 				"../../storage/snapshot-store"
 			);
-			const existing = await readSnapshots(win, panelIdArg);
-			const next = existing.filter((s) => s.id !== id);
-			await writeSnapshots(win, panelIdArg, next);
+			const { resolvePersistenceLockRoot, withPersistenceLock } = await import(
+				"@/management/storage/lock/persistence-lock"
+			);
+			const lockRoot = await resolvePersistenceLockRoot(win);
+			if (!lockRoot) {
+				throw new Error(
+					"deleteSnapshot: no managed persistence root for the persistence lock",
+				);
+			}
+			await withPersistenceLock(win, lockRoot, async () => {
+				const existing = await readSnapshots(win, panelIdArg);
+				const next = existing.filter((s) => s.id !== id);
+				await writeSnapshots(win, panelIdArg, next);
+			});
 		},
 	};
 };

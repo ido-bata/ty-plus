@@ -25,6 +25,15 @@ vi.mock("@/management/workspace/layout/persistence-root", () => ({
 	resolveWorkspacePersistenceManagedRoot: rootMock.resolve,
 }));
 
+vi.mock("@/management/storage/lock/persistence-lock", () => ({
+	PersistenceLockTimeoutError: class PersistenceLockTimeoutError extends Error {},
+	PersistenceLockUnavailableError: class PersistenceLockUnavailableError extends Error {},
+	resolvePersistenceLockRoot: vi.fn(async () => "/test/managed-root"),
+	withPersistenceLock: vi.fn(
+		async (_win: Window, _root: string, fn: () => Promise<unknown>) => fn(),
+	),
+}));
+
 import { tryPersistRemovePresetFromDialog } from "./remove-preset-from-dialog-disk";
 
 const win = {} as Window;
