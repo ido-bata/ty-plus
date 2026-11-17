@@ -12,8 +12,8 @@
  * Owns: src/function/preset/layer-comp/operation.ts
  */
 
-import { getCandidatesSnapshot } from "@/management/storage/candidates-cache/runtime";
 import { resolveEffectMatchName } from "@/management/storage/candidates-cache/plugin-match-name";
+import { getCandidatesSnapshot } from "@/management/storage/candidates-cache/runtime";
 import { definePresetOperation } from "../operation-contract";
 
 definePresetOperation("plugin", async (host, preset) => {

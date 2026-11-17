@@ -6,8 +6,8 @@
  * (PICA resource) — the filename stem is not a reliable matchName.
  */
 
-import { getCandidatesSnapshot } from "@/management/storage/candidates-cache/runtime";
 import { resolveEffectMatchName } from "@/management/storage/candidates-cache/plugin-match-name";
+import { getCandidatesSnapshot } from "@/management/storage/candidates-cache/runtime";
 
 const fileNameFromPath = (value: string): string =>
 	value.split(/[\\/]/).pop() ?? value;

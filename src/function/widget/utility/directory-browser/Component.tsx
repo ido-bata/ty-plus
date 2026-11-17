@@ -23,6 +23,7 @@ import { useCep } from "@/management/ae/cep/contexts/Context";
 import { selectFolder } from "@/management/ae/cep/dialog-shim/bolt";
 import { createCepHostExecutor } from "@/management/ae/cep/host-executor";
 import { detectCepHostCode } from "@/management/ae/cep/runtime";
+import { importFile as runWorkspaceFileImport } from "@/management/ae/file-import";
 import { readGroupJson } from "@/management/catalog/json-files";
 import { notificationStore } from "@/management/online/notification/service";
 import {
@@ -73,7 +74,6 @@ import {
 	DirectoryBrowser,
 	type DirectoryBrowserEntry,
 } from "@/management/storage/ui/DirectoryBrowser";
-import { importFile as runWorkspaceFileImport } from "@/management/ae/file-import";
 import { executeWorkspacePresetForWindow } from "@/management/workspace/runtime";
 import type { SurfaceState } from "@/management/workspace/state";
 import { CollapsibleGroupHeader } from "./CollapsibleGroupHeader";
