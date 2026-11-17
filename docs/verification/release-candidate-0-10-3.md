@@ -120,8 +120,12 @@ bun run release:candidate --channel=stable --release-version=0.10.3
 
 - smoke 6/6 PASS、settings UC-E01 PASS、widgets UC-D11 PASS、catalog UC-C15 PASS、host UC-A04 PASS、journey UC-C10/C11/UC-H02(UC-J02 chain) PASS
 - debug UC-G03: 旧成果物では `binary_manifest_mismatch` で FAIL（#180 の検出契機）。修正版では dev-only probe が正しく不在（`typeof __TY_PLUS_OPERATION_WORKER_VERIFY__ === "undefined"` を live panel で実測）となり SKIP（release 正しい挙動）
-- debug UC-G02: 手動 panel reload 直後の1回だけ `debug console opens: not live` で FAIL（surface 起動タイミング依存のflaky疑い。要再確認）
-- #71 関連: settings dialog を含む UC-E01（言語切替+reload永続化）PASS、panel reload で renderer crash / `Uncaught [object Event]` 再現せず
+- debug UC-G02: 初回実行時は surface 起動タイミングで `not live` FAIL、modeless surface 起動後の再実行で **PASS**（console open → marker replay → close → reopen を実測。evidence `/tmp/e2e-rc5/run.json`）
+- debug UC-G03: dev-only probe が release build で正しく不在のため SKIP（#180 修正の実機確認。`binary_manifest_mismatch` は解消）
+- smoke 6/6 PASS、settings UC-E01 PASS（言語切替+reload永続化）、host UC-A04 PASS、catalog UC-C15 PASS
+- workspace: UC-B02/B05/D10 PASS、UC-C12/C14 は `Create not clickable: missing-or-disabled` で BLOCKED（harness/host側の既知制約、FAILではない）
+- widgets UC-D11 は sandbox に easing widget が未永続化のため SKIP（前回 build では PASS 実績あり）
+- #71 関連: settings dialog を含む UC-E01 PASS、panel reload で renderer crash / `Uncaught [object Event]` 再現せず
 - Windows 実機・macOS での ZXP インストール経路の確認は未実施
 
 ## 6. 主要ジャーニーの受入証拠（#108 matrix 現状）
