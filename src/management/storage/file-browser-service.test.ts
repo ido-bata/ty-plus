@@ -90,6 +90,7 @@ describe("file-browser-service quick action index", () => {
 			title: "deep.ffx",
 			filePath: `${current}/deep.ffx`,
 			icon: { type: "text", param: { text: "FFX" } },
+			siblingImagePath: null,
 		});
 		expect(result.directorySignatures.length).toBeGreaterThan(20);
 	});
@@ -136,7 +137,7 @@ describe("file-browser-service quick action index", () => {
 		expect(progress.at(-1)).toEqual({ count: 2, completed: true });
 	});
 
-	it("keeps sibling image icons in quick action root indexes", async () => {
+	it("exposes sibling image paths without persisting them as icons", async () => {
 		const service = createCepNodeFileBrowserService({
 			win: fakeWindow({
 				dirs: {
@@ -149,10 +150,15 @@ describe("file-browser-service quick action index", () => {
 			{ path: "/root", rootKind: "preset" },
 		]);
 
+		// The sidecar image travels as a display-time hint
+		// (`siblingImagePath`); `icon` stays the materialized type default
+		// so derived imagery is never persisted inside `Preset.icon`
+		// (issue #191).
 		expect(result.rootFiles).toContainEqual(
 			expect.objectContaining({
 				title: "Glow.ffx",
-				icon: { type: "image", param: { src: "/root/Glow.png" } },
+				icon: { type: "text", param: { text: "FFX" } },
+				siblingImagePath: "/root/Glow.png",
 			}),
 		);
 	});

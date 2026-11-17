@@ -12,7 +12,10 @@ import {
 import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 import type { Preset, PresetType } from "@/management/preset/contract";
-import { WorkspacePresetGlyph } from "@/management/preset/workspace/glyph";
+import {
+	usePresetSiblingImageSrc,
+	WorkspacePresetGlyph,
+} from "@/management/preset/workspace/glyph";
 import type {
 	GridSettings,
 	Layout,
@@ -37,14 +40,19 @@ type QuickActionRootFileRow = {
 	description?: string;
 	descriptionImage?: string;
 	icon?: Preset["icon"];
+	siblingImagePath?: string | null;
 	data?: Record<string, unknown>;
 };
 
+import type { SiblingListingEntry } from "@/management/preset/sibling-thumbnail";
 import {
 	getCandidatesSnapshot,
 	subscribeCandidatesSnapshot,
 } from "@/management/storage/candidates-cache/runtime";
-import { canUseCepNodeFileBrowser } from "@/management/storage/file-browser-service";
+import {
+	canUseCepNodeFileBrowser,
+	createCepNodeFileBrowserService,
+} from "@/management/storage/file-browser-service";
 import { SearchIcon } from "@/management/workspace/surface/widget-grid-icons";
 import { css } from "@/styled-system/css";
 import { executeQuickActionPreset } from "./execute";
@@ -232,7 +240,10 @@ function RootFileRow(props: {
 						} as CSSProperties
 					}
 				>
-					<WorkspacePresetGlyph preset={rootFile} />
+					<WorkspacePresetGlyph
+						preset={rootFile}
+						siblingImageSrc={rootFile.siblingImagePath}
+					/>
 				</span>
 				<span className={rowTextBlockClass}>
 					<span className={rowTitleClass}>{rootFile.title}</span>
@@ -246,15 +257,31 @@ function RootFileRow(props: {
 	);
 }
 
+type ThumbnailListDirectory = (
+	dirPath: string,
+) => Promise<ReadonlyArray<SiblingListingEntry>>;
+
 function PresetRow(props: {
 	preset: Preset;
 	idx: number;
 	selected: boolean;
 	widgetInstanceId: string;
 	tl: string;
+	thumbnailListDirectory?: ThumbnailListDirectory;
 	onSelect: (idx: number) => void;
 }): JSX.Element {
-	const { preset, idx, selected, widgetInstanceId, tl, onSelect } = props;
+	const {
+		preset,
+		idx,
+		selected,
+		widgetInstanceId,
+		tl,
+		thumbnailListDirectory,
+		onSelect,
+	} = props;
+	const siblingImageSrc = usePresetSiblingImageSrc(preset, {
+		thumbnailListDirectory,
+	});
 	return (
 		<div
 			key={`${widgetInstanceId}-p-${preset.id}`}
@@ -277,7 +304,10 @@ function PresetRow(props: {
 						} as CSSProperties
 					}
 				>
-					<WorkspacePresetGlyph preset={preset} />
+					<WorkspacePresetGlyph
+						preset={preset}
+						siblingImageSrc={siblingImageSrc}
+					/>
 				</span>
 				<span className={rowTextBlockClass}>
 					<span className={rowTitleClass}>
@@ -309,6 +339,25 @@ function PaletteRowsList(props: {
 		typeLabel,
 		onSelect,
 	} = props;
+	// Display-time sibling image resolution for catalog presets: sidecar
+	// images are derived at render time through the shared matcher and the
+	// thumbnail pipeline, never persisted into `Preset.icon` (issue #191).
+	const thumbnailListDirectory = useMemo<
+		ThumbnailListDirectory | undefined
+	>(() => {
+		if (typeof window === "undefined") {
+			return undefined;
+		}
+		if (!canUseCepNodeFileBrowser(window)) {
+			return undefined;
+		}
+		try {
+			const svc = createCepNodeFileBrowserService({ win: window });
+			return (dirPath: string) => svc.listDirectory(dirPath);
+		} catch {
+			return undefined;
+		}
+	}, []);
 	return (
 		<>
 			{paletteRows.map((row, idx) => {
@@ -349,6 +398,7 @@ function PaletteRowsList(props: {
 						selected={selected}
 						widgetInstanceId={widgetInstanceId}
 						tl={tl}
+						thumbnailListDirectory={thumbnailListDirectory}
 						onSelect={onSelect}
 					/>
 				);

@@ -234,6 +234,37 @@ const loadingGlyphClass = css({
 	backgroundColor: "border.default",
 });
 
+export type PresetSiblingImageOptions = {
+	/** `catalog` (default) = same host as the workspace `PresetTile`. */
+	siblingHintParentDir?: string | null;
+	siblingHintEntries?: ReadonlyArray<SiblingListingEntry> | null;
+	thumbnailListDirectory?: (
+		dirPath: string,
+	) => Promise<ReadonlyArray<SiblingListingEntry>>;
+};
+
+/**
+ * Display-time sibling image resolution shared by every preset glyph
+ * surface (workspace tiles, directory browser, quick-actions palette).
+ * Returns the sidecar image path for `record.filePath`, or `null`.
+ * Sibling imagery is never written back to the preset (issue #191).
+ */
+export function usePresetSiblingImageSrc(
+	record: Preset | null | undefined,
+	options?: PresetSiblingImageOptions,
+): string | null {
+	const siblingHintParentDir = options?.siblingHintParentDir ?? null;
+	const siblingHintEntries = options?.siblingHintEntries ?? null;
+	const thumbnailListDirectory = options?.thumbnailListDirectory;
+	const siblingThumbSrc = usePresetSiblingImageSrc(record, {
+		siblingHintParentDir,
+		siblingHintEntries,
+		thumbnailListDirectory,
+	});
+
+	return siblingThumbSrc;
+}
+
 /**
  * Displays an icon by preset id alone. Lookup is contained in `getPreset`.
  */

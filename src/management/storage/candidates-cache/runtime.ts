@@ -1,5 +1,4 @@
 import { parseRootPathsFromSettingsJson } from "@/management/preset/catalog-add/parse-root-paths";
-import type { Preset } from "@/management/preset/contract";
 import {
 	readCandidates,
 	writeCandidates,
@@ -8,6 +7,7 @@ import {
 	canUseCepNodeFileBrowser,
 	createCepNodeFileBrowserService,
 	type QuickActionDirectorySignature,
+	type QuickActionRootFileRow,
 } from "@/management/storage/file-browser-service";
 import { readSettings } from "@/management/workspace/persistence/store";
 
@@ -25,7 +25,7 @@ type CandidatesSnapshotRoot = {
 
 export type CandidatesSnapshot = {
 	roots: readonly CandidatesSnapshotRoot[];
-	rootFiles: readonly Preset[];
+	rootFiles: readonly QuickActionRootFileRow[];
 	pluginEffects: readonly {
 		filePath: string;
 		matchName: string;
@@ -146,7 +146,7 @@ export const preloadCandidatesSnapshot = async (
 const writeIndexCache = async (
 	win: Window,
 	roots: readonly CandidatesSnapshotRoot[],
-	rootFiles: readonly Preset[],
+	rootFiles: readonly QuickActionRootFileRow[],
 	directorySignatures: readonly QuickActionDirectorySignature[],
 	pluginEffects: CandidatesSnapshot["pluginEffects"],
 ): Promise<void> => {
@@ -178,7 +178,7 @@ const rebuildCandidatesIndex = async (win: Window): Promise<void> => {
 			return;
 		}
 		const service = createCepNodeFileBrowserService({ win });
-		let rootFiles: readonly Preset[] = [];
+		let rootFiles: readonly QuickActionRootFileRow[] = [];
 		let directorySignatures: readonly QuickActionDirectorySignature[] = [];
 		let lastWriteAt = 0;
 		const index = await service.buildQuickActionRootIndexIncremental(

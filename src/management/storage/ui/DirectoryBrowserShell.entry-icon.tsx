@@ -11,7 +11,12 @@ import type { JSX } from "react";
 import { useMemo } from "react";
 import { useThumbnail } from "@/function/widget/utility/directory-browser/hooks/useThumbnail";
 
-import type { PresetIcon } from "@/management/preset/contract";
+import type {
+	Preset,
+	PresetIcon,
+	PresetType,
+} from "@/management/preset/contract";
+import { isDefaultPresetIcon } from "@/management/preset/icon-data";
 import { imageSrcForBrowser } from "@/management/preset/image-src-for-browser";
 import {
 	findSiblingImagePathForPresetFile,
@@ -21,6 +26,14 @@ import {
 import { cx } from "@/shared/util/cx";
 import { css } from "@/styled-system/css";
 import type { DirectoryBrowserEntry } from "./DirectoryBrowser";
+
+const presetTypeForFileType = (
+	fileType: DirectoryBrowserEntry["fileType"],
+): PresetType => {
+	if (fileType === "script") return "script";
+	if (fileType === "plugin") return "plugin";
+	return "preset";
+};
 
 const iconFrameBaseClass = css({
 	display: "inline-flex",
@@ -131,42 +144,33 @@ export function EntryIcon({
 			</IconFrame>
 		);
 	}
-	if (sidekickPath) {
-		// Prefer the thumbnail pipeline (Rust WebP cache + gateway
-		// allow-list) like `EntryThumb` / `SiblingThumbnail` do. While the
-		// pipeline has no resolved URL — or no gateway exists in this
-		// context — fall back to the raw `file://` path, and finally to
-		// the type icon when the path is not browser-resolvable.
-		if (sidekickThumb.staticUrl) {
-			return (
-				<IconFrame size={s} fill={fill}>
-					<img
-						src={sidekickThumb.staticUrl}
-						alt=""
-						decoding="async"
-						draggable={false}
-						className={coverImageClass}
-					/>
-				</IconFrame>
-			);
-		}
-		// `imageSrcForBrowser` rejects non-absolute / non-URL paths and returns
-		// "" — rendering `<img src="">` logs a console error, so fall through
-		// to the type icon instead.
-		const sidekickSrc = imageSrcForBrowser(sidekickPath);
-		if (sidekickSrc) {
-			return (
-				<IconFrame size={s} fill={fill}>
-					<img
-						src={sidekickSrc}
-						alt=""
-						decoding="async"
-						draggable={false}
-						className={coverImageClass}
-					/>
-				</IconFrame>
-			);
-		}
+	// Icon contract (issue #191): a persisted *custom* icon wins over every
+	// derived source; a materialized type default does not — sibling
+	// sidecar images resolved through the thumbnail pipeline outrank it.
+	const presetType = presetTypeForFileType(entry.fileType);
+	const hasCustomIcon =
+		entry.icon != null &&
+		!isDefaultPresetIcon(presetType, entry.icon as Preset["icon"]);
+	if (hasCustomIcon && entry.icon) {
+		const rendered = renderPresetIcon(entry.icon, s, fill);
+		if (rendered) return rendered;
+	}
+	if (sidekickPath && sidekickThumb.staticUrl) {
+		// Sidecar images render only through the thumbnail pipeline (Rust
+		// WebP cache + gateway allow-list). There is no raw `file://`
+		// fallback: when the pipeline has no resolved URL the entry falls
+		// through to its persisted icon or type glyph.
+		return (
+			<IconFrame size={s} fill={fill}>
+				<img
+					src={sidekickThumb.staticUrl}
+					alt=""
+					decoding="async"
+					draggable={false}
+					className={coverImageClass}
+				/>
+			</IconFrame>
+		);
 	}
 	if (entry.icon) {
 		const rendered = renderPresetIcon(entry.icon, s, fill);

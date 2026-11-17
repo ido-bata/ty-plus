@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
 	findSiblingImagePathForPresetFile,
+	isPresetSidekickSourcePath,
 	normalizeSiblingDirPath,
 	siblingPathKey,
 } from "./sibling-thumbnail";
@@ -43,5 +44,40 @@ describe("sibling-thumbnail", () => {
 		expect(findSiblingImagePathForPresetFile("//?/D:/x/Foo.ffx", entries)).toBe(
 			"D:/x/Foo.png",
 		);
+	});
+
+	it("matches JSX sources to sibling images (issue #191)", () => {
+		expect(isPresetSidekickSourcePath("D:/x/Tool.JSX")).toBe(true);
+		expect(isPresetSidekickSourcePath("D:/x/Tool.jsxbin")).toBe(true);
+		const entries = [
+			{ name: "Tool.png", path: "D:/x/Tool.png", isDirectory: false },
+		];
+		expect(findSiblingImagePathForPresetFile("D:/x/Tool.jsx", entries)).toBe(
+			"D:/x/Tool.png",
+		);
+	});
+
+	it("normalizes mixed slashes and case when matching parents", () => {
+		const entries = [
+			{
+				name: "Foo.png",
+				path: "C:\\Ae\\Presets\\Foo.png",
+				isDirectory: false,
+			},
+		];
+		expect(
+			findSiblingImagePathForPresetFile("c:/ae/presets/Foo.ffx", entries),
+		).toBe("C:\\Ae\\Presets\\Foo.png");
+	});
+
+	it("returns null when no sibling image exists", () => {
+		const entries = [
+			{ name: "Other.png", path: "D:/x/Other.png", isDirectory: false },
+			{ name: "Foo.txt", path: "D:/x/Foo.txt", isDirectory: false },
+		];
+		expect(
+			findSiblingImagePathForPresetFile("D:/x/Foo.ffx", entries),
+		).toBeNull();
+		expect(findSiblingImagePathForPresetFile("D:/x/Foo.ffx", [])).toBeNull();
 	});
 });
