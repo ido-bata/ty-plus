@@ -46,6 +46,8 @@ Issue本文の詳細を伝言・再定義せず、正本Issueを直接参照す�
 | recovery | agent-recovery | 中断からの再開、checkpoint、外部side effect |
 | orchestration | parallel-orchestration | subagent / 複数workerへの分解・委譲 |
 | quality-gate | quality-gate | verification level、gate、CI設計 |
+| system-quality | system-quality | 要求変更・設計再構成での全体品質改善。要求保存・アンチケース排除・代替構成比較・旧構造撤去 |
+| idea-discovery | idea-discovery | 既存案の変形ではない根本的に新しい設計原理を求める時 |
 | design-before-build | design-refinement | 非自明なfeature / architecture / product designの実装前整理 |
 | engineering-decisions | engineering-decisions | 実装判断の優先順位、userへ返す判断の境界、tool選定 |
 | debugging | diagnosing-bugs | 再現できる失敗の原因特定 |
@@ -68,6 +70,9 @@ Issue本文の詳細を伝言・再定義せず、正本Issueを直接参照す�
 | skill-authoring | skill-authoring | repositoryでSkillを書く・育てる時 |
 | policy-evaluation | policy-evaluation | Skill / policy変更の評価と検証 |
 | skill-selection | skill-selection | Skill導入・更新の判断。手動起動: `.agents/skills/skill-selection/SKILL.md` |
+| release-planning | linear-release-control | Linearをrelease planning / health / portfolioに使う時 |
+| supervisor-runtime | herdr-runtime | Herdrをoptional Supervisor/session Practiceとして使う時 |
+| supervisor-boundary | supervisor-boundary | Supervisorと実装Workerの権限分離環境の導入・監査 |
 
 ## House rule
 
