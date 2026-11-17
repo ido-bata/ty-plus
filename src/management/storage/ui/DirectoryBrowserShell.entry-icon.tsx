@@ -1,12 +1,4 @@
-import type { LucideIcon } from "lucide-react";
-import {
-	File,
-	Film,
-	Folder,
-	FolderOpen,
-	Image as ImageIcon,
-	Music,
-} from "lucide-react";
+import { File, Folder, FolderOpen } from "lucide-react";
 import type { JSX } from "react";
 import { useMemo } from "react";
 import { useThumbnail } from "@/function/widget/utility/directory-browser/hooks/useThumbnail";
@@ -27,6 +19,7 @@ import {
 import { CanvasEasingIcon } from "@/management/preset/workspace/CanvasEasingIcon";
 import { cx } from "@/shared/util/cx";
 import { css } from "@/styled-system/css";
+import { FILE_TYPE_ICON } from "../file-type-icon";
 import type { DirectoryBrowserEntry } from "./DirectoryBrowser";
 
 const presetTypeForFileType = (
@@ -178,66 +171,23 @@ export function EntryIcon({
 		const rendered = renderPresetIcon(entry.icon, s, fill);
 		if (rendered) return rendered;
 	}
-	if (entry.fileType === "video") {
+	// File-type glyph fallback comes from the shared table so every
+	// directory-browser surface renders the same icon for the same file
+	// (issue #191 audit — this used to be a divergent per-surface copy
+	// that collapsed most types to Film and lacked font/psd/ai/c4d/json).
+	if (entry.isDirectory) {
 		return (
 			<IconFrame size={s} fill={fill}>
-				<Film className={fullSizeClass} aria-hidden />
+				<Folder className={fullSizeClass} aria-hidden />
 			</IconFrame>
 		);
 	}
-	if (entry.fileType === "audio") {
-		return (
-			<IconFrame size={s} fill={fill}>
-				<Music className={fullSizeClass} aria-hidden />
-			</IconFrame>
-		);
-	}
-	if (entry.fileType === "image") {
-		return (
-			<IconFrame size={s} fill={fill}>
-				<ImageIcon className={fullSizeClass} aria-hidden />
-			</IconFrame>
-		);
-	}
-	if (entry.fileType === "image-sequence") {
-		return (
-			<IconFrame size={s} fill={fill}>
-				<Film className={fullSizeClass} aria-hidden />
-			</IconFrame>
-		);
-	}
-	if (entry.fileType === "ae-preset") {
-		return (
-			<IconFrame size={s} fill={fill}>
-				<Film className={fullSizeClass} aria-hidden />
-			</IconFrame>
-		);
-	}
-	if (entry.fileType === "script") {
-		return (
-			<IconFrame size={s} fill={fill}>
-				<Film className={fullSizeClass} aria-hidden />
-			</IconFrame>
-		);
-	}
-	if (entry.fileType === "plugin") {
-		return (
-			<IconFrame size={s} fill={fill}>
-				<Film className={fullSizeClass} aria-hidden />
-			</IconFrame>
-		);
-	}
-	if (entry.fileType === "mogrt") {
-		return (
-			<IconFrame size={s} fill={fill}>
-				<Film className={fullSizeClass} aria-hidden />
-			</IconFrame>
-		);
-	}
-	const IconComponent: LucideIcon = entry.isDirectory ? Folder : File;
+	const Glyph = entry.fileType
+		? (FILE_TYPE_ICON[entry.fileType] ?? File)
+		: File;
 	return (
 		<IconFrame size={s} fill={fill}>
-			<IconComponent className={fullSizeClass} aria-hidden />
+			<Glyph className={fullSizeClass} aria-hidden />
 		</IconFrame>
 	);
 }
