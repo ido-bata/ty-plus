@@ -21,6 +21,7 @@ const descriptor: WidgetDescriptor = {
 	nameKey: "widgets.directoryBrowser.name",
 	tutorial: {
 		summaryKey: "widgets.tutorial.directory-browser.summary",
+		contentVersion: "1",
 		steps: [
 			{
 				titleKey:

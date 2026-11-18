@@ -132,6 +132,7 @@ type WidgetTutorialDescriptor = {
 	type: string;
 	tutorial?: {
 		summaryKey: string;
+		contentVersion: string;
 		steps?: readonly {
 			titleKey: string;
 			bodyKey: string;
@@ -177,13 +178,18 @@ describe("Widget tutorial contract (#147 / #157)", () => {
 	const enRoot: unknown = enWidgetsJson;
 	const jaRoot: unknown = jaWidgetsJson;
 
-	it("every registered widget declares tutorial.summaryKey", () => {
+	it("every registered widget declares tutorial.summaryKey and contentVersion", () => {
 		const missing = descriptors
-			.filter((d) => !d.tutorial?.summaryKey)
+			.filter(
+				(d) =>
+					!d.tutorial?.summaryKey ||
+					typeof d.tutorial.contentVersion !== "string" ||
+					d.tutorial.contentVersion.trim().length === 0,
+			)
 			.map((d) => d.type);
 		expect(
 			missing,
-			`Widgets missing tutorial.summaryKey: [${missing.join(", ")}]`,
+			`Widgets missing tutorial.summaryKey/contentVersion: [${missing.join(", ")}]`,
 		).toEqual([]);
 	});
 

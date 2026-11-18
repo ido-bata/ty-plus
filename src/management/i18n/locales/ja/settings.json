@@ -193,7 +193,8 @@
 			"workspace-backup": "ワークスペースバックアップ",
 			"feedback": "フィードバック",
 			"inputs": "入力",
-			"update": "更新"
+			"update": "更新",
+			"tips": "ヒント"
 		}
 	},
 	"updates": {
@@ -225,5 +226,10 @@
 		"installFailedArchive": "ダウンロードしたアップデートが無効です。再試行するか手動でインストールしてください。",
 		"installFailedPermission": "権限がありません。ダウンロードページから手動でインストールしてください。",
 		"installFailedBusy": "別のインストールが進行中です。しばらくしてから再試行してください。"
-	}
+	},
+	"tipsSectionLabel": "ウィジェットのヒントとチュートリアル",
+	"tipsSectionDescription": "ウィジェットのヘルプ概要と初回ヒントは、ウィジェットごとに一度だけ表示されます。リセットすると再度表示されます。",
+	"tipsReset": "ヒントを再表示",
+	"tipsResetDone": "ヒントをリセットしました。各ウィジェットを次に表示したときに再び表示されます。",
+	"tipsResetFailed": "ヒントをリセットできませんでした。もう一度お試しください。"
 }

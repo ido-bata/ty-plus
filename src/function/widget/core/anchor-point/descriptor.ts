@@ -14,6 +14,7 @@ defineWidget({
 	nameKey: "widgets.anchorPoint.name",
 	tutorial: {
 		summaryKey: "widgets.tutorial.anchor-point.summary",
+		contentVersion: "1",
 		steps: [
 			{
 				titleKey: "widgets.tutorial.anchor-point.steps.nameAnchor.title",

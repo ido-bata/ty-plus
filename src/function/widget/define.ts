@@ -80,6 +80,12 @@ export type TutorialStep = {
  */
 export type WidgetTutorial = {
 	summaryKey: string;
+	/**
+	 * Content version for this widget's tutorial/help copy. Part of the
+	 * seen/dismiss persistence key (Issue #158): bumping it re-presents the
+	 * guidance once even for users who already dismissed the previous version.
+	 */
+	contentVersion: string;
 	steps?: readonly TutorialStep[];
 };
 

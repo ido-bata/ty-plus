@@ -18,6 +18,7 @@ defineWidget({
 	nameKey: "widgets.info.name",
 	tutorial: {
 		summaryKey: "widgets.tutorial.info.summary",
+		contentVersion: "1",
 		steps: [
 			{
 				titleKey: "widgets.tutorial.info.steps.placeWidget.title",

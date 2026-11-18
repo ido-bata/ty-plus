@@ -193,7 +193,8 @@
 			"workspace-backup": "Arbeitsbereich-Sicherung",
 			"feedback": "Feedback",
 			"inputs": "Eingaben",
-			"update": "Updates"
+			"update": "Updates",
+			"tips": "Tipps"
 		}
 	},
 	"updates": {
@@ -225,5 +226,10 @@
 		"installFailedArchive": "Das heruntergeladene Update ist ungültig. Versuchen Sie es später erneut oder installieren Sie es manuell.",
 		"installFailedPermission": "Zugriff verweigert. Installieren Sie es manuell über die Download-Seite.",
 		"installFailedBusy": "Eine andere Installation läuft. Versuchen Sie es in Kürze erneut."
-	}
+	},
+	"tipsSectionLabel": "Widget-Tipps & Tutorials",
+	"tipsSectionDescription": "Widget-Hilfetexte und Hinweise beim ersten Start werden pro Widget nur einmal angezeigt. Zurücksetzen, um sie erneut anzuzeigen.",
+	"tipsReset": "Tipps erneut anzeigen",
+	"tipsResetDone": "Tipps zurückgesetzt. Sie erscheinen beim nächsten Aufruf des jeweiligen Widgets erneut.",
+	"tipsResetFailed": "Tipps konnten nicht zurückgesetzt werden. Bitte erneut versuchen."
 }

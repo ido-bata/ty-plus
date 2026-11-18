@@ -16,6 +16,7 @@ export const descriptor = defineWidget({
 	nameKey: "widgets.easing.name",
 	tutorial: {
 		summaryKey: "widgets.tutorial.easing.summary",
+		contentVersion: "1",
 		steps: [
 			{
 				titleKey: "widgets.tutorial.easing.steps.chooseCurve.title",

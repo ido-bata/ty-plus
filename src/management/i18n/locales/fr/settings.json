@@ -193,7 +193,8 @@
 			"workspace-backup": "Sauvegarde de l'espace de travail",
 			"feedback": "Retour",
 			"inputs": "Entrées",
-			"update": "Mises à jour"
+			"update": "Mises à jour",
+			"tips": "Astuces"
 		}
 	},
 	"updates": {
@@ -225,5 +226,10 @@
 		"installFailedArchive": "La mise à jour téléchargée est invalide. Réessayez plus tard ou installez-la manuellement.",
 		"installFailedPermission": "Permission refusée. Installez-la manuellement depuis la page de téléchargement.",
 		"installFailedBusy": "Une autre installation est en cours. Réessayez dans un instant."
-	}
+	},
+	"tipsSectionLabel": "Astuces et tutoriels des widgets",
+	"tipsSectionDescription": "Les résumés d'aide et les infobulles de première utilisation s'affichent une fois par widget. Réinitialisez pour les revoir.",
+	"tipsReset": "Réafficher les astuces",
+	"tipsResetDone": "Astuces réinitialisées. Elles réapparaîtront à la prochaine ouverture de chaque widget.",
+	"tipsResetFailed": "Impossible de réinitialiser les astuces. Veuillez réessayer."
 }
