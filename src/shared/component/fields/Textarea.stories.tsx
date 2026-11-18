@@ -1,6 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 import { expect } from "storybook/test";
+
+import { expectCanvasLayout } from "@/storybook/quality/layout";
+
 import { Textarea } from "./Textarea";
 
 const meta = {
@@ -68,6 +71,7 @@ export const Focused: Story = {
 		"aria-label": "Notes",
 	},
 	play: async ({ canvasElement }) => {
+		expectCanvasLayout(canvasElement);
 		const textarea = canvasElement.querySelector("textarea");
 		if (!textarea) throw new Error("textarea not found");
 		const restingBorderColor = getComputedStyle(textarea).borderTopColor;
@@ -79,5 +83,6 @@ export const Focused: Story = {
 		const focused = getComputedStyle(textarea);
 		await expect(focused.borderTopColor).not.toBe(restingBorderColor);
 		await expect(focused.boxShadow).not.toBe(restingBoxShadow);
+		expectCanvasLayout(canvasElement);
 	},
 };

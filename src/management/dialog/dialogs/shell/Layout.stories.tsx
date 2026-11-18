@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Button } from "@/shared/component/controls/Button";
+import { expectCanvasLayout } from "@/storybook/quality/layout";
 import { css } from "@/styled-system/css";
 
 import { Shell } from "./Layout";
@@ -121,6 +122,10 @@ export const WithModifier: Story = {
 export const ComputedStyleShell: Story = {
 	args: { ...baseArgs },
 	play: async ({ canvasElement }) => {
+		// Issue #194: dialog shell controls must satisfy the layout
+		// contract — inside the viewport, unclipped by the shell's own
+		// overflow:hidden.
+		expectCanvasLayout(canvasElement);
 		const root = canvasElement.querySelector(
 			"[data-surface-id='storybook-shell-1']",
 		) as HTMLElement | null;
@@ -161,6 +166,7 @@ export const ComputedStyleShell: Story = {
 				`Dialog content overflow-x expected "hidden", got "${contentStyle.overflowX}"`,
 			);
 		}
+		expectCanvasLayout(canvasElement);
 	},
 };
 
@@ -187,5 +193,6 @@ export const ComputedStyleShellWithFooter: Story = {
 				`Dialog footer justify-content expected "space-between", got "${footerStyle.justifyContent}"`,
 			);
 		}
+		expectCanvasLayout(canvasElement);
 	},
 };
