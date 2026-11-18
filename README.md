@@ -36,9 +36,9 @@ If you are installing manually, ZIP archives and platform-specific release manif
 
 ## Compatibility and known limitations
 
-- **Platforms:** Windows x64 and macOS. The published v0.10.1 ZXP has launched on macOS (After Effects 2026, 26.5.3) and the panel opens and renders; end-to-end smoke coverage across operating systems and After Effects versions is still pending. See [verification issue #10](https://github.com/ido-bata/ty-plus/issues/10).
+- **Platforms:** Windows x64 and macOS. The published Stable ZXP (latest v0.10.3) has launched on macOS (After Effects 2026, 26.5.3) and the panel opens and renders; end-to-end smoke coverage across operating systems and After Effects versions is still pending. See [verification issue #10](https://github.com/ido-bata/ty-plus/issues/10).
 - **Windows:** the native worker is not Authenticode-signed. Windows Smart App Control can block it; do not disable OS security protections just to install ty-plus.
-- **macOS:** the native worker is Developer ID-signed but **not notarized** in v0.10.1. macOS quarantine or security policies may prevent it from launching.
+- **macOS:** the native worker is Developer ID-signed but **not notarized** (as of v0.10.3). macOS quarantine or security policies may prevent it from launching.
 - **ZXP:** distributions use a persistent self-signed CEP signing certificate. Signing a ZXP is not the same as notarizing a macOS executable.
 - **Updates:** the extension checks GitHub Releases but does not install updates automatically.
 
@@ -52,7 +52,7 @@ This is the first public Stable-*channel* baseline of an actively developed open
 | Beta | Stable and Beta | `vX.Y.Z-beta.N` |
 | Insider | Stable, Beta and Insider | `vX.Y.Z-insider.N` |
 
-[View releases](https://github.com/ido-bata/ty-plus/releases) · [Release notes for v0.10.1](https://github.com/ido-bata/ty-plus/releases/tag/v0.10.1)
+[View releases](https://github.com/ido-bata/ty-plus/releases) · [Release notes for v0.10.3](https://github.com/ido-bata/ty-plus/releases/tag/v0.10.3)
 
 ## Help and contribute
 

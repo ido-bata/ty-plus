@@ -2,6 +2,10 @@
 
 Bridges, compatibility paths, old/new duplicate paths, fallbacks, and copied definitions. Each entry has ownership, risk, and removal conditions where known.
 
+## Snapshot Notice
+
+This map is a dated evidence snapshot. References to `supabase/functions/`, the Supabase edge function, `PresetLibraryDialog`, or other unprovided online surfaces describe the pre-port repository or pre-#193 state; those surfaces do not exist in the current tree (see `docs/architecture/observation/index.md`).
+
 ## Bridges
 
 | Bridge | Location | Owner | Risk | Removal Condition |

@@ -2,6 +2,10 @@
 
 Strongest available evidence per workflow. Browser-only success is insufficient for CEP/AE workflows.
 
+## Snapshot Notice
+
+This map is a dated evidence snapshot. References to `supabase/functions/`, the Supabase edge function, `PresetLibraryDialog`, or other unprovided online surfaces describe the pre-port repository or pre-#193 state; those surfaces do not exist in the current tree (see `docs/architecture/observation/index.md`).
+
 ## Evidence Availability
 
 | Workflow | typecheck | unit test | browser/dev | CEP load | AE smoke |

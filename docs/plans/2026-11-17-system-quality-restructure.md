@@ -237,3 +237,12 @@ O1〜O7は既存正本の要求であり、本再構成で維持する。O8・O9
 - **全体監査**: 既知不具合の分類に留まらず、product-model §2 の全操作単位×所有境界で同種の構造的欠陥を能動的に探索する
 
 子Issueの再編: #190〜#195 の粒度は維持するが、各Issueの受入条件を product-model §4 の品質契約へ合わせて更新し、#197〜#199 は完了扱いせず受入を再評価する。
+
+## 11. 既存Issue完了判定の再評価（#195、2026-11-17）
+
+system-quality再構成の一環として、close済みIssueの完了判定が現行構成でも成立するかを再評価した。
+
+- **#167（ticket PR高速gateとRC freeze包括検証の分離）**: **判定維持**。`.github/workflows/ci.yml` は `pull_request` で skills/static/unit/coverage の高速gateのみを実行し、全partitionは `push to main` / `workflow_dispatch`（RC freeze経路）と `full-ci` label opt-in に限定されている。本再構成の全ticket PR（#196〜#203）もこの階層で運用した。
+- **#136（project-init reconcileとworktree lifecycle整備）**: **判定維持**。`mise.toml` の `worktree:setup` / `worktree:teardown` がworktree作成・削除の入口として機能し、`.worktree.env` によるport等の決定的注入と `check:skills` のSkill正本一致検査が継続している。本セッションでも同経路で複数worktreeを運用した。
+
+いずれも再構成で前提が崩れていないため、再オープンや追加作業は不要と判断した。

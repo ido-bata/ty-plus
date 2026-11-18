@@ -8,13 +8,11 @@
 ```text
 architecture/
 ├─ index.md
-├─ AGENTS.md
 ├─ project.md
 ├─ repository/
 │  ├─ index.md
 │  ├─ layout.md      (legacy — historical physical layout)
 │  ├─ source-ownership.md
-│  └─ materials.md
 ├─ agent-operations.md
 ├─ runtime/
 │  ├─ index.md
@@ -94,8 +92,7 @@ architecture/
 8. [`data/index.md`](data/index.md) - 型定義の所在と使用元
 9. [`quality/index.md`](quality/index.md) - 実装可能性判断と品質ゲート
 10. [`i18n/index.md`](i18n/index.md) - i18n ポリシーと命名規約
-11. [`AGENTS.md`](AGENTS.md) - AI エージェント向けの読み方
-12. [`agent-operations.md`](agent-operations.md) - 並行実行、復旧、release workflow
+11. [`agent-operations.md`](agent-operations.md) - 並行実行、復旧、release workflow
 
 ## 固定スコープ
 

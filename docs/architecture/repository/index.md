@@ -9,7 +9,6 @@ repository/
 ├─ index.md
 ├─ layout.md          # repo physical structure: src/, rust/, scripts/
 ├─ source-ownership.md # TypeScript and Rust responsibility boundaries
-└─ materials.md       # archive/, reference/, docs/no-use/, docs/plans/ handling
 ```
 
 ## 境界
