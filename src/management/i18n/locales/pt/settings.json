@@ -193,7 +193,8 @@
 			"workspace-backup": "Cópia de segurança do espaço de trabalho",
 			"feedback": "Comentários",
 			"inputs": "Entradas",
-			"update": "Atualizações"
+			"update": "Atualizações",
+			"tips": "Dicas"
 		}
 	},
 	"updates": {
@@ -225,5 +226,10 @@
 		"installFailedArchive": "A atualização baixada é inválida. Tente novamente mais tarde ou instale manualmente.",
 		"installFailedPermission": "Permissão negada. Instale manualmente pela página de download.",
 		"installFailedBusy": "Outra instalação está em andamento. Tente novamente em instantes."
-	}
+	},
+	"tipsSectionLabel": "Dicas e tutoriais de widgets",
+	"tipsSectionDescription": "Os resumos de ajuda e as dicas de primeira utilização são mostrados uma vez por widget. Reponha para os ver novamente.",
+	"tipsReset": "Mostrar dicas novamente",
+	"tipsResetDone": "Dicas repostas. Voltarão a aparecer na próxima vez que cada widget for aberto.",
+	"tipsResetFailed": "Não foi possível repor as dicas. Tente novamente."
 }

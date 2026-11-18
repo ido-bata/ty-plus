@@ -19,6 +19,7 @@ export const PATHS = {
 	paths: (root: string) => `${root}/settings/paths.json`,
 	ui: (root: string) => `${root}/settings/ui.json`,
 	controlPanel: (root: string) => `${root}/settings/control-panel.json`,
+	tutorialState: (root: string) => `${root}/settings/tutorial-state.json`,
 
 	// catalogs
 	presetCatalog: (root: string) => `${root}/presets/presets.json`,

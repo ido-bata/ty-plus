@@ -21,6 +21,7 @@ export default defineWidget({
 	nameKey: "widgets.quickActions.name",
 	tutorial: {
 		summaryKey: "widgets.tutorial.quick-actions.summary",
+		contentVersion: "1",
 		steps: [
 			{
 				titleKey: "widgets.tutorial.quick-actions.steps.openPalette.title",

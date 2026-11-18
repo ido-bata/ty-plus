@@ -193,7 +193,8 @@
 			"workspace-backup": "Workspace Backup",
 			"feedback": "Feedback",
 			"inputs": "Inputs",
-			"update": "Updates"
+			"update": "Updates",
+			"tips": "Tips"
 		}
 	},
 	"updates": {
@@ -225,5 +226,10 @@
 		"installFailedArchive": "The downloaded update is invalid. Try again later or install manually.",
 		"installFailedPermission": "Permission denied. Install manually from the download page.",
 		"installFailedBusy": "Another install is in progress. Try again shortly."
-	}
+	},
+	"tipsSectionLabel": "Widget tips & tutorials",
+	"tipsSectionDescription": "Widget help summaries and first-run hints are shown once per widget. Reset to show them again.",
+	"tipsReset": "Show tips again",
+	"tipsResetDone": "Tips reset. They will appear again the next time each widget is viewed.",
+	"tipsResetFailed": "Could not reset tips. Please try again."
 }

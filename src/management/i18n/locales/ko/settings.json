@@ -193,7 +193,8 @@
 			"workspace-backup": "작업 영역 백업",
 			"feedback": "피드백",
 			"inputs": "입력",
-			"update": "업데이트"
+			"update": "업데이트",
+			"tips": "도움말"
 		}
 	},
 	"updates": {
@@ -225,5 +226,10 @@
 		"installFailedArchive": "다운로드한 업데이트가 올바르지 않습니다. 나중에 다시 시도하거나 수동으로 설치하세요.",
 		"installFailedPermission": "권한이 없습니다. 다운로드 페이지에서 수동으로 설치하세요.",
 		"installFailedBusy": "다른 설치가 진행 중입니다. 잠시 후 다시 시도하세요."
-	}
+	},
+	"tipsSectionLabel": "위젯 팁 및 튜토리얼",
+	"tipsSectionDescription": "위젯 도움말 요약과 첫 실행 힌트는 위젯마다 한 번만 표시됩니다. 재설정하면 다시 표시됩니다.",
+	"tipsReset": "도움말 다시 표시",
+	"tipsResetDone": "도움말이 재설정되었습니다. 각 위젯을 다음에 열 때 다시 표시됩니다.",
+	"tipsResetFailed": "도움말을 재설정할 수 없습니다. 다시 시도하세요."
 }

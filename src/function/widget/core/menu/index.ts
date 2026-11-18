@@ -23,6 +23,7 @@ export default defineWidget({
 	nameKey: "widgets.menu.name",
 	tutorial: {
 		summaryKey: "widgets.tutorial.menu.summary",
+		contentVersion: "1",
 		steps: [
 			{
 				titleKey: "widgets.tutorial.menu.steps.openMenu.title",

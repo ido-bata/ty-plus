@@ -193,7 +193,8 @@
 			"workspace-backup": "Резервная копия рабочего пространства",
 			"feedback": "Обратная связь",
 			"inputs": "Ввод",
-			"update": "Обновления"
+			"update": "Обновления",
+			"tips": "Tips"
 		}
 	},
 	"updates": {
@@ -225,5 +226,10 @@
 		"installFailedArchive": "Загруженное обновление недействительно. Повторите попытку позже или установите вручную.",
 		"installFailedPermission": "Доступ запрещён. Установите вручную со страницы загрузки.",
 		"installFailedBusy": "Выполняется другая установка. Повторите попытку чуть позже."
-	}
+	},
+	"tipsSectionLabel": "Widget tips & tutorials",
+	"tipsSectionDescription": "Widget help summaries and first-run hints are shown once per widget. Reset to show them again.",
+	"tipsReset": "Show tips again",
+	"tipsResetDone": "Tips reset. They will appear again the next time each widget is viewed.",
+	"tipsResetFailed": "Could not reset tips. Please try again."
 }

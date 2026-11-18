@@ -16,6 +16,7 @@ const descriptor = defineWidget({
 	nameKey: "widgets.align.name",
 	tutorial: {
 		summaryKey: "widgets.tutorial.align.summary",
+		contentVersion: "1",
 		steps: [
 			{
 				titleKey: "widgets.tutorial.align.steps.selectTargets.title",

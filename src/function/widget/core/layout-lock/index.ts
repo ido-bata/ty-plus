@@ -15,6 +15,7 @@ export default defineWidget({
 	nameKey: "widgets.layoutLock.name",
 	tutorial: {
 		summaryKey: "widgets.tutorial.layout-lock.summary",
+		contentVersion: "1",
 		steps: [
 			{
 				titleKey: "widgets.tutorial.layout-lock.steps.turnLockOn.title",

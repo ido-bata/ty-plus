@@ -193,7 +193,8 @@
 			"workspace-backup": "Backup dell'area di lavoro",
 			"feedback": "Feedback",
 			"inputs": "Ingressi",
-			"update": "Aggiornamenti"
+			"update": "Aggiornamenti",
+			"tips": "Suggerimenti"
 		}
 	},
 	"updates": {
@@ -225,5 +226,10 @@
 		"installFailedArchive": "L'aggiornamento scaricato non è valido. Riprova più tardi o installalo manualmente.",
 		"installFailedPermission": "Permesso negato. Installalo manualmente dalla pagina di download.",
 		"installFailedBusy": "Un'altra installazione è in corso. Riprova tra poco."
-	}
+	},
+	"tipsSectionLabel": "Suggerimenti e tutorial dei widget",
+	"tipsSectionDescription": "I riepiloghi di aiuto e i suggerimenti al primo utilizzo vengono mostrati una volta per widget. Reimposta per rivederli.",
+	"tipsReset": "Mostra di nuovo i suggerimenti",
+	"tipsResetDone": "Suggerimenti reimpostati. Ricompariranno alla prossima apertura di ogni widget.",
+	"tipsResetFailed": "Impossibile reimpostare i suggerimenti. Riprova."
 }

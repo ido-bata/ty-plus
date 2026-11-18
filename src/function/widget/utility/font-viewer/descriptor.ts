@@ -14,6 +14,7 @@ defineWidget({
 	nameKey: "widgets.fontViewer.name",
 	tutorial: {
 		summaryKey: "widgets.tutorial.font-viewer.summary",
+		contentVersion: "1",
 		steps: [
 			{
 				titleKey: "widgets.tutorial.font-viewer.steps.loadFonts.title",
