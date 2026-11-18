@@ -11,17 +11,18 @@
  * killed CEP process; the parent detects recovery via the stale path.
  */
 
-import { appendFileSync } from "node:fs";
+import { appendFileSync, readFileSync } from "node:fs";
 import { withPersistenceLock } from "./persistence-lock";
 
 const [root, mode, holdMsRaw] = process.argv.slice(2);
-if (!root || (mode !== "hold" && mode !== "crash")) {
-	console.error("usage: worker <root> <hold|crash> [holdMs]");
+if (!root || (mode !== "hold" && mode !== "crash" && mode !== "hold-stale")) {
+	console.error("usage: worker <root> <hold|hold-stale|crash> [holdMs]");
 	process.exit(2);
 }
 const holdMs = Number(holdMsRaw ?? "0");
 const orderPath = `${root}/order.log`;
 const tag = `pid-${process.pid}`;
+const lockDir = `${root}/locks/persistence.lock`;
 
 if (mode === "crash") {
 	await withPersistenceLock(
@@ -42,17 +43,44 @@ if (mode === "crash") {
 	);
 }
 
+const holdOptions =
+	mode === "hold-stale"
+		? // Frozen heartbeat: owner.json is never refreshed, so this hold
+			// goes stale while fn is still running — exactly the state a
+			// contender needs to exercise the stale-break + foreign-release
+			// protocol across real processes.
+			{ heartbeatMs: 60_000, staleMs: 800, timeoutMs: 30_000 }
+		: // staleMs is deliberately short: the crash-recovery test relies on a
+			// dead owner's heartbeat ageing past it quickly. Live holders keep
+			// owner.json fresh via heartbeatMs, so a short staleMs never breaks a
+			// live lock.
+			{ heartbeatMs: 50, staleMs: 800, timeoutMs: 30_000 };
+
 await withPersistenceLock(
 	{} as Window,
 	root,
 	async () => {
 		appendFileSync(orderPath, `${tag}:enter\n`);
 		await new Promise((resolve) => setTimeout(resolve, holdMs));
+		// Report whether the lock dir still carries THIS process's token
+		// at the end of the critical section. A release that wrongly
+		// deleted a foreign re-acquired lock shows up here as `owner-missing`.
+		let ownerState = "missing";
+		try {
+			const owner = JSON.parse(
+				readFileSync(`${lockDir}/owner.json`, "utf8"),
+			) as { token?: unknown };
+			if (
+				typeof owner.token === "string" &&
+				owner.token.includes(`pid-${process.pid}-`)
+			) {
+				ownerState = "ok";
+			}
+		} catch {
+			// lock dir absent or unreadable — reported as missing
+		}
+		appendFileSync(orderPath, `${tag}:owner-${ownerState}\n`);
 		appendFileSync(orderPath, `${tag}:exit\n`);
 	},
-	// staleMs is deliberately short: the crash-recovery test relies on a
-	// dead owner's heartbeat ageing past it quickly. Live holders keep
-	// owner.json fresh via heartbeatMs, so a short staleMs never breaks a
-	// live lock.
-	{ heartbeatMs: 50, staleMs: 800, timeoutMs: 30_000 },
+	holdOptions,
 );

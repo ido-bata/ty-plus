@@ -233,7 +233,7 @@ describe("withPersistenceLock (cross-process, real bun workers)", () => {
 
 	const spawnWorker = (
 		root: string,
-		mode: "hold" | "crash",
+		mode: "hold" | "hold-stale" | "crash",
 		holdMs = 0,
 	): Promise<{ stdout: string; stderr: string }> =>
 		execFileAsync("bun", [workerPath, root, mode, String(holdMs)], {
@@ -252,10 +252,17 @@ describe("withPersistenceLock (cross-process, real bun workers)", () => {
 			expect(result.status).toBe("fulfilled");
 		}
 		const lines = orderLines(root);
-		expect(lines).toHaveLength(6);
-		expectSerialized(lines);
+		// Workers also log `owner-ok` ownership probes — only the
+		// enter/exit markers participate in the serialization check.
+		const markers = lines.filter(
+			(l) => l.endsWith(":enter") || l.endsWith(":exit"),
+		);
+		expect(markers).toHaveLength(6);
+		expectSerialized(markers);
+		// Every holder still owned the lock at the end of its section.
+		expect(lines.filter((l) => l.endsWith(":owner-ok"))).toHaveLength(3);
 		// Distinct processes actually contended — all three pids appear.
-		const pids = new Set(lines.map((l) => l.split(":")[0]));
+		const pids = new Set(markers.map((l) => l.split(":")[0]));
 		expect(pids.size).toBe(3);
 	}, 30_000);
 
@@ -271,6 +278,44 @@ describe("withPersistenceLock (cross-process, real bun workers)", () => {
 		const lines = orderLines(root);
 		expect(lines.some((l) => l.endsWith(":held"))).toBe(true);
 		expect(lines.some((l) => l.endsWith(":enter"))).toBe(true);
-		expectSerialized(lines.filter((l) => !l.endsWith(":held")));
+		expectSerialized(
+			lines.filter((l) => l.endsWith(":enter") || l.endsWith(":exit")),
+		);
+	}, 30_000);
+
+	it("release restores a foreign re-acquired lock across processes", async () => {
+		const root = makeRoot();
+		// Worker A holds with a frozen heartbeat: its lock goes stale while
+		// fn is still running. Worker B (started slightly later) breaks the
+		// stale lock, acquires, and holds LONGER than A — so A's release
+		// lands while B is still inside its critical section. A's release
+		// must recognise the foreign token and restore B's lock dir, never
+		// delete it. B's `owner-ok` probe at the end of its section proves
+		// the directory survived A's release.
+		const stale = spawnWorker(root, "hold-stale", 2_500);
+		await new Promise((r) => setTimeout(r, 300));
+		const contender = spawnWorker(root, "hold", 3_000);
+		const [staleResult, contenderResult] = await Promise.allSettled([
+			stale,
+			contender,
+		]);
+		expect(staleResult.status).toBe("fulfilled");
+		expect(contenderResult.status).toBe("fulfilled");
+		const lines = orderLines(root);
+		// The stale-broken holder (first entrant) legitimately reports
+		// owner-missing at the end of its section; the CONTENDER (second
+		// entrant) must still own the lock dir — proof that the stale
+		// holder's release restored the foreign lock instead of deleting
+		// it while the contender was still inside its critical section.
+		const enters = lines.filter((l) => l.endsWith(":enter"));
+		expect(enters).toHaveLength(2);
+		const contenderPid = enters[1].split(":")[0];
+		expect(lines).toContain(`${contenderPid}:owner-ok`);
+		// No quarantine/orphan leftovers once both releases settled.
+		const { readdirSync } = await import("node:fs");
+		const leftovers = readdirSync(join(root, "locks")).filter((name) =>
+			name.startsWith("persistence.lock."),
+		);
+		expect(leftovers).toEqual([]);
 	}, 30_000);
 });
