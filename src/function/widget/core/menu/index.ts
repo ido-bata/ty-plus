@@ -21,6 +21,19 @@ import { MenuWidget } from "./Component";
 export default defineWidget({
 	type: "menu",
 	nameKey: "widgets.menu.name",
+	tutorial: {
+		summaryKey: "widgets.tutorial.menu.summary",
+		steps: [
+			{
+				titleKey: "widgets.tutorial.menu.steps.openMenu.title",
+				bodyKey: "widgets.tutorial.menu.steps.openMenu.body",
+			},
+			{
+				titleKey: "widgets.tutorial.menu.steps.runCommand.title",
+				bodyKey: "widgets.tutorial.menu.steps.runCommand.body",
+			},
+		],
+	},
 	icon: "Menu",
 	minSize: { cols: 1, rows: 1 },
 	maxSize: { cols: 10, rows: 10 },
