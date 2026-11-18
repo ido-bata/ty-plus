@@ -267,6 +267,11 @@
 		"emptyList": "No fonts loaded yet. Use “Load all system fonts” if available, or reload after the panel finishes loading styles."
 	},
 	"tutorial": {
+		"chrome": {
+			"help": "Help",
+			"title": "Widget help",
+			"close": "Close"
+		},
 		"easing": {
 			"summary": "Edit easing curves and apply them to presets or layer animation.",
 			"steps": {

@@ -267,6 +267,11 @@
 		"cepNodeRequired": "Ordner-Browser benötigt CEP Node"
 	},
 	"tutorial": {
+		"chrome": {
+			"help": "Hilfe",
+			"title": "Widget-Hilfe",
+			"close": "Schließen"
+		},
 		"easing": {
 			"summary": "Easing-Kurven bearbeiten und auf Presets oder Layer-Animationen anwenden.",
 			"steps": {

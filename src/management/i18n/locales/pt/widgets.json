@@ -267,6 +267,11 @@
 		"cepNodeRequired": "O explorador de pastas requer CEP Node"
 	},
 	"tutorial": {
+		"chrome": {
+			"help": "Ajuda",
+			"title": "Ajuda do widget",
+			"close": "Fechar"
+		},
 		"easing": {
 			"summary": "Edite curvas de easing e aplique-as a presets ou à animação de camadas.",
 			"steps": {

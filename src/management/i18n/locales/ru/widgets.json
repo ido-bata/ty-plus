@@ -267,6 +267,11 @@
 		"cepNodeRequired": "Обзору папок требуется CEP Node"
 	},
 	"tutorial": {
+		"chrome": {
+			"help": "Справка",
+			"title": "Справка по виджету",
+			"close": "Закрыть"
+		},
 		"easing": {
 			"summary": "Edit easing curves and apply them to presets or layer animation.",
 			"steps": {
