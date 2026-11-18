@@ -216,18 +216,25 @@ export const collectFolderPresetCandidates = async (
 	options?: { recursive?: boolean },
 ): Promise<OnboardingPresetCandidate[]> => {
 	const recursive = options?.recursive ?? true;
-	const roots = folderPaths.map((p) => p.trim()).filter(Boolean);
+	const roots = folderPaths.flatMap((p) => {
+		const trimmed = p.trim();
+		return trimmed ? [trimmed] : [];
+	});
 	if (roots.length === 0) {
 		return [];
 	}
 	const scannedFiles = new Set<string>();
-	for (const root of roots) {
-		const files = await walkFolderForExtensions(
-			root,
-			ONBOARDING_ALL_FOLDER_EXTENSIONS,
-			listDirectory,
-			recursive,
-		);
+	const perRootFiles = await Promise.all(
+		roots.map((root) =>
+			walkFolderForExtensions(
+				root,
+				ONBOARDING_ALL_FOLDER_EXTENSIONS,
+				listDirectory,
+				recursive,
+			),
+		),
+	);
+	for (const files of perRootFiles) {
 		for (const filePath of files) {
 			scannedFiles.add(filePath);
 		}
