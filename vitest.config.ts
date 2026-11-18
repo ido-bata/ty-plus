@@ -87,19 +87,19 @@ export default defineConfig({
 			provider: "v8",
 			enabled: !!process.env.COVERAGE,
 			reporter: ["text", "json", "html", "lcov"],
-			// PR 3 narrows the coverage include to the **new code** this
-			// change set introduces. Files merely touched (Center.tsx,
-			// boot.tsx) keep most of their pre-existing untested surface;
-			// expanding the gate to those is a follow-up coverage-uplift PR,
-			// not part of this feature PR.
+			// #193 removed the dormant online surface that PR 3's include
+			// list targeted (`composition-runtime-dispatcher.ts`,
+			// `cloud-gateway-boot.ts` no longer exist). The gate now covers
+			// the provided online surfaces that remain — the update and
+			// notification feeds are the only networked features left.
 			//
 			// `perFile: true` so each included file is judged independently —
 			// one file at 100% no longer masks another at 0%, and legacy
 			// untested files kept out of the include list do not impact the
 			// gate at all.
 			include: [
-				"src/management/workspace/placement/append-preset-from-dialog-disk.ts",
-				"src/management/preset/use-cases.ts",
+				"src/management/online/update/feed.ts",
+				"src/management/online/notification/feed.ts",
 			],
 			perFile: true,
 			exclude: [
