@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 import { expect } from "storybook/test";
-
+import { expectCanvasLayout } from "@/storybook/quality/layout";
 import {
 	SegmentedControl,
 	type SegmentedControlProps,
@@ -78,6 +78,7 @@ export const CustomColors: Story = {
 export const HoveredSegment: Story = {
 	render: (args) => <ControlledSegmentedControl {...args} />,
 	play: async ({ canvasElement }) => {
+		expectCanvasLayout(canvasElement);
 		const buttons = Array.from(
 			canvasElement.querySelectorAll<HTMLButtonElement>("button"),
 		);
@@ -96,6 +97,7 @@ export const HoveredSegment: Story = {
 		await expect(getComputedStyle(target).backgroundColor).not.toBe(resting);
 		await userEvent.unhover(target);
 		spacer.remove();
+		expectCanvasLayout(canvasElement);
 	},
 };
 
@@ -104,6 +106,7 @@ export const HoveredSegment: Story = {
 export const SelectedOnClick: Story = {
 	render: (args) => <ControlledSegmentedControl {...args} />,
 	play: async ({ canvasElement }) => {
+		expectCanvasLayout(canvasElement);
 		const buttons = Array.from(
 			canvasElement.querySelectorAll<HTMLButtonElement>("button"),
 		);
@@ -116,5 +119,6 @@ export const SelectedOnClick: Story = {
 		await expect(target.getAttribute("aria-pressed")).toBe("true");
 		await new Promise((resolve) => setTimeout(resolve, 300));
 		await expect(getComputedStyle(target).backgroundColor).not.toBe(resting);
+		expectCanvasLayout(canvasElement);
 	},
 };

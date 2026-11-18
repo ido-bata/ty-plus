@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { expectCanvasLayout } from "@/storybook/quality/layout";
 import { css } from "@/styled-system/css";
 
 import { DialogBody } from "./DialogBody";
@@ -46,6 +47,9 @@ export const Default: Story = {
 		) {
 			throw new Error("Dialog spacing tokens were not applied");
 		}
+		// Issue #194: the dialog body must not overflow the viewport
+		// horizontally or clip its own controls.
+		expectCanvasLayout(canvasElement);
 	},
 	render: () => (
 		<DialogBody>
@@ -57,6 +61,11 @@ export const Default: Story = {
 };
 
 export const Overflow: Story = {
+	// Issue #194: overflowing content must scroll inside the dialog body,
+	// never push page-level horizontal overflow or escape the viewport.
+	play: ({ canvasElement }) => {
+		expectCanvasLayout(canvasElement);
+	},
 	render: () => (
 		<DialogBody>
 			{Array.from({ length: 24 }).map((_, i) => (

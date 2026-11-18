@@ -3,6 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { LayoutLockWidget } from "@/function/widget/core/layout-lock/Component";
 import type { SurfaceState } from "@/management/workspace/state";
 import { createInitialSurfaceState } from "@/management/workspace/state";
+import { expectCanvasLayout } from "@/storybook/quality/layout";
 import { css } from "@/styled-system/css";
 
 type Args = {
@@ -43,8 +44,21 @@ const meta = {
 export default meta;
 type Story = StoryObj<Args>;
 
-export const Unlocked: Story = {};
+// Issue #194: locked/unlocked are the selected states of this widget —
+// both must render their controls inside the layout contract.
+const playLayout = async ({
+	canvasElement,
+}: {
+	canvasElement: HTMLElement;
+}): Promise<void> => {
+	expectCanvasLayout(canvasElement);
+};
+
+export const Unlocked: Story = {
+	play: playLayout,
+};
 
 export const Locked: Story = {
 	args: { layoutLocked: true },
+	play: playLayout,
 };

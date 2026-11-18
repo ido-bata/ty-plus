@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { expect } from "storybook/test";
 import type { Preset } from "@/management/preset/contract";
+import { expectCanvasLayout } from "@/storybook/quality/layout";
 import { css } from "@/styled-system/css";
 import { CatalogPresetIconTile } from "./CatalogPresetIconTile";
 
@@ -50,7 +51,12 @@ const meta = {
 export default meta;
 type Story = StoryObj<Args>;
 
-export const Default: Story = {};
+export const Default: Story = {
+	// Issue #194: initial-state layout contract for the catalog tile.
+	play: async ({ canvasElement }) => {
+		expectCanvasLayout(canvasElement);
+	},
+};
 
 export const Wide: Story = {
 	args: { iconTileAspect: "wide" },
@@ -68,6 +74,11 @@ export const ScriptPreset: Story = {
 };
 
 export const LongTitle: Story = {
+	// Issue #194: long titles must truncate inside the tile, never push
+	// page-level horizontal overflow or escape the viewport.
+	play: async ({ canvasElement }) => {
+		expectCanvasLayout(canvasElement);
+	},
 	args: {
 		preset: makePreset({
 			title: "Glow Pulse with Extra Long Display Name",
@@ -83,6 +94,7 @@ export const LongTitle: Story = {
 // `interactive.hover`, and the post-play state is what gets captured.
 export const Hover: Story = {
 	play: async ({ canvasElement }) => {
+		expectCanvasLayout(canvasElement);
 		const tile = canvasElement.querySelector<HTMLElement>(
 			"[data-preset-id] button",
 		);
@@ -95,5 +107,6 @@ export const Hover: Story = {
 		// comparing computed styles.
 		await new Promise((resolve) => setTimeout(resolve, 300));
 		await expect(getComputedStyle(tile).backgroundColor).not.toBe(resting);
+		expectCanvasLayout(canvasElement);
 	},
 };
