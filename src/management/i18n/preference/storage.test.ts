@@ -102,6 +102,7 @@ describe("loadPreferenceFromFile", () => {
 describe("savePreferenceToFile", () => {
 	it("writes locale to settings/ui.json only", async () => {
 		const writeCalls: Array<{ path: string; data: string }> = [];
+		const renameCalls: Array<{ from: string; to: string }> = [];
 		const win = fakeWindowWithNodeFs({
 			promises: {
 				readFile: async () => "",
@@ -109,16 +110,21 @@ describe("savePreferenceToFile", () => {
 					writeCalls.push({ path, data });
 				},
 				mkdir: async () => undefined,
+				rename: async (from: string, to: string) => {
+					renameCalls.push({ from, to });
+				},
 			},
 		});
 		await savePreferenceToFile(win, "ko");
 		// ADR-0006: the managed-root persistence lock also writes
 		// `locks/persistence.lock/owner.json` through the same fs — only
-		// the ui.json write is under test here.
-		const uiWrites = writeCalls.filter((c) => c.path.endsWith("ui.json"));
+		// the ui.json write is under test here. The payload lands via
+		// tmp file + rename, so match the tmp sibling of ui.json.
+		const uiWrites = writeCalls.filter((c) => c.path.includes("ui.json"));
 		expect(uiWrites).toHaveLength(1);
-		expect(uiWrites[0].path).toMatch(/ui\.json$/);
+		expect(uiWrites[0].path).toMatch(/ui\.json\.tmp-/);
 		expect(uiWrites[0].data).toBe('{\n  "locale": "ko"\n}\n');
+		expect(renameCalls.some(({ to }) => /ui\.json$/.test(to))).toBe(true);
 	});
 
 	it("merges locale with existing ui.json fields", async () => {
@@ -137,10 +143,11 @@ describe("savePreferenceToFile", () => {
 					writeCalls.push({ path, data });
 				},
 				mkdir: async () => undefined,
+				rename: async () => undefined,
 			},
 		});
 		await savePreferenceToFile(win, "pt");
-		const uiWrites = writeCalls.filter((c) => c.path.endsWith("ui.json"));
+		const uiWrites = writeCalls.filter((c) => c.path.includes("ui.json"));
 		expect(uiWrites).toHaveLength(1);
 		expect(uiWrites[0].data).toContain('"locale": "pt"');
 		expect(uiWrites[0].data).toContain('"theme": "dark"');

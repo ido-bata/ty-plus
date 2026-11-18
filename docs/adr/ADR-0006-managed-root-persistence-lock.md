@@ -29,12 +29,15 @@ managed root 配下の共有ファイルへの **全ての multi-file / read-mod
 
 lock の対象は「読んでから書く」経路に限定する。単一ファイルの全置換 write（`settings/control-panel.json`、`cache/*`、widget state 等）は read を伴わないため lock 不要とし、atomic write（後述）だけで保護する。
 
+lock root の解決（`resolvePersistenceLockRoot`）は fail closed である。`ty-plus-init.json` が**存在しない**（pre-onboarding・eval context 非搭載のテスト環境）場合のみ「root 無し」として lock を bypass し、write 側の `resolveWriteManagedRoot` が同じく fail するため実害はない。locator が**存在するのに読めない / parse できない**場合、および probe 後の managed-root 解決が一時エラーで失敗した場合は `PersistenceLockUnavailableError`（または元エラー）を投げ、`fn` を lock 無しで実行しない — 解決失敗を握り潰して unlocked 実行する fail-open 経路は存在しない。
+
 ### 2. Lock protocol
 
 - **Acquire**: `mkdir(lockDir)`。EEXIST = 保持中。成功後に `owner.json`（`{token, pid, acquiredAtMs}`）を書く
 - **Heartbeat**: 保持中は `heartbeatMs`（既定 1000ms）ごとに `owner.json` の mtime を `utimes` で更新する。stale 判定は dir mtime ではなく `owner.json` mtime（= 最終 heartbeat）で行う。`utimes` が ENOENT なら lock 喪失とみなし、保持側は以後の release で他人の lock を消さない
+- **Heartbeat ownership 検査**: 各 beat は `utimes` の前に `owner.json` を読み直し、token が取得時の token と一致することを確認する。stale-break → 他者再取得の後に復帰した旧保持者が新しい owner の heartbeat を更新し続ける事故を防ぐためで、一致しない（foreign token / parse 不能 / ファイル消失）場合はその場で heartbeat を停止し「lock 喪失」として記録する。喪失後も `fn` は最後まで実行されるが、release は従来通り foreign dir を復元するだけで削除しない
 - **Stale break**: `age > staleMs`（既定 15000ms）の lock を、`rename(lockDir, lockDir + ".break-" + token)` で回収する。rename は atomic なので同時 breaker は 1 つだけ成功する。回収後に trash 内の `owner.json` を再検査し、heartbeat が復活していれば `rename` で元に戻して待機を続ける（check-then-act の隙間を rename 後の再検査で閉じる）
-- **Release**: `rename(lockDir, lockDir + ".release-" + token)` でまず排他的に取り出し、trash 内の owner token を検査する。自分の token なら trash を削除。**他人の token なら lock は既に奪取・再取得されている**ので、trash を `lockDir` へ戻す（短期 retry）。戻せない場合は quarantine 名へ退避して error log を出し、絶対に削除しない
+- **Release**: `rename(lockDir, lockDir + ".release-" + token)` でまず排他的に取り出し、trash 内の owner token を検査する。自分の token なら trash を削除。**他人の token なら lock は既に奪取・再取得されている**ので、trash を `lockDir` へ戻す（短期 retry）。戻せない場合は quarantine 名へ退避して error log を出し、絶対に削除しない。rename-aside 自体が失敗した場合、「lock が存在しない」とみなせるのは ENOENT / ENOTDIR のみで、それ以外（EACCES・EPERM・EBUSY 等）は実エラーとして error log に記録し lock dir をその場に残す（停止済み heartbeat により stale 回収が後で拾う）。release は `finally` から呼ばれるため `fn` の結果を覆さない
 - **Timeout**: `timeoutMs`（既定 30000ms）で `PersistenceLockTimeoutError`。deadlock も破壊も起きない
 
 ### 3. 再入（ALS）
@@ -54,7 +57,7 @@ lock の対象は「読んでから書く」経路に限定する。単一ファ
 
 ### 5. 外部 writer の契約
 
-`persistTargetLayout`・`tryPersistAppendPresetFromDialog`・`tryPersistRemovePresetFromDialog`・`persistAppendWidgetFromDialog` は、**lock 内で対象ファイルを読み直してから差分を書き込む**。lock 取得前の read を write の根拠にしない。`persistAppendWidgetFromDialog` の 2 ファイル transaction（layout + `widgets.json`）と preimage rollback は 1 つの lock 保持に収め、rollback が他者の書込を消す経路を構造的に閉じる。
+`persistTargetLayout`・`tryPersistAppendPresetFromDialog`・`tryPersistRemovePresetFromDialog`・`persistAppendWidgetFromDialog` は、**lock 内で対象ファイルを読み直してから差分を書き込む**。lock 取得前の read を write の根拠にしない。dialog / placement 経路が組み立てに使う catalog（`presets/presets.json`・`groups/groups.json`）は lock 取得前に読んではならず、`persistTargetLayout` は caller 供給の catalog に lock 内で読み直した disk catalog を補完 union してから tile 分類・merge に使う（caller 行優先・disk 行で補完。disk read の一時失敗は caller catalog を維持して続行する）。`applyInterPanelMove` は caller の catalog を `persistTargetLayout` 経由で同じ補完を受ける`persistAppendWidgetFromDialog` の 2 ファイル transaction（layout + `widgets.json`）と preimage rollback は 1 つの lock 保持に収め、rollback が他者の書込を消す経路を構造的に閉じる。
 
 `applyInterPanelMove` は全手順（preimage 取得 → target 書込 → read-back → source `settings.json` → `persistSourceLayout` → 失敗時 rollback）を **1 つの lock 保持**で実行する。直列化されるため preimage rollback は他 context の書込を巻き戻さない。
 
@@ -64,7 +67,7 @@ catalog 系も同じ契約に含める。`groups/groups.json` の全 RMW（`grou
 
 ### 6. 原子的 file write
 
-`writeJsonFileText` を tmp file + `rename` に変更し、書込途中の crash で torn file を残さない。tmp は同一 dir に置き rename で atomic に置き換える。`fs.watch` は dir watch が rename を捕捉するため既存の外部変更検知と両立する。
+`writeJsonFileText` を tmp file + `rename` による atomic publish に変更し、書込途中の crash で torn file を残さない。tmp は同一 dir の sibling（`<name>.tmp-*`）に置き rename で atomic に置き換える。**`rename` は必須**であり、CEP Node `fs` が `rename`（sync 経路では `renameSync`）を提供しない host では write 自体を fail closed で拒否する — 直接 `writeFile` への非 atomic fallback は持たない（ADR-0006 の torn-write 防止を fail-open で骨抜きにしないため）。`fs.watch` は dir watch が rename を捕捉し、tmp 名は監視対象 filename に一致しないため、既存の外部変更検知と両立する（`sync-watch.test.ts` で tmp 単独 write が発火せず rename で発火することを検証済み）。
 
 ### 7. 残存リスク（別途記録・対象外）
 

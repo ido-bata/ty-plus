@@ -416,6 +416,40 @@ const writeLocatorJsonViaNodeFs = async (
  * Read `ty-plus-init.json` from the host application folder (`appSupportRoot`).
  * The JSON `supportRoot` field holds the user data browse path, not `appSupportRoot`.
  */
+/**
+ * Strict locator probe for callers that must distinguish "no locator"
+ * (pre-onboarding — safe to bypass) from "locator exists but is unreadable
+ * or invalid" (poisoned/corrupt — writes must fail closed, never run
+ * unlocked). `readInitializationState` collapses both into `null`, which is
+ * why the persistence lock needs this probe (ADR-0006).
+ */
+export type InitializationLocatorProbe =
+	| { readonly status: "missing" }
+	| { readonly status: "invalid" }
+	| { readonly status: "ready"; readonly supportRoot: string };
+
+export const probeInitializationLocator = async (
+	win: Window,
+	appSupportRoot: string,
+): Promise<InitializationLocatorProbe> => {
+	const fs = await resolveNodeFsPromises(win);
+	const locatorPath = resolveLocatorPathFromAppRoot(appSupportRoot);
+	let raw: string;
+	try {
+		raw = await fs.readFile(locatorPath, "utf8");
+	} catch (error) {
+		if ((error as { code?: unknown } | null)?.code === "ENOENT") {
+			return { status: "missing" };
+		}
+		throw error;
+	}
+	const locator = parseInitializationLocatorJson(raw);
+	if (!locator) {
+		return { status: "invalid" };
+	}
+	return { status: "ready", supportRoot: locator.supportRoot };
+};
+
 export const readInitializationState = async (
 	win: Window,
 	appSupportRoot: string,

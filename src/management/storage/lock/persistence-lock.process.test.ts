@@ -14,22 +14,43 @@
 
 import { execFile } from "node:child_process";
 import {
+	chmodSync,
 	existsSync,
 	mkdirSync,
 	mkdtempSync,
 	readFileSync,
 	rmSync,
+	statSync,
 	utimesSync,
 	writeFileSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { promisify } from "node:util";
-import { afterAll, describe, expect, it } from "vitest";
+import { afterAll, beforeEach, describe, expect, it, vi } from "vitest";
+import {
+	probeInitializationLocator,
+	resolveInitializationAppRoot,
+} from "@/management/setting/onboarding/initialization";
+import { resolveWriteManagedRoot } from "@/management/storage/persistence/managed-root";
 import {
 	PersistenceLockTimeoutError,
+	PersistenceLockUnavailableError,
+	resolvePersistenceLockRoot,
 	withPersistenceLock,
 } from "./persistence-lock";
+
+// `resolvePersistenceLockRoot` dynamically imports the initialization
+// locator probe and the managed-root resolver. Mocking them here keeps the
+// lock tests hermetic — the real modules reach into CEP evalScript and the
+// host filesystem, neither of which exists under Vitest.
+vi.mock("@/management/setting/onboarding/initialization", () => ({
+	resolveInitializationAppRoot: vi.fn(),
+	probeInitializationLocator: vi.fn(),
+}));
+vi.mock("@/management/storage/persistence/managed-root", () => ({
+	resolveWriteManagedRoot: vi.fn(),
+}));
 
 const execFileAsync = promisify(execFile);
 const WIN = {} as Window;
@@ -225,6 +246,138 @@ describe("withPersistenceLock (in-process, real fs)", () => {
 		) as { token?: string };
 		expect(owner.token).toBe("foreign-owner");
 	});
+
+	it("heartbeat never refreshes a foreign owner's owner.json", async () => {
+		const root = makeRoot();
+		const lockDir = lockDirOf(root);
+		const ownerPath = join(lockDir, "owner.json");
+		let foreignMtimeBefore = 0;
+		let foreignMtimeAfter = 0;
+		await withPersistenceLock(
+			WIN,
+			root,
+			async () => {
+				// Simulate our hold being stale-broken and the directory
+				// re-acquired by another owner while we were inside fn —
+				// the resumed heartbeat must detect the foreign token and
+				// stop instead of utimes-ing THEIR owner.json every beat.
+				const { rename, mkdir, writeFile } = await import("node:fs/promises");
+				const trash = `${lockDir}.sabotage`;
+				await rename(lockDir, trash);
+				await mkdir(lockDir);
+				await writeFile(
+					ownerPath,
+					JSON.stringify({ v: 1, token: "foreign-owner", pid: 1 }),
+				);
+				foreignMtimeBefore = statSync(ownerPath).mtimeMs;
+				// Several heartbeat intervals pass while the foreign lock
+				// sits in place. A blind utimes heartbeat would push the
+				// mtime forward on every beat.
+				await new Promise((r) => setTimeout(r, 300));
+				foreignMtimeAfter = statSync(ownerPath).mtimeMs;
+			},
+			{ heartbeatMs: 40, staleMs: 60_000, timeoutMs: 5_000 },
+		);
+		// The foreign heartbeat was NOT refreshed: mtime is exactly what
+		// the foreign acquirer wrote (sub-ms precision preserved).
+		expect(foreignMtimeAfter).toBe(foreignMtimeBefore);
+		// And the foreign lock survived our release intact.
+		expect(existsSync(lockDir)).toBe(true);
+		const owner = JSON.parse(readFileSync(ownerPath, "utf8")) as {
+			token?: string;
+		};
+		expect(owner.token).toBe("foreign-owner");
+	});
+
+	it("release logs and leaves the lock when the rename-aside fails", async () => {
+		const root = makeRoot();
+		const lockDir = lockDirOf(root);
+		const locksDir = join(root, "locks");
+		// Make the parent `locks` dir read-only so release's atomic
+		// rename-aside fails with EACCES — a REAL error, not "absent".
+		// The release must surface it (logged) and leave the lock dir in
+		// place for stale recovery, never silently report a clean release.
+		await withPersistenceLock(
+			WIN,
+			root,
+			async () => {
+				chmodSync(locksDir, 0o555);
+			},
+			{ heartbeatMs: 30, staleMs: 60_000, timeoutMs: 5_000 },
+		);
+		// `fn` resolved and release did not throw — but the lock dir is
+		// still on disk because it could not be moved aside.
+		expect(existsSync(lockDir)).toBe(true);
+		chmodSync(locksDir, 0o755);
+	});
+});
+
+describe("resolvePersistenceLockRoot", () => {
+	const mockedAppRoot = vi.mocked(resolveInitializationAppRoot);
+	const mockedProbe = vi.mocked(probeInitializationLocator);
+	const mockedWriteRoot = vi.mocked(resolveWriteManagedRoot);
+
+	beforeEach(() => {
+		mockedAppRoot.mockReset();
+		mockedProbe.mockReset();
+		mockedWriteRoot.mockReset();
+	});
+
+	it("returns null when there is no host eval context", async () => {
+		mockedAppRoot.mockResolvedValue(null);
+		await expect(resolvePersistenceLockRoot(WIN)).resolves.toBeNull();
+		expect(mockedProbe).not.toHaveBeenCalled();
+	});
+
+	it("returns null when the locator is definitively absent", async () => {
+		mockedAppRoot.mockResolvedValue("/Applications/AE");
+		mockedProbe.mockResolvedValue({ status: "missing" });
+		await expect(resolvePersistenceLockRoot(WIN)).resolves.toBeNull();
+		expect(mockedWriteRoot).not.toHaveBeenCalled();
+	});
+
+	it("throws when the locator exists but is invalid — never runs unlocked", async () => {
+		mockedAppRoot.mockResolvedValue("/Applications/AE");
+		mockedProbe.mockResolvedValue({ status: "invalid" });
+		await expect(resolvePersistenceLockRoot(WIN)).rejects.toBeInstanceOf(
+			PersistenceLockUnavailableError,
+		);
+		expect(mockedWriteRoot).not.toHaveBeenCalled();
+	});
+
+	it("returns the resolved managed root when the locator is ready", async () => {
+		mockedAppRoot.mockResolvedValue("/Applications/AE");
+		mockedProbe.mockResolvedValue({
+			status: "ready",
+			supportRoot: "/Users/x/Library/Application Support/Adobe",
+		});
+		mockedWriteRoot.mockResolvedValue(
+			"/Users/x/Library/Application Support/Adobe/ty-plus",
+		);
+		await expect(resolvePersistenceLockRoot(WIN)).resolves.toBe(
+			"/Users/x/Library/Application Support/Adobe/ty-plus",
+		);
+	});
+
+	it("propagates a transient locator read failure instead of bypassing", async () => {
+		mockedAppRoot.mockResolvedValue("/Applications/AE");
+		mockedProbe.mockRejectedValue(
+			Object.assign(new Error("EACCES"), { code: "EACCES" }),
+		);
+		await expect(resolvePersistenceLockRoot(WIN)).rejects.toThrow("EACCES");
+	});
+
+	it("propagates a transient managed-root resolution failure", async () => {
+		mockedAppRoot.mockResolvedValue("/Applications/AE");
+		mockedProbe.mockResolvedValue({
+			status: "ready",
+			supportRoot: "/support",
+		});
+		mockedWriteRoot.mockRejectedValue(new Error("locator read failed"));
+		await expect(resolvePersistenceLockRoot(WIN)).rejects.toThrow(
+			"locator read failed",
+		);
+	});
 });
 
 describe("withPersistenceLock (cross-process, real bun workers)", () => {
@@ -233,13 +386,18 @@ describe("withPersistenceLock (cross-process, real bun workers)", () => {
 
 	const spawnWorker = (
 		root: string,
-		mode: "hold" | "hold-stale" | "crash",
+		mode: "hold" | "hold-stale" | "hold-block" | "crash",
 		holdMs = 0,
+		blockMs = 0,
 	): Promise<{ stdout: string; stderr: string }> =>
-		execFileAsync("bun", [workerPath, root, mode, String(holdMs)], {
-			cwd: process.cwd(),
-			timeout: 30_000,
-		});
+		execFileAsync(
+			"bun",
+			[workerPath, root, mode, String(holdMs), String(blockMs)],
+			{
+				cwd: process.cwd(),
+				timeout: 30_000,
+			},
+		);
 
 	it("serializes three independent processes on the same lock", async () => {
 		const root = makeRoot();
@@ -317,5 +475,36 @@ describe("withPersistenceLock (cross-process, real bun workers)", () => {
 			name.startsWith("persistence.lock."),
 		);
 		expect(leftovers).toEqual([]);
+	}, 30_000);
+
+	it("a stale-broken holder's resumed heartbeat does not refresh the foreign owner's heartbeat", async () => {
+		const root = makeRoot();
+		// Worker A holds with a live heartbeat, then its event loop stalls
+		// past staleMs — owner.json ages out while fn is still running.
+		const stalled = spawnWorker(root, "hold-block", 3_000, 1_400);
+		await new Promise((r) => setTimeout(r, 300));
+		// Worker B stale-breaks A's lock and holds with a FROZEN heartbeat
+		// (heartbeatMs: 60_000), so any owner.json mtime refresh during its
+		// hold can only come from A's resumed heartbeat — the bug this test
+		// guards against. B outlives A so its end-of-section mtime probe
+		// measures the last write to owner.json.
+		const contender = spawnWorker(root, "hold-stale", 4_500);
+		const [stalledResult, contenderResult] = await Promise.allSettled([
+			stalled,
+			contender,
+		]);
+		expect(stalledResult.status).toBe("fulfilled");
+		expect(contenderResult.status).toBe("fulfilled");
+		const lines = orderLines(root);
+		const ageLine = lines.find((l) => l.includes(":owner-mtime-age="));
+		expect(ageLine, "hold-stale worker must log owner mtime age").toBeDefined();
+		const ageMs = Number(ageLine?.split("=")[1]);
+		expect(Number.isFinite(ageMs)).toBe(true);
+		// Fixed behaviour: the last write to B's owner.json is B's own
+		// acquire (~1s in) and B's section runs ~4.5s → age ≈ 4s+.
+		// Buggy behaviour: A's resumed beats utime B's owner.json until A
+		// exits (~2.3s) → age collapses to ≈ B-end − 2.3s ≈ 2.7s.
+		// Threshold sits between the two with margin on both sides.
+		expect(ageMs).toBeGreaterThan(3_200);
 	}, 30_000);
 });

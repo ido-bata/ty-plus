@@ -155,6 +155,21 @@ const isAlreadyExists = (error: unknown): boolean =>
 const isNotFound = (error: unknown): boolean =>
 	(error as { code?: unknown } | null)?.code === "ENOENT";
 
+/**
+ * rename(2) reports "the source path is not there" as ENOENT, and "a path
+ * component is not a directory" as ENOTDIR. Both mean the lock dir we were
+ * asked to move does not exist — every other failure (EACCES, EPERM, EBUSY,
+ * EXDEV, …) is a real error the caller must see instead of silently
+ * treating the lock as unheld.
+ */
+const isAbsentPathError = (error: unknown): boolean => {
+	const code = (error as { code?: unknown } | null)?.code;
+	return code === "ENOENT" || code === "ENOTDIR";
+};
+
+const errorMessage = (error: unknown): string =>
+	error instanceof Error ? error.message : String(error);
+
 const tryAcquire = async (
 	fs: LockFileSystem,
 	lockDir: string,
@@ -223,7 +238,10 @@ const quarantineName = (lockDir: string, tag: string, token: string): string =>
 
 /**
  * Move `lockDir` aside atomically. Only one caller can win the rename;
- * losers see ENOENT and carry on. Returns the trash path or null.
+ * losers see ENOENT/ENOTDIR (the dir is genuinely absent) and carry on.
+ * Every other rename failure is rethrown so callers can distinguish
+ * "no lock held" from "could not inspect the lock dir". Returns the
+ * trash path or null.
  */
 const renameAside = async (
 	fs: LockFileSystem,
@@ -233,8 +251,9 @@ const renameAside = async (
 	try {
 		await fs.rename(lockDir, trash);
 		return trash;
-	} catch {
-		return null;
+	} catch (error) {
+		if (isAbsentPathError(error)) return null;
+		throw error;
 	}
 };
 
@@ -265,7 +284,19 @@ const breakStaleLock = async (
 	sleep: (ms: number) => Promise<void>,
 ): Promise<void> => {
 	const trash = quarantineName(lockDir, "break", token);
-	const moved = await renameAside(fs, lockDir, trash);
+	let moved: string | null;
+	try {
+		moved = await renameAside(fs, lockDir, trash);
+	} catch (error) {
+		// A real rename failure (EACCES/EPERM/EBUSY/…) is not "someone else
+		// moved it" — log and let the acquire loop retry on the next poll
+		// instead of failing the whole transaction on a transient error.
+		lockLog.warn("persistence lock stale-break rename failed; will retry", {
+			action: "persistenceLock:stale-break-rename-failed",
+			context: { lockDir, message: errorMessage(error) },
+		});
+		return;
+	}
 	if (!moved) return;
 	// Re-check freshness *after* winning the rename: the holder may have
 	// heartbeated between our staleness read and the rename. A live
@@ -297,45 +328,80 @@ const breakStaleLock = async (
 
 const startHeartbeat = (
 	fs: LockFileSystem,
-	ownerPath: string,
+	lockDir: string,
+	token: string,
 	heartbeatMs: number,
-	sleep: (ms: number) => Promise<void>,
 	now: () => number,
 ): { stop: () => void; lost: () => boolean } => {
+	const ownerPath = ownerFileName(lockDir);
 	let stopped = false;
 	let lost = false;
 	let timer: ReturnType<typeof setTimeout> | null = null;
+	const schedule = (): void => {
+		if (stopped || lost) return;
+		timer = setTimeout(() => {
+			void beat();
+		}, heartbeatMs);
+		if (typeof timer === "object" && timer && "unref" in timer) {
+			(timer as { unref?: () => void }).unref?.();
+		}
+	};
+	const markLost = (reason: string): void => {
+		lost = true;
+		lockLog.warn("persistence lock lost while held", {
+			action: "persistenceLock:lost",
+			context: { lockDir, reason },
+		});
+	};
 	const beat = async (): Promise<void> => {
 		if (stopped || lost) return;
+		// Ownership check BEFORE touching owner.json: after a stale-break +
+		// foreign re-acquire the file carries another holder's token, and a
+		// blind `utimes` would keep THEIR lock alive for as long as we keep
+		// running `fn` — exactly the foreign-heartbeat refresh this guard
+		// exists to prevent. A token we cannot verify is treated as foreign:
+		// we stop heartbeating and leave release to restore their dir.
+		let raw: string;
+		try {
+			raw = await fs.readFile(ownerPath, "utf8");
+		} catch (error) {
+			if (isNotFound(error)) {
+				markLost("owner.json missing");
+				return;
+			}
+			// Transient read failure: skip this beat rather than risk
+			// refreshing a heartbeat we cannot prove is ours.
+			schedule();
+			return;
+		}
+		let ownerToken: string | null = null;
+		try {
+			const parsed = JSON.parse(raw) as { token?: unknown };
+			ownerToken = typeof parsed.token === "string" ? parsed.token : null;
+		} catch {
+			ownerToken = null;
+		}
+		if (ownerToken !== token) {
+			markLost(
+				ownerToken === null
+					? "owner.json unreadable or token missing"
+					: "owner.json carries a foreign token",
+			);
+			return;
+		}
 		try {
 			const seconds = now() / 1000;
 			await fs.utimes(ownerPath, seconds, seconds);
 		} catch (error) {
 			if (isNotFound(error)) {
-				lost = true;
-				lockLog.warn("persistence lock lost while held", {
-					action: "persistenceLock:lost",
-					context: { ownerPath },
-				});
+				markLost("owner.json removed before utimes");
 				return;
 			}
 			// Transient errors retry on the next tick.
 		}
-		if (!stopped && !lost) {
-			timer = setTimeout(() => {
-				void beat();
-			}, heartbeatMs);
-			if (typeof timer === "object" && timer && "unref" in timer) {
-				(timer as { unref?: () => void }).unref?.();
-			}
-		}
+		schedule();
 	};
-	timer = setTimeout(() => {
-		void beat();
-	}, heartbeatMs);
-	if (typeof timer === "object" && timer && "unref" in timer) {
-		(timer as { unref?: () => void }).unref?.();
-	}
+	schedule();
 	return {
 		stop: () => {
 			stopped = true;
@@ -364,8 +430,7 @@ const acquire = async (
 	const deadline = now() + timeoutMs;
 	for (;;) {
 		if (await tryAcquire(fs, lockDir, token, now)) {
-			const ownerPath = ownerFileName(lockDir);
-			const heartbeat = startHeartbeat(fs, ownerPath, heartbeatMs, sleep, now);
+			const heartbeat = startHeartbeat(fs, lockDir, token, heartbeatMs, now);
 			return async () => {
 				heartbeat.stop();
 				// Capture the directory aside first: only the rename is
@@ -375,7 +440,21 @@ const acquire = async (
 				// was stale-broken and re-acquired, so the directory goes
 				// back — it is never ours to delete.
 				const trash = quarantineName(lockDir, "release", token);
-				const moved = await renameAside(fs, lockDir, trash);
+				let moved: string | null;
+				try {
+					moved = await renameAside(fs, lockDir, trash);
+				} catch (error) {
+					// A real rename failure is NOT "no lock held": the dir may
+					// still be ours. Leave it in place — the stopped heartbeat
+					// lets stale recovery reclaim it — and surface the failure
+					// instead of silently reporting a clean release. This runs
+					// in `finally`, so it must not mask `fn`'s own outcome.
+					lockLog.error("persistence lock release could not move lock dir", {
+						action: "persistenceLock:release-rename-failed",
+						context: { lockDir, message: errorMessage(error) },
+					});
+					return;
+				}
 				if (!moved) return;
 				const owner = await readOwnerToken(fs, trash);
 				if (owner === token) {
@@ -450,24 +529,58 @@ export const __resetPersistenceLockForTests = (): void => {
 
 /**
  * Resolve the managed root that `writeJson`/`readJson` actually write
- * under (`resolveWriteManagedRoot`). Returns null when onboarding has not
- * completed — callers keep their existing "no root" early-return/throw
- * behavior. The lock MUST cover this root: it is the tree the persistence
- * API writes to, which can differ from
+ * under (`resolveWriteManagedRoot`). Returns null ONLY when the locator is
+ * definitively absent — no AE/CEP eval context, or `ty-plus-init.json`
+ * does not exist (pre-onboarding / unit tests) — where callers keep their
+ * existing "no root" early-return/throw behavior.
+ *
+ * A locator that EXISTS but cannot be read or parsed is NOT "no root":
+ * running the transaction unlocked there is exactly the fail-open hole
+ * ADR-0006 closes, so it throws `PersistenceLockUnavailableError` instead
+ * of returning null. The lock MUST cover this root: it is the tree the
+ * persistence API writes to, which can differ from
  * `resolveWorkspacePersistenceManagedRoot` when the settings locator and
  * the init locator disagree (ADR-0006 §1).
  */
 export const resolvePersistenceLockRoot = async (
 	win: Window,
 ): Promise<string | null> => {
+	const { resolveInitializationAppRoot, probeInitializationLocator } =
+		await import("@/management/setting/onboarding/initialization");
+	const { resolveWriteManagedRoot } = await import(
+		"@/management/storage/persistence/managed-root"
+	);
+	let appRoot: string | null;
 	try {
-		const { resolveWriteManagedRoot } = await import(
-			"@/management/storage/persistence/managed-root"
-		);
-		return await resolveWriteManagedRoot(win);
+		appRoot = await resolveInitializationAppRoot(win);
 	} catch {
+		// A host window that cannot even answer the eval-availability probe
+		// (null window in tests, a broken CEP bridge) has no locator to lock
+		// against — same "no root" bypass as a missing eval context. The
+		// write path fails closed on its own via resolveWriteManagedRoot,
+		// so this cannot run a real transaction unlocked.
 		return null;
 	}
+	if (!appRoot) {
+		// No host eval context (tests, non-CEP runtime) — same "no root"
+		// bypass the previous catch-all provided.
+		return null;
+	}
+	const probe = await probeInitializationLocator(win, appRoot);
+	if (probe.status === "missing") {
+		return null;
+	}
+	if (probe.status === "invalid") {
+		throw new PersistenceLockUnavailableError(
+			"ty-plus-init.json exists but is unreadable or invalid; refusing to run the persistence transaction without the managed-root lock.",
+		);
+	}
+	// The probe proved the locator is present and parseable, so the
+	// canonical resolver applies its completed/supportRoot gates and the
+	// managed-suffix rule. It re-reads the locator once — a transient
+	// failure here propagates (fail closed), it is never swallowed into
+	// an unlocked run.
+	return resolveWriteManagedRoot(win);
 };
 
 /**
@@ -477,8 +590,12 @@ export const resolvePersistenceLockRoot = async (
  * Pre-onboarding contexts and unit tests without a CEP host have no managed
  * root — the underlying write calls resolve (or refuse) the same root
  * downstream, so running unlocked preserves the previous behaviour there.
- * When a root exists, every read and write of the transaction must happen
- * inside `fn` so cross-context RMW cannot interleave.
+ * When the locator EXISTS but cannot be read or parsed,
+ * `resolvePersistenceLockRoot` throws and `fn` does NOT run unlocked — a
+ * transient resolution failure must fail the transaction, not silently
+ * drop the lock (ADR-0006). When a root exists, every read and write of
+ * the transaction must happen inside `fn` so cross-context RMW cannot
+ * interleave.
  */
 export const withManagedRootPersistenceLock = async <T>(
 	win: Window,

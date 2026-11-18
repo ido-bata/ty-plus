@@ -14,7 +14,13 @@ type JsonWriteFileSystem = {
 		options: { recursive: true },
 	): Promise<string | undefined>;
 	unlink(path: string): Promise<void>;
-	rename?(from: string, to: string): Promise<void>;
+	/**
+	 * Required: managed-root JSON writes publish via tmp-file + rename
+	 * (ADR-0006 §6). A host without `rename` cannot provide atomic
+	 * publication, so resolution fails closed instead of silently
+	 * falling back to a torn-write-prone direct writeFile.
+	 */
+	rename(from: string, to: string): Promise<void>;
 };
 
 type CepNodeRequire = (id: string) => unknown;
@@ -44,14 +50,28 @@ const resolveJsonWriteFileSystem = async (
 			mkdirSync?: (path: string, options: { recursive: true }) => void;
 		};
 		if (fsMod.promises) {
+			const rename = fsMod.promises.rename;
+			if (typeof rename !== "function") {
+				throw new Error(
+					"CEP Node fs rename API is not available in this host runtime; atomic JSON publish requires it.",
+				);
+			}
 			return {
 				...fsMod.promises,
-				rename: fsMod.promises.rename?.bind(fsMod.promises),
+				rename: rename.bind(fsMod.promises),
 			};
 		}
 		if (fsMod.writeFileSync && fsMod.mkdirSync) {
 			const writeFileSync = fsMod.writeFileSync;
 			const mkdirSync = fsMod.mkdirSync;
+			const renameSync = (
+				fsMod as { renameSync?: (from: string, to: string) => void }
+			).renameSync;
+			if (typeof renameSync !== "function") {
+				throw new Error(
+					"CEP Node fs renameSync API is not available in this host runtime; atomic JSON publish requires it.",
+				);
+			}
 			return {
 				writeFile: async (path, data, encoding) =>
 					writeFileSync(String(path), String(data), encoding as "utf8"),
@@ -70,6 +90,9 @@ const resolveJsonWriteFileSystem = async (
 					throw new Error(
 						"CEP Node fs unlink API is not available in this host runtime.",
 					);
+				},
+				rename: async (from, to) => {
+					renameSync(String(from), String(to));
 				},
 			};
 		}
@@ -116,18 +139,16 @@ export const writeJsonFileText = async (
 	// Atomic publish (ADR-0006 §6): write a sibling tmp file then rename
 	// over the target so a crash mid-write never leaves a torn JSON file
 	// for readers or the persistence lock's transaction boundaries.
-	if (typeof fs.rename === "function") {
-		const tmpPath = nextTmpPath(path);
-		try {
-			await fs.writeFile(tmpPath, normalizedText, "utf8");
-			await fs.rename(tmpPath, path);
-		} catch (error) {
-			await fs.unlink(tmpPath).catch(() => {});
-			throw error;
-		}
-		return;
+	// `rename` is required — `resolveJsonWriteFileSystem` fails closed on
+	// hosts that cannot provide it, so there is no non-atomic fallback.
+	const tmpPath = nextTmpPath(path);
+	try {
+		await fs.writeFile(tmpPath, normalizedText, "utf8");
+		await fs.rename(tmpPath, path);
+	} catch (error) {
+		await fs.unlink(tmpPath).catch(() => {});
+		throw error;
 	}
-	await fs.writeFile(path, normalizedText, "utf8");
 };
 
 /**
