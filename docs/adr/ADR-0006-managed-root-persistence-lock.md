@@ -58,7 +58,9 @@ lock の対象は「読んでから書く」経路に限定する。単一ファ
 
 `applyInterPanelMove` は全手順（preimage 取得 → target 書込 → read-back → source `settings.json` → `persistSourceLayout` → 失敗時 rollback）を **1 つの lock 保持**で実行する。直列化されるため preimage rollback は他 context の書込を巻き戻さない。
 
-`settings/app.json` の `workspacePanels`/`presetIds` を触る read-modify-write（move・group merge・resetWorkspace）と、共有 `snapshots.json` の read-modify-write も同じ lock に載せる。
+`settings/app.json` の read-modify-write は全て同じ lock に載せる。対象は workspacePanels/presetIds を触る経路（move・group merge・resetWorkspace）に加え、settings dialog の `saveSettingsToStorage`（owned keys の read→merge→write）と `persistSettingsPaths` の settings 部分である。共有 `workspaces/history/snapshots.json` の read-modify-write（save/delete snapshot）も同じ lock に載せる。
+
+catalog 系も同じ契約に含める。`groups/groups.json` の全 RMW（`group-catalog.ts` の upsert/remove/merge/reorder/removePresetFromGroup）、`presets/presets.json` の RMW（`repository/shared.ts` の upsert/remove/seed write-back。`local-catalog`・`catalog-root-pinned`・`workspace/services` の 3 経路全てに `withLock` を注入）、`widgets/state/*.json` の instance upsert（`widget-state-store.ts`）、`clipboard/clipboard.json` の read→mutate→write（`clipboard-store.ts`）、`settings/ui.json` の locale merge（`i18n/preference/storage.ts`）、`panels/panel-N.json` の controlPanel merge（`panel/persistence/chrome-store.ts`）、および settings dialog の backup restore（`WorkspaceBackupSection` の全ファイル書換）を lock 配下に置く。
 
 ### 6. 原子的 file write
 
@@ -66,7 +68,16 @@ lock の対象は「読んでから書く」経路に限定する。単一ファ
 
 ### 7. 残存リスク（別途記録・対象外）
 
-- `presets/presets.json` / `groups/groups.json` の catalog RMW、`settings/paths.json`、`cache/*`、widget state files、backup restore の全ファイル書換は今回の対象外。同じ lock 契約への移行を後続で検討する
+以下は検討の結果、lock 対象外として受け入れる。
+
+- **onboarding の初期化 write**（`ensureStorageInitialized`・`initializePresetStorage`・`completeOnboardingStorage`）: workspace panel の persist は layout restore 分類まで write gate で閉じており、onboarding 中は catalog/settings の writer が onboarding dialog 1 context に限られる。初回起動の単一 writer 段階なので lock 不要
+- **`cache/*`**（notifications・remote-presets・public-links・candidates manifest/chunk）: 全て単一ファイルの全置換 write で read を伴わない。sync job が唯一の writer であり、atomic rename（§6）で torn write は起きない。last-writer-wins は cache の契約として許容
+- **`settings/paths.json`・`settings/control-panel.json`**: 単一ファイルの全置換 write で RMW を伴わない。`settings/ui.json` は persistSurfaceState が transaction 内で全置換し、i18n locale の merge write（`savePreferenceToFile`）は同じ lock に載せ済み。paths.json を触る `persistSettingsPaths` の settings.json 側 RMW は lock 済み
+- **`workspaces/background/background-N.json` の dialog save**: background dialog は開いた時点の全状態を保持し、save で全置換する。owner panel の persist も同ファイルを書くため last-writer-wins の authority 競合は残るが、これは RMW の lost update ではなく UI 上の上書き競合であり、lock では解決しない（dialog は shell message で panel に反映を通知する既存経路を持つ）
+- **`cache/layout-undo/<panelId>/stack.json`**: panel 単位の session cache で、その panel context のみが writer。cache 契約として lock 対象外
+- **`tool-handoff/<extensionId>.json`**: read→consume（null 書戻し）の mailbox semantics。二重 consume は同一 payload の重複配送に留まり、lost update ではない
+- **`styles/theme.css`**: 別機構で保護済み。`enqueueThemeWrite` の per-window queue + ExtendScript shared store の cross-surface mutex（Issue #106）が全 context の theme RMW を直列化する。backup restore は persistence lock 内から `enqueueThemeWrite` を呼ぶため二重に安全
+- **presets.json の legacy prefix 正規化 write**（`repository/shared.ts` の `shared.read()` 内、`local-catalog.ts`・`catalog-root-pinned.ts`・`services.ts`）: 一度きりの id prefix 移行で、read 直後の全行正規化を書き戻すだけ。mutation 経路では lock 内の read に含まれるため保護され、`list()` 経路の窓は移行済みファイルでは発火しない
 - persistence gateway（Rust storage）が未配線のため、gateway 経路の lock 意味論は未定義。本番は CEP Node `fs/promises` 直接 I/O が実経路
 - stale-break + 再取得 + release restore が重なる極端な凍結→復帰シナリオでは残存する理論上の split-brain 窓がある。heartbeat + rename 検査で実用上は閉じ、発生時は quarantine 保存 + error log で観測可能にする
 

@@ -26,21 +26,32 @@ export const createCatalogRootPinnedPresetRepository = (
 	options: CatalogRootPinnedPresetRepositoryOptions,
 ): ReturnType<typeof createPresetRepository> => {
 	const base = createPresetRepository({ cloud: options.cloud });
-	return createSharedPresetRepository(base, {
-		async read() {
-			const raw = await readPresetJson(win);
-			const rows = parsePresetCatalogJsonText(raw);
-			if (
-				rows.length > 0 &&
-				typeof raw === "string" &&
-				catalogJsonMayContainLegacyIdPrefixes(raw)
-			) {
-				await writePresetJson(win, serializePresetCatalogJsonText(rows));
-			}
-			return rows;
+	return createSharedPresetRepository(
+		base,
+		{
+			async read() {
+				const raw = await readPresetJson(win);
+				const rows = parsePresetCatalogJsonText(raw);
+				if (
+					rows.length > 0 &&
+					typeof raw === "string" &&
+					catalogJsonMayContainLegacyIdPrefixes(raw)
+				) {
+					await writePresetJson(win, serializePresetCatalogJsonText(rows));
+				}
+				return rows;
+			},
+			async write(presets: Preset[]) {
+				await writePresetJson(win, serializePresetCatalogJsonText(presets));
+			},
 		},
-		async write(presets: Preset[]) {
-			await writePresetJson(win, serializePresetCatalogJsonText(presets));
+		{
+			// ADR-0006: presets.json RMW inside the managed-root lock.
+			withLock: (fn) =>
+				import("@/management/storage/lock/persistence-lock").then(
+					({ withManagedRootPersistenceLock }) =>
+						withManagedRootPersistenceLock(win, fn),
+				),
 		},
-	});
+	);
 };

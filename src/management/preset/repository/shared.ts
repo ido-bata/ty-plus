@@ -17,6 +17,17 @@ type SharedPresetStore = {
 	write(presets: Preset[]): Promise<void>;
 };
 
+/**
+ * ADR-0006: `presets/presets.json` is shared across CEP contexts (panel,
+ * preset edit dialog, preset tool dialog, settings dialog). Every
+ * read-modify-write below runs inside the managed-root persistence lock
+ * when the caller supplies `withLock`; without it the previous unlocked
+ * behaviour is kept (tests, pre-onboarding contexts).
+ */
+export type SharedPresetRepositoryOptions = {
+	withLock?: <T>(fn: () => Promise<T>) => Promise<T>;
+};
+
 const normalizeLocalPresets = (value: unknown): Preset[] => {
 	if (!Array.isArray(value)) {
 		return [];
@@ -58,7 +69,9 @@ const mergeWithSharedLocals = (base: Preset[], locals: Preset[]): Preset[] => {
 export const createSharedPresetRepository = (
 	base: PresetRepositoryLike,
 	shared: SharedPresetStore,
+	options?: SharedPresetRepositoryOptions,
 ): PresetRepositoryLike => {
+	const withLock = options?.withLock ?? (<T>(fn: () => Promise<T>) => fn());
 	let localCache = normalizeLocalPresets(base.listLocalPresets());
 
 	/**
@@ -89,9 +102,21 @@ export const createSharedPresetRepository = (
 			return rows;
 		}
 		if (cacheIsBaseSeed) {
-			await shared.write(localCache);
-			cacheIsBaseSeed = false;
-			return localCache;
+			// ADR-0006: the seed write-back is itself a read→write, so the
+			// "file still empty" check and the write run inside the lock —
+			// another context may have populated the catalog since our
+			// unlocked read above.
+			return withLock(async () => {
+				const fresh = normalizeLocalPresets(await shared.read());
+				if (fresh.length > 0) {
+					localCache = fresh;
+					cacheIsBaseSeed = false;
+					return fresh;
+				}
+				await shared.write(localCache);
+				cacheIsBaseSeed = false;
+				return localCache;
+			});
 		}
 		// A successful read that produced no rows is an empty catalog, not a
 		// failed read. Drop the cached rows so a deletion made through another
@@ -125,50 +150,56 @@ export const createSharedPresetRepository = (
 			return [...localCache];
 		},
 		async upsertLocalPreset(preset) {
-			const current = await readSharedLocals();
-			const [normalized] = normalizePresets([preset]);
-			const next = current.filter(
-				(row) => catalogIdKey(row.id) !== catalogIdKey(normalized.id),
-			);
-			next.push(normalized);
-			localCache = next;
-			await shared.write(next);
-			await base.upsertLocalPreset(normalized);
+			await withLock(async () => {
+				const current = await readSharedLocals();
+				const [normalized] = normalizePresets([preset]);
+				const next = current.filter(
+					(row) => catalogIdKey(row.id) !== catalogIdKey(normalized.id),
+				);
+				next.push(normalized);
+				localCache = next;
+				await shared.write(next);
+				await base.upsertLocalPreset(normalized);
+			});
 		},
 		async upsertLocalPresets(presets) {
 			if (presets.length === 0) {
 				return;
 			}
-			const current = await readSharedLocals();
-			const normalizedBatch = normalizePresets(presets);
-			const merged = new Map<string, Preset>();
-			for (const row of current) {
-				merged.set(catalogIdKey(row.id), row);
-			}
-			for (const preset of normalizedBatch) {
-				merged.set(catalogIdKey(preset.id), preset);
-			}
-			const next = [...merged.values()];
-			localCache = next;
-			await shared.write(next);
-			if (typeof base.upsertLocalPresets === "function") {
-				await base.upsertLocalPresets(normalizedBatch);
-				return;
-			}
-			await Promise.all(
-				normalizedBatch.map((preset) => base.upsertLocalPreset(preset)),
-			);
+			await withLock(async () => {
+				const current = await readSharedLocals();
+				const normalizedBatch = normalizePresets(presets);
+				const merged = new Map<string, Preset>();
+				for (const row of current) {
+					merged.set(catalogIdKey(row.id), row);
+				}
+				for (const preset of normalizedBatch) {
+					merged.set(catalogIdKey(preset.id), preset);
+				}
+				const next = [...merged.values()];
+				localCache = next;
+				await shared.write(next);
+				if (typeof base.upsertLocalPresets === "function") {
+					await base.upsertLocalPresets(normalizedBatch);
+					return;
+				}
+				await Promise.all(
+					normalizedBatch.map((preset) => base.upsertLocalPreset(preset)),
+				);
+			});
 		},
 		async removeLocalPreset(presetId) {
-			const current = await readSharedLocals();
-			const key = catalogIdKey(presetId);
-			const next = current.filter((row) => catalogIdKey(row.id) !== key);
-			localCache = next;
-			await shared.write(next);
-			await base.removeLocalPreset(presetId);
-			if (presetId.trim() !== key) {
-				await base.removeLocalPreset(key);
-			}
+			await withLock(async () => {
+				const current = await readSharedLocals();
+				const key = catalogIdKey(presetId);
+				const next = current.filter((row) => catalogIdKey(row.id) !== key);
+				localCache = next;
+				await shared.write(next);
+				await base.removeLocalPreset(presetId);
+				if (presetId.trim() !== key) {
+					await base.removeLocalPreset(key);
+				}
+			});
 		},
 	};
 };

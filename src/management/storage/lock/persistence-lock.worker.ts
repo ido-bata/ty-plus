@@ -29,10 +29,17 @@ if (mode === "crash") {
 		root,
 		async () => {
 			appendFileSync(orderPath, `${tag}:held\n`);
+			// Abrupt exit INSIDE the critical section: the `finally` release
+			// never runs, so the lock dir + owner.json stay on disk exactly
+			// like a killed CEP process. The parent's next holder must
+			// recover through the stale-break path.
+			process.exit(1);
 		},
+		// Long heartbeat+stale: only abandonment (not a live heartbeat)
+		// makes this lock stale, and the parent waits it out before
+		// acquiring.
 		{ heartbeatMs: 60_000, staleMs: 60_000, timeoutMs: 30_000 },
 	);
-	process.exit(1);
 }
 
 await withPersistenceLock(

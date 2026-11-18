@@ -469,3 +469,25 @@ export const resolvePersistenceLockRoot = async (
 		return null;
 	}
 };
+
+/**
+ * Run `fn` inside the managed-root persistence lock when a managed root is
+ * resolvable; otherwise run `fn` unlocked.
+ *
+ * Pre-onboarding contexts and unit tests without a CEP host have no managed
+ * root — the underlying write calls resolve (or refuse) the same root
+ * downstream, so running unlocked preserves the previous behaviour there.
+ * When a root exists, every read and write of the transaction must happen
+ * inside `fn` so cross-context RMW cannot interleave.
+ */
+export const withManagedRootPersistenceLock = async <T>(
+	win: Window,
+	fn: () => Promise<T>,
+	options: PersistenceLockOptions = {},
+): Promise<T> => {
+	const root = await resolvePersistenceLockRoot(win);
+	if (!root) {
+		return fn();
+	}
+	return withPersistenceLock(win, root, fn, options);
+};
