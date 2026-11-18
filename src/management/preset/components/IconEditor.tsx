@@ -1,13 +1,14 @@
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import { FileSearch, Smile } from "lucide-react";
-import { type JSX, type ReactNode, useEffect, useRef, useState } from "react";
+import { type JSX, type ReactNode, useRef, useState } from "react";
 import { selectFile } from "@/management/ae/cep/dialog-shim/bolt";
 import type { PresetIconEditorDraft } from "@/management/preset/icon-editor";
 import { Icon } from "@/shared/component";
 import { ColorSwatch } from "@/shared/component/fields/ColorSwatch";
 import { Input } from "@/shared/component/fields/Input";
 import { PathField } from "@/shared/component/fields/PathField";
+import { AnchoredPopover } from "@/shared/component/interaction/AnchoredPopover";
 import { css, cx } from "@/styled-system/css";
 
 const ICON_TABS = [
@@ -103,14 +104,14 @@ const emojiPickerBtnClass = css({
 	_disabled: { opacity: 0.5 },
 });
 
+/**
+ * Surface styling for the portaled emoji picker. Placement (position, flip,
+ * viewport clamp) is owned by `AnchoredPopover`; this class must not set
+ * `position` / `top` / `left` / `zIndex`.
+ */
 const emojiPickerPopoverClass = css({
-	position: "absolute",
-	left: "0",
-	top: "100%",
-	zIndex: "50",
-	marginTop: "1",
-	maxHeight: "min(22rem,55vh)",
-	width: "min(100%,22rem)",
+	width: "22rem",
+	maxWidth: "calc(100vw - 1rem)",
 	overflow: "auto",
 	borderRadius: "md",
 	borderWidth: "1px",
@@ -165,16 +166,22 @@ const bodyPreviewGridClass = css({
 	rowGap: "1",
 });
 
+/**
+ * Fixed-size preview tile. The preview must not stretch with the right
+ * column's content height: `alignSelf: "center"` keeps the grid item from
+ * stretching across the two auto rows, and the fixed `width` + square
+ * `aspectRatio` pin the tile size regardless of the fields column.
+ */
 const previewBoxClass = css({
 	gridRow: "span 2",
 	display: "grid",
-	aspectRatio: "square",
-	height: "full",
-	width: "auto",
+	width: "6rem",
+	aspectRatio: "1/1",
 	flexShrink: "0",
 	gridTemplateColumns: "minmax(0, 1fr)",
 	gridTemplateRows: "minmax(0, 1fr)",
 	justifySelf: "start",
+	alignSelf: "center",
 	overflow: "hidden",
 	borderRadius: "shell-sm",
 	backgroundColor: "surface.widget",
@@ -241,18 +248,6 @@ function DefaultEmojiFields({
 	const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
 	const emojiAnchorRef = useRef<HTMLDivElement | null>(null);
 
-	useEffect(() => {
-		if (!emojiPickerOpen) return;
-		const onDocMouseDown = (event: MouseEvent): void => {
-			const el = emojiAnchorRef.current;
-			if (el && !el.contains(event.target as Node)) {
-				setEmojiPickerOpen(false);
-			}
-		};
-		document.addEventListener("mousedown", onDocMouseDown);
-		return () => document.removeEventListener("mousedown", onDocMouseDown);
-	}, [emojiPickerOpen]);
-
 	return (
 		<div ref={emojiAnchorRef} className={emojiAnchorClass}>
 			<div className={emojiAnchorRowClass}>
@@ -271,23 +266,27 @@ function DefaultEmojiFields({
 					disabled={disabled}
 				/>
 			</div>
-			{emojiPickerOpen ? (
-				<div className={emojiPickerPopoverClass}>
-					<Picker
-						data={data}
-						theme="dark"
-						previewPosition="none"
-						skinTonePosition="none"
-						onEmojiSelect={(emoji: { native?: string }) => {
-							const n = emoji?.native?.trim();
-							if (n) {
-								set({ emoji: n });
-							}
-							setEmojiPickerOpen(false);
-						}}
-					/>
-				</div>
-			) : null}
+			<AnchoredPopover
+				open={emojiPickerOpen}
+				onClose={() => setEmojiPickerOpen(false)}
+				anchorRef={emojiAnchorRef}
+				maxHeight="min(22rem,55vh)"
+				className={emojiPickerPopoverClass}
+			>
+				<Picker
+					data={data}
+					theme="dark"
+					previewPosition="none"
+					skinTonePosition="none"
+					onEmojiSelect={(emoji: { native?: string }) => {
+						const n = emoji?.native?.trim();
+						if (n) {
+							set({ emoji: n });
+						}
+						setEmojiPickerOpen(false);
+					}}
+				/>
+			</AnchoredPopover>
 		</div>
 	);
 }
