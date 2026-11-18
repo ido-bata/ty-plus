@@ -270,7 +270,8 @@
 		"chrome": {
 			"help": "Aide",
 			"title": "Aide du widget",
-			"close": "Fermer"
+			"close": "Fermer",
+			"dismissHint": "Masquer l’astuce"
 		},
 		"easing": {
 			"summary": "Modifiez les courbes d'easing et appliquez-les aux préréglages ou à l'animation des calques.",

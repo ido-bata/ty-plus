@@ -10,7 +10,7 @@
 import type { CSSProperties, JSX } from "react";
 import { memo } from "react";
 import type { Preset } from "@/management/preset/contract";
-import { WidgetHelpOverlay } from "@/management/tutorial/WidgetHelpOverlay";
+import { WidgetTutorialLayer } from "@/management/tutorial/WidgetTutorialLayer";
 import { Widget } from "@/management/widget/workspace/TileContent";
 import type {
 	GridSettings,
@@ -199,10 +199,9 @@ function TileBodyImpl(props: TileBodyProps): JSX.Element {
 	if (isWidget) {
 		if (layout) {
 			return (
-				<>
+				<WidgetTutorialLayer widgetType={layout.widgetType}>
 					<Widget layout={layout} state={state} grid={grid} />
-					<WidgetHelpOverlay widgetType={layout.widgetType} />
-				</>
+				</WidgetTutorialLayer>
 			);
 		}
 		return (

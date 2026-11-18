@@ -270,7 +270,8 @@
 		"chrome": {
 			"help": "Aiuto",
 			"title": "Guida del widget",
-			"close": "Chiudi"
+			"close": "Chiudi",
+			"dismissHint": "Chiudi suggerimento"
 		},
 		"easing": {
 			"summary": "Modifica le curve di easing e applicale ai preset o all'animazione dei layer.",
