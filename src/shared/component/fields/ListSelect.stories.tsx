@@ -99,9 +99,7 @@ export const OpenAndSelect: Story = {
 		// The listbox is portaled to document.body by AnchoredPopover, so it is
 		// not inside canvasElement — query the whole document.
 		const optionByText = Array.from(
-			document.querySelectorAll<HTMLButtonElement>(
-				'button[role="option"]',
-			),
+			document.querySelectorAll<HTMLButtonElement>('button[role="option"]'),
 		).find((el) => el.textContent === "Deutsch");
 		if (!optionByText) throw new Error("Deutsch option not found");
 		await userEvent.click(optionByText);

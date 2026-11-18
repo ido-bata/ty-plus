@@ -176,7 +176,7 @@ const previewBoxClass = css({
 	gridRow: "span 2",
 	display: "grid",
 	width: "6rem",
-	aspectRatio: "1/1",
+	aspectRatio: "square",
 	flexShrink: "0",
 	gridTemplateColumns: "minmax(0, 1fr)",
 	gridTemplateRows: "minmax(0, 1fr)",
