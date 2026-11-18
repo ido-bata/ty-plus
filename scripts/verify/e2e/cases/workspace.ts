@@ -53,7 +53,7 @@ type WidgetRecordsFile = { widgets?: WidgetRecord[] };
  * actually mounted. After a panel reload the status bar can exist before
  * React has attached its handlers, so a single click may be a no-op.
  */
-const openSnapshotsDropdown = async (
+export const openSnapshotsDropdown = async (
 	ctx: E2EContext,
 	surface: LiveSurface,
 ): Promise<boolean> => {

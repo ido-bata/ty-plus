@@ -41,7 +41,11 @@ import {
 	withManagedRootSnapshot,
 	writeManagedFile,
 } from "./shared";
-import { addWidgetViaDialog, createFilePresetViaDialog } from "./workspace";
+import {
+	addWidgetViaDialog,
+	createFilePresetViaDialog,
+	openSnapshotsDropdown,
+} from "./workspace";
 
 // ---------------------------------------------------------------------------
 // shared helpers
@@ -583,19 +587,24 @@ export const journeySuiteCases: E2ECase[] = [
 
 				// 5. Restore the snapshot → second widget tile removed.
 				if (snapId) {
-					// reopen dropdown on the reloaded panel
-					await clickFirstSafe(
-						ctx,
-						panel2,
-						'[data-ws-action="toggle-snapshots"]',
-					);
-					await waitForDom(
+					// Reopen the dropdown on the reloaded panel. The shared
+					// helper waits on the popover's stable id — a bare toggle
+					// click can land while the list is still hydrating.
+					const dropdownOpen = await openSnapshotsDropdown(ctx, panel2);
+					const rowSeen = await waitForDom(
 						ctx,
 						panel2,
 						`Boolean(document.querySelector('[data-snap-id="${snapId}"]'))`,
 						15_000,
 					);
-					await ctx.evalJs(
+					checks.push(
+						check(
+							"snapshot row rendered after reload",
+							Boolean(dropdownOpen) && Boolean(rowSeen),
+							`open=${dropdownOpen} row=${String(rowSeen).slice(0, 60)}`,
+						),
+					);
+					const restoreResult = await ctx.evalJs(
 						panel2,
 						`(() => {
 							const btn = document.querySelector(
@@ -604,6 +613,13 @@ export const journeySuiteCases: E2ECase[] = [
 							btn.click();
 							return "clicked";
 						})()`,
+					);
+					checks.push(
+						check(
+							"restore-snapshot clicked",
+							restoreResult === "clicked",
+							String(restoreResult),
+						),
 					);
 					await sleep(2500);
 					const cellsAfter = await cellsOf();
@@ -639,7 +655,10 @@ export const journeySuiteCases: E2ECase[] = [
 				const ws = (app.workspace ?? {}) as Record<string, unknown>;
 				const grid = (ws.grid ?? {}) as Record<string, unknown>;
 				app.ui = { ...ui, accentColor: ACCENT, language: "ja" };
-				app.workspace = { ...ws, grid: { ...grid, cellSize: 120 } };
+				app.workspace = {
+					...ws,
+					grid: { ...grid, cellSize: 120, gap: 4, radius: 2 },
+				};
 				await writeManagedFile(
 					ctx,
 					["settings", "app.json"],
@@ -666,17 +685,24 @@ export const journeySuiteCases: E2ECase[] = [
 				// app.json → theme.css projection lands asynchronously after the
 				// workspace state commit, so poll the computed tokens instead of
 				// reading once (Issue #223 — one-shot reads raced the reconcile).
-				const tokensLive = Boolean(
+				// Poll each token independently: accent and grid metrics are
+				// separate reconcile outputs and must not mask each other.
+				const accentLive = Boolean(
 					await waitForDom(
 						ctx,
 						panel,
-						`(() => {
-						const cs = getComputedStyle(document.documentElement);
-						const accent = cs.getPropertyValue("--color-ty-accent") || "";
-						const cell = cs.getPropertyValue("--ty-ws-cell") || "";
-						return accent.toLowerCase().includes("336699")
-							&& cell.includes("120");
-					})()`,
+						`getComputedStyle(document.documentElement)
+							.getPropertyValue("--color-ty-accent")
+							.toLowerCase().includes("336699")`,
+						30_000,
+					),
+				);
+				const cellLive = Boolean(
+					await waitForDom(
+						ctx,
+						panel,
+						`getComputedStyle(document.documentElement)
+							.getPropertyValue("--ty-ws-cell").includes("120")`,
 						30_000,
 					),
 				);
@@ -688,7 +714,7 @@ export const journeySuiteCases: E2ECase[] = [
 				checks.push(
 					check(
 						"accent color reached theme.css token",
-						tokensLive && String(accent).toLowerCase().includes("336699"),
+						accentLive && String(accent).toLowerCase().includes("336699"),
 						`accent=${String(accent).trim()}`,
 					),
 				);
@@ -701,7 +727,7 @@ export const journeySuiteCases: E2ECase[] = [
 				checks.push(
 					check(
 						"grid cell size reached panel CSS var",
-						tokensLive && String(cell).includes("120"),
+						cellLive && String(cell).includes("120"),
 						`cell=${String(cell).trim()}`,
 					),
 				);
