@@ -1,6 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 import { expect } from "storybook/test";
+
+import { expectCanvasLayout } from "@/storybook/quality/layout";
+
 import { ListSelect } from "./ListSelect";
 
 const sampleOptions = [
@@ -89,6 +92,7 @@ export const OpenAndSelect: Story = {
 	args: {},
 	play: async ({ canvasElement }) => {
 		const { userEvent } = await import("vitest/browser");
+		expectCanvasLayout(canvasElement);
 		const trigger = canvasElement.querySelector<HTMLButtonElement>(
 			'button[aria-haspopup="listbox"]',
 		);
@@ -96,6 +100,13 @@ export const OpenAndSelect: Story = {
 		await expect(trigger.getAttribute("aria-expanded")).toBe("false");
 		await userEvent.click(trigger);
 		await expect(trigger.getAttribute("aria-expanded")).toBe("true");
+		// Issue #194: while the listbox is open, every option must stay
+		// inside the viewport and unclipped — the popover must not lose to
+		// an `overflow:hidden` ancestor (product-model §4.3).
+		expectCanvasLayout(canvasElement, {
+			unclippedSelector:
+				'button, [role="option"], [role="listbox"], [role="combobox"]',
+		});
 		const optionByText = Array.from(
 			canvasElement.querySelectorAll<HTMLButtonElement>(
 				'button[role="option"]',
@@ -105,5 +116,6 @@ export const OpenAndSelect: Story = {
 		await userEvent.click(optionByText);
 		await expect(trigger.getAttribute("aria-expanded")).toBe("false");
 		await expect(trigger.textContent).toContain("Deutsch");
+		expectCanvasLayout(canvasElement);
 	},
 };

@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-
+import {
+	presetIconCanvas,
+	presetIconEmoji,
+	presetIconImage,
+	presetIconText,
+} from "./contract";
 import {
 	createPresetIconDraft,
 	draftToIcon,
@@ -63,5 +68,71 @@ describe("presetIconToDraft with seeded draft", () => {
 		const draft = presetIconToDraft(icon);
 		expect(draft.text).toBe("ABC");
 		expect(draft.type).toBe("text");
+	});
+});
+
+describe("presetIconToDraft / draftToIcon round-trip (issue #191)", () => {
+	it("round-trips an image icon without converting it to a raw string", () => {
+		const icon = presetIconImage("C:/icons/logo.png");
+		const draft = presetIconToDraft(icon);
+		expect(draft.type).toBe("image");
+		expect(draft.imagePath).toBe("C:/icons/logo.png");
+		expect(draftToIcon(draft)).toEqual(icon);
+	});
+
+	it("round-trips an emoji icon with its background color", () => {
+		const icon = presetIconEmoji("🎬", { backgroundColor: "#112233" });
+		const draft = presetIconToDraft(icon);
+		expect(draft.type).toBe("emoji");
+		expect(draft.emoji).toBe("🎬");
+		expect(draft.bgColor).toBe("#112233");
+		expect(draftToIcon(draft)).toEqual(icon);
+	});
+
+	it("round-trips a canvas icon preserving the cubic curve", () => {
+		const icon = presetIconCanvas({
+			cubic: [0.1, 0.2, 0.3, 0.4],
+			color: "#aabbcc",
+			backgroundColor: "#001122",
+		});
+		const draft = presetIconToDraft(icon);
+		expect(draft.type).toBe("canvas");
+		expect(draft.canvasCubic).toEqual([0.1, 0.2, 0.3, 0.4]);
+		expect(draftToIcon(draft)).toEqual(icon);
+	});
+
+	it("round-trips a multi-segment canvas icon without dropping points", () => {
+		const points: [number, number, number, number, number, number][] = [
+			[0, 0, 0.1, 0.1, 0.2, 0.2],
+			[0.5, 1, 0.4, 0.9, 0.6, 0.8],
+			[1, 0, 0.9, 0.1, 0.8, 0.2],
+		];
+		const icon = presetIconCanvas({
+			cubic: [0.1, 0.2, 0.3, 0.4],
+			points,
+			color: "#aabbcc",
+			backgroundColor: "#001122",
+		});
+		const draft = presetIconToDraft(icon);
+		expect(draft.canvasPoints).toEqual(points);
+		expect(draftToIcon(draft)).toEqual(icon);
+	});
+
+	it("round-trips a text icon with colors", () => {
+		const icon = presetIconText("FFX", {
+			color: "#ffffff",
+			backgroundColor: "#2b2b2b",
+		});
+		const draft = presetIconToDraft(icon);
+		expect(draft.type).toBe("text");
+		expect(draft.text).toBe("FFX");
+		expect(draftToIcon(draft)).toEqual(icon);
+	});
+
+	it("returns null for empty image/emoji/text drafts", () => {
+		const base = createPresetIconDraft("");
+		expect(draftToIcon({ ...base, type: "image", imagePath: "  " })).toBeNull();
+		expect(draftToIcon({ ...base, type: "emoji", emoji: " " })).toBeNull();
+		expect(draftToIcon({ ...base, type: "text", text: " " })).toBeNull();
 	});
 });

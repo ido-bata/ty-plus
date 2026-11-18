@@ -1,6 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { createRef, type ReactNode, type RefObject } from "react";
 import { expect } from "storybook/test";
+
+import { expectCanvasLayout } from "@/storybook/quality/layout";
+
 import { BrowserSearchField } from "./BrowserSearchField";
 
 type Args = {
@@ -71,6 +74,7 @@ export const CustomPlaceholder: Story = {
 // state the screenshot pipeline captures.
 export const Focused: Story = {
 	play: async ({ canvasElement }) => {
+		expectCanvasLayout(canvasElement);
 		const input = canvasElement.querySelector<HTMLInputElement>(
 			"[data-directory-browser-search] input",
 		);
@@ -89,5 +93,6 @@ export const Focused: Story = {
 		await expect(getComputedStyle(wrapper).borderTopColor).not.toBe(
 			restingBorderColor,
 		);
+		expectCanvasLayout(canvasElement);
 	},
 };

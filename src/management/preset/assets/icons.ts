@@ -1,6 +1,10 @@
 import type { Preset, PresetIcon } from "@/management/preset/contract";
 
-import { tryParsePresetIconValue } from "@/management/preset/icon-data";
+import {
+	isDefaultPresetIcon,
+	presetTypeFallbackText,
+	tryParsePresetIconValue,
+} from "@/management/preset/icon-data";
 
 export type PresetIconVisual =
 	| { kind: "image"; value: string }
@@ -24,21 +28,6 @@ const IMAGE_URL_RE = /^(?:https?:\/\/|file:\/\/|data:image\/)/i;
 const EMOJI_RE = /\p{Extended_Pictographic}/u;
 
 const clampIconText = (value: string): string => value.trim().slice(0, 6);
-
-const typeFallbackText = (type: Preset["type"] | undefined): string | null => {
-	switch (type) {
-		case "script":
-			return "SCRIPT";
-		case "footage":
-			return "MEDIA";
-		case "preset":
-			return "FFX";
-		case "plugin":
-			return "PLUGIN";
-		default:
-			return null;
-	}
-};
 
 const nameFallbackText = (preset: Pick<Preset, "title" | "id">): string => {
 	const raw = (preset.title?.trim() || preset.id || "?").trim();
@@ -80,10 +69,11 @@ const presetIconToVisual = (
 };
 
 /**
- * Workspace catalog / list UIs: use structured `icon` (or legacy string) only.
- * Skips `descriptionImage` so thumbnails stay distinct from preset icons.
+ * Resolves the persisted `preset.icon` field (structured or legacy string)
+ * into a visual, falling back to the type label and then the preset name.
+ * This is the floor of icon resolution: it always produces a visual.
  */
-const resolvePresetCatalogIconVisual = (
+const resolvePersistedIconVisual = (
 	preset: Pick<Preset, "id" | "title" | "type" | "icon">,
 ): PresetIconVisual => {
 	const structured = tryParsePresetIconValue(preset.icon);
@@ -100,50 +90,79 @@ const resolvePresetCatalogIconVisual = (
 			return { kind: "emoji", value: rawIcon };
 		}
 		if (rawIcon.startsWith("lucide:")) {
-			const k = typeFallbackText(preset.type);
+			const k = presetTypeFallbackText(preset.type);
 			return { kind: "text", value: k ?? nameFallbackText(preset) };
 		}
 		return { kind: "text", value: clampIconText(rawIcon) || "?" };
 	}
 
-	const kindFallback = typeFallbackText(preset.type);
+	const kindFallback = presetTypeFallbackText(preset.type);
 	if (kindFallback) {
 		return { kind: "text", value: kindFallback };
 	}
 	return { kind: "text", value: nameFallbackText(preset) };
 };
 
-const resolvePresetIconVisual = (
-	preset: Pick<Preset, "id" | "title" | "type" | "icon" | "descriptionImage">,
-): PresetIconVisual => {
-	const imagePath = preset.descriptionImage?.trim();
-	if (imagePath) {
-		return { kind: "image", value: imagePath };
+const hasPersistedIconValue = (
+	preset: Pick<Preset, "icon">,
+): preset is Pick<Preset, "icon"> & { icon: NonNullable<Preset["icon"]> } => {
+	const icon = preset.icon;
+	if (icon == null) {
+		return false;
 	}
-
-	return resolvePresetCatalogIconVisual(preset);
+	if (typeof icon === "string") {
+		return icon.trim().length > 0;
+	}
+	return true;
 };
 
 /**
- * Glyph in tiles / dialogs: prefer structured `preset.icon` (incl. text colors).
- * If there is no explicit icon, fall back to `descriptionImage` then catalog defaults
- * (same priority as {@link resolvePresetIconVisual} but skips description when icon is set).
+ * True when the preset carries an icon that differs from the materialized
+ * type default — i.e. a user- or import-assigned icon (including a sibling
+ * image persisted at import time). Derived sources must not override it.
+ */
+export const hasCustomPresetIcon = (
+	preset: Pick<Preset, "type" | "icon">,
+): boolean => {
+	if (!hasPersistedIconValue(preset)) {
+		return false;
+	}
+	return !isDefaultPresetIcon(preset.type, preset.icon);
+};
+
+export type PresetIconResolutionOptions = {
+	/**
+	 * Filesystem-derived sibling image for the preset file (e.g. `Foo.png`
+	 * next to `Foo.ffx`), resolved by the caller through
+	 * `sibling-thumbnail`. It is a display-time derivation, never persisted.
+	 */
+	siblingImageSrc?: string | null;
+};
+
+/**
+ * Single owner of "which image represents this preset".
+ *
+ * Priority: user/import-assigned `icon` > `descriptionImage` > derived
+ * sibling image > persisted default icon > type/name fallback.
+ *
+ * Surfaces that can derive a sibling image pass it via
+ * {@link PresetIconResolutionOptions}; surfaces that cannot simply omit it
+ * and get the persisted-or-fallback result.
  */
 export const resolveWorkspaceGlyphIconVisual = (
 	preset: Pick<Preset, "id" | "title" | "type" | "icon" | "descriptionImage">,
+	options?: PresetIconResolutionOptions,
 ): PresetIconVisual => {
-	const structured = tryParsePresetIconValue(preset.icon);
-	if (structured) {
-		return presetIconToVisual(preset, structured);
+	if (hasCustomPresetIcon(preset)) {
+		return resolvePersistedIconVisual(preset);
 	}
-	const rawIcon = typeof preset.icon === "string" ? preset.icon.trim() : "";
-	if (rawIcon) {
-		return resolvePresetCatalogIconVisual({
-			id: preset.id,
-			title: preset.title,
-			type: preset.type,
-			icon: preset.icon,
-		});
+	const descriptionImage = preset.descriptionImage?.trim();
+	if (descriptionImage) {
+		return { kind: "image", value: descriptionImage };
 	}
-	return resolvePresetIconVisual(preset);
+	const sibling = options?.siblingImageSrc?.trim();
+	if (sibling) {
+		return { kind: "image", value: sibling };
+	}
+	return resolvePersistedIconVisual(preset);
 };

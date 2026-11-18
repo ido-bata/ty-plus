@@ -21,10 +21,7 @@ vi.mock("../../management/workspace/layout/panel-json-files", () => ({
 
 vi.mock("../../management/workspace/layout/persistence", () => ({
 	indexFromPanelId: vi.fn(),
-	readLayoutDocument: vi.fn(),
-	readWorkspaceGridCells: vi.fn(),
 	writeLayoutDocument: vi.fn(),
-	writeWorkspaceGridCells: vi.fn(),
 	clearLayoutNJson: vi.fn(),
 	ensureLayoutFiles: vi.fn(),
 }));

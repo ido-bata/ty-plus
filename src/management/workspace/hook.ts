@@ -17,6 +17,7 @@ import {
 	createCepSurfaceTransport,
 	openCepDialogSurface,
 } from "@/management/ae/cep/transport";
+import { importFile } from "@/management/ae/file-import";
 import { readGroupJson } from "@/management/catalog/json-files";
 import {
 	clearLogs,
@@ -199,8 +200,6 @@ import {
 	requestOpenWorkspaceShellTool,
 } from "./hooks/dialogs";
 import { openDebugConsole, openUrlInDefaultBrowser } from "./hooks/helpers";
-
-import { importFile } from "./hooks/host-exec";
 import {
 	ensurePrimaryPanelWidgets,
 	remapSurfaceSelectionByPreservedTileIds,

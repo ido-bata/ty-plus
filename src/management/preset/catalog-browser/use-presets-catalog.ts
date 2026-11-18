@@ -11,7 +11,6 @@ import {
 } from "react";
 import { detectCepHostCode } from "@/management/ae/cep/runtime";
 import { readGroupJson } from "@/management/catalog/json-files";
-import { resolvePresetToolSurfaceIdForPreset } from "@/management/preset/authoring/request";
 import {
 	ICON_GRID_SCALE_LS_KEY,
 	ICON_TILE_ASPECT_LS_KEY,
@@ -24,7 +23,6 @@ import {
 	type GroupEntry,
 	parseGroupFromText,
 } from "@/management/preset/group-catalog";
-import { getPresetToolDialogEntry } from "@/management/preset/registry";
 import {
 	getPreset,
 	listPresets,
@@ -385,10 +383,7 @@ function usePresetsCatalog(opts: PresetsCatalogOptions): PresetsCatalogApi {
 				if (!preset) {
 					return;
 				}
-				const toolSurface = resolvePresetToolSurfaceIdForPreset(preset);
-				if (!getPresetToolDialogEntry(toolSurface)) {
-					return;
-				}
+				await openPresetEditSurface(window, surfaceId, id);
 			} catch (error) {
 				console.warn(
 					"preset-catalog: edit failed",

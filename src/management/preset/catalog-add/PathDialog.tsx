@@ -489,35 +489,10 @@ export function PathDialog(): JSX.Element {
 		return id;
 	});
 
-	/** Non-persisted display label derived from name, not an ID. */
-	const _previewLabel = useMemo(() => name.trim() || undefined, [name]);
-
 	const resolvedIcon = useMemo(
 		() => iconDraftToPresetIcon(iconDraft),
 		[iconDraft],
 	);
-
-	const _previewPreset = useMemo((): Preset | null => {
-		const fp = selectedPath.trim();
-		if (!fp) {
-			return null;
-		}
-		return createPresetFromFile({
-			id: presetId,
-			filePath: fp,
-			title: name.trim() || undefined,
-			description: description.trim() || undefined,
-			descriptionImage: descriptionImage.trim() || undefined,
-			...(resolvedIcon ? { icon: resolvedIcon } : {}),
-		});
-	}, [
-		presetId,
-		selectedPath,
-		name,
-		description,
-		descriptionImage,
-		resolvedIcon,
-	]);
 
 	const browseHint =
 		selectedPath.trim() || currentPath || readUserHomeOrFallback();
@@ -683,8 +658,6 @@ export function PathDialog(): JSX.Element {
 
 	const emptyConfigured =
 		activeTab !== "other" && !rootPath.trim() && pathsReady;
-
-	const _footerMessage = dialogMessageRef.current;
 
 	return (
 		<DialogShell

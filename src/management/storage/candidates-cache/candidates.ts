@@ -16,7 +16,9 @@ type CandidatesRoot = {
 	rootKind: CandidatesRootKind;
 };
 
-type CandidatesRootFile = Preset;
+type CandidatesRootFile = Preset & {
+	siblingImagePath?: string | null;
+};
 
 type CandidatesDirectorySignature = {
 	path: string;
@@ -326,6 +328,7 @@ const parseRootFiles = (raw: unknown): CandidatesRootFile[] =>
 						description?: unknown;
 						descriptionImage?: unknown;
 						icon?: unknown;
+						siblingImagePath?: unknown;
 						data?: unknown;
 					};
 					const type = isPresetType(r.type)
@@ -374,6 +377,10 @@ const parseRootFiles = (raw: unknown): CandidatesRootFile[] =>
 							type,
 							r.icon as Preset["icon"] | undefined,
 						),
+						...(typeof r.siblingImagePath === "string" &&
+						r.siblingImagePath.trim()
+							? { siblingImagePath: r.siblingImagePath }
+							: {}),
 						...(r.data && typeof r.data === "object" && !Array.isArray(r.data)
 							? { data: r.data as Record<string, unknown> }
 							: {}),
