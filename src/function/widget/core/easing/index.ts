@@ -14,6 +14,7 @@ import { EasingWidget } from "./Component";
 export const descriptor = defineWidget({
 	type: "easing",
 	nameKey: "widgets.easing.name",
+	descriptionKey: "widgets.selector.descriptions.easing",
 	tutorial: {
 		summaryKey: "widgets.tutorial.easing.summary",
 		contentVersion: "1",

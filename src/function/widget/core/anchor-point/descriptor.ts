@@ -12,6 +12,7 @@ import { AnchorPointWidget } from "./Component";
 defineWidget({
 	type: "anchor-point",
 	nameKey: "widgets.anchorPoint.name",
+	descriptionKey: "widgets.selector.descriptions.anchor-point",
 	tutorial: {
 		summaryKey: "widgets.tutorial.anchor-point.summary",
 		contentVersion: "1",

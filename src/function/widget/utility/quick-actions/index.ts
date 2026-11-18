@@ -19,6 +19,7 @@ import { QuickActionsWidget } from "./ActionList";
 export default defineWidget({
 	type: "quick-actions",
 	nameKey: "widgets.quickActions.name",
+	descriptionKey: "widgets.selector.descriptions.quick-actions",
 	tutorial: {
 		summaryKey: "widgets.tutorial.quick-actions.summary",
 		contentVersion: "1",
