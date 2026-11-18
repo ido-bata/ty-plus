@@ -238,26 +238,29 @@ export async function tryPersistAppendPresetFromDialog(
 	}
 	const targetPanelId = input.targetPanelId.trim() || "panel-1";
 
-	// Resolve preset list with explicit local fallback on gateway offline.
-	// Throws when neither cloud nor local catalog is available — caller
-	// MUST surface the error to the user (round-4 Blocker 10 contract).
-	const presets = await resolvePresetListWithLocalFallback({
-		win,
-		targetPanelId,
-		catalogRefIds: ids,
-	});
-
-	// ADR-0006: the dedup check and the layout write are one transaction
-	// inside the managed-root persistence lock — the layout read that
-	// feeds the write decision happens inside the hold, and
+	// ADR-0006: the catalog resolution, dedup check and the layout write
+	// are ONE transaction inside the managed-root persistence lock. The
+	// preset list (cloud repository or local `presets/presets.json`
+	// fallback) and the group catalog are read INSIDE the hold — never
+	// before it — because another CEP context may have rewritten those
+	// shared catalog files while we waited for the lock. The layout read
+	// that feeds the write decision happens inside the hold too, and
 	// `persistTargetLayout` joins the same hold via AsyncLocalStorage.
+	// `resolvePresetListWithLocalFallback` still throws when neither the
+	// cloud gateway nor the local catalog is available — the caller MUST
+	// surface that error (round-4 Blocker 10 contract).
 	const lockRoot = await resolvePersistenceLockRoot(win);
 	if (!lockRoot) {
 		return false;
 	}
 	return withPersistenceLock(win, lockRoot, async () => {
 		const targetIndex = indexFromPanelId(targetPanelId);
-		const [groupText, rawLayout] = await Promise.all([
+		const [presets, groupText, rawLayout] = await Promise.all([
+			resolvePresetListWithLocalFallback({
+				win,
+				targetPanelId,
+				catalogRefIds: ids,
+			}),
 			readGroupJson(win),
 			readNJson(win, targetIndex),
 		]);

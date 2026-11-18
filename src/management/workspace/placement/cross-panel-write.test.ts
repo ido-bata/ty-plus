@@ -40,12 +40,31 @@ vi.mock("@/management/storage/lock/persistence-lock", () => ({
 	),
 }));
 
+const catalogMocks = vi.hoisted(() => ({
+	readGroupJson: vi.fn<(win: Window) => Promise<string | null>>(
+		async () => null,
+	),
+}));
+
+vi.mock("@/management/catalog/json-files", async () => {
+	const actual = await vi.importActual<
+		typeof import("@/management/catalog/json-files")
+	>("@/management/catalog/json-files");
+	return {
+		...actual,
+		readGroupJson: catalogMocks.readGroupJson,
+	};
+});
+
 import { persistTargetLayout } from "./cross-panel-write";
 
 const storageMocks = vi.hoisted(() => ({
 	readNJson: vi.fn<
 		(win: Window, index: 1 | 2 | 3 | 4 | 5) => Promise<string | null>
 	>(async () => null),
+	readPresetsJsonText: vi.fn<(win: Window) => Promise<string | null>>(
+		async () => null,
+	),
 	writeNJson: vi.fn<
 		(win: Window, index: 1 | 2 | 3 | 4 | 5, jsonText: string) => Promise<void>
 	>(async () => undefined),
@@ -70,6 +89,7 @@ vi.mock("@/management/storage", async () => {
 	return {
 		...actual,
 		readNJson: storageMocks.readNJson,
+		readPresetsJsonText: storageMocks.readPresetsJsonText,
 		writeNJson: storageMocks.writeNJson,
 		readWidgetRecords: storageMocks.readWidgetRecords,
 		readSettings: storageMocks.readSettings,
@@ -356,5 +376,78 @@ describe("persistTargetLayout (Issue #182 — an unreadable target is never over
 			reason: "json-parse-failed",
 			consequence: "write aborted; existing tiles left untouched",
 		});
+	});
+});
+
+describe("persistTargetLayout (ADR-0006 — catalog reads happen inside the lock)", () => {
+	beforeEach(() => {
+		storageMocks.readNJson.mockReset();
+		storageMocks.writeNJson.mockReset();
+		storageMocks.readWidgetRecords.mockReset();
+		storageMocks.readSettings.mockReset();
+		storageMocks.readPresetsJsonText.mockReset();
+		storageMocks.upsertWidgetRecords.mockReset();
+		catalogMocks.readGroupJson.mockReset();
+		storageMocks.readWidgetRecords.mockResolvedValue([]);
+		storageMocks.readSettings.mockResolvedValue("{}");
+		storageMocks.readPresetsJsonText.mockResolvedValue(null);
+		catalogMocks.readGroupJson.mockResolvedValue(null);
+		storageMocks.writeNJson.mockResolvedValue(undefined);
+	});
+
+	afterEach(() => {
+		vi.clearAllMocks();
+		_resetBusForTests();
+	});
+
+	it("re-reads presets.json inside the lock so a post-snapshot commit is not lost", async () => {
+		// The caller's `presets` snapshot predates the lock hold (stale —
+		// empty). Another CEP context committed `preset-fresh` to
+		// presets.json while we waited. The in-lock supplement must pick it
+		// up: on panel-1 with an empty layout the implicit fill lays out
+		// every catalog preset, so the written gridCells prove which
+		// catalog the write actually ran against.
+		storageMocks.readPresetsJsonText.mockResolvedValue(
+			JSON.stringify({
+				version: 1,
+				presets: [
+					{
+						id: "preset-fresh",
+						type: "script",
+						title: "Fresh",
+						filePath: "/tmp/fresh.jsx",
+					},
+				],
+			}),
+		);
+		storageMocks.readNJson.mockResolvedValue(null);
+		let writtenJson = "";
+		storageMocks.writeNJson.mockImplementation(
+			async (_w: Window, _i: 1 | 2 | 3 | 4 | 5, jsonText: string) => {
+				writtenJson = jsonText;
+			},
+		);
+
+		await persistTargetLayout(win, {
+			persistenceRoot: undefined,
+			targetPanelId: "panel-1",
+			catalogIdsToMove: [],
+			widgetTiles: [{ id: "widget-probe", width: 1, height: 1 }],
+			widgetTypes: { "widget-probe": "info" },
+			presets: [],
+			groupCatalogEntries: [],
+			widgetInstanceTypesOverlay: { "widget-probe": "info" },
+		});
+
+		const written = JSON.parse(writtenJson) as {
+			gridCells: Array<{ id: string }>;
+		};
+		const ids = written.gridCells.map((c) => c.id);
+		expect(ids).toContain("preset-fresh");
+		expect(ids).toContain("widget-probe");
+		// Both catalog reads ran INSIDE the mocked lock hold — assert the
+		// supplement readers were actually consulted during the write.
+		expect(storageMocks.readPresetsJsonText).toHaveBeenCalled();
+		expect(catalogMocks.readGroupJson).toHaveBeenCalled();
 	});
 });

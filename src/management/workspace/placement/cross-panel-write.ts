@@ -9,18 +9,25 @@
  */
 
 import { isWidgetType, type WidgetType } from "@/function/widget/contract";
+import { readGroupJson } from "@/management/catalog/json-files";
 import { createLogger } from "@/management/debug";
+import { parsePresetCatalogJsonText } from "@/management/preset/catalog-json-text";
 import type { Preset } from "@/management/preset/contract";
-import type { GroupCatalogEntry } from "@/management/preset/group-catalog";
+import {
+	type GroupCatalogEntry,
+	parseGroupFromText,
+} from "@/management/preset/group-catalog";
 import {
 	indexFromPanelId,
 	readNJson,
 	readPanelPresetIdsFromSettingsJson,
+	readPresetsJsonText,
 	readSettings,
 	readWidgetRecords,
 	upsertWidgetRecords,
 	writeNJson,
 } from "@/management/storage";
+import { stripKnownIdPrefixes } from "@/management/storage/ids";
 import {
 	resolvePersistenceLockRoot,
 	withPersistenceLock,
@@ -163,6 +170,78 @@ const buildWidgetRecordsForMove = (input: WidgetMoveInput): WidgetRecord[] => {
 	return out;
 };
 
+const catalogRowKey = (id: string): string => stripKnownIdPrefixes(id.trim());
+
+/**
+ * Union a caller-supplied catalog with a fresh on-disk supplement, deduped
+ * by stripped id. The caller's rows always win on conflict — they may carry
+ * entries that are not file-backed (fixture presets, in-memory state) —
+ * while the supplement adds rows another CEP context committed after the
+ * caller's snapshot was taken.
+ */
+const mergeCatalogSupplement = <T extends { readonly id: string }>(
+	base: readonly T[],
+	supplement: readonly T[] | null,
+): readonly T[] => {
+	if (!supplement || supplement.length === 0) return base;
+	const seen = new Set<string>();
+	const merged: T[] = [];
+	for (const row of [...base, ...supplement]) {
+		const key = catalogRowKey(String(row.id ?? ""));
+		if (!key || seen.has(key)) continue;
+		seen.add(key);
+		merged.push(row);
+	}
+	return merged;
+};
+
+const describeError = (error: unknown): string =>
+	error instanceof Error ? error.message : String(error);
+
+/**
+ * Best-effort fresh read of `presets/presets.json` for the in-lock catalog
+ * supplement. Returns null when the read itself fails — the caller's
+ * catalog remains the baseline either way, so a transient read error must
+ * not fail the whole layout write. A missing/blank/corrupt file yields an
+ * empty supplement via the lenient parser.
+ */
+const readPresetCatalogSupplement = async (
+	win: Window,
+): Promise<readonly Preset[] | null> => {
+	try {
+		const raw = await readPresetsJsonText(win);
+		if (raw === null || !raw.trim()) return [];
+		return parsePresetCatalogJsonText(raw);
+	} catch (error) {
+		workspaceLog.warn(
+			"persistTargetLayout: preset catalog refresh failed; keeping caller catalog",
+			{
+				action: "persistTargetLayout:catalog-refresh-failed",
+				context: { catalog: "presets", message: describeError(error) },
+			},
+		);
+		return null;
+	}
+};
+
+/** Best-effort fresh read of `groups/groups.json` — same contract as above. */
+const readGroupCatalogSupplement = async (
+	win: Window,
+): Promise<readonly GroupCatalogEntry[] | null> => {
+	try {
+		return parseGroupFromText((await readGroupJson(win)) ?? "");
+	} catch (error) {
+		workspaceLog.warn(
+			"persistTargetLayout: group catalog refresh failed; keeping caller catalog",
+			{
+				action: "persistTargetLayout:catalog-refresh-failed",
+				context: { catalog: "groups", message: describeError(error) },
+			},
+		);
+		return null;
+	}
+};
+
 /**
  * Merges moved catalog presets / widgets onto the target panel layout file using
  * the same auto-pack path as live bus subscribers.
@@ -193,6 +272,22 @@ export const persistTargetLayout = async (
 		);
 	}
 	await withPersistenceLock(win, lockRoot, async () => {
+		// ADR-0006 §5: `presets` / `groupCatalogEntries` arrive as caller
+		// inputs that may predate this hold (dialog paths resolve catalogs
+		// before acquiring, the owner panel passes in-memory state). Re-read
+		// the shared catalog files INSIDE the lock and union them with the
+		// caller's rows so tile-id classification below runs against the
+		// freshest catalog state — while keeping caller-only rows (fixture
+		// presets, not-yet-flushed entries) that a disk-only read would drop.
+		const [diskPresets, diskGroups] = await Promise.all([
+			readPresetCatalogSupplement(win),
+			readGroupCatalogSupplement(win),
+		]);
+		const presets = mergeCatalogSupplement(input.presets, diskPresets);
+		const groupCatalogEntries = mergeCatalogSupplement(
+			input.groupCatalogEntries,
+			diskGroups,
+		);
 		const targetIndex = indexFromPanelId(input.targetPanelId);
 		const [rawLayout, widgetRecords, settingsJson] = await Promise.all([
 			readNJson(win, targetIndex),
@@ -214,10 +309,10 @@ export const persistTargetLayout = async (
 		let migratedTiles: Tile[];
 		try {
 			migratedTiles = loadTilesFromNJsonRaw(rawLayout, input.targetPanelId, {
-				presets: input.presets,
+				presets,
 				panelPresetIds: panelPresetIdsFromSettings,
 				widgetRecordLite,
-				groupCatalogEntries: input.groupCatalogEntries,
+				groupCatalogEntries,
 			});
 		} catch (error) {
 			workspaceLog.error("target layout could not be read", {
@@ -248,8 +343,8 @@ export const persistTargetLayout = async (
 		let working = buildSyntheticSurfaceState({
 			panelId: input.targetPanelId,
 			surfaceTiles: migratedTiles,
-			presets: input.presets,
-			groupCatalogEntries: input.groupCatalogEntries,
+			presets,
+			groupCatalogEntries,
 			widgetInstanceTypes,
 			panelPresetIds: panelPresetIdsFromSettings,
 		});

@@ -197,37 +197,23 @@ export async function persistAppendWidgetFromDialog(
 	const id = registry.createId(input.widgetType);
 	const { cols, rows } = cfg.defaultSize;
 
-	// Local-authoritative reads only. `getDataServices()` is deliberately not
-	// on this path (Issue #159 / A).
-	let presets: Preset[];
-	let groupCatalogEntries: ReturnType<typeof parseGroupFromText>;
-	try {
-		presets = await readLocalPresetCatalog(win);
-	} catch (error) {
-		return fail(
-			"local-catalog-read-failed",
-			error instanceof PresetCatalogParseError
-				? `The local preset catalog is corrupt (${error.reason}): ${error.message}`
-				: `The local preset catalog could not be read: ${messageOf(error)}`,
-			{ cause: messageOf(error) },
-		);
-	}
-	try {
-		groupCatalogEntries = parseGroupFromText((await readGroupJson(win)) ?? "");
-	} catch (error) {
-		return fail(
-			"local-group-read-failed",
-			`The local group catalog could not be read: ${messageOf(error)}`,
-			{ cause: messageOf(error) },
-		);
-	}
-
 	// ADR-0006: snapshot, layout write, record write and rollback are ONE
 	// transaction inside the managed-root persistence lock. Nested
 	// `persistTargetLayout` joins the same hold via AsyncLocalStorage, so no
 	// other CEP process can interleave between our reads and our writes —
 	// which is what makes the preimage rollback below safe.
-	const lockRoot = await resolvePersistenceLockRoot(win);
+	let lockRoot: string | null;
+	try {
+		lockRoot = await resolvePersistenceLockRoot(win);
+	} catch (error) {
+		return fail(
+			"persistence-root-unavailable",
+			`The managed ty-plus persistence root could not be resolved: ${messageOf(
+				error,
+			)}`,
+			{ cause: messageOf(error) },
+		);
+	}
 	if (!lockRoot) {
 		return fail(
 			"persistence-root-unavailable",
@@ -241,6 +227,37 @@ export async function persistAppendWidgetFromDialog(
 			win,
 			lockRoot,
 			async (): Promise<AppendWidgetResult | null> => {
+				// Local-authoritative catalog reads (Issue #159 / A —
+				// `getDataServices()` is deliberately not on this path) run
+				// INSIDE the lock: ADR-0006 forbids basing the write on
+				// catalog state read before the hold, since another CEP
+				// context may have rewritten presets.json / groups.json
+				// while we waited for the lock.
+				let presets: Preset[];
+				let groupCatalogEntries: ReturnType<typeof parseGroupFromText>;
+				try {
+					presets = await readLocalPresetCatalog(win);
+				} catch (error) {
+					return fail(
+						"local-catalog-read-failed",
+						error instanceof PresetCatalogParseError
+							? `The local preset catalog is corrupt (${error.reason}): ${error.message}`
+							: `The local preset catalog could not be read: ${messageOf(error)}`,
+						{ cause: messageOf(error) },
+					);
+				}
+				try {
+					groupCatalogEntries = parseGroupFromText(
+						(await readGroupJson(win)) ?? "",
+					);
+				} catch (error) {
+					return fail(
+						"local-group-read-failed",
+						`The local group catalog could not be read: ${messageOf(error)}`,
+						{ cause: messageOf(error) },
+					);
+				}
+
 				// Snapshot both files before the first write so a partial add can be
 				// undone (Issue #159 / C).
 				let rawLayoutBefore: string | null;
