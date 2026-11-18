@@ -639,6 +639,22 @@ export const journeySuiteCases: E2ECase[] = [
 					),
 				);
 
+				// Boot-time theme reconcile (Issue #112) is fire-and-forget:
+				// app.json → theme.css projection lands asynchronously after the
+				// workspace state commit, so poll the computed tokens instead of
+				// reading once (Issue #223 — one-shot reads raced the reconcile).
+				const tokensLive = await waitForDom(
+					ctx,
+					panel,
+					`(() => {
+						const cs = getComputedStyle(document.documentElement);
+						const accent = cs.getPropertyValue("--color-ty-accent") || "";
+						const cell = cs.getPropertyValue("--ty-ws-cell") || "";
+						return accent.toLowerCase().includes("336699")
+							&& cell.includes("120");
+					})()`,
+					30_000,
+				);
 				const accent = await ctx.evalJs(
 					panel,
 					`getComputedStyle(document.documentElement)
@@ -647,7 +663,7 @@ export const journeySuiteCases: E2ECase[] = [
 				checks.push(
 					check(
 						"accent color reached theme.css token",
-						String(accent).toLowerCase().includes("336699"),
+						tokensLive && String(accent).toLowerCase().includes("336699"),
 						`accent=${String(accent).trim()}`,
 					),
 				);
@@ -660,7 +676,7 @@ export const journeySuiteCases: E2ECase[] = [
 				checks.push(
 					check(
 						"grid cell size reached panel CSS var",
-						String(cell).includes("120"),
+						tokensLive && String(cell).includes("120"),
 						`cell=${String(cell).trim()}`,
 					),
 				);
@@ -679,12 +695,19 @@ export const journeySuiteCases: E2ECase[] = [
 						`accent=${uiAfter.accentColor} lang=${uiAfter.language} cell=${gridAfter.cellSize}`,
 					),
 				);
-				const themeCss = await ctx.readManagedText("styles", "theme.css");
+				// theme.css write is part of the same async reconcile — poll it.
+				let themeCss: string | null = null;
+				const themeDeadline = Date.now() + 20_000;
+				while (Date.now() < themeDeadline) {
+					themeCss = await ctx.readManagedText("styles", "theme.css");
+					if ((themeCss ?? "").toLowerCase().includes("336699")) break;
+					await sleep(700);
+				}
 				checks.push(
 					check(
 						"theme.css persisted accent token",
 						(themeCss ?? "").toLowerCase().includes("336699"),
-						"",
+						(themeCss ?? "").slice(0, 120),
 					),
 				);
 			});
