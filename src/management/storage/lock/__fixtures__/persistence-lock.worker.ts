@@ -20,7 +20,7 @@
  */
 
 import { appendFileSync, readFileSync, statSync } from "node:fs";
-import { withPersistenceLock } from "./persistence-lock";
+import { withPersistenceLock } from "../persistence-lock";
 
 const [root, mode, holdMsRaw, blockMsRaw] = process.argv.slice(2);
 if (

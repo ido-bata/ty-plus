@@ -46,7 +46,8 @@ type AllowlistEntry = ExactBoundaryEntry & {
 type PermanentBoundaryOwner =
 	| "cep-binary-resolution"
 	| "cep-operation-worker-runner"
-	| "static-feed-client";
+	| "static-feed-client"
+	| "managed-root-persistence-lock";
 
 type PermanentBoundaryEntry = ExactBoundaryEntry & {
 	owner: PermanentBoundaryOwner;
@@ -293,6 +294,16 @@ const PERMANENT_BOUNDARIES: readonly PermanentBoundaryEntry[] = [
 		rule: "product-network",
 		expectedMatches: 1,
 		owner: "static-feed-client",
+	},
+	// ADR-0006: the managed-root persistence lock is the serialization
+	// primitive for cross-CEP-context file transactions. It needs atomic
+	// mkdir / rename / utimes / stat semantics that no storage gateway
+	// exposes; routing it through a gateway would defeat the lock.
+	{
+		file: "src/management/storage/lock/persistence-lock.ts",
+		rule: "node-fs",
+		expectedMatches: 2,
+		owner: "managed-root-persistence-lock",
 	},
 ];
 

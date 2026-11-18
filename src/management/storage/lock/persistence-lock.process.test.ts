@@ -381,8 +381,10 @@ describe("resolvePersistenceLockRoot", () => {
 });
 
 describe("withPersistenceLock (cross-process, real bun workers)", () => {
-	const workerPath = new URL("./persistence-lock.worker.ts", import.meta.url)
-		.pathname;
+	const workerPath = new URL(
+		"./__fixtures__/persistence-lock.worker.ts",
+		import.meta.url,
+	).pathname;
 
 	const spawnWorker = (
 		root: string,
