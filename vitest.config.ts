@@ -88,10 +88,10 @@ export default defineConfig({
 			enabled: !!process.env.COVERAGE,
 			reporter: ["text", "json", "html", "lcov"],
 			// #193 removed the dormant online surface that PR 3's include
-			// list targeted (`composition-runtime-dispatcher.ts`,
-			// `cloud-gateway-boot.ts` no longer exist). The gate now covers
-			// the provided online surfaces that remain — the update and
-			// notification feeds are the only networked features left.
+			// list targeted (the dispatcher and cloud-gateway boot modules
+			// no longer exist). The gate now covers the provided online
+			// surfaces that remain — the update and notification feeds are
+			// the only networked features left.
 			//
 			// `perFile: true` so each included file is judged independently —
 			// one file at 100% no longer masks another at 0%, and legacy
