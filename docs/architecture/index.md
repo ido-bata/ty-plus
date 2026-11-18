@@ -90,7 +90,7 @@ architecture/
 4. [`runtime/index.md`](runtime/index.md) - 実行経路、ホスト境界、workspace surface
 5. [`ui-reconstruction/README.md`](ui-reconstruction/README.md) - React/Tailwind UI 再構築の設計と移行順
 6. [`storage/index.md`](storage/index.md) - 保存 tree と preset asset
-7. [`cloud/index.md`](cloud/index.md) - online/offline、Supabase、media surface
+7. [`cloud/index.md`](cloud/index.md) - online/offline と提供 feed（通知・更新）。Supabase 等の unprovided surface は #193 で撤去済み
 8. [`data/index.md`](data/index.md) - 型定義の所在と使用元
 9. [`quality/index.md`](quality/index.md) - 実装可能性判断と品質ゲート
 10. [`i18n/index.md`](i18n/index.md) - i18n ポリシーと命名規約
@@ -142,7 +142,7 @@ src/management/ae/cep/entry/id.ts
 src/management/storage/
   └─ workspace state, file I/O, settings persistence
 src/management/online/
-  └─ connectivity, catalog (dormant), notification, static update feed
+  └─ notification, static update feed (unprovided online surfaces removed in #193)
 src/function/widget/registry.ts
   └─ widget grid with active-now / implemented-not-exposed entries
 src/function/widget/renderWidget.ts

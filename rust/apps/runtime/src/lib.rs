@@ -6,14 +6,11 @@
 pub mod codec;
 pub mod dispatcher;
 pub mod handshake;
-pub mod online_dispatch;
 pub mod platform;
-pub mod preset_install;
 pub mod session;
 pub mod transport;
 
 use ty_plus_host_filesystem::HostFilesystemBoundary;
-use ty_plus_online::OnlineBoundary;
 use ty_plus_protocol::ProtocolBoundary;
 use ty_plus_storage::{PersistenceIoHandler, StorageBoundary};
 
@@ -24,8 +21,6 @@ pub struct RuntimeComposition {
     pub protocol: ProtocolBoundary,
     /// Managed storage boundary.
     pub storage: StorageBoundary,
-    /// Product network boundary.
-    pub online: OnlineBoundary,
     /// Session-scoped After Effects filesystem boundary.
     pub host_filesystem: HostFilesystemBoundary,
 }
@@ -37,7 +32,6 @@ impl RuntimeComposition {
         Self {
             protocol: ProtocolBoundary::new(),
             storage: StorageBoundary::new(),
-            online: OnlineBoundary::new(),
             host_filesystem: HostFilesystemBoundary::new(),
         }
     }

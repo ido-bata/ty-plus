@@ -49,10 +49,6 @@
 		"placeholder": "Type to search...",
 		"empty": "No presets found"
 	},
-	"online": {
-		"loading": "Loading...",
-		"empty": "No online presets available"
-	},
 	"presetTool": {
 		"form": {
 			"presetId": "Preset ID",
@@ -152,7 +148,6 @@
 		"animationLabel": "Animation",
 		"layerCompLabel": "Layer/Comp",
 		"codeLabel": "Code",
-		"presetLibrary": "Preset Library",
 		"messages": "Messages",
 		"settings": "Settings",
 		"debugConsole": "Debug Console",

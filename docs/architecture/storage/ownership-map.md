@@ -24,7 +24,7 @@
 | `noteContent` | `widgets/state/note.json` | note widget の内容 |
 | `workspaceYoutubeVideoId` | `widgets/state/youtube.json` | YouTube widget の状態 |
 | `notification cache/read state` | `cache/notifications.json` | 通知キャッシュ |
-| `remote preset cache` | `cache/remote-presets.json` | リモート preset キャッシュ |
+| `preset candidates index` | `cache/candidates.json`, `cache/candidates/*.json` | onboarding の preset 候補キャッシュ |
 
 ## 主要な所在
 

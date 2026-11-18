@@ -49,10 +49,6 @@
 		"placeholder": "Введите для поиска...",
 		"empty": "Пресеты не найдены"
 	},
-	"online": {
-		"loading": "Загрузка...",
-		"empty": "Онлайн-пресеты недоступны"
-	},
 	"presetTool": {
 		"form": {
 			"presetId": "ID пресета",
@@ -152,7 +148,6 @@
 		"animationLabel": "Анимация",
 		"layerCompLabel": "Слой/Композиция",
 		"codeLabel": "Код",
-		"presetLibrary": "Библиотека пресетов",
 		"messages": "Сообщения",
 		"settings": "Настройки",
 		"debugConsole": "Консоль отладки",

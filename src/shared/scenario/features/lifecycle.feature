@@ -28,24 +28,6 @@ Feature: Preset lifecycle
       When the user restarts panel-2
       Then panel-2 tile-X still renders HappyPathPreset post-restart and layout:panel-2 matches the post-move state
 
-  Rule: the local fallback path keeps the lifecycle working when the cloud gateway is unavailable
-
-    @cross-panel @persists-after-restart
-    Scenario: SCN-LIFECYCLE-02 — cloud gateway unavailable, lifecycle still completes
-      Given an onboarding-completed panel with cloud gateway unavailable
-      When the user creates a local preset named OfflinePreset
-      Then the preset row appears in the local catalog and the local-catalog storage key returns the preset object
-      When the user drags OfflinePreset from the catalog onto workspace tile-A on panel-1
-      Then tile-A renders OfflinePreset and layout:panel-1 contains the placement
-      When the user moves OfflinePreset from tile-A to tile-B within the same workspace
-      Then tile-B renders OfflinePreset and tile-A is empty after the within-workspace move
-      When the user reloads panel-1 with cloud still unavailable
-      Then tile-B still renders OfflinePreset and the persisted layout equals the pre-reload layout
-      When the user performs a cross-panel move to panel-2 tile-X via the local fallback path
-      Then panel-2 tile-X renders OfflinePreset and panel-1 has no surface tile referencing the preset
-      When the user restarts panel-2 with cloud still unavailable
-      Then panel-2 tile-X still renders OfflinePreset post-restart and a local-fallback-completed log is emitted
-
   Rule: a failed cross-panel write must fail-safe
 
     @cross-panel

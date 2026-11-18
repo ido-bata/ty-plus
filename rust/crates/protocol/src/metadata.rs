@@ -113,62 +113,6 @@ macro_rules! canonical_methods {
 
 canonical_methods!(
     (
-        OnlineCatalogSearch,
-        "online.catalog.search",
-        IdempotencyPolicy::Optional,
-        RetryClass::Idempotent,
-        true,
-        false
-    ),
-    (
-        OnlineConnectivityCheck,
-        "online.connectivity.check",
-        IdempotencyPolicy::Optional,
-        RetryClass::Idempotent,
-        true,
-        false
-    ),
-    (
-        OnlineDownload,
-        "online.download",
-        IdempotencyPolicy::Forbidden,
-        RetryClass::NonIdempotent,
-        true,
-        false
-    ),
-    (
-        OnlineCatalogCacheRead,
-        "online.catalog.cache.read",
-        IdempotencyPolicy::Optional,
-        RetryClass::Idempotent,
-        true,
-        false
-    ),
-    (
-        OnlineCatalogCacheWrite,
-        "online.catalog.cache.write",
-        IdempotencyPolicy::Forbidden,
-        RetryClass::NonIdempotent,
-        true,
-        false
-    ),
-    (
-        OnlineCatalogCacheDelete,
-        "online.catalog.cache.delete",
-        IdempotencyPolicy::Forbidden,
-        RetryClass::NonIdempotent,
-        true,
-        false
-    ),
-    (
-        OnlineCatalogCacheClear,
-        "online.catalog.cache.clear",
-        IdempotencyPolicy::Forbidden,
-        RetryClass::NonIdempotent,
-        true,
-        false
-    ),
-    (
         HostPluginEffectScan,
         "host.plugin.effect.scan",
         IdempotencyPolicy::Optional,
@@ -395,13 +339,6 @@ mod tests {
     #[test]
     fn canonical_methods_round_trip_through_the_registry() {
         for method in [
-            CanonicalMethod::OnlineCatalogSearch,
-            CanonicalMethod::OnlineConnectivityCheck,
-            CanonicalMethod::OnlineDownload,
-            CanonicalMethod::OnlineCatalogCacheRead,
-            CanonicalMethod::OnlineCatalogCacheWrite,
-            CanonicalMethod::OnlineCatalogCacheDelete,
-            CanonicalMethod::OnlineCatalogCacheClear,
             CanonicalMethod::HostPluginEffectScan,
             CanonicalMethod::HostThumbnailLookup,
             CanonicalMethod::HostThumbnailGenerate,
@@ -424,7 +361,7 @@ mod tests {
         // Production break caught: a missing or duplicate Rust-owned policy entry
         // would leave generated retry metadata ambiguous for a canonical method.
         let methods = CanonicalMethod::all();
-        assert_eq!(methods.len(), 13);
+        assert_eq!(methods.len(), 6);
         assert_eq!(
             methods
                 .iter()
@@ -436,13 +373,6 @@ mod tests {
                 "host.thumbnail.generate",
                 "host.thumbnail.lookup",
                 "host.thumbnail.lookup-or-generate",
-                "online.catalog.cache.clear",
-                "online.catalog.cache.delete",
-                "online.catalog.cache.read",
-                "online.catalog.cache.write",
-                "online.catalog.search",
-                "online.connectivity.check",
-                "online.download",
                 "update.install",
             ]
             .into_iter()
@@ -483,30 +413,6 @@ mod tests {
                 retry_crash_before_accept: false,
             }
         );
-        assert_eq!(
-            CanonicalMethod::OnlineCatalogSearch
-                .operation_policy()
-                .retry_class,
-            RetryClass::Idempotent
-        );
-        assert_eq!(
-            CanonicalMethod::OnlineCatalogCacheRead
-                .operation_policy()
-                .retry_class,
-            RetryClass::Idempotent
-        );
-        for method in [
-            CanonicalMethod::OnlineDownload,
-            CanonicalMethod::OnlineCatalogCacheWrite,
-            CanonicalMethod::OnlineCatalogCacheDelete,
-            CanonicalMethod::OnlineCatalogCacheClear,
-        ] {
-            assert_eq!(
-                method.operation_policy().retry_class,
-                RetryClass::NonIdempotent
-            );
-            assert!(!method.operation_policy().retry_crash_before_accept);
-        }
         assert_eq!(
             CanonicalMethod::UpdateInstall.operation_policy(),
             CanonicalOperationPolicy {

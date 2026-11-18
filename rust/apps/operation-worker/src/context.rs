@@ -10,7 +10,6 @@ use ty_plus_storage::{
     SessionSupportRoot, SharedBrowseRoot,
 };
 
-use crate::online_dispatch::OnlineBoundary;
 use crate::storage_dispatch::{StorageBoundary, StorageError};
 
 /// Immutable request plus the host/session context from which its boundaries are built.
@@ -57,7 +56,6 @@ pub struct ResolvedInvocation {
     pub managed_root: ResolvedStorageRoots,
     pub storage: StorageBoundary,
     pub host_filesystem: HostFilesystemBoundary,
-    pub online: OnlineBoundary,
     pub protocol_version: ProtocolVersion,
     pub session_id: SessionId,
     pub request_id: RequestId,
@@ -77,11 +75,6 @@ impl ResolvedInvocation {
     #[must_use]
     pub fn host_filesystem(&self) -> &HostFilesystemBoundary {
         &self.host_filesystem
-    }
-
-    #[must_use]
-    pub fn online(&self) -> &OnlineBoundary {
-        &self.online
     }
 }
 
@@ -110,7 +103,6 @@ pub fn resolve_invocation(invocation: &Invocation) -> Result<ResolvedInvocation,
         ),
     };
     let managed_root = session.resolve_storage(selection);
-    let managed_root_path = managed_root.managed_root().to_path_buf();
     let managed_root_handle = managed_root
         .managed_root_handle()
         .map_err(InvocationError::Root)?;
@@ -125,24 +117,10 @@ pub fn resolve_invocation(invocation: &Invocation) -> Result<ResolvedInvocation,
         managed_root,
         storage,
         host_filesystem: HostFilesystemBoundary::new(),
-        online: OnlineBoundary::unconfigured(&managed_root_path),
         protocol_version: invocation.request.protocol_version,
         session_id: invocation.request.metadata.session_id.clone(),
         request_id: invocation.request.metadata.request_id.clone(),
     })
-}
-
-/// Resolves an invocation with an explicitly injected online composition.
-pub fn resolve_invocation_with_online(
-    invocation: &Invocation,
-    online: OnlineBoundary,
-) -> Result<ResolvedInvocation, InvocationError> {
-    let mut resolved = resolve_invocation(invocation)?;
-    if online.managed_root() != resolved.managed_root.managed_root() {
-        return Err(InvocationError::ContextMismatch);
-    }
-    resolved.online = online;
-    Ok(resolved)
 }
 
 #[derive(Debug)]

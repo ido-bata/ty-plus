@@ -78,8 +78,6 @@ const PATTERNS: readonly RegExp[] = [
 	attr("data-catalog-preset-type"),
 
 	// Preset gallery / cards / tiles.
-	attr("data-preset-gallery"),
-	attr("data-preset-cards"),
 	attr("data-preset-tool-surface"),
 	attr("data-preset-id"),
 
@@ -150,12 +148,9 @@ const isSelectorWhitelisted = (selector: string): boolean => {
  *
  * Bypass exception:
  *
- *   - `evalScript:$.global.__TY_PLUS_HOST__.tyPlusProbeSettingsDialogState()`
+ *   - `evalScript:$.global.__TY_PLUS_HOST__.<probe>()`
  *     — single token, recognised host-state-oracle prefix;
  *     excluded from E015.
- *   - `evalScript:$.global.__TY_PLUS_HOST__.tyPlusProbeOnlineState()` —
- *     single token, recognised host-state-oracle prefix; excluded
- *     from E015.
  *   - `screenshot:panel-root` — single token, recognised
  *     host-state-oracle prefix; excluded from E015.
  *   - `css:[data-x]:hover` — single token, recognised

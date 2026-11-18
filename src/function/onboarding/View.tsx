@@ -1141,7 +1141,7 @@ function useOnboardingFinish(input: OnboardingFinishInput): {
 				canScanFolders: hasSelectedFolders && canUseCepNodeFileBrowser(window),
 			};
 			// Issue #139: preset import is a local file-backed operation and must
-			// not require the cloud gateway to be booted (offline-core contract).
+			// not require any online service to be reachable (offline-core contract).
 			// `getLocalPresetCatalog` reads/writes the same `presets/presets.json`
 			// the pinned repository used, without consulting the gateway.
 			const importPresetRepository = getLocalPresetCatalog(window);
@@ -1176,12 +1176,6 @@ function useOnboardingFinish(input: OnboardingFinishInput): {
 					payload: {
 						kind: "snapshot" as const,
 						presets,
-						syncStatus: {
-							provider: "supabase",
-							state: "idle" as const,
-							label: "Local Update",
-							checkedAt: new Date().toISOString(),
-						},
 						sourceSurfaceId: panelSurfaceId,
 					},
 				}),

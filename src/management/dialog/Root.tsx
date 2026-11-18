@@ -128,7 +128,6 @@ function ProbeDialogBody({ surfaceId }: { surfaceId: string }): JSX.Element {
  *
  * Surface routing:
  * - "dialog-presets" → PresetsDialog
- * - "dialog-preset-library" → management/online/catalog (via `routes`)
  * - "dialog-messages" → management/online/notification (via `routes`)
  * - "dialog-settings" → SettingsDialog
  * - "dialog-probe" → ProbeDialogBody (placeholder)

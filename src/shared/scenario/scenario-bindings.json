@@ -143,168 +143,6 @@
 			"verification_rows": ["boot-stability"]
 		},
 		{
-			"scenarioId": "SCN-LIFECYCLE-02",
-			"featureFile": "src/shared/scenario/features/lifecycle.feature",
-			"procedureFile": "src/shared/scenario/procedures/SCN-LIFECYCLE-02.json",
-			"scenarioName": "SCN-LIFECYCLE-02 — cloud gateway unavailable, lifecycle still completes",
-			"title": "cloud gateway unavailable: lifecycle still completes via local fallback",
-			"description": "Same lifecycle as SCN-LIFECYCLE-01 but with the cloud-gateway boot stubbed to return null. The lifecycle MUST still complete via the local fallback path.",
-			"evidenceLevel": "simulated_e2e",
-			"oracles": {
-				"ui": {
-					"selector": "[data-preset-id=\"OfflinePreset\"]",
-					"attribute": {
-						"name": "data-state",
-						"value": "placed"
-					}
-				},
-				"persistence": {
-					"storageKey": "layout:panel-2",
-					"expected": {
-						"version": 1,
-						"surfaceTiles": [
-							{
-								"id": "tile-X",
-								"x": 0,
-								"y": 0,
-								"width": 2,
-								"height": 1,
-								"presetId": "OfflinePreset"
-							}
-						]
-					}
-				},
-				"dual": true
-			},
-			"evidence": {
-				"screenshotSelectors": ["[data-preset-id=\"OfflinePreset\"]"],
-				"computedStyleSnapshots": [
-					"computed-style: [data-preset-id=\"OfflinePreset\"]"
-				],
-				"persistedStateDumps": [
-					"storage:preset:OfflinePreset",
-					"storage:layout:panel-1",
-					"storage:layout:panel-2"
-				],
-				"logAssertions": [
-					{
-						"scope": "online",
-						"minLevel": "warn",
-						"messageContains": "getDataServices returned null",
-						"id": "log-cloud-unavailable"
-					},
-					{
-						"scope": "workspace",
-						"minLevel": "info",
-						"messageContains": "cross-panel-move-local-fallback",
-						"id": "log-cross-panel-move-offline"
-					},
-					{
-						"scope": "online",
-						"minLevel": "info",
-						"messageContains": "local-fallback-completed",
-						"id": "log-local-fallback-completed"
-					}
-				]
-			},
-			"environment": {
-				"os": "windows",
-				"hostVersionRange": ">=26.5.0 <27.0.0",
-				"aeRequired": true,
-				"panelState": "post-onboarding",
-				"notes": "getDataServices() returns null at boot."
-			},
-			"fixtures": [
-				{
-					"id": "project:SCN-LIFECYCLE-02",
-					"kind": "settings",
-					"identifier": "project:SCN-LIFECYCLE-02",
-					"initialState": null,
-					"projectPath": "validation.host.aep_root/SCN-LIFECYCLE-02.aep"
-				},
-				{
-					"id": "preset:OfflinePreset",
-					"kind": "preset",
-					"identifier": "preset:OfflinePreset",
-					"initialState": null
-				},
-				{
-					"id": "online-state",
-					"kind": "online-state",
-					"identifier": "online-state",
-					"initialState": {
-						"dataServices": null
-					}
-				},
-				{
-					"id": "layout:panel-1",
-					"kind": "workspace-layout",
-					"identifier": "layout:panel-1",
-					"initialState": {
-						"version": 0,
-						"surfaceTiles": []
-					}
-				},
-				{
-					"id": "layout:panel-2",
-					"kind": "workspace-layout",
-					"identifier": "layout:panel-2",
-					"initialState": {
-						"version": 0,
-						"surfaceTiles": []
-					}
-				}
-			],
-			"requirementRefs": [
-				{
-					"type": "issue",
-					"id": "147"
-				},
-				{
-					"type": "issue",
-					"id": "146",
-					"note": "Local-fallback lifecycle."
-				}
-			],
-			"stopConditions": [
-				{
-					"trigger": "selector-multimatch",
-					"description": "Multiple tile elements resolve the same selector — abort."
-				},
-				{
-					"trigger": "modal-unexpected",
-					"description": "An AE dialog appears that the scenario does not anticipate — abort."
-				},
-				{
-					"trigger": "state-inconsistent",
-					"description": "Persisted layout and DOM tile disagree — abort."
-				}
-			],
-			"onFailure": {
-				"capture": ["screenshot", "log-bus-tail", "persisted-state-dump"],
-				"doNot": ["send-to-network", "modify-preset-asset"]
-			},
-			"automation": {
-				"requiredCapabilities": [
-					"click",
-					"drag",
-					"selector-resolve",
-					"persisted-state-read",
-					"computed-style-snapshot",
-					"log-bus-read",
-					"panel-reload",
-					"process-restart",
-					"cross-panel-bus"
-				]
-			},
-			"postconditions": [
-				"Local fallback lifecycle completed.",
-				"Persisted state on panel-2 still references the preset."
-			],
-			"requirement_id": "boot-stability",
-			"verification_rows": ["boot-stability"]
-		},
-		{
 			"scenarioId": "SCN-FAILURE-01",
 			"featureFile": "src/shared/scenario/features/lifecycle.feature",
 			"procedureFile": "src/shared/scenario/procedures/SCN-FAILURE-01.json",
@@ -1010,109 +848,6 @@
 			"verification_rows": ["settings-dialog"]
 		},
 		{
-			"scenarioId": "SCN-DEGRADED-01",
-			"featureFile": "src/shared/scenario/features/online-degraded.feature",
-			"procedureFile": "src/shared/scenario/procedures/SCN-DEGRADED-01.json",
-			"scenarioName": "SCN-DEGRADED-01 — degraded cloud switches the panel to local fallback",
-			"title": "degraded cloud: gateway failure flips the panel to local fallback without blocking the user",
-			"description": "When the cloud gateway becomes unreachable after boot, the cloud-status widget switches to 'degraded' and a preset creation is routed through the local fallback path.",
-			"evidenceLevel": "scenario_spec",
-			"oracles": {
-				"persistence": {
-					"storageKey": "preset:FallbackPreset",
-					"expected": {
-						"id": "FallbackPreset",
-						"source": "local",
-						"body": "app.alert(\"fallback\")"
-					}
-				},
-				"dual": false
-			},
-			"evidence": {
-				"screenshotSelectors": ["[data-preset-gallery]"],
-				"computedStyleSnapshots": ["computed-style: [data-preset-gallery]"],
-				"persistedStateDumps": ["preset:FallbackPreset"],
-				"logAssertions": [
-					{
-						"scope": "online",
-						"minLevel": "warn",
-						"messageContains": "gateway degraded",
-						"id": "log-gateway-degraded"
-					}
-				]
-			},
-			"environment": {
-				"os": "windows",
-				"hostVersionRange": ">=26.5.0 <27.0.0",
-				"aeRequired": true,
-				"panelState": "post-onboarding",
-				"notes": "Network probe failure mid-scenario."
-			},
-			"fixtures": [
-				{
-					"id": "project:SCN-DEGRADED-01",
-					"kind": "settings",
-					"identifier": "project:SCN-DEGRADED-01",
-					"initialState": null,
-					"projectPath": "validation.host.aep_root/SCN-DEGRADED-01.aep"
-				},
-				{
-					"id": "preset:FallbackPreset",
-					"kind": "preset",
-					"identifier": "preset:FallbackPreset",
-					"initialState": null
-				},
-				{
-					"id": "online-state",
-					"kind": "online-state",
-					"identifier": "online-state",
-					"initialState": {
-						"dataServices": "reachable"
-					}
-				}
-			],
-			"requirementRefs": [
-				{
-					"type": "issue",
-					"id": "147"
-				},
-				{
-					"type": "issue",
-					"id": "146",
-					"note": "Local fallback path."
-				}
-			],
-			"stopConditions": [
-				{
-					"trigger": "log-error-spike",
-					"description": "Multiple online-scope errors without the degraded-switch log entry — abort."
-				},
-				{
-					"trigger": "state-inconsistent",
-					"description": "Cloud-status widget and online-state disagree — abort."
-				}
-			],
-			"onFailure": {
-				"capture": ["screenshot", "log-bus-tail", "persisted-state-dump"],
-				"doNot": ["retry-online-write", "modify-preset-asset"]
-			},
-			"automation": {
-				"requiredCapabilities": [
-					"click",
-					"selector-resolve",
-					"persisted-state-read",
-					"computed-style-snapshot",
-					"log-bus-read"
-				]
-			},
-			"postconditions": [
-				"storage:preset:FallbackPreset contains the preset object.",
-				"Cloud gateway reports 'degraded' state."
-			],
-			"requirement_id": "online-degraded",
-			"verification_rows": ["online-degraded"]
-		},
-		{
 			"scenarioId": "SCN-DIAGNOSTICS-01",
 			"featureFile": "src/shared/scenario/features/diagnostics.feature",
 			"procedureFile": "src/shared/scenario/procedures/SCN-DIAGNOSTICS-01.json",
@@ -1266,6 +1001,12 @@
 					"kind": "settings",
 					"identifier": "storage:diagnostics",
 					"initialState": null
+				},
+				{
+					"id": "preset:RuntimePreset",
+					"kind": "preset",
+					"identifier": "preset:RuntimePreset",
+					"initialState": null
 				}
 			],
 			"requirementRefs": [
@@ -1282,7 +1023,7 @@
 			"stopConditions": [
 				{
 					"trigger": "selector-missing",
-					"description": "Debug Console or the preset library control is not mounted — abort."
+					"description": "Debug Console or the preset list control is not mounted — abort."
 				},
 				{
 					"trigger": "log-error-spike",

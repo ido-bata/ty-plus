@@ -22,13 +22,6 @@ export const protocolLimits = {
 } as const;
 
 export const canonicalMethods = [
-	"online_catalog_search",
-	"online_connectivity_check",
-	"online_download",
-	"online_catalog_cache_read",
-	"online_catalog_cache_write",
-	"online_catalog_cache_delete",
-	"online_catalog_cache_clear",
 	"host_plugin_effect_scan",
 	"host_thumbnail_lookup",
 	"host_thumbnail_generate",
@@ -50,55 +43,6 @@ export type CanonicalOperationPolicy = {
 export const canonicalOperationPolicies: Readonly<
 	Record<CanonicalMethod, CanonicalOperationPolicy>
 > = Object.freeze({
-	online_catalog_search: Object.freeze({
-		idempotencyKey: "optional",
-		retryClass: "idempotent",
-		cancellable: true,
-		retryCrashBeforeAccept: false,
-		wireName: "online.catalog.search",
-	}),
-	online_connectivity_check: Object.freeze({
-		idempotencyKey: "optional",
-		retryClass: "idempotent",
-		cancellable: true,
-		retryCrashBeforeAccept: false,
-		wireName: "online.connectivity.check",
-	}),
-	online_download: Object.freeze({
-		idempotencyKey: "forbidden",
-		retryClass: "non-idempotent",
-		cancellable: true,
-		retryCrashBeforeAccept: false,
-		wireName: "online.download",
-	}),
-	online_catalog_cache_read: Object.freeze({
-		idempotencyKey: "optional",
-		retryClass: "idempotent",
-		cancellable: true,
-		retryCrashBeforeAccept: false,
-		wireName: "online.catalog.cache.read",
-	}),
-	online_catalog_cache_write: Object.freeze({
-		idempotencyKey: "forbidden",
-		retryClass: "non-idempotent",
-		cancellable: true,
-		retryCrashBeforeAccept: false,
-		wireName: "online.catalog.cache.write",
-	}),
-	online_catalog_cache_delete: Object.freeze({
-		idempotencyKey: "forbidden",
-		retryClass: "non-idempotent",
-		cancellable: true,
-		retryCrashBeforeAccept: false,
-		wireName: "online.catalog.cache.delete",
-	}),
-	online_catalog_cache_clear: Object.freeze({
-		idempotencyKey: "forbidden",
-		retryClass: "non-idempotent",
-		cancellable: true,
-		retryCrashBeforeAccept: false,
-		wireName: "online.catalog.cache.clear",
-	}),
 	host_plugin_effect_scan: Object.freeze({
 		idempotencyKey: "optional",
 		retryClass: "idempotent",
@@ -164,13 +108,6 @@ export type CancellationDecision =
 	| "already_finished";
 
 export type CapabilitySet = ReadonlyArray<string>;
-
-export type ConnectivityStatusDto = {
-	checked_at: string;
-	error_message?: string | null;
-	label: string;
-	state: string;
-};
 
 export type EventEnvelope = {
 	payload: EventPayload;

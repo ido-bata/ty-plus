@@ -58,10 +58,7 @@
 		"complete": "Complete",
 		"failed": "Failed",
 		"ready": "Ready",
-		"offline": "Offline",
-		"online": "Online",
-		"syncing": "Syncing...",
-		"synced": "Synced"
+		"offline": "Offline"
 	},
 	"settings": {
 		"optional": "optional",

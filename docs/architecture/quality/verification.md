@@ -29,7 +29,7 @@ See [workspace-class-hooks-check.md](./workspace-class-hooks-check.md) for integ
   `buildDevelopmentWorker()` だけで、従来は `build:cep:dev` の中身にしか存在しなかった
   （Issue #191）。ゲートが要求する成果物をゲート自身が作る。
 - Windows / macOS では artifact を build する。その他の host では
-  **理由付きで skip** を記録する — `verify:online-gateway:package` の
+  **理由付きで skip** を記録する — `verify:operation-worker:package` の
   host-artifact probe が同じ条件で SKIP を記録し、
   `check:rust-workspace` も host-independent crate のみを走らせるため。
   silent な skip は既有の欠陥クラス（#175 / #179）と同じなので禁止。
@@ -66,8 +66,7 @@ Storybook の screenshot capture 成功は視覚合格を意味しない。実 D
 | --- | --- |
 | build / manifest / runtime wiring | [`tests/bootstrap-shell.test.ts`](../../../tests/bootstrap-shell.test.ts), [`tests/cep-dev-bundle.test.ts`](../../../tests/cep-dev-bundle.test.ts), [`tests/platform-graph.test.ts`](../../../tests/platform-graph.test.ts), [`tests/host-detection.test.ts`](../../../tests/host-detection.test.ts) |
 | storage / support root / workspace files | [`tests/support-root-service.test.ts`](../../../tests/support-root-service.test.ts), [`tests/workspace-file-service.test.ts`](../../../tests/workspace-file-service.test.ts), [`tests/workspace-settings-root-resolution.test.ts`](../../../tests/workspace-settings-root-resolution.test.ts), [`tests/workspace-storage.test.ts`](../../../tests/workspace-storage.test.ts) |
-| cloud / Supabase | [`tests/supabase-gateway.test.ts`](../../../tests/supabase-gateway.test.ts), [`tests/typlus-edge-market.test.ts`](../../../tests/typlus-edge-market.test.ts), [`tests/typlus-notifications-db.test.ts`](../../../tests/typlus-notifications-db.test.ts) |
-| licensing | [`tests/licensing-features.test.ts`](../../../tests/licensing-features.test.ts), [`tests/licensing-package.test.ts`](../../../tests/licensing-package.test.ts), [`tests/licensing-ui.test.tsx`](../../../tests/licensing-ui.test.tsx) |
+| online feed（notification / update） | `src/management/online/**/*.test.ts(x)`（static feed のみ。catalog / Supabase 系は #193 で撤去済み） |
 | workspace UI / state | [`tests/workspace-panel-state.test.ts`](../../../tests/workspace-panel-state.test.ts), [`tests/workspace-panel-settings.test.ts`](../../../tests/workspace-panel-settings.test.ts), [`tests/workspace-render-groups.test.ts`](../../../tests/workspace-render-groups.test.ts), [`tests/workspace-widget-selection-events.test.ts`](../../../tests/workspace-widget-selection-events.test.ts) |
 
 ## release gate
@@ -77,7 +76,7 @@ Storybook の screenshot capture 成功は視覚合格を意味しない。実 D
 1. `bun run ci` が通ること
 2. AE only と docs の固定スコープに反する active code が放置されていないこと
 3. data shape を変えた場合、対応する定義元・使用元の path が `docs/architecture/data/` に追記されていること
-4. cloud を商品価値として使う場合、Supabase remote path が fixture ではなく deployment 前提で確認されていること
+4. 提供 online surface は静的 feed（通知・更新）のみであり、catalog / sync / licensing 系の unprovided 機能が再導入されていないこと（#193）
 5. Claude / Codex の最終レビューに耐える説明責務と test coverage があること
 
 ## CI gate の階層（Issue #167）

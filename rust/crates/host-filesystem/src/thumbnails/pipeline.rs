@@ -40,8 +40,8 @@ const SEQUENCE_FRAMES: usize = 8;
 /// Placeholder timestamp emitted into [`MetaMarker::generated_at`].
 ///
 /// `chrono` is not a direct dependency of `host-filesystem` (it is a
-/// transitive dep through `ty-plus-online` and `ty-plus-storage`, but the
-/// pipeline must not pull it in directly). A deterministic constant keeps
+/// transitive dep through `ty-plus-storage`, but the pipeline must not
+/// pull it in directly). A deterministic constant keeps
 /// the meta marker reproducible across runs without adding a dependency;
 /// a future task can replace this with a real clock without breaking
 /// the marker JSON shape.

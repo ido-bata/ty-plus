@@ -69,10 +69,6 @@ const backgroundDialogSource = fs.readFileSync(
 	new URL("../../workspace/background/Dialog.tsx", import.meta.url),
 	"utf8",
 );
-const presetLibrarySource = fs.readFileSync(
-	new URL("../../online/catalog/Dialog.tsx", import.meta.url),
-	"utf8",
-);
 const notificationsSource = fs.readFileSync(
 	new URL("../../online/notification/Center.tsx", import.meta.url),
 	"utf8",
@@ -160,10 +156,7 @@ describe("unified workspace context menu composition", () => {
 		expect(dialogRootSource).toContain("registerCepJsonContextMenuSurface");
 	});
 
-	test("keeps shell catalog and message dialogs on explicit context menus", () => {
-		expect(presetLibrarySource).toContain("data-surface-id={SURFACE_ID}");
-		expect(presetLibrarySource).toContain("CTX.viewGallery");
-		expect(presetLibrarySource).toContain("checkable: true");
+	test("keeps the message dialog on an explicit context menu", () => {
 		expect(notificationsSource).toContain('id: "ctx.close"');
 		expect(notificationsSource).toContain("checked: isRead");
 	});

@@ -3,9 +3,8 @@ import path from "node:path";
 
 import react from "@vitejs/plugin-react";
 import Icons from "unplugin-icons/vite";
-import { type Plugin, defineConfig, loadEnv } from "vite";
+import { defineConfig, type Plugin } from "vite";
 import { type CepOptions, cep, runAction } from "vite-cep-plugin";
-import { LOGGER_MODULE_PATH_SUFFIX } from "./src/management/debug/logger.js";
 import cepConfig, {
 	OPERATION_WORKER_EXPECTED_TRUST_MODE,
 } from "./cep.config.js";
@@ -16,6 +15,7 @@ import {
 	ensureCepDevRedirectPlugin,
 	stripCepDevRedirectPlugin,
 } from "./scripts/utils/vite-plugin-strip-cep-dev-redirect.js";
+import { LOGGER_MODULE_PATH_SUFFIX } from "./src/management/debug/logger.js";
 
 const __dirname = import.meta.dirname;
 
@@ -38,9 +38,7 @@ const __dirname = import.meta.dirname;
  * `LOGGER_MODULE_PATH_SUFFIX` is imported from the module itself so the
  * plugin and the codebase cannot drift.
  */
-const dropConsoleLogInfoPlugin = (
-	loggerWhitelistSuffix: string,
-): Plugin => ({
+const dropConsoleLogInfoPlugin = (loggerWhitelistSuffix: string): Plugin => ({
 	name: "ty-plus:drop-console-log-info",
 	transform(code, id) {
 		if (!isProduction) return null;
@@ -80,7 +78,8 @@ const APP_VERSION = pkg.version;
  * downgrade and never offer). An unrecognised suffix is a build error, not a
  * silent fallback.
  */
-const releaseVersion = (process.env.TY_PLUS_RELEASE_VERSION ?? "").trim() || APP_VERSION;
+const releaseVersion =
+	(process.env.TY_PLUS_RELEASE_VERSION ?? "").trim() || APP_VERSION;
 const releaseChannelFromVersion =
 	/(?:-(beta|insider)\.\d+)?$/.exec(releaseVersion)?.[1] ?? "stable";
 const releaseChannelEnv = (process.env.TY_PLUS_RELEASE_CHANNEL ?? "").trim();
@@ -112,35 +111,7 @@ const enableCepsManifestPosition = /^(1|true|yes)$/i.test(
 	String(process.env.CEP_MANIFEST_POSITION ?? ""),
 );
 
-// Load root `.env` for `__TY_PLUS_DEV_ENV__` injection.
-// `loadEnv` searches `envDir` (set to `__dirname` = repo root) and respects `mode`.
-// For production builds, `process.env.NODE_ENV === "production"` means `mode = production`,
-// so `.env.production` / `.env.production.local` take priority over `.env`.
-const loadedEnv = loadEnv(
-	isProduction ? "production" : "development",
-	__dirname,
-	"",
-);
-
 const makeDefines = (): Record<string, string> => {
-	// Keys that mirror CepDevEnv (used at runtime by readCepDevEnv()).
-	const supabaseUrl = loadedEnv.SUPABASE_URL ?? "";
-	const publishableKey =
-		loadedEnv.SUPABASE_PUBLISHABLE_KEY?.trim() ||
-		loadedEnv.SUPABASE_ANON_KEY?.trim() ||
-		"";
-	const tyPlusApiBase = loadedEnv.TY_PLUS_API_BASE ?? "";
-	const tyPlusMediaBaseUrl = loadedEnv.TY_PLUS_MEDIA_BASE_URL ?? "";
-
-	const cepDevEnv = {
-		...(supabaseUrl ? { SUPABASE_URL: supabaseUrl } : {}),
-		...(publishableKey ? { SUPABASE_PUBLISHABLE_KEY: publishableKey } : {}),
-		...(tyPlusApiBase ? { TY_PLUS_API_BASE: tyPlusApiBase } : {}),
-		...(tyPlusMediaBaseUrl
-			? { TY_PLUS_MEDIA_BASE_URL: tyPlusMediaBaseUrl }
-			: {}),
-	};
-
 	return {
 		__APP_VERSION__: JSON.stringify(APP_VERSION),
 		// Numeric CEP version stays independent of the SemVer GitHub tag.
@@ -149,7 +120,6 @@ const makeDefines = (): Record<string, string> => {
 		// misconfigured prerelease build silently ship as `stable`.
 		__TY_PLUS_RELEASE_VERSION__: JSON.stringify(releaseVersion),
 		__TY_PLUS_RELEASE_CHANNEL__: JSON.stringify(releaseChannel),
-		__TY_PLUS_DEV_ENV__: JSON.stringify(cepDevEnv),
 		// Inline `process.env.NODE_ENV` so the existing production guards
 		// (`if (process.env.NODE_ENV === "production") return;`) get folded
 		// to unconditional returns by esbuild. Keeps dev logs out of the
@@ -204,10 +174,7 @@ cepConfig.panels.map((panel) => {
 // `assetFileNames` below so the appearance boot can pin the link href.
 const SHELL_CSS_ENTRY = "cep-shell";
 {
-	const shellCssPath = path.resolve(
-		root,
-		"management/panel/styles/app.css",
-	);
+	const shellCssPath = path.resolve(root, "management/panel/styles/app.css");
 	if (!seenInputs.has(shellCssPath)) {
 		seenInputs.add(shellCssPath);
 		input[SHELL_CSS_ENTRY] = shellCssPath;

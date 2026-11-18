@@ -49,10 +49,6 @@
 		"placeholder": "Scrivi per cercare...",
 		"empty": "Nessuna preimpostazione trovata"
 	},
-	"online": {
-		"loading": "Caricamento...",
-		"empty": "Nessuna preimpostazione online disponibile"
-	},
 	"presetTool": {
 		"form": {
 			"presetId": "ID Preimpostazione",
@@ -152,7 +148,6 @@
 		"animationLabel": "Animazione",
 		"layerCompLabel": "Layer/Comp",
 		"codeLabel": "Codice",
-		"presetLibrary": "Libreria preimpostazioni",
 		"messages": "Messaggi",
 		"settings": "Impostazioni",
 		"debugConsole": "Console di debug",

@@ -1,11 +1,12 @@
 /**
  * Boot-time feature flags — Issue #131.
  *
- * The boot path used to fire two AE round-trips unconditionally on a
- * successful cloud-gateway boot: a connectivity probe and an empty
- * catalog probe. Combined with the startup preset asset scan, those
- * three host calls flooded the AE main thread on first paint and
- * froze AE UI on Windows AE 2026.
+ * The boot path must not fire diagnostic host round-trips by default:
+ * an unconditional probe flood froze the AE main thread on first
+ * paint on Windows AE 2026. The cloud-gateway probes this flag
+ * originally gated were removed with the unprovided online surface
+ * (#193); the flag now gates the remaining opt-in boot diagnostics
+ * (e.g. the ExtendScript eval probe, Issue #138).
  *
  * Stability now takes priority over diagnostic convenience:
  *
@@ -27,7 +28,7 @@
  *    default never fires boot-time probes.
  *
  * `isBootProbeEnabled()` collapses the resolution into a boolean for
- * the call site in `tryBuildCloudGateway`.
+ * call sites that only need the on/off decision.
  */
 
 const ENABLED_VALUES: ReadonlySet<string> = new Set(["on", "1", "true", "yes"]);
@@ -73,11 +74,10 @@ export const readBootProbeFlag = (): BootProbeFlag => {
 };
 
 /**
- * Whether the boot-time connectivity / catalog probes should fire.
+ * Whether boot-time diagnostic probes should fire.
  *
  * Returns `true` only for an explicit `TY_PLUS_BOOT_PROBES=on` (or
- * equivalent). Default `false`. Used by `tryBuildCloudGateway` to
- * decide whether to fire post-boot probes.
+ * equivalent). Default `false`.
  */
 export const isBootProbeEnabled = (): boolean => readBootProbeFlag() === "on";
 

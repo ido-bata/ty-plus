@@ -63,7 +63,7 @@ describe("persistFolderGroupPreset — offline-core (issue 139)", () => {
 });
 
 describe("onboarding preset import — offline-core (issue 139)", () => {
-	it("does not require the cloud gateway for preset import", () => {
+	it("does not require online services for preset import", () => {
 		expect(onboardingViewSource).not.toMatch(/\bgetDataServices\s*\(/);
 		expect(onboardingViewSource).toMatch(
 			/import\s*\{[^}]*\bgetLocalPresetCatalog\b[^}]*\}\s*from\s*["']@\/management\/preset\/repository\/local-catalog["']/,

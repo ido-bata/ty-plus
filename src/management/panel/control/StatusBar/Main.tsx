@@ -11,7 +11,6 @@ import type { SurfaceState } from "@/management/workspace/state";
 import type { Snapshot } from "@/management/workspace/undo/history";
 import { Icon, IconButton } from "@/shared/component";
 import {
-	Cloud,
 	Layers,
 	Library,
 	MessageSquare,
@@ -294,15 +293,6 @@ export const StatusBar = memo(function StatusBarImpl(
 					className={iconBtnSize}
 				>
 					<Icon icon={Library} size={3} />
-				</IconButton>
-				<IconButton
-					data-ws-action="open-dialog"
-					data-dialog-kind="presetLibrary"
-					title="Preset Library (Online)"
-					size="sm"
-					className={iconBtnSize}
-				>
-					<Icon icon={Cloud} size={3} />
 				</IconButton>
 				<IconButton
 					data-ws-action="toggle-console"

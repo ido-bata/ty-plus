@@ -7,18 +7,16 @@ import {
 	useRef,
 	useState,
 } from "react";
-import { useTranslation } from "react-i18next";
 import {
 	type CepMenuPayload,
 	registerCepJsonContextMenuSurface,
 } from "@/management/dialog/dialogs/context-menu";
-import type { NotificationSummary } from "@/management/online/contract";
 import { fetchNotificationFeed } from "@/management/online/notification/feed";
+import type { NotificationSummary } from "@/management/online/notification/notifications";
 import {
 	loadNotificationsStore,
 	saveNotificationsStore,
 } from "@/management/online/notification/notifications";
-import { tryGetDataServices } from "@/management/workspace/services";
 import { IconButton } from "@/shared/component/controls/IconButton";
 import { Icon } from "@/shared/component/icons/Icon";
 import { cx } from "@/shared/util/cx";
@@ -197,14 +195,6 @@ const listItemTitleClass = css({
 	fontWeight: "medium",
 	color: "text.primary",
 	truncate: true,
-});
-const listItemFixtureBadgeClass = css({
-	marginLeft: "2",
-	borderRadius: "shell-sm",
-	backgroundColor: "surface.warning/20",
-	paddingInline: "2",
-	paddingBlock: "0.5",
-	fontSize: "xs",
 });
 const listItemSummaryClass = css({
 	fontSize: "xs",
@@ -395,211 +385,15 @@ const saveLocalStore = async (store: {
 	await saveNotificationsStore(window, store);
 };
 
-// ── Gateway helpers ──────────────────────────────────────────────────────────
-
-const _loadNotifications = async (
-	gateway: NotificationsGateway,
-): Promise<
-	{ ok: true; remote: NotificationSummary[] } | { ok: false; error: unknown }
-> => {
-	try {
-		if (!gateway.listNotifications) {
-			return { ok: false, error: new Error("listNotifications unavailable") };
-		}
-		const remote = await gateway.listNotifications();
-		return { ok: true, remote };
-	} catch (e) {
-		return { ok: false, error: e };
-	}
-};
-
-const _loadBlocks = async (
-	gateway: NotificationsGateway | undefined,
-	notificationId: string,
-): Promise<
-	{ ok: true; blocks: NotificationBlock[] } | { ok: false; error: unknown }
-> => {
-	try {
-		if (!gateway?.getNotificationBlocks) {
-			return {
-				ok: false,
-				error: new Error("getNotificationBlocks unavailable"),
-			};
-		}
-		const blocks = await gateway.getNotificationBlocks(notificationId);
-		return { ok: true, blocks: blocks as NotificationBlock[] };
-	} catch (e) {
-		return { ok: false, error: e };
-	}
-};
-
-interface NotificationsGateway {
-	listNotifications?: () => Promise<NotificationSummary[]>;
-	getNotificationBlocks?: (notificationId: string) => Promise<unknown[]>;
-}
-
-// ── Block types ───────────────────────────────────────────────────────────────
-
-type NotificationBlock = {
-	id: string;
-	type: string;
-	[key: string]: unknown;
-};
-
-type RichText = {
-	plain_text: string;
-	annotations?: {
-		bold?: boolean;
-		italic?: boolean;
-		code?: boolean;
-		underline?: boolean;
-		strikethrough?: boolean;
-	};
-	href?: string | null;
-};
-
-// ── Rich text rendering ───────────────────────────────────────────────────────
-
-function renderRichText(richText: RichText[]): React.ReactNode {
-	if (!richText || richText.length === 0) return null;
-	return richText.map((rt, _i) => {
-		let text: React.ReactNode = rt.plain_text;
-		if (rt.annotations?.bold) text = <strong>{text}</strong>;
-		if (rt.annotations?.italic) text = <em>{text}</em>;
-		if (rt.annotations?.code) {
-			text = <code className={codeClass}>{text}</code>;
-		}
-		if (rt.annotations?.underline) text = <u>{text}</u>;
-		if (rt.annotations?.strikethrough) text = <s>{text}</s>;
-		if (rt.href) {
-			text = (
-				<a
-					href={rt.href}
-					target="_blank"
-					rel="noopener noreferrer"
-					className={linkClass}
-				>
-					{text}
-				</a>
-			);
-		}
-		return <span key={rt.plain_text}>{text}</span>;
-	});
-}
-
-// ── Block rendering ───────────────────────────────────────────────────────────
-
-function renderBlock(block: NotificationBlock): React.ReactNode {
-	switch (block.type) {
-		case "paragraph": {
-			const rt =
-				(block.paragraph as { rich_text?: RichText[] })?.rich_text ?? [];
-			if (rt.length === 0) return <p className={paragraphEmptyClass} />;
-			return <p className={paragraphClass}>{renderRichText(rt)}</p>;
-		}
-		case "heading_1": {
-			const rt =
-				(block.heading_1 as { rich_text?: RichText[] })?.rich_text ?? [];
-			return <h1 className={heading1Class}>{renderRichText(rt)}</h1>;
-		}
-		case "heading_2": {
-			const rt =
-				(block.heading_2 as { rich_text?: RichText[] })?.rich_text ?? [];
-			return <h2 className={heading2Class}>{renderRichText(rt)}</h2>;
-		}
-		case "heading_3": {
-			const rt =
-				(block.heading_3 as { rich_text?: RichText[] })?.rich_text ?? [];
-			return <h3 className={heading3Class}>{renderRichText(rt)}</h3>;
-		}
-		case "bulleted_list_item": {
-			const rt =
-				(block.bulleted_list_item as { rich_text?: RichText[] })?.rich_text ??
-				[];
-			return <li className={listDiscItemClass}>{renderRichText(rt)}</li>;
-		}
-		case "numbered_list_item": {
-			const rt =
-				(block.numbered_list_item as { rich_text?: RichText[] })?.rich_text ??
-				[];
-			return <li className={listDecimalItemClass}>{renderRichText(rt)}</li>;
-		}
-		case "divider": {
-			return <hr className={dividerClass} />;
-		}
-		case "callout": {
-			const rt = (block.callout as { rich_text?: RichText[] })?.rich_text ?? [];
-			const icon = (block.callout as { icon?: { emoji?: string } })?.icon
-				?.emoji;
-			return (
-				<div className={calloutClass}>
-					{icon && <span className={calloutIconClass}>{icon}</span>}
-					<span className={calloutBodyClass}>{renderRichText(rt)}</span>
-				</div>
-			);
-		}
-		case "quote": {
-			const rt = (block.quote as { rich_text?: RichText[] })?.rich_text ?? [];
-			return (
-				<blockquote className={quoteClass}>
-					<span className={quoteTextClass}>{renderRichText(rt)}</span>
-				</blockquote>
-			);
-		}
-		case "image": {
-			const img = block.image as {
-				type?: string;
-				external?: { url?: string };
-				file?: { url?: string };
-			};
-			const src = img?.external?.url ?? img?.file?.url;
-			if (!src) return null;
-			return (
-				<div className={imageWrapClass}>
-					<img src={src} alt="" className={imageClass} loading="lazy" />
-				</div>
-			);
-		}
-		case "toggle": {
-			const rt = (block.toggle as { rich_text?: RichText[] })?.rich_text ?? [];
-			return (
-				<details className={detailsClass}>
-					<summary className={detailsSummaryClass}>
-						{renderRichText(rt)}
-					</summary>
-					<div className={detailsBodyClass}>Toggle content</div>
-				</details>
-			);
-		}
-		default:
-			return null;
-	}
-}
-
-function BlockList({ blocks }: { blocks: NotificationBlock[] }) {
-	if (blocks.length === 0) {
-		return <p className={noContentClass}>No content</p>;
-	}
-	return (
-		<div className={blockListClass}>
-			{blocks.map((block) => (
-				<div key={block.id}>{renderBlock(block)}</div>
-			))}
-		</div>
-	);
-}
-
 // ── Notification sub-components ───────────────────────────────────────────────
 
 function NotificationListItem(props: {
 	item: NotificationSummary;
 	readAtById: Record<string, string>;
 	onOpen: (item: NotificationSummary) => void;
-	isFixture?: boolean;
 }): JSX.Element {
-	const { item, readAtById, onOpen, isFixture } = props;
+	const { item, readAtById, onOpen } = props;
 	const unread = !readAtById[item.notificationId];
-	const { t } = useTranslation("online");
 	return (
 		<li key={item.notificationId}>
 			<button
@@ -607,17 +401,11 @@ function NotificationListItem(props: {
 				className={listItemButtonClass(unread)}
 				data-notification-id={item.notificationId}
 				onClick={() => void onOpen(item)}
-				style={isFixture ? { opacity: 0.7 } : undefined}
 			>
 				<div className={listItemHeaderClass}>
 					<div className={listItemColumnClass}>
 						<div className={listItemTitleRowClass}>
 							<span className={listItemTitleClass}>{item.name}</span>
-							{isFixture && (
-								<span className={listItemFixtureBadgeClass}>
-									{t("notification.fixtureBadge")}
-								</span>
-							)}
 						</div>
 						{item.summary && (
 							<span className={listItemSummaryClass}>{item.summary}</span>
@@ -638,21 +426,11 @@ function NotificationListItem(props: {
 function NotificationDetailView(props: {
 	selected: NotificationSummary;
 	readAtById: Record<string, string>;
-	blocks: NotificationBlock[];
-	blocksLoading: boolean;
 	onClose: () => void;
 	onToggleRead: (id: string) => void;
 	onRefresh: () => void;
 }): JSX.Element {
-	const {
-		selected,
-		readAtById,
-		blocks,
-		blocksLoading,
-		onClose,
-		onToggleRead,
-		onRefresh,
-	} = props;
+	const { selected, readAtById, onClose, onToggleRead, onRefresh } = props;
 	const isRead = Boolean(readAtById[selected.notificationId]);
 	return (
 		<div className={detailContainerClass} data-surface-id="dialog-messages">
@@ -712,13 +490,15 @@ function NotificationDetailView(props: {
 				{selected.summary && (
 					<p className={detailSummaryClass}>{selected.summary}</p>
 				)}
-				{blocksLoading ? (
-					<div className={loadingStateClass}>
-						<Icon icon={LoaderCircle} size={16} className={spinningIconClass} />
-						<span className={mutedTextClass}>Loading…</span>
-					</div>
-				) : (
-					<BlockList blocks={blocks} />
+				{selected.url && (
+					<a
+						href={selected.url}
+						target="_blank"
+						rel="noopener noreferrer"
+						className={linkClass}
+					>
+						Open link
+					</a>
 				)}
 			</div>
 		</div>
@@ -732,8 +512,6 @@ export function NotificationCenter(): JSX.Element {
 	const [readAtById, setReadAtById] = useState<Record<string, string>>({});
 	const [selectedId, setSelectedId] = useState<string | null>(null);
 	const [loading, setLoading] = useState(false);
-	const [blocks, setBlocks] = useState<NotificationBlock[]>([]);
-	const [blocksLoading, setBlocksLoading] = useState(false);
 	const [initialized, setInitialized] = useState(false);
 
 	// Load from cache on mount
@@ -757,24 +535,9 @@ export function NotificationCenter(): JSX.Element {
 	);
 
 	const syncRemote = useCallback(async () => {
-		// R0 remote source: the static notification feed (Issue #8). The cloud
-		// gateway's listNotifications, when present, still wins — the feed is
-		// the backend-free fallback, not a second server.
+		// The static notification feed is the only remote source.
 		setLoading(true);
 		try {
-			// Issue #69: `getDataServices()` throws `GatewayBootRequiredError`
-			// when the cloud gateway never booted (R0 offline default). The
-			// gateway is optional here — the static feed is the fallback —
-			// so use the non-throwing variant and skip straight to the feed.
-			const gateway = tryGetDataServices()?.gateway;
-			if (gateway?.listNotifications) {
-				const result = await _loadNotifications(gateway);
-				if (result.ok) {
-					setItems(result.remote);
-					await saveLocalStore({ items: result.remote, readAtById });
-					return;
-				}
-			}
 			const feedItems = await fetchNotificationFeed();
 			if (feedItems !== null) {
 				setItems(feedItems);
@@ -823,22 +586,12 @@ export function NotificationCenter(): JSX.Element {
 				setReadAtById(next);
 				await saveLocalStore({ items, readAtById: next });
 			}
-
-			const gateway = tryGetDataServices()?.gateway;
-			setBlocksLoading(true);
-			setBlocks([]);
-			const result = await _loadBlocks(gateway, item.notificationId);
-			setBlocksLoading(false);
-			if (result.ok) {
-				setBlocks(result.blocks);
-			}
 		},
 		[items, readAtById],
 	);
 
 	const closeDetail = useCallback(() => {
 		setSelectedId(null);
-		setBlocks([]);
 	}, []);
 
 	const closeDetailRef = useRef(closeDetail);
@@ -953,8 +706,6 @@ export function NotificationCenter(): JSX.Element {
 			<NotificationDetailView
 				selected={selected}
 				readAtById={readAtById}
-				blocks={blocks}
-				blocksLoading={blocksLoading}
 				onClose={closeDetail}
 				onToggleRead={toggleRead}
 				onRefresh={() => syncRemoteRef.current()}
@@ -1006,7 +757,6 @@ export function NotificationCenter(): JSX.Element {
 								item={item}
 								readAtById={readAtById}
 								onOpen={openDetail}
-								isFixture={tryGetDataServices()?.gateway.isFixture === true}
 							/>
 						))}
 					</ul>

@@ -395,8 +395,7 @@ interface FixtureSpec {
 		| "catalog-entry"
 		| "workspace-layout"
 		| "group"
-		| "settings"
-		| "online-state";
+		| "settings";
 	readonly identifier: string;
 	readonly initialState: unknown;
 	readonly projectPath?: string;

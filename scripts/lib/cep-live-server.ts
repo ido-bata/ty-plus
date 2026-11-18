@@ -6,8 +6,6 @@ type BuildConfigWithAlias = Bun.BuildConfig & {
 	alias?: Record<string, string>;
 };
 
-type DevEnv = Record<string, string | undefined>;
-
 type StartCepLiveServerOptions = {
 	panelEntrypoint: string;
 	dialogEntrypoint?: string;
@@ -15,7 +13,6 @@ type StartCepLiveServerOptions = {
 	debugConsoleDialogEntrypoint?: string;
 	/** For `dialog/dialog-{presets,messages,settings}.html` (`workspace-shell-dialogs.js`) */
 	workspaceShellDialogsEntrypoint?: string;
-	env?: DevEnv;
 	host?: string;
 	port?: number;
 	watchRoots?: string[];
@@ -47,7 +44,6 @@ const encoder = new TextEncoder();
 const resolveOutputs = async (
 	panelEntrypoint: string,
 	dialogEntrypoint: string | undefined,
-	env: DevEnv,
 	extras?: {
 		debugConsoleDialogEntrypoint?: string;
 		workspaceShellDialogsEntrypoint?: string;
@@ -61,9 +57,6 @@ const resolveOutputs = async (
 			minify: false,
 			sourcemap: "external",
 			jsx: { runtime: "automatic", importSource: "react" },
-			define: {
-				__TY_PLUS_DEV_ENV__: JSON.stringify(env),
-			},
 			alias: {
 				"@ui": path.resolve("src", "js", "ui"),
 				"@infra": path.resolve("src", "js", "infra"),
@@ -135,7 +128,6 @@ export const startCepLiveServer = async ({
 	dialogEntrypoint,
 	debugConsoleDialogEntrypoint,
 	workspaceShellDialogsEntrypoint,
-	env = {},
 	host = "127.0.0.1",
 	port = 38912,
 	watchRoots,
@@ -147,7 +139,7 @@ export const startCepLiveServer = async ({
 	};
 	let assetState: LiveAssetState = {
 		revision: 0,
-		...(await resolveOutputs(panelEntrypoint, dialogEntrypoint, env, extras)),
+		...(await resolveOutputs(panelEntrypoint, dialogEntrypoint, extras)),
 	};
 	const clients = new Set<LiveClient>();
 	const watchers: FSWatcher[] = [];
@@ -164,7 +156,7 @@ export const startCepLiveServer = async ({
 	const rebuild = async () => {
 		assetState = {
 			revision: assetState.revision + 1,
-			...(await resolveOutputs(panelEntrypoint, dialogEntrypoint, env, extras)),
+			...(await resolveOutputs(panelEntrypoint, dialogEntrypoint, extras)),
 		};
 		broadcast("reload", { revision: assetState.revision });
 	};

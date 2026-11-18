@@ -2246,31 +2246,6 @@ const hostBundle = {
 	getEasingClipboardPath: wrapCallable(getEasingClipboardPath),
 	pasteKeyframeValues: wrapCallable(pasteKeyframeValues),
 	getLabelColorNames: wrapCallable(readLabelColorNames),
-
-	// Issue #147 round-3 Blocker 3 + round-4 Blocker B — host-state-
-	// oracle probes for the scenario-spec computer-use runner.  AE's
-	// scripting API does NOT expose `app.settingsVisibility` or
-	// `app.onlineState`; both were synthetic probes in round-2.
-	// Round-3 replaces them with real ExtendScript probes that read
-	// panel-published state out of `$.global`; round-4 (Blocker B)
-	// removes the settings-dialog probe (the AE native Settings
-	// dialog cannot be reliably probed from CEP — the panel state for
-	// the ty-plus CEP Settings dialog is now addressed via a panel-
-	// state-oracle `[data-settings-sidebar]` selector on the Gherkin
-	// step instead of a host-state-oracle probe).
-	//
-	// Published by the panel when the cloud gateway probe resolves to
-	// "reachable" / "degraded" / "unreachable".  Values: "online" /
-	// "degraded" / "offline".  AE itself does not have an
-	// `app.onlineState`; the panel keeps its own connectivity state
-	// (`runtime-gateway-health.ts`) and forwards every transition to
-	// `$.global.tyPlusOnlineState` via `runCepEvalScript` so the
-	// ExtendScript probe reads what production actually writes.
-	tyPlusProbeOnlineState: wrapCallable(() => {
-		const v = ($.global as { tyPlusOnlineState?: unknown })
-			.tyPlusOnlineState;
-		return { value: typeof v === "string" ? v : "offline" };
-	}),
 };
 
 $.global.__TY_PLUS_HOST__ = hostBundle;

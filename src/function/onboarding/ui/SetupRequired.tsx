@@ -3,7 +3,7 @@ import { Animation } from "@/function/onboarding/ui/Animation";
 import { useCep } from "@/management/ae/cep/contexts/Context";
 import { registerCepJsonContextMenuSurface } from "@/management/dialog/dialogs/context-menu";
 import { useTranslation } from "@/management/i18n/Context";
-import { usePublicLink } from "@/management/online/public-link/usePublicLink";
+import { openUrlInDefaultBrowser } from "@/management/workspace/hooks/helpers";
 import { Button } from "@/shared";
 import { css } from "@/styled-system/css";
 
@@ -61,6 +61,9 @@ const buttonRowClass = css({
 	gap: "2",
 });
 
+const USER_MANUAL_URL =
+	"https://github.com/ido-bata/ty-plus/blob/main/docs/user-guide/index.md";
+
 export function SetupRequired(): JSX.Element {
 	const { t } = useTranslation("onboarding");
 	const { panelSurfaceId } = useCep();
@@ -71,12 +74,9 @@ export function SetupRequired(): JSX.Element {
 		window.location.reload();
 	}, []);
 
-	const {
-		open: openManual,
-		status,
-		url: manualUrl,
-	} = usePublicLink("user-manual");
-	const manualDisabled = manualUrl == null && status === "loading";
+	const openManual = useCallback(() => {
+		openUrlInDefaultBrowser(USER_MANUAL_URL);
+	}, []);
 
 	// Surface for the SetupRequired view provides a ty-plus-controlled right
 	// click with the actions that matter in this state: open the manual
@@ -91,7 +91,7 @@ export function SetupRequired(): JSX.Element {
 					{
 						id: "ty.ctx.setup-required.open-manual",
 						label: "Open Manual",
-						enabled: manualUrl != null,
+						enabled: true,
 					},
 					{
 						id: "ty.ctx.setup-required.refresh",
@@ -107,7 +107,7 @@ export function SetupRequired(): JSX.Element {
 				}
 			},
 		});
-	}, [panelSurfaceId, openManual, manualUrl, handleRefreshClick]);
+	}, [panelSurfaceId, openManual, handleRefreshClick]);
 
 	return (
 		<div className={wrapperClass} data-testid="setup-required">
@@ -126,11 +126,8 @@ export function SetupRequired(): JSX.Element {
 						uiSize="sm"
 						fullWidth
 						onClick={openManual}
-						disabled={manualDisabled}
 					>
-						{manualUrl
-							? t("secondaryPanel.userManual")
-							: t("secondaryPanel.linkUnavailable")}
+						{t("secondaryPanel.userManual")}
 					</Button>
 					<Button
 						type="button"

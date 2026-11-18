@@ -49,10 +49,6 @@
 		"placeholder": "Escribe para buscar...",
 		"empty": "No se encontraron preajustes"
 	},
-	"online": {
-		"loading": "Cargando...",
-		"empty": "No hay preajustes en línea disponibles"
-	},
 	"presetTool": {
 		"form": {
 			"presetId": "ID del preajuste",
@@ -152,7 +148,6 @@
 		"animationLabel": "Animación",
 		"layerCompLabel": "Capa/Comp",
 		"codeLabel": "Código",
-		"presetLibrary": "Biblioteca de preajustes",
 		"messages": "Mensajes",
 		"settings": "Configuración",
 		"debugConsole": "Consola de depuración",

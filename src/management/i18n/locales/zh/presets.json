@@ -49,10 +49,6 @@
 		"placeholder": "输入以搜索…",
 		"empty": "未找到预设"
 	},
-	"online": {
-		"loading": "加载中…",
-		"empty": "无在线预设"
-	},
 	"presetTool": {
 		"form": {
 			"presetId": "预设 ID",
@@ -152,7 +148,6 @@
 		"animationLabel": "动画",
 		"layerCompLabel": "图层/合成",
 		"codeLabel": "代码",
-		"presetLibrary": "预设库",
 		"messages": "消息",
 		"settings": "设置",
 		"debugConsole": "调试控制台",

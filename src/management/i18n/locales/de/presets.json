@@ -49,10 +49,6 @@
 		"placeholder": "Tippen zum Suchen…",
 		"empty": "Keine Voreinstellungen gefunden"
 	},
-	"online": {
-		"loading": "Wird geladen…",
-		"empty": "Keine Online-Voreinstellungen verfügbar"
-	},
 	"presetTool": {
 		"form": {
 			"presetId": "Preset-ID",
@@ -152,7 +148,6 @@
 		"animationLabel": "Animation",
 		"layerCompLabel": "Ebene/Komposition",
 		"codeLabel": "Code",
-		"presetLibrary": "Voreinstellungs-Bibliothek",
 		"messages": "Nachrichten",
 		"settings": "Einstellungen",
 		"debugConsole": "Debug-Konsole",

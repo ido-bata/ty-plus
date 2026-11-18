@@ -89,9 +89,9 @@
 
 | ID | ユースケース | 主な確認対象 | 自動化 | OS | 状態 | 証跡/Issue |
 | --- | --- | --- | --- | --- | --- | --- |
-| UC-F01 | preset library：検索・view 切替・download → local catalog | catalog DOM、download 完了、presets.json 反映 | semi | both | 未実施 | guide既知: 「Download complete」だが file 未保存の報告あり |
+| ~~UC-F01~~ | preset library：検索・view 切替・download → local catalog | — | — | — | 対象外 | #193 で未提供面を構造撤去 |
 | UC-F02 | notification center：list/detail/既読/sync | cache/notifications.json、DOM | semi | both | 未実施 | |
-| UC-F03 | offline/degraded → core 機能継続 | gateway なしで workspace/preset が動く | semi | both | 未実施 | #10 D-15, online-degraded.feature |
+| UC-F03 | offline/feed 取得失敗 → core 機能継続 | feed なしで workspace/preset が動く | semi | both | 未実施 | #10 D-15（online-degraded.feature は #193 で削除） |
 | UC-F04 | update feed 確認 | releases API 結果表示 | semi | both | 未実施 | #10 D-13 |
 | UC-F05 | notification feed 確認 | 公式通知表示 | semi | both | 未実施 | #10 D-14 |
 
