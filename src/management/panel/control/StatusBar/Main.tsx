@@ -239,6 +239,7 @@ export const StatusBar = memo(function StatusBarImpl(
 						open={snapshotsOpen}
 						onClose={() => setSnapshotsOpen(false)}
 						anchorRef={snapshotsAnchorRef}
+						id="statusbar-snapshots"
 						align="end"
 						maxHeight="60vh"
 						// The status bar lives inside the Control Panel

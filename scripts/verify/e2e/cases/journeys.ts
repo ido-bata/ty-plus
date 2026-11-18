@@ -530,6 +530,29 @@ export const journeySuiteCases: E2ECase[] = [
 					),
 				);
 
+				// The status-bar toggle title mirrors ui.snapshots — polling it
+				// distinguishes "listSnapshots returned empty/rejected" (Issue
+				// #223) from a dropdown rendering problem.
+				let snapTitle = "";
+				const titleDeadline = Date.now() + 15_000;
+				while (Date.now() < titleDeadline) {
+					snapTitle = String(
+						(await ctx.evalJs(
+							panel,
+							`document.querySelector('[data-ws-action="toggle-snapshots"]')?.getAttribute("title") ?? ""`,
+						)) ?? "",
+					);
+					if (snapTitle && !snapTitle.includes("(none)")) break;
+					await sleep(700);
+				}
+				checks.push(
+					check(
+						"snapshot list visible in status bar",
+						Boolean(snapTitle) && !snapTitle.includes("(none)"),
+						`title=${snapTitle || "missing"}`,
+					),
+				);
+
 				// 3. Mutate: second widget tile.
 				const { instanceId: second } = await addWidgetViaDialog(ctx, "info");
 				checks.push(

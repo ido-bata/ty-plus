@@ -58,10 +58,7 @@ const openSnapshotsDropdown = async (
 	surface: LiveSurface,
 ): Promise<boolean> => {
 	const alreadyOpen = await ctx
-		.evalJs(
-			surface,
-			'Boolean(document.querySelector("[data-snapshots-dropdown]"))',
-		)
+		.evalJs(surface, 'Boolean(document.querySelector("#statusbar-snapshots"))')
 		.catch(() => false);
 	if (alreadyOpen) return true;
 	for (let attempt = 0; attempt < 4; attempt++) {
@@ -69,7 +66,7 @@ const openSnapshotsDropdown = async (
 		const open = await waitForDom(
 			ctx,
 			surface,
-			'Boolean(document.querySelector("[data-snapshots-dropdown]"))',
+			'Boolean(document.querySelector("#statusbar-snapshots"))',
 			8_000,
 		);
 		if (open) return true;
@@ -77,7 +74,7 @@ const openSnapshotsDropdown = async (
 		// next iteration toggles again, so re-check state first.
 		const isOpen = await ctx.evalJs(
 			surface,
-			'Boolean(document.querySelector("[data-snapshots-dropdown]"))',
+			'Boolean(document.querySelector("#statusbar-snapshots"))',
 		);
 		if (isOpen) return true;
 		await sleep(1_000);
