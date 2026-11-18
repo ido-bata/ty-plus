@@ -52,30 +52,44 @@ export const openSettingsDialog = async (
 	ctx: E2EContext,
 ): Promise<LiveSurface | null> => {
 	const panel = await ctx.requireSurface({ surfaceId: "panel-1" });
-	await ctx.evalJs(
-		panel,
-		`(() => {
-			const btn = document.querySelector(
-				'[data-ws-action="open-dialog"][data-dialog-kind="settings"]'
+	// A previous dialog that did not fully close can wedge the CEP dialog
+	// surface slot — close stale settings dialogs, then retry the open once
+	// before giving up (Issue #223: UC-J06 flake "settings dialog did not
+	// open" late in a multi-case suite run).
+	for (let attempt = 0; attempt < 2; attempt++) {
+		if (attempt > 0) {
+			const stale = (await listLiveSurfaces(await ctx.surfaces())).filter(
+				(s) => s.surfaceId === "dialog-settings",
 			);
-			if (!btn) return "no-button";
-			btn.click();
-			return "clicked";
-		})()`,
-	);
-	const deadline = Date.now() + 15_000;
-	while (Date.now() < deadline) {
-		await sleep(700);
-		const live = await listLiveSurfaces(await ctx.surfaces());
-		const dialog = live.find((s) => s.surfaceId === "dialog-settings");
-		if (dialog) {
-			const mounted = await waitForDom(
-				ctx,
-				dialog,
-				`document.body ? document.body.innerHTML.length > 500 : false`,
-				10_000,
-			);
-			if (mounted) return dialog;
+			for (const s of stale) await closeSurfaceBestEffort(ctx, s);
+			await sleep(1_000);
+		}
+		const clicked = await ctx.evalJs(
+			panel,
+			`(() => {
+				const btn = document.querySelector(
+					'[data-ws-action="open-dialog"][data-dialog-kind="settings"]'
+				);
+				if (!btn) return "no-button";
+				btn.click();
+				return "clicked";
+			})()`,
+		);
+		if (clicked !== "clicked") return null;
+		const deadline = Date.now() + 15_000;
+		while (Date.now() < deadline) {
+			await sleep(700);
+			const live = await listLiveSurfaces(await ctx.surfaces());
+			const dialog = live.find((s) => s.surfaceId === "dialog-settings");
+			if (dialog) {
+				const mounted = await waitForDom(
+					ctx,
+					dialog,
+					`document.body ? document.body.innerHTML.length > 500 : false`,
+					10_000,
+				);
+				if (mounted) return dialog;
+			}
 		}
 	}
 	return null;
