@@ -21,6 +21,7 @@ import { MenuWidget } from "./Component";
 export default defineWidget({
 	type: "menu",
 	nameKey: "widgets.menu.name",
+	descriptionKey: "widgets.selector.descriptions.menu",
 	tutorial: {
 		summaryKey: "widgets.tutorial.menu.summary",
 		contentVersion: "1",

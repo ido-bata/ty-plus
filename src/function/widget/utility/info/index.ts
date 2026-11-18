@@ -16,6 +16,7 @@ import { PresetInfoWidget } from "./preset";
 defineWidget({
 	type: "info",
 	nameKey: "widgets.info.name",
+	descriptionKey: "widgets.selector.descriptions.info",
 	tutorial: {
 		summaryKey: "widgets.tutorial.info.summary",
 		contentVersion: "1",

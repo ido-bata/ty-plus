@@ -19,6 +19,7 @@ import { DirectoryBrowserWidget } from "./Component";
 const descriptor: WidgetDescriptor = {
 	type: "directory-browser",
 	nameKey: "widgets.directoryBrowser.name",
+	descriptionKey: "widgets.selector.descriptions.directory-browser",
 	tutorial: {
 		summaryKey: "widgets.tutorial.directory-browser.summary",
 		contentVersion: "1",

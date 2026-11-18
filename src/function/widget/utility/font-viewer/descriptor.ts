@@ -12,6 +12,7 @@ import { FontViewerWidget } from "./Component";
 defineWidget({
 	type: "font-viewer",
 	nameKey: "widgets.fontViewer.name",
+	descriptionKey: "widgets.selector.descriptions.font-viewer",
 	tutorial: {
 		summaryKey: "widgets.tutorial.font-viewer.summary",
 		contentVersion: "1",

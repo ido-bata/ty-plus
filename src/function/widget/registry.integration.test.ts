@@ -130,6 +130,7 @@ describe("Widget registry — defineWidget() called for every WIDGET_TYPE", () =
 
 type WidgetTutorialDescriptor = {
 	type: string;
+	descriptionKey?: string;
 	tutorial?: {
 		summaryKey: string;
 		contentVersion: string;
@@ -203,6 +204,14 @@ describe("Widget tutorial contract (#147 / #157)", () => {
 			).toBe(true);
 			expectResolvableString(enRoot, key, `${d.type} en`);
 			expectResolvableString(jaRoot, key, `${d.type} ja`);
+		}
+	});
+
+	it("descriptionKey resolves in en and ja widgets namespaces (#161)", () => {
+		for (const d of descriptors) {
+			if (!d.descriptionKey) continue;
+			expectResolvableString(enRoot, d.descriptionKey, `${d.type} en`);
+			expectResolvableString(jaRoot, d.descriptionKey, `${d.type} ja`);
 		}
 	});
 

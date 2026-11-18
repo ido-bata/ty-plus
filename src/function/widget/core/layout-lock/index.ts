@@ -13,6 +13,7 @@ import { LayoutLockWidget } from "./Component";
 export default defineWidget({
 	type: "layout-lock",
 	nameKey: "widgets.layoutLock.name",
+	descriptionKey: "widgets.selector.descriptions.layout-lock",
 	tutorial: {
 		summaryKey: "widgets.tutorial.layout-lock.summary",
 		contentVersion: "1",

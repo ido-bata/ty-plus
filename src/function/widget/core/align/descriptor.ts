@@ -14,6 +14,7 @@ import { Align } from "./Component";
 const descriptor = defineWidget({
 	type: "align",
 	nameKey: "widgets.align.name",
+	descriptionKey: "widgets.selector.descriptions.align",
 	tutorial: {
 		summaryKey: "widgets.tutorial.align.summary",
 		contentVersion: "1",
