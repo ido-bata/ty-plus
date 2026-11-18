@@ -14,9 +14,22 @@
 
 import { createLogger, type LogSource } from "@/management/debug/logger";
 
+/**
+ * Issue #71: on CEP hosts an escaping subscriber exception can surface
+ * only as "Uncaught [object Event]" — the rejected/thrown value IS a DOM
+ * Event. `String(event)` collapses to "[object Event]", so describe the
+ * event by its constructor name and `type` instead. Errors additionally
+ * carry the first stack frame so the bus entry points at a call site.
+ */
 const describeReason = (reason: unknown): string => {
 	if (reason instanceof Error) {
-		return `${reason.name}: ${reason.message}`;
+		const stackHead = reason.stack?.split("\n")[1]?.trim();
+		const base = `${reason.name}: ${reason.message}`;
+		return stackHead ? `${base} @ ${stackHead.slice(0, 200)}` : base;
+	}
+	if (typeof Event !== "undefined" && reason instanceof Event) {
+		const ctor = reason.constructor?.name ?? "Event";
+		return `${ctor}[${reason.type}]`;
 	}
 	return String(reason);
 };
@@ -49,6 +62,12 @@ export const installGlobalErrorReporting = (
 			action: "global:unhandledrejection",
 			context: {
 				reason: describeReason(event.reason),
+				reasonKind:
+					typeof Event !== "undefined" && event.reason instanceof Event
+						? `Event[${event.reason.type}]`
+						: event.reason instanceof Error
+							? "Error"
+							: typeof event.reason,
 			},
 		});
 	};

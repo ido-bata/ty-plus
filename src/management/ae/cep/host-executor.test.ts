@@ -12,7 +12,11 @@ import {
 	getEntries,
 } from "@/management/debug/logger";
 import { notificationStore } from "@/management/online/notification/service";
-import { ALLOWED_HOST_METHODS, createCepHostExecutor } from "./host-executor";
+import {
+	ALLOWED_HOST_METHODS,
+	createCepHostExecutor,
+	probeAfterEffectsEvalScript,
+} from "./host-executor";
 
 const isAlertOnlyScript = (script: string) =>
 	script.trimStart().startsWith("(function() {\n  try {\n    alert(");
@@ -917,5 +921,48 @@ describe("host bundle load coordinator", () => {
 		} finally {
 			vi.useRealTimers();
 		}
+	});
+});
+
+describe("evalScript result type guard (Issue #71)", () => {
+	test("a non-string callback value resolves as null and is logged", async () => {
+		_resetBusForTests();
+		const win = {
+			__adobe_cep__: {
+				evalScript: (_script: string, callback?: (result: string) => void) => {
+					// Some CEP hosts deliver a DOM Event instead of the script
+					// result — the same value reported as "Uncaught
+					// [object Event]".
+					callback?.(new Event("error") as unknown as string);
+				},
+			},
+		} as unknown as Window;
+
+		// "null" parses to a null probe result rather than throwing inside
+		// JSON.parse or leaking the Event into callers.
+		await expect(probeAfterEffectsEvalScript(win)).resolves.toBeNull();
+
+		const warns = getEntries().filter(
+			(e) => e.source === "host-bridge" && e.level === "warn",
+		);
+		expect(warns.some((e) => e.message.includes("non-string result"))).toBe(
+			true,
+		);
+	});
+
+	test("a string callback value still passes through unchanged", async () => {
+		_resetBusForTests();
+		const win = {
+			__adobe_cep__: {
+				evalScript: (_script: string, callback?: (result: string) => void) => {
+					callback?.('{"ok":true,"appName":"after effects"}');
+				},
+			},
+		} as unknown as Window;
+
+		await expect(probeAfterEffectsEvalScript(win)).resolves.toEqual({
+			ok: true,
+			appName: "after effects",
+		});
 	});
 });

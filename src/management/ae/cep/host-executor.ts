@@ -123,7 +123,30 @@ const runEvalScript = (win: Window, script: string) =>
 		}
 
 		evalScript(script, (result: string) => {
-			resolve(result ?? "null");
+			// Issue #71: some CEP hosts invoke the evalScript callback with a
+			// DOM Event (or another non-string) instead of the script result —
+			// the same value the host reports as "Uncaught [object Event]".
+			// Guard the contract here so the raw value cannot reach
+			// JSON.parse downstream; an unusable result resolves as "null".
+			const value: unknown = result;
+			if (typeof value !== "string") {
+				hostBridgeLog.warn(
+					"[ty-plus] evalScript callback returned a non-string result",
+					{
+						context: {
+							resultKind:
+								typeof Event !== "undefined" && value instanceof Event
+									? `Event[${value.type}]`
+									: value === null
+										? "null"
+										: typeof value,
+						},
+					},
+				);
+				resolve("null");
+				return;
+			}
+			resolve(value);
 		});
 	});
 
