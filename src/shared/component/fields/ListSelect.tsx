@@ -1,5 +1,6 @@
 import type { ReactElement } from "react";
-import { useEffect, useId, useRef, useState } from "react";
+import { useId, useRef, useState } from "react";
+import { AnchoredPopover } from "@/shared/component/interaction/AnchoredPopover";
 import { cx } from "@/shared/util/cx";
 import { css } from "@/styled-system/css";
 
@@ -78,12 +79,6 @@ const triggerBase = css({
 });
 
 const listBox = css({
-	position: "absolute",
-	left: 0,
-	right: 0,
-	top: "calc(100% + 4px)",
-	zIndex: 50,
-	maxHeight: "60",
 	minWidth: 0,
 	overflowY: "auto",
 	borderRadius: "shell-sm",
@@ -144,20 +139,6 @@ export function ListSelect(props: ListSelectProps): ReactElement {
 	const selected = options.find((o) => o.value === value);
 	const label = selected?.label ?? placeholder;
 
-	useEffect(() => {
-		if (!open) {
-			return;
-		}
-		const onDoc = (e: MouseEvent) => {
-			const el = rootRef.current;
-			if (el && !el.contains(e.target as Node)) {
-				setOpen(false);
-			}
-		};
-		document.addEventListener("mousedown", onDoc, true);
-		return () => document.removeEventListener("mousedown", onDoc, true);
-	}, [open]);
-
 	const triggerSize = uiSize === "sm" ? triggerSm : triggerMd;
 
 	return (
@@ -178,39 +159,41 @@ export function ListSelect(props: ListSelectProps): ReactElement {
 					▾
 				</span>
 			</button>
-			{open ? (
-				<div
-					// biome-disable-next-line useSemanticElements -- listbox role requires div for proper ARIA structure
-					id={`${id}-listbox`}
-					role="listbox"
-					tabIndex={-1}
-					aria-labelledby={id}
-					className={listBox}
-				>
-					{options.map((opt) => {
-						const isSel = opt.value === value;
-						return (
-							<div
-								// biome-disable-next-line useSemanticElements -- option role requires div for button containment
-								key={opt.value}
+			<AnchoredPopover
+				open={open}
+				onClose={() => setOpen(false)}
+				anchorRef={rootRef}
+				matchAnchorWidth
+				maxHeight="15rem"
+				role="listbox"
+				id={`${id}-listbox`}
+				aria-labelledby={id}
+				tabIndex={-1}
+				className={listBox}
+			>
+				{options.map((opt) => {
+					const isSel = opt.value === value;
+					return (
+						<div
+							// biome-disable-next-line useSemanticElements -- option role requires div for button containment
+							key={opt.value}
+						>
+							<button
+								type="button"
+								role="option"
+								aria-selected={isSel}
+								className={optionCls(isSel)}
+								onClick={() => {
+									onChange(opt.value);
+									setOpen(false);
+								}}
 							>
-								<button
-									type="button"
-									role="option"
-									aria-selected={isSel}
-									className={optionCls(isSel)}
-									onClick={() => {
-										onChange(opt.value);
-										setOpen(false);
-									}}
-								>
-									{opt.label}
-								</button>
-							</div>
-						);
-					})}
-				</div>
-			) : null}
+								{opt.label}
+							</button>
+						</div>
+					);
+				})}
+			</AnchoredPopover>
 		</div>
 	);
 }
