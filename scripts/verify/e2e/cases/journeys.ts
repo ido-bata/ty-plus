@@ -643,17 +643,19 @@ export const journeySuiteCases: E2ECase[] = [
 				// app.json → theme.css projection lands asynchronously after the
 				// workspace state commit, so poll the computed tokens instead of
 				// reading once (Issue #223 — one-shot reads raced the reconcile).
-				const tokensLive = await waitForDom(
-					ctx,
-					panel,
-					`(() => {
+				const tokensLive = Boolean(
+					await waitForDom(
+						ctx,
+						panel,
+						`(() => {
 						const cs = getComputedStyle(document.documentElement);
 						const accent = cs.getPropertyValue("--color-ty-accent") || "";
 						const cell = cs.getPropertyValue("--ty-ws-cell") || "";
 						return accent.toLowerCase().includes("336699")
 							&& cell.includes("120");
 					})()`,
-					30_000,
+						30_000,
+					),
 				);
 				const accent = await ctx.evalJs(
 					panel,
