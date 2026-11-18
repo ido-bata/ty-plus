@@ -953,21 +953,27 @@ export const installReplayResponderWith = (
 		if (envelope.sourceSurfaceId === surfaceId) return;
 		const request = envelope.payload;
 		const snapshot = buildReplaySnapshot(request, clearedAt);
-		void transport.publish({
-			messageId: `replay-resp:${request.requestId}:${Date.now()}`,
-			correlationId: envelope.correlationId ?? envelope.messageId,
-			channel: LOG_SURFACE_CHANNEL,
-			kind: "response",
-			sourceSurfaceId: surfaceId,
-			targetSurfaceId: envelope.sourceSurfaceId,
-			payload: {
-				kind: "replay-response",
-				requestId: request.requestId,
+		void Promise.resolve(
+			transport.publish({
+				messageId: `replay-resp:${request.requestId}:${Date.now()}`,
+				correlationId: envelope.correlationId ?? envelope.messageId,
+				channel: LOG_SURFACE_CHANNEL,
+				kind: "response",
 				sourceSurfaceId: surfaceId,
-				entries: snapshot.entries,
-				takenAt: snapshot.takenAt,
-			},
-			createdAt: Date.now(),
+				targetSurfaceId: envelope.sourceSurfaceId,
+				payload: {
+					kind: "replay-response",
+					requestId: request.requestId,
+					sourceSurfaceId: surfaceId,
+					entries: snapshot.entries,
+					takenAt: snapshot.takenAt,
+				},
+				createdAt: Date.now(),
+			}),
+		).catch((error: unknown) => {
+			// Issue #71: publish is async; an unobserved rejection here
+			// surfaces as an unhandled rejection on the CEP host.
+			reportTransportFailure("replay-response", error);
 		});
 	});
 
@@ -985,25 +991,36 @@ export const installReplayResponder = (win: Window): (() => void) => {
 		if (!isDebugLogReplayRequest(envelope.payload)) return;
 		if (envelope.sourceSurfaceId === surfaceId) return;
 		const request = envelope.payload;
-		void snapshotClearedAt(win).then((clearedAt) => {
-			const snapshot = buildReplaySnapshot(request, clearedAt);
-			void transport.publish({
-				messageId: `replay-resp:${request.requestId}:${Date.now()}`,
-				correlationId: envelope.correlationId ?? envelope.messageId,
-				channel: LOG_SURFACE_CHANNEL,
-				kind: "response",
-				sourceSurfaceId: surfaceId,
-				targetSurfaceId: envelope.sourceSurfaceId,
-				payload: {
-					kind: "replay-response",
-					requestId: request.requestId,
+		void snapshotClearedAt(win)
+			.then((clearedAt) => {
+				const snapshot = buildReplaySnapshot(request, clearedAt);
+				// Returning the publish promise keeps its rejection inside
+				// this chain so the `.catch` below observes it too.
+				return transport.publish({
+					messageId: `replay-resp:${request.requestId}:${Date.now()}`,
+					correlationId: envelope.correlationId ?? envelope.messageId,
+					channel: LOG_SURFACE_CHANNEL,
+					kind: "response",
 					sourceSurfaceId: surfaceId,
-					entries: snapshot.entries,
-					takenAt: snapshot.takenAt,
-				},
-				createdAt: Date.now(),
+					targetSurfaceId: envelope.sourceSurfaceId,
+					payload: {
+						kind: "replay-response",
+						requestId: request.requestId,
+						sourceSurfaceId: surfaceId,
+						entries: snapshot.entries,
+						takenAt: snapshot.takenAt,
+					},
+					createdAt: Date.now(),
+				});
+			})
+			.catch((error: unknown) => {
+				// Issue #71: a rejection here (tombstone read, snapshot build,
+				// or publish) used to escape as an unhandled rejection that
+				// CEP hosts may surface as "Uncaught [object Event]". Route
+				// it through the bounded transport diagnostic instead — the
+				// responder stays fire-and-forget by contract.
+				reportTransportFailure("replay-response", error);
 			});
-		});
 	});
 };
 

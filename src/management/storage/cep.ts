@@ -1,3 +1,4 @@
+import { createLogger } from "@/management/debug/logger";
 import {
 	buildDeleteScript,
 	buildGetScript,
@@ -6,6 +7,8 @@ import {
 	buildMaxSetScript,
 	buildSetScript,
 } from "@/management/storage/extendscript/cep.ext";
+
+const cepStorageLog = createLogger("workspace");
 
 const sharedMemoryStore = new Map<string, unknown>();
 
@@ -88,7 +91,29 @@ export const runCepEvalScript = (
 			if (timeoutId !== undefined) {
 				clearTimeout(timeoutId);
 			}
-			resolve(result ?? "null");
+			// Issue #71: some CEP hosts invoke the evalScript callback with a
+			// DOM Event (or another non-string) instead of the script result.
+			// Resolve as "null" — the same fallback `result ?? "null"` already
+			// uses — so the raw value cannot leak into JSON.parse callers.
+			const value: unknown = result;
+			if (typeof value !== "string") {
+				cepStorageLog.warn(
+					"[ty-plus] evalScript callback returned a non-string result",
+					{
+						context: {
+							resultKind:
+								typeof Event !== "undefined" && value instanceof Event
+									? `Event[${value.type}]`
+									: value === null
+										? "null"
+										: typeof value,
+						},
+					},
+				);
+				resolve("null");
+				return;
+			}
+			resolve(value);
 		});
 	});
 

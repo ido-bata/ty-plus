@@ -7,12 +7,14 @@
  * the receiving side. We exercise the validator directly so this
  * invariant does not regress.
  */
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 
 import {
+	__resetTransportSubscriberDiagnosticsForTest,
 	createCepSurfaceTransport,
 	isSurfaceMessageEnvelope,
 } from "@/management/ae/cep/transport/index";
+import { _resetBusForTests, getEntries } from "@/management/debug/logger";
 import {
 	SHELL_CHANNELS,
 	type SurfaceMessageEnvelope,
@@ -245,5 +247,98 @@ describe("createCepSurfaceTransport — subscribe (issue 139)", () => {
 				data: JSON.stringify(envelope),
 			}),
 		).toThrow("placement merge failed");
+	});
+});
+
+describe("createCepSurfaceTransport — subscriber failure diagnostics (Issue #71)", () => {
+	const createListeningWindow = () => {
+		const listeners = new Map<string, (ev: { data: string }) => void>();
+		const win = {
+			__adobe_cep__: {
+				addEventListener: (
+					type: string,
+					handler: (ev: { data: string }) => void,
+				) => {
+					listeners.set(type, handler);
+				},
+				removeEventListener: () => {},
+				dispatchEvent: () => {},
+			},
+		} as unknown as Window;
+		return { win, listeners };
+	};
+
+	const fire = (
+		listeners: Map<string, (ev: { data: string }) => void>,
+		overrides: Partial<SurfaceMessageEnvelope> = {},
+	) =>
+		listeners.get("com.typlus.surfaceMessage")?.({
+			data: JSON.stringify(baseEnvelope(overrides)),
+		});
+
+	beforeEach(() => {
+		_resetBusForTests();
+		__resetTransportSubscriberDiagnosticsForTest();
+	});
+
+	it("records a bounded diagnostic naming channel and thrown value, then rethrows", () => {
+		const { win, listeners } = createListeningWindow();
+		const transport = createCepSurfaceTransport(win);
+		transport.subscribe(() => {
+			throw new Error("placement merge failed");
+		});
+
+		expect(() => fire(listeners)).toThrow("placement merge failed");
+
+		const entries = getEntries().filter(
+			(e) => e.action === "transport:subscriber-error",
+		);
+		expect(entries).toHaveLength(1);
+		expect(entries[0]?.level).toBe("warn");
+		expect(entries[0]?.source).toBe("workspace");
+		expect(entries[0]?.context).toMatchObject({
+			channel: SHELL_CHANNELS.debug,
+			kind: "publish",
+			sourceSurfaceId: "panel-1",
+			messageId: "msg-1",
+		});
+		expect(String(entries[0]?.context?.thrown)).toContain(
+			"placement merge failed",
+		);
+	});
+
+	it("describes a thrown DOM Event by constructor name and type", () => {
+		const { win, listeners } = createListeningWindow();
+		const transport = createCepSurfaceTransport(win);
+		transport.subscribe(() => {
+			throw new Event("com.typlus.surfaceMessage");
+		});
+
+		expect(() => fire(listeners)).toThrow();
+
+		const entries = getEntries().filter(
+			(e) => e.action === "transport:subscriber-error",
+		);
+		expect(entries).toHaveLength(1);
+		expect(entries[0]?.context?.thrown).toBe(
+			"Event[com.typlus.surfaceMessage]",
+		);
+	});
+
+	it("stops recording diagnostics after the per-load budget", () => {
+		const { win, listeners } = createListeningWindow();
+		const transport = createCepSurfaceTransport(win);
+		transport.subscribe(() => {
+			throw new Error("always fails");
+		});
+
+		for (let i = 0; i < 8; i += 1) {
+			expect(() => fire(listeners)).toThrow("always fails");
+		}
+
+		const entries = getEntries().filter(
+			(e) => e.action === "transport:subscriber-error",
+		);
+		expect(entries).toHaveLength(5);
 	});
 });
