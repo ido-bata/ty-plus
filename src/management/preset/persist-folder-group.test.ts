@@ -191,12 +191,16 @@ describe("persistFolderGroupPreset — folder-scan path (issue #139)", () => {
 describe("persistFolderGroupPreset — manual preset id path", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
-		listPresets.mockResolvedValue([{ id: "p-1" }, { id: "p-2" }]);
+		listPresets.mockResolvedValue([
+			{ id: "p-1", type: "preset" },
+			{ id: "p-2", type: "script" },
+		]);
 	});
 
 	it("upserts the group entry directly without scanning folders", async () => {
 		const result = await persistFolderGroupPreset(win, {
 			...baseInput,
+			folderPaths: [],
 			presetIdsText: "p-1\np-2",
 		});
 
@@ -209,13 +213,98 @@ describe("persistFolderGroupPreset — manual preset id path", () => {
 		expect(result.catalogRefIds).toEqual(["grp-1"]);
 	});
 
+	it("accepts script and other non-.ffx preset types as explicit members", async () => {
+		const result = await persistFolderGroupPreset(win, {
+			...baseInput,
+			folderPaths: [],
+			presetIdsText: "p-2",
+		});
+
+		expect(upsertGroupEntry).toHaveBeenCalledWith(
+			win,
+			expect.objectContaining({ presetIds: ["p-2"] }),
+		);
+		expect(result.status).toContain("1 items");
+	});
+
+	it("unions folder-scan members with explicit preset ids", async () => {
+		canUseCepNodeFileBrowser.mockReturnValue(true);
+		mockListDirectory.mockResolvedValue([]);
+		createCepNodeFileBrowserService.mockReturnValue({
+			listDirectory: mockListDirectory,
+		});
+		getLocalPresetCatalog.mockReturnValue({ kind: "local-catalog" });
+		importOnboardingPresets.mockResolvedValue({
+			presets: [],
+			addedPresets: [],
+			addedPresetIds: ["p-1"],
+			addedGroupCatalogEntries: [
+				{ id: "grp-1", title: "Root Group", presetIds: ["p-1"] },
+			],
+			projectedPresetIds: [],
+			workspacePanelRefIds: [],
+		});
+
+		await persistFolderGroupPreset(win, {
+			...baseInput,
+			presetIdsText: "p-2",
+		});
+
+		expect(importOnboardingPresets).toHaveBeenCalledTimes(1);
+		expect(mergeGroupEntries).toHaveBeenCalledWith(win, [
+			expect.objectContaining({
+				id: "grp-1",
+				presetIds: ["p-1", "p-2"],
+			}),
+		]);
+	});
+
+	it("still saves an explicit-member group when the folder scan finds nothing", async () => {
+		canUseCepNodeFileBrowser.mockReturnValue(true);
+		mockListDirectory.mockResolvedValue([]);
+		createCepNodeFileBrowserService.mockReturnValue({
+			listDirectory: mockListDirectory,
+		});
+		getLocalPresetCatalog.mockReturnValue({ kind: "local-catalog" });
+		importOnboardingPresets.mockResolvedValue({
+			presets: [],
+			addedPresets: [],
+			addedPresetIds: [],
+			addedGroupCatalogEntries: [],
+			projectedPresetIds: [],
+			workspacePanelRefIds: [],
+		});
+
+		const result = await persistFolderGroupPreset(win, {
+			...baseInput,
+			presetIdsText: "p-2",
+		});
+
+		expect(upsertGroupEntry).toHaveBeenCalledWith(
+			win,
+			expect.objectContaining({ id: "grp-1", presetIds: ["p-2"] }),
+		);
+		expect(result.catalogRefIds).toEqual(["grp-1"]);
+	});
+
 	it("rejects unknown preset ids", async () => {
 		await expect(
 			persistFolderGroupPreset(win, {
 				...baseInput,
+				folderPaths: [],
 				presetIdsText: "p-1\nmissing-id",
 			}),
 		).rejects.toThrow(/not found in catalog/i);
 		expect(upsertGroupEntry).not.toHaveBeenCalled();
+	});
+
+	it("requires at least one folder path or preset id", async () => {
+		await expect(
+			persistFolderGroupPreset(win, {
+				...baseInput,
+				folderPaths: [],
+				presetIdsText: "",
+			}),
+		).rejects.toThrow(/folder path or preset id/i);
 	});
 });
