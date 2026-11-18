@@ -98,18 +98,20 @@ const meta = {
 		rowCount: { control: { type: "number", min: 0, max: 20 } },
 	},
 	render: (args: Args) => {
+		const anchorRef = useRef<HTMLDivElement | null>(null);
 		const portalRef = useRef<HTMLDivElement | null>(null);
 		const listRef = useRef<HTMLDivElement | null>(null);
 		return (
-			<div style={{ padding: 16 }}>
+			<div ref={anchorRef} style={{ padding: 16 }}>
 				<PaletteDropdown
 					open={args.open}
+					anchorRef={anchorRef}
+					onClose={noop}
 					portalRef={portalRef}
 					listRef={listRef}
 					paletteRows={buildRows(args.rowCount)}
 					clampedActiveIdx={0}
 					widgetInstanceId="palette-dropdown-storybook-1"
-					dropdownBox={{ top: 40, left: 16, width: 280 }}
 					t={stubT}
 					typeLabel={typeLabel}
 					instanceAttr={{}}

@@ -1,6 +1,5 @@
 import type { JSX, MouseEvent as ReactMouseEvent, ReactNode } from "react";
-import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { createPortal } from "react-dom";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CTX_MENU_IDS } from "@/management/dialog/dialogs/unified-context-menu-constants";
 import type { Layout } from "@/management/workspace/layout/grid-document";
@@ -9,14 +8,12 @@ import { ATTR_WIDGET_INSTANCE_ID } from "@/management/workspace/placement/types"
 import type { SurfaceState } from "@/management/workspace/state";
 import { DATA_OPENER_WORKSPACE_PANEL } from "@/management/workspace/surface/opener-panel-id";
 import { MenuIcon } from "@/management/workspace/surface/widget-grid-icons";
+import { AnchoredPopover } from "@/shared/component/interaction/AnchoredPopover";
 import { css } from "@/styled-system/css";
 
 type Item = { action: string; label: string };
 
 function MenuPanelContent({
-	portalRef,
-	panelClass,
-	box,
 	instanceAttr,
 	openerPid,
 	close,
@@ -28,9 +25,6 @@ function MenuPanelContent({
 	selectedPresetDeleteLabel,
 	t,
 }: {
-	portalRef: React.RefObject<HTMLDivElement | null>;
-	panelClass: string;
-	box: { top: number; left: number; width: number };
 	instanceAttr: Record<string, string>;
 	openerPid: string;
 	close: () => void;
@@ -43,20 +37,7 @@ function MenuPanelContent({
 	t: (key: string, options?: Record<string, unknown>) => string;
 }): JSX.Element {
 	return (
-		<div
-			ref={portalRef}
-			className={panelClass}
-			role="menu"
-			style={{
-				position: "fixed",
-				top: box.top,
-				left: box.left,
-				minWidth: box.width,
-				maxWidth: "calc(100vw - var(--ty-space-3))",
-			}}
-			onMouseDown={(ev) => ev.stopPropagation()}
-			{...instanceAttr}
-		>
+		<div {...instanceAttr}>
 			<Row
 				action={CTX_MENU_IDS.undo}
 				openerWorkspacePanelId={openerPid}
@@ -207,11 +188,15 @@ function moveToPanelItems(currentPanelId: string): Item[] {
 	return items;
 }
 
+/**
+ * Surface styling for the portaled menu panel. Placement (position, flip,
+ * viewport clamp, dismissal) is owned by `AnchoredPopover`; this class must
+ * not set `position` / `top` / `left` / `zIndex` / `maxHeight`.
+ */
 const panelClass = css({
 	pointerEvents: "auto",
-	zIndex: 100000,
-	maxHeight: "min(70vh,26rem)",
 	minWidth: "var(--ty-widget-icon-size)",
+	maxWidth: "calc(100vw - 1rem)",
 	overflowY: "auto",
 	whiteSpace: "nowrap",
 	borderRadius: "var(--ty-space-1)",
@@ -355,61 +340,17 @@ export function MenuWidget({
 	);
 
 	const [open, setOpen] = useState(false);
-	const [box, setBox] = useState({ top: 0, left: 0, width: 160 });
 	const anchorRef = useRef<HTMLButtonElement>(null);
-	const portalRef = useRef<HTMLDivElement>(null);
-
-	const updatePosition = useCallback(() => {
-		const el = anchorRef.current;
-		if (!el) return;
-		const r = el.getBoundingClientRect();
-		setBox({
-			top: r.bottom + 4,
-			left: r.left,
-			width: Math.max(r.width, 160),
-		});
-	}, []);
 
 	const close = useCallback(() => {
 		setOpen(false);
 	}, []);
 
-	useLayoutEffect(() => {
-		if (open) {
-			updatePosition();
-		}
-	}, [open, updatePosition]);
-
-	const onToggle = useCallback(
-		(ev: ReactMouseEvent<HTMLButtonElement>) => {
-			ev.stopPropagation();
-			ev.preventDefault();
-			if (open) {
-				close();
-			} else {
-				setOpen(true);
-			}
-		},
-		[open, close],
-	);
-
-	useLayoutEffect(() => {
-		if (!open) return;
-		const onDocClick = (ev: MouseEvent) => {
-			const root = anchorRef.current;
-			const panelEl = portalRef.current;
-			if (!root || !panelEl) return;
-			if (
-				root.contains(ev.target as Node) ||
-				panelEl.contains(ev.target as Node)
-			) {
-				return;
-			}
-			close();
-		};
-		document.addEventListener("mousedown", onDocClick);
-		return () => document.removeEventListener("mousedown", onDocClick);
-	}, [open, close]);
+	const onToggle = useCallback((ev: ReactMouseEvent<HTMLButtonElement>) => {
+		ev.stopPropagation();
+		ev.preventDefault();
+		setOpen((prev) => !prev);
+	}, []);
 
 	const widgetInstanceId = String(layout?.id ?? "").trim();
 	const instanceAttr: Record<string, string> =
@@ -422,34 +363,6 @@ export function MenuWidget({
 		/^panel-[1-5]$/.test(state.panelId.trim())
 			? state.panelId.trim()
 			: "";
-
-	const portalHost =
-		typeof document !== "undefined"
-			? (document.querySelector("[data-ty-workspace-panel-root]") ??
-				document.body)
-			: null;
-
-	const panel =
-		open && portalHost
-			? createPortal(
-					<MenuPanelContent
-						portalRef={portalRef}
-						panelClass={panelClass}
-						box={box}
-						instanceAttr={instanceAttr}
-						openerPid={openerPid}
-						close={close}
-						hasMultiPresetSelection={hasMultiPresetSelection}
-						createPresetItems={createPresetItems}
-						dialogItems={dialogItems}
-						layoutItems={layoutItems}
-						movePanelItems={movePanelItems}
-						selectedPresetDeleteLabel={selectedPresetDeleteLabel}
-						t={t}
-					/>,
-					portalHost,
-				)
-			: null;
 
 	return (
 		<button
@@ -486,7 +399,28 @@ export function MenuWidget({
 			{...instanceAttr}
 		>
 			<MenuIcon size={14} />
-			{panel}
+			<AnchoredPopover
+				open={open}
+				onClose={close}
+				anchorRef={anchorRef}
+				role="menu"
+				maxHeight="26rem"
+				zIndex={100000}
+				className={panelClass}
+			>
+				<MenuPanelContent
+					instanceAttr={instanceAttr}
+					openerPid={openerPid}
+					close={close}
+					hasMultiPresetSelection={hasMultiPresetSelection}
+					createPresetItems={createPresetItems}
+					dialogItems={dialogItems}
+					layoutItems={layoutItems}
+					movePanelItems={movePanelItems}
+					selectedPresetDeleteLabel={selectedPresetDeleteLabel}
+					t={t}
+				/>
+			</AnchoredPopover>
 		</button>
 	);
 }

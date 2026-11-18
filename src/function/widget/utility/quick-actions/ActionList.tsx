@@ -192,12 +192,6 @@ export function QuickActionsWidget({
 	const portalRef = useRef<HTMLDivElement>(null);
 	const rowCountRef = useRef(0);
 
-	const [dropdownBox, setDropdownBox] = useState({
-		top: 0,
-		left: 0,
-		width: 0,
-	});
-
 	useLayoutEffect(() => {
 		activeIdxRef.current = activeIdx;
 		rowCountRef.current = paletteRows.length;
@@ -207,25 +201,13 @@ export function QuickActionsWidget({
 	const clampedActiveIdx =
 		paletteRows.length === 0 ? 0 : Math.min(activeIdx, paletteRows.length - 1);
 
-	const updateDropdownPosition = useCallback(() => {
-		const el = anchorRef.current;
-		if (!el) return;
-		const r = el.getBoundingClientRect();
-		setDropdownBox({
-			top: r.bottom + 4,
-			left: r.left,
-			width: r.width,
-		});
-	}, []);
-
 	const closePalette = useCallback(() => {
 		setPaletteOpen(false);
 	}, []);
 
 	const onSearchFocus = useCallback(() => {
 		setPaletteOpen(true);
-		queueMicrotask(() => updateDropdownPosition());
-	}, [updateDropdownPosition]);
+	}, []);
 
 	const onSearchBlur = useCallback(
 		(ev: React.FocusEvent<HTMLInputElement>) => {
@@ -243,33 +225,6 @@ export function QuickActionsWidget({
 		},
 		[closePalette],
 	);
-
-	useLayoutEffect(() => {
-		if (!paletteOpen) return;
-		updateDropdownPosition();
-	}, [paletteOpen, updateDropdownPosition]);
-
-	useEffect(() => {
-		if (!paletteOpen) return;
-		const el = anchorRef.current;
-		if (!el || typeof ResizeObserver === "undefined") {
-			window.addEventListener("resize", updateDropdownPosition);
-			window.addEventListener("scroll", updateDropdownPosition, true);
-			return () => {
-				window.removeEventListener("resize", updateDropdownPosition);
-				window.removeEventListener("scroll", updateDropdownPosition, true);
-			};
-		}
-		const ro = new ResizeObserver(() => updateDropdownPosition());
-		ro.observe(el);
-		window.addEventListener("resize", updateDropdownPosition);
-		window.addEventListener("scroll", updateDropdownPosition, true);
-		return () => {
-			ro.disconnect();
-			window.removeEventListener("resize", updateDropdownPosition);
-			window.removeEventListener("scroll", updateDropdownPosition, true);
-		};
-	}, [paletteOpen, updateDropdownPosition]);
 
 	const scrollActiveIntoView = useCallback((idx: number) => {
 		const root = listRef.current;
@@ -394,12 +349,13 @@ export function QuickActionsWidget({
 	const dropdown = (
 		<PaletteDropdown
 			open={paletteOpen}
+			anchorRef={anchorRef}
+			onClose={closePalette}
 			portalRef={portalRef}
 			listRef={listRef}
 			paletteRows={paletteRows}
 			clampedActiveIdx={clampedActiveIdx}
 			widgetInstanceId={widgetInstanceId}
-			dropdownBox={dropdownBox}
 			t={t}
 			typeLabel={typeLabel}
 			thumbnailListDirectory={thumbnailListDirectory}
