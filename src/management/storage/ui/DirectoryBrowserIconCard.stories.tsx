@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { expect } from "storybook/test";
 import type { SiblingListingEntry } from "@/management/preset/sibling-thumbnail";
+import { expectCanvasLayout } from "@/storybook/quality/layout";
 
 import type { DirectoryBrowserEntry } from "./DirectoryBrowser";
 import { DirectoryBrowserIconCard } from "./DirectoryBrowserIconCard";
@@ -109,6 +110,9 @@ export const NoCheckbox: Story = {
 // identical to resting state".
 export const HoverUnselected: Story = {
 	play: async ({ canvasElement }) => {
+		// Issue #194: card must satisfy the layout contract in resting and
+		// hovered states.
+		expectCanvasLayout(canvasElement);
 		const card = canvasElement.querySelector<HTMLElement>(
 			"[data-card-selected]",
 		);
@@ -134,6 +138,7 @@ export const HoverUnselected: Story = {
 		await expect(getComputedStyle(card).backgroundColor).not.toBe(resting);
 		await userEvent.unhover(card);
 		spacer.remove();
+		expectCanvasLayout(canvasElement);
 	},
 };
 
@@ -143,6 +148,7 @@ export const HoverUnselected: Story = {
 export const HoverSelected: Story = {
 	args: { isSelected: true },
 	play: async ({ canvasElement }) => {
+		expectCanvasLayout(canvasElement);
 		const card = canvasElement.querySelector<HTMLElement>(
 			"[data-card-selected]",
 		);
@@ -160,5 +166,6 @@ export const HoverSelected: Story = {
 		await expect(getComputedStyle(card).backgroundColor).toBe(resting);
 		await userEvent.unhover(card);
 		spacer.remove();
+		expectCanvasLayout(canvasElement);
 	},
 };

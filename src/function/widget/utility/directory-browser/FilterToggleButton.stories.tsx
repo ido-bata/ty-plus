@@ -1,6 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 import { expect } from "storybook/test";
+
+import { expectCanvasLayout } from "@/storybook/quality/layout";
+
 import { FilterToggleButton } from "./FilterToggleButton";
 
 type Args = {
@@ -26,10 +29,18 @@ export const Default: Story = {};
 
 export const Pressed: Story = {
 	args: { pressed: true },
+	// Issue #194: pressed (selected) state must satisfy the layout contract.
+	play: async ({ canvasElement }) => {
+		expectCanvasLayout(canvasElement);
+	},
 };
 
 export const LongLabel: Story = {
 	args: { label: ".aepreset" },
+	// Issue #194: long-string coverage for the filter chip label.
+	play: async ({ canvasElement }) => {
+		expectCanvasLayout(canvasElement);
+	},
 };
 
 export const WithCallback: Story = {
@@ -52,6 +63,7 @@ export const ToggleOnClick: Story = {
 		);
 	},
 	play: async ({ canvasElement }) => {
+		expectCanvasLayout(canvasElement);
 		const button = canvasElement.querySelector("button");
 		if (!button) throw new Error("toggle button not found");
 		const { userEvent } = await import("vitest/browser");
@@ -60,5 +72,6 @@ export const ToggleOnClick: Story = {
 		await expect(getComputedStyle(button).textDecorationLine).toContain(
 			"line-through",
 		);
+		expectCanvasLayout(canvasElement);
 	},
 };

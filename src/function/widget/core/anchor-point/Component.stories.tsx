@@ -3,6 +3,7 @@ import { expect } from "storybook/test";
 
 import { AnchorPointWidget } from "@/function/widget/core/anchor-point/Component";
 import type { Layout } from "@/management/workspace/layout/grid-document";
+import { expectCanvasLayout } from "@/storybook/quality/layout";
 import { css } from "@/styled-system/css";
 
 const layout: Layout = {
@@ -49,7 +50,12 @@ const meta = {
 export default meta;
 type Story = StoryObj<Args>;
 
-export const Default: Story = {};
+export const Default: Story = {
+	// Issue #194: initial-state layout contract.
+	play: async ({ canvasElement }) => {
+		expectCanvasLayout(canvasElement);
+	},
+};
 
 export const Large: Story = {
 	args: { widthPx: 320 },
@@ -86,6 +92,9 @@ export const GesturePreview: Story = {
 export const DragToTopLeft: Story = {
 	args: { widthPx: 280 },
 	play: async ({ canvasElement }) => {
+		// Issue #194: widget controls satisfy the layout contract before
+		// and after the drag gesture commits the anchor.
+		expectCanvasLayout(canvasElement);
 		const grid = canvasElement.querySelector<HTMLElement>(
 			"[data-anchor='center']",
 		)?.parentElement;
@@ -128,5 +137,6 @@ export const DragToTopLeft: Story = {
 		await new Promise((resolve) => setTimeout(resolve, 300));
 
 		await expect(lineOf("top-left").backgroundColor).not.toBe(before);
+		expectCanvasLayout(canvasElement);
 	},
 };
