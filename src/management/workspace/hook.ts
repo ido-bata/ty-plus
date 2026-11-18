@@ -568,6 +568,40 @@ export function useWorkspaceRuntime(root: Element | null): {
 		void initLayoutUndoCache(window, panelId);
 
 		const history = createHistoryManager(panelId, window);
+		// Snapshot list refresh shared by every mutation path. A rejected
+		// `listSnapshots` (unreadable snapshots.json, lock/IO failure) must
+		// not die as an unhandled rejection with the UI silently stuck on a
+		// stale list — log it so the debug console shows the cause (Issue
+		// #223: UC-B05/UC-J03 snapshot rows never rendered).
+		const refreshSnapshotUi = (): void => {
+			void history
+				.listSnapshots()
+				.then((snaps) => {
+					setUi({
+						canUndo: history.canUndo(),
+						canRedo: history.canRedo(),
+						snapshots: snaps,
+					});
+				})
+				.catch((error: unknown) => {
+					workspaceLog.error("snapshot list refresh failed", {
+						action: "workspace:snapshots-refresh",
+						context: {
+							message: error instanceof Error ? error.message : String(error),
+						},
+					});
+				});
+		};
+		const logSnapshotOpError =
+			(op: string) =>
+			(error: unknown): void => {
+				workspaceLog.error(`snapshot ${op} failed`, {
+					action: `workspace:snapshot-${op}`,
+					context: {
+						message: error instanceof Error ? error.message : String(error),
+					},
+				});
+			};
 		void history.init().then(() => {
 			history.push(
 				layoutsFromSurface(
@@ -575,13 +609,7 @@ export function useWorkspaceRuntime(root: Element | null): {
 					widgetResolutionFromCatalogContext(getState()),
 				),
 			);
-			void history.listSnapshots().then((snaps) => {
-				setUi({
-					canUndo: history.canUndo(),
-					canRedo: history.canRedo(),
-					snapshots: snaps,
-				});
-			});
+			refreshSnapshotUi();
 		});
 
 		// ── Persistence (F2) ────────────────────────────────────────────────────
@@ -1020,13 +1048,7 @@ export function useWorkspaceRuntime(root: Element | null): {
 				statusMessage: `Added ${i18n.t(cfg.name.replace(/^widgets\./, ""), { defaultValue: cfg.name })}`,
 			});
 			persistSurfaceState();
-			void history.listSnapshots().then((snaps) => {
-				setUi({
-					canUndo: history.canUndo(),
-					canRedo: history.canRedo(),
-					snapshots: snaps,
-				});
-			});
+			refreshSnapshotUi();
 		};
 
 		const openWidgetAddUi = (openerPanelKey: string): void => {
@@ -1591,13 +1613,7 @@ export function useWorkspaceRuntime(root: Element | null): {
 			}
 			commit({ ...cur, ...result });
 			persistSurfaceState();
-			void history.listSnapshots().then((snaps) => {
-				setUi({
-					canUndo: history.canUndo(),
-					canRedo: history.canRedo(),
-					snapshots: snaps,
-				});
-			});
+			refreshSnapshotUi();
 		};
 
 		// ── Dialog helpers (extracted to hooks/dialogs.ts) ────────────────────────
@@ -2240,47 +2256,45 @@ export function useWorkspaceRuntime(root: Element | null): {
 							),
 						)
 						.then(() => {
-							void history.listSnapshots().then((snaps) => {
-								setUi({
-									canUndo: history.canUndo(),
-									canRedo: history.canRedo(),
-									snapshots: snaps,
-								});
-							});
-						});
+							refreshSnapshotUi();
+						})
+						.catch(logSnapshotOpError("save"));
 					return;
 				case CTX_MENU_IDS.restoreSnapshotPrefix: {
 					const snapId = id.substring(
 						CTX_MENU_IDS.restoreSnapshotPrefix.length,
 					);
 					if (!snapId) return;
-					void history.restoreSnapshot(snapId).then((allPanels) => {
-						if (!allPanels) return;
-						const currentPanelId = cur.panelId;
-						const currentPanelLayout = allPanels[currentPanelId];
-						if (currentPanelLayout) {
-							const result = applyWidgetsFromModule(currentPanelLayout, cur);
-							if (result) {
-								commit({ ...cur, ...result });
+					void history
+						.restoreSnapshot(snapId)
+						.then((allPanels) => {
+							if (!allPanels) return;
+							const currentPanelId = cur.panelId;
+							const currentPanelLayout = allPanels[currentPanelId];
+							if (currentPanelLayout) {
+								const result = applyWidgetsFromModule(currentPanelLayout, cur);
+								if (result) {
+									commit({ ...cur, ...result });
+								}
 							}
-						}
-						void (async () => {
-							await Promise.all(
-								Object.entries(allPanels).map(([panelId, layouts]) => {
-									const idx = indexFromPanelId(panelId);
-									const tiles = layouts.map((w) => ({
-										id: w.id,
-										x: w.x,
-										y: w.y,
-										width: w.width,
-										height: w.height,
-									}));
-									return writeNJson(window, idx, serialize(tiles));
-								}),
-							);
-							persistSurfaceState();
-						})();
-					});
+							void (async () => {
+								await Promise.all(
+									Object.entries(allPanels).map(([panelId, layouts]) => {
+										const idx = indexFromPanelId(panelId);
+										const tiles = layouts.map((w) => ({
+											id: w.id,
+											x: w.x,
+											y: w.y,
+											width: w.width,
+											height: w.height,
+										}));
+										return writeNJson(window, idx, serialize(tiles));
+									}),
+								);
+								persistSurfaceState();
+							})().catch(logSnapshotOpError("restore-write"));
+						})
+						.catch(logSnapshotOpError("restore"));
 					return;
 				}
 				case CTX_MENU_IDS.openPresets:
@@ -2633,13 +2647,7 @@ export function useWorkspaceRuntime(root: Element | null): {
 						),
 					});
 					persistSurfaceState();
-					void history.listSnapshots().then((snaps) => {
-						setUi({
-							canUndo: history.canUndo(),
-							canRedo: history.canRedo(),
-							snapshots: snaps,
-						});
-					});
+					refreshSnapshotUi();
 					return;
 				}
 				case CTX_MENU_IDS.deletePreset: {
@@ -3447,24 +3455,12 @@ export function useWorkspaceRuntime(root: Element | null): {
 						lastWidgetsSnapshot = nextWidgetsSnapshot;
 					}
 				}
-				void history.listSnapshots().then((snaps) => {
-					setUi({
-						canUndo: history.canUndo(),
-						canRedo: history.canRedo(),
-						snapshots: snaps,
-					});
-				});
+				refreshSnapshotUi();
 			},
 			() => {
 				commit({ ...getState() });
 				persistSurfaceState();
-				void history.listSnapshots().then((snaps) => {
-					setUi({
-						canUndo: history.canUndo(),
-						canRedo: history.canRedo(),
-						snapshots: snaps,
-					});
-				});
+				refreshSnapshotUi();
 			},
 			{
 				hostCode,
@@ -3722,62 +3718,58 @@ export function useWorkspaceRuntime(root: Element | null): {
 						),
 					)
 					.then(() => {
-						void history.listSnapshots().then((snaps) => {
-							setUi({
-								canUndo: history.canUndo(),
-								canRedo: history.canRedo(),
-								snapshots: snaps,
-							});
-						});
-					});
+						refreshSnapshotUi();
+					})
+					.catch(logSnapshotOpError("save"));
 			} else if (action === "restore-snapshot") {
 				ev.preventDefault();
 				const id = btn.getAttribute("data-snap-id");
 				if (id) {
-					void history.restoreSnapshot(id).then((allPanels) => {
-						if (!allPanels) return;
-						const cur = getState();
-						const currentPanelId = cur.panelId;
-						const currentPanelLayout = allPanels[currentPanelId];
-						if (currentPanelLayout) {
-							const result = applyWidgetsFromModule(currentPanelLayout, cur);
-							if (result) {
-								commit({ ...cur, ...result });
+					void history
+						.restoreSnapshot(id)
+						.then((allPanels) => {
+							if (!allPanels) return;
+							const cur = getState();
+							const currentPanelId = cur.panelId;
+							const currentPanelLayout = allPanels[currentPanelId];
+							if (currentPanelLayout) {
+								const result = applyWidgetsFromModule(currentPanelLayout, cur);
+								if (result) {
+									commit({ ...cur, ...result });
+								}
 							}
-						}
-						// Write all panel layouts to disk
-						const _persistenceRootArg = lastPersistenceManagedRoot ?? undefined;
-						void (async () => {
-							await Promise.all(
-								Object.entries(allPanels).map(([panelId, layouts]) => {
-									const idx = indexFromPanelId(panelId);
-									const tiles = layouts.map((w) => ({
-										id: w.id,
-										x: w.x,
-										y: w.y,
-										width: w.width,
-										height: w.height,
-									}));
-									return writeNJson(window, idx, serialize(tiles));
-								}),
-							);
-							persistSurfaceState();
-						})();
-					});
+							// Write all panel layouts to disk
+							const _persistenceRootArg =
+								lastPersistenceManagedRoot ?? undefined;
+							void (async () => {
+								await Promise.all(
+									Object.entries(allPanels).map(([panelId, layouts]) => {
+										const idx = indexFromPanelId(panelId);
+										const tiles = layouts.map((w) => ({
+											id: w.id,
+											x: w.x,
+											y: w.y,
+											width: w.width,
+											height: w.height,
+										}));
+										return writeNJson(window, idx, serialize(tiles));
+									}),
+								);
+								persistSurfaceState();
+							})().catch(logSnapshotOpError("restore-write"));
+						})
+						.catch(logSnapshotOpError("restore"));
 				}
 			} else if (action === "delete-snapshot") {
 				ev.preventDefault();
 				const id = btn.getAttribute("data-snap-id");
 				if (id) {
-					void history.deleteSnapshot(id).then(() => {
-						void history.listSnapshots().then((snaps) => {
-							setUi({
-								canUndo: history.canUndo(),
-								canRedo: history.canRedo(),
-								snapshots: snaps,
-							});
-						});
-					});
+					void history
+						.deleteSnapshot(id)
+						.then(() => {
+							refreshSnapshotUi();
+						})
+						.catch(logSnapshotOpError("delete"));
 				}
 			} else if (action === "open-dialog") {
 				ev.preventDefault();
