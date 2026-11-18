@@ -205,11 +205,16 @@ export const smokeCases: E2ECase[] = [
 				workspace?: { grid?: { cellSize?: number } };
 			}>("settings", "app.json");
 			const cellSize = appJson?.workspace?.grid?.cellSize;
+			// Grid metrics persist lazily: app.json only carries
+			// workspace.grid after the user changes grid settings. A fresh
+			// install legitimately has no cellSize — the runtime default (48)
+			// applies instead, so absence is not a failure.
+			const effectiveCellSize = typeof cellSize === "number" ? cellSize : 48;
 			checks.push(
 				check(
-					"settings.workspace.grid.cellSize present",
-					typeof cellSize === "number",
-					`cellSize=${cellSize}`,
+					"settings.workspace.grid.cellSize present or default applies",
+					typeof cellSize === "number" || cellSize === undefined,
+					`cellSize=${cellSize ?? "default(48)"}`,
 				),
 			);
 			const panel = await ctx.requireSurface({ surfaceId: "panel-1" });
@@ -226,8 +231,8 @@ export const smokeCases: E2ECase[] = [
 			checks.push(
 				check(
 					"--ty-ws-cell reflects persisted grid",
-					typeof cellSize === "number" && computed.cell === `${cellSize}px`,
-					`computed=${computed.cell} expected=${cellSize}px`,
+					computed.cell === `${effectiveCellSize}px`,
+					`computed=${computed.cell} expected=${effectiveCellSize}px`,
 				),
 			);
 			return { detail: "grid token convergence", checks };
