@@ -41,6 +41,7 @@ import { CatalogBrowserShell } from "@/management/preset/catalog-browser/shell";
 import { CatalogBrowserViewModeToggle } from "@/management/preset/catalog-browser/view-mode-toggle";
 import { buildPlacementHints } from "@/management/preset/catalog-browser/workspace-placement-hints";
 import type { Preset } from "@/management/preset/contract";
+import { askHostDeleteConfirm } from "@/management/preset/delete-confirm";
 import { traceExecute } from "@/management/preset/execution/lifecycle-trace";
 import type { GroupEntry } from "@/management/preset/group-catalog";
 import { parseGroupFromText } from "@/management/preset/group-catalog";
@@ -1780,6 +1781,14 @@ export function PresetsDialog(): JSX.Element {
 
 	const onDelete = useCallback(
 		async (id: string) => {
+			// Destructive deletes go through the same host confirm gate as the
+			// edit dialog — the catalog list must not bypass it (Issue #223).
+			const groupEntry = groups.find((g) => g.id === id);
+			const presetEntry = presets.find((p) => p.id === id);
+			const isGroup = Boolean(groupEntry);
+			const title = groupEntry?.title ?? presetEntry?.title ?? "";
+			const confirmed = await askHostDeleteConfirm(window, title, isGroup);
+			if (!confirmed) return;
 			try {
 				await removeLocalPreset(id);
 				await loadEverything();
@@ -1790,7 +1799,7 @@ export function PresetsDialog(): JSX.Element {
 				);
 			}
 		},
-		[loadEverything],
+		[groups, presets, loadEverything],
 	);
 
 	const clearSearch = useCallback(() => {
