@@ -270,7 +270,8 @@
 		"chrome": {
 			"help": "帮助",
 			"title": "小部件帮助",
-			"close": "关闭"
+			"close": "关闭",
+			"dismissHint": "关闭提示"
 		},
 		"easing": {
 			"summary": "编辑缓动曲线，并将其应用于预设或图层动画。",

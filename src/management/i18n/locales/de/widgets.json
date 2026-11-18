@@ -270,7 +270,8 @@
 		"chrome": {
 			"help": "Hilfe",
 			"title": "Widget-Hilfe",
-			"close": "Schließen"
+			"close": "Schließen",
+			"dismissHint": "Hinweis schließen"
 		},
 		"easing": {
 			"summary": "Easing-Kurven bearbeiten und auf Presets oder Layer-Animationen anwenden.",

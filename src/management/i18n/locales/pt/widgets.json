@@ -270,7 +270,8 @@
 		"chrome": {
 			"help": "Ajuda",
 			"title": "Ajuda do widget",
-			"close": "Fechar"
+			"close": "Fechar",
+			"dismissHint": "Dispensar dica"
 		},
 		"easing": {
 			"summary": "Edite curvas de easing e aplique-as a presets ou à animação de camadas.",
