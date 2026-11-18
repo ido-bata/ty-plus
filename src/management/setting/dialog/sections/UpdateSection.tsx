@@ -77,7 +77,7 @@ type InstallState =
  * `remote_rejected` (archive), `permission_denied`, and `busy` distinctly
  * (Issue #169); anything else falls back to the generic failure text.
  */
-const installFailureKey = (code: string | undefined): string => {
+export const installFailureKey = (code: string | undefined): string => {
 	switch (code) {
 		case "integrity_mismatch":
 			return "installFailedIntegrity";
@@ -100,7 +100,7 @@ const installFailureKey = (code: string | undefined): string => {
  * carries both `.zip` and `.zxp` entries per platform; only the ZIP is
  * installable in-app (the ZXP remains the manual fallback).
  */
-const installableZipAsset = (
+export const installableZipAsset = (
 	feed: UpdateFeed,
 	platform: ReturnType<typeof detectUpdatePlatform>,
 ): { url: string; fileName: string; sha256: string } | null => {

@@ -536,6 +536,16 @@ fn preserve_worker_versions(backup_app: &Path, target: &Path) {
     }
 }
 
+/// Restore the previous install after the staged rename failed. Prefers
+/// rename; when the backup cannot be renamed onto the target (e.g. the
+/// target path was recreated in the meantime), falls back to copying the
+/// backup tree back into place so the extension keeps a working tree.
+fn restore_previous_install(backup_app: &Path, target: &Path) {
+    if fs::rename(backup_app, target).is_err() {
+        let _ = copy_dir_recursive(backup_app, target);
+    }
+}
+
 /// Map a swap-step io failure: permission problems stay distinguishable
 /// on the wire, everything else is an install failure.
 fn swap_io_error(context: &str, error: io::Error) -> UpdateInstallError {
@@ -571,10 +581,9 @@ fn swap_install(
     };
     if let Err(error) = fs::rename(staged_app, &target) {
         // Roll back: restore the previous install so the extension is
-        // never left without a working tree. If the restore rename fails,
-        // fall back to copying the backup tree back into place.
-        if outcome == SwapOutcome::Swapped && fs::rename(backup_app, &target).is_err() {
-            let _ = copy_dir_recursive(backup_app, &target);
+        // never left without a working tree.
+        if outcome == SwapOutcome::Swapped {
+            restore_previous_install(backup_app, &target);
         }
         return Err(swap_io_error("cannot place staged install", error));
     }
@@ -834,6 +843,20 @@ pub fn dispatch_update_install(
     request: &RequestEnvelope,
     payload: UpdateInstallRequest,
     cancellation: &CancellationToken,
+    events: &mut dyn EventSink,
+) -> Result<serde_json::Value, UpdateInstallError> {
+    let exe = std::env::current_exe()?;
+    dispatch_update_install_with_exe(request, payload, &exe, cancellation, events)
+}
+
+/// `dispatch_update_install` with an injectable executable path so tests
+/// can point the install-layout probe at a fixture tree instead of the
+/// real worker binary location.
+fn dispatch_update_install_with_exe(
+    request: &RequestEnvelope,
+    payload: UpdateInstallRequest,
+    exe: &Path,
+    cancellation: &CancellationToken,
     _events: &mut dyn EventSink,
 ) -> Result<serde_json::Value, UpdateInstallError> {
     request
@@ -841,8 +864,7 @@ pub fn dispatch_update_install(
         .host_context
         .validate()
         .map_err(|e| UpdateInstallError::InvalidRequest(e.to_string()))?;
-    let exe = std::env::current_exe()?;
-    let (_, extensions_root) = install_layout_from_exe(&exe)?;
+    let (_, extensions_root) = install_layout_from_exe(exe)?;
     // A non-writable extensions root (e.g. `/Library/...` or
     // `Program Files`) cannot be replaced by this user. Probe once before
     // downloading 15 MB: creating a temp file is the cheapest writability
@@ -864,7 +886,7 @@ pub fn dispatch_update_install(
             .map_err(|e| UpdateInstallError::Install(e.to_string()));
         }
     }
-    let result = run_install_inner(&payload, &exe, &download_asset, cancellation)?;
+    let result = run_install_inner(&payload, exe, &download_asset, cancellation)?;
     serde_json::to_value(result).map_err(|e| UpdateInstallError::Install(e.to_string()))
 }
 
@@ -1452,5 +1474,238 @@ mod tests {
         let (_, _, detail) = update_error_wire(&UpdateInstallError::Install("bad\npath".into()));
         assert!(!detail.contains('\n'));
         assert!(!detail.is_empty());
+    }
+
+    fn write_pending_marker(extensions_root: &Path, staged_app: &Path) {
+        fs::create_dir_all(extensions_root).unwrap();
+        let marker = PendingMarker {
+            staged_app: staged_app.to_string_lossy().into_owned(),
+            backup_app: extensions_root
+                .join(BACKUP_DIR_NAME)
+                .join(EXTENSION_DIR_NAME)
+                .to_string_lossy()
+                .into_owned(),
+            version: "0.10.2".into(),
+        };
+        fs::write(
+            pending_marker_path(extensions_root),
+            serde_json::to_string(&marker).unwrap(),
+        )
+        .unwrap();
+    }
+
+    #[test]
+    fn pending_attempt_dir_tracks_marker_and_rejects_unsafe_values() {
+        let root = temp_root("pending-dir");
+        let ext = ext_root(&root);
+        let staging = ext.join(STAGING_DIR_NAME);
+
+        // No marker at all.
+        assert_eq!(pending_attempt_dir(&ext, &staging), None);
+
+        // Marker pointing into a per-attempt dir yields that attempt dir.
+        let attempt = staging.join("attempt-1");
+        let staged_app = attempt.join(EXTENSION_DIR_NAME);
+        write_pending_marker(&ext, &staged_app);
+        assert_eq!(pending_attempt_dir(&ext, &staging), Some(attempt.clone()));
+
+        // A legacy marker pointing directly at `staging/app.ty-plus` has
+        // the staging root as parent; that must yield None so sweeping
+        // stays conservative.
+        write_pending_marker(&ext, &staging.join(EXTENSION_DIR_NAME));
+        assert_eq!(pending_attempt_dir(&ext, &staging), None);
+
+        // A corrupt marker is ignored rather than crashing the sweep.
+        fs::write(pending_marker_path(&ext), "not json").unwrap();
+        assert_eq!(pending_attempt_dir(&ext, &staging), None);
+        fs::remove_dir_all(&root).unwrap();
+    }
+
+    /// Age a directory past `STAGING_SWEEP_MIN_AGE` so the sweeper treats
+    /// it as stale.
+    fn age_directory(path: &Path, age: Duration) {
+        let mtime = filetime::FileTime::from_system_time(std::time::SystemTime::now() - age);
+        filetime::set_file_mtime(path, mtime).unwrap();
+    }
+
+    #[test]
+    fn cleanup_stale_staging_attempts_sweeps_only_old_unreferenced_dirs() {
+        let root = temp_root("sweep");
+        let ext = ext_root(&root);
+        let staging = ext.join(STAGING_DIR_NAME);
+
+        // Referenced by the pending marker: must survive even when stale.
+        let marker_attempt = staging.join("marker-attempt");
+        write_file(
+            &marker_attempt
+                .join(EXTENSION_DIR_NAME)
+                .join("CSXS/manifest.xml"),
+            b"pending",
+        );
+        write_pending_marker(&ext, &marker_attempt.join(EXTENSION_DIR_NAME));
+
+        // Fresh and unreferenced: younger than the sweep horizon.
+        let fresh_attempt = staging.join("fresh-attempt");
+        write_file(&fresh_attempt.join("payload.bin"), b"fresh");
+
+        // Stale and unreferenced: older than the sweep horizon.
+        let stale_attempt = staging.join("stale-attempt");
+        write_file(&stale_attempt.join("payload.bin"), b"stale");
+        age_directory(
+            &stale_attempt,
+            STAGING_SWEEP_MIN_AGE + Duration::from_secs(60),
+        );
+        age_directory(
+            &marker_attempt,
+            STAGING_SWEEP_MIN_AGE + Duration::from_secs(60),
+        );
+
+        let keep = pending_attempt_dir(&ext, &staging);
+        assert_eq!(keep, Some(marker_attempt.clone()));
+        cleanup_stale_staging_attempts(&staging, keep.as_deref());
+
+        assert!(
+            marker_attempt.is_dir(),
+            "marker-referenced attempt must be kept"
+        );
+        assert!(fresh_attempt.is_dir(), "fresh attempt must be kept");
+        assert!(
+            !stale_attempt.exists(),
+            "stale unreferenced attempt must be removed"
+        );
+        fs::remove_dir_all(&root).unwrap();
+    }
+
+    #[test]
+    fn restore_previous_install_copies_backup_when_rename_fails() {
+        // When `fs::rename(backup_app, target)` cannot complete — here a
+        // non-empty target makes the rename fail with ENOTEMPTY/EEXIST —
+        // the previous install must still come back via
+        // `copy_dir_recursive`.
+        let root = temp_root("restore-copy");
+        let backup_app = root.join(BACKUP_DIR_NAME).join(EXTENSION_DIR_NAME);
+        let target = ext_root(&root).join(EXTENSION_DIR_NAME);
+        write_file(&backup_app.join("CSXS/manifest.xml"), b"old");
+        write_file(
+            &backup_app.join("worker/versions/aaa/macos/operation-worker"),
+            b"old-worker",
+        );
+        // Occupy the target path so the restore rename fails.
+        write_file(&target.join("recreated.txt"), b"blocker");
+
+        restore_previous_install(&backup_app, &target);
+
+        assert_eq!(
+            fs::read_to_string(target.join("CSXS/manifest.xml")).unwrap(),
+            "old"
+        );
+        assert!(
+            target
+                .join("worker/versions/aaa/macos/operation-worker")
+                .is_file()
+        );
+        fs::remove_dir_all(&root).unwrap();
+    }
+
+    #[test]
+    fn swap_without_existing_target_is_fresh_install() {
+        let root = temp_root("fresh-install");
+        let ext = ext_root(&root);
+        fs::create_dir_all(&ext).unwrap();
+        let staged_app = root.join("staging").join(EXTENSION_DIR_NAME);
+        staged_app_fixture(&staged_app);
+        let backup_app = ext.join(BACKUP_DIR_NAME).join(EXTENSION_DIR_NAME);
+
+        let outcome = swap_install(&ext, &staged_app, &backup_app).unwrap();
+        assert_eq!(outcome, SwapOutcome::FreshInstall);
+
+        // The staged payload became the install root; nothing was
+        // moved aside into the backup location.
+        let target = install_root(&root);
+        assert!(target.join("CSXS/manifest.xml").is_file());
+        assert!(!staged_app.exists());
+        assert!(!backup_app.exists());
+        fs::remove_dir_all(&root).unwrap();
+    }
+
+    #[cfg(unix)]
+    struct NoopEvents;
+
+    #[cfg(unix)]
+    impl EventSink for NoopEvents {
+        fn progress(
+            &mut self,
+            _event: ty_plus_protocol::EventEnvelope,
+        ) -> Result<(), crate::WorkerError> {
+            Ok(())
+        }
+    }
+
+    #[cfg(unix)]
+    fn update_install_envelope() -> RequestEnvelope {
+        use ty_plus_protocol::{
+            CURRENT_PROTOCOL_VERSION, DeadlineUnixMs, HostContext, InvocationContext,
+            ManagedRootContext, MethodName, RequestId, RequestMetadata, SessionId,
+        };
+        RequestEnvelope {
+            protocol_version: CURRENT_PROTOCOL_VERSION,
+            metadata: RequestMetadata {
+                request_id: RequestId::parse("update-install-request").unwrap(),
+                session_id: SessionId::parse("update-install-session").unwrap(),
+                deadline_unix_ms: DeadlineUnixMs::new(
+                    std::time::SystemTime::now()
+                        .duration_since(std::time::UNIX_EPOCH)
+                        .unwrap()
+                        .as_millis() as u64
+                        + 60_000,
+                ),
+                cancellable: true,
+                idempotency_key: None,
+            },
+            context: InvocationContext {
+                host_context: HostContext {
+                    app_root: "/Applications/Adobe After Effects 2024".into(),
+                    support_root: "/Users/test/Library/Application Support".into(),
+                    session_id: "update-install-session".into(),
+                },
+                managed_root: ManagedRootContext::SessionDefault,
+            },
+            method: MethodName::parse("update.install").unwrap(),
+            payload: serde_json::json!({}),
+        }
+    }
+
+    /// A read-only extensions root must short-circuit to
+    /// `manual_required` before any download is attempted. The payload is
+    /// deliberately invalid for `validate_request` so that even if the
+    /// writability probe unexpectedly succeeds, the run fails fast
+    /// instead of touching the network.
+    #[cfg(unix)]
+    #[test]
+    fn dispatch_reports_manual_required_when_extensions_root_is_read_only() {
+        use std::os::unix::fs::PermissionsExt;
+
+        let root = temp_root("manual-required");
+        let exe = exe_fixture(&root);
+        let ext = ext_root(&root);
+        fs::create_dir_all(&ext).unwrap();
+
+        let mut payload = platform_request(&"0".repeat(64));
+        payload.asset.sha256 = "not-hex".into();
+        let request = update_install_envelope();
+        let cancel = CancellationToken::default();
+        let mut events = NoopEvents;
+
+        fs::set_permissions(&ext, fs::Permissions::from_mode(0o555)).unwrap();
+        let result =
+            dispatch_update_install_with_exe(&request, payload, &exe, &cancel, &mut events);
+        // Always restore writability so fixture cleanup cannot fail.
+        fs::set_permissions(&ext, fs::Permissions::from_mode(0o755)).unwrap();
+
+        let value = result.expect("read-only extensions root must report manual_required");
+        assert_eq!(value["status"], "manual_required");
+        assert_eq!(value["restart_required"], false);
+        assert_eq!(value["version"], "0.10.2");
+        fs::remove_dir_all(&root).unwrap();
     }
 }

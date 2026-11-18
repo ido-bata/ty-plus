@@ -604,4 +604,74 @@ mod tests {
             }
         }
     }
+
+    fn update_install_request() -> RequestEnvelope {
+        let mut request = scan_request(Path::new("/host"));
+        request.method = MethodName::parse("update.install").unwrap();
+        request.payload = serde_json::json!({
+            "release_version": "0.10.2",
+            "tag": "v0.10.2",
+            "asset": {
+                "url": "https://github.com/ido-bata/ty-plus/releases/download/v0.10.2/ty-plus-v0.10.2-macos.zip",
+                "file_name": "ty-plus-v0.10.2-macos.zip",
+                "sha256": "583ba8e34b17e8323faabb4399899e8ac3fc6b6383cfcec31664c41772e4bf7e"
+            }
+        });
+        request
+    }
+
+    /// Issue #135: `update.install` failures must surface as a
+    /// `ResponseOutcome::Failure` carrying the mapped stable code and its
+    /// retryable flag, not collapse into a worker error. The test binary
+    /// does not live under an `app.ty-plus` install tree, so dispatch
+    /// fails with `UnsupportedLayout` → `internal_error` (non-retryable)
+    /// before any network access.
+    #[test]
+    fn update_install_typed_error_maps_to_failure_envelope() {
+        let request = update_install_request();
+        let token = CancellationToken::default();
+        let mut events = NoopEvents;
+        let response = ProductionOperationExecutor
+            .execute(&request, &token, &mut events)
+            .expect("typed install failure must produce a response envelope");
+        let ResponseOutcome::Failure { error } = response.outcome else {
+            panic!(
+                "unsupported install layout must fail, got {:?}",
+                response.outcome
+            );
+        };
+        assert_eq!(error.code, StableErrorCode::InternalError);
+        assert!(!error.retryable);
+    }
+
+    /// Issue #135: a cancelled `update.install` must surface as the
+    /// stable `cancelled` protocol error rather than a failure envelope.
+    #[test]
+    fn update_install_cancelled_maps_to_protocol_cancelled() {
+        let request = update_install_request();
+        let token = CancellationToken::default();
+        token.cancel();
+        let mut events = NoopEvents;
+        let result = execute_update_install(&request, &token, &mut events);
+        assert!(matches!(
+            result,
+            Err(WorkerError::Protocol(StableErrorCode::Cancelled))
+        ));
+    }
+
+    /// Issue #135: a payload that is not a valid `UpdateInstallRequest`
+    /// fails as `invalid_request` before dispatch.
+    #[test]
+    fn update_install_invalid_payload_fails_invalid_request() {
+        let mut request = update_install_request();
+        request.payload = serde_json::json!({"release_version": 1});
+        let token = CancellationToken::default();
+        let mut events = NoopEvents;
+        let response = ProductionOperationExecutor
+            .execute(&request, &token, &mut events)
+            .expect("invalid payload must produce a response envelope");
+        assert!(
+            matches!(response.outcome, ResponseOutcome::Failure { error } if error.code == StableErrorCode::InvalidRequest && !error.retryable)
+        );
+    }
 }
