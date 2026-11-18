@@ -53,6 +53,12 @@ export type AnchoredPopoverProps = {
 	 * its chosen side of the anchor.
 	 */
 	maxHeight?: string;
+	/**
+	 * Stacking order for the portaled surface. Defaults to 50, which suits
+	 * dialog-embedded consumers; surfaces rendered inside higher stacking
+	 * contexts (e.g. workspace widget hosts) must pass a larger value.
+	 */
+	zIndex?: number;
 	role?: string;
 	id?: string;
 	"aria-labelledby"?: string;
@@ -69,6 +75,7 @@ export function AnchoredPopover(props: AnchoredPopoverProps): ReactNode {
 		align = "start",
 		matchAnchorWidth = false,
 		maxHeight = "70vh",
+		zIndex = 50,
 		role,
 		id,
 		"aria-labelledby": ariaLabelledby,
@@ -175,7 +182,7 @@ export function AnchoredPopover(props: AnchoredPopoverProps): ReactNode {
 				left: position?.left ?? 0,
 				width: position?.width,
 				maxHeight: position?.maxHeight,
-				zIndex: 50,
+				zIndex,
 				visibility: position ? "visible" : "hidden",
 			}}
 		>
