@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { expect } from "storybook/test";
 import type { Preset } from "@/management/preset/contract";
+import { expectCanvasLayout } from "@/storybook/quality/layout";
 import { CatalogPresetListRow } from "./CatalogPresetListRow";
 
 const makePreset = (overrides: Partial<Preset> = {}): Preset => ({
@@ -46,7 +48,30 @@ const meta = {
 export default meta;
 type Story = StoryObj<Args>;
 
-export const Default: Story = {};
+// Issue #166: the row must expose its entry contract (`data-entry-kind`,
+// preset id, run affordance) inside the layout contract for every preset
+// type — script/plugin rows share the same chrome as preset rows.
+const playRowLayout = async ({
+	canvasElement,
+}: {
+	canvasElement: HTMLElement;
+}): Promise<void> => {
+	expectCanvasLayout(canvasElement, {
+		requireRenderedSelector: "[data-directory-browser-entry] button",
+	});
+	const row = canvasElement.querySelector<HTMLElement>(
+		"[data-directory-browser-entry]",
+	);
+	expect(row?.dataset.entryKind).toBe("preset");
+	expect(row?.dataset.presetId).toBeTruthy();
+	expect(
+		canvasElement.querySelector("button[aria-label='Run preset']"),
+	).not.toBeNull();
+};
+
+export const Default: Story = {
+	play: playRowLayout,
+};
 
 export const ScriptPreset: Story = {
 	args: {
@@ -57,6 +82,7 @@ export const ScriptPreset: Story = {
 			filePath: "/preset/root/bounce.jsx",
 		}),
 	},
+	play: playRowLayout,
 };
 
 export const PluginPreset: Story = {
@@ -68,6 +94,7 @@ export const PluginPreset: Story = {
 			filePath: "/preset/root/color.aex",
 		}),
 	},
+	play: playRowLayout,
 };
 
 export const LongTitle: Story = {
@@ -77,4 +104,5 @@ export const LongTitle: Story = {
 			filePath: "/preset/root/glow-extended-title.ffx",
 		}),
 	},
+	play: playRowLayout,
 };

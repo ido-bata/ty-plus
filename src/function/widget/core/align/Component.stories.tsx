@@ -4,6 +4,7 @@ import { expect, waitFor } from "storybook/test";
 import { Align } from "@/function/widget/core/align/Component";
 import type { SurfaceState } from "@/management/workspace/state";
 import { createInitialSurfaceState } from "@/management/workspace/state";
+import { expectCanvasLayout } from "@/storybook/quality/layout";
 import { css } from "@/styled-system/css";
 
 type Args = {
@@ -53,7 +54,12 @@ const meta = {
 export default meta;
 type Story = StoryObj<Args>;
 
-export const Default: Story = {};
+export const Default: Story = {
+	// Issue #194/#166: initial-state layout contract.
+	play: async ({ canvasElement }) => {
+		expectCanvasLayout(canvasElement);
+	},
+};
 
 export const Compact: Story = {
 	args: { widthPx: 160, heightPx: 160 },
@@ -117,5 +123,70 @@ export const SelectTimeTarget: Story = {
 		await expect(
 			canvasElement.querySelector("[data-ws-action='align-start']"),
 		).not.toBeNull();
+	},
+};
+
+/**
+ * Issue #166: gesture-drag coverage matching the anchor-point /
+ * easing stories. A plain left-drag on the widget surface (away from
+ * `data-ws-action` controls and the tile edge margins) is recognized by
+ * `useAnchorGesture` as `align-right`; the gesture overlay must paint
+ * while the stroke is active and the layout contract must hold before,
+ * during, and after the drag.
+ *
+ * The mousedown is dispatched on the widget root so `event.target` is
+ * not a `data-ws-action` control; coordinates stay well inside the
+ * 16px drag-handle margin. `host("alignLayers")` is a noop under
+ * Storybook, so the observable assertions are the overlay lifecycle and
+ * the layout audit — the recognized action itself is covered by the
+ * hook's unit tests.
+ */
+export const DragAlignRight: Story = {
+	args: { widthPx: 240, heightPx: 240 },
+	play: async ({ canvasElement }) => {
+		expectCanvasLayout(canvasElement);
+		const widget = canvasElement.querySelector<HTMLElement>(
+			"[role='application']",
+		);
+		if (!widget) throw new Error("align widget root not found");
+		const rect = widget.getBoundingClientRect();
+		const cx = rect.left + rect.width / 2;
+		const cy = rect.top + rect.height / 2;
+		const fire = (type: string, dx: number) => {
+			widget.dispatchEvent(
+				new MouseEvent(type, {
+					bubbles: true,
+					cancelable: true,
+					button: 0,
+					buttons: type === "mouseup" ? 0 : 1,
+					clientX: cx + dx,
+					clientY: cy,
+				}),
+			);
+		};
+		fire("mousedown", 0);
+		// `useAnchorGesture` attaches its document-level move/end listeners
+		// in an effect gated on `isActive`; give React a tick to commit
+		// before dispatching the stroke or the moves are dropped.
+		await new Promise((resolve) => setTimeout(resolve, 50));
+		fire("mousemove", 30);
+		await new Promise((resolve) => setTimeout(resolve, 50));
+		// Mid-gesture: the path overlay must be rendered with a polyline.
+		const overlay = canvasElement.querySelector<SVGSVGElement>(
+			"svg[aria-label='Gesture path overlay']",
+		);
+		expect(overlay).not.toBeNull();
+		expect(
+			overlay?.querySelector("polyline") ?? overlay?.querySelector("circle"),
+		).not.toBeNull();
+		expectCanvasLayout(canvasElement);
+		fire("mousemove", 60);
+		fire("mouseup", 60);
+		await new Promise((resolve) => setTimeout(resolve, 300));
+		// Post-gesture: the overlay unmounts and the contract still holds.
+		await expect(
+			canvasElement.querySelector("svg[aria-label='Gesture path overlay']"),
+		).toBeNull();
+		expectCanvasLayout(canvasElement);
 	},
 };

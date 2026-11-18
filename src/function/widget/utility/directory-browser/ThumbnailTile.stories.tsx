@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { expect } from "storybook/test";
 import type { FileBrowserEntry } from "@/management/storage/file-browser-service";
+import { expectCanvasLayout } from "@/storybook/quality/layout";
 import { ThumbnailTile } from "./ThumbnailTile";
 
 type Args = {
@@ -43,12 +45,37 @@ type Story = StoryObj<typeof meta>;
 // is always mounted with a stable ref so the IntersectionObserver
 // stays bound to a single DOM node — even when the inner content
 // swaps from placeholder to `<img>`.
-export const Default: Story = {};
+//
+// Issue #166: while `useThumbnail` is idle/loading/error the tile must
+// keep its box, expose the entry name as the accessible label, and NOT
+// render a broken `<img>` — assert the placeholder contract, not just
+// capture success.
+const playPlaceholderTile = async ({
+	canvasElement,
+	entryName,
+}: {
+	canvasElement: HTMLElement;
+	entryName: string;
+}): Promise<void> => {
+	expectCanvasLayout(canvasElement);
+	const wrapper = canvasElement.querySelector<HTMLElement>(
+		`[aria-label='${entryName}']`,
+	);
+	expect(wrapper).not.toBeNull();
+	expect(wrapper?.querySelector("img")).toBeNull();
+};
+
+export const Default: Story = {
+	play: ({ canvasElement }) =>
+		playPlaceholderTile({ canvasElement, entryName: "alpha.png" }),
+};
 
 export const Loading: Story = {
 	args: {
 		entry: makeFile({ name: "loading.png", path: "/preset/root/loading.png" }),
 	},
+	play: ({ canvasElement }) =>
+		playPlaceholderTile({ canvasElement, entryName: "loading.png" }),
 };
 
 export const WideAspect: Story = {
@@ -88,4 +115,6 @@ export const OffscreenIntersection: Story = {
 			</div>
 		),
 	],
+	play: ({ canvasElement }) =>
+		playPlaceholderTile({ canvasElement, entryName: "offscreen.png" }),
 };
