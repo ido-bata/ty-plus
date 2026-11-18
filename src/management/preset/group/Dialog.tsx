@@ -3,11 +3,7 @@ import { type JSX, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { readUserHomeOrFallback } from "@/management/preset/catalog-add/browse-start-dir";
 import { PresetIconEditor } from "@/management/preset/components/IconEditor";
-import type { Preset, PresetType } from "@/management/preset/contract";
-import type {
-	IconRule,
-	IconRuleFilter,
-} from "@/management/preset/group-catalog";
+import type { Preset } from "@/management/preset/contract";
 import type { PresetIconEditorDraft } from "@/management/preset/icon-editor";
 import {
 	createPresetIconDraft,
@@ -31,15 +27,16 @@ import { Input } from "@/shared/component/fields/Input";
 import { PathField } from "@/shared/component/fields/PathField";
 import { css } from "@/styled-system/css";
 import { ConditionRuleCard } from "./ConditionRuleCard";
+import {
+	type ConditionRule,
+	conditionRulesToIconRules,
+} from "./condition-rule-helpers";
 import { FolderScanDepthSelector } from "./FolderScanDepthSelector";
 
 /**
  * Create a preset group: select multiple presets from catalog or scan a folder.
  * Supports conditional icon rules based on preset type, name pattern, or specific selections.
  */
-const escapeRegex = (value: string): string =>
-	value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-
 const columnClass = css({
 	display: "flex",
 	flexDirection: "column",
@@ -100,16 +97,7 @@ export function GroupDialog(): JSX.Element {
 
 	// Paths list for group members is stored as newline-separated value in field 'paths'
 	// Condition rules: additive list where each rule has a namePattern and an icon draft
-	const [conditionRules, setConditionRules] = useState<
-		{
-			id: string;
-			filterType: "name" | "path" | "preset" | "presetType";
-			pattern: string;
-			matchMode?: "regex" | "contains" | "startsWith" | "endsWith";
-			presetType?: PresetType;
-			draft: PresetIconEditorDraft;
-		}[]
-	>([
+	const [conditionRules, setConditionRules] = useState<ConditionRule[]>([
 		{
 			id: `init-${Date.now()}`,
 			filterType: "name",
@@ -183,16 +171,7 @@ export function GroupDialog(): JSX.Element {
 				.join("|");
 			if (idsKey && lastDetectKeyRef.current !== idsKey) {
 				const sampleIds = presets.map((x) => x.id).slice(0, 10);
-				const autoDetectRulesUpdater = (
-					prev: {
-						id: string;
-						filterType: "name" | "path" | "preset" | "presetType";
-						pattern: string;
-						matchMode?: "regex" | "contains" | "startsWith" | "endsWith";
-						presetType?: PresetType;
-						draft: PresetIconEditorDraft;
-					}[],
-				) => {
+				const autoDetectRulesUpdater = (prev: ConditionRule[]) => {
 					const sampleIdsSet = new Set(sampleIds);
 					const hasOverlap = prev.some(
 						(r) =>
@@ -501,23 +480,7 @@ export function GroupDialog(): JSX.Element {
 					.split(/\r?\n/)
 					.map((l: string) => l.trim())
 					.filter(Boolean);
-				const condRules = conditionRules.flatMap<IconRule>((r) => {
-					const icon = presetIconDraftToPresetIcon(r.draft);
-					let filter: IconRuleFilter | undefined;
-					if (r.filterType === "name" && r.pattern.trim())
-						filter = { namePattern: r.pattern.trim() };
-					if (r.filterType === "path" && r.pattern.trim())
-						filter = { filePathPattern: r.pattern.trim() };
-					if (r.filterType === "preset" && r.pattern.trim())
-						filter = {
-							specificPresetIds: r.pattern.split(/\s*,\s*/).filter(Boolean),
-						};
-					if (r.filterType === "presetType" && r.presetType)
-						filter = { presetType: r.presetType };
-					if (icon && filter) return [{ filter, icon }];
-					if (icon) return [{ icon }];
-					return [];
-				});
+				const condRules = conditionRulesToIconRules(conditionRules);
 				return persistFolderGroupPreset(win, {
 					folderPaths,
 					presetIdsText: values.presetIds ?? "",
