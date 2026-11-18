@@ -42,11 +42,10 @@ Each row is a TSV-style line:
 
 | requirement_id    | acceptance                                                    | scenario_id(s)                                          | last_verified_run_id |
 |-------------------|---------------------------------------------------------------|---------------------------------------------------------|----------------------|
-| boot-stability    | preset lifecycle survives reload + cross-panel + restart       | SCN-LIFECYCLE-01, SCN-LIFECYCLE-02, SCN-FAILURE-01, SCN-BOOT-01 |  |
+| boot-stability    | preset lifecycle survives reload + cross-panel + restart       | SCN-LIFECYCLE-01, SCN-FAILURE-01, SCN-BOOT-01 |  |
 | catalog-crud      | catalog and preset CRUD round-trip preserves disk + storage   | SCN-CATALOG-01, SCN-PRESET-CRUD-01, SCN-GROUPS-01       |  |
 | host-bridge       | panel-originated host actions dispatch through canonical bridge | SCN-HOST-01                                             |  |
 | settings-dialog   | settings dialog round-trip persists edited values            | SCN-SETTINGS-01                                         |  |
-| online-degraded   | degraded cloud switches to local fallback without blocking   | SCN-DEGRADED-01                                         |  |
 | diagnostics       | diagnostics capture produces a verifiable evidence bundle     | SCN-DIAGNOSTICS-01                                      |  |
 | runtime-lifecycle | host bundle action and worker attempt are attributable from the console | SCN-RUNTIME-01 |  |
 | preset-authoring  | authored preset write under a protected root escalates once and commits after read-back | SCN-AUTHOR-01 |  |

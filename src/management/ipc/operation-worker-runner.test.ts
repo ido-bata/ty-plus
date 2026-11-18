@@ -42,7 +42,7 @@ const invocationFixture = {
 	...fixtureInvocation,
 	method: {
 		...fixtureInvocation.method,
-		name: "online.catalog.search",
+		name: "host.plugin.effect.scan",
 		encode: (
 			payload: { value: string },
 			context: typeof fixtureInvocation.context,
@@ -51,7 +51,7 @@ const invocationFixture = {
 			if (encoded.kind !== "request") return encoded;
 			return {
 				...encoded,
-				message: { ...encoded.message, method: "online.catalog.search" },
+				message: { ...encoded.message, method: "host.plugin.effect.scan" },
 			};
 		},
 	},

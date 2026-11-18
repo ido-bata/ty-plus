@@ -6,8 +6,6 @@ function workspaceShellSurfaceIdForToolKind(kind: ToolDialogKind): string {
 	switch (kind) {
 		case "presets":
 			return "dialog-presets";
-		case "presetLibrary":
-			return "dialog-preset-library";
 		case "messages":
 			return "dialog-messages";
 		case "settings":

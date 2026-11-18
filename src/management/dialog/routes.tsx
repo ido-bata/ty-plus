@@ -10,7 +10,6 @@ import { tyPlusExtensionId } from "@/management/ae/cep/extension-id";
 import { readCepOpenParams } from "@/management/ae/cep/transport";
 import { TY_PLUS_DIALOG_EXTENSION } from "@/management/dialog/dialogs/ids";
 import { DeferredDialogBody } from "@/management/dialog/lazy-body";
-import { PresetLibrary } from "@/management/online/catalog/Dialog";
 import { NotificationCenter } from "@/management/online/notification/Center";
 import { GroupDialog, ImportDialog, PathDialog } from "@/management/preset";
 import { GenericPresetCreateDialog } from "@/management/preset/authoring/Dialog";
@@ -67,10 +66,6 @@ function resolveUserDataPath(
  * with direct branches like Presets / Settings).
  */
 const DIALOG_ROUTES: readonly DialogRoute[] = [
-	{
-		surfaceId: "dialog-preset-library",
-		body: () => <PresetLibrary />,
-	},
 	{
 		surfaceId: "dialog-messages",
 		body: () => <NotificationCenter />,

@@ -30,7 +30,7 @@ import { css } from "@/styled-system/css";
  *     so the keyboard interaction never dead-ends.
  *   - `Home` / `End` jump to the first / last item.
  *
- * Hash deep links (e.g. `#language`, `#network`) drive the active
+ * Hash deep links (e.g. `#language`, `#update`) drive the active
  * section on mount and on `hashchange` events. Section changes are
  * mirrored to `window.location.hash` via `replaceState` so the
  * back / forward buttons are reserved for actual navigation.
@@ -49,7 +49,6 @@ export type SettingsSidebarSectionId =
 	| "background"
 	| "grid"
 	| "paths"
-	| "network"
 	| "update"
 	| "component-preview"
 	| "design-tokens"

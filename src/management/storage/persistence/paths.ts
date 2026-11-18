@@ -47,8 +47,6 @@ export const PATHS = {
 
 	// cache/
 	notifications: (root: string) => `${root}/cache/notifications.json`,
-	remotePresets: (root: string) => `${root}/cache/remote-presets.json`,
-	publicLinks: (root: string) => `${root}/cache/public-links.json`,
 	candidates: (root: string) => `${root}/cache/candidates.json`,
 	candidatesChunk: (root: string, id: string) =>
 		`${root}/cache/candidates/${id}.json`,

@@ -1,12 +1,5 @@
 {
   "canonicalMethods": [
-    "online_catalog_search",
-    "online_connectivity_check",
-    "online_download",
-    "online_catalog_cache_read",
-    "online_catalog_cache_write",
-    "online_catalog_cache_delete",
-    "online_catalog_cache_clear",
     "host_plugin_effect_scan",
     "host_thumbnail_lookup",
     "host_thumbnail_generate",
@@ -50,55 +43,6 @@
       "retryCrashBeforeAccept": false,
       "wireName": "host.thumbnail.lookup-or-generate"
     },
-    "online_catalog_cache_clear": {
-      "cancellable": true,
-      "idempotencyKey": "forbidden",
-      "retryClass": "non-idempotent",
-      "retryCrashBeforeAccept": false,
-      "wireName": "online.catalog.cache.clear"
-    },
-    "online_catalog_cache_delete": {
-      "cancellable": true,
-      "idempotencyKey": "forbidden",
-      "retryClass": "non-idempotent",
-      "retryCrashBeforeAccept": false,
-      "wireName": "online.catalog.cache.delete"
-    },
-    "online_catalog_cache_read": {
-      "cancellable": true,
-      "idempotencyKey": "optional",
-      "retryClass": "idempotent",
-      "retryCrashBeforeAccept": false,
-      "wireName": "online.catalog.cache.read"
-    },
-    "online_catalog_cache_write": {
-      "cancellable": true,
-      "idempotencyKey": "forbidden",
-      "retryClass": "non-idempotent",
-      "retryCrashBeforeAccept": false,
-      "wireName": "online.catalog.cache.write"
-    },
-    "online_catalog_search": {
-      "cancellable": true,
-      "idempotencyKey": "optional",
-      "retryClass": "idempotent",
-      "retryCrashBeforeAccept": false,
-      "wireName": "online.catalog.search"
-    },
-    "online_connectivity_check": {
-      "cancellable": true,
-      "idempotencyKey": "optional",
-      "retryClass": "idempotent",
-      "retryCrashBeforeAccept": false,
-      "wireName": "online.connectivity.check"
-    },
-    "online_download": {
-      "cancellable": true,
-      "idempotencyKey": "forbidden",
-      "retryClass": "non-idempotent",
-      "retryCrashBeforeAccept": false,
-      "wireName": "online.download"
-    },
     "update_install": {
       "cancellable": true,
       "idempotencyKey": "forbidden",
@@ -131,35 +75,6 @@
       "title": "CapabilitySet",
       "type": "array",
       "uniqueItems": true
-    },
-    "connectivityStatusDto": {
-      "$schema": "https://json-schema.org/draft/2020-12/schema",
-      "additionalProperties": false,
-      "description": "Connectivity status payload for `online.connectivity.check`.\n\nMirrors the typed `ConnectivityStatus` from `ty_plus_online::connectivity`\nbut uses snake_case wire fields and an `error_message` option so it can be\nserialized as part of the generated schema and re-imported by the\nTypeScript runtime gateway.",
-      "properties": {
-        "checked_at": {
-          "type": "string"
-        },
-        "error_message": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "label": {
-          "type": "string"
-        },
-        "state": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "state",
-        "label",
-        "checked_at"
-      ],
-      "title": "ConnectivityStatusDto",
-      "type": "object"
     },
     "generateThumbnailRequest": {
       "$schema": "https://json-schema.org/draft/2020-12/schema",

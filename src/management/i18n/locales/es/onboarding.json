@@ -43,7 +43,7 @@
 		"adding-presets": {
 			"label": "Preajustes",
 			"title": "Añadir preajustes",
-			"body": "Usa el menú + para añadir preajustes, grupos y widgets.\n\n- Cambia los paneles laterales para la lista de preajustes\n- Los preajustes descargados en línea se colocan automáticamente"
+			"body": "Usa el menú + para añadir preajustes, grupos y widgets.\n\n- Cambia los paneles laterales para la lista de preajustes"
 		},
 		"finish": {
 			"label": "Finalizar",

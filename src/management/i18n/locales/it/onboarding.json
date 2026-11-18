@@ -43,7 +43,7 @@
 		"adding-presets": {
 			"label": "Preimpostazioni",
 			"title": "Aggiungere Preimpostazioni",
-			"body": "Usa il menu + per aggiungere preimpostazioni, gruppi e widget.\n\n- Cambia pannelli laterali per l'elenco preimpostazioni\n- Le preimpostazioni scaricate online si posizionano automaticamente"
+			"body": "Usa il menu + per aggiungere preimpostazioni, gruppi e widget.\n\n- Cambia pannelli laterali per l'elenco preimpostazioni"
 		},
 		"finish": {
 			"label": "Fine",

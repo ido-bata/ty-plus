@@ -107,7 +107,7 @@ export const plannedSteps = (options: {
 	const verifyGate = step("verify packaged bundle (release trust)", [
 		"bun",
 		"run",
-		"verify:online-gateway:package",
+		"verify:operation-worker:package",
 		"--",
 		"--trust-mode=release",
 		`--product-version=${options.productVersion}`,

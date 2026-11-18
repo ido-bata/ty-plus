@@ -198,7 +198,7 @@ describe("resolveOperationWorkerBinary", () => {
 		await chmod(join(extensionRoot, macosRelativePath), 0o755);
 
 		manifest = {
-			capabilities: ["storage", "online"],
+			capabilities: ["storage", "thumbnails"],
 			extensionVersion: "1.0.0",
 			productVersion: "1.0.0",
 			protocolVersion: { major: 1, minor: 0 },
@@ -222,7 +222,7 @@ describe("resolveOperationWorkerBinary", () => {
 	});
 
 	const inputFor = (platform: OperationWorkerPlatform) => ({
-		expectedCapabilities: ["online", "storage"],
+		expectedCapabilities: ["thumbnails", "storage"],
 		expectedExtensionVersion: "1.0.0",
 		expectedProductVersion: "1.0.0",
 		expectedProtocolVersion: { major: 1, minor: 0 } as const,

@@ -11,7 +11,6 @@ use ty_plus_protocol::{
     CURRENT_PROTOCOL_VERSION,
 };
 use ty_plus_runtime::dispatcher;
-use ty_plus_runtime::online_dispatch::OnlineComposition;
 use ty_plus_storage::PersistenceIoHandler;
 
 fn main() -> io::Result<()> {
@@ -28,7 +27,6 @@ fn main() -> io::Result<()> {
     eprintln!("[ty-plus-runtime] Starting with root: {root}");
 
     let persistence_handler = PersistenceIoHandler::new(root.clone());
-    let online = OnlineComposition::new(std::path::Path::new(&root));
     let session_id = SessionId::parse("session-main").expect("valid session ID");
 
     let stdin = io::stdin();
@@ -43,30 +41,28 @@ fn main() -> io::Result<()> {
         }
 
         // Parse as a simple JSON request
-        let response =
-            match parse_and_dispatch(&line, &session_id, &root, &persistence_handler, &online) {
-                Ok(resp) => resp,
-                Err(error) => {
-                    let diagnostic_id =
-                        DiagnosticId::parse("diag-main").expect("valid diagnostic ID");
-                    let protocol_error = ty_plus_protocol::ProtocolError::new(
-                        StableErrorCode::InternalError,
-                        false,
-                        error,
-                        diagnostic_id,
-                    )
-                    .expect("failed to create protocol error");
-                    ResponseEnvelope {
-                        protocol_version: CURRENT_PROTOCOL_VERSION,
-                        request_id: ty_plus_protocol::RequestId::parse("unknown")
-                            .expect("valid request ID"),
-                        session_id: session_id.clone(),
-                        outcome: ResponseOutcome::Failure {
-                            error: protocol_error,
-                        },
-                    }
+        let response = match parse_and_dispatch(&line, &session_id, &root, &persistence_handler) {
+            Ok(resp) => resp,
+            Err(error) => {
+                let diagnostic_id = DiagnosticId::parse("diag-main").expect("valid diagnostic ID");
+                let protocol_error = ty_plus_protocol::ProtocolError::new(
+                    StableErrorCode::InternalError,
+                    false,
+                    error,
+                    diagnostic_id,
+                )
+                .expect("failed to create protocol error");
+                ResponseEnvelope {
+                    protocol_version: CURRENT_PROTOCOL_VERSION,
+                    request_id: ty_plus_protocol::RequestId::parse("unknown")
+                        .expect("valid request ID"),
+                    session_id: session_id.clone(),
+                    outcome: ResponseOutcome::Failure {
+                        error: protocol_error,
+                    },
                 }
-            };
+            }
+        };
 
         let json = serde_json::to_string(&response)?;
         stdout.write_all(json.as_bytes())?;
@@ -82,7 +78,6 @@ fn parse_and_dispatch(
     session_id: &SessionId,
     managed_root: &str,
     persistence_handler: &PersistenceIoHandler,
-    online: &OnlineComposition,
 ) -> Result<ResponseEnvelope, String> {
     let value: Value = serde_json::from_str(line).map_err(|e| format!("JSON parse error: {e}"))?;
 
@@ -137,6 +132,5 @@ fn parse_and_dispatch(
         session_id.clone(),
         request,
         persistence_handler,
-        online,
     ))
 }

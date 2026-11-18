@@ -31,7 +31,6 @@ const mocks = vi.hoisted(() => {
 		cepContext: {
 			value: { panelSurfaceId: "panel-2" } as { panelSurfaceId: string },
 		},
-		manualUrl: { value: "https://example.com/manual" as string | null },
 		unregisterMock,
 		registerMock,
 		openManualMock,
@@ -62,12 +61,8 @@ vi.mock("@/management/i18n/Context", () => ({
 	}),
 }));
 
-vi.mock("@/management/online/public-link/usePublicLink", () => ({
-	usePublicLink: () => ({
-		open: mocks.openManualMock,
-		status: "ready",
-		url: mocks.manualUrl.value,
-	}),
+vi.mock("@/management/workspace/hooks/helpers", () => ({
+	openUrlInDefaultBrowser: mocks.openManualMock,
 }));
 
 vi.mock("@/shared", () => ({
@@ -128,7 +123,6 @@ describe("SetupRequired", () => {
 		mocks.openManualMock.mockClear();
 		mocks.reloadMock.mockClear();
 		mocks.cepContext.value = { panelSurfaceId: "panel-2" };
-		mocks.manualUrl.value = "https://example.com/manual";
 	});
 
 	afterEach(() => {
@@ -181,16 +175,6 @@ describe("SetupRequired", () => {
 			id: "ty.ctx.setup-required.refresh",
 			label: "Refresh",
 		});
-	});
-
-	it("disables Open Manual when the public link is not resolved", () => {
-		mocks.manualUrl.value = null;
-
-		render(<SetupRequired />);
-
-		const registration = mocks.registerMock.mock.calls[0][1];
-		const payload = registration.buildPayload(new MouseEvent("contextmenu"));
-		expect(payload?.menu[0]?.enabled).toBe(false);
 	});
 
 	it("opens the manual when Open Manual is selected", () => {

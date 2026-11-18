@@ -22,7 +22,7 @@ CEP panelとoperation-worker binaryの組は、worker manifest（`dist/cep-dev/w
 bun install --frozen-lockfile --ignore-scripts
 bunx panda codegen --silent && bunx panda cssgen --silent
 bun run build:cep:dev
-bun run verify:online-gateway:package -- --trust-mode=development-unsigned --product-version=<package.jsonのversion>
+bun run verify:operation-worker:package -- --trust-mode=development-unsigned --product-version=<package.jsonのversion>
 bun run scripts/package/package-cep-archive.ts zip
 bun scripts/package/release-manifest.ts --trust-mode=development-unsigned --artifact=dist/app.ty-plus.zip
 ```
@@ -74,7 +74,7 @@ bun scripts/package/release-manifest.ts --trust-mode=development-unsigned --arti
 
 | 検証 | 実施場所 |
 | --- | --- |
-| bundle構造・manifest束縛・version一致 | `verify:online-gateway:package`（CI / ローカル） |
+| bundle構造・manifest束縛・version一致 | `verify:operation-worker:package`（CI / ローカル） |
 | worker binaryのsha256 vs manifest | 同上（release-trustでは必須probe、dev-trustではSKIP — manifestがsha256をpinしないため） |
 | 実worker process起動 | `verify:operation-worker:process`（CI native jobs / ローカル） |
 | After Effects内でのworker動作 | `verify:operation-worker:cep`（実機、#10） |

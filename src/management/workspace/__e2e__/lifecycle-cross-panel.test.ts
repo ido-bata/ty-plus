@@ -72,16 +72,7 @@ vi.mock("@/management/preset/group-catalog", () => ({
 }));
 
 vi.mock("@/management/workspace/services", () => ({
-	getDataServices: () => ({
-		presetRepository: presetRepo,
-		gateway: {
-			provider: "supabase" as const,
-			resolvePreset: async () => ({}),
-		},
-		cloudSync: {},
-		resolveSystemPaths: () => null,
-		bootMode: "live" as const,
-	}),
+	resolveSystemPaths: () => null,
 }));
 
 vi.mock("@/management/ae/cep/transport", () => ({

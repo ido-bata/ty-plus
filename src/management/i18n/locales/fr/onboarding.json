@@ -43,7 +43,7 @@
 		"adding-presets": {
 			"label": "Préréglages",
 			"title": "Ajouter des préréglages",
-			"body": "Utilisez le menu + pour ajouter des préréglages, groupes et widgets.\n\n- Basculez les panneaux latéraux pour la liste des préréglages\n- Les préréglages en ligne téléchargés se placent automatiquement"
+			"body": "Utilisez le menu + pour ajouter des préréglages, groupes et widgets.\n\n- Basculez les panneaux latéraux pour la liste des préréglages"
 		},
 		"finish": {
 			"label": "Terminer",

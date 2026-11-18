@@ -211,7 +211,7 @@ describe("operation worker scheduler", () => {
 			}),
 		});
 		const reusingFactory = {
-			methodName: "online_catalog_search" as const,
+			methodName: "host_plugin_effect_scan" as const,
 			create: (identity: { requestId: string; idempotencyKey?: string }) => {
 				if (firstRequestId === "") firstRequestId = identity.requestId;
 				const invocation = factory.create({
@@ -236,10 +236,10 @@ describe("operation worker scheduler", () => {
 			}),
 		});
 		await scheduler.enqueue(
-			invocationFactory(seen, undefined, "online_catalog_search"),
+			invocationFactory(seen, undefined, "host_plugin_effect_scan"),
 		);
 		await scheduler.enqueue(
-			invocationFactory(seen, undefined, "online_download"),
+			invocationFactory(seen, undefined, "update_install"),
 		);
 		expect(seen[0]?.idempotencyKey).toMatch(/^job-/);
 		expect(seen[1]?.idempotencyKey).toBeUndefined();
@@ -312,14 +312,14 @@ describe("operation worker scheduler", () => {
 
 	it("rejects a factory method lie before creating a runner", async () => {
 		let created = 0;
-		const honest = invocationFactory([], undefined, "online_catalog_search");
+		const honest = invocationFactory([], undefined, "host_plugin_effect_scan");
 		const lying = {
-			methodName: "online_catalog_search" as const,
+			methodName: "host_plugin_effect_scan" as const,
 			create: (identity: { requestId: string; idempotencyKey?: string }) => {
 				const invocation = honest.create(identity);
 				return {
 					...invocation,
-					method: { ...invocation.method, name: "online_catalog_cache_read" },
+					method: { ...invocation.method, name: "host_thumbnail_lookup" },
 				};
 			},
 		};
@@ -358,7 +358,7 @@ describe("operation worker scheduler", () => {
 		});
 		const jobs = ["1", "2", "3", "4", "5", "6"].map((value) =>
 			scheduler.enqueue(
-				invocationFactory([], undefined, "online_catalog_search", value),
+				invocationFactory([], undefined, "host_plugin_effect_scan", value),
 			),
 		);
 		await Promise.resolve();

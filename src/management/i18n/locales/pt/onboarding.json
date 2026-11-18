@@ -43,7 +43,7 @@
 		"adding-presets": {
 			"label": "Predefinições",
 			"title": "Adicionar predefinições",
-			"body": "Use o menu + para adicionar predefinições, grupos e widgets.\n\n- Alterne os painéis laterais para a lista de predefinições\n- Predefinições online baixadas são colocadas automaticamente"
+			"body": "Use o menu + para adicionar predefinições, grupos e widgets.\n\n- Alterne os painéis laterais para a lista de predefinições"
 		},
 		"finish": {
 			"label": "Concluir",

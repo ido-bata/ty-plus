@@ -76,10 +76,10 @@ const STUB_SECTIONS: SettingsSidebarSectionDef[] = [
 		render: () => <div data-testid="section-paths">Paths body</div>,
 	},
 	{
-		sectionId: "network",
+		sectionId: "update",
 		groupId: "data",
-		labelKey: "tabs.section.network",
-		render: () => <div data-testid="section-network">Network body</div>,
+		labelKey: "tabs.section.update",
+		render: () => <div data-testid="section-update">Update body</div>,
 	},
 	{
 		sectionId: "component-preview",
@@ -235,14 +235,14 @@ describe("SettingsSidebar (Issue #143)", () => {
 	it("replaces (not just hides) the previous section body when switching", () => {
 		render(<SettingsSidebar sections={STUB_SECTIONS} />);
 
-		// Language is the default; click Network.
-		const networkTab = screen.getByRole("tab", { name: "Network" });
-		fireEvent.click(networkTab);
+		// Language is the default; click Updates.
+		const updateTab = screen.getByRole("tab", { name: "Updates" });
+		fireEvent.click(updateTab);
 
-		// Only the network body is in the DOM — the language body has
+		// Only the update body is in the DOM — the language body has
 		// been unmounted, not just `display: none`.
 		expect(screen.queryByTestId("section-language")).toBeNull();
-		expect(screen.getByTestId("section-network")).toBeInTheDocument();
+		expect(screen.getByTestId("section-update")).toBeInTheDocument();
 	});
 
 	it("restores the active section from a hashchange event", () => {

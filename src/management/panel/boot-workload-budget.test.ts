@@ -38,10 +38,10 @@ const entriesForAction = (action: string) =>
 describe("boot workload budget — Issue #131", () => {
 	it("emits boot.workload.start when a workload is started", () => {
 		const budget = createBootWorkloadBudget({ budgetMs: 1_000 });
-		budget.start("cloud-gateway-boot");
+		budget.start("operation-worker-boot");
 		expect(entriesForAction("boot.workload.start").length).toBe(1);
 		expect(entriesForAction("boot.workload.start")[0]?.context).toMatchObject({
-			name: "cloud-gateway-boot",
+			name: "operation-worker-boot",
 			budgetMs: 1_000,
 			source: "boot",
 		});

@@ -45,10 +45,8 @@ type CandidatesSystemPaths = {
  * The candidate cache indexes the **user-chosen** preset/script/plugin roots
  * (the same source the directory browser "Anchors" view, `PathDialog`, and
  * `FolderDirectoryPicker` already use), not the CEP gateway's AE-install-rooted
- * paths. The global `getDataServices().resolveSystemPaths()` returns the latter
- * and is intentionally kept as-is for the cloud-preset download flow
- * (`use-cases.ts` -> `resolvePresetDownloadPath`) which needs write access to
- * the AE install folder.
+ * paths. `resolveSystemPaths()` in `workspace/services.ts` returns the latter
+ * for callers that need AE install-folder access.
  */
 const resolveCandidateRootsFromSettings = async (
 	win: Window,

@@ -66,9 +66,9 @@
 			"gherkinRef": { "scenarioId": "SCN-RUNTIME-01", "stepIndex": 3 },
 			"preconditions": ["Debug Console is mounted."],
 			"input": {
-				"selector": "[data-ws-action=\"open-dialog\"][data-dialog-kind=\"presetLibrary\"]"
+				"selector": "[data-ws-action=\"open-dialog\"][data-dialog-kind=\"presets\"]"
 			},
-			"action": "open_online_preset_library",
+			"action": "open_preset_list",
 			"expectedResult": {
 				"logOracle": {
 					"scope": "operation-worker",
@@ -78,16 +78,16 @@
 				}
 			},
 			"postconditions": [
-				"A catalog lookup is queued on the operation worker scheduler."
+				"A thumbnail lookup is queued on the operation worker scheduler."
 			],
 			"mutation": true,
 			"checkpoint": false,
-			"noCleanupReason": "Opening the library issues a read-only catalog lookup. It writes no local record, and the queue drains when the operation settles."
+			"noCleanupReason": "Opening the preset list issues read-only thumbnail lookups for visible entries. It writes no local record, and the queue drains when the operations settle."
 		},
 		{
 			"id": "step-5",
 			"gherkinRef": { "scenarioId": "SCN-RUNTIME-01", "stepIndex": 4 },
-			"preconditions": ["A catalog lookup is queued on the scheduler."],
+			"preconditions": ["A thumbnail lookup is queued on the scheduler."],
 			"input": { "probe": "read the log bus for the operation-worker source" },
 			"action": "checkpoint_re_observe_after_enqueue",
 			"expectedResult": {

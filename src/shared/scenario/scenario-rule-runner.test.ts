@@ -270,11 +270,9 @@ describe("scenario-spec rule runner", () => {
 			"SCN-CATALOG-01",
 			"SCN-PRESET-CRUD-01",
 			"SCN-LIFECYCLE-01",
-			"SCN-LIFECYCLE-02",
 			"SCN-GROUPS-01",
 			"SCN-HOST-01",
 			"SCN-SETTINGS-01",
-			"SCN-DEGRADED-01",
 			"SCN-DIAGNOSTICS-01",
 			"SCN-FAILURE-01",
 		]);

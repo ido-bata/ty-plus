@@ -4,7 +4,7 @@
  * `dist/cep-dev/worker/manifest.json` and the content-addressed binary behind
  * it exist only when `buildDevelopmentWorker()` runs, and the only caller of
  * that used to be `build:cep:dev` — a step nothing in the gate invoked.
- * `ci:static` ran `build`, then `verify:online-gateway:package` looked for a
+ * `ci:static` ran `build`, then `verify:operation-worker:package` looked for a
  * file `build` had never produced, so a fresh checkout failed on Windows and
  * macOS while Linux stayed green: the probes are gated on the same platform
  * condition and SKIP there (Issue #191).
@@ -25,7 +25,7 @@ export const buildGateOperationWorker = async (
 	if (!NATIVE_HOSTS.has(platform)) {
 		console.log(
 			`[cep-worker] skipped: operation-worker artifacts are produced on Windows and macOS only (host=${platform}). ` +
-				`verify:online-gateway:package records SKIP for the same reason, and check:rust-workspace compiles only the host-independent crates here.`,
+				`verify:operation-worker:package records SKIP for the same reason, and check:rust-workspace compiles only the host-independent crates here.`,
 		);
 		return "skipped";
 	}

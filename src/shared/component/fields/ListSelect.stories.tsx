@@ -102,15 +102,17 @@ export const OpenAndSelect: Story = {
 		await expect(trigger.getAttribute("aria-expanded")).toBe("true");
 		// Issue #194: while the listbox is open, every option must stay
 		// inside the viewport and unclipped — the popover must not lose to
-		// an `overflow:hidden` ancestor (product-model §4.3).
-		expectCanvasLayout(canvasElement, {
+		// an `overflow:hidden` ancestor (product-model §4.3). The listbox is
+		// portaled to document.body by AnchoredPopover, so audit the whole
+		// body rather than canvasElement.
+		expectCanvasLayout(document.body, {
 			unclippedSelector:
 				'button, [role="option"], [role="listbox"], [role="combobox"]',
 		});
+		// The listbox is portaled to document.body by AnchoredPopover, so it is
+		// not inside canvasElement — query the whole document.
 		const optionByText = Array.from(
-			canvasElement.querySelectorAll<HTMLButtonElement>(
-				'button[role="option"]',
-			),
+			document.querySelectorAll<HTMLButtonElement>('button[role="option"]'),
 		).find((el) => el.textContent === "Deutsch");
 		if (!optionByText) throw new Error("Deutsch option not found");
 		await userEvent.click(optionByText);

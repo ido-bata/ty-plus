@@ -3,18 +3,19 @@
 	"steps": [
 		{
 			"id": "step-1",
-			"gherkinRef": { "scenarioId": "SCN-LIFECYCLE-01", "stepIndex": 0 },
+			"gherkinRef": {
+				"scenarioId": "SCN-LIFECYCLE-01",
+				"stepIndex": 0
+			},
 			"preconditions": [
 				"Onboarding completed (no SetupRequired widget present).",
 				"No preset named HappyPathPreset exists in the local catalog."
 			],
-			"input": { "snapshot": "precondition probe" },
+			"input": {
+				"snapshot": "precondition probe"
+			},
 			"action": "observe_initial_panel_state",
 			"expectedResult": {
-				"uiOracle": {
-					"selector": "[data-preset-gallery]",
-					"attribute": { "name": "data-state", "value": "empty" }
-				},
 				"persistenceOracle": {
 					"storageKey": "preset:HappyPathPreset",
 					"expected": null
@@ -29,7 +30,10 @@
 		},
 		{
 			"id": "step-2",
-			"gherkinRef": { "scenarioId": "SCN-LIFECYCLE-01", "stepIndex": 1 },
+			"gherkinRef": {
+				"scenarioId": "SCN-LIFECYCLE-01",
+				"stepIndex": 1
+			},
 			"preconditions": ["Catalog is empty of HappyPathPreset."],
 			"input": {
 				"title": "HappyPathPreset",
@@ -38,22 +42,20 @@
 				"tags": ["lifecycle"]
 			},
 			"action": "create_local_preset",
-			"expectedResult": {
-				"uiOracle": {
-					"selector": "[data-preset-gallery]",
-					"attribute": { "name": "data-state", "value": "creating" }
-				}
-			},
 			"postconditions": [
 				"Catalog row for HappyPathPreset enters the 'creating' state.",
 				"Pending persisted write has not yet completed."
 			],
 			"mutation": true,
-			"checkpoint": false
+			"checkpoint": false,
+			"expectedResult": {}
 		},
 		{
 			"id": "step-3",
-			"gherkinRef": { "scenarioId": "SCN-LIFECYCLE-01", "stepIndex": 2 },
+			"gherkinRef": {
+				"scenarioId": "SCN-LIFECYCLE-01",
+				"stepIndex": 2
+			},
 			"preconditions": ["Catalog row for HappyPathPreset is 'creating'."],
 			"input": {
 				"probe": "read storage:preset:HappyPathPreset + DOM catalog row"
@@ -82,7 +84,10 @@
 		},
 		{
 			"id": "step-4",
-			"gherkinRef": { "scenarioId": "SCN-LIFECYCLE-01", "stepIndex": 3 },
+			"gherkinRef": {
+				"scenarioId": "SCN-LIFECYCLE-01",
+				"stepIndex": 3
+			},
 			"preconditions": [
 				"Catalog lists preset HappyPathPreset (postcondition of step-3)."
 			],
@@ -94,7 +99,10 @@
 			"expectedResult": {
 				"uiOracle": {
 					"selector": "[data-preset-id=\"HappyPathPreset\"]",
-					"attribute": { "name": "data-state", "value": "placed" }
+					"attribute": {
+						"name": "data-state",
+						"value": "placed"
+					}
 				},
 				"persistenceOracle": {
 					"storageKey": "layout:panel-1",
@@ -121,9 +129,14 @@
 		},
 		{
 			"id": "step-5",
-			"gherkinRef": { "scenarioId": "SCN-LIFECYCLE-01", "stepIndex": 4 },
+			"gherkinRef": {
+				"scenarioId": "SCN-LIFECYCLE-01",
+				"stepIndex": 4
+			},
 			"preconditions": ["tile-A on panel-1 references HappyPathPreset."],
-			"input": { "probe": "read layout:panel-1 + DOM tile elements" },
+			"input": {
+				"probe": "read layout:panel-1 + DOM tile elements"
+			},
 			"action": "checkpoint_re_observe_after_placement",
 			"expectedResult": {
 				"persistenceOracle": {
@@ -149,9 +162,15 @@
 		},
 		{
 			"id": "step-6",
-			"gherkinRef": { "scenarioId": "SCN-LIFECYCLE-01", "stepIndex": 5 },
+			"gherkinRef": {
+				"scenarioId": "SCN-LIFECYCLE-01",
+				"stepIndex": 5
+			},
 			"preconditions": ["tile-A on panel-1 references HappyPathPreset."],
-			"input": { "fromTileId": "tile-A", "toTileId": "tile-B" },
+			"input": {
+				"fromTileId": "tile-A",
+				"toTileId": "tile-B"
+			},
 			"action": "move_preset_within_workspace",
 			"expectedResult": {
 				"persistenceOracle": {
@@ -177,9 +196,14 @@
 		},
 		{
 			"id": "step-7",
-			"gherkinRef": { "scenarioId": "SCN-LIFECYCLE-01", "stepIndex": 6 },
+			"gherkinRef": {
+				"scenarioId": "SCN-LIFECYCLE-01",
+				"stepIndex": 6
+			},
 			"preconditions": ["tile-B on panel-1 references HappyPathPreset."],
-			"input": { "probe": "read layout:panel-1 + DOM tile elements" },
+			"input": {
+				"probe": "read layout:panel-1 + DOM tile elements"
+			},
 			"action": "checkpoint_re_observe_after_within_workspace_move",
 			"expectedResult": {
 				"persistenceOracle": {
@@ -205,7 +229,10 @@
 		},
 		{
 			"id": "step-8",
-			"gherkinRef": { "scenarioId": "SCN-LIFECYCLE-01", "stepIndex": 7 },
+			"gherkinRef": {
+				"scenarioId": "SCN-LIFECYCLE-01",
+				"stepIndex": 7
+			},
 			"preconditions": ["tile-B on panel-1 references HappyPathPreset."],
 			"input": {
 				"simulate": "panel reload (re-init React tree, rehydrate from JSON)"
@@ -237,7 +264,10 @@
 		},
 		{
 			"id": "step-9",
-			"gherkinRef": { "scenarioId": "SCN-LIFECYCLE-01", "stepIndex": 8 },
+			"gherkinRef": {
+				"scenarioId": "SCN-LIFECYCLE-01",
+				"stepIndex": 8
+			},
 			"preconditions": ["Panel was just reloaded."],
 			"input": {
 				"probe": "read layout:panel-1 + DOM tile elements after reload"
@@ -267,7 +297,10 @@
 		},
 		{
 			"id": "step-10",
-			"gherkinRef": { "scenarioId": "SCN-LIFECYCLE-01", "stepIndex": 9 },
+			"gherkinRef": {
+				"scenarioId": "SCN-LIFECYCLE-01",
+				"stepIndex": 9
+			},
 			"preconditions": [
 				"tile-B on panel-1 references HappyPathPreset (post-reload).",
 				"panel-2 has empty tile tile-X."
@@ -303,9 +336,14 @@
 		},
 		{
 			"id": "step-11",
-			"gherkinRef": { "scenarioId": "SCN-LIFECYCLE-01", "stepIndex": 10 },
+			"gherkinRef": {
+				"scenarioId": "SCN-LIFECYCLE-01",
+				"stepIndex": 10
+			},
 			"preconditions": ["panel-2 tile-X references HappyPathPreset."],
-			"input": { "probe": "read layout:panel-1 + layout:panel-2" },
+			"input": {
+				"probe": "read layout:panel-1 + layout:panel-2"
+			},
 			"action": "checkpoint_re_observe_after_cross_panel_move",
 			"expectedResult": {
 				"persistenceOracle": {
@@ -333,9 +371,14 @@
 		},
 		{
 			"id": "step-12",
-			"gherkinRef": { "scenarioId": "SCN-LIFECYCLE-01", "stepIndex": 11 },
+			"gherkinRef": {
+				"scenarioId": "SCN-LIFECYCLE-01",
+				"stepIndex": 11
+			},
 			"preconditions": ["panel-2 tile-X references HappyPathPreset."],
-			"input": { "simulate": "panel-2 restart (process exit + relaunch)" },
+			"input": {
+				"simulate": "panel-2 restart (process exit + relaunch)"
+			},
 			"action": "simulate_panel_restart",
 			"expectedResult": {
 				"persistenceOracle": {
@@ -363,9 +406,14 @@
 		},
 		{
 			"id": "step-13",
-			"gherkinRef": { "scenarioId": "SCN-LIFECYCLE-01", "stepIndex": 12 },
+			"gherkinRef": {
+				"scenarioId": "SCN-LIFECYCLE-01",
+				"stepIndex": 12
+			},
 			"preconditions": ["Panel-2 was just restarted."],
-			"input": { "probe": "read layout:panel-2 after restart" },
+			"input": {
+				"probe": "read layout:panel-2 after restart"
+			},
 			"action": "checkpoint_re_observe_after_panel_restart",
 			"expectedResult": {
 				"persistenceOracle": {

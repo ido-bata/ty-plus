@@ -111,8 +111,6 @@ pub fn resolve_path(key: &str, args: &[String], root: &Path) -> Option<PathBuf> 
 
         // cache/
         "notifications" => Some(root.join("cache/notifications.json")),
-        "remotePresets" => Some(root.join("cache/remote-presets.json")),
-        "publicLinks" => Some(root.join("cache/public-links.json")),
         "candidates" => Some(root.join("cache/candidates.json")),
         "candidatesChunk" => {
             let id = args.first()?;

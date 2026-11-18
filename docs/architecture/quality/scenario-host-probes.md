@@ -1,7 +1,7 @@
 # Host-state-oracle probes (Issue #147, round-3 Blocker 3 + round-4 Blocker B)
 
-AE-native UI (the AE settings dialog, the AE Project panel, the
-cloud-gateway connectivity state, ...) cannot be addressed via CEP
+AE-native UI (the AE settings dialog, the AE Project panel, ...) cannot
+be addressed via CEP
 DOM selectors because those surfaces are rendered by After Effects
 itself, not by the CEP panel.  The Computer-Use runner needs to
 verify what the host is showing, so the scenario spec carries a
@@ -29,44 +29,8 @@ rather than shipped with a synthetic flag.
 
 | probe id                                       | reads                                       | written by                                | round-4 status        | round-4 scenarios     |
 |------------------------------------------------|---------------------------------------------|-------------------------------------------|-----------------------|-----------------------|
-| `$.global.__TY_PLUS_HOST__.tyPlusProbeOnlineState()` | `$.global.tyPlusOnlineState` (`"online"` / `"degraded"` / `"offline"`) | `publishGatewayHealth` forwards every transition via `runCepEvalScript(window, '$.global.tyPlusOnlineState = "<s>";')` | **real** | SCN-DEGRADED-01        |
 | `$.global.__TY_PLUS_HOST__.tyPlusProbeSettingsDialogState()` | n/a | n/a | **REMOVED** (round-4 Blocker B) | replaced by panel-state-oracle `[data-settings-sidebar]` on SCN-HOST-01 |
-
-`tyPlusProbeOnlineState` lives under
-`src/management/ae/jsx/host-bundle.ext.ts` and is wired through
-`wrapCallable(...)` so the React-side `host-bridge.ts` can invoke
-it via `$.global.__TY_PLUS_HOST__.<name>(...)`.  The procedures'
-`hostStateOracle.script` carries the literal call so the runner's
-evalScript matches the expected value without intermediate string
-assembly.
-
-## Panel publish side
-
-`tyPlusProbeOnlineState` reads `$.global.tyPlusOnlineState`.  The
-panel populates this flag from the canonical
-`runtime-gateway-health.ts` store, which is the single source of
-truth for the cloud gateway state:
-
-- `state: "live"` is published when the boot completes
-  successfully (`cloud-gateway-boot.ts` calls
-  `publishGatewayHealth({ state: "live" })` after the operation-
-  worker composition is wired).
-- `state: "degraded"` is published when a classified boot failure
-  is reported via `reportCloudGatewayFailure`.
-- `state: "offline"` is the initial state (when no gateway has been
-  built yet) and is also the value the store falls back to when
-  `markGatewayNotBooted` runs.
-
-Every transition through `publishGatewayHealth` now forwards the
-mapped value (`live` → `"online"`, `degraded` → `"degraded"`,
-`offline` → `"offline"`) to a host-state publisher registered at
-panel boot by `registerTyPlusHostOnlineStatePublisher(win)`.  The
-publisher calls `runCepEvalScript(win, '$.global.tyPlusOnlineState
-= "<s>";')` so the ExtendScript probe reads the canonical value.
-
-The unit test `runtime-gateway-health.test.ts` exercises the
-publisher path with a mock callback so the write→probe chain is
-covered without needing a live `$.evalScript`.
+| `$.global.__TY_PLUS_HOST__.tyPlusProbeOnlineState()` | n/a | n/a | **REMOVED** (#193) | the cloud gateway / `runtime-gateway-health.ts` publisher was removed with the unprovided online surface; SCN-DEGRADED-01 was deleted |
 
 ## What was REMOVED (round-4 Blocker B)
 
@@ -104,8 +68,8 @@ Concrete examples:
   replaced by the ty-plus CEP Settings dialog panel-state-oracle
   on SCN-HOST-01.
 - `app.onlineState` — AE's scripting API does not expose the
-  network connectivity state.  Replaced by the panel-driven
-  `tyPlusOnlineState` flag above.
+  network connectivity state.  The panel-driven `tyPlusOnlineState`
+  probe was removed in #193 together with the cloud gateway.
 - `app.project.activeItem` accesses etc. — the canonical
   `host-bundle.ext.ts` already exposes `getHostContext` and
   selection-state probes via `wrapCallable`.  Future scenarios may
@@ -127,8 +91,8 @@ carry the call verbatim:
 {
   "hostStateOracle": {
     "method": "evalScript",
-    "script": "$.global.__TY_PLUS_HOST__.tyPlusProbeOnlineState()",
-    "expected": { "equals": "online" }
+    "script": "$.global.__TY_PLUS_HOST__.getHostContext()",
+    "expected": { "hasKey": "app_root" }
   }
 }
 ```

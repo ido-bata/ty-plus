@@ -208,10 +208,6 @@ vi.mock("@/management/preset/execution/lifecycle-trace", () => ({
 
 /* ── Real modules under test ──────────────────────────────────────────────── */
 
-import {
-	__resetGatewayHealthForTests,
-	publishGatewayHealth,
-} from "@/management/online/runtime-gateway-health";
 import { PresetsDialog } from "@/management/preset/catalog-browser/ListDialog";
 import { __resetLocalPresetCatalogForTests } from "@/management/preset/repository/local-catalog";
 
@@ -243,7 +239,6 @@ const renderDialog = async (): Promise<void> => {
 
 beforeEach(() => {
 	__resetLocalPresetCatalogForTests();
-	__resetGatewayHealthForTests();
 	storage.readJsonText.mockReset();
 	storage.writePresetsJson.mockReset();
 	storage.writePresetsJson.mockResolvedValue(undefined);
@@ -256,7 +251,7 @@ afterEach(() => {
 	cleanup();
 });
 
-describe("Preset List with the cloud gateway not booted (#145)", () => {
+describe("Preset List local catalog (#145)", () => {
 	it("lists the local presets", async () => {
 		storage.readJsonText.mockResolvedValue(catalogText([ALPHA, BETA]));
 
@@ -277,50 +272,6 @@ describe("Preset List with the cloud gateway not booted (#145)", () => {
 		});
 
 		expect(bootBoundaryCalls.count).toBe(0);
-	});
-
-	it("says the cloud is offline while still showing the rows", async () => {
-		// `offline` is also the store's initial state — the state the panel is
-		// in when the gateway never booted at all.
-		storage.readJsonText.mockResolvedValue(catalogText([ALPHA, BETA]));
-
-		await renderDialog();
-
-		await waitFor(() => {
-			expect(screen.getByText("Alpha Preset")).toBeInTheDocument();
-		});
-		expect(screen.getByText("Cloud offline")).toBeInTheDocument();
-	});
-
-	it("drops the cloud notice once the gateway is live", async () => {
-		publishGatewayHealth({ state: "live" });
-		storage.readJsonText.mockResolvedValue(catalogText([ALPHA, BETA]));
-
-		await renderDialog();
-
-		await waitFor(() => {
-			expect(screen.getByText("Alpha Preset")).toBeInTheDocument();
-		});
-		expect(screen.queryByText("Cloud offline")).toBeNull();
-	});
-
-	it("surfaces a degraded gateway reason without hiding the rows", async () => {
-		publishGatewayHealth({
-			state: "degraded",
-			failure: {
-				reason: "worker-runtime-failed",
-				message: "runtime port refused",
-			},
-		});
-		storage.readJsonText.mockResolvedValue(catalogText([ALPHA, BETA]));
-
-		await renderDialog();
-
-		await waitFor(() => {
-			expect(screen.getByText("Alpha Preset")).toBeInTheDocument();
-		});
-		expect(screen.getByText("Cloud offline")).toBeInTheDocument();
-		expect(screen.getByText(/runtime port refused/)).toBeInTheDocument();
 	});
 });
 

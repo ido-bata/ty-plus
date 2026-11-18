@@ -307,22 +307,13 @@ retained / cross-surface log の context には allowlist のみを入れる。
 ## offline、licensing、更新
 
 network が不要な operation は、offline 時も同じ worker 起動経路で利用可能にする。
-aescripts licensing は background scheduler ではなく invocation 時に期限を検査し、期限
-到来時だけ online verification を要求する。認証状態と検索 cache は storage の所有する
-managed tree に保存し、search cache はユーザーが明示的に削除するまで消さない。履歴・
-snapshot・worker log の保持数と bundle 制限は storage-owned policy に従い、時間 TTL を
-追加しない。
-
-online catalog の product endpoint と publishable key は secret ではない build-time
-product configuration とし、`TY_PLUS_WORKER_SUPABASE_URL`、
-`TY_PLUS_WORKER_SUPABASE_PUBLISHABLE_KEY`、`TY_PLUS_WORKER_SUPABASE_API_BASE` を Rust の
-compile-time input として typed `SupabaseConfig` へ変換し binary に埋め込む。worker は
-起動時の environment、request payload、worker manifest、PATH から online configuration を
-読まない。build-time input が不完全または不正な binary は remote operation だけを
-configuration failure として fail-closed にし、local operation と永続 cache を停止しない。
-development build はこの明示 input を省略できるが、release packaging は3値の検証済み
-設定を必須とする。user/session credential や aescripts token はこの build-time configuration
-へ含めず、将来も storage-owned credential provider から invocation 単位で取得する。
+worker は提供されている operation（filesystem、永続化、host plugin scan、
+thumbnail、update install）のみを実行し、online catalog / download / sync /
+licensing verification の operation は存在しない。これらの unprovided surface
+は #193 で構造撤去済みであり、build-time の Supabase configuration
+（`TY_PLUS_WORKER_SUPABASE_*`）も撤去した。再導入する場合は新しい backend と
+surface contract の設計からやり直す（[`../offline-core.md`](../offline-core.md)
+参照）。
 
 installer は extension と Windows/macOS の両 binary を同じ product version として更新
 する。更新開始時、CEP Node の launcher は新しい worker の spawn を停止し、その時点で

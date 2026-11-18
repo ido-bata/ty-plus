@@ -4,11 +4,23 @@
  * timestamps into a single store object.
  */
 
-import type { NotificationSummary } from "@/management/online/contract";
 import { readNotifications } from "@/management/storage/read/cache-store";
 import { writeNotifications } from "@/management/storage/write/cache-store";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
+
+/** Notification list row as persisted in `cache/notifications.json`.
+ *  `severity` / `url` are carried by the static notification feed
+ *  (docs/architecture/feeds.md). */
+export type NotificationSummary = {
+	notificationId: string;
+	name: string;
+	summary?: string;
+	category?: string;
+	publishedAt?: string;
+	severity?: "info" | "warning" | "critical";
+	url?: string;
+};
 
 export type NotificationStore = {
 	items: NotificationSummary[];

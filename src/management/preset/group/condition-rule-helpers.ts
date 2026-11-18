@@ -6,9 +6,11 @@ import type {
 import type { PresetIconEditorDraft } from "@/management/preset/icon-editor";
 import { presetIconDraftToPresetIcon } from "@/management/preset/icon-editor";
 
-const escapeRegex = (value: string): string =>
-	value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-
+/**
+ * Single owner for the group "condition rule" shape and its conversion into
+ * persisted `IconRule[]` entries. `group/Dialog.tsx` and `ConditionRuleCard`
+ * both consume this contract instead of re-declaring the type inline.
+ */
 export type ConditionRule = {
 	id: string;
 	filterType: "name" | "path" | "preset" | "presetType";
@@ -18,9 +20,9 @@ export type ConditionRule = {
 	draft: PresetIconEditorDraft;
 };
 
-const buildConditionIconRules = (
+export function conditionRulesToIconRules(
 	rules: readonly ConditionRule[],
-): IconRule[] => {
+): IconRule[] {
 	return rules.flatMap<IconRule>((r) => {
 		const icon = presetIconDraftToPresetIcon(r.draft);
 		let filter: IconRuleFilter | undefined;
@@ -38,4 +40,4 @@ const buildConditionIconRules = (
 		if (icon) return [{ icon }];
 		return [];
 	});
-};
+}

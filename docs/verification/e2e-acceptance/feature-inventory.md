@@ -25,7 +25,6 @@
 | `dialog-footage-preset` | フッテージプリセット作成 | 同上 |
 | `dialog-import-preset` | インポートプリセット作成 | 同上 |
 | `dialog-preset-edit` | プリセット編集/削除 | 9184 |
-| `dialog-preset-library` | オンラインプリセットライブラリ | 9187 |
 | `dialog-messages` | 通知センター | 9188 |
 | `dialog-settings` | 設定ダイアログ | 9189 |
 | `dialog-widget-selector` | Add Widget ピッカー | 9190 |
@@ -97,10 +96,11 @@ Save 失敗は `role="alert"` バナーで表示（#96）。Reset は確認な�
 
 ### 2.6 オンライン/通知/更新（`src/management/online/`）
 
-- **Preset Library**（`dialog-preset-library`）: 検索・カテゴリ chips・tag・gallery(Ctrl+Wheel zoom)/cards/list・Download（進捗）・Notion link・empty/retry states（`data-gateway-boot-reason`）
-- **Messages**（`dialog-messages`）: 通知 list↔detail、既読/未読、refresh、remote sync
-- **Update**: Settings → UpdateSection（channel・check now・release notes リンク）
-- offline/degraded 時は dormant 表示で core を妨げない（offline-core 契約）
+提供面は静的 feed のみ（#193 で未提供面を構造撤去。`docs/architecture/offline-core.md` 参照）。
+
+- **Messages**（`dialog-messages`）: 通知 list↔detail、既読/未読、refresh（公式静的 notification feed）
+- **Update**: Settings → UpdateSection（channel・check now・release notes リンク。GitHub Releases feed）
+- feed 取得失敗時は status 表示のみで core を妨げない（offline-core 契約）
 
 ### 2.7 デバッグコンソール（`src/management/debug/`）
 
@@ -135,7 +135,7 @@ Save 失敗は `role="alert"` バナーで表示（#96）。Reset は確認な�
 | `styles/workspaces/workspace-N.css` | per-workspace style |
 | `clipboard/clipboard.json` | easing clipboard |
 | `tool-handoff/<extensionId>.json` | dialog 起動 handoff |
-| `cache/{notifications,remote-presets,public-links,candidates*}.json` | online cache |
+| `cache/{notifications,candidates*}.json` | notification cache / preset candidates |
 | `logs/ty-plus.log` | app log |
 
 ## 3. 機能間連携フロー（UC の複合対象）
@@ -147,6 +147,6 @@ Save 失敗は `role="alert"` バナーで表示（#96）。Reset は確認な�
 5. support root 変更 → relocation 確認 → persistence → 全パネル layout reload
 6. widget 追加 → disk record → layout reload → tile 描画 → widget 操作 → AE 反映
 7. debug console → 全 surface ログ集約 → filter/eval/clear/replay
-8. online library → download → local catalog → 配置・実行（offline 時は degraded 表示で core 継続）
+8. notification feed / update feed 取得 → status 表示（失敗時も core 継続）
 9. background editor → `background-N.json` → panel 背景再描画
 10. modeless opener handoff → `preset-tool-handoff` + `openerSurfaceId` → 正しい `panel-N` へ書戻し

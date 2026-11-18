@@ -9,8 +9,6 @@ use ty_plus_protocol::{
 };
 use ty_plus_storage::{InvocationId, MutationContext, OperationLock, PersistenceIoHandler};
 
-use crate::online_dispatch::{CatalogSearchRequest, DownloadRequest, OnlineComposition};
-
 /// Errors that can occur during request dispatching.
 #[derive(Debug)]
 pub enum DispatchError {
@@ -41,7 +39,6 @@ pub fn dispatch(
     session_id: SessionId,
     request: RequestEnvelope,
     persistence_handler: &PersistenceIoHandler,
-    online: &OnlineComposition,
 ) -> ResponseEnvelope {
     let request_id = request.metadata.request_id;
     let method = request.method.as_str();
@@ -50,7 +47,6 @@ pub fn dispatch(
         method,
         request.payload,
         persistence_handler,
-        online,
         request_id.to_string(),
     ) {
         Ok(payload) => ResponseOutcome::Success {
@@ -84,7 +80,6 @@ fn dispatch_inner(
     method: &str,
     payload: Value,
     persistence_handler: &PersistenceIoHandler,
-    online: &OnlineComposition,
     invocation: String,
 ) -> Result<Value, DispatchError> {
     match method {
@@ -143,39 +138,6 @@ fn dispatch_inner(
                 .remove_json_with_context(&context, request)
                 .map_err(|e| DispatchError::Handler(e.to_string()))?;
             Ok(serde_json::Value::Null)
-        }
-        "online.connectivity.check" => {
-            let status = online
-                .connectivity_check()
-                .map_err(DispatchError::Handler)?;
-            serde_json::to_value(status).map_err(|e| DispatchError::Handler(e.to_string()))
-        }
-        "online.catalog.search" => {
-            let request: CatalogSearchRequest = serde_json::from_value(payload)
-                .map_err(|e| DispatchError::InvalidPayload(e.to_string()))?;
-            let root = persistence_handler
-                .managed_root()
-                .map_err(|e| DispatchError::Handler(e.to_string()))?;
-            let guard = OperationLock::acquire(
-                &root,
-                std::time::Instant::now() + std::time::Duration::from_secs(5),
-            )
-            .map_err(|e| DispatchError::Handler(e.to_string()))?;
-            let invocation = InvocationId::new(invocation);
-            let context = MutationContext::new(&guard, &invocation);
-            let result = online
-                .catalog_search(&request, &context)
-                .map_err(DispatchError::Handler)?;
-            serde_json::to_value(result).map_err(|e| DispatchError::Handler(e.to_string()))
-        }
-        "online.download" => {
-            let request: DownloadRequest = serde_json::from_value(payload)
-                .map_err(|e| DispatchError::InvalidPayload(e.to_string()))?;
-            let operation_invocation = InvocationId::new(invocation);
-            let result = online
-                .download_with_invocation(&request, &operation_invocation)
-                .map_err(DispatchError::Handler)?;
-            serde_json::to_value(result).map_err(|e| DispatchError::Handler(e.to_string()))
         }
         _ => Err(DispatchError::UnknownMethod(method.to_string())),
     }

@@ -230,8 +230,8 @@ fn request_validation_uses_canonical_method_policy_instead_of_caller_metadata() 
             },
             "managed_root": "session_default"
         },
-        "method": "online.catalog.search",
-        "payload": { "q": "ease" }
+        "method": "host.plugin.effect.scan",
+        "payload": { "roots": ["Plugins"] }
     }))
     .unwrap();
     assert!(request
@@ -245,9 +245,9 @@ fn request_validation_uses_canonical_method_policy_instead_of_caller_metadata() 
 }
 
 #[test]
-fn canonical_download_policy_rejects_idempotency_key_despite_permissive_fallback() {
+fn canonical_non_idempotent_policy_rejects_idempotency_key_despite_permissive_fallback() {
     // Production break caught: canonical policy authority must override a caller
-    // fallback and forbid idempotency metadata on non-idempotent downloads.
+    // fallback and forbid idempotency metadata on non-idempotent operations.
     let request: RequestEnvelope = serde_json::from_value(serde_json::json!({
         "protocol_version": { "major": 1, "minor": 0 },
         "metadata": {
@@ -265,7 +265,7 @@ fn canonical_download_policy_rejects_idempotency_key_despite_permissive_fallback
             },
             "managed_root": "session_default"
         },
-        "method": "online.download",
+        "method": "update.install",
         "payload": { "presetId": "preset-1", "destination": "downloads/preset.ffx" }
     }))
     .unwrap();

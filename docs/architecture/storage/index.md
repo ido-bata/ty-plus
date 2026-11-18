@@ -35,6 +35,6 @@ storage/
 
 - `storage/` は永続化のみを扱う。panel / dialog / widget の UI 関心は、
   それを所有する operation system に属する。
-- Cloud / Supabase は [`../cloud/index.md`](../cloud/index.md) にある。
+- online surface（提供 feed のみ）は [`../cloud/index.md`](../cloud/index.md) にある。
 - スキーマ定義は、それを所有するモジュール配下の data contract にある。
-- Online / account / licensing は `src/management/online/` であり、`cloud/` という source root ではない。
+- `src/management/online/` は提供 feed（notification / update）のみを持ち、`cloud/` という source root ではない。account / licensing / catalog 系は #193 で撤去済み。

@@ -117,7 +117,8 @@ I/O 実装の責務であり、まだ実装されていない。それが存在�
    │     └─ youtube.json
    ├─ cache/
    │  ├─ notifications.json
-   │  └─ remote-presets.json
+   │  ├─ candidates.json
+   │  └─ candidates/
    ├─ control/
    │  └─ operation.lock
    ├─ styles/

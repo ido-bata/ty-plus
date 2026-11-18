@@ -229,17 +229,6 @@ const config: CEP_Config = {
 		{
 			mainPath: CEP_MODELESS_HTML,
 			scriptPath: CEP_HOST_SCRIPT,
-			name: "dialog-preset-library",
-			panelDisplayName: "",
-			autoVisible: false,
-			type: "Modeless",
-			width: SHELL_MODELESS_FRAME.width,
-			height: SHELL_MODELESS_FRAME.height,
-			...modelessGeometry,
-		},
-		{
-			mainPath: CEP_MODELESS_HTML,
-			scriptPath: CEP_HOST_SCRIPT,
 			name: "dialog-messages",
 			panelDisplayName: "",
 			autoVisible: false,

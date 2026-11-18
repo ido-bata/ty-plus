@@ -37,14 +37,10 @@ describe("PATHS registry", () => {
 		);
 	});
 
-	it("cache holds notifications, remote presets, public links, and candidates", () => {
+	it("cache holds notifications and candidates", () => {
 		expect(PATHS.notifications(root)).toBe(
 			"/x/ty-plus/cache/notifications.json",
 		);
-		expect(PATHS.remotePresets(root)).toBe(
-			"/x/ty-plus/cache/remote-presets.json",
-		);
-		expect(PATHS.publicLinks(root)).toBe("/x/ty-plus/cache/public-links.json");
 		expect(PATHS.candidates(root)).toBe("/x/ty-plus/cache/candidates.json");
 		expect(PATHS.candidatesChunk(root, "abc")).toBe(
 			"/x/ty-plus/cache/candidates/abc.json",
