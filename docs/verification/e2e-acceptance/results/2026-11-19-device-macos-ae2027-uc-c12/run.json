@@ -1,0 +1,70 @@
+{
+  "schema": "ty-plus.e2e-run/1",
+  "suite": "workspace",
+  "capturedAt": "2026-11-18T15:10:51.349Z",
+  "extensionDir": "/Users/rebui/Library/Application Support/Adobe/CEP/extensions/app.ty-plus.dev",
+  "managedRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-18T15-10-29-798Z-1908/ty-plus",
+  "realManagedRoot": "/Applications/Adobe After Effects 2027/ty-plus",
+  "sandbox": {
+    "enabled": true,
+    "sandboxRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-18T15-10-29-798Z-1908/ty-plus",
+    "integrity": {
+      "realRoot": "/Applications/Adobe After Effects 2027/ty-plus",
+      "checkedAt": "2026-11-18T15:10:51.349Z",
+      "driftBeforeRepair": {
+        "changed": 1,
+        "added": 0,
+        "removed": 0
+      },
+      "filesRepaired": [
+        "cache/layout-undo/panel-1/stack.json"
+      ],
+      "cleanAfterRepair": true
+    }
+  },
+  "totals": {
+    "PASS": 1,
+    "FAIL": 0,
+    "BLOCKED": 0,
+    "SKIP": 0
+  },
+  "results": [
+    {
+      "uc": "UC-C12",
+      "title": "footage preset (.png) created via dialog → run imports into AE project",
+      "status": "PASS",
+      "detail": "footage preset=bf0faa43-6331-46d8-a83c-bde4d09ee59b",
+      "checks": [
+        {
+          "name": "footage preset record persisted",
+          "ok": true,
+          "detail": "id=bf0faa43-6331-46d8-a83c-bde4d09ee59b"
+        },
+        {
+          "name": "preset type inferred as footage",
+          "ok": true,
+          "detail": "type=footage"
+        },
+        {
+          "name": "catalog lists footage preset",
+          "ok": true,
+          "detail": "true"
+        },
+        {
+          "name": "catalog Run clicked",
+          "ok": true,
+          "detail": "clicked"
+        },
+        {
+          "name": "AE project gained footage item",
+          "ok": true,
+          "detail": "itemsBefore=0 hits=[\"e2e-footage.png|フッテージ\"]"
+        }
+      ],
+      "evidence": [
+        "/Users/rebui/Library/Application Support/ty-plus-e2e/e2e-footage.png"
+      ],
+      "durationMs": 11168
+    }
+  ]
+}

@@ -186,3 +186,39 @@ export const corruptJsonBytes = (prefix: string): Buffer =>
 export const tileCountExpression = `document.querySelectorAll(
 	"[data-workspace-preset-tile], [data-workspace-widget-tile], [data-workspace-group-tile]"
 ).length`;
+
+/**
+ * Answer the native ExtendScript `confirm()` dialog raised by
+ * `askHostDeleteConfirm` inside After Effects. The modal blocks AE's main
+ * thread — every pending evalScript stalls until it is answered, which is
+ * what turned UC-J02/J06 into CDP `Runtime.evaluate` timeouts (Issue #223).
+ * Clicks the Yes/No button on whichever AE window offers it.
+ */
+export const answerHostConfirm = async (
+	answer: "yes" | "no",
+	attempts = 12,
+): Promise<boolean> => {
+	const button = answer === "yes" ? "Yes" : "No";
+	const script = `
+		tell application "System Events"
+			tell process "After Effects"
+				repeat with w in (every window)
+					try
+						click button "${button}" of w
+						return "clicked"
+					end try
+				end repeat
+				return "absent"
+			end tell
+		end tell`;
+	for (let i = 0; i < attempts; i++) {
+		try {
+			const proc = Bun.spawnSync(["osascript", "-e", script]);
+			if (proc.stdout.toString().includes("clicked")) return true;
+		} catch {
+			// osascript unavailable or AE busy — retry
+		}
+		await sleep(800);
+	}
+	return false;
+};

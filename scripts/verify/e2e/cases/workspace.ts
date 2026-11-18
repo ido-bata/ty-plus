@@ -211,6 +211,23 @@ export const createFilePresetViaDialog = async (
 	title: string,
 ): Promise<string> => {
 	const panel = await ctx.requireSurface({ surfaceId: "panel-1" });
+	// Stale preset-add surfaces survive failed runs: a dialog left open with
+	// `busy` stuck (e.g. a host evalScript that never returned while an AE
+	// modal was up) keeps Create disabled forever, and `findLive` picks the
+	// first match — which may be the zombie, not the fresh dialog
+	// (Issue #223: UC-C12 "Create not clickable", UC-J02 timeouts).
+	const stale = (await listLiveSurfaces(await ctx.surfaces())).filter((s) =>
+		s.surfaceId.startsWith("dialog-preset-add"),
+	);
+	for (const s of stale) {
+		try {
+			const conn = await ctx.cdp(s);
+			await conn.send("Page.close", {}, 5_000);
+		} catch {
+			// best-effort — a wedged target may refuse close
+		}
+	}
+	if (stale.length > 0) await sleep(1_000);
 	const opened = await clickFirst(
 		ctx,
 		panel,

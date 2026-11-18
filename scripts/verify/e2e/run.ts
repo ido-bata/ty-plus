@@ -173,10 +173,20 @@ const detectManagedRootForLiveAe = async (
 
 const main = async (): Promise<void> => {
 	const suiteName = option("suite") ?? "smoke";
-	const cases = SUITES[suiteName];
-	if (!cases) {
+	const allCases = SUITES[suiteName];
+	if (!allCases) {
 		throw new Error(
 			`unknown suite "${suiteName}" (available: ${Object.keys(SUITES).join(", ")})`,
+		);
+	}
+	// --uc=UC-J02 isolates a single case for diagnosis (Issue #223): each
+	// invocation gets a fresh sandbox, so cases can be rerun independently
+	// without cross-case state.
+	const ucFilter = option("uc");
+	const cases = ucFilter ? allCases.filter((c) => c.uc === ucFilter) : allCases;
+	if (cases.length === 0) {
+		throw new Error(
+			`no case "${ucFilter}" in suite "${suiteName}" (available: ${allCases.map((c) => c.uc).join(", ")})`,
 		);
 	}
 	const extensionDir = option("extension-dir");
@@ -273,11 +283,23 @@ const main = async (): Promise<void> => {
 				};
 			}
 		} catch (error) {
+			// Annotate host liveness so a CDP/evalScript timeout caused by a
+			// dead or force-quit AE is distinguishable from a product stall
+			// (Issue #223: AE 2027 force-quit crashes correlated with
+			// Runtime.evaluate timeouts).
+			let aeNote = "";
+			try {
+				const probe = Bun.spawnSync(["pgrep", "-f", "MacOS/After Effects"]);
+				if (probe.exitCode !== 0) aeNote = " [AE process not running]";
+			} catch {
+				// probe unavailable — leave detail unchanged
+			}
 			result = {
 				uc: testCase.uc,
 				title: testCase.title,
 				status: "BLOCKED",
-				detail: error instanceof Error ? error.message : String(error),
+				detail:
+					(error instanceof Error ? error.message : String(error)) + aeNote,
 				checks: [],
 				evidence: [],
 				durationMs: Date.now() - started,
