@@ -3,6 +3,10 @@
 Captured: 2026-05-10
 Purpose: Baseline of cross-boundary imports for architecture migration
 
+## Snapshot Notice
+
+This map is a dated evidence snapshot. References to `supabase/functions/`, the Supabase edge function, `PresetLibraryDialog`, or other unprovided online surfaces describe the pre-port repository or pre-#193 state; those surfaces do not exist in the current tree (see `docs/architecture/observation/index.md`).
+
 ## Summary
 
 This document records the current import relationships between `shared`, `management`, and `function` directories. These relationships must be refactored to enforce the target architecture rules:

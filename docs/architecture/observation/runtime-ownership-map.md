@@ -2,6 +2,10 @@
 
 Code classified by runtime. Cross-runtime imports and calls are recorded without resolving ownership conflicts.
 
+## Snapshot Notice
+
+This map is a dated evidence snapshot. References to `supabase/functions/`, the Supabase edge function, `PresetLibraryDialog`, or other unprovided online surfaces describe the pre-port repository or pre-#193 state; those surfaces do not exist in the current tree (see `docs/architecture/observation/index.md`).
+
 ## Legacy Notice
 
 This document references `src/js/` paths which are legacy. Current architecture uses only `src/{function,management,shared}` (see CLAUDE.md).
