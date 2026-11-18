@@ -275,9 +275,6 @@ describe("Preset List local catalog (#145)", () => {
 
 		expect(bootBoundaryCalls.count).toBe(0);
 	});
-
-
-
 });
 
 describe("empty catalog is not the same sentence as a failed read", () => {

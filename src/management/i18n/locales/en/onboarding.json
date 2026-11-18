@@ -43,7 +43,7 @@
 		"adding-presets": {
 			"label": "Presets",
 			"title": "Adding Presets",
-			"body": "Use the + menu to add presets, groups, and widgets.\n\n- Switch side panels for presets list\n- Downloaded online presets auto-place"
+			"body": "Use the + menu to add presets, groups, and widgets.\n\n- Switch side panels for presets list"
 		},
 		"finish": {
 			"label": "Finish",

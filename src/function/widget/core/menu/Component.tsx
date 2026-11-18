@@ -317,8 +317,8 @@ export function MenuWidget({
 	];
 	const dialogItems: Item[] = [
 		{ action: CTX_MENU_IDS.openPresets, label: t("presets:search.title") },
-		// Preset Library is intentionally absent (Issue #170): the online
-		// catalog has no R0 backend, so the entry was a dead affordance.
+		// Preset Library is intentionally absent (Issue #193): the online
+		// catalog surface was removed structurally, not just hidden.
 		{
 			action: CTX_MENU_IDS.openMessages,
 			label: t("presets:presetTool.messages"),

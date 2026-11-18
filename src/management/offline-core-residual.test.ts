@@ -21,7 +21,8 @@ import { describe, expect, it } from "vitest";
 const here = path.dirname(fileURLToPath(import.meta.url));
 const srcRoot = path.resolve(here, "..", "..");
 
-const read = (path: string) => fs.readFileSync(new URL(path, import.meta.url), "utf8");
+const read = (path: string) =>
+	fs.readFileSync(new URL(path, import.meta.url), "utf8");
 
 const statusBarSource = read("./panel/control/StatusBar/Main.tsx");
 const unifiedContextMenuConstantsSource = read(
@@ -53,10 +54,12 @@ const collectSourceFiles = (dir: string): string[] => {
 	for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
 		const full = path.join(dir, entry.name);
 		if (entry.isDirectory()) {
-			if (entry.name === "node_modules" || entry.name.startsWith("."))
-				continue;
+			if (entry.name === "node_modules" || entry.name.startsWith(".")) continue;
 			out.push(...collectSourceFiles(full));
-		} else if (/\.(ts|tsx)$/.test(entry.name) && !entry.name.includes(".test.")) {
+		} else if (
+			/\.(ts|tsx)$/.test(entry.name) &&
+			!entry.name.includes(".test.")
+		) {
 			out.push(full);
 		}
 	}
@@ -83,12 +86,16 @@ describe("unprovided online structure stays removed (issue 193)", () => {
 		expect(servicesSource).not.toMatch(/cloudSync|CloudSync/);
 		expect(servicesSource).not.toMatch(/BootMode|bootMode/);
 		expect(servicesSource).not.toMatch(/GatewayBootRequiredError/);
-		expect(servicesSource).not.toMatch(/initCloudGateway|tryGetDataServices|getDataServices/);
+		expect(servicesSource).not.toMatch(
+			/initCloudGateway|tryGetDataServices|getDataServices/,
+		);
 	});
 
 	it("preset use-cases have no remote resolve path", () => {
 		expect(presetUseCasesSource).not.toMatch(/resolvePresetFromCloud/);
-		expect(presetUseCasesSource).not.toMatch(/tryGetDataServices|getDataServices/);
+		expect(presetUseCasesSource).not.toMatch(
+			/tryGetDataServices|getDataServices/,
+		);
 	});
 
 	it("SetupRequired resolves the user manual without the public-link service", () => {
@@ -120,6 +127,51 @@ describe("Preset Library surface stays removed (issues 170/193)", () => {
 
 	it("has no CEP manifest extension entry", () => {
 		expect(cepConfigSource).not.toMatch(/dialog-preset-library/);
+	});
+});
+
+describe("unprovided online i18n/fixture structure stays removed (issue 193)", () => {
+	const localesDir = path.join(here, "i18n", "locales");
+	const i18nConfigSource = read("./i18n/config.ts");
+	const bundledResourcesSource = read("./i18n/bundled-resources.ts");
+
+	it("has no online i18n namespace or fixture-badge strings", () => {
+		expect(i18nConfigSource).not.toMatch(/"online"/);
+		expect(bundledResourcesSource).not.toMatch(/_online\b|online:/);
+		for (const locale of fs.readdirSync(localesDir)) {
+			expect(
+				fs.existsSync(path.join(localesDir, locale, "online.json")),
+				locale,
+			).toBe(false);
+		}
+	});
+
+	it("has no Preset Library or sync-status keys in any locale", () => {
+		for (const locale of fs.readdirSync(localesDir)) {
+			const presets = JSON.parse(
+				fs.readFileSync(path.join(localesDir, locale, "presets.json"), "utf8"),
+			) as Record<string, unknown>;
+			const presetTool = presets.presetTool as Record<string, unknown>;
+			expect(presetTool.presetLibrary, locale).toBeUndefined();
+			const common = JSON.parse(
+				fs.readFileSync(path.join(localesDir, locale, "common.json"), "utf8"),
+			) as Record<string, unknown>;
+			const status = common.status as Record<string, unknown>;
+			expect(status.syncing, locale).toBeUndefined();
+			expect(status.synced, locale).toBeUndefined();
+		}
+	});
+
+	it("onboarding copy makes no online-preset claims", () => {
+		for (const locale of fs.readdirSync(localesDir)) {
+			const raw = fs.readFileSync(
+				path.join(localesDir, locale, "onboarding.json"),
+				"utf8",
+			);
+			expect(raw, locale).not.toMatch(
+				/online preset|オンライン.*プリセット|en ligne|online-Voreinstellungen|en línea|online preimpostazioni|온라인 프리셋|online baixadas|онлайн-пресет|在线预设/i,
+			);
+		}
 	});
 });
 
@@ -196,5 +248,35 @@ describe("unprovided online wire/Rust structure stays removed (issue 193)", () =
 		for (const method of methods as string[]) {
 			expect(method, method).not.toMatch(/^online\./);
 		}
+	});
+});
+
+describe("unprovided online build/dev plumbing stays removed (issue 193)", () => {
+	const repoRoot = srcRoot;
+
+	it("no dev-env define, Supabase smoke script, or online endpoint name remains", () => {
+		expect(
+			fs.existsSync(path.join(repoRoot, "scripts/utils/load-root-env.ts")),
+		).toBe(false);
+		expect(
+			fs.existsSync(path.join(repoRoot, "scripts/utils/smoke-typlus-api.ts")),
+		).toBe(false);
+		const viteConfig = fs.readFileSync(
+			path.join(repoRoot, "vite.config.ts"),
+			"utf8",
+		);
+		expect(viteConfig).not.toMatch(/__TY_PLUS_DEV_ENV__|SUPABASE_URL/);
+		const cepLiveServer = fs.readFileSync(
+			path.join(repoRoot, "scripts/lib/cep-live-server.ts"),
+			"utf8",
+		);
+		expect(cepLiveServer).not.toMatch(/__TY_PLUS_DEV_ENV__|DevEnv/);
+		const pkg = fs.readFileSync(path.join(repoRoot, "package.json"), "utf8");
+		expect(pkg).not.toMatch(/smoke:typlus-api|smoke-typlus-api/);
+		const endpoint = fs.readFileSync(
+			path.join(repoRoot, "rust/apps/runtime/src/platform/endpoint.rs"),
+			"utf8",
+		);
+		expect(endpoint).not.toMatch(/licensing|"online"/);
 	});
 });

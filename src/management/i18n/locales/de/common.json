@@ -58,9 +58,7 @@
 		"complete": "Abgeschlossen",
 		"failed": "Fehlgeschlagen",
 		"ready": "Bereit",
-		"offline": "Offline",
-		"syncing": "Wird synchronisiert...",
-		"synced": "Synchronisiert"
+		"offline": "Offline"
 	},
 	"settings": {
 		"optional": "optional",

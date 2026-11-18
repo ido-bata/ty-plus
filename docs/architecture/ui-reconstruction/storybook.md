@@ -207,6 +207,11 @@ panel には `Args` のみ露出する。
 
 ## Stories inventory
 
+> 注: 以下の inventory は 2026-09-09 時点の snapshot であり、#193 で撤去した
+> `online/catalog` 系 story（`Dialog.stories.tsx`、`DownloadProgressIconButton`、
+> `PresetLibrarySidePanel` 等）を含む。現在の story 一覧は `src/**/*.stories.tsx`
+> を直接参照すること。
+
 2026-09-09 時点で **123 stories** が `src/**/*.stories.tsx` に置かれている。
 
 | Wave | Scope | Story count |

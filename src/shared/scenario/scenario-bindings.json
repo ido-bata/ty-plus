@@ -1001,6 +1001,12 @@
 					"kind": "settings",
 					"identifier": "storage:diagnostics",
 					"initialState": null
+				},
+				{
+					"id": "preset:RuntimePreset",
+					"kind": "preset",
+					"identifier": "preset:RuntimePreset",
+					"initialState": null
 				}
 			],
 			"requirementRefs": [
@@ -1017,7 +1023,7 @@
 			"stopConditions": [
 				{
 					"trigger": "selector-missing",
-					"description": "Debug Console or the preset library control is not mounted — abort."
+					"description": "Debug Console or the preset list control is not mounted — abort."
 				},
 				{
 					"trigger": "log-error-spike",

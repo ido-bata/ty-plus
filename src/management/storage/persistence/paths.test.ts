@@ -37,7 +37,7 @@ describe("PATHS registry", () => {
 		);
 	});
 
-	it("cache holds notifications, remote presets, public links, and candidates", () => {
+	it("cache holds notifications and candidates", () => {
 		expect(PATHS.notifications(root)).toBe(
 			"/x/ty-plus/cache/notifications.json",
 		);

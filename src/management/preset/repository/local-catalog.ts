@@ -3,13 +3,13 @@
  *
  * ## Why this module exists (Issue #145)
  *
- * Local preset access used to be reachable only through
- * `getDataServices().presetRepository`. `getDataServices()` is the cloud boot
- * boundary: in live mode with no runtime gateway registered it calls
- * `markGatewayNotBooted()` and throws `GatewayBootRequiredError`. Every local
- * read therefore inherited a cloud-boot precondition that has nothing to do
- * with it, and the Preset List rendered an empty body while the real rows sat
- * unread in `presets/presets.json`.
+ * Local preset access used to be reachable only through a gateway-backed
+ * repository that threw `GatewayBootRequiredError` when the (now removed)
+ * cloud gateway had not booted. Every local read therefore inherited a
+ * remote-boot precondition that has nothing to do with it, and the Preset
+ * List rendered an empty body while the real rows sat unread in
+ * `presets/presets.json`. The unprovided online surface was removed
+ * structurally in #193; this module is the sole local catalog owner.
  *
  * The rows never needed the gateway in the first place — they are file-backed
  * and the only cloud call in the whole path is a *remote fallback resolve* on a

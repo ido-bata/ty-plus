@@ -104,6 +104,8 @@ Windows workerはR0では未署名（ADR-0003）。OSのセキュリティ機能
 
 ## 実機検証記録 — 候補 `3c2c4421`（macOS、2026-11-14 実施）
 
+> 注: 本記録は #193 以前のビルドに対する実施結果であり、「preset library」「cloud gateway」「fixture fallback」への言及は当時の surface を指す。これらの unprovided surface は #193 で構造撤去済みであり、現行ビルドでは存在しない。
+
 ### 対象の固定
 
 - sourceCommit: `3c2c442105d62d0e55771e7f4e5eb147c9b6ccc6`（release-0-10-2 head）

@@ -262,7 +262,12 @@ describe("operation worker lifecycle trace through the public composition (Issue
 			await writeWorkerFixture(root);
 			const controller = spawnController();
 			const composition = await buildComposition(root, controller.spawnChild);
-			await composition.lookupThumbnail({file_type:"png",mtime_ms:0,size_bytes:0,source_path:"/tmp/x.png"});
+			await composition.lookupThumbnail({
+				file_type: "png",
+				mtime_ms: 0,
+				size_bytes: 0,
+				source_path: "/tmp/x.png",
+			});
 
 			const trace: LogEntry[] = [];
 			for (const action of TRACE_ACTIONS) {
@@ -313,7 +318,12 @@ describe("operation worker lifecycle trace through the public composition (Issue
 			await writeWorkerFixture(root);
 			const controller = spawnController();
 			const composition = await buildComposition(root, controller.spawnChild);
-			await composition.lookupThumbnail({file_type:"png",mtime_ms:0,size_bytes:0,source_path:"/tmp/x.png"});
+			await composition.lookupThumbnail({
+				file_type: "png",
+				mtime_ms: 0,
+				size_bytes: 0,
+				source_path: "/tmp/x.png",
+			});
 
 			const attempts = entriesWithAction("worker-spawn-attempt");
 			const spawns = entriesWithAction("worker-spawn");
@@ -348,7 +358,12 @@ describe("operation worker lifecycle trace through the public composition (Issue
 				].join("\n"),
 			});
 			const composition = await buildComposition(root, controller.spawnChild);
-			await composition.lookupThumbnail({file_type:"png",mtime_ms:0,size_bytes:0,source_path:"/tmp/x.png"});
+			await composition.lookupThumbnail({
+				file_type: "png",
+				mtime_ms: 0,
+				size_bytes: 0,
+				source_path: "/tmp/x.png",
+			});
 
 			const stderr = entriesWithAction("worker-stderr");
 			expect(stderr).toHaveLength(1);
@@ -373,7 +388,14 @@ describe("operation worker lifecycle trace through the public composition (Issue
 			const composition = await buildComposition(root, () => {
 				throw new Error("spawn failed for https://example.test/?token=abc123");
 			});
-			await expect(composition.lookupThumbnail({file_type:"png",mtime_ms:0,size_bytes:0,source_path:"/tmp/x.png"})).rejects.toThrow();
+			await expect(
+				composition.lookupThumbnail({
+					file_type: "png",
+					mtime_ms: 0,
+					size_bytes: 0,
+					source_path: "/tmp/x.png",
+				}),
+			).rejects.toThrow();
 
 			const failures = entriesWithAction("worker-spawn-failed");
 			expect(failures).toHaveLength(1);
@@ -393,7 +415,12 @@ describe("operation worker lifecycle trace through the public composition (Issue
 			await writeWorkerFixture(root);
 			const controller = spawnController({ failFirstSpawn: true });
 			const composition = await buildComposition(root, controller.spawnChild);
-			await composition.lookupThumbnail({file_type:"png",mtime_ms:0,size_bytes:0,source_path:"/tmp/x.png"});
+			await composition.lookupThumbnail({
+				file_type: "png",
+				mtime_ms: 0,
+				size_bytes: 0,
+				source_path: "/tmp/x.png",
+			});
 
 			expect(controller.spawns).toBe(2);
 

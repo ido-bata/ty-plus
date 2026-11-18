@@ -31,7 +31,6 @@ export const NAMESPACES = [
 	"settings",
 	"widgets",
 	"dialogs",
-	"online",
 ] as const;
 
 type Namespace = (typeof NAMESPACES)[number];

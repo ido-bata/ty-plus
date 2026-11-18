@@ -43,7 +43,7 @@
 		"adding-presets": {
 			"label": "Voreinstellungen",
 			"title": "Voreinstellungen hinzufügen",
-			"body": "Verwenden Sie das + Menü, um Voreinstellungen, Gruppen und Widgets hinzuzufügen.\n\n- Seitenleisten für Voreinstellungsliste umschalten\n- Heruntergeladene Online-Voreinstellungen werden automatisch platziert"
+			"body": "Verwenden Sie das + Menü, um Voreinstellungen, Gruppen und Widgets hinzuzufügen.\n\n- Seitenleisten für Voreinstellungsliste umschalten"
 		},
 		"finish": {
 			"label": "Fertig",

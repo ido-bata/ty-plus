@@ -16,14 +16,12 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { Preset } from "@/management/preset/contract";
 
-const { storage } = vi.hoisted(
-	() => ({
-		storage: {
-			readJsonText: vi.fn(),
-			writePresetsJson: vi.fn(),
-		},
-	}),
-);
+const { storage } = vi.hoisted(() => ({
+	storage: {
+		readJsonText: vi.fn(),
+		writePresetsJson: vi.fn(),
+	},
+}));
 
 /** The storage boundary — the only thing between the catalog and the host file. */
 vi.mock("@/management/storage", () => ({
@@ -122,7 +120,6 @@ describe("duplicatePreset", () => {
 
 		// `bootBoundaryCalls` counts both the throwing and the non-throwing
 		// entry point. Neither may be touched for a local write.
-		
 	});
 });
 
@@ -138,7 +135,6 @@ describe("local CRUD with the gateway not booted (#145)", () => {
 		const rows = await listPresets();
 
 		expect(rows.map((row) => row.id)).toEqual(["src-1", "src-2"]);
-		
 	});
 
 	it("upserts a local row", async () => {
@@ -147,7 +143,6 @@ describe("local CRUD with the gateway not booted (#145)", () => {
 		await upsertLocalPreset(basePreset);
 
 		expect(lastWritten().presets.map((row) => row.id)).toEqual(["src-1"]);
-		
 	});
 
 	it("removes a local row", async () => {
@@ -158,7 +153,6 @@ describe("local CRUD with the gateway not booted (#145)", () => {
 		await removeLocalPreset("src-1");
 
 		expect(lastWritten().presets.map((row) => row.id)).toEqual(["src-2"]);
-		
 	});
 
 	it("reads back a row it just wrote", async () => {

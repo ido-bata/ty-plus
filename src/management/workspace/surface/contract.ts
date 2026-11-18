@@ -115,15 +115,8 @@ type MessagesPayload = {
 	at: string;
 };
 
-/** Settings summary (for backend connection status display. Excludes secrets) */
+/** Settings channel payloads (theme live-sync, save notices, grid sync). */
 export type SettingsPayload =
-	| {
-			kind: "summary";
-			sourceSurfaceId: string;
-			supabaseUrlPresent: boolean;
-			apiBase?: string;
-			mediaBaseUrl?: string;
-	  }
 	| {
 			/** Live settings edit sync to other panels/dialogs */
 			kind: "themeLive";

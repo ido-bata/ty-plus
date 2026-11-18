@@ -24,7 +24,7 @@
 | Widget state | `{supportRoot}/ty-plus/widgets/state/*.json` | widget ごとの状態 (easing, file-browser, note, youtube) |
 | 履歴 | `{supportRoot}/ty-plus/workspaces/history/snapshots.json` | workspace 共有の undo スナップショット (1 ファイルに全 panel 分) |
 | 通知キャッシュ | `{supportRoot}/ty-plus/cache/notifications.json` | 通知キャッシュと既読状態 |
-| リモート preset キャッシュ | `{supportRoot}/ty-plus/cache/remote-presets.json` | キャッシュ済みのリモート preset |
+| 候補キャッシュ | `{supportRoot}/ty-plus/cache/candidates.json` + `candidates/` | onboarding の preset 候補インデックス |
 | テーマ CSS | `{supportRoot}/ty-plus/styles/theme.css` | ユーザーテーマ CSS |
 | Workspace CSS | `{supportRoot}/ty-plus/styles/workspaces/workspace-N.css` | workspace ごとのスタイル |
 | ログ | `{supportRoot}/ty-plus/logs/ty-plus.log` | アプリケーションログ |

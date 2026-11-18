@@ -5,10 +5,7 @@
  */
 
 import { beforeEach, describe, expect, it, type Mock, vi } from "vitest";
-import {
-	readNotifications,
-	writeNotifications,
-} from "./cache-store";
+import { readNotifications, writeNotifications } from "./cache-store";
 
 let mockReadJson: Mock<
 	(win: Window, key: string, ...args: unknown[]) => Promise<unknown>
@@ -59,4 +56,3 @@ describe("writeNotifications", () => {
 		expect(mockWriteJson).toHaveBeenCalledWith(win, "notifications", data);
 	});
 });
-

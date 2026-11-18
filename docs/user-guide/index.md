@@ -19,7 +19,6 @@ ty-plusはAdobe After Effects向けの無料・オープンソースCEP拡張機
 
 - [メイン画面](main-screen/index.md)
 - [外観のカスタマイズ](appearance/index.md)
-- [オンラインプリセット](online-presets/index.md)
 - [メッセージ](messages/index.md)
 - [機能検証チェックリスト](verification-checklist.md)
 

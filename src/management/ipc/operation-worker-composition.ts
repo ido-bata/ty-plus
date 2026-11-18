@@ -499,7 +499,7 @@ export const createOperationWorkerComposition = (
 	if (options.expectedTrustMode === undefined)
 		throw new TypeError("operation-worker trust mode is required");
 	operationWorkerCompositionLog.info(
-		"[ty-plus] cloud gateway: composition construction started",
+		"[ty-plus] operation worker: composition construction started",
 		{
 			context: {
 				stage: "composition-start",

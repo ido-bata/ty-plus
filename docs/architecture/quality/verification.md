@@ -58,8 +58,7 @@ Issue-specific manual / E2E verification procedures live under
 | --- | --- |
 | build / manifest / runtime wiring | [`tests/bootstrap-shell.test.ts`](../../../tests/bootstrap-shell.test.ts), [`tests/cep-dev-bundle.test.ts`](../../../tests/cep-dev-bundle.test.ts), [`tests/platform-graph.test.ts`](../../../tests/platform-graph.test.ts), [`tests/host-detection.test.ts`](../../../tests/host-detection.test.ts) |
 | storage / support root / workspace files | [`tests/support-root-service.test.ts`](../../../tests/support-root-service.test.ts), [`tests/workspace-file-service.test.ts`](../../../tests/workspace-file-service.test.ts), [`tests/workspace-settings-root-resolution.test.ts`](../../../tests/workspace-settings-root-resolution.test.ts), [`tests/workspace-storage.test.ts`](../../../tests/workspace-storage.test.ts) |
-| cloud / Supabase | [`tests/supabase-gateway.test.ts`](../../../tests/supabase-gateway.test.ts), [`tests/typlus-edge-market.test.ts`](../../../tests/typlus-edge-market.test.ts), [`tests/typlus-notifications-db.test.ts`](../../../tests/typlus-notifications-db.test.ts) |
-| licensing | [`tests/licensing-features.test.ts`](../../../tests/licensing-features.test.ts), [`tests/licensing-package.test.ts`](../../../tests/licensing-package.test.ts), [`tests/licensing-ui.test.tsx`](../../../tests/licensing-ui.test.tsx) |
+| online feed（notification / update） | `src/management/online/**/*.test.ts(x)`（static feed のみ。catalog / Supabase 系は #193 で撤去済み） |
 | workspace UI / state | [`tests/workspace-panel-state.test.ts`](../../../tests/workspace-panel-state.test.ts), [`tests/workspace-panel-settings.test.ts`](../../../tests/workspace-panel-settings.test.ts), [`tests/workspace-render-groups.test.ts`](../../../tests/workspace-render-groups.test.ts), [`tests/workspace-widget-selection-events.test.ts`](../../../tests/workspace-widget-selection-events.test.ts) |
 
 ## release gate
@@ -69,7 +68,7 @@ Issue-specific manual / E2E verification procedures live under
 1. `bun run ci` が通ること
 2. AE only と docs の固定スコープに反する active code が放置されていないこと
 3. data shape を変えた場合、対応する定義元・使用元の path が `docs/architecture/data/` に追記されていること
-4. cloud を商品価値として使う場合、Supabase remote path が fixture ではなく deployment 前提で確認されていること
+4. 提供 online surface は静的 feed（通知・更新）のみであり、catalog / sync / licensing 系の unprovided 機能が再導入されていないこと（#193）
 5. Claude / Codex の最終レビューに耐える説明責務と test coverage があること
 
 ## CI gate の階層（Issue #167）

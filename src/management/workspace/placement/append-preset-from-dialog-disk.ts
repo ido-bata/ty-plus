@@ -11,14 +11,13 @@
  * an empty catalog. There is no remote preset source in this product.
  */
 
-
 import { readGroupJson } from "@/management/catalog/json-files";
 import { parseGroupFromText } from "@/management/preset/group-catalog";
+import { getLocalPresetCatalog } from "@/management/preset/repository/local-catalog";
 import { indexFromPanelId, readNJson } from "@/management/storage";
 import { parseLayoutDocument } from "@/management/workspace/layout/grid-document";
 import { resolveWorkspacePersistenceManagedRoot } from "@/management/workspace/layout/persistence-root";
 import { persistTargetLayout } from "@/management/workspace/placement/cross-panel-write";
-import { getLocalPresetCatalog } from "@/management/preset/repository/local-catalog";
 
 export type AppendPresetFromDialogDiskInput = {
 	targetPanelId: string;

@@ -7,13 +7,12 @@ import {
 	useRef,
 	useState,
 } from "react";
-import { useTranslation } from "react-i18next";
 import {
 	type CepMenuPayload,
 	registerCepJsonContextMenuSurface,
 } from "@/management/dialog/dialogs/context-menu";
-import type { NotificationSummary } from "@/management/online/notification/notifications";
 import { fetchNotificationFeed } from "@/management/online/notification/feed";
+import type { NotificationSummary } from "@/management/online/notification/notifications";
 import {
 	loadNotificationsStore,
 	saveNotificationsStore,
@@ -196,14 +195,6 @@ const listItemTitleClass = css({
 	fontWeight: "medium",
 	color: "text.primary",
 	truncate: true,
-});
-const listItemFixtureBadgeClass = css({
-	marginLeft: "2",
-	borderRadius: "shell-sm",
-	backgroundColor: "surface.warning/20",
-	paddingInline: "2",
-	paddingBlock: "0.5",
-	fontSize: "xs",
 });
 const listItemSummaryClass = css({
 	fontSize: "xs",
@@ -403,7 +394,6 @@ function NotificationListItem(props: {
 }): JSX.Element {
 	const { item, readAtById, onOpen } = props;
 	const unread = !readAtById[item.notificationId];
-	const { t } = useTranslation("online");
 	return (
 		<li key={item.notificationId}>
 			<button
@@ -440,13 +430,7 @@ function NotificationDetailView(props: {
 	onToggleRead: (id: string) => void;
 	onRefresh: () => void;
 }): JSX.Element {
-	const {
-		selected,
-		readAtById,
-		onClose,
-		onToggleRead,
-		onRefresh,
-	} = props;
+	const { selected, readAtById, onClose, onToggleRead, onRefresh } = props;
 	const isRead = Boolean(readAtById[selected.notificationId]);
 	return (
 		<div className={detailContainerClass} data-surface-id="dialog-messages">
@@ -602,7 +586,6 @@ export function NotificationCenter(): JSX.Element {
 				setReadAtById(next);
 				await saveLocalStore({ items, readAtById: next });
 			}
-
 		},
 		[items, readAtById],
 	);

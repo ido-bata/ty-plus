@@ -10,8 +10,8 @@
 
 - ライセンスゲートは実装から除去済み（旧 `src/management/online/licensing/` と `rust/crates/licensing` は削除）。機能へのtier制限は存在しない。
 - 提供するオンラインsurfaceは更新feedと通知の静的feedのみ（`docs/architecture/feeds.md`）。それ以外のオンライン機能（catalog / public link / cloud gateway / Preset Library）は #193 で構造ごと撤去した。dormant service層・`online.*` wire method・Rust `online` crate・cloud-gateway boot経路は残っていない。到達不能化ではなく削除であり、再導入する場合はbackend契約と合わせてsurfaceを新規に設計する。
-- fixture payloadを実データとして提示しない: 通知センターは公式静的feedだけをremote sourceとし、runtime gatewayは`listNotifications`/`getNotificationBlocks`を実装しない。backendを持たないcloud-sync確認を発火するSettings「network」セクションは登録しない。public linkはbuild時同梱の実URL（repo内user guide）のみを返す。
-- Preset Library（オンラインcatalog）のUI surfaceは #193 で撤去した。status bar・context menu・tool dialog kind・dialog route・CEP manifest entryのいずれからも到達できない。
+- fixture payloadを実データとして提示しない: 通知センターのremote sourceは公式静的feedのみであり、fixture gateway・fixture badge・`isFixture`契約は存在しない。backendを持たないcloud-sync確認を発火するSettings「network」セクション自体も #193 で撤去した（build-time envのread-only表示も含め、section id・hash導線ともに存在しない）。
+- Preset Library（オンラインcatalog）のUI surfaceは #193 で撤去した。status bar・context menu・tool dialog kind・dialog route・CEP manifest entry・i18n keyのいずれにも存在しない。到達不能化ではなく構造的削除であり、`offline-core-residual.test.ts` が非存在を契約として検査する。
 - 将来の有料機能・配布APIは `docs/architecture/project.md` のcharterに従い、R0の実装はその拡張を妨げない設計に留める。R0で設計・実装しきらない。
 
 ## 検証

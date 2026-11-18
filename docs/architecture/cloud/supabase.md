@@ -14,7 +14,7 @@
 ## 本repoの実際のオンラインsurface
 
 - **更新・通知フィード**: 静的JSON（`docs/architecture/feeds.md`）。R0の公式配信契約。バックエンド不要。
-- **cloud gateway（dormant）**: `src/management/online/catalog/runtime-cloud-gateway.ts` に `createFixtureCloudGateway` / `createRuntimeCloudGateway` が存在する。fixture modeは空カタログを返し、remote modeはruntime port経由でのみ成立する。R0ではバックエンドを持たないdormant状態であり、起動失敗・不達はローカルコアを妨げない（`docs/architecture/offline-core.md`）。
+- **未提供オンライン面**: リモートpreset catalog・public link・cloud gateway・Preset Library・`online.*` wire method・Rust `online` crateは #193 で構造ごと撤去した。dormant service層・fixture gateway・`isFixture` badgeも残っていない（`docs/architecture/offline-core.md`）。再導入はbackend契約と合わせた新規surface設計から始める。
 
 ## 再移植時の前提
 

@@ -12,8 +12,8 @@
  *   5. The binary's sha256 agrees with the manifest.
  *
  * Without this gate, a release ZXP that silently ships without the
- * worker binary or trust metadata will boot, fall through to the
- * fixture gateway, and look like the live transport is up. The smoke
+ * worker binary or trust metadata will boot with thumbnail and update
+ * operations unavailable while looking healthy. The smoke
  * test catches that misconfiguration before a human reviewer ever
  * touches the panel.
  *
@@ -509,7 +509,7 @@ export async function runSmokeTest(
 
 const printReport = (report: SmokeTestReport, evidencePath: string): void => {
 	console.log("");
-	console.log(`Online gateway package smoke test (Issue #128)`);
+	console.log(`Operation worker package smoke test (Issue #128)`);
 	console.log("─".repeat(56));
 	for (const p of report.probes) {
 		const marker = p.skipped ? "SKIP" : p.ok ? "PASS" : "FAIL";

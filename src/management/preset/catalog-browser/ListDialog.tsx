@@ -2104,7 +2104,6 @@ export function PresetsDialog(): JSX.Element {
 		return <p className={emptyStateClass}>No matching presets</p>;
 	};
 
-
 	// A group-catalog read failure degrades grouping only. It is reported
 	// above the body rather than replacing it, because the preset rows did
 	// load.

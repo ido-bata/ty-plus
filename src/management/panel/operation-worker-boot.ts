@@ -32,11 +32,8 @@ import {
 	type OperationWorkerComposition,
 	type OperationWorkerLifecycleObserver,
 } from "@/management/ipc/operation-worker-composition";
-import {
-	OperationWorkerError,
-	type WorkerCorrelation,
-} from "@/management/ipc/operation-worker-runner";
 import { createOperationWorkerContextProvider } from "@/management/ipc/operation-worker-context";
+import type { WorkerCorrelation } from "@/management/ipc/operation-worker-runner";
 
 declare const __APP_VERSION__: string;
 
@@ -146,7 +143,6 @@ export const createBootLifecycleObserver = (
 		}
 	};
 };
-
 
 export type PanelOperationWorker = Readonly<{
 	readonly filesGateway: ReturnType<typeof createFilesGatewayFromComposition>;

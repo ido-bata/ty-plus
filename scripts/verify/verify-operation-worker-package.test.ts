@@ -36,7 +36,7 @@ import {
 let workDir: string;
 
 beforeEach(() => {
-	workDir = mkdtempSync(path.join(tmpdir(), "ty-plus-gateway-verify-"));
+	workDir = mkdtempSync(path.join(tmpdir(), "ty-plus-worker-verify-"));
 });
 
 afterEach(() => {

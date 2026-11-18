@@ -174,10 +174,9 @@ const SETTINGS_SECTIONS: SettingsSidebarSectionDef[] = [
 		labelKey: "tabs.section.paths",
 		render: () => <PathsSection />,
 	},
-	// Issue #82: the cloud-sync "network" section is dormant in R0 — there is
-	// no backend, and mounting it fired a worker connectivity check on every
-	// dialog open. The section is not registered here; restore it together
-	// with a real backend.
+	// Issue #82/#193: the cloud-sync "network" section had no backend and
+	// was removed with the unprovided online surface. Do not re-register
+	// it without a real backend contract.
 	{
 		sectionId: "update",
 		groupId: "data",

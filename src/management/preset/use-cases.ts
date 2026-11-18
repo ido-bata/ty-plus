@@ -50,7 +50,7 @@ export const getPreset = async (
 
 /**
  * Upsert a local preset. Cloud-independent: writing a local row must not
- * require the cloud gateway to be booted.
+ * require any online service to be reachable.
  */
 export const upsertLocalPreset = async (preset: Preset): Promise<void> => {
 	return getLocalPresetCatalog(hostWindow()).upsertLocalPreset(preset);

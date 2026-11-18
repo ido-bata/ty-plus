@@ -6,8 +6,11 @@ repo state?"
 ## Conclusion
 
 The repo is in an implementable state. AE host adapter, ExtendScript
-implementation, storage, cloud client, Supabase edge, licensing, and tests are
-present.
+implementation, storage, local preset surfaces, the static update/notification
+feeds, and tests are present. The unprovided online surface (remote catalog,
+public links, cloud gateway, sync, licensing, `online.*` wire methods, Rust
+`online` crate) was removed structurally in #193 — it is not part of the
+current contract.
 
 There are discrepancies that could cause mis-implementation if unaddressed.
 These are not design gaps — they are收拾不足 (insufficient tidying) of the
@@ -24,7 +27,7 @@ The authoritative structure after the source ownership correction is
 | --- | --- |
 | AE host execution | `src/management/ae/`, `src/function/widget/core/*/script.ext.ts` |
 | Storage / persistence | `src/management/storage/` |
-| Cloud / online | `src/management/online/` |
+| Online feeds (notification / update) | `src/management/online/` |
 | Workspace runtime | `src/management/workspace/` |
 | Widgets | `src/function/widget/` |
 | Presets | `src/function/preset/` |
@@ -51,13 +54,13 @@ primary panel UI authority.
 `src/`, `archive/`, `reference/bolt-cep/`, `docs/no-use/`, `docs/plans/` are not
 current architecture authorities.
 
-### 4. Cloud has remote and fixture modes
+### 4. Online surface is feeds-only
 
-- Remote lane: `src/management/online/` and `supabase/functions/` (Supabase edge functions directory, not legacy `functions/` path)
-- Falls back to fixture when runtime is unset
+- Provided: static JSON feeds for notifications (`src/management/online/notification/`) and updates (`src/management/online/update/`).
+- Removed in #193: remote catalog, public links, cloud gateway, sync, Preset Library, fixture gateway, `online.*` wire methods, Rust `online` crate. There is no fixture mode and no Supabase implementation in this repo.
 
-To ship cloud as product value, Supabase deployment and env configuration are
-required.
+Re-introducing any online feature requires a new backend and surface contract
+(see [`../offline-core.md`](../offline-core.md)).
 
 ## Known gaps
 

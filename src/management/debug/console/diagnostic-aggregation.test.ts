@@ -42,7 +42,7 @@ describe("diagnostic aggregation across surfaces (Issue #129)", () => {
 		const debugConsole = createLogger("debug-console");
 
 		boot.info("[ty-plus] panel boot started");
-		onlineRuntime.info("[ty-plus] cloud gateway boot started");
+		onlineRuntime.info("[ty-plus] operation worker boot started");
 		operationWorker.info(
 			"[ty-plus] operation worker runtime: construction started",
 		);
@@ -57,7 +57,7 @@ describe("diagnostic aggregation across surfaces (Issue #129)", () => {
 		expect(received).toContainEqual({
 			source: "online-runtime",
 			level: "info",
-			message: "[ty-plus] cloud gateway boot started",
+			message: "[ty-plus] operation worker boot started",
 		});
 		expect(received).toContainEqual({
 			source: "operation-worker",
@@ -130,7 +130,6 @@ describe("diagnostic aggregation across surfaces (Issue #129)", () => {
 		expect(entries[0].level).toBe("info");
 		expect(entries[0].message).toBe("[ty-plus] panel entry started");
 	});
-
 });
 
 /**
@@ -145,7 +144,7 @@ function bootSequence(): void {
 	const modeless = createLogger("modeless");
 
 	boot.info("[ty-plus] panel boot started");
-	onlineRuntime.info("[ty-plus] cloud gateway boot started");
+	onlineRuntime.info("[ty-plus] operation worker boot started");
 	operationWorker.info(
 		"[ty-plus] operation worker runtime: construction started",
 	);

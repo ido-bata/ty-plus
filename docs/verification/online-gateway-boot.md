@@ -1,5 +1,7 @@
 # Verification: online gateway boot (Issue #128)
 
+> **Historical record.** 本文書が対象とする cloud gateway / fixture fallback / Online Preset Library の surface は Issue #193 で構造ごと撤去された。記載の手順・ファイルパスは現行コードには存在しない。現行の契約は `docs/architecture/offline-core.md` を参照。
+
 この文書は、Issue #128（`fix(online): release build が fixture fallback に落ち Online Preset / Notifications が live 接続できない`）の修正を After Effects 実機で再現・検証する手順を定義する。Mac ZXP の検証は範囲外（AGENTS.md / CLAUDE.md に従う）。Windows AE 2026 が検証の正本である。
 
 ## 1. 修正の要点

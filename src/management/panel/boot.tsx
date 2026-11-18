@@ -28,6 +28,7 @@ import { createLogger } from "@/management/debug/logger";
 import { installCepJsonContextMenuRewrite } from "@/management/dialog/dialogs/context-menu";
 import { initializeI18n } from "@/management/i18n";
 import { NotificationContainer } from "@/management/online/notification/Container";
+import { readBootProbeFlag } from "@/management/panel/boot-feature-flags";
 import {
 	type BootWorkloadBudget,
 	createBootWorkloadBudget,
@@ -36,14 +37,13 @@ import {
 import { ErrorBoundary } from "@/management/panel/ErrorBoundary";
 import { bootstrapCepShellThemeHydration } from "@/management/panel/inject-styles";
 import { Main } from "@/management/panel/Main";
-import { readBootProbeFlag } from "@/management/panel/boot-feature-flags";
 import { tryBuildOperationWorker } from "@/management/panel/operation-worker-boot";
-import { initUpdateInstaller } from "@/management/workspace/services";
 import {
 	isInitializationComplete,
 	readInitializationStateFromApp,
 } from "@/management/setting/onboarding/initialization";
 import { requestLayoutReload } from "@/management/workspace/onboarding/layout-reload-bridge";
+import { initUpdateInstaller } from "@/management/workspace/services";
 import {
 	type OnboardingPayload,
 	SHELL_CHANNELS,
@@ -187,7 +187,8 @@ export async function bootPanel(): Promise<void> {
 	});
 
 	// Issue #131: per-workload 5-second soft budget. Each background
-	// workload (cloud gateway, thumbnail gateway, i18n, log retention)
+	// workload (operation-worker composition, thumbnail gateway, i18n,
+	// log retention)
 	// emits a start/finish pair with elapsed ms. Any workload that runs
 	// longer than 5s logs a warn, but the workloads themselves are NOT
 	// cancelled by the budget — owning code decides its own lifecycle.

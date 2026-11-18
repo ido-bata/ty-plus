@@ -16,6 +16,6 @@ Feature: Runtime lifecycle
       Given an onboarding-completed panel at the post-onboarding home screen
       When the user opens the Debug Console
       Then the Debug Console mounts and lists a host bundle action from this panel run
-      When the user opens the Online Preset Library
-      Then the operation worker log records the queued attempt
+      When the user opens the preset list
+      Then the operation worker log records the queued thumbnail attempt
       And the operation worker log records the spawned child for that attempt

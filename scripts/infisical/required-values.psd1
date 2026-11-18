@@ -6,12 +6,9 @@
 
 	ManagedNames = @(
 		'ZXP_CERT_PASSWORD'
-		'SUPABASE_URL'
-		'SUPABASE_PUBLISHABLE_KEY'
 	)
 
 	RequiredValues = @(
-		'SUPABASE_URL'
-		'SUPABASE_PUBLISHABLE_KEY'
+		'ZXP_CERT_PASSWORD'
 	)
 }

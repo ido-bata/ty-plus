@@ -22,9 +22,9 @@ const {
 	// Per-test value simulates "catalog available" (JSON text),
 	// "catalog missing" (null → empty catalog), or "catalog corrupt"
 	// (unparseable text → PresetCatalogParseError).
-	readJsonTextMock: vi.fn<
-		(win: Window, key: string) => Promise<string | null>
-	>(async () => null),
+	readJsonTextMock: vi.fn<(win: Window, key: string) => Promise<string | null>>(
+		async () => null,
+	),
 }));
 
 /** Captured warn() calls from createLogger('workspace'). */
@@ -106,7 +106,6 @@ vi.mock("@/management/debug", () => ({
 	}),
 }));
 
-import { __resetLocalPresetCatalogForTests } from "@/management/preset/repository/local-catalog";
 import { tryPersistAppendPresetFromDialog } from "@/management/workspace/placement/append-preset-from-dialog-disk";
 
 /**

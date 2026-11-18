@@ -4,7 +4,7 @@
  * Local preset catalog — Issue #145.
  *
  * These tests exist to pin the contract that the local catalog is reachable
- * with no cloud gateway at all, and that "empty" and "failed" are different
+ * with no online services at all, and that "empty" and "failed" are different
  * answers. Both halves are load-bearing: a regression in either one is the
  * empty-success shape this repository has shipped more than once.
  *
@@ -86,7 +86,7 @@ beforeEach(() => {
 	storageModule.writePresetsJson.mockResolvedValue(undefined);
 });
 
-describe("local preset catalog with no cloud gateway", () => {
+describe("local preset catalog with no online services", () => {
 	it("lists local rows while the gateway has never booted", async () => {
 		storageModule.readJsonText.mockResolvedValue(
 			catalogText([preset("a"), preset("b")]),

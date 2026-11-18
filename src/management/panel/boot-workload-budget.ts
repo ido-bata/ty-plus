@@ -2,9 +2,9 @@
  * Boot-time workload budget (Issue #131).
  *
  * During the AE panel boot, several side effects run concurrently
- * after the first paint: cloud-gateway composition, connectivity
- * probe, catalog probe, thumbnail gateway, startup preset asset scan,
- * i18n init, log retention init, layout/watch init. On Windows AE 2026
+ * after the first paint: operation-worker composition, thumbnail
+ * gateway, startup preset asset scan, i18n init, log retention init,
+ * layout/watch init. On Windows AE 2026
  * a flood of those round-trips has been observed to freeze the AE
  * host main thread for several seconds.
  *

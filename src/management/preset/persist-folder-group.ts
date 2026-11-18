@@ -109,7 +109,7 @@ export const persistFolderGroupPreset = async (
 		}));
 	};
 
-	// Issue #139: group creation must not depend on cloud gateway boot. The
+	// Issue #139: group creation must not depend on any online service. The
 	// imported presets are local file-backed rows, so they go through the
 	// local catalog — the same owner `listPresets`/`upsertLocalPreset` use.
 	const repo = getLocalPresetCatalog(win);

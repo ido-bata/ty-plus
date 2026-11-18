@@ -90,7 +90,6 @@
 		"ci:unit": "cross-env NODE_OPTIONS=--max-old-space-size=28672 SKIP_OPERATION_WORKER_VERIFICATION=1 bun run vitest run --project=unit",
 		"ci:storybook": "cross-env NODE_OPTIONS=--max-old-space-size=28672 bun run vitest run --project=storybook",
 		"ci:coverage": "cross-env NODE_OPTIONS=--max-old-space-size=28672 COVERAGE=1 SKIP_OPERATION_WORKER_VERIFICATION=1 bun run vitest run --project=unit --coverage",
-		"smoke:typlus-api": "bun run scripts/utils/smoke-typlus-api.ts",
 		"biome": "bunx @biomejs/biome",
 		"format": "bun run biome format --write .",
 		"prepare": "panda codegen --silent && panda cssgen --silent",

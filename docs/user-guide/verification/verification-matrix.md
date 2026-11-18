@@ -62,7 +62,7 @@
 | ID | 分岐 | 状態 | 証拠 | メモ |
 | --- | --- | --- | --- | --- |
 | D-01 | Settings modeless | 一部不合格 | `settings/screenshots/settings-*.png` | Reset が危険 |
-| D-02 | Online Preset Library modeless | 一部不合格 | `online-presets/screenshots/online-presets-*.png` | Download が実体保存失敗 |
+| ~~D-02~~ | Online Preset Library modeless | 対象外 | - | #193 で未提供面を構造撤去 |
 | D-03 | Messages modeless | 合格 | `messages/screenshots/messages-01-list-visible.png` | 表示のみ |
 | D-04 | Local Preset ダイアログ | 合格 | `presets/screenshots/presets-06-local-preset-dialog-visible.png` | Cancel のみ |
 | D-05 | Group / Animation / Layer/Comp / Code ダイアログ | 合格 | `presets/screenshots/presets-07-*.png` | Cancel のみ |

@@ -5,7 +5,6 @@ import { installCepDevBundle } from "../cep/install-cep-dev";
 import { launchAfterEffects } from "../lib/adobe-hosts";
 import { startCepLiveServer } from "../lib/cep-live-server";
 import { startMediaSurfaceDevServer } from "../lib/media-surface-dev-server";
-import { normalizeCepDevEnv } from "../utils/load-root-env";
 
 const shouldLaunchAfterEffects = process.argv.includes(
 	"--launch-after-effects",
@@ -18,13 +17,7 @@ const port = Number(Bun.env.TY_PLUS_DEV_SERVER_PORT ?? "38912");
 let mediaServer: { origin: string; stop: () => Promise<void> } | null = null;
 if (enableMediaSurface) {
 	mediaServer = await startMediaSurfaceDevServer();
-	process.env.TY_PLUS_MEDIA_BASE_URL = mediaServer.origin;
 }
-
-const cepEnvBase = normalizeCepDevEnv({ ...Bun.env } as Record<
-	string,
-	string | undefined
->);
 
 const server = await startCepLiveServer({
 	panelEntrypoint: path.resolve("src", "js", "panel", "index-react.tsx"),
@@ -46,10 +39,6 @@ const server = await startCepLiveServer({
 		"dialogs.tsx",
 	),
 	port,
-	env: {
-		...cepEnvBase,
-		...(mediaServer ? { TY_PLUS_MEDIA_BASE_URL: mediaServer.origin } : {}),
-	},
 });
 
 await buildCepDevBundle({ liveServerOrigin: server.origin });

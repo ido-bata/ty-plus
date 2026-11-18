@@ -454,7 +454,7 @@ mod tests {
     fn production_executor_rejects_wrong_payload_before_opening_storage() {
         let root = tempdir_in("executor-invalid");
         let mut request = scan_request(&root);
-        request.method = MethodName::parse("online.download").unwrap();
+        request.method = MethodName::parse("unknown.method").unwrap();
         request.payload = serde_json::json!({"q": "not a download"});
         let token = CancellationToken::default();
         let mut events = CancellingEvents {
