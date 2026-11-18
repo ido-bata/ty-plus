@@ -15,9 +15,10 @@
 
 import { CircleHelp, X } from "lucide-react";
 import type { JSX } from "react";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { getWidgetDescriptor } from "@/function/widget/registry-core";
 import { useTranslation } from "@/management/i18n/Context";
+import { cx } from "@/shared/util/cx";
 import { css } from "@/styled-system/css";
 import { markTutorialSeen } from "./state-store";
 
@@ -63,10 +64,14 @@ const helpPanel = css({
 	position: "absolute",
 	inset: "0",
 	zIndex: "3",
+	margin: "0",
 	display: "flex",
 	flexDirection: "column",
 	gap: "1.5",
 	padding: "2",
+	borderWidth: "1px",
+	borderStyle: "solid",
+	borderColor: "border.subtle",
 	borderRadius: "shell-sm",
 	backgroundColor: "surface.widget",
 	color: "text.primary",
@@ -122,6 +127,7 @@ export function WidgetHelpOverlay({
 }: WidgetHelpOverlayProps): JSX.Element | null {
 	const { t } = useTranslation("widgets");
 	const [open, setOpen] = useState(false);
+	const panelRef = useRef<HTMLDialogElement | null>(null);
 	const descriptor = getWidgetDescriptor(widgetType);
 	const tutorial = descriptor?.tutorial;
 
@@ -130,6 +136,19 @@ export function WidgetHelpOverlay({
 			t(key.replace(/^widgets\./, ""), { defaultValue: "" }),
 		[t],
 	);
+
+	// Block mousedown from reaching tile-level drag/selection handlers while
+	// the help panel is open. A native listener is used so the propagation
+	// stop applies regardless of how the tile observes pointer input.
+	useEffect(() => {
+		const el = panelRef.current;
+		if (!open || !el) return;
+		const stop = (event: Event): void => {
+			event.stopPropagation();
+		};
+		el.addEventListener("mousedown", stop);
+		return () => el.removeEventListener("mousedown", stop);
+	}, [open]);
 
 	if (!tutorial?.summaryKey) {
 		return null;
@@ -142,35 +161,31 @@ export function WidgetHelpOverlay({
 		);
 	};
 
-	const steps = (tutorial.steps ?? []).map((step) => ({
-		title: resolveKey(step.titleKey),
-		body: resolveKey(step.bodyKey),
-	}));
+	const steps = tutorial.steps ?? [];
 
 	return (
 		<>
-			<div className={helpAnchor} onMouseDown={stopPropagation}>
-				<button
-					type="button"
-					className={helpButton}
-					aria-label={t("tutorial.chrome.help", { defaultValue: "Help" })}
-					aria-expanded={open}
-					onClick={(event) => {
-						event.stopPropagation();
-						openHelp();
-					}}
-				>
-					<CircleHelp size={14} aria-hidden />
-				</button>
-			</div>
+			<button
+				type="button"
+				className={cx(helpAnchor, helpButton)}
+				aria-label={t("tutorial.chrome.help", { defaultValue: "Help" })}
+				aria-expanded={open}
+				onMouseDown={stopPropagation}
+				onClick={(event) => {
+					event.stopPropagation();
+					openHelp();
+				}}
+			>
+				<CircleHelp size={14} aria-hidden />
+			</button>
 			{open ? (
-				<div
+				<dialog
+					ref={panelRef}
+					open
 					className={helpPanel}
-					role="dialog"
 					aria-label={t("tutorial.chrome.title", {
 						defaultValue: "Widget help",
 					})}
-					onMouseDown={stopPropagation}
 				>
 					<div className={helpPanelHeader}>
 						<span>
@@ -195,15 +210,17 @@ export function WidgetHelpOverlay({
 					</p>
 					{steps.length > 0 ? (
 						<ol className={helpSteps}>
-							{steps.map((step, index) => (
-								<li key={index}>
-									<div className={helpStepTitle}>{step.title}</div>
-									<div>{step.body}</div>
+							{steps.map((step) => (
+								<li key={step.titleKey}>
+									<div className={helpStepTitle}>
+										{resolveKey(step.titleKey)}
+									</div>
+									<div>{resolveKey(step.bodyKey)}</div>
 								</li>
 							))}
 						</ol>
 					) : null}
-				</div>
+				</dialog>
 			) : null}
 		</>
 	);
