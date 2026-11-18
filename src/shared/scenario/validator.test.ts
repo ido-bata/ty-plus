@@ -486,7 +486,7 @@ describe("scenario validator", () => {
 				hostState: {
 					method: "evalScript",
 					script: "$.global.__TY_PLUS_HOST__.getHostContext()",
-					expected: { hasKey: "app_root" },
+					expected: { contains: "app_root" },
 				},
 				dual: false,
 			},
