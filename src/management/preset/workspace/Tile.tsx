@@ -1,9 +1,11 @@
 import type { CSSProperties, JSX } from "react";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { logCatalogTileDisplay } from "@/management/catalog-tile-display-log";
 import type { Preset } from "@/management/preset/contract";
+import { getSharedSiblingListDirectory } from "@/management/preset/sibling-directory-lister";
 import {
 	PresetCatalogGlyphHost,
+	usePresetSiblingImageSrc,
 	WorkspacePresetGlyph,
 } from "@/management/preset/workspace/glyph";
 import { css } from "@/styled-system/css";
@@ -50,6 +52,19 @@ export function Tile({
 		}
 	}, [label, preset]);
 	const presetId = preset?.id?.trim() ? preset.id.trim() : null;
+	// Workspace tiles derive the sidecar sibling image at display time so a
+	// `Foo.png` next to `Foo.ffx` renders here exactly like it does in the
+	// directory browser (issue #191 — single icon contract across surfaces).
+	const thumbnailListDirectory = useMemo(
+		() =>
+			typeof window === "undefined"
+				? undefined
+				: getSharedSiblingListDirectory(window),
+		[],
+	);
+	const siblingImageSrc = usePresetSiblingImageSrc(preset, {
+		thumbnailListDirectory,
+	});
 	return (
 		<PresetCatalogGlyphHost
 			title={label}
@@ -62,7 +77,10 @@ export function Tile({
 			}}
 		>
 			{preset ? (
-				<WorkspacePresetGlyph preset={preset} />
+				<WorkspacePresetGlyph
+					preset={preset}
+					siblingImageSrc={siblingImageSrc}
+				/>
 			) : (
 				<span
 					data-ws-preset-text-fit="scale"

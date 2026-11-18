@@ -289,9 +289,8 @@ export type Preset = {
 	data?: Record<string, unknown>;
 	/**
 	 * Source preset id when this record was produced by `duplicatePreset`.
-	 * Undefined for hand-authored / cloud-synced originals.
-	 * Preserved for now as an in-memory contract field; the on-disk
-	 * catalog serializer does not yet round-trip it.
+	 * Undefined for hand-authored originals. Persisted by the catalog
+	 * serializer (`catalog-json-text.ts`).
 	 */
 	parentId?: string;
 };

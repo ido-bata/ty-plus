@@ -3,7 +3,7 @@ import { createPortal } from "react-dom";
 import type { PresetType } from "@/management/preset/contract";
 import { css } from "@/styled-system/css";
 import { EffectRow, PresetRow, RootFileRow } from "./row-components";
-import type { ScoredPaletteRow } from "./types";
+import type { ScoredPaletteRow, ThumbnailListDirectory } from "./types";
 
 type PaletteRowsListProps = {
 	paletteRows: ScoredPaletteRow[];
@@ -11,6 +11,7 @@ type PaletteRowsListProps = {
 	widgetInstanceId: string;
 	t: (key: string) => string;
 	typeLabel: (ty: PresetType) => string;
+	thumbnailListDirectory?: ThumbnailListDirectory;
 	onSelect: (idx: number) => void;
 };
 
@@ -20,6 +21,7 @@ function PaletteRowsList({
 	widgetInstanceId,
 	t,
 	typeLabel,
+	thumbnailListDirectory,
 	onSelect,
 }: PaletteRowsListProps): JSX.Element {
 	return (
@@ -62,6 +64,7 @@ function PaletteRowsList({
 						selected={selected}
 						widgetInstanceId={widgetInstanceId}
 						tl={tl}
+						thumbnailListDirectory={thumbnailListDirectory}
 						onSelect={onSelect}
 					/>
 				);
@@ -80,6 +83,7 @@ export type PaletteDropdownProps = {
 	dropdownBox: { top: number; left: number; width: number };
 	t: (key: string) => string;
 	typeLabel: (ty: PresetType) => string;
+	thumbnailListDirectory?: ThumbnailListDirectory;
 	instanceAttr: Record<string, string | undefined>;
 	onSelect: (idx: number) => void;
 	onPaletteMouseDown: (ev: MouseEvent) => void;
@@ -95,6 +99,7 @@ export function PaletteDropdown({
 	dropdownBox,
 	t,
 	typeLabel,
+	thumbnailListDirectory,
 	instanceAttr,
 	onSelect,
 	onPaletteMouseDown,
@@ -148,6 +153,7 @@ export function PaletteDropdown({
 						widgetInstanceId={widgetInstanceId}
 						t={t}
 						typeLabel={typeLabel}
+						thumbnailListDirectory={thumbnailListDirectory}
 						onSelect={onSelect}
 					/>
 				)}

@@ -24,7 +24,11 @@ const ONBOARDING_FOLDER_EXTENSIONS: Record<
 	"presets" | "scripts" | "plugins",
 	readonly string[]
 > = {
-	presets: [".ffx"],
+	// `.mogrt` is collected with presets: it is a template asset, and the
+	// candidate `type` is still inferred from the file path downstream
+	// (`inferPresetTypeFromFilePath`), matching the quick-action root
+	// scan's `allowExt` set.
+	presets: [".ffx", ".mogrt"],
 	scripts: [".jsx", ".jsxbin", ".js"],
 	plugins: [".aex", ".plugin"],
 };
@@ -84,6 +88,7 @@ const walkFolderForExtensions = async (
 	rootPath: string,
 	extensions: readonly string[],
 	listDirectory: (dirPath: string) => Promise<OnboardingFileBrowserEntry[]>,
+	recursive = true,
 ): Promise<string[]> => {
 	const collected: string[] = [];
 	const queue = [rootPath];
@@ -106,7 +111,7 @@ const walkFolderForExtensions = async (
 				collected.push(entry.path);
 				continue;
 			}
-			if (!entry.isDirectory) {
+			if (!entry.isDirectory || !recursive) {
 				continue;
 			}
 			queue.push(entry.path);
@@ -208,7 +213,9 @@ export const collectFilePresetCandidates = (
 export const collectFolderPresetCandidates = async (
 	folderPaths: readonly string[],
 	listDirectory: (dirPath: string) => Promise<OnboardingFileBrowserEntry[]>,
+	options?: { recursive?: boolean },
 ): Promise<OnboardingPresetCandidate[]> => {
+	const recursive = options?.recursive ?? true;
 	const roots = folderPaths.flatMap((p) => {
 		const trimmed = p.trim();
 		return trimmed ? [trimmed] : [];
@@ -223,6 +230,7 @@ export const collectFolderPresetCandidates = async (
 				root,
 				ONBOARDING_ALL_FOLDER_EXTENSIONS,
 				listDirectory,
+				recursive,
 			),
 		),
 	);

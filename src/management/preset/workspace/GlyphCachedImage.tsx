@@ -1,6 +1,6 @@
 import type { JSX } from "react";
 import { ThumbnailTile } from "@/function/widget/utility/directory-browser/ThumbnailTile";
-import type { FileBrowserEntry } from "@/management/storage/file-browser-service";
+import { siblingThumbnailEntryFor } from "@/management/preset/sibling-thumbnail";
 import { css, cx } from "@/styled-system/css";
 
 /**
@@ -25,13 +25,13 @@ import { css, cx } from "@/styled-system/css";
  * ISO-8601 timestamp ensures React's hook never sees a different key
  * for the same source image.
  *
- * `mtime_ms == 0` is rejected by the Rust dispatcher, so we use a
- * fixed non-zero timestamp (`2026-01-01T00:00:00.000Z` — fixed in
- * CHB-2026-09-06). The pipeline will treat the synthetic mtime as
- * authoritative for cache invalidation; in practice every render
- * re-resolves the same sibling, so a sentinel is fine.
+ * `mtime_ms == 0` is rejected by the Rust dispatcher, so the synthetic
+ * entry uses a fixed non-zero timestamp (`2026-01-01T00:00:00.000Z`). The
+ * pipeline treats the synthetic mtime as authoritative for cache
+ * invalidation; in practice every render re-resolves the same sibling,
+ * so a sentinel is fine. The entry is built by the shared
+ * `siblingThumbnailEntryFor` helper in `sibling-thumbnail`.
  */
-const SYNTHETIC_TIMESTAMP = "2026-01-01T00:00:00.000Z";
 
 const glyphImageClass = css({
 	display: "flex",
@@ -53,15 +53,7 @@ export function GlyphCachedImage(props: {
 	if (!imagePath) {
 		return null;
 	}
-	const syntheticEntry: FileBrowserEntry = {
-		name: imagePath.replace(/\\/g, "/").split("/").pop() ?? imagePath,
-		path: imagePath,
-		isDirectory: false,
-		size: 0,
-		modifiedAt: SYNTHETIC_TIMESTAMP,
-		extension: ".png",
-		fileType: "image",
-	};
+	const syntheticEntry = siblingThumbnailEntryFor(imagePath);
 	return (
 		<span
 			className={cx(

@@ -1,23 +1,34 @@
-import type { LucideIcon } from "lucide-react";
-import {
-	File,
-	Film,
-	Folder,
-	FolderOpen,
-	Image as ImageIcon,
-	Music,
-} from "lucide-react";
+import { File, Folder, FolderOpen } from "lucide-react";
 import type { JSX } from "react";
+import { useMemo } from "react";
+import { useThumbnail } from "@/function/widget/utility/directory-browser/hooks/useThumbnail";
 
-import type { PresetIcon } from "@/management/preset/contract";
+import type {
+	Preset,
+	PresetIcon,
+	PresetType,
+} from "@/management/preset/contract";
+import { isDefaultPresetIcon } from "@/management/preset/icon-data";
 import { imageSrcForBrowser } from "@/management/preset/image-src-for-browser";
 import {
 	findSiblingImagePathForPresetFile,
+	isPresetSidekickSourcePath,
 	type SiblingListingEntry,
+	siblingThumbnailEntryFor,
 } from "@/management/preset/sibling-thumbnail";
+import { CanvasEasingIcon } from "@/management/preset/workspace/CanvasEasingIcon";
 import { cx } from "@/shared/util/cx";
 import { css } from "@/styled-system/css";
+import { FILE_TYPE_ICON } from "../file-type-icon";
 import type { DirectoryBrowserEntry } from "./DirectoryBrowser";
+
+const presetTypeForFileType = (
+	fileType: DirectoryBrowserEntry["fileType"],
+): PresetType => {
+	if (fileType === "script") return "script";
+	if (fileType === "plugin") return "plugin";
+	return "preset";
+};
 
 const iconFrameBaseClass = css({
 	display: "inline-flex",
@@ -84,6 +95,28 @@ export function EntryIcon({
 	allEntries?: readonly SiblingListingEntry[];
 	fill?: boolean;
 }): JSX.Element {
+	// Sidecar sibling lookup runs before the early returns so the
+	// `useThumbnail` hook below is called unconditionally (rules of hooks).
+	const sidekickPath =
+		!entry.isDirectory && allEntries && isPresetSidekickSourcePath(entry.path)
+			? findSiblingImagePathForPresetFile(entry.path, allEntries)
+			: null;
+	const sidekickEntry = useMemo(
+		() => (sidekickPath ? siblingThumbnailEntryFor(sidekickPath) : null),
+		[sidekickPath],
+	);
+	const sidekickThumb = useThumbnail(
+		sidekickEntry ?? {
+			name: "",
+			path: "",
+			isDirectory: false,
+			size: 0,
+			modifiedAt: "",
+			extension: "",
+			fileType: "image" as const,
+		},
+	);
+
 	if (entry.path === "" && entry.isDirectory) {
 		const s = size ?? 24;
 		return (
@@ -106,90 +139,55 @@ export function EntryIcon({
 			</IconFrame>
 		);
 	}
-	if (!entry.isDirectory && allEntries) {
-		const sidekick = findSiblingImagePathForPresetFile(entry.path, allEntries);
-		// `imageSrcForBrowser` rejects non-absolute / non-URL paths and returns
-		// "" — rendering `<img src="">` logs a console error, so fall through
-		// to the type icon instead.
-		const sidekickSrc = sidekick ? imageSrcForBrowser(sidekick) : "";
-		if (sidekick && sidekickSrc) {
-			return (
-				<IconFrame size={s} fill={fill}>
-					<img
-						src={sidekickSrc}
-						alt=""
-						decoding="async"
-						draggable={false}
-						className={coverImageClass}
-					/>
-				</IconFrame>
-			);
-		}
+	// Icon contract (issue #191): a persisted *custom* icon wins over every
+	// derived source; a materialized type default does not — sibling
+	// sidecar images resolved through the thumbnail pipeline outrank it.
+	const presetType = presetTypeForFileType(entry.fileType);
+	const hasCustomIcon =
+		entry.icon != null &&
+		!isDefaultPresetIcon(presetType, entry.icon as Preset["icon"]);
+	if (hasCustomIcon && entry.icon) {
+		const rendered = renderPresetIcon(entry.icon, s, fill);
+		if (rendered) return rendered;
+	}
+	if (sidekickPath && sidekickThumb.staticUrl) {
+		// Sidecar images render only through the thumbnail pipeline (Rust
+		// WebP cache + gateway allow-list). There is no raw `file://`
+		// fallback: when the pipeline has no resolved URL the entry falls
+		// through to its persisted icon or type glyph.
+		return (
+			<IconFrame size={s} fill={fill}>
+				<img
+					src={sidekickThumb.staticUrl}
+					alt=""
+					decoding="async"
+					draggable={false}
+					className={coverImageClass}
+				/>
+			</IconFrame>
+		);
 	}
 	if (entry.icon) {
 		const rendered = renderPresetIcon(entry.icon, s, fill);
 		if (rendered) return rendered;
 	}
-	if (entry.fileType === "video") {
+	// File-type glyph fallback comes from the shared table so every
+	// directory-browser surface renders the same icon for the same file
+	// (issue #191 audit — this used to be a divergent per-surface copy
+	// that collapsed most types to Film and lacked font/psd/ai/c4d/json).
+	if (entry.isDirectory) {
 		return (
 			<IconFrame size={s} fill={fill}>
-				<Film className={fullSizeClass} aria-hidden />
+				<Folder className={fullSizeClass} aria-hidden />
 			</IconFrame>
 		);
 	}
-	if (entry.fileType === "audio") {
-		return (
-			<IconFrame size={s} fill={fill}>
-				<Music className={fullSizeClass} aria-hidden />
-			</IconFrame>
-		);
-	}
-	if (entry.fileType === "image") {
-		return (
-			<IconFrame size={s} fill={fill}>
-				<ImageIcon className={fullSizeClass} aria-hidden />
-			</IconFrame>
-		);
-	}
-	if (entry.fileType === "image-sequence") {
-		return (
-			<IconFrame size={s} fill={fill}>
-				<Film className={fullSizeClass} aria-hidden />
-			</IconFrame>
-		);
-	}
-	if (entry.fileType === "ae-preset") {
-		return (
-			<IconFrame size={s} fill={fill}>
-				<Film className={fullSizeClass} aria-hidden />
-			</IconFrame>
-		);
-	}
-	if (entry.fileType === "script") {
-		return (
-			<IconFrame size={s} fill={fill}>
-				<Film className={fullSizeClass} aria-hidden />
-			</IconFrame>
-		);
-	}
-	if (entry.fileType === "plugin") {
-		return (
-			<IconFrame size={s} fill={fill}>
-				<Film className={fullSizeClass} aria-hidden />
-			</IconFrame>
-		);
-	}
-	if (entry.fileType === "mogrt") {
-		return (
-			<IconFrame size={s} fill={fill}>
-				<Film className={fullSizeClass} aria-hidden />
-			</IconFrame>
-		);
-	}
-	const IconComponent: LucideIcon = entry.isDirectory ? Folder : File;
+	const Glyph = entry.fileType
+		? (FILE_TYPE_ICON[entry.fileType] ?? File)
+		: File;
 	return (
 		<IconFrame size={s} fill={fill}>
-			<IconComponent className={fullSizeClass} aria-hidden />
+			<Glyph className={fullSizeClass} aria-hidden />
 		</IconFrame>
 	);
 }
@@ -223,19 +221,55 @@ function renderPresetIcon(
 	if (icon.type === "image") {
 		const src = icon.param.src.trim();
 		if (!src) return null;
+		return <EntryPresetIconImage src={src} size={size} fill={fill} />;
+	}
+	if (icon.type === "canvas" && icon.param.cubic) {
 		return (
 			<IconFrame size={size} fill={fill}>
-				<img
-					src={src}
-					alt=""
-					decoding="async"
-					draggable={false}
-					className={coverImageClass}
+				<CanvasEasingIcon
+					cubic={icon.param.cubic}
+					points={icon.param.points}
+					color={icon.param.color ?? "currentColor"}
 				/>
 			</IconFrame>
 		);
 	}
 	return null;
+}
+
+/**
+ * Renders a persisted image icon through the thumbnail pipeline
+ * (Rust WebP cache + gateway) — the same route sidecar images take.
+ * There is intentionally no raw `file://`/path `<img>` fallback: when
+ * the pipeline has no resolved URL the caller falls through to the
+ * next icon priority (issue #191).
+ */
+function EntryPresetIconImage({
+	src,
+	size,
+	fill,
+}: {
+	src: string;
+	size: number;
+	fill?: boolean;
+}): JSX.Element | null {
+	const thumbEntry = useMemo(() => siblingThumbnailEntryFor(src), [src]);
+	const thumb = useThumbnail(thumbEntry);
+	const url = thumb.staticUrl;
+	if (!url) {
+		return null;
+	}
+	return (
+		<IconFrame size={size} fill={fill}>
+			<img
+				src={url}
+				alt=""
+				decoding="async"
+				draggable={false}
+				className={coverImageClass}
+			/>
+		</IconFrame>
+	);
 }
 
 export function MediaCardContent({
