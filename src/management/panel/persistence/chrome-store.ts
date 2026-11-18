@@ -162,17 +162,25 @@ const saveChromeControlPanel = async (
 	const index = panelIdToIndex(panelId);
 	if (!managed || !index) return;
 
-	const existing = await readJson(win, "panelChrome", index);
-	const next: Record<string, unknown> = {
-		...(existing ?? {}),
-		version: PANEL_CHROME_FILE_VERSION,
-		controlPanel: {
-			position: cp.position,
-			orientation: cp.orientation,
-			collapsed: cp.collapsed,
-		},
-	};
-	await writeJson(win, "panelChrome", next, index);
+	// ADR-0006: panels/panel-N.json merge-write inside the managed-root
+	// persistence lock so concurrent chrome saves cannot lose each
+	// other's keys.
+	const { withManagedRootPersistenceLock } = await import(
+		"@/management/storage/lock/persistence-lock"
+	);
+	await withManagedRootPersistenceLock(win, async () => {
+		const existing = await readJson(win, "panelChrome", index);
+		const next: Record<string, unknown> = {
+			...(existing ?? {}),
+			version: PANEL_CHROME_FILE_VERSION,
+			controlPanel: {
+				position: cp.position,
+				orientation: cp.orientation,
+				collapsed: cp.collapsed,
+			},
+		};
+		await writeJson(win, "panelChrome", next, index);
+	});
 };
 
 export { loadChromeControlPanel as loadPanelChromeControlPanel };

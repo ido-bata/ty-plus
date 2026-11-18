@@ -119,6 +119,14 @@ export const createLocalPresetCatalog = (win: Window): LocalPresetCatalog =>
 	createSharedPresetRepository(
 		LOCAL_ONLY_BASE,
 		createLocalPresetFileStore(win),
+		{
+			// ADR-0006: presets.json RMW inside the managed-root lock.
+			withLock: (fn) =>
+				import("@/management/storage/lock/persistence-lock").then(
+					({ withManagedRootPersistenceLock }) =>
+						withManagedRootPersistenceLock(win, fn),
+				),
+		},
 	);
 
 let catalogs = new WeakMap<Window, LocalPresetCatalog>();

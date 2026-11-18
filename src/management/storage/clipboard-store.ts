@@ -47,16 +47,26 @@ async function persist(
 	path: string | undefined,
 	mutate: (current: ClipboardFile) => ClipboardFile,
 ): Promise<void> {
-	const current = await loadClipboard(win, path);
-	const next = mutate(current);
-	// Use persistence layer if no path provided
-	if (!path) {
-		await writeJson(win, "clipboard", next);
-		return;
-	}
-	// Legacy fallback for direct path access
-	const fsMod = await import("node:fs/promises");
-	await fsMod.writeFile(path, JSON.stringify(next), "utf-8");
+	// ADR-0006: clipboard.json is shared across panels — the
+	// read→mutate→write runs inside the managed-root persistence lock so
+	// concurrent easing/values saves cannot lose each other's keys.
+	// Pre-onboarding / test contexts without a managed root run unlocked,
+	// preserving the previous behaviour (and the legacy path branch).
+	const { withManagedRootPersistenceLock } = await import(
+		"@/management/storage/lock/persistence-lock"
+	);
+	await withManagedRootPersistenceLock(win, async () => {
+		const current = await loadClipboard(win, path);
+		const next = mutate(current);
+		// Use persistence layer if no path provided
+		if (!path) {
+			await writeJson(win, "clipboard", next);
+			return;
+		}
+		// Legacy fallback for direct path access
+		const fsMod = await import("node:fs/promises");
+		await fsMod.writeFile(path, JSON.stringify(next), "utf-8");
+	});
 }
 
 export async function saveEasing(

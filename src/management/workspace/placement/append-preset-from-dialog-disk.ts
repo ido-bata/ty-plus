@@ -9,12 +9,22 @@
  * through `getLocalPresetCatalog`, the single owner of the local catalog.
  * A corrupt file rejects with `PresetCatalogParseError`; a missing file is
  * an empty catalog. There is no remote preset source in this product.
+ *
+ * ADR-0006: the catalog read, dedup check and the layout write are ONE
+ * transaction inside the managed-root persistence lock. All shared catalog
+ * reads happen INSIDE the hold — never before it — because another CEP
+ * context may have rewritten those files while we waited for the lock.
+ * `persistTargetLayout` joins the same hold via AsyncLocalStorage.
  */
 
 import { readGroupJson } from "@/management/catalog/json-files";
 import { parseGroupFromText } from "@/management/preset/group-catalog";
 import { getLocalPresetCatalog } from "@/management/preset/repository/local-catalog";
 import { indexFromPanelId, readNJson } from "@/management/storage";
+import {
+	resolvePersistenceLockRoot,
+	withPersistenceLock,
+} from "@/management/storage/lock/persistence-lock";
 import { parseLayoutDocument } from "@/management/workspace/layout/grid-document";
 import { resolveWorkspacePersistenceManagedRoot } from "@/management/workspace/layout/persistence-root";
 import { persistTargetLayout } from "@/management/workspace/placement/cross-panel-write";
@@ -53,61 +63,60 @@ export async function tryPersistAppendPresetFromDialog(
 	}
 	const targetPanelId = input.targetPanelId.trim() || "panel-1";
 
-	// The local preset catalog is the only preset source. A corrupt
-	// `presets/presets.json` rejects with `PresetCatalogParseError`; a
-	// missing file is an empty catalog.
-	const presets = await getLocalPresetCatalog(win).list();
-
-	// Filter out preset/group IDs that are already present on the target panel.
-	// When a preset is edited (not newly added), the layout should not be modified.
-	// `groups.json` and the target `workspace-N.json` are different stores, so
-	// the two reads are issued together — each one is a round-trip to the AE
-	// host, and the result of neither depends on the other. The catalog
-	// resolution above stays on its own await so its "throw when both cloud
-	// and local are unavailable" contract still decides the caller's error.
-	const targetIndex = indexFromPanelId(targetPanelId);
-	const [groupText, rawLayout] = await Promise.all([
-		readGroupJson(win),
-		readNJson(win, targetIndex),
-	]);
-	const groupCatalogEntries = parseGroupFromText(groupText ?? "");
-	const existingLayout = rawLayout
-		? parseLayoutDocument(JSON.parse(rawLayout))
-		: { gridCells: [], presetLayoutRoster: [] };
-
-	// Build set of catalog refs already on this panel's layout
-	const existingCatalogIds = new Set<string>();
-	for (const cell of existingLayout.gridCells) {
-		const trimmed = cell.id?.trim();
-		if (trimmed) existingCatalogIds.add(trimmed);
-	}
-	if (existingLayout.presetLayoutRoster) {
-		for (const entry of existingLayout.presetLayoutRoster) {
-			const trimmed = entry.presetRefId?.trim();
-			if (trimmed) existingCatalogIds.add(trimmed);
-		}
-	}
-
-	// Split into new IDs (to add) and existing IDs (edit case — skip layout)
-	const newCatalogIds = ids.filter((id) => !existingCatalogIds.has(id));
-	if (newCatalogIds.length === 0) {
-		// All IDs are already on the layout — this is an edit, not an add.
-		// No layout modification needed.
+	const lockRoot = await resolvePersistenceLockRoot(win);
+	if (!lockRoot) {
 		return false;
 	}
+	return withPersistenceLock(win, lockRoot, async () => {
+		// The local preset catalog is the only preset source. A corrupt
+		// `presets/presets.json` rejects with `PresetCatalogParseError`; a
+		// missing file is an empty catalog. The read happens inside the hold
+		// so the dedup decision uses the freshest shared state.
+		const targetIndex = indexFromPanelId(targetPanelId);
+		const [presets, groupText, rawLayout] = await Promise.all([
+			getLocalPresetCatalog(win).list(),
+			readGroupJson(win),
+			readNJson(win, targetIndex),
+		]);
+		const groupCatalogEntries = parseGroupFromText(groupText ?? "");
+		const existingLayout = rawLayout
+			? parseLayoutDocument(JSON.parse(rawLayout))
+			: { gridCells: [], presetLayoutRoster: [] };
 
-	// Layout-write path: any failure here still propagates so the caller can
-	// surface the error.
-	await persistTargetLayout(win, {
-		persistenceRoot: root,
-		targetPanelId,
-		catalogIdsToMove: newCatalogIds,
-		widgetTiles: [],
-		widgetTypes: {},
-		presets,
-		groupCatalogEntries,
-		widgetInstanceTypesOverlay: {},
-		dropPlacement: input.dropPlacement,
+		// Build set of catalog refs already on this panel's layout
+		const existingCatalogIds = new Set<string>();
+		for (const cell of existingLayout.gridCells) {
+			const trimmed = cell.id?.trim();
+			if (trimmed) existingCatalogIds.add(trimmed);
+		}
+		if (existingLayout.presetLayoutRoster) {
+			for (const entry of existingLayout.presetLayoutRoster) {
+				const trimmed = entry.presetRefId?.trim();
+				if (trimmed) existingCatalogIds.add(trimmed);
+			}
+		}
+
+		// Split into new IDs (to add) and existing IDs (edit case — skip layout)
+		const newCatalogIds = ids.filter((id) => !existingCatalogIds.has(id));
+		if (newCatalogIds.length === 0) {
+			// All IDs are already on the layout — this is an edit, not an add.
+			// No layout modification needed.
+			return false;
+		}
+
+		// Layout-write path: any failure here still propagates so the caller can
+		// surface the error.
+		await persistTargetLayout(win, {
+			persistenceRoot: root,
+			targetPanelId,
+			catalogIdsToMove: newCatalogIds,
+			widgetTiles: [],
+			widgetTypes: {},
+			presets,
+			groupCatalogEntries,
+			widgetInstanceTypesOverlay: {},
+			dropPlacement: input.dropPlacement,
+		});
+		return true;
 	});
-	return true;
 }
