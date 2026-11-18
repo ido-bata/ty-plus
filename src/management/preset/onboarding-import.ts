@@ -209,17 +209,24 @@ export const collectFolderPresetCandidates = async (
 	folderPaths: readonly string[],
 	listDirectory: (dirPath: string) => Promise<OnboardingFileBrowserEntry[]>,
 ): Promise<OnboardingPresetCandidate[]> => {
-	const roots = folderPaths.map((p) => p.trim()).filter(Boolean);
+	const roots = folderPaths.flatMap((p) => {
+		const trimmed = p.trim();
+		return trimmed ? [trimmed] : [];
+	});
 	if (roots.length === 0) {
 		return [];
 	}
 	const scannedFiles = new Set<string>();
-	for (const root of roots) {
-		const files = await walkFolderForExtensions(
-			root,
-			ONBOARDING_ALL_FOLDER_EXTENSIONS,
-			listDirectory,
-		);
+	const perRootFiles = await Promise.all(
+		roots.map((root) =>
+			walkFolderForExtensions(
+				root,
+				ONBOARDING_ALL_FOLDER_EXTENSIONS,
+				listDirectory,
+			),
+		),
+	);
+	for (const files of perRootFiles) {
 		for (const filePath of files) {
 			scannedFiles.add(filePath);
 		}
