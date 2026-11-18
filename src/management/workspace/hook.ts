@@ -3872,9 +3872,28 @@ export function useWorkspaceRuntime(root: Element | null): {
 			}
 		};
 
+		// The snapshots popover is portaled to `document.body` by
+		// AnchoredPopover, so its restore/delete buttons live outside `root`.
+		// Listen at document level but only admit clicks inside `root` or the
+		// popover — portaled dialogs and widget surfaces keep their own
+		// `data-ws-action` routing (Issue #223: snapshot restore was a no-op).
+		const onDocumentActionClick = (ev: MouseEvent) => {
+			const btn = (ev.target as HTMLElement).closest("[data-ws-action]");
+			if (
+				!btn ||
+				!(root.contains(btn) || btn.closest("#statusbar-snapshots"))
+			) {
+				return;
+			}
+			onActionClick(ev);
+		};
+
 		// ── Document event listeners ───────────────────────────────────────────
 		root.addEventListener("mousedown", onCpMiddleDown as EventListener, true);
-		root.addEventListener("click", onActionClick as EventListener);
+		document.addEventListener(
+			"click",
+			onDocumentActionClick as EventListener,
+		);
 		document.addEventListener("mousemove", onDocMouseMove);
 		document.addEventListener("mouseup", onDocMouseUp);
 		document.addEventListener("mousedown", onDocMouseDownCloseMenu);
@@ -3912,7 +3931,10 @@ export function useWorkspaceRuntime(root: Element | null): {
 			document.removeEventListener("mousemove", onDocMouseMove);
 			document.removeEventListener("mouseup", onDocMouseUp);
 			document.removeEventListener("mousedown", onDocMouseDownCloseMenu);
-			root.removeEventListener("click", onActionClick as EventListener);
+			document.removeEventListener(
+				"click",
+				onDocumentActionClick as EventListener,
+			);
 			removeExternalPresetDialogListener?.();
 			cpMenuEl?.remove();
 			cpMenuEl = null;

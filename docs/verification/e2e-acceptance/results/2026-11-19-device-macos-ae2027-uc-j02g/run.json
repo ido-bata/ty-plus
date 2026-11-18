@@ -1,0 +1,100 @@
+{
+  "schema": "ty-plus.e2e-run/1",
+  "suite": "journeys",
+  "capturedAt": "2026-11-18T14:40:19.905Z",
+  "extensionDir": "/Users/rebui/Library/Application Support/Adobe/CEP/extensions/app.ty-plus.dev",
+  "managedRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-18T14-39-44-159Z-59566/ty-plus",
+  "realManagedRoot": "/Applications/Adobe After Effects 2027/ty-plus",
+  "sandbox": {
+    "enabled": true,
+    "sandboxRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-18T14-39-44-159Z-59566/ty-plus",
+    "integrity": {
+      "realRoot": "/Applications/Adobe After Effects 2027/ty-plus",
+      "checkedAt": "2026-11-18T14:40:19.904Z",
+      "driftBeforeRepair": {
+        "changed": 1,
+        "added": 0,
+        "removed": 0
+      },
+      "filesRepaired": [
+        "cache/layout-undo/panel-1/stack.json"
+      ],
+      "cleanAfterRepair": true
+    }
+  },
+  "totals": {
+    "PASS": 1,
+    "FAIL": 0,
+    "BLOCKED": 0,
+    "SKIP": 0
+  },
+  "results": [
+    {
+      "uc": "UC-J02",
+      "title": "preset journey: create → place → run → edit → delete-attempt (host confirm gate)",
+      "status": "PASS",
+      "detail": "preset lifecycle incl. edit; delete requires manual host confirm",
+      "checks": [
+        {
+          "name": "preset created via dialog",
+          "ok": true,
+          "detail": "id=d9709701-5d56-4508-a24e-28832b80e57e"
+        },
+        {
+          "name": "preset tile placed on workspace",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "preset run produced AE-side artifact",
+          "ok": true,
+          "detail": "1795012786614|27.0x78"
+        },
+        {
+          "name": "catalog Edit clicked",
+          "ok": true,
+          "detail": "clicked"
+        },
+        {
+          "name": "edit Save clicked",
+          "ok": true,
+          "detail": "clicked"
+        },
+        {
+          "name": "presets.json reflects rename",
+          "ok": true,
+          "detail": "title=E2E J02 Renamed"
+        },
+        {
+          "name": "delete gated by host confirm — preset retained until manual confirm",
+          "ok": true,
+          "detail": "host confirm pending; record intact"
+        },
+        {
+          "name": "host confirm cancel path answered via GUI automation",
+          "ok": true,
+          "detail": "No clicked"
+        },
+        {
+          "name": "cancel path keeps preset",
+          "ok": true,
+          "detail": "preset retained after No"
+        },
+        {
+          "name": "host confirm approve path answered via GUI automation",
+          "ok": true,
+          "detail": "Yes clicked"
+        },
+        {
+          "name": "confirmed delete removes preset",
+          "ok": true,
+          "detail": "preset removed"
+        }
+      ],
+      "evidence": [
+        "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-18T14-39-44-159Z-59566/ty-plus/presets/presets.json"
+      ],
+      "durationMs": 30344
+    }
+  ]
+}

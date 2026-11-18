@@ -114,6 +114,21 @@ export const openPresetCatalog = async (
 	ctx: E2EContext,
 ): Promise<LiveSurface> => {
 	const panel = await ctx.requireSurface({ surfaceId: "panel-1" });
+	// A wedged dialog-presets from a previous run cannot be reloaded
+	// (Page.reload times out on a hung renderer) and `findLive` would pick
+	// it again — close stale instances first (Issue #223).
+	const stale = (await listLiveSurfaces(await ctx.surfaces())).filter(
+		(s) => s.surfaceId === "dialog-presets",
+	);
+	for (const s of stale) {
+		try {
+			const conn = await ctx.cdp(s);
+			await conn.send("Page.close", {}, 5_000);
+		} catch {
+			// best-effort
+		}
+	}
+	if (stale.length > 0) await sleep(1_000);
 	await clickFirst(ctx, panel, '[data-dialog-kind="presets"]');
 	const dialog = await findLive(
 		ctx,

@@ -32,6 +32,7 @@ import {
 } from "./journey";
 import { openSettingsDialog } from "./settings";
 import {
+	answerHostConfirm,
 	closeSurfaceSettled,
 	corruptJsonBytes,
 	managedFilePath,
@@ -425,9 +426,12 @@ export const journeySuiteCases: E2ECase[] = [
 						`Boolean(document.querySelector('[data-preset-id="${presetId}"]'))`,
 						20_000,
 					);
-					const delClicked = await ctx.evalJs(
-						catalog2,
-						`(() => {
+					// The delete click raises a native ExtendScript confirm()
+					// that blocks this surface's renderer for as long as the
+					// modal is unanswered — awaiting Runtime.evaluate would
+					// deadlock, so dispatch detached and answer via OS GUI
+					// automation (Issue #223).
+					const deleteClickExpr = `(() => {
 						const row = document.querySelector(
 							${JSON.stringify(`[data-preset-id="${presetId}"]`)});
 						if (!row) return "missing-row";
@@ -436,15 +440,8 @@ export const journeySuiteCases: E2ECase[] = [
 						if (!btn) return "missing-delete";
 						btn.click();
 						return "clicked";
-					})()`,
-					);
-					checks.push(
-						check(
-							"catalog Delete clicked",
-							delClicked === "clicked",
-							String(delClicked),
-						),
-					);
+					})()`;
+					await ctx.evalJsDetached(catalog2, deleteClickExpr);
 					await sleep(3_000);
 					const stillThere = await ctx.readManagedJson<{
 						presets?: { id?: string }[];
@@ -459,6 +456,55 @@ export const journeySuiteCases: E2ECase[] = [
 							survived
 								? "host confirm pending; record intact"
 								: "preset removed without confirmation",
+						),
+					);
+
+					// Cancel path: answer "No" — preset must survive.
+					const cancelled = await answerHostConfirm("no");
+					checks.push(
+						check(
+							"host confirm cancel path answered via GUI automation",
+							cancelled,
+							cancelled ? "No clicked" : "no Yes/No button found",
+						),
+					);
+					await sleep(1_000);
+					const afterCancel = await ctx.readManagedJson<{
+						presets?: { id?: string }[];
+					}>("presets", "presets.json");
+					checks.push(
+						check(
+							"cancel path keeps preset",
+							Boolean(afterCancel?.presets?.some((p) => p.id === presetId)),
+							"preset retained after No",
+						),
+					);
+
+					// Confirm path: delete again, answer "Yes" — preset must go.
+					await ctx.evalJsDetached(catalog2, deleteClickExpr);
+					await sleep(2_000);
+					const confirmed = await answerHostConfirm("yes");
+					checks.push(
+						check(
+							"host confirm approve path answered via GUI automation",
+							confirmed,
+							confirmed ? "Yes clicked" : "no Yes/No button found",
+						),
+					);
+					const deleteDeadline = Date.now() + 15_000;
+					let removed = false;
+					while (Date.now() < deleteDeadline && !removed) {
+						const doc = await ctx.readManagedJson<{
+							presets?: { id?: string }[];
+						}>("presets", "presets.json");
+						removed = !doc?.presets?.some((p) => p.id === presetId);
+						if (!removed) await sleep(700);
+					}
+					checks.push(
+						check(
+							"confirmed delete removes preset",
+							removed,
+							removed ? "preset removed" : "still present",
 						),
 					);
 					await closeDialogById(ctx, "dialog-presets");

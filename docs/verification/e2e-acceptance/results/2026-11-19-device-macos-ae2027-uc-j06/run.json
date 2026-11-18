@@ -1,0 +1,73 @@
+{
+  "schema": "ty-plus.e2e-run/1",
+  "suite": "journeys",
+  "capturedAt": "2026-11-18T15:10:26.585Z",
+  "extensionDir": "/Users/rebui/Library/Application Support/Adobe/CEP/extensions/app.ty-plus.dev",
+  "managedRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-18T15-09-44-881Z-96010/ty-plus",
+  "realManagedRoot": "/Applications/Adobe After Effects 2027/ty-plus",
+  "sandbox": {
+    "enabled": true,
+    "sandboxRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-18T15-09-44-881Z-96010/ty-plus",
+    "integrity": {
+      "realRoot": "/Applications/Adobe After Effects 2027/ty-plus",
+      "checkedAt": "2026-11-18T15:10:26.584Z",
+      "driftBeforeRepair": {
+        "changed": 1,
+        "added": 0,
+        "removed": 0
+      },
+      "filesRepaired": [
+        "cache/layout-undo/panel-1/stack.json"
+      ],
+      "cleanAfterRepair": true
+    }
+  },
+  "totals": {
+    "PASS": 1,
+    "FAIL": 0,
+    "BLOCKED": 0,
+    "SKIP": 0
+  },
+  "results": [
+    {
+      "uc": "UC-J06",
+      "title": "preset handoff: export bundle → wipe catalog → import → run preset in AE",
+      "status": "PASS",
+      "detail": "export→wipe→import→run preset handoff chain",
+      "checks": [
+        {
+          "name": "bundle exported with preset catalog",
+          "ok": true,
+          "detail": "2979 bytes"
+        },
+        {
+          "name": "catalog wiped to simulate fresh environment",
+          "ok": true,
+          "detail": "presets=0"
+        },
+        {
+          "name": "import restored preset catalog",
+          "ok": true,
+          "detail": "presets=2"
+        },
+        {
+          "name": "catalog lists handed-off preset",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "Run clicked on handed-off preset",
+          "ok": true,
+          "detail": "clicked"
+        },
+        {
+          "name": "handed-off preset executed in AE",
+          "ok": true,
+          "detail": "1795014610026|27.0x78"
+        }
+      ],
+      "evidence": [],
+      "durationMs": 29509
+    }
+  ]
+}
