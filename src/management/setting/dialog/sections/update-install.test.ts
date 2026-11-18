@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { UpdateFeed } from "@/management/online/update/feed";
-import { installableZipAsset, installFailureKey } from "./UpdateSection";
+import { installableZipAsset, installFailureKey } from "./update-install";
 
 const SHA256 = "a".repeat(64);
 
