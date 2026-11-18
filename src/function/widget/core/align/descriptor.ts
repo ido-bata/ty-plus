@@ -14,6 +14,19 @@ import { Align } from "./Component";
 const descriptor = defineWidget({
 	type: "align",
 	nameKey: "widgets.align.name",
+	tutorial: {
+		summaryKey: "widgets.tutorial.align.summary",
+		steps: [
+			{
+				titleKey: "widgets.tutorial.align.steps.selectTargets.title",
+				bodyKey: "widgets.tutorial.align.steps.selectTargets.body",
+			},
+			{
+				titleKey: "widgets.tutorial.align.steps.pickAlignment.title",
+				bodyKey: "widgets.tutorial.align.steps.pickAlignment.body",
+			},
+		],
+	},
 	icon: "AlignCenter",
 	minSize: { cols: 2, rows: 2 },
 	maxSize: { cols: 10, rows: 10 },

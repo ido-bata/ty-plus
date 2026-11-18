@@ -53,6 +53,36 @@ export type WidgetRenderProps = {
 	widgetInstanceId: string;
 };
 
+// ── Tutorial content ─────────────────────────────────────────────────────────────
+
+/**
+ * One step of a widget tutorial/help sequence.
+ *
+ * `titleKey` / `bodyKey` are i18n keys in the `widgets` namespace
+ * (e.g. `widgets.tutorial.easing.steps.chooseCurve.title`). `targetSelector`
+ * optionally points at a `[data-tutorial-target]` element inside the widget so
+ * contextual hints can anchor to the relevant UI.
+ */
+export type TutorialStep = {
+	titleKey: string;
+	bodyKey: string;
+	targetSelector?: string;
+};
+
+/**
+ * Per-widget tutorial/help content contract (spec:
+ * `docs/architecture/widget/tutorial-mode.md`, Issue #147).
+ *
+ * `summaryKey` is a required i18n key for the one-line help summary shown in
+ * help surfaces and the Add Widget catalog. `steps` is an optional ordered
+ * list of tutorial steps; consumers may render them as a help panel or as
+ * dismissible first-run hints.
+ */
+export type WidgetTutorial = {
+	summaryKey: string;
+	steps?: readonly TutorialStep[];
+};
+
 // ── Descriptor ─────────────────────────────────────────────────────────────────
 
 export type WidgetDescriptor = {
@@ -62,6 +92,11 @@ export type WidgetDescriptor = {
 	nameKey: string;
 	/** Optional i18n key for a longer description. */
 	descriptionKey?: string;
+	/**
+	 * Tutorial/help content contract (Issue #147). `summaryKey` must resolve in
+	 * the `widgets` i18n namespace; enforced by the descriptor contract test.
+	 */
+	tutorial?: WidgetTutorial;
 	/** Lucide icon name, e.g. "TrendingUp". */
 	icon: string;
 	minSize: WidgetSize;

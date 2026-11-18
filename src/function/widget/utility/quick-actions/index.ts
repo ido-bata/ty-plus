@@ -19,6 +19,19 @@ import { QuickActionsWidget } from "./ActionList";
 export default defineWidget({
 	type: "quick-actions",
 	nameKey: "widgets.quickActions.name",
+	tutorial: {
+		summaryKey: "widgets.tutorial.quick-actions.summary",
+		steps: [
+			{
+				titleKey: "widgets.tutorial.quick-actions.steps.openPalette.title",
+				bodyKey: "widgets.tutorial.quick-actions.steps.openPalette.body",
+			},
+			{
+				titleKey: "widgets.tutorial.quick-actions.steps.runAction.title",
+				bodyKey: "widgets.tutorial.quick-actions.steps.runAction.body",
+			},
+		],
+	},
 	icon: "Zap",
 	minSize: { cols: 2, rows: 1 },
 	maxSize: { cols: 20, rows: 20 },

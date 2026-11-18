@@ -16,6 +16,19 @@ import { PresetInfoWidget } from "./preset";
 defineWidget({
 	type: "info",
 	nameKey: "widgets.info.name",
+	tutorial: {
+		summaryKey: "widgets.tutorial.info.summary",
+		steps: [
+			{
+				titleKey: "widgets.tutorial.info.steps.placeWidget.title",
+				bodyKey: "widgets.tutorial.info.steps.placeWidget.body",
+			},
+			{
+				titleKey: "widgets.tutorial.info.steps.inspectPreset.title",
+				bodyKey: "widgets.tutorial.info.steps.inspectPreset.body",
+			},
+		],
+	},
 	icon: "Info",
 	minSize: { cols: 4, rows: 2 },
 	maxSize: { cols: 20, rows: 20 },
