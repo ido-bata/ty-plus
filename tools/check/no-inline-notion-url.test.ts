@@ -1,18 +1,11 @@
 /**
  * Guard test: no `https://www.notion.so/...` or `https://www.notion.com/...`
- * string literals may live in `src/**`. Documentation URLs must go through
- * the public-links API (Supabase + JSON cache) and never be hardcoded.
+ * string literals may live in `src/**`. The online Preset Library /
+ * public-links / Supabase surface was removed under the offline-core policy
+ * (#170, #193); this guard remains as reinfection prevention so a restored
+ * online surface cannot silently reintroduce hardcoded documentation URLs.
  *
- * Allowed-list (intentional test/fixture URLs):
- *   - `src/management/online/contract.ts` (PublicLink fixtures/examples)
- *   - `src/management/online/catalog/runtime-cloud-gateway.ts` (fixture mode
- *     fixture URL)
- *   - `src/management/online/public-link/**` (intentional Notion URL
- *     documentation comments)
- *   - `supabase/**` (migrations / Edge Function code is server-side, not
- *     bundled into the CEP extension)
- *   - `tools/check/no-inline-notion-url.test.ts` (this file)
- *   - `docs/no-use/**` and `archive/**` (legacy / reference, not bundled)
+ * Allowed-list: only this file (it names the patterns it forbids).
  */
 
 import { readdir, readFile, stat } from "node:fs/promises";
@@ -24,34 +17,8 @@ const ROOT = path.resolve(__dirname, "..", "..");
 const SRC = path.join(ROOT, "src");
 
 const ALLOWED_PATHS: string[] = [
-	// This file (explanation)
+	// This file (it names the forbidden patterns in its own source)
 	path.join("tools", "check", "no-inline-notion-url.test.ts"),
-	// Public link types / fixture URL
-	path.join("src", "management", "online", "contract.ts"),
-	path.join(
-		"src",
-		"management",
-		"online",
-		"catalog",
-		"runtime-cloud-gateway.ts",
-	),
-	path.join(
-		"src",
-		"management",
-		"online",
-		"catalog",
-		"runtime-cloud-gateway.test.ts",
-	),
-	path.join("src", "management", "online", "runtime-gateway.test.ts"),
-	path.join("src", "management", "online", "public-link", "usePublicLink.ts"),
-	path.join(
-		"src",
-		"management",
-		"online",
-		"public-link",
-		"usePublicLink.test.ts",
-	),
-	// Seeded entry lives in the migration, not in src/
 ];
 
 const NOTION_PATTERNS: RegExp[] = [
