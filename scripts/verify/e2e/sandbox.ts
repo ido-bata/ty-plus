@@ -286,7 +286,18 @@ const markSandboxTheme = async (sandboxRoot: string): Promise<void> => {
 		);
 		await writeFile(themePath, css);
 	} catch {
-		// no theme.css — app.json marker alone may still surface
+		// Fresh installs have no styles/theme.css yet — the managed root only
+		// gains one after a theme write. Create it so the accent probe still
+		// proves the sandbox root resolved (observed on AE 2027, where the
+		// copied root had no styles/ dir and the probe fell back to the
+		// default accent).
+		const seeded =
+			`:root {\n` +
+			`  --accent-r: 226;\n  --accent-g: 183;\n  --accent-b: 1;\n` +
+			`  --color-ty-accent: ${SANDBOX_ACCENT};\n` +
+			`}\n`;
+		await mkdir(path.dirname(themePath), { recursive: true });
+		await writeFile(themePath, seeded);
 	}
 };
 
