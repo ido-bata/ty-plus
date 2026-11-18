@@ -23,6 +23,7 @@ import {
 	ArchiveDetailsSection,
 	type ArchiveDetailsSectionHandle,
 } from "@/management/preset/catalog-add/ArchiveDetailsSection";
+import { verifyAndUpsertPreset } from "@/management/preset/catalog-add/verify-and-upsert";
 import { PresetIconEditor } from "@/management/preset/components/IconEditor";
 import type { Preset, PresetIcon } from "@/management/preset/contract";
 import { askHostDeleteConfirm } from "@/management/preset/delete-confirm";
@@ -40,9 +41,9 @@ import {
 	upsertGroupEntry,
 } from "@/management/preset/group-catalog";
 import {
-	createPresetIconDraft,
 	type PresetIconEditorDraft,
 	presetIconDraftToPresetIcon,
+	presetIconToDraft,
 } from "@/management/preset/icon-editor";
 import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
 import {
@@ -327,33 +328,10 @@ const createEditIconDraft = (
 	icon: Preset["icon"],
 	type: Preset["type"] | undefined,
 ): EditIconDraft => {
-	const coerced = coercePersistedPresetIcon(type, icon);
-	if (coerced.type === "text") {
-		return {
-			...createPresetIconDraft(),
-			type: "text",
-			text: coerced.param.text,
-			bgColor: coerced.param.backgroundColor ?? "#2b2b2b",
-			color: coerced.param.color ?? "#ffffff",
-		};
-	}
-	if (coerced.type === "emoji") {
-		return {
-			...createPresetIconDraft(),
-			type: "emoji",
-			emoji: coerced.param.emoji,
-			bgColor: coerced.param.backgroundColor ?? "#2b2b2b",
-			color: "#ffffff",
-		};
-	}
-	if (coerced.type === "image") {
-		return {
-			...createPresetIconDraft(),
-			type: "image",
-			imagePath: coerced.param.src,
-		};
-	}
-	return createPresetIconDraft();
+	// `presetIconToDraft` round-trips every supported icon type —
+	// including `canvas`, whose cubic curve must survive an unrelated
+	// edit or the save would silently downgrade the icon to text.
+	return presetIconToDraft(coercePersistedPresetIcon(type, icon));
 };
 
 // ===== Reducers =====
@@ -1063,6 +1041,19 @@ export function PresetEditDialog(props: PresetEditDialogProps): JSX.Element {
 						),
 					});
 				}
+			} else if (updated.filePath.trim() !== preset.filePath.trim()) {
+				// Issue #191: a filePath change goes through the same
+				// verify-then-upsert contract as the add paths so the edit
+				// dialog cannot persist a ghost preset pointing at a
+				// missing asset. Metadata-only edits keep the previous
+				// behaviour so a broken path can still be repaired.
+				await verifyAndUpsertPreset({
+					win: window,
+					presetId: updated.id,
+					record: updated,
+					filePath: updated.filePath,
+					entryPoint: "preset-edit",
+				});
 			} else {
 				await upsertLocalPreset(updated);
 			}

@@ -35,7 +35,6 @@ import type { WidgetType } from "@/function/widget";
 import { useCep } from "@/management/ae/cep/contexts/Context";
 import { selectFolder } from "@/management/ae/cep/dialog-shim/bolt";
 import { createCepSurfaceTransport } from "@/management/ae/cep/transport";
-import { useAfterEffectsFilesGateway } from "@/management/ae/files/gateway-context";
 import { BUNDLED_LOCALE_NAMES } from "@/management/i18n/bundled-resources";
 import { useI18n } from "@/management/i18n/Context";
 import {
@@ -1044,7 +1043,6 @@ function useOnboardingFinish(input: OnboardingFinishInput): {
 		setFinishError,
 		onCompleted,
 	} = input;
-	const thumbnailGateway = useAfterEffectsFilesGateway();
 	const handleFinish = useCallback(async () => {
 		setSaving(true);
 		setError(null);
@@ -1157,7 +1155,6 @@ function useOnboardingFinish(input: OnboardingFinishInput): {
 				importOptions,
 				importPresetRepository,
 				listDirectory,
-				thumbnailGateway,
 			);
 			logWorkspace("onboardingView:after-preset-import", {
 				presetCatalogCount: presets.length,
@@ -1263,7 +1260,6 @@ function useOnboardingFinish(input: OnboardingFinishInput): {
 		setFinishError,
 		setSaving,
 		supportPath,
-		thumbnailGateway,
 	]);
 
 	// Retry the failed write with UAC/osascript elevation. The first call

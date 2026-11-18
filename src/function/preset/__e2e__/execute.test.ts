@@ -13,6 +13,30 @@ import { getPresetOperation } from "@/function/preset/operations";
 import type { HostAdapter } from "@/management/ae/host/contract";
 import { executePresetOnHost } from "@/management/preset/execution/pipeline";
 
+vi.mock("@/management/storage/candidates-cache/runtime", () => ({
+	getCandidatesSnapshot: () => ({
+		roots: [],
+		rootFiles: [],
+		pluginEffects: [
+			{
+				filePath: "/path/to/effect.aex",
+				matchName: "ADBE effect",
+				displayName: "effect",
+			},
+			{
+				filePath: "C:/plugins/My Effect.plugin",
+				matchName: "ADBE MyEffect",
+				displayName: "My Effect",
+			},
+			{
+				filePath: "/effects/corrupt.aex",
+				matchName: "ADBE corrupt",
+				displayName: "corrupt",
+			},
+		],
+	}),
+}));
+
 // ---------------------------------------------------------------------------
 // Shared mock fixtures
 // ---------------------------------------------------------------------------
@@ -81,7 +105,7 @@ describe("preset execution via getPresetOperation", () => {
 		expect(result.action).toBe("addFootage");
 	});
 
-	it("plugin type applies effect by file stem", async () => {
+	it("plugin type applies the catalog-resolved matchName", async () => {
 		const host = makeMockHost({
 			applyEffectByMatchName: vi.fn().mockResolvedValue(undefined),
 		});
@@ -89,11 +113,11 @@ describe("preset execution via getPresetOperation", () => {
 			type: "plugin",
 			filePath: "/path/to/effect.aex",
 		});
-		expect(host.applyEffectByMatchName).toHaveBeenCalledWith("effect");
+		expect(host.applyEffectByMatchName).toHaveBeenCalledWith("ADBE effect");
 		expect(result.action).toBe("applyEffectByMatchName");
 	});
 
-	it("plugin type derives the stem from a nested path", async () => {
+	it("plugin type resolves the matchName for a nested path", async () => {
 		const host = makeMockHost({
 			applyEffectByMatchName: vi.fn().mockResolvedValue(undefined),
 		});
@@ -101,7 +125,7 @@ describe("preset execution via getPresetOperation", () => {
 			type: "plugin",
 			filePath: "C:/plugins/My Effect.plugin",
 		});
-		expect(host.applyEffectByMatchName).toHaveBeenCalledWith("My Effect");
+		expect(host.applyEffectByMatchName).toHaveBeenCalledWith("ADBE MyEffect");
 	});
 });
 

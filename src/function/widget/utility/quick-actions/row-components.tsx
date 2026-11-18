@@ -5,10 +5,17 @@ import {
 	useIsPresetAssetMissing,
 	useIsPresetAssetUnverifiable,
 } from "@/management/preset/use-preset-asset-health";
-import { WorkspacePresetGlyph } from "@/management/preset/workspace/glyph";
+import {
+	usePresetSiblingImageSrc,
+	WorkspacePresetGlyph,
+} from "@/management/preset/workspace/glyph";
 import { css } from "@/styled-system/css";
 import { rootFilePresetType } from "./scoring";
-import type { PluginEffectIndexRow, QuickActionRootFileRow } from "./types";
+import type {
+	PluginEffectIndexRow,
+	QuickActionRootFileRow,
+	ThumbnailListDirectory,
+} from "./types";
 
 type RowPropsBase = {
 	idx: number;
@@ -145,7 +152,10 @@ export function RootFileRow(
 						} as CSSProperties
 					}
 				>
-					<WorkspacePresetGlyph preset={rootFile} />
+					<WorkspacePresetGlyph
+						preset={rootFile}
+						siblingImageSrc={rootFile.siblingImagePath}
+					/>
 				</span>
 				<span className={rowTextBlockClass}>
 					<span className={rowTitleClass}>{rootFile.title}</span>
@@ -163,9 +173,21 @@ export function PresetRow(
 	props: {
 		preset: Preset;
 		tl: string;
+		thumbnailListDirectory?: ThumbnailListDirectory;
 	} & RowPropsBase,
 ): JSX.Element {
-	const { preset, idx, selected, widgetInstanceId, tl, onSelect } = props;
+	const {
+		preset,
+		idx,
+		selected,
+		widgetInstanceId,
+		tl,
+		thumbnailListDirectory,
+		onSelect,
+	} = props;
+	const siblingImageSrc = usePresetSiblingImageSrc(preset, {
+		thumbnailListDirectory,
+	});
 	// Issue #130: subscribe to the boot-time asset-health store so the
 	// row re-renders when the scan completes. Only `missing` disables
 	// the row's run affordance; `unverifiable` keeps it enabled but
@@ -202,7 +224,10 @@ export function PresetRow(
 						} as CSSProperties
 					}
 				>
-					<WorkspacePresetGlyph preset={preset} />
+					<WorkspacePresetGlyph
+						preset={preset}
+						siblingImageSrc={siblingImageSrc}
+					/>
 				</span>
 				<span className={rowTextBlockClass}>
 					<span className={rowTitleClass}>

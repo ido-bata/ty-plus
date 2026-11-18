@@ -282,14 +282,11 @@ const PERMANENT_BOUNDARIES: readonly PermanentBoundaryEntry[] = [
 	// broken is exactly the one that must still learn about updates and
 	// official notices. Requiring the worker transport for the feed would be
 	// circular. Feed hosts must send CORS headers; the contract documents it.
+	// Both feeds share `fetchWithDeadline` in update/feed.ts, so the single
+	// `fetch` call there is the only product-network boundary the feed
+	// clients need; notification/feed.ts performs no direct network I/O.
 	{
 		file: "src/management/online/update/feed.ts",
-		rule: "product-network",
-		expectedMatches: 1,
-		owner: "static-feed-client",
-	},
-	{
-		file: "src/management/online/notification/feed.ts",
 		rule: "product-network",
 		expectedMatches: 1,
 		owner: "static-feed-client",

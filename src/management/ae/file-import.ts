@@ -1,11 +1,17 @@
-import { fileStemFromPath } from "@/shared/util/path";
-
-import { fileNameFromPath } from "./state";
-
 /**
  * Imports a file into After Effects via the host executor.
  * Handles .jsx/.jsxbin scripts, .ffx presets, plugin effects, and footage.
+ *
+ * Plugin effects resolve their matchName through the candidates cache
+ * (PICA resource) — the filename stem is not a reliable matchName.
  */
+
+import { resolveEffectMatchName } from "@/management/storage/candidates-cache/plugin-match-name";
+import { getCandidatesSnapshot } from "@/management/storage/candidates-cache/runtime";
+
+const fileNameFromPath = (value: string): string =>
+	value.split(/[\\/]/).pop() ?? value;
+
 export const importFile = async (
 	filePath: string,
 	hostCode: string,
@@ -29,11 +35,12 @@ export const importFile = async (
 		return `Applied preset: ${fileName}`;
 	}
 	if (lowerPath.endsWith(".aex") || lowerPath.endsWith(".plugin")) {
-		const effectId = fileStemFromPath(filePath).trim();
-		if (!effectId) {
-			throw new Error(`effectId is required for plugin: ${fileName}`);
-		}
-		await hostExecutor("applyEffectByMatchName", [effectId]);
+		const snapshot = getCandidatesSnapshot();
+		const matchName = resolveEffectMatchName(
+			filePath,
+			snapshot?.pluginEffects ?? [],
+		);
+		await hostExecutor("applyEffectByMatchName", [matchName]);
 		return `Applied effect: ${fileName}`;
 	}
 	await hostExecutor("addFootage", [{ filePath, toComp: true }]);

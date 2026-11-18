@@ -36,7 +36,8 @@ export type PresetSaveEntryPoint =
 	| "tool-shell:layer-comp"
 	| "tool-shell:animation"
 	| "tool-shell:generic"
-	| "path-dialog";
+	| "path-dialog"
+	| "preset-edit";
 
 export type PresetExecuteEntryPoint =
 	| "workspace-tile"

@@ -211,9 +211,10 @@ export type FetchFeedText = (url: string, timeoutMs: number) => Promise<string>;
  * is absent in the CEP host Chromium versions After Effects ships. An
  * abandoned request is aborted so a hung connection cannot outlive the check.
  */
-const fetchWithDeadline = async (
+export const fetchWithDeadline = async (
 	url: string,
 	timeoutMs: number,
+	accept = "application/vnd.github+json",
 ): Promise<string> => {
 	const controller =
 		typeof AbortController === "function" ? new AbortController() : undefined;
@@ -222,17 +223,17 @@ const fetchWithDeadline = async (
 		const deadline = new Promise<never>((_, reject) => {
 			timer = setTimeout(() => {
 				controller?.abort();
-				reject(new Error("GitHub release request timed out"));
+				reject(new Error("feed request timed out"));
 			}, timeoutMs);
 		});
 		const request = fetch(url, {
-			headers: { Accept: "application/vnd.github+json" },
+			headers: { Accept: accept },
 			...(controller ? { signal: controller.signal } : {}),
 			cache: "default",
 		});
 		const response = await Promise.race([request, deadline]);
 		if (!response.ok) {
-			throw new Error(`GitHub release request failed: HTTP ${response.status}`);
+			throw new Error(`feed request failed: HTTP ${response.status}`);
 		}
 		return await Promise.race([response.text(), deadline]);
 	} finally {

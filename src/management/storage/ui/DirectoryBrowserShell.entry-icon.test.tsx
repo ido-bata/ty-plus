@@ -77,7 +77,11 @@ describe("EntryIcon", () => {
 		expect(container.querySelector("svg")).not.toBeNull();
 	});
 
-	it("renders the sibling image when the path resolves to a file URL", () => {
+	it("never renders a sibling image through a raw file:// path", () => {
+		// Issue #191: sidecar images render only through the thumbnail
+		// pipeline. Without a resolved pipeline URL the entry falls back
+		// to its persisted icon or type glyph — never a raw `file://`
+		// `<img>` source.
 		const entry: DirectoryBrowserEntry = {
 			path: "/preset/root/alpha.ffx",
 			name: "alpha.ffx",
@@ -95,6 +99,7 @@ describe("EntryIcon", () => {
 			<EntryIcon entry={entry} size={24} allEntries={siblings} />,
 		);
 		const img = container.querySelector("img");
-		expect(img?.getAttribute("src")).toBe("file:///preset/root/alpha.png");
+		expect(img?.getAttribute("src") ?? "").not.toContain("file://");
+		expect(container.querySelector("svg")).not.toBeNull();
 	});
 });

@@ -52,6 +52,14 @@ Issue-specific manual / E2E verification procedures live under
   — Issue #130: post-write verification, rollback, startup scan,
   Windows AE 2026 E2E.
 
+## UI render quality（Storybook 実DOM検査）
+
+Storybook の screenshot capture 成功は視覚合格を意味しない。実 DOM の
+寸法・overflow・重なり・操作状態を assert する品質契約は
+[`ui-render-contract.md`](./ui-render-contract.md) を正本とする
+（Issue #194、product-model §4.3）。機械判定可能な条件と人間受入の
+境界、negative fixture による検査自身の拒否証明も同文書に定義する。
+
 ## test suite の主な範囲
 
 | 領域 | 代表 test |

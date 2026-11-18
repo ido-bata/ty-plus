@@ -1,11 +1,14 @@
 import type { CSSProperties, HTMLAttributes, JSX, ReactNode } from "react";
-import { useEffect, useMemo, useState } from "react";
-import { resolveWorkspaceGlyphIconVisual } from "@/management/preset/assets/icons";
+import { useEffect, useState } from "react";
+import {
+	hasCustomPresetIcon,
+	resolveWorkspaceGlyphIconVisual,
+} from "@/management/preset/assets/icons";
 import type { Preset } from "@/management/preset/contract";
 import { presetIconText } from "@/management/preset/contract";
-import { tryParsePresetIconValue } from "@/management/preset/icon-data";
 import {
 	findSiblingImagePathForPresetFile,
+	isPresetSidekickSourcePath,
 	normalizeSiblingDirPath,
 	parentDirectoryOf,
 	type SiblingListingEntry,
@@ -186,22 +189,6 @@ export type PresetGlyphByIdProps = {
 	) => Promise<ReadonlyArray<SiblingListingEntry>>;
 };
 
-/** Skip sibling lookup only when `icon` already pins a loadable absolute / remote image. */
-function isStrongPresetImageIconSrc(raw: string): boolean {
-	const t = raw.trim();
-	if (!t) {
-		return false;
-	}
-	if (/^(https?:|file:|data:)/i.test(t)) {
-		return true;
-	}
-	const n = t.replaceAll("\\", "/");
-	if (/^[a-zA-Z]:\//.test(n)) {
-		return true;
-	}
-	return n.startsWith("/") && !n.startsWith("//");
-}
-
 function renderPresetGlyphShell(
 	surface: "catalog" | "framed",
 	boxClass: string,
@@ -248,54 +235,29 @@ const loadingGlyphClass = css({
 	backgroundColor: "border.default",
 });
 
+export type PresetSiblingImageOptions = {
+	/** `catalog` (default) = same host as the workspace `PresetTile`. */
+	siblingHintParentDir?: string | null;
+	siblingHintEntries?: ReadonlyArray<SiblingListingEntry> | null;
+	thumbnailListDirectory?: (
+		dirPath: string,
+	) => Promise<ReadonlyArray<SiblingListingEntry>>;
+};
+
 /**
- * Displays an icon by preset id alone. Lookup is contained in `getPreset`.
+ * Display-time sibling image resolution shared by every preset glyph
+ * surface (workspace tiles, directory browser, quick-actions palette).
+ * Returns the sidecar image path for `record.filePath`, or `null`.
+ * Sibling imagery is never written back to the preset (issue #191).
  */
-export function PresetGlyphById(props: PresetGlyphByIdProps): JSX.Element {
-	const {
-		presetId,
-		preset: cache,
-		boxClass,
-		emojiClass = DEFAULT_EMOJI_CLASS,
-		className,
-		surface = "catalog",
-		siblingHintParentDir = null,
-		siblingHintEntries = null,
-		thumbnailListDirectory,
-	} = props;
-
-	const [record, setRecord] = useState<Preset | undefined>(() =>
-		cache?.id === presetId ? cache : undefined,
-	);
-	const [phase, setPhase] = useState<"ready" | "loading" | "missing">(() =>
-		cache?.id === presetId ? "ready" : "loading",
-	);
+export function usePresetSiblingImageSrc(
+	record: Preset | null | undefined,
+	options?: PresetSiblingImageOptions,
+): string | null {
+	const siblingHintParentDir = options?.siblingHintParentDir ?? null;
+	const siblingHintEntries = options?.siblingHintEntries ?? null;
+	const thumbnailListDirectory = options?.thumbnailListDirectory;
 	const [siblingThumbSrc, setSiblingThumbSrc] = useState<string | null>(null);
-
-	useEffect(() => {
-		if (cache && cache.id === presetId) {
-			setRecord(cache);
-			setPhase("ready");
-			return;
-		}
-		let cancelled = false;
-		setPhase("loading");
-		setRecord(undefined);
-		void getPreset(presetId).then((p) => {
-			if (cancelled) {
-				return;
-			}
-			if (p) {
-				setRecord(p);
-				setPhase("ready");
-			} else {
-				setPhase("missing");
-			}
-		});
-		return () => {
-			cancelled = true;
-		};
-	}, [presetId, cache]);
 
 	useEffect(() => {
 		setSiblingThumbSrc(null);
@@ -305,14 +267,13 @@ export function PresetGlyphById(props: PresetGlyphByIdProps): JSX.Element {
 		if (record.descriptionImage?.trim()) {
 			return;
 		}
-		const structured = tryParsePresetIconValue(record.icon);
-		if (
-			structured?.type === "image" &&
-			isStrongPresetImageIconSrc(structured.param.src)
-		) {
+		if (hasCustomPresetIcon(record)) {
 			return;
 		}
 
+		if (!isPresetSidekickSourcePath(record.filePath)) {
+			return;
+		}
 		let parent = normalizeSiblingDirPath(parentDirectoryOf(record.filePath));
 		if (!parent.trim() && siblingHintParentDir?.trim()) {
 			parent = normalizeSiblingDirPath(siblingHintParentDir.trim());
@@ -353,16 +314,62 @@ export function PresetGlyphById(props: PresetGlyphByIdProps): JSX.Element {
 		thumbnailListDirectory,
 	]);
 
-	const displayPreset = useMemo((): Preset | null => {
-		if (!record) {
-			return null;
+	return siblingThumbSrc;
+}
+
+/**
+ * Displays an icon by preset id alone. Lookup is contained in `getPreset`.
+ */
+export function PresetGlyphById(props: PresetGlyphByIdProps): JSX.Element {
+	const {
+		presetId,
+		preset: cache,
+		boxClass,
+		emojiClass = DEFAULT_EMOJI_CLASS,
+		className,
+		surface = "catalog",
+		siblingHintParentDir = null,
+		siblingHintEntries = null,
+		thumbnailListDirectory,
+	} = props;
+
+	const [record, setRecord] = useState<Preset | undefined>(() =>
+		cache?.id === presetId ? cache : undefined,
+	);
+	const [phase, setPhase] = useState<"ready" | "loading" | "missing">(() =>
+		cache?.id === presetId ? "ready" : "loading",
+	);
+
+	useEffect(() => {
+		if (cache && cache.id === presetId) {
+			setRecord(cache);
+			setPhase("ready");
+			return;
 		}
-		const t = siblingThumbSrc?.trim();
-		if (!t) {
-			return record;
-		}
-		return { ...record, descriptionImage: t };
-	}, [record, siblingThumbSrc]);
+		let cancelled = false;
+		setPhase("loading");
+		setRecord(undefined);
+		void getPreset(presetId).then((p) => {
+			if (cancelled) {
+				return;
+			}
+			if (p) {
+				setRecord(p);
+				setPhase("ready");
+			} else {
+				setPhase("missing");
+			}
+		});
+		return () => {
+			cancelled = true;
+		};
+	}, [presetId, cache]);
+
+	const siblingThumbSrc = usePresetSiblingImageSrc(record, {
+		siblingHintParentDir,
+		siblingHintEntries,
+		thumbnailListDirectory,
+	});
 
 	if (phase === "loading" && !record) {
 		return renderPresetGlyphShell(
@@ -375,7 +382,7 @@ export function PresetGlyphById(props: PresetGlyphByIdProps): JSX.Element {
 		);
 	}
 
-	if (phase === "missing" || !displayPreset) {
+	if (phase === "missing" || !record) {
 		const placeholder: Preset = {
 			id: presetId,
 			type: "preset",
@@ -397,7 +404,7 @@ export function PresetGlyphById(props: PresetGlyphByIdProps): JSX.Element {
 		boxClass,
 		className,
 		emojiClass,
-		<WorkspacePresetGlyph preset={displayPreset} />,
+		<WorkspacePresetGlyph preset={record} siblingImageSrc={siblingThumbSrc} />,
 	);
 }
 
@@ -471,12 +478,17 @@ const wsPresetTextLineClass = css({
 const textInheritClass = css({ color: "inherit" });
 const textPrimaryClass = css({ color: "text.primary" });
 
-export function WorkspacePresetGlyph({
-	preset,
-}: {
+export function WorkspacePresetGlyph(props: {
 	preset: Preset;
+	/**
+	 * Display-time derived sibling image (e.g. `Foo.png` next to `Foo.ffx`),
+	 * resolved by the caller. Passed through to the icon resolver; never
+	 * written back to the preset.
+	 */
+	siblingImageSrc?: string | null;
 }): JSX.Element {
-	const visual = resolveWorkspaceGlyphIconVisual(preset);
+	const { preset, siblingImageSrc } = props;
+	const visual = resolveWorkspaceGlyphIconVisual(preset, { siblingImageSrc });
 	if (visual.kind === "image") {
 		return <GlyphCachedImage imagePath={visual.value} />;
 	}

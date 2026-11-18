@@ -8,6 +8,7 @@
  */
 
 import type { NotificationSummary } from "@/management/online/notification/notifications";
+import { fetchWithDeadline } from "@/management/online/update/feed";
 
 export const DEFAULT_NOTIFICATION_FEED_URL =
 	"https://ty-plus.app/feeds/notifications.json";
@@ -112,14 +113,9 @@ export const toNotificationSummary = (
 export type FetchFeedText = (url: string, timeoutMs: number) => Promise<string>;
 
 export const defaultFetchFeedText: FetchFeedText = async (url, timeoutMs) => {
-	const response = await fetch(url, {
-		headers: { Accept: "application/json" },
-		signal: AbortSignal.timeout(timeoutMs),
-	});
-	if (!response.ok) {
-		throw new Error(`feed request failed: HTTP ${response.status}`);
-	}
-	return response.text();
+	// CEP host Chromium lacks `AbortSignal.timeout`; share the deadline
+	// implementation with the update feed (issue #191 audit).
+	return fetchWithDeadline(url, timeoutMs, "application/json");
 };
 
 /**
