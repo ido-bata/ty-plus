@@ -267,6 +267,11 @@
 		"cepNodeRequired": "L'explorateur de dossiers nécessite CEP Node"
 	},
 	"tutorial": {
+		"chrome": {
+			"help": "Aide",
+			"title": "Aide du widget",
+			"close": "Fermer"
+		},
 		"easing": {
 			"summary": "Modifiez les courbes d'easing et appliquez-les aux préréglages ou à l'animation des calques.",
 			"steps": {

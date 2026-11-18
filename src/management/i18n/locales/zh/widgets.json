@@ -267,6 +267,11 @@
 		"cepNodeRequired": "文件夹浏览器需要 CEP Node"
 	},
 	"tutorial": {
+		"chrome": {
+			"help": "帮助",
+			"title": "小部件帮助",
+			"close": "关闭"
+		},
 		"easing": {
 			"summary": "编辑缓动曲线，并将其应用于预设或图层动画。",
 			"steps": {

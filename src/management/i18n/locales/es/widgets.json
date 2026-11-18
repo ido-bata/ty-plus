@@ -267,6 +267,11 @@
 		"emptyList": "No fonts loaded yet. Use “Load all system fonts” if available, or reload after the panel finishes loading styles."
 	},
 	"tutorial": {
+		"chrome": {
+			"help": "Ayuda",
+			"title": "Ayuda del widget",
+			"close": "Cerrar"
+		},
 		"easing": {
 			"summary": "Edita curvas de easing y aplícalas a presets o a la animación de capas.",
 			"steps": {
