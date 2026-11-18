@@ -1369,9 +1369,12 @@ export function useWorkspaceRuntime(root: Element | null): {
 				// did, while anything a sibling writer adds afterwards is
 				// unknown to both sets and gets adopted.
 				lastPersistedTileIds = new Set(
-					(isLayoutRestoreBlocked(plan) ? [] : plan.document.gridCells)
-						.map((cell) => String(cell.id ?? "").trim())
-						.filter((id) => id.length > 0),
+					(isLayoutRestoreBlocked(plan) ? [] : plan.document.gridCells).flatMap(
+						(cell) => {
+							const id = String(cell.id ?? "").trim();
+							return id.length > 0 ? [id] : [];
+						},
+					),
 				);
 				if (enablePersistenceAfterReload) {
 					logWorkspace("runtime:layout-enable-post-onboarding-persistence", {
