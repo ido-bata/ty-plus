@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useRef } from "react";
+import { expect } from "storybook/test";
+import { expectCanvasLayout } from "@/storybook/quality/layout";
 import { css } from "@/styled-system/css";
 import type { BrowseModeOption } from "./BrowserBrowseModeSelect";
 import { BrowserHeader } from "./BrowserHeader";
@@ -121,14 +123,31 @@ const meta = {
 export default meta;
 type Story = StoryObj<Args>;
 
-export const Default: Story = {};
+// Issue #166: the composed header (search + path + toolbar + browse-mode
+// select + optional filter panel) must satisfy the layout contract in
+// every browse-mode / filter-expansion state.
+const playHeaderLayout = async ({
+	canvasElement,
+}: {
+	canvasElement: HTMLElement;
+}): Promise<void> => {
+	expectCanvasLayout(canvasElement, {
+		requireRenderedSelector: "input, button, select",
+	});
+};
+
+export const Default: Story = {
+	play: playHeaderLayout,
+};
 
 export const WithSearchQuery: Story = {
 	args: { searchDraft: "glow" },
+	play: playHeaderLayout,
 };
 
 export const IconView: Story = {
 	args: { viewMode: "icons" },
+	play: playHeaderLayout,
 };
 
 export const FiltersExpanded: Story = {
@@ -136,10 +155,12 @@ export const FiltersExpanded: Story = {
 		filtersExpanded: true,
 		recursiveSearch: true,
 	},
+	play: playHeaderLayout,
 };
 
 export const AnchorsMode: Story = {
 	args: { browseMode: "anchors", filtersExpanded: true },
+	play: playHeaderLayout,
 };
 
 export const CatalogMode: Story = {
@@ -147,8 +168,17 @@ export const CatalogMode: Story = {
 		browseMode: "presetsCatalog",
 		filtersExpanded: true,
 	},
+	play: playHeaderLayout,
 };
 
+/** Root/empty-directory state: the go-up toolbar button is disabled. */
 export const GoUpDisabled: Story = {
 	args: { goUpAvailable: false },
+	play: async ({ canvasElement }) => {
+		await playHeaderLayout({ canvasElement });
+		const goUp = canvasElement.querySelector<HTMLButtonElement>(
+			"button[aria-label='Go up']",
+		);
+		expect(goUp?.disabled).toBe(true);
+	},
 };
