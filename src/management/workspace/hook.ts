@@ -3890,10 +3890,7 @@ export function useWorkspaceRuntime(root: Element | null): {
 
 		// ── Document event listeners ───────────────────────────────────────────
 		root.addEventListener("mousedown", onCpMiddleDown as EventListener, true);
-		document.addEventListener(
-			"click",
-			onDocumentActionClick as EventListener,
-		);
+		document.addEventListener("click", onDocumentActionClick as EventListener);
 		document.addEventListener("mousemove", onDocMouseMove);
 		document.addEventListener("mouseup", onDocMouseUp);
 		document.addEventListener("mousedown", onDocMouseDownCloseMenu);
