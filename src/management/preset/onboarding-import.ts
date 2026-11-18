@@ -29,6 +29,18 @@ const ONBOARDING_FOLDER_EXTENSIONS: Record<
 	plugins: [".aex", ".plugin"],
 };
 
+/**
+ * Every extension the folder scan treats as preset-able, across all kinds.
+ * The per-kind buckets above exist for the onboarding UI; the files
+ * themselves are kind-agnostic because the candidate `type` is inferred
+ * from the file path, not from the bucket it was found in.
+ */
+const ONBOARDING_ALL_FOLDER_EXTENSIONS: readonly string[] = [
+	...ONBOARDING_FOLDER_EXTENSIONS.presets,
+	...ONBOARDING_FOLDER_EXTENSIONS.scripts,
+	...ONBOARDING_FOLDER_EXTENSIONS.plugins,
+];
+
 const normalizePathKey = (value: string): string =>
 	value.trim().replaceAll("\\", "/").toLowerCase();
 
@@ -184,6 +196,49 @@ export const collectFilePresetCandidates = (
 		});
 	}
 	return rows;
+};
+
+/**
+ * Scan the given folders for every preset-able file type and return import
+ * candidates, including one `group` candidate per folder root. This is the
+ * single collection contract for "everything under these folders"; callers
+ * that mean all preset types (e.g. workspace folder groups) use this instead
+ * of routing folder paths through a single kind bucket.
+ */
+export const collectFolderPresetCandidates = async (
+	folderPaths: readonly string[],
+	listDirectory: (dirPath: string) => Promise<OnboardingFileBrowserEntry[]>,
+): Promise<OnboardingPresetCandidate[]> => {
+	const roots = folderPaths.flatMap((p) => {
+		const trimmed = p.trim();
+		return trimmed ? [trimmed] : [];
+	});
+	if (roots.length === 0) {
+		return [];
+	}
+	const scannedFiles = new Set<string>();
+	const perRootFiles = await Promise.all(
+		roots.map((root) =>
+			walkFolderForExtensions(
+				root,
+				ONBOARDING_ALL_FOLDER_EXTENSIONS,
+				listDirectory,
+			),
+		),
+	);
+	for (const files of perRootFiles) {
+		for (const filePath of files) {
+			scannedFiles.add(filePath);
+		}
+	}
+	return collectFilePresetCandidates({
+		// The kind buckets do not affect the result: candidate `type` is
+		// inferred from the file path and dedup is by normalized path.
+		presets: scannedFiles,
+		scripts: new Set(),
+		plugins: new Set(),
+		folders: new Set(roots),
+	});
 };
 
 export const collectFilePresetCandidatesWithScannedFolders = async (
