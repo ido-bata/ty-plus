@@ -46,12 +46,16 @@ import { traceExecute } from "@/management/preset/execution/lifecycle-trace";
 import type { GroupEntry } from "@/management/preset/group-catalog";
 import { parseGroupFromText } from "@/management/preset/group-catalog";
 import { tryParsePresetIconValue } from "@/management/preset/icon-data";
+import { getSharedSiblingListDirectory } from "@/management/preset/sibling-directory-lister";
 import {
 	getPreset,
 	listPresets,
 	removeLocalPreset,
 } from "@/management/preset/use-cases";
-import { PresetGlyphById } from "@/management/preset/workspace/glyph";
+import {
+	PresetGlyphById,
+	type PresetGlyphByIdProps,
+} from "@/management/preset/workspace/glyph";
 import {
 	glyphBoxCompactClass,
 	glyphBoxCompactPadClass,
@@ -772,6 +776,29 @@ function sourceLine(preset: Preset): string {
 	return `${preset.type} · ${basenamePath(preset.filePath)}`;
 }
 
+/**
+ * `PresetGlyphById` wired to the shared sibling-image directory lister so
+ * catalog rows resolve sidecar thumbnails exactly like workspace tiles and
+ * the directory browser (issue #191 — one icon contract on every surface).
+ */
+function CatalogPresetGlyph(
+	props: Omit<PresetGlyphByIdProps, "thumbnailListDirectory">,
+): JSX.Element {
+	const thumbnailListDirectory = useMemo(
+		() =>
+			typeof window === "undefined"
+				? undefined
+				: getSharedSiblingListDirectory(window),
+		[],
+	);
+	return (
+		<PresetGlyphById
+			{...props}
+			thumbnailListDirectory={thumbnailListDirectory}
+		/>
+	);
+}
+
 function GroupHeaderGlyph(props: { group: GroupEntry }): JSX.Element {
 	const { group } = props;
 	const parsed = group.icon ? tryParsePresetIconValue(group.icon) : null;
@@ -784,7 +811,7 @@ function GroupHeaderGlyph(props: { group: GroupEntry }): JSX.Element {
 			icon: parsed,
 		};
 		return (
-			<PresetGlyphById
+			<CatalogPresetGlyph
 				presetId={group.id}
 				preset={fake}
 				surface="framed"
@@ -946,7 +973,7 @@ function PresetListTreeItem(props: {
 		>
 			<div aria-hidden className={presetRowSpacerClass} />
 			<div className={presetRowCenterClass}>
-				<PresetGlyphById
+				<CatalogPresetGlyph
 					presetId={preset.id}
 					preset={preset}
 					surface="framed"
@@ -1230,7 +1257,7 @@ function IconPresetCard(props: {
 				aria-label={`Run ${preset.title || preset.id}`}
 			>
 				<div className={iconPresetButtonInnerClass}>
-					<PresetGlyphById
+					<CatalogPresetGlyph
 						presetId={preset.id}
 						preset={preset}
 						boxClass={glyphBoxFlushClass}

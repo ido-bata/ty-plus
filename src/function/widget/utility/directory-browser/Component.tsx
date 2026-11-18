@@ -52,7 +52,7 @@ import {
 	parseGroupFromText,
 } from "@/management/preset/group-catalog";
 import {
-	PRESET_SIDEKICK_SOURCE_EXTENSIONS,
+	isPresetSidekickSourcePath,
 	parentDirectoryOf,
 	SIBLING_IMAGE_NAME_RE,
 	siblingPathKey,
@@ -147,11 +147,7 @@ function buildSidekickByParent(
 
 	for (const p of presets) {
 		const fp = p.filePath?.trim();
-		if (!fp) {
-			continue;
-		}
-		const ext = (fp.match(/\.[^./\\]+$/)?.[0] ?? "").toLowerCase();
-		if (!PRESET_SIDEKICK_SOURCE_EXTENSIONS.has(ext)) {
+		if (!fp || !isPresetSidekickSourcePath(fp)) {
 			continue;
 		}
 		const par = parentDirectoryOf(fp);
@@ -162,11 +158,7 @@ function buildSidekickByParent(
 	}
 
 	for (const e of entries) {
-		if (e.isDirectory) {
-			continue;
-		}
-		const ext = (e.extension ?? "").toLowerCase();
-		if (!PRESET_SIDEKICK_SOURCE_EXTENSIONS.has(ext)) {
+		if (e.isDirectory || !isPresetSidekickSourcePath(e.path)) {
 			continue;
 		}
 		const par = parentDirectoryOf(e.path);
