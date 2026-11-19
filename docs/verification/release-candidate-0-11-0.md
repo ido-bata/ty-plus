@@ -113,3 +113,35 @@ CI `release.yml` `release-trust-windows-candidate`（run 44449771825、@ `bbbe77
 
 ---
 Generated with [Devin](https://devin.ai)
+
+## 追記（2026-11-19 第2回）: RC候補の再確定 — `fab3e9aa`
+
+Insider 実機受入で製品欠陥 #245（install relay の surface ID 不一致による envelope drop）を発見・修正（PR #246）したため、RC候補を再確定した。
+
+### 候補SHAと証拠の対応（再）
+
+- **新 RC候補 SHA: `fab3e9aabcf925d881aa283674a84c94e25f9107`**（`release-0-11-0` HEAD、PR #246 merge 後）
+- `bbbe77cc` → `fab3e9aa` の製品コード差分: `src/management/online/update/install-relay.ts`（+test）のみ。updater relay 経路に限定され、他機能のコードは同一
+- それ以前の実機E2E証拠（`05551c30`/`bbbe77cc`）は変更のないコードパスに対して有効。updater 経路は `fab3e9aa` で**実機 UI E2E PASS**（insider.8→.9、`insider-ui-update-0-11-0.md`）
+
+### Stable 配布物の再生成（`fab3e9aa`、release-trust、監査全項目 PASS）
+
+`bun run release:candidate --channel=stable --release-version=0.11.0`（macOS実機 + Windows xwin、2026-11-19 実施。旧 `bbbe77cc` の署名・ハッシュは流用していない）
+
+| platform | asset | sha256 | bytes |
+| --- | --- | --- | --- |
+| macOS | `ty-plus-v0.11.0-macos.zip` | `41b96618f1b067cb5f8989f8002023f032831f49a7d0b46ccaff9360f08af1e4` | 14,007,869 |
+| macOS | `ty-plus-v0.11.0-macos.zxp` | `0fd042e1e59c5a24763f838080b4c1a0566378f8f852674f9b7ed531b2b1c8f6` | 14,021,897 |
+| Windows | `ty-plus-v0.11.0-windows.zip` | `55a2a3e0b1850cb2c6b4886f3fc5ce72c4bd9397fb2a4adc4791402a50434244` | 10,964,018 |
+| Windows | `ty-plus-v0.11.0-windows.zxp` | `084c8f3232a20315afe326f2ac65dda7603eb1b106a3348d0526e0243332303f` | 10,978,155 |
+
+両 manifest: `releaseVersion=0.11.0` / `channel=stable` / `sourceCommit=fab3e9aa…` / `trustMode=release`。ローカル staging: `dist/staging-stable-rc/{macos,windows}/`。
+
+### Insider 公開実績（本候補と同一 sourceCommit）
+
+- `v0.11.0-insider.8` / `v0.11.0-insider.9`: prerelease・non-latest・6 asset・digest 全一致（`insider-ui-update-0-11-0.md`）
+- insider.8→.9 の UI 経由 updater E2E **PASS**（検出→install→swap→再起動→新版表示→データ保持）
+
+### 判定（更新）
+
+**条件付きリリース可能**（変更なし）。#135 の UI updater 受入が実機で完了した点が前回からの前進。残る人間受入: #166 視覚判定、PR #188 merge/tag/公開の明示承認。未検証環境: Windows 実機・AE 2026。
