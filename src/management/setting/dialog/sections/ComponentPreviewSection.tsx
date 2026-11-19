@@ -18,7 +18,7 @@ import {
 	SettingsField,
 	SettingsGrid,
 } from "@/management/setting/dialog/layout/SettingsGrid";
-import type { DirectoryBrowserEntry } from "@/management/storage/ui/DirectoryBrowser";
+import type { DirectoryBrowserEntry } from "@/management/storage/ui/directory-browser/Component";
 import { SegmentedControl } from "@/shared/component/controls/SegmentedControl";
 import { LoadingSpinner } from "@/shared/component/feedback/LoadingSpinner";
 import { ListSelect } from "@/shared/component/fields/ListSelect";

@@ -10,7 +10,7 @@ vi.mock("@/management/preset/markdown/LiveEditor", () => ({
 	MarkdownLiveEditor: () => <div data-testid="markdown-editor" />,
 }));
 
-vi.mock("@/management/storage/ui/DirectoryBrowser", () => ({
+vi.mock("@/management/storage/ui/directory-browser/Component", () => ({
 	DirectoryBrowser: () => <div data-testid="directory-browser" />,
 }));
 

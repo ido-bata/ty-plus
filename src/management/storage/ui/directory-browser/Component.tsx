@@ -2,13 +2,13 @@ import { FolderOpen } from "lucide-react";
 import type { JSX, ReactNode } from "react";
 import type { PresetIcon } from "@/management/preset/contract";
 import type { FileBrowserFileType } from "@/management/storage/file-browser-service";
-import { DirectoryBrowserIconCard } from "@/management/storage/ui/DirectoryBrowserIconCard";
-import { directoryBrowserMenuFileType } from "@/management/storage/ui/DirectoryBrowserMenu";
-import { EntryIcon } from "@/management/storage/ui/DirectoryBrowserShell.entry-icon";
+import { DirectoryBrowserIconCard } from "@/management/storage/ui/directory-browser/IconCard";
+import { directoryBrowserMenuFileType } from "@/management/storage/ui/directory-browser/Menu";
+import { EntryIcon } from "@/management/storage/ui/directory-browser/Shell.entry-icon";
 import {
 	type DirectoryBrowserViewMode,
 	DirectoryBrowserViewModeToggle,
-} from "@/management/storage/ui/DirectoryBrowserViewModeToggle";
+} from "@/management/storage/ui/directory-browser/ViewModeToggle";
 import { cx } from "@/shared/util/cx";
 import { isIMEComposing } from "@/shared/util/keyboard";
 import { css } from "@/styled-system/css";

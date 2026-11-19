@@ -5,12 +5,12 @@ import { css } from "@/styled-system/css";
 import type {
 	DirectoryBrowserAspect,
 	DirectoryBrowserEntry,
-} from "./DirectoryBrowser";
-import { directoryBrowserMenuFileType } from "./DirectoryBrowserMenu";
+} from "./Component";
+import { directoryBrowserMenuFileType } from "./Menu";
 import {
 	EntryIcon,
 	MediaCardContent,
-} from "./DirectoryBrowserShell.entry-icon";
+} from "./Shell.entry-icon";
 
 export type DirectoryBrowserIconCardProps = {
 	entry: DirectoryBrowserEntry;

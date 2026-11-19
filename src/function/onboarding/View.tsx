@@ -75,7 +75,7 @@ import {
 	readScopedDirectory,
 	resolveScopedParentDirectory,
 } from "@/management/storage/read/scoped-directory";
-import { DirectoryBrowser } from "@/management/storage/ui/DirectoryBrowser";
+import { DirectoryBrowser } from "@/management/storage/ui/directory-browser/Component";
 import type { WidgetRecord } from "@/management/widget/record/types";
 import type { Layout } from "@/management/workspace/layout/grid-document";
 import { publishShellMessage } from "@/management/workspace/messaging/publish-shell-message";

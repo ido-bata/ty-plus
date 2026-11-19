@@ -1,7 +1,7 @@
 import type { JSX } from "react";
 import { Button } from "@/shared/component/controls/Button";
-import type { DirectoryBrowserEntry } from "./DirectoryBrowser";
-import type { DirectoryBrowserSummary } from "./DirectoryBrowserSelectedSummary";
+import type { DirectoryBrowserEntry } from "./Component";
+import type { DirectoryBrowserSummary } from "./SelectedSummary";
 
 export type DirectoryBrowserOnboardingViewProps = {
 	entries: readonly DirectoryBrowserEntry[];

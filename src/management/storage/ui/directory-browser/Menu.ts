@@ -4,7 +4,7 @@ import type {
 	DirectoryBrowserSelectionKind,
 	DirectoryBrowserShellSelectionMode,
 	DirectoryBrowserViewMode,
-} from "@/management/storage/ui/DirectoryBrowser";
+} from "@/management/storage/ui/directory-browser/Component";
 
 type DirectoryBrowserMenuSurface =
 	| "onboarding"

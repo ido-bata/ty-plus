@@ -7,7 +7,7 @@
 
 ## 1. Issue claim
 
-`src/management/storage/ui/DirectoryBrowser.tsx:441-444` の list mode 「上へ」行は
+`src/management/storage/ui/directory-browser/Component.tsx:441-444` の list mode 「上へ」行は
 `border-b border-border-default` 付きの固定行として描画される。報告ではスクロールで
 流れるとのことだが、現コード上はスクロール先頭で「上へ」行が毎回見えても不思議ではない
 (スクロール終端で隠れる挙動とは別物)。
@@ -21,7 +21,7 @@ Closing policy: 30 日以内に再現手順が共有されない場合は Close�
 
 ## 2. Render structure under analysis
 
-Source file: `src/management/storage/ui/DirectoryBrowser.tsx` (read at base SHA).
+Source file: `src/management/storage/ui/directory-browser/Component.tsx` (read at base SHA).
 
 ### 2.1 List-mode return value (lines 424-459)
 
@@ -200,7 +200,7 @@ child. The scroll container cannot bleed into the footer's footprint.
 
 ### 3.6 Existing tests
 
-`src/management/storage/ui/DirectoryBrowser.test.tsx` covers click handlers,
+`src/management/storage/ui/directory-browser/Component.test.tsx` covers click handlers,
 controlled `viewMode`, and grid column scaling. No test asserts:
 
 - That the up-row is sticky during scroll.
@@ -253,16 +253,16 @@ but the panel viewport height is constrained by AE's panel frame):
    `.ty-shell-directory-scroll`, and the footer `offsetHeight`s.
 
 The repo has no jsdom-level scroll-position test for this row; only click and
-controlled-mode contracts are covered (`src/management/storage/ui/DirectoryBrowser.test.tsx`).
+controlled-mode contracts are covered (`src/management/storage/ui/directory-browser/Component.test.tsx`).
 Any new behavior should add a focused test for the chosen sticky/non-sticky
 contract before landing.
 
 ## 6. Relevant file paths
 
-- `src/management/storage/ui/DirectoryBrowser.tsx` — list-mode render (lines 424-459),
+- `src/management/storage/ui/directory-browser/Component.tsx` — list-mode render (lines 424-459),
   icons-mode render (lines 353-423), `renderListRow` (lines 213-295), footer
   (lines 331-350), `shellRowWrap` constant (line 135).
-- `src/management/storage/ui/DirectoryBrowser.test.tsx` — current test surface;
+- `src/management/storage/ui/directory-browser/Component.test.tsx` — current test surface;
   no scroll-position assertions.
 - `src/function/widget/utility/directory-browser/Component.tsx` — primary
   consumer (uses `<DirectoryBrowser>` at line 1866 and supplies `listHeader`

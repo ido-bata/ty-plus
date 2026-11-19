@@ -5,11 +5,11 @@ import { css } from "@/styled-system/css";
 import {
 	DirectoryBrowserSelectedSummary,
 	type DirectoryBrowserSummary,
-} from "./DirectoryBrowserSelectedSummary";
+} from "./SelectedSummary";
 import {
 	type DirectoryBrowserViewMode,
 	DirectoryBrowserViewModeToggle,
-} from "./DirectoryBrowserViewModeToggle";
+} from "./ViewModeToggle";
 
 export type DirectoryBrowserFooterProps = {
 	viewMode: DirectoryBrowserViewMode;

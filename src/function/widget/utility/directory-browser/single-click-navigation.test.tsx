@@ -7,7 +7,7 @@
  * subdirectory; a regression (commit `699f4785`-style) inverted this so the
  * row click only selected the file/dir, and double-click was the only way
  * to navigate. The shared `DirectoryBrowser` component is covered by
- * `src/management/storage/ui/DirectoryBrowser.test.tsx`; this test covers
+ * `src/management/storage/ui/directory-browser/Component.test.tsx`; this test covers
  * the inline row rendering that lives only in the panel widget
  * (`Component.tsx`), which the shared component does NOT render.
  */

@@ -8,7 +8,7 @@ import {
 	buildDirectoryBrowserMenu,
 	handleDirectoryBrowserMenuSelect,
 	parseDirectoryBrowserMenuHit,
-} from "@/management/storage/ui/DirectoryBrowserMenu";
+} from "@/management/storage/ui/directory-browser/Menu";
 
 export function useMenu({
 	onNext,

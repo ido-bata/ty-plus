@@ -10,7 +10,7 @@ import {
 	DirectoryBrowser,
 	type DirectoryBrowserEntry,
 	type DirectoryBrowserShellSelectionMode,
-} from "@/management/storage/ui/DirectoryBrowser";
+} from "@/management/storage/ui/directory-browser/Component";
 import { readSettings } from "@/management/workspace/persistence/store";
 import { css, cx } from "@/styled-system/css";
 

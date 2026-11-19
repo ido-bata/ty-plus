@@ -73,7 +73,7 @@ import {
 import {
 	DirectoryBrowser,
 	type DirectoryBrowserEntry,
-} from "@/management/storage/ui/DirectoryBrowser";
+} from "@/management/storage/ui/directory-browser/Component";
 import { executeWorkspacePresetForWindow } from "@/management/workspace/runtime";
 import type { SurfaceState } from "@/management/workspace/state";
 import { CollapsibleGroupHeader } from "./CollapsibleGroupHeader";

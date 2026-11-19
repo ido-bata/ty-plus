@@ -4,7 +4,7 @@ import { css } from "@/styled-system/css";
 import {
 	DirectoryBrowserSelectedSummary,
 	type DirectoryBrowserSummary,
-} from "./DirectoryBrowserSelectedSummary";
+} from "./SelectedSummary";
 
 type Args = {
 	summary: DirectoryBrowserSummary;

@@ -16,7 +16,7 @@ Widget / surface 単位の render 例外に対する fail-soft 動作は
 
 | 観点 | 所有者 |
 |--------|-------|
-| ファイルシステムの提示 | `management/storage/ui/DirectoryBrowser.tsx` |
+| ファイルシステムの提示 | `management/storage/ui/directory-browser/Component.tsx` |
 | Product icon (PresetIcon) | `management/preset/contract` |
 | 機能的な振る舞い (file browser state, catalog) | `management/storage` |
 

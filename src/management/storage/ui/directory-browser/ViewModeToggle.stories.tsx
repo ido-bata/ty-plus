@@ -6,7 +6,7 @@ import { css } from "@/styled-system/css";
 import {
 	type DirectoryBrowserViewMode,
 	DirectoryBrowserViewModeToggle,
-} from "./DirectoryBrowserViewModeToggle";
+} from "./ViewModeToggle";
 
 type Args = {
 	viewMode: DirectoryBrowserViewMode;

@@ -1,6 +1,6 @@
 import type { JSX } from "react";
-import type { DirectoryBrowserEntry } from "@/management/storage/ui/DirectoryBrowser";
-import { DirectoryBrowser } from "@/management/storage/ui/DirectoryBrowser";
+import type { DirectoryBrowserEntry } from "@/management/storage/ui/directory-browser/Component";
+import { DirectoryBrowser } from "@/management/storage/ui/directory-browser/Component";
 import { css } from "@/styled-system/css";
 import { PreviewGroup } from "./ComponentPreviewSection";
 

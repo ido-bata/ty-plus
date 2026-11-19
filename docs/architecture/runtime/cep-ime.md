@@ -50,7 +50,7 @@ field already knows it is composing).
 - `src/management/widget/catalog.tsx` — catalog keydown (consolidated to helper)
 - `src/management/debug/console/ui/Panel.tsx` — debug console Enter-to-execute (consolidated)
 - `src/management/setting/dialog/sections/PathsSection.tsx` — Enter-to-blur in path fields
-- `src/management/storage/ui/DirectoryBrowser.tsx` — Enter-to-activate in directory list
+- `src/management/storage/ui/directory-browser/Component.tsx` — Enter-to-activate in directory list
 
 **Function layer (`src/function/`):**
 

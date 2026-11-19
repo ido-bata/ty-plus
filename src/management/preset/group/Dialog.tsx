@@ -21,7 +21,7 @@ import { listPresets } from "@/management/preset/use-cases";
 import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
 import { glyphBoxFillClass } from "@/management/preset/workspace/glyph-classes";
 import { AccordionSection } from "@/management/setting/dialog/sections/AccordionSection";
-import { DirectoryBrowser } from "@/management/storage/ui/DirectoryBrowser";
+import { DirectoryBrowser } from "@/management/storage/ui/directory-browser/Component";
 import { Icon } from "@/shared/component";
 import { Button } from "@/shared/component/controls/Button";
 import { Input } from "@/shared/component/fields/Input";

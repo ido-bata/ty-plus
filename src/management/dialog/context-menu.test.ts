@@ -36,7 +36,7 @@ const fontViewerSource = fs.readFileSync(
 	"utf8",
 );
 const directoryBrowserSource = fs.readFileSync(
-	new URL("../storage/ui/DirectoryBrowser.tsx", import.meta.url),
+	new URL("../storage/ui/directory-browser/Component.tsx", import.meta.url),
 	"utf8",
 );
 const easingSource = fs.readFileSync(

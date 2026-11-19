@@ -37,8 +37,8 @@ import {
 } from "@/management/storage/file-browser-service";
 import { createLocalPresetCatalogId } from "@/management/storage/ids";
 import { assertOpaqueId } from "@/management/storage/ids.assert";
-import type { DirectoryBrowserEntry } from "@/management/storage/ui/DirectoryBrowser";
-import { DirectoryBrowser } from "@/management/storage/ui/DirectoryBrowser";
+import type { DirectoryBrowserEntry } from "@/management/storage/ui/directory-browser/Component";
+import { DirectoryBrowser } from "@/management/storage/ui/directory-browser/Component";
 import { readSettings } from "@/management/workspace/persistence/store";
 import { notifyPanelsAfterPresetSave } from "@/management/workspace/placement/notify-panels-after-preset-save";
 import { Icon } from "@/shared/component";

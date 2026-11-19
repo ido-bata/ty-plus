@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
-import type { DirectoryBrowserEntry } from "./DirectoryBrowser";
-import { DirectoryBrowserOnboardingView } from "./DirectoryBrowserOnboarding";
+import type { DirectoryBrowserEntry } from "./Component";
+import { DirectoryBrowserOnboardingView } from "./Onboarding";
 
 type Args = {
 	loading: boolean;

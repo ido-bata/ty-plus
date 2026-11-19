@@ -137,7 +137,7 @@ rather than missing ambient globals.
 | `T2-TSC-TEST-007` | setting onboarding initialization test | 6 |
 | `T2-TSC-TEST-008` | `src/management/storage/contract.test.ts` | 6 |
 | `T2-TSC-TEST-009` | append-preset-from-dialog-disk test | 6 |
-| `T2-TSC-TEST-010` | `src/management/storage/ui/DirectoryBrowser.test.tsx` | 5 |
+| `T2-TSC-TEST-010` | `src/management/storage/ui/directory-browser/Component.test.tsx` | 5 |
 | `T2-TSC-TEST-011` | catalog-grouping tests | 5 |
 | `T2-TSC-TEST-012` | directory-browser context-menu test | 4 |
 | `T2-TSC-TEST-013` | online catalog use-case and gateway tests | 5 |
@@ -171,7 +171,7 @@ Completed on 2026-08-14, awaiting supervisory commit:
 | --- | --- | ---: | ---: |
 | `T2-TSC-TEST-008` | `src/management/storage/contract.test.ts` | 6 | 0 |
 | `T2-TSC-TEST-009` | `src/management/workspace/placement/append-preset-from-dialog-disk.test.ts` | 6 | 0 |
-| `T2-TSC-TEST-010` | `src/management/storage/ui/DirectoryBrowser.test.tsx` | 5 | 0 |
+| `T2-TSC-TEST-010` | `src/management/storage/ui/directory-browser/Component.test.tsx` | 5 | 0 |
 | `T2-TSC-TEST-011` | `src/function/widget/utility/directory-browser/catalog-grouping.test.ts`, `src/function/widget/utility/directory-browser/catalog-grouping-integration.test.tsx` | 5 | 0 |
 
 These four groups removed 22 test-file diagnostics. The storage contract now

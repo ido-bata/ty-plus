@@ -131,7 +131,7 @@ describe("e2e-in-name", () => {
 describe("case-convention", () => {
 	it("flags PascalCase .ts files", () => {
 		const findings = rulesFor(
-			["src/management/storage/ui/DirectoryBrowserMenu.ts"],
+			["src/management/storage/ui/directory-browser/Menu.ts"],
 			"case-convention",
 		);
 		expect(findings).toHaveLength(1);
@@ -190,7 +190,7 @@ describe("dir-stutter and file-stutter", () => {
 	it("does not flag files whose first token differs from the parent", () => {
 		expect(
 			rulesFor(
-				["src/management/storage/ui/DirectoryBrowser.tsx"],
+				["src/management/storage/ui/directory-browser/Component.tsx"],
 				"file-stutter",
 			),
 		).toHaveLength(0);

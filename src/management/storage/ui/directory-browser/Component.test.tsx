@@ -27,7 +27,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import {
 	DirectoryBrowser,
 	type DirectoryBrowserEntry,
-} from "@/management/storage/ui/DirectoryBrowser";
+} from "@/management/storage/ui/directory-browser/Component";
 
 const baseEntries: DirectoryBrowserEntry[] = [
 	{ path: "/preset/root/a", name: "alpha", isDirectory: true },

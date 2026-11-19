@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
-import { DirectoryBrowserFooter } from "./DirectoryBrowserFooter";
-import type { DirectoryBrowserViewMode } from "./DirectoryBrowserViewModeToggle";
+import { DirectoryBrowserFooter } from "./Footer";
+import type { DirectoryBrowserViewMode } from "./ViewModeToggle";
 
 type Args = {
 	viewMode: DirectoryBrowserViewMode;

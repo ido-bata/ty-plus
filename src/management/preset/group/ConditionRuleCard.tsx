@@ -7,7 +7,7 @@ import { presetIconDraftToPresetIcon } from "@/management/preset/icon-editor";
 import { AuthoringSegment } from "@/management/preset/tool-shell/archive-layout";
 import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
 import { glyphBoxFillClass } from "@/management/preset/workspace/glyph-classes";
-import { DirectoryBrowser } from "@/management/storage/ui/DirectoryBrowser";
+import { DirectoryBrowser } from "@/management/storage/ui/directory-browser/Component";
 import { Button } from "@/shared/component/controls/Button";
 import { Input } from "@/shared/component/fields/Input";
 import { RegexEditor } from "@/shared/component/fields/RegexEditor";

@@ -6,14 +6,14 @@ import { describe, expect, it, vi } from "vitest";
 import type {
 	DirectoryBrowserSelectionKind,
 	DirectoryBrowserShellSelectionMode,
-} from "@/management/storage/ui/DirectoryBrowser";
+} from "@/management/storage/ui/directory-browser/Component";
 import {
 	buildDirectoryBrowserMenu,
 	type DirectoryBrowserMenuActions,
 	type DirectoryBrowserMenuContext,
 	handleDirectoryBrowserMenuSelect,
 	parseDirectoryBrowserMenuHit,
-} from "./DirectoryBrowserMenu";
+} from "./Menu";
 
 const baseCtx: DirectoryBrowserMenuContext = {
 	surface: "onboarding",

@@ -55,7 +55,7 @@ cache された WebP を取得する経路を持っているが、preset sidecar
 | 1 | `src/function/widget/utility/directory-browser/Component.tsx:352-364` | ローカル `EntryThumb` (327-372 で定義) の sibling branch |
 | 2 | `src/function/widget/utility/directory-browser/EntryThumb.tsx:81-94` | 同じ sibling branch を書いた独立 file — `Component.tsx` から **import されていない** |
 | 3 | `src/management/preset/workspace/glyph.tsx:336-345` | `WorkspacePresetGlyph` の image branch — sibling 解決 (227-281) と `descriptionImage` 上書き (283-292) の後、生画像を表示 |
-| 4 | `src/management/storage/ui/DirectoryBrowser.tsx:210-224` | 旧 `renderEntryIcon` の sibling branch (legacy shell) |
+| 4 | `src/management/storage/ui/directory-browser/Component.tsx:210-224` | 旧 `renderEntryIcon` の sibling branch (legacy shell) |
 | 5 | `src/management/preset/onboarding-service.ts:175-212` | `resolveSiblingImageIconSrc` が raw path を返し、それを `presetIconImage(siblingSrc)` に保存 |
 
 ## 関連する不整合

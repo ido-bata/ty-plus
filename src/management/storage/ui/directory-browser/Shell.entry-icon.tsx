@@ -19,8 +19,8 @@ import {
 import { CanvasEasingIcon } from "@/management/preset/workspace/CanvasEasingIcon";
 import { cx } from "@/shared/util/cx";
 import { css } from "@/styled-system/css";
-import { FILE_TYPE_ICON } from "../file-type-icon";
-import type { DirectoryBrowserEntry } from "./DirectoryBrowser";
+import { FILE_TYPE_ICON } from "../../file-type-icon";
+import type { DirectoryBrowserEntry } from "./Component";
 
 const presetTypeForFileType = (
 	fileType: DirectoryBrowserEntry["fileType"],

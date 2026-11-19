@@ -11,11 +11,11 @@
 import { cleanup, render } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 
-import type { DirectoryBrowserEntry } from "./DirectoryBrowser";
+import type { DirectoryBrowserEntry } from "./Component";
 import {
 	EntryIcon,
 	MediaCardContent,
-} from "./DirectoryBrowserShell.entry-icon";
+} from "./Shell.entry-icon";
 
 afterEach(cleanup);
 

@@ -3,8 +3,8 @@ import { expect } from "storybook/test";
 import type { SiblingListingEntry } from "@/management/preset/sibling-thumbnail";
 import { expectCanvasLayout } from "@/storybook/quality/layout";
 
-import type { DirectoryBrowserEntry } from "./DirectoryBrowser";
-import { DirectoryBrowserIconCard } from "./DirectoryBrowserIconCard";
+import type { DirectoryBrowserEntry } from "./Component";
+import { DirectoryBrowserIconCard } from "./IconCard";
 
 const siblings: readonly SiblingListingEntry[] = [
 	{ name: "alpha.png", path: "/preset/root/alpha.png", isDirectory: false },
