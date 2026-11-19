@@ -14,8 +14,9 @@ export const installFailureKey = (code: string | undefined): string => {
 		case "integrity_mismatch":
 			return "installFailedIntegrity";
 		case "network_unavailable":
-		case "timeout":
 			return "installFailedDownload";
+		case "timeout":
+			return "installFailedTimeout";
 		case "remote_rejected":
 			return "installFailedArchive";
 		case "permission_denied":

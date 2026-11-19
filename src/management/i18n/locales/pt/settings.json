@@ -225,7 +225,8 @@
 		"installFailedIntegrity": "O arquivo baixado falhou na verificação de integridade. Tente novamente mais tarde.",
 		"installFailedArchive": "A atualização baixada é inválida. Tente novamente mais tarde ou instale manualmente.",
 		"installFailedPermission": "Permissão negada. Instale manualmente pela página de download.",
-		"installFailedBusy": "Outra instalação está em andamento. Tente novamente em instantes."
+		"installFailedBusy": "Outra instalação está em andamento. Tente novamente em instantes.",
+		"installFailedTimeout": "A instalação expirou. Reinicie o After Effects e tente novamente, ou instale manualmente."
 	},
 	"tipsSectionLabel": "Dicas e tutoriais de widgets",
 	"tipsSectionDescription": "Os resumos de ajuda e as dicas de primeira utilização são mostrados uma vez por widget. Reponha para os ver novamente.",

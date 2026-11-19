@@ -225,7 +225,8 @@
 		"installFailedIntegrity": "Le fichier téléchargé a échoué au contrôle d'intégrité. Réessayez plus tard.",
 		"installFailedArchive": "La mise à jour téléchargée est invalide. Réessayez plus tard ou installez-la manuellement.",
 		"installFailedPermission": "Permission refusée. Installez-la manuellement depuis la page de téléchargement.",
-		"installFailedBusy": "Une autre installation est en cours. Réessayez dans un instant."
+		"installFailedBusy": "Une autre installation est en cours. Réessayez dans un instant.",
+		"installFailedTimeout": "Délai d'installation dépassé. Redémarrez After Effects et réessayez, ou installez manuellement."
 	},
 	"tipsSectionLabel": "Astuces et tutoriels des widgets",
 	"tipsSectionDescription": "Les résumés d'aide et les infobulles de première utilisation s'affichent une fois par widget. Réinitialisez pour les revoir.",

@@ -87,7 +87,7 @@ describe("installFailureKey", () => {
 		expect(installFailureKey("network_unavailable")).toBe(
 			"installFailedDownload",
 		);
-		expect(installFailureKey("timeout")).toBe("installFailedDownload");
+		expect(installFailureKey("timeout")).toBe("installFailedTimeout");
 		expect(installFailureKey("remote_rejected")).toBe("installFailedArchive");
 		expect(installFailureKey("permission_denied")).toBe(
 			"installFailedPermission",

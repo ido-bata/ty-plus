@@ -225,7 +225,8 @@
 		"installFailedIntegrity": "ダウンロードしたファイルの整合性チェックに失敗しました。時間をおいて再試行してください。",
 		"installFailedArchive": "ダウンロードしたアップデートが無効です。再試行するか手動でインストールしてください。",
 		"installFailedPermission": "権限がありません。ダウンロードページから手動でインストールしてください。",
-		"installFailedBusy": "別のインストールが進行中です。しばらくしてから再試行してください。"
+		"installFailedBusy": "別のインストールが進行中です。しばらくしてから再試行してください。",
+		"installFailedTimeout": "インストールがタイムアウトしました。After Effects を再起動して再試行するか、手動でインストールしてください。"
 	},
 	"tipsSectionLabel": "ウィジェットのヒントとチュートリアル",
 	"tipsSectionDescription": "ウィジェットのヘルプ概要と初回ヒントは、ウィジェットごとに一度だけ表示されます。リセットすると再度表示されます。",

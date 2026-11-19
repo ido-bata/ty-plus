@@ -225,7 +225,8 @@
 		"installFailedIntegrity": "Загруженный файл не прошёл проверку целостности. Повторите попытку позже.",
 		"installFailedArchive": "Загруженное обновление недействительно. Повторите попытку позже или установите вручную.",
 		"installFailedPermission": "Доступ запрещён. Установите вручную со страницы загрузки.",
-		"installFailedBusy": "Выполняется другая установка. Повторите попытку чуть позже."
+		"installFailedBusy": "Выполняется другая установка. Повторите попытку чуть позже.",
+		"installFailedTimeout": "Время установки истекло. Перезапустите After Effects и повторите попытку или установите вручную."
 	},
 	"tipsSectionLabel": "Widget tips & tutorials",
 	"tipsSectionDescription": "Widget help summaries and first-run hints are shown once per widget. Reset to show them again.",

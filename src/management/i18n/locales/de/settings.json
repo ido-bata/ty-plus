@@ -225,7 +225,8 @@
 		"installFailedIntegrity": "Die Integritätsprüfung der heruntergeladenen Datei ist fehlgeschlagen. Versuchen Sie es später erneut.",
 		"installFailedArchive": "Das heruntergeladene Update ist ungültig. Versuchen Sie es später erneut oder installieren Sie es manuell.",
 		"installFailedPermission": "Zugriff verweigert. Installieren Sie es manuell über die Download-Seite.",
-		"installFailedBusy": "Eine andere Installation läuft. Versuchen Sie es in Kürze erneut."
+		"installFailedBusy": "Eine andere Installation läuft. Versuchen Sie es in Kürze erneut.",
+		"installFailedTimeout": "Zeitüberschreitung bei der Installation. Starten Sie After Effects neu und versuchen Sie es erneut, oder installieren Sie manuell."
 	},
 	"tipsSectionLabel": "Widget-Tipps & Tutorials",
 	"tipsSectionDescription": "Widget-Hilfetexte und Hinweise beim ersten Start werden pro Widget nur einmal angezeigt. Zurücksetzen, um sie erneut anzuzeigen.",

@@ -225,7 +225,8 @@
 		"installFailedIntegrity": "Il file scaricato non ha superato il controllo di integrità. Riprova più tardi.",
 		"installFailedArchive": "L'aggiornamento scaricato non è valido. Riprova più tardi o installalo manualmente.",
 		"installFailedPermission": "Permesso negato. Installalo manualmente dalla pagina di download.",
-		"installFailedBusy": "Un'altra installazione è in corso. Riprova tra poco."
+		"installFailedBusy": "Un'altra installazione è in corso. Riprova tra poco.",
+		"installFailedTimeout": "Installazione scaduta. Riavvia After Effects e riprova, oppure installa manualmente."
 	},
 	"tipsSectionLabel": "Suggerimenti e tutorial dei widget",
 	"tipsSectionDescription": "I riepiloghi di aiuto e i suggerimenti al primo utilizzo vengono mostrati una volta per widget. Reimposta per rivederli.",
