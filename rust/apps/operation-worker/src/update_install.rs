@@ -938,10 +938,7 @@ mod tests {
         let mut req = request_fixture();
         req.release_version = "0.10.2-insider.1".into();
         req.tag = "v0.10.2-insider.1".into();
-        req.asset.file_name = format!(
-            "ty-plus-v0.10.2-insider.1-{}.zip",
-            current_platform()
-        );
+        req.asset.file_name = format!("ty-plus-v0.10.2-insider.1-{}.zip", current_platform());
         req.asset.url = format!(
             "{OFFICIAL_DOWNLOAD_PREFIX}v0.10.2-insider.1/{}",
             req.asset.file_name
