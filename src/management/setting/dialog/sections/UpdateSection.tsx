@@ -74,8 +74,8 @@ type InstallState =
 /**
  * Official GitHub Releases update channel selection (Issue #55).
  * A channel change persists through the existing file-backed settings.
- * Checking never installs or runs code; a user opens the official release
- * page in their browser and installs manually.
+ * Checking never installs or runs code; install goes through the
+ * `update.install` worker operation after the user confirms.
  */
 export function UpdateSection(): JSX.Element {
 	const { t } = useTranslation("settings");
@@ -168,11 +168,6 @@ export function UpdateSection(): JSX.Element {
 		[settings.ui, updateSettings],
 	);
 
-	// R0 distributes stable builds only: the worker rejects prerelease
-	// assets, so non-stable channels get release notes but no install
-	// button (Issue #169).
-	const installAllowed = channel === "stable";
-
 	const label = checking
 		? t("updates.checking")
 		: result === null
@@ -238,8 +233,7 @@ export function UpdateSection(): JSX.Element {
 							>
 								{t("updates.releaseNotes")}
 							</button>
-							{installAllowed &&
-							(installState.kind !== "done" ||
+							{(installState.kind !== "done" ||
 								installState.status === "manual_required") ? (
 								<button
 									type="button"
