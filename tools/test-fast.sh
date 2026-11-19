@@ -58,7 +58,7 @@ PATTERNS=(
   "src/management/debug/console/message-store.test.ts"
   "src/management/debug/console/interceptor.test.ts"
   "src/management/debug/console/ui/dialog-root.test.ts"
-  "src/management/dialog/dialogs/context-menu.test.ts"
+  "src/management/dialog/context-menu.test.ts"
   "src/management/dialog/modeless/boot.test.ts"
   "src/management/dialog/modeless/surface-id.test.ts"
   "src/management/storage/file-browser-service.test.ts"
