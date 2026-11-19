@@ -114,17 +114,33 @@ CI `release.yml` `release-trust-windows-candidate`（run 44449771825、@ `bbbe77
 ---
 Generated with [Devin](https://devin.ai)
 
+## 追記（2026-11-19 第3回）: RC候補の再確定 — `967abb37`
+
+#248/#249（install timeout の誤分類修正）を統合したため、RC候補を再確定した。
+
+- **RC候補 SHA: `967abb37`**（`release-0-11-0` HEAD、PR #249/#250 merge 後）
+- `fab3e9aa` → `967abb37` の製品コード差分: `update-install.ts` の timeout→`installFailedTimeout` 分岐 + locale 10件 + test。updater のエラーメッセージ分類のみで、他機能コードは同一
+- Stable 配布物は `967abb37` で再生成・監査（`bun run release:candidate --channel=stable --release-version=0.11.0`、macOS実機 + Windows xwin、2026-11-19 実施。監査全項目 PASS、sourceCommit=`967abb37…`。`fab3e9aa` 時点の値は履歴として残すが流用しない）。ローカル staging: `dist/staging-stable-rc/{macos,windows}/`
+- 両 manifest: `releaseVersion=0.11.0` / `channel=stable` / `trustMode=release`
+
+| platform | asset | sha256 | bytes |
+| --- | --- | --- | --- |
+| macOS | `ty-plus-v0.11.0-macos.zip` | `c251916a88ffb7af9136c6c215208c803602b492fc66a35e7ba210bb2e9efdcd` | 14,008,444 |
+| macOS | `ty-plus-v0.11.0-macos.zxp` | `ca11643060db409bf7a461e36421bfb9bce863c600388173c46c2887c7248eee` | 14,022,506 |
+| Windows | `ty-plus-v0.11.0-windows.zip` | `e23d7518811cf3ee8ab327c1041b57287c144636a4aad540906b724f0fa26f2f` | 10,964,600 |
+| Windows | `ty-plus-v0.11.0-windows.zxp` | `b6f3e2314d70fa0f87006d2503eb8ca1063b3fd8e7bb1516772afedc7fd224b2` | 10,978,763 |
+
 ## 追記（2026-11-19 第2回）: RC候補の再確定 — `fab3e9aa`
 
 Insider 実機受入で製品欠陥 #245（install relay の surface ID 不一致による envelope drop）を発見・修正（PR #246）したため、RC候補を再確定した。
 
 ### 候補SHAと証拠の対応（再）
 
-- **新 RC候補 SHA: `fab3e9aabcf925d881aa283674a84c94e25f9107`**（`release-0-11-0` HEAD、PR #246 merge 後）
+- 当時の RC候補 SHA: `fab3e9aa`（**第3回追記で `967abb37` に再確定・成果物再生成済み。下表のハッシュは履歴であり公開には使わない**）
 - `bbbe77cc` → `fab3e9aa` の製品コード差分: `src/management/online/update/install-relay.ts`（+test）のみ。updater relay 経路に限定され、他機能のコードは同一
 - それ以前の実機E2E証拠（`05551c30`/`bbbe77cc`）は変更のないコードパスに対して有効。updater 経路は `fab3e9aa` で**実機 UI E2E PASS**（insider.8→.9、`insider-ui-update-0-11-0.md`）
 
-### Stable 配布物の再生成（`fab3e9aa`、release-trust、監査全項目 PASS）
+### Stable 配布物の再生成（`fab3e9aa`、release-trust、監査全項目 PASS）※第3回で `967abb37` の成果物に置き換え済み
 
 `bun run release:candidate --channel=stable --release-version=0.11.0`（macOS実機 + Windows xwin、2026-11-19 実施。旧 `bbbe77cc` の署名・ハッシュは流用していない）
 
