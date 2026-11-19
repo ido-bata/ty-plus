@@ -225,7 +225,8 @@
 		"installFailedIntegrity": "다운로드한 파일의 무결성 검사에 실패했습니다. 나중에 다시 시도하세요.",
 		"installFailedArchive": "다운로드한 업데이트가 올바르지 않습니다. 나중에 다시 시도하거나 수동으로 설치하세요.",
 		"installFailedPermission": "권한이 없습니다. 다운로드 페이지에서 수동으로 설치하세요.",
-		"installFailedBusy": "다른 설치가 진행 중입니다. 잠시 후 다시 시도하세요."
+		"installFailedBusy": "다른 설치가 진행 중입니다. 잠시 후 다시 시도하세요.",
+		"installFailedTimeout": "설치 시간이 초과되었습니다. After Effects를 다시 시작하고 재시도하거나 수동으로 설치하세요."
 	},
 	"tipsSectionLabel": "위젯 팁 및 튜토리얼",
 	"tipsSectionDescription": "위젯 도움말 요약과 첫 실행 힌트는 위젯마다 한 번만 표시됩니다. 재설정하면 다시 표시됩니다.",

@@ -225,7 +225,8 @@
 		"installFailedIntegrity": "El archivo descargado no superó la comprobación de integridad. Inténtelo más tarde.",
 		"installFailedArchive": "La actualización descargada no es válida. Inténtelo más tarde o instálela manualmente.",
 		"installFailedPermission": "Permiso denegado. Instálela manualmente desde la página de descarga.",
-		"installFailedBusy": "Hay otra instalación en curso. Inténtelo de nuevo en breve."
+		"installFailedBusy": "Hay otra instalación en curso. Inténtelo de nuevo en breve.",
+		"installFailedTimeout": "La instalación agotó el tiempo de espera. Reinicie After Effects e inténtelo de nuevo, o instálela manualmente."
 	},
 	"tipsSectionLabel": "Consejos y tutoriales de widgets",
 	"tipsSectionDescription": "Los resúmenes de ayuda y las sugerencias de primera ejecución se muestran una vez por widget. Restablece para volver a verlos.",

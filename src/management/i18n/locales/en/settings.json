@@ -225,7 +225,8 @@
 		"installFailedIntegrity": "The downloaded file failed its integrity check. Try again later.",
 		"installFailedArchive": "The downloaded update is invalid. Try again later or install manually.",
 		"installFailedPermission": "Permission denied. Install manually from the download page.",
-		"installFailedBusy": "Another install is in progress. Try again shortly."
+		"installFailedBusy": "Another install is in progress. Try again shortly.",
+		"installFailedTimeout": "Install timed out. Restart After Effects and try again, or install manually."
 	},
 	"tipsSectionLabel": "Widget tips & tutorials",
 	"tipsSectionDescription": "Widget help summaries and first-run hints are shown once per widget. Reset to show them again.",

@@ -225,7 +225,8 @@
 		"installFailedIntegrity": "下载的文件未通过完整性检查。请稍后重试。",
 		"installFailedArchive": "下载的更新无效。请稍后重试或手动安装。",
 		"installFailedPermission": "没有权限。请从下载页面手动安装。",
-		"installFailedBusy": "另一个安装正在进行中。请稍后重试。"
+		"installFailedBusy": "另一个安装正在进行中。请稍后重试。",
+		"installFailedTimeout": "安装超时。请重启 After Effects 后重试，或手动安装。"
 	},
 	"tipsSectionLabel": "小组件提示与教程",
 	"tipsSectionDescription": "小组件的帮助摘要和首次提示每个小组件只显示一次。重置后可再次显示。",
