@@ -1,7 +1,7 @@
 # Storybook 視覚品質レビュー・チェックリスト — v0.11.0 RC
 
-capture 実施SHA: `05551c30` / RC候補SHA: `fab3e9aa`（2026-11-19 再freeze、`release-candidate-0-11-0.md` 追記参照）
-`05551c30..fab3e9aa` の `src/` 差分は updater 経路に限定（#238 tag検証、#241 installゲート撤去、#243-#246 install relay）。UI コンポーネント・Storybook 対象コードに変更なし。capture 証拠は RC候補の視覚対象コードに対して有効。
+capture 実施SHA: `05551c30` / RC候補SHA: `967abb37`（2026-11-19 再freeze、`release-candidate-0-11-0.md` 追記参照）
+`05551c30..967abb37` の `src/` 差分は updater 経路に限定（#238 tag検証、#241 installゲート撤去、#243-#246 install relay、#248 timeout メッセージ分岐）。UI コンポーネント・Storybook 対象コードに変更なし。capture 証拠は RC候補の視覚対象コードに対して有効。
 
 capture report: `storybook-capture-report-05551c308c8581fe7b3c7ec87f6d040c6c063de1` (CI artifact)
 429/429 story `ok`、render-failed/capture-error/missing = 0。console error は ErrorBoundary/Fallback の意図的 fixture のみ。
