@@ -24,19 +24,17 @@ const srcRoot = path.resolve(here, "..", "..");
 const read = (path: string) =>
 	fs.readFileSync(new URL(path, import.meta.url), "utf8");
 
-const statusBarSource = read("./panel/control/StatusBar/Main.tsx");
+const statusBarSource = read("./panel/control/status-bar/Main.tsx");
 const unifiedContextMenuConstantsSource = read(
 	"./dialog/unified-context-menu-constants.ts",
 );
-const unifiedContextMenuSource = read(
-	"./dialog/unified-context-menu.ts",
-);
+const unifiedContextMenuSource = read("./dialog/unified-context-menu.ts");
 const widgetMenuSource = read("../function/widget/core/menu/Component.tsx");
 const dialogRoutesSource = read("./dialog/routes.tsx");
 const dialogIdsSource = read("./dialog/ids.ts");
 const surfaceIdSource = read("./dialog/modeless/surface-id.ts");
 const cepConfigSource = read("../../cep.config.ts");
-const presetUseCasesSource = read("./preset/use-cases.ts");
+const presetUseCasesSource = read("./preset/operations.ts");
 const setupRequiredSource = read("../function/onboarding/ui/SetupRequired.tsx");
 const servicesSource = read("./workspace/services.ts");
 

@@ -6,10 +6,7 @@
  */
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import {
-	loadNotificationsStore,
-	saveNotificationsStore,
-} from "./notifications";
+import { loadNotificationsStore, saveNotificationsStore } from "./store";
 
 // ── Mock cache-store helpers ─────────────────────────────────────────────────
 

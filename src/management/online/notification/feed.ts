@@ -7,7 +7,7 @@
  * "no remote items" and the local cache stays authoritative.
  */
 
-import type { NotificationSummary } from "@/management/online/notification/notifications";
+import type { NotificationSummary } from "@/management/online/notification/store";
 import { fetchWithDeadline } from "@/management/online/update/feed";
 
 export const DEFAULT_NOTIFICATION_FEED_URL =

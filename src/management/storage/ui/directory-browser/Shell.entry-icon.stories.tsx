@@ -8,10 +8,7 @@ import type { SiblingListingEntry } from "@/management/preset/sibling/thumbnail"
 import { css } from "@/styled-system/css";
 
 import type { DirectoryBrowserEntry } from "./Component";
-import {
-	EntryIcon,
-	MediaCardContent,
-} from "./Shell.entry-icon";
+import { EntryIcon, MediaCardContent } from "./Shell.entry-icon";
 
 const siblings: readonly SiblingListingEntry[] = [
 	{ name: "alpha.png", path: "/preset/root/alpha.png", isDirectory: false },

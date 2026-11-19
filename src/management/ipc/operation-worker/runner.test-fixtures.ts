@@ -1,10 +1,7 @@
 import { EventEmitter } from "node:events";
 import { protocolVersion, type WireMessage } from "../generated";
 import { encodeOperationWorkerFrame } from "./frame";
-import type {
-	ImmutableHostContext,
-	OperationInvocation,
-} from "./runner";
+import type { ImmutableHostContext, OperationInvocation } from "./runner";
 
 const requestId = "request-1";
 const sessionId = "session-1";

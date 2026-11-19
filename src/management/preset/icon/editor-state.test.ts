@@ -11,7 +11,7 @@ import {
 	PRESET_ICON_TEXT_MAX,
 	presetIconDraftToPresetIcon,
 	presetIconToDraft,
-} from "./draft";
+} from "./editor-state";
 
 describe("createPresetIconDraft", () => {
 	it("returns an empty text draft when no initial text is given", () => {

@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { createScopedStoragePort, type StoragePort } from "./storage-port";
+import { createScopedStoragePort, type StoragePort } from "./port";
 
-describe("storage-port", () => {
+describe("port", () => {
 	it("createScopedStoragePort prefixes keys", () => {
 		const mockParent: StoragePort = {
 			readJson: vi.fn().mockResolvedValue({ success: true, data: {} }),

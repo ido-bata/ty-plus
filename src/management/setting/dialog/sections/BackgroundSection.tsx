@@ -6,7 +6,7 @@ import {
 	useRef,
 	useState,
 } from "react";
-import { useCep } from "@/management/ae/cep/contexts/Context";
+import { useCep } from "@/management/ae/cep/contexts/CepContext";
 import { useSettings } from "@/management/setting/context";
 import {
 	SETTINGS_CONTROL_HEIGHT_CLASS,

@@ -2,7 +2,7 @@ import {
 	getValidExtensionsForPresetAddTab,
 	PRESET_ADD_DRIVES_PATH,
 	type PresetAddFolderType,
-} from "@/management/preset/catalog-add/archive/types";
+} from "@/management/preset/catalog-add/archive-source/types";
 import type { FileBrowserEntry } from "@/management/storage/file-browser-service";
 import { createCepNodeFileBrowserService } from "@/management/storage/file-browser-service";
 

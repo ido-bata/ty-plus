@@ -61,7 +61,7 @@ vi.mock("@/management/i18n/Context", () => ({
 	}),
 }));
 
-vi.mock("@/management/workspace/hooks/helpers", () => ({
+vi.mock("@/management/workspace/hooks/external", () => ({
 	openUrlInDefaultBrowser: mocks.openManualMock,
 }));
 
@@ -93,7 +93,7 @@ vi.mock("@/shared", () => ({
 	),
 }));
 
-vi.mock("@/management/ae/cep/contexts/Context", () => ({
+vi.mock("@/management/ae/cep/contexts/CepContext", () => ({
 	useCep: () => mocks.cepContext.value,
 }));
 

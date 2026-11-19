@@ -6,11 +6,11 @@ import {
 import {
 	type PresetIconEditorDraft,
 	presetIconDraftToPresetIcon,
-} from "@/management/preset/icon/draft";
+} from "@/management/preset/icon/editor-state";
 import { collectFolderPresetCandidates } from "@/management/preset/onboarding/import";
 import { importOnboardingPresets } from "@/management/preset/onboarding/service";
+import { listPresets } from "@/management/preset/operations";
 import { getLocalPresetCatalog } from "@/management/preset/repository/local-catalog";
-import { listPresets } from "@/management/preset/use-cases";
 import {
 	canUseCepNodeFileBrowser,
 	createCepNodeFileBrowserService,

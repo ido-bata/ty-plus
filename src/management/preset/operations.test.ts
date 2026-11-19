@@ -32,14 +32,14 @@ vi.mock("@/management/storage/persistence", () => ({
 	readJsonText: storage.readJsonText,
 }));
 
-import { __resetLocalPresetCatalogForTests } from "@/management/preset/repository/local-catalog";
 import {
 	duplicatePreset,
 	getPreset,
 	listPresets,
 	removeLocalPreset,
 	upsertLocalPreset,
-} from "@/management/preset/use-cases";
+} from "@/management/preset/operations";
+import { __resetLocalPresetCatalogForTests } from "@/management/preset/repository/local-catalog";
 
 const basePreset: Preset = {
 	id: "src-1",

@@ -17,7 +17,7 @@
  *   in the switch.
  *
  * Behavioral coverage of the public API itself lives in
- * `src/management/preset/use-cases.test.ts`; the deterministic helpers
+ * `src/management/preset/operations.test.ts`; the deterministic helpers
  * (`resolveDuplicateHit`, `computeNextPresetSelectedIds`,
  * `runDuplicatePreset`) are covered in
  * `src/management/workspace/hook-duplicate-preset.test.ts`; the menu
@@ -36,10 +36,7 @@ const helpersSource = fs.readFileSync(
 	"utf8",
 );
 const constantsSource = fs.readFileSync(
-	new URL(
-		"../dialog/unified-context-menu-constants.ts",
-		import.meta.url,
-	),
+	new URL("../dialog/unified-context-menu-constants.ts", import.meta.url),
 	"utf8",
 );
 

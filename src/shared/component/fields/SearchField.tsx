@@ -7,7 +7,7 @@ import type {
 	ReactNode,
 	Ref,
 } from "react";
-import { Icon } from "@/shared/component/icons/Icon";
+import { Icon } from "@/shared/component/icons/LucideIcon";
 import { cx, Input } from "@/shared/component/index";
 import { css } from "@/styled-system/css";
 

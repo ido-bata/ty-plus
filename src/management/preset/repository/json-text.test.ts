@@ -6,14 +6,13 @@
  * @vitest-environment happy-dom
  */
 import { describe, expect, it } from "vitest";
-
+import type { Preset } from "@/management/preset/contract";
 import {
 	PresetCatalogParseError,
 	parsePresetCatalogJsonText,
 	parsePresetCatalogJsonTextStrict,
 	serializePresetCatalogJsonText,
 } from "@/management/preset/repository/json-text";
-import type { Preset } from "@/management/preset/contract";
 
 const basePreset: Preset = {
 	id: "round-trip-1",

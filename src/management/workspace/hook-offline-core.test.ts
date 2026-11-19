@@ -3,7 +3,7 @@
  *
  * Local preset reads/writes in the workspace hook must go through the
  * file-backed local catalog (`listPresets` / `getPreset` from
- * `@/management/preset/use-cases`), never through `getDataServices()` —
+ * `@/management/preset/operations`), never through `getDataServices()` —
  * the cloud boot boundary that throws `GatewayBootRequiredError` when the
  * gateway has not booted (degraded / offline / unimplemented network).
  *

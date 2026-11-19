@@ -15,7 +15,7 @@ import { type JSX, useEffect, useRef, useState } from "react";
 import { css, cx } from "@/styled-system/css";
 import { ensureExtendscriptLanguage, initTextMate } from "./textmate";
 import TsVolarWorker from "./typescript-worker?worker";
-import { type ResizeGestureEvent, useEditorResize } from "./use-editor-resize";
+import { type ResizeGestureEvent, useEditorResize } from "./use-resize";
 
 const MONACO_STYLE_ID = "ty-plus-monaco-library-theme";
 const EXTENDSCRIPT_THEME_ID = "ty-plus-extendscript";

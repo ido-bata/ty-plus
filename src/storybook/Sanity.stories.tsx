@@ -10,7 +10,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useTranslation } from "react-i18next";
 
-import { useCep } from "@/management/ae/cep/contexts/Context";
+import { useCep } from "@/management/ae/cep/contexts/CepContext";
 import { useAfterEffectsFilesGateway } from "@/management/ae/files/gateway-context";
 
 function SanityPanel() {

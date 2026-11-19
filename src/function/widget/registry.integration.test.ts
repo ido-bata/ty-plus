@@ -65,7 +65,7 @@ vi.mock("./utility/font-viewer/Component", () => ({
 	FontViewerWidget: () => null,
 }));
 vi.mock("./utility/info/preset", () => ({ PresetInfoWidget: () => null }));
-vi.mock("./utility/quick-actions/ActionList", () => ({
+vi.mock("./utility/quick-actions/QuickActionsWidget", () => ({
 	QuickActionsWidget: () => null,
 }));
 

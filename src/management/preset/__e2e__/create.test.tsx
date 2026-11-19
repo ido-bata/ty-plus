@@ -44,7 +44,7 @@ vi.mock("@/management/preset", async () => {
 	};
 });
 
-vi.mock("@/management/preset/use-cases", () => ({
+vi.mock("@/management/preset/operations", () => ({
 	upsertLocalPreset: mockUpsertLocalPreset,
 }));
 

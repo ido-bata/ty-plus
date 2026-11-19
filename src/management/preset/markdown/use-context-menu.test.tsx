@@ -10,7 +10,7 @@
  */
 import { renderHook } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
-import { useMarkdownContextMenu } from "./useMarkdownContextMenu";
+import { useMarkdownContextMenu } from "./use-context-menu";
 
 type Registration = {
 	buildPayload: (event: MouseEvent) => {
@@ -24,7 +24,7 @@ const mocks = vi.hoisted(() => ({
 	install: vi.fn(() => vi.fn()),
 }));
 
-vi.mock("@/management/ae/cep/contexts/Context", () => ({
+vi.mock("@/management/ae/cep/contexts/CepContext", () => ({
 	useCep: () => ({ panelSurfaceId: "panel-1" }),
 }));
 
@@ -131,7 +131,7 @@ describe("useMarkdownContextMenu", () => {
 		const url = await import("node:url");
 		const here = path.dirname(url.fileURLToPath(import.meta.url));
 		const source = fs.readFileSync(
-			path.resolve(here, "useMarkdownContextMenu.ts"),
+			path.resolve(here, "use-context-menu.ts"),
 			"utf8",
 		);
 		// Strip JSDoc / line comments so the JSDoc explanation of why we

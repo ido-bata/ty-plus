@@ -9,7 +9,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { WidgetType } from "@/function/widget";
 import { isWidgetType } from "@/function/widget/contract";
-import { useCep } from "@/management/ae/cep/contexts/Context";
+import { useCep } from "@/management/ae/cep/contexts/CepContext";
 import { tyPlusExtensionId } from "@/management/ae/cep/extension-id";
 import { createCepHostExecutor } from "@/management/ae/cep/host-executor";
 import { detectCepHostCode } from "@/management/ae/cep/runtime";
@@ -53,6 +53,12 @@ import type { Preset } from "@/management/preset/contract";
 import { askHostDeleteConfirm } from "@/management/preset/delete-confirm";
 import type { PresetDialogRequest } from "@/management/preset/dialog-request";
 import {
+	parseGroupFromText,
+	removeGroupEntry,
+	removePresetFromGroupEntry,
+	upsertGroupEntry,
+} from "@/management/preset/group/catalog";
+import {
 	dispatchGroupWorkspaceRequest,
 	GROUP_WORKSPACE_EVENT,
 	type GroupWorkspaceRequest,
@@ -62,19 +68,13 @@ import {
 	releaseGroupPreset,
 } from "@/management/preset/group/release";
 import {
-	parseGroupFromText,
-	removeGroupEntry,
-	removePresetFromGroupEntry,
-	upsertGroupEntry,
-} from "@/management/preset/group/catalog";
-import { writePresetToolHandoff } from "@/management/preset/tool-handoff-file";
-import { PRESET_TOOL_OPEN_BUS_CHANNEL } from "@/management/preset/tool-open-channel";
-import {
 	duplicatePreset,
 	getPreset,
 	listPresets,
 	removeLocalPreset,
-} from "@/management/preset/use-cases";
+} from "@/management/preset/operations";
+import { writePresetToolHandoff } from "@/management/preset/tool-handoff-file";
+import { PRESET_TOOL_OPEN_BUS_CHANNEL } from "@/management/preset/tool-open-channel";
 import {
 	PRESET_HOVER_EVENT,
 	type WorkspacePresetHoverDetail,
@@ -199,7 +199,7 @@ import {
 	requestOpenBackgroundPanel,
 	requestOpenWorkspaceShellTool,
 } from "./hooks/dialogs";
-import { openDebugConsole, openUrlInDefaultBrowser } from "./hooks/helpers";
+import { openDebugConsole, openUrlInDefaultBrowser } from "./hooks/external";
 import {
 	ensurePrimaryPanelWidgets,
 	remapSurfaceSelectionByPreservedTileIds,

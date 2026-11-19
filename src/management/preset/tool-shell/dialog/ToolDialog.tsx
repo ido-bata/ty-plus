@@ -11,9 +11,9 @@ import { useTranslation } from "react-i18next";
 import { selectFile, selectFolder } from "@/management/ae/cep/dialog-shim/bolt";
 import { DialogShell } from "@/management/dialog";
 import { registerCepJsonContextMenuSurface } from "@/management/dialog/context-menu";
+import { readPhysicalExtensionId } from "@/management/dialog/modeless/surface-id";
 import { DialogFooterActions } from "@/management/dialog/shell/Footer";
 import type { DroppedFile } from "@/management/dialog/shell/Layout";
-import { readPhysicalExtensionId } from "@/management/dialog/modeless/surface-id";
 import { useDialogClose } from "@/management/dialog/useClose";
 import { assertPresetAssetPresent } from "@/management/preset/assets/verification";
 import {
@@ -22,17 +22,17 @@ import {
 } from "@/management/preset/authoring/write-preset-asset";
 import { ArchiveDetailsSection } from "@/management/preset/catalog-add/ArchiveDetailsSection";
 import { verifyAndUpsertPreset } from "@/management/preset/catalog-add/verify-and-upsert";
-import { PresetIconEditor } from "@/management/preset/icon/Editor";
 import type { Preset, PresetType } from "@/management/preset/contract";
 import {
 	type PresetSaveEntryPoint,
 	tracePresetLifecycle,
 } from "@/management/preset/execution/lifecycle-trace";
+import { PresetIconEditor } from "@/management/preset/icon/Editor";
 import {
 	createPresetIconDraft,
 	presetIconDraftToPresetIcon,
 	presetIconToDraft,
-} from "@/management/preset/icon/draft";
+} from "@/management/preset/icon/editor-state";
 import {
 	buildPresetToolContextMenuPayload,
 	PRESET_TOOL_CTX,

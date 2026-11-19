@@ -13,7 +13,7 @@ import { join, relative, resolve } from "node:path";
 import {
 	getNamedSymbols as extractNamedSymbols,
 	type NamedSymbol,
-} from "../../lib/extract.js";
+} from "../../lib/imports.js";
 import type { Finding, Severity } from "../types.js";
 
 export function run(srcRoot: string): Finding[] {

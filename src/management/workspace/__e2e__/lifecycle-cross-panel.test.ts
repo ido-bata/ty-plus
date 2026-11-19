@@ -91,7 +91,7 @@ vi.mock("@/management/workspace/messaging/publish-shell-message", () => ({
 	},
 }));
 
-vi.mock("@/management/preset/use-cases", () => ({
+vi.mock("@/management/preset/operations", () => ({
 	listPresets: async () => [...presetRepo.rows],
 }));
 

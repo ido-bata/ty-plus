@@ -1,9 +1,9 @@
 import { type JSX, useCallback, useEffect } from "react";
 import { Animation } from "@/function/onboarding/ui/Animation";
-import { useCep } from "@/management/ae/cep/contexts/Context";
+import { useCep } from "@/management/ae/cep/contexts/CepContext";
 import { registerCepJsonContextMenuSurface } from "@/management/dialog/context-menu";
 import { useTranslation } from "@/management/i18n/Context";
-import { openUrlInDefaultBrowser } from "@/management/workspace/hooks/helpers";
+import { openUrlInDefaultBrowser } from "@/management/workspace/hooks/external";
 import { Button } from "@/shared";
 import { css } from "@/styled-system/css";
 

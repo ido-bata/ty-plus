@@ -8,16 +8,13 @@ import { cleanup, render, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { NotificationCenter } from "./Center";
 import { fetchNotificationFeed } from "./feed";
-import {
-	loadNotificationsStore,
-	saveNotificationsStore,
-} from "./notifications";
+import { loadNotificationsStore, saveNotificationsStore } from "./store";
 
 vi.mock("./feed", () => ({
 	fetchNotificationFeed: vi.fn(async () => null),
 }));
 
-vi.mock("./notifications", () => ({
+vi.mock("./store", () => ({
 	loadNotificationsStore: vi.fn(async () => ({ items: [], readAtById: {} })),
 	saveNotificationsStore: vi.fn(async () => {}),
 }));

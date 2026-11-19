@@ -26,10 +26,7 @@ import "../../../../storybook/decorators/i18n-init-once";
 
 import type { Meta, StoryObj } from "@storybook/react";
 
-import {
-	DirectoryBrowser,
-	type DirectoryBrowserEntry,
-} from "./Component";
+import { DirectoryBrowser, type DirectoryBrowserEntry } from "./Component";
 
 const MOCK_ENTRIES: DirectoryBrowserEntry[] = [
 	{ path: "/preset/root/animation", name: "animation", isDirectory: true },

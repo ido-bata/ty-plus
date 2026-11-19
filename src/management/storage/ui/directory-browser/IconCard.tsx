@@ -6,11 +6,8 @@ import type {
 	DirectoryBrowserAspect,
 	DirectoryBrowserEntry,
 } from "./Component";
-import { directoryBrowserMenuFileType } from "./Menu";
-import {
-	EntryIcon,
-	MediaCardContent,
-} from "./Shell.entry-icon";
+import { directoryBrowserMenuFileType } from "./menu";
+import { EntryIcon, MediaCardContent } from "./Shell.entry-icon";
 
 export type DirectoryBrowserIconCardProps = {
 	entry: DirectoryBrowserEntry;

@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { useCep } from "@/management/ae/cep/contexts/Context";
+import { useCep } from "@/management/ae/cep/contexts/CepContext";
 import {
 	installCepJsonContextMenuRewrite,
 	registerCepJsonContextMenuSurface,

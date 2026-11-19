@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import type { PresetAddFolderType } from "@/management/preset/catalog-add/archive/types";
+import type { PresetAddFolderType } from "@/management/preset/catalog-add/archive-source/types";
 import { css, cx } from "@/styled-system/css";
 
 const FOLDER_TABS: { id: PresetAddFolderType; label: string }[] = [

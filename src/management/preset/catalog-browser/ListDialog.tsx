@@ -46,12 +46,12 @@ import { traceExecute } from "@/management/preset/execution/lifecycle-trace";
 import type { GroupEntry } from "@/management/preset/group/catalog";
 import { parseGroupFromText } from "@/management/preset/group/catalog";
 import { tryParsePresetIconValue } from "@/management/preset/icon/normalize";
-import { getSharedSiblingListDirectory } from "@/management/preset/sibling/directory-lister";
 import {
 	getPreset,
 	listPresets,
 	removeLocalPreset,
-} from "@/management/preset/use-cases";
+} from "@/management/preset/operations";
+import { getSharedSiblingListDirectory } from "@/management/preset/sibling/directory-lister";
 import {
 	PresetGlyphById,
 	type PresetGlyphByIdProps,

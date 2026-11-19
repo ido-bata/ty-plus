@@ -32,7 +32,7 @@ import {
 	resolveCurrentFolderPath,
 } from "@/function/onboarding/usePaths";
 import type { WidgetType } from "@/function/widget";
-import { useCep } from "@/management/ae/cep/contexts/Context";
+import { useCep } from "@/management/ae/cep/contexts/CepContext";
 import { selectFolder } from "@/management/ae/cep/dialog-shim/bolt";
 import { createCepSurfaceTransport } from "@/management/ae/cep/transport";
 import { BUNDLED_LOCALE_NAMES } from "@/management/i18n/bundled-resources";

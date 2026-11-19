@@ -1,6 +1,6 @@
 import { createCepSurfaceTransport } from "@/management/ae/cep/transport";
 import { createLogger } from "@/management/debug";
-import { listPresets } from "@/management/preset/use-cases";
+import { listPresets } from "@/management/preset/operations";
 import { publishShellMessage } from "@/management/workspace/messaging/publish-shell-message";
 import { tryPersistAppendPresetFromDialog } from "@/management/workspace/placement/append-preset-from-dialog-disk";
 import { tryPersistRemovePresetFromDialog } from "@/management/workspace/placement/remove-preset-from-dialog-disk";

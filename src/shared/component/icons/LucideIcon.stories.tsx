@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { Library, Save, Settings, X } from "lucide-react";
 import { css } from "@/styled-system/css";
 
-import { Icon } from "./Icon";
+import { Icon } from "./LucideIcon";
 
 type Args = {
 	iconName: "library" | "save" | "settings" | "close";

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import type { CSSProperties } from "react";
-import { BackgroundPreview } from "@/management/workspace/background/BackgroundPreview";
+import { BackgroundPreview } from "@/management/workspace/background/Preview";
 import { css } from "@/styled-system/css";
 
 type Args = {

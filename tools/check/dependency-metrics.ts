@@ -1,6 +1,6 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
-import { getImportEntries } from "./lib/extract.js";
+import { getImportEntries } from "./lib/imports.js";
 
 const ROOT = resolve("src");
 

@@ -367,7 +367,7 @@ describe("createCepHostExecutor", () => {
 
 // Issue #158 — the reference lives in a comment because a `#NNN` inside a
 // string literal on a code line is indistinguishable from a 3-digit hex colour
-// to check-design-tokens, which flags it as a colour literal.
+// to design-tokens, which flags it as a colour literal.
 describe("host bundle load coordinator", () => {
 	// Repeated operations share one caller per (Window, HostId); cross-surface
 	// deduplication is covered by the shared-engine cases below.

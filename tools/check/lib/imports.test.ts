@@ -1,9 +1,9 @@
 /**
- * Self-tests for tools/check/lib/extract.ts.
+ * Self-tests for tools/check/lib/imports.ts.
  */
 
 import { describe, expect, it } from "vitest";
-import { getImportEntries, getNamedSymbols } from "./extract.js";
+import { getImportEntries, getNamedSymbols } from "./imports.js";
 
 describe("getImportEntries", () => {
 	it("parses simple named imports", () => {
@@ -94,9 +94,9 @@ describe("getNamedSymbols", () => {
 	});
 
 	it("extracts function declarations", () => {
-		const source = `function helper() { return 1; }\n`;
+		const source = `function computeTotal() { return 1; }\n`;
 		const symbols = getNamedSymbols("test.ts", source);
-		expect(symbols.map((s) => s.name)).toContain("helper");
+		expect(symbols.map((s) => s.name)).toContain("computeTotal");
 	});
 
 	it("extracts class declarations", () => {

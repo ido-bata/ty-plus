@@ -7,10 +7,10 @@ import {
 	BrowserBrowseModeSelect,
 } from "./BrowseModeSelect";
 import { BrowserFilterPanel } from "./FilterPanel";
+import type { FileBrowserBrowseMode, FileBrowserFilter } from "./lib/types";
 import { BrowserPathField } from "./PathField";
 import { BrowserSearchField } from "./SearchField";
 import { BrowserToolbar } from "./Toolbar";
-import type { FileBrowserBrowseMode, FileBrowserFilter } from "./lib/types";
 export type BrowserHeaderProps = {
 	searchInputRef: RefObject<HTMLInputElement | null>;
 	searchDraft: string;

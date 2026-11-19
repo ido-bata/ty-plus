@@ -6,6 +6,7 @@ import {
 } from "@/management/preset/assets/icons";
 import type { Preset } from "@/management/preset/contract";
 import { presetIconText } from "@/management/preset/contract";
+import { getPreset } from "@/management/preset/operations";
 import {
 	findSiblingImagePathForPresetFile,
 	isPresetSidekickSourcePath,
@@ -14,7 +15,6 @@ import {
 	type SiblingListingEntry,
 	siblingPathKey,
 } from "@/management/preset/sibling/thumbnail";
-import { getPreset } from "@/management/preset/use-cases";
 import { CanvasEasingIcon } from "@/management/preset/workspace/CanvasEasingIcon";
 import { GlyphCachedImage } from "@/management/preset/workspace/GlyphCachedImage";
 import { cx } from "@/shared/util/cx";

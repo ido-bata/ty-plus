@@ -32,7 +32,7 @@
 import { execSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { basename, posix } from "node:path";
-import { getNamedSymbols } from "./lib/extract.js";
+import { getNamedSymbols } from "./lib/imports.js";
 
 type Severity = "error" | "warn" | "info";
 

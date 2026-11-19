@@ -26,7 +26,7 @@ const cepRuntimeState = vi.hoisted(() => {
 	return { hostCode: "AEFT" };
 });
 
-vi.mock("@/management/preset/use-cases", () => ({
+vi.mock("@/management/preset/operations", () => ({
 	getPreset: (id: string) => useCasesState.getPreset(id),
 }));
 

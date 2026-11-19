@@ -4,7 +4,7 @@ import {
 	SettingsFieldLabel,
 	SettingsGrid,
 } from "@/management/setting/dialog/layout/SettingsGrid";
-import { openUrlInDefaultBrowser } from "@/management/workspace/hooks/helpers";
+import { openUrlInDefaultBrowser } from "@/management/workspace/hooks/external";
 import { Button } from "@/shared/component/controls/Button";
 import { Input } from "@/shared/component/fields/Input";
 import { ListSelect } from "@/shared/component/fields/ListSelect";

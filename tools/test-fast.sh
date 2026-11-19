@@ -15,7 +15,7 @@ PATTERNS=(
   "src/management/storage/file-operations.test.ts"
   "src/management/storage/read/scoped-directory.test.ts"
   "src/management/storage/index-cache/quick-actions-runtime.test.ts"
-  "src/management/online/notification/notifications.test.ts"
+  "src/management/online/notification/store.test.ts"
   "src/management/online/catalog/gateway.test.ts"
   "src/management/online/connectivity/env.test.ts"
   "src/management/setting/models/settings.test.ts"

@@ -3,7 +3,7 @@ import type { JSX, ReactNode } from "react";
 import type { PresetIcon } from "@/management/preset/contract";
 import type { FileBrowserFileType } from "@/management/storage/file-browser-service";
 import { DirectoryBrowserIconCard } from "@/management/storage/ui/directory-browser/IconCard";
-import { directoryBrowserMenuFileType } from "@/management/storage/ui/directory-browser/Menu";
+import { directoryBrowserMenuFileType } from "@/management/storage/ui/directory-browser/menu";
 import { EntryIcon } from "@/management/storage/ui/directory-browser/Shell.entry-icon";
 import {
 	type DirectoryBrowserViewMode,

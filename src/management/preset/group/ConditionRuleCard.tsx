@@ -1,9 +1,9 @@
 import { Trash2 } from "lucide-react";
 import type { JSX } from "react";
 import { readUserHomeOrFallback } from "@/management/preset/catalog-add/browse-start-dir";
-import { PresetIconEditor } from "@/management/preset/icon/Editor";
 import type { Preset, PresetType } from "@/management/preset/contract";
-import { presetIconDraftToPresetIcon } from "@/management/preset/icon/draft";
+import { PresetIconEditor } from "@/management/preset/icon/Editor";
+import { presetIconDraftToPresetIcon } from "@/management/preset/icon/editor-state";
 import { AuthoringSegment } from "@/management/preset/tool-shell/archive-layout";
 import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
 import { glyphBoxFillClass } from "@/management/preset/workspace/glyph-classes";

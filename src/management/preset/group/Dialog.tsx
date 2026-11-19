@@ -2,14 +2,15 @@ import { ChevronDown, FolderOpen, Plus, Trash2 } from "lucide-react";
 import { type JSX, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { readUserHomeOrFallback } from "@/management/preset/catalog-add/browse-start-dir";
-import { PresetIconEditor } from "@/management/preset/icon/Editor";
 import type { Preset } from "@/management/preset/contract";
-import type { PresetIconEditorDraft } from "@/management/preset/icon/draft";
+import { persistFolderGroupPreset } from "@/management/preset/group/persist-folder";
+import { PresetIconEditor } from "@/management/preset/icon/Editor";
+import type { PresetIconEditorDraft } from "@/management/preset/icon/editor-state";
 import {
 	createPresetIconDraft,
 	presetIconDraftToPresetIcon,
-} from "@/management/preset/icon/draft";
-import { persistFolderGroupPreset } from "@/management/preset/group/persist-folder";
+} from "@/management/preset/icon/editor-state";
+import { listPresets } from "@/management/preset/operations";
 import {
 	AuthoringField,
 	AuthoringGrid,
@@ -17,7 +18,6 @@ import {
 } from "@/management/preset/tool-shell/archive-layout";
 import { Dialog } from "@/management/preset/tool-shell/dialog/ToolDialog";
 import { FolderDirectoryPicker } from "@/management/preset/tool-shell/FolderDirectoryPicker";
-import { listPresets } from "@/management/preset/use-cases";
 import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
 import { glyphBoxFillClass } from "@/management/preset/workspace/glyph-classes";
 import { AccordionSection } from "@/management/setting/dialog/sections/AccordionSection";

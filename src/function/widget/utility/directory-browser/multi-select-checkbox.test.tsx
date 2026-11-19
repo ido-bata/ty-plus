@@ -78,7 +78,7 @@ mocks.listDirectory.mockImplementation(async (dir: string) => {
 	return [];
 });
 
-vi.mock("@/management/ae/cep/contexts/Context", () => ({
+vi.mock("@/management/ae/cep/contexts/CepContext", () => ({
 	useCep: () => ({ isCep: true }),
 }));
 
@@ -125,7 +125,7 @@ vi.mock("@/management/preset", () => ({
 	readIconTileAspect: () => "square" as const,
 }));
 
-vi.mock("@/management/preset/use-cases", () => ({
+vi.mock("@/management/preset/operations", () => ({
 	getPreset: vi.fn(),
 }));
 

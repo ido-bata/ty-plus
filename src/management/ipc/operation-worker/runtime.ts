@@ -1,7 +1,4 @@
-import type {
-	WorkerChild,
-	WorkerSpawnOptions,
-} from "./runner";
+import type { WorkerChild, WorkerSpawnOptions } from "./runner";
 
 export interface WorkerFileStats {
 	readonly size: number;

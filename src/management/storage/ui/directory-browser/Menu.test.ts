@@ -13,7 +13,7 @@ import {
 	type DirectoryBrowserMenuContext,
 	handleDirectoryBrowserMenuSelect,
 	parseDirectoryBrowserMenuHit,
-} from "./Menu";
+} from "./menu";
 
 const baseCtx: DirectoryBrowserMenuContext = {
 	surface: "onboarding",

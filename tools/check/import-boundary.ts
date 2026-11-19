@@ -15,7 +15,7 @@
 
 import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
-import { getImportEntries, type ImportEntry } from "./lib/extract.js";
+import { getImportEntries, type ImportEntry } from "./lib/imports.js";
 
 const ROOT = resolve("src");
 const BASELINE_PATH = resolve(__dirname, ".baseline.json");
@@ -33,7 +33,7 @@ export interface MgmtFnEdge {
 }
 
 // ---------------------------------------------------------------------------
-// Import detection (regex-based; see ./lib/extract.ts)
+// Import detection (regex-based; see ./lib/imports.ts)
 // ---------------------------------------------------------------------------
 
 export type { ImportEntry };

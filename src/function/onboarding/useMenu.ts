@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useCep } from "@/management/ae/cep/contexts/Context";
+import { useCep } from "@/management/ae/cep/contexts/CepContext";
 import {
 	installCepJsonContextMenuRewrite,
 	registerCepJsonContextMenuSurface,
@@ -8,7 +8,7 @@ import {
 	buildDirectoryBrowserMenu,
 	handleDirectoryBrowserMenuSelect,
 	parseDirectoryBrowserMenuHit,
-} from "@/management/storage/ui/directory-browser/Menu";
+} from "@/management/storage/ui/directory-browser/menu";
 
 export function useMenu({
 	onNext,

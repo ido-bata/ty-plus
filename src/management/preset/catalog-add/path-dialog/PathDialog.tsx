@@ -16,20 +16,20 @@ import { ArchiveDetailsSection } from "@/management/preset/catalog-add/ArchiveDe
 import {
 	createArchiveIconDraft,
 	iconDraftToPresetIcon,
-} from "@/management/preset/catalog-add/archive/icon";
-import type { ArchiveListRow } from "@/management/preset/catalog-add/archive/load-entries";
-import { loadArchiveRows } from "@/management/preset/catalog-add/archive/load-entries";
+} from "@/management/preset/catalog-add/archive-source/icon";
+import type { ArchiveListRow } from "@/management/preset/catalog-add/archive-source/load-entries";
+import { loadArchiveRows } from "@/management/preset/catalog-add/archive-source/load-entries";
 import {
 	normalizeFsPath,
 	PRESET_ADD_DRIVES_PATH,
 	type PresetAddFolderType,
-} from "@/management/preset/catalog-add/archive/types";
+} from "@/management/preset/catalog-add/archive-source/types";
 import { readUserHomeOrFallback } from "@/management/preset/catalog-add/browse-start-dir";
 import { parseRootPathsFromSettingsJson } from "@/management/preset/catalog-add/parse-root-paths";
 import { verifyAndUpsertPreset } from "@/management/preset/catalog-add/verify-and-upsert";
-import { PresetIconEditor } from "@/management/preset/icon/Editor";
 import type { Preset } from "@/management/preset/contract";
 import { tracePresetLifecycle } from "@/management/preset/execution/lifecycle-trace";
+import { PresetIconEditor } from "@/management/preset/icon/Editor";
 import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
 import {
 	canUseCepNodeFileBrowser,

@@ -18,7 +18,7 @@
 import { assertPresetAssetPresent } from "@/management/preset/assets/verification";
 import type { Preset } from "@/management/preset/contract";
 import type { PresetSaveEntryPoint } from "@/management/preset/execution/lifecycle-trace";
-import { upsertLocalPreset } from "@/management/preset/use-cases";
+import { upsertLocalPreset } from "@/management/preset/operations";
 
 /**
  * Verify the asset backing `record` is present on disk, then upsert

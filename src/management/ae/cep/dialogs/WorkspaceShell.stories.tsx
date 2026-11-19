@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { Button } from "@/shared/component/controls/Button";
 import { css } from "@/styled-system/css";
 
-import { WorkspaceShell } from "./DialogShell";
+import { WorkspaceShell } from "./WorkspaceShell";
 
 type Args = {
 	title: string;

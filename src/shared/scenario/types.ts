@@ -19,7 +19,7 @@
  * this PR — only the contract is declared and structurally validated.
  *
  * Scenarios are validated by `validator.ts`.  The rule-check Vitest suite
- * (`scenario-rule-runner.test.ts`) walks every spec file and asserts
+ * (`rule-runner.test.ts`) walks every spec file and asserts
  * structural validity.  Executing the actions of a scenario (via real AE
  * or Computer Use) is the role of future `real_ae_e2e` runners and is
  * OUT OF SCOPE for this PR.

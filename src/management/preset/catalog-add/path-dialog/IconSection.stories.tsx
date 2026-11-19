@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { css } from "@/styled-system/css";
 
-import { createArchiveIconDraft } from "../archive/icon";
+import { createArchiveIconDraft } from "../archive-source/icon";
 import { PathDialogIconSection } from "./IconSection";
 
 type Args = {

@@ -8,7 +8,7 @@
 import type { ComponentType } from "react";
 import type { WidgetRenderProps } from "@/function/widget/define";
 import { defineWidget } from "@/function/widget/define";
-import { QuickActionsWidget } from "./ActionList";
+import { QuickActionsWidget } from "./QuickActionsWidget";
 
 /**
  * Quick Actions widget descriptor.
