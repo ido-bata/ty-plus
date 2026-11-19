@@ -15,7 +15,7 @@ import {
 	type ReleaseGroupDropPlacement,
 	releaseDropPlacementFromState,
 	releaseGroupPreset,
-} from "@/management/preset/group/group-release";
+} from "@/management/preset/group/release";
 import type { SurfaceState } from "@/management/workspace/state";
 
 const baseState: Pick<SurfaceState, "surfaceTiles" | "groupCatalogEntries"> = {

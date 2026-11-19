@@ -1,7 +1,7 @@
 import type { JSX } from "react";
 import { useTranslation } from "react-i18next";
 import { readUserHomeOrFallback } from "@/management/preset/catalog-add/browse-start-dir";
-import { Dialog } from "@/management/preset/tool-shell/Dialog";
+import { Dialog } from "@/management/preset/tool-shell/dialog/ToolDialog";
 
 export function ImportDialog(): JSX.Element {
 	const { t } = useTranslation("presets");

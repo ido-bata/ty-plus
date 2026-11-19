@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { css } from "@/styled-system/css";
 
-import { createArchiveIconDraft } from "./archive-icon";
-import { PathDialogIconSection } from "./PathDialogIconSection";
+import { createArchiveIconDraft } from "../archive/icon";
+import { PathDialogIconSection } from "./IconSection";
 
 type Args = {
 	iconType: "text" | "emoji" | "image";

@@ -17,13 +17,13 @@ const LAYOUT_SOURCE = readFileSync(LAYOUT_SOURCE_PATH, "utf8");
 
 const PATH_DIALOG_SOURCE_PATH = resolve(
 	REPO_ROOT,
-	"src/management/preset/catalog-add/PathDialog.tsx",
+	"src/management/preset/catalog-add/path-dialog/PathDialog.tsx",
 );
 const PATH_DIALOG_SOURCE = readFileSync(PATH_DIALOG_SOURCE_PATH, "utf8");
 
 const TOOL_SHELL_DIALOG_SOURCE_PATH = resolve(
 	REPO_ROOT,
-	"src/management/preset/tool-shell/Dialog.tsx",
+	"src/management/preset/tool-shell/dialog/ToolDialog.tsx",
 );
 const TOOL_SHELL_DIALOG_SOURCE = readFileSync(
 	TOOL_SHELL_DIALOG_SOURCE_PATH,

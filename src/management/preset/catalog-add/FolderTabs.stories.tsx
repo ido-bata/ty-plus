@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { css } from "@/styled-system/css";
 
-import type { PresetAddFolderType } from "./archive-types";
+import type { PresetAddFolderType } from "./archive/types";
 import { FolderTabs } from "./FolderTabs";
 
 type Args = {

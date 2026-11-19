@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { css } from "@/styled-system/css";
 
-import type { PresetToolField } from "./Dialog";
-import { ToolDialogFields } from "./DialogFields";
+import type { PresetToolField } from "./ToolDialog";
+import { ToolDialogFields } from "./Fields";
 
 const baseFields: PresetToolField[] = [
 	{ key: "title", label: "Title", placeholder: "Title", kind: "input" },

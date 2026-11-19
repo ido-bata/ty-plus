@@ -215,7 +215,7 @@ The author named three branches the requirement could go down. Each maps to a di
 
 ### Q2. "Catalog-based" (preset picker) vs. "AE local file" vs. "SVG string" vs. "Standard presets"
 
-- **Catalog-based** (preset picker): already supported by `PresetIconEditorDraft.type = "image"` with `imagePath` (`icon-editor.ts:13`), but the picker would be a new UI widget — there is no existing "pick a preset as cell image" surface. The catalog-add dialog (`src/management/preset/catalog-add/`) and the dialog icon section (`src/management/preset/tool-shell/DialogIconSection.tsx`) are the closest analogs.
+- **Catalog-based** (preset picker): already supported by `PresetIconEditorDraft.type = "image"` with `imagePath` (`icon-editor.ts:13`), but the picker would be a new UI widget — there is no existing "pick a preset as cell image" surface. The catalog-add dialog (`src/management/preset/catalog-add/`) and the dialog icon section (`src/management/preset/tool-shell/dialog/IconSection.tsx`) are the closest analogs.
 - **AE local file**: file-path input. `GlyphCachedImage` already renders arbitrary file paths through the Rust thumbnail pipeline (with `file://` URL coercion via `imageSrcForBrowser`).
 - **SVG string**: not currently supported by `PresetIcon` (the `image` kind is raster-only). Adding SVG would mean a new `PresetIcon` variant or a parallel "raw SVG" branch.
 - **Standard presets** (built-in gallery): would require a curated list under `src/shared/` or `src/management/preset/assets/`. There is no such list today.

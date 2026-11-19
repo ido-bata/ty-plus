@@ -10,7 +10,7 @@
  * that the menu handler `case CTX_MENU_IDS.releaseGroupPreset` exists.
  *
  * Behavioral coverage of the extracted pure logic lives in
- * `src/management/preset/group/group-release.test.ts`.
+ * `src/management/preset/group/release.test.ts`.
  */
 import fs from "node:fs";
 import { describe, expect, it } from "vitest";
@@ -36,18 +36,18 @@ const constantsSource = fs.readFileSync(
 );
 
 describe("useWorkspaceRuntime hook (group drop wiring — Issue #86)", () => {
-	it("imports the extracted releaseGroupPreset helper from preset/group/group-release", () => {
+	it("imports the extracted releaseGroupPreset helper from preset/group/release", () => {
 		expect(hookSource).toMatch(
-			/import\s*\{[^}]*\breleaseGroupPreset\b[^}]*\}\s*from\s*["']@\/management\/preset\/group\/group-release["']/,
+			/import\s*\{[^}]*\breleaseGroupPreset\b[^}]*\}\s*from\s*["']@\/management\/preset\/group\/release["']/,
 		);
 		expect(hookSource).toMatch(
-			/import\s*\{[^}]*\breleaseDropPlacementFromState\b[^}]*\}\s*from\s*["']@\/management\/preset\/group\/group-release["']/,
+			/import\s*\{[^}]*\breleaseDropPlacementFromState\b[^}]*\}\s*from\s*["']@\/management\/preset\/group\/release["']/,
 		);
 	});
 
 	it("exports releaseGroupPreset and dropPlacement helper from the module under test", () => {
 		const helperSource = fs.readFileSync(
-			new URL("../preset/group/group-release.ts", import.meta.url),
+			new URL("../preset/group/release.ts", import.meta.url),
 			"utf8",
 		);
 		expect(helperSource).toMatch(/export\s+const\s+releaseGroupPreset/);

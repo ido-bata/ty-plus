@@ -15,7 +15,7 @@ import {
 	AuthoringGrid,
 	AuthoringSection,
 } from "@/management/preset/tool-shell/archive-layout";
-import { Dialog } from "@/management/preset/tool-shell/Dialog";
+import { Dialog } from "@/management/preset/tool-shell/dialog/ToolDialog";
 import { FolderDirectoryPicker } from "@/management/preset/tool-shell/FolderDirectoryPicker";
 import { listPresets } from "@/management/preset/use-cases";
 import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";

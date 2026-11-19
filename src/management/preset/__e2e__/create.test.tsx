@@ -36,8 +36,8 @@ const {
 
 vi.mock("@/management/preset", async () => {
 	const { Dialog } = await vi.importActual<
-		typeof import("@/management/preset/tool-shell/Dialog")
-	>("@/management/preset/tool-shell/Dialog");
+		typeof import("@/management/preset/tool-shell/dialog/ToolDialog")
+	>("@/management/preset/tool-shell/dialog/ToolDialog");
 	return {
 		ToolDialog: Dialog,
 		readUserHomeOrFallback: () => "C:\\Users\\test",

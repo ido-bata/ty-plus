@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { css } from "@/styled-system/css";
 
-import { PathDialogPathFieldRow } from "./PathDialogPathFieldRow";
+import { PathDialogPathFieldRow } from "./PathFieldRow";
 
 type Args = {
 	value: string;

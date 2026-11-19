@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { css } from "@/styled-system/css";
 
-import { ToolDialogForm } from "./DialogForm";
+import { ToolDialogForm } from "./Form";
 
 type Args = {
 	name: string;

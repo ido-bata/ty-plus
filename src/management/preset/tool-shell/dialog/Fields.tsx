@@ -6,8 +6,8 @@ import { PathField } from "@/shared/component/fields/PathField";
 import { Textarea } from "@/shared/component/fields/Textarea";
 import { css } from "@/styled-system/css";
 
-import type { PathBrowseSpec, PresetToolField } from "./Dialog";
-import { shellFieldLabelClass } from "./preset-tool-helpers";
+import type { PathBrowseSpec, PresetToolField } from "./ToolDialog";
+import { shellFieldLabelClass } from "../preset-tool-helpers";
 
 const fieldColumnClass = css({
 	display: "flex",

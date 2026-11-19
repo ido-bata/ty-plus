@@ -6,7 +6,7 @@ import { Tile } from "@/management/preset/workspace/Tile";
 import type { GridSettings } from "@/management/workspace/layout/grid-document";
 import { ATTR_GROUP_PANEL } from "@/management/workspace/placement/types";
 import { css, cx } from "@/styled-system/css";
-import { useGroupPanelDrag } from "./use-group-panel-drag";
+import { useGroupPanelDrag } from "./use-panel-drag";
 
 const ATTR_GROUP_PANEL_ITEM = "data-workspace-group-panel-item";
 

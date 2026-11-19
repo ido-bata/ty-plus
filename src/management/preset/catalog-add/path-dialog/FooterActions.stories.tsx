@@ -1,23 +1,16 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { css } from "@/styled-system/css";
 
-import { ToolDialogFooter } from "./DialogFooter";
-
-const stubT = (key: string): string => {
-	const map: Record<string, string> = {
-		"presetTool.cancel": "Cancel",
-		"presetTool.create": "Create",
-		"presetTool.status.saving": "Saving...",
-	};
-	return map[key] ?? key;
-};
+import { PathDialogFooterActions } from "./FooterActions";
 
 type Args = {
 	busy: boolean;
+	canAdd: boolean;
 };
 
 const baseArgs: Args = {
 	busy: false,
+	canAdd: true,
 };
 
 const decoratorBoxClass = css({
@@ -26,10 +19,11 @@ const decoratorBoxClass = css({
 });
 
 const meta = {
-	title: "Preset/ToolShell/DialogFooter",
+	title: "Preset/CatalogAdd/PathDialogFooterActions",
 	args: baseArgs,
 	argTypes: {
 		busy: { control: "boolean" },
+		canAdd: { control: "boolean" },
 	},
 	decorators: [
 		(Story) => (
@@ -39,11 +33,11 @@ const meta = {
 		),
 	],
 	render: (args: Args) => (
-		<ToolDialogFooter
+		<PathDialogFooterActions
 			close={() => undefined}
 			busy={args.busy}
-			t={stubT}
-			onSave={async () => undefined}
+			canAdd={args.canAdd}
+			handleAdd={async () => undefined}
 		/>
 	),
 } satisfies Meta<Args>;
@@ -53,6 +47,10 @@ type Story = StoryObj<Args>;
 
 export const Default: Story = {};
 
-export const Saving: Story = {
+export const Disabled: Story = {
+	args: { canAdd: false },
+};
+
+export const Busy: Story = {
 	args: { busy: true },
 };
