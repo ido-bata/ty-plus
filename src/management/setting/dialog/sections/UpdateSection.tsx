@@ -233,8 +233,8 @@ export function UpdateSection(): JSX.Element {
 							>
 								{t("updates.releaseNotes")}
 							</button>
-							{(installState.kind !== "done" ||
-								installState.status === "manual_required") ? (
+							{installState.kind !== "done" ||
+							installState.status === "manual_required" ? (
 								<button
 									type="button"
 									className={linkStyle}
