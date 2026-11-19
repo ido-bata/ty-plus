@@ -2,13 +2,13 @@
 
 - Status: **条件付きリリース可能**（人間の最終視覚受入・公開承認待ち）
 - 対象: PR #188（`release-0-11-0` → `main`）
-- RC候補 SHA: `bbbe77cc4f3dab367d19256fdbc2fe2a8f1551d6`（`release-0-11-0` HEAD、PR #234 merge 後）
+- RC候補 SHA: `967abb3723b9099e19247a492d58105d19103913`（`release-0-11-0` 製品コード HEAD。PR #249/#250 merge 後に再確定 — 末尾「追記 第3回」参照。旧候補 `bbbe77cc`/`fab3e9aa` は履歴として各追記に残す）
 - 正本: `.agents/skills/release-channels/SKILL.md`、`docs/operations/release-runbook.md`、ADR-0003/0004、`docs/verification/e2e-acceptance/use-case-matrix.md`
 - **この記録は公開の承認ではない**。`release-0-11-0 → main` merge・tag作成・GitHub Release作成は本人の明示承認まで実行しない。
 
 ## 1. RC候補SHAと証拠の対応
 
-RC候補 `bbbe77cc` について、実機E2E・Storybook capture の証拠SHAとの同一性を差分で証明する。
+RC候補 `bbbe77cc`（当時）について、実機E2E・Storybook capture の証拠SHAとの同一性を差分で証明する。**現行RC候補は `967abb37`** — `bbbe77cc`→`967abb37` の製品コード差分は updater 経路のみ（#238/#241/#243-#246/#248）で、当該経路は insider.8→.9 の実機 UI E2E で検証済み。
 
 | 範囲 | 差分 | 判定 |
 | --- | --- | --- |
