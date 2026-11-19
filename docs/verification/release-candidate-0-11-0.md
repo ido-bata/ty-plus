@@ -2,49 +2,71 @@
 
 - Status: **条件付きリリース可能**（人間の最終視覚受入・公開承認待ち）
 - 対象: PR #188（`release-0-11-0` → `main`）
-- RC候補 SHA: `c7795084054db6e91bf69b1fe893c40e09169b4b`（`release-0-11-0` HEAD、PR #231 merge 後）
+- RC候補 SHA: `bbbe77cc4f3dab367d19256fdbc2fe2a8f1551d6`（`release-0-11-0` HEAD、PR #234 merge 後）
 - 正本: `.agents/skills/release-channels/SKILL.md`、`docs/operations/release-runbook.md`、ADR-0003/0004、`docs/verification/e2e-acceptance/use-case-matrix.md`
 - **この記録は公開の承認ではない**。`release-0-11-0 → main` merge・tag作成・GitHub Release作成は本人の明示承認まで実行しない。
 
 ## 1. RC候補SHAと証拠の対応
 
-RC候補 `c7795084` について、実機E2E・Storybook capture の証拠SHAとの同一性を差分で証明する。
+RC候補 `bbbe77cc` について、実機E2E・Storybook capture の証拠SHAとの同一性を差分で証明する。
 
 | 範囲 | 差分 | 判定 |
 | --- | --- | --- |
-| `05551c30`（実機E2E・capture実施SHA）→ `c7795084` | `src/` `rust/` `scripts/cep` `scripts/package` `scripts/build`: **差分ゼロ**。変更は `scripts/verify/e2e/cases/settings.ts`（検証ハーネス）、`scripts/verify/update-install-sandbox.ts`（新規検証）、`package.json`（script 1行追加、version 不変）、`docs/` のみ | 製品コード同一のため、`05551c30` 時点の実機証拠は `c7795084` に有効 |
+| `05551c30`（実機E2E・capture実施SHA）→ `bbbe77cc` | `src/` `rust/` `scripts/cep` `scripts/build`: **差分ゼロ**。変更は検証スクリプト（`scripts/verify/*`）、release署名ツール（`scripts/package/sign-zxp.ts` — ZXP timestamp 方針のみ、payload 非含有）、`package.json`（script 1行追加、version 不変）、`docs/` のみ | 製品コード同一のため、`05551c30` 時点の実機証拠は `bbbe77cc` に有効 |
 
-したがって以下の実機証拠は対象SHA `c7795084` の製品コードに対するものとして扱う。
+したがって以下の実機証拠は対象SHA `bbbe77cc` の製品コードに対するものとして扱う。
 
 - AE 2027 実機E2E: `docs/verification/e2e-acceptance/results/2026-11-19-device-macos-ae2027-*/`（smoke/catalog/resilience/settings/journey/journeys/workspace/debug/host + UC個別）
 - UC-J06 を含む full journeys suite: `results/2026-11-19-device-macos-ae2027-journeys-full2/run.json` — **PASS=6/FAIL=0/BLOCKED=0**（単独PASSではなく一括実行での安定性を確認済み）
-- Storybook capture: `storybook-capture-report-05551c308c8581fe7b3c7ec87f6d040c6c063de1`（429/429 story ok）
+- Storybook capture: `storybook-capture-report-05551c308c8581fe7b3c7ec87f6d040c6c063de1`（429/429 story ok。SHA 対応は `storybook-visual-review-0-11-0.md` 冒頭参照）
 
 ## 2. 自動検証（CI）
 
 | ゲート | 対象 | 結果 |
 | --- | --- | --- |
-| skills / static / unit / coverage / release gate | PR #231（`c7795084` を含む release HEAD） | PASS |
-| storybook / capture-report / operation-worker macOS+Windows | `release-0-11-0` workflow_dispatch（RC freeze 経路） | `05551c30` で全 success。`c7795084` では製品コード同一のため同等（settings.ts のみ差分、影響は E2E ハーネス内に限定） |
+| skills / static / unit / coverage / release gate | PR #231/#232/#234（`bbbe77cc` を含む release HEAD） | PASS |
+| storybook / capture-report / operation-worker macOS+Windows | `release-0-11-0` workflow_dispatch（RC freeze 経路） | `05551c30` で全 success。`bbbe77cc` では製品コード同一のため同等（settings.ts のみ差分、影響は E2E ハーネス内に限定） |
 | `verify:update-install:sandbox` | ローカル macOS arm64 | **6/6 PASS**（swap-success / integrity-mismatch / pending-swap / pending-retry-on-spawn / manual-required / url-rejected） |
 
 ## 3. 配布成果物（release-trust candidate）
 
+**ZXP タイムスタンプについて**: Apple TSA endpoint が無効化され、ZXPSignCmd 4.1.3 が検証できる TSA が存在しないため、本候補の ZXP は RFC3161 timestamp 無しで署名されている（#233）。`ZXPSignCmd -verify` で `Signature verified successfully` を確認済み。署名の有効性は署名証明書の有効期間（2036-11-09 まで）が担う。v0.10.x までの ZXP には timestamp が付いていた点が相違点。
+
 ### macOS（完了 — Developer ID署名 / 未公証、ADR-0003 Amendment 1）
 
-`bun run release:candidate --channel=stable --release-version=0.11.0`（`c7795084`、2026-11-19 実施）
+`bun run release:candidate --channel=stable --release-version=0.11.0`（`bbbe77cc`、2026-11-19 実施。ZXP は TSA 無し署名 — §3 参照）
 
 | 項目 | 実測値 |
 | --- | --- |
-| sourceCommit | `c7795084054db6e91bf69b1fe893c40e09169b4b` |
+| sourceCommit | `bbbe77cc4f3dab367d19256fdbc2fe2a8f1551d6` |
 | trustMode | `release` |
-| ZIP | `ty-plus-v0.11.0-macos.zip` / sha256 `cdb6377ed3644b3f113bad14a7d2317eaeafad52d31cfce7cb775d39f2a83097` / 14,002,347 bytes |
-| ZXP | `ty-plus-v0.11.0-macos.zxp` / sha256 `30b3f8d74eaeb30ac3004f13f631c602b1bdfe36e7ae9a980e10dfb76e08f97b` / 14,019,832 bytes |
+| ZIP | `ty-plus-v0.11.0-macos.zip` / sha256 `21ad46c2180cae7a094e30edef481b5bc0a230f46cd5f2424e9a9e11940bb37c` / 14,002,352 bytes |
+| ZXP | `ty-plus-v0.11.0-macos.zxp` / sha256 `6753c5d974c2d480e9d86fe95c4c765afb8c7276abb51cdeed86a3520015f761` / 14,016,089 bytes |
 | 監査 | `verify-release-artifacts.ts`: manifest sourceCommit=HEAD 一致、全 artifact sha256 一致、archive 内容=pack 一致、ZXP署名独立検証、secret scan clean — **全項目 PASS** |
 
-### Windows（CI `release-trust-windows-candidate`、run 44447806589）
+### Windows（完了 — cargo xwin クロスコンパイル、未署名worker + 署名済みZXP、ADR-0003）
 
-`release.yml` workflow_dispatch @ `release-0-11-0`。artifact `ty-plus-release-candidate-0.11.0-windows-c7795084` の sha256 を取得次第、本書へ転記する。
+v0.10.2 と同じ手順で macOS ホストからビルド（2026-11-19 実施）:
+
+```sh
+CROSS_COMPILE_CARGO="cargo +1.89.0 xwin" TY_PLUS_BUILD_PLATFORM=windows \
+TY_PLUS_RELEASE_VERSION=0.11.0 TY_PLUS_RELEASE_CHANNEL=stable \
+TY_PLUS_ZXP_CERT_PATH="$HOME/Library/Application Support/ty-plus-signing/ty-plus-release.p12" \
+TY_PLUS_ZXP_CERT_PASSWORD="$(security find-generic-password -s 'ty-plus.zxp.signing' -w)" \
+ZXP_SIGN_CMD="$PWD/.tmp/zxp/ZXPSignCmd" \
+bun run release:candidate --channel=stable --release-version=0.11.0
+```
+
+| 項目 | 実測値 |
+| --- | --- |
+| sourceCommit | `bbbe77cc4f3dab367d19256fdbc2fe2a8f1551d6` |
+| trustMode | `release` |
+| ZIP | `ty-plus-v0.11.0-windows.zip` / sha256 `3f77e5c060b51a324886ba1a7cb6a1dc327138064e8770796fd2eb69925d4e21` / 10,958,639 bytes |
+| ZXP | `ty-plus-v0.11.0-windows.zxp` / sha256 `1fc7a11b7feec1bf732140aa12097693fb80287ea12e54f6ed2289410a7eb57e` / 10,972,758 bytes |
+| worker | `windows/operation-worker.exe`（7,601,152 bytes、sha256 `2e7881dd6a701c7512c3e2feaa677f383fafc55a5cfbda2628f7649413f6feef`、Authenticode 未署名 = R0 の正当な形） |
+| 監査 | `verify-release-artifacts.ts` 全項目 PASS（sourceCommit=HEAD、sha256、archive=pack、ZXP署名、secret scan） |
+
+CI `release.yml` `release-trust-windows-candidate`（run 44449771825）も `bbbe77cc` で再実行中。TSA 無し既定化（#233/#234）により exit 35 は解消される見込み。
 
 ## 4. Issue別 受入状況
 
@@ -87,7 +109,7 @@ RC候補 `c7795084` について、実機E2E・Storybook capture の証拠SHAと
 
 **条件付きリリース可能**。公開ブロッカーは人間の審美受入と公開承認のみ。技術的に自律解決可能な残件なし。新規製品欠陥は RC 期間中に検出されず（#223 は全件収束済み）。
 
-判定の前提: §3 の Windows candidate artifact が `c7795084` に対して生成・監査されること。未生成の場合は macOS のみの部分公開判断が必要（Windows 欠落の明示ルールは runbook 既定に従う）。
+判定の前提: §3 の Windows candidate artifact は `bbbe77cc` に対して生成・監査済み（ローカル cargo xwin、v0.10.2 と同一手順）。CI `release-trust-windows-candidate` の独立再現も進行中で、失敗してもローカル成果物は有効。
 
 ---
 Generated with [Devin](https://devin.ai)
