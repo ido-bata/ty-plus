@@ -52,5 +52,5 @@ export TY_PLUS_ZXP_CERT_PASSWORD="$(security find-generic-password -s 'ty-plus.z
 
 ## 5. 検証
 
-署名後、`build-release.ts` が `ZXPSignCmd -verify` を実行し、`verify-release-artifacts.ts` が監査時に**再度**検証する
+署名後、`build-release.ts` が `ZXPSignCmd -verify` を実行し、`release-artifacts.ts` が監査時に**再度**検証する
 （ビルド後に差し替えても前の判定を継承しない）。検証にパスワードは不要。

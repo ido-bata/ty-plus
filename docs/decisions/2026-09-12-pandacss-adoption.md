@@ -91,7 +91,7 @@ Slice 分割:
 
 1. **Foundation** — `panda.config.ts`, `vite.config.ts`, `.storybook/main.ts`,
    `biome.json`, `package.json`, `app.css`, `theme.css`,
-   `check-design-tokens.ts` 差替、AGENTS.md 更新、ADR の登録。
+   `design-tokens.ts` 差替、AGENTS.md 更新、ADR の登録。
 2. **shared/ + management/style/ + storybook/decorators/** — 基盤となる
    atomic primitive の Panda 化。他の slice はこの完了を待つ。
 3. **function/widget/** — 最大の集中 (~70 ファイル)。
@@ -113,7 +113,7 @@ Tailwind の class を残した状態での共存期間は **当日限り**。
 
 - トークン参照が一段減り、`mergePanelTheme` の出力 (`--ty-*`) と
   Panda `tokens.colors.surface.panel` が **同じ CSS 変数を指す**。
-- `bun run ci` の lint 段で `check-design-tokens.ts` が hex/rgb literal を
+- `bun run ci` の lint 段で `design-tokens.ts` が hex/rgb literal を
   検出する責務は維持しつつ、`panda codegen --check` (or
   `tsc --noEmit` on `styled-system/`) で token 不整合を追加検出できる。
 - Storybook 側で `@tailwindcss/vite` を strip するロジック (`.storybook/main.ts:50-65`)

@@ -87,7 +87,7 @@ JS コンテキスト間の IPC 通信のための一時データ。**panel の�
 - **問題:** 再読み込みで panel の位置と向きが失われる
 - **使用すべき手段:** `settings/control-panel.json`
 
-### 3. `src/management/online/notification/notifications.ts`
+### 3. `src/management/online/notification/store.ts`
 - **事象:** 通知キャッシュと既読状態が runtime memory に書かれている
 - **問題:** panel の読み込みごとに通知を再取得している
 - **使用すべき手段:** `{supportRoot}/ty-plus/cache/notifications.json` の Managed Storage

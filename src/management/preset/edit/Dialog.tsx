@@ -11,7 +11,7 @@ import { useTranslation } from "react-i18next";
 import { selectFile } from "@/management/ae/cep/dialog-shim/bolt";
 import { readGroupJson } from "@/management/catalog/json-files";
 import { DialogShell } from "@/management/dialog";
-import { DialogFooterActions } from "@/management/dialog/dialogs/shell/Footer";
+import { DialogFooterActions } from "@/management/dialog/shell/Footer";
 import { useDialogClose } from "@/management/dialog/useClose";
 import {
 	coercePersistedPresetIcon,
@@ -24,27 +24,27 @@ import {
 	type ArchiveDetailsSectionHandle,
 } from "@/management/preset/catalog-add/ArchiveDetailsSection";
 import { verifyAndUpsertPreset } from "@/management/preset/catalog-add/verify-and-upsert";
-import { PresetIconEditor } from "@/management/preset/components/IconEditor";
 import type { Preset, PresetIcon } from "@/management/preset/contract";
 import { askHostDeleteConfirm } from "@/management/preset/delete-confirm";
 import type { CodeEditorValue } from "@/management/preset/editor/Code";
 import { Editor } from "@/management/preset/editor/View";
 import { traceExecute } from "@/management/preset/execution/lifecycle-trace";
+import {
+	parseGroupFromText,
+	removeGroupEntry,
+	upsertGroupEntry,
+} from "@/management/preset/group/catalog";
 import { findGroupEntry } from "@/management/preset/group/catalog-helpers";
 import {
 	isGroupCatalogPreset,
 	synthesizeGroupPresetForTile,
 } from "@/management/preset/group/synthesize";
-import {
-	parseGroupFromText,
-	removeGroupEntry,
-	upsertGroupEntry,
-} from "@/management/preset/group-catalog";
+import { PresetIconEditor } from "@/management/preset/icon/Editor";
 import {
 	type PresetIconEditorDraft,
 	presetIconDraftToPresetIcon,
 	presetIconToDraft,
-} from "@/management/preset/icon-editor";
+} from "@/management/preset/icon/editor-state";
 import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
 import {
 	glyphBoxCompactPadClass,

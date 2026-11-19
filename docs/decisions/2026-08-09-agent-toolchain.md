@@ -86,7 +86,7 @@ adopt npm / pnpm / Yarn.
   `react-doctor@0.9.12`, fixed as an exact devDependency), invoked via
   the package-local executable in `bun run doctor`. The scan
   ships a baseline gate: `bun run check:react-doctor` runs
-  `scripts/check/check-react-doctor-baseline.ts` against the
+  `scripts/check/react-doctor-baseline.ts` against the
   baseline captured in `tools/check/.react-doctor-baseline.json`
   (currently 89/100, 25 warnings, 0 errors) and fails on score or
   count regression. Its capture metadata records the same exact
@@ -289,7 +289,7 @@ conversations.
   `readWidgetCatalogJson` / `writeWidgetCatalogJson` aliases
   survive in active callers (`src/management/preset/edit/Dialog.tsx`,
   `src/management/preset/catalog-browser/ListDialog.tsx`,
-  `src/management/preset/group-catalog.ts`,
+  `src/management/preset/group/catalog.ts`,
   `src/management/workspace/persistence/store.ts`).~~ Resolved
   2026-08-23: the only remaining caller
   (`workspace/persistence/store.ts`) was rewritten to use the

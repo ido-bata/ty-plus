@@ -1,43 +1,43 @@
 {
-  "schema": "ty-plus.e2e-run/1",
-  "suite": "widgets",
-  "capturedAt": "2026-11-18T04:44:45.523Z",
-  "extensionDir": "/Users/rebui/Library/Application Support/Adobe/CEP/extensions/app.ty-plus.dev",
-  "managedRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-18T04-44-13-707Z-35893/ty-plus",
-  "realManagedRoot": "/Applications/Adobe After Effects 2026/ty-plus",
-  "sandbox": {
-    "enabled": true,
-    "sandboxRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-18T04-44-13-707Z-35893/ty-plus",
-    "integrity": {
-      "realRoot": "/Applications/Adobe After Effects 2026/ty-plus",
-      "checkedAt": "2026-11-18T04:44:45.521Z",
-      "driftBeforeRepair": {
-        "changed": 1,
-        "added": 1,
-        "removed": 0
-      },
-      "filesRepaired": [
-        "cache/layout-undo/panel-1/stack.json",
-        "removed:locks/persistence.lock/owner.json"
-      ],
-      "cleanAfterRepair": true
-    }
-  },
-  "totals": {
-    "PASS": 0,
-    "FAIL": 0,
-    "BLOCKED": 0,
-    "SKIP": 1
-  },
-  "results": [
-    {
-      "uc": "UC-D11",
-      "title": "easing widget state file restores mode/loopCount after reload",
-      "status": "SKIP",
-      "detail": "easing widget 5aaaf392-4a28-4cf8-a89e-0f7e414b41d4 not mounted on panel-1",
-      "checks": [],
-      "evidence": [],
-      "durationMs": 652
-    }
-  ]
+	"schema": "ty-plus.e2e-run/1",
+	"suite": "widgets",
+	"capturedAt": "2026-11-18T04:44:45.523Z",
+	"extensionDir": "/Users/rebui/Library/Application Support/Adobe/CEP/extensions/app.ty-plus.dev",
+	"managedRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-18T04-44-13-707Z-35893/ty-plus",
+	"realManagedRoot": "/Applications/Adobe After Effects 2026/ty-plus",
+	"sandbox": {
+		"enabled": true,
+		"sandboxRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-18T04-44-13-707Z-35893/ty-plus",
+		"integrity": {
+			"realRoot": "/Applications/Adobe After Effects 2026/ty-plus",
+			"checkedAt": "2026-11-18T04:44:45.521Z",
+			"driftBeforeRepair": {
+				"changed": 1,
+				"added": 1,
+				"removed": 0
+			},
+			"filesRepaired": [
+				"cache/layout-undo/panel-1/stack.json",
+				"removed:locks/persistence.lock/owner.json"
+			],
+			"cleanAfterRepair": true
+		}
+	},
+	"totals": {
+		"PASS": 0,
+		"FAIL": 0,
+		"BLOCKED": 0,
+		"SKIP": 1
+	},
+	"results": [
+		{
+			"uc": "UC-D11",
+			"title": "easing widget state file restores mode/loopCount after reload",
+			"status": "SKIP",
+			"detail": "easing widget 5aaaf392-4a28-4cf8-a89e-0f7e414b41d4 not mounted on panel-1",
+			"checks": [],
+			"evidence": [],
+			"durationMs": 652
+		}
+	]
 }

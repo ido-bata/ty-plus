@@ -289,7 +289,7 @@ message は log に残さない**（path は retained log に不要、生 messag
 
 Each requested product operation launches one Rust operation worker from
 `rust/apps/operation-worker/` and exits after its final response. The permanent CEP Node
-boundary is `src/management/ipc/operation-worker-runner.ts`; it resolves the
+boundary is `src/management/ipc/operation-worker/runner.ts`; it resolves the
 binary, spawns it, validates frames, forwards progress/results, and escalates
 cancel. A per-invocation worker is the product boundary; no daemon, endpoint
 discovery, named pipe, UDS, heartbeat, or single-instance process is required.

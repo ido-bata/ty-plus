@@ -1,100 +1,96 @@
 {
-  "schema": "ty-plus.e2e-run/1",
-  "suite": "debug",
-  "capturedAt": "2026-11-18T15:50:06.827Z",
-  "extensionDir": "/Users/rebui/Library/Application Support/Adobe/CEP/extensions/app.ty-plus.dev",
-  "managedRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-18T15-49-49-400Z-37680/ty-plus",
-  "realManagedRoot": "/Applications/Adobe After Effects 2027/ty-plus",
-  "sandbox": {
-    "enabled": true,
-    "sandboxRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-18T15-49-49-400Z-37680/ty-plus",
-    "integrity": {
-      "realRoot": "/Applications/Adobe After Effects 2027/ty-plus",
-      "checkedAt": "2026-11-18T15:50:06.827Z",
-      "driftBeforeRepair": {
-        "changed": 1,
-        "added": 0,
-        "removed": 0
-      },
-      "filesRepaired": [
-        "cache/layout-undo/panel-1/stack.json"
-      ],
-      "cleanAfterRepair": true
-    }
-  },
-  "totals": {
-    "PASS": 2,
-    "FAIL": 0,
-    "BLOCKED": 0,
-    "SKIP": 0
-  },
-  "results": [
-    {
-      "uc": "UC-G02",
-      "title": "debug console reopen replays previously logged messages",
-      "status": "PASS",
-      "detail": "close → reopen replay",
-      "checks": [
-        {
-          "name": "debug console opens",
-          "ok": true,
-          "detail": "live"
-        },
-        {
-          "name": "marker message visible in first open",
-          "ok": true,
-          "detail": "msgs=32 marker=true"
-        },
-        {
-          "name": "debug console closes",
-          "ok": true,
-          "detail": "closed"
-        },
-        {
-          "name": "debug console reopens",
-          "ok": true,
-          "detail": "live"
-        },
-        {
-          "name": "reopened console replays history (msg count > 0)",
-          "ok": true,
-          "detail": "msgs=32 (first open had 32)"
-        },
-        {
-          "name": "replayed history includes pre-close marker",
-          "ok": true,
-          "detail": "hasMarker=true"
-        }
-      ],
-      "evidence": [],
-      "durationMs": 10358
-    },
-    {
-      "uc": "UC-G03",
-      "title": "operation worker verify: spawn → accept → result → exit",
-      "status": "PASS",
-      "detail": "worker pid=37936 sha=2047d36e68f4",
-      "checks": [
-        {
-          "name": "rowCount > 0",
-          "ok": true,
-          "detail": "rows=351"
-        },
-        {
-          "name": "progress stages reach finished",
-          "ok": true,
-          "detail": "discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>finished"
-        },
-        {
-          "name": "worker accepted + final response + stdout EOF + exit 0",
-          "ok": true,
-          "detail": "accepted=true final=true eof=true exit=0"
-        }
-      ],
-      "evidence": [
-        "uc-g03-operation-worker.json"
-      ],
-      "durationMs": 1177
-    }
-  ]
+	"schema": "ty-plus.e2e-run/1",
+	"suite": "debug",
+	"capturedAt": "2026-11-18T15:50:06.827Z",
+	"extensionDir": "/Users/rebui/Library/Application Support/Adobe/CEP/extensions/app.ty-plus.dev",
+	"managedRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-18T15-49-49-400Z-37680/ty-plus",
+	"realManagedRoot": "/Applications/Adobe After Effects 2027/ty-plus",
+	"sandbox": {
+		"enabled": true,
+		"sandboxRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-18T15-49-49-400Z-37680/ty-plus",
+		"integrity": {
+			"realRoot": "/Applications/Adobe After Effects 2027/ty-plus",
+			"checkedAt": "2026-11-18T15:50:06.827Z",
+			"driftBeforeRepair": {
+				"changed": 1,
+				"added": 0,
+				"removed": 0
+			},
+			"filesRepaired": ["cache/layout-undo/panel-1/stack.json"],
+			"cleanAfterRepair": true
+		}
+	},
+	"totals": {
+		"PASS": 2,
+		"FAIL": 0,
+		"BLOCKED": 0,
+		"SKIP": 0
+	},
+	"results": [
+		{
+			"uc": "UC-G02",
+			"title": "debug console reopen replays previously logged messages",
+			"status": "PASS",
+			"detail": "close → reopen replay",
+			"checks": [
+				{
+					"name": "debug console opens",
+					"ok": true,
+					"detail": "live"
+				},
+				{
+					"name": "marker message visible in first open",
+					"ok": true,
+					"detail": "msgs=32 marker=true"
+				},
+				{
+					"name": "debug console closes",
+					"ok": true,
+					"detail": "closed"
+				},
+				{
+					"name": "debug console reopens",
+					"ok": true,
+					"detail": "live"
+				},
+				{
+					"name": "reopened console replays history (msg count > 0)",
+					"ok": true,
+					"detail": "msgs=32 (first open had 32)"
+				},
+				{
+					"name": "replayed history includes pre-close marker",
+					"ok": true,
+					"detail": "hasMarker=true"
+				}
+			],
+			"evidence": [],
+			"durationMs": 10358
+		},
+		{
+			"uc": "UC-G03",
+			"title": "operation worker verify: spawn → accept → result → exit",
+			"status": "PASS",
+			"detail": "worker pid=37936 sha=2047d36e68f4",
+			"checks": [
+				{
+					"name": "rowCount > 0",
+					"ok": true,
+					"detail": "rows=351"
+				},
+				{
+					"name": "progress stages reach finished",
+					"ok": true,
+					"detail": "discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>finished"
+				},
+				{
+					"name": "worker accepted + final response + stdout EOF + exit 0",
+					"ok": true,
+					"detail": "accepted=true final=true eof=true exit=0"
+				}
+			],
+			"evidence": ["uc-g03-operation-worker.json"],
+			"durationMs": 1177
+		}
+	]
 }

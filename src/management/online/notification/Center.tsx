@@ -10,15 +10,15 @@ import {
 import {
 	type CepMenuPayload,
 	registerCepJsonContextMenuSurface,
-} from "@/management/dialog/dialogs/context-menu";
+} from "@/management/dialog/context-menu";
 import { fetchNotificationFeed } from "@/management/online/notification/feed";
-import type { NotificationSummary } from "@/management/online/notification/notifications";
+import type { NotificationSummary } from "@/management/online/notification/store";
 import {
 	loadNotificationsStore,
 	saveNotificationsStore,
-} from "@/management/online/notification/notifications";
+} from "@/management/online/notification/store";
 import { IconButton } from "@/shared/component/controls/IconButton";
-import { Icon } from "@/shared/component/icons/Icon";
+import { Icon } from "@/shared/component/icons/LucideIcon";
 import { cx } from "@/shared/util/cx";
 import { css } from "@/styled-system/css";
 

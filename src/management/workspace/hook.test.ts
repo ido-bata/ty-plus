@@ -17,12 +17,12 @@
  *   in the switch.
  *
  * Behavioral coverage of the public API itself lives in
- * `src/management/preset/use-cases.test.ts`; the deterministic helpers
+ * `src/management/preset/operations.test.ts`; the deterministic helpers
  * (`resolveDuplicateHit`, `computeNextPresetSelectedIds`,
  * `runDuplicatePreset`) are covered in
  * `src/management/workspace/hook-duplicate-preset.test.ts`; the menu
  * payload shape is covered by
- * `src/management/dialog/dialogs/unified-context-menu.test.ts`.
+ * `src/management/dialog/unified-context-menu.test.ts`.
  */
 import fs from "node:fs";
 import { describe, expect, it } from "vitest";
@@ -36,10 +36,7 @@ const helpersSource = fs.readFileSync(
 	"utf8",
 );
 const constantsSource = fs.readFileSync(
-	new URL(
-		"../dialog/dialogs/unified-context-menu-constants.ts",
-		import.meta.url,
-	),
+	new URL("../dialog/unified-context-menu-constants.ts", import.meta.url),
 	"utf8",
 );
 
@@ -49,7 +46,7 @@ describe("useWorkspaceRuntime hook (Duplicate preset case)", () => {
 		// the symbol to be named `duplicatePreset` and the source to be the
 		// public use-case module.
 		expect(hookSource).toMatch(
-			/import\s*\{[^}]*\bduplicatePreset\b[^}]*\}\s*from\s*["']@\/management\/preset\/use-cases["']/,
+			/import\s*\{[^}]*\bduplicatePreset\b[^}]*\}\s*from\s*["']@\/management\/preset\/operations["']/,
 		);
 	});
 

@@ -1,4 +1,4 @@
-import type { CepMenuPayload } from "@/management/dialog/dialogs/context-menu";
+import type { CepMenuPayload } from "@/management/dialog/context-menu";
 import {
 	SETTINGS_CTX,
 	SETTINGS_DIALOG_SURFACE_ID,

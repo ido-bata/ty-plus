@@ -18,7 +18,7 @@
  */
 
 import { readGroupJson } from "@/management/catalog/json-files";
-import { parseGroupFromText } from "@/management/preset/group-catalog";
+import { parseGroupFromText } from "@/management/preset/group/catalog";
 import { getLocalPresetCatalog } from "@/management/preset/repository/local-catalog";
 import { indexFromPanelId, readNJson } from "@/management/storage";
 import {

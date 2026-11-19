@@ -29,7 +29,7 @@ thumbnail の decode / encode / 永続化を所有し、React パネルは表示
 
 `video` / `audio` / `ae-project` / `ae-preset` / `mogrt` / `psd` / `ai` / `c4d` /
 `plugin` / `unknown`。これらは sibling image 経路
-(`src/management/preset/sibling-thumbnail.ts` の `findSiblingImagePathForPresetFile`)
+(`src/management/preset/sibling/thumbnail.ts` の `findSiblingImagePathForPresetFile`)
 または generic icon にフォールバックする。video は v2 で扱う。
 
 ### folder_preview.png (AeViewer 互換)

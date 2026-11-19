@@ -59,9 +59,9 @@ ty-plus の i18n には **3 つのレイヤー** があり、それぞれで大�
 
 | ルール | 検査 |
 | --- | --- |
-| i18n キーが camelCase | `bun run scripts/check/check-i18n-locale-coverage.ts` のキー列挙 (要追加) |
-| UI 文字列が sentence case (Title Case 検出) | `bun run scripts/check/check-i18n-locked-terms.ts` (要追加) |
-| 固有名詞 canonical 一致 | `bun run scripts/check/check-i18n-locked-terms.ts` |
+| i18n キーが camelCase | `bun run scripts/check/i18n-locale-coverage.ts` のキー列挙 (要追加) |
+| UI 文字列が sentence case (Title Case 検出) | `bun run scripts/check/i18n-locked-terms.ts` (要追加) |
+| 固有名詞 canonical 一致 | `bun run scripts/check/i18n-locked-terms.ts` |
 | コードパス/ファイル名が kebab-case (重複チェック) | `bun run check:naming` (既存 — path/file redundancy) |
 
 ## 4. 例外

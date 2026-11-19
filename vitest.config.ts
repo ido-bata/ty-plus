@@ -1,9 +1,8 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
-
+import { storybookTest } from "@storybook/addon-vitest/vitest-plugin";
 import { playwright } from "@vitest/browser-playwright";
 import { defineConfig } from "vitest/config";
-import { storybookTest } from "@storybook/addon-vitest/vitest-plugin";
 
 /**
  * Vitest config for the ty-plus project.
@@ -16,7 +15,7 @@ import { storybookTest } from "@storybook/addon-vitest/vitest-plugin";
  * 2. `storybook` (inside `test.projects`) — browser-environment tests that
  *    render stories under headless Chromium. This is the official path
  *    for headless story validation, replacing the manual
- *    `scripts/verify/sb-snapshot-all.ts` workaround. The storybookTest
+ *    `scripts/verify/storybook/snapshot-all.ts` workaround. The storybookTest
  *    plugin pulls in everything Storybook needs (story glob, aliases,
  *    decorators, CEP-plugin stripping) through `.storybook/main.ts →
  *    viteFinal`, so this project deliberately does NOT use
@@ -182,7 +181,7 @@ export default defineConfig({
 						// never clipped by a smaller viewport — requirement
 						// 4 of docs/architecture/ui-reconstruction/storybook.md.
 						// Keep in sync with CAPTURE_VIEWPORT in
-						// scripts/verify/storybook-screenshot-capture.ts.
+						// scripts/verify/storybook/screenshot-capture.ts.
 						provider: playwright({
 							contextOptions: {
 								viewport: { width: 1280, height: 720 },
@@ -211,7 +210,7 @@ export default defineConfig({
 					// capture hook (see the file header).
 					setupFiles: [
 						"@storybook/addon-vitest/internal/setup-file-with-project-annotations",
-						"./scripts/verify/storybook-screenshot-capture.ts",
+						"./scripts/verify/storybook/screenshot-capture.ts",
 					],
 				},
 			},

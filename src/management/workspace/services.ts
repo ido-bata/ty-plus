@@ -2,7 +2,7 @@ import { resolveCepFileSystemGateway } from "@/management/ae/cep/runtime";
 import type {
 	UpdateInstallRequestDTO,
 	UpdateInstallResultDTO,
-} from "@/management/ipc/operation-worker-composition";
+} from "@/management/ipc/operation-worker/composition";
 
 /** Local alias for the shape used by resolveSystemPaths (matches shared/contract HostFileSystemPaths). */
 type SystemPaths = {

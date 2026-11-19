@@ -18,7 +18,7 @@ export type ToolDialogEntry = {
 	leadEn: string;
 };
 
-/** manifest sizes are bound to `WORKSPACE_SHELL_MODELESS_FRAME` (`build-cep-dev` / `cep-dialog-layout`) */
+/** manifest sizes are bound to `WORKSPACE_SHELL_MODELESS_FRAME` (`cep-dev` / `cep-dialog-layout`) */
 export const TOOL_DIALOG_REGISTRY: readonly ToolDialogEntry[] = [
 	{
 		surfaceId: "dialog-preset-add",

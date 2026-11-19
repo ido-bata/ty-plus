@@ -16,14 +16,14 @@
 - パネル・modeless のランタイムコードは `src/management/ae/cep/extension-id.ts` の `tyPlusExtensionId()` / `tyPlusExtensionBundleId` を経由し、Vite define `__TY_PLUS_EXTENSION_BUNDLE_ID__`（`cep.config.ts` の `id` と同一値）を唯一の注入点とする。`app.ty-plus` prefix のリテラルを src へ新規に書かない。
 - panel entry の surface id 解決と `panel/index.html` の inline script は Extension Id の**接尾辞**（`.panelN` / `.panel.N`）で判定し、prefix に依存しない。
 - 開発インストールのフォルダ名は Extension Bundle Id と同じ `app.ty-plus.dev` とし、リリースの `app.ty-plus` フォルダと分ける（`scripts/cep/install-cep-dev.ts`）。manifest 内の Id とフォルダ名は独立だが、同名フォルダの衝突を避けるため両方を分離する。#86 以前の開発フォルダ名 `org.loginc.ty-plus` はレガシー配置として uninstall / prebuild-clean の対象に残す。
-- `scripts/verify/verify-operation-worker-cep.ts` は `.debug` の `*.panel1` エントリから Extension Id を解決し、開発/リリースどちらのバンドルでも検証できる。
+- `scripts/verify/operation-worker/operation-worker-cep.ts` は `.debug` の `*.panel1` エントリから Extension Id を解決し、開発/リリースどちらのバンドルでも検証できる。
 
 ## Consequences
 
 - dev build と release build を同時にインストールしても CEP surface は衝突しない。`r0-device-gate.md` の「同居禁止」ルールは、Id が分離された後は「対象ビルドの証跡化」として簡略化できる（フォルダ名で判別可能）。
 - ユーザーデータ（管理ルート `~/Library/Application Support/ty-plus/` 等）は Extension Id に依存しないため、dev/release 間でデータは共有される。これは従来どおりであり、本 ADR で変更しない。
 - preset tool handoff ファイル名は Extension Id を含むため、dev build は `app.ty-plus.dev.*.json` を読み書きする。一時ファイルであり永続データではない。
-- `app.ty-plus.dev` という Id を名乗るのは開発ビルドのみ。リリース・ZXP・zip の監査（`verify-release-artifacts.ts`）は従来どおり `app.ty-plus` を要求し、開発 Id が混入した成果物はリリース監査で拒否される。
+- `app.ty-plus.dev` という Id を名乗るのは開発ビルドのみ。リリース・ZXP・zip の監査（`release-artifacts.ts`）は従来どおり `app.ty-plus` を要求し、開発 Id が混入した成果物はリリース監査で拒否される。
 
 ## Rejected
 

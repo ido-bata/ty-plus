@@ -7,7 +7,7 @@
  * subdirectory; a regression (commit `699f4785`-style) inverted this so the
  * row click only selected the file/dir, and double-click was the only way
  * to navigate. The shared `DirectoryBrowser` component is covered by
- * `src/management/storage/ui/DirectoryBrowser.test.tsx`; this test covers
+ * `src/management/storage/ui/directory-browser/Component.test.tsx`; this test covers
  * the inline row rendering that lives only in the panel widget
  * (`Component.tsx`), which the shared component does NOT render.
  */
@@ -101,7 +101,7 @@ const fixtureListDirectory = async (
 
 mocks.listDirectory.mockImplementation(fixtureListDirectory);
 
-vi.mock("@/management/ae/cep/contexts/Context", () => ({
+vi.mock("@/management/ae/cep/contexts/CepContext", () => ({
 	useCep: () => ({ isCep: true }),
 }));
 
@@ -148,7 +148,7 @@ vi.mock("@/management/preset", () => ({
 	readIconTileAspect: () => "square" as const,
 }));
 
-vi.mock("@/management/preset/use-cases", () => ({
+vi.mock("@/management/preset/operations", () => ({
 	getPreset: vi.fn(),
 }));
 

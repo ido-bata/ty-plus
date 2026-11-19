@@ -4,7 +4,7 @@
 
 **Goal:** CEP Node を、manifest で検証した worker の one-shot 起動、frame I/O、cancel/retry/scheduling、immutable host context、責任別 gateway、常駐 transport 削除へ切り替える。
 
-**Architecture:** React は責任別の TypeScript gateway を呼び、CEP Node は一つの operation ごとに一つの real Rust operation worker を起動する。CEP Node の permanent な `child_process` 境界は `src/management/ipc/operation-worker-runner.ts` だけとし、ExtendScript の host context は invocation ごとに凍結して渡す。Rust protocol/worker、storage/online policy、paired artifact、cross-process install lease は上流計画の成果物をこの計画で再定義しない。
+**Architecture:** React は責任別の TypeScript gateway を呼び、CEP Node は一つの operation ごとに一つの real Rust operation worker を起動する。CEP Node の permanent な `child_process` 境界は `src/management/ipc/operation-worker/runner.ts` だけとし、ExtendScript の host context は invocation ごとに凍結して渡す。Rust protocol/worker、storage/online policy、paired artifact、cross-process install lease は上流計画の成果物をこの計画で再定義しない。
 
 **Tech Stack:** Bun `1.3.10`、TypeScript、React 19、CEP Node、Vitest、Node `child_process`（`shell: false`）、生成済み Rust protocol の TypeScript 型。
 
@@ -44,8 +44,8 @@
 **Consumes:** OW-PRO-002（[`01-rust-worker-protocol.md`](01-rust-worker-protocol.md) の生成済み `WireMessage`、`protocolLimits.maxFrameBytes`、wire error contract）。
 
 **Files:**
-- Create: `src/management/ipc/operation-worker-frame.ts`
-- Create: `src/management/ipc/operation-worker-frame.test.ts`
+- Create: `src/management/ipc/operation-worker/frame.ts`
+- Create: `src/management/ipc/operation-worker/frame.test.ts`
 - Modify: `src/management/ipc/index.ts`
 
 **Interfaces:**
@@ -81,7 +81,7 @@ describe("operation worker frame codec", () => {
 
 - [ ] **Step 2: focused RED を実行する**
 
-Run: `bun run vitest run src/management/ipc/operation-worker-frame.test.ts`
+Run: `bun run vitest run src/management/ipc/operation-worker/frame.test.ts`
 
 Expected: FAIL because `operation-worker-frame.ts` が存在せず、OW-PRO-002 の generated frame を TypeScript で encode/decode できない。
 
@@ -105,7 +105,7 @@ export const encodeOperationWorkerFrame = (message: WireMessage): Uint8Array => 
 
 - [ ] **Step 4: focused GREEN と protocol limit 境界を確認する**
 
-Run: `bun run vitest run src/management/ipc/operation-worker-frame.test.ts`
+Run: `bun run vitest run src/management/ipc/operation-worker/frame.test.ts`
 
 Expected: PASS。fragmented chunk、複数 frame、exact `protocolLimits.maxFrameBytes`、oversized、zero-length、high-bit、invalid UTF-8/JSON、truncated EOF、unknown generated message が stable error または decoded message になる。
 
@@ -114,10 +114,10 @@ Expected: PASS。fragmented chunk、複数 frame、exact `protocolLimits.maxFram
 Review: generated `WireMessage` と limit だけを import し、Rust/schema を再定義していないこと、codec が process と I/O resource を保持しないこと、UTF-8 byte length が payload の実測値であることを確認する。
 
 ```text
-git diff --check -- src/management/ipc/operation-worker-frame.ts src/management/ipc/operation-worker-frame.test.ts src/management/ipc/index.ts
-git diff -- src/management/ipc/operation-worker-frame.ts src/management/ipc/operation-worker-frame.test.ts src/management/ipc/index.ts
-git diff --cached -- src/management/ipc/operation-worker-frame.ts src/management/ipc/operation-worker-frame.test.ts src/management/ipc/index.ts
-git add -- src/management/ipc/operation-worker-frame.ts src/management/ipc/operation-worker-frame.test.ts src/management/ipc/index.ts
+git diff --check -- src/management/ipc/operation-worker/frame.ts src/management/ipc/operation-worker/frame.test.ts src/management/ipc/index.ts
+git diff -- src/management/ipc/operation-worker/frame.ts src/management/ipc/operation-worker/frame.test.ts src/management/ipc/index.ts
+git diff --cached -- src/management/ipc/operation-worker/frame.ts src/management/ipc/operation-worker/frame.test.ts src/management/ipc/index.ts
+git add -- src/management/ipc/operation-worker/frame.ts src/management/ipc/operation-worker/frame.test.ts src/management/ipc/index.ts
 git commit -m "feat(ipc): add worker frame codec"
 ```
 
@@ -130,10 +130,10 @@ git commit -m "feat(ipc): add worker frame codec"
 **Consumes:** OW-CEP-001 の codec error boundary と canonical operation-worker spec。このtaskがmanifest型の唯一のownerであり、OW-DIST-001/002/003は生成・署名・package時にこのcontractをconsumeする。
 
 **Files:**
-- Create: `src/management/ipc/operation-worker-binary.ts`
-- Create: `src/management/ipc/operation-worker-binary.test.ts`
+- Create: `src/management/ipc/operation-worker/binary.ts`
+- Create: `src/management/ipc/operation-worker/binary.test.ts`
 - Modify: `src/management/ipc/index.ts`
-- Modify: `scripts/check/check-rust-runtime-boundaries.ts`
+- Modify: `scripts/check/rust-runtime-boundaries.ts`
 
 **Interfaces:**
 - `export type OperationWorkerPlatform = "windows" | "macos"`。
@@ -146,7 +146,7 @@ git commit -m "feat(ipc): add worker frame codec"
 - resolver 内部 helper は `validateManifestRelativePath(path: string): string`、`assertManifestMetadata(manifest: OperationWorkerManifest, productVersion: string, extensionVersion: string, protocolVersion: ProtocolVersion, capabilities: readonly string[]): void`、`assertPairedArtifacts(manifest: OperationWorkerManifest): void`、`inspectExecutableFile(path: string, platform: OperationWorkerPlatform): Promise<{ readonly sha256: string }>`、`validateArtifactSignatureMetadata(artifact: OperationWorkerArtifact, platform: OperationWorkerPlatform): boolean` の exact signature を持つ。file headerとhashは同じopen file handleから読む。
 - missing binary、path traversal、wrong platform、version/capability mismatch、signature mismatch、hash mismatch は stable `binary_missing` または `binary_manifest_mismatch` として spawn 前に拒否する。
 - Authenticode / codesign とcertificate fingerprintの実検証は `OW-DIST-002` だけが所有する。runtime resolverはpackage時に検証済みの署名metadataのplatform bindingを検査し、OS command、native addon、別verifier processを起動しない。
-- `scripts/check/check-rust-runtime-boundaries.ts` はこのfileだけのNode filesystem accessをpermanent CEP binary-resolution boundaryとしてexact path + match countで許可する。domain filesystemの一般許可やdirectory wildcardは追加しない。
+- `scripts/check/rust-runtime-boundaries.ts` はこのfileだけのNode filesystem accessをpermanent CEP binary-resolution boundaryとしてexact path + match countで許可する。domain filesystemの一般許可やdirectory wildcardは追加しない。
 
 - [ ] **Step 1: canonical manifest の missing、traversal、hash/version/platform RED test を書く**
 
@@ -184,7 +184,7 @@ it("fails closed when the selected platform entry is absent", async () => {
 
 - [ ] **Step 2: focused RED を実行する**
 
-Run: `bun run vitest run src/management/ipc/operation-worker-binary.test.ts`
+Run: `bun run vitest run src/management/ipc/operation-worker/binary.test.ts`
 
 Expected: FAIL because manifest-only resolver がなく、missing/mismatch を spawn 前の stable error に変換できない。
 
@@ -212,7 +212,7 @@ export const resolveOperationWorkerBinary = async (input: ResolveWorkerBinaryInp
 
 - [ ] **Step 4: focused GREEN を実行する**
 
-Run: `bun run vitest run src/management/ipc/operation-worker-binary.test.ts`
+Run: `bun run vitest run src/management/ipc/operation-worker/binary.test.ts`
 
 Expected: PASS。Windows/macOS 各 entry、path traversal、wrong platform、missing file、product/extension/protocol/capability mismatch、両entryのmalformed/inherited field、signature metadata mismatch、hash mismatch、PE/Mach-O header不一致が fail-closed になり、成功時だけ検証済み `ResolvedWorkerBinary` が返る。
 
@@ -221,10 +221,10 @@ Expected: PASS。Windows/macOS 各 entry、path traversal、wrong platform、mis
 Review: canonical manifest type が DIST-001/002 の producer と一致し、resolver が extension root + manifest だけを使い、missing binary に fallback を返さないことを確認する。artifact build、署名、package、installer をこの task に追加しない。
 
 ```text
-git diff --check -- src/management/ipc/operation-worker-binary.ts src/management/ipc/operation-worker-binary.test.ts src/management/ipc/index.ts scripts/check/check-rust-runtime-boundaries.ts
-git diff -- src/management/ipc/operation-worker-binary.ts src/management/ipc/operation-worker-binary.test.ts src/management/ipc/index.ts scripts/check/check-rust-runtime-boundaries.ts
-git diff --cached -- src/management/ipc/operation-worker-binary.ts src/management/ipc/operation-worker-binary.test.ts src/management/ipc/index.ts scripts/check/check-rust-runtime-boundaries.ts
-git add -- src/management/ipc/operation-worker-binary.ts src/management/ipc/operation-worker-binary.test.ts src/management/ipc/index.ts scripts/check/check-rust-runtime-boundaries.ts
+git diff --check -- src/management/ipc/operation-worker/binary.ts src/management/ipc/operation-worker/binary.test.ts src/management/ipc/index.ts scripts/check/rust-runtime-boundaries.ts
+git diff -- src/management/ipc/operation-worker/binary.ts src/management/ipc/operation-worker/binary.test.ts src/management/ipc/index.ts scripts/check/rust-runtime-boundaries.ts
+git diff --cached -- src/management/ipc/operation-worker/binary.ts src/management/ipc/operation-worker/binary.test.ts src/management/ipc/index.ts scripts/check/rust-runtime-boundaries.ts
+git add -- src/management/ipc/operation-worker/binary.ts src/management/ipc/operation-worker/binary.test.ts src/management/ipc/index.ts scripts/check/rust-runtime-boundaries.ts
 git commit -m "feat(ipc): resolve packaged worker binary"
 ```
 
@@ -237,9 +237,9 @@ git commit -m "feat(ipc): resolve packaged worker binary"
 **Consumes:** OW-RUST-003（[`01-rust-worker-protocol.md`](01-rust-worker-protocol.md) の per-invocation worker composition と generated invocation lifecycle）、OW-CEP-001、OW-CEP-002。
 
 **Files:**
-- Create: `src/management/ipc/operation-worker-runner.ts`
-- Create: `src/management/ipc/operation-worker-runner.test.ts`
-- Create: `src/management/ipc/operation-worker-runner.test-fixtures.ts`
+- Create: `src/management/ipc/operation-worker/runner.ts`
+- Create: `src/management/ipc/operation-worker/runner.test.ts`
+- Create: `src/management/ipc/operation-worker/runner.test-fixtures.ts`
 - Modify: `src/management/ipc/index.ts`
 
 **Rust boundary:** この task は CEP TypeScript runner だけを扱う。`rust/` 配下の file、Rust protocol、schema、generated output、Rust worker composition は変更しない。
@@ -280,7 +280,7 @@ it("requires accepted, monotonic progress, one final, and EOF", async () => {
 
 - [ ] **Step 2: focused RED を実行する**
 
-Run: `bun run vitest run src/management/ipc/operation-worker-runner.test.ts`
+Run: `bun run vitest run src/management/ipc/operation-worker/runner.test.ts`
 
 Expected: FAIL because one-shot spawn、accepted/progress/final/EOF validation、stable crash mapping が未実装である。
 
@@ -313,7 +313,7 @@ stdout は OW-CEP-001 の decoder で parse し、stderr は redacted diagnostic
 
 - [ ] **Step 4: lifecycle、failure、platform の GREEN を実行する**
 
-Run: `bun run vitest run src/management/ipc/operation-worker-runner.test.ts`
+Run: `bun run vitest run src/management/ipc/operation-worker/runner.test.ts`
 
 Expected: PASS。accepted 前の reject、accepted/progress/final/EOF、duplicate final、progress sequence regression、malformed frame、stderr redaction、spawn error、missing final crash、Windows hidden option、macOS branch、argv/env に request がないこと、bootstrap digestだけがenvにあること、manifest switch raceで旧content-addressed pathが維持されることを確認する。Rust test、Rust file 編集、schema generator はこの task の command に含めない。
 
@@ -322,11 +322,11 @@ Expected: PASS。accepted 前の reject、accepted/progress/final/EOF、duplicat
 Review: `child_process` import が runner だけにあり、runner が process/pipe を保持して reconnect しないこと、`shell: false` と piped stdio が固定されていること、OW-RUST-003 の lifecycle を TypeScript 側で再定義していないことを確認する。
 
 ```text
-rg -n "from \"node:child_process\"|require\(.*child_process" src/management/ipc/operation-worker-runner.ts
-git diff --check -- src/management/ipc/operation-worker-runner.ts src/management/ipc/operation-worker-runner.test.ts src/management/ipc/operation-worker-runner.test-fixtures.ts src/management/ipc/index.ts
-git diff -- src/management/ipc/operation-worker-runner.ts src/management/ipc/operation-worker-runner.test.ts src/management/ipc/operation-worker-runner.test-fixtures.ts src/management/ipc/index.ts
-git diff --cached -- src/management/ipc/operation-worker-runner.ts src/management/ipc/operation-worker-runner.test.ts src/management/ipc/operation-worker-runner.test-fixtures.ts src/management/ipc/index.ts
-git add -- src/management/ipc/operation-worker-runner.ts src/management/ipc/operation-worker-runner.test.ts src/management/ipc/operation-worker-runner.test-fixtures.ts src/management/ipc/index.ts
+rg -n "from \"node:child_process\"|require\(.*child_process" src/management/ipc/operation-worker/runner.ts
+git diff --check -- src/management/ipc/operation-worker/runner.ts src/management/ipc/operation-worker/runner.test.ts src/management/ipc/operation-worker/runner.test-fixtures.ts src/management/ipc/index.ts
+git diff -- src/management/ipc/operation-worker/runner.ts src/management/ipc/operation-worker/runner.test.ts src/management/ipc/operation-worker/runner.test-fixtures.ts src/management/ipc/index.ts
+git diff --cached -- src/management/ipc/operation-worker/runner.ts src/management/ipc/operation-worker/runner.test.ts src/management/ipc/operation-worker/runner.test-fixtures.ts src/management/ipc/index.ts
+git add -- src/management/ipc/operation-worker/runner.ts src/management/ipc/operation-worker/runner.test.ts src/management/ipc/operation-worker/runner.test-fixtures.ts src/management/ipc/index.ts
 git commit -m "feat(ipc): run one operation worker"
 ```
 
@@ -341,11 +341,11 @@ git commit -m "feat(ipc): run one operation worker"
 **Consumes:** OW-CEP-003 の runner と stable error、OW-RUST-003 の idempotency/commit-stage metadata。
 
 **Files:**
-- Create: `src/management/ipc/operation-worker-scheduler.ts`
-- Create: `src/management/ipc/operation-worker-scheduler.test.ts`
-- Create: `src/management/ipc/operation-worker-scheduler.test-fixtures.ts`
-- Modify: `src/management/ipc/operation-worker-runner.ts`
-- Modify: `src/management/ipc/operation-worker-runner.test.ts`
+- Create: `src/management/ipc/operation-worker/scheduler.ts`
+- Create: `src/management/ipc/operation-worker/scheduler.test.ts`
+- Create: `src/management/ipc/operation-worker/scheduler.test-fixtures.ts`
+- Modify: `src/management/ipc/operation-worker/runner.ts`
+- Modify: `src/management/ipc/operation-worker/runner.test.ts`
 - Modify: `src/management/ipc/index.ts`
 
 **Interfaces:**
@@ -386,7 +386,7 @@ it("keeps a fifth job queued while four workers are active", async () => {
 
 - [ ] **Step 2: focused RED を実行する**
 
-Run: `bun run vitest run src/management/ipc/operation-worker-scheduler.test.ts src/management/ipc/operation-worker-runner.test.ts`
+Run: `bun run vitest run src/management/ipc/operation-worker/scheduler.test.ts src/management/ipc/operation-worker/runner.test.ts`
 
 Expected: FAIL because cancel grace、forced error、retry guard、FIFO queue、max-4 active limit、bounded drain が未実装である。
 
@@ -423,7 +423,7 @@ private pump(): void {
 
 - [ ] **Step 5: focused GREEN を実行する**
 
-Run: `bun run vitest run src/management/ipc/operation-worker-scheduler.test.ts src/management/ipc/operation-worker-runner.test.ts`
+Run: `bun run vitest run src/management/ipc/operation-worker/scheduler.test.ts src/management/ipc/operation-worker/runner.test.ts`
 
 Expected: PASS。graceful cancel、commit-stage 後の retry 拒否、forced termination error、idempotent の一回 retry、write の retry なし、fresh process identity、FIFO、active 最大 4、stop accepting、deadline drain、bulk kill なしを確認する。
 
@@ -432,10 +432,10 @@ Expected: PASS。graceful cancel、commit-stage 後の retry 拒否、forced ter
 Review: retry が最大一回で commit 観測後に行われないこと、cancel が同じ child に一回だけ送られること、forced termination が対象 child だけであること、scheduler limit が 4 以外を受け付けないことを確認する。
 
 ```text
-git diff --check -- src/management/ipc/operation-worker-scheduler.ts src/management/ipc/operation-worker-scheduler.test.ts src/management/ipc/operation-worker-scheduler.test-fixtures.ts src/management/ipc/operation-worker-runner.ts src/management/ipc/operation-worker-runner.test.ts src/management/ipc/index.ts
-git diff -- src/management/ipc/operation-worker-scheduler.ts src/management/ipc/operation-worker-scheduler.test.ts src/management/ipc/operation-worker-scheduler.test-fixtures.ts src/management/ipc/operation-worker-runner.ts src/management/ipc/operation-worker-runner.test.ts src/management/ipc/index.ts
-git diff --cached -- src/management/ipc/operation-worker-scheduler.ts src/management/ipc/operation-worker-scheduler.test.ts src/management/ipc/operation-worker-scheduler.test-fixtures.ts src/management/ipc/operation-worker-runner.ts src/management/ipc/operation-worker-runner.test.ts src/management/ipc/index.ts
-git add -- src/management/ipc/operation-worker-scheduler.ts src/management/ipc/operation-worker-scheduler.test.ts src/management/ipc/operation-worker-scheduler.test-fixtures.ts src/management/ipc/operation-worker-runner.ts src/management/ipc/operation-worker-runner.test.ts src/management/ipc/index.ts
+git diff --check -- src/management/ipc/operation-worker/scheduler.ts src/management/ipc/operation-worker/scheduler.test.ts src/management/ipc/operation-worker/scheduler.test-fixtures.ts src/management/ipc/operation-worker/runner.ts src/management/ipc/operation-worker/runner.test.ts src/management/ipc/index.ts
+git diff -- src/management/ipc/operation-worker/scheduler.ts src/management/ipc/operation-worker/scheduler.test.ts src/management/ipc/operation-worker/scheduler.test-fixtures.ts src/management/ipc/operation-worker/runner.ts src/management/ipc/operation-worker/runner.test.ts src/management/ipc/index.ts
+git diff --cached -- src/management/ipc/operation-worker/scheduler.ts src/management/ipc/operation-worker/scheduler.test.ts src/management/ipc/operation-worker/scheduler.test-fixtures.ts src/management/ipc/operation-worker/runner.ts src/management/ipc/operation-worker/runner.test.ts src/management/ipc/index.ts
+git add -- src/management/ipc/operation-worker/scheduler.ts src/management/ipc/operation-worker/scheduler.test.ts src/management/ipc/operation-worker/scheduler.test-fixtures.ts src/management/ipc/operation-worker/runner.ts src/management/ipc/operation-worker/runner.test.ts src/management/ipc/index.ts
 git commit -m "feat(ipc): schedule cancellable workers"
 ```
 
@@ -449,8 +449,8 @@ git commit -m "feat(ipc): schedule cancellable workers"
 
 **Files:**
 - Create: `src/management/ae/host-bridge.test.ts`
-- Create: `src/management/ipc/operation-worker-context.ts`
-- Create: `src/management/ipc/operation-worker-context.test.ts`
+- Create: `src/management/ipc/operation-worker/context.ts`
+- Create: `src/management/ipc/operation-worker/context.test.ts`
 - Modify: `src/management/ae/host/contract.ts`
 - Modify: `src/management/ae/host-bridge.ts`
 - Modify: `src/management/ae/jsx/host-bundle.ext.ts`
@@ -481,7 +481,7 @@ it("freezes the ExtendScript host context for each invocation", async () => {
 
 - [ ] **Step 2: focused RED を実行する**
 
-Run: `bun run vitest run src/management/ipc/operation-worker-context.test.ts src/management/ae/jsx/host-bundle.test.ts`
+Run: `bun run vitest run src/management/ipc/operation-worker/context.test.ts src/management/ae/jsx/host-bundle.test.ts`
 
 Expected: FAIL because context provider がなく、ExtendScript の camelCase context を immutable invocation context に変換できない。
 
@@ -499,7 +499,7 @@ export const createOperationWorkerContextProvider = (win: Window): HostContextPr
 
 - [ ] **Step 4: focused GREEN を実行する**
 
-Run: `bun run vitest run src/management/ipc/operation-worker-context.test.ts src/management/ae/jsx/host-bundle.test.ts src/management/ae/host-bridge.test.ts`
+Run: `bun run vitest run src/management/ipc/operation-worker/context.test.ts src/management/ae/jsx/host-bundle.test.ts src/management/ae/host-bridge.test.ts`
 
 Expected: PASS。空の root/session は拒否され、各呼び出しが frozen context を受け取り、ExtendScript 以外の root discovery がない。
 
@@ -508,10 +508,10 @@ Expected: PASS。空の root/session は拒否され、各呼び出しが frozen
 Review: context provider が process/gateway を保持せず、explicit shared root 以外で managed root を共有せず、`getHostContext` が AE host boundary に限定されることを確認する。
 
 ```text
-git diff --check -- src/management/ae/host-bridge.test.ts src/management/ipc/operation-worker-context.ts src/management/ipc/operation-worker-context.test.ts src/management/ae/host/contract.ts src/management/ae/host-bridge.ts src/management/ae/jsx/host-bundle.ext.ts src/management/ae/jsx/host-bundle.test.ts src/management/ipc/index.ts
-git diff -- src/management/ae/host-bridge.test.ts src/management/ipc/operation-worker-context.ts src/management/ipc/operation-worker-context.test.ts src/management/ae/host/contract.ts src/management/ae/host-bridge.ts src/management/ae/jsx/host-bundle.ext.ts src/management/ae/jsx/host-bundle.test.ts src/management/ipc/index.ts
-git diff --cached -- src/management/ae/host-bridge.test.ts src/management/ipc/operation-worker-context.ts src/management/ipc/operation-worker-context.test.ts src/management/ae/host/contract.ts src/management/ae/host-bridge.ts src/management/ae/jsx/host-bundle.ext.ts src/management/ae/jsx/host-bundle.test.ts src/management/ipc/index.ts
-git add -- src/management/ae/host-bridge.test.ts src/management/ipc/operation-worker-context.ts src/management/ipc/operation-worker-context.test.ts src/management/ae/host/contract.ts src/management/ae/host-bridge.ts src/management/ae/jsx/host-bundle.ext.ts src/management/ae/jsx/host-bundle.test.ts src/management/ipc/index.ts
+git diff --check -- src/management/ae/host-bridge.test.ts src/management/ipc/operation-worker/context.ts src/management/ipc/operation-worker/context.test.ts src/management/ae/host/contract.ts src/management/ae/host-bridge.ts src/management/ae/jsx/host-bundle.ext.ts src/management/ae/jsx/host-bundle.test.ts src/management/ipc/index.ts
+git diff -- src/management/ae/host-bridge.test.ts src/management/ipc/operation-worker/context.ts src/management/ipc/operation-worker/context.test.ts src/management/ae/host/contract.ts src/management/ae/host-bridge.ts src/management/ae/jsx/host-bundle.ext.ts src/management/ae/jsx/host-bundle.test.ts src/management/ipc/index.ts
+git diff --cached -- src/management/ae/host-bridge.test.ts src/management/ipc/operation-worker/context.ts src/management/ipc/operation-worker/context.test.ts src/management/ae/host/contract.ts src/management/ae/host-bridge.ts src/management/ae/jsx/host-bundle.ext.ts src/management/ae/jsx/host-bundle.test.ts src/management/ipc/index.ts
+git add -- src/management/ae/host-bridge.test.ts src/management/ipc/operation-worker/context.ts src/management/ipc/operation-worker/context.test.ts src/management/ae/host/contract.ts src/management/ae/host-bridge.ts src/management/ae/jsx/host-bundle.ext.ts src/management/ae/jsx/host-bundle.test.ts src/management/ipc/index.ts
 git commit -m "feat(ipc): capture immutable host context"
 ```
 
@@ -802,7 +802,7 @@ callsite は OW-CEP-005〜008 の provider/gateway に向け、旧 connection li
 
 ```text
 rg -n "RuntimeTransport|RuntimeLifecycle|SurfaceMultiplex|initRustStorageRuntime|endpoint\.json|named pipe|Unix domain|heartbeat|single-instance|fallbackToLegacy|rust/apps/runtime" src scripts package.json
-bun run vitest run src/management/ipc/resident-runtime-removal.test.ts src/management/ipc/operation-worker-frame.test.ts src/management/ipc/operation-worker-binary.test.ts src/management/ipc/operation-worker-runner.test.ts src/management/ipc/operation-worker-scheduler.test.ts
+bun run vitest run src/management/ipc/resident-runtime-removal.test.ts src/management/ipc/operation-worker/frame.test.ts src/management/ipc/operation-worker/binary.test.ts src/management/ipc/operation-worker/runner.test.ts src/management/ipc/operation-worker/scheduler.test.ts
 bun run typecheck
 bun run ci
 ```

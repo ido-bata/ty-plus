@@ -131,6 +131,6 @@ Windows AE 2026 で確認した兆候は §4 と同じ。
 
 ## 7. 既知の制限
 
-- `verification:online-gateway:package` はバイナリと trust metadata の存在だけを検証する。AE パネルにロードして live dispatch を実行する本番的なテストは別 issue で AE verification スクリプト（`verify-operation-worker-process.ts`, `verify-operation-worker-cep.ts`）に残されている。Issue #128 のスコープ外。
+- `verification:online-gateway:package` はバイナリと trust metadata の存在だけを検証する。AE パネルにロードして live dispatch を実行する本番的なテストは別 issue で AE verification スクリプト（`operation-worker-process.ts`, `operation-worker-cep.ts`）に残されている。Issue #128 のスコープ外。
 - Mac ZXP の検証は本 Issue のスコープ外（CLAUDE.md の Mac ZXP 注意事項参照）。
 - Docker / CI 上で bun run build を完走させる場合、`bun install --frozen-lockfile --ignore-scripts` を実行しても Rust build が `cargo` 等のホスト依存を要求する可能性がある。Windows AE での検証はネイティブ側の責任分担とする。

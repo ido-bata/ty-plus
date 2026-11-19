@@ -8,7 +8,7 @@
 import { describe, expect, it } from "vitest";
 
 import type { Preset } from "@/management/preset/contract";
-import type { GroupEntry } from "@/management/preset/group-catalog";
+import type { GroupEntry } from "@/management/preset/group/catalog";
 
 import { partitionCatalogPresetsByGroup } from "./partition-catalog-presets";
 
@@ -92,7 +92,7 @@ describe("partitionCatalogPresetsByGroup", () => {
 
 	it("handles parseGroupFromText('') → empty groups gracefully", async () => {
 		const { parseGroupFromText } = await import(
-			"@/management/preset/group-catalog"
+			"@/management/preset/group/catalog"
 		);
 		const groups = parseGroupFromText("");
 		const ps = [preset("a")];

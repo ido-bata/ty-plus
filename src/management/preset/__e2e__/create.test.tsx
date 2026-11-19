@@ -36,15 +36,15 @@ const {
 
 vi.mock("@/management/preset", async () => {
 	const { Dialog } = await vi.importActual<
-		typeof import("@/management/preset/tool-shell/Dialog")
-	>("@/management/preset/tool-shell/Dialog");
+		typeof import("@/management/preset/tool-shell/dialog/ToolDialog")
+	>("@/management/preset/tool-shell/dialog/ToolDialog");
 	return {
 		ToolDialog: Dialog,
 		readUserHomeOrFallback: () => "C:\\Users\\test",
 	};
 });
 
-vi.mock("@/management/preset/use-cases", () => ({
+vi.mock("@/management/preset/operations", () => ({
 	upsertLocalPreset: mockUpsertLocalPreset,
 }));
 
@@ -232,7 +232,7 @@ vi.mock("../../../shared/component/fields/Input", () => ({
 	),
 }));
 
-vi.mock("../../../management/preset/components/IconEditor", () => ({
+vi.mock("../../../management/preset/icon/Editor", () => ({
 	PresetIconEditor: () => (
 		<div data-testid="preset-icon-editor">Icon Editor</div>
 	),

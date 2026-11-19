@@ -46,7 +46,7 @@
 | #186 | release-0-10-0 | fix(debug): Debug Consoleのカバレッジと上限の反証可能性 | 延期候補 | 本人確認済み | **延期確定**（2026-11-11技術評価）。開発時診断の改善でありR0のユーザー可視機能に影響しない。R0後の診断改善タスク | `1fac098cf1` | - |
 | #178 | release-0-10-0 | fix(workspace): post-onboarding widget placement復旧 | 採用候補（主要操作） | 本人確認済み | **採用・R0必須**（2026-11-11技術評価）。Add Widgetがcloud未bootの実機通常状態で無言failし配置されない。旧repoで実機再検証済み（`0b2f1d92`） | `7b40c1ed34` | unit suite緑（PR #38） |
 | #177 | release-0-10-0 | fix(settings): right content paneのcanonical inner gutter | 延期候補（UI polish） | 本人確認済み | **延期確定**（2026-11-11技術評価）。視覚調整であり機能欠陥ではない。R0後のUI polishタスク | `6cda4bc9ca` | - |
-| #176 | release-0-10-0 | fix(ci): SKIP検証の所有者定義とrelease gate partition（#172〜#175） | R0有効（#6/#10のgate基盤） | 本人確認済み | **部分移植**（2026-11-11技術評価）。#172（binary path）は#6/PR #27で修正済み、#173はwire名改名（`lookup-or-generate`）で別解、#175は新CI（#19）のplatform-native job設計で代替済み。**#174（storybook screenshotのPOSIX path手実装）の欠陥は本repoに残置** — `scripts/verify/screenshot-path.ts` のみ移植する | `06d76f2bad` | - |
+| #176 | release-0-10-0 | fix(ci): SKIP検証の所有者定義とrelease gate partition（#172〜#175） | R0有効（#6/#10のgate基盤） | 本人確認済み | **部分移植**（2026-11-11技術評価）。#172（binary path）は#6/PR #27で修正済み、#173はwire名改名（`lookup-or-generate`）で別解、#175は新CI（#19）のplatform-native job設計で代替済み。**#174（storybook screenshotのPOSIX path手実装）の欠陥は本repoに残置** — `scripts/verify/storybook/screenshot-path.ts` のみ移植する | `06d76f2bad` | - |
 
 ## 移植DAGと実行順序
 

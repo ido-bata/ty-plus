@@ -1,4 +1,4 @@
-import type { CepMenuPayload } from "@/management/dialog/dialogs/unified-context-menu";
+import type { CepMenuPayload } from "@/management/dialog/unified-context-menu";
 
 export const DEBUG_CTX_IDS = {
 	copyMessage: "dbg.ctx.copy-message",

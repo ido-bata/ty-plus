@@ -13,9 +13,9 @@ import {
 	canonicalMethods,
 	protocolVersion,
 } from "../../src/management/ipc/generated/wire";
-import type { OperationWorkerManifest } from "../../src/management/ipc/operation-worker-binary";
-import { resolveOperationWorkerBinary } from "../../src/management/ipc/operation-worker-binary";
-import { createNodeOperationWorkerRuntime } from "../../src/management/ipc/operation-worker-node-runtime";
+import type { OperationWorkerManifest } from "../../src/management/ipc/operation-worker/binary";
+import { resolveOperationWorkerBinary } from "../../src/management/ipc/operation-worker/binary";
+import { createNodeOperationWorkerRuntime } from "../../src/management/ipc/operation-worker/node-runtime";
 import { resolveCepExtensionsRoot } from "../lib/cep-paths";
 import { ensurePlayerDebugMode } from "../lib/write-debug-mode";
 import {

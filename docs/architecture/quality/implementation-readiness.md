@@ -77,7 +77,7 @@ Re-introducing any online feature requires a new backend and surface contract
 GitHub Actions の `ubuntu-latest` でも同じ2点で止まり、どちらも code regression ではない。
 
 - **`verify:operation-worker:package` は linux で必ず exit 2。**
-  [`scripts/verify/verify-operation-worker-package.ts`](../../../scripts/verify/verify-operation-worker-package.ts)
+  [`scripts/verify/operation-worker/operation-worker-package.ts`](../../../scripts/verify/operation-worker/operation-worker-package.ts)
   は `process.platform === "linux"` を検知すると platform 判定 probe を `ok: false` で積んで
   返す（CEP operation-worker は Windows / macOS 専用ビルドのため）。この script は `ci`
   script の第3項で、`574560e2`（Issue #128, 2026-09-21）で接続された。以降 ubuntu 上の

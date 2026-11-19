@@ -1,7 +1,7 @@
 import { notifyPanelsAfterPresetSave } from "@/management/workspace/placement/notify-panels-after-preset-save";
 import { css } from "@/styled-system/css";
 
-import type { PresetToolDialogProps } from "./Dialog";
+import type { PresetToolDialogProps } from "./dialog/ToolDialog";
 
 export const shellFieldLabelClass = css({
 	fontSize: "xs",

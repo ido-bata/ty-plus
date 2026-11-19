@@ -9,8 +9,8 @@
 
 import { createCepSurfaceTransport } from "@/management/ae/cep/transport";
 import { createLogger } from "@/management/debug/logger";
-import type { UpdateInstallResultDTO } from "@/management/ipc/operation-worker-composition";
-import { OperationWorkerAttemptError } from "@/management/ipc/operation-worker-runner";
+import type { UpdateInstallResultDTO } from "@/management/ipc/operation-worker/composition";
+import { OperationWorkerAttemptError } from "@/management/ipc/operation-worker/runner";
 import { publishShellMessage } from "@/management/workspace/messaging/publish-shell-message";
 import {
 	SHELL_CHANNELS,

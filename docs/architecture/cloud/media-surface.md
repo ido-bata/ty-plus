@@ -9,7 +9,7 @@
 | HTTP entry | [`src/media-surface/src/index.ts`](../../../src/media-surface/src/index.ts) |
 | YouTube page render | [`src/media-surface/src/youtube-page.ts`](../../../src/media-surface/src/youtube-page.ts) |
 | dev server 起動 | [`scripts/lib/media-surface-dev-server.ts`](../../../scripts/lib/media-surface-dev-server.ts) |
-| AE deploy 時の統合起動 | [`scripts/dev-ae-deploy.ts`](../../../scripts/dev-ae-deploy.ts) |
+| AE deploy 時の統合起動 | [`scripts/ae-deploy.ts`](../../../scripts/ae-deploy.ts) |
 
 ## 現在の役割
 
@@ -19,7 +19,7 @@
 
 ## dev 導線
 
-[`scripts/dev-ae-deploy.ts`](../../../scripts/dev-ae-deploy.ts) は media surface dev server を起動し、`TY_PLUS_MEDIA_BASE_URL` を設定してから build / install / AE launch を行う。
+[`scripts/ae-deploy.ts`](../../../scripts/ae-deploy.ts) は media surface dev server を起動し、`TY_PLUS_MEDIA_BASE_URL` を設定してから build / install / AE launch を行う。
 
 ## 境界
 

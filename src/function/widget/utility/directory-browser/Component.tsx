@@ -19,7 +19,7 @@ import {
 	useState,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { useCep } from "@/management/ae/cep/contexts/Context";
+import { useCep } from "@/management/ae/cep/contexts/CepContext";
 import { selectFolder } from "@/management/ae/cep/dialog-shim/bolt";
 import { createCepHostExecutor } from "@/management/ae/cep/host-executor";
 import { detectCepHostCode } from "@/management/ae/cep/runtime";
@@ -40,7 +40,11 @@ import {
 	LIST_ROW_GRID,
 	PresetGlyphById,
 } from "@/management/preset";
-import { isPresetAssetMissing } from "@/management/preset/asset-health";
+import { isPresetAssetMissing } from "@/management/preset/assets/health";
+import {
+	useIsPresetAssetMissing,
+	useIsPresetAssetUnverifiable,
+} from "@/management/preset/assets/use-health";
 import type {
 	Preset,
 	PresetRecord,
@@ -50,19 +54,15 @@ import { traceExecute } from "@/management/preset/execution/lifecycle-trace";
 import {
 	type GroupEntry,
 	parseGroupFromText,
-} from "@/management/preset/group-catalog";
+} from "@/management/preset/group/catalog";
+import { getPreset } from "@/management/preset/operations";
 import {
 	isPresetSidekickSourcePath,
 	parentDirectoryOf,
 	SIBLING_IMAGE_NAME_RE,
 	siblingPathKey,
 	stemWithoutExtension,
-} from "@/management/preset/sibling-thumbnail";
-import { getPreset } from "@/management/preset/use-cases";
-import {
-	useIsPresetAssetMissing,
-	useIsPresetAssetUnverifiable,
-} from "@/management/preset/use-preset-asset-health";
+} from "@/management/preset/sibling/thumbnail";
 import { readSettings } from "@/management/storage";
 import {
 	canUseCepNodeFileBrowser,
@@ -73,7 +73,7 @@ import {
 import {
 	DirectoryBrowser,
 	type DirectoryBrowserEntry,
-} from "@/management/storage/ui/DirectoryBrowser";
+} from "@/management/storage/ui/directory-browser/Component";
 import { executeWorkspacePresetForWindow } from "@/management/workspace/runtime";
 import type { SurfaceState } from "@/management/workspace/state";
 import { CollapsibleGroupHeader } from "./CollapsibleGroupHeader";

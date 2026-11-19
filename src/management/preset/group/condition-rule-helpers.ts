@@ -2,9 +2,9 @@ import type { PresetType } from "@/management/preset/contract";
 import type {
 	IconRule,
 	IconRuleFilter,
-} from "@/management/preset/group-catalog";
-import type { PresetIconEditorDraft } from "@/management/preset/icon-editor";
-import { presetIconDraftToPresetIcon } from "@/management/preset/icon-editor";
+} from "@/management/preset/group/catalog";
+import type { PresetIconEditorDraft } from "@/management/preset/icon/editor-state";
+import { presetIconDraftToPresetIcon } from "@/management/preset/icon/editor-state";
 
 /**
  * Single owner for the group "condition rule" shape and its conversion into

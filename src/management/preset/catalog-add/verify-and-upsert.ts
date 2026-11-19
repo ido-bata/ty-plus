@@ -15,10 +15,10 @@
  * still call `assertPresetAssetPresent` directly for their early verify
  * gate; only the final verify→upsert tail is shared.
  */
-import { assertPresetAssetPresent } from "@/management/preset/asset-verification";
+import { assertPresetAssetPresent } from "@/management/preset/assets/verification";
 import type { Preset } from "@/management/preset/contract";
 import type { PresetSaveEntryPoint } from "@/management/preset/execution/lifecycle-trace";
-import { upsertLocalPreset } from "@/management/preset/use-cases";
+import { upsertLocalPreset } from "@/management/preset/operations";
 
 /**
  * Verify the asset backing `record` is present on disk, then upsert

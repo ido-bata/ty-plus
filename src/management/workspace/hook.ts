@@ -9,7 +9,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { WidgetType } from "@/function/widget";
 import { isWidgetType } from "@/function/widget/contract";
-import { useCep } from "@/management/ae/cep/contexts/Context";
+import { useCep } from "@/management/ae/cep/contexts/CepContext";
 import { tyPlusExtensionId } from "@/management/ae/cep/extension-id";
 import { createCepHostExecutor } from "@/management/ae/cep/host-executor";
 import { detectCepHostCode } from "@/management/ae/cep/runtime";
@@ -27,14 +27,14 @@ import {
 	initializeLogRetention,
 } from "@/management/debug";
 import { DebugConsole } from "@/management/debug/console/ui";
-import type { ToolDialogKind } from "@/management/dialog/dialogs/ids";
+import type { ToolDialogKind } from "@/management/dialog/ids";
 import {
 	attachUnifiedWorkspaceContextMenu,
 	CEP_CONTEXT_HEADER_ID_PREFIX,
 	type ContextHit,
 	CTX_MENU_IDS,
 	updateAlignTargetCache,
-} from "@/management/dialog/dialogs/unified-context-menu";
+} from "@/management/dialog/unified-context-menu";
 import { i18n } from "@/management/i18n/index";
 import { notificationStore } from "@/management/online/notification/service";
 import {
@@ -48,10 +48,16 @@ import {
 	writeCpState,
 } from "@/management/panel/control/state";
 import { loadPanelChromeControlPanel } from "@/management/panel/persistence/chrome-store";
-import { isPresetAssetMissing } from "@/management/preset/asset-health";
+import { isPresetAssetMissing } from "@/management/preset/assets/health";
 import type { Preset } from "@/management/preset/contract";
 import { askHostDeleteConfirm } from "@/management/preset/delete-confirm";
 import type { PresetDialogRequest } from "@/management/preset/dialog-request";
+import {
+	parseGroupFromText,
+	removeGroupEntry,
+	removePresetFromGroupEntry,
+	upsertGroupEntry,
+} from "@/management/preset/group/catalog";
 import {
 	dispatchGroupWorkspaceRequest,
 	GROUP_WORKSPACE_EVENT,
@@ -60,21 +66,15 @@ import {
 import {
 	releaseDropPlacementFromState,
 	releaseGroupPreset,
-} from "@/management/preset/group/group-release";
-import {
-	parseGroupFromText,
-	removeGroupEntry,
-	removePresetFromGroupEntry,
-	upsertGroupEntry,
-} from "@/management/preset/group-catalog";
-import { writePresetToolHandoff } from "@/management/preset/tool-handoff-file";
-import { PRESET_TOOL_OPEN_BUS_CHANNEL } from "@/management/preset/tool-open-channel";
+} from "@/management/preset/group/release";
 import {
 	duplicatePreset,
 	getPreset,
 	listPresets,
 	removeLocalPreset,
-} from "@/management/preset/use-cases";
+} from "@/management/preset/operations";
+import { writePresetToolHandoff } from "@/management/preset/tool-handoff-file";
+import { PRESET_TOOL_OPEN_BUS_CHANNEL } from "@/management/preset/tool-open-channel";
 import {
 	PRESET_HOVER_EVENT,
 	type WorkspacePresetHoverDetail,
@@ -199,7 +199,7 @@ import {
 	requestOpenBackgroundPanel,
 	requestOpenWorkspaceShellTool,
 } from "./hooks/dialogs";
-import { openDebugConsole, openUrlInDefaultBrowser } from "./hooks/helpers";
+import { openDebugConsole, openUrlInDefaultBrowser } from "./hooks/external";
 import {
 	ensurePrimaryPanelWidgets,
 	remapSurfaceSelectionByPreservedTileIds,

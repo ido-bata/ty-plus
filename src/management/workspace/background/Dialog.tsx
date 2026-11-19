@@ -15,9 +15,9 @@ import { createCepSurfaceTransport } from "@/management/ae/cep/transport";
 import {
 	type CepMenuPayload,
 	registerCepJsonContextMenuSurface,
-} from "@/management/dialog/dialogs/context-menu";
-import { DialogFooterActions } from "@/management/dialog/dialogs/shell/Footer";
+} from "@/management/dialog/context-menu";
 import { DialogShell } from "@/management/dialog/index";
+import { DialogFooterActions } from "@/management/dialog/shell/Footer";
 import { useDialogClose } from "@/management/dialog/useClose";
 import type {
 	Background,

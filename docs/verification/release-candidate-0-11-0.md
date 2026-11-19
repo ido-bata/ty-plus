@@ -12,7 +12,7 @@ RC候補 `bbbe77cc`（当時）について、実機E2E・Storybook capture の�
 
 | 範囲 | 差分 | 判定 |
 | --- | --- | --- |
-| `05551c30`（実機E2E・capture実施SHA）→ `bbbe77cc` | `src/` `rust/` `scripts/cep` `scripts/build`: **差分ゼロ**。変更は検証スクリプト（`scripts/verify/*`）、release署名ツール（`scripts/package/sign-zxp.ts` — ZXP timestamp 方針のみ、payload 非含有）、`package.json`（script 1行追加、version 不変）、`docs/` のみ | 製品コード同一のため、`05551c30` 時点の実機証拠は `bbbe77cc` に有効 |
+| `05551c30`（実機E2E・capture実施SHA）→ `bbbe77cc` | `src/` `rust/` `scripts/cep` `scripts/build`: **差分ゼロ**。変更は検証スクリプト（`scripts/verify/*`）、release署名ツール（`scripts/package/sign/zxp.ts` — ZXP timestamp 方針のみ、payload 非含有）、`package.json`（script 1行追加、version 不変）、`docs/` のみ | 製品コード同一のため、`05551c30` 時点の実機証拠は `bbbe77cc` に有効 |
 
 したがって以下の実機証拠は対象SHA `bbbe77cc` の製品コードに対するものとして扱う。
 
@@ -42,7 +42,7 @@ RC候補 `bbbe77cc`（当時）について、実機E2E・Storybook capture の�
 | trustMode | `release` |
 | ZIP | `ty-plus-v0.11.0-macos.zip` / sha256 `21ad46c2180cae7a094e30edef481b5bc0a230f46cd5f2424e9a9e11940bb37c` / 14,002,352 bytes |
 | ZXP | `ty-plus-v0.11.0-macos.zxp` / sha256 `6753c5d974c2d480e9d86fe95c4c765afb8c7276abb51cdeed86a3520015f761` / 14,016,089 bytes |
-| 監査 | `verify-release-artifacts.ts`: manifest sourceCommit=HEAD 一致、全 artifact sha256 一致、archive 内容=pack 一致、ZXP署名独立検証、secret scan clean — **全項目 PASS** |
+| 監査 | `release-artifacts.ts`: manifest sourceCommit=HEAD 一致、全 artifact sha256 一致、archive 内容=pack 一致、ZXP署名独立検証、secret scan clean — **全項目 PASS** |
 
 ### Windows（完了 — cargo xwin クロスコンパイル、未署名worker + 署名済みZXP、ADR-0003）
 
@@ -64,9 +64,9 @@ bun run release:candidate --channel=stable --release-version=0.11.0
 | ZIP | `ty-plus-v0.11.0-windows.zip` / sha256 `3f77e5c060b51a324886ba1a7cb6a1dc327138064e8770796fd2eb69925d4e21` / 10,958,639 bytes |
 | ZXP | `ty-plus-v0.11.0-windows.zxp` / sha256 `1fc7a11b7feec1bf732140aa12097693fb80287ea12e54f6ed2289410a7eb57e` / 10,972,758 bytes |
 | worker | `windows/operation-worker.exe`（7,601,152 bytes、sha256 `2e7881dd6a701c7512c3e2feaa677f383fafc55a5cfbda2628f7649413f6feef`、Authenticode 未署名 = R0 の正当な形） |
-| 監査 | `verify-release-artifacts.ts` 全項目 PASS（sourceCommit=HEAD、sha256、archive=pack、ZXP署名、secret scan） |
+| 監査 | `release-artifacts.ts` 全項目 PASS（sourceCommit=HEAD、sha256、archive=pack、ZXP署名、secret scan） |
 
-CI `release.yml` `release-trust-windows-candidate`（run 44449771825、@ `bbbe77cc`）も **success**。TSA 無し既定化（#233/#234）で exit 35 は解消。CI artifact `ty-plus-release-candidate-windows-bbbe77cc…` の manifest も sourceCommit=`bbbe77cc`・trustMode=`release` を確認（zip/zxp の sha256 はローカル xwin build と異なるが、CI job 内の `verify-release-artifacts` 監査は PASS。内容同一性は sourceCommit と監査で担保）。
+CI `release.yml` `release-trust-windows-candidate`（run 44449771825、@ `bbbe77cc`）も **success**。TSA 無し既定化（#233/#234）で exit 35 は解消。CI artifact `ty-plus-release-candidate-windows-bbbe77cc…` の manifest も sourceCommit=`bbbe77cc`・trustMode=`release` を確認（zip/zxp の sha256 はローカル xwin build と異なるが、CI job 内の `release-artifacts` 監査は PASS。内容同一性は sourceCommit と監査で担保）。
 
 ## 4. Issue別 受入状況
 

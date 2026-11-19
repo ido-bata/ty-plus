@@ -2,7 +2,7 @@
  * ExtendScript host bundle entry (`*.ext.ts`).
  *
  * The checked-in `ty-plus-host.bundle.js` is the full host until sources are migrated here.
- * `scripts/build/build-extendscript-host.ts` skips rebuilding while the stub marker is present
+ * `scripts/build/extendscript-host.ts` skips rebuilding while the stub marker is present
  * (override with `TY_PLUS_REBUILD_HOST=1`).
  */
 // @ty-plus-host-stub

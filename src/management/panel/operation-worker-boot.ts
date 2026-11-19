@@ -22,18 +22,18 @@ import { createLogger } from "@/management/debug/logger";
 import {
 	compiledOperationWorkerTrustMode,
 	type OperationWorkerPlatform,
-} from "@/management/ipc/operation-worker-binary";
+} from "@/management/ipc/operation-worker/binary";
 import {
 	createCepOperationWorkerRuntime,
 	readCepNodePlatform,
-} from "@/management/ipc/operation-worker-cep-runtime";
+} from "@/management/ipc/operation-worker/cep-runtime";
 import {
 	createOperationWorkerComposition,
 	type OperationWorkerComposition,
 	type OperationWorkerLifecycleObserver,
-} from "@/management/ipc/operation-worker-composition";
-import { createOperationWorkerContextProvider } from "@/management/ipc/operation-worker-context";
-import type { WorkerCorrelation } from "@/management/ipc/operation-worker-runner";
+} from "@/management/ipc/operation-worker/composition";
+import { createOperationWorkerContextProvider } from "@/management/ipc/operation-worker/context";
+import type { WorkerCorrelation } from "@/management/ipc/operation-worker/runner";
 
 declare const __APP_VERSION__: string;
 

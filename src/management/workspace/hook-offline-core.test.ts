@@ -3,7 +3,7 @@
  *
  * Local preset reads/writes in the workspace hook must go through the
  * file-backed local catalog (`listPresets` / `getPreset` from
- * `@/management/preset/use-cases`), never through `getDataServices()` —
+ * `@/management/preset/operations`), never through `getDataServices()` —
  * the cloud boot boundary that throws `GatewayBootRequiredError` when the
  * gateway has not booted (degraded / offline / unimplemented network).
  *
@@ -19,7 +19,7 @@ const hookSource = fs.readFileSync(
 	"utf8",
 );
 const persistFolderGroupSource = fs.readFileSync(
-	new URL("../preset/persist-folder-group.ts", import.meta.url),
+	new URL("../preset/group/persist-folder.ts", import.meta.url),
 	"utf8",
 );
 const onboardingViewSource = fs.readFileSync(
@@ -37,7 +37,7 @@ describe("useWorkspaceRuntime hook — offline-core preset access (issue 139)", 
 
 	it("reads the preset list via the local-catalog use-case", () => {
 		expect(hookSource).toMatch(
-			/import\s*\{[^}]*\blistPresets\b[^}]*\}\s*from\s*["']@\/management\/preset\/use-cases["']/,
+			/import\s*\{[^}]*\blistPresets\b[^}]*\}\s*from\s*["']@\/management\/preset\/operations["']/,
 		);
 		expect(hookSource).toMatch(/\blistPresets\s*\(\s*\)/);
 	});

@@ -33,7 +33,7 @@ cross-compileだけを実機 acceptance とみなさない。credentialがない
 - product import graph に `RuntimeTransport`、`RuntimeLifecycle`、`SurfaceMultiplex`、`initRustStorageRuntime` がない。
 - `rust/Cargo.toml` は `apps/operation-worker` を含み、`apps/runtime` を含まない。
 - product source/build scripts に endpoint discovery、named pipe、UDS、heartbeat、single-instance、global `runtime.lock` がない。
-- CEP Node の直接 `child_process` import は `src/management/ipc/operation-worker-runner.ts` だけである。
+- CEP Node の直接 `child_process` import は `src/management/ipc/operation-worker/runner.ts` だけである。
 - `control/operation.lock` 以外のprocess coordination fileを作らない。
 - 同じAE versionでも異なるsession support rootは分離され、明示shared rootだけが共有される。
 - 二連続operationが異なるPIDを持ち、一方のcrash後にも次operationが起動する。

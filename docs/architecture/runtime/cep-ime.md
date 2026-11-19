@@ -50,12 +50,12 @@ field already knows it is composing).
 - `src/management/widget/catalog.tsx` — catalog keydown (consolidated to helper)
 - `src/management/debug/console/ui/Panel.tsx` — debug console Enter-to-execute (consolidated)
 - `src/management/setting/dialog/sections/PathsSection.tsx` — Enter-to-blur in path fields
-- `src/management/storage/ui/DirectoryBrowser.tsx` — Enter-to-activate in directory list
+- `src/management/storage/ui/directory-browser/Component.tsx` — Enter-to-activate in directory list
 
 **Function layer (`src/function/`):**
 
 - `src/function/widget/core/easing/Component.tsx` — Space-key continuous redraw trigger
-- `src/function/widget/utility/quick-actions/ActionList.tsx` — command palette (Enter activates, Escape closes, ArrowUp/Down navigate)
+- `src/function/widget/utility/quick-actions/QuickActionsWidget.tsx` — command palette (Enter activates, Escape closes, ArrowUp/Down navigate)
 - `src/function/widget/utility/directory-browser/Component.tsx` — five Enter-to-activate sites (path input commit, file browser row, catalog preset row, file system list, file browser list)
 - `src/function/onboarding/View.tsx` — Enter-to-finalize in support-root path field
 

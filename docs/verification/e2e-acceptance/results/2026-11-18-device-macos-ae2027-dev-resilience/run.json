@@ -1,174 +1,174 @@
 {
-  "schema": "ty-plus.e2e-run/1",
-  "suite": "resilience",
-  "capturedAt": "2026-11-18T11:34:11.682Z",
-  "extensionDir": "/Users/rebui/Library/Application Support/Adobe/CEP/extensions/app.ty-plus.dev",
-  "managedRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-18T11-33-46-919Z-10530/ty-plus",
-  "realManagedRoot": "/Applications/Adobe After Effects 2027/ty-plus",
-  "sandbox": {
-    "enabled": true,
-    "sandboxRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-18T11-33-46-919Z-10530/ty-plus",
-    "integrity": {
-      "realRoot": "/Applications/Adobe After Effects 2027/ty-plus",
-      "checkedAt": "2026-11-18T11:34:11.681Z",
-      "driftBeforeRepair": {
-        "changed": 1,
-        "added": 1,
-        "removed": 0
-      },
-      "filesRepaired": [
-        "cache/layout-undo/panel-1/stack.json",
-        "removed:cache/layout-undo/panel-1/stack.json.tmp-91311-3-1f1693fd-458c-40be-a3c7-4fb226b6113d"
-      ],
-      "cleanAfterRepair": true
-    }
-  },
-  "totals": {
-    "PASS": 5,
-    "FAIL": 0,
-    "BLOCKED": 0,
-    "SKIP": 0
-  },
-  "results": [
-    {
-      "uc": "UC-I01",
-      "title": "corrupt workspaces/workspace-1.json: banner shown, bytes preserved",
-      "status": "PASS",
-      "detail": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-18T11-33-46-919Z-10530/ty-plus/workspaces/workspace-1.json",
-      "checks": [
-        {
-          "name": "workspaces/workspace-1.json overwritten with corrupt bytes",
-          "ok": true,
-          "detail": "29 bytes"
-        },
-        {
-          "name": "panel boots with non-trivial DOM after corrupt file",
-          "ok": true,
-          "detail": "body=55783 grid=true tiles=7"
-        },
-        {
-          "name": "layout restore banner reports corrupt",
-          "ok": true,
-          "detail": "present"
-        },
-        {
-          "name": "workspaces/workspace-1.json not silently destroyed on boot",
-          "ok": true,
-          "detail": "corrupt bytes preserved"
-        }
-      ],
-      "evidence": [],
-      "durationMs": 4111
-    },
-    {
-      "uc": "UC-I02",
-      "title": "corrupt widgets/widgets.json: boots, bytes preserved (UC-D12 alias)",
-      "status": "PASS",
-      "detail": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-18T11-33-46-919Z-10530/ty-plus/widgets/widgets.json",
-      "checks": [
-        {
-          "name": "widgets/widgets.json overwritten with corrupt bytes",
-          "ok": true,
-          "detail": "39 bytes"
-        },
-        {
-          "name": "panel boots with non-trivial DOM after corrupt file",
-          "ok": true,
-          "detail": "body=55769 grid=true tiles=7"
-        },
-        {
-          "name": "workspace grid still rendered",
-          "ok": true,
-          "detail": "present"
-        },
-        {
-          "name": "widgets/widgets.json not silently destroyed on boot",
-          "ok": true,
-          "detail": "corrupt bytes preserved"
-        }
-      ],
-      "evidence": [],
-      "durationMs": 3689
-    },
-    {
-      "uc": "UC-I04",
-      "title": "corrupt styles/theme.css: defaults fallback, file preserved or repaired",
-      "status": "PASS",
-      "detail": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-18T11-33-46-919Z-10530/ty-plus/styles/theme.css",
-      "checks": [
-        {
-          "name": "panel boots and applies fallback theme",
-          "ok": true,
-          "detail": "body=55783 grid=true accent=#58a6ff"
-        },
-        {
-          "name": "styles/theme.css preserved or regenerated",
-          "ok": true,
-          "detail": "corrupt bytes preserved (defaults applied)"
-        }
-      ],
-      "evidence": [],
-      "durationMs": 3540
-    },
-    {
-      "uc": "UC-I05",
-      "title": "corrupt settings/app.json: defaults fallback, bytes preserved",
-      "status": "PASS",
-      "detail": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-18T11-33-46-919Z-10530/ty-plus/settings/app.json",
-      "checks": [
-        {
-          "name": "settings/app.json overwritten with corrupt bytes",
-          "ok": true,
-          "detail": "50 bytes"
-        },
-        {
-          "name": "panel boots with non-trivial DOM after corrupt file",
-          "ok": true,
-          "detail": "body=55831 grid=true tiles=7"
-        },
-        {
-          "name": "workspace grid still rendered",
-          "ok": true,
-          "detail": "present"
-        },
-        {
-          "name": "settings/app.json not silently destroyed on boot",
-          "ok": true,
-          "detail": "corrupt bytes preserved"
-        }
-      ],
-      "evidence": [],
-      "durationMs": 3829
-    },
-    {
-      "uc": "UC-C16",
-      "title": "corrupt presets/presets.json: boots, records preserved",
-      "status": "PASS",
-      "detail": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-18T11-33-46-919Z-10530/ty-plus/presets/presets.json",
-      "checks": [
-        {
-          "name": "presets/presets.json overwritten with corrupt bytes",
-          "ok": true,
-          "detail": "39 bytes"
-        },
-        {
-          "name": "panel boots with non-trivial DOM after corrupt file",
-          "ok": true,
-          "detail": "body=55801 grid=true tiles=7"
-        },
-        {
-          "name": "workspace grid still rendered",
-          "ok": true,
-          "detail": "present"
-        },
-        {
-          "name": "presets/presets.json not silently destroyed on boot",
-          "ok": true,
-          "detail": "corrupt bytes preserved"
-        }
-      ],
-      "evidence": [],
-      "durationMs": 3931
-    }
-  ]
+	"schema": "ty-plus.e2e-run/1",
+	"suite": "resilience",
+	"capturedAt": "2026-11-18T11:34:11.682Z",
+	"extensionDir": "/Users/rebui/Library/Application Support/Adobe/CEP/extensions/app.ty-plus.dev",
+	"managedRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-18T11-33-46-919Z-10530/ty-plus",
+	"realManagedRoot": "/Applications/Adobe After Effects 2027/ty-plus",
+	"sandbox": {
+		"enabled": true,
+		"sandboxRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-18T11-33-46-919Z-10530/ty-plus",
+		"integrity": {
+			"realRoot": "/Applications/Adobe After Effects 2027/ty-plus",
+			"checkedAt": "2026-11-18T11:34:11.681Z",
+			"driftBeforeRepair": {
+				"changed": 1,
+				"added": 1,
+				"removed": 0
+			},
+			"filesRepaired": [
+				"cache/layout-undo/panel-1/stack.json",
+				"removed:cache/layout-undo/panel-1/stack.json.tmp-91311-3-1f1693fd-458c-40be-a3c7-4fb226b6113d"
+			],
+			"cleanAfterRepair": true
+		}
+	},
+	"totals": {
+		"PASS": 5,
+		"FAIL": 0,
+		"BLOCKED": 0,
+		"SKIP": 0
+	},
+	"results": [
+		{
+			"uc": "UC-I01",
+			"title": "corrupt workspaces/workspace-1.json: banner shown, bytes preserved",
+			"status": "PASS",
+			"detail": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-18T11-33-46-919Z-10530/ty-plus/workspaces/workspace-1.json",
+			"checks": [
+				{
+					"name": "workspaces/workspace-1.json overwritten with corrupt bytes",
+					"ok": true,
+					"detail": "29 bytes"
+				},
+				{
+					"name": "panel boots with non-trivial DOM after corrupt file",
+					"ok": true,
+					"detail": "body=55783 grid=true tiles=7"
+				},
+				{
+					"name": "layout restore banner reports corrupt",
+					"ok": true,
+					"detail": "present"
+				},
+				{
+					"name": "workspaces/workspace-1.json not silently destroyed on boot",
+					"ok": true,
+					"detail": "corrupt bytes preserved"
+				}
+			],
+			"evidence": [],
+			"durationMs": 4111
+		},
+		{
+			"uc": "UC-I02",
+			"title": "corrupt widgets/widgets.json: boots, bytes preserved (UC-D12 alias)",
+			"status": "PASS",
+			"detail": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-18T11-33-46-919Z-10530/ty-plus/widgets/widgets.json",
+			"checks": [
+				{
+					"name": "widgets/widgets.json overwritten with corrupt bytes",
+					"ok": true,
+					"detail": "39 bytes"
+				},
+				{
+					"name": "panel boots with non-trivial DOM after corrupt file",
+					"ok": true,
+					"detail": "body=55769 grid=true tiles=7"
+				},
+				{
+					"name": "workspace grid still rendered",
+					"ok": true,
+					"detail": "present"
+				},
+				{
+					"name": "widgets/widgets.json not silently destroyed on boot",
+					"ok": true,
+					"detail": "corrupt bytes preserved"
+				}
+			],
+			"evidence": [],
+			"durationMs": 3689
+		},
+		{
+			"uc": "UC-I04",
+			"title": "corrupt styles/theme.css: defaults fallback, file preserved or repaired",
+			"status": "PASS",
+			"detail": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-18T11-33-46-919Z-10530/ty-plus/styles/theme.css",
+			"checks": [
+				{
+					"name": "panel boots and applies fallback theme",
+					"ok": true,
+					"detail": "body=55783 grid=true accent=#58a6ff"
+				},
+				{
+					"name": "styles/theme.css preserved or regenerated",
+					"ok": true,
+					"detail": "corrupt bytes preserved (defaults applied)"
+				}
+			],
+			"evidence": [],
+			"durationMs": 3540
+		},
+		{
+			"uc": "UC-I05",
+			"title": "corrupt settings/app.json: defaults fallback, bytes preserved",
+			"status": "PASS",
+			"detail": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-18T11-33-46-919Z-10530/ty-plus/settings/app.json",
+			"checks": [
+				{
+					"name": "settings/app.json overwritten with corrupt bytes",
+					"ok": true,
+					"detail": "50 bytes"
+				},
+				{
+					"name": "panel boots with non-trivial DOM after corrupt file",
+					"ok": true,
+					"detail": "body=55831 grid=true tiles=7"
+				},
+				{
+					"name": "workspace grid still rendered",
+					"ok": true,
+					"detail": "present"
+				},
+				{
+					"name": "settings/app.json not silently destroyed on boot",
+					"ok": true,
+					"detail": "corrupt bytes preserved"
+				}
+			],
+			"evidence": [],
+			"durationMs": 3829
+		},
+		{
+			"uc": "UC-C16",
+			"title": "corrupt presets/presets.json: boots, records preserved",
+			"status": "PASS",
+			"detail": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-18T11-33-46-919Z-10530/ty-plus/presets/presets.json",
+			"checks": [
+				{
+					"name": "presets/presets.json overwritten with corrupt bytes",
+					"ok": true,
+					"detail": "39 bytes"
+				},
+				{
+					"name": "panel boots with non-trivial DOM after corrupt file",
+					"ok": true,
+					"detail": "body=55801 grid=true tiles=7"
+				},
+				{
+					"name": "workspace grid still rendered",
+					"ok": true,
+					"detail": "present"
+				},
+				{
+					"name": "presets/presets.json not silently destroyed on boot",
+					"ok": true,
+					"detail": "corrupt bytes preserved"
+				}
+			],
+			"evidence": [],
+			"durationMs": 3931
+		}
+	]
 }

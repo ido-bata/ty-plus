@@ -20,12 +20,9 @@ vi.mock("@/management/workspace/layout/panel-json-files", () => ({
 	writeBackgroundJson: vi.fn(async () => undefined),
 }));
 
-vi.mock("../../dialog/useDialogClose", () => ({
-	useDialogClose: () => ({ close: vi.fn() }),
-}));
-
-vi.mock("../../dialog/dialogs/hooks/useClose", () => ({
+vi.mock("@/management/dialog/useClose", () => ({
 	useClose: () => ({ close: vi.fn(), onBeforeUnload: vi.fn() }),
+	useDialogClose: () => ({ close: vi.fn() }),
 }));
 
 vi.mock("../../ae/cep/transport", async (importOriginal) => {

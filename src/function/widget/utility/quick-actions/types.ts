@@ -1,5 +1,5 @@
 import type { Preset, PresetType } from "@/management/preset/contract";
-import type { SiblingListingEntry } from "@/management/preset/sibling-thumbnail";
+import type { SiblingListingEntry } from "@/management/preset/sibling/thumbnail";
 
 export type PluginEffectIndexRow = {
 	filePath: string;

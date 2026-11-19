@@ -28,7 +28,7 @@ Issue 本文が想定する修正対象:
 | --- | --- |
 | `src/management/panel/Main.tsx` | panel ルート。state 取得後に `Grid` / `Toolbar` / `StatusBar` / `AddWidgetPickerOverlay` を描画する。`StatusBar` だけ `state.panelId === "panel-1"` 条件付き (L109)。 |
 | `src/management/panel/boot.tsx` | `panel-1` を `isPrimaryPanel` と判定し、init / onboarding / パネル ID 解決を行う。panel-id 別のレンダ分岐はなし。 |
-| `src/management/panel/control/StatusBar/Main.tsx` | `<footer data-ws-status-bar>` を返す唯一の panel chrome。padding は `px-2` 固定 (L74)。`panel-1` / `panel-2..5` での class 分岐なし。 |
+| `src/management/panel/control/status-bar/Main.tsx` | `<footer data-ws-status-bar>` を返す唯一の panel chrome。padding は `px-2` 固定 (L74)。`panel-1` / `panel-2..5` での class 分岐なし。 |
 | `src/management/panel/control/Toolbar.tsx` | フローティング control panel。`fixed bottom-*` で位置を取り、`panelId` は chrome state のキーと StatusBar 用の `bottom-11` / `bottom-4` 切替の判定のみに使用。 |
 | `src/management/panel/control/state.ts` | `cpPositionToClasses(position, _orientation, panelId)` で `panelId === "panel-1"` のとき `bottom-11`、それ以外は `bottom-4` を返す (L84-90)。Toolbar の縦位置のみを変える。 |
 | `src/management/panel/persistence/chrome-store.ts` | panel-1 のみ legacy fallback を参照する (L139)。chrome の永続化専用で描画には影響しない。 |
@@ -56,7 +56,7 @@ Issue 本文が想定する修正対象:
 - `rg '<header|</header' src/management` のうち panel 配下にヒットするものは 0 件
   (該当するのは dialog / online notification / widget picker-overlay のみ)。
 - `rg '<footer|</footer' src/management` のうち panel 配下でヒットするのは
-  `src/management/panel/control/StatusBar/Main.tsx:72` の 1 件のみ。
+  `src/management/panel/control/status-bar/Main.tsx:72` の 1 件のみ。
 
 → panel の "header" コンポーネントはコードベース上に存在しない。報告者が
   「左端 padding が panel-1 とずれる」と観測した "header" は、別の UI 要素を
@@ -94,7 +94,7 @@ Issue 本文が想定する修正対象:
 
 ### Finding F3 — StatusBar の padding は panel-id で変わらない (`px-2` 固定)
 
-`src/management/panel/control/StatusBar/Main.tsx:74`:
+`src/management/panel/control/status-bar/Main.tsx:74`:
 
 ```tsx
 <footer
@@ -165,13 +165,13 @@ export function cpPositionToClasses(
 `rg '<header|</header|<footer|</footer' src/` のうち、`src/management/panel/`
 配下でヒットするのは:
 
-- `src/management/panel/control/StatusBar/Main.tsx:72,226` (`<footer>` のみ)
+- `src/management/panel/control/status-bar/Main.tsx:72,226` (`<footer>` のみ)
 
 のみ。`<header>` を返す panel 配下のコンポーネントは存在しない。
 `<header>` を返すのは次の dialog / online 経路のみ:
 
 - `src/management/widget/picker-overlay.tsx:57` (AddWidget picker の modal header)
-- `src/management/ae/cep/dialogs/DialogShell.tsx:32` (CEP dialog shell header)
+- `src/management/ae/cep/dialogs/WorkspaceShell.tsx:32` (CEP dialog shell header)
 - `src/management/dialog/dialogs/shell/Header.tsx:21` (dialog header)
 - `src/management/online/notification/Center.tsx:349, 653` (notification center)
 
@@ -193,10 +193,10 @@ export function cpPositionToClasses(
 | --- | --- | --- |
 | `panel/ErrorBoundary.tsx:132` | `px-2 py-1` | 無 |
 | `panel/ErrorBoundary.tsx:139` | `px-2 py-0.5` | 無 |
-| `panel/control/StatusBar/Main.tsx:74` | `px-2` | 無 (F3) |
-| `panel/control/StatusBar/Main.tsx:141` | `px-2 py-1` | 無 |
-| `panel/control/StatusBar/Main.tsx:159` | `px-2 py-1` | 無 |
-| `panel/control/StatusBar/Main.tsx:138` | `p-1` | 無 |
+| `panel/control/status-bar/Main.tsx:74` | `px-2` | 無 (F3) |
+| `panel/control/status-bar/Main.tsx:141` | `px-2 py-1` | 無 |
+| `panel/control/status-bar/Main.tsx:159` | `px-2 py-1` | 無 |
+| `panel/control/status-bar/Main.tsx:138` | `p-1` | 無 |
 
 `Main.tsx` 自体には padding / margin 値が無い (`rg 'padding|gap' src/management/panel/Main.tsx` → 0 件)。
 panel-id 別 padding 値は検出できない。
@@ -298,7 +298,7 @@ Issue 本文のクロージング方針「30 日以内に再現手順が共有�
 - Issue: <https://github.com/rebuildup/ty-plus/issues/84>
 - Main: `src/management/panel/Main.tsx`
 - Boot: `src/management/panel/boot.tsx`
-- StatusBar: `src/management/panel/control/StatusBar/Main.tsx`
+- StatusBar: `src/management/panel/control/status-bar/Main.tsx`
 - Toolbar: `src/management/panel/control/Toolbar.tsx`
 - Toolbar positioning: `src/management/panel/control/state.ts`
 - Panel chrome persistence: `src/management/panel/persistence/chrome-store.ts`

@@ -3,7 +3,7 @@
  *
  * This is the structural rule-check engine.  It is deliberately
  * side-effect free and consumes only the types declared in `types.ts`.
- * The Vitest rule-runner (`scenario-rule-runner.test.ts`) wires each
+ * The Vitest rule-runner (`rule-runner.test.ts`) wires each
  * rule to a top-level `it()` so the human-CI feedback names the failing
  * rule code.
  *

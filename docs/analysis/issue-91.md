@@ -15,7 +15,7 @@ Issue #91 の前提 — "`src/management/preset/editor/View.tsx` / `Code.tsx` �
 1. `src/management/preset/editor/View.tsx` は 17 行の `CodeEditor` の薄い wrapper
    であり、`editor/Code.tsx` も Monaco エディタ (`CodeEditor`) であり、どちらも
    "アイコンエディタ" ではない。
-2. アイコンエディタは `src/management/preset/components/IconEditor.tsx`
+2. アイコンエディタは `src/management/preset/icon/Editor.tsx`
    (`PresetIconEditor`) に存在し、Issue 本文が想定する "preset/editor/View.tsx"
    ではない。
 3. `assets/preset/*.svg` も存在しない — `src/management/preset/assets/` のファイル
@@ -43,11 +43,11 @@ Issue #91 の前提 — "`src/management/preset/editor/View.tsx` / `Code.tsx` �
 |---|---|---|
 | `src/management/preset/editor/View.tsx` | source | 存在。17 行、`CodeEditor` の re-export ラッパー。スタイル定義なし |
 | `src/management/preset/editor/Code.tsx` | source | 存在。730 行、Monaco `CodeEditor` 実装 |
-| `src/management/preset/components/IconEditor.tsx` | source | 存在。287 行、`PresetIconEditor` の実体 |
+| `src/management/preset/icon/Editor.tsx` | source | 存在。287 行、`PresetIconEditor` の実体 |
 | `src/management/preset/assets/preset/*.svg` | (存在しない) | ディレクトリ `src/management/preset/assets/` は存在し、ファイルは `icons.ts` 1 件のみ。SVG は 0 件 |
 | `src/management/preset/editor/Code-resize.test.ts` | test | 存在。レイアウトではなく source-level 文字列 assertion |
-| `src/management/preset/icon-editor.test.ts` | test | 存在。`createPresetIconDraft` / `draftToIcon` などの pure logic のみ |
-| `src/management/preset/components/IconEditor.stories.tsx` | story | 存在。5 stories (`Default` / `Emoji` / `Image` / `Unframed` / `WithPresetPreview`) |
+| `src/management/preset/icon/editor-draft.test.ts` | test | 存在。`createPresetIconDraft` / `draftToIcon` などの pure logic のみ |
+| `src/management/preset/icon/Editor.stories.tsx` | story | 存在。5 stories (`Default` / `Emoji` / `Image` / `Unframed` / `WithPresetPreview`) |
 
 ### `editor/View.tsx` の構造 (Issue 本文が言及したパス)
 
@@ -158,7 +158,7 @@ return (
 
 ### `components/IconEditor.tsx` の構造 (本物の "アイコンエディタ")
 
-`src/management/preset/components/IconEditor.tsx:239-285` (preview あり / なし分岐):
+`src/management/preset/icon/Editor.tsx:239-285` (preview あり / なし分岐):
 
 ```tsx
 const body = preview ? (
@@ -301,7 +301,7 @@ contentClassName="flex min-h-0 w-full min-w-0 flex-1 flex-col overflow-hidden !p
 - `src/management/preset/editor/View.tsx` (17 行、`CodeEditor` の re-export)
   と `src/management/preset/editor/Code.tsx` (730 行、Monaco wrapper) は
   どちらも "code editor" であり "icon editor" ではない。
-- "アイコンエディタ" は `src/management/preset/components/IconEditor.tsx`
+- "アイコンエディタ" は `src/management/preset/icon/Editor.tsx`
   (`PresetIconEditor`) が実体。
 - `src/management/preset/assets/preset/*.svg` は **存在しない**
   (`src/management/preset/assets/` のファイルは `icons.ts` 1 件のみ、
@@ -404,7 +404,7 @@ preview tile の右カラム側 (minmax(0,1fr)) を侵食して縮む可能性�
     `z-10` (badge)。
   - `src/management/preset/group/Panel.tsx:296` — `z-200` (debug
     overlay)。
-  - `src/management/preset/components/IconEditor.tsx:93` — `z-50`
+  - `src/management/preset/icon/Editor.tsx:93` — `z-50`
     (emoji picker popup)。
 - `editor/` 配下に `z-*` / `relative` / `absolute` は **0 件** (ripgrep
   結果で確認)。
@@ -560,8 +560,8 @@ Issue #91 の前提のうち
 - `src/management/preset/editor/View.tsx` — 17 行の wrapper
 - `src/management/preset/editor/Code.tsx` — Monaco `CodeEditor`
 - `src/management/preset/editor/Code-resize.test.ts` — source-level layout assertion
-- `src/management/preset/components/IconEditor.tsx` — `PresetIconEditor` (アイコンeditor の実体)
-- `src/management/preset/components/IconEditor.stories.tsx` — 5 variants (decorator: `w-[28rem] p-2`)
+- `src/management/preset/icon/Editor.tsx` — `PresetIconEditor` (アイコンeditor の実体)
+- `src/management/preset/icon/Editor.stories.tsx` — 5 variants (decorator: `w-[28rem] p-2`)
 - `src/function/preset/code/Dialog.tsx:545-557` — IconEditor の呼び出し (AuthoringSection span=6)
 - `src/management/preset/edit/Dialog.tsx:669-694` — IconEditor + CodeEditor 同居 (script preset)
 - `src/management/preset/edit/Dialog.tsx:957-958` — `DialogShell` `contentClassName="... overflow-hidden ..."`

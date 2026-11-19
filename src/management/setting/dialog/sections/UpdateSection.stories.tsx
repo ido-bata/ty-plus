@@ -4,7 +4,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import i18n from "i18next";
 import { type JSX, type ReactElement, useEffect, useMemo } from "react";
 import { expect, waitFor } from "storybook/test";
-import type { UpdateInstallResultDTO } from "@/management/ipc/operation-worker-composition";
+import type { UpdateInstallResultDTO } from "@/management/ipc/operation-worker/composition";
 import { SettingsContext } from "@/management/setting/context";
 import {
 	DEFAULT_SETTINGS,

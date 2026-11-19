@@ -4,7 +4,7 @@ import { css, cx } from "@/styled-system/css";
 import type { EditorState } from "./commands";
 import { PlaceholderOverlay } from "./PlaceholderOverlay";
 import { type RenderSegment, renderMarkdown } from "./render";
-import { useMarkdownContextMenu } from "./useMarkdownContextMenu";
+import { useMarkdownContextMenu } from "./use-context-menu";
 
 export type MarkdownLiveEditorProps = {
 	id?: string;

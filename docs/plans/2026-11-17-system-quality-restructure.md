@@ -42,16 +42,16 @@ O1〜O7は既存正本の要求であり、本再構成で維持する。O8・O9
 
 フォルダスキャン経路は `.ffx` のみを収集し、`.jsx` / `.jsxbin` のscript presetをグループメンバーにできない。手動presetIds経路は全typeを許容するため経路間で非対称である。
 
-- `src/management/preset/persist-folder-group.ts`: `importOnboardingPresets` へ `selectedFolders` の `presets` 枠だけを渡し `scripts` / `plugins` を空にする。エラーメッセージも `.ffx` 限定を明示する
-- `src/management/preset/onboarding-import.ts`: `ONBOARDING_FOLDER_EXTENSIONS` 自体は scripts 対応済みで、走査能力はある。グループ作成側が presets 枠しか渡さないため能力が届かない
-- `src/management/preset/group-catalog.ts`: `GroupEntry.presetIds` はtype非依存なので、スキーマはscriptメンバーを保持できる。書き込み経路だけが欠けている
+- `src/management/preset/group/persist-folder.ts`: `importOnboardingPresets` へ `selectedFolders` の `presets` 枠だけを渡し `scripts` / `plugins` を空にする。エラーメッセージも `.ffx` 限定を明示する
+- `src/management/preset/onboarding/import.ts`: `ONBOARDING_FOLDER_EXTENSIONS` 自体は scripts 対応済みで、走査能力はある。グループ作成側が presets 枠しか渡さないため能力が届かない
+- `src/management/preset/group/catalog.ts`: `GroupEntry.presetIds` はtype非依存なので、スキーマはscriptメンバーを保持できる。書き込み経路だけが欠けている
 - `src/management/preset/group/Dialog.tsx`: UIからscript presetをメンバーに追加する導線がない
 
 #### B. アイコン自動検出の経路不一致
 
 サイドカー画像（`Foo.png` ↔ `Foo.ffx`）によるアイコン自動検出が複数経路に分かれ、判定条件・永続化フィールド・描画pipelineが一致していない。
 
-- `src/management/preset/sibling-thumbnail.ts` の `findSiblingImagePathForPresetFile` はpreset側の拡張子を見ない。一方 `src/function/widget/utility/directory-browser/Component.tsx` の `buildSidekickByParent` は `.ffx/.jsx/...` の拡張子フィルタを持ち、ペア判定が食い違う
+- `src/management/preset/sibling/thumbnail.ts` の `findSiblingImagePathForPresetFile` はpreset側の拡張子を見ない。一方 `src/function/widget/utility/directory-browser/Component.tsx` の `buildSidekickByParent` は `.ffx/.jsx/...` の拡張子フィルタを持ち、ペア判定が食い違う
 - 取込時（`onboarding-service.ts`）は検出結果を `preset.icon` へ永続化する。ワークスペースglyph（`preset/workspace/glyph.tsx`）は同じ検出を `descriptionImage` へ注入する。永続化フィールドが経路ごとに異なる
 - `src/management/preset/assets/icons.ts` の `resolvePresetIconVisual` は `descriptionImage > icon`、`resolveWorkspaceGlyphIconVisual` は `icon > descriptionImage` と優先度が逆である。コメントは「same priority」と主張するが実装が一致しない
 - 旧 `DirectoryBrowser` には `SiblingThumbnail.tsx`（story以外から未参照のデッドコード）と `EntryIcon` の生パス描画（WebP pipeline bypass）が残り、thumbnail pipelineを通る現行経路と併存する
@@ -59,7 +59,7 @@ O1〜O7は既存正本の要求であり、本再構成で維持する。O8・O9
 
 #### C. アイコンエディタとプリセットリストの表示崩壊
 
-- `src/management/preset/components/IconEditor.tsx`: previewグリッドが右カラム内容依存でtileサイズが変動し得る。emoji pickerのpopoverがdialogの `overflow-hidden` でクリップまたは後続要素へ重なり得る（`docs/analysis/issue-91.md`）
+- `src/management/preset/icon/Editor.tsx`: previewグリッドが右カラム内容依存でtileサイズが変動し得る。emoji pickerのpopoverがdialogの `overflow-hidden` でクリップまたは後続要素へ重なり得る（`docs/analysis/issue-91.md`）
 - `src/management/preset/edit/Dialog.tsx` はcontentに `overflow-hidden` を指定しており、popoverのはみ出しを構造的に禁じている
 - `IconEditor.stories.tsx` のdecoratorは `w-[28rem]` 固定で、幅依存の崩れを再現しない。レイアウトをpinする自動テストがない
 - `src/management/preset/catalog-browser/layout.ts` はPanda-only bundleでCSSを生成しないraw Tailwind問題（#127/#143）の名残を持つ。プリセットリスト側の同種崩壊経路として監査対象

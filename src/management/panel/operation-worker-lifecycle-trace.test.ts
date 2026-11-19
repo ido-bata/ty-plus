@@ -11,20 +11,20 @@ import {
 	type LogEntry,
 } from "@/management/debug/logger";
 import { canonicalMethods, type WireMessage } from "@/management/ipc/generated";
-import type { OperationWorkerManifest } from "@/management/ipc/operation-worker-binary";
+import type { OperationWorkerManifest } from "@/management/ipc/operation-worker/binary";
 import {
 	createInjectedHostContextProvider,
 	createOperationWorkerComposition,
 	type OperationWorkerComposition,
-} from "@/management/ipc/operation-worker-composition";
-import { encodeOperationWorkerFrame } from "@/management/ipc/operation-worker-frame";
-import { createNodeOperationWorkerRuntime } from "@/management/ipc/operation-worker-node-runtime";
+} from "@/management/ipc/operation-worker/composition";
+import { encodeOperationWorkerFrame } from "@/management/ipc/operation-worker/frame";
+import { createNodeOperationWorkerRuntime } from "@/management/ipc/operation-worker/node-runtime";
 import type {
 	WorkerChild,
 	WorkerSpawnOptions,
-} from "@/management/ipc/operation-worker-runner";
-import { createWindowsWorkerFixture } from "@/management/ipc/operation-worker-runner.test-fixtures";
-import type { OperationWorkerRuntime } from "@/management/ipc/operation-worker-runtime";
+} from "@/management/ipc/operation-worker/runner";
+import { createWindowsWorkerFixture } from "@/management/ipc/operation-worker/runner.test-fixtures";
+import type { OperationWorkerRuntime } from "@/management/ipc/operation-worker/runtime";
 import { createBootLifecycleObserver } from "./operation-worker-boot";
 
 /**

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { FolderOpen } from "lucide-react";
 import { useState } from "react";
 import { expect } from "storybook/test";
-import { Icon } from "@/shared/component/icons/Icon";
+import { Icon } from "@/shared/component/icons/LucideIcon";
 import { expectCanvasLayout } from "@/storybook/quality/layout";
 import { PathField } from "./PathField";
 

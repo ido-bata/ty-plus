@@ -44,8 +44,8 @@ bun run release:candidate --channel=stable --release-version=0.10.2
 
 - ZIPは `LICENSE` / `THIRD-PARTY-NOTICES.md` / `jsx/ty-plus-host.jsx` / `CSXS/manifest.xml`（`ExtensionBundleVersion="0.10.2"`）+ `windows/` workerのみを含む。macOS workerは含まない（`pruneUndeclaredWorkers` で宣言外のworker版を除去）
 - ZXPも当該platformのworkerのみを含む
-- `verify-operation-worker-package.ts` 全項目PASS（`trust-mode-manifest`: unsigned worker — R0 Windows shape）
-- 監査（`verify-release-artifacts.ts`）全項目PASS: `0.10.2 (stable), sourceCommit=78f95de2…, 2 artifact(s) hash-verified, secret scan clean`
+- `operation-worker-package.ts` 全項目PASS（`trust-mode-manifest`: unsigned worker — R0 Windows shape）
+- 監査（`release-artifacts.ts`）全項目PASS: `0.10.2 (stable), sourceCommit=78f95de2…, 2 artifact(s) hash-verified, secret scan clean`
 
 ## 3. macOS配布候補（完成 — Developer ID署名 / 未公証）
 
@@ -71,7 +71,7 @@ bun run release:candidate --channel=stable --release-version=0.10.2
 - `codesign --verify --strict` 成功。`Authority=Developer ID Application: Yusuke Kimura (JK49RJ2CK2)`、TeamIdentifier `JK49RJ2CK2`
 - `spctl --assess --type execute` は `rejected (Unnotarized Developer ID)` を返す。**ADR-0003 Amendment 1（2026-11-12 本人決定）により公証はR0の要件ではなく、これは正しい状態**
 - ZIPは `ExtensionBundleVersion="0.10.2"`、当該platformのworkerのみを含む
-- 監査（`verify-release-artifacts.ts`）全項目PASS、secret scan clean
+- 監査（`release-artifacts.ts`）全項目PASS、secret scan clean
 
 > **tag target**: 両platformの成果物の `sourceCommit` は `78f95de20202a188282a0557680d3c80aa4788ca`。GitHub Release作成時は `--target 78f95de20202a188282a0557680d3c80aa4788ca` を指定し、**tagと成果物の `sourceCommit` を一致させる**。この記録docの後続commitはdocsのみで、成果物のバイトに影響しない。
 

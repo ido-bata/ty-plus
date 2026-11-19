@@ -22,12 +22,12 @@ import { traceExecute } from "@/management/preset/execution/lifecycle-trace";
 import {
 	type GroupEntry,
 	parseGroupFromText,
-} from "@/management/preset/group-catalog";
+} from "@/management/preset/group/catalog";
 import {
 	getPreset,
 	listPresets,
 	removeLocalPreset,
-} from "@/management/preset/use-cases";
+} from "@/management/preset/operations";
 import { stripKnownIdPrefixes } from "@/management/storage/ids";
 import { readSettings } from "@/management/storage/workspace/store";
 import { openPresetEditSurface } from "@/management/workspace/hooks/preset";

@@ -10,7 +10,7 @@
  *     (environment, fixtures, requirement refs, stop conditions, on-
  *     failure policy, automation caps, postconditions)
  *
- * The rule-check runner (`scenario-rule-runner.test.ts`) consumes this
+ * The rule-check runner (`rule-runner.test.ts`) consumes this
  * barrel.  Future runners (real AE driver, Computer Use driver) consume
  * the same barrel so the contract is the single source of truth.
  */

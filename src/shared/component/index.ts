@@ -10,6 +10,6 @@ export { ListSelect } from "@/shared/component/fields/ListSelect";
 export { PathField } from "@/shared/component/fields/PathField";
 
 export * as Icons from "@/shared/component/icons";
-export { Icon } from "@/shared/component/icons/Icon";
+export { Icon } from "@/shared/component/icons/LucideIcon";
 export { ScrollArea } from "@/shared/component/layout/ScrollArea";
 export { cx } from "@/shared/util/cx";

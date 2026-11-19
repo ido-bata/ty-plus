@@ -64,7 +64,9 @@ const colors = defineTokens.colors({
 	/* Workspace tokens */
 	ws: {
 		"placement-surface": { value: "var(--ty-ws-placement-surface)" },
-		"gridcell-ring-border": { value: "var(--color-ty-ws-gridcell-ring-border)" },
+		"gridcell-ring-border": {
+			value: "var(--color-ty-ws-gridcell-ring-border)",
+		},
 		"gridcell-ring-border-selected": {
 			value: "var(--color-ty-ws-gridcell-ring-border-selected)",
 		},
@@ -100,7 +102,9 @@ const opacities = defineTokens.opacities({
 	},
 	"ws-accent-outline": { value: "var(--ty-opacity-ws-accent-outline)" },
 	"ws-widget-drag": { value: "var(--ty-opacity-ws-widget-drag)" },
-	"ws-gridcell-ring-border": { value: "var(--ty-opacity-ws-gridcell-ring-border)" },
+	"ws-gridcell-ring-border": {
+		value: "var(--ty-opacity-ws-gridcell-ring-border)",
+	},
 	"ws-gridcell-ring-border-selected": {
 		value: "var(--ty-opacity-ws-gridcell-ring-border-selected)",
 	},
@@ -221,8 +225,7 @@ const sizes = defineTokens.sizes({
 
 const fonts = defineTokens.fonts({
 	base: {
-		value:
-			'system-ui, "Segoe UI", "Helvetica Neue", ui-sans-serif, sans-serif',
+		value: 'system-ui, "Segoe UI", "Helvetica Neue", ui-sans-serif, sans-serif',
 	},
 });
 

@@ -24,9 +24,9 @@ import {
 import { detectCepHostCode } from "@/management/ae/cep/runtime";
 import { readGroupJson } from "@/management/catalog/json-files";
 import { DialogShell } from "@/management/dialog";
-import type { CepMenuPayload } from "@/management/dialog/dialogs/context-menu";
-import { registerCepJsonContextMenuSurface } from "@/management/dialog/dialogs/context-menu";
-import type { ShellProps } from "@/management/dialog/dialogs/shell/Layout";
+import type { CepMenuPayload } from "@/management/dialog/context-menu";
+import { registerCepJsonContextMenuSurface } from "@/management/dialog/context-menu";
+import type { ShellProps } from "@/management/dialog/shell/Layout";
 import { useDialogClose } from "@/management/dialog/useClose";
 import {
 	ICON_CELL_BASE_REM,
@@ -43,15 +43,15 @@ import { buildPlacementHints } from "@/management/preset/catalog-browser/workspa
 import type { Preset } from "@/management/preset/contract";
 import { askHostDeleteConfirm } from "@/management/preset/delete-confirm";
 import { traceExecute } from "@/management/preset/execution/lifecycle-trace";
-import type { GroupEntry } from "@/management/preset/group-catalog";
-import { parseGroupFromText } from "@/management/preset/group-catalog";
-import { tryParsePresetIconValue } from "@/management/preset/icon-data";
-import { getSharedSiblingListDirectory } from "@/management/preset/sibling-directory-lister";
+import type { GroupEntry } from "@/management/preset/group/catalog";
+import { parseGroupFromText } from "@/management/preset/group/catalog";
+import { tryParsePresetIconValue } from "@/management/preset/icon/normalize";
 import {
 	getPreset,
 	listPresets,
 	removeLocalPreset,
-} from "@/management/preset/use-cases";
+} from "@/management/preset/operations";
+import { getSharedSiblingListDirectory } from "@/management/preset/sibling/directory-lister";
 import {
 	PresetGlyphById,
 	type PresetGlyphByIdProps,

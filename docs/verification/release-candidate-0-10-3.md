@@ -44,8 +44,8 @@ bun run release:candidate --channel=stable --release-version=0.10.3
 実測で確認した内容:
 
 - ZIPは `LICENSE` / `THIRD-PARTY-NOTICES.md` / `jsx/ty-plus-host.jsx` / `CSXS/manifest.xml`（`ExtensionBundleVersion="0.10.3"`）+ `windows/` workerのみを含む。macOS workerは含まない（`pruneUndeclaredWorkers` で宣言外のworker版を除去）
-- `verify-operation-worker-package.ts` 全項目PASS（`trust-mode-manifest`: unsigned worker — R0 Windows shape）
-- 監査（`verify-release-artifacts.ts`）全項目PASS: `0.10.3 (stable), sourceCommit=e3bee75d…, 2 artifact(s) hash-verified, secret scan clean`
+- `operation-worker-package.ts` 全項目PASS（`trust-mode-manifest`: unsigned worker — R0 Windows shape）
+- 監査（`release-artifacts.ts`）全項目PASS: `0.10.3 (stable), sourceCommit=e3bee75d…, 2 artifact(s) hash-verified, secret scan clean`
 
 ## 3. macOS配布候補（完成 — Developer ID署名 / 未公証）
 
@@ -72,7 +72,7 @@ bun run release:candidate --channel=stable --release-version=0.10.3
 - `codesign --verify --strict` 成功。`Authority=Developer ID Application: Yusuke Kimura (JK49RJ2CK2)`、TeamIdentifier `JK49RJ2CK2`、hardened runtime 有効
 - `spctl --assess` は未公証を返す想定（ADR-0003 Amendment 1 によりR0要件外。v0.10.2と同じ状態）
 - ZIPは `ExtensionBundleVersion="0.10.3"`、当該platformのworkerのみを含む
-- 監査（`verify-release-artifacts.ts`）全項目PASS、secret scan clean
+- 監査（`release-artifacts.ts`）全項目PASS、secret scan clean
 
 > **tag target**: 両platformの成果物の `sourceCommit` は `e3bee75dde7c1cb974c621f7c6a40d5e7f9fa4ad`。GitHub Release作成時は `--target e3bee75dde7c1cb974c621f7c6a40d5e7f9fa4ad` を指定し、**tagと成果物の `sourceCommit` を一致させる**。本記録docの後続commitはdocsのみで、成果物のバイトに影響しない。
 > 成果物の保管先: `dist/github-release/`（repo内・gitignore対象）と `~/work/ty-plus-rc-0.10.3/`（ローカルバックアップ）。

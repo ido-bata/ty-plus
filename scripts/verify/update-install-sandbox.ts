@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+import { spawnSync } from "node:child_process";
+import { createHash } from "node:crypto";
 /**
  * Sandboxed end-to-end verification for the update.install worker path (#135).
  *
@@ -28,8 +30,6 @@ import {
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { spawnSync } from "node:child_process";
-import { createHash } from "node:crypto";
 
 const WORKER =
 	process.argv[2] ?? "rust/target/release/ty-plus-operation-worker";
@@ -164,8 +164,14 @@ function callWorker(frameJson: string, timeoutMs = 180_000) {
 
 function freshInstall(marker = "old-install") {
 	rmSync(appDir, { recursive: true, force: true });
-	rmSync(join(extensionRoot, ".ty-plus-backup"), { recursive: true, force: true });
-	rmSync(join(extensionRoot, ".ty-plus-update-staging"), { recursive: true, force: true });
+	rmSync(join(extensionRoot, ".ty-plus-backup"), {
+		recursive: true,
+		force: true,
+	});
+	rmSync(join(extensionRoot, ".ty-plus-update-staging"), {
+		recursive: true,
+		force: true,
+	});
 	rmSync(join(extensionRoot, ".ty-plus-update-pending.json"), { force: true });
 	mkdirSync(appDir, { recursive: true });
 	writeFileSync(join(appDir, "OLD_INSTALL_MARKER.txt"), marker);
@@ -174,7 +180,9 @@ function freshInstall(marker = "old-install") {
 
 const manifestHasVersion = (dir: string, version: string) => {
 	const p = join(dir, "CSXS", "manifest.xml");
-	return existsSync(p) && readFileSync(p, "utf8").includes(`Version="${version}"`);
+	return (
+		existsSync(p) && readFileSync(p, "utf8").includes(`Version="${version}"`)
+	);
 };
 
 // --- Scenario 1: successful swap -------------------------------------------
@@ -190,7 +198,8 @@ freshInstall();
 			!existsSync(join(appDir, "OLD_INSTALL_MARKER.txt")) &&
 			!existsSync(join(extensionRoot, ".ty-plus-update-pending.json")),
 		JSON.stringify({
-			outcome: r.response?.message?.outcome ?? r.error ?? r.stderr?.slice(0, 200),
+			outcome:
+				r.response?.message?.outcome ?? r.error ?? r.stderr?.slice(0, 200),
 			version: manifestHasVersion(appDir, CORE),
 		}),
 	);
@@ -281,6 +290,8 @@ freshInstall();
 }
 
 const failed = results.filter((r) => !r.ok);
-console.log(`\n${results.length - failed.length}/${results.length} scenarios passed`);
+console.log(
+	`\n${results.length - failed.length}/${results.length} scenarios passed`,
+);
 rmSync(sandboxRoot, { recursive: true, force: true });
 process.exit(failed.length === 0 ? 0 : 1);

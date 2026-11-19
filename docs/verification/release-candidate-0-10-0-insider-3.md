@@ -12,9 +12,9 @@
 ```sh
 TY_PLUS_RELEASE_VERSION=0.10.0-insider.3 bun run build:cep:dev
 bun run verify:operation-worker:package -- --trust-mode=development-unsigned --product-version=0.10.0
-bun run scripts/package/package-cep-archive.ts zip
+bun run scripts/package/release/cep-archive.ts zip
 TY_PLUS_RELEASE_VERSION=0.10.0-insider.3 TY_PLUS_RELEASE_CHANNEL=insider \
-  bun scripts/package/release-manifest.ts \
+  bun scripts/package/release/manifest.ts \
   --trust-mode=development-unsigned --artifact=dist/app.ty-plus.zip
 ```
 
@@ -31,16 +31,16 @@ zip内の確認（実バイト）: `app.ty-plus/jsx/ty-plus-host.jsx`、`LICENSE
 
 > この記録自体はdocs-onlyの後続commitである。成果物は `b1e920471d11…` のコード状態に対してビルドした。
 >
-> **再現性の実測**: 同じ `dist/cep-pack` から `package-cep-archive.ts zip` を再実行すると、zipのsha256は**変化する**（アーカイブがファイルのmtimeを格納するため。実測: `00ee92fd…` → `d27f37c5…`、サイズは同一）。したがって再現条件は「sha256が一致すること」ではなく、次の2点である。
+> **再現性の実測**: 同じ `dist/cep-pack` から `cep-archive.ts zip` を再実行すると、zipのsha256は**変化する**（アーカイブがファイルのmtimeを格納するため。実測: `00ee92fd…` → `d27f37c5…`、サイズは同一）。したがって再現条件は「sha256が一致すること」ではなく、次の2点である。
 >
 > 1. `dist/cep-pack/` の内容が同じであること（`release-manifest.json` の `sourceCommit` と `HEAD` の一致、pack内の各ファイルが同一）。
-> 2. 同じ `TY_PLUS_RELEASE_VERSION` / `TY_PLUS_RELEASE_CHANNEL` でビルドしたこと（注入bindingの一致は `verify-release-artifacts.ts` が検査する）。
+> 2. 同じ `TY_PLUS_RELEASE_VERSION` / `TY_PLUS_RELEASE_CHANNEL` でビルドしたこと（注入bindingの一致は `release-artifacts.ts` が検査する）。
 >
 > バイト単位の同一性が必要な場面（再ダウンロード検証）では、**公開したzipそのもの**を基準にする。`release-manifest.json` のsha256は、その公開物の同一性を確認するために使う。
 
 ## 2. 配布物監査（release信頼に読み替えた場合の機構確認）
 
-`verify-release-artifacts.ts` の全検査を、上記zipと別途ZXP署名した実artifactに対して実行し、PASSを確認した。
+`release-artifacts.ts` の全検査を、上記zipと別途ZXP署名した実artifactに対して実行し、PASSを確認した。
 
 - `trustMode=release` / `sourceCommit`=`HEAD` / artifact sha256一致
 - pack内の LICENSE / THIRD-PARTY-NOTICES.md / `jsx/ty-plus-host.jsx`

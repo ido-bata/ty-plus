@@ -19,7 +19,7 @@
 | `REP-003` | `REP-002` | platform module rule を各 OS domain に適用 | `windows.rs`, `macos.rs`, `mod.rs` | 両 target compile | 同じ operation の実装が隣接 |
 | `REP-004` | `REP-001` | Rust format / clippy / test scripts を追加 | `package.json`, `scripts/check/**` | 各 script exit 0 | CI から呼べる |
 | `REP-005` | `FND-005` | TypeScript IPC transport と責務別 gateway の空 contract を配置 | `src/management/ipc/**`, domain `runtime-gateway.ts` | typecheck | `function/` から transport import なし |
-| `REP-006` | `FND-005` | 直接 fs / network / shell を検出する architecture guard を追加。最初は現行 allowlist を明示 | `scripts/check/check-rust-runtime-boundaries.ts`, `package.json` | fixture self-test | allowlist に owner task ID がある |
+| `REP-006` | `FND-005` | 直接 fs / network / shell を検出する architecture guard を追加。最初は現行 allowlist を明示 | `scripts/check/rust-runtime-boundaries.ts`, `package.json` | fixture self-test | allowlist に owner task ID がある |
 | `REP-007` | `REP-001` | repository source ownership の正規 docs を更新 | `docs/architecture/repository/**` | docs link check | `rust/` が product source |
 
 ## Protocol tasks

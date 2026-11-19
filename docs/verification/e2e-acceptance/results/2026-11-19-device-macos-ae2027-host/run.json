@@ -1,53 +1,51 @@
 {
-  "schema": "ty-plus.e2e-run/1",
-  "suite": "host",
-  "capturedAt": "2026-11-18T15:50:12.797Z",
-  "extensionDir": "/Users/rebui/Library/Application Support/Adobe/CEP/extensions/app.ty-plus.dev",
-  "managedRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-18T15-50-06-890Z-37957/ty-plus",
-  "realManagedRoot": "/Applications/Adobe After Effects 2027/ty-plus",
-  "sandbox": {
-    "enabled": true,
-    "sandboxRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-18T15-50-06-890Z-37957/ty-plus",
-    "integrity": {
-      "realRoot": "/Applications/Adobe After Effects 2027/ty-plus",
-      "checkedAt": "2026-11-18T15:50:12.796Z",
-      "driftBeforeRepair": {
-        "changed": 1,
-        "added": 0,
-        "removed": 0
-      },
-      "filesRepaired": [
-        "cache/layout-undo/panel-1/stack.json"
-      ],
-      "cleanAfterRepair": true
-    }
-  },
-  "totals": {
-    "PASS": 1,
-    "FAIL": 0,
-    "BLOCKED": 0,
-    "SKIP": 0
-  },
-  "results": [
-    {
-      "uc": "UC-A04",
-      "title": "resident host contract answers getHostContext with app context",
-      "status": "PASS",
-      "detail": "AE 27.0x78",
-      "checks": [
-        {
-          "name": "app.version responds",
-          "ok": true,
-          "detail": "27.0x78"
-        },
-        {
-          "name": "getHostContext returns structured host context",
-          "ok": true,
-          "detail": "raw={\"ok\":true,\"hostId\":\"after-effects\",\"value\":{\"appRoot\":\"/Applications/Adobe After Effects 2027\",\"supportRoot\":\"/Users/rebui/Library/Application Support\",\"sessionId\":\"ae-1795017008164\"}}"
-        }
-      ],
-      "evidence": [],
-      "durationMs": 66
-    }
-  ]
+	"schema": "ty-plus.e2e-run/1",
+	"suite": "host",
+	"capturedAt": "2026-11-18T15:50:12.797Z",
+	"extensionDir": "/Users/rebui/Library/Application Support/Adobe/CEP/extensions/app.ty-plus.dev",
+	"managedRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-18T15-50-06-890Z-37957/ty-plus",
+	"realManagedRoot": "/Applications/Adobe After Effects 2027/ty-plus",
+	"sandbox": {
+		"enabled": true,
+		"sandboxRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-18T15-50-06-890Z-37957/ty-plus",
+		"integrity": {
+			"realRoot": "/Applications/Adobe After Effects 2027/ty-plus",
+			"checkedAt": "2026-11-18T15:50:12.796Z",
+			"driftBeforeRepair": {
+				"changed": 1,
+				"added": 0,
+				"removed": 0
+			},
+			"filesRepaired": ["cache/layout-undo/panel-1/stack.json"],
+			"cleanAfterRepair": true
+		}
+	},
+	"totals": {
+		"PASS": 1,
+		"FAIL": 0,
+		"BLOCKED": 0,
+		"SKIP": 0
+	},
+	"results": [
+		{
+			"uc": "UC-A04",
+			"title": "resident host contract answers getHostContext with app context",
+			"status": "PASS",
+			"detail": "AE 27.0x78",
+			"checks": [
+				{
+					"name": "app.version responds",
+					"ok": true,
+					"detail": "27.0x78"
+				},
+				{
+					"name": "getHostContext returns structured host context",
+					"ok": true,
+					"detail": "raw={\"ok\":true,\"hostId\":\"after-effects\",\"value\":{\"appRoot\":\"/Applications/Adobe After Effects 2027\",\"supportRoot\":\"/Users/rebui/Library/Application Support\",\"sessionId\":\"ae-1795017008164\"}}"
+				}
+			],
+			"evidence": [],
+			"durationMs": 66
+		}
+	]
 }

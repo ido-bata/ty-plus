@@ -1,6 +1,6 @@
 import { type JSX, useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { OperationWorkerAttemptError } from "@/management/ipc/operation-worker-runner";
+import { OperationWorkerAttemptError } from "@/management/ipc/operation-worker/runner";
 import {
 	isReleaseChannel,
 	type ReleaseChannel,
@@ -25,7 +25,7 @@ import {
 	SettingsFieldLabel,
 	SettingsGrid,
 } from "@/management/setting/dialog/layout/SettingsGrid";
-import { openUrlInDefaultBrowser } from "@/management/workspace/hooks/helpers";
+import { openUrlInDefaultBrowser } from "@/management/workspace/hooks/external";
 import { getUpdateInstaller } from "@/management/workspace/services";
 import { ListSelect } from "@/shared/component/fields/ListSelect";
 import { css } from "@/styled-system/css";

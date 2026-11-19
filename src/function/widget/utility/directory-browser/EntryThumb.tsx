@@ -4,7 +4,7 @@ import {
 	findSiblingImagePathForPresetFile,
 	isPresetSidekickSourcePath,
 	siblingThumbnailEntryFor,
-} from "@/management/preset/sibling-thumbnail";
+} from "@/management/preset/sibling/thumbnail";
 import {
 	canUseCepNodeFileBrowser,
 	createCepNodeFileBrowserService,

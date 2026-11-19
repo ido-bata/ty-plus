@@ -1,6 +1,6 @@
 import type { JSX } from "react";
 import { ThumbnailTile } from "@/function/widget/utility/directory-browser/ThumbnailTile";
-import { siblingThumbnailEntryFor } from "@/management/preset/sibling-thumbnail";
+import { siblingThumbnailEntryFor } from "@/management/preset/sibling/thumbnail";
 import { css, cx } from "@/styled-system/css";
 
 /**

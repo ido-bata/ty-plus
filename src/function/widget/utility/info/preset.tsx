@@ -3,7 +3,7 @@ import { type JSX, type ReactNode, useEffect, useMemo, useState } from "react";
 import { WorkspacePresetGlyph } from "@/management/preset";
 import type { Preset } from "@/management/preset/contract";
 import { resolvePresetsForInfoByCatalogIds } from "@/management/preset/group/info-resolution";
-import { getSharedSiblingListDirectory } from "@/management/preset/sibling-directory-lister";
+import { getSharedSiblingListDirectory } from "@/management/preset/sibling/directory-lister";
 import { usePresetSiblingImageSrc } from "@/management/preset/workspace/glyph";
 import { catalogRefsForSurfaceIds } from "@/management/workspace/placement/resolve";
 import type {
