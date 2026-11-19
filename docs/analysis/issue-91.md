@@ -46,7 +46,7 @@ Issue #91 の前提 — "`src/management/preset/editor/View.tsx` / `Code.tsx` �
 | `src/management/preset/icon/Editor.tsx` | source | 存在。287 行、`PresetIconEditor` の実体 |
 | `src/management/preset/assets/preset/*.svg` | (存在しない) | ディレクトリ `src/management/preset/assets/` は存在し、ファイルは `icons.ts` 1 件のみ。SVG は 0 件 |
 | `src/management/preset/editor/Code-resize.test.ts` | test | 存在。レイアウトではなく source-level 文字列 assertion |
-| `src/management/preset/icon/draft.test.ts` | test | 存在。`createPresetIconDraft` / `draftToIcon` などの pure logic のみ |
+| `src/management/preset/icon/editor-draft.test.ts` | test | 存在。`createPresetIconDraft` / `draftToIcon` などの pure logic のみ |
 | `src/management/preset/icon/Editor.stories.tsx` | story | 存在。5 stories (`Default` / `Emoji` / `Image` / `Unframed` / `WithPresetPreview`) |
 
 ### `editor/View.tsx` の構造 (Issue 本文が言及したパス)

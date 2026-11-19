@@ -47,7 +47,7 @@ const preview: Preview = {
 		// every story renders at the addon's 1200x900 default and the
 		// tester-iframe scale makes PNG dimensions window-dependent.
 		// Keep `capture` in sync with CAPTURE_VIEWPORT in
-		// scripts/verify/storybook-screenshot-capture.ts and the provider
+		// scripts/verify/storybook/screenshot-capture.ts and the provider
 		// `contextOptions.viewport` in vitest.config.ts.
 		viewport: {
 			options: {

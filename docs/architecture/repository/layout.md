@@ -50,8 +50,8 @@ Rust operation worker に関して現在正規化済みの開発経路は、役�
 
 | 役割 | 配置 | 現行の導線 |
 | --- | --- | --- |
-| generate | `scripts/generate/` | [`generate-rust-protocol-schema.ts`](../../../scripts/generate/generate-rust-protocol-schema.ts) |
-| check | `scripts/check/` | [`check-rust-workspace.ts`](../../../scripts/check/check-rust-workspace.ts), [`check-rust-runtime-boundaries.ts`](../../../scripts/check/check-rust-runtime-boundaries.ts) |
+| generate | `scripts/generate/` | [`rust-protocol-schema.ts`](../../../scripts/generate/rust-protocol-schema.ts) |
+| check | `scripts/check/` | [`rust-workspace.ts`](../../../scripts/check/rust-workspace.ts), [`rust-runtime-boundaries.ts`](../../../scripts/check/rust-runtime-boundaries.ts) |
 
 script は product source の所有者にはならない。生成元と生成物の関係は個別の
 generator から追跡し、docs で data shape を再定義しない。

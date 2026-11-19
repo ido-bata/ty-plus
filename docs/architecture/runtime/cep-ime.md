@@ -55,7 +55,7 @@ field already knows it is composing).
 **Function layer (`src/function/`):**
 
 - `src/function/widget/core/easing/Component.tsx` — Space-key continuous redraw trigger
-- `src/function/widget/utility/quick-actions/ActionList.tsx` — command palette (Enter activates, Escape closes, ArrowUp/Down navigate)
+- `src/function/widget/utility/quick-actions/QuickActionsWidget.tsx` — command palette (Enter activates, Escape closes, ArrowUp/Down navigate)
 - `src/function/widget/utility/directory-browser/Component.tsx` — five Enter-to-activate sites (path input commit, file browser row, catalog preset row, file system list, file browser list)
 - `src/function/onboarding/View.tsx` — Enter-to-finalize in support-root path field
 

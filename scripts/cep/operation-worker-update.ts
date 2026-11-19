@@ -16,7 +16,7 @@ import type {
 import {
 	type RustTarget,
 	stageOperationWorkerTargets,
-} from "../build/build-operation-worker";
+} from "../build/operation-worker";
 
 export interface ExclusiveInstallLease {
 	replacePair(pair: OperationWorkerManifest): Promise<void>;
@@ -407,10 +407,10 @@ const buildWorker = async (
 export async function buildDevelopmentWorker(
 	distRoot = path.resolve("dist", "cep-dev"),
 ): Promise<DevelopmentWorkerBuildResult> {
-	return buildWorker(
-		distRoot,
-		() => ({ mode: "development-unsigned", buildProfile: "development" }),
-	);
+	return buildWorker(distRoot, () => ({
+		mode: "development-unsigned",
+		buildProfile: "development",
+	}));
 }
 
 /**

@@ -195,12 +195,12 @@ git commit -m "feat(protocol): define one-shot worker lifecycle"
 - Modify (generated): `src/management/ipc/generated/wire.ts`
 - Modify (generated): `src/management/ipc/generated/index.ts`
 - Modify: `src/management/ipc/generated/wire-contract.test.ts`
-- Modify: `scripts/generate/generate-rust-protocol-schema.ts`
-- Modify: `scripts/generate/generate-typescript-protocol.ts` only when the new schema construct is not representable by the existing generator
+- Modify: `scripts/generate/rust-protocol-schema.ts`
+- Modify: `scripts/generate/typescript-protocol.ts` only when the new schema construct is not representable by the existing generator
 - Modify: `package.json` to add the canonical schema generation scripts
 
 **Interfaces:**
-- Consumes: OW-PRO-001 の Rust wire types、`schema::generate_schema_catalog()`、`scripts/generate/generate-typescript-protocol.ts`。
+- Consumes: OW-PRO-001 の Rust wire types、`schema::generate_schema_catalog()`、`scripts/generate/typescript-protocol.ts`。
 - Produces: generated `InvocationContext`、`ManagedRootContext`、`AcceptedEvent`、`EventPayload`、`WireMessage::Cancel`、stable error string union。TypeScript は Rust source を再定義せず、generated `wire.ts` だけを import する。
 
 ```ts
@@ -249,8 +249,8 @@ Expected: `FAIL` because checked-in Rust schema does not yet include the lifecyc
 Add these exact package scripts before running generation:
 
 ```json
-"generate:rust-protocol-schema": "bun scripts/generate/generate-rust-protocol-schema.ts",
-"generate:typescript-protocol": "bun scripts/generate/generate-typescript-protocol.ts",
+"generate:rust-protocol-schema": "bun scripts/generate/rust-protocol-schema.ts",
+"generate:typescript-protocol": "bun scripts/generate/typescript-protocol.ts",
 ```
 
 Run:
@@ -288,7 +288,7 @@ Expected: all commands `PASS`; both `--check` commands confirm current output, t
 Review: `rg -n "type InvocationContext|type AcceptedEvent|worker_crashed|worker_forced_termination" src/management/ipc/generated/wire.ts rust/crates/protocol/generated/wire.schema.json` finds each declaration once; `git diff --check` returns no output.
 
 ```powershell
-git add -- rust/crates/protocol/generated/wire.schema.json src/management/ipc/generated/wire.ts src/management/ipc/generated/index.ts src/management/ipc/generated/wire-contract.test.ts scripts/generate/generate-rust-protocol-schema.ts scripts/generate/generate-typescript-protocol.ts package.json
+git add -- rust/crates/protocol/generated/wire.schema.json src/management/ipc/generated/wire.ts src/management/ipc/generated/index.ts src/management/ipc/generated/wire-contract.test.ts scripts/generate/rust-protocol-schema.ts scripts/generate/typescript-protocol.ts package.json
 git commit -m "chore(protocol): generate worker lifecycle contracts"
 ```
 
@@ -639,7 +639,7 @@ Expected: `PASS`; offline-independent calls succeed without connectivity, expire
 
 - [ ] **Step 5: Review that this task does not duplicate storage, distribution, CEP, or blocked licensing work, then commit exact paths.**
 
-Review: `rg -n "child_process|build-operation-worker|installer|acquire_operation_lock|Transaction::new" rust/apps/operation-worker/src` shows only calls to storage APIs and no duplicate implementations; `rg -n "mock worker|fallback|deferred" rust/apps/operation-worker` returns no output; `cargo fmt --check` passes.
+Review: `rg -n "child_process|operation-worker|installer|acquire_operation_lock|Transaction::new" rust/apps/operation-worker/src` shows only calls to storage APIs and no duplicate implementations; `rg -n "mock worker|fallback|deferred" rust/apps/operation-worker` returns no output; `cargo fmt --check` passes.
 
 ```powershell
 git add -- rust/apps/operation-worker/src/context.rs rust/apps/operation-worker/src/storage_dispatch.rs rust/apps/operation-worker/src/host_filesystem_dispatch.rs rust/apps/operation-worker/src/online_dispatch.rs rust/apps/operation-worker/src/lib.rs rust/apps/operation-worker/tests/invocation.rs rust/apps/operation-worker/tests/host_filesystem.rs rust/apps/operation-worker/tests/online.rs
@@ -677,7 +677,7 @@ OW-LIC-001 が unblock されても、この task に licensing file を追加�
 - Delete only after every gate below passes: `rust/apps/runtime/src/platform/windows_transport.rs`
 - Modify: `rust/Cargo.toml` to remove the `apps/runtime` workspace member and retain `apps/operation-worker`
 - Modify: `rust/Cargo.lock` to remove packages reachable only from `apps/runtime`
-- Modify: `scripts/check/check-rust-runtime-boundaries.ts` and its fixtures to assert worker-only runtime ownership
+- Modify: `scripts/check/rust-runtime-boundaries.ts` and its fixtures to assert worker-only runtime ownership
 
 **Interfaces:**
 - Consumes: OW-RUST-001〜003 green evidence、OW-CEP-009 の TS resident transport/lifecycle/multiplex deletion、OW-DIST-003 の paired real binary and cross-process install lease evidence、`bun run check:rust-runtime-boundaries`。
@@ -722,7 +722,7 @@ Expected: the reference scan returns only explicitly historical/superseded docum
 Review: two consecutive real invocations have distinct process identities; a crash does not block the next invocation; non-idempotent writes are not retried; no endpoint/discovery/heartbeat/process identity file is created; `git diff --check` passes.
 
 ```powershell
-git add -- rust/apps/runtime rust/Cargo.toml rust/Cargo.lock scripts/check/check-rust-runtime-boundaries.ts scripts/check/fixtures
+git add -- rust/apps/runtime rust/Cargo.toml rust/Cargo.lock scripts/check/rust-runtime-boundaries.ts scripts/check/fixtures
 git commit -m "refactor(worker): remove resident runtime app"
 ```
 

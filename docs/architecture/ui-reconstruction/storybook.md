@@ -245,7 +245,7 @@ header に inline で書いてある。
   と `useEffect` での catalog sync を発火するため副作用を抑える mock が必要
   で、structural stub を選択。
 - `info/preset.stories.tsx` — 同じ textmate WASM 経路 (Wave 4.3)。
-- `quick-actions/ActionList.stories.tsx` — 同じ textmate WASM 経路 +
+- `quick-actions/QuickActionsWidget.stories.tsx` — 同じ textmate WASM 経路 +
   `canUseCepNodeFileBrowser` が CEP window を inspect (Wave 4.3)。
 - `core/easing/Component.stories.tsx`, `core/align/Component.stories.tsx` —
   `useWidgetRuntime` が noop に fallback するため storage 連携は無効
@@ -458,7 +458,7 @@ silently omit decorators without throwing".
 
 ### Historical status of `sb-snapshot-all.ts`
 
-`scripts/verify/sb-snapshot-all.ts` and `scripts/verify/sb-snapshot-gallery.ts`
+`scripts/verify/storybook/snapshot-all.ts` and `scripts/verify/storybook/snapshot-gallery.ts`
 are kept as **diagnostic / historical workarounds**, not as the
 production capture path. They are intentionally not deleted because
 the 192/256/16 result is a useful regression fixture for "manual
@@ -482,7 +482,7 @@ Pipeline summary (kept verbatim for reference):
    storyIndex entry, calls `importFn` to resolve the CSF module,
    extracts the unboundStoryFn, and invokes `currentRender.renderToScreen`
    directly. Screenshot to `.tmp/storybook-screenshots/<id>.png`.
-4. `bun scripts/verify/sb-snapshot-gallery.ts` rebuilds
+4. `bun scripts/verify/storybook/snapshot-gallery.ts` rebuilds
    `.tmp/storybook-screenshots/index.html` from the PNGs on disk.
 
 Historical output breakdown (2026-09-17):
@@ -599,13 +599,13 @@ usable as a UI-reconstruction image source. Failure to satisfy any of
 pipeline will require hand-checking output.
 
 **Status (implemented on the #146 branch):** the capture hook is
-`scripts/verify/storybook-screenshot-capture.ts` (Vitest `setupFiles`
+`scripts/verify/storybook/screenshot-capture.ts` (Vitest `setupFiles`
 entry, runs inside the official addon lifecycle). It writes PNGs to
 `.tmp/vitest-screenshots/` and JSON sidecars to
-`.tmp/storybook-captures/`; `scripts/verify/storybook-capture-merge.ts`
+`.tmp/storybook-captures/`; `scripts/verify/storybook/capture-merge.ts`
 diffs sidecars against `storybook-static/index.json` into
 `.tmp/storybook-captures/report.json`;
-`scripts/verify/storybook-capture-gallery.ts` renders the gallery from
+`scripts/verify/storybook/capture-gallery.ts` renders the gallery from
 metadata. CI uploads per-shard artifacts and runs the merge in a
 separate `storybook-capture-report` job that is deliberately outside
 `release-gate.needs`. Pixel-diff / visual-quality gating (reg-suit or

@@ -7,10 +7,10 @@
 ## 前提（実装済み、コード変更不要）
 
 - 署名は環境変数で設定する。コードは設定を読むだけで、証明書の値を持たない。
-- **worker binaryのOS署名はmacOSのみ必須（ADR-0003）**: `scripts/package/sign-worker.ts`（証明書store参照 `TY_PLUS_SIGN_CERT_SHA1` を優先、PFXは代替。設定なしでは何も生成する前に拒否する）。**WindowsのworkerはR0では未署名が正当な形** — 署名設定は存在せず、参照もしない。
-- ZXP署名: `scripts/package/sign-zxp.ts`（`TY_PLUS_ZXP_CERT_PATH` / `TY_PLUS_ZXP_CERT_PASSWORD`）。**継続利用する自己署名P12は正式配布に使用できる**。release-trustでは開発用の使い捨て証明書への自動fallbackのみ拒否する。初回Stableは`docs/operations/zxp-signing-identity.md`の既存署名主体を使用。**workerのOS署名とは独立した契約**。
+- **worker binaryのOS署名はmacOSのみ必須（ADR-0003）**: `scripts/package/sign/worker.ts`（証明書store参照 `TY_PLUS_SIGN_CERT_SHA1` を優先、PFXは代替。設定なしでは何も生成する前に拒否する）。**WindowsのworkerはR0では未署名が正当な形** — 署名設定は存在せず、参照もしない。
+- ZXP署名: `scripts/package/sign/zxp.ts`（`TY_PLUS_ZXP_CERT_PATH` / `TY_PLUS_ZXP_CERT_PASSWORD`）。**継続利用する自己署名P12は正式配布に使用できる**。release-trustでは開発用の使い捨て証明書への自動fallbackのみ拒否する。初回Stableは`docs/operations/zxp-signing-identity.md`の既存署名主体を使用。**workerのOS署名とは独立した契約**。
 - notarization: `notarytool submit`（zip提出 — bare Mach-Oは受理形式外）+ `spctl --assess --type execute` で証拠取得。
-- 検証: `bun run scripts/package/build-release.ts` が全工程を実行する。macOSでの拒否はCIの `release-trust-gate-refusal` jobが、Windowsでの署名なし実行は `release-trust-windows-candidate` jobが検証する。
+- 検証: `bun run scripts/package/build/release.ts` が全工程を実行する。macOSでの拒否はCIの `release-trust-gate-refusal` jobが、Windowsでの署名なし実行は `release-trust-windows-candidate` jobが検証する。
 
 ## 1. macOS（Developer ID署名 + 公証）
 
@@ -30,7 +30,7 @@
    export TY_PLUS_SIGN_IDENTITY="Developer ID Application: <本人名義> (<TEAMID>)"
    export TY_PLUS_NOTARY_PROFILE="ty-plus-notary"
    ```
-6. 実行: `bun run scripts/package/build-release.ts` → `signature-evidence.ts` が署名済みbinaryから証拠（CDHash / 証明書fingerprint）を読み戻し、release trust manifestに記録する。
+6. 実行: `bun run scripts/package/build/release.ts` → `signature-evidence.ts` が署名済みbinaryから証拠（CDHash / 証明書fingerprint）を読み戻し、release trust manifestに記録する。
 
 ## 2. Windows（Authenticode署名 — 将来の任意拡張、R0では不要）
 
@@ -62,7 +62,7 @@
    ```sh
    export TY_PLUS_SIGN_TOOL_PATH="C:/Program Files (x86)/Windows Kits/10/bin/<ver>/x64/signtool.exe"
    ```
-5. 実行: `bun run scripts/package/build-release.ts` → Authenticode署名 → `Get-AuthenticodeSignature` probeで証拠を読み戻す。
+5. 実行: `bun run scripts/package/build/release.ts` → Authenticode署名 → `Get-AuthenticodeSignature` probeで証拠を読み戻す。
 
 ## 3. ZXP署名
 
@@ -96,7 +96,7 @@
 
 ## 6. 実行順序（設定後）
 
-1. `bun run scripts/package/build-release.ts`（macOS: worker OS署名 + ZXP署名 / Windows: 未署名worker + ZXP署名 / verify gate / secret検査 / zip / release manifest）
-2. `bun run scripts/verify/verify-release-artifacts.ts`（manifestのsha256再計算・HEAD一致・pack走査・notices同梱確認）
+1. `bun run scripts/package/build/release.ts`（macOS: worker OS署名 + ZXP署名 / Windows: 未署名worker + ZXP署名 / verify gate / secret検査 / zip / release manifest）
+2. `bun run scripts/verify/release-artifacts.ts`（manifestのsha256再計算・HEAD一致・pack走査・notices同梱確認）
 3. 実機ゲート（#10、11/29枠）: D-01〜D-15を検証対象ビルドで実施
 4. 公開判断（#1、11/30 Go/No-Go）— **本人の明示的承認ゲート**

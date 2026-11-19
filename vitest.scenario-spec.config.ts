@@ -30,7 +30,7 @@ export default defineConfig({
 	test: {
 		environment: "node",
 		include: [
-			"src/shared/scenario/scenario-rule-runner.test.ts",
+			"src/shared/scenario/rule-runner.test.ts",
 			"src/shared/scenario/validator.test.ts",
 			"src/shared/scenario/loader.test.ts",
 			"src/shared/scenario/verification-matrix.test.ts",

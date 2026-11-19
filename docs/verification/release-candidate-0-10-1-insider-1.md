@@ -48,7 +48,7 @@ ZIP/ZXPの内容を実測で確認:
 - ZXP: **Windows workerのみ**（macOS workerを含まない）
 - ZXPのsha256がZIPと異なる（別物であることの確認）
 
-監査（`verify-release-artifacts.ts`）の全項目PASS: `trustMode=release` / `sourceCommit=HEAD` / artifact sha256 / 更新contract埋め込み / 注入bindingの版・channel一致 / CEP版一致 / worker署名証拠（Windowsは未署名を許容）/ secret scan clean。
+監査（`release-artifacts.ts`）の全項目PASS: `trustMode=release` / `sourceCommit=HEAD` / artifact sha256 / 更新contract埋め込み / 注入bindingの版・channel一致 / CEP版一致 / worker署名証拠（Windowsは未署名を許容）/ secret scan clean。
 
 ## 3. macOS（未完成 — 公証資格情報が無い）
 
@@ -112,7 +112,7 @@ macOSのrelease-trustビルドは**ビルドを進めてから公証で停止**�
 3. **同一版の再ビルドができない** — stagingディレクトリをマージしていたため、正当な再ビルドが「different bytes」で拒否された。ビルドごとに丸ごと書き換えるよう修正。
 4. **既定TSAが検証不能** — DigiCert/Sectigo/Entrust は pinned Adobe signer (ZXPSignCmd 4.1.3) で `exit 35`。Apple TSA に変更（`ZXP_TIMESTAMP_URL` で上書き可）。
 5. **クロスビルドのplatform判定が不統一** — verify gate がホストOSで判定し、Windows候補をmacOSとして検査していた。`build-platform.ts` に一本化。
-6. **`package-cep-archive.ts` が import 時に `main()` を実行** — 他のscriptと不整合でテスト不能だった。
+6. **`cep-archive.ts` が import 時に `main()` を実行** — 他のscriptと不整合でテスト不能だった。
 
 ## 7. 署名基盤（継続利用）
 

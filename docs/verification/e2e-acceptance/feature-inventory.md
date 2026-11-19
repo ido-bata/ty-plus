@@ -111,7 +111,7 @@ Save 失敗は `role="alert"` バナーで表示（#96）。Reset は確認な�
 - `HostAdapter` メソッド群（contract.ts が正本）: `getHostContext, ping, runScriptFile, applyPreset, addFootage, verifyPresetAsset, scanPluginEffectRoots, applyEffectByMatchName, applyEasing, applyLoopEasing, setAnchorPoint, captureEasingCurve, captureKeyframeValues, getEasingClipboardPath, pasteKeyframeValues, getLabelColorNames, getFontBrowserEntries, writeSelectedTextLayers, readSelectedTextLayers, prepareAnimationPresetTarget, openAnimationPresetSaveDialog, prepareLayerCompPresetScript, prepareCodePresetScript, prepareEasingPresetScript, getSelectionCount, getEasingSelectionCount, alignLayers`
 - host bundle `jsx/ty-plus-host.jsx`（`HOST_BUNDLE_VERSION = workspace-preset-scriptui-panel-v4`）、resident 判定 + self-heal（#104）
 - 書込/実行は allowed roots（ae-support / user-data / extension）に限定（`classifyAllowedRoot`, `assertAllowedFilePath`, `authorizePayloadSaveDir`）
-- operation worker（Rust）: spawn→accept→progress→final→EOF/exit を panel から verify（`verify-operation-worker-cep.ts`）
+- operation worker（Rust）: spawn→accept→progress→final→EOF/exit を panel から verify（`operation-worker-cep.ts`）
 - ExtendScript `alert()` は CEP 経由操作では構造化エラー＋非モーダル通知（#72）
 
 ### 2.9 永続化ファイル一覧（managed root = `<supportRoot>/ty-plus/`）

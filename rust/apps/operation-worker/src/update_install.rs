@@ -455,7 +455,7 @@ fn extract_release_zip_with_limits(
     Ok(dest_dir.join(EXTENSION_DIR_NAME))
 }
 
-/// Post-extraction sanity checks mirroring `verify-release-artifacts`:
+/// Post-extraction sanity checks mirroring `release-artifacts`:
 /// manifest, bundle version, host jsx, and worker manifest must exist and
 /// agree with the requested version.
 fn validate_staged_app(app_dir: &Path, release_version: &str) -> Result<(), UpdateInstallError> {

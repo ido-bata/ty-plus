@@ -84,7 +84,7 @@
 | `scripts/build/build-cli.ts` | `PKG-002` | `rust/` runtime build。両 platform artifact を明示 |
 | `scripts/lib/cli-paths.ts` | `PKG-003` | runtime path resolver へ改名・更新 |
 | `scripts/package/sign-cli.ts` | `PKG-005` | macOS runtime signing / notarization |
-| `scripts/package/package-cep-archive.ts` | `PKG-004` | binary 欠落を warning でなく hard failure |
+| `scripts/package/release/cep-archive.ts` | `PKG-004` | binary 欠落を warning でなく hard failure |
 | `package.json` の `*:cli` scripts | `PKG-002` | `*:runtime` へ置換 |
 | `tools/ty-plus-cli/` | `DEL-012` | `rust/` への移行後に完全削除 |
 

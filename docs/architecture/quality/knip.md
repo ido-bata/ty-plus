@@ -19,7 +19,7 @@ bun run knip
      `src/management/ae/jsx/**`、
      `src/management/preset/jsx-presets.ts`。
      これらは owner を持たない（または build 中間生成物）ので検出対象外。
-  2. **scripts/ 外の補助エントリ** — `scripts/cep/cep-uninstall.ts`、
+  2. **scripts/ 外の補助エントリ** — `scripts/cep/uninstall.ts`、
      `scripts/demo/markdown-editor/vite.config.ts`、
      `scripts/lib/cep-bundle.ts`。
      デモ・運用補助スクリプトで product graph に組込まない。

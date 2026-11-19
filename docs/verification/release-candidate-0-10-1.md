@@ -48,7 +48,7 @@ bun run release:candidate --channel=stable --release-version=0.10.1
 - 各ZIPは `LICENSE` / `THIRD-PARTY-NOTICES.md` / `jsx/ty-plus-host.jsx` / `CSXS/manifest.xml`（`ExtensionBundleVersion="0.10.1"`）+ 当該platformのworkerのみを含む。cross-platform workerは含まない（`pruneUndeclaredWorkers` で宣言外のworker版を除去）
 - 各ZXPは**当該platformのworkerのみ**を含む。ZIPとハッシュが異なる
 - panel bundleの注入binding: `currentReleaseVersion=0.10.1` / `buildReleaseChannel=stable`
-- 監査（`verify-release-artifacts.ts`）全項目PASS（両platform）
+- 監査（`release-artifacts.ts`）全項目PASS（両platform）
 
 > **tag target**: この成果物の `sourceCommit` は `d52e06315eaed2df11e6d001b4c9d8fbe26be643`。GitHub Release作成時は `--target d52e06315eaed2df11e6d001b4c9d8fbe26be643` を指定し、**tagと成果物の `sourceCommit` を一致させる**。この記録docの後続commitはdocsのみで、成果物のバイトに影響しない（`git diff --stat d52e06315..HEAD` がdocsのみであることを確認する）。
 

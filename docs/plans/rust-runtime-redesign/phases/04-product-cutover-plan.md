@@ -226,7 +226,7 @@ For each cutover:
 2. Verify TS tests pass: `bun run vitest run`
 3. Verify typecheck passes: `bun run typecheck`
 4. Verify no old imports remain: `rg "readJsonFileText|writeJsonFileText" src/`
-5. Verify architecture guard passes: `bun run scripts/check/check-storage-read-write-split.ts`
+5. Verify architecture guard passes: `bun run scripts/check/storage-read-write-split.ts`
 
 ## Current Status
 

@@ -25,7 +25,7 @@ cargo +1.85.0 test -p ty-plus-host-filesystem
 npx vitest run src/management/ae/files/
 
 # Boundary guard
-bun run scripts/check/check-rust-runtime-boundaries.ts
+bun run scripts/check/rust-runtime-boundaries.ts
 
 # Lint and typecheck
 npm run lint

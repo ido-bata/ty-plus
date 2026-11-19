@@ -1,14 +1,14 @@
 {
-  "realRoot": "/Applications/Adobe After Effects 2026/ty-plus",
-  "checkedAt": "2026-11-18T04:44:45.521Z",
-  "driftBeforeRepair": {
-    "changed": 1,
-    "added": 1,
-    "removed": 0
-  },
-  "filesRepaired": [
-    "cache/layout-undo/panel-1/stack.json",
-    "removed:locks/persistence.lock/owner.json"
-  ],
-  "cleanAfterRepair": true
+	"realRoot": "/Applications/Adobe After Effects 2026/ty-plus",
+	"checkedAt": "2026-11-18T04:44:45.521Z",
+	"driftBeforeRepair": {
+		"changed": 1,
+		"added": 1,
+		"removed": 0
+	},
+	"filesRepaired": [
+		"cache/layout-undo/panel-1/stack.json",
+		"removed:locks/persistence.lock/owner.json"
+	],
+	"cleanAfterRepair": true
 }

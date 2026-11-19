@@ -36,11 +36,11 @@
 `git add -- <paths>`、`git diff --cached -- <paths>` を実行する。`git add .`、directory stage、
 unscoped `git diff --exit-code` を使わない。
 
-- OW-LIVE-001 paths: `rust/crates/protocol/src/metadata.rs rust/crates/protocol/src/message.rs rust/crates/protocol/src/scan.rs rust/crates/protocol/src/schema.rs rust/crates/protocol/src/lib.rs rust/crates/protocol/tests/golden_messages.rs rust/crates/protocol/tests/schema_snapshot.rs rust/apps/operation-worker/src/online_dispatch.rs rust/apps/operation-worker/src/storage_dispatch.rs rust/apps/operation-worker/src/host_filesystem_dispatch.rs rust/apps/operation-worker/tests/online.rs rust/apps/operation-worker/tests/host_filesystem.rs rust/crates/host-filesystem/src/lib.rs rust/crates/host-filesystem/src/scan.rs rust/crates/host-filesystem/src/scan/task.rs rust/crates/host-filesystem/src/scan/adversarial.rs rust/crates/host-filesystem/src/scan/macos.rs rust/crates/host-filesystem/src/scan/windows.rs scripts/generate/generate-rust-protocol-schema.ts scripts/generate/generate-typescript-protocol.ts rust/crates/protocol/generated/wire.schema.json src/management/ipc/generated/wire.ts src/management/ipc/generated/wire-contract.test.ts`
+- OW-LIVE-001 paths: `rust/crates/protocol/src/metadata.rs rust/crates/protocol/src/message.rs rust/crates/protocol/src/scan.rs rust/crates/protocol/src/schema.rs rust/crates/protocol/src/lib.rs rust/crates/protocol/tests/golden_messages.rs rust/crates/protocol/tests/schema_snapshot.rs rust/apps/operation-worker/src/online_dispatch.rs rust/apps/operation-worker/src/storage_dispatch.rs rust/apps/operation-worker/src/host_filesystem_dispatch.rs rust/apps/operation-worker/tests/online.rs rust/apps/operation-worker/tests/host_filesystem.rs rust/crates/host-filesystem/src/lib.rs rust/crates/host-filesystem/src/scan.rs rust/crates/host-filesystem/src/scan/task.rs rust/crates/host-filesystem/src/scan/adversarial.rs rust/crates/host-filesystem/src/scan/macos.rs rust/crates/host-filesystem/src/scan/windows.rs scripts/generate/rust-protocol-schema.ts scripts/generate/typescript-protocol.ts rust/crates/protocol/generated/wire.schema.json src/management/ipc/generated/wire.ts src/management/ipc/generated/wire-contract.test.ts`
 - OW-LIVE-002 paths: `rust/apps/operation-worker/src/cancellation.rs rust/apps/operation-worker/src/lifecycle.rs rust/apps/operation-worker/src/lib.rs rust/apps/operation-worker/src/main.rs rust/apps/operation-worker/tests/lifecycle.rs rust/apps/operation-worker/tests/live_control_stream.rs`
 - OW-LIVE-003 paths: `docs/architecture/runtime/operation-worker.md rust/apps/operation-worker/src/executor.rs rust/apps/operation-worker/src/product_online_config.rs rust/apps/operation-worker/src/main.rs rust/apps/operation-worker/src/lib.rs rust/apps/operation-worker/src/host_filesystem_dispatch.rs rust/apps/operation-worker/src/online_dispatch.rs rust/apps/operation-worker/src/storage_dispatch.rs rust/apps/operation-worker/Cargo.toml rust/apps/operation-worker/tests/executable_process.rs rust/apps/operation-worker/tests/host_filesystem.rs rust/apps/operation-worker/tests/online.rs rust/apps/operation-worker/tests/storage.rs rust/crates/online/src/download.rs rust/crates/online/src/offline.rs rust/crates/online/src/search_cache.rs rust/crates/online/src/lib.rs rust/crates/online/tests/offline_search_cache.rs`
 - OW-CEP-004 paths: `src/management/ipc/operation-worker/scheduler.ts src/management/ipc/operation-worker/scheduler.test.ts src/management/ipc/operation-worker/scheduler.test-fixtures.ts src/management/ipc/operation-worker/runner.ts src/management/ipc/operation-worker/runner.test.ts src/management/ipc/index.ts`
-- OW-HOST-001 paths: `src/management/ipc/operation-worker/composition.ts src/management/ipc/operation-worker/composition.test.ts scripts/verify/verify-operation-worker-process.ts scripts/verify/verify-operation-worker-process.test.ts src/management/ipc/index.ts package.json`
+- OW-HOST-001 paths: `src/management/ipc/operation-worker/composition.ts src/management/ipc/operation-worker/composition.test.ts scripts/verify/operation-worker/operation-worker-process.ts scripts/verify/operation-worker/operation-worker-process.test.ts src/management/ipc/index.ts package.json`
 - OW-HOST-002 paths: `scripts/verify/verify-ae-operation-worker.ts scripts/verify/verify-ae-operation-worker.test.ts src/management/ipc/operation-worker/host-verification.ts src/management/ipc/operation-worker/host-verification.test.ts src/management/ae/cep/entry/panel.tsx package.json`
 
 ---
@@ -66,8 +66,8 @@ unscoped `git diff --exit-code` を使わない。
 - Modify: `rust/crates/host-filesystem/src/scan/adversarial.rs`
 - Modify: `rust/crates/host-filesystem/src/scan/macos.rs`
 - Modify: `rust/crates/host-filesystem/src/scan/windows.rs`
-- Modify: `scripts/generate/generate-rust-protocol-schema.ts`
-- Modify: `scripts/generate/generate-typescript-protocol.ts`
+- Modify: `scripts/generate/rust-protocol-schema.ts`
+- Modify: `scripts/generate/typescript-protocol.ts`
 - Modify generated: `rust/crates/protocol/generated/wire.schema.json`
 - Modify generated: `src/management/ipc/generated/wire.ts`
 - Modify: `src/management/ipc/generated/wire-contract.test.ts`
@@ -436,8 +436,8 @@ OW-LIVE-003
 **Files:**
 - Create: `src/management/ipc/operation-worker/composition.ts`
 - Create: `src/management/ipc/operation-worker/composition.test.ts`
-- Create: `scripts/verify/verify-operation-worker-process.ts`
-- Create: `scripts/verify/verify-operation-worker-process.test.ts`
+- Create: `scripts/verify/operation-worker/operation-worker-process.ts`
+- Create: `scripts/verify/operation-worker/operation-worker-process.test.ts`
 - Modify: `src/management/ipc/index.ts`
 - Modify: `package.json`
 
@@ -452,7 +452,7 @@ Prove manifest absence fails before spawn, current-platform binary is selected, 
 
 - [ ] **Step 2: Run RED.**
 
-Run: `bun run vitest run src/management/ipc/operation-worker/composition.test.ts scripts/verify/verify-operation-worker-process.test.ts`
+Run: `bun run vitest run src/management/ipc/operation-worker/composition.test.ts scripts/verify/operation-worker/operation-worker-process.test.ts`
 
 Expected: FAIL because production composition and process verifier do not exist.
 

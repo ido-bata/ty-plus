@@ -18,7 +18,7 @@ ty-plusの配布は**GitHub Releasesを唯一の正本**とする（ADR-0004）�
 | 直近の候補の検証記録（雛形として使う） | `docs/verification/release-candidate-0-10-0-insider-3.md` |
 | 配布・更新のユーザー向け説明 | `docs/user-guide/installation/index.md` |
 
-このSkillが持つのは**判断の順序と、そこで止める条件**だけである。tag文法・asset命名・channel購読規則は `scripts/package/release-version.ts` と `src/management/online/update/channel.ts` が実装する唯一の定義であり、Skillやrunbookへコピーしない。
+このSkillが持つのは**判断の順序と、そこで止める条件**だけである。tag文法・asset命名・channel購読規則は `scripts/package/release/version.ts` と `src/management/online/update/channel.ts` が実装する唯一の定義であり、Skillやrunbookへコピーしない。
 
 ## 0. 鉄則
 
@@ -41,7 +41,7 @@ ty-plusの配布は**GitHub Releasesを唯一の正本**とする（ADR-0004）�
 bun run release:candidate --channel=insider --release-version=0.10.0-insider.1
 ```
 
-内部では `build-release.ts` → `verify-release-artifacts.ts` → `prepare-github-release.ts` を順に実行し、途中で失敗したら止まる。`release:verify` と `release:stage` で個別に再実行できる。channelとtagが食い違う、数値コアが `package.json` と違う、hostがWindows/macOSでない、のいずれでも**ビルドを始める前に**拒否する。`--channel` は省略できる（versionから導出する）。
+内部では `build-release.ts` → `release-artifacts.ts` → `prepare-github-release.ts` を順に実行し、途中で失敗したら止まる。`release:verify` と `release:stage` で個別に再実行できる。channelとtagが食い違う、数値コアが `package.json` と違う、hostがWindows/macOSでない、のいずれでも**ビルドを始める前に**拒否する。`--channel` は省略できる（versionから導出する）。
 
 ## 2. platformごとの前提を確認する
 
@@ -57,7 +57,7 @@ bun run release:candidate --channel=insider --release-version=0.10.0-insider.1
 
 ## 3. 成果物を監査する
 
-`verify-release-artifacts.ts` が実バイトに対して検査する。**証拠の欠落はskipではなく失敗**である。以下は代表例であり、**全項目の正本はスクリプト**（`scripts/verify/verify-release-artifacts.ts`）とする。
+`release-artifacts.ts` が実バイトに対して検査する。**証拠の欠落はskipではなく失敗**である。以下は代表例であり、**全項目の正本はスクリプト**（`scripts/verify/release-artifacts.ts`）とする。
 
 - manifestの `trustMode` が `release` であること
 - `sourceCommit` が現在の `HEAD` と一致すること（別のバイトを保証していないこと）
@@ -137,7 +137,7 @@ signerが見つからない場合、監査は「署名不正」ではなく「�
 
 channelの概念を再実装しない。拡張点は2つだけである。
 
-- **成果物のidentity**: `scripts/package/release-version.ts`（tag・asset名・platform）
+- **成果物のidentity**: `scripts/package/release/version.ts`（tag・asset名・platform）
 - **購読の意味**: `src/management/online/update/channel.ts`（どのchannelがどれを受信するか）
 
 インストーラ形式を増やすならasset名の導出を `release-version.ts` に足し、配布元を増やすなら更新providerを追加する。Skill・runbook・各scriptへtag文法を書き写さない。

@@ -66,7 +66,7 @@
 
 ## 2. 機械的 enforce
 
-`scripts/check/check-i18n-locked-terms.ts` がこのテーブルの canonical を機械的に検査する。
+`scripts/check/i18n-locked-terms.ts` がこのテーブルの canonical を機械的に検査する。
 
 - 1.1 の語がロケールファイルに存在し、かつ英語原文と一致しない場合 → **エラー**
 - 1.2 の語の値が canonical テーブルにない場合 → **エラー**
@@ -81,8 +81,8 @@ canonical を逸脱する必要がある場合 (例: マーケ要件で全言語
 1. `en/<namespace>.json` に英語原文を追加
 2. 1.1 / 1.2 / 1.3 のどれに該当する語かを確認
 3. 1.1 / 1.2 の場合は本ポリシーの該当行を更新してから翻訳
-4. 残り 9 言語のロケールファイルに翻訳を埋める (`bun run scripts/check/check-i18n-locale-coverage.ts` で確認)
-5. `bun run scripts/check/check-i18n-locked-terms.ts` で canonical 違反がないことを確認
+4. 残り 9 言語のロケールファイルに翻訳を埋める (`bun run scripts/check/i18n-locale-coverage.ts` で確認)
+5. `bun run scripts/check/i18n-locked-terms.ts` で canonical 違反がないことを確認
 6. `bun run lint` で静的検査全体 green を確認
 
 ## 5. en key-set canonical
@@ -91,4 +91,4 @@ canonical を逸脱する必要がある場合 (例: マーケ要件で全言語
 
 - 9 locale は en と同一 namespace・同一 leaf key 集合を持つ。余分な key（他 namespace の複製を含む）は持たない。
 - `t()` が参照する static literal key は en に存在しなければならない。動的組み立て key は対象外。
-- 機械的強制は `bun run scripts/check/check-i18n-locale-coverage.ts --strict-en-canonical`。未訳値は `TODO: ` prefix で置く。
+- 機械的強制は `bun run scripts/check/i18n-locale-coverage.ts --strict-en-canonical`。未訳値は `TODO: ` prefix で置く。

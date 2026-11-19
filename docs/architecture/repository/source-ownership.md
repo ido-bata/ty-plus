@@ -234,9 +234,9 @@ Windows と macOS で分岐する実装は、その操作を所有する責務�
 `scripts/` は product behavior ではなく、build / dev / generate / check の実行経路を
 所有する。Rust operation worker に関して現在実装済みの正規導線は次の通り。
 
-- generate: [`scripts/generate/generate-rust-protocol-schema.ts`](../../../scripts/generate/generate-rust-protocol-schema.ts)
-- check: [`scripts/check/check-rust-workspace.ts`](../../../scripts/check/check-rust-workspace.ts),
-  [`scripts/check/check-rust-runtime-boundaries.ts`](../../../scripts/check/check-rust-runtime-boundaries.ts)
+- generate: [`scripts/generate/rust-protocol-schema.ts`](../../../scripts/generate/rust-protocol-schema.ts)
+- check: [`scripts/check/rust-workspace.ts`](../../../scripts/check/rust-workspace.ts),
+  [`scripts/check/rust-runtime-boundaries.ts`](../../../scripts/check/rust-runtime-boundaries.ts)
 
 Rust operation worker の build / dev launcher は未実装であり、旧 CLI WIP や CEP deploy scriptを
 正規導線として扱わない。

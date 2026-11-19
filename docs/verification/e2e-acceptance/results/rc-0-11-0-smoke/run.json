@@ -1,170 +1,168 @@
 {
-  "schema": "ty-plus.e2e-run/1",
-  "suite": "smoke",
-  "capturedAt": "2026-11-18T04:42:38.889Z",
-  "extensionDir": "/Users/rebui/Library/Application Support/Adobe/CEP/extensions/app.ty-plus.dev",
-  "managedRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-18T04-42-21-354Z-33370/ty-plus",
-  "realManagedRoot": "/Applications/Adobe After Effects 2026/ty-plus",
-  "sandbox": {
-    "enabled": true,
-    "sandboxRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-18T04-42-21-354Z-33370/ty-plus",
-    "integrity": {
-      "realRoot": "/Applications/Adobe After Effects 2026/ty-plus",
-      "checkedAt": "2026-11-18T04:42:38.888Z",
-      "driftBeforeRepair": {
-        "changed": 1,
-        "added": 0,
-        "removed": 0
-      },
-      "filesRepaired": [
-        "cache/layout-undo/panel-1/stack.json"
-      ],
-      "cleanAfterRepair": true
-    }
-  },
-  "totals": {
-    "PASS": 6,
-    "FAIL": 0,
-    "BLOCKED": 0,
-    "SKIP": 0
-  },
-  "results": [
-    {
-      "uc": "UC-A03",
-      "title": "live surfaces boot with CEP bridge and extension origin",
-      "status": "PASS",
-      "detail": "1 live surfaces checked",
-      "checks": [
-        {
-          "name": "at least one surface is live",
-          "ok": true,
-          "detail": "1 live surfaces"
-        },
-        {
-          "name": "panel-1 is live",
-          "ok": true,
-          "detail": "panel-1"
-        },
-        {
-          "name": "panel-1 boots",
-          "ok": true,
-          "detail": "readyState=complete body=49485 cs=true"
-        },
-        {
-          "name": "panel-1 loads from CEP extensions",
-          "ok": true,
-          "detail": "file:///Users/rebui/Library/Application%20Support/Adobe/CEP/extensions/app.ty-plus.dev/panel/index.html"
-        }
-      ],
-      "evidence": [
-        "/Users/rebui/work/ty-plus/docs/verification/e2e-acceptance/results/rc-0-11-0-smoke/smoke-panel-1.png"
-      ],
-      "durationMs": 5029
-    },
-    {
-      "uc": "UC-H01",
-      "title": "ExtendScript host responds and host bundle contract is callable",
-      "status": "PASS",
-      "detail": "AE 26.5.3x9",
-      "checks": [
-        {
-          "name": "app.version responds",
-          "ok": true,
-          "detail": "26.5.3x9"
-        },
-        {
-          "name": "host bundle exposes callable contract",
-          "ok": true,
-          "detail": "contract-ok"
-        }
-      ],
-      "evidence": [],
-      "durationMs": 36
-    },
-    {
-      "uc": "UC-A02",
-      "title": "persisted settings/layout/theme files exist and parse",
-      "status": "PASS",
-      "detail": "managed root files",
-      "checks": [
-        {
-          "name": "settings/app.json parses",
-          "ok": true,
-          "detail": "ok"
-        },
-        {
-          "name": "workspaces/workspace-1.json parses",
-          "ok": true,
-          "detail": "ok"
-        },
-        {
-          "name": "presets/presets.json parses",
-          "ok": true,
-          "detail": "ok"
-        },
-        {
-          "name": "styles/theme.css state consistent with overrides",
-          "ok": true,
-          "detail": "169 bytes"
-        }
-      ],
-      "evidence": [],
-      "durationMs": 1
-    },
-    {
-      "uc": "UC-B04",
-      "title": "grid settings persisted value reaches panel CSS variables",
-      "status": "PASS",
-      "detail": "grid token convergence",
-      "checks": [
-        {
-          "name": "settings.workspace.grid.cellSize present",
-          "ok": true,
-          "detail": "cellSize=80"
-        },
-        {
-          "name": "--ty-ws-cell reflects persisted grid",
-          "ok": true,
-          "detail": "computed=80px expected=80px"
-        }
-      ],
-      "evidence": [],
-      "durationMs": 1
-    },
-    {
-      "uc": "UC-E02",
-      "title": "ui accent color persisted in app.json reaches theme.css tokens",
-      "status": "PASS",
-      "detail": "ui.* → theme pipeline",
-      "checks": [
-        {
-          "name": "ui.accentColor present in app.json",
-          "ok": true,
-          "detail": "accent=#e2b701"
-        },
-        {
-          "name": "theme.css accent token matches ui.* projection",
-          "ok": true,
-          "detail": "--color-ty-accent: #e2b701"
-        }
-      ],
-      "evidence": [],
-      "durationMs": 0
-    },
-    {
-      "uc": "UC-G01",
-      "title": "debug console surface aggregates logs and evaluates JS",
-      "status": "PASS",
-      "detail": "debug console",
-      "checks": [
-        {
-          "name": "debug console DOM mounted",
-          "ok": true,
-          "detail": "body=32552 msgs=34"
-        }
-      ],
-      "evidence": [],
-      "durationMs": 2524
-    }
-  ]
+	"schema": "ty-plus.e2e-run/1",
+	"suite": "smoke",
+	"capturedAt": "2026-11-18T04:42:38.889Z",
+	"extensionDir": "/Users/rebui/Library/Application Support/Adobe/CEP/extensions/app.ty-plus.dev",
+	"managedRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-18T04-42-21-354Z-33370/ty-plus",
+	"realManagedRoot": "/Applications/Adobe After Effects 2026/ty-plus",
+	"sandbox": {
+		"enabled": true,
+		"sandboxRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-18T04-42-21-354Z-33370/ty-plus",
+		"integrity": {
+			"realRoot": "/Applications/Adobe After Effects 2026/ty-plus",
+			"checkedAt": "2026-11-18T04:42:38.888Z",
+			"driftBeforeRepair": {
+				"changed": 1,
+				"added": 0,
+				"removed": 0
+			},
+			"filesRepaired": ["cache/layout-undo/panel-1/stack.json"],
+			"cleanAfterRepair": true
+		}
+	},
+	"totals": {
+		"PASS": 6,
+		"FAIL": 0,
+		"BLOCKED": 0,
+		"SKIP": 0
+	},
+	"results": [
+		{
+			"uc": "UC-A03",
+			"title": "live surfaces boot with CEP bridge and extension origin",
+			"status": "PASS",
+			"detail": "1 live surfaces checked",
+			"checks": [
+				{
+					"name": "at least one surface is live",
+					"ok": true,
+					"detail": "1 live surfaces"
+				},
+				{
+					"name": "panel-1 is live",
+					"ok": true,
+					"detail": "panel-1"
+				},
+				{
+					"name": "panel-1 boots",
+					"ok": true,
+					"detail": "readyState=complete body=49485 cs=true"
+				},
+				{
+					"name": "panel-1 loads from CEP extensions",
+					"ok": true,
+					"detail": "file:///Users/rebui/Library/Application%20Support/Adobe/CEP/extensions/app.ty-plus.dev/panel/index.html"
+				}
+			],
+			"evidence": [
+				"/Users/rebui/work/ty-plus/docs/verification/e2e-acceptance/results/rc-0-11-0-smoke/smoke-panel-1.png"
+			],
+			"durationMs": 5029
+		},
+		{
+			"uc": "UC-H01",
+			"title": "ExtendScript host responds and host bundle contract is callable",
+			"status": "PASS",
+			"detail": "AE 26.5.3x9",
+			"checks": [
+				{
+					"name": "app.version responds",
+					"ok": true,
+					"detail": "26.5.3x9"
+				},
+				{
+					"name": "host bundle exposes callable contract",
+					"ok": true,
+					"detail": "contract-ok"
+				}
+			],
+			"evidence": [],
+			"durationMs": 36
+		},
+		{
+			"uc": "UC-A02",
+			"title": "persisted settings/layout/theme files exist and parse",
+			"status": "PASS",
+			"detail": "managed root files",
+			"checks": [
+				{
+					"name": "settings/app.json parses",
+					"ok": true,
+					"detail": "ok"
+				},
+				{
+					"name": "workspaces/workspace-1.json parses",
+					"ok": true,
+					"detail": "ok"
+				},
+				{
+					"name": "presets/presets.json parses",
+					"ok": true,
+					"detail": "ok"
+				},
+				{
+					"name": "styles/theme.css state consistent with overrides",
+					"ok": true,
+					"detail": "169 bytes"
+				}
+			],
+			"evidence": [],
+			"durationMs": 1
+		},
+		{
+			"uc": "UC-B04",
+			"title": "grid settings persisted value reaches panel CSS variables",
+			"status": "PASS",
+			"detail": "grid token convergence",
+			"checks": [
+				{
+					"name": "settings.workspace.grid.cellSize present",
+					"ok": true,
+					"detail": "cellSize=80"
+				},
+				{
+					"name": "--ty-ws-cell reflects persisted grid",
+					"ok": true,
+					"detail": "computed=80px expected=80px"
+				}
+			],
+			"evidence": [],
+			"durationMs": 1
+		},
+		{
+			"uc": "UC-E02",
+			"title": "ui accent color persisted in app.json reaches theme.css tokens",
+			"status": "PASS",
+			"detail": "ui.* → theme pipeline",
+			"checks": [
+				{
+					"name": "ui.accentColor present in app.json",
+					"ok": true,
+					"detail": "accent=#e2b701"
+				},
+				{
+					"name": "theme.css accent token matches ui.* projection",
+					"ok": true,
+					"detail": "--color-ty-accent: #e2b701"
+				}
+			],
+			"evidence": [],
+			"durationMs": 0
+		},
+		{
+			"uc": "UC-G01",
+			"title": "debug console surface aggregates logs and evaluates JS",
+			"status": "PASS",
+			"detail": "debug console",
+			"checks": [
+				{
+					"name": "debug console DOM mounted",
+					"ok": true,
+					"detail": "body=32552 msgs=34"
+				}
+			],
+			"evidence": [],
+			"durationMs": 2524
+		}
+	]
 }

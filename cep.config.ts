@@ -72,7 +72,7 @@ export const OPERATION_WORKER_EXPECTED_TRUST_MODE = isDevelopmentBuild
  * In production, a missing password is fatal: an empty password would be
  * forwarded to the ZXP signer and produce a confusing downstream failure.
  * In development, fall back to an empty string and warn — matching the
- * pattern in `scripts/package/sign-zxp.ts`.
+ * pattern in `scripts/package/sign/zxp.ts`.
  */
 function resolveZxpCertPassword(): string {
 	const password = process.env.ZXP_CERT_PASSWORD;

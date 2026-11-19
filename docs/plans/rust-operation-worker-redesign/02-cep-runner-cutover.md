@@ -133,7 +133,7 @@ git commit -m "feat(ipc): add worker frame codec"
 - Create: `src/management/ipc/operation-worker/binary.ts`
 - Create: `src/management/ipc/operation-worker/binary.test.ts`
 - Modify: `src/management/ipc/index.ts`
-- Modify: `scripts/check/check-rust-runtime-boundaries.ts`
+- Modify: `scripts/check/rust-runtime-boundaries.ts`
 
 **Interfaces:**
 - `export type OperationWorkerPlatform = "windows" | "macos"`。
@@ -146,7 +146,7 @@ git commit -m "feat(ipc): add worker frame codec"
 - resolver 内部 helper は `validateManifestRelativePath(path: string): string`、`assertManifestMetadata(manifest: OperationWorkerManifest, productVersion: string, extensionVersion: string, protocolVersion: ProtocolVersion, capabilities: readonly string[]): void`、`assertPairedArtifacts(manifest: OperationWorkerManifest): void`、`inspectExecutableFile(path: string, platform: OperationWorkerPlatform): Promise<{ readonly sha256: string }>`、`validateArtifactSignatureMetadata(artifact: OperationWorkerArtifact, platform: OperationWorkerPlatform): boolean` の exact signature を持つ。file headerとhashは同じopen file handleから読む。
 - missing binary、path traversal、wrong platform、version/capability mismatch、signature mismatch、hash mismatch は stable `binary_missing` または `binary_manifest_mismatch` として spawn 前に拒否する。
 - Authenticode / codesign とcertificate fingerprintの実検証は `OW-DIST-002` だけが所有する。runtime resolverはpackage時に検証済みの署名metadataのplatform bindingを検査し、OS command、native addon、別verifier processを起動しない。
-- `scripts/check/check-rust-runtime-boundaries.ts` はこのfileだけのNode filesystem accessをpermanent CEP binary-resolution boundaryとしてexact path + match countで許可する。domain filesystemの一般許可やdirectory wildcardは追加しない。
+- `scripts/check/rust-runtime-boundaries.ts` はこのfileだけのNode filesystem accessをpermanent CEP binary-resolution boundaryとしてexact path + match countで許可する。domain filesystemの一般許可やdirectory wildcardは追加しない。
 
 - [ ] **Step 1: canonical manifest の missing、traversal、hash/version/platform RED test を書く**
 
@@ -221,10 +221,10 @@ Expected: PASS。Windows/macOS 各 entry、path traversal、wrong platform、mis
 Review: canonical manifest type が DIST-001/002 の producer と一致し、resolver が extension root + manifest だけを使い、missing binary に fallback を返さないことを確認する。artifact build、署名、package、installer をこの task に追加しない。
 
 ```text
-git diff --check -- src/management/ipc/operation-worker/binary.ts src/management/ipc/operation-worker/binary.test.ts src/management/ipc/index.ts scripts/check/check-rust-runtime-boundaries.ts
-git diff -- src/management/ipc/operation-worker/binary.ts src/management/ipc/operation-worker/binary.test.ts src/management/ipc/index.ts scripts/check/check-rust-runtime-boundaries.ts
-git diff --cached -- src/management/ipc/operation-worker/binary.ts src/management/ipc/operation-worker/binary.test.ts src/management/ipc/index.ts scripts/check/check-rust-runtime-boundaries.ts
-git add -- src/management/ipc/operation-worker/binary.ts src/management/ipc/operation-worker/binary.test.ts src/management/ipc/index.ts scripts/check/check-rust-runtime-boundaries.ts
+git diff --check -- src/management/ipc/operation-worker/binary.ts src/management/ipc/operation-worker/binary.test.ts src/management/ipc/index.ts scripts/check/rust-runtime-boundaries.ts
+git diff -- src/management/ipc/operation-worker/binary.ts src/management/ipc/operation-worker/binary.test.ts src/management/ipc/index.ts scripts/check/rust-runtime-boundaries.ts
+git diff --cached -- src/management/ipc/operation-worker/binary.ts src/management/ipc/operation-worker/binary.test.ts src/management/ipc/index.ts scripts/check/rust-runtime-boundaries.ts
+git add -- src/management/ipc/operation-worker/binary.ts src/management/ipc/operation-worker/binary.test.ts src/management/ipc/index.ts scripts/check/rust-runtime-boundaries.ts
 git commit -m "feat(ipc): resolve packaged worker binary"
 ```
 

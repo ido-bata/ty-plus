@@ -23,7 +23,7 @@
 - `src/management/workspace/layout/grid-document.ts:178-188` — `Layout` type with `data?: Record<string, unknown>`. **The dormant per-tile persistence slot.**
 - `src/management/preset/contract.ts:14-78` — `ImageParams = { src: string }`, `PresetIcon` discriminated union (`text | emoji | image | canvas`), `presetIconImage(src)` constructor, `coercePresetCatalogIcon` legacy parser.
 - `src/management/preset/icon/normalize.ts` — `tryParsePresetIconValue`, `coercePersistedPresetIcon`, `normalizePresets`.
-- `src/management/preset/icon/draft.ts` — `PresetIconEditorDraft`, `presetIconToDraft`, `draftToIcon`. The four-kind icon editor (used by `IconEditor.tsx`).
+- `src/management/preset/icon/editor-draft.ts` — `PresetIconEditorDraft`, `presetIconToDraft`, `draftToIcon`. The four-kind icon editor (used by `IconEditor.tsx`).
 - `src/management/preset/assets/icons.ts` — `resolveWorkspaceGlyphIconVisual(preset)` resolves `Preset.icon` + `descriptionImage` into a `PresetIconVisual` (`kind: "image" | "emoji" | "text" | "canvas"`).
 - `src/management/preset/workspace/glyph.tsx` — `WorkspacePresetGlyph` (the in-tile renderer for all four `PresetIcon` kinds).
 - `src/management/preset/workspace/GlyphCachedImage.tsx` — image-only delegate to `ThumbnailTile` via the Rust thumbnail cache pipeline.
@@ -176,7 +176,7 @@ The codebase has a full image-render pipeline:
 |---------|------|
 | Discriminated icon type (`text` / `emoji` / `image` / `canvas`) | `src/management/preset/contract.ts:41-78` |
 | `image` constructor `presetIconImage(src)` | `src/management/preset/contract.ts:72-74` |
-| Editor draft ↔ icon conversion (all 4 kinds) | `src/management/preset/icon/draft.ts` |
+| Editor draft ↔ icon conversion (all 4 kinds) | `src/management/preset/icon/editor-draft.ts` |
 | URL safety allowlist (`https:`, `file:`, absolute paths; `javascript:`/`data:text/html` rejected) | `src/management/preset/image-src-for-browser.ts` |
 | Tile renderer that delegates to all 4 kinds | `src/management/preset/workspace/glyph.tsx` (`WorkspacePresetGlyph`) |
 | Image-only render → Rust thumbnail cache | `src/management/preset/workspace/GlyphCachedImage.tsx` → `ThumbnailTile.tsx` |
@@ -184,7 +184,7 @@ The codebase has a full image-render pipeline:
 
 `WorkspacePresetGlyph` (`glyph.tsx:331-437`) handles all four icon kinds. For `kind: "image"` it returns `<GlyphCachedImage imagePath={visual.value} />`. `GlyphCachedImage` (`GlyphCachedImage.tsx:35-62`) builds a synthetic `FileBrowserEntry` (sentinel `modifiedAt = "2026-01-01T00:00:00.000Z"` because Rust dispatcher rejects `mtime_ms == 0`) and delegates to `ThumbnailTile`, which goes through the `useThumbnail` Rust gateway. This is the same pipeline the DirectoryBrowser uses.
 
-The `info` widget already imports `WorkspacePresetGlyph` (per `grep -rn "WorkspacePresetGlyph" src/function/widget/`) at `src/function/widget/utility/info/preset.tsx:164` and `src/function/widget/utility/quick-actions/ActionList.tsx:180`. The dependency direction `function/widget/* → management/preset/workspace/glyph` is already established.
+The `info` widget already imports `WorkspacePresetGlyph` (per `grep -rn "WorkspacePresetGlyph" src/function/widget/`) at `src/function/widget/utility/info/preset.tsx:164` and `src/function/widget/utility/quick-actions/QuickActionsWidget.tsx:180`. The dependency direction `function/widget/* → management/preset/workspace/glyph` is already established.
 
 **Finding — image render infrastructure is fully built and already imported across the widget layer.** Adopting it inside `anchor-point/Component.tsx` requires no new pipeline; the existing `<WorkspacePresetGlyph preset={{ id, type: "preset", title: "", filePath: "", icon: cellIcon }} />` (or the lighter `GlyphCachedImage` directly) can be inserted inside each cell `<button>` to replace the line-spans.
 

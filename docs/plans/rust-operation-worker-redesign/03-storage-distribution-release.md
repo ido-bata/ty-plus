@@ -342,8 +342,8 @@ official artifacts受領後は、このtaskを直接拡張せず、確定したd
 **Depends on:** `OW-STO-003`、`OW-LIVE-003` の real executable、`OW-CEP-002` の canonical platform/path contract。worker/CEP runner の実装は変更しない。
 
 **Files:**
-- Create: `scripts/build/build-operation-worker.ts`
-- Create: `scripts/build/build-operation-worker.test.ts`
+- Create: `scripts/build/operation-worker.ts`
+- Create: `scripts/build/operation-worker.test.ts`
 - Modify: `scripts/build/build-cli.ts`
 - Modify: `.github/workflows/ci.yml`
 - Modify: `package.json`
@@ -368,7 +368,7 @@ it("builds unsigned staging for both platform artifacts", async () => {
 
 - [ ] **Step 2: RED を実行する**
 
-Run: `bun run vitest run scripts/build/build-operation-worker.test.ts`
+Run: `bun run vitest run scripts/build/operation-worker.test.ts`
 
 Expected: FAIL because `buildOperationWorkerArtifacts`、paired unsigned artifact、universal macOS artifact、staging output が存在しない。
 
@@ -384,7 +384,7 @@ await Bun.write("dist/worker/staging.json", JSON.stringify(staging));
 
 - [ ] **Step 4: GREEN を実行する**
 
-Run: `bun run vitest run scripts/build/build-operation-worker.test.ts && bun run build:operation-worker`
+Run: `bun run vitest run scripts/build/operation-worker.test.ts && bun run build:operation-worker`
 
 Expected: PASS for both OS entries、macOS universal、version mismatch、protocol mismatch、missing artifact hard failure、release manifest/hash/signatureの非生成。
 
@@ -409,11 +409,11 @@ Windows と macOS の real unsigned build output、target、product version、pr
 旧 `tools/ty-plus-cli` をworker artifactとして参照していないこと、staging pathが02のresolver contractと一致すること、release manifestを先行生成していないことをreviewする。
 
 ```text
-git add -- scripts/build/build-operation-worker.ts scripts/build/build-operation-worker.test.ts scripts/build/build-cli.ts .github/workflows/ci.yml package.json
+git add -- scripts/build/operation-worker.ts scripts/build/operation-worker.test.ts scripts/build/build-cli.ts .github/workflows/ci.yml package.json
 git commit -m "build: stage operation worker binaries"
 ```
 
-`REVIEW`、`CHECKPOINT`、`RESTART: next=run bun run vitest run scripts/build/build-operation-worker.test.ts; last_success=focused build fixture; last_failure=missing paired staging artifact; generated=dist/worker/staging.json; safe_switch=yes` を記録する。
+`REVIEW`、`CHECKPOINT`、`RESTART: next=run bun run vitest run scripts/build/operation-worker.test.ts; last_success=focused build fixture; last_failure=missing paired staging artifact; generated=dist/worker/staging.json; safe_switch=yes` を記録する。
 
 ### Task OW-DIST-002: signing と package validation
 
@@ -422,9 +422,9 @@ git commit -m "build: stage operation worker binaries"
 **Files:**
 - Create: `scripts/package/verify-operation-worker-manifest.ts`
 - Create: `scripts/package/verify-operation-worker-manifest.test.ts`
-- Modify: `scripts/package/package-cep-archive.ts`
+- Modify: `scripts/package/release/cep-archive.ts`
 - Modify: `scripts/package/sign-cli.ts`
-- Modify: `scripts/package/sign-zxp.ts`
+- Modify: `scripts/package/sign/zxp.ts`
 - Modify: `package.json`
 
 **Interfaces:**
@@ -493,7 +493,7 @@ Windows signing/verification と macOS signing/notarization/verification を実�
 signing disabled、credential 不在、片 OS 欠落が success にならず、archive に旧 CLI や fallback 文言が入らないことを review する。
 
 ```text
-git add -- scripts/package/verify-operation-worker-manifest.ts scripts/package/verify-operation-worker-manifest.test.ts scripts/package/package-cep-archive.ts scripts/package/sign-cli.ts scripts/package/sign-zxp.ts package.json
+git add -- scripts/package/verify-operation-worker-manifest.ts scripts/package/verify-operation-worker-manifest.test.ts scripts/package/release/cep-archive.ts scripts/package/sign-cli.ts scripts/package/sign/zxp.ts package.json
 git commit -m "pkg: package operation worker pair"
 ```
 
@@ -511,10 +511,10 @@ git commit -m "pkg: package operation worker pair"
 - Modify: `rust/apps/operation-worker/src/platform/windows.rs`
 - Modify: `rust/apps/operation-worker/src/platform/macos.rs`
 - Modify: `rust/apps/operation-worker/src/platform/mod.rs`
-- Modify: `scripts/build/build-cep-dev.ts`
+- Modify: `scripts/build/cep-dev.ts`
 - Modify: `scripts/cep/install-cep-dev.ts`
-- Modify: `scripts/cep/install-cep-single.mjs`
-- Modify: `scripts/cep/cep-watch.ts`
+- Modify: `scripts/cep/install-cep-single.ts`
+- Modify: `scripts/cep/watch.ts`
 - Modify: `src/management/ipc/operation-worker/binary.ts`
 - Modify: `src/management/ipc/operation-worker/binary.test.ts`
 - Modify: `cep.config.ts`
@@ -599,7 +599,7 @@ shared lease 中の deadline abort、worker crash 後のOS lock解放、再実�
 dev script に mock/JS/ExtendScript fallback、installer に unbounded wait、mass kill、partial replacement がないこと、Windows/macOS双方が同じnative shared/exclusive lease lifecycleを実装し、片方をno-opにしていないことをreviewする。
 
 ```text
-git add -- scripts/cep/operation-worker-update.ts scripts/cep/operation-worker-update.test.ts scripts/build/build-cep-dev.ts scripts/cep/install-cep-dev.ts scripts/cep/install-cep-single.mjs scripts/cep/cep-watch.ts src/management/ipc/operation-worker/binary.ts src/management/ipc/operation-worker/binary.test.ts cep.config.ts rust/apps/operation-worker/src/install_lease.rs rust/apps/operation-worker/src/main.rs rust/apps/operation-worker/src/platform/windows.rs rust/apps/operation-worker/src/platform/macos.rs rust/apps/operation-worker/src/platform/mod.rs package.json
+git add -- scripts/cep/operation-worker-update.ts scripts/cep/operation-worker-update.test.ts scripts/build/cep-dev.ts scripts/cep/install-cep-dev.ts scripts/cep/install-cep-single.ts scripts/cep/watch.ts src/management/ipc/operation-worker/binary.ts src/management/ipc/operation-worker/binary.test.ts cep.config.ts rust/apps/operation-worker/src/install_lease.rs rust/apps/operation-worker/src/main.rs rust/apps/operation-worker/src/platform/windows.rs rust/apps/operation-worker/src/platform/macos.rs rust/apps/operation-worker/src/platform/mod.rs package.json
 git commit -m "pkg: coordinate operation worker updates"
 ```
 
@@ -631,7 +631,7 @@ git commit -m "pkg: coordinate operation worker updates"
 - Delete: `tools/ty-plus-cli/crates/host/src/lib.rs`
 - Create: `scripts/check/check-operation-worker-cutover.ts`
 - Create: `scripts/check/check-operation-worker-cutover.test.ts`
-- Modify: `scripts/check/check-rust-runtime-boundaries.ts`
+- Modify: `scripts/check/rust-runtime-boundaries.ts`
 - Modify: `scripts/build/build-cli.ts`
 - Modify: `scripts/lib/cli-paths.ts`
 - Modify: `package.json`
@@ -683,7 +683,7 @@ Expected: PASS with no actionable warning。Windows と macOS の real worker la
 old dirty file の unrelated hunk を stage していないこと、01/02 の実装を重複削除していないこと、allowlist が恒久例外化していないことを review する。
 
 ```text
-git add -- tools/ty-plus-cli/Cargo.lock tools/ty-plus-cli/Cargo.toml tools/ty-plus-cli/README.md tools/ty-plus-cli/rust-toolchain.toml tools/ty-plus-cli/crates/cli/Cargo.toml tools/ty-plus-cli/crates/cli/src/main.rs tools/ty-plus-cli/crates/cli/src/output.rs tools/ty-plus-cli/crates/cli/src/commands/app_root.rs tools/ty-plus-cli/crates/cli/src/commands/mod.rs tools/ty-plus-cli/crates/cli/src/commands/plugin_scan_stub.rs tools/ty-plus-cli/crates/core/Cargo.toml tools/ty-plus-cli/crates/core/src/error.rs tools/ty-plus-cli/crates/core/src/hash.rs tools/ty-plus-cli/crates/core/src/json.rs tools/ty-plus-cli/crates/core/src/lib.rs tools/ty-plus-cli/crates/core/src/paths.rs tools/ty-plus-cli/crates/host/Cargo.toml tools/ty-plus-cli/crates/host/src/app_root.rs tools/ty-plus-cli/crates/host/src/lib.rs scripts/check/check-operation-worker-cutover.ts scripts/check/check-operation-worker-cutover.test.ts scripts/check/check-rust-runtime-boundaries.ts scripts/build/build-cli.ts scripts/lib/cli-paths.ts package.json
+git add -- tools/ty-plus-cli/Cargo.lock tools/ty-plus-cli/Cargo.toml tools/ty-plus-cli/README.md tools/ty-plus-cli/rust-toolchain.toml tools/ty-plus-cli/crates/cli/Cargo.toml tools/ty-plus-cli/crates/cli/src/main.rs tools/ty-plus-cli/crates/cli/src/output.rs tools/ty-plus-cli/crates/cli/src/commands/app_root.rs tools/ty-plus-cli/crates/cli/src/commands/mod.rs tools/ty-plus-cli/crates/cli/src/commands/plugin_scan_stub.rs tools/ty-plus-cli/crates/core/Cargo.toml tools/ty-plus-cli/crates/core/src/error.rs tools/ty-plus-cli/crates/core/src/hash.rs tools/ty-plus-cli/crates/core/src/json.rs tools/ty-plus-cli/crates/core/src/lib.rs tools/ty-plus-cli/crates/core/src/paths.rs tools/ty-plus-cli/crates/host/Cargo.toml tools/ty-plus-cli/crates/host/src/app_root.rs tools/ty-plus-cli/crates/host/src/lib.rs scripts/check/check-operation-worker-cutover.ts scripts/check/check-operation-worker-cutover.test.ts scripts/check/rust-runtime-boundaries.ts scripts/build/build-cli.ts scripts/lib/cli-paths.ts package.json
 git commit -m "chore: complete operation worker cutover"
 ```
 

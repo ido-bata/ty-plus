@@ -22,7 +22,7 @@ These class names are consumed by the host-page CSS injection and must NOT appea
 ## Running the check
 
 ```bash
-bun run scripts/check/check-workspace-class-hooks.ts
+bun run scripts/check/workspace-class-hooks.ts
 ```
 
 Exit codes:
@@ -42,4 +42,4 @@ These require a deliberate cleanup: `ws-widget` needs `data-widget-id` migration
 
 ## Adding new hooks
 
-To add a new protected hook, update `PROTECTED_HOOKS` in `scripts/check/check-workspace-class-hooks.ts`. Document the hook in this file when added.
+To add a new protected hook, update `PROTECTED_HOOKS` in `scripts/check/workspace-class-hooks.ts`. Document the hook in this file when added.

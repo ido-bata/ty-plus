@@ -19,7 +19,7 @@
 | Diagnostic sink | `console.log/info` + interceptor ring buffer | `src/management/debug/logger.ts` ring buffer + interceptor forwards into it |
 | Surface loggers | inline `console.log/info` at each call site | `createLogger(source)` returning bound `.info/.warn/.error/.log/.debug` |
 | Vite plugin | strip `console.log/info` from every file | same strip, with a whitelist suffix for the logger module |
-| Build smoke test | (none) | `scripts/check/check-debug-logger-survives-bundle.ts` |
+| Build smoke test | (none) | `scripts/check/debug-logger-survives-bundle.ts` |
 | UI | level filter only | level filter + source filter (11 chips) + session scope (`All history` 既定 / `This session`) |
 
 The central logger (`src/management/debug/logger.ts`) is now the canonical
@@ -41,7 +41,7 @@ module itself, so they cannot drift apart).
 - `src/management/debug/console/ui/Panel.test.tsx` — adds source-filter cases
 - `vite.config.ts` — `dropConsoleLogInfoPlugin` takes a
   `loggerWhitelistSuffix` so the logger module is never transformed
-- `scripts/check/check-debug-logger-survives-bundle.ts` — build-artifact
+- `scripts/check/debug-logger-survives-bundle.ts` — build-artifact
   smoke test
 - `src/management/panel/boot.tsx`, `src/management/panel/cloud-gateway-boot.ts`
 - `src/management/ae/cep/entry/panel.tsx`,
@@ -118,7 +118,7 @@ warn / error / debug) composes with it.
    opened; `This session` narrows it on request (Issue #138).
 7. With ≥100 log events, the ring buffer holds the most recent 1000 entries
    (criterion 7 — runs in `bun run test`).
-8. `bun run scripts/check/check-debug-logger-survives-bundle.ts` passes in
+8. `bun run scripts/check/debug-logger-survives-bundle.ts` passes in
    `NODE_ENV=production` (criterion 8).
 
 ## How the regression is locked down
@@ -130,7 +130,7 @@ sink's outbound `console.*` path. The fix has three independent guardrails:
    module via the exported `LOGGER_MODULE_PATH_SUFFIX` constant. The plugin
    imports the constant from the module itself, so the path cannot drift.
 
-2. **`scripts/check/check-debug-logger-survives-bundle.ts`** mirrors the
+2. **`scripts/check/debug-logger-survives-bundle.ts`** mirrors the
    plugin's regex and asserts:
    - The logger module is NOT transformed when the id matches the suffix.
    - A non-logger file IS transformed (pre-existing strip behavior is

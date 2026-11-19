@@ -1,244 +1,242 @@
 {
-  "schema": "ty-plus.e2e-run/1",
-  "suite": "workspace",
-  "capturedAt": "2026-11-18T15:49:43.110Z",
-  "extensionDir": "/Users/rebui/Library/Application Support/Adobe/CEP/extensions/app.ty-plus.dev",
-  "managedRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-18T15-49-08-488Z-35847/ty-plus",
-  "realManagedRoot": "/Applications/Adobe After Effects 2027/ty-plus",
-  "sandbox": {
-    "enabled": true,
-    "sandboxRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-18T15-49-08-488Z-35847/ty-plus",
-    "integrity": {
-      "realRoot": "/Applications/Adobe After Effects 2027/ty-plus",
-      "checkedAt": "2026-11-18T15:49:43.108Z",
-      "driftBeforeRepair": {
-        "changed": 1,
-        "added": 0,
-        "removed": 0
-      },
-      "filesRepaired": [
-        "cache/layout-undo/panel-1/stack.json"
-      ],
-      "cleanAfterRepair": true
-    }
-  },
-  "totals": {
-    "PASS": 5,
-    "FAIL": 0,
-    "BLOCKED": 0,
-    "SKIP": 0
-  },
-  "results": [
-    {
-      "uc": "UC-B02",
-      "title": "Add Widget dialog places an info tile",
-      "status": "PASS",
-      "detail": "widget=0a846f21-7ccf-490b-b30d-e260194c3159 cells 7→7",
-      "checks": [
-        {
-          "name": "widgets.json gained info record",
-          "ok": true,
-          "detail": "id=0a846f21-7ccf-490b-b30d-e260194c3159"
-        },
-        {
-          "name": "info tile mounted on panel",
-          "ok": true,
-          "detail": "true \"\""
-        },
-        {
-          "name": "workspace-1.json gridCells grew",
-          "ok": true,
-          "detail": "before=7 after=8"
-        },
-        {
-          "name": "layout restored after case",
-          "ok": true,
-          "detail": "before=7 restored=7"
-        }
-      ],
-      "evidence": [
-        "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-18T15-49-08-488Z-35847/ty-plus/widgets/widgets.json",
-        "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-18T15-49-08-488Z-35847/ty-plus/workspaces/workspace-1.json"
-      ],
-      "durationMs": 4922
-    },
-    {
-      "uc": "UC-B05",
-      "title": "layout snapshot save → mutate → restore → delete round-trip",
-      "status": "PASS",
-      "detail": "snapshot=1795016954376 cells 7",
-      "checks": [
-        {
-          "name": "save-snapshot clicked",
-          "ok": true,
-          "detail": "clicked"
-        },
-        {
-          "name": "snapshots.json gained a new entry",
-          "ok": true,
-          "detail": "id=1795016954376"
-        },
-        {
-          "name": "snapshot row rendered in dropdown",
-          "ok": true,
-          "detail": "true"
-        },
-        {
-          "name": "layout mutated (widget tile added)",
-          "ok": true,
-          "detail": "cells 7→8 widget=234e95c8-7f5a-44de-85d1-dd0c3308c2aa"
-        },
-        {
-          "name": "restore-snapshot clicked",
-          "ok": true,
-          "detail": "clicked"
-        },
-        {
-          "name": "gridCells restored to snapshot state",
-          "ok": true,
-          "detail": "before=7 mutated=8 restored=7"
-        },
-        {
-          "name": "added widget tile removed by restore",
-          "ok": true,
-          "detail": "tile=234e95c8-7f5a-44de-85d1-dd0c3308c2aa"
-        },
-        {
-          "name": "delete-snapshot clicked",
-          "ok": true,
-          "detail": "clicked"
-        },
-        {
-          "name": "snapshot removed from snapshots.json",
-          "ok": true,
-          "detail": "snapId=1795016954376"
-        }
-      ],
-      "evidence": [
-        "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-18T15-49-08-488Z-35847/ty-plus/workspaces/history/snapshots.json"
-      ],
-      "durationMs": 7309
-    },
-    {
-      "uc": "UC-D10",
-      "title": "quick-actions palette runs script preset twice consecutively",
-      "status": "PASS",
-      "detail": "quick-actions runs=2 marker=1795016963831|27.0x78",
-      "checks": [
-        {
-          "name": "quick-actions search focused + query typed",
-          "ok": true,
-          "detail": "focused:DG"
-        },
-        {
-          "name": "palette lists dg-script-marker run action",
-          "ok": true,
-          "detail": "true"
-        },
-        {
-          "name": "palette run clicked",
-          "ok": true,
-          "detail": "clicked"
-        },
-        {
-          "name": "run #1 produced AE-side marker",
-          "ok": true,
-          "detail": "1795016962524|27.0x78"
-        },
-        {
-          "name": "run #2 consecutive re-execution produced new marker",
-          "ok": true,
-          "detail": "m1=1795016962524|27.0x78 m2=1795016963831|27.0x78"
-        }
-      ],
-      "evidence": [
-        "/Users/rebui/Library/Application Support/ty-plus/dg-presets/marker.txt"
-      ],
-      "durationMs": 2683
-    },
-    {
-      "uc": "UC-C12",
-      "title": "footage preset (.png) created via dialog → run imports into AE project",
-      "status": "PASS",
-      "detail": "footage preset=0faec846-5246-463c-b0ce-6630d544fe8f",
-      "checks": [
-        {
-          "name": "footage preset record persisted",
-          "ok": true,
-          "detail": "id=0faec846-5246-463c-b0ce-6630d544fe8f"
-        },
-        {
-          "name": "preset type inferred as footage",
-          "ok": true,
-          "detail": "type=footage"
-        },
-        {
-          "name": "catalog lists footage preset",
-          "ok": true,
-          "detail": "true"
-        },
-        {
-          "name": "catalog Run clicked",
-          "ok": true,
-          "detail": "clicked"
-        },
-        {
-          "name": "AE project gained footage item",
-          "ok": true,
-          "detail": "itemsBefore=0 hits=[\"e2e-footage.png|フッテージ\"]"
-        }
-      ],
-      "evidence": [
-        "/Users/rebui/Library/Application Support/ty-plus-e2e/e2e-footage.png"
-      ],
-      "durationMs": 6659
-    },
-    {
-      "uc": "UC-C14",
-      "title": "run preset with deleted asset fails without blocking modal",
-      "status": "PASS",
-      "detail": "stale preset run handled",
-      "checks": [
-        {
-          "name": "stale-asset preset created",
-          "ok": true,
-          "detail": "id=fb991f98-4af7-46ad-a817-ff6147998f13"
-        },
-        {
-          "name": "catalog row present for stale preset",
-          "ok": true,
-          "detail": "{\"hasRun\":true,\"disabled\":false}"
-        },
-        {
-          "name": "run attempted or gated by disabled button",
-          "ok": true,
-          "detail": "click=clicked disabled=false"
-        },
-        {
-          "name": "no blocking modal over panel",
-          "ok": true,
-          "detail": "modal=false"
-        },
-        {
-          "name": "panel still responsive",
-          "ok": true,
-          "detail": "eval=2"
-        },
-        {
-          "name": "structured non-modal error surfaced",
-          "ok": true,
-          "detail": "toasts=[\"Ty Plus: Error: Script file not found: /Users/rebui/Library/Application Support/ty-plus-e2e/e2e-stale.jsx line=357 file=~/Library/Application%20Support/Adobe/CEP/extensions/app.ty-plus.dev/jsx/ty-plus-host.jsx\",\"Preset failed: Error: Script file not found: /Users/rebui/Library/Application Support/ty-plus-e2e/e2e-stale.jsx line=357 file=~/Library/Application%20Support/Adobe/CEP/extensions/app.ty-plus.dev/jsx/ty-plus-host.jsx\"] gated=false rowMissing=false"
-        },
-        {
-          "name": "no AE-side artifact from stale preset",
-          "ok": true,
-          "detail": "marker absent"
-        }
-      ],
-      "evidence": [
-        "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-18T15-49-08-488Z-35847/ty-plus/presets/presets.json"
-      ],
-      "durationMs": 7528
-    }
-  ]
+	"schema": "ty-plus.e2e-run/1",
+	"suite": "workspace",
+	"capturedAt": "2026-11-18T15:49:43.110Z",
+	"extensionDir": "/Users/rebui/Library/Application Support/Adobe/CEP/extensions/app.ty-plus.dev",
+	"managedRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-18T15-49-08-488Z-35847/ty-plus",
+	"realManagedRoot": "/Applications/Adobe After Effects 2027/ty-plus",
+	"sandbox": {
+		"enabled": true,
+		"sandboxRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-18T15-49-08-488Z-35847/ty-plus",
+		"integrity": {
+			"realRoot": "/Applications/Adobe After Effects 2027/ty-plus",
+			"checkedAt": "2026-11-18T15:49:43.108Z",
+			"driftBeforeRepair": {
+				"changed": 1,
+				"added": 0,
+				"removed": 0
+			},
+			"filesRepaired": ["cache/layout-undo/panel-1/stack.json"],
+			"cleanAfterRepair": true
+		}
+	},
+	"totals": {
+		"PASS": 5,
+		"FAIL": 0,
+		"BLOCKED": 0,
+		"SKIP": 0
+	},
+	"results": [
+		{
+			"uc": "UC-B02",
+			"title": "Add Widget dialog places an info tile",
+			"status": "PASS",
+			"detail": "widget=0a846f21-7ccf-490b-b30d-e260194c3159 cells 7→7",
+			"checks": [
+				{
+					"name": "widgets.json gained info record",
+					"ok": true,
+					"detail": "id=0a846f21-7ccf-490b-b30d-e260194c3159"
+				},
+				{
+					"name": "info tile mounted on panel",
+					"ok": true,
+					"detail": "true \"\""
+				},
+				{
+					"name": "workspace-1.json gridCells grew",
+					"ok": true,
+					"detail": "before=7 after=8"
+				},
+				{
+					"name": "layout restored after case",
+					"ok": true,
+					"detail": "before=7 restored=7"
+				}
+			],
+			"evidence": [
+				"/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-18T15-49-08-488Z-35847/ty-plus/widgets/widgets.json",
+				"/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-18T15-49-08-488Z-35847/ty-plus/workspaces/workspace-1.json"
+			],
+			"durationMs": 4922
+		},
+		{
+			"uc": "UC-B05",
+			"title": "layout snapshot save → mutate → restore → delete round-trip",
+			"status": "PASS",
+			"detail": "snapshot=1795016954376 cells 7",
+			"checks": [
+				{
+					"name": "save-snapshot clicked",
+					"ok": true,
+					"detail": "clicked"
+				},
+				{
+					"name": "snapshots.json gained a new entry",
+					"ok": true,
+					"detail": "id=1795016954376"
+				},
+				{
+					"name": "snapshot row rendered in dropdown",
+					"ok": true,
+					"detail": "true"
+				},
+				{
+					"name": "layout mutated (widget tile added)",
+					"ok": true,
+					"detail": "cells 7→8 widget=234e95c8-7f5a-44de-85d1-dd0c3308c2aa"
+				},
+				{
+					"name": "restore-snapshot clicked",
+					"ok": true,
+					"detail": "clicked"
+				},
+				{
+					"name": "gridCells restored to snapshot state",
+					"ok": true,
+					"detail": "before=7 mutated=8 restored=7"
+				},
+				{
+					"name": "added widget tile removed by restore",
+					"ok": true,
+					"detail": "tile=234e95c8-7f5a-44de-85d1-dd0c3308c2aa"
+				},
+				{
+					"name": "delete-snapshot clicked",
+					"ok": true,
+					"detail": "clicked"
+				},
+				{
+					"name": "snapshot removed from snapshots.json",
+					"ok": true,
+					"detail": "snapId=1795016954376"
+				}
+			],
+			"evidence": [
+				"/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-18T15-49-08-488Z-35847/ty-plus/workspaces/history/snapshots.json"
+			],
+			"durationMs": 7309
+		},
+		{
+			"uc": "UC-D10",
+			"title": "quick-actions palette runs script preset twice consecutively",
+			"status": "PASS",
+			"detail": "quick-actions runs=2 marker=1795016963831|27.0x78",
+			"checks": [
+				{
+					"name": "quick-actions search focused + query typed",
+					"ok": true,
+					"detail": "focused:DG"
+				},
+				{
+					"name": "palette lists dg-script-marker run action",
+					"ok": true,
+					"detail": "true"
+				},
+				{
+					"name": "palette run clicked",
+					"ok": true,
+					"detail": "clicked"
+				},
+				{
+					"name": "run #1 produced AE-side marker",
+					"ok": true,
+					"detail": "1795016962524|27.0x78"
+				},
+				{
+					"name": "run #2 consecutive re-execution produced new marker",
+					"ok": true,
+					"detail": "m1=1795016962524|27.0x78 m2=1795016963831|27.0x78"
+				}
+			],
+			"evidence": [
+				"/Users/rebui/Library/Application Support/ty-plus/dg-presets/marker.txt"
+			],
+			"durationMs": 2683
+		},
+		{
+			"uc": "UC-C12",
+			"title": "footage preset (.png) created via dialog → run imports into AE project",
+			"status": "PASS",
+			"detail": "footage preset=0faec846-5246-463c-b0ce-6630d544fe8f",
+			"checks": [
+				{
+					"name": "footage preset record persisted",
+					"ok": true,
+					"detail": "id=0faec846-5246-463c-b0ce-6630d544fe8f"
+				},
+				{
+					"name": "preset type inferred as footage",
+					"ok": true,
+					"detail": "type=footage"
+				},
+				{
+					"name": "catalog lists footage preset",
+					"ok": true,
+					"detail": "true"
+				},
+				{
+					"name": "catalog Run clicked",
+					"ok": true,
+					"detail": "clicked"
+				},
+				{
+					"name": "AE project gained footage item",
+					"ok": true,
+					"detail": "itemsBefore=0 hits=[\"e2e-footage.png|フッテージ\"]"
+				}
+			],
+			"evidence": [
+				"/Users/rebui/Library/Application Support/ty-plus-e2e/e2e-footage.png"
+			],
+			"durationMs": 6659
+		},
+		{
+			"uc": "UC-C14",
+			"title": "run preset with deleted asset fails without blocking modal",
+			"status": "PASS",
+			"detail": "stale preset run handled",
+			"checks": [
+				{
+					"name": "stale-asset preset created",
+					"ok": true,
+					"detail": "id=fb991f98-4af7-46ad-a817-ff6147998f13"
+				},
+				{
+					"name": "catalog row present for stale preset",
+					"ok": true,
+					"detail": "{\"hasRun\":true,\"disabled\":false}"
+				},
+				{
+					"name": "run attempted or gated by disabled button",
+					"ok": true,
+					"detail": "click=clicked disabled=false"
+				},
+				{
+					"name": "no blocking modal over panel",
+					"ok": true,
+					"detail": "modal=false"
+				},
+				{
+					"name": "panel still responsive",
+					"ok": true,
+					"detail": "eval=2"
+				},
+				{
+					"name": "structured non-modal error surfaced",
+					"ok": true,
+					"detail": "toasts=[\"Ty Plus: Error: Script file not found: /Users/rebui/Library/Application Support/ty-plus-e2e/e2e-stale.jsx line=357 file=~/Library/Application%20Support/Adobe/CEP/extensions/app.ty-plus.dev/jsx/ty-plus-host.jsx\",\"Preset failed: Error: Script file not found: /Users/rebui/Library/Application Support/ty-plus-e2e/e2e-stale.jsx line=357 file=~/Library/Application%20Support/Adobe/CEP/extensions/app.ty-plus.dev/jsx/ty-plus-host.jsx\"] gated=false rowMissing=false"
+				},
+				{
+					"name": "no AE-side artifact from stale preset",
+					"ok": true,
+					"detail": "marker absent"
+				}
+			],
+			"evidence": [
+				"/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-18T15-49-08-488Z-35847/ty-plus/presets/presets.json"
+			],
+			"durationMs": 7528
+		}
+	]
 }
