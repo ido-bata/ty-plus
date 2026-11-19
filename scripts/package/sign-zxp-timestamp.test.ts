@@ -4,12 +4,12 @@ import { buildSignZxpArgs, resolveSignZxpConfig, signZxp } from "./sign-zxp";
 /**
  * ZXP timestamp-server contract.
  *
- * Regression context: the default TSA was DigiCert, which the pinned Adobe
- * signer (ZXPSignCmd 4.1.3) can no longer validate — signing aborted with exit
- * 35 ("the timestamp returned from the chosen TSA could not be verified"). The
- * default moved to Apple's TSA, which signs and verifies with that binary.
- * A TSA failure is not a "signature is bad" result, so it must not be mistaken
- * for one.
+ * Regression context: every TSA tried so far fails validation in the pinned
+ * Adobe signer (ZXPSignCmd 4.1.3) — DigiCert/Sectigo/Entrust abort with exit
+ * 35, and Apple's endpoint (the only one that ever worked) is now defunct.
+ * The default is therefore "no timestamp": the signer produces a ZXP that
+ * `ZXPSignCmd -verify` accepts, covered by the signing certificate's own
+ * validity period. ZXP_TIMESTAMP_URL opts back into a trusted TSA.
  */
 
 const config = (env: Record<string, string> = {}) =>
@@ -20,11 +20,14 @@ const config = (env: Record<string, string> = {}) =>
 	});
 
 describe("ZXP timestamp server", () => {
-	it("defaults to a TSA the pinned signer can verify", () => {
+	it("defaults to no timestamp (every known TSA fails the pinned signer)", () => {
 		const resolved = config();
-		expect(resolved.timestampUrl).toBe("http://timestamp.apple.com/ts01");
-		// DigiCert cannot be validated by ZXPSignCmd 4.1.3 any more.
-		expect(resolved.timestampUrl).not.toContain("digicert");
+		expect(resolved.timestampUrl).toBeUndefined();
+	});
+
+	it("treats ZXP_TIMESTAMP_URL=none as an explicit opt-out", () => {
+		const resolved = config({ ZXP_TIMESTAMP_URL: "none" });
+		expect(resolved.timestampUrl).toBeUndefined();
 	});
 
 	it("lets an operator override the TSA explicitly", () => {
@@ -34,11 +37,13 @@ describe("ZXP timestamp server", () => {
 		expect(resolved.timestampUrl).toBe("http://timestamp.example.test/tsa");
 	});
 
-	it("passes the TSA to the signer as -tsa <url>", () => {
-		const args = buildSignZxpArgs(config());
+	it("passes an overridden TSA to the signer as -tsa <url>", () => {
+		const args = buildSignZxpArgs(
+			config({ ZXP_TIMESTAMP_URL: "http://timestamp.example.test/tsa" }),
+		);
 		const index = args.indexOf("-tsa");
 		expect(index).toBeGreaterThan(-1);
-		expect(args[index + 1]).toBe("http://timestamp.apple.com/ts01");
+		expect(args[index + 1]).toBe("http://timestamp.example.test/tsa");
 	});
 
 	it("omits -tsa when no timestamp server is configured", () => {
