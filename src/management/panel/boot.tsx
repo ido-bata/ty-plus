@@ -38,6 +38,7 @@ import { ErrorBoundary } from "@/management/panel/ErrorBoundary";
 import { bootstrapCepShellThemeHydration } from "@/management/panel/inject-styles";
 import { Main } from "@/management/panel/Main";
 import { tryBuildOperationWorker } from "@/management/panel/operation-worker-boot";
+import { installUpdateBusResponder } from "@/management/panel/update-install-bus";
 import {
 	isInitializationComplete,
 	readInitializationStateFromApp,
@@ -276,6 +277,11 @@ export async function bootPanel(): Promise<void> {
 			installUpdate: (request) =>
 				operationWorker.composition.installUpdate(request),
 		});
+		// Issue #243: non-panel surfaces (settings dialog) cannot reach the
+		// worker; relay their install requests to this panel's composition.
+		installUpdateBusResponder(window, (request) =>
+			operationWorker.composition.installUpdate(request),
+		);
 	}
 
 	// Issue #131 (hardening): the boot does NOT run a startup preset
