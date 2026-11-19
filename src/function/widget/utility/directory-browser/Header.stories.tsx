@@ -3,8 +3,8 @@ import { useRef } from "react";
 import { expect } from "storybook/test";
 import { expectCanvasLayout } from "@/storybook/quality/layout";
 import { css } from "@/styled-system/css";
-import type { BrowseModeOption } from "./BrowserBrowseModeSelect";
-import { BrowserHeader } from "./BrowserHeader";
+import type { BrowseModeOption } from "./BrowseModeSelect";
+import { BrowserHeader } from "./Header";
 import type { FileBrowserBrowseMode } from "./lib/types";
 
 const BROWSE_MODE_OPTIONS: readonly BrowseModeOption[] = [

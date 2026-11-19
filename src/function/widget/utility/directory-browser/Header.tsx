@@ -5,11 +5,11 @@ import { css } from "@/styled-system/css";
 import {
 	type BrowseModeOption,
 	BrowserBrowseModeSelect,
-} from "./BrowserBrowseModeSelect";
-import { BrowserFilterPanel } from "./BrowserFilterPanel";
-import { BrowserPathField } from "./BrowserPathField";
-import { BrowserSearchField } from "./BrowserSearchField";
-import { BrowserToolbar } from "./BrowserToolbar";
+} from "./BrowseModeSelect";
+import { BrowserFilterPanel } from "./FilterPanel";
+import { BrowserPathField } from "./PathField";
+import { BrowserSearchField } from "./SearchField";
+import { BrowserToolbar } from "./Toolbar";
 import type { FileBrowserBrowseMode, FileBrowserFilter } from "./lib/types";
 export type BrowserHeaderProps = {
 	searchInputRef: RefObject<HTMLInputElement | null>;

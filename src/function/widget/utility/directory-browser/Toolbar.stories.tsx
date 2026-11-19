@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { expect } from "storybook/test";
 import { expectCanvasLayout } from "@/storybook/quality/layout";
 import { css } from "@/styled-system/css";
-import { BrowserToolbar } from "./BrowserToolbar";
+import { BrowserToolbar } from "./Toolbar";
 
 const noop = (): void => undefined;
 

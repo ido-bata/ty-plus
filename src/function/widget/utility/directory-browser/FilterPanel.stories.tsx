@@ -3,7 +3,7 @@ import { expect } from "storybook/test";
 import type { PresetType } from "@/management/preset/contract";
 import type { FileBrowserFileType } from "@/management/storage/file-browser-service";
 import { expectCanvasLayout } from "@/storybook/quality/layout";
-import { BrowserFilterPanel } from "./BrowserFilterPanel";
+import { BrowserFilterPanel } from "./FilterPanel";
 import type { FileBrowserBrowseMode, FileBrowserFilter } from "./lib/types";
 
 type Args = {

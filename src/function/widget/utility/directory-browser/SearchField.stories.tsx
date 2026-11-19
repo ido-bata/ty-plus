@@ -4,7 +4,7 @@ import { expect } from "storybook/test";
 
 import { expectCanvasLayout } from "@/storybook/quality/layout";
 
-import { BrowserSearchField } from "./BrowserSearchField";
+import { BrowserSearchField } from "./SearchField";
 
 type Args = {
 	inputRef: RefObject<HTMLInputElement | null>;

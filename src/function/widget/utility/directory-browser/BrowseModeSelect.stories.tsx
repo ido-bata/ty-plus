@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { BrowserBrowseModeSelect } from "./BrowserBrowseModeSelect";
+import { BrowserBrowseModeSelect } from "./BrowseModeSelect";
 import type { FileBrowserBrowseMode } from "./lib/types";
 
 type Args = {
