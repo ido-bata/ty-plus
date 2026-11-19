@@ -15,6 +15,10 @@ import {
 	OFFICIAL_RELEASES_URL,
 	type UpdateCheckResult,
 } from "@/management/online/update/feed";
+import {
+	requestPanelUpdateInstall,
+	UpdateInstallRelayError,
+} from "@/management/online/update/install-relay";
 import { useSettings } from "@/management/setting/context";
 import {
 	SettingsField,
@@ -125,21 +129,28 @@ export function UpdateSection(): JSX.Element {
 		const installer = getUpdateInstaller();
 		const platform = detectUpdatePlatform();
 		const asset = installableZipAsset(result.feed, platform);
-		if (installer === null || asset === null) {
+		if (asset === null) {
 			setInstallState({ kind: "done", status: "manual_required" });
 			return;
 		}
+		const request = {
+			release_version: result.feed.version,
+			tag: `v${result.feed.version}`,
+			asset: {
+				url: asset.url,
+				file_name: asset.fileName,
+				sha256: asset.sha256,
+			},
+		};
 		setInstallState({ kind: "installing" });
 		try {
-			const installed = await installer.installUpdate({
-				release_version: result.feed.version,
-				tag: `v${result.feed.version}`,
-				asset: {
-					url: asset.url,
-					file_name: asset.fileName,
-					sha256: asset.sha256,
-				},
-			});
+			// Issue #243: this dialog runs in its own CEP surface without a
+			// worker composition; relay to the opener panel over the updates
+			// channel when no local installer is registered.
+			const installed =
+				installer !== null
+					? await installer.installUpdate(request)
+					: await requestPanelUpdateInstall(request);
 			setInstallState({
 				kind: "done",
 				status:
@@ -153,7 +164,11 @@ export function UpdateSection(): JSX.Element {
 			setInstallState({
 				kind: "failed",
 				code:
-					error instanceof OperationWorkerAttemptError ? error.code : undefined,
+					error instanceof OperationWorkerAttemptError
+						? error.code
+						: error instanceof UpdateInstallRelayError
+							? error.code
+							: undefined,
 			});
 		}
 	}, [result]);
