@@ -1,4 +1,7 @@
-# Storybook 視覚品質レビュー・チェックリスト — v0.11.0 RC (SHA 05551c30)
+# Storybook 視覚品質レビュー・チェックリスト — v0.11.0 RC
+
+capture 実施SHA: `05551c30` / RC候補SHA: `c7795084`
+`05551c30..c7795084` の差分は検証スクリプト・docs・package.json scripts のみで `src/` `rust/` に変更なし（`docs/verification/release-candidate-0-11-0.md` §1）。capture 証拠は RC候補の製品コードに対して有効。
 
 capture report: `storybook-capture-report-05551c308c8581fe7b3c7ec87f6d040c6c063de1` (CI artifact)
 429/429 story `ok`、render-failed/capture-error/missing = 0。console error は ErrorBoundary/Fallback の意図的 fixture のみ。
