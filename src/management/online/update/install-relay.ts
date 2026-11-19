@@ -8,6 +8,7 @@
  */
 
 import { createCepSurfaceTransport } from "@/management/ae/cep/transport";
+import { resolveDialogSurfaceId } from "@/management/dialog/modeless/surface-id";
 import type {
 	UpdateInstallRequestDTO,
 	UpdateInstallResultDTO,
@@ -34,11 +35,22 @@ const ownSurfaceId = (win: Window): string => {
 		__TY_PLUS_DIALOG_SURFACE_ID__?: string;
 		__TY_PLUS_PANEL_SURFACE_ID__?: string;
 	};
-	return (
-		w.__TY_PLUS_DIALOG_SURFACE_ID__ ??
-		w.__TY_PLUS_PANEL_SURFACE_ID__ ??
-		"ty-plus-surface"
-	);
+	const fromGlobals =
+		w.__TY_PLUS_DIALOG_SURFACE_ID__ ?? w.__TY_PLUS_PANEL_SURFACE_ID__;
+	if (typeof fromGlobals === "string" && fromGlobals.length > 0) {
+		return fromGlobals;
+	}
+	// `__TY_PLUS_DIALOG_SURFACE_ID__` is a test hook, never assigned in
+	// production: resolve the real id from the physical extension id so the
+	// envelope's sourceSurfaceId passes SURFACE_ID_PATTERN. The bare
+	// "ty-plus-surface" fallback does not match the pattern, so every
+	// transport subscriber silently dropped the request (device-verified:
+	// the panel received the envelope but never answered, relay timed out).
+	const resolved = resolveDialogSurfaceId();
+	if (resolved.length > 0) {
+		return resolved;
+	}
+	return "ty-plus-surface";
 };
 
 const isInstallResult = (

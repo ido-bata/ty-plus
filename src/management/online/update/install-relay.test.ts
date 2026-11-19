@@ -21,6 +21,10 @@ interface MockTransport extends SurfaceTransport {
 
 const transports: MockTransport[] = [];
 
+vi.mock("@/management/dialog/modeless/surface-id", () => ({
+	resolveDialogSurfaceId: () => "dialog-settings",
+}));
+
 vi.mock("@/management/ae/cep/transport", () => ({
 	createCepSurfaceTransport: (): MockTransport => {
 		const subscribers = new Set<Subscriber>();
@@ -107,6 +111,27 @@ describe("requestPanelUpdateInstall", () => {
 		expect(calls[0].payload).toMatchObject({
 			kind: "install-request",
 			request: { release_version: "0.11.0-insider.4" },
+		});
+	});
+
+	it("falls back to resolveDialogSurfaceId when surface globals are unset", async () => {
+		const bare = window as Window & {
+			__TY_PLUS_DIALOG_SURFACE_ID__?: string;
+			__TY_PLUS_PANEL_SURFACE_ID__?: string;
+		};
+		delete bare.__TY_PLUS_DIALOG_SURFACE_ID__;
+		delete bare.__TY_PLUS_PANEL_SURFACE_ID__;
+		const promise = requestPanelUpdateInstall(request, {
+			win: window,
+			targetPanelId: "panel-1",
+			timeoutMs: 50,
+		});
+		promise.catch(() => {});
+		await new Promise((r) => setTimeout(r, 10));
+		const calls = transports[0].__publishCalls();
+		expect(calls[0]).toMatchObject({
+			sourceSurfaceId: "dialog-settings",
+			targetSurfaceId: "panel-1",
 		});
 	});
 
