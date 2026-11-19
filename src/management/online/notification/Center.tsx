@@ -10,7 +10,7 @@ import {
 import {
 	type CepMenuPayload,
 	registerCepJsonContextMenuSurface,
-} from "@/management/dialog/dialogs/context-menu";
+} from "@/management/dialog/context-menu";
 import { fetchNotificationFeed } from "@/management/online/notification/feed";
 import type { NotificationSummary } from "@/management/online/notification/notifications";
 import {

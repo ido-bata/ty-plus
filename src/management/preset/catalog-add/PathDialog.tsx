@@ -9,7 +9,7 @@ import {
 } from "react";
 import { selectFile } from "@/management/ae/cep/dialog-shim/bolt";
 import { DialogShell } from "@/management/dialog";
-import { DialogFooterActions } from "@/management/dialog/dialogs/shell/Footer";
+import { DialogFooterActions } from "@/management/dialog/shell/Footer";
 import { useDialogClose } from "@/management/dialog/useClose";
 import { createPresetFromFile } from "@/management/preset/authoring/request";
 import { ArchiveDetailsSection } from "@/management/preset/catalog-add/ArchiveDetailsSection";

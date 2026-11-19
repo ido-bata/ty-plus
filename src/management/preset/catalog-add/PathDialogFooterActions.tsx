@@ -1,7 +1,7 @@
 import { Save } from "lucide-react";
 import type { JSX } from "react";
 
-import { DialogFooterActions } from "@/management/dialog/dialogs/shell/Footer";
+import { DialogFooterActions } from "@/management/dialog/shell/Footer";
 import { Button } from "@/shared/component/controls/Button";
 
 export function PathDialogFooterActions({

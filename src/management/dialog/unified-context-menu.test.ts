@@ -7,8 +7,8 @@ import {
 	setEasingClipboard,
 	setValuesClipboard,
 	updateEasingSettingsCache,
-} from "@/management/dialog/dialogs/unified-context-menu";
-import { CTX_MENU_IDS } from "@/management/dialog/dialogs/unified-context-menu-constants";
+} from "@/management/dialog/unified-context-menu";
+import { CTX_MENU_IDS } from "@/management/dialog/unified-context-menu-constants";
 import { EASING_CURVE_COLOR_ROWS } from "@/management/workspace/literals/easing-color-catalog";
 import type { SurfaceState } from "@/management/workspace/state";
 import type { Snapshot } from "@/management/workspace/undo/history";

@@ -8,7 +8,7 @@ import {
 	useState,
 } from "react";
 import { DialogShell } from "@/management/dialog";
-import { DialogFooterActions } from "@/management/dialog/dialogs/shell/Footer";
+import { DialogFooterActions } from "@/management/dialog/shell/Footer";
 import { useDialogClose } from "@/management/dialog/useClose";
 import { useSettings } from "@/management/setting/context";
 import {

@@ -11,7 +11,7 @@ import { Shell } from "./Layout";
 const REPO_ROOT = process.cwd();
 const LAYOUT_SOURCE_PATH = resolve(
 	REPO_ROOT,
-	"src/management/dialog/dialogs/shell/Layout.tsx",
+	"src/management/dialog/shell/Layout.tsx",
 );
 const LAYOUT_SOURCE = readFileSync(LAYOUT_SOURCE_PATH, "utf8");
 

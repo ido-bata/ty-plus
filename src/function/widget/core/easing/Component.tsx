@@ -15,7 +15,7 @@ import { useWidgetRuntime } from "@/function/widget/runtime-context";
 import {
 	setEasingClipboard,
 	setValuesClipboard,
-} from "@/management/dialog/dialogs/unified-context-menu";
+} from "@/management/dialog/unified-context-menu";
 import { notificationStore } from "@/management/online/notification/service";
 import {
 	loadClipboard,

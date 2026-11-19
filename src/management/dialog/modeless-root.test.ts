@@ -10,7 +10,7 @@ vi.mock("@/management/preset/editor/textmate", () => ({
 }));
 
 import { PRESET_ADD_TOOL_POOL_EXTENSION_IDS } from "../preset/add-dialog-pool";
-import { resolveDialogExtensionIdForOpen } from "./dialogs/ids";
+import { resolveDialogExtensionIdForOpen } from "./ids";
 import { DialogRoot, type DialogRootProps } from "./Root";
 
 /**

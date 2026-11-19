@@ -1,4 +1,4 @@
-import type { ProbeResultPayload } from "@/management/dialog/dialogs/bridge";
+import type { ProbeResultPayload } from "@/management/dialog/bridge";
 
 export const createProbeId = (
 	now: () => number = Date.now,

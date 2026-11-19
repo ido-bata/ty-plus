@@ -14,7 +14,7 @@ import { DialogShell } from "@/management/dialog";
 import {
 	type CepMenuPayload,
 	registerCepJsonContextMenuSurface,
-} from "@/management/dialog/dialogs/context-menu";
+} from "@/management/dialog/context-menu";
 import { useDialogClose } from "@/management/dialog/useClose";
 import { AddWidgetCatalogPanel } from "@/management/widget/catalog";
 import { defaultFirstWidgetType } from "@/management/widget/default-first-widget-type";

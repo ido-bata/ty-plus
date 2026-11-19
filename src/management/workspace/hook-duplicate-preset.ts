@@ -22,7 +22,7 @@
  * same code path runs in production and in tests.
  */
 
-import type { ContextHit } from "@/management/dialog/dialogs/unified-context-menu";
+import type { ContextHit } from "@/management/dialog/unified-context-menu";
 import type { Preset } from "@/management/preset/contract";
 import type { SurfaceState } from "@/management/workspace/state";
 import type { Tile } from "@/management/workspace/surface/tiles";

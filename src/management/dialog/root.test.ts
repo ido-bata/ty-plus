@@ -11,7 +11,7 @@ import { PRESET_ADD_TOOL_POOL_EXTENSION_IDS } from "../preset/add-dialog-pool";
 import {
 	resolveDialogExtensionIdForOpen,
 	resolveWorkspaceShellDialogExtensionId,
-} from "./dialogs/ids";
+} from "./ids";
 import { DialogRoot, type DialogRootProps } from "./Root";
 
 /**

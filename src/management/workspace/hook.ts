@@ -27,14 +27,14 @@ import {
 	initializeLogRetention,
 } from "@/management/debug";
 import { DebugConsole } from "@/management/debug/console/ui";
-import type { ToolDialogKind } from "@/management/dialog/dialogs/ids";
+import type { ToolDialogKind } from "@/management/dialog/ids";
 import {
 	attachUnifiedWorkspaceContextMenu,
 	CEP_CONTEXT_HEADER_ID_PREFIX,
 	type ContextHit,
 	CTX_MENU_IDS,
 	updateAlignTargetCache,
-} from "@/management/dialog/dialogs/unified-context-menu";
+} from "@/management/dialog/unified-context-menu";
 import { i18n } from "@/management/i18n/index";
 import { notificationStore } from "@/management/online/notification/service";
 import {
