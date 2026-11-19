@@ -18,6 +18,7 @@
 		"verify:operation-worker:process": "bun run scripts/verify/verify-operation-worker-process.ts",
 		"verify:operation-worker:cep": "bun run scripts/verify/verify-operation-worker-cep.ts",
 		"verify:operation-worker:package": "bun run scripts/verify/verify-operation-worker-package.ts",
+		"verify:update-install:sandbox": "bun run scripts/verify/update-install-sandbox.ts",
 		"check:e2e-coverage": "bun run scripts/verify/e2e/coverage.ts",
 		"install:git-hooks": "bun run scripts/install-git-hooks.ts",
 		"build:operation-worker": "bun run scripts/build/build-operation-worker.ts",
