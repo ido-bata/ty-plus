@@ -46,7 +46,7 @@ describe("useWorkspaceRuntime hook (Duplicate preset case)", () => {
 		// the symbol to be named `duplicatePreset` and the source to be the
 		// public use-case module.
 		expect(hookSource).toMatch(
-			/import\s*\{[^}]*\bduplicatePreset\b[^}]*\}\s*from\s*["']@\/management\/preset\/use-cases["']/,
+			/import\s*\{[^}]*\bduplicatePreset\b[^}]*\}\s*from\s*["']@\/management\/preset\/operations["']/,
 		);
 	});
 

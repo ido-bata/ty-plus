@@ -37,7 +37,7 @@ describe("useWorkspaceRuntime hook — offline-core preset access (issue 139)", 
 
 	it("reads the preset list via the local-catalog use-case", () => {
 		expect(hookSource).toMatch(
-			/import\s*\{[^}]*\blistPresets\b[^}]*\}\s*from\s*["']@\/management\/preset\/use-cases["']/,
+			/import\s*\{[^}]*\blistPresets\b[^}]*\}\s*from\s*["']@\/management\/preset\/operations["']/,
 		);
 		expect(hookSource).toMatch(/\blistPresets\s*\(\s*\)/);
 	});
