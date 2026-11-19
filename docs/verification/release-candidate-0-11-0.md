@@ -66,7 +66,7 @@ bun run release:candidate --channel=stable --release-version=0.11.0
 | worker | `windows/operation-worker.exe`（7,601,152 bytes、sha256 `2e7881dd6a701c7512c3e2feaa677f383fafc55a5cfbda2628f7649413f6feef`、Authenticode 未署名 = R0 の正当な形） |
 | 監査 | `verify-release-artifacts.ts` 全項目 PASS（sourceCommit=HEAD、sha256、archive=pack、ZXP署名、secret scan） |
 
-CI `release.yml` `release-trust-windows-candidate`（run 44449771825）も `bbbe77cc` で再実行中。TSA 無し既定化（#233/#234）により exit 35 は解消される見込み。
+CI `release.yml` `release-trust-windows-candidate`（run 44449771825、@ `bbbe77cc`）も **success**。TSA 無し既定化（#233/#234）で exit 35 は解消。CI artifact `ty-plus-release-candidate-windows-bbbe77cc…` の manifest も sourceCommit=`bbbe77cc`・trustMode=`release` を確認（zip/zxp の sha256 はローカル xwin build と異なるが、CI job 内の `verify-release-artifacts` 監査は PASS。内容同一性は sourceCommit と監査で担保）。
 
 ## 4. Issue別 受入状況
 
@@ -109,7 +109,7 @@ CI `release.yml` `release-trust-windows-candidate`（run 44449771825）も `bbbe
 
 **条件付きリリース可能**。公開ブロッカーは人間の審美受入と公開承認のみ。技術的に自律解決可能な残件なし。新規製品欠陥は RC 期間中に検出されず（#223 は全件収束済み）。
 
-判定の前提: §3 の Windows candidate artifact は `bbbe77cc` に対して生成・監査済み（ローカル cargo xwin、v0.10.2 と同一手順）。CI `release-trust-windows-candidate` の独立再現も進行中で、失敗してもローカル成果物は有効。
+判定の前提: §3 の Windows candidate artifact は `bbbe77cc` に対して生成・監査済み（ローカル cargo xwin、v0.10.2 と同一手順）。CI `release-trust-windows-candidate` の独立再現も success（run 44449771825）。
 
 ---
 Generated with [Devin](https://devin.ai)
