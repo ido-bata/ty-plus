@@ -36,11 +36,12 @@ export TY_PLUS_ZXP_CERT_PASSWORD="$(security find-generic-password -s 'ty-plus.z
 
 ## 3. タイムスタンプ（TSA）
 
-pinned Adobe signer（ZXPSignCmd 4.1.3）が現在検証できるTSAは**Apple**のみである。
+**既定はタイムスタンプ無し**（`-tsa` を付けない）。2026-11-19 時点で ZXPSignCmd 4.1.3 が検証できる TSA は存在しない。
 
-- 既定: `http://timestamp.apple.com/ts01`（`scripts/package/sign-zxp.ts`）
-- DigiCert / Sectigo / Entrust は 2026-11-12 時点で `exit 35`（timestamp could not be verified）で署名を中断する
-- 別TSAを使う場合は `ZXP_TIMESTAMP_URL` で明示する。検証できないTSAを既定に戻さない
+- Apple `http://timestamp.apple.com/ts01` は endpoint が死んでいる（302 でマーケティングページへリダイレクト、HTTPS は timeout）。かつて唯一検証できた TSA だった
+- DigiCert / Sectigo / Entrust は `exit 35`（timestamp could not be verified）で署名を中断する（2026-11-12 計測、変わらず）
+- `-tsa` 無しの ZXP は `ZXPSignCmd -verify` で `Signature verified successfully` となることを実測済み。署名の有効性は署名証明書の有効期間（2036-11-09 まで）が担う
+- 別TSAを使う場合は `ZXP_TIMESTAMP_URL` で明示する。`none` を指定してもタイムスタンプ無しになる。検証できないTSAを既定に戻さない
 
 ## 4. バックアップと復元
 
