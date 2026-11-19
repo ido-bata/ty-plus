@@ -65,6 +65,7 @@
 		"check:health": "bun tools/check/health/index.ts",
 		"check:naming": "bun tools/check/naming-redundancy.ts",
 		"check:naming:symbols": "bun tools/check/naming-redundancy-symbols.ts",
+		"check:naming:antipatterns": "bun tools/check/naming-antipatterns.ts",
 		"test": "cross-env NODE_OPTIONS=--max-old-space-size=28672 bun run vitest run",
 		"test:watch": "cross-env NODE_OPTIONS=--max-old-space-size=28672 bun run vitest",
 		"test:coverage": "cross-env NODE_OPTIONS=--max-old-space-size=28672 bun run vitest run --coverage",
