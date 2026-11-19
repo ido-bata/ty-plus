@@ -205,7 +205,7 @@ mod tests {
         ])
         .unwrap();
         let peer = CapabilitySet::new([
-            CapabilityName::parse("online.fetch").unwrap(),
+            CapabilityName::parse("host.filesystem").unwrap(),
             CapabilityName::parse("runtime.health").unwrap(),
         ])
         .unwrap();

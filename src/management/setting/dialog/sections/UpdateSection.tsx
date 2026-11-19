@@ -14,8 +14,11 @@ import {
 	detectUpdatePlatform,
 	OFFICIAL_RELEASES_URL,
 	type UpdateCheckResult,
-	type UpdateFeed,
 } from "@/management/online/update/feed";
+import {
+	requestPanelUpdateInstall,
+	UpdateInstallRelayError,
+} from "@/management/online/update/install-relay";
 import { useSettings } from "@/management/setting/context";
 import {
 	SettingsField,
@@ -26,6 +29,7 @@ import { openUrlInDefaultBrowser } from "@/management/workspace/hooks/helpers";
 import { getUpdateInstaller } from "@/management/workspace/services";
 import { ListSelect } from "@/shared/component/fields/ListSelect";
 import { css } from "@/styled-system/css";
+import { installableZipAsset, installFailureKey } from "./update-install";
 
 const mutedTextStyle = css({
 	fontSize: "text-xs",
@@ -72,54 +76,10 @@ type InstallState =
 	| { kind: "failed"; code?: string };
 
 /**
- * Map the worker's stable error code onto a localized failure message.
- * `update.install` reports `integrity_mismatch`, `network_unavailable`,
- * `remote_rejected` (archive), `permission_denied`, and `busy` distinctly
- * (Issue #169); anything else falls back to the generic failure text.
- */
-const installFailureKey = (code: string | undefined): string => {
-	switch (code) {
-		case "integrity_mismatch":
-			return "installFailedIntegrity";
-		case "network_unavailable":
-		case "timeout":
-			return "installFailedDownload";
-		case "remote_rejected":
-			return "installFailedArchive";
-		case "permission_denied":
-			return "installFailedPermission";
-		case "busy":
-			return "installFailedBusy";
-		default:
-			return "installFailed";
-	}
-};
-
-/**
- * Pick the platform ZIP asset the worker installer consumes. The feed
- * carries both `.zip` and `.zxp` entries per platform; only the ZIP is
- * installable in-app (the ZXP remains the manual fallback).
- */
-const installableZipAsset = (
-	feed: UpdateFeed,
-	platform: ReturnType<typeof detectUpdatePlatform>,
-): { url: string; fileName: string; sha256: string } | null => {
-	if (platform === undefined) return null;
-	const tag = `v${feed.version}`;
-	for (const asset of feed.assets) {
-		if (asset.platform !== platform || !asset.url.endsWith(".zip")) continue;
-		const fileName = asset.url.split("/").pop() ?? "";
-		if (fileName !== `ty-plus-${tag}-${platform}.zip`) continue;
-		return { url: asset.url, fileName, sha256: asset.sha256 };
-	}
-	return null;
-};
-
-/**
  * Official GitHub Releases update channel selection (Issue #55).
  * A channel change persists through the existing file-backed settings.
- * Checking never installs or runs code; a user opens the official release
- * page in their browser and installs manually.
+ * Checking never installs or runs code; install goes through the
+ * `update.install` worker operation after the user confirms.
  */
 export function UpdateSection(): JSX.Element {
 	const { t } = useTranslation("settings");
@@ -169,21 +129,28 @@ export function UpdateSection(): JSX.Element {
 		const installer = getUpdateInstaller();
 		const platform = detectUpdatePlatform();
 		const asset = installableZipAsset(result.feed, platform);
-		if (installer === null || asset === null) {
+		if (asset === null) {
 			setInstallState({ kind: "done", status: "manual_required" });
 			return;
 		}
+		const request = {
+			release_version: result.feed.version,
+			tag: `v${result.feed.version}`,
+			asset: {
+				url: asset.url,
+				file_name: asset.fileName,
+				sha256: asset.sha256,
+			},
+		};
 		setInstallState({ kind: "installing" });
 		try {
-			const installed = await installer.installUpdate({
-				release_version: result.feed.version,
-				tag: `v${result.feed.version}`,
-				asset: {
-					url: asset.url,
-					file_name: asset.fileName,
-					sha256: asset.sha256,
-				},
-			});
+			// Issue #243: this dialog runs in its own CEP surface without a
+			// worker composition; relay to the opener panel over the updates
+			// channel when no local installer is registered.
+			const installed =
+				installer !== null
+					? await installer.installUpdate(request)
+					: await requestPanelUpdateInstall(request);
 			setInstallState({
 				kind: "done",
 				status:
@@ -197,7 +164,11 @@ export function UpdateSection(): JSX.Element {
 			setInstallState({
 				kind: "failed",
 				code:
-					error instanceof OperationWorkerAttemptError ? error.code : undefined,
+					error instanceof OperationWorkerAttemptError
+						? error.code
+						: error instanceof UpdateInstallRelayError
+							? error.code
+							: undefined,
 			});
 		}
 	}, [result]);
@@ -211,11 +182,6 @@ export function UpdateSection(): JSX.Element {
 		},
 		[settings.ui, updateSettings],
 	);
-
-	// R0 distributes stable builds only: the worker rejects prerelease
-	// assets, so non-stable channels get release notes but no install
-	// button (Issue #169).
-	const installAllowed = channel === "stable";
 
 	const label = checking
 		? t("updates.checking")
@@ -282,9 +248,8 @@ export function UpdateSection(): JSX.Element {
 							>
 								{t("updates.releaseNotes")}
 							</button>
-							{installAllowed &&
-							(installState.kind !== "done" ||
-								installState.status === "manual_required") ? (
+							{installState.kind !== "done" ||
+							installState.status === "manual_required" ? (
 								<button
 									type="button"
 									className={linkStyle}

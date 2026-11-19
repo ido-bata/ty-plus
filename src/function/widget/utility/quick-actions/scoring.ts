@@ -1,36 +1,36 @@
 import type { Preset, PresetType } from "@/management/preset/contract";
 import type { QuickActionRootFileRow } from "./types";
 
-const PRESET_TYPE_ORDER: PresetType[] = [
+export const PRESET_TYPE_ORDER: PresetType[] = [
 	"preset",
 	"script",
 	"plugin",
 	"footage",
 ];
 
-const EFFECT_SORT_ORDER = 100;
+export const EFFECT_SORT_ORDER = 100;
 
 export const rootFilePresetType = (row: QuickActionRootFileRow): PresetType =>
 	row.type === "script" || row.type === "plugin" ? row.type : "preset";
 
-const isGroupFolderRow = (p: Preset): boolean =>
+export const isGroupFolderRow = (p: Preset): boolean =>
 	Array.isArray((p.data as { presetIds?: unknown } | undefined)?.presetIds);
 
-const presetHaystack = (p: Preset, typeLabel: string): string =>
+export const presetHaystack = (p: Preset, typeLabel: string): string =>
 	`${p.title}\n${p.filePath}\n${p.type}\n${typeLabel}`.toLowerCase();
 
-const effectHaystack = (e: {
+export const effectHaystack = (e: {
 	displayName: string;
 	matchName: string;
 	filePath: string;
 }): string => `${e.displayName}\n${e.matchName}\n${e.filePath}`.toLowerCase();
 
-const fileHaystack = (
+export const fileHaystack = (
 	rf: QuickActionRootFileRow,
 	anchorLabel: string,
 ): string => `${rf.title}\n${rf.filePath}\n${anchorLabel}`.toLowerCase();
 
-const scoreHaystack = (hay: string, q: string): number => {
+export const scoreHaystack = (hay: string, q: string): number => {
 	if (!q) return 1;
 	if (hay.includes(q)) return 2;
 	const parts = q.split(/\s+/).filter(Boolean);

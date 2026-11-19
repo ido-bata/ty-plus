@@ -265,5 +265,130 @@
 		"emptyItems": "Элементы не найдены",
 		"goUp": "На уровень вверх",
 		"cepNodeRequired": "Обзору папок требуется CEP Node"
+	},
+	"tutorial": {
+		"chrome": {
+			"help": "Справка",
+			"title": "Справка по виджету",
+			"close": "Закрыть",
+			"dismissHint": "Скрыть подсказку"
+		},
+		"easing": {
+			"summary": "Edit easing curves and apply them to presets or layer animation.",
+			"steps": {
+				"chooseCurve": {
+					"title": "Choose a curve",
+					"body": "Pick a preset curve or draw your own in the editor."
+				},
+				"applyCurve": {
+					"title": "Apply it",
+					"body": "Apply the curve to the selected preset or layer."
+				}
+			}
+		},
+		"menu": {
+			"summary": "Open workspace commands, layout actions, and dialogs from one tile.",
+			"steps": {
+				"openMenu": {
+					"title": "Open the menu",
+					"body": "Click the tile to open the workspace command menu."
+				},
+				"runCommand": {
+					"title": "Run a command",
+					"body": "Choose a command to run it on the current workspace."
+				}
+			}
+		},
+		"align": {
+			"summary": "Align selected presets or layers to common positions on the grid.",
+			"steps": {
+				"selectTargets": {
+					"title": "Select targets",
+					"body": "Select the presets or layers you want to align."
+				},
+				"pickAlignment": {
+					"title": "Pick an alignment",
+					"body": "Choose an alignment option to snap them into place."
+				}
+			}
+		},
+		"anchor-point": {
+			"summary": "Place a named anchor for layout references and snapping workflows.",
+			"steps": {
+				"nameAnchor": {
+					"title": "Name the anchor",
+					"body": "Enter a name that identifies this anchor point."
+				},
+				"dropAnchor": {
+					"title": "Drop it on the grid",
+					"body": "Click the workspace to place the anchor."
+				}
+			}
+		},
+		"layout-lock": {
+			"summary": "Prevent accidental moves while you arrange the workspace grid.",
+			"steps": {
+				"turnLockOn": {
+					"title": "Turn the lock on",
+					"body": "Enable the lock to freeze widget positions."
+				},
+				"unlockToRearrange": {
+					"title": "Unlock to rearrange",
+					"body": "Disable the lock when you want to move widgets again."
+				}
+			}
+		},
+		"info": {
+			"summary": "Show preset metadata, paths, and status in a wide summary tile.",
+			"steps": {
+				"placeWidget": {
+					"title": "Place the widget",
+					"body": "Add the Info widget to your workspace."
+				},
+				"inspectPreset": {
+					"title": "Inspect a preset",
+					"body": "Select a preset to view its details here."
+				}
+			}
+		},
+		"quick-actions": {
+			"summary": "Run scripts, effects, and file actions from a compact command palette.",
+			"steps": {
+				"openPalette": {
+					"title": "Open the palette",
+					"body": "Open the palette and type to search actions."
+				},
+				"runAction": {
+					"title": "Run an action",
+					"body": "Select an action to execute it right away."
+				}
+			}
+		},
+		"directory-browser": {
+			"summary": "Browse disk folders and presets from inside the panel.",
+			"steps": {
+				"navigateFolders": {
+					"title": "Navigate folders",
+					"body": "Use the path field or folder list to move around."
+				},
+				"openPreset": {
+					"title": "Open a preset",
+					"body": "Double-click a preset to apply or inspect it."
+				}
+			}
+		},
+		"font-viewer": {
+			"summary": "Preview font families, styles, and sample text in the workspace.",
+			"steps": {
+				"loadFonts": {
+					"title": "Load fonts",
+					"body": "Load system fonts or choose a family to preview."
+				},
+				"editSample": {
+					"title": "Edit the sample",
+					"body": "Change the sample text to check glyphs and styles."
+				}
+			}
+		}
 	}
 }

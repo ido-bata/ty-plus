@@ -40,13 +40,11 @@ export type NotifyPanelsAfterPresetSaveInput = {
  *    `tryPersistRemovePresetFromDialog` and the resulting `presetPlacement` /
  *    `reloadWorkspaceLayoutFromStorage` layout bus message. These touch only
  *    the managed persistence root and the in-process layout bus — they are
- *    cloud-independent. Even when `getDataServices()` throws (boot path
- *    Issue #128) or the cloud gateway is offline, these calls complete and
+ *    cloud-independent. Even when remote services are unreachable, these calls complete and
  *    the user's disk write is reflected on the panel.
  *
- *  - **notify-remote** (cloud-only, warn-on-failure): the `listPresets()`
- *    snapshot broadcast. This calls `getDataServices().presetRepository.list()`
- *    which rejects when the gateway is unavailable. The disk-write above
+ *  - **notify-remote** (warn-on-failure): the `listPresets()`
+ *    snapshot broadcast to other panels. The disk-write above
  *    already succeeded, so the caller MUST NOT see a rejected promise for
  *    a successful save — the snapshot is a best-effort refresh of the
  *    open panels' preset list and is logged at WARN level when degraded.
@@ -167,12 +165,6 @@ export async function notifyPanelsAfterPresetSave(
 	const snapshot: PresetsPayload = {
 		kind: "snapshot",
 		presets,
-		syncStatus: {
-			provider: "supabase",
-			state: "idle",
-			label: "Local Update",
-			checkedAt: new Date().toISOString(),
-		},
 		sourceSurfaceId: input.sourceSurfaceId,
 	};
 	await publishShellMessage(transport, {

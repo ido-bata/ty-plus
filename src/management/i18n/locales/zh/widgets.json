@@ -265,5 +265,130 @@
 		"emptyItems": "未找到项目",
 		"goUp": "上一级",
 		"cepNodeRequired": "文件夹浏览器需要 CEP Node"
+	},
+	"tutorial": {
+		"chrome": {
+			"help": "帮助",
+			"title": "小部件帮助",
+			"close": "关闭",
+			"dismissHint": "关闭提示"
+		},
+		"easing": {
+			"summary": "编辑缓动曲线，并将其应用于预设或图层动画。",
+			"steps": {
+				"chooseCurve": {
+					"title": "选择曲线",
+					"body": "选择预设曲线，或在编辑器中自行绘制。"
+				},
+				"applyCurve": {
+					"title": "应用曲线",
+					"body": "将曲线应用到选中的预设或图层。"
+				}
+			}
+		},
+		"menu": {
+			"summary": "从一个磁贴打开工作区命令、布局操作和对话框。",
+			"steps": {
+				"openMenu": {
+					"title": "打开菜单",
+					"body": "点击磁贴以打开工作区命令菜单。"
+				},
+				"runCommand": {
+					"title": "运行命令",
+					"body": "选择一条命令，将其应用于当前工作区。"
+				}
+			}
+		},
+		"align": {
+			"summary": "将选中的预设或图层对齐到网格上的共同位置。",
+			"steps": {
+				"selectTargets": {
+					"title": "选择对象",
+					"body": "选择要对齐的预设或图层。"
+				},
+				"pickAlignment": {
+					"title": "选择对齐方式",
+					"body": "选择对齐选项，使它们对齐到位。"
+				}
+			}
+		},
+		"anchor-point": {
+			"summary": "放置命名锚点，用于布局参考和吸附工作流。",
+			"steps": {
+				"nameAnchor": {
+					"title": "命名锚点",
+					"body": "输入用于标识此锚点的名称。"
+				},
+				"dropAnchor": {
+					"title": "放到网格上",
+					"body": "点击工作区以放置锚点。"
+				}
+			}
+		},
+		"layout-lock": {
+			"summary": "在排列工作区网格时防止意外移动。",
+			"steps": {
+				"turnLockOn": {
+					"title": "开启锁定",
+					"body": "启用锁定以固定小组件位置。"
+				},
+				"unlockToRearrange": {
+					"title": "解锁以重新排列",
+					"body": "需要再次移动小组件时关闭锁定。"
+				}
+			}
+		},
+		"info": {
+			"summary": "在宽大的摘要磁贴中显示预设元数据、路径和状态。",
+			"steps": {
+				"placeWidget": {
+					"title": "放置小组件",
+					"body": "将 Info 小组件添加到工作区。"
+				},
+				"inspectPreset": {
+					"title": "查看预设",
+					"body": "选择一个预设即可在此查看其详情。"
+				}
+			}
+		},
+		"quick-actions": {
+			"summary": "从紧凑的命令面板运行脚本、效果和文件操作。",
+			"steps": {
+				"openPalette": {
+					"title": "打开面板",
+					"body": "打开命令面板并输入以搜索操作。"
+				},
+				"runAction": {
+					"title": "运行操作",
+					"body": "选择一项操作即可立即执行。"
+				}
+			}
+		},
+		"directory-browser": {
+			"summary": "直接在面板中浏览磁盘文件夹和预设。",
+			"steps": {
+				"navigateFolders": {
+					"title": "浏览文件夹",
+					"body": "使用路径栏或文件夹列表进行移动。"
+				},
+				"openPreset": {
+					"title": "打开预设",
+					"body": "双击预设即可应用或查看。"
+				}
+			}
+		},
+		"font-viewer": {
+			"summary": "在工作区中预览字体系列、样式和示例文本。",
+			"steps": {
+				"loadFonts": {
+					"title": "加载字体",
+					"body": "加载系统字体，或选择要预览的字体系列。"
+				},
+				"editSample": {
+					"title": "编辑示例",
+					"body": "更改示例文本以检查字形和样式。"
+				}
+			}
+		}
 	}
 }

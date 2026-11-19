@@ -53,13 +53,6 @@
 | DirectoryBrowserウィジェット001 | Directory Browser Widget 全景 |
 | FontViewerウィジェット001 | Font Viewer Widget 全景 |
 
-## オンラインプリセット
-
-| ラベル | 撮影対象 |
-| --- | --- |
-| PresetLibrary001 | オンラインプリセットライブラリ |
-| PresetLibrary録画001 | 検索、Download、登録 |
-
 ## 外観カスタマイズ
 
 | ラベル | 撮影対象 |

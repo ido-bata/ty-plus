@@ -42,7 +42,7 @@ describe("diagnostic aggregation across surfaces (Issue #129)", () => {
 		const debugConsole = createLogger("debug-console");
 
 		boot.info("[ty-plus] panel boot started");
-		onlineRuntime.info("[ty-plus] cloud gateway boot started");
+		onlineRuntime.info("[ty-plus] operation worker boot started");
 		operationWorker.info(
 			"[ty-plus] operation worker runtime: construction started",
 		);
@@ -57,7 +57,7 @@ describe("diagnostic aggregation across surfaces (Issue #129)", () => {
 		expect(received).toContainEqual({
 			source: "online-runtime",
 			level: "info",
-			message: "[ty-plus] cloud gateway boot started",
+			message: "[ty-plus] operation worker boot started",
 		});
 		expect(received).toContainEqual({
 			source: "operation-worker",
@@ -130,36 +130,6 @@ describe("diagnostic aggregation across surfaces (Issue #129)", () => {
 		expect(entries[0].level).toBe("info");
 		expect(entries[0].message).toBe("[ty-plus] panel entry started");
 	});
-
-	it("cloud gateway boot emits one event per stage so Debug Console can pinpoint failures", () => {
-		// Drives `tryBuildCloudGateway` against a window without
-		// `__adobe_cep__` to trigger the trust-mode/platform gates. Each
-		// gate must emit exactly one canonical event so the user can see
-		// which stage stopped the boot.
-		const stages: string[] = [];
-		subscribeLog((entries) => {
-			for (const e of entries) {
-				if (e.source === "online-runtime" && e.context) {
-					const stage = (e.context as { stage?: unknown }).stage;
-					if (typeof stage === "string") stages.push(stage);
-				}
-			}
-		});
-
-		return import("@/management/panel/cloud-gateway-boot").then(
-			({ tryBuildCloudGateway }) => {
-				const result = tryBuildCloudGateway(window);
-				expect(result.kind).toBe("degraded");
-
-				// boot-started and at least one failure stage must be
-				// present. The exact later stages depend on the host
-				// trust mode and platform, but `boot-started` is always
-				// emitted first.
-				expect(stages[0]).toBe("boot-started");
-				expect(stages.length).toBeGreaterThanOrEqual(2);
-			},
-		);
-	});
 });
 
 /**
@@ -174,7 +144,7 @@ function bootSequence(): void {
 	const modeless = createLogger("modeless");
 
 	boot.info("[ty-plus] panel boot started");
-	onlineRuntime.info("[ty-plus] cloud gateway boot started");
+	onlineRuntime.info("[ty-plus] operation worker boot started");
 	operationWorker.info(
 		"[ty-plus] operation worker runtime: construction started",
 	);

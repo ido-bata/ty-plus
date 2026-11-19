@@ -58,10 +58,7 @@
 		"complete": "完成",
 		"failed": "失败",
 		"ready": "就绪",
-		"offline": "离线",
-		"online": "在线",
-		"syncing": "同步中...",
-		"synced": "已同步"
+		"offline": "离线"
 	},
 	"settings": {
 		"optional": "可选",

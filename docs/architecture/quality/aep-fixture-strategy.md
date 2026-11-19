@@ -90,10 +90,10 @@ Each `SCN-X/` directory carries:
 | SCN-GROUPS-01        | post-onboarding, catalog has PresetA + PresetB                         | `validation.host.aep_root/SCN-GROUPS-01.aep`                      | open `.aep`, write `storage:catalog-list` with two preset entries      |
 | SCN-HOST-01          | post-onboarding, AE settings dialog dismissible                        | `validation.host.aep_root/SCN-HOST-01.aep`                        | open `.aep`, ensure no AE modal is on screen                           |
 | SCN-SETTINGS-01      | post-onboarding, `storage:settings` empty                             | `validation.host.aep_root/SCN-SETTINGS-01.aep`                    | open `.aep`, reset `storage:settings`                                  |
-| SCN-DEGRADED-01      | post-onboarding, cloud gateway reachable                               | `validation.host.aep_root/SCN-DEGRADED-01.aep`                    | open `.aep`, ensure `dataServices` resolves to the reachable probe     |
+| ~~SCN-DEGRADED-01~~  | **removed in #193** — the online-degraded scenario targeted the unprovided cloud gateway surface | — | — |
 | SCN-DIAGNOSTICS-01   | post-onboarding, log bus has ≥1 info entry, `storage:diagnostics` empty| `validation.host.aep_root/SCN-DIAGNOSTICS-01.aep`                 | open `.aep`, seed a synthetic info entry, clear `storage:diagnostics`  |
 | SCN-LIFECYCLE-01     | post-onboarding, empty workspace                                       | `validation.host.aep_root/SCN-LIFECYCLE-01.aep`                   | open `.aep`, ensure layouts `panel-1` / `panel-2` are empty            |
-| SCN-LIFECYCLE-02     | post-onboarding, cloud gateway boot returns null                       | `validation.host.aep_root/SCN-LIFECYCLE-02.aep`                   | open `.aep`, inject `getDataServices() === null` boot stub             |
+| ~~SCN-LIFECYCLE-02~~ | **removed in #193** — the scenario stubbed the removed cloud-gateway boot path | — | — |
 | SCN-FAILURE-01       | post-onboarding, `target.applyMove` injected to throw                  | `validation.host.aep_root/SCN-FAILURE-01.aep`                     | open `.aep`, install the `applyMove` throwing stub                     |
 
 The `projectPath` is also surfaced on `FixtureSpec` (round-3 Blocker

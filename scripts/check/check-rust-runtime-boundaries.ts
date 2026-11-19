@@ -46,7 +46,8 @@ type AllowlistEntry = ExactBoundaryEntry & {
 type PermanentBoundaryOwner =
 	| "cep-binary-resolution"
 	| "cep-operation-worker-runner"
-	| "static-feed-client";
+	| "static-feed-client"
+	| "managed-root-persistence-lock";
 
 type PermanentBoundaryEntry = ExactBoundaryEntry & {
 	owner: PermanentBoundaryOwner;
@@ -282,17 +283,24 @@ const PERMANENT_BOUNDARIES: readonly PermanentBoundaryEntry[] = [
 	// broken is exactly the one that must still learn about updates and
 	// official notices. Requiring the worker transport for the feed would be
 	// circular. Feed hosts must send CORS headers; the contract documents it.
+	// Both feeds share `fetchWithDeadline` in update/feed.ts, so the single
+	// `fetch` call there is the only product-network boundary the feed
+	// clients need; notification/feed.ts performs no direct network I/O.
 	{
 		file: "src/management/online/update/feed.ts",
 		rule: "product-network",
 		expectedMatches: 1,
 		owner: "static-feed-client",
 	},
+	// ADR-0006: the managed-root persistence lock is the serialization
+	// primitive for cross-CEP-context file transactions. It needs atomic
+	// mkdir / rename / utimes / stat semantics that no storage gateway
+	// exposes; routing it through a gateway would defeat the lock.
 	{
-		file: "src/management/online/notification/feed.ts",
-		rule: "product-network",
-		expectedMatches: 1,
-		owner: "static-feed-client",
+		file: "src/management/storage/lock/persistence-lock.ts",
+		rule: "node-fs",
+		expectedMatches: 2,
+		owner: "managed-root-persistence-lock",
 	},
 ];
 

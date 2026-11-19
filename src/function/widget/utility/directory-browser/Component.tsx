@@ -19,11 +19,11 @@ import {
 	useState,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { resolveEffectMatchName } from "@/function/widget/utility/directory-browser/plugin-match-name";
 import { useCep } from "@/management/ae/cep/contexts/Context";
 import { selectFolder } from "@/management/ae/cep/dialog-shim/bolt";
 import { createCepHostExecutor } from "@/management/ae/cep/host-executor";
 import { detectCepHostCode } from "@/management/ae/cep/runtime";
+import { importFile as runWorkspaceFileImport } from "@/management/ae/file-import";
 import { readGroupJson } from "@/management/catalog/json-files";
 import { notificationStore } from "@/management/online/notification/service";
 import {
@@ -52,7 +52,9 @@ import {
 	parseGroupFromText,
 } from "@/management/preset/group-catalog";
 import {
+	isPresetSidekickSourcePath,
 	parentDirectoryOf,
+	SIBLING_IMAGE_NAME_RE,
 	siblingPathKey,
 	stemWithoutExtension,
 } from "@/management/preset/sibling-thumbnail";
@@ -62,7 +64,6 @@ import {
 	useIsPresetAssetUnverifiable,
 } from "@/management/preset/use-preset-asset-health";
 import { readSettings } from "@/management/storage";
-import { getCandidatesSnapshot } from "@/management/storage/candidates-cache/runtime";
 import {
 	canUseCepNodeFileBrowser,
 	createCepNodeFileBrowserService,
@@ -118,25 +119,11 @@ function normPathKey(p: string): string {
 	return p.replace(/\\/g, "/").replace(/\/+$/, "").toLowerCase();
 }
 
-/** Preset / script / project files that may pair with a same-stem thumbnail image. */
-const PRESET_SIDEKICK_SOURCE_EXT = new Set([
-	".ffx",
-	".jsx",
-	".jsxbin",
-	".aep",
-	".aepx",
-	".aet",
-	".mogrt",
-	".zxp",
-]);
-
-const COMPANION_IMAGE_FILE_RE = /\.(png|jpe?g|gif|webp|svg)$/i;
-
 function isCompanionThumbnailImageEntry(entry: FileBrowserEntry): boolean {
 	if (entry.isDirectory) {
 		return false;
 	}
-	return COMPANION_IMAGE_FILE_RE.test(entry.name);
+	return SIBLING_IMAGE_NAME_RE.test(entry.name);
 }
 
 function buildSidekickByParent(
@@ -160,11 +147,7 @@ function buildSidekickByParent(
 
 	for (const p of presets) {
 		const fp = p.filePath?.trim();
-		if (!fp) {
-			continue;
-		}
-		const ext = (fp.match(/\.[^./\\]+$/)?.[0] ?? "").toLowerCase();
-		if (!PRESET_SIDEKICK_SOURCE_EXT.has(ext)) {
+		if (!fp || !isPresetSidekickSourcePath(fp)) {
 			continue;
 		}
 		const par = parentDirectoryOf(fp);
@@ -175,11 +158,7 @@ function buildSidekickByParent(
 	}
 
 	for (const e of entries) {
-		if (e.isDirectory) {
-			continue;
-		}
-		const ext = (e.extension ?? "").toLowerCase();
-		if (!PRESET_SIDEKICK_SOURCE_EXT.has(ext)) {
+		if (e.isDirectory || !isPresetSidekickSourcePath(e.path)) {
 			continue;
 		}
 		const par = parentDirectoryOf(e.path);
@@ -884,35 +863,13 @@ export function DirectoryBrowserWidget({
 			hostCode === "AEFT"
 				? createCepHostExecutor(window, "after-effects")
 				: null;
-		if (hostCode !== "AEFT" || !hostExecutorForAlign) {
-			throw new Error(
-				"File import is currently available only in After Effects.",
-			);
-		}
-		const lowerPath = filePath.toLowerCase();
-		const fileName = filePath.split(/[\\/]/).pop() ?? filePath;
-		if (lowerPath.endsWith(".jsx") || lowerPath.endsWith(".jsxbin")) {
-			await hostExecutorForAlign("runScriptFile", [filePath]);
-			return `Ran script: ${fileName}`;
-		}
-		if (lowerPath.endsWith(".ffx")) {
-			await hostExecutorForAlign("applyPreset", [filePath]);
-			return `Applied preset: ${fileName}`;
-		}
-		if (lowerPath.endsWith(".aex") || lowerPath.endsWith(".plugin")) {
-			// Look up the catalog matchName from the candidates cache. The
-			// filename stem is NOT a reliable matchName — After Effects stores
-			// matchName in the plugin's PICA resource, not the filename.
-			const snapshot = getCandidatesSnapshot();
-			const matchName = resolveEffectMatchName(
-				filePath,
-				snapshot?.pluginEffects ?? [],
-			);
-			await hostExecutorForAlign("applyEffectByMatchName", [matchName]);
-			return `Applied effect: ${fileName}`;
-		}
-		await hostExecutorForAlign("addFootage", [{ filePath, toComp: true }]);
-		return `Imported footage: ${fileName}`;
+		return runWorkspaceFileImport(
+			filePath,
+			hostCode,
+			hostExecutorForAlign as
+				| ((method: string, args: unknown[]) => Promise<{ value?: unknown }>)
+				| null,
+		);
 	}, []);
 
 	const handleImportFile = useCallback(

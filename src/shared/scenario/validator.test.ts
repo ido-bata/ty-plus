@@ -485,8 +485,8 @@ describe("scenario validator", () => {
 				persistence: { storageKey: "k", expected: { ok: true } },
 				hostState: {
 					method: "evalScript",
-					script: "$.global.__TY_PLUS_HOST__.tyPlusProbeOnlineState()",
-					expected: { equals: "online" },
+					script: "$.global.__TY_PLUS_HOST__.getHostContext()",
+					expected: { contains: "app_root" },
 				},
 				dual: false,
 			},

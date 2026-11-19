@@ -2,6 +2,10 @@
 
 Evidence/classification pass for active debt separation. This document records findings without changing source code.
 
+## Snapshot Notice
+
+This map is a dated evidence snapshot. References to `supabase/functions/`, the Supabase edge function, `PresetLibraryDialog`, or other unprovided online surfaces describe the pre-port repository or pre-#193 state; those surfaces do not exist in the current tree (see `docs/architecture/observation/index.md`).
+
 ## Classification System
 
 | Tag | Meaning |

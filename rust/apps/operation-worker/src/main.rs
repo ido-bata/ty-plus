@@ -2,9 +2,7 @@ use std::io::{self, Read};
 use std::path::Path;
 
 use ty_plus_operation_worker::install_lease;
-use ty_plus_operation_worker::{
-    ProductionOperationExecutor, WorkerDependencies, build_product_online_config, run_once,
-};
+use ty_plus_operation_worker::{ProductionOperationExecutor, WorkerDependencies, run_once};
 
 fn main() {
     if std::env::args().nth(1).as_deref() == Some("--install-lease-exclusive") {
@@ -22,8 +20,7 @@ fn main() {
     }
     let reader = io::stdin();
     let writer = io::stdout();
-    let executor =
-        ProductionOperationExecutor::from_product_online_config(build_product_online_config());
+    let executor = ProductionOperationExecutor;
     let dependencies = WorkerDependencies {
         executor: &executor,
     };

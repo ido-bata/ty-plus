@@ -265,5 +265,130 @@
 		"hintNoLocalApi": "This Chromium build does not expose queryLocalFonts — only fonts registered on document.fonts are listed.",
 		"localAccessErrorPrefix": "Local font access:",
 		"emptyList": "No fonts loaded yet. Use “Load all system fonts” if available, or reload after the panel finishes loading styles."
+	},
+	"tutorial": {
+		"chrome": {
+			"help": "Ayuda",
+			"title": "Ayuda del widget",
+			"close": "Cerrar",
+			"dismissHint": "Descartar sugerencia"
+		},
+		"easing": {
+			"summary": "Edita curvas de easing y aplícalas a presets o a la animación de capas.",
+			"steps": {
+				"chooseCurve": {
+					"title": "Elige una curva",
+					"body": "Selecciona una curva predefinida o dibuja la tuya en el editor."
+				},
+				"applyCurve": {
+					"title": "Aplicarla",
+					"body": "Aplica la curva al preset o a la capa seleccionados."
+				}
+			}
+		},
+		"menu": {
+			"summary": "Abre comandos del espacio de trabajo, acciones de diseño y diálogos desde una sola ficha.",
+			"steps": {
+				"openMenu": {
+					"title": "Abrir el menú",
+					"body": "Haz clic en la ficha para abrir el menú de comandos."
+				},
+				"runCommand": {
+					"title": "Ejecutar un comando",
+					"body": "Elige un comando para aplicarlo al espacio de trabajo actual."
+				}
+			}
+		},
+		"align": {
+			"summary": "Alinea los presets o capas seleccionados en posiciones comunes de la cuadrícula.",
+			"steps": {
+				"selectTargets": {
+					"title": "Seleccionar objetivos",
+					"body": "Selecciona los presets o capas que quieres alinear."
+				},
+				"pickAlignment": {
+					"title": "Elegir alineación",
+					"body": "Elige una opción de alineación para ajustarlos."
+				}
+			}
+		},
+		"anchor-point": {
+			"summary": "Coloca un ancla con nombre para referencias de diseño y flujos de ajuste.",
+			"steps": {
+				"nameAnchor": {
+					"title": "Nombrar el ancla",
+					"body": "Escribe un nombre que identifique este punto de anclaje."
+				},
+				"dropAnchor": {
+					"title": "Soltarla en la cuadrícula",
+					"body": "Haz clic en el espacio de trabajo para colocar el ancla."
+				}
+			}
+		},
+		"layout-lock": {
+			"summary": "Evita movimientos accidentales mientras organizas la cuadrícula del espacio de trabajo.",
+			"steps": {
+				"turnLockOn": {
+					"title": "Activar el bloqueo",
+					"body": "Activa el bloqueo para congelar las posiciones de los widgets."
+				},
+				"unlockToRearrange": {
+					"title": "Desbloquear para reorganizar",
+					"body": "Desactiva el bloqueo cuando quieras mover widgets de nuevo."
+				}
+			}
+		},
+		"info": {
+			"summary": "Muestra metadatos, rutas y estado de presets en una ficha de resumen amplia.",
+			"steps": {
+				"placeWidget": {
+					"title": "Colocar el widget",
+					"body": "Añade el widget Info a tu espacio de trabajo."
+				},
+				"inspectPreset": {
+					"title": "Inspeccionar un preset",
+					"body": "Selecciona un preset para ver sus detalles aquí."
+				}
+			}
+		},
+		"quick-actions": {
+			"summary": "Ejecuta scripts, efectos y acciones de archivo desde una paleta de comandos compacta.",
+			"steps": {
+				"openPalette": {
+					"title": "Abrir la paleta",
+					"body": "Abre la paleta y escribe para buscar acciones."
+				},
+				"runAction": {
+					"title": "Ejecutar una acción",
+					"body": "Selecciona una acción para ejecutarla de inmediato."
+				}
+			}
+		},
+		"directory-browser": {
+			"summary": "Explora carpetas del disco y presets desde dentro del panel.",
+			"steps": {
+				"navigateFolders": {
+					"title": "Navegar por carpetas",
+					"body": "Usa el campo de ruta o la lista de carpetas para moverte."
+				},
+				"openPreset": {
+					"title": "Abrir un preset",
+					"body": "Haz doble clic en un preset para aplicarlo o inspeccionarlo."
+				}
+			}
+		},
+		"font-viewer": {
+			"summary": "Previsualiza familias de fuentes, estilos y texto de muestra en el espacio de trabajo.",
+			"steps": {
+				"loadFonts": {
+					"title": "Cargar fuentes",
+					"body": "Carga las fuentes del sistema o elige una familia para previsualizarla."
+				},
+				"editSample": {
+					"title": "Editar la muestra",
+					"body": "Cambia el texto de muestra para revisar glifos y estilos."
+				}
+			}
+		}
 	}
 }

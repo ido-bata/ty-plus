@@ -1,13 +1,9 @@
 import { ChevronDown, FolderOpen, Plus, Trash2 } from "lucide-react";
-import { type JSX, useRef, useState } from "react";
+import { type JSX, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { readUserHomeOrFallback } from "@/management/preset/catalog-add/browse-start-dir";
 import { PresetIconEditor } from "@/management/preset/components/IconEditor";
-import type { Preset, PresetType } from "@/management/preset/contract";
-import type {
-	IconRule,
-	IconRuleFilter,
-} from "@/management/preset/group-catalog";
+import type { Preset } from "@/management/preset/contract";
 import type { PresetIconEditorDraft } from "@/management/preset/icon-editor";
 import {
 	createPresetIconDraft,
@@ -25,21 +21,24 @@ import { listPresets } from "@/management/preset/use-cases";
 import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
 import { glyphBoxFillClass } from "@/management/preset/workspace/glyph-classes";
 import { AccordionSection } from "@/management/setting/dialog/sections/AccordionSection";
+import { DirectoryBrowser } from "@/management/storage/ui/DirectoryBrowser";
 import { Icon } from "@/shared/component";
 import { Button } from "@/shared/component/controls/Button";
 import { Input } from "@/shared/component/fields/Input";
 import { PathField } from "@/shared/component/fields/PathField";
+import { Textarea } from "@/shared/component/fields/Textarea";
 import { css } from "@/styled-system/css";
 import { ConditionRuleCard } from "./ConditionRuleCard";
+import {
+	type ConditionRule,
+	conditionRulesToIconRules,
+} from "./condition-rule-helpers";
 import { FolderScanDepthSelector } from "./FolderScanDepthSelector";
 
 /**
  * Create a preset group: select multiple presets from catalog or scan a folder.
  * Supports conditional icon rules based on preset type, name pattern, or specific selections.
  */
-const escapeRegex = (value: string): string =>
-	value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-
 const columnClass = css({
 	display: "flex",
 	flexDirection: "column",
@@ -91,6 +90,20 @@ const pathRowClass = css({
 	gap: "2",
 });
 
+const memberBrowserClass = css({
+	height: "16rem",
+	minHeight: "0",
+	overflow: "hidden",
+});
+
+const memberLabelClass = css({
+	fontSize: "xs",
+	fontWeight: "medium",
+	textTransform: "uppercase",
+	letterSpacing: "wide",
+	color: "text.muted",
+});
+
 export function GroupDialog(): JSX.Element {
 	const { t } = useTranslation("presets");
 	// Base icon for icon rules (draft state)
@@ -100,16 +113,7 @@ export function GroupDialog(): JSX.Element {
 
 	// Paths list for group members is stored as newline-separated value in field 'paths'
 	// Condition rules: additive list where each rule has a namePattern and an icon draft
-	const [conditionRules, setConditionRules] = useState<
-		{
-			id: string;
-			filterType: "name" | "path" | "preset" | "presetType";
-			pattern: string;
-			matchMode?: "regex" | "contains" | "startsWith" | "endsWith";
-			presetType?: PresetType;
-			draft: PresetIconEditorDraft;
-		}[]
-	>([
+	const [conditionRules, setConditionRules] = useState<ConditionRule[]>([
 		{
 			id: `init-${Date.now()}`,
 			filterType: "name",
@@ -124,6 +128,27 @@ export function GroupDialog(): JSX.Element {
 		{ id: string; title: string; filePath: string }[]
 	>([]);
 	const [candidateDirs, setCandidateDirs] = useState<string[]>([]);
+
+	// Explicit group members: the whole preset catalog, every type
+	// (preset/script/plugin/footage) — issue #190.
+	const [memberPresets, setMemberPresets] = useState<Preset[]>([]);
+	const [memberPresetsLoading, setMemberPresetsLoading] = useState(true);
+	useEffect(() => {
+		let cancelled = false;
+		void listPresets()
+			.then((rows) => {
+				if (!cancelled) setMemberPresets(rows);
+			})
+			.catch(() => {
+				if (!cancelled) setMemberPresets([]);
+			})
+			.finally(() => {
+				if (!cancelled) setMemberPresetsLoading(false);
+			});
+		return () => {
+			cancelled = true;
+		};
+	}, []);
 
 	const _prevPathsRef = useRef<string | null>(null);
 	const lastDetectKeyRef = useRef<string | null>(null);
@@ -183,16 +208,7 @@ export function GroupDialog(): JSX.Element {
 				.join("|");
 			if (idsKey && lastDetectKeyRef.current !== idsKey) {
 				const sampleIds = presets.map((x) => x.id).slice(0, 10);
-				const autoDetectRulesUpdater = (
-					prev: {
-						id: string;
-						filterType: "name" | "path" | "preset" | "presetType";
-						pattern: string;
-						matchMode?: "regex" | "contains" | "startsWith" | "endsWith";
-						presetType?: PresetType;
-						draft: PresetIconEditorDraft;
-					}[],
-				) => {
+				const autoDetectRulesUpdater = (prev: ConditionRule[]) => {
 					const sampleIdsSet = new Set(sampleIds);
 					const hasOverlap = prev.some(
 						(r) =>
@@ -397,6 +413,79 @@ export function GroupDialog(): JSX.Element {
 										);
 									})}
 								</div>
+
+								{/* Explicit members: pick any catalog preset, regardless
+								    of type (.ffx preset, script, plugin, footage). The
+								    selection is stored as `presetIds`, one id per line,
+								    and is unioned with folder-scan members on save. */}
+								{(() => {
+									const memberPresetByPath = new Map(
+										memberPresets.map((p) => [p.filePath?.trim() || p.id, p]),
+									);
+									const selectedMemberIds = new Set(
+										(ctx.values.presetIds ?? "")
+											.split(/\r?\n/)
+											.map((l) => l.trim())
+											.filter(Boolean),
+									);
+									const toggleMember = (entryPath: string) => {
+										const preset = memberPresetByPath.get(entryPath);
+										if (!preset) return;
+										const next = new Set(selectedMemberIds);
+										if (next.has(preset.id)) next.delete(preset.id);
+										else next.add(preset.id);
+										ctx.setValue("presetIds", [...next].join("\n"));
+									};
+									return (
+										<div className={columnClass}>
+											<span className={memberLabelClass}>
+												Preset members (all types)
+											</span>
+											<div className={memberBrowserClass}>
+												<DirectoryBrowser
+													selectionMode="files"
+													entries={memberPresets.map((p) => ({
+														path: p.filePath?.trim() || p.id,
+														name: `${p.title} (${p.type})`,
+														isDirectory: false,
+													}))}
+													loading={memberPresetsLoading}
+													canGoUp={false}
+													onEntryClick={() => {}}
+													onEntryActivate={() => {}}
+													onGoUp={() => {}}
+													isSelected={(entryPath) => {
+														const p = memberPresetByPath.get(entryPath);
+														return p ? selectedMemberIds.has(p.id) : false;
+													}}
+													onToggleSelected={toggleMember}
+													selectedSummary={{ files: 0, folders: 0 }}
+													viewMode="list"
+													onViewModeChange={() => {}}
+													scale={1}
+													aspect="square"
+													loadingLabel=""
+													emptyLabel={
+														memberPresets.length === 0
+															? "No presets in catalog"
+															: ""
+													}
+													upLabel=""
+												/>
+											</div>
+											<Textarea
+												aria-label="Preset member IDs"
+												placeholder="One preset ID per line"
+												value={ctx.values.presetIds ?? ""}
+												onChange={(event) =>
+													ctx.setValue("presetIds", event.currentTarget.value)
+												}
+												uiSize="sm"
+												disabled={ctx.busy}
+											/>
+										</div>
+									);
+								})()}
 							</div>
 						</AuthoringSection>
 						{/* 3. Icon Rules (Additive) */}
@@ -501,23 +590,7 @@ export function GroupDialog(): JSX.Element {
 					.split(/\r?\n/)
 					.map((l: string) => l.trim())
 					.filter(Boolean);
-				const condRules = conditionRules.flatMap<IconRule>((r) => {
-					const icon = presetIconDraftToPresetIcon(r.draft);
-					let filter: IconRuleFilter | undefined;
-					if (r.filterType === "name" && r.pattern.trim())
-						filter = { namePattern: r.pattern.trim() };
-					if (r.filterType === "path" && r.pattern.trim())
-						filter = { filePathPattern: r.pattern.trim() };
-					if (r.filterType === "preset" && r.pattern.trim())
-						filter = {
-							specificPresetIds: r.pattern.split(/\s*,\s*/).filter(Boolean),
-						};
-					if (r.filterType === "presetType" && r.presetType)
-						filter = { presetType: r.presetType };
-					if (icon && filter) return [{ filter, icon }];
-					if (icon) return [{ icon }];
-					return [];
-				});
+				const condRules = conditionRulesToIconRules(conditionRules);
 				return persistFolderGroupPreset(win, {
 					folderPaths,
 					presetIdsText: values.presetIds ?? "",

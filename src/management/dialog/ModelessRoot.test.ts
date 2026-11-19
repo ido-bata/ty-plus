@@ -20,7 +20,6 @@ import { DialogRoot, type DialogRootProps } from "./Root";
  * These are P1 smoke tests for the dialog surface bridge:
  * - debug-console
  * - dialog-presets
- * - dialog-preset-library
  * - dialog-messages
  * - dialog-settings
  *
@@ -33,7 +32,6 @@ import { DialogRoot, type DialogRootProps } from "./Root";
 const REGISTERED_SURFACE_IDS = [
 	"debug-console",
 	"dialog-presets",
-	"dialog-preset-library",
 	"dialog-messages",
 	"dialog-settings",
 ] as const;
@@ -47,11 +45,6 @@ describe("DialogRoot surface registry", () => {
 	it("dialog-presets resolves via resolveDialogExtensionIdForOpen", () => {
 		const ext = resolveDialogExtensionIdForOpen("dialog-presets");
 		expect(ext).toBe("app.ty-plus.dialog-presets");
-	});
-
-	it("dialog-preset-library resolves via resolveDialogExtensionIdForOpen", () => {
-		const ext = resolveDialogExtensionIdForOpen("dialog-preset-library");
-		expect(ext).toBe("app.ty-plus.dialog-preset-library");
 	});
 
 	it("dialog-messages resolves via resolveDialogExtensionIdForOpen", () => {

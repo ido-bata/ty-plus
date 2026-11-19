@@ -97,7 +97,34 @@ export class E2EContext {
 	/** Evaluate JS inside a surface's DOM context. */
 	async evalJs(surface: LiveSurface, expression: string, timeoutMs?: number) {
 		const conn = await this.cdp(surface);
-		return conn.evaluate(expression, timeoutMs);
+		try {
+			return await conn.evaluate(expression, timeoutMs);
+		} catch (error) {
+			// Tag the failing surface + expression head so a BLOCKED detail
+			// identifies the stuck target instead of a bare "CDP timeout"
+			// (Issue #223: J02/J06 timeouts had no attributable surface).
+			const head = expression.replace(/\s+/g, " ").slice(0, 80);
+			throw new Error(
+				`${error instanceof Error ? error.message : String(error)} [surface=${surface.surfaceId}@${surface.port} expr=${head}]`,
+			);
+		}
+	}
+
+	/**
+	 * Fire-and-forget evaluate for expressions whose handler raises a native
+	 * host modal (ExtendScript `confirm()` via `askHostDeleteConfirm`). The
+	 * evalScript round-trip blocks the surface's renderer until the modal is
+	 * answered, so awaiting `Runtime.evaluate` deadlocks the harness — the
+	 * response is simply never read (Issue #223).
+	 */
+	async evalJsDetached(surface: LiveSurface, expression: string) {
+		const conn = await this.cdp(surface);
+		void conn
+			.send("Runtime.evaluate", {
+				expression,
+				returnByValue: true,
+			})
+			.catch(() => {});
 	}
 
 	/** Evaluate ExtendScript inside After Effects via the surface's CSInterface. */

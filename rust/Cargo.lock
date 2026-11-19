@@ -434,6 +434,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "filetime"
+version = "0.2.30"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e1255e7a9f1902190d4c10a75f2f7f495d3d3ce13e9ba26e6c48683a0f4dbed7"
+dependencies = [
+ "cfg-if",
+ "libc",
+]
+
+[[package]]
 name = "find-msvc-tools"
 version = "0.1.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2322,27 +2332,15 @@ dependencies = [
 ]
 
 [[package]]
-name = "ty-plus-online"
-version = "0.1.0"
-dependencies = [
- "chrono",
- "reqwest",
- "serde",
- "serde_json",
- "sha2",
- "url",
-]
-
-[[package]]
 name = "ty-plus-operation-worker"
 version = "0.1.0"
 dependencies = [
+ "filetime",
  "reqwest",
  "serde",
  "serde_json",
  "sha2",
  "ty-plus-host-filesystem",
- "ty-plus-online",
  "ty-plus-protocol",
  "ty-plus-storage",
  "url",
@@ -2371,7 +2369,6 @@ dependencies = [
  "tokio-native-tls",
  "tokio-stream",
  "ty-plus-host-filesystem",
- "ty-plus-online",
  "ty-plus-protocol",
  "ty-plus-storage",
  "windows-sys 0.61.2",

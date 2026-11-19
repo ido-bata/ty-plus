@@ -3,6 +3,7 @@ import { FolderOpen } from "lucide-react";
 import { useState } from "react";
 import { expect } from "storybook/test";
 import { Icon } from "@/shared/component/icons/Icon";
+import { expectCanvasLayout } from "@/storybook/quality/layout";
 import { PathField } from "./PathField";
 
 const meta = {
@@ -85,6 +86,7 @@ export const Focused: Story = {
 		browseSlot: BrowseIcon,
 	},
 	play: async ({ canvasElement }) => {
+		expectCanvasLayout(canvasElement);
 		const input = canvasElement.querySelector<HTMLInputElement>(
 			"[data-path-field] input",
 		);
@@ -97,5 +99,6 @@ export const Focused: Story = {
 		await expect(getComputedStyle(input).borderTopColor).not.toBe(
 			restingBorderColor,
 		);
+		expectCanvasLayout(canvasElement);
 	},
 };

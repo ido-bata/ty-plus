@@ -43,10 +43,7 @@ const HOST_FILESYSTEM_CRATE = "ty-plus-host-filesystem";
  * asserts equality, so adding a workspace member without updating this
  * list fails CI rather than silently skipping lint/test for it.
  */
-export const LINUX_SAFE_CRATES = [
-	"ty-plus-protocol",
-	"ty-plus-online",
-] as const;
+export const LINUX_SAFE_CRATES = ["ty-plus-protocol"] as const;
 
 type LinuxSafeCrate = (typeof LINUX_SAFE_CRATES)[number];
 
@@ -104,7 +101,7 @@ export const fetchCargoMetadata = (): CargoMetadata => {
 /**
  * Extract the package name from a cargo package ID.
  * ID format: `<source-url>#<name>@<version>`, e.g.
- *   `path+file:///repo/rust/crates/online#ty-plus-online@0.1.0`.
+ *   `path+file:///repo/rust/crates/protocol#ty-plus-protocol@0.1.0`.
  */
 const packageNameFromId = (id: string): string | null => {
 	const hashIdx = id.lastIndexOf("#");

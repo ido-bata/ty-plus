@@ -48,6 +48,16 @@ const LITERAL_CLASS_EXTRACT =
 
 const SKIP_DIRS = new Set(["node_modules", ".git", "docs", "archive"]);
 
+// A protected hook must match as a whole class token. Hyphenated neighbours
+// disqualify the match: `ty-ws-grid-gap` / `--ty-ws-grid-radius` are theme
+// custom-property token keys (see grid-settings.ts GRID_LIVE_TOKEN_KEYS),
+// not the `ws-grid` class hook consumed by host-page CSS injection, and a
+// class like `foo-ws-grid` is a different class token that host selectors
+// (`.ws-grid`) never match. `\b` alone cannot express this because `-` is a
+// word boundary, so the boundary excludes `-` explicitly.
+const hookTokenPattern = (hook: string): RegExp =>
+	new RegExp(`(?<![\\w-])${hook}(?![\\w-])`);
+
 /**
  * Scan a JS/TS/TSX file for class attribute values that contain workspace hooks.
  */
@@ -89,8 +99,7 @@ function scanFile(filePath, content) {
 		while (m !== null) {
 			const attrValue = m[1];
 			for (const hook of PROTECTED_HOOKS) {
-				const tokenPattern = new RegExp(`\\b${hook}\\b`);
-				if (tokenPattern.test(attrValue)) {
+				if (hookTokenPattern(hook).test(attrValue)) {
 					violations.push({
 						line: li + 1,
 						col: m.index + 1,
@@ -110,8 +119,7 @@ function scanFile(filePath, content) {
 			const str = m2[1] ?? m2[2];
 			if (str) {
 				for (const hook of PROTECTED_HOOKS) {
-					const tokenPattern = new RegExp(`\\b${hook}\\b`);
-					if (tokenPattern.test(str)) {
+					if (hookTokenPattern(hook).test(str)) {
 						violations.push({
 							line: li + 1,
 							col: m2.index + 1,

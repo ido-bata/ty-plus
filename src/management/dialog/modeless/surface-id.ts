@@ -23,7 +23,6 @@ const DIALOG_EXTENSION_SUFFIX_TO_SURFACE_ID: Record<string, string> = {
 	"dialog-preset-edit": "dialog-preset-edit",
 	"debug-console": "debug-console",
 	"dialog-presets": "dialog-presets",
-	"dialog-preset-library": "dialog-preset-library",
 	"dialog-messages": "dialog-messages",
 	"dialog-settings": "dialog-settings",
 	"dialog-probe": "dialog-probe",

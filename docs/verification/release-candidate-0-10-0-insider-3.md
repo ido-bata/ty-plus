@@ -11,7 +11,7 @@
 
 ```sh
 TY_PLUS_RELEASE_VERSION=0.10.0-insider.3 bun run build:cep:dev
-bun run verify:online-gateway:package -- --trust-mode=development-unsigned --product-version=0.10.0
+bun run verify:operation-worker:package -- --trust-mode=development-unsigned --product-version=0.10.0
 bun run scripts/package/package-cep-archive.ts zip
 TY_PLUS_RELEASE_VERSION=0.10.0-insider.3 TY_PLUS_RELEASE_CHANNEL=insider \
   bun scripts/package/release-manifest.ts \

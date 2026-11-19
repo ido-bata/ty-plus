@@ -13,7 +13,6 @@ export const CTX_MENU_IDS = {
 	/** Restore one snapshot: child id is `${restoreSnapshotPrefix}${snapshotId}`. */
 	restoreSnapshotPrefix: "ty.ctx.restore-snapshot.",
 	openPresets: "ty.ctx.open-presets",
-	openPresetLibrary: "ty.ctx.open-preset-library",
 	openMessages: "ty.ctx.open-messages",
 	openSettings: "ty.ctx.open-settings",
 	openDebug: "ty.ctx.open-debug",

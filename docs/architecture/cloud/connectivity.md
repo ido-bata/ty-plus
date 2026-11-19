@@ -10,31 +10,30 @@ Online surface implementation is under `src/management/online/`. The local core
 
 ## Current Behavior
 
-- `createFixtureCloudGateway()` returns an **empty** preset/notification
-  catalog; no sample fixtures are bundled. The dialog renders an empty state,
-  and `resolvePreset` for an unknown id throws by design.
-- `createRuntimeCloudGateway()` binds the gateway to a runtime port. Without a
-  deployed backend the gateway stays **dormant**: boot failure and
-  unreachability degrade to a status display and never block the local core
-  (the `cloud-gateway-boot` degraded path, plus the old #128/#187 separation
-  fixes ported into this repo).
-- Update/notification feeds are **static JSON** fetched directly by the panel
+- The only provided online surfaces are the **static JSON feeds** for updates
+  and notifications, fetched directly by the panel
   (`docs/architecture/feeds.md`). They are fail-soft: fetch failure shows as
   "取得失敗" and does not affect local features.
+- The unprovided online surfaces — remote preset catalog, public links, cloud
+  gateway, Preset Library UI, `online.*` wire methods, the Rust `online`
+  crate, and the cloud-gateway boot path — were removed structurally in #193.
+  There is no fixture gateway, no `isFixture` badge contract, and no dormant
+  service layer left to fall back to.
 
 ## Product Decision
 
 - Offline mode does not block local workspace / local preset execution.
 - Online is additive value over the local route.
-- Fixture / dormant mode is the dev/test/unset fallback, not the product value
-  itself.
+- Unprovided features are removed from the structure entirely rather than
+  kept unreachable; reintroduction requires a new backend contract and a new
+  surface design (see [`../offline-core.md`](../offline-core.md)).
 
 ## Local Persistence Contract
 
 | Contract | Implementation |
 | --- | --- |
-| Local persistence is authoritative | local preset store writes with `source: "local"`; local catalog read never touches the gateway |
-| Cloud is non-blocking overlay | gateway health and catalog failures surface as status only, never throw into local paths |
+| Local persistence is authoritative | local preset store writes with `source: "local"`; the local catalog never touches a remote source |
+| Provided feeds are non-blocking | feed fetch failures surface as status only, never throw into local paths |
 | Core AE workflows work offline | unit suite runs without network; `PanelRoot.offline.test.ts` pins the wiring contract |
 
 ## Not in This Repo

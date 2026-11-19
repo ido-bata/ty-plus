@@ -49,10 +49,6 @@
 		"placeholder": "検索ワードを入力…",
 		"empty": "該当するプリセットがありません"
 	},
-	"online": {
-		"loading": "読み込み中…",
-		"empty": "オンラインのプリセットはありません"
-	},
 	"presetTool": {
 		"form": {
 			"presetId": "プリセット ID",
@@ -152,7 +148,6 @@
 		"animationLabel": "アニメーション",
 		"layerCompLabel": "レイヤー/コンプ",
 		"codeLabel": "コード",
-		"presetLibrary": "プリセットライブラリ",
 		"messages": "メッセージ",
 		"settings": "設定",
 		"debugConsole": "デバッグコンソール",

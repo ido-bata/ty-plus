@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import * as id from "../ae/cep/entry/id";
 import * as initialization from "../setting/onboarding/initialization";
 import { bootPanel } from "./boot";
-import { tryBuildCloudGateway } from "./cloud-gateway-boot";
+import { tryBuildOperationWorker } from "./operation-worker-boot";
 
 // ── Mock dependencies ────────────────────────────────────────────────────────
 
@@ -63,25 +63,9 @@ vi.mock("../setting/onboarding/initialization", () => ({
 	readInitializationStateFromApp: vi.fn(),
 }));
 
-vi.mock("./thumbnail-gateway-boot", () => ({
-	tryBuildThumbnailGateway: vi.fn(() => null),
+vi.mock("./operation-worker-boot", () => ({
+	tryBuildOperationWorker: vi.fn(() => null),
 }));
-
-vi.mock("./cloud-gateway-boot", async (importOriginal) => {
-	const actual = await (
-		importOriginal as () => Promise<Record<string, unknown>>
-	)();
-	return {
-		...actual,
-		tryBuildCloudGateway: vi.fn(() => ({
-			kind: "degraded" as const,
-			failure: {
-				reason: "missing-extension-root" as const,
-				message: "test fixture",
-			},
-		})),
-	};
-});
 
 vi.mock("../../function/onboarding/ui/SetupRequired", () => ({
 	SetupRequired: () => <div data-testid="setup-required">SetupRequired</div>,
@@ -159,7 +143,7 @@ describe("bootPanel", () => {
 		);
 	});
 
-	describe("cloud gateway wiring", () => {
+	describe("operation worker wiring", () => {
 		beforeEach(() => {
 			(
 				initialization.readInitializationStateFromApp as ReturnType<
@@ -174,13 +158,13 @@ describe("bootPanel", () => {
 			).mockReturnValue({ completed: true, supportRoot: "D:/Temp/support" });
 		});
 
-		it("calls tryBuildCloudGateway once with the panel window at boot", async () => {
-			(tryBuildCloudGateway as ReturnType<typeof vi.fn>).mockClear();
+		it("calls tryBuildOperationWorker once with the panel window at boot", async () => {
+			(tryBuildOperationWorker as ReturnType<typeof vi.fn>).mockClear();
 
 			await bootPanel();
 
-			expect(tryBuildCloudGateway).toHaveBeenCalledTimes(1);
-			expect(tryBuildCloudGateway).toHaveBeenCalledWith(window);
+			expect(tryBuildOperationWorker).toHaveBeenCalledTimes(1);
+			expect(tryBuildOperationWorker).toHaveBeenCalledWith(window);
 		});
 	});
 });

@@ -40,7 +40,6 @@ type Args = {
 	loading: boolean;
 	blocks: readonly NotificationBlock[];
 	blocksLoading: boolean;
-	isFixture: boolean;
 };
 
 const makeItem = (
@@ -173,7 +172,7 @@ const ListView = (args: Args): JSX.Element => (
 							padding: 12,
 							cursor: "pointer",
 							background: unread ? "#2c2c2c" : "#252525",
-							opacity: args.isFixture ? 0.7 : 1,
+							opacity: 1,
 							display: "flex",
 							alignItems: "flex-start",
 							justifyContent: "space-between",
@@ -215,20 +214,6 @@ const ListView = (args: Args): JSX.Element => (
 											>
 												{item.name}
 											</span>
-											{args.isFixture ? (
-												<span
-													style={{
-														marginLeft: 8,
-														padding: "1px 6px",
-														borderRadius: 4,
-														background: "rgba(240, 179, 71, 0.2)",
-														fontSize: 10,
-														color: "#f0b347",
-													}}
-												>
-													placeholder (offline fixture)
-												</span>
-											) : null}
 										</div>
 										{item.summary ? (
 											<span
@@ -629,7 +614,6 @@ const baseArgs: Args = {
 	loading: false,
 	blocks: [],
 	blocksLoading: false,
-	isFixture: false,
 };
 
 const meta = {
@@ -672,15 +656,6 @@ export const LongList: Story = {
 			"n-4": "2026-09-07T09:10:00.000Z",
 			"n-9": "2026-09-06T17:00:00.000Z",
 		},
-	},
-};
-
-export const FixtureMode: Story = {
-	args: {
-		view: "list",
-		items: SAMPLE_ITEMS,
-		readAtById: {},
-		isFixture: true,
 	},
 };
 

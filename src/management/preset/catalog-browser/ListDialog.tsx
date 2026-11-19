@@ -28,8 +28,6 @@ import type { CepMenuPayload } from "@/management/dialog/dialogs/context-menu";
 import { registerCepJsonContextMenuSurface } from "@/management/dialog/dialogs/context-menu";
 import type { ShellProps } from "@/management/dialog/dialogs/shell/Layout";
 import { useDialogClose } from "@/management/dialog/useClose";
-import { useGatewayHealth } from "@/management/online/runtime-gateway-health";
-import { resolvePresetToolSurfaceIdForPreset } from "@/management/preset/authoring/request";
 import {
 	ICON_CELL_BASE_REM,
 	ICON_GRID_CLASS,
@@ -43,17 +41,21 @@ import { CatalogBrowserShell } from "@/management/preset/catalog-browser/shell";
 import { CatalogBrowserViewModeToggle } from "@/management/preset/catalog-browser/view-mode-toggle";
 import { buildPlacementHints } from "@/management/preset/catalog-browser/workspace-placement-hints";
 import type { Preset } from "@/management/preset/contract";
+import { askHostDeleteConfirm } from "@/management/preset/delete-confirm";
 import { traceExecute } from "@/management/preset/execution/lifecycle-trace";
 import type { GroupEntry } from "@/management/preset/group-catalog";
 import { parseGroupFromText } from "@/management/preset/group-catalog";
 import { tryParsePresetIconValue } from "@/management/preset/icon-data";
-import { getPresetToolDialogEntry } from "@/management/preset/registry";
+import { getSharedSiblingListDirectory } from "@/management/preset/sibling-directory-lister";
 import {
 	getPreset,
 	listPresets,
 	removeLocalPreset,
 } from "@/management/preset/use-cases";
-import { PresetGlyphById } from "@/management/preset/workspace/glyph";
+import {
+	PresetGlyphById,
+	type PresetGlyphByIdProps,
+} from "@/management/preset/workspace/glyph";
 import {
 	glyphBoxCompactClass,
 	glyphBoxCompactPadClass,
@@ -774,6 +776,29 @@ function sourceLine(preset: Preset): string {
 	return `${preset.type} · ${basenamePath(preset.filePath)}`;
 }
 
+/**
+ * `PresetGlyphById` wired to the shared sibling-image directory lister so
+ * catalog rows resolve sidecar thumbnails exactly like workspace tiles and
+ * the directory browser (issue #191 — one icon contract on every surface).
+ */
+function CatalogPresetGlyph(
+	props: Omit<PresetGlyphByIdProps, "thumbnailListDirectory">,
+): JSX.Element {
+	const thumbnailListDirectory = useMemo(
+		() =>
+			typeof window === "undefined"
+				? undefined
+				: getSharedSiblingListDirectory(window),
+		[],
+	);
+	return (
+		<PresetGlyphById
+			{...props}
+			thumbnailListDirectory={thumbnailListDirectory}
+		/>
+	);
+}
+
 function GroupHeaderGlyph(props: { group: GroupEntry }): JSX.Element {
 	const { group } = props;
 	const parsed = group.icon ? tryParsePresetIconValue(group.icon) : null;
@@ -786,7 +811,7 @@ function GroupHeaderGlyph(props: { group: GroupEntry }): JSX.Element {
 			icon: parsed,
 		};
 		return (
-			<PresetGlyphById
+			<CatalogPresetGlyph
 				presetId={group.id}
 				preset={fake}
 				surface="framed"
@@ -948,7 +973,7 @@ function PresetListTreeItem(props: {
 		>
 			<div aria-hidden className={presetRowSpacerClass} />
 			<div className={presetRowCenterClass}>
-				<PresetGlyphById
+				<CatalogPresetGlyph
 					presetId={preset.id}
 					preset={preset}
 					surface="framed"
@@ -1232,7 +1257,7 @@ function IconPresetCard(props: {
 				aria-label={`Run ${preset.title || preset.id}`}
 			>
 				<div className={iconPresetButtonInnerClass}>
-					<PresetGlyphById
+					<CatalogPresetGlyph
 						presetId={preset.id}
 						preset={preset}
 						boxClass={glyphBoxFlushClass}
@@ -1493,10 +1518,6 @@ export function PresetsDialog(): JSX.Element {
 		placement,
 		groupPlacement,
 	} = loadState;
-	// Cloud health is tracked separately from the local catalog state on
-	// purpose (Issue #145): the gateway being down is a fact about the online
-	// side and must not decide what the local list renders.
-	const gatewayHealth = useGatewayHealth();
 	const {
 		viewMode,
 		setViewMode,
@@ -1747,10 +1768,7 @@ export function PresetsDialog(): JSX.Element {
 				if (!preset) {
 					return;
 				}
-				const toolSurface = resolvePresetToolSurfaceIdForPreset(preset);
-				if (!getPresetToolDialogEntry(toolSurface)) {
-					return;
-				}
+				await openPresetEditSurface(window, PRESETS_DIALOG_SURFACE_ID, id);
 			} catch (error) {
 				console.warn(
 					"preset-list: edit failed",
@@ -1763,6 +1781,14 @@ export function PresetsDialog(): JSX.Element {
 
 	const onDelete = useCallback(
 		async (id: string) => {
+			// Destructive deletes go through the same host confirm gate as the
+			// edit dialog — the catalog list must not bypass it (Issue #223).
+			const groupEntry = groups.find((g) => g.id === id);
+			const presetEntry = presets.find((p) => p.id === id);
+			const isGroup = Boolean(groupEntry);
+			const title = groupEntry?.title ?? presetEntry?.title ?? "";
+			const confirmed = await askHostDeleteConfirm(window, title, isGroup);
+			if (!confirmed) return;
 			try {
 				await removeLocalPreset(id);
 				await loadEverything();
@@ -1773,7 +1799,7 @@ export function PresetsDialog(): JSX.Element {
 				);
 			}
 		},
-		[loadEverything],
+		[groups, presets, loadEverything],
 	);
 
 	const clearSearch = useCallback(() => {
@@ -2109,24 +2135,9 @@ export function PresetsDialog(): JSX.Element {
 		return <p className={emptyStateClass}>No matching presets</p>;
 	};
 
-	const cloudNotice =
-		gatewayHealth.state === "live" ? null : (
-			<p className={cloudNoticeClass} data-preset-list-cloud-notice>
-				<span className={css({ fontWeight: "medium", flexShrink: "0" })}>
-					Cloud offline
-				</span>
-				<span>
-					{gatewayHealth.state === "degraded"
-						? gatewayHealth.failure.message
-						: gatewayHealth.reason}{" "}
-					— showing the local catalog only.
-				</span>
-			</p>
-		);
-
-	// A group-catalog read failure degrades grouping only. It is reported next
-	// to the cloud note rather than replacing the body, because the preset rows
-	// did load.
+	// A group-catalog read failure degrades grouping only. It is reported
+	// above the body rather than replacing it, because the preset rows did
+	// load.
 	const groupsNotice = groupsError ? (
 		<p className={cloudNoticeClass} data-preset-list-groups-notice>
 			<span className={css({ fontWeight: "medium", flexShrink: "0" })}>
@@ -2196,7 +2207,6 @@ export function PresetsDialog(): JSX.Element {
 					</div>
 				}
 			>
-				{cloudNotice}
 				{groupsNotice}
 				{viewMode === "list" ? (
 					visibleCount === 0 && loadPhase !== "streaming" ? (

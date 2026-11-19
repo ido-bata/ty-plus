@@ -3,10 +3,10 @@ import {
 	normalizeCepSystemPath,
 } from "@/management/ae/cep/runtime";
 import type { Preset, PresetType } from "@/management/preset/contract";
-import { presetIconImage } from "@/management/preset/contract";
 import { coercePersistedPresetIcon } from "@/management/preset/icon-data";
 import {
 	findSiblingImagePathForPresetFile,
+	SIBLING_IMAGE_NAME_RE,
 	type SiblingListingEntry,
 } from "@/management/preset/sibling-thumbnail";
 
@@ -42,7 +42,14 @@ export type FileBrowserEntry = {
 
 type QuickActionRootKind = "preset" | "script" | "plugin";
 
-type QuickActionRootFileRow = Preset;
+/**
+ * Quick-action root file row. `icon` always carries the materialized type
+ * default; the sidecar image path travels separately as `siblingImagePath`
+ * so derived imagery is never persisted inside `Preset.icon` (issue #191).
+ */
+export type QuickActionRootFileRow = Preset & {
+	siblingImagePath?: string | null;
+};
 
 export type QuickActionDirectorySignature = {
 	path: string;
@@ -490,14 +497,7 @@ const buildFileBrowserService = (options: {
 			".aex",
 			".plugin",
 		]);
-		const siblingImageExt = new Set([
-			".png",
-			".jpg",
-			".jpeg",
-			".gif",
-			".webp",
-			".svg",
-		]);
+
 		let visitedEntries = 0;
 		let lastProgressFileCount = 0;
 		let lastProgressDirectoryCount = 0;
@@ -555,8 +555,7 @@ const buildFileBrowserService = (options: {
 			const siblingEntries: SiblingListingEntry[] = [];
 			for (const entry of dirents) {
 				if (!entry.isFile()) continue;
-				const ext = (pathMod.extname(entry.name) || "").toLowerCase();
-				if (!siblingImageExt.has(ext)) continue;
+				if (!SIBLING_IMAGE_NAME_RE.test(entry.name)) continue;
 				siblingEntries.push({
 					name: entry.name,
 					path: normalizeListedPath(pathMod.resolve(currentDir, entry.name)),
@@ -606,9 +605,8 @@ const buildFileBrowserService = (options: {
 							type,
 							title: dirent.name,
 							filePath,
-							icon: siblingImage
-								? presetIconImage(siblingImage)
-								: coercePersistedPresetIcon(type, undefined),
+							icon: coercePersistedPresetIcon(type, undefined),
+							siblingImagePath: siblingImage,
 						});
 						$chunkReportPromises.push(reportProgress(false));
 					}

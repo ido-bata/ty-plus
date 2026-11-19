@@ -19,6 +19,7 @@ export const PATHS = {
 	paths: (root: string) => `${root}/settings/paths.json`,
 	ui: (root: string) => `${root}/settings/ui.json`,
 	controlPanel: (root: string) => `${root}/settings/control-panel.json`,
+	tutorialState: (root: string) => `${root}/settings/tutorial-state.json`,
 
 	// catalogs
 	presetCatalog: (root: string) => `${root}/presets/presets.json`,
@@ -47,8 +48,6 @@ export const PATHS = {
 
 	// cache/
 	notifications: (root: string) => `${root}/cache/notifications.json`,
-	remotePresets: (root: string) => `${root}/cache/remote-presets.json`,
-	publicLinks: (root: string) => `${root}/cache/public-links.json`,
 	candidates: (root: string) => `${root}/cache/candidates.json`,
 	candidatesChunk: (root: string, id: string) =>
 		`${root}/cache/candidates/${id}.json`,

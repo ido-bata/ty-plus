@@ -8,6 +8,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { WidgetType } from "@/function/widget";
+import { isWidgetType } from "@/function/widget/contract";
 import { useCep } from "@/management/ae/cep/contexts/Context";
 import { tyPlusExtensionId } from "@/management/ae/cep/extension-id";
 import { createCepHostExecutor } from "@/management/ae/cep/host-executor";
@@ -16,6 +17,7 @@ import {
 	createCepSurfaceTransport,
 	openCepDialogSurface,
 } from "@/management/ae/cep/transport";
+import { importFile } from "@/management/ae/file-import";
 import { readGroupJson } from "@/management/catalog/json-files";
 import {
 	clearLogs,
@@ -91,17 +93,20 @@ import {
 	readUiSettings,
 	readWidgetRecords,
 	saveControlPanelState,
-	upsertWidgetRecords,
-	writeBackgroundJson,
 	writeNJson,
 	writeSettings,
-	writeUiSettings,
 } from "@/management/storage";
 import { startCandidatesPreload } from "@/management/storage/candidates-cache/runtime";
 import {
 	canUseCepNodeFileBrowser,
 	createCepNodeFileBrowserService,
 } from "@/management/storage/file-browser-service";
+import {
+	PersistenceLockTimeoutError,
+	PersistenceLockUnavailableError,
+	resolvePersistenceLockRoot,
+	withPersistenceLock,
+} from "@/management/storage/lock/persistence-lock";
 import { openWidgetAddDialogSurface } from "@/management/widget/open-add-dialog";
 import { registry } from "@/management/widget/registry";
 import { dispatchWorkspaceWsActionClick } from "@/management/workspace/events/dispatch-ws-action-click";
@@ -117,6 +122,10 @@ import {
 	setupExternalPresetDialogListener,
 } from "@/management/workspace/hooks/preset";
 import { packTopLeft } from "@/management/workspace/layout/engine";
+import {
+	type PersistedLayoutDocument,
+	parseLayoutDocumentJsonText,
+} from "@/management/workspace/layout/grid-document";
 import { resolveWorkspacePersistenceManagedRoot } from "@/management/workspace/layout/persistence-root";
 import {
 	isLayoutRestoreBlocked,
@@ -135,6 +144,7 @@ import {
 	type LayoutReloadPayload,
 	setLayoutReloadHandler,
 } from "@/management/workspace/onboarding/layout-reload-bridge";
+import { mergeOwnerLayoutWithDisk } from "@/management/workspace/persistence/external-layout-merge";
 import {
 	type PersistSurfaceStage,
 	SurfaceWriteError,
@@ -190,8 +200,6 @@ import {
 	requestOpenWorkspaceShellTool,
 } from "./hooks/dialogs";
 import { openDebugConsole, openUrlInDefaultBrowser } from "./hooks/helpers";
-
-import { importFile } from "./hooks/host-exec";
 import {
 	ensurePrimaryPanelWidgets,
 	remapSurfaceSelectionByPreservedTileIds,
@@ -560,6 +568,40 @@ export function useWorkspaceRuntime(root: Element | null): {
 		void initLayoutUndoCache(window, panelId);
 
 		const history = createHistoryManager(panelId, window);
+		// Snapshot list refresh shared by every mutation path. A rejected
+		// `listSnapshots` (unreadable snapshots.json, lock/IO failure) must
+		// not die as an unhandled rejection with the UI silently stuck on a
+		// stale list — log it so the debug console shows the cause (Issue
+		// #223: UC-B05/UC-J03 snapshot rows never rendered).
+		const refreshSnapshotUi = (): void => {
+			void history
+				.listSnapshots()
+				.then((snaps) => {
+					setUi({
+						canUndo: history.canUndo(),
+						canRedo: history.canRedo(),
+						snapshots: snaps,
+					});
+				})
+				.catch((error: unknown) => {
+					workspaceLog.error("snapshot list refresh failed", {
+						action: "workspace:snapshots-refresh",
+						context: {
+							message: error instanceof Error ? error.message : String(error),
+						},
+					});
+				});
+		};
+		const logSnapshotOpError =
+			(op: string) =>
+			(error: unknown): void => {
+				workspaceLog.error(`snapshot ${op} failed`, {
+					action: `workspace:snapshot-${op}`,
+					context: {
+						message: error instanceof Error ? error.message : String(error),
+					},
+				});
+			};
 		void history.init().then(() => {
 			history.push(
 				layoutsFromSurface(
@@ -567,17 +609,19 @@ export function useWorkspaceRuntime(root: Element | null): {
 					widgetResolutionFromCatalogContext(getState()),
 				),
 			);
-			void history.listSnapshots().then((snaps) => {
-				setUi({
-					canUndo: history.canUndo(),
-					canRedo: history.canRedo(),
-					snapshots: snaps,
-				});
-			});
+			refreshSnapshotUi();
 		});
 
 		// ── Persistence (F2) ────────────────────────────────────────────────────
 		let lastSavedSurfaceState = "";
+		// ADR-0006 §4: tile ids this panel actually has on disk — seeded from
+		// the layout document at restore and advanced by `onLayoutCommitted`
+		// after every successful `workspace-N.json` write. It is what lets the
+		// in-lock merge tell "the user deleted this tile" (absent from state,
+		// still on disk → dropped) apart from "an external writer removed it"
+		// (was persisted, now absent on disk → removed from state too) and
+		// "an external writer added it" (on disk, unknown to both → adopted).
+		let lastPersistedTileIds = new Set<string>();
 		// Writes stay closed until a layout restore classifies the on-disk
 		// `workspace-N.json` as readable. A failed read must never become an
 		// empty layout that the first user edit then persists (Issue #204).
@@ -607,6 +651,130 @@ export function useWorkspaceRuntime(root: Element | null): {
 			});
 
 		/**
+		 * ADR-0006 §4: the read→merge→write body shared by both persist
+		 * variants. MUST be invoked inside `withPersistenceLock` — every disk
+		 * read that feeds the write happens inside the hold, so no sibling
+		 * CEP process can interleave between our layout read and our writes.
+		 *
+		 * Instead of blindly serializing state, the on-disk `gridCells` are
+		 * merged against `lastPersistedTileIds` and the live state
+		 * (`mergeOwnerLayoutWithDisk`): external additions are adopted into
+		 * both the write and the in-memory state, external removals drop the
+		 * tile from state as well, and the owner's own tiles stay
+		 * authoritative. A corrupt/unreadable layout file fails the persist
+		 * rather than being overwritten with an empty grid.
+		 */
+		const persistLatestSurfaceStateLocked = async (
+			persistenceRootArg: string | undefined,
+			backgroundFatal: boolean,
+		): Promise<void> => {
+			const wsIndex = indexFromPanelId(getState().panelId);
+			const rawDisk = await readNJson(window, wsIndex);
+			let diskCells: PersistedLayoutDocument["gridCells"] = [];
+			if (rawDisk != null && rawDisk.trim() !== "") {
+				try {
+					diskCells = parseLayoutDocumentJsonText(rawDisk).gridCells;
+				} catch (error) {
+					throw new SurfaceWriteError("read-layout", error);
+				}
+			}
+			const latest = getState();
+			const merge = mergeOwnerLayoutWithDisk({
+				diskCells,
+				lastPersistedIds: lastPersistedTileIds,
+				stateTiles: latest.surfaceTiles,
+			});
+
+			// Adopted widget tiles need a type before the next reload resolves
+			// them from `widgets.json`. The records read is best-effort: an
+			// unreadable records file must not fail a persist whose layout
+			// write is still safe (records are untouched by the merge).
+			const adoptedIds = new Set(merge.adoptedTiles.map((t) => t.id));
+			const adoptedWidgetTypes: Record<string, WidgetType> = {};
+			if (adoptedIds.size > 0) {
+				try {
+					for (const record of await readWidgetRecords(window)) {
+						const id = String(record.id ?? "").trim();
+						if (adoptedIds.has(id) && isWidgetType(String(record.type))) {
+							adoptedWidgetTypes[id] = record.type as WidgetType;
+						}
+					}
+				} catch {
+					// best-effort classification only
+				}
+			}
+
+			const mergedResolutionState: SurfaceState = {
+				...latest,
+				surfaceTiles: merge.tilesToWrite,
+				widgetInstanceTypes: {
+					...latest.widgetInstanceTypes,
+					...adoptedWidgetTypes,
+				},
+			};
+			const widgetLayouts = layoutsFromSurface(
+				merge.tilesToWrite,
+				widgetResolutionFromCatalogContext(mergedResolutionState),
+			);
+
+			await writeSurfaceState({
+				win: window,
+				panelId: latest.panelId,
+				wsIndex,
+				widgetRecords: widgetLayouts.map((w) => ({
+					id: w.id,
+					type: w.widgetType as WidgetType,
+					param: {} as Record<string, unknown>,
+				})),
+				layoutJsonText: serialize(merge.tilesToWrite),
+				uiSettings: {
+					version: 1 as const,
+					showGridOverlay: latest.showGridOverlay,
+					showPresetLabels: latest.showPresetLabels,
+					selectedFont: "",
+				},
+				persistenceRootArg,
+				backgroundJsonText:
+					latest.bg != null ? `${JSON.stringify(latest.bg, null, 2)}\n` : null,
+				backgroundFatal,
+				onLayoutCommitted: () => {
+					// The layout file is durable NOW — advance the baseline
+					// before the remaining stages so a later failure cannot
+					// make a compensating persist misclassify these ids as
+					// external removals (ADR-0006 §4).
+					lastPersistedTileIds = new Set(merge.nextLastPersistedIds);
+					if (
+						merge.adoptedTiles.length === 0 &&
+						merge.removedTileIds.length === 0
+					) {
+						return;
+					}
+					const cur2 = getState();
+					const removedSet = new Set(merge.removedTileIds);
+					const prevTiles = cur2.surfaceTiles;
+					const prevIds = new Set(prevTiles.map((t) => t.id));
+					const nextTiles = [
+						...prevTiles.filter((t) => !removedSet.has(t.id)),
+						...merge.adoptedTiles.filter((t) => !prevIds.has(t.id)),
+					];
+					commit({
+						...cur2,
+						surfaceTiles: nextTiles,
+						selectedSurfaceIndices: remapSurfaceSelectionByPreservedTileIds(
+							prevTiles,
+							nextTiles,
+							cur2.selectedSurfaceIndices,
+						),
+						widgetInstanceTypes: {
+							...cur2.widgetInstanceTypes,
+							...adoptedWidgetTypes,
+						},
+					});
+				},
+			});
+		};
+
+		/**
 		 * Persist the current surface after a user edit.
 		 *
 		 * The gate is the FIRST statement, before change-detection and before
@@ -631,7 +799,6 @@ export function useWorkspaceRuntime(root: Element | null): {
 			}
 			lastSavedSurfaceState = nextSerialized;
 			try {
-				const snapshot = cur;
 				workspacePersistChain = workspacePersistChain
 					.catch(() => {})
 					.then(async () => {
@@ -654,41 +821,24 @@ export function useWorkspaceRuntime(root: Element | null): {
 							return;
 						}
 						const persistenceRootArg = lastPersistenceManagedRoot ?? undefined;
+						// ADR-0006: the lock keys on the root `writeJson` actually
+						// resolves — it can differ from the workspace persistence
+						// root, so it MUST be resolved separately.
+						const lockRoot = await resolvePersistenceLockRoot(window);
+						if (!lockRoot) {
+							if (lastSavedSurfaceState === nextSerialized) {
+								lastSavedSurfaceState = "";
+							}
+							logWorkspace("runtime:persist-lock-root-unavailable", {
+								panelId: cur.panelId,
+							});
+							return;
+						}
 						try {
 							suppressLocalWorkspaceJsonWriteUntil = Date.now() + 900;
-							const wsIndex = indexFromPanelId(snapshot.panelId);
-
-							const widgetLayouts = layoutsFromSurface(
-								snapshot.surfaceTiles,
-								widgetResolutionFromCatalogContext(snapshot),
+							await withPersistenceLock(window, lockRoot, () =>
+								persistLatestSurfaceStateLocked(persistenceRootArg, false),
 							);
-
-							// The order of the four writes (records → layout → ui settings →
-							// background) and the stage a failure is attributed to live in
-							// `persistence/surface-write.ts`, where a partial failure can be
-							// exercised against real files instead of asserted on this source text.
-							await writeSurfaceState({
-								win: window,
-								panelId: snapshot.panelId,
-								wsIndex,
-								widgetRecords: widgetLayouts.map((w) => ({
-									id: w.id,
-									type: w.widgetType as WidgetType,
-									param: {} as Record<string, unknown>,
-								})),
-								layoutJsonText: serialize(snapshot.surfaceTiles),
-								uiSettings: {
-									version: 1 as const,
-									showGridOverlay: snapshot.showGridOverlay,
-									showPresetLabels: snapshot.showPresetLabels,
-									selectedFont: "",
-								},
-								persistenceRootArg,
-								backgroundJsonText:
-									snapshot.bg != null
-										? `${JSON.stringify(snapshot.bg, null, 2)}\n`
-										: null,
-							});
 						} catch (error) {
 							// A failure must be retried, not remembered as saved, and it
 							// must reach the Debug Console — the previous bare `catch`
@@ -699,11 +849,14 @@ export function useWorkspaceRuntime(root: Element | null): {
 							const stage: PersistSurfaceStage =
 								error instanceof SurfaceWriteError
 									? error.stage
-									: "write-widget-records";
+									: error instanceof PersistenceLockTimeoutError ||
+											error instanceof PersistenceLockUnavailableError
+										? "acquire-lock"
+										: "write-widget-records";
 							workspaceLog.error("surface state was not persisted", {
 								action: "persistSurfaceState:failed",
 								context: {
-									panelId: snapshot.panelId,
+									panelId: cur.panelId,
 									stage,
 									message:
 										error instanceof Error ? error.message : String(error),
@@ -756,7 +909,6 @@ export function useWorkspaceRuntime(root: Element | null): {
 				return;
 			}
 			lastSavedSurfaceState = nextSerialized;
-			const snapshot = cur;
 			const persistenceRootArg = lastPersistenceManagedRoot ?? undefined;
 			if (!persistenceRootArg) {
 				lastSavedSurfaceState = "";
@@ -780,49 +932,36 @@ export function useWorkspaceRuntime(root: Element | null): {
 					`persistSurfaceStateAwaitable: persistence root has changed since last commit (previous=${persistenceRootArg}, current=${revalidatedRoot ?? "null"}); refusing to write under a stale root`,
 				);
 			}
-			const wsIndex = indexFromPanelId(snapshot.panelId);
-			const widgetLayouts = layoutsFromSurface(
-				snapshot.surfaceTiles,
-				widgetResolutionFromCatalogContext(snapshot),
-			);
-			await writeNJson(window, wsIndex, serialize(snapshot.surfaceTiles));
-			if (widgetLayouts.length > 0) {
-				const widgetRecords = widgetLayouts.map((w) => ({
-					id: w.id,
-					type: w.widgetType as WidgetType,
-					param: {} as Record<string, unknown>,
-				}));
-				await upsertWidgetRecords(window, widgetRecords);
-			}
-			await writeUiSettings(
-				window,
-				{
-					version: 1 as const,
-					showGridOverlay: snapshot.showGridOverlay,
-					showPresetLabels: snapshot.showPresetLabels,
-					selectedFont: "",
-				},
-				persistenceRootArg,
-			);
-			if (snapshot.bg != null) {
-				// Background write failures are non-fatal for the layout
-				// but they ARE propagated for the awaitable variant — the
-				// Blocker 7 caller needs every layout-touching write to
-				// settle so the rollback-to-source can be evaluated against
-				// an exact on-disk view.
-				await writeBackgroundJson(
-					window,
-					wsIndex,
-					`${JSON.stringify(snapshot.bg, null, 2)}\n`,
+			// ADR-0006: same locked read→merge→write as the fire-and-forget
+			// variant. When called from `applyInterPanelMove` this JOINS the
+			// move's outer lock hold via AsyncLocalStorage instead of
+			// deadlocking on it.
+			const lockRoot = await resolvePersistenceLockRoot(window);
+			if (!lockRoot) {
+				lastSavedSurfaceState = "";
+				throw new Error(
+					"persistSurfaceStateAwaitable: no managed persistence root available for the persistence lock",
 				);
 			}
+			try {
+				await withPersistenceLock(window, lockRoot, () =>
+					persistLatestSurfaceStateLocked(persistenceRootArg, true),
+				);
+			} catch (error) {
+				// Never leave the baseline claiming a write that did not
+				// commit — the next persist must retry, and the move chain
+				// needs the rejection to evaluate its rollback.
+				lastSavedSurfaceState = "";
+				throw error;
+			}
+			lastSavedSurfaceState = serializePersistedSurfaceStateForChangeDetection(
+				getState(),
+			);
 			// Round-5 / Needs-fix 2: surface the persistence root and
 			// the source-persist outcome on the success diagnostic line
 			// so the parent (applyInterPanelMove) and Debug Console can
 			// confirm which writer path ran without reading the input
-			// shape. Round-5 / Blocker 12 also routes widget writes
-			// through `widgets.json` here — the record count is the
-			// canonical widget-write indicator for `widgets.json`.
+			// shape.
 			logWorkspace("runtime:persist-surface-state-awaitable:ok", {
 				persistenceRoot: persistenceRootArg,
 				persistenceRootKind: persistenceRootArg
@@ -830,8 +969,7 @@ export function useWorkspaceRuntime(root: Element | null): {
 					.includes("local-test")
 					? "local-test"
 					: "managed",
-				panelId: snapshot.panelId,
-				widgetLayoutCount: widgetLayouts.length,
+				panelId: getState().panelId,
 			});
 		};
 
@@ -910,13 +1048,7 @@ export function useWorkspaceRuntime(root: Element | null): {
 				statusMessage: `Added ${i18n.t(cfg.name.replace(/^widgets\./, ""), { defaultValue: cfg.name })}`,
 			});
 			persistSurfaceState();
-			void history.listSnapshots().then((snaps) => {
-				setUi({
-					canUndo: history.canUndo(),
-					canRedo: history.canRedo(),
-					snapshots: snaps,
-				});
-			});
+			refreshSnapshotUi();
 		};
 
 		const openWidgetAddUi = (openerPanelKey: string): void => {
@@ -1251,6 +1383,20 @@ export function useWorkspaceRuntime(root: Element | null): {
 			if (adoption.enabled) {
 				lastSavedSurfaceState =
 					serializePersistedSurfaceStateForChangeDetection(getState());
+				// ADR-0006 §4: seed the persisted-id baseline from the disk
+				// document the restore just classified. Cells that could not
+				// be resolved into state tiles stay "ours" — the first merge
+				// drops them exactly like the old bare `serialize(state)`
+				// did, while anything a sibling writer adds afterwards is
+				// unknown to both sets and gets adopted.
+				lastPersistedTileIds = new Set(
+					(isLayoutRestoreBlocked(plan) ? [] : plan.document.gridCells).flatMap(
+						(cell) => {
+							const id = String(cell.id ?? "").trim();
+							return id.length > 0 ? [id] : [];
+						},
+					),
+				);
 				if (enablePersistenceAfterReload) {
 					logWorkspace("runtime:layout-enable-post-onboarding-persistence", {
 						wsIndex,
@@ -1467,13 +1613,7 @@ export function useWorkspaceRuntime(root: Element | null): {
 			}
 			commit({ ...cur, ...result });
 			persistSurfaceState();
-			void history.listSnapshots().then((snaps) => {
-				setUi({
-					canUndo: history.canUndo(),
-					canRedo: history.canRedo(),
-					snapshots: snaps,
-				});
-			});
+			refreshSnapshotUi();
 		};
 
 		// ── Dialog helpers (extracted to hooks/dialogs.ts) ────────────────────────
@@ -1756,13 +1896,10 @@ export function useWorkspaceRuntime(root: Element | null): {
 					});
 				return Promise.resolve();
 			}
-			// Issue #88: R0 has no cloud backend, so preset refresh must not
-			// fire `cloudSync.syncPresets()` — it only performed a worker
-			// connectivity check whose status no consumer reads (the presets
-			// bus subscriber ignores `syncStatus`). Emit the same idle
-			// "Local Update" status the other snapshot producers use.
+			// Issue #88: R0 has no cloud backend, so preset refresh is a
+			// local catalog read only — there is no sync status to emit.
 			// issue 139: the row source is the local catalog — file-backed and
-			// independent of cloud gateway boot (offline-core contract).
+			// independent of any gateway boot (offline-core contract).
 			// Every caller uses `void refreshPresets()`, so a rejection here
 			// would surface as an unhandled rejection; log and resolve instead.
 			return (async () => {
@@ -1778,12 +1915,6 @@ export function useWorkspaceRuntime(root: Element | null): {
 					const presetPayload: PresetsPayload = {
 						kind: "snapshot",
 						presets,
-						syncStatus: {
-							provider: "supabase",
-							state: "idle",
-							label: "Local Update",
-							checkedAt: new Date().toISOString(),
-						},
 						sourceSurfaceId: panelId,
 					};
 					await publishShellMessage(cepSurfaceTransport, {
@@ -2125,61 +2256,50 @@ export function useWorkspaceRuntime(root: Element | null): {
 							),
 						)
 						.then(() => {
-							void history.listSnapshots().then((snaps) => {
-								setUi({
-									canUndo: history.canUndo(),
-									canRedo: history.canRedo(),
-									snapshots: snaps,
-								});
-							});
-						});
+							refreshSnapshotUi();
+						})
+						.catch(logSnapshotOpError("save"));
 					return;
 				case CTX_MENU_IDS.restoreSnapshotPrefix: {
 					const snapId = id.substring(
 						CTX_MENU_IDS.restoreSnapshotPrefix.length,
 					);
 					if (!snapId) return;
-					void history.restoreSnapshot(snapId).then((allPanels) => {
-						if (!allPanels) return;
-						const currentPanelId = cur.panelId;
-						const currentPanelLayout = allPanels[currentPanelId];
-						if (currentPanelLayout) {
-							const result = applyWidgetsFromModule(currentPanelLayout, cur);
-							if (result) {
-								commit({ ...cur, ...result });
+					void history
+						.restoreSnapshot(snapId)
+						.then((allPanels) => {
+							if (!allPanels) return;
+							const currentPanelId = cur.panelId;
+							const currentPanelLayout = allPanels[currentPanelId];
+							if (currentPanelLayout) {
+								const result = applyWidgetsFromModule(currentPanelLayout, cur);
+								if (result) {
+									commit({ ...cur, ...result });
+								}
 							}
-						}
-						void (async () => {
-							await Promise.all(
-								Object.entries(allPanels).map(([panelId, layouts]) => {
-									const idx = indexFromPanelId(panelId);
-									const tiles = layouts.map((w) => ({
-										id: w.id,
-										x: w.x,
-										y: w.y,
-										width: w.width,
-										height: w.height,
-									}));
-									return writeNJson(window, idx, serialize(tiles));
-								}),
-							);
-							persistSurfaceState();
-						})();
-					});
+							void (async () => {
+								await Promise.all(
+									Object.entries(allPanels).map(([panelId, layouts]) => {
+										const idx = indexFromPanelId(panelId);
+										const tiles = layouts.map((w) => ({
+											id: w.id,
+											x: w.x,
+											y: w.y,
+											width: w.width,
+											height: w.height,
+										}));
+										return writeNJson(window, idx, serialize(tiles));
+									}),
+								);
+								persistSurfaceState();
+							})().catch(logSnapshotOpError("restore-write"));
+						})
+						.catch(logSnapshotOpError("restore"));
 					return;
 				}
 				case CTX_MENU_IDS.openPresets:
 					requestOpenWorkspaceShellTool(
 						"presets",
-						undefined,
-						panelId,
-						isCep,
-						window,
-					);
-					return;
-				case CTX_MENU_IDS.openPresetLibrary:
-					requestOpenWorkspaceShellTool(
-						"presetLibrary",
 						undefined,
 						panelId,
 						isCep,
@@ -2251,19 +2371,23 @@ export function useWorkspaceRuntime(root: Element | null): {
 					return;
 				case CTX_MENU_IDS.resetWorkspace: {
 					void (async () => {
-						const currentSettingsJson = await readSettings(window);
 						const wsIndex = indexFromPanelId(cur.panelId);
-						const _resetRoot =
-							(await resolveWorkspacePersistenceManagedRoot(window)) ??
-							undefined;
-						await clearLayoutNJson(window, wsIndex);
-						await writeSettings(
-							window,
-							clearWorkspacePanelStateFromSettingsJson(
-								currentSettingsJson,
-								cur.panelId,
-							),
-						);
+						const lockRoot = await resolvePersistenceLockRoot(window);
+						if (!lockRoot) return;
+						// ADR-0006: layout clear + settings rewrite are one
+						// transaction inside the managed-root lock.
+						await withPersistenceLock(window, lockRoot, async () => {
+							const currentSettingsJson = await readSettings(window);
+							await clearLayoutNJson(window, wsIndex);
+							await writeSettings(
+								window,
+								clearWorkspacePanelStateFromSettingsJson(
+									currentSettingsJson,
+									cur.panelId,
+								),
+							);
+						});
+						lastPersistedTileIds = new Set();
 						const next = createInitialSurfaceState({
 							grid: {},
 							panelId: cur.panelId,
@@ -2523,13 +2647,7 @@ export function useWorkspaceRuntime(root: Element | null): {
 						),
 					});
 					persistSurfaceState();
-					void history.listSnapshots().then((snaps) => {
-						setUi({
-							canUndo: history.canUndo(),
-							canRedo: history.canRedo(),
-							snapshots: snaps,
-						});
-					});
+					refreshSnapshotUi();
 					return;
 				}
 				case CTX_MENU_IDS.deletePreset: {
@@ -2900,31 +3018,41 @@ export function useWorkspaceRuntime(root: Element | null): {
 							width: maxRight - minX,
 							height: maxBottom - minY,
 						};
-						const settingsJson = await readSettings(window);
-						const existingPanelPresetIds = readPanelPresetIdsFromSettingsJson(
-							settingsJson,
-							cur.panelId,
-						);
-						const basePanelPresetIds =
-							existingPanelPresetIds.length > 0
-								? [...existingPanelPresetIds]
-								: [];
-						const nextPanelPresetIds = Array.from(
-							new Set([
-								...basePanelPresetIds.filter((id) => !nonFolderIdSet.has(id)),
-								groupId,
-							]),
-						);
-						const nextSettingsJson = mergeGroupPresetLayoutIntoSettingsJson(
-							settingsJson,
-							{
-								panelId: cur.panelId,
-								presetIds: nextPanelPresetIds,
-								groupId,
-								groupLayout,
+						// ADR-0006: settings read→merge→write inside the lock.
+						const lockRoot = await resolvePersistenceLockRoot(window);
+						if (!lockRoot) return;
+						const nextPanelPresetIds = await withPersistenceLock(
+							window,
+							lockRoot,
+							async () => {
+								const settingsJson = await readSettings(window);
+								const existingPanelPresetIds =
+									readPanelPresetIdsFromSettingsJson(settingsJson, cur.panelId);
+								const basePanelPresetIds =
+									existingPanelPresetIds.length > 0
+										? [...existingPanelPresetIds]
+										: [];
+								const nextPanelPresetIds = Array.from(
+									new Set([
+										...basePanelPresetIds.filter(
+											(id) => !nonFolderIdSet.has(id),
+										),
+										groupId,
+									]),
+								);
+								const merged = mergeGroupPresetLayoutIntoSettingsJson(
+									settingsJson,
+									{
+										panelId: cur.panelId,
+										presetIds: nextPanelPresetIds,
+										groupId,
+										groupLayout,
+									},
+								);
+								await writeSettings(window, merged);
+								return nextPanelPresetIds;
 							},
 						);
-						await writeSettings(window, nextSettingsJson);
 						const filteredTiles = cur.surfaceTiles.filter(
 							(_, i) => !removeIdx.has(i),
 						);
@@ -3327,24 +3455,12 @@ export function useWorkspaceRuntime(root: Element | null): {
 						lastWidgetsSnapshot = nextWidgetsSnapshot;
 					}
 				}
-				void history.listSnapshots().then((snaps) => {
-					setUi({
-						canUndo: history.canUndo(),
-						canRedo: history.canRedo(),
-						snapshots: snaps,
-					});
-				});
+				refreshSnapshotUi();
 			},
 			() => {
 				commit({ ...getState() });
 				persistSurfaceState();
-				void history.listSnapshots().then((snaps) => {
-					setUi({
-						canUndo: history.canUndo(),
-						canRedo: history.canRedo(),
-						snapshots: snaps,
-					});
-				});
+				refreshSnapshotUi();
 			},
 			{
 				hostCode,
@@ -3602,62 +3718,58 @@ export function useWorkspaceRuntime(root: Element | null): {
 						),
 					)
 					.then(() => {
-						void history.listSnapshots().then((snaps) => {
-							setUi({
-								canUndo: history.canUndo(),
-								canRedo: history.canRedo(),
-								snapshots: snaps,
-							});
-						});
-					});
+						refreshSnapshotUi();
+					})
+					.catch(logSnapshotOpError("save"));
 			} else if (action === "restore-snapshot") {
 				ev.preventDefault();
 				const id = btn.getAttribute("data-snap-id");
 				if (id) {
-					void history.restoreSnapshot(id).then((allPanels) => {
-						if (!allPanels) return;
-						const cur = getState();
-						const currentPanelId = cur.panelId;
-						const currentPanelLayout = allPanels[currentPanelId];
-						if (currentPanelLayout) {
-							const result = applyWidgetsFromModule(currentPanelLayout, cur);
-							if (result) {
-								commit({ ...cur, ...result });
+					void history
+						.restoreSnapshot(id)
+						.then((allPanels) => {
+							if (!allPanels) return;
+							const cur = getState();
+							const currentPanelId = cur.panelId;
+							const currentPanelLayout = allPanels[currentPanelId];
+							if (currentPanelLayout) {
+								const result = applyWidgetsFromModule(currentPanelLayout, cur);
+								if (result) {
+									commit({ ...cur, ...result });
+								}
 							}
-						}
-						// Write all panel layouts to disk
-						const _persistenceRootArg = lastPersistenceManagedRoot ?? undefined;
-						void (async () => {
-							await Promise.all(
-								Object.entries(allPanels).map(([panelId, layouts]) => {
-									const idx = indexFromPanelId(panelId);
-									const tiles = layouts.map((w) => ({
-										id: w.id,
-										x: w.x,
-										y: w.y,
-										width: w.width,
-										height: w.height,
-									}));
-									return writeNJson(window, idx, serialize(tiles));
-								}),
-							);
-							persistSurfaceState();
-						})();
-					});
+							// Write all panel layouts to disk
+							const _persistenceRootArg =
+								lastPersistenceManagedRoot ?? undefined;
+							void (async () => {
+								await Promise.all(
+									Object.entries(allPanels).map(([panelId, layouts]) => {
+										const idx = indexFromPanelId(panelId);
+										const tiles = layouts.map((w) => ({
+											id: w.id,
+											x: w.x,
+											y: w.y,
+											width: w.width,
+											height: w.height,
+										}));
+										return writeNJson(window, idx, serialize(tiles));
+									}),
+								);
+								persistSurfaceState();
+							})().catch(logSnapshotOpError("restore-write"));
+						})
+						.catch(logSnapshotOpError("restore"));
 				}
 			} else if (action === "delete-snapshot") {
 				ev.preventDefault();
 				const id = btn.getAttribute("data-snap-id");
 				if (id) {
-					void history.deleteSnapshot(id).then(() => {
-						void history.listSnapshots().then((snaps) => {
-							setUi({
-								canUndo: history.canUndo(),
-								canRedo: history.canRedo(),
-								snapshots: snaps,
-							});
-						});
-					});
+					void history
+						.deleteSnapshot(id)
+						.then(() => {
+							refreshSnapshotUi();
+						})
+						.catch(logSnapshotOpError("delete"));
 				}
 			} else if (action === "open-dialog") {
 				ev.preventDefault();
@@ -3760,9 +3872,25 @@ export function useWorkspaceRuntime(root: Element | null): {
 			}
 		};
 
+		// The snapshots popover is portaled to `document.body` by
+		// AnchoredPopover, so its restore/delete buttons live outside `root`.
+		// Listen at document level but only admit clicks inside `root` or the
+		// popover — portaled dialogs and widget surfaces keep their own
+		// `data-ws-action` routing (Issue #223: snapshot restore was a no-op).
+		const onDocumentActionClick = (ev: MouseEvent) => {
+			const btn = (ev.target as HTMLElement).closest("[data-ws-action]");
+			if (
+				!btn ||
+				!(root.contains(btn) || btn.closest("#statusbar-snapshots"))
+			) {
+				return;
+			}
+			onActionClick(ev);
+		};
+
 		// ── Document event listeners ───────────────────────────────────────────
 		root.addEventListener("mousedown", onCpMiddleDown as EventListener, true);
-		root.addEventListener("click", onActionClick as EventListener);
+		document.addEventListener("click", onDocumentActionClick as EventListener);
 		document.addEventListener("mousemove", onDocMouseMove);
 		document.addEventListener("mouseup", onDocMouseUp);
 		document.addEventListener("mousedown", onDocMouseDownCloseMenu);
@@ -3800,7 +3928,10 @@ export function useWorkspaceRuntime(root: Element | null): {
 			document.removeEventListener("mousemove", onDocMouseMove);
 			document.removeEventListener("mouseup", onDocMouseUp);
 			document.removeEventListener("mousedown", onDocMouseDownCloseMenu);
-			root.removeEventListener("click", onActionClick as EventListener);
+			document.removeEventListener(
+				"click",
+				onDocumentActionClick as EventListener,
+			);
 			removeExternalPresetDialogListener?.();
 			cpMenuEl?.remove();
 			cpMenuEl = null;

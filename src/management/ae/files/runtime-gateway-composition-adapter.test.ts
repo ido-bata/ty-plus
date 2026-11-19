@@ -51,20 +51,6 @@ function makeComposition(
 					animated_source_path: null,
 				})),
 		) as unknown as OperationWorkerComposition["generateThumbnail"],
-		lookupCatalog: vi.fn(async () => ({
-			items: [],
-		})) as unknown as OperationWorkerComposition["lookupCatalog"],
-		downloadPreset: vi.fn(async () => ({
-			bytes_written: 0,
-			sha256: "",
-			final_url: "",
-			destination: "",
-		})) as unknown as OperationWorkerComposition["downloadPreset"],
-		checkConnectivity: vi.fn(async () => ({
-			state: "unknown",
-			label: "",
-			checked_at: "",
-		})) as unknown as OperationWorkerComposition["checkConnectivity"],
 		installUpdate: vi.fn(async () => ({
 			status: "installed",
 			version: "0.0.0",

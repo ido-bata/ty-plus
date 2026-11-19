@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import type { Preset } from "@/management/preset/contract";
 import { presetIconText } from "@/management/preset/contract";
 import { createPresetIconDraft } from "@/management/preset/icon-editor";
+import { expectCanvasLayout } from "@/storybook/quality/layout";
 import { css } from "@/styled-system/css";
 import { IconEditor } from "./IconEditor";
 
@@ -15,14 +16,20 @@ const basePreset: Preset = {
 
 type Args = {
 	iconType: "text" | "emoji" | "image";
+	/**
+	 * Container width in rem. The preview tile size must stay constant across
+	 * widths — narrow containers reproduce the cramped right column that used
+	 * to distort the preview grid.
+	 */
+	containerWidthRem: number;
 };
 
 const baseArgs: Args = {
 	iconType: "text",
+	containerWidthRem: 28,
 };
 
 const decoratorBoxClass = css({
-	width: "28rem",
 	padding: "2",
 });
 
@@ -49,13 +56,21 @@ const meta = {
 			control: { type: "select" },
 			options: ["text", "emoji", "image"],
 		},
+		containerWidthRem: {
+			control: { type: "range", min: 14, max: 48, step: 2 },
+		},
 	},
 	decorators: [
-		(Story) => (
-			<div className={decoratorBoxClass}>
-				<Story />
-			</div>
-		),
+		(Story, context) => {
+			const widthRem =
+				(context.args as Args | undefined)?.containerWidthRem ??
+				baseArgs.containerWidthRem;
+			return (
+				<div className={decoratorBoxClass} style={{ width: `${widthRem}rem` }}>
+					<Story />
+				</div>
+			);
+		},
 	],
 	render: (args: Args) => {
 		const draft = createPresetIconDraft("PR");
@@ -79,7 +94,14 @@ const meta = {
 export default meta;
 type Story = StoryObj<Args>;
 
-export const Default: Story = {};
+export const Default: Story = {
+	// Issue #194: every rendered control (fields, browse button, preview)
+	// must sit inside the viewport unclipped; #192 owns any DOM changes
+	// this contract then re-verifies.
+	play: async ({ canvasElement }) => {
+		expectCanvasLayout(canvasElement);
+	},
+};
 
 export const Emoji: Story = {
 	args: { iconType: "emoji" },
@@ -87,6 +109,19 @@ export const Emoji: Story = {
 
 export const Image: Story = {
 	args: { iconType: "image" },
+};
+
+/**
+ * Narrow container: reproduces the cramped right column that used to make the
+ * preview tile grow/shrink with field content height.
+ */
+export const NarrowContainer: Story = {
+	args: { containerWidthRem: 16 },
+};
+
+/** Wide container: the preview tile must stay the same size as NarrowContainer. */
+export const WideContainer: Story = {
+	args: { containerWidthRem: 44 },
 };
 
 export const Unframed: Story = {
@@ -101,6 +136,9 @@ export const Unframed: Story = {
 };
 
 export const WithPresetPreview: Story = {
+	play: async ({ canvasElement }) => {
+		expectCanvasLayout(canvasElement);
+	},
 	render: () => (
 		<IconEditor
 			draft={createPresetIconDraft("HD")}

@@ -92,7 +92,7 @@ jobs:
       # uses).
       - name: Verify packaged bundle
         run: >-
-          bun run verify:online-gateway:package --
+          bun run verify:operation-worker:package --
           --trust-mode=development-unsigned
           --product-version=${{ steps.version.outputs.expected }}
 

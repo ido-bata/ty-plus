@@ -32,6 +32,7 @@ import {
 } from "./journey";
 import { openSettingsDialog } from "./settings";
 import {
+	answerHostConfirm,
 	closeSurfaceSettled,
 	corruptJsonBytes,
 	managedFilePath,
@@ -41,7 +42,11 @@ import {
 	withManagedRootSnapshot,
 	writeManagedFile,
 } from "./shared";
-import { addWidgetViaDialog, createFilePresetViaDialog } from "./workspace";
+import {
+	addWidgetViaDialog,
+	createFilePresetViaDialog,
+	openSnapshotsDropdown,
+} from "./workspace";
 
 // ---------------------------------------------------------------------------
 // shared helpers
@@ -421,9 +426,12 @@ export const journeySuiteCases: E2ECase[] = [
 						`Boolean(document.querySelector('[data-preset-id="${presetId}"]'))`,
 						20_000,
 					);
-					const delClicked = await ctx.evalJs(
-						catalog2,
-						`(() => {
+					// The delete click raises a native ExtendScript confirm()
+					// that blocks this surface's renderer for as long as the
+					// modal is unanswered — awaiting Runtime.evaluate would
+					// deadlock, so dispatch detached and answer via OS GUI
+					// automation (Issue #223).
+					const deleteClickExpr = `(() => {
 						const row = document.querySelector(
 							${JSON.stringify(`[data-preset-id="${presetId}"]`)});
 						if (!row) return "missing-row";
@@ -432,15 +440,8 @@ export const journeySuiteCases: E2ECase[] = [
 						if (!btn) return "missing-delete";
 						btn.click();
 						return "clicked";
-					})()`,
-					);
-					checks.push(
-						check(
-							"catalog Delete clicked",
-							delClicked === "clicked",
-							String(delClicked),
-						),
-					);
+					})()`;
+					await ctx.evalJsDetached(catalog2, deleteClickExpr);
 					await sleep(3_000);
 					const stillThere = await ctx.readManagedJson<{
 						presets?: { id?: string }[];
@@ -455,6 +456,55 @@ export const journeySuiteCases: E2ECase[] = [
 							survived
 								? "host confirm pending; record intact"
 								: "preset removed without confirmation",
+						),
+					);
+
+					// Cancel path: answer "No" — preset must survive.
+					const cancelled = await answerHostConfirm("no");
+					checks.push(
+						check(
+							"host confirm cancel path answered via GUI automation",
+							cancelled,
+							cancelled ? "No clicked" : "no Yes/No button found",
+						),
+					);
+					await sleep(1_000);
+					const afterCancel = await ctx.readManagedJson<{
+						presets?: { id?: string }[];
+					}>("presets", "presets.json");
+					checks.push(
+						check(
+							"cancel path keeps preset",
+							Boolean(afterCancel?.presets?.some((p) => p.id === presetId)),
+							"preset retained after No",
+						),
+					);
+
+					// Confirm path: delete again, answer "Yes" — preset must go.
+					await ctx.evalJsDetached(catalog2, deleteClickExpr);
+					await sleep(2_000);
+					const confirmed = await answerHostConfirm("yes");
+					checks.push(
+						check(
+							"host confirm approve path answered via GUI automation",
+							confirmed,
+							confirmed ? "Yes clicked" : "no Yes/No button found",
+						),
+					);
+					const deleteDeadline = Date.now() + 15_000;
+					let removed = false;
+					while (Date.now() < deleteDeadline && !removed) {
+						const doc = await ctx.readManagedJson<{
+							presets?: { id?: string }[];
+						}>("presets", "presets.json");
+						removed = !doc?.presets?.some((p) => p.id === presetId);
+						if (!removed) await sleep(700);
+					}
+					checks.push(
+						check(
+							"confirmed delete removes preset",
+							removed,
+							removed ? "preset removed" : "still present",
 						),
 					);
 					await closeDialogById(ctx, "dialog-presets");
@@ -530,6 +580,29 @@ export const journeySuiteCases: E2ECase[] = [
 					),
 				);
 
+				// The status-bar toggle title mirrors ui.snapshots — polling it
+				// distinguishes "listSnapshots returned empty/rejected" (Issue
+				// #223) from a dropdown rendering problem.
+				let snapTitle = "";
+				const titleDeadline = Date.now() + 15_000;
+				while (Date.now() < titleDeadline) {
+					snapTitle = String(
+						(await ctx.evalJs(
+							panel,
+							`document.querySelector('[data-ws-action="toggle-snapshots"]')?.getAttribute("title") ?? ""`,
+						)) ?? "",
+					);
+					if (snapTitle && !snapTitle.includes("(none)")) break;
+					await sleep(700);
+				}
+				checks.push(
+					check(
+						"snapshot list visible in status bar",
+						Boolean(snapTitle) && !snapTitle.includes("(none)"),
+						`title=${snapTitle || "missing"}`,
+					),
+				);
+
 				// 3. Mutate: second widget tile.
 				const { instanceId: second } = await addWidgetViaDialog(ctx, "info");
 				checks.push(
@@ -560,19 +633,24 @@ export const journeySuiteCases: E2ECase[] = [
 
 				// 5. Restore the snapshot → second widget tile removed.
 				if (snapId) {
-					// reopen dropdown on the reloaded panel
-					await clickFirstSafe(
-						ctx,
-						panel2,
-						'[data-ws-action="toggle-snapshots"]',
-					);
-					await waitForDom(
+					// Reopen the dropdown on the reloaded panel. The shared
+					// helper waits on the popover's stable id — a bare toggle
+					// click can land while the list is still hydrating.
+					const dropdownOpen = await openSnapshotsDropdown(ctx, panel2);
+					const rowSeen = await waitForDom(
 						ctx,
 						panel2,
 						`Boolean(document.querySelector('[data-snap-id="${snapId}"]'))`,
 						15_000,
 					);
-					await ctx.evalJs(
+					checks.push(
+						check(
+							"snapshot row rendered after reload",
+							Boolean(dropdownOpen) && Boolean(rowSeen),
+							`open=${dropdownOpen} row=${String(rowSeen).slice(0, 60)}`,
+						),
+					);
+					const restoreResult = await ctx.evalJs(
 						panel2,
 						`(() => {
 							const btn = document.querySelector(
@@ -581,6 +659,13 @@ export const journeySuiteCases: E2ECase[] = [
 							btn.click();
 							return "clicked";
 						})()`,
+					);
+					checks.push(
+						check(
+							"restore-snapshot clicked",
+							restoreResult === "clicked",
+							String(restoreResult),
+						),
 					);
 					await sleep(2500);
 					const cellsAfter = await cellsOf();
@@ -616,7 +701,10 @@ export const journeySuiteCases: E2ECase[] = [
 				const ws = (app.workspace ?? {}) as Record<string, unknown>;
 				const grid = (ws.grid ?? {}) as Record<string, unknown>;
 				app.ui = { ...ui, accentColor: ACCENT, language: "ja" };
-				app.workspace = { ...ws, grid: { ...grid, cellSize: 120 } };
+				app.workspace = {
+					...ws,
+					grid: { ...grid, cellSize: 120, gap: 4, radius: 2 },
+				};
 				await writeManagedFile(
 					ctx,
 					["settings", "app.json"],
@@ -639,6 +727,31 @@ export const journeySuiteCases: E2ECase[] = [
 					),
 				);
 
+				// Boot-time theme reconcile (Issue #112) is fire-and-forget:
+				// app.json → theme.css projection lands asynchronously after the
+				// workspace state commit, so poll the computed tokens instead of
+				// reading once (Issue #223 — one-shot reads raced the reconcile).
+				// Poll each token independently: accent and grid metrics are
+				// separate reconcile outputs and must not mask each other.
+				const accentLive = Boolean(
+					await waitForDom(
+						ctx,
+						panel,
+						`getComputedStyle(document.documentElement)
+							.getPropertyValue("--color-ty-accent")
+							.toLowerCase().includes("336699")`,
+						30_000,
+					),
+				);
+				const cellLive = Boolean(
+					await waitForDom(
+						ctx,
+						panel,
+						`getComputedStyle(document.documentElement)
+							.getPropertyValue("--ty-ws-cell").includes("120")`,
+						30_000,
+					),
+				);
 				const accent = await ctx.evalJs(
 					panel,
 					`getComputedStyle(document.documentElement)
@@ -647,7 +760,7 @@ export const journeySuiteCases: E2ECase[] = [
 				checks.push(
 					check(
 						"accent color reached theme.css token",
-						String(accent).toLowerCase().includes("336699"),
+						accentLive && String(accent).toLowerCase().includes("336699"),
 						`accent=${String(accent).trim()}`,
 					),
 				);
@@ -660,7 +773,7 @@ export const journeySuiteCases: E2ECase[] = [
 				checks.push(
 					check(
 						"grid cell size reached panel CSS var",
-						String(cell).includes("120"),
+						cellLive && String(cell).includes("120"),
 						`cell=${String(cell).trim()}`,
 					),
 				);
@@ -679,12 +792,19 @@ export const journeySuiteCases: E2ECase[] = [
 						`accent=${uiAfter.accentColor} lang=${uiAfter.language} cell=${gridAfter.cellSize}`,
 					),
 				);
-				const themeCss = await ctx.readManagedText("styles", "theme.css");
+				// theme.css write is part of the same async reconcile — poll it.
+				let themeCss: string | null = null;
+				const themeDeadline = Date.now() + 20_000;
+				while (Date.now() < themeDeadline) {
+					themeCss = await ctx.readManagedText("styles", "theme.css");
+					if ((themeCss ?? "").toLowerCase().includes("336699")) break;
+					await sleep(700);
+				}
 				checks.push(
 					check(
 						"theme.css persisted accent token",
 						(themeCss ?? "").toLowerCase().includes("336699"),
-						"",
+						(themeCss ?? "").slice(0, 120),
 					),
 				);
 			});

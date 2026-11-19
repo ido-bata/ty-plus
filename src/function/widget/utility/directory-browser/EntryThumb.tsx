@@ -1,6 +1,10 @@
 import type { JSX } from "react";
 import { useMemo } from "react";
-import { findSiblingImagePathForPresetFile } from "@/management/preset/sibling-thumbnail";
+import {
+	findSiblingImagePathForPresetFile,
+	isPresetSidekickSourcePath,
+	siblingThumbnailEntryFor,
+} from "@/management/preset/sibling-thumbnail";
 import {
 	canUseCepNodeFileBrowser,
 	createCepNodeFileBrowserService,
@@ -11,36 +15,6 @@ import { EntryGlyph } from "./EntryGlyph";
 import { useFolderPreview } from "./hooks/useFolderPreview";
 import { useThumbnail } from "./hooks/useThumbnail";
 import { ThumbnailTile } from "./ThumbnailTile";
-
-/**
- * Build a synthetic `FileBrowserEntry` for a sidecar sibling image so
- * it can be fed through [`useThumbnail`] (which is keyed off
- * `FileBrowserEntry` shape — path / size / mtime / fileType).
- *
- * `mtime` is read off the source file via `useThumbnail`'s
- * `entry.modifiedAt`; we deliberately set it to `new Date(0).toISOString()`
- * when the sidecar file's mtime is unavailable, which causes
- * `useThumbnail` to fall back to a generate call (the cache miss is
- * preferred over a stale hit). The pipeline's meta-marker validation
- * rejects `mtime_ms == 0` in the Rust side, so the React hook feeds a
- * real timestamp into the wire payload.
- */
-function siblingEntryFor(
-	entry: FileBrowserEntry,
-	sidekickPath: string,
-	size: number,
-	modifiedAt: string,
-): FileBrowserEntry {
-	return {
-		name: sidekickPath.replace(/\\/g, "/").split("/").pop() ?? sidekickPath,
-		path: sidekickPath,
-		isDirectory: false,
-		size,
-		modifiedAt,
-		extension: ".png",
-		fileType: "image",
-	};
-}
 
 /**
  * Renders the icon-area inside a filesystem tile or row.
@@ -96,14 +70,21 @@ export function EntryThumb(props: {
 	// Sidecar sibling lookup is cheap and runs in render; we keep it
 	// outside of `useThumbnail` because `useThumbnail` is keyed off the
 	// `entry` argument, not an inline lookup result.
-	const sidekickPath = !entry.isDirectory
-		? findSiblingImagePathForPresetFile(entry.path, siblingSourceEntries)
-		: null;
+	const sidekickPath =
+		!entry.isDirectory && isPresetSidekickSourcePath(entry.path)
+			? findSiblingImagePathForPresetFile(entry.path, siblingSourceEntries)
+			: null;
 	const sidekickEntry = useMemo(() => {
 		if (!sidekickPath) {
 			return null;
 		}
-		return siblingEntryFor(entry, sidekickPath, entry.size, entry.modifiedAt);
+		// The sidecar's mtime/size come from the source entry so the
+		// thumbnail cache invalidates when the preset file changes; the
+		// shared helper owns the synthetic-entry shape.
+		return siblingThumbnailEntryFor(sidekickPath, {
+			size: entry.size,
+			modifiedAt: entry.modifiedAt,
+		});
 	}, [sidekickPath, entry]);
 	const sidekickThumb = useThumbnail(
 		sidekickEntry ?? {

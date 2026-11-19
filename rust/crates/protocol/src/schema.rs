@@ -3,7 +3,7 @@
 use serde_json::{json, Value};
 
 use crate::{
-    CancelRequest, CanonicalMethod, CapabilitySet, ConnectivityStatusDto, GenerateThumbnailRequest,
+    CancelRequest, CanonicalMethod, CapabilitySet, GenerateThumbnailRequest,
     GenerateThumbnailResponse, LookupThumbnailRequest, LookupThumbnailResponse,
     PluginEffectScanRequest, WireMessage, CURRENT_PROTOCOL_VERSION, MAX_CAPABILITIES,
     MAX_CAPABILITY_NAME_BYTES, MAX_DEADLINE_HORIZON_MS, MAX_FRAME_BYTES, MAX_IDEMPOTENCY_KEY_BYTES,
@@ -43,7 +43,6 @@ pub fn generate_schema_catalog() -> Value {
         "documents": {
             "cancelRequest": schemars::schema_for!(CancelRequest),
             "capabilitySet": schemars::schema_for!(CapabilitySet),
-            "connectivityStatusDto": schemars::schema_for!(ConnectivityStatusDto),
             "generateThumbnailRequest": schemars::schema_for!(GenerateThumbnailRequest),
             "generateThumbnailResponse": schemars::schema_for!(GenerateThumbnailResponse),
             "lookupThumbnailRequest": schemars::schema_for!(LookupThumbnailRequest),

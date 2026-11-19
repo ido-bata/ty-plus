@@ -1,0 +1,296 @@
+{
+  "schema": "ty-plus.e2e-run/1",
+  "suite": "journeys",
+  "capturedAt": "2026-11-19T01:42:14.819Z",
+  "extensionDir": "/Users/rebui/Library/Application Support/Adobe/CEP/extensions/app.ty-plus.dev",
+  "managedRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-19T01-40-16-445Z-22827/ty-plus",
+  "realManagedRoot": "/Applications/Adobe After Effects 2027/ty-plus",
+  "sandbox": {
+    "enabled": true,
+    "sandboxRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-19T01-40-16-445Z-22827/ty-plus",
+    "integrity": {
+      "realRoot": "/Applications/Adobe After Effects 2027/ty-plus",
+      "checkedAt": "2026-11-19T01:42:14.818Z",
+      "driftBeforeRepair": {
+        "changed": 1,
+        "added": 0,
+        "removed": 0
+      },
+      "filesRepaired": [
+        "cache/layout-undo/panel-1/stack.json"
+      ],
+      "cleanAfterRepair": true
+    }
+  },
+  "totals": {
+    "PASS": 6,
+    "FAIL": 0,
+    "BLOCKED": 0,
+    "SKIP": 0
+  },
+  "results": [
+    {
+      "uc": "UC-J02",
+      "title": "preset journey: create → place → run → edit → delete-attempt (host confirm gate)",
+      "status": "PASS",
+      "detail": "preset lifecycle incl. edit; delete requires manual host confirm",
+      "checks": [
+        {
+          "name": "preset created via dialog",
+          "ok": true,
+          "detail": "id=60d08921-6b9c-4e2c-afcd-2fce25add99f"
+        },
+        {
+          "name": "preset tile placed on workspace",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "preset run produced AE-side artifact",
+          "ok": true,
+          "detail": "1795052421297|27.0x78"
+        },
+        {
+          "name": "catalog Edit clicked",
+          "ok": true,
+          "detail": "clicked"
+        },
+        {
+          "name": "edit Save clicked",
+          "ok": true,
+          "detail": "clicked"
+        },
+        {
+          "name": "presets.json reflects rename",
+          "ok": true,
+          "detail": "title=E2E J02 Renamed"
+        },
+        {
+          "name": "delete gated by host confirm — preset retained until manual confirm",
+          "ok": true,
+          "detail": "host confirm pending; record intact"
+        },
+        {
+          "name": "host confirm cancel path answered via GUI automation",
+          "ok": true,
+          "detail": "No clicked"
+        },
+        {
+          "name": "cancel path keeps preset",
+          "ok": true,
+          "detail": "preset retained after No"
+        },
+        {
+          "name": "host confirm approve path answered via GUI automation",
+          "ok": true,
+          "detail": "Yes clicked"
+        },
+        {
+          "name": "confirmed delete removes preset",
+          "ok": true,
+          "detail": "preset removed"
+        }
+      ],
+      "evidence": [
+        "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-19T01-40-16-445Z-22827/ty-plus/presets/presets.json"
+      ],
+      "durationMs": 32525
+    },
+    {
+      "uc": "UC-J03",
+      "title": "layout journey: widget + preset tile + snapshot → reload → restore",
+      "status": "PASS",
+      "detail": "widget+preset layout snapshot round-trip",
+      "checks": [
+        {
+          "name": "widget added via Add Widget dialog",
+          "ok": true,
+          "detail": "id=d27d4130-9ef0-459d-9173-13de0a1726f0"
+        },
+        {
+          "name": "snapshot saved to snapshots.json",
+          "ok": true,
+          "detail": "snap=1795052454364"
+        },
+        {
+          "name": "snapshot list visible in status bar",
+          "ok": true,
+          "detail": "title=Saved layouts (1)"
+        },
+        {
+          "name": "layout mutated with second widget",
+          "ok": true,
+          "detail": "second=1fbfaf2a-cafe-45fd-b27a-ea3bb2b8db93"
+        },
+        {
+          "name": "mutated layout survives reload",
+          "ok": true,
+          "detail": "cells=9"
+        },
+        {
+          "name": "snapshot row rendered after reload",
+          "ok": true,
+          "detail": "open=true row=true"
+        },
+        {
+          "name": "restore-snapshot clicked",
+          "ok": true,
+          "detail": "clicked"
+        },
+        {
+          "name": "snapshot restore returned gridCells to saved state",
+          "ok": true,
+          "detail": "start=7 after=8"
+        }
+      ],
+      "evidence": [
+        "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-19T01-40-16-445Z-22827/ty-plus/workspaces/history/snapshots.json"
+      ],
+      "durationMs": 11521
+    },
+    {
+      "uc": "UC-J04",
+      "title": "appearance journey: accent/grid/locale change → live → reload persists",
+      "status": "PASS",
+      "detail": "accent/grid/locale round-trip through settings files",
+      "checks": [
+        {
+          "name": "locale ja applied after reload",
+          "ok": true,
+          "detail": "lang=ja"
+        },
+        {
+          "name": "accent color reached theme.css token",
+          "ok": true,
+          "detail": "accent=#336699"
+        },
+        {
+          "name": "grid cell size reached panel CSS var",
+          "ok": true,
+          "detail": "cell=120px"
+        },
+        {
+          "name": "app.json persisted accent+locale+grid",
+          "ok": true,
+          "detail": "accent=#336699 lang=ja cell=120"
+        },
+        {
+          "name": "theme.css persisted accent token",
+          "ok": true,
+          "detail": ":root {\n  --accent-r: 51;\n  --accent-g: 102;\n  --accent-b: 153;\n  --color-ty-accent: #336699;\n  --ty-ws-cell: 120px;\n  -"
+        }
+      ],
+      "evidence": [
+        "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-19T01-40-16-445Z-22827/ty-plus/settings/app.json"
+      ],
+      "durationMs": 16619
+    },
+    {
+      "uc": "UC-J05",
+      "title": "recovery journey: backup export → corrupt files → boot fallback → import restore",
+      "status": "PASS",
+      "detail": "export→corrupt→boot→import→verify recovery chain",
+      "checks": [
+        {
+          "name": "backup bundle exported via settings UI",
+          "ok": true,
+          "detail": "2979 bytes"
+        },
+        {
+          "name": "panel responsive after corruption",
+          "ok": true,
+          "detail": "eval=2"
+        },
+        {
+          "name": "corrupt workspace file not silently destroyed",
+          "ok": true,
+          "detail": "file still present"
+        },
+        {
+          "name": "app.json restored by backup import",
+          "ok": true,
+          "detail": "after={\"core\":{\"paths\":{\"supportRoot\":\"/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-19T01-40-1"
+        },
+        {
+          "name": "workspace-1.json restored to valid JSON",
+          "ok": true,
+          "detail": "parses"
+        }
+      ],
+      "evidence": [],
+      "durationMs": 13965
+    },
+    {
+      "uc": "UC-J06",
+      "title": "preset handoff: export bundle → wipe catalog → import → run preset in AE",
+      "status": "PASS",
+      "detail": "export→wipe→import→run preset handoff chain",
+      "checks": [
+        {
+          "name": "bundle exported with preset catalog",
+          "ok": true,
+          "detail": "2979 bytes"
+        },
+        {
+          "name": "catalog wiped to simulate fresh environment",
+          "ok": true,
+          "detail": "presets=0"
+        },
+        {
+          "name": "import restored preset catalog",
+          "ok": true,
+          "detail": "presets=2"
+        },
+        {
+          "name": "catalog lists handed-off preset",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "Run clicked on handed-off preset",
+          "ok": true,
+          "detail": "clicked"
+        },
+        {
+          "name": "handed-off preset executed in AE",
+          "ok": true,
+          "detail": "1795052516872|27.0x78"
+        }
+      ],
+      "evidence": [],
+      "durationMs": 31909
+    },
+    {
+      "uc": "UC-J07",
+      "title": "daily work: quick-actions runs script then ffx preset consecutively",
+      "status": "PASS",
+      "detail": "consecutive quick-action runs: script marker + ffx effects=2",
+      "checks": [
+        {
+          "name": "quick-actions run #1 (script) clicked",
+          "ok": true,
+          "detail": "clicked"
+        },
+        {
+          "name": "script preset produced AE-side marker",
+          "ok": true,
+          "detail": "1795052526634|27.0x78"
+        },
+        {
+          "name": "quick-actions run #2 (ffx) clicked",
+          "ok": true,
+          "detail": "clicked"
+        },
+        {
+          "name": "ffx preset applied effects to selected layer",
+          "ok": true,
+          "detail": "effects=2"
+        }
+      ],
+      "evidence": [
+        "/Users/rebui/Library/Application Support/ty-plus/dg-presets/marker.txt"
+      ],
+      "durationMs": 4317
+    }
+  ]
+}

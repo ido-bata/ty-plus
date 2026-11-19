@@ -21,6 +21,7 @@ import {
 	type PresetAuthoringWriter,
 } from "@/management/preset/authoring/write-preset-asset";
 import { ArchiveDetailsSection } from "@/management/preset/catalog-add/ArchiveDetailsSection";
+import { verifyAndUpsertPreset } from "@/management/preset/catalog-add/verify-and-upsert";
 import { PresetIconEditor } from "@/management/preset/components/IconEditor";
 import type { Preset, PresetType } from "@/management/preset/contract";
 import {
@@ -36,7 +37,6 @@ import {
 	buildPresetToolContextMenuPayload,
 	PRESET_TOOL_CTX,
 } from "@/management/preset/tool-shell/context-menu";
-import { upsertLocalPreset } from "@/management/preset/use-cases";
 import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
 import { glyphBoxFillClass } from "@/management/preset/workspace/glyph-classes";
 import { createInstanceId } from "@/management/storage/ids";
@@ -540,18 +540,6 @@ export function Dialog(props: PresetToolDialogProps): JSX.Element {
 				fullPath: filePath,
 				entryPoint: traceEntryPoint,
 			});
-			// Issue #130 (local-flow branch): if `beforeSave` was not
-			// provided we still have to verify whatever `buildFilePath`
-			// produced — a stray `filePath` the user typed into the form
-			// (e.g. for the "Add Local Preset" authoring dialog) would
-			// otherwise persist a record pointing at a non-existent file.
-			await assertPresetAssetPresent({
-				win: window,
-				presetId,
-				type: props.type,
-				filePath,
-				entryPoint: traceEntryPoint,
-			});
 			traceStage = "persist";
 			const extraData = getExtraData(props.mapPersistData, values);
 			const dataBlock: Record<string, unknown> = {
@@ -567,7 +555,20 @@ export function Dialog(props: PresetToolDialogProps): JSX.Element {
 				icon: resolvedIconValue,
 				...getDataBlock(dataBlock),
 			};
-			await upsertLocalPreset(record);
+			// Issue #130 (local-flow branch): if `beforeSave` was not
+			// provided we still have to verify whatever `buildFilePath`
+			// produced — a stray `filePath` the user typed into the form
+			// (e.g. for the "Add Local Preset" authoring dialog) would
+			// otherwise persist a record pointing at a non-existent file.
+			// The verify→upsert pairing is owned by the shared helper so
+			// this surface cannot drift from `PathDialog` / `edit/Dialog`.
+			await verifyAndUpsertPreset({
+				win: window,
+				presetId,
+				record,
+				filePath,
+				entryPoint: traceEntryPoint,
+			});
 			tracePresetLifecycle({
 				kind: "preset.save.persist",
 				presetId,

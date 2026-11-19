@@ -265,5 +265,130 @@
 		"emptyItems": "Aucun élément trouvé",
 		"goUp": "Remonter",
 		"cepNodeRequired": "L'explorateur de dossiers nécessite CEP Node"
+	},
+	"tutorial": {
+		"chrome": {
+			"help": "Aide",
+			"title": "Aide du widget",
+			"close": "Fermer",
+			"dismissHint": "Masquer l’astuce"
+		},
+		"easing": {
+			"summary": "Modifiez les courbes d'easing et appliquez-les aux préréglages ou à l'animation des calques.",
+			"steps": {
+				"chooseCurve": {
+					"title": "Choisir une courbe",
+					"body": "Sélectionnez une courbe prédéfinie ou dessinez la vôtre dans l'éditeur."
+				},
+				"applyCurve": {
+					"title": "L'appliquer",
+					"body": "Appliquez la courbe au préréglage ou au calque sélectionné."
+				}
+			}
+		},
+		"menu": {
+			"summary": "Ouvrez les commandes de l'espace de travail, les actions de mise en page et les boîtes de dialogue depuis une seule tuile.",
+			"steps": {
+				"openMenu": {
+					"title": "Ouvrir le menu",
+					"body": "Cliquez sur la tuile pour ouvrir le menu des commandes."
+				},
+				"runCommand": {
+					"title": "Exécuter une commande",
+					"body": "Choisissez une commande pour l'appliquer à l'espace de travail actuel."
+				}
+			}
+		},
+		"align": {
+			"summary": "Alignez les préréglages ou calques sélectionnés sur des positions communes de la grille.",
+			"steps": {
+				"selectTargets": {
+					"title": "Sélectionner les cibles",
+					"body": "Sélectionnez les préréglages ou calques à aligner."
+				},
+				"pickAlignment": {
+					"title": "Choisir l'alignement",
+					"body": "Choisissez une option d'alignement pour les ajuster."
+				}
+			}
+		},
+		"anchor-point": {
+			"summary": "Placez une ancre nommée pour les références de mise en page et le snapping.",
+			"steps": {
+				"nameAnchor": {
+					"title": "Nommer l'ancre",
+					"body": "Saisissez un nom qui identifie ce point d'ancrage."
+				},
+				"dropAnchor": {
+					"title": "La déposer sur la grille",
+					"body": "Cliquez dans l'espace de travail pour placer l'ancre."
+				}
+			}
+		},
+		"layout-lock": {
+			"summary": "Évitez les déplacements accidentels pendant l'organisation de la grille.",
+			"steps": {
+				"turnLockOn": {
+					"title": "Activer le verrouillage",
+					"body": "Activez le verrouillage pour figer les positions des widgets."
+				},
+				"unlockToRearrange": {
+					"title": "Déverrouiller pour réorganiser",
+					"body": "Désactivez le verrouillage pour déplacer à nouveau les widgets."
+				}
+			}
+		},
+		"info": {
+			"summary": "Affichez les métadonnées, chemins et état des préréglages dans une large tuile récapitulative.",
+			"steps": {
+				"placeWidget": {
+					"title": "Placer le widget",
+					"body": "Ajoutez le widget Info à votre espace de travail."
+				},
+				"inspectPreset": {
+					"title": "Inspecter un préréglage",
+					"body": "Sélectionnez un préréglage pour voir ses détails ici."
+				}
+			}
+		},
+		"quick-actions": {
+			"summary": "Exécutez scripts, effets et actions de fichier depuis une palette de commandes compacte.",
+			"steps": {
+				"openPalette": {
+					"title": "Ouvrir la palette",
+					"body": "Ouvrez la palette et tapez pour rechercher des actions."
+				},
+				"runAction": {
+					"title": "Exécuter une action",
+					"body": "Sélectionnez une action pour l'exécuter immédiatement."
+				}
+			}
+		},
+		"directory-browser": {
+			"summary": "Parcourez les dossiers du disque et les préréglages depuis le panneau.",
+			"steps": {
+				"navigateFolders": {
+					"title": "Naviguer dans les dossiers",
+					"body": "Utilisez le champ de chemin ou la liste des dossiers."
+				},
+				"openPreset": {
+					"title": "Ouvrir un préréglage",
+					"body": "Double-cliquez un préréglage pour l'appliquer ou l'inspecter."
+				}
+			}
+		},
+		"font-viewer": {
+			"summary": "Prévisualisez les familles de polices, styles et texte d'exemple dans l'espace de travail.",
+			"steps": {
+				"loadFonts": {
+					"title": "Charger les polices",
+					"body": "Chargez les polices système ou choisissez une famille à prévisualiser."
+				},
+				"editSample": {
+					"title": "Modifier l'exemple",
+					"body": "Modifiez le texte d'exemple pour vérifier glyphes et styles."
+				}
+			}
+		}
 	}
 }

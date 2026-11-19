@@ -36,5 +36,5 @@ runtime/
   worker process として扱う。ここでいう `runtime` は CEP / UI の実行文脈を含む一般語で
   あり、常駐 Rust process を意味しない。
 - 保存 tree は [`../storage/index.md`](../storage/index.md) に置く。
-- online/offline と Supabase は [`../cloud/index.md`](../cloud/index.md) に置く。
+- online/offline と提供 feed は [`../cloud/index.md`](../cloud/index.md) に置く。
 - データ型の定義元は [`../data/index.md`](../data/index.md) に置く。

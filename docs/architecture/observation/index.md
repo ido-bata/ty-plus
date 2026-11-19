@@ -14,6 +14,10 @@ These are evidence artifacts, not implementation instructions. They do not instr
 
 Some maps reference legacy paths (`src/cep-shell/`, `src/js/`, `src/packages/`, `src/packages/host-scripts/`, `command-dispatch`) that have been superseded by `src/{function,management,shared}`. These references are preserved for historical accuracy and are annotated as legacy where applicable.
 
+## Snapshot Notice
+
+These maps are dated evidence snapshots, not a description of the current tree. Entries citing `supabase/functions/` refer to the pre-port repository: the Supabase implementation was never ported into this repo (see `docs/architecture/cloud/supabase.md`), and the remaining unprovided online surfaces were removed structurally in #193. Treat those rows as historical observations; the current online surface is limited to the static update and notification feeds (`docs/architecture/feeds.md`, `docs/architecture/offline-core.md`).
+
 ## Maps
 
 - [Workflow Map](./workflow-map.md) — Active user-facing workflows

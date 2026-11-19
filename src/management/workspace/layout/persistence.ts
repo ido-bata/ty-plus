@@ -4,14 +4,8 @@
  */
 
 import { readJson, writeJson } from "@/management/storage/persistence";
-import type {
-	LayoutItem,
-	PersistedLayoutDocument,
-} from "@/management/workspace/layout/grid-document";
-import {
-	parseLayoutDocument,
-	serializePersistedLayoutDocument,
-} from "@/management/workspace/layout/grid-document";
+import type { PersistedLayoutDocument } from "@/management/workspace/layout/grid-document";
+import { serializePersistedLayoutDocument } from "@/management/workspace/layout/grid-document";
 
 export const indexFromPanelId = (panelId: string): 1 | 2 | 3 | 4 | 5 => {
 	const t = panelId.trim();
@@ -28,25 +22,6 @@ export const indexFromPanelId = (panelId: string): 1 | 2 | 3 | 4 | 5 => {
 	return 1;
 };
 
-export const readLayoutDocument = async (
-	win: Window,
-	index: 1 | 2 | 3 | 4 | 5,
-): Promise<PersistedLayoutDocument> => {
-	const empty = (): PersistedLayoutDocument => ({ gridCells: [] });
-	const stored = await readJson(win, "workspace", index);
-	if (!stored) {
-		return empty();
-	}
-	if (Array.isArray(stored)) {
-		return parseLayoutDocument(stored);
-	}
-	const o = stored as { gridCells?: unknown; items?: unknown };
-	if (Array.isArray(o.gridCells) || Array.isArray(o.items)) {
-		return parseLayoutDocument(stored);
-	}
-	return empty();
-};
-
 export const writeLayoutDocument = async (
 	win: Window,
 	index: 1 | 2 | 3 | 4 | 5,
@@ -56,21 +31,6 @@ export const writeLayoutDocument = async (
 	// The serialized shape is already `{ gridCells: [...] }`; pass the parsed
 	// object so the persistence API owns stringification.
 	await writeJson(win, "workspace", JSON.parse(json), index);
-};
-
-export const readWorkspaceGridCells = async (
-	win: Window,
-	index: 1 | 2 | 3 | 4 | 5,
-): Promise<LayoutItem[]> => (await readLayoutDocument(win, index)).gridCells;
-
-export const writeWorkspaceGridCells = async (
-	win: Window,
-	index: 1 | 2 | 3 | 4 | 5,
-	gridCells: readonly LayoutItem[],
-): Promise<void> => {
-	await writeLayoutDocument(win, index, {
-		gridCells: [...gridCells],
-	});
 };
 
 export const ensureLayoutFiles = async (win: Window): Promise<void> => {

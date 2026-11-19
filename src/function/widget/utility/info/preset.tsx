@@ -3,6 +3,8 @@ import { type JSX, type ReactNode, useEffect, useMemo, useState } from "react";
 import { WorkspacePresetGlyph } from "@/management/preset";
 import type { Preset } from "@/management/preset/contract";
 import { resolvePresetsForInfoByCatalogIds } from "@/management/preset/group/info-resolution";
+import { getSharedSiblingListDirectory } from "@/management/preset/sibling-directory-lister";
+import { usePresetSiblingImageSrc } from "@/management/preset/workspace/glyph";
 import { catalogRefsForSurfaceIds } from "@/management/workspace/placement/resolve";
 import type {
 	GridSettings,
@@ -308,6 +310,16 @@ function PresetCard({
 	const previewSrc = pickPreviewImageSrc(preset);
 	const hasImage = !!previewSrc;
 	const hasDescription = !!preset.description?.trim();
+	const thumbnailListDirectory = useMemo(
+		() =>
+			typeof window === "undefined"
+				? undefined
+				: getSharedSiblingListDirectory(window),
+		[],
+	);
+	const siblingImageSrc = usePresetSiblingImageSrc(preset, {
+		thumbnailListDirectory,
+	});
 
 	return (
 		<div
@@ -346,7 +358,10 @@ function PresetCard({
 							overflow: "hidden",
 						})}
 					>
-						<WorkspacePresetGlyph preset={preset} />
+						<WorkspacePresetGlyph
+							preset={preset}
+							siblingImageSrc={siblingImageSrc}
+						/>
 					</div>
 				</div>
 				<div

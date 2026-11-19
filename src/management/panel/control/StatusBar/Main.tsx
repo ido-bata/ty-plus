@@ -4,14 +4,13 @@
  * and secondary panel launchers.
  */
 
-import { memo, useEffect, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 
 import { subscribe } from "@/management/debug";
 import type { SurfaceState } from "@/management/workspace/state";
 import type { Snapshot } from "@/management/workspace/undo/history";
 import { Icon, IconButton } from "@/shared/component";
 import {
-	Cloud,
 	Layers,
 	Library,
 	MessageSquare,
@@ -22,6 +21,7 @@ import {
 	Trash2,
 	Undo2,
 } from "@/shared/component/icons";
+import { AnchoredPopover } from "@/shared/component/interaction/AnchoredPopover";
 import { cx } from "@/shared/util/cx";
 import { css } from "@/styled-system/css";
 
@@ -99,16 +99,16 @@ const iconBtnSize = css({
 	width: "6",
 });
 
-const snapshotsWrap = css({
-	position: "relative",
-});
-
+/**
+ * Surface styling for the snapshots dropdown. Placement (position, flip,
+ * viewport clamp, dismissal) is owned by `AnchoredPopover`; this class must
+ * not set `position` / `top` / `left` / `bottom` / `right` / `zIndex` /
+ * `maxHeight`.
+ */
 const snapshotsDropdown = css({
-	position: "absolute",
-	bottom: "100%",
-	right: "0",
 	minWidth: "var(--ty-space-45)",
 	maxWidth: "80",
+	overflowY: "auto",
 	backgroundColor: "var(--color-ty-snap-panel)",
 	borderWidth: "1px",
 	borderStyle: "solid",
@@ -116,7 +116,6 @@ const snapshotsDropdown = css({
 		"rgba(var(--text-r),var(--text-g),var(--text-b),var(--ty-opacity-ws-snap-panel-border))",
 	borderRadius: "var(--radius)",
 	padding: "1",
-	zIndex: "50",
 });
 
 const snapshotsEmpty = css({
@@ -162,6 +161,7 @@ export const StatusBar = memo(function StatusBarImpl(
 	const [latestConsoleText, setLatestConsoleText] = useState<string>("");
 	const [consoleVisible, setConsoleVisible] = useState(false);
 	const [snapshotsOpen, setSnapshotsOpen] = useState(false);
+	const snapshotsAnchorRef = useRef<HTMLDivElement | null>(null);
 
 	useEffect(() => {
 		const unsub = subscribe((msgs) => {
@@ -176,18 +176,6 @@ export const StatusBar = memo(function StatusBarImpl(
 		});
 		return unsub;
 	}, []);
-
-	useEffect(() => {
-		if (!snapshotsOpen) return;
-		const close = (e: MouseEvent) => {
-			const target = e.target as HTMLElement;
-			if (target.closest("[data-ws-action='toggle-snapshots']")) return;
-			if (target.closest("[data-snapshots-dropdown]")) return;
-			setSnapshotsOpen(false);
-		};
-		document.addEventListener("click", close);
-		return () => document.removeEventListener("click", close);
-	}, [snapshotsOpen]);
 
 	return (
 		<footer data-ws-status-bar="" className={cx("status-bar", footerBase)}>
@@ -233,7 +221,7 @@ export const StatusBar = memo(function StatusBarImpl(
 					<Icon icon={Save} size={3} />
 				</IconButton>
 
-				<div className={snapshotsWrap}>
+				<div ref={snapshotsAnchorRef}>
 					<IconButton
 						data-ws-action="toggle-snapshots"
 						title={
@@ -247,43 +235,52 @@ export const StatusBar = memo(function StatusBarImpl(
 					>
 						<Icon icon={Layers} size={3} />
 					</IconButton>
-					{snapshotsOpen && (
-						<div data-snapshots-dropdown="" className={snapshotsDropdown}>
-							{props.snapshots.length === 0 ? (
-								<span className={snapshotsEmpty}>No saved layouts</span>
-							) : (
-								props.snapshots
-									.slice()
-									.reverse()
-									.map((snp) => (
-										<div
-											key={snp.id}
-											data-snapshots-row=""
-											className={snapshotsRow}
+					<AnchoredPopover
+						open={snapshotsOpen}
+						onClose={() => setSnapshotsOpen(false)}
+						anchorRef={snapshotsAnchorRef}
+						id="statusbar-snapshots"
+						align="end"
+						maxHeight="60vh"
+						// The status bar lives inside the Control Panel
+						// (z=150); the portaled surface must stack above it.
+						zIndex={200}
+						className={snapshotsDropdown}
+					>
+						{props.snapshots.length === 0 ? (
+							<span className={snapshotsEmpty}>No saved layouts</span>
+						) : (
+							props.snapshots
+								.slice()
+								.reverse()
+								.map((snp) => (
+									<div
+										key={snp.id}
+										data-snapshots-row=""
+										className={snapshotsRow}
+									>
+										<button
+											type="button"
+											data-ws-action="restore-snapshot"
+											data-snap-id={snp.id}
+											title={`Restore "${snp.label}"`}
+											className={snapshotsLabel}
 										>
-											<button
-												type="button"
-												data-ws-action="restore-snapshot"
-												data-snap-id={snp.id}
-												title={`Restore "${snp.label}"`}
-												className={snapshotsLabel}
-											>
-												{snp.label}
-											</button>
-											<IconButton
-												data-ws-action="delete-snapshot"
-												data-snap-id={snp.id}
-												title="Delete"
-												size="sm"
-												className={iconBtnSize}
-											>
-												<Icon icon={Trash2} size={3} />
-											</IconButton>
-										</div>
-									))
-							)}
-						</div>
-					)}
+											{snp.label}
+										</button>
+										<IconButton
+											data-ws-action="delete-snapshot"
+											data-snap-id={snp.id}
+											title="Delete"
+											size="sm"
+											className={iconBtnSize}
+										>
+											<Icon icon={Trash2} size={3} />
+										</IconButton>
+									</div>
+								))
+						)}
+					</AnchoredPopover>
 				</div>
 
 				<IconButton
@@ -294,15 +291,6 @@ export const StatusBar = memo(function StatusBarImpl(
 					className={iconBtnSize}
 				>
 					<Icon icon={Library} size={3} />
-				</IconButton>
-				<IconButton
-					data-ws-action="open-dialog"
-					data-dialog-kind="presetLibrary"
-					title="Preset Library (Online)"
-					size="sm"
-					className={iconBtnSize}
-				>
-					<Icon icon={Cloud} size={3} />
 				</IconButton>
 				<IconButton
 					data-ws-action="toggle-console"

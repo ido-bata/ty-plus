@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { expect } from "storybook/test";
 import type { FileBrowserEntry } from "@/management/storage/file-browser-service";
+import { expectCanvasLayout } from "@/storybook/quality/layout";
 import { EntryThumb } from "./EntryThumb";
 
 type Args = {
@@ -63,16 +65,34 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+// Issue #166: under Storybook the thumbnail gateway stays idle, so every
+// variant must fall back to the EntryGlyph — assert the glyph `<svg>`
+// renders inside the box and no `<img>` leaks through, plus the layout
+// contract.
+const playGlyphFallback = async ({
+	canvasElement,
+}: {
+	canvasElement: HTMLElement;
+}): Promise<void> => {
+	expectCanvasLayout(canvasElement);
+	expect(canvasElement.querySelector("svg")).not.toBeNull();
+	expect(canvasElement.querySelector("img")).toBeNull();
+};
+
 // useThumbnail() and useFolderPreview() resolve to idle under the
 // Storybook decorators, so all variants render the EntryGlyph fallback.
-export const Default: Story = {};
+export const Default: Story = {
+	play: playGlyphFallback,
+};
 
 export const Folder: Story = {
 	args: { entry: makeDir("presets", "/preset/presets") },
+	play: playGlyphFallback,
 };
 
 export const ParentUp: Story = {
 	args: { entry: makeDir("..", "/preset/root") },
+	play: playGlyphFallback,
 };
 
 export const Video: Story = {
@@ -86,6 +106,7 @@ export const Video: Story = {
 		glyphSize: 14,
 		glyphClassName: "shrink-0",
 	},
+	play: playGlyphFallback,
 };
 
 export const SmallGlyph: Story = {
@@ -93,6 +114,7 @@ export const SmallGlyph: Story = {
 		glyphSize: 14,
 		glyphClassName: "shrink-0",
 	},
+	play: playGlyphFallback,
 	decorators: [
 		(Story) => (
 			<div

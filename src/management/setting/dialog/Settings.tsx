@@ -24,6 +24,7 @@ import { InputsSection } from "@/management/setting/dialog/sections/InputsSectio
 import { LanguageSection } from "@/management/setting/dialog/sections/LanguageSection";
 import { PathsSection } from "@/management/setting/dialog/sections/PathsSection";
 import { StyleSection } from "@/management/setting/dialog/sections/StyleSection";
+import { TipsSection } from "@/management/setting/dialog/sections/TipsSection";
 import { TokensSection } from "@/management/setting/dialog/sections/TokensSection";
 import { UpdateSection } from "@/management/setting/dialog/sections/UpdateSection";
 import { WorkspaceBackupSection } from "@/management/setting/dialog/sections/WorkspaceBackupSection";
@@ -167,6 +168,12 @@ const SETTINGS_SECTIONS: SettingsSidebarSectionDef[] = [
 		labelKey: "tabs.section.grid",
 		render: () => <GridSection />,
 	},
+	{
+		sectionId: "tips",
+		groupId: "display",
+		labelKey: "tabs.section.tips",
+		render: () => <TipsSection />,
+	},
 	// データ (data)
 	{
 		sectionId: "paths",
@@ -174,10 +181,9 @@ const SETTINGS_SECTIONS: SettingsSidebarSectionDef[] = [
 		labelKey: "tabs.section.paths",
 		render: () => <PathsSection />,
 	},
-	// Issue #82: the cloud-sync "network" section is dormant in R0 — there is
-	// no backend, and mounting it fired a worker connectivity check on every
-	// dialog open. The section is not registered here; restore it together
-	// with a real backend.
+	// Issue #82/#193: the cloud-sync "network" section had no backend and
+	// was removed with the unprovided online surface. Do not re-register
+	// it without a real backend contract.
 	{
 		sectionId: "update",
 		groupId: "data",

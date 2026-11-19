@@ -53,15 +53,12 @@ type WidgetRecordsFile = { widgets?: WidgetRecord[] };
  * actually mounted. After a panel reload the status bar can exist before
  * React has attached its handlers, so a single click may be a no-op.
  */
-const openSnapshotsDropdown = async (
+export const openSnapshotsDropdown = async (
 	ctx: E2EContext,
 	surface: LiveSurface,
 ): Promise<boolean> => {
 	const alreadyOpen = await ctx
-		.evalJs(
-			surface,
-			'Boolean(document.querySelector("[data-snapshots-dropdown]"))',
-		)
+		.evalJs(surface, 'Boolean(document.querySelector("#statusbar-snapshots"))')
 		.catch(() => false);
 	if (alreadyOpen) return true;
 	for (let attempt = 0; attempt < 4; attempt++) {
@@ -69,7 +66,7 @@ const openSnapshotsDropdown = async (
 		const open = await waitForDom(
 			ctx,
 			surface,
-			'Boolean(document.querySelector("[data-snapshots-dropdown]"))',
+			'Boolean(document.querySelector("#statusbar-snapshots"))',
 			8_000,
 		);
 		if (open) return true;
@@ -77,7 +74,7 @@ const openSnapshotsDropdown = async (
 		// next iteration toggles again, so re-check state first.
 		const isOpen = await ctx.evalJs(
 			surface,
-			'Boolean(document.querySelector("[data-snapshots-dropdown]"))',
+			'Boolean(document.querySelector("#statusbar-snapshots"))',
 		);
 		if (isOpen) return true;
 		await sleep(1_000);
@@ -214,6 +211,23 @@ export const createFilePresetViaDialog = async (
 	title: string,
 ): Promise<string> => {
 	const panel = await ctx.requireSurface({ surfaceId: "panel-1" });
+	// Stale preset-add surfaces survive failed runs: a dialog left open with
+	// `busy` stuck (e.g. a host evalScript that never returned while an AE
+	// modal was up) keeps Create disabled forever, and `findLive` picks the
+	// first match — which may be the zombie, not the fresh dialog
+	// (Issue #223: UC-C12 "Create not clickable", UC-J02 timeouts).
+	const stale = (await listLiveSurfaces(await ctx.surfaces())).filter((s) =>
+		s.surfaceId.startsWith("dialog-preset-add"),
+	);
+	for (const s of stale) {
+		try {
+			const conn = await ctx.cdp(s);
+			await conn.send("Page.close", {}, 5_000);
+		} catch {
+			// best-effort — a wedged target may refuse close
+		}
+	}
+	if (stale.length > 0) await sleep(1_000);
 	const opened = await clickFirst(
 		ctx,
 		panel,

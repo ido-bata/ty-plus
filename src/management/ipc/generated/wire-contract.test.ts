@@ -387,55 +387,6 @@ describe("generated canonical operation policy", () => {
 		// Production break caught: generated clients must not maintain a partial or
 		// duplicate retry/cancellation policy table.
 		expect(canonicalOperationPolicies).toEqual({
-			online_catalog_search: {
-				cancellable: true,
-				idempotencyKey: "optional",
-				retryClass: "idempotent",
-				retryCrashBeforeAccept: false,
-				wireName: "online.catalog.search",
-			},
-			online_connectivity_check: {
-				cancellable: true,
-				idempotencyKey: "optional",
-				retryClass: "idempotent",
-				retryCrashBeforeAccept: false,
-				wireName: "online.connectivity.check",
-			},
-			online_download: {
-				cancellable: true,
-				idempotencyKey: "forbidden",
-				retryClass: "non-idempotent",
-				retryCrashBeforeAccept: false,
-				wireName: "online.download",
-			},
-			online_catalog_cache_read: {
-				cancellable: true,
-				idempotencyKey: "optional",
-				retryClass: "idempotent",
-				retryCrashBeforeAccept: false,
-				wireName: "online.catalog.cache.read",
-			},
-			online_catalog_cache_write: {
-				cancellable: true,
-				idempotencyKey: "forbidden",
-				retryClass: "non-idempotent",
-				retryCrashBeforeAccept: false,
-				wireName: "online.catalog.cache.write",
-			},
-			online_catalog_cache_delete: {
-				cancellable: true,
-				idempotencyKey: "forbidden",
-				retryClass: "non-idempotent",
-				retryCrashBeforeAccept: false,
-				wireName: "online.catalog.cache.delete",
-			},
-			online_catalog_cache_clear: {
-				cancellable: true,
-				idempotencyKey: "forbidden",
-				retryClass: "non-idempotent",
-				retryCrashBeforeAccept: false,
-				wireName: "online.catalog.cache.clear",
-			},
 			host_plugin_effect_scan: {
 				cancellable: true,
 				idempotencyKey: "optional",

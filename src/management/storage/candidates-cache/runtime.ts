@@ -1,5 +1,4 @@
 import { parseRootPathsFromSettingsJson } from "@/management/preset/catalog-add/parse-root-paths";
-import type { Preset } from "@/management/preset/contract";
 import {
 	readCandidates,
 	writeCandidates,
@@ -8,6 +7,7 @@ import {
 	canUseCepNodeFileBrowser,
 	createCepNodeFileBrowserService,
 	type QuickActionDirectorySignature,
+	type QuickActionRootFileRow,
 } from "@/management/storage/file-browser-service";
 import { readSettings } from "@/management/workspace/persistence/store";
 
@@ -25,7 +25,7 @@ type CandidatesSnapshotRoot = {
 
 export type CandidatesSnapshot = {
 	roots: readonly CandidatesSnapshotRoot[];
-	rootFiles: readonly Preset[];
+	rootFiles: readonly QuickActionRootFileRow[];
 	pluginEffects: readonly {
 		filePath: string;
 		matchName: string;
@@ -45,10 +45,8 @@ type CandidatesSystemPaths = {
  * The candidate cache indexes the **user-chosen** preset/script/plugin roots
  * (the same source the directory browser "Anchors" view, `PathDialog`, and
  * `FolderDirectoryPicker` already use), not the CEP gateway's AE-install-rooted
- * paths. The global `getDataServices().resolveSystemPaths()` returns the latter
- * and is intentionally kept as-is for the cloud-preset download flow
- * (`use-cases.ts` -> `resolvePresetDownloadPath`) which needs write access to
- * the AE install folder.
+ * paths. `resolveSystemPaths()` in `workspace/services.ts` returns the latter
+ * for callers that need AE install-folder access.
  */
 const resolveCandidateRootsFromSettings = async (
 	win: Window,
@@ -146,7 +144,7 @@ export const preloadCandidatesSnapshot = async (
 const writeIndexCache = async (
 	win: Window,
 	roots: readonly CandidatesSnapshotRoot[],
-	rootFiles: readonly Preset[],
+	rootFiles: readonly QuickActionRootFileRow[],
 	directorySignatures: readonly QuickActionDirectorySignature[],
 	pluginEffects: CandidatesSnapshot["pluginEffects"],
 ): Promise<void> => {
@@ -178,7 +176,7 @@ const rebuildCandidatesIndex = async (win: Window): Promise<void> => {
 			return;
 		}
 		const service = createCepNodeFileBrowserService({ win });
-		let rootFiles: readonly Preset[] = [];
+		let rootFiles: readonly QuickActionRootFileRow[] = [];
 		let directorySignatures: readonly QuickActionDirectorySignature[] = [];
 		let lastWriteAt = 0;
 		const index = await service.buildQuickActionRootIndexIncremental(

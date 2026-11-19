@@ -49,10 +49,6 @@
 		"placeholder": "Tapez pour rechercher…",
 		"empty": "Aucun préréglage trouvé"
 	},
-	"online": {
-		"loading": "Chargement…",
-		"empty": "Aucun préréglage en ligne disponible"
-	},
 	"presetTool": {
 		"form": {
 			"presetId": "ID du préréglage",
@@ -152,7 +148,6 @@
 		"animationLabel": "Animation",
 		"layerCompLabel": "Calque/Comp",
 		"codeLabel": "Code",
-		"presetLibrary": "Bibliothèque de préréglages",
 		"messages": "Messages",
 		"settings": "Paramètres",
 		"debugConsole": "Console de débogage",

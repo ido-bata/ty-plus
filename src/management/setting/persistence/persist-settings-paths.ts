@@ -116,9 +116,18 @@ export const persistSettingsPaths = async (
 		await writeSettingsPathsJson(win, pathsToJsonRecord(normalized));
 	}
 
-	const rawSettings = await readSettings(win);
-	const mergedJson = mergePathsIntoSettingsJsonText(rawSettings, normalized);
-	await writeSettings(win, mergedJson);
+	// ADR-0006: the settings.json read→merge→write shares app.json with
+	// the workspace layer's locked writers — run it inside the same
+	// managed-root persistence lock. paths.json above is a single-file
+	// full replace and needs no lock.
+	const { withManagedRootPersistenceLock } = await import(
+		"@/management/storage/lock/persistence-lock"
+	);
+	await withManagedRootPersistenceLock(win, async () => {
+		const rawSettings = await readSettings(win);
+		const mergedJson = mergePathsIntoSettingsJsonText(rawSettings, normalized);
+		await writeSettings(win, mergedJson);
+	});
 
 	return normalized;
 };

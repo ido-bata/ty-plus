@@ -233,7 +233,7 @@ export const LongList: Story = {
 			},
 			{
 				id: "n-7",
-				message: "Failed to read cache — falling back to fixtures.",
+				message: "Failed to read notification cache.",
 				type: "error",
 				dismissible: true,
 			},

@@ -72,7 +72,6 @@ fn resolve_invocation_uses_support_root_for_session_default() {
     );
     let _ = resolved.storage();
     let _ = resolved.host_filesystem();
-    let _ = resolved.online();
 }
 
 #[test]
@@ -101,18 +100,6 @@ fn resolve_invocation_rejects_request_context_mismatch() {
     mismatched.request.context.host_context.session_id = "other-session".to_owned();
     assert!(matches!(
         resolve_invocation(&mismatched),
-        Err(ty_plus_operation_worker::InvocationError::ContextMismatch)
-    ));
-}
-
-#[test]
-fn injected_online_boundary_cannot_cross_invocation_root() {
-    let invocation = invocation(ManagedRootContext::SessionDefault);
-    let other_root = std::env::temp_dir().join("ow-rust-003-other-online-root");
-    std::fs::create_dir_all(&other_root).unwrap();
-    let online = ty_plus_operation_worker::OnlineBoundary::unconfigured(&other_root);
-    assert!(matches!(
-        ty_plus_operation_worker::resolve_invocation_with_online(&invocation, online),
         Err(ty_plus_operation_worker::InvocationError::ContextMismatch)
     ));
 }

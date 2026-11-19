@@ -267,11 +267,21 @@ function publishSettingsSaveFailure(win: Window, message: string): void {
 
 async function saveSettingsToStorage(settings: Settings): Promise<boolean> {
 	try {
-		const raw = await readSettings(window);
-		const onDisk = raw?.trim() ? (JSON.parse(raw) as unknown) : {};
-		const merged = mergeOwnedSettingsIntoSettingsJson(onDisk, settings);
-		await writeSettings(window, `${JSON.stringify(merged, null, 2)}\n`);
-		return true;
+		// ADR-0006: settings/app.json is shared with the workspace layer
+		// (panel persists, inter-panel moves, backup restore), which writes
+		// under the managed-root persistence lock. This read→merge→write
+		// must hold the same lock or a concurrent workspace write can be
+		// lost. The per-window queue above only serializes THIS context.
+		const { withManagedRootPersistenceLock } = await import(
+			"@/management/storage/lock/persistence-lock"
+		);
+		return await withManagedRootPersistenceLock(window, async () => {
+			const raw = await readSettings(window);
+			const onDisk = raw?.trim() ? (JSON.parse(raw) as unknown) : {};
+			const merged = mergeOwnedSettingsIntoSettingsJson(onDisk, settings);
+			await writeSettings(window, `${JSON.stringify(merged, null, 2)}\n`);
+			return true;
+		});
 	} catch (error) {
 		console.error("[Settings] Failed to save settings:", error);
 		return false;

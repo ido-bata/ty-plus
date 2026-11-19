@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { type JSX, type ReactElement, useMemo } from "react";
+import { expect } from "storybook/test";
 import { SettingsContext } from "@/management/setting/context";
 import {
 	DEFAULT_SETTINGS,
@@ -7,6 +8,7 @@ import {
 	type Settings,
 	type SettingsPatch,
 } from "@/management/setting/models/settings";
+import { expectCanvasLayout } from "@/storybook/quality/layout";
 import { css } from "@/styled-system/css";
 
 import { SettingsDialog } from "./Settings";
@@ -172,4 +174,48 @@ export const LowResolution: Story = {
  */
 export const HashRouted: Story = {
 	render: renderDialog("design-tokens"),
+};
+
+/**
+ * Issue #166: sidebar → section switching contract. Clicks the
+ * Appearance tab and asserts the tabpanel swaps (the language section
+ * unmounts, the appearance section mounts, `aria-selected` follows).
+ * A second click on Grid proves the switch is not a one-shot mount.
+ * The Update section is deliberately avoided — mounting it fires a
+ * real update-feed fetch.
+ */
+export const SectionSwitch: Story = {
+	// `renderDialog("")` clears any hash left by earlier stories so the
+	// sidebar deterministically starts on the default (language) section.
+	render: renderDialog(""),
+	play: async ({ canvasElement }) => {
+		const { userEvent } = await import("vitest/browser");
+		const tabFor = (id: string): HTMLButtonElement => {
+			const tab = canvasElement.querySelector<HTMLButtonElement>(
+				`[data-settings-sidebar-item='${id}']`,
+			);
+			if (!tab) throw new Error(`sidebar tab not found: ${id}`);
+			return tab;
+		};
+		const panelFor = (id: string): Element | null =>
+			canvasElement.querySelector(`[data-settings-sidebar-section='${id}']`);
+
+		expect(panelFor("language")).not.toBeNull();
+		expect(panelFor("appearance")).toBeNull();
+
+		await userEvent.click(tabFor("appearance"));
+		await expect(panelFor("appearance")).not.toBeNull();
+		await expect(panelFor("language")).toBeNull();
+		await expect(tabFor("appearance").getAttribute("aria-selected")).toBe(
+			"true",
+		);
+		await expect(tabFor("language").getAttribute("aria-selected")).toBe(
+			"false",
+		);
+
+		await userEvent.click(tabFor("grid"));
+		await expect(panelFor("grid")).not.toBeNull();
+		await expect(panelFor("appearance")).toBeNull();
+		expectCanvasLayout(canvasElement);
+	},
 };

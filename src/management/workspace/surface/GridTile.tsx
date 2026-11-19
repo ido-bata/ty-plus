@@ -10,6 +10,7 @@
 import type { CSSProperties, JSX } from "react";
 import { memo } from "react";
 import type { Preset } from "@/management/preset/contract";
+import { WidgetTutorialLayer } from "@/management/tutorial/WidgetTutorialLayer";
 import { Widget } from "@/management/widget/workspace/TileContent";
 import type {
 	GridSettings,
@@ -197,7 +198,11 @@ function TileBodyImpl(props: TileBodyProps): JSX.Element {
 	} = props;
 	if (isWidget) {
 		if (layout) {
-			return <Widget layout={layout} state={state} grid={grid} />;
+			return (
+				<WidgetTutorialLayer widgetType={layout.widgetType}>
+					<Widget layout={layout} state={state} grid={grid} />
+				</WidgetTutorialLayer>
+			);
 		}
 		return (
 			<div className={widgetMissingCard} title={tileId}>

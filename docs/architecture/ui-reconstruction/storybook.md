@@ -21,6 +21,10 @@ preview での見た目は token レベル一致する。
 src/
 ├── storybook/
 │   ├── Sanity.stories.tsx                    # Smoke test for decorators
+│   ├── quality/                              # Render-quality assertion layer (Issue #194)
+│   │   ├── layout.ts                         #   DOM layout contract helpers + auditCanvas
+│   │   ├── layout.test.ts                    #   pure-geometry unit tests (unit project)
+│   │   └── contract.stories.tsx              #   positive + negative fixtures
 │   └── decorators/
 │       ├── cep-shim.ts                       # Module-load side-effect: window.__adobe_cep__
 │       ├── CepMockDecorator.tsx              # Imports cep-shim
@@ -207,6 +211,11 @@ panel には `Args` のみ露出する。
 
 ## Stories inventory
 
+> 注: 以下の inventory は 2026-09-09 時点の snapshot であり、#193 で撤去した
+> `online/catalog` 系 story（`Dialog.stories.tsx`、`DownloadProgressIconButton`、
+> `PresetLibrarySidePanel` 等）を含む。現在の story 一覧は `src/**/*.stories.tsx`
+> を直接参照すること。
+
 2026-09-09 時点で **123 stories** が `src/**/*.stories.tsx` に置かれている。
 
 | Wave | Scope | Story count |
@@ -268,6 +277,18 @@ bunx storybook build        # preview / module resolution が壊れていない�
 
 `bunx storybook build` は `MISSING_EXPORT` や module not found で失敗する。
 これらは CEP build では検出できない (CEP では webpack が緩く fallback する)
+
+### Render quality contract (Issue #194)
+
+capture pipeline の PNG/metadata は網羅性の証拠であり、視覚品質の合格
+判定ではない。story `play()` から `src/storybook/quality/layout.ts` の
+`expectCanvasLayout` / granular `assert*` helpers を呼び、実 DOM の
+viewport bounds・`overflow:hidden` clip・重なり・操作状態
+（hover/focus/selected/drag）を assert する。契約の詳細・適用状況・
+machine-checkable vs human acceptance の区別は
+[ui-render-contract.md](../quality/ui-render-contract.md) を正本とする。
+negative fixture (`src/storybook/quality/contract.stories.tsx`) が
+検査の拒否能力を常設で証明する。
 
 ---
 

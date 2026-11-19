@@ -48,7 +48,7 @@ UI は `surface` や `dialog` で横断分類しない。
 ```text
 management/presets/indexing/list/dialog.tsx
 management/workspaces/panels/main.tsx
-management/online/catalog/list/dialog.tsx
+management/online/notification/center.tsx
 function/widgets/easing/body.tsx
 function/presets/code/editor.tsx
 function/onboarding/primary.tsx
@@ -72,7 +72,7 @@ features/presets/...
 ```text
 management/presets/indexing/list/dialog.tsx
 function/widgets/easing/body.tsx
-management/online/licensing/dialog.tsx
+management/online/update/feed.ts
 ```
 
 悪い:
@@ -80,7 +80,7 @@ management/online/licensing/dialog.tsx
 ```text
 management/presets/preset-indexing/preset-list/PresetListDialog.tsx
 function/widgets/easing-widget/EasingWidget.tsx
-management/online/online-licensing/LicenseDialog.tsx
+management/online/notification/feed.ts
 ```
 
 ## 管理系
@@ -112,11 +112,9 @@ management/
 │  ├─ files/
 │  └─ scripts/
 └─ online/
-   ├─ connectivity/
-   ├─ account/
-   ├─ licensing/
-   ├─ catalog/
-   └─ notifications/
+   ├─ notification/   # static JSON feed（提供面）
+   └─ update/         # static JSON feed + installer（提供面）
+   # catalog / public-link / licensing / account / connectivity は #193 で撤去済み
 ```
 
 ### 管理系の判断基準
@@ -200,8 +198,6 @@ crate は技術一般の `core` や `native` に集約せず、次の product �
 | --- | --- | --- |
 | [`crates/protocol`](../../../rust/crates/protocol/) | versioned IPC contract と boundary validation | domain behavior、transport lifecycle |
 | [`crates/storage`](../../../rust/crates/storage/) | managed storage、persistent cache、operation history | AE installation discovery、product network |
-| [`crates/online`](../../../rust/crates/online/) | product HTTP、catalog、sync、download | license policy、persistent storage |
-| [`crates/licensing`](../../../rust/crates/licensing/) | aescripts license policy と state | 一般の product network、offline feature behavior |
 | [`crates/host-filesystem`](../../../rust/crates/host-filesystem/) | active AE session から渡された root に scope した filesystem operation | `appRoot` discovery、managed storage policy |
 | `apps/operation-worker` | 1 invocation の operation worker の lifecycle と上記 crate の composition | 各責務の domain implementation、常駐 daemon |
 
@@ -212,8 +208,8 @@ crate は技術一般の `core` や `native` に集約せず、次の product �
 
 - `apps/operation-worker` は responsibility crate を組み立て、1 invocation を処理して終了する
   composition root であり、汎用の aggregate core や常駐 daemon にしない。
-- `protocol` は wire contract の所有者であり、storage / online / licensing /
-  host-filesystem の business logic を吸収しない。
+- `protocol` は wire contract の所有者であり、storage / host-filesystem の
+  business logic を吸収しない。online / licensing の crate は #193 で撤去済み。
 - React / CEP 側は [`src/management/ipc`](../../../src/management/ipc/) の transport
   boundary から Rust operation worker へ接続する。ExtendScript は AE context を供給する
  だけである。Rust の責務を `src/shared`

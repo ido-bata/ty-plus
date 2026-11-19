@@ -213,12 +213,16 @@ describe("readUiSettings", () => {
 describe("writeUiSettings", () => {
 	it("writes to ty-plus/settings/ui.json", async () => {
 		const writeCalls: Array<{ path: string; data: string }> = [];
+		const renameCalls: Array<{ from: string; to: string }> = [];
 		const supportRoot = "C:/Users/test/AppData/Roaming/Adobe/CEP";
 		const win = fakeWindowWithCsInterfaceAndFs(supportRoot, {
 			promises: {
 				mkdir: async () => undefined,
 				writeFile: async (path: string, data: string) => {
 					writeCalls.push({ path, data });
+				},
+				rename: async (from: string, to: string) => {
+					renameCalls.push({ from, to });
 				},
 			},
 		});
@@ -230,8 +234,11 @@ describe("writeUiSettings", () => {
 			selectedFont: "Arial",
 		});
 
+		// ADR-0006 §6: payload lands via tmp file + rename onto ui.json.
 		expect(writeCalls).toHaveLength(1);
-		expect(writeCalls[0].path).toMatch(/ty-plus[/\\]settings[/\\]ui\.json$/);
+		expect(writeCalls[0].path).toMatch(/ui\.json\.tmp-/);
+		expect(renameCalls).toHaveLength(1);
+		expect(renameCalls[0].to).toMatch(/ty-plus[/\\]settings[/\\]ui\.json$/);
 		const written = JSON.parse(writeCalls[0].data);
 		expect(written.showGridOverlay).toBe(false);
 		expect(written.showPresetLabels).toBe(true);
@@ -247,6 +254,7 @@ describe("writeUiSettings", () => {
 					mkdirCalls.push(path);
 				},
 				writeFile: async () => {},
+				rename: async () => undefined,
 			},
 		});
 
@@ -304,13 +312,14 @@ describe("writeUiSettings", () => {
 	// separator — `…/ty-plus/settings/ui.json` matches whether it is absolute
 	// or resolved against the CEP process cwd. These pin the prefix.
 	it("writes an absolute path under a POSIX support root", async () => {
-		const writeCalls: string[] = [];
+		const renameTargets: string[] = [];
 		const supportRoot = "/Users/test/Library/Application Support/Adobe/CEP";
 		const win = fakeWindowWithCsInterfaceAndFs(supportRoot, {
 			promises: {
 				mkdir: async () => undefined,
-				writeFile: async (path: string) => {
-					writeCalls.push(path);
+				writeFile: async () => {},
+				rename: async (_from: string, to: string) => {
+					renameTargets.push(to);
 				},
 				readFile: async () => {
 					throw Object.assign(new Error("ENOENT"), { code: "ENOENT" });
@@ -325,12 +334,13 @@ describe("writeUiSettings", () => {
 			selectedFont: "",
 		});
 
-		expect(writeCalls).toHaveLength(1);
-		expect(writeCalls[0]).toBe(
+		// The tmp+rename publish lands on the absolute ui.json path.
+		expect(renameTargets).toHaveLength(1);
+		expect(renameTargets[0]).toBe(
 			"/Users/test/Library/Application Support/Adobe/CEP/ty-plus/settings/ui.json",
 		);
-		expect(writeCalls[0].startsWith("/")).toBe(true);
-		expect(writeCalls[0].endsWith("/settings/ui.json")).toBe(true);
+		expect(renameTargets[0].startsWith("/")).toBe(true);
+		expect(renameTargets[0].endsWith("/settings/ui.json")).toBe(true);
 
 		// The diagnostic must not fire when the write actually happens.
 		expect(skipActions()).toHaveLength(0);
@@ -343,6 +353,7 @@ describe("ensureUiSettingsFile", () => {
 	it("creates default settings file when missing", async () => {
 		const writeCalls: Array<{ path: string; data: string }> = [];
 		const supportRoot = "C:/Users/test/AppData/Roaming/Adobe/CEP";
+		const renameCalls: Array<{ from: string; to: string }> = [];
 		const win = fakeWindowWithCsInterfaceAndFs(supportRoot, {
 			promises: {
 				readFile: async (path: string) => {
@@ -355,13 +366,18 @@ describe("ensureUiSettingsFile", () => {
 				writeFile: async (path: string, data: string) => {
 					writeCalls.push({ path, data });
 				},
+				rename: async (from: string, to: string) => {
+					renameCalls.push({ from, to });
+				},
 			},
 		});
 
 		await ensureUiSettingsFile(win);
 
 		expect(writeCalls).toHaveLength(1);
-		expect(writeCalls[0].path).toMatch(/ty-plus[/\\]settings[/\\]ui\.json$/);
+		expect(writeCalls[0].path).toMatch(/ui\.json\.tmp-/);
+		expect(renameCalls).toHaveLength(1);
+		expect(renameCalls[0].to).toMatch(/ty-plus[/\\]settings[/\\]ui\.json$/);
 		const written = JSON.parse(writeCalls[0].data);
 		expect(written.version).toBe(1);
 		expect(written.showGridOverlay).toBe(true);
@@ -405,6 +421,7 @@ describe("ensureUiSettingsFile", () => {
 				writeFile: async (path: string) => {
 					writeCalls.push(path);
 				},
+				rename: async () => undefined,
 			},
 		});
 
@@ -464,8 +481,13 @@ describe("writeUiSettings against a real filesystem (Issue #216)", () => {
 							mkdir: fsPromises.mkdir,
 							readFile: fsPromises.readFile,
 							writeFile: async (path: string, data: string) => {
-								writePaths.push(String(path));
 								await fsPromises.writeFile(path, data, "utf8");
+							},
+							rename: async (from: string, to: string) => {
+								// Record the PUBLISHED path — tmp+rename means
+								// writeFile targets a `.tmp-` sibling.
+								writePaths.push(String(to));
+								await fsPromises.rename(from, to);
 							},
 						},
 					}),

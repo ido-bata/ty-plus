@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import type { Preset } from "@/management/preset/contract";
 import { presetIconText } from "@/management/preset/contract";
+import { expectCanvasLayout } from "@/storybook/quality/layout";
 import { css } from "@/styled-system/css";
 import { Tile } from "./Tile";
 
@@ -55,8 +56,31 @@ const meta = {
 export default meta;
 type Story = StoryObj<Args>;
 
-export const Default: Story = {};
+// Issue #194: workspace tile contract — the tile must stay inside its
+// grid cell and the viewport, in both populated and missing states.
+const playTileLayout = async ({
+	canvasElement,
+}: {
+	canvasElement: HTMLElement;
+}): Promise<void> => {
+	expectCanvasLayout(canvasElement);
+};
+
+export const Default: Story = {
+	play: playTileLayout,
+};
 
 export const Missing: Story = {
 	args: { hasPreset: false, label: "missing-row" },
+	play: playTileLayout,
+};
+
+// Issue #194: long-string coverage — an over-long label must truncate
+// inside the tile instead of overflowing the cell or the page.
+export const LongLabel: Story = {
+	args: {
+		hasPreset: true,
+		label: "Apply Cinematic Color Grade with Extra Long Preset Display Name",
+	},
+	play: playTileLayout,
 };

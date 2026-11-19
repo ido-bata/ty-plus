@@ -151,6 +151,17 @@ vi.mock("@/management/workspace/runtime", () => ({
 	executeWorkspacePresetForWindow: vi.fn(),
 }));
 
+// `useFolderPreview` issues `service.listDirectory(dirPath)` from a mount
+// `useEffect` for EVERY directory tile (looking for `folder_preview.png`).
+// That passive effect can flush after the "no navigation" test snapshots
+// `listDirectory.mock.calls`, so its background call for
+// `/preset/root/alpha` lands in the post-click window and flakes the
+// assertion. These tests only care about click propagation, so stub the
+// hook out entirely.
+vi.mock("./hooks/useFolderPreview", () => ({
+	useFolderPreview: () => null,
+}));
+
 const baseState = {
 	grid: { cols: 1, rows: 1, cellSize: 100, gap: 0 },
 	panelId: "panel-1",

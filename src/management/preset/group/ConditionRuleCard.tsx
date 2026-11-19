@@ -3,7 +3,6 @@ import type { JSX } from "react";
 import { readUserHomeOrFallback } from "@/management/preset/catalog-add/browse-start-dir";
 import { PresetIconEditor } from "@/management/preset/components/IconEditor";
 import type { Preset, PresetType } from "@/management/preset/contract";
-import type { PresetIconEditorDraft } from "@/management/preset/icon-editor";
 import { presetIconDraftToPresetIcon } from "@/management/preset/icon-editor";
 import { AuthoringSegment } from "@/management/preset/tool-shell/archive-layout";
 import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
@@ -13,18 +12,10 @@ import { Button } from "@/shared/component/controls/Button";
 import { Input } from "@/shared/component/fields/Input";
 import { RegexEditor } from "@/shared/component/fields/RegexEditor";
 import { css } from "@/styled-system/css";
+import type { ConditionRule } from "./condition-rule-helpers";
 
 const escapeRegex = (value: string): string =>
 	value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-
-type ConditionRule = {
-	id: string;
-	filterType: "name" | "path" | "preset" | "presetType";
-	pattern: string;
-	matchMode?: "regex" | "contains" | "startsWith" | "endsWith";
-	presetType?: PresetType;
-	draft: PresetIconEditorDraft;
-};
 
 const cardClass = css({
 	borderRadius: "shell-sm",

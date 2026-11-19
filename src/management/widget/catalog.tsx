@@ -26,6 +26,7 @@ import {
 import type { WidgetType } from "@/function/widget";
 import { useTranslation } from "@/management/i18n/Context";
 import { CatalogBrowserViewModeToggle } from "@/management/preset/catalog-browser/view-mode-toggle";
+import { resolveCatalogDescriptionKey } from "@/management/widget/description-key";
 import { registry } from "@/management/widget/registry";
 import { Icon } from "@/shared/component";
 import { SearchField } from "@/shared/component/fields/SearchField";
@@ -479,7 +480,7 @@ export function AddWidgetCatalogPanel({
 
 	const describe = useCallback(
 		(w: CatalogEntry) =>
-			t(`selector.descriptions.${w.type}`, { defaultValue: "" }),
+			t(resolveCatalogDescriptionKey(w), { defaultValue: "" }),
 		[t],
 	);
 

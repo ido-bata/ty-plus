@@ -1,0 +1,88 @@
+{
+  "schema": "ty-plus.e2e-run/1",
+  "suite": "workspace",
+  "capturedAt": "2026-11-18T15:25:35.110Z",
+  "extensionDir": "/Users/rebui/Library/Application Support/Adobe/CEP/extensions/app.ty-plus.dev",
+  "managedRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-18T15-25-15-807Z-2986/ty-plus",
+  "realManagedRoot": "/Applications/Adobe After Effects 2027/ty-plus",
+  "sandbox": {
+    "enabled": true,
+    "sandboxRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-18T15-25-15-807Z-2986/ty-plus",
+    "integrity": {
+      "realRoot": "/Applications/Adobe After Effects 2027/ty-plus",
+      "checkedAt": "2026-11-18T15:25:35.110Z",
+      "driftBeforeRepair": {
+        "changed": 0,
+        "added": 0,
+        "removed": 0
+      },
+      "filesRepaired": [],
+      "cleanAfterRepair": true
+    }
+  },
+  "totals": {
+    "PASS": 1,
+    "FAIL": 0,
+    "BLOCKED": 0,
+    "SKIP": 0
+  },
+  "results": [
+    {
+      "uc": "UC-B05",
+      "title": "layout snapshot save → mutate → restore → delete round-trip",
+      "status": "PASS",
+      "detail": "snapshot=1795015520942 cells 7",
+      "checks": [
+        {
+          "name": "save-snapshot clicked",
+          "ok": true,
+          "detail": "clicked"
+        },
+        {
+          "name": "snapshots.json gained a new entry",
+          "ok": true,
+          "detail": "id=1795015520942"
+        },
+        {
+          "name": "snapshot row rendered in dropdown",
+          "ok": true,
+          "detail": "true"
+        },
+        {
+          "name": "layout mutated (widget tile added)",
+          "ok": true,
+          "detail": "cells 7→8 widget=6e5107d6-6523-4e3a-a9c5-f8d035f587f9"
+        },
+        {
+          "name": "restore-snapshot clicked",
+          "ok": true,
+          "detail": "clicked"
+        },
+        {
+          "name": "gridCells restored to snapshot state",
+          "ok": true,
+          "detail": "before=7 mutated=8 restored=7"
+        },
+        {
+          "name": "added widget tile removed by restore",
+          "ok": true,
+          "detail": "tile=6e5107d6-6523-4e3a-a9c5-f8d035f587f9"
+        },
+        {
+          "name": "delete-snapshot clicked",
+          "ok": true,
+          "detail": "clicked"
+        },
+        {
+          "name": "snapshot removed from snapshots.json",
+          "ok": true,
+          "detail": "snapId=1795015520942"
+        }
+      ],
+      "evidence": [
+        "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-18T15-25-15-807Z-2986/ty-plus/workspaces/history/snapshots.json"
+      ],
+      "durationMs": 13678
+    }
+  ]
+}

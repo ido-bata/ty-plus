@@ -13,6 +13,21 @@ import { LayoutLockWidget } from "./Component";
 export default defineWidget({
 	type: "layout-lock",
 	nameKey: "widgets.layoutLock.name",
+	descriptionKey: "widgets.selector.descriptions.layout-lock",
+	tutorial: {
+		summaryKey: "widgets.tutorial.layout-lock.summary",
+		contentVersion: "1",
+		steps: [
+			{
+				titleKey: "widgets.tutorial.layout-lock.steps.turnLockOn.title",
+				bodyKey: "widgets.tutorial.layout-lock.steps.turnLockOn.body",
+			},
+			{
+				titleKey: "widgets.tutorial.layout-lock.steps.unlockToRearrange.title",
+				bodyKey: "widgets.tutorial.layout-lock.steps.unlockToRearrange.body",
+			},
+		],
+	},
 	icon: "Lock",
 	minSize: { cols: 1, rows: 1 },
 	maxSize: { cols: 10, rows: 10 },

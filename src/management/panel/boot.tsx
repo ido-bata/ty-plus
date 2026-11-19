@@ -34,20 +34,17 @@ import {
 	createBootWorkloadBudget,
 	runUnderBootWorkloadBudget,
 } from "@/management/panel/boot-workload-budget";
-import {
-	isDegradedGatewayBootResult,
-	labelOfGatewayBootFailureReason,
-	tryBuildCloudGateway,
-} from "@/management/panel/cloud-gateway-boot";
 import { ErrorBoundary } from "@/management/panel/ErrorBoundary";
 import { bootstrapCepShellThemeHydration } from "@/management/panel/inject-styles";
 import { Main } from "@/management/panel/Main";
-import { tryBuildThumbnailGateway } from "@/management/panel/thumbnail-gateway-boot";
+import { tryBuildOperationWorker } from "@/management/panel/operation-worker-boot";
+import { installUpdateBusResponder } from "@/management/panel/update-install-bus";
 import {
 	isInitializationComplete,
 	readInitializationStateFromApp,
 } from "@/management/setting/onboarding/initialization";
 import { requestLayoutReload } from "@/management/workspace/onboarding/layout-reload-bridge";
+import { initUpdateInstaller } from "@/management/workspace/services";
 import {
 	type OnboardingPayload,
 	SHELL_CHANNELS,
@@ -191,7 +188,8 @@ export async function bootPanel(): Promise<void> {
 	});
 
 	// Issue #131: per-workload 5-second soft budget. Each background
-	// workload (cloud gateway, thumbnail gateway, i18n, log retention)
+	// workload (operation-worker composition, thumbnail gateway, i18n,
+	// log retention)
 	// emits a start/finish pair with elapsed ms. Any workload that runs
 	// longer than 5s logs a warn, but the workloads themselves are NOT
 	// cancelled by the budget — owning code decides its own lifecycle.
@@ -271,35 +269,18 @@ export async function bootPanel(): Promise<void> {
 	// their own surface-specific handlers. This must be done before rendering.
 	installCepJsonContextMenuRewrite(window, panelSurfaceId);
 
-	const thumbnailHandle = bootBudget.start("thumbnail-gateway-boot");
-	const thumbnailGateway = tryBuildThumbnailGateway(window);
-	thumbnailHandle.finish("completed");
-	const cloudHandle = bootBudget.start("cloud-gateway-boot");
-	const cloudGatewayBootResult = tryBuildCloudGateway(window);
-	cloudHandle.finish(
-		isDegradedGatewayBootResult(cloudGatewayBootResult)
-			? "failed"
-			: "completed",
-	);
-	if (isDegradedGatewayBootResult(cloudGatewayBootResult)) {
-		// Issue #129: route the degraded boot failure into the canonical
-		// bus with the `online-runtime` source so the Debug Console sees it
-		// instead of only catching it via the legacy `console.error` line
-		// below (which would land in the bus with the `console-interceptor`
-		// source). The `console.error` line is retained for AE DevTools
-		// visibility.
-		bootLog.error("[ty-plus] panel boot: live cloud gateway not built", {
-			context: {
-				reason: cloudGatewayBootResult.failure.reason,
-				label: labelOfGatewayBootFailureReason(
-					cloudGatewayBootResult.failure.reason,
-				),
-				message: cloudGatewayBootResult.failure.message,
-			},
+	const workerHandle = bootBudget.start("operation-worker-boot");
+	const operationWorker = tryBuildOperationWorker(window);
+	workerHandle.finish(operationWorker ? "completed" : "failed");
+	if (operationWorker) {
+		initUpdateInstaller({
+			installUpdate: (request) =>
+				operationWorker.composition.installUpdate(request),
 		});
-		console.error(
-			`[ty-plus] panel boot: live cloud gateway not built (${labelOfGatewayBootFailureReason(cloudGatewayBootResult.failure.reason)})`,
-			cloudGatewayBootResult.failure,
+		// Issue #243: non-panel surfaces (settings dialog) cannot reach the
+		// worker; relay their install requests to this panel's composition.
+		installUpdateBusResponder(window, (request) =>
+			operationWorker.composition.installUpdate(request),
 		);
 	}
 
@@ -313,14 +294,10 @@ export async function bootPanel(): Promise<void> {
 	// out over the catalog at boot; stale detection happens lazily on
 	// execute (`verifySinglePresetAsset`) and via explicit refresh.
 	//
-	// The cloud-gateway boot probes are also OFF in the release default
-	// (see `boot-feature-flags.ts`). Operators can opt in via
-	// `TY_PLUS_BOOT_PROBES=on` for diagnostics.
 	bootLog.info(
-		"[ty-plus] panel boot: lazy verification only (no boot-time host scan, no auto probes)",
+		"[ty-plus] panel boot: lazy verification only (no boot-time host scan)",
 		{
 			context: {
-				bootProbeFlag: readBootProbeFlag(),
 				bootedAt: Date.now(),
 			},
 		},
@@ -393,7 +370,7 @@ export async function bootPanel(): Promise<void> {
 				extensionId: tyPlusWorkspaceExtensionId(panelIndex),
 				openerWorkspacePanelId: panelSurfaceId,
 			}}
-			gateway={thumbnailGateway}
+			gateway={operationWorker?.filesGateway ?? null}
 		>
 			<PanelApp
 				initialShowOnboarding={Boolean(showOnboarding)}
@@ -408,9 +385,7 @@ export async function bootPanel(): Promise<void> {
 		context: {
 			panelSurfaceId,
 			isPrimaryPanel,
-			gateway: isDegradedGatewayBootResult(cloudGatewayBootResult)
-				? "degraded"
-				: "live",
+			gateway: operationWorker ? "live" : "unavailable",
 		},
 	});
 }

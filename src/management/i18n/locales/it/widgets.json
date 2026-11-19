@@ -265,5 +265,130 @@
 		"hintNoLocalApi": "This Chromium build does not expose queryLocalFonts — only fonts registered on document.fonts are listed.",
 		"localAccessErrorPrefix": "Local font access:",
 		"emptyList": "No fonts loaded yet. Use “Load all system fonts” if available, or reload after the panel finishes loading styles."
+	},
+	"tutorial": {
+		"chrome": {
+			"help": "Aiuto",
+			"title": "Guida del widget",
+			"close": "Chiudi",
+			"dismissHint": "Chiudi suggerimento"
+		},
+		"easing": {
+			"summary": "Modifica le curve di easing e applicale ai preset o all'animazione dei layer.",
+			"steps": {
+				"chooseCurve": {
+					"title": "Scegli una curva",
+					"body": "Seleziona una curva predefinita o disegnane una tua nell'editor."
+				},
+				"applyCurve": {
+					"title": "Applicala",
+					"body": "Applica la curva al preset o al layer selezionato."
+				}
+			}
+		},
+		"menu": {
+			"summary": "Apri comandi dell'area di lavoro, azioni di layout e finestre di dialogo da un'unica tessera.",
+			"steps": {
+				"openMenu": {
+					"title": "Apri il menu",
+					"body": "Fai clic sulla tessera per aprire il menu dei comandi."
+				},
+				"runCommand": {
+					"title": "Esegui un comando",
+					"body": "Scegli un comando per applicarlo all'area di lavoro corrente."
+				}
+			}
+		},
+		"align": {
+			"summary": "Allinea i preset o i layer selezionati a posizioni comuni sulla griglia.",
+			"steps": {
+				"selectTargets": {
+					"title": "Seleziona i bersagli",
+					"body": "Seleziona i preset o i layer da allineare."
+				},
+				"pickAlignment": {
+					"title": "Scegli l'allineamento",
+					"body": "Scegli un'opzione di allineamento per sistemarli."
+				}
+			}
+		},
+		"anchor-point": {
+			"summary": "Posiziona un'ancora con nome per riferimenti di layout e flussi di snapping.",
+			"steps": {
+				"nameAnchor": {
+					"title": "Nomina l'ancora",
+					"body": "Inserisci un nome che identifichi questo punto di ancoraggio."
+				},
+				"dropAnchor": {
+					"title": "Posala sulla griglia",
+					"body": "Fai clic nell'area di lavoro per posizionare l'ancora."
+				}
+			}
+		},
+		"layout-lock": {
+			"summary": "Evita spostamenti accidentali mentre organizzi la griglia dell'area di lavoro.",
+			"steps": {
+				"turnLockOn": {
+					"title": "Attiva il blocco",
+					"body": "Attiva il blocco per congelare le posizioni dei widget."
+				},
+				"unlockToRearrange": {
+					"title": "Sblocca per riordinare",
+					"body": "Disattiva il blocco quando vuoi spostare di nuovo i widget."
+				}
+			}
+		},
+		"info": {
+			"summary": "Mostra metadati, percorsi e stato dei preset in un'ampia tessera di riepilogo.",
+			"steps": {
+				"placeWidget": {
+					"title": "Posiziona il widget",
+					"body": "Aggiungi il widget Info alla tua area di lavoro."
+				},
+				"inspectPreset": {
+					"title": "Ispeziona un preset",
+					"body": "Seleziona un preset per vederne qui i dettagli."
+				}
+			}
+		},
+		"quick-actions": {
+			"summary": "Esegui script, effetti e azioni sui file da una compatta tavolozza comandi.",
+			"steps": {
+				"openPalette": {
+					"title": "Apri la tavolozza",
+					"body": "Apri la tavolozza e digita per cercare azioni."
+				},
+				"runAction": {
+					"title": "Esegui un'azione",
+					"body": "Seleziona un'azione per eseguirla subito."
+				}
+			}
+		},
+		"directory-browser": {
+			"summary": "Sfoglia cartelle del disco e preset direttamente dal pannello.",
+			"steps": {
+				"navigateFolders": {
+					"title": "Naviga nelle cartelle",
+					"body": "Usa il campo percorso o l'elenco delle cartelle per spostarti."
+				},
+				"openPreset": {
+					"title": "Apri un preset",
+					"body": "Fai doppio clic su un preset per applicarlo o ispezionarlo."
+				}
+			}
+		},
+		"font-viewer": {
+			"summary": "Anteprima famiglie di font, stili e testo di esempio nell'area di lavoro.",
+			"steps": {
+				"loadFonts": {
+					"title": "Carica i font",
+					"body": "Carica i font di sistema o scegli una famiglia da visualizzare."
+				},
+				"editSample": {
+					"title": "Modifica l'esempio",
+					"body": "Cambia il testo di esempio per controllare glifi e stili."
+				}
+			}
+		}
 	}
 }
