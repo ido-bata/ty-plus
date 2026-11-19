@@ -44,12 +44,19 @@ export const resolveSignZxpConfig = (
 		pick(env.ZXP_CERT_PATH) ?? "dist/certs/ty-plus-self-signed.p12",
 	);
 	const certPassword = pick(env.ZXP_CERT_PASSWORD);
-	// Apple's TSA is the one the pinned Adobe signer (ZXPSignCmd 4.1.3) can
-	// verify today. DigiCert/Sectigo/Entrust currently fail that check with
-	// exit 35 ("timestamp … could not be verified"), which aborts signing.
-	// Override with ZXP_TIMESTAMP_URL for a different trusted TSA.
+	// No default TSA: Apple's timestamp endpoint (the only one ZXPSignCmd
+	// 4.1.3 ever validated) is defunct — it now redirects to a marketing
+	// page and HTTPS times out, and DigiCert/Sectigo/Entrust fail the
+	// signer's TSA check with exit 35. Signing without -tsa produces a
+	// ZXP that `ZXPSignCmd -verify` accepts; the signing certificate's
+	// own validity period covers the signature. Set ZXP_TIMESTAMP_URL to
+	// a trusted TSA URL to opt back in; the literal "none" also disables
+	// the timestamp explicitly.
+	const timestampOverride = pick(env.ZXP_TIMESTAMP_URL);
 	const timestampUrl =
-		pick(env.ZXP_TIMESTAMP_URL) ?? "http://timestamp.apple.com/ts01";
+		timestampOverride === undefined || timestampOverride.toLowerCase() === "none"
+			? undefined
+			: timestampOverride;
 
 	if (!certPassword) {
 		throw new Error(
