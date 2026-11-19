@@ -160,13 +160,15 @@ describe("requestPanelUpdateInstall", () => {
 			),
 		);
 		t.__emit(
-			resultEnvelope({
-				kind: "install-result",
-				requestId,
-				ok: true,
-				status: "installed",
-			}),
-			{ targetSurfaceId: "dialog-other" },
+			resultEnvelope(
+				{
+					kind: "install-result",
+					requestId,
+					ok: true,
+					status: "installed",
+				},
+				{ targetSurfaceId: "dialog-other" },
+			),
 		);
 		t.__emit(
 			resultEnvelope({
