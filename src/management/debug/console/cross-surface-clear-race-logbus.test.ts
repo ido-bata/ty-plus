@@ -52,7 +52,7 @@
 // `__resetClearedAtForTest` all run their real implementations
 // against the in-memory CEP shared-storage layer.
 //
-// File placement: sibling of `cross-surface-clear-race-round6.test.ts`.
+// File placement: sibling of `cross-surface-clear-race-delivery.test.ts`.
 
 import {
 	cleanup,

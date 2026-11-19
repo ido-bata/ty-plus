@@ -338,6 +338,9 @@ const firstMeaningfulToken = (stem: string): string | null => {
 };
 
 const isSkipped = (path: string): boolean =>
+	// `/vendor/` segments hold third-party code whose names are contracts we
+	// do not control (e.g. Adobe's CSInterface.js).
+	path.includes("/vendor/") ||
 	SKIP_PREFIXES.some((prefix) => path.startsWith(prefix));
 
 const repoRoot = (): string =>
