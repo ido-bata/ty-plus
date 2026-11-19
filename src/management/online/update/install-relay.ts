@@ -12,7 +12,7 @@ import { resolveDialogSurfaceId } from "@/management/dialog/modeless/surface-id"
 import type {
 	UpdateInstallRequestDTO,
 	UpdateInstallResultDTO,
-} from "@/management/ipc/operation-worker-composition";
+} from "@/management/ipc/operation-worker/composition";
 import { publishShellMessage } from "@/management/workspace/messaging/publish-shell-message";
 import {
 	SHELL_CHANNELS,

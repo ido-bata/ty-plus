@@ -10,7 +10,7 @@ import { runInNewContext } from "node:vm";
 import { transformSync } from "@babel/core";
 import { build } from "esbuild";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
-import { createOperationWorkerContextProvider } from "@/management/ipc/operation-worker-context";
+import { createOperationWorkerContextProvider } from "@/management/ipc/operation-worker/context";
 import { ALLOWED_HOST_METHODS } from "../cep/host-executor";
 
 const source = readFileSync(

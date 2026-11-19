@@ -8,20 +8,20 @@ import {
 	type PluginEffectScanRequest,
 	protocolVersion,
 	type WireMessage,
-} from "./generated";
+} from "../generated";
 import type {
 	ArtifactTrust,
 	OperationWorkerManifest,
 	OperationWorkerPlatform,
 	ResolvedWorkerBinary,
 	ResolveWorkerBinaryInput,
-} from "./operation-worker-binary";
-import { resolveOperationWorkerBinary } from "./operation-worker-binary";
-import type { HostContextProvider } from "./operation-worker-context";
+} from "./binary";
+import { resolveOperationWorkerBinary } from "./binary";
+import type { HostContextProvider } from "./context";
 import type {
 	ResolveAttemptInput,
 	OperationInvocation as WorkerInvocation,
-} from "./operation-worker-runner";
+} from "./runner";
 import {
 	createOperationWorkerRunner,
 	type ImmutableHostContext,
@@ -31,14 +31,14 @@ import {
 	type WorkerCorrelation,
 	type WorkerLifecycleEvent,
 	type WorkerRunOptions,
-} from "./operation-worker-runner";
-import type { OperationWorkerRuntime } from "./operation-worker-runtime";
+} from "./runner";
+import type { OperationWorkerRuntime } from "./runtime";
 import type {
 	OperationAttemptIdentity,
 	OperationInvocationFactory,
 	RunnerFactory,
-} from "./operation-worker-scheduler";
-import { OperationWorkerScheduler } from "./operation-worker-scheduler";
+} from "./scheduler";
+import { OperationWorkerScheduler } from "./scheduler";
 
 /** Diagnostic observer applied to every spawned child + lifecycle event. */
 export type OperationWorkerLifecycleObserver = (

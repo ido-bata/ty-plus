@@ -2,8 +2,8 @@ import { spawn } from "node:child_process";
 import { createHash, randomBytes } from "node:crypto";
 import { promises as fileSystem } from "node:fs";
 import path from "node:path";
-import type { WorkerChild } from "./operation-worker-runner";
-import type { OperationWorkerRuntime } from "./operation-worker-runtime";
+import type { WorkerChild } from "./runner";
+import type { OperationWorkerRuntime } from "./runtime";
 
 export const createNodeOperationWorkerRuntime = (): OperationWorkerRuntime => ({
 	fileSystem,

@@ -3,25 +3,25 @@ import { EventEmitter } from "node:events";
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { describe, expect, it, vi } from "vitest";
-import { protocolVersion, type WireMessage } from "./generated";
+import { protocolVersion, type WireMessage } from "../generated";
 import {
 	type OperationWorkerArtifact,
 	type OperationWorkerManifest,
 	resolveOperationWorkerBinary as resolveOperationWorkerBinaryCore,
 	WorkerBinaryError,
-} from "./operation-worker-binary";
+} from "./binary";
 import {
 	encodeOperationWorkerFrame,
 	OperationWorkerFrameDecoder,
-} from "./operation-worker-frame";
-import { createNodeOperationWorkerRuntime } from "./operation-worker-node-runtime";
+} from "./frame";
+import { createNodeOperationWorkerRuntime } from "./node-runtime";
 import {
 	createOperationWorkerRunner,
 	type OperationWorkerAttemptError,
 	type OperationWorkerError,
 	type WorkerChild,
 	type WorkerLifecycleEvent,
-} from "./operation-worker-runner";
+} from "./runner";
 import {
 	acceptedFrame,
 	createMacosWorkerFixture,
@@ -31,7 +31,7 @@ import {
 	invocationFixture as fixtureInvocation,
 	malformedFirstFrame,
 	progressFrame,
-} from "./operation-worker-runner.test-fixtures";
+} from "./runner.test-fixtures";
 
 const resolveOperationWorkerBinary = (
 	input: Parameters<typeof resolveOperationWorkerBinaryCore>[0],

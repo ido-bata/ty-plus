@@ -7,7 +7,7 @@
 
 ## trust model
 
-CEP panelとoperation-worker binaryの組は、worker manifest（`dist/cep-dev/worker/manifest.json`）の `trust.mode` で結合される。panel側の期待値はbuild時に確定し、実行時に一致検証される（`src/management/ipc/operation-worker-binary.ts`）。不一致はworker起動を拒否する（`binary_manifest_mismatch`）。
+CEP panelとoperation-worker binaryの組は、worker manifest（`dist/cep-dev/worker/manifest.json`）の `trust.mode` で結合される。panel側の期待値はbuild時に確定し、実行時に一致検証される（`src/management/ipc/operation-worker/binary.ts`）。不一致はworker起動を拒否する（`binary_manifest_mismatch`）。
 
 | trust mode | panel期待値の確定 | worker binary | manifest署名block | 用途 |
 | --- | --- | --- | --- | --- |

@@ -12,7 +12,7 @@ import type {
 	OperationWorkerArtifact,
 	OperationWorkerManifest,
 	OperationWorkerPlatform,
-} from "../../src/management/ipc/operation-worker-binary";
+} from "../../src/management/ipc/operation-worker/binary";
 import {
 	type RustTarget,
 	stageOperationWorkerTargets,

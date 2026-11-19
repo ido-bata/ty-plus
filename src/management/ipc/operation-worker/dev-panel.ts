@@ -3,25 +3,25 @@ import {
 	normalizeCepSystemPath,
 } from "@/management/ae/cep/runtime";
 import { createLogger } from "@/management/debug/logger";
-import type { PluginEffectScanRequest } from "./generated";
+import type { PluginEffectScanRequest } from "../generated";
 import {
 	compiledOperationWorkerTrustMode,
 	type OperationWorkerPlatform,
-} from "./operation-worker-binary";
+} from "./binary";
 import {
 	createCepOperationWorkerRuntime,
 	readCepNodePlatform,
-} from "./operation-worker-cep-runtime";
-import type { HostPluginEffectScanResult } from "./operation-worker-composition";
+} from "./cep-runtime";
+import type { HostPluginEffectScanResult } from "./composition";
 import {
 	createOperationWorkerComposition,
 	type OperationWorkerComposition,
-} from "./operation-worker-composition";
+} from "./composition";
 import {
 	createOperationWorkerContextProvider,
 	type HostContextProvider,
-} from "./operation-worker-context";
-import type { WorkerLifecycleEvent } from "./operation-worker-runner";
+} from "./context";
+import type { WorkerLifecycleEvent } from "./runner";
 
 declare const __APP_VERSION__: string;
 
@@ -152,7 +152,7 @@ const safeResult = (
 });
 
 type OperationWorkerDevPanelOptions = Readonly<{
-	readonly runtime?: import("./operation-worker-runtime").OperationWorkerRuntime;
+	readonly runtime?: import("./runtime").OperationWorkerRuntime;
 	readonly trustMode?: "release" | "development-unsigned";
 	readonly appVersion?: string;
 	readonly extensionVersion?: string;
@@ -210,7 +210,7 @@ const installOperationWorkerDevPanelInternal = (
 			stdoutEof: false,
 		};
 		let runtime:
-			| import("./operation-worker-runtime").OperationWorkerRuntime
+			| import("./runtime").OperationWorkerRuntime
 			| undefined;
 		const onChildCreated = (
 			child: { readonly pid?: number },

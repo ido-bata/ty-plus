@@ -7,7 +7,7 @@
  * and every executed request produces exactly one install-result reply.
  */
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { UpdateInstallResultDTO } from "@/management/ipc/operation-worker-composition";
+import type { UpdateInstallResultDTO } from "@/management/ipc/operation-worker/composition";
 import type {
 	SurfaceMessageEnvelope,
 	SurfaceTransport,
@@ -148,7 +148,7 @@ describe("installUpdateBusResponder", () => {
 
 	it("reports worker failure as ok:false with the stable error code", async () => {
 		const { OperationWorkerAttemptError } = await import(
-			"@/management/ipc/operation-worker-runner"
+			"@/management/ipc/operation-worker/runner"
 		);
 		const execute = vi.fn(async () => {
 			throw new OperationWorkerAttemptError("integrity_mismatch", undefined, {

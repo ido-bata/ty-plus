@@ -4,7 +4,7 @@ import {
 	type CanonicalOperationPolicy,
 	canonicalMethods,
 	canonicalOperationPolicies,
-} from "./generated";
+} from "../generated";
 import {
 	type OperationInvocation,
 	OperationWorkerAttemptError,
@@ -12,7 +12,7 @@ import {
 	type OperationWorkerRunner,
 	type WorkerCorrelation,
 	type WorkerRunOptions,
-} from "./operation-worker-runner";
+} from "./runner";
 
 export type RequestId = string;
 export type IdempotencyKey = string;

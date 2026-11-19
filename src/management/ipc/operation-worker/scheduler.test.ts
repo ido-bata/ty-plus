@@ -1,20 +1,20 @@
 import { describe, expect, it } from "vitest";
-import { canonicalMethods, canonicalOperationPolicies } from "./generated";
+import { canonicalMethods, canonicalOperationPolicies } from "../generated";
 import {
 	type OperationInvocation,
 	OperationWorkerAttemptError,
 	type OperationWorkerRunner,
-} from "./operation-worker-runner";
+} from "./runner";
 import {
 	canonicalWireMethodName,
 	canRetry,
 	OperationWorkerScheduler,
 	type RetryState,
-} from "./operation-worker-scheduler";
+} from "./scheduler";
 import {
 	deferredRunnerFactory,
 	invocationFactory,
-} from "./operation-worker-scheduler.test-fixtures";
+} from "./scheduler.test-fixtures";
 
 let testId = 0;
 const newTestScheduler = (

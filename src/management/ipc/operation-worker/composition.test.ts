@@ -2,18 +2,18 @@ import { createHash } from "node:crypto";
 import { promises as fileSystem } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { canonicalMethods } from "./generated";
-import type { OperationWorkerManifest } from "./operation-worker-binary";
+import { canonicalMethods } from "../generated";
+import type { OperationWorkerManifest } from "./binary";
 import {
 	createInjectedHostContextProvider,
 	createOperationWorkerComposition,
 	notifyOperationWorkerChildCreated,
-} from "./operation-worker-composition";
-import { createNodeOperationWorkerRuntime } from "./operation-worker-node-runtime";
+} from "./composition";
+import { createNodeOperationWorkerRuntime } from "./node-runtime";
 import {
 	createMacosWorkerFixture,
 	createWindowsWorkerFixture,
-} from "./operation-worker-runner.test-fixtures";
+} from "./runner.test-fixtures";
 
 const runtime = createNodeOperationWorkerRuntime();
 

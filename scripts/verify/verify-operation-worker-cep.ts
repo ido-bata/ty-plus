@@ -1,7 +1,7 @@
 import { mkdir, readFile, rename, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
-import type { OperationWorkerDevVerificationResult } from "../../src/management/ipc/operation-worker-dev-panel";
+import type { OperationWorkerDevVerificationResult } from "../../src/management/ipc/operation-worker/dev-panel";
 
 const DEV_GLOBAL = "__TY_PLUS_OPERATION_WORKER_VERIFY__";
 /**

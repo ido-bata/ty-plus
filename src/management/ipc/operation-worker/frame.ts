@@ -1,4 +1,4 @@
-import { isWireMessage, protocolLimits, type WireMessage } from "./generated";
+import { isWireMessage, protocolLimits, type WireMessage } from "../generated";
 
 export type OperationWorkerFrameErrorCode =
 	| "frame_zero_length"

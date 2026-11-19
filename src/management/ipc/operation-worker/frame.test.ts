@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { protocolLimits, type WireMessage } from "./generated";
+import { protocolLimits, type WireMessage } from "../generated";
 import {
 	encodeOperationWorkerFrame,
 	OperationWorkerFrameDecoder,
 	type OperationWorkerFrameError,
-} from "./operation-worker-frame";
+} from "./frame";
 
 const acceptedFixture: WireMessage = {
 	kind: "event",

@@ -3,7 +3,7 @@ import {
 	HOST_BUNDLE_SCHEMA_VERSION,
 	HOST_BUNDLE_VERSION,
 } from "@/management/ae/host/contract";
-import { createOperationWorkerContextProvider } from "./operation-worker-context";
+import { createOperationWorkerContextProvider } from "./context";
 
 type HostPayload = {
 	appRoot: unknown;

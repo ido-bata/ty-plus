@@ -1,14 +1,14 @@
-import type { canonicalOperationPolicies, WireMessage } from "./generated";
+import type { canonicalOperationPolicies, WireMessage } from "../generated";
 import type {
 	ImmutableHostContext,
 	OperationInvocation,
 	OperationWorkerRunner,
 	WorkerRunOptions,
-} from "./operation-worker-runner";
+} from "./runner";
 import {
 	canonicalWireMethodName,
 	type OperationInvocationFactory,
-} from "./operation-worker-scheduler";
+} from "./scheduler";
 
 export type DeferredRunner = OperationWorkerRunner & {
 	started: boolean;

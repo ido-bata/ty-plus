@@ -1,7 +1,7 @@
 import type {
 	WorkerChild,
 	WorkerSpawnOptions,
-} from "./operation-worker-runner";
+} from "./runner";
 
 export interface WorkerFileStats {
 	readonly size: number;

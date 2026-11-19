@@ -7,18 +7,18 @@ import {
 	protocolVersion,
 	type StableErrorCode,
 	type WireMessage,
-} from "./generated";
+} from "../generated";
 import {
 	type OperationWorkerManifest,
 	type OperationWorkerPlatform,
 	type ResolvedWorkerBinary,
 	type ResolveWorkerBinaryInput,
 	WorkerBinaryError,
-} from "./operation-worker-binary";
+} from "./binary";
 import {
 	encodeOperationWorkerFrame,
 	OperationWorkerFrameDecoder,
-} from "./operation-worker-frame";
+} from "./frame";
 
 export type ImmutableHostContext = Readonly<{
 	appRoot: string;

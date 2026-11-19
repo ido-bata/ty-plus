@@ -6,13 +6,13 @@ import {
 	CepNodeRuntimeError,
 	createCepOperationWorkerRuntime,
 	readCepNodePlatform,
-} from "./operation-worker-cep-runtime";
-import type { WorkerSpawnOptions } from "./operation-worker-runner";
-import { OperationWorkerScheduler } from "./operation-worker-scheduler";
+} from "./cep-runtime";
+import type { WorkerSpawnOptions } from "./runner";
+import { OperationWorkerScheduler } from "./scheduler";
 import {
 	deferredRunnerFactory,
 	invocationFactory,
-} from "./operation-worker-scheduler.test-fixtures";
+} from "./scheduler.test-fixtures";
 
 describe("CEP operation worker runtime", () => {
 	it("uses only cep_node.require and preserves the worker adapter contract", async () => {

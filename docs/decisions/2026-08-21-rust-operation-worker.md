@@ -29,7 +29,7 @@ Rust の実行単位の名称は **Rust operation worker** とする。`native`�
   licensing、transaction/recovery、protected-operation orchestration を所有する。
 
 `rust/apps/operation-worker/` が Rust worker の composition root であり、
-`src/management/ipc/operation-worker-runner.ts` だけが CEP 側の permanent な
+`src/management/ipc/operation-worker/runner.ts` だけが CEP 側の permanent な
 `child_process` boundary であり、worker は一つの invocation を処理して終了する。
 endpoint discovery、named pipe、UDS、background heartbeat、single-instance process、
 idle lifetime は product の前提にしない。

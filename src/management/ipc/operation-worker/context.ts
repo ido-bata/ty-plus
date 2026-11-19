@@ -1,7 +1,7 @@
 import { createCepHostExecutor } from "@/management/ae/cep/host-executor";
 import type { HostContext } from "@/management/ae/host/contract";
 import { createAdapter } from "@/management/ae/host-bridge";
-import type { ImmutableHostContext } from "./operation-worker-runner";
+import type { ImmutableHostContext } from "./runner";
 
 export type HostContextProvider = () => Promise<ImmutableHostContext>;
 

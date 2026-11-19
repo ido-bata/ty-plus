@@ -515,8 +515,8 @@ git commit -m "pkg: package operation worker pair"
 - Modify: `scripts/cep/install-cep-dev.ts`
 - Modify: `scripts/cep/install-cep-single.mjs`
 - Modify: `scripts/cep/cep-watch.ts`
-- Modify: `src/management/ipc/operation-worker-binary.ts`
-- Modify: `src/management/ipc/operation-worker-binary.test.ts`
+- Modify: `src/management/ipc/operation-worker/binary.ts`
+- Modify: `src/management/ipc/operation-worker/binary.test.ts`
 - Modify: `cep.config.ts`
 - Modify: `package.json`
 
@@ -584,7 +584,7 @@ cleanup、常駐 coordinator は実装しない。
 
 - [ ] **Step 4: GREEN を実行する**
 
-Run: `bun run vitest run scripts/cep/operation-worker-update.test.ts src/management/ipc/operation-worker-binary.test.ts && bun run build:cep:dev && bun run install:cep:dev`
+Run: `bun run vitest run scripts/cep/operation-worker-update.test.ts src/management/ipc/operation-worker/binary.test.ts && bun run build:cep:dev && bun run install:cep:dev`
 
 Expected: PASS for current-platform real binary dev start、release/development trust mismatch hard failure、missing binary hard failure、worker shared lease before accepted、self hash mismatch rejection、resolve→manifest-switch→spawn raceで旧content-addressed artifact維持、exclusive lease update、second AE instance contention、deadline abort、crash auto-release、old artifact preservation、next installer retry。
 
@@ -599,7 +599,7 @@ shared lease 中の deadline abort、worker crash 後のOS lock解放、再実�
 dev script に mock/JS/ExtendScript fallback、installer に unbounded wait、mass kill、partial replacement がないこと、Windows/macOS双方が同じnative shared/exclusive lease lifecycleを実装し、片方をno-opにしていないことをreviewする。
 
 ```text
-git add -- scripts/cep/operation-worker-update.ts scripts/cep/operation-worker-update.test.ts scripts/build/build-cep-dev.ts scripts/cep/install-cep-dev.ts scripts/cep/install-cep-single.mjs scripts/cep/cep-watch.ts src/management/ipc/operation-worker-binary.ts src/management/ipc/operation-worker-binary.test.ts cep.config.ts rust/apps/operation-worker/src/install_lease.rs rust/apps/operation-worker/src/main.rs rust/apps/operation-worker/src/platform/windows.rs rust/apps/operation-worker/src/platform/macos.rs rust/apps/operation-worker/src/platform/mod.rs package.json
+git add -- scripts/cep/operation-worker-update.ts scripts/cep/operation-worker-update.test.ts scripts/build/build-cep-dev.ts scripts/cep/install-cep-dev.ts scripts/cep/install-cep-single.mjs scripts/cep/cep-watch.ts src/management/ipc/operation-worker/binary.ts src/management/ipc/operation-worker/binary.test.ts cep.config.ts rust/apps/operation-worker/src/install_lease.rs rust/apps/operation-worker/src/main.rs rust/apps/operation-worker/src/platform/windows.rs rust/apps/operation-worker/src/platform/macos.rs rust/apps/operation-worker/src/platform/mod.rs package.json
 git commit -m "pkg: coordinate operation worker updates"
 ```
 

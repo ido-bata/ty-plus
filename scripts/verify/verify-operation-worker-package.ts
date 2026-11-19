@@ -53,7 +53,7 @@ import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { RELEASE_SIGNING_POLICY } from "../../src/management/ipc/operation-worker-binary";
+import { RELEASE_SIGNING_POLICY } from "../../src/management/ipc/operation-worker/binary";
 
 export type TrustMode = "development-unsigned" | "release" | "unknown";
 export type HostPlatform = "windows" | "macos" | "linux";

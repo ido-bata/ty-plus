@@ -39,9 +39,9 @@ unscoped `git diff --exit-code` を使わない。
 - OW-LIVE-001 paths: `rust/crates/protocol/src/metadata.rs rust/crates/protocol/src/message.rs rust/crates/protocol/src/scan.rs rust/crates/protocol/src/schema.rs rust/crates/protocol/src/lib.rs rust/crates/protocol/tests/golden_messages.rs rust/crates/protocol/tests/schema_snapshot.rs rust/apps/operation-worker/src/online_dispatch.rs rust/apps/operation-worker/src/storage_dispatch.rs rust/apps/operation-worker/src/host_filesystem_dispatch.rs rust/apps/operation-worker/tests/online.rs rust/apps/operation-worker/tests/host_filesystem.rs rust/crates/host-filesystem/src/lib.rs rust/crates/host-filesystem/src/scan.rs rust/crates/host-filesystem/src/scan/task.rs rust/crates/host-filesystem/src/scan/adversarial.rs rust/crates/host-filesystem/src/scan/macos.rs rust/crates/host-filesystem/src/scan/windows.rs scripts/generate/generate-rust-protocol-schema.ts scripts/generate/generate-typescript-protocol.ts rust/crates/protocol/generated/wire.schema.json src/management/ipc/generated/wire.ts src/management/ipc/generated/wire-contract.test.ts`
 - OW-LIVE-002 paths: `rust/apps/operation-worker/src/cancellation.rs rust/apps/operation-worker/src/lifecycle.rs rust/apps/operation-worker/src/lib.rs rust/apps/operation-worker/src/main.rs rust/apps/operation-worker/tests/lifecycle.rs rust/apps/operation-worker/tests/live_control_stream.rs`
 - OW-LIVE-003 paths: `docs/architecture/runtime/operation-worker.md rust/apps/operation-worker/src/executor.rs rust/apps/operation-worker/src/product_online_config.rs rust/apps/operation-worker/src/main.rs rust/apps/operation-worker/src/lib.rs rust/apps/operation-worker/src/host_filesystem_dispatch.rs rust/apps/operation-worker/src/online_dispatch.rs rust/apps/operation-worker/src/storage_dispatch.rs rust/apps/operation-worker/Cargo.toml rust/apps/operation-worker/tests/executable_process.rs rust/apps/operation-worker/tests/host_filesystem.rs rust/apps/operation-worker/tests/online.rs rust/apps/operation-worker/tests/storage.rs rust/crates/online/src/download.rs rust/crates/online/src/offline.rs rust/crates/online/src/search_cache.rs rust/crates/online/src/lib.rs rust/crates/online/tests/offline_search_cache.rs`
-- OW-CEP-004 paths: `src/management/ipc/operation-worker-scheduler.ts src/management/ipc/operation-worker-scheduler.test.ts src/management/ipc/operation-worker-scheduler.test-fixtures.ts src/management/ipc/operation-worker-runner.ts src/management/ipc/operation-worker-runner.test.ts src/management/ipc/index.ts`
-- OW-HOST-001 paths: `src/management/ipc/operation-worker-composition.ts src/management/ipc/operation-worker-composition.test.ts scripts/verify/verify-operation-worker-process.ts scripts/verify/verify-operation-worker-process.test.ts src/management/ipc/index.ts package.json`
-- OW-HOST-002 paths: `scripts/verify/verify-ae-operation-worker.ts scripts/verify/verify-ae-operation-worker.test.ts src/management/ipc/operation-worker-host-verification.ts src/management/ipc/operation-worker-host-verification.test.ts src/management/ae/cep/entry/panel.tsx package.json`
+- OW-CEP-004 paths: `src/management/ipc/operation-worker/scheduler.ts src/management/ipc/operation-worker/scheduler.test.ts src/management/ipc/operation-worker/scheduler.test-fixtures.ts src/management/ipc/operation-worker/runner.ts src/management/ipc/operation-worker/runner.test.ts src/management/ipc/index.ts`
+- OW-HOST-001 paths: `src/management/ipc/operation-worker/composition.ts src/management/ipc/operation-worker/composition.test.ts scripts/verify/verify-operation-worker-process.ts scripts/verify/verify-operation-worker-process.test.ts src/management/ipc/index.ts package.json`
+- OW-HOST-002 paths: `scripts/verify/verify-ae-operation-worker.ts scripts/verify/verify-ae-operation-worker.test.ts src/management/ipc/operation-worker/host-verification.ts src/management/ipc/operation-worker/host-verification.test.ts src/management/ae/cep/entry/panel.tsx package.json`
 
 ---
 
@@ -141,7 +141,7 @@ Run: `bun run generate:typescript-protocol`
 
 Run: `cd rust && cargo test -p ty-plus-protocol`
 
-Run: `bun run vitest run src/management/ipc/generated/wire-contract.test.ts src/management/ipc/operation-worker-frame.test.ts`
+Run: `bun run vitest run src/management/ipc/generated/wire-contract.test.ts src/management/ipc/operation-worker/frame.test.ts`
 
 Expected: PASS. After the first generator run, copy the exact bytes of `rust/crates/protocol/generated/wire.schema.json` and `src/management/ipc/generated/wire.ts` under `.tmp/operation-worker-verification/ow-live-001/first-run/`. Run both generators a second time, compute SHA-256 for each first-run/current pair, and require the hashes to match. This compares generator run 1 with run 2 even when generated output intentionally differs from `HEAD`; do not use a clean-worktree diff as a freshness assertion.
 
@@ -324,11 +324,11 @@ Commit: `feat(worker): execute production operations`
 **Depends on:** OW-LIVE-001 through OW-LIVE-003 and OW-CEP-003.
 
 **Files:**
-- Create: `src/management/ipc/operation-worker-scheduler.ts`
-- Create: `src/management/ipc/operation-worker-scheduler.test.ts`
-- Create: `src/management/ipc/operation-worker-scheduler.test-fixtures.ts`
-- Modify: `src/management/ipc/operation-worker-runner.ts`
-- Modify: `src/management/ipc/operation-worker-runner.test.ts`
+- Create: `src/management/ipc/operation-worker/scheduler.ts`
+- Create: `src/management/ipc/operation-worker/scheduler.test.ts`
+- Create: `src/management/ipc/operation-worker/scheduler.test-fixtures.ts`
+- Modify: `src/management/ipc/operation-worker/runner.ts`
+- Modify: `src/management/ipc/operation-worker/runner.test.ts`
 - Modify: `src/management/ipc/index.ts`
 
 **Interfaces:**
@@ -368,7 +368,7 @@ The retry test asserts different request ids, the same generated idempotency key
 
 - [ ] **Step 2: Run RED.**
 
-Run: `bun run vitest run src/management/ipc/operation-worker-scheduler.test.ts src/management/ipc/operation-worker-runner.test.ts`
+Run: `bun run vitest run src/management/ipc/operation-worker/scheduler.test.ts src/management/ipc/operation-worker/runner.test.ts`
 
 Expected: FAIL because the current runner closes stdin immediately and scheduler is absent.
 
@@ -390,7 +390,7 @@ Reject constructor limits other than 4. `stopAccepting()` rejects new jobs. Exis
 
 - [ ] **Step 5: Run GREEN and commit.**
 
-Run: `bun run vitest run src/management/ipc/operation-worker-scheduler.test.ts src/management/ipc/operation-worker-runner.test.ts src/management/ipc/operation-worker-frame.test.ts`
+Run: `bun run vitest run src/management/ipc/operation-worker/scheduler.test.ts src/management/ipc/operation-worker/runner.test.ts src/management/ipc/operation-worker/frame.test.ts`
 
 Run: `bun run typecheck && bun run typecheck:test`
 
@@ -434,8 +434,8 @@ OW-LIVE-003
 **Depends on:** OW-CEP-004, OW-DIST-003 development lane, and immutable host context provider OW-CEP-005 from [`02-cep-runner-cutover.md`](02-cep-runner-cutover.md). After OW-CEP-004 is reviewed, execution returns to OW-CEP-005 and records its commit before this task starts.
 
 **Files:**
-- Create: `src/management/ipc/operation-worker-composition.ts`
-- Create: `src/management/ipc/operation-worker-composition.test.ts`
+- Create: `src/management/ipc/operation-worker/composition.ts`
+- Create: `src/management/ipc/operation-worker/composition.test.ts`
 - Create: `scripts/verify/verify-operation-worker-process.ts`
 - Create: `scripts/verify/verify-operation-worker-process.test.ts`
 - Modify: `src/management/ipc/index.ts`
@@ -452,7 +452,7 @@ Prove manifest absence fails before spawn, current-platform binary is selected, 
 
 - [ ] **Step 2: Run RED.**
 
-Run: `bun run vitest run src/management/ipc/operation-worker-composition.test.ts scripts/verify/verify-operation-worker-process.test.ts`
+Run: `bun run vitest run src/management/ipc/operation-worker/composition.test.ts scripts/verify/verify-operation-worker-process.test.ts`
 
 Expected: FAIL because production composition and process verifier do not exist.
 
@@ -479,8 +479,8 @@ Commit: `feat(ipc): compose packaged operation worker`
 **Files:**
 - Create: `scripts/verify/verify-ae-operation-worker.ts`
 - Create: `scripts/verify/verify-ae-operation-worker.test.ts`
-- Create: `src/management/ipc/operation-worker-host-verification.ts`
-- Create: `src/management/ipc/operation-worker-host-verification.test.ts`
+- Create: `src/management/ipc/operation-worker/host-verification.ts`
+- Create: `src/management/ipc/operation-worker/host-verification.test.ts`
 - Modify: `src/management/ae/cep/entry/panel.tsx`
 - Modify: `package.json`
 
@@ -496,7 +496,7 @@ Cover no running CEP target、multiple debug targets with exact extension select
 
 - [ ] **Step 2: Run RED.**
 
-Run: `bun run vitest run scripts/verify/verify-ae-operation-worker.test.ts src/management/ipc/operation-worker-host-verification.test.ts`
+Run: `bun run vitest run scripts/verify/verify-ae-operation-worker.test.ts src/management/ipc/operation-worker/host-verification.test.ts`
 
 Expected: FAIL on the current incomplete loaded-panel verification path.
 

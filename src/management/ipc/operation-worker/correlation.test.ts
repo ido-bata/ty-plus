@@ -4,12 +4,12 @@ import {
 	_setDevConsoleEnabled,
 	getEntries,
 } from "@/management/debug/logger";
-import { OperationWorkerAttemptError } from "./operation-worker-runner";
-import { OperationWorkerScheduler } from "./operation-worker-scheduler";
+import { OperationWorkerAttemptError } from "./runner";
+import { OperationWorkerScheduler } from "./scheduler";
 import {
 	deferredRunnerFactory,
 	invocationFactory,
-} from "./operation-worker-scheduler.test-fixtures";
+} from "./scheduler.test-fixtures";
 
 /**
  * Issue #158 — one scheduler job, one attempt, one trace.

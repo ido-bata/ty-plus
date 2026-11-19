@@ -24,14 +24,14 @@ const { createCompositionMock, getCapturedOptions } = vi.hoisted(() => {
 	};
 });
 
-vi.mock("./operation-worker-composition", () => ({
+vi.mock("./composition", () => ({
 	createOperationWorkerComposition: createCompositionMock,
 }));
 
 import {
 	installOperationWorkerDevPanel,
 	operationWorkerDevPanelGlobalName,
-} from "./operation-worker-dev-panel";
+} from "./dev-panel";
 
 describe("operation worker dev panel production wiring", () => {
 	it.each(["win32", "darwin"] as const)(

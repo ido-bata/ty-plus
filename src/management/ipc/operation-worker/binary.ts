@@ -1,8 +1,8 @@
-import type { ProtocolVersion } from "./generated/wire";
+import type { ProtocolVersion } from "../generated/wire";
 import type {
 	OperationWorkerRuntime,
 	WorkerFileHandle,
-} from "./operation-worker-runtime";
+} from "./runtime";
 
 export type OperationWorkerPlatform = "windows" | "macos";
 

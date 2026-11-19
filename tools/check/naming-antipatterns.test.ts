@@ -226,7 +226,7 @@ describe("prefix-group", () => {
 	it("flags flat directories with many files sharing a prefix", () => {
 		const paths = Array.from(
 			{ length: 9 },
-			(_, i) => `src/management/ipc/operation-worker-part${i}.ts`,
+			(_, i) => `src/management/ipc/operation-worker/part${i}.ts`,
 		);
 		const findings = rulesFor(paths, "prefix-group");
 		expect(findings).toHaveLength(1);

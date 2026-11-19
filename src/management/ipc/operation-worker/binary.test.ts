@@ -15,8 +15,8 @@ import {
 	type OperationWorkerManifest,
 	type OperationWorkerPlatform,
 	resolveOperationWorkerBinary as resolveOperationWorkerBinaryCore,
-} from "./operation-worker-binary";
-import { createNodeOperationWorkerRuntime } from "./operation-worker-node-runtime";
+} from "./binary";
+import { createNodeOperationWorkerRuntime } from "./node-runtime";
 
 const resolveOperationWorkerBinary = (
 	input: Parameters<typeof resolveOperationWorkerBinaryCore>[0],

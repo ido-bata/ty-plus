@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
 	installOperationWorkerDevPanel,
 	operationWorkerDevPanelGlobalName,
-} from "./operation-worker-dev-panel";
+} from "./dev-panel";
 
 const makeWindow = (platform = "win32"): Window => {
 	const target = {

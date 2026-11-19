@@ -44,7 +44,7 @@ export {
 	resolveOperationWorkerBinary,
 	WorkerBinaryError,
 	type WorkerBinaryErrorCode,
-} from "./operation-worker-binary";
+} from "./operation-worker/binary";
 export {
 	createInjectedHostContextProvider,
 	createOperationWorkerComposition,
@@ -53,18 +53,18 @@ export {
 	type OperationWorkerChildObserver,
 	type OperationWorkerComposition,
 	type OperationWorkerCompositionOptions,
-} from "./operation-worker-composition";
+} from "./operation-worker/composition";
 export {
 	createOperationWorkerContextProvider,
 	type HostContextProvider,
 	HostContextValidationError,
-} from "./operation-worker-context";
+} from "./operation-worker/context";
 export {
 	encodeOperationWorkerFrame,
 	OperationWorkerFrameDecoder,
 	OperationWorkerFrameError,
 	type OperationWorkerFrameErrorCode,
-} from "./operation-worker-frame";
+} from "./operation-worker/frame";
 export {
 	type CancelPolicy,
 	createOperationWorkerRunner,
@@ -83,7 +83,7 @@ export {
 	type WorkerRunOptions,
 	type WorkerSpawnOptions,
 	type WorkerStream,
-} from "./operation-worker-runner";
+} from "./operation-worker/runner";
 export {
 	canRetry,
 	type IdempotencyKey,
@@ -94,7 +94,7 @@ export {
 	type RetryState,
 	type RunnerFactory,
 	type WorkerJob,
-} from "./operation-worker-scheduler";
+} from "./operation-worker/scheduler";
 export {
 	type RuntimeMethod,
 	type RuntimeRequestDispatcher,

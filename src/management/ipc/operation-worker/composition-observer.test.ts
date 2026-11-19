@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { notifyOperationWorkerChildCreated } from "./operation-worker-composition";
+import { notifyOperationWorkerChildCreated } from "./composition";
 
 describe("operation worker composition observers", () => {
 	it("isolates onChildCreated failures", () => {

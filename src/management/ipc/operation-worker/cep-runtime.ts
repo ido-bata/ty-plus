@@ -2,12 +2,12 @@ import { createLogger } from "@/management/debug/logger";
 import type {
 	WorkerChild,
 	WorkerSpawnOptions,
-} from "./operation-worker-runner";
+} from "./runner";
 import type {
 	OperationWorkerRuntime,
 	WorkerFileHandle,
 	WorkerFileStats,
-} from "./operation-worker-runtime";
+} from "./runtime";
 
 const operationWorkerRuntimeLog = createLogger("operation-worker");
 

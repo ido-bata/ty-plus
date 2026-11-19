@@ -29,7 +29,7 @@ Rust worker の composition root は `rust/apps/operation-worker/` とする。
 | Rust operation worker | 1 invocation の filesystem、persistence、network、licensing、transaction/recovery、protected operation orchestration | React UI、AE DOM、別 invocation の状態 |
 
 React は responsibility-specific gateway を呼び、CEP Node の
-`src/management/ipc/operation-worker-runner.ts` だけが `child_process` 境界を持つ。
+`src/management/ipc/operation-worker/runner.ts` だけが `child_process` 境界を持つ。
 ExtendScript と worker は相互に直接呼び出さず、AE 由来の context は CEP Node が
 invocation frame に含める。worker は process-global な app root、support root、managed
 root を持たず、すべての入力を invocation の immutable context として扱う。
