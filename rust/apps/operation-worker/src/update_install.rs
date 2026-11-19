@@ -223,13 +223,17 @@ fn validate_request(request: &UpdateInstallRequest) -> Result<(), UpdateInstallE
             "platform is not windows or macos".into(),
         ));
     }
-    let core = numeric_core(&request.release_version).ok_or_else(|| {
+    numeric_core(&request.release_version).ok_or_else(|| {
         UpdateInstallError::InvalidRequest(format!(
             "release_version {:?} has no numeric core",
             request.release_version
         ))
     })?;
-    if request.tag != format!("v{core}") {
+    // The tag is `v` + the full release version, including any prerelease
+    // channel suffix (`0.11.0-insider.1` -> `v0.11.0-insider.1`). The
+    // numeric core is still required so `release_version` stays semver-ish;
+    // it is also what `ExtensionBundleVersion` can express (Issue #237).
+    if request.tag != format!("v{}", request.release_version) {
         return Err(UpdateInstallError::InvalidRequest(format!(
             "tag {:?} does not match release_version {:?}",
             request.tag, request.release_version
@@ -929,9 +933,20 @@ mod tests {
         let mut req = request_fixture();
         req.asset.url = "https://evil.example.com/x.zip".into();
         assert!(validate_request(&req).is_err());
+        // Prerelease channels are installable: the tag is `v` + the full
+        // release version and the asset name derives from that tag.
         let mut req = request_fixture();
         req.release_version = "0.10.2-insider.1".into();
         req.tag = "v0.10.2-insider.1".into();
+        req.asset.file_name = format!("ty-plus-v0.10.2-insider.1-{}.zip", current_platform());
+        req.asset.url = format!(
+            "{OFFICIAL_DOWNLOAD_PREFIX}v0.10.2-insider.1/{}",
+            req.asset.file_name
+        );
+        assert!(validate_request(&req).is_ok());
+        // A prerelease version with a stable-style tag is still rejected.
+        let mut req = request_fixture();
+        req.release_version = "0.10.2-insider.1".into();
         assert!(validate_request(&req).is_err());
     }
 

@@ -33,8 +33,10 @@ import { createHash } from "node:crypto";
 
 const WORKER =
 	process.argv[2] ?? "rust/target/release/ty-plus-operation-worker";
-const RELEASE = "0.10.2";
+const RELEASE = process.env.TY_PLUS_UPDATE_RELEASE ?? "0.10.2";
 const TAG = `v${RELEASE}`;
+// CEP manifests only express the numeric core (ExtensionBundleVersion).
+const CORE = RELEASE.split(/[-+]/)[0];
 const PLATFORM = process.platform === "darwin" ? "macos" : "windows";
 const ASSET_NAME = `ty-plus-${TAG}-${PLATFORM}.zip`;
 const ASSET_URL = `https://github.com/ido-bata/ty-plus/releases/download/${TAG}/${ASSET_NAME}`;
@@ -184,12 +186,12 @@ freshInstall();
 		"swap-success",
 		r.response?.message?.outcome?.status === "success" &&
 			payload?.status === "installed" &&
-			manifestHasVersion(appDir, RELEASE) &&
+			manifestHasVersion(appDir, CORE) &&
 			!existsSync(join(appDir, "OLD_INSTALL_MARKER.txt")) &&
 			!existsSync(join(extensionRoot, ".ty-plus-update-pending.json")),
 		JSON.stringify({
 			outcome: r.response?.message?.outcome ?? r.error ?? r.stderr?.slice(0, 200),
-			version: manifestHasVersion(appDir, RELEASE),
+			version: manifestHasVersion(appDir, CORE),
 		}),
 	);
 }
@@ -203,7 +205,7 @@ freshInstall();
 		r.response?.message?.outcome?.status === "failure" &&
 			r.response?.message?.outcome?.error?.code === "integrity_mismatch" &&
 			existsSync(join(appDir, "OLD_INSTALL_MARKER.txt")) &&
-			!manifestHasVersion(appDir, RELEASE),
+			!manifestHasVersion(appDir, CORE),
 		JSON.stringify(r.response?.message?.outcome ?? r.error ?? "no response"),
 	);
 }
@@ -236,11 +238,11 @@ freshInstall();
 	check(
 		"pending-retry-on-spawn",
 		!existsSync(join(extensionRoot, ".ty-plus-update-pending.json")) &&
-			manifestHasVersion(appDir, RELEASE) &&
+			manifestHasVersion(appDir, CORE) &&
 			!existsSync(join(appDir, "OLD_INSTALL_MARKER.txt")),
 		JSON.stringify({
 			outcome: r2.response?.message?.outcome ?? r2.error ?? "",
-			version: manifestHasVersion(appDir, RELEASE),
+			version: manifestHasVersion(appDir, CORE),
 		}),
 	);
 }
@@ -265,7 +267,9 @@ freshInstall();
 freshInstall();
 {
 	const r = callWorker(
-		requestFrame({ url: "https://evil.example.com/ty-plus-v0.10.2-macos.zip" }),
+		requestFrame({
+			url: `https://evil.example.com/${ASSET_NAME}`,
+		}),
 	);
 	check(
 		"url-rejected",
