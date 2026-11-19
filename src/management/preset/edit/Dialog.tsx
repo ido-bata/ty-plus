@@ -24,7 +24,7 @@ import {
 	type ArchiveDetailsSectionHandle,
 } from "@/management/preset/catalog-add/ArchiveDetailsSection";
 import { verifyAndUpsertPreset } from "@/management/preset/catalog-add/verify-and-upsert";
-import { PresetIconEditor } from "@/management/preset/components/IconEditor";
+import { PresetIconEditor } from "@/management/preset/icon/Editor";
 import type { Preset, PresetIcon } from "@/management/preset/contract";
 import { askHostDeleteConfirm } from "@/management/preset/delete-confirm";
 import type { CodeEditorValue } from "@/management/preset/editor/Code";
@@ -39,12 +39,12 @@ import {
 	parseGroupFromText,
 	removeGroupEntry,
 	upsertGroupEntry,
-} from "@/management/preset/group-catalog";
+} from "@/management/preset/group/catalog";
 import {
 	type PresetIconEditorDraft,
 	presetIconDraftToPresetIcon,
 	presetIconToDraft,
-} from "@/management/preset/icon-editor";
+} from "@/management/preset/icon/draft";
 import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
 import {
 	glyphBoxCompactPadClass,

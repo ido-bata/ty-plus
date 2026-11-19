@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { readOnboardingPresetDirectory } from "./onboarding-directory";
+import { readOnboardingPresetDirectory } from "./directory";
 
 type Dirent = {
 	name: string;

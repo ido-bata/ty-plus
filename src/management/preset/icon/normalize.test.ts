@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
-import type { PresetRecord } from "../../management/preset/contract";
+import type { PresetRecord } from "@/management/preset/contract";
 import {
 	coercePresetCatalogIcon,
 	presetIconEmoji,
 	presetIconImage,
 	presetIconText,
-} from "./contract";
+} from "../contract";
 
 import {
 	coercePersistedPresetIcon,
@@ -14,7 +14,7 @@ import {
 	normalizePresets,
 	normalizeRecordCatalogIds,
 	tryParsePresetIconValue,
-} from "./icon-data";
+} from "./normalize";
 
 describe("icon-data", () => {
 	it("defaultPresetIconForKind returns type-based text", () => {

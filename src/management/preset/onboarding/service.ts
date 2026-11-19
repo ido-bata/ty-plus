@@ -5,15 +5,15 @@
  */
 
 import type { Preset } from "@/management/preset/contract";
-import type { GroupCatalogEntry } from "@/management/preset/group-catalog";
-import { coercePersistedPresetIcon } from "@/management/preset/icon-data";
+import type { GroupCatalogEntry } from "@/management/preset/group/catalog";
+import { coercePersistedPresetIcon } from "@/management/preset/icon/normalize";
 import {
 	collectFilePresetCandidates,
 	collectFilePresetCandidatesWithScannedFolders,
 	type OnboardingPresetCandidate,
 	resolveOnboardingProjectedPresetIds,
 	resolveOnboardingWorkspacePanelRefIds,
-} from "@/management/preset/onboarding-import";
+} from "@/management/preset/onboarding/import";
 import { createLocalPresetCatalogId } from "@/management/storage/ids";
 import { logWorkspace } from "@/management/workspace/onboarding/flow-log";
 

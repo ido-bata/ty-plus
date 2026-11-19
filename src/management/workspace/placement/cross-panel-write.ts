@@ -11,12 +11,12 @@
 import { isWidgetType, type WidgetType } from "@/function/widget/contract";
 import { readGroupJson } from "@/management/catalog/json-files";
 import { createLogger } from "@/management/debug";
-import { parsePresetCatalogJsonText } from "@/management/preset/catalog-json-text";
+import { parsePresetCatalogJsonText } from "@/management/preset/repository/json-text";
 import type { Preset } from "@/management/preset/contract";
 import {
 	type GroupCatalogEntry,
 	parseGroupFromText,
-} from "@/management/preset/group-catalog";
+} from "@/management/preset/group/catalog";
 import {
 	indexFromPanelId,
 	readNJson,

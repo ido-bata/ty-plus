@@ -11,7 +11,7 @@ import { createLogger } from "@/management/debug/logger";
 import {
 	removePresetFromGroupEntry,
 	reorderPresetInGroupEntry,
-} from "@/management/preset/group-catalog";
+} from "@/management/preset/group/catalog";
 import type { GridSettings } from "@/management/workspace/layout/grid-document";
 import { gridClientPointToCell } from "@/management/workspace/placement/grid-coords";
 import { notifyPanelsAfterPresetSave } from "@/management/workspace/placement/notify-panels-after-preset-save";

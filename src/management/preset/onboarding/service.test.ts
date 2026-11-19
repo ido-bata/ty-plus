@@ -5,9 +5,9 @@
  */
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { PresetRecord } from "../../management/preset/contract";
-import { coercePersistedPresetIcon } from "./icon-data";
-import { importOnboardingPresets } from "./onboarding-service";
+import type { PresetRecord } from "@/management/preset/contract";
+import { coercePersistedPresetIcon } from "../icon/normalize";
+import { importOnboardingPresets } from "./service";
 
 const looksLikeRandomUuid = (id: string): boolean =>
 	/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(

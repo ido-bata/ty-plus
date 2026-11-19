@@ -8,14 +8,14 @@ import type {
 	PresetIcon,
 	PresetType,
 } from "@/management/preset/contract";
-import { isDefaultPresetIcon } from "@/management/preset/icon-data";
+import { isDefaultPresetIcon } from "@/management/preset/icon/normalize";
 import { imageSrcForBrowser } from "@/management/preset/image-src-for-browser";
 import {
 	findSiblingImagePathForPresetFile,
 	isPresetSidekickSourcePath,
 	type SiblingListingEntry,
 	siblingThumbnailEntryFor,
-} from "@/management/preset/sibling-thumbnail";
+} from "@/management/preset/sibling/thumbnail";
 import { CanvasEasingIcon } from "@/management/preset/workspace/CanvasEasingIcon";
 import { cx } from "@/shared/util/cx";
 import { css } from "@/styled-system/css";

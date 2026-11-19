@@ -56,8 +56,8 @@ Issue #89 は「alignment widget のキー画像をカスタム可能にする�
 | `src/function/widget/core/anchor-point/descriptor.ts` | source | anchor-point の `defineWidget` |
 | `src/function/widget/define.ts` | source | `WidgetDescriptor` 型定義 (24-83) |
 | `src/management/preset/contract.ts` | source | `PresetIcon` 型 (text/emoji/image/canvas) — 既存 image インフラ |
-| `src/management/preset/icon-data.ts` | source | preset icon 永続化 |
-| `src/management/preset/components/IconEditor.tsx` | source | `PresetIconEditor` UI |
+| `src/management/preset/icon/normalize.ts` | source | preset icon 永続化 |
+| `src/management/preset/icon/Editor.tsx` | source | `PresetIconEditor` UI |
 | `src/function/widget/core/anchor-point/Component.stories.tsx` | source | 比較対象: anchor-point stories (`Default`, `Large`, `GesturePreview`) |
 | `src/management/i18n/locales/en/widgets.json` | i18n | `widgets.align.name` = "Align", 説明あり |
 | `src/management/i18n/locales/ja/widgets.json` | i18n | `整列` |
@@ -221,7 +221,7 @@ export type PresetIcon =
   | { type: "canvas"; param: CanvasParams };
 ```
 
-`PresetIconEditor` (`src/management/preset/components/IconEditor.tsx`) と
+`PresetIconEditor` (`src/management/preset/icon/Editor.tsx`) と
 永続化 (`icon-data.ts`) が既に動く。ただしこれは **preset catalog の
 thumbnail / workspace tile 専用**で、widget action icon には適用されて
 いない。
@@ -469,7 +469,7 @@ descriptor へのフィールド追加と Component のレンダラ差し替え�
 - Anchor-point Descriptor: `src/function/widget/core/anchor-point/descriptor.ts`
 - Widget descriptor: `src/function/widget/define.ts`
 - Preset icon contract: `src/management/preset/contract.ts`
-- Preset icon editor: `src/management/preset/components/IconEditor.tsx`
+- Preset icon editor: `src/management/preset/icon/Editor.tsx`
 - Widget boundary doc: `docs/architecture/widget-boundary.md`
 - Anchor-point widget doc: `docs/architecture/widget/anchor-point.md`
 - Widget records doc: `docs/architecture/data/workspace-records/widget/types.md`

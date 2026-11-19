@@ -1,5 +1,5 @@
 import type { JSX, ReactNode } from "react";
-import type { SiblingListingEntry } from "@/management/preset/sibling-thumbnail";
+import type { SiblingListingEntry } from "@/management/preset/sibling/thumbnail";
 import { cx } from "@/shared/util/cx";
 import { css } from "@/styled-system/css";
 import type {

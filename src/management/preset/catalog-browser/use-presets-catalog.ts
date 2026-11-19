@@ -22,7 +22,7 @@ import { traceExecute } from "@/management/preset/execution/lifecycle-trace";
 import {
 	type GroupEntry,
 	parseGroupFromText,
-} from "@/management/preset/group-catalog";
+} from "@/management/preset/group/catalog";
 import {
 	getPreset,
 	listPresets,

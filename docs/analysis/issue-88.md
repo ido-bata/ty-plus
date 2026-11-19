@@ -22,8 +22,8 @@
 - `src/function/widget/runtime-context.tsx` — `useWidgetRuntime()` exposes `host`, `activeWidgetInstanceId`, `setActiveWidgetInstanceId`. No settings surface.
 - `src/management/workspace/layout/grid-document.ts:178-188` — `Layout` type with `data?: Record<string, unknown>`. **The dormant per-tile persistence slot.**
 - `src/management/preset/contract.ts:14-78` — `ImageParams = { src: string }`, `PresetIcon` discriminated union (`text | emoji | image | canvas`), `presetIconImage(src)` constructor, `coercePresetCatalogIcon` legacy parser.
-- `src/management/preset/icon-data.ts` — `tryParsePresetIconValue`, `coercePersistedPresetIcon`, `normalizePresets`.
-- `src/management/preset/icon-editor.ts` — `PresetIconEditorDraft`, `presetIconToDraft`, `draftToIcon`. The four-kind icon editor (used by `IconEditor.tsx`).
+- `src/management/preset/icon/normalize.ts` — `tryParsePresetIconValue`, `coercePersistedPresetIcon`, `normalizePresets`.
+- `src/management/preset/icon/draft.ts` — `PresetIconEditorDraft`, `presetIconToDraft`, `draftToIcon`. The four-kind icon editor (used by `IconEditor.tsx`).
 - `src/management/preset/assets/icons.ts` — `resolveWorkspaceGlyphIconVisual(preset)` resolves `Preset.icon` + `descriptionImage` into a `PresetIconVisual` (`kind: "image" | "emoji" | "text" | "canvas"`).
 - `src/management/preset/workspace/glyph.tsx` — `WorkspacePresetGlyph` (the in-tile renderer for all four `PresetIcon` kinds).
 - `src/management/preset/workspace/GlyphCachedImage.tsx` — image-only delegate to `ThumbnailTile` via the Rust thumbnail cache pipeline.
@@ -176,7 +176,7 @@ The codebase has a full image-render pipeline:
 |---------|------|
 | Discriminated icon type (`text` / `emoji` / `image` / `canvas`) | `src/management/preset/contract.ts:41-78` |
 | `image` constructor `presetIconImage(src)` | `src/management/preset/contract.ts:72-74` |
-| Editor draft ↔ icon conversion (all 4 kinds) | `src/management/preset/icon-editor.ts` |
+| Editor draft ↔ icon conversion (all 4 kinds) | `src/management/preset/icon/draft.ts` |
 | URL safety allowlist (`https:`, `file:`, absolute paths; `javascript:`/`data:text/html` rejected) | `src/management/preset/image-src-for-browser.ts` |
 | Tile renderer that delegates to all 4 kinds | `src/management/preset/workspace/glyph.tsx` (`WorkspacePresetGlyph`) |
 | Image-only render → Rust thumbnail cache | `src/management/preset/workspace/GlyphCachedImage.tsx` → `ThumbnailTile.tsx` |

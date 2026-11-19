@@ -39,7 +39,7 @@
 import {
 	parsePresetCatalogJsonTextStrict,
 	serializePresetCatalogJsonText,
-} from "@/management/preset/catalog-json-text";
+} from "@/management/preset/repository/json-text";
 import type { Preset } from "@/management/preset/contract";
 import { createSharedPresetRepository } from "@/management/preset/repository/shared";
 import { writePresetsJson } from "@/management/storage";

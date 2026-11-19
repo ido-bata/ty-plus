@@ -19,7 +19,7 @@ const hookSource = fs.readFileSync(
 	"utf8",
 );
 const persistFolderGroupSource = fs.readFileSync(
-	new URL("../preset/persist-folder-group.ts", import.meta.url),
+	new URL("../preset/group/persist-folder.ts", import.meta.url),
 	"utf8",
 );
 const onboardingViewSource = fs.readFileSync(

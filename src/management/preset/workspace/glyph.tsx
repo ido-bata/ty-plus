@@ -13,7 +13,7 @@ import {
 	parentDirectoryOf,
 	type SiblingListingEntry,
 	siblingPathKey,
-} from "@/management/preset/sibling-thumbnail";
+} from "@/management/preset/sibling/thumbnail";
 import { getPreset } from "@/management/preset/use-cases";
 import { CanvasEasingIcon } from "@/management/preset/workspace/CanvasEasingIcon";
 import { GlyphCachedImage } from "@/management/preset/workspace/GlyphCachedImage";

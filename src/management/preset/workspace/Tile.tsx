@@ -2,7 +2,7 @@ import type { CSSProperties, JSX } from "react";
 import { useEffect, useMemo } from "react";
 import { logCatalogTileDisplay } from "@/management/catalog-tile-display-log";
 import type { Preset } from "@/management/preset/contract";
-import { getSharedSiblingListDirectory } from "@/management/preset/sibling-directory-lister";
+import { getSharedSiblingListDirectory } from "@/management/preset/sibling/directory-lister";
 import {
 	PresetCatalogGlyphHost,
 	usePresetSiblingImageSrc,

@@ -4,7 +4,7 @@ import {
 	presetIconImage,
 	presetIconText,
 } from "@/management/preset/contract";
-import type { SiblingListingEntry } from "@/management/preset/sibling-thumbnail";
+import type { SiblingListingEntry } from "@/management/preset/sibling/thumbnail";
 import { css } from "@/styled-system/css";
 
 import type { DirectoryBrowserEntry } from "./Component";

@@ -24,12 +24,12 @@ import { readUserHomeOrFallback, ToolDialog } from "@/management/preset";
 import { saveAnimationPresetAsset } from "@/management/preset/authoring/write-preset-asset";
 import { ArchiveDetailsSection } from "@/management/preset/catalog-add/ArchiveDetailsSection";
 import { parseRootPathsFromSettingsJson } from "@/management/preset/catalog-add/parse-root-paths";
-import { PresetIconEditor } from "@/management/preset/components/IconEditor";
+import { PresetIconEditor } from "@/management/preset/icon/Editor";
 import type { Preset } from "@/management/preset/contract";
 import {
 	createPresetIconDraft,
 	presetIconDraftToPresetIcon,
-} from "@/management/preset/icon-editor";
+} from "@/management/preset/icon/draft";
 import {
 	AuthoringField,
 	AuthoringGrid,

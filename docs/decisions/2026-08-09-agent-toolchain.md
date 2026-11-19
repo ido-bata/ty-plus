@@ -289,7 +289,7 @@ conversations.
   `readWidgetCatalogJson` / `writeWidgetCatalogJson` aliases
   survive in active callers (`src/management/preset/edit/Dialog.tsx`,
   `src/management/preset/catalog-browser/ListDialog.tsx`,
-  `src/management/preset/group-catalog.ts`,
+  `src/management/preset/group/catalog.ts`,
   `src/management/workspace/persistence/store.ts`).~~ Resolved
   2026-08-23: the only remaining caller
   (`workspace/persistence/store.ts`) was rewritten to use the

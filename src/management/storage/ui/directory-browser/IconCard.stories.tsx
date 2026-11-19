@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { expect } from "storybook/test";
-import type { SiblingListingEntry } from "@/management/preset/sibling-thumbnail";
+import type { SiblingListingEntry } from "@/management/preset/sibling/thumbnail";
 import { expectCanvasLayout } from "@/storybook/quality/layout";
 
 import type { DirectoryBrowserEntry } from "./Component";

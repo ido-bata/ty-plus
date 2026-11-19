@@ -17,8 +17,8 @@
 - `src/management/preset/group/events.ts` — `dispatchGroupWorkspaceRequest` / `GROUP_WORKSPACE_EVENT`; only one `type` is exposed today: `"toggle-open"`. No `"drop-out"` / `"dissolve"` / `"release"` is part of the contract.
 - `src/management/preset/group/Panel.tsx` — the only file that performs a *group→workspace* write. Operates on **member presets** of an opened group panel, not on the group tile in the surface grid.
 - `src/management/preset/group/WorkspaceLayer.tsx`, `PanelOverlay.tsx`, `ContainerCatalogTile.tsx`, `CatalogTileBody.tsx` — group surface rendering; none wires drag-out.
-- `src/management/preset/group-catalog.ts:222-271` — `removeGroupEntry` and `removePresetFromGroupEntry` are the disk-side primitives used by `Panel.tsx`. No helper combines them atomically.
-- `src/management/preset/persist-folder-group.ts` — write path for *creating* folder groups. No dissolve path.
+- `src/management/preset/group/catalog.ts:222-271` — `removeGroupEntry` and `removePresetFromGroupEntry` are the disk-side primitives used by `Panel.tsx`. No helper combines them atomically.
+- `src/management/preset/group/persist-folder.ts` — write path for *creating* folder groups. No dissolve path.
 - `src/management/dialog/dialogs/unified-context-menu.ts:1395-1416, 1462-1473` — menu construction. `releaseGroupPreset` is offered to the user in two menus.
 - `src/management/dialog/dialogs/unified-context-menu-constants.ts:97-98` — menu IDs `releaseGroupPreset`, `removePresetFromOpenedGroup`.
 - `src/management/preset/group/surface-visibility.ts` — `shouldHideGroupedMemberSurfaceTile`; explains why dissolved presets must be re-added to `surfaceTiles`.
@@ -202,7 +202,7 @@ Classification: **the modifier-key hypothesis is not borne out by the code.** Th
 
 ## 4. Group catalog mutations and atomicity
 
-`src/management/preset/group-catalog.ts` exposes:
+`src/management/preset/group/catalog.ts` exposes:
 
 - `upsertGroupEntry` (line ~178): writes one group entry to `groups.json`.
 - `removeGroupEntry` (line 223-236): removes one group row by id.

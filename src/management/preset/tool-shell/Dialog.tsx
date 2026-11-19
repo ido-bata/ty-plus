@@ -15,14 +15,14 @@ import { DialogFooterActions } from "@/management/dialog/shell/Footer";
 import type { DroppedFile } from "@/management/dialog/shell/Layout";
 import { readPhysicalExtensionId } from "@/management/dialog/modeless/surface-id";
 import { useDialogClose } from "@/management/dialog/useClose";
-import { assertPresetAssetPresent } from "@/management/preset/asset-verification";
+import { assertPresetAssetPresent } from "@/management/preset/assets/verification";
 import {
 	createPresetAuthoringWriter,
 	type PresetAuthoringWriter,
 } from "@/management/preset/authoring/write-preset-asset";
 import { ArchiveDetailsSection } from "@/management/preset/catalog-add/ArchiveDetailsSection";
 import { verifyAndUpsertPreset } from "@/management/preset/catalog-add/verify-and-upsert";
-import { PresetIconEditor } from "@/management/preset/components/IconEditor";
+import { PresetIconEditor } from "@/management/preset/icon/Editor";
 import type { Preset, PresetType } from "@/management/preset/contract";
 import {
 	type PresetSaveEntryPoint,
@@ -32,7 +32,7 @@ import {
 	createPresetIconDraft,
 	presetIconDraftToPresetIcon,
 	presetIconToDraft,
-} from "@/management/preset/icon-editor";
+} from "@/management/preset/icon/draft";
 import {
 	buildPresetToolContextMenuPayload,
 	PRESET_TOOL_CTX,

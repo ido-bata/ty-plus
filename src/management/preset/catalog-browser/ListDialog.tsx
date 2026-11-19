@@ -43,10 +43,10 @@ import { buildPlacementHints } from "@/management/preset/catalog-browser/workspa
 import type { Preset } from "@/management/preset/contract";
 import { askHostDeleteConfirm } from "@/management/preset/delete-confirm";
 import { traceExecute } from "@/management/preset/execution/lifecycle-trace";
-import type { GroupEntry } from "@/management/preset/group-catalog";
-import { parseGroupFromText } from "@/management/preset/group-catalog";
-import { tryParsePresetIconValue } from "@/management/preset/icon-data";
-import { getSharedSiblingListDirectory } from "@/management/preset/sibling-directory-lister";
+import type { GroupEntry } from "@/management/preset/group/catalog";
+import { parseGroupFromText } from "@/management/preset/group/catalog";
+import { tryParsePresetIconValue } from "@/management/preset/icon/normalize";
+import { getSharedSiblingListDirectory } from "@/management/preset/sibling/directory-lister";
 import {
 	getPreset,
 	listPresets,

@@ -12,7 +12,7 @@ import type {
 	PresetIcon,
 	PresetType,
 } from "@/management/preset/contract";
-import { tryParsePresetIconValue } from "@/management/preset/icon-data";
+import { tryParsePresetIconValue } from "@/management/preset/icon/normalize";
 import { logWorkspace } from "@/management/workspace/onboarding/flow-log";
 
 /**

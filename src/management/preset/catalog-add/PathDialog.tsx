@@ -27,7 +27,7 @@ import {
 import { readUserHomeOrFallback } from "@/management/preset/catalog-add/browse-start-dir";
 import { parseRootPathsFromSettingsJson } from "@/management/preset/catalog-add/parse-root-paths";
 import { verifyAndUpsertPreset } from "@/management/preset/catalog-add/verify-and-upsert";
-import { PresetIconEditor } from "@/management/preset/components/IconEditor";
+import { PresetIconEditor } from "@/management/preset/icon/Editor";
 import type { Preset } from "@/management/preset/contract";
 import { tracePresetLifecycle } from "@/management/preset/execution/lifecycle-trace";
 import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";

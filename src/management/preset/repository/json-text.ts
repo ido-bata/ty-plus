@@ -3,7 +3,7 @@ import {
 	titleFromFilePath,
 } from "@/management/preset/authoring/request";
 import type { Preset, PresetType } from "@/management/preset/contract";
-import { normalizePresets } from "@/management/preset/icon-data";
+import { normalizePresets } from "@/management/preset/icon/normalize";
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
 	Boolean(value) && typeof value === "object" && !Array.isArray(value);

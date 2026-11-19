@@ -2,7 +2,7 @@ import {
 	canUseCepNodeFileBrowser,
 	createCepNodeFileBrowserService,
 } from "@/management/storage/file-browser-service";
-import { type SiblingListingEntry, siblingPathKey } from "./sibling-thumbnail";
+import { type SiblingListingEntry, siblingPathKey } from "./thumbnail";
 
 export type SiblingListDirectory = (
 	dirPath: string,

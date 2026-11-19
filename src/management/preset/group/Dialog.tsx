@@ -2,14 +2,14 @@ import { ChevronDown, FolderOpen, Plus, Trash2 } from "lucide-react";
 import { type JSX, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { readUserHomeOrFallback } from "@/management/preset/catalog-add/browse-start-dir";
-import { PresetIconEditor } from "@/management/preset/components/IconEditor";
+import { PresetIconEditor } from "@/management/preset/icon/Editor";
 import type { Preset } from "@/management/preset/contract";
-import type { PresetIconEditorDraft } from "@/management/preset/icon-editor";
+import type { PresetIconEditorDraft } from "@/management/preset/icon/draft";
 import {
 	createPresetIconDraft,
 	presetIconDraftToPresetIcon,
-} from "@/management/preset/icon-editor";
-import { persistFolderGroupPreset } from "@/management/preset/persist-folder-group";
+} from "@/management/preset/icon/draft";
+import { persistFolderGroupPreset } from "@/management/preset/group/persist-folder";
 import {
 	AuthoringField,
 	AuthoringGrid,

@@ -17,7 +17,7 @@ import {
 	type PresetAssetHealth,
 	readPresetAssetHealth,
 	subscribePresetAssetHealth,
-} from "@/management/preset/asset-health";
+} from "@/management/preset/assets/health";
 
 const subscribe = (listener: () => void): (() => void) =>
 	subscribePresetAssetHealth(() => {

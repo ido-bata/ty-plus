@@ -3,12 +3,12 @@
  */
 
 import { describe, expect, it } from "vitest";
-import type { PresetRecord } from "../../management/preset/contract";
+import type { PresetRecord } from "@/management/preset/contract";
 
 import {
 	resolveOnboardingProjectedPresetIds,
 	resolveOnboardingWorkspacePanelRefIds,
-} from "./onboarding-import";
+} from "./import";
 
 describe("onboarding-import preset id resolution", () => {
 	it("resolveOnboardingProjectedPresetIds matches catalog rows by filePath", () => {

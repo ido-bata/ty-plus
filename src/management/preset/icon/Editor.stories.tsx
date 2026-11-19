@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import type { Preset } from "@/management/preset/contract";
 import { presetIconText } from "@/management/preset/contract";
-import { createPresetIconDraft } from "@/management/preset/icon-editor";
+import { createPresetIconDraft } from "@/management/preset/icon/draft";
 import { expectCanvasLayout } from "@/storybook/quality/layout";
 import { css } from "@/styled-system/css";
-import { IconEditor } from "./IconEditor";
+import { IconEditor } from "./Editor";
 
 const basePreset: Preset = {
 	id: "preview",

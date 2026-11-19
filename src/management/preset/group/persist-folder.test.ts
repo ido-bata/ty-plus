@@ -26,10 +26,10 @@ vi.mock("@/management/preset/use-cases", () => ({ listPresets }));
 vi.mock("@/management/preset/repository/local-catalog", () => ({
 	getLocalPresetCatalog,
 }));
-vi.mock("@/management/preset/onboarding-service", () => ({
+vi.mock("@/management/preset/onboarding/service", () => ({
 	importOnboardingPresets,
 }));
-vi.mock("@/management/preset/group-catalog", () => ({
+vi.mock("@/management/preset/group/catalog", () => ({
 	mergeGroupEntries,
 	upsertGroupEntry,
 }));
@@ -37,11 +37,11 @@ vi.mock("@/management/storage/file-browser-service", () => ({
 	canUseCepNodeFileBrowser,
 	createCepNodeFileBrowserService,
 }));
-vi.mock("@/management/preset/icon-editor", () => ({
+vi.mock("@/management/preset/icon/draft", () => ({
 	presetIconDraftToPresetIcon: vi.fn(() => null),
 }));
 
-const { persistFolderGroupPreset } = await import("./persist-folder-group");
+const { persistFolderGroupPreset } = await import("./persist-folder");
 
 const win = {} as Window;
 

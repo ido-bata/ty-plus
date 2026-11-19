@@ -30,7 +30,7 @@ import {
 	PresetAssetMissingError,
 	verifyPresetAsset,
 	verifySinglePresetAsset,
-} from "@/management/preset/asset-verification";
+} from "@/management/preset/assets/verification";
 import type { Preset } from "@/management/preset/contract";
 
 const hostState = vi.hoisted(() => {

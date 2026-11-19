@@ -40,7 +40,7 @@ import {
 	LIST_ROW_GRID,
 	PresetGlyphById,
 } from "@/management/preset";
-import { isPresetAssetMissing } from "@/management/preset/asset-health";
+import { isPresetAssetMissing } from "@/management/preset/assets/health";
 import type {
 	Preset,
 	PresetRecord,
@@ -50,19 +50,19 @@ import { traceExecute } from "@/management/preset/execution/lifecycle-trace";
 import {
 	type GroupEntry,
 	parseGroupFromText,
-} from "@/management/preset/group-catalog";
+} from "@/management/preset/group/catalog";
 import {
 	isPresetSidekickSourcePath,
 	parentDirectoryOf,
 	SIBLING_IMAGE_NAME_RE,
 	siblingPathKey,
 	stemWithoutExtension,
-} from "@/management/preset/sibling-thumbnail";
+} from "@/management/preset/sibling/thumbnail";
 import { getPreset } from "@/management/preset/use-cases";
 import {
 	useIsPresetAssetMissing,
 	useIsPresetAssetUnverifiable,
-} from "@/management/preset/use-preset-asset-health";
+} from "@/management/preset/assets/use-health";
 import { readSettings } from "@/management/storage";
 import {
 	canUseCepNodeFileBrowser,

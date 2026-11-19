@@ -12,7 +12,7 @@ import {
 	parsePresetCatalogJsonText,
 	parsePresetCatalogJsonTextStrict,
 	serializePresetCatalogJsonText,
-} from "@/management/preset/catalog-json-text";
+} from "@/management/preset/repository/json-text";
 import type { Preset } from "@/management/preset/contract";
 
 const basePreset: Preset = {

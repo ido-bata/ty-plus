@@ -21,7 +21,7 @@ import {
 	publishPresetAssetHealth,
 	readPresetAssetHealth,
 	subscribePresetAssetHealth,
-} from "@/management/preset/asset-health";
+} from "@/management/preset/assets/health";
 
 describe("preset asset-health store — Issue #131", () => {
 	beforeEach(() => {

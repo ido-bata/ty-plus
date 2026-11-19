@@ -4,7 +4,7 @@ import {
 	isDefaultPresetIcon,
 	presetTypeFallbackText,
 	tryParsePresetIconValue,
-} from "@/management/preset/icon-data";
+} from "@/management/preset/icon/normalize";
 
 export type PresetIconVisual =
 	| { kind: "image"; value: string }

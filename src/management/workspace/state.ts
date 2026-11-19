@@ -1,7 +1,7 @@
 import type { WidgetType } from "@/function/widget";
 
 import type { Preset } from "@/management/preset/contract";
-import type { GroupCatalogEntry } from "@/management/preset/group-catalog";
+import type { GroupCatalogEntry } from "@/management/preset/group/catalog";
 import type { Background } from "@/management/workspace/background/contract";
 import {
 	buildPrimaryPanelWidgets,

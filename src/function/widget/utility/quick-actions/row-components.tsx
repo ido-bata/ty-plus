@@ -4,7 +4,7 @@ import type { Preset, PresetType } from "@/management/preset/contract";
 import {
 	useIsPresetAssetMissing,
 	useIsPresetAssetUnverifiable,
-} from "@/management/preset/use-preset-asset-health";
+} from "@/management/preset/assets/use-health";
 import {
 	usePresetSiblingImageSrc,
 	WorkspacePresetGlyph,

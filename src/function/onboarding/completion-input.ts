@@ -1,12 +1,12 @@
 import type {
 	OnboardingFileBrowserEntry,
 	OnboardingPresetCandidate,
-} from "../../management/preset/onboarding-import";
+} from "../../management/preset/onboarding/import";
 import {
 	collectFilePresetCandidates,
 	collectFilePresetCandidatesWithScannedFolders,
 	type OnboardingSelectedFiles,
-} from "../../management/preset/onboarding-import";
+} from "../../management/preset/onboarding/import";
 import type { FilePickStep } from "./steps-data";
 
 type Subfolders = {

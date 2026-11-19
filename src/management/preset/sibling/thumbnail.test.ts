@@ -5,7 +5,7 @@ import {
 	isPresetSidekickSourcePath,
 	normalizeSiblingDirPath,
 	siblingPathKey,
-} from "./sibling-thumbnail";
+} from "./thumbnail";
 
 describe("sibling-thumbnail", () => {
 	it("normalizeSiblingDirPath strips Win32 long-path prefix", () => {

@@ -45,7 +45,7 @@ import { saveCepShellLocale } from "@/management/i18n/locale-storage";
 import {
 	importOnboardingPresets,
 	type OnboardingImportOptions,
-} from "@/management/preset/onboarding-service";
+} from "@/management/preset/onboarding/service";
 import { getLocalPresetCatalog } from "@/management/preset/repository/local-catalog";
 import { completeOnboardingStorage } from "@/management/setting/onboarding/complete";
 import {

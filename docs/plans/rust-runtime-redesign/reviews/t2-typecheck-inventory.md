@@ -243,7 +243,7 @@ widget-routing work, leaving 15 diagnostics in these 10 owned test files:
 - `src/function/widget/utility/directory-browser/single-click-navigation.test.tsx`
 - `src/management/dialog/dialogs/unified-context-menu.test.ts`
 - `src/management/preset/__e2e__/remove.test.tsx`
-- `src/management/preset/icon-data.test.ts`
+- `src/management/preset/icon/normalize.test.ts`
 - `src/management/setting/onboarding/complete.test.ts`
 - `src/management/setting/persistence/workspace-ui-settings-file.test.ts`
 - `src/management/workspace/easing-colors.test.ts`

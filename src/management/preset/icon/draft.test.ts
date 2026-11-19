@@ -4,14 +4,14 @@ import {
 	presetIconEmoji,
 	presetIconImage,
 	presetIconText,
-} from "./contract";
+} from "../contract";
 import {
 	createPresetIconDraft,
 	draftToIcon,
 	PRESET_ICON_TEXT_MAX,
 	presetIconDraftToPresetIcon,
 	presetIconToDraft,
-} from "./icon-editor";
+} from "./draft";
 
 describe("createPresetIconDraft", () => {
 	it("returns an empty text draft when no initial text is given", () => {

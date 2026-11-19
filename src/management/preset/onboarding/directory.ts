@@ -1,6 +1,6 @@
 import type { FilePickStep } from "@/function/onboarding/steps-data";
 import type { PresetType } from "@/management/preset/contract";
-import { coercePersistedPresetIcon } from "@/management/preset/icon-data";
+import { coercePersistedPresetIcon } from "@/management/preset/icon/normalize";
 import { readScopedDirectory } from "@/management/storage/read/scoped-directory";
 import type { DirectoryBrowserEntry } from "@/management/storage/ui/directory-browser/Component";
 

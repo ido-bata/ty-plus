@@ -11,7 +11,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
 	parsePresetCatalogJsonText,
 	serializePresetCatalogJsonText,
-} from "@/management/preset/catalog-json-text";
+} from "@/management/preset/repository/json-text";
 import type { Preset } from "@/management/preset/contract";
 
 const { mockReadJsonFileText, mockWriteJsonFileText, mockReadRoot } =
