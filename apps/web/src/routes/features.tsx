@@ -3,7 +3,16 @@ import { Button, MediaFrame } from "@ty-plus/ui";
 import { cx } from "@ty-plus/ui/util/cx";
 import { css } from "@/styled-system/css";
 import { SITE } from "../lib/site";
-import { cluster, container, section, stack } from "../styles/layout";
+import {
+	cluster,
+	container,
+	section,
+	span4,
+	span5,
+	span7,
+	span8,
+	stack,
+} from "../styles/layout";
 import * as s from "../styles/site";
 
 export const Route = createFileRoute("/features")({
@@ -28,19 +37,7 @@ const featureRow = css({
 	alignItems: "start",
 });
 
-const span5 = css({
-	gridColumn: { base: "1 / -1", lg: "span 5" },
-	minWidth: 0,
-});
-const span7 = css({
-	gridColumn: { base: "1 / -1", lg: "span 7" },
-	minWidth: 0,
-});
-const span7First = css({
-	gridColumn: { base: "1 / -1", lg: "span 7" },
-	minWidth: 0,
-	order: { lg: -1 },
-});
+const orderFirst = css({ order: { lg: -1 } });
 
 const FEATURES = [
 	{
@@ -50,6 +47,9 @@ const FEATURES = [
 		alt: "The ty-plus workspace canvas with the search, easing, and alignment widgets arranged",
 		width: 2420,
 		height: 906,
+		// Flagship capture gets the widest treatment: image leads at 8 cols.
+		mediaFirst: true,
+		mediaSpan: "wide" as const,
 	},
 	{
 		title: "Widgets on demand",
@@ -58,6 +58,8 @@ const FEATURES = [
 		alt: "The Add Widget dialog in ty-plus listing available widget types",
 		width: 1600,
 		height: 956,
+		mediaFirst: false,
+		mediaSpan: "std" as const,
 	},
 	{
 		title: "Presets without leaving the panel",
@@ -66,6 +68,8 @@ const FEATURES = [
 		alt: "The Code Preset creation dialog in ty-plus",
 		width: 1600,
 		height: 956,
+		mediaFirst: true,
+		mediaSpan: "std" as const,
 	},
 	{
 		title: "Customizable appearance",
@@ -98,18 +102,28 @@ function FeaturesPage() {
 				aria-label="Feature details"
 			>
 				<div className={stack({ gap: 6 })}>
-					{FEATURES.map((f, i) => {
-						const flip = i % 2 === 1 && "image" in f;
+					{FEATURES.map((f) => {
+						const hasImage = "image" in f;
+						const wide = hasImage && f.mediaSpan === "wide";
+						const textSpan = wide ? span4 : span5;
+						const mediaSpan = wide ? span8 : span7;
+						const mediaFirst = hasImage && f.mediaFirst;
 						return (
 							<article className={featureRow} key={f.title}>
-								<div className={span5}>
+								<div className={textSpan}>
 									<div className={stack({ gap: 2 })}>
 										<h2 className={s.h2}>{f.title}</h2>
 										<p className={s.body}>{f.body}</p>
 									</div>
 								</div>
-								{"image" in f ? (
-									<figure className={cx(s.figure, flip ? span7First : span7)}>
+								{hasImage ? (
+									<figure
+										className={cx(
+											s.figure,
+											mediaSpan,
+											mediaFirst && orderFirst,
+										)}
+									>
 										<MediaFrame>
 											<img
 												src={f.image}
