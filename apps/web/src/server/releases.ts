@@ -33,6 +33,7 @@ interface GitHubRelease {
 	prerelease?: unknown;
 	draft?: unknown;
 	html_url?: unknown;
+	body?: unknown;
 	assets?: unknown;
 }
 
@@ -62,6 +63,7 @@ function mapRelease(raw: unknown): ReleaseInfo | null {
 		prerelease: r.prerelease === true,
 		draft: false,
 		htmlUrl: r.html_url,
+		body: typeof r.body === "string" ? r.body : "",
 		assets: assets.flatMap((a) => {
 			if (!isRecord(a)) return [];
 			const asset = a as GitHubReleaseAsset;

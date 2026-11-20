@@ -19,6 +19,37 @@ export const Route = createFileRoute("/download")({
 	component: DownloadPage,
 });
 
+function formatBytes(size: number | null): string {
+	if (size === null) return "";
+	if (size < 1024 * 1024) return `${(size / 1024).toFixed(0)} KB`;
+	return `${(size / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function AssetDownload({
+	asset,
+	os,
+}: {
+	asset: { name: string; url: string; size: number | null } | undefined;
+	os: string;
+}) {
+	if (!asset) return <p>No {os} asset in this release.</p>;
+	return (
+		<div className="asset-download">
+			<p>
+				<a className="btn btn-primary" href={asset.url}>
+					Download for {os}
+				</a>
+			</p>
+			<p className="asset-file">
+				<code>{asset.name}</code>
+				{asset.size !== null ? (
+					<span className="asset-size">{formatBytes(asset.size)}</span>
+				) : null}
+			</p>
+		</div>
+	);
+}
+
 function DownloadPage() {
 	const { releases, source } = Route.useLoaderData();
 	const latest = findLatestStable(releases);
@@ -66,15 +97,7 @@ function DownloadPage() {
 				<div className="grid">
 					<article className="card">
 						<h3>Windows</h3>
-						{windows ? (
-							<p>
-								<a className="btn btn-primary" href={windows.url}>
-									Download {windows.name}
-								</a>
-							</p>
-						) : (
-							<p>No Windows asset in this release.</p>
-						)}
+						<AssetDownload asset={windows} os="Windows" />
 						<p>
 							Install the ZXP with a CEP-compatible installer (for example ZXP
 							Installer or Extension Manager).
@@ -82,15 +105,7 @@ function DownloadPage() {
 					</article>
 					<article className="card">
 						<h3>macOS</h3>
-						{macos ? (
-							<p>
-								<a className="btn btn-primary" href={macos.url}>
-									Download {macos.name}
-								</a>
-							</p>
-						) : (
-							<p>No macOS asset in this release.</p>
-						)}
+						<AssetDownload asset={macos} os="macOS" />
 						<p>See the installation guide for Gatekeeper notes.</p>
 					</article>
 				</div>

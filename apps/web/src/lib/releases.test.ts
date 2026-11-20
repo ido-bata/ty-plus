@@ -14,6 +14,7 @@ function release(overrides: Partial<ReleaseInfo>): ReleaseInfo {
 		prerelease: false,
 		draft: false,
 		htmlUrl: "https://example.com",
+		body: "",
 		assets: [],
 		...overrides,
 	};

@@ -1,5 +1,5 @@
 {
-	"generatedAt": "2026-11-20T07:00:31.179Z",
+	"generatedAt": "2026-11-20T10:41:36.408Z",
 	"releases": [
 		{
 			"tagName": "v0.11.0-insider.9",
@@ -8,6 +8,7 @@
 			"prerelease": true,
 			"draft": false,
 			"htmlUrl": "https://github.com/ido-bata/ty-plus/releases/tag/v0.11.0-insider.9",
+			"body": "Insider（確認用プレリリース）— v0.11.0 の Stable 公開前受入用です。Stable ではありません。\n\n## 内容\n\n- `v0.11.0-insider.8` と同一の製品ソース（sourceCommit `fab3e9aabcf925d881aa283674a84c94e25f9107`）。insider.8 からの UI 経由アップデート経路を実機検証するための更新先連番です。\n- 変更点は insider.8 のリリースノートを参照（#245 / PR #246: Settings→Updates の install リレー修正）。\n\n## 検証状況\n\n- 両 platform: trustMode=release、manifest/sha256/ZXP署名 監査 PASS\n- macOS worker: Developer ID 署名・未公証（ADR-0003 Amendment 1）/ Windows worker: 未署名（R0 の正当な形）\n- ZXP: 署名済み・timestamp 無し（#233）\n- **未検証**: Windows 実機、AE 2026",
 			"assets": [
 				{
 					"name": "ty-plus-v0.11.0-insider.9-macos-release-manifest.json",
@@ -48,6 +49,7 @@
 			"prerelease": true,
 			"draft": false,
 			"htmlUrl": "https://github.com/ido-bata/ty-plus/releases/tag/v0.11.0-insider.8",
+			"body": "Insider（確認用プレリリース）— v0.11.0 の Stable 公開前受入用です。Stable ではありません。\n\n## 変更点（v0.11.0-insider.7 以降）\n\n- **#245 / PR #246**: Settings → Updates の「アップデートをインストール」が応答しない不具合を修正。リレー envelope の `sourceSurfaceId` がバリデーションに一致せず transport 層で drop され、worker が起動しないまま 180 秒 timeout →「ダウンロードに失敗しました」と誤表示されていた。fallback を `resolveDialogSurfaceId()` に変更。\n\n## 検証状況\n\n- sourceCommit: `fab3e9aabcf925d881aa283674a84c94e25f9107`\n- 両 platform: trustMode=release、manifest/sha256/ZXP署名 監査 PASS\n- macOS worker: Developer ID 署名・**未公証**（ADR-0003 Amendment 1、R0 要件）\n- Windows worker: **未署名**（R0 の正当な形。Authenticode は ADR-0003 で不要）\n- ZXP: 署名済み・RFC3161 timestamp 無し（Apple TSA 無効化のため、#233。証明書は 2036 年まで有効）\n- 実機受入: macOS AE 2027 で Settings→Updates の検出・ボタン表示を確認済み。UI 経由 install の完走は本連番で検証中\n- **未検証**: Windows 実機、AE 2026（本ホストで window 非生成の環境問題）\n\n## 既知の制約\n\n- CEP manifest は数値 `0.11.0` のみ表現可能。`0.11.0-insider.N` は配布版であり、更新検出は releaseVersion で行う\n- insider.1 の updater は prerelease tag を拒否する既知不具合あり（#237）。insider.2 以降を使用",
 			"assets": [
 				{
 					"name": "ty-plus-v0.11.0-insider.8-macos-release-manifest.json",
@@ -88,6 +90,7 @@
 			"prerelease": true,
 			"draft": false,
 			"htmlUrl": "https://github.com/ido-bata/ty-plus/releases/tag/v0.11.0-insider.7",
+			"body": "Insider build for pre-Stable acceptance (channel=insider, sourceCommit fda7a610). Same product source as insider.5/.6; update target for the Settings UI updater acceptance (.6 -> .7). Not a Stable release; Windows worker unsigned (ADR-0003); macOS worker Developer ID signed, not notarized; ZXP signed without TSA timestamp.",
 			"assets": [
 				{
 					"name": "ty-plus-v0.11.0-insider.7-macos-release-manifest.json",
@@ -128,6 +131,7 @@
 			"prerelease": true,
 			"draft": false,
 			"htmlUrl": "https://github.com/ido-bata/ty-plus/releases/tag/v0.11.0-insider.6",
+			"body": "Insider build for pre-Stable acceptance (channel=insider, sourceCommit fda7a610). Same product source as insider.5; used as the update target for the Settings UI updater acceptance (.5 -> .6). Not a Stable release; Windows worker unsigned (ADR-0003); macOS worker Developer ID signed, not notarized; ZXP signed without TSA timestamp.",
 			"assets": [
 				{
 					"name": "ty-plus-v0.11.0-insider.6-macos-release-manifest.json",
@@ -168,6 +172,7 @@
 			"prerelease": true,
 			"draft": false,
 			"htmlUrl": "https://github.com/ido-bata/ty-plus/releases/tag/v0.11.0-insider.5",
+			"body": "Insider build for pre-Stable acceptance (channel=insider, sourceCommit fda7a610). Includes the settings-dialog update relay fix (#243/#244). Not a Stable release; Windows worker unsigned (ADR-0003); macOS worker Developer ID signed, not notarized; ZXP signed without TSA timestamp. See docs/verification for details.",
 			"assets": [
 				{
 					"name": "ty-plus-v0.11.0-insider.5-macos-release-manifest.json",
@@ -208,6 +213,7 @@
 			"prerelease": true,
 			"draft": false,
 			"htmlUrl": "https://github.com/ido-bata/ty-plus/releases/tag/v0.11.0-insider.4",
+			"body": "## ty-plus 0.11.0 Insider 4 — updater UI acceptance target\n\n**Insider preview, not Stable.** Same product source as Insider 3 (`c4cab5df`); new releaseVersion only, prepared as the update target for real-device UI-path updater acceptance (Insider.3 → Insider.4).\n\n### Artifacts / trust status\n\n- `ty-plus-v0.11.0-insider.4-macos.zip` / `.zxp`, `ty-plus-v0.11.0-insider.4-windows.zip` / `.zxp`\n- macOS worker: Developer ID signed, not notarized; Windows worker: unsigned (R0, ADR-0003); ZXP: persistent release certificate, no timestamp\n- `sourceCommit`: `c4cab5dfe3fe7cf0ac1a0efaf41a2963eee52de9`\n\n### Verification scope\n\n- Intended check: Settings → Updates button → `update.install` → AE restart → version 0.11.0-insider.4\n- Everything in Insider 3 applies unchanged (same source commit)\n",
 			"assets": [
 				{
 					"name": "ty-plus-v0.11.0-insider.4-macos-release-manifest.json",
@@ -248,6 +254,7 @@
 			"prerelease": true,
 			"draft": false,
 			"htmlUrl": "https://github.com/ido-bata/ty-plus/releases/tag/v0.11.0-insider.3",
+			"body": "## ty-plus 0.11.0 Insider 3 — pre-Stable acceptance build\n\n**Insider preview, not Stable.** Built for real-device updater acceptance.\n\n### What changed since Insider 2\n\n- **In-app updater now works on Insider/Beta**: the Settings → Updates install button was gated to `channel === \"stable\"` even though the worker accepts prerelease tags since Insider 2's worker fix (#237/#238, #241). Insider/Beta users can now detect **and install** updates in-app.\n- Docs: updater tag contract and Insider migration notes aligned with the shipped implementation (#239).\n\n### Migration note for Insider.1 users\n\n`v0.11.0-insider.1`'s worker rejects prerelease tags, so `.1 → .2` in-app update cannot work. Install `v0.11.0-insider.2` or later **manually** (ZXP or ZIP), then in-app updates work from `.2` onward.\n\n### Artifacts / trust status\n\n- `ty-plus-v0.11.0-insider.3-macos.zip` / `.zxp`, `ty-plus-v0.11.0-insider.3-windows.zip` / `.zxp`\n- macOS worker: Developer ID signed, **not notarized**; Windows worker: **unsigned** (R0, ADR-0003); ZXP: persistent release certificate, **no timestamp** (TSA endpoints defunct)\n- `sourceCommit`: `c4cab5dfe3fe7cf0ac1a0efaf41a2963eee52de9` (`release-0-11-0`)\n\n### Verified environments\n\n- macOS + AE 2027 full E2E suite PASS (earlier RC evidence; this build adds only the update-button gate fix + docs)\n- Not verified: AE 2026 (host window issue), Windows real device, macOS notarization (intentionally absent)\n",
 			"assets": [
 				{
 					"name": "ty-plus-v0.11.0-insider.3-macos-release-manifest.json",
@@ -288,6 +295,7 @@
 			"prerelease": true,
 			"draft": false,
 			"htmlUrl": "https://github.com/ido-bata/ty-plus/releases/tag/v0.11.0-insider.2",
+			"body": "## ty-plus 0.11.0 Insider 2 — pre-Stable acceptance build\n\n**This is an Insider preview, not a Stable release.** Use for pre-release acceptance only; expect rough edges.\n\n### What changed since Insider 1\n\n- **Fixes in-app updater for Insider/Beta**: `update.install` previously rejected prerelease tags (`v0.11.0-insider.N`) as `invalid_request`, so Insider users could not self-update. Detection already worked; installation now works end-to-end (verified against this release's own published asset).\n\n### Artifacts\n\n- `ty-plus-v0.11.0-insider.2-macos.zip` / `.zxp` — macOS (Apple Silicon + Intel CEP panel)\n- `ty-plus-v0.11.0-insider.2-windows.zip` / `.zxp` — Windows\n- `*-release-manifest.json` — per-platform manifest with `sourceCommit`, channel, and SHA-256 of each artifact\n\n### Installation\n\nManual install only at this stage: extract the ZIP and copy `app.ty-plus` into the CEP extensions directory, or install the `.zxp` via the ZXPSignCmd/CEP packaging flow. In-app update from Insider 1 or earlier is supported once this build is detected.\n\n### Trust & signing status (read before installing)\n\n- **macOS worker**: Developer ID signed (`Developer ID Application: Yusuke Kimura (JK49RJ2CK2)`), **not notarized** — Gatekeeper will warn; right-click → Open or `xattr -d com.apple.quarantine` may be needed.\n- **Windows worker**: **unsigned** (R0 trust model, ADR-0003). SmartScreen will warn.\n- **ZXP signature**: signed with the persistent ty-plus release certificate; **no RFC-3161 timestamp** because all publicly verifiable TSA endpoints usable by ZXPSignCmd are currently defunct (Apple `timestamp.apple.com` is dead; commercial TSAs fail verification). Signature validity is bounded by the certificate validity (through 2036-11).\n- **Source commit**: `0889a1f68d8e89df0d53afbc9f51b14db48041d9` (`release-0-11-0`, includes PR #238)\n\n### Verified environments\n\n- macOS + After Effects 2027: full E2E suite PASS (see `docs/verification/e2e-acceptance/`)\n- **Not yet verified**: AE 2026 (host produced no windows in the test environment — environment issue, not confirmed product defect), Windows real-device acceptance, macOS notarization path (intentionally absent)\n",
 			"assets": [
 				{
 					"name": "ty-plus-v0.11.0-insider.2-macos-release-manifest.json",
@@ -328,6 +336,7 @@
 			"prerelease": true,
 			"draft": false,
 			"htmlUrl": "https://github.com/ido-bata/ty-plus/releases/tag/v0.11.0-insider.1",
+			"body": "# ty-plus 0.11.0 Insider 1\n\n**Insider preview — Stable ではありません。** 実機受入のための確認用リリースです。\n\n- channel: `insider` / releaseVersion: `0.11.0-insider.1`\n- sourceCommit: `72242ff291c689a3ceef3d62b5c6f6a4c6bdf0cd`（`release-0-11-0`）\n- trustMode: `release`（development-unsigned ではありません）\n\n## 収録内容\n\n- v0.11.0 RC の全変更（#71 Settings 起動例外の緩和、#108 E2E 体系、#135 アプリ内アップデータ、#166 Storybook 検査基盤、#189 品質再構成、#223 snapshot/theme/delete-confirm 修正群）\n- updater（`update.install`）: GitHub Release からの取得・SHA-256 検証・staged swap・rollback・pending retry を実装\n\n## 未検証環境（既知の制約）\n\n- **Windows**: worker binary は未署名（R0 の正当な形。Authenticode なし）。Windows Smart App Control がブロックする場合があります。OS セキュリティ保護を無効化しないでください\n- **macOS**: worker は Developer ID 署名済みだが**未公証**。quarantine/セキュリティポリシーで起動がブロックされる場合があります\n- **ZXP タイムスタンプ**: Apple TSA endpoint の無効化により RFC3161 timestamp 無しで署名（#233）。`ZXPSignCmd -verify` は PASS、署名証明書は 2036 年まで有効\n- **AE 2026**: 本開発機で window 非生成の環境問題を確認中（#71）。AE 2027 では全 E2E suite PASS\n- **Windows 実機 E2E**: journeys/workspace suite は未実施（11-15 の旧 build で部分証跡のみ）\n\n## インストール\n\nZXP を CEP 対応インストーラで導入し AE を再起動。既存の v0.10.x からはアプリ内 updater または手動 ZXP 再インストールで更新できます。\n\n## 既知の問題\n\n- 公開後の初回 `update.install` 実行が実運用経路の初回証拠です（sandbox 検証済み: swap/rollback/pending retry/manual_required）\n- 詳細な検証記録: `docs/verification/release-candidate-0-11-0.md`\n",
 			"assets": [
 				{
 					"name": "ty-plus-v0.11.0-insider.1-macos-release-manifest.json",
@@ -368,6 +377,7 @@
 			"prerelease": false,
 			"draft": false,
 			"htmlUrl": "https://github.com/ido-bata/ty-plus/releases/tag/v0.10.3",
+			"body": "# ty-plus v0.10.3\n\nv0.10.2 以降に報告・検出されたローカルコア停止系の不具合と、更新インストール経路の安全性を修正した **Stable** 修正リリースです。無料・アカウント不要で、ローカル機能はオフラインで動作します。\n\n## この版について\n\n- 配布channel: **Stable**（`v0.10.3`、GitHub `prerelease=false`）\n- CEP数値版: `0.10.3` / 配布版: `0.10.3`\n- 更新元: 本リポジトリのGitHub Releases（アプリ内の Settings → Updates から確認できます）\n\n## 変更内容\n\n### 不具合修正\n\n- Cloud Gateway 未起動・ネットワーク未接続の状態で、プリセットのドラッグ＆ドロップ配置・グループ作成・パネル操作が失敗し、パネル全体が表示不能になることがあった問題を修正。ローカルコア機能はオンライン基盤なしで動作します\n- オンライン未実装機能を示唆する dead UI（Preset Library を開く導線など）を整理\n- DirectoryBrowser の右クリックメニューで共通操作（Move to panel 等）が失われていた問題を修正\n- Easing / Align 等のポインタ操作の退行を修復\n- DirectoryBrowser の画像プレビューで `file:` / `data:` URL が正しく扱われず空表示になることがあった問題を修正\n- Windows パスの画像 URL 解釈の不具合を修正\n- リリース版で内部 worker（サムネイル生成・プラグイン走査・アプリ内更新のインストール処理など）が起動しない不具合を修正。RC 実機検証で検出し、出荷物への再発を防ぐ検証を追加しました\n\n### 更新インストールの安全性\n\n- アプリ内アップデートのインストール処理で、排他制御の自己競合・ロールバック失敗・pending 復旧の抜けを修正\n- 配布物の整合性検証（サイズ・件数・SHA-256・パス検査）と、失敗種別に応じたエラーメッセージを改善\n- 既存ユーザーデータ（settings / workspace / widgets / presets）は更新で上書きされません\n\n### その他\n\n- Storybook の操作状態 story を拡充し、開発時の視覚回帰検出基盤を改善（利用者向けの動作変更はありません）\n\n## 対応OS\n\n| platform | 状態 | 備考 |\n| --- | --- | --- |\n| Windows (x64) | **配布** | workerはADR-0003によりAuthenticode未署名。SmartScreenの警告が出る場合があり、**Smart App Control有効環境では起動しません** |\n| macOS | **配布** | Developer ID Application署名済み・未公証（ADR-0003 Amendment 1）。`spctl`で未公証と判定されますが、拡張の内部workerは通常ブラウザ経由の隔離を受けません |\n\n## インストール\n\n利用中のOSに対応する `ty-plus-v0.10.3-<platform>.zxp` を取得し、ZXP対応インストーラで導入してAfter Effectsを再起動します。**Window > Extensions** から ty-plus を開きます。\n\n- `platform` は `windows` / `macos`\n- ZIPは手動設置・検証用です。ZIP内のCEP拡張はZXP署名の恩恵を受けないため、環境によってはCEP開発者モードが必要です。通常の利用にはZXPを推奨します。\n\n## 既知の制約\n\n- 署名済みZXPは継続利用する自己署名証明書で署名しています（発行者表示は検証されません）。更新でも同じ主体を維持します（`docs/operations/zxp-signing-identity.md`）。\n- Windows版は未署名workerのため、Smart App Control 有効環境では動作しません。\n- macOS版はDeveloper ID署名・未公証です（ADR-0003 Amendment 1）。`xattr -w com.apple.quarantine` 等で隔離された場合や、macOSのポリシー変更時には初回起動が拒否され得ます。\n- 自動更新は行いません。更新確認はGitHub Releases APIへの読み取りのみで、ダウンロード・インストールは手動です。\n- オンライン機能（preset library・通知 feed・更新確認）は R0 では dormant です。コア機能はオフラインで動作します。\n- アプリ内アップデートの実機インストール経路は本版で重点修正しましたが、実際の更新適用は公開後の実リリースで確認します。更新前に Settings とプリセットのバックアップを推奨します。\n- 旧版（v0.10.1 / v0.10.2）にも同種の worker 起動不具合が存在した可能性があります（未確定）。旧版でサムネイル生成やアプリ内更新が動作しない場合は本版への更新をお試しください。\n\n## 検証\n\n成果物のSHA-256、署名、`sourceCommit`、チャンネル整合は `docs/verification/release-candidate-0-10-3.md` に記載しています。実機確認の範囲と未検証事項もそこに明記しています。\n",
 			"assets": [
 				{
 					"name": "ty-plus-v0.10.3-macos-release-manifest.json",
@@ -408,6 +418,7 @@
 			"prerelease": false,
 			"draft": false,
 			"htmlUrl": "https://github.com/ido-bata/ty-plus/releases/tag/v0.10.2",
+			"body": "# ty-plus v0.10.2\n\nv0.10.1 で報告された実機不具合の修正を中心とした **Stable** リリースです。無料・アカウント不要で、ローカル機能はオフラインで動作します。\n\n## この版について\n\n- 配布channel: **Stable**（`v0.10.2`、GitHub `prerelease=false`）\n- CEP数値版: `0.10.2` / 配布版: `0.10.2`\n- 更新元: 本リポジトリのGitHub Releases（アプリ内の Settings → Updates から確認できます）\n\n## 変更内容\n\n### 不具合修正\n\n- 選択済みタイルの端をドラッグしてもリサイズではなく移動になっていた問題を修正\n- CEP経由の operation worker が macOS で失敗していた問題を修正（appRoot の解決誤り。サムネイル・plugin scan 等の worker 機能が動作します）\n- ExtendScript 側の `alert()` がモーダルダイアログで After Effects 全体をブロックしていた問題を修正。失敗は構造化エラーと非モーダル通知で表示されます\n- preset 実行に失敗した際にユーザーへ何も表示されなかった問題を修正（エラー通知を表示）\n- Quick Actions / Quick Bar から preset を実行できなかった問題を修正\n- 設定画面で言語を英語に切り替えても `documentElement.lang` が日本語のまま残ることがあった問題を修正\n- theme.css への設定書き込みがパネル・ダイアログ間で競合し、外観設定が失われることがあった問題を修正\n- ホストバンドルの異常終了後に自己修復が効かない・無限リトライになることがあった問題を修正\n- 設定（言語・外観・グリッド・レイアウト）の保存が失敗した際にダイアログへ通知されない問題を修正\n- マウスのみのドラッグ操作（ペン以外の入力デバイス）に対応。easing エディタのハンドル表示・グリッド行揃えも修正\n- フィードバック送信が実際には GitHub issue を開くように修正\n\n### その他\n\n- E2E 受入体系（全機能インベントリ・ユースケース対応表・自動ハーネス）を整備し、macOS / Windows 実機での検証記録を蓄積\n\n## 対応OS\n\n| platform | 状態 | 備考 |\n| --- | --- | --- |\n| Windows (x64) | **配布** | workerはADR-0003によりAuthenticode未署名。SmartScreenの警告が出る場合があり、**Smart App Control有効環境では起動しません** |\n| macOS | **配布** | Developer ID Application署名済み・未公証（ADR-0003 Amendment 1）。`spctl`で未公証と判定されますが、拡張の内部workerは通常ブラウザ経由の隔離を受けません |\n\n## インストール\n\n利用中のOSに対応する `ty-plus-v0.10.2-<platform>.zxp` を取得し、ZXP対応インストーラで導入してAfter Effectsを再起動します。**Window > Extensions** から ty-plus を開きます。\n\n- `platform` は `windows` / `macos`\n- ZIPは手動設置・検証用です。ZIP内のCEP拡張はZXP署名の恩恵を受けないため、環境によってはCEP開発者モードが必要です。通常の利用にはZXPを推奨します。\n\n## 既知の制約\n\n- 署名済みZXPは継続利用する自己署名証明書で署名しています（発行者表示は検証されません）。更新でも同じ主体を維持します（`docs/operations/zxp-signing-identity.md`）。\n- Windows版は未署名workerのため、Smart App Control 有効環境では動作しません。\n- macOS版はDeveloper ID署名・未公証です（ADR-0003 Amendment 1）。`xattr -w com.apple.quarantine` 等で隔離された場合や、macOSのポリシー変更時には初回起動が拒否され得ます。\n- 自動更新は行いません。更新確認はGitHub Releases APIへの読み取りのみで、ダウンロード・インストールは手動です。\n- オンライン機能（preset library・通知 feed・更新確認）は R0 では dormant です。コア機能はオフラインで動作します。\n\n## 検証\n\n成果物のSHA-256、署名、`sourceCommit`、チャンネル整合は `docs/verification/release-candidate-0-10-2.md` に記載しています。実機確認の範囲と未検証事項もそこに明記しています。\n",
 			"assets": [
 				{
 					"name": "ty-plus-v0.10.2-macos-release-manifest.json",
@@ -448,6 +459,7 @@
 			"prerelease": false,
 			"draft": false,
 			"htmlUrl": "https://github.com/ido-bata/ty-plus/releases/tag/v0.10.1",
+			"body": "# ty-plus v0.10.1\n\n初回の **Stable** リリースです。無料・アカウント不要で、ローカル機能はオフラインで動作します。\n\n## この版について\n\n- 配布channel: **Stable**（`v0.10.1`、GitHub `prerelease=false`）\n- CEP数値版: `0.10.1` / 配布版: `0.10.1`\n- 更新元: 本リポジトリのGitHub Releases（アプリ内の Settings → Updates から確認できます）\n\n## 変更内容\n\n- GitHub Releasesを更新・配布の正本とする更新経路（Stable / Beta / Insider）。Stable購読者は安定版のみを受信します\n- 設定画面に更新channelの選択を追加（選択はローカル設定に保存）\n- 設定保存時にワークスペースのレイアウト・スナップショットが失われないよう修正\n- リリース成果物の監査をfail-closed化（署名証拠・版・channel・同梱物の不一致を公開前に拒否）\n- 配布パッケージに他platformのworkerが混入しないよう修正\n\n## 対応OS\n\n| platform | 状態 | 備考 |\n| --- | --- | --- |\n| Windows (x64) | **配布** | workerはADR-0003によりAuthenticode未署名。SmartScreenの警告が出る場合があり、**Smart App Control有効環境では起動しません** |\n| macOS | **配布** | Developer ID Application署名済み・未公証（ADR-0003 Amendment 1）。`spctl`で未公証と判定されますが、拡張の内部workerは通常ブラウザ経由の隔離を受けません |\n\n## インストール\n\n利用中のOSに対応する `ty-plus-v0.10.1-<platform>.zxp` を取得し、ZXP対応インストーラで導入してAfter Effectsを再起動します。**Window > Extensions** から ty-plus を開きます。\n\n- `platform` は `windows` / `macos`\n- ZIPは手動設置・検証用です。ZIP内のCEP拡張はZXP署名の恩恵を受けないため、環境によってはCEP開発者モードが必要です。通常の利用にはZXPを推奨します。\n\n## 既知の制約\n\n- 署名済みZXPは継続利用する自己署名証明書で署名しています（発行者表示は検証されません）。将来の更新でも同じ主体を維持します（`docs/operations/zxp-signing-identity.md`）。\n- Windows版は未署名workerのため、Smart App Control 有効環境では動作しません。\n- macOS版はDeveloper ID署名・未公証です（ADR-0003 Amendment 1）。`xattr -w com.apple.quarantine` 等で隔離された場合や、macOSのポリシー変更時には初回起動が拒否され得ます。\n- **実機での起動確認は未実施です**（ビルド・監査・署名検証は完了しています）。不具合があれば `docs/user-guide/` の不具合報告手順で知らせてください。\n- 自動更新は行いません。更新確認はGitHub Releases APIへの読み取りのみで、ダウンロード・インストールは手動です。\n\n## 検証\n\n成果物のSHA-256、署名、`sourceCommit`、チャンネル整合は `docs/verification/release-candidate-0-10-1.md` に記載しています。実機確認の範囲もそこに明記しています。\n",
 			"assets": [
 				{
 					"name": "ty-plus-v0.10.1-macos-release-manifest.json",

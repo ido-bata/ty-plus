@@ -20,6 +20,8 @@ export interface ReleaseInfo {
 	prerelease: boolean;
 	draft: boolean;
 	htmlUrl: string;
+	/** GitHub release notes body (may be empty). */
+	body: string;
 	assets: ReleaseAsset[];
 }
 

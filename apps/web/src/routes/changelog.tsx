@@ -23,36 +23,77 @@ export const Route = createFileRoute("/changelog")({
 	component: ChangelogPage,
 });
 
-const CHANNEL_LABEL: Record<ReleaseChannel, string> = {
-	stable: "Stable",
-	beta: "Beta",
-	insider: "Insider",
-};
+const CHANNELS: { id: ReleaseChannel; label: string; hint: string }[] = [
+	{ id: "stable", label: "Stable", hint: "Recommended for most users" },
+	{ id: "beta", label: "Beta", hint: "Pre-release builds" },
+	{ id: "insider", label: "Insider", hint: "Frequent early builds" },
+];
+
+/**
+ * Renders GitHub release-notes markdown as plain text. React escapes the
+ * output, so no HTML from the body can reach the DOM; we only strip the
+ * markdown syntax that would look noisy as literal text.
+ */
+function notesToText(body: string): string {
+	return body
+		.replace(/```[\s\S]*?```/g, "")
+		.replace(/!\[([^\]]*)\]\([^)]*\)/g, "$1")
+		.replace(/\[([^\]]+)\]\(([^)]+)\)/g, "$1 ($2)")
+		.replace(/^#{1,6}\s+/gm, "")
+		.replace(/\*\*([^*]+)\*\*/g, "$1")
+		.replace(/__([^_]+)__/g, "$1")
+		.replace(/`([^`]+)`/g, "$1")
+		.replace(/^\s*[-*+]\s+/gm, "• ")
+		.replace(/^\s*\d+\.\s+/gm, "")
+		.replace(/\n{3,}/g, "\n\n")
+		.trim();
+}
 
 function ReleaseRow({ release }: { release: ReleaseInfo }) {
 	const channel = classifyChannel(release);
+	const notes = notesToText(release.body ?? "");
 	return (
 		<li className="release-item">
-			<a className="release-version" href={release.htmlUrl}>
-				{release.tagName}
-			</a>
-			<span className="release-name">{release.name ?? ""}</span>
-			<span className="release-meta">
+			<div className="release-main">
+				<a className="release-version" href={release.htmlUrl}>
+					{release.tagName}
+				</a>
+				{release.name && release.name !== release.tagName ? (
+					<span className="release-name">{release.name}</span>
+				) : null}
+			</div>
+			<div className="release-side">
 				<time className="release-date" dateTime={release.publishedAt}>
 					{release.publishedAt.slice(0, 10)}
 				</time>
 				<span
 					className={`badge${channel === "insider" ? " badge--insider" : ""}`}
 				>
-					{CHANNEL_LABEL[channel]}
+					{CHANNELS.find((c) => c.id === channel)?.label}
 				</span>
-			</span>
+				{release.assets.length > 0 ? (
+					<span className="release-assets">
+						{release.assets.length} asset
+						{release.assets.length === 1 ? "" : "s"}
+					</span>
+				) : null}
+			</div>
+			{notes ? (
+				<details className="release-notes">
+					<summary>Release notes</summary>
+					<p className="release-body">{notes}</p>
+				</details>
+			) : null}
 		</li>
 	);
 }
 
 function ChangelogPage() {
 	const { releases, source } = Route.useLoaderData();
+	const byChannel = CHANNELS.map((c) => ({
+		...c,
+		releases: releases.filter((r) => classifyChannel(r) === c.id),
+	})).filter((c) => c.releases.length > 0);
 
 	return (
 		<main>
@@ -60,8 +101,8 @@ function ChangelogPage() {
 				<span className="eyebrow">Releases</span>
 				<h1>Changelog</h1>
 				<p className="lead">
-					Release notes are published on GitHub Releases. Stable, Beta, and
-					Insider channels are listed below — newest first.
+					Release notes are published on GitHub Releases, grouped by update
+					channel — newest first within each channel.
 				</p>
 			</header>
 
@@ -75,19 +116,30 @@ function ChangelogPage() {
 				</div>
 			)}
 
-			<section className="page section" aria-label="Releases">
-				{releases.length === 0 ? (
+			{releases.length === 0 ? (
+				<section className="page section">
 					<p>
 						Release data is temporarily unavailable.{" "}
 						<a href={SITE.releases}>Browse all releases on GitHub</a>.
 					</p>
-				) : (
-					<ul className="release-list">
-						{releases.map((r) => (
-							<ReleaseRow key={r.tagName} release={r} />
-						))}
-					</ul>
-				)}
+				</section>
+			) : (
+				byChannel.map((group) => (
+					<section className="page section" key={group.id}>
+						<header className="changelog-group-head">
+							<h2>{group.label}</h2>
+							<p>{group.hint}</p>
+						</header>
+						<ul className="release-list">
+							{group.releases.map((r) => (
+								<ReleaseRow key={r.tagName} release={r} />
+							))}
+						</ul>
+					</section>
+				))
+			)}
+
+			<section className="page">
 				<p className="btn-row">
 					<a className="btn btn-secondary" href={SITE.releases}>
 						All releases on GitHub
