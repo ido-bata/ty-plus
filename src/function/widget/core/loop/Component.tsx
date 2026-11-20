@@ -26,6 +26,7 @@ import {
 import type { Layout } from "@/management/workspace/layout/grid-document";
 import { Button } from "@/shared/component";
 import { css } from "@/styled-system/css";
+import { MotionPreview } from "./MotionPreview";
 import { WaveEditor } from "./WaveEditor";
 
 const DEFAULT_TEMPLATE: WavePoint[] = [
@@ -58,7 +59,7 @@ export function LoopWidget({
 		...DEFAULT_WAVE,
 		...initialWave,
 	});
-	const [previewTime, setPreviewTime] = useState<number | null>(null);
+	const [previewTime, setPreviewTime] = useState<number | null>(0);
 	const [status, setStatus] = useState<"idle" | "busy" | "error">("idle");
 	const loadedRef = useRef(false);
 	const persist = useCallback(() => {
@@ -182,7 +183,7 @@ export function LoopWidget({
 		<div
 			className={css({
 				display: "grid",
-				gridTemplateRows: "auto minmax(0, 1fr) auto",
+				gridTemplateRows: "auto minmax(0, 1fr) minmax(0, 1.1fr) auto",
 				height: "full",
 				minHeight: 0,
 				width: "full",
@@ -229,6 +230,17 @@ export function LoopWidget({
 				</Button>
 			</div>
 
+			<div
+				className={css({
+					position: "relative",
+					minHeight: 0,
+					borderBottomWidth: "1px",
+					borderBottomStyle: "solid",
+					borderBottomColor: "border.default",
+				})}
+			>
+				<MotionPreview template={template} wave={wave} time={previewTime} />
+			</div>
 			<div className={css({ position: "relative", minHeight: 0 })}>
 				<WaveEditor
 					labels={{
