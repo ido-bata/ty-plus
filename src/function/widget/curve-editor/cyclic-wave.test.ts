@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+	applyWaveHandleDrag,
 	attackShare,
 	buildCyclicWave,
 	type CyclicWaveParams,
@@ -7,6 +8,7 @@ import {
 	cycleBoundaries,
 	sampleWave,
 	type WavePoint,
+	waveHandlePositions,
 } from "./cyclic-wave";
 
 const template: WavePoint[] = [
@@ -91,5 +93,39 @@ describe("sampleWave", () => {
 		const wave = buildCyclicWave(template, params());
 		expect(sampleWave(wave, 0)).toBeCloseTo(0);
 		expect(sampleWave(wave, 1)).toBeCloseTo(1);
+	});
+});
+
+describe("waveHandlePositions", () => {
+	it("puts the frequency handle on the first cycle boundary", () => {
+		const handles = waveHandlePositions(template, params({ cycles: 4 }));
+		expect(handles.frequency.x).toBeCloseTo(0.25);
+	});
+
+	it("puts the bias handle at the end of the first attack leg", () => {
+		const handles = waveHandlePositions(template, params({ bias: 0.5 }));
+		expect(handles.bias.x).toBeCloseTo(0.75 / 3);
+	});
+});
+
+describe("applyWaveHandleDrag", () => {
+	it("derives the cycle count from the frequency handle", () => {
+		const next = applyWaveHandleDrag(
+			"frequency",
+			{ x: 0.2, y: 0 },
+			template,
+			params(),
+		);
+		expect(next.cycles).toBe(5);
+	});
+
+	it("derives the attack share from the bias handle", () => {
+		const next = applyWaveHandleDrag(
+			"bias",
+			{ x: 0.25, y: 0 },
+			template,
+			params(),
+		);
+		expect(next.bias).toBeCloseTo(0.5);
 	});
 });
