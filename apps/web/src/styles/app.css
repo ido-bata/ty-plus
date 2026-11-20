@@ -1,0 +1,426 @@
+@import "../../../../styled-system/styles.css";
+
+/*
+ * The shared stylesheet carries CEP shell global rules (fixed viewport,
+ * overflow: hidden). The public site is a normal document, so restore
+ * standard document flow here. Unlayered rules win over Panda's @layer base.
+ */
+html,
+body {
+	min-width: 0;
+	min-height: 0;
+	height: auto;
+	overflow: visible;
+}
+
+html {
+	color-scheme: dark;
+	scroll-behavior: smooth;
+}
+
+body {
+	background: var(--ty-surface-panel);
+	color: var(--ty-text-primary);
+	font-family: var(--fonts-base, system-ui, sans-serif);
+	line-height: 1.6;
+	-webkit-font-smoothing: antialiased;
+}
+
+/* Visible keyboard focus for all interactive elements. */
+:focus-visible {
+	outline: 2px solid var(--ty-interactive-focus);
+	outline-offset: 2px;
+}
+
+/* Skip link: visually hidden until focused. */
+.skip-link {
+	position: absolute;
+	inset-block-start: 0.5rem;
+	inset-inline-start: 0.5rem;
+	z-index: 100;
+	padding: 0.5rem 1rem;
+	background: var(--ty-surface-dialog);
+	color: var(--ty-text-primary);
+	border: 1px solid var(--ty-border-strong);
+	border-radius: var(--ty-shell-radius);
+	transform: translateY(-200%);
+}
+.skip-link:focus-visible {
+	transform: translateY(0);
+}
+
+img {
+	max-width: 100%;
+	height: auto;
+}
+
+/* ------------------------------------------------------------------ */
+/* Site header: responsive navigation (modern-web-guidance: navbar)    */
+/* One semantic <nav> at every size; collapsed layout uses a native   */
+/* popover anchored to the menu button, wide layout is inline.         */
+/* ------------------------------------------------------------------ */
+
+.site-header {
+	border-block-end: 1px solid var(--ty-border-subtle);
+	background: color-mix(in srgb, var(--ty-surface-panel) 92%, transparent);
+	backdrop-filter: blur(8px);
+	position: sticky;
+	inset-block-start: 0;
+	z-index: 50;
+}
+
+.site-header-inner {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	max-width: 72rem;
+	margin-inline: auto;
+	padding-inline: 1rem;
+	block-size: 3.5rem;
+}
+
+/* Keep the row's natural width measurable */
+.site-header-inner > * {
+	flex-shrink: 0;
+	white-space: nowrap;
+}
+
+.site-logo {
+	font-weight: 700;
+	font-size: 1.05rem;
+	letter-spacing: -0.01em;
+	color: var(--ty-text-primary);
+	text-decoration: none;
+}
+
+.site-nav {
+	margin-inline-start: auto;
+	display: flex;
+	align-items: center;
+}
+
+.site-menu-button {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.375rem;
+	padding: 0.375rem 0.75rem;
+	font: inherit;
+	font-size: 0.9rem;
+	color: var(--ty-text-primary);
+	background: var(--ty-interactive-hover);
+	border: 1px solid var(--ty-border-subtle);
+	border-radius: var(--ty-shell-radius);
+	cursor: pointer;
+}
+
+.site-menu-button:hover {
+	background: var(--ty-interactive-active);
+}
+
+.site-menu {
+	list-style: none;
+	margin: 0;
+	padding: 0.5rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.125rem;
+	min-inline-size: 12rem;
+}
+
+/* Collapsed (default): fixed popover anchored under the menu button. */
+.site-menu[popover] {
+	position: fixed;
+	inset: auto;
+	inset-block-start: anchor(--menu-button bottom);
+	inset-inline-end: 1rem;
+	inline-size: min(80dvw, 24rem);
+	max-inline-size: calc(100dvw - 2rem);
+	block-size: fit-content;
+	max-block-size: calc(100dvh - 6rem);
+	margin-block-start: 0.5rem;
+	overflow: auto;
+	background: var(--ty-surface-dialog);
+	color: var(--ty-text-primary);
+	border: 1px solid var(--ty-border-strong);
+	border-radius: var(--ty-shell-radius-lg);
+	box-shadow: var(--ty-shadow-control-panel, 0 8px 30px rgb(0 0 0 / 0.45));
+}
+
+.site-menu-button {
+	anchor-name: --menu-button;
+}
+
+.site-menu a {
+	display: block;
+	padding: 0.5rem 0.75rem;
+	border-radius: var(--ty-shell-radius-sm);
+	color: var(--ty-text-primary);
+	text-decoration: none;
+	font-size: 0.95rem;
+}
+
+.site-menu a:hover {
+	background: var(--ty-interactive-hover);
+}
+
+.site-menu a[aria-current="page"] {
+	background: var(--ty-interactive-active);
+	font-weight: 600;
+}
+
+/* Measurement pass: render the menu inline without transitions so its
+   natural width can be compared against the header row. */
+.site-header.is-measuring,
+.site-header.is-measuring * {
+	transition: none !important;
+}
+
+.site-header.is-measuring .site-menu {
+	position: static;
+	display: flex;
+	flex-direction: row;
+	inline-size: auto;
+	max-inline-size: none;
+	block-size: auto;
+	max-block-size: none;
+	overflow: visible;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	box-shadow: none;
+}
+
+.site-header.is-measuring .site-menu-button {
+	display: none;
+}
+
+/* Wide layout: inline navigation, hide the collapsed trigger. */
+.site-header.is-wide .site-menu-button {
+	display: none;
+}
+
+.site-header.is-wide .site-menu {
+	position: static;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 0.25rem;
+	inline-size: auto;
+	max-inline-size: none;
+	block-size: auto;
+	max-block-size: none;
+	overflow: visible;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	box-shadow: none;
+}
+
+.site-header.is-wide .site-menu[popover]::backdrop {
+	display: none;
+}
+
+/* Anchor positioning fallback: browsers without anchor() support get a
+   reasonable fixed position near the top-right instead. */
+@supports not (inset-block-start: anchor(--menu-button bottom)) {
+	.site-menu[popover] {
+		inset-block-start: 4rem;
+	}
+}
+
+/* ------------------------------------------------------------------ */
+/* Content pages                                                       */
+/* ------------------------------------------------------------------ */
+
+.page {
+	max-width: 72rem;
+	margin-inline: auto;
+	padding-inline: 1rem;
+	padding-block: 3rem 1rem;
+}
+
+.page-header {
+	margin-block-end: 2.5rem;
+}
+
+.page-header h1 {
+	font-size: clamp(1.75rem, 4vw, 2.5rem);
+	line-height: 1.2;
+	letter-spacing: -0.02em;
+	margin-block-end: 0.75rem;
+}
+
+.lead {
+	font-size: 1.1rem;
+	color: var(--ty-text-muted);
+	max-width: 42rem;
+}
+
+.section {
+	margin-block-end: 3rem;
+}
+
+.section h2 {
+	font-size: 1.4rem;
+	letter-spacing: -0.01em;
+	margin-block-end: 0.5rem;
+}
+
+.section p {
+	color: var(--ty-text-muted);
+	max-width: 44rem;
+}
+
+.grid {
+	display: grid;
+	gap: 1.25rem;
+	grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+}
+
+.card {
+	background: var(--ty-surface-widget);
+	border: 1px solid var(--ty-border-subtle);
+	border-radius: var(--ty-shell-radius-lg);
+	padding: 1.25rem;
+}
+
+.card h3 {
+	font-size: 1.05rem;
+	margin-block-end: 0.375rem;
+}
+
+.card p {
+	font-size: 0.92rem;
+	color: var(--ty-text-muted);
+	margin: 0;
+}
+
+/* Buttons: shared tokens, no literals. */
+.btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 0.625rem 1.25rem;
+	border-radius: var(--ty-shell-radius);
+	font-weight: 600;
+	font-size: 0.95rem;
+	text-decoration: none;
+	border: 1px solid transparent;
+	cursor: pointer;
+}
+
+.btn-primary {
+	background: var(--ty-text-primary);
+	color: var(--ty-surface-panel);
+}
+
+.btn-primary:hover {
+	background: var(--ty-text-muted);
+}
+
+.btn-secondary {
+	background: var(--ty-interactive-hover);
+	color: var(--ty-text-primary);
+	border-color: var(--ty-border-subtle);
+}
+
+.btn-secondary:hover {
+	background: var(--ty-interactive-active);
+}
+
+/* Screenshot figure with caption. */
+figure.shot {
+	margin: 0;
+}
+
+figure.shot img {
+	display: block;
+	width: 100%;
+	border: 1px solid var(--ty-border-subtle);
+	border-radius: var(--ty-shell-radius-lg);
+	background: var(--ty-surface-widget);
+}
+
+figure.shot figcaption {
+	font-size: 0.82rem;
+	color: var(--ty-text-muted);
+	margin-block-start: 0.5rem;
+}
+
+/* Hero */
+.hero {
+	padding-block: 4rem 3rem;
+	text-align: center;
+}
+
+.hero h1 {
+	font-size: clamp(2rem, 5.5vw, 3.25rem);
+	line-height: 1.15;
+	letter-spacing: -0.03em;
+	margin-block-end: 1rem;
+}
+
+.hero .lead {
+	margin-inline: auto;
+	font-size: 1.15rem;
+}
+
+.hero-actions {
+	display: flex;
+	gap: 0.75rem;
+	justify-content: center;
+	flex-wrap: wrap;
+	margin-block-start: 1.75rem;
+}
+
+.hero-shot {
+	margin-block-start: 3rem;
+}
+
+.badge-row {
+	display: flex;
+	gap: 0.5rem;
+	justify-content: center;
+	flex-wrap: wrap;
+	margin-block-end: 1.25rem;
+}
+
+.badge {
+	display: inline-block;
+	padding: 0.2rem 0.65rem;
+	font-size: 0.78rem;
+	font-weight: 600;
+	border-radius: 999px;
+	border: 1px solid var(--ty-border-subtle);
+	color: var(--ty-text-muted);
+	background: var(--ty-interactive-hover);
+}
+
+/* Simple definition/notice list used on docs/support pages. */
+.link-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: grid;
+	gap: 0.75rem;
+}
+
+.link-list a {
+	color: var(--ty-text-accent);
+}
+
+.link-list a:hover {
+	text-decoration: underline;
+}
+
+.notice {
+	border: 1px solid var(--ty-border-subtle);
+	border-inline-start: 3px solid var(--ty-border-strong);
+	background: var(--ty-surface-widget);
+	border-radius: var(--ty-shell-radius);
+	padding: 0.875rem 1rem;
+	color: var(--ty-text-muted);
+	font-size: 0.92rem;
+}
