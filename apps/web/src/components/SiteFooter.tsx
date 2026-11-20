@@ -2,8 +2,6 @@ import { Link } from "@tanstack/react-router";
 import { SITE } from "../lib/site";
 import { SiteMark } from "./SiteMark";
 
-const YEAR = new Date().getFullYear();
-
 const PRODUCT_LINKS = [
 	{ to: "/features", label: "Features" },
 	{ to: "/download", label: "Download" },
@@ -58,7 +56,7 @@ export function SiteFooter() {
 				</nav>
 			</div>
 			<div className="site-footer-bottom">
-				<span>© {YEAR} ty-plus contributors</span>
+				<span>© ty-plus contributors</span>
 				<span>MIT License · Works offline · CEP panel</span>
 			</div>
 		</footer>

@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { findLatestStable, zxpAsset } from "../lib/releases";
 import { SITE } from "../lib/site";
 import { listReleases } from "../server/releases";
@@ -98,7 +98,7 @@ function DownloadPage() {
 				{prereleases.length > 0 && (
 					<p className="notice">
 						Beta and Insider builds are also published — see the{" "}
-						<a href="/changelog">changelog</a> for the full list.
+						<Link to="/changelog">changelog</Link> for the full list.
 					</p>
 				)}
 			</section>
