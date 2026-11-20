@@ -1,6 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { NAV_LINKS, SITE } from "../lib/site";
+import { SiteMark } from "./SiteMark";
 
 const MENU_ID = "site-menu";
 
@@ -79,7 +80,8 @@ export function SiteHeader() {
 		>
 			<div ref={innerRef} className="site-header-inner">
 				<Link to="/" className="site-logo">
-					{SITE.name}
+					<SiteMark />
+					<span>{SITE.name}</span>
 				</Link>
 
 				<nav className="site-nav" aria-label="Primary">
@@ -90,7 +92,16 @@ export function SiteHeader() {
 						popoverTargetAction="toggle"
 						aria-controls={MENU_ID}
 					>
-						<span aria-hidden="true">☰</span>
+						<svg
+							viewBox="0 0 16 16"
+							aria-hidden="true"
+							fill="none"
+							stroke="currentColor"
+							strokeWidth="1.5"
+							strokeLinecap="round"
+						>
+							<path d="M2 4.5h12M2 8h12M2 11.5h12" />
+						</svg>
 						<span>Menu</span>
 					</button>
 
@@ -111,6 +122,9 @@ export function SiteHeader() {
 							</li>
 						))}
 					</ul>
+					<Link to="/download" className="btn btn-primary site-header-cta">
+						Download
+					</Link>
 				</nav>
 			</div>
 		</header>
