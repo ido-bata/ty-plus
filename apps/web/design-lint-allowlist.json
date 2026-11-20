@@ -1,0 +1,1088 @@
+[
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 5,
+		"rule": "web-token",
+		"message": "custom property \"--site-bg\" defines a web-specific token; use shared --ty-* tokens"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 6,
+		"rule": "web-token",
+		"message": "custom property \"--site-bg-raised\" defines a web-specific token; use shared --ty-* tokens"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 6,
+		"rule": "web-token",
+		"message": "custom property \"--site-bg-overlay\" defines a web-specific token; use shared --ty-* tokens"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 6,
+		"rule": "web-token",
+		"message": "custom property \"--site-hairline\" defines a web-specific token; use shared --ty-* tokens"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 6,
+		"rule": "web-token",
+		"message": "custom property \"--site-hairline-strong\" defines a web-specific token; use shared --ty-* tokens"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 6,
+		"rule": "web-token",
+		"message": "custom property \"--site-text\" defines a web-specific token; use shared --ty-* tokens"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 6,
+		"rule": "web-token",
+		"message": "custom property \"--site-text-muted\" defines a web-specific token; use shared --ty-* tokens"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 6,
+		"rule": "web-token",
+		"message": "custom property \"--site-text-faint\" defines a web-specific token; use shared --ty-* tokens"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 6,
+		"rule": "web-token",
+		"message": "custom property \"--site-accent\" defines a web-specific token; use shared --ty-* tokens"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 6,
+		"rule": "web-token",
+		"message": "custom property \"--site-accent-hover\" defines a web-specific token; use shared --ty-* tokens"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 6,
+		"rule": "web-token",
+		"message": "custom property \"--site-accent-ink\" defines a web-specific token; use shared --ty-* tokens"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 5,
+		"rule": "web-token",
+		"message": "custom property \"--site-radius\" defines a web-specific token; use shared --ty-* tokens"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 6,
+		"rule": "web-token",
+		"message": "custom property \"--site-radius-lg\" defines a web-specific token; use shared --ty-* tokens"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 8,
+		"rule": "web-token",
+		"message": "custom property \"--site-font-sans\" defines a web-specific token; use shared --ty-* tokens"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 8,
+		"rule": "web-token",
+		"message": "custom property \"--site-font-mono\" defines a web-specific token; use shared --ty-* tokens"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 5,
+		"rule": "web-token",
+		"message": "custom property \"--site-wrap\" defines a web-specific token; use shared --ty-* tokens"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 5,
+		"rule": "web-token",
+		"message": "custom property \"--site-prose\" defines a web-specific token; use shared --ty-* tokens"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 48,
+		"rule": "web-token",
+		"message": "background references \"--site-bg\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 43,
+		"rule": "web-token",
+		"message": "color references \"--site-text\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 44,
+		"rule": "web-token",
+		"message": "font-family references \"--site-font-sans\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 59,
+		"rule": "web-token",
+		"message": "background references \"--site-accent\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 59,
+		"rule": "web-token",
+		"message": "color references \"--site-accent-ink\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 65,
+		"rule": "web-token",
+		"message": "outline references \"--site-accent\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 73,
+		"rule": "web-token",
+		"message": "background references \"--site-bg-overlay\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 73,
+		"rule": "web-token",
+		"message": "color references \"--site-text\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 73,
+		"rule": "web-token",
+		"message": "border references \"--site-hairline-strong\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 73,
+		"rule": "web-token",
+		"message": "border-radius references \"--site-radius\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 73,
+		"rule": "web-token",
+		"message": "font-family references \"--site-font-mono\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 95,
+		"rule": "web-token",
+		"message": "color references \"--site-accent\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 99,
+		"rule": "web-token",
+		"message": "color references \"--site-accent-hover\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 100,
+		"rule": "control-selector",
+		"message": "selector \".eyebrow\" styles a raw control / control-lookalike class"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 109,
+		"rule": "web-token",
+		"message": "font-family references \"--site-font-mono\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 109,
+		"rule": "web-token",
+		"message": "color references \"--site-text-faint\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 118,
+		"rule": "control-selector",
+		"message": "selector \".eyebrow::before\" styles a raw control / control-lookalike class"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 122,
+		"rule": "web-token",
+		"message": "background references \"--site-accent\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 134,
+		"rule": "web-token",
+		"message": "max-width references \"--site-wrap\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 146,
+		"rule": "web-token",
+		"message": "max-width references \"--site-prose\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 161,
+		"rule": "web-token",
+		"message": "color references \"--site-text-muted\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 180,
+		"rule": "web-token",
+		"message": "color references \"--site-text-muted\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 180,
+		"rule": "web-token",
+		"message": "max-width references \"--site-prose\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 182,
+		"rule": "control-selector",
+		"message": "selector \".btn\" styles a raw control / control-lookalike class"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 187,
+		"rule": "web-token",
+		"message": "border-radius references \"--site-radius\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 187,
+		"rule": "web-token",
+		"message": "font-family references \"--site-font-sans\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 206,
+		"rule": "web-token",
+		"message": "background references \"--site-accent\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 206,
+		"rule": "web-token",
+		"message": "color references \"--site-accent-ink\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 211,
+		"rule": "web-token",
+		"message": "background references \"--site-accent-hover\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 211,
+		"rule": "web-token",
+		"message": "color references \"--site-accent-ink\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 216,
+		"rule": "web-token",
+		"message": "color references \"--site-text\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 217,
+		"rule": "web-token",
+		"message": "border-color references \"--site-hairline-strong\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 222,
+		"rule": "web-token",
+		"message": "border-color references \"--site-text-faint\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 222,
+		"rule": "web-token",
+		"message": "background references \"--site-bg-raised\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 222,
+		"rule": "web-token",
+		"message": "color references \"--site-text\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 234,
+		"rule": "web-token",
+		"message": "border references \"--site-hairline\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 234,
+		"rule": "web-token",
+		"message": "border-radius references \"--site-radius-lg\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 234,
+		"rule": "web-token",
+		"message": "background references \"--site-bg-raised\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 235,
+		"rule": "literal-color",
+		"message": "box-shadow: \"0 1px 0 rgb(255 255 255 / 0.04) inset,\n\t\t0 24px 60px -24px r\" is a literal color; use shared tokens"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 250,
+		"rule": "web-token",
+		"message": "border references \"--site-hairline\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 250,
+		"rule": "web-token",
+		"message": "border-radius references \"--site-radius-lg\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 250,
+		"rule": "web-token",
+		"message": "background references \"--site-bg-raised\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 256,
+		"rule": "web-token",
+		"message": "font-family references \"--site-font-mono\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 256,
+		"rule": "web-token",
+		"message": "color references \"--site-text-faint\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 267,
+		"rule": "web-token",
+		"message": "color references \"--site-accent\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 280,
+		"rule": "web-token",
+		"message": "color references \"--site-text\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 281,
+		"rule": "web-token",
+		"message": "text-decoration-color references \"--site-hairline-strong\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 286,
+		"rule": "web-token",
+		"message": "color references \"--site-accent-hover\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 287,
+		"rule": "control-selector",
+		"message": "selector \".notice\" styles a raw control / control-lookalike class"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 290,
+		"rule": "web-token",
+		"message": "border references \"--site-hairline\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 291,
+		"rule": "web-token",
+		"message": "border-inline-start references \"--site-accent\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 290,
+		"rule": "web-token",
+		"message": "background references \"--site-bg-raised\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 290,
+		"rule": "web-token",
+		"message": "border-radius references \"--site-radius\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 290,
+		"rule": "web-token",
+		"message": "color references \"--site-text-muted\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 290,
+		"rule": "web-token",
+		"message": "max-width references \"--site-prose\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 313,
+		"rule": "web-token",
+		"message": "border-block-end references \"--site-hairline\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 314,
+		"rule": "web-token",
+		"message": "background references \"--site-bg\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 323,
+		"rule": "web-token",
+		"message": "max-width references \"--site-wrap\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 339,
+		"rule": "web-token",
+		"message": "color references \"--site-text\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 349,
+		"rule": "web-token",
+		"message": "color references \"--site-text\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 373,
+		"rule": "web-token",
+		"message": "font-family references \"--site-font-sans\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 373,
+		"rule": "web-token",
+		"message": "color references \"--site-text\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 373,
+		"rule": "web-token",
+		"message": "background references \"--site-bg-raised\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 373,
+		"rule": "web-token",
+		"message": "border references \"--site-hairline\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 373,
+		"rule": "web-token",
+		"message": "border-radius references \"--site-radius\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 387,
+		"rule": "web-token",
+		"message": "border-color references \"--site-hairline-strong\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 409,
+		"rule": "web-token",
+		"message": "background references \"--site-bg-overlay\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 408,
+		"rule": "web-token",
+		"message": "color references \"--site-text\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 409,
+		"rule": "web-token",
+		"message": "border references \"--site-hairline-strong\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 409,
+		"rule": "web-token",
+		"message": "border-radius references \"--site-radius-lg\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 409,
+		"rule": "literal-color",
+		"message": "box-shadow: \"0 16px 48px -12px rgb(0 0 0 / 0.8)\" is a literal color; use shared tokens"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 435,
+		"rule": "web-token",
+		"message": "border-radius references \"--site-radius\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 435,
+		"rule": "web-token",
+		"message": "color references \"--site-text-muted\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 448,
+		"rule": "web-token",
+		"message": "color references \"--site-text\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 449,
+		"rule": "web-token",
+		"message": "background references \"--site-bg-raised\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 453,
+		"rule": "web-token",
+		"message": "color references \"--site-text\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 454,
+		"rule": "web-token",
+		"message": "background references \"--site-bg-raised\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 454,
+		"rule": "web-token",
+		"message": "box-shadow references \"--site-accent\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 468,
+		"rule": "web-token",
+		"message": "box-shadow references \"--site-accent\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 537,
+		"rule": "web-token",
+		"message": "border-block-start references \"--site-hairline\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 537,
+		"rule": "web-token",
+		"message": "background references \"--site-bg-raised\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 543,
+		"rule": "web-token",
+		"message": "max-width references \"--site-wrap\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 557,
+		"rule": "web-token",
+		"message": "color references \"--site-text-muted\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 563,
+		"rule": "web-token",
+		"message": "font-family references \"--site-font-mono\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 563,
+		"rule": "web-token",
+		"message": "color references \"--site-text-faint\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 582,
+		"rule": "web-token",
+		"message": "color references \"--site-text-muted\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 587,
+		"rule": "web-token",
+		"message": "color references \"--site-text\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 591,
+		"rule": "web-token",
+		"message": "border-block-start references \"--site-hairline\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 591,
+		"rule": "web-token",
+		"message": "max-width references \"--site-wrap\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 591,
+		"rule": "web-token",
+		"message": "font-family references \"--site-font-mono\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 591,
+		"rule": "web-token",
+		"message": "color references \"--site-text-faint\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 649,
+		"rule": "web-token",
+		"message": "font-family references \"--site-font-mono\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 649,
+		"rule": "web-token",
+		"message": "color references \"--site-text-faint\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 666,
+		"rule": "web-token",
+		"message": "background references \"--site-accent\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 686,
+		"rule": "control-selector",
+		"message": "selector \".hero-actions .btn\" styles a raw control / control-lookalike class"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 698,
+		"rule": "control-selector",
+		"message": "selector \".hero-actions .btn\" styles a raw control / control-lookalike class"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 708,
+		"rule": "web-token",
+		"message": "border-block-start references \"--site-hairline\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 713,
+		"rule": "web-token",
+		"message": "border-block-end references \"--site-hairline\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 725,
+		"rule": "web-token",
+		"message": "font-family references \"--site-font-mono\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 725,
+		"rule": "web-token",
+		"message": "color references \"--site-accent\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 742,
+		"rule": "web-token",
+		"message": "color references \"--site-text-muted\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 821,
+		"rule": "web-token",
+		"message": "border-block-end references \"--site-hairline\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 829,
+		"rule": "web-token",
+		"message": "border-block-start references \"--site-hairline\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 841,
+		"rule": "web-token",
+		"message": "font-family references \"--site-font-mono\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 841,
+		"rule": "web-token",
+		"message": "color references \"--site-text\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 850,
+		"rule": "web-token",
+		"message": "color references \"--site-accent-hover\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 855,
+		"rule": "web-token",
+		"message": "color references \"--site-text-faint\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 867,
+		"rule": "web-token",
+		"message": "font-family references \"--site-font-mono\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 867,
+		"rule": "web-token",
+		"message": "color references \"--site-text-faint\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 876,
+		"rule": "web-token",
+		"message": "color references \"--site-text-muted\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 890,
+		"rule": "web-token",
+		"message": "font-family references \"--site-font-mono\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 890,
+		"rule": "web-token",
+		"message": "color references \"--site-text-faint\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 899,
+		"rule": "web-token",
+		"message": "color references \"--site-text-muted\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 904,
+		"rule": "web-token",
+		"message": "border references \"--site-hairline\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 904,
+		"rule": "web-token",
+		"message": "border-radius references \"--site-radius\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 904,
+		"rule": "web-token",
+		"message": "background references \"--site-bg-raised\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 904,
+		"rule": "web-token",
+		"message": "color references \"--site-text-muted\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 916,
+		"rule": "web-token",
+		"message": "font-family references \"--site-font-mono\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 916,
+		"rule": "web-token",
+		"message": "color references \"--site-text-faint\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 940,
+		"rule": "web-token",
+		"message": "color references \"--site-text-faint\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 942,
+		"rule": "control-selector",
+		"message": "selector \".badge\" styles a raw control / control-lookalike class"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 946,
+		"rule": "web-token",
+		"message": "font-family references \"--site-font-mono\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 946,
+		"rule": "web-token",
+		"message": "border references \"--site-hairline-strong\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 946,
+		"rule": "web-token",
+		"message": "color references \"--site-text-muted\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 946,
+		"rule": "web-token",
+		"message": "background references \"--site-bg-raised\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 960,
+		"rule": "web-token",
+		"message": "color references \"--site-accent-hover\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 961,
+		"rule": "web-token",
+		"message": "border-color references \"--site-accent\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 973,
+		"rule": "web-token",
+		"message": "font-family references \"--site-font-mono\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 973,
+		"rule": "web-token",
+		"message": "color references \"--site-text-muted\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 980,
+		"rule": "web-token",
+		"message": "font-family references \"--site-font-mono\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 980,
+		"rule": "web-token",
+		"message": "color references \"--site-text-faint\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 997,
+		"rule": "web-token",
+		"message": "font-family references \"--site-font-mono\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 997,
+		"rule": "web-token",
+		"message": "color references \"--site-text-muted\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 997,
+		"rule": "web-token",
+		"message": "background references \"--site-bg-raised\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 997,
+		"rule": "web-token",
+		"message": "border references \"--site-hairline\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 997,
+		"rule": "web-token",
+		"message": "border-radius references \"--site-radius\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 1010,
+		"rule": "web-token",
+		"message": "color references \"--site-text\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 1011,
+		"rule": "web-token",
+		"message": "border-color references \"--site-hairline-strong\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 1018,
+		"rule": "web-token",
+		"message": "border-block-start references \"--site-hairline\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 1023,
+		"rule": "web-token",
+		"message": "border-block-end references \"--site-hairline\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 1030,
+		"rule": "web-token",
+		"message": "font-family references \"--site-font-mono\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 1030,
+		"rule": "web-token",
+		"message": "color references \"--site-text-faint\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 1040,
+		"rule": "web-token",
+		"message": "color references \"--site-text-muted\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 1045,
+		"rule": "web-token",
+		"message": "color references \"--site-text\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 1051,
+		"rule": "web-token",
+		"message": "font-family references \"--site-font-sans\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 1051,
+		"rule": "web-token",
+		"message": "color references \"--site-text\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 1062,
+		"rule": "web-token",
+		"message": "text-decoration-color references \"--site-hairline-strong\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 1067,
+		"rule": "web-token",
+		"message": "color references \"--site-accent-hover\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 1080,
+		"rule": "web-token",
+		"message": "max-width references \"--site-prose\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 1090,
+		"rule": "web-token",
+		"message": "color references \"--site-text-muted\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 1097,
+		"rule": "web-token",
+		"message": "font-family references \"--site-font-mono\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 1097,
+		"rule": "web-token",
+		"message": "color references \"--site-accent\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 1107,
+		"rule": "web-token",
+		"message": "color references \"--site-text\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 1113,
+		"rule": "web-token",
+		"message": "border-block references \"--site-hairline\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 1131,
+		"rule": "web-token",
+		"message": "color references \"--site-text-muted\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 1158,
+		"rule": "control-selector",
+		"message": "selector \".card\" styles a raw control / control-lookalike class"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 1161,
+		"rule": "web-token",
+		"message": "background references \"--site-bg-raised\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 1162,
+		"rule": "web-token",
+		"message": "border references \"--site-hairline\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 1162,
+		"rule": "web-token",
+		"message": "border-radius references \"--site-radius-lg\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 1165,
+		"rule": "control-selector",
+		"message": "selector \".card h3\" styles a raw control / control-lookalike class"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 1171,
+		"rule": "control-selector",
+		"message": "selector \".card p\" styles a raw control / control-lookalike class"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 1175,
+		"rule": "web-token",
+		"message": "color references \"--site-text-muted\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/styles/app.css",
+		"line": 1204,
+		"rule": "web-token",
+		"message": "border-radius references \"--site-radius-lg\"; only --ty-*/--color-*/--scrollbar-* vars are allowed"
+	},
+	{
+		"file": "apps/web/src/components/SiteHeader.tsx",
+		"line": 97,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive"
+	}
+]
