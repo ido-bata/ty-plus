@@ -211,6 +211,9 @@ const sizes = defineTokens.sizes({
 	"text-md": { value: "var(--ty-text-size-md)" },
 	"text-body": { value: "var(--ty-text-size-body)" },
 	"text-display-sm": { value: "var(--ty-text-size-display-sm)" },
+	"text-display-md": { value: "var(--ty-text-size-display-md)" },
+	"text-display-lg": { value: "var(--ty-text-size-display-lg)" },
+	"text-lead": { value: "var(--ty-text-size-lead)" },
 	"text-grid-measure": { value: "var(--ty-text-size-grid-measure)" },
 	"text-prompt": { value: "var(--ty-text-size-prompt)" },
 	"shell-border-width": { value: "var(--ty-shell-border-width)" },
@@ -224,9 +227,8 @@ const sizes = defineTokens.sizes({
 });
 
 const fonts = defineTokens.fonts({
-	base: {
-		value: 'system-ui, "Segoe UI", "Helvetica Neue", ui-sans-serif, sans-serif',
-	},
+	base: { value: "var(--ty-base-font-family)" },
+	mono: { value: "var(--ty-font-mono)" },
 });
 
 const fontSizes = defineTokens.fontSizes({
@@ -238,12 +240,16 @@ const fontSizes = defineTokens.fontSizes({
 	"text-md": { value: "var(--ty-text-size-md)" },
 	"text-body": { value: "var(--ty-text-size-body)" },
 	"text-display-sm": { value: "var(--ty-text-size-display-sm)" },
+	"text-display-md": { value: "var(--ty-text-size-display-md)" },
+	"text-display-lg": { value: "var(--ty-text-size-display-lg)" },
+	"text-lead": { value: "var(--ty-text-size-lead)" },
 	"text-grid-measure": { value: "var(--ty-text-size-grid-measure)" },
 	"text-prompt": { value: "var(--ty-text-size-prompt)" },
 });
 
 const borderWidths = defineTokens.borderWidths({
 	"shell-border-width": { value: "var(--ty-shell-border-width)" },
+	hairline: { value: "var(--ty-shell-border-width)" },
 });
 
 const shadows = defineTokens.shadows({

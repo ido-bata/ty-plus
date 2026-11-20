@@ -56,9 +56,8 @@ const COLOR_PROPS = new Set([
 	"stroke",
 	"columnRuleColor",
 	"accentColor",
-	"boxShadow",
-	"textShadow",
 ]);
+const SHADOW_PROPS = new Set(["boxShadow", "textShadow"]);
 const RADIUS_PROPS = new Set([
 	"borderRadius",
 	"borderTopLeftRadius",
@@ -144,14 +143,23 @@ function checkStyleObject(
 		const add = (rule: string, message: string) =>
 			out.push({ file, line, rule, message });
 		if (COLOR_PROPS.has(key)) {
+			const hasVar = val.includes("var(");
 			if (
-				COLOR_LITERAL.test(val) ||
+				(COLOR_LITERAL.test(val) && !hasVar) ||
 				(!val.includes(".") &&
-					!val.includes("var(") &&
+					!hasVar &&
 					!BARE_OK.has(val.toLowerCase()) &&
 					!val.startsWith("["))
 			) {
 				add("token-color", `${key}: "${val}" is not a shared token/var`);
+			}
+		}
+		if (SHADOW_PROPS.has(key)) {
+			if (COLOR_LITERAL.test(val) && !val.includes("var(")) {
+				add(
+					"token-color",
+					`${key}: "${val}" contains a literal color; use a shadow token`,
+				);
 			}
 		}
 		if (
@@ -164,7 +172,7 @@ function checkStyleObject(
 			FONT_PROPS.has(key) &&
 			(UNIT_VALUE.test(val) ||
 				COLOR_LITERAL.test(val) ||
-				(key === "fontFamily" && !val.includes("var(") && !val.includes(".")))
+				(key === "fontFamily" && /["',\s]/.test(val)))
 		) {
 			add("token-font", `${key}: "${val}" must use a font token/var`);
 		}
