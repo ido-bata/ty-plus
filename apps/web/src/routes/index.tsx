@@ -12,8 +12,6 @@ import {
 	section,
 	span3,
 	span4,
-	span5,
-	span7,
 	span8,
 	span9,
 	stack,
@@ -76,6 +74,14 @@ const resourceCell = css({
 	borderTopColor: "border.subtle",
 });
 
+// On narrow screens the wide product capture is cropped to a 4:3 window so
+// the panel UI stays recognizable instead of shrinking to a thumbnail strip.
+const heroImg = css({
+	aspectRatio: { base: "4 / 3", md: "auto" },
+	objectFit: "cover",
+	objectPosition: "center top",
+});
+
 const RESOURCES = [
 	{
 		title: "Download",
@@ -103,65 +109,74 @@ function HomePage() {
 
 	return (
 		<main>
-			{/* Hero — asymmetric 5:7 on the shared 12-column grid */}
+			{/* Hero — product-first: compact copy band, then the real panel
+			    capture at full content width so the UI is readable in the
+			    first viewport. */}
 			<section
 				className={cx(
-					container({ size: "wide" }),
+					container({ size: "content" }),
 					section({ variant: "flow" }),
 				)}
 				aria-label="Introduction"
 			>
 				<div className={grid({ gap: 3 })}>
-					<div className={span5}>
-						<div className={stack({ gap: 4 })}>
+					<div
+						className={css({ gridColumn: { base: "1 / -1", lg: "span 8" } })}
+					>
+						<div className={stack({ gap: 3 })}>
 							<h1 className={s.h1}>{SITE.tagline}</h1>
 							<p className={s.lead}>
 								ty-plus turns part of your After Effects workspace into a
 								customizable home for reusable presets and everyday tools —
 								without leaving After Effects.
 							</p>
-							<div className={cluster({ gap: 3 })}>
-								<Button as={Link} to="/download" variant="primary" uiSize="lg">
-									Download ty-plus
-								</Button>
-								<Button
-									as={Link}
-									to="/features"
-									variant="secondary"
-									uiSize="lg"
-								>
-									Explore features
-								</Button>
-							</div>
-							<div className={metaRow}>
-								<Badge tone="neutral">MIT License</Badge>
-								<span>No account required</span>
-								<span>Works fully offline</span>
-								<span>Windows · macOS</span>
-								{latest ? <span>Stable {latest.tagName}</span> : null}
-							</div>
 						</div>
 					</div>
-					<figure className={cx(s.figure, span7)}>
-						<MediaFrame>
-							<img
-								src="/images/hero.png"
-								alt="The ty-plus panel inside After Effects — workspace, widgets, and preset tools together"
-								width={3412}
-								height={2044}
-								fetchPriority="high"
-								className={s.shotImg}
-							/>
-						</MediaFrame>
-						<figcaption className={s.figcaption}>
-							The ty-plus panel — captured from a configured project.
-						</figcaption>
-					</figure>
+					<div
+						className={css({
+							gridColumn: { base: "1 / -1", lg: "span 4" },
+							display: "flex",
+							flexDirection: "column",
+							justifyContent: "flex-end",
+							gap: "1.25rem",
+						})}
+					>
+						<div className={cluster({ gap: 3 })}>
+							<Button as={Link} to="/download" variant="primary" uiSize="lg">
+								Download ty-plus
+							</Button>
+							<Button as={Link} to="/features" variant="secondary" uiSize="lg">
+								Explore features
+							</Button>
+						</div>
+						<div className={metaRow}>
+							<Badge tone="neutral">MIT License</Badge>
+							<span>No account required</span>
+							<span>Works fully offline</span>
+							<span>Windows · macOS</span>
+							{latest ? <span>Stable {latest.tagName}</span> : null}
+						</div>
+					</div>
 				</div>
+				<figure className={s.figure}>
+					<MediaFrame>
+						<img
+							src="/images/hero.png"
+							alt="The ty-plus panel inside After Effects — workspace, widgets, and preset tools together"
+							width={3412}
+							height={2044}
+							fetchPriority="high"
+							className={cx(s.shotImg, heroImg)}
+						/>
+					</MediaFrame>
+					<figcaption className={s.figcaption}>
+						The ty-plus panel — captured from a configured project.
+					</figcaption>
+				</figure>
 			</section>
 
-			{/* Features — 3:9 sections; right rail nests a 2-column grid of
-			    text+capture rows so each section reads differently */}
+			{/* Features — 3:9: left rail carries the section identity, right rail
+			    nests text+capture rows where each description matches its shot. */}
 			<section
 				className={cx(
 					container({ size: "content" }),
@@ -232,7 +247,7 @@ function HomePage() {
 				</div>
 			</section>
 
-			{/* Showcase — 8:4: large capture left, copy + CTA right */}
+			{/* Workspace — 8:4: the gridded canvas as a wide band beside copy */}
 			<section
 				className={cx(
 					container({ size: "content" }),

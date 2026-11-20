@@ -169,3 +169,12 @@
 - **検証**: `docs/verification/web-redesign/review-302/`（6ルート×desktop/tablet/mobile、menu-open 含む 85枚、overflowX なし）。Desktop 計測: `/` docH=2496、セクション高 720/733/425/286 でリズムに変化あり。Typecheck / lint（biome + design lint 0 violations）/ `check-web-design.test.ts` 10 pass / `vite build`（7ページ prerender）成功。
 
 - **未決**: 最終ビジュアル受入は外部レビュー待ち。`release-0-12-0 → main`・本番公開は行わない。
+
+## Revision (#306): Notice content contract + product-first LP
+
+外部レビューで共有 Notice の表示不具合と、製品ビジュアル・LP構成の不合格が指摘された。
+
+- **Notice の子構造契約**: ルートは `display:flex` のまま、children を単一の content block（`flex:1; min-width:0`）で包む。テキスト・インラインリンク・複数段落・アイコン・アクションは通常の文書フローで描画され、flex item として分断されない。見た目は引き続き `@ty-plus/ui` が所有し、Web 側で workaround しない。契約は `Notice.test.tsx`（unit）と `Notice.stories.tsx` の `RichContent`（Storybook play 関数）で固定した。
+- **Hero の製品ファースト化**: 5:7 の比率自体を目的にせず、コピー/アクション/メタ情報のコンパクトな帯の下に `hero.png` を content 幅いっぱいで提示する構成へ変更。モバイルは `object-fit: cover` + `4/3` crop で左側のウィジェット密集領域を優先する。
+- **Features の画像-説明対応**: 同一種類のスクリーンショットの単純交互をやめ、機能ごとに対応する実機キャプチャと媒体幅（wide / std）を割り当てる。説明のない未検証画像は使わない。
+- **比率の扱い**: 5:7 / 3:9 / 8:4 は座標系上の表現手段であり目標ではない。面積配分・余白・タイポグラフィ・画像倍率はブラウザ実画面で評価する。

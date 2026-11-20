@@ -37,7 +37,7 @@ src/management/ae/jsx/*.bundle.js
 storybook-static/
 
 # Storybook browser-test screenshot output (regenerated on every run).
-src/**/__screenshots__/
+**/src/**/__screenshots__/
 
 # PandaCSS generated runtime (regenerated on `bun install` via `prepare`).
 styled-system/
