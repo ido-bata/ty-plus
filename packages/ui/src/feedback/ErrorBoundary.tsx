@@ -15,6 +15,8 @@ export type ErrorBoundaryProps = {
 
 type ErrorBoundaryState = {
 	error: Error | null;
+	/** resetKeys snapshot used to detect prop changes without setState in didUpdate. */
+	resetKeys?: readonly unknown[];
 };
 
 function resetKeysChanged(
@@ -33,22 +35,45 @@ export class ErrorBoundary extends Component<
 	ErrorBoundaryProps,
 	ErrorBoundaryState
 > {
-	state: ErrorBoundaryState = { error: null };
+	state: ErrorBoundaryState = {
+		error: null,
+		resetKeys: this.props.resetKeys,
+	};
 
 	static getDerivedStateFromError(error: Error): ErrorBoundaryState {
+		// Partial state merge keeps the resetKeys snapshot intact.
 		return { error };
+	}
+
+	// React types this static as (Readonly<P>, S) => Partial<S> | null. The
+	// props parameter is `unknown` because Storybook's Meta<typeof C>
+	// inference checks the static against the class type itself; the cast
+	// below restores the real prop type.
+	static getDerivedStateFromProps(
+		nextProps: unknown,
+		prevState: ErrorBoundaryState,
+	): Partial<ErrorBoundaryState> | null {
+		const props = nextProps as ErrorBoundaryProps;
+		if (prevState.error !== null) {
+			if (resetKeysChanged(prevState.resetKeys, props.resetKeys)) {
+				return { error: null, resetKeys: props.resetKeys };
+			}
+		}
+		if (!Object.is(prevState.resetKeys, props.resetKeys)) {
+			return { resetKeys: props.resetKeys };
+		}
+		return null;
 	}
 
 	componentDidCatch(error: Error, info: ErrorInfo): void {
 		this.props.onError?.(error, info);
 	}
 
-	componentDidUpdate(previousProps: ErrorBoundaryProps): void {
-		if (this.state.error === null) {
-			return;
-		}
-		if (resetKeysChanged(previousProps.resetKeys, this.props.resetKeys)) {
-			this.setState({ error: null });
+	componentDidUpdate(
+		_previousProps: ErrorBoundaryProps,
+		previousState: ErrorBoundaryState,
+	): void {
+		if (previousState.error !== null && this.state.error === null) {
 			this.props.onReset?.();
 		}
 	}

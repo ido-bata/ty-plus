@@ -1,7 +1,7 @@
 /**
  * Interaction tuning for workspace pointer/drag handling.
  * Gesture segmentation thresholds (used by `useAnchorGesture`) live with the
- * hook itself in `shared/component/interaction/use-anchor-gesture`.
+ * hook itself in `packages/ui/src/interaction/use-anchor-gesture`.
  */
 
 export const RESIZE_MARGIN = 12;
