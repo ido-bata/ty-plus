@@ -3,7 +3,11 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 
-import { collectViolations, partitionViolations } from "./check-web-design";
+import {
+	collectViolations,
+	partitionViolations,
+	type Violation,
+} from "./check-web-design";
 
 const fixture = (files: Record<string, string>) => {
 	const dir = mkdtempSync(join(tmpdir(), "web-design-"));
@@ -16,18 +20,20 @@ const fixture = (files: Record<string, string>) => {
 };
 
 const rules = (dir: string) => collectViolations(dir, dir).map((v) => v.rule);
+const rulesOf = (dir: string, mode: "web" | "shared") =>
+	collectViolations(dir, dir, { mode }).map((v) => v.rule);
 
 describe("check-web-design", () => {
 	it("passes a compliant implementation", () => {
 		const dir = fixture({
 			"page.tsx": `
-import { Button, Surface } from "@ty-plus/ui";
+import { Button } from "@ty-plus/ui";
 import { css } from "@/styled-system/css";
 const row = css({ display: "flex", gap: "4", color: "text.muted" });
 export const Page = () => (
-	<Surface className={row}>
+	<div className={row}>
 		<Button as="a" href="/download" variant="primary">Download</Button>
-	</Surface>
+	</div>
 );`,
 			"app.css": `
 :root { --ty-base-font-family: system-ui, sans-serif; }
@@ -84,10 +90,96 @@ export const s = css({
 		expect(found).not.toContain("token-color-extra");
 	});
 
+	it("recurses into nested responsive/condition objects", () => {
+		const dir = fixture({
+			"styled.tsx": `
+import { css } from "@/styled-system/css";
+export const s = css({
+	color: { base: "#ffffff", md: "red" },
+	_hover: { backgroundColor: "rgb(1,2,3)" },
+});`,
+		});
+		const found = rules(dir);
+		expect(
+			found.filter((r) => r === "token-color").length,
+		).toBeGreaterThanOrEqual(3);
+	});
+
+	it("passes valid responsive token values in web mode", () => {
+		const dir = fixture({
+			"styled.tsx": `
+import { css } from "@/styled-system/css";
+export const s = css({
+	display: { base: "block", md: "flex" },
+	color: { base: "text.primary", md: "text.muted" },
+});`,
+		});
+		expect(collectViolations(dir, dir)).toEqual([]);
+	});
+
+	it("rejects arbitrary --ty-* token definitions and undefined var() refs", () => {
+		const dir = fixture({
+			"tokens.css": `
+:root { --ty-made-up-token: #fff; }
+.a { color: var(--ty-does-not-exist); }
+.b { color: var(--ty-text-primary); }
+.c { color: var(--color-text-primary); }
+`,
+		});
+		const vs = collectViolations(dir, dir);
+		const webToken = vs.filter((v) => v.rule === "web-token");
+		expect(webToken).toHaveLength(2);
+	});
+
+	it("rejects undefined Panda token paths but accepts defined ones", () => {
+		const dir = fixture({
+			"styled.tsx": `
+import { css } from "@/styled-system/css";
+export const s = css({
+	color: "text.bogus",
+	backgroundColor: "surface.panel",
+	fontSize: "text-display-lg",
+});`,
+		});
+		const vs = collectViolations(dir, dir);
+		const undef = vs.filter((v) => v.rule === "token-undefined");
+		expect(undef).toHaveLength(1);
+		expect(undef[0].message).toContain("text.bogus");
+	});
+
+	it("rejects appearance overrides on shared @ty-plus/ui components", () => {
+		const dir = fixture({
+			"page.tsx": `
+import { Button } from "@ty-plus/ui";
+import { css } from "@/styled-system/css";
+const override = css({ backgroundColor: "#123456" });
+export const Page = () => <Button className={override}>Go</Button>;`,
+		});
+		const found = rules(dir);
+		expect(found).toContain("ui-override");
+	});
+
+	it("bans responsive breakpoint conditions in shared components only", () => {
+		const dir = fixture({
+			"shared.tsx": `
+import { css } from "@/styled-system/css";
+export const s = css({ padding: { base: "1", md: "2" } });
+export const T = () => <button>raw is fine here</button>;`,
+		});
+		// web mode: responsive values are legal, raw <button> is banned
+		const web = rulesOf(dir, "web");
+		expect(web).toContain("raw-control");
+		expect(web).not.toContain("responsive-condition");
+		// shared mode: raw controls allowed, responsive banned
+		const shared = rulesOf(dir, "shared");
+		expect(shared).toContain("responsive-condition");
+		expect(shared).not.toContain("raw-control");
+	});
+
 	it("partitions fresh vs stale allowlist entries", () => {
 		const dir = fixture({ "a.css": ".btn { color: red; }" });
-		const violations = collectViolations(dir, dir);
-		const staleEntry = {
+		const violations: Violation[] = collectViolations(dir, dir);
+		const staleEntry: Violation = {
 			file: "gone.css",
 			line: 1,
 			rule: "web-token",
