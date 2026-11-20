@@ -10,6 +10,7 @@ architecture/
 ├─ index.md
 ├─ AGENTS.md
 ├─ project.md
+├─ roadmap.md
 ├─ repository/
 │  ├─ index.md
 │  ├─ layout.md      (legacy — historical physical layout)
@@ -85,17 +86,18 @@ architecture/
 ## 読む順番
 
 1. [`project.md`](project.md) - プロジェクト定義と固定スコープ
-2. [`repository/index.md`](repository/index.md) - repo 全体の地図
-3. [`repository/source-ownership.md`](repository/source-ownership.md) - TypeScript `src/` と Rust `rust/` の所有境界
-4. [`runtime/index.md`](runtime/index.md) - 実行経路、ホスト境界、workspace surface
-5. [`ui-reconstruction/README.md`](ui-reconstruction/README.md) - React/Tailwind UI 再構築の設計と移行順
-6. [`storage/index.md`](storage/index.md) - 保存 tree と preset asset
-7. [`cloud/index.md`](cloud/index.md) - online/offline、Supabase、media surface
-8. [`data/index.md`](data/index.md) - 型定義の所在と使用元
-9. [`quality/index.md`](quality/index.md) - 実装可能性判断と品質ゲート
-10. [`i18n/index.md`](i18n/index.md) - i18n ポリシーと命名規約
-11. [`AGENTS.md`](AGENTS.md) - AI エージェント向けの読み方
-12. [`agent-operations.md`](agent-operations.md) - 並行実行、復旧、release workflow
+2. [`roadmap.md`](roadmap.md) - R0〜R5のフェーズ定義と追跡Issue
+3. [`repository/index.md`](repository/index.md) - repo 全体の地図
+4. [`repository/source-ownership.md`](repository/source-ownership.md) - TypeScript `src/` と Rust `rust/` の所有境界
+5. [`runtime/index.md`](runtime/index.md) - 実行経路、ホスト境界、workspace surface
+6. [`ui-reconstruction/README.md`](ui-reconstruction/README.md) - React/Tailwind UI 再構築の設計と移行順
+7. [`storage/index.md`](storage/index.md) - 保存 tree と preset asset
+8. [`cloud/index.md`](cloud/index.md) - online/offline、Supabase、media surface
+9. [`data/index.md`](data/index.md) - 型定義の所在と使用元
+10. [`quality/index.md`](quality/index.md) - 実装可能性判断と品質ゲート
+11. [`i18n/index.md`](i18n/index.md) - i18n ポリシーと命名規約
+12. [`AGENTS.md`](AGENTS.md) - AI エージェント向けの読み方
+13. [`agent-operations.md`](agent-operations.md) - 並行実行、復旧、release workflow
 
 ## 固定スコープ
 

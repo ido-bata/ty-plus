@@ -10,6 +10,7 @@ After Effects拡張 ty-plus の公開済み無料OSSリポジトリ（初回Stab
 | --- | --- |
 | 移行の暫定正本（新repo正本への移行完了まで） | `rebuildup/ty-plus#230` |
 | R0計画・リリース条件・期日 | `rebuildup/ty-plus#218` |
+| R0〜R5ロードマップ | `docs/architecture/roadmap.md` |
 | 権利監査 | `rebuildup/ty-plus#219` および本repoの対応Issue |
 | 移植元選定・移植台帳 | `rebuildup/ty-plus#228` と `docs/migration/porting-ledger.md` |
 | 最上位contract / Operating Model | `rebuildup/project-init` の `constitution/CONSTITUTION.md` / `organization/profiles/release-driven-solo.md` |
