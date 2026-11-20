@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Button } from "@ty-plus/ui";
+import { cx } from "@ty-plus/ui/util/cx";
 import { SITE } from "../lib/site";
+import { container, section, stack } from "../styles/layout";
 import * as s from "../styles/site";
 
 export const Route = createFileRoute("/support")({
@@ -40,23 +42,30 @@ const HELP_TOPICS = [
 function SupportPage() {
 	return (
 		<main>
-			<header className={s.pageHead}>
-				<div className={s.page}>
-					<h1 className={s.h1}>Support</h1>
-					<p className={s.lead}>
-						ty-plus is a community open-source project. The fastest way to get
-						help is through GitHub.
-					</p>
-				</div>
+			<header
+				className={cx(
+					container({ size: "content" }),
+					section({ variant: "prose" }),
+				)}
+			>
+				<h1 className={s.h1}>Support</h1>
+				<p className={s.lead}>
+					ty-plus is a community open-source project. The fastest way to get
+					help is through GitHub.
+				</p>
 			</header>
 
-			<section className={s.page} aria-labelledby="help">
-				<div className={s.section}>
-					<div>
-						<h2 className={s.h2} id="help">
-							Documentation &amp; issues
-						</h2>
-					</div>
+			<section
+				className={cx(
+					container({ size: "content" }),
+					section({ variant: "prose" }),
+				)}
+				aria-labelledby="help"
+			>
+				<div className={stack({ gap: 4 })}>
+					<h2 className={s.h2} id="help">
+						Documentation &amp; issues
+					</h2>
 					<dl className={s.defList}>
 						{HELP_TOPICS.map((t) => (
 							<div className={s.defRow} key={t.term}>
@@ -72,9 +81,15 @@ function SupportPage() {
 				</div>
 			</section>
 
-			<section className={s.page} aria-labelledby="report">
-				<div className={s.section}>
-					<div>
+			<section
+				className={cx(
+					container({ size: "content" }),
+					section({ variant: "prose" }),
+				)}
+				aria-labelledby="report"
+			>
+				<div className={stack({ gap: 4 })}>
+					<div className={stack({ gap: 2 })}>
 						<h2 className={s.h2} id="report">
 							Bugs &amp; feature requests
 						</h2>
@@ -87,7 +102,7 @@ function SupportPage() {
 							After Effects version, ty-plus version, and steps to reproduce.
 						</p>
 					</div>
-					<div className={s.btnRow}>
+					<div>
 						<Button as="a" href={SITE.newIssue} variant="primary">
 							Open an issue
 						</Button>
@@ -95,27 +110,37 @@ function SupportPage() {
 				</div>
 			</section>
 
-			<section className={s.page} aria-labelledby="security">
-				<div className={s.section}>
-					<div>
-						<h2 className={s.h2} id="security">
-							Responsible disclosure
-						</h2>
-						<p className={s.body}>
-							Please do not open public issues for security vulnerabilities. See
-							the{" "}
-							<a className={s.link} href={SITE.security}>
-								security policy
-							</a>{" "}
-							for responsible disclosure.
-						</p>
-					</div>
+			<section
+				className={cx(
+					container({ size: "content" }),
+					section({ variant: "prose" }),
+				)}
+				aria-labelledby="security"
+			>
+				<div className={stack({ gap: 2 })}>
+					<h2 className={s.h2} id="security">
+						Responsible disclosure
+					</h2>
+					<p className={s.body}>
+						Please do not open public issues for security vulnerabilities. See
+						the{" "}
+						<a className={s.link} href={SITE.security}>
+							security policy
+						</a>{" "}
+						for responsible disclosure.
+					</p>
 				</div>
 			</section>
 
-			<section className={s.page} aria-labelledby="contribute">
-				<div className={s.section}>
-					<div>
+			<section
+				className={cx(
+					container({ size: "content" }),
+					section({ variant: "prose" }),
+				)}
+				aria-labelledby="contribute"
+			>
+				<div className={stack({ gap: 4 })}>
+					<div className={stack({ gap: 2 })}>
 						<h2 className={s.h2} id="contribute">
 							Develop with us
 						</h2>
@@ -131,7 +156,7 @@ function SupportPage() {
 							for terms.
 						</p>
 					</div>
-					<div className={s.btnRow}>
+					<div>
 						<Button as="a" href={SITE.repo} variant="secondary">
 							Source code
 						</Button>

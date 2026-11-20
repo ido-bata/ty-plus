@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Badge, Button, Notice } from "@ty-plus/ui";
+import { cx } from "@ty-plus/ui/util/cx";
 import { css } from "@/styled-system/css";
 import {
 	classifyChannel,
@@ -8,6 +9,7 @@ import {
 } from "../lib/releases";
 import { SITE } from "../lib/site";
 import { listReleases } from "../server/releases";
+import { container, section, stack } from "../styles/layout";
 import * as s from "../styles/site";
 
 export const Route = createFileRoute("/changelog")({
@@ -127,18 +129,26 @@ function ChangelogPage() {
 
 	return (
 		<main>
-			<header className={s.pageHead}>
-				<div className={s.page}>
-					<h1 className={s.h1}>Changelog</h1>
-					<p className={s.lead}>
-						Release notes are published on GitHub Releases, grouped by update
-						channel — newest first within each channel.
-					</p>
-				</div>
+			<header
+				className={cx(
+					container({ size: "content" }),
+					section({ variant: "prose" }),
+				)}
+			>
+				<h1 className={s.h1}>Changelog</h1>
+				<p className={s.lead}>
+					Release notes are published on GitHub Releases, grouped by update
+					channel — newest first within each channel.
+				</p>
 			</header>
 
 			{source !== "live" && (
-				<div className={s.page}>
+				<div
+					className={cx(
+						container({ size: "content" }),
+						section({ variant: "flush" }),
+					)}
+				>
 					<Notice tone="warning" role="status">
 						Release data is temporarily unavailable; showing the last published
 						snapshot. Check{" "}
@@ -151,7 +161,12 @@ function ChangelogPage() {
 			)}
 
 			{releases.length === 0 ? (
-				<section className={s.page}>
+				<section
+					className={cx(
+						container({ size: "content" }),
+						section({ variant: "prose" }),
+					)}
+				>
 					<p className={s.body}>
 						Release data is temporarily unavailable.{" "}
 						<a className={s.link} href={SITE.releases}>
@@ -162,9 +177,15 @@ function ChangelogPage() {
 				</section>
 			) : (
 				byChannel.map((group) => (
-					<section className={s.page} key={group.id}>
-						<div className={s.section}>
-							<div>
+					<section
+						className={cx(
+							container({ size: "content" }),
+							section({ variant: "band" }),
+						)}
+						key={group.id}
+					>
+						<div className={stack({ gap: 4 })}>
+							<div className={stack({ gap: 1 })}>
 								<h2 className={s.h2}>{group.label}</h2>
 								<p className={s.body}>{group.hint}</p>
 							</div>
@@ -178,29 +199,37 @@ function ChangelogPage() {
 				))
 			)}
 
-			<section className={s.page}>
-				<div className={s.btnRow}>
+			<section
+				className={cx(
+					container({ size: "content" }),
+					section({ variant: "prose" }),
+				)}
+			>
+				<div>
 					<Button as="a" href={SITE.releases} variant="secondary">
 						All releases on GitHub
 					</Button>
 				</div>
 			</section>
 
-			<section className={s.page}>
-				<div className={s.section}>
-					<div>
-						<h2 className={s.h2}>Stable, Beta, Insider</h2>
-						<p className={s.body}>
-							Choose Stable, Beta, or Insider under{" "}
-							<strong>Settings → Updates</strong> inside the panel. Updates are
-							checked against GitHub Releases; installation stays manual.
-							Channel details are in the{" "}
-							<a className={s.link} href={SITE.userGuide}>
-								user guide
-							</a>
-							.
-						</p>
-					</div>
+			<section
+				className={cx(
+					container({ size: "content" }),
+					section({ variant: "prose" }),
+				)}
+			>
+				<div className={stack({ gap: 2 })}>
+					<h2 className={s.h2}>Stable, Beta, Insider</h2>
+					<p className={s.body}>
+						Choose Stable, Beta, or Insider under{" "}
+						<strong>Settings → Updates</strong> inside the panel. Updates are
+						checked against GitHub Releases; installation stays manual. Channel
+						details are in the{" "}
+						<a className={s.link} href={SITE.userGuide}>
+							user guide
+						</a>
+						.
+					</p>
 				</div>
 			</section>
 		</main>

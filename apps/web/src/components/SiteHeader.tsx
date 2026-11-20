@@ -4,6 +4,7 @@ import { cx } from "@ty-plus/ui/util/cx";
 import { useEffect, useRef, useState } from "react";
 import { css } from "@/styled-system/css";
 import { NAV_LINKS, SITE } from "../lib/site";
+import { container } from "../styles/layout";
 import { SiteMark } from "./SiteMark";
 
 const MENU_ID = "site-menu";
@@ -68,9 +69,6 @@ const headerInner = css({
 	alignItems: "center",
 	justifyContent: "space-between",
 	gap: "1rem",
-	maxWidth: "76rem",
-	marginInline: "auto",
-	paddingInline: { base: "1.25rem", md: "2rem" },
 	height: "4rem",
 });
 
@@ -219,7 +217,10 @@ export function SiteHeader() {
 			ref={headerRef}
 			className={cx(header, isWide ? "is-wide" : "is-collapsed")}
 		>
-			<div ref={innerRef} className={headerInner}>
+			<div
+				ref={innerRef}
+				className={cx(container({ size: "content" }), headerInner)}
+			>
 				<Link to="/" className={logo}>
 					<SiteMark
 						className={css({ inlineSize: "1.25rem", blockSize: "1.25rem" })}

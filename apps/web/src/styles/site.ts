@@ -7,27 +7,6 @@ import { css } from "@/styled-system/css";
  * @ty-plus/ui components.
  */
 
-export const page = css({
-	width: "100%",
-	maxWidth: "76rem",
-	marginInline: "auto",
-	paddingInline: { base: "1.25rem", md: "2rem" },
-});
-
-export const section = css({
-	display: "flex",
-	flexDirection: "column",
-	gap: "1.5rem",
-	paddingBlock: "3rem",
-});
-
-export const pageHead = css({
-	display: "flex",
-	flexDirection: "column",
-	gap: "0.75rem",
-	paddingBlock: { base: "2.5rem", md: "3.5rem" },
-});
-
 export const h1 = css({
 	fontSize: "text-display-lg",
 	fontWeight: "semibold",
@@ -88,24 +67,6 @@ export const shotImg = css({
 	height: "auto",
 });
 
-export const btnRow = css({
-	display: "flex",
-	gap: "0.75rem",
-	flexWrap: "wrap",
-});
-
-export const grid = css({
-	display: "grid",
-	gridTemplateColumns: { base: "1fr", md: "1fr 1fr" },
-	gap: "1.25rem",
-});
-
-export const cardBody = css({
-	display: "flex",
-	flexDirection: "column",
-	gap: "0.75rem",
-});
-
 export const defList = css({
 	display: "flex",
 	flexDirection: "column",
@@ -137,20 +98,6 @@ export const steps = css({
 	flexDirection: "column",
 	gap: "0.75rem",
 	color: "text.muted",
-});
-
-export const ctaBand = css({
-	display: "flex",
-	flexDirection: { base: "column", md: "row" },
-	alignItems: { md: "center" },
-	justifyContent: "space-between",
-	gap: "1.5rem",
-	padding: "2rem",
-	borderRadius: "surface-card",
-	borderWidth: "hairline",
-	borderStyle: "solid",
-	borderColor: "border.subtle",
-	backgroundColor: "surface.widget",
 });
 
 export const releaseList = css({

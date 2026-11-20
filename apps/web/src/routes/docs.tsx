@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Button } from "@ty-plus/ui";
+import { cx } from "@ty-plus/ui/util/cx";
 import { SITE } from "../lib/site";
+import { container, section, stack } from "../styles/layout";
 import * as s from "../styles/site";
 
 export const Route = createFileRoute("/docs")({
@@ -54,23 +56,30 @@ const DOC_SECTIONS = [
 function DocsPage() {
 	return (
 		<main>
-			<header className={s.pageHead}>
-				<div className={s.page}>
-					<h1 className={s.h1}>Documentation</h1>
-					<p className={s.lead}>
-						The user guide is maintained in the repository so it always matches
-						the released product. It is currently written in Japanese.
-					</p>
-				</div>
+			<header
+				className={cx(
+					container({ size: "content" }),
+					section({ variant: "prose" }),
+				)}
+			>
+				<h1 className={s.h1}>Documentation</h1>
+				<p className={s.lead}>
+					The user guide is maintained in the repository so it always matches
+					the released product. It is currently written in Japanese.
+				</p>
 			</header>
 
-			<section className={s.page} aria-labelledby="sections">
-				<div className={s.section}>
-					<div>
-						<h2 className={s.h2} id="sections">
-							User guide sections
-						</h2>
-					</div>
+			<section
+				className={cx(
+					container({ size: "content" }),
+					section({ variant: "prose" }),
+				)}
+				aria-labelledby="sections"
+			>
+				<div className={stack({ gap: 4 })}>
+					<h2 className={s.h2} id="sections">
+						User guide sections
+					</h2>
 					<dl className={s.defList}>
 						{DOC_SECTIONS.map((d) => (
 							<div className={s.defRow} key={d.title}>
@@ -86,9 +95,14 @@ function DocsPage() {
 				</div>
 			</section>
 
-			<section className={s.page}>
-				<div className={s.section}>
-					<div>
+			<section
+				className={cx(
+					container({ size: "content" }),
+					section({ variant: "prose" }),
+				)}
+			>
+				<div className={stack({ gap: 4 })}>
+					<div className={stack({ gap: 2 })}>
 						<h2 className={s.h2}>Improve the docs</h2>
 						<p className={s.body}>
 							Documentation improvements are welcome — see{" "}
@@ -98,7 +112,7 @@ function DocsPage() {
 							for how to propose changes.
 						</p>
 					</div>
-					<div className={s.btnRow}>
+					<div>
 						<Button as="a" href={SITE.userGuide} variant="primary">
 							Open user guide
 						</Button>
