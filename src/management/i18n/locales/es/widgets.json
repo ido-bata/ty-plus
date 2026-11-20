@@ -81,7 +81,11 @@
 			"frequency": "Frecuencia",
 			"bias": "Sesgo",
 			"damping": "Amortiguacion"
-		}
+		},
+		"update": "Actualizar",
+		"unapply": "Quitar bucle",
+		"applied": "Aplicado",
+		"conflict": "Editado en AE"
 	},
 	"menu": {
 		"name": "Menú",

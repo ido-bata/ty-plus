@@ -81,7 +81,11 @@
 			"frequency": "Frequenza",
 			"bias": "Sbilanciamento",
 			"damping": "Smorzamento"
-		}
+		},
+		"update": "Aggiorna",
+		"unapply": "Rimuovi loop",
+		"applied": "Applicato",
+		"conflict": "Modificato in AE"
 	},
 	"menu": {
 		"name": "Menu",

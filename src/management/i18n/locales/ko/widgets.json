@@ -81,7 +81,11 @@
 			"frequency": "주파수",
 			"bias": "편향",
 			"damping": "감쇠"
-		}
+		},
+		"update": "업데이트",
+		"unapply": "루프 해제",
+		"applied": "적용됨",
+		"conflict": "AE에서 편집됨"
 	},
 	"menu": {
 		"name": "메뉴",

@@ -81,7 +81,11 @@
 			"frequency": "Frequency",
 			"bias": "Bias",
 			"damping": "Damping"
-		}
+		},
+		"update": "Update",
+		"unapply": "Remove loop",
+		"applied": "Applied",
+		"conflict": "Edited in AE"
 	},
 	"menu": {
 		"name": "Menu",

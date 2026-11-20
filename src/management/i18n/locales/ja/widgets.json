@@ -81,7 +81,11 @@
 			"frequency": "周期数",
 			"bias": "偏り",
 			"damping": "減衰"
-		}
+		},
+		"update": "更新",
+		"unapply": "ループを解除",
+		"applied": "適用済み",
+		"conflict": "AE側で編集済み"
 	},
 	"menu": {
 		"name": "メニュー",

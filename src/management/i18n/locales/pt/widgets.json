@@ -81,7 +81,11 @@
 			"frequency": "Frequencia",
 			"bias": "Vies",
 			"damping": "Amortecimento"
-		}
+		},
+		"update": "Atualizar",
+		"unapply": "Remover loop",
+		"applied": "Aplicado",
+		"conflict": "Editado no AE"
 	},
 	"menu": {
 		"name": "Menu",

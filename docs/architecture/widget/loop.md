@@ -243,6 +243,48 @@ parameter editor（グラフ＋4ハンドル）から motion editor（動きそ�
 
 数値フォームや説明文は増やさない。
 
+
+### ホストコマンドの契約（実装単位の共通仕様）
+
+payload / 戻り値は panel 側（React）とホスト側が同じ語彙を使う。
+
+- `applyLoopEasing` payload: 既存のもの + `sidecarPath: string`（panel 側が解決した
+  管理ルート配下の sidecar パス）
+- `applyLoopEasing` 戻り値: `{ changed, applied: AppliedLoopRecord[], errors }`
+- `captureLoopState` payload: `{ sidecarPath: string }`
+  戻り値: `{ records: AppliedLoopRecord[] }`（選択中プロパティに一致するもの）
+- `unapplyLoopEasing` payload: `{ sidecarPath: string }`
+  戻り値: `{ restored: number, conflicts: string[], errors: string[] }`
+
+```ts
+type AppliedLoopRecord = {
+	/** matchName ベースの識別子（例: "Layer 1.Position"） */
+	propertyId: string;
+	/** 適用した時間範囲（秒） */
+	range: { start: number; end: number };
+	/** 適用時の周期パラメータ */
+	loopParams: {
+		cycles: number;
+		amplitude: number;
+		damping: number;
+		bias: number;
+		mode: string;
+	};
+	/** 適用前に存在したキーフレーム（復元用） */
+	originalKeyframes: {
+		time: number;
+		value: number[];
+		inEase: { speed: number; influence: number }[];
+		outEase: { speed: number; influence: number }[];
+		interpolationType: number;
+	}[];
+	/** 適用で書き込んだキーフレーム（競合検出の照合用） */
+	writtenKeyframes: { time: number; value: number[] }[];
+	/** 適用時刻（ms） */
+	appliedAt: number;
+};
+```
+
 ### 未実施（この単位）
 
 - 上記のホストAPI・sidecar・UI 状態の実装（次の実装単位）

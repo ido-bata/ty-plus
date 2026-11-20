@@ -81,7 +81,11 @@
 			"frequency": "Frequenz",
 			"bias": "Bias",
 			"damping": "Daempfung"
-		}
+		},
+		"update": "Aktualisieren",
+		"unapply": "Schleife entfernen",
+		"applied": "Angewendet",
+		"conflict": "In AE bearbeitet"
 	},
 	"menu": {
 		"name": "Menü",
