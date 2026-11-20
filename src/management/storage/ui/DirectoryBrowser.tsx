@@ -153,7 +153,7 @@ const shellRowBtn = css({
 	transitionProperty: "colors",
 	_hover: {
 		backgroundColor:
-			"color-mix(in_oklab,var(--color-interactive-hover)_38%,transparent)",
+			"color-mix(in oklab, var(--color-interactive-hover) 38%, transparent)",
 	},
 });
 
@@ -182,7 +182,7 @@ const rowInnerClass = css({
  * coexist in the overlap state.
  */
 const rowInnerActiveClass = css({
-	boxShadow: "inset 0 2px 0 0 var(--color-border-strong)",
+	boxShadow: "inset 0 2px 0 0 var(--color-text-accent)",
 });
 /**
  * `isSelected` cue — the user toggled this row.  Match the visual
@@ -203,8 +203,8 @@ const rowInnerActiveClass = css({
  */
 const rowInnerSelectedClass = css({
 	backgroundColor:
-		"color-mix(in_oklab,var(--color-interactive-hover)_25%,transparent)",
-	boxShadow: "inset 2px 0 0 0 var(--color-border-strong)",
+		"color-mix(in oklab, var(--color-interactive-hover) 25%, transparent)",
+	boxShadow: "inset 2px 0 0 0 var(--color-text-accent)",
 });
 /**
  * Overlap of `activePath` + `isSelected`.  The visual contract requires
@@ -219,9 +219,9 @@ const rowInnerSelectedClass = css({
  */
 const rowInnerActiveAndSelectedClass = css({
 	backgroundColor:
-		"color-mix(in_oklab,var(--color-interactive-hover)_25%,transparent)",
+		"color-mix(in oklab, var(--color-interactive-hover) 25%, transparent)",
 	boxShadow:
-		"inset 0 2px 0 0 var(--color-border-strong), inset 2px 0 0 0 var(--color-border-strong)",
+		"inset 0 2px 0 0 var(--color-text-accent), inset 2px 0 0 0 var(--color-text-accent)",
 });
 const rowBtnFlex1Class = css({ flex: "1" });
 
@@ -424,7 +424,7 @@ const upRowClass = css({
 	borderBottomStyle: "solid",
 	borderBottomColor: "border.default",
 	backgroundColor:
-		"color-mix(in_oklab,var(--color-surface-widget)_50%,var(--color-surface-dialog))",
+		"color-mix(in oklab, var(--color-surface-widget) 50%, var(--color-surface-dialog))",
 });
 const listEmptyLabelClass = css({
 	paddingInline: "2",

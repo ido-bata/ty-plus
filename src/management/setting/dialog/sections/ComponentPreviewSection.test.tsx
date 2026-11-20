@@ -37,4 +37,35 @@ describe("ComponentPreviewSection", () => {
 			container.querySelectorAll("[data-settings-accordion-trigger]"),
 		).toHaveLength(0);
 	});
+
+	it("only previews components that are actually used in the product", () => {
+		render(<ComponentPreviewSection />);
+
+		// Components with real product usage.
+		for (const title of [
+			"Segmented Control",
+			"Color Fields",
+			"Regex Editor",
+			"List Select",
+			"Directory Browser",
+			"Preset Icon Editor",
+			"Markdown Editor",
+			"Code Editor",
+		]) {
+			expect(screen.getAllByText(title).length).toBeGreaterThan(0);
+		}
+		expect(screen.getAllByLabelText("Accent color").length).toBeGreaterThan(0);
+		expect(
+			screen.getAllByLabelText("Widget Background color").length,
+		).toBeGreaterThan(0);
+
+		// Removed fakes: LoadingSpinner had zero product usages,
+		// PreviewCard was a section-local mock, and standalone
+		// RangeField is only an internal part of ColorOpacityField.
+		expect(screen.queryByText("Loading")).not.toBeInTheDocument();
+		expect(screen.queryByText("Preview Card")).not.toBeInTheDocument();
+		expect(
+			screen.queryByText("Slider with numeric input"),
+		).not.toBeInTheDocument();
+	});
 });

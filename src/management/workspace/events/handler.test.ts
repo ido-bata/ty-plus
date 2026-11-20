@@ -603,6 +603,37 @@ describe("workspace interaction events", () => {
 			);
 		});
 
+		it("skips the anchor-point action for widgets that run it themselves", () => {
+			// The anchor-point widget applies the anchor from its own click
+			// handler; running the capture-path script as well would apply
+			// the same move twice.
+			const state = createMinimalState({
+				surfaceTiles: tilesFromWidgets([
+					makeWidget(WIDGET_INFO_ID, 0, 0, 4, 4, "anchor-point"),
+				]),
+			});
+			setup(state);
+
+			const widgetEl = container.querySelector<HTMLElement>(
+				`[data-workspace-surface-index="0"]`,
+			)!;
+			const selfHandling = document.createElement("div");
+			selfHandling.dataset.wsHandlesActions = "";
+			const anchorBtn = document.createElement("button");
+			anchorBtn.type = "button";
+			anchorBtn.dataset.wsAction = "anchor-point";
+			anchorBtn.dataset.anchor = "top-left";
+			selfHandling.appendChild(anchorBtn);
+			widgetEl.appendChild(selfHandling);
+
+			const rect = anchorBtn.getBoundingClientRect();
+			simulateClick(anchorBtn, rect.left + 2, rect.top + 2);
+
+			expect(currentState.statusMessage).not.toBe(
+				"Anchor point requested: top-left",
+			);
+		});
+
 		it("does not execute group placement shells as presets", () => {
 			const executePreset = vi.fn().mockResolvedValue(undefined);
 			const state = createMinimalState({

@@ -90,6 +90,33 @@ export function SettingsFieldLabel({
 	return <span className={fieldLabelStyle}>{children}</span>;
 }
 
+const fieldValueStyle = css({
+	display: "flex",
+	width: "full",
+	minWidth: 0,
+	minHeight: "var(--ty-space-8)",
+	alignItems: "center",
+	gap: "var(--ty-space-2)",
+});
+
+/**
+ * Canonical read-only value row inside a `SettingsField`: occupies the
+ * full grid-cell width and the same 32px band as paired controls
+ * (ListSelect/Input/Button md), so label+value fields line up with
+ * label+control fields on the settings grid. Inline text must not be a
+ * direct `SettingsField` child — it sizes to its content instead of the
+ * cell (enforced by `check-settings-ui-primitives`).
+ */
+export function SettingsFieldValue({
+	children,
+	className = "",
+}: {
+	children: ReactNode;
+	className?: string;
+}): JSX.Element {
+	return <div className={cx(fieldValueStyle, className)}>{children}</div>;
+}
+
 export function SettingsSectionHeading({
 	children,
 }: {

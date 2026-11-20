@@ -60,10 +60,10 @@ const cardBaseClass = css({
  * surface even if a shared hover rule is reintroduced upstream.
  */
 const cardSelectedClass = css({
-	borderColor: "border.strong",
+	borderColor: "text.accent",
 	backgroundColor: "surface.widget",
 	_hover: { backgroundColor: "surface.widget" },
-	boxShadow: "inset 0 0 0 1px var(--color-border-strong)",
+	boxShadow: "inset 0 0 0 1px var(--color-text-accent)",
 });
 const cardUnselectedClass = css({
 	borderColor: "border.default",

@@ -6,9 +6,9 @@
  * explicit output. No React, no DOM, no `state` access.
  */
 
+import type { WaveHandle } from "@/shared/cyclic-wave";
 import type { Camera, HandleAnchor } from "./camera";
 import { handleDotScreenPos } from "./camera";
-import type { WaveHandle } from "./cyclic-wave";
 
 export type Vec2 = { x: number; y: number };
 

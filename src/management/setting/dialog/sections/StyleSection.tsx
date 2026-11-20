@@ -9,16 +9,7 @@ import {
 import type { Settings } from "@/management/setting/models/settings";
 import { applyUiSettingsTheme } from "@/management/setting/ui-theme-sync";
 import { ColorField } from "@/shared/component/fields/ColorField";
-import { RangeField } from "@/shared/component/fields/RangeField";
-import { css } from "@/styled-system/css";
-
-const colorRowStyle = css({
-	display: "grid",
-	width: "full",
-	minWidth: 0,
-	gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-	gap: "var(--ty-shell-space)",
-});
+import { ColorOpacityField } from "@/shared/component/fields/ColorOpacityField";
 
 export function StyleSection(): JSX.Element {
 	const { settings, updateSettings, reportSaveError } = useSettings();
@@ -136,38 +127,22 @@ export function StyleSection(): JSX.Element {
 				/>
 			</SettingsField>
 			<SettingsField span={6}>
-				<div className={colorRowStyle}>
-					<ColorField
-						label="Widget Background"
-						value={widgetBg}
-						onChange={handleWidgetBgColorChange}
-					/>
-					<RangeField
-						label="Opacity"
-						unit="%"
-						min={0}
-						max={100}
-						value={widgetOpacity}
-						onChange={handleWidgetOpacityChange}
-					/>
-				</div>
+				<ColorOpacityField
+					label="Widget Background"
+					color={widgetBg}
+					onColorChange={handleWidgetBgColorChange}
+					opacity={widgetOpacity}
+					onOpacityChange={handleWidgetOpacityChange}
+				/>
 			</SettingsField>
 			<SettingsField span={6}>
-				<div className={colorRowStyle}>
-					<ColorField
-						label="Panel Background"
-						value={panelBg}
-						onChange={handlePanelBgColorChange}
-					/>
-					<RangeField
-						label="Opacity"
-						unit="%"
-						min={0}
-						max={100}
-						value={panelOpacity}
-						onChange={handlePanelOpacityChange}
-					/>
-				</div>
+				<ColorOpacityField
+					label="Panel Background"
+					color={panelBg}
+					onColorChange={handlePanelBgColorChange}
+					opacity={panelOpacity}
+					onOpacityChange={handlePanelOpacityChange}
+				/>
 			</SettingsField>
 		</SettingsGrid>
 	);

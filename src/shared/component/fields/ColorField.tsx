@@ -22,7 +22,7 @@ const grid = css({
 	display: "grid",
 	width: "full",
 	minWidth: 0,
-	gridTemplateColumns: "8 minmax(0, 1fr)",
+	gridTemplateColumns: "var(--ty-space-8) minmax(0, 1fr)",
 	alignItems: "center",
 	gap: "2",
 });
@@ -58,7 +58,7 @@ export function ColorField({
 					value={value}
 					onChange={(e) => onChange(e.target.value)}
 					aria-label={label ? `${label} value` : "Color value"}
-					uiSize="sm"
+					uiSize="md"
 					className={inputFull}
 				/>
 			</div>

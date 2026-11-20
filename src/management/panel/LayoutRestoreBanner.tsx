@@ -33,11 +33,11 @@ const banner = css({
 	borderBottomStyle: "solid",
 	borderBottomColor: "border.subtle",
 	color: "text.primary",
-	fontSize: "shell-sm",
+	fontSize: "shell-text-sm",
 });
 
 const heading = css({
-	fontSize: "shell-sm",
+	fontSize: "shell-text-sm",
 	fontWeight: "bold",
 	color: "text.primary",
 });
@@ -49,7 +49,7 @@ const body = css({
 
 const detail = css({
 	fontFamily: "mono",
-	fontSize: "shell-sm",
+	fontSize: "shell-text-sm",
 	color: "text.muted",
 	overflowWrap: "anywhere",
 });

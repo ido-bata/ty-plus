@@ -68,7 +68,7 @@ const footerRowStyle = css({
 
 const footerHintStyle = css({
 	minWidth: 0,
-	fontSize: "shell-text-xs",
+	fontSize: "shell-text-sm",
 	lineHeight: "snug",
 	color: "text.muted",
 });
@@ -100,7 +100,7 @@ const catalogIntroPanelStyle = css({
 const footerErrorStyle = css({
 	minWidth: 0,
 	marginBottom: "2",
-	fontSize: "shell-text-xs",
+	fontSize: "shell-text-sm",
 	lineHeight: "snug",
 	color: "status.error",
 });

@@ -58,7 +58,7 @@ const monoTextClass = css({
 	lineHeight: "none",
 });
 const emojiTextClass = css({
-	fontSize: "base",
+	fontSize: "md",
 	lineHeight: "none",
 });
 

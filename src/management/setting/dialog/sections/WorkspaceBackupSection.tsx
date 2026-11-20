@@ -1,7 +1,10 @@
 import { type JSX, useCallback, useEffect, useRef, useState } from "react";
 import { cacheCepShellThemeOverridesFromCssText } from "@/management/panel/theme/storage";
 import { enqueueThemeWrite } from "@/management/panel/theme/write-queue";
-import { SettingsGrid } from "@/management/setting/dialog/layout/SettingsGrid";
+import {
+	SettingsField,
+	SettingsGrid,
+} from "@/management/setting/dialog/layout/SettingsGrid";
 import {
 	readBackgroundJson,
 	readNJson,
@@ -16,7 +19,6 @@ import {
 } from "@/management/storage";
 import { Button } from "@/shared/component/controls/Button";
 import { Textarea } from "@/shared/component/fields/Textarea";
-import { cx } from "@/shared/util/cx";
 import { css } from "@/styled-system/css";
 
 type WorkspaceBackupBundle = {
@@ -32,29 +34,6 @@ type WorkspaceBackupBundle = {
 const mutedTextStyle = css({
 	fontSize: "text-xs",
 	color: "text.muted",
-});
-
-const bundleContainerStyle = css({
-	gridColumn: "span 6 / span 6",
-});
-
-const buttonsRowStyle = css({
-	gridColumn: "span 6 / span 6",
-	display: "grid",
-	width: "full",
-	minWidth: 0,
-	gridTemplateColumns: "repeat(6, minmax(0, 1fr))",
-	gap: "var(--ty-shell-space)",
-});
-
-const exportButtonStyle = css({
-	gridColumn: "span 3 / span 3",
-	width: "full",
-});
-
-const importButtonStyle = css({
-	gridColumn: "span 3 / span 3",
-	width: "full",
 });
 
 export function WorkspaceBackupSection(): JSX.Element {
@@ -191,37 +170,35 @@ export function WorkspaceBackupSection(): JSX.Element {
 
 	return (
 		<SettingsGrid>
-			<p className={cx(bundleContainerStyle, mutedTextStyle)}>
-				Export or import your workspace configuration.
-			</p>
-			<div className={bundleContainerStyle} data-settings-backup-bundle>
-				<Textarea
-					value={bundleText}
-					onChange={(e) => setBundleText(e.target.value)}
-					rows={8}
-					placeholder="Workspace backup JSON"
-				/>
-			</div>
-			<div className={buttonsRowStyle}>
-				<Button
-					onClick={handleExport}
-					variant="default"
-					uiSize="sm"
-					className={exportButtonStyle}
-				>
+			<SettingsField span={6}>
+				<p className={mutedTextStyle}>
+					Export or import your workspace configuration.
+				</p>
+			</SettingsField>
+			<SettingsField span={6}>
+				<div data-settings-backup-bundle>
+					<Textarea
+						value={bundleText}
+						onChange={(e) => setBundleText(e.target.value)}
+						rows={8}
+						placeholder="Workspace backup JSON"
+					/>
+				</div>
+			</SettingsField>
+			<SettingsField span={3}>
+				<Button onClick={handleExport} variant="default" uiSize="md" fullWidth>
 					Export
 				</Button>
-				<Button
-					onClick={handleImport}
-					variant="default"
-					uiSize="sm"
-					className={importButtonStyle}
-				>
+			</SettingsField>
+			<SettingsField span={3}>
+				<Button onClick={handleImport} variant="default" uiSize="md" fullWidth>
 					Import
 				</Button>
-			</div>
+			</SettingsField>
 			{status ? (
-				<p className={cx(bundleContainerStyle, mutedTextStyle)}>{status}</p>
+				<SettingsField span={6}>
+					<p className={mutedTextStyle}>{status}</p>
+				</SettingsField>
 			) : null}
 		</SettingsGrid>
 	);

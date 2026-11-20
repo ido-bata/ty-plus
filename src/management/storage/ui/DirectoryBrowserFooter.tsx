@@ -35,7 +35,7 @@ const summaryWrapClass = css({
 	display: "flex",
 	alignItems: "center",
 	gap: "3",
-	fontSize: "--ty-shell-text-size-sm",
+	fontSize: "shell-text-sm",
 	color: "text.muted",
 });
 

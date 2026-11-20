@@ -59,8 +59,10 @@ const saveErrorBannerStyle = css({
 	borderRadius: "1",
 	borderWidth: "1px",
 	borderStyle: "solid",
-	borderColor: "colorMix(in srgb, status.error 30%, transparent)",
-	backgroundColor: "colorMix(in srgb, status.error 10%, transparent)",
+	borderColor:
+		"color-mix(in srgb, var(--colors-status-error) 30%, transparent)",
+	backgroundColor:
+		"color-mix(in srgb, var(--colors-status-error) 10%, transparent)",
 	padding: "2",
 	fontSize: "text-xs",
 	color: "status.error",
@@ -75,7 +77,7 @@ const loadingContainerStyle = css({
 });
 
 const loadingTextStyle = css({
-	fontSize: "text-sm",
+	fontSize: "sm",
 	color: "text.muted",
 });
 
