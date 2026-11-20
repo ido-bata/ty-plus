@@ -297,9 +297,7 @@ describe("Preset List with the cloud gateway not booted (#145)", () => {
 		expect(
 			screen.getByText(/Cloud features are not active in this session/),
 		).toBeInTheDocument();
-		expect(
-			screen.queryByText(/gateway boot was not invoked/),
-		).toBeNull();
+		expect(screen.queryByText(/gateway boot was not invoked/)).toBeNull();
 	});
 
 	it("drops the cloud notice once the gateway is live", async () => {
