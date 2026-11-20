@@ -81,7 +81,11 @@
 			"frequency": "Frequence",
 			"bias": "Biais",
 			"damping": "Amortissement"
-		}
+		},
+		"update": "Mettre a jour",
+		"unapply": "Supprimer la boucle",
+		"applied": "Applique",
+		"conflict": "Modifie dans AE"
 	},
 	"menu": {
 		"name": "Menu",

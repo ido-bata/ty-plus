@@ -2076,6 +2076,255 @@ const buildLoopReplicatedPoints = (
 // multi-point shape), fall through to applyEasing so the caller still
 // gets the same single-cycle behavior they would have without this
 // command.
+// ---------------------------------------------------------------------------
+// Applied loop bookkeeping.
+//
+// The sidecar is the authority for "what was applied": applyLoopEasing
+// snapshots the keyframes it replaces, so a loop can be re-opened, updated
+// and undone without guessing from the current keyframes.
+// ---------------------------------------------------------------------------
+
+const easingPropertyId = (prop: any): string => {
+	try {
+		const parent = prop.parentProperty;
+		const layerName = parent && parent.name ? parent.name : "";
+		return layerName + "." + prop.matchName;
+	} catch (_e) {
+		return "";
+	}
+};
+
+const snapshotEasingKeyframes = (prop: any, start: number, end: number): any[] => {
+	const out: any[] = [];
+	for (let i = 1; i <= prop.numKeys; i += 1) {
+		const time = Number(prop.keyTime(i));
+		if (time < start - 0.001 || time > end + 0.001) continue;
+		let inEase: any[] = [];
+		let outEase: any[] = [];
+		try {
+			const ins = prop.keyInTemporalEase(i);
+			for (let d = 0; d < ins.length; d += 1)
+				inEase.push({ speed: ins[d].speed, influence: ins[d].influence });
+			const outs = prop.keyOutTemporalEase(i);
+			for (let d = 0; d < outs.length; d += 1)
+				outEase.push({ speed: outs[d].speed, influence: outs[d].influence });
+		} catch (_e) {
+			inEase = [];
+			outEase = [];
+		}
+		let interpolationType = 6612;
+		try {
+			interpolationType = prop.keyInterpolationType(i);
+		} catch (_e) {
+			interpolationType = 6612;
+		}
+		out.push({
+			time,
+			value: prop.keyValue(i),
+			inEase,
+			outEase,
+			interpolationType,
+		});
+	}
+	return out;
+};
+
+const loopKeyframesOf = (prop: any): any[] => {
+	const out: any[] = [];
+	for (let i = 1; i <= prop.numKeys; i += 1) {
+		out.push({ time: Number(prop.keyTime(i)), value: prop.keyValue(i) });
+	}
+	return out;
+};
+
+const sameLoopValue = (a: any, b: any): boolean => {
+	const av = a instanceof Array ? a : [a];
+	const bv = b instanceof Array ? b : [b];
+	if (av.length !== bv.length) return false;
+	for (let i = 0; i < av.length; i += 1) {
+		if (Math.abs(Number(av[i]) - Number(bv[i])) > 0.000001) return false;
+	}
+	return true;
+};
+
+/** Detect a manual edit made after the loop was applied. */
+const loopRecordConflict = (record: any, prop: any): boolean => {
+	const written = record.writtenKeyframes || [];
+	const current = loopKeyframesOf(prop);
+	const range = record.range || { start: 0, end: 0 };
+	const inRange: any[] = [];
+	for (let i = 0; i < current.length; i += 1) {
+		const time = current[i].time;
+		if (time < range.start - 0.001 || time > range.end + 0.001) continue;
+		inRange.push(current[i]);
+	}
+	if (inRange.length !== written.length) return true;
+	for (let i = 0; i < written.length; i += 1) {
+		if (Math.abs(inRange[i].time - written[i].time) > 0.001) return true;
+		if (!sameLoopValue(inRange[i].value, written[i].value)) return true;
+	}
+	return false;
+};
+
+/** Restore the snapshotted keyframes (undo the applied loop). */
+const restoreEasingKeyframes = (prop: any, snapshot: any[]): number => {
+	if (!snapshot || snapshot.length === 0) return 0;
+	let start = Number.MAX_VALUE;
+	let end = -Number.MAX_VALUE;
+	for (let i = 0; i < snapshot.length; i += 1) {
+		if (snapshot[i].time < start) start = snapshot[i].time;
+		if (snapshot[i].time > end) end = snapshot[i].time;
+	}
+	for (let i = prop.numKeys; i >= 1; i -= 1) {
+		const time = Number(prop.keyTime(i));
+		if (time < start - 0.001 || time > end + 0.001) continue;
+		try {
+			prop.removeKey(i);
+		} catch (_e) {
+		}
+	}
+	for (let i = 0; i < snapshot.length; i += 1) {
+		const frame = snapshot[i];
+		let index = 0;
+		try {
+			index = prop.addKey(frame.time);
+			prop.setValueAtKey(index, frame.value);
+		} catch (_e) {
+			continue;
+		}
+		try {
+			const inArr: any[] = [];
+			for (let d = 0; d < frame.inEase.length; d += 1)
+				inArr.push(new KeyframeEase(frame.inEase[d].speed, frame.inEase[d].influence));
+			const outArr: any[] = [];
+			for (let d = 0; d < frame.outEase.length; d += 1)
+				outArr.push(new KeyframeEase(frame.outEase[d].speed, frame.outEase[d].influence));
+			prop.setTemporalEaseAtKey(index, inArr, outArr);
+			prop.setInterpolationTypeAtKey(index, frame.interpolationType, frame.interpolationType);
+		} catch (_e) {
+		}
+	}
+	return snapshot.length;
+};
+
+/** The applied-loop commands the Loop widget drives. */
+const captureLoopState = (payload: Record<string, unknown>) => {
+	const stored = (payload.records || []) as any[];
+	const records: any[] = [];
+	const conflicts: string[] = [];
+	if (stored.length > 0) {
+		const selected = collectEasingTargetProperties();
+		for (let i = 0; i < selected.length; i += 1) {
+			const prop = selected[i];
+			const id = easingPropertyId(prop);
+			for (let r = 0; r < stored.length; r += 1) {
+				const record = sidecar.records[r];
+				if (record.propertyId !== id) continue;
+				records.push(record);
+				if (loopRecordConflict(record, prop)) conflicts.push(id);
+			}
+		}
+	}
+	return { records, conflicts };
+};
+
+const unapplyLoopEasing = (payload: Record<string, unknown>) => {
+	const stored = (payload.records || []) as any[];
+	let restored = 0;
+	const restoredIds: string[] = [];
+	const conflicts: string[] = [];
+	const errors: string[] = [];
+	const selected = collectEasingTargetProperties();
+	for (let r = 0; r < stored.length; r += 1) {
+		const record = sidecar.records[r];
+		let prop = null;
+		for (let i = 0; i < selected.length; i += 1) {
+			if (easingPropertyId(selected[i]) === record.propertyId) {
+				prop = selected[i];
+				break;
+			}
+		}
+		if (!prop) continue;
+		if (loopRecordConflict(record, prop)) {
+			conflicts.push(record.propertyId);
+			continue;
+		}
+		restored += restoreEasingKeyframes(prop, record.originalKeyframes);
+		restoredIds.push(record.propertyId);
+	}
+	return { restored, restoredIds, conflicts, errors };
+};
+
+/** The time range the loop covers on a property. */
+const easingSelectionRange = (prop: any): { start: number; end: number } => {
+	let start = Number.MAX_VALUE;
+	let end = -Number.MAX_VALUE;
+	let keys: number[] = [];
+	try {
+		const raw = prop.selectedKeys;
+		if (raw && raw.length) {
+			for (let k = 0; k < raw.length; k += 1) keys.push(Number(raw[k]));
+		}
+	} catch (_e) {
+		keys = [];
+	}
+	if (keys.length < 2) {
+		for (let i = 1; i <= prop.numKeys; i += 1) keys.push(i);
+	}
+	for (let i = 0; i < keys.length; i += 1) {
+		let time = 0;
+		try {
+			time = Number(prop.keyTime(keys[i]));
+		} catch (_e) {
+			continue;
+		}
+		if (time < start) start = time;
+		if (time > end) end = time;
+	}
+	if (start > end) return { start: 0, end: 0 };
+	return { start, end };
+};
+
+/** Find a selected property by its id (layer name + property match name). */
+const findSelectedProperty = (id: string): any => {
+	const props = collectEasingTargetProperties();
+	for (let i = 0; i < props.length; i += 1) {
+		if (easingPropertyId(props[i]) === id) return props[i];
+	}
+	return null;
+};
+
+/** Keep the first snapshot of a property when a loop is updated. */
+const mergeLoopRecords = (
+	existing: any[],
+	incoming: any[],
+): any[] => {
+	const out: any[] = [];
+	for (let i = 0; i < incoming.length; i += 1) {
+		const record = incoming[i];
+		let previous = null;
+		for (let e = 0; e < existing.length; e += 1) {
+			const item = existing[e];
+			if (
+				item.propertyId === record.propertyId &&
+				Math.abs(item.range.start - record.range.start) < 0.001
+			) {
+				previous = item;
+				break;
+			}
+		}
+		out.push(
+			previous
+				? {
+						...record,
+						originalKeyframes: previous.originalKeyframes,
+					}
+				: record,
+		);
+	}
+	return out;
+};
+
 const applyLoopEasing = (payload: Record<string, unknown>) => {
 	const loopCount = Math.max(
 		0,
@@ -2091,6 +2340,25 @@ const applyLoopEasing = (payload: Record<string, unknown>) => {
 		// the user's intent (a curve in a single cycle) still applies.
 		return applyEasing(payload);
 	}
+	// Snapshot the keyframes the wave is about to replace so the loop can
+	// be re-opened and undone later.
+	const snapshots: any[] = [];
+	{
+		const props = collectEasingTargetProperties();
+		for (let i = 0; i < props.length; i += 1) {
+			const prop = props[i];
+			const range = easingSelectionRange(prop);
+			snapshots.push({
+				propertyId: easingPropertyId(prop),
+				range,
+				originalKeyframes: snapshotEasingKeyframes(
+					prop,
+					range.start,
+					range.end,
+				),
+			});
+		}
+	}
 	const replicated = buildLoopReplicatedPoints(
 		segmentPoints,
 		loopCount,
@@ -2105,7 +2373,39 @@ const applyLoopEasing = (payload: Record<string, unknown>) => {
 	// incoming handles. The outer keyframes' outgoing handles are kept
 	// as the user already had them.
 	loopPayload.targeting = "in";
-	return applyEasing(loopPayload);
+	const result = applyEasing(loopPayload);
+	{
+		const incoming: any[] = [];
+		for (let i = 0; i < snapshots.length; i += 1) {
+			const snapshot = snapshots[i];
+			const prop = findSelectedProperty(snapshot.propertyId);
+			if (!prop) continue;
+			const written: any[] = [];
+			const current = loopKeyframesOf(prop);
+			for (let k = 0; k < current.length; k += 1) {
+				const time = current[k].time;
+				if (
+					time < snapshot.range.start - 0.001 ||
+					time > snapshot.range.end + 0.001
+				)
+					continue;
+				written.push(current[k]);
+			}
+			incoming.push({
+				propertyId: snapshot.propertyId,
+				range: snapshot.range,
+				loopParams: payload.wave || {},
+				template: payload.points || [],
+				originalKeyframes: snapshot.originalKeyframes,
+				writtenKeyframes: written,
+				appliedAt: new Date().getTime(),
+			});
+		}
+		const merged = result && typeof result === "object" ? result : {};
+		(merged as any).applied = incoming;
+		return merged;
+	}
+	return result;
 };
 
 const captureEasingCurve = () => {
@@ -2292,6 +2592,12 @@ const hostBundle = {
 	),
 	applyLoopEasing: wrapCallable((payload: Record<string, unknown>) =>
 		applyLoopEasing(payload),
+	),
+	captureLoopState: wrapCallable((payload: Record<string, unknown>) =>
+		captureLoopState(payload),
+	),
+	unapplyLoopEasing: wrapCallable((payload: Record<string, unknown>) =>
+		unapplyLoopEasing(payload),
 	),
 	captureEasingCurve: wrapCallable(captureEasingCurve),
 	captureKeyframeValues: wrapCallable(captureKeyframeValues),

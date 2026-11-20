@@ -21,11 +21,13 @@ import {
 import { useWidgetRuntime } from "@/function/widget/runtime-context";
 import {
 	readWidgetStateJson,
+	resolveLoopAppliedStatePath,
 	writeWidgetStateJson,
 } from "@/management/storage/widget-state-store";
 import type { Layout } from "@/management/workspace/layout/grid-document";
 import { Button } from "@/shared/component";
 import { css } from "@/styled-system/css";
+import { type AppliedLoopRecord, templateRowsToPoints } from "./applied-state";
 import { MotionPreview } from "./MotionPreview";
 import { WaveEditor } from "./WaveEditor";
 
@@ -46,15 +48,23 @@ const DEFAULT_WAVE: CyclicWaveParams = {
 export function LoopWidget({
 	layout,
 	initialWave,
+	initialApplied,
 }: {
 	layout: Layout;
 	/** Seed for the wave parameters (Storybook/tests). */
 	initialWave?: CyclicWaveParams;
+	/** Seed for an already applied loop (Storybook/tests). */
+	initialApplied?: AppliedLoopRecord;
 }): JSX.Element {
 	const { t } = useTranslation("widgets");
 	const { host, setActiveWidgetInstanceId } = useWidgetRuntime();
 	const instanceId = String(layout.id ?? layout.widgetId ?? "").trim();
 	const [template, setTemplate] = useState<WavePoint[]>(DEFAULT_TEMPLATE);
+	const [applied, setApplied] = useState<AppliedLoopRecord | null>(
+		initialApplied ?? null,
+	);
+	const [records, setRecords] = useState<AppliedLoopRecord[]>([]);
+	const [conflict, setConflict] = useState(false);
 	const [wave, setWave] = useState<CyclicWaveParams>({
 		...DEFAULT_WAVE,
 		...initialWave,
@@ -78,10 +88,11 @@ export function LoopWidget({
 					point.hOut.y,
 				]),
 				wave,
+				appliedRecords: records,
 			},
 			{ instanceId },
 		).catch(() => {});
-	}, [instanceId, template, wave]);
+	}, [instanceId, records, template, wave]);
 	useEffect(() => {
 		if (!instanceId) return;
 		let cancelled = false;
@@ -99,6 +110,13 @@ export function LoopWidget({
 						})),
 					);
 				}
+				const storedRecords = raw.appliedRecords as
+					| AppliedLoopRecord[]
+					| undefined;
+				if (storedRecords && storedRecords.length > 0) {
+					setRecords(storedRecords);
+					setApplied(storedRecords[0]);
+				}
 				const storedWave = raw.wave as CyclicWaveParams | undefined;
 				if (storedWave && typeof storedWave.cycles === "number") {
 					setWave({ ...DEFAULT_WAVE, ...storedWave });
@@ -112,11 +130,65 @@ export function LoopWidget({
 			cancelled = true;
 		};
 	}, [instanceId]);
+	/** Re-read the applied loop of the current selection (sidecar). */
+	const capture = useCallback(async () => {
+		try {
+			const sidecarPath = await resolveLoopAppliedStatePath(window);
+			if (!sidecarPath) return;
+			const result = (await host("captureLoopState", [{ records }])) as
+				| { value?: { records?: AppliedLoopRecord[]; conflicts?: string[] } }
+				| undefined;
+			const matched = result?.value?.records ?? [];
+			const record = matched[0];
+			if (!record) {
+				setApplied(null);
+				setConflict(false);
+				return;
+			}
+			setApplied(record);
+			setConflict((result?.value?.conflicts ?? []).length > 0);
+			setWave({
+				...DEFAULT_WAVE,
+				...record.loopParams,
+				mode: record.loopParams.mode === "cycle" ? "cycle" : "pingpong",
+			});
+			setTemplate(templateRowsToPoints(record.template ?? []));
+		} catch (error) {
+			console.error("[ty-plus:widget:loop] capture failed", error);
+		}
+	}, [host, records]);
+
+	/** Undo the applied loop and restore the original keyframes. */
+	const unapply = useCallback(async () => {
+		if (conflict) return;
+		setStatus("busy");
+		try {
+			const sidecarPath = await resolveLoopAppliedStatePath(window);
+			if (!sidecarPath) return;
+			const result = (await host("unapplyLoopEasing", [{ records }])) as
+				| { value?: { restored?: number; conflicts?: string[] } }
+				| undefined;
+			const conflicts = result?.value?.conflicts ?? [];
+			if (conflicts.length > 0) {
+				setConflict(true);
+				setStatus("error");
+				return;
+			}
+			setApplied(null);
+			setConflict(false);
+			setStatus("idle");
+		} catch (error) {
+			console.error("[ty-plus:widget:loop] unapply failed", error);
+			setStatus("error");
+		}
+	}, [conflict, host, records]);
+
 	const apply = useCallback(async () => {
 		if (!instanceId) return;
 		setActiveWidgetInstanceId(instanceId);
 		setStatus("busy");
 		try {
+			const sidecarPath = await resolveLoopAppliedStatePath(window);
 			const result = (await host("applyLoopEasing", [
 				{
 					version: 1,
@@ -135,6 +207,13 @@ export function LoopWidget({
 					targeting: "in",
 				},
 			])) as { value?: { errors?: unknown } } | undefined;
+			const appliedRecords = (
+				result?.value as { applied?: AppliedLoopRecord[] }
+			)?.applied;
+			if (appliedRecords && appliedRecords.length > 0) {
+				setRecords(appliedRecords);
+				setApplied(appliedRecords[0]);
+			}
 			const errors = result?.value?.errors;
 			if (Array.isArray(errors) && errors.length > 0) {
 				console.error("[ty-plus:widget:loop] apply reported errors", errors);
@@ -147,6 +226,12 @@ export function LoopWidget({
 			setStatus("error");
 		}
 	}, [host, instanceId, setActiveWidgetInstanceId, template, wave]);
+	// Re-read the applied loop when the widget is shown or re-focused: the
+	// user may have selected another property or closed the panel.
+	useEffect(() => {
+		void capture();
+	}, [capture]);
+
 	const updateTemplate = useCallback(
 		(points: WavePoint[]) => {
 			setTemplate(points);
@@ -194,6 +279,9 @@ export function LoopWidget({
 				color: "text.primary",
 				userSelect: "none",
 			})}
+			onFocusCapture={() => {
+				void capture();
+			}}
 		>
 			<div
 				className={css({
@@ -212,6 +300,15 @@ export function LoopWidget({
 				<span className={css({ whiteSpace: "nowrap" })}>
 					{t("loop.cycles")} {wave.cycles}
 				</span>
+				{applied ? (
+					<span
+						className={css({
+							color: conflict ? "text.danger" : "text.muted",
+						})}
+					>
+						{conflict ? t("loop.conflict") : t("loop.applied")}
+					</span>
+				) : null}
 				<span className={css({ marginLeft: "auto", whiteSpace: "nowrap" })}>
 					{currentValue === null ? "" : `${(currentValue * 100).toFixed(0)}%`}
 				</span>
@@ -276,15 +373,28 @@ export function LoopWidget({
 					variant="primary"
 					uiSize="sm"
 					fullWidth
-					disabled={status === "busy"}
+					disabled={status === "busy" || conflict}
 					data-ws-action="loop-apply-current"
 					data-tutorial-target="loop-apply"
 					onClick={() => {
 						void apply();
 					}}
 				>
-					{t("easing.apply")}
+					{applied ? t("loop.update") : t("easing.apply")}
 				</Button>
+				{applied ? (
+					<Button
+						variant="outline"
+						uiSize="sm"
+						disabled={status === "busy" || conflict}
+						data-ws-action="loop-unapply-current"
+						onClick={() => {
+							void unapply();
+						}}
+					>
+						{t("loop.unapply")}
+					</Button>
+				) : null}
 			</div>
 		</div>
 	);

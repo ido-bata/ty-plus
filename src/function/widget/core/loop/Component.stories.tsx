@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-
+import type { AppliedLoopRecord } from "@/function/widget/core/loop/applied-state";
 import { LoopWidget } from "@/function/widget/core/loop/Component";
 import type { CyclicWaveParams } from "@/function/widget/curve-editor/cyclic-wave";
 import type { Layout } from "@/management/workspace/layout/grid-document";
@@ -19,6 +19,7 @@ type Args = {
 	widthPx: number;
 	heightPx: number;
 	wave: CyclicWaveParams;
+	applied?: AppliedLoopRecord;
 };
 
 const baseWave: CyclicWaveParams = {
@@ -41,7 +42,11 @@ const meta = {
 			className={css({ padding: "3" })}
 			style={{ width: args.widthPx, height: args.heightPx }}
 		>
-			<LoopWidget layout={layout} initialWave={args.wave} />
+			<LoopWidget
+				layout={layout}
+				initialWave={args.wave}
+				initialApplied={args.applied}
+			/>
 		</div>
 	),
 } satisfies Meta<Args>;
@@ -78,4 +83,29 @@ export const HighFrequency: Story = {
 /** Narrow panel: the compact layout must stay usable. */
 export const Narrow: Story = {
 	args: { widthPx: 170, heightPx: 260 },
+};
+
+const appliedRecord: AppliedLoopRecord = {
+	propertyId: "Layer 1.Position",
+	range: { start: 0, end: 2 },
+	loopParams: {
+		cycles: 3,
+		amplitude: 1,
+		damping: 1,
+		bias: 0,
+		mode: "pingpong",
+	},
+	template: [
+		[0, 0, 0, 0, 0.15, 0],
+		[0.5, 0.92, -0.2, 0.2, 0.2, 0.2],
+		[1, 1, -0.15, 0, 0, 0],
+	],
+	originalKeyframes: [],
+	writtenKeyframes: [],
+	appliedAt: 0,
+};
+
+/** A loop that is already applied to the AE selection. */
+export const Applied: Story = {
+	args: { applied: appliedRecord },
 };
