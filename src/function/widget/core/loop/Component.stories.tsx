@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { expect } from "storybook/test";
 
 import { LoopWidget } from "@/function/widget/core/loop/Component";
 import type { CyclicWaveParams } from "@/function/widget/curve-editor/cyclic-wave";

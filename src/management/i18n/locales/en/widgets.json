@@ -75,7 +75,13 @@
 		"name": "Loop",
 		"cycles": "Cycles",
 		"decrement": "Decrease loop cycles",
-		"increment": "Increase loop cycles"
+		"increment": "Increase loop cycles",
+		"handle": {
+			"easing": "Easing",
+			"frequency": "Frequency",
+			"bias": "Bias",
+			"damping": "Damping"
+		}
 	},
 	"menu": {
 		"name": "Menu",

@@ -75,7 +75,13 @@
 		"name": "Boucle",
 		"cycles": "Cycles",
 		"decrement": "Diminuer les cycles",
-		"increment": "Augmenter les cycles"
+		"increment": "Augmenter les cycles",
+		"handle": {
+			"easing": "Courbe",
+			"frequency": "Frequence",
+			"bias": "Biais",
+			"damping": "Amortissement"
+		}
 	},
 	"menu": {
 		"name": "Menu",

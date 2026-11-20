@@ -75,7 +75,13 @@
 		"name": "ループ",
 		"cycles": "サイクル",
 		"decrement": "サイクルを減らす",
-		"increment": "サイクルを増やす"
+		"increment": "サイクルを増やす",
+		"handle": {
+			"easing": "イージング",
+			"frequency": "周期数",
+			"bias": "偏り",
+			"damping": "減衰"
+		}
 	},
 	"menu": {
 		"name": "メニュー",

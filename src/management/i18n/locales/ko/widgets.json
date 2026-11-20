@@ -75,7 +75,13 @@
 		"name": "루프",
 		"cycles": "사이클",
 		"decrement": "사이클 줄이기",
-		"increment": "사이클 늘리기"
+		"increment": "사이클 늘리기",
+		"handle": {
+			"easing": "이징",
+			"frequency": "주파수",
+			"bias": "편향",
+			"damping": "감쇠"
+		}
 	},
 	"menu": {
 		"name": "메뉴",

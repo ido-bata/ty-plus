@@ -75,7 +75,13 @@
 		"name": "循环",
 		"cycles": "循环",
 		"decrement": "减少循环",
-		"increment": "增加循环"
+		"increment": "增加循环",
+		"handle": {
+			"easing": "缓动",
+			"frequency": "频率",
+			"bias": "偏置",
+			"damping": "阻尼"
+		}
 	},
 	"menu": {
 		"name": "菜单",
