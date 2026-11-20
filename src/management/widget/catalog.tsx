@@ -7,6 +7,7 @@ import {
 	LayoutGrid,
 	Lock,
 	Menu,
+	Repeat,
 	Search,
 	TrendingUp,
 	Type,
@@ -56,6 +57,7 @@ const WIDGET_ICONS: Record<string, LucideIcon> = {
 	Zap,
 	FolderTree,
 	Type,
+	Repeat,
 };
 
 const emptyResultsStyle = css({
@@ -267,7 +269,8 @@ const listboxStyle = css({
 	borderWidth: "1px",
 	borderStyle: "solid",
 	borderColor: "border.default",
-	backgroundColor: "colorMix(in srgb, surface.widget 35%, transparent)",
+	backgroundColor:
+		"color-mix(in srgb, var(--colors-surface-widget) 35%, transparent)",
 	padding: "2",
 });
 

@@ -564,15 +564,22 @@ describe("ExtendScript host bundle command wrappers", () => {
 				helperIndex,
 				helperIndex + 4000,
 			);
-			// The helper scales handle x-offsets by 1/loopCount so each
-			// cycle's segment-relative handle coordinates stay correct.
+			// The helper applies the cyclic wave parameters (amplitude,
+			// damping, bias, mode) from the payload.
 			expect(body).toMatch(/loopCount/);
-			expect(body).toMatch(/scale/);
+			expect(body).toMatch(/amplitude/);
+			expect(body).toMatch(/damping/);
+			expect(body).toMatch(/bias/);
+			expect(body).toMatch(/mode/);
+			// Handle offsets stay UNSCALED: AE reads the ease influence
+			// relative to the segment, so scaling them (the old rule) made
+			// every cycle's shape drift.
+			expect(body).not.toMatch(/pnt\[2\] \* scale/);
 			// It must skip the first point of cycle 0 (== k1) and the
 			// last point of the final cycle (== k2) so we don't double-
 			// write the outer keyframes.
 			expect(body).toMatch(/i === 0 && j === 0/);
-			expect(body).toMatch(/i === loopCount - 1 && j === last/);
+			expect(body).toMatch(/i === cycles - 1 && j === segmentPoints.length - 1/);
 		});
 
 		test("applyLoopEasing falls back to applyEasing when loopCount < 2", () => {

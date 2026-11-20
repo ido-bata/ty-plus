@@ -2,14 +2,14 @@ import { describe, expect, it } from "vitest";
 import {
 	computeCamera,
 	handleDotScreenPos,
-} from "@/function/widget/core/easing/camera";
+} from "@/function/widget/curve-editor/camera";
 import {
 	applyMirror,
 	findNearestDragTarget,
 	isPointOrHandleHit,
 	resolveHandleMove,
 	resolvePullOutHandle,
-} from "@/function/widget/core/easing/gestures";
+} from "@/function/widget/curve-editor/gestures";
 
 describe("applyMirror", () => {
 	it("returns the 180° mirror of a non-zero vector", () => {

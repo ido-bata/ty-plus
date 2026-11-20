@@ -168,4 +168,37 @@ describe("EasingWidget canvas gestures", () => {
 		await new Promise((resolve) => setTimeout(resolve, 50));
 		expect(hostCalls(host, "applyEasing")).toHaveLength(0);
 	});
+
+	it("abbreviates the mode labels when the toolbar is narrow", () => {
+		const widthSpy = vi
+			.spyOn(Element.prototype, "clientWidth", "get")
+			.mockReturnValue(120);
+		const rectSpy = vi
+			.spyOn(Element.prototype, "getBoundingClientRect")
+			.mockReturnValue({
+				width: 300,
+				height: 0,
+				top: 0,
+				left: 0,
+				right: 300,
+				bottom: 0,
+				x: 0,
+				y: 0,
+				toJSON: () => ({}),
+			});
+		const { container } = renderEasing();
+		const buttons = [
+			...container.querySelectorAll<HTMLButtonElement>(
+				"[role='toolbar'] button",
+			),
+		];
+		expect(buttons.map((button) => button.textContent)).toEqual([
+			"C",
+			"B",
+			"E",
+		]);
+		expect(buttons[0].getAttribute("title")).toBe("Curve");
+		widthSpy.mockRestore();
+		rectSpy.mockRestore();
+	});
 });

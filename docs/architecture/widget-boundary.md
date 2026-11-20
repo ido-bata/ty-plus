@@ -44,17 +44,20 @@ function/widget/contract   →  function-local implementation details only
 
 `function/widget/` の widget leaf は UI コンポーネント、コマンドの振る舞い、機能ローカルの型を所有する。management 側のシステム (registry、workspace、placement) は、management のオーケストレーションと機能実装の間を疎結合に保つため、manifest index 経由でのみ widget にアクセスしなければならない。
 
-## Easing Widget: Loop モード
 
-`function/widget/core/easing` は `Mode` 拡張として `"loop"` を持つ。
-loop モードは **in ターゲットにのみ** 意味を持つ — `applyTargetingRef` が
-`"both"` / `"out"` のときは単一 cycle の適用にフォールバックする。
-bounce / elastic モードでは loop トグルを disable し、`applyEasing` 経路のみ
-が走る。loop 経路はホスト側に専用の `applyLoopEasing` コマンドを追加する:
+## Loop Widget
 
-- 1 アクションで `(k1, k2)` 区間内に `loopCount` cycle の同形 curve を再生成
-- `loopCount` は整数 1..N (host 側でクランプ)
-- `cubic` / `points` / `labelColor` / `detectedType` の payload shape は `applyEasing` と共通
+`function/widget/core/loop` は loop 適用専用の独立 widget である。
+easing widget の `Mode` から `"loop"` は削除済みで、loop はモードではなく
+widget type として存在する。
+
+- curve editor の実装は `function/widget/curve-editor` に共有され、
+  `variant` prop で easing / loop を切り替える
+- loop widget は cycle 数を指定し、`applyLoopEasing` で **in ターゲットにのみ**
+  適用する (host 側が `targeting` を `"in"` に固定する)
+- `loopCount` は整数 2..16 (host 側でもクランプ)
+- `cubic` / `points` / `labelColor` / `detectedType` の payload shape は
+  `applyEasing` と共通
 - host 実装は `src/management/ae/jsx/host-bundle.ext.ts` の既存 multi-point
   apply 経路を `loopCount` 回複製する形に拡張する。React 側で point 配列を
   膨らませて送る形にはしない (handle の segment-relative 座標が歪むため)

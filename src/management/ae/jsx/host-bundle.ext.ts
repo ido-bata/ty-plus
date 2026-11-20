@@ -1991,29 +1991,62 @@ const applyEasing = (payload: Record<string, unknown>) => {
 const buildLoopReplicatedPoints = (
 	segmentPoints: number[][],
 	loopCount: number,
+	wave?: Record<string, unknown>,
 ): number[][] => {
 	if (segmentPoints.length < 2) return segmentPoints;
 	if (loopCount < 2) return segmentPoints;
-	const last = segmentPoints.length - 1;
+	const cycles = Math.max(1, Math.round(loopCount));
+	const amplitude = wave && typeof wave.amplitude === "number" ? wave.amplitude : 1;
+	const damping = wave && typeof wave.damping === "number" ? wave.damping : 1;
+	const bias = wave && typeof wave.bias === "number" ? wave.bias : 0;
+	const oneWay = !!wave && wave.mode === "cycle";
+	const share = Math.max(0.05, Math.min(0.95, 0.5 + bias / 2));
+	const first = segmentPoints[0];
+	const lastPoint = segmentPoints[segmentPoints.length - 1];
+	const span = lastPoint[0] - first[0];
+	const chordAt = (x: number): number => {
+		if (Math.abs(span) < 1e-9) return first[1];
+		const ratio = Math.max(0, Math.min(1, (x - first[0]) / span));
+		return first[1] + (lastPoint[1] - first[1]) * ratio;
+	};
 	const out: number[][] = [];
-	for (let i = 0; i < loopCount; i += 1) {
-		const offset = i / loopCount;
-		const scale = 1 / loopCount;
+	for (let i = 0; i < cycles; i += 1) {
+		const decay = Math.pow(damping, i);
+		const hasReturn = !oneWay && i < cycles - 1;
+		const leg = hasReturn ? share : 1;
 		for (let j = 0; j < segmentPoints.length; j += 1) {
-			// Skip the original segment endpoints when they coincide with
-			// the outer keyframes (k1 for cycle 0 / p0, k2 for the final
-			// cycle / p_last). All other points are emitted so the curve
-			// is piecewise continuous across cycle boundaries.
-			if (i === 0 && j === 0) continue;
-			if (i === loopCount - 1 && j === last) continue;
 			const pnt = segmentPoints[j];
+			const chord = chordAt(pnt[0]);
+			const deviation = (pnt[1] - chord) * amplitude * decay;
+			// The attack leg. The handle offsets stay unscaled: AE reads the
+			// ease influence relative to the segment, so scaling them would
+			// distort the shape (the previous host rule scaled them by
+			// 1 / loopCount).
+			const isOuterStart = i === 0 && j === 0;
+			const isOuterEnd =
+				i === cycles - 1 && j === segmentPoints.length - 1;
+			if (!isOuterStart && !isOuterEnd) {
+				out.push([
+					(i + pnt[0] * leg) / cycles,
+					chord + deviation,
+					pnt[2],
+					pnt[3],
+					pnt[4],
+					pnt[5],
+				]);
+			}
+			if (!hasReturn) continue;
+			// The mirrored return leg (the template traversed backwards).
+			const back = segmentPoints[segmentPoints.length - 1 - j];
+			const backChord = chordAt(back[0]);
+			const backDeviation = (back[1] - backChord) * amplitude * decay;
 			out.push([
-				offset + clampEasingNumber(pnt[0], 0) * scale,
-				pnt[1],
-				pnt[2] * scale,
-				pnt[3],
-				pnt[4] * scale,
-				pnt[5],
+				(i + share + (1 - back[0]) * (1 - share)) / cycles,
+				backChord - backDeviation,
+				back[4],
+				-back[5],
+				back[2],
+				-back[3],
 			]);
 		}
 	}
@@ -2043,7 +2076,11 @@ const applyLoopEasing = (payload: Record<string, unknown>) => {
 		// the user's intent (a curve in a single cycle) still applies.
 		return applyEasing(payload);
 	}
-	const replicated = buildLoopReplicatedPoints(segmentPoints, loopCount);
+	const replicated = buildLoopReplicatedPoints(
+		segmentPoints,
+		loopCount,
+		payload.wave as Record<string, unknown> | undefined,
+	);
 	const loopPayload: Record<string, unknown> = {
 		...payload,
 		points: replicated,

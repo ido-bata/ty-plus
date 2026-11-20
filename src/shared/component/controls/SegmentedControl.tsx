@@ -2,7 +2,14 @@ import type { ReactElement } from "react";
 import { cx } from "@/shared/util/cx";
 import { css } from "@/styled-system/css";
 
-type SegmentedOption = { value: string; label: string };
+type SegmentedOption = {
+	value: string;
+	label: string;
+	/** Tooltip shown on the button (used when the label is abbreviated). */
+	title?: string;
+	/** Accessible name override (full label when the visible one is short). */
+	ariaLabel?: string;
+};
 
 export type SegmentedControlProps = {
 	options: SegmentedOption[];
@@ -37,6 +44,8 @@ const buttonBase = css({
 	flex: 1,
 	borderRadius: "shell-sm",
 	paddingInline: "2",
+	overflow: "hidden",
+	textOverflow: "ellipsis",
 	fontSize: "shell-text-sm",
 	lineHeight: "tight",
 	transitionProperty: "colors",
@@ -88,6 +97,8 @@ export function SegmentedControl(props: SegmentedControlProps): ReactElement {
 								: (unselectedClassName ?? buttonUnselected),
 							buttonClassName,
 						)}
+						title={opt.title}
+						aria-label={opt.ariaLabel}
 						onClick={() => onChange(opt.value)}
 					>
 						{opt.label}

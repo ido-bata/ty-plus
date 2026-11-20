@@ -22,6 +22,7 @@ export type WidgetStateName =
 	| "directory-browser"
 	| "easing"
 	| "info"
+	| "loop"
 	| "menu"
 	| "quick-actions"
 	| "selection";

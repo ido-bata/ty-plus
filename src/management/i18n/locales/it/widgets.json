@@ -9,6 +9,7 @@
 		"fieldsetLegend": "Layout browser widget",
 		"descriptions": {
 			"easing": "Modifica e applica curve easing per preimpostazioni e animazione layer.",
+			"loop": "Modifica una curva a ciclo singolo e applicala ripetutamente ai keyframe selezionati.",
 			"menu": "Apri comandi area di lavoro, azioni layout e dialoghi da una tile.",
 			"align": "Allinea preimpostazioni o layer selezionati a posizioni comuni sulla griglia.",
 			"anchor-point": "Collocare un'ancora nominata per riferimenti layout e flussi di snapping.",
@@ -39,14 +40,8 @@
 		"reverse": "Reverse",
 		"mode": {
 			"curve": "Curve",
-			"loop": "Loop",
 			"bounce": "Bounce",
 			"elastic": "Elastic"
-		},
-		"loop": {
-			"cycles": "Cicli",
-			"decrement": "Diminuisci cicli",
-			"increment": "Aumenta cicli"
 		},
 		"options": {
 			"mode": "Mode",
@@ -75,6 +70,12 @@
 			"easeIn": "Ease in",
 			"easeInOut": "Ease in/out"
 		}
+	},
+	"loop": {
+		"name": "Loop",
+		"cycles": "Cicli",
+		"decrement": "Diminuisci cicli",
+		"increment": "Aumenta cicli"
 	},
 	"menu": {
 		"name": "Menu",
@@ -283,6 +284,19 @@
 				"applyCurve": {
 					"title": "Applicala",
 					"body": "Applica la curva al preset o al layer selezionato."
+				}
+			}
+		},
+		"loop": {
+			"summary": "Modifica una curva di easing in loop e applicala ai keyframe selezionati.",
+			"steps": {
+				"chooseCycle": {
+					"title": "Definisci il ciclo",
+					"body": "Trascina le maniglie della curva per definire un ciclo singolo."
+				},
+				"applyCycle": {
+					"title": "Applica il loop",
+					"body": "Imposta il numero di cicli e applica il loop ai keyframe selezionati."
 				}
 			}
 		},
