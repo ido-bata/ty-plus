@@ -85,7 +85,9 @@
 		"update": "更新",
 		"unapply": "移除循环",
 		"applied": "已应用",
-		"conflict": "已在 AE 中编辑"
+		"conflict": "已在 AE 中编辑",
+		"play": "播放",
+		"pause": "暂停"
 	},
 	"menu": {
 		"name": "菜单",

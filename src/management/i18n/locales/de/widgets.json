@@ -85,7 +85,9 @@
 		"update": "Aktualisieren",
 		"unapply": "Schleife entfernen",
 		"applied": "Angewendet",
-		"conflict": "In AE bearbeitet"
+		"conflict": "In AE bearbeitet",
+		"play": "Abspielen",
+		"pause": "Pause"
 	},
 	"menu": {
 		"name": "Menü",

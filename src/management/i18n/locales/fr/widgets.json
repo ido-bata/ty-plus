@@ -85,7 +85,9 @@
 		"update": "Mettre a jour",
 		"unapply": "Supprimer la boucle",
 		"applied": "Applique",
-		"conflict": "Modifie dans AE"
+		"conflict": "Modifie dans AE",
+		"play": "Lecture",
+		"pause": "Pause"
 	},
 	"menu": {
 		"name": "Menu",

@@ -11,6 +11,13 @@ import { Pause, Play } from "lucide-react";
 import type { JSX } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import {
+	buildCyclicWave,
+	type CyclicWaveParams,
+	DEFAULT_CYCLES,
+	sampleWave,
+	type WavePoint,
+} from "@/function/widget/core/loop/cyclic-wave";
 import { useWidgetRuntime } from "@/function/widget/runtime-context";
 import {
 	readWidgetStateJson,
@@ -19,13 +26,6 @@ import {
 } from "@/management/storage/widget-state-store";
 import type { Layout } from "@/management/workspace/layout/grid-document";
 import { Button } from "@/shared/component";
-import {
-	buildCyclicWave,
-	type CyclicWaveParams,
-	DEFAULT_CYCLES,
-	sampleWave,
-	type WavePoint,
-} from "@/shared/cyclic-wave";
 import { css } from "@/styled-system/css";
 import { type AppliedLoopRecord, templateRowsToPoints } from "./applied-state";
 import { MotionPreview } from "./MotionPreview";
@@ -303,7 +303,7 @@ export function LoopWidget({
 				{applied ? (
 					<span
 						className={css({
-							color: conflict ? "text.danger" : "text.muted",
+							color: conflict ? "status.error" : "text.muted",
 						})}
 					>
 						{conflict ? t("loop.conflict") : t("loop.applied")}

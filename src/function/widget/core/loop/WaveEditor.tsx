@@ -20,7 +20,7 @@ import {
 	type WaveHandle,
 	type WavePoint,
 	waveHandlePositions,
-} from "@/shared/cyclic-wave";
+} from "@/function/widget/core/loop/cyclic-wave";
 import {
 	fitWaveCamera,
 	screenToTime,

@@ -85,7 +85,9 @@
 		"update": "업데이트",
 		"unapply": "루프 해제",
 		"applied": "적용됨",
-		"conflict": "AE에서 편집됨"
+		"conflict": "AE에서 편집됨",
+		"play": "재생",
+		"pause": "일시정지"
 	},
 	"menu": {
 		"name": "메뉴",
