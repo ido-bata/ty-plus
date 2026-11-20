@@ -48,6 +48,8 @@ export type WaveEditorProps = {
 	onWaveChange: (wave: CyclicWaveParams) => void;
 	/** Normalized time of the playhead (0..1), or null when idle. */
 	previewTime?: number | null;
+	/** Called while the user scrubs the timeline (the background drag). */
+	onScrub?: (time: number) => void;
 };
 
 type DragTarget =
@@ -76,6 +78,7 @@ export function WaveEditor({
 	onTemplateChange,
 	onWaveChange,
 	previewTime,
+	onScrub,
 }: WaveEditorProps): JSX.Element {
 	const canvasRef = useRef<HTMLCanvasElement | null>(null);
 	const containerRef = useRef<HTMLDivElement | null>(null);
@@ -333,13 +336,7 @@ export function WaveEditor({
 			const time = screenToTime(x, cam);
 			const value = screenToValue(y, cam);
 			if (target.kind === "pan") {
-				const span = cam.viewSpan;
-				const delta = (x - lastX.current) / cam.scale;
-				setView((current) => ({
-					start: Math.max(0, Math.min(1 - span, current.start - delta)),
-					span: current.span,
-				}));
-				lastX.current = x;
+				onScrub?.(Math.max(0, Math.min(1, time)));
 				return;
 			}
 			if (target.kind === "wave-handle") {
@@ -373,7 +370,7 @@ export function WaveEditor({
 				onTemplateChange(next);
 			}
 		},
-		[hitTest, onTemplateChange, onWaveChange, template, wave],
+		[hitTest, onScrub, onTemplateChange, onWaveChange, template, wave],
 	);
 
 	const handlePointerUp = useCallback(() => {
@@ -384,6 +381,14 @@ export function WaveEditor({
 		event.preventDefault();
 		event.stopPropagation();
 		const cam = cameraRef.current;
+		if (event.shiftKey) {
+			const delta = (event.deltaY > 0 ? 1 : -1) * cam.viewSpan * 0.1;
+			setView((current) => ({
+				start: Math.max(0, Math.min(1 - current.span, current.start + delta)),
+				span: current.span,
+			}));
+			return;
+		}
 		const span = Math.max(
 			0.05,
 			Math.min(1, cam.viewSpan * (event.deltaY > 0 ? 1.1 : 0.9)),

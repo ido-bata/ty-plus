@@ -254,6 +254,10 @@ export function LoopWidget({
 					onTemplateChange={updateTemplate}
 					onWaveChange={updateWave}
 					previewTime={previewTime}
+					onScrub={(time) => {
+						setPlaying(false);
+						setPreviewTime(time);
+					}}
 				/>
 			</div>
 			<div

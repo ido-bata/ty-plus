@@ -105,9 +105,24 @@ export function MotionPreview({
 				ctx.moveTo(x, 0);
 				ctx.lineTo(x, height);
 				ctx.stroke();
-				ctx.fillStyle = accent;
+				// The runner on the time track and the value it produces.
+				const trackY = height - 6;
+				ctx.strokeStyle = muted;
+				ctx.globalAlpha = 0.5;
 				ctx.beginPath();
-				ctx.arc(x, y, 5, 0, Math.PI * 2);
+				ctx.moveTo(0, trackY);
+				ctx.lineTo(width, trackY);
+				ctx.stroke();
+				ctx.globalAlpha = 1;
+				ctx.strokeStyle = accent;
+				ctx.beginPath();
+				ctx.moveTo(x, y);
+				ctx.lineTo(x, trackY);
+				ctx.stroke();
+				ctx.fillStyle = accent;
+				ctx.fillRect(x - 4, trackY - 4, 8, 8);
+				ctx.beginPath();
+				ctx.arc(x, y, 4, 0, Math.PI * 2);
 				ctx.fill();
 				ctx.strokeStyle = accent;
 				ctx.globalAlpha = 0.35;
