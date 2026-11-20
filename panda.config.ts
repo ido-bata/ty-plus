@@ -259,7 +259,7 @@ const durations = defineTokens.durations({
 
 export default defineConfig({
 	preflight: true,
-	include: ["./src/**/*.{ts,tsx}"],
+	include: ["./src/**/*.{ts,tsx}", "./packages/**/*.{ts,tsx}", "./apps/**/*.{ts,tsx}"],
 	exclude: [],
 	jsxFramework: "react",
 	outdir: "styled-system",

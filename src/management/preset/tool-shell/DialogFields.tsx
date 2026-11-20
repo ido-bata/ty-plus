@@ -1,9 +1,9 @@
+import { Icon } from "@ty-plus/ui";
+import { Input } from "@ty-plus/ui/fields/Input";
+import { PathField } from "@ty-plus/ui/fields/PathField";
+import { Textarea } from "@ty-plus/ui/fields/Textarea";
 import { FileSearch, FolderOpen } from "lucide-react";
 import type { JSX } from "react";
-import { Icon } from "@/shared/component";
-import { Input } from "@/shared/component/fields/Input";
-import { PathField } from "@/shared/component/fields/PathField";
-import { Textarea } from "@/shared/component/fields/Textarea";
 import { css } from "@/styled-system/css";
 
 import type { PathBrowseSpec, PresetToolField } from "./Dialog";

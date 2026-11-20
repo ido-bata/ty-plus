@@ -1,6 +1,5 @@
+import { cx } from "@ty-plus/ui/util/cx";
 import type { JSX } from "react";
-
-import { cx } from "@/shared/util/cx";
 import { css } from "@/styled-system/css";
 
 export type DirectoryBrowserViewMode = "list" | "icons";

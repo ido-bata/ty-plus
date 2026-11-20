@@ -2,7 +2,7 @@
  * Dialog footer shell primitives.
  *
  * The canonical dialog footer uses `Footer` + `DialogFooterActions` +
- * `Button` (from `@/shared/component/controls/Button`). All in-app dialogs
+ * `Button` (from `@ty-plus/ui/controls/Button`). All in-app dialogs
  * must render their action row through `DialogFooterActions`; do not author
  * ad-hoc `flex justify-end` or `grid grid-cols-N` rows.
  *
@@ -26,8 +26,8 @@
  * 4+ action buttons are forbidden — split into an overflow menu.
  */
 
+import { cx } from "@ty-plus/ui/util/cx";
 import type { JSX, ReactNode } from "react";
-import { cx } from "@/shared/util/cx";
 import { css } from "@/styled-system/css";
 
 /** PandaCSS layout for the canonical dialog footer. */

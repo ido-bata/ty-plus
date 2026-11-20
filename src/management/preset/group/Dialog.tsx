@@ -1,3 +1,7 @@
+import { Icon } from "@ty-plus/ui";
+import { Button } from "@ty-plus/ui/controls/Button";
+import { Input } from "@ty-plus/ui/fields/Input";
+import { PathField } from "@ty-plus/ui/fields/PathField";
 import { ChevronDown, FolderOpen, Plus, Trash2 } from "lucide-react";
 import { type JSX, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -25,10 +29,6 @@ import { listPresets } from "@/management/preset/use-cases";
 import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
 import { glyphBoxFillClass } from "@/management/preset/workspace/glyph-classes";
 import { AccordionSection } from "@/management/setting/dialog/sections/AccordionSection";
-import { Icon } from "@/shared/component";
-import { Button } from "@/shared/component/controls/Button";
-import { Input } from "@/shared/component/fields/Input";
-import { PathField } from "@/shared/component/fields/PathField";
 import { css } from "@/styled-system/css";
 import { ConditionRuleCard } from "./ConditionRuleCard";
 import { FolderScanDepthSelector } from "./FolderScanDepthSelector";

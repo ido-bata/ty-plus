@@ -1,7 +1,9 @@
+import { Icon } from "@ty-plus/ui";
+import { Input } from "@ty-plus/ui/fields/Input";
+import { PathField } from "@ty-plus/ui/fields/PathField";
 import { AlertCircle, FolderOpen } from "lucide-react";
 import { type JSX, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-
 import { selectFolder } from "@/management/ae/cep/dialog-shim/bolt";
 import { readUserHomeOrFallback, ToolDialog } from "@/management/preset";
 import { hostSafeFileName } from "@/management/preset/authoring/host-safe-file-name";
@@ -25,9 +27,6 @@ import { glyphBoxFillClass } from "@/management/preset/workspace/glyph-classes";
 import { createInstanceId } from "@/management/storage/ids";
 import { readSettings } from "@/management/workspace/persistence/store";
 import { notifyPanelsAfterPresetSave } from "@/management/workspace/placement/notify-panels-after-preset-save";
-import { Icon } from "@/shared/component";
-import { Input } from "@/shared/component/fields/Input";
-import { PathField } from "@/shared/component/fields/PathField";
 import { css } from "@/styled-system/css";
 
 type LayerCompType = "layer" | "comp";

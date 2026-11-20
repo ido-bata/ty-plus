@@ -1,6 +1,6 @@
+import { SearchField } from "@ty-plus/ui/fields/SearchField";
 import { Search } from "lucide-react";
 import type { JSX } from "react";
-import { SearchField } from "@/shared/component/fields/SearchField";
 import { css } from "@/styled-system/css";
 import { PresetLibraryViewModeToggle } from "./PresetLibraryViewModeToggle";
 import type { ViewMode } from "./preset-library-types";

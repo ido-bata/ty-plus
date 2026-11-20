@@ -1,5 +1,5 @@
+import { ScrollArea } from "@ty-plus/ui";
 import type { JSX, ReactNode } from "react";
-import { ScrollArea } from "@/shared/component";
 import { css } from "@/styled-system/css";
 
 const dialogScrollArea = css({

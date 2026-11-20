@@ -1,3 +1,4 @@
+import { Button } from "@ty-plus/ui/controls/Button";
 import {
 	type JSX,
 	useCallback,
@@ -26,7 +27,6 @@ import {
 	awaitOpenerWorkspacePanelIdFromCep,
 	resolveOpenerWorkspacePanelId,
 } from "@/management/workspace/surface/opener-panel-id";
-import { Button } from "@/shared/component/controls/Button";
 import { css } from "@/styled-system/css";
 
 const DIALOG_SURFACE_ID = "dialog-widget-selector" as const;

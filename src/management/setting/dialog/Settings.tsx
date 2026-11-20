@@ -1,3 +1,4 @@
+import { Button } from "@ty-plus/ui/controls/Button";
 import {
 	Component,
 	type ErrorInfo,
@@ -28,7 +29,6 @@ import { TokensSection } from "@/management/setting/dialog/sections/TokensSectio
 import { UpdateSection } from "@/management/setting/dialog/sections/UpdateSection";
 import { WorkspaceBackupSection } from "@/management/setting/dialog/sections/WorkspaceBackupSection";
 import { useSettingsDialogContextMenu } from "@/management/setting/dialog/useSettingsDialogContextMenu";
-import { Button } from "@/shared/component/controls/Button";
 import { css } from "@/styled-system/css";
 
 const errorFallbackStyle = css({

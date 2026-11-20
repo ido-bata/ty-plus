@@ -1,6 +1,6 @@
+import { SearchField } from "@ty-plus/ui/fields/SearchField";
 import { Search } from "lucide-react";
 import type { JSX, ReactNode, RefObject } from "react";
-import { SearchField } from "@/shared/component/fields/SearchField";
 import { css } from "@/styled-system/css";
 
 export function BrowserSearchField(props: {

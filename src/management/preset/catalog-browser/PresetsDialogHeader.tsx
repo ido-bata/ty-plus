@@ -1,8 +1,8 @@
+import { Icon, IconButton } from "@ty-plus/ui";
+import { SearchField } from "@ty-plus/ui/fields/SearchField";
 import { LoaderCircle, RefreshCw, Search } from "lucide-react";
 import type { JSX, ReactNode } from "react";
 import { CatalogBrowserViewModeToggle } from "@/management/preset/catalog-browser/view-mode-toggle";
-import { Icon, IconButton } from "@/shared/component";
-import { SearchField } from "@/shared/component/fields/SearchField";
 import { css } from "@/styled-system/css";
 
 import type { LoadPhase, PresetViewMode } from "./use-presets-catalog";

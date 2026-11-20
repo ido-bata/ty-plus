@@ -1,8 +1,8 @@
+import { Icon } from "@ty-plus/ui";
+import { PathField } from "@ty-plus/ui/fields/PathField";
 import { FileSearch } from "lucide-react";
 import type { JSX } from "react";
 import { selectFile } from "@/management/ae/cep/dialog-shim/bolt";
-import { Icon } from "@/shared/component";
-import { PathField } from "@/shared/component/fields/PathField";
 import { css } from "@/styled-system/css";
 
 const fieldColumnClass = css({

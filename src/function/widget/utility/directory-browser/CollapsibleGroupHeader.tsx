@@ -1,6 +1,6 @@
+import { Icon } from "@ty-plus/ui";
 import { ChevronDown } from "lucide-react";
 import { type JSX, type ReactNode, useState } from "react";
-import { Icon } from "@/shared/component";
 import { css } from "@/styled-system/css";
 
 export type CollapsibleGroupHeaderProps = {

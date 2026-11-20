@@ -80,10 +80,28 @@ export const resolveModuleOwner = (
 	specifier: string,
 	fromFilePath: string,
 ): string | null => {
+	// "@/..." alias specifiers resolve under src/. Scoped to packages/ importers
+	// so the shared UI package cannot reach domain slices through aliases;
+	// src-internal alias resolution keeps its historical (baseline) semantics.
+	if (specifier.startsWith("@/") && fromFilePath.includes("/packages/")) {
+		const rest = specifier.slice(2);
+		if (rest.startsWith("styled-system/")) return null;
+		const owner = rest.split("/")[0];
+		if (
+			owner === "shared" ||
+			owner === "management" ||
+			owner === "function" ||
+			owner === "contract"
+		) {
+			return owner;
+		}
+		return null;
+	}
+
 	// External packages are not violations
 	if (!specifier.startsWith(".")) {
 		// @ty-plus/scoped packages
-		if (specifier.startsWith("@ty-plus/shared")) return "shared";
+		if (specifier.startsWith("@ty-plus/ui")) return "shared";
 		if (
 			specifier.startsWith("@ty-plus/management") ||
 			specifier.startsWith("@ty-plus/workspace") ||
@@ -246,7 +264,11 @@ export const classifyBoundaryViolation = (
 	// Extract the source owner directly from the file path
 	const normalized = filePath.replace(/\\/g, "/");
 	const srcOwnerMatch = normalized.match(/\/src\/([^/]+)/);
-	const srcOwner = srcOwnerMatch ? srcOwnerMatch[1] : null;
+	let srcOwner = srcOwnerMatch ? srcOwnerMatch[1] : null;
+	// packages/ui is the shared UI package; treat its files as shared owner
+	if (normalized.includes("/packages/ui/src/")) {
+		srcOwner = "shared";
+	}
 
 	// Phase 3: shared may import only shared or external packages
 	if (
@@ -307,10 +329,12 @@ export const classifyBoundaryViolation = (
 	// Note: management->management (intra-slice) is always allowed
 	if (srcOwner === "management" && targetOwner === "shared") {
 		const normalizedSpec = specifier.replace(/\\/g, "/");
-		const isSharedComponent = normalizedSpec.includes("/shared/component");
+		const isSharedUi =
+			normalizedSpec.startsWith("@ty-plus/ui") ||
+			normalizedSpec.includes("/shared/component");
 		const isSharedUtil = normalizedSpec.includes("/shared/util");
-		if (!isSharedComponent && !isSharedUtil) {
-			return "management -> shared (management may import only contract, shared/component, shared/util)";
+		if (!isSharedUi && !isSharedUtil) {
+			return "management -> shared (management may import only contract, @ty-plus/ui, shared/util)";
 		}
 	}
 
@@ -341,10 +365,12 @@ export const classifyBoundaryViolation = (
 		targetOwner !== "shared"
 	) {
 		const normalizedSpec = specifier.replace(/\\/g, "/");
-		const isSharedComponent = normalizedSpec.includes("/shared/component");
+		const isSharedUi =
+			normalizedSpec.startsWith("@ty-plus/ui") ||
+			normalizedSpec.includes("/shared/component");
 		const isSharedUtil = normalizedSpec.includes("/shared/util");
-		if (!isSharedComponent && !isSharedUtil) {
-			return `function -> ${targetOwner} (function may import only contract, management, shared/component, shared/util)`;
+		if (!isSharedUi && !isSharedUtil) {
+			return `function -> ${targetOwner} (function may import only contract, management, @ty-plus/ui, shared/util)`;
 		}
 	}
 
@@ -493,7 +519,10 @@ const main = (args: string[]) => {
 		}
 	}
 
-	const tsFiles = scanDirectory(ROOT, [".ts", ".tsx"]);
+	const tsFiles = [
+		...scanDirectory(ROOT, [".ts", ".tsx"]),
+		...scanDirectory(resolve("packages", "ui", "src"), [".ts", ".tsx"]),
+	];
 	const allViolations: Violation[] = [];
 	const mgmtFnEdges: MgmtFnEdge[] = [];
 

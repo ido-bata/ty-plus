@@ -1,3 +1,6 @@
+import { Button } from "@ty-plus/ui/controls/Button";
+import { ListSelect } from "@ty-plus/ui/fields/ListSelect";
+import { cx } from "@ty-plus/ui/util/cx";
 import {
 	type JSX,
 	useCallback,
@@ -23,9 +26,6 @@ import type {
 } from "@/management/workspace/background/contract";
 import { parse } from "@/management/workspace/background/parse";
 import { resolveWorkspacePersistenceManagedRoot } from "@/management/workspace/layout/persistence-root";
-import { Button } from "@/shared/component/controls/Button";
-import { ListSelect } from "@/shared/component/fields/ListSelect";
-import { cx } from "@/shared/util/cx";
 import { css } from "@/styled-system/css";
 
 const PANEL_OPTIONS = [

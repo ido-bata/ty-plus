@@ -1,6 +1,6 @@
+import { Input } from "@ty-plus/ui/fields/Input";
+import { cx } from "@ty-plus/ui/util/cx";
 import { type JSX, useId } from "react";
-import { Input } from "@/shared/component/fields/Input";
-import { cx } from "@/shared/util/cx";
 import { css } from "@/styled-system/css";
 
 export type TokenEditorProps = {

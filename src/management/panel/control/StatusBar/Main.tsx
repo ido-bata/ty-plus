@@ -4,12 +4,7 @@
  * and secondary panel launchers.
  */
 
-import { memo, useEffect, useState } from "react";
-
-import { subscribe } from "@/management/debug";
-import type { SurfaceState } from "@/management/workspace/state";
-import type { Snapshot } from "@/management/workspace/undo/history";
-import { Icon, IconButton } from "@/shared/component";
+import { Icon, IconButton } from "@ty-plus/ui";
 import {
 	Cloud,
 	Layers,
@@ -21,8 +16,12 @@ import {
 	Terminal,
 	Trash2,
 	Undo2,
-} from "@/shared/component/icons";
-import { cx } from "@/shared/util/cx";
+} from "@ty-plus/ui/icons";
+import { cx } from "@ty-plus/ui/util/cx";
+import { memo, useEffect, useState } from "react";
+import { subscribe } from "@/management/debug";
+import type { SurfaceState } from "@/management/workspace/state";
+import type { Snapshot } from "@/management/workspace/undo/history";
 import { css } from "@/styled-system/css";
 
 export type StatusBarProps = {

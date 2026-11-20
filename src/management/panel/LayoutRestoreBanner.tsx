@@ -10,10 +10,10 @@
  * after the file has been repaired or restored.
  */
 
+import { Button } from "@ty-plus/ui";
 import type { ReactElement } from "react";
 import { useTranslation } from "react-i18next";
 import type { LayoutRestoreNotice } from "@/management/workspace/layout/restore-plan";
-import { Button } from "@/shared/component";
 import { css } from "@/styled-system/css";
 
 export type LayoutRestoreBannerProps = {

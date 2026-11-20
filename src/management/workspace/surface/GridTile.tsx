@@ -7,6 +7,7 @@
  * parent `Grid` inside a single `useMemo`; this module only renders.
  */
 
+import { cx } from "@ty-plus/ui/util/cx";
 import type { CSSProperties, JSX } from "react";
 import { memo } from "react";
 import type { Preset } from "@/management/preset/contract";
@@ -17,7 +18,6 @@ import type {
 } from "@/management/workspace/layout/grid-document";
 import type { SurfaceState, Tile } from "@/management/workspace/state";
 import type { CatalogTileBodyRenderer } from "@/management/workspace/surface/grid-catalog-tile-context";
-import { cx } from "@/shared/util/cx";
 import { css } from "@/styled-system/css";
 
 export type GridTileProps = {

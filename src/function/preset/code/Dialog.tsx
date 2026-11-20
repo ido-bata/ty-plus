@@ -1,3 +1,6 @@
+import { Icon } from "@ty-plus/ui";
+import { Input } from "@ty-plus/ui/fields/Input";
+import { PathField } from "@ty-plus/ui/fields/PathField";
 import type { TFunction } from "i18next";
 import { AlertCircle, FolderOpen } from "lucide-react";
 import {
@@ -9,7 +12,6 @@ import {
 	useState,
 } from "react";
 import { useTranslation } from "react-i18next";
-
 import { selectFolder } from "@/management/ae/cep/dialog-shim/bolt";
 import { readUserHomeOrFallback, ToolDialog } from "@/management/preset";
 import { assertPresetAssetPresent } from "@/management/preset/asset-verification";
@@ -40,9 +42,6 @@ import {
 import { createInstanceId } from "@/management/storage/ids";
 import { readSettings } from "@/management/workspace/persistence/store";
 import { notifyPanelsAfterPresetSave } from "@/management/workspace/placement/notify-panels-after-preset-save";
-import { Icon } from "@/shared/component";
-import { Input } from "@/shared/component/fields/Input";
-import { PathField } from "@/shared/component/fields/PathField";
 import { css } from "@/styled-system/css";
 
 type CodeType = "extendscript" | "expression";

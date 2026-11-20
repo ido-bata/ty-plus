@@ -1,3 +1,4 @@
+import { cx } from "@ty-plus/ui/util/cx";
 import {
 	type JSX,
 	type KeyboardEvent,
@@ -10,7 +11,6 @@ import {
 	useState,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { cx } from "@/shared/util/cx";
 import { css } from "@/styled-system/css";
 
 /**

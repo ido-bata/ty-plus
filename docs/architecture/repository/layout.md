@@ -6,8 +6,10 @@
 ## 現行構造
 
 ```text
-src/       # React / CEP / ExtendScript の TypeScript product source
+src/       # React / CEP / ExtendScript の TypeScript product source (CEP app)
 rust/      # Rust operation worker の product source
+apps/      # deployable applications。現行は apps/web (TanStack Start 公式サイト)
+packages/  # cross-app shared packages。現行は packages/ui (@ty-plus/ui)
 scripts/   # build / dev / generate / check の開発・検証経路
 ```
 
@@ -24,6 +26,9 @@ src/
 ```
 
 `src/` は `function/` `management/` `shared/` の 3 系統だけを最上位に使う。
+`apps/` と `packages/` は `src/` の外にある workspace 境界であり、CEP panel の
+product source ではない。`apps/web` は公式 Web サイト (ADR-0007)、`packages/ui` は
+CEP と Web が共有する UI package である。
 
 ## Rust source
 
@@ -58,7 +63,7 @@ generator から追跡し、docs で data shape を再定義しない。
 Rust operation worker の正規 build / dev launcher はまだ実装されていない。未追跡の旧 CLI
 WIP や CEP deploy script を、その代替として正規導線にしない。
 
-**Legacy paths** (no longer used as layer names): `packages/`, `cep-shell`, `host-scripts`, `command-dispatch`, `src js`, `apps/` (リポジトリ直下), `functions/` (as root).
+**Legacy paths** (no longer used as layer names): `cep-shell`, `host-scripts`, `command-dispatch`, `src js`, `functions/` (as root). `packages/` と `apps/` は #257/#258 以降 workspace 配置として現行。
 
 ## 重要ルール
 

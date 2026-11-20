@@ -1,6 +1,6 @@
+import { Icon, IconButton } from "@ty-plus/ui";
 import { LayoutGrid, List as ListIcon } from "lucide-react";
 import type { JSX } from "react";
-import { Icon, IconButton } from "@/shared/component";
 import { css, cx } from "@/styled-system/css";
 
 export type CatalogBrowserViewMode = "list" | "icons";

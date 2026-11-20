@@ -1,3 +1,6 @@
+import { Button } from "@ty-plus/ui/controls/Button";
+import { Textarea } from "@ty-plus/ui/fields/Textarea";
+import { cx } from "@ty-plus/ui/util/cx";
 import { type JSX, useCallback, useEffect, useRef, useState } from "react";
 import { cacheCepShellThemeOverridesFromCssText } from "@/management/panel/theme/storage";
 import { enqueueThemeWrite } from "@/management/panel/theme/write-queue";
@@ -14,9 +17,6 @@ import {
 	writeSettings,
 	writeThemeCss,
 } from "@/management/storage";
-import { Button } from "@/shared/component/controls/Button";
-import { Textarea } from "@/shared/component/fields/Textarea";
-import { cx } from "@/shared/util/cx";
 import { css } from "@/styled-system/css";
 
 type WorkspaceBackupBundle = {

@@ -1,5 +1,5 @@
+import { ScrollArea } from "@ty-plus/ui";
 import type { JSX, ReactNode } from "react";
-import { ScrollArea } from "@/shared/component";
 import { css, cx } from "@/styled-system/css";
 
 type ShellDomPrefix = "preset-list" | "directory-browser";

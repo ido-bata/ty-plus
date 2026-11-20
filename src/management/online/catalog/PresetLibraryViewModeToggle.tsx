@@ -1,8 +1,8 @@
+import { IconButton } from "@ty-plus/ui/controls/IconButton";
+import { Icon } from "@ty-plus/ui/icons/Icon";
+import { cx } from "@ty-plus/ui/util/cx";
 import { Grid3x3, LayoutGrid, List } from "lucide-react";
 import type { JSX } from "react";
-import { IconButton } from "@/shared/component/controls/IconButton";
-import { Icon } from "@/shared/component/icons/Icon";
-import { cx } from "@/shared/util/cx";
 import { css } from "@/styled-system/css";
 import type { ViewMode } from "./preset-library-types";
 

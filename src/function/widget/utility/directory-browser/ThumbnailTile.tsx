@@ -1,6 +1,6 @@
+import { cx } from "@ty-plus/ui/util/cx";
 import type { JSX } from "react";
 import type { FileBrowserEntry } from "@/management/storage/file-browser-service";
-import { cx } from "@/shared/util/cx";
 import { css } from "@/styled-system/css";
 import { useIntersectionVisible } from "./hooks/useIntersectionVisible";
 import { useThumbnail } from "./hooks/useThumbnail";

@@ -1,9 +1,9 @@
+import { SegmentedControl } from "@ty-plus/ui/controls/SegmentedControl";
 import type { JSX } from "react";
 import type {
 	Layer,
 	PatternValue,
 } from "@/management/workspace/background/contract";
-import { SegmentedControl } from "@/shared/component/controls/SegmentedControl";
 import { css } from "@/styled-system/css";
 import { QUIET_SELECTED_CLASS } from "./constants";
 import { ColorField, FieldLabel, NumberField } from "./Fields";

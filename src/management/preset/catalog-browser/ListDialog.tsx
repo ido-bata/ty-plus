@@ -1,3 +1,7 @@
+import { Icon, IconButton } from "@ty-plus/ui";
+import { SearchField } from "@ty-plus/ui/fields/SearchField";
+import { cx } from "@ty-plus/ui/util/cx";
+import { isIMEComposing } from "@ty-plus/ui/util/keyboard";
 import {
 	ArrowLeft,
 	ChevronDown,
@@ -64,12 +68,8 @@ import { stripKnownIdPrefixes } from "@/management/storage/ids";
 import { readSettings } from "@/management/storage/workspace/store";
 import { openPresetEditSurface } from "@/management/workspace/hooks/preset";
 import { executeWorkspacePresetForWindow } from "@/management/workspace/runtime";
-import { Icon, IconButton } from "@/shared/component";
-import { SearchField } from "@/shared/component/fields/SearchField";
 import { useCatalogViewMode } from "@/shared/util/catalog-view-mode";
-import { cx } from "@/shared/util/cx";
 import { useIconGridScale } from "@/shared/util/icon-grid-scale";
-import { isIMEComposing } from "@/shared/util/keyboard";
 import { useTileAspect } from "@/shared/util/tile-aspect";
 import { css } from "@/styled-system/css";
 

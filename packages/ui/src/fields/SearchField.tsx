@@ -1,3 +1,5 @@
+import { Icon } from "@ty-plus/ui/icons/Icon";
+import { cx, Input } from "@ty-plus/ui/index";
 import type { LucideIcon } from "lucide-react";
 import { X } from "lucide-react";
 import type {
@@ -7,8 +9,6 @@ import type {
 	ReactNode,
 	Ref,
 } from "react";
-import { Icon } from "@/shared/component/icons/Icon";
-import { cx, Input } from "@/shared/component/index";
 import { css } from "@/styled-system/css";
 
 export type SearchFieldProps = {

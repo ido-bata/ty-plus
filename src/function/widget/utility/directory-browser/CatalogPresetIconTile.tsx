@@ -1,3 +1,5 @@
+import { Icon } from "@ty-plus/ui";
+import { cx } from "@ty-plus/ui/util/cx";
 import { Play } from "lucide-react";
 import type { JSX } from "react";
 import type { IconTileAspect } from "@/management/preset";
@@ -8,8 +10,6 @@ import {
 	PresetGlyphById,
 } from "@/management/preset";
 import type { Preset } from "@/management/preset/contract";
-import { Icon } from "@/shared/component";
-import { cx } from "@/shared/util/cx";
 import { css } from "@/styled-system/css";
 
 export type CatalogPresetIconTileProps = {

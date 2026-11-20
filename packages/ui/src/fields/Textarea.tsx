@@ -1,5 +1,5 @@
+import { cx } from "@ty-plus/ui/util/cx";
 import type { ReactElement, TextareaHTMLAttributes } from "react";
-import { cx } from "@/shared/util/cx";
 import { css } from "@/styled-system/css";
 
 export type TextareaProps = TextareaHTMLAttributes<HTMLTextAreaElement> & {

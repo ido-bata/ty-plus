@@ -1,11 +1,11 @@
+import { IconButton } from "@ty-plus/ui/controls/IconButton";
+import { Icon } from "@ty-plus/ui/icons/Icon";
 import { ExternalLink } from "lucide-react";
 import type { JSX } from "react";
 import { DownloadProgressIconButton } from "@/management/online/catalog/DownloadProgressIconButton";
 import type { DownloadProgress } from "@/management/online/catalog/use-cases";
 import type { PresetSearchItem } from "@/management/online/contract";
 import { openUrlInDefaultBrowser } from "@/management/workspace/hooks/helpers";
-import { IconButton } from "@/shared/component/controls/IconButton";
-import { Icon } from "@/shared/component/icons/Icon";
 import { css } from "@/styled-system/css";
 import { PresetCategoryBadge, PresetMarketThumb } from "./PresetMarketThumb";
 

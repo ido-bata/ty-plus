@@ -1,6 +1,6 @@
+import { cx } from "@ty-plus/ui/util/cx";
 import { type JSX, useState } from "react";
 import type { PresetSearchItem } from "@/management/online/contract";
-import { cx } from "@/shared/util/cx";
 import { css } from "@/styled-system/css";
 
 const thumbBaseClass = css({

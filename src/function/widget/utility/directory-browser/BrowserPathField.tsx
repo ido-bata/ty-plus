@@ -1,7 +1,7 @@
+import { Icon, PathField } from "@ty-plus/ui";
+import { isIMEComposing } from "@ty-plus/ui/util/keyboard";
 import { FolderOpen } from "lucide-react";
 import type { JSX } from "react";
-import { Icon, PathField } from "@/shared/component";
-import { isIMEComposing } from "@/shared/util/keyboard";
 import { css } from "@/styled-system/css";
 
 export function BrowserPathField(props: {

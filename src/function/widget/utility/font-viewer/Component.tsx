@@ -1,3 +1,7 @@
+import { Button, Icon, ListSelect } from "@ty-plus/ui";
+import { Input } from "@ty-plus/ui/fields/Input";
+import { SearchField } from "@ty-plus/ui/fields/SearchField";
+import { cx } from "@ty-plus/ui/util/cx";
 import { ArrowLeft, ChevronDown, ChevronRight, Search } from "lucide-react";
 import {
 	type CSSProperties,
@@ -20,11 +24,7 @@ import {
 	iconTileMediaClass,
 } from "@/management/preset";
 import type { Layout } from "@/management/workspace/state";
-import { Button, Icon, ListSelect } from "@/shared/component";
-import { Input } from "@/shared/component/fields/Input";
-import { SearchField } from "@/shared/component/fields/SearchField";
 import { useCatalogViewMode } from "@/shared/util/catalog-view-mode";
-import { cx } from "@/shared/util/cx";
 import { useIconGridScale } from "@/shared/util/icon-grid-scale";
 import { useTileAspect } from "@/shared/util/tile-aspect";
 import { css } from "@/styled-system/css";

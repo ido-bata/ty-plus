@@ -1,3 +1,6 @@
+import { Button } from "@ty-plus/ui/controls/Button";
+import { Input } from "@ty-plus/ui/fields/Input";
+import { RegexEditor } from "@ty-plus/ui/fields/RegexEditor";
 import { Trash2 } from "lucide-react";
 import type { JSX } from "react";
 import { readUserHomeOrFallback } from "@/management/preset/catalog-add/browse-start-dir";
@@ -9,9 +12,6 @@ import { AuthoringSegment } from "@/management/preset/tool-shell/archive-layout"
 import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
 import { glyphBoxFillClass } from "@/management/preset/workspace/glyph-classes";
 import { DirectoryBrowser } from "@/management/storage/ui/DirectoryBrowser";
-import { Button } from "@/shared/component/controls/Button";
-import { Input } from "@/shared/component/fields/Input";
-import { RegexEditor } from "@/shared/component/fields/RegexEditor";
 import { css } from "@/styled-system/css";
 
 const escapeRegex = (value: string): string =>

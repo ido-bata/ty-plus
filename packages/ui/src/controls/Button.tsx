@@ -1,5 +1,5 @@
+import { cx } from "@ty-plus/ui/util/cx";
 import type { ButtonHTMLAttributes, ReactElement, ReactNode } from "react";
-import { cx } from "@/shared/util/cx";
 import { css } from "@/styled-system/css";
 
 type ButtonVariant =

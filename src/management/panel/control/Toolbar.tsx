@@ -2,6 +2,8 @@
  * Floating compact toolbar with position/orientation logic and storage persistence.
  */
 
+import { Icon, IconButton } from "@ty-plus/ui";
+import { cx } from "@ty-plus/ui/util/cx";
 import type { LucideIcon } from "lucide-react";
 import {
 	Code2,
@@ -18,8 +20,6 @@ import {
 	cpPositionToClasses,
 	readCpState,
 } from "@/management/panel/control/state";
-import { Icon, IconButton } from "@/shared/component";
-import { cx } from "@/shared/util/cx";
 import { css } from "@/styled-system/css";
 
 export type ToolbarProps = {

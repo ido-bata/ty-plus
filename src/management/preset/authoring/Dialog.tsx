@@ -1,3 +1,4 @@
+import { Input } from "@ty-plus/ui/fields/Input";
 import { type JSX, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { readCepOpenParams } from "@/management/ae/cep/transport";
@@ -17,7 +18,6 @@ import {
 } from "@/management/preset/tool-shell/archive-layout";
 import { openPresetToolSurface } from "@/management/workspace/hooks/dialogs";
 import { readSettings } from "@/management/workspace/persistence/store";
-import { Input } from "@/shared/component/fields/Input";
 import { css } from "@/styled-system/css";
 
 type CreatePresetParams = {
