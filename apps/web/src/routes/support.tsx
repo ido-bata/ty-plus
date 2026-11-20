@@ -16,10 +16,30 @@ export const Route = createFileRoute("/support")({
 	component: SupportPage,
 });
 
+const HELP_TOPICS = [
+	{
+		term: "User guide",
+		description:
+			"Installation, workspace, widgets, presets, settings, troubleshooting.",
+		href: SITE.userGuide,
+	},
+	{
+		term: "Installation & troubleshooting",
+		description: "ZXP install and OS security notes.",
+		href: SITE.installation,
+	},
+	{
+		term: "Existing issues",
+		description: "Check whether your problem is already reported.",
+		href: SITE.issues,
+	},
+] as const;
+
 function SupportPage() {
 	return (
-		<main className="page">
-			<header className="page-header">
+		<main>
+			<header className="page page-head">
+				<span className="eyebrow">Help</span>
 				<h1>Support</h1>
 				<p className="lead">
 					ty-plus is a community open-source project. The fastest way to get
@@ -27,26 +47,24 @@ function SupportPage() {
 				</p>
 			</header>
 
-			<section className="section" aria-labelledby="help">
-				<h2 id="help">Get help</h2>
-				<ul className="link-list">
-					<li>
-						<a href={SITE.userGuide}>User guide</a> — installation, workspace,
-						widgets, presets, settings, troubleshooting.
-					</li>
-					<li>
-						<a href={SITE.installation}>Installation &amp; troubleshooting</a> —
-						ZXP install and OS security notes.
-					</li>
-					<li>
-						<a href={SITE.issues}>Existing issues</a> — check whether your
-						problem is already reported.
-					</li>
-				</ul>
+			<section className="page section" aria-labelledby="help">
+				<span className="eyebrow">Get help</span>
+				<h2 id="help">Documentation &amp; issues</h2>
+				<dl className="def-list def-list--links">
+					{HELP_TOPICS.map((t) => (
+						<div className="def-row" key={t.term}>
+							<dt>
+								<a href={t.href}>{t.term}</a>
+							</dt>
+							<dd>{t.description}</dd>
+						</div>
+					))}
+				</dl>
 			</section>
 
-			<section className="section" aria-labelledby="report">
-				<h2 id="report">Report a bug or request a feature</h2>
+			<section className="page section" aria-labelledby="report">
+				<span className="eyebrow">Report</span>
+				<h2 id="report">Bugs &amp; feature requests</h2>
 				<p>
 					Use <a href={SITE.newIssue}>the issue templates on GitHub</a> to
 					report a bug or request an improvement. Please include your OS, After
@@ -54,8 +72,9 @@ function SupportPage() {
 				</p>
 			</section>
 
-			<section className="section" aria-labelledby="security">
-				<h2 id="security">Security</h2>
+			<section className="page section" aria-labelledby="security">
+				<span className="eyebrow">Security</span>
+				<h2 id="security">Responsible disclosure</h2>
 				<p>
 					Please do not open public issues for security vulnerabilities. See the{" "}
 					<a href={SITE.security}>security policy</a> for responsible
@@ -63,8 +82,9 @@ function SupportPage() {
 				</p>
 			</section>
 
-			<section className="section" aria-labelledby="contribute">
-				<h2 id="contribute">Contribute</h2>
+			<section className="page section" aria-labelledby="contribute">
+				<span className="eyebrow">Contribute</span>
+				<h2 id="contribute">Develop with us</h2>
 				<p>
 					ty-plus is MIT licensed and developed in the open. See{" "}
 					<a href={SITE.contributing}>CONTRIBUTING.md</a> to get started, and{" "}
