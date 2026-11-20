@@ -1,6 +1,6 @@
 # Design Brief — ty-plus official site
 
-- Status: Accepted direction for the #275 redesign (2026-11-20)
+- Status: Accepted direction for the #275 redesign, amended by #280 image audit
 - Scope: `apps/web` の6公開ページ。CEPパネルのビジュアル言語は継承対象ではなく、共有するのは primitive（色の一部・コンポーネント契約）のみ。
 
 ## Product context
@@ -35,8 +35,8 @@
 ## Color direction
 
 - Default mode: dark only（製品がダークUIのため）。`color-scheme: dark` 維持。
-- 背景: `#0B0C0E` 系の深い黒（現行 `#1d1d1d` より沈め、奥行きを出す）。
-- Surface: 1段だけ明るい `#131417` / hairline `rgba(255,255,255,0.08)`。
+- 背景: `#0B0C0E` 系の深い黒（旧 `#1d1d1d` より沈め、奥行きを出す）。
+- Surface: 1段だけ明るい `#131417` / hairline `rgb(255 255 255 / 0.08)`。
 - Accent: インディゴ `#7A6CFF` 系を一点だけ。selection/focus/link/CTAの核。セマンティック色は最小限。
 - Text: `#E8E9EB` primary / `#9BA1A8` muted。WCAG AA(4.5:1)を本文で担保。
 
@@ -45,7 +45,7 @@
 - Sans: IBM Plex Sans（可変）。UI・本文。
 - Mono: IBM Plex Mono。eyebrow・メタデータ・バージョン・日付・ナビ補助。
 - Scale: display `clamp(2.5rem, 6vw, 4.5rem)` / section `1.5rem` / body `1rem` / meta `0.75rem` uppercase tracking。
-- 見出しweightは700まで。400の巨大文字は使わない（現行の最大の問題）。
+- 見出しweightは700まで。400の巨大文字は使わない。
 
 ## Component character
 
@@ -59,37 +59,33 @@
 
 ## Composition rules（全ページ共通）
 
-- ページ頭: mono eyebrow → H1 → lead の3段。中央寄せはheroのみ許可せず、左揃え基調。
-- コンテンツ幅: prose系は `~68ch`、全体は `80rem` 前後。
+- ページ頭: mono eyebrow → H1 → lead の3段。左揃え基調。
+- コンテンツ幅: prose系は `~68ch`、全体は `76rem`。
 - カード羅列を避け、重要度でサイズを変える（hero画像 > feature画像 > 補助リスト）。
 - 画像は `figure` + monoキャプション。実画面のみ。存在しないUIを捏造しない。
+- 同一ページ内で同じスクリーンショットを再利用しない。機能説明と画像内容は `docs/user-guide` の検証済みキャプションを正本として一致させる。
+
+## Product imagery rules（#280 で追加）
+
+- 掲載するのは `docs/user-guide` の検証済み実キャプチャのみ。空のAE開始画面、オンボーディング途中、機能と無関係なウィンドウを製品機能として掲載しない。
+- 各画像は説明する機能の「適用後/結果」の状態を優先する（例: プリセットなら適用済み、ウィジェットなら追加済み）。
+- キャプションは画像の実内容を述べる。機能名の誇張・捏造をしない。
 
 ## Shared UI の境界
 
-- `@ty-plus/ui` の共有primitive（Button系・tokensの考え方）は維持。ただしWebのタイポ・余白・角丸は `apps/web` 固有のtoken層（`styles/site.css`の`:root`変数）で定義し、CEP panelの `--ty-shell-*` をWebへ強制適用しない。
-- `styled-system/styles.css` のimportは現行どおり維持（Panda生成物）。Web独自スタイルはそれと競合しないよう `app.css` 内で完結させる。
+- `@ty-plus/ui` の共有primitive（Button系・tokensの考え方）は維持。ただしWebのタイポ・余白・角丸は `apps/web` 固有のtoken層（`src/styles/app.css` の `:root` 変数）で定義し、CEP panelの `--ty-shell-*` をWebへ強制適用しない。
+- `styled-system/styles.css` のimportは維持（Panda生成物）。Web独自スタイルは `app.css` 内で完結させる。
 
 ## Decisions made
 
 - ダーク1テーマ、accentはインディゴ1色、フォントはIBM Plex Sans/Mono（self-host, fontsource）。
-- ナビは現行のsemantic `<nav>` + popover構造を維持し、スタイルのみ刷新。
-- ヒーロー画像は `hero.png`（実AE画面）を「フレーム付き標本」として提示。縦長 `panel.png` はfeatures等のサイドカラムに使用。
+- ナビはsemantic `<nav>` + native popover構造を維持し、スタイルのみ刷新。
+- ヒーローは `hero.png`（v0.10.1 実機AE画面）をフレーム付き標本として提示。
+- 画像割当は docs キャプション正本に基づく: presets=グループ展開、widgets=Add Widgetダイアログ、settings=Settings dialog、widget-added/easing-applied/ffx-applied/directory-browser/appearance/panels-open=各検証済み状態。
 
 ## Explicitly unresolved
 
-- ロゴマークの最終形（暫定: 2×2タイル+「+」のSVGマーク。人間の最終デザイン受入は別途）。
+- ロゴマークの最終形（暫定: 2×2タイルのSVGマーク。人間の最終デザイン受入は別途）。
 - OG imageの更新（現行hero.pngのまま。専用OG画像は後続検討）。
 - `SITE.url`（canonical/OG）はdeploy確定後に見直し（#255記録済み）。
-
-## Evidence
-
-- 現行実装の機械監査: `docs/verification/web-redesign/before/`（18枚のviewport別キャプチャ）+ audit JSON。
-  - 主な問題: 全見出しweight 400で階層が弱い、H1が52pxの細字、カード均等グリッド、スクリーンショットが360px幅まで縮小、system-uiのみ、フッターがinline style、ロゴが文字のみ。
-- 本briefはIssue #275の受入条件とセットで運用する。
-EOF
-}
-```
-
-Wait — I used write tool already; remove the stray "```" tail? Check: my content ends with "## Evidence" section then "EOF\n}\n```" — no, I wrote literal file content ending with the evidence bullets. The content I passed ended at "本briefはIssue #275の受入条件とセットで運用する。" — good, no stray. The tool result shows file written.
-
-Now create sub-issues for decomposition. To conserve context, create two issues quickly: #276 foundation (tokens/fonts/brand/layout shell), #277 pages. Actually issue numbers auto-assign; create both in one command.<|end_message|><|message_model|>exec<|content_invoke_tool_json|>{
+- オンライン系画面（Online Preset Library / Messages）の掲載可否は、チャット的UIに見える可能性を考慮し #280 では不使用。必要なら別途検討。

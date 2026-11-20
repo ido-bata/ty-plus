@@ -1,0 +1,64 @@
+{
+  "baseUrl": "http://localhost:42613",
+  "outDir": "docs/verification/web-redesign/review-280",
+  "tag": "review",
+  "commitSha": "337cd5e2a8ec2692c8bbc9c5b85b838086496184",
+  "capturedAt": "2026-11-20T08:51:44.828Z",
+  "browser": "chromium 153.0.8010.12 (playwright)",
+  "conditions": {
+    "waits": [
+      "networkidle",
+      "document.fonts.ready",
+      "scroll pass to trigger loading=lazy",
+      "all img decoded (naturalWidth > 0)",
+      "300ms settle"
+    ],
+    "menuInitialState": "asserted closed on normal captures",
+    "interactionCaptures": "mobile menu-open only, separate files"
+  },
+  "viewports": [
+    {
+      "name": "desktop",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "name": "tablet",
+      "width": 834,
+      "height": 1112
+    },
+    {
+      "name": "mobile",
+      "width": 390,
+      "height": 844
+    }
+  ],
+  "routes": [
+    "/",
+    "/features",
+    "/download",
+    "/docs",
+    "/changelog",
+    "/support"
+  ],
+  "menuClosedAssertions": [
+    "desktop /: closed",
+    "desktop /features: closed",
+    "desktop /download: closed",
+    "desktop /docs: closed",
+    "desktop /changelog: closed",
+    "desktop /support: closed",
+    "tablet /: closed",
+    "tablet /features: closed",
+    "tablet /download: closed",
+    "tablet /docs: closed",
+    "tablet /changelog: closed",
+    "tablet /support: closed",
+    "mobile /: closed",
+    "mobile /features: closed",
+    "mobile /download: closed",
+    "mobile /docs: closed",
+    "mobile /changelog: closed",
+    "mobile /support: closed"
+  ]
+}

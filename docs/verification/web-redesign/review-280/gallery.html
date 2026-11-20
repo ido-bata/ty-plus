@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>ty-plus web redesign — review captures (#280)</title>
+<style>
+  body{font-family:system-ui,sans-serif;background:#0b0c0e;color:#e8e9eb;margin:0;padding:24px}
+  h1{font-size:20px} h2{font-size:15px;color:#9ba1a8;margin-top:32px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+  figure{margin:0} img{width:100%;border:1px solid #ffffff1f;display:block}
+  figcaption{font-size:12px;color:#9ba1a8;padding:6px 0}
+  code{background:#ffffff10;padding:2px 6px}
+</style>
+</head>
+<body>
+<h1>ty-plus official site — capture review (#280)</h1>
+<p>Commit <code>337cd5e2a8ec2692c8bbc9c5b85b838086496184</code> · Chromium 153 · viewports: desktop 1440×900 / tablet 834×1112 / mobile 390×844 (mobile DSF=2). Normal-state captures assert nav menu closed; <code>-menu-open.png</code> are interaction-state only. Full metadata: <code>capture-meta.json</code>.</p>
+<p>Previous pass for comparison: <code>../after/</code> · <code>../before/</code> · <code>../foundation/</code></p>
+<h2>desktop — full page</h2><div class="grid" id="desktop-full"></div>
+<h2>desktop — viewport units (top / sections / footer)</h2><div class="grid" id="desktop-units"></div>
+<h2>tablet — full page</h2><div class="grid" id="tablet-full"></div>
+<h2>tablet — viewport units</h2><div class="grid" id="tablet-units"></div>
+<h2>mobile — full page</h2><div class="grid" id="mobile-full"></div>
+<h2>mobile — viewport units</h2><div class="grid" id="mobile-units"></div>
+<h2>mobile — interaction state (menu open)</h2><div class="grid" id="mobile-menu"></div>
+<script>
+const files = [];
+files.push('review-desktop-changelog-footer.png');
+files.push('review-desktop-changelog-sec-1.png');
+files.push('review-desktop-changelog-top.png');
+files.push('review-desktop-changelog.png');
+files.push('review-desktop-docs-footer.png');
+files.push('review-desktop-docs-sec-1.png');
+files.push('review-desktop-docs-top.png');
+files.push('review-desktop-docs.png');
+files.push('review-desktop-download-footer.png');
+files.push('review-desktop-download-sec-1.png');
+files.push('review-desktop-download-top.png');
+files.push('review-desktop-download.png');
+files.push('review-desktop-features-footer.png');
+files.push('review-desktop-features-sec-1.png');
+files.push('review-desktop-features-top.png');
+files.push('review-desktop-features.png');
+files.push('review-desktop-index-footer.png');
+files.push('review-desktop-index-sec-0.png');
+files.push('review-desktop-index-sec-1.png');
+files.push('review-desktop-index-sec-2.png');
+files.push('review-desktop-index-top.png');
+files.push('review-desktop-index.png');
+files.push('review-desktop-support-footer.png');
+files.push('review-desktop-support-top.png');
+files.push('review-desktop-support.png');
+files.push('review-mobile-changelog-footer.png');
+files.push('review-mobile-changelog-menu-open.png');
+files.push('review-mobile-changelog-sec-1.png');
+files.push('review-mobile-changelog-top.png');
+files.push('review-mobile-changelog.png');
+files.push('review-mobile-docs-footer.png');
+files.push('review-mobile-docs-menu-open.png');
+files.push('review-mobile-docs-sec-1.png');
+files.push('review-mobile-docs-top.png');
+files.push('review-mobile-docs.png');
+files.push('review-mobile-download-footer.png');
+files.push('review-mobile-download-menu-open.png');
+files.push('review-mobile-download-sec-1.png');
+files.push('review-mobile-download-sec-2.png');
+files.push('review-mobile-download-top.png');
+files.push('review-mobile-download.png');
+files.push('review-mobile-features-footer.png');
+files.push('review-mobile-features-menu-open.png');
+files.push('review-mobile-features-sec-1.png');
+files.push('review-mobile-features-sec-2.png');
+files.push('review-mobile-features-top.png');
+files.push('review-mobile-features.png');
+files.push('review-mobile-index-footer.png');
+files.push('review-mobile-index-menu-open.png');
+files.push('review-mobile-index-sec-0.png');
+files.push('review-mobile-index-sec-1.png');
+files.push('review-mobile-index-sec-2.png');
+files.push('review-mobile-index-sec-3.png');
+files.push('review-mobile-index-top.png');
+files.push('review-mobile-index.png');
+files.push('review-mobile-support-footer.png');
+files.push('review-mobile-support-menu-open.png');
+files.push('review-mobile-support-sec-1.png');
+files.push('review-mobile-support-top.png');
+files.push('review-mobile-support.png');
+files.push('review-tablet-changelog-footer.png');
+files.push('review-tablet-changelog-sec-1.png');
+files.push('review-tablet-changelog-top.png');
+files.push('review-tablet-changelog.png');
+files.push('review-tablet-docs-footer.png');
+files.push('review-tablet-docs-top.png');
+files.push('review-tablet-docs.png');
+files.push('review-tablet-download-footer.png');
+files.push('review-tablet-download-top.png');
+files.push('review-tablet-download.png');
+files.push('review-tablet-features-footer.png');
+files.push('review-tablet-features-sec-1.png');
+files.push('review-tablet-features-top.png');
+files.push('review-tablet-features.png');
+files.push('review-tablet-index-footer.png');
+files.push('review-tablet-index-sec-0.png');
+files.push('review-tablet-index-sec-1.png');
+files.push('review-tablet-index-sec-2.png');
+files.push('review-tablet-index-top.png');
+files.push('review-tablet-index.png');
+files.push('review-tablet-support-footer.png');
+files.push('review-tablet-support-top.png');
+files.push('review-tablet-support.png');
+const groups = {
+  "desktop-full": f => f.startsWith("review-desktop-") && !/-top|-sec-|-footer|-menu-open/.test(f),
+  "desktop-units": f => f.startsWith("review-desktop-") && /-(top|sec-\d+|footer)/.test(f),
+  "tablet-full": f => f.startsWith("review-tablet-") && !/-top|-sec-|-footer|-menu-open/.test(f),
+  "tablet-units": f => f.startsWith("review-tablet-") && /-(top|sec-\d+|footer)/.test(f),
+  "mobile-full": f => f.startsWith("review-mobile-") && !/-top|-sec-|-footer|-menu-open/.test(f),
+  "mobile-units": f => f.startsWith("review-mobile-") && /-(top|sec-\d+|footer)/.test(f),
+  "mobile-menu": f => f.includes("menu-open"),
+};
+for (const [id, pred] of Object.entries(groups)) {
+  const el = document.getElementById(id);
+  for (const f of files.filter(pred)) {
+    const fig = document.createElement("figure");
+    const img = document.createElement("img"); img.loading = "lazy"; img.src = f;
+    const cap = document.createElement("figcaption"); cap.textContent = f;
+    fig.append(img, cap); el.append(fig);
+  }
+}
+</script>
+</body>
+</html>
