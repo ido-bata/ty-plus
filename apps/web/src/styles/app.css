@@ -136,19 +136,23 @@ a:hover {
 	display: none;
 }
 
-/* Page container */
+/* Page container. Vertical rhythm comes from margins between sibling
+   .page blocks so gaps collapse consistently instead of stacking. */
 .page {
 	max-width: var(--site-wrap);
 	margin-inline: auto;
 	padding-inline: 1.25rem;
-	padding-block: 3.5rem 4rem;
+}
+
+.page + .page {
+	margin-block-start: 3.5rem;
 }
 
 /* Standard page head: eyebrow → h1 → lead. */
 .page-head,
 .page-header {
 	max-width: var(--site-prose);
-	margin-block-end: 3rem;
+	padding-block-start: 3.5rem;
 }
 
 .page-head h1,
@@ -168,8 +172,8 @@ a:hover {
 	margin: 0;
 }
 
-.section {
-	margin-block-end: 4rem;
+.section:not(.page) {
+	margin-block-end: 2.5rem;
 }
 
 .section h2 {
@@ -536,7 +540,7 @@ figure.shot figcaption .shot-index {
 
 .site-footer {
 	border-block-start: 1px solid var(--site-hairline);
-	margin-block-start: 5rem;
+	margin-block-start: 4rem;
 	background: var(--site-bg-raised);
 }
 
@@ -615,7 +619,7 @@ figure.shot figcaption .shot-index {
 /* ------------------------------------------------------------------ */
 
 .hero {
-	padding-block: 5rem 4rem;
+	padding-block: 5rem 0;
 }
 
 .hero-grid {
@@ -675,7 +679,7 @@ figure.shot figcaption .shot-index {
 
 @media (max-width: 60rem) {
 	.hero {
-		padding-block: 3.5rem 3rem;
+		padding-block: 3.5rem 0;
 	}
 	.hero-grid {
 		grid-template-columns: 1fr;
