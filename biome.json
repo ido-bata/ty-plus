@@ -18,7 +18,8 @@
 			"!**/src/function/widget/workspace/components/LayoutLockWidget.tsx",
 			"!**/src/function/widget/workspace/components/MenuWidget.tsx",
 			"!**/src/management/workspace/hooks/**",
-			"!**/src/function/widget/state-slice-contract.ts"
+			"!**/src/function/widget/state-slice-contract.ts",
+			"!**/routeTree.gen.ts"
 		]
 	},
 	"css": {
