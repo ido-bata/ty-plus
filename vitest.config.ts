@@ -176,6 +176,17 @@ export default defineConfig({
 					environment: "happy-dom",
 					browser: {
 						enabled: true,
+						// Vitest's browser session must handshake within this
+						// window (default 60_000). The tester page cannot
+						// finish loading while the storybook project is
+						// still doing its first-load work — bun package
+						// extraction plus the Vite dep-optimizer pass over
+						// monaco/@volar/typescript — which on this machine
+						// regularly exceeds 60s on a cold cache. The browser
+						// itself is healthy; the page just arrives late, and
+						// the default timeout turns that into
+						// "Failed to connect to the browser session".
+						connectTimeout: 180_000,
 						// `contextOptions.viewport` pins the browser window so
 						// the tester iframe (resized per-test by
 						// `page.viewport()` in the capture setup file) is
@@ -190,6 +201,19 @@ export default defineConfig({
 						}),
 						headless: true,
 						instances: [{ browser: "chromium" }],
+						// `page.screenshot()` in
+						// scripts/verify/storybook-screenshot-capture.ts
+						// auto-persists every capture under
+						// `browser.screenshotDirectory` in addition to
+						// returning `{ base64 }`. The default is
+						// `__screenshots__/<testFile>/<test>.png` next to
+						// each story file — directories named
+						// `*.stories.tsx` that the Storybook watcher then
+						// indexes as CSF files, poisoning `index.json`
+						// with EISDIR for any concurrently running dev
+						// server. Keep the redundant auto-saves under
+						// `.tmp/` (gitignored) instead.
+						screenshotDirectory: ".tmp/storybook-vitest-screenshots",
 					},
 					// Stories can pull in Monaco/WASM chains that hang
 					// the test loader; the addon's setup file applies a
