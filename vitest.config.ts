@@ -1,9 +1,8 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
-
+import { storybookTest } from "@storybook/addon-vitest/vitest-plugin";
 import { playwright } from "@vitest/browser-playwright";
 import { defineConfig } from "vitest/config";
-import { storybookTest } from "@storybook/addon-vitest/vitest-plugin";
 
 /**
  * Vitest config for the ty-plus project.
@@ -74,6 +73,8 @@ export default defineConfig({
 			"src/**/*.test.tsx",
 			"packages/**/*.test.ts",
 			"packages/**/*.test.tsx",
+			"apps/**/*.test.ts",
+			"apps/**/*.test.tsx",
 			"tools/**/*.test.ts",
 			"scripts/**/*.test.ts",
 		],
