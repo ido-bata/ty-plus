@@ -52,6 +52,13 @@ function notesToText(body: string): string {
 function ReleaseRow({ release }: { release: ReleaseInfo }) {
 	const channel = classifyChannel(release);
 	const notes = notesToText(release.body ?? "");
+	const excerpt = notes
+		.split("\n")
+		.map((l) => l.trim())
+		.filter((l) => l.length > 0)
+		.slice(0, 3)
+		.join(" ")
+		.slice(0, 220);
 	return (
 		<li className="release-item">
 			<div className="release-main">
@@ -78,9 +85,10 @@ function ReleaseRow({ release }: { release: ReleaseInfo }) {
 					</span>
 				) : null}
 			</div>
+			{excerpt ? <p className="release-excerpt">{excerpt}</p> : null}
 			{notes ? (
 				<details className="release-notes">
-					<summary>Release notes</summary>
+					<summary>Full release notes</summary>
 					<p className="release-body">{notes}</p>
 				</details>
 			) : null}

@@ -98,9 +98,9 @@ function HomePage() {
 						<span className="shot-frame">
 							<img
 								src="/images/hero.png"
-								alt="ty-plus v0.10.1 running inside Adobe After Effects 2026 on macOS"
-								width={1600}
-								height={829}
+								alt="The ty-plus workspace canvas inside After Effects — easing, alignment, and preset widgets arranged for a real project"
+								width={3412}
+								height={2044}
 								fetchPriority="high"
 							/>
 						</span>

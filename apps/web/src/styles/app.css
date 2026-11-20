@@ -703,6 +703,17 @@ figure.shot figcaption .shot-index {
 	}
 }
 
+@media (max-width: 30rem) {
+	.hero-actions {
+		flex-direction: column;
+	}
+	.hero-actions .btn {
+		flex: 1 1 auto;
+		width: 100%;
+		justify-content: center;
+	}
+}
+
 /* Feature rows on the home page: asymmetric, hairline-separated. */
 .feature-rows {
 	border-block-start: 1px solid var(--site-hairline);
@@ -752,10 +763,15 @@ figure.shot figcaption .shot-index {
    borrowing an unrelated screenshot. */
 .feature-row--plain {
 	grid-template-columns: minmax(0, 8fr);
+	padding-block: 2.5rem;
 }
 
 .feature-row--plain > div {
 	max-width: 44rem;
+}
+
+.feature-row--plain .feature-row-index {
+	font-size: 0.85rem;
 }
 
 @media (max-width: 56rem) {
@@ -865,6 +881,15 @@ figure.shot figcaption .shot-index {
 	letter-spacing: 0.04em;
 	color: var(--site-text-faint);
 	white-space: nowrap;
+}
+
+.release-excerpt {
+	grid-column: 1 / -1;
+	margin: 0;
+	max-width: 46rem;
+	color: var(--site-text-muted);
+	font-size: 0.88rem;
+	line-height: 1.6;
 }
 
 .release-notes {
