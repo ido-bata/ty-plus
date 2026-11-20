@@ -215,5 +215,9 @@ export function Button(props: ButtonProps): ReactElement {
 		),
 		...rest,
 	};
-	return <Component {...(buttonProps as ComponentPropsWithRef<ElementType>)}>{content}</Component>;
+	return (
+		<Component {...(buttonProps as ComponentPropsWithRef<ElementType>)}>
+			{content}
+		</Component>
+	);
 }

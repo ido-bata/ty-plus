@@ -110,3 +110,15 @@
 | C コンタクトシート | 細いコピー列＋製品画像2枚縦積み | 651×390px＋第2画像 | 情報密度は高いが1枚あたりの視認性が不足 |
 
 採用: **B**。製品の魅力を伝えるにはUIの実寸が最優先であり、見出し・CTA・メタ情報はその上のコンパクトなブロックに集約する。モバイルでは横長ワークスペース画像を左側ウィジェット密集領域へクロップし、縮小版ではなく製品寄りの構図を維持する。
+
+## Revision (#291–#293): shared-component design system
+
+「Precision Instrument」をデザイン方針として撤回し、T3 Code (`pingdotgg/t3code`, `docs/internals/web-ui.md`) のUI規律を参考に、**共有コンポーネントと共有トークンだけでサイトを構築する**方針へ転換した。
+
+- 視覚的UIはすべて `@ty-plus/ui` の共有プリミティブ（Button / IconButton / Surface / Badge / Notice / MediaFrame / ScrollArea 等）で構成する。コントロール外観はコンポーネントが所有し、variant/size/tone/slot の型安全APIで選択する。
+- `Button` は `as` prop でポリモーフィック描画に対応し、`<Button as={Link}>` / `as="a"` でルーティングリンクに共有外観を適用する（`<a className="btn">` の再実装は禁止）。
+- `--site-*` 独自トークン体系とWeb専用のコントロールCSSは廃止。`apps/web/src/styles/app.css` はドキュメントリセットと `--ty-*` テーマ供給（フォントスタックのみ）のみに縮小した。色・文字・余白・角丸・境界線・シャドウは `--ty-*` セマンティックトークン経由。
+- 表示用タイポグラフィが必要なため、共有トークンに `ty-text-size-display-md/lg`・`ty-text-size-lead`・`ty-font-mono` を追加（CEPパネルでは未使用。両環境で同一契約）。
+- ページ側は `apps/web/src/styles/site.ts` のレイアウトrecipe（css()）と共有コンポーネントのcompositionのみを担当する。装飾目的のeyebrow/番号/罫線要素は削除した。
+- 恒久対策として `scripts/check/check-web-design.ts`（Design lint）を `lint` ゲートへ組み込み、rawコントロール・style属性・リテラル色/フォント/角丸/境界線・Web専用トークン・コントロール類似セレクタをTSX ASTとCSS宣言解析で静的に禁止する。allowlist機構で既存違反を管理し、#293 で全違反を解消（0件）。
+- 検証: `docs/verification/web-redesign/review-293/`（6ルート×desktop/tablet/mobile、menu-open状態含む、violations 0）。

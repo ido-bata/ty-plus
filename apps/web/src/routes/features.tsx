@@ -1,5 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { Button, MediaFrame } from "@ty-plus/ui";
+import { css } from "@/styled-system/css";
 import { SITE } from "../lib/site";
+import * as s from "../styles/site";
 
 export const Route = createFileRoute("/features")({
 	head: () => ({
@@ -16,29 +19,37 @@ export const Route = createFileRoute("/features")({
 	component: FeaturesPage,
 });
 
+const featureList = css({
+	display: "flex",
+	flexDirection: "column",
+	gap: "3rem",
+});
+
+const featureRow = css({
+	display: "grid",
+	gridTemplateColumns: { base: "1fr", lg: "minmax(0, 22rem) 1fr" },
+	gap: { base: "1rem", lg: "3rem" },
+	alignItems: "start",
+});
+
 const FEATURES = [
 	{
-		index: "01",
 		title: "Workspace tiles & widgets",
 		body: "Arrange preset tiles, directory browsers, and utility widgets on a gridded workspace. Add, remove, and reorder widgets from the built-in picker, then save the layout locally — it is restored exactly as you left it.",
 		image: "/images/workspace.png",
 		alt: "The ty-plus workspace canvas with the search, easing, and alignment widgets arranged",
-		caption: "fig. 01 — widgets arranged on the workspace canvas",
 		width: 2420,
 		height: 906,
 	},
 	{
-		index: "02",
 		title: "Widgets on demand",
 		body: "Directory browsers, quick utilities, and tools you add from the built-in picker. Every widget is a real panel feature — it keeps working with the network unplugged.",
 		image: "/images/add-widget.png",
 		alt: "The Add Widget dialog in ty-plus listing available widget types",
-		caption: "fig. 03 — the Add Widget picker",
 		width: 1600,
 		height: 956,
 	},
 	{
-		index: "03",
 		title: "Customizable appearance",
 		body: "Tune colors, spacing, and panel styling from Settings. Appearance changes apply live and are stored on your machine — the panel looks the way you want it to.",
 	},
@@ -47,67 +58,62 @@ const FEATURES = [
 function FeaturesPage() {
 	return (
 		<main>
-			<header className="page page-head">
-				<span className="eyebrow">Product</span>
-				<h1>Features</h1>
-				<p className="lead">
-					ty-plus is a CEP extension panel for Adobe After Effects. It gives you
-					a customizable home for the presets and tools you reach for constantly
-					— all running locally inside After Effects.
-				</p>
+			<header className={s.pageHead}>
+				<div className={s.page}>
+					<h1 className={s.h1}>Features</h1>
+					<p className={s.lead}>
+						ty-plus is a CEP extension panel for Adobe After Effects. It gives
+						you a customizable home for the presets and tools you reach for
+						constantly — all running locally inside After Effects.
+					</p>
+				</div>
 			</header>
 
-			<section className="page" aria-label="Feature details">
-				<div className="feature-rows">
+			<section className={s.page} aria-label="Feature details">
+				<div className={featureList}>
 					{FEATURES.map((f) => (
-						<article
-							className={`feature-row${"image" in f ? "" : " feature-row--plain"}`}
-							key={f.index}
-						>
-							<div>
-								<span className="feature-row-index">{f.index}</span>
-								<h3>{f.title}</h3>
-								<p>{f.body}</p>
+						<article className={featureRow} key={f.title}>
+							<div className={s.cardBody}>
+								<h2 className={s.h3}>{f.title}</h2>
+								<p className={s.body}>{f.body}</p>
 							</div>
 							{"image" in f ? (
-								<div className="feature-row-media">
-									<figure className="shot">
-										<span className="shot-frame">
-											<img
-												src={f.image}
-												alt={f.alt}
-												width={f.width}
-												height={f.height}
-												loading="lazy"
-											/>
-										</span>
-										<figcaption>{f.caption}</figcaption>
-									</figure>
-								</div>
+								<figure className={s.figure}>
+									<MediaFrame>
+										<img
+											src={f.image}
+											alt={f.alt}
+											width={f.width}
+											height={f.height}
+											loading="lazy"
+											className={s.shotImg}
+										/>
+									</MediaFrame>
+								</figure>
 							) : null}
 						</article>
 					))}
 				</div>
 			</section>
 
-			<section className="page">
-				<div className="cta-band">
+			<section className={s.page}>
+				<div className={s.ctaBand}>
 					<div>
-						<h2>Offline by design</h2>
-						<p>
+						<h2 className={s.h2}>Offline by design</h2>
+						<p className={s.body}>
 							Workspace settings, presets, and widget configuration live on your
 							machine. The extension checks GitHub Releases for updates, but
 							every core function works without a network connection — and
 							without an account.
 						</p>
 					</div>
-					<div className="cta-band-actions">
-						<Link className="btn btn-primary" to="/download">
+					<div className={s.btnRow}>
+						<Button as={Link} to="/download" variant="primary">
 							Download
-						</Link>
-						<a className="btn btn-secondary" href={SITE.userGuide}>
+						</Button>
+						<Button as="a" href={SITE.userGuide} variant="secondary">
 							User guide
-						</a>
+						</Button>
 					</div>
 				</div>
 			</section>

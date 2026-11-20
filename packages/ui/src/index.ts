@@ -14,6 +14,7 @@ export { PathField } from "./fields/PathField";
 
 export * as Icons from "./icons";
 export { Icon } from "./icons/Icon";
+export { MediaFrame } from "./layout/MediaFrame";
 export { ScrollArea } from "./layout/ScrollArea";
 export { Surface } from "./layout/Surface";
 export { cx } from "./util/cx";

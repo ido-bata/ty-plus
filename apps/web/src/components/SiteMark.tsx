@@ -9,7 +9,7 @@ type SiteMarkProps = {
 export function SiteMark({ className }: SiteMarkProps) {
 	return (
 		<svg
-			className={className ?? "site-logo-mark"}
+			className={className}
 			viewBox="0 0 16 16"
 			aria-hidden="true"
 			focusable="false"
@@ -21,7 +21,7 @@ export function SiteMark({ className }: SiteMarkProps) {
 				width="6.6"
 				height="6.6"
 				rx="1.4"
-				fill="var(--site-accent)"
+				fill="var(--ty-text-accent)"
 			/>
 			<rect
 				x="8.4"
@@ -29,7 +29,7 @@ export function SiteMark({ className }: SiteMarkProps) {
 				width="6.6"
 				height="6.6"
 				rx="1.4"
-				fill="var(--site-text)"
+				fill="var(--ty-text-primary)"
 				opacity="0.9"
 			/>
 			<rect
@@ -38,7 +38,7 @@ export function SiteMark({ className }: SiteMarkProps) {
 				width="6.6"
 				height="6.6"
 				rx="1.4"
-				fill="var(--site-text)"
+				fill="var(--ty-text-primary)"
 				opacity="0.55"
 			/>
 			<rect
@@ -47,7 +47,7 @@ export function SiteMark({ className }: SiteMarkProps) {
 				width="6.6"
 				height="6.6"
 				rx="1.4"
-				fill="var(--site-text)"
+				fill="var(--ty-text-primary)"
 				opacity="0.28"
 			/>
 		</svg>

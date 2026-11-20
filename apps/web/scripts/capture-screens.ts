@@ -89,7 +89,7 @@ const meta: Record<string, unknown> = {
  */
 async function checkMenuHidden(page: import("playwright").Page, label: string) {
 	const state = await page.evaluate(() => {
-		const menu = document.querySelector<HTMLElement>(".site-menu");
+		const menu = document.querySelector<HTMLElement>("#site-menu");
 		if (!menu) return { missing: true as const };
 		// Wide layout renders the menu inline without the popover attribute;
 		// the hidden-state contract only applies to the collapsed popover.
@@ -246,12 +246,12 @@ for (const vp of VIEWPORTS) {
 
 		// Interaction state: mobile nav popover open (separate file).
 		if (vp.name === "mobile") {
-			const button = page.locator(".site-menu-button");
+			const button = page.locator("[data-menu-button]");
 			if (await button.isVisible()) {
 				await button.click();
 				await page.waitForTimeout(300);
 				const open = await page.evaluate(() =>
-					document.querySelector(".site-menu")?.matches(":popover-open"),
+					document.querySelector("#site-menu")?.matches(":popover-open"),
 				);
 				if (open) {
 					// Interaction state: the open menu must actually paint.

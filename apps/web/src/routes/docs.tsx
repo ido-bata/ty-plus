@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { Button } from "@ty-plus/ui";
 import { SITE } from "../lib/site";
+import * as s from "../styles/site";
 
 export const Route = createFileRoute("/docs")({
 	head: () => ({
@@ -52,38 +54,56 @@ const DOC_SECTIONS = [
 function DocsPage() {
 	return (
 		<main>
-			<header className="page page-head">
-				<span className="eyebrow">Resources</span>
-				<h1>Documentation</h1>
-				<p className="lead">
-					The user guide is maintained in the repository so it always matches
-					the released product. It is currently written in Japanese.
-				</p>
+			<header className={s.pageHead}>
+				<div className={s.page}>
+					<h1 className={s.h1}>Documentation</h1>
+					<p className={s.lead}>
+						The user guide is maintained in the repository so it always matches
+						the released product. It is currently written in Japanese.
+					</p>
+				</div>
 			</header>
 
-			<section className="page section" aria-labelledby="sections">
-				<span className="eyebrow">Guides</span>
-				<h2 id="sections">User guide sections</h2>
-				<dl className="def-list def-list--links">
-					{DOC_SECTIONS.map((d) => (
-						<div className="def-row" key={d.title}>
-							<dt>
-								<a href={d.href}>{d.title}</a>
-							</dt>
-							<dd>{d.description}</dd>
-						</div>
-					))}
-				</dl>
+			<section className={s.page} aria-labelledby="sections">
+				<div className={s.section}>
+					<div>
+						<h2 className={s.h2} id="sections">
+							User guide sections
+						</h2>
+					</div>
+					<dl className={s.defList}>
+						{DOC_SECTIONS.map((d) => (
+							<div className={s.defRow} key={d.title}>
+								<dt className={s.defTerm}>
+									<a className={s.link} href={d.href}>
+										{d.title}
+									</a>
+								</dt>
+								<dd className={s.defDesc}>{d.description}</dd>
+							</div>
+						))}
+					</dl>
+				</div>
 			</section>
 
-			<section className="page section">
-				<span className="eyebrow">Contributing</span>
-				<h2>Improve the docs</h2>
-				<p>
-					Documentation improvements are welcome — see{" "}
-					<a href={SITE.contributing}>CONTRIBUTING.md</a> for how to propose
-					changes.
-				</p>
+			<section className={s.page}>
+				<div className={s.section}>
+					<div>
+						<h2 className={s.h2}>Improve the docs</h2>
+						<p className={s.body}>
+							Documentation improvements are welcome — see{" "}
+							<a className={s.link} href={SITE.contributing}>
+								CONTRIBUTING.md
+							</a>{" "}
+							for how to propose changes.
+						</p>
+					</div>
+					<div className={s.btnRow}>
+						<Button as="a" href={SITE.userGuide} variant="primary">
+							Open user guide
+						</Button>
+					</div>
+				</div>
 			</section>
 		</main>
 	);
