@@ -14,7 +14,7 @@ import {
 	type CyclicWaveParams,
 	sampleWave,
 	type WavePoint,
-} from "@/shared/cyclic-wave";
+} from "@/function/widget/core/loop/cyclic-wave";
 
 export type MotionPreviewProps = {
 	template: WavePoint[];

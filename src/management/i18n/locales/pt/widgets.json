@@ -85,7 +85,9 @@
 		"update": "Atualizar",
 		"unapply": "Remover loop",
 		"applied": "Aplicado",
-		"conflict": "Editado no AE"
+		"conflict": "Editado no AE",
+		"play": "Reproduzir",
+		"pause": "Pausar"
 	},
 	"menu": {
 		"name": "Menu",

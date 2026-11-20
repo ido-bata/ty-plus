@@ -85,7 +85,9 @@
 		"update": "更新",
 		"unapply": "ループを解除",
 		"applied": "適用済み",
-		"conflict": "AE側で編集済み"
+		"conflict": "AE側で編集済み",
+		"play": "再生",
+		"pause": "一時停止"
 	},
 	"menu": {
 		"name": "メニュー",
