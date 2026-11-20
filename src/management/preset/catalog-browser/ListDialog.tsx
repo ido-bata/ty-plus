@@ -2117,9 +2117,8 @@ export function PresetsDialog(): JSX.Element {
 				</span>
 				<span>
 					{gatewayHealth.state === "degraded"
-						? gatewayHealth.failure.message
-						: gatewayHealth.reason}{" "}
-					— showing the local catalog only.
+						? `${gatewayHealth.failure.message} — showing the local catalog only.`
+						: "Cloud features are not active in this session — showing the local catalog only."}
 				</span>
 			</p>
 		);
