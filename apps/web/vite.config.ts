@@ -28,11 +28,11 @@ export default defineConfig({
 			},
 			{
 				find: /^@\/styled-system\/(.*)$/,
-				replacement: `${path.join(repoRoot, "styled-system")}/$1`,
+				replacement: `${path.join(root, "styled-system")}/$1`,
 			},
 			{
 				find: /^@styled-system\/(.*)$/,
-				replacement: `${path.join(repoRoot, "styled-system")}/$1`,
+				replacement: `${path.join(root, "styled-system")}/$1`,
 			},
 		],
 	},
