@@ -44,16 +44,25 @@ export function SiteHeader() {
 		const measure = () => {
 			cancelAnimationFrame(raf);
 			raf = requestAnimationFrame(() => {
+				// An open popover lives in the top layer, so it never
+				// contributes to the header's scrollWidth. Hide it for one
+				// frame so the inline row can be measured naturally, then
+				// restore the open state before paint.
+				const wasOpen = menu.matches(":popover-open");
+				if (wasOpen) menu.hidePopover();
+
 				// Render the row inline (button hidden, menu in flow) for one
 				// frame to measure the natural width, then decide.
 				header.classList.add("is-measuring");
 				const fits = inner.scrollWidth <= inner.clientWidth;
 				header.classList.remove("is-measuring");
 
+				if (wasOpen) menu.showPopover();
+
 				// Widening while the popover is open: remember to reopen it
 				// when the layout narrows again. Kept outside the state
 				// updater so the updater stays pure.
-				if (fits && menu.matches(":popover-open")) {
+				if (fits && wasOpen) {
 					reopenRef.current = true;
 				}
 				setIsWide(fits);

@@ -79,7 +79,66 @@ const meta: Record<string, unknown> = {
 	viewports: VIEWPORTS,
 	routes: ROUTES,
 	menuClosedAssertions: [] as string[],
+	menuHiddenViolations: [] as string[],
 };
+
+/**
+ * Normal state must render the collapsed nav menu fully hidden — not just
+ * `:popover-open`-closed. Author `display` rules can keep a closed popover
+ * painted, so we verify computed style, geometry and a hit test.
+ */
+async function checkMenuHidden(page: import("playwright").Page, label: string) {
+	const state = await page.evaluate(() => {
+		const menu = document.querySelector<HTMLElement>(".site-menu");
+		if (!menu) return { missing: true as const };
+		// Wide layout renders the menu inline without the popover attribute;
+		// the hidden-state contract only applies to the collapsed popover.
+		if (!menu.hasAttribute("popover")) {
+			return { missing: false as const, inline: true as const };
+		}
+		const cs = getComputedStyle(menu);
+		const r = menu.getBoundingClientRect();
+		const visible =
+			cs.display !== "none" &&
+			cs.visibility !== "hidden" &&
+			cs.opacity !== "0" &&
+			r.width > 0 &&
+			r.height > 0 &&
+			r.bottom > 0 &&
+			r.top < innerHeight &&
+			r.right > 0 &&
+			r.left < innerWidth;
+		const hit = visible
+			? document.elementFromPoint(
+					Math.min(Math.max(r.left + r.width / 2, 1), innerWidth - 1),
+					Math.min(Math.max(r.top + r.height / 2, 1), innerHeight - 1),
+				)
+			: null;
+		const hitIsMenu = hit !== null && (menu === hit || menu.contains(hit));
+		return {
+			missing: false as const,
+			popoverOpen: menu.matches(":popover-open"),
+			visible,
+			hitIsMenu,
+		};
+	});
+	// Wide (inline) layout is exempt from the hidden-state contract.
+	if ("inline" in state && state.inline) {
+		const line = `${label}: inline layout -> ok`;
+		(meta.menuClosedAssertions as string[]).push(line);
+		return true;
+	}
+	// A closed popover must be invisible; an open one must be visible.
+	const pass = state.missing
+		? false
+		: state.popoverOpen
+			? state.visible
+			: !state.visible;
+	const line = `${label}: ${JSON.stringify(state)} -> ${pass ? "ok" : "FAIL"}`;
+	(meta.menuClosedAssertions as string[]).push(line);
+	if (!pass) (meta.menuHiddenViolations as string[]).push(line);
+	return pass;
+}
 
 async function settle(page: import("playwright").Page) {
 	await page.evaluate(async () => {
@@ -129,13 +188,8 @@ for (const vp of VIEWPORTS) {
 		});
 		await settle(page);
 
-		// Normal state must start with the nav popover closed.
-		const menuOpen = await page.evaluate(() =>
-			document.querySelector(".site-menu")?.matches(":popover-open"),
-		);
-		(meta.menuClosedAssertions as string[]).push(
-			`${vp.name} ${route}: ${menuOpen ? "OPEN (unexpected)" : "closed"}`,
-		);
+		// Normal state: the collapsed nav menu must be fully hidden.
+		await checkMenuHidden(page, `${vp.name} ${route}`);
 
 		const file = join(outDir, `${tag}-${vp.name}-${name}.png`);
 		await page.screenshot({ path: file, fullPage: true });
@@ -200,6 +254,8 @@ for (const vp of VIEWPORTS) {
 					document.querySelector(".site-menu")?.matches(":popover-open"),
 				);
 				if (open) {
+					// Interaction state: the open menu must actually paint.
+					await checkMenuHidden(page, `${vp.name} ${route} menu-open`);
 					const menuFile = join(
 						outDir,
 						`${tag}-${vp.name}-${name}-menu-open.png`,
@@ -218,3 +274,11 @@ await browser.close();
 
 writeFileSync(join(outDir, "capture-meta.json"), JSON.stringify(meta, null, 2));
 console.log(`saved ${join(outDir, "capture-meta.json")}`);
+
+const violations = meta.menuHiddenViolations as string[];
+if (violations.length > 0) {
+	console.error(
+		`menu visibility check FAILED (${violations.length}):\n${violations.join("\n")}`,
+	);
+	process.exit(1);
+}
