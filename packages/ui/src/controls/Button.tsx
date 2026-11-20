@@ -1,5 +1,11 @@
 import { cx } from "@ty-plus/ui/util/cx";
-import type { ButtonHTMLAttributes, ReactElement, ReactNode } from "react";
+import type {
+	ButtonHTMLAttributes,
+	ComponentPropsWithRef,
+	ElementType,
+	ReactElement,
+	ReactNode,
+} from "react";
 import { css } from "@/styled-system/css";
 
 type ButtonVariant =
@@ -11,7 +17,7 @@ type ButtonVariant =
 	| "danger";
 type ButtonSize = "sm" | "md" | "lg";
 
-export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+type ButtonOwnProps = {
 	variant?: ButtonVariant;
 	uiSize?: ButtonSize;
 	/** Expands to fill parent width within grid cell */
@@ -21,6 +27,17 @@ export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 	/** End slot */
 	end?: ReactNode;
 };
+
+/**
+ * Polymorphic button. Defaults to a native `<button>`; pass `as` to render
+ * another element or component (e.g. a router link) while keeping the shared
+ * appearance. Extra props for the rendered element are forwarded as-is.
+ */
+export type ButtonProps = ButtonOwnProps &
+	ButtonHTMLAttributes<HTMLButtonElement> & {
+		as?: ElementType;
+		[key: string]: unknown;
+	};
 
 const base = css({
 	display: "inline-flex",
@@ -165,6 +182,7 @@ const labelSlot = css({
 
 export function Button(props: ButtonProps): ReactElement {
 	const {
+		as: Component = "button",
 		className,
 		type,
 		variant = "default",
@@ -185,19 +203,17 @@ export function Button(props: ButtonProps): ReactElement {
 		) : (
 			children
 		);
-	return (
-		<button
-			type={type ?? "button"}
-			className={cx(
-				base,
-				sizes[uiSize],
-				variants[variant],
-				fullWidth ? css({ width: "full" }) : "",
-				className,
-			)}
-			{...rest}
-		>
-			{content}
-		</button>
-	);
+	const buttonProps = {
+		// `type` only applies to native buttons; links must not receive it.
+		...(Component === "button" ? { type: type ?? "button" } : {}),
+		className: cx(
+			base,
+			sizes[uiSize],
+			variants[variant],
+			fullWidth ? css({ width: "full" }) : "",
+			className,
+		),
+		...rest,
+	};
+	return <Component {...(buttonProps as ComponentPropsWithRef<ElementType>)}>{content}</Component>;
 }
