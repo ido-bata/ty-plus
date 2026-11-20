@@ -187,3 +187,12 @@
 - **実画像**: `hero.png` / `workspace.png` / `preset-tiles.png`（新規）/ `add-widget.png` / `preset-dialog.png` を、After Effects 2026 + `app.ty-plus.dev` パネル（1706×1022 CSS px、Retina 2x）からの実機 CDP キャプチャへ差し替え。撮影条件・対象SHAは `docs/verification/web-redesign/` の記録に従う。
 - **LP 再構成**: Hero はコピーrail(span5) + プリセットタイル入りワークスペース実写(span7) の非対称分割。Workspace 帯は utility widget 領域のワイド提示(span8+span4)。Features 帯は Local Presets と Add Widget の2ダイアログを入れ子2列で並置し、同種スクリーンショットの積層をやめた。モバイルではコピー→画像→CTAの順で製品ビジュアルを早期に提示する。
 - **capture-meta 修正**: `capture-screens.ts` が `commitSha` に加えて `sourceTree.dirty` / `dirtyPaths` を記録し、`--require-clean` で未コミット差分がある場合は撮影を拒否する。
+
+## Revision (#319): identifiable product assets + honest DOM order
+
+review-309 で「プリセットタイルが同一の低コントラストカーブで識別不能」「モバイル順序の報告と実装の不一致」が指摘された。製品側の問題は #316 / PR #318 で分離して修正し、本 Revision は素材と構図のみを扱う。
+
+- **素材**: #316 の fixture（退化 canvas アイコンを title text へ正規化 + `data-preset-id` 識別 assert + CDP 実ポインタ hover 検証）で再撮影した実機キャプチャへ差替。`hero.png` / `preset-tiles.png` / `workspace.png` / `preset-dialog.png` は名前付きプリセットタイルと利用者向けオフライン通知を含む。`add-widget.png` は既存の実機キャプチャを維持。
+- **Hero の DOM 順序**: グリッド子要素を copy / figure / actions の3要素に分割。DOM 順は全 viewport で copy → image → actions（モバイルは CTA が画像の後）。md+ では figure が左右2行を span し、copy/actions が左 rail を構成する。前回報告した「コピー→画像→CTA」と実装を一致させた。
+- **セクション構図の差別化**: Workspace 帯は説明 rail(span4) → 画像(span8) の読み順へ反転。Features 帯は左 rail を廃し、全幅ヘッダ + キャプション付き2ダイアログ横並びへ変更（各 surface に名前を付与）。Resources の3列グリッドは維持。
+- **Features 行**: flagship を「Preset tiles from your catalog」（preset-tiles.png, wide）へ変更。`mediaSpan: "narrow"`（text span7 / media span5）を追加し行毎の密度を変化。featureRow / orderFirst のブレークポイントを span 系と同じ `md` に揃え、md–lg 帯での潜在的な暗黙カラム生成を解消。
