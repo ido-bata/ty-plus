@@ -75,7 +75,13 @@
 		"name": "Loop",
 		"cycles": "Ciclos",
 		"decrement": "Diminuir ciclos",
-		"increment": "Aumentar ciclos"
+		"increment": "Aumentar ciclos",
+		"handle": {
+			"easing": "Suavizacao",
+			"frequency": "Frequencia",
+			"bias": "Vies",
+			"damping": "Amortecimento"
+		}
 	},
 	"menu": {
 		"name": "Menu",

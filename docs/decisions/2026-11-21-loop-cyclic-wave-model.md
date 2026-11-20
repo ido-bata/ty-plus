@@ -21,3 +21,5 @@
 - Easing ウィジェットとは Mode を共有しない。共有するのは描画・操作の基盤だけ。
 - ホストの `applyLoopEasing` は複製規則の変更を Companion として更新する。
 - 旧 loop モードの挙動は `cycle / amplitude=1 / damping=1 / bias=0` に包含される。
+- 共有するのは周期モデル（`cyclic-wave.ts`）・座標処理・描画プリミティブであり、
+  画面レイアウトと編集体験は Loop 側で持つ

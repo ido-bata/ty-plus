@@ -42,7 +42,7 @@ const renderLoop = () => {
 		</RuntimeProvider>,
 	);
 	const canvas = utils.container.querySelector<HTMLCanvasElement>(
-		"[data-ws-easing-editor-canvas]",
+		"[data-ws-loop-wave-canvas]",
 	);
 	if (!canvas) throw new Error("loop canvas not found");
 	return { ...utils, canvas };
@@ -75,22 +75,20 @@ describe("LoopWidget", () => {
 		host.mockClear();
 	});
 
-	it("applies the loop through applyLoopEasing with a cycle count", async () => {
-		const { canvas } = renderLoop();
-		fireEvent.pointerDown(canvas, { button: 0, clientX: 100, clientY: 100 });
-		fireEvent.pointerMove(canvas, { button: 0, clientX: 140, clientY: 140 });
-		fireEvent.pointerUp(canvas, { button: 0, clientX: 140, clientY: 140 });
-
+	it("applies the loop through applyLoopEasing with the wave parameters", async () => {
+		const { container } = renderLoop();
+		const button = container.querySelector<HTMLButtonElement>(
+			'[data-ws-action="loop-apply-current"]',
+		);
+		if (!button) throw new Error("apply button not found");
+		fireEvent.click(button);
 		await waitFor(() => {
 			expect(callsTo("applyLoopEasing").length).toBeGreaterThan(0);
 		});
 		expect(callsTo("applyEasing")).toHaveLength(0);
-		const args = (
-			callsTo("applyLoopEasing")[0] as unknown as [
-				string,
-				{ loopCount?: number }[],
-			]
-		)[1];
-		expect(args[0].loopCount).toBeGreaterThanOrEqual(2);
+		const args = callsTo("applyLoopEasing")[0][1] as {
+			wave?: { cycles?: number };
+		}[];
+		expect(args[0].wave?.cycles).toBeGreaterThanOrEqual(2);
 	});
 });
