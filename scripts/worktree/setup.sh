@@ -31,6 +31,7 @@ CEP_DEBUG_BASE=$((base + 10))
 TY_PLUS_MEDIA_DEV_PORT=$((base + 20))
 TY_PLUS_STORYBOOK_PORT=$((base + 30))
 TY_PLUS_STORYBOOK_SNAPSHOT_PORT=$((base + 31))
+TY_PLUS_WEB_PORT=$((base + 40))
 EOF
 mv "$tmp" "$root/.worktree.env"
 
