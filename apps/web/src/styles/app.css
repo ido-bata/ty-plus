@@ -1187,3 +1187,55 @@ figure.shot figcaption .shot-index {
 	color: var(--site-text-muted);
 	margin: 0;
 }
+
+/* Product-first hero (#289) */
+.hero-stage {
+	display: grid;
+	gap: 2.5rem;
+}
+.hero-stage-head {
+	display: grid;
+	gap: 1rem;
+	max-width: 46rem;
+}
+.hero-stage-head h1 {
+	font-size: clamp(2.2rem, 5vw, 3.6rem);
+	font-weight: 600;
+	line-height: 1.08;
+	letter-spacing: -0.03em;
+	margin: 0.5rem 0 0;
+}
+.hero-stage-head .lead {
+	font-size: 1.08rem;
+	max-width: 38rem;
+}
+.hero-stage-shot {
+	margin: 0;
+}
+.hero-stage-shot .shot-frame {
+	border-radius: var(--site-radius-lg, 12px);
+}
+.hero-stage-shot img {
+	width: 100%;
+	height: auto;
+	display: block;
+}
+
+@media (max-width: 56rem) {
+	.hero-stage {
+		gap: 2rem;
+	}
+}
+
+@media (max-width: 40rem) {
+	/* Mobile: crop the wide workspace capture to the widget-dense region
+	   so the product UI stays legible instead of shrinking to a strip. */
+	.hero-stage-shot .shot-frame {
+		overflow: hidden;
+	}
+	.hero-stage-shot img {
+		width: 220%;
+		max-width: none;
+		margin-left: -8%;
+	}
+}

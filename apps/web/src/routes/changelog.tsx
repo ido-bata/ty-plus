@@ -52,13 +52,18 @@ function notesToText(body: string): string {
 function ReleaseRow({ release }: { release: ReleaseInfo }) {
 	const channel = classifyChannel(release);
 	const notes = notesToText(release.body ?? "");
-	const excerpt = notes
+	// Prefer real bullet items; skip heading fragments and short noise lines
+	// so the visible excerpt carries the release's actual meaning.
+	const lines = notes
 		.split("\n")
 		.map((l) => l.trim())
-		.filter((l) => l.length > 0)
-		.slice(0, 3)
-		.join(" ")
-		.slice(0, 220);
+		.filter((l) => l.length > 0);
+	const bullets = lines.filter((l) => l.startsWith("• "));
+	const prose = lines.filter(
+		(l) => !l.startsWith("• ") && l.length >= 40 && !l.endsWith(":"),
+	);
+	const excerptSrc = (bullets.length > 0 ? bullets : prose).slice(0, 3);
+	const excerpt = excerptSrc.join(" ").slice(0, 260);
 	return (
 		<li className="release-item">
 			<div className="release-main">

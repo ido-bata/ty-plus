@@ -66,8 +66,8 @@ function HomePage() {
 	return (
 		<main>
 			<section className="hero page">
-				<div className="hero-grid">
-					<div>
+				<div className="hero-stage">
+					<div className="hero-stage-head">
 						<span className="eyebrow">Free · Open source · Local-first</span>
 						<h1>{SITE.tagline}</h1>
 						<p className="lead">
@@ -94,11 +94,11 @@ function HomePage() {
 							{latest ? <span>Stable {latest.tagName}</span> : null}
 						</div>
 					</div>
-					<figure className="shot hero-shot">
+					<figure className="shot hero-stage-shot">
 						<span className="shot-frame">
 							<img
 								src="/images/hero.png"
-								alt="The ty-plus workspace canvas inside After Effects — easing, alignment, and preset widgets arranged for a real project"
+								alt="The ty-plus workspace canvas inside After Effects — search, easing, alignment, and preset widgets arranged on the canvas"
 								width={3412}
 								height={2044}
 								fetchPriority="high"
@@ -106,8 +106,8 @@ function HomePage() {
 						</span>
 						<figcaption>
 							<span className="shot-index">shot 00</span>
-							ty-plus v0.10.1 (Stable) in Adobe After Effects 2026 — macOS, the
-							real released build.
+							The ty-plus workspace in After Effects — every widget is a real
+							panel feature, captured from a configured project.
 						</figcaption>
 					</figure>
 				</div>
