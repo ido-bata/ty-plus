@@ -21,33 +21,36 @@ const FEATURES = [
 		index: "01",
 		title: "Workspace tiles & widgets",
 		body: "Arrange preset tiles, directory browsers, and utility widgets on a gridded workspace. Add, remove, and reorder widgets from the built-in picker, then save the layout locally — it is restored exactly as you left it.",
-		image: "/images/widget-added.png",
-		alt: "A widget added to the ty-plus workspace",
-		caption: "fig. 01 — a widget added to the workspace",
+		image: "/images/workspace.png",
+		alt: "The ty-plus panel docked inside a new After Effects project",
+		caption: "fig. 01 — the panel inside After Effects",
+		width: 1600,
+		height: 956,
 	},
 	{
 		index: "02",
 		title: "Preset library",
 		body: "Keep easing, text-style, footage, layer, animation, and code presets organized in groups. Apply them to the right After Effects target without leaving the panel or hunting through folders.",
-		image: "/images/easing-applied.png",
-		alt: "An easing preset applied to keyframes in a saved After Effects project",
-		caption: "fig. 02 — easing preset applied to keyframes",
+		image: "/images/preset-tiles.png",
+		alt: "Preset tiles in the ty-plus panel",
+		caption: "fig. 02 — preset tiles, ready to apply",
+		width: 640,
+		height: 1748,
 	},
 	{
 		index: "03",
-		title: "Customizable appearance",
-		body: "Tune colors, spacing, and panel styling from Settings. Appearance changes apply live and are stored on your machine — the panel looks the way you want it to.",
-		image: "/images/settings.png",
-		alt: "ty-plus settings dialog",
-		caption: "fig. 03 — settings dialog",
+		title: "Widgets on demand",
+		body: "Directory browsers, quick utilities, and tools you add from the built-in picker. Every widget is a real panel feature — it keeps working with the network unplugged.",
+		image: "/images/add-widget.png",
+		alt: "The Add Widget dialog in ty-plus listing available widget types",
+		caption: "fig. 03 — the Add Widget picker",
+		width: 1600,
+		height: 956,
 	},
 	{
 		index: "04",
-		title: "Widgets on demand",
-		body: "Directory browsers, quick utilities, and tools you add from the built-in picker. Every widget is a real panel feature — it keeps working with the network unplugged.",
-		image: "/images/directory-browser.png",
-		alt: "Directory Browser widget added to the ty-plus workspace",
-		caption: "fig. 04 — directory browser widget",
+		title: "Customizable appearance",
+		body: "Tune colors, spacing, and panel styling from Settings. Appearance changes apply live and are stored on your machine — the panel looks the way you want it to.",
 	},
 ] as const;
 
@@ -67,26 +70,31 @@ function FeaturesPage() {
 			<section className="page" aria-label="Feature details">
 				<div className="feature-rows">
 					{FEATURES.map((f) => (
-						<article className="feature-row" key={f.index}>
+						<article
+							className={`feature-row${"image" in f ? "" : " feature-row--plain"}`}
+							key={f.index}
+						>
 							<div>
 								<span className="feature-row-index">{f.index}</span>
 								<h3>{f.title}</h3>
 								<p>{f.body}</p>
 							</div>
-							<div className="feature-row-media">
-								<figure className="shot">
-									<span className="shot-frame">
-										<img
-											src={f.image}
-											alt={f.alt}
-											width={1600}
-											height={1039}
-											loading="lazy"
-										/>
-									</span>
-									<figcaption>{f.caption}</figcaption>
-								</figure>
-							</div>
+							{"image" in f ? (
+								<div className="feature-row-media">
+									<figure className="shot">
+										<span className="shot-frame">
+											<img
+												src={f.image}
+												alt={f.alt}
+												width={f.width}
+												height={f.height}
+												loading="lazy"
+											/>
+										</span>
+										<figcaption>{f.caption}</figcaption>
+									</figure>
+								</div>
+							) : null}
 						</article>
 					))}
 				</div>
