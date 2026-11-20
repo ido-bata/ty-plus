@@ -195,7 +195,23 @@ for (const vp of VIEWPORTS) {
 		await page.screenshot({ path: file, fullPage: true });
 		console.log(`saved ${file}`);
 
-		// Viewport-unit shots: top, sections, footer.
+		// Viewport-unit shots: top, sections, footer. The fullPage capture
+		// above can leave the scroll position anywhere, so explicitly return
+		// to the top and verify it before shooting the hero viewport.
+		await page.evaluate(() =>
+			window.scrollTo({ top: 0, left: 0, behavior: "instant" }),
+		);
+		await page.waitForTimeout(150);
+		const scrollY = await page.evaluate(() => window.scrollY);
+		const topOk = scrollY === 0;
+		(meta.menuClosedAssertions as string[]).push(
+			`${vp.name} ${route} top-shot scrollY=${scrollY} -> ${topOk ? "ok" : "FAIL"}`,
+		);
+		if (!topOk) {
+			(meta.menuHiddenViolations as string[]).push(
+				`${vp.name} ${route} top-shot not at scroll top`,
+			);
+		}
 		const topFile = join(outDir, `${tag}-${vp.name}-${name}-top.png`);
 		await page.screenshot({ path: topFile });
 

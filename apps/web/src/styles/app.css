@@ -636,7 +636,7 @@ figure.shot figcaption .shot-index {
 }
 
 .hero h1 {
-	font-size: clamp(2.4rem, 5.5vw, 4.2rem);
+	font-size: clamp(2.5rem, 6vw, 4.2rem);
 	font-weight: 600;
 	line-height: 1.06;
 	letter-spacing: -0.03em;
@@ -685,14 +685,21 @@ figure.shot figcaption .shot-index {
 
 @media (max-width: 60rem) {
 	.hero {
-		padding-block: 3.5rem 0;
+		padding-block: 3rem 0;
 	}
 	.hero-grid {
 		grid-template-columns: 1fr;
 		gap: 2.5rem;
 	}
 	.hero h1 {
-		max-width: 20ch;
+		font-size: clamp(2rem, 9vw, 3rem);
+		max-width: 16ch;
+	}
+	.hero-actions .btn {
+		flex: 1 1 10rem;
+	}
+	.hero-meta {
+		gap: 0.4rem 1.25rem;
 	}
 }
 
@@ -807,7 +814,7 @@ figure.shot figcaption .shot-index {
 
 .release-item {
 	display: grid;
-	grid-template-columns: auto minmax(0, 1fr) auto;
+	grid-template-columns: minmax(0, 1fr) auto;
 	gap: 0.4rem 1.25rem;
 	align-items: baseline;
 	padding-block: 1.1rem;
@@ -816,6 +823,14 @@ figure.shot figcaption .shot-index {
 
 .release-item:first-child {
 	border-block-start: 1px solid var(--site-hairline);
+}
+
+.release-main {
+	display: flex;
+	align-items: baseline;
+	gap: 0.4rem 1rem;
+	flex-wrap: wrap;
+	min-width: 0;
 }
 
 .release-version {
@@ -834,27 +849,54 @@ figure.shot figcaption .shot-index {
 .release-name {
 	font-size: 0.9rem;
 	color: var(--site-text-faint);
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
 }
 
-.release-meta {
+.release-side {
 	display: flex;
-	gap: 0.9rem;
 	align-items: baseline;
+	gap: 0.9rem;
+	flex-wrap: wrap;
 	justify-content: flex-end;
+}
+
+.release-assets {
+	font-family: var(--site-font-mono);
+	font-size: 0.72rem;
+	letter-spacing: 0.04em;
+	color: var(--site-text-faint);
 	white-space: nowrap;
 }
 
-@media (max-width: 44rem) {
-	.release-item {
-		grid-template-columns: 1fr auto;
-	}
-	.release-name {
-		grid-column: 1 / -1;
-		order: 3;
-	}
+.release-notes {
+	grid-column: 1 / -1;
+	justify-self: start;
+	max-width: 46rem;
+}
+
+.release-notes summary {
+	font-family: var(--site-font-mono);
+	font-size: 0.75rem;
+	letter-spacing: 0.06em;
+	color: var(--site-text-faint);
+	cursor: pointer;
+	list-style-position: inside;
+}
+
+.release-notes summary:hover {
+	color: var(--site-text-muted);
+}
+
+.release-body {
+	margin: 0.75rem 0 0;
+	padding: 0.875rem 1rem;
+	border: 1px solid var(--site-hairline);
+	border-radius: var(--site-radius);
+	background: var(--site-bg-raised);
+	color: var(--site-text-muted);
+	font-size: 0.88rem;
+	line-height: 1.65;
+	white-space: pre-line;
+	overflow-wrap: anywhere;
 }
 
 .release-date {
@@ -862,6 +904,28 @@ figure.shot figcaption .shot-index {
 	font-size: 0.78rem;
 	color: var(--site-text-faint);
 	white-space: nowrap;
+}
+
+.changelog-group-head {
+	display: flex;
+	align-items: baseline;
+	gap: 1rem;
+	flex-wrap: wrap;
+	margin-block-end: 1.25rem;
+}
+
+.changelog-group-head h2 {
+	font-size: clamp(1.35rem, 2.5vw, 1.7rem);
+	font-weight: 600;
+	letter-spacing: -0.02em;
+	line-height: 1.25;
+	margin: 0;
+}
+
+.changelog-group-head p {
+	margin: 0;
+	font-size: 0.88rem;
+	color: var(--site-text-faint);
 }
 
 .badge {
@@ -882,6 +946,28 @@ figure.shot figcaption .shot-index {
 .badge--insider {
 	color: var(--site-accent-hover);
 	border-color: color-mix(in srgb, var(--site-accent) 45%, transparent);
+}
+
+.asset-download .asset-file {
+	display: flex;
+	align-items: baseline;
+	gap: 0.6rem;
+	flex-wrap: wrap;
+	margin-block: 0.6rem 0;
+}
+
+.asset-download .asset-file code {
+	font-family: var(--site-font-mono);
+	font-size: 0.75rem;
+	color: var(--site-text-muted);
+	overflow-wrap: anywhere;
+}
+
+.asset-download .asset-size {
+	font-family: var(--site-font-mono);
+	font-size: 0.72rem;
+	color: var(--site-text-faint);
+	white-space: nowrap;
 }
 
 .asset-list {
