@@ -45,3 +45,7 @@ node_modules
 
 # Per-worktree port/env file written by scripts/worktree/setup.sh
 .worktree.env
+
+# Wrangler local state (workerd dev/preview artifacts).
+.wrangler/
+apps/web/.wrangler/

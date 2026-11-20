@@ -1,0 +1,20 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "ty-plus-web",
+	// Pinned compat date; bump deliberately, not automatically.
+	"compatibility_date": "2026-11-17",
+	"compatibility_flags": ["nodejs_compat"],
+	"main": "@tanstack/react-start/server-entry",
+	// Free tier starts on workers.dev; no custom domain (ADR-0007).
+	"workers_dev": true,
+	// Static Assets (client build + prerendered pages) are wired by
+	// @cloudflare/vite-plugin — do not set `assets.directory` here; the
+	// plugin points it at the client build output automatically.
+	"env": {
+		// Optional staging Worker: `wrangler deploy --env preview`.
+		"preview": {
+			"name": "ty-plus-web-preview",
+			"workers_dev": true
+		}
+	}
+}
