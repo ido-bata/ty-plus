@@ -63,9 +63,8 @@ function ChangelogPage() {
 				<p>
 					Choose Stable, Beta, or Insider under{" "}
 					<strong>Settings → Updates</strong> inside the panel. Updates are
-					checked against GitHub Releases; installation stays manual.
-					Channel details are in the{" "}
-					<a href={SITE.userGuide}>user guide</a>.
+					checked against GitHub Releases; installation stays manual. Channel
+					details are in the <a href={SITE.userGuide}>user guide</a>.
 				</p>
 			</section>
 		</main>

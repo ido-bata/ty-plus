@@ -35,8 +35,8 @@ function HomePage() {
 				<h1>{SITE.tagline}</h1>
 				<p className="lead">
 					ty-plus turns part of your After Effects workspace into a customizable
-					home for reusable presets and everyday tools — without leaving
-					After Effects.
+					home for reusable presets and everyday tools — without leaving After
+					Effects.
 				</p>
 				<div className="hero-actions">
 					<a className="btn btn-primary" href={SITE.latestRelease}>
@@ -68,9 +68,8 @@ function HomePage() {
 						<article className="card">
 							<h3>Presets &amp; scripts</h3>
 							<p>
-								Organize and launch reusable After Effects items — easing,
-								text styles, footage, layer and animation presets — from one
-								place.
+								Organize and launch reusable After Effects items — easing, text
+								styles, footage, layer and animation presets — from one place.
 							</p>
 						</article>
 						<article className="card">
@@ -83,8 +82,8 @@ function HomePage() {
 						<article className="card">
 							<h3>Local-first</h3>
 							<p>
-								Core functions work fully offline. No sign-in, no
-								subscription, no telemetry required.
+								Core functions work fully offline. No sign-in, no subscription,
+								no telemetry required.
 							</p>
 						</article>
 						<article className="card">
@@ -136,8 +135,8 @@ function HomePage() {
 				<div className="section">
 					<h2>Get started</h2>
 					<p>
-						Download the latest Stable ZXP for Windows or macOS, install it
-						with a CEP-compatible installer, then open{" "}
+						Download the latest Stable ZXP for Windows or macOS, install it with
+						a CEP-compatible installer, then open{" "}
 						<strong>Window → Extensions → ty-plus</strong>. Step-by-step
 						instructions live in the{" "}
 						<a href={SITE.installation}>installation guide</a>.

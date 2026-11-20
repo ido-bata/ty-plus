@@ -16,7 +16,7 @@ export default defineConfig({
 		alias: [
 			{
 				find: /^@ty-plus\/ui\/(.*)$/,
-				replacement: path.join(repoRoot, "packages/ui/src") + "/$1",
+				replacement: `${path.join(repoRoot, "packages/ui/src")}/$1`,
 			},
 			{
 				find: "@ty-plus/ui",
@@ -24,11 +24,11 @@ export default defineConfig({
 			},
 			{
 				find: /^@\/styled-system\/(.*)$/,
-				replacement: path.join(repoRoot, "styled-system") + "/$1",
+				replacement: `${path.join(repoRoot, "styled-system")}/$1`,
 			},
 			{
 				find: /^@styled-system\/(.*)$/,
-				replacement: path.join(repoRoot, "styled-system") + "/$1",
+				replacement: `${path.join(repoRoot, "styled-system")}/$1`,
 			},
 		],
 	},

@@ -73,7 +73,10 @@ export function SiteHeader() {
 	}, []);
 
 	return (
-		<header ref={headerRef} className={`site-header${isWide ? " is-wide" : ""}`}>
+		<header
+			ref={headerRef}
+			className={`site-header${isWide ? " is-wide" : ""}`}
+		>
 			<div ref={innerRef} className="site-header-inner">
 				<Link to="/" className="site-logo">
 					{SITE.name}

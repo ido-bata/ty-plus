@@ -49,9 +49,9 @@ function FeaturesPage() {
 			<header className="page-header">
 				<h1>Features</h1>
 				<p className="lead">
-					ty-plus is a CEP extension panel for Adobe After Effects. It gives
-					you a customizable home for the presets and tools you reach for
-					constantly — all running locally inside After Effects.
+					ty-plus is a CEP extension panel for Adobe After Effects. It gives you
+					a customizable home for the presets and tools you reach for constantly
+					— all running locally inside After Effects.
 				</p>
 			</header>
 

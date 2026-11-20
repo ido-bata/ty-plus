@@ -27,8 +27,8 @@ function DownloadPage() {
 			<header className="page-header">
 				<h1>Download</h1>
 				<p className="lead">
-					ty-plus is distributed as a ZXP extension through GitHub Releases.
-					It is free and open source under the MIT License.
+					ty-plus is distributed as a ZXP extension through GitHub Releases. It
+					is free and open source under the MIT License.
 				</p>
 			</header>
 
@@ -52,8 +52,7 @@ function DownloadPage() {
 						<h3>Windows</h3>
 						<p>
 							Download <code>ty-plus-&lt;tag&gt;-windows.zxp</code> from the
-							release page and install it with a CEP-compatible ZXP
-							installer.
+							release page and install it with a CEP-compatible ZXP installer.
 						</p>
 					</article>
 					<article className="card">
@@ -79,8 +78,8 @@ function DownloadPage() {
 						download the ZXP for your OS.
 					</li>
 					<li>
-						Install the ZXP with a CEP-compatible installer (for example
-						ZXP Installer or Extension Manager).
+						Install the ZXP with a CEP-compatible installer (for example ZXP
+						Installer or Extension Manager).
 					</li>
 					<li>
 						Restart Adobe After Effects and open{" "}
@@ -89,8 +88,8 @@ function DownloadPage() {
 				</ol>
 				<p className="notice">
 					The Windows native worker is not Authenticode-signed and the macOS
-					worker is not notarized. OS security policies may require
-					adjustments — see the{" "}
+					worker is not notarized. OS security policies may require adjustments
+					— see the{" "}
 					<a href={SITE.installation}>installation and troubleshooting guide</a>{" "}
 					for details.
 				</p>

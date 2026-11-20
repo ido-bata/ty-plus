@@ -6,12 +6,12 @@ import {
 	Outlet,
 	Scripts,
 } from "@tanstack/react-router";
+import { DESIGN_TOKENS_DEFAULTS } from "@ty-plus/ui/tokens/design-tokens-defaults";
+import { themeVarsToCssBlock } from "@ty-plus/ui/tokens/theme-css";
 import type { ReactNode } from "react";
 import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
 import { SITE } from "../lib/site";
-import { themeVarsToCssBlock } from "@ty-plus/ui/tokens/theme-css";
-import { DESIGN_TOKENS_DEFAULTS } from "@ty-plus/ui/tokens/design-tokens-defaults";
 
 const themeCss = themeVarsToCssBlock(DESIGN_TOKENS_DEFAULTS);
 
@@ -55,7 +55,7 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
 		<html lang="en">
 			<head>
 				{/* Shared design tokens: single source is @ty-plus/ui. */}
-				<style dangerouslySetInnerHTML={{ __html: themeCss }} />
+				<style>{themeCss}</style>
 				<HeadContent />
 			</head>
 			<body>

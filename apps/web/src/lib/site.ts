@@ -11,12 +11,12 @@ export const SITE = {
 	issues: "https://github.com/ido-bata/ty-plus/issues",
 	newIssue: "https://github.com/ido-bata/ty-plus/issues/new/choose",
 	security: "https://github.com/ido-bata/ty-plus/blob/main/SECURITY.md",
-	userGuide: "https://github.com/ido-bata/ty-plus/blob/main/docs/user-guide/index.md",
+	userGuide:
+		"https://github.com/ido-bata/ty-plus/blob/main/docs/user-guide/index.md",
 	installation:
 		"https://github.com/ido-bata/ty-plus/blob/main/docs/user-guide/installation/index.md",
 	license: "https://github.com/ido-bata/ty-plus/blob/main/LICENSE",
-	contributing:
-		"https://github.com/ido-bata/ty-plus/blob/main/CONTRIBUTING.md",
+	contributing: "https://github.com/ido-bata/ty-plus/blob/main/CONTRIBUTING.md",
 } as const;
 
 export const NAV_LINKS = [
