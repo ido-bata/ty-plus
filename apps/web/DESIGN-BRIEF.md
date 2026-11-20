@@ -122,3 +122,11 @@
 - ページ側は `apps/web/src/styles/site.ts` のレイアウトrecipe（css()）と共有コンポーネントのcompositionのみを担当する。装飾目的のeyebrow/番号/罫線要素は削除した。
 - 恒久対策として `scripts/check/check-web-design.ts`（Design lint）を `lint` ゲートへ組み込み、rawコントロール・style属性・リテラル色/フォント/角丸/境界線・Web専用トークン・コントロール類似セレクタをTSX ASTとCSS宣言解析で静的に禁止する。allowlist機構で既存違反を管理し、#293 で全違反を解消（0件）。
 - 検証: `docs/verification/web-redesign/review-293/`（6ルート×desktop/tablet/mobile、menu-open状態含む、violations 0）。
+
+## Revision (#298–#299): platform split + lint hardening
+
+外部レビューで判明した基盤欠陥を修正した。
+
+- **Panda設定の分離**: root `panda.config.ts` の `sm/md/lg/xl/2xl: 0rem` は CEP パネル（固定サイズ面）がメディアクエリを出さないための意図的仕様だが、Web が同一生成物を消費していたため全レスポンシブvariantが常時適用に退化していた。トークン値を `panda.tokens.ts` に抽出し、root は CEP 専用（0rem 維持）、`apps/web/panda.config.ts` が実ブレークポイント（40/48/64/80/96rem）と Web globalCss を所有する。共有するのはトークン値とコンポーネント実装のみで、レイアウト条件はプラットフォーム毎に分離する。
+- **Design lint v2**: `check-web-design.ts` をトークン正本照合へ強化。`DEFINED_VARS`（`themeVarsToCssBlock(DESIGN_TOKENS_DEFAULTS)` の実出力）と `PANDA_TOKENS`（`panda.tokens.ts` のフラット化パス）をレジストリとして、ネストしたレスポンシブ/条件オブジェクト内のリテラル・任意 `--*` 定義/参照・未定義トークンパス・`@ty-plus/ui` への `className`/`css` 上書きを FAIL にする。`packages/ui` は shared モードで走査し、ブレークポイント条件の混入を禁止しつつ raw コントロール実装を許可する。spacing/size リテラルはレイアウト recipe の管轄として意図的に対象外。
+- **検証**: `docs/verification/web-redesign/review-298/`（6ルート×desktop/tablet/mobile + menu-open）、中間幅 700/1000/1100px のグリッド遷移を実ブラウザ計測で確認。
