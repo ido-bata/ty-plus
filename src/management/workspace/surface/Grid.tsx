@@ -6,6 +6,7 @@
  * cells whose derived data didn't change when the parent `state` ref churns.
  */
 
+import { cx } from "@ty-plus/ui/util/cx";
 import type { CSSProperties, JSX } from "react";
 import { useEffect, useMemo } from "react";
 import type { WidgetType } from "@/function/widget";
@@ -52,7 +53,6 @@ import {
 	classifyFromCatalogs,
 	type Role,
 } from "@/management/workspace/surface/tiles";
-import { cx } from "@/shared/util/cx";
 import { css } from "@/styled-system/css";
 
 const scrollRootClass = css({

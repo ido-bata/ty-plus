@@ -1,3 +1,5 @@
+import { useAnchorGesture } from "@ty-plus/ui/interaction/use-anchor-gesture";
+import { cx } from "@ty-plus/ui/util/cx";
 import {
 	type JSX,
 	useCallback,
@@ -6,7 +8,6 @@ import {
 	useRef,
 	useState,
 } from "react";
-
 import { useWidgetRuntime } from "@/function/widget/runtime-context";
 import {
 	DRAG_HANDLE_MARGIN,
@@ -17,8 +18,6 @@ import {
 	AlignIcon,
 	TargetIcon,
 } from "@/management/workspace/surface/widget-grid-icons";
-import { useAnchorGesture } from "@/shared/component/interaction/use-anchor-gesture";
-import { cx } from "@/shared/util/cx";
 import { css } from "@/styled-system/css";
 
 type Action =

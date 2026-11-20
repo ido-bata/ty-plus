@@ -1,3 +1,6 @@
+import { Icon } from "@ty-plus/ui";
+import { Button } from "@ty-plus/ui/controls/Button";
+import { Input } from "@ty-plus/ui/fields/Input";
 import type { TFunction } from "i18next";
 import {
 	AlertCircle,
@@ -18,7 +21,6 @@ import {
 	useState,
 } from "react";
 import { useTranslation } from "react-i18next";
-
 import { selectFolder } from "@/management/ae/cep/dialog-shim/bolt";
 import { readUserHomeOrFallback, ToolDialog } from "@/management/preset";
 import { saveAnimationPresetAsset } from "@/management/preset/authoring/write-preset-asset";
@@ -45,9 +47,6 @@ import {
 import { createInstanceId } from "@/management/storage/ids";
 import { readSettings } from "@/management/workspace/persistence/store";
 import { notifyPanelsAfterPresetSave } from "@/management/workspace/placement/notify-panels-after-preset-save";
-import { Icon } from "@/shared/component";
-import { Button } from "@/shared/component/controls/Button";
-import { Input } from "@/shared/component/fields/Input";
 import { css } from "@/styled-system/css";
 
 type PresetStatus =

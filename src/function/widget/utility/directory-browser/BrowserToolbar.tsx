@@ -1,8 +1,8 @@
+import { Icon, IconButton } from "@ty-plus/ui";
+import { cx } from "@ty-plus/ui/util/cx";
 import { ArrowUp, HardDrive, RefreshCw, Settings2 } from "lucide-react";
 import type { JSX } from "react";
 import { CatalogBrowserViewModeToggle } from "@/management/preset";
-import { Icon, IconButton } from "@/shared/component";
-import { cx } from "@/shared/util/cx";
 import { css } from "@/styled-system/css";
 export function BrowserToolbar(props: {
 	goUpAvailable: boolean;

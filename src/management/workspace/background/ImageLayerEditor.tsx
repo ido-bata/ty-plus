@@ -1,3 +1,5 @@
+import { SegmentedControl } from "@ty-plus/ui/controls/SegmentedControl";
+import { PathField } from "@ty-plus/ui/fields/PathField";
 import { FileSearch } from "lucide-react";
 import type { JSX } from "react";
 import { selectFile } from "@/management/ae/cep/dialog-shim/bolt";
@@ -6,8 +8,6 @@ import type {
 	ImageRepeatValue,
 	Layer,
 } from "@/management/workspace/background/contract";
-import { SegmentedControl } from "@/shared/component/controls/SegmentedControl";
-import { PathField } from "@/shared/component/fields/PathField";
 import { css } from "@/styled-system/css";
 import { QUIET_SELECTED_CLASS } from "./constants";
 import { FieldLabel, NumberField } from "./Fields";

@@ -1,3 +1,5 @@
+import { Button } from "@ty-plus/ui/controls/Button";
+import { Textarea } from "@ty-plus/ui/fields/Textarea";
 import {
 	Fragment,
 	type JSX,
@@ -24,8 +26,6 @@ import {
 	SettingsSectionHeading,
 } from "@/management/setting/dialog/layout/SettingsGrid";
 import { DEFAULT_THEME } from "@/management/style/default-values";
-import { Button } from "@/shared/component/controls/Button";
-import { Textarea } from "@/shared/component/fields/Textarea";
 import { css } from "@/styled-system/css";
 
 interface TokenCategory {

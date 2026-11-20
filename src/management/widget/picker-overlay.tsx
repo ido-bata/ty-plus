@@ -1,8 +1,8 @@
+import { Button } from "@ty-plus/ui/controls/Button";
 import { type JSX, useCallback, useRef, useState } from "react";
 import type { WidgetType } from "@/function/widget";
 import { AddWidgetCatalogPanel } from "@/management/widget/catalog";
 import { defaultFirstWidgetType } from "@/management/widget/default-first-widget-type";
-import { Button } from "@/shared/component/controls/Button";
 import { css } from "@/styled-system/css";
 
 type Props = {

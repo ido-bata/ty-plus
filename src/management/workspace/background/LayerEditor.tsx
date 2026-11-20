@@ -1,3 +1,5 @@
+import { Button } from "@ty-plus/ui/controls/Button";
+import { cx } from "@ty-plus/ui/util/cx";
 import { Grid2X2, Image, Palette } from "lucide-react";
 import type { JSX } from "react";
 import type { Layer } from "@/management/workspace/background/contract";
@@ -8,8 +10,6 @@ import {
 	PRESET_COLORS,
 } from "@/management/workspace/background/layer-factory";
 import { PatternLayerEditor } from "@/management/workspace/background/PatternLayerEditor";
-import { Button } from "@/shared/component/controls/Button";
-import { cx } from "@/shared/util/cx";
 import { css } from "@/styled-system/css";
 import { ColorField, NumberField } from "./Fields";
 

@@ -1,3 +1,8 @@
+import { Button } from "@ty-plus/ui/controls/Button";
+import { IconButton } from "@ty-plus/ui/controls/IconButton";
+import { SearchField } from "@ty-plus/ui/fields/SearchField";
+import { Icon } from "@ty-plus/ui/icons/Icon";
+import { cx } from "@ty-plus/ui/util/cx";
 import {
 	ExternalLink,
 	Grid3x3,
@@ -41,11 +46,6 @@ import type { GatewayBootFailureReason } from "@/management/panel/cloud-gateway-
 import { openUrlInDefaultBrowser } from "@/management/workspace/hooks/helpers";
 import { notifyPanelsAfterPresetSave } from "@/management/workspace/placement/notify-panels-after-preset-save";
 import { tryGetDataServices } from "@/management/workspace/services";
-import { Button } from "@/shared/component/controls/Button";
-import { IconButton } from "@/shared/component/controls/IconButton";
-import { SearchField } from "@/shared/component/fields/SearchField";
-import { Icon } from "@/shared/component/icons/Icon";
-import { cx } from "@/shared/util/cx";
 import { css } from "@/styled-system/css";
 
 const CATALOG_LIMIT = 50;

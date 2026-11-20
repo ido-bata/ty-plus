@@ -1,3 +1,5 @@
+import { ColorField } from "@ty-plus/ui/fields/ColorField";
+import { RangeField } from "@ty-plus/ui/fields/RangeField";
 import { type JSX, useCallback } from "react";
 import { useCep } from "@/management/ae/cep/contexts/Context";
 import { useSettings } from "@/management/setting/context";
@@ -8,8 +10,6 @@ import {
 } from "@/management/setting/dialog/layout/SettingsGrid";
 import type { Settings } from "@/management/setting/models/settings";
 import { applyUiSettingsTheme } from "@/management/setting/ui-theme-sync";
-import { ColorField } from "@/shared/component/fields/ColorField";
-import { RangeField } from "@/shared/component/fields/RangeField";
 import { css } from "@/styled-system/css";
 
 const colorRowStyle = css({

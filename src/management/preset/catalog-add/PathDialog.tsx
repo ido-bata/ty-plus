@@ -1,3 +1,8 @@
+import { Icon } from "@ty-plus/ui";
+import { Button } from "@ty-plus/ui/controls/Button";
+import { Input } from "@ty-plus/ui/fields/Input";
+import { PathField } from "@ty-plus/ui/fields/PathField";
+import { DialogBody } from "@ty-plus/ui/shell/DialogBody";
 import { FileSearch, Save } from "lucide-react";
 import {
 	type JSX,
@@ -41,11 +46,6 @@ import type { DirectoryBrowserEntry } from "@/management/storage/ui/DirectoryBro
 import { DirectoryBrowser } from "@/management/storage/ui/DirectoryBrowser";
 import { readSettings } from "@/management/workspace/persistence/store";
 import { notifyPanelsAfterPresetSave } from "@/management/workspace/placement/notify-panels-after-preset-save";
-import { Icon } from "@/shared/component";
-import { Button } from "@/shared/component/controls/Button";
-import { Input } from "@/shared/component/fields/Input";
-import { PathField } from "@/shared/component/fields/PathField";
-import { DialogBody } from "@/shared/component/shell/DialogBody";
 import { css, cx } from "@/styled-system/css";
 
 const derivePresetNameFromFilePath = (path: string): string => {

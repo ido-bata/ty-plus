@@ -1,3 +1,8 @@
+import { SegmentedControl } from "@ty-plus/ui/controls/SegmentedControl";
+import { LoadingSpinner } from "@ty-plus/ui/feedback/LoadingSpinner";
+import { ListSelect } from "@ty-plus/ui/fields/ListSelect";
+import { ScrollArea } from "@ty-plus/ui/layout/ScrollArea";
+import { cx } from "@ty-plus/ui/util/cx";
 import { type JSX, type ReactNode, useMemo, useState } from "react";
 import { PresetIconEditor } from "@/management/preset/components/IconEditor";
 import type { Preset } from "@/management/preset/contract";
@@ -19,11 +24,6 @@ import {
 	SettingsGrid,
 } from "@/management/setting/dialog/layout/SettingsGrid";
 import type { DirectoryBrowserEntry } from "@/management/storage/ui/DirectoryBrowser";
-import { SegmentedControl } from "@/shared/component/controls/SegmentedControl";
-import { LoadingSpinner } from "@/shared/component/feedback/LoadingSpinner";
-import { ListSelect } from "@/shared/component/fields/ListSelect";
-import { ScrollArea } from "@/shared/component/layout/ScrollArea";
-import { cx } from "@/shared/util/cx";
 import { css } from "@/styled-system/css";
 import { ButtonsPreview } from "./ButtonsPreview";
 import { DirectoryBrowserPreview } from "./DirectoryBrowserPreview";

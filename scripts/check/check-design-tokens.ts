@@ -10,8 +10,8 @@ const NUMERIC_RGB = /rgba?\(\s*[0-9]/;
 const ALLOWED_NUMERIC_RGB =
   /rgba?\(\s*(?:var\(--color-ws-transparent-rgb-|var\(--color-ty-)/;
 
-const THEME_DIR = path.resolve("src", "shared", "style");
-const THEME_LITERALS_DIR = path.join(THEME_DIR, "literals");
+const THEME_DIR = path.resolve("packages", "ui", "src");
+const THEME_LITERALS_DIR = path.join(THEME_DIR, "tokens");
 const STYLES_DIR = path.resolve("src", "management", "ae", "cep", "styles");
 const SHELL_SRC = path.resolve("src", "management", "ae", "cep");
 
@@ -320,9 +320,7 @@ const main = async (): Promise<void> => {
 	}
 
 	for (const item of await runContrastValidation()) {
-		all.push(
-			`src/management/style/literals/design-tokens-defaults.ts: ${item}`,
-		);
+		all.push(`packages/ui/src/tokens/design-tokens-defaults.ts: ${item}`);
 	}
 
 	if (all.length > 0) {

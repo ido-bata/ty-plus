@@ -1,3 +1,4 @@
+import { NumberField } from "@ty-plus/ui/fields/NumberField";
 import { type JSX, useCallback, useEffect, useRef, useState } from "react";
 import { useCep } from "@/management/ae/cep/contexts/Context";
 import { useSettings } from "@/management/setting/context";
@@ -11,7 +12,6 @@ import {
 	SettingsGrid,
 	SettingsSectionHeading,
 } from "@/management/setting/dialog/layout/SettingsGrid";
-import { NumberField } from "@/shared/component/fields/NumberField";
 
 export function GridSection(): JSX.Element {
 	const { settings, updateSettings, reportSaveError } = useSettings();

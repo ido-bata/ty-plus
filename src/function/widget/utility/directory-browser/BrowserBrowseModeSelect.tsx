@@ -1,5 +1,5 @@
+import { ListSelect } from "@ty-plus/ui";
 import type { JSX } from "react";
-import { ListSelect } from "@/shared/component";
 import { css } from "@/styled-system/css";
 import type { FileBrowserBrowseMode } from "./lib/types";
 

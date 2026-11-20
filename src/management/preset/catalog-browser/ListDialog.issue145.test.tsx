@@ -138,7 +138,7 @@ vi.mock("@/management/preset/workspace/glyph-classes", () => ({
 	glyphEmojiProminentClass: "glyph-emoji-prominent",
 }));
 
-vi.mock("@/shared/component", () => ({
+vi.mock("@ty-plus/ui", () => ({
 	Icon: () => <span data-testid="icon" />,
 	IconButton: ({
 		children,
@@ -158,7 +158,7 @@ vi.mock("@/shared/component", () => ({
 	),
 }));
 
-vi.mock("@/shared/component/fields/SearchField", () => ({
+vi.mock("@ty-plus/ui/fields/SearchField", () => ({
 	SearchField: ({
 		value,
 		onChange,

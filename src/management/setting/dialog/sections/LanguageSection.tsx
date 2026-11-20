@@ -1,3 +1,4 @@
+import { ListSelect } from "@ty-plus/ui/fields/ListSelect";
 import { type JSX, useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { changeLanguage } from "@/management/i18n/index";
@@ -7,7 +8,6 @@ import {
 	SettingsFieldLabel,
 	SettingsGrid,
 } from "@/management/setting/dialog/layout/SettingsGrid";
-import { ListSelect } from "@/shared/component/fields/ListSelect";
 
 const LOCALES: { value: string; labelKey: string }[] = [
 	{ value: "en", labelKey: "settings.languages.english" },

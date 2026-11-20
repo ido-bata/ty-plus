@@ -1,3 +1,5 @@
+import { IconButton, ListSelect, PathField } from "@ty-plus/ui/index";
+import { isIMEComposing } from "@ty-plus/ui/util/keyboard";
 import {
 	AlertCircle,
 	FolderOpen,
@@ -89,8 +91,6 @@ import {
 	widgetResolutionFromCatalogContext,
 } from "@/management/workspace/surface/tiles";
 import { Button } from "@/shared";
-import { IconButton, ListSelect, PathField } from "@/shared/component/index";
-import { isIMEComposing } from "@/shared/util/keyboard";
 import { css } from "@/styled-system/css";
 
 const errorBannerClass = css({

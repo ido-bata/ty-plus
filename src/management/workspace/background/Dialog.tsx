@@ -1,3 +1,8 @@
+import { Button } from "@ty-plus/ui/controls/Button";
+import { IconButton } from "@ty-plus/ui/controls/IconButton";
+import { Input } from "@ty-plus/ui/fields/Input";
+import { ScrollArea } from "@ty-plus/ui/layout/ScrollArea";
+import { cx } from "@ty-plus/ui/util/cx";
 import {
 	ArrowDown,
 	ArrowUp,
@@ -10,7 +15,6 @@ import {
 } from "lucide-react";
 import { type JSX, useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-
 import { createCepSurfaceTransport } from "@/management/ae/cep/transport";
 import {
 	type CepMenuPayload,
@@ -36,11 +40,6 @@ import {
 	type BackgroundPayload,
 	SHELL_CHANNELS,
 } from "@/management/workspace/surface/contract";
-import { Button } from "@/shared/component/controls/Button";
-import { IconButton } from "@/shared/component/controls/IconButton";
-import { Input } from "@/shared/component/fields/Input";
-import { ScrollArea } from "@/shared/component/layout/ScrollArea";
-import { cx } from "@/shared/util/cx";
 import { css } from "@/styled-system/css";
 import {
 	FIELD_LABEL_CLASS,

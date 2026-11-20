@@ -3,6 +3,10 @@
 	"private": true,
 	"version": "0.10.3",
 	"packageManager": "bun@1.3.10",
+	"workspaces": [
+		"apps/*",
+		"packages/*"
+	],
 	"type": "module",
 	"scripts": {
 		"dev": "bunx vite --config vite.config.ts",
@@ -69,7 +73,7 @@
 		"test:coverage": "cross-env NODE_OPTIONS=--max-old-space-size=28672 bun run vitest run --coverage",
 		"test:scenario-spec": "cross-env NODE_OPTIONS=--max-old-space-size=28672 bun run vitest run --config vitest.scenario-spec.config.ts",
 		"check:coverage": "cross-env NODE_OPTIONS=--max-old-space-size=28672 bun run vitest run --coverage",
-		"typecheck": "cross-env NODE_OPTIONS=--max-old-space-size=28672 bun run typecheck:main && bun run typecheck:test && bun run typecheck:extendscript && bun run typecheck:release",
+		"typecheck": "cross-env NODE_OPTIONS=--max-old-space-size=28672 bun run typecheck:main && bun run typecheck:test && bun run typecheck:extendscript && bun run typecheck:release && bun run typecheck:web",
 		"typecheck:main": "cross-env NODE_OPTIONS=--max-old-space-size=28672 tsc -p tsconfig.json --noEmit",
 		"typecheck:test": "cross-env NODE_OPTIONS=--max-old-space-size=28672 tsc -p tsconfig.test.json --noEmit",
 		"typecheck:extendscript": "cross-env NODE_OPTIONS=--max-old-space-size=28672 tsc -p tsconfig.extendscript.json --noEmit",
@@ -94,12 +98,15 @@
 		"biome": "bunx @biomejs/biome",
 		"format": "bun run biome format --write .",
 		"prepare": "panda codegen --silent && panda cssgen --silent",
-		"lint": "cross-env NODE_OPTIONS=--max-old-space-size=28672 bun run biome check src && bun run scripts/check/check-design-tokens.ts && bun run scripts/check/check-static-guardrail.ts && bun run scripts/check/check-no-tailwind-literals.ts && bun run check:storage-split && bun run scripts/check/check-i18n-locale-coverage.ts --strict-en-canonical && bun run scripts/check/check-i18n-locked-terms.ts",
+		"lint": "cross-env NODE_OPTIONS=--max-old-space-size=28672 bun run biome check src apps && bun run scripts/check/check-design-tokens.ts && bun run scripts/check/check-static-guardrail.ts && bun run scripts/check/check-no-tailwind-literals.ts && bun run check:storage-split && bun run scripts/check/check-i18n-locale-coverage.ts --strict-en-canonical && bun run scripts/check/check-i18n-locked-terms.ts",
 		"doctor": "bunx --no-install react-doctor",
 		"agent:snapshot": "bun run scripts/agent/supervisor.ts snapshot .tmp/agent-snapshots/current.json",
 		"agent:verify-result": "bun run scripts/agent/supervisor.ts verify-result",
 		"agent:recovery-drill": "bun run vitest run scripts/agent/supervisor.test.ts",
-		"typecheck:release": "cross-env NODE_OPTIONS=--max-old-space-size=28672 tsc -p tsconfig.scripts.json --noEmit"
+		"typecheck:release": "cross-env NODE_OPTIONS=--max-old-space-size=28672 tsc -p tsconfig.scripts.json --noEmit",
+		"dev:web": "bun run --filter @ty-plus/web dev",
+		"build:web": "bun run --filter @ty-plus/web build",
+		"typecheck:web": "bun run --filter @ty-plus/web typecheck"
 	},
 	"devDependencies": {
 		"@babel/core": "^8.0.1",

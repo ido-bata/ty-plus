@@ -1,12 +1,12 @@
+import { Button, IconButton, SegmentedControl } from "@ty-plus/ui";
+import { ArrowDownToLine } from "@ty-plus/ui/icons";
+import { cx } from "@ty-plus/ui/util/cx";
+import { isIMEComposing } from "@ty-plus/ui/util/keyboard";
 import type React from "react";
 import type { JSX } from "react";
 import { useCallback, useMemo, useState } from "react";
 import { currentSessionStartedAt } from "@/management/debug/console/interceptor";
 import type { LogMessage } from "@/management/debug/console/types";
-import { Button, IconButton, SegmentedControl } from "@/shared/component";
-import { ArrowDownToLine } from "@/shared/component/icons";
-import { cx } from "@/shared/util/cx";
-import { isIMEComposing } from "@/shared/util/keyboard";
 import { css } from "@/styled-system/css";
 
 // ── Helpers ─────────────────────────────────────────────────────────────────

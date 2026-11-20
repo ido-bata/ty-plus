@@ -3,6 +3,7 @@
 - Status: Accepted（R0設計の履歴正本。初回Stable `v0.10.1`は2026-11-12公開済み）
 - Date: 2026-11-11
 - 正本: `rebuildup/ty-plus#218`（R0計画）/ `rebuildup/ty-plus#220`（本charterの元Issue）/ `rebuildup/ty-plus#230`（移行の暫定正本）
+- 関連: [`roadmap.md`](roadmap.md)（R0〜R5のフェーズ定義。R0以降の方向性を一覧する）
 
 ## 目的
 

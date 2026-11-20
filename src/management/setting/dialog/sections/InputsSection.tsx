@@ -1,3 +1,4 @@
+import { cx } from "@ty-plus/ui/util/cx";
 import { type ChangeEvent, type JSX, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useSettings } from "@/management/setting/context";
@@ -6,7 +7,6 @@ import {
 	SettingsFieldLabel,
 	SettingsGrid,
 } from "@/management/setting/dialog/layout/SettingsGrid";
-import { cx } from "@/shared/util/cx";
 import { css } from "@/styled-system/css";
 
 type GestureKey = "anchorPoint" | "alignment";

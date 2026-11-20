@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Button } from "@/shared/component/controls/Button";
+import { Button } from "@ty-plus/ui/controls/Button";
 import { css } from "@/styled-system/css";
 
 import { DialogFooterActions, Footer } from "./Footer";

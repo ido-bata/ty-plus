@@ -1,3 +1,4 @@
+import { DialogBody } from "@ty-plus/ui/shell/DialogBody";
 import { type JSX, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -15,7 +16,6 @@ import {
 	AuthoringGrid,
 } from "@/management/preset/tool-shell/archive-layout";
 import type { SurfaceMessageEnvelope } from "@/management/workspace/surface/contract";
-import { DialogBody } from "@/shared/component/shell/DialogBody";
 import { css } from "@/styled-system/css";
 
 const BOOT_SURFACE_ID = "dialog-preset-tool-boot" as const;

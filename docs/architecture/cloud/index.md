@@ -12,7 +12,8 @@ cloud/
 ├─ connectivity.md
 ├─ supabase.md
 ├─ secrets.md
-└─ media-surface.md
+├─ media-surface.md
+└─ workers-site.md
 ```
 
 ## Reading Order
@@ -21,6 +22,7 @@ cloud/
 2. [supabase.md](supabase.md) — current client/edge/migration
 3. [secrets.md](secrets.md) — self-hosted Infisical binding and Secret consumers
 4. [media-surface.md](media-surface.md) — auxiliary HTTP surface
+5. [workers-site.md](workers-site.md) — official website deploy path (Workers + Static Assets)
 
 ## Source Ownership Note
 

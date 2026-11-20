@@ -1,7 +1,7 @@
+import { Button } from "@ty-plus/ui/controls/Button";
+import { IconButton } from "@ty-plus/ui/controls/IconButton";
 import { Folder, Home as HomeIcon, Settings } from "lucide-react";
 import type { JSX } from "react";
-import { Button } from "@/shared/component/controls/Button";
-import { IconButton } from "@/shared/component/controls/IconButton";
 import { css } from "@/styled-system/css";
 import { PreviewGroup } from "./ComponentPreviewSection";
 

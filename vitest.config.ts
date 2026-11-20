@@ -1,9 +1,8 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
-
+import { storybookTest } from "@storybook/addon-vitest/vitest-plugin";
 import { playwright } from "@vitest/browser-playwright";
 import { defineConfig } from "vitest/config";
-import { storybookTest } from "@storybook/addon-vitest/vitest-plugin";
 
 /**
  * Vitest config for the ty-plus project.
@@ -43,6 +42,14 @@ export default defineConfig({
 	resolve: {
 		alias: [
 			{
+				find: /^@ty-plus\/ui\/(.*)$/,
+				replacement: path.resolve(__dirname, "packages/ui/src") + "/$1",
+			},
+			{
+				find: "@ty-plus/ui",
+				replacement: path.resolve(__dirname, "packages/ui/src/index.ts"),
+			},
+			{
 				find: /^@\/(?!styled-system)/,
 				replacement: path.resolve(__dirname, "src") + "/",
 			},
@@ -64,6 +71,10 @@ export default defineConfig({
 		include: [
 			"src/**/*.test.ts",
 			"src/**/*.test.tsx",
+			"packages/**/*.test.ts",
+			"packages/**/*.test.tsx",
+			"apps/**/*.test.ts",
+			"apps/**/*.test.tsx",
 			"tools/**/*.test.ts",
 			"scripts/**/*.test.ts",
 		],

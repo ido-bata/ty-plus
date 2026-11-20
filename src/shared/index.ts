@@ -1,1 +1,1 @@
-export * from "@/shared/component";
+export * from "@ty-plus/ui";

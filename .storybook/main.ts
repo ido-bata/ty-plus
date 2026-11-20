@@ -81,7 +81,7 @@ const config: StorybookConfig = {
 		name: "@storybook/react-vite",
 		options: {},
 	},
-	stories: ["../src/**/*.stories.@(ts|tsx)"],
+	stories: ["../src/**/*.stories.@(ts|tsx)", "../packages/**/*.stories.@(ts|tsx)"],
 	addons: ["@storybook/addon-vitest"],
 	docs: {},
 	core: {
@@ -137,6 +137,14 @@ const config: StorybookConfig = {
 				{
 					find: /^@styled-system\/(.*)$/,
 					replacement: path.resolve(projectRoot, "styled-system") + "/$1",
+				},
+				{
+					find: /^@ty-plus\/ui\/(.*)$/,
+					replacement: path.resolve(projectRoot, "packages/ui/src") + "/$1",
+				},
+				{
+					find: "@ty-plus/ui",
+					replacement: path.resolve(projectRoot, "packages/ui/src/index.ts"),
 				},
 				{ find: "@", replacement: path.resolve(root) },
 				{ find: "@esTypes", replacement: path.resolve(root) },

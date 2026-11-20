@@ -1,13 +1,13 @@
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
+import { Icon } from "@ty-plus/ui";
+import { ColorSwatch } from "@ty-plus/ui/fields/ColorSwatch";
+import { Input } from "@ty-plus/ui/fields/Input";
+import { PathField } from "@ty-plus/ui/fields/PathField";
 import { FileSearch, Smile } from "lucide-react";
 import { type JSX, type ReactNode, useEffect, useRef, useState } from "react";
 import { selectFile } from "@/management/ae/cep/dialog-shim/bolt";
 import type { PresetIconEditorDraft } from "@/management/preset/icon-editor";
-import { Icon } from "@/shared/component";
-import { ColorSwatch } from "@/shared/component/fields/ColorSwatch";
-import { Input } from "@/shared/component/fields/Input";
-import { PathField } from "@/shared/component/fields/PathField";
 import { css, cx } from "@/styled-system/css";
 
 const ICON_TABS = [

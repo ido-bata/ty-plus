@@ -1,7 +1,7 @@
+import { cx } from "@ty-plus/ui/util/cx";
 import { AlertTriangle, Info, X, XCircle } from "lucide-react";
 import { type JSX, useEffect, useState } from "react";
 import ReactDOM from "react-dom";
-import { cx } from "@/shared/util/cx";
 import { css } from "@/styled-system/css";
 import { type NotificationEntry, notificationStore } from "./service";
 

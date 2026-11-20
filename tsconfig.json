@@ -6,10 +6,17 @@
 		"jsx": "react-jsx",
 		"jsxImportSource": "react"
 	},
-	"include": ["src/**/*.ts", "src/**/*.tsx"],
+	"include": [
+		"src/**/*.ts",
+		"src/**/*.tsx",
+		"packages/ui/src/**/*.ts",
+		"packages/ui/src/**/*.tsx"
+	],
 	"exclude": [
 		"src/**/*.test.ts",
 		"src/**/*.test.tsx",
+		"packages/ui/src/**/*.test.ts",
+		"packages/ui/src/**/*.test.tsx",
 		"src/**/*.ext.ts",
 		"src/management/ae/scripts/types/extendscript.d.ts"
 	]

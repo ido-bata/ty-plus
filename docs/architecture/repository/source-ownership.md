@@ -158,17 +158,29 @@ function/
 
 ## 共通系
 
-`shared/` は、管理系にも機能系にも依存しない。
+`shared/` は、管理系にも機能系にも依存しない。CEP / Web 横断の UI 資産は
+`packages/ui` (`@ty-plus/ui`) が所有し、`src/shared/` には残さない。
 
 ```text
-shared/
-├─ contracts/
-├─ components/
-├─ style/
-├─ i18n/
-├─ debug/
-└─ utils/
+packages/ui/           # @ty-plus/ui: CEP と Web が共有する React UI package
+├─ controls/           # Button, IconButton, SegmentedControl
+├─ fields/             # Input, ListSelect, PathField などの入力系
+├─ feedback/           # ErrorBoundary, FileDropZone, LoadingSpinner
+├─ interaction/        # anchor gesture などの hook
+├─ layout/             # ScrollArea
+├─ shell/              # DialogBody
+├─ icons/              # Icon と icon 集
+├─ tokens/             # design token literal source と theme -> CSS 変換
+└─ util/               # cx, keyboard (IME) など UI 補助
+
+src/shared/
+└─ util/               # CEP 内共有 utility (bytes, path, tile aspect など)
 ```
+
+`@ty-plus/ui` は domain slice (`management` / `function` / `contract`) と
+`node:` 依存、CEP 固有 API (`cep_node`, `CSInterface`, `__adobe_cep__`) を
+import しない。`tools/check/import-boundary.ts` がこの境界を検査する。
+i18n 文言は package に持たせず、利用側 app が供給する。
 
 debug は製品導線ではなく、管理系・機能系を観測する独立経路である。
 そのため workspace runtime や widget behavior に混ぜない。
@@ -177,11 +189,10 @@ debug は製品導線ではなく、管理系・機能系を観測する独立�
 
 以下の path は旧系统中途の残留であり、layer として docs で参照しない。
 
-- `packages/` — 旧 package 境界
 - `host-scripts` — 旧 ExtendScript 配置
 - `command-dispatch` — 旧コマンド dispatch 系
 - `src/js` — 旧 CEP Panel runtime
-- `/apps/` — 旧 application bundle。`rust/apps/` は Rust workspace 内の現行配置であり、これに含めない
+- `rust/apps/` 直下の `apps/` は Rust workspace 内の現行配置であり、repo 直下 `apps/` (Web app) とは別物である
 - `cep-shell` (as a layer) — 旧配布・実行上の容器名
 - `functions/` — 旧 source path (Supabase edge function は `supabase/functions/`)
 

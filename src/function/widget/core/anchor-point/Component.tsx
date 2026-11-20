@@ -1,9 +1,9 @@
-import React, { type JSX } from "react";
-import type { WidgetRenderProps } from "@/function/widget/define";
 import {
 	type GesturePoint,
 	useAnchorGesture,
-} from "@/shared/component/interaction/use-anchor-gesture";
+} from "@ty-plus/ui/interaction/use-anchor-gesture";
+import React, { type JSX } from "react";
+import type { WidgetRenderProps } from "@/function/widget/define";
 import { css } from "@/styled-system/css";
 import { runAnchorScript } from "./run";
 import { type AnchorPosition, isValidAnchorPosition } from "./script";

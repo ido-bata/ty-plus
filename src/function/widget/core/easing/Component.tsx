@@ -1,3 +1,5 @@
+import { Button, SegmentedControl } from "@ty-plus/ui";
+import { isIMEComposing } from "@ty-plus/ui/util/keyboard";
 import type { TFunction } from "i18next";
 import { Check, Copy, GitCompare, Plus, Repeat } from "lucide-react";
 import {
@@ -28,8 +30,6 @@ import {
 } from "@/management/storage/widget-state-store";
 import type { Layout } from "@/management/workspace/layout/grid-document";
 import { ATTR_WIDGET_INSTANCE_ID } from "@/management/workspace/placement/types";
-import { Button, SegmentedControl } from "@/shared/component";
-import { isIMEComposing } from "@/shared/util/keyboard";
 import { css } from "@/styled-system/css";
 import { type Camera, computeCamera, handleDotScreenPos } from "./camera";
 import {
