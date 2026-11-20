@@ -1,6 +1,8 @@
 import { Link } from "@tanstack/react-router";
+import { cx } from "@ty-plus/ui/util/cx";
 import { css } from "@/styled-system/css";
 import { SITE } from "../lib/site";
+import { container } from "../styles/layout";
 import { SiteMark } from "./SiteMark";
 
 const footer = css({
@@ -14,9 +16,7 @@ const inner = css({
 	display: "grid",
 	gridTemplateColumns: { base: "1fr", md: "2fr 1fr 1fr" },
 	gap: "2rem",
-	maxWidth: "76rem",
-	marginInline: "auto",
-	padding: "3rem 2rem 2rem",
+	paddingBlock: "3rem 2rem",
 });
 
 const brand = css({
@@ -77,9 +77,7 @@ const bottom = css({
 	justifyContent: "space-between",
 	gap: "1rem",
 	flexWrap: "wrap",
-	maxWidth: "76rem",
-	marginInline: "auto",
-	padding: "1rem 2rem",
+	paddingBlock: "1rem",
 	borderTopWidth: "hairline",
 	borderTopStyle: "solid",
 	borderTopColor: "border.subtle",
@@ -104,7 +102,7 @@ const RESOURCE_LINKS = [
 export function SiteFooter() {
 	return (
 		<footer className={footer}>
-			<div className={inner}>
+			<div className={cx(container({ size: "content" }), inner)}>
 				<div className={brand}>
 					<Link to="/" className={logo}>
 						<SiteMark
@@ -148,7 +146,7 @@ export function SiteFooter() {
 					</ul>
 				</nav>
 			</div>
-			<div className={bottom}>
+			<div className={cx(container({ size: "content" }), bottom)}>
 				<span>© ty-plus contributors</span>
 				<span>MIT License · Works offline · CEP panel</span>
 			</div>

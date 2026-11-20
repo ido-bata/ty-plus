@@ -130,3 +130,42 @@
 - **Panda設定の分離**: root `panda.config.ts` の `sm/md/lg/xl/2xl: 0rem` は CEP パネル（固定サイズ面）がメディアクエリを出さないための意図的仕様だが、Web が同一生成物を消費していたため全レスポンシブvariantが常時適用に退化していた。トークン値を `panda.tokens.ts` に抽出し、root は CEP 専用（0rem 維持）、`apps/web/panda.config.ts` が実ブレークポイント（40/48/64/80/96rem）と Web globalCss を所有する。共有するのはトークン値とコンポーネント実装のみで、レイアウト条件はプラットフォーム毎に分離する。
 - **Design lint v2**: `check-web-design.ts` をトークン正本照合へ強化。`DEFINED_VARS`（`themeVarsToCssBlock(DESIGN_TOKENS_DEFAULTS)` の実出力）と `PANDA_TOKENS`（`panda.tokens.ts` のフラット化パス）をレジストリとして、ネストしたレスポンシブ/条件オブジェクト内のリテラル・任意 `--*` 定義/参照・未定義トークンパス・`@ty-plus/ui` への `className`/`css` 上書きを FAIL にする。`packages/ui` は shared モードで走査し、ブレークポイント条件の混入を禁止しつつ raw コントロール実装を許可する。spacing/size リテラルはレイアウト recipe の管轄として意図的に対象外。
 - **検証**: `docs/verification/web-redesign/review-298/`（6ルート×desktop/tablet/mobile + menu-open）、中間幅 700/1000/1100px のグリッド遷移を実ブラウザ計測で確認。
+
+## Revision (#302): LP layout system + homepage rebuild
+
+外部レビューで「視覚要素をすべて共有コンポーネントで構築する」制約は過剰と判断された。責務境界を修正する。
+
+- **境界**: Button/Input/Badge 等のコントロール、共有トークン、状態表現は `@ty-plus/ui` が所有する。LP固有のレイアウト・セクション構成・グリッド・ビジュアル演出は Web 側の責務であり、アプリ内UIとマーケティングサイトを同一画面構成へ強制しない。Design lint はこの境界に合わせ、共有UI外観の再実装（`ui-override`）は禁止を維持しつつ、Web固有レイアウト recipe の表現を許可する（spacing/size リテラルは従来どおり recipe 管轄）。
+
+- **参照正本**: `ido-bata/ido-bata.github.io` の `src/styles/recipes.ts`、`src/app/page.tsx`、`.agents/skills/layout-system/SKILL.md`、`references/marketing.md` を Inspect → Extract → Translate → Implement → Verify で確認。抽出した構造ルール: 単一の container 正本（幅+ガター）、用途別サイズ、セクション毎の垂直リズム variant、12カラム grid + span による非対称構成、Grid/Stack/Cluster プリミティブ。色・コピー・個別寸法はコピーしない。
+
+- **レイアウト契約**: `apps/web/src/styles/layout.ts` に Web 専用 recipe として実装。
+  - `container({size})`: narrow 48rem / content 72rem / wide 90rem。ページの外幅とガター（1.25/2/2.5rem）の単一正本。Header/Footer も同じ container に揃え、ページ端の整列軸を統一した。
+  - `section({variant})`: flow（hero/showcase, py 4→7rem）/ band（標準, 3→5rem）/ prose（参照系, 2.5→3.5rem）/ flush。セクション単位の垂直リズムを recipe が所有し、ページ側で paddingBlock を書かない。
+  - `grid({cols,gap})`: 12カラム座標系（mobile は1カラム）。`cols` で対称グリッド（2/3/4）へ切替。
+  - `span3..span9`: 12カラム上の span。mobile では全幅へ退避。**Panda の静的抽出はリテラルオブジェクトしか読めないため、関数で値を返す span ヘルパーは禁止**（`css(span(n))` は class 名だけ生成され CSS が出ない欠陥を実測で確認し、リテラル recipe へ変更した）。
+  - `stack` / `cluster`: 縦リズムと折返し行。
+  - `breakout`: 意図的なフル幅表現のルール（現状未使用。安易な使用は禁止）。
+  - `site.ts` はタイポグラフィとコンテンツ primitive（h1-h3/lead/body/link/figure/defList/releaseList 等）に縮小し、`page`/`section`/`pageHead`/`grid`/`cardBody`/`btnRow`/`ctaBand` のページ毎レイアウト recipe は削除した。
+
+- **トップページ再構築**: 縦積みHero＋大判画像＋均等カードの反復を廃止し、セクション毎に異なる構図を共通座標系上に配置した。
+  - Hero: 5:7 非対称グリッド（コピー列 + `hero.png` 実機キャプチャ 780×467px@desktop）。
+  - Features: 3:9 — 左に section label + 見出し + 本文 + 導線、右に入れ子の text+capture 行2件（Add Widget / Code Preset ダイアログ、各 443×265px）。
+  - Showcase: 8:4 — `workspace.png` ワークスペースキャンバス + コピー/CTA。
+  - Resources: 密度の高い3カラムグリッドで Download / Docs / Changelog へ誘導。
+  - Footer は container(content) でページ端の整列軸に接続。
+
+- **構図案の比較**: 実装した2案をブラウザ描画・DOM計測で比較した（証跡: `docs/verification/web-redesign/lab-302/`）。
+
+  | 案 | 構図 | 特徴 | 判定 |
+  |---|---|---|---|
+  | A 非対称グリッド | 5:7 Hero → 3:9 Features（右に入れ子行）→ 8:4 Showcase → 3列 Resources | セクション毎に構図と面積配分が異なり、共通の水平・垂直整列軸で接続。docH 2496px@desktop | **採用** |
+  | B センタードヒーロー | 中央寄せコピー帯 + 21:9 シネマティックステージ → 3列概要 → 交互 4:8 行 → defList Resources | ヒーローが従来の「コピー→大判画像」縦積みに近く、ステージは hero.png を約28%水平クロップして製品端を切る | 不採用 |
+
+  採用理由: 要求された「セクション毎に異なる構図・共通整列軸」に A が直接対応し、製品画像をクロップなしで実寸提示できる。B の 21:9 クロップは実機画面の端を欠くため不採用。
+
+- **他ページ**: Features は操作体験の説明として 5:7 / 7:5 交互グリッドのフィーチャー行（画像は実機キャプチャのみ）。Download は 4:8 でリリース情報列と OS 別ダウンロードカードへ集中。Docs / Changelog / Support は情報参照ページとして prose リズム + defList/releaseList の高密度構成とし、LP的 Hero や大型ビジュアルを強制しない。6ページが同一テンプレートを共有しない。
+
+- **検証**: `docs/verification/web-redesign/review-302/`（6ルート×desktop/tablet/mobile、menu-open 含む 85枚、overflowX なし）。Desktop 計測: `/` docH=2496、セクション高 720/733/425/286 でリズムに変化あり。Typecheck / lint（biome + design lint 0 violations）/ `check-web-design.test.ts` 10 pass / `vite build`（7ページ prerender）成功。
+
+- **未決**: 最終ビジュアル受入は外部レビュー待ち。`release-0-12-0 → main`・本番公開は行わない。
