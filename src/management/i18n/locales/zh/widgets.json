@@ -9,6 +9,7 @@
 		"fieldsetLegend": "小组件浏览器布局",
 		"descriptions": {
 			"easing": "编辑并应用预设和图层动画的缓动曲线。",
+			"loop": "编辑单个循环的曲线，并重复应用到选中的关键帧。",
 			"menu": "从一个图块打开工作区命令、布局操作和对话框。",
 			"align": "将选定的预设或图层对齐到网格上的常用位置。",
 			"anchor-point": "为布局参考和捕捉工作流放置命名锚点。",
@@ -39,14 +40,8 @@
 		"reverse": "Reverse",
 		"mode": {
 			"curve": "Curve",
-			"loop": "Loop",
 			"bounce": "Bounce",
 			"elastic": "Elastic"
-		},
-		"loop": {
-			"cycles": "循环",
-			"decrement": "减少循环",
-			"increment": "增加循环"
 		},
 		"options": {
 			"mode": "Mode",
@@ -75,6 +70,12 @@
 			"easeIn": "Ease in",
 			"easeInOut": "Ease in/out"
 		}
+	},
+	"loop": {
+		"name": "循环",
+		"cycles": "循环",
+		"decrement": "减少循环",
+		"increment": "增加循环"
 	},
 	"menu": {
 		"name": "菜单",
@@ -271,7 +272,12 @@
 			"help": "帮助",
 			"title": "小部件帮助",
 			"close": "关闭",
-			"dismissHint": "关闭提示"
+			"dismissHint": "关闭提示",
+			"next": "下一步",
+			"back": "上一步",
+			"skip": "跳过",
+			"finish": "完成",
+			"stepProgress": "{{current}} / {{total}}"
 		},
 		"easing": {
 			"summary": "编辑缓动曲线，并将其应用于预设或图层动画。",
@@ -283,6 +289,19 @@
 				"applyCurve": {
 					"title": "应用曲线",
 					"body": "将曲线应用到选中的预设或图层。"
+				}
+			}
+		},
+		"loop": {
+			"summary": "编辑循环缓动曲线，并将其应用到选中的关键帧。",
+			"steps": {
+				"chooseCycle": {
+					"title": "调整循环形状",
+					"body": "拖动曲线控制点，调整单个循环的形状。"
+				},
+				"applyCycle": {
+					"title": "应用循环",
+					"body": "设置循环次数，并将循环应用到选中的关键帧。"
 				}
 			}
 		},

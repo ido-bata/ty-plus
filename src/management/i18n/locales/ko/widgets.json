@@ -9,6 +9,7 @@
 		"fieldsetLegend": "위젯 브라우저 레이아웃",
 		"descriptions": {
 			"easing": "프리셋 및 레이어 애니메이션의 이징 커브를 편집하고 적용합니다.",
+			"loop": "한 사이클 커브를 편집해 선택한 키프레임에 반복 적용합니다.",
 			"menu": "하나의 타일에서 워크스페이스 명령, 레이아웃 작업, 대화상자를 엽니다.",
 			"align": "선택한 프리셋 또는 레이어를 그리드의 일반 위치로 정렬합니다.",
 			"anchor-point": "레이아웃 참조 및 스냅핑 워크플로우를 위한 명명된 앵커를 배치합니다.",
@@ -39,14 +40,8 @@
 		"reverse": "Reverse",
 		"mode": {
 			"curve": "Curve",
-			"loop": "Loop",
 			"bounce": "Bounce",
 			"elastic": "Elastic"
-		},
-		"loop": {
-			"cycles": "사이클",
-			"decrement": "사이클 줄이기",
-			"increment": "사이클 늘리기"
 		},
 		"options": {
 			"mode": "Mode",
@@ -75,6 +70,12 @@
 			"easeIn": "Ease in",
 			"easeInOut": "Ease in/out"
 		}
+	},
+	"loop": {
+		"name": "루프",
+		"cycles": "사이클",
+		"decrement": "사이클 줄이기",
+		"increment": "사이클 늘리기"
 	},
 	"menu": {
 		"name": "메뉴",
@@ -271,7 +272,12 @@
 			"help": "도움말",
 			"title": "위젯 도움말",
 			"close": "닫기",
-			"dismissHint": "힌트 닫기"
+			"dismissHint": "힌트 닫기",
+			"next": "다음",
+			"back": "뒤로",
+			"skip": "건너뛰기",
+			"finish": "완료",
+			"stepProgress": "{{current}} / {{total}}"
 		},
 		"easing": {
 			"summary": "이징 커브를 편집하고 프리셋이나 레이어 애니메이션에 적용합니다.",
@@ -283,6 +289,19 @@
 				"applyCurve": {
 					"title": "적용하기",
 					"body": "선택한 프리셋이나 레이어에 커브를 적용합니다."
+				}
+			}
+		},
+		"loop": {
+			"summary": "루프 이징 커브를 편집해 선택한 키프레임에 적용합니다.",
+			"steps": {
+				"chooseCycle": {
+					"title": "사이클 모양 만들기",
+					"body": "커브 핸들을 드래그해 한 사이클의 모양을 만듭니다."
+				},
+				"applyCycle": {
+					"title": "루프 적용하기",
+					"body": "사이클 수를 설정하고 선택한 키프레임에 루프를 적용합니다."
 				}
 			}
 		},

@@ -9,6 +9,7 @@
 		"fieldsetLegend": "Widget-Browser-Layout",
 		"descriptions": {
 			"easing": "Easing-Kurven für Presets und Layer-Animation bearbeiten und anwenden.",
+			"loop": "Bearbeite eine Kurve mit einem Zyklus und wende sie wiederholt auf ausgewählte Keyframes an.",
 			"menu": "Arbeitsbereich-Befehle, Layout-Aktionen und Dialoge von einer Kachel aus öffnen.",
 			"align": "Ausgewählte Presets oder Layer auf gemeinsame Positionen im Raster ausrichten.",
 			"anchor-point": "Benannte Anker für Layout-Referenzen und Snapping-Workflows platzieren.",
@@ -39,14 +40,8 @@
 		"reverse": "Reverse",
 		"mode": {
 			"curve": "Curve",
-			"loop": "Loop",
 			"bounce": "Bounce",
 			"elastic": "Elastic"
-		},
-		"loop": {
-			"cycles": "Zyklen",
-			"decrement": "Zyklen verringern",
-			"increment": "Zyklen erhöhen"
 		},
 		"options": {
 			"mode": "Mode",
@@ -75,6 +70,12 @@
 			"easeIn": "Ease in",
 			"easeInOut": "Ease in/out"
 		}
+	},
+	"loop": {
+		"name": "Loop",
+		"cycles": "Zyklen",
+		"decrement": "Zyklen verringern",
+		"increment": "Zyklen erhöhen"
 	},
 	"menu": {
 		"name": "Menü",
@@ -271,7 +272,12 @@
 			"help": "Hilfe",
 			"title": "Widget-Hilfe",
 			"close": "Schließen",
-			"dismissHint": "Hinweis schließen"
+			"dismissHint": "Hinweis schließen",
+			"next": "Weiter",
+			"back": "Zurück",
+			"skip": "Überspringen",
+			"finish": "Fertig",
+			"stepProgress": "{{current}} / {{total}}"
 		},
 		"easing": {
 			"summary": "Easing-Kurven bearbeiten und auf Presets oder Layer-Animationen anwenden.",
@@ -283,6 +289,19 @@
 				"applyCurve": {
 					"title": "Anwenden",
 					"body": "Wende die Kurve auf das ausgewählte Preset oder den Layer an."
+				}
+			}
+		},
+		"loop": {
+			"summary": "Bearbeite eine Loop-Easing-Kurve und wende sie auf ausgewählte Keyframes an.",
+			"steps": {
+				"chooseCycle": {
+					"title": "Zyklus formen",
+					"body": "Verschiebe die Kurvengriffe, um einen Zyklus zu formen."
+				},
+				"applyCycle": {
+					"title": "Loop anwenden",
+					"body": "Lege die Anzahl der Zyklen fest und wende den Loop auf die ausgewählten Keyframes an."
 				}
 			}
 		},

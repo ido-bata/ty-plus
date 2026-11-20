@@ -9,6 +9,7 @@
 		"fieldsetLegend": "Diseño del navegador de widgets",
 		"descriptions": {
 			"easing": "Editar y aplicar curvas de easing para preajustes y animación de capas.",
+			"loop": "Edita una curva de un solo ciclo y aplícala repetidamente a los keyframes seleccionados.",
 			"menu": "Abrir comandos del espacio de trabajo, acciones de diseño y diálogos desde una baldosa.",
 			"align": "Alinear preajustes o capas seleccionadas a posiciones comunes en la cuadrícula.",
 			"anchor-point": "Colocar un ancla nombrada para referencias de diseño y flujos de snapping.",
@@ -39,14 +40,8 @@
 		"reverse": "Reverse",
 		"mode": {
 			"curve": "Curve",
-			"loop": "Loop",
 			"bounce": "Bounce",
 			"elastic": "Elastic"
-		},
-		"loop": {
-			"cycles": "Ciclos",
-			"decrement": "Disminuir ciclos",
-			"increment": "Aumentar ciclos"
 		},
 		"options": {
 			"mode": "Mode",
@@ -75,6 +70,12 @@
 			"easeIn": "Ease in",
 			"easeInOut": "Ease in/out"
 		}
+	},
+	"loop": {
+		"name": "Bucle",
+		"cycles": "Ciclos",
+		"decrement": "Disminuir ciclos",
+		"increment": "Aumentar ciclos"
 	},
 	"menu": {
 		"name": "Menú",
@@ -271,7 +272,12 @@
 			"help": "Ayuda",
 			"title": "Ayuda del widget",
 			"close": "Cerrar",
-			"dismissHint": "Descartar sugerencia"
+			"dismissHint": "Descartar sugerencia",
+			"next": "Siguiente",
+			"back": "Atrás",
+			"skip": "Omitir",
+			"finish": "Listo",
+			"stepProgress": "{{current}} / {{total}}"
 		},
 		"easing": {
 			"summary": "Edita curvas de easing y aplícalas a presets o a la animación de capas.",
@@ -283,6 +289,19 @@
 				"applyCurve": {
 					"title": "Aplicarla",
 					"body": "Aplica la curva al preset o a la capa seleccionados."
+				}
+			}
+		},
+		"loop": {
+			"summary": "Edita una curva de easing en bucle y aplícala a los keyframes seleccionados.",
+			"steps": {
+				"chooseCycle": {
+					"title": "Dar forma al ciclo",
+					"body": "Arrastra los tiradores de la curva para dar forma a un solo ciclo."
+				},
+				"applyCycle": {
+					"title": "Aplicar el bucle",
+					"body": "Define el número de ciclos y aplica el bucle a los keyframes seleccionados."
 				}
 			}
 		},

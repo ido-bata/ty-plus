@@ -54,6 +54,7 @@ vi.mock("./core/anchor-point/Component", () => ({
 	AnchorPointWidget: () => null,
 }));
 vi.mock("./core/easing/Component", () => ({ EasingWidget: () => null }));
+vi.mock("./core/loop/Component", () => ({ LoopWidget: () => null }));
 vi.mock("./core/layout-lock/Component", () => ({
 	LayoutLockWidget: () => null,
 }));
@@ -76,6 +77,7 @@ vi.mock("./utility/quick-actions/ActionList", () => ({
 import "./core/align/descriptor.ts";
 import "./core/anchor-point/descriptor.ts";
 import "./core/easing/index.ts";
+import "./core/loop/index.ts";
 import "./core/layout-lock/index.ts";
 import "./core/menu/index.ts";
 import "./utility/directory-browser/index.ts";

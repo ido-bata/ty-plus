@@ -56,26 +56,6 @@ export const Compact: Story = {
 	args: { widthPx: 180, heightPx: 220 },
 };
 
-// Loop mode renders the curve editor (the points array is the single-
-// cycle template) plus the cycle-count input. We force the mode into
-// "loop" via the segmented control's aria-label + data attribute pair
-// so the loop controls row becomes visible in Storybook without needing
-// a runtime click sequence.
-export const LoopMode: Story = {
-	args: { widthPx: 280, heightPx: 280 },
-	play: async ({ canvasElement }) => {
-		const buttons = canvasElement.querySelectorAll<HTMLButtonElement>(
-			"[role='toolbar'] button",
-		);
-		for (const button of buttons) {
-			if (button.textContent?.trim() === "Loop") {
-				button.click();
-				break;
-			}
-		}
-	},
-};
-
 // Some CEP/CEF input paths emit mousedown/mousemove/mouseup without the
 // matching pointerdown/pointerup — only pointermove is synthesized. This
 // story replays a drag using MouseEvent alone (no PointerEvent) to prove

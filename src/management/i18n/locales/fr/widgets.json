@@ -9,6 +9,7 @@
 		"fieldsetLegend": "Disposition du navigateur de widgets",
 		"descriptions": {
 			"easing": "Modifier et appliquer des courbes d'easing pour les préréglages et l'animation de calque.",
+			"loop": "Modifiez une courbe à un seul cycle et appliquez-la de façon répétée aux images clés sélectionnées.",
 			"menu": "Ouvrir les commandes de l'espace de travail, actions de disposition et dialogues depuis une tuile.",
 			"align": "Aligner les préréglages ou calques sélectionnés sur des positions communes de la grille.",
 			"anchor-point": "Placer un point d'ancrage nommé pour les références de disposition et les flux de snapping.",
@@ -39,14 +40,8 @@
 		"reverse": "Reverse",
 		"mode": {
 			"curve": "Curve",
-			"loop": "Loop",
 			"bounce": "Bounce",
 			"elastic": "Elastic"
-		},
-		"loop": {
-			"cycles": "Cycles",
-			"decrement": "Diminuer les cycles",
-			"increment": "Augmenter les cycles"
 		},
 		"options": {
 			"mode": "Mode",
@@ -75,6 +70,12 @@
 			"easeIn": "Ease in",
 			"easeInOut": "Ease in/out"
 		}
+	},
+	"loop": {
+		"name": "Boucle",
+		"cycles": "Cycles",
+		"decrement": "Diminuer les cycles",
+		"increment": "Augmenter les cycles"
 	},
 	"menu": {
 		"name": "Menu",
@@ -271,7 +272,12 @@
 			"help": "Aide",
 			"title": "Aide du widget",
 			"close": "Fermer",
-			"dismissHint": "Masquer l’astuce"
+			"dismissHint": "Masquer l’astuce",
+			"next": "Suivant",
+			"back": "Retour",
+			"skip": "Ignorer",
+			"finish": "Terminé",
+			"stepProgress": "{{current}} / {{total}}"
 		},
 		"easing": {
 			"summary": "Modifiez les courbes d'easing et appliquez-les aux préréglages ou à l'animation des calques.",
@@ -283,6 +289,19 @@
 				"applyCurve": {
 					"title": "L'appliquer",
 					"body": "Appliquez la courbe au préréglage ou au calque sélectionné."
+				}
+			}
+		},
+		"loop": {
+			"summary": "Modifiez une courbe easing en boucle et appliquez-la aux images clés sélectionnées.",
+			"steps": {
+				"chooseCycle": {
+					"title": "Façonner le cycle",
+					"body": "Faites glisser les poignées de la courbe pour façonner un seul cycle."
+				},
+				"applyCycle": {
+					"title": "Appliquer la boucle",
+					"body": "Définissez le nombre de cycles et appliquez la boucle aux images clés sélectionnées."
 				}
 			}
 		},

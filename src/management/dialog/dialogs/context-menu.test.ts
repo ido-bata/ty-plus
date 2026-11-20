@@ -41,7 +41,7 @@ const directoryBrowserSource = fs.readFileSync(
 );
 const easingSource = fs.readFileSync(
 	new URL(
-		"../../../function/widget/core/easing/Component.tsx",
+		"../../../function/widget/curve-editor/Component.tsx",
 		import.meta.url,
 	),
 	"utf8",

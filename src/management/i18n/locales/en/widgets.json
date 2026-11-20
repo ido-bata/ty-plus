@@ -9,6 +9,7 @@
 		"fieldsetLegend": "Widget browser layout",
 		"descriptions": {
 			"easing": "Edit and apply easing curves for presets and layer animation.",
+			"loop": "Edit a single-cycle curve and apply it repeatedly to selected keyframes.",
 			"menu": "Open workspace commands, layout actions, and dialogs from one tile.",
 			"align": "Align selected presets or layers to common positions on the grid.",
 			"anchor-point": "Place a named anchor for layout references and snapping workflows.",
@@ -39,14 +40,8 @@
 		"reverse": "Reverse",
 		"mode": {
 			"curve": "Curve",
-			"loop": "Loop",
 			"bounce": "Bounce",
 			"elastic": "Elastic"
-		},
-		"loop": {
-			"cycles": "Cycles",
-			"decrement": "Decrease loop cycles",
-			"increment": "Increase loop cycles"
 		},
 		"options": {
 			"mode": "Mode",
@@ -75,6 +70,12 @@
 			"easeIn": "Ease in",
 			"easeInOut": "Ease in/out"
 		}
+	},
+	"loop": {
+		"name": "Loop",
+		"cycles": "Cycles",
+		"decrement": "Decrease loop cycles",
+		"increment": "Increase loop cycles"
 	},
 	"menu": {
 		"name": "Menu",
@@ -271,7 +272,12 @@
 			"help": "Help",
 			"title": "Widget help",
 			"close": "Close",
-			"dismissHint": "Dismiss hint"
+			"dismissHint": "Dismiss hint",
+			"next": "Next",
+			"back": "Back",
+			"skip": "Skip",
+			"finish": "Done",
+			"stepProgress": "{{current}} / {{total}}"
 		},
 		"easing": {
 			"summary": "Edit easing curves and apply them to presets or layer animation.",
@@ -283,6 +289,19 @@
 				"applyCurve": {
 					"title": "Apply it",
 					"body": "Apply the curve to the selected preset or layer."
+				}
+			}
+		},
+		"loop": {
+			"summary": "Edit a looping easing curve and apply it to selected keyframes.",
+			"steps": {
+				"chooseCycle": {
+					"title": "Shape the cycle",
+					"body": "Drag the curve handles to shape a single cycle."
+				},
+				"applyCycle": {
+					"title": "Apply the loop",
+					"body": "Set the cycle count and apply the loop to the selected keyframes."
 				}
 			}
 		},
