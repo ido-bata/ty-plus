@@ -46,13 +46,28 @@ const VIEWPORTS = [
 	{ name: "mobile", width: 390, height: 844 },
 ] as const;
 
-const commitSha = (() => {
+const git = (args: string): string => {
 	try {
-		return execSync("git rev-parse HEAD", { encoding: "utf8" }).trim();
+		return execSync(`git ${args}`, { encoding: "utf8" }).trim();
 	} catch {
-		return "unknown";
+		return "";
 	}
-})();
+};
+
+const commitSha = git("rev-parse HEAD") || "unknown";
+// Review evidence must point at a real commit *and* prove the built source
+// had no uncommitted drift — record the porcelain state alongside the SHA.
+const dirtyPaths = git("status --porcelain")
+	.split("\n")
+	.filter(Boolean)
+	.map((l) => l.slice(3).trim());
+const requireClean = process.argv.includes("--require-clean");
+if (requireClean && dirtyPaths.length > 0) {
+	console.error(
+		`capture-screens: refusing to capture with uncommitted changes:\n${dirtyPaths.join("\n")}`,
+	);
+	process.exit(1);
+}
 
 mkdirSync(outDir, { recursive: true });
 
@@ -63,6 +78,10 @@ const meta: Record<string, unknown> = {
 	outDir,
 	tag,
 	commitSha,
+	sourceTree: {
+		dirty: dirtyPaths.length > 0,
+		dirtyPaths,
+	},
 	capturedAt: new Date().toISOString(),
 	browser: `chromium ${browserVersion} (playwright)`,
 	conditions: {

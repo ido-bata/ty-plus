@@ -178,3 +178,12 @@
 - **Hero の製品ファースト化**: 5:7 の比率自体を目的にせず、コピー/アクション/メタ情報のコンパクトな帯の下に `hero.png` を content 幅いっぱいで提示する構成へ変更。モバイルは `object-fit: cover` + `4/3` crop で左側のウィジェット密集領域を優先する。
 - **Features の画像-説明対応**: 同一種類のスクリーンショットの単純交互をやめ、機能ごとに対応する実機キャプチャと媒体幅（wide / std）を割り当てる。説明のない未検証画像は使わない。
 - **比率の扱い**: 5:7 / 3:9 / 8:4 は座標系上の表現手段であり目標ではない。面積配分・余白・タイポグラフィ・画像倍率はブラウザ実画面で評価する。
+
+## Revision (#309): real product-state captures + LP recomposition
+
+外部レビューで「Hero の画像サイズ・列比率の反復ではなく、製品の利用体験を視覚的に説明する構成」が要求された。
+
+- **撮影環境**: `scripts/verify/web-product-capture.ts` を追加。`scripts/verify/e2e` の E2EContext/CDP 基盤を再利用し、managed root を snapshot → `workspaces/workspace-1.json` の gridCells に `presets/presets.json` のカタログIDを持つプリセットタイルをシード → パネルを reload → スクロール位置別の実画面を `Page.captureScreenshot` で取得 → Local Presets / Add Widget ダイアログを実際に開いて撮影 → managed root を restore。捏造したUI状態は使わない。#287 の初期状態問題に対し、カタログ登録済みプリセットを gridCells の id 参照でタイル化する fixture 手法を確立した（レイアウト項目の type はカタログ lookup で解決される既存契約）。
+- **実画像**: `hero.png` / `workspace.png` / `preset-tiles.png`（新規）/ `add-widget.png` / `preset-dialog.png` を、After Effects 2026 + `app.ty-plus.dev` パネル（1706×1022 CSS px、Retina 2x）からの実機 CDP キャプチャへ差し替え。撮影条件・対象SHAは `docs/verification/web-redesign/` の記録に従う。
+- **LP 再構成**: Hero はコピーrail(span5) + プリセットタイル入りワークスペース実写(span7) の非対称分割。Workspace 帯は utility widget 領域のワイド提示(span8+span4)。Features 帯は Local Presets と Add Widget の2ダイアログを入れ子2列で並置し、同種スクリーンショットの積層をやめた。モバイルではコピー→画像→CTAの順で製品ビジュアルを早期に提示する。
+- **capture-meta 修正**: `capture-screens.ts` が `commitSha` に加えて `sourceTree.dirty` / `dirtyPaths` を記録し、`--require-clean` で未コミット差分がある場合は撮影を拒否する。
