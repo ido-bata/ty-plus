@@ -112,9 +112,10 @@ a:hover {
 
 /* Mono eyebrow / metadata label. */
 .eyebrow {
-	display: inline-flex;
+	display: flex;
 	align-items: center;
 	gap: 0.5rem;
+	margin-block-end: 0.9rem;
 	font-family: var(--site-font-mono);
 	font-size: 0.72rem;
 	font-weight: 500;
@@ -135,19 +136,23 @@ a:hover {
 	display: none;
 }
 
-/* Page container */
+/* Page container. Vertical rhythm comes from margins between sibling
+   .page blocks so gaps collapse consistently instead of stacking. */
 .page {
 	max-width: var(--site-wrap);
 	margin-inline: auto;
 	padding-inline: 1.25rem;
-	padding-block: 3.5rem 4rem;
+}
+
+.page + .page {
+	margin-block-start: 3.5rem;
 }
 
 /* Standard page head: eyebrow → h1 → lead. */
 .page-head,
 .page-header {
 	max-width: var(--site-prose);
-	margin-block-end: 3rem;
+	padding-block-start: 3.5rem;
 }
 
 .page-head h1,
@@ -167,8 +172,8 @@ a:hover {
 	margin: 0;
 }
 
-.section {
-	margin-block-end: 4rem;
+.section:not(.page) {
+	margin-block-end: 2.5rem;
 }
 
 .section h2 {
@@ -298,6 +303,14 @@ figure.shot figcaption .shot-index {
 	color: var(--site-text-muted);
 	font-size: 0.92rem;
 	max-width: var(--site-prose);
+}
+
+.notice-spaced {
+	margin-block-start: 1.5rem;
+}
+
+.btn-row {
+	margin-block-start: 1.25rem;
 }
 
 /* ------------------------------------------------------------------ */
@@ -527,7 +540,7 @@ figure.shot figcaption .shot-index {
 
 .site-footer {
 	border-block-start: 1px solid var(--site-hairline);
-	margin-block-start: 5rem;
+	margin-block-start: 4rem;
 	background: var(--site-bg-raised);
 }
 
@@ -606,7 +619,7 @@ figure.shot figcaption .shot-index {
 /* ------------------------------------------------------------------ */
 
 .hero {
-	padding-block: 5rem 4rem;
+	padding-block: 5rem 0;
 }
 
 .hero-grid {
@@ -666,7 +679,7 @@ figure.shot figcaption .shot-index {
 
 @media (max-width: 60rem) {
 	.hero {
-		padding-block: 3.5rem 3rem;
+		padding-block: 3.5rem 0;
 	}
 	.hero-grid {
 		grid-template-columns: 1fr;
@@ -774,10 +787,10 @@ figure.shot figcaption .shot-index {
 
 .release-item {
 	display: grid;
-	grid-template-columns: auto 1fr auto;
-	gap: 1.25rem;
+	grid-template-columns: auto minmax(0, 1fr) auto;
+	gap: 0.4rem 1.25rem;
 	align-items: baseline;
-	padding-block: 1.25rem;
+	padding-block: 1.1rem;
 	border-block-end: 1px solid var(--site-hairline);
 }
 
@@ -791,10 +804,37 @@ figure.shot figcaption .shot-index {
 	font-weight: 600;
 	color: var(--site-text);
 	text-decoration: none;
+	white-space: nowrap;
 }
 
 .release-version:hover {
 	color: var(--site-accent-hover);
+}
+
+.release-name {
+	font-size: 0.9rem;
+	color: var(--site-text-faint);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.release-meta {
+	display: flex;
+	gap: 0.9rem;
+	align-items: baseline;
+	justify-content: flex-end;
+	white-space: nowrap;
+}
+
+@media (max-width: 44rem) {
+	.release-item {
+		grid-template-columns: 1fr auto;
+	}
+	.release-name {
+		grid-column: 1 / -1;
+		order: 3;
+	}
 }
 
 .release-date {
@@ -887,10 +927,107 @@ figure.shot figcaption .shot-index {
 	font-weight: 600;
 }
 
+/* Link-index variant: titles in sans, descriptions in dd. */
+.def-list--links .def-row dt {
+	font-family: var(--site-font-sans);
+	font-size: 0.95rem;
+	font-weight: 600;
+	letter-spacing: 0;
+	text-transform: none;
+	color: var(--site-text);
+	padding-block-start: 0.15rem;
+}
+
+.def-list--links .def-row dt a {
+	color: inherit;
+	text-decoration-color: var(--site-hairline-strong);
+	text-underline-offset: 3px;
+}
+
+.def-list--links .def-row dt a:hover {
+	color: var(--site-accent-hover);
+}
+
 @media (max-width: 40rem) {
 	.def-row {
 		grid-template-columns: 1fr;
 		gap: 0.4rem;
+	}
+}
+
+/* Numbered steps (install guide etc.). */
+.steps {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	counter-reset: step;
+	display: grid;
+	gap: 1.1rem;
+	max-width: var(--site-prose);
+}
+
+.steps li {
+	counter-increment: step;
+	display: grid;
+	grid-template-columns: 2.25rem 1fr;
+	gap: 0.9rem;
+	color: var(--site-text-muted);
+}
+
+.steps li::before {
+	content: counter(step, decimal-leading-zero);
+	font-family: var(--site-font-mono);
+	font-size: 0.8rem;
+	letter-spacing: 0.06em;
+	color: var(--site-accent);
+	padding-block-start: 0.3rem;
+}
+
+.steps strong,
+.steps b {
+	color: var(--site-text);
+	font-weight: 600;
+}
+
+/* CTA band at the foot of the home page. */
+.cta-band {
+	border-block: 1px solid var(--site-hairline);
+	padding-block: 3.5rem;
+	display: grid;
+	grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+	gap: 2.5rem;
+	align-items: end;
+}
+
+.cta-band h2 {
+	font-size: clamp(1.6rem, 3vw, 2.2rem);
+	font-weight: 600;
+	letter-spacing: -0.02em;
+	line-height: 1.2;
+	margin: 0 0 0.75rem;
+	max-width: 18ch;
+}
+
+.cta-band p {
+	color: var(--site-text-muted);
+	max-width: 34rem;
+	margin: 0;
+}
+
+.cta-band-actions {
+	display: flex;
+	gap: 0.75rem;
+	flex-wrap: wrap;
+	justify-content: flex-end;
+}
+
+@media (max-width: 56rem) {
+	.cta-band {
+		grid-template-columns: 1fr;
+		align-items: start;
+	}
+	.cta-band-actions {
+		justify-content: flex-start;
 	}
 }
 

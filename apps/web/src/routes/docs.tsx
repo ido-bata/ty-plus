@@ -51,8 +51,9 @@ const DOC_SECTIONS = [
 
 function DocsPage() {
 	return (
-		<main className="page">
-			<header className="page-header">
+		<main>
+			<header className="page page-head">
+				<span className="eyebrow">Resources</span>
 				<h1>Documentation</h1>
 				<p className="lead">
 					The user guide is maintained in the repository so it always matches
@@ -60,22 +61,24 @@ function DocsPage() {
 				</p>
 			</header>
 
-			<section className="section" aria-labelledby="sections">
-				<h2 id="sections">Guides</h2>
-				<div className="grid">
+			<section className="page section" aria-labelledby="sections">
+				<span className="eyebrow">Guides</span>
+				<h2 id="sections">User guide sections</h2>
+				<dl className="def-list def-list--links">
 					{DOC_SECTIONS.map((d) => (
-						<article className="card" key={d.title}>
-							<h3>
+						<div className="def-row" key={d.title}>
+							<dt>
 								<a href={d.href}>{d.title}</a>
-							</h3>
-							<p>{d.description}</p>
-						</article>
+							</dt>
+							<dd>{d.description}</dd>
+						</div>
 					))}
-				</div>
+				</dl>
 			</section>
 
-			<section className="section">
-				<h2>Contributing to docs</h2>
+			<section className="page section">
+				<span className="eyebrow">Contributing</span>
+				<h2>Improve the docs</h2>
 				<p>
 					Documentation improvements are welcome — see{" "}
 					<a href={SITE.contributing}>CONTRIBUTING.md</a> for how to propose
