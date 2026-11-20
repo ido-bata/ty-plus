@@ -1,0 +1,485 @@
+{
+	"generatedAt": "2026-11-20T07:00:31.179Z",
+	"releases": [
+		{
+			"tagName": "v0.11.0-insider.9",
+			"name": "v0.11.0-insider.9",
+			"publishedAt": "2026-11-19T06:01:11Z",
+			"prerelease": true,
+			"draft": false,
+			"htmlUrl": "https://github.com/ido-bata/ty-plus/releases/tag/v0.11.0-insider.9",
+			"assets": [
+				{
+					"name": "ty-plus-v0.11.0-insider.9-macos-release-manifest.json",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.11.0-insider.9/ty-plus-v0.11.0-insider.9-macos-release-manifest.json",
+					"size": 624
+				},
+				{
+					"name": "ty-plus-v0.11.0-insider.9-macos.zip",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.11.0-insider.9/ty-plus-v0.11.0-insider.9-macos.zip",
+					"size": 14007896
+				},
+				{
+					"name": "ty-plus-v0.11.0-insider.9-macos.zxp",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.11.0-insider.9/ty-plus-v0.11.0-insider.9-macos.zxp",
+					"size": 14021930
+				},
+				{
+					"name": "ty-plus-v0.11.0-insider.9-windows-release-manifest.json",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.11.0-insider.9/ty-plus-v0.11.0-insider.9-windows-release-manifest.json",
+					"size": 628
+				},
+				{
+					"name": "ty-plus-v0.11.0-insider.9-windows.zip",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.11.0-insider.9/ty-plus-v0.11.0-insider.9-windows.zip",
+					"size": 10964043
+				},
+				{
+					"name": "ty-plus-v0.11.0-insider.9-windows.zxp",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.11.0-insider.9/ty-plus-v0.11.0-insider.9-windows.zxp",
+					"size": 10978181
+				}
+			]
+		},
+		{
+			"tagName": "v0.11.0-insider.8",
+			"name": "v0.11.0-insider.8",
+			"publishedAt": "2026-11-19T06:00:06Z",
+			"prerelease": true,
+			"draft": false,
+			"htmlUrl": "https://github.com/ido-bata/ty-plus/releases/tag/v0.11.0-insider.8",
+			"assets": [
+				{
+					"name": "ty-plus-v0.11.0-insider.8-macos-release-manifest.json",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.11.0-insider.8/ty-plus-v0.11.0-insider.8-macos-release-manifest.json",
+					"size": 624
+				},
+				{
+					"name": "ty-plus-v0.11.0-insider.8-macos.zip",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.11.0-insider.8/ty-plus-v0.11.0-insider.8-macos.zip",
+					"size": 14007921
+				},
+				{
+					"name": "ty-plus-v0.11.0-insider.8-macos.zxp",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.11.0-insider.8/ty-plus-v0.11.0-insider.8-macos.zxp",
+					"size": 14021945
+				},
+				{
+					"name": "ty-plus-v0.11.0-insider.8-windows-release-manifest.json",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.11.0-insider.8/ty-plus-v0.11.0-insider.8-windows-release-manifest.json",
+					"size": 628
+				},
+				{
+					"name": "ty-plus-v0.11.0-insider.8-windows.zip",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.11.0-insider.8/ty-plus-v0.11.0-insider.8-windows.zip",
+					"size": 10964049
+				},
+				{
+					"name": "ty-plus-v0.11.0-insider.8-windows.zxp",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.11.0-insider.8/ty-plus-v0.11.0-insider.8-windows.zxp",
+					"size": 10978193
+				}
+			]
+		},
+		{
+			"tagName": "v0.11.0-insider.7",
+			"name": "v0.11.0-insider.7",
+			"publishedAt": "2026-11-19T05:32:05Z",
+			"prerelease": true,
+			"draft": false,
+			"htmlUrl": "https://github.com/ido-bata/ty-plus/releases/tag/v0.11.0-insider.7",
+			"assets": [
+				{
+					"name": "ty-plus-v0.11.0-insider.7-macos-release-manifest.json",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.11.0-insider.7/ty-plus-v0.11.0-insider.7-macos-release-manifest.json",
+					"size": 624
+				},
+				{
+					"name": "ty-plus-v0.11.0-insider.7-macos.zip",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.11.0-insider.7/ty-plus-v0.11.0-insider.7-macos.zip",
+					"size": 14007616
+				},
+				{
+					"name": "ty-plus-v0.11.0-insider.7-macos.zxp",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.11.0-insider.7/ty-plus-v0.11.0-insider.7-macos.zxp",
+					"size": 14021625
+				},
+				{
+					"name": "ty-plus-v0.11.0-insider.7-windows-release-manifest.json",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.11.0-insider.7/ty-plus-v0.11.0-insider.7-windows-release-manifest.json",
+					"size": 628
+				},
+				{
+					"name": "ty-plus-v0.11.0-insider.7-windows.zip",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.11.0-insider.7/ty-plus-v0.11.0-insider.7-windows.zip",
+					"size": 10963759
+				},
+				{
+					"name": "ty-plus-v0.11.0-insider.7-windows.zxp",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.11.0-insider.7/ty-plus-v0.11.0-insider.7-windows.zxp",
+					"size": 10977883
+				}
+			]
+		},
+		{
+			"tagName": "v0.11.0-insider.6",
+			"name": "v0.11.0-insider.6",
+			"publishedAt": "2026-11-19T05:16:04Z",
+			"prerelease": true,
+			"draft": false,
+			"htmlUrl": "https://github.com/ido-bata/ty-plus/releases/tag/v0.11.0-insider.6",
+			"assets": [
+				{
+					"name": "ty-plus-v0.11.0-insider.6-macos-release-manifest.json",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.11.0-insider.6/ty-plus-v0.11.0-insider.6-macos-release-manifest.json",
+					"size": 624
+				},
+				{
+					"name": "ty-plus-v0.11.0-insider.6-macos.zip",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.11.0-insider.6/ty-plus-v0.11.0-insider.6-macos.zip",
+					"size": 14007613
+				},
+				{
+					"name": "ty-plus-v0.11.0-insider.6-macos.zxp",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.11.0-insider.6/ty-plus-v0.11.0-insider.6-macos.zxp",
+					"size": 14021626
+				},
+				{
+					"name": "ty-plus-v0.11.0-insider.6-windows-release-manifest.json",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.11.0-insider.6/ty-plus-v0.11.0-insider.6-windows-release-manifest.json",
+					"size": 628
+				},
+				{
+					"name": "ty-plus-v0.11.0-insider.6-windows.zip",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.11.0-insider.6/ty-plus-v0.11.0-insider.6-windows.zip",
+					"size": 10963758
+				},
+				{
+					"name": "ty-plus-v0.11.0-insider.6-windows.zxp",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.11.0-insider.6/ty-plus-v0.11.0-insider.6-windows.zxp",
+					"size": 10977888
+				}
+			]
+		},
+		{
+			"tagName": "v0.11.0-insider.5",
+			"name": "v0.11.0-insider.5",
+			"publishedAt": "2026-11-19T05:15:07Z",
+			"prerelease": true,
+			"draft": false,
+			"htmlUrl": "https://github.com/ido-bata/ty-plus/releases/tag/v0.11.0-insider.5",
+			"assets": [
+				{
+					"name": "ty-plus-v0.11.0-insider.5-macos-release-manifest.json",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.11.0-insider.5/ty-plus-v0.11.0-insider.5-macos-release-manifest.json",
+					"size": 624
+				},
+				{
+					"name": "ty-plus-v0.11.0-insider.5-macos.zip",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.11.0-insider.5/ty-plus-v0.11.0-insider.5-macos.zip",
+					"size": 14007602
+				},
+				{
+					"name": "ty-plus-v0.11.0-insider.5-macos.zxp",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.11.0-insider.5/ty-plus-v0.11.0-insider.5-macos.zxp",
+					"size": 14021618
+				},
+				{
+					"name": "ty-plus-v0.11.0-insider.5-windows-release-manifest.json",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.11.0-insider.5/ty-plus-v0.11.0-insider.5-windows-release-manifest.json",
+					"size": 628
+				},
+				{
+					"name": "ty-plus-v0.11.0-insider.5-windows.zip",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.11.0-insider.5/ty-plus-v0.11.0-insider.5-windows.zip",
+					"size": 10963750
+				},
+				{
+					"name": "ty-plus-v0.11.0-insider.5-windows.zxp",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.11.0-insider.5/ty-plus-v0.11.0-insider.5-windows.zxp",
+					"size": 10977881
+				}
+			]
+		},
+		{
+			"tagName": "v0.11.0-insider.4",
+			"name": "ty-plus 0.11.0 Insider 4",
+			"publishedAt": "2026-11-19T04:52:09Z",
+			"prerelease": true,
+			"draft": false,
+			"htmlUrl": "https://github.com/ido-bata/ty-plus/releases/tag/v0.11.0-insider.4",
+			"assets": [
+				{
+					"name": "ty-plus-v0.11.0-insider.4-macos-release-manifest.json",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.11.0-insider.4/ty-plus-v0.11.0-insider.4-macos-release-manifest.json",
+					"size": 624
+				},
+				{
+					"name": "ty-plus-v0.11.0-insider.4-macos.zip",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.11.0-insider.4/ty-plus-v0.11.0-insider.4-macos.zip",
+					"size": 14002509
+				},
+				{
+					"name": "ty-plus-v0.11.0-insider.4-macos.zxp",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.11.0-insider.4/ty-plus-v0.11.0-insider.4-macos.zxp",
+					"size": 14016500
+				},
+				{
+					"name": "ty-plus-v0.11.0-insider.4-windows-release-manifest.json",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.11.0-insider.4/ty-plus-v0.11.0-insider.4-windows-release-manifest.json",
+					"size": 628
+				},
+				{
+					"name": "ty-plus-v0.11.0-insider.4-windows.zip",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.11.0-insider.4/ty-plus-v0.11.0-insider.4-windows.zip",
+					"size": 11003783
+				},
+				{
+					"name": "ty-plus-v0.11.0-insider.4-windows.zxp",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.11.0-insider.4/ty-plus-v0.11.0-insider.4-windows.zxp",
+					"size": 11016264
+				}
+			]
+		},
+		{
+			"tagName": "v0.11.0-insider.3",
+			"name": "ty-plus 0.11.0 Insider 3",
+			"publishedAt": "2026-11-19T04:43:08Z",
+			"prerelease": true,
+			"draft": false,
+			"htmlUrl": "https://github.com/ido-bata/ty-plus/releases/tag/v0.11.0-insider.3",
+			"assets": [
+				{
+					"name": "ty-plus-v0.11.0-insider.3-macos-release-manifest.json",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.11.0-insider.3/ty-plus-v0.11.0-insider.3-macos-release-manifest.json",
+					"size": 624
+				},
+				{
+					"name": "ty-plus-v0.11.0-insider.3-macos.zip",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.11.0-insider.3/ty-plus-v0.11.0-insider.3-macos.zip",
+					"size": 14002515
+				},
+				{
+					"name": "ty-plus-v0.11.0-insider.3-macos.zxp",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.11.0-insider.3/ty-plus-v0.11.0-insider.3-macos.zxp",
+					"size": 14016506
+				},
+				{
+					"name": "ty-plus-v0.11.0-insider.3-windows-release-manifest.json",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.11.0-insider.3/ty-plus-v0.11.0-insider.3-windows-release-manifest.json",
+					"size": 628
+				},
+				{
+					"name": "ty-plus-v0.11.0-insider.3-windows.zip",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.11.0-insider.3/ty-plus-v0.11.0-insider.3-windows.zip",
+					"size": 11003792
+				},
+				{
+					"name": "ty-plus-v0.11.0-insider.3-windows.zxp",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.11.0-insider.3/ty-plus-v0.11.0-insider.3-windows.zxp",
+					"size": 11016272
+				}
+			]
+		},
+		{
+			"tagName": "v0.11.0-insider.2",
+			"name": "ty-plus 0.11.0 Insider 2",
+			"publishedAt": "2026-11-19T04:07:59Z",
+			"prerelease": true,
+			"draft": false,
+			"htmlUrl": "https://github.com/ido-bata/ty-plus/releases/tag/v0.11.0-insider.2",
+			"assets": [
+				{
+					"name": "ty-plus-v0.11.0-insider.2-macos-release-manifest.json",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.11.0-insider.2/ty-plus-v0.11.0-insider.2-macos-release-manifest.json",
+					"size": 624
+				},
+				{
+					"name": "ty-plus-v0.11.0-insider.2-macos.zip",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.11.0-insider.2/ty-plus-v0.11.0-insider.2-macos.zip",
+					"size": 14002641
+				},
+				{
+					"name": "ty-plus-v0.11.0-insider.2-macos.zxp",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.11.0-insider.2/ty-plus-v0.11.0-insider.2-macos.zxp",
+					"size": 14016643
+				},
+				{
+					"name": "ty-plus-v0.11.0-insider.2-windows-release-manifest.json",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.11.0-insider.2/ty-plus-v0.11.0-insider.2-windows-release-manifest.json",
+					"size": 628
+				},
+				{
+					"name": "ty-plus-v0.11.0-insider.2-windows.zip",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.11.0-insider.2/ty-plus-v0.11.0-insider.2-windows.zip",
+					"size": 11003917
+				},
+				{
+					"name": "ty-plus-v0.11.0-insider.2-windows.zxp",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.11.0-insider.2/ty-plus-v0.11.0-insider.2-windows.zxp",
+					"size": 11016416
+				}
+			]
+		},
+		{
+			"tagName": "v0.11.0-insider.1",
+			"name": "ty-plus 0.11.0 Insider 1",
+			"publishedAt": "2026-11-19T03:44:04Z",
+			"prerelease": true,
+			"draft": false,
+			"htmlUrl": "https://github.com/ido-bata/ty-plus/releases/tag/v0.11.0-insider.1",
+			"assets": [
+				{
+					"name": "ty-plus-v0.11.0-insider.1-macos-release-manifest.json",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.11.0-insider.1/ty-plus-v0.11.0-insider.1-macos-release-manifest.json",
+					"size": 624
+				},
+				{
+					"name": "ty-plus-v0.11.0-insider.1-macos.zip",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.11.0-insider.1/ty-plus-v0.11.0-insider.1-macos.zip",
+					"size": 14002378
+				},
+				{
+					"name": "ty-plus-v0.11.0-insider.1-macos.zxp",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.11.0-insider.1/ty-plus-v0.11.0-insider.1-macos.zxp",
+					"size": 14016210
+				},
+				{
+					"name": "ty-plus-v0.11.0-insider.1-windows-release-manifest.json",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.11.0-insider.1/ty-plus-v0.11.0-insider.1-windows-release-manifest.json",
+					"size": 628
+				},
+				{
+					"name": "ty-plus-v0.11.0-insider.1-windows.zip",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.11.0-insider.1/ty-plus-v0.11.0-insider.1-windows.zip",
+					"size": 10958664
+				},
+				{
+					"name": "ty-plus-v0.11.0-insider.1-windows.zxp",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.11.0-insider.1/ty-plus-v0.11.0-insider.1-windows.zxp",
+					"size": 10972785
+				}
+			]
+		},
+		{
+			"tagName": "v0.10.3",
+			"name": "ty-plus 0.10.3",
+			"publishedAt": "2026-11-17T11:31:58Z",
+			"prerelease": false,
+			"draft": false,
+			"htmlUrl": "https://github.com/ido-bata/ty-plus/releases/tag/v0.10.3",
+			"assets": [
+				{
+					"name": "ty-plus-v0.10.3-macos-release-manifest.json",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.10.3/ty-plus-v0.10.3-macos-release-manifest.json",
+					"size": 593
+				},
+				{
+					"name": "ty-plus-v0.10.3-macos.zip",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.10.3/ty-plus-v0.10.3-macos.zip",
+					"size": 14331702
+				},
+				{
+					"name": "ty-plus-v0.10.3-macos.zxp",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.10.3/ty-plus-v0.10.3-macos.zxp",
+					"size": 14349215
+				},
+				{
+					"name": "ty-plus-v0.10.3-windows-release-manifest.json",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.10.3/ty-plus-v0.10.3-windows-release-manifest.json",
+					"size": 597
+				},
+				{
+					"name": "ty-plus-v0.10.3-windows.zip",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.10.3/ty-plus-v0.10.3-windows.zip",
+					"size": 11159210
+				},
+				{
+					"name": "ty-plus-v0.10.3-windows.zxp",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.10.3/ty-plus-v0.10.3-windows.zxp",
+					"size": 11179904
+				}
+			]
+		},
+		{
+			"tagName": "v0.10.2",
+			"name": "ty-plus 0.10.2",
+			"publishedAt": "2026-11-16T00:52:30Z",
+			"prerelease": false,
+			"draft": false,
+			"htmlUrl": "https://github.com/ido-bata/ty-plus/releases/tag/v0.10.2",
+			"assets": [
+				{
+					"name": "ty-plus-v0.10.2-macos-release-manifest.json",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.10.2/ty-plus-v0.10.2-macos-release-manifest.json",
+					"size": 593
+				},
+				{
+					"name": "ty-plus-v0.10.2-macos.zip",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.10.2/ty-plus-v0.10.2-macos.zip",
+					"size": 14184925
+				},
+				{
+					"name": "ty-plus-v0.10.2-macos.zxp",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.10.2/ty-plus-v0.10.2-macos.zxp",
+					"size": 14203133
+				},
+				{
+					"name": "ty-plus-v0.10.2-windows-release-manifest.json",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.10.2/ty-plus-v0.10.2-windows-release-manifest.json",
+					"size": 597
+				},
+				{
+					"name": "ty-plus-v0.10.2-windows.zip",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.10.2/ty-plus-v0.10.2-windows.zip",
+					"size": 11065436
+				},
+				{
+					"name": "ty-plus-v0.10.2-windows.zxp",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.10.2/ty-plus-v0.10.2-windows.zxp",
+					"size": 11084338
+				}
+			]
+		},
+		{
+			"tagName": "v0.10.1",
+			"name": "ty-plus 0.10.1",
+			"publishedAt": "2026-11-12T14:50:13Z",
+			"prerelease": false,
+			"draft": false,
+			"htmlUrl": "https://github.com/ido-bata/ty-plus/releases/tag/v0.10.1",
+			"assets": [
+				{
+					"name": "ty-plus-v0.10.1-macos-release-manifest.json",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.10.1/ty-plus-v0.10.1-macos-release-manifest.json",
+					"size": 593
+				},
+				{
+					"name": "ty-plus-v0.10.1-macos.zip",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.10.1/ty-plus-v0.10.1-macos.zip",
+					"size": 14145767
+				},
+				{
+					"name": "ty-plus-v0.10.1-macos.zxp",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.10.1/ty-plus-v0.10.1-macos.zxp",
+					"size": 14163719
+				},
+				{
+					"name": "ty-plus-v0.10.1-windows-release-manifest.json",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.10.1/ty-plus-v0.10.1-windows-release-manifest.json",
+					"size": 597
+				},
+				{
+					"name": "ty-plus-v0.10.1-windows.zip",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.10.1/ty-plus-v0.10.1-windows.zip",
+					"size": 11026352
+				},
+				{
+					"name": "ty-plus-v0.10.1-windows.zxp",
+					"url": "https://github.com/ido-bata/ty-plus/releases/download/v0.10.1/ty-plus-v0.10.1-windows.zxp",
+					"size": 11044905
+				}
+			]
+		}
+	]
+}

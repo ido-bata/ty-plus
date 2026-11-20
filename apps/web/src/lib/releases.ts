@@ -1,10 +1,12 @@
 /**
- * Release data boundary.
+ * Release domain contract.
  *
- * `listReleases` is the single entry point for release information. #260
- * replaces the stub with a GitHub Releases fetch (server-side, cached) while
- * keeping this signature stable for pages and future public API clients.
+ * This module is the isomorphic boundary for release information: pure types
+ * and helpers that both the web server functions (`src/server/`) and future
+ * public API clients (CEP, third-party) can share. Anything that performs I/O
+ * or depends on a runtime belongs in `src/server/` instead.
  */
+
 export interface ReleaseAsset {
 	name: string;
 	url: string;
@@ -21,9 +23,44 @@ export interface ReleaseInfo {
 	assets: ReleaseAsset[];
 }
 
-/** Returns published (non-draft) releases, newest first. */
-export async function listReleases(): Promise<ReleaseInfo[]> {
-	// TODO(#260): fetch https://api.github.com/repos/ido-bata/ty-plus/releases
-	// with caching and a static fallback snapshot.
-	return [];
+export type ReleaseChannel = "stable" | "beta" | "insider";
+
+/** Where the release list came from when it was served. */
+export type ReleasesSource = "live" | "snapshot" | "empty";
+
+export interface ReleasesResult {
+	releases: ReleaseInfo[];
+	source: ReleasesSource;
+	/** ISO timestamp of the live fetch, or of the snapshot generation. */
+	fetchedAt: string | null;
+}
+
+const INSIDER_PATTERN = /insider/i;
+
+/**
+ * Maps a GitHub release to a distribution channel. Stable is any published
+ * non-prerelease; prereleases are split into Insider (tag contains
+ * "insider") and Beta (everything else).
+ */
+export function classifyChannel(
+	release: Pick<ReleaseInfo, "tagName" | "prerelease">,
+): ReleaseChannel {
+	if (!release.prerelease) return "stable";
+	return INSIDER_PATTERN.test(release.tagName) ? "insider" : "beta";
+}
+
+/** Latest published stable release, or undefined when none exists. */
+export function findLatestStable(
+	releases: readonly ReleaseInfo[],
+): ReleaseInfo | undefined {
+	return releases.find((r) => classifyChannel(r) === "stable");
+}
+
+/** Returns the ZXP installer asset for the given OS, if the release ships one. */
+export function zxpAsset(
+	release: Pick<ReleaseInfo, "assets">,
+	os: "windows" | "macos",
+): ReleaseAsset | undefined {
+	const suffix = `-${os}.zxp`;
+	return release.assets.find((a) => a.name.endsWith(suffix));
 }
