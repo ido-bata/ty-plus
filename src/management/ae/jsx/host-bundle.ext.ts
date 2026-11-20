@@ -1558,10 +1558,24 @@ const easingPropertyFollowers = (prop: any): any[] => {
 	return [prop];
 };
 
+// A property whose value comes from an expression must not be rewritten:
+// the ease we write is either ignored or silently drops the expression.
+const isExpressionDriven = (prop: any): boolean => {
+	try {
+		if (!prop) return false;
+		if (prop.expressionEnabled === false) return false;
+		const expression = prop.expression;
+		return typeof expression === "string" && expression.length > 0;
+	} catch (_e) {
+		return false;
+	}
+};
+
 const collectEasingTargetProperties = (): any[] => {
 	const props = collectSelectedAnimatedProperties();
 	const out: any[] = [];
 	for (let i = 0; i < props.length; i += 1) {
+		if (isExpressionDriven(props[i])) continue;
 		const followers = easingPropertyFollowers(props[i]);
 		for (let j = 0; j < followers.length; j += 1) out.push(followers[j]);
 	}
@@ -1578,6 +1592,7 @@ const getEasingSelectionCount = () => {
 	for (let i = 0; i < props.length; i += 1) {
 		const prop = props[i] as any;
 		if (!prop || !prop.numKeys || prop.numKeys < 2) continue;
+		if (isExpressionDriven(prop)) continue;
 		let selectedKeys: number[] = [];
 		try {
 			const raw = prop.selectedKeys;
