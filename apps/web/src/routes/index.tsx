@@ -31,51 +31,41 @@ const FEATURES = [
 		title: "A workspace built for how you work",
 		body: "Tiles, widgets, and preset groups live on a gridded panel inside After Effects. Arrange the layout once and it stays exactly where you left it — stored locally, restored on launch.",
 		image: "/images/workspace.png",
-		alt: "ty-plus workspace after onboarding inside After Effects",
-		caption: "fig. 01 — workspace layout, locally persisted",
+		alt: "The ty-plus panel docked inside a new After Effects project",
+		caption: "fig. 01 — the panel inside After Effects",
+		width: 1600,
+		height: 956,
 	},
 	{
 		index: "02",
 		title: "Presets without the hunt",
 		body: "Easing, text styles, footage, layer and animation presets — grouped, searchable, one click from the panel. No more digging through folders mid-comp.",
-		image: "/images/presets.png",
-		alt: "ty-plus preset group opened inside the panel",
-		caption: "fig. 02 — a preset group, opened",
+		image: "/images/preset-tiles.png",
+		alt: "Preset tiles in the ty-plus panel",
+		caption: "fig. 02 — preset tiles, ready to apply",
+		width: 640,
+		height: 1748,
 	},
 	{
 		index: "03",
 		title: "Widgets that earn their tile",
 		body: "Directory browsers, quick utilities, and tools you add from the built-in picker. Every widget is a real panel feature, not a web embed — it keeps working offline.",
-		image: "/images/widgets.png",
-		alt: "ty-plus Add Widget dialog listing available widgets",
+		image: "/images/add-widget.png",
+		alt: "The Add Widget dialog in ty-plus listing available widget types",
 		caption: "fig. 03 — the Add Widget picker",
+		width: 1600,
+		height: 956,
 	},
 ] as const;
 
 const SHOTS = [
 	{
-		className: "shot-wide",
-		src: "/images/ffx-applied.png",
-		alt: "An .ffx animation preset applied to a layer in After Effects",
-		caption: "preset applied to a layer — fig. 04",
-	},
-	{
-		className: "shot-tall",
-		src: "/images/directory-browser.png",
-		alt: "Directory Browser widget added to the ty-plus workspace",
-		caption: "directory browser widget — fig. 05",
-	},
-	{
-		className: "shot-wide",
-		src: "/images/appearance.png",
-		alt: "ty-plus panel with a custom background applied",
-		caption: "custom appearance — fig. 06",
-	},
-	{
-		className: "shot-tall",
-		src: "/images/panels-open.png",
-		alt: "Multiple ty-plus panels open inside After Effects",
-		caption: "panels in the workspace — fig. 07",
+		className: "shot-full",
+		src: "/images/preset-dialog.png",
+		alt: "The Code Preset creation dialog in ty-plus",
+		caption: "fig. 04 — creating a preset without leaving the panel",
+		width: 1600,
+		height: 956,
 	},
 ] as const;
 
@@ -148,8 +138,8 @@ function HomePage() {
 										<img
 											src={f.image}
 											alt={f.alt}
-											width={1600}
-											height={1039}
+											width={f.width}
+											height={f.height}
 											loading="lazy"
 										/>
 									</span>
@@ -174,8 +164,8 @@ function HomePage() {
 								<img
 									src={s.src}
 									alt={s.alt}
-									width={1600}
-									height={1039}
+									width={s.width}
+									height={s.height}
 									loading="lazy"
 								/>
 							</span>

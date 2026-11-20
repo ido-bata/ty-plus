@@ -429,6 +429,12 @@ figure.shot figcaption .shot-index {
 	box-shadow: 0 16px 48px -12px rgb(0 0 0 / 0.8);
 }
 
+/* A closed popover must stay hidden: the author `display` on .site-menu
+   would otherwise override the UA `[popover]:not(:popover-open)` rule. */
+.site-menu[popover]:not(:popover-open) {
+	display: none;
+}
+
 .site-menu-button {
 	anchor-name: --menu-button;
 }
@@ -735,6 +741,16 @@ figure.shot figcaption .shot-index {
 	margin: 0;
 }
 
+/* Rows without verified product imagery stay text-only rather than
+   borrowing an unrelated screenshot. */
+.feature-row--plain {
+	grid-template-columns: minmax(0, 8fr);
+}
+
+.feature-row--plain > div {
+	max-width: 44rem;
+}
+
 @media (max-width: 56rem) {
 	.feature-row {
 		grid-template-columns: 1fr;
@@ -763,6 +779,10 @@ figure.shot figcaption .shot-index {
 
 .shot-grid .shot-pair {
 	grid-column: span 6;
+}
+
+.shot-grid .shot-full {
+	grid-column: span 12;
 }
 
 @media (max-width: 56rem) {
