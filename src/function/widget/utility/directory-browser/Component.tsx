@@ -93,12 +93,12 @@ type FileBrowserFilter = "all" | "media" | "presets" | "scripts" | "fonts";
 
 type FileBrowserBrowseMode = "filesystem" | "anchors" | "presetsCatalog";
 
-import { Icon, IconButton, ListSelect, PathField } from "@/shared/component";
-import { SearchField } from "@/shared/component/fields/SearchField";
+import { Icon, IconButton, ListSelect, PathField } from "@ty-plus/ui";
+import { SearchField } from "@ty-plus/ui/fields/SearchField";
+import { cx } from "@ty-plus/ui/util/cx";
+import { isIMEComposing } from "@ty-plus/ui/util/keyboard";
 import { useCatalogViewMode } from "@/shared/util/catalog-view-mode";
-import { cx } from "@/shared/util/cx";
 import { useIconGridScale } from "@/shared/util/icon-grid-scale";
-import { isIMEComposing } from "@/shared/util/keyboard";
 import { useTileAspect } from "@/shared/util/tile-aspect";
 import { css } from "@/styled-system/css";
 

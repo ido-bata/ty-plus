@@ -1,5 +1,5 @@
+import { Button } from "@ty-plus/ui/controls/Button";
 import type { JSX } from "react";
-import { Button } from "@/shared/component/controls/Button";
 import type { DirectoryBrowserEntry } from "./DirectoryBrowser";
 import type { DirectoryBrowserSummary } from "./DirectoryBrowserSelectedSummary";
 

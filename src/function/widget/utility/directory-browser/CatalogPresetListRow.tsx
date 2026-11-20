@@ -1,9 +1,9 @@
+import { Icon } from "@ty-plus/ui";
+import { isIMEComposing } from "@ty-plus/ui/util/keyboard";
 import { Play } from "lucide-react";
 import type { JSX } from "react";
 import { PresetGlyphById } from "@/management/preset";
 import type { Preset } from "@/management/preset/contract";
-import { Icon } from "@/shared/component";
-import { isIMEComposing } from "@/shared/util/keyboard";
 import { css } from "@/styled-system/css";
 import { basenamePath } from "./lib/file-entry";
 

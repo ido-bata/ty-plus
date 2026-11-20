@@ -1,3 +1,4 @@
+import { isIMEComposing } from "@ty-plus/ui/util/keyboard";
 import { Wand2 } from "lucide-react";
 import {
 	type CSSProperties,
@@ -19,7 +20,6 @@ import type {
 } from "@/management/workspace/layout/grid-document";
 import { ATTR_WIDGET_INSTANCE_ID } from "@/management/workspace/placement/types";
 import type { SurfaceState } from "@/management/workspace/state";
-import { isIMEComposing } from "@/shared/util/keyboard";
 
 type PluginEffectIndexRow = {
 	filePath: string;

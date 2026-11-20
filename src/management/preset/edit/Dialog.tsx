@@ -1,3 +1,8 @@
+import { Icon } from "@ty-plus/ui";
+import { Button } from "@ty-plus/ui/controls/Button";
+import { Input } from "@ty-plus/ui/fields/Input";
+import { PathField } from "@ty-plus/ui/fields/PathField";
+import { DialogBody } from "@ty-plus/ui/shell/DialogBody";
 import { FileSearch, Pencil, Play, Save, Trash2 } from "lucide-react";
 import {
 	type JSX,
@@ -53,11 +58,6 @@ import { readTextFile } from "@/management/storage";
 import { openPresetEditSurface } from "@/management/workspace/hooks/preset";
 import { notifyPanelsAfterPresetSave } from "@/management/workspace/placement/notify-panels-after-preset-save";
 import { executeWorkspacePresetForWindow } from "@/management/workspace/runtime";
-import { Icon } from "@/shared/component";
-import { Button } from "@/shared/component/controls/Button";
-import { Input } from "@/shared/component/fields/Input";
-import { PathField } from "@/shared/component/fields/PathField";
-import { DialogBody } from "@/shared/component/shell/DialogBody";
 import { css } from "@/styled-system/css";
 
 export type PresetEditDialogProps = {

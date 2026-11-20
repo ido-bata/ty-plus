@@ -1,6 +1,6 @@
+import { cx } from "@ty-plus/ui/util/cx";
 import type { ReactElement } from "react";
 import { useEffect, useId, useRef, useState } from "react";
-import { cx } from "@/shared/util/cx";
 import { css } from "@/styled-system/css";
 
 type ListSelectOption = { value: string; label: string };

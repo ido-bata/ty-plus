@@ -1,9 +1,9 @@
+import { IconButton } from "@ty-plus/ui/controls/IconButton";
+import { Icon } from "@ty-plus/ui/icons/Icon";
 import { RefreshCw, X } from "lucide-react";
 import type { JSX } from "react";
 import { gatewayRetryAffordance } from "@/management/online/catalog/gateway-retry";
 import type { GatewayBootFailureReason } from "@/management/panel/cloud-gateway-boot";
-import { IconButton } from "@/shared/component/controls/IconButton";
-import { Icon } from "@/shared/component/icons/Icon";
 import { css } from "@/styled-system/css";
 
 /**

@@ -1,6 +1,6 @@
+import { NumberField } from "@ty-plus/ui/fields/NumberField";
+import { cx } from "@ty-plus/ui/util/cx";
 import type { JSX } from "react";
-import { NumberField } from "@/shared/component/fields/NumberField";
-import { cx } from "@/shared/util/cx";
 import { css } from "@/styled-system/css";
 
 export type RangeFieldProps = {

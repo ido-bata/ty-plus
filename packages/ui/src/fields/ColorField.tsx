@@ -1,7 +1,7 @@
+import { ColorSwatch } from "@ty-plus/ui/fields/ColorSwatch";
+import { Input } from "@ty-plus/ui/fields/Input";
+import { cx } from "@ty-plus/ui/util/cx";
 import type { JSX } from "react";
-import { ColorSwatch } from "@/shared/component/fields/ColorSwatch";
-import { Input } from "@/shared/component/fields/Input";
-import { cx } from "@/shared/util/cx";
 import { css } from "@/styled-system/css";
 
 export type ColorFieldProps = {

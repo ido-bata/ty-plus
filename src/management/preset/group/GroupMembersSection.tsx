@@ -1,10 +1,10 @@
+import { Icon } from "@ty-plus/ui";
+import { Button } from "@ty-plus/ui/controls/Button";
+import { PathField } from "@ty-plus/ui/fields/PathField";
 import { ChevronDown, FolderOpen, Plus, Trash2 } from "lucide-react";
 import type { JSX, ReactNode } from "react";
 import { AuthoringSection } from "@/management/preset/tool-shell/archive-layout";
 import { FolderDirectoryPicker } from "@/management/preset/tool-shell/FolderDirectoryPicker";
-import { Icon } from "@/shared/component";
-import { Button } from "@/shared/component/controls/Button";
-import { PathField } from "@/shared/component/fields/PathField";
 import { css } from "@/styled-system/css";
 import { FolderScanDepthSelector } from "./FolderScanDepthSelector";
 

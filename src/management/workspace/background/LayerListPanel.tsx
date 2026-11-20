@@ -1,3 +1,7 @@
+import { Button } from "@ty-plus/ui/controls/Button";
+import { IconButton } from "@ty-plus/ui/controls/IconButton";
+import { Input } from "@ty-plus/ui/fields/Input";
+import { cx } from "@ty-plus/ui/util/cx";
 import {
 	ArrowDown,
 	ArrowUp,
@@ -17,10 +21,6 @@ import type {
 	LayerType,
 } from "@/management/workspace/background/contract";
 import { LayerIcon } from "@/management/workspace/background/LayerEditor";
-import { Button } from "@/shared/component/controls/Button";
-import { IconButton } from "@/shared/component/controls/IconButton";
-import { Input } from "@/shared/component/fields/Input";
-import { cx } from "@/shared/util/cx";
 import { css } from "@/styled-system/css";
 
 function layerLabel(layer: Layer, t: (key: string) => string): string {

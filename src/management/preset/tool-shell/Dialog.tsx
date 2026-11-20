@@ -1,3 +1,9 @@
+import { Icon } from "@ty-plus/ui";
+import { Button } from "@ty-plus/ui/controls/Button";
+import { Input } from "@ty-plus/ui/fields/Input";
+import { PathField } from "@ty-plus/ui/fields/PathField";
+import { Textarea } from "@ty-plus/ui/fields/Textarea";
+import { DialogBody } from "@ty-plus/ui/shell/DialogBody";
 import { FileSearch, FolderOpen, Save } from "lucide-react";
 import {
 	type JSX,
@@ -41,12 +47,6 @@ import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
 import { glyphBoxFillClass } from "@/management/preset/workspace/glyph-classes";
 import { createInstanceId } from "@/management/storage/ids";
 import { notifyPanelsAfterPresetSave } from "@/management/workspace/placement/notify-panels-after-preset-save";
-import { Icon } from "@/shared/component";
-import { Button } from "@/shared/component/controls/Button";
-import { Input } from "@/shared/component/fields/Input";
-import { PathField } from "@/shared/component/fields/PathField";
-import { Textarea } from "@/shared/component/fields/Textarea";
-import { DialogBody } from "@/shared/component/shell/DialogBody";
 import { css } from "@/styled-system/css";
 
 type FieldKind = "input" | "textarea" | "checkbox" | "select";

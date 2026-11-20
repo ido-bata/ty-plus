@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { Icon } from "@ty-plus/ui/icons/Icon";
 import { FolderOpen } from "lucide-react";
 import { useState } from "react";
 import { expect } from "storybook/test";
-import { Icon } from "@/shared/component/icons/Icon";
 import { PathField } from "./PathField";
 
 const meta = {

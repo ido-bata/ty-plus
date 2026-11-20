@@ -19,6 +19,7 @@ const resolveModuleOwner = (
 	fromFilePath: string,
 ): string | null => {
 	if (!specifier.startsWith(".")) {
+		if (specifier.startsWith("@ty-plus/ui")) return "ui";
 		if (specifier.startsWith("@ty-plus/shared")) return "shared";
 		if (
 			specifier.startsWith("@ty-plus/management") ||

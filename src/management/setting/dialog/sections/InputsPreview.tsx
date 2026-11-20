@@ -1,11 +1,11 @@
+import { Input } from "@ty-plus/ui/fields/Input";
+import { NumberField } from "@ty-plus/ui/fields/NumberField";
+import { PathField } from "@ty-plus/ui/fields/PathField";
+import { RangeField } from "@ty-plus/ui/fields/RangeField";
+import { SearchField } from "@ty-plus/ui/fields/SearchField";
+import { Textarea } from "@ty-plus/ui/fields/Textarea";
 import { FolderOpen, Search } from "lucide-react";
 import type { JSX } from "react";
-import { Input } from "@/shared/component/fields/Input";
-import { NumberField } from "@/shared/component/fields/NumberField";
-import { PathField } from "@/shared/component/fields/PathField";
-import { RangeField } from "@/shared/component/fields/RangeField";
-import { SearchField } from "@/shared/component/fields/SearchField";
-import { Textarea } from "@/shared/component/fields/Textarea";
 import { css } from "@/styled-system/css";
 import { PreviewGroup } from "./ComponentPreviewSection";
 

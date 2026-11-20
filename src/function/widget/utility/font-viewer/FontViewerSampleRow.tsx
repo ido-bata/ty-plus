@@ -1,7 +1,7 @@
+import { ListSelect } from "@ty-plus/ui";
+import { Input } from "@ty-plus/ui/fields/Input";
 import type { ChangeEvent, JSX } from "react";
 import { useTranslation } from "react-i18next";
-import { ListSelect } from "@/shared/component";
-import { Input } from "@/shared/component/fields/Input";
 import { css } from "@/styled-system/css";
 import type { FontSamplePreset } from "./sample-presets";
 

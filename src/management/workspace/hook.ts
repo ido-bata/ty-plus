@@ -6,6 +6,8 @@
  * control panel drag, workspace event wiring).
  */
 
+import { cx } from "@ty-plus/ui/util/cx";
+import { isIMEComposing } from "@ty-plus/ui/util/keyboard";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { WidgetType } from "@/function/widget";
 import { useCep } from "@/management/ae/cep/contexts/Context";
@@ -181,8 +183,6 @@ import {
 	type Snapshot,
 } from "@/management/workspace/undo/history";
 import { initLayoutUndoCache } from "@/management/workspace/undo/layout-undo-cache";
-import { cx } from "@/shared/util/cx";
-import { isIMEComposing } from "@/shared/util/keyboard";
 import { css } from "@/styled-system/css";
 import {
 	openDialogProbe,

@@ -1,3 +1,5 @@
+import { PathField } from "@ty-plus/ui/fields/PathField";
+import { isIMEComposing } from "@ty-plus/ui/util/keyboard";
 import { FolderOpen } from "lucide-react";
 import { type JSX, useCallback, useEffect, useRef, useState } from "react";
 import { useCep } from "@/management/ae/cep/contexts/Context";
@@ -34,8 +36,6 @@ import {
 	type LayoutPayload,
 	SHELL_CHANNELS,
 } from "@/management/workspace/surface/contract";
-import { PathField } from "@/shared/component/fields/PathField";
-import { isIMEComposing } from "@/shared/util/keyboard";
 import { normalizePathLike } from "@/shared/util/path";
 import { css } from "@/styled-system/css";
 

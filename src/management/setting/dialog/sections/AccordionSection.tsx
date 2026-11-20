@@ -1,8 +1,8 @@
+import { Icon } from "@ty-plus/ui/icons/Icon";
+import { cx } from "@ty-plus/ui/util/cx";
 import { ChevronDown } from "lucide-react";
 import { type JSX, type ReactNode, useEffect, useState } from "react";
 import { settingsSectionIdFromTitle } from "@/management/setting/dialog/settings-context-menu-build";
-import { Icon } from "@/shared/component/icons/Icon";
-import { cx } from "@/shared/util/cx";
 import { css } from "@/styled-system/css";
 
 export type AccordionSectionProps = {

@@ -43,6 +43,14 @@ export default defineConfig({
 	resolve: {
 		alias: [
 			{
+				find: /^@ty-plus\/ui\/(.*)$/,
+				replacement: path.resolve(__dirname, "packages/ui/src") + "/$1",
+			},
+			{
+				find: "@ty-plus/ui",
+				replacement: path.resolve(__dirname, "packages/ui/src/index.ts"),
+			},
+			{
 				find: /^@\/(?!styled-system)/,
 				replacement: path.resolve(__dirname, "src") + "/",
 			},
@@ -64,6 +72,8 @@ export default defineConfig({
 		include: [
 			"src/**/*.test.ts",
 			"src/**/*.test.tsx",
+			"packages/**/*.test.ts",
+			"packages/**/*.test.tsx",
 			"tools/**/*.test.ts",
 			"scripts/**/*.test.ts",
 		],

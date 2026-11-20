@@ -1,3 +1,6 @@
+import { IconButton } from "@ty-plus/ui/controls/IconButton";
+import { Icon } from "@ty-plus/ui/icons/Icon";
+import { cx } from "@ty-plus/ui/util/cx";
 import { ArrowLeft, Check, LoaderCircle, Mail, RefreshCw } from "lucide-react";
 import {
 	type JSX,
@@ -19,9 +22,6 @@ import {
 	saveNotificationsStore,
 } from "@/management/online/notification/notifications";
 import { tryGetDataServices } from "@/management/workspace/services";
-import { IconButton } from "@/shared/component/controls/IconButton";
-import { Icon } from "@/shared/component/icons/Icon";
-import { cx } from "@/shared/util/cx";
 import { css } from "@/styled-system/css";
 
 // ── Style constants ──────────────────────────────────────────────────────────

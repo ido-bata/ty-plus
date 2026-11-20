@@ -1,8 +1,7 @@
+import { Button } from "@ty-plus/ui/controls/Button";
 import { Save } from "lucide-react";
 import type { JSX } from "react";
-
 import { DialogFooterActions } from "@/management/dialog/dialogs/shell/Footer";
-import { Button } from "@/shared/component/controls/Button";
 
 export type ToolDialogFooterProps = {
 	close: () => void;

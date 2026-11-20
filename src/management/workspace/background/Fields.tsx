@@ -1,7 +1,7 @@
+import { Input } from "@ty-plus/ui/fields/Input";
 import type { ChangeEventHandler, JSX } from "react";
 import { FIELD_LABEL_CLASS } from "@/management/workspace/background/constants";
 import { DEFAULT_COLOR } from "@/management/workspace/background/layer-factory";
-import { Input } from "@/shared/component/fields/Input";
 import { css } from "@/styled-system/css";
 
 export function FieldLabel(props: { children: string }): JSX.Element {

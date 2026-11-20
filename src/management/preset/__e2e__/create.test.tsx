@@ -197,13 +197,13 @@ vi.mock("react-i18next", () => ({
 	}),
 }));
 
-vi.mock("../../../shared/component/shell/DialogBody", () => ({
+vi.mock("@ty-plus/ui/shell/DialogBody", () => ({
 	DialogBody: ({ children }: { children: ReactNode }) => (
 		<div data-testid="dialog-body">{children}</div>
 	),
 }));
 
-vi.mock("../../../shared/component/fields/Input", () => ({
+vi.mock("@ty-plus/ui/fields/Input", () => ({
 	Input: ({
 		label,
 		value,
@@ -238,7 +238,7 @@ vi.mock("../../../management/preset/components/IconEditor", () => ({
 	),
 }));
 
-vi.mock("../../../shared/component/controls/Button", () => ({
+vi.mock("@ty-plus/ui/controls/Button", () => ({
 	Button: ({
 		children,
 		disabled,

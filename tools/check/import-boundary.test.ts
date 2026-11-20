@@ -61,9 +61,9 @@ describe("resolveModuleOwner", () => {
 		expect(resolveModuleOwner("@supabase/supabase-js", "test.ts")).toBeNull();
 	});
 
-	it("returns 'shared' for @ty-plus/shared", () => {
-		expect(resolveModuleOwner("@ty-plus/shared", "test.ts")).toBe("shared");
-		expect(resolveModuleOwner("@ty-plus/shared/contract", "test.ts")).toBe(
+	it("returns 'shared' for @ty-plus/ui", () => {
+		expect(resolveModuleOwner("@ty-plus/ui", "test.ts")).toBe("shared");
+		expect(resolveModuleOwner("@ty-plus/ui/contract", "test.ts")).toBe(
 			"shared",
 		);
 	});

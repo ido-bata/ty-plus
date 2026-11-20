@@ -1,5 +1,5 @@
+import { Input } from "@ty-plus/ui/fields/Input";
 import type { JSX } from "react";
-import { Input } from "@/shared/component/fields/Input";
 import { css } from "@/styled-system/css";
 
 import type { PresetToolDialogProps } from "./Dialog";

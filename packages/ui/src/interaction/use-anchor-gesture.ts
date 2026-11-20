@@ -44,6 +44,7 @@
  * `state.path`, `state.isActive`, and `state.recognizedAction`.
  */
 
+import { isIMEComposing } from "@ty-plus/ui/util/keyboard";
 import {
 	type MouseEvent as ReactMouseEvent,
 	type PointerEvent as ReactPointerEvent,
@@ -53,8 +54,6 @@ import {
 	useRef,
 	useState,
 } from "react";
-
-import { isIMEComposing } from "@/shared/util/keyboard";
 
 /** Two-dimensional local widget point. */
 export type GesturePoint = Readonly<{ x: number; y: number }>;

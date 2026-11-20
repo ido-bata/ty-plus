@@ -15,6 +15,8 @@
 			"@/styled-system/*": ["./styled-system/*"],
 			"@styled-system/*": ["./styled-system/*"],
 			"@ty-plus/shared": ["./src/shared/index.ts"],
+			"@ty-plus/ui": ["./packages/ui/src/index.ts"],
+			"@ty-plus/ui/*": ["./packages/ui/src/*"],
 			"@ty-plus/workspace": ["./src/management/workspace/index.ts"],
 			"@ty-plus/management/workspaces": ["./src/management/workspace/index.ts"],
 			"@ty-plus/management/preset/registry": [

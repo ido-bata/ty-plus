@@ -1,3 +1,4 @@
+import { Icon } from "@ty-plus/ui";
 import {
 	ArrowUp,
 	Box,
@@ -19,7 +20,6 @@ import type {
 	FileBrowserEntry,
 	FileBrowserFileType,
 } from "@/management/storage/file-browser-service";
-import { Icon } from "@/shared/component";
 
 const TYPE_ICON: Partial<Record<FileBrowserFileType, LucideIcon>> = {
 	image: ImageIcon,

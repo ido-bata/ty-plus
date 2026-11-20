@@ -1,3 +1,7 @@
+import { Icon } from "@ty-plus/ui";
+import { SearchField } from "@ty-plus/ui/fields/SearchField";
+import { cx } from "@ty-plus/ui/util/cx";
+import { isIMEComposing } from "@ty-plus/ui/util/keyboard";
 import type { LucideIcon } from "lucide-react";
 import {
 	AlignCenter,
@@ -27,10 +31,6 @@ import type { WidgetType } from "@/function/widget";
 import { useTranslation } from "@/management/i18n/Context";
 import { CatalogBrowserViewModeToggle } from "@/management/preset/catalog-browser/view-mode-toggle";
 import { registry } from "@/management/widget/registry";
-import { Icon } from "@/shared/component";
-import { SearchField } from "@/shared/component/fields/SearchField";
-import { cx } from "@/shared/util/cx";
-import { isIMEComposing } from "@/shared/util/keyboard";
 import { css } from "@/styled-system/css";
 
 type CatalogEntry = (typeof registry.widgets)[number];

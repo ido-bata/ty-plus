@@ -1,3 +1,8 @@
+import { Button } from "@ty-plus/ui/controls/Button";
+import { Input } from "@ty-plus/ui/fields/Input";
+import { ListSelect } from "@ty-plus/ui/fields/ListSelect";
+import { Textarea } from "@ty-plus/ui/fields/Textarea";
+import { cx } from "@ty-plus/ui/util/cx";
 import { type JSX, useCallback, useEffect, useReducer } from "react";
 import {
 	SettingsField,
@@ -5,11 +10,6 @@ import {
 	SettingsGrid,
 } from "@/management/setting/dialog/layout/SettingsGrid";
 import { openUrlInDefaultBrowser } from "@/management/workspace/hooks/helpers";
-import { Button } from "@/shared/component/controls/Button";
-import { Input } from "@/shared/component/fields/Input";
-import { ListSelect } from "@/shared/component/fields/ListSelect";
-import { Textarea } from "@/shared/component/fields/Textarea";
-import { cx } from "@/shared/util/cx";
 import { css } from "@/styled-system/css";
 
 const CATEGORIES: { value: string; label: string }[] = [

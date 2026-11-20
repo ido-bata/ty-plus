@@ -2,7 +2,7 @@
  * PandaCSS config — bridge from current `:root` CSS variables (--ty-*) injected
  * by `mergePanelTheme` into PandaCSS tokens.
  *
- * The shell builds CSS vars from `management/style/literals/design-tokens-defaults.ts`,
+ * The shell builds CSS vars from `packages/ui/src/tokens/design-tokens-defaults.ts`,
  * so every token here references those existing variables instead of duplicating
  * literals. New tokens follow the same convention: define the CSS var first,
  * then reference it from Panda.
@@ -64,7 +64,9 @@ const colors = defineTokens.colors({
 	/* Workspace tokens */
 	ws: {
 		"placement-surface": { value: "var(--ty-ws-placement-surface)" },
-		"gridcell-ring-border": { value: "var(--color-ty-ws-gridcell-ring-border)" },
+		"gridcell-ring-border": {
+			value: "var(--color-ty-ws-gridcell-ring-border)",
+		},
 		"gridcell-ring-border-selected": {
 			value: "var(--color-ty-ws-gridcell-ring-border-selected)",
 		},
@@ -100,7 +102,9 @@ const opacities = defineTokens.opacities({
 	},
 	"ws-accent-outline": { value: "var(--ty-opacity-ws-accent-outline)" },
 	"ws-widget-drag": { value: "var(--ty-opacity-ws-widget-drag)" },
-	"ws-gridcell-ring-border": { value: "var(--ty-opacity-ws-gridcell-ring-border)" },
+	"ws-gridcell-ring-border": {
+		value: "var(--ty-opacity-ws-gridcell-ring-border)",
+	},
 	"ws-gridcell-ring-border-selected": {
 		value: "var(--ty-opacity-ws-gridcell-ring-border-selected)",
 	},
@@ -221,8 +225,7 @@ const sizes = defineTokens.sizes({
 
 const fonts = defineTokens.fonts({
 	base: {
-		value:
-			'system-ui, "Segoe UI", "Helvetica Neue", ui-sans-serif, sans-serif',
+		value: 'system-ui, "Segoe UI", "Helvetica Neue", ui-sans-serif, sans-serif',
 	},
 });
 
@@ -259,7 +262,11 @@ const durations = defineTokens.durations({
 
 export default defineConfig({
 	preflight: true,
-	include: ["./src/**/*.{ts,tsx}"],
+	include: [
+		"./src/**/*.{ts,tsx}",
+		"./packages/**/*.{ts,tsx}",
+		"./apps/**/*.{ts,tsx}",
+	],
 	exclude: [],
 	jsxFramework: "react",
 	outdir: "styled-system",

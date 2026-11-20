@@ -58,7 +58,7 @@
 	},
 	"overrides": [
 		{
-			"includes": ["**/src/shared/component/fields/ListSelect.tsx"],
+			"includes": ["**/packages/ui/src/fields/ListSelect.tsx"],
 			"linter": {
 				"rules": {
 					"a11y": {
@@ -171,7 +171,7 @@
 			}
 		},
 		{
-			"includes": ["**/src/shared/component/feedback/LoadingSpinner.tsx"],
+			"includes": ["**/packages/ui/src/feedback/LoadingSpinner.tsx"],
 			"linter": {
 				"rules": {
 					"a11y": {

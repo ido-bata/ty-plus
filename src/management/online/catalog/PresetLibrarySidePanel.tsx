@@ -1,10 +1,10 @@
+import { Button } from "@ty-plus/ui/controls/Button";
+import { IconButton } from "@ty-plus/ui/controls/IconButton";
+import { SearchField } from "@ty-plus/ui/fields/SearchField";
+import { Icon } from "@ty-plus/ui/icons/Icon";
+import { cx } from "@ty-plus/ui/util/cx";
 import { PanelLeftClose, Search, X } from "lucide-react";
 import type { JSX } from "react";
-import { Button } from "@/shared/component/controls/Button";
-import { IconButton } from "@/shared/component/controls/IconButton";
-import { SearchField } from "@/shared/component/fields/SearchField";
-import { Icon } from "@/shared/component/icons/Icon";
-import { cx } from "@/shared/util/cx";
 import { css } from "@/styled-system/css";
 
 export type PresetLibrarySidePanelProps = {

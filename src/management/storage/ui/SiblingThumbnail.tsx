@@ -1,3 +1,4 @@
+import { cx } from "@ty-plus/ui/util/cx";
 import type { JSX } from "react";
 import { useThumbnail } from "@/function/widget/utility/directory-browser/hooks/useThumbnail";
 import {
@@ -5,7 +6,6 @@ import {
 	type SiblingListingEntry,
 } from "@/management/preset/sibling-thumbnail";
 import type { FileBrowserEntry } from "@/management/storage/file-browser-service";
-import { cx } from "@/shared/util/cx";
 import { css } from "@/styled-system/css";
 
 /**

@@ -265,6 +265,14 @@ export default defineConfig({
 				find: /^@styled-system\/(.*)$/,
 				replacement: path.resolve(__dirname, "styled-system") + "/$1",
 			},
+			{
+				find: /^@ty-plus\/ui\/(.*)$/,
+				replacement: path.resolve(__dirname, "packages/ui/src") + "/$1",
+			},
+			{
+				find: "@ty-plus/ui",
+				replacement: path.resolve(__dirname, "packages/ui/src/index.ts"),
+			},
 			{ find: "@", replacement: path.resolve(__dirname, "src") },
 			{ find: "@esTypes", replacement: path.resolve(__dirname, "src") },
 			{ find: "@ui", replacement: path.resolve(__dirname, "src/js/ui") },

@@ -1,6 +1,6 @@
+import { Button } from "@ty-plus/ui";
 import type { JSX } from "react";
 import { useTranslation } from "react-i18next";
-import { Button } from "@/shared/component";
 import { css } from "@/styled-system/css";
 import { getQueryLocalFonts } from "./local-fonts";
 import type { FontLoadVia } from "./use-font-catalog";
