@@ -29,7 +29,7 @@ const fieldsetClass = css({
 	borderColor: "border.default",
 	backgroundColor: "surface.widget",
 	opacity: 0.5,
-	padding: "px",
+	padding: "1px",
 });
 
 const srOnlyClass = css({
@@ -63,7 +63,7 @@ const buttonActiveClass = css({
 const buttonInactiveClass = css({ color: "text.muted" });
 
 const separatorClass = css({
-	width: "px",
+	width: "1px",
 	flexShrink: "0",
 	alignSelf: "stretch",
 	backgroundColor: "border.default",

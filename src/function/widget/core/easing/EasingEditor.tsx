@@ -46,19 +46,6 @@ import {
 } from "./curve-category";
 import { decideReverseAction } from "./curve-ops";
 import {
-	applyWaveHandleDrag,
-	attackShare,
-	buildCyclicWave,
-	type CyclicWaveParams,
-	DEFAULT_CYCLES,
-	MAX_CYCLES,
-	MIN_CYCLES,
-	sampleWave,
-	type WaveHandle,
-	waveHandlePositions,
-	waveTemplateInGraph,
-} from "./cyclic-wave";
-import {
 	type DragTarget,
 	findNearestDragTarget,
 	isPointOrHandleHit,
@@ -67,7 +54,6 @@ import {
 } from "./gestures";
 import { buildCurvePointsFromProcedural } from "./procedural-points";
 import { useElementWidth } from "./use-element-width";
-import { drawCyclicWave } from "./wave-draw";
 
 type Mode = "curve" | "bounce" | "elastic";
 type ApplyMode = "single" | "pair";
@@ -76,12 +62,6 @@ type Point = { x: number; y: number };
 type CurvePoint = { x: number; y: number; hIn: Point; hOut: Point };
 type EditorState = {
 	mode: Mode;
-	/** Loop-only: the cyclic wave parameters (frequency/bias/damping/...). */
-	wave: CyclicWaveParams;
-	/** Loop-only: the parameter handle currently dragged, if any. */
-	waveDrag: WaveHandle | null;
-	/** Loop-only: the cycle whose template point is being dragged. */
-	waveCycle: number;
 	width: number;
 	height: number;
 	camera: Camera;
@@ -117,28 +97,7 @@ type StoredState = {
 	customColors?: CustomColors;
 	points?: CurvePoint[];
 	procedural?: { handle: Point };
-	loopCount?: number;
-	wave?: CyclicWaveParams;
 };
-
-const MIN_LOOP_COUNT = 2;
-const MAX_LOOP_COUNT = 16;
-const DEFAULT_LOOP_COUNT = 3;
-
-export type CurveEditorVariant = "easing" | "loop";
-
-const VARIANTS = {
-	easing: {
-		applyCommand: "applyEasing",
-		showToolbar: true,
-		showCycles: false,
-	},
-	loop: {
-		applyCommand: "applyLoopEasing",
-		showToolbar: false,
-		showCycles: true,
-	},
-} as const;
 
 /**
  * Width the action bar needs for its copy / reverse / apply / preset buttons.
@@ -251,15 +210,6 @@ const proceduralValue = (mode: Mode, t: number, handle: Point): number =>
 
 const createInitialState = (): EditorState => ({
 	mode: "curve",
-	wave: {
-		cycles: DEFAULT_CYCLES,
-		amplitude: 1,
-		damping: 1,
-		bias: 0,
-		mode: "pingpong",
-	},
-	waveDrag: null,
-	waveCycle: 0,
 	width: 400,
 	height: 400,
 	camera: computeCamera(400, 400),
@@ -468,7 +418,6 @@ const serializeState = (
 	autoApply: boolean,
 	labelColor: number | null,
 	customColors: CustomColors,
-	loopCount: number,
 ): StoredState => ({
 	mode: state.mode,
 	applyMode,
@@ -478,26 +427,7 @@ const serializeState = (
 	customColors,
 	points: clonePoints(state.points),
 	procedural: { handle: { ...state.procedural.handle } },
-	loopCount,
-	wave: { ...state.wave },
 });
-
-const coerceWave = (value: unknown): CyclicWaveParams | undefined => {
-	if (!value || typeof value !== "object") return undefined;
-	const raw = value as Record<string, unknown>;
-	const cycles = Number(raw.cycles);
-	const amplitude = Number(raw.amplitude);
-	if (!Number.isFinite(cycles) || !Number.isFinite(amplitude)) return undefined;
-	const damping = Number(raw.damping);
-	const bias = Number(raw.bias);
-	return {
-		cycles: clamp(Math.round(cycles), MIN_CYCLES, MAX_CYCLES),
-		amplitude: clamp(amplitude, 0, 2),
-		damping: clamp(Number.isFinite(damping) ? damping : 1, 0, 1),
-		bias: clamp(Number.isFinite(bias) ? bias : 0, -1, 1),
-		mode: raw.mode === "cycle" ? "cycle" : "pingpong",
-	};
-};
 
 const coerceCustomColors = (value: unknown): CustomColors | undefined => {
 	if (!value || typeof value !== "object") return undefined;
@@ -563,13 +493,6 @@ const coerceStoredState = (
 		"handle" in value.procedural
 			? (value.procedural as { handle?: { x?: unknown; y?: unknown } }).handle
 			: undefined;
-	const rawLoopCount = Number(value.loopCount);
-	const loopCount =
-		Number.isFinite(rawLoopCount) &&
-		rawLoopCount >= MIN_LOOP_COUNT &&
-		rawLoopCount <= MAX_LOOP_COUNT
-			? Math.round(rawLoopCount)
-			: undefined;
 	return {
 		mode,
 		applyMode,
@@ -592,8 +515,6 @@ const coerceStoredState = (
 						},
 					}
 				: undefined,
-		loopCount,
-		wave: coerceWave(value.wave),
 	};
 };
 
@@ -690,123 +611,6 @@ function EasingModeToolbar({
 					whiteSpace: "nowrap",
 				})}
 			/>
-		</div>
-	);
-}
-
-function EasingLoopControls({
-	visible,
-	compact,
-	loopCount,
-	onLoopCountChange,
-	t,
-}: {
-	visible: boolean;
-	compact: boolean;
-	loopCount: number;
-	onLoopCountChange: (value: number) => void;
-	t: TFunction;
-}): JSX.Element | null {
-	// Loop only makes sense with curve mode; bounce/elastic disable the
-	// cycle-count input because the host's multi-point replication is
-	// keyed on the curve-mode points array.
-	// NOTE: this component must always render an element. The parent grid
-	// declares four rows ("auto auto 1fr auto") and relies on auto-placement;
-	// returning null shifts the canvas into the "auto" row and the action bar
-	// into the "1fr" row, collapsing the editor (issue #78 follow-up).
-	if (!visible) return <div aria-hidden="true" />;
-	const decrement = (): void => {
-		onLoopCountChange(Math.max(MIN_LOOP_COUNT, loopCount - 1));
-	};
-	const increment = (): void => {
-		onLoopCountChange(Math.min(MAX_LOOP_COUNT, loopCount + 1));
-	};
-	const onInputChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-		const raw = Number(event.target.value);
-		if (!Number.isFinite(raw)) return;
-		const next = Math.round(clamp(raw, MIN_LOOP_COUNT, MAX_LOOP_COUNT));
-		onLoopCountChange(next);
-	};
-	return (
-		<div
-			className={css({
-				display: "grid",
-				minHeight: "8",
-				minWidth: 0,
-				gridTemplateColumns: "auto 1fr auto",
-				alignItems: "center",
-				gap: "1",
-				paddingInline: "1",
-				paddingBlock: "1",
-			})}
-		>
-			<Repeat
-				className={css({ height: "4", width: "4", color: "text.muted" })}
-				aria-hidden
-			/>
-			<label
-				className={css({
-					display: "flex",
-					alignItems: "center",
-					gap: "2",
-					fontSize: "text-2xs",
-					color: "text.muted",
-				})}
-			>
-				<span
-					className={css({
-						whiteSpace: "nowrap",
-						display: compact ? "none" : undefined,
-					})}
-				>
-					{t("loop.cycles")}
-				</span>
-				<input
-					type="number"
-					inputMode="numeric"
-					min={MIN_LOOP_COUNT}
-					max={MAX_LOOP_COUNT}
-					step={1}
-					value={loopCount}
-					onChange={onInputChange}
-					aria-label={t("loop.cycles")}
-					data-ws-action="easing-loop-count-input"
-					className={css({
-						height: "6",
-						width: compact ? "8" : "12",
-						borderRadius: "shell-sm",
-						borderWidth: "1px",
-						borderStyle: "solid",
-						borderColor: "border.default",
-						backgroundColor: "surface.panel",
-						paddingInline: "2",
-						fontSize: "text-2xs",
-						color: "text.primary",
-					})}
-				/>
-			</label>
-			<div className={css({ display: "flex", alignItems: "center", gap: "1" })}>
-				<Button
-					variant="outline"
-					uiSize="sm"
-					aria-label={t("loop.decrement")}
-					data-ws-action="easing-loop-decrement"
-					onClick={decrement}
-					disabled={loopCount <= MIN_LOOP_COUNT}
-				>
-					-
-				</Button>
-				<Button
-					variant="outline"
-					uiSize="sm"
-					aria-label={t("loop.increment")}
-					data-ws-action="easing-loop-increment"
-					onClick={increment}
-					disabled={loopCount >= MAX_LOOP_COUNT}
-				>
-					+
-				</Button>
-			</div>
 		</div>
 	);
 }
@@ -922,32 +726,18 @@ function EasingActionBar({
 	);
 }
 
-export function CurveEditor({
-	layout,
-	variant,
-	initialWave,
-}: {
-	layout: Layout;
-	variant: CurveEditorVariant;
-	/** Loop-only: seed for the cyclic wave parameters (Storybook/tests). */
-	initialWave?: CyclicWaveParams;
-}): JSX.Element {
-	const config = VARIANTS[variant];
+export function EasingEditor({ layout }: { layout: Layout }): JSX.Element {
 	const rootRef = useRef<HTMLDivElement | null>(null);
 	const width = useElementWidth(rootRef);
-	const canvasTarget = variant === "loop" ? "loop-canvas" : "easing-canvas";
-	const applyTarget = variant === "loop" ? "loop-apply" : "easing-apply";
+	const canvasTarget = "easing-canvas";
+	const applyTarget = "easing-apply";
 	const { t } = useTranslation("widgets");
-	const nameLabel = variant === "loop" ? t("loop.name") : t("easing.name");
+	const nameLabel = t("easing.name");
 	const { host, setActiveWidgetInstanceId } = useWidgetRuntime();
 	const widgetInstanceId = String(layout.id ?? layout.widgetId ?? "").trim();
 	const canvasRef = useRef<HTMLCanvasElement | null>(null);
 	const containerRef = useRef<HTMLDivElement | null>(null);
-	const initialState = useMemo(() => {
-		const state = createInitialState();
-		if (initialWave) state.wave = { ...state.wave, ...initialWave };
-		return state;
-	}, [initialWave]);
+	const initialState = useMemo(() => createInitialState(), []);
 	const stateRef = useRef<EditorState>(initialState);
 	const drawRef = useRef<(() => void) | null>(null);
 	const previewStartRef = useRef<number | null>(null);
@@ -973,8 +763,6 @@ export function CurveEditor({
 	const [labelColorNames, setLabelColorNames] = useState<
 		Record<string, string>
 	>({});
-	const [loopCount, setLoopCountState] = useState<number>(DEFAULT_LOOP_COUNT);
-	const [wave, setWave] = useState<CyclicWaveParams>(initialState.wave);
 	const [status, setStatus] = useState<"idle" | "busy" | "done" | "error">(
 		"idle",
 	);
@@ -996,403 +784,6 @@ export function CurveEditor({
 		setModeState(next);
 		setStatus("idle");
 		drawRef.current?.();
-	}, []);
-
-	const setLoopCount = useCallback(
-		(next: number) => {
-			const clamped = clamp(Math.round(next), MIN_LOOP_COUNT, MAX_LOOP_COUNT);
-			setLoopCountState(clamped);
-			if (variant === "loop") {
-				const nextWave = { ...stateRef.current.wave, cycles: clamped };
-				stateRef.current.wave = nextWave;
-				setWave(nextWave);
-			}
-			// The loop count changes the apply path, not the curve editor.
-			// Reset status so an in-flight busy doesn't strand the editor
-			// after the user changes cycle count mid-apply.
-			setStatus("idle");
-		},
-		[variant],
-	);
-
-	const persistState = useCallback(() => {
-		if (!widgetInstanceId || !stateLoadedRef.current) return;
-		stateRef.current.mode = mode;
-		void writeWidgetStateJson(
-			window,
-			variant,
-			serializeState(
-				stateRef.current,
-				applyMode,
-				backgroundPattern,
-				autoApply,
-				labelColor,
-				customColors,
-				loopCount,
-			),
-			{ instanceId: widgetInstanceId },
-		).catch(() => {});
-	}, [
-		applyMode,
-		autoApply,
-		backgroundPattern,
-		customColors,
-		labelColor,
-		loopCount,
-		mode,
-		variant,
-		widgetInstanceId,
-	]);
-
-	useEffect(() => {
-		if (!widgetInstanceId) return;
-		let cancelled = false;
-		stateLoadedRef.current = false;
-		void readWidgetStateJson(window, variant, {
-			instanceId: widgetInstanceId,
-		})
-			.then((raw: Record<string, unknown> | null) => {
-				if (cancelled) return;
-				const stored = coerceStoredState(raw);
-				if (!stored) {
-					stateLoadedRef.current = true;
-					return;
-				}
-				const state = stateRef.current;
-				if (stored.mode) {
-					state.mode = stored.mode;
-					setModeState(stored.mode);
-				}
-				if (stored.points) state.points = stored.points;
-				if (stored.wave) {
-					state.wave = stored.wave;
-					setWave(stored.wave);
-				}
-				if (stored.procedural) state.procedural = stored.procedural;
-				if (stored.applyMode) setApplyMode(stored.applyMode);
-				if (stored.backgroundPattern) {
-					setBackgroundPattern(stored.backgroundPattern);
-				}
-				if (typeof stored.autoApply === "boolean") {
-					setAutoApply(stored.autoApply);
-				}
-				if (typeof stored.labelColor === "number") {
-					setLabelColor(stored.labelColor);
-				}
-				if (stored.customColors) {
-					setCustomColors(stored.customColors);
-				}
-				if (typeof stored.loopCount === "number") {
-					setLoopCountState(stored.loopCount);
-				}
-				drawRef.current?.();
-				stateLoadedRef.current = true;
-			})
-			.catch(() => {
-				stateLoadedRef.current = true;
-			});
-		return () => {
-			cancelled = true;
-		};
-	}, [variant, widgetInstanceId]);
-
-	useEffect(() => {
-		persistState();
-	}, [persistState]);
-
-	useEffect(() => {
-		window.dispatchEvent(
-			new CustomEvent("ty-plus:easing-settings-changed", {
-				detail: {
-					background: backgroundPattern,
-					applyMode,
-					autoApply,
-					labelColor,
-					customColors,
-					labelColorNames,
-				},
-			}),
-		);
-	}, [
-		backgroundPattern,
-		applyMode,
-		autoApply,
-		customColors,
-		labelColor,
-		labelColorNames,
-	]);
-
-	const draw = useCallback(() => {
-		const canvas = canvasRef.current;
-		if (!canvas) return;
-		const ctx = canvas.getContext("2d");
-		if (!ctx) return;
-		const state = stateRef.current;
-		ctx.clearRect(0, 0, state.width, state.height);
-
-		const text = readCssColor(canvas, "--ty-text-primary", "#ffffff");
-		const muted = readCssColor(canvas, "--ty-text-muted", "#999999");
-		const accent = readCssColor(canvas, "--ty-text-accent", text);
-		const grid = readCssColor(
-			canvas,
-			"--ty-border-surface",
-			"rgba(255,255,255,0.14)",
-		);
-
-		const { zoom, x: cx, y: cy } = state.camera;
-		const startX = Math.floor((-cx / zoom) * 4) / 4;
-		const endX = Math.ceil(((state.width - cx) / zoom) * 4) / 4;
-		const startY = Math.floor(((cy - state.height) / zoom) * 4) / 4;
-		const endY = Math.ceil((cy / zoom) * 4) / 4;
-
-		if (backgroundPattern === "grid") {
-			ctx.lineWidth = 1;
-			ctx.strokeStyle = grid;
-			ctx.beginPath();
-			for (let x = startX; x <= endX; x += 0.25) {
-				const sx = cx + x * zoom;
-				ctx.moveTo(sx, 0);
-				ctx.lineTo(sx, state.height);
-			}
-			for (let y = startY; y <= endY; y += 0.25) {
-				const sy = cy - y * zoom;
-				ctx.moveTo(0, sy);
-				ctx.lineTo(state.width, sy);
-			}
-			ctx.stroke();
-		} else {
-			const radius = Math.max(0.8, zoom * 0.01);
-			ctx.fillStyle = grid;
-			ctx.beginPath();
-			for (let x = startX; x <= endX; x += 0.125) {
-				for (let y = startY; y <= endY; y += 0.125) {
-					if (
-						(Math.abs(x) < 0.01 && Math.abs(y) < 0.01) ||
-						(Math.abs(x - 1) < 0.01 && Math.abs(y - 1) < 0.01)
-					) {
-						continue;
-					}
-					const p = worldToScreen({ x, y }, state.camera);
-					ctx.moveTo(p.x, p.y);
-					ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
-				}
-			}
-			ctx.fill();
-		}
-
-		const graphStart = worldToScreen({ x: 0, y: 0 }, state.camera);
-		const graphEnd = worldToScreen({ x: 1, y: 1 }, state.camera);
-		ctx.strokeStyle = muted;
-		ctx.strokeRect(
-			graphStart.x,
-			graphEnd.y,
-			graphEnd.x - graphStart.x,
-			graphStart.y - graphEnd.y,
-		);
-
-		const drawDot = (
-			point: Point,
-			radius: number,
-			color: string,
-			highlight: boolean,
-			hollow = false,
-		): void => {
-			const size = highlight ? radius * 1.5 : radius;
-			ctx.fillStyle = color;
-			ctx.beginPath();
-			ctx.arc(point.x, point.y, size, 0, Math.PI * 2);
-			ctx.fill();
-			if (hollow) {
-				ctx.fillStyle = "rgba(0,0,0,0.6)";
-				ctx.beginPath();
-				ctx.arc(point.x, point.y, size * 0.4, 0, Math.PI * 2);
-				ctx.fill();
-			}
-		};
-
-		const isHover = (
-			type: DragTarget extends infer _ ? string : never,
-			index = -1,
-		) =>
-			Boolean(
-				state.hoverTarget &&
-					"type" in state.hoverTarget &&
-					state.hoverTarget.type === type &&
-					(!isIndexedTarget(state.hoverTarget) ||
-						state.hoverTarget.index === index),
-			);
-
-		if (variant === "loop") {
-			drawCyclicWave(
-				ctx,
-				state.points,
-				state.wave,
-				state.camera,
-				{ text, muted, accent, grid },
-				state.waveDrag,
-			);
-		} else if (state.mode === "curve") {
-			ctx.strokeStyle = text;
-			ctx.lineWidth = 2;
-			ctx.lineJoin = "round";
-			ctx.lineCap = "round";
-			ctx.beginPath();
-			const first = worldToScreen(state.points[0], state.camera);
-			ctx.moveTo(first.x, first.y);
-			for (let i = 0; i < state.points.length - 1; i += 1) {
-				const current = state.points[i];
-				const next = state.points[i + 1];
-				const cp1 = worldToScreen(
-					{ x: current.x + current.hOut.x, y: current.y + current.hOut.y },
-					state.camera,
-				);
-				const cp2 = worldToScreen(
-					{ x: next.x + next.hIn.x, y: next.y + next.hIn.y },
-					state.camera,
-				);
-				const end = worldToScreen(next, state.camera);
-				ctx.bezierCurveTo(cp1.x, cp1.y, cp2.x, cp2.y, end.x, end.y);
-			}
-			ctx.stroke();
-
-			ctx.lineWidth = 1;
-			ctx.strokeStyle = muted;
-			state.points.forEach((point, index) => {
-				const screen = worldToScreen(point, state.camera);
-				if (index > 0) {
-					const hIn = handleDotScreenPos(point, "hIn", state.camera);
-					ctx.beginPath();
-					ctx.moveTo(screen.x, screen.y);
-					ctx.lineTo(hIn.x, hIn.y);
-					ctx.stroke();
-					drawDot(
-						hIn,
-						3,
-						isHover("hIn", index) ? accent : muted,
-						isHover("hIn", index),
-					);
-				}
-				if (index < state.points.length - 1) {
-					const hOut = handleDotScreenPos(point, "hOut", state.camera);
-					ctx.beginPath();
-					ctx.moveTo(screen.x, screen.y);
-					ctx.lineTo(hOut.x, hOut.y);
-					ctx.stroke();
-					drawDot(
-						hOut,
-						3,
-						isHover("hOut", index) ? accent : muted,
-						isHover("hOut", index),
-					);
-				}
-				drawDot(
-					screen,
-					4,
-					index === 0 || index === state.points.length - 1 ? muted : text,
-					false,
-					true,
-				);
-			});
-		} else {
-			ctx.strokeStyle = text;
-			ctx.lineWidth = 2;
-			ctx.lineJoin = "round";
-			ctx.lineCap = "round";
-			ctx.beginPath();
-			const start = worldToScreen({ x: 0, y: 0 }, state.camera);
-			ctx.moveTo(start.x, start.y);
-			const steps = 2000;
-			for (let i = 1; i <= steps; i += 1) {
-				const tValue = i / steps;
-				const p = worldToScreen(
-					{
-						x: tValue,
-						y: proceduralValue(state.mode, tValue, state.procedural.handle),
-					},
-					state.camera,
-				);
-				ctx.lineTo(p.x, p.y);
-			}
-			ctx.stroke();
-
-			const handle = worldToScreen(state.procedural.handle, state.camera);
-			const top = worldToScreen(
-				{ x: state.procedural.handle.x, y: 1 },
-				state.camera,
-			);
-			ctx.strokeStyle = muted;
-			ctx.lineWidth = 1;
-			ctx.beginPath();
-			ctx.moveTo(handle.x, top.y);
-			ctx.lineTo(handle.x, handle.y);
-			ctx.stroke();
-			drawDot(handle, 4, text, isHover("procedural"), true);
-		}
-
-		if (previewStartRef.current !== null) {
-			const elapsed = performance.now() - previewStartRef.current;
-			const tValue = clamp(elapsed / PREVIEW_DURATION_MS, 0, 1);
-			const y =
-				variant === "loop"
-					? sampleWave(buildCyclicWave(state.points, state.wave), tValue)
-					: state.mode === "curve"
-						? solveCurveYForX(tValue, state.points)
-						: proceduralValue(state.mode, tValue, state.procedural.handle);
-			const preview = worldToScreen({ x: tValue, y }, state.camera);
-			ctx.fillStyle = accent;
-			ctx.shadowColor = accent;
-			ctx.shadowBlur = 6;
-			ctx.beginPath();
-			ctx.arc(preview.x, preview.y, 4, 0, Math.PI * 2);
-			ctx.fill();
-			ctx.shadowBlur = 0;
-		}
-
-		canvas.style.cursor = state.isDragging
-			? state.dragTarget?.type === "pan"
-				? "grabbing"
-				: "default"
-			: spacePressedRef.current
-				? "grab"
-				: state.hoverTarget
-					? "pointer"
-					: "default";
-	}, [backgroundPattern, variant]);
-
-	useEffect(() => {
-		drawRef.current = draw;
-	}, [draw]);
-
-	useEffect(() => {
-		draw();
-	}, [draw]);
-
-	useEffect(() => {
-		const container = containerRef.current;
-		const canvas = canvasRef.current;
-		if (!container || !canvas) return;
-		const resize = (): void => {
-			const rect = container.getBoundingClientRect();
-			const width = Math.max(1, Math.floor(rect.width));
-			const height = Math.max(1, Math.floor(rect.height));
-			const dpr = window.devicePixelRatio || 1;
-			canvas.width = Math.floor(width * dpr);
-			canvas.height = Math.floor(height * dpr);
-			const ctx = canvas.getContext("2d");
-			if (ctx) ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-			stateRef.current.width = width;
-			stateRef.current.height = height;
-			stateRef.current.camera = computeCamera(width, height);
-			drawRef.current?.();
-		};
-		resize();
-		if (typeof ResizeObserver === "undefined") {
-			window.addEventListener("resize", resize);
-			return () => window.removeEventListener("resize", resize);
-		}
-		const observer = new ResizeObserver(resize);
-		observer.observe(container);
-		return () => observer.disconnect();
 	}, []);
 
 	useEffect(() => {
@@ -1459,16 +850,13 @@ export function CurveEditor({
 			// (issue #145); pan is an explicit gesture handled before this.
 			return findNearestDragTarget({
 				screen,
-				points:
-					variant === "loop"
-						? waveTemplateInGraph(state.points, state.wave)
-						: state.points,
+				points: state.points,
 				proceduralHandle: state.procedural.handle,
 				camera: state.camera,
 				useCurvePoints: state.mode === "curve",
 			});
 		},
-		[variant],
+		[],
 	);
 
 	const findClosest = useCallback(
@@ -1486,20 +874,6 @@ export function CurveEditor({
 	 * The loop widget draws every cycle, so a drag on any cycle has to be
 	 * translated into the template that all cycles share.
 	 */
-	const waveMapping = useCallback((worldX: number) => {
-		const state = stateRef.current;
-		const cycles = Math.max(1, Math.round(state.wave.cycles));
-		const cycle = 0;
-		const hasReturn = state.wave.mode === "pingpong" && cycle < cycles - 1;
-		const legPhase = hasReturn ? attackShare(state.wave.bias) : 1;
-		const local = worldX * cycles - cycle;
-		return {
-			phase: clamp(local / legPhase, 0, 1),
-			scale: cycles / legPhase,
-			graphX: (cycle + local) / cycles,
-		};
-	}, []);
-
 	const updateDrag = useCallback(
 		(screen: Point, snap: boolean, shift: boolean): void => {
 			const state = stateRef.current;
@@ -1515,19 +889,6 @@ export function CurveEditor({
 					x: Math.round(world.x / 0.05) * 0.05,
 					y: Math.round(world.y / 0.05) * 0.05,
 				};
-			}
-
-			if (variant === "loop" && state.waveDrag) {
-				const next = applyWaveHandleDrag(
-					state.waveDrag,
-					world,
-					state.points,
-					state.wave,
-				);
-				state.wave = next;
-				setWave(next);
-				drawRef.current?.();
-				return;
 			}
 
 			if (target.type === "procedural") {
@@ -1552,12 +913,7 @@ export function CurveEditor({
 
 			if (target.type === "point") {
 				if (target.index !== 0 && target.index !== state.points.length - 1) {
-					const mapping = variant === "loop" ? waveMapping(world.x) : null;
-					point.x = clamp(
-						mapping ? mapping.phase : world.x,
-						previousX + gap,
-						nextX - gap,
-					);
+					point.x = clamp(world.x, previousX + gap, nextX - gap);
 					point.y = world.y;
 					clampHandlesForPoint(state.points, target.index);
 				}
@@ -1579,10 +935,7 @@ export function CurveEditor({
 					};
 				}
 
-				const mapping = variant === "loop" ? waveMapping(world.x) : null;
-				let hx = mapping
-					? (world.x - mapping.graphX) * mapping.scale
-					: world.x - point.x;
+				let hx = world.x - point.x;
 				let hy = world.y - point.y;
 				if (shift) {
 					if (Math.abs(hx) > Math.abs(hy) * 2) hy = 0;
@@ -1665,8 +1018,34 @@ export function CurveEditor({
 			setStatus("idle");
 			drawRef.current?.();
 		},
-		[variant, waveMapping],
+		[],
 	);
+
+	const persistState = useCallback(() => {
+		if (!widgetInstanceId || !stateLoadedRef.current) return;
+		stateRef.current.mode = mode;
+		void writeWidgetStateJson(
+			window,
+			"easing",
+			serializeState(
+				stateRef.current,
+				applyMode,
+				backgroundPattern,
+				autoApply,
+				labelColor,
+				customColors,
+			),
+			{ instanceId: widgetInstanceId },
+		).catch(() => {});
+	}, [
+		applyMode,
+		autoApply,
+		backgroundPattern,
+		customColors,
+		labelColor,
+		mode,
+		widgetInstanceId,
+	]);
 
 	const applyCurve = useCallback(async () => {
 		activate();
@@ -1731,8 +1110,7 @@ export function CurveEditor({
 		// "both" or "out", fall back to a single-cycle applyEasing so the
 		// user's chosen targeting is honored. This matches the documented
 		// behavior — loop semantics only exist for the "in" handle side.
-		const useLoop = variant === "loop" && wave.cycles >= MIN_CYCLES;
-		const hostCommand = config.applyCommand;
+		const hostCommand = "applyEasing";
 		const payload: Record<string, unknown> = {
 			version: 1,
 			graph: "value",
@@ -1744,10 +1122,6 @@ export function CurveEditor({
 			detectedType,
 			targeting,
 		};
-		if (useLoop) {
-			payload.loopCount = loopCount;
-			payload.wave = { ...state.wave };
-		}
 		try {
 			const result = await host(hostCommand, [payload]);
 			// DEBUG: always log so we can confirm the new React code is loaded
@@ -1755,7 +1129,6 @@ export function CurveEditor({
 			console.log(`[ty-plus:widget:easing] ${hostCommand} result`, {
 				mode: state.mode,
 				pointCount: points.length,
-				loopCount: useLoop ? loopCount : undefined,
 				applyMode,
 				targeting,
 				result,
@@ -1767,7 +1140,6 @@ export function CurveEditor({
 					{
 						mode: state.mode,
 						pointCount: points.length,
-						loopCount: useLoop ? loopCount : undefined,
 						applyMode,
 						errors: hostErrors,
 					},
@@ -1780,7 +1152,6 @@ export function CurveEditor({
 				hostCommand,
 				mode: state.mode,
 				pointCount: points.length,
-				loopCount: useLoop ? loopCount : undefined,
 				applyMode,
 				error:
 					err instanceof Error
@@ -1793,17 +1164,7 @@ export function CurveEditor({
 			// next apply.
 			applyTargetingRef.current = "both";
 		}
-	}, [
-		activate,
-		applyMode,
-		config.applyCommand,
-		customColors,
-		host,
-		labelColor,
-		loopCount,
-		variant,
-		wave,
-	]);
+	}, [activate, applyMode, customColors, host, labelColor]);
 
 	// Some CEP/CEF input paths deliver mouse events without the matching
 	// pointerdown/pointerup (only pointermove is synthesized). The mouse
@@ -1941,28 +1302,6 @@ export function CurveEditor({
 			// #145). There is deliberately no empty-area pan branch: pan is
 			// an explicit gesture only (middle-button or Space+left, handled
 			// above).
-			if (variant === "loop") {
-				const positions = waveHandlePositions(state.points, state.wave);
-				const keys = Object.keys(positions) as WaveHandle[];
-				for (const key of keys) {
-					const handle = worldToScreen(positions[key], state.camera);
-					if (Math.hypot(handle.x - screen.x, handle.y - screen.y) > 12) {
-						continue;
-					}
-					event.preventDefault();
-					event.stopPropagation();
-					state.isDragging = true;
-					state.dragTarget = { type: "wave", handle: key };
-					state.hoverTarget = state.dragTarget;
-					state.waveDrag = key;
-					state.dragChanged = false;
-					if (typeof event.pointerId === "number") {
-						canvas.setPointerCapture(event.pointerId);
-					}
-					return;
-				}
-			}
-
 			const target = findClosestWithDistance(screen).target;
 			if (!target) return;
 			event.preventDefault();
@@ -2023,7 +1362,6 @@ export function CurveEditor({
 			persistState,
 			updateDrag,
 			applyCurve,
-			variant,
 		],
 	);
 
@@ -2074,7 +1412,6 @@ export function CurveEditor({
 			const dragChanged = state.dragChanged;
 			state.isDragging = false;
 			state.dragTarget = null;
-			state.waveDrag = null;
 			state.dragChanged = false;
 			state.altHeld = false;
 			state.mirrorHeld = false;
@@ -2519,17 +1856,9 @@ export function CurveEditor({
 			{...activeAttr}
 		>
 			<EasingModeToolbar
-				modeButtons={config.showToolbar ? modeButtons : []}
+				modeButtons={modeButtons}
 				mode={mode}
 				onModeChange={setMode}
-				t={t}
-			/>
-
-			<EasingLoopControls
-				visible={config.showCycles}
-				compact={compact}
-				loopCount={variant === "loop" ? wave.cycles : loopCount}
-				onLoopCountChange={setLoopCount}
 				t={t}
 			/>
 

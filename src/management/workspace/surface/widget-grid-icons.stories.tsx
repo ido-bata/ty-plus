@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { expect } from "storybook/test";
 import { css } from "@/styled-system/css";
 
 import {
@@ -186,49 +187,89 @@ export const Targets: Story = {
 	),
 };
 
+const ALIGN_ICON_NAMES = [
+	"align-left",
+	"align-center-h",
+	"align-right",
+	"align-top",
+	"align-center-v",
+	"align-bottom",
+	"distribute-left",
+	"distribute-center-h",
+	"distribute-right",
+	"distribute-top",
+	"distribute-center-v",
+	"distribute-bottom",
+	"distribute-spacing-h",
+	"distribute-h",
+	"distribute-spacing-v",
+	"distribute-v",
+	"align-start",
+	"align-end",
+	"align-duration",
+	"distribute-start",
+	"distribute-end",
+] as const;
+
 export const AlignIcons: Story = {
-	render: () => {
-		const names = [
-			"align-left",
-			"align-center-h",
-			"align-right",
-			"align-top",
-			"align-center-v",
-			"align-bottom",
-			"distribute-h",
-			"distribute-v",
-			"align-start",
-			"align-end",
-		];
-		return (
-			<div
-				className={css({
-					display: "grid",
-					gridTemplateColumns: "repeat(5, minmax(0, 1fr))",
-					gap: "3",
-					p: "4",
-					color: "text.primary",
-				})}
-			>
-				{names.map((name) => (
-					<div
-						key={name}
-						className={css({
-							display: "flex",
-							flexDirection: "column",
-							alignItems: "center",
-							gap: "1",
-						})}
-					>
-						<AlignIcon name={name} />
-						<span
-							className={css({ fontSize: "text-2xs", color: "text.muted" })}
-						>
-							{name}
-						</span>
-					</div>
-				))}
-			</div>
-		);
+	render: () => (
+		<div
+			className={css({
+				display: "grid",
+				gridTemplateColumns: "repeat(6, minmax(0, 1fr))",
+				gap: "3",
+				p: "4",
+				color: "text.primary",
+			})}
+		>
+			{ALIGN_ICON_NAMES.map((name) => (
+				<div
+					key={name}
+					className={css({
+						display: "flex",
+						flexDirection: "column",
+						alignItems: "center",
+						gap: "1",
+					})}
+				>
+					<AlignIcon name={name} />
+					<span className={css({ fontSize: "text-2xs", color: "text.muted" })}>
+						{name}
+					</span>
+				</div>
+			))}
+		</div>
+	),
+	play: async ({ canvasElement }) => {
+		// Browser-side geometry gate: every icon must paint inside its
+		// 24x24 viewBox and keep a minimum presence on both axes, matching
+		// the contract enforced statically by check:icon-geometry.
+		const svgs = Array.from(canvasElement.querySelectorAll("svg"));
+		expect(svgs).toHaveLength(ALIGN_ICON_NAMES.length);
+		for (const svg of svgs) {
+			// <svg> itself is not a graphics element; union its children's boxes.
+			const parts = Array.from(svg.querySelectorAll("*")).map((el) =>
+				(el as SVGGraphicsElement).getBBox(),
+			);
+			expect(parts.length).toBeGreaterThan(0);
+			const box = {
+				x: Math.min(...parts.map((b) => b.x)),
+				y: Math.min(...parts.map((b) => b.y)),
+				width:
+					Math.max(...parts.map((b) => b.x + b.width)) -
+					Math.min(...parts.map((b) => b.x)),
+				height:
+					Math.max(...parts.map((b) => b.y + b.height)) -
+					Math.min(...parts.map((b) => b.y)),
+			};
+			expect(box.x).toBeGreaterThanOrEqual(-0.6);
+			expect(box.y).toBeGreaterThanOrEqual(-0.6);
+			expect(box.x + box.width).toBeLessThanOrEqual(24.6);
+			expect(box.y + box.height).toBeLessThanOrEqual(24.6);
+			const dominant = Math.max(box.width, box.height);
+			const minor = Math.min(box.width, box.height);
+			expect(dominant).toBeGreaterThanOrEqual(12);
+			expect(minor).toBeGreaterThanOrEqual(2.5);
+		}
 	},
 };

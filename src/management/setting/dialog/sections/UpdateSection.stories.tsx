@@ -315,10 +315,18 @@ export const Checking: Story = {
 
 /**
  * Newer stable release on the feed: status shows the available version,
- * release notes + install actions render. Clicking install with no
- * registered installer degrades to the manual-install notice.
+ * release notes + install actions render. Clicking install resolves to
+ * `manual_required` (the in-panel relay cannot reach a host panel under
+ * Storybook, so a stub installer keeps the outcome deterministic).
  */
 export const UpdateAvailable: Story = {
+	render: renderWithInstaller({
+		installUpdate: async () => ({
+			status: "manual_required",
+			version: UPDATE_VERSION,
+			restart_required: false,
+		}),
+	}),
 	play: async ({ canvasElement }) => {
 		await statusLabel(canvasElement, "updates.available", {
 			version: UPDATE_VERSION,

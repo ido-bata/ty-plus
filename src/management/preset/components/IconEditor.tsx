@@ -1,7 +1,6 @@
-import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import { FileSearch, Smile } from "lucide-react";
-import { type JSX, type ReactNode, useRef, useState } from "react";
+import { type JSX, type ReactNode, useEffect, useRef, useState } from "react";
 import { selectFile } from "@/management/ae/cep/dialog-shim/bolt";
 import type { PresetIconEditorDraft } from "@/management/preset/icon-editor";
 import { Icon } from "@/shared/component";
@@ -104,6 +103,12 @@ const emojiPickerBtnClass = css({
 	_disabled: { opacity: 0.5 },
 });
 
+const emojiPickerLoadingClass = css({
+	padding: "4",
+	fontSize: "shell-text-sm",
+	color: "text.muted",
+});
+
 /**
  * Surface styling for the portaled emoji picker. Placement (position, flip,
  * viewport clamp) is owned by `AnchoredPopover`; this class must not set
@@ -167,32 +172,35 @@ const bodyPreviewGridClass = css({
 });
 
 /**
- * Fixed-size preview tile. The preview must not stretch with the right
- * column's content height: `alignSelf: "center"` keeps the grid item from
- * stretching across the two auto rows, and the fixed `width` + square
- * `aspectRatio` pin the tile size regardless of the fields column.
+ * Preview tile grid item. It spans the tabs + fields rows and stretches
+ * to their combined height; the square size is derived inside
+ * `previewInnerClass` via `aspect-ratio`, so the tile tracks the field
+ * column's height instead of imposing a fixed size on the rows.
  */
 const previewBoxClass = css({
 	gridRow: "span 2",
-	display: "grid",
-	width: "6rem",
-	aspectRatio: "square",
-	flexShrink: "0",
-	gridTemplateColumns: "minmax(0, 1fr)",
-	gridTemplateRows: "minmax(0, 1fr)",
+	display: "flex",
+	minWidth: "0",
+	alignItems: "center",
 	justifySelf: "start",
-	alignSelf: "center",
-	overflow: "hidden",
-	borderRadius: "shell-sm",
-	backgroundColor: "surface.widget",
+	alignSelf: "stretch",
 });
 
+/**
+ * Square preview tile sized to the two field rows it spans: the grid
+ * item above stretches to the row pair's height, and `aspect-ratio`
+ * derives the width from that height, so the icon stays square at
+ * exactly "two UI rows" tall instead of a fixed size that leaves
+ * dead space next to shorter field content.
+ */
 const previewInnerClass = css({
 	minHeight: "0",
 	minWidth: "0",
 	height: "full",
-	width: "full",
+	aspectRatio: "square",
 	overflow: "hidden",
+	borderRadius: "shell-sm",
+	backgroundColor: "surface.widget",
 	"& > *": {
 		height: "full",
 		width: "full",
@@ -247,6 +255,19 @@ function DefaultEmojiFields({
 }: EditorApi & { browseDir?: string }): JSX.Element {
 	const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
 	const emojiAnchorRef = useRef<HTMLDivElement | null>(null);
+	// The emoji dataset is ~3 MB of JSON; keep it out of the eager module
+	// graph and fetch it only when the picker is actually opened.
+	const [emojiData, setEmojiData] = useState<unknown>(null);
+	useEffect(() => {
+		if (!emojiPickerOpen || emojiData) return;
+		let cancelled = false;
+		import("@emoji-mart/data").then((mod) => {
+			if (!cancelled) setEmojiData(mod.default);
+		});
+		return () => {
+			cancelled = true;
+		};
+	}, [emojiPickerOpen, emojiData]);
 
 	return (
 		<div ref={emojiAnchorRef} className={emojiAnchorClass}>
@@ -273,19 +294,23 @@ function DefaultEmojiFields({
 				maxHeight="min(22rem,55vh)"
 				className={emojiPickerPopoverClass}
 			>
-				<Picker
-					data={data}
-					theme="dark"
-					previewPosition="none"
-					skinTonePosition="none"
-					onEmojiSelect={(emoji: { native?: string }) => {
-						const n = emoji?.native?.trim();
-						if (n) {
-							set({ emoji: n });
-						}
-						setEmojiPickerOpen(false);
-					}}
-				/>
+				{emojiData ? (
+					<Picker
+						data={emojiData}
+						theme="dark"
+						previewPosition="none"
+						skinTonePosition="none"
+						onEmojiSelect={(emoji: { native?: string }) => {
+							const n = emoji?.native?.trim();
+							if (n) {
+								set({ emoji: n });
+							}
+							setEmojiPickerOpen(false);
+						}}
+					/>
+				) : (
+					<div className={emojiPickerLoadingClass}>Loading…</div>
+				)}
 			</AnchoredPopover>
 		</div>
 	);

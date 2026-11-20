@@ -19,7 +19,7 @@ const backdropStyle = css({
 	display: "flex",
 	alignItems: "stretch",
 	justifyContent: "center",
-	backgroundColor: "colorMix(in srgb, black 45%, transparent)",
+	backgroundColor: "color-mix(in srgb, black 45%, transparent)",
 	padding: "3",
 	sm: {
 		padding: "6",
@@ -83,7 +83,7 @@ const catalogClass = css({
 
 const catalogIntroStyle = css({
 	flexShrink: 0,
-	fontSize: "shell-text-xs",
+	fontSize: "shell-text-sm",
 	color: "text.muted",
 });
 

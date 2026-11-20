@@ -46,6 +46,7 @@ type ProbeProps = {
 	actionSelector?: string | null;
 	resizeMargin?: number | null;
 	dragHandleMargin?: number | null;
+	pointerCapture?: boolean;
 	enabled?: boolean;
 	onRecognize: (action: Action) => void;
 	stateRef: { current: ProbeState };
@@ -58,6 +59,7 @@ function Probe({
 	actionSelector,
 	resizeMargin,
 	dragHandleMargin,
+	pointerCapture,
 	enabled,
 	onRecognize,
 	stateRef,
@@ -76,6 +78,9 @@ function Probe({
 	}
 	if (dragHandleMargin !== undefined) {
 		config.dragHandleMargin = dragHandleMargin;
+	}
+	if (pointerCapture !== undefined) {
+		config.pointerCapture = pointerCapture;
 	}
 	const hookArgs: Parameters<typeof useAnchorGesture<Action>>[0] = {
 		targetRef: containerRef,
@@ -852,6 +857,46 @@ describe("useAnchorGesture", () => {
 			});
 			expect(stateRef.current.isActive).toBe(false);
 			expect(onRecognize).not.toHaveBeenCalled();
+		});
+	});
+
+	describe("pointer capture", () => {
+		it("takes pointer capture on the gesture target by default", () => {
+			const { target, stateRef } = renderProbe({ onRecognize: vi.fn() });
+			const capture = vi.fn();
+			target.setPointerCapture = capture;
+
+			fireEvent.pointerDown(target, {
+				button: 0,
+				clientX: 30,
+				clientY: 40,
+				pointerId: 7,
+			});
+
+			expect(capture).toHaveBeenCalledWith(7);
+			expect(stateRef.current.isActive).toBe(true);
+		});
+
+		it("skips pointer capture when pointerCapture is false", () => {
+			// Widgets whose whole surface is a set of buttons opt out:
+			// pointer capture retargets the compatibility mouse events —
+			// and therefore the `click` event — to the capturing element.
+			const { target, stateRef } = renderProbe({
+				onRecognize: vi.fn(),
+				pointerCapture: false,
+			});
+			const capture = vi.fn();
+			target.setPointerCapture = capture;
+
+			fireEvent.pointerDown(target, {
+				button: 0,
+				clientX: 30,
+				clientY: 40,
+				pointerId: 7,
+			});
+
+			expect(capture).not.toHaveBeenCalled();
+			expect(stateRef.current.isActive).toBe(true);
 		});
 	});
 

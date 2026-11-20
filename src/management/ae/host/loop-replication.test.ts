@@ -11,7 +11,7 @@ import {
 	buildCyclicWave,
 	type CyclicWaveParams,
 	type WavePoint,
-} from "@/function/widget/curve-editor/cyclic-wave";
+} from "@/shared/cyclic-wave";
 
 type Row = number[];
 

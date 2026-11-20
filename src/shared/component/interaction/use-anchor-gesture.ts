@@ -16,6 +16,10 @@
  *      for the rationale and unimplemented fine-adjustment behavior.
  *   2. Pointer capture is taken on the widget element so subsequent moves and
  *      the release fire even when the pointer leaves the widget bounds.
+ *      Consumers whose surface is entirely made of buttons can opt out with
+ *      `config.pointerCapture: false` — capture retargets the compatibility
+ *      mouse events (and therefore the `click` event) to the capturing
+ *      element, which would swallow the per-button click path.
  *   3. Each segment commits a direction (`left` | `right` | `top` | `bottom`)
  *      once the cursor travels `segmentThreshold` (default 25) pixels in a
  *      consistent direction. Up to 3 most-recent segments are kept, enabling
@@ -98,6 +102,18 @@ export type AnchorGestureConfig<T extends string> = {
 	 * Default: `null` (no drag-handle guard).
 	 */
 	dragHandleMargin?: number | null;
+	/**
+	 * Whether the gesture takes a pointer capture on the target element when
+	 * the gesture starts. Default `true`.
+	 *
+	 * Pointer capture retargets the compatibility mouse events — and
+	 * therefore the `click` event — to the capturing element. Widgets whose
+	 * whole surface is a set of buttons (the anchor-point grid) would lose
+	 * their native click path, so they opt out with `false`: the hook's
+	 * move / release listeners live on `document`, so the gesture still
+	 * tracks a drag that leaves the widget bounds.
+	 */
+	pointerCapture?: boolean;
 };
 
 /** Public default constants so tests and widgets reference the same numbers. */
@@ -249,6 +265,7 @@ export function useAnchorGesture<T extends string>({
 		config.resizeMargin === null ? null : (config.resizeMargin ?? null);
 	const dragHandleMargin =
 		config.dragHandleMargin === null ? null : (config.dragHandleMargin ?? null);
+	const pointerCapture = config.pointerCapture ?? true;
 
 	const [isActive, setIsActive] = useState(false);
 	const [path, setPath] = useState<GesturePoint[]>([]);
@@ -329,7 +346,7 @@ export function useAnchorGesture<T extends string>({
 			setIsActive(true);
 
 			const pointerId = (event as { pointerId?: number }).pointerId;
-			if (typeof pointerId === "number") {
+			if (pointerCapture && typeof pointerId === "number") {
 				setPointerCaptureSafely(event.currentTarget, pointerId);
 			}
 		},
@@ -339,6 +356,7 @@ export function useAnchorGesture<T extends string>({
 			actionSelector,
 			resizeMargin,
 			dragHandleMargin,
+			pointerCapture,
 			enabled,
 		],
 	);

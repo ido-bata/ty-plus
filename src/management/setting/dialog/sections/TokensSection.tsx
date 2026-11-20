@@ -365,20 +365,24 @@ export function TokensSection(): JSX.Element {
 					/>
 				</div>
 			</SettingsField>
-			<SettingsField span={6}>
-				<Button variant="primary" uiSize="sm" onClick={handleApply}>
+			<SettingsField span={2}>
+				<Button variant="primary" uiSize="md" fullWidth onClick={handleApply}>
 					Apply & Save
 				</Button>
-				<Button variant="primary" uiSize="sm" onClick={handleExport}>
+			</SettingsField>
+			<SettingsField span={2}>
+				<Button variant="primary" uiSize="md" fullWidth onClick={handleExport}>
 					Export to Clipboard
 				</Button>
-				<Button variant="default" uiSize="sm" onClick={handleImport}>
+			</SettingsField>
+			<SettingsField span={2}>
+				<Button variant="default" uiSize="md" fullWidth onClick={handleImport}>
 					Import from Text
 				</Button>
 			</SettingsField>
 			{status ? (
 				<SettingsField span={6}>
-					<span className={mutedTextStyle}>{status}</span>
+					<p className={mutedTextStyle}>{status}</p>
 				</SettingsField>
 			) : null}
 		</SettingsGrid>

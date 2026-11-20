@@ -1,5 +1,6 @@
 import { type JSX, useCallback, useEffect, useReducer } from "react";
 import {
+	SETTINGS_CONTROL_HEIGHT_CLASS,
 	SettingsField,
 	SettingsFieldLabel,
 	SettingsGrid,
@@ -80,14 +81,18 @@ const messageBaseStyle = css({
 });
 
 const messageErrorStyle = css({
-	borderColor: "colorMix(in srgb, status.error 30%, transparent)",
-	backgroundColor: "colorMix(in srgb, status.error 10%, transparent)",
+	borderColor:
+		"color-mix(in srgb, var(--colors-status-error) 30%, transparent)",
+	backgroundColor:
+		"color-mix(in srgb, var(--colors-status-error) 10%, transparent)",
 	color: "status.error",
 });
 
 const messageSuccessStyle = css({
-	borderColor: "colorMix(in srgb, status.success 30%, transparent)",
-	backgroundColor: "colorMix(in srgb, status.success 10%, transparent)",
+	borderColor:
+		"color-mix(in srgb, var(--colors-status-success) 30%, transparent)",
+	backgroundColor:
+		"color-mix(in srgb, var(--colors-status-success) 10%, transparent)",
 	color: "status.success",
 });
 
@@ -156,6 +161,7 @@ export function FeedbackSection(): JSX.Element {
 						dispatch({ type: "SET_FIELD", field: "category", value: v })
 					}
 					placeholder="Select category"
+					triggerClassName={SETTINGS_CONTROL_HEIGHT_CLASS}
 				/>
 			</SettingsField>
 
@@ -224,7 +230,8 @@ export function FeedbackSection(): JSX.Element {
 				<Button
 					onClick={handleSubmit}
 					variant="primary"
-					uiSize="sm"
+					uiSize="md"
+					fullWidth
 					disabled={!subject.trim() || !description.trim()}
 				>
 					Open GitHub issue

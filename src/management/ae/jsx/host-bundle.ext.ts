@@ -1283,6 +1283,124 @@ const getSelectionCount = () => {
 	return { count: selectedLayers ? selectedLayers.length : 0 };
 };
 
+// ExtendScript has no Set — keep this a plain array.
+const TIME_ALIGN_ACTIONS = [
+	"align-start",
+	"align-end",
+	"align-duration",
+	"distribute-start",
+	"distribute-end",
+];
+
+/**
+ * Timeline align/distribute. Ported from
+ * `function/widget/core/align/time-script.ext.ts` so `host("alignLayers")`
+ * covers the full action set the Align widget can emit.
+ */
+const alignTime = (
+	comp: any,
+	selected: any[],
+	action: string,
+	target: string,
+) => {
+	const dur = comp.duration;
+	const compTime = target === "comp";
+	app.beginUndoGroup("ty-plus time align");
+	try {
+		if (
+			compTime &&
+			(action === "align-start" ||
+				action === "align-end" ||
+				action === "align-duration")
+		) {
+			if (action === "align-start") {
+				for (let i = 0; i < selected.length; i += 1)
+					selected[i].inPoint = 0;
+			} else if (action === "align-end") {
+				for (let j = 0; j < selected.length; j += 1)
+					selected[j].outPoint = dur;
+			} else {
+				for (let k = 0; k < selected.length; k += 1) {
+					selected[k].inPoint = 0;
+					selected[k].outPoint = dur;
+				}
+			}
+		} else if (action === "align-start") {
+			let minIn = 1e12;
+			for (let i = 0; i < selected.length; i += 1) {
+				const ip = selected[i].inPoint;
+				if (ip < minIn) minIn = ip;
+			}
+			if (isFinite(minIn)) {
+				for (let j = 0; j < selected.length; j += 1) {
+					const layer = selected[j];
+					const off = minIn - layer.inPoint;
+					if (off !== 0) layer.startTime = layer.startTime + off;
+				}
+			}
+		} else if (action === "align-end") {
+			let maxOut = -1e12;
+			for (let i = 0; i < selected.length; i += 1) {
+				const op = selected[i].outPoint;
+				if (op > maxOut) maxOut = op;
+			}
+			if (isFinite(maxOut)) {
+				for (let j = 0; j < selected.length; j += 1) {
+					const layer = selected[j];
+					const off = maxOut - layer.outPoint;
+					if (off !== 0) layer.startTime = layer.startTime + off;
+				}
+			}
+		} else if (action === "align-duration") {
+			const refLayer = selected[0];
+			const refDur = refLayer.outPoint - refLayer.inPoint;
+			for (let i = 1; i < selected.length; i += 1) {
+				const layer = selected[i];
+				const ci = layer.inPoint;
+				layer.inPoint = ci;
+				layer.outPoint = ci + refDur;
+			}
+		} else if (action === "distribute-start") {
+			if (selected.length > 2) {
+				const inPts: number[] = [];
+				for (let i = 0; i < selected.length; i += 1)
+					inPts.push(selected[i].inPoint);
+				inPts.sort((a, b) => a - b);
+				const firstIn = inPts[0];
+				const lastIn = inPts[inPts.length - 1];
+				const span = lastIn - firstIn;
+				const step = span / (inPts.length - 1 || 1);
+				for (let j = 0; j < selected.length; j += 1) {
+					const layer = selected[j];
+					const targetIn = firstIn + step * j;
+					const offset = targetIn - layer.inPoint;
+					if (offset !== 0) layer.startTime = layer.startTime + offset;
+				}
+			}
+		} else if (action === "distribute-end") {
+			if (selected.length > 2) {
+				const outPts: number[] = [];
+				for (let i = 0; i < selected.length; i += 1)
+					outPts.push(selected[i].outPoint);
+				outPts.sort((a, b) => a - b);
+				const firstOut = outPts[0];
+				const lastOut = outPts[outPts.length - 1];
+				const span = lastOut - firstOut;
+				const step = span / (outPts.length - 1 || 1);
+				for (let j = 0; j < selected.length; j += 1) {
+					const layer = selected[j];
+					const targetOut = firstOut + step * j;
+					const offset = targetOut - layer.outPoint;
+					if (offset !== 0) layer.startTime = layer.startTime + offset;
+				}
+			}
+		}
+		return { changed: selected.length };
+	} finally {
+		app.endUndoGroup();
+	}
+};
+
 const alignLayers = (input: { action?: string; target?: string }) => {
 	const action = trimStr(String(input.action || ""));
 	const target = trimStr(String(input.target || "selection"));
@@ -1296,6 +1414,10 @@ const alignLayers = (input: { action?: string; target?: string }) => {
 	const selected = comp.selectedLayers;
 	if (!selected || selected.length < 1) {
 		throw new Error("Select at least one layer before aligning");
+	}
+
+	if (TIME_ALIGN_ACTIONS.indexOf(action) >= 0) {
+		return alignTime(comp, selected, action, target);
 	}
 
 	const getLayerBounds = (layer: any, time: number) => {
@@ -1402,6 +1524,11 @@ const alignLayers = (input: { action?: string; target?: string }) => {
 		maxRight = comp.width;
 		minTop = 0;
 		maxBottom = comp.height;
+	} else if (target === "key-object" && bounds.length >= 2) {
+		minLeft = bounds[0].left;
+		maxRight = bounds[0].right;
+		minTop = bounds[0].top;
+		maxBottom = bounds[0].bottom;
 	}
 
 	const centerX = (minLeft + maxRight) / 2;
@@ -1438,6 +1565,96 @@ const alignLayers = (input: { action?: string; target?: string }) => {
 				}
 			}
 			return { changed: distribute.length };
+		}
+
+		if (action === "distribute-spacing-h" || action === "distribute-spacing-v") {
+			const spacing = makeIndexed(bounds);
+			if (spacing.length <= 2) return { changed: 0 };
+			if (action === "distribute-spacing-h") {
+				spacing.sort((a, b) => a.b.left - b.b.left);
+				const leftEdge = spacing[0].b.left;
+				const rightEdge = spacing[spacing.length - 1].b.right;
+				let totalWidth = 0;
+				for (let i = 0; i < spacing.length; i += 1)
+					totalWidth += spacing[i].b.right - spacing[i].b.left;
+				const gap = (rightEdge - leftEdge - totalWidth) / (spacing.length - 1);
+				let cursor = leftEdge;
+				for (let i = 0; i < spacing.length; i += 1) {
+					const sb = spacing[i].b;
+					applyDelta(selected[spacing[i].idx], cursor - sb.left, 0);
+					cursor += sb.right - sb.left + gap;
+				}
+			} else {
+				spacing.sort((a, b) => a.b.top - b.b.top);
+				const topEdge = spacing[0].b.top;
+				const bottomEdge = spacing[spacing.length - 1].b.bottom;
+				let totalHeight = 0;
+				for (let i = 0; i < spacing.length; i += 1)
+					totalHeight += spacing[i].b.bottom - spacing[i].b.top;
+				const gapY =
+					(bottomEdge - topEdge - totalHeight) / (spacing.length - 1);
+				let cursorY = topEdge;
+				for (let i = 0; i < spacing.length; i += 1) {
+					const sb = spacing[i].b;
+					applyDelta(selected[spacing[i].idx], 0, cursorY - sb.top);
+					cursorY += sb.bottom - sb.top + gapY;
+				}
+			}
+			return { changed: spacing.length };
+		}
+
+		if (
+			action === "distribute-left" ||
+			action === "distribute-center-h" ||
+			action === "distribute-right" ||
+			action === "distribute-top" ||
+			action === "distribute-center-v" ||
+			action === "distribute-bottom"
+		) {
+			const linear = makeIndexed(bounds);
+			if (linear.length <= 2) return { changed: 0 };
+			if (
+				action === "distribute-left" ||
+				action === "distribute-center-h" ||
+				action === "distribute-right"
+			) {
+				const propH =
+					action === "distribute-left"
+						? "left"
+						: action === "distribute-right"
+							? "right"
+							: "centerX";
+				linear.sort((a, b) => a.b[propH] - b.b[propH]);
+				const firstH = linear[0].b[propH];
+				const lastH = linear[linear.length - 1].b[propH];
+				const stepH = (lastH - firstH) / (linear.length - 1);
+				for (let i = 0; i < linear.length; i += 1) {
+					applyDelta(
+						selected[linear[i].idx],
+						firstH + stepH * i - linear[i].b[propH],
+						0,
+					);
+				}
+			} else {
+				const propV =
+					action === "distribute-top"
+						? "top"
+						: action === "distribute-bottom"
+							? "bottom"
+							: "centerY";
+				linear.sort((a, b) => a.b[propV] - b.b[propV]);
+				const firstV = linear[0].b[propV];
+				const lastV = linear[linear.length - 1].b[propV];
+				const stepV = (lastV - firstV) / (linear.length - 1);
+				for (let i = 0; i < linear.length; i += 1) {
+					applyDelta(
+						selected[linear[i].idx],
+						0,
+						firstV + stepV * i - linear[i].b[propV],
+					);
+				}
+			}
+			return { changed: linear.length };
 		}
 
 		let changed = 0;

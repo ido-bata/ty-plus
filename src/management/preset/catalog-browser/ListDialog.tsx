@@ -203,7 +203,7 @@ const presetRowClass = css({
 });
 
 const presetRowSpacerClass = css({
-	minHeight: "px",
+	minHeight: "1px",
 });
 
 const presetRowCenterClass = css({
@@ -463,7 +463,7 @@ const iconGroupBadgeClass = css({
 	borderColor: "border.default",
 	backgroundColor: "surface.dialog/95",
 	paddingInline: "1",
-	paddingBlock: "px",
+	paddingBlock: "1px",
 	fontSize: "2xs",
 	lineHeight: "1",
 	fontWeight: "medium",

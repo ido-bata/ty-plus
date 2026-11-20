@@ -15,13 +15,15 @@ import { ColorTokenEditor } from "@/management/setting/dialog/components/ColorTo
 import { NumberTokenEditor } from "@/management/setting/dialog/components/NumberTokenEditor";
 import { TokenEditor } from "@/management/setting/dialog/components/TokenEditor";
 import {
+	SETTINGS_CONTROL_HEIGHT_CLASS,
 	SettingsField,
 	SettingsGrid,
 } from "@/management/setting/dialog/layout/SettingsGrid";
-import type { DirectoryBrowserEntry } from "@/management/storage/ui/DirectoryBrowser";
 import { SegmentedControl } from "@/shared/component/controls/SegmentedControl";
-import { LoadingSpinner } from "@/shared/component/feedback/LoadingSpinner";
+import { ColorField } from "@/shared/component/fields/ColorField";
+import { ColorOpacityField } from "@/shared/component/fields/ColorOpacityField";
 import { ListSelect } from "@/shared/component/fields/ListSelect";
+import { RegexEditor } from "@/shared/component/fields/RegexEditor";
 import { ScrollArea } from "@/shared/component/layout/ScrollArea";
 import { cx } from "@/shared/util/cx";
 import { css } from "@/styled-system/css";
@@ -39,37 +41,6 @@ const SELECT_OPTIONS = [
 	{ value: "opt1", label: "Option 1" },
 	{ value: "opt2", label: "Option 2" },
 	{ value: "opt3", label: "Option 3" },
-];
-
-const MOCK_DIR_ENTRIES: DirectoryBrowserEntry[] = [
-	{
-		path: "/host/presets/animation",
-		name: "animation",
-		isDirectory: true,
-	},
-	{
-		path: "/host/presets/transitions",
-		name: "transitions",
-		isDirectory: true,
-	},
-	{
-		path: "/host/presets/fade-in.ffx",
-		name: "fade-in.ffx",
-		isDirectory: false,
-		extension: ".ffx",
-	},
-	{
-		path: "/host/presets/slide-left.ffx",
-		name: "slide-left.ffx",
-		isDirectory: false,
-		extension: ".ffx",
-	},
-	{
-		path: "/host/presets/scale-up.ffx",
-		name: "scale-up.ffx",
-		isDirectory: false,
-		extension: ".ffx",
-	},
 ];
 
 const mutedTextStyle = css({
@@ -114,56 +85,6 @@ const swatchLabelStyle = css({
 	color: "text.muted",
 });
 
-const previewCardStyle = css({
-	display: "flex",
-	alignItems: "center",
-	gap: "3",
-	borderRadius: "shell-sm",
-	borderWidth: "1px",
-	borderStyle: "solid",
-	borderColor: "border.default",
-	backgroundColor: "surface.widget",
-	padding: "3",
-});
-
-const previewCardIconStyle = css({
-	display: "flex",
-	height: "10",
-	width: "10",
-	flexShrink: 0,
-	alignItems: "center",
-	justifyContent: "center",
-	borderRadius: "shell-sm",
-	borderWidth: "1px",
-	borderStyle: "solid",
-	borderColor: "border.default",
-	backgroundColor: "surface.dialog",
-});
-
-const previewCardIconTextStyle = css({
-	fontSize: "text-xs",
-	color: "text.muted",
-});
-
-const previewCardBodyStyle = css({
-	display: "flex",
-	minWidth: 0,
-	flexDirection: "column",
-	gap: "0.5",
-});
-
-const previewCardTitleStyle = css({
-	truncate: true,
-	fontSize: "text-sm",
-	fontWeight: "medium",
-	color: "text.primary",
-});
-
-const previewCardDescriptionStyle = css({
-	fontSize: "text-xs",
-	color: "text.muted",
-});
-
 const threeColumnGridStyle = css({
 	display: "grid",
 	gap: "3",
@@ -188,14 +109,6 @@ const scrollInnerStyle = css({
 
 const scrollLineStyle = css({
 	paddingBlock: "0.5",
-	fontSize: "text-xs",
-	color: "text.muted",
-});
-
-const loadingRowStyle = css({
-	display: "flex",
-	alignItems: "center",
-	gap: "2",
 	fontSize: "text-xs",
 	color: "text.muted",
 });
@@ -274,31 +187,14 @@ function SwatchRow({
 	);
 }
 
-function PreviewCard({
-	title,
-	description,
-}: {
-	title: string;
-	description: string;
-}): JSX.Element {
-	return (
-		<div className={previewCardStyle}>
-			<div className={previewCardIconStyle}>
-				<span className={previewCardIconTextStyle}>🎨</span>
-			</div>
-			<div className={previewCardBodyStyle}>
-				<span className={previewCardTitleStyle}>{title}</span>
-				<span className={previewCardDescriptionStyle}>{description}</span>
-			</div>
-		</div>
-	);
-}
-
 export function ComponentPreviewSection(): JSX.Element {
 	const [textValue, setTextValue] = useState("sample");
 	const [numberValue, setNumberValue] = useState("42");
-	const [sliderValue, setSliderValue] = useState(42);
 	const [selectedTab, setSelectedTab] = useState("dark");
+	const [accentColor, setAccentColor] = useState("#5886ff");
+	const [widgetBgColor, setWidgetBgColor] = useState("#1e1e1e");
+	const [widgetBgOpacity, setWidgetBgOpacity] = useState(100);
+	const [regexValue, setRegexValue] = useState("^Header.*$");
 
 	const [selectValue, setSelectValue] = useState("opt1");
 	const [searchValue, setSearchValue] = useState("");
@@ -366,8 +262,6 @@ export function ComponentPreviewSection(): JSX.Element {
 					onTextChange={setTextValue}
 					numberValue={numberValue}
 					onNumberChange={setNumberValue}
-					sliderValue={sliderValue}
-					onSliderChange={setSliderValue}
 					searchValue={searchValue}
 					onSearchChange={setSearchValue}
 					pathValue={pathValue}
@@ -382,6 +276,7 @@ export function ComponentPreviewSection(): JSX.Element {
 						value={selectValue}
 						onChange={setSelectValue}
 						placeholder="Select option"
+						triggerClassName={SETTINGS_CONTROL_HEIGHT_CLASS}
 					/>
 				</PreviewGroup>
 			</SettingsField>
@@ -427,11 +322,31 @@ export function ComponentPreviewSection(): JSX.Element {
 			</SettingsField>
 
 			<SettingsField span={6}>
-				<PreviewGroup title="Loading">
-					<div className={loadingRowStyle}>
-						<LoadingSpinner size="sm" />
-						<span>Syncing settings</span>
+				<PreviewGroup title="Color Fields">
+					<div className={threeColumnGridStyle}>
+						<ColorField
+							label="Accent"
+							value={accentColor}
+							onChange={setAccentColor}
+						/>
+						<ColorOpacityField
+							label="Widget Background"
+							color={widgetBgColor}
+							onColorChange={setWidgetBgColor}
+							opacity={widgetBgOpacity}
+							onOpacityChange={setWidgetBgOpacity}
+						/>
 					</div>
+				</PreviewGroup>
+			</SettingsField>
+
+			<SettingsField span={6}>
+				<PreviewGroup title="Regex Editor">
+					<RegexEditor
+						value={regexValue}
+						onChange={setRegexValue}
+						placeholder="Name regex (e.g. ^Header.*$)"
+					/>
 				</PreviewGroup>
 			</SettingsField>
 
@@ -453,12 +368,6 @@ export function ComponentPreviewSection(): JSX.Element {
 						<SwatchRow label="Active" className={swatchBgActive} />
 						<SwatchRow label="Focus" className={swatchBorderFocus} />
 					</div>
-				</PreviewGroup>
-			</SettingsField>
-
-			<SettingsField span={6}>
-				<PreviewGroup title="Preview Card">
-					<PreviewCard title="Cool blue" description="local · 12 KB" />
 				</PreviewGroup>
 			</SettingsField>
 

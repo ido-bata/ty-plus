@@ -21,12 +21,15 @@ import {
 } from "@/management/online/update/install-relay";
 import { useSettings } from "@/management/setting/context";
 import {
+	SETTINGS_CONTROL_HEIGHT_CLASS,
 	SettingsField,
 	SettingsFieldLabel,
+	SettingsFieldValue,
 	SettingsGrid,
 } from "@/management/setting/dialog/layout/SettingsGrid";
 import { openUrlInDefaultBrowser } from "@/management/workspace/hooks/helpers";
 import { getUpdateInstaller } from "@/management/workspace/services";
+import { Button } from "@/shared/component/controls/Button";
 import { ListSelect } from "@/shared/component/fields/ListSelect";
 import { css } from "@/styled-system/css";
 import { installableZipAsset, installFailureKey } from "./update-install";
@@ -37,34 +40,27 @@ const mutedTextStyle = css({
 });
 
 const statusReadyStyle = css({
-	fontSize: "text-sm",
+	fontSize: "shell-text-sm",
 	fontWeight: "medium",
 	color: "status.success",
 });
 
 const statusAttentionStyle = css({
-	fontSize: "text-sm",
+	fontSize: "shell-text-sm",
 	fontWeight: "medium",
 	color: "status.warning",
 });
 
+const statusErrorStyle = css({
+	fontSize: "shell-text-sm",
+	fontWeight: "medium",
+	color: "status.error",
+});
+
 const statusMutedStyle = css({
-	fontSize: "text-sm",
+	fontSize: "shell-text-sm",
 	fontWeight: "medium",
 	color: "text.muted",
-});
-
-const linkStyle = css({
-	fontSize: "text-sm",
-	color: "text.link",
-	textDecoration: "underline",
-	cursor: "pointer",
-});
-
-const linkRowStyle = css({
-	display: "flex",
-	gap: "2",
-	alignItems: "center",
 });
 
 const CHANNELS: ReleaseChannel[] = ["stable", "beta", "insider"];
@@ -201,6 +197,13 @@ export function UpdateSection(): JSX.Element {
 				? statusReadyStyle
 				: statusMutedStyle;
 
+	const releaseNotesUrl =
+		result?.status === "update-available" ? result.feed.releaseNotesUrl : null;
+	const installSettled =
+		installState.kind === "done" && installState.status !== "manual_required";
+	const showInstall = result?.status === "update-available" && !installSettled;
+	const showReleaseNotes = releaseNotesUrl !== null;
+
 	return (
 		<SettingsGrid>
 			<SettingsField span={6}>
@@ -216,83 +219,105 @@ export function UpdateSection(): JSX.Element {
 					value={channel}
 					onChange={handleChannelChange}
 					placeholder={t("updates.channelPlaceholder")}
+					triggerClassName={SETTINGS_CONTROL_HEIGHT_CLASS}
 				/>
 			</SettingsField>
 			<SettingsField span={3}>
 				<SettingsFieldLabel>{t("updates.installed")}</SettingsFieldLabel>
-				<span className={mutedTextStyle}>{currentReleaseVersion}</span>
-				<button
-					type="button"
-					className={linkStyle}
+				<SettingsFieldValue>
+					<span className={mutedTextStyle}>{currentReleaseVersion}</span>
+				</SettingsFieldValue>
+			</SettingsField>
+			<SettingsField span={3}>
+				<SettingsFieldLabel>{t("updates.status")}</SettingsFieldLabel>
+				<SettingsFieldValue>
+					<span className={tone}>{label}</span>
+				</SettingsFieldValue>
+				{result?.status === "unavailable" ? (
+					<p className={mutedTextStyle}>{result.reason}</p>
+				) : null}
+			</SettingsField>
+			<SettingsField span={3}>
+				<SettingsFieldLabel>{t("updates.detail")}</SettingsFieldLabel>
+				<SettingsFieldValue>
+					<span className={mutedTextStyle}>
+						{result?.status === "update-available"
+							? result.feed.publishedAt.slice(0, 10)
+							: "—"}
+					</span>
+				</SettingsFieldValue>
+			</SettingsField>
+			<SettingsField span={1}>
+				<Button
+					variant="ghost"
+					uiSize="md"
+					fullWidth
 					onClick={() => void runCheck()}
 					disabled={checking}
 				>
 					{t("updates.checkNow")}
-				</button>
+				</Button>
 			</SettingsField>
-			<SettingsField span={3}>
-				<span className={mutedTextStyle}>{t("updates.status")}</span>
-				<span className={tone}>{label}</span>
-			</SettingsField>
-			<SettingsField span={3}>
-				<span className={mutedTextStyle}>{t("updates.detail")}</span>
-				<span className={linkRowStyle}>
-					{result?.status === "update-available" ? (
-						<>
-							<button
-								type="button"
-								className={linkStyle}
-								onClick={() =>
-									openUrlInDefaultBrowser(result.feed.releaseNotesUrl)
-								}
-							>
-								{t("updates.releaseNotes")}
-							</button>
-							{installState.kind !== "done" ||
-							installState.status === "manual_required" ? (
-								<button
-									type="button"
-									className={linkStyle}
-									onClick={() => void runInstall()}
-									disabled={installState.kind === "installing"}
-								>
-									{installState.kind === "installing"
-										? t("updates.installing")
-										: t("updates.install")}
-								</button>
-							) : null}
-						</>
-					) : (
-						<span className={mutedTextStyle}>
-							{result?.status === "unavailable" ? result.reason : "—"}
-						</span>
-					)}
-				</span>
-				{installState.kind === "done" || installState.kind === "failed" ? (
-					<span
-						className={
-							installState.kind === "failed"
-								? statusAttentionStyle
-								: statusReadyStyle
-						}
+			{showInstall ? (
+				<SettingsField span={2}>
+					<Button
+						variant="primary"
+						uiSize="md"
+						fullWidth
+						onClick={() => void runInstall()}
+						disabled={installState.kind === "installing"}
 					>
-						{installState.kind === "failed"
-							? t(`updates.${installFailureKey(installState.code)}`)
-							: installState.status === "installed"
-								? t("updates.installDone")
-								: installState.status === "pending"
-									? t("updates.installPending")
-									: t("updates.installManual")}
-					</span>
-				) : null}
-				<button
-					type="button"
-					className={linkStyle}
+						{installState.kind === "installing"
+							? t("updates.installing")
+							: t("updates.install")}
+					</Button>
+				</SettingsField>
+			) : null}
+			{showReleaseNotes && releaseNotesUrl !== null ? (
+				<SettingsField span={1}>
+					<Button
+						variant="secondary"
+						uiSize="md"
+						fullWidth
+						onClick={() => openUrlInDefaultBrowser(releaseNotesUrl)}
+					>
+						{t("updates.releaseNotes")}
+					</Button>
+				</SettingsField>
+			) : null}
+			<SettingsField span={2}>
+				<Button
+					variant="ghost"
+					uiSize="md"
+					fullWidth
 					onClick={() => openUrlInDefaultBrowser(OFFICIAL_RELEASES_URL)}
 				>
 					{t("updates.browse")}
-				</button>
+				</Button>
 			</SettingsField>
+			{installState.kind === "done" || installState.kind === "failed" ? (
+				<SettingsField span={6}>
+					<SettingsFieldValue>
+						<span
+							className={
+								installState.kind === "failed"
+									? statusErrorStyle
+									: installState.status === "manual_required"
+										? statusAttentionStyle
+										: statusReadyStyle
+							}
+						>
+							{installState.kind === "failed"
+								? t(`updates.${installFailureKey(installState.code)}`)
+								: installState.status === "installed"
+									? t("updates.installDone")
+									: installState.status === "pending"
+										? t("updates.installPending")
+										: t("updates.installManual")}
+						</span>
+					</SettingsFieldValue>
+				</SettingsField>
+			) : null}
 		</SettingsGrid>
 	);
 }

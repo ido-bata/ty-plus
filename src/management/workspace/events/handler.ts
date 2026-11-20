@@ -1455,6 +1455,11 @@ export const setupInteractionEvents = (
 			(TIME_ALIGN_ACTIONS as readonly string[]).includes(action) ||
 			(ALIGN_ACTIONS as readonly string[]).includes(action)
 		) {
+			// Widgets marked `data-ws-handles-actions` execute align actions
+			// themselves via `host("alignLayers")` (which knows the current
+			// target). Running the capture-path script here as well would
+			// double-apply the operation with a hardcoded "selection" target.
+			if (btn?.closest("[data-ws-handles-actions]")) return;
 			const jsx = (TIME_ALIGN_ACTIONS as readonly string[]).includes(action)
 				? buildTimeAlignScript(action, "selection")
 				: buildAlignLayersScript(action, "selection");
@@ -1463,6 +1468,11 @@ export const setupInteractionEvents = (
 		}
 
 		if (action === "anchor-point") {
+			// The anchor-point widget runs the anchor script itself (it owns
+			// the selected-position state and the drag gesture). Running the
+			// capture-path script here as well would apply the same anchor
+			// move twice.
+			if (btn?.closest("[data-ws-handles-actions]")) return;
 			const pos = readDataAttr(btn, "data-anchor") || "center";
 			if (!isValidAnchorPosition(pos)) return;
 			setState({

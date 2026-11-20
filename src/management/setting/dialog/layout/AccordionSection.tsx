@@ -39,7 +39,7 @@ const triggerStyle = css({
 });
 
 const triggerTitleStyle = css({
-	fontSize: "text-sm",
+	fontSize: "sm",
 	fontWeight: "medium",
 	color: "text.primary",
 });

@@ -4,7 +4,7 @@
  * The Loop widget edits a single-cycle easing curve and applies it N times
  * to the "in" handle side through the host `applyLoopEasing` command. The
  * curve editor itself is shared with the Easing widget
- * (`function/widget/curve-editor`).
+ * (`function/widget/core/loop`).
  */
 
 import { defineWidget } from "@/function/widget/define";

@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { changeLanguage } from "@/management/i18n/index";
 import { useSettings } from "@/management/setting/context";
 import {
+	SETTINGS_CONTROL_HEIGHT_CLASS,
 	SettingsField,
 	SettingsFieldLabel,
 	SettingsGrid,
@@ -60,6 +61,7 @@ export function LanguageSection(): JSX.Element {
 					value={localLocale}
 					onChange={handleLocaleChange}
 					placeholder="Select language"
+					triggerClassName={SETTINGS_CONTROL_HEIGHT_CLASS}
 				/>
 			</SettingsField>
 		</SettingsGrid>

@@ -45,7 +45,7 @@ const footerBase = css({
 	borderTopColor: "border.subtle",
 	backgroundColor: "surface.dialog",
 	paddingInline: "2",
-	fontSize: "shell-sm",
+	fontSize: "shell-text-sm",
 	userSelect: "none",
 });
 
@@ -72,7 +72,7 @@ const statusTextBase = css({
 	overflow: "hidden",
 	textOverflow: "ellipsis",
 	whiteSpace: "nowrap",
-	fontSize: "shell-sm",
+	fontSize: "shell-text-sm",
 	transitionProperty: "opacity",
 	transitionDuration: "300ms",
 });

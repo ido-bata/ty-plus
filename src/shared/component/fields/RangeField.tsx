@@ -34,7 +34,7 @@ const row = css({
 });
 const rowTopGap = css({ marginTop: "1" });
 
-const RANGE_INPUT_CLASS = cx(
+export const RANGE_INPUT_CLASS = cx(
 	"ty-ui-range",
 	css({
 		height: "4",
@@ -50,7 +50,7 @@ const RANGE_INPUT_CLASS = cx(
 			backgroundColor: "border.default",
 		},
 		"&::-webkit-slider-thumb": {
-			marginTop: "calc((1 - 4) / 2)",
+			marginTop: "calc((var(--ty-space-1) - var(--ty-space-4)) / 2)",
 			height: "4",
 			width: "4",
 			cursor: "pointer",

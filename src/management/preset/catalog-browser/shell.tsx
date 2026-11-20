@@ -25,7 +25,8 @@ const presetListOuterClass = css({
 	flex: "1",
 	flexDirection: "column",
 	gap: "2",
-	paddingBlock: "shell-space",
+	paddingInline: "var(--ty-shell-pad-inline)",
+	paddingBlock: "var(--ty-shell-space)",
 	backgroundColor: "surface.dialog",
 });
 
@@ -93,9 +94,19 @@ export function CatalogBrowserShell(props: ShellProps): JSX.Element {
 	if (scrollMode === "list-only" && domPrefix === "directory-browser") {
 		return (
 			<div className={cx(outerPad, overflowHiddenClass)} {...bodyDataAttr}>
-				<div className={headerSlotClass}>{headerRow}</div>
+				<div
+					className={headerSlotClass}
+					data-tutorial-target="directory-browser-nav"
+				>
+					{headerRow}
+				</div>
 				<ScrollArea className={listOnlyScrollAreaClass}>
-					<div className={listOnlyInnerClass}>{children}</div>
+					<div
+						className={listOnlyInnerClass}
+						data-tutorial-target="directory-browser-list"
+					>
+						{children}
+					</div>
 				</ScrollArea>
 			</div>
 		);

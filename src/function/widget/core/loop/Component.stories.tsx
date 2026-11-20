@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import type { AppliedLoopRecord } from "@/function/widget/core/loop/applied-state";
 import { LoopWidget } from "@/function/widget/core/loop/Component";
-import type { CyclicWaveParams } from "@/function/widget/curve-editor/cyclic-wave";
 import type { Layout } from "@/management/workspace/layout/grid-document";
+import type { CyclicWaveParams } from "@/shared/cyclic-wave";
 import { expectCanvasLayout } from "@/storybook/quality/layout";
 import { css } from "@/styled-system/css";
 

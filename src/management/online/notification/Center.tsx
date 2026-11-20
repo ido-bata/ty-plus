@@ -54,7 +54,7 @@ const heading1Class = css({
 	color: "text.primary",
 });
 const heading2Class = css({
-	fontSize: "base",
+	fontSize: "md",
 	fontWeight: "semibold",
 	color: "text.primary",
 });

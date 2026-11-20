@@ -179,40 +179,44 @@ export function AlignIcon({ name }: { name: string }): JSX.Element {
 			)}
 			{name === "distribute-spacing-h" && (
 				<>
-					<line x1="7" y1="9" x2="7" y2="15" {...ALIGN_LINE} />
-					<line x1="5.5" y1="10.5" x2="8.5" y2="10.5" {...ALIGN_LINE} />
-					<line x1="5.5" y1="13.5" x2="8.5" y2="13.5" {...ALIGN_LINE} />
-					<rect x="11" y="6" width="8" height="4" {...ALIGN_RECT} />
-					<rect x="12" y="14" width="6" height="4" {...ALIGN_RECT} />
+					<rect x="2.25" y="7.5" width="5.5" height="9" {...ALIGN_RECT} />
+					<rect x="16.25" y="7.5" width="5.5" height="9" {...ALIGN_RECT} />
+					<path
+						d="M8.3 12L11 9L11 15ZM15.7 12L13 9L13 15ZM11 11H13V13H11Z"
+						fill="currentColor"
+					/>
 				</>
 			)}
 			{name === "distribute-spacing-v" && (
 				<>
-					<line x1="9" y1="7" x2="15" y2="7" {...ALIGN_LINE} />
-					<line x1="10.5" y1="5.5" x2="10.5" y2="8.5" {...ALIGN_LINE} />
-					<line x1="13.5" y1="5.5" x2="13.5" y2="8.5" {...ALIGN_LINE} />
-					<rect x="6" y="11" width="4" height="8" {...ALIGN_RECT} />
-					<rect x="14" y="12" width="4" height="6" {...ALIGN_RECT} />
+					<rect x="7.5" y="2.25" width="9" height="5.5" {...ALIGN_RECT} />
+					<rect x="7.5" y="16.25" width="9" height="5.5" {...ALIGN_RECT} />
+					<path
+						d="M12 8.3L9 11L15 11ZM12 15.7L9 13L15 13ZM11 11H13V13H11Z"
+						fill="currentColor"
+					/>
 				</>
 			)}
 			{name === "distribute-h" && (
 				<>
-					<rect x="5" y="11" width="3" height="7" {...ALIGN_RECT} />
-					<rect x="12" y="11" width="3" height="5" {...ALIGN_RECT} />
-					<rect x="19" y="11" width="3" height="7" {...ALIGN_RECT} />
-					<line x1="5" y1="6" x2="5" y2="10" {...ALIGN_LINE} />
-					<line x1="12" y1="6" x2="12" y2="10" {...ALIGN_LINE} />
-					<line x1="19" y1="6" x2="19" y2="10" {...ALIGN_LINE} />
+					<rect x="2.5" y="8.5" width="4.5" height="7" {...ALIGN_RECT} />
+					<rect x="9.5" y="8.5" width="4.5" height="7" {...ALIGN_RECT} />
+					<rect x="16.5" y="8.5" width="4.5" height="7" {...ALIGN_RECT} />
+					<path
+						d="M4.75 5L7.25 3L7.25 7ZM19.25 5L16.75 3L16.75 7ZM7.25 4.4H16.75V5.6H7.25Z"
+						fill="currentColor"
+					/>
 				</>
 			)}
 			{name === "distribute-v" && (
 				<>
-					<rect x="11" y="5" width="7" height="3" {...ALIGN_RECT} />
-					<rect x="11" y="12" width="5" height="3" {...ALIGN_RECT} />
-					<rect x="11" y="19" width="7" height="3" {...ALIGN_RECT} />
-					<line x1="6" y1="5" x2="10" y2="5" {...ALIGN_LINE} />
-					<line x1="6" y1="12" x2="10" y2="12" {...ALIGN_LINE} />
-					<line x1="6" y1="19" x2="10" y2="19" {...ALIGN_LINE} />
+					<rect x="8.5" y="2.5" width="7" height="4.5" {...ALIGN_RECT} />
+					<rect x="8.5" y="9.5" width="7" height="4.5" {...ALIGN_RECT} />
+					<rect x="8.5" y="16.5" width="7" height="4.5" {...ALIGN_RECT} />
+					<path
+						d="M5 4.75L3 7.25L7 7.25ZM5 19.25L3 16.75L7 16.75ZM4.4 7.25H5.6V16.75H4.4Z"
+						fill="currentColor"
+					/>
 				</>
 			)}
 			{name === "align-start" && (

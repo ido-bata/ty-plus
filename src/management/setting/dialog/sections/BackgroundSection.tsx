@@ -275,14 +275,14 @@ export function BackgroundSection(): JSX.Element {
 
 			{loading ? (
 				<SettingsField span={6}>
-					<span className={mutedTextStyle}>Loading backdrop…</span>
+					<p className={mutedTextStyle}>Loading backdrop…</p>
 				</SettingsField>
 			) : layers.length === 0 ? (
 				<SettingsField span={6}>
-					<span className={mutedTextStyle}>
+					<p className={mutedTextStyle}>
 						No layers saved yet for Workspace Panel {panelIndex}. You can add
 						layers in the editor — an empty backdrop is fine.
-					</span>
+					</p>
 				</SettingsField>
 			) : (
 				layers.map((layer) => (

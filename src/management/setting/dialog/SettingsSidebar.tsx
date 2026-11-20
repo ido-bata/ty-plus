@@ -162,6 +162,15 @@ const bodyStyle = css({
 	overflowY: "auto",
 });
 
+// Right-pane sheet padding — mirrors the canonical `DialogBody` sheet
+// (`ty-shell-sheet`) so section grids never touch the divider or the
+// panel edges. The section title stays outside this padding so its
+// bottom border still spans the full pane width.
+const panelStyle = css({
+	paddingInline: "var(--ty-shell-pad-inline)",
+	paddingBlock: "var(--ty-shell-space)",
+});
+
 // Canonical page heading for the active section in the right pane.
 // Sized below the dialog <h1> (`var(--ty-text-size-md)`) but visibly
 // above the AccordionSection trigger (`text-sm` / medium) so the
@@ -420,6 +429,7 @@ export function SettingsSidebar({
 					role="tabpanel"
 					id={activePanelId}
 					aria-labelledby={`${tablistId}-tab-${activeSectionId}`}
+					className={cx("ty-shell-sheet", panelStyle)}
 					data-settings-sidebar-section={activeSectionId}
 					data-settings-sidebar-panel="active"
 				>

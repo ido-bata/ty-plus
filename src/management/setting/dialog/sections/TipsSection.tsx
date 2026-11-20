@@ -11,7 +11,7 @@ import { css } from "@/styled-system/css";
 
 const statusStyle = css({
 	fontSize: "text-xs",
-	color: "text.secondary",
+	color: "text.muted",
 });
 
 /**
@@ -49,6 +49,7 @@ export function TipsSection(): JSX.Element {
 						<Button
 							variant="default"
 							uiSize="sm"
+							fullWidth
 							onClick={handleReset}
 							data-settings-tips-reset=""
 						>
