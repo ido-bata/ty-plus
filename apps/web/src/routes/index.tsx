@@ -10,13 +10,34 @@ import {
 	container,
 	grid,
 	section,
-	span3,
 	span4,
 	span8,
-	span9,
 	stack,
 } from "../styles/layout";
 import * as s from "../styles/site";
+
+const heroFigure = css({
+	minWidth: 0,
+	gridColumn: { base: "1 / -1", md: "span 8" },
+	gridRow: { md: "span 2" },
+});
+
+const heroCopy = css({
+	minWidth: 0,
+	gridColumn: { base: "1 / -1", md: "span 4" },
+	display: "flex",
+	flexDirection: "column",
+	justifyContent: "center",
+});
+
+const heroActions = css({
+	minWidth: 0,
+	gridColumn: { base: "1 / -1", md: "span 4" },
+	display: "flex",
+	flexDirection: "column",
+	gap: "1.25rem",
+	alignItems: "flex-start",
+});
 
 export const Route = createFileRoute("/")({
 	loader: () => listReleases(),
@@ -101,8 +122,9 @@ function HomePage() {
 
 	return (
 		<main>
-			{/* Hero — asymmetric split: compact copy rail beside a real panel
-			    capture with preset tiles bound from the local catalog. */}
+			{/* Hero — three grid children so DOM order is copy → image →
+			    actions on every viewport. On md+ the image spans both left
+			    rows beside the copy/actions rail. */}
 			<section
 				className={cx(
 					container({ size: "content" }),
@@ -111,15 +133,7 @@ function HomePage() {
 				aria-label="Introduction"
 			>
 				<div className={grid({ gap: 3 })}>
-					<div
-						className={css({
-							gridColumn: { base: "1 / -1", lg: "span 5" },
-							display: "flex",
-							flexDirection: "column",
-							justifyContent: "center",
-							gap: "1.25rem",
-						})}
-					>
+					<div className={heroCopy}>
 						<div className={stack({ gap: 3 })}>
 							<h1 className={s.h1}>{SITE.tagline}</h1>
 							<p className={s.lead}>
@@ -128,6 +142,24 @@ function HomePage() {
 								without leaving After Effects.
 							</p>
 						</div>
+					</div>
+					<figure className={heroFigure}>
+						<MediaFrame>
+							<img
+								src="/images/hero.png"
+								alt="The ty-plus workspace with named preset tiles bound from the local preset catalog"
+								width={3412}
+								height={2044}
+								fetchPriority="high"
+								className={s.shotImg}
+							/>
+						</MediaFrame>
+						<figcaption className={s.figcaption}>
+							Preset tiles placed on the workspace grid — captured live from the
+							panel.
+						</figcaption>
+					</figure>
+					<div className={heroActions}>
 						<div className={cluster({ gap: 3 })}>
 							<Button as={Link} to="/download" variant="primary" uiSize="lg">
 								Download ty-plus
@@ -144,29 +176,12 @@ function HomePage() {
 							{latest ? <span>Stable {latest.tagName}</span> : null}
 						</div>
 					</div>
-					<figure
-						className={css({ gridColumn: { base: "1 / -1", lg: "span 7" } })}
-					>
-						<MediaFrame>
-							<img
-								src="/images/hero.png"
-								alt="The ty-plus workspace with preset tiles bound from the local preset catalog"
-								width={3412}
-								height={2044}
-								fetchPriority="high"
-								className={s.shotImg}
-							/>
-						</MediaFrame>
-						<figcaption className={s.figcaption}>
-							Preset tiles placed on the workspace grid — captured live from the
-							panel.
-						</figcaption>
-					</figure>
 				</div>
 			</section>
 
-			{/* Workspace — the utility-widget band at the top of the panel,
-			    shown wide beside a short explanation. */}
+			{/* Workspace — explanation rail leads; the panel toolbar capture
+			    fills the remaining columns. Reading order is text → image on
+			    every viewport, the inverse of the hero's media-dominant rail. */}
 			<section
 				className={cx(
 					container({ size: "content" }),
@@ -175,18 +190,6 @@ function HomePage() {
 				aria-label="Workspace overview"
 			>
 				<div className={grid({ gap: 3 })}>
-					<figure className={cx(s.figure, span8)}>
-						<MediaFrame>
-							<img
-								src="/images/workspace.png"
-								alt="The ty-plus panel toolbar and workspace widgets — quick actions, easing curve, alignment, and anchor point tools"
-								width={3412}
-								height={2044}
-								loading="lazy"
-								className={s.shotImg}
-							/>
-						</MediaFrame>
-					</figure>
 					<div className={span4}>
 						<div className={stack({ gap: 3 })}>
 							<h2 className={s.h2}>Tools where you already work</h2>
@@ -200,12 +203,25 @@ function HomePage() {
 							</Button>
 						</div>
 					</div>
+					<figure className={cx(s.figure, span8)}>
+						<MediaFrame>
+							<img
+								src="/images/workspace.png"
+								alt="The ty-plus panel toolbar and workspace widgets — quick actions, easing curve, alignment, and anchor point tools"
+								width={3412}
+								height={2044}
+								loading="lazy"
+								className={s.shotImg}
+							/>
+						</MediaFrame>
+					</figure>
 				</div>
 			</section>
 
-			{/* Features — left rail carries the section identity; the right rail
-			    pairs the two real dialogs side by side instead of stacking the
-			    same kind of shot. */}
+			{/* Features — full-width header over a captioned dialog pair. The
+			    two real dialogs sit side by side at equal weight; captions
+			    name each surface so the pair reads as a catalog, not a
+			    repeated screenshot. */}
 			<section
 				className={cx(
 					container({ size: "content" }),
@@ -213,47 +229,51 @@ function HomePage() {
 				)}
 				aria-label="Feature overview"
 			>
-				<div className={grid({ gap: 3 })}>
-					<div className={span3}>
-						<div className={stack({ gap: 3 })}>
-							<span className={sectionLabel}>Features</span>
-							<h2 className={s.h2}>Built for the panel, not the browser</h2>
-							<p className={s.body}>
-								Every surface below is a real panel dialog — it runs inside
-								After Effects and keeps working with the network unplugged.
-							</p>
-							<Button as={Link} to="/features" variant="secondary" uiSize="sm">
-								All features
-							</Button>
-						</div>
+				<div className={stack({ gap: 3 })}>
+					<div className={stack({ gap: 2 })}>
+						<span className={sectionLabel}>Features</span>
+						<h2 className={s.h2}>Built for the panel, not the browser</h2>
+						<p className={s.body}>
+							Every surface below is a real panel dialog — it runs inside After
+							Effects and keeps working with the network unplugged.
+						</p>
 					</div>
-					<div className={span9}>
-						<div className={dialogPair}>
-							<figure className={s.figure}>
-								<MediaFrame>
-									<img
-										src="/images/preset-dialog.png"
-										alt="The Local Presets browser in ty-plus listing presets from the local catalog"
-										width={1760}
-										height={1520}
-										loading="lazy"
-										className={s.shotImg}
-									/>
-								</MediaFrame>
-							</figure>
-							<figure className={s.figure}>
-								<MediaFrame>
-									<img
-										src="/images/add-widget.png"
-										alt="The Add Widget selector in ty-plus listing the available widget types"
-										width={1760}
-										height={1520}
-										loading="lazy"
-										className={s.shotImg}
-									/>
-								</MediaFrame>
-							</figure>
-						</div>
+					<div className={cluster({ gap: 3 })}>
+						<Button as={Link} to="/features" variant="secondary" uiSize="sm">
+							All features
+						</Button>
+					</div>
+					<div className={dialogPair}>
+						<figure className={s.figure}>
+							<MediaFrame>
+								<img
+									src="/images/preset-dialog.png"
+									alt="The Local Presets browser in ty-plus listing presets from the local catalog"
+									width={1760}
+									height={1520}
+									loading="lazy"
+									className={s.shotImg}
+								/>
+							</MediaFrame>
+							<figcaption className={s.figcaption}>
+								Local Presets — browse, filter, and place catalog presets.
+							</figcaption>
+						</figure>
+						<figure className={s.figure}>
+							<MediaFrame>
+								<img
+									src="/images/add-widget.png"
+									alt="The Add Widget selector in ty-plus listing the available widget types"
+									width={1760}
+									height={1520}
+									loading="lazy"
+									className={s.shotImg}
+								/>
+							</MediaFrame>
+							<figcaption className={s.figcaption}>
+								Add Widget — extend the workspace with built-in tools.
+							</figcaption>
+						</figure>
 					</div>
 				</div>
 			</section>

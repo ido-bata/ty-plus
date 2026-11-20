@@ -32,19 +32,19 @@ export const Route = createFileRoute("/features")({
 
 const featureRow = css({
 	display: "grid",
-	gridTemplateColumns: { base: "1fr", lg: "repeat(12, minmax(0, 1fr))" },
-	gap: { base: "1rem", lg: "2.5rem" },
+	gridTemplateColumns: { base: "1fr", md: "repeat(12, minmax(0, 1fr))" },
+	gap: { base: "1rem", md: "2.5rem" },
 	alignItems: "start",
 });
 
-const orderFirst = css({ order: { lg: -1 } });
+const orderFirst = css({ order: { md: -1 } });
 
 const FEATURES = [
 	{
-		title: "Workspace tiles & widgets",
-		body: "Arrange preset tiles, directory browsers, and utility widgets on a gridded workspace. Add, remove, and reorder widgets from the built-in picker, then save the layout locally — it is restored exactly as you left it.",
-		image: "/images/workspace.png",
-		alt: "The ty-plus panel toolbar and workspace widgets — quick actions, easing curve, alignment, and anchor point tools",
+		title: "Preset tiles from your catalog",
+		body: "Presets you register — animation presets, code presets, footage, and groups — become named tiles on the same grid as your widgets. Select a tile to preview it, then run it without leaving the panel.",
+		image: "/images/preset-tiles.png",
+		alt: "Named preset tiles on the ty-plus workspace grid, each bound to a preset from the local catalog",
 		width: 3412,
 		height: 2044,
 		// Flagship capture gets the widest treatment: image leads at 8 cols.
@@ -52,23 +52,13 @@ const FEATURES = [
 		mediaSpan: "wide" as const,
 	},
 	{
-		title: "Preset tiles from your catalog",
-		body: "Presets you register — animation presets, code presets, footage, and groups — become tiles on the same grid as your widgets. Select a tile to preview it, then run it without leaving the panel.",
-		image: "/images/preset-tiles.png",
-		alt: "Preset tiles on the ty-plus workspace grid, each bound to a preset from the local catalog",
+		title: "Workspace tiles & widgets",
+		body: "Arrange preset tiles, directory browsers, and utility widgets on a gridded workspace. Add, remove, and reorder widgets from the built-in picker, then save the layout locally — it is restored exactly as you left it.",
+		image: "/images/workspace.png",
+		alt: "The ty-plus panel toolbar and workspace widgets — quick actions, easing curve, alignment, and anchor point tools",
 		width: 3412,
 		height: 2044,
 		mediaFirst: false,
-		mediaSpan: "std" as const,
-	},
-	{
-		title: "Widgets on demand",
-		body: "Directory browsers, quick utilities, and tools you add from the built-in picker. Every widget is a real panel feature — it keeps working with the network unplugged.",
-		image: "/images/add-widget.png",
-		alt: "The Add Widget selector in ty-plus listing the available widget types",
-		width: 1760,
-		height: 1520,
-		mediaFirst: true,
 		mediaSpan: "std" as const,
 	},
 	{
@@ -76,6 +66,17 @@ const FEATURES = [
 		body: "The Search Presets dialog browses your local catalog — filter, preview, and place presets on the workspace without opening After Effects dialogs.",
 		image: "/images/preset-dialog.png",
 		alt: "The Local Presets browser dialog in ty-plus listing presets from the local catalog",
+		width: 1760,
+		height: 1520,
+		mediaFirst: true,
+		// Narrower media keeps the row's density different from the rows above.
+		mediaSpan: "narrow" as const,
+	},
+	{
+		title: "Widgets on demand",
+		body: "Directory browsers, quick utilities, and tools you add from the built-in picker. Every widget is a real panel feature — it keeps working with the network unplugged.",
+		image: "/images/add-widget.png",
+		alt: "The Add Widget selector in ty-plus listing the available widget types",
 		width: 1760,
 		height: 1520,
 		mediaFirst: false,
@@ -115,8 +116,9 @@ function FeaturesPage() {
 					{FEATURES.map((f) => {
 						const hasImage = "image" in f;
 						const wide = hasImage && f.mediaSpan === "wide";
-						const textSpan = wide ? span4 : span5;
-						const mediaSpan = wide ? span8 : span7;
+						const narrow = hasImage && f.mediaSpan === "narrow";
+						const textSpan = wide ? span4 : narrow ? span7 : span5;
+						const mediaSpan = wide ? span8 : narrow ? span5 : span7;
 						const mediaFirst = hasImage && f.mediaFirst;
 						return (
 							<article className={featureRow} key={f.title}>
