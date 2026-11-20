@@ -3,6 +3,7 @@ import { listReleases } from "../lib/releases";
 import { SITE } from "../lib/site";
 
 export const Route = createFileRoute("/changelog")({
+	loader: () => listReleases(),
 	head: () => ({
 		meta: [
 			{ title: `Changelog — ${SITE.name}` },
@@ -14,7 +15,6 @@ export const Route = createFileRoute("/changelog")({
 			{ property: "og:title", content: `Changelog — ${SITE.name}` },
 		],
 	}),
-	loader: () => listReleases(),
 	component: ChangelogPage,
 });
 

@@ -49,13 +49,13 @@ export function SiteHeader() {
 				const fits = inner.scrollWidth <= inner.clientWidth;
 				header.classList.remove("is-measuring");
 
-				setIsWide((wide) => {
-					if (wide === fits) return wide;
-					if (fits && menu.matches(":popover-open")) {
-						reopenRef.current = true;
-					}
-					return fits;
-				});
+				// Widening while the popover is open: remember to reopen it
+				// when the layout narrows again. Kept outside the state
+				// updater so the updater stays pure.
+				if (fits && menu.matches(":popover-open")) {
+					reopenRef.current = true;
+				}
+				setIsWide(fits);
 			});
 		};
 

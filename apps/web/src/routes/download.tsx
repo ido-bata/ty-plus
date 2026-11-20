@@ -3,6 +3,7 @@ import { listReleases } from "../lib/releases";
 import { SITE } from "../lib/site";
 
 export const Route = createFileRoute("/download")({
+	loader: () => listReleases(),
 	head: () => ({
 		meta: [
 			{ title: `Download — ${SITE.name}` },
@@ -14,7 +15,6 @@ export const Route = createFileRoute("/download")({
 			{ property: "og:title", content: `Download — ${SITE.name}` },
 		],
 	}),
-	loader: () => listReleases(),
 	component: DownloadPage,
 });
 
