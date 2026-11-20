@@ -31,7 +31,13 @@ import { ATTR_WIDGET_INSTANCE_ID } from "@/management/workspace/placement/types"
 import { Button, SegmentedControl } from "@/shared/component";
 import { isIMEComposing } from "@/shared/util/keyboard";
 import { css } from "@/styled-system/css";
-import { type Camera, computeCamera, handleDotScreenPos } from "./camera";
+import {
+	type Camera,
+	computeCamera,
+	handleDotScreenPos,
+	screenToWorld,
+	worldToScreen,
+} from "./camera";
 import {
 	type CurveCategory,
 	detectCurveCategory,
@@ -39,6 +45,19 @@ import {
 	mapCategoryToType,
 } from "./curve-category";
 import { decideReverseAction } from "./curve-ops";
+import {
+	applyWaveHandleDrag,
+	attackShare,
+	buildCyclicWave,
+	type CyclicWaveParams,
+	DEFAULT_CYCLES,
+	MAX_CYCLES,
+	MIN_CYCLES,
+	sampleWave,
+	type WaveHandle,
+	waveHandlePositions,
+	waveTemplateInGraph,
+} from "./cyclic-wave";
 import {
 	type DragTarget,
 	findNearestDragTarget,
@@ -48,6 +67,7 @@ import {
 } from "./gestures";
 import { buildCurvePointsFromProcedural } from "./procedural-points";
 import { useElementWidth } from "./use-element-width";
+import { drawCyclicWave } from "./wave-draw";
 
 type Mode = "curve" | "bounce" | "elastic";
 type ApplyMode = "single" | "pair";
@@ -56,6 +76,12 @@ type Point = { x: number; y: number };
 type CurvePoint = { x: number; y: number; hIn: Point; hOut: Point };
 type EditorState = {
 	mode: Mode;
+	/** Loop-only: the cyclic wave parameters (frequency/bias/damping/...). */
+	wave: CyclicWaveParams;
+	/** Loop-only: the parameter handle currently dragged, if any. */
+	waveDrag: WaveHandle | null;
+	/** Loop-only: the cycle whose template point is being dragged. */
+	waveCycle: number;
 	width: number;
 	height: number;
 	camera: Camera;
@@ -92,6 +118,7 @@ type StoredState = {
 	points?: CurvePoint[];
 	procedural?: { handle: Point };
 	loopCount?: number;
+	wave?: CyclicWaveParams;
 };
 
 const MIN_LOOP_COUNT = 2;
@@ -142,16 +169,6 @@ const PRESET_CURVES: Record<string, Cubic> = {
 
 const clamp = (value: number, min: number, max: number): number =>
 	Math.max(min, Math.min(max, value));
-
-const worldToScreen = (point: Point, camera: Camera): Point => ({
-	x: camera.x + point.x * camera.zoom,
-	y: camera.y - point.y * camera.zoom,
-});
-
-const screenToWorld = (point: Point, camera: Camera): Point => ({
-	x: (point.x - camera.x) / camera.zoom,
-	y: (camera.y - point.y) / camera.zoom,
-});
 
 const cubicBezierAt = (
 	t: number,
@@ -234,6 +251,15 @@ const proceduralValue = (mode: Mode, t: number, handle: Point): number =>
 
 const createInitialState = (): EditorState => ({
 	mode: "curve",
+	wave: {
+		cycles: DEFAULT_CYCLES,
+		amplitude: 1,
+		damping: 1,
+		bias: 0,
+		mode: "pingpong",
+	},
+	waveDrag: null,
+	waveCycle: 0,
 	width: 400,
 	height: 400,
 	camera: computeCamera(400, 400),
@@ -453,7 +479,25 @@ const serializeState = (
 	points: clonePoints(state.points),
 	procedural: { handle: { ...state.procedural.handle } },
 	loopCount,
+	wave: { ...state.wave },
 });
+
+const coerceWave = (value: unknown): CyclicWaveParams | undefined => {
+	if (!value || typeof value !== "object") return undefined;
+	const raw = value as Record<string, unknown>;
+	const cycles = Number(raw.cycles);
+	const amplitude = Number(raw.amplitude);
+	if (!Number.isFinite(cycles) || !Number.isFinite(amplitude)) return undefined;
+	const damping = Number(raw.damping);
+	const bias = Number(raw.bias);
+	return {
+		cycles: clamp(Math.round(cycles), MIN_CYCLES, MAX_CYCLES),
+		amplitude: clamp(amplitude, 0, 2),
+		damping: clamp(Number.isFinite(damping) ? damping : 1, 0, 1),
+		bias: clamp(Number.isFinite(bias) ? bias : 0, -1, 1),
+		mode: raw.mode === "cycle" ? "cycle" : "pingpong",
+	};
+};
 
 const coerceCustomColors = (value: unknown): CustomColors | undefined => {
 	if (!value || typeof value !== "object") return undefined;
@@ -549,6 +593,7 @@ const coerceStoredState = (
 					}
 				: undefined,
 		loopCount,
+		wave: coerceWave(value.wave),
 	};
 };
 
@@ -880,9 +925,12 @@ function EasingActionBar({
 export function CurveEditor({
 	layout,
 	variant,
+	initialWave,
 }: {
 	layout: Layout;
 	variant: CurveEditorVariant;
+	/** Loop-only: seed for the cyclic wave parameters (Storybook/tests). */
+	initialWave?: CyclicWaveParams;
 }): JSX.Element {
 	const config = VARIANTS[variant];
 	const rootRef = useRef<HTMLDivElement | null>(null);
@@ -895,7 +943,11 @@ export function CurveEditor({
 	const widgetInstanceId = String(layout.id ?? layout.widgetId ?? "").trim();
 	const canvasRef = useRef<HTMLCanvasElement | null>(null);
 	const containerRef = useRef<HTMLDivElement | null>(null);
-	const initialState = useMemo(() => createInitialState(), []);
+	const initialState = useMemo(() => {
+		const state = createInitialState();
+		if (initialWave) state.wave = { ...state.wave, ...initialWave };
+		return state;
+	}, [initialWave]);
 	const stateRef = useRef<EditorState>(initialState);
 	const drawRef = useRef<(() => void) | null>(null);
 	const previewStartRef = useRef<number | null>(null);
@@ -922,6 +974,7 @@ export function CurveEditor({
 		Record<string, string>
 	>({});
 	const [loopCount, setLoopCountState] = useState<number>(DEFAULT_LOOP_COUNT);
+	const [wave, setWave] = useState<CyclicWaveParams>(initialState.wave);
 	const [status, setStatus] = useState<"idle" | "busy" | "done" | "error">(
 		"idle",
 	);
@@ -945,14 +998,22 @@ export function CurveEditor({
 		drawRef.current?.();
 	}, []);
 
-	const setLoopCount = useCallback((next: number) => {
-		const clamped = clamp(Math.round(next), MIN_LOOP_COUNT, MAX_LOOP_COUNT);
-		setLoopCountState(clamped);
-		// The loop count changes the apply path, not the curve editor.
-		// Reset status so an in-flight busy doesn't strand the editor
-		// after the user changes cycle count mid-apply.
-		setStatus("idle");
-	}, []);
+	const setLoopCount = useCallback(
+		(next: number) => {
+			const clamped = clamp(Math.round(next), MIN_LOOP_COUNT, MAX_LOOP_COUNT);
+			setLoopCountState(clamped);
+			if (variant === "loop") {
+				const nextWave = { ...stateRef.current.wave, cycles: clamped };
+				stateRef.current.wave = nextWave;
+				setWave(nextWave);
+			}
+			// The loop count changes the apply path, not the curve editor.
+			// Reset status so an in-flight busy doesn't strand the editor
+			// after the user changes cycle count mid-apply.
+			setStatus("idle");
+		},
+		[variant],
+	);
 
 	const persistState = useCallback(() => {
 		if (!widgetInstanceId || !stateLoadedRef.current) return;
@@ -1003,6 +1064,10 @@ export function CurveEditor({
 					setModeState(stored.mode);
 				}
 				if (stored.points) state.points = stored.points;
+				if (stored.wave) {
+					state.wave = stored.wave;
+					setWave(stored.wave);
+				}
 				if (stored.procedural) state.procedural = stored.procedural;
 				if (stored.applyMode) setApplyMode(stored.applyMode);
 				if (stored.backgroundPattern) {
@@ -1157,7 +1222,16 @@ export function CurveEditor({
 						state.hoverTarget.index === index),
 			);
 
-		if (state.mode === "curve") {
+		if (variant === "loop") {
+			drawCyclicWave(
+				ctx,
+				state.points,
+				state.wave,
+				state.camera,
+				{ text, muted, accent, grid },
+				state.waveDrag,
+			);
+		} else if (state.mode === "curve") {
 			ctx.strokeStyle = text;
 			ctx.lineWidth = 2;
 			ctx.lineJoin = "round";
@@ -1259,9 +1333,11 @@ export function CurveEditor({
 			const elapsed = performance.now() - previewStartRef.current;
 			const tValue = clamp(elapsed / PREVIEW_DURATION_MS, 0, 1);
 			const y =
-				state.mode === "curve"
-					? solveCurveYForX(tValue, state.points)
-					: proceduralValue(state.mode, tValue, state.procedural.handle);
+				variant === "loop"
+					? sampleWave(buildCyclicWave(state.points, state.wave), tValue)
+					: state.mode === "curve"
+						? solveCurveYForX(tValue, state.points)
+						: proceduralValue(state.mode, tValue, state.procedural.handle);
 			const preview = worldToScreen({ x: tValue, y }, state.camera);
 			ctx.fillStyle = accent;
 			ctx.shadowColor = accent;
@@ -1281,7 +1357,7 @@ export function CurveEditor({
 				: state.hoverTarget
 					? "pointer"
 					: "default";
-	}, [backgroundPattern]);
+	}, [backgroundPattern, variant]);
 
 	useEffect(() => {
 		drawRef.current = draw;
@@ -1383,13 +1459,16 @@ export function CurveEditor({
 			// (issue #145); pan is an explicit gesture handled before this.
 			return findNearestDragTarget({
 				screen,
-				points: state.points,
+				points:
+					variant === "loop"
+						? waveTemplateInGraph(state.points, state.wave)
+						: state.points,
 				proceduralHandle: state.procedural.handle,
 				camera: state.camera,
 				useCurvePoints: state.mode === "curve",
 			});
 		},
-		[],
+		[variant],
 	);
 
 	const findClosest = useCallback(
@@ -1400,6 +1479,26 @@ export function CurveEditor({
 		},
 		[findClosestWithDistance],
 	);
+
+	/**
+	 * Map a graph position back into the shared template's coordinate space.
+	 *
+	 * The loop widget draws every cycle, so a drag on any cycle has to be
+	 * translated into the template that all cycles share.
+	 */
+	const waveMapping = useCallback((worldX: number) => {
+		const state = stateRef.current;
+		const cycles = Math.max(1, Math.round(state.wave.cycles));
+		const cycle = 0;
+		const hasReturn = state.wave.mode === "pingpong" && cycle < cycles - 1;
+		const legPhase = hasReturn ? attackShare(state.wave.bias) : 1;
+		const local = worldX * cycles - cycle;
+		return {
+			phase: clamp(local / legPhase, 0, 1),
+			scale: cycles / legPhase,
+			graphX: (cycle + local) / cycles,
+		};
+	}, []);
 
 	const updateDrag = useCallback(
 		(screen: Point, snap: boolean, shift: boolean): void => {
@@ -1416,6 +1515,19 @@ export function CurveEditor({
 					x: Math.round(world.x / 0.05) * 0.05,
 					y: Math.round(world.y / 0.05) * 0.05,
 				};
+			}
+
+			if (variant === "loop" && state.waveDrag) {
+				const next = applyWaveHandleDrag(
+					state.waveDrag,
+					world,
+					state.points,
+					state.wave,
+				);
+				state.wave = next;
+				setWave(next);
+				drawRef.current?.();
+				return;
 			}
 
 			if (target.type === "procedural") {
@@ -1440,7 +1552,12 @@ export function CurveEditor({
 
 			if (target.type === "point") {
 				if (target.index !== 0 && target.index !== state.points.length - 1) {
-					point.x = clamp(world.x, previousX + gap, nextX - gap);
+					const mapping = variant === "loop" ? waveMapping(world.x) : null;
+					point.x = clamp(
+						mapping ? mapping.phase : world.x,
+						previousX + gap,
+						nextX - gap,
+					);
 					point.y = world.y;
 					clampHandlesForPoint(state.points, target.index);
 				}
@@ -1462,7 +1579,10 @@ export function CurveEditor({
 					};
 				}
 
-				let hx = world.x - point.x;
+				const mapping = variant === "loop" ? waveMapping(world.x) : null;
+				let hx = mapping
+					? (world.x - mapping.graphX) * mapping.scale
+					: world.x - point.x;
 				let hy = world.y - point.y;
 				if (shift) {
 					if (Math.abs(hx) > Math.abs(hy) * 2) hy = 0;
@@ -1545,7 +1665,7 @@ export function CurveEditor({
 			setStatus("idle");
 			drawRef.current?.();
 		},
-		[],
+		[variant, waveMapping],
 	);
 
 	const applyCurve = useCallback(async () => {
@@ -1611,7 +1731,7 @@ export function CurveEditor({
 		// "both" or "out", fall back to a single-cycle applyEasing so the
 		// user's chosen targeting is honored. This matches the documented
 		// behavior — loop semantics only exist for the "in" handle side.
-		const useLoop = variant === "loop" && loopCount >= MIN_LOOP_COUNT;
+		const useLoop = variant === "loop" && wave.cycles >= MIN_CYCLES;
 		const hostCommand = config.applyCommand;
 		const payload: Record<string, unknown> = {
 			version: 1,
@@ -1626,6 +1746,7 @@ export function CurveEditor({
 		};
 		if (useLoop) {
 			payload.loopCount = loopCount;
+			payload.wave = { ...state.wave };
 		}
 		try {
 			const result = await host(hostCommand, [payload]);
@@ -1681,6 +1802,7 @@ export function CurveEditor({
 		labelColor,
 		loopCount,
 		variant,
+		wave,
 	]);
 
 	// Some CEP/CEF input paths deliver mouse events without the matching
@@ -1819,6 +1941,28 @@ export function CurveEditor({
 			// #145). There is deliberately no empty-area pan branch: pan is
 			// an explicit gesture only (middle-button or Space+left, handled
 			// above).
+			if (variant === "loop") {
+				const positions = waveHandlePositions(state.points, state.wave);
+				const keys = Object.keys(positions) as WaveHandle[];
+				for (const key of keys) {
+					const handle = worldToScreen(positions[key], state.camera);
+					if (Math.hypot(handle.x - screen.x, handle.y - screen.y) > 12) {
+						continue;
+					}
+					event.preventDefault();
+					event.stopPropagation();
+					state.isDragging = true;
+					state.dragTarget = { type: "wave", handle: key };
+					state.hoverTarget = state.dragTarget;
+					state.waveDrag = key;
+					state.dragChanged = false;
+					if (typeof event.pointerId === "number") {
+						canvas.setPointerCapture(event.pointerId);
+					}
+					return;
+				}
+			}
+
 			const target = findClosestWithDistance(screen).target;
 			if (!target) return;
 			event.preventDefault();
@@ -1879,6 +2023,7 @@ export function CurveEditor({
 			persistState,
 			updateDrag,
 			applyCurve,
+			variant,
 		],
 	);
 
@@ -1929,6 +2074,7 @@ export function CurveEditor({
 			const dragChanged = state.dragChanged;
 			state.isDragging = false;
 			state.dragTarget = null;
+			state.waveDrag = null;
 			state.dragChanged = false;
 			state.altHeld = false;
 			state.mirrorHeld = false;
@@ -2382,7 +2528,7 @@ export function CurveEditor({
 			<EasingLoopControls
 				visible={config.showCycles}
 				compact={compact}
-				loopCount={loopCount}
+				loopCount={variant === "loop" ? wave.cycles : loopCount}
 				onLoopCountChange={setLoopCount}
 				t={t}
 			/>

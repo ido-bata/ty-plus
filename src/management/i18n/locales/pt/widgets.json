@@ -272,12 +272,7 @@
 			"help": "Ajuda",
 			"title": "Ajuda do widget",
 			"close": "Fechar",
-			"dismissHint": "Dispensar dica",
-			"next": "Avançar",
-			"back": "Voltar",
-			"skip": "Ignorar",
-			"finish": "Concluir",
-			"stepProgress": "{{current}} / {{total}}"
+			"dismissHint": "Dispensar dica"
 		},
 		"easing": {
 			"summary": "Edite curvas de easing e aplique-as a presets ou à animação de camadas.",

@@ -8,6 +8,7 @@
 
 import type { Camera, HandleAnchor } from "./camera";
 import { handleDotScreenPos } from "./camera";
+import type { WaveHandle } from "./cyclic-wave";
 
 export type Vec2 = { x: number; y: number };
 
@@ -91,6 +92,7 @@ export type DragTarget =
 	| { type: "hOut"; index: number }
 	| { type: "procedural" }
 	| { type: "pan" }
+	| { type: "wave"; handle: WaveHandle }
 	| null;
 
 export type HitTestArgs = {

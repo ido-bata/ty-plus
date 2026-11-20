@@ -156,3 +156,148 @@ export const toTemplateRows = (template: WavePoint[]): number[][] =>
 		point.hOut.x,
 		point.hOut.y,
 	]);
+
+/** The template point that deviates most from the chord (the wave's bulge). */
+export const waveBulge = (
+	template: WavePoint[],
+): { phase: number; deviation: number } => {
+	let best = { phase: 0.5, deviation: 0 };
+	for (const point of template) {
+		const deviation = point.y - chordValue(template, point.x);
+		if (Math.abs(deviation) > Math.abs(best.deviation)) {
+			best = { phase: point.x, deviation };
+		}
+	}
+	return best;
+};
+
+export type WaveHandle = "frequency" | "bias" | "damping";
+
+export type NormalizedPoint = { x: number; y: number };
+
+/**
+ * Normalized positions of the loop editor's parameter handles.
+ *
+ * - frequency: the first cycle boundary (its width is the period)
+ * - bias: the end of the first attack leg (the attack/return split)
+ * - damping: the bulge of the last cycle (how much is left at the end)
+ */
+export const waveHandlePositions = (
+	template: WavePoint[],
+	params: CyclicWaveParams,
+): Record<WaveHandle, NormalizedPoint> => {
+	const cycles = Math.max(1, Math.round(params.cycles));
+	const share = attackShare(params.bias);
+	const bulge = waveBulge(template);
+	const decay = cycleDecay(cycles - 1, params.damping);
+	return {
+		frequency: { x: 1 / cycles, y: 0 },
+		bias: { x: share / cycles, y: chordValue(template, 1) },
+		damping: {
+			x: (cycles - 1) / cycles + bulge.phase * ((1 - share) / cycles),
+			y:
+				chordValue(template, bulge.phase) +
+				bulge.deviation * params.amplitude * decay,
+		},
+	};
+};
+
+/**
+ * Resolve a handle drag into updated wave parameters.
+ *
+ * The handle drag works on normalized graph coordinates; the inverse mapping
+ * keeps the graph and the parameters in sync (the graph IS the parameter
+ * readout - there is no separate numeric form).
+ */
+export const applyWaveHandleDrag = (
+	handle: WaveHandle,
+	world: NormalizedPoint,
+	template: WavePoint[],
+	params: CyclicWaveParams,
+): CyclicWaveParams => {
+	if (handle === "frequency") {
+		const cycles = Math.round(1 / Math.max(0.02, world.x));
+		return { ...params, cycles: clamp(cycles, MIN_CYCLES, MAX_CYCLES) };
+	}
+	if (handle === "bias") {
+		const cycles = Math.max(1, Math.round(params.cycles));
+		const share = clamp(world.x * cycles, 0.05, 0.95);
+		return { ...params, bias: share * 2 - 1 };
+	}
+	const bulge = waveBulge(template);
+	const base = chordValue(template, bulge.phase);
+	const span = bulge.deviation * params.amplitude;
+	if (Math.abs(span) < 1e-6) return params;
+	const damping = clamp((world.y - base) / span, 0, 1);
+	return { ...params, damping };
+};
+
+export type WaveTemplatePosition = {
+	x: number;
+	y: number;
+	/** Index of the template point this position belongs to. */
+	index: number;
+	leg: "attack" | "return";
+};
+
+/**
+ * Where the template's points appear in the given cycle.
+ *
+ * Every cycle shows the same template, so dragging any cycle edits the shared
+ * template and the whole wave follows.
+ */
+export const waveTemplatePositions = (
+	template: WavePoint[],
+	params: CyclicWaveParams,
+	cycle: number,
+): WaveTemplatePosition[] => {
+	const cycles = Math.max(1, Math.round(params.cycles));
+	const share = attackShare(params.bias);
+	const decay = cycleDecay(cycle, params.damping);
+	const hasReturn = params.mode === "pingpong" && cycle < cycles - 1;
+	const out: WaveTemplatePosition[] = [];
+	for (let j = 0; j < template.length; j += 1) {
+		const point = template[j];
+		const chord = chordValue(template, point.x);
+		const deviation = (point.y - chord) * params.amplitude * decay;
+		const phase = hasReturn ? point.x * share : point.x;
+		out.push({
+			x: (cycle + phase) / cycles,
+			y: chord + deviation,
+			index: j,
+			leg: "attack",
+		});
+		if (hasReturn) {
+			out.push({
+				x: (cycle + share + (1 - point.x) * (1 - share)) / cycles,
+				y: chord - deviation,
+				index: j,
+				leg: "return",
+			});
+		}
+	}
+	return out;
+};
+
+/**
+ * The template drawn in the first cycle, in graph coordinates.
+ *
+ * The loop editor edits the shared template in the first cycle; every other
+ * cycle shows the result of the same template.
+ */
+export const waveTemplateInGraph = (
+	template: WavePoint[],
+	params: CyclicWaveParams,
+): WavePoint[] => {
+	const cycles = Math.max(1, Math.round(params.cycles));
+	const scale = attackShare(params.bias) / cycles;
+	return template.map((point) => {
+		const chord = chordValue(template, point.x);
+		return {
+			x: point.x * scale,
+			y: chord + (point.y - chord) * params.amplitude,
+			hIn: { x: point.hIn.x * scale, y: point.hIn.y * scale },
+			hOut: { x: point.hOut.x * scale, y: point.hOut.y * scale },
+		};
+	});
+};

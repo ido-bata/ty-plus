@@ -272,12 +272,7 @@
 			"help": "도움말",
 			"title": "위젯 도움말",
 			"close": "닫기",
-			"dismissHint": "힌트 닫기",
-			"next": "다음",
-			"back": "뒤로",
-			"skip": "건너뛰기",
-			"finish": "완료",
-			"stepProgress": "{{current}} / {{total}}"
+			"dismissHint": "힌트 닫기"
 		},
 		"easing": {
 			"summary": "이징 커브를 편집하고 프리셋이나 레이어 애니메이션에 적용합니다.",

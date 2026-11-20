@@ -62,3 +62,15 @@ export const handleDotScreenPos = (
 		y: anchor.y + dir.y * HANDLE_MIN_SCREEN_PX,
 	};
 };
+
+/** World (graph) coordinates to screen pixels. */
+export const worldToScreen = (point: Point2D, camera: Camera): Point2D => ({
+	x: camera.x + point.x * camera.zoom,
+	y: camera.y - point.y * camera.zoom,
+});
+
+/** Screen pixels to world (graph) coordinates. */
+export const screenToWorld = (point: Point2D, camera: Camera): Point2D => ({
+	x: (point.x - camera.x) / camera.zoom,
+	y: (camera.y - point.y) / camera.zoom,
+});

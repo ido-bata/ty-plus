@@ -272,12 +272,7 @@
 			"help": "Hilfe",
 			"title": "Widget-Hilfe",
 			"close": "Schließen",
-			"dismissHint": "Hinweis schließen",
-			"next": "Weiter",
-			"back": "Zurück",
-			"skip": "Überspringen",
-			"finish": "Fertig",
-			"stepProgress": "{{current}} / {{total}}"
+			"dismissHint": "Hinweis schließen"
 		},
 		"easing": {
 			"summary": "Easing-Kurven bearbeiten und auf Presets oder Layer-Animationen anwenden.",
