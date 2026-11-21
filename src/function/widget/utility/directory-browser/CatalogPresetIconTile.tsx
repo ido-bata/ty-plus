@@ -62,6 +62,7 @@ export function CatalogPresetIconTile({
 				borderStyle: "solid",
 				borderColor: "border.default",
 				backgroundColor: "surface.dialog",
+				_hover: { backgroundColor: "interactive.hover" },
 			})}
 			data-directory-browser-entry
 			data-entry-kind="preset"
