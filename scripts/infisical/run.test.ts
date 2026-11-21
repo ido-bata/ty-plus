@@ -193,7 +193,7 @@ describeWithPwsh("Infisical run wrapper argument vector", () => {
 				"bun",
 				"run",
 				"--silent",
-				"scripts/package/sign-zxp.ts",
+				"scripts/package/sign/zxp.ts",
 				"--out",
 				"dist/ty plus.zxp",
 			];
