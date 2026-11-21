@@ -1,4 +1,4 @@
-import { Input } from "@ty-plus/ui/fields/Input";
+import { Input } from "@ty-plus/ui";
 import type { JSX } from "react";
 
 export function PathDialogNameField(props: {

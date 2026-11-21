@@ -1,9 +1,4 @@
-import { Icon } from "@ty-plus/ui";
-import { Button } from "@ty-plus/ui/controls/Button";
-import { Input } from "@ty-plus/ui/fields/Input";
-import { PathField } from "@ty-plus/ui/fields/PathField";
-import { DialogBody } from "@ty-plus/ui/shell/DialogBody";
-import { FileSearch, Save } from "lucide-react";
+import { DialogBody } from "@ty-plus/ui";
 import {
 	type JSX,
 	useCallback,
@@ -12,9 +7,7 @@ import {
 	useRef,
 	useState,
 } from "react";
-import { selectFile } from "@/management/ae/cep/dialog-shim/bolt";
 import { DialogShell } from "@/management/dialog";
-import { DialogFooterActions } from "@/management/dialog/dialogs/shell/Footer";
 import { useDialogClose } from "@/management/dialog/useClose";
 import { createPresetFromFile } from "@/management/preset/authoring/request";
 import { ArchiveDetailsSection } from "@/management/preset/catalog-add/ArchiveDetailsSection";
@@ -30,12 +23,15 @@ import {
 	type PresetAddFolderType,
 } from "@/management/preset/catalog-add/archive-types";
 import { readUserHomeOrFallback } from "@/management/preset/catalog-add/browse-start-dir";
+import { FolderTabs } from "@/management/preset/catalog-add/FolderTabs";
+import { PathDialogFooterActions } from "@/management/preset/catalog-add/PathDialogFooterActions";
+import { PathDialogIconSection } from "@/management/preset/catalog-add/PathDialogIconSection";
+import { PathDialogNameField } from "@/management/preset/catalog-add/PathDialogNameField";
+import { PathDialogPathFieldRow } from "@/management/preset/catalog-add/PathDialogPathFieldRow";
 import { parseRootPathsFromSettingsJson } from "@/management/preset/catalog-add/parse-root-paths";
 import { verifyAndUpsertPreset } from "@/management/preset/catalog-add/verify-and-upsert";
-import { PresetIconEditor } from "@/management/preset/components/IconEditor";
 import type { Preset } from "@/management/preset/contract";
 import { tracePresetLifecycle } from "@/management/preset/execution/lifecycle-trace";
-import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
 import {
 	canUseCepNodeFileBrowser,
 	createCepNodeFileBrowserService,
@@ -46,7 +42,7 @@ import type { FileEntry } from "@/management/storage/ui/file-entry/FileEntryList
 import { FileEntryList } from "@/management/storage/ui/file-entry/FileEntryList";
 import { readSettings } from "@/management/workspace/persistence/store";
 import { notifyPanelsAfterPresetSave } from "@/management/workspace/placement/notify-panels-after-preset-save";
-import { css, cx } from "@/styled-system/css";
+import { css } from "@/styled-system/css";
 
 const derivePresetNameFromFilePath = (path: string): string => {
 	const base = path.split(/[/\\]/).pop() ?? "";
@@ -59,13 +55,6 @@ type DroppedFile = {
 	isDirectory: boolean;
 };
 
-const FOLDER_TABS: { id: PresetAddFolderType; label: string }[] = [
-	{ id: "presets", label: "Presets" },
-	{ id: "scripts", label: "Scripts" },
-	{ id: "plugins", label: "Plug-ins" },
-	{ id: "other", label: "Other" },
-];
-
 const rootPathForTab = (
 	roots: { presetRoot: string; scriptRoot: string; pluginRoot: string },
 	tab: PresetAddFolderType,
@@ -75,53 +64,6 @@ const rootPathForTab = (
 	if (tab === "plugins") return roots.pluginRoot;
 	return "";
 };
-
-const folderTabBaseClass = css({
-	height: "7",
-	minWidth: "0",
-	flex: "1",
-	borderRadius: "shell-sm",
-	paddingInline: "2",
-	fontSize: "shell-text-sm",
-	lineHeight: "tight",
-	transitionProperty: "colors",
-});
-
-const folderTabActiveClass = css({
-	backgroundColor: "text.accent",
-	color: "surface.panel",
-	boxShadow: "sm",
-});
-
-const folderTabInactiveClass = css({
-	backgroundColor: "surface.widget",
-	color: "text.muted",
-	_hover: {
-		backgroundColor: "interactive.hover",
-		color: "text.primary",
-	},
-});
-
-const FOLDER_TAB_CLASS = (active: boolean): string =>
-	cx(
-		folderTabBaseClass,
-		active ? folderTabActiveClass : folderTabInactiveClass,
-	);
-
-const folderTabsRowClass = css({
-	display: "inline-flex",
-	width: "full",
-	minWidth: "0",
-	maxWidth: "full",
-	flexWrap: "wrap",
-	gap: "1",
-	borderRadius: "shell-sm",
-	borderWidth: "1px",
-	borderStyle: "solid",
-	borderColor: "border.default",
-	backgroundColor: "surface.panel",
-	padding: "0.5",
-});
 
 const browserContainerClass = css({
 	display: "flex",
@@ -156,20 +98,6 @@ const formColumnClass = css({
 	gap: "3",
 });
 
-const fieldColumnClass = css({
-	display: "flex",
-	flexDirection: "column",
-	gap: "1",
-});
-
-const fieldLabelClass = css({
-	fontSize: "xs",
-	fontWeight: "medium",
-	textTransform: "uppercase",
-	letterSpacing: "wide",
-	color: "text.muted",
-});
-
 const errorClass = css({
 	display: "flex",
 	alignItems: "center",
@@ -183,11 +111,6 @@ const errorClass = css({
 	paddingBlock: "2",
 	fontSize: "xs",
 	color: "status.error",
-});
-
-const previewBoxClass = css({
-	height: "full",
-	width: "full",
 });
 
 /**
@@ -214,27 +137,6 @@ const pathDialogFooterClass = css({
 	paddingInline: "var(--ty-shell-pad-inline)",
 	paddingBlock: "var(--ty-shell-space)",
 });
-
-function FolderTabs(props: {
-	activeTab: PresetAddFolderType;
-	onTabChange: (tab: PresetAddFolderType) => void;
-}): JSX.Element {
-	const { activeTab, onTabChange } = props;
-	return (
-		<div className={folderTabsRowClass}>
-			{FOLDER_TABS.map((tab) => (
-				<button
-					key={tab.id}
-					type="button"
-					className={FOLDER_TAB_CLASS(activeTab === tab.id)}
-					onClick={() => onTabChange(tab.id)}
-				>
-					{tab.label}
-				</button>
-			))}
-		</div>
-	);
-}
 
 function BrowserContent(props: {
 	cepBrowser: boolean;
@@ -303,45 +205,6 @@ function BrowserContent(props: {
 				/>
 			)}
 		</div>
-	);
-}
-
-/** Register a single catalog preset from a filesystem path (catalog authoring, not a separate "file preset" type). */
-function PathDialogFooterActions({
-	close,
-	busy,
-	canAdd,
-	handleAdd,
-}: {
-	close: () => void;
-	busy: boolean;
-	canAdd: boolean;
-	handleAdd: () => Promise<void>;
-}): JSX.Element {
-	return (
-		<DialogFooterActions>
-			<Button
-				type="button"
-				variant="ghost"
-				uiSize="sm"
-				fullWidth
-				onClick={() => close()}
-				disabled={busy}
-			>
-				Cancel
-			</Button>
-			<Button
-				type="button"
-				variant="primary"
-				uiSize="sm"
-				fullWidth
-				start={<Save size={14} />}
-				disabled={!canAdd}
-				onClick={() => void handleAdd()}
-			>
-				{busy ? "Creating..." : "Create"}
-			</Button>
-		</DialogFooterActions>
 	);
 }
 
@@ -701,39 +564,24 @@ export function PathDialog(): JSX.Element {
 		>
 			<DialogBody>
 				<div className={formColumnClass}>
-					<Input
-						label="Name"
-						value={name}
-						onChange={(e) => {
-							setName(e.target.value);
+					<PathDialogNameField
+						name={name}
+						onNameChange={(next) => {
+							setName(next);
 							setNameManuallyEdited(true);
 						}}
-						placeholder="Enter name..."
-						autoComplete="off"
-						spellCheck={false}
-						uiSize="md"
 					/>
 
-					<div className={fieldColumnClass}>
-						<span className={fieldLabelClass}>File Path</span>
-						<PathField
-							value={pathFieldDisplay}
-							onChange={setSelectedPath}
-							onBrowse={() =>
-								selectFile(browseHint, "Select File", (picked) =>
-									setSelectedPath(picked),
-								)
-							}
-							browseAriaLabel="Browse file"
-							browseSlot={<Icon icon={FileSearch} size={16} aria-hidden />}
-							placeholder={
-								currentPath.trim()
-									? "Current folder shown — pick a file or browse"
-									: "Select a file..."
-							}
-							uiSize="md"
-						/>
-					</div>
+					<PathDialogPathFieldRow
+						value={pathFieldDisplay}
+						onChange={setSelectedPath}
+						browseHint={browseHint}
+						placeholder={
+							currentPath.trim()
+								? "Current folder shown — pick a file or browse"
+								: "Select a file..."
+						}
+					/>
 
 					<FolderTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
@@ -768,28 +616,10 @@ export function PathDialog(): JSX.Element {
 					/>
 
 					{/* Icon */}
-					<PresetIconEditor
+					<PathDialogIconSection
 						draft={iconDraft}
 						onChange={setIconDraft}
 						browseDir={browseHint}
-						label="Icon"
-						preview={
-							<FramedPresetGlyph
-								preset={
-									{
-										id: "icon-preview",
-										type: "preset",
-										title: "Preview",
-										filePath: "ty-plus://icon-preview",
-										icon: iconDraftToPresetIcon(iconDraft) ?? {
-											type: "text",
-											param: { text: "?" },
-										},
-									} satisfies Preset
-								}
-								boxClass={previewBoxClass}
-							/>
-						}
 					/>
 				</div>
 			</DialogBody>
