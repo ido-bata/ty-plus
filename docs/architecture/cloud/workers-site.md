@@ -35,8 +35,8 @@ repository root で、Node.js のサポート対象LTS版と Bun 1.3.10 を用�
 bun install --frozen-lockfile --ignore-scripts
 bunx panda codegen --silent
 bunx panda cssgen --silent
-bunx panda codegen --config apps/web/panda.config.ts --cwd apps/web --silent
-bunx panda cssgen --config apps/web/panda.config.ts --cwd apps/web --silent
+bunx panda codegen --config panda.config.ts --cwd apps/web --silent
+bunx panda cssgen --config panda.config.ts --cwd apps/web --silent
 cd apps/web
 npm exec --no -- cf build --mode production
 npm exec --no -- cf deploy --prebuilt --mode production --dry-run
