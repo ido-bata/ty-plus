@@ -546,8 +546,12 @@ const DEFAULT_REASON: Record<string, string> = {
 
 export type AllowlistEntry = {
 	file: string;
+	/** The line the violation was on when the baseline was written. */
 	line: number;
 	rule: string;
+	/** The violation message; part of the entry's identity. */
+	message: string;
+	/** Why the violation is tolerated, and what would clear it. */
 	reason: string;
 };
 
@@ -562,6 +566,7 @@ export function loadAllowlist(path = ALLOWLIST_PATH): AllowlistEntry[] {
 				typeof (entry as AllowlistEntry).file === "string" &&
 				typeof (entry as AllowlistEntry).line === "number" &&
 				typeof (entry as AllowlistEntry).rule === "string" &&
+				typeof (entry as AllowlistEntry).message === "string" &&
 				typeof (entry as AllowlistEntry).reason === "string",
 		);
 	} catch {
@@ -569,19 +574,31 @@ export function loadAllowlist(path = ALLOWLIST_PATH): AllowlistEntry[] {
 	}
 }
 
+/**
+ * The identity of an allowlisted violation.
+ *
+ * Deliberately NOT line-number based: an allowlist keyed by line number is
+ * invalidated by any edit above the violation, so a file with an
+ * allowlisted violation has to have its whole allowlist regenerated after
+ * every change to it. The file, the rule and the message identify the
+ * violation and survive line shifts.
+ */
 export function violationKey(v: {
 	file: string;
 	line: number;
 	rule: string;
+	message: string;
 }): string {
-	return `${v.file}:${v.line}:${v.rule}`;
+	return `${v.file}::${v.rule}::${v.message}`;
 }
 
 export function partitionViolations(
 	violations: Violation[],
 	allowlist: AllowlistEntry[],
 ): { fresh: Violation[]; stale: AllowlistEntry[] } {
-	const allowed = new Set(allowlist.map(violationKey));
+	const allowed = new Set(
+		allowlist.map((e) => violationKey(e as unknown as Violation)),
+	);
 	const live = new Set(violations.map(violationKey));
 	return {
 		fresh: violations.filter((v) => !allowed.has(violationKey(v))),
@@ -603,6 +620,7 @@ function main(): void {
 			file: v.file,
 			line: v.line,
 			rule: v.rule,
+			message: v.message,
 			reason: existing.get(violationKey(v)) ?? DEFAULT_REASON[v.rule],
 		}));
 		writeFileSync(ALLOWLIST_PATH, `${JSON.stringify(merged, null, "\t")}\n`);
