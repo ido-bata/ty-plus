@@ -3,21 +3,20 @@ import {
 	Checkbox,
 	cx,
 	Icon,
+	IconButton,
 	isIMEComposing,
 	ScrollArea,
 } from "@ty-plus/ui";
-import { FolderOpen } from "lucide-react";
+import { FolderOpen, LayoutGrid, List as ListIcon } from "lucide-react";
 import type { JSX, ReactNode } from "react";
 import type { PresetIcon } from "@/management/preset/contract";
 import type { FileBrowserFileType } from "@/management/storage/file-browser-service";
-import { DirectoryBrowserFooter } from "@/management/storage/ui/DirectoryBrowserFooter";
-import { DirectoryBrowserIconCard } from "@/management/storage/ui/DirectoryBrowserIconCard";
-import { directoryBrowserMenuFileType } from "@/management/storage/ui/DirectoryBrowserMenu";
-import { EntryIcon } from "@/management/storage/ui/DirectoryBrowserShell.entry-icon";
-import type { DirectoryBrowserViewMode } from "@/management/storage/ui/DirectoryBrowserViewModeToggle";
+import { FileEntryCard } from "@/management/storage/ui/FileEntryCard";
+import { FileEntryGlyph } from "@/management/storage/ui/FileEntryGlyph";
+import { fileEntryMenuFileType } from "@/management/storage/ui/file-entry-menu";
 import { css } from "@/styled-system/css";
 
-export type DirectoryBrowserEntry = {
+export type FileEntry = {
 	path: string;
 	name: string;
 	isDirectory: boolean;
@@ -31,20 +30,171 @@ export type DirectoryBrowserEntry = {
 	previewUrl?: string;
 };
 
-export type DirectoryBrowserShellSelectionMode = "files" | "folders" | "both";
+export type FileEntrySelectionMode = "files" | "folders" | "both";
 
-export type DirectoryBrowserSelectionKind = "file" | "folder";
+export type FileEntryKind = "file" | "folder";
 
-const kindOfEntry = (
-	entry: DirectoryBrowserEntry,
-): DirectoryBrowserSelectionKind => (entry.isDirectory ? "folder" : "file");
+const kindOfEntry = (entry: FileEntry): FileEntryKind =>
+	entry.isDirectory ? "folder" : "file";
 
-export type DirectoryBrowserAspect = "square" | "wide";
+export type FileEntryAspect = "square" | "wide";
 
-export type { DirectoryBrowserViewMode };
+/**
+ * How the entries are laid out.  The kit renders both; the owner owns the
+ * state (and may hide the toggle when it provides its own).
+ */
+export type FileEntryViewMode = "list" | "icons";
 
-type DirectoryBrowserProps = {
-	entries: readonly DirectoryBrowserEntry[];
+/**
+ * The "N files / M folders selected" readout.
+ *
+ * The wording, the truncation behaviour and the `ty-shell-directory-summary`
+ * hook live here so the kit renders the summary in exactly one place.
+ */
+export type FileEntrySummary = string | { files: number; folders: number };
+
+const summaryClass = css({
+	truncate: true,
+	whiteSpace: "nowrap",
+	fontSize: "shell-text-sm",
+	color: "text.muted",
+});
+
+function FileEntrySelectedSummary({
+	summary,
+}: {
+	summary: FileEntrySummary;
+}): JSX.Element {
+	if (typeof summary === "string") {
+		return (
+			<span
+				className={cx("ty-shell-directory-summary", summaryClass)}
+				title={summary}
+			>
+				{summary}
+			</span>
+		);
+	}
+	const parts: string[] = [];
+	if (summary.files > 0) {
+		parts.push(`${summary.files} file${summary.files !== 1 ? "s" : ""}`);
+	}
+	if (summary.folders > 0) {
+		parts.push(`${summary.folders} folder${summary.folders !== 1 ? "s" : ""}`);
+	}
+	return <span className={summaryClass}>{parts.join(" ")} selected</span>;
+}
+
+/**
+ * The list/icons toggle.  The active mode is published through
+ * `aria-pressed` as well as the shared `active` surface, so the state is not
+ * carried by colour alone.
+ */
+function FileEntryViewModeToggle({
+	viewMode,
+	onChange,
+}: {
+	viewMode: FileEntryViewMode;
+	onChange: (mode: FileEntryViewMode) => void;
+}): JSX.Element {
+	return (
+		<div className={viewToggleWrapClass}>
+			<IconButton
+				type="button"
+				variant="ghost"
+				size="sm"
+				active={viewMode === "list"}
+				aria-pressed={viewMode === "list"}
+				aria-label="List view"
+				title="List view"
+				onClick={() => {
+					onChange("list");
+				}}
+			>
+				<Icon icon={ListIcon} size={4} />
+			</IconButton>
+			<IconButton
+				type="button"
+				variant="ghost"
+				size="sm"
+				active={viewMode === "icons"}
+				aria-pressed={viewMode === "icons"}
+				aria-label="Icon view"
+				title="Icon view"
+				onClick={() => {
+					onChange("icons");
+				}}
+			>
+				<Icon icon={LayoutGrid} size={4} />
+			</IconButton>
+		</div>
+	);
+}
+
+const footerClass = css({
+	display: "flex",
+	alignItems: "center",
+	gap: "2",
+	borderTopWidth: "1px",
+	borderTopStyle: "solid",
+	borderTopColor: "border.default",
+	backgroundColor: "surface.widget",
+	paddingBlock: "0",
+	paddingInline: "1",
+	flexShrink: 0,
+});
+
+const summaryWrapClass = css({
+	display: "flex",
+	alignItems: "center",
+	gap: "3",
+	minWidth: 0,
+	fontSize: "shell-text-sm",
+	color: "text.muted",
+});
+
+const viewToggleWrapClass = css({
+	display: "flex",
+	gap: "1",
+	marginLeft: "auto",
+	flexShrink: 0,
+});
+
+function FileEntryListFooter({
+	viewMode,
+	onViewModeChange,
+	showSelectedSummary,
+	selectedSummary,
+	showViewToggle = true,
+	footerExtra,
+}: {
+	viewMode: FileEntryViewMode;
+	onViewModeChange?: (mode: FileEntryViewMode) => void;
+	showSelectedSummary: boolean;
+	selectedSummary?: FileEntrySummary | null;
+	showViewToggle?: boolean;
+	footerExtra?: ReactNode;
+}): JSX.Element {
+	return (
+		<div className={footerClass}>
+			{showSelectedSummary && selectedSummary ? (
+				<div className={summaryWrapClass}>
+					<FileEntrySelectedSummary summary={selectedSummary} />
+				</div>
+			) : null}
+			{footerExtra}
+			{showViewToggle && onViewModeChange ? (
+				<FileEntryViewModeToggle
+					viewMode={viewMode}
+					onChange={onViewModeChange}
+				/>
+			) : null}
+		</div>
+	);
+}
+
+type FileEntryListProps = {
+	entries: readonly FileEntry[];
 	/**
 	 * Optional file name extensions to filter entries (e.g. [".ffx", ".jsx"]).
 	 * Directories always pass the filter.
@@ -52,32 +202,31 @@ type DirectoryBrowserProps = {
 	 */
 	fileNameFilter?: readonly string[];
 	loading: boolean;
-	canGoUp: boolean;
-	onGoUp: () => void;
-	onEntryClick: (entry: DirectoryBrowserEntry) => void;
+	/**
+	 * Whether the "up" row is offered.  Owners that do not navigate leave it
+	 * out entirely instead of passing a no-op handler.
+	 */
+	canGoUp?: boolean;
+	/** Called when the "up" row is activated. */
+	onGoUp?: () => void;
+	onEntryClick: (entry: FileEntry) => void;
 	/**
 	 * Called when an entry is activated (double-click or Enter key).
 	 * For files, this should open/execute. For directories, navigate into.
 	 * Up-row always calls onGoUp on single-click.
 	 */
-	onEntryActivate?: (entry: DirectoryBrowserEntry) => void;
+	onEntryActivate?: (entry: FileEntry) => void;
 	/**
 	 * Called on single-click for directory rows/cards. Files keep using
 	 * `onEntryClick` for single-click selection. When omitted, directory
 	 * single-click remains a no-op (double-click/Enter still activates via
 	 * `onEntryActivate`). Issue #142.
 	 */
-	onEntrySelect?: (entry: DirectoryBrowserEntry) => void;
-	selectionMode: DirectoryBrowserShellSelectionMode;
-	isSelected: (
-		entryPath: string,
-		kind: DirectoryBrowserSelectionKind,
-	) => boolean;
-	onToggleSelected: (
-		entryPath: string,
-		kind: DirectoryBrowserSelectionKind,
-	) => void;
-	selectedSummary: string | { files: number; folders: number } | null;
+	onEntrySelect?: (entry: FileEntry) => void;
+	selectionMode: FileEntrySelectionMode;
+	isSelected: (entryPath: string, kind: FileEntryKind) => boolean;
+	onToggleSelected: (entryPath: string, kind: FileEntryKind) => void;
+	selectedSummary?: FileEntrySummary | null;
 	/**
 	 * Whether to show selected summary in the scroll area footer.
 	 * Default: true.
@@ -88,20 +237,26 @@ type DirectoryBrowserProps = {
 	upLabel?: string;
 	/**
 	 * Fully controlled display mode. The kit keeps no internal view state;
-	 * owners pass the #65 shared hooks (or local state) down.
+	 * owners pass the #65 shared hooks (or local state) down.  Defaults to
+	 * the list layout.
 	 */
-	viewMode: DirectoryBrowserViewMode;
-	onViewModeChange: (mode: DirectoryBrowserViewMode) => void;
+	viewMode?: FileEntryViewMode;
+	/**
+	 * Called when the owner switches between the list and the icon grid.
+	 * When it is omitted the kit renders no toggle, so a picker that only
+	 * offers a list does not have to stub it.
+	 */
+	onViewModeChange?: (mode: FileEntryViewMode) => void;
 	/**
 	 * Grid zoom scale. Applied to the icon grid cell size as
 	 * `cellBaseRem * scale`.
 	 */
-	scale: number;
+	scale?: number;
 	/**
 	 * Tile media shape. `"square"` renders the 4:3 media band,
 	 * `"wide"` renders a 16:9 band.
 	 */
-	aspect: DirectoryBrowserAspect;
+	aspect?: FileEntryAspect;
 	/**
 	 * Grid cell base width in rem at scale 1. Default 4.
 	 */
@@ -122,7 +277,7 @@ type DirectoryBrowserProps = {
 	 * the media band) and an optional overlay (positioned absolutely on
 	 * the card). Defaults to the shared entry-icon rendering.
 	 */
-	renderTile?: (entry: DirectoryBrowserEntry) => {
+	renderTile?: (entry: FileEntry) => {
 		media: ReactNode;
 		overlay?: ReactNode;
 	};
@@ -131,7 +286,7 @@ type DirectoryBrowserProps = {
 	 * trailing content (rendered after the checkboxes). Defaults to the
 	 * shared entry-icon rendering.
 	 */
-	renderRow?: (entry: DirectoryBrowserEntry) => {
+	renderRow?: (entry: FileEntry) => {
 		icon?: ReactNode;
 		trailing?: ReactNode;
 	};
@@ -435,14 +590,14 @@ const listEmptyLabelClass = css({
 	color: "text.muted",
 });
 
-function mediaBandClass(aspect: DirectoryBrowserAspect): string {
+function mediaBandClass(aspect: FileEntryAspect): string {
 	return cx(
 		mediaBandBaseClass,
 		aspect === "wide" ? mediaBandWideClass : mediaBandSquareClass,
 	);
 }
 
-export const DirectoryBrowser = ({
+export const FileEntryList = ({
 	entries,
 	fileNameFilter,
 	loading,
@@ -454,15 +609,15 @@ export const DirectoryBrowser = ({
 	selectionMode,
 	isSelected,
 	onToggleSelected,
-	selectedSummary,
+	selectedSummary = null,
 	showSelectedSummary = true,
 	emptyLabel = "No files found",
 	loadingLabel = "Loading...",
 	upLabel = "..",
-	viewMode,
+	viewMode = "list",
 	onViewModeChange,
-	scale,
-	aspect,
+	scale = 1,
+	aspect = "square",
 	cellBaseRem = 4,
 	showViewToggle = true,
 	activePath = null,
@@ -470,8 +625,8 @@ export const DirectoryBrowser = ({
 	renderRow,
 	listHeader,
 	footerExtra,
-}: DirectoryBrowserProps) => {
-	const displayedEntries: readonly DirectoryBrowserEntry[] = fileNameFilter
+}: FileEntryListProps) => {
+	const displayedEntries: readonly FileEntry[] = fileNameFilter
 		? entries.filter((e) =>
 				e.isDirectory
 					? true
@@ -481,34 +636,34 @@ export const DirectoryBrowser = ({
 			)
 		: entries;
 
-	const showFileCheckbox = (entry: DirectoryBrowserEntry) =>
+	const showFileCheckbox = (entry: FileEntry) =>
 		!entry.isDirectory &&
 		entry.path !== "" && // up-entry has empty path
 		(selectionMode === "files" || selectionMode === "both");
 
-	const showFolderCheckbox = (entry: DirectoryBrowserEntry) =>
+	const showFolderCheckbox = (entry: FileEntry) =>
 		entry.isDirectory &&
 		entry.path !== "" && // up-entry has empty path
 		(selectionMode === "folders" || selectionMode === "both");
 
-	const showCheckbox = (entry: DirectoryBrowserEntry) =>
+	const showCheckbox = (entry: FileEntry) =>
 		showFileCheckbox(entry) || showFolderCheckbox(entry);
 
-	const handleRowClick = (entry: DirectoryBrowserEntry) => {
+	const handleRowClick = (entry: FileEntry) => {
 		onEntryClick(entry);
 	};
 
 	// Up-row uses single-click to go up
 	const handleUpRowClick = (): void => {
-		onGoUp();
+		onGoUp?.();
 	};
 
-	const handleRowActivate = (entry: DirectoryBrowserEntry): void => {
+	const handleRowActivate = (entry: FileEntry): void => {
 		onEntryActivate?.(entry);
 	};
 
 	// Synthetic up-entry for normalized row rendering (up is always single-click)
-	const previewEntry: DirectoryBrowserEntry = {
+	const previewEntry: FileEntry = {
 		path: "",
 		name: upLabel,
 		isDirectory: true,
@@ -516,7 +671,7 @@ export const DirectoryBrowser = ({
 
 	// Render a normalized list-mode row (shared by up-row and normal entries)
 	const renderListRow = (
-		entry: DirectoryBrowserEntry,
+		entry: FileEntry,
 		entryOnClick: () => void,
 		entryOnActivate?: () => void,
 	): JSX.Element => {
@@ -556,7 +711,7 @@ export const DirectoryBrowser = ({
 						data-directory-browser-entry=""
 						data-entry-kind={entry.isDirectory ? "dir" : "file"}
 						data-entry-path={entry.path}
-						data-entry-file-type={directoryBrowserMenuFileType(entry)}
+						data-entry-file-type={fileEntryMenuFileType(entry)}
 						className={cx(shellRowBtn, rowBtnFlex1Class)}
 						onClick={
 							isUpRow || !entry.isDirectory
@@ -576,7 +731,7 @@ export const DirectoryBrowser = ({
 					>
 						<span className={rowLeftIconClass}>
 							{renderRow?.(entry).icon ?? (
-								<EntryIcon entry={entry} size={shellListIconSize} />
+								<FileEntryGlyph entry={entry} size={shellListIconSize} />
 							)}
 							<span
 								className={cx(
@@ -623,7 +778,7 @@ export const DirectoryBrowser = ({
 	};
 
 	const handleToggle =
-		(entry: DirectoryBrowserEntry) =>
+		(entry: FileEntry) =>
 		(event?: React.MouseEvent): void => {
 			event?.stopPropagation();
 			onToggleSelected(entry.path, kindOfEntry(entry));
@@ -632,7 +787,7 @@ export const DirectoryBrowser = ({
 	// The footer (summary readout + view-mode toggle) is a shared kit
 	// component so the kit owns that surface in exactly one place.
 	const footer = (
-		<DirectoryBrowserFooter
+		<FileEntryListFooter
 			viewMode={viewMode}
 			onViewModeChange={onViewModeChange}
 			showSelectedSummary={showSelectedSummary}
@@ -673,7 +828,9 @@ export const DirectoryBrowser = ({
 											variant="bare"
 											uiSize="sm"
 											className={upTileButtonClass}
-											onClick={onGoUp}
+											onClick={() => {
+												onGoUp?.();
+											}}
 										>
 											<div className={mediaBandClass(aspect)}>
 												<div className={upIconInnerClass}>
@@ -693,7 +850,7 @@ export const DirectoryBrowser = ({
 									<div className={emptyLabelClass}>{emptyLabel}</div>
 								) : (
 									displayedEntries.map((entry) => (
-										<DirectoryBrowserIconCard
+										<FileEntryCard
 											key={entry.path}
 											entry={entry}
 											isSelected={isSelected(entry.path, kindOfEntry(entry))}

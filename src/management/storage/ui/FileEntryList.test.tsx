@@ -1,7 +1,7 @@
 /**
  * @vitest-environment jsdom
  *
- * Click-handler contract for the unified `DirectoryBrowser` kit:
+ * Click-handler contract for the unified `FileEntryList` kit:
  *   - single-click on a file row fires `onEntryClick`
  *   - single-click on a directory row fires neither callback (directories
  *     require double-click or Enter via `onEntryActivate` to navigate)
@@ -25,11 +25,11 @@ import { cleanup, fireEvent, render } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import {
-	DirectoryBrowser,
-	type DirectoryBrowserEntry,
-} from "@/management/storage/ui/DirectoryBrowser";
+	type FileEntry,
+	FileEntryList,
+} from "@/management/storage/ui/FileEntryList";
 
-const baseEntries: DirectoryBrowserEntry[] = [
+const baseEntries: FileEntry[] = [
 	{ path: "/preset/root/a", name: "alpha", isDirectory: true },
 	{ path: "/preset/root/b.txt", name: "b.txt", isDirectory: false },
 ];
@@ -49,7 +49,7 @@ const baseProps = {
 	aspect: "square" as const,
 };
 
-describe("DirectoryBrowser kit click contract", () => {
+describe("FileEntryList kit click contract", () => {
 	afterEach(() => {
 		cleanup();
 	});
@@ -59,7 +59,7 @@ describe("DirectoryBrowser kit click contract", () => {
 		const onEntryActivate = vi.fn();
 
 		const { container } = render(
-			<DirectoryBrowser
+			<FileEntryList
 				{...baseProps}
 				onEntryClick={onEntryClick}
 				onEntryActivate={onEntryActivate}
@@ -82,7 +82,7 @@ describe("DirectoryBrowser kit click contract", () => {
 		const onEntrySelect = vi.fn();
 
 		const { container } = render(
-			<DirectoryBrowser
+			<FileEntryList
 				{...baseProps}
 				onEntryClick={onEntryClick}
 				onEntrySelect={onEntrySelect}
@@ -111,7 +111,7 @@ describe("DirectoryBrowser kit click contract", () => {
 		const onEntryClick = vi.fn();
 
 		const { container } = render(
-			<DirectoryBrowser
+			<FileEntryList
 				{...baseProps}
 				onGoUp={onGoUp}
 				onEntryClick={onEntryClick}
@@ -133,7 +133,7 @@ describe("DirectoryBrowser kit click contract", () => {
 		const onEntryClick = vi.fn();
 
 		const { container } = render(
-			<DirectoryBrowser {...baseProps} onEntryClick={onEntryClick} />,
+			<FileEntryList {...baseProps} onEntryClick={onEntryClick} />,
 		);
 
 		const fileRow = container.querySelector(
@@ -157,7 +157,7 @@ describe("DirectoryBrowser kit click contract", () => {
 		const onEntryActivate = vi.fn();
 
 		const { container } = render(
-			<DirectoryBrowser
+			<FileEntryList
 				{...baseProps}
 				onEntryClick={onEntryClick}
 				onEntryActivate={onEntryActivate}
@@ -185,7 +185,7 @@ describe("DirectoryBrowser kit click contract", () => {
 		const onToggleSelected = vi.fn();
 
 		const { container } = render(
-			<DirectoryBrowser
+			<FileEntryList
 				{...baseProps}
 				selectionMode="files"
 				onEntryClick={onEntryClick}
@@ -214,7 +214,7 @@ describe("DirectoryBrowser kit click contract", () => {
 		const onToggleSelected = vi.fn();
 
 		const { container } = render(
-			<DirectoryBrowser
+			<FileEntryList
 				{...baseProps}
 				selectionMode="folders"
 				onEntryClick={onEntryClick}
@@ -241,7 +241,7 @@ describe("DirectoryBrowser kit click contract", () => {
 
 	it("renders the icons grid when viewMode=icons is passed (fully controlled)", () => {
 		const { container, rerender } = render(
-			<DirectoryBrowser {...baseProps} onEntryClick={vi.fn()} />,
+			<FileEntryList {...baseProps} onEntryClick={vi.fn()} />,
 		);
 		expect(
 			container.querySelector(
@@ -250,11 +250,7 @@ describe("DirectoryBrowser kit click contract", () => {
 		).toBeNull();
 
 		rerender(
-			<DirectoryBrowser
-				{...baseProps}
-				viewMode="icons"
-				onEntryClick={vi.fn()}
-			/>,
+			<FileEntryList {...baseProps} viewMode="icons" onEntryClick={vi.fn()} />,
 		);
 		const grid = container.querySelector(
 			".ty-shell-directory-scroll [data-directory-browser-grid]",
@@ -266,7 +262,7 @@ describe("DirectoryBrowser kit click contract", () => {
 	it("calls onViewModeChange without keeping internal view state", () => {
 		const onViewModeChange = vi.fn();
 		const { container, rerender } = render(
-			<DirectoryBrowser
+			<FileEntryList
 				{...baseProps}
 				viewMode="list"
 				onViewModeChange={onViewModeChange}
@@ -281,7 +277,7 @@ describe("DirectoryBrowser kit click contract", () => {
 
 		// Parent ignores the change: the kit must NOT switch on its own.
 		rerender(
-			<DirectoryBrowser
+			<FileEntryList
 				{...baseProps}
 				viewMode="list"
 				onViewModeChange={onViewModeChange}
@@ -310,7 +306,7 @@ describe("DirectoryBrowser kit click contract", () => {
 
 		// Parent follows the change: the kit switches.
 		rerender(
-			<DirectoryBrowser
+			<FileEntryList
 				{...baseProps}
 				viewMode="icons"
 				onViewModeChange={onViewModeChange}
@@ -328,7 +324,7 @@ describe("DirectoryBrowser kit click contract", () => {
 
 	it("scales grid columns with the scale prop", () => {
 		const { container } = render(
-			<DirectoryBrowser
+			<FileEntryList
 				{...baseProps}
 				viewMode="icons"
 				scale={1.5}
@@ -355,7 +351,7 @@ describe("DirectoryBrowser kit click contract", () => {
 	 */
 	it("does not bump font-weight on the row text when isSelected toggles", () => {
 		const { container, rerender } = render(
-			<DirectoryBrowser
+			<FileEntryList
 				{...baseProps}
 				isSelected={() => false}
 				onEntryClick={vi.fn()}
@@ -369,7 +365,7 @@ describe("DirectoryBrowser kit click contract", () => {
 		const classUnselected = buttonUnselected?.className ?? "";
 
 		rerender(
-			<DirectoryBrowser
+			<FileEntryList
 				{...baseProps}
 				isSelected={(path) => path === "/preset/root/b.txt"}
 				onEntryClick={vi.fn()}
@@ -394,7 +390,7 @@ describe("DirectoryBrowser kit click contract", () => {
 
 	it("IconCard label does not change weight when isSelected toggles", () => {
 		const { container, rerender } = render(
-			<DirectoryBrowser
+			<FileEntryList
 				{...baseProps}
 				viewMode="icons"
 				isSelected={() => false}
@@ -411,7 +407,7 @@ describe("DirectoryBrowser kit click contract", () => {
 				?.className ?? "";
 
 		rerender(
-			<DirectoryBrowser
+			<FileEntryList
 				{...baseProps}
 				viewMode="icons"
 				isSelected={(path) => path === "/preset/root/b.txt"}
@@ -469,7 +465,7 @@ describe("DirectoryBrowser kit click contract", () => {
 
 		for (const s of states) {
 			const { container } = render(
-				<DirectoryBrowser
+				<FileEntryList
 					{...baseProps}
 					activePath={s.activePath}
 					isSelected={(path) => s.selected(path)}
@@ -522,7 +518,7 @@ describe("DirectoryBrowser kit click contract", () => {
 
 		for (const s of expected) {
 			const { container } = render(
-				<DirectoryBrowser
+				<FileEntryList
 					{...baseProps}
 					activePath={s.activePath}
 					isSelected={s.selected}
@@ -546,7 +542,7 @@ describe("DirectoryBrowser kit click contract", () => {
 	 */
 	it("renders long file names with the same font-size token regardless of selection", () => {
 		const longName = "foo-bar-baz-qux-quux-corge-grault-garply-waldo-fred.txt";
-		const longEntries: DirectoryBrowserEntry[] = [
+		const longEntries: FileEntry[] = [
 			{
 				path: "/preset/root/long.txt",
 				name: longName,
@@ -555,7 +551,7 @@ describe("DirectoryBrowser kit click contract", () => {
 		];
 
 		const { container, rerender } = render(
-			<DirectoryBrowser
+			<FileEntryList
 				{...baseProps}
 				entries={longEntries}
 				isSelected={() => false}
@@ -568,7 +564,7 @@ describe("DirectoryBrowser kit click contract", () => {
 		const classUnselected = buttonUnselected?.className ?? "";
 
 		rerender(
-			<DirectoryBrowser
+			<FileEntryList
 				{...baseProps}
 				entries={longEntries}
 				isSelected={() => true}
@@ -598,7 +594,7 @@ describe("DirectoryBrowser kit click contract", () => {
 	 */
 	it("does not introduce a height-affecting rule on selection", () => {
 		const { container, rerender } = render(
-			<DirectoryBrowser
+			<FileEntryList
 				{...baseProps}
 				isSelected={() => false}
 				onEntryClick={vi.fn()}
@@ -611,7 +607,7 @@ describe("DirectoryBrowser kit click contract", () => {
 		const unselectedClass = unselectedInner?.className ?? "";
 
 		rerender(
-			<DirectoryBrowser
+			<FileEntryList
 				{...baseProps}
 				isSelected={() => true}
 				onEntryClick={vi.fn()}
