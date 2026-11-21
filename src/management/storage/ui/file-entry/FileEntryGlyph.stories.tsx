@@ -117,7 +117,7 @@ const renderIcon = (args: Args) => (
 );
 
 const meta = {
-	title: "FileEntryList/FileEntryGlyph",
+	title: "Storage/FileEntry/FileEntryGlyph",
 	args: baseArgs,
 	argTypes: {
 		kind: {
