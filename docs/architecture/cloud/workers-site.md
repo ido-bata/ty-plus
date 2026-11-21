@@ -45,7 +45,7 @@ npm exec --no -- cf deploy --prebuilt --mode preview --dry-run
 bun run preview
 ```
 
-現行 `cf` RC の `cf build --mode` が Vite 8 のモード対応を誤判定する環境があるため、モード指定で Vite build を実行して Build Output v1 を生成し、`cf deploy --prebuilt` で Cloudflare CLI に渡す。生成先 `.cloudflare/output/v1/` と SSR Worker、static assets、6ページのprerenderを確認すること。dry-run はリモートへアップロードせず、公開成功の証拠ではない。既存の `apps/web/wrangler.jsonc` を `cf` の設定として扱わない。
+現行 `cf` RC の `cf build --mode` が Vite 8 のモード対応を誤判定する環境があるため、モード指定で Vite build を実行して Build Output v1 を生成し、`cf deploy --prebuilt` で Cloudflare CLI に渡す。生成先 `.cloudflare/output/v1/` と SSR Worker、static assets、6ページのprerenderを確認すること。dry-run はリモートへアップロードせず、公開成功の証拠ではない。旧 `apps/web/wrangler.jsonc` は cf v2 移行で削除済み。設定の正本は `cloudflare.config.ts` のみ。
 
 ## Deploy（認証・承認が必要）
 
