@@ -6,7 +6,7 @@ import { describe, expect, it, vi } from "vitest";
 import type {
 	FileEntryKind,
 	FileEntrySelectionMode,
-} from "@/management/storage/ui/FileEntryList";
+} from "@/management/storage/ui/file-entry/FileEntryList";
 import {
 	buildFileEntryMenu,
 	type FileEntryMenuActions,

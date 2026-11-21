@@ -11,7 +11,7 @@ import { presetIconDraftToPresetIcon } from "@/management/preset/icon-editor";
 import { AuthoringSegment } from "@/management/preset/tool-shell/archive-layout";
 import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
 import { glyphBoxFillClass } from "@/management/preset/workspace/glyph-classes";
-import { FileEntryList } from "@/management/storage/ui/FileEntryList";
+import { FileEntryList } from "@/management/storage/ui/file-entry/FileEntryList";
 import { css } from "@/styled-system/css";
 
 const escapeRegex = (value: string): string =>

@@ -4,7 +4,7 @@ import type {
 	FileEntryKind,
 	FileEntrySelectionMode,
 	FileEntryViewMode,
-} from "@/management/storage/ui/FileEntryList";
+} from "@/management/storage/ui/file-entry/FileEntryList";
 
 type FileEntryMenuSurface =
 	| "onboarding"

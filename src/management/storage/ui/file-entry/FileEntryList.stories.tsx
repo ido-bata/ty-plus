@@ -22,7 +22,7 @@
  * `I18nDecorator` (mounted by the preview) runs upgrades only;
  * the actual init must happen at this file's module top level.
  */
-import "../../../storybook/decorators/i18n-init-once";
+import "../../../../storybook/decorators/i18n-init-once";
 
 import type { Meta, StoryObj } from "@storybook/react";
 

@@ -135,27 +135,45 @@ describe("classifyBoundaryViolation", () => {
 		).toBeNull();
 	});
 
-	it("returns null for management->function via index barrel (K1 rule)", () => {
-		// K1: management may import from function only via index.ts barrels
-		const mgmtFile = "/src/management/dialog/routes.tsx";
+	it("returns null for management->function via the domain manifest (K1 rule)", () => {
+		// K1: management may import the function slice's public vocabulary —
+		// the widget catalog's manifest included.
+		const mgmtFile = "/src/management/widget/catalog.tsx";
 		expect(
-			classifyBoundaryViolation(mgmtFile, "@/function/preset/animation/Dialog"),
+			classifyBoundaryViolation(mgmtFile, "@/function/widget"),
+		).toBeNull();
+		expect(
+			classifyBoundaryViolation(mgmtFile, "@/function/widget/contract"),
 		).toBeNull();
 	});
 
 	it("flags management->function direct-to-implementation as violation (K1 rule)", () => {
-		// K1: management importing function implementation directly (non-index) is a violation
-		// Note: @/ aliases are treated as external by resolveModuleOwner, so we use a relative
-		// path that resolves to /src/function/...
+		// K1: management importing function implementation directly is a violation.
+		// The alias form resolves too — it used to be treated as an external
+		// package, which is how a management -> widget-leaf import survived.
 		const mgmtFile = "/src/management/dialog/routes.tsx";
+		const reason =
+			"management -> function (management may import only the function slice's public vocabulary)";
+		expect(
+			classifyBoundaryViolation(mgmtFile, "@/function/preset/animation/Dialog"),
+		).toBe(reason);
 		expect(
 			classifyBoundaryViolation(
 				mgmtFile,
 				"../../function/widget/utility/font-viewer/text-style-preset-dialog",
 			),
-		).toBe(
-			"management -> function (management may import only from function minimal index)",
-		);
+		).toBe(reason);
+	});
+
+	it("exempts tests from the management->function rule (K1 rule)", () => {
+		// A test may exercise an implementation it may not import in production.
+		const testFile = "/src/management/widget/workspace/TileContent.test.tsx";
+		expect(
+			classifyBoundaryViolation(
+				testFile,
+				"../../../function/widget/core/align/Component",
+			),
+		).toBeNull();
 	});
 
 	it('flags "shared -> management" violation', () => {

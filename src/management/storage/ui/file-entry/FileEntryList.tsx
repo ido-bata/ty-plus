@@ -11,9 +11,9 @@ import { FolderOpen, LayoutGrid, List as ListIcon } from "lucide-react";
 import type { JSX, ReactNode } from "react";
 import type { PresetIcon } from "@/management/preset/contract";
 import type { FileBrowserFileType } from "@/management/storage/file-browser-service";
-import { FileEntryCard } from "@/management/storage/ui/FileEntryCard";
-import { FileEntryGlyph } from "@/management/storage/ui/FileEntryGlyph";
-import { fileEntryMenuFileType } from "@/management/storage/ui/file-entry-menu";
+import { FileEntryCard } from "@/management/storage/ui/file-entry/FileEntryCard";
+import { FileEntryGlyph } from "@/management/storage/ui/file-entry/FileEntryGlyph";
+import { fileEntryMenuFileType } from "@/management/storage/ui/file-entry/file-entry-menu";
 import { css } from "@/styled-system/css";
 
 export type FileEntry = {

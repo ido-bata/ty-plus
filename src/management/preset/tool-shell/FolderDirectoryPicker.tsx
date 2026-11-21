@@ -10,7 +10,7 @@ import {
 	type FileEntry,
 	FileEntryList,
 	type FileEntrySelectionMode,
-} from "@/management/storage/ui/FileEntryList";
+} from "@/management/storage/ui/file-entry/FileEntryList";
 import { readSettings } from "@/management/workspace/persistence/store";
 import { css, cx } from "@/styled-system/css";
 

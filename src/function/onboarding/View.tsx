@@ -78,7 +78,7 @@ import {
 	readScopedDirectory,
 	resolveScopedParentDirectory,
 } from "@/management/storage/read/scoped-directory";
-import { FileEntryList } from "@/management/storage/ui/FileEntryList";
+import { FileEntryList } from "@/management/storage/ui/file-entry/FileEntryList";
 import type { WidgetRecord } from "@/management/widget/record/types";
 import type { Layout } from "@/management/workspace/layout/grid-document";
 import { publishShellMessage } from "@/management/workspace/messaging/publish-shell-message";
