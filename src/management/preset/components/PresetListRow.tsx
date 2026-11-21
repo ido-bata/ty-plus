@@ -7,7 +7,7 @@ import {
 	useIsPresetAssetMissing,
 	useIsPresetAssetUnverifiable,
 } from "@/management/preset/use-preset-asset-health";
-import { PresetGlyphById } from "@/management/preset/workspace/glyph";
+import { PresetGlyphById } from "@/management/preset/workspace/glyph-by-id";
 import { css } from "@/styled-system/css";
 
 export type PresetListRowProps = {
