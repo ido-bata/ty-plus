@@ -8,11 +8,11 @@ import { createFixtureCloudGateway } from "@/management/online/catalog/runtime-c
 import { createCloudSyncService } from "@/management/online/catalog/sync";
 import type { CloudGateway } from "@/management/online/contract";
 import { markGatewayNotBooted } from "@/management/online/runtime-gateway-health";
+import type { Preset } from "@/management/preset/contract";
 import {
 	parsePresetCatalogJsonTextStrict,
 	serializePresetCatalogJsonText,
 } from "@/management/preset/repository/json-text";
-import type { Preset } from "@/management/preset/contract";
 import { createSharedPresetRepository } from "@/management/preset/repository/shared";
 import { readPresetsJsonText, writePresetsJson } from "@/management/storage";
 import { catalogJsonMayContainLegacyIdPrefixes } from "@/management/storage/ids";

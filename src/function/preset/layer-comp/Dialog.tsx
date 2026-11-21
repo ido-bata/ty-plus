@@ -16,12 +16,12 @@ import {
 import { hostSafeFileName } from "@/management/preset/authoring/host-safe-file-name";
 import { ArchiveDetailsSection } from "@/management/preset/catalog-add/ArchiveDetailsSection";
 import { parseRootPathsFromSettingsJson } from "@/management/preset/catalog-add/parse-root-paths";
-import { PresetIconEditor } from "@/management/preset/icon/Editor";
 import type { Preset } from "@/management/preset/contract";
 import {
 	createPresetIconDraft,
 	presetIconDraftToPresetIcon,
 } from "@/management/preset/icon/draft";
+import { PresetIconEditor } from "@/management/preset/icon/Editor";
 import { upsertLocalPreset } from "@/management/preset/use-cases";
 import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
 import { glyphBoxFillClass } from "@/management/preset/workspace/glyph-classes";

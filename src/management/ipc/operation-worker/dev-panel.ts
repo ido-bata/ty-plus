@@ -209,9 +209,7 @@ const installOperationWorkerDevPanelInternal = (
 			finalResponse: false,
 			stdoutEof: false,
 		};
-		let runtime:
-			| import("./runtime").OperationWorkerRuntime
-			| undefined;
+		let runtime: import("./runtime").OperationWorkerRuntime | undefined;
 		const onChildCreated = (
 			child: { readonly pid?: number },
 			binaryPath: string,

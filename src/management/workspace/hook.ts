@@ -53,6 +53,12 @@ import type { Preset } from "@/management/preset/contract";
 import { askHostDeleteConfirm } from "@/management/preset/delete-confirm";
 import type { PresetDialogRequest } from "@/management/preset/dialog-request";
 import {
+	parseGroupFromText,
+	removeGroupEntry,
+	removePresetFromGroupEntry,
+	upsertGroupEntry,
+} from "@/management/preset/group/catalog";
+import {
 	dispatchGroupWorkspaceRequest,
 	GROUP_WORKSPACE_EVENT,
 	type GroupWorkspaceRequest,
@@ -61,12 +67,6 @@ import {
 	releaseDropPlacementFromState,
 	releaseGroupPreset,
 } from "@/management/preset/group/release";
-import {
-	parseGroupFromText,
-	removeGroupEntry,
-	removePresetFromGroupEntry,
-	upsertGroupEntry,
-} from "@/management/preset/group/catalog";
 import { writePresetToolHandoff } from "@/management/preset/tool-handoff-file";
 import { PRESET_TOOL_OPEN_BUS_CHANNEL } from "@/management/preset/tool-open-channel";
 import {

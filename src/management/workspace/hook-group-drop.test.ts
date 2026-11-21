@@ -35,10 +35,10 @@ const constantsSource = fs.readFileSync(
 describe("useWorkspaceRuntime hook (group drop wiring — Issue #86)", () => {
 	it("imports the extracted releaseGroupPreset helper from preset/group/release", () => {
 		expect(hookSource).toMatch(
-			/import\s*\{[^}]*\breleaseGroupPreset\b[^}]*\}\s*from\s*["']@\/management\/preset\/group\/group-release["']/,
+			/import\s*\{[^}]*\breleaseGroupPreset\b[^}]*\}\s*from\s*["']@\/management\/preset\/group\/release["']/,
 		);
 		expect(hookSource).toMatch(
-			/import\s*\{[^}]*\breleaseDropPlacementFromState\b[^}]*\}\s*from\s*["']@\/management\/preset\/group\/group-release["']/,
+			/import\s*\{[^}]*\breleaseDropPlacementFromState\b[^}]*\}\s*from\s*["']@\/management\/preset\/group\/release["']/,
 		);
 	});
 

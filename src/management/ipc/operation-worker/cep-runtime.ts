@@ -1,8 +1,5 @@
 import { createLogger } from "@/management/debug/logger";
-import type {
-	WorkerChild,
-	WorkerSpawnOptions,
-} from "./runner";
+import type { WorkerChild, WorkerSpawnOptions } from "./runner";
 import type {
 	OperationWorkerRuntime,
 	WorkerFileHandle,
