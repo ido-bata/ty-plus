@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import type { Preset } from "@/management/preset/contract";
-import { CatalogPresetListRow } from "./CatalogPresetListRow";
+import { PresetListRow } from "./PresetListRow";
 
 const makePreset = (overrides: Partial<Preset> = {}): Preset => ({
 	id: "preset-glow",
@@ -21,7 +21,7 @@ const baseArgs: Args = {
 };
 
 const meta = {
-	title: "DirectoryBrowser/CatalogPresetListRow",
+	title: "Preset/Components/PresetListRow",
 	args: baseArgs,
 	render: (args: Args) => (
 		<ul
@@ -32,7 +32,7 @@ const meta = {
 				minWidth: 360,
 			}}
 		>
-			<CatalogPresetListRow
+			<PresetListRow
 				preset={args.preset}
 				presetGlyphSiblingProps={{}}
 				activateCatalogPresetRow={noop}

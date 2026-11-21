@@ -1,21 +1,21 @@
 import { Button, cx, Icon, IconButton } from "@ty-plus/ui";
 import { Play } from "lucide-react";
 import type { JSX } from "react";
-import type { IconTileAspect } from "@/management/preset";
-import {
-	glyphBoxFlushClass,
-	glyphEmojiProminentClass,
-	iconTileMediaClass,
-	PresetGlyphById,
-} from "@/management/preset";
+import type { IconTileAspect } from "@/management/preset/catalog-browser/layout";
+import { iconTileMediaClass } from "@/management/preset/catalog-browser/layout";
 import type { Preset } from "@/management/preset/contract";
 import {
 	useIsPresetAssetMissing,
 	useIsPresetAssetUnverifiable,
 } from "@/management/preset/use-preset-asset-health";
+import { PresetGlyphById } from "@/management/preset/workspace/glyph";
+import {
+	glyphBoxFlushClass,
+	glyphEmojiProminentClass,
+} from "@/management/preset/workspace/glyph-classes";
 import { css } from "@/styled-system/css";
 
-export type CatalogPresetIconTileProps = {
+export type PresetIconTileProps = {
 	preset: Preset;
 	iconTileAspect: IconTileAspect;
 	presetGlyphSiblingProps: Record<string, unknown>;
@@ -28,7 +28,7 @@ export type CatalogPresetIconTileProps = {
 	actionsRunBlockedUnverifiableLabel: string;
 };
 
-export function CatalogPresetIconTile({
+export function PresetIconTile({
 	preset: p,
 	iconTileAspect,
 	presetGlyphSiblingProps,
@@ -37,7 +37,7 @@ export function CatalogPresetIconTile({
 	actionsRunLabel,
 	actionsRunBlockedMissingLabel,
 	actionsRunBlockedUnverifiableLabel,
-}: CatalogPresetIconTileProps): JSX.Element {
+}: PresetIconTileProps): JSX.Element {
 	// Issue #130: same subscription pattern as the list row — only
 	// `missing` disables the run affordance. `unverifiable` keeps it
 	// clickable and surfaces a different title so the user knows the

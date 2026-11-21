@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { expect } from "storybook/test";
 import type { Preset } from "@/management/preset/contract";
 import { css } from "@/styled-system/css";
-import { CatalogPresetIconTile } from "./CatalogPresetIconTile";
+import { PresetIconTile } from "./PresetIconTile";
 
 const makePreset = (overrides: Partial<Preset> = {}): Preset => ({
 	id: "preset-glow",
@@ -25,7 +25,7 @@ const baseArgs: Args = {
 };
 
 const meta = {
-	title: "DirectoryBrowser/CatalogPresetIconTile",
+	title: "Preset/Components/PresetIconTile",
 	args: baseArgs,
 	argTypes: {
 		iconTileAspect: {
@@ -35,7 +35,7 @@ const meta = {
 	},
 	render: (args: Args) => (
 		<div className={css({ width: "36", padding: "2" })}>
-			<CatalogPresetIconTile
+			<PresetIconTile
 				preset={args.preset}
 				iconTileAspect={args.iconTileAspect}
 				presetGlyphSiblingProps={{}}

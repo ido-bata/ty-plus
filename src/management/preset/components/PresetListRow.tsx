@@ -1,16 +1,16 @@
 import { Button, Icon, IconButton, isIMEComposing } from "@ty-plus/ui";
 import { Play } from "lucide-react";
 import type { JSX } from "react";
-import { PresetGlyphById } from "@/management/preset";
+import { basenamePath } from "@/management/preset/catalog-browser/preset-browser-helpers";
 import type { Preset } from "@/management/preset/contract";
 import {
 	useIsPresetAssetMissing,
 	useIsPresetAssetUnverifiable,
 } from "@/management/preset/use-preset-asset-health";
+import { PresetGlyphById } from "@/management/preset/workspace/glyph";
 import { css } from "@/styled-system/css";
-import { basenamePath } from "./lib/file-entry";
 
-export type CatalogPresetListRowProps = {
+export type PresetListRowProps = {
 	preset: Preset;
 	presetGlyphSiblingProps: Record<string, unknown>;
 	activateCatalogPresetRow: (filePath: string) => void;
@@ -22,7 +22,7 @@ export type CatalogPresetListRowProps = {
 	actionsRunBlockedUnverifiableLabel: string;
 };
 
-export function CatalogPresetListRow({
+export function PresetListRow({
 	preset: p,
 	presetGlyphSiblingProps,
 	activateCatalogPresetRow,
@@ -30,7 +30,7 @@ export function CatalogPresetListRow({
 	actionsRunLabel,
 	actionsRunBlockedMissingLabel,
 	actionsRunBlockedUnverifiableLabel,
-}: CatalogPresetListRowProps): JSX.Element {
+}: PresetListRowProps): JSX.Element {
 	// Issue #130: subscribe to the boot-time asset-health store so this
 	// row re-renders when the scan completes. Only `missing` disables
 	// the run affordance; `unverifiable` keeps it enabled but flips the
