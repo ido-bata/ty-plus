@@ -36,3 +36,43 @@ export const glyphEmojiProminentClass = css({
 		fontSize: "shell-text-sm",
 	},
 });
+
+export const DEFAULT_EMOJI_CLASS = "";
+
+export const frameBase = css({
+	display: "flex",
+	flexShrink: 0,
+	alignItems: "center",
+	justifyContent: "center",
+	overflow: "hidden",
+	borderRadius: "shell-sm",
+	borderWidth: "1px",
+	borderStyle: "solid",
+	borderColor: "border.default",
+	backgroundColor: "surface.widget",
+	minHeight: "0",
+	minWidth: "0",
+	containerType: "size",
+	"& [data-ws-preset-icon='image']": {
+		display: "flex",
+		height: "full",
+		minHeight: "0",
+		width: "full",
+		minWidth: "0",
+		overflow: "hidden",
+	},
+	"& [data-ws-preset-icon='image'] img": {
+		height: "full",
+		width: "full",
+		minHeight: "0",
+		minWidth: "0",
+		objectFit: "cover",
+		objectPosition: "center",
+	},
+});
+
+export const framedTextClass = css({
+	"& [data-ws-preset-text]:not([data-ws-preset-text-fit])": {
+		fontSize: "2xs",
+	},
+});

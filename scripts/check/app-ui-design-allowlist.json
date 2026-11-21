@@ -260,7 +260,7 @@
 	},
 	{
 		"file": "src/function/widget/utility/quick-actions/palette-search.tsx",
-		"line": 56,
+		"line": 57,
 		"rule": "raw-control",
 		"message": "raw <input> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
@@ -960,10 +960,17 @@
 	},
 	{
 		"file": "src/management/preset/workspace/glyph.tsx",
-		"line": 498,
+		"line": 212,
 		"rule": "inline-style",
 		"message": "inline style sets fontSize — appearance must come from css() and the token system",
 		"reason": "inline style sets appearance; move it into css() and the token system"
+	},
+	{
+		"file": "src/management/preset/workspace/PresetTileButton.tsx",
+		"line": 107,
+		"rule": "ui-override",
+		"message": "<Button> is a shared @ty-plus/ui component; borderWidth, backgroundColor, borderRadius must come from its variant/size/tone props, not className",
+		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
 	},
 	{
 		"file": "src/management/setting/dialog/components/ColorTokenEditor.tsx",
@@ -1479,13 +1486,6 @@
 	{
 		"file": "src/management/workspace/surface/Grid.tsx",
 		"line": 9,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/workspace/surface/GridTile.tsx",
-		"line": 10,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"

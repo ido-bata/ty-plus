@@ -196,3 +196,34 @@ review-309 で「プリセットタイルが同一の低コントラストカー
 - **Hero の DOM 順序**: グリッド子要素を copy / figure / actions の3要素に分割。DOM 順は全 viewport で copy → image → actions（モバイルは CTA が画像の後）。md+ では figure が左右2行を span し、copy/actions が左 rail を構成する。前回報告した「コピー→画像→CTA」と実装を一致させた。
 - **セクション構図の差別化**: Workspace 帯は説明 rail(span4) → 画像(span8) の読み順へ反転。Features 帯は左 rail を廃し、全幅ヘッダ + キャプション付き2ダイアログ横並びへ変更（各 surface に名前を付与）。Resources の3列グリッドは維持。
 - **Features 行**: flagship を「Preset tiles from your catalog」（preset-tiles.png, wide）へ変更。`mediaSpan: "narrow"`（text span7 / media span5）を追加し行毎の密度を変化。featureRow / orderFirst のブレークポイントを span 系と同じ `md` に揃え、md–lg 帯での潜在的な暗黙カラム生成を解消。
+
+## Revision (#328): verified state-transition material, role-separated crops
+
+#322 / PR #326 で hover→info widget・Shift+click 選択・プレーンクリック実行（Effect Parade 差分検証済み）の実機キャプチャが確立された。本 Revision はその検証済み成果のみを素材化し、機能ごとに異なる情報役割を持つ領域cropへ分解する。
+
+- **素材の役割分離**: `preset-grid.png`（名前付きプリセットタイル行、Hero/flagship）、`preset-selected.png`（選択タイル + info widget の関係、専用「Hover, select, run」セクション/行）、`workspace-widgets.png`（utility widget 帯）、`presets-dialog.png`（Local Presets 実ダイアログ）。同一ワークスペース画像の使い回しを廃止。
+- **正直な検証範囲の明記**: コピーと figcaption で「hover で info widget に詳細、Shift+click で選択、プレーンクリックで実行（実プロジェクトで検証済み）」を記述。タイルアイコンは撮影 fixture が設定した説明用グリフであり、実 `.ffx` の動作を可視化したものではない旨を明記。実行の視覚的 Before/After は未取得のため捏造しない。
+- **未解決の分離**: Add Widget ダイアログは CEP ホストが新規 modeless extension を spawn しない環境ブロッカー（#322 記録済み）のため既存検証済み `add-widget.png` を継続使用。LP 収束を妨げない。
+
+## Revision (#331): product UI components rendered on the web
+
+スクリーンショット依存を部分的に脱却し、モノレポの実装をWebで直接再利用する第一歩。
+
+- **再利用経路**: `@ty-plus/product` エイリアス（vite + tsconfig paths）で `src/` 配下の製品モジュールを Web から import 可能にした。現時点の採用対象は `CanvasEasingIcon`（canvas 描画のみ・ホスト非依存）のみ。Tile / glyph / workspace grid / dialogs は storage・widget runtime・i18n・CEP transport へ依存するため、ホストアダプタ分離が済むまでスクリーンショットを併用する（後続 Issue で分解予定）。
+- **Web デモ**: `components/PresetStage.tsx` — 製品の `CanvasEasingIcon` で描くプリセットタイル群 + 選択状態（ローカル React state）+ info readout。`lib/demo-presets.ts` の easing 曲線は fixture 定義の説明用グリフであり、実 `.ffx` 解析結果ではないことをコピーで明記。AE 実行は Web では偽装しない。
+- **Hero**: スクリーンショットを `PresetRail`（実イージングアイコンの staggered 構成）へ置換。DOM 順 copy → visual → actions を維持。
+- **Interaction セクション**: `preset-selected.png` を廃し、操作可能な `PresetStage` へ置換。実機検証済みの状態遷移（hover/Shift+click/実行）はコピーで説明し、Web 側は選択状態のみを実装。
+- **Features**: `featureRow` テンプレートの反復をやめ、flagship を全幅 `PresetStage` バンド、以降は media 位置・span・密度の異なる非対称行 + text-only 行へ再構成。
+- **スクリーンショットの残存用途**: workspace 全体・実ダイアログ・選択状態の実機関係性は、Web 非対応コンポーネントの証拠として引き続き使用。
+
+## Revision (#333): real preset tile layer shared with the product
+
+`PresetStage` の Web 専用再実装をやめ、製品の preset tile レンダラを直接利用する。
+
+- **モジュール分割**: `glyph.tsx` から catalog id 解決（`getPreset` → storage/CEP 依存）を行う `PresetGlyphById` を `glyph-by-id.tsx` へ分離。`glyph.tsx` は `PresetCatalogGlyphHost` / `FramedPresetGlyph` / `WorkspacePresetGlyph` のみを持ち、ホスト非依存になった。`preset/index.ts` と `ListDialog.tsx` の import を更新し、`ListDialog.issue145.test.tsx` の mock 対象も追従。
+- **Web 解決経路**: vite に `@/…` → `src/` の catch-all alias（`@/styled-system` より後段）を追加し、製品モジュール内部の `@/management/…` import を解決。web panda.config の include に `../../src/**` を追加し、製品側 `css()` クラスを web バンドルへ生成。vitest.config にも `@ty-plus/product` alias を追加。
+- **再利用した実装**: `Tile`（`data-preset-id` + hover 通知）→ `PresetCatalogGlyphHost` → `WorkspacePresetGlyph` → `resolveWorkspaceGlyphIconVisual` → `CanvasEasingIcon`。デモ preset は実 `Preset` contract オブジェクトで、icon は製品の `presetIconCanvas` で構築（canvas 曲線は fixture 定義の説明用グリフと明記）。
+- **状態モデル**: 選択（ローカル state）を初期値ありで表示し、hover は製品と同じ precedence（selection → hover fallback）で info readout に反映。AE 実行は Web では偽装しない。
+- **契約テスト**: `PresetStage.contract.test.tsx` が製品 `Tile` の SSR 出力に `data-preset-id` / `ws-preset-icon--canvas` / `<canvas>` が含まれることを assert — Web 側の模倣実装への退行を検出する。
+- **修正**: Hero の `PresetRail` で使っていた `translateY` stagger が figcaption と重なっていた問題を、transform 撤去で解消（DOM 計測で overlap=false を確認）。
+- **残課題**: Info Widget 本体・Workspace Grid・ダイアログの再利用は widget runtime / workspace state 依存のため #333 の後続段階。スクリーンショットはそれらの実機証拠として継続使用。
