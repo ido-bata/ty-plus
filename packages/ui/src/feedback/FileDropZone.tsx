@@ -1,4 +1,4 @@
-import { Icon } from "@ty-plus/ui";
+import { Icon } from "@ty-plus/ui/icons/Icon";
 import { cx } from "@ty-plus/ui/util/cx";
 import { Upload } from "lucide-react";
 import { type JSX, useCallback, useRef, useState } from "react";

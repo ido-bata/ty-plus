@@ -14,7 +14,16 @@ type ButtonVariant =
 	| "secondary"
 	| "outline"
 	| "ghost"
-	| "danger";
+	| "danger"
+	/**
+	 * No chrome of its own: transparent surface, no border, inherited text
+	 * colour and weight. Use it when the button IS the whole surface of a
+	 * composite (a list row, a tile) and the surrounding container owns the
+	 * border, fill, and hover treatment. It keeps the shared focus ring and
+	 * the shared size scale, so the control still behaves like every other
+	 * button in the app.
+	 */
+	| "bare";
 type ButtonSize = "sm" | "md" | "lg";
 
 type ButtonOwnProps = {
@@ -152,6 +161,18 @@ const variants: Record<ButtonVariant, string> = {
 			borderColor: "interactive.focus",
 			boxShadow: "inset 0 0 0 1px var(--color-interactive-focus)",
 			outline: "none",
+		},
+	}),
+	bare: css({
+		backgroundColor: "transparent",
+		borderWidth: "0",
+		color: "text.primary",
+		fontWeight: "normal",
+		_hover: { backgroundColor: "transparent" },
+		_active: { backgroundColor: "transparent" },
+		_focusVisible: {
+			boxShadow: "0 0 0 2px var(--color-interactive-focus)",
+			outlineOffset: "0",
 		},
 	}),
 	danger: css({
