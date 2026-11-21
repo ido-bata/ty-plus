@@ -38,8 +38,8 @@ export const WithCallback: Story = {
 
 // Issue #146: selected-state capture. The component is controlled, so a
 // stateful render wrapper flips `pressed` on a real-pointer click; the
-// post-click pressed styling (strikethrough + dimmed) is what the
-// screenshot pipeline captures.
+// post-click pressed state (`aria-pressed` + the shared `ghost` variant)
+// is what the screenshot pipeline captures.
 export const ToggleOnClick: Story = {
 	render: (args: Args) => {
 		const [pressed, setPressed] = useState(false);
@@ -57,8 +57,6 @@ export const ToggleOnClick: Story = {
 		const { userEvent } = await import("vitest/browser");
 		await userEvent.click(button);
 		await new Promise((resolve) => setTimeout(resolve, 300));
-		await expect(getComputedStyle(button).textDecorationLine).toContain(
-			"line-through",
-		);
+		await expect(button.getAttribute("aria-pressed")).toBe("true");
 	},
 };

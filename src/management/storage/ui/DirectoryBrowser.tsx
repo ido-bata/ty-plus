@@ -1,16 +1,20 @@
-import { cx } from "@ty-plus/ui/util/cx";
-import { isIMEComposing } from "@ty-plus/ui/util/keyboard";
+import {
+	Button,
+	Checkbox,
+	cx,
+	Icon,
+	isIMEComposing,
+	ScrollArea,
+} from "@ty-plus/ui";
 import { FolderOpen } from "lucide-react";
 import type { JSX, ReactNode } from "react";
 import type { PresetIcon } from "@/management/preset/contract";
 import type { FileBrowserFileType } from "@/management/storage/file-browser-service";
+import { DirectoryBrowserFooter } from "@/management/storage/ui/DirectoryBrowserFooter";
 import { DirectoryBrowserIconCard } from "@/management/storage/ui/DirectoryBrowserIconCard";
 import { directoryBrowserMenuFileType } from "@/management/storage/ui/DirectoryBrowserMenu";
 import { EntryIcon } from "@/management/storage/ui/DirectoryBrowserShell.entry-icon";
-import {
-	type DirectoryBrowserViewMode,
-	DirectoryBrowserViewModeToggle,
-} from "@/management/storage/ui/DirectoryBrowserViewModeToggle";
+import type { DirectoryBrowserViewMode } from "@/management/storage/ui/DirectoryBrowserViewModeToggle";
 import { css } from "@/styled-system/css";
 
 export type DirectoryBrowserEntry = {
@@ -138,29 +142,34 @@ type DirectoryBrowserProps = {
 	footerExtra?: ReactNode;
 };
 
+/**
+ * The row body is a shared `Button` in its `bare` variant: no chrome of its
+ * own (no border, no fill, no bold text) - the row wrapper owns the
+ * selected / active surfaces and the hover fill, exactly like the icon card
+ * and the "up" tile own theirs.
+ *
+ * Only layout is left for this class.  The shared variant keeps the shared
+ * focus ring and the shared size scale.
+ */
 const shellRowBtn = css({
-	display: "flex",
-	width: "full",
 	minWidth: 0,
-	alignItems: "center",
-	justifyContent: "space-between",
-	gap: "2",
-	paddingInline: "2",
-	paddingBlock: "1.5",
 	textAlign: "left",
-	fontSize: "shell-text-sm",
-	color: "text.primary",
-	transitionProperty: "colors",
-	_hover: {
-		backgroundColor:
-			"color-mix(in_oklab,var(--color-interactive-hover)_38%,transparent)",
-	},
 });
 
 const shellRowWrap = css({
 	borderBottomWidth: "1px",
 	borderBottomStyle: "solid",
 	borderBottomColor: "border.default",
+	/**
+	 * Hover fill of the row.  It lives on the outermost row element, so it
+	 * paints *under* the selected / active surface of `rowInnerClass`
+	 * instead of replacing it - a selected row therefore keeps its
+	 * selection fill and merely lightens on hover.
+	 */
+	_hover: {
+		backgroundColor:
+			"color-mix(in oklab,var(--color-interactive-hover)_38%,transparent)",
+	},
 	"&:last-child": { borderBottomWidth: 0 },
 });
 
@@ -191,15 +200,12 @@ const rowInnerActiveClass = css({
  * rather than a border so it does not consume layout space and the
  * row height stays identical to an unselected row.
  *
- * The background fill is a 25% mix of `interactive.hover` — slightly
- * darker than the 38% mix used by `shellRowBtn._hover`.  The button
- * paints its hover fill on top of this inner div, so if the inner
- * were at the full `interactive.hover` token (8% white) the row would
- * *darken* on hover instead of lightening (review #148 inline).  At
- * 25% (~2% white) the inner sits just under the button hover mix
- * (~3% white), so a selected row still receives the standard
- * lightening-on-hover feedback.  Selection itself remains clearly
- * distinguished from an unselected hover by the left accent.
+ * The background fill is a 25% mix of `interactive.hover` and it sits on
+ * the inner div, *above* the row's 38% hover mix (`shellRowWrap._hover`).
+ * Because the fill is translucent, a selected row still lightens on hover
+ * instead of darkening (review #148 inline) — the hover mix shows through
+ * the 25% fill.  Selection itself remains clearly distinguished from an
+ * unselected hover by the left accent.
  */
 const rowInnerSelectedClass = css({
 	backgroundColor:
@@ -246,48 +252,16 @@ const rowEntryTextSelectedClass = css({
 	color: "text.primary",
 });
 
-const checkboxLabelClass = css({
+/**
+ * Wrapper around the row's selection checkbox.  The control itself is the
+ * shared `Checkbox`; the wrapper only reserves the gutter so the rows
+ * stay aligned.
+ */
+const checkboxWrapClass = css({
 	display: "flex",
 	flexShrink: 0,
 	alignItems: "center",
 	paddingInline: "1",
-});
-const checkboxClass = css({
-	height: "4",
-	width: "4",
-	borderRadius: "sm",
-	borderWidth: "1px",
-	borderStyle: "solid",
-	borderColor: "border.default",
-	backgroundColor: "surface.widget",
-});
-
-const summaryClass = css({
-	fontSize: "shell-text-sm",
-	color: "text.muted",
-	truncate: true,
-	whiteSpace: "nowrap",
-});
-
-const footerClass = css({
-	display: "flex",
-	alignItems: "center",
-	gap: "2",
-	borderTopWidth: "1px",
-	borderTopStyle: "solid",
-	borderTopColor: "border.default",
-	backgroundColor: "surface.widget",
-	paddingBlock: "0",
-	paddingInline: "1",
-	flexShrink: 0,
-});
-
-const footerSummaryClass = css({
-	display: "flex",
-	alignItems: "center",
-	gap: "3",
-	fontSize: "shell-text-sm",
-	color: "text.muted",
 });
 
 const iconBodyClass = css({
@@ -303,16 +277,18 @@ const iconBodyClass = css({
 	backgroundColor: "surface.dialog",
 	height: "full",
 });
-const iconScrollClass = css({
+/**
+ * Scroll container for the icon grid.  The scrolling itself is delegated
+ * to the shared `ScrollArea`; this class only keeps the grid cell
+ * layout.
+ */
+const iconGridClass = css({
 	display: "grid",
 	gridAutoRows: "min",
 	alignContent: "start",
 	alignItems: "start",
 	gap: "1",
 	padding: "1.5",
-	overflowY: "auto",
-	flex: "1",
-	minHeight: 0,
 });
 const iconLoadingClass = css({
 	gridColumn: "1 / -1",
@@ -328,10 +304,20 @@ const stickyHeaderClass = css({
 	zIndex: 10,
 });
 
-const upButtonClass = css({
+/**
+ * The "up" tile is a shared `Button` as well.  It keeps the tile look
+ * (bordered column: media band above the label); the shared button's own
+ * border / radius / hover values are the ones the tile wants, so only the
+ * box layout is overridden here.
+ */
+/**
+ * The "up" tile: a bordered container that owns the tile surface and the
+ * hover fill, with a shared `bare` `Button` inside it — the same composite
+ * shape as the icon card.
+ */
+const upTileClass = css({
 	position: "relative",
 	display: "flex",
-	height: "auto",
 	flexDirection: "column",
 	alignItems: "stretch",
 	alignSelf: "stretch",
@@ -345,6 +331,19 @@ const upButtonClass = css({
 	_hover: { backgroundColor: "interactive.hover" },
 	minWidth: 0,
 	maxWidth: "full",
+});
+
+/**
+ * The tile body.  `height` and `paddingInline` are the two box metrics the
+ * shared size scale would otherwise impose; a tile is sized by its media
+ * band, so it cannot use the fixed control height.
+ */
+const upTileButtonClass = css({
+	height: "auto",
+	paddingInline: "0",
+	flexDirection: "column",
+	alignItems: "stretch",
+	gap: "0",
 });
 const mediaBandBaseClass = css({
 	display: "flex",
@@ -407,8 +406,11 @@ const listBodyClass = css({
 	overflow: "hidden",
 	height: "full",
 });
-const listScrollClass = css({
-	overflowY: "auto",
+/**
+ * Shared scroll container sizing for both view modes.  The scrolling
+ * itself is delegated to the shared `ScrollArea`.
+ */
+const scrollAreaClass = css({
 	flex: "1",
 	minHeight: 0,
 });
@@ -547,8 +549,10 @@ export const DirectoryBrowser = ({
 					data-row-active={active ? "true" : "false"}
 					data-row-selected={selected ? "true" : "false"}
 				>
-					<button
+					<Button
 						type="button"
+						variant="bare"
+						uiSize="sm"
 						data-directory-browser-entry=""
 						data-entry-kind={entry.isDirectory ? "dir" : "file"}
 						data-entry-path={entry.path}
@@ -583,36 +587,34 @@ export const DirectoryBrowser = ({
 								{entry.name}
 							</span>
 						</span>
-					</button>
+					</Button>
 					{showFileCheckbox(entry) ? (
-						<label className={checkboxLabelClass}>
-							<input
-								type="checkbox"
+						<span className={checkboxWrapClass}>
+							<Checkbox
+								uiSize="md"
 								data-directory-browser-entry-select=""
 								data-entry-path={entry.path}
 								data-multi-select="true"
 								data-multi-select-path={entry.path}
-								className={checkboxClass}
 								checked={isSelected(entry.path, "file")}
 								onChange={() => onToggleSelected(entry.path, "file")}
 								aria-label={`select file ${entry.name}`}
 							/>
-						</label>
+						</span>
 					) : null}
 					{showFolderCheckbox(entry) ? (
-						<label className={checkboxLabelClass}>
-							<input
-								type="checkbox"
+						<span className={checkboxWrapClass}>
+							<Checkbox
+								uiSize="md"
 								data-directory-browser-entry-select=""
 								data-entry-path={entry.path}
 								data-multi-select="true"
 								data-multi-select-path={entry.path}
-								className={checkboxClass}
 								checked={isSelected(entry.path, "folder")}
 								onChange={() => onToggleSelected(entry.path, "folder")}
 								aria-label={`select folder ${entry.name}`}
 							/>
-						</label>
+						</span>
 					) : null}
 					{renderRow?.(entry).trailing ?? null}
 				</div>
@@ -627,46 +629,17 @@ export const DirectoryBrowser = ({
 			onToggleSelected(entry.path, kindOfEntry(entry));
 		};
 
-	// Render summary section
-	const renderSummary = () => {
-		if (!showSelectedSummary || !selectedSummary) return null;
-		if (typeof selectedSummary === "string") {
-			return (
-				<span
-					className={cx(summaryClass, "ty-shell-directory-summary")}
-					title={selectedSummary}
-				>
-					{selectedSummary}
-				</span>
-			);
-		}
-		const parts: string[] = [];
-		if (selectedSummary.files > 0) {
-			parts.push(
-				`${selectedSummary.files} file${selectedSummary.files !== 1 ? "s" : ""}`,
-			);
-		}
-		if (selectedSummary.folders > 0) {
-			parts.push(
-				`${selectedSummary.folders} folder${selectedSummary.folders !== 1 ? "s" : ""}`,
-			);
-		}
-		return <span>{parts.join(" ")} selected</span>;
-	};
-
+	// The footer (summary readout + view-mode toggle) is a shared kit
+	// component so the kit owns that surface in exactly one place.
 	const footer = (
-		<div className={footerClass}>
-			{showSelectedSummary && selectedSummary ? (
-				<div className={footerSummaryClass}>{renderSummary()}</div>
-			) : null}
-			{footerExtra}
-			{showViewToggle ? (
-				<DirectoryBrowserViewModeToggle
-					viewMode={viewMode}
-					onChange={onViewModeChange}
-				/>
-			) : null}
-		</div>
+		<DirectoryBrowserFooter
+			viewMode={viewMode}
+			onViewModeChange={onViewModeChange}
+			showSelectedSummary={showSelectedSummary}
+			selectedSummary={selectedSummary}
+			showViewToggle={showViewToggle}
+			footerExtra={footerExtra}
+		/>
 	);
 
 	// Icon view mode
@@ -676,56 +649,70 @@ export const DirectoryBrowser = ({
 				data-directory-browser-body=""
 				className={cx(iconBodyClass, "ty-shell-directory-browser")}
 			>
-				<div
-					className={cx(iconScrollClass, "ty-shell-directory-scroll grid")}
-					style={{
-						gridTemplateColumns: `repeat(auto-fill, minmax(${cellBaseRem * scale}rem, 1fr))`,
-					}}
+				<ScrollArea
+					className={cx(scrollAreaClass, "ty-shell-directory-scroll")}
 				>
-					{loading ? (
-						<div className={iconLoadingClass}>{loadingLabel}</div>
-					) : (
-						<>
-							{listHeader ? (
-								<div className={stickyHeaderClass}>{listHeader}</div>
-							) : null}
-							{canGoUp ? (
-								<button
-									type="button"
-									className={upButtonClass}
-									onClick={onGoUp}
-								>
-									<div className={mediaBandClass(aspect)}>
-										<div className={upIconInnerClass}>
-											<FolderOpen className={upIconSvgClass} aria-hidden />
-										</div>
+					<div
+						className={cx(iconGridClass, "grid")}
+						data-directory-browser-grid=""
+						style={{
+							gridTemplateColumns: `repeat(auto-fill, minmax(${cellBaseRem * scale}rem, 1fr))`,
+						}}
+					>
+						{loading ? (
+							<div className={iconLoadingClass}>{loadingLabel}</div>
+						) : (
+							<>
+								{listHeader ? (
+									<div className={stickyHeaderClass}>{listHeader}</div>
+								) : null}
+								{canGoUp ? (
+									<div className={upTileClass}>
+										<Button
+											type="button"
+											variant="bare"
+											uiSize="sm"
+											className={upTileButtonClass}
+											onClick={onGoUp}
+										>
+											<div className={mediaBandClass(aspect)}>
+												<div className={upIconInnerClass}>
+													<Icon
+														icon={FolderOpen}
+														size={64}
+														className={upIconSvgClass}
+														aria-hidden
+													/>
+												</div>
+											</div>
+											<span className={upLabelClass}>{upLabel}</span>
+										</Button>
 									</div>
-									<span className={upLabelClass}>{upLabel}</span>
-								</button>
-							) : null}
-							{displayedEntries.length === 0 ? (
-								<div className={emptyLabelClass}>{emptyLabel}</div>
-							) : (
-								displayedEntries.map((entry) => (
-									<DirectoryBrowserIconCard
-										key={entry.path}
-										entry={entry}
-										isSelected={isSelected(entry.path, kindOfEntry(entry))}
-										onClick={() => handleRowClick(entry)}
-										onDoubleClick={() => handleRowActivate(entry)}
-										onSelect={
-											onEntrySelect ? () => onEntrySelect(entry) : undefined
-										}
-										onToggle={handleToggle(entry)}
-										showCheckbox={showCheckbox(entry)}
-										aspect={aspect}
-										renderTile={renderTile}
-									/>
-								))
-							)}
-						</>
-					)}
-				</div>
+								) : null}
+								{displayedEntries.length === 0 ? (
+									<div className={emptyLabelClass}>{emptyLabel}</div>
+								) : (
+									displayedEntries.map((entry) => (
+										<DirectoryBrowserIconCard
+											key={entry.path}
+											entry={entry}
+											isSelected={isSelected(entry.path, kindOfEntry(entry))}
+											onClick={() => handleRowClick(entry)}
+											onDoubleClick={() => handleRowActivate(entry)}
+											onSelect={
+												onEntrySelect ? () => onEntrySelect(entry) : undefined
+											}
+											onToggle={handleToggle(entry)}
+											showCheckbox={showCheckbox(entry)}
+											aspect={aspect}
+											renderTile={renderTile}
+										/>
+									))
+								)}
+							</>
+						)}
+					</div>
+				</ScrollArea>
 				{footer}
 			</div>
 		);
@@ -735,7 +722,7 @@ export const DirectoryBrowser = ({
 			data-directory-browser-body=""
 			className={cx(listBodyClass, "ty-shell-directory-browser")}
 		>
-			<div className={cx(listScrollClass, "ty-shell-directory-scroll")}>
+			<ScrollArea className={cx(scrollAreaClass, "ty-shell-directory-scroll")}>
 				{loading ? (
 					<div className={listLoadingClass}>{loadingLabel}</div>
 				) : (
@@ -758,7 +745,7 @@ export const DirectoryBrowser = ({
 						)}
 					</>
 				)}
-			</div>
+			</ScrollArea>
 			{footer}
 		</div>
 	);

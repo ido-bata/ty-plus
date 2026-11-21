@@ -1,4 +1,4 @@
-import { cx } from "@ty-plus/ui/util/cx";
+import { cx, Icon } from "@ty-plus/ui";
 import type { LucideIcon } from "lucide-react";
 import {
 	File,
@@ -87,7 +87,12 @@ export function EntryIcon({
 		const s = size ?? 24;
 		return (
 			<IconFrame size={s} fill={fill}>
-				<FolderOpen className={fullSizeClass} aria-hidden />
+				<Icon
+					icon={FolderOpen}
+					size={s}
+					className={fullSizeClass}
+					aria-hidden
+				/>
 			</IconFrame>
 		);
 	}
@@ -132,63 +137,68 @@ export function EntryIcon({
 	if (entry.fileType === "video") {
 		return (
 			<IconFrame size={s} fill={fill}>
-				<Film className={fullSizeClass} aria-hidden />
+				<Icon icon={Film} size={s} className={fullSizeClass} aria-hidden />
 			</IconFrame>
 		);
 	}
 	if (entry.fileType === "audio") {
 		return (
 			<IconFrame size={s} fill={fill}>
-				<Music className={fullSizeClass} aria-hidden />
+				<Icon icon={Music} size={s} className={fullSizeClass} aria-hidden />
 			</IconFrame>
 		);
 	}
 	if (entry.fileType === "image") {
 		return (
 			<IconFrame size={s} fill={fill}>
-				<ImageIcon className={fullSizeClass} aria-hidden />
+				<Icon icon={ImageIcon} size={s} className={fullSizeClass} aria-hidden />
 			</IconFrame>
 		);
 	}
 	if (entry.fileType === "image-sequence") {
 		return (
 			<IconFrame size={s} fill={fill}>
-				<Film className={fullSizeClass} aria-hidden />
+				<Icon icon={Film} size={s} className={fullSizeClass} aria-hidden />
 			</IconFrame>
 		);
 	}
 	if (entry.fileType === "ae-preset") {
 		return (
 			<IconFrame size={s} fill={fill}>
-				<Film className={fullSizeClass} aria-hidden />
+				<Icon icon={Film} size={s} className={fullSizeClass} aria-hidden />
 			</IconFrame>
 		);
 	}
 	if (entry.fileType === "script") {
 		return (
 			<IconFrame size={s} fill={fill}>
-				<Film className={fullSizeClass} aria-hidden />
+				<Icon icon={Film} size={s} className={fullSizeClass} aria-hidden />
 			</IconFrame>
 		);
 	}
 	if (entry.fileType === "plugin") {
 		return (
 			<IconFrame size={s} fill={fill}>
-				<Film className={fullSizeClass} aria-hidden />
+				<Icon icon={Film} size={s} className={fullSizeClass} aria-hidden />
 			</IconFrame>
 		);
 	}
 	if (entry.fileType === "mogrt") {
 		return (
 			<IconFrame size={s} fill={fill}>
-				<Film className={fullSizeClass} aria-hidden />
+				<Icon icon={Film} size={s} className={fullSizeClass} aria-hidden />
 			</IconFrame>
 		);
 	}
 	const IconComponent: LucideIcon = entry.isDirectory ? Folder : File;
 	return (
 		<IconFrame size={s} fill={fill}>
-			<IconComponent className={fullSizeClass} aria-hidden />
+			<Icon
+				icon={IconComponent}
+				size={s}
+				className={fullSizeClass}
+				aria-hidden
+			/>
 		</IconFrame>
 	);
 }

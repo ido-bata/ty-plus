@@ -37,7 +37,9 @@ const meta = {
 				presetGlyphSiblingProps={{}}
 				activateCatalogPresetRow={noop}
 				runPreset={noop}
-				actionsRunLabel="Run preset"
+				actionsRunLabel="Run"
+				actionsRunBlockedMissingLabel="Preset asset is missing on disk"
+				actionsRunBlockedUnverifiableLabel="Could not verify preset asset"
 			/>
 		</ul>
 	),

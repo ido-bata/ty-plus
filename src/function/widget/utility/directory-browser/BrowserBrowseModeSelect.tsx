@@ -17,15 +17,7 @@ export function BrowserBrowseModeSelect(props: {
 	const { value, options, onChange, ariaLabel } = props;
 	return (
 		<ListSelect
-			className={css({ width: "full", minWidth: 0 })}
-			triggerClassName={css({
-				minHeight: "8",
-				height: "8",
-				maxHeight: "8",
-				paddingBlock: 0,
-				paddingInline: "2",
-				fontSize: "text-2xs",
-			})}
+			className={css({ minWidth: 0 })}
 			uiSize="sm"
 			value={value}
 			options={options as { value: string; label: string }[]}

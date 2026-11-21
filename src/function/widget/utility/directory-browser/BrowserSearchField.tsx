@@ -1,4 +1,4 @@
-import { SearchField } from "@ty-plus/ui/fields/SearchField";
+import { SearchField } from "@ty-plus/ui";
 import { Search } from "lucide-react";
 import type { JSX, ReactNode, RefObject } from "react";
 import { css } from "@/styled-system/css";
@@ -19,12 +19,8 @@ export function BrowserSearchField(props: {
 			className={css({ minHeight: 0, minWidth: 0 })}
 		>
 			<SearchField
-				className={css({
-					height: "8",
-					minHeight: "8",
-					width: "full",
-					paddingBlock: 0,
-				})}
+				className={css({ minWidth: 0 })}
+				uiSize="md"
 				icon={Search}
 				inputRef={inputRef}
 				placeholder={placeholder}

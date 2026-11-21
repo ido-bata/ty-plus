@@ -41,7 +41,9 @@ const meta = {
 				presetGlyphSiblingProps={{}}
 				setFileBrowserSelectedPath={noop}
 				runPreset={noop}
-				actionsRunLabel="Run preset"
+				actionsRunLabel="Run"
+				actionsRunBlockedMissingLabel="Preset asset is missing on disk"
+				actionsRunBlockedUnverifiableLabel="Could not verify preset asset"
 			/>
 		</div>
 	),
@@ -83,9 +85,10 @@ export const LongTitle: Story = {
 // `interactive.hover`, and the post-play state is what gets captured.
 export const Hover: Story = {
 	play: async ({ canvasElement }) => {
-		const tile = canvasElement.querySelector<HTMLElement>(
-			"[data-preset-id] button",
-		);
+		// The tile is one composite surface: the container owns the fill and
+		// the hover, so the hover is observed on it rather than on the
+		// `bare` button inside it.
+		const tile = canvasElement.querySelector<HTMLElement>("[data-preset-id]");
 		if (!tile) throw new Error("preset icon tile not found");
 		const { userEvent } = await import("vitest/browser");
 		const resting = getComputedStyle(tile).backgroundColor;

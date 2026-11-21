@@ -1,13 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { css } from "@/styled-system/css";
 
-import {
-	type CatalogBrowserViewMode,
-	CatalogBrowserViewModeToggle,
-} from "./view-mode-toggle";
+import { type ViewMode, ViewModeToggle } from "./ViewModeToggle";
 
 type Args = {
-	viewMode: CatalogBrowserViewMode;
+	viewMode: ViewMode;
 };
 
 const baseArgs: Args = {
@@ -17,7 +14,7 @@ const baseArgs: Args = {
 const decoratorBoxClass = css({ padding: "2" });
 
 const meta = {
-	title: "Preset/CatalogBrowser/ViewModeToggle",
+	title: "Shared/Controls/ViewModeToggle",
 	args: baseArgs,
 	argTypes: {
 		viewMode: {
@@ -33,7 +30,7 @@ const meta = {
 		),
 	],
 	render: (args: Args) => (
-		<CatalogBrowserViewModeToggle
+		<ViewModeToggle
 			viewMode={args.viewMode}
 			onViewModeChange={() => undefined}
 			onEnterIconView={() => undefined}

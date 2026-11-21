@@ -1,3 +1,4 @@
+import { Button, ListSelect } from "@ty-plus/ui";
 import type { JSX } from "react";
 import type { PresetType } from "@/management/preset/contract";
 import type { FileBrowserFileType } from "@/management/storage/file-browser-service";
@@ -128,33 +129,25 @@ export function BrowserFilterPanel(
 				>
 					{typeListLabel}
 				</span>
-				<select
+				<ListSelect
 					className={css({
+						flexShrink: 0,
 						maxWidth: "full",
-						flexShrink: 1,
-						borderRadius: "shell-sm",
-						borderWidth: "1px",
-						borderStyle: "solid",
-						borderColor: "border.default",
-						backgroundColor: "surface.widget",
-						paddingBlock: "0.5",
-						paddingRight: "6",
-						paddingLeft: "1",
-						fontSize: "text-2xs",
-						color: "text.primary",
 					})}
+					uiSize="sm"
 					value={coarseFilter}
-					onChange={(e) =>
-						onCoarseFilterChange(e.target.value as FileBrowserFilter)
+					options={[
+						{ value: "all", label: optionAllLabel },
+						{ value: "media", label: optionMediaLabel },
+						{ value: "presets", label: optionPresetsLabel },
+						{ value: "scripts", label: optionScriptsLabel },
+						{ value: "fonts", label: optionFontsLabel },
+					]}
+					onChange={(next: string) =>
+						onCoarseFilterChange(next as FileBrowserFilter)
 					}
 					aria-label={quickFilterAriaLabel}
-				>
-					<option value="all">{optionAllLabel}</option>
-					<option value="media">{optionMediaLabel}</option>
-					<option value="presets">{optionPresetsLabel}</option>
-					<option value="scripts">{optionScriptsLabel}</option>
-					<option value="fonts">{optionFontsLabel}</option>
-				</select>
+				/>
 			</div>
 			<div className={css({ display: "flex", flexWrap: "wrap", gap: "1" })}>
 				<span
@@ -194,32 +187,22 @@ export function BrowserFilterPanel(
 					/>
 				))}
 			</div>
-			<button
+			<Button
 				type="button"
-				className={css({
-					width: "full",
-					borderRadius: "shell-sm",
-					borderWidth: "1px",
-					borderStyle: "solid",
-					borderColor: "border.default",
-					backgroundColor: "surface.widget",
-					opacity: 0.3,
-					paddingInline: "2",
-					paddingBlock: "1.5",
-					textAlign: "left",
-					fontSize: "text-2xs",
-					color: "text.muted",
-					_hover: {
-						backgroundColor: "interactive.hover",
-						color: "text.primary",
-					},
-				})}
+				variant="outline"
+				uiSize="sm"
+				fullWidth
+				aria-pressed={recursiveSearch}
 				onClick={onToggleRecursiveSearch}
+				className={css({
+					justifyContent: "flex-start",
+					textAlign: "left",
+				})}
 			>
 				{recursiveSearchLabel(
 					recursiveSearch ? recursiveOnLabel : recursiveOffLabel,
 				)}
-			</button>
+			</Button>
 		</>
 	);
 }

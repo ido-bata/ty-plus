@@ -136,7 +136,8 @@
 			"importOnly": "インポート",
 			"selectFile": "選択",
 			"deselect": "選択解除",
-			"runBlockedMissingAsset": "プリセットのアセットがディスク上に存在しないため、実行は無効です。"
+			"runBlockedMissingAsset": "プリセットのアセットがディスク上に存在しないため、実行は無効です。",
+			"runBlockedUnverifiableAsset": "プリセットのアセットを検証できませんでした（ホストに接続できません）— 再試行"
 		},
 		"path": {
 			"pickFolderPrompt": "フォルダを選択",
@@ -158,6 +159,7 @@
 			"error": "プレビューを表示できません"
 		},
 		"toolbar": {
+			"refresh": "更新",
 			"detailedFilters": "フィルター",
 			"viewModeLegend": "表示モード",
 			"listView": "リスト表示",
@@ -195,6 +197,7 @@
 			"noItems": "項目なし"
 		},
 		"entry": {
+			"goUp": "上へ移動",
 			"defaultFolderSubtitle": "デフォルト",
 			"parentRowName": "上へ",
 			"browseDrives": "ドライブを表示",

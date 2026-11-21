@@ -1,4 +1,5 @@
-import { cx } from "@ty-plus/ui/util/cx";
+import { Icon, IconButton } from "@ty-plus/ui";
+import { LayoutGrid, List as ListIcon } from "lucide-react";
 import type { JSX } from "react";
 import { css } from "@/styled-system/css";
 
@@ -18,28 +19,14 @@ const wrapperClass = css({
 	flexShrink: 0,
 });
 
-const buttonBaseClass = css({
-	borderRadius: "shell-sm",
-	padding: "1",
-	transitionProperty: "colors",
-});
-const buttonActiveClass = css({
-	backgroundColor: "surface.widget",
-	color: "text.primary",
-});
-const buttonInactiveClass = css({
-	color: "text.muted",
-	_hover: { backgroundColor: "interactive.hover" },
-});
-const svgClass = css({
-	height: "4",
-	width: "4",
-});
-
-function viewButtonClass(active: boolean): string {
-	return cx(buttonBaseClass, active ? buttonActiveClass : buttonInactiveClass);
-}
-
+/**
+ * List / icon view toggle.
+ *
+ * Both buttons are shared `IconButton`s: the focus ring, the radius and the
+ * selected surface come from the shared component (`active`), and
+ * `aria-pressed` states the pressed state to assistive technology — a
+ * screen reader can tell which mode is active.
+ */
 export function DirectoryBrowserViewModeToggle({
 	viewMode,
 	onChange,
@@ -48,52 +35,34 @@ export function DirectoryBrowserViewModeToggle({
 }: DirectoryBrowserViewModeToggleProps): JSX.Element {
 	return (
 		<div className={wrapperClass}>
-			<button
+			<IconButton
 				type="button"
-				className={viewButtonClass(viewMode === "list")}
+				variant="ghost"
+				size="sm"
+				active={viewMode === "list"}
+				aria-pressed={viewMode === "list"}
+				aria-label={listViewAriaLabel}
+				title={listViewAriaLabel}
 				onClick={() => {
 					onChange("list");
 				}}
-				aria-label={listViewAriaLabel}
 			>
-				<svg
-					role="presentation"
-					className={svgClass}
-					fill="none"
-					viewBox="0 0 24 24"
-					stroke="currentColor"
-				>
-					<path
-						strokeLinecap="round"
-						strokeLinejoin="round"
-						strokeWidth={2}
-						d="M4 6h16M4 10h16M4 14h16M4 18h16"
-					/>
-				</svg>
-			</button>
-			<button
+				<Icon icon={ListIcon} size={4} />
+			</IconButton>
+			<IconButton
 				type="button"
-				className={viewButtonClass(viewMode === "icons")}
+				variant="ghost"
+				size="sm"
+				active={viewMode === "icons"}
+				aria-pressed={viewMode === "icons"}
+				aria-label={iconViewAriaLabel}
+				title={iconViewAriaLabel}
 				onClick={() => {
 					onChange("icons");
 				}}
-				aria-label={iconViewAriaLabel}
 			>
-				<svg
-					role="presentation"
-					className={svgClass}
-					fill="none"
-					viewBox="0 0 24 24"
-					stroke="currentColor"
-				>
-					<path
-						strokeLinecap="round"
-						strokeLinejoin="round"
-						strokeWidth={2}
-						d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm10 0a1 1 0 011-1h4a1 1 0 0 1 1 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zm10 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"
-					/>
-				</svg>
-			</button>
+				<Icon icon={LayoutGrid} size={4} />
+			</IconButton>
 		</div>
 	);
 }
