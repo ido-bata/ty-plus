@@ -62,6 +62,9 @@ export function PresetIconTile({
 				borderStyle: "solid",
 				borderColor: "border.default",
 				backgroundColor: "surface.dialog",
+				// The tile is one composite surface: the container owns the
+				// border, the fill and the hover. The inner button is
+				// `bare`, so it has no hover of its own.
 				_hover: { backgroundColor: "interactive.hover" },
 			})}
 			data-directory-browser-entry
