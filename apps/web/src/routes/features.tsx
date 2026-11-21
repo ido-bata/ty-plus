@@ -211,24 +211,24 @@ function FeaturesPage() {
 						caption="Add Widget — pick a CORE or UTILITY widget; the dialog states where it lands on the grid."
 						className={span4}
 					/>
-					<div className={cx(span4, stack({ gap: 4 }))}>
-						<div className={stack({ gap: 2 })}>
-							<h3 className={s.h3}>Widgets on demand</h3>
-							<p className={s.body}>
-								Menu, Easing, Align, Anchor Point, Directory Browser, Font
-								Viewer, and more — pick them in Add Widget and they join the
-								same grid as your preset tiles. Every widget keeps working with
-								the network unplugged.
-							</p>
-						</div>
-						<div className={stack({ gap: 2 })}>
-							<h3 className={s.h3}>Customizable appearance</h3>
-							<p className={s.body}>
-								Change the workspace background — solid, pattern, or image —
-								from the Menu widget, and tune theme, opacity, and density in
-								Settings. Both are stored in local files on your machine.
-							</p>
-						</div>
+					<div className={cx(span4, stack({ gap: 2 }))}>
+						<h3 className={s.h3}>Widgets on demand</h3>
+						<p className={s.body}>
+							Easing draws a speed curve you apply to keyframes; Align lines up
+							selected layers and Anchor Point sets the anchor. Directory
+							Browser, Font Viewer, Quick Actions, Menu, Info, and Layout Lock
+							cover the rest. Pick them in Add Widget and they join the same
+							grid as your preset tiles — every widget keeps working with the
+							network unplugged.
+						</p>
+					</div>
+					<div className={cx(span4, stack({ gap: 2 }))}>
+						<h3 className={s.h3}>Customizable appearance</h3>
+						<p className={s.body}>
+							Change the workspace background — solid, pattern, or image — from
+							the Menu widget, and tune theme, opacity, and density in Settings.
+							Both are stored in local files on your machine.
+						</p>
 					</div>
 				</div>
 			</section>
