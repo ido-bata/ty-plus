@@ -84,6 +84,36 @@ jobs:
         working-directory: apps/web
         run: npm exec --no -- cf deploy --prebuilt --mode "$TARGET" --dry-run
 
+      - name: Local workerd HTTP smoke of the production build
+        working-directory: apps/web
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm exec --no -- vite preview --host 127.0.0.1 --port 4173 >/tmp/ty-plus-web-preview.log 2>&1 &
+          pid=$!
+          trap 'kill "$pid" 2>/dev/null || true' EXIT
+          ready=0
+          for attempt in $(seq 1 45); do
+            if curl --fail --silent --max-time 3 http://127.0.0.1:4173/ -o /dev/null; then ready=1; break; fi
+            sleep 1
+          done
+          if [[ "$ready" != 1 ]]; then cat /tmp/ty-plus-web-preview.log; exit 1; fi
+          for route in / /features /download /docs /changelog /support /sitemap.xml; do
+            code=$(curl --silent --show-error --location --max-time 45 -o /dev/null -w '%{http_code}' "http://127.0.0.1:4173${route}")
+            if [[ "$code" != 200 ]]; then
+              echo "::error::Local preview ${route}: HTTP ${code}"
+              cat /tmp/ty-plus-web-preview.log
+              exit 1
+            fi
+          done
+
+      - name: Validate the separate preview Worker Build Output
+        if: github.event_name != 'workflow_dispatch'
+        working-directory: apps/web
+        run: |
+          npm exec --no -- vite build --mode preview
+          npm exec --no -- cf deploy --prebuilt --mode preview --dry-run
+
       - name: Upload exactly the validated Build Output
         if: github.event_name == 'workflow_dispatch'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
