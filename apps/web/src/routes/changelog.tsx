@@ -74,7 +74,10 @@ function notesToText(body: string): string {
 function ReleaseRow({ release }: { release: ReleaseInfo }) {
 	const channel = classifyChannel(release);
 	const notes = notesToText(release.body ?? "");
-	const { bullets, prose } = releaseExcerpt(notes);
+	// The excerpt parser needs the raw markdown: notesToText strips heading
+	// markers, which would hide the section structure used to prioritize
+	// user-facing changes over verification metadata.
+	const { bullets, prose } = releaseExcerpt(release.body ?? "");
 	return (
 		<li className={s.releaseItem}>
 			<div className={s.releaseHead}>
