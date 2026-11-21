@@ -65,8 +65,8 @@ jobs:
         run: |
           bunx panda codegen --silent
           bunx panda cssgen --silent
-          bunx panda codegen --config apps/web/panda.config.ts --cwd apps/web --silent
-          bunx panda cssgen --config apps/web/panda.config.ts --cwd apps/web --silent
+          bunx panda codegen --config panda.config.ts --cwd apps/web --silent
+          bunx panda cssgen --config panda.config.ts --cwd apps/web --silent
 
       - name: Record public source SHA for post-deploy attestation
         shell: bash
