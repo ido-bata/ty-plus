@@ -1,9 +1,7 @@
+import { Icon } from "@ty-plus/ui";
+import { Lock, LockOpen } from "lucide-react";
 import type { JSX } from "react";
 import type { SurfaceState } from "@/management/workspace/state";
-import {
-	LockIcon,
-	UnlockIcon,
-} from "@/management/workspace/surface/widget-grid-icons";
 import { css } from "@/styled-system/css";
 
 const buttonBaseClass = css({
@@ -50,7 +48,11 @@ export function LayoutLockWidget({
 			title={state.layoutLocked ? "Unlock Layout" : "Lock Layout"}
 			type="button"
 		>
-			{state.layoutLocked ? <LockIcon size={14} /> : <UnlockIcon size={14} />}
+			{state.layoutLocked ? (
+				<Icon icon={Lock} size={14} />
+			) : (
+				<Icon icon={LockOpen} size={14} />
+			)}
 		</button>
 	);
 }
