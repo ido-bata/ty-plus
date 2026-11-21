@@ -42,8 +42,8 @@ import {
 } from "@/management/storage/file-browser-service";
 import { createLocalPresetCatalogId } from "@/management/storage/ids";
 import { assertOpaqueId } from "@/management/storage/ids.assert";
-import type { FileEntry } from "@/management/storage/ui/FileEntryList";
-import { FileEntryList } from "@/management/storage/ui/FileEntryList";
+import type { FileEntry } from "@/management/storage/ui/file-entry/FileEntryList";
+import { FileEntryList } from "@/management/storage/ui/file-entry/FileEntryList";
 import { readSettings } from "@/management/workspace/persistence/store";
 import { notifyPanelsAfterPresetSave } from "@/management/workspace/placement/notify-panels-after-preset-save";
 import { css, cx } from "@/styled-system/css";

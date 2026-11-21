@@ -3,8 +3,8 @@
 	"owners": [
 		{
 			"feature": "FileEntryList",
-			"ownerModule": "src/management/storage/ui/FileEntryList.tsx",
-			"ownerDir": "src/management/storage/ui",
+			"ownerModule": "src/management/storage/ui/file-entry/FileEntryList.tsx",
+			"ownerDir": "src/management/storage/ui/file-entry",
 			"ownerLayer": "management",
 			"sharedDomHooks": [
 				"data-directory-browser-entry",

@@ -27,7 +27,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import {
 	type FileEntry,
 	FileEntryList,
-} from "@/management/storage/ui/FileEntryList";
+} from "@/management/storage/ui/file-entry/FileEntryList";
 
 const baseEntries: FileEntry[] = [
 	{ path: "/preset/root/a", name: "alpha", isDirectory: true },

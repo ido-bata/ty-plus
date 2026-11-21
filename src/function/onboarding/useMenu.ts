@@ -8,7 +8,7 @@ import {
 	buildFileEntryMenu,
 	handleFileEntryMenuSelect,
 	parseFileEntryMenuHit,
-} from "@/management/storage/ui/file-entry-menu";
+} from "@/management/storage/ui/file-entry/file-entry-menu";
 
 export function useMenu({
 	onNext,

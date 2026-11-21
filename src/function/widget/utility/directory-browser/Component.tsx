@@ -63,7 +63,7 @@ import {
 import {
 	type FileEntry,
 	FileEntryList,
-} from "@/management/storage/ui/FileEntryList";
+} from "@/management/storage/ui/file-entry/FileEntryList";
 import { executeWorkspacePresetForWindow } from "@/management/workspace/runtime";
 import type { SurfaceState } from "@/management/workspace/state";
 import { useCatalogViewMode } from "@/shared/util/catalog-view-mode";
@@ -75,7 +75,6 @@ import { EntryThumb } from "./EntryThumb";
 import { renderFilterPanel } from "./filter-panel";
 import { formatPathForMode } from "./format-path";
 import { DEFAULT_CARD_SIZE, useCardZoom } from "./hooks/useCardZoom";
-import type { FileBrowserBrowseMode, FileBrowserFilter } from "./types";
 import {
 	DRIVES_SENTINEL,
 	isAtDriveRoot,
@@ -86,6 +85,7 @@ import {
 	partitionCatalogPresetsByGroup,
 } from "./partition-catalog-presets";
 import { renderToolbar } from "./toolbar";
+import type { FileBrowserBrowseMode, FileBrowserFilter } from "./types";
 
 async function resolvePresetForRun(presetId: string): Promise<Preset> {
 	const preset = await getPreset(presetId);

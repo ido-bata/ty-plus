@@ -23,7 +23,7 @@ import {
 	SettingsField,
 	SettingsGrid,
 } from "@/management/setting/dialog/layout/SettingsGrid";
-import type { FileEntry } from "@/management/storage/ui/FileEntryList";
+import type { FileEntry } from "@/management/storage/ui/file-entry/FileEntryList";
 import { css } from "@/styled-system/css";
 import { ButtonsPreview } from "./ButtonsPreview";
 import { DirectoryBrowserPreview } from "./DirectoryBrowserPreview";

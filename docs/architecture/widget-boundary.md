@@ -21,7 +21,7 @@ storage が所有する機能を「browser」と呼ぶと語が二重になる�
 
 | 観点 | 所有者 |
 |--------|-------|
-| ファイルシステムの提示 | `management/storage/ui/FileEntryList.tsx` |
+| ファイルシステムの提示 | `management/storage/ui/file-entry/FileEntryList.tsx` |
 | Product icon (PresetIcon) | `management/preset/contract` |
 | 機能的な振る舞い (file browser state, catalog) | `management/storage` |
 

@@ -2,7 +2,7 @@ import type { FilePickStep } from "@/function/onboarding/steps-data";
 import type { PresetType } from "@/management/preset/contract";
 import { coercePersistedPresetIcon } from "@/management/preset/icon-data";
 import { readScopedDirectory } from "@/management/storage/read/scoped-directory";
-import type { FileEntry } from "@/management/storage/ui/FileEntryList";
+import type { FileEntry } from "@/management/storage/ui/file-entry/FileEntryList";
 
 export type OnboardingDirectoryReadOptions = {
 	win: Window;

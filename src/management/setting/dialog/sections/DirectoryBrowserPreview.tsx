@@ -1,6 +1,6 @@
 import type { JSX } from "react";
-import type { FileEntry } from "@/management/storage/ui/FileEntryList";
-import { FileEntryList } from "@/management/storage/ui/FileEntryList";
+import type { FileEntry } from "@/management/storage/ui/file-entry/FileEntryList";
+import { FileEntryList } from "@/management/storage/ui/file-entry/FileEntryList";
 import { css } from "@/styled-system/css";
 import { PreviewGroup } from "./ComponentPreviewSection";
 
