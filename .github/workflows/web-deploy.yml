@@ -175,7 +175,7 @@ jobs:
         run: |
           set -euo pipefail
           for route in / /features /download /docs /changelog /support /sitemap.xml; do
-            code=$(curl --connect-timeout 15 --max-time 45 --retry 3 -sSL -o /dev/null -w '%{http_code}' "${SITE_ORIGIN}${route}")
+            code=$(curl --connect-timeout 15 --max-time 45 --retry 3 --retry-all-errors -sSL -o /dev/null -w '%{http_code}' "${SITE_ORIGIN}${route}")
             if [[ "$code" != 200 ]]; then
               echo "::error::${route}: HTTP ${code} (expected 200)"
               exit 1
