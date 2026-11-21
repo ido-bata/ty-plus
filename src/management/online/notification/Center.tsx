@@ -14,7 +14,7 @@ import { useTranslation } from "react-i18next";
 import {
 	type CepMenuPayload,
 	registerCepJsonContextMenuSurface,
-} from "@/management/dialog/dialogs/context-menu";
+} from "@/management/dialog/context-menu";
 import type { NotificationSummary } from "@/management/online/contract";
 import { fetchNotificationFeed } from "@/management/online/notification/feed";
 import {

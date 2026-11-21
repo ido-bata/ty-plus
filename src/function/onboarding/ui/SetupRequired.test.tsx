@@ -45,7 +45,7 @@ type Registration = {
 	onMenuSelect?: (menuId: string) => void;
 };
 
-vi.mock("@/management/dialog/dialogs/context-menu", () => ({
+vi.mock("@/management/dialog/context-menu", () => ({
 	registerCepJsonContextMenuSurface: (
 		surfaceId: string,
 		registration: Registration,

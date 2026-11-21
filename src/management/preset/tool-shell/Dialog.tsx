@@ -10,9 +10,9 @@ import {
 import { useTranslation } from "react-i18next";
 import { selectFile, selectFolder } from "@/management/ae/cep/dialog-shim/bolt";
 import { DialogShell } from "@/management/dialog";
-import { registerCepJsonContextMenuSurface } from "@/management/dialog/dialogs/context-menu";
-import type { DroppedFile } from "@/management/dialog/dialogs/shell/Layout";
+import { registerCepJsonContextMenuSurface } from "@/management/dialog/context-menu";
 import { readPhysicalExtensionId } from "@/management/dialog/modeless/surface-id";
+import type { DroppedFile } from "@/management/dialog/shell/Layout";
 import { useDialogClose } from "@/management/dialog/useClose";
 import { assertPresetAssetPresent } from "@/management/preset/asset-verification";
 import {

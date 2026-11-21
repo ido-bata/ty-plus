@@ -5,12 +5,12 @@
  */
 
 import { openCepDialogSurface } from "@/management/ae/cep/transport";
-import { storeRequest as storeDialogRequest } from "@/management/dialog/dialogs/bridge";
+import { storeRequest as storeDialogRequest } from "@/management/dialog/bridge";
 import {
 	TY_PLUS_DIALOG_EXTENSION,
 	type ToolDialogKind,
-} from "@/management/dialog/dialogs/ids";
-import { createProbeId as createDialogProbeId } from "@/management/dialog/dialogs/probe/session";
+} from "@/management/dialog/ids";
+import { createProbeId as createDialogProbeId } from "@/management/dialog/probe/session";
 import { planWorkspaceShellToolDialogOpen } from "@/management/dialog/workspace-shell-tool-open";
 import { allocatePresetAddToolExtensionId } from "@/management/preset/add-dialog-pool";
 import { writePresetToolHandoff } from "@/management/preset/tool-handoff-file";

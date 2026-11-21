@@ -1,5 +1,5 @@
-import type { ToolDialogKind } from "@/management/dialog/dialogs/ids";
-import { tyPlusWorkspaceToolDialogId } from "@/management/dialog/dialogs/ids";
+import type { ToolDialogKind } from "@/management/dialog/ids";
+import { tyPlusWorkspaceToolDialogId } from "@/management/dialog/ids";
 
 /** `DialogRoot` surface ids for status bar / workspace shell tool kinds. */
 function workspaceShellSurfaceIdForToolKind(kind: ToolDialogKind): string {

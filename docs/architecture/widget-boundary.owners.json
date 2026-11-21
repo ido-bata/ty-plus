@@ -10,7 +10,7 @@
 				"data-directory-browser-entry",
 				"data-directory-browser-entry-select"
 			],
-			"note": "FileEntryList is the file entry listing that storage owns; it is a feature UI, not a common primitive (docs/architecture/widget-boundary.md). The DOM hooks keep the directory-browser name because they address the widget's surface and are a runtime contract: src/shared/scenario/real-anchors.ts, src/management/dialog/dialogs/unified-context-menu.ts and src/management/preset/tool-shell/context-menu.ts resolve them, and the scenario procedures under src/shared/scenario/procedures/ address them by name."
+			"note": "FileEntryList is the file entry listing that storage owns; it is a feature UI, not a common primitive (docs/architecture/widget-boundary.md). The DOM hooks keep the directory-browser name because they address the widget's surface and are a runtime contract: src/shared/scenario/real-anchors.ts, src/management/dialog/unified-context-menu.ts and src/management/preset/tool-shell/context-menu.ts resolve them, and the scenario procedures under src/shared/scenario/procedures/ address them by name."
 		}
 	],
 	"sharedComponents": [

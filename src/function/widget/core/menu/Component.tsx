@@ -4,7 +4,7 @@ import type { JSX, MouseEvent as ReactMouseEvent, ReactNode } from "react";
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
-import { CTX_MENU_IDS } from "@/management/dialog/dialogs/unified-context-menu-constants";
+import { CTX_MENU_IDS } from "@/management/dialog/unified-context-menu-constants";
 import type { Layout } from "@/management/workspace/layout/grid-document";
 import { catalogRefsForSurfaceIds } from "@/management/workspace/placement/resolve";
 import { ATTR_WIDGET_INSTANCE_ID } from "@/management/workspace/placement/types";

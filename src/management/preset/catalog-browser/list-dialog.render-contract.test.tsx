@@ -99,7 +99,7 @@ vi.mock("@/management/dialog/useClose", () => ({
 	useClose: () => ({ close: vi.fn(), hasUnsavedChanges: () => false }),
 }));
 
-vi.mock("@/management/dialog/dialogs/context-menu", () => ({
+vi.mock("@/management/dialog/context-menu", () => ({
 	registerCepJsonContextMenuSurface: vi.fn(),
 }));
 

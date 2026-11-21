@@ -10,18 +10,15 @@ const contextMenuSource = fs.readFileSync(
 	"utf8",
 );
 const settingsContextMenuBuildSource = fs.readFileSync(
-	new URL(
-		"../../setting/dialog/settings-context-menu-build.ts",
-		import.meta.url,
-	),
+	new URL("../setting/dialog/settings-context-menu-build.ts", import.meta.url),
 	"utf8",
 );
 const settingsContextMenuIdsSource = fs.readFileSync(
-	new URL("../../setting/dialog/settings-context-menu-ids.ts", import.meta.url),
+	new URL("../setting/dialog/settings-context-menu-ids.ts", import.meta.url),
 	"utf8",
 );
 const toolShellContextMenuSource = fs.readFileSync(
-	new URL("../../preset/tool-shell/context-menu.ts", import.meta.url),
+	new URL("../preset/tool-shell/context-menu.ts", import.meta.url),
 	"utf8",
 );
 const constantsSource = fs.readFileSync(
@@ -30,55 +27,49 @@ const constantsSource = fs.readFileSync(
 );
 const fontViewerSource = fs.readFileSync(
 	new URL(
-		"../../../function/widget/utility/font-viewer/Component.tsx",
+		"../../function/widget/utility/font-viewer/Component.tsx",
 		import.meta.url,
 	),
 	"utf8",
 );
 const directoryBrowserSource = fs.readFileSync(
-	new URL("../../storage/ui/file-entry/FileEntryList.tsx", import.meta.url),
+	new URL("../storage/ui/file-entry/FileEntryList.tsx", import.meta.url),
 	"utf8",
 );
 const easingSource = fs.readFileSync(
-	new URL(
-		"../../../function/widget/core/easing/Component.tsx",
-		import.meta.url,
-	),
+	new URL("../../function/widget/core/easing/Component.tsx", import.meta.url),
 	"utf8",
 );
 const settingsDialogSource = fs.readFileSync(
-	new URL("../../setting/dialog/Settings.tsx", import.meta.url),
+	new URL("../setting/dialog/Settings.tsx", import.meta.url),
 	"utf8",
 );
 const settingsMenuSource = fs.readFileSync(
-	new URL(
-		"../../setting/dialog/useSettingsDialogContextMenu.ts",
-		import.meta.url,
-	),
+	new URL("../setting/dialog/useSettingsDialogContextMenu.ts", import.meta.url),
 	"utf8",
 );
 const widgetSelectorSource = fs.readFileSync(
-	new URL("../../widget/add-dialog.tsx", import.meta.url),
+	new URL("../widget/add-dialog.tsx", import.meta.url),
 	"utf8",
 );
 const widgetCatalogSource = fs.readFileSync(
-	new URL("../../widget/catalog.tsx", import.meta.url),
+	new URL("../widget/catalog.tsx", import.meta.url),
 	"utf8",
 );
 const backgroundDialogSource = fs.readFileSync(
-	new URL("../../workspace/background/Dialog.tsx", import.meta.url),
+	new URL("../workspace/background/Dialog.tsx", import.meta.url),
 	"utf8",
 );
 const presetLibrarySource = fs.readFileSync(
-	new URL("../../online/catalog/Dialog.tsx", import.meta.url),
+	new URL("../online/catalog/Dialog.tsx", import.meta.url),
 	"utf8",
 );
 const notificationsSource = fs.readFileSync(
-	new URL("../../online/notification/Center.tsx", import.meta.url),
+	new URL("../online/notification/Center.tsx", import.meta.url),
 	"utf8",
 );
 const dialogRootSource = fs.readFileSync(
-	new URL("../Root.tsx", import.meta.url),
+	new URL("./Root.tsx", import.meta.url),
 	"utf8",
 );
 

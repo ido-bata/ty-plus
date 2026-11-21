@@ -12,7 +12,7 @@
 		"reason": "management must not import function implementation directly"
 	},
 	{
-		"from": "src/management/dialog/dialogs/unified-context-menu.ts",
+		"from": "src/management/dialog/unified-context-menu.ts",
 		"to": "../../../function/widget",
 		"specifier": "../../../function/widget",
 		"reason": "management must not import function implementation directly"

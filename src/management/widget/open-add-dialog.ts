@@ -1,5 +1,5 @@
 import { openCepDialogSurface } from "@/management/ae/cep/transport";
-import { TY_PLUS_DIALOG_EXTENSION } from "@/management/dialog/dialogs/ids";
+import { TY_PLUS_DIALOG_EXTENSION } from "@/management/dialog/ids";
 import { writePresetToolHandoff } from "@/management/preset/tool-handoff-file";
 
 /**
