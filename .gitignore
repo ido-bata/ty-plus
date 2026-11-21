@@ -49,3 +49,7 @@ node_modules
 # Wrangler local state (workerd dev/preview artifacts).
 .wrangler/
 apps/web/.wrangler/
+
+# Cloudflare CLI v1 Build Output and generated types.
+.cloudflare/
+apps/web/.cloudflare/
