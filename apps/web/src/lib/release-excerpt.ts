@@ -25,6 +25,38 @@ export function cleanInline(text: string): string {
 }
 
 /**
+ * Inline bookkeeping tokens that are noise in a one-line excerpt:
+ * `sourceCommit` hashes, `channel=…` markers, ADR references, and bare
+ * commit SHAs inside parentheses. They stay in "Full release notes";
+ * the excerpt should read as prose, not provenance.
+ */
+const EXCERPT_META = [
+	/sourceCommit\s*[=:]?\s*[0-9a-f]{7,40}/gi,
+	/\bchannel=\w+/gi,
+	/\bADR-\d+\b/g,
+	/[（(]\s*[0-9a-f]{7,40}\s*[)）]/g,
+];
+
+function scrubExcerptMeta(text: string): string {
+	let out = text;
+	for (const re of EXCERPT_META) out = out.replace(re, "");
+	return (
+		out
+			.replace(/[（(][\s,、;；]*[)）]/g, "")
+			.replace(/\s{2,}/g, " ")
+			.replace(/\s+,/g, ",")
+			// "acceptance (metadata)." leaves ")." → "."; keep "> .7" arrow spacing.
+			.replace(/(?<![>-])\s+(?=[.;:!?])/g, "")
+			.replace(/([（(])\s+/g, "$1")
+			.trim()
+	);
+}
+
+function excerptClean(text: string): string {
+	return scrubExcerptMeta(cleanInline(text));
+}
+
+/**
  * Truncate at the last sentence/clause boundary within `max` chars.
  * Falls back to the last whitespace, then a hard cut only when the text
  * has no usable boundary at all.
@@ -196,7 +228,7 @@ function legacyExcerpt(
 ): ReleaseExcerpt {
 	const bullets: string[] = [];
 	for (const raw of bulletLines(lines, maxBullets)) {
-		const cleaned = truncateAtBoundary(cleanInline(raw), bulletMax);
+		const cleaned = truncateAtBoundary(excerptClean(raw), bulletMax);
 		if (cleaned.length > 0) bullets.push(cleaned);
 	}
 
@@ -208,7 +240,7 @@ function legacyExcerpt(
 			!l.endsWith(":"),
 	);
 	const prose = proseLine
-		? truncateAtBoundary(cleanInline(proseLine), proseMax)
+		? truncateAtBoundary(excerptClean(proseLine), proseMax)
 		: null;
 
 	return { bullets, prose };
@@ -250,7 +282,7 @@ export function releaseExcerpt(
 		}
 		bullets = [];
 		for (const raw of bulletLines(lines, maxBullets)) {
-			const cleaned = truncateAtBoundary(cleanInline(raw), bulletMax);
+			const cleaned = truncateAtBoundary(excerptClean(raw), bulletMax);
 			if (cleaned.length > 0) bullets.push(cleaned);
 		}
 		if (bullets.length > 0) break;
@@ -260,7 +292,7 @@ export function releaseExcerpt(
 	for (const rank of [0, 1, 2] as const) {
 		const line = firstProseLine(sections, rank);
 		if (line) {
-			prose = truncateAtBoundary(cleanInline(line), proseMax);
+			prose = truncateAtBoundary(excerptClean(line), proseMax);
 			break;
 		}
 	}
