@@ -3,7 +3,12 @@ name: Web cf deployment
 # Cloudflare Workers build and deployment. No Wrangler or CF credentials on PRs.
 on:
   push:
-    branches: ["358", "release-*"]
+    branches: ["release-*"]
+    paths:
+      - "apps/web/**"
+      - "bun.lock"
+      - "package.json"
+      - ".github/workflows/web-deploy.yml"
   pull_request:
     paths:
       - "apps/web/**"
