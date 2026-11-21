@@ -1,6 +1,6 @@
 import type { JSX } from "react";
-import { ThumbnailTile } from "@/function/widget/utility/directory-browser/ThumbnailTile";
 import type { FileBrowserEntry } from "@/management/storage/file-browser-service";
+import { ThumbnailTile } from "@/management/storage/thumbnail/ThumbnailTile";
 import { css, cx } from "@/styled-system/css";
 
 /**

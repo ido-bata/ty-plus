@@ -20,7 +20,7 @@ const makeFile = (
 });
 
 const meta = {
-	title: "DirectoryBrowser/ThumbnailTile",
+	title: "FileEntryList/ThumbnailTile",
 	component: ThumbnailTile,
 	args: {
 		entry: makeFile(),
