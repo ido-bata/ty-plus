@@ -22,7 +22,30 @@
 		"expand": "Развернуть",
 		"collapse": "Свернуть",
 		"position": "Позиция",
-		"orientation": "Ориентация"
+		"orientation": "Ориентация",
+		"ariaLabel": "Пресеты / Виджеты",
+		"collapseExpand": "Свернуть/Развернуть",
+		"horizontal": "Горизонтально",
+		"vertical": "Вертикально",
+		"resetToDefaults": "Сбросить по умолчанию",
+		"buttons": {
+			"localPreset": "Локальный пресет",
+			"groupPreset": "Групповой пресет",
+			"animationPreset": "Пресет анимации",
+			"layerCompPreset": "Пресет слоя/Comp",
+			"codePreset": "Пресет кода",
+			"addWidget": "Добавить виджет"
+		},
+		"positionLabels": {
+			"topLeft": "Слева сверху",
+			"topCenter": "Сверху по центру",
+			"topRight": "Справа сверху",
+			"bottomLeft": "Слева снизу",
+			"bottomCenter": "Снизу по центру",
+			"bottomRight": "Справа снизу",
+			"leftCenter": "Слева по центру",
+			"rightCenter": "Справа по центру"
+		}
 	},
 	"context": {
 		"lock": "Заблокировать",
@@ -41,5 +64,35 @@
 		"savingPaused": "Сохранение приостановлено, чтобы не перезаписать этот файл. Исправьте или восстановите файл, затем повторите попытку.",
 		"file": "Файл: workspace-{{wsIndex}}.json",
 		"retry": "Повторить восстановление"
+	},
+	"statusBar": {
+		"undoTitle": "Отменить (Ctrl+Z)",
+		"redoTitle": "Повторить (Ctrl+Y)",
+		"saveSnapshotTitle": "Сохранить снимок макета",
+		"savedLayoutsTitle": "Сохранённые макеты ({{count}})",
+		"savedLayoutsTitleEmpty": "Сохранённые макеты (нет)",
+		"noSavedLayouts": "Нет сохранённых макетов",
+		"restoreSnapshotTitle": "Восстановить \"{{label}}\"",
+		"presetLibraryTitle": "Библиотека пресетов (онлайн)",
+		"debugConsoleTitle": "Консоль отладки (Ctrl+`)"
+	},
+	"gridTile": {
+		"widgetTitle": "Виджет",
+		"configLoadError": "Не удалось загрузить конфигурацию"
+	},
+	"debugProbe": {
+		"title": "Проверка диалога",
+		"message": "Проверка моста панель -> диалог"
+	},
+	"easingCurveColors": {
+		"linear": "Линейная",
+		"hold": "Удержание",
+		"easeInGentle": "Ease in",
+		"easeInSharp": "Ease in (резкий)",
+		"easeOutGentle": "Ease out",
+		"easeOutSharp": "Ease out (резкий)",
+		"easeInOut": "Ease in/out",
+		"overshoot": "Овершут",
+		"bezier": "Безье"
 	}
 }

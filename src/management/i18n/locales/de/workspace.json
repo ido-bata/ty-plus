@@ -22,7 +22,30 @@
 		"expand": "Erweitern",
 		"collapse": "Einklappen",
 		"position": "Position",
-		"orientation": "Ausrichtung"
+		"orientation": "Ausrichtung",
+		"ariaLabel": "Voreinstellungen / Widgets",
+		"collapseExpand": "Einklappen/Ausklappen",
+		"horizontal": "Horizontal",
+		"vertical": "Vertikal",
+		"resetToDefaults": "Auf Standard zurücksetzen",
+		"buttons": {
+			"localPreset": "Lokale Voreinstellung",
+			"groupPreset": "Gruppenvoreinstellung",
+			"animationPreset": "Animationsvoreinstellung",
+			"layerCompPreset": "Layer-/Comp-Voreinstellung",
+			"codePreset": "Code-Voreinstellung",
+			"addWidget": "Widget hinzufügen"
+		},
+		"positionLabels": {
+			"topLeft": "Oben links",
+			"topCenter": "Oben Mitte",
+			"topRight": "Oben rechts",
+			"bottomLeft": "Unten links",
+			"bottomCenter": "Unten Mitte",
+			"bottomRight": "Unten rechts",
+			"leftCenter": "Mitte links",
+			"rightCenter": "Mitte rechts"
+		}
 	},
 	"context": {
 		"lock": "Sperren",
@@ -41,5 +64,35 @@
 		"savingPaused": "Das Speichern ist pausiert, damit die Datei nicht überschrieben wird. Repariere oder stelle die Datei wieder her und versuche es erneut.",
 		"file": "Datei: workspace-{{wsIndex}}.json",
 		"retry": "Wiederherstellung erneut versuchen"
+	},
+	"statusBar": {
+		"undoTitle": "Rückgängig (Strg+Z)",
+		"redoTitle": "Wiederholen (Strg+Y)",
+		"saveSnapshotTitle": "Layout-Snapshot speichern",
+		"savedLayoutsTitle": "Gespeicherte Layouts ({{count}})",
+		"savedLayoutsTitleEmpty": "Gespeicherte Layouts (keine)",
+		"noSavedLayouts": "Keine gespeicherten Layouts",
+		"restoreSnapshotTitle": "\"{{label}}\" wiederherstellen",
+		"presetLibraryTitle": "Voreinstellungsbibliothek (Online)",
+		"debugConsoleTitle": "Debug-Konsole (Strg+`)"
+	},
+	"gridTile": {
+		"widgetTitle": "Widget",
+		"configLoadError": "Konfiguration konnte nicht geladen werden"
+	},
+	"debugProbe": {
+		"title": "Dialog-Test",
+		"message": "Panel -> Dialog-Bridge-Prüfung"
+	},
+	"easingCurveColors": {
+		"linear": "Linear",
+		"hold": "Halten",
+		"easeInGentle": "Ease in",
+		"easeInSharp": "Ease in (scharf)",
+		"easeOutGentle": "Ease out",
+		"easeOutSharp": "Ease out (scharf)",
+		"easeInOut": "Ease in/out",
+		"overshoot": "Überschwingen",
+		"bezier": "Bézier"
 	}
 }

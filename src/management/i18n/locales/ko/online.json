@@ -1,5 +1,99 @@
 {
 	"notification": {
-		"fixtureBadge": "자리표시자 (오프라인 픽스처)"
+		"fixtureBadge": "자리표시자 (오프라인 픽스처)",
+		"fixture": {
+			"welcomeName": "ty-plus에 오신 것을 환영합니다",
+			"welcomeSummary": "ty-plus를 설치해 주셔서 감사합니다! 런타임이 연결되지 않았을 때(오프라인 픽스처) 표시되는 자리표시자 알림입니다.",
+			"updateName": "업데이트 사용 가능",
+			"updateSummary": "새 버전에는 그리드 성능 향상과 버그 수정이 포함될 수 있습니다.",
+			"maintenanceName": "유지 관리 공지",
+			"maintenanceSummary": "서버 유지 관리가 예정되어 있을 수 있습니다. 상태 페이지를 확인하세요."
+		}
+	},
+	"gatewayBoot": {
+		"connectivityProbeFailed": "작업기 구성이 시작된 후 연결 확인이 실패했습니다.",
+		"catalogProbeFailed": "작업기 구성이 시작된 후 카탈로그 확인이 실패했습니다.",
+		"runtimeInitFailed": "시작 중 작업 워커 런타임을 만들 수 없습니다.",
+		"compositionInitFailed": "시작 중 작업 워커 구성을 만들 수 없습니다."
+	},
+	"catalog": {
+		"title": "온라인 프리셋 라이브러리",
+		"searchPlaceholder": "이름, ID, 설명, 카테고리, 태그로 필터링",
+		"filterPlaceholder": "필터링…",
+		"showFilters": "필터 표시",
+		"hideFilters": "필터 숨기기",
+		"category": "카테고리",
+		"tags": "태그",
+		"allCategories": "모든 카테고리",
+		"clear": "지우기",
+		"clearAll": "모두 지우기",
+		"clearAllFilters": "모든 필터 지우기",
+		"clearSearch": "검색 지우기",
+		"clearCategoryFilter": "카테고리 필터 지우기",
+		"clearTagSelection": "태그 선택 지우기",
+		"refreshCatalog": "카탈로그 새로고침",
+		"reloadCatalog": "카탈로그 다시 로드",
+		"reloadingCatalog": "다시 로드 중…",
+		"openNotion": "Notion 열기",
+		"openManualNotion": "매뉴얼 열기(Notion)",
+		"viewMenu": "보기",
+		"viewMode": "보기 모드",
+		"viewGallery": "갤러리 보기",
+		"viewGalleryTitle": "갤러리(Ctrl+휠로 확대/축소)",
+		"viewGalleryLabel": "갤러리",
+		"viewCards": "카드 보기",
+		"viewCardsLabel": "카드",
+		"viewList": "목록 보기",
+		"viewListLabel": "목록",
+		"tableThumb": "썸네일",
+		"tableNameId": "이름 / ID",
+		"tableActions": "작업",
+		"emptyUnavailable": "온라인 프리셋 라이브러리를 사용할 수 없습니다.",
+		"emptyNoCatalog": "온라인 카탈로그가 없습니다.",
+		"emptyNoMatch": "필터와 일치하는 프리셋이 없습니다.",
+		"footerCount": "{{filtered}} / {{catalog}}개 항목",
+		"footerZoom": "Ctrl+휠: {{percent}}%",
+		"downloadConfirm": "이 프리셋을 다운로드할까요?",
+		"downloadCancelled": "사용자가 다운로드를 취소했습니다",
+		"downloadUnavailable": "런타임 다운로드를 사용할 수 없습니다(온라인 전송이 연결되지 않음)",
+		"systemPathsUnavailable": "시스템 경로를 사용할 수 없습니다",
+		"invalidDownloadPath": "잘못된 다운로드 경로: {{path}}",
+		"downloadFailed": "다운로드 실패: {{message}}",
+		"pluginInstalled": "플러그인이 설치되었습니다. 사용하려면 After Effects를 다시 시작하세요.",
+		"downloadComplete": "다운로드 완료.",
+		"downloadedDescription": "[카탈로그에서 다운로드됨] {{description}}",
+		"gatewayBootRetryHint": "{{reason}} — 게이트웨이 부팅을 다시 시도하려면 패널을 다시 로드하세요",
+		"hideSidePanel": "사이드 패널 숨기기",
+		"showSidePanel": "사이드 패널 표시",
+		"download": "다운로드",
+		"import": "가져오기",
+		"sync": {
+			"idle": "클라우드 동기화 대기 중",
+			"ok": "ty-plus OK",
+			"failed": "클라우드 동기화 실패"
+		}
+	},
+	"notificationCenter": {
+		"title": "알림",
+		"loading": "로드 중…",
+		"empty": "알림이 없습니다",
+		"toggleContent": "콘텐츠 전환",
+		"noContent": "콘텐츠 없음",
+		"backToList": "목록으로 돌아가기",
+		"backToListMenu": "목록으로 돌아가기",
+		"refresh": "새로고침",
+		"open": "열기",
+		"close": "닫기",
+		"markRead": "읽음으로 표시",
+		"markUnread": "읽지 않음으로 표시",
+		"markAsRead": "읽음으로 표시",
+		"markAsUnread": "읽지 않음으로 표시",
+		"generalCategory": "일반"
+	},
+	"notificationContainer": {
+		"dismiss": "알림 닫기"
+	},
+	"publicLink": {
+		"userManual": "사용자 매뉴얼"
 	}
 }

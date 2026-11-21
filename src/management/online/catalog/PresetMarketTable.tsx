@@ -2,6 +2,7 @@ import { IconButton } from "@ty-plus/ui/controls/IconButton";
 import { Icon } from "@ty-plus/ui/icons/Icon";
 import { ExternalLink } from "lucide-react";
 import type { JSX } from "react";
+import { i18n } from "@/management/i18n/index";
 import { DownloadProgressIconButton } from "@/management/online/catalog/DownloadProgressIconButton";
 import type { DownloadProgress } from "@/management/online/catalog/use-cases";
 import type { PresetSearchItem } from "@/management/online/contract";
@@ -159,10 +160,18 @@ export function PresetMarketTable(props: PresetMarketTableProps): JSX.Element {
 			<table className={tableClass}>
 				<thead className={headerRowClass}>
 					<tr>
-						<th className={thumbHeaderClass}>Thumb</th>
-						<th className={headerCellClass}>Name / ID</th>
-						<th className={actionsHeaderClass}>Category</th>
-						<th className={actionsHeaderClass}>Actions</th>
+						<th className={thumbHeaderClass}>
+							{i18n.t("online:catalog.tableThumb")}
+						</th>
+						<th className={headerCellClass}>
+							{i18n.t("online:catalog.tableNameId")}
+						</th>
+						<th className={actionsHeaderClass}>
+							{i18n.t("online:catalog.category")}
+						</th>
+						<th className={actionsHeaderClass}>
+							{i18n.t("online:catalog.tableActions")}
+						</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -195,7 +204,7 @@ export function PresetMarketTable(props: PresetMarketTableProps): JSX.Element {
 										<IconButton
 											size="sm"
 											variant="ghost"
-											title="Open Notion"
+											title={i18n.t("online:catalog.openNotion")}
 											onClick={() =>
 												openUrlInDefaultBrowser(item.notionPageUrl ?? "")
 											}

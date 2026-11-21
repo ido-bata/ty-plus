@@ -1,47 +1,54 @@
 {
 	"codePreset": {
-		"codeType": "Code type",
+		"codeType": "Code-Typ",
 		"editor": {
 			"expression": "Expression",
-			"script": "Script code (.jsx)"
+			"script": "Skriptcode (.jsx)"
 		},
-		"saveLocation": "Save location",
-		"savePreview": "Save preview",
+		"saveLocation": "Speicherort",
+		"savePreview": "Speichervorschau",
 		"status": {
-			"fileExists": "File already exists — will be overwritten",
-			"success": "Preset saved successfully!"
+			"fileExists": "Datei existiert bereits — wird überschrieben",
+			"success": "Preset erfolgreich gespeichert!"
 		},
 		"type": {
 			"expression": "Expression",
-			"script": "Script"
-		}
+			"script": "Skript"
+		},
+		"iconText": "CODE",
+		"alertSelectComp": "Bitte eine Composition auswählen.",
+		"alertSelectProperty": "Bitte mindestens eine Eigenschaft auswählen, um den Expression anzuwenden.",
+		"alertNoExpressionProps": "Die ausgewählten Eigenschaften akzeptieren keinen Expression.",
+		"alertApplyError": "Fehler beim Anwenden des Expression:",
+		"defaultDescription": "Code-Voreinstellung: {{name}}"
 	},
 	"common": {
 		"browseFolder": "Ordner durchsuchen",
 		"copyPath": "Pfad kopieren",
-		"selectFile": "Datei auswählen"
+		"selectFile": "Datei auswählen",
+		"systemDefault": "Systemstandard"
 	},
 	"layerCompPreset": {
 		"desc": {
-			"comp": "Open the composition you want to save. Project must be saved first.",
-			"layer": "Select the layers you want to save. Project must be saved first."
+			"comp": "Öffnen Sie die Komposition, die Sie speichern möchten. Das Projekt muss zuerst gespeichert werden.",
+			"layer": "Wählen Sie die Ebenen aus, die Sie speichern möchten. Das Projekt muss zuerst gespeichert werden."
 		},
 		"hint": {
-			"saveButton": "Press \"Create\" at the bottom of the dialog to save."
+			"saveButton": "Drücken Sie „Erstellen“ unten im Dialog, um zu speichern."
 		},
-		"savePreview": "Save preview",
+		"savePreview": "Speichervorschau",
 		"step1": {
-			"title": "Preset type"
+			"title": "Preset-Typ"
 		},
 		"step2": {
-			"title": "Prepare in After Effects"
+			"title": "In After Effects vorbereiten"
 		},
 		"step3": {
-			"title": "Save location"
+			"title": "Speicherort"
 		},
 		"type": {
 			"comp": "Composition",
-			"layer": "Layer"
+			"layer": "Ebene"
 		}
 	},
 	"search": {
@@ -100,7 +107,8 @@
 			"fields": {
 				"path": "Footage-Pfad",
 				"mode": "Import-Modus"
-			}
+			},
+			"iconText": "MEDIA"
 		},
 		"layerComp": {
 			"title": "Ebene / Komposition-Voreinstellung",
@@ -114,7 +122,9 @@
 			"fields": {
 				"path": "Importpfad",
 				"strategy": "Strategie"
-			}
+			},
+			"iconText": "IMPORT",
+			"pathPlaceholder": "C:\\path\\asset"
 		},
 		"code": {
 			"title": "Code-Voreinstellung",
@@ -122,10 +132,11 @@
 			"extra": "Gespeicherte Skriptdateien werden in After Effects ausgeführt.",
 			"defaultName": "Code-Voreinstellung",
 			"editor": {
-				"format": "Format Document",
-				"formatTooltip": "Format the script body",
-				"diagnosticCount": "{{count}} problem",
-				"diagnosticCount_other": "{{count}} problems"
+				"format": "Dokument formatieren",
+				"formatTooltip": "Skriptinhalt formatieren",
+				"diagnosticCount": "{{count}} Problem",
+				"diagnosticCount_one": "{{count}} Problem",
+				"diagnosticCount_other": "{{count}} Probleme"
 			}
 		},
 		"easing": {
@@ -170,29 +181,30 @@
 	},
 	"animationPreset": {
 		"step1": {
-			"title": "Select in After Effects",
-			"desc": "Select properties or layers you want to save as preset"
+			"title": "In After Effects auswählen",
+			"desc": "Wählen Sie Eigenschaften oder Ebenen aus, die als Preset gespeichert werden sollen"
 		},
 		"step2": {
-			"title": "Save to this folder"
+			"title": "In diesem Ordner speichern"
 		},
 		"step3": {
-			"button": "Save Animation Preset",
-			"detecting": "Detecting..."
+			"button": "Animations-Preset speichern",
+			"detecting": "Wird erkannt..."
 		},
 		"status": {
-			"success": "Detected!",
-			"noSelection": "No selection",
-			"noSelectionHint": "Select properties or layers in AE first",
-			"timeout": "Scan timeout",
-			"timeoutHint": "Choose a smaller folder",
-			"error": "Not detected",
-			"errorHint": "Save to the folder above"
+			"success": "Erkannt!",
+			"noSelection": "Keine Auswahl",
+			"noSelectionHint": "Wählen Sie zuerst Eigenschaften oder Ebenen in AE aus",
+			"timeout": "Scan-Zeitüberschreitung",
+			"timeoutHint": "Wählen Sie einen kleineren Ordner",
+			"error": "Nicht erkannt",
+			"errorHint": "Im obenstehenden Ordner speichern"
 		},
 		"path": {
-			"reset": "Reset to default",
-			"notConfigured": "Not configured"
-		}
+			"reset": "Auf Standard zurücksetzen",
+			"notConfigured": "Nicht konfiguriert"
+		},
+		"iconText": "ANIM"
 	},
 	"edit": {
 		"title": "Preset bearbeiten",
@@ -204,7 +216,13 @@
 			"saved": "Gespeichert",
 			"deleted": "Gelöscht",
 			"saveFailed": "Speichern fehlgeschlagen: {{message}}",
-			"deleteFailed": "Löschen fehlgeschlagen: {{message}}"
+			"deleteFailed": "Löschen fehlgeschlagen: {{message}}",
+			"notFound": "Preset nicht gefunden",
+			"loadFailed": "Laden fehlgeschlagen",
+			"saveFailedFallback": "Speichern fehlgeschlagen",
+			"deleteFailedFallback": "Löschen fehlgeschlagen",
+			"saving": "Wird gespeichert…",
+			"deleting": "Wird gelöscht…"
 		},
 		"fields": {
 			"presetName": "Preset-Name",
@@ -223,7 +241,18 @@
 			"script": "Skript-Preset",
 			"plugin": "Plugin-Preset",
 			"footage": "Footage-Preset"
-		}
+		},
+		"memberLoading": "Wird geladen…",
+		"memberNotFound": "Mitglied nicht gefunden: {{id}}",
+		"memberRun": "{{name}} ausführen",
+		"memberEdit": "{{name}} bearbeiten",
+		"memberDelete": "{{name}} löschen",
+		"memberPresets": "Mitglieds-Presets ({{count}})",
+		"noMemberPresets": "Keine Mitglieds-Presets",
+		"selectJsxFile": "JSX-Datei auswählen",
+		"browseLoadFile": "Datei laden",
+		"loadFromFilePlaceholder": "Aus Datei laden…",
+		"code": "Code"
 	},
 	"group": {
 		"title": "Preset-Gruppe erstellen",
@@ -231,7 +260,165 @@
 		"defaultName": "Gruppen-Preset",
 		"fields": {
 			"groupName": "Gruppenname",
-			"groupNamePlaceholder": "Gruppenname eingeben"
+			"groupNamePlaceholder": "Gruppenname eingeben",
+			"folderPaths": "Ordnerpfade",
+			"folderPathsPlaceholder": "Ein Ordnerpfad pro Zeile",
+			"presetIds": "Preset-IDs",
+			"presetIdsPlaceholder": "Eine Preset-ID pro Zeile",
+			"recursiveScan": "Ordner rekursiv scannen"
+		},
+		"iconText": "GRUPPE",
+		"browseMembers": "Dateien und Ordner zum Hinzufügen durchsuchen",
+		"addPath": "Pfad hinzufügen",
+		"detectCandidates": "Kandidaten erkennen",
+		"browseFolder": "Ordner durchsuchen",
+		"removePath": "Pfad entfernen",
+		"iconRules": "Symbolregeln",
+		"baseIcon": {
+			"heading": "Basis-Symbol (Standard für alle Presets)",
+			"label": "Basis-Symbol"
+		},
+		"rules": "Regeln",
+		"addRule": "Regel hinzufügen",
+		"groupIcon": "Gruppen-Symbol",
+		"advancedSettings": "Erweiterte Einstellungen",
+		"scanDepth": "Ordner-Scan-Tiefe",
+		"scanDepthFlat": "Direkt",
+		"scanDepthRecursive": "Untergeordnete einschließen",
+		"synth": {
+			"noMembers": "Keine Mitglieds-Presets.",
+			"memberPresets_one": "{{count}} Mitglieds-Preset.",
+			"memberPresets_other": "{{count}} Mitglieds-Presets.",
+			"description": "Gruppencontainer. {{memberLine}}"
+		},
+		"rule": {
+			"filterName": "Name",
+			"filterPath": "Pfad",
+			"filterPresetId": "Preset-ID",
+			"filterPresetType": "Preset-Typ",
+			"removeRule": "Regel entfernen",
+			"nameRegexPlaceholder": "Namensregex (z. B. ^Header.*$)",
+			"namePatternPlaceholder": "Namensmuster",
+			"matchContains": "Enthält",
+			"matchStarts": "Beginnt mit",
+			"matchEnds": "Endet mit",
+			"matchRegex": "Regex",
+			"presetTypePreset": "Preset",
+			"presetTypeScript": "Skript",
+			"presetTypePlugin": "Plug-in",
+			"presetTypeFootage": "Footage",
+			"noDirectories": "Keine Verzeichnisse erkannt",
+			"noPresets": "Keine Presets erkannt",
+			"iconLabel": "Regel-Symbol"
 		}
+	},
+	"catalogAdd": {
+		"dialogTitle": "Katalog-Preset aus Pfad hinzufügen",
+		"name": "Name",
+		"namePlaceholder": "Namen eingeben…",
+		"filePath": "Dateipfad",
+		"selectFile": "Datei auswählen",
+		"browseFile": "Datei durchsuchen",
+		"icon": "Symbol",
+		"creating": "Wird erstellt…",
+		"pathPlaceholderCurrentFolder": "Aktueller Ordner wird angezeigt — Datei wählen oder durchsuchen",
+		"pathPlaceholderSelectFile": "Datei auswählen…",
+		"browser": {
+			"cepNodeRequired": "Dateibrowser erfordert CEP Node",
+			"noPresetsFolder": "Kein Preset-Ordner konfiguriert",
+			"noScriptsFolder": "Kein Skript-Ordner konfiguriert",
+			"noPluginsFolder": "Kein Plug-in-Ordner konfiguriert",
+			"noFiles": "Keine Dateien gefunden"
+		}
+	},
+	"iconEditor": {
+		"tabs": {
+			"text": "Text",
+			"emoji": "Emoji",
+			"image": "Bild",
+			"canvas": "Canvas"
+		},
+		"emojiPicker": "Emoji-Auswahl",
+		"selectImage": "Symbolbild auswählen",
+		"browseImage": "Symbolbild durchsuchen",
+		"imagePlaceholder": "Bildpfad oder URL",
+		"iconTextAria": "Symboltext",
+		"textPlaceholder": "2–6 Zeichen",
+		"previewAria": "Symbolvorschau"
+	},
+	"catalogBrowser": {
+		"loading": "Wird geladen",
+		"searchPlaceholder": "Nach Name, Typ oder Pfad suchen…",
+		"reload": "Katalog neu laden"
+	},
+	"listDialog": {
+		"workspacePlaced": "Workspace: {{tags}}",
+		"workspaceGroupPlaced": "Workspace: {{tags}} (Gruppe „{{label}}“)",
+		"workspaceNotPlaced": "Workspace: nicht platziert",
+		"runPresetAria": "Preset ausführen",
+		"editPresetAria": "Preset bearbeiten",
+		"deletePresetAria": "Preset löschen",
+		"editGroup": "Gruppe bearbeiten",
+		"deleteGroup": "Gruppe löschen",
+		"visibleItems_one": "{{count}} Element",
+		"visibleItems_other": "{{count}} Elemente",
+		"filteredSuffix": " · gefiltert",
+		"collapseGroup": "Gruppe einklappen",
+		"expandGroup": "Gruppe ausklappen",
+		"returnToAllPresets": "Zurück zu allen Presets",
+		"leaveGroupTitle": "Gruppe „{{name}}“ verlassen und zur Liste zurückkehren",
+		"returnToListTitle": "Zurück zur Liste",
+		"allPresets": "Alle Presets",
+		"runPresetNamed": "{{name}} ausführen",
+		"loadFailedTitle": "Lokaler Katalog konnte nicht geladen werden",
+		"tryAgain": "Erneut versuchen",
+		"loadingCatalog": "Lokaler Katalog wird geladen…",
+		"emptyCatalog": "Noch keine Presets lokal gespeichert",
+		"noMatches": "Keine passenden Presets",
+		"cloudOffline": "Cloud offline",
+		"cloudDegradedDetail": "{{message}} — es wird nur der lokale Katalog angezeigt.",
+		"cloudOfflineDetail": "Cloud-Funktionen sind in dieser Sitzung nicht aktiv — es wird nur der lokale Katalog angezeigt.",
+		"groupsUnavailable": "Gruppen nicht verfügbar",
+		"groupsErrorDetail": "{{error}} — Presets werden ohne Gruppierung aufgelistet.",
+		"title": "Preset-Liste",
+		"gridResizeHint": "Strg gedrückt halten und scrollen, um das Symbolraster zu skalieren"
+	},
+	"codeEditor": {
+		"snippets": {
+			"ifBlock": "if-Block",
+			"elseBlock": "else-Block",
+			"forLoop": "for-Schleife",
+			"whileLoop": "while-Schleife",
+			"function": "Funktion",
+			"tryCatch": "try / catch",
+			"extendscriptLog": "ExtendScript-Protokoll"
+		},
+		"resizeAria": "Code-Editor skalieren"
+	},
+	"glyph": {
+		"loadingPresetIcon": "Preset-Symbol wird geladen"
+	},
+	"assetWrite": {
+		"pathNotAbsolute": "Der Pfad des Voreinstellung-Assets ist kein absoluter Pfad: {{path}}",
+		"fsUnavailable": "Schreiben des Voreinstellung-Assets nicht verfügbar: Das CEP-Node-Dateisystem ist in diesem Fenster nicht erreichbar.",
+		"writeFailed": "Schreiben des Voreinstellung-Assets fehlgeschlagen: {{error}}",
+		"verificationMissing": "Voreinstellung-Asset fehlt nach dem Schreiben: {{path}}",
+		"verificationMismatch": "Inhalt des Voreinstellung-Assets stimmt nach dem Schreiben nicht überein: {{path}}",
+		"elevationUnavailable": "Das Schreiben des Voreinstellung-Assets wurde durch Berechtigungen verweigert und es ist kein Erhöhungsmechanismus auf diesem Host verfügbar: {{path}} ({{detail}})",
+		"elevationCancelled": "Die Administratorberechtigung für {{path}} wurde abgelehnt. Das Voreinstellung-Asset wurde nicht gespeichert.",
+		"writeDenied": "Das Schreiben des Voreinstellung-Assets wurde durch Berechtigungen verweigert: {{path}}",
+		"verificationMissingElevated": "Voreinstellung-Asset fehlt nach dem erhöhten Schreiben: {{path}}",
+		"verificationMismatchElevated": "Inhalt des Voreinstellung-Assets stimmt nach dem erhöhten Schreiben nicht überein: {{path}}",
+		"dirPathNotAbsolute": "Das Verzeichnis des Voreinstellung-Assets ist kein absoluter Pfad: {{path}}",
+		"dirFsUnavailable": "Erstellen des Voreinstellung-Asset-Verzeichnisses nicht verfügbar: Das CEP-Node-Dateisystem ist in diesem Fenster nicht erreichbar.",
+		"dirCreateFailed": "Voreinstellung-Asset-Verzeichnis konnte nicht erstellt werden: {{error}}",
+		"dirElevationUnavailable": "Das Erstellen des Voreinstellung-Asset-Verzeichnisses wurde durch Berechtigungen verweigert und es ist kein Erhöhungsmechanismus auf diesem Host verfügbar: {{path}}",
+		"dirElevationCancelled": "Die Administratorberechtigung für {{path}} wurde abgelehnt. Das Voreinstellung-Asset-Verzeichnis wurde nicht erstellt.",
+		"dirMissingAfterElevated": "Voreinstellung-Asset-Verzeichnis fehlt nach dem erhöhten Erstellen: {{path}}",
+		"dirDenied": "Das Erstellen des Voreinstellung-Asset-Verzeichnisses wurde durch Berechtigungen verweigert: {{path}}",
+		"dirMissingAfterCreate": "Voreinstellung-Asset-Verzeichnis fehlt nach dem Erstellen: {{path}}",
+		"exitCodeSuffix": " (Exit-Code {{code}})",
+		"elevatedErrorWithDetail": "Erhöhtes Schreiben meldete einen Fehler{{exitNote}}: {{detail}}",
+		"elevatedError": "Erhöhtes Schreiben meldete einen Fehler{{exitNote}}"
 	}
 }

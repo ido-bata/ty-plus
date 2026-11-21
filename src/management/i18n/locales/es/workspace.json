@@ -22,7 +22,30 @@
 		"expand": "Expandir",
 		"collapse": "Contraer",
 		"position": "Posición",
-		"orientation": "Orientación"
+		"orientation": "Orientación",
+		"ariaLabel": "Preajustes / Widgets",
+		"collapseExpand": "Contraer/Expandir",
+		"horizontal": "Horizontal",
+		"vertical": "Vertical",
+		"resetToDefaults": "Restablecer valores predeterminados",
+		"buttons": {
+			"localPreset": "Preajuste local",
+			"groupPreset": "Preajuste de grupo",
+			"animationPreset": "Preajuste de animación",
+			"layerCompPreset": "Preajuste de capa/comp",
+			"codePreset": "Preajuste de código",
+			"addWidget": "Añadir widget"
+		},
+		"positionLabels": {
+			"topLeft": "Arriba izquierda",
+			"topCenter": "Arriba centro",
+			"topRight": "Arriba derecha",
+			"bottomLeft": "Abajo izquierda",
+			"bottomCenter": "Abajo centro",
+			"bottomRight": "Abajo derecha",
+			"leftCenter": "Centro izquierda",
+			"rightCenter": "Centro derecha"
+		}
 	},
 	"context": {
 		"lock": "Bloquear",
@@ -41,5 +64,35 @@
 		"savingPaused": "El guardado está en pausa para no sobrescribir este archivo. Repara o restaura el archivo y vuelve a intentarlo.",
 		"file": "Archivo: workspace-{{wsIndex}}.json",
 		"retry": "Reintentar la restauración"
+	},
+	"statusBar": {
+		"undoTitle": "Deshacer (Ctrl+Z)",
+		"redoTitle": "Rehacer (Ctrl+Y)",
+		"saveSnapshotTitle": "Guardar instantánea del diseño",
+		"savedLayoutsTitle": "Diseños guardados ({{count}})",
+		"savedLayoutsTitleEmpty": "Diseños guardados (ninguno)",
+		"noSavedLayouts": "No hay diseños guardados",
+		"restoreSnapshotTitle": "Restaurar \"{{label}}\"",
+		"presetLibraryTitle": "Biblioteca de preajustes (en línea)",
+		"debugConsoleTitle": "Consola de depuración (Ctrl+`)"
+	},
+	"gridTile": {
+		"widgetTitle": "Widget",
+		"configLoadError": "No se pudo cargar la configuración"
+	},
+	"debugProbe": {
+		"title": "Sonda de diálogo",
+		"message": "Comprobación del puente panel -> diálogo"
+	},
+	"easingCurveColors": {
+		"linear": "Lineal",
+		"hold": "Mantener",
+		"easeInGentle": "Ease in",
+		"easeInSharp": "Ease in (brusco)",
+		"easeOutGentle": "Ease out",
+		"easeOutSharp": "Ease out (brusco)",
+		"easeInOut": "Ease in/out",
+		"overshoot": "Sobreimpulso",
+		"bezier": "Bézier"
 	}
 }

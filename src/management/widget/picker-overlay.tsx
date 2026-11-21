@@ -1,6 +1,7 @@
 import { Button } from "@ty-plus/ui/controls/Button";
 import { type JSX, useCallback, useRef, useState } from "react";
 import type { WidgetType } from "@/function/widget";
+import { i18n } from "@/management/i18n/index";
 import { AddWidgetCatalogPanel } from "@/management/widget/catalog";
 import { defaultFirstWidgetType } from "@/management/widget/default-first-widget-type";
 import { css } from "@/styled-system/css";
@@ -164,7 +165,9 @@ export function AddWidgetPickerOverlay({
 				<header className={headerStyle}>
 					<div className={headerBodyStyle}>
 						<h2 id="add-widget-overlay-title" className={titleStyle}>
-							Add widget
+							{i18n.t("widgets:selector.addWidget", {
+								defaultValue: "Add widget",
+							})}
 						</h2>
 						<p className={panelIdStyle}>{panelId}</p>
 					</div>
@@ -174,7 +177,9 @@ export function AddWidgetPickerOverlay({
 					className={catalogClass}
 					intro={
 						<p className={catalogIntroStyle}>
-							Target panel{" "}
+							{i18n.t("widgets:pickerOverlay.targetPanelPrefix", {
+								defaultValue: "Target panel",
+							})}{" "}
 							<span className={catalogIntroPanelStyle}>{panelId}</span>
 						</p>
 					}
@@ -188,7 +193,10 @@ export function AddWidgetPickerOverlay({
 				/>
 				<footer className={footerStyle}>
 					<p className={footerHintStyle}>
-						Widget is appended at the bottom of the grid for this panel.
+						{i18n.t("widgets:pickerOverlay.footerHint", {
+							defaultValue:
+								"Widget is appended at the bottom of the grid for this panel.",
+						})}
 					</p>
 					<div className={footerActionsStyle}>
 						<Button
@@ -197,7 +205,7 @@ export function AddWidgetPickerOverlay({
 							type="button"
 							onClick={onClose}
 						>
-							Cancel
+							{i18n.t("common:buttons.cancel")}
 						</Button>
 						<Button
 							variant="primary"
@@ -208,7 +216,7 @@ export function AddWidgetPickerOverlay({
 								if (selectedType) emitAdd(selectedType);
 							}}
 						>
-							Add
+							{i18n.t("widgets:selector.add", { defaultValue: "Add" })}
 						</Button>
 					</div>
 				</footer>

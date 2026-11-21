@@ -180,5 +180,82 @@
 			"copied": "Copiado al portapapeles",
 			"digest": "ID de error"
 		}
+	},
+	"ui": {
+		"loadingSpinner": {
+			"label": "Cargando"
+		},
+		"searchField": {
+			"clearAria": "Borrar búsqueda",
+			"clearTitle": "Borrar"
+		},
+		"regexEditor": {
+			"enterPattern": "Introduce un patrón.",
+			"invalidFlags": "Indicadores no válidos: {{flags}}",
+			"plainSource": "Fuente regex simple",
+			"literalFormat": "Formato regex literal",
+			"testString": "Cadena de prueba",
+			"sourcePlaceholder": "Fuente regex",
+			"flagsPlaceholder": "indicadores",
+			"matches": "Coincidencias",
+			"noMatch": "Sin coincidencias",
+			"literalSuffix": "· literal /patrón/flags",
+			"sourceSuffix": "· solo fuente"
+		},
+		"listSelect": {
+			"placeholder": "Seleccionar…"
+		}
+	},
+	"directoryBrowser": {
+		"refresh": "Actualizar",
+		"goUp": "Subir",
+		"open": "Abrir",
+		"select": "Seleccionar",
+		"deselect": "Deseleccionar",
+		"listView": "Vista de lista",
+		"iconView": "Vista de iconos",
+		"noFilesFound": "No se encontraron archivos"
+	},
+	"debugConsole": {
+		"title": "Consola",
+		"clear": "Borrar",
+		"evaluateAria": "Evaluar JavaScript",
+		"evaluatePlaceholder": "Evaluar JavaScript…",
+		"rowContextHint": "Clic derecho para copiar",
+		"filterLevelAria": "Filtrar mensajes de la consola",
+		"filterSourceAria": "Filtrar mensajes por origen",
+		"filterScopeAria": "Filtrar mensajes por ámbito de sesión",
+		"levels": {
+			"all": "Todos",
+			"log": "Registro",
+			"info": "Info",
+			"warn": "Advertencia",
+			"error": "Error"
+		},
+		"sources": {
+			"all": "Todas las fuentes",
+			"panel": "Panel",
+			"modeless": "Sin ventana",
+			"hostBridge": "Puente de host",
+			"online": "En línea",
+			"preset": "Preajuste",
+			"opWorker": "Worker de operaciones",
+			"workspace": "Área de trabajo",
+			"boot": "Inicio",
+			"debugConsole": "Consola de depuración",
+			"console": "Consola"
+		},
+		"scopes": {
+			"allHistory": "Todo el historial",
+			"thisSession": "Esta sesión"
+		},
+		"contextMenu": {
+			"copyMessage": "Copiar mensaje",
+			"copyAllMessages": "Copiar todos los mensajes",
+			"clearConsole": "Borrar consola",
+			"enableAutoScroll": "Activar desplazamiento automático",
+			"disableAutoScroll": "Desactivar desplazamiento automático",
+			"itemActive": "{{level}} (activo)"
+		}
 	}
 }

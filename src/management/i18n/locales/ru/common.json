@@ -180,5 +180,82 @@
 			"copied": "Скопировано в буфер обмена",
 			"digest": "Идентификатор ошибки"
 		}
+	},
+	"ui": {
+		"loadingSpinner": {
+			"label": "Загрузка"
+		},
+		"searchField": {
+			"clearAria": "Очистить поиск",
+			"clearTitle": "Очистить"
+		},
+		"regexEditor": {
+			"enterPattern": "Введите шаблон.",
+			"invalidFlags": "Недопустимые флаги: {{flags}}",
+			"plainSource": "Простой regex-шаблон",
+			"literalFormat": "Литеральный формат regex",
+			"testString": "Тестовая строка",
+			"sourcePlaceholder": "Шаблон regex",
+			"flagsPlaceholder": "флаги",
+			"matches": "Совпадения",
+			"noMatch": "Нет совпадений",
+			"literalSuffix": "· литерал /pattern/flags",
+			"sourceSuffix": "· только исходник"
+		},
+		"listSelect": {
+			"placeholder": "Выбрать…"
+		}
+	},
+	"directoryBrowser": {
+		"refresh": "Обновить",
+		"goUp": "Наверх",
+		"open": "Открыть",
+		"select": "Выбрать",
+		"deselect": "Снять выбор",
+		"listView": "Список",
+		"iconView": "Значки",
+		"noFilesFound": "Файлы не найдены"
+	},
+	"debugConsole": {
+		"title": "Консоль",
+		"clear": "Очистить",
+		"evaluateAria": "Вычислить JavaScript",
+		"evaluatePlaceholder": "Вычислить JavaScript…",
+		"rowContextHint": "Щелчок правой кнопкой для копирования",
+		"filterLevelAria": "Фильтровать сообщения консоли",
+		"filterSourceAria": "Фильтровать сообщения консоли по источнику",
+		"filterScopeAria": "Фильтровать сообщения консоли по области сеанса",
+		"levels": {
+			"all": "Все",
+			"log": "Журнал",
+			"info": "Инфо",
+			"warn": "Предупреждение",
+			"error": "Ошибка"
+		},
+		"sources": {
+			"all": "Все источники",
+			"panel": "Панель",
+			"modeless": "Без окна",
+			"hostBridge": "Мост хоста",
+			"online": "Онлайн",
+			"preset": "Пресет",
+			"opWorker": "Операционный воркер",
+			"workspace": "Рабочая область",
+			"boot": "Загрузка",
+			"debugConsole": "Консоль отладки",
+			"console": "Консоль"
+		},
+		"scopes": {
+			"allHistory": "Вся история",
+			"thisSession": "Этот сеанс"
+		},
+		"contextMenu": {
+			"copyMessage": "Копировать сообщение",
+			"copyAllMessages": "Копировать все сообщения",
+			"clearConsole": "Очистить консоль",
+			"enableAutoScroll": "Включить автопрокрутку",
+			"disableAutoScroll": "Выключить автопрокрутку",
+			"itemActive": "{{level}} (активно)"
+		}
 	}
 }

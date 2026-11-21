@@ -17,7 +17,10 @@
 			"quick-actions": "Скрипты, эффекты и файловые действия из компактной палитры команд.",
 			"directory-browser": "Просмотр папок и пресетов внутри панели.",
 			"font-viewer": "Предпросмотр семейств, стилей и примера текста в рабочей области."
-		}
+		},
+		"add": "Добавить",
+		"adding": "Добавление…",
+		"noMatches": "Нет подходящих виджетов. Попробуйте другой запрос."
 	},
 	"types": {
 		"align": "Выравнивание",
@@ -34,14 +37,14 @@
 	},
 	"easing": {
 		"name": "Easing",
-		"apply": "Apply",
-		"copyFromSelection": "Copy from selection",
-		"reverse": "Reverse",
+		"apply": "Применить",
+		"copyFromSelection": "Копировать из выделения",
+		"reverse": "Обратить",
 		"mode": {
-			"curve": "Curve",
-			"loop": "Loop",
-			"bounce": "Bounce",
-			"elastic": "Elastic"
+			"curve": "Кривая",
+			"loop": "Цикл",
+			"bounce": "Отскок",
+			"elastic": "Эластичный"
 		},
 		"loop": {
 			"cycles": "Циклы",
@@ -49,31 +52,37 @@
 			"increment": "Увеличить циклы"
 		},
 		"options": {
-			"mode": "Mode",
-			"grid": "Grid",
-			"label": "Label"
+			"mode": "Режим",
+			"grid": "Сетка",
+			"label": "Метка"
 		},
 		"background": {
-			"dots": "Dots",
-			"grid": "Grid"
+			"dots": "Точки",
+			"grid": "Сетка"
 		},
 		"label": {
-			"none": "None"
+			"none": "Нет"
 		},
 		"applyMode": {
-			"single": "Single",
-			"pair": "Each"
+			"single": "Один",
+			"pair": "Каждый"
 		},
 		"status": {
-			"applying": "Applying",
-			"applied": "Applied",
-			"failed": "Failed"
+			"applying": "Применение…",
+			"applied": "Применено",
+			"failed": "Ошибка"
 		},
 		"presets": {
-			"linear": "Linear",
-			"easeOut": "Ease out",
-			"easeIn": "Ease in",
-			"easeInOut": "Ease in/out"
+			"linear": "Линейная",
+			"easeOut": "Плавный выход",
+			"easeIn": "Плавный вход",
+			"easeInOut": "Плавный вход/выход"
+		},
+		"presetAria": {
+			"linear": "Применить пресет Easing Linear",
+			"easeOut": "Применить пресет Easing Ease out",
+			"easeIn": "Применить пресет Easing Ease in",
+			"easeInOut": "Применить пресет Easing Ease in/out"
 		}
 	},
 	"menu": {
@@ -92,16 +101,66 @@
 		"groupSelectedItems": "Группировать выбранное",
 		"moveToPanel": "Переместить на панель",
 		"deleteSelectedPresets": "Удалить {{count}} пресетов",
-		"layout": "Макет"
+		"layout": "Макет",
+		"separatorAria": "Разделитель раздела меню"
 	},
 	"align": {
-		"name": "Выравнивание"
+		"name": "Выравнивание",
+		"gestureOverlay": "Оверлей траектории жеста",
+		"targets": {
+			"selection": "Выровнять по выделенному",
+			"composition": "Выровнять по Composition",
+			"keyObject": "Выровнять по ключевому объекту",
+			"time": "Выравнивание по времени"
+		},
+		"sections": {
+			"distribute": "Распределение",
+			"spacing": "Интервал",
+			"time": "Время"
+		}
 	},
 	"anchorPoint": {
-		"name": "Anchor point"
+		"name": "Anchor point",
+		"gestureOverlay": "Оверлей жеста Anchor point",
+		"positions": {
+			"topLeft": "Сверху слева",
+			"topCenter": "Сверху по центру",
+			"topRight": "Сверху справа",
+			"centerLeft": "Слева по центру",
+			"center": "Центр",
+			"centerRight": "Справа по центру",
+			"bottomLeft": "Снизу слева",
+			"bottomCenter": "Снизу по центру",
+			"bottomRight": "Снизу справа"
+		}
 	},
 	"info": {
-		"name": "Info"
+		"name": "Info",
+		"activeComp": "Активный Comp",
+		"compInfo": "Информация о Comp",
+		"file": "Файл",
+		"kind": "Тип",
+		"noPresetSelected": "Пресет не выбран",
+		"noDescription": "Нет описания",
+		"source": {
+			"selection": "Выделение",
+			"hover": "Наведение"
+		},
+		"comp": {
+			"size": "Размер",
+			"pixelAspect": "Пиксельное соотношение",
+			"background": "Фон",
+			"frameRate": "Частота кадров",
+			"duration": "Длительность",
+			"shutterAngle": "Угол затвора",
+			"shutterPhase": "Фаза затвора",
+			"total": "Всего",
+			"selected": "Выбрано",
+			"motionBlur": "Размытие движения",
+			"draft3d": "Черновик 3D",
+			"on": "Вкл",
+			"off": "Выкл"
+		}
 	},
 	"layoutLock": {
 		"name": "Layout lock"
@@ -111,10 +170,10 @@
 	},
 	"quickActions": {
 		"name": "Quick actions",
-		"palettePlaceholder": "Search presets, scripts, plugins, effects, and files under roots…",
-		"paletteEmpty": "No matching presets or effects.",
-		"effectRowKind": "Effect",
-		"rootFileRowKind": "Disk"
+		"palettePlaceholder": "Поиск пресетов, скриптов, плагинов, эффектов и файлов в корневых папках…",
+		"paletteEmpty": "Нет подходящих пресетов или эффектов.",
+		"effectRowKind": "Эффект",
+		"rootFileRowKind": "Диск"
 	},
 	"fxSearch": "FX search",
 	"directoryBrowser": {
@@ -203,6 +262,9 @@
 		},
 		"hints": {
 			"iconGridWheel": "Ctrl+колесо для изменения размера"
+		},
+		"listHeader": {
+			"name": "Имя"
 		}
 	},
 	"textEditor": {
@@ -210,47 +272,47 @@
 	},
 	"fontViewer": {
 		"name": "Font viewer",
-		"searchPlaceholder": "Search family, PostScript, style…",
-		"searchAria": "Search fonts",
-		"listView": "List view",
-		"iconView": "Icon cards",
-		"layoutLegend": "Font layout",
-		"reload": "Reload font list",
-		"samplePresets": "Sample",
-		"sampleCustom": "Custom",
-		"samplePresetAria": "Preview sample preset",
-		"previewTextAria": "Preview text",
-		"samplePlaceholder": "Preview text (CJK / emoji / Latin)",
-		"ctxMenuHeading": "Display options",
-		"ctxTileSquare": "Tile aspect 1:1",
-		"ctxTileWide": "Tile aspect 16:9",
-		"ctxShowResolved": "Show resolved-font match column (list)",
-		"ctxHideResolved": "Hide resolved-font match column (list)",
-		"showResolved": "Resolved font check (list)",
-		"loadError": "Could not load fonts.",
-		"loading": "Loading…",
-		"statsLine": "{{families}} families · {{faces}} typefaces ({{total}} loaded)",
-		"familySummary": "{{count}} typefaces",
-		"expandFamily": "Expand family",
-		"collapseFamily": "Collapse family",
-		"backToFamilies": "All font families",
-		"openFamilyIcon": "Open family",
-		"noMatches": "No matching fonts",
-		"phaseAeHost": "Querying After Effects for fonts (evalScript)…",
-		"phaseBrowser": "Reading browser font sources…",
-		"aeHostErrorLabel": "After Effects host:",
-		"previewSectionSummary": "Preview",
-		"sampleCollapsedPlaceholder": "Open to edit sample text and options",
+		"searchPlaceholder": "Поиск по семейству, PostScript, стилю…",
+		"searchAria": "Поиск шрифтов",
+		"listView": "Вид списка",
+		"iconView": "Карточки значков",
+		"layoutLegend": "Макет просмотра шрифтов",
+		"reload": "Перезагрузить список шрифтов",
+		"samplePresets": "Образец",
+		"sampleCustom": "Свой",
+		"samplePresetAria": "Предпросмотр образца",
+		"previewTextAria": "Предпросмотр текста",
+		"samplePlaceholder": "Текст предпросмотра (CJK / эмодзи / латиница)",
+		"ctxMenuHeading": "Варианты отображения",
+		"ctxTileSquare": "Пропорции плитки 1:1",
+		"ctxTileWide": "Пропорции плитки 16:9",
+		"ctxShowResolved": "Показать столбец совпадения разрешённого шрифта (список)",
+		"ctxHideResolved": "Скрыть столбец совпадения разрешённого шрифта (список)",
+		"showResolved": "Проверка разрешённого шрифта (список)",
+		"loadError": "Не удалось загрузить шрифты.",
+		"loading": "Загрузка…",
+		"statsLine": "{{families}} семейств · {{faces}} начертаний (загружено {{total}})",
+		"familySummary": "{{count}} начертаний",
+		"expandFamily": "Развернуть семейство",
+		"collapseFamily": "Свернуть семейство",
+		"backToFamilies": "Все семейства шрифтов",
+		"openFamilyIcon": "Открыть семейство",
+		"noMatches": "Нет подходящих шрифтов",
+		"phaseAeHost": "Запрос шрифтов у After Effects (evalScript)…",
+		"phaseBrowser": "Чтение источников шрифтов браузера…",
+		"aeHostErrorLabel": "Хост After Effects:",
+		"previewSectionSummary": "Предпросмотр",
+		"sampleCollapsedPlaceholder": "Откройте, чтобы изменить текст и параметры образца",
 		"viaLocalApi": "Local Font Access API",
 		"viaAfterEffects": "After Effects (app.fonts)",
 		"viaDocumentFonts": "document.fonts (subset)",
-		"fallbackBadge": "swap",
-		"primaryBadge": "match",
-		"hintNeedUserGesture": "Installed fonts need a button click (Chromium Local Font Access). Until then, this catalog lists only fonts already registered on document.fonts for this panel.",
-		"loadAllSystemFonts": "Load all system fonts…",
-		"hintNoLocalApi": "This Chromium build does not expose queryLocalFonts — only fonts registered on document.fonts are listed.",
-		"localAccessErrorPrefix": "Local font access:",
-		"emptyList": "No fonts loaded yet. Use “Load all system fonts” if available, or reload after the panel finishes loading styles."
+		"fallbackBadge": "замена",
+		"primaryBadge": "совпадение",
+		"hintNeedUserGesture": "Для установленных шрифтов нужен клик по кнопке (Chromium Local Font Access). До этого каталог содержит только шрифты, уже зарегистрированные в document.fonts для этой панели.",
+		"loadAllSystemFonts": "Загрузить все системные шрифты…",
+		"hintNoLocalApi": "Эта сборка Chromium не предоставляет queryLocalFonts — перечислены только шрифты, зарегистрированные в document.fonts.",
+		"localAccessErrorPrefix": "Доступ к локальным шрифтам:",
+		"emptyList": "Шрифты ещё не загружены. Используйте «Загрузить все системные шрифты», если доступно, или перезагрузите после завершения загрузки стилей панелью."
 	},
 	"folderDirectoryPicker": {
 		"label": "Обзор папок",
@@ -265,5 +327,29 @@
 		"emptyItems": "Элементы не найдены",
 		"goUp": "На уровень вверх",
 		"cepNodeRequired": "Обзору папок требуется CEP Node"
+	},
+	"viewModeToggle": {
+		"listView": "Вид списка",
+		"iconView": "Вид значков",
+		"fieldsetLegend": "Макет каталога"
+	},
+	"addWidgetDialog": {
+		"addsToPrefix": "Добавляется в",
+		"addsToSuffix": "в нижнюю часть сетки.",
+		"addFailure": "Не удалось добавить виджет: {{message}}",
+		"introPrefix": "Выберите тип виджета. Перечислены только типы, доступные в каталоге. Новые плитки будут добавлены в",
+		"introSuffix": ".",
+		"contextMenu": {
+			"addThisWidget": "Добавить этот виджет",
+			"select": "Выбрать",
+			"category": "Категория",
+			"clearSearch": "Очистить поиск",
+			"addSelectedWidget": "Добавить выбранный виджет",
+			"unknownCategory": "Неизвестно"
+		}
+	},
+	"pickerOverlay": {
+		"targetPanelPrefix": "Целевая панель",
+		"footerHint": "Виджет будет добавлен в нижнюю часть сетки этой панели."
 	}
 }

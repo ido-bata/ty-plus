@@ -1,6 +1,7 @@
 import { SearchField } from "@ty-plus/ui/fields/SearchField";
 import { Search } from "lucide-react";
 import type { JSX } from "react";
+import { i18n } from "@/management/i18n/index";
 import { css } from "@/styled-system/css";
 import { PresetLibraryViewModeToggle } from "./PresetLibraryViewModeToggle";
 import type { ViewMode } from "./preset-library-types";
@@ -49,7 +50,7 @@ export function PresetLibrarySearchBar(
 			<div className={searchWrapperClass}>
 				<SearchField
 					icon={Search}
-					placeholder="Filter by name, ID, description, category, tag"
+					placeholder={i18n.t("online:catalog.searchPlaceholder")}
 					value={query}
 					onChange={(e) => onQueryChange(e.currentTarget.value)}
 					onClear={onClearQuery}

@@ -1,6 +1,7 @@
 import { Icon, IconButton } from "@ty-plus/ui";
 import { LayoutGrid, List as ListIcon } from "lucide-react";
 import type { JSX } from "react";
+import { i18n } from "@/management/i18n/index";
 import { css, cx } from "@/styled-system/css";
 
 export type CatalogBrowserViewMode = "list" | "icons";
@@ -76,9 +77,9 @@ export function CatalogBrowserViewModeToggle({
 	viewMode,
 	onViewModeChange,
 	onEnterIconView,
-	listViewAriaLabel = "List view",
-	iconViewAriaLabel = "Icon view",
-	fieldsetLegend = "Catalog layout",
+	listViewAriaLabel = i18n.t("widgets:viewModeToggle.listView"),
+	iconViewAriaLabel = i18n.t("widgets:viewModeToggle.iconView"),
+	fieldsetLegend = i18n.t("widgets:viewModeToggle.fieldsetLegend"),
 }: ViewModeToggleProps): JSX.Element {
 	return (
 		<fieldset className={fieldsetClass}>

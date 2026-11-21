@@ -13,6 +13,7 @@ import {
 } from "react";
 import { useTranslation } from "react-i18next";
 import { selectFolder } from "@/management/ae/cep/dialog-shim/bolt";
+import { i18n } from "@/management/i18n/index";
 import { readUserHomeOrFallback, ToolDialog } from "@/management/preset";
 import { assertPresetAssetPresent } from "@/management/preset/asset-verification";
 import { hostSafeFileName } from "@/management/preset/authoring/host-safe-file-name";
@@ -202,13 +203,27 @@ function CodeActionStatusSection({
 
 const buildExpressionScript = (expression: string): string => {
 	const encoded = JSON.stringify(expression);
+	// Alert strings are embedded into the generated ExtendScript, so they are
+	// JSON-encoded to stay safe inside single-quoted script literals.
+	const alertSelectComp = JSON.stringify(
+		i18n.t("presets:codePreset.alertSelectComp"),
+	);
+	const alertSelectProperty = JSON.stringify(
+		i18n.t("presets:codePreset.alertSelectProperty"),
+	);
+	const alertNoExpressionProps = JSON.stringify(
+		i18n.t("presets:codePreset.alertNoExpressionProps"),
+	);
+	const alertApplyError = JSON.stringify(
+		i18n.t("presets:codePreset.alertApplyError"),
+	);
 	return [
 		"// ty-plus: expression preset",
 		"(function () {",
 		"  var comp = app.project.activeItem;",
-		"  if (!(comp instanceof CompItem)) { alert('Please select a composition.'); return; }",
+		`  if (!(comp instanceof CompItem)) { alert(${alertSelectComp}); return; }`,
 		"  var props = comp.selectedProperties;",
-		"  if (!props || props.length === 0) { alert('Please select at least one property to apply the expression.'); return; }",
+		`  if (!props || props.length === 0) { alert(${alertSelectProperty}); return; }`,
 		"  app.beginUndoGroup('ty-plus: apply expression');",
 		"  try {",
 		"    var count = 0;",
@@ -220,9 +235,9 @@ const buildExpressionScript = (expression: string): string => {
 		"        count++;",
 		"      }",
 		"    }",
-		"    if (count === 0) alert('Selected properties do not accept expressions.');",
+		`    if (count === 0) alert(${alertNoExpressionProps});`,
 		"  } catch (e) {",
-		"    alert('Error applying expression: ' + e.toString());",
+		`    alert(${alertApplyError} + " " + e.toString());`,
 		"  } finally {",
 		"    app.endUndoGroup();",
 		"  }",
@@ -490,7 +505,7 @@ export function Dialog(): JSX.Element {
 			type="script"
 			description={t("presetTool.code.lead")}
 			defaultName={t("presetTool.code.defaultName")}
-			iconText="CODE"
+			iconText={t("codePreset.iconText")}
 			resolveBrowseStartDir={readUserHomeOrFallback}
 			entryPoint="tool-shell:code"
 			fields={[]}
@@ -520,7 +535,9 @@ export function Dialog(): JSX.Element {
 					title: name.trim(),
 					// The path the writer verified, never the preview string.
 					filePath: authoredPathRef.current || fullFilePath,
-					description: description.trim() || `Code preset: ${name.trim()}`,
+					description: description.trim()
+						? description.trim()
+						: t("codePreset.defaultDescription", { name: name.trim() }),
 					...(descriptionImage.trim()
 						? { descriptionImage: descriptionImage.trim() }
 						: {}),
@@ -557,9 +574,9 @@ export function Dialog(): JSX.Element {
 							value={saveDir}
 							onChange={(next) => setSaveDir(next)}
 							onBrowse={handleBrowseFolder}
-							browseAriaLabel="Browse folder"
+							browseAriaLabel={t("common.browseFolder")}
 							browseSlot={<Icon icon={FolderOpen} size={16} aria-hidden />}
-							placeholder={defaultSavePath || "System default"}
+							placeholder={defaultSavePath || t("common.systemDefault")}
 							uiSize="md"
 							disabled={busy}
 						/>

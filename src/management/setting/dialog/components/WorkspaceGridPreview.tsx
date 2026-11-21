@@ -1,4 +1,5 @@
 import type { JSX } from "react";
+import { i18n } from "@/management/i18n/index";
 import { GRID_THEME_TOKEN_KEYS } from "@/management/setting/dialog/grid-theme-sync";
 import { css } from "@/styled-system/css";
 
@@ -35,7 +36,11 @@ const cellStyle = css({
 
 export function WorkspaceGridPreview(): JSX.Element {
 	return (
-		<div className={rootStyle} role="img" aria-label="Workspace grid preview">
+		<div
+			className={rootStyle}
+			role="img"
+			aria-label={i18n.t("settings:gridSection.previewAria")}
+		>
 			<div
 				className={gridStyle}
 				style={{

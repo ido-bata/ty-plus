@@ -9,6 +9,7 @@ import {
 } from "@ty-plus/product/management/preset/workspace";
 import { Badge } from "@ty-plus/ui";
 import { type MouseEvent, useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { css } from "@/styled-system/css";
 import { DEMO_PRESETS } from "../lib/demo-presets";
 
@@ -136,27 +137,43 @@ const applyNote = css({
 	color: "text.primary",
 });
 
+/** Maps a `demo-<slug>` preset id to its `demoPresets.<slug>` i18n key. */
+const demoPresetKey = (id: string): string | null => {
+	if (!id.startsWith("demo-")) return null;
+	const slug = id
+		.slice("demo-".length)
+		.split("-")
+		.map((part, i) =>
+			i === 0 ? part : part.charAt(0).toUpperCase() + part.slice(1),
+		)
+		.join("");
+	return `demoPresets.${slug}`;
+};
+
 function modeLabel(
 	items: readonly Preset[],
 	source: PresetInfoSource,
 	stale: boolean,
 	stickySource: PresetInfoSource | null,
+	t: (key: string, options?: Record<string, unknown>) => string,
 ): string {
-	if (items.length === 0) return "empty";
+	if (items.length === 0) return t("presetStage.mode.empty");
 	// Sticky content outlives the gesture that produced it; saying
 	// "selected"/"hover" while nothing is selected or hovered would
 	// misreport the current state, so name it as retained content.
 	if (stale) {
 		return stickySource === "selection"
 			? items.length > 1
-				? "last selection"
-				: "last selected"
-			: "recent";
+				? t("presetStage.mode.lastSelection")
+				: t("presetStage.mode.lastSelected")
+			: t("presetStage.mode.recent");
 	}
 	if (source === "selection") {
-		return items.length > 1 ? `${items.length} selected` : "selected";
+		return items.length > 1
+			? t("presetStage.mode.selectedCount", { count: items.length })
+			: t("presetStage.mode.selected");
 	}
-	return "hover";
+	return t("presetStage.mode.hover");
 }
 
 export function PresetStage({
@@ -164,11 +181,29 @@ export function PresetStage({
 }: {
 	presets?: Preset[];
 }) {
+	const { t } = useTranslation("web");
+	// Demo preset titles/descriptions are illustrative copy, so they are
+	// localized here rather than baked into DEMO_PRESETS.
+	const localizedPresets = useMemo(
+		() =>
+			presets.map((p) => {
+				const key = demoPresetKey(p.id);
+				if (!key) return p;
+				return {
+					...p,
+					title: t(`${key}.title`, { defaultValue: p.title }),
+					description: t(`${key}.description`, {
+						defaultValue: p.description,
+					}),
+				};
+			}),
+		[presets, t],
+	);
 	// One tile starts selected so the info surface demonstrates its value on
 	// first paint; everything after that is driven by the gestures above.
-	const seedIndex = Math.min(2, Math.max(0, presets.length - 1));
+	const seedIndex = Math.min(2, Math.max(0, localizedPresets.length - 1));
 	const [selectedIds, setSelectedIds] = useState<string[]>(() =>
-		presets[seedIndex] ? [presets[seedIndex].id] : [],
+		localizedPresets[seedIndex] ? [localizedPresets[seedIndex].id] : [],
 	);
 	const [hoverId, setHoverId] = useState<string | null>(null);
 	const [applied, setApplied] = useState<Preset | null>(null);
@@ -201,7 +236,7 @@ export function PresetStage({
 
 	const live = useMemo(() => {
 		if (selectedIds.length > 0) {
-			const byId = new Map(presets.map((p) => [p.id, p]));
+			const byId = new Map(localizedPresets.map((p) => [p.id, p]));
 			return {
 				source: "selection" as PresetInfoSource,
 				items: selectedIds
@@ -209,12 +244,14 @@ export function PresetStage({
 					.filter((p): p is Preset => p !== undefined),
 			};
 		}
-		const hovered = hoverId ? presets.find((p) => p.id === hoverId) : undefined;
+		const hovered = hoverId
+			? localizedPresets.find((p) => p.id === hoverId)
+			: undefined;
 		return {
 			source: "hover" as PresetInfoSource,
 			items: hovered ? [hovered] : [],
 		};
-	}, [presets, selectedIds, hoverId]);
+	}, [localizedPresets, selectedIds, hoverId]);
 
 	useEffect(() => {
 		if (live.items.length > 0) {
@@ -232,13 +269,13 @@ export function PresetStage({
 	const derivedAnchor = useMemo(() => {
 		const lastSelected = selectedIds.at(-1);
 		if (lastSelected) {
-			return presets.findIndex((p) => p.id === lastSelected);
+			return localizedPresets.findIndex((p) => p.id === lastSelected);
 		}
 		if (hoverId) {
-			return presets.findIndex((p) => p.id === hoverId);
+			return localizedPresets.findIndex((p) => p.id === hoverId);
 		}
 		return -1;
-	}, [presets, selectedIds, hoverId]);
+	}, [localizedPresets, selectedIds, hoverId]);
 	useEffect(() => {
 		if (derivedAnchor >= 0) setAnchorIndex(derivedAnchor);
 	}, [derivedAnchor]);
@@ -247,12 +284,12 @@ export function PresetStage({
 	// anchor's row, so the full-width card starts on a fresh row instead
 	// of splitting the anchor's row and leaving empty cells behind.
 	const cardOrderIndex = useMemo(() => {
-		if (anchorIndex < 0) return presets.length;
+		if (anchorIndex < 0) return localizedPresets.length;
 		return Math.min(
 			Math.floor(anchorIndex / NARROW_COLS) * NARROW_COLS + NARROW_COLS - 1,
-			presets.length - 1,
+			localizedPresets.length - 1,
 		);
-	}, [anchorIndex, presets.length]);
+	}, [anchorIndex, localizedPresets.length]);
 
 	const toggleSelected = (id: string) =>
 		setSelectedIds((prev) =>
@@ -309,7 +346,7 @@ export function PresetStage({
 			className={stage}
 			data-preset-stage
 			role="group"
-			aria-label="Preset tiles demo"
+			aria-label={t("presetStage.ariaLabel")}
 			onClick={handleStageClick}
 			onKeyDown={(ev) => {
 				// Escape mirrors the panel's click-empty-grid deselect for
@@ -324,7 +361,7 @@ export function PresetStage({
 			}}
 		>
 			<div className={tileGrid}>
-				{presets.map((p, i) => (
+				{localizedPresets.map((p, i) => (
 					<div
 						key={p.id}
 						ref={(el) => {
@@ -360,7 +397,7 @@ export function PresetStage({
 								: "neutral"
 						}
 					>
-						{modeLabel(items, source, stale, sticky?.source ?? null)}
+						{modeLabel(items, source, stale, sticky?.source ?? null, t)}
 					</Badge>
 				</div>
 				<div className={infoBody}>
@@ -371,22 +408,12 @@ export function PresetStage({
 				<div className={infoFoot}>
 					{applied ? (
 						<p className={applyNote} data-apply-note aria-live="polite">
-							“{applied.title}” — in the panel a plain click applies this preset
-							to the active layer.
+							{t("presetStage.applyNote", { title: applied.title })}
 						</p>
 					) : null}
-					<p hidden={pointerKind !== "fine"}>
-						Hover to inspect · ⌘/Ctrl+click toggles selection · Shift+click adds
-						· click applies in the panel
-					</p>
-					<p hidden={pointerKind !== "coarse"}>
-						Tap to inspect and select · in the panel a tap would apply the
-						preset to the active layer
-					</p>
-					<p>
-						Web demo · selection is local state · runs in the After Effects
-						panel
-					</p>
+					<p hidden={pointerKind !== "fine"}>{t("presetStage.hintFine")}</p>
+					<p hidden={pointerKind !== "coarse"}>{t("presetStage.hintCoarse")}</p>
+					<p>{t("presetStage.demoNote")}</p>
 				</div>
 			</div>
 		</div>

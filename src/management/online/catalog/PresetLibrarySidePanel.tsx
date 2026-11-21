@@ -5,6 +5,7 @@ import { Icon } from "@ty-plus/ui/icons/Icon";
 import { cx } from "@ty-plus/ui/util/cx";
 import { PanelLeftClose, Search, X } from "lucide-react";
 import type { JSX } from "react";
+import { i18n } from "@/management/i18n/index";
 import { css } from "@/styled-system/css";
 
 export type PresetLibrarySidePanelProps = {
@@ -232,7 +233,7 @@ export function PresetLibrarySidePanel(
 				<IconButton
 					size="sm"
 					variant="ghost"
-					title="Hide filters"
+					title={i18n.t("online:catalog.hideFilters")}
 					onClick={onTogglePanel}
 				>
 					<Icon icon={PanelLeftClose} size={12} />
@@ -240,7 +241,7 @@ export function PresetLibrarySidePanel(
 				<div className={searchWrapperClass}>
 					<SearchField
 						icon={Search}
-						placeholder="Filter…"
+						placeholder={i18n.t("online:catalog.filterPlaceholder")}
 						value={query}
 						onChange={(e) => onQueryChange(e.currentTarget.value)}
 						onClear={onClearQuery}
@@ -253,14 +254,16 @@ export function PresetLibrarySidePanel(
 
 			<div className={categorySectionClass}>
 				<div className={sectionHeaderClass}>
-					<span className={sectionTitleClass}>Category</span>
+					<span className={sectionTitleClass}>
+						{i18n.t("online:catalog.category")}
+					</span>
 					<Button
 						variant="ghost"
 						uiSize="sm"
 						disabled={!selectedCategory}
 						onClick={() => onCategoryChange("")}
 					>
-						Clear
+						{i18n.t("online:catalog.clear")}
 					</Button>
 				</div>
 				<div className={categoryListClass}>
@@ -269,7 +272,7 @@ export function PresetLibrarySidePanel(
 						className={categoryButtonClass(selectedCategory === "")}
 						onClick={() => onCategoryChange("")}
 					>
-						All categories
+						{i18n.t("online:catalog.allCategories")}
 					</button>
 					{categories.map((cat) => (
 						<button
@@ -287,7 +290,9 @@ export function PresetLibrarySidePanel(
 			{allTags.length > 0 && (
 				<div className={tagSectionClass}>
 					<div className={sectionHeaderClass}>
-						<span className={sectionTitleClass}>Tags</span>
+						<span className={sectionTitleClass}>
+							{i18n.t("online:catalog.tags")}
+						</span>
 						<div className={tagHeaderClass}>
 							<Button
 								variant="ghost"
@@ -295,7 +300,7 @@ export function PresetLibrarySidePanel(
 								disabled={selectedTags.size === 0}
 								onClick={onClearAllTags}
 							>
-								Clear
+								{i18n.t("online:catalog.clear")}
 							</Button>
 						</div>
 					</div>
@@ -324,7 +329,9 @@ export function PresetLibrarySidePanel(
 						className={fullWidthButtonClass}
 					>
 						<Icon icon={X} size={10} />
-						<span className={clearAllLabelClass}>Clear all</span>
+						<span className={clearAllLabelClass}>
+							{i18n.t("online:catalog.clearAll")}
+						</span>
 					</Button>
 				</div>
 			)}

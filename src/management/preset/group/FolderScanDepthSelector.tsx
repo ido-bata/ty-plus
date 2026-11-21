@@ -1,4 +1,5 @@
 import type { JSX } from "react";
+import { i18n } from "@/management/i18n/index";
 import { AuthoringSegment } from "@/management/preset/tool-shell/archive-layout";
 import { css } from "@/styled-system/css";
 
@@ -25,13 +26,16 @@ export function FolderScanDepthSelector({
 }): JSX.Element {
 	return (
 		<div className={wrapperClass}>
-			<span className={labelClass}>Folder scan depth</span>
+			<span className={labelClass}>{i18n.t("presets:group.scanDepth")}</span>
 			<AuthoringSegment
 				value={recursive === "true" ? "recursive" : "flat"}
 				onChange={onRecursiveChange}
 				options={[
-					{ value: "flat", label: "Direct" },
-					{ value: "recursive", label: "Include descendants" },
+					{ value: "flat", label: i18n.t("presets:group.scanDepthFlat") },
+					{
+						value: "recursive",
+						label: i18n.t("presets:group.scanDepthRecursive"),
+					},
 				]}
 			/>
 		</div>

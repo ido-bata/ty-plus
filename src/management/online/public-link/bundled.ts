@@ -1,3 +1,4 @@
+import { i18n } from "@/management/i18n/index";
 import type { PublicLink } from "@/management/online/contract";
 
 /**
@@ -17,7 +18,7 @@ export const resolveBundledPublicLink = (key: string): PublicLink => {
 		return {
 			key,
 			url: USER_MANUAL_DOCS_URL,
-			label: "User Manual",
+			label: i18n.t("online:publicLink.userManual"),
 		};
 	}
 	throw new Error(`Unknown public link: ${key}`);

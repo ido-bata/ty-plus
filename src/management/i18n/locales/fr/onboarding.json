@@ -13,7 +13,8 @@
 		"support": {
 			"label": "Emplacement",
 			"title": "Sélectionner le dossier AE",
-			"body": "Choisissez votre dossier After Effects. Sur Windows, c'est le répertoire Support Files ; sur macOS c'est le dossier de l'application contenant Presets."
+			"body": "Choisissez votre dossier After Effects. Sur Windows, c'est le répertoire Support Files ; sur macOS c'est le dossier de l'application contenant Presets.",
+			"aeAppFolderHint": "Dossier de l'app AE détecté — l'étape des sous-dossiers sera ignorée."
 		},
 		"subfolders": {
 			"label": "Dossiers",
@@ -94,6 +95,10 @@
 		"next": "Suivant",
 		"finish": "Terminer",
 		"toggleFullscreen": "Passer en plein écran",
-		"toggleModal": "Revenir à la fenêtre"
+		"toggleModal": "Revenir à la fenêtre",
+		"openManual": "Ouvrir le manuel"
+	},
+	"syncStatus": {
+		"localUpdate": "Mise à jour locale"
 	}
 }

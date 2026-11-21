@@ -45,6 +45,7 @@ const defaultRenderCatalogTileBody: CatalogTileBodyRenderer = ({
 		label,
 		hasPresetRow: Boolean(preset),
 		presetId: preset?.id,
+		// i18n-exempt: internal diagnostic hint for the display log, not rendered UI
 		hint: "GridCatalogTileBodyProvider is not on the outside, or render was not passed",
 	});
 	return (

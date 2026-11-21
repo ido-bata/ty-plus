@@ -26,6 +26,7 @@ import {
 	CTX_MENU_IDS,
 	QA_ORDER,
 } from "@/management/dialog/dialogs/unified-context-menu-constants";
+import { i18n } from "@/management/i18n/index";
 import type { Preset } from "@/management/preset/contract";
 import { readWidgetStateJson } from "@/management/storage/widget-state-store";
 import {
@@ -426,7 +427,9 @@ function movePresetsToPanelSubmenu(
 	if (children.length === 0) return null;
 	return {
 		id: parentId,
-		label: "Move to panel",
+		label: i18n.t("contextMenu:unified.moveToPanel", {
+			defaultValue: "Move to panel",
+		}),
 		menu: children,
 	};
 }
@@ -442,12 +445,16 @@ export const buildSavedLayoutsSubmenu = (
 	if (snapshots.length === 0) {
 		return {
 			id: CTX_MENU_IDS.savedLayoutsMenuRoot,
-			label: "Saved Layouts",
+			label: i18n.t("contextMenu:unified.savedLayouts", {
+				defaultValue: "Saved Layouts",
+			}),
 			enabled: includeCep,
 			menu: [
 				{
 					id: `${CTX_MENU_IDS.savedLayoutsMenuRoot}.empty`,
-					label: "(No saved layouts)",
+					label: i18n.t("contextMenu:unified.noSavedLayouts", {
+						defaultValue: "(No saved layouts)",
+					}),
 					enabled: false,
 				},
 			],
@@ -455,7 +462,9 @@ export const buildSavedLayoutsSubmenu = (
 	}
 	return {
 		id: CTX_MENU_IDS.savedLayoutsMenuRoot,
-		label: "Saved Layouts",
+		label: i18n.t("contextMenu:unified.savedLayouts", {
+			defaultValue: "Saved Layouts",
+		}),
 		enabled: includeCep,
 		menu: snapshots
 			.slice()
@@ -476,35 +485,49 @@ function layoutArchiveSubmenuEntry(
 ): CepMenuEntry {
 	return {
 		id: CTX_MENU_IDS.layoutMenuRoot,
-		label: "Layout",
+		label: i18n.t("contextMenu:unified.layout", { defaultValue: "Layout" }),
 		menu: [
 			{
 				id: CTX_MENU_IDS.saveSnapshot,
-				label: "Save Layout",
+				label: i18n.t("contextMenu:unified.saveLayout", {
+					defaultValue: "Save Layout",
+				}),
 				enabled: includeCep,
 			},
 			buildSavedLayoutsSubmenu(snapshots, includeCep),
 			{
 				id: CTX_MENU_IDS.reloadPresets,
-				label: "Reload",
+				label: i18n.t("contextMenu:unified.reload", {
+					defaultValue: "Reload",
+				}),
 				enabled: includeCep,
 			},
 			sep(),
 			{
 				id: CTX_MENU_IDS.toggleLayoutLock,
-				label: layoutLocked ? "Unlock Layout" : "Lock Layout",
+				label: layoutLocked
+					? i18n.t("contextMenu:unified.unlockLayout", {
+							defaultValue: "Unlock Layout",
+						})
+					: i18n.t("contextMenu:unified.lockLayout", {
+							defaultValue: "Lock Layout",
+						}),
 				checkable: true,
 				checked: layoutLocked,
 			},
 			{
 				id: CTX_MENU_IDS.packTopLeft,
-				label: "Pack to Top-Left",
+				label: i18n.t("contextMenu:unified.packToTopLeft", {
+					defaultValue: "Pack to Top-Left",
+				}),
 				enabled: includeCep && !layoutLocked,
 			},
 			sep(),
 			{
 				id: CTX_MENU_IDS.openBackground,
-				label: "Background",
+				label: i18n.t("contextMenu:unified.background", {
+					defaultValue: "Background",
+				}),
 				enabled: includeCep,
 			},
 		],
@@ -515,32 +538,44 @@ function layoutArchiveSubmenuEntry(
 function createPresetsArchiveEntry(includeCep: boolean): CepMenuEntry {
 	return {
 		id: CTX_MENU_IDS.createPresetsMenuRoot,
-		label: "Create Preset",
+		label: i18n.t("contextMenu:unified.createPreset", {
+			defaultValue: "Create Preset",
+		}),
 		enabled: includeCep,
 		menu: [
 			{
 				id: CTX_MENU_IDS.createFilePreset,
-				label: "Local Preset",
+				label: i18n.t("contextMenu:unified.localPreset", {
+					defaultValue: "Local Preset",
+				}),
 				enabled: includeCep,
 			},
 			{
 				id: CTX_MENU_IDS.createFolderPreset,
-				label: "Group Preset",
+				label: i18n.t("contextMenu:unified.groupPreset", {
+					defaultValue: "Group Preset",
+				}),
 				enabled: includeCep,
 			},
 			{
 				id: CTX_MENU_IDS.createAnimationPreset,
-				label: "Animation",
+				label: i18n.t("contextMenu:unified.animationPreset", {
+					defaultValue: "Animation",
+				}),
 				enabled: includeCep,
 			},
 			{
 				id: CTX_MENU_IDS.createLayerCompPreset,
-				label: "Layer/Comp",
+				label: i18n.t("contextMenu:unified.layerCompPreset", {
+					defaultValue: "Layer/Comp",
+				}),
 				enabled: includeCep,
 			},
 			{
 				id: CTX_MENU_IDS.createCodePreset,
-				label: "Code",
+				label: i18n.t("contextMenu:unified.codePreset", {
+					defaultValue: "Code",
+				}),
 				enabled: includeCep,
 			},
 		],
@@ -767,7 +802,10 @@ export function buildEasingLabelColorMenu(
 		if (fromAe?.trim()) return fromAe.trim();
 		const fromBundled = bundledLabelNamesCache[key];
 		if (fromBundled) return fromBundled;
-		return `Color ${colorIndex}`;
+		return i18n.t("contextMenu:unified.easing.colorFallback", {
+			index: colorIndex,
+			defaultValue: "Color {{index}}",
+		});
 	};
 	const currentFor = (category: EasingCurveColorRowKey): number => {
 		const override = customColors[category];
@@ -782,7 +820,9 @@ export function buildEasingLabelColorMenu(
 		const categoryMenu: CepMenuEntry[] = [];
 		categoryMenu.push({
 			id: `${CTX_MENU_IDS.easingLabelCategoryValuePrefix}${row.key}.none`,
-			label: "None",
+			label: i18n.t("contextMenu:unified.easing.colorNone", {
+				defaultValue: "None",
+			}),
 			checkable: true,
 			checked: current === -1,
 		});
@@ -822,12 +862,17 @@ export function buildEasingMainLabelColorMenu(
 		if (fromAe?.trim()) return fromAe.trim();
 		const fromBundled = bundledLabelNamesCache[key];
 		if (fromBundled) return fromBundled;
-		return `Color ${colorIndex}`;
+		return i18n.t("contextMenu:unified.easing.colorFallback", {
+			index: colorIndex,
+			defaultValue: "Color {{index}}",
+		});
 	};
 	const out: CepMenuEntry[] = [];
 	out.push({
 		id: `${CTX_MENU_IDS.easingMainLabelColorValuePrefix}none`,
-		label: "None",
+		label: i18n.t("contextMenu:unified.easing.colorNone", {
+			defaultValue: "None",
+		}),
 		checkable: true,
 		checked: currentColor === null,
 	});
@@ -881,98 +926,164 @@ function buildAlignContextMenu(currentTarget: string): CepMenuEntry[] {
 		// Align submenu
 		{
 			id: "ty.ctx.align.align",
-			label: "Align",
+			label: i18n.t("contextMenu:unified.align.align", {
+				defaultValue: "Align",
+			}),
 			menu: [
-				{ id: `${CTX_MENU_IDS.alignActionPrefix}align-left`, label: "Left" },
+				{
+					id: `${CTX_MENU_IDS.alignActionPrefix}align-left`,
+					label: i18n.t("contextMenu:unified.align.left", {
+						defaultValue: "Left",
+					}),
+				},
 				{
 					id: `${CTX_MENU_IDS.alignActionPrefix}align-center-h`,
-					label: "Center H",
+					label: i18n.t("contextMenu:unified.align.centerH", {
+						defaultValue: "Center H",
+					}),
 				},
-				{ id: `${CTX_MENU_IDS.alignActionPrefix}align-right`, label: "Right" },
+				{
+					id: `${CTX_MENU_IDS.alignActionPrefix}align-right`,
+					label: i18n.t("contextMenu:unified.align.right", {
+						defaultValue: "Right",
+					}),
+				},
 				sep(),
-				{ id: `${CTX_MENU_IDS.alignActionPrefix}align-top`, label: "Top" },
+				{
+					id: `${CTX_MENU_IDS.alignActionPrefix}align-top`,
+					label: i18n.t("contextMenu:unified.align.top", {
+						defaultValue: "Top",
+					}),
+				},
 				{
 					id: `${CTX_MENU_IDS.alignActionPrefix}align-center-v`,
-					label: "Center V",
+					label: i18n.t("contextMenu:unified.align.centerV", {
+						defaultValue: "Center V",
+					}),
 				},
 				{
 					id: `${CTX_MENU_IDS.alignActionPrefix}align-bottom`,
-					label: "Bottom",
+					label: i18n.t("contextMenu:unified.align.bottom", {
+						defaultValue: "Bottom",
+					}),
 				},
 			],
 		},
 		// Distribute submenu
 		{
 			id: "ty.ctx.align.distribute",
-			label: "Distribute",
+			label: i18n.t("contextMenu:unified.align.distribute", {
+				defaultValue: "Distribute",
+			}),
 			menu: [
 				{
 					id: `${CTX_MENU_IDS.alignActionPrefix}distribute-left`,
-					label: "Left",
+					label: i18n.t("contextMenu:unified.align.left", {
+						defaultValue: "Left",
+					}),
 				},
 				{
 					id: `${CTX_MENU_IDS.alignActionPrefix}distribute-center-h`,
-					label: "Center H",
+					label: i18n.t("contextMenu:unified.align.centerH", {
+						defaultValue: "Center H",
+					}),
 				},
 				{
 					id: `${CTX_MENU_IDS.alignActionPrefix}distribute-right`,
-					label: "Right",
+					label: i18n.t("contextMenu:unified.align.right", {
+						defaultValue: "Right",
+					}),
 				},
 				sep(),
-				{ id: `${CTX_MENU_IDS.alignActionPrefix}distribute-top`, label: "Top" },
+				{
+					id: `${CTX_MENU_IDS.alignActionPrefix}distribute-top`,
+					label: i18n.t("contextMenu:unified.align.top", {
+						defaultValue: "Top",
+					}),
+				},
 				{
 					id: `${CTX_MENU_IDS.alignActionPrefix}distribute-center-v`,
-					label: "Center V",
+					label: i18n.t("contextMenu:unified.align.centerV", {
+						defaultValue: "Center V",
+					}),
 				},
 				{
 					id: `${CTX_MENU_IDS.alignActionPrefix}distribute-bottom`,
-					label: "Bottom",
+					label: i18n.t("contextMenu:unified.align.bottom", {
+						defaultValue: "Bottom",
+					}),
 				},
 			],
 		},
 		// Spacing submenu
 		{
 			id: "ty.ctx.align.spacing",
-			label: "Spacing",
+			label: i18n.t("contextMenu:unified.align.spacing", {
+				defaultValue: "Spacing",
+			}),
 			menu: [
 				{
 					id: `${CTX_MENU_IDS.alignActionPrefix}distribute-spacing-h`,
-					label: "Spacing H",
+					label: i18n.t("contextMenu:unified.align.spacingH", {
+						defaultValue: "Spacing H",
+					}),
 				},
 				{
 					id: `${CTX_MENU_IDS.alignActionPrefix}distribute-h`,
-					label: "Distribute H",
+					label: i18n.t("contextMenu:unified.align.distributeH", {
+						defaultValue: "Distribute H",
+					}),
 				},
 				sep(),
 				{
 					id: `${CTX_MENU_IDS.alignActionPrefix}distribute-spacing-v`,
-					label: "Spacing V",
+					label: i18n.t("contextMenu:unified.align.spacingV", {
+						defaultValue: "Spacing V",
+					}),
 				},
 				{
 					id: `${CTX_MENU_IDS.alignActionPrefix}distribute-v`,
-					label: "Distribute V",
+					label: i18n.t("contextMenu:unified.align.distributeV", {
+						defaultValue: "Distribute V",
+					}),
 				},
 			],
 		},
 		// Time submenu
 		{
 			id: "ty.ctx.align.time",
-			label: "Time",
+			label: i18n.t("contextMenu:unified.align.time", { defaultValue: "Time" }),
 			menu: [
-				{ id: `${CTX_MENU_IDS.alignActionPrefix}align-start`, label: "Start" },
-				{ id: `${CTX_MENU_IDS.alignActionPrefix}align-end`, label: "End" },
+				{
+					id: `${CTX_MENU_IDS.alignActionPrefix}align-start`,
+					label: i18n.t("contextMenu:unified.align.start", {
+						defaultValue: "Start",
+					}),
+				},
+				{
+					id: `${CTX_MENU_IDS.alignActionPrefix}align-end`,
+					label: i18n.t("contextMenu:unified.align.end", {
+						defaultValue: "End",
+					}),
+				},
 				{
 					id: `${CTX_MENU_IDS.alignActionPrefix}align-duration`,
-					label: "Duration",
+					label: i18n.t("contextMenu:unified.align.duration", {
+						defaultValue: "Duration",
+					}),
 				},
 				sep(),
 				{
 					id: `${CTX_MENU_IDS.alignActionPrefix}distribute-start`,
-					label: "Distribute Start",
+					label: i18n.t("contextMenu:unified.align.distributeStart", {
+						defaultValue: "Distribute Start",
+					}),
 				},
 				{
 					id: `${CTX_MENU_IDS.alignActionPrefix}distribute-end`,
-					label: "Distribute End",
+					label: i18n.t("contextMenu:unified.align.distributeEnd", {
+						defaultValue: "Distribute End",
+					}),
 				},
 			],
 		},
@@ -980,25 +1091,31 @@ function buildAlignContextMenu(currentTarget: string): CepMenuEntry[] {
 		// Target selection (exclusive)
 		{
 			id: CTX_MENU_IDS.alignTargetSelection,
-			label: "Selection",
+			label: i18n.t("contextMenu:unified.align.selection", {
+				defaultValue: "Selection",
+			}),
 			checkable: true,
 			checked: currentTarget === "selection",
 		},
 		{
 			id: CTX_MENU_IDS.alignTargetComp,
-			label: "Comp",
+			label: i18n.t("contextMenu:unified.align.comp", {
+				defaultValue: "Comp",
+			}),
 			checkable: true,
 			checked: currentTarget === "comp",
 		},
 		{
 			id: CTX_MENU_IDS.alignTargetKeyObject,
-			label: "Key Object",
+			label: i18n.t("contextMenu:unified.align.keyObject", {
+				defaultValue: "Key Object",
+			}),
 			checkable: true,
 			checked: currentTarget === "key-object",
 		},
 		{
 			id: CTX_MENU_IDS.alignTargetTime,
-			label: "Time",
+			label: i18n.t("contextMenu:unified.align.time", { defaultValue: "Time" }),
 			checkable: true,
 			checked: currentTarget === "time",
 		},
@@ -1009,73 +1126,103 @@ function buildAnchorPointContextMenu(currentPosition: string): CepMenuEntry[] {
 	return [
 		{
 			id: CTX_MENU_IDS.anchorPointResetCenter,
-			label: "Reset to Center",
+			label: i18n.t("contextMenu:unified.anchorPoint.resetToCenter", {
+				defaultValue: "Reset to Center",
+			}),
 		},
 		sep(),
 		{
 			id: CTX_MENU_IDS.anchorPointApplyAllLayers,
-			label: "Apply to All Selected Layers",
+			label: i18n.t(
+				"contextMenu:unified.anchorPoint.applyToAllSelectedLayers",
+				{
+					defaultValue: "Apply to All Selected Layers",
+				},
+			),
 		},
 		{
 			id: CTX_MENU_IDS.anchorPointApplyActiveComp,
-			label: "Apply to Active Composition",
+			label: i18n.t(
+				"contextMenu:unified.anchorPoint.applyToActiveComposition",
+				{ defaultValue: "Apply to Active Composition" },
+			),
 		},
 		sep(),
 		{
 			id: "ty.ctx.anchor-point.positions",
-			label: "Position",
+			label: i18n.t("contextMenu:unified.anchorPoint.position", {
+				defaultValue: "Position",
+			}),
 			menu: [
 				{
 					id: `${CTX_MENU_IDS.anchorPointPrefix}top-left`,
-					label: "Top Left",
+					label: i18n.t("contextMenu:unified.anchorPoint.topLeft", {
+						defaultValue: "Top Left",
+					}),
 					checkable: true,
 					checked: currentPosition === "top-left",
 				},
 				{
 					id: `${CTX_MENU_IDS.anchorPointPrefix}top-center`,
-					label: "Top Center",
+					label: i18n.t("contextMenu:unified.anchorPoint.topCenter", {
+						defaultValue: "Top Center",
+					}),
 					checkable: true,
 					checked: currentPosition === "top-center",
 				},
 				{
 					id: `${CTX_MENU_IDS.anchorPointPrefix}top-right`,
-					label: "Top Right",
+					label: i18n.t("contextMenu:unified.anchorPoint.topRight", {
+						defaultValue: "Top Right",
+					}),
 					checkable: true,
 					checked: currentPosition === "top-right",
 				},
 				{
 					id: `${CTX_MENU_IDS.anchorPointPrefix}center-left`,
-					label: "Center Left",
+					label: i18n.t("contextMenu:unified.anchorPoint.centerLeft", {
+						defaultValue: "Center Left",
+					}),
 					checkable: true,
 					checked: currentPosition === "center-left",
 				},
 				{
 					id: `${CTX_MENU_IDS.anchorPointPrefix}center`,
-					label: "Center",
+					label: i18n.t("contextMenu:unified.anchorPoint.center", {
+						defaultValue: "Center",
+					}),
 					checkable: true,
 					checked: currentPosition === "center",
 				},
 				{
 					id: `${CTX_MENU_IDS.anchorPointPrefix}center-right`,
-					label: "Center Right",
+					label: i18n.t("contextMenu:unified.anchorPoint.centerRight", {
+						defaultValue: "Center Right",
+					}),
 					checkable: true,
 					checked: currentPosition === "center-right",
 				},
 				{
 					id: `${CTX_MENU_IDS.anchorPointPrefix}bottom-left`,
-					label: "Bottom Left",
+					label: i18n.t("contextMenu:unified.anchorPoint.bottomLeft", {
+						defaultValue: "Bottom Left",
+					}),
 					checkable: true,
 					checked: currentPosition === "bottom-left",
 				},
 				{
 					id: `${CTX_MENU_IDS.anchorPointPrefix}bottom-center`,
-					label: "Bottom Center",
+					label: i18n.t("contextMenu:unified.anchorPoint.bottomCenter", {
+						defaultValue: "Bottom Center",
+					}),
 					checkable: true,
 					checked: currentPosition === "bottom-center",
 				},
 				{
 					id: `${CTX_MENU_IDS.anchorPointPrefix}bottom-right`,
-					label: "Bottom Right",
+					label: i18n.t("contextMenu:unified.anchorPoint.bottomRight", {
+						defaultValue: "Bottom Right",
+					}),
 					checkable: true,
 					checked: currentPosition === "bottom-right",
 				},
@@ -1089,20 +1236,26 @@ function buildFontViewerContextMenu(): CepMenuEntry[] {
 	return [
 		{
 			id: CTX_MENU_IDS.fontViewerTileSquare,
-			label: "Tile aspect 1:1",
+			label: i18n.t("contextMenu:unified.fontViewer.tileAspectSquare", {
+				defaultValue: "Tile aspect 1:1",
+			}),
 			checkable: true,
 			checked: aspect === "square",
 		},
 		{
 			id: CTX_MENU_IDS.fontViewerTileWide,
-			label: "Tile aspect 16:9",
+			label: i18n.t("contextMenu:unified.fontViewer.tileAspectWide", {
+				defaultValue: "Tile aspect 16:9",
+			}),
 			checkable: true,
 			checked: aspect === "wide",
 		},
 		sep(),
 		{
 			id: CTX_MENU_IDS.fontViewerToggleResolved,
-			label: "Toggle resolved-font match column",
+			label: i18n.t("contextMenu:unified.fontViewer.toggleResolvedColumn", {
+				defaultValue: "Toggle resolved-font match column",
+			}),
 		},
 	];
 }
@@ -1111,28 +1264,40 @@ export function buildEasingContextMenu(): CepMenuEntry[] {
 	return [
 		{
 			id: CTX_MENU_IDS.easingApplyCurrent,
-			label: "Apply",
+			label: i18n.t("contextMenu:unified.easing.apply", {
+				defaultValue: "Apply",
+			}),
 		},
 		{
 			id: CTX_MENU_IDS.easingCopyFromSelection,
-			label: "Copy from selection",
+			label: i18n.t("contextMenu:unified.easing.copyFromSelection", {
+				defaultValue: "Copy from selection",
+			}),
 		},
 		{
 			id: CTX_MENU_IDS.easingReverseCurve,
-			label: "Reverse / Convert to Curve",
+			label: i18n.t("contextMenu:unified.easing.reverseOrConvertToCurve", {
+				defaultValue: "Reverse / Convert to Curve",
+			}),
 		},
 		{
 			id: "ty.ctx.easing.copyPaste",
-			label: "Clipboard",
+			label: i18n.t("contextMenu:unified.easing.clipboard", {
+				defaultValue: "Clipboard",
+			}),
 			menu: [
 				{
 					id: CTX_MENU_IDS.easingCopyEase,
-					label: "Copy Ease",
+					label: i18n.t("contextMenu:unified.easing.copyEase", {
+						defaultValue: "Copy Ease",
+					}),
 					enabled: easingClipboardCache !== null,
 				},
 				{
 					id: CTX_MENU_IDS.easingCopyValues,
-					label: "Copy Values",
+					label: i18n.t("contextMenu:unified.easing.copyValues", {
+						defaultValue: "Copy Values",
+					}),
 					// Always enabled: you can always copy the current
 					// selection's values to the clipboard.
 					enabled: true,
@@ -1140,7 +1305,9 @@ export function buildEasingContextMenu(): CepMenuEntry[] {
 				sep(),
 				{
 					id: CTX_MENU_IDS.easingPaste,
-					label: "Paste",
+					label: i18n.t("contextMenu:unified.easing.paste", {
+						defaultValue: "Paste",
+					}),
 					enabled:
 						easingClipboardCache !== null || valuesClipboardCache !== null,
 				},
@@ -1149,40 +1316,56 @@ export function buildEasingContextMenu(): CepMenuEntry[] {
 		sep(),
 		{
 			id: "ty.ctx.easing.presets",
-			label: "Preset",
+			label: i18n.t("contextMenu:unified.easing.preset", {
+				defaultValue: "Preset",
+			}),
 			menu: [
 				{
 					id: CTX_MENU_IDS.easingPresetLinear,
-					label: "Linear",
+					label: i18n.t("contextMenu:unified.easing.linear", {
+						defaultValue: "Linear",
+					}),
 				},
 				{
 					id: CTX_MENU_IDS.easingPresetEaseOut,
-					label: "Ease Out",
+					label: i18n.t("contextMenu:unified.easing.easeOut", {
+						defaultValue: "Ease Out",
+					}),
 				},
 				{
 					id: CTX_MENU_IDS.easingPresetEaseIn,
-					label: "Ease In",
+					label: i18n.t("contextMenu:unified.easing.easeIn", {
+						defaultValue: "Ease In",
+					}),
 				},
 				{
 					id: CTX_MENU_IDS.easingPresetEaseInOut,
-					label: "Ease In Out",
+					label: i18n.t("contextMenu:unified.easing.easeInOut", {
+						defaultValue: "Ease In Out",
+					}),
 				},
 			],
 		},
 		sep(),
 		{
 			id: "ty.ctx.easing.background",
-			label: "Background",
+			label: i18n.t("contextMenu:unified.background", {
+				defaultValue: "Background",
+			}),
 			menu: [
 				{
 					id: CTX_MENU_IDS.easingBackgroundDot,
-					label: "Dots",
+					label: i18n.t("contextMenu:unified.easing.dots", {
+						defaultValue: "Dots",
+					}),
 					checkable: true,
 					checked: readEasingBackground() === "dot",
 				},
 				{
 					id: CTX_MENU_IDS.easingBackgroundGrid,
-					label: "Grid",
+					label: i18n.t("contextMenu:unified.easing.grid", {
+						defaultValue: "Grid",
+					}),
 					checkable: true,
 					checked: readEasingBackground() === "grid",
 				},
@@ -1190,17 +1373,23 @@ export function buildEasingContextMenu(): CepMenuEntry[] {
 		},
 		{
 			id: "ty.ctx.easing.applyMode",
-			label: "Apply Mode",
+			label: i18n.t("contextMenu:unified.easing.applyMode", {
+				defaultValue: "Apply Mode",
+			}),
 			menu: [
 				{
 					id: CTX_MENU_IDS.easingApplyModeSingle,
-					label: "Single",
+					label: i18n.t("contextMenu:unified.easing.single", {
+						defaultValue: "Single",
+					}),
 					checkable: true,
 					checked: readEasingApplyMode() === "single",
 				},
 				{
 					id: CTX_MENU_IDS.easingApplyModePair,
-					label: "Each Segment",
+					label: i18n.t("contextMenu:unified.easing.eachSegment", {
+						defaultValue: "Each Segment",
+					}),
 					checkable: true,
 					checked: readEasingApplyMode() === "pair",
 				},
@@ -1208,17 +1397,23 @@ export function buildEasingContextMenu(): CepMenuEntry[] {
 		},
 		{
 			id: "ty.ctx.easing.autoApply",
-			label: "Auto Apply",
+			label: i18n.t("contextMenu:unified.easing.autoApply", {
+				defaultValue: "Auto Apply",
+			}),
 			menu: [
 				{
 					id: CTX_MENU_IDS.easingAutoApplyOn,
-					label: "On",
+					label: i18n.t("contextMenu:unified.easing.on", {
+						defaultValue: "On",
+					}),
 					checkable: true,
 					checked: readEasingAutoApply(),
 				},
 				{
 					id: CTX_MENU_IDS.easingAutoApplyOff,
-					label: "Off",
+					label: i18n.t("contextMenu:unified.easing.off", {
+						defaultValue: "Off",
+					}),
 					checkable: true,
 					checked: !readEasingAutoApply(),
 				},
@@ -1226,7 +1421,9 @@ export function buildEasingContextMenu(): CepMenuEntry[] {
 		},
 		{
 			id: "ty.ctx.easing.labels",
-			label: "Label Color",
+			label: i18n.t("contextMenu:unified.easing.labelColor", {
+				defaultValue: "Label Color",
+			}),
 			menu: buildEasingLabelColorMenu(
 				easingCustomColorsCache,
 				easingLabelColorNamesCache,
@@ -1234,7 +1431,9 @@ export function buildEasingContextMenu(): CepMenuEntry[] {
 		},
 		{
 			id: "ty.ctx.easing.mainLabelColor",
-			label: "Apply Color",
+			label: i18n.t("contextMenu:unified.easing.applyColor", {
+				defaultValue: "Apply Color",
+			}),
 			menu: buildEasingMainLabelColorMenu(
 				easingMainLabelColorCache,
 				easingLabelColorNamesCache,
@@ -1242,46 +1441,64 @@ export function buildEasingContextMenu(): CepMenuEntry[] {
 		},
 		{
 			id: "ty.ctx.easing.shortcuts",
-			label: "Shortcuts",
+			label: i18n.t("contextMenu:unified.easing.shortcuts", {
+				defaultValue: "Shortcuts",
+			}),
 			menu: [
 				{
 					id: "_shortcut.drag",
-					label: "Drag: move point/handle",
+					label: i18n.t("contextMenu:unified.easing.shortcutDrag", {
+						defaultValue: "Drag: move point/handle",
+					}),
 					enabled: false,
 				},
 				{
 					id: "_shortcut.shift",
-					label: "Shift+Drag: constrain to axis",
+					label: i18n.t("contextMenu:unified.easing.shortcutShift", {
+						defaultValue: "Shift+Drag: constrain to axis",
+					}),
 					enabled: false,
 				},
 				{
 					id: "_shortcut.alt",
-					label: "Alt+Drag: independent handles",
+					label: i18n.t("contextMenu:unified.easing.shortcutAlt", {
+						defaultValue: "Alt+Drag: independent handles",
+					}),
 					enabled: false,
 				},
 				{
 					id: "_shortcut.mirror",
-					label: "Ctrl+Alt+Drag: mirror handles",
+					label: i18n.t("contextMenu:unified.easing.shortcutMirror", {
+						defaultValue: "Ctrl+Alt+Drag: mirror handles",
+					}),
 					enabled: false,
 				},
 				{
 					id: "_shortcut.add",
-					label: "Ctrl+Click: add/remove point",
+					label: i18n.t("contextMenu:unified.easing.shortcutAdd", {
+						defaultValue: "Ctrl+Click: add/remove point",
+					}),
 					enabled: false,
 				},
 				{
 					id: "_shortcut.pull",
-					label: "Alt+Click: pull out handle",
+					label: i18n.t("contextMenu:unified.easing.shortcutPull", {
+						defaultValue: "Alt+Click: pull out handle",
+					}),
 					enabled: false,
 				},
 				{
 					id: "_shortcut.pan",
-					label: "Space+Drag / Middle: pan",
+					label: i18n.t("contextMenu:unified.easing.shortcutPan", {
+						defaultValue: "Space+Drag / Middle: pan",
+					}),
 					enabled: false,
 				},
 				{
 					id: "_shortcut.reset",
-					label: "Double-click empty: reset",
+					label: i18n.t("contextMenu:unified.easing.shortcutReset", {
+						defaultValue: "Double-click empty: reset",
+					}),
 					enabled: false,
 				},
 			],
@@ -1310,12 +1527,12 @@ function buildWorkspaceRootMenu(
 
 	rows.push({
 		id: CTX_MENU_IDS.undo,
-		label: "Undo",
+		label: i18n.t("contextMenu:unified.undo", { defaultValue: "Undo" }),
 		enabled: includeCep,
 	});
 	rows.push({
 		id: CTX_MENU_IDS.redo,
-		label: "Redo",
+		label: i18n.t("contextMenu:unified.redo", { defaultValue: "Redo" }),
 		enabled: includeCep,
 	});
 	rows.push(sep());
@@ -1323,7 +1540,9 @@ function buildWorkspaceRootMenu(
 	if (multi && includeCep) {
 		rows.push({
 			id: CTX_MENU_IDS.groupSelectedPresets,
-			label: "Group Selected Items",
+			label: i18n.t("contextMenu:unified.groupSelectedItems", {
+				defaultValue: "Group Selected Items",
+			}),
 		});
 		const mv = movePresetsToPanelSubmenu(
 			state.panelId,
@@ -1333,7 +1552,10 @@ function buildWorkspaceRootMenu(
 		if (mv) rows.push(mv);
 		rows.push({
 			id: CTX_MENU_IDS.deleteSelectedPresets,
-			label: `Delete ${sel.length} Presets`,
+			label: i18n.t("contextMenu:unified.deletePresets", {
+				total: sel.length,
+				defaultValue: "Delete {{total}} Presets",
+			}),
 		});
 		rows.push(sep());
 	}
@@ -1344,7 +1566,9 @@ function buildWorkspaceRootMenu(
 	rows.push(sep());
 	rows.push({
 		id: CTX_MENU_IDS.addWidget,
-		label: "Add Widget",
+		label: i18n.t("contextMenu:unified.addWidget", {
+			defaultValue: "Add Widget",
+		}),
 		enabled: includeCep,
 	});
 	rows.push(createPresetsArchiveEntry(includeCep));
@@ -1392,24 +1616,28 @@ function buildPresetRowMenu(
 	if (multi && includeCep) {
 		rows.push({
 			id: CTX_MENU_IDS.groupSelectedPresets,
-			label: "Group Selected Items",
+			label: i18n.t("contextMenu:unified.groupSelectedItems", {
+				defaultValue: "Group Selected Items",
+			}),
 		});
 		rows.push(sep());
 	}
 
 	rows.push({
 		id: CTX_MENU_IDS.runPreset,
-		label: "Run",
+		label: i18n.t("contextMenu:unified.run", { defaultValue: "Run" }),
 		enabled: hasId,
 	});
 	rows.push({
 		id: CTX_MENU_IDS.editPreset,
-		label: "Edit",
+		label: i18n.t("contextMenu:unified.edit", { defaultValue: "Edit" }),
 		enabled: hasId && includeCep,
 	});
 	rows.push({
 		id: CTX_MENU_IDS.duplicatePreset,
-		label: "Duplicate",
+		label: i18n.t("contextMenu:unified.duplicate", {
+			defaultValue: "Duplicate",
+		}),
 		enabled: hasId && includeCep && preset !== undefined,
 	});
 	const moveSub = movePresetsToPanelSubmenu(
@@ -1421,20 +1649,24 @@ function buildPresetRowMenu(
 	rows.push(sep());
 	rows.push({
 		id: CTX_MENU_IDS.deletePreset,
-		label: "Delete",
+		label: i18n.t("contextMenu:unified.delete", { defaultValue: "Delete" }),
 		enabled: hasId && includeCep && !delDisabled,
 	});
 	if (isGroupPresetRow && includeCep) {
 		rows.push({
 			id: CTX_MENU_IDS.releaseGroupPreset,
-			label: "Release Group",
+			label: i18n.t("contextMenu:unified.releaseGroup", {
+				defaultValue: "Release Group",
+			}),
 			enabled: hasId,
 		});
 	}
 	if (isMemberOfOpenedGroup && includeCep) {
 		rows.push({
 			id: CTX_MENU_IDS.removePresetFromOpenedGroup,
-			label: "Remove from This Group",
+			label: i18n.t("contextMenu:unified.removeFromThisGroup", {
+				defaultValue: "Remove from This Group",
+			}),
 			enabled: hasId,
 		});
 	}
@@ -1458,12 +1690,14 @@ function buildDirectoryBrowserEntryMenu(
 	const path = hit.entryPath?.trim() ?? "";
 	const goUp: CepMenuEntry = {
 		id: CTX_MENU_IDS.dirBrowserGoUp,
-		label: "Go up",
+		label: i18n.t("contextMenu:unified.goUp", { defaultValue: "Go up" }),
 		enabled: includeCep && hit.canGoUp !== false,
 	};
 	const refresh: CepMenuEntry = {
 		id: CTX_MENU_IDS.dirBrowserRefresh,
-		label: "Refresh",
+		label: i18n.t("contextMenu:unified.refresh", {
+			defaultValue: "Refresh",
+		}),
 		enabled: includeCep,
 	};
 
@@ -1473,7 +1707,7 @@ function buildDirectoryBrowserEntryMenu(
 		if (path) {
 			rows.push({
 				id: `${CTX_MENU_IDS.dirBrowserOpenDirPrefix}${encodeURIComponent(path)}`,
-				label: "Open",
+				label: i18n.t("contextMenu:unified.open", { defaultValue: "Open" }),
 				enabled: includeCep,
 			});
 		}
@@ -1488,19 +1722,27 @@ function buildDirectoryBrowserEntryMenu(
 	const rows: CepMenuEntry[] = [
 		{
 			id: `${CTX_MENU_IDS.dirBrowserSelectPrefix}${encodeURIComponent(path)}`,
-			label: isSelected ? "Deselect" : "Select",
+			label: isSelected
+				? i18n.t("contextMenu:unified.deselect", {
+						defaultValue: "Deselect",
+					})
+				: i18n.t("contextMenu:unified.select", { defaultValue: "Select" }),
 			enabled: includeCep && path.length > 0,
 		},
 		{
 			id: `${CTX_MENU_IDS.dirBrowserImportPrefix}${encodeURIComponent(path)}`,
-			label: "Import",
+			label: i18n.t("contextMenu:unified.importFile", {
+				defaultValue: "Import",
+			}),
 			enabled: includeCep && path.length > 0,
 		},
 	];
 	if (hit.fileType === "audio") {
 		rows.push({
 			id: `${CTX_MENU_IDS.dirBrowserAudioPreviewPrefix}${encodeURIComponent(path)}`,
-			label: "Play audio preview",
+			label: i18n.t("contextMenu:unified.playAudioPreview", {
+				defaultValue: "Play audio preview",
+			}),
 			enabled: includeCep && path.length > 0,
 		});
 	}
@@ -1526,32 +1768,42 @@ function buildDirectoryBrowserBodyMenu(
 	const rows: CepMenuEntry[] = [
 		{
 			id: CTX_MENU_IDS.dirBrowserRefresh,
-			label: "Refresh",
+			label: i18n.t("contextMenu:unified.refresh", {
+				defaultValue: "Refresh",
+			}),
 			enabled: includeCep,
 		},
 		{
 			id: CTX_MENU_IDS.dirBrowserGoUp,
-			label: "Go up",
+			label: i18n.t("contextMenu:unified.goUp", { defaultValue: "Go up" }),
 			enabled: includeCep && hit.canGoUp !== false,
 		},
 		{
 			id: CTX_MENU_IDS.dirBrowserBrowseDrives,
-			label: "Browse drives",
+			label: i18n.t("contextMenu:unified.browseDrives", {
+				defaultValue: "Browse drives",
+			}),
 			enabled: includeCep,
 		},
 		{
 			id: CTX_MENU_IDS.dirBrowserToggleFilters,
-			label: "Toggle filters",
+			label: i18n.t("contextMenu:unified.toggleFilters", {
+				defaultValue: "Toggle filters",
+			}),
 			enabled: includeCep,
 		},
 		{
 			id: CTX_MENU_IDS.dirBrowserClearSearch,
-			label: "Clear search",
+			label: i18n.t("contextMenu:unified.clearSearch", {
+				defaultValue: "Clear search",
+			}),
 			enabled: includeCep,
 		},
 		{
 			id: CTX_MENU_IDS.dirBrowserDefaultDir,
-			label: "Default directory",
+			label: i18n.t("contextMenu:unified.defaultDirectory", {
+				defaultValue: "Default directory",
+			}),
 			enabled: includeCep,
 		},
 		sep(),
@@ -1590,12 +1842,12 @@ function buildGroupTileMenu(
 
 	rows.push({
 		id: CTX_MENU_IDS.runPreset,
-		label: "Open",
+		label: i18n.t("contextMenu:unified.open", { defaultValue: "Open" }),
 		enabled: hasId,
 	});
 	rows.push({
 		id: CTX_MENU_IDS.editPreset,
-		label: "Edit",
+		label: i18n.t("contextMenu:unified.edit", { defaultValue: "Edit" }),
 		enabled: hasId && includeCep,
 	});
 	const moveSub = movePresetsToPanelSubmenu(
@@ -1607,13 +1859,15 @@ function buildGroupTileMenu(
 	rows.push(sep());
 	rows.push({
 		id: CTX_MENU_IDS.deletePreset,
-		label: "Delete",
+		label: i18n.t("contextMenu:unified.delete", { defaultValue: "Delete" }),
 		enabled: hasId && includeCep && groupCatalogHit,
 	});
 	if (groupCatalogHit && includeCep) {
 		rows.push({
 			id: CTX_MENU_IDS.releaseGroupPreset,
-			label: "Release Group",
+			label: i18n.t("contextMenu:unified.releaseGroup", {
+				defaultValue: "Release Group",
+			}),
 			enabled: hasId,
 		});
 	}
@@ -1642,7 +1896,7 @@ function buildWorkspacePlacementBaseMenu(
 	rows.push(sep());
 	rows.push({
 		id: CTX_MENU_IDS.deleteWorkspaceWidget,
-		label: "Delete",
+		label: i18n.t("contextMenu:unified.delete", { defaultValue: "Delete" }),
 		enabled: opts.isCep && wid.trim().length > 0,
 	});
 	return rows;
@@ -1680,24 +1934,32 @@ function buildWorkspacePlacementWidgetMenu(
 			sep(),
 			{
 				id: CTX_MENU_IDS.openPresets,
-				label: "Presets",
+				label: i18n.t("contextMenu:unified.presets", {
+					defaultValue: "Presets",
+				}),
 				enabled: opts.isCep,
 			},
 			// Preset Library is intentionally absent (Issue #170): the online
 			// catalog has no R0 backend, so the entry was a dead affordance.
 			{
 				id: CTX_MENU_IDS.openMessages,
-				label: "Messages",
+				label: i18n.t("contextMenu:unified.messages", {
+					defaultValue: "Messages",
+				}),
 				enabled: opts.isCep,
 			},
 			{
 				id: CTX_MENU_IDS.openSettings,
-				label: "Settings",
+				label: i18n.t("contextMenu:unified.settings", {
+					defaultValue: "Settings",
+				}),
 				enabled: opts.isCep,
 			},
 			{
 				id: CTX_MENU_IDS.openDebug,
-				label: "Debug Console",
+				label: i18n.t("contextMenu:unified.debugConsole", {
+					defaultValue: "Debug Console",
+				}),
 			},
 		];
 		return rows;
@@ -1708,7 +1970,13 @@ function buildWorkspacePlacementWidgetMenu(
 	if (wid === "widget-layout-lock") {
 		specificRows.push({
 			id: CTX_MENU_IDS.toggleLayoutLock,
-			label: state.layoutLocked ? "Unlock Layout" : "Lock Layout",
+			label: state.layoutLocked
+				? i18n.t("contextMenu:unified.unlockLayout", {
+						defaultValue: "Unlock Layout",
+					})
+				: i18n.t("contextMenu:unified.lockLayout", {
+						defaultValue: "Lock Layout",
+					}),
 			checkable: true,
 			checked: state.layoutLocked,
 		});
@@ -1718,7 +1986,9 @@ function buildWorkspacePlacementWidgetMenu(
 	if (wid === "widget-project-info" && opts.hostCode === "AEFT") {
 		specificRows.push({
 			id: CTX_MENU_IDS.refreshProjectInfo,
-			label: "Update Comp Info",
+			label: i18n.t("contextMenu:unified.updateCompInfo", {
+				defaultValue: "Update Comp Info",
+			}),
 		});
 		specificRows.push(sep());
 	}
@@ -1728,7 +1998,7 @@ function buildWorkspacePlacementWidgetMenu(
 		// For info widget, Edit is always enabled when in CEP mode
 		specificRows.push({
 			id: CTX_MENU_IDS.editPreset,
-			label: "Edit",
+			label: i18n.t("contextMenu:unified.edit", { defaultValue: "Edit" }),
 			enabled: opts.isCep,
 		});
 		specificRows.push(sep());
@@ -1785,12 +2055,16 @@ export function buildWorkspaceContextMenuPayload(
 			menu: [
 				{
 					id: CTX_MENU_IDS.probeLog,
-					label: "Test: Log to Console",
+					label: i18n.t("contextMenu:unified.probe.logToConsole", {
+						defaultValue: "Test: Log to Console",
+					}),
 				},
 				sep(),
 				{
 					id: CTX_MENU_IDS.probeOpenDebug,
-					label: "Test: Open Debug Console",
+					label: i18n.t("contextMenu:unified.probe.openDebugConsole", {
+						defaultValue: "Test: Open Debug Console",
+					}),
 					enabled: includeCep,
 				},
 			],
@@ -1809,7 +2083,15 @@ export function buildWorkspaceContextMenuPayload(
 			menu: [
 				{
 					id: CTX_MENU_IDS.qaToggle,
-					label: visible ? `Hide Category "${cat}"` : `Show Category "${cat}"`,
+					label: visible
+						? i18n.t("contextMenu:unified.hideCategory", {
+								cat,
+								defaultValue: 'Hide Category "{{cat}}"',
+							})
+						: i18n.t("contextMenu:unified.showCategory", {
+								cat,
+								defaultValue: 'Show Category "{{cat}}"',
+							}),
 				},
 			],
 		};
@@ -1874,40 +2156,100 @@ function buildControlPanelContextMenuPayload(): CepMenuPayload {
 		menu: [
 			{
 				id: CTX_MENU_IDS.cpToggleCollapse,
-				label: "Collapse/Expand",
+				label: i18n.t("contextMenu:unified.collapseExpand", {
+					defaultValue: "Collapse/Expand",
+				}),
 			},
 			sep(),
 			{
 				id: "ty.ctx.cp.group.position",
-				label: "Position",
+				label: i18n.t("contextMenu:unified.cp.position", {
+					defaultValue: "Position",
+				}),
 				menu: [
-					{ id: CTX_MENU_IDS.cpLayoutTopLeft, label: "Top-Left" },
-					{ id: CTX_MENU_IDS.cpLayoutTopCenter, label: "Top-Center" },
-					{ id: CTX_MENU_IDS.cpLayoutTopRight, label: "Top-Right" },
-					{ id: CTX_MENU_IDS.cpLayoutBottomLeft, label: "Bottom-Left" },
-					{ id: CTX_MENU_IDS.cpLayoutBottomCenter, label: "Bottom-Center" },
-					{ id: CTX_MENU_IDS.cpLayoutBottomRight, label: "Bottom-Right" },
-					{ id: CTX_MENU_IDS.cpLayoutLeftCenter, label: "Left-Center" },
-					{ id: CTX_MENU_IDS.cpLayoutRightCenter, label: "Right-Center" },
+					{
+						id: CTX_MENU_IDS.cpLayoutTopLeft,
+						label: i18n.t("contextMenu:unified.cp.topLeft", {
+							defaultValue: "Top-Left",
+						}),
+					},
+					{
+						id: CTX_MENU_IDS.cpLayoutTopCenter,
+						label: i18n.t("contextMenu:unified.cp.topCenter", {
+							defaultValue: "Top-Center",
+						}),
+					},
+					{
+						id: CTX_MENU_IDS.cpLayoutTopRight,
+						label: i18n.t("contextMenu:unified.cp.topRight", {
+							defaultValue: "Top-Right",
+						}),
+					},
+					{
+						id: CTX_MENU_IDS.cpLayoutBottomLeft,
+						label: i18n.t("contextMenu:unified.cp.bottomLeft", {
+							defaultValue: "Bottom-Left",
+						}),
+					},
+					{
+						id: CTX_MENU_IDS.cpLayoutBottomCenter,
+						label: i18n.t("contextMenu:unified.cp.bottomCenter", {
+							defaultValue: "Bottom-Center",
+						}),
+					},
+					{
+						id: CTX_MENU_IDS.cpLayoutBottomRight,
+						label: i18n.t("contextMenu:unified.cp.bottomRight", {
+							defaultValue: "Bottom-Right",
+						}),
+					},
+					{
+						id: CTX_MENU_IDS.cpLayoutLeftCenter,
+						label: i18n.t("contextMenu:unified.cp.leftCenter", {
+							defaultValue: "Left-Center",
+						}),
+					},
+					{
+						id: CTX_MENU_IDS.cpLayoutRightCenter,
+						label: i18n.t("contextMenu:unified.cp.rightCenter", {
+							defaultValue: "Right-Center",
+						}),
+					},
 				],
 			},
 			{
 				id: "ty.ctx.cp.group.orientation",
-				label: "Orientation",
+				label: i18n.t("contextMenu:unified.cp.orientation", {
+					defaultValue: "Orientation",
+				}),
 				menu: [
-					{ id: CTX_MENU_IDS.cpOrientHorizontal, label: "Horizontal" },
-					{ id: CTX_MENU_IDS.cpOrientVertical, label: "Vertical" },
+					{
+						id: CTX_MENU_IDS.cpOrientHorizontal,
+						label: i18n.t("contextMenu:unified.cp.horizontal", {
+							defaultValue: "Horizontal",
+						}),
+					},
+					{
+						id: CTX_MENU_IDS.cpOrientVertical,
+						label: i18n.t("contextMenu:unified.cp.vertical", {
+							defaultValue: "Vertical",
+						}),
+					},
 				],
 			},
 			sep(),
 			{
 				id: CTX_MENU_IDS.cpResetDefault,
-				label: "Reset to Default",
+				label: i18n.t("contextMenu:unified.cp.resetToDefault", {
+					defaultValue: "Reset to Default",
+				}),
 			},
 			sep(),
 			{
 				id: CTX_MENU_IDS.addWidget,
-				label: "Add Widget",
+				label: i18n.t("contextMenu:unified.addWidget", {
+					defaultValue: "Add Widget",
+				}),
 			},
 		],
 	};

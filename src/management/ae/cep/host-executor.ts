@@ -367,7 +367,10 @@ const buildHostBundleLoadScript = (jsxPath: string): string => `
   } catch (error) {
     return JSON.stringify({
       ok: false,
-      error: { message: "Host bundle load failed: " + String(error) }
+      error: {
+        // i18n-exempt: host bridge error payload consumed by the panel, not rendered UI
+        message: "Host bundle load failed: " + String(error),
+      }
     });
   }
 })();
@@ -943,7 +946,11 @@ const buildCepHostExecutor = (
     if (!hostBundle) {
       return JSON.stringify({
         ok: false,
-        error: { message: "Host bundle is not resident", code: "host_bundle_missing" }
+        error: {
+        // i18n-exempt: host bridge error payload consumed by the panel, not rendered UI
+        message: "Host bundle is not resident",
+        code: "host_bundle_missing",
+      }
       });
     }
     var hostMethod = typeof hostBundle['${escapedMethod}'] === "function"
@@ -952,11 +959,16 @@ const buildCepHostExecutor = (
     if (hostMethod) {
       return hostMethod('${rawArgs}');
     }
-    return JSON.stringify({ ok: false, error: { message: "__TY_PLUS_HOST__.${escapedMethod} is not available", code: "host_method_missing" } });
+    return JSON.stringify({ ok: false, error: {
+        // i18n-exempt: host bridge error payload consumed by the panel, not rendered UI
+        message: "__TY_PLUS_HOST__.${escapedMethod} is not available",
+        code: "host_method_missing",
+      } });
   } catch (error) {
     return JSON.stringify({
       ok: false,
       error: {
+        // i18n-exempt: host bridge error payload consumed by the panel, not rendered UI
         message: "Host function wrapper failed for ${escapedMethod}: " + String(error)
       }
     });

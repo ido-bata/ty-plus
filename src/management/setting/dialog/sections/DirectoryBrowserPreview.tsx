@@ -1,4 +1,5 @@
 import type { JSX } from "react";
+import { i18n } from "@/management/i18n/index";
 import type { DirectoryBrowserEntry } from "@/management/storage/ui/DirectoryBrowser";
 import { DirectoryBrowser } from "@/management/storage/ui/DirectoryBrowser";
 import { css } from "@/styled-system/css";
@@ -55,7 +56,11 @@ export function DirectoryBrowserPreview({
 }): JSX.Element {
 	return (
 		<PreviewGroup
-			title={viewMode === "icons" ? "Icon Card View" : "Directory Browser"}
+			title={i18n.t(
+				viewMode === "icons"
+					? "settings:componentPreview.iconCardView"
+					: "settings:componentPreview.directoryBrowser",
+			)}
 		>
 			<div className={browserContainerStyle}>
 				<DirectoryBrowser
@@ -90,8 +95,8 @@ export function DirectoryBrowserPreview({
 					onViewModeChange={() => {}}
 					scale={1}
 					aspect="square"
-					emptyLabel="No files found"
-					loadingLabel="Loading..."
+					emptyLabel={i18n.t("settings:componentPreview.noFilesFound")}
+					loadingLabel={i18n.t("common:app.loading")}
 					upLabel=".."
 				/>
 			</div>

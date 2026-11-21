@@ -1,5 +1,99 @@
 {
 	"notification": {
-		"fixtureBadge": "placeholder (offline fixture)"
+		"fixtureBadge": "placeholder (offline fixture)",
+		"fixture": {
+			"welcomeName": "Welcome to ty-plus",
+			"welcomeSummary": "Thanks for installing ty-plus! This is a placeholder notification shown when the runtime is not connected (offline fixture).",
+			"updateName": "Update available",
+			"updateSummary": "A new version may include improved grid performance and bug fixes.",
+			"maintenanceName": "Maintenance notice",
+			"maintenanceSummary": "Server maintenance may be scheduled; check status page."
+		}
+	},
+	"gatewayBoot": {
+		"connectivityProbeFailed": "The connectivity check failed after the worker composition started.",
+		"catalogProbeFailed": "The catalog check failed after the worker composition started.",
+		"runtimeInitFailed": "The operation worker runtime could not be created during startup.",
+		"compositionInitFailed": "The operation worker composition could not be created during startup."
+	},
+	"catalog": {
+		"title": "Online Preset Library",
+		"searchPlaceholder": "Filter by name, ID, description, category, tag",
+		"filterPlaceholder": "Filter…",
+		"showFilters": "Show filters",
+		"hideFilters": "Hide filters",
+		"category": "Category",
+		"tags": "Tags",
+		"allCategories": "All categories",
+		"clear": "Clear",
+		"clearAll": "Clear all",
+		"clearAllFilters": "Clear all filters",
+		"clearSearch": "Clear search",
+		"clearCategoryFilter": "Clear category filter",
+		"clearTagSelection": "Clear tag selection",
+		"refreshCatalog": "Refresh catalog",
+		"reloadCatalog": "Reload catalog",
+		"reloadingCatalog": "Reloading…",
+		"openNotion": "Open Notion",
+		"openManualNotion": "Open manual (Notion)",
+		"viewMenu": "View",
+		"viewMode": "View mode",
+		"viewGallery": "Gallery view",
+		"viewGalleryTitle": "Gallery (Ctrl+Wheel to zoom)",
+		"viewGalleryLabel": "Gallery",
+		"viewCards": "Cards view",
+		"viewCardsLabel": "Cards",
+		"viewList": "List view",
+		"viewListLabel": "List",
+		"tableThumb": "Thumb",
+		"tableNameId": "Name / ID",
+		"tableActions": "Actions",
+		"emptyUnavailable": "Online preset library is unavailable.",
+		"emptyNoCatalog": "No online catalog.",
+		"emptyNoMatch": "No presets match filter.",
+		"footerCount": "{{filtered}} / {{catalog}} items",
+		"footerZoom": "Ctrl+Wheel: {{percent}}%",
+		"downloadConfirm": "Download this preset?",
+		"downloadCancelled": "Download cancelled by user",
+		"downloadUnavailable": "Runtime download is unavailable (no online transport connected)",
+		"systemPathsUnavailable": "System paths not available",
+		"invalidDownloadPath": "Invalid download path: {{path}}",
+		"downloadFailed": "Download failed: {{message}}",
+		"pluginInstalled": "Plugin installed. Restart After Effects to use it.",
+		"downloadComplete": "Download complete.",
+		"downloadedDescription": "[Downloaded from catalog] {{description}}",
+		"gatewayBootRetryHint": "{{reason}} — reload the panel to retry the gateway boot",
+		"hideSidePanel": "Hide side panel",
+		"showSidePanel": "Show side panel",
+		"download": "Download",
+		"import": "Import",
+		"sync": {
+			"idle": "Cloud sync idle",
+			"ok": "Ty Plus OK",
+			"failed": "Cloud sync failed"
+		}
+	},
+	"notificationCenter": {
+		"title": "Notifications",
+		"loading": "Loading…",
+		"empty": "No notifications",
+		"toggleContent": "Toggle content",
+		"noContent": "No content",
+		"backToList": "Back to list",
+		"backToListMenu": "Back to List",
+		"refresh": "Refresh",
+		"open": "Open",
+		"close": "Close",
+		"markRead": "Mark read",
+		"markUnread": "Mark unread",
+		"markAsRead": "Mark as Read",
+		"markAsUnread": "Mark as Unread",
+		"generalCategory": "general"
+	},
+	"notificationContainer": {
+		"dismiss": "Dismiss notification"
+	},
+	"publicLink": {
+		"userManual": "User Manual"
 	}
 }

@@ -1,5 +1,6 @@
 import { cx } from "@ty-plus/ui/util/cx";
 import type { HTMLAttributes, JSX } from "react";
+import { useTranslation } from "react-i18next";
 import { css } from "@/styled-system/css";
 
 export type LoadingSpinnerProps = {
@@ -46,16 +47,23 @@ const srOnly = css({
 });
 
 export function LoadingSpinner({
-	label = "Loading",
+	label,
 	size = "md",
 	className,
 	...rest
 }: LoadingSpinnerProps): JSX.Element {
+	const { t } = useTranslation();
+	const resolvedLabel =
+		label ?? t("ui.loadingSpinner.label", { defaultValue: "Loading" });
 	return (
-		<output aria-label={label} className={cx(root, className)} {...rest}>
+		<output
+			aria-label={resolvedLabel}
+			className={cx(root, className)}
+			{...rest}
+		>
 			{/* Non-arrow circular spinner using CSS border animation */}
 			<span className={cx(ring, sizeMap[size])} aria-hidden />
-			<span className={srOnly}>{label}</span>
+			<span className={srOnly}>{resolvedLabel}</span>
 		</output>
 	);
 }

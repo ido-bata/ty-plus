@@ -180,5 +180,82 @@
 			"copied": "Copied to clipboard",
 			"digest": "Error ID"
 		}
+	},
+	"ui": {
+		"loadingSpinner": {
+			"label": "Loading"
+		},
+		"searchField": {
+			"clearAria": "Clear search",
+			"clearTitle": "Clear"
+		},
+		"regexEditor": {
+			"enterPattern": "Enter a pattern.",
+			"invalidFlags": "Invalid flags: {{flags}}",
+			"plainSource": "Plain regex source",
+			"literalFormat": "Literal regex format",
+			"testString": "Test string",
+			"sourcePlaceholder": "Regex source",
+			"flagsPlaceholder": "flags",
+			"matches": "Matches",
+			"noMatch": "No match",
+			"literalSuffix": "· literal /pattern/flags",
+			"sourceSuffix": "· source only"
+		},
+		"listSelect": {
+			"placeholder": "Select…"
+		}
+	},
+	"directoryBrowser": {
+		"refresh": "Refresh",
+		"goUp": "Go Up",
+		"open": "Open",
+		"select": "Select",
+		"deselect": "Deselect",
+		"listView": "List view",
+		"iconView": "Icon view",
+		"noFilesFound": "No files found"
+	},
+	"debugConsole": {
+		"title": "Console",
+		"clear": "Clear",
+		"evaluateAria": "Evaluate JavaScript",
+		"evaluatePlaceholder": "Evaluate JavaScript...",
+		"rowContextHint": "Right-click to copy",
+		"filterLevelAria": "Filter console messages",
+		"filterSourceAria": "Filter console messages by source",
+		"filterScopeAria": "Filter console messages by session scope",
+		"levels": {
+			"all": "All",
+			"log": "Log",
+			"info": "Info",
+			"warn": "Warn",
+			"error": "Error"
+		},
+		"sources": {
+			"all": "All sources",
+			"panel": "Panel",
+			"modeless": "Modeless",
+			"hostBridge": "Host bridge",
+			"online": "Online",
+			"preset": "Preset",
+			"opWorker": "Op worker",
+			"workspace": "Workspace",
+			"boot": "Boot",
+			"debugConsole": "Debug console",
+			"console": "Console"
+		},
+		"scopes": {
+			"allHistory": "All history",
+			"thisSession": "This session"
+		},
+		"contextMenu": {
+			"copyMessage": "Copy message",
+			"copyAllMessages": "Copy all messages",
+			"clearConsole": "Clear console",
+			"enableAutoScroll": "Enable auto-scroll",
+			"disableAutoScroll": "Disable auto-scroll",
+			"itemActive": "{{level}} (active)"
+		}
 	}
 }

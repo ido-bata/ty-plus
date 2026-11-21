@@ -234,7 +234,7 @@ export function GroupDialog(): JSX.Element {
 			type="preset"
 			description={t("group.lead")}
 			defaultName={t("group.defaultName")}
-			iconText="GROUP"
+			iconText={t("group.iconText")}
 			pathBrowse={{ fieldKey: "path", mode: "folder" }}
 			resolveBrowseStartDir={readUserHomeOrFallback}
 			renderForm={(ctx) => {
@@ -290,7 +290,7 @@ export function GroupDialog(): JSX.Element {
 										detectCandidates(lines.filter(Boolean));
 									}}
 									selectionMode="both"
-									label="Browse files & folders to add"
+									label={t("group.browseMembers")}
 									candidatePresets={candidatePresets}
 									candidateDirs={candidateDirs}
 									onPickPreset={(id) => {
@@ -335,7 +335,7 @@ export function GroupDialog(): JSX.Element {
 											detectCandidates(lines.filter(Boolean));
 										}}
 									>
-										<Plus size={16} /> Add path
+										<Plus size={16} /> {t("group.addPath")}
 									</Button>
 									<Button
 										type="button"
@@ -344,7 +344,7 @@ export function GroupDialog(): JSX.Element {
 											detectCandidates(pathLines.filter(Boolean));
 										}}
 									>
-										<ChevronDown size={14} /> Detect candidates
+										<ChevronDown size={14} /> {t("group.detectCandidates")}
 									</Button>
 								</div>
 
@@ -368,7 +368,7 @@ export function GroupDialog(): JSX.Element {
 														detectCandidates(raw.filter(Boolean));
 													}}
 													onBrowse={() => ctx.runPathBrowse(`paths[${idx}]`)}
-													browseAriaLabel="Browse folder"
+													browseAriaLabel={t("group.browseFolder")}
 													browseSlot={
 														<Icon icon={FolderOpen} size={16} aria-hidden />
 													}
@@ -378,7 +378,7 @@ export function GroupDialog(): JSX.Element {
 												/>
 												<Button
 													variant="ghost"
-													aria-label="Remove path"
+													aria-label={t("group.removePath")}
 													onClick={() => {
 														const raw = ((ctx.values.paths ?? "") as string)
 															.split(/\r?\n/)
@@ -400,19 +400,19 @@ export function GroupDialog(): JSX.Element {
 							</div>
 						</AuthoringSection>
 						{/* 3. Icon Rules (Additive) */}
-						<AuthoringSection title="Icon Rules" span={6}>
+						<AuthoringSection title={t("group.iconRules")} span={6}>
 							<div className={rulesColumnClass}>
 								<div className={baseIconCardClass}>
 									<div className={baseIconHeaderClass}>
 										<span className={baseIconLabelClass}>
-											Base Icon (default for all presets)
+											{t("group.baseIcon.heading")}
 										</span>
 									</div>
 									<div className={baseIconEditorClass}>
 										<PresetIconEditor
 											draft={baseIconDraft}
 											onChange={setBaseIconDraft}
-											label="Base icon"
+											label={t("group.baseIcon.label")}
 											browseDir={readUserHomeOrFallback()}
 											framed={true}
 											preview={
@@ -421,6 +421,7 @@ export function GroupDialog(): JSX.Element {
 														{
 															id: "base-icon-preview",
 															type: "preset" as const,
+															// i18n-exempt: synthetic preset record title for the glyph preview, never rendered as a label
 															title: "Preview",
 															filePath: "ty-plus://base-icon-preview",
 															icon: presetIconDraftToPresetIcon(
@@ -435,7 +436,7 @@ export function GroupDialog(): JSX.Element {
 									</div>
 								</div>
 
-								<AccordionSection title="Rules" defaultOpen={true}>
+								<AccordionSection title={t("group.rules")} defaultOpen={true}>
 									<div className={columnClass}>
 										{conditionRules.map((r, i) => (
 											<ConditionRuleCard
@@ -479,18 +480,18 @@ export function GroupDialog(): JSX.Element {
 												detectCandidates(lines);
 											}}
 										>
-											<Plus size={16} /> Add rule
+											<Plus size={16} /> {t("group.addRule")}
 										</Button>
 									</div>
 								</AccordionSection>
 							</div>
 						</AuthoringSection>
 						{/* 4. Group Icon */}
-						<AuthoringSection title="Group Icon" span={6}>
+						<AuthoringSection title={t("group.groupIcon")} span={6}>
 							{ctx.icon}
 						</AuthoringSection>
 						{/* 5. Advanced Settings (Description + Image) */}
-						<AuthoringSection title="Advanced Settings" span={6}>
+						<AuthoringSection title={t("group.advancedSettings")} span={6}>
 							{ctx.details}
 						</AuthoringSection>
 					</AuthoringGrid>
@@ -531,19 +532,19 @@ export function GroupDialog(): JSX.Element {
 			fields={[
 				{
 					key: "paths",
-					label: "Folder paths",
+					label: t("group.fields.folderPaths"),
 					kind: "textarea",
-					placeholder: "One folder path per line",
+					placeholder: t("group.fields.folderPathsPlaceholder"),
 				},
 				{
 					key: "presetIds",
-					label: "Preset IDs",
+					label: t("group.fields.presetIds"),
 					kind: "textarea",
-					placeholder: "One preset ID per line",
+					placeholder: t("group.fields.presetIdsPlaceholder"),
 				},
 				{
 					key: "recursive",
-					label: "Recursive folder scan",
+					label: t("group.fields.recursiveScan"),
 					kind: "checkbox",
 					defaultValue: "false",
 				},

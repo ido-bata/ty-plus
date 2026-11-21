@@ -1605,46 +1605,119 @@ export function useWorkspaceRuntime(root: Element | null): {
 				wrap.appendChild(b);
 			};
 
-			addBtn("Collapse/Expand", () => {
-				const st = readCpState(panelId);
-				commitCpState({ ...st, collapsed: !st.collapsed });
-			});
+			addBtn(
+				i18n.t("workspace:controlPanel.collapseExpand", {
+					defaultValue: "Collapse/Expand",
+				}),
+				() => {
+					const st = readCpState(panelId);
+					commitCpState({ ...st, collapsed: !st.collapsed });
+				},
+			);
 			addSep();
-			addHeading("Position");
-			const posDefs: { p: CpPosition; o: CpOrientation; label: string }[] = [
-				{ p: "top-left", o: "horizontal", label: "Top Left" },
-				{ p: "top-center", o: "horizontal", label: "Top Center" },
-				{ p: "top-right", o: "horizontal", label: "Top Right" },
-				{ p: "bottom-left", o: "horizontal", label: "Bottom Left" },
-				{ p: "bottom-center", o: "horizontal", label: "Bottom Center" },
-				{ p: "bottom-right", o: "horizontal", label: "Bottom Right" },
-				{ p: "left-center", o: "vertical", label: "Left Center" },
-				{ p: "right-center", o: "vertical", label: "Right Center" },
+			addHeading(
+				i18n.t("workspace:controlPanel.position", {
+					defaultValue: "Position",
+				}),
+			);
+			const posDefs: {
+				p: CpPosition;
+				o: CpOrientation;
+				labelKey: string;
+				labelFallback: string;
+			}[] = [
+				{
+					p: "top-left",
+					o: "horizontal",
+					labelKey: "workspace:controlPanel.positionLabels.topLeft",
+					labelFallback: "Top Left",
+				},
+				{
+					p: "top-center",
+					o: "horizontal",
+					labelKey: "workspace:controlPanel.positionLabels.topCenter",
+					labelFallback: "Top Center",
+				},
+				{
+					p: "top-right",
+					o: "horizontal",
+					labelKey: "workspace:controlPanel.positionLabels.topRight",
+					labelFallback: "Top Right",
+				},
+				{
+					p: "bottom-left",
+					o: "horizontal",
+					labelKey: "workspace:controlPanel.positionLabels.bottomLeft",
+					labelFallback: "Bottom Left",
+				},
+				{
+					p: "bottom-center",
+					o: "horizontal",
+					labelKey: "workspace:controlPanel.positionLabels.bottomCenter",
+					labelFallback: "Bottom Center",
+				},
+				{
+					p: "bottom-right",
+					o: "horizontal",
+					labelKey: "workspace:controlPanel.positionLabels.bottomRight",
+					labelFallback: "Bottom Right",
+				},
+				{
+					p: "left-center",
+					o: "vertical",
+					labelKey: "workspace:controlPanel.positionLabels.leftCenter",
+					labelFallback: "Left Center",
+				},
+				{
+					p: "right-center",
+					o: "vertical",
+					labelKey: "workspace:controlPanel.positionLabels.rightCenter",
+					labelFallback: "Right Center",
+				},
 			];
-			for (const { p, o, label } of posDefs) {
-				addBtn(label, () => {
+			for (const { p, o, labelKey, labelFallback } of posDefs) {
+				addBtn(i18n.t(labelKey, { defaultValue: labelFallback }), () => {
 					const st = readCpState(panelId);
 					commitCpState({ ...st, position: p, orientation: o });
 				});
 			}
 			addSep();
-			addHeading("Orientation");
-			addBtn("Horizontal", () => {
-				const st = readCpState(panelId);
-				commitCpState({ ...st, orientation: "horizontal" });
-			});
-			addBtn("Vertical", () => {
-				const st = readCpState(panelId);
-				commitCpState({ ...st, orientation: "vertical" });
-			});
+			addHeading(
+				i18n.t("workspace:controlPanel.orientation", {
+					defaultValue: "Orientation",
+				}),
+			);
+			addBtn(
+				i18n.t("workspace:controlPanel.horizontal", {
+					defaultValue: "Horizontal",
+				}),
+				() => {
+					const st = readCpState(panelId);
+					commitCpState({ ...st, orientation: "horizontal" });
+				},
+			);
+			addBtn(
+				i18n.t("workspace:controlPanel.vertical", {
+					defaultValue: "Vertical",
+				}),
+				() => {
+					const st = readCpState(panelId);
+					commitCpState({ ...st, orientation: "vertical" });
+				},
+			);
 			addSep();
-			addBtn("Reset to Defaults", () => {
-				commitCpState({
-					position: "bottom-right",
-					orientation: "horizontal",
-					collapsed: false,
-				});
-			});
+			addBtn(
+				i18n.t("workspace:controlPanel.resetToDefaults", {
+					defaultValue: "Reset to Defaults",
+				}),
+				() => {
+					commitCpState({
+						position: "bottom-right",
+						orientation: "horizontal",
+						collapsed: false,
+					});
+				},
+			);
 
 			document.body.appendChild(wrap);
 			cpMenuEl = wrap;
@@ -1781,6 +1854,7 @@ export function useWorkspaceRuntime(root: Element | null): {
 						syncStatus: {
 							provider: "supabase",
 							state: "idle",
+							// i18n-exempt: syncStatus is write-only payload data; the presets bus subscriber ignores it and no UI renders label
 							label: "Local Update",
 							checkedAt: new Date().toISOString(),
 						},
@@ -2241,8 +2315,12 @@ export function useWorkspaceRuntime(root: Element | null): {
 				case CTX_MENU_IDS.probeOpenDebug:
 					void openDialogProbe(
 						{
-							title: "Dialog Probe",
-							message: "Panel -> Dialog bridge check",
+							title: i18n.t("workspace:debugProbe.title", {
+								defaultValue: "Dialog Probe",
+							}),
+							message: i18n.t("workspace:debugProbe.message", {
+								defaultValue: "Panel -> Dialog bridge check",
+							}),
 						},
 						isCep,
 						panelId,

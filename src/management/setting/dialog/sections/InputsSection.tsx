@@ -1,6 +1,6 @@
 import { cx } from "@ty-plus/ui/util/cx";
 import { type ChangeEvent, type JSX, useCallback } from "react";
-import { useTranslation } from "react-i18next";
+import { i18n } from "@/management/i18n/index";
 import { useSettings } from "@/management/setting/context";
 import {
 	SettingsField,
@@ -50,7 +50,6 @@ const checkboxStyle = css({
 });
 
 export function InputsSection(): JSX.Element {
-	const { t } = useTranslation("settings");
 	const { settings, updateSettings } = useSettings();
 
 	const handleGestureToggle = useCallback(
@@ -68,7 +67,9 @@ export function InputsSection(): JSX.Element {
 	return (
 		<SettingsGrid>
 			<SettingsField span={6}>
-				<SettingsFieldLabel>Gestures</SettingsFieldLabel>
+				<SettingsFieldLabel>
+					{i18n.t("settings:inputsSection.gestures")}
+				</SettingsFieldLabel>
 				<div className={groupStyle}>
 					<label className={labelStyle}>
 						<input
@@ -78,7 +79,7 @@ export function InputsSection(): JSX.Element {
 							onChange={handleGestureToggle("anchorPoint")}
 							data-settings-gesture="anchorPoint"
 						/>
-						<span>{t("settings.inputs.gestures.anchorPoint")}</span>
+						<span>{i18n.t("settings:inputs.gestures.anchorPoint")}</span>
 					</label>
 					<label className={labelStyle}>
 						<input
@@ -88,7 +89,7 @@ export function InputsSection(): JSX.Element {
 							onChange={handleGestureToggle("alignment")}
 							data-settings-gesture="alignment"
 						/>
-						<span>{t("settings.inputs.gestures.alignment")}</span>
+						<span>{i18n.t("settings:inputs.gestures.alignment")}</span>
 					</label>
 				</div>
 			</SettingsField>

@@ -16,6 +16,7 @@ import {
 } from "react";
 import { resolvePanelSurfaceId } from "@/management/ae/cep/entry/id";
 import { createCepSurfaceTransport } from "@/management/ae/cep/transport";
+import { i18n } from "@/management/i18n/index";
 import {
 	coerceSettings,
 	DEFAULT_SETTINGS,
@@ -133,6 +134,7 @@ type OwnedKeySpec = true | { readonly [key: string]: OwnedKeySpec };
  * when a new field is added.
  */
 type OwnedSpecFor<T> = {
+	// i18n-exempt: TypeScript mapped-type syntax, not UI copy.
 	readonly [K in keyof T]-?: NonNullable<T[K]> extends object
 		? true | OwnedSpecFor<NonNullable<T[K]>>
 		: true;
@@ -232,8 +234,7 @@ export function mergeOwnedSettingsIntoSettingsJson(
  * overwrite from memory would restore workspace keys the workspace layer has
  * deleted since this panel loaded them.
  */
-const SETTINGS_SAVE_FAILED_MESSAGE =
-	"Failed to save settings. The settings folder may be read-only.";
+const SETTINGS_SAVE_FAILED_MESSAGE_KEY = "settings:saveFailed";
 
 /**
  * Best-effort broadcast of a settings write failure on the shell bus so the
@@ -321,9 +322,10 @@ export function SettingsProvider({
 	const runSettingsSave = useCallback(
 		(snapshot: Settings): Promise<boolean> =>
 			enqueueSettingsSave(snapshot).then((ok) => {
-				setSaveError(ok ? null : SETTINGS_SAVE_FAILED_MESSAGE);
+				const message = i18n.t(SETTINGS_SAVE_FAILED_MESSAGE_KEY);
+				setSaveError(ok ? null : message);
 				if (!ok) {
-					publishSettingsSaveFailure(window, SETTINGS_SAVE_FAILED_MESSAGE);
+					publishSettingsSaveFailure(window, message);
 				}
 				return ok;
 			}),
@@ -408,7 +410,7 @@ export function SettingsProvider({
 		settingsRef.current = DEFAULT_SETTINGS;
 		setSettings(DEFAULT_SETTINGS);
 		const ok = await runSettingsSave(DEFAULT_SETTINGS);
-		setSaveError(ok ? null : SETTINGS_SAVE_FAILED_MESSAGE);
+		setSaveError(ok ? null : i18n.t(SETTINGS_SAVE_FAILED_MESSAGE_KEY));
 	}, [runSettingsSave]);
 
 	const reloadSettingsFromDisk = useCallback(async () => {

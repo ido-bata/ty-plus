@@ -13,7 +13,8 @@
 		"support": {
 			"label": "위치",
 			"title": "AE 폴더 선택",
-			"body": "After Effects 애플리케이션 폴더를 선택하세요. Windows에서는 Support Files 디렉터리이고, macOS에서는 Presets를 포함한 앱 폴더입니다."
+			"body": "After Effects 애플리케이션 폴더를 선택하세요. Windows에서는 Support Files 디렉터리이고, macOS에서는 Presets를 포함한 앱 폴더입니다.",
+			"aeAppFolderHint": "AE 앱 폴더가 감지되었습니다 — 하위 폴더 단계가 건너뛰어집니다."
 		},
 		"subfolders": {
 			"label": "폴더",
@@ -94,6 +95,10 @@
 		"next": "다음",
 		"finish": "완료",
 		"toggleFullscreen": "전체 화면으로 확장",
-		"toggleModal": "모달로 돌아가기"
+		"toggleModal": "모달로 돌아가기",
+		"openManual": "매뉴얼 열기"
+	},
+	"syncStatus": {
+		"localUpdate": "로컬 업데이트"
 	}
 }

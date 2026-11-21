@@ -23,8 +23,8 @@
 			"imageFit": "Adatta",
 			"imageRepeat": "Ripeti",
 			"imageScale": "Scala %",
-			"shiftX": "Shift X (px)",
-			"shiftY": "Shift Y (px)",
+			"shiftX": "Sposta X (px)",
+			"shiftY": "Sposta Y (px)",
 			"pattern": "Pattern",
 			"patternSize": "Dimensione",
 			"patternColor": "Primo piano",
@@ -65,7 +65,16 @@
 			"saved": "Salvato",
 			"loadFailed": "Caricamento non riuscito: {{message}}",
 			"saveFailed": "Salvataggio non riuscito",
-			"preview": "Anteprima"
+			"preview": "Anteprima",
+			"contextMenu": {
+				"selectLayer": "Seleziona livello",
+				"enableLayer": "Attiva livello",
+				"disableLayer": "Disattiva livello",
+				"layerType": "Tipo di livello",
+				"order": "Ordine",
+				"addLayer": "Aggiungi livello",
+				"clearAllLayers": "Cancella tutti i livelli"
+			}
 		},
 		"widgetSelector": {
 			"title": "Aggiungi widget",
@@ -75,5 +84,17 @@
 			"notInPanelYet": "Questo tipo di widget non ha ancora un'interfaccia nel pannello — non può essere posizionato.",
 			"footerHint": "Le voci disattivate non sono ancora implementate nel renderer. Le altre chiudono il dialogo dopo l'invio."
 		}
-	}
+	},
+	"unknownDialog": {
+		"title": "Superficie di dialogo sconosciuta",
+		"noBodyForSurfaceId": "Nessun corpo di dialogo trovato per surfaceId:",
+		"copySurfaceId": "Copia id superficie"
+	},
+	"probe": {
+		"title": "Sonda",
+		"bodyForSurfaceId": "Dialogo sonda per surfaceId:",
+		"logSurfaceId": "Registra id superficie",
+		"copySurfaceId": "Copia id superficie"
+	},
+	"loading": "Caricamento…"
 }

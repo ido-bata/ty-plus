@@ -6,14 +6,15 @@
 			"body": "Vamos começar a configuração"
 		},
 		"language": {
-			"label": "Language",
+			"label": "Idioma",
 			"title": "Choose Language",
 			"body": "Select your preferred language"
 		},
 		"support": {
 			"label": "Localização",
 			"title": "Selecionar pasta do AE",
-			"body": "Escolha a pasta do aplicativo After Effects. No Windows, este é o diretório Support Files; no macOS, é a pasta do aplicativo que contém Presets."
+			"body": "Escolha a pasta do aplicativo After Effects. No Windows, este é o diretório Support Files; no macOS, é a pasta do aplicativo que contém Presets.",
+			"aeAppFolderHint": "Pasta do app AE detectada — a etapa de subpastas será ignorada."
 		},
 		"subfolders": {
 			"label": "Pastas",
@@ -94,6 +95,10 @@
 		"next": "Avançar",
 		"finish": "Concluir",
 		"toggleFullscreen": "Expandir para tela cheia",
-		"toggleModal": "Voltar para modal"
+		"toggleModal": "Voltar para modal",
+		"openManual": "Abrir manual"
+	},
+	"syncStatus": {
+		"localUpdate": "Atualização local"
 	}
 }

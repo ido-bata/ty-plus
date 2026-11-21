@@ -1,4 +1,5 @@
 import type { JSX } from "react";
+import { i18n } from "@/management/i18n/index";
 import { css } from "@/styled-system/css";
 
 export type PresetLibraryFooterProps = {
@@ -38,11 +39,16 @@ export function PresetLibraryFooter(
 	return (
 		<div className={footerClass}>
 			<span className={countClass}>
-				{filtered} / {catalog} items
+				{i18n.t("online:catalog.footerCount", {
+					filtered,
+					catalog,
+				})}
 			</span>
 			{mode === "gallery" && (
 				<span className={zoomClass}>
-					Ctrl+Wheel: {Math.round(scale * 100)}%
+					{i18n.t("online:catalog.footerZoom", {
+						percent: Math.round(scale * 100),
+					})}
 				</span>
 			)}
 		</div>

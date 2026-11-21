@@ -1,3 +1,4 @@
+import { i18n } from "@/management/i18n/index";
 import type {
 	CloudGateway,
 	NotificationSummary,
@@ -42,27 +43,25 @@ import type { Preset } from "@/management/preset/contract";
 
 export const FALLBACK_RECORDS: Preset[] = [];
 
-const FALLBACK_NOTIFICATIONS: NotificationSummary[] = [
+const fallbackNotifications = (): NotificationSummary[] => [
 	{
 		notificationId: "msg-1",
-		name: "Welcome to ty-plus",
-		summary:
-			"Thanks for installing ty-plus! This is a placeholder notification shown when the runtime is not connected (offline fixture).",
+		name: i18n.t("online:notification.fixture.welcomeName"),
+		summary: i18n.t("online:notification.fixture.welcomeSummary"),
 		category: "info",
 		publishedAt: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
 	},
 	{
 		notificationId: "msg-2",
-		name: "Update available",
-		summary:
-			"A new version may include improved grid performance and bug fixes.",
+		name: i18n.t("online:notification.fixture.updateName"),
+		summary: i18n.t("online:notification.fixture.updateSummary"),
 		category: "update",
 		publishedAt: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
 	},
 	{
 		notificationId: "msg-3",
-		name: "Maintenance notice",
-		summary: "Server maintenance may be scheduled; check status page.",
+		name: i18n.t("online:notification.fixture.maintenanceName"),
+		summary: i18n.t("online:notification.fixture.maintenanceSummary"),
 		category: "warn",
 		publishedAt: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
 	},
@@ -123,7 +122,7 @@ export const createFixtureCloudGateway = (): CloudGateway => ({
 		return { items: [] };
 	},
 	async listNotifications() {
-		return [...FALLBACK_NOTIFICATIONS];
+		return [...fallbackNotifications()];
 	},
 	async getNotificationBlocks() {
 		return [];

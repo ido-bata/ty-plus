@@ -20,6 +20,7 @@ import {
 import { cx } from "@ty-plus/ui/util/cx";
 import { memo, useEffect, useState } from "react";
 import { subscribe } from "@/management/debug";
+import { i18n } from "@/management/i18n/index";
 import type { SurfaceState } from "@/management/workspace/state";
 import type { Snapshot } from "@/management/workspace/undo/history";
 import { css } from "@/styled-system/css";
@@ -207,7 +208,9 @@ export const StatusBar = memo(function StatusBarImpl(
 			<div className={actionGroup}>
 				<IconButton
 					data-ws-action="undo"
-					title="Undo (Ctrl+Z)"
+					title={i18n.t("workspace:statusBar.undoTitle", {
+						defaultValue: "Undo (Ctrl+Z)",
+					})}
 					disabled={!props.canUndo}
 					size="sm"
 					className={iconBtnSize}
@@ -216,7 +219,9 @@ export const StatusBar = memo(function StatusBarImpl(
 				</IconButton>
 				<IconButton
 					data-ws-action="redo"
-					title="Redo (Ctrl+Y)"
+					title={i18n.t("workspace:statusBar.redoTitle", {
+						defaultValue: "Redo (Ctrl+Y)",
+					})}
 					disabled={!props.canRedo}
 					size="sm"
 					className={iconBtnSize}
@@ -225,7 +230,9 @@ export const StatusBar = memo(function StatusBarImpl(
 				</IconButton>
 				<IconButton
 					data-ws-action="save-snapshot"
-					title="Save layout snapshot"
+					title={i18n.t("workspace:statusBar.saveSnapshotTitle", {
+						defaultValue: "Save layout snapshot",
+					})}
 					size="sm"
 					className={iconBtnSize}
 				>
@@ -237,8 +244,13 @@ export const StatusBar = memo(function StatusBarImpl(
 						data-ws-action="toggle-snapshots"
 						title={
 							props.snapshots.length === 0
-								? "Saved layouts (none)"
-								: `Saved layouts (${props.snapshots.length})`
+								? i18n.t("workspace:statusBar.savedLayoutsTitleEmpty", {
+										defaultValue: "Saved layouts (none)",
+									})
+								: i18n.t("workspace:statusBar.savedLayoutsTitle", {
+										count: props.snapshots.length,
+										defaultValue: "Saved layouts ({{count}})",
+									})
 						}
 						size="sm"
 						className={iconBtnSize}
@@ -249,7 +261,11 @@ export const StatusBar = memo(function StatusBarImpl(
 					{snapshotsOpen && (
 						<div data-snapshots-dropdown="" className={snapshotsDropdown}>
 							{props.snapshots.length === 0 ? (
-								<span className={snapshotsEmpty}>No saved layouts</span>
+								<span className={snapshotsEmpty}>
+									{i18n.t("workspace:statusBar.noSavedLayouts", {
+										defaultValue: "No saved layouts",
+									})}
+								</span>
 							) : (
 								props.snapshots
 									.slice()
@@ -264,7 +280,13 @@ export const StatusBar = memo(function StatusBarImpl(
 												type="button"
 												data-ws-action="restore-snapshot"
 												data-snap-id={snp.id}
-												title={`Restore "${snp.label}"`}
+												title={i18n.t(
+													"workspace:statusBar.restoreSnapshotTitle",
+													{
+														label: snp.label,
+														defaultValue: 'Restore "{{label}}"',
+													},
+												)}
 												className={snapshotsLabel}
 											>
 												{snp.label}
@@ -272,7 +294,7 @@ export const StatusBar = memo(function StatusBarImpl(
 											<IconButton
 												data-ws-action="delete-snapshot"
 												data-snap-id={snp.id}
-												title="Delete"
+												title={i18n.t("common:buttons.delete")}
 												size="sm"
 												className={iconBtnSize}
 											>
@@ -288,7 +310,9 @@ export const StatusBar = memo(function StatusBarImpl(
 				<IconButton
 					data-ws-action="open-dialog"
 					data-dialog-kind="presets"
-					title="Local Preset"
+					title={i18n.t("workspace:controlPanel.buttons.localPreset", {
+						defaultValue: "Local Preset",
+					})}
 					size="sm"
 					className={iconBtnSize}
 				>
@@ -297,7 +321,9 @@ export const StatusBar = memo(function StatusBarImpl(
 				<IconButton
 					data-ws-action="open-dialog"
 					data-dialog-kind="presetLibrary"
-					title="Preset Library (Online)"
+					title={i18n.t("workspace:statusBar.presetLibraryTitle", {
+						defaultValue: "Preset Library (Online)",
+					})}
 					size="sm"
 					className={iconBtnSize}
 				>
@@ -305,7 +331,9 @@ export const StatusBar = memo(function StatusBarImpl(
 				</IconButton>
 				<IconButton
 					data-ws-action="toggle-console"
-					title="Debug console (Ctrl+`)"
+					title={i18n.t("workspace:statusBar.debugConsoleTitle", {
+						defaultValue: "Debug console (Ctrl+`)",
+					})}
 					size="sm"
 					className={iconBtnSize}
 				>
@@ -314,7 +342,7 @@ export const StatusBar = memo(function StatusBarImpl(
 				<IconButton
 					data-ws-action="open-dialog"
 					data-dialog-kind="messages"
-					title="Messages"
+					title={i18n.t("common:statusBar.message")}
 					size="sm"
 					className={iconBtnSize}
 				>
@@ -323,7 +351,7 @@ export const StatusBar = memo(function StatusBarImpl(
 				<IconButton
 					data-ws-action="open-dialog"
 					data-dialog-kind="settings"
-					title="Settings"
+					title={i18n.t("common:statusBar.settings")}
 					size="sm"
 					className={iconBtnSize}
 				>
