@@ -217,7 +217,7 @@ const groupTitleButtonClass = css({
 		color: "text.primary",
 	},
 	_focusVisible: {
-		boxShadow: "0 0 0 2px var(--colors-interactive-focus)",
+		boxShadow: "var(--color-focus-ring)",
 	},
 });
 
@@ -283,7 +283,7 @@ const iconNavigateUpButtonClass = css({
 		backgroundColor: "interactive.hover",
 	},
 	_focusVisible: {
-		boxShadow: "0 0 0 2px var(--colors-interactive-focus)",
+		boxShadow: "var(--color-focus-ring)",
 	},
 });
 

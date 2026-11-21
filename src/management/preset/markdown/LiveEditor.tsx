@@ -54,7 +54,7 @@ const editorBaseClass = css({
 	outline: "none",
 	_focusWithin: {
 		borderColor: "interactive.focus",
-		boxShadow: "inset 0 0 0 1px var(--color-interactive-focus)",
+		boxShadow: "var(--color-focus-ring)",
 	},
 });
 

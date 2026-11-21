@@ -37,7 +37,7 @@ const gridStage = css({
 	flexDirection: "column",
 	overflow: "hidden",
 	boxSizing: "border-box",
-	backgroundColor: "var(--bg-app)",
+	backgroundColor: "var(--color-surface-panel)",
 });
 
 const gridShell = css({
@@ -46,7 +46,7 @@ const gridShell = css({
 	minHeight: "0",
 	minWidth: "0",
 	overflow: "hidden",
-	backgroundColor: "var(--bg-app)",
+	backgroundColor: "var(--color-surface-panel)",
 });
 
 const toolbarSlot = css({

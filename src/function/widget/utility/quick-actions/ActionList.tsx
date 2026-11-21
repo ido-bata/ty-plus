@@ -375,8 +375,8 @@ export function QuickActionsWidget({
 				minWidth: 0,
 				flexDirection: "column",
 				overflow: "visible",
-				borderRadius: "var(--radius)",
-				backgroundColor: "var(--widget-background)",
+				borderRadius: "var(--radius-shell)",
+				backgroundColor: "var(--color-surface-widget)",
 				padding: 0,
 			})}
 			data-widget-quick-actions=""
