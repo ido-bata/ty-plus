@@ -31,6 +31,16 @@ import { DEMO_PRESETS } from "../lib/demo-presets";
  * - On coarse pointers there is no hover and no modifier-click, so a tap
  *   toggles selection (the inspect gesture); the footer copy states this
  *   demo scope explicitly.
+ *
+ * Layout per viewport:
+ * - lg+: tile grid (4 columns) beside a persistent info column that
+ *   stretches to the grid's height; body content is vertically centered
+ *   and the footer (apply note / hints / disclaimer) pins to the bottom.
+ * - Below lg: the info card is a full-width row inserted into the tile
+ *   grid immediately after the tile that produced the current content
+ *   (last selected tile, else hovered tile, else where it last was), so
+ *   the result is adjacent to the tile the user touched instead of
+ *   appearing only after all tiles are traversed.
  */
 
 const COARSE_POINTER = "(pointer: coarse)";
@@ -39,35 +49,40 @@ const isCoarsePointer = (): boolean =>
 	typeof window !== "undefined" && window.matchMedia(COARSE_POINTER).matches;
 
 const stage = css({
-	display: "block",
+	display: "grid",
+	gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+	gap: "0.75rem",
 	lg: {
-		display: "grid",
 		gridTemplateColumns: "minmax(0, 3fr) minmax(0, 2fr)",
 		gap: "1rem",
 		alignItems: "stretch",
 	},
 });
 
+/* Below lg the tile grid dissolves into the stage grid (`display:
+   contents`) so tile boxes and the info card share one coordinate
+   system; `order` then interleaves the card after the active tile. */
 const tileGrid = css({
-	display: "grid",
-	gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-	gap: "0.75rem",
-	lg: { gridTemplateColumns: "repeat(4, minmax(0, 1fr))" },
+	display: "contents",
+	lg: {
+		display: "grid",
+		gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
+		gap: "0.75rem",
+	},
 });
 
 const tileBox = css({
 	position: "relative",
 	aspectRatio: "1",
+	// Keep tiles clear of the sticky site header when scroll-into-view
+	// (and real anchor navigation) brings them to the top edge.
+	scrollMarginTop: "5rem",
 });
 
-/* Below lg the info surface docks to the bottom of the viewport while the
-   stage scrolls past (sticky detail surface) so the tapped tile's result
-   is always adjacent to the finger; at lg+ it is a persistent side
-   column that stretches to the tile grid's height. */
 const infoCard = css({
 	display: "flex",
 	flexDirection: "column",
-	marginBlockStart: "1rem",
+	gridColumn: { base: "1 / -1", lg: "auto" },
 	padding: "0.875rem 1rem",
 	borderRadius: "surface-card",
 	borderWidth: "hairline",
@@ -76,11 +91,6 @@ const infoCard = css({
 	background: "surface.panel",
 	minHeight: "9rem",
 	maxHeight: { base: "24rem", lg: "none" },
-	position: { base: "sticky", lg: "static" },
-	bottom: { base: "0.75rem", lg: "auto" },
-	zIndex: { base: 20, lg: "auto" },
-	boxShadow: { base: "control-panel", lg: "none" },
-	lg: { marginBlockStart: 0 },
 });
 
 const infoHead = css({
@@ -136,12 +146,17 @@ export function PresetStage({
 }) {
 	// One tile starts selected so the info surface demonstrates its value on
 	// first paint; everything after that is driven by the gestures above.
-	const [selectedIds, setSelectedIds] = useState<string[]>(() => {
-		const seed = presets[2]?.id ?? presets[0]?.id;
-		return seed ? [seed] : [];
-	});
+	const seedIndex = Math.min(2, Math.max(0, presets.length - 1));
+	const [selectedIds, setSelectedIds] = useState<string[]>(() =>
+		presets[seedIndex] ? [presets[seedIndex].id] : [],
+	);
 	const [hoverId, setHoverId] = useState<string | null>(null);
 	const [applied, setApplied] = useState<Preset | null>(null);
+	// Anchor tile for the info card's grid position on narrow layouts.
+	// Tracks the tile that produced the current content — the last selected
+	// tile while a selection is live, else the hovered tile — and holds its
+	// last value while the surface shows sticky items.
+	const [anchorIndex, setAnchorIndex] = useState(seedIndex);
 	// Pointer capability for the footer hint copy. Resolved after mount so
 	// prerendered HTML stays deterministic (both hints render `hidden`
 	// until the media query is read on the client).
@@ -188,6 +203,21 @@ export function PresetStage({
 	const items = live.items.length > 0 ? live.items : (sticky?.items ?? []);
 	const source =
 		live.items.length > 0 ? live.source : (sticky?.source ?? "hover");
+
+	// Which tile the info card should sit next to on narrow layouts.
+	const derivedAnchor = useMemo(() => {
+		const lastSelected = selectedIds.at(-1);
+		if (lastSelected) {
+			return presets.findIndex((p) => p.id === lastSelected);
+		}
+		if (hoverId) {
+			return presets.findIndex((p) => p.id === hoverId);
+		}
+		return -1;
+	}, [presets, selectedIds, hoverId]);
+	useEffect(() => {
+		if (derivedAnchor >= 0) setAnchorIndex(derivedAnchor);
+	}, [derivedAnchor]);
 
 	const toggleSelected = (id: string) =>
 		setSelectedIds((prev) =>
@@ -249,8 +279,15 @@ export function PresetStage({
 			onClick={handleStageClick}
 		>
 			<div className={tileGrid}>
-				{presets.map((p) => (
-					<div key={p.id} className={tileBox} data-preset-tile>
+				{presets.map((p, i) => (
+					<div
+						key={p.id}
+						ref={(el) => {
+							if (el) el.style.order = String(i * 2);
+						}}
+						className={tileBox}
+						data-preset-tile
+					>
 						<PresetTileButton
 							preset={p}
 							selected={selectedIds.includes(p.id)}
@@ -261,6 +298,13 @@ export function PresetStage({
 				))}
 			</div>
 			<div
+				ref={(el) => {
+					if (el) {
+						el.style.order = String(
+							anchorIndex >= 0 ? anchorIndex * 2 + 1 : 999,
+						);
+					}
+				}}
 				className={infoCard}
 				data-info-card
 				data-mode={presetInfoMode(items)}
