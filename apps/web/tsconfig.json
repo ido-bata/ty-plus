@@ -3,7 +3,40 @@
 	"compilerOptions": {
 		"lib": ["ES2022", "DOM", "DOM.Iterable"],
 		"types": ["node", "vite/client"],
-		"jsx": "react-jsx"
+		"jsx": "react-jsx",
+		"paths": {
+			"@/*": ["../../src/*"],
+			"@/styled-system/*": ["../../styled-system/*"],
+			"@styled-system/*": ["../../styled-system/*"],
+			"@ty-plus/shared": ["../../src/shared/index.ts"],
+			"@ty-plus/ui": ["../../packages/ui/src/index.ts"],
+			"@ty-plus/ui/*": ["../../packages/ui/src/*"],
+			"@ty-plus/workspace": ["../../src/management/workspace/index.ts"],
+			"@ty-plus/management/workspaces": [
+				"../../src/management/workspace/index.ts"
+			],
+			"@ty-plus/management/preset/registry": [
+				"../../src/management/preset/registry.ts"
+			],
+			"@ty-plus/management/ae/cep/runtime": [
+				"../../src/management/ae/cep/runtime.ts"
+			],
+			"@ty-plus/management/ae/cep/host-executor": [
+				"../../src/management/ae/cep/host-executor.ts"
+			],
+			"@ty-plus/management/ae/cep/transport/transport": [
+				"../../src/management/ae/cep/transport/transport.ts"
+			],
+			"@ty-plus/management/ae/cep/shared-storage": [
+				"../../src/management/ae/cep/shared-storage.ts"
+			],
+			"@ty-plus/cep-shell": ["../../src/management/ae/cep/entry/panel.tsx"],
+			"@ty-plus/management/online/licensing": [
+				"../../src/management/online/licensing/index.ts"
+			],
+			"@ty-plus/licensing": ["../../src/management/online/licensing/index.ts"],
+			"@ty-plus/product/*": ["../../src/*"]
+		}
 	},
 	"include": [
 		"src/**/*.ts",

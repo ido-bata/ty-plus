@@ -20,6 +20,11 @@ const base = css({
 	lineHeight: "relaxed",
 });
 
+const content = css({
+	flex: "1",
+	minWidth: 0,
+});
+
 const tones: Record<NoticeTone, string> = {
 	info: css({
 		backgroundColor: "surface.widget",
@@ -43,8 +48,18 @@ const tones: Record<NoticeTone, string> = {
 	}),
 };
 
-/** Inline notice/callout. Appearance is owned here; do not restyle. */
+/**
+ * Inline notice/callout. Appearance is owned here; do not restyle.
+ *
+ * Children flow inside a single content block so inline text, links,
+ * and multiple paragraphs render as normal document flow — they must
+ * not become separate flex items of the notice frame.
+ */
 export function Notice(props: NoticeProps): ReactElement {
-	const { className, tone = "info", ...rest } = props;
-	return <div className={cx(base, tones[tone], className)} {...rest} />;
+	const { className, tone = "info", children, ...rest } = props;
+	return (
+		<div className={cx(base, tones[tone], className)} {...rest}>
+			<div className={content}>{children}</div>
+		</div>
+	);
 }

@@ -13,11 +13,31 @@ import {
 import { DESIGN_TOKENS_DEFAULTS } from "@ty-plus/ui/tokens/design-tokens-defaults";
 import { themeVarsToCssBlock } from "@ty-plus/ui/tokens/theme-css";
 import type { ReactNode } from "react";
+import { css } from "@/styled-system/css";
 import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
 import { SITE } from "../lib/site";
 
 const themeCss = themeVarsToCssBlock(DESIGN_TOKENS_DEFAULTS);
+
+const skipLink = css({
+	position: "absolute",
+	insetBlockStart: "0.5rem",
+	insetInlineStart: "0.5rem",
+	zIndex: 100,
+	padding: "0.5rem 0.75rem",
+	borderRadius: "shell-sm",
+	backgroundColor: "surface.overlay",
+	color: "text.primary",
+	fontSize: "sm",
+	fontWeight: "medium",
+	textDecoration: "none",
+	borderWidth: "hairline",
+	borderStyle: "solid",
+	borderColor: "border.strong",
+	translate: "0 -200%",
+	_focusVisible: { translate: "0 0" },
+});
 
 export const Route = createRootRoute({
 	head: () => ({
@@ -44,7 +64,7 @@ export const Route = createRootRoute({
 function RootComponent() {
 	return (
 		<RootDocument>
-			<a href="#main" className="skip-link">
+			<a href="#main" className={skipLink}>
 				Skip to content
 			</a>
 			<SiteHeader />

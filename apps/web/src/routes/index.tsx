@@ -1,7 +1,22 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { Badge, Button, MediaFrame } from "@ty-plus/ui";
+import { cx } from "@ty-plus/ui/util/cx";
+import { css } from "@/styled-system/css";
+import { PresetStage } from "../components/PresetStage";
 import { findLatestStable } from "../lib/releases";
 import { SITE } from "../lib/site";
 import { listReleases } from "../server/releases";
+import {
+	cluster,
+	container,
+	grid,
+	section,
+	span4,
+	span5,
+	span8,
+	stack,
+} from "../styles/layout";
+import * as s from "../styles/site";
 
 export const Route = createFileRoute("/")({
 	loader: () => listReleases(),
@@ -19,45 +34,62 @@ export const Route = createFileRoute("/")({
 				content:
 					"Free, open-source, local-first CEP extension for Adobe After Effects.",
 			},
-			{ property: "og:image", content: `${SITE.url}/images/hero.png` },
+			{ property: "og:image", content: `${SITE.url}/images/preset-grid.png` },
 		],
 	}),
 	component: HomePage,
 });
 
-const FEATURES = [
+const metaRow = css({
+	display: "flex",
+	gap: "1rem",
+	flexWrap: "wrap",
+	alignItems: "center",
+	fontSize: "xs",
+	color: "text.muted",
+});
+
+const sectionLabel = css({
+	fontSize: "xs",
+	fontWeight: "medium",
+	letterSpacing: "wider",
+	textTransform: "uppercase",
+	color: "text.muted",
+});
+
+/* Mosaic rhythm — one wide evidence band on top, three unequal cells
+   below. Every image gets enough columns to stay readable. */
+
+const RESOURCES = [
 	{
-		index: "01",
-		title: "A workspace built for how you work",
-		body: "Tiles, widgets, and preset groups live on a gridded panel inside After Effects. Arrange the layout once and it stays exactly where you left it — stored locally, restored on launch.",
-		image: "/images/workspace.png",
-		alt: "The ty-plus workspace canvas with the search, easing, and alignment widgets arranged",
-		caption: "fig. 01 — widgets arranged on the workspace canvas",
-		width: 2420,
-		height: 906,
+		title: "Download",
+		body: "Free ZXP builds for Windows and macOS from GitHub Releases.",
+		to: "/download",
+		label: "Get ty-plus",
 	},
 	{
-		index: "02",
-		title: "Widgets that earn their tile",
-		body: "Directory browsers, quick utilities, and tools you add from the built-in picker. Every widget is a real panel feature, not a web embed — it keeps working offline.",
-		image: "/images/add-widget.png",
-		alt: "The Add Widget dialog in ty-plus listing available widget types",
-		caption: "fig. 03 — the Add Widget picker",
-		width: 1600,
-		height: 956,
+		title: "Docs",
+		body: "User guide, installation, workspace, widgets, presets, settings.",
+		to: "/docs",
+		label: "Read the guide",
+	},
+	{
+		title: "Changelog",
+		body: "Release notes grouped by Stable, Beta, and Insider channels.",
+		to: "/changelog",
+		label: "See what's new",
 	},
 ] as const;
 
-const SHOTS = [
-	{
-		className: "shot-full",
-		src: "/images/preset-dialog.png",
-		alt: "The Code Preset creation dialog in ty-plus",
-		caption: "fig. 04 — creating a preset without leaving the panel",
-		width: 1600,
-		height: 956,
-	},
-] as const;
+const resourceCell = css({
+	display: "flex",
+	flexDirection: "column",
+	gap: "0.5rem",
+	paddingBlockStart: "1rem",
+	borderTopWidth: "hairline",
+	borderTopStyle: "solid",
+	borderTopColor: "border.subtle",
+});
 
 function HomePage() {
 	const { releases } = Route.useLoaderData();
@@ -65,126 +97,164 @@ function HomePage() {
 
 	return (
 		<main>
-			<section className="hero page">
-				<div className="hero-stage">
-					<div className="hero-stage-head">
-						<span className="eyebrow">Free · Open source · Local-first</span>
-						<h1>{SITE.tagline}</h1>
-						<p className="lead">
-							ty-plus turns part of your After Effects workspace into a
-							customizable home for reusable presets and everyday tools —
-							without leaving After Effects.
-						</p>
-						<div className="hero-actions">
-							<Link className="btn btn-primary" to="/download">
-								Download ty-plus
-							</Link>
-							<Link className="btn btn-secondary" to="/features">
-								Explore features
-							</Link>
+			{/* Hero — the working demo IS the hero visual. Copy rail (span 4)
+			    carries claim + actions; the wide rail (span 8) renders the
+			    shared product tile stage, interactive on first paint. */}
+			<section
+				className={cx(
+					container({ size: "wide" }),
+					section({ variant: "flow" }),
+				)}
+				aria-label="Introduction"
+			>
+				<div className={grid({ gap: 3 })}>
+					<div className={cx(span4, stack({ gap: 3 }))}>
+						<div className={stack({ gap: 3 })}>
+							<span className={sectionLabel}>Free · Open source</span>
+							<h1 className={s.h1}>{SITE.tagline}</h1>
+							<p className={s.lead}>
+								ty-plus turns part of your After Effects workspace into a
+								customizable home for reusable presets and everyday tools —
+								without leaving After Effects.
+							</p>
 						</div>
-						<div className="hero-meta">
-							<span>
-								<span className="dot" aria-hidden="true" />
-								MIT License
-							</span>
+						<div className={cluster({ gap: 3 })}>
+							<Button as={Link} to="/download" variant="primary" uiSize="lg">
+								Download ty-plus
+							</Button>
+							<Button as={Link} to="/features" variant="secondary" uiSize="lg">
+								Explore features
+							</Button>
+						</div>
+						<div className={metaRow}>
+							<Badge tone="neutral">MIT License</Badge>
 							<span>No account required</span>
 							<span>Works fully offline</span>
 							<span>Windows · macOS</span>
 							{latest ? <span>Stable {latest.tagName}</span> : null}
 						</div>
 					</div>
-					<figure className="shot hero-stage-shot">
-						<span className="shot-frame">
-							<img
-								src="/images/hero.png"
-								alt="The ty-plus workspace canvas inside After Effects — search, easing, alignment, and preset widgets arranged on the canvas"
-								width={3412}
-								height={2044}
-								fetchPriority="high"
-							/>
-						</span>
-						<figcaption>
-							<span className="shot-index">shot 00</span>
-							The ty-plus workspace in After Effects — every widget is a real
-							panel feature, captured from a configured project.
-						</figcaption>
-					</figure>
-				</div>
-			</section>
-
-			<section className="page" aria-label="Feature overview">
-				<div className="feature-rows">
-					{FEATURES.map((f) => (
-						<article className="feature-row" key={f.index}>
-							<div>
-								<span className="feature-row-index">{f.index}</span>
-								<h3>{f.title}</h3>
-								<p>{f.body}</p>
-							</div>
-							<div className="feature-row-media">
-								<figure className="shot">
-									<span className="shot-frame">
-										<img
-											src={f.image}
-											alt={f.alt}
-											width={f.width}
-											height={f.height}
-											loading="lazy"
-										/>
-									</span>
-									<figcaption>{f.caption}</figcaption>
-								</figure>
-							</div>
-						</article>
-					))}
-				</div>
-			</section>
-
-			<section className="page" aria-labelledby="screens">
-				<div className="section">
-					<span className="eyebrow">Inside the panel</span>
-					<h2 id="screens">Every surface, captured from the released build</h2>
-					<p>No mockups — these are captures of the shipping extension.</p>
-				</div>
-				<div className="shot-grid">
-					{SHOTS.map((s) => (
-						<figure className={`shot ${s.className}`} key={s.src}>
-							<span className="shot-frame">
-								<img
-									src={s.src}
-									alt={s.alt}
-									width={s.width}
-									height={s.height}
-									loading="lazy"
-								/>
-							</span>
-							<figcaption>{s.caption}</figcaption>
-						</figure>
-					))}
-				</div>
-			</section>
-
-			<section className="page">
-				<div className="cta-band">
-					<div>
-						<h2>Get ty-plus in After Effects</h2>
-						<p>
-							Download the latest ZXP, install it with a CEP-compatible
-							installer, then open{" "}
-							<strong>Window → Extensions → ty-plus</strong>. Installation notes
-							and troubleshooting live in the{" "}
-							<a href={SITE.installation}>user guide</a>.
+					<div className={cx(span8, css({ minWidth: 0 }))}>
+						<PresetStage />
+						<p className={cx(s.body, css({ marginBlockStart: "0.75rem" }))}>
+							Interactive demo — the same tile and info surfaces as the panel.
+							Hover or tap to inspect, ⌘/Ctrl+click or Shift+click to select; a
+							plain click applies in After Effects, not here.
 						</p>
 					</div>
-					<div className="cta-band-actions">
-						<Link className="btn btn-primary" to="/download">
-							Download
-						</Link>
-						<Link className="btn btn-secondary" to="/changelog">
-							Release notes
-						</Link>
+				</div>
+			</section>
+
+			{/* Mosaic — the workspace strip gets a full evidence band; the
+			    two dialogs and the offline note fill the row beneath at
+			    unequal weights. */}
+			<section
+				className={cx(
+					container({ size: "content" }),
+					section({ variant: "band" }),
+				)}
+				aria-label="Panel surfaces"
+			>
+				<div className={grid({ gap: 3 })}>
+					<figure className={cx(s.figure, span8)}>
+						<MediaFrame>
+							<img
+								src="/images/workspace-widgets.png"
+								alt="Utility widgets on the ty-plus workspace — quick actions, easing curve, alignment, and anchor point tools"
+								width={2160}
+								height={1040}
+								loading="lazy"
+								className={s.shotImg}
+							/>
+						</MediaFrame>
+						<figcaption className={s.figcaption}>
+							The workspace grid — presets and widgets on one surface, captured
+							from the running panel.
+						</figcaption>
+					</figure>
+					<figure className={cx(s.figure, span5)}>
+						<MediaFrame>
+							<img
+								src="/images/presets-dialog.png"
+								alt="The Local Presets browser in ty-plus listing presets from the local catalog"
+								width={1760}
+								height={1520}
+								loading="lazy"
+								className={s.shotImg}
+							/>
+						</MediaFrame>
+						<figcaption className={s.figcaption}>
+							Local Presets — browse, filter, and place catalog presets.
+						</figcaption>
+					</figure>
+					<div className={cx(span4, stack({ gap: 3 }))}>
+						<figure className={s.figure}>
+							<MediaFrame>
+								<img
+									src="/images/add-widget.png"
+									alt="The Add Widget selector in ty-plus listing the available widget types"
+									width={1760}
+									height={1520}
+									loading="lazy"
+									className={s.shotImg}
+								/>
+							</MediaFrame>
+							<figcaption className={s.figcaption}>
+								Add Widget — extend the workspace with built-in tools.
+							</figcaption>
+						</figure>
+						<p className={s.body}>
+							Every surface runs inside After Effects and keeps working with the
+							network unplugged.
+						</p>
+						<Button as={Link} to="/features" variant="secondary" uiSize="sm">
+							All features
+						</Button>
 					</div>
+				</div>
+			</section>
+
+			{/* Statement — text-only band. A deliberate low-density break
+			    between the media-heavy sections above and the index below. */}
+			<section
+				className={cx(
+					container({ size: "narrow" }),
+					section({ variant: "prose" }),
+				)}
+				aria-label="Principles"
+			>
+				<div className={stack({ gap: 3, align: "center" })}>
+					<h2 className={cx(s.h2, css({ textAlign: "center" }))}>
+						Local-first, offline-capable, yours to arrange
+					</h2>
+					<p className={cx(s.body, css({ textAlign: "center" }))}>
+						Presets, widgets, and layouts live in local files on your machine.
+						No account, no telemetry, no subscription — the panel works the same
+						unplugged.
+					</p>
+				</div>
+			</section>
+
+			{/* Resources — dense 3-cell index aligned to the same axes. */}
+			<section
+				className={cx(
+					container({ size: "content" }),
+					section({ variant: "band" }),
+				)}
+				aria-label="Resources"
+			>
+				<div className={grid({ cols: 3, gap: 3 })}>
+					{RESOURCES.map((r) => (
+						<div className={resourceCell} key={r.title}>
+							<h3 className={s.h3}>{r.title}</h3>
+							<p className={s.body}>{r.body}</p>
+							<div>
+								<Button as={Link} to={r.to} variant="secondary" uiSize="sm">
+									{r.label}
+								</Button>
+							</div>
+						</div>
+					))}
 				</div>
 			</section>
 		</main>

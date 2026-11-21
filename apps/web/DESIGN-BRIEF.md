@@ -110,3 +110,120 @@
 | C コンタクトシート | 細いコピー列＋製品画像2枚縦積み | 651×390px＋第2画像 | 情報密度は高いが1枚あたりの視認性が不足 |
 
 採用: **B**。製品の魅力を伝えるにはUIの実寸が最優先であり、見出し・CTA・メタ情報はその上のコンパクトなブロックに集約する。モバイルでは横長ワークスペース画像を左側ウィジェット密集領域へクロップし、縮小版ではなく製品寄りの構図を維持する。
+
+## Revision (#291–#293): shared-component design system
+
+「Precision Instrument」をデザイン方針として撤回し、T3 Code (`pingdotgg/t3code`, `docs/internals/web-ui.md`) のUI規律を参考に、**共有コンポーネントと共有トークンだけでサイトを構築する**方針へ転換した。
+
+- 視覚的UIはすべて `@ty-plus/ui` の共有プリミティブ（Button / IconButton / Surface / Badge / Notice / MediaFrame / ScrollArea 等）で構成する。コントロール外観はコンポーネントが所有し、variant/size/tone/slot の型安全APIで選択する。
+- `Button` は `as` prop でポリモーフィック描画に対応し、`<Button as={Link}>` / `as="a"` でルーティングリンクに共有外観を適用する（`<a className="btn">` の再実装は禁止）。
+- `--site-*` 独自トークン体系とWeb専用のコントロールCSSは廃止。`apps/web/src/styles/app.css` はドキュメントリセットと `--ty-*` テーマ供給（フォントスタックのみ）のみに縮小した。色・文字・余白・角丸・境界線・シャドウは `--ty-*` セマンティックトークン経由。
+- 表示用タイポグラフィが必要なため、共有トークンに `ty-text-size-display-md/lg`・`ty-text-size-lead`・`ty-font-mono` を追加（CEPパネルでは未使用。両環境で同一契約）。
+- ページ側は `apps/web/src/styles/site.ts` のレイアウトrecipe（css()）と共有コンポーネントのcompositionのみを担当する。装飾目的のeyebrow/番号/罫線要素は削除した。
+- 恒久対策として `scripts/check/check-web-design.ts`（Design lint）を `lint` ゲートへ組み込み、rawコントロール・style属性・リテラル色/フォント/角丸/境界線・Web専用トークン・コントロール類似セレクタをTSX ASTとCSS宣言解析で静的に禁止する。allowlist機構で既存違反を管理し、#293 で全違反を解消（0件）。
+- 検証: `docs/verification/web-redesign/review-293/`（6ルート×desktop/tablet/mobile、menu-open状態含む、violations 0）。
+
+## Revision (#298–#299): platform split + lint hardening
+
+外部レビューで判明した基盤欠陥を修正した。
+
+- **Panda設定の分離**: root `panda.config.ts` の `sm/md/lg/xl/2xl: 0rem` は CEP パネル（固定サイズ面）がメディアクエリを出さないための意図的仕様だが、Web が同一生成物を消費していたため全レスポンシブvariantが常時適用に退化していた。トークン値を `panda.tokens.ts` に抽出し、root は CEP 専用（0rem 維持）、`apps/web/panda.config.ts` が実ブレークポイント（40/48/64/80/96rem）と Web globalCss を所有する。共有するのはトークン値とコンポーネント実装のみで、レイアウト条件はプラットフォーム毎に分離する。
+- **Design lint v2**: `check-web-design.ts` をトークン正本照合へ強化。`DEFINED_VARS`（`themeVarsToCssBlock(DESIGN_TOKENS_DEFAULTS)` の実出力）と `PANDA_TOKENS`（`panda.tokens.ts` のフラット化パス）をレジストリとして、ネストしたレスポンシブ/条件オブジェクト内のリテラル・任意 `--*` 定義/参照・未定義トークンパス・`@ty-plus/ui` への `className`/`css` 上書きを FAIL にする。`packages/ui` は shared モードで走査し、ブレークポイント条件の混入を禁止しつつ raw コントロール実装を許可する。spacing/size リテラルはレイアウト recipe の管轄として意図的に対象外。
+- **検証**: `docs/verification/web-redesign/review-298/`（6ルート×desktop/tablet/mobile + menu-open）、中間幅 700/1000/1100px のグリッド遷移を実ブラウザ計測で確認。
+
+## Revision (#302): LP layout system + homepage rebuild
+
+外部レビューで「視覚要素をすべて共有コンポーネントで構築する」制約は過剰と判断された。責務境界を修正する。
+
+- **境界**: Button/Input/Badge 等のコントロール、共有トークン、状態表現は `@ty-plus/ui` が所有する。LP固有のレイアウト・セクション構成・グリッド・ビジュアル演出は Web 側の責務であり、アプリ内UIとマーケティングサイトを同一画面構成へ強制しない。Design lint はこの境界に合わせ、共有UI外観の再実装（`ui-override`）は禁止を維持しつつ、Web固有レイアウト recipe の表現を許可する（spacing/size リテラルは従来どおり recipe 管轄）。
+
+- **参照正本**: `ido-bata/ido-bata.github.io` の `src/styles/recipes.ts`、`src/app/page.tsx`、`.agents/skills/layout-system/SKILL.md`、`references/marketing.md` を Inspect → Extract → Translate → Implement → Verify で確認。抽出した構造ルール: 単一の container 正本（幅+ガター）、用途別サイズ、セクション毎の垂直リズム variant、12カラム grid + span による非対称構成、Grid/Stack/Cluster プリミティブ。色・コピー・個別寸法はコピーしない。
+
+- **レイアウト契約**: `apps/web/src/styles/layout.ts` に Web 専用 recipe として実装。
+  - `container({size})`: narrow 48rem / content 72rem / wide 90rem。ページの外幅とガター（1.25/2/2.5rem）の単一正本。Header/Footer も同じ container に揃え、ページ端の整列軸を統一した。
+  - `section({variant})`: flow（hero/showcase, py 4→7rem）/ band（標準, 3→5rem）/ prose（参照系, 2.5→3.5rem）/ flush。セクション単位の垂直リズムを recipe が所有し、ページ側で paddingBlock を書かない。
+  - `grid({cols,gap})`: 12カラム座標系（mobile は1カラム）。`cols` で対称グリッド（2/3/4）へ切替。
+  - `span3..span9`: 12カラム上の span。mobile では全幅へ退避。**Panda の静的抽出はリテラルオブジェクトしか読めないため、関数で値を返す span ヘルパーは禁止**（`css(span(n))` は class 名だけ生成され CSS が出ない欠陥を実測で確認し、リテラル recipe へ変更した）。
+  - `stack` / `cluster`: 縦リズムと折返し行。
+  - `breakout`: 意図的なフル幅表現のルール（現状未使用。安易な使用は禁止）。
+  - `site.ts` はタイポグラフィとコンテンツ primitive（h1-h3/lead/body/link/figure/defList/releaseList 等）に縮小し、`page`/`section`/`pageHead`/`grid`/`cardBody`/`btnRow`/`ctaBand` のページ毎レイアウト recipe は削除した。
+
+- **トップページ再構築**: 縦積みHero＋大判画像＋均等カードの反復を廃止し、セクション毎に異なる構図を共通座標系上に配置した。
+  - Hero: 5:7 非対称グリッド（コピー列 + `hero.png` 実機キャプチャ 780×467px@desktop）。
+  - Features: 3:9 — 左に section label + 見出し + 本文 + 導線、右に入れ子の text+capture 行2件（Add Widget / Code Preset ダイアログ、各 443×265px）。
+  - Showcase: 8:4 — `workspace.png` ワークスペースキャンバス + コピー/CTA。
+  - Resources: 密度の高い3カラムグリッドで Download / Docs / Changelog へ誘導。
+  - Footer は container(content) でページ端の整列軸に接続。
+
+- **構図案の比較**: 実装した2案をブラウザ描画・DOM計測で比較した（証跡: `docs/verification/web-redesign/lab-302/`）。
+
+  | 案 | 構図 | 特徴 | 判定 |
+  |---|---|---|---|
+  | A 非対称グリッド | 5:7 Hero → 3:9 Features（右に入れ子行）→ 8:4 Showcase → 3列 Resources | セクション毎に構図と面積配分が異なり、共通の水平・垂直整列軸で接続。docH 2496px@desktop | **採用** |
+  | B センタードヒーロー | 中央寄せコピー帯 + 21:9 シネマティックステージ → 3列概要 → 交互 4:8 行 → defList Resources | ヒーローが従来の「コピー→大判画像」縦積みに近く、ステージは hero.png を約28%水平クロップして製品端を切る | 不採用 |
+
+  採用理由: 要求された「セクション毎に異なる構図・共通整列軸」に A が直接対応し、製品画像をクロップなしで実寸提示できる。B の 21:9 クロップは実機画面の端を欠くため不採用。
+
+- **他ページ**: Features は操作体験の説明として 5:7 / 7:5 交互グリッドのフィーチャー行（画像は実機キャプチャのみ）。Download は 4:8 でリリース情報列と OS 別ダウンロードカードへ集中。Docs / Changelog / Support は情報参照ページとして prose リズム + defList/releaseList の高密度構成とし、LP的 Hero や大型ビジュアルを強制しない。6ページが同一テンプレートを共有しない。
+
+- **検証**: `docs/verification/web-redesign/review-302/`（6ルート×desktop/tablet/mobile、menu-open 含む 85枚、overflowX なし）。Desktop 計測: `/` docH=2496、セクション高 720/733/425/286 でリズムに変化あり。Typecheck / lint（biome + design lint 0 violations）/ `check-web-design.test.ts` 10 pass / `vite build`（7ページ prerender）成功。
+
+- **未決**: 最終ビジュアル受入は外部レビュー待ち。`release-0-12-0 → main`・本番公開は行わない。
+
+## Revision (#306): Notice content contract + product-first LP
+
+外部レビューで共有 Notice の表示不具合と、製品ビジュアル・LP構成の不合格が指摘された。
+
+- **Notice の子構造契約**: ルートは `display:flex` のまま、children を単一の content block（`flex:1; min-width:0`）で包む。テキスト・インラインリンク・複数段落・アイコン・アクションは通常の文書フローで描画され、flex item として分断されない。見た目は引き続き `@ty-plus/ui` が所有し、Web 側で workaround しない。契約は `Notice.test.tsx`（unit）と `Notice.stories.tsx` の `RichContent`（Storybook play 関数）で固定した。
+- **Hero の製品ファースト化**: 5:7 の比率自体を目的にせず、コピー/アクション/メタ情報のコンパクトな帯の下に `hero.png` を content 幅いっぱいで提示する構成へ変更。モバイルは `object-fit: cover` + `4/3` crop で左側のウィジェット密集領域を優先する。
+- **Features の画像-説明対応**: 同一種類のスクリーンショットの単純交互をやめ、機能ごとに対応する実機キャプチャと媒体幅（wide / std）を割り当てる。説明のない未検証画像は使わない。
+- **比率の扱い**: 5:7 / 3:9 / 8:4 は座標系上の表現手段であり目標ではない。面積配分・余白・タイポグラフィ・画像倍率はブラウザ実画面で評価する。
+
+## Revision (#309): real product-state captures + LP recomposition
+
+外部レビューで「Hero の画像サイズ・列比率の反復ではなく、製品の利用体験を視覚的に説明する構成」が要求された。
+
+- **撮影環境**: `scripts/verify/web-product-capture.ts` を追加。`scripts/verify/e2e` の E2EContext/CDP 基盤を再利用し、managed root を snapshot → `workspaces/workspace-1.json` の gridCells に `presets/presets.json` のカタログIDを持つプリセットタイルをシード → パネルを reload → スクロール位置別の実画面を `Page.captureScreenshot` で取得 → Local Presets / Add Widget ダイアログを実際に開いて撮影 → managed root を restore。捏造したUI状態は使わない。#287 の初期状態問題に対し、カタログ登録済みプリセットを gridCells の id 参照でタイル化する fixture 手法を確立した（レイアウト項目の type はカタログ lookup で解決される既存契約）。
+- **実画像**: `hero.png` / `workspace.png` / `preset-tiles.png`（新規）/ `add-widget.png` / `preset-dialog.png` を、After Effects 2026 + `app.ty-plus.dev` パネル（1706×1022 CSS px、Retina 2x）からの実機 CDP キャプチャへ差し替え。撮影条件・対象SHAは `docs/verification/web-redesign/` の記録に従う。
+- **LP 再構成**: Hero はコピーrail(span5) + プリセットタイル入りワークスペース実写(span7) の非対称分割。Workspace 帯は utility widget 領域のワイド提示(span8+span4)。Features 帯は Local Presets と Add Widget の2ダイアログを入れ子2列で並置し、同種スクリーンショットの積層をやめた。モバイルではコピー→画像→CTAの順で製品ビジュアルを早期に提示する。
+- **capture-meta 修正**: `capture-screens.ts` が `commitSha` に加えて `sourceTree.dirty` / `dirtyPaths` を記録し、`--require-clean` で未コミット差分がある場合は撮影を拒否する。
+
+## Revision (#319): identifiable product assets + honest DOM order
+
+review-309 で「プリセットタイルが同一の低コントラストカーブで識別不能」「モバイル順序の報告と実装の不一致」が指摘された。製品側の問題は #316 / PR #318 で分離して修正し、本 Revision は素材と構図のみを扱う。
+
+- **素材**: #316 の fixture（退化 canvas アイコンを title text へ正規化 + `data-preset-id` 識別 assert + CDP 実ポインタ hover 検証）で再撮影した実機キャプチャへ差替。`hero.png` / `preset-tiles.png` / `workspace.png` / `preset-dialog.png` は名前付きプリセットタイルと利用者向けオフライン通知を含む。`add-widget.png` は既存の実機キャプチャを維持。
+- **Hero の DOM 順序**: グリッド子要素を copy / figure / actions の3要素に分割。DOM 順は全 viewport で copy → image → actions（モバイルは CTA が画像の後）。md+ では figure が左右2行を span し、copy/actions が左 rail を構成する。前回報告した「コピー→画像→CTA」と実装を一致させた。
+- **セクション構図の差別化**: Workspace 帯は説明 rail(span4) → 画像(span8) の読み順へ反転。Features 帯は左 rail を廃し、全幅ヘッダ + キャプション付き2ダイアログ横並びへ変更（各 surface に名前を付与）。Resources の3列グリッドは維持。
+- **Features 行**: flagship を「Preset tiles from your catalog」（preset-tiles.png, wide）へ変更。`mediaSpan: "narrow"`（text span7 / media span5）を追加し行毎の密度を変化。featureRow / orderFirst のブレークポイントを span 系と同じ `md` に揃え、md–lg 帯での潜在的な暗黙カラム生成を解消。
+
+## Revision (#328): verified state-transition material, role-separated crops
+
+#322 / PR #326 で hover→info widget・Shift+click 選択・プレーンクリック実行（Effect Parade 差分検証済み）の実機キャプチャが確立された。本 Revision はその検証済み成果のみを素材化し、機能ごとに異なる情報役割を持つ領域cropへ分解する。
+
+- **素材の役割分離**: `preset-grid.png`（名前付きプリセットタイル行、Hero/flagship）、`preset-selected.png`（選択タイル + info widget の関係、専用「Hover, select, run」セクション/行）、`workspace-widgets.png`（utility widget 帯）、`presets-dialog.png`（Local Presets 実ダイアログ）。同一ワークスペース画像の使い回しを廃止。
+- **正直な検証範囲の明記**: コピーと figcaption で「hover で info widget に詳細、Shift+click で選択、プレーンクリックで実行（実プロジェクトで検証済み）」を記述。タイルアイコンは撮影 fixture が設定した説明用グリフであり、実 `.ffx` の動作を可視化したものではない旨を明記。実行の視覚的 Before/After は未取得のため捏造しない。
+- **未解決の分離**: Add Widget ダイアログは CEP ホストが新規 modeless extension を spawn しない環境ブロッカー（#322 記録済み）のため既存検証済み `add-widget.png` を継続使用。LP 収束を妨げない。
+
+## Revision (#331): product UI components rendered on the web
+
+スクリーンショット依存を部分的に脱却し、モノレポの実装をWebで直接再利用する第一歩。
+
+- **再利用経路**: `@ty-plus/product` エイリアス（vite + tsconfig paths）で `src/` 配下の製品モジュールを Web から import 可能にした。現時点の採用対象は `CanvasEasingIcon`（canvas 描画のみ・ホスト非依存）のみ。Tile / glyph / workspace grid / dialogs は storage・widget runtime・i18n・CEP transport へ依存するため、ホストアダプタ分離が済むまでスクリーンショットを併用する（後続 Issue で分解予定）。
+- **Web デモ**: `components/PresetStage.tsx` — 製品の `CanvasEasingIcon` で描くプリセットタイル群 + 選択状態（ローカル React state）+ info readout。`lib/demo-presets.ts` の easing 曲線は fixture 定義の説明用グリフであり、実 `.ffx` 解析結果ではないことをコピーで明記。AE 実行は Web では偽装しない。
+- **Hero**: スクリーンショットを `PresetRail`（実イージングアイコンの staggered 構成）へ置換。DOM 順 copy → visual → actions を維持。
+- **Interaction セクション**: `preset-selected.png` を廃し、操作可能な `PresetStage` へ置換。実機検証済みの状態遷移（hover/Shift+click/実行）はコピーで説明し、Web 側は選択状態のみを実装。
+- **Features**: `featureRow` テンプレートの反復をやめ、flagship を全幅 `PresetStage` バンド、以降は media 位置・span・密度の異なる非対称行 + text-only 行へ再構成。
+- **スクリーンショットの残存用途**: workspace 全体・実ダイアログ・選択状態の実機関係性は、Web 非対応コンポーネントの証拠として引き続き使用。
+
+## Revision (#333): real preset tile layer shared with the product
+
+`PresetStage` の Web 専用再実装をやめ、製品の preset tile レンダラを直接利用する。
+
+- **モジュール分割**: `glyph.tsx` から catalog id 解決（`getPreset` → storage/CEP 依存）を行う `PresetGlyphById` を `glyph-by-id.tsx` へ分離。`glyph.tsx` は `PresetCatalogGlyphHost` / `FramedPresetGlyph` / `WorkspacePresetGlyph` のみを持ち、ホスト非依存になった。`preset/index.ts` と `ListDialog.tsx` の import を更新し、`ListDialog.issue145.test.tsx` の mock 対象も追従。
+- **Web 解決経路**: vite に `@/…` → `src/` の catch-all alias（`@/styled-system` より後段）を追加し、製品モジュール内部の `@/management/…` import を解決。web panda.config の include に `../../src/**` を追加し、製品側 `css()` クラスを web バンドルへ生成。vitest.config にも `@ty-plus/product` alias を追加。
+- **再利用した実装**: `Tile`（`data-preset-id` + hover 通知）→ `PresetCatalogGlyphHost` → `WorkspacePresetGlyph` → `resolveWorkspaceGlyphIconVisual` → `CanvasEasingIcon`。デモ preset は実 `Preset` contract オブジェクトで、icon は製品の `presetIconCanvas` で構築（canvas 曲線は fixture 定義の説明用グリフと明記）。
+- **状態モデル**: 選択（ローカル state）を初期値ありで表示し、hover は製品と同じ precedence（selection → hover fallback）で info readout に反映。AE 実行は Web では偽装しない。
+- **契約テスト**: `PresetStage.contract.test.tsx` が製品 `Tile` の SSR 出力に `data-preset-id` / `ws-preset-icon--canvas` / `<canvas>` が含まれることを assert — Web 側の模倣実装への退行を検出する。
+- **修正**: Hero の `PresetRail` で使っていた `translateY` stagger が figcaption と重なっていた問題を、transform 撤去で解消（DOM 計測で overlap=false を確認）。
+- **残課題**: Info Widget 本体・Workspace Grid・ダイアログの再利用は widget runtime / workspace state 依存のため #333 の後続段階。スクリーンショットはそれらの実機証拠として継続使用。

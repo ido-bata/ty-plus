@@ -442,6 +442,10 @@ export const DESIGN_TOKENS_DEFAULTS: Record<string, string> = {
 	"ty-text-size-body": "15px",
 	/** Timer digits etc. */
 	"ty-text-size-display-sm": "18px",
+	/** Marketing / documentation display sizes (unused by CEP panel) */
+	"ty-text-size-display-md": "1.75rem",
+	"ty-text-size-display-lg": "2.75rem",
+	"ty-text-size-lead": "1.125rem",
 	/** Decimal font for grid dimension display */
 	"ty-text-size-grid-measure": "10.5px",
 	/** Prompts / emphasis (dc-prompt etc.) */
@@ -519,6 +523,8 @@ export const DESIGN_TOKENS_DEFAULTS: Record<string, string> = {
 	"ty-base-letter-spacing": "0.01em",
 	"ty-base-font-family":
 		'system-ui, "Segoe UI", "Helvetica Neue", ui-sans-serif, sans-serif',
+	"ty-font-mono":
+		'ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace',
 
 	/** CEP panel minimum size (`base.css` html.ty-plus-cep-shell) */
 	"ty-cep-shell-min-width": "280px",

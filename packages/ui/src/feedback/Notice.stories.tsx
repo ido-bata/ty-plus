@@ -49,3 +49,39 @@ export const Tones: Story = {
 		}
 	},
 };
+
+/**
+ * Rich content: inline link inside a sentence plus a second paragraph.
+ * Guards the regression where text nodes and anchors became separate
+ * flex items and the sentence was split across columns.
+ */
+export const RichContent: Story = {
+	render: () => (
+		<div className={stack}>
+			<Notice tone="warning" role="status">
+				Release data is temporarily unavailable; showing the last published
+				snapshot. Check{" "}
+				<a href="https://github.com/ido-bata/ty-plus/releases">
+					GitHub Releases
+				</a>{" "}
+				for the newest builds.
+				<p>
+					Beta and Insider builds are also published — see the changelog for the
+					full list.
+				</p>
+			</Notice>
+		</div>
+	),
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		const link = canvas.getByRole("link", { name: "GitHub Releases" });
+		expect(link).toBeVisible();
+		// The link must share a flow block with surrounding text, not sit in
+		// its own flex item: its parent must contain the sentence text node.
+		const parent = link.parentElement as HTMLElement;
+		expect(parent.textContent).toContain("snapshot. Check");
+		expect(
+			canvas.getByText(/Beta and Insider builds are also published/),
+		).toBeVisible();
+	},
+};

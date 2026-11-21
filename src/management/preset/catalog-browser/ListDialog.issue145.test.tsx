@@ -126,7 +126,7 @@ vi.mock("@/management/preset/catalog-browser/view-mode-toggle", () => ({
 	CatalogBrowserViewModeToggle: () => <div data-testid="view-toggle" />,
 }));
 
-vi.mock("@/management/preset/workspace/glyph", () => ({
+vi.mock("@/management/preset/workspace/glyph-by-id", () => ({
 	PresetGlyphById: () => <span data-testid="preset-glyph" />,
 }));
 
@@ -292,6 +292,12 @@ describe("Preset List with the cloud gateway not booted (#145)", () => {
 			expect(screen.getByText("Alpha Preset")).toBeInTheDocument();
 		});
 		expect(screen.getByText("Cloud offline")).toBeInTheDocument();
+		// The offline branch must not leak the internal boot diagnostic —
+		// `gateway boot was not invoked` is store-internal copy, not UI copy.
+		expect(
+			screen.getByText(/Cloud features are not active in this session/),
+		).toBeInTheDocument();
+		expect(screen.queryByText(/gateway boot was not invoked/)).toBeNull();
 	});
 
 	it("drops the cloud notice once the gateway is live", async () => {

@@ -46,13 +46,7 @@ export const Tones: Story = {
 	),
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
-		for (const tone of [
-			"neutral",
-			"accent",
-			"success",
-			"warning",
-			"error",
-		]) {
+		for (const tone of ["neutral", "accent", "success", "warning", "error"]) {
 			expect(canvas.getByText(tone)).toBeVisible();
 		}
 	},

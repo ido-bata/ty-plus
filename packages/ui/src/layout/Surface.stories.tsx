@@ -66,7 +66,12 @@ export const Paddings: Story = {
 	render: (args) => (
 		<div className={row}>
 			{(["none", "sm", "md", "lg"] as const).map((p) => (
-				<Surface {...args} key={p} padding={p} className={css({ width: "10rem" })}>
+				<Surface
+					{...args}
+					key={p}
+					padding={p}
+					className={css({ width: "10rem" })}
+				>
 					{p}
 				</Surface>
 			))}

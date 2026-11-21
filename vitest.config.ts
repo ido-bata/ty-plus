@@ -42,6 +42,10 @@ export default defineConfig({
 	resolve: {
 		alias: [
 			{
+				find: "@ty-plus/product",
+				replacement: path.resolve(__dirname, "src"),
+			},
+			{
 				find: /^@ty-plus\/ui\/(.*)$/,
 				replacement: path.resolve(__dirname, "packages/ui/src") + "/$1",
 			},

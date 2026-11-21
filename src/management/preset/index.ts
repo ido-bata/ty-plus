@@ -25,10 +25,8 @@ export {
 	removeLocalPreset,
 	upsertLocalPreset,
 } from "@/management/preset/use-cases";
-export {
-	PresetGlyphById,
-	WorkspacePresetGlyph,
-} from "@/management/preset/workspace/glyph";
+export { WorkspacePresetGlyph } from "@/management/preset/workspace/glyph";
+export { PresetGlyphById } from "@/management/preset/workspace/glyph-by-id";
 export {
 	glyphBoxCompactClass,
 	glyphBoxCompactPadClass,

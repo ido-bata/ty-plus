@@ -1,5 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { Button } from "@ty-plus/ui";
+import { cx } from "@ty-plus/ui/util/cx";
 import { SITE } from "../lib/site";
+import { container, section, stack } from "../styles/layout";
+import * as s from "../styles/site";
 
 export const Route = createFileRoute("/support")({
 	head: () => ({
@@ -38,58 +42,126 @@ const HELP_TOPICS = [
 function SupportPage() {
 	return (
 		<main>
-			<header className="page page-head">
-				<span className="eyebrow">Help</span>
-				<h1>Support</h1>
-				<p className="lead">
+			<header
+				className={cx(
+					container({ size: "content" }),
+					section({ variant: "prose" }),
+				)}
+			>
+				<h1 className={s.h1}>Support</h1>
+				<p className={s.lead}>
 					ty-plus is a community open-source project. The fastest way to get
 					help is through GitHub.
 				</p>
 			</header>
 
-			<section className="page section" aria-labelledby="help">
-				<span className="eyebrow">Get help</span>
-				<h2 id="help">Documentation &amp; issues</h2>
-				<dl className="def-list def-list--links">
-					{HELP_TOPICS.map((t) => (
-						<div className="def-row" key={t.term}>
-							<dt>
-								<a href={t.href}>{t.term}</a>
-							</dt>
-							<dd>{t.description}</dd>
-						</div>
-					))}
-				</dl>
+			<section
+				className={cx(
+					container({ size: "content" }),
+					section({ variant: "prose" }),
+				)}
+				aria-labelledby="help"
+			>
+				<div className={stack({ gap: 4 })}>
+					<h2 className={s.h2} id="help">
+						Documentation &amp; issues
+					</h2>
+					<dl className={s.defList}>
+						{HELP_TOPICS.map((t) => (
+							<div className={s.defRow} key={t.term}>
+								<dt className={s.defTerm}>
+									<a className={s.link} href={t.href}>
+										{t.term}
+									</a>
+								</dt>
+								<dd className={s.defDesc}>{t.description}</dd>
+							</div>
+						))}
+					</dl>
+				</div>
 			</section>
 
-			<section className="page section" aria-labelledby="report">
-				<span className="eyebrow">Report</span>
-				<h2 id="report">Bugs &amp; feature requests</h2>
-				<p>
-					Use <a href={SITE.newIssue}>the issue templates on GitHub</a> to
-					report a bug or request an improvement. Please include your OS, After
-					Effects version, ty-plus version, and steps to reproduce.
-				</p>
+			<section
+				className={cx(
+					container({ size: "content" }),
+					section({ variant: "prose" }),
+				)}
+				aria-labelledby="report"
+			>
+				<div className={stack({ gap: 4 })}>
+					<div className={stack({ gap: 2 })}>
+						<h2 className={s.h2} id="report">
+							Bugs &amp; feature requests
+						</h2>
+						<p className={s.body}>
+							Use{" "}
+							<a className={s.link} href={SITE.newIssue}>
+								the issue templates on GitHub
+							</a>{" "}
+							to report a bug or request an improvement. Please include your OS,
+							After Effects version, ty-plus version, and steps to reproduce.
+						</p>
+					</div>
+					<div>
+						<Button as="a" href={SITE.newIssue} variant="primary">
+							Open an issue
+						</Button>
+					</div>
+				</div>
 			</section>
 
-			<section className="page section" aria-labelledby="security">
-				<span className="eyebrow">Security</span>
-				<h2 id="security">Responsible disclosure</h2>
-				<p>
-					Please do not open public issues for security vulnerabilities. See the{" "}
-					<a href={SITE.security}>security policy</a> for responsible
-					disclosure.
-				</p>
+			<section
+				className={cx(
+					container({ size: "content" }),
+					section({ variant: "prose" }),
+				)}
+				aria-labelledby="security"
+			>
+				<div className={stack({ gap: 2 })}>
+					<h2 className={s.h2} id="security">
+						Responsible disclosure
+					</h2>
+					<p className={s.body}>
+						Please do not open public issues for security vulnerabilities. See
+						the{" "}
+						<a className={s.link} href={SITE.security}>
+							security policy
+						</a>{" "}
+						for responsible disclosure.
+					</p>
+				</div>
 			</section>
 
-			<section className="page section" aria-labelledby="contribute">
-				<span className="eyebrow">Contribute</span>
-				<h2 id="contribute">Develop with us</h2>
-				<p>
-					ty-plus is MIT licensed and developed in the open. See{" "}
-					<a href={SITE.contributing}>CONTRIBUTING.md</a> to get started, and{" "}
-					<a href={SITE.license}>LICENSE</a> for terms.
-				</p>
+			<section
+				className={cx(
+					container({ size: "content" }),
+					section({ variant: "prose" }),
+				)}
+				aria-labelledby="contribute"
+			>
+				<div className={stack({ gap: 4 })}>
+					<div className={stack({ gap: 2 })}>
+						<h2 className={s.h2} id="contribute">
+							Develop with us
+						</h2>
+						<p className={s.body}>
+							ty-plus is MIT licensed and developed in the open. See{" "}
+							<a className={s.link} href={SITE.contributing}>
+								CONTRIBUTING.md
+							</a>{" "}
+							to get started, and{" "}
+							<a className={s.link} href={SITE.license}>
+								LICENSE
+							</a>{" "}
+							for terms.
+						</p>
+					</div>
+					<div>
+						<Button as="a" href={SITE.repo} variant="secondary">
+							Source code
+						</Button>
+					</div>
+				</div>
 			</section>
 		</main>
 	);

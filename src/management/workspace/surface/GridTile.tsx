@@ -7,7 +7,6 @@
  * parent `Grid` inside a single `useMemo`; this module only renders.
  */
 
-import { cx } from "@ty-plus/ui/util/cx";
 import type { CSSProperties, JSX } from "react";
 import { memo } from "react";
 import type { Preset } from "@/management/preset/contract";
@@ -18,6 +17,7 @@ import type {
 } from "@/management/workspace/layout/grid-document";
 import type { SurfaceState, Tile } from "@/management/workspace/state";
 import type { CatalogTileBodyRenderer } from "@/management/workspace/surface/grid-catalog-tile-context";
+import { WorkspaceTileFrame } from "@/management/workspace/surface/TileFrame";
 import { css } from "@/styled-system/css";
 
 export type GridTileProps = {
@@ -48,52 +48,6 @@ type WorkspacePlacementTileProps = {
 	selected: boolean;
 	children: import("react").ReactNode;
 };
-
-const tileShell = css({
-	position: "absolute",
-	boxSizing: "border-box",
-	minHeight: "0",
-	minWidth: "0",
-	userSelect: "none",
-	borderRadius: "shell-sm",
-	backgroundColor: "surface.widget",
-	color: "text.primary",
-});
-
-const tileInner = css({
-	position: "absolute",
-	inset: "0",
-	zIndex: "0",
-	minHeight: "0",
-	minWidth: "0",
-	overflow: "hidden",
-	borderRadius: "shell-sm",
-});
-
-const tileFrameSelected = css({
-	borderWidth: "1px",
-	borderStyle: "solid",
-	borderColor: "var(--color-ty-ws-gridcell-ring-border-selected)",
-});
-
-const tileFrameDefault = css({
-	borderWidth: "1px",
-	borderStyle: "solid",
-	borderColor: "var(--color-ty-ws-gridcell-ring-border)",
-});
-
-const tileFrameOverlay = css({
-	pointerEvents: "none",
-	position: "absolute",
-	inset: "0",
-	zIndex: "1",
-	boxSizing: "border-box",
-	borderRadius: "shell-sm",
-	borderStyle: "solid",
-	transitionProperty: "border-color",
-	transitionDuration: "100ms",
-	transitionTimingFunction: "ease-out",
-});
 
 const widgetMissingCard = css({
 	display: "flex",
@@ -127,18 +81,14 @@ function WorkspacePlacementTileImpl(
 	props: WorkspacePlacementTileProps,
 ): JSX.Element {
 	const { placementStyle, shellAttrs, selected, children } = props;
-	const frameBorder = selected ? tileFrameSelected : tileFrameDefault;
-
 	return (
-		<div
-			{...shellAttrs}
-			className={tileShell}
-			draggable={false}
+		<WorkspaceTileFrame
+			selected={selected}
 			style={placementStyle}
+			attrs={shellAttrs}
 		>
-			<div className={tileInner}>{children}</div>
-			<div aria-hidden className={cx(tileFrameOverlay, frameBorder)} />
-		</div>
+			{children}
+		</WorkspaceTileFrame>
 	);
 }
 

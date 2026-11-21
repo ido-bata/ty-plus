@@ -23,16 +23,26 @@ export default defineConfig({
 				replacement: `${path.join(repoRoot, "packages/ui/src")}/$1`,
 			},
 			{
+				find: "@ty-plus/product",
+				replacement: path.join(repoRoot, "src"),
+			},
+			{
 				find: "@ty-plus/ui",
 				replacement: path.join(repoRoot, "packages/ui/src/index.ts"),
 			},
 			{
 				find: /^@\/styled-system\/(.*)$/,
-				replacement: `${path.join(repoRoot, "styled-system")}/$1`,
+				replacement: `${path.join(root, "styled-system")}/$1`,
 			},
 			{
 				find: /^@styled-system\/(.*)$/,
-				replacement: `${path.join(repoRoot, "styled-system")}/$1`,
+				replacement: `${path.join(root, "styled-system")}/$1`,
+			},
+			// Catch-all for product (`src/`) modules imported via `@/…` —
+			// must stay AFTER the `@/styled-system` entries above.
+			{
+				find: /^@\/(.*)$/,
+				replacement: `${path.join(repoRoot, "src")}/$1`,
 			},
 		],
 	},
