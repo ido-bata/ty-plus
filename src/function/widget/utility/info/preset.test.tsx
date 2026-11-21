@@ -3,7 +3,7 @@
 /**
  * Behavioral regression coverage for `PresetInfoWidget` (Issue #87).
  *
- * The bug pattern is pinned statically in `preset.bug-pattern.test.ts`
+ * The bug pattern is pinned statically in `preset-render-loop.test.ts`
  * because mounting the actual component at base SHA would hang the test
  * runner in jsdom + React 19 — `render()` inside `act()` flushes the
  * useEffect → setState → re-render loop synchronously and never returns.
@@ -18,7 +18,7 @@
  *
  * If the bug regresses, test (1) or (5) will hang the runner; CI must
  * tolerate the runtime cost (~ms) and the static check in
- * `preset.bug-pattern.test.ts` is the authoritative gate.
+ * `preset-render-loop.test.ts` is the authoritative gate.
  */
 
 import { cleanup, render } from "@testing-library/react";

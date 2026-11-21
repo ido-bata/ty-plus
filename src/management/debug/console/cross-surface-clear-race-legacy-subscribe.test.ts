@@ -77,7 +77,7 @@
 //      pre-Clear, merges ONLY post-Clear.
 //   7. Assert: pre-Clear row absent, post-Clear row present.
 //
-// File placement: sibling of `cross-surface-clear-race-round7.test.ts`.
+// File placement: sibling of `cross-surface-clear-race-logbus.test.ts`.
 
 import {
 	cleanup,

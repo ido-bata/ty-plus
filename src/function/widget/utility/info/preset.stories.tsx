@@ -208,7 +208,7 @@ export const Empty: Story = {
 // Object.is on every render and triggered React error #185. After the
 // fix (`useMemo` on `items`), this state mounts in a single commit.
 // The structural stub here does not exercise the effect path — see
-// `preset.bug-pattern.test.ts` for the static check and
+// `preset-render-loop.test.ts` for the static check and
 // `preset.test.tsx` for the behavioral regression.
 export const BugTriggerSingle: Story = {
 	name: "Bug-trigger state (single, Issue #87)",

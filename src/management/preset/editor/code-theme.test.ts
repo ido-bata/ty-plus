@@ -7,7 +7,7 @@
  *
  * The CodeEditor component itself is excluded from CI (monaco-editor +
  * happy-dom), so source-level assertions are the practical way to lock
- * these tokens in. Same pattern as `Code-resize.test.ts`.
+ * these tokens in. Same pattern as `code-resize.test.ts`.
  */
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
