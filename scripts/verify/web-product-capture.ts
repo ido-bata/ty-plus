@@ -491,11 +491,20 @@ await withManagedRootSnapshot(ctx, "web-product-capture", async () => {
 	//    execute the preset). The info widget switches to "selection" mode.
 	const selectTarget = assigned.get("fadeOut") ?? demoPresets[1];
 	if (selectTarget?.title) {
-		const c = await centerOf(
-			panel,
-			`[data-workspace-preset-tile] [data-preset-id="${selectTarget.id}"]`,
-		);
-		if (c) {
+		let selOk = false;
+		// Try each selection modifier the product accepts. Ctrl+click is a
+		// secondary click on macOS (context menu), so it is last.
+		for (const [name, mod] of [
+			["cmd", 4],
+			["shift", 8],
+			["ctrl", 2],
+		] as const) {
+			if (selOk) break;
+			const c = await centerOf(
+				panel,
+				`[data-workspace-preset-tile] [data-preset-id="${selectTarget.id}"]`,
+			);
+			if (!c) break;
 			// Move pointer away first so hover does not mask selection.
 			const conn = await ctx.cdp(panel);
 			await conn.send("Input.dispatchMouseEvent", {
@@ -503,22 +512,57 @@ await withManagedRootSnapshot(ctx, "web-product-capture", async () => {
 				x: 4,
 				y: 4,
 			});
-			await clickAt(panel, c.x, c.y, 2); // Ctrl+click
-			console.log("ctrl+click dispatched for", selectTarget.title);
+			await clickAt(panel, c.x, c.y, mod);
+			console.log(`${name}+click dispatched for`, selectTarget.title);
+			selOk = await infoCardShows(selectTarget.title, "selection");
+			console.log(`info widget shows selected preset (${name}):`, selOk);
 		}
-		const selOk = await infoCardShows(selectTarget.title, "selection");
-		console.log("info widget shows selected preset:", selOk);
+		if (!selOk) {
+			// Debug: dump what the info widget and tile selection actually show.
+			const dbg = await ctx.evalJs(
+				panel,
+				`(() => {
+					const card = document.querySelector('[data-mode="single"], [data-mode="empty"], [data-mode="multi"]');
+					const tile = document.querySelector('[data-workspace-preset-tile] [data-preset-id="${selectTarget.id}"]');
+					const shell = tile?.closest("[data-placement-index]");
+					return {
+						mode: card?.getAttribute("data-mode") ?? null,
+						cardText: (card?.innerText ?? "").slice(0, 200),
+						shellClass: shell?.className ?? null,
+						shellAttrs: shell ? [...shell.attributes].map(a => a.name + "=" + a.value).join(" ") : null,
+					};
+				})()`,
+			);
+			console.log("selection debug:", JSON.stringify(dbg));
+		}
 		if (selOk) {
 			// Scroll so the info widget row is in frame.
 			await scrollPanelTo(panel, Math.max(0, (firstTileTop as number) + 500));
 			await sleep(400);
 			await ctx.screenshot(panel, "product-preset-selected");
-			// Deselect again so later states start clean.
-			const c2 = await centerOf(
+			// Deselect again so later states start clean. Cmd+click does not
+			// toggle on this host, so click empty grid space instead (the
+			// workspace clears all selection on a plain background click).
+			const emptyPt = await ctx.evalJs(
 				panel,
-				`[data-workspace-preset-tile] [data-preset-id="${selectTarget.id}"]`,
+				`(() => {
+					const scroll = document.querySelector(".ws-scroll") ?? document.querySelector("[data-ws-scroll]");
+					if (!scroll) return null;
+					const r = scroll.getBoundingClientRect();
+					for (let y = r.top + 8; y < r.bottom - 8; y += 24) {
+						for (let x = r.left + 8; x < r.right - 8; x += 24) {
+							const el = document.elementFromPoint(x, y);
+							if (!el) continue;
+							if (el.closest("[data-workspace-surface-index]")) continue;
+							if (!el.closest(".ws-scroll") && !el.closest("[data-ws-scroll]")) continue;
+							return { x, y };
+						}
+					}
+					return null;
+				})()`,
 			);
-			if (c2) await clickAt(panel, c2.x, c2.y, 2);
+			const pt = emptyPt as { x: number; y: number } | null;
+			if (pt) await clickAt(panel, pt.x, pt.y, 0);
 			await sleep(400);
 		}
 	}
@@ -540,62 +584,92 @@ await withManagedRootSnapshot(ctx, "web-product-capture", async () => {
 	}
 	if (runTarget && panelAlive) {
 		try {
-			const setup = await ctx.evalScriptOnPanel1(`(() => {
-			try {
-				var existing = null;
+			const fxProbe = `(function(){
+				var comp = null;
 				for (var i = 1; i <= app.project.numItems; i++) {
-					if (app.project.item(i) instanceof CompItem && app.project.item(i).name === ${JSON.stringify(createdCompName)}) {
-						existing = app.project.item(i); break;
+					var it = app.project.item(i);
+					if (it instanceof CompItem && it.name === ${JSON.stringify(createdCompName)}) { comp = it; break; }
+				}
+				if (!comp || comp.numLayers < 1) return "no-comp";
+				var layer = comp.layer(1);
+				var fx = [];
+				if (layer.Effects) {
+					for (var k = 1; k <= layer.Effects.numProperties; k++) {
+						var p = layer.Effects.property(k);
+						fx.push(p ? p.matchName : "null");
 					}
 				}
-				var comp = existing || app.project.items.addComp(${JSON.stringify(createdCompName)}, 640, 360, 1, 4, 30);
-				if (comp.numLayers === 0) {
+				return JSON.stringify(fx);
+			})()`;
+			const setup = await ctx.evalScriptOnPanel1(`(function(){
+				var comp = null;
+				for (var i = 1; i <= app.project.numItems; i++) {
+					var it = app.project.item(i);
+					if (it instanceof CompItem && it.name === ${JSON.stringify(createdCompName)}) { comp = it; break; }
+				}
+				if (!comp) {
+					comp = app.project.items.addComp(${JSON.stringify(createdCompName)}, 640, 360, 1, 4, 30);
 					comp.layers.addSolid([0.15, 0.35, 0.85], "demo-solid", 640, 360, 1, 4);
 				}
-				app.project.activeItem = comp;
+				try { comp.openInViewer(); } catch (e) {}
+				if (comp.numLayers < 1) {
+					comp.layers.addSolid([0.15, 0.35, 0.85], "demo-solid", 640, 360, 1, 4);
+				}
+				for (var j = 1; j <= comp.numLayers; j++) {
+					comp.layer(j).selected = (j === 1);
+				}
 				return "ok:" + comp.name + ":layers=" + comp.numLayers;
-			} catch (e) { return "err:" + e; }
-		})()`);
+			})()`);
 			console.log("demo comp setup:", setup);
 			compCreated = String(setup).startsWith("ok:");
 
 			if (compCreated) {
-				const effectsBefore = await ctx.evalScriptOnPanel1(`(() => {
-				var comp = app.project.activeItem;
-				var fx = [];
-				for (var i = 1; i <= comp.numLayers; i++) {
-					var l = comp.layer(i);
-					for (var j = 1; j <= l.property("ADBE Effect Parade").numProperties; j++) {
-						fx.push(l.name + ":" + l.property("ADBE Effect Parade").property(j).matchName);
-					}
-				}
-				return JSON.stringify(fx);
-			})()`);
+				const effectsBefore = await ctx.evalScriptOnPanel1(fxProbe);
 				console.log("effects before run:", effectsBefore);
 
-				// Scroll the run target into view, then plain-click it.
-				const runCenter = await centerOf(
-					panel,
-					`[data-workspace-preset-tile] [data-preset-id="${runTarget.id}"]`,
-				);
-				if (runCenter) {
-					await clickAt(panel, runCenter.x, runCenter.y, 0);
-					console.log("plain click dispatched for", runTarget.title);
-				}
-				await sleep(2500);
-
-				const effectsAfter = await ctx.evalScriptOnPanel1(`(() => {
-				var comp = app.project.activeItem;
-				var fx = [];
-				for (var i = 1; i <= comp.numLayers; i++) {
-					var l = comp.layer(i);
-					for (var j = 1; j <= l.property("ADBE Effect Parade").numProperties; j++) {
-						fx.push(l.name + ":" + l.property("ADBE Effect Parade").property(j).matchName);
+				// Re-assert the demo comp is the active item right before the
+				// click; preset execution targets the active comp's selection.
+				await ctx.evalScriptOnPanel1(`(function(){
+					var comp = null;
+					for (var i = 1; i <= app.project.numItems; i++) {
+						var it = app.project.item(i);
+						if (it instanceof CompItem && it.name === ${JSON.stringify(createdCompName)}) { comp = it; break; }
 					}
+					if (comp) {
+						try { comp.openInViewer(); } catch (e) {}
+						for (var j = 1; j <= comp.numLayers; j++) comp.layer(j).selected = (j === 1);
+					}
+					return comp ? "ok" : "missing";
+				})()`);
+
+				let effectsAfter = "[]";
+				for (let attempt = 0; attempt < 2; attempt++) {
+					// Scroll the tile into view first — centerOf reports
+					// viewport coordinates and off-screen tiles give misses.
+					await ctx.evalJs(
+						panel,
+						`(() => {
+							const el = document.querySelector('[data-workspace-preset-tile] [data-preset-id="${runTarget.id}"]');
+							el?.scrollIntoView({ block: "center", inline: "center" });
+							return Boolean(el);
+						})()`,
+					);
+					await sleep(400);
+					const runCenter = await centerOf(
+						panel,
+						`[data-workspace-preset-tile] [data-preset-id="${runTarget.id}"]`,
+					);
+					if (runCenter) {
+						await clickAt(panel, runCenter.x, runCenter.y, 0);
+						console.log(
+							`plain click dispatched for ${runTarget.title} (attempt ${attempt + 1})`,
+						);
+					}
+					await sleep(4000);
+					effectsAfter = await ctx.evalScriptOnPanel1(fxProbe);
+					console.log("effects after run:", effectsAfter);
+					if (effectsAfter !== "[]" && effectsAfter !== effectsBefore) break;
 				}
-				return JSON.stringify(fx);
-			})()`);
-				console.log("effects after run:", effectsAfter);
 				const applied = effectsBefore !== effectsAfter && effectsAfter !== "[]";
 				console.log("preset application verified:", applied);
 				if (applied) {
@@ -614,7 +688,10 @@ await withManagedRootSnapshot(ctx, "web-product-capture", async () => {
 		await ctx.screenshot(panel, "product-preset-zone-2");
 	}
 
-	// 7) Local Presets dialog (catalog browser).
+	// 7) Local Presets dialog (catalog browser). Scroll to top first so
+	//    toolbar actions are in their normal visible state.
+	await scrollPanelTo(panel, 0);
+	await sleep(400);
 	const openedPresets = await clickFirst(
 		ctx,
 		panel,
@@ -641,22 +718,41 @@ await withManagedRootSnapshot(ctx, "web-product-capture", async () => {
 		console.log("presets dialog surface not found");
 	}
 
-	// 8) Add Widget selector dialog.
+	// 8) Add Widget selector dialog. The action id also appears on context
+	//    menu rows, so click the visible match rather than the first node.
 	let widgetDialog = null;
 	for (let attempt = 0; attempt < 2 && !widgetDialog; attempt++) {
-		const openedWidget = await clickFirst(
-			ctx,
+		const openedWidget = await ctx.evalJs(
 			panel,
-			'[data-ws-action="ty.ctx.add-widget"]',
+			`(() => {
+				const els = [...document.querySelectorAll('[data-ws-action="ty.ctx.add-widget"]')];
+				const info = els.map((el) => {
+					const r = el.getBoundingClientRect();
+					return { w: r.width, h: r.height, text: (el.textContent ?? "").trim().slice(0, 40) };
+				});
+				const visible = els.find((el) => {
+					const r = el.getBoundingClientRect();
+					return r.width > 0 && r.height > 0;
+				});
+				if (visible) { visible.click(); return "clicked:" + JSON.stringify(info); }
+				return "no-visible:" + JSON.stringify(info);
+			})()`,
 		);
 		console.log(
 			`open add-widget dialog (attempt ${attempt + 1}):`,
-			openedWidget,
+			String(openedWidget).slice(0, 300),
 		);
 		widgetDialog = await findLive(
 			ctx,
 			(s) => s.surfaceId.includes("widget-selector"),
 			45_000,
+		);
+	}
+	if (!widgetDialog) {
+		const liveIds = (await ctx.liveSurfaces()).map((s) => s.surfaceId);
+		console.log(
+			"widget selector dialog surface not found; live:",
+			liveIds.join(", "),
 		);
 	}
 	if (widgetDialog) {
@@ -675,7 +771,7 @@ await withManagedRootSnapshot(ctx, "web-product-capture", async () => {
 
 	// ── Cleanup: remove the demo comp from the user's AE project ──────
 	if (compCreated) {
-		const removed = await ctx.evalScriptOnPanel1(`(() => {
+		const removed = await ctx.evalScriptOnPanel1(`(function(){
 			try {
 				for (var i = app.project.numItems; i >= 1; i--) {
 					var it = app.project.item(i);
