@@ -26,12 +26,9 @@ import "../../../storybook/decorators/i18n-init-once";
 
 import type { Meta, StoryObj } from "@storybook/react";
 
-import {
-	DirectoryBrowser,
-	type DirectoryBrowserEntry,
-} from "./DirectoryBrowser";
+import { type FileEntry, FileEntryList } from "./FileEntryList";
 
-const MOCK_ENTRIES: DirectoryBrowserEntry[] = [
+const MOCK_ENTRIES: FileEntry[] = [
 	{ path: "/preset/root/animation", name: "animation", isDirectory: true },
 	{ path: "/preset/root/transitions", name: "transitions", isDirectory: true },
 	{ path: "/preset/root/fade-in.ffx", name: "fade-in.ffx", isDirectory: false },
@@ -47,7 +44,7 @@ const MOCK_ENTRIES: DirectoryBrowserEntry[] = [
 	},
 ];
 
-const LONG_ENTRIES: DirectoryBrowserEntry[] = [
+const LONG_ENTRIES: FileEntry[] = [
 	{
 		path: "/preset/root/foo-bar-baz-qux-quux-corge-grault-garply-waldo-fred.txt",
 		name: "foo-bar-baz-qux-quux-corge-grault-garply-waldo-fred.txt",
@@ -63,7 +60,7 @@ type Args = {
 	activePath: string | null;
 	selectedPath: string | null;
 	selectionMode: "files" | "folders" | "both";
-	entries: DirectoryBrowserEntry[];
+	entries: FileEntry[];
 };
 
 const baseArgs: Args = {
@@ -75,7 +72,7 @@ const baseArgs: Args = {
 };
 
 const renderBrowser = (args: Args) => (
-	<DirectoryBrowser
+	<FileEntryList
 		entries={args.entries}
 		loading={false}
 		canGoUp={true}
@@ -101,7 +98,7 @@ const renderBrowser = (args: Args) => (
 );
 
 const meta = {
-	title: "DirectoryBrowser/DirectoryBrowser",
+	title: "FileEntryList/FileEntryList",
 	args: baseArgs,
 	argTypes: {
 		viewMode: {

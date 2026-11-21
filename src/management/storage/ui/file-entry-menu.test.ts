@@ -4,18 +4,18 @@
 
 import { describe, expect, it, vi } from "vitest";
 import type {
-	DirectoryBrowserSelectionKind,
-	DirectoryBrowserShellSelectionMode,
-} from "@/management/storage/ui/DirectoryBrowser";
+	FileEntryKind,
+	FileEntrySelectionMode,
+} from "@/management/storage/ui/FileEntryList";
 import {
-	buildDirectoryBrowserMenu,
-	type DirectoryBrowserMenuActions,
-	type DirectoryBrowserMenuContext,
-	handleDirectoryBrowserMenuSelect,
-	parseDirectoryBrowserMenuHit,
-} from "./DirectoryBrowserMenu";
+	buildFileEntryMenu,
+	type FileEntryMenuActions,
+	type FileEntryMenuContext,
+	handleFileEntryMenuSelect,
+	parseFileEntryMenuHit,
+} from "./file-entry-menu";
 
-const baseCtx: DirectoryBrowserMenuContext = {
+const baseCtx: FileEntryMenuContext = {
 	surface: "onboarding",
 	viewMode: "list",
 	selectionMode: "both",
@@ -24,7 +24,7 @@ const baseCtx: DirectoryBrowserMenuContext = {
 	canRefresh: true,
 };
 
-function actionsStub(): DirectoryBrowserMenuActions & {
+function actionsStub(): FileEntryMenuActions & {
 	calls: { name: string; args: unknown[] }[];
 } {
 	const calls: { name: string; args: unknown[] }[] = [];
@@ -45,11 +45,11 @@ function actionsStub(): DirectoryBrowserMenuActions & {
 	};
 }
 
-describe("parseDirectoryBrowserMenuHit", () => {
+describe("parseFileEntryMenuHit", () => {
 	it("returns null outside the browser body", () => {
 		const el = document.createElement("div");
-		expect(parseDirectoryBrowserMenuHit(el)).toBeNull();
-		expect(parseDirectoryBrowserMenuHit(null)).toBeNull();
+		expect(parseFileEntryMenuHit(el)).toBeNull();
+		expect(parseFileEntryMenuHit(null)).toBeNull();
 	});
 
 	it("returns a body hit for empty entry attributes", () => {
@@ -58,7 +58,7 @@ describe("parseDirectoryBrowserMenuHit", () => {
 		const row = document.createElement("button");
 		row.setAttribute("data-directory-browser-entry", "");
 		body.appendChild(row);
-		expect(parseDirectoryBrowserMenuHit(row)).toEqual({ target: "body" });
+		expect(parseFileEntryMenuHit(row)).toEqual({ target: "body" });
 	});
 
 	it("returns an entry hit for dir and file rows", () => {
@@ -69,7 +69,7 @@ describe("parseDirectoryBrowserMenuHit", () => {
 		row.setAttribute("data-entry-kind", "dir");
 		row.setAttribute("data-entry-path", "/a/b");
 		body.appendChild(row);
-		expect(parseDirectoryBrowserMenuHit(row)).toEqual({
+		expect(parseFileEntryMenuHit(row)).toEqual({
 			target: "entry",
 			kind: "dir",
 			path: "/a/b",
@@ -77,9 +77,9 @@ describe("parseDirectoryBrowserMenuHit", () => {
 	});
 });
 
-describe("buildDirectoryBrowserMenu", () => {
+describe("buildFileEntryMenu", () => {
 	it("builds Refresh + Go up for body hits", () => {
-		const payload = buildDirectoryBrowserMenu(baseCtx, { target: "body" });
+		const payload = buildFileEntryMenu(baseCtx, { target: "body" });
 		expect(payload.menu.map((item) => item.label)).toEqual([
 			"Refresh",
 			"Go Up",
@@ -87,7 +87,7 @@ describe("buildDirectoryBrowserMenu", () => {
 	});
 
 	it("builds Open + Select + Refresh + Go up for dir entries", () => {
-		const payload = buildDirectoryBrowserMenu(baseCtx, {
+		const payload = buildFileEntryMenu(baseCtx, {
 			target: "entry",
 			kind: "dir",
 			path: "/a/b",
@@ -101,7 +101,7 @@ describe("buildDirectoryBrowserMenu", () => {
 	});
 
 	it("labels the toggle Deselect when already selected", () => {
-		const payload = buildDirectoryBrowserMenu(
+		const payload = buildFileEntryMenu(
 			{
 				...baseCtx,
 				isSelected: (path, kind) => path === "/a/b" && kind === "folder",
@@ -112,7 +112,7 @@ describe("buildDirectoryBrowserMenu", () => {
 	});
 
 	it("omits Refresh when canRefresh is false and disables Go up", () => {
-		const payload = buildDirectoryBrowserMenu(
+		const payload = buildFileEntryMenu(
 			{ ...baseCtx, canRefresh: false, canGoUp: false },
 			{ target: "body" },
 		);
@@ -124,7 +124,7 @@ describe("buildDirectoryBrowserMenu", () => {
 	});
 
 	it("appends surface contributions", () => {
-		const payload = buildDirectoryBrowserMenu(
+		const payload = buildFileEntryMenu(
 			{
 				...baseCtx,
 				contributions: [{ id: "custom", label: "Custom" }],
@@ -141,9 +141,9 @@ describe("buildDirectoryBrowserMenu", () => {
 
 describe("selectionMode enforcement", () => {
 	const cases: {
-		selectionMode: DirectoryBrowserShellSelectionMode;
+		selectionMode: FileEntrySelectionMode;
 		hitKind: "dir" | "file";
-		selectionKind: DirectoryBrowserSelectionKind;
+		selectionKind: FileEntryKind;
 		allowed: boolean;
 	}[] = [
 		{
@@ -186,7 +186,7 @@ describe("selectionMode enforcement", () => {
 
 	for (const { selectionMode, hitKind, selectionKind, allowed } of cases) {
 		it(`${allowed ? "keeps" : "omits"} the ${selectionKind} toggle when selectionMode is ${selectionMode}`, () => {
-			const payload = buildDirectoryBrowserMenu(
+			const payload = buildFileEntryMenu(
 				{ ...baseCtx, selectionMode },
 				{ target: "entry", kind: hitKind, path: "/a/b" },
 			);
@@ -203,7 +203,7 @@ describe("selectionMode enforcement", () => {
 
 		it(`${allowed ? "dispatches" : "refuses"} a ${selectionKind} toggle id when selectionMode is ${selectionMode}`, () => {
 			const actions = actionsStub();
-			const handled = handleDirectoryBrowserMenuSelect(
+			const handled = handleFileEntryMenuSelect(
 				`ty.dir-browser.select:${selectionKind}:${encodeURIComponent("/a/b")}`,
 				{ ...baseCtx, selectionMode },
 				actions,
@@ -216,7 +216,7 @@ describe("selectionMode enforcement", () => {
 	}
 
 	it("still offers Open for directories when folder selection is disallowed", () => {
-		const payload = buildDirectoryBrowserMenu(
+		const payload = buildFileEntryMenu(
 			{ ...baseCtx, selectionMode: "files" },
 			{ target: "entry", kind: "dir", path: "/a/b" },
 		);
@@ -228,22 +228,14 @@ describe("selectionMode enforcement", () => {
 	});
 });
 
-describe("handleDirectoryBrowserMenuSelect", () => {
+describe("handleFileEntryMenuSelect", () => {
 	it("dispatches refresh and go-up", () => {
 		const actions = actionsStub();
 		expect(
-			handleDirectoryBrowserMenuSelect(
-				"ty.dir-browser.refresh",
-				baseCtx,
-				actions,
-			),
+			handleFileEntryMenuSelect("ty.dir-browser.refresh", baseCtx, actions),
 		).toBe(true);
 		expect(
-			handleDirectoryBrowserMenuSelect(
-				"ty.dir-browser.go-up",
-				baseCtx,
-				actions,
-			),
+			handleFileEntryMenuSelect("ty.dir-browser.go-up", baseCtx, actions),
 		).toBe(true);
 		expect(actions.calls.map((call) => call.name)).toEqual([
 			"refresh",
@@ -255,14 +247,14 @@ describe("handleDirectoryBrowserMenuSelect", () => {
 		const actions = actionsStub();
 		const encoded = encodeURIComponent("C:/a b/c");
 		expect(
-			handleDirectoryBrowserMenuSelect(
+			handleFileEntryMenuSelect(
 				`ty.dir-browser.open:${encoded}`,
 				baseCtx,
 				actions,
 			),
 		).toBe(true);
 		expect(
-			handleDirectoryBrowserMenuSelect(
+			handleFileEntryMenuSelect(
 				`ty.dir-browser.deselect:file:${encoded}`,
 				baseCtx,
 				actions,
@@ -276,12 +268,12 @@ describe("handleDirectoryBrowserMenuSelect", () => {
 
 	it("routes contributions to onCustomAction", () => {
 		const onCustomAction = vi.fn();
-		const ctx: DirectoryBrowserMenuContext = {
+		const ctx: FileEntryMenuContext = {
 			...baseCtx,
 			contributions: [{ id: "custom", label: "Custom" }],
 		};
 		expect(
-			handleDirectoryBrowserMenuSelect("custom", ctx, {
+			handleFileEntryMenuSelect("custom", ctx, {
 				...actionsStub(),
 				onCustomAction,
 			}),
@@ -292,7 +284,7 @@ describe("handleDirectoryBrowserMenuSelect", () => {
 	it("returns false for unknown ids", () => {
 		const actions = actionsStub();
 		expect(
-			handleDirectoryBrowserMenuSelect("ty.something-else", baseCtx, actions),
+			handleFileEntryMenuSelect("ty.something-else", baseCtx, actions),
 		).toBe(false);
 		expect(actions.calls).toHaveLength(0);
 	});

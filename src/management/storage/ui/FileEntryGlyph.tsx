@@ -1,22 +1,15 @@
 import { cx, Icon } from "@ty-plus/ui";
-import type { LucideIcon } from "lucide-react";
-import {
-	File,
-	Film,
-	Folder,
-	FolderOpen,
-	Image as ImageIcon,
-	Music,
-} from "lucide-react";
+import { FolderOpen } from "lucide-react";
 import type { JSX } from "react";
-import type { PresetIcon } from "@/management/preset/contract";
 import { imageSrcForBrowser } from "@/management/preset/image-src-for-browser";
+import { PresetIconContent } from "@/management/preset/preset-icon";
 import {
 	findSiblingImagePathForPresetFile,
 	type SiblingListingEntry,
 } from "@/management/preset/sibling-thumbnail";
+import { FileTypeGlyph } from "@/management/storage/file-type-glyph";
 import { css } from "@/styled-system/css";
-import type { DirectoryBrowserEntry } from "./DirectoryBrowser";
+import type { FileEntry } from "./FileEntryList";
 
 const iconFrameBaseClass = css({
 	display: "inline-flex",
@@ -72,13 +65,13 @@ function IconFrame({
 	);
 }
 
-export function EntryIcon({
+export function FileEntryGlyph({
 	entry,
 	size,
 	allEntries,
 	fill,
 }: {
-	entry: DirectoryBrowserEntry;
+	entry: FileEntry;
 	size?: number;
 	allEntries?: readonly SiblingListingEntry[];
 	fill?: boolean;
@@ -130,132 +123,39 @@ export function EntryIcon({
 			);
 		}
 	}
+	// A preset icon is a preset-domain value, so its rendering is the preset
+	// feature's debt (`management/preset/preset-icon.tsx`).
 	if (entry.icon) {
-		const rendered = renderPresetIcon(entry.icon, s, fill);
-		if (rendered) return rendered;
+		const content = <PresetIconContent icon={entry.icon} size={s} />;
+		if (content) {
+			return (
+				<IconFrame size={s} fill={fill}>
+					{content}
+				</IconFrame>
+			);
+		}
 	}
-	if (entry.fileType === "video") {
-		return (
-			<IconFrame size={s} fill={fill}>
-				<Icon icon={Film} size={s} className={fullSizeClass} aria-hidden />
-			</IconFrame>
-		);
-	}
-	if (entry.fileType === "audio") {
-		return (
-			<IconFrame size={s} fill={fill}>
-				<Icon icon={Music} size={s} className={fullSizeClass} aria-hidden />
-			</IconFrame>
-		);
-	}
-	if (entry.fileType === "image") {
-		return (
-			<IconFrame size={s} fill={fill}>
-				<Icon icon={ImageIcon} size={s} className={fullSizeClass} aria-hidden />
-			</IconFrame>
-		);
-	}
-	if (entry.fileType === "image-sequence") {
-		return (
-			<IconFrame size={s} fill={fill}>
-				<Icon icon={Film} size={s} className={fullSizeClass} aria-hidden />
-			</IconFrame>
-		);
-	}
-	if (entry.fileType === "ae-preset") {
-		return (
-			<IconFrame size={s} fill={fill}>
-				<Icon icon={Film} size={s} className={fullSizeClass} aria-hidden />
-			</IconFrame>
-		);
-	}
-	if (entry.fileType === "script") {
-		return (
-			<IconFrame size={s} fill={fill}>
-				<Icon icon={Film} size={s} className={fullSizeClass} aria-hidden />
-			</IconFrame>
-		);
-	}
-	if (entry.fileType === "plugin") {
-		return (
-			<IconFrame size={s} fill={fill}>
-				<Icon icon={Film} size={s} className={fullSizeClass} aria-hidden />
-			</IconFrame>
-		);
-	}
-	if (entry.fileType === "mogrt") {
-		return (
-			<IconFrame size={s} fill={fill}>
-				<Icon icon={Film} size={s} className={fullSizeClass} aria-hidden />
-			</IconFrame>
-		);
-	}
-	const IconComponent: LucideIcon = entry.isDirectory ? Folder : File;
 	return (
 		<IconFrame size={s} fill={fill}>
-			<Icon
-				icon={IconComponent}
+			<FileTypeGlyph
+				fileType={entry.fileType}
+				isDirectory={entry.isDirectory}
 				size={s}
 				className={fullSizeClass}
-				aria-hidden
 			/>
 		</IconFrame>
 	);
 }
 
-function renderPresetIcon(
-	icon: PresetIcon,
-	size: number,
-	fill?: boolean,
-): JSX.Element | null {
-	if (icon.type === "text") {
-		const t = icon.param.text;
-		return (
-			<IconFrame size={size} fill={fill}>
-				<span
-					className={monoTextClass}
-					style={fill ? undefined : { fontSize: size * 0.52 }}
-				>
-					{t.slice(0, 2)}
-				</span>
-			</IconFrame>
-		);
-	}
-	if (icon.type === "emoji") {
-		const e = icon.param.emoji;
-		return (
-			<IconFrame size={size} fill={fill}>
-				<span className={emojiTextClass}>{e}</span>
-			</IconFrame>
-		);
-	}
-	if (icon.type === "image") {
-		const src = icon.param.src.trim();
-		if (!src) return null;
-		return (
-			<IconFrame size={size} fill={fill}>
-				<img
-					src={src}
-					alt=""
-					decoding="async"
-					draggable={false}
-					className={coverImageClass}
-				/>
-			</IconFrame>
-		);
-	}
-	return null;
-}
-
-export function MediaCardContent({
+export function FileEntryMedia({
 	entry,
 }: {
-	entry: DirectoryBrowserEntry;
+	entry: FileEntry;
 }): JSX.Element | null {
 	if (entry.fileType === "image" && entry.previewUrl?.trim()) {
 		// `previewUrl` is already a browser-ready URL (`file:` from
 		// file-browser-service, `data:` in previews) — pass it through like
-		// `EntryIcon` does instead of re-validating it as a file path, which
+		// `FileEntryGlyph` does instead of re-validating it as a file path, which
 		// would reject `data:` URIs and collapse to `src=""`.
 		return (
 			<img
