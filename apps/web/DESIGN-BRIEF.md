@@ -204,3 +204,14 @@ review-309 で「プリセットタイルが同一の低コントラストカー
 - **素材の役割分離**: `preset-grid.png`（名前付きプリセットタイル行、Hero/flagship）、`preset-selected.png`（選択タイル + info widget の関係、専用「Hover, select, run」セクション/行）、`workspace-widgets.png`（utility widget 帯）、`presets-dialog.png`（Local Presets 実ダイアログ）。同一ワークスペース画像の使い回しを廃止。
 - **正直な検証範囲の明記**: コピーと figcaption で「hover で info widget に詳細、Shift+click で選択、プレーンクリックで実行（実プロジェクトで検証済み）」を記述。タイルアイコンは撮影 fixture が設定した説明用グリフであり、実 `.ffx` の動作を可視化したものではない旨を明記。実行の視覚的 Before/After は未取得のため捏造しない。
 - **未解決の分離**: Add Widget ダイアログは CEP ホストが新規 modeless extension を spawn しない環境ブロッカー（#322 記録済み）のため既存検証済み `add-widget.png` を継続使用。LP 収束を妨げない。
+
+## Revision (#331): product UI components rendered on the web
+
+スクリーンショット依存を部分的に脱却し、モノレポの実装をWebで直接再利用する第一歩。
+
+- **再利用経路**: `@ty-plus/product` エイリアス（vite + tsconfig paths）で `src/` 配下の製品モジュールを Web から import 可能にした。現時点の採用対象は `CanvasEasingIcon`（canvas 描画のみ・ホスト非依存）のみ。Tile / glyph / workspace grid / dialogs は storage・widget runtime・i18n・CEP transport へ依存するため、ホストアダプタ分離が済むまでスクリーンショットを併用する（後続 Issue で分解予定）。
+- **Web デモ**: `components/PresetStage.tsx` — 製品の `CanvasEasingIcon` で描くプリセットタイル群 + 選択状態（ローカル React state）+ info readout。`lib/demo-presets.ts` の easing 曲線は fixture 定義の説明用グリフであり、実 `.ffx` 解析結果ではないことをコピーで明記。AE 実行は Web では偽装しない。
+- **Hero**: スクリーンショットを `PresetRail`（実イージングアイコンの staggered 構成）へ置換。DOM 順 copy → visual → actions を維持。
+- **Interaction セクション**: `preset-selected.png` を廃し、操作可能な `PresetStage` へ置換。実機検証済みの状態遷移（hover/Shift+click/実行）はコピーで説明し、Web 側は選択状態のみを実装。
+- **Features**: `featureRow` テンプレートの反復をやめ、flagship を全幅 `PresetStage` バンド、以降は media 位置・span・密度の異なる非対称行 + text-only 行へ再構成。
+- **スクリーンショットの残存用途**: workspace 全体・実ダイアログ・選択状態の実機関係性は、Web 非対応コンポーネントの証拠として引き続き使用。
