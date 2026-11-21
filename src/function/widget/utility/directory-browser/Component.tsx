@@ -1,5 +1,13 @@
-import { Button, Icon, IconButton, isIMEComposing } from "@ty-plus/ui";
-import { ChevronRight, FolderOpen, Play } from "lucide-react";
+import {
+	Button,
+	Icon,
+	IconButton,
+	isIMEComposing,
+	ListSelect,
+	PathField,
+	SearchField,
+} from "@ty-plus/ui";
+import { ChevronRight, FolderOpen, Play, Search } from "lucide-react";
 import {
 	type CSSProperties,
 	type JSX,
@@ -26,6 +34,8 @@ import {
 	ICON_TILE_ASPECT_LS_KEY,
 } from "@/management/preset";
 import { isPresetAssetMissing } from "@/management/preset/asset-health";
+import { PresetIconTile } from "@/management/preset/components/PresetIconTile";
+import { PresetListRow } from "@/management/preset/components/PresetListRow";
 import type {
 	Preset,
 	PresetRecord,
@@ -51,23 +61,21 @@ import {
 	type FileBrowserFileType,
 } from "@/management/storage/file-browser-service";
 import {
-	DirectoryBrowser,
-	type DirectoryBrowserEntry,
-} from "@/management/storage/ui/DirectoryBrowser";
+	type FileEntry,
+	FileEntryList,
+} from "@/management/storage/ui/FileEntryList";
 import { executeWorkspacePresetForWindow } from "@/management/workspace/runtime";
 import type { SurfaceState } from "@/management/workspace/state";
 import { useCatalogViewMode } from "@/shared/util/catalog-view-mode";
 import { useIconGridScale } from "@/shared/util/icon-grid-scale";
 import { useTileAspect } from "@/shared/util/tile-aspect";
 import { css } from "@/styled-system/css";
-import { BrowserHeader } from "./BrowserHeader";
-import { CatalogPresetIconTile } from "./CatalogPresetIconTile";
-import { CatalogPresetListRow } from "./CatalogPresetListRow";
 import { CollapsibleGroupHeader } from "./CollapsibleGroupHeader";
 import { EntryThumb } from "./EntryThumb";
+import { renderFilterPanel } from "./filter-panel";
 import { formatPathForMode } from "./format-path";
 import { DEFAULT_CARD_SIZE, useCardZoom } from "./hooks/useCardZoom";
-import type { FileBrowserBrowseMode, FileBrowserFilter } from "./lib/types";
+import type { FileBrowserBrowseMode, FileBrowserFilter } from "./types";
 import {
 	DRIVES_SENTINEL,
 	isAtDriveRoot,
@@ -77,6 +85,7 @@ import {
 	type GroupedCatalogPresets,
 	partitionCatalogPresetsByGroup,
 } from "./partition-catalog-presets";
+import { renderToolbar } from "./toolbar";
 
 async function resolvePresetForRun(presetId: string): Promise<Preset> {
 	const preset = await getPreset(presetId);
@@ -1146,10 +1155,10 @@ export function DirectoryBrowserWidget({
 		fileBrowserHiddenExtensions,
 	]);
 
-	// Kit entries for the unified DirectoryBrowser (filesystem mode only).
+	// Kit entries for the unified FileEntryList (filesystem mode only).
 	// The ".." parent row is excluded: the kit renders its own up-tile.
-	const fsKitEntries = useMemo((): DirectoryBrowserEntry[] => {
-		const out: DirectoryBrowserEntry[] = [];
+	const fsKitEntries = useMemo((): FileEntry[] => {
+		const out: FileEntry[] = [];
 		for (const e of fsVisible) {
 			if (e.name === ".." && e.isDirectory) {
 				continue;
@@ -1425,111 +1434,213 @@ export function DirectoryBrowserWidget({
 				domPrefix="directory-browser"
 				scrollMode="list-only"
 				headerRow={
-					<BrowserHeader
-						searchInputRef={searchInputRef}
-						searchDraft={searchDraft}
-						onSearchDraftChange={setSearchDraft}
-						onClearSearch={clearSearchAndNotifyWorkspace}
-						searchInlineTrailing={searchInlineTrailing}
-						searchPlaceholder={
-							fileBrowserBrowseMode === "presetsCatalog"
-								? t("directoryBrowser.search.placeholderCatalog")
-								: t("directoryBrowser.search.placeholderFolder")
-						}
-						onPathDraftChange={setPathDraft}
-						onCommitPath={commitPathDraft}
-						onBrowseFolders={
-							isCep &&
-							typeof window !== "undefined" &&
-							canUseCepNodeFileBrowser(window)
-								? openFolderPicker
-								: undefined
-						}
-						pathPickerPrompt={t("directoryBrowser.path.pickFolderPrompt")}
-						pathPickerAriaLabel={t("directoryBrowser.path.pickFolderAria")}
-						pathInputPlaceholder={t("directoryBrowser.path.inputPlaceholder")}
-						pathInputTitle={t("directoryBrowser.path.inputTitle")}
-						browseMode={fileBrowserBrowseMode}
-						browseModeOptions={browseModeOptions}
-						onBrowseModeChange={applyBrowseMode}
-						browseModeSelectAriaLabel={t(
-							"directoryBrowser.browseModeSelectAria",
-						)}
-						viewMode={viewMode}
-						onViewModeChange={setViewMode}
-						goUpAvailable={canGoUpFromCurrent}
-						filtersExpanded={fileBrowserFiltersExpanded}
-						onRefresh={() => {
-							void refreshFileBrowser();
-						}}
-						onGoUp={handleGoUp}
-						onBrowseDrives={handleBrowseDrives}
-						onToggleFilters={() =>
-							setFileBrowserFiltersExpanded((prev) => !prev)
-						}
-						detailedFiltersLabel={t("directoryBrowser.toolbar.detailedFilters")}
-						listViewAriaLabel={t("directoryBrowser.toolbar.listView")}
-						iconViewAriaLabel={t("directoryBrowser.toolbar.iconView")}
-						viewModeLegend={t("directoryBrowser.toolbar.viewModeLegend")}
-						refreshLabel={t("directoryBrowser.toolbar.refresh")}
-						goUpLabel={t("directoryBrowser.entry.goUp")}
-						browseDrivesLabel={t("directoryBrowser.entry.browseDrives")}
-						coarseFilter={fileBrowserFilter}
-						onCoarseFilterChange={setFileBrowserFilter}
-						hiddenExtensions={fileBrowserHiddenExtensions}
-						onToggleHiddenExtension={(ext) =>
-							setFileBrowserHiddenExtensions((prev) =>
-								prev.includes(ext)
-									? prev.filter((x) => x !== ext)
-									: [...prev, ext],
-							)
-						}
-						hiddenFileTypes={fileBrowserHiddenFileTypes}
-						onToggleHiddenFileType={(ft) =>
-							setFileBrowserHiddenFileTypes((prev) =>
-								prev.includes(ft)
-									? prev.filter((x) => x !== ft)
-									: [...prev, ft],
-							)
-						}
-						catalogHiddenPresetTypes={fileBrowserCatalogHiddenPresetTypes}
-						onToggleCatalogHiddenPresetType={(pt) =>
-							setFileBrowserCatalogHiddenPresetTypes((prev) =>
-								prev.includes(pt)
-									? prev.filter((x) => x !== pt)
-									: [...prev, pt],
-							)
-						}
-						recursiveSearch={fileBrowserRecursiveSearch}
-						onToggleRecursiveSearch={() =>
-							setFileBrowserRecursiveSearch((prev) => !prev)
-						}
-						pathDisplay={formatPathForMode(
-							fileBrowserBrowseMode,
-							pathDraft,
-							anchorRootsForPathField,
-						)}
-						typeListLabel={t("directoryBrowser.filters.typeList")}
-						quickFilterAriaLabel={t("directoryBrowser.filters.quickFilterAria")}
-						optionAllLabel={t("directoryBrowser.filters.optionAll")}
-						optionMediaLabel={t("directoryBrowser.filters.optionMedia")}
-						optionPresetsLabel={t("directoryBrowser.filters.optionPresets")}
-						optionScriptsLabel={t("directoryBrowser.filters.optionScripts")}
-						optionFontsLabel={t("directoryBrowser.filters.optionFonts")}
-						extensionHideLabel={t("directoryBrowser.filters.extensionHide")}
-						fileTypeHideLabel={t("directoryBrowser.filters.fileTypeHide")}
-						catalogPresetTypesHideLabel={t(
-							"directoryBrowser.filters.catalogPresetTypesHide",
-						)}
-						anchorsNoFiltersLabel={t(
-							"directoryBrowser.filters.anchorsNoFilters",
-						)}
-						recursiveSearchLabel={(state) =>
-							t("directoryBrowser.filters.recursiveSearch", { state })
-						}
-						recursiveOnLabel={t("directoryBrowser.filters.recursiveOn")}
-						recursiveOffLabel={t("directoryBrowser.filters.recursiveOff")}
-					/>
+					<div
+						className={css({
+							display: "flex",
+							minWidth: 0,
+							flexDirection: "column",
+							gap: "2.5",
+						})}
+					>
+						<div
+							className={css({
+								display: "flex",
+								minWidth: 0,
+								alignItems: "stretch",
+								gap: "2",
+							})}
+						>
+							<div
+								className={css({
+									display: "flex",
+									minHeight: 0,
+									minWidth: 0,
+									flex: "1",
+									flexDirection: "column",
+									gap: "2.5",
+								})}
+							>
+								<div
+									data-directory-browser-search
+									className={css({ minHeight: 0, minWidth: 0 })}
+								>
+									<SearchField
+										uiSize="md"
+										className={css({ minWidth: 0 })}
+										icon={Search}
+										inputRef={searchInputRef}
+										placeholder={
+											fileBrowserBrowseMode === "presetsCatalog"
+												? t("directoryBrowser.search.placeholderCatalog")
+												: t("directoryBrowser.search.placeholderFolder")
+										}
+										value={searchDraft}
+										onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+											setSearchDraft(e.currentTarget.value);
+										}}
+										showClearButton
+										onClear={clearSearchAndNotifyWorkspace}
+										showInlineTrailing
+										inlineTrailing={searchInlineTrailing}
+									/>
+								</div>
+								<PathField
+									value={formatPathForMode(
+										fileBrowserBrowseMode,
+										pathDraft,
+										anchorRootsForPathField,
+									)}
+									onChange={setPathDraft}
+									onBrowse={
+										isCep &&
+										typeof window !== "undefined" &&
+										canUseCepNodeFileBrowser(window)
+											? openFolderPicker
+											: undefined
+									}
+									browseSlot={<Icon icon={FolderOpen} size={12} />}
+									browseAriaLabel={t("directoryBrowser.path.pickFolderAria")}
+									placeholder={t("directoryBrowser.path.inputPlaceholder")}
+									uiSize="md"
+									className={css({ minWidth: 0 })}
+									inputProps={{
+										title: t("directoryBrowser.path.inputTitle"),
+										onKeyDown: (
+											e: React.KeyboardEvent<HTMLInputElement>,
+										): void => {
+											if (isIMEComposing(e)) return;
+											if (e.key === "Enter") {
+												e.preventDefault();
+												commitPathDraft();
+											}
+										},
+									}}
+								/>
+							</div>
+							<div
+								className={css({
+									display: "flex",
+									minHeight: 0,
+									flexShrink: 0,
+									flexDirection: "column",
+									gap: "2.5",
+									alignSelf: "stretch",
+								})}
+							>
+								{renderToolbar({
+									goUpAvailable: canGoUpFromCurrent,
+									filtersExpanded: fileBrowserFiltersExpanded,
+									onRefresh: () => {
+										void refreshFileBrowser();
+									},
+									onGoUp: handleGoUp,
+									onBrowseDrives: handleBrowseDrives,
+									onToggleFilters: () =>
+										setFileBrowserFiltersExpanded((prev) => !prev),
+									viewMode,
+									onViewModeChange: setViewMode,
+									detailedFiltersLabel: t(
+										"directoryBrowser.toolbar.detailedFilters",
+									),
+									listViewAriaLabel: t("directoryBrowser.toolbar.listView"),
+									iconViewAriaLabel: t("directoryBrowser.toolbar.iconView"),
+									viewModeLegend: t("directoryBrowser.toolbar.viewModeLegend"),
+									refreshLabel: t("directoryBrowser.toolbar.refresh"),
+									goUpLabel: t("directoryBrowser.entry.goUp"),
+									browseDrivesLabel: t("directoryBrowser.entry.browseDrives"),
+								})}
+								<ListSelect
+									className={css({ minWidth: 0 })}
+									uiSize="sm"
+									value={fileBrowserBrowseMode}
+									options={
+										browseModeOptions as {
+											value: string;
+											label: string;
+										}[]
+									}
+									onChange={(next: string) =>
+										applyBrowseMode(next as FileBrowserBrowseMode)
+									}
+									aria-label={t("directoryBrowser.browseModeSelectAria")}
+								/>
+							</div>
+						</div>
+						{fileBrowserFiltersExpanded ? (
+							<div
+								className={css({
+									display: "flex",
+									minWidth: 0,
+									flexDirection: "column",
+									gap: "2",
+									borderRadius: "shell-sm",
+									borderWidth: "1px",
+									borderStyle: "solid",
+									borderColor: "border.default",
+									backgroundColor: "surface.widget",
+									opacity: 0.4,
+									padding: "2",
+								})}
+							>
+								{renderFilterPanel({
+									browseMode: fileBrowserBrowseMode,
+									coarseFilter: fileBrowserFilter,
+									onCoarseFilterChange: setFileBrowserFilter,
+									hiddenExtensions: fileBrowserHiddenExtensions,
+									onToggleHiddenExtension: (ext: string) =>
+										setFileBrowserHiddenExtensions((prev) =>
+											prev.includes(ext)
+												? prev.filter((x) => x !== ext)
+												: [...prev, ext],
+										),
+									hiddenFileTypes: fileBrowserHiddenFileTypes,
+									onToggleHiddenFileType: (ft: FileBrowserFileType) =>
+										setFileBrowserHiddenFileTypes((prev) =>
+											prev.includes(ft)
+												? prev.filter((x) => x !== ft)
+												: [...prev, ft],
+										),
+									catalogHiddenPresetTypes: fileBrowserCatalogHiddenPresetTypes,
+									onToggleCatalogHiddenPresetType: (pt: PresetType) =>
+										setFileBrowserCatalogHiddenPresetTypes((prev) =>
+											prev.includes(pt)
+												? prev.filter((x) => x !== pt)
+												: [...prev, pt],
+										),
+									recursiveSearch: fileBrowserRecursiveSearch,
+									onToggleRecursiveSearch: () =>
+										setFileBrowserRecursiveSearch((prev) => !prev),
+									typeListLabel: t("directoryBrowser.filters.typeList"),
+									quickFilterAriaLabel: t(
+										"directoryBrowser.filters.quickFilterAria",
+									),
+									optionAllLabel: t("directoryBrowser.filters.optionAll"),
+									optionMediaLabel: t("directoryBrowser.filters.optionMedia"),
+									optionPresetsLabel: t(
+										"directoryBrowser.filters.optionPresets",
+									),
+									optionScriptsLabel: t(
+										"directoryBrowser.filters.optionScripts",
+									),
+									optionFontsLabel: t("directoryBrowser.filters.optionFonts"),
+									extensionHideLabel: t(
+										"directoryBrowser.filters.extensionHide",
+									),
+									fileTypeHideLabel: t("directoryBrowser.filters.fileTypeHide"),
+									catalogPresetTypesHideLabel: t(
+										"directoryBrowser.filters.catalogPresetTypesHide",
+									),
+									anchorsNoFiltersLabel: t(
+										"directoryBrowser.filters.anchorsNoFilters",
+									),
+									recursiveSearchLabel: (state: string) =>
+										t("directoryBrowser.filters.recursiveSearch", { state }),
+									recursiveOnLabel: t("directoryBrowser.filters.recursiveOn"),
+									recursiveOffLabel: t("directoryBrowser.filters.recursiveOff"),
+								})}
+							</div>
+						) : null}
+					</div>
 				}
 			>
 				{err ? <p className={emptyStateErrorClass}>{err}</p> : null}
@@ -1723,7 +1834,7 @@ export function DirectoryBrowserWidget({
 									>
 										<ul className={fileListClass}>
 											{g.presets.map((p: Preset) => (
-												<CatalogPresetListRow
+												<PresetListRow
 													key={p.id}
 													preset={p}
 													presetGlyphSiblingProps={presetGlyphSiblingProps}
@@ -1759,7 +1870,7 @@ export function DirectoryBrowserWidget({
 										>
 											<div className={ICON_GRID_CLASS}>
 												{g.presets.map((p: Preset) => (
-													<CatalogPresetIconTile
+													<PresetIconTile
 														key={p.id}
 														preset={p}
 														iconTileAspect={iconTileAspect}
@@ -1793,7 +1904,7 @@ export function DirectoryBrowserWidget({
 										{viewMode === "list" ? (
 											<ul className={fileListClass}>
 												{partitionedCatalog.ungrouped.map((p: Preset) => (
-													<CatalogPresetListRow
+													<PresetListRow
 														key={p.id}
 														preset={p}
 														presetGlyphSiblingProps={presetGlyphSiblingProps}
@@ -1823,7 +1934,7 @@ export function DirectoryBrowserWidget({
 											>
 												<div className={ICON_GRID_CLASS}>
 													{partitionedCatalog.ungrouped.map((p: Preset) => (
-														<CatalogPresetIconTile
+														<PresetIconTile
 															key={p.id}
 															preset={p}
 															iconTileAspect={iconTileAspect}
@@ -1850,7 +1961,7 @@ export function DirectoryBrowserWidget({
 								) : viewMode === "list" ? (
 									<ul className={fileListClass}>
 										{partitionedCatalog.ungrouped.map((p: Preset) => (
-											<CatalogPresetListRow
+											<PresetListRow
 												key={p.id}
 												preset={p}
 												presetGlyphSiblingProps={presetGlyphSiblingProps}
@@ -1880,7 +1991,7 @@ export function DirectoryBrowserWidget({
 									>
 										<div className={ICON_GRID_CLASS}>
 											{partitionedCatalog.ungrouped.map((p: Preset) => (
-												<CatalogPresetIconTile
+												<PresetIconTile
 													key={p.id}
 													preset={p}
 													iconTileAspect={iconTileAspect}
@@ -1915,7 +2026,7 @@ export function DirectoryBrowserWidget({
 						className={css({ minWidth: 0 })}
 						style={{ "--ty-card-zoom-size": `${cardSize}px` } as CSSProperties}
 					>
-						<DirectoryBrowser
+						<FileEntryList
 							entries={fsKitEntries}
 							loading={false}
 							canGoUp={canGoUpFromCurrent}
