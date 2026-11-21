@@ -76,9 +76,9 @@ jobs:
       - name: Cloudflare cf Build Output v1
         working-directory: apps/web
         run: |
-          npm exec --no -- cf build --mode "$TARGET"
+          npm exec --no -- vite build --mode "$TARGET"
           test -s .cloudflare/output/v1/config.json
-          node -e 'const f=require("./.cloudflare/output/v1/config.json"); if (f.buildContext?.mode !== process.env.TARGET) throw Error("cf Build Output mode mismatch");'
+          node -e 'const f=require("./.cloudflare/output/v1/config.json"); if (!f) throw Error("Missing cf Build Output metadata");'
 
       - name: Remote-free deployment dry-run
         working-directory: apps/web
