@@ -355,7 +355,7 @@ What was proven:
   `sb-snapshot-all.ts` PNGs were in the "empty" bucket
   (`BackgroundPreview`, `DownloadProgressIconButton`,
   `PresetLibrarySidePanel`, `BrowserFilterPanel`, `EntryGlyph`,
-  `EntryThumb`, `CatalogPresetIconTile`, `SearchField`, `Settings`)
+  `EntryThumb`, `PresetIconTile`, `SearchField`, `Settings`)
   and stories whose PNGs were "missing" (`Sanity/DecoratorChain`).
   Every one of them renders correctly under the official path.
 - Root cause is identified to a **single common-cause failure mode** in
@@ -609,8 +609,7 @@ LD_LIBRARY_PATH=~/chrome-libs/usr/lib/x86_64-linux-gnu \
     src/management/online/catalog/download/DownloadProgressIconButton.stories.tsx \
     src/management/online/catalog/PresetLibrarySidePanel.stories.tsx \
     src/function/widget/utility/directory-browser/BrowserFilterPanel.stories.tsx \
-    src/function/widget/utility/directory-browser/EntryGlyph.stories.tsx \
-    src/function/widget/utility/directory-browser/CatalogPresetIconTile.stories.tsx \
+    src/management/preset/components/PresetIconTile.stories.tsx \
     src/function/widget/utility/directory-browser/EntryThumb.stories.tsx \
     src/management/setting/dialog/Settings.stories.tsx
 ```

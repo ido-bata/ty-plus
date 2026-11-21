@@ -27,13 +27,13 @@
  *
  * - `createIntersectionObserverMock` / `restoreIntersectionObserver`
  *   are taken from
- *   `src/function/widget/utility/directory-browser/hooks/useIntersectionVisible.test.tsx`.
+ *   `src/management/storage/thumbnail/useIntersectionVisible.test.tsx`.
  *   Without it, jsdom does not synchronously fire the intersection
  *   callback that flips `isVisible=true`, leaving `useThumbnail` stuck
  *   in `idle` for the resolved-state assertions below.
  * - `makeGatewayMock` / `withGateway` / `successfulBatch` / `makeEntry`
  *   mirror the helpers in
- *   `src/function/widget/utility/directory-browser/hooks/useThumbnail.test.tsx`,
+ *   `src/management/storage/thumbnail/useThumbnail.test.tsx`,
  *   so the IPC layer is wired through the real gateway contract and
  *   the resolved URLs reach `ThumbnailTile` as the real hook would
  *   surface them (`file://` URLs produced by `toFileUrl`).
@@ -45,8 +45,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { AfterEffectsFilesGatewayProvider } from "@/management/ae/files/gateway-context";
 import type { AfterEffectsFilesRuntimeGateway } from "@/management/ae/files/runtime-gateway-impl";
 import type { FileBrowserEntry } from "@/management/storage/file-browser-service";
-import { __resetThumbnailStateForTests } from "./hooks/useThumbnail";
 import { ThumbnailTile } from "./ThumbnailTile";
+import { __resetThumbnailStateForTests } from "./useThumbnail";
 
 // ----- IntersectionObserver mock (from useIntersectionVisible.test.tsx) -----
 
