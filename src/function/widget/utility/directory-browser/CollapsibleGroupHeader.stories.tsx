@@ -23,7 +23,7 @@ const SampleChild = (): ReactNode => (
 );
 
 const meta = {
-	title: "DirectoryBrowser/CollapsibleGroupHeader",
+	title: "FileEntryList/CollapsibleGroupHeader",
 	component: CollapsibleGroupHeader,
 	args: {
 		title: "Glow Effects",
