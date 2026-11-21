@@ -11,6 +11,8 @@ import {
 	grid,
 	section,
 	span4,
+	span5,
+	span7,
 	span8,
 	stack,
 } from "../styles/layout";
@@ -55,7 +57,7 @@ export const Route = createFileRoute("/")({
 				content:
 					"Free, open-source, local-first CEP extension for Adobe After Effects.",
 			},
-			{ property: "og:image", content: `${SITE.url}/images/hero.png` },
+			{ property: "og:image", content: `${SITE.url}/images/preset-grid.png` },
 		],
 	}),
 	component: HomePage,
@@ -77,6 +79,8 @@ const sectionLabel = css({
 	textTransform: "uppercase",
 	color: "text.muted",
 });
+
+const mediaLead = css({ order: { md: -1 } });
 
 const dialogPair = css({
 	display: "grid",
@@ -146,10 +150,10 @@ function HomePage() {
 					<figure className={heroFigure}>
 						<MediaFrame>
 							<img
-								src="/images/hero.png"
-								alt="The ty-plus workspace with named preset tiles bound from the local preset catalog"
-								width={3412}
-								height={2044}
+								src="/images/preset-grid.png"
+								alt="Named preset tiles on the ty-plus workspace grid — fade in, pop in, slide in and other animation presets from the local catalog"
+								width={2160}
+								height={820}
 								fetchPriority="high"
 								className={s.shotImg}
 							/>
@@ -206,14 +210,61 @@ function HomePage() {
 					<figure className={cx(s.figure, span8)}>
 						<MediaFrame>
 							<img
-								src="/images/workspace.png"
-								alt="The ty-plus panel toolbar and workspace widgets — quick actions, easing curve, alignment, and anchor point tools"
-								width={3412}
-								height={2044}
+								src="/images/workspace-widgets.png"
+								alt="Utility widgets on the ty-plus workspace — quick actions, easing curve, alignment, and anchor point tools"
+								width={2160}
+								height={1040}
 								loading="lazy"
 								className={s.shotImg}
 							/>
 						</MediaFrame>
+					</figure>
+				</div>
+			</section>
+
+			{/* Preset interaction — the verified state transition: hover and
+			    selection feed the info widget, a plain click runs the preset
+			    on the active layer. Image leads on md+; text follows in DOM
+			    order so the explanation reads first on mobile. */}
+			<section
+				className={cx(
+					container({ size: "content" }),
+					section({ variant: "band" }),
+				)}
+				aria-label="Preset interaction"
+			>
+				<div className={grid({ gap: 3 })}>
+					<div className={span5}>
+						<div className={stack({ gap: 3 })}>
+							<h2 className={s.h2}>Hover, select, run</h2>
+							<p className={s.body}>
+								Hover a preset tile and the info widget shows what it does.
+								Shift-click to select tiles for inspection, then a plain click
+								applies the preset to the active layer in After Effects —
+								verified end to end on a real project.
+							</p>
+							<p className={s.body}>
+								Tile icons in these captures are illustrative glyphs; execution
+								was confirmed by the effects added to the composition, not by
+								the icon artwork.
+							</p>
+						</div>
+					</div>
+					<figure className={cx(s.figure, span7, mediaLead)}>
+						<MediaFrame>
+							<img
+								src="/images/preset-selected.png"
+								alt="A selected preset tile with the info widget showing the preset's name, kind, and source"
+								width={2160}
+								height={410}
+								loading="lazy"
+								className={s.shotImg}
+							/>
+						</MediaFrame>
+						<figcaption className={s.figcaption}>
+							Selected tile — the info widget shows the preset name, kind, and
+							selection source.
+						</figcaption>
 					</figure>
 				</div>
 			</section>
@@ -247,7 +298,7 @@ function HomePage() {
 						<figure className={s.figure}>
 							<MediaFrame>
 								<img
-									src="/images/preset-dialog.png"
+									src="/images/presets-dialog.png"
 									alt="The Local Presets browser in ty-plus listing presets from the local catalog"
 									width={1760}
 									height={1520}
