@@ -2,7 +2,7 @@ import type { FilePickStep } from "@/function/onboarding/steps-data";
 import type { PresetType } from "@/management/preset/contract";
 import { coercePersistedPresetIcon } from "@/management/preset/icon-data";
 import { readScopedDirectory } from "@/management/storage/read/scoped-directory";
-import type { DirectoryBrowserEntry } from "@/management/storage/ui/DirectoryBrowser";
+import type { FileEntry } from "@/management/storage/ui/file-entry/FileEntryList";
 
 export type OnboardingDirectoryReadOptions = {
 	win: Window;
@@ -21,7 +21,7 @@ export const readOnboardingPresetDirectory = async ({
 	rootPath,
 	dirPath,
 	allowedExtensions,
-}: OnboardingDirectoryReadOptions): Promise<DirectoryBrowserEntry[]> => {
+}: OnboardingDirectoryReadOptions): Promise<FileEntry[]> => {
 	const presetType = presetTypeForStep(kind);
 	const icon = coercePersistedPresetIcon(presetType, undefined);
 	const rows = await readScopedDirectory({

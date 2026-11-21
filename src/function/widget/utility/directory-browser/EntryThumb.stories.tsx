@@ -64,7 +64,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 // useThumbnail() and useFolderPreview() resolve to idle under the
-// Storybook decorators, so all variants render the EntryGlyph fallback.
+// Storybook decorators, so all variants render the file-type glyph fallback.
 export const Default: Story = {};
 
 export const Folder: Story = {

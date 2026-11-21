@@ -2,8 +2,8 @@ import { cx } from "@ty-plus/ui";
 import type { JSX } from "react";
 import type { FileBrowserEntry } from "@/management/storage/file-browser-service";
 import { css } from "@/styled-system/css";
-import { useIntersectionVisible } from "./hooks/useIntersectionVisible";
-import { useThumbnail } from "./hooks/useThumbnail";
+import { useIntersectionVisible } from "./useIntersectionVisible";
+import { useThumbnail } from "./useThumbnail";
 
 /**
  * Image tile that renders a thumbnail via the gateway

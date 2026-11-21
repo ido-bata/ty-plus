@@ -1,18 +1,18 @@
 import type { CepMenuPayload } from "@/management/dialog/dialogs/context-menu";
 import type {
-	DirectoryBrowserEntry,
-	DirectoryBrowserSelectionKind,
-	DirectoryBrowserShellSelectionMode,
-	DirectoryBrowserViewMode,
-} from "@/management/storage/ui/DirectoryBrowser";
+	FileEntry,
+	FileEntryKind,
+	FileEntrySelectionMode,
+	FileEntryViewMode,
+} from "@/management/storage/ui/file-entry/FileEntryList";
 
-type DirectoryBrowserMenuSurface =
+type FileEntryMenuSurface =
 	| "onboarding"
 	| "settings-preview"
 	| "tool-shell"
 	| "widget";
 
-export type DirectoryBrowserMenuHit =
+export type FileEntryMenuHit =
 	| { target: "body" }
 	| { target: "entry"; kind: "dir" | "file"; path: string };
 
@@ -22,22 +22,22 @@ type DirectoryBrowserMenuContribution = {
 	enabled?: boolean;
 };
 
-export type DirectoryBrowserMenuContext = {
-	surface: DirectoryBrowserMenuSurface;
+export type FileEntryMenuContext = {
+	surface: FileEntryMenuSurface;
 	/** Reserved for icons-only items (e.g. aspect). Defaults to `"list"`. */
-	viewMode?: DirectoryBrowserViewMode;
-	selectionMode: DirectoryBrowserShellSelectionMode;
-	isSelected: (path: string, kind: DirectoryBrowserSelectionKind) => boolean;
+	viewMode?: FileEntryViewMode;
+	selectionMode: FileEntrySelectionMode;
+	isSelected: (path: string, kind: FileEntryKind) => boolean;
 	canGoUp: boolean;
 	canRefresh: boolean;
 	contributions?: readonly DirectoryBrowserMenuContribution[];
 };
 
-export type DirectoryBrowserMenuActions = {
+export type FileEntryMenuActions = {
 	onRefresh: () => void;
 	onGoUp: () => void;
 	onOpenEntry: (path: string) => void;
-	onToggleSelected: (path: string, kind: DirectoryBrowserSelectionKind) => void;
+	onToggleSelected: (path: string, kind: FileEntryKind) => void;
 	onCustomAction?: (id: string) => void;
 };
 
@@ -49,8 +49,8 @@ const MENU_ID_PREFIX = "ty.dir-browser.";
  * menu must apply the same rule so it cannot select what the surface forbids.
  */
 const isSelectionKindAllowed = (
-	selectionMode: DirectoryBrowserShellSelectionMode,
-	kind: DirectoryBrowserSelectionKind,
+	selectionMode: FileEntrySelectionMode,
+	kind: FileEntryKind,
 ): boolean => {
 	if (selectionMode === "both") {
 		return true;
@@ -63,8 +63,8 @@ const isSelectionKindAllowed = (
  * Only the media kinds the menu understands (image / video / audio) are
  * emitted; directories and every other file type leave the attribute off.
  */
-export function directoryBrowserMenuFileType(
-	entry: DirectoryBrowserEntry,
+export function fileEntryMenuFileType(
+	entry: FileEntry,
 ): "image" | "video" | "audio" | undefined {
 	if (entry.isDirectory) return undefined;
 	const ft = entry.fileType;
@@ -81,9 +81,9 @@ const decodePath = (rest: string): string => {
 	}
 };
 
-export function parseDirectoryBrowserMenuHit(
+export function parseFileEntryMenuHit(
 	el: Element | null,
-): DirectoryBrowserMenuHit | null {
+): FileEntryMenuHit | null {
 	const body = el?.closest?.("[data-directory-browser-body]");
 	if (!body) {
 		return null;
@@ -100,9 +100,9 @@ export function parseDirectoryBrowserMenuHit(
 	return { target: "entry", kind, path };
 }
 
-export function buildDirectoryBrowserMenu(
-	ctx: DirectoryBrowserMenuContext,
-	hit: DirectoryBrowserMenuHit,
+export function buildFileEntryMenu(
+	ctx: FileEntryMenuContext,
+	hit: FileEntryMenuHit,
 ): CepMenuPayload {
 	const menu: CepMenuPayload["menu"] = [];
 	const pushRefresh = (): void => {
@@ -117,10 +117,7 @@ export function buildDirectoryBrowserMenu(
 			enabled: ctx.canGoUp,
 		});
 	};
-	const pushToggle = (
-		path: string,
-		kind: DirectoryBrowserSelectionKind,
-	): void => {
+	const pushToggle = (path: string, kind: FileEntryKind): void => {
 		if (!isSelectionKindAllowed(ctx.selectionMode, kind)) {
 			return;
 		}
@@ -153,10 +150,10 @@ export function buildDirectoryBrowserMenu(
 	return { menu };
 }
 
-export function handleDirectoryBrowserMenuSelect(
+export function handleFileEntryMenuSelect(
 	menuId: string,
-	ctx: DirectoryBrowserMenuContext,
-	actions: DirectoryBrowserMenuActions,
+	ctx: FileEntryMenuContext,
+	actions: FileEntryMenuActions,
 ): boolean {
 	if (menuId === `${MENU_ID_PREFIX}refresh`) {
 		actions.onRefresh();

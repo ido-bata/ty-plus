@@ -1,9 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { expect } from "storybook/test";
 import type { SiblingListingEntry } from "@/management/preset/sibling-thumbnail";
-
-import type { DirectoryBrowserEntry } from "./DirectoryBrowser";
-import { DirectoryBrowserIconCard } from "./DirectoryBrowserIconCard";
+import { FileEntryCard } from "./FileEntryCard";
+import type { FileEntry } from "./FileEntryList";
 
 const siblings: readonly SiblingListingEntry[] = [
 	{ name: "alpha.png", path: "/preset/root/alpha.png", isDirectory: false },
@@ -15,7 +14,7 @@ type Args = {
 	kind: "file" | "folder" | "image";
 };
 
-const buildEntry = (kind: Args["kind"]): DirectoryBrowserEntry => {
+const buildEntry = (kind: Args["kind"]): FileEntry => {
 	switch (kind) {
 		case "file":
 			return {
@@ -49,7 +48,7 @@ const baseArgs: Args = {
 };
 
 const renderCard = (args: Args) => (
-	<DirectoryBrowserIconCard
+	<FileEntryCard
 		entry={buildEntry(args.kind)}
 		isSelected={args.isSelected}
 		showCheckbox={args.showCheckbox}
@@ -62,7 +61,7 @@ const renderCard = (args: Args) => (
 );
 
 const meta = {
-	title: "DirectoryBrowser/DirectoryBrowserIconCard",
+	title: "Storage/FileEntry/FileEntryCard",
 	args: baseArgs,
 	argTypes: {
 		isSelected: { control: "boolean" },

@@ -42,8 +42,8 @@ import {
 } from "@/management/storage/file-browser-service";
 import { createLocalPresetCatalogId } from "@/management/storage/ids";
 import { assertOpaqueId } from "@/management/storage/ids.assert";
-import type { DirectoryBrowserEntry } from "@/management/storage/ui/DirectoryBrowser";
-import { DirectoryBrowser } from "@/management/storage/ui/DirectoryBrowser";
+import type { FileEntry } from "@/management/storage/ui/file-entry/FileEntryList";
+import { FileEntryList } from "@/management/storage/ui/file-entry/FileEntryList";
 import { readSettings } from "@/management/workspace/persistence/store";
 import { notifyPanelsAfterPresetSave } from "@/management/workspace/placement/notify-panels-after-preset-save";
 import { css, cx } from "@/styled-system/css";
@@ -242,12 +242,12 @@ function BrowserContent(props: {
 	activeTab: PresetAddFolderType;
 	loadingFiles: boolean;
 	browserError: string | null;
-	browserEntries: DirectoryBrowserEntry[];
+	browserEntries: FileEntry[];
 	canGoUp: boolean;
 	selectedPath: string;
 	onGoUp: () => void;
-	onEntryClick: (entry: DirectoryBrowserEntry) => void;
-	onEntryActivate: (entry: DirectoryBrowserEntry) => void;
+	onEntryClick: (entry: FileEntry) => void;
+	onEntryActivate: (entry: FileEntry) => void;
 	onToggleFileSelected: (path: string) => void;
 }): JSX.Element {
 	const {
@@ -282,7 +282,7 @@ function BrowserContent(props: {
 					</span>
 				</div>
 			) : (
-				<DirectoryBrowser
+				<FileEntryList
 					selectionMode="files"
 					entries={browserEntries}
 					loading={loadingFiles}
@@ -297,10 +297,6 @@ function BrowserContent(props: {
 						folders: 0,
 					}}
 					showSelectedSummary={Boolean(selectedPath.trim())}
-					viewMode="list"
-					onViewModeChange={() => {}}
-					scale={1}
-					aspect="square"
 					loadingLabel="Loading..."
 					emptyLabel="No files found"
 					upLabel="Go up"
@@ -543,7 +539,7 @@ export function PathDialog(): JSX.Element {
 		[activeTab],
 	);
 
-	const browserEntries = useMemo((): DirectoryBrowserEntry[] => {
+	const browserEntries = useMemo((): FileEntry[] => {
 		return rows.map((r) => ({
 			path: r.path,
 			name: r.name,
@@ -552,7 +548,7 @@ export function PathDialog(): JSX.Element {
 	}, [rows]);
 
 	const handleBrowserEntryClick = useCallback(
-		(entry: DirectoryBrowserEntry) => {
+		(entry: FileEntry) => {
 			if (entry.isDirectory) {
 				navigateToDir(entry.path);
 				return;
@@ -563,7 +559,7 @@ export function PathDialog(): JSX.Element {
 	);
 
 	const handleBrowserEntryActivate = useCallback(
-		(entry: DirectoryBrowserEntry) => {
+		(entry: FileEntry) => {
 			if (entry.isDirectory) {
 				navigateToDir(entry.path);
 				return;

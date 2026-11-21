@@ -10,52 +10,48 @@
 
 import { cleanup, render } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-
-import type { DirectoryBrowserEntry } from "./DirectoryBrowser";
-import {
-	EntryIcon,
-	MediaCardContent,
-} from "./DirectoryBrowserShell.entry-icon";
+import { FileEntryGlyph, FileEntryMedia } from "./FileEntryGlyph";
+import type { FileEntry } from "./FileEntryList";
 
 afterEach(cleanup);
 
 const DATA_URI =
 	"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'/>";
 
-describe("MediaCardContent", () => {
+describe("FileEntryMedia", () => {
 	it("renders a data-URI previewUrl as-is (no file-path revalidation)", () => {
-		const entry: DirectoryBrowserEntry = {
+		const entry: FileEntry = {
 			path: "/preset/root/alpha.png",
 			name: "alpha.png",
 			isDirectory: false,
 			fileType: "image",
 			previewUrl: DATA_URI,
 		};
-		const { container } = render(<MediaCardContent entry={entry} />);
+		const { container } = render(<FileEntryMedia entry={entry} />);
 		const img = container.querySelector("img");
 		expect(img).not.toBeNull();
 		expect(img?.getAttribute("src")).toBe(DATA_URI);
 	});
 
 	it("renders nothing for a video whose path cannot become a URL", () => {
-		const entry: DirectoryBrowserEntry = {
+		const entry: FileEntry = {
 			path: "relative/clip.mp4",
 			name: "clip.mp4",
 			isDirectory: false,
 			fileType: "video",
 		};
-		const { container } = render(<MediaCardContent entry={entry} />);
+		const { container } = render(<FileEntryMedia entry={entry} />);
 		expect(container.querySelector("video")).toBeNull();
 		expect(container.querySelector("img")).toBeNull();
 	});
 });
 
-describe("EntryIcon", () => {
+describe("FileEntryGlyph", () => {
 	it("falls back to the type icon when the sibling image path is not browser-resolvable", () => {
 		// `relative/alpha.png` has no drive letter or leading slash, so
 		// `imageSrcForBrowser` returns "" — the icon must not render
 		// `<img src="">`.
-		const entry: DirectoryBrowserEntry = {
+		const entry: FileEntry = {
 			path: "relative/alpha.ffx",
 			name: "alpha.ffx",
 			isDirectory: false,
@@ -69,7 +65,7 @@ describe("EntryIcon", () => {
 			},
 		];
 		const { container } = render(
-			<EntryIcon entry={entry} size={24} allEntries={siblings} />,
+			<FileEntryGlyph entry={entry} size={24} allEntries={siblings} />,
 		);
 		const img = container.querySelector("img");
 		expect(img === null || (img.getAttribute("src") ?? "") !== "").toBe(true);
@@ -78,7 +74,7 @@ describe("EntryIcon", () => {
 	});
 
 	it("renders the sibling image when the path resolves to a file URL", () => {
-		const entry: DirectoryBrowserEntry = {
+		const entry: FileEntry = {
 			path: "/preset/root/alpha.ffx",
 			name: "alpha.ffx",
 			isDirectory: false,
@@ -92,7 +88,7 @@ describe("EntryIcon", () => {
 			},
 		];
 		const { container } = render(
-			<EntryIcon entry={entry} size={24} allEntries={siblings} />,
+			<FileEntryGlyph entry={entry} size={24} allEntries={siblings} />,
 		);
 		const img = container.querySelector("img");
 		expect(img?.getAttribute("src")).toBe("file:///preset/root/alpha.png");

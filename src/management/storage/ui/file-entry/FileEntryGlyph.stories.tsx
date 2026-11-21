@@ -6,12 +6,8 @@ import {
 } from "@/management/preset/contract";
 import type { SiblingListingEntry } from "@/management/preset/sibling-thumbnail";
 import { css } from "@/styled-system/css";
-
-import type { DirectoryBrowserEntry } from "./DirectoryBrowser";
-import {
-	EntryIcon,
-	MediaCardContent,
-} from "./DirectoryBrowserShell.entry-icon";
+import { FileEntryGlyph, FileEntryMedia } from "./FileEntryGlyph";
+import type { FileEntry } from "./FileEntryList";
 
 const siblings: readonly SiblingListingEntry[] = [
 	{ name: "alpha.png", path: "/preset/root/alpha.png", isDirectory: false },
@@ -31,7 +27,7 @@ type Args = {
 	size: number;
 };
 
-const buildEntry = (kind: Args["kind"]): DirectoryBrowserEntry => {
+const buildEntry = (kind: Args["kind"]): FileEntry => {
 	switch (kind) {
 		case "folder":
 			return { path: "", name: "presets", isDirectory: true };
@@ -109,7 +105,7 @@ const renderIcon = (args: Args) => (
 			color: "text.primary",
 		})}
 	>
-		<EntryIcon
+		<FileEntryGlyph
 			entry={buildEntry(args.kind)}
 			size={args.size}
 			allEntries={siblings}
@@ -121,7 +117,7 @@ const renderIcon = (args: Args) => (
 );
 
 const meta = {
-	title: "DirectoryBrowser/EntryIcon",
+	title: "Storage/FileEntry/FileEntryGlyph",
 	args: baseArgs,
 	argTypes: {
 		kind: {
@@ -170,7 +166,7 @@ export const SiblingMatch: Story = {
 				color: "text.primary",
 			})}
 		>
-			<EntryIcon
+			<FileEntryGlyph
 				entry={{
 					path: "/preset/root/alpha.ffx",
 					name: "alpha.ffx",
@@ -211,7 +207,7 @@ export const MediaCardImage: Story = {
 				})}
 				style={{ width: 56, height: 56 }}
 			>
-				<MediaCardContent
+				<FileEntryMedia
 					entry={{
 						path: "/preset/root/alpha.png",
 						name: "alpha.png",
@@ -223,7 +219,7 @@ export const MediaCardImage: Story = {
 				/>
 			</div>
 			<span className={css({ fontSize: "sm", color: "text.muted" })}>
-				MediaCardContent (image)
+				FileEntryMedia (image)
 			</span>
 		</div>
 	),

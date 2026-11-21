@@ -170,7 +170,7 @@ const ensureMotionKill = (): void => {
  * Real-pointer state leaks across stories: `userEvent.hover` in one
  * story's `play()` leaves the cursor over that element, and the next
  * story's resting screenshot would capture a `:hover` style it never
- * asked for (the spacer hack in `DirectoryBrowserIconCard.stories.tsx`
+ * asked for (the spacer hack in `FileEntryCard.stories.tsx`
  * exists because of this). Parking the pointer on an invisible fixed
  * corner element in `beforeEach` gives every story the same neutral
  * pointer position. Failures are warnings, not errors — a missed park

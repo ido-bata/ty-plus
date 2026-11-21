@@ -2,18 +2,12 @@ import { Button, Checkbox, cx } from "@ty-plus/ui";
 import type { JSX, ReactNode } from "react";
 import type { SiblingListingEntry } from "@/management/preset/sibling-thumbnail";
 import { css } from "@/styled-system/css";
-import type {
-	DirectoryBrowserAspect,
-	DirectoryBrowserEntry,
-} from "./DirectoryBrowser";
-import { directoryBrowserMenuFileType } from "./DirectoryBrowserMenu";
-import {
-	EntryIcon,
-	MediaCardContent,
-} from "./DirectoryBrowserShell.entry-icon";
+import { FileEntryGlyph, FileEntryMedia } from "./FileEntryGlyph";
+import type { FileEntry, FileEntryAspect } from "./FileEntryList";
+import { fileEntryMenuFileType } from "./file-entry-menu";
 
-export type DirectoryBrowserIconCardProps = {
-	entry: DirectoryBrowserEntry;
+export type FileEntryCardProps = {
+	entry: FileEntry;
 	isSelected: boolean;
 	onClick: () => void;
 	/**
@@ -25,8 +19,8 @@ export type DirectoryBrowserIconCardProps = {
 	onToggle: (event?: React.MouseEvent) => void;
 	showCheckbox: boolean;
 	allEntries?: readonly SiblingListingEntry[];
-	aspect: DirectoryBrowserAspect;
-	renderTile?: (entry: DirectoryBrowserEntry) => {
+	aspect: FileEntryAspect;
+	renderTile?: (entry: FileEntry) => {
 		media: ReactNode;
 		overlay?: ReactNode;
 	};
@@ -168,14 +162,14 @@ function labelClass(isSelected: boolean): string {
 	);
 }
 
-function mediaBandClass(aspect: DirectoryBrowserAspect): string {
+function mediaBandClass(aspect: FileEntryAspect): string {
 	return cx(
 		mediaBandBaseClass,
 		aspect === "wide" ? mediaBandWideClass : mediaBandSquareClass,
 	);
 }
 
-export function DirectoryBrowserIconCard({
+export function FileEntryCard({
 	entry,
 	isSelected,
 	onClick,
@@ -186,10 +180,10 @@ export function DirectoryBrowserIconCard({
 	allEntries,
 	aspect,
 	renderTile,
-}: DirectoryBrowserIconCardProps): JSX.Element {
+}: FileEntryCardProps): JSX.Element {
 	const tileContent = renderTile?.(entry);
 	const mediaPreview: JSX.Element | null = !entry.isDirectory ? (
-		<MediaCardContent entry={entry} />
+		<FileEntryMedia entry={entry} />
 	) : null;
 	const iconSize = 64;
 
@@ -205,7 +199,7 @@ export function DirectoryBrowserIconCard({
 				data-directory-browser-entry=""
 				data-entry-kind={entry.isDirectory ? "dir" : "file"}
 				data-entry-path={entry.path}
-				data-entry-file-type={directoryBrowserMenuFileType(entry)}
+				data-entry-file-type={fileEntryMenuFileType(entry)}
 				className={cardButtonClass}
 				onClick={entry.isDirectory ? onSelect : onClick}
 				onDoubleClick={onDoubleClick}
@@ -213,7 +207,7 @@ export function DirectoryBrowserIconCard({
 				<div className={mediaBandClass(aspect)}>
 					{tileContent?.media ?? mediaPreview ?? (
 						<div className={fallbackIconWrapClass}>
-							<EntryIcon
+							<FileEntryGlyph
 								entry={entry}
 								size={iconSize}
 								allEntries={allEntries}

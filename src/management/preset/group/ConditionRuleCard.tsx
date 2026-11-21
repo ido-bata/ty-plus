@@ -11,7 +11,7 @@ import { presetIconDraftToPresetIcon } from "@/management/preset/icon-editor";
 import { AuthoringSegment } from "@/management/preset/tool-shell/archive-layout";
 import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
 import { glyphBoxFillClass } from "@/management/preset/workspace/glyph-classes";
-import { DirectoryBrowser } from "@/management/storage/ui/DirectoryBrowser";
+import { FileEntryList } from "@/management/storage/ui/file-entry/FileEntryList";
 import { css } from "@/styled-system/css";
 
 const escapeRegex = (value: string): string =>
@@ -177,7 +177,7 @@ export function ConditionRuleCard({
 
 				{r.filterType === "path" ? (
 					<div className={directoryHostClass}>
-						<DirectoryBrowser
+						<FileEntryList
 							selectionMode="folders"
 							entries={candidateDirs.map((d) => ({
 								path: d,
@@ -185,10 +185,8 @@ export function ConditionRuleCard({
 								isDirectory: true,
 							}))}
 							loading={false}
-							canGoUp={false}
 							onEntryClick={() => {}}
 							onEntryActivate={() => {}}
-							onGoUp={() => {}}
 							isSelected={(entryPath) =>
 								r.pattern === `^${escapeRegex(entryPath)}(?:\\\\|/|$)`
 							}
@@ -199,10 +197,6 @@ export function ConditionRuleCard({
 								});
 							}}
 							selectedSummary={{ files: 0, folders: 0 }}
-							viewMode="list"
-							onViewModeChange={() => {}}
-							scale={1}
-							aspect="square"
 							loadingLabel=""
 							emptyLabel={
 								candidateDirs.length === 0 ? "No directories detected" : ""
@@ -222,7 +216,7 @@ export function ConditionRuleCard({
 							);
 							return (
 								<div className={directoryHostClass}>
-									<DirectoryBrowser
+									<FileEntryList
 										selectionMode="files"
 										entries={candidatePresets.map((p) => ({
 											path: p.filePath,
@@ -230,10 +224,8 @@ export function ConditionRuleCard({
 											isDirectory: false,
 										}))}
 										loading={false}
-										canGoUp={false}
 										onEntryClick={() => {}}
 										onEntryActivate={() => {}}
-										onGoUp={() => {}}
 										isSelected={(entryPath) => {
 											const p = candidateByPath.get(entryPath);
 											if (!p) return false;
