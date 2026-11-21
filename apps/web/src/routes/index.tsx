@@ -138,7 +138,8 @@ function HomePage() {
 						<PresetStage />
 						<p className={cx(s.body, css({ marginBlockStart: "0.75rem" }))}>
 							Interactive demo — the same tile and info surfaces as the panel.
-							Select a tile; nothing runs in After Effects here.
+							Hover or tap to inspect, ⌘/Ctrl+click or Shift+click to select; a
+							plain click applies in After Effects, not here.
 						</p>
 					</div>
 				</div>
