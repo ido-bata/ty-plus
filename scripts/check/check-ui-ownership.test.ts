@@ -9,8 +9,8 @@ import {
 
 const owner: Owner = {
 	feature: "FileEntryList",
-	ownerModule: "src/management/storage/ui/FileEntryList.tsx",
-	ownerDir: "src/management/storage/ui",
+	ownerModule: "src/management/storage/ui/file-entry/FileEntryList.tsx",
+	ownerDir: "src/management/storage/ui/file-entry",
 	ownerLayer: "management",
 	sharedDomHooks: ["data-directory-browser-entry"],
 	note: "owned by storage",
@@ -27,10 +27,7 @@ export function FileEntryList() {}
 export const FileEntryCard = () => null;
 const Internal = () => null;
 `;
-		expect(exportedComponents(src)).toEqual([
-			"FileEntryList",
-			"FileEntryCard",
-		]);
+		expect(exportedComponents(src)).toEqual(["FileEntryList", "FileEntryCard"]);
 	});
 });
 
@@ -48,7 +45,7 @@ describe("checkOwnership", () => {
 			[owner],
 			[
 				source(
-					"src/management/storage/ui/FileEntryList.tsx",
+					"src/management/storage/ui/file-entry/FileEntryList.tsx",
 					"export function FileEntryList() {}",
 				),
 			],
@@ -81,12 +78,12 @@ describe("checkOwnership", () => {
 			[owner],
 			[
 				source(
-					"src/management/storage/ui/FileEntryList.tsx",
+					"src/management/storage/ui/file-entry/FileEntryList.tsx",
 					"export function FileEntryList() {}",
 				),
 				source(
 					"src/function/widget/utility/directory-browser/BrowserKit.tsx",
-					"export function DirectoryBrowserKit() {}",
+					"export function FileEntryListKit() {}",
 				),
 			],
 			"/repo",
@@ -102,7 +99,7 @@ describe("checkOwnership", () => {
 			[owner],
 			[
 				source(
-					"src/management/storage/ui/FileEntryList.tsx",
+					"src/management/storage/ui/file-entry/FileEntryList.tsx",
 					"export function FileEntryList() {}",
 				),
 				source(
@@ -120,7 +117,7 @@ describe("checkOwnership", () => {
 			[owner],
 			[
 				source(
-					"src/management/storage/ui/FileEntryList.tsx",
+					"src/management/storage/ui/file-entry/FileEntryList.tsx",
 					"export function FileEntryList() {}",
 				),
 				source(
@@ -138,7 +135,7 @@ describe("checkOwnership", () => {
 			[owner],
 			[
 				source(
-					"src/management/storage/ui/FileEntryList.tsx",
+					"src/management/storage/ui/file-entry/FileEntryList.tsx",
 					"export function FileEntryList() {}",
 				),
 				source(
