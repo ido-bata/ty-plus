@@ -52,6 +52,8 @@ import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import ts from "typescript5";
+import { DESIGN_TOKENS_DEFAULTS } from "../../packages/ui/src/tokens/design-tokens-defaults";
+import { themeVarsToCssBlock } from "../../packages/ui/src/tokens/theme-css";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(HERE, "..", "..");
@@ -71,6 +73,40 @@ export type Violation = {
 };
 
 const RAW_CONTROL_TAGS = new Set(["button", "input", "select", "textarea"]);
+
+/**
+ * The one focus indicator. Every focusable control paints it, so a focused
+ * field looks the same as a focused button. The value lives in the theme
+ * (`--color-focus-ring`) rather than in each component's style, so the
+ * geometry cannot drift.
+ */
+const CANONICAL_FOCUS_RING = "var(--color-focus-ring)";
+
+/** The CSS conditions that express "this control has focus". */
+const FOCUS_CONDITIONS = new Set(["_focus", "_focusVisible", "_focusWithin"]);
+
+/**
+ * The theme's custom properties. A `var(--x)` that is not one of them does
+ * not resolve, so the property it feeds silently falls back — a focus ring
+ * that names a token that does not exist paints nothing.
+ */
+const DEFINED_VARS = new Set(
+	[
+		...themeVarsToCssBlock(DESIGN_TOKENS_DEFAULTS).matchAll(/(--[\w-]+)\s*:/g),
+	].map((m) => m[1]),
+);
+
+/**
+ * Variables that are not part of the theme but are legitimately defined
+ * outside it (the CEP panel's scrollbar geometry).
+ */
+const EXTERNAL_VARS = new Set([
+	"--scrollbar-width",
+	"--scrollbar-track-bg",
+	"--scrollbar-thumb-bg",
+	"--scrollbar-thumb-radius",
+	"--scrollbar-transition-duration",
+]);
 
 /**
  * Properties that decide how a control *looks*. A shared component must not
@@ -179,6 +215,67 @@ function* walk(dir: string): Generator<string> {
 
 function lineOf(sf: ts.SourceFile, node: ts.Node): number {
 	return sf.getLineAndCharacterOfPosition(node.getStart(sf)).line + 1;
+}
+
+/**
+ * The custom properties a file sets through an inline style object.
+ */
+function collectRuntimeCustomProps(sf: ts.SourceFile): Set<string> {
+	const names = new Set<string>();
+	const visit = (node: ts.Node): void => {
+		if (ts.isJsxAttribute(node) && node.name.getText(sf) === "style") {
+			const initializer = node.initializer;
+			if (!initializer || !ts.isJsxExpression(initializer)) return;
+			const expr = initializer.expression;
+			const object = ts.isAsExpression(expr) ? expr.expression : expr;
+			if (!object || !ts.isObjectLiteralExpression(object)) return;
+			for (const prop of object.properties) {
+				if (!ts.isPropertyAssignment(prop)) continue;
+				const key = propName(prop.name);
+				if (key?.startsWith("--")) names.add(key);
+			}
+		}
+		ts.forEachChild(node, visit);
+	};
+	visit(sf);
+	return names;
+}
+
+/**
+ * The `var(--name, …)` references in a value, with whether each one has a
+ * fallback. The scan tracks nested parentheses so `var(--a, var(--b))` is
+ * read as one reference with a fallback.
+ */
+export function parseVarCalls(
+	value: string,
+): { name: string; hasFallback: boolean }[] {
+	const out: { name: string; hasFallback: boolean }[] = [];
+	const re = /var\(\s*(--[\w-]+)/g;
+	let match: RegExpExecArray | null;
+	while ((match = re.exec(value)) !== null) {
+		const start = match.index + match[0].length;
+		let depth = 1;
+		let i = start;
+		for (; i < value.length; i++) {
+			if (value[i] === "(") depth++;
+			else if (value[i] === ")") {
+				depth--;
+				if (depth === 0) break;
+			}
+		}
+		const body = value.slice(start, i);
+		out.push({ name: match[1], hasFallback: body.includes(",") });
+		re.lastIndex = i;
+	}
+	return out;
+}
+
+function stringValue(expr: ts.Expression | undefined): string | null {
+	if (!expr) return null;
+	if (ts.isStringLiteral(expr) || ts.isNoSubstitutionTemplateLiteral(expr)) {
+		return expr.text;
+	}
+	return null;
 }
 
 function propName(name: ts.PropertyName | undefined): string | null {
@@ -337,6 +434,13 @@ export function checkAppSource(file: string, src: string): Violation[] {
 	);
 	const uiNames = collectUiImports(sf);
 	const cssConsts = collectCssConsts(sf);
+	/**
+	 * Custom properties this file sets through an inline style. They are
+	 * defined at runtime on the element that sets them, so a `var(--x)` that
+	 * reads them resolves — the value is not known at build time, which is
+	 * exactly why it travels as a custom property.
+	 */
+	const runtimeCustomProps = collectRuntimeCustomProps(sf);
 
 	const add = (node: ts.Node, rule: string, message: string): void => {
 		out.push({ file, line: lineOf(sf, node), rule, message });
@@ -357,7 +461,80 @@ export function checkAppSource(file: string, src: string): Violation[] {
 		return null;
 	};
 
+	/**
+	 * Walk a style object: check the focus conditions against the canonical
+	 * indicator, and check every `var(--x)` against the theme.
+	 */
+	const checkStyleObject = (obj: ts.ObjectLiteralExpression): void => {
+		for (const prop of obj.properties) {
+			if (ts.isSpreadAssignment(prop)) continue;
+			if (!ts.isPropertyAssignment(prop)) continue;
+			const key = propName(prop.name);
+			const init = prop.initializer;
+
+			if (key && FOCUS_CONDITIONS.has(key)) {
+				if (!ts.isObjectLiteralExpression(init)) continue;
+				let ring: string | null = null;
+				const others: string[] = [];
+				for (const inner of init.properties) {
+					if (!ts.isPropertyAssignment(inner)) continue;
+					const innerKey = propName(inner.name);
+					if (!innerKey) continue;
+					if (innerKey === "boxShadow") {
+						ring = stringValue(inner.initializer);
+					} else {
+						others.push(innerKey);
+					}
+				}
+				if (ring === null) {
+					add(
+						init,
+						"focus-ring-missing",
+						`${key} paints no focus indicator — every focusable control paints ${CANONICAL_FOCUS_RING}${others.length > 0 ? ` (this rule only sets ${others.join(", ")})` : ""}`,
+					);
+				} else if (ring !== CANONICAL_FOCUS_RING) {
+					add(
+						init,
+						"focus-ring-divergent",
+						`${key} paints "${ring}" — the one focus indicator is ${CANONICAL_FOCUS_RING}`,
+					);
+				}
+			}
+
+			if (ts.isObjectLiteralExpression(init)) {
+				checkStyleObject(init);
+				continue;
+			}
+			const value = stringValue(init);
+			if (value === null) continue;
+			// `var(--x, fallback)` resolves through the fallback, so only an
+			// undefined name with no fallback leaves the property unset.
+			for (const { name, hasFallback } of parseVarCalls(value)) {
+				if (hasFallback) continue;
+				if (
+					DEFINED_VARS.has(name) ||
+					EXTERNAL_VARS.has(name) ||
+					runtimeCustomProps.has(name)
+				)
+					continue;
+				add(
+					init,
+					"unknown-css-var",
+					`var(${name}) is not a defined theme variable — it does not resolve, so the property it feeds falls back silently`,
+				);
+			}
+		}
+	};
+
 	const visit = (node: ts.Node): void => {
+		if (ts.isCallExpression(node)) {
+			const callee = node.expression.getText(sf);
+			if (/^css(\.raw)?$/.test(callee)) {
+				for (const arg of node.arguments) {
+					if (ts.isObjectLiteralExpression(arg)) checkStyleObject(arg);
+				}
+			}
+		}
 		if (
 			ts.isImportDeclaration(node) &&
 			ts.isStringLiteral(node.moduleSpecifier)

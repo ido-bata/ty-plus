@@ -155,13 +155,6 @@
 	},
 	{
 		"file": "src/function/widget/core/easing/Component.tsx",
-		"line": 630,
-		"rule": "raw-control",
-		"message": "raw <input> is banned; use a @ty-plus/ui primitive",
-		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
-	},
-	{
-		"file": "src/function/widget/core/easing/Component.tsx",
 		"line": 753,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
@@ -259,13 +252,6 @@
 		"reason": "inline style sets appearance; move it into css() and the token system"
 	},
 	{
-		"file": "src/function/widget/utility/quick-actions/palette-search.tsx",
-		"line": 57,
-		"rule": "raw-control",
-		"message": "raw <input> is banned; use a @ty-plus/ui primitive",
-		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
-	},
-	{
 		"file": "src/function/widget/utility/quick-actions/row-components.tsx",
 		"line": 93,
 		"rule": "raw-control",
@@ -306,13 +292,6 @@
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/util/keyboard\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/debug/console/ui/Panel.tsx",
-		"line": 521,
-		"rule": "raw-control",
-		"message": "raw <input> is banned; use a @ty-plus/ui primitive",
-		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/dialog/dialogs/shell/Content.tsx",
@@ -431,13 +410,6 @@
 		"line": 1090,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
-		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
-	},
-	{
-		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 1121,
-		"rule": "raw-control",
-		"message": "raw <input> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
@@ -910,20 +882,6 @@
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
-		"file": "src/management/preset/tool-shell/DialogFields.tsx",
-		"line": 76,
-		"rule": "raw-control",
-		"message": "raw <input> is banned; use a @ty-plus/ui primitive",
-		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
-	},
-	{
-		"file": "src/management/preset/tool-shell/DialogFields.tsx",
-		"line": 90,
-		"rule": "raw-control",
-		"message": "raw <select> is banned; use a @ty-plus/ui primitive",
-		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
-	},
-	{
 		"file": "src/management/preset/tool-shell/FolderDirectoryPicker.tsx",
 		"line": 257,
 		"rule": "raw-control",
@@ -1183,27 +1141,6 @@
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
-		"file": "src/management/setting/dialog/sections/InputsSection.tsx",
-		"line": 1,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/setting/dialog/sections/InputsSection.tsx",
-		"line": 74,
-		"rule": "raw-control",
-		"message": "raw <input> is banned; use a @ty-plus/ui primitive",
-		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
-	},
-	{
-		"file": "src/management/setting/dialog/sections/InputsSection.tsx",
-		"line": 84,
-		"rule": "raw-control",
-		"message": "raw <input> is banned; use a @ty-plus/ui primitive",
-		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
-	},
-	{
 		"file": "src/management/setting/dialog/sections/LanguageSection.tsx",
 		"line": 1,
 		"rule": "deep-import",
@@ -1407,13 +1344,6 @@
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
-		"file": "src/management/workspace/background/Fields.tsx",
-		"line": 83,
-		"rule": "raw-control",
-		"message": "raw <input> is banned; use a @ty-plus/ui primitive",
-		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
-	},
-	{
 		"file": "src/management/workspace/background/ImageLayerEditor.tsx",
 		"line": 1,
 		"rule": "deep-import",
@@ -1460,13 +1390,6 @@
 		"line": 2,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/controls/IconButton\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/workspace/background/LayerListPanel.tsx",
-		"line": 3,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/fields/Input\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
