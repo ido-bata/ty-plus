@@ -38,14 +38,14 @@ bunx panda cssgen --silent
 bunx panda codegen --config panda.config.ts --cwd apps/web --silent
 bunx panda cssgen --config panda.config.ts --cwd apps/web --silent
 cd apps/web
-npm exec --no -- cf build --mode production
+npm exec --no -- vite build --mode production
 npm exec --no -- cf deploy --prebuilt --mode production --dry-run
-npm exec --no -- cf build --mode preview
+npm exec --no -- vite build --mode preview
 npm exec --no -- cf deploy --prebuilt --mode preview --dry-run
 bun run preview
 ```
 
-`cf build` は `vite build` を実行する。生成先 `.cloudflare/output/v1/` と SSR Worker、static assets、6ページのprerenderを確認すること。dry-run はリモートへアップロードせず、公開成功の証拠ではない。既存の `apps/web/wrangler.jsonc` を `cf` の設定として扱わない。
+現行 `cf` RC の `cf build --mode` が Vite 8 のモード対応を誤判定する環境があるため、モード指定で Vite build を実行して Build Output v1 を生成し、`cf deploy --prebuilt` で Cloudflare CLI に渡す。生成先 `.cloudflare/output/v1/` と SSR Worker、static assets、6ページのprerenderを確認すること。dry-run はリモートへアップロードせず、公開成功の証拠ではない。既存の `apps/web/wrangler.jsonc` を `cf` の設定として扱わない。
 
 ## Deploy（認証・承認が必要）
 
@@ -59,7 +59,7 @@ GitHub Actions `.github/workflows/web-deploy.yml` の `workflow_dispatch` から
 
 `site_origin` はビルド時に `VITE_TY_PLUS_SITE_ORIGIN` として渡され、`SITE.url` / canonical / sitemap / OG metadata を揃える。既定の `https://ty-plus.app` を workers.dev として誤公開しないこと。
 
-Workflowは`cf build --mode <target>`→`cf deploy --prebuilt --mode <target> --dry-run`→承認/環境認証→`cf deploy --prebuilt --mode <target>`→実URLのHTTP smoke順。デプロイが失敗したら公開成功と記録せず、前バージョンのWorker Deploymentへ戻す（`cf workers deployments` のAPI契約に従い、旧version IDと配信比率を確認してから操作する）。
+Workflowは`vite build --mode <target>`→`cf deploy --prebuilt --mode <target> --dry-run`→承認/環境認証→`cf deploy --prebuilt --mode <target>`→実URLのHTTP smoke順。デプロイが失敗したら公開成功と記録せず、前バージョンのWorker Deploymentへ戻す（`cf workers deployments` のAPI契約に従い、旧version IDと配信比率を確認してから操作する）。
 
 手動時は同じ`cf`を使用できる。`cf auth login` は対話端末用であり、CIでは使わない。CIからは`CLOUDFLARE_API_TOKEN`と`CLOUDFLARE_ACCOUNT_ID`のみを注入する。
 
