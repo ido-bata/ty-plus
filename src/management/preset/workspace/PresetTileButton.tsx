@@ -1,5 +1,5 @@
 import { cx } from "@ty-plus/ui/util/cx";
-import type { CSSProperties, JSX } from "react";
+import type { CSSProperties, JSX, MouseEvent } from "react";
 import type { Preset } from "@/management/preset/contract";
 import {
 	PresetCatalogGlyphHost,
@@ -56,7 +56,12 @@ export type PresetTileButtonProps = {
 	/** Accessible name; defaults to `preset.title`. */
 	label?: string;
 	selected?: boolean;
-	onSelect?: () => void;
+	/**
+	 * Click handler; receives the button's mouse event so callers can honor
+	 * modifier-click contracts (Ctrl/Cmd toggle, Shift add, plain activate)
+	 * without wrapping the tile in a non-semantic click surface.
+	 */
+	onSelect?: (ev: MouseEvent<HTMLButtonElement>) => void;
 	/** Mirrors the workspace hover contract: preset id on enter, null on leave. */
 	onHoverChange?: (presetId: string | null) => void;
 	className?: string;

@@ -6,6 +6,7 @@ import {
 import { renderToString } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import { DEMO_PRESETS } from "../lib/demo-presets";
+import { PresetStage } from "./PresetStage";
 
 /**
  * Contract: the web demo must render the product's own preset tile
@@ -43,6 +44,19 @@ describe("PresetStage product-component contract", () => {
 		expect(html).toContain('aria-pressed="true"');
 		expect(html).toContain(`data-preset-id="${preset.id}"`);
 		expect(html).toContain("ws-preset-icon");
+	});
+
+	it("PresetStage renders every demo tile through the product tile path plus the info surface", () => {
+		const html = renderToString(<PresetStage />);
+		expect(html).toContain("data-preset-stage");
+		expect(html).toContain("data-info-card");
+		for (const p of DEMO_PRESETS) {
+			expect(html).toContain(`data-preset-id="${p.id}"`);
+		}
+		// The seeded selection marks exactly one tile as pressed and the
+		// info surface renders single-selection mode.
+		expect(html.match(/aria-pressed="true"/g)).toHaveLength(1);
+		expect(html).toContain('data-mode="single"');
 	});
 
 	it("canvas icon presets resolve through the product icon pipeline", () => {

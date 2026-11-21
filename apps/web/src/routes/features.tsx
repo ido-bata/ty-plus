@@ -111,8 +111,9 @@ function FeaturesPage() {
 						<p className={s.body}>
 							Presets you register — animation presets, code presets, footage,
 							and groups — become named tiles on the same grid as your widgets.
-							Each tile carries its own icon and title. Select a tile; the info
-							readout mirrors what the panel's info widget shows.
+							Each tile carries its own icon and title. Hover or tap a tile to
+							inspect it, or select tiles with ⌘/Ctrl+click and Shift+click —
+							the info readout mirrors what the panel's info widget shows.
 						</p>
 					</div>
 					<div className={cx(span8, css({ minWidth: 0 }))}>
