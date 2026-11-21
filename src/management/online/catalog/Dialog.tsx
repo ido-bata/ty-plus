@@ -29,7 +29,7 @@ import { showExtendScriptAlert } from "@/management/ae/cep/eval";
 import {
 	type CepMenuPayload,
 	registerCepJsonContextMenuSurface,
-} from "@/management/dialog/dialogs/context-menu";
+} from "@/management/dialog/context-menu";
 import { DownloadProgressIconButton } from "@/management/online/catalog/DownloadProgressIconButton";
 import { gatewayRetryAffordance } from "@/management/online/catalog/gateway-retry";
 import { sanitizeOnlineErrorMessage } from "@/management/online/catalog/sanitize-error";

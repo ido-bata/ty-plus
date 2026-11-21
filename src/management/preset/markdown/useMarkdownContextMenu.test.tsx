@@ -28,7 +28,7 @@ vi.mock("@/management/ae/cep/contexts/Context", () => ({
 	useCep: () => ({ panelSurfaceId: "panel-1" }),
 }));
 
-vi.mock("@/management/dialog/dialogs/context-menu", () => ({
+vi.mock("@/management/dialog/context-menu", () => ({
 	registerCepJsonContextMenuSurface: mocks.register,
 	installCepJsonContextMenuRewrite: mocks.install,
 }));

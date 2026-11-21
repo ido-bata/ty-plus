@@ -1,7 +1,7 @@
 import { type JSX, useCallback, useEffect } from "react";
 import { Animation } from "@/function/onboarding/ui/Animation";
 import { useCep } from "@/management/ae/cep/contexts/Context";
-import { registerCepJsonContextMenuSurface } from "@/management/dialog/dialogs/context-menu";
+import { registerCepJsonContextMenuSurface } from "@/management/dialog/context-menu";
 import { useTranslation } from "@/management/i18n/Context";
 import { usePublicLink } from "@/management/online/public-link/usePublicLink";
 import { Button } from "@/shared";

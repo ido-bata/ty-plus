@@ -1,11 +1,11 @@
 import { cx } from "@ty-plus/ui/util/cx";
 import type { CSSProperties, HTMLAttributes, JSX, ReactNode } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useClose } from "@/management/dialog/dialogs/hooks/useClose";
-import { useSurface } from "@/management/dialog/dialogs/hooks/useSurface";
-import { Content } from "@/management/dialog/dialogs/shell/Content";
-import { Footer } from "@/management/dialog/dialogs/shell/Footer";
-import { Header } from "@/management/dialog/dialogs/shell/Header";
+import { useClose } from "@/management/dialog/useClose";
+import { useSurface } from "@/management/dialog/useSurface";
+import { Content } from "@/management/dialog/shell/Content";
+import { Footer } from "@/management/dialog/shell/Footer";
+import { Header } from "@/management/dialog/shell/Header";
 import { css } from "@/styled-system/css";
 
 /**

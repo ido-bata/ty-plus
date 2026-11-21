@@ -22,7 +22,7 @@
  * `runDuplicatePreset`) are covered in
  * `src/management/workspace/hook-duplicate-preset.test.ts`; the menu
  * payload shape is covered by
- * `src/management/dialog/dialogs/unified-context-menu.test.ts`.
+ * `src/management/dialog/unified-context-menu.test.ts`.
  */
 import fs from "node:fs";
 import { describe, expect, it } from "vitest";
@@ -37,7 +37,7 @@ const helpersSource = fs.readFileSync(
 );
 const constantsSource = fs.readFileSync(
 	new URL(
-		"../dialog/dialogs/unified-context-menu-constants.ts",
+		"../dialog/unified-context-menu-constants.ts",
 		import.meta.url,
 	),
 	"utf8",

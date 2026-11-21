@@ -8,7 +8,7 @@ import { Dialog as FootageDialog } from "@/function/preset/footage/Dialog";
 import { Dialog as LayerCompDialog } from "@/function/preset/layer-comp/Dialog";
 import { tyPlusExtensionId } from "@/management/ae/cep/extension-id";
 import { readCepOpenParams } from "@/management/ae/cep/transport";
-import { TY_PLUS_DIALOG_EXTENSION } from "@/management/dialog/dialogs/ids";
+import { TY_PLUS_DIALOG_EXTENSION } from "@/management/dialog/ids";
 import { DeferredDialogBody } from "@/management/dialog/lazy-body";
 import { PresetLibrary } from "@/management/online/catalog/Dialog";
 import { NotificationCenter } from "@/management/online/notification/Center";

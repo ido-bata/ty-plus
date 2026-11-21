@@ -25,7 +25,7 @@ import { inferWidgetTypeFromLegacyLayoutId } from "@/function/widget/legacy-pars
 import {
 	CTX_MENU_IDS,
 	QA_ORDER,
-} from "@/management/dialog/dialogs/unified-context-menu-constants";
+} from "@/management/dialog/unified-context-menu-constants";
 import type { Preset } from "@/management/preset/contract";
 import { readWidgetStateJson } from "@/management/storage/widget-state-store";
 import {
@@ -48,7 +48,7 @@ import {
 import type { SurfaceState } from "@/management/workspace/state";
 import type { Snapshot } from "@/management/workspace/undo/history";
 
-export { CTX_MENU_IDS } from "@/management/dialog/dialogs/unified-context-menu-constants";
+export { CTX_MENU_IDS } from "@/management/dialog/unified-context-menu-constants";
 
 export type ContextHit =
 	| { zone: "outside" }

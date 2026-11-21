@@ -294,28 +294,28 @@
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
-		"file": "src/management/dialog/dialogs/shell/Content.tsx",
+		"file": "src/management/dialog/shell/Content.tsx",
 		"line": 1,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
-		"file": "src/management/dialog/dialogs/shell/Footer.tsx",
+		"file": "src/management/dialog/shell/Footer.tsx",
 		"line": 29,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
-		"file": "src/management/dialog/dialogs/shell/Header.tsx",
+		"file": "src/management/dialog/shell/Header.tsx",
 		"line": 1,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
-		"file": "src/management/dialog/dialogs/shell/Layout.tsx",
+		"file": "src/management/dialog/shell/Layout.tsx",
 		"line": 1,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",

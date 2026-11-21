@@ -29,7 +29,7 @@ const eventsSource = fs.readFileSync(
 );
 const constantsSource = fs.readFileSync(
 	new URL(
-		"../dialog/dialogs/unified-context-menu-constants.ts",
+		"../dialog/unified-context-menu-constants.ts",
 		import.meta.url,
 	),
 	"utf8",

@@ -16,7 +16,7 @@ import { useTranslation } from "react-i18next";
 import { selectFile } from "@/management/ae/cep/dialog-shim/bolt";
 import { readGroupJson } from "@/management/catalog/json-files";
 import { DialogShell } from "@/management/dialog";
-import { DialogFooterActions } from "@/management/dialog/dialogs/shell/Footer";
+import { DialogFooterActions } from "@/management/dialog/shell/Footer";
 import { useDialogClose } from "@/management/dialog/useClose";
 import {
 	coercePersistedPresetIcon,

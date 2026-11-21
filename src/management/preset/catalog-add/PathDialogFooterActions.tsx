@@ -1,7 +1,7 @@
 import { Button } from "@ty-plus/ui";
 import { Save } from "lucide-react";
 import type { JSX } from "react";
-import { DialogFooterActions } from "@/management/dialog/dialogs/shell/Footer";
+import { DialogFooterActions } from "@/management/dialog/shell/Footer";
 
 export function PathDialogFooterActions({
 	close,

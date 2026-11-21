@@ -1,4 +1,4 @@
-import type { CepMenuPayload } from "@/management/dialog/dialogs/context-menu";
+import type { CepMenuPayload } from "@/management/dialog/context-menu";
 
 export const PRESET_TOOL_CTX = {
 	save: "ty.ctx.presetTool.save",
