@@ -275,4 +275,21 @@ describe("releaseExcerpt against bundled release snapshot", () => {
 		expect(e7.bullets).toEqual([]);
 		expect(e7.prose).toContain("Insider build");
 	});
+
+	it("scrubs inline provenance tokens from excerpts", () => {
+		for (const tag of [
+			"v0.11.0-insider.4",
+			"v0.11.0-insider.5",
+			"v0.11.0-insider.6",
+			"v0.11.0-insider.7",
+		]) {
+			const release = releases.find((r) => r.tagName === tag);
+			expect(release, tag).toBeDefined();
+			const { bullets, prose } = releaseExcerpt(release?.body ?? "");
+			const text = [...bullets, prose ?? ""].join(" ");
+			expect(text, tag).not.toMatch(/sourceCommit/i);
+			expect(text, tag).not.toMatch(/channel=/);
+			expect(text, tag).not.toMatch(/ADR-\d+/);
+		}
+	});
 });
