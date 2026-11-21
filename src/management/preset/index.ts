@@ -2,6 +2,12 @@
  * Preset management public API
  */
 
+export {
+	AuthoringField,
+	AuthoringGrid,
+	AuthoringSection,
+	AuthoringSegment,
+} from "@/management/preset/authoring-layout";
 export { readUserHomeOrFallback } from "@/management/preset/catalog-add/browse-start-dir";
 export { PathDialog } from "@/management/preset/catalog-add/PathDialog";
 export {

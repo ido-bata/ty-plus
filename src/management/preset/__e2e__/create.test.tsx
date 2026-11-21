@@ -164,7 +164,7 @@ vi.mock("@/management/workspace/persistence/store", () => ({
 	readSettings: mockReadSettings,
 }));
 
-vi.mock("../../../management/preset/tool-shell/archive-layout", () => ({
+vi.mock("../../../management/preset/authoring-layout", () => ({
 	AuthoringGrid: ({ children }: { children: ReactNode }) => (
 		<div data-testid="authoring-grid">{children}</div>
 	),

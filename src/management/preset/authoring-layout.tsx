@@ -1,3 +1,4 @@
+import { SegmentedControl } from "@ty-plus/ui";
 import type { JSX, ReactNode } from "react";
 import { css, cx } from "@/styled-system/css";
 
@@ -50,46 +51,6 @@ const sectionTitleTextClass = css({
 const sectionDescriptionClass = css({
 	fontSize: "xs",
 	color: "text.muted",
-});
-
-const segmentContainerClass = css({
-	display: "inline-flex",
-	width: "full",
-	minWidth: "0",
-	maxWidth: "full",
-	gap: "1",
-	borderRadius: "shell-sm",
-	borderWidth: "1px",
-	borderStyle: "solid",
-	borderColor: "border.default",
-	backgroundColor: "surface.panel",
-	padding: "0.5",
-});
-
-const segmentButtonBaseClass = css({
-	height: "8",
-	minWidth: "0",
-	flex: "1",
-	borderRadius: "shell-sm",
-	paddingInline: "2",
-	fontSize: "shell-text-sm",
-	lineHeight: "tight",
-	transitionProperty: "colors",
-});
-
-const segmentButtonActiveClass = css({
-	backgroundColor: "text.accent",
-	color: "surface.panel",
-	boxShadow: "sm",
-});
-
-const segmentButtonInactiveClass = css({
-	backgroundColor: "surface.widget",
-	color: "text.muted",
-	_hover: {
-		backgroundColor: "interactive.hover",
-		color: "text.primary",
-	},
 });
 
 const inlineActionsClass = css({
@@ -149,29 +110,21 @@ export function AuthoringSegment({
 	value,
 	onChange,
 	options,
+	ariaLabel,
 }: {
 	value: string;
 	onChange: (value: string) => void;
 	options: readonly { value: string; label: string }[];
+	/** Accessible name for the group. */
+	ariaLabel?: string;
 }): JSX.Element {
 	return (
-		<div className={segmentContainerClass}>
-			{options.map((option) => (
-				<button
-					key={option.value}
-					type="button"
-					className={cx(
-						segmentButtonBaseClass,
-						value === option.value
-							? segmentButtonActiveClass
-							: segmentButtonInactiveClass,
-					)}
-					onClick={() => onChange(option.value)}
-				>
-					{option.label}
-				</button>
-			))}
-		</div>
+		<SegmentedControl
+			value={value}
+			onChange={onChange}
+			options={[...options]}
+			aria-label={ariaLabel}
+		/>
 	);
 }
 
