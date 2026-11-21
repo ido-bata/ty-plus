@@ -62,7 +62,7 @@ const statusDot = css({
 	borderRadius: "full",
 	height: "1",
 	width: "1",
-	backgroundColor: "var(--color-text-muted-60, var(--color-ty-text-muted))",
+	backgroundColor: "var(--color-text-muted-60, var(--color-text-muted))",
 	opacity: "0.6",
 });
 
@@ -113,7 +113,7 @@ const snapshotsDropdown = css({
 	borderStyle: "solid",
 	borderColor:
 		"rgba(var(--text-r),var(--text-g),var(--text-b),var(--ty-opacity-ws-snap-panel-border))",
-	borderRadius: "var(--radius)",
+	borderRadius: "var(--radius-shell)",
 	padding: "1",
 	zIndex: "50",
 });
@@ -130,7 +130,7 @@ const snapshotsRow = css({
 	display: "flex",
 	alignItems: "center",
 	gap: "1",
-	borderRadius: "var(--radius)",
+	borderRadius: "var(--radius-shell)",
 	_hover: { backgroundColor: "interactive.hover" },
 });
 

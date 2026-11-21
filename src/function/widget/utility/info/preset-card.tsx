@@ -29,7 +29,7 @@ function SectionLabel({ children }: { children: ReactNode }): JSX.Element {
 				fontWeight: "bold",
 				textTransform: "uppercase",
 				letterSpacing: "0.06em",
-				color: "var(--text-muted)",
+				color: "var(--color-text-muted)",
 			})}
 		>
 			{children}
@@ -38,7 +38,7 @@ function SectionLabel({ children }: { children: ReactNode }): JSX.Element {
 }
 
 const multiItemClass = css({
-	borderRadius: "var(--radius)",
+	borderRadius: "var(--radius-shell)",
 	borderWidth: "1px",
 	borderStyle: "solid",
 	borderColor: "border.strong",
@@ -65,7 +65,7 @@ const emptyGlyphClass = css({
 
 const emptyGlyphMarkClass = css({
 	fontSize: "var(--ty-shell-text-size)",
-	color: "var(--text-muted)",
+	color: "var(--color-text-muted)",
 	opacity: 0.5,
 });
 
@@ -109,7 +109,7 @@ function PresetInfoEmptyContent({
 							truncate: true,
 							fontSize: "var(--ty-shell-text-size)",
 							fontWeight: "semibold",
-							color: "var(--text-muted)",
+							color: "var(--color-text-muted)",
 							opacity: 0.5,
 						})}
 					>
@@ -119,7 +119,7 @@ function PresetInfoEmptyContent({
 						className={css({
 							flexShrink: 0,
 							fontSize: "text-3xs",
-							color: "var(--text-muted)",
+							color: "var(--color-text-muted)",
 						})}
 					>
 						{source}
@@ -207,7 +207,7 @@ export function PresetCard({
 								truncate: true,
 								fontSize: "var(--ty-shell-text-size)",
 								fontWeight: "semibold",
-								color: "var(--text-main)",
+								color: "var(--color-text-primary)",
 							})}
 							title={name}
 						>
@@ -217,7 +217,7 @@ export function PresetCard({
 							className={css({
 								flexShrink: 0,
 								fontSize: "text-3xs",
-								color: "var(--text-muted)",
+								color: "var(--color-text-muted)",
 							})}
 						>
 							{source}
@@ -238,7 +238,7 @@ export function PresetCard({
 									minWidth: 0,
 									wordBreak: "break-all",
 									fontSize: "text-3xs",
-									color: "var(--text-muted)",
+									color: "var(--color-text-muted)",
 								})}
 							>
 								{fileName}
@@ -248,11 +248,11 @@ export function PresetCard({
 							className={css({
 								flexShrink: 0,
 								borderRadius: "var(--ty-space-0-5)",
-								backgroundColor: "var(--surface-glass)",
+								backgroundColor: "var(--color-surface-overlay)",
 								paddingInline: "var(--ty-space-1)",
 								paddingBlock: "var(--ty-space-0-5)",
 								fontSize: "text-3xs",
-								color: "var(--text-main)",
+								color: "var(--color-text-primary)",
 							})}
 						>
 							{kindLabel}
@@ -311,7 +311,7 @@ export function PresetCard({
 							className={css({
 								fontSize: "text-xs",
 								lineHeight: "relaxed",
-								color: "var(--text-muted)",
+								color: "var(--color-text-muted)",
 							})}
 						>
 							{formatPresetDescription(preset.description).map((part) =>

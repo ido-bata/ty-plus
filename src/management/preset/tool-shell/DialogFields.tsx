@@ -1,6 +1,13 @@
-import { Icon, Input, PathField, Textarea } from "@ty-plus/ui";
+import {
+	Checkbox,
+	Icon,
+	Input,
+	ListSelect,
+	PathField,
+	Textarea,
+} from "@ty-plus/ui";
 import { FileSearch, FolderOpen } from "lucide-react";
-import type { JSX } from "react";
+import { type JSX, useId } from "react";
 import { css } from "@/styled-system/css";
 
 import type { PathBrowseSpec, PresetToolField } from "./Dialog";
@@ -22,35 +29,6 @@ const checkboxLabelClass = css({
 	color: "text.primary",
 });
 
-const checkboxInputClass = css({
-	height: "4",
-	width: "4",
-	flexShrink: "0",
-	borderRadius: "sm",
-	borderWidth: "1px",
-	borderStyle: "solid",
-	borderColor: "border.default",
-	backgroundColor: "surface.widget",
-});
-
-const selectClass = css({
-	width: "full",
-	minWidth: "0",
-	cursor: "pointer",
-	borderRadius: "shell-sm",
-	borderWidth: "1px",
-	borderStyle: "solid",
-	borderColor: "border.default",
-	backgroundColor: "surface.widget",
-	paddingInline: "2.5",
-	paddingBlock: "2",
-	fontSize: "shell-text-sm",
-	color: "text.primary",
-	outline: "none",
-	_focus: { borderColor: "interactive.focus" },
-	_disabled: { opacity: "0.5" },
-});
-
 export type ToolDialogFieldsProps = {
 	fields: PresetToolField[];
 	values: Record<string, string>;
@@ -68,14 +46,20 @@ export function ToolDialogFields({
 	runPathBrowse,
 	setValue,
 }: ToolDialogFieldsProps): JSX.Element {
+	const idPrefix = useId();
+
 	return (
 		<>
 			{fields.map((field) =>
 				field.kind === "checkbox" ? (
-					<label key={field.key} className={checkboxLabelClass}>
-						<input
-							type="checkbox"
-							className={checkboxInputClass}
+					<label
+						key={field.key}
+						htmlFor={`${idPrefix}-${field.key}`}
+						className={checkboxLabelClass}
+					>
+						<Checkbox
+							id={`${idPrefix}-${field.key}`}
+							uiSize="md"
 							checked={(values[field.key] ?? "") === "true"}
 							onChange={(event) =>
 								setValue(field.key, event.target.checked ? "true" : "false")
@@ -87,19 +71,14 @@ export function ToolDialogFields({
 				) : field.kind === "select" && field.options?.length ? (
 					<div key={field.key} className={fieldColumnClass}>
 						<span className={shellFieldLabelClass}>{field.label}</span>
-						<select
+						<ListSelect
 							aria-label={field.label}
-							className={selectClass}
+							uiSize="sm"
+							options={field.options}
 							value={values[field.key] ?? ""}
-							onChange={(event) => setValue(field.key, event.target.value)}
+							onChange={(next) => setValue(field.key, next)}
 							disabled={busy}
-						>
-							{field.options.map((opt) => (
-								<option key={opt.value} value={opt.value}>
-									{opt.label}
-								</option>
-							))}
-						</select>
+						/>
 					</div>
 				) : field.kind === "textarea" ? (
 					<div key={field.key} className={fieldColumnClass}>
