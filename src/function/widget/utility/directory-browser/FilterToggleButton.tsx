@@ -1,7 +1,15 @@
-import { cx } from "@ty-plus/ui/util/cx";
+import { Button } from "@ty-plus/ui";
 import type { JSX } from "react";
-import { css } from "@/styled-system/css";
 
+/**
+ * Toggle chip used by the directory browser's detail filters.
+ *
+ * `pressed` means the entry is currently *hidden* by the filter. The state is
+ * published through `aria-pressed` and the shared `Button` variants (a hidden
+ * entry reads as the quieter `ghost` chip, a visible one as the outlined
+ * chip) so the appearance comes from the design system instead of a local
+ * `opacity` override.
+ */
 export function FilterToggleButton({
 	pressed,
 	label,
@@ -11,36 +19,15 @@ export function FilterToggleButton({
 	label: string;
 	onClick: () => void;
 }): JSX.Element {
-	const base = css({
-		borderRadius: "shell-sm",
-		borderWidth: "1px",
-		borderStyle: "solid",
-		paddingInline: "1.5",
-		paddingBlock: "0.5",
-		fontSize: "text-2xs",
-	});
 	return (
-		<button
+		<Button
 			type="button"
-			className={cx(
-				base,
-				pressed
-					? css({
-							borderColor: "border.default",
-							backgroundColor: "surface.widget",
-							opacity: 0.4,
-							color: "text.muted",
-							textDecoration: "line-through",
-						})
-					: css({
-							borderColor: "border.strong",
-							backgroundColor: "surface.widget",
-							color: "text.primary",
-						}),
-			)}
+			variant={pressed ? "ghost" : "outline"}
+			uiSize="sm"
+			aria-pressed={pressed}
 			onClick={onClick}
 		>
 			{label}
-		</button>
+		</Button>
 	);
 }

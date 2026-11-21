@@ -40,6 +40,9 @@ const meta = {
 				listViewAriaLabel="List view"
 				iconViewAriaLabel="Icon view"
 				viewModeLegend="View mode"
+				refreshLabel="Refresh"
+				goUpLabel="Go up"
+				browseDrivesLabel="Browse drives"
 			/>
 		</div>
 	),

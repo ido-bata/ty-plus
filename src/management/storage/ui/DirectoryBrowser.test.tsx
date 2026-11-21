@@ -244,7 +244,9 @@ describe("DirectoryBrowser kit click contract", () => {
 			<DirectoryBrowser {...baseProps} onEntryClick={vi.fn()} />,
 		);
 		expect(
-			container.querySelector(".ty-shell-directory-scroll.grid"),
+			container.querySelector(
+				".ty-shell-directory-scroll [data-directory-browser-grid]",
+			),
 		).toBeNull();
 
 		rerender(
@@ -254,7 +256,9 @@ describe("DirectoryBrowser kit click contract", () => {
 				onEntryClick={vi.fn()}
 			/>,
 		);
-		const grid = container.querySelector(".ty-shell-directory-scroll.grid");
+		const grid = container.querySelector(
+			".ty-shell-directory-scroll [data-directory-browser-grid]",
+		);
 		expect(grid).not.toBeNull();
 		expect(grid?.querySelector('[data-entry-kind="file"]')).not.toBeNull();
 	});
@@ -270,7 +274,9 @@ describe("DirectoryBrowser kit click contract", () => {
 			/>,
 		);
 		expect(
-			container.querySelector(".ty-shell-directory-scroll.grid"),
+			container.querySelector(
+				".ty-shell-directory-scroll [data-directory-browser-grid]",
+			),
 		).toBeNull();
 
 		// Parent ignores the change: the kit must NOT switch on its own.
@@ -283,7 +289,9 @@ describe("DirectoryBrowser kit click contract", () => {
 			/>,
 		);
 		expect(
-			container.querySelector(".ty-shell-directory-scroll.grid"),
+			container.querySelector(
+				".ty-shell-directory-scroll [data-directory-browser-grid]",
+			),
 		).toBeNull();
 
 		// The footer toggle only notifies the owner.
@@ -295,7 +303,9 @@ describe("DirectoryBrowser kit click contract", () => {
 		expect(onViewModeChange).toHaveBeenCalledTimes(1);
 		expect(onViewModeChange).toHaveBeenCalledWith("icons");
 		expect(
-			container.querySelector(".ty-shell-directory-scroll.grid"),
+			container.querySelector(
+				".ty-shell-directory-scroll [data-directory-browser-grid]",
+			),
 		).toBeNull();
 
 		// Parent follows the change: the kit switches.
@@ -308,7 +318,9 @@ describe("DirectoryBrowser kit click contract", () => {
 			/>,
 		);
 		expect(
-			container.querySelector(".ty-shell-directory-scroll.grid"),
+			container.querySelector(
+				".ty-shell-directory-scroll [data-directory-browser-grid]",
+			),
 		).not.toBeNull();
 		// Only the explicit footer-toggle click notified the owner.
 		expect(onViewModeChange).toHaveBeenCalledTimes(1);
@@ -324,7 +336,7 @@ describe("DirectoryBrowser kit click contract", () => {
 			/>,
 		);
 		const grid = container.querySelector(
-			".ty-shell-directory-scroll.grid",
+			".ty-shell-directory-scroll [data-directory-browser-grid]",
 		) as HTMLElement | null;
 		expect(grid?.style.gridTemplateColumns).toContain("6rem");
 	});
@@ -335,12 +347,11 @@ describe("DirectoryBrowser kit click contract", () => {
 	 * Toggling `isSelected` must not change the rendered row's
 	 * font-weight, font-size, line-height, or letter-spacing.  happy-dom's
 	 * CSS computation is unreliable (see `bunfig.toml`'s environment
-	 * fallback) so we assert on:
-	 *   1. The generated className set on the row's text span (the
-	 *      `rowEntryTextSelectedClass` applied on selection must NOT
-	 *      include `fontWeight: medium` or any weight-on-selection rule).
-	 *   2. Source-level absence of `fontWeight: "medium"` in the
-	 *      production files — guards against accidental regression.
+	 * fallback) so we assert on the generated className set:
+	 *   1. The row's font-weight classes must be *identical* in both
+	 *      states — the shared `Button` may carry a weight of its own,
+	 *      but selection must never introduce (or remove) one.
+	 *   2. Both states must use the same font-size token.
 	 */
 	it("does not bump font-weight on the row text when isSelected toggles", () => {
 		const { container, rerender } = render(
@@ -371,12 +382,11 @@ describe("DirectoryBrowser kit click contract", () => {
 		expect(buttonSelected).not.toBeNull();
 		const classSelected = buttonSelected?.className ?? "";
 
-		// The selected variant must not introduce any font-weight bump
-		// on the row's text-bearing button.
-		expect(classSelected).not.toMatch(
-			/font-weight_500|font-weight_medium|fw_medium/,
-		);
-		expect(classSelected).not.toMatch(/\bfw_[a-z]+/);
+		// The selected variant must not change the font-weight of the
+		// row's text-bearing button in any way.
+		const weightOf = (className: string): string =>
+			(className.match(/fw_[a-z0-9-]+/g) ?? []).join(" ");
+		expect(weightOf(classSelected)).toBe(weightOf(classUnselected));
 		// Both states must use the same font-size token.
 		expect(classUnselected).toContain("fs_shell-text-sm");
 		expect(classSelected).toContain("fs_shell-text-sm");

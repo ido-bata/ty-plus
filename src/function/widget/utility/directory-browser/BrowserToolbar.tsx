@@ -1,9 +1,9 @@
 import { Icon, IconButton } from "@ty-plus/ui";
-import { cx } from "@ty-plus/ui/util/cx";
 import { ArrowUp, HardDrive, RefreshCw, Settings2 } from "lucide-react";
 import type { JSX } from "react";
 import { CatalogBrowserViewModeToggle } from "@/management/preset";
 import { css } from "@/styled-system/css";
+
 export function BrowserToolbar(props: {
 	goUpAvailable: boolean;
 	filtersExpanded: boolean;
@@ -17,6 +17,9 @@ export function BrowserToolbar(props: {
 	listViewAriaLabel: string;
 	iconViewAriaLabel: string;
 	viewModeLegend: string;
+	refreshLabel: string;
+	goUpLabel: string;
+	browseDrivesLabel: string;
 }): JSX.Element {
 	const {
 		goUpAvailable,
@@ -31,26 +34,10 @@ export function BrowserToolbar(props: {
 		listViewAriaLabel,
 		iconViewAriaLabel,
 		viewModeLegend,
+		refreshLabel,
+		goUpLabel,
+		browseDrivesLabel,
 	} = props;
-	const iconBtnClass = css({
-		height: "full",
-		minHeight: 0,
-		width: "8",
-		flexShrink: 0,
-		alignSelf: "stretch",
-		borderRadius: "shell-sm",
-		borderWidth: "1px",
-		borderStyle: "solid",
-		borderColor: "border.default",
-		backgroundColor: "surface.widget",
-		padding: 0,
-		color: "text.muted",
-		_hover: { color: "text.primary" },
-		_disabled: {
-			cursor: "not-allowed",
-			opacity: 0.5,
-		},
-	});
 	return (
 		<div
 			data-directory-browser-toolbar
@@ -65,76 +52,49 @@ export function BrowserToolbar(props: {
 		>
 			{" "}
 			<IconButton
-				variant="ghost"
-				size="sm"
-				className={iconBtnClass}
-				aria-label="Refresh"
-				title="Refresh"
+				variant="default"
+				size="md"
+				aria-label={refreshLabel}
+				title={refreshLabel}
 				onClick={() => {
 					void onRefresh();
 				}}
 			>
 				{" "}
-				<Icon icon={RefreshCw} size={10} />{" "}
+				<Icon icon={RefreshCw} size={12} />{" "}
 			</IconButton>{" "}
 			<IconButton
-				variant="ghost"
-				size="sm"
-				className={iconBtnClass}
-				aria-label="Go up"
-				title="Go up"
+				variant="default"
+				size="md"
+				aria-label={goUpLabel}
+				title={goUpLabel}
 				disabled={!goUpAvailable}
 				onClick={onGoUp}
 			>
 				{" "}
-				<Icon icon={ArrowUp} size={10} />{" "}
+				<Icon icon={ArrowUp} size={12} />{" "}
 			</IconButton>{" "}
 			<IconButton
-				variant="ghost"
-				size="sm"
-				className={iconBtnClass}
-				aria-label="Browse drives"
-				title="Browse drives"
+				variant="default"
+				size="md"
+				aria-label={browseDrivesLabel}
+				title={browseDrivesLabel}
 				onClick={onBrowseDrives}
 			>
 				{" "}
-				<Icon icon={HardDrive} size={10} />{" "}
+				<Icon icon={HardDrive} size={12} />{" "}
 			</IconButton>{" "}
 			<IconButton
 				variant="ghost"
-				size="sm"
-				className={cx(
-					css({
-						height: "full",
-						minHeight: 0,
-						width: "8",
-						flexShrink: 0,
-						alignSelf: "stretch",
-						borderRadius: "shell-sm",
-						borderWidth: "1px",
-						borderStyle: "solid",
-						padding: 0,
-					}),
-					filtersExpanded
-						? css({
-								borderColor: "border.strong",
-								backgroundColor: "surface.widget",
-								color: "text.primary",
-							})
-						: css({
-								borderColor: "border.default",
-								backgroundColor: "surface.widget",
-								color: "text.muted",
-								opacity: 0.5,
-								_hover: { color: "text.primary" },
-							}),
-				)}
+				size="md"
+				active={filtersExpanded}
+				aria-pressed={filtersExpanded}
 				aria-label={detailedFiltersLabel}
 				title={detailedFiltersLabel}
 				onClick={onToggleFilters}
 			>
 				{" "}
-				<Icon icon={Settings2} size={10} />{" "}
+				<Icon icon={Settings2} size={12} />{" "}
 			</IconButton>{" "}
 			<CatalogBrowserViewModeToggle
 				viewMode={viewMode}

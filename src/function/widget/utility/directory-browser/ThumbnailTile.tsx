@@ -1,4 +1,4 @@
-import { cx } from "@ty-plus/ui/util/cx";
+import { cx } from "@ty-plus/ui";
 import type { JSX } from "react";
 import type { FileBrowserEntry } from "@/management/storage/file-browser-service";
 import { css } from "@/styled-system/css";

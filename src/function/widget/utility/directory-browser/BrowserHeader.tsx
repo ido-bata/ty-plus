@@ -41,6 +41,9 @@ export type BrowserHeaderProps = {
 	listViewAriaLabel: string;
 	iconViewAriaLabel: string;
 	viewModeLegend: string;
+	refreshLabel: string;
+	goUpLabel: string;
+	browseDrivesLabel: string;
 	coarseFilter: FileBrowserFilter;
 	onCoarseFilterChange: (next: FileBrowserFilter) => void;
 	hiddenExtensions: readonly string[];
@@ -97,6 +100,9 @@ export function BrowserHeader(props: BrowserHeaderProps): JSX.Element {
 		listViewAriaLabel,
 		iconViewAriaLabel,
 		viewModeLegend,
+		refreshLabel,
+		goUpLabel,
+		browseDrivesLabel,
 		coarseFilter,
 		onCoarseFilterChange,
 		hiddenExtensions,
@@ -195,6 +201,9 @@ export function BrowserHeader(props: BrowserHeaderProps): JSX.Element {
 						listViewAriaLabel={listViewAriaLabel}
 						iconViewAriaLabel={iconViewAriaLabel}
 						viewModeLegend={viewModeLegend}
+						refreshLabel={refreshLabel}
+						goUpLabel={goUpLabel}
+						browseDrivesLabel={browseDrivesLabel}
 					/>{" "}
 					<BrowserBrowseModeSelect
 						value={browseMode}

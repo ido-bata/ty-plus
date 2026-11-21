@@ -136,7 +136,8 @@
 			"importOnly": "Importieren",
 			"selectFile": "Auswählen",
 			"deselect": "Auswahl aufheben",
-			"runBlockedMissingAsset": "Das Preset-Asset fehlt auf der Festplatte — Ausführung ist deaktiviert."
+			"runBlockedMissingAsset": "Das Preset-Asset fehlt auf der Festplatte — Ausführung ist deaktiviert.",
+			"runBlockedUnverifiableAsset": "Preset-Asset konnte nicht überprüft werden (Host nicht erreichbar) — erneut versuchen"
 		},
 		"path": {
 			"pickFolderPrompt": "Ordner auswählen",
@@ -158,6 +159,7 @@
 			"error": "Vorschau nicht verfügbar"
 		},
 		"toolbar": {
+			"refresh": "Aktualisieren",
 			"detailedFilters": "Filter",
 			"viewModeLegend": "Ansichtsmodus",
 			"listView": "Listenansicht",
@@ -195,6 +197,7 @@
 			"noItems": "Keine Elemente"
 		},
 		"entry": {
+			"goUp": "Nach oben",
 			"defaultFolderSubtitle": "Standard",
 			"parentRowName": "Aufwärts",
 			"browseDrives": "Laufwerke durchsuchen",

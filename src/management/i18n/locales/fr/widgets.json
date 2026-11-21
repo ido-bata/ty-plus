@@ -136,7 +136,8 @@
 			"importOnly": "Importer",
 			"selectFile": "Sélectionner",
 			"deselect": "Désélectionner",
-			"runBlockedMissingAsset": "La ressource du préréglage est absente du disque — exécution désactivée."
+			"runBlockedMissingAsset": "La ressource du préréglage est absente du disque — exécution désactivée.",
+			"runBlockedUnverifiableAsset": "Impossible de vérifier la ressource du préréglage (hôte indisponible) — réessayer"
 		},
 		"path": {
 			"pickFolderPrompt": "Sélectionner un dossier",
@@ -158,6 +159,7 @@
 			"error": "Aperçu indisponible"
 		},
 		"toolbar": {
+			"refresh": "Actualiser",
 			"detailedFilters": "Filtres",
 			"viewModeLegend": "Mode d'affichage",
 			"listView": "Vue liste",
@@ -195,6 +197,7 @@
 			"noItems": "Aucun élément"
 		},
 		"entry": {
+			"goUp": "Monter",
 			"defaultFolderSubtitle": "Par défaut",
 			"parentRowName": "Monter",
 			"browseDrives": "Parcourir les lecteurs",
