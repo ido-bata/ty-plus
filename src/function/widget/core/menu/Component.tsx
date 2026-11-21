@@ -1,3 +1,5 @@
+import { Icon } from "@ty-plus/ui";
+import { Menu } from "lucide-react";
 import type { JSX, MouseEvent as ReactMouseEvent, ReactNode } from "react";
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
@@ -8,7 +10,6 @@ import { catalogRefsForSurfaceIds } from "@/management/workspace/placement/resol
 import { ATTR_WIDGET_INSTANCE_ID } from "@/management/workspace/placement/types";
 import type { SurfaceState } from "@/management/workspace/state";
 import { DATA_OPENER_WORKSPACE_PANEL } from "@/management/workspace/surface/opener-panel-id";
-import { MenuIcon } from "@/management/workspace/surface/widget-grid-icons";
 import { css } from "@/styled-system/css";
 
 type Item = { action: string; label: string };
@@ -485,7 +486,7 @@ export function MenuWidget({
 			onClick={onToggle}
 			{...instanceAttr}
 		>
-			<MenuIcon size={14} />
+			<Icon icon={Menu} size={14} />
 			{panel}
 		</button>
 	);
