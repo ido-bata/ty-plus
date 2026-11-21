@@ -1,7 +1,7 @@
-import { renderToString } from "react-dom/server";
-import { describe, expect, it } from "vitest";
 import { presetIconCanvas } from "@ty-plus/product/management/preset/contract";
 import { Tile } from "@ty-plus/product/management/preset/workspace/Tile";
+import { renderToString } from "react-dom/server";
+import { describe, expect, it } from "vitest";
 import { DEMO_PRESETS } from "../lib/demo-presets";
 
 /**
@@ -23,9 +23,7 @@ describe("PresetStage product-component contract", () => {
 
 	it("the product Tile renders the shared glyph host markup", () => {
 		const preset = DEMO_PRESETS[0];
-		const html = renderToString(
-			<Tile preset={preset} label={preset.title} />,
-		);
+		const html = renderToString(<Tile preset={preset} label={preset.title} />);
 		// Product glyph host contract: data-preset-id + ws-preset-icon shell.
 		expect(html).toContain(`data-preset-id="${preset.id}"`);
 		expect(html).toContain("ws-preset-icon");
