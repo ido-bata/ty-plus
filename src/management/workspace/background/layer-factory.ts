@@ -21,7 +21,7 @@ export const PRESET_COLORS = [
 ];
 const PATTERNS: readonly PatternValue[] = ["dots", "grid", "lines"];
 
-function createNewLayer(type: LayerType): Layer {
+export function createNewLayer(type: LayerType): Layer {
 	return {
 		id: `layer-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
 		type,
@@ -45,7 +45,7 @@ function createNewLayer(type: LayerType): Layer {
 	};
 }
 
-function migrateToLayers(bg: Background | null): Layer[] {
+export function migrateToLayers(bg: Background | null): Layer[] {
 	if (!bg) {
 		return [createNewLayer("color")];
 	}
@@ -89,8 +89,4 @@ function migrateToLayers(bg: Background | null): Layer[] {
 
 export function clampNumber(value: number, min: number, max: number): number {
 	return Math.max(min, Math.min(max, Number.isFinite(value) ? value : min));
-}
-
-function isUrlImagePath(value: string): boolean {
-	return /^(https?:|data:image\/)/i.test(value.trim());
 }

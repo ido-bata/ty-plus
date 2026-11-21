@@ -13,7 +13,14 @@ import {
 } from "react";
 import { useTranslation } from "react-i18next";
 import { selectFolder } from "@/management/ae/cep/dialog-shim/bolt";
-import { readUserHomeOrFallback, ToolDialog } from "@/management/preset";
+import {
+	AuthoringField,
+	AuthoringGrid,
+	AuthoringSection,
+	AuthoringSegment,
+	readUserHomeOrFallback,
+	ToolDialog,
+} from "@/management/preset";
 import { assertPresetAssetPresent } from "@/management/preset/asset-verification";
 import { hostSafeFileName } from "@/management/preset/authoring/host-safe-file-name";
 import { authorCodePresetAsset } from "@/management/preset/authoring/write-preset-asset";
@@ -26,12 +33,6 @@ import {
 	createPresetIconDraft,
 	presetIconDraftToPresetIcon,
 } from "@/management/preset/icon-editor";
-import {
-	AuthoringField,
-	AuthoringGrid,
-	AuthoringSection,
-	AuthoringSegment,
-} from "@/management/preset/tool-shell/archive-layout";
 import { upsertLocalPreset } from "@/management/preset/use-cases";
 import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
 import { glyphBoxFillClass } from "@/management/preset/workspace/glyph-classes";

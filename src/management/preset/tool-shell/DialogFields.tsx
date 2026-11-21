@@ -1,7 +1,4 @@
-import { Icon } from "@ty-plus/ui";
-import { Input } from "@ty-plus/ui/fields/Input";
-import { PathField } from "@ty-plus/ui/fields/PathField";
-import { Textarea } from "@ty-plus/ui/fields/Textarea";
+import { Icon, Input, PathField, Textarea } from "@ty-plus/ui";
 import { FileSearch, FolderOpen } from "lucide-react";
 import type { JSX } from "react";
 import { css } from "@/styled-system/css";

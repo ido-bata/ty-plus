@@ -4,6 +4,11 @@ import { useTranslation } from "react-i18next";
 import { readCepOpenParams } from "@/management/ae/cep/transport";
 import { readUserHomeOrFallback, ToolDialog } from "@/management/preset";
 import { hostSafeFileName } from "@/management/preset/authoring/host-safe-file-name";
+import {
+	AuthoringField,
+	AuthoringGrid,
+	AuthoringSection,
+} from "@/management/preset/authoring-layout";
 import { parseRootPathsFromSettingsJson } from "@/management/preset/catalog-add/parse-root-paths";
 import type {
 	PresetEasingCurveV1,
@@ -11,11 +16,6 @@ import type {
 	PresetType,
 } from "@/management/preset/contract";
 import { getCachedPresetToolHandoffPayload } from "@/management/preset/tool-handoff-file";
-import {
-	AuthoringField,
-	AuthoringGrid,
-	AuthoringSection,
-} from "@/management/preset/tool-shell/archive-layout";
 import { openPresetToolSurface } from "@/management/workspace/hooks/dialogs";
 import { readSettings } from "@/management/workspace/persistence/store";
 import { css } from "@/styled-system/css";

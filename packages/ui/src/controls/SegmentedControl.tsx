@@ -12,8 +12,8 @@ export type SegmentedControlProps = {
 	buttonClassName?: string;
 	selectedClassName?: string;
 	unselectedClassName?: string;
-	/** radiogroup label (i18n is caller's responsibility) */
-	"aria-label": string;
+	/** Accessible name for the group (i18n is the caller's responsibility). */
+	"aria-label"?: string;
 };
 
 const toolbar = css({

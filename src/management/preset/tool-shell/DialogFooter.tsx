@@ -1,4 +1,4 @@
-import { Button } from "@ty-plus/ui/controls/Button";
+import { Button } from "@ty-plus/ui";
 import { Save } from "lucide-react";
 import type { JSX } from "react";
 import { DialogFooterActions } from "@/management/dialog/dialogs/shell/Footer";

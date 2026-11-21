@@ -1,10 +1,4 @@
-import { Icon } from "@ty-plus/ui";
-import { Button } from "@ty-plus/ui/controls/Button";
-import { Input } from "@ty-plus/ui/fields/Input";
-import { PathField } from "@ty-plus/ui/fields/PathField";
-import { Textarea } from "@ty-plus/ui/fields/Textarea";
-import { DialogBody } from "@ty-plus/ui/shell/DialogBody";
-import { FileSearch, FolderOpen, Save } from "lucide-react";
+import { DialogBody } from "@ty-plus/ui";
 import {
 	type JSX,
 	type ReactNode,
@@ -17,7 +11,6 @@ import { useTranslation } from "react-i18next";
 import { selectFile, selectFolder } from "@/management/ae/cep/dialog-shim/bolt";
 import { DialogShell } from "@/management/dialog";
 import { registerCepJsonContextMenuSurface } from "@/management/dialog/dialogs/context-menu";
-import { DialogFooterActions } from "@/management/dialog/dialogs/shell/Footer";
 import type { DroppedFile } from "@/management/dialog/dialogs/shell/Layout";
 import { readPhysicalExtensionId } from "@/management/dialog/modeless/surface-id";
 import { useDialogClose } from "@/management/dialog/useClose";
@@ -26,8 +19,6 @@ import {
 	createPresetAuthoringWriter,
 	type PresetAuthoringWriter,
 } from "@/management/preset/authoring/write-preset-asset";
-import { ArchiveDetailsSection } from "@/management/preset/catalog-add/ArchiveDetailsSection";
-import { PresetIconEditor } from "@/management/preset/components/IconEditor";
 import type { Preset, PresetType } from "@/management/preset/contract";
 import {
 	type PresetSaveEntryPoint,
@@ -43,11 +34,24 @@ import {
 	PRESET_TOOL_CTX,
 } from "@/management/preset/tool-shell/context-menu";
 import { upsertLocalPreset } from "@/management/preset/use-cases";
-import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
-import { glyphBoxFillClass } from "@/management/preset/workspace/glyph-classes";
 import { createInstanceId } from "@/management/storage/ids";
-import { notifyPanelsAfterPresetSave } from "@/management/workspace/placement/notify-panels-after-preset-save";
 import { css } from "@/styled-system/css";
+import { ToolDialogDetailsSection } from "./DialogDetailsSection";
+import { ToolDialogFields } from "./DialogFields";
+import { ToolDialogFooter } from "./DialogFooter";
+import { ToolDialogForm } from "./DialogForm";
+import { ToolDialogIconSection } from "./DialogIconSection";
+import {
+	buildFilePath,
+	getCatalogRefIds,
+	getCatalogRefIdsArg,
+	getDataBlock,
+	getExtraData,
+	getIconText,
+	getStatusMessage,
+	getTitle,
+	notifyBounded,
+} from "./preset-tool-helpers";
 
 type FieldKind = "input" | "textarea" | "checkbox" | "select";
 
@@ -137,71 +141,6 @@ export type PresetToolDialogProps = {
 	onFileDrop?: (files: DroppedFile[]) => void;
 };
 
-const shellFieldLabelClass = css({
-	fontSize: "xs",
-	fontWeight: "medium",
-	textTransform: "uppercase",
-	letterSpacing: "wide",
-	color: "text.muted",
-});
-
-const fieldColumnClass = css({
-	display: "flex",
-	minWidth: "0",
-	flexDirection: "column",
-	gap: "1",
-});
-
-const checkboxLabelClass = css({
-	display: "flex",
-	cursor: "pointer",
-	alignItems: "center",
-	gap: "2",
-	fontSize: "shell-text-sm",
-	color: "text.primary",
-});
-
-const checkboxInputClass = css({
-	height: "4",
-	width: "4",
-	flexShrink: "0",
-	borderRadius: "sm",
-	borderWidth: "1px",
-	borderStyle: "solid",
-	borderColor: "border.default",
-	backgroundColor: "surface.widget",
-});
-
-const selectClass = css({
-	width: "full",
-	minWidth: "0",
-	cursor: "pointer",
-	borderRadius: "shell-sm",
-	borderWidth: "1px",
-	borderStyle: "solid",
-	borderColor: "border.default",
-	backgroundColor: "surface.widget",
-	paddingInline: "2.5",
-	paddingBlock: "2",
-	fontSize: "shell-text-sm",
-	color: "text.primary",
-	outline: "none",
-	_focus: { borderColor: "interactive.focus" },
-	_disabled: { opacity: "0.5" },
-});
-
-const defaultFormClass = css({
-	display: "flex",
-	flexDirection: "column",
-	gap: "3",
-});
-
-const leadClass = css({
-	margin: "0",
-	fontSize: "shell-text-sm",
-	color: "text.muted",
-});
-
 /**
  * Authoring failure banner. A rejected save root or a declined UAC prompt
  * must be visible in the dialog itself — the status state below is never
@@ -247,103 +186,6 @@ const toolShellFooterClass = css({
 	paddingInline: "var(--ty-shell-pad-inline)",
 	paddingBlock: "var(--ty-shell-space)",
 });
-
-const getCatalogRefIds = (r: { catalogRefIds?: readonly string[] | null }) =>
-	r.catalogRefIds?.filter((x) => x.trim().length > 0) ?? [];
-
-const getCatalogRefIdsArg = (refs: string[], presetId: string) =>
-	refs.length > 0 ? refs : [presetId];
-
-const buildFilePath = (
-	before: { filePath?: string | null } | null,
-	buildFilePath: PresetToolDialogProps["buildFilePath"],
-	values: Record<string, string>,
-	name: string,
-	presetId: string,
-) =>
-	(
-		before?.filePath ??
-		buildFilePath?.(values, {
-			name: name.trim(),
-			presetId,
-		}) ??
-		""
-	).trim();
-
-const getExtraData = (
-	mapPersistData: PresetToolDialogProps["mapPersistData"],
-	values: Record<string, string>,
-) => mapPersistData?.(values) ?? {};
-
-const getTitle = (name: string, defaultName: string | undefined) =>
-	name.trim() || defaultName || "";
-
-const getIconText = (iconText: string | null | undefined) =>
-	iconText ?? "PRESET";
-
-const getDataBlock = (extraData: Record<string, unknown>) =>
-	Object.keys(extraData).length > 0 ? { data: extraData } : {};
-
-const getStatusMessage = (
-	before: { status?: string } | null,
-	recordId: string,
-) => before?.status ?? `Saved: ${recordId}`;
-
-const notifyBounded = async (
-	input: Parameters<typeof notifyPanelsAfterPresetSave>[1],
-): Promise<void> => {
-	let timer: ReturnType<typeof setTimeout> | null = null;
-	const timeout = new Promise<void>((resolve) => {
-		timer = setTimeout(resolve, 3000);
-	});
-	try {
-		await Promise.race([
-			notifyPanelsAfterPresetSave(window, input).catch(() => undefined),
-			timeout,
-		]);
-	} catch {
-		// race cannot realistically reject here; swallow defensively
-	}
-	if (timer) clearTimeout(timer);
-};
-
-function ToolDialogFooter({
-	close,
-	busy,
-	t,
-	onSave,
-}: {
-	close: () => void;
-	busy: boolean;
-	t: (key: string, options?: Record<string, unknown>) => string;
-	onSave: () => Promise<void>;
-}): JSX.Element {
-	return (
-		<DialogFooterActions>
-			<Button
-				type="button"
-				variant="ghost"
-				uiSize="sm"
-				fullWidth
-				onClick={() => close()}
-				disabled={busy}
-			>
-				{t("presetTool.cancel")}
-			</Button>
-			<Button
-				type="button"
-				variant="primary"
-				uiSize="sm"
-				fullWidth
-				start={<Save size={14} />}
-				disabled={busy}
-				onClick={() => void onSave()}
-			>
-				{busy ? t("presetTool.status.saving") : t("presetTool.create")}
-			</Button>
-		</DialogFooterActions>
-	);
-}
 
 export function Dialog(props: PresetToolDialogProps): JSX.Element {
 	const { t } = useTranslation("presets");
@@ -636,168 +478,52 @@ export function Dialog(props: PresetToolDialogProps): JSX.Element {
 		};
 	}, [props.surfaceId, close]);
 
-	const renderPlainInput = (field: PresetToolField): JSX.Element => {
-		const spec = findBrowseSpec(field.key);
-		if (!spec) {
-			return (
-				<Input
-					key={field.key}
-					label={field.label}
-					placeholder={field.placeholder}
-					value={values[field.key] ?? ""}
-					onChange={(event) =>
-						setValues((current) => ({
-							...current,
-							[field.key]: event.currentTarget.value,
-						}))
-					}
-					uiSize="md"
-					disabled={busy}
-				/>
-			);
-		}
-		return (
-			<div key={field.key} className={fieldColumnClass}>
-				<span className={shellFieldLabelClass}>{field.label}</span>
-				<PathField
-					value={values[field.key] ?? ""}
-					onChange={(next) =>
-						setValues((current) => ({ ...current, [field.key]: next }))
-					}
-					onBrowse={() => runPathBrowse(field.key)}
-					browseAriaLabel={
-						spec.mode === "folder" ? "Browse folder" : "Browse file"
-					}
-					browseSlot={
-						<Icon
-							icon={spec.mode === "folder" ? FolderOpen : FileSearch}
-							size={16}
-							aria-hidden
-						/>
-					}
-					placeholder={field.placeholder}
-					uiSize="md"
-					disabled={busy}
-				/>
-			</div>
-		);
-	};
-
 	const renderedFields = (
-		<>
-			{props.fields.map((field) =>
-				field.kind === "checkbox" ? (
-					<label key={field.key} className={checkboxLabelClass}>
-						<input
-							type="checkbox"
-							className={checkboxInputClass}
-							checked={(values[field.key] ?? "") === "true"}
-							onChange={(event) =>
-								setValues((current) => ({
-									...current,
-									[field.key]: event.target.checked ? "true" : "false",
-								}))
-							}
-							disabled={busy}
-						/>
-						<span className={shellFieldLabelClass}>{field.label}</span>
-					</label>
-				) : field.kind === "select" && field.options?.length ? (
-					<div key={field.key} className={fieldColumnClass}>
-						<span className={shellFieldLabelClass}>{field.label}</span>
-						<select
-							aria-label={field.label}
-							className={selectClass}
-							value={values[field.key] ?? ""}
-							onChange={(event) =>
-								setValues((current) => ({
-									...current,
-									[field.key]: event.currentTarget.value,
-								}))
-							}
-							disabled={busy}
-						>
-							{field.options.map((opt) => (
-								<option key={opt.value} value={opt.value}>
-									{opt.label}
-								</option>
-							))}
-						</select>
-					</div>
-				) : field.kind === "textarea" ? (
-					<div key={field.key} className={fieldColumnClass}>
-						<span className={shellFieldLabelClass}>{field.label}</span>
-						<Textarea
-							aria-label={field.label}
-							placeholder={field.placeholder}
-							value={values[field.key] ?? ""}
-							onChange={(event) =>
-								setValues((current) => ({
-									...current,
-									[field.key]: event.currentTarget.value,
-								}))
-							}
-							uiSize="md"
-							disabled={busy}
-						/>
-					</div>
-				) : (
-					renderPlainInput(field)
-				),
-			)}
-		</>
+		<ToolDialogFields
+			fields={props.fields}
+			values={values}
+			busy={busy}
+			browseSpecs={browseSpecs}
+			runPathBrowse={runPathBrowse}
+			setValue={setFieldValue}
+		/>
 	);
 
 	const iconSection = (
-		<div data-preset-tool-area="icon" className={css({ minWidth: "0" })}>
-			<PresetIconEditor
-				draft={iconDraft}
-				onChange={setIconDraft}
-				browseDir={props.resolveBrowseStartDir?.()}
-				label={t("presetTool.form.icon")}
-				preview={
-					<FramedPresetGlyph
-						preset={previewPreset}
-						boxClass={glyphBoxFillClass}
-					/>
-				}
-				showCanvasTab={iconDraft.type === "canvas"}
-			/>
-		</div>
+		<ToolDialogIconSection
+			iconDraft={iconDraft}
+			onIconDraftChange={setIconDraft}
+			browseDir={props.resolveBrowseStartDir?.() ?? ""}
+			label={t("presetTool.form.icon")}
+			previewPreset={previewPreset}
+		/>
 	);
 
 	const detailsSection = (
-		<div data-preset-tool-area="details" className={css({ minWidth: "0" })}>
-			<ArchiveDetailsSection
-				description={description}
-				onDescriptionChange={setDescription}
-				descriptionImage={descriptionImage}
-				onDescriptionImageChange={setDescriptionImage}
-				browseDir={props.resolveBrowseStartDir?.() ?? ""}
-			/>
-		</div>
+		<ToolDialogDetailsSection
+			description={description}
+			onDescriptionChange={setDescription}
+			descriptionImage={descriptionImage}
+			onDescriptionImageChange={setDescriptionImage}
+			browseDir={props.resolveBrowseStartDir?.() ?? ""}
+		/>
 	);
 
 	const defaultForm = (
-		<div className={defaultFormClass}>
-			<p className={leadClass}>{props.description}</p>
-			{props.leadingSlots}
-			{props.renderLeadingSlots?.({
-				values,
-				setValue: setFieldValue,
-				busy,
-			})}
-			<Input
-				label={t("presetTool.form.presetName")}
-				value={name}
-				onChange={(event) => setName(event.currentTarget.value)}
-				uiSize="md"
-				disabled={busy}
-			/>
-			{renderedFields}
-			{detailsSection}
-			{iconSection}
-		</div>
+		<ToolDialogForm
+			description={props.description}
+			leadingSlots={props.leadingSlots}
+			renderLeadingSlots={props.renderLeadingSlots}
+			values={values}
+			setValue={setFieldValue}
+			busy={busy}
+			name={name}
+			setName={setName}
+			fields={renderedFields}
+			details={detailsSection}
+			icon={iconSection}
+			nameLabel={t("presetTool.form.presetName")}
+		/>
 	);
 
 	return (

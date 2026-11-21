@@ -5,7 +5,14 @@ import { AlertCircle, FolderOpen } from "lucide-react";
 import { type JSX, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { selectFolder } from "@/management/ae/cep/dialog-shim/bolt";
-import { readUserHomeOrFallback, ToolDialog } from "@/management/preset";
+import {
+	AuthoringField,
+	AuthoringGrid,
+	AuthoringSection,
+	AuthoringSegment,
+	readUserHomeOrFallback,
+	ToolDialog,
+} from "@/management/preset";
 import { hostSafeFileName } from "@/management/preset/authoring/host-safe-file-name";
 import { ArchiveDetailsSection } from "@/management/preset/catalog-add/ArchiveDetailsSection";
 import { parseRootPathsFromSettingsJson } from "@/management/preset/catalog-add/parse-root-paths";
@@ -15,12 +22,6 @@ import {
 	createPresetIconDraft,
 	presetIconDraftToPresetIcon,
 } from "@/management/preset/icon-editor";
-import {
-	AuthoringField,
-	AuthoringGrid,
-	AuthoringSection,
-	AuthoringSegment,
-} from "@/management/preset/tool-shell/archive-layout";
 import { upsertLocalPreset } from "@/management/preset/use-cases";
 import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
 import { glyphBoxFillClass } from "@/management/preset/workspace/glyph-classes";

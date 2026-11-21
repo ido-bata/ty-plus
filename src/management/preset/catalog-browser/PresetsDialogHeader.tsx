@@ -1,10 +1,15 @@
-import { Icon, IconButton, ViewModeToggle } from "@ty-plus/ui";
-import { SearchField } from "@ty-plus/ui/fields/SearchField";
+import { Icon, IconButton, SearchField, ViewModeToggle } from "@ty-plus/ui";
 import { LoaderCircle, RefreshCw, Search } from "lucide-react";
 import type { JSX, ReactNode } from "react";
 import { css } from "@/styled-system/css";
 
 import type { LoadPhase, PresetViewMode } from "./use-presets-catalog";
+
+/**
+ * The preset list dialog distinguishes a successful terminal load (`"loaded"`)
+ * from the catalog hook's phases, so the header accepts the wider union.
+ */
+type HeaderLoadPhase = LoadPhase | "loaded";
 
 const headerRowClass = css({
 	display: "flex",
@@ -35,7 +40,7 @@ const searchFieldClass = css({
 	height: "8",
 	minHeight: "8",
 	flex: "1",
-	padding: "0",
+	paddingBlock: "0",
 });
 
 const reloadButtonClass = css({
@@ -48,8 +53,7 @@ const reloadButtonClass = css({
 	borderWidth: "1px",
 	borderStyle: "solid",
 	borderColor: "border.default",
-	backgroundColor: "surface.widget",
-	opacity: 0.5,
+	backgroundColor: "surface.widget/50",
 	padding: "0",
 	color: "text.muted",
 	_hover: { color: "text.primary" },
@@ -108,7 +112,7 @@ const progressFillClass = css({
 const countClass = css({ flexShrink: "0", fontVariantNumeric: "tabular-nums" });
 
 type SearchStatusBarProps = {
-	loadPhase: LoadPhase;
+	loadPhase: HeaderLoadPhase;
 	loadError: string | null;
 	streamTotal: number;
 	presetsLength: number;
@@ -125,7 +129,9 @@ function SearchStatusBar(props: SearchStatusBarProps): ReactNode {
 		visibleCount,
 		filter,
 	} = props;
-	if (loadPhase === "reading") {
+	// "idle" means the first read has not finished yet — showing a count there
+	// would claim "0 items" about a catalog we have not read.
+	if (loadPhase === "idle" || loadPhase === "reading") {
 		return (
 			<span className={loadingInlineClass}>
 				<LoaderCircle className={loadingSpinnerClass} aria-hidden />
@@ -171,7 +177,7 @@ export type PresetsDialogHeaderProps = {
 	filter: string;
 	onFilterChange: (value: string) => void;
 	onReload: () => void;
-	loadPhase: LoadPhase;
+	loadPhase: HeaderLoadPhase;
 	loadError: string | null;
 	streamTotal: number;
 	presetsLength: number;
