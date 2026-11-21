@@ -126,7 +126,7 @@ vi.mock("@/management/preset/catalog-browser/view-mode-toggle", () => ({
 	CatalogBrowserViewModeToggle: () => <div data-testid="view-toggle" />,
 }));
 
-vi.mock("@/management/preset/workspace/glyph", () => ({
+vi.mock("@/management/preset/workspace/glyph-by-id", () => ({
 	PresetGlyphById: () => <span data-testid="preset-glyph" />,
 }));
 

@@ -38,6 +38,12 @@ export default defineConfig({
 				find: /^@styled-system\/(.*)$/,
 				replacement: `${path.join(root, "styled-system")}/$1`,
 			},
+			// Catch-all for product (`src/`) modules imported via `@/…` —
+			// must stay AFTER the `@/styled-system` entries above.
+			{
+				find: /^@\/(.*)$/,
+				replacement: `${path.join(repoRoot, "src")}/$1`,
+			},
 		],
 	},
 	plugins: [
