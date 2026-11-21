@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { checkAppSource } from "./check-app-ui-design";
+import { checkAppSource, parseVarCalls } from "./check-app-ui-design";
 
 const rules = (src: string): string[] =>
 	checkAppSource("test.tsx", src).map((v) => v.rule);
@@ -91,5 +91,100 @@ export const C = () => <IconButton className={layout} aria-label="x" />;
 	it("allows an inline style that only sets runtime position", () => {
 		const src = `export const C = () => <div style={{ top: box.top, left: box.left }}>x</div>;`;
 		expect(rules(src)).toEqual([]);
+	});
+});
+
+describe("focus indicators", () => {
+	const rules = (src: string): string[] =>
+		checkAppSource("test.tsx", src).map((v) => v.rule);
+
+	it("accepts the canonical focus ring", () => {
+		const src = `
+import { css } from "@/styled-system/css";
+const field = css({
+	outline: "none",
+	_focus: {
+		borderColor: "interactive.focus",
+		boxShadow: "var(--color-focus-ring)",
+	},
+});
+`;
+		expect(rules(src)).toEqual([]);
+	});
+
+	it("reports a focus rule that paints no indicator", () => {
+		const src = `
+import { css } from "@/styled-system/css";
+const field = css({
+	outline: "none",
+	_focus: { borderColor: "interactive.focus" },
+});
+`;
+		expect(rules(src)).toEqual(["focus-ring-missing"]);
+	});
+
+	it("reports a focus rule that paints a different indicator", () => {
+		const src = `
+import { css } from "@/styled-system/css";
+const field = css({
+	_focusVisible: { boxShadow: "inset 0 0 0 1px var(--color-interactive-focus)" },
+});
+`;
+		expect(rules(src)).toEqual(["focus-ring-divergent"]);
+	});
+});
+
+describe("css variables", () => {
+	const rules = (src: string): string[] =>
+		checkAppSource("test.tsx", src).map((v) => v.rule);
+
+	it("accepts a defined theme variable", () => {
+		const src = `
+import { css } from "@/styled-system/css";
+const a = css({ color: "var(--color-text-muted)" });
+`;
+		expect(rules(src)).toEqual([]);
+	});
+
+	it("reports an undefined variable that has no fallback", () => {
+		const src = `
+import { css } from "@/styled-system/css";
+const a = css({ color: "var(--color-nope)" });
+`;
+		expect(rules(src)).toEqual(["unknown-css-var"]);
+	});
+
+	it("accepts an undefined variable that has a fallback", () => {
+		const src = `
+import { css } from "@/styled-system/css";
+const a = css({ color: "var(--color-nope, #fff)" });
+`;
+		expect(rules(src)).toEqual([]);
+	});
+
+	it("accepts a custom property the file sets inline", () => {
+		const src = `
+import { css } from "@/styled-system/css";
+const a = css({ fontSize: "var(--runtime-size)" });
+export const C = () => <span style={{ "--runtime-size": "10px" } as React.CSSProperties}>x</span>;
+`;
+		expect(rules(src)).toEqual([]);
+	});
+});
+
+describe("parseVarCalls", () => {
+	it("reads the name and whether a fallback is present", () => {
+		expect(parseVarCalls("var(--a)")).toEqual([
+			{ name: "--a", hasFallback: false },
+		]);
+		expect(parseVarCalls("var(--a, #fff)")).toEqual([
+			{ name: "--a", hasFallback: true },
+		]);
+	});
+
+	it("does not mistake a nested fallback for the outer name", () => {
+		expect(parseVarCalls("var(--a, var(--b))")).toEqual([
+			{ name: "--a", hasFallback: true },
+		]);
 	});
 });
