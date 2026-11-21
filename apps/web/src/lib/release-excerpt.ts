@@ -194,10 +194,11 @@ function legacyExcerpt(
 		proseMax: number;
 	},
 ): ReleaseExcerpt {
-	const bullets = bulletLines(lines, Number.MAX_SAFE_INTEGER)
-		.slice(0, maxBullets)
-		.map((l) => truncateAtBoundary(cleanInline(l), bulletMax))
-		.filter((l) => l.length > 0);
+	const bullets: string[] = [];
+	for (const raw of bulletLines(lines, maxBullets)) {
+		const cleaned = truncateAtBoundary(cleanInline(raw), bulletMax);
+		if (cleaned.length > 0) bullets.push(cleaned);
+	}
 
 	const proseLine = lines.find(
 		(l) =>
@@ -243,13 +244,15 @@ export function releaseExcerpt(
 
 	let bullets: string[] = [];
 	for (const rank of [0, 1] as const) {
-		const lines = sections
-			.filter((s) => s.rank === rank)
-			.flatMap((s) => s.lines);
-		bullets = bulletLines(lines, maxBullets).map((l) =>
-			truncateAtBoundary(cleanInline(l), bulletMax),
-		);
-		bullets = bullets.filter((l) => l.length > 0);
+		const lines: string[] = [];
+		for (const section of sections) {
+			if (section.rank === rank) lines.push(...section.lines);
+		}
+		bullets = [];
+		for (const raw of bulletLines(lines, maxBullets)) {
+			const cleaned = truncateAtBoundary(cleanInline(raw), bulletMax);
+			if (cleaned.length > 0) bullets.push(cleaned);
+		}
 		if (bullets.length > 0) break;
 	}
 
