@@ -9,11 +9,11 @@
 		"preview": "vite preview",
 		"typecheck": "tsc -p tsconfig.json --noEmit",
 		"snapshot:releases": "bun scripts/fetch-release-snapshot.ts",
-		"deploy": "npm exec --no -- cf deploy --mode production",
-		"deploy:preview": "npm exec --no -- cf deploy --mode preview",
-		"cf-typegen": "npm exec --no -- cf build --mode production",
-		"deploy:dry-run": "npm exec --no -- cf deploy --mode production --dry-run",
-		"deploy:preview:dry-run": "npm exec --no -- cf deploy --mode preview --dry-run"
+		"deploy": "bun run build && npm exec --no -- cf deploy --prebuilt --mode production",
+		"deploy:preview": "vite build --mode preview && npm exec --no -- cf deploy --prebuilt --mode preview",
+		"cf-typegen": "bun run build",
+		"deploy:dry-run": "bun run build && npm exec --no -- cf deploy --prebuilt --mode production --dry-run",
+		"deploy:preview:dry-run": "vite build --mode preview && npm exec --no -- cf deploy --prebuilt --mode preview --dry-run"
 	},
 	"dependencies": {
 		"@fontsource-variable/ibm-plex-sans": "^5.3.0",
