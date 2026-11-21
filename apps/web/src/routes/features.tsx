@@ -130,8 +130,8 @@ function FeaturesPage() {
 
 			{/* Verified chain — the copy rail states the operation → state →
 			    result contract (including the honest apply note); the two real
-			    captures below it show the states the demo mirrors, in gesture
-			    order: tiles first, then selection feeding the info widget. */}
+			    captures beside it show the same info widget before and after a
+			    selection, cropped from the verified #322 product captures. */}
 			<section
 				className={cx(
 					container({ size: "content" }),
@@ -150,25 +150,26 @@ function FeaturesPage() {
 							adds to it. A plain click applies the preset to the active layer
 							in After Effects — a path verified end to end against a real
 							project. The demo records that intent as a note rather than
-							simulating the run.
+							simulating the run. The two captures pair the real info widget
+							before and after a selection.
 						</p>
 					</div>
-					<div className={cx(span8, stack({ gap: 3 }))}>
-						<FeatureShot
-							image="/images/preset-grid.png"
-							alt="Preset tiles on the ty-plus workspace grid with the info widget below reading 'No preset selected'"
-							width={2160}
-							height={820}
-							caption="Preset tiles on the workspace grid — the info widget below still reads 'No preset selected'."
-						/>
-						<FeatureShot
-							image="/images/preset-selected.png"
-							alt="The info widget listing the selected preset — its name, preset kind, and selection as the source"
-							width={2160}
-							height={410}
-							caption="Select a tile and the same info widget lists the preset — name, kind, and 'selection' as its source."
-						/>
-					</div>
+					<FeatureShot
+						image="/images/preset-info-empty.png"
+						alt="The ty-plus info widget in its empty state, reading 'No preset selected'"
+						width={685}
+						height={625}
+						caption="Before — nothing selected: the info widget reads 'No preset selected'."
+						className={span4}
+					/>
+					<FeatureShot
+						image="/images/preset-info-selected.png"
+						alt="The ty-plus info widget listing the selected preset — its name, preset kind, and selection as the source"
+						width={685}
+						height={660}
+						caption="After — a tile is selected: the widget lists the preset's name, kind, and 'selection' as its source."
+						className={span4}
+					/>
 				</div>
 			</section>
 
