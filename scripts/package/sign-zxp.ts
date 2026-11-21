@@ -44,12 +44,20 @@ export const resolveSignZxpConfig = (
 		pick(env.ZXP_CERT_PATH) ?? "dist/certs/ty-plus-self-signed.p12",
 	);
 	const certPassword = pick(env.ZXP_CERT_PASSWORD);
-	// Apple's TSA is the one the pinned Adobe signer (ZXPSignCmd 4.1.3) can
-	// verify today. DigiCert/Sectigo/Entrust currently fail that check with
-	// exit 35 ("timestamp … could not be verified"), which aborts signing.
-	// Override with ZXP_TIMESTAMP_URL for a different trusted TSA.
+	// No default TSA: Apple's timestamp endpoint (the only one ZXPSignCmd
+	// 4.1.3 ever validated) is defunct — it now redirects to a marketing
+	// page and HTTPS times out, and DigiCert/Sectigo/Entrust fail the
+	// signer's TSA check with exit 35. Signing without -tsa produces a
+	// ZXP that `ZXPSignCmd -verify` accepts; the signing certificate's
+	// own validity period covers the signature. Set ZXP_TIMESTAMP_URL to
+	// a trusted TSA URL to opt back in; the literal "none" also disables
+	// the timestamp explicitly.
+	const timestampOverride = pick(env.ZXP_TIMESTAMP_URL);
 	const timestampUrl =
-		pick(env.ZXP_TIMESTAMP_URL) ?? "http://timestamp.apple.com/ts01";
+		timestampOverride === undefined ||
+		timestampOverride.toLowerCase() === "none"
+			? undefined
+			: timestampOverride;
 
 	if (!certPassword) {
 		throw new Error(
@@ -67,9 +75,7 @@ export const resolveSignZxpConfig = (
 	};
 };
 
-const SELF_SIGNED_DEFAULT = path.resolve(
-	"dist/certs/ty-plus-self-signed.p12",
-);
+const SELF_SIGNED_DEFAULT = path.resolve("dist/certs/ty-plus-self-signed.p12");
 
 /**
  * Release-trust ZXP signing configuration. Distinct from the development
@@ -201,11 +207,9 @@ export const signZxp = (
  * part of verification; the exit status is the only verdict.
  */
 export const verifyZxp = (config: SignZxpConfig): void => {
-	const result = spawnSync(
-		config.signCmd,
-		["-verify", config.outputFile],
-		{ stdio: "inherit" },
-	);
+	const result = spawnSync(config.signCmd, ["-verify", config.outputFile], {
+		stdio: "inherit",
+	});
 	if (result.status !== 0) {
 		throw new Error(
 			`ZXP signature verification failed with exit code ${result.status ?? -1} — the signed ZXP is not trusted distribution evidence`,

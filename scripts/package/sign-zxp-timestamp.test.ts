@@ -6,8 +6,10 @@ import { buildSignZxpArgs, resolveSignZxpConfig, signZxp } from "./sign-zxp";
  *
  * Regression context: the default TSA was DigiCert, which the pinned Adobe
  * signer (ZXPSignCmd 4.1.3) can no longer validate — signing aborted with exit
- * 35 ("the timestamp returned from the chosen TSA could not be verified"). The
- * default moved to Apple's TSA, which signs and verifies with that binary.
+ * 35 ("the timestamp returned from the chosen TSA could not be verified").
+ * Apple's TSA, the fallback default, is also defunct (dead endpoint, HTTPS
+ * timeout), so the default is now no timestamp at all; a TSA is opt-in via
+ * ZXP_TIMESTAMP_URL.
  * A TSA failure is not a "signature is bad" result, so it must not be mistaken
  * for one.
  */
@@ -20,11 +22,14 @@ const config = (env: Record<string, string> = {}) =>
 	});
 
 describe("ZXP timestamp server", () => {
-	it("defaults to a TSA the pinned signer can verify", () => {
+	it("defaults to no timestamp server", () => {
 		const resolved = config();
-		expect(resolved.timestampUrl).toBe("http://timestamp.apple.com/ts01");
-		// DigiCert cannot be validated by ZXPSignCmd 4.1.3 any more.
-		expect(resolved.timestampUrl).not.toContain("digicert");
+		expect(resolved.timestampUrl).toBeUndefined();
+	});
+
+	it('treats the literal "none" as an explicit opt-out', () => {
+		const resolved = config({ ZXP_TIMESTAMP_URL: "none" });
+		expect(resolved.timestampUrl).toBeUndefined();
 	});
 
 	it("lets an operator override the TSA explicitly", () => {
@@ -35,15 +40,17 @@ describe("ZXP timestamp server", () => {
 	});
 
 	it("passes the TSA to the signer as -tsa <url>", () => {
-		const args = buildSignZxpArgs(config());
+		const args = buildSignZxpArgs({
+			...config(),
+			timestampUrl: "http://timestamp.example.test/tsa",
+		});
 		const index = args.indexOf("-tsa");
 		expect(index).toBeGreaterThan(-1);
-		expect(args[index + 1]).toBe("http://timestamp.apple.com/ts01");
+		expect(args[index + 1]).toBe("http://timestamp.example.test/tsa");
 	});
 
 	it("omits -tsa when no timestamp server is configured", () => {
-		// An empty override means "sign without a timestamp" rather than
-		// falling back to an unverifiable server.
+		// No TSA means the signer gets no -tsa flag at all.
 		const args = buildSignZxpArgs({ ...config(), timestampUrl: undefined });
 		expect(args).not.toContain("-tsa");
 	});
