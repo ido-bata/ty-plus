@@ -97,7 +97,7 @@ jobs:
           --product-version=${{ steps.version.outputs.expected }}
 
       - name: Package unsigned zip
-        run: bun run scripts/package/package-cep-archive.ts zip
+        run: bun run scripts/package/release/cep-archive.ts zip
 
       - name: Name artifact with build metadata
         shell: bash
@@ -110,7 +110,7 @@ jobs:
 
       - name: Generate release manifest
         run: >-
-          bun scripts/package/release-manifest.ts
+          bun scripts/package/release/manifest.ts
           --trust-mode=development-unsigned
           --artifact=dist/${{ env.artifact_name }}
 
@@ -140,7 +140,7 @@ jobs:
       - name: Refuse an unsigned release-trust build
         shell: bash
         run: |
-          if bun scripts/package/build-release.ts 2> refusal.log; then
+          if bun scripts/package/build/release.ts 2> refusal.log; then
             echo "::error::release-trust build must refuse without signing configuration"
             exit 1
           fi
@@ -208,10 +208,10 @@ jobs:
           "TY_PLUS_ZXP_CERT_PASSWORD=$password" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Run the release-trust build (unsigned Windows worker)
-        run: bun scripts/package/build-release.ts
+        run: bun scripts/package/build/release.ts
 
       - name: Audit the release artifacts
-        run: bun scripts/verify/verify-release-artifacts.ts
+        run: bun scripts/verify/release-artifacts.ts
 
       - name: Name the distribution candidate
         shell: pwsh

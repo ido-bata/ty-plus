@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { buildSignZxpArgs } from "../../scripts/package/sign-zxp";
+import { buildSignZxpArgs } from "../../scripts/package/sign/zxp";
 
 describe("buildSignZxpArgs", () => {
 	test("signs the staged extension directory, not a renamed zip archive", () => {

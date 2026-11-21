@@ -166,7 +166,7 @@ from Tavmjong Bah. For further information, contact: tavmjong @ free
 
 ## 4. ビルド時ツール（配布物には同梱しない）
 
-- `reference/Adobe-CEP/CEP-Resources/`（ZXPSignCmd等）: Adobe提供のビルド時ツール。リポジトリにはtracked fileとして存在せず、配布zip / ZXPにも同梱しない（`package-cep-archive.ts` のpack対象外）。
+- `reference/Adobe-CEP/CEP-Resources/`（ZXPSignCmd等）: Adobe提供のビルド時ツール。リポジトリにはtracked fileとして存在せず、配布zip / ZXPにも同梱しない（`cep-archive.ts` のpack対象外）。
 
 ## 5. Agent Skills（開発用・配布物には同梱しない）
 
