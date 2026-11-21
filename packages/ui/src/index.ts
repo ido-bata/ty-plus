@@ -12,6 +12,8 @@
 export { Button } from "./controls/Button";
 export { IconButton } from "./controls/IconButton";
 export { SegmentedControl } from "./controls/SegmentedControl";
+export type { ViewMode, ViewModeToggleProps } from "./controls/ViewModeToggle";
+export { ViewModeToggle } from "./controls/ViewModeToggle";
 
 export { Badge } from "./feedback/Badge";
 export { ErrorBoundary } from "./feedback/ErrorBoundary";

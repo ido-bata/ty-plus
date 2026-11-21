@@ -1,8 +1,7 @@
-import { Icon, IconButton } from "@ty-plus/ui";
+import { Icon, IconButton, ViewModeToggle } from "@ty-plus/ui";
 import { SearchField } from "@ty-plus/ui/fields/SearchField";
 import { LoaderCircle, RefreshCw, Search } from "lucide-react";
 import type { JSX, ReactNode } from "react";
-import { CatalogBrowserViewModeToggle } from "@/management/preset/catalog-browser/view-mode-toggle";
 import { css } from "@/styled-system/css";
 
 import type { LoadPhase, PresetViewMode } from "./use-presets-catalog";
@@ -223,7 +222,7 @@ export function PresetsDialogHeader(
 				/>
 			</div>
 			<div data-preset-list-toolbar className={toolbarSlotClass}>
-				<CatalogBrowserViewModeToggle
+				<ViewModeToggle
 					viewMode={viewMode}
 					onViewModeChange={onViewModeChange}
 					onEnterIconView={onEnterIconView}

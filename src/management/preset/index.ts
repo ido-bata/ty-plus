@@ -14,7 +14,6 @@ export {
 	LIST_ROW_GRID,
 } from "@/management/preset/catalog-browser/layout";
 export { CatalogBrowserShell } from "@/management/preset/catalog-browser/shell";
-export { CatalogBrowserViewModeToggle } from "@/management/preset/catalog-browser/view-mode-toggle";
 export * from "@/management/preset/contract";
 export { GroupDialog } from "@/management/preset/group/Dialog";
 export { coercePersistedPresetIcon } from "@/management/preset/icon-data";

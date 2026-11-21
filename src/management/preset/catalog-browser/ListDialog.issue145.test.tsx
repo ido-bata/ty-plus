@@ -122,10 +122,6 @@ vi.mock("@/management/preset/catalog-browser/shell", () => ({
 	),
 }));
 
-vi.mock("@/management/preset/catalog-browser/view-mode-toggle", () => ({
-	CatalogBrowserViewModeToggle: () => <div data-testid="view-toggle" />,
-}));
-
 vi.mock("@/management/preset/workspace/glyph", () => ({
 	PresetGlyphById: () => <span data-testid="preset-glyph" />,
 }));
@@ -140,6 +136,7 @@ vi.mock("@/management/preset/workspace/glyph-classes", () => ({
 
 vi.mock("@ty-plus/ui", () => ({
 	Icon: () => <span data-testid="icon" />,
+	ViewModeToggle: () => <div data-testid="view-toggle" />,
 	IconButton: ({
 		children,
 		...rest
