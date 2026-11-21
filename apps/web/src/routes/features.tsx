@@ -38,30 +38,13 @@ const sectionLabel = css({
 	color: "text.muted",
 });
 
-/* Mosaic cells for the feature grid — unequal spans, one row-spanning
-   media cell, so the page reads as composed surfaces rather than a
-   repeated "copy + wide image" row. */
-const mosaicLead = css({
+const full12 = css({
 	minWidth: 0,
-	gridColumn: { base: "1 / -1", md: "span 7" },
-	gridRow: { md: "span 2" },
+	gridColumn: { base: "1 / -1", md: "span 12" },
 });
-const mosaicA = css({
-	minWidth: 0,
-	gridColumn: { base: "1 / -1", md: "span 5" },
-});
-const mosaicB = css({
-	minWidth: 0,
-	gridColumn: { base: "1 / -1", md: "span 5" },
-});
-const mosaicC = css({
-	minWidth: 0,
-	gridColumn: { base: "1 / -1", md: "span 5" },
-});
-const mosaicD = css({
-	minWidth: 0,
-	gridColumn: { base: "1 / -1", md: "span 7" },
-});
+
+/* Mosaic rhythm — same grammar as home but a different arrangement:
+   one wide evidence band, then three equal-weight cells. */
 
 function FeatureShot({
 	image,
@@ -159,18 +142,25 @@ function FeaturesPage() {
 						</p>
 					</div>
 					<FeatureShot
+						image="/images/preset-grid.png"
+						alt="Named preset tiles in the ty-plus catalog — each tile shows its preset name and easing glyph"
+						width={2160}
+						height={820}
+						className={cx(span8, css({ alignSelf: "center" }))}
+					/>
+					<FeatureShot
 						image="/images/preset-selected.png"
 						alt="A selected preset tile with the ty-plus info widget showing the preset name, kind, and selection source"
 						width={2160}
 						height={410}
-						className={cx(span8, css({ alignSelf: "center" }))}
+						className={full12}
 					/>
 				</div>
 			</section>
 
-			{/* Mosaic — the workspace shot spans two rows as the tall anchor;
-			    the dialog and widget-picker sit at unequal weights beside a
-			    stacked copy cell. */}
+			{/* Mosaic — same grammar as home, different arrangement: the
+			    workspace strip gets the wide band; the two dialogs and the
+			    stacked copy cell share the row below. */}
 			<section
 				className={cx(
 					container({ size: "content" }),
@@ -184,38 +174,40 @@ function FeaturesPage() {
 						alt="Utility widgets on the ty-plus workspace — quick actions, easing curve, alignment, and anchor point tools"
 						width={2160}
 						height={1040}
-						className={mosaicLead}
+						className={span8}
 					/>
 					<FeatureShot
 						image="/images/presets-dialog.png"
 						alt="The Local Presets browser dialog in ty-plus listing presets from the local catalog"
 						width={1760}
 						height={1520}
-						className={mosaicA}
+						className={span4}
 					/>
 					<FeatureShot
 						image="/images/add-widget.png"
 						alt="The Add Widget selector in ty-plus listing the available widget types"
 						width={1760}
 						height={1520}
-						className={mosaicB}
+						className={span4}
 					/>
-					<div className={cx(mosaicC, stack({ gap: 2 }))}>
-						<h2 className={s.h2}>Widgets on demand</h2>
-						<p className={s.body}>
-							Directory browsers, quick utilities, and tools you add from the
-							built-in picker. The Local Presets dialog browses, filters, and
-							places catalog presets without opening After Effects dialogs —
-							every widget keeps working with the network unplugged.
-						</p>
-					</div>
-					<div className={cx(mosaicD, stack({ gap: 2 }))}>
-						<h2 className={s.h2}>Customizable appearance</h2>
-						<p className={s.body}>
-							Tune colors, spacing, and panel styling from Settings. Appearance
-							changes apply live and are stored on your machine — the panel
-							looks the way you want it to.
-						</p>
+					<div className={cx(span4, stack({ gap: 4 }))}>
+						<div className={stack({ gap: 2 })}>
+							<h2 className={s.h2}>Widgets on demand</h2>
+							<p className={s.body}>
+								Directory browsers, quick utilities, and tools you add from the
+								built-in picker. The Local Presets dialog browses, filters, and
+								places catalog presets without opening After Effects dialogs —
+								every widget keeps working with the network unplugged.
+							</p>
+						</div>
+						<div className={stack({ gap: 2 })}>
+							<h2 className={s.h2}>Customizable appearance</h2>
+							<p className={s.body}>
+								Tune colors, spacing, and panel styling from Settings.
+								Appearance changes apply live and are stored on your machine —
+								the panel looks the way you want it to.
+							</p>
+						</div>
 					</div>
 				</div>
 			</section>

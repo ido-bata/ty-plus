@@ -60,3 +60,26 @@
 - レビューモデルは free tier で精度に限界あり。最終的な人間の目視受入は依然として必要
 - モバイルでの実機スクリーンショット可読性（別素材 or 拡大導線は将来検討）
 - tablet でのタイル orphan 行（軽微）
+
+## ラウンド3（`final3/`、SHA `54eaaba1`、clean tree / `--require-clean`）
+
+### 今回の構成変更
+
+- `PresetStage`: タイルグリッドを base 3列 / lg 4列に再構成し、lg以上で info surface をタイルの右側 2fr に常駐（従来は下部で情報面が小さかった）。全12プリセットで行が常に整数倍（desktop 4列×3行、tablet/mobile 3列×4行）
+- Home モザイク: workspace-widgets を span8 の全幅エビデンス帯に、残りを span5/span4/span3 の不均等セルに再配置（従来の row-span 2 による余白問題を解消）
+- Features interaction: preset-grid（名前付きタイル）を copy rail の span8 に追加、preset-selected を full-width 帯へ移動して浅い横長表示を解消
+- Features モザイク: Home と同文法で span8 / span4 / span4 / span4 に再配置
+- `changelog.tsx`: `.slice(0,260)` を廃止し `release-excerpt.ts` のセマンティック excerpt（箇条書き・段落・見出しを保持、文/節境界で切断）へ置換。`release-excerpt.test.ts` 9件追加
+
+### VLモデル評価（`final3/`、index/features/changelog × desktop/tablet/mobile）
+
+| 指摘 | 判定 |
+|---|---|
+| tablet でプリセットタイルの orphan 行 | **棄却（誤検出）**。DOM実測: 12タイル、tablet=834px で 3列×4行・全行完結、desktop=4列×3行、mobile=3列×4行。`gridTemplateColumns` 実値と行/列ユニーク座標で確認 |
+| preset-selected.png のパネル端での文字クリップ（desktop/mobile features） | **非採用**。画像内のクリップは実製品UIの端であり、ソースキャプチャの内容。レイアウト起因のクリップではない |
+| desktop index / mobile index / desktop changelog | 指摘なし |
+
+### 再現性
+
+- `capture-meta.json`: `commitSha=54eaaba1`、`sourceTree.dirty=false`、`--require-clean` で撮影（未コミット変更があると撮影自体を拒否するオプションを使用）
+- 撮影は `/tmp/review337-final3` で実施後にリポジトリへ複製（撮影中に出力dirが git status を汚すのを防ぐため）。`outDir` フィールドは撮影時パスを示す

@@ -12,6 +12,7 @@ import {
 	grid,
 	section,
 	span4,
+	span5,
 	span8,
 	stack,
 } from "../styles/layout";
@@ -56,21 +57,8 @@ const sectionLabel = css({
 	color: "text.muted",
 });
 
-/* Mosaic cells — deliberately unequal spans and one row-spanning cell so
-   the section reads as a composed surface, not a card row. */
-const mosaicLead = css({
-	minWidth: 0,
-	gridColumn: { base: "1 / -1", md: "span 5" },
-	gridRow: { md: "span 2" },
-});
-const mosaicWide = css({
-	minWidth: 0,
-	gridColumn: { base: "1 / -1", md: "span 4" },
-});
-const mosaicNarrow = css({
-	minWidth: 0,
-	gridColumn: { base: "1 / -1", md: "span 3" },
-});
+/* Mosaic rhythm — one wide evidence band on top, three unequal cells
+   below. Every image gets enough columns to stay readable. */
 
 const RESOURCES = [
 	{
@@ -156,9 +144,9 @@ function HomePage() {
 				</div>
 			</section>
 
-			{/* Mosaic — three real panel captures at unequal weights. The
-			    workspace shot spans two rows so the section has a tall
-			    anchor instead of three identical rectangles. */}
+			{/* Mosaic — the workspace strip gets a full evidence band; the
+			    two dialogs and the offline note fill the row beneath at
+			    unequal weights. */}
 			<section
 				className={cx(
 					container({ size: "content" }),
@@ -167,7 +155,7 @@ function HomePage() {
 				aria-label="Panel surfaces"
 			>
 				<div className={grid({ gap: 3 })}>
-					<figure className={cx(s.figure, mosaicLead)}>
+					<figure className={cx(s.figure, span8)}>
 						<MediaFrame>
 							<img
 								src="/images/workspace-widgets.png"
@@ -183,7 +171,7 @@ function HomePage() {
 							from the running panel.
 						</figcaption>
 					</figure>
-					<figure className={cx(s.figure, mosaicWide)}>
+					<figure className={cx(s.figure, span5)}>
 						<MediaFrame>
 							<img
 								src="/images/presets-dialog.png"
@@ -198,7 +186,7 @@ function HomePage() {
 							Local Presets — browse, filter, and place catalog presets.
 						</figcaption>
 					</figure>
-					<div className={cx(mosaicNarrow, stack({ gap: 3 }))}>
+					<div className={cx(span4, stack({ gap: 3 }))}>
 						<figure className={s.figure}>
 							<MediaFrame>
 								<img

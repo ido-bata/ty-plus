@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Badge, Button, Notice } from "@ty-plus/ui";
 import { cx } from "@ty-plus/ui/util/cx";
 import { css } from "@/styled-system/css";
+import { releaseExcerpt } from "../lib/release-excerpt";
 import {
 	classifyChannel,
 	type ReleaseChannel,
@@ -73,19 +74,7 @@ function notesToText(body: string): string {
 function ReleaseRow({ release }: { release: ReleaseInfo }) {
 	const channel = classifyChannel(release);
 	const notes = notesToText(release.body ?? "");
-	// Prefer real bullet items; skip heading fragments and short noise lines
-	// so the visible excerpt carries the release's actual meaning.
-	const lines = notes
-		.split("\n")
-		.map((l) => l.trim())
-		.filter((l) => l.length > 0);
-	const bullets = lines.filter((l) => l.startsWith("• "));
-	const prose = lines.filter(
-		(l) => !l.startsWith("• ") && l.length >= 40 && !l.endsWith(":"),
-	);
-	const excerptSrc = (bullets.length > 0 ? bullets : prose).slice(0, 3);
-	const excerpt = excerptSrc.join(" ").slice(0, 260);
-	const bulletItems = bullets.slice(0, 3).map((l) => l.replace(/^•\s*/, ""));
+	const { bullets, prose } = releaseExcerpt(notes);
 	return (
 		<li className={s.releaseItem}>
 			<div className={s.releaseHead}>
@@ -110,16 +99,16 @@ function ReleaseRow({ release }: { release: ReleaseInfo }) {
 					</span>
 				) : null}
 			</div>
-			{bulletItems.length > 0 ? (
+			{bullets.length > 0 ? (
 				<ul className={s.bulletList}>
-					{bulletItems.map((item) => (
+					{bullets.map((item) => (
 						<li className={s.body} key={item.slice(0, 24)}>
 							{item}
 						</li>
 					))}
 				</ul>
-			) : excerpt ? (
-				<p className={s.body}>{excerpt}</p>
+			) : prose ? (
+				<p className={s.body}>{prose}</p>
 			) : null}
 			{notes ? (
 				<details className={notesDetails}>

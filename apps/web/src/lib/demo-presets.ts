@@ -87,4 +87,24 @@ export const DEMO_PRESETS: Preset[] = [
 		filePath: "",
 		icon: presetIconCanvas({ cubic: [0.36, 0, 0.66, -0.56], color: "#e8c87a" }),
 	},
+	{
+		id: "demo-slide-out",
+		type: "preset",
+		title: "Slide Out",
+		filePath: "",
+		icon: presetIconCanvas({
+			cubic: [0.32, 0, 0.68, 1],
+			color: "#f0b27a",
+		}),
+	},
+	{
+		id: "demo-spin-out",
+		type: "preset",
+		title: "Spin Out",
+		filePath: "",
+		icon: presetIconCanvas({
+			cubic: [0.84, 0, 0.16, 1],
+			color: "#9fd8a8",
+		}),
+	},
 ];
