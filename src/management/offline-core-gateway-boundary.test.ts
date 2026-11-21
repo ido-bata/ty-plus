@@ -27,9 +27,7 @@ const read = (path: string) =>
 
 const usePublicLinkSource = read("./online/public-link/usePublicLink.ts");
 const catalogDialogSource = read("./online/catalog/Dialog.tsx");
-const unifiedContextMenuSource = read(
-	"./dialog/unified-context-menu.ts",
-);
+const unifiedContextMenuSource = read("./dialog/unified-context-menu.ts");
 const widgetMenuSource = read("../function/widget/core/menu/Component.tsx");
 const presetUseCasesSource = read("./preset/use-cases.ts");
 const catalogUseCasesSource = read("./online/catalog/use-cases.ts");

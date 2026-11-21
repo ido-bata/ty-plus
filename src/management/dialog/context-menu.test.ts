@@ -10,10 +10,7 @@ const contextMenuSource = fs.readFileSync(
 	"utf8",
 );
 const settingsContextMenuBuildSource = fs.readFileSync(
-	new URL(
-		"../setting/dialog/settings-context-menu-build.ts",
-		import.meta.url,
-	),
+	new URL("../setting/dialog/settings-context-menu-build.ts", import.meta.url),
 	"utf8",
 );
 const settingsContextMenuIdsSource = fs.readFileSync(
@@ -40,10 +37,7 @@ const directoryBrowserSource = fs.readFileSync(
 	"utf8",
 );
 const easingSource = fs.readFileSync(
-	new URL(
-		"../../function/widget/core/easing/Component.tsx",
-		import.meta.url,
-	),
+	new URL("../../function/widget/core/easing/Component.tsx", import.meta.url),
 	"utf8",
 );
 const settingsDialogSource = fs.readFileSync(
@@ -51,10 +45,7 @@ const settingsDialogSource = fs.readFileSync(
 	"utf8",
 );
 const settingsMenuSource = fs.readFileSync(
-	new URL(
-		"../setting/dialog/useSettingsDialogContextMenu.ts",
-		import.meta.url,
-	),
+	new URL("../setting/dialog/useSettingsDialogContextMenu.ts", import.meta.url),
 	"utf8",
 );
 const widgetSelectorSource = fs.readFileSync(
