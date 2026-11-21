@@ -23,7 +23,13 @@ import {
 
 export default defineConfig({
 	preflight: true,
-	include: ["./src/**/*.{ts,tsx}", "../../packages/ui/src/**/*.{ts,tsx}"],
+	include: [
+		"./src/**/*.{ts,tsx}",
+		"../../packages/ui/src/**/*.{ts,tsx}",
+		// Product modules imported via @ty-plus/product / @/… must have
+		// their css() classes generated for the web bundle too.
+		"../../src/**/*.{ts,tsx}",
+	],
 	exclude: [],
 	jsxFramework: "react",
 	outdir: "styled-system",

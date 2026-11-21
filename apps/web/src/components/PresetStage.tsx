@@ -1,14 +1,17 @@
-import { CanvasEasingIcon } from "@ty-plus/product/management/preset/workspace/CanvasEasingIcon";
+import type { Preset } from "@ty-plus/product/management/preset/contract";
+import { Tile } from "@ty-plus/product/management/preset/workspace/Tile";
 import { cx } from "@ty-plus/ui/util/cx";
 import { useState } from "react";
 import { css } from "@/styled-system/css";
-import { DEMO_PRESETS, type DemoPreset } from "../lib/demo-presets";
+import { DEMO_PRESETS } from "../lib/demo-presets";
 
 /**
- * Web demo built from the product's own `CanvasEasingIcon` — the same canvas
- * renderer the panel uses for canvas-type preset glyphs. Selection state is
- * local React state: this demonstrates the hover/select interaction model,
- * not After Effects execution.
+ * Web demo composed from the product's own preset tile layer:
+ * `Tile` → `PresetCatalogGlyphHost` → `WorkspacePresetGlyph` →
+ * `CanvasEasingIcon`, the same render path the workspace grid cell uses.
+ * Selection and hover are local React state mirroring the panel's
+ * info-widget precedence (selection first, hover fallback) — After
+ * Effects execution is not faked on this page.
  */
 
 const stage = css({
@@ -21,10 +24,9 @@ const stage = css({
 	gap: "0.75rem",
 });
 
-const tile = css({
+const cell = css({
 	display: "flex",
 	flexDirection: "column",
-	alignItems: "stretch",
 	gap: "0.5rem",
 	padding: "0.75rem",
 	borderRadius: "surface-card",
@@ -44,12 +46,12 @@ const tile = css({
 	},
 });
 
-const tileSelected = css({
+const cellSelected = css({
 	borderColor: "interactive.focus",
 	background: "interactive.active",
 });
 
-const tileIcon = css({
+const cellIcon = css({
 	display: "flex",
 	aspectRatio: "1",
 	width: "full",
@@ -57,10 +59,10 @@ const tileIcon = css({
 	justifyContent: "center",
 	borderRadius: "surface-detail",
 	background: "surface.widget",
-	color: "text.primary",
+	overflow: "hidden",
 });
 
-const tileTitle = css({
+const cellTitle = css({
 	fontSize: "xs",
 	fontWeight: "medium",
 	color: "text.primary",
@@ -88,23 +90,32 @@ const infoTitle = css({
 });
 const infoMeta = css({ fontSize: "xs", color: "text.muted" });
 
-function PresetTile({
+function PresetCell({
 	preset,
 	selected,
+	hovered,
 	onSelect,
+	onHover,
 }: {
-	preset: DemoPreset;
+	preset: Preset;
 	selected: boolean;
+	hovered: boolean;
 	onSelect: () => void;
+	onHover: (id: string | null) => void;
 }) {
 	return (
 		// role="button" + keyboard handling: the shared @ty-plus/ui primitives
-		// own control chrome, while this composite tile is LP composition.
+		// own control chrome, while this composite cell is LP composition
+		// around the product's real tile glyph layer.
 		<div
 			role="button"
 			tabIndex={0}
 			aria-pressed={selected}
-			className={cx(tile, selected && tileSelected)}
+			className={cx(
+				cell,
+				selected && cellSelected,
+				hovered && !selected && css({ borderColor: "border.strong" }),
+			)}
 			onClick={onSelect}
 			onKeyDown={(e) => {
 				if (e.key === "Enter" || e.key === " ") {
@@ -113,10 +124,14 @@ function PresetTile({
 				}
 			}}
 		>
-			<span className={tileIcon} aria-hidden="true">
-				<CanvasEasingIcon cubic={preset.cubic} color={preset.color} />
+			<span className={cellIcon}>
+				<Tile
+					preset={preset}
+					label={preset.title}
+					onHoverChange={(id) => onHover(id)}
+				/>
 			</span>
-			<span className={tileTitle}>{preset.title}</span>
+			<span className={cellTitle}>{preset.title}</span>
 		</div>
 	);
 }
@@ -124,10 +139,18 @@ function PresetTile({
 export function PresetStage({
 	presets = DEMO_PRESETS,
 }: {
-	presets?: DemoPreset[];
+	presets?: Preset[];
 }) {
-	const [selectedId, setSelectedId] = useState<string | null>(null);
-	const selected = presets.find((p) => p.id === selectedId) ?? null;
+	// Pre-select one tile so the demo shows its value on first paint; the
+	// info readout mirrors the product's selection→hover precedence.
+	const [selectedId, setSelectedId] = useState<string | null>(
+		() => presets[2]?.id ?? null,
+	);
+	const [hoverId, setHoverId] = useState<string | null>(null);
+	const active =
+		presets.find((p) => p.id === selectedId) ??
+		presets.find((p) => p.id === hoverId) ??
+		null;
 
 	return (
 		<div
@@ -135,27 +158,31 @@ export function PresetStage({
 		>
 			<div className={stage} role="group" aria-label="Preset tiles demo">
 				{presets.map((p) => (
-					<PresetTile
+					<PresetCell
 						key={p.id}
 						preset={p}
 						selected={p.id === selectedId}
+						hovered={p.id === hoverId}
 						onSelect={() => setSelectedId(p.id === selectedId ? null : p.id)}
+						onHover={setHoverId}
 					/>
 				))}
 			</div>
 			<div className={infoCard} aria-live="polite">
-				{selected ? (
+				{active ? (
 					<>
-						<span className={infoTitle}>{selected.title}</span>
+						<span className={infoTitle}>{active.title}</span>
 						<span className={infoMeta}>
-							Animation preset · easing glyph · demo data
+							Animation preset ·{" "}
+							{selectedId === active.id ? "selected" : "hover"} · demo data
 						</span>
 					</>
 				) : (
 					<>
 						<span className={infoTitle}>No preset selected</span>
 						<span className={infoMeta}>
-							Select a tile to see what the info widget shows in the panel.
+							Hover or select a tile — the readout mirrors the panel's info
+							widget.
 						</span>
 					</>
 				)}
@@ -164,11 +191,11 @@ export function PresetStage({
 	);
 }
 
-/** Decorative rail of real easing icons for the hero — no interaction. */
+/** Decorative rail of real preset tiles for the hero — no interaction. */
 export function PresetRail({
 	presets = DEMO_PRESETS.slice(0, 6),
 }: {
-	presets?: DemoPreset[];
+	presets?: Preset[];
 }) {
 	return (
 		<div
@@ -194,8 +221,8 @@ export function PresetRail({
 						borderStyle: "solid",
 						borderColor: "border.subtle",
 						background: "surface.panel",
-						transform: { md: i % 2 === 1 ? "translateY(0.75rem)" : undefined },
 					})}
+					data-rail-index={i}
 				>
 					<span
 						className={css({
@@ -204,12 +231,12 @@ export function PresetRail({
 							aspectRatio: "1",
 							alignItems: "center",
 							justifyContent: "center",
-							color: "text.primary",
+							overflow: "hidden",
 						})}
 					>
-						<CanvasEasingIcon cubic={p.cubic} color={p.color} />
+						<Tile preset={p} label={p.title} />
 					</span>
-					<span className={tileTitle}>{p.title}</span>
+					<span className={cellTitle}>{p.title}</span>
 				</div>
 			))}
 		</div>

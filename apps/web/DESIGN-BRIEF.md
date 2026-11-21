@@ -215,3 +215,15 @@ review-309 で「プリセットタイルが同一の低コントラストカー
 - **Interaction セクション**: `preset-selected.png` を廃し、操作可能な `PresetStage` へ置換。実機検証済みの状態遷移（hover/Shift+click/実行）はコピーで説明し、Web 側は選択状態のみを実装。
 - **Features**: `featureRow` テンプレートの反復をやめ、flagship を全幅 `PresetStage` バンド、以降は media 位置・span・密度の異なる非対称行 + text-only 行へ再構成。
 - **スクリーンショットの残存用途**: workspace 全体・実ダイアログ・選択状態の実機関係性は、Web 非対応コンポーネントの証拠として引き続き使用。
+
+## Revision (#333): real preset tile layer shared with the product
+
+`PresetStage` の Web 専用再実装をやめ、製品の preset tile レンダラを直接利用する。
+
+- **モジュール分割**: `glyph.tsx` から catalog id 解決（`getPreset` → storage/CEP 依存）を行う `PresetGlyphById` を `glyph-by-id.tsx` へ分離。`glyph.tsx` は `PresetCatalogGlyphHost` / `FramedPresetGlyph` / `WorkspacePresetGlyph` のみを持ち、ホスト非依存になった。`preset/index.ts` と `ListDialog.tsx` の import を更新し、`ListDialog.issue145.test.tsx` の mock 対象も追従。
+- **Web 解決経路**: vite に `@/…` → `src/` の catch-all alias（`@/styled-system` より後段）を追加し、製品モジュール内部の `@/management/…` import を解決。web panda.config の include に `../../src/**` を追加し、製品側 `css()` クラスを web バンドルへ生成。vitest.config にも `@ty-plus/product` alias を追加。
+- **再利用した実装**: `Tile`（`data-preset-id` + hover 通知）→ `PresetCatalogGlyphHost` → `WorkspacePresetGlyph` → `resolveWorkspaceGlyphIconVisual` → `CanvasEasingIcon`。デモ preset は実 `Preset` contract オブジェクトで、icon は製品の `presetIconCanvas` で構築（canvas 曲線は fixture 定義の説明用グリフと明記）。
+- **状態モデル**: 選択（ローカル state）を初期値ありで表示し、hover は製品と同じ precedence（selection → hover fallback）で info readout に反映。AE 実行は Web では偽装しない。
+- **契約テスト**: `PresetStage.contract.test.tsx` が製品 `Tile` の SSR 出力に `data-preset-id` / `ws-preset-icon--canvas` / `<canvas>` が含まれることを assert — Web 側の模倣実装への退行を検出する。
+- **修正**: Hero の `PresetRail` で使っていた `translateY` stagger が figcaption と重なっていた問題を、transform 撤去で解消（DOM 計測で overlap=false を確認）。
+- **残課題**: Info Widget 本体・Workspace Grid・ダイアログの再利用は widget runtime / workspace state 依存のため #333 の後続段階。スクリーンショットはそれらの実機証拠として継続使用。
