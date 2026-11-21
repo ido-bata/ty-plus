@@ -156,17 +156,17 @@ function FeaturesPage() {
 					<div className={cx(span8, stack({ gap: 3 }))}>
 						<FeatureShot
 							image="/images/preset-grid.png"
-							alt="Named preset tiles in the ty-plus catalog — each tile shows its preset name and easing glyph"
+							alt="Preset tiles on the ty-plus workspace grid with the info widget below reading 'No preset selected'"
 							width={2160}
 							height={820}
-							caption="Preset tiles in the running panel — named catalog entries, each with its own icon."
+							caption="Preset tiles on the workspace grid — the info widget below still reads 'No preset selected'."
 						/>
 						<FeatureShot
 							image="/images/preset-selected.png"
-							alt="A selected preset tile with the ty-plus info widget showing the preset name, kind, and selection source"
+							alt="The info widget listing the selected preset — its name, preset kind, and selection as the source"
 							width={2160}
 							height={410}
-							caption="A selected tile — the info widget shows the preset's name, kind, and that it came from the selection."
+							caption="Select a tile and the same info widget lists the preset — name, kind, and 'selection' as its source."
 						/>
 					</div>
 				</div>
@@ -189,26 +189,26 @@ function FeaturesPage() {
 					</div>
 					<FeatureShot
 						image="/images/workspace-widgets.png"
-						alt="Utility widgets on the ty-plus workspace — quick actions, easing curve, alignment, and anchor point tools"
+						alt="The ty-plus easing widget — a curve editor with Curve, Loop, Bounce, and Elastic modes and an Apply action — beside align and distribute tools"
 						width={2160}
 						height={1040}
-						caption="Utility widgets share the grid with preset tiles — quick actions, easing curve, alignment, anchor point, and more."
+						caption="The easing curve editor shapes speed curves and applies them to keyframes; align, distribute, and spacing tools sit on the same grid."
 						className={span8}
 					/>
 					<FeatureShot
 						image="/images/presets-dialog.png"
-						alt="The Local Presets browser dialog in ty-plus listing presets from the local catalog"
+						alt="The Local Presets browser in ty-plus listing catalog presets with an offline notice"
 						width={1760}
 						height={1520}
-						caption="Local Presets — browse, filter, and place catalog presets without leaving the panel."
+						caption="Local Presets — search the catalog and see which workspace holds each preset; browsing keeps working offline."
 						className={span4}
 					/>
 					<FeatureShot
 						image="/images/add-widget.png"
-						alt="The Add Widget selector in ty-plus listing the available widget types"
+						alt="The Add Widget selector in ty-plus listing CORE and UTILITY widget types"
 						width={1760}
 						height={1520}
-						caption="Add Widget — the built-in picker that puts widgets on the grid."
+						caption="Add Widget — pick a CORE or UTILITY widget; the dialog states where it lands on the grid."
 						className={span4}
 					/>
 					<div className={cx(span4, stack({ gap: 4 }))}>
