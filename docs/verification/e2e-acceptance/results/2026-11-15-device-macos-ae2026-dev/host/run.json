@@ -1,35 +1,35 @@
 {
-	"schema": "ty-plus.e2e-run/1",
-	"suite": "host",
-	"capturedAt": "2026-11-15T10:47:49.838Z",
-	"extensionDir": "/Users/rebui/Library/Application Support/Adobe/CEP/extensions/app.ty-plus.dev",
-	"managedRoot": "/Applications/Adobe After Effects 2026/ty-plus",
-	"totals": {
-		"PASS": 1,
-		"FAIL": 0,
-		"BLOCKED": 0,
-		"SKIP": 0
-	},
-	"results": [
-		{
-			"uc": "UC-A04",
-			"title": "resident host contract answers getHostContext with app context",
-			"status": "PASS",
-			"detail": "AE 26.5.3x9",
-			"checks": [
-				{
-					"name": "app.version responds",
-					"ok": true,
-					"detail": "26.5.3x9"
-				},
-				{
-					"name": "getHostContext returns structured host context",
-					"ok": true,
-					"detail": "raw={\"ok\":true,\"hostId\":\"after-effects\",\"value\":{\"appRoot\":\"/Applications/Adobe After Effects 2026\",\"supportRoot\":\"/Users/rebui/Library/Application Support\",\"sessionId\":\"ae-1794739669659\"}}"
-				}
-			],
-			"evidence": [],
-			"durationMs": 1481
-		}
-	]
+  "schema": "ty-plus.e2e-run/1",
+  "suite": "host",
+  "capturedAt": "2026-11-15T10:47:49.838Z",
+  "extensionDir": "/Users/rebui/Library/Application Support/Adobe/CEP/extensions/app.ty-plus.dev",
+  "managedRoot": "/Applications/Adobe After Effects 2026/ty-plus",
+  "totals": {
+    "PASS": 1,
+    "FAIL": 0,
+    "BLOCKED": 0,
+    "SKIP": 0
+  },
+  "results": [
+    {
+      "uc": "UC-A04",
+      "title": "resident host contract answers getHostContext with app context",
+      "status": "PASS",
+      "detail": "AE 26.5.3x9",
+      "checks": [
+        {
+          "name": "app.version responds",
+          "ok": true,
+          "detail": "26.5.3x9"
+        },
+        {
+          "name": "getHostContext returns structured host context",
+          "ok": true,
+          "detail": "raw={\"ok\":true,\"hostId\":\"after-effects\",\"value\":{\"appRoot\":\"/Applications/Adobe After Effects 2026\",\"supportRoot\":\"/Users/rebui/Library/Application Support\",\"sessionId\":\"ae-1794739669659\"}}"
+        }
+      ],
+      "evidence": [],
+      "durationMs": 1481
+    }
+  ]
 }

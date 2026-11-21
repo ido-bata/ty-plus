@@ -1,65 +1,67 @@
 {
-	"schema": "ty-plus.e2e-run/1",
-	"suite": "debug",
-	"capturedAt": "2026-11-15T12:02:33.693Z",
-	"extensionDir": "C:/Users/rebui/AppData/Roaming/Adobe/CEP/extensions/app.ty-plus.dev",
-	"managedRoot": "D:/4_apps/adobe/Adobe After Effects 2027/Support Files/ty-plus",
-	"totals": {
-		"PASS": 1,
-		"FAIL": 1,
-		"BLOCKED": 0,
-		"SKIP": 0
-	},
-	"results": [
-		{
-			"uc": "UC-G02",
-			"title": "debug console reopen replays previously logged messages",
-			"status": "FAIL",
-			"detail": "console did not close",
-			"checks": [
-				{
-					"name": "debug console opens",
-					"ok": true,
-					"detail": "live"
-				},
-				{
-					"name": "marker message visible in first open",
-					"ok": true,
-					"detail": "msgs=30 marker=true"
-				},
-				{
-					"name": "debug console closes",
-					"ok": false,
-					"detail": "still live"
-				}
-			],
-			"evidence": [],
-			"durationMs": 20941
-		},
-		{
-			"uc": "UC-G03",
-			"title": "operation worker verify: spawn → accept → result → exit",
-			"status": "PASS",
-			"detail": "worker pid=47216 sha=15f3749f411d",
-			"checks": [
-				{
-					"name": "rowCount > 0",
-					"ok": true,
-					"detail": "rows=510"
-				},
-				{
-					"name": "progress stages reach finished",
-					"ok": true,
-					"detail": "discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>finished"
-				},
-				{
-					"name": "worker accepted + final response + stdout EOF + exit 0",
-					"ok": true,
-					"detail": "accepted=true final=true eof=true exit=0"
-				}
-			],
-			"evidence": ["uc-g03-operation-worker.json"],
-			"durationMs": 38357
-		}
-	]
+  "schema": "ty-plus.e2e-run/1",
+  "suite": "debug",
+  "capturedAt": "2026-11-15T12:02:33.693Z",
+  "extensionDir": "C:/Users/rebui/AppData/Roaming/Adobe/CEP/extensions/app.ty-plus.dev",
+  "managedRoot": "D:/4_apps/adobe/Adobe After Effects 2027/Support Files/ty-plus",
+  "totals": {
+    "PASS": 1,
+    "FAIL": 1,
+    "BLOCKED": 0,
+    "SKIP": 0
+  },
+  "results": [
+    {
+      "uc": "UC-G02",
+      "title": "debug console reopen replays previously logged messages",
+      "status": "FAIL",
+      "detail": "console did not close",
+      "checks": [
+        {
+          "name": "debug console opens",
+          "ok": true,
+          "detail": "live"
+        },
+        {
+          "name": "marker message visible in first open",
+          "ok": true,
+          "detail": "msgs=30 marker=true"
+        },
+        {
+          "name": "debug console closes",
+          "ok": false,
+          "detail": "still live"
+        }
+      ],
+      "evidence": [],
+      "durationMs": 20941
+    },
+    {
+      "uc": "UC-G03",
+      "title": "operation worker verify: spawn → accept → result → exit",
+      "status": "PASS",
+      "detail": "worker pid=47216 sha=15f3749f411d",
+      "checks": [
+        {
+          "name": "rowCount > 0",
+          "ok": true,
+          "detail": "rows=510"
+        },
+        {
+          "name": "progress stages reach finished",
+          "ok": true,
+          "detail": "discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>discovering>finished"
+        },
+        {
+          "name": "worker accepted + final response + stdout EOF + exit 0",
+          "ok": true,
+          "detail": "accepted=true final=true eof=true exit=0"
+        }
+      ],
+      "evidence": [
+        "uc-g03-operation-worker.json"
+      ],
+      "durationMs": 38357
+    }
+  ]
 }

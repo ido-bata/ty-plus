@@ -1,35 +1,35 @@
 {
-	"schema": "ty-plus.e2e-run/1",
-	"suite": "host",
-	"capturedAt": "2026-11-15T12:01:34.311Z",
-	"extensionDir": "C:/Users/rebui/AppData/Roaming/Adobe/CEP/extensions/app.ty-plus.dev",
-	"managedRoot": "D:/4_apps/adobe/Adobe After Effects 2027/Support Files/ty-plus",
-	"totals": {
-		"PASS": 1,
-		"FAIL": 0,
-		"BLOCKED": 0,
-		"SKIP": 0
-	},
-	"results": [
-		{
-			"uc": "UC-A04",
-			"title": "resident host contract answers getHostContext with app context",
-			"status": "PASS",
-			"detail": "AE 27.0x78",
-			"checks": [
-				{
-					"name": "app.version responds",
-					"ok": true,
-					"detail": "27.0x78"
-				},
-				{
-					"name": "getHostContext returns structured host context",
-					"ok": true,
-					"detail": "raw={\"ok\":true,\"hostId\":\"after-effects\",\"value\":{\"appRoot\":\"D:\\\\4_apps\\\\adobe\\\\Adobe After Effects 2027/support files\",\"supportRoot\":\"C:\\\\Users\\\\rebui\\\\AppData\\\\Roaming\",\"sessionId\":\"ae-1794744094310\"}}"
-				}
-			],
-			"evidence": [],
-			"durationMs": 566
-		}
-	]
+  "schema": "ty-plus.e2e-run/1",
+  "suite": "host",
+  "capturedAt": "2026-11-15T12:01:34.311Z",
+  "extensionDir": "C:/Users/rebui/AppData/Roaming/Adobe/CEP/extensions/app.ty-plus.dev",
+  "managedRoot": "D:/4_apps/adobe/Adobe After Effects 2027/Support Files/ty-plus",
+  "totals": {
+    "PASS": 1,
+    "FAIL": 0,
+    "BLOCKED": 0,
+    "SKIP": 0
+  },
+  "results": [
+    {
+      "uc": "UC-A04",
+      "title": "resident host contract answers getHostContext with app context",
+      "status": "PASS",
+      "detail": "AE 27.0x78",
+      "checks": [
+        {
+          "name": "app.version responds",
+          "ok": true,
+          "detail": "27.0x78"
+        },
+        {
+          "name": "getHostContext returns structured host context",
+          "ok": true,
+          "detail": "raw={\"ok\":true,\"hostId\":\"after-effects\",\"value\":{\"appRoot\":\"D:\\\\4_apps\\\\adobe\\\\Adobe After Effects 2027/support files\",\"supportRoot\":\"C:\\\\Users\\\\rebui\\\\AppData\\\\Roaming\",\"sessionId\":\"ae-1794744094310\"}}"
+        }
+      ],
+      "evidence": [],
+      "durationMs": 566
+    }
+  ]
 }
