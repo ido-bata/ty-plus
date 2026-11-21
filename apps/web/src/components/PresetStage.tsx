@@ -23,11 +23,20 @@ import { DEMO_PRESETS } from "../lib/demo-presets";
 const stage = css({
 	display: "grid",
 	gridTemplateColumns: {
-		base: "repeat(2, minmax(0, 1fr))",
-		sm: "repeat(3, minmax(0, 1fr))",
-		lg: "repeat(5, minmax(0, 1fr))",
+		base: "repeat(3, minmax(0, 1fr))",
+		lg: "repeat(4, minmax(0, 1fr))",
 	},
 	gap: "0.75rem",
+});
+
+/* Tiles and the info surface sit side by side on wide layouts — the same
+   relationship the panel's workspace grid and info widget have — and stack
+   on narrow ones. */
+const stageWrap = css({
+	display: "grid",
+	gridTemplateColumns: { base: "1fr", lg: "minmax(0, 3fr) minmax(0, 2fr)" },
+	gap: "1rem",
+	alignItems: "start",
 });
 
 const tileBox = css({
@@ -74,9 +83,7 @@ export function PresetStage({
 	const infoItems = active ? [active] : [];
 
 	return (
-		<div
-			className={css({ display: "flex", flexDirection: "column", gap: "1rem" })}
-		>
+		<div className={stageWrap}>
 			<div className={stage} role="group" aria-label="Preset tiles demo">
 				{presets.map((p) => (
 					<div key={p.id} className={tileBox}>
