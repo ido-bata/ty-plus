@@ -85,6 +85,7 @@ function ReleaseRow({ release }: { release: ReleaseInfo }) {
 	);
 	const excerptSrc = (bullets.length > 0 ? bullets : prose).slice(0, 3);
 	const excerpt = excerptSrc.join(" ").slice(0, 260);
+	const bulletItems = bullets.slice(0, 3).map((l) => l.replace(/^•\s*/, ""));
 	return (
 		<li className={s.releaseItem}>
 			<div className={s.releaseHead}>
@@ -109,7 +110,17 @@ function ReleaseRow({ release }: { release: ReleaseInfo }) {
 					</span>
 				) : null}
 			</div>
-			{excerpt ? <p className={s.body}>{excerpt}</p> : null}
+			{bulletItems.length > 0 ? (
+				<ul className={s.bulletList}>
+					{bulletItems.map((item) => (
+						<li className={s.body} key={item.slice(0, 24)}>
+							{item}
+						</li>
+					))}
+				</ul>
+			) : excerpt ? (
+				<p className={s.body}>{excerpt}</p>
+			) : null}
 			{notes ? (
 				<details className={notesDetails}>
 					<summary>Full release notes</summary>

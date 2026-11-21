@@ -131,7 +131,7 @@ const menuPopover = css({
 	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.strong",
-	backgroundColor: "surface.overlay",
+	backgroundColor: "surface.dialog",
 	boxShadow: "control-panel",
 	// Author display would beat the UA [popover]:not(:popover-open) rule.
 	"&:not(:popover-open)": { display: "none" },

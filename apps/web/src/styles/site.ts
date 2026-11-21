@@ -107,10 +107,19 @@ export const defDesc = css({ color: "text.muted", margin: 0 });
 export const steps = css({
 	margin: 0,
 	paddingInlineStart: "1.25rem",
-	display: "flex",
-	flexDirection: "column",
-	gap: "0.75rem",
+	listStyleType: "decimal",
 	color: "text.muted",
+	// Flex/grid parents suppress ::marker, so keep the list block-level and
+	// space items with a sibling margin instead.
+	"& > li + li": { marginBlockStart: "0.75rem" },
+});
+
+export const bulletList = css({
+	margin: 0,
+	paddingInlineStart: "1.25rem",
+	listStyleType: "disc",
+	color: "text.muted",
+	"& > li + li": { marginBlockStart: "0.375rem" },
 });
 
 export const releaseList = css({
