@@ -1,0 +1,142 @@
+[
+	{
+		"file": "src/function/widget/utility/font-viewer/FontViewerBanners.tsx",
+		"reason": "extracted font-viewer sub-components that the widget still renders inline; wire them in or delete them"
+	},
+	{
+		"file": "src/function/widget/utility/font-viewer/FontViewerSampleRow.tsx",
+		"reason": "extracted font-viewer sub-components that the widget still renders inline; wire them in or delete them"
+	},
+	{
+		"file": "src/function/widget/utility/font-viewer/FontViewerStatusLine.tsx",
+		"reason": "extracted font-viewer sub-components that the widget still renders inline; wire them in or delete them"
+	},
+	{
+		"file": "src/function/widget/utility/quick-actions/palette-dropdown.tsx",
+		"reason": "extracted quick-actions sub-components that the widget still renders inline; wire them in or delete them"
+	},
+	{
+		"file": "src/function/widget/utility/quick-actions/palette-search.tsx",
+		"reason": "extracted quick-actions sub-components that the widget still renders inline; wire them in or delete them"
+	},
+	{
+		"file": "src/function/widget/utility/quick-actions/row-components.tsx",
+		"reason": "extracted quick-actions sub-components that the widget still renders inline; wire them in or delete them"
+	},
+	{
+		"file": "src/management/online/catalog/PresetLibraryFooter.tsx",
+		"reason": "the online catalog surface is dormant and scheduled for removal (Issue #193); the components are unreachable from the app until then"
+	},
+	{
+		"file": "src/management/online/catalog/PresetLibraryHeader.tsx",
+		"reason": "the online catalog surface is dormant and scheduled for removal (Issue #193); the components are unreachable from the app until then"
+	},
+	{
+		"file": "src/management/online/catalog/PresetLibrarySearchBar.tsx",
+		"reason": "the online catalog surface is dormant and scheduled for removal (Issue #193); the components are unreachable from the app until then"
+	},
+	{
+		"file": "src/management/online/catalog/PresetLibrarySidePanel.tsx",
+		"reason": "the online catalog surface is dormant and scheduled for removal (Issue #193); the components are unreachable from the app until then"
+	},
+	{
+		"file": "src/management/online/catalog/PresetLibraryViewModeToggle.tsx",
+		"reason": "the online catalog surface is dormant and scheduled for removal (Issue #193); the components are unreachable from the app until then"
+	},
+	{
+		"file": "src/management/online/catalog/PresetMarketCard.tsx",
+		"reason": "the online catalog surface is dormant and scheduled for removal (Issue #193); the components are unreachable from the app until then"
+	},
+	{
+		"file": "src/management/online/catalog/PresetMarketResults.tsx",
+		"reason": "the online catalog surface is dormant and scheduled for removal (Issue #193); the components are unreachable from the app until then"
+	},
+	{
+		"file": "src/management/online/catalog/PresetMarketTable.tsx",
+		"reason": "the online catalog surface is dormant and scheduled for removal (Issue #193); the components are unreachable from the app until then"
+	},
+	{
+		"file": "src/management/online/catalog/PresetMarketThumb.tsx",
+		"reason": "the online catalog surface is dormant and scheduled for removal (Issue #193); the components are unreachable from the app until then"
+	},
+	{
+		"file": "src/management/preset/catalog-add/FolderTabs.tsx",
+		"reason": "extracted catalog-add dialog sections that the dialog still renders inline; wire them in or delete them"
+	},
+	{
+		"file": "src/management/preset/catalog-add/PathDialogFooterActions.tsx",
+		"reason": "extracted catalog-add dialog sections that the dialog still renders inline; wire them in or delete them"
+	},
+	{
+		"file": "src/management/preset/catalog-add/PathDialogIconSection.tsx",
+		"reason": "extracted catalog-add dialog sections that the dialog still renders inline; wire them in or delete them"
+	},
+	{
+		"file": "src/management/preset/catalog-add/PathDialogNameField.tsx",
+		"reason": "extracted catalog-add dialog sections that the dialog still renders inline; wire them in or delete them"
+	},
+	{
+		"file": "src/management/preset/catalog-add/PathDialogPathFieldRow.tsx",
+		"reason": "extracted catalog-add dialog sections that the dialog still renders inline; wire them in or delete them"
+	},
+	{
+		"file": "src/management/preset/catalog-browser/PresetsDialogHeader.tsx",
+		"reason": "extracted component that production code no longer reaches; wire it in or delete it"
+	},
+	{
+		"file": "src/management/preset/group/BaseIconCard.tsx",
+		"reason": "extracted preset-group sub-components that the group dialog still renders inline; wire them in or delete them (Issue #192)"
+	},
+	{
+		"file": "src/management/preset/group/ConditionRulesSection.tsx",
+		"reason": "extracted preset-group sub-components that the group dialog still renders inline; wire them in or delete them (Issue #192)"
+	},
+	{
+		"file": "src/management/preset/group/GroupMembersSection.tsx",
+		"reason": "extracted preset-group sub-components that the group dialog still renders inline; wire them in or delete them (Issue #192)"
+	},
+	{
+		"file": "src/management/preset/group/GroupNameField.tsx",
+		"reason": "extracted preset-group sub-components that the group dialog still renders inline; wire them in or delete them (Issue #192)"
+	},
+	{
+		"file": "src/management/preset/markdown/EditorLines.tsx",
+		"reason": "extracted markdown editor parts that the editor still renders inline; wire them in or delete them"
+	},
+	{
+		"file": "src/management/preset/markdown/renderSegments.tsx",
+		"reason": "extracted markdown editor parts that the editor still renders inline; wire them in or delete them"
+	},
+	{
+		"file": "src/management/preset/tool-shell/DialogDetailsSection.tsx",
+		"reason": "extracted tool-shell dialog sections that the dialog still renders inline; wire them in or delete them"
+	},
+	{
+		"file": "src/management/preset/tool-shell/DialogFields.tsx",
+		"reason": "extracted tool-shell dialog sections that the dialog still renders inline; wire them in or delete them"
+	},
+	{
+		"file": "src/management/preset/tool-shell/DialogFooter.tsx",
+		"reason": "extracted tool-shell dialog sections that the dialog still renders inline; wire them in or delete them"
+	},
+	{
+		"file": "src/management/preset/tool-shell/DialogForm.tsx",
+		"reason": "extracted tool-shell dialog sections that the dialog still renders inline; wire them in or delete them"
+	},
+	{
+		"file": "src/management/preset/tool-shell/DialogIconSection.tsx",
+		"reason": "extracted tool-shell dialog sections that the dialog still renders inline; wire them in or delete them"
+	},
+	{
+		"file": "src/management/workspace/background/BackgroundPreview.tsx",
+		"reason": "extracted component that production code no longer reaches; wire it in or delete it"
+	},
+	{
+		"file": "src/management/workspace/background/LayerEditor.tsx",
+		"reason": "extracted component that production code no longer reaches; wire it in or delete it"
+	},
+	{
+		"file": "src/management/workspace/background/LayerListPanel.tsx",
+		"reason": "extracted component that production code no longer reaches; wire it in or delete it"
+	}
+]
