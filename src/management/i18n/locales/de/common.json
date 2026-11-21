@@ -180,5 +180,82 @@
 			"copied": "In die Zwischenablage kopiert",
 			"digest": "Fehler-ID"
 		}
+	},
+	"ui": {
+		"loadingSpinner": {
+			"label": "Wird geladen"
+		},
+		"searchField": {
+			"clearAria": "Suche löschen",
+			"clearTitle": "Löschen"
+		},
+		"regexEditor": {
+			"enterPattern": "Gib ein Muster ein.",
+			"invalidFlags": "Ungültige Flags: {{flags}}",
+			"plainSource": "Einfacher Regex-Quelltext",
+			"literalFormat": "Literales Regex-Format",
+			"testString": "Testzeichenfolge",
+			"sourcePlaceholder": "Regex-Quelltext",
+			"flagsPlaceholder": "Flags",
+			"matches": "Treffer",
+			"noMatch": "Kein Treffer",
+			"literalSuffix": "· literal /pattern/flags",
+			"sourceSuffix": "· nur Quelltext"
+		},
+		"listSelect": {
+			"placeholder": "Auswählen…"
+		}
+	},
+	"directoryBrowser": {
+		"refresh": "Aktualisieren",
+		"goUp": "Nach oben",
+		"open": "Öffnen",
+		"select": "Auswählen",
+		"deselect": "Auswahl aufheben",
+		"listView": "Listenansicht",
+		"iconView": "Symbolansicht",
+		"noFilesFound": "Keine Dateien gefunden"
+	},
+	"debugConsole": {
+		"title": "Konsole",
+		"clear": "Leeren",
+		"evaluateAria": "JavaScript auswerten",
+		"evaluatePlaceholder": "JavaScript auswerten…",
+		"rowContextHint": "Rechtsklicken zum Kopieren",
+		"filterLevelAria": "Konsolennachrichten filtern",
+		"filterSourceAria": "Konsolennachrichten nach Quelle filtern",
+		"filterScopeAria": "Konsolennachrichten nach Sitzungsbereich filtern",
+		"levels": {
+			"all": "Alle",
+			"log": "Protokoll",
+			"info": "Info",
+			"warn": "Warnung",
+			"error": "Fehler"
+		},
+		"sources": {
+			"all": "Alle Quellen",
+			"panel": "Panel",
+			"modeless": "Modellos",
+			"hostBridge": "Host-Bridge",
+			"online": "Online",
+			"preset": "Voreinstellung",
+			"opWorker": "Operations-Worker",
+			"workspace": "Arbeitsbereich",
+			"boot": "Start",
+			"debugConsole": "Debug-Konsole",
+			"console": "Konsole"
+		},
+		"scopes": {
+			"allHistory": "Gesamter Verlauf",
+			"thisSession": "Diese Sitzung"
+		},
+		"contextMenu": {
+			"copyMessage": "Nachricht kopieren",
+			"copyAllMessages": "Alle Nachrichten kopieren",
+			"clearConsole": "Konsole leeren",
+			"enableAutoScroll": "Auto-Scroll aktivieren",
+			"disableAutoScroll": "Auto-Scroll deaktivieren",
+			"itemActive": "{{level}} (aktiv)"
+		}
 	}
 }

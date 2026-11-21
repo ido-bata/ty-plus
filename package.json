@@ -98,7 +98,7 @@
 		"biome": "bunx @biomejs/biome",
 		"format": "bun run biome format --write .",
 		"prepare": "panda codegen --silent && panda cssgen --silent && panda codegen --config panda.config.ts --cwd apps/web --silent && panda cssgen --config panda.config.ts --cwd apps/web --silent",
-		"lint": "cross-env NODE_OPTIONS=--max-old-space-size=28672 bun run biome check src apps && bun run scripts/check/check-design-tokens.ts && bun run scripts/check/check-static-guardrail.ts && bun run scripts/check/check-no-tailwind-literals.ts && bun run check:storage-split && bun run scripts/check/check-i18n-locale-coverage.ts --strict-en-canonical && bun run scripts/check/check-i18n-locked-terms.ts && bun run scripts/check/check-web-design.ts",
+		"lint": "cross-env NODE_OPTIONS=--max-old-space-size=28672 bun run biome check src apps && bun run scripts/check/check-design-tokens.ts && bun run scripts/check/check-static-guardrail.ts && bun run scripts/check/check-no-tailwind-literals.ts && bun run check:storage-split && bun run scripts/check/check-i18n-locale-coverage.ts --strict-en-canonical && bun run scripts/check/check-i18n-locale-coverage.ts --strict-en-canonical --locales-dir=apps/web/src/i18n/locales --src-dir=apps/web/src && bun run scripts/check/check-i18n-locked-terms.ts && bun run scripts/check/check-i18n-hardcoded-strings.ts && bun run scripts/check/check-web-design.ts",
 		"doctor": "bunx --no-install react-doctor",
 		"agent:snapshot": "bun run scripts/agent/supervisor.ts snapshot .tmp/agent-snapshots/current.json",
 		"agent:verify-result": "bun run scripts/agent/supervisor.ts verify-result",

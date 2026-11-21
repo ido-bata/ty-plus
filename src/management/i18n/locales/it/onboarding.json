@@ -13,7 +13,8 @@
 		"support": {
 			"label": "Posizione",
 			"title": "Seleziona Cartella AE",
-			"body": "Scegli la cartella dell'applicazione After Effects. Su Windows è la directory Support Files; su macOS è la cartella dell'app contenente Presets."
+			"body": "Scegli la cartella dell'applicazione After Effects. Su Windows è la directory Support Files; su macOS è la cartella dell'app contenente Presets.",
+			"aeAppFolderHint": "Cartella dell'app AE rilevata — il passaggio delle sottocartelle verrà saltato."
 		},
 		"subfolders": {
 			"label": "Cartelle",
@@ -94,6 +95,10 @@
 		"next": "Avanti",
 		"finish": "Fine",
 		"toggleFullscreen": "Espandi a schermo intero",
-		"toggleModal": "Torna alla finestra"
+		"toggleModal": "Torna alla finestra",
+		"openManual": "Apri manuale"
+	},
+	"syncStatus": {
+		"localUpdate": "Aggiornamento locale"
 	}
 }

@@ -170,6 +170,7 @@ export async function notifyPanelsAfterPresetSave(
 		syncStatus: {
 			provider: "supabase",
 			state: "idle",
+			// i18n-exempt: syncStatus is write-only payload data; the presets bus subscriber ignores it and no UI renders label
 			label: "Local Update",
 			checkedAt: new Date().toISOString(),
 		},

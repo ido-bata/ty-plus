@@ -2,6 +2,7 @@ import { Button } from "@ty-plus/ui/controls/Button";
 import { Textarea } from "@ty-plus/ui/fields/Textarea";
 import { cx } from "@ty-plus/ui/util/cx";
 import { type JSX, useCallback, useEffect, useRef, useState } from "react";
+import { i18n } from "@/management/i18n/index";
 import { cacheCepShellThemeOverridesFromCssText } from "@/management/panel/theme/storage";
 import { enqueueThemeWrite } from "@/management/panel/theme/write-queue";
 import { SettingsGrid } from "@/management/setting/dialog/layout/SettingsGrid";
@@ -93,12 +94,12 @@ export function WorkspaceBackupSection(): JSX.Element {
 		const text = `${JSON.stringify(bundle, null, 2)}\n`;
 		setBundleText(text);
 		void navigator.clipboard.writeText(text);
-		setStatus("Exported workspace backup JSON and copied to clipboard.");
+		setStatus(i18n.t("settings:workspaceBackupSection.statusExported"));
 	}, []);
 
 	const handleImport = useCallback(async () => {
 		if (!bundleText.trim()) {
-			setStatus("Paste backup JSON first.");
+			setStatus(i18n.t("settings:workspaceBackupSection.statusPasteFirst"));
 			return;
 		}
 		const execImportBackup = async () => {
@@ -143,12 +144,12 @@ export function WorkspaceBackupSection(): JSX.Element {
 					}
 				}),
 			);
-			setStatus("Imported workspace backup. Reopen dialogs/panels to refresh.");
+			setStatus(i18n.t("settings:workspaceBackupSection.statusImported"));
 		};
 		try {
 			await execImportBackup();
 		} catch {
-			setStatus("Invalid backup JSON.");
+			setStatus(i18n.t("settings:workspaceBackupSection.statusInvalid"));
 		}
 	}, [bundleText]);
 
@@ -175,14 +176,14 @@ export function WorkspaceBackupSection(): JSX.Element {
 	return (
 		<SettingsGrid>
 			<p className={cx(bundleContainerStyle, mutedTextStyle)}>
-				Export or import your workspace configuration.
+				{i18n.t("settings:workspaceBackupSection.intro")}
 			</p>
 			<div className={bundleContainerStyle} data-settings-backup-bundle>
 				<Textarea
 					value={bundleText}
 					onChange={(e) => setBundleText(e.target.value)}
 					rows={8}
-					placeholder="Workspace backup JSON"
+					placeholder={i18n.t("settings:workspaceBackupSection.placeholder")}
 				/>
 			</div>
 			<div className={buttonsRowStyle}>
@@ -192,7 +193,7 @@ export function WorkspaceBackupSection(): JSX.Element {
 					uiSize="sm"
 					className={exportButtonStyle}
 				>
-					Export
+					{i18n.t("common:actions.export")}
 				</Button>
 				<Button
 					onClick={handleImport}
@@ -200,7 +201,7 @@ export function WorkspaceBackupSection(): JSX.Element {
 					uiSize="sm"
 					className={importButtonStyle}
 				>
-					Import
+					{i18n.t("common:actions.import")}
 				</Button>
 			</div>
 			{status ? (

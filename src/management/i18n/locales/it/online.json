@@ -1,5 +1,99 @@
 {
 	"notification": {
-		"fixtureBadge": "segnaposto (fixture offline)"
+		"fixtureBadge": "segnaposto (fixture offline)",
+		"fixture": {
+			"welcomeName": "Benvenuto in ty-plus",
+			"welcomeSummary": "Grazie per aver installato ty-plus! Questa è una notifica segnaposto mostrata quando il runtime non è connesso (fixture offline).",
+			"updateName": "Aggiornamento disponibile",
+			"updateSummary": "Una nuova versione può includere prestazioni della griglia migliorate e correzioni di bug.",
+			"maintenanceName": "Avviso di manutenzione",
+			"maintenanceSummary": "Potrebbe essere programmata una manutenzione del server; controlla la pagina di stato."
+		}
+	},
+	"gatewayBoot": {
+		"connectivityProbeFailed": "Il controllo di connettività non è riuscito dopo l'avvio della composizione del worker.",
+		"catalogProbeFailed": "Il controllo del catalogo non è riuscito dopo l'avvio della composizione del worker.",
+		"runtimeInitFailed": "Impossibile creare il runtime del worker operazioni durante l'avvio.",
+		"compositionInitFailed": "Impossibile creare la composizione del worker operazioni durante l'avvio."
+	},
+	"catalog": {
+		"title": "Libreria di preset online",
+		"searchPlaceholder": "Filtra per nome, ID, descrizione, categoria, tag",
+		"filterPlaceholder": "Filtra…",
+		"showFilters": "Mostra filtri",
+		"hideFilters": "Nascondi filtri",
+		"category": "Categoria",
+		"tags": "Tag",
+		"allCategories": "Tutte le categorie",
+		"clear": "Cancella",
+		"clearAll": "Cancella tutto",
+		"clearAllFilters": "Cancella tutti i filtri",
+		"clearSearch": "Cancella ricerca",
+		"clearCategoryFilter": "Cancella filtro categoria",
+		"clearTagSelection": "Cancella selezione tag",
+		"refreshCatalog": "Aggiorna catalogo",
+		"reloadCatalog": "Ricarica catalogo",
+		"reloadingCatalog": "Ricaricamento…",
+		"openNotion": "Apri Notion",
+		"openManualNotion": "Apri manuale (Notion)",
+		"viewMenu": "Vista",
+		"viewMode": "Modalità di visualizzazione",
+		"viewGallery": "Vista galleria",
+		"viewGalleryTitle": "Galleria (Ctrl+rotellina per lo zoom)",
+		"viewGalleryLabel": "Galleria",
+		"viewCards": "Vista schede",
+		"viewCardsLabel": "Schede",
+		"viewList": "Vista elenco",
+		"viewListLabel": "Elenco",
+		"tableThumb": "Miniatura",
+		"tableNameId": "Nome / ID",
+		"tableActions": "Azioni",
+		"emptyUnavailable": "La libreria di preset online non è disponibile.",
+		"emptyNoCatalog": "Nessun catalogo online.",
+		"emptyNoMatch": "Nessun preset corrisponde al filtro.",
+		"footerCount": "{{filtered}} / {{catalog}} elementi",
+		"footerZoom": "Ctrl+rotellina: {{percent}}%",
+		"downloadConfirm": "Scaricare questo preset?",
+		"downloadCancelled": "Download annullato dall'utente",
+		"downloadUnavailable": "Download runtime non disponibile (nessun trasporto online connesso)",
+		"systemPathsUnavailable": "Percorsi di sistema non disponibili",
+		"invalidDownloadPath": "Percorso di download non valido: {{path}}",
+		"downloadFailed": "Download non riuscito: {{message}}",
+		"pluginInstalled": "Plugin installato. Riavvia After Effects per usarlo.",
+		"downloadComplete": "Download completato.",
+		"downloadedDescription": "[Scaricato dal catalogo] {{description}}",
+		"gatewayBootRetryHint": "{{reason}} — ricarica il pannello per riprovare l'avvio del gateway",
+		"hideSidePanel": "Nascondi pannello laterale",
+		"showSidePanel": "Mostra pannello laterale",
+		"download": "Scarica",
+		"import": "Importa",
+		"sync": {
+			"idle": "Sincronizzazione cloud inattiva",
+			"ok": "Ty Plus OK",
+			"failed": "Sincronizzazione cloud non riuscita"
+		}
+	},
+	"notificationCenter": {
+		"title": "Notifiche",
+		"loading": "Caricamento…",
+		"empty": "Nessuna notifica",
+		"toggleContent": "Attiva/disattiva contenuto",
+		"noContent": "Nessun contenuto",
+		"backToList": "Torna all'elenco",
+		"backToListMenu": "Torna all'elenco",
+		"refresh": "Aggiorna",
+		"open": "Apri",
+		"close": "Chiudi",
+		"markRead": "Segna come letto",
+		"markUnread": "Segna come non letto",
+		"markAsRead": "Segna come letto",
+		"markAsUnread": "Segna come non letto",
+		"generalCategory": "generale"
+	},
+	"notificationContainer": {
+		"dismiss": "Chiudi notifica"
+	},
+	"publicLink": {
+		"userManual": "Manuale utente"
 	}
 }

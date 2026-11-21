@@ -44,6 +44,7 @@ import {
 	SUPPORTED_LOCALES,
 	type SupportedLocale,
 } from "@/management/i18n/config";
+import { i18n } from "@/management/i18n/index";
 import { saveCepShellLocale } from "@/management/i18n/locale-storage";
 import {
 	importOnboardingPresets,
@@ -566,9 +567,7 @@ function SupportStepBody({
 		<div className={stepBodyClass}>
 			<p className={stepBodyTextClass}>{body}</p>
 			{isAeAppFolder ? (
-				<p className={supportHintClass}>
-					AE app folder detected — subfolders step will be skipped.
-				</p>
+				<p className={supportHintClass}>{t("step.support.aeAppFolderHint")}</p>
 			) : null}
 			<div
 				className={supportBrowseClass}
@@ -793,7 +792,7 @@ function FileStepBrowser({
 				onViewModeChange={setViewMode}
 				scale={1}
 				aspect="square"
-				loadingLabel="Loading..."
+				loadingLabel={t("common:status.loading")}
 				emptyLabel={t("empty")}
 				upLabel={t("goUp")}
 			/>
@@ -1182,7 +1181,7 @@ function useOnboardingFinish(input: OnboardingFinishInput): {
 						syncStatus: {
 							provider: "supabase",
 							state: "idle" as const,
-							label: "Local Update",
+							label: i18n.t("onboarding:syncStatus.localUpdate"),
 							checkedAt: new Date().toISOString(),
 						},
 						sourceSurfaceId: panelSurfaceId,

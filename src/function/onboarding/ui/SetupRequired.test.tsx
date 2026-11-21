@@ -19,6 +19,7 @@ import {
 	it,
 	vi,
 } from "vitest";
+import { i18n } from "@/management/i18n/index";
 
 const mocks = vi.hoisted(() => {
 	const unregisterMock = vi.fn();
@@ -174,12 +175,12 @@ describe("SetupRequired", () => {
 		expect(payload?.menu).toHaveLength(2);
 		expect(payload?.menu[0]).toEqual({
 			id: "ty.ctx.setup-required.open-manual",
-			label: "Open Manual",
+			label: i18n.t("onboarding:actions.openManual"),
 			enabled: true,
 		});
 		expect(payload?.menu[1]).toEqual({
 			id: "ty.ctx.setup-required.refresh",
-			label: "Refresh",
+			label: i18n.t("common:actions.refresh"),
 		});
 	});
 

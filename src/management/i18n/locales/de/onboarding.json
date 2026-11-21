@@ -1,7 +1,7 @@
 {
 	"step": {
 		"intro": {
-			"label": "Intro",
+			"label": "Einführung",
 			"title": "Willkommen",
 			"body": "Willkommen! ty-plus erstellt einen persönlichen Arbeitsbereich für schnelleres Arbeiten.\nPlatzieren Sie Voreinstellungen/Widgets und optimieren Sie Ihren Workflow. Beginnen wir mit der Einrichtung!"
 		},
@@ -13,7 +13,8 @@
 		"support": {
 			"label": "Speicherort",
 			"title": "AE-Ordner auswählen",
-			"body": "Wählen Sie Ihren After Effects Programmordner. Unter Windows ist dies das Support Files-Verzeichnis; unter macOS ist es der App-Ordner, der Voreinstellungen enthält."
+			"body": "Wählen Sie Ihren After Effects Programmordner. Unter Windows ist dies das Support Files-Verzeichnis; unter macOS ist es der App-Ordner, der Voreinstellungen enthält.",
+			"aeAppFolderHint": "AE-App-Ordner erkannt — der Schritt für Unterordner wird übersprungen."
 		},
 		"subfolders": {
 			"label": "Ordner",
@@ -94,6 +95,10 @@
 		"next": "Weiter",
 		"finish": "Fertig",
 		"toggleFullscreen": "Auf Vollbild erweitern",
-		"toggleModal": "Zum Modal zurückkehren"
+		"toggleModal": "Zum Modal zurückkehren",
+		"openManual": "Handbuch öffnen"
+	},
+	"syncStatus": {
+		"localUpdate": "Lokales Update"
 	}
 }

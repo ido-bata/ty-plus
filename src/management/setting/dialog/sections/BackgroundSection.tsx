@@ -10,6 +10,7 @@ import {
 	useState,
 } from "react";
 import { useCep } from "@/management/ae/cep/contexts/Context";
+import { i18n } from "@/management/i18n/index";
 import { useSettings } from "@/management/setting/context";
 import {
 	SETTINGS_CONTROL_HEIGHT_CLASS,
@@ -29,11 +30,11 @@ import { resolveWorkspacePersistenceManagedRoot } from "@/management/workspace/l
 import { css } from "@/styled-system/css";
 
 const PANEL_OPTIONS = [
-	{ value: "1", label: "Workspace Panel 1" },
-	{ value: "2", label: "Workspace Panel 2" },
-	{ value: "3", label: "Workspace Panel 3" },
-	{ value: "4", label: "Workspace Panel 4" },
-	{ value: "5", label: "Workspace Panel 5" },
+	{ value: "1", labelKey: "settings:backgroundSection.workspacePanel" },
+	{ value: "2", labelKey: "settings:backgroundSection.workspacePanel" },
+	{ value: "3", labelKey: "settings:backgroundSection.workspacePanel" },
+	{ value: "4", labelKey: "settings:backgroundSection.workspacePanel" },
+	{ value: "5", labelKey: "settings:backgroundSection.workspacePanel" },
 ] as const;
 
 function panelIndexFromId(panelId: string): 1 | 2 | 3 | 4 | 5 {
@@ -45,10 +46,16 @@ function panelIndexFromId(panelId: string): 1 | 2 | 3 | 4 | 5 {
 	return 1;
 }
 
+function layerTypeLabel(type: Layer["type"]): string {
+	return i18n.t(`dialogs:workspaceShell.backgroundPanel.types.${type}`, {
+		defaultValue: type,
+	});
+}
+
 function layerSummary(layer: Layer): string {
-	const parts: string[] = [layer.type];
+	const parts: string[] = [layerTypeLabel(layer.type)];
 	if (!layer.enabled) {
-		parts.push("disabled");
+		parts.push(i18n.t("settings:backgroundSection.layerDisabled"));
 	}
 	parts.push(`${Math.round(layer.opacity)}%`);
 	if (layer.type === "color" && layer.color) {
@@ -58,7 +65,14 @@ function layerSummary(layer: Layer): string {
 		parts.push(layer.imagePath);
 	}
 	if (layer.type === "pattern" && layer.patternType) {
-		parts.push(layer.patternType);
+		parts.push(
+			i18n.t(
+				`dialogs:workspaceShell.backgroundPanel.patterns.${layer.patternType}`,
+				{
+					defaultValue: layer.patternType,
+				},
+			),
+		);
 	}
 	return parts.join(" · ");
 }
@@ -219,17 +233,20 @@ export function BackgroundSection(): JSX.Element {
 		<SettingsGrid>
 			<SettingsField span={6}>
 				<p className={mutedTextStyle}>
-					Each workspace panel has its own layered backdrop (color, image,
-					pattern). Choose the panel to edit, then open the same background
-					editor as the workspace context menu.
+					{i18n.t("settings:backgroundSection.intro")}
 				</p>
 			</SettingsField>
 
 			<SettingsField span={6}>
-				<SettingsFieldLabel>Target workspace panel</SettingsFieldLabel>
+				<SettingsFieldLabel>
+					{i18n.t("settings:backgroundSection.targetPanel")}
+				</SettingsFieldLabel>
 				<div className={controlsRowStyle}>
 					<ListSelect
-						options={[...PANEL_OPTIONS]}
+						options={PANEL_OPTIONS.map((option) => ({
+							value: option.value,
+							label: i18n.t(option.labelKey, { index: option.value }),
+						}))}
 						value={String(panelIndex)}
 						onChange={(value) => {
 							const n = Number(value);
@@ -238,7 +255,7 @@ export function BackgroundSection(): JSX.Element {
 							}
 						}}
 						uiSize="sm"
-						aria-label="Target workspace panel for backdrop"
+						aria-label={i18n.t("settings:backgroundSection.targetPanelAria")}
 						disabled={!isCep}
 						triggerClassName={SETTINGS_CONTROL_HEIGHT_CLASS}
 						className={listSelectClass}
@@ -254,9 +271,13 @@ export function BackgroundSection(): JSX.Element {
 							openEditorClass,
 							css({ width: "full" }),
 						)}
-						aria-label={`Open background editor for workspace panel ${panelIndex}`}
+						aria-label={i18n.t("settings:backgroundSection.openEditorAria", {
+							panel: panelIndex,
+						})}
 					>
-						Open Panel {panelIndex} Editor
+						{i18n.t("settings:backgroundSection.openEditor", {
+							panel: panelIndex,
+						})}
 					</Button>
 				</div>
 			</SettingsField>
@@ -264,24 +285,31 @@ export function BackgroundSection(): JSX.Element {
 			{!isCep ? (
 				<SettingsField span={6}>
 					<p className={mutedTextStyle}>
-						Background editor is available inside After Effects only.
+						{i18n.t("settings:backgroundSection.aeOnly")}
 					</p>
 				</SettingsField>
 			) : null}
 
 			<SettingsSectionHeading>
-				Panel {panelIndex} layers ({enabledCount}/{layers.length} enabled)
+				{i18n.t("settings:backgroundSection.layersHeading", {
+					panel: panelIndex,
+					enabled: enabledCount,
+					total: layers.length,
+				})}
 			</SettingsSectionHeading>
 
 			{loading ? (
 				<SettingsField span={6}>
-					<span className={mutedTextStyle}>Loading backdrop…</span>
+					<span className={mutedTextStyle}>
+						{i18n.t("settings:backgroundSection.loading")}
+					</span>
 				</SettingsField>
 			) : layers.length === 0 ? (
 				<SettingsField span={6}>
 					<span className={mutedTextStyle}>
-						No layers saved yet for Workspace Panel {panelIndex}. You can add
-						layers in the editor — an empty backdrop is fine.
+						{i18n.t("settings:backgroundSection.empty", {
+							panel: panelIndex,
+						})}
 					</span>
 				</SettingsField>
 			) : (
@@ -289,7 +317,9 @@ export function BackgroundSection(): JSX.Element {
 					<SettingsField key={layer.id} span={6}>
 						<div className={layerRowStyle}>
 							<span className={layerLabelStyle}>{layerSummary(layer)}</span>
-							<span className={layerTypeStyle}>{layer.type}</span>
+							<span className={layerTypeStyle}>
+								{layerTypeLabel(layer.type)}
+							</span>
 						</div>
 					</SettingsField>
 				))

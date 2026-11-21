@@ -3,6 +3,7 @@ import { Icon } from "@ty-plus/ui/icons/Icon";
 import { cx } from "@ty-plus/ui/util/cx";
 import { LoaderCircle, PanelLeftClose, RefreshCw } from "lucide-react";
 import type { JSX } from "react";
+import { i18n } from "@/management/i18n/index";
 import { css } from "@/styled-system/css";
 
 export type PresetLibraryHeaderProps = {
@@ -52,18 +53,22 @@ export function PresetLibraryHeader(
 				<IconButton
 					size="sm"
 					variant="ghost"
-					title="Show filters"
+					title={i18n.t("online:catalog.showFilters")}
 					onClick={onShowSidePanel}
 				>
 					<Icon icon={PanelLeftClose} size={12} />
 				</IconButton>
 			)}
-			<h1 className={titleClass}>Online Preset Library</h1>
+			<h1 className={titleClass}>{i18n.t("online:catalog.title")}</h1>
 			<div className={actionRowClass}>
 				<IconButton
 					size="sm"
 					variant="ghost"
-					title={isReloading ? "Reloading…" : "Reload catalog"}
+					title={
+						isReloading
+							? i18n.t("online:catalog.reloadingCatalog")
+							: i18n.t("online:catalog.reloadCatalog")
+					}
 					onClick={onReload}
 					disabled={isReloading}
 					className={cx(isReloading && spinningClass)}

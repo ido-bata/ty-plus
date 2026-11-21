@@ -1,5 +1,6 @@
 import { cx } from "@ty-plus/ui/util/cx";
 import type { JSX } from "react";
+import { i18n } from "@/management/i18n/index";
 import { css } from "@/styled-system/css";
 
 export type DirectoryBrowserViewMode = "list" | "icons";
@@ -43,8 +44,12 @@ function viewButtonClass(active: boolean): string {
 export function DirectoryBrowserViewModeToggle({
 	viewMode,
 	onChange,
-	listViewAriaLabel = "List view",
-	iconViewAriaLabel = "Icon view",
+	listViewAriaLabel = i18n.t("common:directoryBrowser.listView", {
+		defaultValue: "List view",
+	}),
+	iconViewAriaLabel = i18n.t("common:directoryBrowser.iconView", {
+		defaultValue: "Icon view",
+	}),
 }: DirectoryBrowserViewModeToggleProps): JSX.Element {
 	return (
 		<div className={wrapperClass}>

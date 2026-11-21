@@ -13,7 +13,8 @@
 		"support": {
 			"label": "Location",
 			"title": "Select AE Folder",
-			"body": "Choose your After Effects application folder. On Windows this is the Support Files directory; on macOS it's the app folder containing Presets."
+			"body": "Choose your After Effects application folder. On Windows this is the Support Files directory; on macOS it's the app folder containing Presets.",
+			"aeAppFolderHint": "AE app folder detected — subfolders step will be skipped."
 		},
 		"subfolders": {
 			"label": "Folders",
@@ -94,6 +95,10 @@
 		"next": "Next",
 		"finish": "Finish",
 		"toggleFullscreen": "Expand to fullscreen",
-		"toggleModal": "Return to modal"
+		"toggleModal": "Return to modal",
+		"openManual": "Open Manual"
+	},
+	"syncStatus": {
+		"localUpdate": "Local Update"
 	}
 }

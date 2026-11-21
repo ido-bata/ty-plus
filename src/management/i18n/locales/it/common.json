@@ -180,5 +180,82 @@
 			"copied": "Copiato negli appunti",
 			"digest": "ID errore"
 		}
+	},
+	"ui": {
+		"loadingSpinner": {
+			"label": "Caricamento"
+		},
+		"searchField": {
+			"clearAria": "Cancella ricerca",
+			"clearTitle": "Cancella"
+		},
+		"regexEditor": {
+			"enterPattern": "Inserisci un pattern.",
+			"invalidFlags": "Flag non validi: {{flags}}",
+			"plainSource": "Sorgente regex semplice",
+			"literalFormat": "Formato regex letterale",
+			"testString": "Stringa di test",
+			"sourcePlaceholder": "Sorgente regex",
+			"flagsPlaceholder": "flag",
+			"matches": "Corrispondenze",
+			"noMatch": "Nessuna corrispondenza",
+			"literalSuffix": "· letterale /pattern/flags",
+			"sourceSuffix": "· solo sorgente"
+		},
+		"listSelect": {
+			"placeholder": "Seleziona…"
+		}
+	},
+	"directoryBrowser": {
+		"refresh": "Aggiorna",
+		"goUp": "Vai su",
+		"open": "Apri",
+		"select": "Seleziona",
+		"deselect": "Deseleziona",
+		"listView": "Vista elenco",
+		"iconView": "Vista icone",
+		"noFilesFound": "Nessun file trovato"
+	},
+	"debugConsole": {
+		"title": "Console",
+		"clear": "Cancella",
+		"evaluateAria": "Valuta JavaScript",
+		"evaluatePlaceholder": "Valuta JavaScript…",
+		"rowContextHint": "Clic destro per copiare",
+		"filterLevelAria": "Filtra i messaggi della console",
+		"filterSourceAria": "Filtra i messaggi per origine",
+		"filterScopeAria": "Filtra i messaggi per ambito della sessione",
+		"levels": {
+			"all": "Tutti",
+			"log": "Registro",
+			"info": "Info",
+			"warn": "Avviso",
+			"error": "Errore"
+		},
+		"sources": {
+			"all": "Tutte le origini",
+			"panel": "Pannello",
+			"modeless": "Senza finestra",
+			"hostBridge": "Ponte host",
+			"online": "Online",
+			"preset": "Preimpostazione",
+			"opWorker": "Worker operazioni",
+			"workspace": "Area di lavoro",
+			"boot": "Avvio",
+			"debugConsole": "Console di debug",
+			"console": "Console"
+		},
+		"scopes": {
+			"allHistory": "Cronologia completa",
+			"thisSession": "Questa sessione"
+		},
+		"contextMenu": {
+			"copyMessage": "Copia messaggio",
+			"copyAllMessages": "Copia tutti i messaggi",
+			"clearConsole": "Cancella console",
+			"enableAutoScroll": "Attiva scorrimento automatico",
+			"disableAutoScroll": "Disattiva scorrimento automatico",
+			"itemActive": "{{level}} (attivo)"
+		}
 	}
 }

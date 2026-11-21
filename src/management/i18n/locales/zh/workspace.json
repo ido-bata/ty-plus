@@ -22,7 +22,30 @@
 		"expand": "展开",
 		"collapse": "折叠",
 		"position": "位置",
-		"orientation": "方向"
+		"orientation": "方向",
+		"ariaLabel": "预设 / 小组件",
+		"collapseExpand": "折叠/展开",
+		"horizontal": "水平",
+		"vertical": "垂直",
+		"resetToDefaults": "重置为默认值",
+		"buttons": {
+			"localPreset": "本地预设",
+			"groupPreset": "组预设",
+			"animationPreset": "动画预设",
+			"layerCompPreset": "图层/Comp 预设",
+			"codePreset": "代码预设",
+			"addWidget": "添加小组件"
+		},
+		"positionLabels": {
+			"topLeft": "左上",
+			"topCenter": "上中",
+			"topRight": "右上",
+			"bottomLeft": "左下",
+			"bottomCenter": "下中",
+			"bottomRight": "右下",
+			"leftCenter": "左中",
+			"rightCenter": "右中"
+		}
 	},
 	"context": {
 		"lock": "锁定",
@@ -41,5 +64,35 @@
 		"savingPaused": "保存已暂停，以避免覆盖该文件。请修复或恢复该文件后重试。",
 		"file": "文件: workspace-{{wsIndex}}.json",
 		"retry": "重试恢复"
+	},
+	"statusBar": {
+		"undoTitle": "撤销 (Ctrl+Z)",
+		"redoTitle": "重做 (Ctrl+Y)",
+		"saveSnapshotTitle": "保存布局快照",
+		"savedLayoutsTitle": "已保存的布局 ({{count}})",
+		"savedLayoutsTitleEmpty": "已保存的布局（无）",
+		"noSavedLayouts": "没有已保存的布局",
+		"restoreSnapshotTitle": "恢复\"{{label}}\"",
+		"presetLibraryTitle": "预设库（在线）",
+		"debugConsoleTitle": "调试控制台 (Ctrl+`)"
+	},
+	"gridTile": {
+		"widgetTitle": "小组件",
+		"configLoadError": "无法加载配置"
+	},
+	"debugProbe": {
+		"title": "对话框探测",
+		"message": "面板 -> 对话框桥接检查"
+	},
+	"easingCurveColors": {
+		"linear": "线性",
+		"hold": "保持",
+		"easeInGentle": "缓入",
+		"easeInSharp": "缓入（急）",
+		"easeOutGentle": "缓出",
+		"easeOutSharp": "缓出（急）",
+		"easeInOut": "缓入缓出",
+		"overshoot": "过冲",
+		"bezier": "贝塞尔"
 	}
 }

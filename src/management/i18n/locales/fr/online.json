@@ -1,5 +1,99 @@
 {
 	"notification": {
-		"fixtureBadge": "espace réservé (fixture hors ligne)"
+		"fixtureBadge": "espace réservé (fixture hors ligne)",
+		"fixture": {
+			"welcomeName": "Bienvenue dans ty-plus",
+			"welcomeSummary": "Merci d'avoir installé ty-plus ! Ceci est une notification fictive affichée lorsque le runtime n'est pas connecté (fixture hors ligne).",
+			"updateName": "Mise à jour disponible",
+			"updateSummary": "Une nouvelle version peut inclure des améliorations de performance de la grille et des corrections de bugs.",
+			"maintenanceName": "Avis de maintenance",
+			"maintenanceSummary": "Une maintenance du serveur peut être planifiée ; consultez la page de statut."
+		}
+	},
+	"gatewayBoot": {
+		"connectivityProbeFailed": "La vérification de connectivité a échoué après le démarrage de la composition du worker.",
+		"catalogProbeFailed": "La vérification du catalogue a échoué après le démarrage de la composition du worker.",
+		"runtimeInitFailed": "Le runtime du worker d'opération n'a pas pu être créé au démarrage.",
+		"compositionInitFailed": "La composition du worker d'opération n'a pas pu être créée au démarrage."
+	},
+	"catalog": {
+		"title": "Bibliothèque de presets en ligne",
+		"searchPlaceholder": "Filtrer par nom, ID, description, catégorie, tag",
+		"filterPlaceholder": "Filtrer…",
+		"showFilters": "Afficher les filtres",
+		"hideFilters": "Masquer les filtres",
+		"category": "Catégorie",
+		"tags": "Tags",
+		"allCategories": "Toutes les catégories",
+		"clear": "Effacer",
+		"clearAll": "Tout effacer",
+		"clearAllFilters": "Effacer tous les filtres",
+		"clearSearch": "Effacer la recherche",
+		"clearCategoryFilter": "Effacer le filtre de catégorie",
+		"clearTagSelection": "Effacer la sélection de tags",
+		"refreshCatalog": "Actualiser le catalogue",
+		"reloadCatalog": "Recharger le catalogue",
+		"reloadingCatalog": "Rechargement…",
+		"openNotion": "Ouvrir Notion",
+		"openManualNotion": "Ouvrir le manuel (Notion)",
+		"viewMenu": "Affichage",
+		"viewMode": "Mode d'affichage",
+		"viewGallery": "Vue galerie",
+		"viewGalleryTitle": "Galerie (Ctrl+molette pour zoomer)",
+		"viewGalleryLabel": "Galerie",
+		"viewCards": "Vue cartes",
+		"viewCardsLabel": "Cartes",
+		"viewList": "Vue liste",
+		"viewListLabel": "Liste",
+		"tableThumb": "Vignette",
+		"tableNameId": "Nom / ID",
+		"tableActions": "Actions",
+		"emptyUnavailable": "La bibliothèque de presets en ligne est indisponible.",
+		"emptyNoCatalog": "Aucun catalogue en ligne.",
+		"emptyNoMatch": "Aucun preset ne correspond au filtre.",
+		"footerCount": "{{filtered}} / {{catalog}} éléments",
+		"footerZoom": "Ctrl+molette : {{percent}} %",
+		"downloadConfirm": "Télécharger ce preset ?",
+		"downloadCancelled": "Téléchargement annulé par l'utilisateur",
+		"downloadUnavailable": "Le téléchargement runtime est indisponible (aucun transport en ligne connecté)",
+		"systemPathsUnavailable": "Chemins système indisponibles",
+		"invalidDownloadPath": "Chemin de téléchargement invalide : {{path}}",
+		"downloadFailed": "Échec du téléchargement : {{message}}",
+		"pluginInstalled": "Plugin installé. Redémarrez After Effects pour l'utiliser.",
+		"downloadComplete": "Téléchargement terminé.",
+		"downloadedDescription": "[Téléchargé depuis le catalogue] {{description}}",
+		"gatewayBootRetryHint": "{{reason}} — rechargez le panneau pour réessayer le démarrage de la passerelle",
+		"hideSidePanel": "Masquer le panneau latéral",
+		"showSidePanel": "Afficher le panneau latéral",
+		"download": "Télécharger",
+		"import": "Importer",
+		"sync": {
+			"idle": "Synchronisation cloud inactive",
+			"ok": "Ty Plus OK",
+			"failed": "Échec de la synchronisation cloud"
+		}
+	},
+	"notificationCenter": {
+		"title": "Notifications",
+		"loading": "Chargement…",
+		"empty": "Aucune notification",
+		"toggleContent": "Basculer le contenu",
+		"noContent": "Aucun contenu",
+		"backToList": "Retour à la liste",
+		"backToListMenu": "Retour à la liste",
+		"refresh": "Actualiser",
+		"open": "Ouvrir",
+		"close": "Fermer",
+		"markRead": "Marquer comme lu",
+		"markUnread": "Marquer comme non lu",
+		"markAsRead": "Marquer comme lu",
+		"markAsUnread": "Marquer comme non lu",
+		"generalCategory": "général"
+	},
+	"notificationContainer": {
+		"dismiss": "Fermer la notification"
+	},
+	"publicLink": {
+		"userManual": "Manuel utilisateur"
 	}
 }

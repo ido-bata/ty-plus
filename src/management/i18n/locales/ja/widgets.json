@@ -17,7 +17,10 @@
 			"quick-actions": "スクリプト、エフェクト、ファイル操作をコンパクトなパレットから実行します。",
 			"directory-browser": "パネル内からディスク上のフォルダやプリセットを参照します。",
 			"font-viewer": "フォントファミリー、スタイル、サンプル文をワークスペースでプレビューします。"
-		}
+		},
+		"add": "追加",
+		"adding": "追加中…",
+		"noMatches": "一致するウィジェットがありません。別の検索を試してください。"
 	},
 	"types": {
 		"align": "整列",
@@ -74,6 +77,12 @@
 			"easeOut": "イーズアウト",
 			"easeIn": "イーズイン",
 			"easeInOut": "イーズイン/アウト"
+		},
+		"presetAria": {
+			"linear": "リニアプリセットを適用",
+			"easeOut": "イーズアウトプリセットを適用",
+			"easeIn": "イーズインプリセットを適用",
+			"easeInOut": "イーズイン/アウトプリセットを適用"
 		}
 	},
 	"menu": {
@@ -92,16 +101,66 @@
 		"groupSelectedItems": "選択項目をグループ化",
 		"moveToPanel": "パネルに移動",
 		"deleteSelectedPresets": "{{count}}件のプリセットを削除",
-		"layout": "レイアウト"
+		"layout": "レイアウト",
+		"separatorAria": "メニューセクションの区切り"
 	},
 	"align": {
-		"name": "整列"
+		"name": "整列",
+		"gestureOverlay": "ジェスチャー軌跡オーバーレイ",
+		"targets": {
+			"selection": "選択に整列",
+			"composition": "Composition に整列",
+			"keyObject": "キーオブジェクトに整列",
+			"time": "時間の整列"
+		},
+		"sections": {
+			"distribute": "分布",
+			"spacing": "間隔",
+			"time": "時間"
+		}
 	},
 	"anchorPoint": {
-		"name": "アンカーポイント"
+		"name": "アンカーポイント",
+		"gestureOverlay": "アンカーポイントジェスチャーオーバーレイ",
+		"positions": {
+			"topLeft": "左上",
+			"topCenter": "上中央",
+			"topRight": "右上",
+			"centerLeft": "左中央",
+			"center": "中央",
+			"centerRight": "右中央",
+			"bottomLeft": "左下",
+			"bottomCenter": "下中央",
+			"bottomRight": "右下"
+		}
 	},
 	"info": {
-		"name": "情報"
+		"name": "情報",
+		"activeComp": "アクティブな Comp",
+		"compInfo": "Comp 情報",
+		"file": "ファイル",
+		"kind": "種類",
+		"noPresetSelected": "プリセットが選択されていません",
+		"noDescription": "説明なし",
+		"source": {
+			"selection": "選択",
+			"hover": "ホバー"
+		},
+		"comp": {
+			"size": "サイズ",
+			"pixelAspect": "ピクセルアスペクト",
+			"background": "背景",
+			"frameRate": "フレームレート",
+			"duration": "長さ",
+			"shutterAngle": "シャッターアングル",
+			"shutterPhase": "シャッターフェーズ",
+			"total": "合計",
+			"selected": "選択済み",
+			"motionBlur": "モーションブラー",
+			"draft3d": "3Dドラフト",
+			"on": "オン",
+			"off": "オフ"
+		}
 	},
 	"layoutLock": {
 		"name": "レイアウトロック"
@@ -203,6 +262,9 @@
 		},
 		"hints": {
 			"iconGridWheel": "Ctrl+スクロールでサイズ変更"
+		},
+		"listHeader": {
+			"name": "名前"
 		}
 	},
 	"folderDirectoryPicker": {
@@ -265,5 +327,29 @@
 		"hintNoLocalApi": "この Chromium では queryLocalFonts が使えません。document.fonts に登録されたフォントのみ表示されます。",
 		"localAccessErrorPrefix": "ローカルフォントアクセス:",
 		"emptyList": "まだフォントがありません。利用可能なら「システムの全フォントを読み込む」を押すか、スタイル読み込み後に再読み込みしてください。"
+	},
+	"viewModeToggle": {
+		"listView": "リスト表示",
+		"iconView": "アイコン表示",
+		"fieldsetLegend": "カタログレイアウト"
+	},
+	"addWidgetDialog": {
+		"addsToPrefix": "追加先:",
+		"addsToSuffix": "グリッドの下部に配置されます。",
+		"addFailure": "ウィジェットを追加できませんでした: {{message}}",
+		"introPrefix": "ウィジェットの種類を選択してください。カタログで利用可能な種類のみが表示されます。新しいタイルは",
+		"introSuffix": "に追加されます。",
+		"contextMenu": {
+			"addThisWidget": "このウィジェットを追加",
+			"select": "選択",
+			"category": "カテゴリ",
+			"clearSearch": "検索をクリア",
+			"addSelectedWidget": "選択したウィジェットを追加",
+			"unknownCategory": "不明"
+		}
+	},
+	"pickerOverlay": {
+		"targetPanelPrefix": "対象パネル",
+		"footerHint": "ウィジェットはこのパネルのグリッド下部に追加されます。"
 	}
 }

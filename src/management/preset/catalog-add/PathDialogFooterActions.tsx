@@ -2,6 +2,7 @@ import { Button } from "@ty-plus/ui/controls/Button";
 import { Save } from "lucide-react";
 import type { JSX } from "react";
 import { DialogFooterActions } from "@/management/dialog/dialogs/shell/Footer";
+import { i18n } from "@/management/i18n/index";
 
 export function PathDialogFooterActions({
 	close,
@@ -24,7 +25,7 @@ export function PathDialogFooterActions({
 				onClick={() => close()}
 				disabled={busy}
 			>
-				Cancel
+				{i18n.t("common:buttons.cancel")}
 			</Button>
 			<Button
 				type="button"
@@ -35,7 +36,9 @@ export function PathDialogFooterActions({
 				disabled={!canAdd}
 				onClick={() => void handleAdd()}
 			>
-				{busy ? "Creating..." : "Create"}
+				{busy
+					? i18n.t("presets:catalogAdd.creating")
+					: i18n.t("common:actions.create")}
 			</Button>
 		</DialogFooterActions>
 	);

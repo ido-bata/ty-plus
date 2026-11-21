@@ -13,7 +13,8 @@
 		"support": {
 			"label": "Расположение",
 			"title": "Выберите папку AE",
-			"body": "Выберите папку приложения After Effects. В Windows это каталог Support Files; в macOS — папка приложения, содержащая Presets."
+			"body": "Выберите папку приложения After Effects. В Windows это каталог Support Files; в macOS — папка приложения, содержащая Presets.",
+			"aeAppFolderHint": "Обнаружена папка приложения AE — шаг с подпапками будет пропущен."
 		},
 		"subfolders": {
 			"label": "Папки",
@@ -61,8 +62,8 @@
 		"selected": "Выбрано: {{count}}"
 	},
 	"secondaryPanel": {
-		"title": "Setup required",
-		"description": "Complete onboarding in panel-1 first.",
+		"title": "Требуется настройка",
+		"description": "Сначала завершите настройку в panel-1.",
 		"userManual": "Руководство пользователя",
 		"openMainPanel": "Открыть главную панель",
 		"linkUnavailable": "Ссылка на руководство недоступна"
@@ -94,6 +95,10 @@
 		"next": "Далее",
 		"finish": "Готово",
 		"toggleFullscreen": "Развернуть на весь экран",
-		"toggleModal": "Вернуться к окну"
+		"toggleModal": "Вернуться к окну",
+		"openManual": "Открыть руководство"
+	},
+	"syncStatus": {
+		"localUpdate": "Локальное обновление"
 	}
 }

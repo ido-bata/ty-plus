@@ -13,7 +13,8 @@
 		"support": {
 			"label": "位置",
 			"title": "选择 AE 文件夹",
-			"body": "选择 After Effects 应用程序文件夹。在 Windows 上，这是 Support Files 目录；在 macOS 上，它是包含 Presets 的应用文件夹。"
+			"body": "选择 After Effects 应用程序文件夹。在 Windows 上，这是 Support Files 目录；在 macOS 上，它是包含 Presets 的应用文件夹。",
+			"aeAppFolderHint": "检测到 AE 应用文件夹 — 将跳过子文件夹步骤。"
 		},
 		"subfolders": {
 			"label": "文件夹",
@@ -94,6 +95,10 @@
 		"next": "下一步",
 		"finish": "完成",
 		"toggleFullscreen": "切换到全屏",
-		"toggleModal": "返回模态框"
+		"toggleModal": "返回模态框",
+		"openManual": "打开手册"
+	},
+	"syncStatus": {
+		"localUpdate": "本地更新"
 	}
 }

@@ -17,7 +17,10 @@
 			"quick-actions": "Skripte, Effekte und Dateiaktionen von einer kompakten Befehlspalette aus ausführen.",
 			"directory-browser": "Festplattenordner und Presets innerhalb des Panels durchsuchen.",
 			"font-viewer": "Schriftfamilien, Stile und Beispieltext in der Arbeitsfläche in der Vorschau anzeigen."
-		}
+		},
+		"add": "Hinzufügen",
+		"adding": "Wird hinzugefügt…",
+		"noMatches": "Keine passenden Widgets. Versuchen Sie eine andere Suche."
 	},
 	"types": {
 		"align": "Ausrichten",
@@ -34,14 +37,14 @@
 	},
 	"easing": {
 		"name": "Easing",
-		"apply": "Apply",
-		"copyFromSelection": "Copy from selection",
-		"reverse": "Reverse",
+		"apply": "Anwenden",
+		"copyFromSelection": "Aus Auswahl kopieren",
+		"reverse": "Umkehren",
 		"mode": {
-			"curve": "Curve",
-			"loop": "Loop",
+			"curve": "Kurve",
+			"loop": "Schleife",
 			"bounce": "Bounce",
-			"elastic": "Elastic"
+			"elastic": "Elastisch"
 		},
 		"loop": {
 			"cycles": "Zyklen",
@@ -49,31 +52,37 @@
 			"increment": "Zyklen erhöhen"
 		},
 		"options": {
-			"mode": "Mode",
-			"grid": "Grid",
-			"label": "Label"
+			"mode": "Modus",
+			"grid": "Raster",
+			"label": "Beschriftung"
 		},
 		"background": {
-			"dots": "Dots",
-			"grid": "Grid"
+			"dots": "Punkte",
+			"grid": "Raster"
 		},
 		"label": {
-			"none": "None"
+			"none": "Keine"
 		},
 		"applyMode": {
-			"single": "Single",
-			"pair": "Each"
+			"single": "Einzeln",
+			"pair": "Paarweise"
 		},
 		"status": {
-			"applying": "Applying",
-			"applied": "Applied",
-			"failed": "Failed"
+			"applying": "Wird angewendet",
+			"applied": "Angewendet",
+			"failed": "Fehlgeschlagen"
 		},
 		"presets": {
 			"linear": "Linear",
 			"easeOut": "Ease out",
 			"easeIn": "Ease in",
 			"easeInOut": "Ease in/out"
+		},
+		"presetAria": {
+			"linear": "Easing-Voreinstellung Linear anwenden",
+			"easeOut": "Easing-Voreinstellung Ease out anwenden",
+			"easeIn": "Easing-Voreinstellung Ease in anwenden",
+			"easeInOut": "Easing-Voreinstellung Ease in/out anwenden"
 		}
 	},
 	"menu": {
@@ -92,16 +101,66 @@
 		"groupSelectedItems": "Ausgewählte Elemente gruppieren",
 		"moveToPanel": "In Panel verschieben",
 		"deleteSelectedPresets": "{{count}} Voreinstellungen löschen",
-		"layout": "Layout"
+		"layout": "Layout",
+		"separatorAria": "Menüabschnitts-Trennlinie"
 	},
 	"align": {
-		"name": "Ausrichten"
+		"name": "Ausrichten",
+		"gestureOverlay": "Gestenpfad-Overlay",
+		"targets": {
+			"selection": "An Auswahl ausrichten",
+			"composition": "An Composition ausrichten",
+			"keyObject": "An Schlüsselobjekt ausrichten",
+			"time": "Zeit-Ausrichtung"
+		},
+		"sections": {
+			"distribute": "Verteilen",
+			"spacing": "Abstand",
+			"time": "Zeit"
+		}
 	},
 	"anchorPoint": {
-		"name": "Anchor point"
+		"name": "Anchor point",
+		"gestureOverlay": "Anchor-Point-Gesten-Overlay",
+		"positions": {
+			"topLeft": "Oben links",
+			"topCenter": "Oben Mitte",
+			"topRight": "Oben rechts",
+			"centerLeft": "Mitte links",
+			"center": "Mitte",
+			"centerRight": "Mitte rechts",
+			"bottomLeft": "Unten links",
+			"bottomCenter": "Unten Mitte",
+			"bottomRight": "Unten rechts"
+		}
 	},
 	"info": {
-		"name": "Info"
+		"name": "Info",
+		"activeComp": "Aktive Comp",
+		"compInfo": "Comp-Info",
+		"file": "Datei",
+		"kind": "Typ",
+		"noPresetSelected": "Keine Voreinstellung ausgewählt",
+		"noDescription": "Keine Beschreibung",
+		"source": {
+			"selection": "Auswahl",
+			"hover": "Hover"
+		},
+		"comp": {
+			"size": "Größe",
+			"pixelAspect": "Pixel-Seitenverhältnis",
+			"background": "Hintergrund",
+			"frameRate": "Bildrate",
+			"duration": "Dauer",
+			"shutterAngle": "Verschlusswinkel",
+			"shutterPhase": "Verschlussphase",
+			"total": "Gesamt",
+			"selected": "Ausgewählt",
+			"motionBlur": "Bewegungsunschärfe",
+			"draft3d": "3D-Entwurf",
+			"on": "Ein",
+			"off": "Aus"
+		}
 	},
 	"layoutLock": {
 		"name": "Layout lock"
@@ -111,10 +170,10 @@
 	},
 	"quickActions": {
 		"name": "Quick actions",
-		"palettePlaceholder": "Search presets, scripts, plugins, effects, and files under roots…",
-		"paletteEmpty": "No matching presets or effects.",
-		"effectRowKind": "Effect",
-		"rootFileRowKind": "Disk"
+		"palettePlaceholder": "Presets, Skripte, Plugins, Effekte und Dateien unter den Stammverzeichnissen suchen…",
+		"paletteEmpty": "Keine passenden Presets oder Effekte.",
+		"effectRowKind": "Effekt",
+		"rootFileRowKind": "Festplatte"
 	},
 	"fxSearch": "FX search",
 	"directoryBrowser": {
@@ -203,6 +262,9 @@
 		},
 		"hints": {
 			"iconGridWheel": "Strg+Scrollen zum Skalieren"
+		},
+		"listHeader": {
+			"name": "Name"
 		}
 	},
 	"textEditor": {
@@ -210,47 +272,47 @@
 	},
 	"fontViewer": {
 		"name": "Font viewer",
-		"searchPlaceholder": "Search family, PostScript, style…",
-		"searchAria": "Search fonts",
-		"listView": "List view",
-		"iconView": "Icon cards",
-		"layoutLegend": "Font layout",
-		"reload": "Reload font list",
-		"samplePresets": "Sample",
-		"sampleCustom": "Custom",
-		"samplePresetAria": "Preview sample preset",
-		"previewTextAria": "Preview text",
-		"samplePlaceholder": "Preview text (CJK / emoji / Latin)",
-		"ctxMenuHeading": "Display options",
-		"ctxTileSquare": "Tile aspect 1:1",
-		"ctxTileWide": "Tile aspect 16:9",
-		"ctxShowResolved": "Show resolved-font match column (list)",
-		"ctxHideResolved": "Hide resolved-font match column (list)",
-		"showResolved": "Resolved font check (list)",
-		"loadError": "Could not load fonts.",
-		"loading": "Loading…",
-		"statsLine": "{{families}} families · {{faces}} typefaces ({{total}} loaded)",
-		"familySummary": "{{count}} typefaces",
-		"expandFamily": "Expand family",
-		"collapseFamily": "Collapse family",
-		"backToFamilies": "All font families",
-		"openFamilyIcon": "Open family",
-		"noMatches": "No matching fonts",
-		"phaseAeHost": "Querying After Effects for fonts (evalScript)…",
-		"phaseBrowser": "Reading browser font sources…",
-		"aeHostErrorLabel": "After Effects host:",
-		"previewSectionSummary": "Preview",
-		"sampleCollapsedPlaceholder": "Open to edit sample text and options",
+		"searchPlaceholder": "Familie, PostScript, Stil suchen…",
+		"searchAria": "Schriften suchen",
+		"listView": "Listenansicht",
+		"iconView": "Symbolkarten",
+		"layoutLegend": "Schriftlayout",
+		"reload": "Schriftliste neu laden",
+		"samplePresets": "Beispiel",
+		"sampleCustom": "Benutzerdefiniert",
+		"samplePresetAria": "Beispiel-Preset in der Vorschau anzeigen",
+		"previewTextAria": "Vorschautext",
+		"samplePlaceholder": "Vorschautext (CJK / Emoji / Latein)",
+		"ctxMenuHeading": "Anzeigeoptionen",
+		"ctxTileSquare": "Kachel-Seitenverhältnis 1:1",
+		"ctxTileWide": "Kachel-Seitenverhältnis 16:9",
+		"ctxShowResolved": "Spalte für aufgelöste Schriftübereinstimmung anzeigen (Liste)",
+		"ctxHideResolved": "Spalte für aufgelöste Schriftübereinstimmung ausblenden (Liste)",
+		"showResolved": "Aufgelöste Schriftprüfung (Liste)",
+		"loadError": "Schriften konnten nicht geladen werden.",
+		"loading": "Wird geladen…",
+		"statsLine": "{{families}} Familien · {{faces}} Schriftarten ({{total}} geladen)",
+		"familySummary": "{{count}} Schriftarten",
+		"expandFamily": "Familie ausklappen",
+		"collapseFamily": "Familie einklappen",
+		"backToFamilies": "Alle Schriftfamilien",
+		"openFamilyIcon": "Familie öffnen",
+		"noMatches": "Keine passenden Schriften",
+		"phaseAeHost": "Schriften werden in After Effects abgefragt (evalScript)…",
+		"phaseBrowser": "Browser-Schriftquellen werden gelesen…",
+		"aeHostErrorLabel": "After-Effects-Host:",
+		"previewSectionSummary": "Vorschau",
+		"sampleCollapsedPlaceholder": "Öffnen, um Beispieltext und Optionen zu bearbeiten",
 		"viaLocalApi": "Local Font Access API",
 		"viaAfterEffects": "After Effects (app.fonts)",
-		"viaDocumentFonts": "document.fonts (subset)",
-		"fallbackBadge": "swap",
-		"primaryBadge": "match",
-		"hintNeedUserGesture": "Installed fonts need a button click (Chromium Local Font Access). Until then, this catalog lists only fonts already registered on document.fonts for this panel.",
-		"loadAllSystemFonts": "Load all system fonts…",
-		"hintNoLocalApi": "This Chromium build does not expose queryLocalFonts — only fonts registered on document.fonts are listed.",
-		"localAccessErrorPrefix": "Local font access:",
-		"emptyList": "No fonts loaded yet. Use “Load all system fonts” if available, or reload after the panel finishes loading styles."
+		"viaDocumentFonts": "document.fonts (Teilmenge)",
+		"fallbackBadge": "Ersatz",
+		"primaryBadge": "Treffer",
+		"hintNeedUserGesture": "Installierte Schriften erfordern einen Klick auf eine Schaltfläche (Chromium Local Font Access). Bis dahin listet dieser Katalog nur Schriften, die für dieses Panel bereits in document.fonts registriert sind.",
+		"loadAllSystemFonts": "Alle Systemschriften laden…",
+		"hintNoLocalApi": "Dieser Chromium-Build stellt queryLocalFonts nicht bereit — es werden nur in document.fonts registrierte Schriften aufgelistet.",
+		"localAccessErrorPrefix": "Lokaler Schriftzugriff:",
+		"emptyList": "Noch keine Schriften geladen. Verwenden Sie „Alle Systemschriften laden“, falls verfügbar, oder laden Sie neu, nachdem das Panel das Laden der Stile abgeschlossen hat."
 	},
 	"folderDirectoryPicker": {
 		"label": "Ordner-Browser",
@@ -265,5 +327,29 @@
 		"emptyItems": "Keine Elemente gefunden",
 		"goUp": "Eine Ebene hoch",
 		"cepNodeRequired": "Ordner-Browser benötigt CEP Node"
+	},
+	"viewModeToggle": {
+		"listView": "Listenansicht",
+		"iconView": "Symbolansicht",
+		"fieldsetLegend": "Katalog-Layout"
+	},
+	"addWidgetDialog": {
+		"addsToPrefix": "Wird hinzugefügt zu",
+		"addsToSuffix": "am unteren Ende des Gitters.",
+		"addFailure": "Widget konnte nicht hinzugefügt werden: {{message}}",
+		"introPrefix": "Wählen Sie einen Widget-Typ. Es werden nur Typen aufgelistet, die im Katalog verfügbar sind. Neue Kacheln werden hinzugefügt zu",
+		"introSuffix": " hinzugefügt.",
+		"contextMenu": {
+			"addThisWidget": "Dieses Widget hinzufügen",
+			"select": "Auswählen",
+			"category": "Kategorie",
+			"clearSearch": "Suche löschen",
+			"addSelectedWidget": "Ausgewähltes Widget hinzufügen",
+			"unknownCategory": "Unbekannt"
+		}
+	},
+	"pickerOverlay": {
+		"targetPanelPrefix": "Zielpanel",
+		"footerHint": "Das Widget wird am unteren Ende des Gitters dieses Panels angehängt."
 	}
 }

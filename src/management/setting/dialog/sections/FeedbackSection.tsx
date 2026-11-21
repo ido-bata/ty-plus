@@ -4,6 +4,7 @@ import { ListSelect } from "@ty-plus/ui/fields/ListSelect";
 import { Textarea } from "@ty-plus/ui/fields/Textarea";
 import { cx } from "@ty-plus/ui/util/cx";
 import { type JSX, useCallback, useEffect, useReducer } from "react";
+import { i18n } from "@/management/i18n/index";
 import {
 	SettingsField,
 	SettingsFieldLabel,
@@ -12,12 +13,15 @@ import {
 import { openUrlInDefaultBrowser } from "@/management/workspace/hooks/helpers";
 import { css } from "@/styled-system/css";
 
-const CATEGORIES: { value: string; label: string }[] = [
-	{ value: "bug", label: "Bug Report" },
-	{ value: "feature", label: "Feature Request" },
-	{ value: "question", label: "Question" },
-	{ value: "feedback", label: "General Feedback" },
-	{ value: "other", label: "Other" },
+const CATEGORIES: { value: string; labelKey: string }[] = [
+	{ value: "bug", labelKey: "settings:feedbackSection.categoryBug" },
+	{ value: "feature", labelKey: "settings:feedbackSection.categoryFeature" },
+	{ value: "question", labelKey: "settings:feedbackSection.categoryQuestion" },
+	{
+		value: "feedback",
+		labelKey: "settings:feedbackSection.categoryGeneral",
+	},
+	{ value: "other", labelKey: "settings:feedbackSection.categoryOther" },
 ];
 
 type FeedbackState = {
@@ -112,8 +116,10 @@ export function FeedbackSection(): JSX.Element {
 		const params = new URLSearchParams({
 			title: subject.trim(),
 			body: [
-				`Category: ${category}`,
-				presetId.trim() ? `Preset ID: ${presetId.trim()}` : null,
+				`${i18n.t("common:settings.labels.category")}: ${category}`,
+				presetId.trim()
+					? `${i18n.t("common:settings.labels.presetId")}: ${presetId.trim()}`
+					: null,
 				"",
 				description.trim(),
 			]
@@ -123,8 +129,7 @@ export function FeedbackSection(): JSX.Element {
 		openUrlInDefaultBrowser(`${GITHUB_ISSUES_NEW_URL}?${params.toString()}`);
 		dispatch({
 			type: "SUBMIT_SUCCESS",
-			message:
-				"GitHub issue page opened in your browser — review and submit there to send the report.",
+			message: i18n.t("settings:feedbackSection.submitSuccess"),
 		});
 	}, [category, subject, presetId, description]);
 
@@ -148,19 +153,26 @@ export function FeedbackSection(): JSX.Element {
 	return (
 		<SettingsGrid>
 			<SettingsField span={6}>
-				<SettingsFieldLabel>Category</SettingsFieldLabel>
+				<SettingsFieldLabel>
+					{i18n.t("common:settings.labels.category")}
+				</SettingsFieldLabel>
 				<ListSelect
-					options={CATEGORIES}
+					options={CATEGORIES.map((c) => ({
+						value: c.value,
+						label: i18n.t(c.labelKey),
+					}))}
 					value={category}
 					onChange={(v: string) =>
 						dispatch({ type: "SET_FIELD", field: "category", value: v })
 					}
-					placeholder="Select category"
+					placeholder={i18n.t("settings:feedbackSection.selectCategory")}
 				/>
 			</SettingsField>
 
 			<SettingsField span={6}>
-				<SettingsFieldLabel>Subject</SettingsFieldLabel>
+				<SettingsFieldLabel>
+					{i18n.t("common:settings.labels.subject")}
+				</SettingsFieldLabel>
 				<Input
 					type="text"
 					value={subject}
@@ -171,12 +183,14 @@ export function FeedbackSection(): JSX.Element {
 							value: e.target.value,
 						})
 					}
-					placeholder="Brief summary"
+					placeholder={i18n.t("settings:feedbackSection.subjectPlaceholder")}
 				/>
 			</SettingsField>
 
 			<SettingsField span={6}>
-				<SettingsFieldLabel>Preset ID</SettingsFieldLabel>
+				<SettingsFieldLabel>
+					{i18n.t("common:settings.labels.presetId")}
+				</SettingsFieldLabel>
 				<Input
 					type="text"
 					value={presetId}
@@ -187,12 +201,14 @@ export function FeedbackSection(): JSX.Element {
 							value: e.target.value,
 						})
 					}
-					placeholder="e.g. TY-001 (if related to a preset)"
+					placeholder={i18n.t("settings:feedbackSection.presetIdPlaceholder")}
 				/>
 			</SettingsField>
 
 			<SettingsField span={6}>
-				<SettingsFieldLabel>Description</SettingsFieldLabel>
+				<SettingsFieldLabel>
+					{i18n.t("common:settings.labels.description")}
+				</SettingsFieldLabel>
 				<Textarea
 					value={description}
 					onChange={(e) =>
@@ -202,7 +218,9 @@ export function FeedbackSection(): JSX.Element {
 							value: e.target.value,
 						})
 					}
-					placeholder="Details about what happened..."
+					placeholder={i18n.t(
+						"settings:feedbackSection.descriptionPlaceholder",
+					)}
 					rows={4}
 				/>
 			</SettingsField>
@@ -227,14 +245,13 @@ export function FeedbackSection(): JSX.Element {
 					uiSize="sm"
 					disabled={!subject.trim() || !description.trim()}
 				>
-					Open GitHub issue
+					{i18n.t("settings:feedbackSection.openIssue")}
 				</Button>
 			</SettingsField>
 
 			<SettingsField span={6}>
 				<p className={mutedTextStyle}>
-					Opens a prefilled issue on the public GitHub tracker — nothing is sent
-					until you submit it there. Please include as much detail as possible.
+					{i18n.t("settings:feedbackSection.hint")}
 				</p>
 			</SettingsField>
 		</SettingsGrid>

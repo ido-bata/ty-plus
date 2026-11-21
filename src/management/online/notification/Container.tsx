@@ -2,6 +2,7 @@ import { cx } from "@ty-plus/ui/util/cx";
 import { AlertTriangle, Info, X, XCircle } from "lucide-react";
 import { type JSX, useEffect, useState } from "react";
 import ReactDOM from "react-dom";
+import { i18n } from "@/management/i18n/index";
 import { css } from "@/styled-system/css";
 import { type NotificationEntry, notificationStore } from "./service";
 
@@ -128,7 +129,7 @@ export function NotificationContainer(): JSX.Element | null {
 							type="button"
 							onClick={() => notificationStore.remove(n.id)}
 							className={dismissButtonClass}
-							aria-label="Dismiss notification"
+							aria-label={i18n.t("online:notificationContainer.dismiss")}
 						>
 							<X className={dismissIconClass} />
 						</button>

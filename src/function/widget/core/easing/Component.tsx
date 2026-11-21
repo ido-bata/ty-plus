@@ -394,6 +394,7 @@ const collectLabelNamesFrom = (value: unknown): Record<string, string> => {
 };
 
 const mergeLabelNamesInto = (
+	// i18n-exempt: TypeScript type annotation caught by the JSX-text heuristic, not UI copy
 	target: Record<string, string>,
 	source: Record<string, string>,
 ): void => {
@@ -752,25 +753,25 @@ function EasingActionBar({
 			>
 				<button
 					type="button"
-					aria-label="Apply linear easing preset"
+					aria-label={t("easing.presetAria.linear")}
 					data-ws-action="easing-preset"
 					data-easing-preset="linear"
 				/>
 				<button
 					type="button"
-					aria-label="Apply ease-out preset"
+					aria-label={t("easing.presetAria.easeOut")}
 					data-ws-action="easing-preset"
 					data-easing-preset="easeOut"
 				/>
 				<button
 					type="button"
-					aria-label="Apply ease-in preset"
+					aria-label={t("easing.presetAria.easeIn")}
 					data-ws-action="easing-preset"
 					data-easing-preset="easeIn"
 				/>
 				<button
 					type="button"
-					aria-label="Apply ease-in-out preset"
+					aria-label={t("easing.presetAria.easeInOut")}
 					data-ws-action="easing-preset"
 					data-easing-preset="easeInOut"
 				/>

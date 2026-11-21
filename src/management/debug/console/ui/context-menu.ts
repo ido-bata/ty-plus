@@ -1,4 +1,5 @@
 import type { CepMenuPayload } from "@/management/dialog/dialogs/unified-context-menu";
+import { i18n } from "@/management/i18n/index";
 
 export const DEBUG_CTX_IDS = {
 	copyMessage: "dbg.ctx.copy-message",
@@ -30,59 +31,121 @@ export function buildDebugConsoleContextMenu(
 		menu: [
 			{
 				id: DEBUG_CTX_IDS.copyMessage,
-				label: "Copy Message",
+				label: i18n.t("common:debugConsole.contextMenu.copyMessage", {
+					defaultValue: "Copy message",
+				}),
 				enabled: true,
 			},
 			{
 				id: DEBUG_CTX_IDS.copyAllMessages,
-				label: "Copy All Messages",
+				label: i18n.t("common:debugConsole.contextMenu.copyAllMessages", {
+					defaultValue: "Copy all messages",
+				}),
 				enabled: messageCount > 0,
 			},
 			{ label: "---" },
 			{
 				id: DEBUG_CTX_IDS.selectAll,
-				label: "Select All",
+				label: i18n.t("common:actions.selectAll"),
 				enabled: messageCount > 0,
 			},
 			{ label: "---" },
 			{
 				id: DEBUG_CTX_IDS.clearMessages,
-				label: "Clear Console",
+				label: i18n.t("common:debugConsole.contextMenu.clearConsole", {
+					defaultValue: "Clear console",
+				}),
 			},
 			{
 				id: DEBUG_CTX_IDS.toggleAutoScroll,
-				label: autoScroll ? "Disable Auto-Scroll" : "Enable Auto-Scroll",
+				label: autoScroll
+					? i18n.t("common:debugConsole.contextMenu.disableAutoScroll", {
+							defaultValue: "Disable auto-scroll",
+						})
+					: i18n.t("common:debugConsole.contextMenu.enableAutoScroll", {
+							defaultValue: "Enable auto-scroll",
+						}),
 				checkable: true,
 				checked: autoScroll,
 			},
 			{ label: "---" },
 			{
 				id: DEBUG_CTX_IDS.filterAll,
-				label: filterLevel === "all" ? "All (active)" : "All",
+				label:
+					filterLevel === "all"
+						? i18n.t("common:debugConsole.contextMenu.itemActive", {
+								level: i18n.t("common:debugConsole.levels.all", {
+									defaultValue: "All",
+								}),
+								defaultValue: "{{level}} (active)",
+							})
+						: i18n.t("common:debugConsole.levels.all", {
+								defaultValue: "All",
+							}),
 				checkable: true,
 				checked: filterLevel === "all",
 			},
 			{
 				id: DEBUG_CTX_IDS.filterLog,
-				label: filterLevel === "log" ? "Log (active)" : "Log",
+				label:
+					filterLevel === "log"
+						? i18n.t("common:debugConsole.contextMenu.itemActive", {
+								level: i18n.t("common:debugConsole.levels.log", {
+									defaultValue: "Log",
+								}),
+								defaultValue: "{{level}} (active)",
+							})
+						: i18n.t("common:debugConsole.levels.log", {
+								defaultValue: "Log",
+							}),
 				checkable: true,
 				checked: filterLevel === "log",
 			},
 			{
 				id: DEBUG_CTX_IDS.filterInfo,
-				label: filterLevel === "info" ? "Info (active)" : "Info",
+				label:
+					filterLevel === "info"
+						? i18n.t("common:debugConsole.contextMenu.itemActive", {
+								level: i18n.t("common:debugConsole.levels.info", {
+									defaultValue: "Info",
+								}),
+								defaultValue: "{{level}} (active)",
+							})
+						: i18n.t("common:debugConsole.levels.info", {
+								defaultValue: "Info",
+							}),
 				checkable: true,
 				checked: filterLevel === "info",
 			},
 			{
 				id: DEBUG_CTX_IDS.filterWarn,
-				label: filterLevel === "warn" ? "Warn (active)" : "Warn",
+				label:
+					filterLevel === "warn"
+						? i18n.t("common:debugConsole.contextMenu.itemActive", {
+								level: i18n.t("common:debugConsole.levels.warn", {
+									defaultValue: "Warn",
+								}),
+								defaultValue: "{{level}} (active)",
+							})
+						: i18n.t("common:debugConsole.levels.warn", {
+								defaultValue: "Warn",
+							}),
 				checkable: true,
 				checked: filterLevel === "warn",
 			},
 			{
 				id: DEBUG_CTX_IDS.filterError,
-				label: filterLevel === "error" ? "Error (active)" : "Error",
+				label:
+					filterLevel === "error"
+						? i18n.t("common:debugConsole.contextMenu.itemActive", {
+								level: i18n.t("common:debugConsole.levels.error", {
+									defaultValue: "Error",
+								}),
+								defaultValue: "{{level}} (active)",
+							})
+						: i18n.t("common:debugConsole.levels.error", {
+								defaultValue: "Error",
+							}),
 				checkable: true,
 				checked: filterLevel === "error",
 			},

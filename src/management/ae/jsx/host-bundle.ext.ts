@@ -739,8 +739,10 @@ const prepareEasingPresetScript = (payload: Record<string, unknown>) => {
 		`// labelColor: ${labelColor}`,
 		"(function () {",
 		"  var comp = app.project.activeItem;",
+				// i18n-exempt: alert() text runs inside After Effects ExtendScript, outside CEP i18n
 		"  if (!(comp instanceof CompItem)) { alert('Please select a composition.'); return; }",
 		"  var props = comp.selectedProperties;",
+				// i18n-exempt: alert() text runs inside After Effects ExtendScript, outside CEP i18n
 		"  if (!props || props.length === 0) { alert('Please select at least one property to apply the easing.'); return; }",
 		"  app.beginUndoGroup('ty-plus: apply easing preset');",
 		`  var cubic = ${JSON.stringify(cubic)};`,
@@ -817,8 +819,10 @@ const prepareEasingPresetScript = (payload: Record<string, unknown>) => {
 		"        count++;",
 		"      }",
 		"    }",
+				// i18n-exempt: alert() text runs inside After Effects ExtendScript, outside CEP i18n
 		"    if (count === 0) alert('Selected properties do not have enough keyframes.');",
 		"  } catch (e) {",
+				// i18n-exempt: alert() text runs inside After Effects ExtendScript, outside CEP i18n
 		"    alert('Error applying easing: ' + e.toString());",
 		"  } finally {",
 		"    app.endUndoGroup();",

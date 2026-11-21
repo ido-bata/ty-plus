@@ -505,6 +505,7 @@ const GroupMemberItem = ({
 	onEdit: (id: string) => void;
 	onDelete: (id: string) => void;
 }) => {
+	const { t } = useTranslation("presets");
 	const [member, setMember] = useState<Preset | null>(null);
 	const [loading, setLoading] = useState(true);
 
@@ -531,7 +532,9 @@ const GroupMemberItem = ({
 		return (
 			<li className={memberRowPendingClass}>
 				<div className={memberPendingGlyphClass} />
-				<span className={memberPendingLabelClass}>Loading…</span>
+				<span className={memberPendingLabelClass}>
+					{t("edit.memberLoading")}
+				</span>
 			</li>
 		);
 	}
@@ -541,7 +544,7 @@ const GroupMemberItem = ({
 			<li className={memberRowMissingClass} data-preset-id={memberId}>
 				<div className={memberMissingGlyphClass} />
 				<span className={memberMissingLabelClass}>
-					Member not found: {memberId}
+					{t("edit.memberNotFound", { id: memberId })}
 				</span>
 			</li>
 		);
@@ -567,8 +570,10 @@ const GroupMemberItem = ({
 				<button
 					type="button"
 					className={memberActionButtonClass}
-					aria-label={`Run ${member.title}`}
-					title="Run"
+					aria-label={t("edit.memberRun", {
+						name: member.title || member.id,
+					})}
+					title={t("common:actions.run")}
 					disabled={disabled}
 					onClick={() => onRun(member.id)}
 				>
@@ -577,8 +582,10 @@ const GroupMemberItem = ({
 				<button
 					type="button"
 					className={memberActionButtonClass}
-					aria-label={`Edit ${member.title}`}
-					title="Edit"
+					aria-label={t("edit.memberEdit", {
+						name: member.title || member.id,
+					})}
+					title={t("common:actions.edit")}
 					disabled={disabled}
 					onClick={() => onEdit(member.id)}
 				>
@@ -587,8 +594,10 @@ const GroupMemberItem = ({
 				<button
 					type="button"
 					className={memberActionButtonClass}
-					aria-label={`Delete ${member.title}`}
-					title="Delete"
+					aria-label={t("edit.memberDelete", {
+						name: member.title || member.id,
+					})}
+					title={t("common:actions.delete")}
 					disabled={disabled}
 					onClick={() => onDelete(member.id)}
 				>
@@ -675,11 +684,13 @@ const PresetEditFormFields = ({
 				{/* Group members list */}
 				<div className={stackClass}>
 					<span className={FIELD_LABEL_CLASS}>
-						Member presets ({memberIds.length})
+						{t("edit.memberPresets", { count: memberIds.length })}
 					</span>
 					<ul className={memberPickerListClass}>
 						{memberIds.length === 0 ? (
-							<li className={memberPickerEmptyClass}>No member presets</li>
+							<li className={memberPickerEmptyClass}>
+								{t("edit.noMemberPresets")}
+							</li>
 						) : (
 							<GroupMembersList
 								memberIds={memberIds}
@@ -729,13 +740,14 @@ const PresetEditFormFields = ({
 					}
 					disabled={busy}
 					browseDir={form.filePath}
-					label="Icon"
+					label={t("edit.fields.icon")}
 					preview={
 						<FramedPresetGlyph
 							preset={
 								{
 									id: "icon-preview",
 									type: "preset",
+									// i18n-exempt: synthetic preset record title for the glyph preview, never rendered as a label
 									title: "Preview",
 									filePath: "ty-plus://icon-preview",
 									icon: presetIconDraftToPresetIcon(form.iconDraft) ?? {
@@ -789,14 +801,14 @@ const PresetEditFormFields = ({
 
 			{/* File path */}
 			<div className={stackClass}>
-				<span className={FIELD_LABEL_CLASS}>File path</span>
+				<span className={FIELD_LABEL_CLASS}>{t("edit.fields.filePath")}</span>
 				<PathField
 					value={form.filePath}
 					onChange={(next) =>
 						dispatch({ type: "UPDATE_FILE_PATH", filePath: next })
 					}
 					onBrowse={() => {
-						selectFile(preset.filePath, "Select JSX file", (file) => {
+						selectFile(preset.filePath, t("edit.selectJsxFile"), (file) => {
 							if (!file) return;
 							dispatch({ type: "UPDATE_FILE_PATH", filePath: file });
 							// Load file content into code editor (only for JSX script type)
@@ -819,9 +831,9 @@ const PresetEditFormFields = ({
 							}
 						});
 					}}
-					browseAriaLabel="Load file"
+					browseAriaLabel={t("edit.browseLoadFile")}
 					browseSlot={<Icon icon={FileSearch} size={16} aria-hidden />}
-					placeholder="Load from file…"
+					placeholder={t("edit.loadFromFilePlaceholder")}
 					uiSize="md"
 					disabled={busy}
 				/>
@@ -830,7 +842,9 @@ const PresetEditFormFields = ({
 			{/* Easing metadata editor */}
 			{showEasingEditor && (
 				<div className={stackClass}>
-					<span className={FIELD_LABEL_CLASS}>Curve</span>
+					<span className={FIELD_LABEL_CLASS}>
+						{t("presetTool.easing.curve")}
+					</span>
 					<Input
 						label=""
 						value={form.easingCurve}
@@ -849,7 +863,7 @@ const PresetEditFormFields = ({
 			{/* Code editor */}
 			{showCodeEditor && (
 				<div className={stackClass}>
-					<span className={FIELD_LABEL_CLASS}>Code</span>
+					<span className={FIELD_LABEL_CLASS}>{t("edit.code")}</span>
 					<Editor
 						value={form.codeContent}
 						onChange={(value) =>
@@ -870,13 +884,14 @@ const PresetEditFormFields = ({
 				}
 				disabled={busy}
 				browseDir={preset.filePath}
-				label="Icon"
+				label={t("edit.fields.icon")}
 				preview={
 					<FramedPresetGlyph
 						preset={
 							{
 								id: "icon-preview",
 								type: "preset",
+								// i18n-exempt: synthetic preset record title for the glyph preview, never rendered as a label
 								title: "Preview",
 								filePath: "ty-plus://icon-preview",
 								icon: presetIconDraftToPresetIcon(form.iconDraft) ?? {
@@ -967,7 +982,10 @@ export function PresetEditDialog(props: PresetEditDialogProps): JSX.Element {
 
 			if (cancelled) return;
 			if (!p) {
-				dispatchDialog({ type: "LOAD_ERROR", message: "Preset not found" });
+				dispatchDialog({
+					type: "LOAD_ERROR",
+					message: t("edit.status.notFound"),
+				});
 				return;
 			}
 			if (cancelled) return;
@@ -1017,7 +1035,7 @@ export function PresetEditDialog(props: PresetEditDialogProps): JSX.Element {
 				await execLoadPreset();
 			} catch (e) {
 				if (cancelled) return;
-				let message = "Failed to load";
+				let message = t("edit.status.loadFailed");
 				if (e instanceof Error) message = e.message;
 				dispatchDialog({
 					type: "LOAD_ERROR",
@@ -1029,7 +1047,7 @@ export function PresetEditDialog(props: PresetEditDialogProps): JSX.Element {
 		return () => {
 			cancelled = true;
 		};
-	}, [presetId]);
+	}, [presetId, t]);
 
 	const handleSave = useCallback(async () => {
 		if (dialogStatus.phase !== "loaded" || !dialogStatus.preset) return;
@@ -1078,14 +1096,14 @@ export function PresetEditDialog(props: PresetEditDialogProps): JSX.Element {
 			if (onSaved) onSaved();
 			close();
 		} catch (e) {
-			let message = "Save failed";
+			let message = t("edit.status.saveFailedFallback");
 			if (e instanceof Error) message = e.message;
 			dispatchDialog({
 				type: "SAVE_ERROR",
 				message,
 			});
 		}
-	}, [dialogStatus, form, onSaved, close]);
+	}, [dialogStatus, form, onSaved, close, t]);
 
 	const handleDelete = useCallback(async () => {
 		if (dialogStatus.phase !== "loaded" || !dialogStatus.preset) return;
@@ -1116,24 +1134,24 @@ export function PresetEditDialog(props: PresetEditDialogProps): JSX.Element {
 			if (onDeleted) onDeleted();
 			close();
 		} catch (e) {
-			let message = "Delete failed";
+			let message = t("edit.status.deleteFailedFallback");
 			if (e instanceof Error) message = e.message;
 			dispatchDialog({
 				type: "DELETE_ERROR",
 				message,
 			});
 		}
-	}, [dialogStatus, onDeleted, close]);
+	}, [dialogStatus, onDeleted, close, t]);
 
 	const isBusy =
 		dialogStatus.phase === "saving" || dialogStatus.phase === "deleting";
 	const _statusMessage =
 		dialogStatus.phase === "loading"
-			? "Loading preset…"
+			? t("edit.status.loading")
 			: dialogStatus.phase === "saving"
-				? "Saving…"
+				? t("edit.status.saving")
 				: dialogStatus.phase === "deleting"
-					? "Deleting…"
+					? t("edit.status.deleting")
 					: dialogStatus.phase === "error"
 						? dialogStatus.message
 						: "";
@@ -1162,7 +1180,7 @@ export function PresetEditDialog(props: PresetEditDialogProps): JSX.Element {
 						onClick={() => close()}
 						disabled={isBusy}
 					>
-						Cancel
+						{t("common:buttons.cancel")}
 					</Button>
 					<Button
 						type="button"
@@ -1173,7 +1191,9 @@ export function PresetEditDialog(props: PresetEditDialogProps): JSX.Element {
 						onClick={() => void handleDelete()}
 						disabled={isBusy}
 					>
-						{dialogStatus.phase === "deleting" ? "Deleting…" : "Delete"}
+						{dialogStatus.phase === "deleting"
+							? t("edit.status.deleting")
+							: t("edit.delete")}
 					</Button>
 					<Button
 						type="button"
@@ -1184,14 +1204,16 @@ export function PresetEditDialog(props: PresetEditDialogProps): JSX.Element {
 						onClick={() => void handleSave()}
 						disabled={isBusy}
 					>
-						{dialogStatus.phase === "saving" ? "Saving…" : "Save"}
+						{dialogStatus.phase === "saving"
+							? t("edit.status.saving")
+							: t("edit.save")}
 					</Button>
 				</DialogFooterActions>
 			}
 		>
 			<DialogBody>
 				{dialogStatus.phase === "loading" && (
-					<div className={emptyStateClass}>Loading preset…</div>
+					<div className={emptyStateClass}>{t("edit.status.loading")}</div>
 				)}
 				{dialogStatus.phase === "error" && (
 					<div className={emptyStateClass}>{dialogStatus.message}</div>

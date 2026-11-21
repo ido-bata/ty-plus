@@ -1,6 +1,5 @@
 import type { JSX, ReactNode } from "react";
 import { useEffect } from "react";
-
 import { DebugDialogRoot } from "@/management/debug/console/ui/dialog-root";
 import {
 	type CepMenuPayload,
@@ -8,6 +7,7 @@ import {
 } from "@/management/dialog/dialogs/context-menu";
 import { DeferredDialogBody } from "@/management/dialog/lazy-body";
 import { resolveFunctionDialog } from "@/management/dialog/routes";
+import { i18n } from "@/management/i18n/index";
 import { PresetsDialog } from "@/management/preset/catalog-browser/ListDialog";
 import { SettingsDialog } from "@/management/setting/dialog/Settings";
 import { AddWidgetDialog } from "@/management/widget/add-dialog";
@@ -45,10 +45,15 @@ function UnknownDialog({ surfaceId }: { surfaceId: string }): JSX.Element {
 			menu: [
 				{
 					id: "ty.ctx.unknown-dialog.copy-surface-id",
-					label: "Copy surface id",
+					label: i18n.t("dialogs:unknownDialog.copySurfaceId", {
+						defaultValue: "Copy surface id",
+					}),
 				},
 				{ label: "---" },
-				{ id: "ty.ctx.unknown-dialog.close", label: "Close" },
+				{
+					id: "ty.ctx.unknown-dialog.close",
+					label: i18n.t("dialogs:close", { defaultValue: "Close" }),
+				},
 			],
 		};
 		return registerCepJsonContextMenuSurface(surfaceId, {
@@ -72,10 +77,14 @@ function UnknownDialog({ surfaceId }: { surfaceId: string }): JSX.Element {
 	return (
 		<div style={UNKNOWN_DIALOG_OUTER_STYLE}>
 			<h1 style={{ fontSize: "1.25rem", marginBottom: "0.5rem" }}>
-				Unknown Dialog Surface
+				{i18n.t("dialogs:unknownDialog.title", {
+					defaultValue: "Unknown Dialog Surface",
+				})}
 			</h1>
 			<p style={{ color: "#666" }}>
-				No dialog body found for surfaceId:{" "}
+				{i18n.t("dialogs:unknownDialog.noBodyForSurfaceId", {
+					defaultValue: "No dialog body found for surfaceId:",
+				})}{" "}
 				<code style={{ background: "#f0f0f0", padding: "0.125rem 0.375rem" }}>
 					{surfaceId}
 				</code>
@@ -90,10 +99,23 @@ function ProbeDialogBody({ surfaceId }: { surfaceId: string }): JSX.Element {
 		return registerCepJsonContextMenuSurface(surfaceId, {
 			buildPayload: () => ({
 				menu: [
-					{ id: "ty.ctx.probe.log-surface", label: "Log surface id" },
-					{ id: "ty.ctx.probe.copy-surface", label: "Copy surface id" },
+					{
+						id: "ty.ctx.probe.log-surface",
+						label: i18n.t("dialogs:probe.logSurfaceId", {
+							defaultValue: "Log surface id",
+						}),
+					},
+					{
+						id: "ty.ctx.probe.copy-surface",
+						label: i18n.t("dialogs:probe.copySurfaceId", {
+							defaultValue: "Copy surface id",
+						}),
+					},
 					{ label: "---" },
-					{ id: "ty.ctx.probe.close", label: "Close" },
+					{
+						id: "ty.ctx.probe.close",
+						label: i18n.t("dialogs:close", { defaultValue: "Close" }),
+					},
 				],
 			}),
 			onMenuSelect: (menuId) => {
@@ -112,9 +134,13 @@ function ProbeDialogBody({ surfaceId }: { surfaceId: string }): JSX.Element {
 
 	return (
 		<div style={PROBE_DIALOG_OUTER_STYLE}>
-			<h1 style={{ fontSize: "1.25rem", marginBottom: "0.5rem" }}>Probe</h1>
+			<h1 style={{ fontSize: "1.25rem", marginBottom: "0.5rem" }}>
+				{i18n.t("dialogs:probe.title", { defaultValue: "Probe" })}
+			</h1>
 			<p style={{ color: "#666" }}>
-				Probe dialog for surfaceId:{" "}
+				{i18n.t("dialogs:probe.bodyForSurfaceId", {
+					defaultValue: "Probe dialog for surfaceId:",
+				})}{" "}
 				<code style={{ background: "#f0f0f0", padding: "0.125rem 0.375rem" }}>
 					{surfaceId}
 				</code>

@@ -13,7 +13,8 @@
 		"support": {
 			"label": "Ubicación",
 			"title": "Seleccionar carpeta de AE",
-			"body": "Elige la carpeta de aplicación de After Effects. En Windows es el directorio de Support Files; en macOS es la carpeta de la app que contiene Presets."
+			"body": "Elige la carpeta de aplicación de After Effects. En Windows es el directorio de Support Files; en macOS es la carpeta de la app que contiene Presets.",
+			"aeAppFolderHint": "Carpeta de la app de AE detectada — se omitirá el paso de subcarpetas."
 		},
 		"subfolders": {
 			"label": "Carpetas",
@@ -94,6 +95,10 @@
 		"next": "Siguiente",
 		"finish": "Finalizar",
 		"toggleFullscreen": "Expandir a pantalla completa",
-		"toggleModal": "Volver al modal"
+		"toggleModal": "Volver al modal",
+		"openManual": "Abrir manual"
+	},
+	"syncStatus": {
+		"localUpdate": "Actualización local"
 	}
 }

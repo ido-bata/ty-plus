@@ -1640,8 +1640,8 @@ export function DirectoryBrowserWidget({
 										variant="ghost"
 										size="sm"
 										className={iconToolBtnBase}
-										aria-label="Refresh"
-										title="Refresh"
+										aria-label={t("common:actions.refresh")}
+										title={t("common:actions.refresh")}
 										onClick={() => {
 											void refreshFileBrowser();
 										}}
@@ -1657,8 +1657,8 @@ export function DirectoryBrowserWidget({
 												_disabled: { cursor: "not-allowed", opacity: 0.5 },
 											}),
 										)}
-										aria-label="Go up"
-										title="Go up"
+										aria-label={t("folderDirectoryPicker.goUp")}
+										title={t("folderDirectoryPicker.goUp")}
 										disabled={!canGoUpFromCurrent}
 										onClick={handleGoUp}
 									>
@@ -1668,8 +1668,8 @@ export function DirectoryBrowserWidget({
 										variant="ghost"
 										size="sm"
 										className={iconToolBtnBase}
-										aria-label="Browse drives"
-										title="Browse drives"
+										aria-label={t("directoryBrowser.entry.browseDrives")}
+										title={t("directoryBrowser.entry.browseDrives")}
 										onClick={handleBrowseDrives}
 									>
 										<Icon icon={HardDrive} size={10} />
@@ -2548,7 +2548,9 @@ export function DirectoryBrowserWidget({
 									<span
 										className={css({ height: "7", width: "7", flexShrink: 0 })}
 									/>
-									<span className={listHeaderNameClass}>Name</span>
+									<span className={listHeaderNameClass}>
+										{t("directoryBrowser.listHeader.name")}
+									</span>
 									<span
 										className={css({ height: "5", width: "5", flexShrink: 0 })}
 										aria-hidden

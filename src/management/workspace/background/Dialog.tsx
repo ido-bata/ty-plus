@@ -580,36 +580,46 @@ export function WorkspaceBackgroundDialog(
 				menu: [
 					{
 						id: `${BG_CTX.selectPrefix}${layer.id}`,
-						label: "Select layer",
+						label: t("workspaceShell.backgroundPanel.contextMenu.selectLayer", {
+							defaultValue: "Select layer",
+						}),
 						checkable: true,
 						checked: isSelected,
 					},
 					{
 						id: `${BG_CTX.togglePrefix}${layer.id}`,
-						label: layer.enabled ? "Disable layer" : "Enable layer",
+						label: layer.enabled
+							? t("workspaceShell.backgroundPanel.contextMenu.disableLayer", {
+									defaultValue: "Disable layer",
+								})
+							: t("workspaceShell.backgroundPanel.contextMenu.enableLayer", {
+									defaultValue: "Enable layer",
+								}),
 						checkable: true,
 						checked: layer.enabled,
 					},
 					{ label: "---" },
 					{
 						id: "ty.ctx.background.change-type",
-						label: "Layer Type",
+						label: t("workspaceShell.backgroundPanel.contextMenu.layerType", {
+							defaultValue: "Layer type",
+						}),
 						menu: [
 							{
 								id: `${BG_CTX.typeColorPrefix}${layer.id}`,
-								label: "Color",
+								label: t("workspaceShell.backgroundPanel.types.color"),
 								checkable: true,
 								checked: layer.type === "color",
 							},
 							{
 								id: `${BG_CTX.typePatternPrefix}${layer.id}`,
-								label: "Pattern",
+								label: t("workspaceShell.backgroundPanel.types.pattern"),
 								checkable: true,
 								checked: layer.type === "pattern",
 							},
 							{
 								id: `${BG_CTX.typeImagePrefix}${layer.id}`,
-								label: "Image",
+								label: t("workspaceShell.backgroundPanel.types.image"),
 								checkable: true,
 								checked: layer.type === "image",
 							},
@@ -617,17 +627,25 @@ export function WorkspaceBackgroundDialog(
 					},
 					{
 						id: "ty.ctx.background.order",
-						label: "Order",
+						label: t("workspaceShell.backgroundPanel.contextMenu.order", {
+							defaultValue: "Order",
+						}),
 						menu: [
-							{ id: `${BG_CTX.moveUpPrefix}${layer.id}`, label: "Move Up" },
+							{
+								id: `${BG_CTX.moveUpPrefix}${layer.id}`,
+								label: t("workspaceShell.backgroundPanel.moveUp"),
+							},
 							{
 								id: `${BG_CTX.moveDownPrefix}${layer.id}`,
-								label: "Move Down",
+								label: t("workspaceShell.backgroundPanel.moveDown"),
 							},
 						],
 					},
 					{ label: "---" },
-					{ id: `${BG_CTX.removePrefix}${layer.id}`, label: "Remove layer" },
+					{
+						id: `${BG_CTX.removePrefix}${layer.id}`,
+						label: t("workspaceShell.backgroundPanel.remove"),
+					},
 				],
 			};
 		};
@@ -643,15 +661,34 @@ export function WorkspaceBackgroundDialog(
 					menu: [
 						{
 							id: "ty.ctx.background.add",
-							label: "Add Layer",
+							label: t("workspaceShell.backgroundPanel.contextMenu.addLayer", {
+								defaultValue: "Add layer",
+							}),
 							menu: [
-								{ id: BG_CTX.addColor, label: "Color" },
-								{ id: BG_CTX.addPattern, label: "Pattern" },
-								{ id: BG_CTX.addImage, label: "Image" },
+								{
+									id: BG_CTX.addColor,
+									label: t("workspaceShell.backgroundPanel.types.color"),
+								},
+								{
+									id: BG_CTX.addPattern,
+									label: t("workspaceShell.backgroundPanel.types.pattern"),
+								},
+								{
+									id: BG_CTX.addImage,
+									label: t("workspaceShell.backgroundPanel.types.image"),
+								},
 							],
 						},
 						{ label: "---" },
-						{ id: BG_CTX.clearAll, label: "Clear all layers" },
+						{
+							id: BG_CTX.clearAll,
+							label: t(
+								"workspaceShell.backgroundPanel.contextMenu.clearAllLayers",
+								{
+									defaultValue: "Clear all layers",
+								},
+							),
+						},
 					],
 				};
 			}
@@ -659,21 +696,42 @@ export function WorkspaceBackgroundDialog(
 				menu: [
 					{
 						id: BG_CTX.save,
-						label: saving ? "Saving..." : "Save",
+						label: saving
+							? t("workspaceShell.backgroundPanel.saving")
+							: t("save"),
 						enabled: !saving,
 					},
-					{ id: BG_CTX.cancel, label: "Cancel" },
+					{ id: BG_CTX.cancel, label: t("cancel") },
 					{ label: "---" },
 					{
 						id: "ty.ctx.background.add",
-						label: "Add Layer",
+						label: t("workspaceShell.backgroundPanel.contextMenu.addLayer", {
+							defaultValue: "Add layer",
+						}),
 						menu: [
-							{ id: BG_CTX.addColor, label: "Color" },
-							{ id: BG_CTX.addPattern, label: "Pattern" },
-							{ id: BG_CTX.addImage, label: "Image" },
+							{
+								id: BG_CTX.addColor,
+								label: t("workspaceShell.backgroundPanel.types.color"),
+							},
+							{
+								id: BG_CTX.addPattern,
+								label: t("workspaceShell.backgroundPanel.types.pattern"),
+							},
+							{
+								id: BG_CTX.addImage,
+								label: t("workspaceShell.backgroundPanel.types.image"),
+							},
 						],
 					},
-					{ id: BG_CTX.clearAll, label: "Clear all layers" },
+					{
+						id: BG_CTX.clearAll,
+						label: t(
+							"workspaceShell.backgroundPanel.contextMenu.clearAllLayers",
+							{
+								defaultValue: "Clear all layers",
+							},
+						),
+					},
 				],
 			};
 		};
@@ -752,6 +810,7 @@ export function WorkspaceBackgroundDialog(
 		removeLayer,
 		saving,
 		selectedLayerId,
+		t,
 		updateLayer,
 	]);
 

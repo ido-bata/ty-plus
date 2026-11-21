@@ -180,5 +180,82 @@
 			"copied": "クリップボードにコピーしました",
 			"digest": "エラー ID"
 		}
+	},
+	"ui": {
+		"loadingSpinner": {
+			"label": "読み込み中"
+		},
+		"searchField": {
+			"clearAria": "検索をクリア",
+			"clearTitle": "クリア"
+		},
+		"regexEditor": {
+			"enterPattern": "パターンを入力してください。",
+			"invalidFlags": "無効なフラグ: {{flags}}",
+			"plainSource": "プレーンな正規表現ソース",
+			"literalFormat": "リテラル正規表現フォーマット",
+			"testString": "テスト文字列",
+			"sourcePlaceholder": "正規表現ソース",
+			"flagsPlaceholder": "フラグ",
+			"matches": "一致",
+			"noMatch": "一致なし",
+			"literalSuffix": "· リテラル /pattern/flags",
+			"sourceSuffix": "· ソースのみ"
+		},
+		"listSelect": {
+			"placeholder": "選択…"
+		}
+	},
+	"directoryBrowser": {
+		"refresh": "更新",
+		"goUp": "上へ",
+		"open": "開く",
+		"select": "選択",
+		"deselect": "選択解除",
+		"listView": "リスト表示",
+		"iconView": "アイコン表示",
+		"noFilesFound": "ファイルが見つかりません"
+	},
+	"debugConsole": {
+		"title": "コンソール",
+		"clear": "クリア",
+		"evaluateAria": "JavaScriptを評価",
+		"evaluatePlaceholder": "JavaScriptを評価…",
+		"rowContextHint": "右クリックでコピー",
+		"filterLevelAria": "コンソールメッセージをフィルター",
+		"filterSourceAria": "ソース別にコンソールメッセージをフィルター",
+		"filterScopeAria": "セッション範囲でコンソールメッセージをフィルター",
+		"levels": {
+			"all": "すべて",
+			"log": "ログ",
+			"info": "情報",
+			"warn": "警告",
+			"error": "エラー"
+		},
+		"sources": {
+			"all": "すべてのソース",
+			"panel": "パネル",
+			"modeless": "モードレス",
+			"hostBridge": "ホストブリッジ",
+			"online": "オンライン",
+			"preset": "プリセット",
+			"opWorker": "オペレーションワーカー",
+			"workspace": "ワークスペース",
+			"boot": "起動",
+			"debugConsole": "デバッグコンソール",
+			"console": "コンソール"
+		},
+		"scopes": {
+			"allHistory": "すべての履歴",
+			"thisSession": "このセッション"
+		},
+		"contextMenu": {
+			"copyMessage": "メッセージをコピー",
+			"copyAllMessages": "すべてのメッセージをコピー",
+			"clearConsole": "コンソールをクリア",
+			"enableAutoScroll": "自動スクロールを有効にする",
+			"disableAutoScroll": "自動スクロールを無効にする",
+			"itemActive": "{{level}}（アクティブ）"
+		}
 	}
 }

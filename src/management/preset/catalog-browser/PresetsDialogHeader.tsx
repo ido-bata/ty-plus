@@ -2,6 +2,7 @@ import { Icon, IconButton } from "@ty-plus/ui";
 import { SearchField } from "@ty-plus/ui/fields/SearchField";
 import { LoaderCircle, RefreshCw, Search } from "lucide-react";
 import type { JSX, ReactNode } from "react";
+import { i18n } from "@/management/i18n/index";
 import { CatalogBrowserViewModeToggle } from "@/management/preset/catalog-browser/view-mode-toggle";
 import { css } from "@/styled-system/css";
 
@@ -130,14 +131,16 @@ function SearchStatusBar(props: SearchStatusBarProps): ReactNode {
 		return (
 			<span className={loadingInlineClass}>
 				<LoaderCircle className={loadingSpinnerClass} aria-hidden />
-				<span className={loadingTextClass}>Loading</span>
+				<span className={loadingTextClass}>
+					{i18n.t("presets:catalogBrowser.loading")}
+				</span>
 			</span>
 		);
 	}
 	if (loadPhase === "error") {
 		return (
 			<span className={errorTextClass} title={loadError ?? undefined}>
-				{loadError ?? "Error"}
+				{loadError ?? i18n.t("common:status.error")}
 			</span>
 		);
 	}
@@ -204,7 +207,7 @@ export function PresetsDialogHeader(
 				<SearchField
 					className={searchFieldClass}
 					icon={Search}
-					placeholder="Search by name, type, or path…"
+					placeholder={i18n.t("presets:catalogBrowser.searchPlaceholder")}
 					value={filter}
 					onChange={(e) => onFilterChange(e.currentTarget.value)}
 					showClearButton
@@ -232,8 +235,8 @@ export function PresetsDialogHeader(
 					variant="ghost"
 					size="sm"
 					className={reloadButtonClass}
-					aria-label="Reload catalog"
-					title="Reload catalog"
+					aria-label={i18n.t("presets:catalogBrowser.reload")}
+					title={i18n.t("presets:catalogBrowser.reload")}
 					onClick={() => void onReload()}
 				>
 					<Icon icon={RefreshCw} size={10} />

@@ -347,11 +347,11 @@ export function Dialog(): JSX.Element {
 											value={saveDir}
 											onChange={(next) => setSaveDir(next)}
 											onBrowse={handleBrowseFolder}
-											browseAriaLabel="Browse folder"
+											browseAriaLabel={t("common.browseFolder")}
 											browseSlot={
 												<Icon icon={FolderOpen} size={16} aria-hidden />
 											}
-											placeholder={defaultSavePath || "System default"}
+											placeholder={defaultSavePath || t("common.systemDefault")}
 											uiSize="md"
 										/>
 										{fullFilePath ? (

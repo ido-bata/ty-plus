@@ -2,6 +2,7 @@ import { cx } from "@ty-plus/ui/util/cx";
 import { isIMEComposing } from "@ty-plus/ui/util/keyboard";
 import { FolderOpen } from "lucide-react";
 import type { JSX, ReactNode } from "react";
+import { i18n } from "@/management/i18n/index";
 import type { PresetIcon } from "@/management/preset/contract";
 import type { FileBrowserFileType } from "@/management/storage/file-browser-service";
 import { DirectoryBrowserIconCard } from "@/management/storage/ui/DirectoryBrowserIconCard";
@@ -454,8 +455,10 @@ export const DirectoryBrowser = ({
 	onToggleSelected,
 	selectedSummary,
 	showSelectedSummary = true,
-	emptyLabel = "No files found",
-	loadingLabel = "Loading...",
+	emptyLabel = i18n.t("common:directoryBrowser.noFilesFound", {
+		defaultValue: "No files found",
+	}),
+	loadingLabel = i18n.t("common:app.loading", { defaultValue: "Loading..." }),
 	upLabel = "..",
 	viewMode,
 	onViewModeChange,

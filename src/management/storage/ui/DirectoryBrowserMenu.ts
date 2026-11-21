@@ -1,4 +1,5 @@
 import type { CepMenuPayload } from "@/management/dialog/dialogs/context-menu";
+import { i18n } from "@/management/i18n/index";
 import type {
 	DirectoryBrowserEntry,
 	DirectoryBrowserSelectionKind,
@@ -107,13 +108,20 @@ export function buildDirectoryBrowserMenu(
 	const menu: CepMenuPayload["menu"] = [];
 	const pushRefresh = (): void => {
 		if (ctx.canRefresh) {
-			menu.push({ id: `${MENU_ID_PREFIX}refresh`, label: "Refresh" });
+			menu.push({
+				id: `${MENU_ID_PREFIX}refresh`,
+				label: i18n.t("common:directoryBrowser.refresh", {
+					defaultValue: "Refresh",
+				}),
+			});
 		}
 	};
 	const pushGoUp = (): void => {
 		menu.push({
 			id: `${MENU_ID_PREFIX}go-up`,
-			label: "Go Up",
+			label: i18n.t("common:directoryBrowser.goUp", {
+				defaultValue: "Go Up",
+			}),
 			enabled: ctx.canGoUp,
 		});
 	};
@@ -128,7 +136,13 @@ export function buildDirectoryBrowserMenu(
 		const action = selected ? "deselect" : "select";
 		menu.push({
 			id: `${MENU_ID_PREFIX}${action}:${kind}:${encodePath(path)}`,
-			label: selected ? "Deselect" : "Select",
+			label: selected
+				? i18n.t("common:directoryBrowser.deselect", {
+						defaultValue: "Deselect",
+					})
+				: i18n.t("common:directoryBrowser.select", {
+						defaultValue: "Select",
+					}),
 		});
 	};
 	if (hit.target === "body") {
@@ -137,7 +151,9 @@ export function buildDirectoryBrowserMenu(
 	} else if (hit.kind === "dir") {
 		menu.push({
 			id: `${MENU_ID_PREFIX}open:${encodePath(hit.path)}`,
-			label: "Open",
+			label: i18n.t("common:directoryBrowser.open", {
+				defaultValue: "Open",
+			}),
 		});
 		pushToggle(hit.path, "folder");
 		pushRefresh();

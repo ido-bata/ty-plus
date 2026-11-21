@@ -4,6 +4,7 @@ import { ListSelect } from "@ty-plus/ui/fields/ListSelect";
 import { ScrollArea } from "@ty-plus/ui/layout/ScrollArea";
 import { cx } from "@ty-plus/ui/util/cx";
 import { type JSX, type ReactNode, useMemo, useState } from "react";
+import { i18n } from "@/management/i18n/index";
 import { PresetIconEditor } from "@/management/preset/components/IconEditor";
 import type { Preset } from "@/management/preset/contract";
 import type { CodeEditorValue } from "@/management/preset/editor/Code";
@@ -30,15 +31,15 @@ import { DirectoryBrowserPreview } from "./DirectoryBrowserPreview";
 import { InputsPreview } from "./InputsPreview";
 
 const TAB_OPTIONS = [
-	{ value: "system", label: "System" },
-	{ value: "dark", label: "Dark" },
-	{ value: "light", label: "Light" },
+	{ value: "system", labelKey: "common:settings.themes.system" },
+	{ value: "dark", labelKey: "common:settings.themes.dark" },
+	{ value: "light", labelKey: "common:settings.themes.light" },
 ];
 
 const SELECT_OPTIONS = [
-	{ value: "opt1", label: "Option 1" },
-	{ value: "opt2", label: "Option 2" },
-	{ value: "opt3", label: "Option 3" },
+	{ value: "opt1", labelKey: "settings:componentPreview.option1" },
+	{ value: "opt2", labelKey: "settings:componentPreview.option2" },
+	{ value: "opt3", labelKey: "settings:componentPreview.option3" },
 ];
 
 const MOCK_DIR_ENTRIES: DirectoryBrowserEntry[] = [
@@ -315,6 +316,23 @@ export function ComponentPreviewSection(): JSX.Element {
 	const [iconDraft, setIconDraft] = useState<PresetIconEditorDraft>(
 		createPresetIconDraft,
 	);
+	const tabOptions = useMemo(
+		() =>
+			TAB_OPTIONS.map((option) => ({
+				value: option.value,
+				label: i18n.t(option.labelKey),
+			})),
+		[],
+	);
+	const selectOptions = useMemo(
+		() =>
+			SELECT_OPTIONS.map((option) => ({
+				value: option.value,
+				label: i18n.t(option.labelKey),
+			})),
+		[],
+	);
+
 	const iconPreviewPreset = useMemo((): Preset | null => {
 		const icon = presetIconDraftToPresetIcon(iconDraft);
 		if (!icon) {
@@ -323,7 +341,7 @@ export function ComponentPreviewSection(): JSX.Element {
 		return {
 			id: "ty-plus-preview-icon",
 			type: "preset",
-			title: "Preview",
+			title: i18n.t("settings:componentPreview.presetTitle"),
 			filePath: "ty-plus://icon-preview",
 			icon,
 		};
@@ -341,7 +359,7 @@ export function ComponentPreviewSection(): JSX.Element {
 		<SettingsGrid>
 			<SettingsField span={6}>
 				<p className={mutedTextStyle}>
-					Live preview of shared UI components using current design tokens.
+					{i18n.t("settings:componentPreview.intro")}
 				</p>
 			</SettingsField>
 
@@ -350,12 +368,14 @@ export function ComponentPreviewSection(): JSX.Element {
 			</SettingsField>
 
 			<SettingsField span={6}>
-				<PreviewGroup title="Segmented Control">
+				<PreviewGroup
+					title={i18n.t("settings:componentPreview.segmentedControl")}
+				>
 					<SegmentedControl
-						options={TAB_OPTIONS}
+						options={tabOptions}
 						value={selectedTab}
 						onChange={setSelectedTab}
-						aria-label="Theme selection"
+						aria-label={i18n.t("settings:componentPreview.themeSelectionAria")}
 					/>
 				</PreviewGroup>
 			</SettingsField>
@@ -376,34 +396,36 @@ export function ComponentPreviewSection(): JSX.Element {
 			</SettingsField>
 
 			<SettingsField span={6}>
-				<PreviewGroup title="List Select">
+				<PreviewGroup title={i18n.t("settings:componentPreview.listSelect")}>
 					<ListSelect
-						options={SELECT_OPTIONS}
+						options={selectOptions}
 						value={selectValue}
 						onChange={setSelectValue}
-						placeholder="Select option"
+						placeholder={i18n.t(
+							"settings:componentPreview.selectOptionPlaceholder",
+						)}
 					/>
 				</PreviewGroup>
 			</SettingsField>
 
 			<SettingsField span={6}>
-				<PreviewGroup title="Dialog Editors">
+				<PreviewGroup title={i18n.t("settings:componentPreview.dialogEditors")}>
 					<div className={threeColumnGridStyle}>
 						<TokenEditor
-							label="Token"
+							label={i18n.t("settings:componentPreview.editorToken")}
 							description="text-r"
 							value={tokenValue}
 							onChange={setTokenValue}
 						/>
 						<NumberTokenEditor
-							label="Number"
+							label={i18n.t("settings:componentPreview.editorNumber")}
 							description="ty-opacity-text-main"
 							value={numberTokenValue}
 							onChange={setNumberTokenValue}
 							unit="%"
 						/>
 						<ColorTokenEditor
-							label="Color"
+							label={i18n.t("settings:componentPreview.editorColor")}
 							description="color-ty-accent"
 							value={colorTokenValue}
 							onChange={setColorTokenValue}
@@ -413,12 +435,14 @@ export function ComponentPreviewSection(): JSX.Element {
 			</SettingsField>
 
 			<SettingsField span={6}>
-				<PreviewGroup title="Scroll Area">
+				<PreviewGroup title={i18n.t("settings:componentPreview.scrollArea")}>
 					<ScrollArea className={scrollAreaClass}>
 						<div className={scrollInnerStyle}>
 							{Array.from({ length: 12 }, (_, index) => (
 								<div key={index} className={scrollLineStyle}>
-									Line item {index + 1}
+									{i18n.t("settings:componentPreview.lineItem", {
+										index: index + 1,
+									})}
 								</div>
 							))}
 						</div>
@@ -427,38 +451,66 @@ export function ComponentPreviewSection(): JSX.Element {
 			</SettingsField>
 
 			<SettingsField span={6}>
-				<PreviewGroup title="Loading">
+				<PreviewGroup title={i18n.t("settings:componentPreview.loading")}>
 					<div className={loadingRowStyle}>
 						<LoadingSpinner size="sm" />
-						<span>Syncing settings</span>
+						<span>{i18n.t("settings:componentPreview.syncingSettings")}</span>
 					</div>
 				</PreviewGroup>
 			</SettingsField>
 
 			<SettingsField span={6}>
-				<PreviewGroup title="Surface Colors">
+				<PreviewGroup title={i18n.t("settings:componentPreview.surfaceColors")}>
 					<div className={swatchGridFourStyle}>
-						<SwatchRow label="Panel" className={swatchBgPanel} />
-						<SwatchRow label="Widget" className={swatchBgWidget} />
-						<SwatchRow label="Dialog" className={swatchBgDialog} />
-						<SwatchRow label="Overlay" className={swatchBgOverlay} />
+						<SwatchRow
+							label={i18n.t("settings:componentPreview.swatchPanel")}
+							className={swatchBgPanel}
+						/>
+						<SwatchRow
+							label={i18n.t("settings:componentPreview.swatchWidget")}
+							className={swatchBgWidget}
+						/>
+						<SwatchRow
+							label={i18n.t("settings:componentPreview.swatchDialog")}
+							className={swatchBgDialog}
+						/>
+						<SwatchRow
+							label={i18n.t("settings:componentPreview.swatchOverlay")}
+							className={swatchBgOverlay}
+						/>
 					</div>
 				</PreviewGroup>
 			</SettingsField>
 
 			<SettingsField span={6}>
-				<PreviewGroup title="Interactive States">
+				<PreviewGroup
+					title={i18n.t("settings:componentPreview.interactiveStates")}
+				>
 					<div className={swatchGridThreeStyle}>
-						<SwatchRow label="Hover" className={swatchBgHover} />
-						<SwatchRow label="Active" className={swatchBgActive} />
-						<SwatchRow label="Focus" className={swatchBorderFocus} />
+						<SwatchRow
+							label={i18n.t("settings:componentPreview.swatchHover")}
+							className={swatchBgHover}
+						/>
+						<SwatchRow
+							label={i18n.t("settings:componentPreview.swatchActive")}
+							className={swatchBgActive}
+						/>
+						<SwatchRow
+							label={i18n.t("settings:componentPreview.swatchFocus")}
+							className={swatchBorderFocus}
+						/>
 					</div>
 				</PreviewGroup>
 			</SettingsField>
 
 			<SettingsField span={6}>
-				<PreviewGroup title="Preview Card">
-					<PreviewCard title="Cool blue" description="local · 12 KB" />
+				<PreviewGroup title={i18n.t("settings:componentPreview.previewCard")}>
+					<PreviewCard
+						title={i18n.t("settings:componentPreview.previewCardTitle")}
+						description={i18n.t(
+							"settings:componentPreview.previewCardDescription",
+						)}
+					/>
 				</PreviewGroup>
 			</SettingsField>
 
@@ -483,7 +535,9 @@ export function ComponentPreviewSection(): JSX.Element {
 			</SettingsField>
 
 			<SettingsField span={6}>
-				<PreviewGroup title="Preset Icon Editor">
+				<PreviewGroup
+					title={i18n.t("settings:componentPreview.presetIconEditor")}
+				>
 					<PresetIconEditor
 						draft={iconDraft}
 						onChange={setIconDraft}
@@ -502,17 +556,21 @@ export function ComponentPreviewSection(): JSX.Element {
 			</SettingsField>
 
 			<SettingsField span={6}>
-				<PreviewGroup title="Markdown Editor">
+				<PreviewGroup
+					title={i18n.t("settings:componentPreview.markdownEditor")}
+				>
 					<MarkdownLiveEditor
 						value={markdownValue}
 						onChange={setMarkdownValue}
-						placeholder="Description (markdown)"
+						placeholder={i18n.t(
+							"settings:componentPreview.markdownPlaceholder",
+						)}
 					/>
 				</PreviewGroup>
 			</SettingsField>
 
 			<SettingsField span={6}>
-				<PreviewGroup title="Code Editor">
+				<PreviewGroup title={i18n.t("settings:componentPreview.codeEditor")}>
 					<Editor
 						value={codeValue}
 						onChange={setCodeValue}

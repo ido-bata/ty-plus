@@ -17,6 +17,7 @@ import {
 	registerCepJsonContextMenuSurface,
 } from "@/management/dialog/dialogs/context-menu";
 import { useDialogClose } from "@/management/dialog/useClose";
+import { i18n } from "@/management/i18n/index";
 import { AddWidgetCatalogPanel } from "@/management/widget/catalog";
 import { defaultFirstWidgetType } from "@/management/widget/default-first-widget-type";
 import { publishShellMessage } from "@/management/workspace/messaging/publish-shell-message";
@@ -156,7 +157,12 @@ export function AddWidgetDialog(): JSX.Element {
 					widgetType: type,
 				});
 				if (!result.ok) {
-					setAddFailure(`Could not add the widget: ${result.message}`);
+					setAddFailure(
+						i18n.t("widgets:addWidgetDialog.addFailure", {
+							message: result.message,
+							defaultValue: "Could not add the widget: {{message}}",
+						}),
+					);
 					return;
 				}
 				const layoutPayload: LayoutPayload = {
@@ -208,23 +214,37 @@ export function AddWidgetDialog(): JSX.Element {
 					menu: [
 						{
 							id: `${WIDGET_SELECTOR_CTX.addPrefix}${hitType}`,
-							label: "Add this widget",
+							label: i18n.t(
+								"widgets:addWidgetDialog.contextMenu.addThisWidget",
+								{
+									defaultValue: "Add this widget",
+								},
+							),
 							enabled: !busy,
 						},
 						{
 							id: `${WIDGET_SELECTOR_CTX.selectPrefix}${hitType}`,
-							label: "Select",
+							label: i18n.t("widgets:addWidgetDialog.contextMenu.select", {
+								defaultValue: "Select",
+							}),
 							checkable: true,
 							checked: isSelected,
 						},
 						{ label: "---" },
 						{
 							id: "ty.ctx.widget-selector.category",
-							label: "Category",
+							label: i18n.t("widgets:addWidgetDialog.contextMenu.category", {
+								defaultValue: "Category",
+							}),
 							menu: [
 								{
 									id: "ty.ctx.widget-selector.category.current",
-									label: hitCategory || "Unknown",
+									label:
+										hitCategory ||
+										i18n.t(
+											"widgets:addWidgetDialog.contextMenu.unknownCategory",
+											{ defaultValue: "Unknown" },
+										),
 									enabled: false,
 									checkable: true,
 									checked: true,
@@ -232,7 +252,10 @@ export function AddWidgetDialog(): JSX.Element {
 							],
 						},
 						{ label: "---" },
-						{ id: WIDGET_SELECTOR_CTX.cancel, label: "Cancel" },
+						{
+							id: WIDGET_SELECTOR_CTX.cancel,
+							label: i18n.t("common:buttons.cancel"),
+						},
 					],
 				};
 			}
@@ -242,16 +265,24 @@ export function AddWidgetDialog(): JSX.Element {
 					menu: [
 						{
 							id: WIDGET_SELECTOR_CTX.clearSearch,
-							label: "Clear search",
+							label: i18n.t("widgets:addWidgetDialog.contextMenu.clearSearch", {
+								defaultValue: "Clear search",
+							}),
 							enabled: query.length > 0,
 						},
 						{ label: "---" },
 						{
 							id: WIDGET_SELECTOR_CTX.addSelected,
-							label: "Add selected widget",
+							label: i18n.t(
+								"widgets:addWidgetDialog.contextMenu.addSelectedWidget",
+								{ defaultValue: "Add selected widget" },
+							),
 							enabled: Boolean(selectedType) && !busy,
 						},
-						{ id: WIDGET_SELECTOR_CTX.cancel, label: "Cancel" },
+						{
+							id: WIDGET_SELECTOR_CTX.cancel,
+							label: i18n.t("common:buttons.cancel"),
+						},
 					],
 				};
 			}
@@ -259,16 +290,24 @@ export function AddWidgetDialog(): JSX.Element {
 				menu: [
 					{
 						id: WIDGET_SELECTOR_CTX.addSelected,
-						label: "Add selected widget",
+						label: i18n.t(
+							"widgets:addWidgetDialog.contextMenu.addSelectedWidget",
+							{ defaultValue: "Add selected widget" },
+						),
 						enabled: Boolean(selectedType) && !busy,
 					},
 					{
 						id: WIDGET_SELECTOR_CTX.clearSearch,
-						label: "Clear search",
+						label: i18n.t("widgets:addWidgetDialog.contextMenu.clearSearch", {
+							defaultValue: "Clear search",
+						}),
 						enabled: query.length > 0,
 					},
 					{ label: "---" },
-					{ id: WIDGET_SELECTOR_CTX.cancel, label: "Cancel" },
+					{
+						id: WIDGET_SELECTOR_CTX.cancel,
+						label: i18n.t("common:buttons.cancel"),
+					},
 				],
 			};
 		};
@@ -307,7 +346,9 @@ export function AddWidgetDialog(): JSX.Element {
 	return (
 		<DialogShell
 			surfaceId={DIALOG_SURFACE_ID}
-			title="Add widget"
+			title={i18n.t("widgets:selector.addWidget", {
+				defaultValue: "Add widget",
+			})}
 			headerMeta={targetPanelId}
 			contentClassName={contentClassName}
 			footerClassName={footerClassName}
@@ -320,8 +361,13 @@ export function AddWidgetDialog(): JSX.Element {
 					) : null}
 					<div className={footerRowStyle}>
 						<p className={footerHintStyle}>
-							Adds to <span className={footerPanelStyle}>{targetPanelId}</span>{" "}
-							at the bottom of the grid.
+							{i18n.t("widgets:addWidgetDialog.addsToPrefix", {
+								defaultValue: "Adds to",
+							})}{" "}
+							<span className={footerPanelStyle}>{targetPanelId}</span>{" "}
+							{i18n.t("widgets:addWidgetDialog.addsToSuffix", {
+								defaultValue: "at the bottom of the grid.",
+							})}
 						</p>
 						<Button
 							variant="default"
@@ -330,7 +376,7 @@ export function AddWidgetDialog(): JSX.Element {
 							fullWidth
 							onClick={() => close()}
 						>
-							Cancel
+							{i18n.t("common:buttons.cancel")}
 						</Button>
 						<Button
 							variant="primary"
@@ -342,7 +388,13 @@ export function AddWidgetDialog(): JSX.Element {
 								if (selectedType) void addForType(selectedType);
 							}}
 						>
-							{busy ? "Adding…" : "Add"}
+							{busy
+								? i18n.t("widgets:selector.adding", {
+										defaultValue: "Adding…",
+									})
+								: i18n.t("widgets:selector.add", {
+										defaultValue: "Add",
+									})}
 						</Button>
 					</div>
 				</div>
@@ -353,9 +405,14 @@ export function AddWidgetDialog(): JSX.Element {
 				className={catalogClass}
 				intro={
 					<p className={catalogIntroStyle}>
-						Choose a widget type. Only kinds that are available in the catalog
-						are listed. New tiles go to{" "}
-						<span className={catalogIntroPanelStyle}>{targetPanelId}</span>.
+						{i18n.t("widgets:addWidgetDialog.introPrefix", {
+							defaultValue:
+								"Choose a widget type. Only kinds that are available in the catalog are listed. New tiles go to",
+						})}{" "}
+						<span className={catalogIntroPanelStyle}>{targetPanelId}</span>
+						{i18n.t("widgets:addWidgetDialog.introSuffix", {
+							defaultValue: ".",
+						})}
 					</p>
 				}
 				query={query}

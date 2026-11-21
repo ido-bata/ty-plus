@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 
+import { i18n } from "@/management/i18n/index";
+import { labelOfGatewayBootFailureReason } from "@/management/panel/cloud-gateway-boot";
 import { gatewayRetryAffordance } from "./gateway-retry";
 
 /**
@@ -14,7 +16,7 @@ import { gatewayRetryAffordance } from "./gateway-retry";
 describe("gatewayRetryAffordance", () => {
 	it("offers a live catalog refresh when the gateway is healthy", () => {
 		expect(gatewayRetryAffordance(undefined)).toEqual({
-			title: "Refresh catalog",
+			title: i18n.t("online:catalog.refreshCatalog"),
 			disabled: false,
 		});
 	});
@@ -28,7 +30,11 @@ describe("gatewayRetryAffordance", () => {
 	] as const)("disables the control and names the failure for %s", (reason) => {
 		const retry = gatewayRetryAffordance(reason);
 		expect(retry.disabled).toBe(true);
-		expect(retry.title).toContain("reload the panel");
+		expect(retry.title).toBe(
+			i18n.t("online:catalog.gatewayBootRetryHint", {
+				reason: labelOfGatewayBootFailureReason(reason),
+			}),
+		);
 	});
 
 	it("never labels the control as retrying the gateway boot", () => {

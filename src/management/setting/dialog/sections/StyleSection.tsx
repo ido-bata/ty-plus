@@ -2,6 +2,7 @@ import { ColorField } from "@ty-plus/ui/fields/ColorField";
 import { RangeField } from "@ty-plus/ui/fields/RangeField";
 import { type JSX, useCallback } from "react";
 import { useCep } from "@/management/ae/cep/contexts/Context";
+import { i18n } from "@/management/i18n/index";
 import { useSettings } from "@/management/setting/context";
 import {
 	SettingsField,
@@ -36,9 +37,7 @@ export function StyleSection(): JSX.Element {
 					// app.json committed but the theme.css projection failed:
 					// surface the persistence failure through the same banner
 					// and saveNotice broadcast as settings writes (#94 review).
-					reportSaveError(
-						"Failed to save UI theme. The theme file may be read-only.",
-					);
+					reportSaveError(i18n.t("settings:styleSection.saveError"));
 				},
 			);
 		},
@@ -120,17 +119,19 @@ export function StyleSection(): JSX.Element {
 		<SettingsGrid>
 			{/* `ui.theme` has no second palette to switch to; the selector is
 			    hidden until light/system themes exist (Issue #94). */}
-			<SettingsSectionHeading>Colors</SettingsSectionHeading>
+			<SettingsSectionHeading>
+				{i18n.t("settings:colors")}
+			</SettingsSectionHeading>
 			<SettingsField span={3}>
 				<ColorField
-					label="Accent"
+					label={i18n.t("settings:colorAccent")}
 					value={settings.ui.accentColor ?? "#5886ff"}
 					onChange={handleAccentColorChange}
 				/>
 			</SettingsField>
 			<SettingsField span={3}>
 				<ColorField
-					label="Text"
+					label={i18n.t("settings:colorText")}
 					value={settings.ui.textColor ?? "#f0f0f0"}
 					onChange={handleTextColorChange}
 				/>
@@ -138,12 +139,12 @@ export function StyleSection(): JSX.Element {
 			<SettingsField span={6}>
 				<div className={colorRowStyle}>
 					<ColorField
-						label="Widget Background"
+						label={i18n.t("common:settings.labels.widgetBackground")}
 						value={widgetBg}
 						onChange={handleWidgetBgColorChange}
 					/>
 					<RangeField
-						label="Opacity"
+						label={i18n.t("settings:opacity")}
 						unit="%"
 						min={0}
 						max={100}
@@ -155,12 +156,12 @@ export function StyleSection(): JSX.Element {
 			<SettingsField span={6}>
 				<div className={colorRowStyle}>
 					<ColorField
-						label="Panel Background"
+						label={i18n.t("common:settings.labels.panelBackground")}
 						value={panelBg}
 						onChange={handlePanelBgColorChange}
 					/>
 					<RangeField
-						label="Opacity"
+						label={i18n.t("settings:opacity")}
 						unit="%"
 						min={0}
 						max={100}

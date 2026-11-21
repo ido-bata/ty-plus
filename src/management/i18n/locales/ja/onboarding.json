@@ -13,7 +13,8 @@
 		"support": {
 			"label": "場所",
 			"title": "After Effects フォルダ",
-			"body": "After Effects のアプリケーションフォルダを指定してください。Windows では「Support Files」、macOS では Presets を含むアプリフォルダです。"
+			"body": "After Effects のアプリケーションフォルダを指定してください。Windows では「Support Files」、macOS では Presets を含むアプリフォルダです。",
+			"aeAppFolderHint": "AE アプリフォルダを検出しました — サブフォルダの手順はスキップされます。"
 		},
 		"subfolders": {
 			"label": "サブフォルダ",
@@ -94,6 +95,10 @@
 		"next": "次へ",
 		"finish": "完了",
 		"toggleFullscreen": "全画面表示に切り替え",
-		"toggleModal": "モーダル表示に戻る"
+		"toggleModal": "モーダル表示に戻る",
+		"openManual": "マニュアルを開く"
+	},
+	"syncStatus": {
+		"localUpdate": "ローカル更新"
 	}
 }

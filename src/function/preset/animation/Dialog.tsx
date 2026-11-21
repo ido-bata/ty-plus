@@ -813,7 +813,7 @@ export function Dialog(): JSX.Element {
 			type="preset"
 			description={t("presetTool.animation.lead")}
 			defaultName={t("presetTool.animation.defaultName")}
-			iconText="ANIM"
+			iconText={t("animationPreset.iconText")}
 			resolveBrowseStartDir={readUserHomeOrFallback}
 			entryPoint="tool-shell:animation"
 			fields={[

@@ -180,5 +180,82 @@
 			"copied": "Copié dans le presse-papier",
 			"digest": "ID d'erreur"
 		}
+	},
+	"ui": {
+		"loadingSpinner": {
+			"label": "Chargement"
+		},
+		"searchField": {
+			"clearAria": "Effacer la recherche",
+			"clearTitle": "Effacer"
+		},
+		"regexEditor": {
+			"enterPattern": "Saisissez un motif.",
+			"invalidFlags": "Indicateurs invalides : {{flags}}",
+			"plainSource": "Source regex simple",
+			"literalFormat": "Format regex littéral",
+			"testString": "Chaîne de test",
+			"sourcePlaceholder": "Source regex",
+			"flagsPlaceholder": "indicateurs",
+			"matches": "Correspondances",
+			"noMatch": "Aucune correspondance",
+			"literalSuffix": "· littéral /pattern/flags",
+			"sourceSuffix": "· source uniquement"
+		},
+		"listSelect": {
+			"placeholder": "Sélectionner…"
+		}
+	},
+	"directoryBrowser": {
+		"refresh": "Actualiser",
+		"goUp": "Remonter",
+		"open": "Ouvrir",
+		"select": "Sélectionner",
+		"deselect": "Désélectionner",
+		"listView": "Vue liste",
+		"iconView": "Vue icônes",
+		"noFilesFound": "Aucun fichier trouvé"
+	},
+	"debugConsole": {
+		"title": "Console",
+		"clear": "Effacer",
+		"evaluateAria": "Évaluer le JavaScript",
+		"evaluatePlaceholder": "Évaluer le JavaScript…",
+		"rowContextHint": "Clic droit pour copier",
+		"filterLevelAria": "Filtrer les messages de la console",
+		"filterSourceAria": "Filtrer les messages par source",
+		"filterScopeAria": "Filtrer les messages par portée de session",
+		"levels": {
+			"all": "Tous",
+			"log": "Journal",
+			"info": "Info",
+			"warn": "Avertissement",
+			"error": "Erreur"
+		},
+		"sources": {
+			"all": "Toutes les sources",
+			"panel": "Panneau",
+			"modeless": "Sans fenêtre",
+			"hostBridge": "Pont hôte",
+			"online": "En ligne",
+			"preset": "Préréglage",
+			"opWorker": "Outil d'opération",
+			"workspace": "Espace de travail",
+			"boot": "Démarrage",
+			"debugConsole": "Console de débogage",
+			"console": "Console"
+		},
+		"scopes": {
+			"allHistory": "Tout l'historique",
+			"thisSession": "Cette session"
+		},
+		"contextMenu": {
+			"copyMessage": "Copier le message",
+			"copyAllMessages": "Copier tous les messages",
+			"clearConsole": "Effacer la console",
+			"enableAutoScroll": "Activer le défilement automatique",
+			"disableAutoScroll": "Désactiver le défilement automatique",
+			"itemActive": "{{level}} (actif)"
+		}
 	}
 }

@@ -21,6 +21,7 @@ import {
 	normalizeCepSystemPath,
 } from "@/management/ae/cep/runtime";
 import { createLogger } from "@/management/debug/logger";
+import { i18n } from "@/management/i18n/index";
 import type { OperationWorkerPlatform } from "@/management/ipc/operation-worker-binary";
 import { compiledOperationWorkerTrustMode } from "@/management/ipc/operation-worker-binary";
 import {
@@ -233,7 +234,10 @@ const fireBootConnectivityProbe = (
 				state: "degraded",
 				failure: {
 					reason: "worker-runtime-failed",
-					message: "connectivity probe rejection after successful composition",
+					message: i18n.t("online:gatewayBoot.connectivityProbeFailed", {
+						defaultValue:
+							"The connectivity check failed after the worker composition started.",
+					}),
 					cause: err,
 				},
 			});
@@ -287,7 +291,10 @@ const fireBootCatalogProbe = (
 				state: "degraded",
 				failure: {
 					reason: "worker-runtime-failed",
-					message: "catalog probe rejection after successful composition",
+					message: i18n.t("online:gatewayBoot.catalogProbeFailed", {
+						defaultValue:
+							"The catalog check failed after the worker composition started.",
+					}),
 					cause: err,
 				},
 			});
@@ -550,7 +557,10 @@ export const tryBuildCloudGateway = (
 	} catch (err) {
 		const failure: GatewayBootFailure = {
 			reason: "worker-runtime-failed",
-			message: "createCepOperationWorkerRuntime threw during boot",
+			message: i18n.t("online:gatewayBoot.runtimeInitFailed", {
+				defaultValue:
+					"The operation worker runtime could not be created during startup.",
+			}),
 			cause: err,
 		};
 		operationWorkerLog.error(
@@ -634,7 +644,10 @@ export const tryBuildCloudGateway = (
 	} catch (err) {
 		const failure: GatewayBootFailure = {
 			reason: "worker-composition-failed",
-			message: "createOperationWorkerComposition threw during boot",
+			message: i18n.t("online:gatewayBoot.compositionInitFailed", {
+				defaultValue:
+					"The operation worker composition could not be created during startup.",
+			}),
 			cause: err,
 		};
 		operationWorkerLog.error(

@@ -3,6 +3,7 @@ import { Icon } from "@ty-plus/ui/icons/Icon";
 import { cx } from "@ty-plus/ui/util/cx";
 import { Grid3x3, LayoutGrid, List } from "lucide-react";
 import type { JSX } from "react";
+import { i18n } from "@/management/i18n/index";
 import { css } from "@/styled-system/css";
 import type { ViewMode } from "./preset-library-types";
 
@@ -62,14 +63,14 @@ export function PresetLibraryViewModeToggle(
 	const { mode, onModeChange } = props;
 	return (
 		<fieldset className={fieldsetClass}>
-			<legend className="sr-only">View mode</legend>
+			<legend className="sr-only">{i18n.t("online:catalog.viewMode")}</legend>
 			<IconButton
 				variant="ghost"
 				size="sm"
 				type="button"
 				aria-pressed={mode === "gallery"}
-				aria-label="Gallery view"
-				title="Gallery (Ctrl+Wheel to zoom)"
+				aria-label={i18n.t("online:catalog.viewGallery")}
+				title={i18n.t("online:catalog.viewGalleryTitle")}
 				className={viewModeBtnClass(mode === "gallery")}
 				onClick={() => onModeChange("gallery")}
 			>
@@ -81,8 +82,8 @@ export function PresetLibraryViewModeToggle(
 				size="sm"
 				type="button"
 				aria-pressed={mode === "cards"}
-				aria-label="Cards view"
-				title="Cards"
+				aria-label={i18n.t("online:catalog.viewCards")}
+				title={i18n.t("online:catalog.viewCardsLabel")}
 				className={viewModeBtnClass(mode === "cards")}
 				onClick={() => onModeChange("cards")}
 			>
@@ -94,8 +95,8 @@ export function PresetLibraryViewModeToggle(
 				size="sm"
 				type="button"
 				aria-pressed={mode === "list"}
-				aria-label="List view"
-				title="List"
+				aria-label={i18n.t("online:catalog.viewList")}
+				title={i18n.t("online:catalog.viewListLabel")}
 				className={viewModeBtnClass(mode === "list")}
 				onClick={() => onModeChange("list")}
 			>

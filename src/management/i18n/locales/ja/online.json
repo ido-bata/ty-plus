@@ -1,5 +1,99 @@
 {
 	"notification": {
-		"fixtureBadge": "プレースホルダ（オフライン用フィクスチャ）"
+		"fixtureBadge": "プレースホルダ（オフライン用フィクスチャ）",
+		"fixture": {
+			"welcomeName": "ty-plus へようこそ",
+			"welcomeSummary": "ty-plus をインストールしていただきありがとうございます！これはランタイムが接続されていないとき（オフラインフィクスチャ）に表示されるプレースホルダー通知です。",
+			"updateName": "アップデートのお知らせ",
+			"updateSummary": "新しいバージョンにはグリッド性能の向上やバグ修正が含まれる場合があります。",
+			"maintenanceName": "メンテナンスのお知らせ",
+			"maintenanceSummary": "サーバーメンテナンスが予定されている場合があります。ステータスページを確認してください。"
+		}
+	},
+	"gatewayBoot": {
+		"connectivityProbeFailed": "ワーカー構成の開始後に接続チェックが失敗しました。",
+		"catalogProbeFailed": "ワーカー構成の開始後にカタログチェックが失敗しました。",
+		"runtimeInitFailed": "起動中にオペレーションワーカーのランタイムを作成できませんでした。",
+		"compositionInitFailed": "起動中にオペレーションワーカーの構成を作成できませんでした。"
+	},
+	"catalog": {
+		"title": "オンラインプリセットライブラリ",
+		"searchPlaceholder": "名前、ID、説明、カテゴリ、タグで絞り込み",
+		"filterPlaceholder": "絞り込み…",
+		"showFilters": "フィルターを表示",
+		"hideFilters": "フィルターを隠す",
+		"category": "カテゴリ",
+		"tags": "タグ",
+		"allCategories": "すべてのカテゴリ",
+		"clear": "クリア",
+		"clearAll": "すべてクリア",
+		"clearAllFilters": "すべてのフィルターをクリア",
+		"clearSearch": "検索をクリア",
+		"clearCategoryFilter": "カテゴリフィルターをクリア",
+		"clearTagSelection": "タグ選択をクリア",
+		"refreshCatalog": "カタログを更新",
+		"reloadCatalog": "カタログを再読み込み",
+		"reloadingCatalog": "再読み込み中…",
+		"openNotion": "Notion を開く",
+		"openManualNotion": "マニュアルを開く（Notion）",
+		"viewMenu": "表示",
+		"viewMode": "表示モード",
+		"viewGallery": "ギャラリー表示",
+		"viewGalleryTitle": "ギャラリー（Ctrl+ホイールでズーム）",
+		"viewGalleryLabel": "ギャラリー",
+		"viewCards": "カード表示",
+		"viewCardsLabel": "カード",
+		"viewList": "リスト表示",
+		"viewListLabel": "リスト",
+		"tableThumb": "サムネイル",
+		"tableNameId": "名前 / ID",
+		"tableActions": "操作",
+		"emptyUnavailable": "オンラインプリセットライブラリを利用できません。",
+		"emptyNoCatalog": "オンラインカタログがありません。",
+		"emptyNoMatch": "フィルターに一致するプリセットがありません。",
+		"footerCount": "{{filtered}} / {{catalog}} 件",
+		"footerZoom": "Ctrl+ホイール: {{percent}}%",
+		"downloadConfirm": "このプリセットをダウンロードしますか？",
+		"downloadCancelled": "ユーザーがダウンロードをキャンセルしました",
+		"downloadUnavailable": "ランタイムダウンロードを利用できません（オンライン転送が接続されていません）",
+		"systemPathsUnavailable": "システムパスを取得できません",
+		"invalidDownloadPath": "ダウンロードパスが無効です: {{path}}",
+		"downloadFailed": "ダウンロードに失敗しました: {{message}}",
+		"pluginInstalled": "プラグインをインストールしました。使用するには After Effects を再起動してください。",
+		"downloadComplete": "ダウンロードが完了しました。",
+		"downloadedDescription": "[カタログからダウンロード] {{description}}",
+		"gatewayBootRetryHint": "{{reason}} — ゲートウェイの起動を再試行するにはパネルを再読み込みしてください",
+		"hideSidePanel": "サイドパネルを隠す",
+		"showSidePanel": "サイドパネルを表示",
+		"download": "ダウンロード",
+		"import": "インポート",
+		"sync": {
+			"idle": "クラウド同期は待機中",
+			"ok": "ty-plus OK",
+			"failed": "クラウド同期に失敗しました"
+		}
+	},
+	"notificationCenter": {
+		"title": "通知",
+		"loading": "読み込み中…",
+		"empty": "通知はありません",
+		"toggleContent": "コンテンツを切り替え",
+		"noContent": "コンテンツがありません",
+		"backToList": "一覧に戻る",
+		"backToListMenu": "一覧に戻る",
+		"refresh": "更新",
+		"open": "開く",
+		"close": "閉じる",
+		"markRead": "既読にする",
+		"markUnread": "未読にする",
+		"markAsRead": "既読にする",
+		"markAsUnread": "未読にする",
+		"generalCategory": "一般"
+	},
+	"notificationContainer": {
+		"dismiss": "通知を閉じる"
+	},
+	"publicLink": {
+		"userManual": "ユーザーマニュアル"
 	}
 }

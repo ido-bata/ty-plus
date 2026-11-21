@@ -2,6 +2,7 @@ import { IconButton } from "@ty-plus/ui/controls/IconButton";
 import { Icon } from "@ty-plus/ui/icons/Icon";
 import { ExternalLink } from "lucide-react";
 import type { JSX } from "react";
+import { i18n } from "@/management/i18n/index";
 import { DownloadProgressIconButton } from "@/management/online/catalog/DownloadProgressIconButton";
 import type { DownloadProgress } from "@/management/online/catalog/use-cases";
 import type { PresetSearchItem } from "@/management/online/contract";
@@ -207,7 +208,7 @@ export function PresetMarketCard(props: PresetMarketCardProps): JSX.Element {
 							<IconButton
 								size="sm"
 								variant="ghost"
-								title="Open Notion"
+								title={i18n.t("online:catalog.openNotion")}
 								onClick={() =>
 									openUrlInDefaultBrowser(item.notionPageUrl ?? "")
 								}
@@ -275,7 +276,7 @@ export function PresetMarketCardItem(
 							<IconButton
 								size="sm"
 								variant="ghost"
-								title="Open Notion"
+								title={i18n.t("online:catalog.openNotion")}
 								onClick={() =>
 									openUrlInDefaultBrowser(item.notionPageUrl ?? "")
 								}

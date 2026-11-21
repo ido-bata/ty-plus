@@ -180,5 +180,82 @@
 			"copied": "클립보드에 복사됨",
 			"digest": "오류 ID"
 		}
+	},
+	"ui": {
+		"loadingSpinner": {
+			"label": "로드 중"
+		},
+		"searchField": {
+			"clearAria": "검색 지우기",
+			"clearTitle": "지우기"
+		},
+		"regexEditor": {
+			"enterPattern": "패턴을 입력하세요.",
+			"invalidFlags": "잘못된 플래그: {{flags}}",
+			"plainSource": "일반 정규식 소스",
+			"literalFormat": "리터럴 정규식 형식",
+			"testString": "테스트 문자열",
+			"sourcePlaceholder": "정규식 소스",
+			"flagsPlaceholder": "플래그",
+			"matches": "일치",
+			"noMatch": "일치 없음",
+			"literalSuffix": "· 리터럴 /pattern/flags",
+			"sourceSuffix": "· 소스만"
+		},
+		"listSelect": {
+			"placeholder": "선택…"
+		}
+	},
+	"directoryBrowser": {
+		"refresh": "새로 고침",
+		"goUp": "위로",
+		"open": "열기",
+		"select": "선택",
+		"deselect": "선택 해제",
+		"listView": "목록 보기",
+		"iconView": "아이콘 보기",
+		"noFilesFound": "파일을 찾을 수 없음"
+	},
+	"debugConsole": {
+		"title": "콘솔",
+		"clear": "지우기",
+		"evaluateAria": "JavaScript 평가",
+		"evaluatePlaceholder": "JavaScript 평가…",
+		"rowContextHint": "오른쪽 클릭으로 복사",
+		"filterLevelAria": "콘솔 메시지 필터링",
+		"filterSourceAria": "소스별 콘솔 메시지 필터링",
+		"filterScopeAria": "세션 범위별 콘솔 메시지 필터링",
+		"levels": {
+			"all": "전체",
+			"log": "로그",
+			"info": "정보",
+			"warn": "경고",
+			"error": "오류"
+		},
+		"sources": {
+			"all": "모든 소스",
+			"panel": "패널",
+			"modeless": "모드리스",
+			"hostBridge": "호스트 브리지",
+			"online": "온라인",
+			"preset": "프리셋",
+			"opWorker": "작업 워커",
+			"workspace": "작업 영역",
+			"boot": "부팅",
+			"debugConsole": "디버그 콘솔",
+			"console": "콘솔"
+		},
+		"scopes": {
+			"allHistory": "전체 기록",
+			"thisSession": "이번 세션"
+		},
+		"contextMenu": {
+			"copyMessage": "메시지 복사",
+			"copyAllMessages": "모든 메시지 복사",
+			"clearConsole": "콘솔 지우기",
+			"enableAutoScroll": "자동 스크롤 활성화",
+			"disableAutoScroll": "자동 스크롤 비활성화",
+			"itemActive": "{{level}}(활성)"
+		}
 	}
 }

@@ -2,6 +2,7 @@ import { Icon, IconButton } from "@ty-plus/ui";
 import { cx } from "@ty-plus/ui/util/cx";
 import { ArrowUp, HardDrive, RefreshCw, Settings2 } from "lucide-react";
 import type { JSX } from "react";
+import { i18n } from "@/management/i18n/index";
 import { CatalogBrowserViewModeToggle } from "@/management/preset";
 import { css } from "@/styled-system/css";
 export function BrowserToolbar(props: {
@@ -68,8 +69,8 @@ export function BrowserToolbar(props: {
 				variant="ghost"
 				size="sm"
 				className={iconBtnClass}
-				aria-label="Refresh"
-				title="Refresh"
+				aria-label={i18n.t("common:actions.refresh")}
+				title={i18n.t("common:actions.refresh")}
 				onClick={() => {
 					void onRefresh();
 				}}
@@ -81,8 +82,8 @@ export function BrowserToolbar(props: {
 				variant="ghost"
 				size="sm"
 				className={iconBtnClass}
-				aria-label="Go up"
-				title="Go up"
+				aria-label={i18n.t("widgets:folderDirectoryPicker.goUp")}
+				title={i18n.t("widgets:folderDirectoryPicker.goUp")}
 				disabled={!goUpAvailable}
 				onClick={onGoUp}
 			>
@@ -93,8 +94,8 @@ export function BrowserToolbar(props: {
 				variant="ghost"
 				size="sm"
 				className={iconBtnClass}
-				aria-label="Browse drives"
-				title="Browse drives"
+				aria-label={i18n.t("widgets:directoryBrowser.entry.browseDrives")}
+				title={i18n.t("widgets:directoryBrowser.entry.browseDrives")}
 				onClick={onBrowseDrives}
 			>
 				{" "}

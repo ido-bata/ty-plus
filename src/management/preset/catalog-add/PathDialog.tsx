@@ -16,6 +16,7 @@ import { selectFile } from "@/management/ae/cep/dialog-shim/bolt";
 import { DialogShell } from "@/management/dialog";
 import { DialogFooterActions } from "@/management/dialog/dialogs/shell/Footer";
 import { useDialogClose } from "@/management/dialog/useClose";
+import { i18n } from "@/management/i18n/index";
 import { createPresetFromFile } from "@/management/preset/authoring/request";
 import { ArchiveDetailsSection } from "@/management/preset/catalog-add/ArchiveDetailsSection";
 import {
@@ -59,11 +60,11 @@ type DroppedFile = {
 	isDirectory: boolean;
 };
 
-const FOLDER_TABS: { id: PresetAddFolderType; label: string }[] = [
-	{ id: "presets", label: "Presets" },
-	{ id: "scripts", label: "Scripts" },
-	{ id: "plugins", label: "Plug-ins" },
-	{ id: "other", label: "Other" },
+const FOLDER_TABS: { id: PresetAddFolderType; labelKey: string }[] = [
+	{ id: "presets", labelKey: "widgets:folderDirectoryPicker.tab.presets" },
+	{ id: "scripts", labelKey: "widgets:folderDirectoryPicker.tab.scripts" },
+	{ id: "plugins", labelKey: "widgets:folderDirectoryPicker.tab.plugins" },
+	{ id: "other", labelKey: "widgets:folderDirectoryPicker.tab.other" },
 ];
 
 const rootPathForTab = (
@@ -229,7 +230,7 @@ function FolderTabs(props: {
 					className={FOLDER_TAB_CLASS(activeTab === tab.id)}
 					onClick={() => onTabChange(tab.id)}
 				>
-					{tab.label}
+					{i18n.t(tab.labelKey)}
 				</button>
 			))}
 		</div>
@@ -269,16 +270,16 @@ function BrowserContent(props: {
 		<div className={browserContainerClass}>
 			{!cepBrowser ? (
 				<div className={browserEmptyClass}>
-					<span>File browser requires CEP Node</span>
+					<span>{i18n.t("presets:catalogAdd.browser.cepNodeRequired")}</span>
 				</div>
 			) : emptyConfigured ? (
 				<div className={browserEmptyClass}>
 					<span>
 						{activeTab === "presets"
-							? "No presets folder configured"
+							? i18n.t("presets:catalogAdd.browser.noPresetsFolder")
 							: activeTab === "scripts"
-								? "No scripts folder configured"
-								: "No plugins folder configured"}
+								? i18n.t("presets:catalogAdd.browser.noScriptsFolder")
+								: i18n.t("presets:catalogAdd.browser.noPluginsFolder")}
 					</span>
 				</div>
 			) : (
@@ -301,9 +302,9 @@ function BrowserContent(props: {
 					onViewModeChange={() => {}}
 					scale={1}
 					aspect="square"
-					loadingLabel="Loading..."
-					emptyLabel="No files found"
-					upLabel="Go up"
+					loadingLabel={i18n.t("widgets:folderDirectoryPicker.loading")}
+					emptyLabel={i18n.t("presets:catalogAdd.browser.noFiles")}
+					upLabel={i18n.t("widgets:folderDirectoryPicker.goUp")}
 				/>
 			)}
 		</div>
@@ -332,7 +333,7 @@ function PathDialogFooterActions({
 				onClick={() => close()}
 				disabled={busy}
 			>
-				Cancel
+				{i18n.t("common:buttons.cancel")}
 			</Button>
 			<Button
 				type="button"
@@ -343,7 +344,9 @@ function PathDialogFooterActions({
 				disabled={!canAdd}
 				onClick={() => void handleAdd()}
 			>
-				{busy ? "Creating..." : "Create"}
+				{busy
+					? i18n.t("presets:catalogAdd.creating")
+					: i18n.t("common:actions.create")}
 			</Button>
 		</DialogFooterActions>
 	);
@@ -688,7 +691,7 @@ export function PathDialog(): JSX.Element {
 
 	return (
 		<DialogShell
-			title="Add catalog preset from path"
+			title={i18n.t("presets:catalogAdd.dialogTitle")}
 			surfaceId="dialog-preset-add"
 			modifier="wsd-root--preset-tool"
 			contentClassName={pathDialogContentClass}
@@ -706,34 +709,38 @@ export function PathDialog(): JSX.Element {
 			<DialogBody>
 				<div className={formColumnClass}>
 					<Input
-						label="Name"
+						label={i18n.t("presets:catalogAdd.name")}
 						value={name}
 						onChange={(e) => {
 							setName(e.target.value);
 							setNameManuallyEdited(true);
 						}}
-						placeholder="Enter name..."
+						placeholder={i18n.t("presets:catalogAdd.namePlaceholder")}
 						autoComplete="off"
 						spellCheck={false}
 						uiSize="md"
 					/>
 
 					<div className={fieldColumnClass}>
-						<span className={fieldLabelClass}>File Path</span>
+						<span className={fieldLabelClass}>
+							{i18n.t("presets:catalogAdd.filePath")}
+						</span>
 						<PathField
 							value={pathFieldDisplay}
 							onChange={setSelectedPath}
 							onBrowse={() =>
-								selectFile(browseHint, "Select File", (picked) =>
-									setSelectedPath(picked),
+								selectFile(
+									browseHint,
+									i18n.t("presets:catalogAdd.selectFile"),
+									(picked) => setSelectedPath(picked),
 								)
 							}
-							browseAriaLabel="Browse file"
+							browseAriaLabel={i18n.t("presets:catalogAdd.browseFile")}
 							browseSlot={<Icon icon={FileSearch} size={16} aria-hidden />}
 							placeholder={
 								currentPath.trim()
-									? "Current folder shown — pick a file or browse"
-									: "Select a file..."
+									? i18n.t("presets:catalogAdd.pathPlaceholderCurrentFolder")
+									: i18n.t("presets:catalogAdd.pathPlaceholderSelectFile")
 							}
 							uiSize="md"
 						/>
@@ -776,13 +783,14 @@ export function PathDialog(): JSX.Element {
 						draft={iconDraft}
 						onChange={setIconDraft}
 						browseDir={browseHint}
-						label="Icon"
+						label={i18n.t("presets:catalogAdd.icon")}
 						preview={
 							<FramedPresetGlyph
 								preset={
 									{
 										id: "icon-preview",
 										type: "preset",
+										// i18n-exempt: synthetic preset record title for the glyph preview, never rendered as a label
 										title: "Preview",
 										filePath: "ty-plus://icon-preview",
 										icon: iconDraftToPresetIcon(iconDraft) ?? {

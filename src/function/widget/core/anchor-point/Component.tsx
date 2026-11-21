@@ -4,6 +4,7 @@ import {
 } from "@ty-plus/ui/interaction/use-anchor-gesture";
 import React, { type JSX } from "react";
 import type { WidgetRenderProps } from "@/function/widget/define";
+import { i18n } from "@/management/i18n/index";
 import { css } from "@/styled-system/css";
 import { runAnchorScript } from "./run";
 import { type AnchorPosition, isValidAnchorPosition } from "./script";
@@ -52,15 +53,15 @@ const ANCHOR_GESTURE_MAP: Readonly<Record<string, AnchorPosition>> = {
 };
 
 const ANCHOR_LABELS: Readonly<Record<string, string>> = {
-	"top-left": "Top Left",
-	"top-center": "Top Center",
-	"top-right": "Top Right",
-	"center-left": "Center Left",
-	center: "Center",
-	"center-right": "Center Right",
-	"bottom-left": "Bottom Left",
-	"bottom-center": "Bottom Center",
-	"bottom-right": "Bottom Right",
+	"top-left": "widgets:anchorPoint.positions.topLeft",
+	"top-center": "widgets:anchorPoint.positions.topCenter",
+	"top-right": "widgets:anchorPoint.positions.topRight",
+	"center-left": "widgets:anchorPoint.positions.centerLeft",
+	center: "widgets:anchorPoint.positions.center",
+	"center-right": "widgets:anchorPoint.positions.centerRight",
+	"bottom-left": "widgets:anchorPoint.positions.bottomLeft",
+	"bottom-center": "widgets:anchorPoint.positions.bottomCenter",
+	"bottom-right": "widgets:anchorPoint.positions.bottomRight",
 };
 
 function AnchorPointGestureOverlay({
@@ -74,10 +75,9 @@ function AnchorPointGestureOverlay({
 }): JSX.Element | null {
 	if (!isActive) return null;
 	const points = path.map((p) => `${p.x},${p.y}`).join(" ");
-	const label =
-		recognizedAction !== null
-			? (ANCHOR_LABELS[recognizedAction] ?? null)
-			: null;
+	const labelKey =
+		recognizedAction !== null ? ANCHOR_LABELS[recognizedAction] : undefined;
+	const label = labelKey !== undefined ? i18n.t(labelKey) : null;
 	return (
 		<svg
 			className={css({
@@ -89,9 +89,9 @@ function AnchorPointGestureOverlay({
 				width: "full",
 				overflow: "visible",
 			})}
-			aria-label="Anchor point gesture overlay"
+			aria-label={i18n.t("widgets:anchorPoint.gestureOverlay")}
 		>
-			<title>Anchor point gesture overlay</title>
+			<title>{i18n.t("widgets:anchorPoint.gestureOverlay")}</title>
 			{points.length > 0 && (
 				<polyline
 					points={points}
