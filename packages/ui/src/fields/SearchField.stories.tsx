@@ -8,6 +8,7 @@ const meta = {
 	title: "Shared/Fields/SearchField",
 	component: SearchField,
 	argTypes: {
+		uiSize: { control: "select", options: ["sm", "md", "lg"] },
 		placeholder: { control: "text" },
 		disabled: { control: "boolean" },
 		showClearButton: { control: "boolean" },
