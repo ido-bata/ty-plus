@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Badge, Button, MediaFrame } from "@ty-plus/ui";
 import { cx } from "@ty-plus/ui/util/cx";
 import { css } from "@/styled-system/css";
+import { PresetRail, PresetStage } from "../components/PresetStage";
 import { findLatestStable } from "../lib/releases";
 import { SITE } from "../lib/site";
 import { listReleases } from "../server/releases";
@@ -148,19 +149,12 @@ function HomePage() {
 						</div>
 					</div>
 					<figure className={heroFigure}>
-						<MediaFrame>
-							<img
-								src="/images/preset-grid.png"
-								alt="Named preset tiles on the ty-plus workspace grid — fade in, pop in, slide in and other animation presets from the local catalog"
-								width={2160}
-								height={820}
-								fetchPriority="high"
-								className={s.shotImg}
-							/>
-						</MediaFrame>
+						<div className={s.figure}>
+							<PresetRail />
+						</div>
 						<figcaption className={s.figcaption}>
-							Preset tiles placed on the workspace grid — captured live from the
-							panel.
+							Preset tiles rendered with the product's own easing-icon component
+							— demo glyphs, not parsed .ffx motion.
 						</figcaption>
 					</figure>
 					<div className={heroActions}>
@@ -222,10 +216,9 @@ function HomePage() {
 				</div>
 			</section>
 
-			{/* Preset interaction — the verified state transition: hover and
-			    selection feed the info widget, a plain click runs the preset
-			    on the active layer. Image leads on md+; text follows in DOM
-			    order so the explanation reads first on mobile. */}
+			{/* Preset interaction — a working demo built from the product's
+			    own icon component. Selection is real local state; the copy
+			    states plainly what runs in After Effects vs. on this page. */}
 			<section
 				className={cx(
 					container({ size: "content" }),
@@ -238,34 +231,21 @@ function HomePage() {
 						<div className={stack({ gap: 3 })}>
 							<h2 className={s.h2}>Hover, select, run</h2>
 							<p className={s.body}>
-								Hover a preset tile and the info widget shows what it does.
-								Shift-click to select tiles for inspection, then a plain click
-								applies the preset to the active layer in After Effects —
-								verified end to end on a real project.
+								In the panel, hover a preset tile and the info widget shows what
+								it does. Shift-click selects tiles for inspection; a plain click
+								applies the preset to the active layer — verified end to end on
+								a real project.
 							</p>
 							<p className={s.body}>
-								Tile icons in these captures are illustrative glyphs; execution
-								was confirmed by the effects added to the composition, not by
-								the icon artwork.
+								Try the selection below — the tiles use the same icon renderer
+								as the product. This page cannot reach After Effects, so
+								execution stays in the panel.
 							</p>
 						</div>
 					</div>
-					<figure className={cx(s.figure, span7, mediaLead)}>
-						<MediaFrame>
-							<img
-								src="/images/preset-selected.png"
-								alt="A selected preset tile with the info widget showing the preset's name, kind, and source"
-								width={2160}
-								height={410}
-								loading="lazy"
-								className={s.shotImg}
-							/>
-						</MediaFrame>
-						<figcaption className={s.figcaption}>
-							Selected tile — the info widget shows the preset name, kind, and
-							selection source.
-						</figcaption>
-					</figure>
+					<div className={cx(span7, mediaLead)}>
+						<PresetStage />
+					</div>
 				</div>
 			</section>
 

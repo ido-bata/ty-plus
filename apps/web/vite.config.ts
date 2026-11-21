@@ -23,6 +23,10 @@ export default defineConfig({
 				replacement: `${path.join(repoRoot, "packages/ui/src")}/$1`,
 			},
 			{
+				find: "@ty-plus/product",
+				replacement: path.join(repoRoot, "src"),
+			},
+			{
 				find: "@ty-plus/ui",
 				replacement: path.join(repoRoot, "packages/ui/src/index.ts"),
 			},
