@@ -306,6 +306,12 @@ export const DESIGN_TOKENS_DEFAULTS: Record<string, string> = {
 	"ty-interactive-active": "var(--color-ty-ink-12)",
 	"ty-interactive-focus":
 		"rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.45)",
+	/*
+	 * The one focus indicator: a 2px accent ring outside the control. Every
+	 * focusable control paints this ring, so a focused field looks the same
+	 * as a focused button.
+	 */
+	"ty-focus-ring": "0 0 0 2px var(--ty-interactive-focus)",
 
 	/* Shell (packages/workspace inline CSS) */
 	"color-ty-shell-canvas-start": "#1a1a1a",

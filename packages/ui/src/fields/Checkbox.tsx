@@ -48,7 +48,7 @@ const box = css({
 		backgroundColor: "text.accent",
 	},
 	_focusVisible: {
-		boxShadow: "0 0 0 2px var(--color-interactive-focus)",
+		boxShadow: "var(--color-focus-ring)",
 		outlineOffset: "0",
 	},
 	_disabled: {

@@ -56,7 +56,10 @@ const inputClass = css({
 	color: "text.primary",
 	outline: "none",
 	transitionProperty: "colors",
-	_focus: { borderColor: "interactive.focus" },
+	_focus: {
+		borderColor: "interactive.focus",
+		boxShadow: "var(--color-focus-ring)",
+	},
 	_disabled: { opacity: 0.5 },
 });
 

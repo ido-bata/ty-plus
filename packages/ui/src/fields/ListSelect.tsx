@@ -68,7 +68,7 @@ const triggerBase = css({
 	_hover: { backgroundColor: "interactive.hover" },
 	_focusVisible: {
 		borderColor: "interactive.focus",
-		boxShadow: "inset 0 0 0 1px var(--color-interactive-focus)",
+		boxShadow: "var(--color-focus-ring)",
 		outline: "none",
 	},
 	_disabled: {
