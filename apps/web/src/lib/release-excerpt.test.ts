@@ -127,9 +127,7 @@ describe("releaseExcerpt section awareness", () => {
 			"- macOS + AE 2027 E2E PASS",
 		].join("\n");
 		const { bullets } = releaseExcerpt(body);
-		expect(bullets).toEqual([
-			"Fixes the updater rejecting prerelease tags",
-		]);
+		expect(bullets).toEqual(["Fixes the updater rejecting prerelease tags"]);
 	});
 
 	it("lets unrecognized subsections inherit a user-facing parent rank", () => {
@@ -178,10 +176,7 @@ describe("releaseExcerpt section awareness", () => {
 			"- sha256 verified",
 		].join("\n");
 		const { bullets } = releaseExcerpt(body);
-		expect(bullets).toEqual([
-			"trustMode=release 監査 PASS",
-			"sha256 verified",
-		]);
+		expect(bullets).toEqual(["trustMode=release 監査 PASS", "sha256 verified"]);
 	});
 
 	it("supports numbered list bullets and ignores fenced code", () => {
@@ -268,17 +263,13 @@ describe("releaseExcerpt against bundled release snapshot", () => {
 	});
 
 	it("falls back to prose for meta-only insider builds", () => {
-		const insider4 = releases.find(
-			(r) => r.tagName === "v0.11.0-insider.4",
-		);
+		const insider4 = releases.find((r) => r.tagName === "v0.11.0-insider.4");
 		expect(insider4).toBeDefined();
 		const { bullets, prose } = releaseExcerpt(insider4?.body ?? "");
 		expect(bullets).toEqual([]);
 		expect(prose).toContain("Insider preview");
 
-		const insider7 = releases.find(
-			(r) => r.tagName === "v0.11.0-insider.7",
-		);
+		const insider7 = releases.find((r) => r.tagName === "v0.11.0-insider.7");
 		expect(insider7).toBeDefined();
 		const e7 = releaseExcerpt(insider7?.body ?? "");
 		expect(e7.bullets).toEqual([]);

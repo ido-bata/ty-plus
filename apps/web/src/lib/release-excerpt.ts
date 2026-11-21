@@ -196,9 +196,7 @@ function legacyExcerpt(
 ): ReleaseExcerpt {
 	const bullets = bulletLines(lines, Number.MAX_SAFE_INTEGER)
 		.slice(0, maxBullets)
-		.map((l) =>
-			truncateAtBoundary(cleanInline(l), bulletMax),
-		)
+		.map((l) => truncateAtBoundary(cleanInline(l), bulletMax))
 		.filter((l) => l.length > 0);
 
 	const proseLine = lines.find(
