@@ -7,10 +7,10 @@ import {
 	createCepNodeFileBrowserService,
 } from "@/management/storage/file-browser-service";
 import {
-	DirectoryBrowser,
-	type DirectoryBrowserEntry,
-	type DirectoryBrowserShellSelectionMode,
-} from "@/management/storage/ui/DirectoryBrowser";
+	type FileEntry,
+	FileEntryList,
+	type FileEntrySelectionMode,
+} from "@/management/storage/ui/FileEntryList";
 import { readSettings } from "@/management/workspace/persistence/store";
 import { css, cx } from "@/styled-system/css";
 
@@ -132,7 +132,7 @@ export function FolderDirectoryPicker({
 	value: string;
 	onChange: (next: string) => void;
 	label?: string;
-	selectionMode?: DirectoryBrowserShellSelectionMode;
+	selectionMode?: FileEntrySelectionMode;
 	selectedPaths?: string[];
 	onToggleSelected?: (path: string, selected: boolean) => void;
 	candidatePresets?: { id: string; title: string; filePath: string }[];
@@ -143,7 +143,7 @@ export function FolderDirectoryPicker({
 	const [currentPath, setCurrentPath] = useState(
 		() => value.trim() || readUserHomeOrFallback(),
 	);
-	const [entries, setEntries] = useState<DirectoryBrowserEntry[]>([]);
+	const [entries, setEntries] = useState<FileEntry[]>([]);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState("");
 	const cepBrowser = canUseCepNodeFileBrowser(window);
@@ -303,7 +303,7 @@ export function FolderDirectoryPicker({
 				{cepBrowser ? (
 					<>
 						<div className={browserInnerClass}>
-							<DirectoryBrowser
+							<FileEntryList
 								selectionMode={selectionMode}
 								entries={entries}
 								loading={loading}
@@ -328,10 +328,6 @@ export function FolderDirectoryPicker({
 								}
 								onToggleSelected={(entryPath) => toggleSelected(entryPath)}
 								selectedSummary={selectedSummary}
-								viewMode="list"
-								onViewModeChange={() => {}}
-								scale={1}
-								aspect="square"
 								loadingLabel={t("folderDirectoryPicker.loading")}
 								emptyLabel={
 									selectionMode === "folders"
