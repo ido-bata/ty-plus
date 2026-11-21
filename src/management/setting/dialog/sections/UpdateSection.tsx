@@ -1,7 +1,7 @@
 import { ListSelect } from "@ty-plus/ui/fields/ListSelect";
 import { type JSX, useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { OperationWorkerAttemptError } from "@/management/ipc/operation-worker-runner";
+import { OperationWorkerAttemptError } from "@/management/ipc/operation-worker/runner";
 import {
 	isReleaseChannel,
 	type ReleaseChannel,

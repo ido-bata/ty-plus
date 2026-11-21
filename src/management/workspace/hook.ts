@@ -48,10 +48,16 @@ import {
 	writeCpState,
 } from "@/management/panel/control/state";
 import { loadPanelChromeControlPanel } from "@/management/panel/persistence/chrome-store";
-import { isPresetAssetMissing } from "@/management/preset/asset-health";
+import { isPresetAssetMissing } from "@/management/preset/assets/health";
 import type { Preset } from "@/management/preset/contract";
 import { askHostDeleteConfirm } from "@/management/preset/delete-confirm";
 import type { PresetDialogRequest } from "@/management/preset/dialog-request";
+import {
+	parseGroupFromText,
+	removeGroupEntry,
+	removePresetFromGroupEntry,
+	upsertGroupEntry,
+} from "@/management/preset/group/catalog";
 import {
 	dispatchGroupWorkspaceRequest,
 	GROUP_WORKSPACE_EVENT,
@@ -60,13 +66,7 @@ import {
 import {
 	releaseDropPlacementFromState,
 	releaseGroupPreset,
-} from "@/management/preset/group/group-release";
-import {
-	parseGroupFromText,
-	removeGroupEntry,
-	removePresetFromGroupEntry,
-	upsertGroupEntry,
-} from "@/management/preset/group-catalog";
+} from "@/management/preset/group/release";
 import { writePresetToolHandoff } from "@/management/preset/tool-handoff-file";
 import { PRESET_TOOL_OPEN_BUS_CHANNEL } from "@/management/preset/tool-open-channel";
 import {

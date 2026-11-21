@@ -497,91 +497,91 @@
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
-		"file": "src/management/panel/control/StatusBar/Main.tsx",
+		"file": "src/management/panel/control/status-bar/Main.tsx",
 		"line": 8,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/icons\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
-		"file": "src/management/panel/control/StatusBar/Main.tsx",
+		"file": "src/management/panel/control/status-bar/Main.tsx",
 		"line": 20,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
-		"file": "src/management/panel/control/StatusBar/Main.tsx",
+		"file": "src/management/panel/control/status-bar/Main.tsx",
 		"line": 213,
 		"rule": "ui-override",
 		"message": "<IconButton> is a shared @ty-plus/ui component; height, width must come from its variant/size/tone props, not className",
 		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
 	},
 	{
-		"file": "src/management/panel/control/StatusBar/Main.tsx",
+		"file": "src/management/panel/control/status-bar/Main.tsx",
 		"line": 222,
 		"rule": "ui-override",
 		"message": "<IconButton> is a shared @ty-plus/ui component; height, width must come from its variant/size/tone props, not className",
 		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
 	},
 	{
-		"file": "src/management/panel/control/StatusBar/Main.tsx",
+		"file": "src/management/panel/control/status-bar/Main.tsx",
 		"line": 230,
 		"rule": "ui-override",
 		"message": "<IconButton> is a shared @ty-plus/ui component; height, width must come from its variant/size/tone props, not className",
 		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
 	},
 	{
-		"file": "src/management/panel/control/StatusBar/Main.tsx",
+		"file": "src/management/panel/control/status-bar/Main.tsx",
 		"line": 244,
 		"rule": "ui-override",
 		"message": "<IconButton> is a shared @ty-plus/ui component; height, width must come from its variant/size/tone props, not className",
 		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
 	},
 	{
-		"file": "src/management/panel/control/StatusBar/Main.tsx",
+		"file": "src/management/panel/control/status-bar/Main.tsx",
 		"line": 263,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
-		"file": "src/management/panel/control/StatusBar/Main.tsx",
+		"file": "src/management/panel/control/status-bar/Main.tsx",
 		"line": 277,
 		"rule": "ui-override",
 		"message": "<IconButton> is a shared @ty-plus/ui component; height, width must come from its variant/size/tone props, not className",
 		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
 	},
 	{
-		"file": "src/management/panel/control/StatusBar/Main.tsx",
+		"file": "src/management/panel/control/status-bar/Main.tsx",
 		"line": 293,
 		"rule": "ui-override",
 		"message": "<IconButton> is a shared @ty-plus/ui component; height, width must come from its variant/size/tone props, not className",
 		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
 	},
 	{
-		"file": "src/management/panel/control/StatusBar/Main.tsx",
+		"file": "src/management/panel/control/status-bar/Main.tsx",
 		"line": 302,
 		"rule": "ui-override",
 		"message": "<IconButton> is a shared @ty-plus/ui component; height, width must come from its variant/size/tone props, not className",
 		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
 	},
 	{
-		"file": "src/management/panel/control/StatusBar/Main.tsx",
+		"file": "src/management/panel/control/status-bar/Main.tsx",
 		"line": 310,
 		"rule": "ui-override",
 		"message": "<IconButton> is a shared @ty-plus/ui component; height, width must come from its variant/size/tone props, not className",
 		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
 	},
 	{
-		"file": "src/management/panel/control/StatusBar/Main.tsx",
+		"file": "src/management/panel/control/status-bar/Main.tsx",
 		"line": 319,
 		"rule": "ui-override",
 		"message": "<IconButton> is a shared @ty-plus/ui component; height, width must come from its variant/size/tone props, not className",
 		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
 	},
 	{
-		"file": "src/management/panel/control/StatusBar/Main.tsx",
+		"file": "src/management/panel/control/status-bar/Main.tsx",
 		"line": 328,
 		"rule": "ui-override",
 		"message": "<IconButton> is a shared @ty-plus/ui component; height, width must come from its variant/size/tone props, not className",
@@ -749,35 +749,35 @@
 		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
 	},
 	{
-		"file": "src/management/preset/components/IconEditor.tsx",
+		"file": "src/management/preset/icon/Editor.tsx",
 		"line": 4,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/fields/ColorSwatch\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
-		"file": "src/management/preset/components/IconEditor.tsx",
+		"file": "src/management/preset/icon/Editor.tsx",
 		"line": 5,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/fields/Input\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
-		"file": "src/management/preset/components/IconEditor.tsx",
+		"file": "src/management/preset/icon/Editor.tsx",
 		"line": 6,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/fields/PathField\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
-		"file": "src/management/preset/components/IconEditor.tsx",
+		"file": "src/management/preset/icon/Editor.tsx",
 		"line": 259,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
-		"file": "src/management/preset/components/IconEditor.tsx",
+		"file": "src/management/preset/icon/Editor.tsx",
 		"line": 376,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",

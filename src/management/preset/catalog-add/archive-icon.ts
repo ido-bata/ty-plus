@@ -3,7 +3,7 @@ import {
 	PRESET_ICON_TEXT_MAX,
 	type PresetIconEditorDraft,
 	presetIconDraftToPresetIcon,
-} from "@/management/preset/icon-editor";
+} from "@/management/preset/icon/draft";
 
 export type ArchiveIconDraft = PresetIconEditorDraft;
 

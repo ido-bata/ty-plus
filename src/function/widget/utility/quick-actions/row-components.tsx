@@ -1,10 +1,10 @@
 import { Wand2 } from "lucide-react";
 import type { CSSProperties, JSX } from "react";
-import type { Preset, PresetType } from "@/management/preset/contract";
 import {
 	useIsPresetAssetMissing,
 	useIsPresetAssetUnverifiable,
-} from "@/management/preset/use-preset-asset-health";
+} from "@/management/preset/assets/use-health";
+import type { Preset, PresetType } from "@/management/preset/contract";
 import { WorkspacePresetGlyph } from "@/management/preset/workspace/glyph";
 import { css } from "@/styled-system/css";
 import { rootFilePresetType } from "./scoring";

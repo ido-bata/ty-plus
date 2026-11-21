@@ -42,9 +42,9 @@ import { CatalogBrowserShell } from "@/management/preset/catalog-browser/shell";
 import { buildPlacementHints } from "@/management/preset/catalog-browser/workspace-placement-hints";
 import type { Preset } from "@/management/preset/contract";
 import { traceExecute } from "@/management/preset/execution/lifecycle-trace";
-import type { GroupEntry } from "@/management/preset/group-catalog";
-import { parseGroupFromText } from "@/management/preset/group-catalog";
-import { tryParsePresetIconValue } from "@/management/preset/icon-data";
+import type { GroupEntry } from "@/management/preset/group/catalog";
+import { parseGroupFromText } from "@/management/preset/group/catalog";
+import { tryParsePresetIconValue } from "@/management/preset/icon/normalize";
 import { getPresetToolDialogEntry } from "@/management/preset/registry";
 import {
 	getPreset,

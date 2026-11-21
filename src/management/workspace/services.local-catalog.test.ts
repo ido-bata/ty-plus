@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
 	PresetCatalogParseError,
 	parsePresetCatalogJsonTextStrict,
-} from "@/management/preset/catalog-json-text";
+} from "@/management/preset/repository/json-text";
 
 const storageMocks = vi.hoisted(() => ({
 	readPresetsJsonText: vi.fn<() => Promise<string | null>>(async () => null),

@@ -67,7 +67,7 @@ vi.mock("@/management/catalog/json-files", () => ({
 	readGroupJson: async () => "",
 }));
 
-vi.mock("@/management/preset/group-catalog", () => ({
+vi.mock("@/management/preset/group/catalog", () => ({
 	parseGroupFromText: () => [],
 }));
 

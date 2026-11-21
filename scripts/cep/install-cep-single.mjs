@@ -9,7 +9,7 @@ import {
 	canonicalMethods,
 	protocolVersion,
 } from "../../src/management/ipc/generated/wire.ts";
-import { resolveOperationWorkerBinary } from "../../src/management/ipc/operation-worker-binary.ts";
+import { resolveOperationWorkerBinary } from "../../src/management/ipc/operation-worker/binary.ts";
 import {
 	addDataMainToScripts,
 	patchCepNativeRequireMainPath,

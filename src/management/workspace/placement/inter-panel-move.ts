@@ -44,7 +44,7 @@
 import type { WidgetType } from "@/function/widget";
 import { createLogger } from "@/management/debug";
 import type { Preset } from "@/management/preset/contract";
-import type { GroupCatalogEntry } from "@/management/preset/group-catalog";
+import type { GroupCatalogEntry } from "@/management/preset/group/catalog";
 import {
 	indexFromPanelId,
 	movePresetPlacement,

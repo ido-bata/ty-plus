@@ -1,6 +1,6 @@
 import type { Preset } from "@/management/preset/contract";
 
-import { normalizePresets } from "@/management/preset/icon-data";
+import { normalizePresets } from "@/management/preset/icon/normalize";
 import { stripKnownIdPrefixes } from "@/management/storage/ids";
 
 type PresetRepositoryLike = {

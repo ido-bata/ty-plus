@@ -2,17 +2,17 @@ import { resolveCepFileSystemGateway } from "@/management/ae/cep/runtime";
 import type {
 	UpdateInstallRequestDTO,
 	UpdateInstallResultDTO,
-} from "@/management/ipc/operation-worker-composition";
+} from "@/management/ipc/operation-worker/composition";
 import { createPresetRepository } from "@/management/online/catalog/repository";
 import { createFixtureCloudGateway } from "@/management/online/catalog/runtime-cloud-gateway";
 import { createCloudSyncService } from "@/management/online/catalog/sync";
 import type { CloudGateway } from "@/management/online/contract";
 import { markGatewayNotBooted } from "@/management/online/runtime-gateway-health";
+import type { Preset } from "@/management/preset/contract";
 import {
 	parsePresetCatalogJsonTextStrict,
 	serializePresetCatalogJsonText,
-} from "@/management/preset/catalog-json-text";
-import type { Preset } from "@/management/preset/contract";
+} from "@/management/preset/repository/json-text";
 import { createSharedPresetRepository } from "@/management/preset/repository/shared";
 import { readPresetsJsonText, writePresetsJson } from "@/management/storage";
 import { catalogJsonMayContainLegacyIdPrefixes } from "@/management/storage/ids";

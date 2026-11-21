@@ -229,7 +229,7 @@ describe("DirectoryBrowserWidget catalog grouping (integration)", () => {
 			"./partition-catalog-presets"
 		);
 		const { parseGroupFromText } = await import(
-			"@/management/preset/group-catalog"
+			"@/management/preset/group/catalog"
 		);
 		const groups = parseGroupFromText(groupsJson);
 		const partitioned = partitionCatalogPresetsByGroup(

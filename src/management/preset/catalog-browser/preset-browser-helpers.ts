@@ -1,5 +1,5 @@
 import type { Preset } from "@/management/preset/contract";
-import type { GroupEntry } from "@/management/preset/group-catalog";
+import type { GroupEntry } from "@/management/preset/group/catalog";
 import { stripKnownIdPrefixes } from "@/management/storage/ids";
 
 /**

@@ -181,7 +181,7 @@ describe("dir-stutter and file-stutter", () => {
 
 	it("flags file names repeating the parent directory", () => {
 		const findings = rulesFor(
-			["src/management/preset/group/group-release.ts"],
+			["scripts/check/check-app-ui-design.ts"],
 			"file-stutter",
 		);
 		expect(findings).toHaveLength(1);

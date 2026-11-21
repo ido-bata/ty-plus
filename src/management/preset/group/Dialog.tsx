@@ -8,14 +8,14 @@ import { readUserHomeOrFallback } from "@/management/preset/catalog-add/browse-s
 import type {
 	IconRule,
 	IconRuleFilter,
-} from "@/management/preset/group-catalog";
+} from "@/management/preset/group/catalog";
+import { persistFolderGroupPreset } from "@/management/preset/group/persist-folder";
 import {
 	createPresetIconDraft,
 	type PresetIconEditorDraft,
 	presetIconDraftToPresetIcon,
-} from "@/management/preset/icon-editor";
-import { persistFolderGroupPreset } from "@/management/preset/persist-folder-group";
-import { Dialog } from "@/management/preset/tool-shell/Dialog";
+} from "@/management/preset/icon/draft";
+import { Dialog } from "@/management/preset/tool-shell/dialog/ToolDialog";
 import { listPresets } from "@/management/preset/use-cases";
 import { ConditionRulesSection } from "./ConditionRulesSection";
 import type { ConditionRule } from "./condition-rule-helpers";

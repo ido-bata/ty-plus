@@ -260,13 +260,13 @@ const TEMPORARY_ALLOWLIST: readonly AllowlistEntry[] = [
 
 const PERMANENT_BOUNDARIES: readonly PermanentBoundaryEntry[] = [
 	{
-		file: "src/management/ipc/operation-worker-node-runtime.ts",
+		file: "src/management/ipc/operation-worker/node-runtime.ts",
 		rule: "node-fs",
 		expectedMatches: 1,
 		owner: "cep-binary-resolution",
 	},
 	{
-		file: "src/management/ipc/operation-worker-node-runtime.ts",
+		file: "src/management/ipc/operation-worker/node-runtime.ts",
 		rule: "child-process",
 		expectedMatches: 1,
 		owner: "cep-operation-worker-runner",

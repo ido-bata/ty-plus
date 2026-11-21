@@ -4,7 +4,6 @@ import { ListSelect } from "@ty-plus/ui/fields/ListSelect";
 import { ScrollArea } from "@ty-plus/ui/layout/ScrollArea";
 import { cx } from "@ty-plus/ui/util/cx";
 import { type JSX, type ReactNode, useMemo, useState } from "react";
-import { PresetIconEditor } from "@/management/preset/components/IconEditor";
 import type { Preset } from "@/management/preset/contract";
 import type { CodeEditorValue } from "@/management/preset/editor/Code";
 import { Editor } from "@/management/preset/editor/View";
@@ -12,7 +11,8 @@ import {
 	createPresetIconDraft,
 	type PresetIconEditorDraft,
 	presetIconDraftToPresetIcon,
-} from "@/management/preset/icon-editor";
+} from "@/management/preset/icon/draft";
+import { PresetIconEditor } from "@/management/preset/icon/Editor";
 import { MarkdownLiveEditor } from "@/management/preset/markdown/LiveEditor";
 import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
 import { glyphBoxFillClass } from "@/management/preset/workspace/glyph-classes";

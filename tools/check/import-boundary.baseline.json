@@ -54,7 +54,7 @@
 		"reason": "management must not import function implementation directly"
 	},
 	{
-		"from": "src/management/preset/onboarding-service.ts",
+		"from": "src/management/preset/onboarding/service.ts",
 		"to": "../../function/widget",
 		"specifier": "../../function/widget",
 		"reason": "management must not import function implementation directly"

@@ -90,7 +90,7 @@
 		"reason": "management must not import function implementation directly"
 	},
 	{
-		"from": "src/management/preset/onboarding-directory.ts",
+		"from": "src/management/preset/onboarding/directory.ts",
 		"to": "@/function/onboarding/steps-data",
 		"specifier": "@/function/onboarding/steps-data",
 		"reason": "management must not import function implementation directly"

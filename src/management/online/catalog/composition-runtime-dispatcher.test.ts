@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import type { OperationWorkerComposition } from "@/management/ipc/operation-worker-composition";
+import type { OperationWorkerComposition } from "@/management/ipc/operation-worker/composition";
 import {
 	CatalogSearchMethod,
 	type CatalogSearchRequestDTO,

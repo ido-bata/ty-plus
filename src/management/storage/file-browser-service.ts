@@ -4,7 +4,7 @@ import {
 } from "@/management/ae/cep/runtime";
 import type { Preset, PresetType } from "@/management/preset/contract";
 import { presetIconImage } from "@/management/preset/contract";
-import { coercePersistedPresetIcon } from "@/management/preset/icon-data";
+import { coercePersistedPresetIcon } from "@/management/preset/icon/normalize";
 import {
 	findSiblingImagePathForPresetFile,
 	type SiblingListingEntry,

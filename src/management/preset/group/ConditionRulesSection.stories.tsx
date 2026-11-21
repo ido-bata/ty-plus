@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { createPresetIconDraft } from "@/management/preset/icon-editor";
+import { createPresetIconDraft } from "@/management/preset/icon/draft";
 import { css } from "@/styled-system/css";
 import { ConditionRulesSection } from "./ConditionRulesSection";
 import type { ConditionRule } from "./condition-rule-helpers";

@@ -1,7 +1,7 @@
 import { Button } from "@ty-plus/ui";
 import { Plus } from "lucide-react";
 import type { JSX } from "react";
-import type { PresetIconEditorDraft } from "@/management/preset/icon-editor";
+import type { PresetIconEditorDraft } from "@/management/preset/icon/draft";
 import { AccordionSection } from "@/management/setting/dialog/sections/AccordionSection";
 import { css } from "@/styled-system/css";
 import { BaseIconCard } from "./BaseIconCard";
