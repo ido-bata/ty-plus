@@ -48,7 +48,7 @@ import { saveCepShellLocale } from "@/management/i18n/locale-storage";
 import {
 	importOnboardingPresets,
 	type OnboardingImportOptions,
-} from "@/management/preset/onboarding-service";
+} from "@/management/preset/onboarding/service";
 import { getLocalPresetCatalog } from "@/management/preset/repository/local-catalog";
 import { completeOnboardingStorage } from "@/management/setting/onboarding/complete";
 import {
@@ -78,7 +78,7 @@ import {
 	readScopedDirectory,
 	resolveScopedParentDirectory,
 } from "@/management/storage/read/scoped-directory";
-import { DirectoryBrowser } from "@/management/storage/ui/DirectoryBrowser";
+import { FileEntryList } from "@/management/storage/ui/file-entry/FileEntryList";
 import type { WidgetRecord } from "@/management/widget/record/types";
 import type { Layout } from "@/management/workspace/layout/grid-document";
 import { publishShellMessage } from "@/management/workspace/messaging/publish-shell-message";
@@ -741,7 +741,7 @@ function FileStepBrowser({
 	return (
 		<div className={fileStepBodyClass}>
 			<p className={stepBodyTextClass}>{t(`step.${kind}.body`)}</p>
-			<DirectoryBrowser
+			<FileEntryList
 				entries={[...folderEntries]}
 				fileNameFilter={STEP_EXTENSIONS[kind]}
 				loading={loadingFiles}

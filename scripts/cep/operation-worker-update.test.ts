@@ -2,7 +2,7 @@ import { spawn } from "node:child_process";
 import { promises as fileSystem } from "node:fs";
 import path from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import type { OperationWorkerManifest } from "../../src/management/ipc/operation-worker-binary";
+import type { OperationWorkerManifest } from "../../src/management/ipc/operation-worker/binary";
 import { replaceBundleUnderLease } from "./install-cep-dev";
 import {
 	InstallLeaseDeadlineError,

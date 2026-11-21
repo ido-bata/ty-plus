@@ -1,4 +1,4 @@
-import { ScrollArea } from "@ty-plus/ui";
+import { ScrollArea } from "@ty-plus/ui/layout/ScrollArea";
 import type { JSX, ReactNode } from "react";
 import { css } from "@/styled-system/css";
 

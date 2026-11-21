@@ -41,11 +41,14 @@ function HostFooter({ state }: { state: SurfaceState }): JSX.Element | null {
 					borderColor: "border.subtle",
 					paddingTop: "var(--ty-space-2)",
 					fontSize: "text-xs",
-					color: "var(--text-muted)",
+					color: "var(--color-text-muted)",
 				})}
 			>
 				<span
-					className={css({ fontWeight: "semibold", color: "var(--text-main)" })}
+					className={css({
+						fontWeight: "semibold",
+						color: "var(--color-text-primary)",
+					})}
 				>
 					Comp info
 				</span>
@@ -64,8 +67,8 @@ const infoContainerClass = css({
 	width: "full",
 	flexDirection: "column",
 	overflow: "auto",
-	borderRadius: "var(--radius)",
-	backgroundColor: "var(--widget-background)",
+	borderRadius: "var(--radius-shell)",
+	backgroundColor: "var(--color-surface-widget)",
 	padding: "var(--ty-ws-grid-padding-clamp)",
 });
 
@@ -160,7 +163,9 @@ function _PresetMeta({
 						fontSize: "text-xs",
 					})}
 				>
-					<span className={css({ flexShrink: 0, color: "var(--text-muted)" })}>
+					<span
+						className={css({ flexShrink: 0, color: "var(--color-text-muted)" })}
+					>
 						File
 					</span>
 					<span
@@ -168,7 +173,7 @@ function _PresetMeta({
 							minWidth: 0,
 							wordBreak: "break-all",
 							textAlign: "right",
-							color: "var(--text-main)",
+							color: "var(--color-text-primary)",
 						})}
 					>
 						{fileName ?? "-"}
@@ -181,8 +186,10 @@ function _PresetMeta({
 						fontSize: "text-xs",
 					})}
 				>
-					<span className={css({ color: "var(--text-muted)" })}>Kind</span>
-					<span className={css({ color: "var(--text-main)" })}>
+					<span className={css({ color: "var(--color-text-muted)" })}>
+						Kind
+					</span>
+					<span className={css({ color: "var(--color-text-primary)" })}>
 						{kindLabel ?? "-"}
 					</span>
 				</div>

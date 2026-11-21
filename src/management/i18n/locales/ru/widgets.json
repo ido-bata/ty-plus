@@ -136,7 +136,8 @@
 			"importOnly": "Импорт",
 			"selectFile": "Выбрать",
 			"deselect": "Отменить выбор",
-			"runBlockedMissingAsset": "Файл пресета отсутствует на диске — запуск отключён."
+			"runBlockedMissingAsset": "Файл пресета отсутствует на диске — запуск отключён.",
+			"runBlockedUnverifiableAsset": "Не удалось проверить файл пресета (хост недоступен) — повторить"
 		},
 		"path": {
 			"pickFolderPrompt": "Выберите папку",
@@ -158,6 +159,7 @@
 			"error": "Предпросмотр недоступен"
 		},
 		"toolbar": {
+			"refresh": "Обновить",
 			"detailedFilters": "Фильтры",
 			"viewModeLegend": "Режим просмотра",
 			"listView": "Список",
@@ -195,6 +197,7 @@
 			"noItems": "Нет элементов"
 		},
 		"entry": {
+			"goUp": "Вверх",
 			"defaultFolderSubtitle": "По умолчанию",
 			"parentRowName": "Наверх",
 			"browseDrives": "Обзор дисков",

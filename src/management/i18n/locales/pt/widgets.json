@@ -136,7 +136,8 @@
 			"importOnly": "Importar",
 			"selectFile": "Selecionar",
 			"deselect": "Desselecionar",
-			"runBlockedMissingAsset": "O recurso do preset não está no disco — a execução está desativada."
+			"runBlockedMissingAsset": "O recurso do preset não está no disco — a execução está desativada.",
+			"runBlockedUnverifiableAsset": "Não foi possível verificar o recurso do preset (host indisponível) — tentar novamente"
 		},
 		"path": {
 			"pickFolderPrompt": "Selecione uma pasta",
@@ -158,6 +159,7 @@
 			"error": "Pré-visualização indisponível"
 		},
 		"toolbar": {
+			"refresh": "Atualizar",
 			"detailedFilters": "Filtros",
 			"viewModeLegend": "Modo de visualização",
 			"listView": "Visualização em lista",
@@ -195,6 +197,7 @@
 			"noItems": "Nenhum item"
 		},
 		"entry": {
+			"goUp": "Subir",
 			"defaultFolderSubtitle": "Padrão",
 			"parentRowName": "Acima",
 			"browseDrives": "Procurar unidades",

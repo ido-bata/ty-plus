@@ -5,8 +5,8 @@ import {
 	createLogger,
 	getEntries,
 } from "@/management/debug/logger";
-import type { OperationWorkerManifest } from "@/management/ipc/operation-worker-binary";
-import type { WorkerCorrelation } from "@/management/ipc/operation-worker-runner";
+import type { OperationWorkerManifest } from "@/management/ipc/operation-worker/binary";
+import type { WorkerCorrelation } from "@/management/ipc/operation-worker/runner";
 import { createBootLifecycleObserver } from "./cloud-gateway-boot";
 
 /**

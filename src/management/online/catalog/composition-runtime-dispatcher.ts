@@ -1,4 +1,4 @@
-import type { OperationWorkerComposition } from "@/management/ipc/operation-worker-composition";
+import type { OperationWorkerComposition } from "@/management/ipc/operation-worker/composition";
 import type { RuntimeRequestDispatcher } from "@/management/ipc/request";
 import {
 	CatalogSearchMethod,

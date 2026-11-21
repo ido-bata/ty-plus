@@ -6,8 +6,8 @@
  * The archive version of this widget used single-click to navigate into a
  * subdirectory; a regression (commit `699f4785`-style) inverted this so the
  * row click only selected the file/dir, and double-click was the only way
- * to navigate. The shared `DirectoryBrowser` component is covered by
- * `src/management/storage/ui/DirectoryBrowser.test.tsx`; this test covers
+ * to navigate. The shared `FileEntryList` component is covered by
+ * `src/management/storage/ui/FileEntryList.test.tsx`; this test covers
  * the inline row rendering that lives only in the panel widget
  * (`Component.tsx`), which the shared component does NOT render.
  */
@@ -121,6 +121,14 @@ vi.mock("@/management/online/notification/service", () => ({
 	notificationStore: { add: vi.fn() },
 }));
 
+vi.mock("@ty-plus/ui", async (importOriginal) => {
+	const actual = await importOriginal<typeof import("@ty-plus/ui")>();
+	return {
+		...actual,
+		ViewModeToggle: () => <div data-testid="view-mode-toggle" />,
+	};
+});
+
 vi.mock("@/management/preset", () => ({
 	CatalogBrowserShell: ({
 		children,
@@ -134,7 +142,6 @@ vi.mock("@/management/preset", () => ({
 			{children}
 		</div>
 	),
-	CatalogBrowserViewModeToggle: () => <div data-testid="view-mode-toggle" />,
 	ICON_CELL_BASE_REM: 4,
 	ICON_GRID_CLASS: "icon-grid",
 	ICON_GRID_SCALE_LS_KEY: "ty-plus.iconGridScale",

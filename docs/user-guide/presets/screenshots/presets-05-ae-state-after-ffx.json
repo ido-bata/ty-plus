@@ -1,1 +1,7 @@
-{"activeItem":"ty-plus verification preset target","selectedLayer":"ty-plus verification text","effectCount":3,"effects":["Duration","Intensity","(Transform)"],"positionKeys":2}
+{
+	"activeItem": "ty-plus verification preset target",
+	"selectedLayer": "ty-plus verification text",
+	"effectCount": 3,
+	"effects": ["Duration", "Intensity", "(Transform)"],
+	"positionKeys": 2
+}

@@ -130,6 +130,7 @@
 			"runSuccess": "Executed: {{presetId}}",
 			"runFailed": "Failed: {{message}}",
 			"runBlockedMissingAsset": "Preset asset is missing on disk — run is disabled.",
+			"runBlockedUnverifiableAsset": "Could not verify preset asset (host unavailable) — retry",
 			"run": "Run",
 			"importRun": "Import & Run",
 			"openFolder": "Open folder",
@@ -158,6 +159,7 @@
 			"error": "Preview unavailable"
 		},
 		"toolbar": {
+			"refresh": "Refresh",
 			"detailedFilters": "Filters",
 			"viewModeLegend": "View mode",
 			"listView": "List view",
@@ -195,6 +197,7 @@
 			"noItems": "No items"
 		},
 		"entry": {
+			"goUp": "Go up",
 			"defaultFolderSubtitle": "Default",
 			"parentRowName": "Up",
 			"browseDrives": "Browse drives",

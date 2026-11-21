@@ -1,5 +1,6 @@
+import { Input } from "@ty-plus/ui/fields/Input";
 import { Icon } from "@ty-plus/ui/icons/Icon";
-import { cx, Input } from "@ty-plus/ui/index";
+import { cx } from "@ty-plus/ui/util/cx";
 import type { LucideIcon } from "lucide-react";
 import { X } from "lucide-react";
 import type {
@@ -13,6 +14,12 @@ import { css } from "@/styled-system/css";
 
 export type SearchFieldProps = {
 	icon: LucideIcon;
+	/**
+	 * Control height in spacing units, matching the shared control scale.
+	 * Callers must not override the height with `className` — the field's
+	 * height is part of its contract.
+	 */
+	uiSize?: "sm" | "md" | "lg";
 	/**
 	 * When true, the inner input is uncontrolled (no `value` passed through to DOM).
 	 * Use with `defaultValue` when a parent listens on bubble (e.g. `data-ws-action` + container `input`).
@@ -53,10 +60,17 @@ const root = css({
 	transitionProperty: "border-color,box-shadow",
 	_focusWithin: {
 		borderColor: "interactive.focus",
+		boxShadow: "var(--color-focus-ring)",
 	},
 });
 
 const iconSlot = css({ flexShrink: 0, color: "text.muted" });
+
+const sizeMap: Record<NonNullable<SearchFieldProps["uiSize"]>, string> = {
+	sm: css({ height: "7", minHeight: "7", paddingBlock: 0 }),
+	md: css({ height: "8", minHeight: "8", paddingBlock: 0 }),
+	lg: css({ height: "9", minHeight: "9", paddingBlock: 0 }),
+};
 
 const innerInput = css({
 	minWidth: 0,
@@ -99,14 +113,21 @@ const clearButton = css({
 	borderRadius: "shell-sm",
 	padding: "0.5",
 	color: "text.muted",
+	outline: "none",
+	transitionProperty: "colors",
 	_hover: {
 		backgroundColor: "interactive.hover",
 		color: "text.primary",
+	},
+	_focusVisible: {
+		boxShadow: "var(--color-focus-ring)",
+		outlineOffset: "0",
 	},
 });
 
 export function SearchField({
 	icon,
+	uiSize = "md",
 	uncontrolled = false,
 	className,
 	inputClassName,
@@ -147,7 +168,7 @@ export function SearchField({
 	};
 
 	return (
-		<div className={cx(root, className)}>
+		<div className={cx(root, sizeMap[uiSize], className)}>
 			<Icon icon={icon} size={10} className={iconSlot} aria-hidden />
 			<Input
 				ref={inputRef}

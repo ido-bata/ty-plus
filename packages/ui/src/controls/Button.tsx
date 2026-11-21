@@ -14,7 +14,16 @@ type ButtonVariant =
 	| "secondary"
 	| "outline"
 	| "ghost"
-	| "danger";
+	| "danger"
+	/**
+	 * No chrome of its own: transparent surface, no border, inherited text
+	 * colour and weight. Use it when the button IS the whole surface of a
+	 * composite (a list row, a tile) and the surrounding container owns the
+	 * border, fill, and hover treatment. It keeps the shared focus ring and
+	 * the shared size scale, so the control still behaves like every other
+	 * button in the app.
+	 */
+	| "bare";
 type ButtonSize = "sm" | "md" | "lg";
 
 type ButtonOwnProps = {
@@ -97,7 +106,7 @@ const variants: Record<ButtonVariant, string> = {
 		_hover: { backgroundColor: "interactive.hover" },
 		_active: { backgroundColor: "interactive.active" },
 		_focusVisible: {
-			boxShadow: "0 0 0 2px var(--color-interactive-focus)",
+			boxShadow: "var(--color-focus-ring)",
 			outlineOffset: "0",
 		},
 	}),
@@ -107,7 +116,7 @@ const variants: Record<ButtonVariant, string> = {
 		_hover: { opacity: 0.9 },
 		_active: { opacity: 0.85 },
 		_focusVisible: {
-			boxShadow: "0 0 0 2px var(--color-interactive-focus)",
+			boxShadow: "var(--color-focus-ring)",
 			outlineOffset: "0",
 		},
 	}),
@@ -120,7 +129,7 @@ const variants: Record<ButtonVariant, string> = {
 		_hover: { backgroundColor: "interactive.hover" },
 		_active: { backgroundColor: "interactive.active" },
 		_focusVisible: {
-			boxShadow: "0 0 0 2px var(--color-interactive-focus)",
+			boxShadow: "var(--color-focus-ring)",
 			outlineOffset: "0",
 		},
 	}),
@@ -133,7 +142,7 @@ const variants: Record<ButtonVariant, string> = {
 		_hover: { backgroundColor: "interactive.hover" },
 		_active: { backgroundColor: "interactive.active" },
 		_focusVisible: {
-			boxShadow: "0 0 0 2px var(--color-interactive-focus)",
+			boxShadow: "var(--color-focus-ring)",
 			outlineOffset: "0",
 		},
 	}),
@@ -150,8 +159,20 @@ const variants: Record<ButtonVariant, string> = {
 		_active: { backgroundColor: "interactive.active" },
 		_focusVisible: {
 			borderColor: "interactive.focus",
-			boxShadow: "inset 0 0 0 1px var(--color-interactive-focus)",
+			boxShadow: "var(--color-focus-ring)",
 			outline: "none",
+		},
+	}),
+	bare: css({
+		backgroundColor: "transparent",
+		borderWidth: "0",
+		color: "text.primary",
+		fontWeight: "normal",
+		_hover: { backgroundColor: "transparent" },
+		_active: { backgroundColor: "transparent" },
+		_focusVisible: {
+			boxShadow: "var(--color-focus-ring)",
+			outlineOffset: "0",
 		},
 	}),
 	danger: css({
@@ -162,7 +183,7 @@ const variants: Record<ButtonVariant, string> = {
 		borderColor: "border.subtle",
 		_hover: { backgroundColor: "interactive.hover" },
 		_focusVisible: {
-			boxShadow: "0 0 0 2px var(--color-interactive-focus)",
+			boxShadow: "var(--color-focus-ring)",
 			outlineOffset: "0",
 		},
 	}),

@@ -1,9 +1,9 @@
 import type { JSX } from "react";
 import { readUserHomeOrFallback } from "@/management/preset/catalog-add/browse-start-dir";
-import { PresetIconEditor } from "@/management/preset/components/IconEditor";
 import type { Preset } from "@/management/preset/contract";
-import type { PresetIconEditorDraft } from "@/management/preset/icon-editor";
-import { presetIconDraftToPresetIcon } from "@/management/preset/icon-editor";
+import type { PresetIconEditorDraft } from "@/management/preset/icon/draft";
+import { presetIconDraftToPresetIcon } from "@/management/preset/icon/draft";
+import { PresetIconEditor } from "@/management/preset/icon/Editor";
 import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
 import { glyphBoxFillClass } from "@/management/preset/workspace/glyph-classes";
 import { css } from "@/styled-system/css";

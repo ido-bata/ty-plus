@@ -2,7 +2,7 @@ import type { Preset } from "@/management/preset/contract";
 import {
 	coercePersistedPresetIcon,
 	normalizeRecordCatalogIds,
-} from "@/management/preset/icon-data";
+} from "@/management/preset/icon/normalize";
 import { readJson, writeJson } from "@/management/storage/persistence";
 
 const MAX_ROOT_FILES_PER_CHUNK = 400;

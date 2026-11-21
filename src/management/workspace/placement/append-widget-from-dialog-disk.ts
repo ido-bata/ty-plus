@@ -46,12 +46,12 @@
 import type { WidgetType } from "@/function/widget";
 import { readGroupJson } from "@/management/catalog/json-files";
 import { createLogger } from "@/management/debug";
+import type { Preset } from "@/management/preset/contract";
+import { parseGroupFromText } from "@/management/preset/group/catalog";
 import {
 	PresetCatalogParseError,
 	parsePresetCatalogJsonTextStrict,
-} from "@/management/preset/catalog-json-text";
-import type { Preset } from "@/management/preset/contract";
-import { parseGroupFromText } from "@/management/preset/group-catalog";
+} from "@/management/preset/repository/json-text";
 import { indexFromPanelId, readPresetsJson } from "@/management/storage";
 import {
 	readWidgetRecordsFileStrict,

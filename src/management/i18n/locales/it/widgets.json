@@ -136,7 +136,8 @@
 			"importOnly": "Importa",
 			"selectFile": "Seleziona",
 			"deselect": "Deseleziona",
-			"runBlockedMissingAsset": "La risorsa del preset non è presente su disco — esecuzione disabilitata."
+			"runBlockedMissingAsset": "La risorsa del preset non è presente su disco — esecuzione disabilitata.",
+			"runBlockedUnverifiableAsset": "Impossibile verificare la risorsa del preset (host non raggiungibile) — riprova"
 		},
 		"path": {
 			"pickFolderPrompt": "Seleziona una cartella",
@@ -158,6 +159,7 @@
 			"error": "Anteprima non disponibile"
 		},
 		"toolbar": {
+			"refresh": "Aggiorna",
 			"detailedFilters": "Filtri",
 			"viewModeLegend": "Modalità di visualizzazione",
 			"listView": "Vista elenco",
@@ -195,6 +197,7 @@
 			"noItems": "Nessun elemento"
 		},
 		"entry": {
+			"goUp": "Vai su",
 			"defaultFolderSubtitle": "Predefinita",
 			"parentRowName": "Su",
 			"browseDrives": "Esplora unità",

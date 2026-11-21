@@ -3,7 +3,7 @@ import { useCep } from "@/management/ae/cep/contexts/Context";
 import {
 	installCepJsonContextMenuRewrite,
 	registerCepJsonContextMenuSurface,
-} from "@/management/dialog/dialogs/context-menu";
+} from "@/management/dialog/context-menu";
 import {
 	type EditorState,
 	toggleBold,

@@ -36,8 +36,8 @@ const {
 
 vi.mock("@/management/preset", async () => {
 	const { Dialog } = await vi.importActual<
-		typeof import("@/management/preset/tool-shell/Dialog")
-	>("@/management/preset/tool-shell/Dialog");
+		typeof import("@/management/preset/tool-shell/dialog/ToolDialog")
+	>("@/management/preset/tool-shell/dialog/ToolDialog");
 	return {
 		ToolDialog: Dialog,
 		readUserHomeOrFallback: () => "C:\\Users\\test",
@@ -164,7 +164,7 @@ vi.mock("@/management/workspace/persistence/store", () => ({
 	readSettings: mockReadSettings,
 }));
 
-vi.mock("../../../management/preset/tool-shell/archive-layout", () => ({
+vi.mock("../../../management/preset/authoring-layout", () => ({
 	AuthoringGrid: ({ children }: { children: ReactNode }) => (
 		<div data-testid="authoring-grid">{children}</div>
 	),
@@ -232,7 +232,7 @@ vi.mock("@ty-plus/ui/fields/Input", () => ({
 	),
 }));
 
-vi.mock("../../../management/preset/components/IconEditor", () => ({
+vi.mock("../../../management/preset/icon/Editor", () => ({
 	PresetIconEditor: () => (
 		<div data-testid="preset-icon-editor">Icon Editor</div>
 	),

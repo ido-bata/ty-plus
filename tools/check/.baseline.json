@@ -1,10 +1,74 @@
 {
-	"src/management/widget/workspace/TileContent.test.tsx:13 :: management -> function (management may import only from function minimal index)": [
-		{
-			"file": "C:\\Users\\rebui\\Desktop\\ty-plus\\src\\management\\widget\\workspace\\TileContent.test.tsx",
-			"reason": "management -> function (management may import only from function minimal index)",
-			"line": "vi,",
-			"lineNumber": 13
-		}
-	]
+  "src/management/panel/boot.tsx:5 :: management -> function (management may import only the function slice's public vocabulary)": [
+    {
+      "file": "/Users/rebui/work/ty-plus-327/src/management/panel/boot.tsx",
+      "reason": "management -> function (management may import only the function slice's public vocabulary)",
+      "line": "* - Theme and appearance bootstrap",
+      "lineNumber": 5
+    }
+  ],
+  "src/management/panel/boot.tsx:6 :: management -> function (management may import only the function slice's public vocabulary)": [
+    {
+      "file": "/Users/rebui/work/ty-plus-327/src/management/panel/boot.tsx",
+      "reason": "management -> function (management may import only the function slice's public vocabulary)",
+      "line": "*/",
+      "lineNumber": 6
+    }
+  ],
+  "src/management/preset/onboarding/directory.ts:1 :: management -> function (management may import only the function slice's public vocabulary)": [
+    {
+      "file": "/Users/rebui/work/ty-plus-327/src/management/preset/onboarding/directory.ts",
+      "reason": "management -> function (management may import only the function slice's public vocabulary)",
+      "line": "import type { FilePickStep } from \"@/function/onboarding/steps-data\";",
+      "lineNumber": 1
+    }
+  ],
+  "src/management/workspace/events/handler.ts:1 :: management -> function (management may import only the function slice's public vocabulary)": [
+    {
+      "file": "/Users/rebui/work/ty-plus-327/src/management/workspace/events/handler.ts",
+      "reason": "management -> function (management may import only the function slice's public vocabulary)",
+      "line": "import {",
+      "lineNumber": 1
+    }
+  ],
+  "src/management/workspace/events/handler.ts:7 :: management -> function (management may import only the function slice's public vocabulary)": [
+    {
+      "file": "/Users/rebui/work/ty-plus-327/src/management/workspace/events/handler.ts",
+      "reason": "management -> function (management may import only the function slice's public vocabulary)",
+      "line": "import {",
+      "lineNumber": 7
+    }
+  ],
+  "src/management/dialog/routes.tsx:5 :: management -> function (management may import only the function slice's public vocabulary)": [
+    {
+      "file": "/Users/rebui/work/ty-plus-327/src/management/dialog/routes.tsx",
+      "reason": "management -> function (management may import only the function slice's public vocabulary)",
+      "line": "import { Dialog as AnimationDialog } from \"@/function/preset/animation/Dialog\";",
+      "lineNumber": 5
+    }
+  ],
+  "src/management/dialog/routes.tsx:6 :: management -> function (management may import only the function slice's public vocabulary)": [
+    {
+      "file": "/Users/rebui/work/ty-plus-327/src/management/dialog/routes.tsx",
+      "reason": "management -> function (management may import only the function slice's public vocabulary)",
+      "line": "import { Dialog as CodeDialog } from \"@/function/preset/code/Dialog\";",
+      "lineNumber": 6
+    }
+  ],
+  "src/management/dialog/routes.tsx:7 :: management -> function (management may import only the function slice's public vocabulary)": [
+    {
+      "file": "/Users/rebui/work/ty-plus-327/src/management/dialog/routes.tsx",
+      "reason": "management -> function (management may import only the function slice's public vocabulary)",
+      "line": "import { Dialog as FootageDialog } from \"@/function/preset/footage/Dialog\";",
+      "lineNumber": 7
+    }
+  ],
+  "src/management/dialog/routes.tsx:8 :: management -> function (management may import only the function slice's public vocabulary)": [
+    {
+      "file": "/Users/rebui/work/ty-plus-327/src/management/dialog/routes.tsx",
+      "reason": "management -> function (management may import only the function slice's public vocabulary)",
+      "line": "import { Dialog as LayerCompDialog } from \"@/function/preset/layer-comp/Dialog\";",
+      "lineNumber": 8
+    }
+  ]
 }

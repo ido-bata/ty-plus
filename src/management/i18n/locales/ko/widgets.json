@@ -136,7 +136,8 @@
 			"importOnly": "가져오기",
 			"selectFile": "선택",
 			"deselect": "선택 해제",
-			"runBlockedMissingAsset": "프리셋 자산이 디스크에 없습니다 — 실행이 비활성화되었습니다."
+			"runBlockedMissingAsset": "프리셋 자산이 디스크에 없습니다 — 실행이 비활성화되었습니다.",
+			"runBlockedUnverifiableAsset": "프리셋 자산을 확인할 수 없습니다 (호스트 사용 불가) — 다시 시도"
 		},
 		"path": {
 			"pickFolderPrompt": "폴더 선택",
@@ -158,6 +159,7 @@
 			"error": "미리보기 사용 불가"
 		},
 		"toolbar": {
+			"refresh": "새로 고침",
 			"detailedFilters": "필터",
 			"viewModeLegend": "보기 모드",
 			"listView": "목록 보기",
@@ -195,6 +197,7 @@
 			"noItems": "항목 없음"
 		},
 		"entry": {
+			"goUp": "상위 폴더로",
 			"defaultFolderSubtitle": "기본",
 			"parentRowName": "상위",
 			"browseDrives": "드라이브 찾아보기",

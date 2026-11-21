@@ -1,0 +1,1423 @@
+[
+	{
+		"file": "src/function/onboarding/View.tsx",
+		"line": 1,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/index\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/function/onboarding/View.tsx",
+		"line": 2,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/util/keyboard\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/function/preset/animation/Dialog.tsx",
+		"line": 2,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/controls/Button\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/function/preset/animation/Dialog.tsx",
+		"line": 3,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/fields/Input\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/function/preset/animation/Dialog.tsx",
+		"line": 354,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/function/preset/code/Dialog.tsx",
+		"line": 2,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/fields/Input\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/function/preset/code/Dialog.tsx",
+		"line": 3,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/fields/PathField\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/function/preset/layer-comp/Dialog.tsx",
+		"line": 2,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/fields/Input\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/function/preset/layer-comp/Dialog.tsx",
+		"line": 3,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/fields/PathField\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/function/widget/core/align/Component.tsx",
+		"line": 1,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/interaction/use-anchor-gesture\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/function/widget/core/align/Component.tsx",
+		"line": 2,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/function/widget/core/align/Component.tsx",
+		"line": 146,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/function/widget/core/align/Component.tsx",
+		"line": 193,
+		"rule": "raw-svg",
+		"message": "raw <svg> is banned; use `Icon` with a lucide icon",
+		"reason": "hand-drawn icon predates the shared design system; replace it with `Icon` and a lucide icon"
+	},
+	{
+		"file": "src/function/widget/core/align/Component.tsx",
+		"line": 282,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/function/widget/core/align/Component.tsx",
+		"line": 291,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/function/widget/core/align/Component.tsx",
+		"line": 300,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/function/widget/core/align/Component.tsx",
+		"line": 309,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/function/widget/core/anchor-point/Component.tsx",
+		"line": 1,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/interaction/use-anchor-gesture\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/function/widget/core/anchor-point/Component.tsx",
+		"line": 82,
+		"rule": "raw-svg",
+		"message": "raw <svg> is banned; use `Icon` with a lucide icon",
+		"reason": "hand-drawn icon predates the shared design system; replace it with `Icon` and a lucide icon"
+	},
+	{
+		"file": "src/function/widget/core/anchor-point/Component.tsx",
+		"line": 120,
+		"rule": "inline-style",
+		"message": "inline style sets stroke — appearance must come from css() and the token system",
+		"reason": "inline style sets appearance; move it into css() and the token system"
+	},
+	{
+		"file": "src/function/widget/core/anchor-point/Component.tsx",
+		"line": 202,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/function/widget/core/easing/Component.tsx",
+		"line": 2,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/util/keyboard\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/function/widget/core/easing/Component.tsx",
+		"line": 753,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/function/widget/core/easing/Component.tsx",
+		"line": 759,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/function/widget/core/easing/Component.tsx",
+		"line": 765,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/function/widget/core/easing/Component.tsx",
+		"line": 771,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/function/widget/core/layout-lock/Component.tsx",
+		"line": 45,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/function/widget/core/menu/Component.tsx",
+		"line": 456,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/function/widget/core/menu/Component.tsx",
+		"line": 511,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/function/widget/utility/font-viewer/Component.tsx",
+		"line": 2,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/fields/SearchField\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/function/widget/utility/font-viewer/Component.tsx",
+		"line": 3,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/function/widget/utility/font-viewer/Component.tsx",
+		"line": 161,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/function/widget/utility/font-viewer/Component.tsx",
+		"line": 349,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/function/widget/utility/font-viewer/Component.tsx",
+		"line": 559,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/function/widget/utility/font-viewer/Component.tsx",
+		"line": 593,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/function/widget/utility/info/comp-sections.tsx",
+		"line": 41,
+		"rule": "inline-style",
+		"message": "inline style sets background — appearance must come from css() and the token system",
+		"reason": "inline style sets appearance; move it into css() and the token system"
+	},
+	{
+		"file": "src/function/widget/utility/quick-actions/row-components.tsx",
+		"line": 93,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/function/widget/utility/quick-actions/row-components.tsx",
+		"line": 132,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/function/widget/utility/quick-actions/row-components.tsx",
+		"line": 186,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/management/debug/console/ui/Panel.tsx",
+		"line": 2,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/icons\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/debug/console/ui/Panel.tsx",
+		"line": 3,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/debug/console/ui/Panel.tsx",
+		"line": 4,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/util/keyboard\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/dialog/shell/Content.tsx",
+		"line": 1,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/dialog/shell/Footer.tsx",
+		"line": 29,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/dialog/shell/Header.tsx",
+		"line": 1,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/dialog/shell/Layout.tsx",
+		"line": 1,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/dialog/Root.tsx",
+		"line": 74,
+		"rule": "inline-style",
+		"message": "inline style sets fontSize — appearance must come from css() and the token system",
+		"reason": "inline style sets appearance; move it into css() and the token system"
+	},
+	{
+		"file": "src/management/dialog/Root.tsx",
+		"line": 77,
+		"rule": "inline-style",
+		"message": "inline style sets color — appearance must come from css() and the token system",
+		"reason": "inline style sets appearance; move it into css() and the token system"
+	},
+	{
+		"file": "src/management/dialog/Root.tsx",
+		"line": 79,
+		"rule": "inline-style",
+		"message": "inline style sets background — appearance must come from css() and the token system",
+		"reason": "inline style sets appearance; move it into css() and the token system"
+	},
+	{
+		"file": "src/management/dialog/Root.tsx",
+		"line": 115,
+		"rule": "inline-style",
+		"message": "inline style sets fontSize — appearance must come from css() and the token system",
+		"reason": "inline style sets appearance; move it into css() and the token system"
+	},
+	{
+		"file": "src/management/dialog/Root.tsx",
+		"line": 116,
+		"rule": "inline-style",
+		"message": "inline style sets color — appearance must come from css() and the token system",
+		"reason": "inline style sets appearance; move it into css() and the token system"
+	},
+	{
+		"file": "src/management/dialog/Root.tsx",
+		"line": 118,
+		"rule": "inline-style",
+		"message": "inline style sets background — appearance must come from css() and the token system",
+		"reason": "inline style sets appearance; move it into css() and the token system"
+	},
+	{
+		"file": "src/management/online/catalog/Dialog.tsx",
+		"line": 1,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/controls/Button\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/online/catalog/Dialog.tsx",
+		"line": 2,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/controls/IconButton\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/online/catalog/Dialog.tsx",
+		"line": 3,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/fields/SearchField\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/online/catalog/Dialog.tsx",
+		"line": 4,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/icons/Icon\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/online/catalog/Dialog.tsx",
+		"line": 5,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/online/catalog/Dialog.tsx",
+		"line": 1082,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/management/online/catalog/Dialog.tsx",
+		"line": 1090,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/management/online/catalog/DownloadProgressIconButton.tsx",
+		"line": 1,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/controls/IconButton\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/online/catalog/DownloadProgressIconButton.tsx",
+		"line": 2,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/icons/Icon\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/online/catalog/DownloadProgressIconButton.tsx",
+		"line": 3,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/online/catalog/DownloadProgressIconButton.tsx",
+		"line": 186,
+		"rule": "raw-svg",
+		"message": "raw <svg> is banned; use `Icon` with a lucide icon",
+		"reason": "hand-drawn icon predates the shared design system; replace it with `Icon` and a lucide icon"
+	},
+	{
+		"file": "src/management/online/catalog/PresetLibraryEmptyState.tsx",
+		"line": 1,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/controls/IconButton\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/online/catalog/PresetLibraryEmptyState.tsx",
+		"line": 2,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/icons/Icon\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/online/notification/Center.tsx",
+		"line": 1,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/controls/IconButton\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/online/notification/Center.tsx",
+		"line": 2,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/icons/Icon\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/online/notification/Center.tsx",
+		"line": 3,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/online/notification/Center.tsx",
+		"line": 605,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/management/online/notification/Container.tsx",
+		"line": 1,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/online/notification/Container.tsx",
+		"line": 127,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/management/panel/control/status-bar/Main.tsx",
+		"line": 8,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/icons\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/panel/control/status-bar/Main.tsx",
+		"line": 20,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/panel/control/status-bar/Main.tsx",
+		"line": 213,
+		"rule": "ui-override",
+		"message": "<IconButton> is a shared @ty-plus/ui component; height, width must come from its variant/size/tone props, not className",
+		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
+	},
+	{
+		"file": "src/management/panel/control/status-bar/Main.tsx",
+		"line": 222,
+		"rule": "ui-override",
+		"message": "<IconButton> is a shared @ty-plus/ui component; height, width must come from its variant/size/tone props, not className",
+		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
+	},
+	{
+		"file": "src/management/panel/control/status-bar/Main.tsx",
+		"line": 230,
+		"rule": "ui-override",
+		"message": "<IconButton> is a shared @ty-plus/ui component; height, width must come from its variant/size/tone props, not className",
+		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
+	},
+	{
+		"file": "src/management/panel/control/status-bar/Main.tsx",
+		"line": 244,
+		"rule": "ui-override",
+		"message": "<IconButton> is a shared @ty-plus/ui component; height, width must come from its variant/size/tone props, not className",
+		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
+	},
+	{
+		"file": "src/management/panel/control/status-bar/Main.tsx",
+		"line": 263,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/management/panel/control/status-bar/Main.tsx",
+		"line": 277,
+		"rule": "ui-override",
+		"message": "<IconButton> is a shared @ty-plus/ui component; height, width must come from its variant/size/tone props, not className",
+		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
+	},
+	{
+		"file": "src/management/panel/control/status-bar/Main.tsx",
+		"line": 293,
+		"rule": "ui-override",
+		"message": "<IconButton> is a shared @ty-plus/ui component; height, width must come from its variant/size/tone props, not className",
+		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
+	},
+	{
+		"file": "src/management/panel/control/status-bar/Main.tsx",
+		"line": 302,
+		"rule": "ui-override",
+		"message": "<IconButton> is a shared @ty-plus/ui component; height, width must come from its variant/size/tone props, not className",
+		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
+	},
+	{
+		"file": "src/management/panel/control/status-bar/Main.tsx",
+		"line": 310,
+		"rule": "ui-override",
+		"message": "<IconButton> is a shared @ty-plus/ui component; height, width must come from its variant/size/tone props, not className",
+		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
+	},
+	{
+		"file": "src/management/panel/control/status-bar/Main.tsx",
+		"line": 319,
+		"rule": "ui-override",
+		"message": "<IconButton> is a shared @ty-plus/ui component; height, width must come from its variant/size/tone props, not className",
+		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
+	},
+	{
+		"file": "src/management/panel/control/status-bar/Main.tsx",
+		"line": 328,
+		"rule": "ui-override",
+		"message": "<IconButton> is a shared @ty-plus/ui component; height, width must come from its variant/size/tone props, not className",
+		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
+	},
+	{
+		"file": "src/management/panel/control/Toolbar.tsx",
+		"line": 6,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/panel/control/Toolbar.tsx",
+		"line": 168,
+		"rule": "ui-override",
+		"message": "<IconButton> is a shared @ty-plus/ui component; height, width must come from its variant/size/tone props, not className",
+		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
+	},
+	{
+		"file": "src/management/panel/ErrorBoundary.tsx",
+		"line": 179,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/management/preset/authoring/Dialog.tsx",
+		"line": 1,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/fields/Input\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/preset/catalog-add/ArchiveDetailsSection.tsx",
+		"line": 2,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/fields/PathField\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/preset/catalog-add/ArchiveDetailsSection.tsx",
+		"line": 213,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/management/preset/catalog-add/FolderTabs.tsx",
+		"line": 67,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
+		"line": 692,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
+		"line": 701,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
+		"line": 710,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
+		"line": 731,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
+		"line": 740,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
+		"line": 829,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
+		"line": 847,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
+		"line": 945,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
+		"line": 982,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
+		"line": 1008,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
+		"line": 1019,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
+		"line": 1047,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
+		"line": 1070,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
+		"line": 1081,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
+		"line": 1909,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/management/preset/catalog-browser/PresetsDialogHeader.tsx",
+		"line": 239,
+		"rule": "ui-override",
+		"message": "<IconButton> is a shared @ty-plus/ui component; height, width, borderRadius, borderWidth, borderStyle, borderColor, backgroundColor, padding, color must come from its variant/size/tone props, not className",
+		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
+	},
+	{
+		"file": "src/management/preset/icon/Editor.tsx",
+		"line": 4,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/fields/ColorSwatch\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/preset/icon/Editor.tsx",
+		"line": 5,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/fields/Input\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/preset/icon/Editor.tsx",
+		"line": 6,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/fields/PathField\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/preset/icon/Editor.tsx",
+		"line": 259,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/management/preset/icon/Editor.tsx",
+		"line": 376,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/management/preset/edit/Dialog.tsx",
+		"line": 2,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/controls/Button\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/preset/edit/Dialog.tsx",
+		"line": 3,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/fields/Input\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/preset/edit/Dialog.tsx",
+		"line": 4,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/fields/PathField\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/preset/edit/Dialog.tsx",
+		"line": 5,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/shell/DialogBody\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/preset/edit/Dialog.tsx",
+		"line": 567,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/management/preset/edit/Dialog.tsx",
+		"line": 577,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/management/preset/edit/Dialog.tsx",
+		"line": 587,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/management/preset/group/ConditionRuleCard.tsx",
+		"line": 1,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/controls/Button\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/preset/group/ConditionRuleCard.tsx",
+		"line": 2,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/fields/Input\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/preset/group/ConditionRuleCard.tsx",
+		"line": 3,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/fields/RegexEditor\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/preset/group/Panel.tsx",
+		"line": 171,
+		"rule": "inline-style",
+		"message": "inline style sets backgroundColor — appearance must come from css() and the token system",
+		"reason": "inline style sets appearance; move it into css() and the token system"
+	},
+	{
+		"file": "src/management/preset/group/Panel.tsx",
+		"line": 194,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/management/preset/group/Panel.tsx",
+		"line": 200,
+		"rule": "inline-style",
+		"message": "inline style sets opacity — appearance must come from css() and the token system",
+		"reason": "inline style sets appearance; move it into css() and the token system"
+	},
+	{
+		"file": "src/management/preset/modeless/ToolHost.tsx",
+		"line": 1,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/shell/DialogBody\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/preset/tool-shell/FolderDirectoryPicker.tsx",
+		"line": 257,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/management/preset/tool-shell/FolderDirectoryPicker.tsx",
+		"line": 268,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/management/preset/tool-shell/FolderDirectoryPicker.tsx",
+		"line": 279,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/management/preset/tool-shell/FolderDirectoryPicker.tsx",
+		"line": 290,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/management/preset/workspace/glyph.tsx",
+		"line": 1,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/preset/workspace/glyph.tsx",
+		"line": 212,
+		"rule": "inline-style",
+		"message": "inline style sets fontSize — appearance must come from css() and the token system",
+		"reason": "inline style sets appearance; move it into css() and the token system"
+	},
+	{
+		"file": "src/management/preset/workspace/PresetTileButton.tsx",
+		"line": 107,
+		"rule": "ui-override",
+		"message": "<Button> is a shared @ty-plus/ui component; borderWidth, backgroundColor, borderRadius must come from its variant/size/tone props, not className",
+		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
+	},
+	{
+		"file": "src/management/setting/dialog/components/ColorTokenEditor.tsx",
+		"line": 1,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/fields/ColorField\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/setting/dialog/components/NumberTokenEditor.tsx",
+		"line": 1,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/fields/NumberField\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/setting/dialog/components/TokenEditor.tsx",
+		"line": 1,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/fields/Input\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/setting/dialog/components/TokenEditor.tsx",
+		"line": 2,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/setting/dialog/layout/SettingsGrid.tsx",
+		"line": 1,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/setting/dialog/sections/AccordionSection.tsx",
+		"line": 1,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/icons/Icon\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/setting/dialog/sections/AccordionSection.tsx",
+		"line": 2,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/setting/dialog/sections/AccordionSection.tsx",
+		"line": 102,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/management/setting/dialog/sections/BackgroundSection.tsx",
+		"line": 1,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/controls/Button\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/setting/dialog/sections/BackgroundSection.tsx",
+		"line": 2,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/fields/ListSelect\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/setting/dialog/sections/BackgroundSection.tsx",
+		"line": 3,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/setting/dialog/sections/ButtonsPreview.tsx",
+		"line": 1,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/controls/Button\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/setting/dialog/sections/ButtonsPreview.tsx",
+		"line": 2,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/controls/IconButton\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/setting/dialog/sections/ComponentPreviewSection.tsx",
+		"line": 1,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/controls/SegmentedControl\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/setting/dialog/sections/ComponentPreviewSection.tsx",
+		"line": 2,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/feedback/LoadingSpinner\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/setting/dialog/sections/ComponentPreviewSection.tsx",
+		"line": 3,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/fields/ListSelect\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/setting/dialog/sections/ComponentPreviewSection.tsx",
+		"line": 4,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/layout/ScrollArea\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/setting/dialog/sections/ComponentPreviewSection.tsx",
+		"line": 5,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/setting/dialog/sections/FeedbackSection.tsx",
+		"line": 1,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/controls/Button\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/setting/dialog/sections/FeedbackSection.tsx",
+		"line": 2,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/fields/Input\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/setting/dialog/sections/FeedbackSection.tsx",
+		"line": 3,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/fields/ListSelect\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/setting/dialog/sections/FeedbackSection.tsx",
+		"line": 4,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/fields/Textarea\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/setting/dialog/sections/FeedbackSection.tsx",
+		"line": 5,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/setting/dialog/sections/GridSection.tsx",
+		"line": 1,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/fields/NumberField\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/setting/dialog/sections/InputsPreview.tsx",
+		"line": 1,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/fields/Input\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/setting/dialog/sections/InputsPreview.tsx",
+		"line": 2,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/fields/NumberField\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/setting/dialog/sections/InputsPreview.tsx",
+		"line": 3,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/fields/PathField\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/setting/dialog/sections/InputsPreview.tsx",
+		"line": 4,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/fields/RangeField\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/setting/dialog/sections/InputsPreview.tsx",
+		"line": 5,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/fields/SearchField\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/setting/dialog/sections/InputsPreview.tsx",
+		"line": 6,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/fields/Textarea\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/setting/dialog/sections/LanguageSection.tsx",
+		"line": 1,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/fields/ListSelect\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/setting/dialog/sections/PathsSection.tsx",
+		"line": 1,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/fields/PathField\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/setting/dialog/sections/PathsSection.tsx",
+		"line": 2,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/util/keyboard\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/setting/dialog/sections/StyleSection.tsx",
+		"line": 1,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/fields/ColorField\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/setting/dialog/sections/StyleSection.tsx",
+		"line": 2,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/fields/RangeField\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/setting/dialog/sections/TokensSection.tsx",
+		"line": 1,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/controls/Button\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/setting/dialog/sections/TokensSection.tsx",
+		"line": 2,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/fields/Textarea\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/setting/dialog/sections/UpdateSection.tsx",
+		"line": 1,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/fields/ListSelect\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/setting/dialog/sections/UpdateSection.tsx",
+		"line": 258,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/management/setting/dialog/sections/UpdateSection.tsx",
+		"line": 276,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/management/setting/dialog/sections/UpdateSection.tsx",
+		"line": 288,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/management/setting/dialog/sections/UpdateSection.tsx",
+		"line": 323,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/management/setting/dialog/sections/WorkspaceBackupSection.tsx",
+		"line": 1,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/controls/Button\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/setting/dialog/sections/WorkspaceBackupSection.tsx",
+		"line": 2,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/fields/Textarea\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/setting/dialog/sections/WorkspaceBackupSection.tsx",
+		"line": 3,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/setting/dialog/Settings.tsx",
+		"line": 1,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/controls/Button\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/setting/dialog/SettingsSidebar.tsx",
+		"line": 1,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/setting/dialog/SettingsSidebar.tsx",
+		"line": 380,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/management/widget/add-dialog.tsx",
+		"line": 1,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/controls/Button\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/widget/catalog.tsx",
+		"line": 2,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/fields/SearchField\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/widget/catalog.tsx",
+		"line": 3,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/widget/catalog.tsx",
+		"line": 4,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/util/keyboard\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/widget/catalog.tsx",
+		"line": 354,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/management/widget/catalog.tsx",
+		"line": 414,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/management/widget/picker-overlay.tsx",
+		"line": 1,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/controls/Button\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/workspace/background/Dialog.tsx",
+		"line": 1,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/controls/Button\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/workspace/background/Dialog.tsx",
+		"line": 2,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/layout/ScrollArea\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/workspace/background/Dialog.tsx",
+		"line": 3,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/workspace/background/Fields.tsx",
+		"line": 1,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/fields/Input\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/workspace/background/ImageLayerEditor.tsx",
+		"line": 1,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/controls/SegmentedControl\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/workspace/background/ImageLayerEditor.tsx",
+		"line": 2,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/fields/PathField\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/workspace/background/LayerEditor.tsx",
+		"line": 1,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/controls/Button\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/workspace/background/LayerEditor.tsx",
+		"line": 2,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/workspace/background/LayerEditor.tsx",
+		"line": 104,
+		"rule": "inline-style",
+		"message": "inline style sets backgroundColor — appearance must come from css() and the token system",
+		"reason": "inline style sets appearance; move it into css() and the token system"
+	},
+	{
+		"file": "src/management/workspace/background/LayerListPanel.tsx",
+		"line": 1,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/controls/Button\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/workspace/background/LayerListPanel.tsx",
+		"line": 2,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/controls/IconButton\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/workspace/background/LayerListPanel.tsx",
+		"line": 4,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/workspace/background/PatternLayerEditor.tsx",
+		"line": 1,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/controls/SegmentedControl\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/workspace/surface/Grid.tsx",
+		"line": 9,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/workspace/surface/widget-grid-icons.tsx",
+		"line": 8,
+		"rule": "raw-svg",
+		"message": "raw <svg> is banned; use `Icon` with a lucide icon",
+		"reason": "hand-drawn icon predates the shared design system; replace it with `Icon` and a lucide icon"
+	}
+]

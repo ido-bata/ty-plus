@@ -4,7 +4,7 @@
  * Pure presentation: positioning stays with the caller via `style`.
  */
 
-import { cx } from "@ty-plus/ui/util/cx";
+import { cx } from "@ty-plus/ui";
 import type { CSSProperties, JSX, ReactNode } from "react";
 import { css } from "@/styled-system/css";
 

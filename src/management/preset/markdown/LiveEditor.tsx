@@ -1,9 +1,8 @@
-import type { JSX, ReactNode } from "react";
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { css, cx } from "@/styled-system/css";
 import type { EditorState } from "./commands";
+import { EditorLines } from "./EditorLines";
 import { PlaceholderOverlay } from "./PlaceholderOverlay";
-import { type RenderSegment, renderMarkdown } from "./render";
 import { useMarkdownContextMenu } from "./useMarkdownContextMenu";
 
 export type MarkdownLiveEditorProps = {
@@ -38,54 +37,6 @@ const lineOffsetInValue = (lines: string[], lineIndex: number): number => {
 	return offset;
 };
 
-const ulListClass = css({
-	listStyleType: "disc",
-	paddingLeft: "5",
-});
-
-const h1Class = css({
-	fontSize: "2xl",
-	fontWeight: "bold",
-	lineHeight: "tight",
-});
-
-const h2Class = css({
-	fontSize: "xl",
-	fontWeight: "bold",
-	lineHeight: "tight",
-});
-
-const h3Class = css({
-	fontSize: "lg",
-	fontWeight: "bold",
-	lineHeight: "tight",
-});
-
-const strongClass = css({ fontWeight: "bold" });
-const emClass = css({ fontStyle: "italic" });
-
-const codeClass = css({
-	borderRadius: "sm",
-	backgroundColor: "surface.panel",
-	paddingInline: "1",
-	paddingBlock: "0.5",
-	fontFamily: "mono",
-	fontSize: "0.9em",
-});
-
-const linkClass = css({
-	color: "text.accent",
-	textDecoration: "underline",
-});
-
-const paragraphClass = css({ marginBlock: "2" });
-
-const lineClass = css({
-	minHeight: "1.5rem",
-	lineHeight: "6",
-	outline: "none",
-});
-
 const editorBaseClass = css({
 	position: "relative",
 	overflow: "hidden",
@@ -103,91 +54,11 @@ const editorBaseClass = css({
 	outline: "none",
 	_focusWithin: {
 		borderColor: "interactive.focus",
-		boxShadow: "inset 0 0 0 1px var(--color-interactive-focus)",
+		boxShadow: "var(--color-focus-ring)",
 	},
 });
 
 const editorMinHeightClass = css({ minHeight: "160px" });
-
-const renderSegmentsToReact = (segments: RenderSegment[]): ReactNode => {
-	const out: ReactNode[] = [];
-	let i = 0;
-	while (i < segments.length) {
-		const seg = segments[i];
-		if (seg.tag === "ul") {
-			const items: ReactNode[] = [];
-			i++;
-			while (i < segments.length && segments[i].tag === "li") {
-				items.push(<li key={segments[i].key}>{segments[i].content}</li>);
-				i++;
-			}
-			if (i < segments.length && segments[i].tag === "ul") i++;
-			out.push(
-				<ul key={`ul-group-${out.length}`} className={ulListClass}>
-					{items}
-				</ul>,
-			);
-			continue;
-		}
-		if (seg.tag === "h1") {
-			out.push(
-				<h1 key={seg.key} className={h1Class}>
-					{seg.content}
-				</h1>,
-			);
-		} else if (seg.tag === "h2") {
-			out.push(
-				<h2 key={seg.key} className={h2Class}>
-					{seg.content}
-				</h2>,
-			);
-		} else if (seg.tag === "h3") {
-			out.push(
-				<h3 key={seg.key} className={h3Class}>
-					{seg.content}
-				</h3>,
-			);
-		} else if (seg.tag === "strong") {
-			out.push(
-				<strong key={seg.key} className={strongClass}>
-					{seg.content}
-				</strong>,
-			);
-		} else if (seg.tag === "em") {
-			out.push(
-				<em key={seg.key} className={emClass}>
-					{seg.content}
-				</em>,
-			);
-		} else if (seg.tag === "code") {
-			out.push(
-				<code key={seg.key} className={codeClass}>
-					{seg.content}
-				</code>,
-			);
-		} else if (seg.tag === "a") {
-			out.push(
-				<a
-					key={seg.key}
-					href={seg.href}
-					className={linkClass}
-					target="_blank"
-					rel="noreferrer noopener"
-				>
-					{seg.content}
-				</a>,
-			);
-		} else if (seg.tag === "br") {
-			out.push(<br key={seg.key} />);
-		} else if (seg.tag === "p") {
-			out.push(<p key={seg.key} className={paragraphClass} />);
-		} else if (seg.content) {
-			out.push(<span key={seg.key}>{seg.content}</span>);
-		}
-		i++;
-	}
-	return out;
-};
 
 const findLineElement = (
 	node: Node | null,
@@ -224,42 +95,6 @@ function placeCaret(
 	range.collapse(true);
 	sel.removeAllRanges();
 	sel.addRange(range);
-}
-
-function EditorLines({
-	lines,
-	cursorLineIndex,
-	cursorLineRef,
-}: {
-	lines: string[];
-	cursorLineIndex: number;
-	cursorLineRef: React.RefObject<HTMLSpanElement | null>;
-}): JSX.Element {
-	return (
-		<>
-			{lines.map((line, idx) => {
-				const isCursor = idx === cursorLineIndex;
-				return (
-					<div
-						key={`${idx}-${line.length}-${line.slice(0, 16)}`}
-						data-line={idx}
-						contentEditable={isCursor}
-						aria-hidden="true"
-						suppressContentEditableWarning
-						className={lineClass}
-					>
-						{isCursor ? (
-							<span ref={cursorLineRef} suppressContentEditableWarning />
-						) : line === "" ? (
-							""
-						) : (
-							renderSegmentsToReact(renderMarkdown(line))
-						)}
-					</div>
-				);
-			})}
-		</>
-	);
 }
 
 export function MarkdownLiveEditor({
@@ -570,27 +405,11 @@ export function MarkdownLiveEditor({
 			{value === "" && placeholder ? (
 				<PlaceholderOverlay placeholder={placeholder} />
 			) : null}
-			{lines.map((line, idx) => {
-				const isCursor = idx === cursorLineIndex;
-				return (
-					<div
-						key={`${idx}-${line.length}-${line.slice(0, 16)}`}
-						data-line={idx}
-						contentEditable={isCursor}
-						aria-hidden="true"
-						suppressContentEditableWarning
-						className={lineClass}
-					>
-						{isCursor ? (
-							<span ref={cursorLineRef} suppressContentEditableWarning />
-						) : line === "" ? (
-							""
-						) : (
-							renderSegmentsToReact(renderMarkdown(line))
-						)}
-					</div>
-				);
-			})}
+			<EditorLines
+				lines={lines}
+				cursorLineIndex={cursorLineIndex}
+				cursorLineRef={cursorLineRef}
+			/>
 		</div>
 	);
 }

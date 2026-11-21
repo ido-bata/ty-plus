@@ -1,34 +1,30 @@
 import { Button } from "@ty-plus/ui/controls/Button";
-import { IconButton } from "@ty-plus/ui/controls/IconButton";
-import { Input } from "@ty-plus/ui/fields/Input";
 import { ScrollArea } from "@ty-plus/ui/layout/ScrollArea";
 import { cx } from "@ty-plus/ui/util/cx";
-import {
-	ArrowDown,
-	ArrowUp,
-	Grid2X2,
-	Image,
-	Palette,
-	RotateCcw,
-	Save,
-	Trash2,
-} from "lucide-react";
+import { RotateCcw, Save } from "lucide-react";
 import { type JSX, useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { createCepSurfaceTransport } from "@/management/ae/cep/transport";
 import {
 	type CepMenuPayload,
 	registerCepJsonContextMenuSurface,
-} from "@/management/dialog/dialogs/context-menu";
-import { DialogFooterActions } from "@/management/dialog/dialogs/shell/Footer";
+} from "@/management/dialog/context-menu";
 import { DialogShell } from "@/management/dialog/index";
+import { DialogFooterActions } from "@/management/dialog/shell/Footer";
 import { useDialogClose } from "@/management/dialog/useClose";
+import { BackgroundPreview } from "@/management/workspace/background/BackgroundPreview";
 import type {
 	Background,
 	Layer,
 	LayerType,
-	PatternValue,
 } from "@/management/workspace/background/contract";
+import { LayerEditor } from "@/management/workspace/background/LayerEditor";
+import { LayerListPanel } from "@/management/workspace/background/LayerListPanel";
+import {
+	createNewLayer,
+	DEFAULT_COLOR,
+	migrateToLayers,
+} from "@/management/workspace/background/layer-factory";
 import { parse } from "@/management/workspace/background/parse";
 import { toStyle } from "@/management/workspace/background/style";
 import {
@@ -41,15 +37,6 @@ import {
 	SHELL_CHANNELS,
 } from "@/management/workspace/surface/contract";
 import { css } from "@/styled-system/css";
-import {
-	FIELD_LABEL_CLASS,
-	QUIET_CONTROL_CLASS,
-	QUIET_SELECTED_CLASS,
-	QUIET_UNSELECTED_CLASS,
-} from "./constants";
-import * as Fields from "./Fields";
-import { ImageLayerEditor } from "./ImageLayerEditor";
-import { PatternLayerEditor } from "./PatternLayerEditor";
 
 export type WorkspaceBackgroundDialogProps = {
 	panelId: 1 | 2 | 3 | 4 | 5;
@@ -73,101 +60,6 @@ const BG_CTX = {
 	typePatternPrefix: "ty.ctx.background.type.pattern:",
 	typeImagePrefix: "ty.ctx.background.type.image:",
 } as const;
-const DEFAULT_COLOR = "#1e1e1e";
-const DEFAULT_PATTERN_COLOR = "#444444";
-const PRESET_COLORS = [
-	"#1e1e1e",
-	"#0d1117",
-	"#1a1a2e",
-	"#16213e",
-	"#0f3460",
-	"#2d2d2d",
-	"#3c3c3c",
-	"#252525",
-	"#1b1b2f",
-	"#162447",
-];
-const PATTERNS: readonly PatternValue[] = ["dots", "grid", "lines"];
-
-function createNewLayer(type: LayerType): Layer {
-	return {
-		id: `layer-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
-		type,
-		enabled: true,
-		opacity: 100,
-		color: type === "color" ? DEFAULT_COLOR : undefined,
-		colorOpacity: 100,
-		imagePath: undefined,
-		imageSource: type === "image" ? "file" : undefined,
-		imageFit: type === "image" ? "cover" : undefined,
-		imageRepeat: type === "image" ? "no-repeat" : undefined,
-		imageScale: 100,
-		imageShiftX: 0,
-		imageShiftY: 0,
-		patternType: type === "pattern" ? "dots" : undefined,
-		patternColor: type === "pattern" ? DEFAULT_PATTERN_COLOR : undefined,
-		patternColorOpacity: 100,
-		patternBgColor: type === "pattern" ? "transparent" : undefined,
-		patternBgOpacity: 100,
-		patternSize: type === "pattern" ? 6 : undefined,
-	};
-}
-
-function migrateToLayers(bg: Background | null): Layer[] {
-	if (!bg) {
-		return [createNewLayer("color")];
-	}
-	if (bg.layers?.length) {
-		return bg.layers;
-	}
-	if (bg.type === "color" && bg.value) {
-		return [
-			{
-				...createNewLayer("color"),
-				id: "legacy-color",
-				color: bg.value,
-			},
-		];
-	}
-	if (bg.type === "image" && bg.path) {
-		return [
-			{
-				...createNewLayer("image"),
-				id: "legacy-image",
-				imagePath: bg.path,
-				imageSource: bg.source ?? "file",
-			},
-		];
-	}
-	if (bg.type === "pattern" && bg.value) {
-		return [
-			{
-				...createNewLayer("pattern"),
-				id: "legacy-pattern",
-				patternType: PATTERNS.includes(bg.value as PatternValue)
-					? (bg.value as PatternValue)
-					: "dots",
-				patternColor: bg.patternColor ?? DEFAULT_PATTERN_COLOR,
-				patternBgColor: bg.backgroundColor ?? "transparent",
-			},
-		];
-	}
-	return [createNewLayer("color")];
-}
-
-function clampNumber(value: number, min: number, max: number): number {
-	return Math.max(min, Math.min(max, Number.isFinite(value) ? value : min));
-}
-
-function layerLabel(layer: Layer, t: (key: string) => string): string {
-	if (layer.type === "pattern") {
-		return t(
-			`workspaceShell.backgroundPanel.patterns.${layer.patternType ?? "dots"}`,
-		);
-	}
-	return t(`workspaceShell.backgroundPanel.types.${layer.type}`);
-}
-
 const contentClass = css({
 	display: "flex",
 	minHeight: "0",
@@ -214,106 +106,6 @@ const mainGrid = css({
 	gap: "3",
 });
 
-const listSection = css({
-	display: "grid",
-	minHeight: "0",
-	width: "full",
-});
-
-const listCard = css({
-	display: "grid",
-	height: "full",
-	minHeight: "0",
-	gridTemplateRows: "auto minmax(0,1fr) auto",
-	borderRadius: "shell-sm",
-	borderWidth: "1px",
-	borderStyle: "solid",
-	borderColor: "var(--color-ty-widget-border)",
-});
-
-const listHeader = css({
-	display: "grid",
-	gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-	gap: "1",
-	borderBottomWidth: "1px",
-	borderBottomStyle: "solid",
-	borderBottomColor: "var(--color-ty-widget-border)",
-	padding: "2",
-});
-
-const listScroll = css({
-	minHeight: "0",
-	overflow: "auto",
-	padding: "1",
-});
-
-const listEmpty = css({
-	padding: "3",
-	textAlign: "center",
-	fontSize: "text-xs",
-	color: "text.muted",
-});
-
-const listItems = css({
-	display: "grid",
-	gap: "1",
-});
-
-const layerRow = css({
-	display: "grid",
-	gridTemplateColumns: "auto minmax(0,1fr)",
-	alignItems: "center",
-	gap: "1",
-});
-
-const layerCheckbox = css({
-	height: "4",
-	width: "4",
-});
-
-const layerButton = css({
-	minWidth: "0",
-	justifyContent: "flex-start",
-});
-
-const layerButtonLabel = css({
-	minWidth: "0",
-	overflow: "hidden",
-	textOverflow: "ellipsis",
-	whiteSpace: "nowrap",
-	fontSize: "text-xs",
-});
-
-const layerColorRing = css({
-	boxShadow: "0 0 0 1px var(--color-ty-ink-12)",
-});
-
-const listFooter = css({
-	display: "grid",
-	gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-	gap: "1",
-	borderTopWidth: "1px",
-	borderTopStyle: "solid",
-	borderTopColor: "var(--color-ty-widget-border)",
-	padding: "1",
-});
-
-const iconBtn = css({
-	height: "6",
-	width: "full",
-	borderWidth: "1px",
-	borderStyle: "solid",
-	borderColor: "var(--color-ty-widget-border)",
-	backgroundColor: "transparent",
-	padding: "0",
-	"& svg": { width: "3", height: "3" },
-	_hover: { backgroundColor: "var(--color-ty-ink-04)" },
-});
-
-const iconBtnDanger = css({
-	color: "status.error",
-});
-
 const editorSection = css({
 	display: "grid",
 	minHeight: "0",
@@ -335,78 +127,6 @@ const emptySelection = css({
 	placeItems: "center",
 	fontSize: "text-xs",
 	color: "text.muted",
-});
-
-const previewSection = css({
-	display: "grid",
-	height: "full",
-	minHeight: "0",
-	width: "full",
-	gridTemplateRows: "auto minmax(0,1fr)",
-	gap: "1",
-	borderTopWidth: "1px",
-	borderTopStyle: "solid",
-	borderTopColor: "var(--color-ty-widget-border)",
-	paddingTop: "2",
-});
-
-const previewHeader = css({
-	display: "grid",
-	gridTemplateColumns: "minmax(0,1fr) auto",
-	alignItems: "center",
-	gap: "2",
-});
-
-const previewStatus = css({
-	minWidth: "0",
-	overflow: "hidden",
-	textOverflow: "ellipsis",
-	whiteSpace: "nowrap",
-	textAlign: "right",
-	fontSize: "text-xs",
-	color: "text.muted",
-});
-
-const previewBox = css({
-	height: "full",
-	minHeight: "20",
-	width: "full",
-	borderRadius: "shell-sm",
-	borderWidth: "1px",
-	borderStyle: "solid",
-	borderColor: "var(--color-ty-widget-border)",
-	backgroundColor: "surface.panel",
-});
-
-const editorRoot = css({
-	display: "grid",
-	width: "full",
-	gap: "3",
-});
-
-const editorColorRow = css({
-	display: "grid",
-	gap: "2",
-});
-
-const editorPresetGrid = css({
-	display: "grid",
-	gridTemplateColumns: "repeat(5, minmax(0, 1fr))",
-	gap: "1",
-});
-
-const presetSwatch = css({
-	aspectRatio: "1 / 1",
-	minHeight: "0",
-	paddingInline: "0",
-	borderColor: "var(--color-ty-widget-border)",
-	_hover: { borderColor: "var(--color-ty-widget-border-strong)" },
-});
-
-const layerIconClass = css({
-	height: "4",
-	width: "4",
-	flexShrink: 0,
 });
 
 export function WorkspaceBackgroundDialog(
@@ -816,148 +536,16 @@ export function WorkspaceBackgroundDialog(
 						</div>
 					) : (
 						<div className={mainGrid}>
-							<section className={listSection}>
-								<div className={listCard}>
-									<div className={listHeader}>
-										<Button
-											type="button"
-											variant="default"
-											uiSize="sm"
-											fullWidth
-											className={QUIET_CONTROL_CLASS}
-											title={t(
-												"workspaceShell.backgroundPanel.tooltips.addColor",
-											)}
-											onClick={() => addLayer("color")}
-										>
-											<Palette />
-										</Button>
-										<Button
-											type="button"
-											variant="default"
-											uiSize="sm"
-											fullWidth
-											className={QUIET_CONTROL_CLASS}
-											title={t(
-												"workspaceShell.backgroundPanel.tooltips.addPattern",
-											)}
-											onClick={() => addLayer("pattern")}
-										>
-											<Grid2X2 />
-										</Button>
-										<Button
-											type="button"
-											variant="default"
-											uiSize="sm"
-											fullWidth
-											className={QUIET_CONTROL_CLASS}
-											title={t(
-												"workspaceShell.backgroundPanel.tooltips.addImage",
-											)}
-											onClick={() => addLayer("image")}
-										>
-											<Image />
-										</Button>
-									</div>
-									<div className={listScroll} data-background-layer-list>
-										{layers.length === 0 ? (
-											<div className={listEmpty}>
-												{t("workspaceShell.backgroundPanel.emptyLayers")}
-											</div>
-										) : (
-											<div className={listItems}>
-												{layers.map((layer) => (
-													<div
-														key={layer.id}
-														data-background-layer-id={layer.id}
-														className={layerRow}
-													>
-														<Input
-															type="checkbox"
-															className={layerCheckbox}
-															checked={layer.enabled}
-															aria-label={t(
-																"workspaceShell.backgroundPanel.enabled",
-															)}
-															uiSize="sm"
-															onChange={(e) =>
-																updateLayer(layer.id, {
-																	enabled: e.currentTarget.checked,
-																})
-															}
-														/>
-														<Button
-															type="button"
-															variant="default"
-															uiSize="sm"
-															fullWidth
-															className={cx(
-																layerButton,
-																selectedLayerId === layer.id
-																	? QUIET_SELECTED_CLASS
-																	: QUIET_UNSELECTED_CLASS,
-															)}
-															onClick={() => setSelectedLayerId(layer.id)}
-														>
-															<LayerIcon layer={layer} />
-															<span className={layerButtonLabel}>
-																{layerLabel(layer, t)}
-															</span>
-														</Button>
-													</div>
-												))}
-											</div>
-										)}
-									</div>
-									<div className={listFooter}>
-										<IconButton
-											type="button"
-											variant="ghost"
-											size="sm"
-											className={iconBtn}
-											title={t("workspaceShell.backgroundPanel.moveUp")}
-											onClick={() =>
-												selectedLayer
-													? moveLayer(selectedLayer.id, "up")
-													: undefined
-											}
-											disabled={!selectedLayer}
-										>
-											<ArrowUp />
-										</IconButton>
-										<IconButton
-											type="button"
-											variant="ghost"
-											size="sm"
-											className={iconBtn}
-											title={t("workspaceShell.backgroundPanel.moveDown")}
-											onClick={() =>
-												selectedLayer
-													? moveLayer(selectedLayer.id, "down")
-													: undefined
-											}
-											disabled={!selectedLayer}
-										>
-											<ArrowDown />
-										</IconButton>
-										<IconButton
-											type="button"
-											variant="ghost"
-											size="sm"
-											className={cx(iconBtn, iconBtnDanger)}
-											title={t("workspaceShell.backgroundPanel.remove")}
-											onClick={() =>
-												selectedLayer
-													? removeLayer(selectedLayer.id)
-													: undefined
-											}
-											disabled={!selectedLayer}
-										>
-											<Trash2 />
-										</IconButton>
-									</div>
-								</div>
-							</section>
+							<LayerListPanel
+								layers={layers}
+								selectedLayerId={selectedLayerId}
+								onSelectLayer={setSelectedLayerId}
+								onToggleLayer={(id, enabled) => updateLayer(id, { enabled })}
+								onAddLayer={addLayer}
+								onMoveLayer={moveLayer}
+								onRemoveLayer={removeLayer}
+								t={t}
+							/>
 
 							<section className={editorSection}>
 								<div className={editorScroll}>
@@ -974,97 +562,16 @@ export function WorkspaceBackgroundDialog(
 									)}
 								</div>
 
-								<div className={previewSection}>
-									<div className={previewHeader}>
-										<span className={FIELD_LABEL_CLASS}>
-											{t("workspaceShell.backgroundPanel.preview")}
-										</span>
-										<span className={previewStatus}>{status}</span>
-									</div>
-									<div
-										className={previewBox}
-										style={previewStyle}
-										title={t("workspaceShell.backgroundPanel.preview")}
-									/>
-								</div>
+								<BackgroundPreview
+									previewStyle={previewStyle}
+									status={status}
+									t={t}
+								/>
 							</section>
 						</div>
 					)}
 				</div>
 			</ScrollArea>
 		</DialogShell>
-	);
-}
-
-function LayerIcon({ layer }: { layer: Layer }): JSX.Element {
-	if (layer.type === "image") {
-		return <Image className={layerIconClass} />;
-	}
-	if (layer.type === "pattern") {
-		return <Grid2X2 className={layerIconClass} />;
-	}
-	return <Palette className={layerIconClass} />;
-}
-
-function LayerEditor(props: {
-	layer: Layer;
-	updateLayer: (id: string, updates: Partial<Layer>) => void;
-	t: (key: string) => string;
-}): JSX.Element {
-	const { layer, updateLayer, t } = props;
-	const updateNumber = (key: keyof Layer, min: number, max: number) => {
-		return (value: number) => {
-			updateLayer(layer.id, {
-				[key]: clampNumber(value, min, max),
-			});
-		};
-	};
-
-	return (
-		<div className={editorRoot}>
-			<Fields.NumberField
-				label={t("workspaceShell.backgroundPanel.opacity")}
-				value={layer.opacity}
-				min={0}
-				max={100}
-				onValueChange={updateNumber("opacity", 0, 100)}
-			/>
-
-			{layer.type === "color" ? (
-				<div className={editorColorRow}>
-					<Fields.ColorField
-						label={t("workspaceShell.backgroundPanel.color")}
-						value={layer.color ?? DEFAULT_COLOR}
-						onColorChange={(value) => updateLayer(layer.id, { color: value })}
-					/>
-					<div className={editorPresetGrid}>
-						{PRESET_COLORS.map((color) => (
-							<Button
-								key={color}
-								type="button"
-								variant="default"
-								uiSize="sm"
-								fullWidth
-								className={cx(
-									presetSwatch,
-									layer.color === color ? layerColorRing : "",
-								)}
-								style={{ backgroundColor: color }}
-								title={color}
-								onClick={() => updateLayer(layer.id, { color })}
-							/>
-						))}
-					</div>
-				</div>
-			) : null}
-
-			{layer.type === "image" ? (
-				<ImageLayerEditor layer={layer} updateLayer={updateLayer} t={t} />
-			) : null}
-
-			{layer.type === "pattern" ? (
-				<PatternLayerEditor layer={layer} updateLayer={updateLayer} t={t} />
-			) : null}
-		</div>
 	);
 }

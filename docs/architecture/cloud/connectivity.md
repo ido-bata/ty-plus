@@ -35,7 +35,7 @@ Online surface implementation is under `src/management/online/`. The local core
 | --- | --- |
 | Local persistence is authoritative | local preset store writes with `source: "local"`; local catalog read never touches the gateway |
 | Cloud is non-blocking overlay | gateway health and catalog failures surface as status only, never throw into local paths |
-| Core AE workflows work offline | unit suite runs without network; `PanelRoot.offline.test.ts` pins the wiring contract |
+| Core AE workflows work offline | unit suite runs without network; `panel-root.offline.test.ts` pins the wiring contract |
 
 ## Not in This Repo
 

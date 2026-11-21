@@ -24,8 +24,9 @@ vi.mock("../../dialog/useDialogClose", () => ({
 	useDialogClose: () => ({ close: vi.fn() }),
 }));
 
-vi.mock("../../dialog/dialogs/hooks/useClose", () => ({
+vi.mock("../../dialog/useClose", () => ({
 	useClose: () => ({ close: vi.fn(), onBeforeUnload: vi.fn() }),
+	useDialogClose: () => ({ close: vi.fn(), onBeforeUnload: vi.fn() }),
 }));
 
 vi.mock("../../ae/cep/transport", async (importOriginal) => {

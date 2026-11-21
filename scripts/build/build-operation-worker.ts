@@ -7,7 +7,7 @@ import {
 	type ProtocolVersion,
 	protocolVersion,
 } from "../../src/management/ipc/generated/wire";
-import type { OperationWorkerPlatform } from "../../src/management/ipc/operation-worker-binary";
+import type { OperationWorkerPlatform } from "../../src/management/ipc/operation-worker/binary";
 
 export type RustTarget =
 	| "x86_64-pc-windows-msvc"

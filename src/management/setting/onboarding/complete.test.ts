@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { PresetRecord } from "../../../management/preset/contract";
 import * as catalogFilesStore from "../../catalog/json-files";
-import * as groupCatalog from "../../preset/group-catalog";
+import * as groupCatalog from "../../preset/group/catalog";
 import * as presetInitialize from "../../preset/initialize";
 import * as workspaceLayoutStore from "../../storage/workspace/layout-store";
 import * as workspaceStore from "../../storage/workspace/store";
@@ -21,7 +21,7 @@ vi.mock("../../preset/initialize", () => ({
 	initializePresetStorage: vi.fn(),
 }));
 
-vi.mock("../../preset/group-catalog", () => ({
+vi.mock("../../preset/group/catalog", () => ({
 	mergeGroupEntries: vi.fn().mockResolvedValue(undefined),
 	mergeGroupCatalogEntries: vi.fn().mockResolvedValue(undefined),
 }));

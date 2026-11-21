@@ -37,7 +37,7 @@ vi.mock("@/management/preset/use-cases", () => ({
 	listPresets: listPresetsMock,
 }));
 
-vi.mock("@/management/preset/group-catalog", () => ({
+vi.mock("@/management/preset/group/catalog", () => ({
 	parseGroupFromText: () => [],
 }));
 

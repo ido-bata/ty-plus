@@ -1,17 +1,11 @@
-import { Icon, IconButton } from "@ty-plus/ui";
-import { SearchField } from "@ty-plus/ui/fields/SearchField";
-import { cx } from "@ty-plus/ui/util/cx";
-import { isIMEComposing } from "@ty-plus/ui/util/keyboard";
+import { cx, Icon, isIMEComposing } from "@ty-plus/ui";
 import {
 	ArrowLeft,
 	ChevronDown,
 	ChevronRight,
 	Folder,
-	LoaderCircle,
 	Pencil,
 	Play,
-	RefreshCw,
-	Search,
 	Trash2,
 } from "lucide-react";
 import {
@@ -28,9 +22,9 @@ import {
 import { detectCepHostCode } from "@/management/ae/cep/runtime";
 import { readGroupJson } from "@/management/catalog/json-files";
 import { DialogShell } from "@/management/dialog";
-import type { CepMenuPayload } from "@/management/dialog/dialogs/context-menu";
-import { registerCepJsonContextMenuSurface } from "@/management/dialog/dialogs/context-menu";
-import type { ShellProps } from "@/management/dialog/dialogs/shell/Layout";
+import type { CepMenuPayload } from "@/management/dialog/context-menu";
+import { registerCepJsonContextMenuSurface } from "@/management/dialog/context-menu";
+import type { ShellProps } from "@/management/dialog/shell/Layout";
 import { useDialogClose } from "@/management/dialog/useClose";
 import { useGatewayHealth } from "@/management/online/runtime-gateway-health";
 import { resolvePresetToolSurfaceIdForPreset } from "@/management/preset/authoring/request";
@@ -43,14 +37,14 @@ import {
 	iconTileMediaClass,
 	LIST_ROW_GRID,
 } from "@/management/preset/catalog-browser/layout";
+import { PresetsDialogHeader } from "@/management/preset/catalog-browser/PresetsDialogHeader";
 import { CatalogBrowserShell } from "@/management/preset/catalog-browser/shell";
-import { CatalogBrowserViewModeToggle } from "@/management/preset/catalog-browser/view-mode-toggle";
 import { buildPlacementHints } from "@/management/preset/catalog-browser/workspace-placement-hints";
 import type { Preset } from "@/management/preset/contract";
 import { traceExecute } from "@/management/preset/execution/lifecycle-trace";
-import type { GroupEntry } from "@/management/preset/group-catalog";
-import { parseGroupFromText } from "@/management/preset/group-catalog";
-import { tryParsePresetIconValue } from "@/management/preset/icon-data";
+import type { GroupEntry } from "@/management/preset/group/catalog";
+import { parseGroupFromText } from "@/management/preset/group/catalog";
+import { tryParsePresetIconValue } from "@/management/preset/icon/normalize";
 import { getPresetToolDialogEntry } from "@/management/preset/registry";
 import {
 	getPreset,
@@ -93,13 +87,6 @@ const folderIconClass = css({
 	width: "3.5",
 });
 
-const searchFieldClass = css({
-	height: "8",
-	minHeight: "8",
-	flex: "1",
-	paddingBlock: "0",
-});
-
 const tinyAct = css({
 	display: "inline-flex",
 	height: "5",
@@ -124,71 +111,6 @@ const actionsRowClass = css({
 	flexShrink: "0",
 	alignItems: "center",
 	gap: "0.5",
-});
-
-const loadingRowClass = css({
-	display: "inline-flex",
-	minWidth: "0",
-	alignItems: "center",
-	gap: "1",
-	overflow: "hidden",
-	textOverflow: "ellipsis",
-	whiteSpace: "nowrap",
-});
-
-const loadingIconClass = css({
-	height: "3",
-	width: "3",
-	flexShrink: "0",
-	animation: "spin",
-});
-
-const loadingLabelClass = css({
-	overflow: "hidden",
-	textOverflow: "ellipsis",
-	whiteSpace: "nowrap",
-});
-
-const errorLabelClass = css({
-	overflow: "hidden",
-	textOverflow: "ellipsis",
-	whiteSpace: "nowrap",
-	color: "red.400",
-});
-
-const streamingRowClass = css({
-	display: "inline-flex",
-	minWidth: "0",
-	maxWidth: "full",
-	alignItems: "center",
-	gap: "1.5",
-	overflow: "hidden",
-	textOverflow: "ellipsis",
-	whiteSpace: "nowrap",
-});
-
-const progressTrackClass = css({
-	display: "inline-block",
-	height: "1",
-	width: "10",
-	flexShrink: "0",
-	overflow: "hidden",
-	borderRadius: "full",
-	backgroundColor: "border.default",
-});
-
-const progressBarClass = css({
-	display: "block",
-	height: "full",
-	borderRadius: "full",
-	backgroundColor: "interactive.focus",
-	transitionProperty: "width",
-	transitionDuration: "200",
-});
-
-const countClass = css({
-	flexShrink: "0",
-	fontVariantNumeric: "tabular-nums",
 });
 
 const presetRowClass = css({
@@ -295,7 +217,7 @@ const groupTitleButtonClass = css({
 		color: "text.primary",
 	},
 	_focusVisible: {
-		boxShadow: "0 0 0 2px var(--colors-interactive-focus)",
+		boxShadow: "var(--color-focus-ring)",
 	},
 });
 
@@ -361,7 +283,7 @@ const iconNavigateUpButtonClass = css({
 		backgroundColor: "interactive.hover",
 	},
 	_focusVisible: {
-		boxShadow: "0 0 0 2px var(--colors-interactive-focus)",
+		boxShadow: "var(--color-focus-ring)",
 	},
 });
 
@@ -560,49 +482,6 @@ const iconPresetTitleClass = css({
 	fontWeight: "medium",
 	lineHeight: "tight",
 	color: "text.primary",
-});
-
-const headerRowClass = css({
-	display: "flex",
-	minHeight: "8",
-	minWidth: "0",
-	alignItems: "stretch",
-	gap: "2",
-});
-
-const searchFieldWrapperClass = css({
-	display: "flex",
-	minHeight: "0",
-	minWidth: "0",
-	flex: "1",
-	alignItems: "stretch",
-});
-
-const toolbarClass = css({
-	display: "flex",
-	height: "8",
-	flexShrink: "0",
-	alignItems: "stretch",
-	gap: "1",
-	alignSelf: "stretch",
-});
-
-const reloadButtonClass = css({
-	height: "full",
-	minHeight: "0",
-	width: "8",
-	flexShrink: "0",
-	alignSelf: "stretch",
-	borderRadius: "shell-sm",
-	borderWidth: "1px",
-	borderStyle: "solid",
-	borderColor: "border.default",
-	backgroundColor: "surface.widget/50",
-	padding: "0",
-	color: "text.muted",
-	_hover: {
-		color: "text.primary",
-	},
 });
 
 const emptyStateClass = css({
@@ -872,66 +751,6 @@ function GroupRowActions(props: {
 }
 
 // ── Extracted sub-components ──────────────────────────────────────────────────
-
-function SearchStatusBar(props: {
-	loadPhase: LoadPhase;
-	loadError: string | null;
-	streamTotal: number;
-	presetsLength: number;
-	visibleCount: number;
-	filter: string;
-}): ReactNode {
-	const {
-		loadPhase,
-		loadError,
-		streamTotal,
-		presetsLength,
-		visibleCount,
-		filter,
-	} = props;
-	// "idle" means the first read has not finished yet — showing a count there
-	// would claim "0 items" about a catalog we have not read.
-	if (loadPhase === "idle" || loadPhase === "reading") {
-		return (
-			<span className={loadingRowClass}>
-				<LoaderCircle className={loadingIconClass} aria-hidden />
-				<span className={loadingLabelClass}>Loading</span>
-			</span>
-		);
-	}
-	if (loadPhase === "error") {
-		return (
-			<span className={errorLabelClass} title={loadError ?? undefined}>
-				{loadError ?? "Error"}
-			</span>
-		);
-	}
-	return (
-		<span className={streamingRowClass}>
-			{loadPhase === "streaming" && streamTotal > 0 ? (
-				<>
-					<span className={progressTrackClass} aria-hidden>
-						<span
-							className={progressBarClass}
-							style={{
-								width: `${Math.min(
-									100,
-									Math.round((presetsLength / Math.max(streamTotal, 1)) * 100),
-								)}%`,
-							}}
-						/>
-					</span>
-					<span className={countClass}>
-						{presetsLength}/{streamTotal}
-					</span>
-				</>
-			) : null}
-			<span className={countClass}>
-				{visibleCount} items{filter.trim() ? " · filtered" : ""}
-			</span>
-		</span>
-	);
-}
 
 function PresetListTreeItem(props: {
 	preset: Preset;
@@ -2150,49 +1969,21 @@ export function PresetsDialog(): JSX.Element {
 			<CatalogBrowserShell
 				domPrefix="preset-list"
 				headerRow={
-					<div className={headerRowClass}>
-						<div data-preset-list-search className={searchFieldWrapperClass}>
-							<SearchField
-								className={searchFieldClass}
-								icon={Search}
-								placeholder="Search by name, type, or path…"
-								value={filter}
-								onChange={(e) => setFilter(e.currentTarget.value)}
-								showClearButton
-								onClear={() => setFilter("")}
-								showInlineTrailing
-								inlineTrailing={
-									<SearchStatusBar
-										loadPhase={loadPhase}
-										loadError={loadError}
-										streamTotal={streamTotal}
-										presetsLength={presets.length}
-										visibleCount={visibleCount}
-										filter={filter}
-									/>
-								}
-							/>
-						</div>
-						<div data-preset-list-toolbar className={toolbarClass}>
-							<CatalogBrowserViewModeToggle
-								viewMode={viewMode}
-								onViewModeChange={setViewMode}
-								onEnterIconView={() => {
-									setIconBrowse("root");
-								}}
-							/>
-							<IconButton
-								variant="ghost"
-								size="sm"
-								className={reloadButtonClass}
-								aria-label="Reload catalog"
-								title="Reload catalog"
-								onClick={() => void loadEverything()}
-							>
-								<Icon icon={RefreshCw} size={10} />
-							</IconButton>
-						</div>
-					</div>
+					<PresetsDialogHeader
+						filter={filter}
+						onFilterChange={setFilter}
+						onReload={() => void loadEverything()}
+						loadPhase={loadPhase}
+						loadError={loadError}
+						streamTotal={streamTotal}
+						presetsLength={presets.length}
+						visibleCount={visibleCount}
+						viewMode={viewMode}
+						onViewModeChange={setViewMode}
+						onEnterIconView={() => {
+							setIconBrowse("root");
+						}}
+					/>
 				}
 			>
 				{cloudNotice}

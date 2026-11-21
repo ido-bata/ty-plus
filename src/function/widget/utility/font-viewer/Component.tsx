@@ -1,5 +1,4 @@
-import { Button, Icon, ListSelect } from "@ty-plus/ui";
-import { Input } from "@ty-plus/ui/fields/Input";
+import { Icon, ViewModeToggle } from "@ty-plus/ui";
 import { SearchField } from "@ty-plus/ui/fields/SearchField";
 import { cx } from "@ty-plus/ui/util/cx";
 import { ArrowLeft, ChevronDown, ChevronRight, Search } from "lucide-react";
@@ -10,12 +9,10 @@ import {
 	useDeferredValue,
 	useEffect,
 	useMemo,
-	useReducer,
 	useState,
 } from "react";
 import { useTranslation } from "react-i18next";
 import {
-	CatalogBrowserViewModeToggle,
 	ICON_CELL_BASE_REM,
 	ICON_GRID_CLASS,
 	ICON_GRID_SCALE_LS_KEY,
@@ -28,30 +25,28 @@ import { useCatalogViewMode } from "@/shared/util/catalog-view-mode";
 import { useIconGridScale } from "@/shared/util/icon-grid-scale";
 import { useTileAspect } from "@/shared/util/tile-aspect";
 import { css } from "@/styled-system/css";
-import { loadAeHostFontCatalog } from "./host-catalog";
+import {
+	FontViewerEmptyState,
+	FontViewerErrorBanner,
+	FontViewerLoadHint,
+	FontViewerLoadPhase,
+	FontViewerLocalAccessError,
+} from "./FontViewerBanners";
+import { FontViewerSampleRow } from "./FontViewerSampleRow";
+import { FontViewerStatusLine } from "./FontViewerStatusLine";
 import {
 	cssQuoteFamily,
 	type FontFamilyGroup,
 	filterFontRowsByQuery,
-	getQueryLocalFonts,
 	groupFontRowsByFamily,
 	type LocalFontFaceRow,
-	loadSystemFontCatalog,
 } from "./local-fonts";
+import { FONT_SAMPLE_PRESETS } from "./sample-presets";
+import { useFontCatalog } from "./use-font-catalog";
 
 type FontViewerWidgetProps = {
 	layout: Layout;
 };
-
-const SAMPLE_PRESETS: readonly { id: string; text: string }[] = [
-	{
-		id: "latin",
-		text: "The quick brown fox jumps over the lazy dog. 0123456789",
-	},
-	{ id: "cjk", text: "天地玄黃宇宙洪荒 日月盈昃辰宿列張" },
-	{ id: "emoji", text: "😀🎬🎨✨🔤" },
-	{ id: "mixed", text: "Ty+ フォント 漢字 Кирилlica العربية" },
-];
 
 function previewFontKey(row: LocalFontFaceRow): string {
 	const ps = row.postscriptName.trim();
@@ -65,83 +60,6 @@ const FAMILY_LIST_SPECIMEN_FONT_SIZE =
 /** CSS `font-size` for family-level specimen inside icon tiles. */
 const FAMILY_ICON_SPECIMEN_FONT_SIZE =
 	"clamp(0.7rem, 0.62rem + 0.4vw, 1.05rem)";
-
-type FontLoadState = {
-	rows: readonly LocalFontFaceRow[];
-	via: "after-effects" | "queryLocalFonts" | "documentFonts" | null;
-	loadPhase: "ae-host" | "browser" | null;
-	aeHostError: string | null;
-	loading: boolean;
-	error: string | null;
-	localAccessError: string | null;
-};
-
-type FontLoadAction =
-	| { type: "load-start" }
-	| { type: "ae-host-start" }
-	| {
-			type: "ae-host-success";
-			rows: readonly LocalFontFaceRow[];
-	  }
-	| { type: "ae-host-empty"; error: string | null }
-	| { type: "browser-start" }
-	| {
-			type: "browser-success";
-			rows: readonly LocalFontFaceRow[];
-			via: NonNullable<FontLoadState["via"]>;
-			localAccessError: string | null;
-	  }
-	| { type: "error"; message: string };
-
-function fontLoadReducer(
-	state: FontLoadState,
-	action: FontLoadAction,
-): FontLoadState {
-	switch (action.type) {
-		case "load-start":
-			return {
-				...state,
-				loading: true,
-				error: null,
-				localAccessError: null,
-				aeHostError: null,
-			};
-		case "ae-host-start":
-			return { ...state, loadPhase: "ae-host" };
-		case "ae-host-success":
-			return {
-				...state,
-				rows: action.rows,
-				via: "after-effects",
-				loadPhase: null,
-				aeHostError: null,
-				loading: false,
-			};
-		case "ae-host-empty":
-			return { ...state, aeHostError: action.error };
-		case "browser-start":
-			return { ...state, loadPhase: "browser" };
-		case "browser-success":
-			return {
-				...state,
-				loadPhase: null,
-				rows: action.rows,
-				via: action.via,
-				localAccessError: action.localAccessError,
-				aeHostError: action.rows.length > 0 ? null : state.aeHostError,
-				loading: false,
-			};
-		case "error":
-			return {
-				...state,
-				error: action.message,
-				rows: [],
-				via: null,
-				loadPhase: null,
-				loading: false,
-			};
-	}
-}
 
 function isUprightFace(row: LocalFontFaceRow): boolean {
 	const s = row.style.toLowerCase();
@@ -260,7 +178,7 @@ function FontNavigateUpCard(props: {
 				outline: "none",
 				_hover: { backgroundColor: "interactive.hover" },
 				_focusVisible: {
-					boxShadow: "0 0 0 2px var(--color-interactive-focus)",
+					boxShadow: "var(--color-focus-ring)",
 				},
 			})}
 			onClick={onNavigateUp}
@@ -437,7 +355,7 @@ function FontIconCatalogTile(props: {
 						outline: "none",
 						_hover: { backgroundColor: "interactive.hover" },
 						_focusVisible: {
-							boxShadow: "0 0 0 2px var(--color-interactive-focus)",
+							boxShadow: "var(--color-focus-ring)",
 						},
 					}),
 				)}
@@ -691,7 +609,7 @@ function FontListTreeFamilyGroup(props: {
 						outline: "none",
 						_hover: { color: "text.primary" },
 						_focusVisible: {
-							boxShadow: "0 0 0 2px var(--color-interactive-focus)",
+							boxShadow: "var(--color-focus-ring)",
 						},
 					})}
 					onClick={() => {
@@ -1142,15 +1060,7 @@ export function FontViewerWidget({
 	layout,
 }: FontViewerWidgetProps): JSX.Element {
 	const { t } = useTranslation("widgets");
-	const [loadState, dispatchLoad] = useReducer(fontLoadReducer, {
-		rows: [],
-		via: null,
-		loadPhase: null,
-		aeHostError: null,
-		loading: false,
-		error: null,
-		localAccessError: null,
-	});
+	const { state: loadState, reload: load } = useFontCatalog();
 	const {
 		rows,
 		via,
@@ -1164,9 +1074,9 @@ export function FontViewerWidget({
 	const dq = useDeferredValue(query);
 	const { viewMode, setViewMode } = useCatalogViewMode();
 	const [samplePresetChoice, setSamplePresetChoice] = useState<string>(
-		SAMPLE_PRESETS[0]?.id ?? "latin",
+		FONT_SAMPLE_PRESETS[0]?.id ?? "latin",
 	);
-	const [sample, setSample] = useState(SAMPLE_PRESETS[0]?.text ?? "");
+	const [sample, setSample] = useState(FONT_SAMPLE_PRESETS[0]?.text ?? "");
 	const [showResolvedHint, setShowResolvedHint] = useState(true);
 
 	const [expandedFamilies, setExpandedFamilies] = useState<Set<string>>(
@@ -1280,41 +1190,6 @@ export function FontViewerWidget({
 		};
 	}, [layout.id, setIconTileAspect]);
 
-	useEffect(() => {
-		console.info("[ty-plus:font-viewer] widget mounted");
-	}, []);
-
-	const load = useCallback(async (opts?: { tryLocalAccess?: boolean }) => {
-		dispatchLoad({ type: "load-start" });
-		try {
-			dispatchLoad({ type: "ae-host-start" });
-			const ae = await loadAeHostFontCatalog(window);
-			if (ae.rows.length > 0) {
-				dispatchLoad({ type: "ae-host-success", rows: ae.rows });
-				return;
-			}
-			dispatchLoad({ type: "ae-host-empty", error: ae.error ?? null });
-
-			dispatchLoad({ type: "browser-start" });
-			const result = await loadSystemFontCatalog({
-				tryLocalAccess: opts?.tryLocalAccess,
-			});
-			dispatchLoad({
-				type: "browser-success",
-				rows: result.rows,
-				via: result.via,
-				localAccessError: result.localAccessError ?? null,
-			});
-		} catch (e) {
-			const msg = e instanceof Error ? e.message : String(e);
-			dispatchLoad({ type: "error", message: msg });
-		}
-	}, []);
-
-	useEffect(() => {
-		void load({ tryLocalAccess: false });
-	}, [load]);
-
 	return (
 		<div
 			className={css({
@@ -1340,65 +1215,13 @@ export function FontViewerWidget({
 					gap: "1",
 				})}
 			>
-				<div
-					className={css({
-						display: "flex",
-						flexShrink: 0,
-						flexWrap: "wrap",
-						alignItems: "flex-end",
-						gap: "2",
-					})}
-				>
-					<ListSelect
-						uiSize="sm"
-						className={css({ flexShrink: 0 })}
-						options={[
-							...SAMPLE_PRESETS.map((p) => ({
-								value: p.id,
-								label: p.id.toUpperCase(),
-							})),
-							{
-								value: "custom",
-								label: t("fontViewer.sampleCustom", { defaultValue: "Custom" }),
-							},
-						]}
-						value={samplePresetChoice}
-						onChange={(v) => {
-							if (v === "custom") {
-								setSamplePresetChoice("custom");
-								return;
-							}
-							const preset = SAMPLE_PRESETS.find((p) => p.id === v);
-							if (preset) {
-								setSample(preset.text);
-								setSamplePresetChoice(v);
-							}
-						}}
-						aria-label={t("fontViewer.samplePresetAria", {
-							defaultValue: "Preview sample preset",
-						})}
-					/>
-					<Input
-						uiSize="sm"
-						className={css({
-							minWidth: 0,
-							flex: 1,
-							fontFamily: "mono",
-							fontSize: "text-xs",
-						})}
-						value={sample}
-						onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-							setSample(e.target.value);
-							setSamplePresetChoice("custom");
-						}}
-						placeholder={t("fontViewer.samplePlaceholder", {
-							defaultValue: "Preview text (CJK / emoji / Latin)",
-						})}
-						aria-label={t("fontViewer.previewTextAria", {
-							defaultValue: "Preview text",
-						})}
-					/>
-				</div>
+				<FontViewerSampleRow
+					presets={FONT_SAMPLE_PRESETS}
+					presetChoice={samplePresetChoice}
+					sample={sample}
+					onSampleChange={setSample}
+					onPresetChoiceChange={setSamplePresetChoice}
+				/>
 				<div
 					className={css({
 						display: "flex",
@@ -1412,7 +1235,7 @@ export function FontViewerWidget({
 						className={css({
 							minWidth: 0,
 							flex: 1,
-							flexBasis: "var(--ty-widget-icon-size)",
+							flexBasis: "4",
 						})}
 					>
 						<SearchField
@@ -1433,7 +1256,7 @@ export function FontViewerWidget({
 							})}
 						/>
 					</div>
-					<CatalogBrowserViewModeToggle
+					<ViewModeToggle
 						viewMode={viewMode}
 						onViewModeChange={setViewMode}
 						onEnterIconView={() => {
@@ -1451,227 +1274,32 @@ export function FontViewerWidget({
 					/>
 				</div>
 
-				{getQueryLocalFonts() !== undefined &&
-				via !== "queryLocalFonts" &&
-				via !== "after-effects" ? (
-					<div
-						className={css({
-							display: "flex",
-							flexShrink: 0,
-							flexDirection: "column",
-							gap: "2",
-							borderRadius: "shell-sm",
-							borderWidth: "1px",
-							borderStyle: "solid",
-							borderColor: "border.default",
-							backgroundColor: "surface.widget",
-							opacity: 0.4,
-							padding: "2",
-							fontSize: "text-xs",
-							color: "text.muted",
-						})}
-					>
-						<p className={css({ margin: 0, lineHeight: "snug" })}>
-							{t("fontViewer.hintNeedUserGesture", {
-								defaultValue:
-									"Installed fonts need a button click (Chromium Local Font Access). The list below shows fonts already loaded in this panel until then.",
-							})}
-						</p>
-						<div>
-							<Button
-								type="button"
-								variant="primary"
-								uiSize="sm"
-								disabled={loading}
-								onClick={() => {
-									void load({ tryLocalAccess: true });
-								}}
-							>
-								{t("fontViewer.loadAllSystemFonts", {
-									defaultValue: "Load all system fonts…",
-								})}
-							</Button>
-						</div>
-					</div>
-				) : getQueryLocalFonts() === undefined && via !== "after-effects" ? (
-					<div
-						className={css({
-							flexShrink: 0,
-							borderRadius: "shell-sm",
-							borderWidth: "1px",
-							borderStyle: "solid",
-							borderColor: "border.default",
-							backgroundColor: "surface.widget",
-							opacity: 0.4,
-							padding: "2",
-							fontSize: "text-xs",
-							color: "text.muted",
-						})}
-					>
-						{t("fontViewer.hintNoLocalApi", {
-							defaultValue:
-								"This Chromium build does not expose queryLocalFonts — only fonts registered on document.fonts are listed.",
-						})}
-					</div>
-				) : null}
+				<FontViewerLoadHint
+					loading={loading}
+					via={via}
+					onLoadAllSystemFonts={() => {
+						void load({ tryLocalAccess: true });
+					}}
+				/>
 
-				{loadPhase ? (
-					<div
-						className={css({
-							flexShrink: 0,
-							borderRadius: "shell-sm",
-							borderWidth: "1px",
-							borderStyle: "solid",
-							borderColor: "border.default",
-							backgroundColor: "surface.widget",
-							opacity: 0.5,
-							padding: "2",
-							fontSize: "text-xs",
-							color: "text.muted",
-						})}
-					>
-						{loadPhase === "ae-host"
-							? t("fontViewer.phaseAeHost", {
-									defaultValue:
-										"Querying After Effects for fonts (evalScript)…",
-								})
-							: t("fontViewer.phaseBrowser", {
-									defaultValue: "Reading browser font sources…",
-								})}
-					</div>
-				) : null}
+				<FontViewerLoadPhase loadPhase={loadPhase} />
 
 				{localAccessError ? (
-					<div
-						className={css({
-							flexShrink: 0,
-							borderRadius: "shell-sm",
-							borderWidth: "1px",
-							borderStyle: "solid",
-							borderColor: "border.default",
-							backgroundColor: "surface.widget",
-							opacity: 0.5,
-							padding: "2",
-							fontSize: "text-xs",
-							color: "amber.700",
-							_dark: { color: "amber.300" },
-						})}
-					>
-						{t("fontViewer.localAccessErrorPrefix", {
-							defaultValue: "Local font access:",
-						})}{" "}
-						{localAccessError}
-					</div>
+					<FontViewerLocalAccessError error={localAccessError} />
 				) : null}
 
-				<div
-					className={css({
-						display: "flex",
-						flexShrink: 0,
-						flexWrap: "wrap",
-						justifyContent: "space-between",
-						columnGap: "2",
-						rowGap: "0.5",
-						borderBottomWidth: "1px",
-						borderBottomStyle: "solid",
-						borderColor: "border.default",
-						opacity: 0.5,
-						paddingInline: "0.5",
-						paddingBottom: "1",
-						fontSize: "text-xs",
-						color: "text.muted",
-					})}
-				>
-					<span className={css({ minWidth: 0 })}>
-						{loading
-							? t("fontViewer.loading", { defaultValue: "Loading…" })
-							: t("fontViewer.statsLine", {
-									families: familyGroups.length,
-									faces: filteredFaceCount,
-									total: rows.length,
-								})}
-					</span>
-					{via ? (
-						<span className={css({ flexShrink: 0 })}>
-							{via === "after-effects"
-								? t("fontViewer.viaAfterEffects", {
-										defaultValue: "After Effects (app.fonts)",
-									})
-								: via === "queryLocalFonts"
-									? t("fontViewer.viaLocalApi", {
-											defaultValue: "Local Font Access API",
-										})
-									: t("fontViewer.viaDocumentFonts", {
-											defaultValue: "document.fonts (subset)",
-										})}
-						</span>
-					) : null}
-				</div>
+				<FontViewerStatusLine
+					loading={loading}
+					familyCount={familyGroups.length}
+					filteredFaceCount={filteredFaceCount}
+					total={rows.length}
+					via={via}
+				/>
 
-				{error ? (
-					<div
-						className={css({
-							flexShrink: 0,
-							borderRadius: "shell-sm",
-							borderWidth: "1px",
-							borderStyle: "solid",
-							borderColor: "border.default",
-							backgroundColor: "surface.widget",
-							opacity: 0.5,
-							padding: "2",
-							fontSize: "text-xs",
-							color: "amber.700",
-							_dark: { color: "amber.300" },
-						})}
-					>
-						{t("fontViewer.loadError", {
-							defaultValue: "Could not load fonts.",
-						})}{" "}
-						{error}
-					</div>
-				) : null}
+				{error ? <FontViewerErrorBanner error={error} /> : null}
 
 				{!loading && rows.length === 0 ? (
-					<div
-						className={css({
-							display: "flex",
-							flexShrink: 0,
-							flexDirection: "column",
-							gap: "2",
-							borderRadius: "shell-sm",
-							borderWidth: "1px",
-							borderStyle: "dashed",
-							borderColor: "border.default",
-							padding: "2",
-							fontSize: "text-xs",
-							color: "text.muted",
-						})}
-					>
-						<p className={css({ margin: 0, lineHeight: "snug" })}>
-							{t("fontViewer.emptyList", {
-								defaultValue:
-									'No fonts loaded yet. Use "Load all system fonts" if available, or reload after the panel finishes loading styles.',
-							})}
-						</p>
-						{aeHostError ? (
-							<p
-								className={css({
-									margin: 0,
-									wordBreak: "break-all",
-									fontFamily: "mono",
-									fontSize: "text-2xs",
-									color: "text.muted",
-								})}
-							>
-								<span className={css({ fontFamily: "sans" })}>
-									{t("fontViewer.aeHostErrorLabel", {
-										defaultValue: "After Effects host:",
-									})}
-								</span>{" "}
-								{aeHostError}
-							</p>
-						) : null}
-					</div>
+					<FontViewerEmptyState aeHostError={aeHostError} />
 				) : null}
 
 				<div

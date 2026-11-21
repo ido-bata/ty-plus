@@ -13,25 +13,26 @@ import {
 } from "react";
 import { useTranslation } from "react-i18next";
 import { selectFolder } from "@/management/ae/cep/dialog-shim/bolt";
-import { readUserHomeOrFallback, ToolDialog } from "@/management/preset";
-import { assertPresetAssetPresent } from "@/management/preset/asset-verification";
-import { hostSafeFileName } from "@/management/preset/authoring/host-safe-file-name";
-import { authorCodePresetAsset } from "@/management/preset/authoring/write-preset-asset";
-import { ArchiveDetailsSection } from "@/management/preset/catalog-add/ArchiveDetailsSection";
-import { parseRootPathsFromSettingsJson } from "@/management/preset/catalog-add/parse-root-paths";
-import { PresetIconEditor } from "@/management/preset/components/IconEditor";
-import type { Preset, PresetIcon } from "@/management/preset/contract";
-import { CodeEditor } from "@/management/preset/editor/Code";
-import {
-	createPresetIconDraft,
-	presetIconDraftToPresetIcon,
-} from "@/management/preset/icon-editor";
 import {
 	AuthoringField,
 	AuthoringGrid,
 	AuthoringSection,
 	AuthoringSegment,
-} from "@/management/preset/tool-shell/archive-layout";
+	readUserHomeOrFallback,
+	ToolDialog,
+} from "@/management/preset";
+import { assertPresetAssetPresent } from "@/management/preset/assets/verification";
+import { hostSafeFileName } from "@/management/preset/authoring/host-safe-file-name";
+import { authorCodePresetAsset } from "@/management/preset/authoring/write-preset-asset";
+import { ArchiveDetailsSection } from "@/management/preset/catalog-add/ArchiveDetailsSection";
+import { parseRootPathsFromSettingsJson } from "@/management/preset/catalog-add/parse-root-paths";
+import type { Preset, PresetIcon } from "@/management/preset/contract";
+import { CodeEditor } from "@/management/preset/editor/Code";
+import {
+	createPresetIconDraft,
+	presetIconDraftToPresetIcon,
+} from "@/management/preset/icon/draft";
+import { PresetIconEditor } from "@/management/preset/icon/Editor";
 import { upsertLocalPreset } from "@/management/preset/use-cases";
 import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
 import { glyphBoxFillClass } from "@/management/preset/workspace/glyph-classes";

@@ -1,6 +1,6 @@
 import type { Preset, PresetIcon } from "@/management/preset/contract";
 
-import { tryParsePresetIconValue } from "@/management/preset/icon-data";
+import { tryParsePresetIconValue } from "@/management/preset/icon/normalize";
 
 export type PresetIconVisual =
 	| { kind: "image"; value: string }

@@ -5,7 +5,7 @@ import { DebugDialogRoot } from "@/management/debug/console/ui/dialog-root";
 import {
 	type CepMenuPayload,
 	registerCepJsonContextMenuSurface,
-} from "@/management/dialog/dialogs/context-menu";
+} from "@/management/dialog/context-menu";
 import { DeferredDialogBody } from "@/management/dialog/lazy-body";
 import { resolveFunctionDialog } from "@/management/dialog/routes";
 import { PresetsDialog } from "@/management/preset/catalog-browser/ListDialog";

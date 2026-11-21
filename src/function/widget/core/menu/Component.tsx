@@ -1,14 +1,15 @@
+import { Icon } from "@ty-plus/ui";
+import { Menu } from "lucide-react";
 import type { JSX, MouseEvent as ReactMouseEvent, ReactNode } from "react";
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
-import { CTX_MENU_IDS } from "@/management/dialog/dialogs/unified-context-menu-constants";
+import { CTX_MENU_IDS } from "@/management/dialog/unified-context-menu-constants";
 import type { Layout } from "@/management/workspace/layout/grid-document";
 import { catalogRefsForSurfaceIds } from "@/management/workspace/placement/resolve";
 import { ATTR_WIDGET_INSTANCE_ID } from "@/management/workspace/placement/types";
 import type { SurfaceState } from "@/management/workspace/state";
 import { DATA_OPENER_WORKSPACE_PANEL } from "@/management/workspace/surface/opener-panel-id";
-import { MenuIcon } from "@/management/workspace/surface/widget-grid-icons";
 import { css } from "@/styled-system/css";
 
 type Item = { action: string; label: string };
@@ -211,7 +212,7 @@ const panelClass = css({
 	pointerEvents: "auto",
 	zIndex: 100000,
 	maxHeight: "min(70vh,26rem)",
-	minWidth: "var(--ty-widget-icon-size)",
+	minWidth: "4",
 	overflowY: "auto",
 	whiteSpace: "nowrap",
 	borderRadius: "var(--ty-space-1)",
@@ -485,7 +486,7 @@ export function MenuWidget({
 			onClick={onToggle}
 			{...instanceAttr}
 		>
-			<MenuIcon size={14} />
+			<Icon icon={Menu} size={14} />
 			{panel}
 		</button>
 	);

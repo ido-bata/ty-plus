@@ -96,7 +96,7 @@ function AnchorPointGestureOverlay({
 				<polyline
 					points={points}
 					fill="none"
-					stroke="var(--action-primary)"
+					stroke="var(--color-text-accent)"
 					strokeWidth={2}
 					strokeLinecap="round"
 					strokeLinejoin="round"
@@ -107,14 +107,14 @@ function AnchorPointGestureOverlay({
 					cx={path[path.length - 1]?.x ?? 0}
 					cy={path[path.length - 1]?.y ?? 0}
 					r={3}
-					fill="var(--action-primary)"
+					fill="var(--color-text-accent)"
 				/>
 			)}
 			{label !== null && (
 				<text
 					x={4}
 					y={14}
-					className={css({ fill: "var(--accent, var(--action-primary))" })}
+					className={css({ fill: "var(--accent, var(--color-text-accent))" })}
 					fontSize={11}
 					fontWeight="bold"
 					style={{ paintOrder: "stroke", stroke: "rgba(0,0,0,0.5)" }}
