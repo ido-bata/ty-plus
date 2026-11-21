@@ -104,12 +104,12 @@ function PresetCell({
 	onHover: (id: string | null) => void;
 }) {
 	return (
-		// role="button" + keyboard handling: the shared @ty-plus/ui primitives
-		// own control chrome, while this composite cell is LP composition
-		// around the product's real tile glyph layer.
-		<div
-			role="button"
-			tabIndex={0}
+		// Native <button> (react-doctor prefer-tag-over-role); the shared
+		// @ty-plus/ui primitives own control chrome, while this composite
+		// cell is LP composition around the product's real tile glyph layer.
+		// Tracked in apps/web/design-lint-allowlist.json.
+		<button
+			type="button"
 			aria-pressed={selected}
 			className={cx(
 				cell,
@@ -117,12 +117,6 @@ function PresetCell({
 				hovered && !selected && css({ borderColor: "border.strong" }),
 			)}
 			onClick={onSelect}
-			onKeyDown={(e) => {
-				if (e.key === "Enter" || e.key === " ") {
-					e.preventDefault();
-					onSelect();
-				}
-			}}
 		>
 			<span className={cellIcon}>
 				<Tile
@@ -132,7 +126,7 @@ function PresetCell({
 				/>
 			</span>
 			<span className={cellTitle}>{preset.title}</span>
-		</div>
+		</button>
 	);
 }
 

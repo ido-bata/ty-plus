@@ -13,12 +13,14 @@ import {
 } from "@/management/preset/sibling-thumbnail";
 import { getPreset } from "@/management/preset/use-cases";
 import {
-	DEFAULT_EMOJI_CLASS,
-	frameBase,
-	framedTextClass,
 	PresetCatalogGlyphHost,
 	WorkspacePresetGlyph,
 } from "@/management/preset/workspace/glyph";
+import {
+	DEFAULT_EMOJI_CLASS,
+	frameBase,
+	framedTextClass,
+} from "@/management/preset/workspace/glyph-classes";
 import { css } from "@/styled-system/css";
 
 /**

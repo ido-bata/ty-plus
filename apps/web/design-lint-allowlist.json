@@ -1,0 +1,8 @@
+[
+	{
+		"file": "apps/web/src/components/PresetStage.tsx",
+		"line": 111,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive"
+	}
+]

@@ -4,6 +4,11 @@ import { resolveWorkspaceGlyphIconVisual } from "@/management/preset/assets/icon
 import type { Preset } from "@/management/preset/contract";
 import { CanvasEasingIcon } from "@/management/preset/workspace/CanvasEasingIcon";
 import { GlyphCachedImage } from "@/management/preset/workspace/GlyphCachedImage";
+import {
+	DEFAULT_EMOJI_CLASS,
+	frameBase,
+	framedTextClass,
+} from "@/management/preset/workspace/glyph-classes";
 import { css } from "@/styled-system/css";
 
 /** Same host as the workspace `PresetTile` (the source of truth for the in-grid-cell appearance). */
@@ -37,8 +42,6 @@ const presetCatalogGlyphHostBase = css({
 		fontSize: "2xs",
 	},
 });
-
-export const DEFAULT_EMOJI_CLASS = "";
 
 export type PresetCatalogGlyphHostProps = HTMLAttributes<HTMLDivElement> & {
 	children: ReactNode;
@@ -78,44 +81,6 @@ export function PresetCatalogGlyphHost(
 		</div>
 	);
 }
-
-export const frameBase = css({
-	display: "flex",
-	flexShrink: 0,
-	alignItems: "center",
-	justifyContent: "center",
-	overflow: "hidden",
-	borderRadius: "shell-sm",
-	borderWidth: "1px",
-	borderStyle: "solid",
-	borderColor: "border.default",
-	backgroundColor: "surface.widget",
-	minHeight: "0",
-	minWidth: "0",
-	containerType: "size",
-	"& [data-ws-preset-icon='image']": {
-		display: "flex",
-		height: "full",
-		minHeight: "0",
-		width: "full",
-		minWidth: "0",
-		overflow: "hidden",
-	},
-	"& [data-ws-preset-icon='image'] img": {
-		height: "full",
-		width: "full",
-		minHeight: "0",
-		minWidth: "0",
-		objectFit: "cover",
-		objectPosition: "center",
-	},
-});
-
-export const framedTextClass = css({
-	"& [data-ws-preset-text]:not([data-ws-preset-text-fit])": {
-		fontSize: "2xs",
-	},
-});
 
 export type FramedPresetGlyphProps = {
 	preset: Preset;
