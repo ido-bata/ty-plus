@@ -41,6 +41,64 @@ export type { ImportEntry };
 export { getImportEntries };
 
 // ---------------------------------------------------------------------------
+// Function slice public vocabulary
+// ---------------------------------------------------------------------------
+
+/**
+ * The modules `management` may import from the `function` slice.
+ *
+ * They describe the widget catalog — which widget types exist, how to read
+ * the registry, how a widget is rendered, how a legacy layout id maps to a
+ * widget type — rather than implement any single widget. Everything else in
+ * `function/` (a widget leaf, a preset dialog, the onboarding view) is
+ * implementation and must not be reached from `management`.
+ *
+ * Paths are canonical, extension-less, and rooted at `/src`.
+ */
+const FUNCTION_PUBLIC_API = new Set([
+	// A domain index may be imported by its directory alias
+	// (`@/function/widget`) or by its file path.
+	"/src/function/widget",
+	"/src/function/widget/index",
+	"/src/function/widget/contract",
+	"/src/function/widget/legacy-parse",
+	"/src/function/widget/registry",
+	"/src/function/widget/runtime-context",
+	"/src/function/preset/operations",
+	"/src/function/preset/operations/index",
+]);
+
+/**
+ * Canonical, extension-less `src/` path of an import specifier, or null when
+ * the specifier does not point into `src/`.
+ */
+const canonicalSrcPath = (
+	specifier: string,
+	fromFilePath: string,
+): string | null => {
+	let path: string | null = null;
+	if (specifier.startsWith("@/")) {
+		path = `/src/${specifier.slice(2)}`;
+	} else if (specifier.startsWith(".")) {
+		const normalizedFrom = fromFilePath.replace(/\\/g, "/");
+		path = normalizedFrom.startsWith("/src/")
+			? resolveUnixStylePath(normalizedFrom, specifier)
+			: resolve(dirname(normalizedFrom), specifier).replace(/\\/g, "/");
+	}
+	if (!path) return null;
+	return path.replace(/\.(ts|tsx|js|jsx)$/, "");
+};
+
+export const isFunctionPublicApi = (
+	specifier: string,
+	fromFilePath: string,
+): boolean => {
+	const path = canonicalSrcPath(specifier, fromFilePath);
+	if (!path) return false;
+	return FUNCTION_PUBLIC_API.has(path);
+};
+
+// ---------------------------------------------------------------------------
 // Module owner resolution
 // ---------------------------------------------------------------------------
 
@@ -80,10 +138,16 @@ export const resolveModuleOwner = (
 	specifier: string,
 	fromFilePath: string,
 ): string | null => {
-	// "@/..." alias specifiers resolve under src/. Scoped to packages/ importers
-	// so the shared UI package cannot reach domain slices through aliases;
-	// src-internal alias resolution keeps its historical (baseline) semantics.
-	if (specifier.startsWith("@/") && fromFilePath.includes("/packages/")) {
+	// "@/..." alias specifiers resolve under src/.
+	//
+	// This used to be scoped to packages/ importers only, with the comment
+	// "src-internal alias resolution keeps its historical (baseline)
+	// semantics". The effect was that the ownership rules below never fired
+	// for aliased imports — and virtually every import in src/ is aliased —
+	// so `management -> function` was unenforced in practice. That is how
+	// `management/preset/workspace/GlyphCachedImage.tsx` came to import a
+	// widget leaf, which `docs/architecture/widget-boundary.md` forbids.
+	if (specifier.startsWith("@/")) {
 		const rest = specifier.slice(2);
 		if (rest.startsWith("styled-system/")) return null;
 		const owner = rest.split("/")[0];
@@ -338,18 +402,23 @@ export const classifyBoundaryViolation = (
 		}
 	}
 
-	// K1: management may import ONLY from function minimal index files
-	// (e.g. @/function/widget/index.ts, @/function/preset/index.ts).
-	// Direct imports to function implementation are violations.
+	// K1: management may import ONLY from the function slice's public
+	// vocabulary — the widget catalog's manifest and the modules that make up
+	// that catalog. Direct imports to a function *implementation* (a widget
+	// leaf, a preset dialog, an onboarding view) are violations.
+	//
+	// The vocabulary is listed explicitly because it is a contract, not a
+	// coincidence: these are the modules that describe the widget catalog
+	// (which types exist, how to read the registry, how to render a widget)
+	// rather than implement any single widget.
 	if (srcOwner === "management" && targetOwner === "function") {
-		const normalizedSpec = specifier.replace(/\\/g, "/");
-		// Allowed: any path that goes through a function-domain index.ts
-		// e.g. @/function/widget/index.ts, @/function/preset/operations/index.ts
-		const isIndexImport =
-			normalizedSpec.includes("/function/") &&
-			normalizedSpec.match(/\/function\/[^/]+\/index\.ts$/);
-		if (!isIndexImport) {
-			return "management -> function (management may import only from function minimal index)";
+		// A test may exercise an implementation it would not be allowed to
+		// import from production code — that is what the test is for.
+		if (/\.(test|spec)\.(ts|tsx)$/.test(filePath)) {
+			return null;
+		}
+		if (!isFunctionPublicApi(specifier, filePath)) {
+			return "management -> function (management may import only the function slice's public vocabulary)";
 		}
 	}
 
