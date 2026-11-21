@@ -220,7 +220,7 @@ review-309 で「プリセットタイルが同一の低コントラストカー
 
 `PresetStage` の Web 専用再実装をやめ、製品の preset tile レンダラを直接利用する。
 
-- **モジュール分割**: `glyph.tsx` から catalog id 解決（`getPreset` → storage/CEP 依存）を行う `PresetGlyphById` を `glyph-by-id.tsx` へ分離。`glyph.tsx` は `PresetCatalogGlyphHost` / `FramedPresetGlyph` / `WorkspacePresetGlyph` のみを持ち、ホスト非依存になった。`preset/index.ts` と `ListDialog.tsx` の import を更新し、`ListDialog.issue145.test.tsx` の mock 対象も追従。
+- **モジュール分割**: `glyph.tsx` から catalog id 解決（`getPreset` → storage/CEP 依存）を行う `PresetGlyphById` を `glyph-by-id.tsx` へ分離。`glyph.tsx` は `PresetCatalogGlyphHost` / `FramedPresetGlyph` / `WorkspacePresetGlyph` のみを持ち、ホスト非依存になった。`preset/index.ts` と `ListDialog.tsx` の import を更新し、`list-dialog.render-contract.test.tsx` の mock 対象も追従。
 - **Web 解決経路**: vite に `@/…` → `src/` の catch-all alias（`@/styled-system` より後段）を追加し、製品モジュール内部の `@/management/…` import を解決。web panda.config の include に `../../src/**` を追加し、製品側 `css()` クラスを web バンドルへ生成。vitest.config にも `@ty-plus/product` alias を追加。
 - **再利用した実装**: `Tile`（`data-preset-id` + hover 通知）→ `PresetCatalogGlyphHost` → `WorkspacePresetGlyph` → `resolveWorkspaceGlyphIconVisual` → `CanvasEasingIcon`。デモ preset は実 `Preset` contract オブジェクトで、icon は製品の `presetIconCanvas` で構築（canvas 曲線は fixture 定義の説明用グリフと明記）。
 - **状態モデル**: 選択（ローカル state）を初期値ありで表示し、hover は製品と同じ precedence（selection → hover fallback）で info readout に反映。AE 実行は Web では偽装しない。
