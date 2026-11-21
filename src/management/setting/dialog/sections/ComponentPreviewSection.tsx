@@ -23,7 +23,7 @@ import {
 	SettingsField,
 	SettingsGrid,
 } from "@/management/setting/dialog/layout/SettingsGrid";
-import type { DirectoryBrowserEntry } from "@/management/storage/ui/DirectoryBrowser";
+import type { FileEntry } from "@/management/storage/ui/FileEntryList";
 import { css } from "@/styled-system/css";
 import { ButtonsPreview } from "./ButtonsPreview";
 import { DirectoryBrowserPreview } from "./DirectoryBrowserPreview";
@@ -41,7 +41,7 @@ const SELECT_OPTIONS = [
 	{ value: "opt3", label: "Option 3" },
 ];
 
-const MOCK_DIR_ENTRIES: DirectoryBrowserEntry[] = [
+const MOCK_DIR_ENTRIES: FileEntry[] = [
 	{
 		path: "/host/presets/animation",
 		name: "animation",
