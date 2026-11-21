@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Badge, Button, MediaFrame } from "@ty-plus/ui";
 import { cx } from "@ty-plus/ui/util/cx";
 import { css } from "@/styled-system/css";
-import { PresetRail, PresetStage } from "../components/PresetStage";
+import { PresetStage } from "../components/PresetStage";
 import { findLatestStable } from "../lib/releases";
 import { SITE } from "../lib/site";
 import { listReleases } from "../server/releases";
@@ -12,35 +12,10 @@ import {
 	grid,
 	section,
 	span4,
-	span5,
-	span7,
 	span8,
 	stack,
 } from "../styles/layout";
 import * as s from "../styles/site";
-
-const heroFigure = css({
-	minWidth: 0,
-	gridColumn: { base: "1 / -1", md: "span 8" },
-	gridRow: { md: "span 2" },
-});
-
-const heroCopy = css({
-	minWidth: 0,
-	gridColumn: { base: "1 / -1", md: "span 4" },
-	display: "flex",
-	flexDirection: "column",
-	justifyContent: "center",
-});
-
-const heroActions = css({
-	minWidth: 0,
-	gridColumn: { base: "1 / -1", md: "span 4" },
-	display: "flex",
-	flexDirection: "column",
-	gap: "1.25rem",
-	alignItems: "flex-start",
-});
 
 export const Route = createFileRoute("/")({
 	loader: () => listReleases(),
@@ -81,13 +56,20 @@ const sectionLabel = css({
 	color: "text.muted",
 });
 
-const mediaLead = css({ order: { md: -1 } });
-
-const dialogPair = css({
-	display: "grid",
-	gridTemplateColumns: { base: "1fr", sm: "repeat(2, minmax(0, 1fr))" },
-	gap: "1.5rem",
-	alignItems: "start",
+/* Mosaic cells — deliberately unequal spans and one row-spanning cell so
+   the section reads as a composed surface, not a card row. */
+const mosaicLead = css({
+	minWidth: 0,
+	gridColumn: { base: "1 / -1", md: "span 5" },
+	gridRow: { md: "span 2" },
+});
+const mosaicWide = css({
+	minWidth: 0,
+	gridColumn: { base: "1 / -1", md: "span 4" },
+});
+const mosaicNarrow = css({
+	minWidth: 0,
+	gridColumn: { base: "1 / -1", md: "span 3" },
 });
 
 const RESOURCES = [
@@ -127,19 +109,20 @@ function HomePage() {
 
 	return (
 		<main>
-			{/* Hero — three grid children so DOM order is copy → image →
-			    actions on every viewport. On md+ the image spans both left
-			    rows beside the copy/actions rail. */}
+			{/* Hero — the working demo IS the hero visual. Copy rail (span 4)
+			    carries claim + actions; the wide rail (span 8) renders the
+			    shared product tile stage, interactive on first paint. */}
 			<section
 				className={cx(
-					container({ size: "content" }),
+					container({ size: "wide" }),
 					section({ variant: "flow" }),
 				)}
 				aria-label="Introduction"
 			>
 				<div className={grid({ gap: 3 })}>
-					<div className={heroCopy}>
+					<div className={cx(span4, stack({ gap: 3 }))}>
 						<div className={stack({ gap: 3 })}>
+							<span className={sectionLabel}>Free · Open source</span>
 							<h1 className={s.h1}>{SITE.tagline}</h1>
 							<p className={s.lead}>
 								ty-plus turns part of your After Effects workspace into a
@@ -147,17 +130,6 @@ function HomePage() {
 								without leaving After Effects.
 							</p>
 						</div>
-					</div>
-					<figure className={heroFigure}>
-						<div className={s.figure}>
-							<PresetRail />
-						</div>
-						<figcaption className={s.figcaption}>
-							Preset tiles rendered with the product's own easing-icon component
-							— demo glyphs, not parsed .ffx motion.
-						</figcaption>
-					</figure>
-					<div className={heroActions}>
 						<div className={cluster({ gap: 3 })}>
 							<Button as={Link} to="/download" variant="primary" uiSize="lg">
 								Download ty-plus
@@ -174,34 +146,24 @@ function HomePage() {
 							{latest ? <span>Stable {latest.tagName}</span> : null}
 						</div>
 					</div>
+					<div className={cx(span8, css({ minWidth: 0 }))}>
+						<PresetStage />
+					</div>
 				</div>
 			</section>
 
-			{/* Workspace — explanation rail leads; the panel toolbar capture
-			    fills the remaining columns. Reading order is text → image on
-			    every viewport, the inverse of the hero's media-dominant rail. */}
+			{/* Mosaic — three real panel captures at unequal weights. The
+			    workspace shot spans two rows so the section has a tall
+			    anchor instead of three identical rectangles. */}
 			<section
 				className={cx(
 					container({ size: "content" }),
 					section({ variant: "band" }),
 				)}
-				aria-label="Workspace overview"
+				aria-label="Panel surfaces"
 			>
 				<div className={grid({ gap: 3 })}>
-					<div className={span4}>
-						<div className={stack({ gap: 3 })}>
-							<h2 className={s.h2}>Tools where you already work</h2>
-							<p className={s.body}>
-								Easing curves, alignment, anchor-point helpers, and directory
-								browsers live on the same grid as your preset tiles. The layout
-								is stored locally and restored exactly as you left it.
-							</p>
-							<Button as={Link} to="/features" variant="secondary">
-								See how it works
-							</Button>
-						</div>
-					</div>
-					<figure className={cx(s.figure, span8)}>
+					<figure className={cx(s.figure, mosaicLead)}>
 						<MediaFrame>
 							<img
 								src="/images/workspace-widgets.png"
@@ -212,84 +174,27 @@ function HomePage() {
 								className={s.shotImg}
 							/>
 						</MediaFrame>
+						<figcaption className={s.figcaption}>
+							The workspace grid — presets and widgets on one surface, captured
+							from the running panel.
+						</figcaption>
 					</figure>
-				</div>
-			</section>
-
-			{/* Preset interaction — a working demo built from the product's
-			    own icon component. Selection is real local state; the copy
-			    states plainly what runs in After Effects vs. on this page. */}
-			<section
-				className={cx(
-					container({ size: "content" }),
-					section({ variant: "band" }),
-				)}
-				aria-label="Preset interaction"
-			>
-				<div className={grid({ gap: 3 })}>
-					<div className={span5}>
-						<div className={stack({ gap: 3 })}>
-							<h2 className={s.h2}>Hover, select, run</h2>
-							<p className={s.body}>
-								In the panel, hover a preset tile and the info widget shows what
-								it does. Shift-click selects tiles for inspection; a plain click
-								applies the preset to the active layer — verified end to end on
-								a real project.
-							</p>
-							<p className={s.body}>
-								Try the selection below — the tiles use the same icon renderer
-								as the product. This page cannot reach After Effects, so
-								execution stays in the panel.
-							</p>
-						</div>
-					</div>
-					<div className={cx(span7, mediaLead)}>
-						<PresetStage />
-					</div>
-				</div>
-			</section>
-
-			{/* Features — full-width header over a captioned dialog pair. The
-			    two real dialogs sit side by side at equal weight; captions
-			    name each surface so the pair reads as a catalog, not a
-			    repeated screenshot. */}
-			<section
-				className={cx(
-					container({ size: "content" }),
-					section({ variant: "band" }),
-				)}
-				aria-label="Feature overview"
-			>
-				<div className={stack({ gap: 3 })}>
-					<div className={stack({ gap: 2 })}>
-						<span className={sectionLabel}>Features</span>
-						<h2 className={s.h2}>Built for the panel, not the browser</h2>
-						<p className={s.body}>
-							Every surface below is a real panel dialog — it runs inside After
-							Effects and keeps working with the network unplugged.
-						</p>
-					</div>
-					<div className={cluster({ gap: 3 })}>
-						<Button as={Link} to="/features" variant="secondary" uiSize="sm">
-							All features
-						</Button>
-					</div>
-					<div className={dialogPair}>
-						<figure className={s.figure}>
-							<MediaFrame>
-								<img
-									src="/images/presets-dialog.png"
-									alt="The Local Presets browser in ty-plus listing presets from the local catalog"
-									width={1760}
-									height={1520}
-									loading="lazy"
-									className={s.shotImg}
-								/>
-							</MediaFrame>
-							<figcaption className={s.figcaption}>
-								Local Presets — browse, filter, and place catalog presets.
-							</figcaption>
-						</figure>
+					<figure className={cx(s.figure, mosaicWide)}>
+						<MediaFrame>
+							<img
+								src="/images/presets-dialog.png"
+								alt="The Local Presets browser in ty-plus listing presets from the local catalog"
+								width={1760}
+								height={1520}
+								loading="lazy"
+								className={s.shotImg}
+							/>
+						</MediaFrame>
+						<figcaption className={s.figcaption}>
+							Local Presets — browse, filter, and place catalog presets.
+						</figcaption>
+					</figure>
+					<div className={cx(mosaicNarrow, stack({ gap: 3 }))}>
 						<figure className={s.figure}>
 							<MediaFrame>
 								<img
@@ -305,11 +210,39 @@ function HomePage() {
 								Add Widget — extend the workspace with built-in tools.
 							</figcaption>
 						</figure>
+						<p className={s.body}>
+							Every surface runs inside After Effects and keeps working with the
+							network unplugged.
+						</p>
+						<Button as={Link} to="/features" variant="secondary" uiSize="sm">
+							All features
+						</Button>
 					</div>
 				</div>
 			</section>
 
-			{/* Resources — dense 3-cell grid aligned to the same axes */}
+			{/* Statement — text-only band. A deliberate low-density break
+			    between the media-heavy sections above and the index below. */}
+			<section
+				className={cx(
+					container({ size: "narrow" }),
+					section({ variant: "prose" }),
+				)}
+				aria-label="Principles"
+			>
+				<div className={stack({ gap: 3, align: "center" })}>
+					<h2 className={cx(s.h2, css({ textAlign: "center" }))}>
+						Local-first, offline-capable, yours to arrange
+					</h2>
+					<p className={cx(s.body, css({ textAlign: "center" }))}>
+						Presets, widgets, and layouts live in local files on your machine.
+						No account, no telemetry, no subscription — the panel works the same
+						unplugged.
+					</p>
+				</div>
+			</section>
+
+			{/* Resources — dense 3-cell index aligned to the same axes. */}
 			<section
 				className={cx(
 					container({ size: "content" }),
