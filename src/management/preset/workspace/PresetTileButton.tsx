@@ -1,4 +1,4 @@
-import { cx } from "@ty-plus/ui/util/cx";
+import { Button, cx } from "@ty-plus/ui";
 import type { CSSProperties, JSX, MouseEvent } from "react";
 import type { Preset } from "@/management/preset/contract";
 import {
@@ -98,8 +98,10 @@ export function PresetTileButton(props: PresetTileButtonProps): JSX.Element {
 					<WorkspacePresetGlyph preset={preset} />
 				</PresetCatalogGlyphHost>
 			</WorkspaceTileFrame>
-			<button
+			<Button
 				type="button"
+				variant="bare"
+				uiSize="sm"
 				className={hitArea}
 				aria-pressed={selected}
 				aria-label={accessibleName}

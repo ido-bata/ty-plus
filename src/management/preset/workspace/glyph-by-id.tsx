@@ -1,4 +1,4 @@
-import { cx } from "@ty-plus/ui/util/cx";
+import { cx } from "@ty-plus/ui";
 import type { JSX, ReactNode } from "react";
 import { useEffect, useMemo, useState } from "react";
 import type { Preset } from "@/management/preset/contract";
