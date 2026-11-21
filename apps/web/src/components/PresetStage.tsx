@@ -6,7 +6,6 @@ import {
 import {
 	type Preset,
 	PresetTileButton,
-	Tile,
 } from "@ty-plus/product/management/preset/workspace";
 import { useState } from "react";
 import { css } from "@/styled-system/css";
@@ -99,64 +98,3 @@ export function PresetStage({
 		</div>
 	);
 }
-
-/** Decorative rail of real preset tiles for the hero — no interaction. */
-export function PresetRail({
-	presets = DEMO_PRESETS.slice(0, 6),
-}: {
-	presets?: Preset[];
-}) {
-	return (
-		<div
-			className={css({
-				display: "flex",
-				flexWrap: "wrap",
-				gap: "0.75rem",
-				alignItems: "flex-end",
-			})}
-			aria-hidden="true"
-		>
-			{presets.map((p, i) => (
-				<div
-					key={p.id}
-					className={css({
-						display: "flex",
-						flexDirection: "column",
-						alignItems: "center",
-						gap: "0.375rem",
-						padding: "0.75rem",
-						borderRadius: "surface-card",
-						borderWidth: "hairline",
-						borderStyle: "solid",
-						borderColor: "border.subtle",
-						background: "surface.panel",
-					})}
-					data-rail-index={i}
-				>
-					<span
-						className={css({
-							display: "flex",
-							width: { base: "3.5rem", md: "4.5rem" },
-							aspectRatio: "1",
-							alignItems: "center",
-							justifyContent: "center",
-							overflow: "hidden",
-						})}
-					>
-						<Tile preset={p} label={p.title} />
-					</span>
-					<span className={cellTitle}>{p.title}</span>
-				</div>
-			))}
-		</div>
-	);
-}
-
-const cellTitle = css({
-	fontSize: "xs",
-	fontWeight: "medium",
-	color: "text.primary",
-	whiteSpace: "nowrap",
-	overflow: "hidden",
-	textOverflow: "ellipsis",
-});

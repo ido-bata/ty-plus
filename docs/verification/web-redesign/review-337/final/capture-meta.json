@@ -1,17 +1,13 @@
 {
-  "baseUrl": "http://localhost:4173",
+  "baseUrl": "http://localhost:4178",
   "outDir": "docs/verification/web-redesign/review-337/final",
   "tag": "final",
-  "commitSha": "ac797a17d5aaa0b8584c8280826ec09ec275fb22",
+  "commitSha": "757c7a637e422921b848d669d5000736a2ba106b",
   "sourceTree": {
-    "dirty": true,
-    "dirtyPaths": [
-      "pps/web/src/routes/features.tsx",
-      "apps/web/src/routes/index.tsx",
-      "docs/verification/web-redesign/review-337/variant-b/"
-    ]
+    "dirty": false,
+    "dirtyPaths": []
   },
-  "capturedAt": "2026-11-21T09:07:19.047Z",
+  "capturedAt": "2026-11-21T10:03:10.501Z",
   "browser": "chromium 153.0.8010.12 (playwright)",
   "conditions": {
     "waits": [

@@ -42,6 +42,9 @@ export const body = css({
 });
 
 export const link = css({
+	display: "inline-block",
+	paddingBlock: "0.25rem",
+	marginBlock: "-0.25rem",
 	color: "text.primary",
 	textDecoration: "underline",
 	textUnderlineOffset: "2px",
@@ -88,7 +91,17 @@ export const defRow = css({
 	},
 });
 
-export const defTerm = css({ fontWeight: "medium", margin: 0 });
+export const defTerm = css({
+	fontWeight: "medium",
+	margin: 0,
+	// Standalone term links get a ≥24px tap target without changing the
+	// row's visual rhythm.
+	"& a": {
+		display: "inline-block",
+		paddingBlock: "0.375rem",
+		marginBlock: "-0.375rem",
+	},
+});
 export const defDesc = css({ color: "text.muted", margin: 0 });
 
 export const steps = css({
@@ -126,6 +139,9 @@ export const releaseHead = css({
 });
 
 export const releaseVersion = css({
+	display: "inline-block",
+	paddingBlock: "0.375rem",
+	marginBlock: "-0.375rem",
 	fontFamily: "mono",
 	fontSize: "text-md",
 	fontWeight: "medium",
