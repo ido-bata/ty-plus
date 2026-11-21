@@ -177,6 +177,8 @@ export function PresetStage({
 		source: PresetInfoSource;
 	} | null>(null);
 
+	const selectedSet = useMemo(() => new Set(selectedIds), [selectedIds]);
+
 	const live = useMemo(() => {
 		if (selectedIds.length > 0) {
 			const byId = new Map(presets.map((p) => [p.id, p]));
@@ -270,13 +272,23 @@ export function PresetStage({
 	};
 
 	return (
-		// biome-ignore lint/a11y/useKeyWithClickEvents: supplementary pointer affordance — every actionable tile inside is a native <button> that is already keyboard-operable; this only mirrors the panel's click-empty-grid deselect.
 		<div
 			className={stage}
 			data-preset-stage
 			role="group"
 			aria-label="Preset tiles demo"
 			onClick={handleStageClick}
+			onKeyDown={(ev) => {
+				// Escape mirrors the panel's click-empty-grid deselect for
+				// keyboard users who cannot click the stage background.
+				if (
+					ev.key === "Escape" &&
+					(selectedIds.length > 0 || applied !== null)
+				) {
+					setSelectedIds([]);
+					setApplied(null);
+				}
+			}}
 		>
 			<div className={tileGrid}>
 				{presets.map((p, i) => (
@@ -290,7 +302,7 @@ export function PresetStage({
 					>
 						<PresetTileButton
 							preset={p}
-							selected={selectedIds.includes(p.id)}
+							selected={selectedSet.has(p.id)}
 							onSelect={(ev) => handleTileClick(ev, p)}
 							onHoverChange={setHoverId}
 						/>
