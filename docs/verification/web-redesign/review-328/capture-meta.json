@@ -1,0 +1,93 @@
+{
+  "baseUrl": "http://localhost:4173",
+  "outDir": "docs/verification/web-redesign/review-328",
+  "tag": "review",
+  "commitSha": "41653851fc4c474bb43ef89f400a5fa0be8f5bdf",
+  "sourceTree": {
+    "dirty": false,
+    "dirtyPaths": []
+  },
+  "capturedAt": "2026-11-21T05:30:29.594Z",
+  "browser": "chromium 153.0.8010.12 (playwright)",
+  "conditions": {
+    "waits": [
+      "networkidle",
+      "document.fonts.ready",
+      "scroll pass to trigger loading=lazy",
+      "all img decoded (naturalWidth > 0)",
+      "300ms settle"
+    ],
+    "menuInitialState": "asserted closed on normal captures",
+    "interactionCaptures": "mobile menu-open only, separate files"
+  },
+  "viewports": [
+    {
+      "name": "desktop",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "name": "tablet",
+      "width": 834,
+      "height": 1112
+    },
+    {
+      "name": "mobile",
+      "width": 390,
+      "height": 844
+    }
+  ],
+  "routes": [
+    "/",
+    "/features",
+    "/download",
+    "/docs",
+    "/changelog",
+    "/support"
+  ],
+  "menuClosedAssertions": [
+    "desktop /: inline layout -> ok",
+    "desktop / top-shot scrollY=0 -> ok",
+    "desktop /features: inline layout -> ok",
+    "desktop /features top-shot scrollY=0 -> ok",
+    "desktop /download: inline layout -> ok",
+    "desktop /download top-shot scrollY=0 -> ok",
+    "desktop /docs: inline layout -> ok",
+    "desktop /docs top-shot scrollY=0 -> ok",
+    "desktop /changelog: inline layout -> ok",
+    "desktop /changelog top-shot scrollY=0 -> ok",
+    "desktop /support: inline layout -> ok",
+    "desktop /support top-shot scrollY=0 -> ok",
+    "tablet /: inline layout -> ok",
+    "tablet / top-shot scrollY=0 -> ok",
+    "tablet /features: inline layout -> ok",
+    "tablet /features top-shot scrollY=0 -> ok",
+    "tablet /download: inline layout -> ok",
+    "tablet /download top-shot scrollY=0 -> ok",
+    "tablet /docs: inline layout -> ok",
+    "tablet /docs top-shot scrollY=0 -> ok",
+    "tablet /changelog: inline layout -> ok",
+    "tablet /changelog top-shot scrollY=0 -> ok",
+    "tablet /support: inline layout -> ok",
+    "tablet /support top-shot scrollY=0 -> ok",
+    "mobile /: {\"missing\":false,\"popoverOpen\":false,\"visible\":false,\"hitIsMenu\":false} -> ok",
+    "mobile / top-shot scrollY=0 -> ok",
+    "mobile / menu-open: {\"missing\":false,\"popoverOpen\":true,\"visible\":true,\"hitIsMenu\":true} -> ok",
+    "mobile /features: {\"missing\":false,\"popoverOpen\":false,\"visible\":false,\"hitIsMenu\":false} -> ok",
+    "mobile /features top-shot scrollY=0 -> ok",
+    "mobile /features menu-open: {\"missing\":false,\"popoverOpen\":true,\"visible\":true,\"hitIsMenu\":true} -> ok",
+    "mobile /download: {\"missing\":false,\"popoverOpen\":false,\"visible\":false,\"hitIsMenu\":false} -> ok",
+    "mobile /download top-shot scrollY=0 -> ok",
+    "mobile /download menu-open: {\"missing\":false,\"popoverOpen\":true,\"visible\":true,\"hitIsMenu\":true} -> ok",
+    "mobile /docs: {\"missing\":false,\"popoverOpen\":false,\"visible\":false,\"hitIsMenu\":false} -> ok",
+    "mobile /docs top-shot scrollY=0 -> ok",
+    "mobile /docs menu-open: {\"missing\":false,\"popoverOpen\":true,\"visible\":true,\"hitIsMenu\":true} -> ok",
+    "mobile /changelog: {\"missing\":false,\"popoverOpen\":false,\"visible\":false,\"hitIsMenu\":false} -> ok",
+    "mobile /changelog top-shot scrollY=0 -> ok",
+    "mobile /changelog menu-open: {\"missing\":false,\"popoverOpen\":true,\"visible\":true,\"hitIsMenu\":true} -> ok",
+    "mobile /support: {\"missing\":false,\"popoverOpen\":false,\"visible\":false,\"hitIsMenu\":false} -> ok",
+    "mobile /support top-shot scrollY=0 -> ok",
+    "mobile /support menu-open: {\"missing\":false,\"popoverOpen\":true,\"visible\":true,\"hitIsMenu\":true} -> ok"
+  ],
+  "menuHiddenViolations": []
+}
