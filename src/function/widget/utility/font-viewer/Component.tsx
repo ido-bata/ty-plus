@@ -1,4 +1,4 @@
-import { Button, Icon, ListSelect } from "@ty-plus/ui";
+import { Button, Icon, ListSelect, ViewModeToggle } from "@ty-plus/ui";
 import { Input } from "@ty-plus/ui/fields/Input";
 import { SearchField } from "@ty-plus/ui/fields/SearchField";
 import { cx } from "@ty-plus/ui/util/cx";
@@ -15,7 +15,6 @@ import {
 } from "react";
 import { useTranslation } from "react-i18next";
 import {
-	CatalogBrowserViewModeToggle,
 	ICON_CELL_BASE_REM,
 	ICON_GRID_CLASS,
 	ICON_GRID_SCALE_LS_KEY,
@@ -1433,7 +1432,7 @@ export function FontViewerWidget({
 							})}
 						/>
 					</div>
-					<CatalogBrowserViewModeToggle
+					<ViewModeToggle
 						viewMode={viewMode}
 						onViewModeChange={setViewMode}
 						onEnterIconView={() => {

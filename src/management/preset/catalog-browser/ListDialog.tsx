@@ -1,4 +1,4 @@
-import { Icon, IconButton } from "@ty-plus/ui";
+import { Icon, IconButton, ViewModeToggle } from "@ty-plus/ui";
 import { SearchField } from "@ty-plus/ui/fields/SearchField";
 import { cx } from "@ty-plus/ui/util/cx";
 import { isIMEComposing } from "@ty-plus/ui/util/keyboard";
@@ -44,7 +44,6 @@ import {
 	LIST_ROW_GRID,
 } from "@/management/preset/catalog-browser/layout";
 import { CatalogBrowserShell } from "@/management/preset/catalog-browser/shell";
-import { CatalogBrowserViewModeToggle } from "@/management/preset/catalog-browser/view-mode-toggle";
 import { buildPlacementHints } from "@/management/preset/catalog-browser/workspace-placement-hints";
 import type { Preset } from "@/management/preset/contract";
 import { traceExecute } from "@/management/preset/execution/lifecycle-trace";
@@ -2174,7 +2173,7 @@ export function PresetsDialog(): JSX.Element {
 							/>
 						</div>
 						<div data-preset-list-toolbar className={toolbarClass}>
-							<CatalogBrowserViewModeToggle
+							<ViewModeToggle
 								viewMode={viewMode}
 								onViewModeChange={setViewMode}
 								onEnterIconView={() => {

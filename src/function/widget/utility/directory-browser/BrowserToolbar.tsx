@@ -1,7 +1,6 @@
-import { Icon, IconButton } from "@ty-plus/ui";
+import { Icon, IconButton, ViewModeToggle } from "@ty-plus/ui";
 import { ArrowUp, HardDrive, RefreshCw, Settings2 } from "lucide-react";
 import type { JSX } from "react";
-import { CatalogBrowserViewModeToggle } from "@/management/preset";
 import { css } from "@/styled-system/css";
 
 export function BrowserToolbar(props: {
@@ -96,7 +95,7 @@ export function BrowserToolbar(props: {
 				{" "}
 				<Icon icon={Settings2} size={12} />{" "}
 			</IconButton>{" "}
-			<CatalogBrowserViewModeToggle
+			<ViewModeToggle
 				viewMode={viewMode}
 				onViewModeChange={onViewModeChange}
 				fieldsetLegend={viewModeLegend}

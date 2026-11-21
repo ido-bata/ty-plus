@@ -3,11 +3,11 @@ import { LayoutGrid, List as ListIcon } from "lucide-react";
 import type { JSX } from "react";
 import { css, cx } from "@/styled-system/css";
 
-export type CatalogBrowserViewMode = "list" | "icons";
+export type ViewMode = "list" | "icons";
 
 export type ViewModeToggleProps = {
-	viewMode: CatalogBrowserViewMode;
-	onViewModeChange: (mode: CatalogBrowserViewMode) => void;
+	viewMode: ViewMode;
+	onViewModeChange: (mode: ViewMode) => void;
 	/** Extra hook when entering icon view (e.g. preset dialog resets group browse). */
 	onEnterIconView?: () => void;
 	/** Accessible labels (e.g. from `useTranslation("widgets")`). */
@@ -70,9 +70,13 @@ const separatorClass = css({
 });
 
 /**
- * List / icon segmented control shared by {@link PresetsDialog} and directory-browser widget.
+ * The list / icon view toggle.
+ *
+ * A generic control: it is offered by the preset catalog, the file entry
+ * list, the widget catalog and the font viewer, so it lives in the shared
+ * design system rather than in one of the features that use it.
  */
-export function CatalogBrowserViewModeToggle({
+export function ViewModeToggle({
 	viewMode,
 	onViewModeChange,
 	onEnterIconView,

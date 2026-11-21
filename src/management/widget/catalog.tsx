@@ -1,4 +1,4 @@
-import { Icon } from "@ty-plus/ui";
+import { Icon, ViewModeToggle } from "@ty-plus/ui";
 import { SearchField } from "@ty-plus/ui/fields/SearchField";
 import { cx } from "@ty-plus/ui/util/cx";
 import { isIMEComposing } from "@ty-plus/ui/util/keyboard";
@@ -29,7 +29,6 @@ import {
 } from "react";
 import type { WidgetType } from "@/function/widget";
 import { useTranslation } from "@/management/i18n/Context";
-import { CatalogBrowserViewModeToggle } from "@/management/preset/catalog-browser/view-mode-toggle";
 import { registry } from "@/management/widget/registry";
 import { css } from "@/styled-system/css";
 
@@ -684,7 +683,7 @@ export function AddWidgetCatalogPanel({
 					}
 				/>
 				<div className={viewModeWrapperStyle}>
-					<CatalogBrowserViewModeToggle
+					<ViewModeToggle
 						viewMode={viewMode}
 						onViewModeChange={setViewMode}
 						listViewAriaLabel={listViewAria}
