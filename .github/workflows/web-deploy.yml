@@ -175,7 +175,14 @@ jobs:
         run: |
           set -euo pipefail
           for route in / /features /download /docs /changelog /support /sitemap.xml; do
-            code=$(curl --connect-timeout 15 --max-time 45 --retry 3 -sSL -o /dev/null -w '%{http_code}' "${SITE_ORIGIN}${route}")
+            # Workers asset propagation can briefly 404 right after deploy;
+            # retry explicitly instead of relying on curl --retry semantics.
+            code=000
+            for attempt in 1 2 3 4 5; do
+              code=$(curl --connect-timeout 15 --max-time 45 -sSL -o /dev/null -w '%{http_code}' "${SITE_ORIGIN}${route}" || true)
+              if [[ "$code" == 200 ]]; then break; fi
+              sleep 5
+            done
             if [[ "$code" != 200 ]]; then
               echo "::error::${route}: HTTP ${code} (expected 200)"
               exit 1

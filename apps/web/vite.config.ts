@@ -53,8 +53,13 @@ export default defineConfig({
 		cloudflare({ viteEnvironment: { name: "ssr" } }),
 		tanstackStart({
 			// Public pages are static: prerender every route and emit a sitemap.
+			// This config is evaluated in Node, where import.meta.env is not
+			// populated — read the workers.dev origin from process.env directly.
 			prerender: { enabled: true, crawlLinks: true },
-			sitemap: { enabled: true, host: SITE.url },
+			sitemap: {
+				enabled: true,
+				host: process.env.VITE_TY_PLUS_SITE_ORIGIN || SITE.url,
+			},
 		}),
 		viteReact(),
 	],
