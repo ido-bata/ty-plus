@@ -120,3 +120,17 @@ allowlist の各エントリには理由が必要で、減らせないまま残�
 - ADR `docs/decisions/2026-09-10-directory-browser-kit.md` — 単一 kit の決定
 - `docs/architecture/widget-boundary.md` — 機能 UI の所有
 - `docs/architecture/ui-reconstruction/04-component-system.md` — primitive 一覧
+
+
+## focus 表示の統一
+
+focus の表示は、共有 token `--color-focus-ring`（accent 2px の ring）が唯一の
+定義です。すべての focus 可能 control はこの ring を描画します。text 系は
+さらに border を `interactive.focus` に塗り替えます（field 自身にも focus が出る）。
+
+`check:app-ui-design` がこれを強制します:
+
+- `focus-ring-missing` — focus 規則が ring を描画していない
+- `focus-ring-divergent` — canonical 以外の ring を描画している
+- `unknown-css-var` — 解決できない CSS 変数を参照している（fallback 付き、
+  あるいは同じ file が inline で設定する custom property は可）

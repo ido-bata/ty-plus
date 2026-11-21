@@ -1,223 +1,221 @@
 {
-  "schema": "ty-plus.e2e-run/1",
-  "suite": "smoke",
-  "capturedAt": "2026-11-15T15:37:33.887Z",
-  "extensionDir": "/Users/rebui/Library/Application Support/Adobe/CEP/extensions/app.ty-plus.dev",
-  "managedRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-15T15-36-50-332Z-76019/ty-plus",
-  "realManagedRoot": "/Applications/Adobe After Effects 2026/ty-plus",
-  "sandbox": {
-    "enabled": true,
-    "sandboxRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-15T15-36-50-332Z-76019/ty-plus",
-    "integrity": {
-      "realRoot": "/Applications/Adobe After Effects 2026/ty-plus",
-      "checkedAt": "2026-11-15T15:37:33.883Z",
-      "driftBeforeRepair": {
-        "changed": 1,
-        "added": 0,
-        "removed": 0
-      },
-      "filesRepaired": [
-        "tool-handoff/app.ty-plus.dev.dialog-preset-add.json"
-      ],
-      "cleanAfterRepair": false
-    }
-  },
-  "totals": {
-    "PASS": 6,
-    "FAIL": 0,
-    "BLOCKED": 0,
-    "SKIP": 0
-  },
-  "results": [
-    {
-      "uc": "UC-A03",
-      "title": "live surfaces boot with CEP bridge and extension origin",
-      "status": "PASS",
-      "detail": "6 live surfaces checked",
-      "checks": [
-        {
-          "name": "at least one surface is live",
-          "ok": true,
-          "detail": "6 live surfaces"
-        },
-        {
-          "name": "panel-1 is live",
-          "ok": true,
-          "detail": "panel-1"
-        },
-        {
-          "name": "panel-1 boots",
-          "ok": true,
-          "detail": "readyState=complete body=49825 cs=true"
-        },
-        {
-          "name": "panel-1 loads from CEP extensions",
-          "ok": true,
-          "detail": "file:///Users/rebui/Library/Application%20Support/Adobe/CEP/extensions/app.ty-plus.dev/panel/index.html"
-        },
-        {
-          "name": "dialog-preset-add boots",
-          "ok": true,
-          "detail": "readyState=complete body=3592 cs=true"
-        },
-        {
-          "name": "dialog-preset-add loads from CEP extensions",
-          "ok": true,
-          "detail": "file:///Users/rebui/Library/Application%20Support/Adobe/CEP/extensions/app.ty-plus.dev/modeless/index.html"
-        },
-        {
-          "name": "dialog-preset-add-2 boots",
-          "ok": true,
-          "detail": "readyState=complete body=3592 cs=true"
-        },
-        {
-          "name": "dialog-preset-add-2 loads from CEP extensions",
-          "ok": true,
-          "detail": "file:///Users/rebui/Library/Application%20Support/Adobe/CEP/extensions/app.ty-plus.dev/modeless/index.html"
-        },
-        {
-          "name": "debug-console boots",
-          "ok": true,
-          "detail": "readyState=complete body=27604 cs=true"
-        },
-        {
-          "name": "debug-console loads from CEP extensions",
-          "ok": true,
-          "detail": "file:///Users/rebui/Library/Application%20Support/Adobe/CEP/extensions/app.ty-plus.dev/modeless/index.html"
-        },
-        {
-          "name": "dialog-presets boots",
-          "ok": true,
-          "detail": "readyState=complete body=7154 cs=true"
-        },
-        {
-          "name": "dialog-presets loads from CEP extensions",
-          "ok": true,
-          "detail": "file:///Users/rebui/Library/Application%20Support/Adobe/CEP/extensions/app.ty-plus.dev/modeless/index.html"
-        },
-        {
-          "name": "dialog-widget-selector boots",
-          "ok": true,
-          "detail": "readyState=complete body=18781 cs=true"
-        },
-        {
-          "name": "dialog-widget-selector loads from CEP extensions",
-          "ok": true,
-          "detail": "file:///Users/rebui/Library/Application%20Support/Adobe/CEP/extensions/app.ty-plus.dev/modeless/index.html"
-        }
-      ],
-      "evidence": [
-        "/Users/rebui/work/ty-plus/docs/verification/e2e-acceptance/results/.tmp-sandbox-smoke/smoke-panel-1.png",
-        "/Users/rebui/work/ty-plus/docs/verification/e2e-acceptance/results/.tmp-sandbox-smoke/smoke-dialog-preset-add.png",
-        "/Users/rebui/work/ty-plus/docs/verification/e2e-acceptance/results/.tmp-sandbox-smoke/smoke-dialog-preset-add-2.png",
-        "/Users/rebui/work/ty-plus/docs/verification/e2e-acceptance/results/.tmp-sandbox-smoke/smoke-debug-console.png"
-      ],
-      "durationMs": 21686
-    },
-    {
-      "uc": "UC-H01",
-      "title": "ExtendScript host responds and host bundle contract is callable",
-      "status": "PASS",
-      "detail": "AE 26.5.3x9",
-      "checks": [
-        {
-          "name": "app.version responds",
-          "ok": true,
-          "detail": "26.5.3x9"
-        },
-        {
-          "name": "host bundle exposes callable contract",
-          "ok": true,
-          "detail": "contract-ok"
-        }
-      ],
-      "evidence": [],
-      "durationMs": 38
-    },
-    {
-      "uc": "UC-A02",
-      "title": "persisted settings/layout/theme files exist and parse",
-      "status": "PASS",
-      "detail": "managed root files",
-      "checks": [
-        {
-          "name": "settings/app.json parses",
-          "ok": true,
-          "detail": "ok"
-        },
-        {
-          "name": "workspaces/workspace-1.json parses",
-          "ok": true,
-          "detail": "ok"
-        },
-        {
-          "name": "presets/presets.json parses",
-          "ok": true,
-          "detail": "ok"
-        },
-        {
-          "name": "styles/theme.css state consistent with overrides",
-          "ok": true,
-          "detail": "169 bytes"
-        }
-      ],
-      "evidence": [],
-      "durationMs": 2
-    },
-    {
-      "uc": "UC-B04",
-      "title": "grid settings persisted value reaches panel CSS variables",
-      "status": "PASS",
-      "detail": "grid token convergence",
-      "checks": [
-        {
-          "name": "settings.workspace.grid.cellSize present",
-          "ok": true,
-          "detail": "cellSize=80"
-        },
-        {
-          "name": "--ty-ws-cell reflects persisted grid",
-          "ok": true,
-          "detail": "computed=80px expected=80px"
-        }
-      ],
-      "evidence": [],
-      "durationMs": 1
-    },
-    {
-      "uc": "UC-E02",
-      "title": "ui accent color persisted in app.json reaches theme.css tokens",
-      "status": "PASS",
-      "detail": "ui.* → theme pipeline",
-      "checks": [
-        {
-          "name": "ui.accentColor present in app.json",
-          "ok": true,
-          "detail": "accent=#e2b701"
-        },
-        {
-          "name": "theme.css accent token matches ui.* projection",
-          "ok": true,
-          "detail": "--color-ty-accent: #e2b701"
-        }
-      ],
-      "evidence": [],
-      "durationMs": 5
-    },
-    {
-      "uc": "UC-G01",
-      "title": "debug console surface aggregates logs and evaluates JS",
-      "status": "PASS",
-      "detail": "debug console",
-      "checks": [
-        {
-          "name": "debug console DOM mounted",
-          "ok": true,
-          "detail": "body=27604 msgs=27"
-        }
-      ],
-      "evidence": [],
-      "durationMs": 2529
-    }
-  ]
+	"schema": "ty-plus.e2e-run/1",
+	"suite": "smoke",
+	"capturedAt": "2026-11-15T15:37:33.887Z",
+	"extensionDir": "/Users/rebui/Library/Application Support/Adobe/CEP/extensions/app.ty-plus.dev",
+	"managedRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-15T15-36-50-332Z-76019/ty-plus",
+	"realManagedRoot": "/Applications/Adobe After Effects 2026/ty-plus",
+	"sandbox": {
+		"enabled": true,
+		"sandboxRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-15T15-36-50-332Z-76019/ty-plus",
+		"integrity": {
+			"realRoot": "/Applications/Adobe After Effects 2026/ty-plus",
+			"checkedAt": "2026-11-15T15:37:33.883Z",
+			"driftBeforeRepair": {
+				"changed": 1,
+				"added": 0,
+				"removed": 0
+			},
+			"filesRepaired": ["tool-handoff/app.ty-plus.dev.dialog-preset-add.json"],
+			"cleanAfterRepair": false
+		}
+	},
+	"totals": {
+		"PASS": 6,
+		"FAIL": 0,
+		"BLOCKED": 0,
+		"SKIP": 0
+	},
+	"results": [
+		{
+			"uc": "UC-A03",
+			"title": "live surfaces boot with CEP bridge and extension origin",
+			"status": "PASS",
+			"detail": "6 live surfaces checked",
+			"checks": [
+				{
+					"name": "at least one surface is live",
+					"ok": true,
+					"detail": "6 live surfaces"
+				},
+				{
+					"name": "panel-1 is live",
+					"ok": true,
+					"detail": "panel-1"
+				},
+				{
+					"name": "panel-1 boots",
+					"ok": true,
+					"detail": "readyState=complete body=49825 cs=true"
+				},
+				{
+					"name": "panel-1 loads from CEP extensions",
+					"ok": true,
+					"detail": "file:///Users/rebui/Library/Application%20Support/Adobe/CEP/extensions/app.ty-plus.dev/panel/index.html"
+				},
+				{
+					"name": "dialog-preset-add boots",
+					"ok": true,
+					"detail": "readyState=complete body=3592 cs=true"
+				},
+				{
+					"name": "dialog-preset-add loads from CEP extensions",
+					"ok": true,
+					"detail": "file:///Users/rebui/Library/Application%20Support/Adobe/CEP/extensions/app.ty-plus.dev/modeless/index.html"
+				},
+				{
+					"name": "dialog-preset-add-2 boots",
+					"ok": true,
+					"detail": "readyState=complete body=3592 cs=true"
+				},
+				{
+					"name": "dialog-preset-add-2 loads from CEP extensions",
+					"ok": true,
+					"detail": "file:///Users/rebui/Library/Application%20Support/Adobe/CEP/extensions/app.ty-plus.dev/modeless/index.html"
+				},
+				{
+					"name": "debug-console boots",
+					"ok": true,
+					"detail": "readyState=complete body=27604 cs=true"
+				},
+				{
+					"name": "debug-console loads from CEP extensions",
+					"ok": true,
+					"detail": "file:///Users/rebui/Library/Application%20Support/Adobe/CEP/extensions/app.ty-plus.dev/modeless/index.html"
+				},
+				{
+					"name": "dialog-presets boots",
+					"ok": true,
+					"detail": "readyState=complete body=7154 cs=true"
+				},
+				{
+					"name": "dialog-presets loads from CEP extensions",
+					"ok": true,
+					"detail": "file:///Users/rebui/Library/Application%20Support/Adobe/CEP/extensions/app.ty-plus.dev/modeless/index.html"
+				},
+				{
+					"name": "dialog-widget-selector boots",
+					"ok": true,
+					"detail": "readyState=complete body=18781 cs=true"
+				},
+				{
+					"name": "dialog-widget-selector loads from CEP extensions",
+					"ok": true,
+					"detail": "file:///Users/rebui/Library/Application%20Support/Adobe/CEP/extensions/app.ty-plus.dev/modeless/index.html"
+				}
+			],
+			"evidence": [
+				"/Users/rebui/work/ty-plus/docs/verification/e2e-acceptance/results/.tmp-sandbox-smoke/smoke-panel-1.png",
+				"/Users/rebui/work/ty-plus/docs/verification/e2e-acceptance/results/.tmp-sandbox-smoke/smoke-dialog-preset-add.png",
+				"/Users/rebui/work/ty-plus/docs/verification/e2e-acceptance/results/.tmp-sandbox-smoke/smoke-dialog-preset-add-2.png",
+				"/Users/rebui/work/ty-plus/docs/verification/e2e-acceptance/results/.tmp-sandbox-smoke/smoke-debug-console.png"
+			],
+			"durationMs": 21686
+		},
+		{
+			"uc": "UC-H01",
+			"title": "ExtendScript host responds and host bundle contract is callable",
+			"status": "PASS",
+			"detail": "AE 26.5.3x9",
+			"checks": [
+				{
+					"name": "app.version responds",
+					"ok": true,
+					"detail": "26.5.3x9"
+				},
+				{
+					"name": "host bundle exposes callable contract",
+					"ok": true,
+					"detail": "contract-ok"
+				}
+			],
+			"evidence": [],
+			"durationMs": 38
+		},
+		{
+			"uc": "UC-A02",
+			"title": "persisted settings/layout/theme files exist and parse",
+			"status": "PASS",
+			"detail": "managed root files",
+			"checks": [
+				{
+					"name": "settings/app.json parses",
+					"ok": true,
+					"detail": "ok"
+				},
+				{
+					"name": "workspaces/workspace-1.json parses",
+					"ok": true,
+					"detail": "ok"
+				},
+				{
+					"name": "presets/presets.json parses",
+					"ok": true,
+					"detail": "ok"
+				},
+				{
+					"name": "styles/theme.css state consistent with overrides",
+					"ok": true,
+					"detail": "169 bytes"
+				}
+			],
+			"evidence": [],
+			"durationMs": 2
+		},
+		{
+			"uc": "UC-B04",
+			"title": "grid settings persisted value reaches panel CSS variables",
+			"status": "PASS",
+			"detail": "grid token convergence",
+			"checks": [
+				{
+					"name": "settings.workspace.grid.cellSize present",
+					"ok": true,
+					"detail": "cellSize=80"
+				},
+				{
+					"name": "--ty-ws-cell reflects persisted grid",
+					"ok": true,
+					"detail": "computed=80px expected=80px"
+				}
+			],
+			"evidence": [],
+			"durationMs": 1
+		},
+		{
+			"uc": "UC-E02",
+			"title": "ui accent color persisted in app.json reaches theme.css tokens",
+			"status": "PASS",
+			"detail": "ui.* → theme pipeline",
+			"checks": [
+				{
+					"name": "ui.accentColor present in app.json",
+					"ok": true,
+					"detail": "accent=#e2b701"
+				},
+				{
+					"name": "theme.css accent token matches ui.* projection",
+					"ok": true,
+					"detail": "--color-ty-accent: #e2b701"
+				}
+			],
+			"evidence": [],
+			"durationMs": 5
+		},
+		{
+			"uc": "UC-G01",
+			"title": "debug console surface aggregates logs and evaluates JS",
+			"status": "PASS",
+			"detail": "debug console",
+			"checks": [
+				{
+					"name": "debug console DOM mounted",
+					"ok": true,
+					"detail": "body=27604 msgs=27"
+				}
+			],
+			"evidence": [],
+			"durationMs": 2529
+		}
+	]
 }
