@@ -6,13 +6,13 @@
  *
  * `docs/architecture/widget-boundary.md` states the rule in prose:
  *
- *   "`DirectoryBrowser` は storage が所有する機能 UI である。
+ *   "`FileEntryList` は storage が所有する機能 UI である。
  *    ファイルシステムのエントリと product icon を提示する。共通 primitive ではない。"
  *
  * with the ownership table:
  *
  *   | 観点                                        | 所有者                                        |
- *   | 文件システムの提示                          | `management/storage/ui/DirectoryBrowser.tsx`  |
+ *   | 文件システムの提示                          | `management/storage/ui/FileEntryList.tsx`  |
  *   | Product icon (PresetIcon)                   | `management/preset/contract`                  |
  *   | 機能的な振る舞い (file browser state, catalog) | `management/storage`                        |
  *
@@ -60,7 +60,7 @@ const MANIFEST_PATH = join(
 );
 
 export type Owner = {
-	/** Feature name, e.g. "DirectoryBrowser". */
+	/** Feature name, e.g. "FileEntryList". */
 	feature: string;
 	/** Repo-relative module that exports the feature. */
 	ownerModule: string;
