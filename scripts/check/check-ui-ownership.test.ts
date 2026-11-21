@@ -1,9 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
 	checkOwnership,
+	checkSharedComponents,
 	emittedDomHooks,
 	exportedComponents,
 	type Owner,
+	type SharedComponent,
 	type SourceFile,
 } from "./check-ui-ownership";
 
@@ -146,5 +148,104 @@ describe("checkOwnership", () => {
 			"/repo",
 		);
 		expect(violations).toEqual([]);
+	});
+});
+
+describe("checkSharedComponents", () => {
+	const shared: SharedComponent = {
+		name: "AuthoringGrid",
+		ownerModule: "src/management/preset/authoring-layout.tsx",
+		publicModule: "src/management/preset/index.ts",
+		note: "belongs to the preset domain",
+	};
+
+	function file(rel: string, src: string, imports: string[] = []): SourceFile {
+		return { path: `/repo/${rel}`, rel, src, imports };
+	}
+
+	it("accepts the owner and its public barrel", () => {
+		const violations = checkSharedComponents(
+			[shared],
+			[
+				file(
+					"src/management/preset/authoring-layout.tsx",
+					"export function AuthoringGrid() {}",
+				),
+				file(
+					"src/management/preset/index.ts",
+					'export { AuthoringGrid } from "@/management/preset/authoring-layout";',
+				),
+				file(
+					"src/function/preset/code/Dialog.tsx",
+					'import { AuthoringGrid } from "@/management/preset";',
+					["src/management/preset/index.ts"],
+				),
+			],
+			"/repo",
+		);
+		expect(violations).toEqual([]);
+	});
+
+	it("reports a missing owner module", () => {
+		const violations = checkSharedComponents([shared], [], "/repo");
+		expect(violations.map((v) => v.rule)).toEqual(["shared-owner-missing"]);
+	});
+
+	it("reports an owner that does not export the component", () => {
+		const violations = checkSharedComponents(
+			[shared],
+			[
+				file(
+					"src/management/preset/authoring-layout.tsx",
+					"export function SomethingElse() {}",
+				),
+			],
+			"/repo",
+		);
+		expect(violations.map((v) => v.rule)).toEqual(["shared-owner-missing"]);
+	});
+
+	it("reports a second definition", () => {
+		const violations = checkSharedComponents(
+			[shared],
+			[
+				file(
+					"src/management/preset/authoring-layout.tsx",
+					"export function AuthoringGrid() {}",
+				),
+				file(
+					"src/function/widget/utility/quick-actions/AuthoringGrid.tsx",
+					"export function AuthoringGrid() {}",
+				),
+			],
+			"/repo",
+		);
+		expect(violations.map((v) => v.rule)).toEqual(["shared-duplicate"]);
+	});
+
+	it("reports an import that bypasses the owner", () => {
+		const violations = checkSharedComponents(
+			[shared],
+			[
+				file(
+					"src/management/preset/authoring-layout.tsx",
+					"export function AuthoringGrid() {}",
+				),
+				file(
+					"src/function/preset/code/Dialog.tsx",
+					'import { AuthoringGrid } from "@/management/preset/tool-shell/archive-layout";',
+					["src/management/preset/tool-shell/archive-layout"],
+				),
+				file(
+					"src/management/preset/tool-shell/archive-layout.tsx",
+					"export function AuthoringGrid() {}",
+				),
+			],
+			"/repo",
+		);
+		expect(violations.map((v) => v.rule).sort()).toEqual([
+			"shared-bypass-import",
+			"shared-duplicate",
+		]);
 	});
 });

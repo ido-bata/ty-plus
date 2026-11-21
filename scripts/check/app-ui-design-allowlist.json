@@ -193,39 +193,27 @@
 	},
 	{
 		"file": "src/function/widget/utility/font-viewer/Component.tsx",
-		"line": 4,
-		"rule": "deep-import",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/function/widget/utility/font-viewer/Component.tsx",
-		"line": 242,
+		"line": 161,
 		"rule": "raw-control",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/function/widget/utility/font-viewer/Component.tsx",
-		"line": 430,
+		"line": 349,
 		"rule": "raw-control",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/function/widget/utility/font-viewer/Component.tsx",
-		"line": 640,
+		"line": 559,
 		"rule": "raw-control",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/function/widget/utility/font-viewer/Component.tsx",
-		"line": 674,
+		"line": 593,
 		"rule": "raw-control",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
-	},
-	{
-		"file": "src/function/widget/utility/font-viewer/FontViewerSampleRow.tsx",
-		"line": 2,
-		"rule": "deep-import",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
 		"file": "src/function/widget/utility/info/comp-sections.tsx",
