@@ -1,57 +1,76 @@
 # 公式WebサイトのCloudflare Workersデプロイ
 
-`apps/web`（TanStack Start）をCloudflare Workers + Static Assetsとして配備する経路の正本。決定の背景は [ADR-0007](../../adr/ADR-0007-official-web-platform.md)、費用・secretの枠組みは [cost-gate.md](../cost-gate.md) と [secrets.md](secrets.md) に従う。
+`apps/web`（TanStack Start）の **Cloudflare CLI (`cf`)** による Workers + Static Assets デプロイの正本。方針は [ADR-0007](../../adr/ADR-0007-official-web-platform.md)、費用は [cost-gate.md](../cost-gate.md)、秘密値は [secrets.md](secrets.md) に従う。
 
 ## 構成
 
-| 項目 | 内容 |
+| 項目 | 契約 |
 | --- | --- |
-| Framework | TanStack Start 1.x（`@tanstack/react-start`） |
-| Workers接続 | `@cloudflare/vite-plugin`（`apps/web/vite.config.ts` の先頭plugin） |
-| 設定 | `apps/web/wrangler.jsonc`（input config。build成果物の `dist/server/wrangler.json` がdeploy時の実効config） |
-| Worker entry | `@tanstack/react-start/server-entry` |
-| Static Assets | client build + prerender済みHTMLを `@cloudflare/vite-plugin` が自動配線（`assets.directory` は手書きしない） |
-| 公開先 | `workers.dev` のみ。独自ドメインは購入しない（ADR-0007） |
+| Framework | TanStack Start（`@tanstack/react-start`） |
+| Build | Vite 8 + `@cloudflare/vite-plugin` v2 RC（`viteEnvironment.name = "ssr"`） |
+| Deployment CLI | Cloudflare `cf` 1.0 RC。Wrangler deploy は使用しない |
+| Worker config | `apps/web/cloudflare.config.ts`。entrypoint は `@tanstack/react-start/server-entry` |
+| Build Output | `apps/web/.cloudflare/output/v1/`（`cf build` で生成） |
+| Static assets | Vite client build + prerendered HTML。assets directory を config に手動指定しない |
+| Origin | 当面 `workers.dev`。独自ドメインなし |
+| Release permissions | previewは独立Worker。production初回公開・変更は明示的な承認が必要 |
 
-サーバー側処理は `apps/web/src/server/` のServer Functionsに限定する。`src/lib/` はisomorphicな契約・pure helperで、将来の公開API（CEP・第三者クライアント向け）と共有する境界。公開APIの実装はR1以降のIssueで別途設計する。
+`cf` は **Node.jsランタイム** で実行する。Bunは依存関係導入・Viteビルド用として利用できるが、`bun --bun cf` のようにCLI本体をBunで実行しない。repository内のバージョンを使うため `npm exec --no -- cf ...` とする。
 
-## 環境分離
+## 環境
 
-| 環境 | コマンド | 実行基盤 | 備考 |
+| 対象 | モード | Worker name | 公開 |
 | --- | --- | --- | --- |
-| 開発 | `bun run --filter @ty-plus/web dev` | Vite dev + workerd | portは `.worktree.env` の `TY_PLUS_WEB_PORT` |
-| プレビュー | `bun run --filter @ty-plus/web preview` | `vite preview`（workerd/miniflare） | portは `TY_PLUS_PREVIEW_PORT`。deploy前のローカル検証用 |
-| preview deploy | `bun run --filter @ty-plus/web deploy:preview` | `wrangler deploy --env preview` | `ty-plus-web-preview.workers.dev`。外部公開を伴うため実施は承認制 |
-| 本番 deploy | `bun run --filter @ty-plus/web deploy` | `wrangler deploy` | `ty-plus-web.workers.dev`。**release-class操作。明示的承認なしに実行しない** |
+| local | `development` | `ty-plus-web` | Vite/workerdのみ |
+| preview | `preview` | `ty-plus-web-preview` | 別 `workers.dev` Worker |
+| production | `production` | `ty-plus-web` | 正式な `workers.dev` Worker |
 
-## 再現手順
+`cf` の `--mode` は旧 Wrangler の `--env` と異なる。`cloudflare.config.ts` はモードごとに独立した完全設定を返す。既存Worker名・互換日付・`nodejs_compat` を変更する際は別Issueで判断する。
+
+## ローカル再現（認証不要）
+
+repository root で、Node.js のサポート対象LTS版と Bun 1.3.10 を用意する。
 
 ```bash
+bun install --frozen-lockfile --ignore-scripts
+bunx panda codegen --silent
+bunx panda cssgen --silent
+bunx panda codegen --config apps/web/panda.config.ts --cwd apps/web --silent
+bunx panda cssgen --config apps/web/panda.config.ts --cwd apps/web --silent
 cd apps/web
-bun install --frozen-lockfile
-bun run build          # vite build（client + SSR + prerender + sitemap）
-bun run preview        # workerdでローカルpreview（全route 200を確認）
-bunx wrangler deploy --dry-run   # bundle + assetsを認証なしで検証
-bun run deploy         # 本番deploy（要承認）
+npm exec --no -- cf build --mode production
+npm exec --no -- cf deploy --prebuilt --mode production --dry-run
+npm exec --no -- cf build --mode preview
+npm exec --no -- cf deploy --prebuilt --mode preview --dry-run
+bun run preview
 ```
 
-`wrangler types`（`cf-typegen`）でWorker型を再生成できる。現状Worker側で使うbinding・型は最小限のため必須ではない。
+`cf build` は `vite build` を実行する。生成先 `.cloudflare/output/v1/` と SSR Worker、static assets、6ページのprerenderを確認すること。dry-run はリモートへアップロードせず、公開成功の証拠ではない。既存の `apps/web/wrangler.jsonc` を `cf` の設定として扱わない。
 
-## Secrets
+## Deploy（認証・承認が必要）
 
-- 現状のサイトはsecretを必要としない。GitHub Releases APIは匿名GETで、server functionが実行時にfetchする。
-- 将来bindingやtokenが必要になった場合は [secrets.md](secrets.md) の契約に従い、Infisicalを正本として `wrangler secret put` または環境変数で注入する。`.env` に実値を置かず、公開成果物・PR・Issueへsecret値を書かない。
-- `pull_request` workflowへsecretを渡さない既存契約を維持する。
+GitHub Actions `.github/workflows/web-deploy.yml` の `workflow_dispatch` から `preview` または `production` を明示選択する。productionは `main` 由来の承認済みコミットのみ許す。`pull_request` はビルドとdry-runに限定し、Cloudflare秘密値を渡さない。
 
-## 無料枠・コスト
+**GitHub Environment** `web-preview` / `web-production` を事前に設定する。`web-production` は必要な承認者を指定する。各Environmentに以下を設定する。
 
-- Workers Free: 10万req/日、CPU 10ms/req。Static Assetsの配信はWorkersを経由しないため実質無料。
-- GitHub Releases APIの匿名rate limitは60req/時/IP。server functionは10分TTLのin-memory cacheを持ち、超過時は `src/server/releases.snapshot.json` の静的snapshotへfallbackする（`snapshot:releases` scriptで再生成）。
-- 上限超過・課金発生の停止条件は [cost-gate.md](../cost-gate.md) に従い、人の確認を前提とする。自動監視は導入しない。
+- Secret `CLOUDFLARE_API_TOKEN`: 対象アカウントのWorkerデプロイに限定したAPI token（Infisical正本から同期）
+- Variable `CLOUDFLARE_ACCOUNT_ID`: 対象CloudflareアカウントID
+- Workflow input `site_origin`: 発行されるWorkers URLと一致する `https://<worker>.<subdomain>.workers.dev`。previewでは `ty-plus-web-preview`、productionでは `ty-plus-web` を指定する
 
-## 検証状況
+`site_origin` はビルド時に `VITE_TY_PLUS_SITE_ORIGIN` として渡され、`SITE.url` / canonical / sitemap / OG metadata を揃える。既定の `https://ty-plus.app` を workers.dev として誤公開しないこと。
 
-- `bun run --filter @ty-plus/web build`: client/SSR build + 6ページprerender + sitemap生成がworkerd上で成功。
-- `bun run --filter @ty-plus/web preview`: 全公開routeが200（307はtrailing-slash正規化）。
-- `bunx wrangler deploy --dry-run`: Worker bundle + Static Assetsのupload対象を認証なしで検証済み。
-- `workers.dev` への実deployは未実施（承認待ち）。
+Workflowは`cf build --mode <target>`→`cf deploy --prebuilt --mode <target> --dry-run`→承認/環境認証→`cf deploy --prebuilt --mode <target>`→実URLのHTTP smoke順。デプロイが失敗したら公開成功と記録せず、前バージョンのWorker Deploymentへ戻す（`cf workers deployments` のAPI契約に従い、旧version IDと配信比率を確認してから操作する）。
+
+手動時は同じ`cf`を使用できる。`cf auth login` は対話端末用であり、CIでは使わない。CIからは`CLOUDFLARE_API_TOKEN`と`CLOUDFLARE_ACCOUNT_ID`のみを注入する。
+
+## 費用・秘密値・観測
+
+- Workers Freeを前提とする。Workerの実行時間・リクエストと配信コストは [cost-gate.md](../cost-gate.md) の停止条件を正本とし、課金プラン変更を自動で行わない。
+- GitHub Releases APIは匿名GET。取得失敗時はbundled snapshotへfallbackする。実公開後のChangelogを`live` / fallback両経路で確認する。
+- Cloudflare認証値はGitHub Repository、Issue、PR、ログ、生成物に出さず、Infisicalを正本にする。プレビュー・PRには本番tokenを渡さない。
+- 公開後はsource SHA、Worker Version、workers.dev URL、6 route・sitemap・静的画像・404応答を証跡として残す。
+
+## 実装・受入状況
+
+- 旧Wrangler経路の `build`/`preview`/`deploy --dry-run` は #261 で確認されたが、**実公開は確認されていない**。
+- `cf` 移行のbuild / dry-run / 実deploy / origin smokeは Issue #358 で追跡する。CI・実結果で判定し、未実施なら明示する。
