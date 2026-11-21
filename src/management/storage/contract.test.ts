@@ -121,9 +121,9 @@ vi.mock("../storage/workspace/store", () => ({
 	writeSettings: mockwriteSettings,
 }));
 
-vi.mock("../preset/group-catalog", async (importOriginal) => {
+vi.mock("../preset/group/catalog", async (importOriginal) => {
 	const actual =
-		await importOriginal<typeof import("../preset/group-catalog")>();
+		await importOriginal<typeof import("../preset/group/catalog")>();
 	return {
 		...actual,
 		mergeGroupCatalogEntries: vi.fn().mockResolvedValue(undefined),

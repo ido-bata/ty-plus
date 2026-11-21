@@ -33,7 +33,7 @@ import {
 	ICON_GRID_SCALE_LS_KEY,
 	ICON_TILE_ASPECT_LS_KEY,
 } from "@/management/preset";
-import { isPresetAssetMissing } from "@/management/preset/asset-health";
+import { isPresetAssetMissing } from "@/management/preset/assets/health";
 import { PresetIconTile } from "@/management/preset/components/PresetIconTile";
 import { PresetListRow } from "@/management/preset/components/PresetListRow";
 import type {
@@ -45,7 +45,7 @@ import { traceExecute } from "@/management/preset/execution/lifecycle-trace";
 import {
 	type GroupEntry,
 	parseGroupFromText,
-} from "@/management/preset/group-catalog";
+} from "@/management/preset/group/catalog";
 import {
 	parentDirectoryOf,
 	siblingPathKey,

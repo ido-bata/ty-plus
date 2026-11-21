@@ -59,7 +59,7 @@ vi.mock("@/management/storage", () => ({
 	writeSettings: vi.fn(),
 }));
 
-vi.mock("@/management/preset/onboarding-directory", () => ({
+vi.mock("@/management/preset/onboarding/directory", () => ({
 	readOnboardingPresetDirectory: ({ dirPath }: { dirPath: string }) => {
 		if (dirPath === "C:/Ae/Presets") {
 			return Promise.resolve([

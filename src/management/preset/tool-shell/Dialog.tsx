@@ -14,7 +14,7 @@ import { registerCepJsonContextMenuSurface } from "@/management/dialog/context-m
 import { readPhysicalExtensionId } from "@/management/dialog/modeless/surface-id";
 import type { DroppedFile } from "@/management/dialog/shell/Layout";
 import { useDialogClose } from "@/management/dialog/useClose";
-import { assertPresetAssetPresent } from "@/management/preset/asset-verification";
+import { assertPresetAssetPresent } from "@/management/preset/assets/verification";
 import {
 	createPresetAuthoringWriter,
 	type PresetAuthoringWriter,
@@ -28,7 +28,7 @@ import {
 	createPresetIconDraft,
 	presetIconDraftToPresetIcon,
 	presetIconToDraft,
-} from "@/management/preset/icon-editor";
+} from "@/management/preset/icon/draft";
 import {
 	buildPresetToolContextMenuPayload,
 	PRESET_TOOL_CTX,

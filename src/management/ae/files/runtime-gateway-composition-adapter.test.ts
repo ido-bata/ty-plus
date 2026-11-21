@@ -17,7 +17,7 @@
  */
 
 import { describe, expect, it, vi } from "vitest";
-import type { OperationWorkerComposition } from "@/management/ipc/operation-worker-composition";
+import type { OperationWorkerComposition } from "@/management/ipc/operation-worker/composition";
 import { createFilesGatewayFromComposition } from "./runtime-gateway-composition-adapter";
 import type { AfterEffectsFilesRuntimeGateway } from "./runtime-gateway-impl";
 

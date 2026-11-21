@@ -40,7 +40,7 @@ storage が所有する機能を「browser」と呼ぶと語が二重になる�
 | --- | --- | --- |
 | `management/dialog/routes.tsx` | `function/preset/*/Dialog` | dialog router が function 層の preset dialog を mount する |
 | `management/panel/boot.tsx` | `function/onboarding/View`, `function/onboarding/ui/SetupRequired` | panel の boot が onboarding の view を mount する |
-| `management/preset/onboarding-directory.ts` | `function/onboarding/steps-data` | onboarding の step 定義を参照する |
+| `management/preset/onboarding/directory.ts` | `function/onboarding/steps-data` | onboarding の step 定義を参照する |
 | `management/workspace/events/handler.ts` | `function/widget/core/align`, `function/widget/core/anchor-point` | workspace の event handler が個別 widget の action helper を参照する |
 
 いずれも「利用側が実装に届く」構造で、所有権の問題はないが、境界の

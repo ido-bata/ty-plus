@@ -15,9 +15,9 @@
       "lineNumber": 6
     }
   ],
-  "src/management/preset/onboarding-directory.ts:1 :: management -> function (management may import only the function slice's public vocabulary)": [
+  "src/management/preset/onboarding/directory.ts:1 :: management -> function (management may import only the function slice's public vocabulary)": [
     {
-      "file": "/Users/rebui/work/ty-plus-327/src/management/preset/onboarding-directory.ts",
+      "file": "/Users/rebui/work/ty-plus-327/src/management/preset/onboarding/directory.ts",
       "reason": "management -> function (management may import only the function slice's public vocabulary)",
       "line": "import type { FilePickStep } from \"@/function/onboarding/steps-data\";",
       "lineNumber": 1

@@ -232,7 +232,7 @@ vi.mock("@ty-plus/ui/fields/Input", () => ({
 	),
 }));
 
-vi.mock("../../../management/preset/components/IconEditor", () => ({
+vi.mock("../../../management/preset/icon/Editor", () => ({
 	PresetIconEditor: () => (
 		<div data-testid="preset-icon-editor">Icon Editor</div>
 	),

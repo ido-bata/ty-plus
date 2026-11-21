@@ -11,7 +11,7 @@ import type { Preset } from "@/management/preset/contract";
 import {
 	type GroupCatalogEntry,
 	mergeGroupEntries as mergeGroupCatalogEntries,
-} from "@/management/preset/group-catalog";
+} from "@/management/preset/group/catalog";
 import { initializePresetStorage } from "@/management/preset/initialize";
 import { readSupportRootFromSettingsJson } from "@/management/setting/onboarding/initialization";
 import { writeSettingsPathsJson } from "@/management/setting/persistence/settings-json-files";

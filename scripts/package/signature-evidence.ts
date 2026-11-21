@@ -1,6 +1,6 @@
 /**
  * Extract the OS signature evidence a release trust block requires
- * (`ArtifactSignature` in `src/management/ipc/operation-worker-binary.ts`).
+ * (`ArtifactSignature` in `src/management/ipc/operation-worker/binary.ts`).
  *
  * The release manifest must not be generated from *claimed* signing metadata:
  * the evidence is read back from the signed binary itself, and extraction
@@ -20,7 +20,7 @@ import { spawnSync } from "node:child_process";
 import { mkdtempSync, readdirSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
-import type { ArtifactSignature } from "../../src/management/ipc/operation-worker-binary";
+import type { ArtifactSignature } from "../../src/management/ipc/operation-worker/binary";
 
 export type SignaturePlatform = "windows" | "macos";
 

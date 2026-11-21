@@ -47,7 +47,7 @@ vi.mock("@/management/workspace/services", () => {
 	);
 });
 
-import { PresetCatalogParseError } from "@/management/preset/catalog-json-text";
+import { PresetCatalogParseError } from "@/management/preset/repository/json-text";
 import type { Preset } from "@/management/preset/contract";
 import {
 	__resetLocalPresetCatalogForTests,

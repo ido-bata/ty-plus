@@ -15,7 +15,7 @@
  * remain manually synchronized; if you change the verify contract here,
  * mirror the change in `Dialog.tsx`.
  */
-import { assertPresetAssetPresent } from "@/management/preset/asset-verification";
+import { assertPresetAssetPresent } from "@/management/preset/assets/verification";
 import type { Preset } from "@/management/preset/contract";
 import type { PresetSaveEntryPoint } from "@/management/preset/execution/lifecycle-trace";
 import { upsertLocalPreset } from "@/management/preset/use-cases";

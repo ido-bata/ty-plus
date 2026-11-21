@@ -8,8 +8,8 @@ import {
 	OperationWorkerFrameDecoder,
 	type WorkerChild,
 } from "../../src/management/ipc";
-import { compiledOperationWorkerTrustMode } from "../../src/management/ipc/operation-worker-binary";
-import { createNodeOperationWorkerRuntime } from "../../src/management/ipc/operation-worker-node-runtime";
+import { compiledOperationWorkerTrustMode } from "../../src/management/ipc/operation-worker/binary";
+import { createNodeOperationWorkerRuntime } from "../../src/management/ipc/operation-worker/node-runtime";
 
 export type OperationWorkerProcessVerificationOptions = Readonly<{
 	extensionRoot?: string;

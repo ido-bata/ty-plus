@@ -7,7 +7,7 @@ import type { CloudGateway } from "@/management/online/contract";
 import {
 	parsePresetCatalogJsonText,
 	serializePresetCatalogJsonText,
-} from "@/management/preset/catalog-json-text";
+} from "@/management/preset/repository/json-text";
 import type { Preset } from "@/management/preset/contract";
 import { createSharedPresetRepository } from "@/management/preset/repository/shared";
 import { catalogJsonMayContainLegacyIdPrefixes } from "@/management/storage/ids";

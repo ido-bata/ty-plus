@@ -19,7 +19,7 @@
  */
 
 import { findGroupEntry } from "@/management/preset/group/catalog-helpers";
-import { removeGroupEntry } from "@/management/preset/group-catalog";
+import { removeGroupEntry } from "@/management/preset/group/catalog";
 import { notifyPanelsAfterPresetSave } from "@/management/workspace/placement/notify-panels-after-preset-save";
 import type { SurfaceState } from "@/management/workspace/state";
 

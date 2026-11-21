@@ -6,7 +6,7 @@ import type { Preset } from "@/management/preset/contract";
 import {
 	useIsPresetAssetMissing,
 	useIsPresetAssetUnverifiable,
-} from "@/management/preset/use-preset-asset-health";
+} from "@/management/preset/assets/use-health";
 import { PresetGlyphById } from "@/management/preset/workspace/glyph-by-id";
 import { css } from "@/styled-system/css";
 

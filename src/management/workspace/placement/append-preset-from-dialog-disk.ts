@@ -42,9 +42,9 @@ import { createLogger } from "@/management/debug";
 import {
 	PresetCatalogParseError,
 	parsePresetCatalogJsonTextStrict,
-} from "@/management/preset/catalog-json-text";
+} from "@/management/preset/repository/json-text";
 import type { Preset } from "@/management/preset/contract";
-import { parseGroupFromText } from "@/management/preset/group-catalog";
+import { parseGroupFromText } from "@/management/preset/group/catalog";
 import {
 	indexFromPanelId,
 	readNJson,
