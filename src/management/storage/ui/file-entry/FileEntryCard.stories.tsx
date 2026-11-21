@@ -61,7 +61,7 @@ const renderCard = (args: Args) => (
 );
 
 const meta = {
-	title: "FileEntryList/FileEntryCard",
+	title: "Storage/FileEntry/FileEntryCard",
 	args: baseArgs,
 	argTypes: {
 		isSelected: { control: "boolean" },

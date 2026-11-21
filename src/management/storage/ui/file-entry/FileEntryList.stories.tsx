@@ -98,7 +98,7 @@ const renderBrowser = (args: Args) => (
 );
 
 const meta = {
-	title: "FileEntryList/FileEntryList",
+	title: "Storage/FileEntry/FileEntryList",
 	args: baseArgs,
 	argTypes: {
 		viewMode: {

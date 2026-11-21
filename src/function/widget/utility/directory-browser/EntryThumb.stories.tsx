@@ -33,7 +33,7 @@ const makeDir = (name: string, path: string): FileBrowserEntry => ({
 });
 
 const meta = {
-	title: "FileEntryList/EntryThumb",
+	title: "DirectoryBrowser/EntryThumb",
 	component: EntryThumb,
 	args: {
 		entry: makeFile(),
