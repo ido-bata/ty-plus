@@ -13,6 +13,15 @@
 | --- | --- | --- | --- |
 | `ZXP_CERT_PASSWORD` | Secret | Optional (#32のみ) | ZXP証明書の署名。`sign-zxp.ts`。Infisical等のsecret managerで管理し、クライアントに配信しない |
 | `GITHUB_TOKEN` | CI managed | workflow内のみ | CIの `contents: read` に最小化済み（`docs/architecture/cost-gate.md`） |
+| `CLOUDFLARE_API_TOKEN` | Secret | Web deploy時 | GitHub Environment `web-preview` / `web-production` のSecret。Workers Scripts編集に限定したAPI token。正本はInfisical |
+| `CLOUDFLARE_ACCOUNT_ID` | 非secret識別子 | Web deploy時 | 同EnvironmentのVariable。CloudflareアカウントID |
+
+## Cloudflare Web deploy（#358）
+
+- GitHub Actions `.github/workflows/web-deploy.yml` の `deploy` job は `workflow_dispatch` かつ `refs/heads/main` のみ。`pull_request` / `release-*` pushにはsecretを渡さない。
+- GitHub Environment `web-preview`（保護なし）/ `web-production`（required reviewer = repo運用者）を使用する。Environment変数・secretの値はリポジトリに置かない。
+- Infisical正本: project `ty-plus`（project ID `4a42939b-5be2-47e7-8a23-f8931dfe2b1d`、self-hosted `https://secrets.rebuildup.dev`）。`CLOUDFLARE_API_TOKEN` は `prod` environment・`/` pathへ登録し、GitHub Environment secretへ同期する。`CLOUDFLARE_ACCOUNT_ID` は非secretのためGitHub Environment variableへ直接設定してよい。
+- `dev` environmentに残存する `NOTION_TOKEN` / `SYNC_TOKEN` は旧repo由来の孤立secretであり、本repoにconsumerが存在しない。削除は別途本人判断とする。
 
 ## 排除契約
 
