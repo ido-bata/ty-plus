@@ -1,4 +1,4 @@
-import { Button } from "@ty-plus/ui/controls/Button";
+import { Button } from "@ty-plus/ui";
 import { Plus } from "lucide-react";
 import type { JSX } from "react";
 import type { PresetIconEditorDraft } from "@/management/preset/icon-editor";

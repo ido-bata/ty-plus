@@ -1,7 +1,7 @@
-import { Input } from "@ty-plus/ui/fields/Input";
+import { Input } from "@ty-plus/ui";
 import type { JSX } from "react";
 import { useTranslation } from "react-i18next";
-import { AuthoringField } from "@/management/preset/tool-shell/archive-layout";
+import { AuthoringField } from "@/management/preset/authoring-layout";
 
 export function GroupNameField({
 	name,

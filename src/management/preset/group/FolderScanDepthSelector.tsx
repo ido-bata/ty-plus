@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import { AuthoringSegment } from "@/management/preset/tool-shell/archive-layout";
+import { AuthoringSegment } from "@/management/preset/authoring-layout";
 import { css } from "@/styled-system/css";
 
 const wrapperClass = css({

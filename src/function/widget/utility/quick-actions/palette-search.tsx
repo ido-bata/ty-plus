@@ -1,5 +1,6 @@
+import { Icon } from "@ty-plus/ui";
+import { Search } from "lucide-react";
 import type { JSX, RefObject } from "react";
-import { SearchIcon } from "@/management/workspace/surface/widget-grid-icons";
 import { css } from "@/styled-system/css";
 
 export type PaletteSearchProps = {
@@ -42,7 +43,8 @@ export function PaletteSearch({
 				paddingBlock: 0,
 			})}
 		>
-			<SearchIcon
+			<Icon
+				icon={Search}
 				className={css({
 					height: "4",
 					width: "4",

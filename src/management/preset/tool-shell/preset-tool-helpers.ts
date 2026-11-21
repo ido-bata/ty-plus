@@ -11,14 +11,16 @@ export const shellFieldLabelClass = css({
 	color: "text.muted",
 });
 
-const getCatalogRefIds = (r: {
+export const getCatalogRefIds = (r: {
 	catalogRefIds?: readonly string[] | null;
 }): string[] => r.catalogRefIds?.filter((x) => x.trim().length > 0) ?? [];
 
-const getCatalogRefIdsArg = (refs: string[], presetId: string): string[] =>
-	refs.length > 0 ? refs : [presetId];
+export const getCatalogRefIdsArg = (
+	refs: string[],
+	presetId: string,
+): string[] => (refs.length > 0 ? refs : [presetId]);
 
-const buildFilePath = (
+export const buildFilePath = (
 	before: { filePath?: string | null } | null,
 	buildFilePath: PresetToolDialogProps["buildFilePath"],
 	values: Record<string, string>,
@@ -34,28 +36,30 @@ const buildFilePath = (
 		""
 	).trim();
 
-const getExtraData = (
+export const getExtraData = (
 	mapPersistData: PresetToolDialogProps["mapPersistData"],
 	values: Record<string, string>,
 ): Record<string, unknown> => mapPersistData?.(values) ?? {};
 
-const getTitle = (name: string, defaultName: string | undefined): string =>
-	name.trim() || defaultName || "";
+export const getTitle = (
+	name: string,
+	defaultName: string | undefined,
+): string => name.trim() || defaultName || "";
 
-const getIconText = (iconText: string | null | undefined): string =>
+export const getIconText = (iconText: string | null | undefined): string =>
 	iconText ?? "PRESET";
 
-const getDataBlock = (
+export const getDataBlock = (
 	extraData: Record<string, unknown>,
 ): { data?: Record<string, unknown> } =>
 	Object.keys(extraData).length > 0 ? { data: extraData } : {};
 
-const getStatusMessage = (
+export const getStatusMessage = (
 	before: { status?: string } | null,
 	recordId: string,
 ): string => before?.status ?? `Saved: ${recordId}`;
 
-const notifyBounded = async (
+export const notifyBounded = async (
 	input: Parameters<typeof notifyPanelsAfterPresetSave>[1],
 ): Promise<void> => {
 	let timer: ReturnType<typeof setTimeout> | null = null;
