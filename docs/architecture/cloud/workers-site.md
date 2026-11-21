@@ -12,7 +12,9 @@
 | Worker config | `apps/web/cloudflare.config.ts`。entrypoint は `@tanstack/react-start/server-entry` |
 | Build Output | `apps/web/.cloudflare/output/v1/`（`cf build` で生成） |
 | Static assets | Vite client build + prerendered HTML。assets directory を config に手動指定しない |
-| Origin | 当面 `workers.dev`。独自ドメインなし |
+| Origin | `workers.dev`（account subdomain `rebuild-up-up`）。独自ドメインなし |
+| 公開URL（2026-11-21初回公開） | production: `https://ty-plus-web.rebuild-up-up.workers.dev` / preview: `https://ty-plus-web-preview.rebuild-up-up.workers.dev` |
+| Cloudflare account | `c6ab6651a5d4d6d0d07686bbd3c3d56f`（非secret識別子。`CLOUDFLARE_ACCOUNT_ID` として GitHub Environment variable に設定済み） |
 | Release permissions | previewは独立Worker。production初回公開・変更は明示的な承認が必要 |
 
 `cf` は **Node.jsランタイム** で実行する。Bunは依存関係導入・Viteビルド用として利用できるが、`bun --bun cf` のようにCLI本体をBunで実行しない。repository内のバージョンを使うため `npm exec --no -- cf ...` とする。
@@ -74,3 +76,18 @@ Workflowは`vite build --mode <target>`→`cf deploy --prebuilt --mode <target> 
 
 - 旧Wrangler経路の `build`/`preview`/`deploy --dry-run` は #261 で確認されたが、**実公開は確認されていない**。
 - `cf` 移行のbuild / dry-run / 実deploy / origin smokeは Issue #358 で追跡する。CI・実結果で判定し、未実施なら明示する。
+
+### 公開実績（2026-11-21、#358）
+
+- `main` merge commit `af6cf1dc` から `workflow_dispatch` で preview → production の順に実deploy。両job成功。
+- preview: run `44925674425`、production: run `44926155992`（`web-production` Environmentのrequired reviewer承認後にdeploy job実行）。
+- 実URL検証: 両Workerで `/` `/features` `/download` `/docs` `/changelog` `/support` `/sitemap.xml` がHTTP 200（nested routeは末尾`/`へ307 redirect後200）、未知routeは404、`/images/preset-grid.png` 200、`/deploy-info.json` が `sourceSha=af6cf1dc…` `target=<mode>` を返す。canonical / `og:url` / sitemap `<loc>` は各Workerのoriginと一致。
+- ChangelogはGitHub Releases live経路で v0.12.0 まで表示を確認。
+- デプロイ直後のasset伝播で一時的に404が返ることがあるため、smokeは明示retry loop（5回・5秒間隔）で吸収する。
+
+### Rollback / 更新
+
+- 通常更新: `main` へmerge後、`web-deploy.yml` を `workflow_dispatch` で `preview` → 検証 → `production` の順に実行する。`site_origin` には上記の確定URLを指定する。
+- 緊急rollback: `cf workers deployments`（または Cloudflare dashboard）で対象Workerの旧versionへtrafficを戻す。version IDと配分を確認してから操作する。Worker script自体の削除は旧version復元ではないため行わない。
+- deploy job失敗時は公開成功と記録しない。前versionのDeploymentがそのまま配信を継続する。
+- アカウントには旧Wrangler時代の `ty-plus` というWorker scriptが残存する（workers.devでは404を返す休眠script）。本構成の `ty-plus-web` / `ty-plus-web-preview` とは別物であり、削除は本人判断。Cloudflare Workers Builds連携がrepo push毎にこの旧Workerのbuildを試行しcheckがfailすることがある（本番deploy経路とは無関係）。
