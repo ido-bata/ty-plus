@@ -2,9 +2,9 @@
 export const SITE = {
 	name: "ty-plus",
 	tagline: "Your presets and tools, right inside Adobe After Effects.",
-	// Canonical site origin. workers.dev deployment is tracked in #261;
-	// update this when the production origin is fixed.
-	url: "https://ty-plus.app",
+	// Vite replaces this public build-time value for workers.dev deployments.
+	// Local builds retain the future brand domain until hosting is configured.
+	url: import.meta.env.VITE_TY_PLUS_SITE_ORIGIN || "https://ty-plus.app",
 	repo: "https://github.com/ido-bata/ty-plus",
 	releases: "https://github.com/ido-bata/ty-plus/releases",
 	latestRelease: "https://github.com/ido-bata/ty-plus/releases/latest",
