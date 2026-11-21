@@ -11,10 +11,8 @@ import {
 	container,
 	grid,
 	section,
-	span3,
-	span5,
-	span7,
-	span9,
+	span4,
+	span8,
 	stack,
 } from "../styles/layout";
 import * as s from "../styles/site";
@@ -46,7 +44,6 @@ const metaRow = css({
 	gap: "1rem",
 	flexWrap: "wrap",
 	alignItems: "center",
-	justifyContent: "center",
 	fontSize: "xs",
 	color: "text.muted",
 });
@@ -59,14 +56,20 @@ const sectionLabel = css({
 	color: "text.muted",
 });
 
-const resourceRow = css({
-	display: "flex",
-	flexDirection: "column",
-	gap: "0.5rem",
-	paddingBlock: "1.25rem",
-	borderTopWidth: "hairline",
-	borderTopStyle: "solid",
-	borderTopColor: "border.subtle",
+/* Mosaic cells — deliberately unequal spans and one row-spanning cell so
+   the section reads as a composed surface, not a card row. */
+const mosaicLead = css({
+	minWidth: 0,
+	gridColumn: { base: "1 / -1", md: "span 5" },
+	gridRow: { md: "span 2" },
+});
+const mosaicWide = css({
+	minWidth: 0,
+	gridColumn: { base: "1 / -1", md: "span 4" },
+});
+const mosaicNarrow = css({
+	minWidth: 0,
+	gridColumn: { base: "1 / -1", md: "span 3" },
 });
 
 const RESOURCES = [
@@ -90,99 +93,77 @@ const RESOURCES = [
 	},
 ] as const;
 
+const resourceCell = css({
+	display: "flex",
+	flexDirection: "column",
+	gap: "0.5rem",
+	paddingBlockStart: "1rem",
+	borderTopWidth: "hairline",
+	borderTopStyle: "solid",
+	borderTopColor: "border.subtle",
+});
+
 function HomePage() {
 	const { releases } = Route.useLoaderData();
 	const latest = findLatestStable(releases);
 
 	return (
 		<main>
-			{/* Hero — centered typographic band. No media: the product
-			    arrives in the demo section below, so the page opens on
-			    claim + action instead of another screenshot. */}
+			{/* Hero — the working demo IS the hero visual. Copy rail (span 4)
+			    carries claim + actions; the wide rail (span 8) renders the
+			    shared product tile stage, interactive on first paint. */}
 			<section
 				className={cx(
-					container({ size: "narrow" }),
+					container({ size: "wide" }),
 					section({ variant: "flow" }),
 				)}
 				aria-label="Introduction"
 			>
-				<div className={stack({ gap: 4, align: "center" })}>
-					<h1 className={cx(s.h1, css({ textAlign: "center" }))}>
-						{SITE.tagline}
-					</h1>
-					<p
-						className={cx(
-							s.lead,
-							css({ textAlign: "center", maxWidth: "40rem" }),
-						)}
-					>
-						ty-plus turns part of your After Effects workspace into a
-						customizable home for reusable presets and everyday tools — without
-						leaving After Effects.
-					</p>
-					<div className={cluster({ gap: 3, justify: "center" })}>
-						<Button as={Link} to="/download" variant="primary" uiSize="lg">
-							Download ty-plus
-						</Button>
-						<Button as={Link} to="/features" variant="secondary" uiSize="lg">
-							Explore features
-						</Button>
-					</div>
-					<div className={metaRow}>
-						<Badge tone="neutral">MIT License</Badge>
-						<span>No account required</span>
-						<span>Works fully offline</span>
-						<span>Windows · macOS</span>
-						{latest ? <span>Stable {latest.tagName}</span> : null}
-					</div>
-				</div>
-			</section>
-
-			{/* Product demo — the page's visual center of gravity. A narrow
-			    heading rail (span 3) carries the claim; the wide rail (span 9)
-			    holds the working preset stage built from shared product UI. */}
-			<section
-				className={cx(
-					container({ size: "content" }),
-					section({ variant: "band" }),
-				)}
-				aria-label="Preset interaction"
-			>
 				<div className={grid({ gap: 3 })}>
-					<div className={span3}>
+					<div className={cx(span4, stack({ gap: 3 }))}>
 						<div className={stack({ gap: 3 })}>
-							<span className={sectionLabel}>Try it</span>
-							<h2 className={s.h2}>Hover, select, run</h2>
-							<p className={s.body}>
-								In the panel, hover a preset tile and the info widget shows what
-								it does. Shift-click selects tiles for inspection; a plain click
-								applies the preset — verified end to end on a real project.
-							</p>
-							<p className={s.body}>
-								This demo uses the product's own tile and info-card renderers.
-								It cannot reach After Effects, so execution stays in the panel.
+							<span className={sectionLabel}>Free · Open source</span>
+							<h1 className={s.h1}>{SITE.tagline}</h1>
+							<p className={s.lead}>
+								ty-plus turns part of your After Effects workspace into a
+								customizable home for reusable presets and everyday tools —
+								without leaving After Effects.
 							</p>
 						</div>
+						<div className={cluster({ gap: 3 })}>
+							<Button as={Link} to="/download" variant="primary" uiSize="lg">
+								Download ty-plus
+							</Button>
+							<Button as={Link} to="/features" variant="secondary" uiSize="lg">
+								Explore features
+							</Button>
+						</div>
+						<div className={metaRow}>
+							<Badge tone="neutral">MIT License</Badge>
+							<span>No account required</span>
+							<span>Works fully offline</span>
+							<span>Windows · macOS</span>
+							{latest ? <span>Stable {latest.tagName}</span> : null}
+						</div>
 					</div>
-					<div className={span9}>
+					<div className={cx(span8, css({ minWidth: 0 }))}>
 						<PresetStage />
 					</div>
 				</div>
 			</section>
 
-			{/* Workspace — inverted rail: media leads on the left (span 7),
-			    the explanation sits in the narrow right rail (span 5), so the
-			    page does not repeat the demo section's text-left / media-right
-			    silhouette. */}
+			{/* Mosaic — three real panel captures at unequal weights. The
+			    workspace shot spans two rows so the section has a tall
+			    anchor instead of three identical rectangles. */}
 			<section
 				className={cx(
 					container({ size: "content" }),
 					section({ variant: "band" }),
 				)}
-				aria-label="Workspace overview"
+				aria-label="Panel surfaces"
 			>
 				<div className={grid({ gap: 3 })}>
-					<figure className={cx(s.figure, span7)}>
+					<figure className={cx(s.figure, mosaicLead)}>
 						<MediaFrame>
 							<img
 								src="/images/workspace-widgets.png"
@@ -194,52 +175,31 @@ function HomePage() {
 							/>
 						</MediaFrame>
 						<figcaption className={s.figcaption}>
-							Utility widgets share the same grid as preset tiles — captured
+							The workspace grid — presets and widgets on one surface, captured
 							from the running panel.
 						</figcaption>
 					</figure>
-					<div className={span5}>
-						<div className={stack({ gap: 3 })}>
-							<span className={sectionLabel}>Workspace</span>
-							<h2 className={s.h2}>Tools where you already work</h2>
-							<p className={s.body}>
-								Easing curves, alignment, anchor-point helpers, and directory
-								browsers live on the same grid as your preset tiles. The layout
-								is stored locally and restored exactly as you left it.
-							</p>
-							<Button as={Link} to="/features" variant="secondary">
-								See how it works
-							</Button>
-						</div>
-					</div>
-				</div>
-			</section>
-
-			{/* Features — asymmetric dialog pair: the presets browser takes
-			    the wide rail, Add Widget the narrow one, breaking the equal
-			    50/50 card row. */}
-			<section
-				className={cx(
-					container({ size: "content" }),
-					section({ variant: "band" }),
-				)}
-				aria-label="Feature overview"
-			>
-				<div className={stack({ gap: 3 })}>
-					<div className={stack({ gap: 2 })}>
-						<span className={sectionLabel}>Features</span>
-						<h2 className={s.h2}>Built for the panel, not the browser</h2>
-						<p className={s.body}>
-							Every surface below is a real panel dialog — it runs inside After
-							Effects and keeps working with the network unplugged.
-						</p>
-					</div>
-					<div className={grid({ gap: 3 })}>
-						<figure className={cx(s.figure, span7)}>
+					<figure className={cx(s.figure, mosaicWide)}>
+						<MediaFrame>
+							<img
+								src="/images/presets-dialog.png"
+								alt="The Local Presets browser in ty-plus listing presets from the local catalog"
+								width={1760}
+								height={1520}
+								loading="lazy"
+								className={s.shotImg}
+							/>
+						</MediaFrame>
+						<figcaption className={s.figcaption}>
+							Local Presets — browse, filter, and place catalog presets.
+						</figcaption>
+					</figure>
+					<div className={cx(mosaicNarrow, stack({ gap: 3 }))}>
+						<figure className={s.figure}>
 							<MediaFrame>
 								<img
-									src="/images/presets-dialog.png"
-									alt="The Local Presets browser in ty-plus listing presets from the local catalog"
+									src="/images/add-widget.png"
+									alt="The Add Widget selector in ty-plus listing the available widget types"
 									width={1760}
 									height={1520}
 									loading="lazy"
@@ -247,34 +207,42 @@ function HomePage() {
 								/>
 							</MediaFrame>
 							<figcaption className={s.figcaption}>
-								Local Presets — browse, filter, and place catalog presets.
+								Add Widget — extend the workspace with built-in tools.
 							</figcaption>
 						</figure>
-						<div className={cx(span5, stack({ gap: 3 }))}>
-							<figure className={s.figure}>
-								<MediaFrame>
-									<img
-										src="/images/add-widget.png"
-										alt="The Add Widget selector in ty-plus listing the available widget types"
-										width={1760}
-										height={1520}
-										loading="lazy"
-										className={s.shotImg}
-									/>
-								</MediaFrame>
-								<figcaption className={s.figcaption}>
-									Add Widget — extend the workspace with built-in tools.
-								</figcaption>
-							</figure>
-							<Button as={Link} to="/features" variant="secondary" uiSize="sm">
-								All features
-							</Button>
-						</div>
+						<p className={s.body}>
+							Every surface runs inside After Effects and keeps working with the
+							network unplugged.
+						</p>
+						<Button as={Link} to="/features" variant="secondary" uiSize="sm">
+							All features
+						</Button>
 					</div>
 				</div>
 			</section>
 
-			{/* Resources — dense index rows on a shared top rule, not cards. */}
+			{/* Statement — text-only band. A deliberate low-density break
+			    between the media-heavy sections above and the index below. */}
+			<section
+				className={cx(
+					container({ size: "narrow" }),
+					section({ variant: "prose" }),
+				)}
+				aria-label="Principles"
+			>
+				<div className={stack({ gap: 3, align: "center" })}>
+					<h2 className={cx(s.h2, css({ textAlign: "center" }))}>
+						Local-first, offline-capable, yours to arrange
+					</h2>
+					<p className={cx(s.body, css({ textAlign: "center" }))}>
+						Presets, widgets, and layouts live in local files on your machine.
+						No account, no telemetry, no subscription — the panel works the same
+						unplugged.
+					</p>
+				</div>
+			</section>
+
+			{/* Resources — dense 3-cell index aligned to the same axes. */}
 			<section
 				className={cx(
 					container({ size: "content" }),
@@ -282,23 +250,18 @@ function HomePage() {
 				)}
 				aria-label="Resources"
 			>
-				<div className={grid({ gap: 3 })}>
-					<div className={span3}>
-						<span className={sectionLabel}>Resources</span>
-					</div>
-					<div className={span9}>
-						{RESOURCES.map((r) => (
-							<div className={resourceRow} key={r.title}>
-								<h3 className={s.h3}>{r.title}</h3>
-								<p className={s.body}>{r.body}</p>
-								<div>
-									<Button as={Link} to={r.to} variant="secondary" uiSize="sm">
-										{r.label}
-									</Button>
-								</div>
+				<div className={grid({ cols: 3, gap: 3 })}>
+					{RESOURCES.map((r) => (
+						<div className={resourceCell} key={r.title}>
+							<h3 className={s.h3}>{r.title}</h3>
+							<p className={s.body}>{r.body}</p>
+							<div>
+								<Button as={Link} to={r.to} variant="secondary" uiSize="sm">
+									{r.label}
+								</Button>
 							</div>
-						))}
-					</div>
+						</div>
+					))}
 				</div>
 			</section>
 		</main>

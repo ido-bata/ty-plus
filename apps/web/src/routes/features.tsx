@@ -7,10 +7,9 @@ import { SITE } from "../lib/site";
 import {
 	cluster,
 	container,
+	grid,
 	section,
 	span4,
-	span5,
-	span7,
 	span8,
 	stack,
 } from "../styles/layout";
@@ -31,38 +30,54 @@ export const Route = createFileRoute("/features")({
 	component: FeaturesPage,
 });
 
-const featureRow = css({
-	display: "grid",
-	gridTemplateColumns: { base: "1fr", md: "repeat(12, minmax(0, 1fr))" },
-	gap: { base: "1rem", md: "2.5rem" },
-	alignItems: "start",
+const sectionLabel = css({
+	fontSize: "xs",
+	fontWeight: "medium",
+	letterSpacing: "wider",
+	textTransform: "uppercase",
+	color: "text.muted",
 });
 
-const orderFirst = css({ order: { md: -1 } });
-
-const stageBand = css({
-	display: "flex",
-	flexDirection: "column",
-	gap: "1.25rem",
+/* Mosaic cells for the feature grid — unequal spans, one row-spanning
+   media cell, so the page reads as composed surfaces rather than a
+   repeated "copy + wide image" row. */
+const mosaicLead = css({
+	minWidth: 0,
+	gridColumn: { base: "1 / -1", md: "span 7" },
+	gridRow: { md: "span 2" },
+});
+const mosaicA = css({
+	minWidth: 0,
+	gridColumn: { base: "1 / -1", md: "span 5" },
+});
+const mosaicB = css({
+	minWidth: 0,
+	gridColumn: { base: "1 / -1", md: "span 5" },
+});
+const mosaicC = css({
+	minWidth: 0,
+	gridColumn: { base: "1 / -1", md: "span 5" },
+});
+const mosaicD = css({
+	minWidth: 0,
+	gridColumn: { base: "1 / -1", md: "span 7" },
 });
 
-function FeatureMedia({
+function FeatureShot({
 	image,
 	alt,
 	width,
 	height,
-	span,
-	first,
+	className,
 }: {
 	image: string;
 	alt: string;
 	width: number;
 	height: number;
-	span: string;
-	first?: boolean;
+	className?: string;
 }) {
 	return (
-		<figure className={cx(s.figure, span, first && orderFirst)}>
+		<figure className={cx(s.figure, className)}>
 			<MediaFrame>
 				<img
 					src={image}
@@ -82,167 +97,143 @@ function FeaturesPage() {
 		<main>
 			<header
 				className={cx(
-					container({ size: "content" }),
+					container({ size: "narrow" }),
 					section({ variant: "prose" }),
 				)}
 			>
-				<h1 className={s.h1}>Features</h1>
-				<p className={s.lead}>
-					ty-plus is a CEP extension panel for Adobe After Effects. It gives you
-					a customizable home for the presets and tools you reach for constantly
-					— all running locally inside After Effects.
-				</p>
+				<div className={stack({ gap: 3, align: "center" })}>
+					<span className={sectionLabel}>Inside the panel</span>
+					<h1 className={cx(s.h1, css({ textAlign: "center" }))}>Features</h1>
+					<p className={cx(s.lead, css({ textAlign: "center" }))}>
+						ty-plus is a CEP extension panel for Adobe After Effects. It gives
+						you a customizable home for the presets and tools you reach for
+						constantly — all running locally inside After Effects.
+					</p>
+				</div>
 			</header>
 
-			{/* Flagship — the working preset demo leads the page at full width.
-			    Selection is real local state on the product's own icon renderer. */}
+			{/* Flagship — copy rail (span 4) + the working preset demo (span 8),
+			    the same axis the home hero uses. */}
 			<section
 				className={cx(
-					container({ size: "content" }),
+					container({ size: "wide" }),
 					section({ variant: "band" }),
 				)}
 				aria-label="Preset tiles"
 			>
-				<div className={stageBand}>
-					<div className={stack({ gap: 2 })}>
-						<h2 className={s.h2}>Preset tiles from your catalog</h2>
+				<div className={grid({ gap: 3 })}>
+					<div className={cx(span4, stack({ gap: 3 }))}>
+						<span className={sectionLabel}>Preset tiles</span>
+						<h2 className={s.h2}>Your catalog, as a shelf of tiles</h2>
 						<p className={s.body}>
 							Presets you register — animation presets, code presets, footage,
 							and groups — become named tiles on the same grid as your widgets.
-							Each tile carries its own icon and title, so the grid reads as a
-							shelf of tools rather than identical buttons. Select a tile below;
-							the info readout mirrors what the panel's info widget shows.
+							Each tile carries its own icon and title. Select a tile; the info
+							readout mirrors what the panel's info widget shows.
 						</p>
 					</div>
-					<PresetStage />
+					<div className={cx(span8, css({ minWidth: 0 }))}>
+						<PresetStage />
+					</div>
 				</div>
 			</section>
 
+			{/* Interaction strip — verified capture gets a wide, short cell
+			    paired with a narrow copy rail. */}
 			<section
 				className={cx(
 					container({ size: "content" }),
 					section({ variant: "band" }),
 				)}
-				aria-label="Feature details"
+				aria-label="Interaction"
 			>
-				<div className={stack({ gap: 6 })}>
-					{/* Workspace — media leads wide; the inverse silhouette of the
-					    rows below. */}
-					<article className={featureRow}>
-						<div className={span4}>
-							<div className={stack({ gap: 2 })}>
-								<h2 className={s.h2}>Workspace tiles &amp; widgets</h2>
-								<p className={s.body}>
-									Arrange preset tiles, directory browsers, and utility widgets
-									on a gridded workspace. Add, remove, and reorder widgets from
-									the built-in picker, then save the layout locally — it is
-									restored exactly as you left it.
-								</p>
-							</div>
-						</div>
-						<FeatureMedia
-							image="/images/workspace-widgets.png"
-							alt="Utility widgets on the ty-plus workspace — quick actions, easing curve, alignment, and anchor point tools"
-							width={2160}
-							height={1040}
-							span={span8}
-							first
-						/>
-					</article>
-
-					{/* Interaction — verified capture; text rail is wider here so the
-					    row's density differs from the workspace row above. */}
-					<article className={featureRow}>
-						<div className={span7}>
-							<div className={stack({ gap: 2 })}>
-								<h2 className={s.h2}>Hover, select, run</h2>
-								<p className={s.body}>
-									Hover a tile and the info widget shows the preset's name,
-									kind, and source. Shift-click selects tiles for inspection; a
-									plain click applies the preset to the active layer — verified
-									end to end against a real After Effects project.
-								</p>
-							</div>
-						</div>
-						<FeatureMedia
-							image="/images/preset-selected.png"
-							alt="A selected preset tile with the ty-plus info widget showing the preset name, kind, and selection source"
-							width={2160}
-							height={410}
-							span={span5}
-						/>
-					</article>
-
-					{/* Local Presets — narrow media keeps this row compact. */}
-					<article className={featureRow}>
-						<div className={span7}>
-							<div className={stack({ gap: 2 })}>
-								<h2 className={s.h2}>Local Presets browser</h2>
-								<p className={s.body}>
-									The Search Presets dialog browses your local catalog — filter,
-									preview, and place presets on the workspace without opening
-									After Effects dialogs.
-								</p>
-							</div>
-						</div>
-						<FeatureMedia
-							image="/images/presets-dialog.png"
-							alt="The Local Presets browser dialog in ty-plus listing presets from the local catalog"
-							width={1760}
-							height={1520}
-							span={span5}
-						/>
-					</article>
-
-					{/* Widgets — media returns to the leading position. */}
-					<article className={featureRow}>
-						<div className={span5}>
-							<div className={stack({ gap: 2 })}>
-								<h2 className={s.h2}>Widgets on demand</h2>
-								<p className={s.body}>
-									Directory browsers, quick utilities, and tools you add from
-									the built-in picker. Every widget is a real panel feature — it
-									keeps working with the network unplugged.
-								</p>
-							</div>
-						</div>
-						<FeatureMedia
-							image="/images/add-widget.png"
-							alt="The Add Widget selector in ty-plus listing the available widget types"
-							width={1760}
-							height={1520}
-							span={span7}
-							first
-						/>
-					</article>
-
-					{/* Text-only close — no forced visual. */}
-					<article className={featureRow}>
-						<div className={span5}>
-							<div className={stack({ gap: 2 })}>
-								<h2 className={s.h2}>Customizable appearance</h2>
-								<p className={s.body}>
-									Tune colors, spacing, and panel styling from Settings.
-									Appearance changes apply live and are stored on your machine —
-									the panel looks the way you want it to.
-								</p>
-							</div>
-						</div>
-					</article>
+				<div className={grid({ gap: 3 })}>
+					<div className={cx(span4, stack({ gap: 2 }))}>
+						<span className={sectionLabel}>Interaction</span>
+						<h2 className={s.h2}>Hover, select, run</h2>
+						<p className={s.body}>
+							Hover a tile and the info widget shows the preset's name, kind,
+							and source. Shift-click selects tiles for inspection; a plain
+							click applies the preset to the active layer — verified end to end
+							against a real After Effects project.
+						</p>
+					</div>
+					<FeatureShot
+						image="/images/preset-selected.png"
+						alt="A selected preset tile with the ty-plus info widget showing the preset name, kind, and selection source"
+						width={2160}
+						height={410}
+						className={cx(span8, css({ alignSelf: "center" }))}
+					/>
 				</div>
 			</section>
 
+			{/* Mosaic — the workspace shot spans two rows as the tall anchor;
+			    the dialog and widget-picker sit at unequal weights beside a
+			    stacked copy cell. */}
 			<section
 				className={cx(
 					container({ size: "content" }),
+					section({ variant: "band" }),
+				)}
+				aria-label="Surfaces"
+			>
+				<div className={grid({ gap: 3 })}>
+					<FeatureShot
+						image="/images/workspace-widgets.png"
+						alt="Utility widgets on the ty-plus workspace — quick actions, easing curve, alignment, and anchor point tools"
+						width={2160}
+						height={1040}
+						className={mosaicLead}
+					/>
+					<FeatureShot
+						image="/images/presets-dialog.png"
+						alt="The Local Presets browser dialog in ty-plus listing presets from the local catalog"
+						width={1760}
+						height={1520}
+						className={mosaicA}
+					/>
+					<FeatureShot
+						image="/images/add-widget.png"
+						alt="The Add Widget selector in ty-plus listing the available widget types"
+						width={1760}
+						height={1520}
+						className={mosaicB}
+					/>
+					<div className={cx(mosaicC, stack({ gap: 2 }))}>
+						<h2 className={s.h2}>Widgets on demand</h2>
+						<p className={s.body}>
+							Directory browsers, quick utilities, and tools you add from the
+							built-in picker. The Local Presets dialog browses, filters, and
+							places catalog presets without opening After Effects dialogs —
+							every widget keeps working with the network unplugged.
+						</p>
+					</div>
+					<div className={cx(mosaicD, stack({ gap: 2 }))}>
+						<h2 className={s.h2}>Customizable appearance</h2>
+						<p className={s.body}>
+							Tune colors, spacing, and panel styling from Settings. Appearance
+							changes apply live and are stored on your machine — the panel
+							looks the way you want it to.
+						</p>
+					</div>
+				</div>
+			</section>
+
+			{/* Statement — text-only band closing the page. */}
+			<section
+				className={cx(
+					container({ size: "narrow" }),
 					section({ variant: "prose" }),
 				)}
 				aria-label="Availability"
 			>
-				<div className={stack({ gap: 4 })}>
-					<div className={stack({ gap: 2 })}>
-						<h2 className={s.h2}>Offline by design</h2>
-						<p className={s.body}>
+				<div className={stack({ gap: 4, align: "center" })}>
+					<div className={stack({ gap: 2, align: "center" })}>
+						<h2 className={cx(s.h2, css({ textAlign: "center" }))}>
+							Offline by design
+						</h2>
+						<p className={cx(s.body, css({ textAlign: "center" }))}>
 							Workspace settings, presets, and widget configuration live on your
 							machine. The extension checks GitHub Releases for updates, but
 							every core function works without a network connection — and
