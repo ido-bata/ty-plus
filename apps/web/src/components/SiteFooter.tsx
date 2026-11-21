@@ -30,6 +30,8 @@ const logo = css({
 	display: "inline-flex",
 	alignItems: "center",
 	gap: "0.5rem",
+	paddingBlock: "0.375rem",
+	marginBlock: "-0.375rem",
 	fontWeight: "semibold",
 	color: "text.primary",
 	textDecoration: "none",
@@ -66,6 +68,9 @@ const colList = css({
 });
 
 const colLink = css({
+	display: "inline-block",
+	paddingBlock: "0.375rem",
+	marginBlock: "-0.375rem",
 	fontSize: "sm",
 	color: "text.muted",
 	textDecoration: "none",
