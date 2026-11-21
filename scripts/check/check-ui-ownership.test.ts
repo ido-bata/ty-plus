@@ -8,8 +8,8 @@ import {
 } from "./check-ui-ownership";
 
 const owner: Owner = {
-	feature: "DirectoryBrowser",
-	ownerModule: "src/management/storage/ui/DirectoryBrowser.tsx",
+	feature: "FileEntryList",
+	ownerModule: "src/management/storage/ui/FileEntryList.tsx",
 	ownerDir: "src/management/storage/ui",
 	ownerLayer: "management",
 	sharedDomHooks: ["data-directory-browser-entry"],
@@ -23,13 +23,13 @@ function source(rel: string, src: string): SourceFile {
 describe("exportedComponents", () => {
 	it("finds exported component names", () => {
 		const src = `
-export function DirectoryBrowser() {}
-export const DirectoryBrowserIconCard = () => null;
+export function FileEntryList() {}
+export const FileEntryCard = () => null;
 const Internal = () => null;
 `;
 		expect(exportedComponents(src)).toEqual([
-			"DirectoryBrowser",
-			"DirectoryBrowserIconCard",
+			"FileEntryList",
+			"FileEntryCard",
 		]);
 	});
 });
@@ -48,8 +48,8 @@ describe("checkOwnership", () => {
 			[owner],
 			[
 				source(
-					"src/management/storage/ui/DirectoryBrowser.tsx",
-					"export function DirectoryBrowser() {}",
+					"src/management/storage/ui/FileEntryList.tsx",
+					"export function FileEntryList() {}",
 				),
 			],
 			"/repo",
@@ -67,7 +67,7 @@ describe("checkOwnership", () => {
 			[owner],
 			[
 				source(
-					"src/management/storage/ui/DirectoryBrowser.tsx",
+					"src/management/storage/ui/FileEntryList.tsx",
 					"export function SomethingElse() {}",
 				),
 			],
@@ -81,8 +81,8 @@ describe("checkOwnership", () => {
 			[owner],
 			[
 				source(
-					"src/management/storage/ui/DirectoryBrowser.tsx",
-					"export function DirectoryBrowser() {}",
+					"src/management/storage/ui/FileEntryList.tsx",
+					"export function FileEntryList() {}",
 				),
 				source(
 					"src/function/widget/utility/directory-browser/BrowserKit.tsx",
@@ -102,8 +102,8 @@ describe("checkOwnership", () => {
 			[owner],
 			[
 				source(
-					"src/management/storage/ui/DirectoryBrowser.tsx",
-					"export function DirectoryBrowser() {}",
+					"src/management/storage/ui/FileEntryList.tsx",
+					"export function FileEntryList() {}",
 				),
 				source(
 					"src/function/widget/utility/directory-browser/Component.tsx",
@@ -120,8 +120,8 @@ describe("checkOwnership", () => {
 			[owner],
 			[
 				source(
-					"src/management/storage/ui/DirectoryBrowser.tsx",
-					"export function DirectoryBrowser() {}",
+					"src/management/storage/ui/FileEntryList.tsx",
+					"export function FileEntryList() {}",
 				),
 				source(
 					"src/management/setting/dialog/sections/DirectoryBrowserPreview.tsx",
@@ -138,12 +138,12 @@ describe("checkOwnership", () => {
 			[owner],
 			[
 				source(
-					"src/management/storage/ui/DirectoryBrowser.tsx",
-					"export function DirectoryBrowser() {}",
+					"src/management/storage/ui/FileEntryList.tsx",
+					"export function FileEntryList() {}",
 				),
 				source(
-					"src/management/storage/ui/DirectoryBrowserIconCard.tsx",
-					"export function DirectoryBrowserIconCard() {}",
+					"src/management/storage/ui/FileEntryCard.tsx",
+					"export function FileEntryCard() {}",
 				),
 			],
 			"/repo",
