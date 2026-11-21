@@ -85,13 +85,15 @@ export function releaseExcerpt(
 		.map((l) => l.trim())
 		.filter((l) => l.length > 0);
 
-	const bullets = lines
-		.filter((l) => BULLET_MARKER.test(l))
-		.map((l) =>
-			truncateAtBoundary(cleanInline(l.replace(BULLET_MARKER, "")), bulletMax),
-		)
-		.filter((l) => l.length > 0)
-		.slice(0, maxBullets);
+	const bullets: string[] = [];
+	for (const line of lines) {
+		if (bullets.length >= maxBullets || !BULLET_MARKER.test(line)) continue;
+		const cleaned = truncateAtBoundary(
+			cleanInline(line.replace(BULLET_MARKER, "")),
+			bulletMax,
+		);
+		if (cleaned.length > 0) bullets.push(cleaned);
+	}
 
 	const proseLine = lines.find(
 		(l) =>
