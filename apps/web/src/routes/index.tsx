@@ -148,6 +148,10 @@ function HomePage() {
 					</div>
 					<div className={cx(span8, css({ minWidth: 0 }))}>
 						<PresetStage />
+						<p className={cx(s.body, css({ marginBlockStart: "0.75rem" }))}>
+							Interactive demo — the same tile and info surfaces as the panel.
+							Select a tile; nothing runs in After Effects here.
+						</p>
 					</div>
 				</div>
 			</section>
