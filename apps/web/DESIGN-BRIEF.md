@@ -196,3 +196,11 @@ review-309 で「プリセットタイルが同一の低コントラストカー
 - **Hero の DOM 順序**: グリッド子要素を copy / figure / actions の3要素に分割。DOM 順は全 viewport で copy → image → actions（モバイルは CTA が画像の後）。md+ では figure が左右2行を span し、copy/actions が左 rail を構成する。前回報告した「コピー→画像→CTA」と実装を一致させた。
 - **セクション構図の差別化**: Workspace 帯は説明 rail(span4) → 画像(span8) の読み順へ反転。Features 帯は左 rail を廃し、全幅ヘッダ + キャプション付き2ダイアログ横並びへ変更（各 surface に名前を付与）。Resources の3列グリッドは維持。
 - **Features 行**: flagship を「Preset tiles from your catalog」（preset-tiles.png, wide）へ変更。`mediaSpan: "narrow"`（text span7 / media span5）を追加し行毎の密度を変化。featureRow / orderFirst のブレークポイントを span 系と同じ `md` に揃え、md–lg 帯での潜在的な暗黙カラム生成を解消。
+
+## Revision (#328): verified state-transition material, role-separated crops
+
+#322 / PR #326 で hover→info widget・Shift+click 選択・プレーンクリック実行（Effect Parade 差分検証済み）の実機キャプチャが確立された。本 Revision はその検証済み成果のみを素材化し、機能ごとに異なる情報役割を持つ領域cropへ分解する。
+
+- **素材の役割分離**: `preset-grid.png`（名前付きプリセットタイル行、Hero/flagship）、`preset-selected.png`（選択タイル + info widget の関係、専用「Hover, select, run」セクション/行）、`workspace-widgets.png`（utility widget 帯）、`presets-dialog.png`（Local Presets 実ダイアログ）。同一ワークスペース画像の使い回しを廃止。
+- **正直な検証範囲の明記**: コピーと figcaption で「hover で info widget に詳細、Shift+click で選択、プレーンクリックで実行（実プロジェクトで検証済み）」を記述。タイルアイコンは撮影 fixture が設定した説明用グリフであり、実 `.ffx` の動作を可視化したものではない旨を明記。実行の視覚的 Before/After は未取得のため捏造しない。
+- **未解決の分離**: Add Widget ダイアログは CEP ホストが新規 modeless extension を spawn しない環境ブロッカー（#322 記録済み）のため既存検証済み `add-widget.png` を継続使用。LP 収束を妨げない。
