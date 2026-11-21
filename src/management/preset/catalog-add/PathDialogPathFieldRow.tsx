@@ -1,5 +1,4 @@
-import { Icon } from "@ty-plus/ui";
-import { PathField } from "@ty-plus/ui/fields/PathField";
+import { Icon, PathField } from "@ty-plus/ui";
 import { FileSearch } from "lucide-react";
 import type { JSX } from "react";
 import { selectFile } from "@/management/ae/cep/dialog-shim/bolt";

@@ -134,7 +134,8 @@ vi.mock("@/management/preset/workspace/glyph-classes", () => ({
 	glyphEmojiProminentClass: "glyph-emoji-prominent",
 }));
 
-vi.mock("@ty-plus/ui", () => ({
+vi.mock("@ty-plus/ui", async (importOriginal) => ({
+	...(await importOriginal<typeof import("@ty-plus/ui")>()),
 	Icon: () => <span data-testid="icon" />,
 	ViewModeToggle: () => <div data-testid="view-toggle" />,
 	IconButton: ({
