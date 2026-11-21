@@ -3,7 +3,7 @@ import type { Preset } from "@/management/preset/contract";
 import { presetIconText } from "@/management/preset/contract";
 import { createPresetIconDraft } from "@/management/preset/icon/draft";
 import { css } from "@/styled-system/css";
-import { ToolDialogIconSection } from "./DialogIconSection";
+import { ToolDialogIconSection } from "./IconSection";
 
 const basePreset: Preset = {
 	id: "preview",
@@ -27,7 +27,7 @@ const decoratorBoxClass = css({
 });
 
 const meta = {
-	title: "Preset/ToolShell/DialogIconSection",
+	title: "Preset/ToolShell/Dialog/IconSection",
 	args: baseArgs,
 	argTypes: {
 		iconType: {

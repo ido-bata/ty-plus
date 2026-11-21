@@ -9,9 +9,8 @@ import {
 import { FileSearch, FolderOpen } from "lucide-react";
 import { type JSX, useId } from "react";
 import { css } from "@/styled-system/css";
-
-import type { PathBrowseSpec, PresetToolField } from "./Dialog";
-import { shellFieldLabelClass } from "./preset-tool-helpers";
+import { shellFieldLabelClass } from "../preset-tool-helpers";
+import type { PathBrowseSpec, PresetToolField } from "./ToolDialog";
 
 const fieldColumnClass = css({
 	display: "flex",

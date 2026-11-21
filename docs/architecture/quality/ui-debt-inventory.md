@@ -52,11 +52,11 @@ Issue #327 の DirectoryBrowser 調査から、UI の不整合は DirectoryBrows
 | `function/widget/utility/font-viewer` | 3 | `FontViewerBanners` / `FontViewerSampleRow` / `FontViewerStatusLine` | 着地 |
 | `function/widget/utility/quick-actions` | 3 | `palette-dropdown` / `palette-search` / `row-components` | 着地 |
 | `management/online/catalog` | 9 | `PresetLibrary*` / `PresetMarket*` | 削除 |
-| `management/preset/catalog-add` | 5 | `FolderTabs` / `PathDialog*` | 着地 |
+| `management/preset/catalog-add` | 5 | `FolderTabs` / `path-dialog/*` | 着地 |
 | `management/preset/catalog-browser` | 1 | `PresetsDialogHeader` | 着地 |
 | `management/preset/group` | 4 | `BaseIconCard` / `ConditionRulesSection` / `GroupMembersSection` / `GroupNameField` | 着地 |
 | `management/preset/markdown` | 2 | `EditorLines` / `renderSegments` | 着地 |
-| `management/preset/tool-shell` | 5 | `Dialog*Section` / `DialogFields` / `DialogFooter` / `DialogForm` | 着地 |
+| `management/preset/tool-shell` | 5 | `dialog/*Section` / `dialog/Fields` / `dialog/Footer` / `dialog/Form` | 着地 |
 | `management/workspace/background` | 3 | `BackgroundPreview` / `LayerEditor` / `LayerListPanel` | 着地 |
 
 着地したものは、生産側の inline 実装を削除して抽出側を本番で使い、story も本番と同じ component を描くようにした。

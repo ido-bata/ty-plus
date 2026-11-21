@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { css } from "@/styled-system/css";
 
-import { ToolDialogForm } from "./DialogForm";
+import { ToolDialogForm } from "./Form";
 
 type Args = {
 	name: string;
@@ -19,7 +19,7 @@ const decoratorBoxClass = css({
 });
 
 const meta = {
-	title: "Preset/ToolShell/DialogForm",
+	title: "Preset/ToolShell/Dialog/Form",
 	args: baseArgs,
 	argTypes: {
 		name: { control: "text" },

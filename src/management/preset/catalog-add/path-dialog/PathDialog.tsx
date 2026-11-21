@@ -24,11 +24,11 @@ import {
 } from "@/management/preset/catalog-add/archive-types";
 import { readUserHomeOrFallback } from "@/management/preset/catalog-add/browse-start-dir";
 import { FolderTabs } from "@/management/preset/catalog-add/FolderTabs";
-import { PathDialogFooterActions } from "@/management/preset/catalog-add/PathDialogFooterActions";
-import { PathDialogIconSection } from "@/management/preset/catalog-add/PathDialogIconSection";
-import { PathDialogNameField } from "@/management/preset/catalog-add/PathDialogNameField";
-import { PathDialogPathFieldRow } from "@/management/preset/catalog-add/PathDialogPathFieldRow";
 import { parseRootPathsFromSettingsJson } from "@/management/preset/catalog-add/parse-root-paths";
+import { PathDialogFooterActions } from "@/management/preset/catalog-add/path-dialog/FooterActions";
+import { PathDialogIconSection } from "@/management/preset/catalog-add/path-dialog/IconSection";
+import { PathDialogNameField } from "@/management/preset/catalog-add/path-dialog/NameField";
+import { PathDialogPathFieldRow } from "@/management/preset/catalog-add/path-dialog/PathFieldRow";
 import { verifyAndUpsertPreset } from "@/management/preset/catalog-add/verify-and-upsert";
 import type { Preset } from "@/management/preset/contract";
 import { tracePresetLifecycle } from "@/management/preset/execution/lifecycle-trace";

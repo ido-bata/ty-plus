@@ -1,7 +1,7 @@
 import type { JSX } from "react";
-import { PresetIconEditor } from "@/management/preset/icon/Editor";
 import type { Preset } from "@/management/preset/contract";
 import type { PresetIconEditorDraft } from "@/management/preset/icon/draft";
+import { PresetIconEditor } from "@/management/preset/icon/Editor";
 import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
 import { css } from "@/styled-system/css";
 

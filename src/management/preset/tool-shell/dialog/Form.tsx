@@ -2,7 +2,7 @@ import { Input } from "@ty-plus/ui";
 import type { JSX } from "react";
 import { css } from "@/styled-system/css";
 
-import type { PresetToolDialogProps } from "./Dialog";
+import type { PresetToolDialogProps } from "./ToolDialog";
 
 const formColumnClass = css({
 	display: "flex",

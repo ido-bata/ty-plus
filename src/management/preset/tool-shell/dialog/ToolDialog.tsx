@@ -36,11 +36,6 @@ import {
 import { upsertLocalPreset } from "@/management/preset/use-cases";
 import { createInstanceId } from "@/management/storage/ids";
 import { css } from "@/styled-system/css";
-import { ToolDialogDetailsSection } from "./DialogDetailsSection";
-import { ToolDialogFields } from "./DialogFields";
-import { ToolDialogFooter } from "./DialogFooter";
-import { ToolDialogForm } from "./DialogForm";
-import { ToolDialogIconSection } from "./DialogIconSection";
 import {
 	buildFilePath,
 	getCatalogRefIds,
@@ -51,7 +46,12 @@ import {
 	getStatusMessage,
 	getTitle,
 	notifyBounded,
-} from "./preset-tool-helpers";
+} from "../preset-tool-helpers";
+import { ToolDialogDetailsSection } from "./DetailsSection";
+import { ToolDialogFields } from "./Fields";
+import { ToolDialogFooter } from "./Footer";
+import { ToolDialogForm } from "./Form";
+import { ToolDialogIconSection } from "./IconSection";
 
 type FieldKind = "input" | "textarea" | "checkbox" | "select";
 

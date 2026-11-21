@@ -2,8 +2,8 @@ import type { JSX } from "react";
 
 import type { ArchiveIconDraft } from "@/management/preset/catalog-add/archive-icon";
 import { iconDraftToPresetIcon } from "@/management/preset/catalog-add/archive-icon";
-import { PresetIconEditor } from "@/management/preset/icon/Editor";
 import type { Preset } from "@/management/preset/contract";
+import { PresetIconEditor } from "@/management/preset/icon/Editor";
 import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
 import { glyphBoxFillClass } from "@/management/preset/workspace/glyph-classes";
 

@@ -9,7 +9,7 @@
  * the verify-then-upsert sequence so both call sites share the same
  * contract.
  *
- * TODO: migrate `src/management/preset/tool-shell/Dialog.tsx` to call
+ * TODO: migrate `src/management/preset/tool-shell/dialog/ToolDialog.tsx` to call
  * this helper instead of inlining `assertPresetAssetPresent` →
  * `upsertLocalPreset`. Until that migration lands, the two surfaces
  * remain manually synchronized; if you change the verify contract here,

@@ -28,27 +28,27 @@ import {
 	ArchiveDetailsSection,
 	type ArchiveDetailsSectionHandle,
 } from "@/management/preset/catalog-add/ArchiveDetailsSection";
-import { PresetIconEditor } from "@/management/preset/icon/Editor";
 import type { Preset, PresetIcon } from "@/management/preset/contract";
 import { askHostDeleteConfirm } from "@/management/preset/delete-confirm";
 import type { CodeEditorValue } from "@/management/preset/editor/Code";
 import { Editor } from "@/management/preset/editor/View";
 import { traceExecute } from "@/management/preset/execution/lifecycle-trace";
+import {
+	parseGroupFromText,
+	removeGroupEntry,
+	upsertGroupEntry,
+} from "@/management/preset/group/catalog";
 import { findGroupEntry } from "@/management/preset/group/catalog-helpers";
 import {
 	isGroupCatalogPreset,
 	synthesizeGroupPresetForTile,
 } from "@/management/preset/group/synthesize";
 import {
-	parseGroupFromText,
-	removeGroupEntry,
-	upsertGroupEntry,
-} from "@/management/preset/group/catalog";
-import {
 	createPresetIconDraft,
 	type PresetIconEditorDraft,
 	presetIconDraftToPresetIcon,
 } from "@/management/preset/icon/draft";
+import { PresetIconEditor } from "@/management/preset/icon/Editor";
 import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
 import {
 	glyphBoxCompactPadClass,

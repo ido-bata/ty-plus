@@ -60,7 +60,7 @@ import {
 import {
 	releaseDropPlacementFromState,
 	releaseGroupPreset,
-} from "@/management/preset/group/group-release";
+} from "@/management/preset/group/release";
 import {
 	parseGroupFromText,
 	removeGroupEntry,

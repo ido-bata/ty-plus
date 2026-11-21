@@ -18,8 +18,8 @@
  * Issue #86.
  */
 
-import { findGroupEntry } from "@/management/preset/group/catalog-helpers";
 import { removeGroupEntry } from "@/management/preset/group/catalog";
+import { findGroupEntry } from "@/management/preset/group/catalog-helpers";
 import { notifyPanelsAfterPresetSave } from "@/management/workspace/placement/notify-panels-after-preset-save";
 import type { SurfaceState } from "@/management/workspace/state";
 

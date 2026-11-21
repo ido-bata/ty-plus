@@ -1,8 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { css } from "@/styled-system/css";
-
-import type { PresetToolField } from "./Dialog";
-import { ToolDialogFields } from "./DialogFields";
+import { ToolDialogFields } from "./Fields";
+import type { PresetToolField } from "./ToolDialog";
 
 const baseFields: PresetToolField[] = [
 	{ key: "title", label: "Title", placeholder: "Title", kind: "input" },
@@ -38,7 +37,7 @@ const decoratorBoxClass = css({
 });
 
 const meta = {
-	title: "Preset/ToolShell/DialogFields",
+	title: "Preset/ToolShell/Dialog/Fields",
 	args: baseArgs,
 	argTypes: {
 		busy: { control: "boolean" },

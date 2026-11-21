@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { css } from "@/styled-system/css";
 
-import { PathDialogPathFieldRow } from "./PathDialogPathFieldRow";
+import { PathDialogPathFieldRow } from "./PathFieldRow";
 
 type Args = {
 	value: string;
@@ -19,7 +19,7 @@ const decoratorBoxClass = css({
 });
 
 const meta = {
-	title: "Preset/CatalogAdd/PathDialogPathFieldRow",
+	title: "Preset/CatalogAdd/PathDialog/PathFieldRow",
 	args: baseArgs,
 	argTypes: {
 		value: { control: "text" },

@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { css } from "@/styled-system/css";
 
-import { PathDialogNameField } from "./PathDialogNameField";
+import { PathDialogNameField } from "./NameField";
 
 type Args = {
 	name: string;
@@ -17,7 +17,7 @@ const decoratorBoxClass = css({
 });
 
 const meta = {
-	title: "Preset/CatalogAdd/PathDialogNameField",
+	title: "Preset/CatalogAdd/PathDialog/NameField",
 	args: baseArgs,
 	argTypes: {
 		name: { control: "text" },
