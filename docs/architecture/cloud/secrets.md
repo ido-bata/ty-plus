@@ -20,7 +20,7 @@
 
 - GitHub Actions `.github/workflows/web-deploy.yml` の `deploy` job は `workflow_dispatch` かつ `refs/heads/main` のみ。`pull_request` / `release-*` pushにはsecretを渡さない。
 - GitHub Environment `web-preview`（保護なし）/ `web-production`（required reviewer = repo運用者）を使用する。Environment変数・secretの値はリポジトリに置かない。
-- Infisical正本: project `ty-plus`（project ID `4a42939b-5be2-47e7-8a23-f8931dfe2b1d`、self-hosted `https://secrets.rebuildup.dev`）。`CLOUDFLARE_API_TOKEN` は `prod` environment・`/` pathへ登録し、GitHub Environment secretへ同期する。`CLOUDFLARE_ACCOUNT_ID` は非secretのためGitHub Environment variableへ直接設定してよい。
+- Infisical正本: project `ty-plus`（project ID `4a42939b-5be2-47e7-8a23-f8931dfe2b1d`、self-hosted `https://secrets.rebuildup.dev`）。現行projectは `dev` environmentのみを持ち、`CLOUDFLARE_API_TOKEN` は `dev`・`/` pathへ登録済み（2026-11-21）。GitHub Environment `web-preview` / `web-production` のsecretへ同期済み。`CLOUDFLARE_ACCOUNT_ID` は非secretのためGitHub Environment variableへ直接設定済み。
 - `dev` environmentに残存する `NOTION_TOKEN` / `SYNC_TOKEN` は旧repo由来の孤立secretであり、本repoにconsumerが存在しない。削除は別途本人判断とする。
 
 ## 排除契約
