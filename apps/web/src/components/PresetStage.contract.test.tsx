@@ -1,5 +1,8 @@
 import { presetIconCanvas } from "@ty-plus/product/management/preset/contract";
-import { Tile } from "@ty-plus/product/management/preset/workspace/Tile";
+import {
+	PresetTileButton,
+	Tile,
+} from "@ty-plus/product/management/preset/workspace";
 import { renderToString } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import { DEMO_PRESETS } from "../lib/demo-presets";
@@ -7,8 +10,9 @@ import { DEMO_PRESETS } from "../lib/demo-presets";
 /**
  * Contract: the web demo must render the product's own preset tile
  * implementation — not a web-side copy. These assertions pin the shared
- * render path (`Tile` → `PresetCatalogGlyphHost` → `WorkspacePresetGlyph`)
- * so a future refactor that forks the markup fails here.
+ * render path (`PresetTileButton` → `WorkspaceTileFrame` +
+ * `PresetCatalogGlyphHost` → `WorkspacePresetGlyph`) so a future refactor
+ * that forks the markup fails here.
  */
 describe("PresetStage product-component contract", () => {
 	it("demo presets are real Preset contract objects with canvas icons", () => {
@@ -25,6 +29,18 @@ describe("PresetStage product-component contract", () => {
 		const preset = DEMO_PRESETS[0];
 		const html = renderToString(<Tile preset={preset} label={preset.title} />);
 		// Product glyph host contract: data-preset-id + ws-preset-icon shell.
+		expect(html).toContain(`data-preset-id="${preset.id}"`);
+		expect(html).toContain("ws-preset-icon");
+	});
+
+	it("PresetTileButton renders native button semantics over the shared tile chrome", () => {
+		const preset = DEMO_PRESETS[0];
+		const html = renderToString(
+			<PresetTileButton preset={preset} selected onSelect={() => {}} />,
+		);
+		expect(html).toContain("<button");
+		expect(html).toContain('type="button"');
+		expect(html).toContain('aria-pressed="true"');
 		expect(html).toContain(`data-preset-id="${preset.id}"`);
 		expect(html).toContain("ws-preset-icon");
 	});
