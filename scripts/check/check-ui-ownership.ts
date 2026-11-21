@@ -82,6 +82,25 @@ export type Owner = {
 	note: string;
 };
 
+/**
+ * A component that several features use but that belongs to exactly one
+ * domain. The declaration says which domain, so the placement can be
+ * enforced instead of drifting.
+ */
+export type SharedComponent = {
+	/** Exported component name, e.g. "AuthoringGrid". */
+	name: string;
+	/** Repo-relative module that defines it. */
+	ownerModule: string;
+	/**
+	 * Repo-relative module other layers may import it through (the owner's
+	 * public barrel). Empty when the owner exposes no barrel.
+	 */
+	publicModule?: string;
+	/** Why this component belongs to that domain (surfaced in violations). */
+	note: string;
+};
+
 export type Violation = {
 	file: string;
 	line: number;
@@ -95,6 +114,12 @@ export function loadOwners(path = MANIFEST_PATH): Owner[] {
 	return owners;
 }
 
+export function loadSharedComponents(path = MANIFEST_PATH): SharedComponent[] {
+	const parsed = JSON.parse(readFileSync(path, "utf8"));
+	const shared: SharedComponent[] = parsed.sharedComponents ?? [];
+	return shared;
+}
+
 // ---------------------------------------------------------------------------
 // Source scanning
 // ---------------------------------------------------------------------------
@@ -103,7 +128,56 @@ type SourceFile = {
 	path: string;
 	rel: string;
 	src: string;
+	/**
+	 * Repo-relative modules this file imports, resolved from the `@/`
+	 * alias and relative specifiers. Package specifiers are ignored.
+	 */
+	imports: string[];
 };
+
+/**
+ * A module path without its file extension, so that an import specifier and
+ * the module it resolves to compare equal.
+ */
+export function moduleKey(path: string): string {
+	return path.replace(/\.(tsx|ts|jsx|js)$/, "");
+}
+
+/**
+ * Repo-relative module paths a source file imports. Only in-repo specifiers
+ * (`@/…` and relative) are resolved; package specifiers are ignored.
+ */
+export function importedModules(
+	rel: string,
+	src: string,
+	root = ROOT,
+): string[] {
+	const out: string[] = [];
+	const dir = dirname(rel);
+	for (const m of src.matchAll(/(?:from|import)\s*\(?\s*["']([^"']+)["']/g)) {
+		const spec = m[1];
+		let base: string | null = null;
+		if (spec.startsWith("@/")) {
+			base = join("src", spec.slice(2));
+		} else if (spec.startsWith(".")) {
+			base = join(dir, spec);
+		}
+		if (!base) continue;
+		const normalized = relative(root, resolve(root, base)).replace(/\\/g, "/");
+		// Resolve to the file that exists, so the path matches the
+		// extension-ful module paths the manifest declares.
+		const candidates = [
+			normalized,
+			`${normalized}.tsx`,
+			`${normalized}.ts`,
+			`${normalized}/index.tsx`,
+			`${normalized}/index.ts`,
+		];
+		const found = candidates.find((c) => existsSync(join(root, c)));
+		out.push(found ?? normalized);
+	}
+	return out;
+}
 
 function collectSources(dir: string, root = ROOT): SourceFile[] {
 	const out: SourceFile[] = [];
@@ -122,16 +196,33 @@ function collectSources(dir: string, root = ROOT): SourceFile[] {
 				!entry.name.endsWith(".test.tsx") &&
 				!entry.name.endsWith(".stories.tsx")
 			) {
+				const rel = relative(root, full).replace(/\\/g, "/");
+				const src = readFileSync(full, "utf8");
 				out.push({
 					path: full,
-					rel: relative(root, full),
-					src: readFileSync(full, "utf8"),
+					rel,
+					src,
+					imports: importedModules(rel, src, root),
 				});
 			}
 		}
 	};
 	walk(dir);
 	return out;
+}
+
+/**
+ * Component names a module *defines* — as opposed to re-exports. A barrel
+ * that re-exports a component does not own a second copy of it.
+ */
+export function definedComponents(src: string): string[] {
+	const names: string[] = [];
+	for (const m of src.matchAll(
+		/export\s+(?:const|function|class)\s+([A-Z]\w*)/g,
+	)) {
+		names.push(m[1]);
+	}
+	return names;
 }
 
 /** Component names exported by a module. */
@@ -238,6 +329,88 @@ export function checkOwnership(
 	);
 }
 
+/**
+ * Enforce the placement of a component that several features use but that
+ * belongs to exactly one domain.
+ *
+ *   shared-owner-missing  the declared owner module does not exist, or does
+ *                         not export the component
+ *   shared-duplicate      another module exports a component of the same name
+ *   shared-bypass-import  a file imports the component from a module that is
+ *                         neither the owner nor the owner's public barrel —
+ *                         i.e. it reaches into the owner's internals
+ */
+export function checkSharedComponents(
+	shared: SharedComponent[],
+	sources: SourceFile[],
+	root = ROOT,
+): Violation[] {
+	const out: Violation[] = [];
+
+	for (const component of shared) {
+		const ownerSource = sources.find((s) => s.rel === component.ownerModule);
+		if (!ownerSource) {
+			out.push({
+				file: component.ownerModule,
+				line: 1,
+				rule: "shared-owner-missing",
+				message: `${component.name} belongs to ${component.ownerModule}, but that module does not exist`,
+			});
+			continue;
+		}
+		if (!exportedComponents(ownerSource.src).includes(component.name)) {
+			out.push({
+				file: component.ownerModule,
+				line: 1,
+				rule: "shared-owner-missing",
+				message: `${component.ownerModule} must export ${component.name} — ${component.note}`,
+			});
+		}
+
+		const allowed = new Set(
+			[component.ownerModule, component.publicModule]
+				.filter((v): v is string => Boolean(v))
+				.map(moduleKey),
+		);
+
+		for (const source of sources) {
+			if (source.rel === component.ownerModule) continue;
+
+			// Rule 2: nobody may define their own copy. A barrel that
+			// re-exports the component is not a copy.
+			if (definedComponents(source.src).includes(component.name)) {
+				out.push({
+					file: source.rel,
+					line: 1,
+					rule: "shared-duplicate",
+					message: `${component.name} belongs to ${component.ownerModule}; ${source.rel} must not define its own ${component.name}`,
+				});
+			}
+
+			// Rule 3: imports go through the owner or its public barrel.
+			for (const spec of source.imports) {
+				if (allowed.has(moduleKey(spec))) continue;
+				if (!spec.startsWith("src/")) continue;
+				const target = sources.find(
+					(s) => moduleKey(s.rel) === moduleKey(spec),
+				);
+				if (!target) continue;
+				if (!exportedComponents(target.src).includes(component.name)) continue;
+				out.push({
+					file: source.rel,
+					line: 1,
+					rule: "shared-bypass-import",
+					message: `${component.name} is owned by ${component.ownerModule}; ${source.rel} must not import it from ${spec} — ${component.note}`,
+				});
+			}
+		}
+	}
+
+	return out.sort((a, b) =>
+		a.file === b.file ? a.line - b.line : a.file.localeCompare(b.file),
+	);
+}
+
 function main(): void {
 	if (!existsSync(MANIFEST_PATH)) {
 		console.error(
@@ -246,8 +419,12 @@ function main(): void {
 		process.exit(1);
 	}
 	const owners = loadOwners();
+	const shared = loadSharedComponents();
 	const sources = collectSources(join(ROOT, "src"));
-	const violations = checkOwnership(owners, sources);
+	const violations = [
+		...checkOwnership(owners, sources),
+		...checkSharedComponents(shared, sources),
+	];
 	for (const v of violations) {
 		console.error(`FAIL ${v.file}:${v.line} [${v.rule}] ${v.message}`);
 	}
@@ -255,7 +432,9 @@ function main(): void {
 		console.error(`\nui-ownership: ${violations.length} violation(s)`);
 		process.exit(1);
 	}
-	console.log(`ui-ownership: ok (${owners.length} owned feature UI(s))`);
+	console.log(
+		`ui-ownership: ok (${owners.length} owned feature UI(s), ${shared.length} shared component(s))`,
+	);
 }
 
 if (import.meta.main) {

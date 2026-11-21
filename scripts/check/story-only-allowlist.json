@@ -1,17 +1,5 @@
 [
 	{
-		"file": "src/function/widget/utility/font-viewer/FontViewerBanners.tsx",
-		"reason": "extracted font-viewer sub-components that the widget still renders inline; wire them in or delete them"
-	},
-	{
-		"file": "src/function/widget/utility/font-viewer/FontViewerSampleRow.tsx",
-		"reason": "extracted font-viewer sub-components that the widget still renders inline; wire them in or delete them"
-	},
-	{
-		"file": "src/function/widget/utility/font-viewer/FontViewerStatusLine.tsx",
-		"reason": "extracted font-viewer sub-components that the widget still renders inline; wire them in or delete them"
-	},
-	{
 		"file": "src/function/widget/utility/quick-actions/palette-dropdown.tsx",
 		"reason": "extracted quick-actions sub-components that the widget still renders inline; wire them in or delete them"
 	},

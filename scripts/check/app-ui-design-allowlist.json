@@ -193,39 +193,27 @@
 	},
 	{
 		"file": "src/function/widget/utility/font-viewer/Component.tsx",
-		"line": 4,
-		"rule": "deep-import",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/function/widget/utility/font-viewer/Component.tsx",
-		"line": 243,
+		"line": 161,
 		"rule": "raw-control",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/function/widget/utility/font-viewer/Component.tsx",
-		"line": 431,
+		"line": 349,
 		"rule": "raw-control",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/function/widget/utility/font-viewer/Component.tsx",
-		"line": 641,
+		"line": 559,
 		"rule": "raw-control",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/function/widget/utility/font-viewer/Component.tsx",
-		"line": 675,
+		"line": 593,
 		"rule": "raw-control",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
-	},
-	{
-		"file": "src/function/widget/utility/font-viewer/FontViewerSampleRow.tsx",
-		"line": 2,
-		"rule": "deep-import",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
 		"file": "src/function/widget/utility/info/comp-sections.tsx",
@@ -799,97 +787,97 @@
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 813,
+		"line": 812,
 		"rule": "raw-control",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 822,
+		"line": 821,
 		"rule": "raw-control",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 831,
+		"line": 830,
 		"rule": "raw-control",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 852,
+		"line": 851,
 		"rule": "raw-control",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 861,
+		"line": 860,
 		"rule": "raw-control",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 1010,
+		"line": 1009,
 		"rule": "raw-control",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 1028,
+		"line": 1027,
 		"rule": "raw-control",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 1126,
+		"line": 1125,
 		"rule": "raw-control",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 1163,
+		"line": 1162,
 		"rule": "raw-control",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 1189,
+		"line": 1188,
 		"rule": "raw-control",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 1200,
+		"line": 1199,
 		"rule": "raw-control",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 1228,
+		"line": 1227,
 		"rule": "raw-control",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 1251,
+		"line": 1250,
 		"rule": "raw-control",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 1262,
+		"line": 1261,
 		"rule": "raw-control",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 2090,
+		"line": 2089,
 		"rule": "raw-control",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 2187,
+		"line": 2186,
 		"rule": "ui-override",
 		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
 	},
@@ -901,7 +889,7 @@
 	},
 	{
 		"file": "src/management/preset/catalog-browser/PresetsDialogHeader.tsx",
-		"line": 234,
+		"line": 233,
 		"rule": "ui-override",
 		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
 	},
@@ -1519,13 +1507,13 @@
 	},
 	{
 		"file": "src/management/widget/catalog.tsx",
-		"line": 355,
+		"line": 354,
 		"rule": "raw-control",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/widget/catalog.tsx",
-		"line": 415,
+		"line": 414,
 		"rule": "raw-control",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},

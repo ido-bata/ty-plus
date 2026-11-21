@@ -12,5 +12,31 @@
 			],
 			"note": "DirectoryBrowser is a feature UI owned by storage, not a common primitive (docs/architecture/widget-boundary.md). The DOM hooks are a cross-cutting contract: src/shared/scenario/real-anchors.ts, src/management/dialog/dialogs/unified-context-menu.ts and src/management/preset/tool-shell/context-menu.ts resolve them, so any entry surface must emit them."
 		}
+	],
+	"sharedComponents": [
+		{
+			"name": "AuthoringGrid",
+			"ownerModule": "src/management/preset/authoring-layout.tsx",
+			"publicModule": "src/management/preset/index.ts",
+			"note": "the authoring form layout belongs to the preset domain; it used to sit in preset/tool-shell, which is one feature of that domain, and was imported from four preset dialogs and the group/modeless/authoring surfaces."
+		},
+		{
+			"name": "AuthoringField",
+			"ownerModule": "src/management/preset/authoring-layout.tsx",
+			"publicModule": "src/management/preset/index.ts",
+			"note": "the authoring form layout belongs to the preset domain."
+		},
+		{
+			"name": "AuthoringSection",
+			"ownerModule": "src/management/preset/authoring-layout.tsx",
+			"publicModule": "src/management/preset/index.ts",
+			"note": "the authoring form layout belongs to the preset domain."
+		},
+		{
+			"name": "AuthoringSegment",
+			"ownerModule": "src/management/preset/authoring-layout.tsx",
+			"publicModule": "src/management/preset/index.ts",
+			"note": "the authoring form layout belongs to the preset domain."
+		}
 	]
 }
