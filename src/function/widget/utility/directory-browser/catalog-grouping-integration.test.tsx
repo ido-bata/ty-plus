@@ -37,6 +37,14 @@ vi.mock("@/management/online/notification/service", () => ({
 	notificationStore: { add: vi.fn() },
 }));
 
+vi.mock("@ty-plus/ui", async (importOriginal) => {
+	const actual = await importOriginal<typeof import("@ty-plus/ui")>();
+	return {
+		...actual,
+		ViewModeToggle: () => <div data-testid="view-mode-toggle" />,
+	};
+});
+
 vi.mock("@/management/preset", () => ({
 	CatalogBrowserShell: ({
 		children,
@@ -50,7 +58,6 @@ vi.mock("@/management/preset", () => ({
 			{children}
 		</div>
 	),
-	CatalogBrowserViewModeToggle: () => <div data-testid="view-mode-toggle" />,
 	ICON_CELL_BASE_REM: 4,
 	ICON_GRID_CLASS: "icon-grid",
 	ICON_GRID_SCALE_LS_KEY: "ty-plus.iconGridScale",

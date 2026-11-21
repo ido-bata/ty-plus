@@ -64,7 +64,7 @@ const baseArgs: Args = {
 };
 
 const meta = {
-	title: "WidgetUtility/DirectoryBrowser",
+	title: "WidgetUtility/FileEntryList",
 	args: baseArgs,
 	argTypes: {
 		widthPx: { control: { type: "number", min: 280, max: 720 } },

@@ -3,8 +3,7 @@ import type { JSX } from "react";
 import type { PresetType } from "@/management/preset/contract";
 import type { FileBrowserFileType } from "@/management/storage/file-browser-service";
 import { css } from "@/styled-system/css";
-import { FilterToggleButton } from "./FilterToggleButton";
-import type { FileBrowserBrowseMode, FileBrowserFilter } from "./lib/types";
+import type { FileBrowserBrowseMode, FileBrowserFilter } from "./types";
 
 const EXT_TOGGLE_SET = [".ffx", ".jsx", ".jsxbin", ".mogrt", ".json"] as const;
 
@@ -54,9 +53,34 @@ export type BrowserFilterPanelProps = {
 	recursiveOffLabel: string;
 };
 
-export function BrowserFilterPanel(
-	props: BrowserFilterPanelProps,
-): JSX.Element {
+/**
+ * A filter chip.  "Pressed" means the entry kind is currently *hidden* by
+ * the filter, so the state is published through `aria-pressed` and carried
+ * by the shared button variants rather than by an opacity override.
+ */
+function FilterChip({
+	pressed,
+	label,
+	onClick,
+}: {
+	pressed: boolean;
+	label: string;
+	onClick: () => void;
+}): JSX.Element {
+	return (
+		<Button
+			type="button"
+			variant={pressed ? "ghost" : "outline"}
+			uiSize="sm"
+			aria-pressed={pressed}
+			onClick={onClick}
+		>
+			{label}
+		</Button>
+	);
+}
+
+export function renderFilterPanel(props: BrowserFilterPanelProps): JSX.Element {
 	const {
 		browseMode,
 		coarseFilter,
@@ -106,7 +130,7 @@ export function BrowserFilterPanel(
 					{catalogPresetTypesHideLabel}
 				</span>
 				{CATALOG_TYPE_TOGGLE_SET.map((ct) => (
-					<FilterToggleButton
+					<FilterChip
 						key={ct}
 						pressed={catalogHiddenPresetTypes.includes(ct)}
 						label={ct}
@@ -160,7 +184,7 @@ export function BrowserFilterPanel(
 					{extensionHideLabel}
 				</span>
 				{EXT_TOGGLE_SET.map((ext) => (
-					<FilterToggleButton
+					<FilterChip
 						key={ext}
 						pressed={hiddenExtensions.includes(ext)}
 						label={ext}
@@ -179,7 +203,7 @@ export function BrowserFilterPanel(
 					{fileTypeHideLabel}
 				</span>
 				{FILE_TYPE_TOGGLE.map((ft) => (
-					<FilterToggleButton
+					<FilterChip
 						key={ft}
 						pressed={hiddenFileTypes.includes(ft)}
 						label={ft}

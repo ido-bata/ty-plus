@@ -23,15 +23,14 @@ const indexPath = resolve(here, "index.ts");
 const componentSrc = readFileSync(componentPath, "utf8");
 const indexSrc = readFileSync(indexPath, "utf8");
 
-// The widget is composed from the extracted modules next to it (header,
-// toolbar, filter panel, ...). Their `t()` calls are part of the same
-// use-side surface, so they are covered by the same key check.
+// The widget is composed from the modules next to it (the widget-local
+// chrome and the preset rows it renders). Their `t()` calls are part of the
+// same use-side surface, so they are covered by the same key check.
 const extractedSrcs: readonly { file: string; src: string }[] = [
-	"BrowserHeader.tsx",
-	"BrowserToolbar.tsx",
-	"BrowserFilterPanel.tsx",
-	"CatalogPresetListRow.tsx",
-	"CatalogPresetIconTile.tsx",
+	"toolbar.tsx",
+	"filter-panel.tsx",
+	"../../../../management/preset/components/PresetListRow.tsx",
+	"../../../../management/preset/components/PresetIconTile.tsx",
 	"CollapsibleGroupHeader.tsx",
 ].map((file) => ({ file, src: readFileSync(resolve(here, file), "utf8") }));
 
