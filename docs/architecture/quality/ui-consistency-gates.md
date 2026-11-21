@@ -87,6 +87,19 @@ bun run check:story-only -- --write-baseline
 
 widget 記述子 `DirectoryBrowserWidget` は widget 自身の type 名なので許可する。
 
+さらに manifest の `sharedComponents` は、**複数 feature が使うが単一 domain に
+属する component** の置き場所を宣言する（例: authoring の layout kit は preset
+domain のもの）。規則:
+
+- `shared-owner-missing` — 宣言された owner module が存在しない、または
+  component を export しない
+- `shared-duplicate` — 別の module が同名 component を**定義**している
+  （barrel が re-export しているだけのは別）
+- `shared-bypass-import` — owner にも owner の public barrel でもない module から
+  import している（owner の内側へ手を伸ばしている）
+
+宣言は人が判断する部分なので、manifest に書くこと自体がレビュー対象になる。
+
 ## なぜ検査を「ディレクトリ単位」にしないのか
 
 `scripts/check/check-settings-ui-primitives.ts` は
