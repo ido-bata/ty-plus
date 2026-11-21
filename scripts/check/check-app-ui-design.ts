@@ -1,0 +1,635 @@
+#!/usr/bin/env bun
+/**
+ * check-app-ui-design — enforces the shared design-system contract on the
+ * CEP application code (`src/**`).
+ *
+ * WHY THIS EXISTS
+ *
+ * The shared design system lives in `packages/ui` and is imported as
+ * `@ty-plus/ui`. The official site (`apps/web/src`) has been held to that
+ * contract since it was written (`scripts/check/check-web-design.ts`), which
+ * is why it has zero violations. The CEP app was written before the shared
+ * package existed and was never held to it, so the same interaction is
+ * implemented over and over with hand-written `css()`:
+ *
+ *   - raw `<button>` / `<input>` / `<select>` / `<textarea>` — every one of
+ *     them is a shared control that carries the focus ring, the disabled
+ *     treatment, and the size scale. A hand-rolled one has none of them.
+ *   - hand-drawn `<svg>` path data — the shared `Icon` applies a
+ *     size-dependent `strokeWidth`, so raw SVG renders at a different weight
+ *     from every other icon.
+ *   - `className`/`css` overrides on a `@ty-plus/ui` component — this is how
+ *     a shared control gets re-skinned into something that no longer matches
+ *     the shared one.
+ *   - deep imports (`@ty-plus/ui/fields/Input`) — the barrel is the reviewed
+ *     public surface; a deep import bypasses it.
+ *
+ * RULES
+ *
+ *   raw-control   raw <button|input|select|textarea> — use a shared primitive
+ *   raw-svg       raw <svg> — use `Icon` with a lucide icon
+ *   ui-override   appearance props (color/background/border/radius/font/
+ *                 shadow/box metrics/padding) passed to a shared component
+ *                 through `className`/`css` — use variant/size/tone props
+ *   deep-import   `@ty-plus/ui/<subpath>` — import from the barrel
+ *   inline-style  `style={{...}}` — styling goes through `css()`
+ *
+ * `packages/ui` itself is exempt: it IS the implementation of the contract.
+ *
+ * VIOLATIONS THAT ALREADY EXIST
+ *
+ * Tracked in `scripts/check/app-ui-design-allowlist.json`, one entry per
+ * violation with the reason it is tolerated. An allowlist entry that no
+ * longer violates fails the check, so the list can only shrink. New
+ * violations always fail.
+ *
+ * Exit codes:
+ *   0 - no new violations
+ *   1 - violations detected
+ */
+
+import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { dirname, join, relative, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+import ts from "typescript5";
+
+const HERE = dirname(fileURLToPath(import.meta.url));
+const ROOT = resolve(HERE, "..", "..");
+const APP_DIR = join(ROOT, "src");
+const ALLOWLIST_PATH = join(
+	ROOT,
+	"scripts",
+	"check",
+	"app-ui-design-allowlist.json",
+);
+
+export type Violation = {
+	file: string;
+	line: number;
+	rule: string;
+	message: string;
+};
+
+const RAW_CONTROL_TAGS = new Set(["button", "input", "select", "textarea"]);
+
+/**
+ * Properties that decide how a control *looks*. A shared component must not
+ * receive these through `className`/`css`: they belong to the component's
+ * own variant/size/tone props, and overriding them is how two surfaces end
+ * up rendering the same control differently.
+ */
+const APPEARANCE_PROPS = new Set([
+	"background",
+	"backgroundColor",
+	"border",
+	"borderBlock",
+	"borderBlockEnd",
+	"borderBlockStart",
+	"borderBottom",
+	"borderBottomColor",
+	"borderBottomLeftRadius",
+	"borderBottomRightRadius",
+	"borderColor",
+	"borderInline",
+	"borderInlineEnd",
+	"borderInlineStart",
+	"borderLeft",
+	"borderLeftColor",
+	"borderRadius",
+	"borderRight",
+	"borderRightColor",
+	"borderStyle",
+	"borderTop",
+	"borderTopColor",
+	"borderTopLeftRadius",
+	"borderTopRightRadius",
+	"borderWidth",
+	"boxShadow",
+	"color",
+	"fontSize",
+	"fontWeight",
+	"opacity",
+	"outline",
+]);
+
+/**
+ * Box metrics. For `IconButton` these ARE the size scale (the component has
+ * no other way to express "6x6"), so overriding them breaks the scale. For
+ * the other controls the box is host layout — a row button that fills the
+ * row, a card button that fills the card — and overriding it is legitimate.
+ */
+const BOX_METRIC_PROPS = new Set([
+	"height",
+	"width",
+	"padding",
+	"paddingBlock",
+	"paddingBlockEnd",
+	"paddingBlockStart",
+	"paddingBottom",
+	"paddingInline",
+	"paddingInlineEnd",
+	"paddingInlineStart",
+	"paddingLeft",
+	"paddingRight",
+	"paddingTop",
+]);
+
+/** Shared components whose own box is part of their contract. */
+const CONTROL_COMPONENTS = new Set([
+	"Button",
+	"Checkbox",
+	"ColorSwatch",
+	"IconButton",
+	"Input",
+	"ListSelect",
+	"NumberField",
+	"PathField",
+	"RangeField",
+	"SearchField",
+	"SegmentedControl",
+	"Textarea",
+]);
+
+// ---------------------------------------------------------------------------
+// File walking
+// ---------------------------------------------------------------------------
+
+function* walk(dir: string): Generator<string> {
+	let entries: ReturnType<typeof readdirSync>;
+	try {
+		entries = readdirSync(dir, { withFileTypes: true });
+	} catch {
+		return;
+	}
+	for (const entry of entries) {
+		const full = join(dir, entry.name);
+		if (entry.isDirectory()) yield* walk(full);
+		else if (
+			/\.tsx$/.test(entry.name) &&
+			!entry.name.endsWith(".test.tsx") &&
+			!entry.name.endsWith(".stories.tsx")
+		)
+			yield full;
+	}
+}
+
+// ---------------------------------------------------------------------------
+// AST helpers
+// ---------------------------------------------------------------------------
+
+function lineOf(sf: ts.SourceFile, node: ts.Node): number {
+	return sf.getLineAndCharacterOfPosition(node.getStart(sf)).line + 1;
+}
+
+function propName(name: ts.PropertyName | undefined): string | null {
+	if (!name) return null;
+	if (ts.isIdentifier(name) || ts.isStringLiteral(name)) return name.text;
+	return null;
+}
+
+/**
+ * Local `const X = css({...})` declarations, so a shared component's
+ * `className={someConst}` can be resolved to the style object it carries.
+ */
+function collectCssConsts(
+	sf: ts.SourceFile,
+): Map<string, ts.ObjectLiteralExpression> {
+	const consts = new Map<string, ts.ObjectLiteralExpression>();
+	for (const stmt of sf.statements) {
+		if (!ts.isVariableStatement(stmt)) continue;
+		for (const decl of stmt.declarationList.declarations) {
+			if (!ts.isIdentifier(decl.name)) continue;
+			const init = decl.initializer;
+			if (!init || !ts.isCallExpression(init)) continue;
+			const callee = init.expression.getText(sf);
+			if (!/^css(\.raw)?$/.test(callee)) continue;
+			const arg = init.arguments[0];
+			if (arg && ts.isObjectLiteralExpression(arg)) {
+				consts.set(decl.name.text, arg);
+			}
+		}
+	}
+	return consts;
+}
+
+function appearancePropsOf(
+	obj: ts.ObjectLiteralExpression,
+	tag: string,
+): string[] {
+	// Only controls carry an appearance contract. A glyph (`Icon`) may be
+	// tinted, a container (`ScrollArea`, `Surface`) may carry a background —
+	// neither is a re-skin of a control.
+	if (!CONTROL_COMPONENTS.has(tag)) return [];
+	const found: string[] = [];
+	for (const prop of obj.properties) {
+		if (!ts.isPropertyAssignment(prop)) continue;
+		const key = propName(prop.name);
+		if (!key) continue;
+		if (APPEARANCE_PROPS.has(key)) {
+			found.push(key);
+			continue;
+		}
+		if (BOX_METRIC_PROPS.has(key) && tag === "IconButton") {
+			found.push(key);
+		}
+	}
+	return found;
+}
+
+/** Names imported from the shared package barrel. */
+function collectUiImports(sf: ts.SourceFile): Set<string> {
+	const names = new Set<string>();
+	for (const stmt of sf.statements) {
+		if (
+			!ts.isImportDeclaration(stmt) ||
+			!ts.isStringLiteral(stmt.moduleSpecifier) ||
+			stmt.moduleSpecifier.text !== "@ty-plus/ui"
+		)
+			continue;
+		const clause = stmt.importClause;
+		if (!clause?.namedBindings) continue;
+		if (!ts.isNamedImports(clause.namedBindings)) continue;
+		for (const el of clause.namedBindings.elements) {
+			names.add(el.name.text);
+		}
+	}
+	return names;
+}
+
+/**
+ * True when a `style={{...}}` attribute sets nothing but CSS custom
+ * properties. Those carry runtime-computed values that `css()` cannot
+ * express, so they are the one legitimate use of an inline style object.
+ */
+function isCustomPropertyOnlyStyle(attr: ts.JsxAttribute): boolean {
+	const initializer = attr.initializer;
+	if (!initializer || !ts.isJsxExpression(initializer)) return false;
+	const expr = initializer.expression;
+	if (!expr || !ts.isObjectLiteralExpression(expr)) return false;
+	const props = expr.properties;
+	if (props.length === 0) return false;
+	for (const prop of props) {
+		if (!ts.isPropertyAssignment(prop)) return false;
+		const key = propName(prop.name);
+		if (!key?.startsWith("--")) return false;
+	}
+	return true;
+}
+
+/**
+ * Appearance properties set through an inline `style` object. Runtime
+ * positioning and sizing are allowed; runtime appearance is not.
+ */
+function inlineStyleAppearanceProps(attr: ts.JsxAttribute): string[] {
+	const initializer = attr.initializer;
+	if (!initializer || !ts.isJsxExpression(initializer)) return [];
+	const expr = initializer.expression;
+	if (!expr || !ts.isObjectLiteralExpression(expr)) return [];
+	const found: string[] = [];
+	for (const prop of expr.properties) {
+		if (!ts.isPropertyAssignment(prop)) continue;
+		const key = propName(prop.name);
+		if (!key) continue;
+		if (key.startsWith("--")) continue;
+		if (STYLE_APPEARANCE_PROPS.has(key)) found.push(key);
+	}
+	return found;
+}
+
+/**
+ * Appearance properties inside a `style` object. Runtime *position* and
+ * *size* values (a measured popover origin, a zoom factor) are legitimate
+ * inline-style uses in the CEP app; runtime *appearance* is not — those
+ * must come from the token system.
+ */
+const STYLE_APPEARANCE_PROPS = new Set([
+	"background",
+	"backgroundColor",
+	"border",
+	"borderBottomColor",
+	"borderColor",
+	"borderLeftColor",
+	"borderRightColor",
+	"borderTopColor",
+	"boxShadow",
+	"color",
+	"fill",
+	"fontSize",
+	"fontWeight",
+	"opacity",
+	"outline",
+	"stroke",
+	"textShadow",
+]);
+
+// ---------------------------------------------------------------------------
+// Checking
+// ---------------------------------------------------------------------------
+
+export function checkAppSource(file: string, src: string): Violation[] {
+	const out: Violation[] = [];
+	const sf = ts.createSourceFile(
+		file,
+		src,
+		ts.ScriptTarget.Latest,
+		true,
+		ts.ScriptKind.TSX,
+	);
+	const uiNames = collectUiImports(sf);
+	const cssConsts = collectCssConsts(sf);
+
+	const add = (node: ts.Node, rule: string, message: string): void => {
+		out.push({ file, line: lineOf(sf, node), rule, message });
+	};
+
+	const resolveStyleObject = (
+		expr: ts.Expression,
+	): ts.ObjectLiteralExpression | null => {
+		if (ts.isCallExpression(expr)) {
+			const callee = expr.expression.getText(sf);
+			if (!/^css(\.raw)?$/.test(callee)) return null;
+			const arg = expr.arguments[0];
+			return arg && ts.isObjectLiteralExpression(arg) ? arg : null;
+		}
+		if (ts.isIdentifier(expr)) {
+			return cssConsts.get(expr.text) ?? null;
+		}
+		return null;
+	};
+
+	const visit = (node: ts.Node): void => {
+		if (
+			ts.isImportDeclaration(node) &&
+			ts.isStringLiteral(node.moduleSpecifier)
+		) {
+			const specifier = node.moduleSpecifier.text;
+			// `tokens/*` is the design-token registry, not the component
+			// surface: it stays importable by path. Everything else must go
+			// through the barrel.
+			if (
+				specifier.startsWith("@ty-plus/ui/") &&
+				!specifier.startsWith("@ty-plus/ui/tokens/")
+			) {
+				add(
+					node,
+					"deep-import",
+					`import from "${specifier}" bypasses the @ty-plus/ui barrel — import from "@ty-plus/ui"`,
+				);
+			}
+		}
+
+		if (ts.isJsxSelfClosingElement(node) || ts.isJsxOpeningElement(node)) {
+			const tag = node.tagName.getText(sf);
+			if (RAW_CONTROL_TAGS.has(tag)) {
+				add(
+					node,
+					"raw-control",
+					`raw <${tag}> is banned; use a @ty-plus/ui primitive`,
+				);
+			}
+			if (tag === "svg") {
+				add(
+					node,
+					"raw-svg",
+					"raw <svg> is banned; use `Icon` with a lucide icon",
+				);
+			}
+			if (uiNames.has(tag)) {
+				for (const attr of node.attributes.properties) {
+					if (!ts.isJsxAttribute(attr)) continue;
+					const attrName = attr.name.getText(sf);
+					if (attrName !== "className" && attrName !== "css") continue;
+					const initializer = attr.initializer;
+					if (!initializer || !ts.isJsxExpression(initializer)) continue;
+					const expr = initializer.expression;
+					if (!expr) continue;
+					const styleObject = resolveStyleObject(expr);
+					if (!styleObject) continue;
+					const props = appearancePropsOf(styleObject, tag);
+					if (props.length === 0) continue;
+					add(
+						attr,
+						"ui-override",
+						`<${tag}> is a shared @ty-plus/ui component; ${props.join(", ")} must come from its variant/size/tone props, not ${attrName}`,
+					);
+				}
+			}
+			for (const attr of node.attributes.properties) {
+				if (!ts.isJsxAttribute(attr)) continue;
+				if (attr.name.getText(sf) !== "style") continue;
+				// A `style` object that only sets CSS custom properties is the
+				// documented escape hatch for runtime-computed values
+				// (a zoom factor, a measured offset) — `css()` cannot express
+				// them because they are not known at build time.
+				if (isCustomPropertyOnlyStyle(attr)) continue;
+				const appearance = inlineStyleAppearanceProps(attr);
+				if (appearance.length === 0) continue;
+				add(
+					attr,
+					"inline-style",
+					`inline style sets ${appearance.join(", ")} — appearance must come from css() and the token system`,
+				);
+			}
+		}
+		ts.forEachChild(node, visit);
+	};
+	visit(sf);
+	return out;
+}
+
+// ---------------------------------------------------------------------------
+// Barrel completeness
+// ---------------------------------------------------------------------------
+
+/**
+ * Every public component of the shared package must be reachable from the
+ * barrel. A component that exists but is not exported is either dead code
+ * or a deep-import escape hatch — both are the defect this rule removes.
+ */
+export function checkUiBarrel(uiSrcDir: string, root = ROOT): Violation[] {
+	const barrelPath = join(uiSrcDir, "index.ts");
+	if (!existsSync(barrelPath)) {
+		return [
+			{
+				file: relative(root, barrelPath),
+				line: 1,
+				rule: "missing-barrel",
+				message: "the shared package has no index.ts barrel",
+			},
+		];
+	}
+	const barrel = readFileSync(barrelPath, "utf8");
+	const exported = new Set<string>();
+	for (const m of barrel.matchAll(/export\s*\{([^}]*)\}/g)) {
+		for (const part of m[1].split(",")) {
+			const name = part
+				.trim()
+				.split(/\s+as\s+/)
+				.pop()
+				?.trim();
+			if (name) exported.add(name);
+		}
+	}
+	for (const m of barrel.matchAll(/export\s*\*\s*as\s+(\w+)/g)) {
+		exported.add(m[1]);
+	}
+
+	const out: Violation[] = [];
+	const files: string[] = [];
+	const walk = (dir: string): void => {
+		for (const entry of readdirSync(dir, { withFileTypes: true })) {
+			const full = join(dir, entry.name);
+			if (entry.isDirectory()) walk(full);
+			else if (
+				/\.tsx$/.test(entry.name) &&
+				!entry.name.endsWith(".test.tsx") &&
+				!entry.name.endsWith(".stories.tsx")
+			)
+				files.push(full);
+		}
+	};
+	walk(uiSrcDir);
+
+	for (const file of files) {
+		const src = readFileSync(file, "utf8");
+		for (const m of src.matchAll(
+			/export\s+(?:const|function|class)\s+([A-Z]\w*)/g,
+		)) {
+			const name = m[1];
+			if (exported.has(name)) continue;
+			out.push({
+				file: relative(root, file),
+				line: src.slice(0, m.index).split("\n").length,
+				rule: "barrel-gap",
+				message: `${name} is not exported from the @ty-plus/ui barrel`,
+			});
+		}
+	}
+	return out;
+}
+
+// ---------------------------------------------------------------------------
+// Driver
+// ---------------------------------------------------------------------------
+
+export function collectViolations(root = ROOT): Violation[] {
+	const out: Violation[] = [];
+	for (const file of walk(join(root, "src"))) {
+		const rel = relative(root, file);
+		out.push(...checkAppSource(rel, readFileSync(file, "utf8")));
+	}
+	out.push(...checkUiBarrel(join(root, "packages", "ui", "src"), root));
+	return out.sort((a, b) =>
+		a.file === b.file ? a.line - b.line : a.file.localeCompare(b.file),
+	);
+}
+
+/**
+ * Default reason per rule, used when the baseline is (re)generated. Each one
+ * names the migration that clears the entry, so an allowlist entry always
+ * says what would remove it.
+ */
+const DEFAULT_REASON: Record<string, string> = {
+	"raw-control":
+		"hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive",
+	"raw-svg":
+		"hand-drawn icon predates the shared design system; replace it with `Icon` and a lucide icon",
+	"ui-override":
+		"the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop",
+	"deep-import":
+		"deep import of the shared package; move it to the @ty-plus/ui barrel",
+	"inline-style":
+		"inline style sets appearance; move it into css() and the token system",
+	"barrel-gap":
+		"the shared component is not exported from the barrel; export it or delete it",
+};
+
+export type AllowlistEntry = {
+	file: string;
+	line: number;
+	rule: string;
+	reason: string;
+};
+
+export function loadAllowlist(path = ALLOWLIST_PATH): AllowlistEntry[] {
+	try {
+		const parsed = JSON.parse(readFileSync(path, "utf8"));
+		if (!Array.isArray(parsed)) return [];
+		return parsed.filter(
+			(entry): entry is AllowlistEntry =>
+				typeof entry === "object" &&
+				entry !== null &&
+				typeof (entry as AllowlistEntry).file === "string" &&
+				typeof (entry as AllowlistEntry).line === "number" &&
+				typeof (entry as AllowlistEntry).rule === "string" &&
+				typeof (entry as AllowlistEntry).reason === "string",
+		);
+	} catch {
+		return [];
+	}
+}
+
+export function violationKey(v: {
+	file: string;
+	line: number;
+	rule: string;
+}): string {
+	return `${v.file}:${v.line}:${v.rule}`;
+}
+
+export function partitionViolations(
+	violations: Violation[],
+	allowlist: AllowlistEntry[],
+): { fresh: Violation[]; stale: AllowlistEntry[] } {
+	const allowed = new Set(allowlist.map(violationKey));
+	const live = new Set(violations.map(violationKey));
+	return {
+		fresh: violations.filter((v) => !allowed.has(violationKey(v))),
+		stale: allowlist.filter((entry) => !live.has(violationKey(entry))),
+	};
+}
+
+function main(): void {
+	if (!existsSync(APP_DIR)) {
+		console.error("check-app-ui-design: src/ not found");
+		process.exit(1);
+	}
+	const violations = collectViolations();
+	const allowlist = loadAllowlist();
+
+	if (process.argv.includes("--write-baseline")) {
+		const existing = new Map(allowlist.map((e) => [violationKey(e), e.reason]));
+		const merged = violations.map((v) => ({
+			file: v.file,
+			line: v.line,
+			rule: v.rule,
+			reason: existing.get(violationKey(v)) ?? DEFAULT_REASON[v.rule],
+		}));
+		writeFileSync(ALLOWLIST_PATH, `${JSON.stringify(merged, null, "\t")}\n`);
+		console.log(
+			`app-ui-design: wrote ${merged.length} baseline entr(ies) to ${relative(ROOT, ALLOWLIST_PATH)}`,
+		);
+		return;
+	}
+
+	const { fresh, stale } = partitionViolations(violations, allowlist);
+	for (const v of fresh) {
+		console.error(`FAIL ${v.file}:${v.line} [${v.rule}] ${v.message}`);
+	}
+	for (const entry of stale) {
+		console.error(
+			`STALE ${entry.file}:${entry.line} [${entry.rule}] allowlist entry no longer violates — remove it`,
+		);
+	}
+	if (fresh.length > 0 || stale.length > 0) {
+		console.error(
+			`\napp-ui-design: ${fresh.length} new violation(s), ${stale.length} stale allowlist entry(ies)`,
+		);
+		process.exit(1);
+	}
+	console.log(`app-ui-design: ok (${violations.length} allowlisted, 0 new)`);
+}
+
+if (import.meta.main) {
+	main();
+}

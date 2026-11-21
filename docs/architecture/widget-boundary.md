@@ -20,6 +20,11 @@ Widget / surface 単位の render 例外に対する fail-soft 動作は
 | Product icon (PresetIcon) | `management/preset/contract` |
 | 機能的な振る舞い (file browser state, catalog) | `management/storage` |
 
+この表は `docs/architecture/widget-boundary.owners.json` に機械可読な形で
+複製があり、`scripts/check/check-ui-ownership.ts` が所有者違反を検出する
+(所有者モジュールの欠落・別 layer における同名の再実装)。表と manifest は
+同時に更新すること。
+
 ## Widget Interface Boundary
 
 widget システムは interface と implementation の 2 層 boundary を用いる。

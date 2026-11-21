@@ -11,6 +11,7 @@ quality/
 ├─ knip.md
 ├─ biome-overrides.md
 ├─ storage-violations-check.md
+├─ ui-consistency-gates.md
 ├─ verification.md
 ├─ workspace-class-hooks-check.md
 └─ workspace-load-order.md
@@ -22,6 +23,7 @@ quality/
 2. [verification.md](verification.md) - build / test / review の品質ゲート
 3. [knip.md](knip.md) - 未使用コード検出（Knip）とクリーンアップ方針
 4. [biome-overrides.md](biome-overrides.md) - `biome.json` の per-file relaxed zone 一覧と理由
+5. [ui-consistency-gates.md](ui-consistency-gates.md) - 共有UI契約と機能UI所有者の静的ゲート
 
 ## 境界
 
