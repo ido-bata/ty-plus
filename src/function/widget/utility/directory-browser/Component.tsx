@@ -1,13 +1,5 @@
-import {
-	ArrowUp,
-	ChevronRight,
-	FolderOpen,
-	HardDrive,
-	Play,
-	RefreshCw,
-	Search,
-	Settings2,
-} from "lucide-react";
+import { Button, Icon, IconButton, isIMEComposing } from "@ty-plus/ui";
+import { ChevronRight, FolderOpen, Play } from "lucide-react";
 import {
 	type CSSProperties,
 	type JSX,
@@ -28,17 +20,10 @@ import { readGroupJson } from "@/management/catalog/json-files";
 import { notificationStore } from "@/management/online/notification/service";
 import {
 	CatalogBrowserShell,
-	CatalogBrowserViewModeToggle,
-	glyphBoxFlushClass,
-	glyphEmojiProminentClass,
 	ICON_CELL_BASE_REM,
 	ICON_GRID_CLASS,
 	ICON_GRID_SCALE_LS_KEY,
 	ICON_TILE_ASPECT_LS_KEY,
-	type IconTileAspect,
-	iconTileMediaClass,
-	LIST_ROW_GRID,
-	PresetGlyphById,
 } from "@/management/preset";
 import { isPresetAssetMissing } from "@/management/preset/asset-health";
 import type {
@@ -57,10 +42,6 @@ import {
 	stemWithoutExtension,
 } from "@/management/preset/sibling-thumbnail";
 import { getPreset } from "@/management/preset/use-cases";
-import {
-	useIsPresetAssetMissing,
-	useIsPresetAssetUnverifiable,
-} from "@/management/preset/use-preset-asset-health";
 import { readSettings } from "@/management/storage";
 import { getCandidatesSnapshot } from "@/management/storage/candidates-cache/runtime";
 import {
@@ -75,10 +56,18 @@ import {
 } from "@/management/storage/ui/DirectoryBrowser";
 import { executeWorkspacePresetForWindow } from "@/management/workspace/runtime";
 import type { SurfaceState } from "@/management/workspace/state";
+import { useCatalogViewMode } from "@/shared/util/catalog-view-mode";
+import { useIconGridScale } from "@/shared/util/icon-grid-scale";
+import { useTileAspect } from "@/shared/util/tile-aspect";
+import { css } from "@/styled-system/css";
+import { BrowserHeader } from "./BrowserHeader";
+import { CatalogPresetIconTile } from "./CatalogPresetIconTile";
+import { CatalogPresetListRow } from "./CatalogPresetListRow";
 import { CollapsibleGroupHeader } from "./CollapsibleGroupHeader";
 import { EntryThumb } from "./EntryThumb";
 import { formatPathForMode } from "./format-path";
 import { DEFAULT_CARD_SIZE, useCardZoom } from "./hooks/useCardZoom";
+import type { FileBrowserBrowseMode, FileBrowserFilter } from "./lib/types";
 import {
 	DRIVES_SENTINEL,
 	isAtDriveRoot,
@@ -88,25 +77,6 @@ import {
 	type GroupedCatalogPresets,
 	partitionCatalogPresetsByGroup,
 } from "./partition-catalog-presets";
-
-type FileBrowserFilter = "all" | "media" | "presets" | "scripts" | "fonts";
-
-type FileBrowserBrowseMode = "filesystem" | "anchors" | "presetsCatalog";
-
-import { Icon, IconButton, ListSelect, PathField } from "@ty-plus/ui";
-import { SearchField } from "@ty-plus/ui/fields/SearchField";
-import { cx } from "@ty-plus/ui/util/cx";
-import { isIMEComposing } from "@ty-plus/ui/util/keyboard";
-import { useCatalogViewMode } from "@/shared/util/catalog-view-mode";
-import { useIconGridScale } from "@/shared/util/icon-grid-scale";
-import { useTileAspect } from "@/shared/util/tile-aspect";
-import { css } from "@/styled-system/css";
-
-function basenamePath(p: string): string {
-	const t = p.replace(/\\/g, "/").replace(/\/+$/, "");
-	const i = t.lastIndexOf("/");
-	return i >= 0 ? t.slice(i + 1) : t || "—";
-}
 
 async function resolvePresetForRun(presetId: string): Promise<Preset> {
 	const preset = await getPreset(presetId);
@@ -283,89 +253,7 @@ function parentRow(parentPath: string): FileBrowserEntry {
 // image entry (including preset sidecar siblings) through the
 // `useThumbnail` gateway hook per ADR-003.
 
-const EXT_TOGGLE_SET = [".ffx", ".jsx", ".jsxbin", ".mogrt", ".json"] as const;
-
-const FILE_TYPE_TOGGLE: readonly FileBrowserFileType[] = [
-	"ae-preset",
-	"script",
-	"image",
-	"video",
-	"audio",
-	"json",
-	"text",
-	"unknown",
-] as const;
-
-const CATALOG_TYPE_TOGGLE_SET: readonly PresetType[] = [
-	"preset",
-	"script",
-	"plugin",
-	"footage",
-] as const;
-
 type AnchorRow = { label: string; path: string; isDefault?: boolean };
-
-function filterToggleBtnClass(pressed: boolean): string {
-	return cx(
-		css({
-			borderRadius: "shell-sm",
-			borderWidth: "1px",
-			borderStyle: "solid",
-			paddingInline: "1.5",
-			paddingBlock: "0.5",
-			fontSize: "text-2xs",
-		}),
-		pressed
-			? css({
-					borderColor: "border.default",
-					backgroundColor: "surface.widget",
-					opacity: 0.4,
-					color: "text.muted",
-					textDecoration: "line-through",
-				})
-			: css({
-					borderColor: "border.strong",
-					backgroundColor: "surface.widget",
-					color: "text.primary",
-				}),
-	);
-}
-
-function FilterToggleButton({
-	pressed,
-	label,
-	onClick,
-}: {
-	pressed: boolean;
-	label: string;
-	onClick: () => void;
-}): JSX.Element {
-	return (
-		<button
-			type="button"
-			className={filterToggleBtnClass(pressed)}
-			onClick={onClick}
-		>
-			{label}
-		</button>
-	);
-}
-
-const anchorRowBaseClass = css({
-	width: "full",
-	borderWidth: 0,
-	backgroundColor: "transparent",
-	paddingInline: "2",
-	paddingBlock: "1.5",
-	textAlign: "left",
-	fontFamily: "inherit",
-	boxShadow: "none",
-	outline: "none",
-	_hover: { backgroundColor: "interactive.hover" },
-	_focusVisible: {
-		boxShadow: "0 0 0 2px var(--color-interactive-focus)",
-	},
-});
 
 const anchorRowIconWrapClass = css({
 	display: "flex",
@@ -395,7 +283,7 @@ const emptyStateErrorClass = css({
 	paddingBlock: "4",
 	textAlign: "center",
 	fontSize: "shell-text-sm",
-	color: "red.400",
+	color: "status.error",
 });
 
 const fileListClass = css({
@@ -434,16 +322,27 @@ const listHeaderNameClass = css({
 function AnchorRowButton({
 	label,
 	subtitle,
+	entryPath,
 	onActivate,
 }: {
 	label: string;
 	subtitle: string;
+	entryPath: string;
 	onActivate: () => void;
 }): JSX.Element {
 	return (
-		<button
+		<Button
 			type="button"
-			className={cx(LIST_ROW_GRID, anchorRowBaseClass)}
+			variant="bare"
+			uiSize="md"
+			fullWidth
+			className={css({
+				display: "flex",
+				minWidth: 0,
+				alignItems: "center",
+				justifyContent: "flex-start",
+				gap: "2",
+			})}
 			onDoubleClick={onActivate}
 			onKeyDown={(ev) => {
 				if (isIMEComposing(ev)) return;
@@ -453,8 +352,12 @@ function AnchorRowButton({
 			}}
 			data-directory-browser-entry
 			data-entry-kind="dir"
+			data-entry-path={entryPath}
 		>
-			<span aria-hidden className={css({ minHeight: "1px" })} />
+			<span
+				aria-hidden
+				className={css({ width: "9", minHeight: "1px", flexShrink: 0 })}
+			/>
 			<span
 				className={css({
 					display: "flex",
@@ -466,7 +369,7 @@ function AnchorRowButton({
 					<Icon icon={FolderOpen} size={14} aria-hidden />
 				</span>
 			</span>
-			<div className={css({ minWidth: 0 })}>
+			<div className={css({ minWidth: 0, flex: "1" })}>
 				<div
 					className={css({
 						truncate: true,
@@ -490,7 +393,7 @@ function AnchorRowButton({
 			<span className={anchorRowTrailingClass}>
 				<Icon icon={ChevronRight} size={12} aria-hidden />
 			</span>
-		</button>
+		</Button>
 	);
 }
 
@@ -1367,8 +1270,6 @@ export function DirectoryBrowserWidget({
 		setFileBrowserQuery("");
 	};
 
-	const filterToggleBtn = filterToggleBtnClass;
-
 	const browseModeOptions = useMemo(
 		() =>
 			(
@@ -1501,8 +1402,6 @@ export function DirectoryBrowserWidget({
 		color: "text.primary",
 	});
 
-	const listRowGridText = LIST_ROW_GRID;
-
 	return (
 		<div
 			ref={widgetPanelRef}
@@ -1526,423 +1425,111 @@ export function DirectoryBrowserWidget({
 				domPrefix="directory-browser"
 				scrollMode="list-only"
 				headerRow={
-					<div
-						className={css({
-							display: "flex",
-							minWidth: 0,
-							flexDirection: "column",
-							gap: "2.5",
-						})}
-					>
-						<div
-							className={css({
-								display: "flex",
-								minWidth: 0,
-								alignItems: "stretch",
-								gap: "2",
-							})}
-						>
-							<div
-								className={css({
-									display: "flex",
-									minHeight: 0,
-									minWidth: 0,
-									flex: 1,
-									flexDirection: "column",
-									gap: "2.5",
-								})}
-							>
-								<div
-									data-directory-browser-search
-									className={css({ minHeight: 0, minWidth: 0 })}
-								>
-									<SearchField
-										className={css({
-											height: "8",
-											minHeight: "8",
-											width: "full",
-											paddingBlock: 0,
-										})}
-										icon={Search}
-										inputRef={searchInputRef}
-										placeholder={
-											fileBrowserBrowseMode === "presetsCatalog"
-												? t("directoryBrowser.search.placeholderCatalog")
-												: t("directoryBrowser.search.placeholderFolder")
-										}
-										value={searchDraft}
-										onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-											setSearchDraft(e.currentTarget.value);
-										}}
-										autoComplete="off"
-										spellCheck={false}
-										showClearButton
-										onClear={clearSearchAndNotifyWorkspace}
-										showInlineTrailing
-										inlineTrailing={searchInlineTrailing}
-									/>
-								</div>
-								<PathField
-									value={formatPathForMode(
-										fileBrowserBrowseMode,
-										pathDraft,
-										anchorRootsForPathField,
-									)}
-									onChange={setPathDraft}
-									onBrowse={
-										isCep &&
-										typeof window !== "undefined" &&
-										canUseCepNodeFileBrowser(window)
-											? openFolderPicker
-											: undefined
-									}
-									browseSlot={<Icon icon={FolderOpen} size={12} />}
-									browseAriaLabel={t("directoryBrowser.path.pickFolderAria")}
-									placeholder={t("directoryBrowser.path.inputPlaceholder")}
-									uiSize="md"
-									className={css({ minWidth: 0 })}
-									inputProps={{
-										title: t("directoryBrowser.path.inputTitle"),
-										onKeyDown: (
-											e: React.KeyboardEvent<HTMLInputElement>,
-										): void => {
-											if (isIMEComposing(e)) return;
-											if (e.key === "Enter") {
-												e.preventDefault();
-												commitPathDraft();
-											}
-										},
-									}}
-								/>
-							</div>
-							<div
-								className={css({
-									display: "flex",
-									minHeight: 0,
-									flexShrink: 0,
-									flexDirection: "column",
-									gap: "2.5",
-									alignSelf: "stretch",
-								})}
-							>
-								<div
-									data-directory-browser-toolbar
-									data-directory-browser-body
-									className={css({
-										display: "flex",
-										height: "8",
-										flexShrink: 0,
-										alignItems: "stretch",
-										gap: "1",
-									})}
-								>
-									<IconButton
-										variant="ghost"
-										size="sm"
-										className={iconToolBtnBase}
-										aria-label="Refresh"
-										title="Refresh"
-										onClick={() => {
-											void refreshFileBrowser();
-										}}
-									>
-										<Icon icon={RefreshCw} size={10} />
-									</IconButton>
-									<IconButton
-										variant="ghost"
-										size="sm"
-										className={cx(
-											iconToolBtnBase,
-											css({
-												_disabled: { cursor: "not-allowed", opacity: 0.5 },
-											}),
-										)}
-										aria-label="Go up"
-										title="Go up"
-										disabled={!canGoUpFromCurrent}
-										onClick={handleGoUp}
-									>
-										<Icon icon={ArrowUp} size={10} />
-									</IconButton>
-									<IconButton
-										variant="ghost"
-										size="sm"
-										className={iconToolBtnBase}
-										aria-label="Browse drives"
-										title="Browse drives"
-										onClick={handleBrowseDrives}
-									>
-										<Icon icon={HardDrive} size={10} />
-									</IconButton>
-									<IconButton
-										variant="ghost"
-										size="sm"
-										className={cx(
-											iconToolBtnBase,
-											fileBrowserFiltersExpanded ? iconToolBtnActive : "",
-										)}
-										aria-label={t("directoryBrowser.toolbar.detailedFilters")}
-										title={t("directoryBrowser.toolbar.detailedFilters")}
-										onClick={() =>
-											setFileBrowserFiltersExpanded((prev) => !prev)
-										}
-									>
-										<Icon icon={Settings2} size={10} />
-									</IconButton>
-									<CatalogBrowserViewModeToggle
-										viewMode={viewMode}
-										onViewModeChange={setViewMode}
-										fieldsetLegend={t(
-											"directoryBrowser.toolbar.viewModeLegend",
-										)}
-										listViewAriaLabel={t("directoryBrowser.toolbar.listView")}
-										iconViewAriaLabel={t("directoryBrowser.toolbar.iconView")}
-									/>
-								</div>
-								<ListSelect
-									className={css({ width: "full", minWidth: 0 })}
-									triggerClassName={css({
-										minHeight: "8",
-										height: "8",
-										maxHeight: "8",
-										paddingBlock: 0,
-										paddingInline: "2",
-										fontSize: "text-2xs",
-									})}
-									uiSize="sm"
-									value={fileBrowserBrowseMode}
-									options={browseModeOptions}
-									onChange={applyBrowseMode}
-									aria-label={t("directoryBrowser.browseModeSelectAria")}
-								/>
-							</div>
-						</div>
-						{fileBrowserFiltersExpanded ? (
-							<div
-								className={css({
-									display: "flex",
-									minWidth: 0,
-									flexDirection: "column",
-									gap: "2",
-									borderRadius: "shell-sm",
-									borderWidth: "1px",
-									borderStyle: "solid",
-									borderColor: "border.default",
-									backgroundColor: "surface.widget",
-									opacity: 0.4,
-									padding: "2",
-								})}
-							>
-								{fileBrowserBrowseMode === "filesystem" ? (
-									<>
-										<div
-											className={css({
-												display: "flex",
-												flexWrap: "wrap",
-												gap: "1",
-											})}
-										>
-											<span
-												className={css({
-													width: "full",
-													fontSize: "text-2xs",
-													color: "text.muted",
-												})}
-											>
-												{t("directoryBrowser.filters.typeList")}
-											</span>
-											<select
-												className={css({
-													maxWidth: "full",
-													flexShrink: 0,
-													borderRadius: "shell-sm",
-													borderWidth: "1px",
-													borderStyle: "solid",
-													borderColor: "border.default",
-													backgroundColor: "surface.widget",
-													paddingBlock: "0.5",
-													paddingRight: "6",
-													paddingLeft: "1",
-													fontSize: "text-2xs",
-													color: "text.primary",
-												})}
-												value={fileBrowserFilter}
-												onChange={(e) =>
-													setFileBrowserFilter(
-														e.target.value as FileBrowserFilter,
-													)
-												}
-												aria-label={t(
-													"directoryBrowser.filters.quickFilterAria",
-												)}
-											>
-												<option value="all">
-													{t("directoryBrowser.filters.optionAll")}
-												</option>
-												<option value="media">
-													{t("directoryBrowser.filters.optionMedia")}
-												</option>
-												<option value="presets">
-													{t("directoryBrowser.filters.optionPresets")}
-												</option>
-												<option value="scripts">
-													{t("directoryBrowser.filters.optionScripts")}
-												</option>
-												<option value="fonts">
-													{t("directoryBrowser.filters.optionFonts")}
-												</option>
-											</select>
-										</div>
-										<div
-											className={css({
-												display: "flex",
-												flexWrap: "wrap",
-												gap: "1",
-											})}
-										>
-											<span
-												className={css({
-													width: "full",
-													fontSize: "text-2xs",
-													color: "text.muted",
-												})}
-											>
-												{t("directoryBrowser.filters.extensionHide")}
-											</span>
-											{EXT_TOGGLE_SET.map((ext) => (
-												<button
-													key={ext}
-													type="button"
-													className={filterToggleBtn(
-														fileBrowserHiddenExtensions.includes(ext),
-													)}
-													onClick={() => {
-														setFileBrowserHiddenExtensions((prev) =>
-															prev.includes(ext)
-																? prev.filter((x) => x !== ext)
-																: [...prev, ext],
-														);
-													}}
-												>
-													{ext}
-												</button>
-											))}
-										</div>
-										<div
-											className={css({
-												display: "flex",
-												flexWrap: "wrap",
-												gap: "1",
-											})}
-										>
-											<span
-												className={css({
-													width: "full",
-													fontSize: "text-2xs",
-													color: "text.muted",
-												})}
-											>
-												{t("directoryBrowser.filters.fileTypeHide")}
-											</span>
-											{FILE_TYPE_TOGGLE.map((ft) => (
-												<button
-													key={ft}
-													type="button"
-													className={filterToggleBtn(
-														fileBrowserHiddenFileTypes.includes(ft),
-													)}
-													onClick={() => {
-														setFileBrowserHiddenFileTypes((prev) =>
-															prev.includes(ft)
-																? prev.filter((x) => x !== ft)
-																: [...prev, ft],
-														);
-													}}
-												>
-													{ft}
-												</button>
-											))}
-										</div>
-										<button
-											type="button"
-											className={css({
-												width: "full",
-												borderRadius: "shell-sm",
-												borderWidth: "1px",
-												borderStyle: "solid",
-												borderColor: "border.default",
-												backgroundColor: "surface.widget",
-												opacity: 0.3,
-												paddingInline: "2",
-												paddingBlock: "1.5",
-												textAlign: "left",
-												fontSize: "text-2xs",
-												color: "text.muted",
-												_hover: {
-													backgroundColor: "interactive.hover",
-													color: "text.primary",
-												},
-											})}
-											onClick={() =>
-												setFileBrowserRecursiveSearch((prev) => !prev)
-											}
-										>
-											{t("directoryBrowser.filters.recursiveSearch", {
-												state: fileBrowserRecursiveSearch
-													? t("directoryBrowser.filters.recursiveOn")
-													: t("directoryBrowser.filters.recursiveOff"),
-											})}
-										</button>
-									</>
-								) : fileBrowserBrowseMode === "presetsCatalog" ? (
-									<div
-										className={css({
-											display: "flex",
-											flexWrap: "wrap",
-											gap: "1",
-										})}
-									>
-										<span
-											className={css({
-												width: "full",
-												fontSize: "text-2xs",
-												color: "text.muted",
-											})}
-										>
-											{t("directoryBrowser.filters.catalogPresetTypesHide")}
-										</span>
-										{CATALOG_TYPE_TOGGLE_SET.map((ct) => (
-											<button
-												key={ct}
-												type="button"
-												className={filterToggleBtn(
-													fileBrowserCatalogHiddenPresetTypes.includes(ct),
-												)}
-												onClick={() => {
-													setFileBrowserCatalogHiddenPresetTypes((prev) =>
-														prev.includes(ct)
-															? prev.filter((x) => x !== ct)
-															: [...prev, ct],
-													);
-												}}
-											>
-												{ct}
-											</button>
-										))}
-									</div>
-								) : (
-									<p
-										className={css({
-											fontSize: "text-2xs",
-											color: "text.muted",
-										})}
-									>
-										{t("directoryBrowser.filters.anchorsNoFilters")}
-									</p>
-								)}
-							</div>
-						) : null}
-					</div>
+					<BrowserHeader
+						searchInputRef={searchInputRef}
+						searchDraft={searchDraft}
+						onSearchDraftChange={setSearchDraft}
+						onClearSearch={clearSearchAndNotifyWorkspace}
+						searchInlineTrailing={searchInlineTrailing}
+						searchPlaceholder={
+							fileBrowserBrowseMode === "presetsCatalog"
+								? t("directoryBrowser.search.placeholderCatalog")
+								: t("directoryBrowser.search.placeholderFolder")
+						}
+						onPathDraftChange={setPathDraft}
+						onCommitPath={commitPathDraft}
+						onBrowseFolders={
+							isCep &&
+							typeof window !== "undefined" &&
+							canUseCepNodeFileBrowser(window)
+								? openFolderPicker
+								: undefined
+						}
+						pathPickerPrompt={t("directoryBrowser.path.pickFolderPrompt")}
+						pathPickerAriaLabel={t("directoryBrowser.path.pickFolderAria")}
+						pathInputPlaceholder={t("directoryBrowser.path.inputPlaceholder")}
+						pathInputTitle={t("directoryBrowser.path.inputTitle")}
+						browseMode={fileBrowserBrowseMode}
+						browseModeOptions={browseModeOptions}
+						onBrowseModeChange={applyBrowseMode}
+						browseModeSelectAriaLabel={t(
+							"directoryBrowser.browseModeSelectAria",
+						)}
+						viewMode={viewMode}
+						onViewModeChange={setViewMode}
+						goUpAvailable={canGoUpFromCurrent}
+						filtersExpanded={fileBrowserFiltersExpanded}
+						onRefresh={() => {
+							void refreshFileBrowser();
+						}}
+						onGoUp={handleGoUp}
+						onBrowseDrives={handleBrowseDrives}
+						onToggleFilters={() =>
+							setFileBrowserFiltersExpanded((prev) => !prev)
+						}
+						detailedFiltersLabel={t("directoryBrowser.toolbar.detailedFilters")}
+						listViewAriaLabel={t("directoryBrowser.toolbar.listView")}
+						iconViewAriaLabel={t("directoryBrowser.toolbar.iconView")}
+						viewModeLegend={t("directoryBrowser.toolbar.viewModeLegend")}
+						refreshLabel={t("directoryBrowser.toolbar.refresh")}
+						goUpLabel={t("directoryBrowser.entry.goUp")}
+						browseDrivesLabel={t("directoryBrowser.entry.browseDrives")}
+						coarseFilter={fileBrowserFilter}
+						onCoarseFilterChange={setFileBrowserFilter}
+						hiddenExtensions={fileBrowserHiddenExtensions}
+						onToggleHiddenExtension={(ext) =>
+							setFileBrowserHiddenExtensions((prev) =>
+								prev.includes(ext)
+									? prev.filter((x) => x !== ext)
+									: [...prev, ext],
+							)
+						}
+						hiddenFileTypes={fileBrowserHiddenFileTypes}
+						onToggleHiddenFileType={(ft) =>
+							setFileBrowserHiddenFileTypes((prev) =>
+								prev.includes(ft)
+									? prev.filter((x) => x !== ft)
+									: [...prev, ft],
+							)
+						}
+						catalogHiddenPresetTypes={fileBrowserCatalogHiddenPresetTypes}
+						onToggleCatalogHiddenPresetType={(pt) =>
+							setFileBrowserCatalogHiddenPresetTypes((prev) =>
+								prev.includes(pt)
+									? prev.filter((x) => x !== pt)
+									: [...prev, pt],
+							)
+						}
+						recursiveSearch={fileBrowserRecursiveSearch}
+						onToggleRecursiveSearch={() =>
+							setFileBrowserRecursiveSearch((prev) => !prev)
+						}
+						pathDisplay={formatPathForMode(
+							fileBrowserBrowseMode,
+							pathDraft,
+							anchorRootsForPathField,
+						)}
+						typeListLabel={t("directoryBrowser.filters.typeList")}
+						quickFilterAriaLabel={t("directoryBrowser.filters.quickFilterAria")}
+						optionAllLabel={t("directoryBrowser.filters.optionAll")}
+						optionMediaLabel={t("directoryBrowser.filters.optionMedia")}
+						optionPresetsLabel={t("directoryBrowser.filters.optionPresets")}
+						optionScriptsLabel={t("directoryBrowser.filters.optionScripts")}
+						optionFontsLabel={t("directoryBrowser.filters.optionFonts")}
+						extensionHideLabel={t("directoryBrowser.filters.extensionHide")}
+						fileTypeHideLabel={t("directoryBrowser.filters.fileTypeHide")}
+						catalogPresetTypesHideLabel={t(
+							"directoryBrowser.filters.catalogPresetTypesHide",
+						)}
+						anchorsNoFiltersLabel={t(
+							"directoryBrowser.filters.anchorsNoFilters",
+						)}
+						recursiveSearchLabel={(state) =>
+							t("directoryBrowser.filters.recursiveSearch", { state })
+						}
+						recursiveOnLabel={t("directoryBrowser.filters.recursiveOn")}
+						recursiveOffLabel={t("directoryBrowser.filters.recursiveOff")}
+					/>
 				}
 			>
 				{err ? <p className={emptyStateErrorClass}>{err}</p> : null}
@@ -1975,65 +1562,23 @@ export function DirectoryBrowserWidget({
 							{anchorRows.map((row) => (
 								<li
 									key={row.label + row.path}
-									className={css({ backgroundColor: "surface.dialog" })}
+									className={css({
+										backgroundColor: "surface.dialog",
+										_hover: { backgroundColor: "interactive.hover" },
+									})}
 								>
-									<button
-										type="button"
-										className={cx(listRowGridText, anchorRowBaseClass)}
-										onDoubleClick={() => {
+									<AnchorRowButton
+										label={row.label}
+										subtitle={
+											row.isDefault
+												? t("directoryBrowser.entry.defaultFolderSubtitle")
+												: row.path
+										}
+										entryPath={row.isDefault ? "" : row.path}
+										onActivate={() => {
 											openAnchorOrDefault(row);
 										}}
-										onKeyDown={(ev) => {
-											if (isIMEComposing(ev)) return;
-											if (ev.key !== "Enter") {
-												return;
-											}
-											ev.preventDefault();
-											openAnchorOrDefault(row);
-										}}
-										data-directory-browser-entry
-										data-entry-kind="dir"
-										data-entry-path={row.isDefault ? "" : row.path}
-									>
-										<span aria-hidden className={css({ minHeight: "1px" })} />
-										<span
-											className={css({
-												display: "flex",
-												alignItems: "center",
-												justifyContent: "center",
-											})}
-										>
-											<span className={anchorRowIconWrapClass}>
-												<Icon icon={FolderOpen} size={14} aria-hidden />
-											</span>
-										</span>
-										<div className={css({ minWidth: 0 })}>
-											<div
-												className={css({
-													truncate: true,
-													fontSize: "shell-text-sm",
-													fontWeight: "medium",
-													color: "text.primary",
-												})}
-											>
-												{row.label}
-											</div>
-											<div
-												className={css({
-													truncate: true,
-													fontSize: "text-xs",
-													color: "text.muted",
-												})}
-											>
-												{row.isDefault
-													? t("directoryBrowser.entry.defaultFolderSubtitle")
-													: row.path}
-											</div>
-										</div>
-										<span className={anchorRowTrailingClass}>
-											<Icon icon={ChevronRight} size={12} aria-hidden />
-										</span>
-									</button>
+									/>
 								</li>
 							))}
 						</ul>
@@ -2059,32 +1604,28 @@ export function DirectoryBrowserWidget({
 											minHeight: 0,
 											minWidth: 0,
 											flexDirection: "column",
+											overflow: "hidden",
+											borderRadius: "shell-sm",
+											borderWidth: "1px",
+											borderStyle: "solid",
+											borderColor: "border.default",
+											backgroundColor: "surface.widget",
+											_hover: { backgroundColor: "interactive.hover" },
 										})}
 										data-directory-browser-entry
 										data-entry-kind="dir"
 										data-entry-path={row.isDefault ? "" : row.path}
 									>
-										<button
+										<Button
 											type="button"
-											className={cx(
-												iconTileMediaClass(iconTileAspect),
-												css({
-													width: "full",
-													overflow: "hidden",
-													borderRadius: "shell-sm",
-													borderWidth: "1px",
-													borderStyle: "solid",
-													borderColor: "border.default",
-													backgroundColor: "surface.widget",
-													textAlign: "left",
-													outline: "none",
-													_hover: { backgroundColor: "interactive.hover" },
-													_focusVisible: {
-														boxShadow:
-															"0 0 0 2px var(--color-interactive-focus)",
-													},
-												}),
-											)}
+											variant="bare"
+											uiSize="sm"
+											fullWidth
+											style={{ height: "auto" }}
+											className={css({
+												display: "flex",
+												textAlign: "left",
+											})}
 											onDoubleClick={() => {
 												openAnchorOrDefault(row);
 											}}
@@ -2120,7 +1661,7 @@ export function DirectoryBrowserWidget({
 													aria-hidden
 												/>
 											</div>
-										</button>
+										</Button>
 										<div
 											className={css({
 												marginTop: "0.5",
@@ -2189,6 +1730,12 @@ export function DirectoryBrowserWidget({
 													activateCatalogPresetRow={activateCatalogPresetRow}
 													runPreset={runPreset}
 													actionsRunLabel={t("directoryBrowser.actions.run")}
+													actionsRunBlockedMissingLabel={t(
+														"directoryBrowser.actions.runBlockedMissingAsset",
+													)}
+													actionsRunBlockedUnverifiableLabel={t(
+														"directoryBrowser.actions.runBlockedUnverifiableAsset",
+													)}
 												/>
 											))}
 										</ul>
@@ -2222,6 +1769,12 @@ export function DirectoryBrowserWidget({
 														}
 														runPreset={runPreset}
 														actionsRunLabel={t("directoryBrowser.actions.run")}
+														actionsRunBlockedMissingLabel={t(
+															"directoryBrowser.actions.runBlockedMissingAsset",
+														)}
+														actionsRunBlockedUnverifiableLabel={t(
+															"directoryBrowser.actions.runBlockedUnverifiableAsset",
+														)}
 													/>
 												))}
 											</div>
@@ -2247,6 +1800,12 @@ export function DirectoryBrowserWidget({
 														activateCatalogPresetRow={activateCatalogPresetRow}
 														runPreset={runPreset}
 														actionsRunLabel={t("directoryBrowser.actions.run")}
+														actionsRunBlockedMissingLabel={t(
+															"directoryBrowser.actions.runBlockedMissingAsset",
+														)}
+														actionsRunBlockedUnverifiableLabel={t(
+															"directoryBrowser.actions.runBlockedUnverifiableAsset",
+														)}
 													/>
 												))}
 											</ul>
@@ -2276,6 +1835,12 @@ export function DirectoryBrowserWidget({
 															actionsRunLabel={t(
 																"directoryBrowser.actions.run",
 															)}
+															actionsRunBlockedMissingLabel={t(
+																"directoryBrowser.actions.runBlockedMissingAsset",
+															)}
+															actionsRunBlockedUnverifiableLabel={t(
+																"directoryBrowser.actions.runBlockedUnverifiableAsset",
+															)}
 														/>
 													))}
 												</div>
@@ -2292,6 +1857,12 @@ export function DirectoryBrowserWidget({
 												activateCatalogPresetRow={activateCatalogPresetRow}
 												runPreset={runPreset}
 												actionsRunLabel={t("directoryBrowser.actions.run")}
+												actionsRunBlockedMissingLabel={t(
+													"directoryBrowser.actions.runBlockedMissingAsset",
+												)}
+												actionsRunBlockedUnverifiableLabel={t(
+													"directoryBrowser.actions.runBlockedUnverifiableAsset",
+												)}
 											/>
 										))}
 									</ul>
@@ -2319,6 +1890,12 @@ export function DirectoryBrowserWidget({
 													}
 													runPreset={runPreset}
 													actionsRunLabel={t("directoryBrowser.actions.run")}
+													actionsRunBlockedMissingLabel={t(
+														"directoryBrowser.actions.runBlockedMissingAsset",
+													)}
+													actionsRunBlockedUnverifiableLabel={t(
+														"directoryBrowser.actions.runBlockedUnverifiableAsset",
+													)}
 												/>
 											))}
 										</div>
@@ -2385,29 +1962,14 @@ export function DirectoryBrowserWidget({
 									/>
 								) : null;
 								const overlay = entry.isDirectory ? (
-									<button
+									<IconButton
 										type="button"
+										variant="default"
+										size="xs"
 										className={css({
 											position: "absolute",
 											right: "1",
 											bottom: "1",
-											display: "inline-flex",
-											height: "6",
-											width: "6",
-											alignItems: "center",
-											justifyContent: "center",
-											borderRadius: "shell-sm",
-											borderWidth: "1px",
-											borderStyle: "solid",
-											borderColor: "border.default",
-											backgroundColor: "surface.dialog",
-											opacity: 0.9,
-											color: "text.muted",
-											boxShadow: "sm",
-											_hover: {
-												backgroundColor: "interactive.hover",
-												color: "text.primary",
-											},
 										})}
 										onClick={(ev) => {
 											ev.stopPropagation();
@@ -2415,31 +1977,16 @@ export function DirectoryBrowserWidget({
 										aria-label={t("directoryBrowser.actions.openEntry")}
 									>
 										<Icon icon={FolderOpen} size={11} />
-									</button>
+									</IconButton>
 								) : (
-									<button
+									<IconButton
 										type="button"
+										variant="default"
+										size="xs"
 										className={css({
 											position: "absolute",
 											right: "1",
 											bottom: "1",
-											display: "inline-flex",
-											height: "6",
-											width: "6",
-											alignItems: "center",
-											justifyContent: "center",
-											borderRadius: "shell-sm",
-											borderWidth: "1px",
-											borderStyle: "solid",
-											borderColor: "border.default",
-											backgroundColor: "surface.dialog",
-											opacity: 0.9,
-											color: "text.muted",
-											boxShadow: "sm",
-											_hover: {
-												backgroundColor: "interactive.hover",
-												color: "text.primary",
-											},
 										})}
 										onClick={() => {
 											void handleImportFile(entry.path);
@@ -2447,7 +1994,7 @@ export function DirectoryBrowserWidget({
 										aria-label={t("directoryBrowser.actions.importOnly")}
 									>
 										<Icon icon={Play} size={11} />
-									</button>
+									</IconButton>
 								);
 								return { media, overlay };
 							}}
@@ -2480,27 +2027,10 @@ export function DirectoryBrowserWidget({
 									</span>
 								) : null;
 								const trailing = entry.isDirectory ? (
-									<button
+									<IconButton
 										type="button"
-										className={css({
-											display: "inline-flex",
-											height: "7",
-											width: "7",
-											flexShrink: 0,
-											alignItems: "center",
-											justifyContent: "center",
-											borderRadius: "shell-sm",
-											borderWidth: "1px",
-											borderStyle: "solid",
-											borderColor: "border.default",
-											backgroundColor: "surface.widget",
-											opacity: 0.5,
-											color: "text.muted",
-											_hover: {
-												backgroundColor: "interactive.hover",
-												color: "text.primary",
-											},
-										})}
+										variant="default"
+										size="sm"
 										onClick={(ev) => {
 											ev.stopPropagation();
 											setFileBrowserCurrentDir(entry.path);
@@ -2509,29 +2039,12 @@ export function DirectoryBrowserWidget({
 										title={t("directoryBrowser.actions.openFolder")}
 									>
 										<Icon icon={FolderOpen} size={12} />
-									</button>
+									</IconButton>
 								) : (
-									<button
+									<IconButton
 										type="button"
-										className={css({
-											display: "inline-flex",
-											height: "7",
-											width: "7",
-											flexShrink: 0,
-											alignItems: "center",
-											justifyContent: "center",
-											borderRadius: "shell-sm",
-											borderWidth: "1px",
-											borderStyle: "solid",
-											borderColor: "border.default",
-											backgroundColor: "surface.widget",
-											opacity: 0.5,
-											color: "text.muted",
-											_hover: {
-												backgroundColor: "interactive.hover",
-												color: "text.primary",
-											},
-										})}
+										variant="default"
+										size="sm"
 										onClick={() => {
 											void handleImportFile(entry.path);
 										}}
@@ -2539,7 +2052,7 @@ export function DirectoryBrowserWidget({
 										title={t("directoryBrowser.actions.importRun")}
 									>
 										<Icon icon={Play} size={12} />
-									</button>
+									</IconButton>
 								);
 								return { icon, trailing };
 							}}
@@ -2560,301 +2073,6 @@ export function DirectoryBrowserWidget({
 					</div>
 				)}
 			</CatalogBrowserShell>
-		</div>
-	);
-}
-
-type CatalogPresetListRowProps = {
-	preset: Preset;
-	presetGlyphSiblingProps: Record<string, unknown>;
-	activateCatalogPresetRow: (filePath: string) => void;
-	runPreset: (id: string) => Promise<void> | void;
-	actionsRunLabel: string;
-};
-
-function CatalogPresetListRow({
-	preset: p,
-	presetGlyphSiblingProps,
-	activateCatalogPresetRow,
-	runPreset,
-	actionsRunLabel,
-}: CatalogPresetListRowProps): JSX.Element {
-	// Issue #130: subscribe to the boot-time asset-health store so this
-	// row re-renders when the scan completes. Only `missing` disables
-	// the run affordance; `unverifiable` keeps it enabled but flips the
-	// title to "unknown / retry".
-	const isMissing = useIsPresetAssetMissing(p.id);
-	const isUnverifiable = useIsPresetAssetUnverifiable(p.id);
-	const runTitle = isMissing
-		? "Preset asset is missing on disk — run is disabled"
-		: isUnverifiable
-			? "Could not verify preset asset (host unavailable) — retry"
-			: actionsRunLabel;
-	return (
-		<li className={css({ backgroundColor: "surface.dialog" })}>
-			<div
-				className={css({
-					display: "flex",
-					minWidth: 0,
-					alignItems: "center",
-					gap: "2",
-					paddingInline: "2",
-					paddingBlock: "1.5",
-				})}
-				data-directory-browser-entry
-				data-entry-kind="preset"
-				data-entry-path={p.filePath}
-				data-preset-id={p.id}
-			>
-				<button
-					type="button"
-					className={css({
-						display: "flex",
-						minWidth: 0,
-						flex: 1,
-						alignItems: "center",
-						gap: "2",
-						borderWidth: 0,
-						backgroundColor: "transparent",
-						padding: 0,
-						textAlign: "left",
-						fontFamily: "inherit",
-						boxShadow: "none",
-						outline: "none",
-						_hover: { opacity: 0.9 },
-						_focusVisible: {
-							boxShadow: "0 0 0 2px var(--color-interactive-focus)",
-						},
-					})}
-					onDoubleClick={() => {
-						activateCatalogPresetRow(p.filePath);
-					}}
-					onKeyDown={(ev) => {
-						if (isIMEComposing(ev)) return;
-						if (ev.key !== "Enter") {
-							return;
-						}
-						ev.preventDefault();
-						activateCatalogPresetRow(p.filePath);
-					}}
-				>
-					<PresetGlyphById
-						presetId={p.id}
-						preset={p}
-						surface="framed"
-						boxClass={css({ height: "7", width: "7", flexShrink: 0 })}
-						{...presetGlyphSiblingProps}
-					/>
-					<div className={css({ minWidth: 0 })}>
-						<div
-							className={css({
-								truncate: true,
-								fontSize: "shell-text-sm",
-								fontWeight: "medium",
-								color: "text.primary",
-							})}
-						>
-							{p.title}
-						</div>
-						<div
-							className={css({
-								truncate: true,
-								fontSize: "text-xs",
-								color: "text.muted",
-							})}
-						>
-							{p.type} · {basenamePath(p.filePath)}
-						</div>
-					</div>
-				</button>
-				<button
-					type="button"
-					className={css({
-						display: "inline-flex",
-						height: "7",
-						width: "7",
-						flexShrink: 0,
-						alignItems: "center",
-						justifyContent: "center",
-						borderRadius: "shell-sm",
-						borderWidth: "1px",
-						borderStyle: "solid",
-						borderColor: "border.default",
-						backgroundColor: "surface.widget",
-						opacity: 0.5,
-						color: "text.muted",
-						_hover: {
-							backgroundColor: "interactive.hover",
-							color: "text.primary",
-						},
-					})}
-					onClick={() => {
-						void runPreset(p.id);
-					}}
-					disabled={isMissing}
-					aria-disabled={isMissing}
-					aria-label={runTitle}
-					title={runTitle}
-				>
-					<Icon icon={Play} size={12} />
-				</button>
-			</div>
-		</li>
-	);
-}
-
-type CatalogPresetIconTileProps = {
-	preset: Preset;
-	iconTileAspect: IconTileAspect;
-	presetGlyphSiblingProps: Record<string, unknown>;
-	setFileBrowserSelectedPath: (path: string) => void;
-	runPreset: (id: string) => Promise<void> | void;
-	actionsRunLabel: string;
-};
-
-function CatalogPresetIconTile({
-	preset: p,
-	iconTileAspect,
-	presetGlyphSiblingProps,
-	setFileBrowserSelectedPath,
-	runPreset,
-	actionsRunLabel,
-}: CatalogPresetIconTileProps): JSX.Element {
-	// Issue #130: same subscription pattern as the list row — only
-	// `missing` disables the run affordance. `unverifiable` keeps it
-	// clickable and surfaces a different title so the user knows the
-	// panel could not confirm asset presence.
-	const isMissing = useIsPresetAssetMissing(p.id);
-	const isUnverifiable = useIsPresetAssetUnverifiable(p.id);
-	const runTitle = isMissing
-		? "Preset asset is missing on disk — run is disabled"
-		: isUnverifiable
-			? "Could not verify preset asset (host unavailable) — retry"
-			: actionsRunLabel;
-	return (
-		<div
-			className={css({
-				position: "relative",
-				display: "flex",
-				minWidth: 0,
-				flexDirection: "column",
-			})}
-			data-directory-browser-entry
-			data-entry-kind="preset"
-			data-entry-path={p.filePath}
-			data-preset-id={p.id}
-		>
-			<button
-				type="button"
-				className={css({
-					display: "flex",
-					width: "full",
-					minWidth: 0,
-					flexDirection: "column",
-					alignItems: "stretch",
-					borderRadius: "shell-sm",
-					borderWidth: "1px",
-					borderStyle: "solid",
-					borderColor: "border.default",
-					backgroundColor: "surface.dialog",
-					padding: "1",
-					textAlign: "left",
-					outline: "none",
-					_hover: { backgroundColor: "interactive.hover" },
-					_focusVisible: {
-						boxShadow: "0 0 0 2px var(--color-interactive-focus)",
-					},
-				})}
-				onClick={() => setFileBrowserSelectedPath(p.filePath)}
-				title={p.filePath}
-			>
-				<div
-					className={cx(
-						iconTileMediaClass(iconTileAspect),
-						css({
-							overflow: "hidden",
-							borderRadius: "shell-sm",
-							borderWidth: "1px",
-							borderStyle: "solid",
-							borderColor: "border.default",
-							backgroundColor: "surface.widget",
-						}),
-					)}
-				>
-					<div
-						className={css({
-							display: "flex",
-							height: "full",
-							width: "full",
-							alignItems: "center",
-							justifyContent: "center",
-							padding: "0.5",
-						})}
-					>
-						<PresetGlyphById
-							presetId={p.id}
-							preset={p}
-							boxClass={glyphBoxFlushClass}
-							emojiClass={glyphEmojiProminentClass}
-							{...presetGlyphSiblingProps}
-						/>
-					</div>
-				</div>
-				<div
-					className={css({
-						marginTop: "0.5",
-						minWidth: 0,
-						paddingInline: "0.5",
-					})}
-				>
-					<div
-						className={css({
-							truncate: true,
-							textAlign: "left",
-							fontSize: "shell-text-sm",
-							fontWeight: "medium",
-							lineHeight: "tight",
-							color: "text.primary",
-						})}
-					>
-						{p.title}
-					</div>
-				</div>
-			</button>
-			<button
-				type="button"
-				className={css({
-					position: "absolute",
-					right: "1",
-					bottom: "1",
-					display: "inline-flex",
-					height: "6",
-					width: "6",
-					alignItems: "center",
-					justifyContent: "center",
-					borderRadius: "shell-sm",
-					borderWidth: "1px",
-					borderStyle: "solid",
-					borderColor: "border.default",
-					backgroundColor: "surface.dialog",
-					opacity: 0.9,
-					color: "text.muted",
-					boxShadow: "sm",
-					_hover: {
-						backgroundColor: "interactive.hover",
-						color: "text.primary",
-					},
-				})}
-				onClick={() => {
-					void runPreset(p.id);
-				}}
-				disabled={isMissing}
-				aria-disabled={isMissing}
-				aria-label={runTitle}
-				title={runTitle}
-			>
-				<Icon icon={Play} size={11} />
-			</button>
 		</div>
 	);
 }

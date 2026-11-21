@@ -1,7 +1,7 @@
 /**
  * Bridge a production `OperationWorkerComposition` to the
  * `AfterEffectsFilesRuntimeGateway` interface used by `useThumbnail` /
- * `EntryThumb` / `GlyphCachedImage` / `SiblingThumbnail`.
+ * `EntryThumb` / `GlyphCachedImage`.
  *
  * The runtime gateway abstraction in `runtime-gateway-impl.ts` was
  * originally written against `RuntimeRequestDispatcher` so tests could

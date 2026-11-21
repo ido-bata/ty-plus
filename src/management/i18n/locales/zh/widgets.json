@@ -136,7 +136,8 @@
 			"importOnly": "导入",
 			"selectFile": "选择",
 			"deselect": "取消选择",
-			"runBlockedMissingAsset": "预设资源在磁盘上不存在 — 运行已禁用。"
+			"runBlockedMissingAsset": "预设资源在磁盘上不存在 — 运行已禁用。",
+			"runBlockedUnverifiableAsset": "无法验证预设资源（主机不可用）— 重试"
 		},
 		"path": {
 			"pickFolderPrompt": "选择文件夹",
@@ -158,6 +159,7 @@
 			"error": "预览不可用"
 		},
 		"toolbar": {
+			"refresh": "刷新",
 			"detailedFilters": "过滤器",
 			"viewModeLegend": "视图模式",
 			"listView": "列表视图",
@@ -195,6 +197,7 @@
 			"noItems": "无项目"
 		},
 		"entry": {
+			"goUp": "上一级",
 			"defaultFolderSubtitle": "默认",
 			"parentRowName": "上一级",
 			"browseDrives": "浏览驱动器",

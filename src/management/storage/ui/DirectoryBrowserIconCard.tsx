@@ -1,4 +1,4 @@
-import { cx } from "@ty-plus/ui/util/cx";
+import { Button, Checkbox, cx } from "@ty-plus/ui";
 import type { JSX, ReactNode } from "react";
 import type { SiblingListingEntry } from "@/management/preset/sibling-thumbnail";
 import { css } from "@/styled-system/css";
@@ -74,11 +74,23 @@ const cardUnselectedClass = css({
 	_hover: { backgroundColor: "interactive.hover" },
 });
 
+/**
+ * The card body is a shared `Button` in its `bare` variant: the card
+ * container owns the border, the surface and the hover fill, so the button
+ * carries no chrome of its own.  The tile layout (a column of media band +
+ * label) is all that is left for this class.
+ *
+ * `height` and `paddingInline` are the two box metrics the shared size
+ * scale would otherwise impose; a tile is sized by its media band, so it
+ * cannot use the fixed control height.
+ */
 const cardButtonClass = css({
-	display: "flex",
-	width: "full",
+	height: "auto",
+	paddingInline: "0",
 	flexDirection: "column",
 	alignItems: "stretch",
+	justifyContent: "flex-start",
+	gap: "0",
 });
 
 const mediaBandBaseClass = css({
@@ -129,25 +141,17 @@ const labelUnselectedClass = css({
 	color: "text.muted",
 });
 
-const checkboxLabelClass = css({
+/**
+ * The selection checkbox is a shared `Checkbox`: a native, focusable
+ * control that is keyboard-operable on its own.  It is positioned over
+ * the tile media band, so it stays a *sibling* of the card button rather
+ * than a descendant — interactive content must not live inside a button.
+ */
+const checkboxClass = css({
 	position: "absolute",
 	top: "1",
 	right: "1",
 	zIndex: 10,
-	display: "flex",
-	alignItems: "center",
-	justifyContent: "center",
-	cursor: "pointer",
-});
-const checkboxClass = css({
-	pointerEvents: "none",
-	height: "3.5",
-	width: "3.5",
-	borderRadius: "sm",
-	borderWidth: "1px",
-	borderStyle: "solid",
-	borderColor: "border.default",
-	backgroundColor: "surface.widget",
 });
 
 function cardClass(isSelected: boolean): string {
@@ -194,8 +198,10 @@ export function DirectoryBrowserIconCard({
 			className={cardClass(isSelected)}
 			data-card-selected={isSelected ? "true" : "false"}
 		>
-			<button
+			<Button
 				type="button"
+				variant="bare"
+				uiSize="sm"
 				data-directory-browser-entry=""
 				data-entry-kind={entry.isDirectory ? "dir" : "file"}
 				data-entry-path={entry.path}
@@ -219,37 +225,22 @@ export function DirectoryBrowserIconCard({
 				<span className={labelClass(isSelected)} title={entry.name}>
 					{entry.name}
 				</span>
-			</button>
+			</Button>
 			{tileContent?.overlay ?? null}
 			{showCheckbox ? (
-				<label
-					className={checkboxLabelClass}
-					onClick={(event: React.MouseEvent) => {
-						// Dedupe the label-input synthetic click that real
-						// Chromium dispatches (see DirectoryBrowser IconCard).
-						if (event.target !== event.currentTarget) return;
-						onToggle(event);
+				<Checkbox
+					uiSize="sm"
+					className={checkboxClass}
+					data-directory-browser-entry-select=""
+					data-entry-path={entry.path}
+					data-multi-select="true"
+					data-multi-select-path={entry.path}
+					checked={isSelected}
+					onChange={() => {
+						onToggle();
 					}}
-					onKeyDown={(e) => {
-						if (e.key === "Enter" || e.key === " ") {
-							e.preventDefault();
-							e.stopPropagation();
-							onToggle();
-						}
-					}}
-				>
-					<input
-						type="checkbox"
-						data-directory-browser-entry-select=""
-						data-entry-path={entry.path}
-						data-multi-select="true"
-						data-multi-select-path={entry.path}
-						className={checkboxClass}
-						checked={isSelected}
-						readOnly
-						aria-label={`select ${entry.name}`}
-					/>
-				</label>
+					aria-label={`select ${entry.name}`}
+				/>
 			) : null}
 		</div>
 	);

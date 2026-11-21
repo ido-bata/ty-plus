@@ -1,4 +1,4 @@
-import type { JSX } from "react";
+import type { JSX, ReactNode } from "react";
 
 import { css } from "@/styled-system/css";
 
@@ -15,7 +15,15 @@ export type DirectoryBrowserFooterProps = {
 	viewMode: DirectoryBrowserViewMode;
 	onViewModeChange: (mode: DirectoryBrowserViewMode) => void;
 	showSelectedSummary: boolean;
-	selectedSummary: DirectoryBrowserSummary;
+	/** `null` means "nothing selected yet" — no summary is rendered. */
+	selectedSummary: DirectoryBrowserSummary | null;
+	/**
+	 * Whether to render the list/icons toggle.  Owners that provide their
+	 * own toolbar toggle hide it to avoid duplication.
+	 */
+	showViewToggle?: boolean;
+	/** Extra content rendered between the summary and the view toggle. */
+	footerExtra?: ReactNode;
 };
 
 const footerClass = css({
@@ -35,7 +43,8 @@ const summaryWrapClass = css({
 	display: "flex",
 	alignItems: "center",
 	gap: "3",
-	fontSize: "--ty-shell-text-size-sm",
+	minWidth: 0,
+	fontSize: "shell-text-sm",
 	color: "text.muted",
 });
 
@@ -44,6 +53,8 @@ export function DirectoryBrowserFooter({
 	onViewModeChange,
 	showSelectedSummary,
 	selectedSummary,
+	showViewToggle = true,
+	footerExtra,
 }: DirectoryBrowserFooterProps): JSX.Element {
 	return (
 		<div className={footerClass}>
@@ -52,10 +63,13 @@ export function DirectoryBrowserFooter({
 					<DirectoryBrowserSelectedSummary summary={selectedSummary} />
 				</div>
 			) : null}
-			<DirectoryBrowserViewModeToggle
-				viewMode={viewMode}
-				onChange={onViewModeChange}
-			/>
+			{footerExtra}
+			{showViewToggle ? (
+				<DirectoryBrowserViewModeToggle
+					viewMode={viewMode}
+					onChange={onViewModeChange}
+				/>
+			) : null}
 		</div>
 	);
 }

@@ -1,5 +1,4 @@
-import { Icon, PathField } from "@ty-plus/ui";
-import { isIMEComposing } from "@ty-plus/ui/util/keyboard";
+import { Icon, isIMEComposing, PathField } from "@ty-plus/ui";
 import { FolderOpen } from "lucide-react";
 import type { JSX } from "react";
 import { css } from "@/styled-system/css";
