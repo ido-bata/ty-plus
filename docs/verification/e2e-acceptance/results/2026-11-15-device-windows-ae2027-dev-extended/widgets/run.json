@@ -1,24 +1,24 @@
 {
-	"schema": "ty-plus.e2e-run/1",
-	"suite": "widgets",
-	"capturedAt": "2026-11-15T12:02:39.621Z",
-	"extensionDir": "C:/Users/rebui/AppData/Roaming/Adobe/CEP/extensions/app.ty-plus.dev",
-	"managedRoot": "D:/4_apps/adobe/Adobe After Effects 2027/Support Files/ty-plus",
-	"totals": {
-		"PASS": 0,
-		"FAIL": 0,
-		"BLOCKED": 1,
-		"SKIP": 0
-	},
-	"results": [
-		{
-			"uc": "UC-D11",
-			"title": "easing widget state file restores mode/loopCount after reload",
-			"status": "BLOCKED",
-			"detail": "EPERM: operation not permitted, rm 'D:/4_apps/adobe/Adobe After Effects 2027/Support Files/ty-plus'",
-			"checks": [],
-			"evidence": [],
-			"durationMs": 1397
-		}
-	]
+  "schema": "ty-plus.e2e-run/1",
+  "suite": "widgets",
+  "capturedAt": "2026-11-15T12:02:39.621Z",
+  "extensionDir": "C:/Users/rebui/AppData/Roaming/Adobe/CEP/extensions/app.ty-plus.dev",
+  "managedRoot": "D:/4_apps/adobe/Adobe After Effects 2027/Support Files/ty-plus",
+  "totals": {
+    "PASS": 0,
+    "FAIL": 0,
+    "BLOCKED": 1,
+    "SKIP": 0
+  },
+  "results": [
+    {
+      "uc": "UC-D11",
+      "title": "easing widget state file restores mode/loopCount after reload",
+      "status": "BLOCKED",
+      "detail": "EPERM: operation not permitted, rm 'D:/4_apps/adobe/Adobe After Effects 2027/Support Files/ty-plus'",
+      "checks": [],
+      "evidence": [],
+      "durationMs": 1397
+    }
+  ]
 }

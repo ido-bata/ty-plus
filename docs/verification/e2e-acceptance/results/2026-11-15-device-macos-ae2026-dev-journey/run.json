@@ -1,144 +1,144 @@
 {
-	"schema": "ty-plus.e2e-run/1",
-	"suite": "journey",
-	"capturedAt": "2026-11-15T13:32:03.456Z",
-	"extensionDir": "/Users/rebui/Library/Application Support/Adobe/CEP/extensions/app.ty-plus.dev",
-	"managedRoot": "/Applications/Adobe After Effects 2026/ty-plus",
-	"totals": {
-		"PASS": 3,
-		"FAIL": 0,
-		"BLOCKED": 0,
-		"SKIP": 0
-	},
-	"results": [
-		{
-			"uc": "UC-C11",
-			"title": "script preset (.jsx) run from catalog executes in AE",
-			"status": "PASS",
-			"detail": "marker=script preset executed",
-			"checks": [
-				{
-					"name": "catalog lists dg-script-marker preset",
-					"ok": true,
-					"detail": "true"
-				},
-				{
-					"name": "catalog Run button clicked",
-					"ok": true,
-					"detail": "clicked"
-				},
-				{
-					"name": "ExtendScript side effect: marker.txt written by AE",
-					"ok": true,
-					"detail": "content=script preset executed"
-				}
-			],
-			"evidence": [
-				"/Users/rebui/Library/Application Support/ty-plus/dg-presets/marker.txt"
-			],
-			"durationMs": 520
-		},
-		{
-			"uc": "UC-C10",
-			"title": ".ffx preset run applies effect to selected AE layer",
-			"status": "PASS",
-			"detail": "effects 0→3: [\"ADBE Slider Control|デュレーション\",\"Pseudo/@@nkoVEkLBTQyeYNXsPyxv4g|パーソナリティ\",\"ADBE Geometry2|(Transform)\"]",
-			"checks": [
-				{
-					"name": "AE comp + selected layer ready",
-					"ok": true,
-					"detail": "{\"comp\":\"TYPlus E2E Comp\",\"layers\":1,\"effectsBefore\":0}"
-				},
-				{
-					"name": "catalog lists dg-ffx-fadein preset",
-					"ok": true,
-					"detail": "true"
-				},
-				{
-					"name": "catalog Run button clicked",
-					"ok": true,
-					"detail": "clicked"
-				},
-				{
-					"name": "layer gained effects from .ffx preset",
-					"ok": true,
-					"detail": "before=0 after=3 fx=[\"ADBE Slider Control|デュレーション\",\"Pseudo/@@nkoVEkLBTQyeYNXsPyxv4g|パーソナリティ\",\"ADBE Geometry2|(Transform)\"]"
-				}
-			],
-			"evidence": [],
-			"durationMs": 2027
-		},
-		{
-			"uc": "UC-H02",
-			"title": "preset journey: create via dialog → tile placed → run → reload → re-run (UC-J02 chain)",
-			"status": "PASS",
-			"detail": "preset journey completed (presetId=e7cd0a7c-605e-4e4e-9e2a-353d9a55e5df)",
-			"checks": [
-				{
-					"name": "toolbar create-file-preset clicked",
-					"ok": true,
-					"detail": "clicked"
-				},
-				{
-					"name": "preset path field accepts file path",
-					"ok": true,
-					"detail": "/Users/rebui/Library/Application Support/ty-plus-e2e/e2e-journey.jsx"
-				},
-				{
-					"name": "preset name field accepts title",
-					"ok": true,
-					"detail": "E2E Journey Script"
-				},
-				{
-					"name": "Create submitted",
-					"ok": true,
-					"detail": "clicked"
-				},
-				{
-					"name": "presets.json persisted new record",
-					"ok": true,
-					"detail": "id=e7cd0a7c-605e-4e4e-9e2a-353d9a55e5df"
-				},
-				{
-					"name": "workspace tile rendered for new preset",
-					"ok": true,
-					"detail": "true"
-				},
-				{
-					"name": "workspace-1.json gridCells grew (tile persisted)",
-					"ok": true,
-					"detail": "before=11 after=12"
-				},
-				{
-					"name": "tile click dispatched",
-					"ok": true,
-					"detail": "clicked"
-				},
-				{
-					"name": "run #1 produced AE-side artifact",
-					"ok": true,
-					"detail": "content=1794749517451|26.5.3x9"
-				},
-				{
-					"name": "tile survives panel reload",
-					"ok": true,
-					"detail": "true"
-				},
-				{
-					"name": "run #2 after reload re-executed script",
-					"ok": true,
-					"detail": "click=clicked marker1=1794749517451|26.5.3x9 marker2=1794749520303|26.5.3x9"
-				},
-				{
-					"name": "presets.json restored after journey",
-					"ok": true,
-					"detail": "before=2 after=2"
-				}
-			],
-			"evidence": [
-				"/Applications/Adobe After Effects 2026/ty-plus/presets/presets.json"
-			],
-			"durationMs": 7018
-		}
-	]
+  "schema": "ty-plus.e2e-run/1",
+  "suite": "journey",
+  "capturedAt": "2026-11-15T13:32:03.456Z",
+  "extensionDir": "/Users/rebui/Library/Application Support/Adobe/CEP/extensions/app.ty-plus.dev",
+  "managedRoot": "/Applications/Adobe After Effects 2026/ty-plus",
+  "totals": {
+    "PASS": 3,
+    "FAIL": 0,
+    "BLOCKED": 0,
+    "SKIP": 0
+  },
+  "results": [
+    {
+      "uc": "UC-C11",
+      "title": "script preset (.jsx) run from catalog executes in AE",
+      "status": "PASS",
+      "detail": "marker=script preset executed",
+      "checks": [
+        {
+          "name": "catalog lists dg-script-marker preset",
+          "ok": true,
+          "detail": "true"
+        },
+        {
+          "name": "catalog Run button clicked",
+          "ok": true,
+          "detail": "clicked"
+        },
+        {
+          "name": "ExtendScript side effect: marker.txt written by AE",
+          "ok": true,
+          "detail": "content=script preset executed"
+        }
+      ],
+      "evidence": [
+        "/Users/rebui/Library/Application Support/ty-plus/dg-presets/marker.txt"
+      ],
+      "durationMs": 520
+    },
+    {
+      "uc": "UC-C10",
+      "title": ".ffx preset run applies effect to selected AE layer",
+      "status": "PASS",
+      "detail": "effects 0→3: [\"ADBE Slider Control|デュレーション\",\"Pseudo/@@nkoVEkLBTQyeYNXsPyxv4g|パーソナリティ\",\"ADBE Geometry2|(Transform)\"]",
+      "checks": [
+        {
+          "name": "AE comp + selected layer ready",
+          "ok": true,
+          "detail": "{\"comp\":\"TYPlus E2E Comp\",\"layers\":1,\"effectsBefore\":0}"
+        },
+        {
+          "name": "catalog lists dg-ffx-fadein preset",
+          "ok": true,
+          "detail": "true"
+        },
+        {
+          "name": "catalog Run button clicked",
+          "ok": true,
+          "detail": "clicked"
+        },
+        {
+          "name": "layer gained effects from .ffx preset",
+          "ok": true,
+          "detail": "before=0 after=3 fx=[\"ADBE Slider Control|デュレーション\",\"Pseudo/@@nkoVEkLBTQyeYNXsPyxv4g|パーソナリティ\",\"ADBE Geometry2|(Transform)\"]"
+        }
+      ],
+      "evidence": [],
+      "durationMs": 2027
+    },
+    {
+      "uc": "UC-H02",
+      "title": "preset journey: create via dialog → tile placed → run → reload → re-run (UC-J02 chain)",
+      "status": "PASS",
+      "detail": "preset journey completed (presetId=e7cd0a7c-605e-4e4e-9e2a-353d9a55e5df)",
+      "checks": [
+        {
+          "name": "toolbar create-file-preset clicked",
+          "ok": true,
+          "detail": "clicked"
+        },
+        {
+          "name": "preset path field accepts file path",
+          "ok": true,
+          "detail": "/Users/rebui/Library/Application Support/ty-plus-e2e/e2e-journey.jsx"
+        },
+        {
+          "name": "preset name field accepts title",
+          "ok": true,
+          "detail": "E2E Journey Script"
+        },
+        {
+          "name": "Create submitted",
+          "ok": true,
+          "detail": "clicked"
+        },
+        {
+          "name": "presets.json persisted new record",
+          "ok": true,
+          "detail": "id=e7cd0a7c-605e-4e4e-9e2a-353d9a55e5df"
+        },
+        {
+          "name": "workspace tile rendered for new preset",
+          "ok": true,
+          "detail": "true"
+        },
+        {
+          "name": "workspace-1.json gridCells grew (tile persisted)",
+          "ok": true,
+          "detail": "before=11 after=12"
+        },
+        {
+          "name": "tile click dispatched",
+          "ok": true,
+          "detail": "clicked"
+        },
+        {
+          "name": "run #1 produced AE-side artifact",
+          "ok": true,
+          "detail": "content=1794749517451|26.5.3x9"
+        },
+        {
+          "name": "tile survives panel reload",
+          "ok": true,
+          "detail": "true"
+        },
+        {
+          "name": "run #2 after reload re-executed script",
+          "ok": true,
+          "detail": "click=clicked marker1=1794749517451|26.5.3x9 marker2=1794749520303|26.5.3x9"
+        },
+        {
+          "name": "presets.json restored after journey",
+          "ok": true,
+          "detail": "before=2 after=2"
+        }
+      ],
+      "evidence": [
+        "/Applications/Adobe After Effects 2026/ty-plus/presets/presets.json"
+      ],
+      "durationMs": 7018
+    }
+  ]
 }
