@@ -36,11 +36,12 @@ import { DEMO_PRESETS } from "../lib/demo-presets";
  * - lg+: tile grid (4 columns) beside a persistent info column that
  *   stretches to the grid's height; body content is vertically centered
  *   and the footer (apply note / hints / disclaimer) pins to the bottom.
- * - Below lg: the info card is a full-width row inserted into the tile
- *   grid immediately after the tile that produced the current content
- *   (last selected tile, else hovered tile, else where it last was), so
- *   the result is adjacent to the tile the user touched instead of
- *   appearing only after all tiles are traversed.
+ * - Below lg: the info card is a full-width row placed after the last
+ *   tile of the row containing the tile that produced the current
+ *   content (last selected tile, else hovered tile, else where it last
+ *   was). It starts on a fresh row instead of splitting the anchor's
+ *   row, so no grid cells are left blank and tiles below simply shift
+ *   down by one row.
  */
 
 const COARSE_POINTER = "(pointer: coarse)";
@@ -59,9 +60,13 @@ const stage = css({
 	},
 });
 
+// Below lg the stage grid is 3 columns (see `stage` base); the info
+// card's `order` targets the last tile of the anchor's row.
+const NARROW_COLS = 3;
+
 /* Below lg the tile grid dissolves into the stage grid (`display:
    contents`) so tile boxes and the info card share one coordinate
-   system; `order` then interleaves the card after the active tile. */
+   system; `order` then places the card after that row's last tile. */
 const tileGrid = css({
 	display: "contents",
 	lg: {
@@ -131,8 +136,23 @@ const applyNote = css({
 	color: "text.primary",
 });
 
-function modeLabel(items: readonly Preset[], source: PresetInfoSource): string {
+function modeLabel(
+	items: readonly Preset[],
+	source: PresetInfoSource,
+	stale: boolean,
+	stickySource: PresetInfoSource | null,
+): string {
 	if (items.length === 0) return "empty";
+	// Sticky content outlives the gesture that produced it; saying
+	// "selected"/"hover" while nothing is selected or hovered would
+	// misreport the current state, so name it as retained content.
+	if (stale) {
+		return stickySource === "selection"
+			? items.length > 1
+				? "last selection"
+				: "last selected"
+			: "recent";
+	}
 	if (source === "selection") {
 		return items.length > 1 ? `${items.length} selected` : "selected";
 	}
@@ -203,8 +223,10 @@ export function PresetStage({
 	}, [live.items, live.source]);
 
 	const items = live.items.length > 0 ? live.items : (sticky?.items ?? []);
-	const source =
-		live.items.length > 0 ? live.source : (sticky?.source ?? "hover");
+	// Like the panel, the card body is tagged with the *current* gesture
+	// source; sticky items keep rendering after the gesture ends.
+	const source = live.source;
+	const stale = live.items.length === 0 && items.length > 0;
 
 	// Which tile the info card should sit next to on narrow layouts.
 	const derivedAnchor = useMemo(() => {
@@ -220,6 +242,17 @@ export function PresetStage({
 	useEffect(() => {
 		if (derivedAnchor >= 0) setAnchorIndex(derivedAnchor);
 	}, [derivedAnchor]);
+
+	// Grid index the info card's `order` targets: the last tile of the
+	// anchor's row, so the full-width card starts on a fresh row instead
+	// of splitting the anchor's row and leaving empty cells behind.
+	const cardOrderIndex = useMemo(() => {
+		if (anchorIndex < 0) return presets.length;
+		return Math.min(
+			Math.floor(anchorIndex / NARROW_COLS) * NARROW_COLS + NARROW_COLS - 1,
+			presets.length - 1,
+		);
+	}, [anchorIndex, presets.length]);
 
 	const toggleSelected = (id: string) =>
 		setSelectedIds((prev) =>
@@ -312,9 +345,7 @@ export function PresetStage({
 			<div
 				ref={(el) => {
 					if (el) {
-						el.style.order = String(
-							anchorIndex >= 0 ? anchorIndex * 2 + 1 : 999,
-						);
+						el.style.order = String(cardOrderIndex * 2 + 1);
 					}
 				}}
 				className={infoCard}
@@ -324,10 +355,12 @@ export function PresetStage({
 				<div className={infoHead}>
 					<Badge
 						tone={
-							source === "selection" && items.length > 0 ? "accent" : "neutral"
+							source === "selection" && !stale && items.length > 0
+								? "accent"
+								: "neutral"
 						}
 					>
-						{modeLabel(items, source)}
+						{modeLabel(items, source, stale, sticky?.source ?? null)}
 					</Badge>
 				</div>
 				<div className={infoBody}>
