@@ -56,7 +56,7 @@ const PATH_LABELS: Record<PathKey, string> = {
 const errorMessageStyle = css({
 	marginBottom: "2",
 	fontSize: "shell-text-sm",
-	color: "var(--ty-color-danger)",
+	color: "var(--color-status-error)",
 });
 
 const pathFieldClass = css({

@@ -29,7 +29,7 @@ const rootShellBase = css({
 
 /** Visual feedback when a droppable surface is being dragged over. */
 const rootShellDragOver = css({
-	boxShadow: "inset 0 0 0 1px var(--ty-interactive-focus)",
+	boxShadow: "var(--color-focus-ring)",
 	bg: "color-mix(in oklab, var(--ty-interactive-hover) 30%, transparent)",
 });
 
@@ -62,7 +62,7 @@ const dialogColumnBase = css({
 
 /** Centered small-dialog variant: column caps at the canonical max width. */
 const dialogColumnCentered = css({
-	maxWidth: "var(--ty-dialog-content-max-width)",
+	maxWidth: "var(--max-w-3xl)",
 	marginInline: "auto",
 });
 

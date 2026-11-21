@@ -212,7 +212,7 @@ const panelClass = css({
 	pointerEvents: "auto",
 	zIndex: 100000,
 	maxHeight: "min(70vh,26rem)",
-	minWidth: "var(--ty-widget-icon-size)",
+	minWidth: "4",
 	overflowY: "auto",
 	whiteSpace: "nowrap",
 	borderRadius: "var(--ty-space-1)",

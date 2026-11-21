@@ -178,7 +178,7 @@ function FontNavigateUpCard(props: {
 				outline: "none",
 				_hover: { backgroundColor: "interactive.hover" },
 				_focusVisible: {
-					boxShadow: "0 0 0 2px var(--color-interactive-focus)",
+					boxShadow: "var(--color-focus-ring)",
 				},
 			})}
 			onClick={onNavigateUp}
@@ -355,7 +355,7 @@ function FontIconCatalogTile(props: {
 						outline: "none",
 						_hover: { backgroundColor: "interactive.hover" },
 						_focusVisible: {
-							boxShadow: "0 0 0 2px var(--color-interactive-focus)",
+							boxShadow: "var(--color-focus-ring)",
 						},
 					}),
 				)}
@@ -609,7 +609,7 @@ function FontListTreeFamilyGroup(props: {
 						outline: "none",
 						_hover: { color: "text.primary" },
 						_focusVisible: {
-							boxShadow: "0 0 0 2px var(--color-interactive-focus)",
+							boxShadow: "var(--color-focus-ring)",
 						},
 					})}
 					onClick={() => {
@@ -1235,7 +1235,7 @@ export function FontViewerWidget({
 						className={css({
 							minWidth: 0,
 							flex: 1,
-							flexBasis: "var(--ty-widget-icon-size)",
+							flexBasis: "4",
 						})}
 					>
 						<SearchField

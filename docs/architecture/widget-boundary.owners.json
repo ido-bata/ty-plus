@@ -1,0 +1,42 @@
+{
+	"$comment": "Machine-readable form of the ownership table in docs/architecture/widget-boundary.md. Enforced by scripts/check/check-ui-ownership.ts. Keep the prose table and this manifest in sync.",
+	"owners": [
+		{
+			"feature": "FileEntryList",
+			"ownerModule": "src/management/storage/ui/file-entry/FileEntryList.tsx",
+			"ownerDir": "src/management/storage/ui/file-entry",
+			"ownerLayer": "management",
+			"sharedDomHooks": [
+				"data-directory-browser-entry",
+				"data-directory-browser-entry-select"
+			],
+			"note": "FileEntryList is the file entry listing that storage owns; it is a feature UI, not a common primitive (docs/architecture/widget-boundary.md). The DOM hooks keep the directory-browser name because they address the widget's surface and are a runtime contract: src/shared/scenario/real-anchors.ts, src/management/dialog/dialogs/unified-context-menu.ts and src/management/preset/tool-shell/context-menu.ts resolve them, and the scenario procedures under src/shared/scenario/procedures/ address them by name."
+		}
+	],
+	"sharedComponents": [
+		{
+			"name": "AuthoringGrid",
+			"ownerModule": "src/management/preset/authoring-layout.tsx",
+			"publicModule": "src/management/preset/index.ts",
+			"note": "the authoring form layout belongs to the preset domain; it used to sit in preset/tool-shell, which is one feature of that domain, and was imported from four preset dialogs and the group/modeless/authoring surfaces."
+		},
+		{
+			"name": "AuthoringField",
+			"ownerModule": "src/management/preset/authoring-layout.tsx",
+			"publicModule": "src/management/preset/index.ts",
+			"note": "the authoring form layout belongs to the preset domain."
+		},
+		{
+			"name": "AuthoringSection",
+			"ownerModule": "src/management/preset/authoring-layout.tsx",
+			"publicModule": "src/management/preset/index.ts",
+			"note": "the authoring form layout belongs to the preset domain."
+		},
+		{
+			"name": "AuthoringSegment",
+			"ownerModule": "src/management/preset/authoring-layout.tsx",
+			"publicModule": "src/management/preset/index.ts",
+			"note": "the authoring form layout belongs to the preset domain."
+		}
+	]
+}

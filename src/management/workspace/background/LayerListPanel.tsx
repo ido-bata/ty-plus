@@ -1,6 +1,6 @@
+import { Checkbox } from "@ty-plus/ui";
 import { Button } from "@ty-plus/ui/controls/Button";
 import { IconButton } from "@ty-plus/ui/controls/IconButton";
-import { Input } from "@ty-plus/ui/fields/Input";
 import { cx } from "@ty-plus/ui/util/cx";
 import {
 	ArrowDown,
@@ -82,11 +82,6 @@ const layerRow = css({
 	gridTemplateColumns: "auto minmax(0,1fr)",
 	alignItems: "center",
 	gap: "1",
-});
-
-const layerCheckbox = css({
-	height: "4",
-	width: "4",
 });
 
 const layerButton = css({
@@ -201,12 +196,10 @@ export function LayerListPanel(props: {
 									data-background-layer-id={layer.id}
 									className={layerRow}
 								>
-									<Input
-										type="checkbox"
-										className={layerCheckbox}
+									<Checkbox
 										checked={layer.enabled}
 										aria-label={t("workspaceShell.backgroundPanel.enabled")}
-										uiSize="sm"
+										uiSize="md"
 										onChange={(e) =>
 											onToggleLayer(layer.id, e.currentTarget.checked)
 										}

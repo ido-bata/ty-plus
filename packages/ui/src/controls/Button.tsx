@@ -106,7 +106,7 @@ const variants: Record<ButtonVariant, string> = {
 		_hover: { backgroundColor: "interactive.hover" },
 		_active: { backgroundColor: "interactive.active" },
 		_focusVisible: {
-			boxShadow: "0 0 0 2px var(--color-interactive-focus)",
+			boxShadow: "var(--color-focus-ring)",
 			outlineOffset: "0",
 		},
 	}),
@@ -116,7 +116,7 @@ const variants: Record<ButtonVariant, string> = {
 		_hover: { opacity: 0.9 },
 		_active: { opacity: 0.85 },
 		_focusVisible: {
-			boxShadow: "0 0 0 2px var(--color-interactive-focus)",
+			boxShadow: "var(--color-focus-ring)",
 			outlineOffset: "0",
 		},
 	}),
@@ -129,7 +129,7 @@ const variants: Record<ButtonVariant, string> = {
 		_hover: { backgroundColor: "interactive.hover" },
 		_active: { backgroundColor: "interactive.active" },
 		_focusVisible: {
-			boxShadow: "0 0 0 2px var(--color-interactive-focus)",
+			boxShadow: "var(--color-focus-ring)",
 			outlineOffset: "0",
 		},
 	}),
@@ -142,7 +142,7 @@ const variants: Record<ButtonVariant, string> = {
 		_hover: { backgroundColor: "interactive.hover" },
 		_active: { backgroundColor: "interactive.active" },
 		_focusVisible: {
-			boxShadow: "0 0 0 2px var(--color-interactive-focus)",
+			boxShadow: "var(--color-focus-ring)",
 			outlineOffset: "0",
 		},
 	}),
@@ -159,7 +159,7 @@ const variants: Record<ButtonVariant, string> = {
 		_active: { backgroundColor: "interactive.active" },
 		_focusVisible: {
 			borderColor: "interactive.focus",
-			boxShadow: "inset 0 0 0 1px var(--color-interactive-focus)",
+			boxShadow: "var(--color-focus-ring)",
 			outline: "none",
 		},
 	}),
@@ -171,7 +171,7 @@ const variants: Record<ButtonVariant, string> = {
 		_hover: { backgroundColor: "transparent" },
 		_active: { backgroundColor: "transparent" },
 		_focusVisible: {
-			boxShadow: "0 0 0 2px var(--color-interactive-focus)",
+			boxShadow: "var(--color-focus-ring)",
 			outlineOffset: "0",
 		},
 	}),
@@ -183,7 +183,7 @@ const variants: Record<ButtonVariant, string> = {
 		borderColor: "border.subtle",
 		_hover: { backgroundColor: "interactive.hover" },
 		_focusVisible: {
-			boxShadow: "0 0 0 2px var(--color-interactive-focus)",
+			boxShadow: "var(--color-focus-ring)",
 			outlineOffset: "0",
 		},
 	}),

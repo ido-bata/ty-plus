@@ -10,15 +10,41 @@ Widget / surface 単位の render 例外に対する fail-soft 動作は
 [`docs/decisions/2026-09-10-widget-error-boundary.md`](../decisions/2026-09-10-widget-error-boundary.md)
 が pinning する。
 
-## DirectoryBrowser の所有
+## ファイルエントリ一覧の所有
 
-`DirectoryBrowser` は storage が所有する機能 UI である。ファイルシステムのエントリと product icon を提示する。共通 primitive ではない。
+`FileEntryList` は storage が所有する機能 UI である。ファイルシステムのエントリを
+一覧して選択・移動させる。共通 primitive ではない。
+
+storage が所有する機能を「browser」と呼ぶと語が二重になる（browser は一般に
+パスとツールバーを持ち、それらは利用側の責務）。そこで名前は「file entry の
+一覧」を表すものにする。
 
 | 観点 | 所有者 |
 |--------|-------|
 | ファイルシステムの提示 | `management/storage/ui/file-entry/FileEntryList.tsx` |
 | Product icon (PresetIcon) | `management/preset/contract` |
 | 機能的な振る舞い (file browser state, catalog) | `management/storage` |
+
+この表は `docs/architecture/widget-boundary.owners.json` に機械可読な形で
+複製があり、`scripts/check/check-ui-ownership.ts` が所有者違反を検出する
+(所有者モジュールの欠落・別 layer における同名の再実装)。表と manifest は
+同時に更新すること。
+
+## 既知の management → function 越境
+
+`tools/check/import-boundary.ts` は `@/` alias 形式の import も解決する
+（以前は alias を解決しないため、この規則が実質的に発火していなかった）。
+現在残る越境は次のとおりで、`tools/check/.baseline.json` に退避してある。
+
+| 箇所 | 越境先 | 内容 |
+| --- | --- | --- |
+| `management/dialog/routes.tsx` | `function/preset/*/Dialog` | dialog router が function 層の preset dialog を mount する |
+| `management/panel/boot.tsx` | `function/onboarding/View`, `function/onboarding/ui/SetupRequired` | panel の boot が onboarding の view を mount する |
+| `management/preset/onboarding-directory.ts` | `function/onboarding/steps-data` | onboarding の step 定義を参照する |
+| `management/workspace/events/handler.ts` | `function/widget/core/align`, `function/widget/core/anchor-point` | workspace の event handler が個別 widget の action helper を参照する |
+
+いずれも「利用側が実装に届く」構造で、所有権の問題はないが、境界の
+裏返しである。これらは baseline からの縮小対象であり、優先度は低い。
 
 ## Widget Interface Boundary
 

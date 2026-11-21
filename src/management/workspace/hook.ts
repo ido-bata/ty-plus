@@ -239,7 +239,7 @@ const cpMenuHeading = css({
 	fontWeight: "bold",
 	textTransform: "uppercase",
 	letterSpacing: "0.05em",
-	color: "var(--text-muted)",
+	color: "var(--color-text-muted)",
 	pointerEvents: "none",
 });
 
@@ -251,7 +251,7 @@ const cpMenuButton = css({
 	borderStyle: "none",
 	backgroundColor: "transparent",
 	fontSize: "var(--ty-shell-text-size-sm)",
-	color: "var(--text-main)",
+	color: "var(--color-text-primary)",
 	textAlign: "left",
 	cursor: "pointer",
 	font: "inherit",
