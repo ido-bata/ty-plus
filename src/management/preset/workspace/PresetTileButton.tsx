@@ -1,0 +1,107 @@
+import { cx } from "@ty-plus/ui/util/cx";
+import type { CSSProperties, JSX } from "react";
+import type { Preset } from "@/management/preset/contract";
+import {
+	PresetCatalogGlyphHost,
+	WorkspacePresetGlyph,
+} from "@/management/preset/workspace/glyph";
+import { WorkspaceTileFrame } from "@/management/workspace/surface/TileFrame";
+import { css } from "@/styled-system/css";
+
+/**
+ * Clickable preset tile: the workspace tile chrome (`WorkspaceTileFrame`)
+ * plus the catalog glyph layer (`PresetCatalogGlyphHost` →
+ * `WorkspacePresetGlyph`), the same render path as a workspace grid cell.
+ *
+ * The workspace grid itself keeps its placement-shell interaction model
+ * (drag / select / run handled by the surface); this button variant is for
+ * catalog-style surfaces that need native button semantics — e.g. the
+ * official Web demo. Interaction capabilities beyond `onSelect` /
+ * `onHoverChange` are the caller's responsibility.
+ */
+
+const root = css({
+	position: "relative",
+	display: "block",
+	width: "full",
+	height: "full",
+	minHeight: "0",
+	minWidth: "0",
+});
+
+const frameFill = css({
+	height: "full",
+	width: "full",
+});
+
+const hitArea = css({
+	position: "absolute",
+	inset: "0",
+	padding: "0",
+	borderWidth: "0",
+	backgroundColor: "transparent",
+	cursor: "pointer",
+	borderRadius: "shell-sm",
+	_hover: { backgroundColor: "interactive.hover" },
+	_focusVisible: {
+		outlineWidth: "1px",
+		outlineStyle: "solid",
+		outlineColor: "interactive.focus",
+		outlineOffset: "-1px",
+	},
+});
+
+export type PresetTileButtonProps = {
+	preset: Preset;
+	/** Accessible name; defaults to `preset.title`. */
+	label?: string;
+	selected?: boolean;
+	onSelect?: () => void;
+	/** Mirrors the workspace hover contract: preset id on enter, null on leave. */
+	onHoverChange?: (presetId: string | null) => void;
+	className?: string;
+	style?: CSSProperties;
+};
+
+export function PresetTileButton(props: PresetTileButtonProps): JSX.Element {
+	const {
+		preset,
+		label,
+		selected = false,
+		onSelect,
+		onHoverChange,
+		className,
+		style,
+	} = props;
+	const presetId = preset.id.trim() ? preset.id.trim() : null;
+	const accessibleName = label ?? preset.title?.trim() ?? presetId ?? "Preset";
+
+	return (
+		<div
+			className={cx(root, className)}
+			style={style}
+			onPointerEnter={() => {
+				if (presetId) onHoverChange?.(presetId);
+			}}
+			onPointerLeave={() => {
+				if (presetId) onHoverChange?.(null);
+			}}
+		>
+			<WorkspaceTileFrame selected={selected} className={frameFill}>
+				<PresetCatalogGlyphHost
+					title={accessibleName}
+					{...(presetId ? { "data-preset-id": presetId } : {})}
+				>
+					<WorkspacePresetGlyph preset={preset} />
+				</PresetCatalogGlyphHost>
+			</WorkspaceTileFrame>
+			<button
+				type="button"
+				className={hitArea}
+				aria-pressed={selected}
+				aria-label={accessibleName}
+				onClick={onSelect}
+			/>
+		</div>
+	);
+}
