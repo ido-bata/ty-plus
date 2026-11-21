@@ -60,6 +60,7 @@ const root = css({
 	transitionProperty: "border-color,box-shadow",
 	_focusWithin: {
 		borderColor: "interactive.focus",
+		boxShadow: "var(--color-focus-ring)",
 	},
 });
 
@@ -119,7 +120,7 @@ const clearButton = css({
 		color: "text.primary",
 	},
 	_focusVisible: {
-		boxShadow: "0 0 0 2px var(--color-interactive-focus)",
+		boxShadow: "var(--color-focus-ring)",
 		outlineOffset: "0",
 	},
 });

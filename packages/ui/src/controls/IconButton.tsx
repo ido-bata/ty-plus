@@ -65,7 +65,7 @@ const variantMap: Record<NonNullable<IconButtonProps["variant"]>, string> = {
 
 const focusRing = css({
 	_focusVisible: {
-		boxShadow: "0 0 0 2px var(--color-interactive-focus)",
+		boxShadow: "var(--color-focus-ring)",
 		outlineOffset: "0",
 		outline: "2px solid transparent",
 	},
