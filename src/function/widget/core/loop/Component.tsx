@@ -7,8 +7,6 @@
  * Easing widget's square value graph.
  */
 
-import { Button } from "@ty-plus/ui";
-import { Pause, Play } from "lucide-react";
 import type { JSX } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -28,6 +26,8 @@ import {
 import type { Layout } from "@/management/workspace/layout/grid-document";
 import { css } from "@/styled-system/css";
 import { type AppliedLoopRecord, templateRowsToPoints } from "./applied-state";
+import { LoopActions } from "./LoopActions";
+import { LoopToolbar } from "./LoopToolbar";
 import { MotionPreview } from "./MotionPreview";
 import { WaveEditor } from "./WaveEditor";
 
@@ -283,49 +283,14 @@ export function LoopWidget({
 				void capture();
 			}}
 		>
-			<div
-				className={css({
-					display: "flex",
-					alignItems: "center",
-					gap: "2",
-					paddingInline: "2",
-					paddingBlock: "1",
-					borderBottomWidth: "1px",
-					borderBottomStyle: "solid",
-					borderBottomColor: "border.default",
-					fontSize: "text-2xs",
-					color: "text.muted",
-				})}
-			>
-				<span className={css({ whiteSpace: "nowrap" })}>
-					{t("loop.cycles")} {wave.cycles}
-				</span>
-				{applied ? (
-					<span
-						className={css({
-							color: conflict ? "status.error" : "text.muted",
-						})}
-					>
-						{conflict ? t("loop.conflict") : t("loop.applied")}
-					</span>
-				) : null}
-				<span className={css({ marginLeft: "auto", whiteSpace: "nowrap" })}>
-					{currentValue === null ? "" : `${(currentValue * 100).toFixed(0)}%`}
-				</span>
-				<Button
-					variant="ghost"
-					uiSize="sm"
-					aria-label={playing ? t("loop.pause") : t("loop.play")}
-					data-ws-action="loop-preview-toggle"
-					onClick={() => setPlaying((value) => !value)}
-				>
-					{playing ? (
-						<Pause className={css({ height: "3", width: "3" })} aria-hidden />
-					) : (
-						<Play className={css({ height: "3", width: "3" })} aria-hidden />
-					)}
-				</Button>
-			</div>
+			<LoopToolbar
+				cycles={wave.cycles}
+				applied={applied !== null}
+				conflict={conflict}
+				currentValue={currentValue}
+				playing={playing}
+				onTogglePlay={() => setPlaying((value) => !value)}
+			/>
 
 			<div
 				className={css({
@@ -357,45 +322,16 @@ export function LoopWidget({
 					}}
 				/>
 			</div>
-			<div
-				className={css({
-					display: "flex",
-					alignItems: "center",
-					gap: "1",
-					paddingInline: "2",
-					paddingBlock: "1",
-					borderTopWidth: "1px",
-					borderTopStyle: "solid",
-					borderTopColor: "border.default",
-				})}
-			>
-				<Button
-					variant="primary"
-					uiSize="sm"
-					fullWidth
-					disabled={status === "busy" || conflict}
-					data-ws-action="loop-apply-current"
-					data-tutorial-target="loop-apply"
-					onClick={() => {
-						void apply();
-					}}
-				>
-					{applied ? t("loop.update") : t("easing.apply")}
-				</Button>
-				{applied ? (
-					<Button
-						variant="outline"
-						uiSize="sm"
-						disabled={status === "busy" || conflict}
-						data-ws-action="loop-unapply-current"
-						onClick={() => {
-							void unapply();
-						}}
-					>
-						{t("loop.unapply")}
-					</Button>
-				) : null}
-			</div>
+			<LoopActions
+				applied={applied !== null}
+				disabled={status === "busy" || conflict}
+				onApply={() => {
+					void apply();
+				}}
+				onUnapply={() => {
+					void unapply();
+				}}
+			/>
 		</div>
 	);
 }

@@ -16,17 +16,14 @@ import {
 	buildCyclicWave,
 	type CyclicWaveParams,
 	chordValue,
-	cycleBoundaries,
-	type WaveHandle,
 	type WavePoint,
-	waveHandlePositions,
 } from "@/function/widget/core/loop/cyclic-wave";
+import { drawWaveScene } from "./draw-wave";
+import { type DragTarget, hitTestWave } from "./hit-test";
 import {
 	fitWaveCamera,
 	screenToTime,
 	screenToValue,
-	timeToScreen,
-	valueToScreen,
 	type WaveCamera,
 } from "./wave-camera";
 
@@ -52,17 +49,6 @@ export type WaveEditorProps = {
 	onScrub?: (time: number) => void;
 };
 
-type DragTarget =
-	| { kind: "wave-handle"; handle: WaveHandle }
-	| { kind: "template-point"; index: number }
-	| { kind: "template-handle"; index: number; side: "hIn" | "hOut" }
-	| { kind: "pan" };
-
-const shareOf = (wave: CyclicWaveParams): number => attackShare(wave.bias);
-
-const HANDLE_HIT_PX = 12;
-const HANDLE_RADIUS = 5;
-
 const cloneTemplate = (points: WavePoint[]): WavePoint[] =>
 	points.map((point) => ({
 		x: point.x,
@@ -83,7 +69,6 @@ export function WaveEditor({
 	const canvasRef = useRef<HTMLCanvasElement | null>(null);
 	const containerRef = useRef<HTMLDivElement | null>(null);
 	const dragRef = useRef<DragTarget | null>(null);
-	const lastX = useRef(0);
 	const [size, setSize] = useState({ width: 320, height: 140 });
 	const [view, setView] = useState({ start: 0, span: 1 });
 	const [hover, setHover] = useState<DragTarget | null>(null);
@@ -107,128 +92,26 @@ export function WaveEditor({
 		view.span,
 	);
 	const cameraRef = useRef<WaveCamera>(camera);
-	cameraRef.current = camera;
+	useEffect(() => {
+		cameraRef.current = camera;
+	}, [camera]);
 	const draw = useCallback(() => {
 		const canvas = canvasRef.current;
 		if (!canvas) return;
 		const ctx = canvas.getContext("2d");
 		if (!ctx) return;
-		const cam = cameraRef.current;
-		const width = size.width;
-		const height = size.height;
-		ctx.clearRect(0, 0, width, height);
-		const style = getComputedStyle(canvas);
-		const text = style.getPropertyValue("--ty-text-primary").trim() || "#fff";
-		const muted = style.getPropertyValue("--ty-text-muted").trim() || "#999";
-		const accent = style.getPropertyValue("--ty-text-accent").trim() || text;
-		const grid =
-			style.getPropertyValue("--ty-border-surface").trim() ||
-			"rgba(255,255,255,0.14)";
-		// Cycle boundaries and the segment ends.
-		ctx.strokeStyle = grid;
-		ctx.lineWidth = 1;
-		ctx.beginPath();
-		for (const boundary of cycleBoundaries(wave.cycles)) {
-			const x = timeToScreen(boundary, cam);
-			if (x < -1 || x > width + 1) continue;
-			ctx.moveTo(x, 0);
-			ctx.lineTo(x, height);
-		}
-		ctx.stroke();
-		// The waveform itself.
-		ctx.strokeStyle = text;
-		ctx.lineWidth = 2;
-		ctx.lineJoin = "round";
-		ctx.lineCap = "round";
-		ctx.beginPath();
-		wavePoints.forEach((point, index) => {
-			const x = timeToScreen(point.x, cam);
-			const y = valueToScreen(point.y, cam);
-			if (index === 0) ctx.moveTo(x, y);
-			else ctx.lineTo(x, y);
+		drawWaveScene(ctx, {
+			canvas,
+			width: size.width,
+			height: size.height,
+			camera: cameraRef.current,
+			wavePoints,
+			template,
+			wave,
+			labels,
+			hover,
+			previewTime,
 		});
-		ctx.stroke();
-		// The damping envelope: the peak of every cycle, connected.
-		ctx.strokeStyle = muted;
-		ctx.setLineDash([4, 4]);
-		ctx.lineWidth = 1;
-		ctx.beginPath();
-		const peaks: { x: number; y: number }[] = [];
-		for (let cycle = 0; cycle < wave.cycles; cycle += 1) {
-			let peak: { x: number; y: number } | null = null;
-			for (const point of wavePoints) {
-				if (Math.floor(point.x * wave.cycles) !== cycle) continue;
-				if (!peak || point.y > peak.y) peak = point;
-			}
-			if (peak) peaks.push(peak);
-		}
-		peaks.forEach((peak, index) => {
-			const x = timeToScreen(peak.x, cam);
-			const y = valueToScreen(peak.y, cam);
-			if (index === 0) ctx.moveTo(x, y);
-			else ctx.lineTo(x, y);
-		});
-		ctx.stroke();
-		ctx.setLineDash([]);
-		// The representative (edited) cycle: its control points and handles.
-		const legTimeScale = Math.max(1e-6, shareOf(wave) / wave.cycles);
-		ctx.strokeStyle = muted;
-		ctx.lineWidth = 1;
-		for (const point of template) {
-			const px = timeToScreen(point.x * legTimeScale, cam);
-			const py = valueToScreen(chordValue(template, point.x), cam);
-			for (const side of ["hIn", "hOut"] as const) {
-				const handle = point[side];
-				const hx = timeToScreen(
-					point.x * legTimeScale + handle.x * legTimeScale,
-					cam,
-				);
-				const hy = valueToScreen(chordValue(template, point.x) + handle.y, cam);
-				ctx.beginPath();
-				ctx.moveTo(px, py);
-				ctx.lineTo(hx, hy);
-				ctx.stroke();
-				ctx.fillStyle = muted;
-				ctx.beginPath();
-				ctx.arc(hx, hy, 3, 0, Math.PI * 2);
-				ctx.fill();
-			}
-			ctx.fillStyle = text;
-			ctx.beginPath();
-			ctx.arc(px, py, 4, 0, Math.PI * 2);
-			ctx.fill();
-		}
-		// The three parameter handles.
-		const handles = waveHandlePositions(template, wave);
-		for (const key of Object.keys(handles) as WaveHandle[]) {
-			const position = handles[key];
-			const x = timeToScreen(position.x, cam);
-			const y = valueToScreen(position.y, cam);
-			const active = hover?.kind === "wave-handle" && hover.handle === key;
-			ctx.fillStyle = active ? accent : text;
-			ctx.beginPath();
-			ctx.arc(x, y, active ? HANDLE_RADIUS + 1 : HANDLE_RADIUS, 0, Math.PI * 2);
-			ctx.fill();
-			ctx.fillStyle = active ? accent : muted;
-			ctx.font = "10px system-ui, sans-serif";
-			ctx.textAlign = "left";
-			ctx.textBaseline = "middle";
-			const labelX = Math.min(
-				Math.max(x + HANDLE_RADIUS + 3, 2),
-				Math.max(2, width - ctx.measureText(labels[key]).width - 2),
-			);
-			ctx.fillText(labels[key], labelX, y);
-		}
-		// The playhead: the current time and the value at that time.
-		if (previewTime !== null && previewTime !== undefined) {
-			const x = timeToScreen(previewTime, cam);
-			ctx.strokeStyle = accent;
-			ctx.lineWidth = 1;
-			ctx.beginPath();
-			ctx.moveTo(x, 0);
-			ctx.lineTo(x, height);
-			ctx.stroke();
-		}
 	}, [hover, labels, previewTime, size, template, wave, wavePoints]);
 
 	useEffect(() => {
@@ -260,43 +143,8 @@ export function WaveEditor({
 		draw();
 	}, [draw]);
 	const hitTest = useCallback(
-		(screenX: number, screenY: number): DragTarget => {
-			const cam = cameraRef.current;
-			const handles = waveHandlePositions(template, wave);
-			for (const key of Object.keys(handles) as WaveHandle[]) {
-				const position = handles[key];
-				const x = timeToScreen(position.x, cam);
-				const y = valueToScreen(position.y, cam);
-				if (Math.hypot(x - screenX, y - screenY) <= HANDLE_HIT_PX) {
-					return { kind: "wave-handle", handle: key };
-				}
-			}
-			// The template's control points and handles (edit cycle only).
-			const legScale = Math.max(1e-6, shareOf(wave) / wave.cycles);
-			for (let index = 0; index < template.length; index += 1) {
-				const point = template[index];
-				const px = timeToScreen(point.x * legScale, cam);
-				const py = valueToScreen(chordValue(template, point.x), cam);
-				if (Math.hypot(px - screenX, py - screenY) <= HANDLE_HIT_PX) {
-					return { kind: "template-point", index };
-				}
-				for (const side of ["hIn", "hOut"] as const) {
-					const handle = point[side];
-					const hx = timeToScreen(
-						point.x * legScale + handle.x * legScale,
-						cam,
-					);
-					const hy = valueToScreen(
-						chordValue(template, point.x) + handle.y,
-						cam,
-					);
-					if (Math.hypot(hx - screenX, hy - screenY) <= HANDLE_HIT_PX) {
-						return { kind: "template-handle", index, side };
-					}
-				}
-			}
-			return { kind: "pan" };
-		},
+		(screenX: number, screenY: number): DragTarget =>
+			hitTestWave(screenX, screenY, cameraRef.current, template, wave),
 		[template, wave],
 	);
 
@@ -354,7 +202,7 @@ export function WaveEditor({
 			if (target.kind === "template-point") {
 				const point = next[target.index];
 				if (!point) return;
-				const legScale = Math.max(1e-6, shareOf(wave) / wave.cycles);
+				const legScale = Math.max(1e-6, attackShare(wave.bias) / wave.cycles);
 				point.x = Math.max(0, Math.min(1, time / legScale));
 				point.y = value;
 				onTemplateChange(next);
@@ -363,7 +211,7 @@ export function WaveEditor({
 			if (target.kind === "template-handle") {
 				const point = next[target.index];
 				if (!point) return;
-				const legScale = Math.max(1e-6, shareOf(wave) / wave.cycles);
+				const legScale = Math.max(1e-6, attackShare(wave.bias) / wave.cycles);
 				const handle = point[target.side];
 				handle.x = (time - point.x * legScale) / legScale;
 				handle.y = value - chordValue(template, point.x);
