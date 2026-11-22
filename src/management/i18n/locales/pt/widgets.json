@@ -16,7 +16,8 @@
 			"info": "Mostrar metadados de predefinição, caminhos e status em um tile de resumo amplo.",
 			"quick-actions": "Executar scripts, efeitos e ações de arquivo a partir de uma paleta de comandos compacta.",
 			"directory-browser": "Navegar pastas de disco e predefinições de dentro do painel.",
-			"font-viewer": "Visualizar famílias de fontes, estilos e texto de exemplo na área de trabalho."
+			"font-viewer": "Visualizar famílias de fontes, estilos e texto de exemplo na área de trabalho.",
+			"loop": "Edite uma curva de ciclo único e aplique-a repetidamente aos keyframes selecionados."
 		}
 	},
 	"types": {
@@ -268,5 +269,23 @@
 		"emptyItems": "Nenhum item encontrado",
 		"goUp": "Subir nível",
 		"cepNodeRequired": "O explorador de pastas requer CEP Node"
+	},
+	"loop": {
+		"name": "Loop",
+		"cycles": "Ciclos",
+		"decrement": "Diminuir ciclos",
+		"increment": "Aumentar ciclos",
+		"handle": {
+			"easing": "Suavizacao",
+			"frequency": "Frequencia",
+			"bias": "Vies",
+			"damping": "Amortecimento"
+		},
+		"update": "Atualizar",
+		"unapply": "Remover loop",
+		"applied": "Aplicado",
+		"conflict": "Editado no AE",
+		"play": "Reproduzir",
+		"pause": "Pausar"
 	}
 }

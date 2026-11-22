@@ -16,7 +16,8 @@
 			"info": "Show preset metadata, paths, and status in a wide summary tile.",
 			"quick-actions": "Run scripts, effects, and file actions from a compact command palette.",
 			"directory-browser": "Browse disk folders and presets from inside the panel.",
-			"font-viewer": "Preview font families, styles, and sample text in the workspace."
+			"font-viewer": "Preview font families, styles, and sample text in the workspace.",
+			"loop": "Edit a single-cycle curve and apply it repeatedly to selected keyframes."
 		}
 	},
 	"types": {
@@ -268,5 +269,23 @@
 		"hintNoLocalApi": "This Chromium build does not expose queryLocalFonts — only fonts registered on document.fonts are listed.",
 		"localAccessErrorPrefix": "Local font access:",
 		"emptyList": "No fonts loaded yet. Use “Load all system fonts” if available, or reload after the panel finishes loading styles."
+	},
+	"loop": {
+		"name": "Loop",
+		"cycles": "Cycles",
+		"decrement": "Decrease loop cycles",
+		"increment": "Increase loop cycles",
+		"handle": {
+			"easing": "Easing",
+			"frequency": "Frequency",
+			"bias": "Bias",
+			"damping": "Damping"
+		},
+		"update": "Update",
+		"unapply": "Remove loop",
+		"applied": "Applied",
+		"conflict": "Edited in AE",
+		"play": "Play",
+		"pause": "Pause"
 	}
 }

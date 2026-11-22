@@ -16,7 +16,8 @@
 			"info": "Mostra metadati preimpostazione, percorsi e stato in una tile riepilogativa ampia.",
 			"quick-actions": "Esegui script, effetti e azioni file da una palette comandi compatta.",
 			"directory-browser": "Sfoglia cartelle disco e preimpostazioni dall'interno del pannello.",
-			"font-viewer": "Anteprima famiglie font, stili e testo campione nell'area di lavoro."
+			"font-viewer": "Anteprima famiglie font, stili e testo campione nell'area di lavoro.",
+			"loop": "Modifica una curva a ciclo singolo e applicala ripetutamente ai keyframe selezionati."
 		}
 	},
 	"types": {
@@ -268,5 +269,23 @@
 		"hintNoLocalApi": "This Chromium build does not expose queryLocalFonts — only fonts registered on document.fonts are listed.",
 		"localAccessErrorPrefix": "Local font access:",
 		"emptyList": "No fonts loaded yet. Use “Load all system fonts” if available, or reload after the panel finishes loading styles."
+	},
+	"loop": {
+		"name": "Loop",
+		"cycles": "Cicli",
+		"decrement": "Diminuisci cicli",
+		"increment": "Aumenta cicli",
+		"handle": {
+			"easing": "Curva",
+			"frequency": "Frequenza",
+			"bias": "Sbilanciamento",
+			"damping": "Smorzamento"
+		},
+		"update": "Aggiorna",
+		"unapply": "Rimuovi loop",
+		"applied": "Applicato",
+		"conflict": "Modificato in AE",
+		"play": "Riproduci",
+		"pause": "Pausa"
 	}
 }

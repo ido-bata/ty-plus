@@ -16,7 +16,8 @@
 			"info": "在宽摘要图块中显示预设元数据、路径和状态。",
 			"quick-actions": "从紧凑命令面板运行脚本、效果和文件操作。",
 			"directory-browser": "从面板内浏览磁盘文件夹和预设。",
-			"font-viewer": "在工作区中预览字体系列、样式和示例文本。"
+			"font-viewer": "在工作区中预览字体系列、样式和示例文本。",
+			"loop": "编辑单个循环的曲线，并重复应用到选中的关键帧。"
 		}
 	},
 	"types": {
@@ -268,5 +269,23 @@
 		"emptyItems": "未找到项目",
 		"goUp": "上一级",
 		"cepNodeRequired": "文件夹浏览器需要 CEP Node"
+	},
+	"loop": {
+		"name": "循环",
+		"cycles": "循环",
+		"decrement": "减少循环",
+		"increment": "增加循环",
+		"handle": {
+			"easing": "缓动",
+			"frequency": "频率",
+			"bias": "偏置",
+			"damping": "阻尼"
+		},
+		"update": "更新",
+		"unapply": "移除循环",
+		"applied": "已应用",
+		"conflict": "已在 AE 中编辑",
+		"play": "播放",
+		"pause": "暂停"
 	}
 }

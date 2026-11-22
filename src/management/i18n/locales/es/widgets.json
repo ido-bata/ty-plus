@@ -16,7 +16,8 @@
 			"info": "Mostrar metadatos de preajustes, rutas y estado en una baldosa resumen amplia.",
 			"quick-actions": "Ejecutar scripts, efectos y acciones de archivo desde una paleta de comandos compacta.",
 			"directory-browser": "Explorar carpetas del disco y preajustes desde dentro del panel.",
-			"font-viewer": "Previsualizar familias de fuentes, estilos y texto de ejemplo en el espacio de trabajo."
+			"font-viewer": "Previsualizar familias de fuentes, estilos y texto de ejemplo en el espacio de trabajo.",
+			"loop": "Edita una curva de un solo ciclo y aplícala repetidamente a los keyframes seleccionados."
 		}
 	},
 	"types": {
@@ -268,5 +269,23 @@
 		"hintNoLocalApi": "This Chromium build does not expose queryLocalFonts — only fonts registered on document.fonts are listed.",
 		"localAccessErrorPrefix": "Local font access:",
 		"emptyList": "No fonts loaded yet. Use “Load all system fonts” if available, or reload after the panel finishes loading styles."
+	},
+	"loop": {
+		"name": "Bucle",
+		"cycles": "Ciclos",
+		"decrement": "Disminuir ciclos",
+		"increment": "Aumentar ciclos",
+		"handle": {
+			"easing": "Suavizado",
+			"frequency": "Frecuencia",
+			"bias": "Sesgo",
+			"damping": "Amortiguacion"
+		},
+		"update": "Actualizar",
+		"unapply": "Quitar bucle",
+		"applied": "Aplicado",
+		"conflict": "Editado en AE",
+		"play": "Reproducir",
+		"pause": "Pausa"
 	}
 }

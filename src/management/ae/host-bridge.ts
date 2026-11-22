@@ -73,6 +73,10 @@ export const createAdapter = (
 			call("applyEasing", [payload]),
 		applyLoopEasing: (payload: Record<string, unknown>) =>
 			call("applyLoopEasing", [payload]),
+		captureLoopState: (payload: Record<string, unknown>) =>
+			call("captureLoopState", [payload]),
+		unapplyLoopEasing: (payload: Record<string, unknown>) =>
+			call("unapplyLoopEasing", [payload]),
 		setAnchorPoint: (input: { position: string }) =>
 			call("setAnchorPoint", [input]),
 		captureEasingCurve: () => call("captureEasingCurve", []),
