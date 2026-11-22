@@ -278,8 +278,6 @@ function SourceFilterTabs({
 	);
 }
 
-const SOURCE_FILTER_TOOLBAR_LABEL = "Filter console messages by source";
-
 /**
  * View scope (Issue #138, supersedes Issue #79).
  *

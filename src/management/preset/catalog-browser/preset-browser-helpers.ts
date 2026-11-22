@@ -12,19 +12,6 @@ export function basenamePath(p: string): string {
 	return i >= 0 ? t.slice(i + 1) : t || "—";
 }
 
-function matchesPresetQuery(preset: Preset, q: string): boolean {
-	const t = q.trim().toLowerCase();
-	if (!t) {
-		return true;
-	}
-	return (
-		preset.id.toLowerCase().includes(t) ||
-		(preset.title ?? "").toLowerCase().includes(t) ||
-		preset.type.toLowerCase().includes(t) ||
-		preset.filePath.toLowerCase().includes(t)
-	);
-}
-
 export function presetWorkspaceSummary(
 	preset: Preset,
 	presetLoc: ReadonlyMap<string, readonly string[]>,
@@ -52,21 +39,4 @@ export function presetWorkspaceSummary(
 		}
 	}
 	return "Workspace: not placed";
-}
-
-function groupWorkspaceSummary(
-	group: GroupEntry,
-	groupLoc: ReadonlyMap<string, readonly string[]>,
-): string {
-	const tags =
-		groupLoc.get(group.id) ??
-		groupLoc.get(stripKnownIdPrefixes(String(group.id ?? "").trim()));
-	if (tags?.length) {
-		return `Workspace: ${tags.join(", ")}`;
-	}
-	return "Workspace: not placed";
-}
-
-function sourceLine(preset: Preset): string {
-	return `${preset.type} · ${basenamePath(preset.filePath)}`;
 }

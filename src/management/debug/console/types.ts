@@ -37,11 +37,3 @@ export type WirePayload = {
 	action?: string;
 	context?: Record<string, unknown>;
 };
-
-type DebugInterceptor = {
-	enable(): void;
-	disable(): void;
-	subscribe(cb: (msgs: readonly LogMessage[]) => void): () => void;
-	getMessages(): readonly LogMessage[];
-	clearMessages(): void;
-};

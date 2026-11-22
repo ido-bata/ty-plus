@@ -737,7 +737,7 @@ export function Dialog(): JSX.Element {
 		[name, resolvedIcon],
 	);
 
-	const canCreate = name.trim().length > 0 && selectedPath && !busy;
+	const _canCreate = name.trim().length > 0 && selectedPath && !busy;
 
 	return (
 		<ToolDialog

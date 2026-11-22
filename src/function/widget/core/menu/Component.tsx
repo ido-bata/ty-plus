@@ -238,12 +238,6 @@ const itemClass = css({
 	_hover: { backgroundColor: "interactive.hover" },
 });
 
-const sepClass = css({
-	marginBlock: "var(--ty-space-1)",
-	height: "1px",
-	backgroundColor: "border.subtle",
-});
-
 const groupSummaryClass = css({
 	cursor: "pointer",
 	listStyleType: "none",

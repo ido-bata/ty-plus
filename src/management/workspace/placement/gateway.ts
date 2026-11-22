@@ -21,9 +21,6 @@ import {
 export const DEFAULT_TILE_WIDTH = 1;
 export const DEFAULT_TILE_HEIGHT = 1;
 
-/** -1: column-band packing; 0|1: anchor-based axis priority for near-anchor growth. */
-type AutoAxis = -1 | 0 | 1;
-
 export type PresetPlacementRequest = {
 	/** Catalog preset or folder-group preset id */
 	presetRefId: string;

@@ -1,14 +1,7 @@
 // Debug console overlay panel  Eslides up from the bottom of the host element.
 // Uses React for rendering via Panel.
 
-import {
-	type JSX,
-	type RefObject,
-	useCallback,
-	useEffect,
-	useRef,
-	useState,
-} from "react";
+import { type JSX, useCallback, useEffect, useRef, useState } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import {
 	clearLogs,
@@ -100,8 +93,6 @@ export class DebugConsole {
 }
 
 // ── React wrapper component ──────────────────────────────────────────────────
-
-type MessagesRef = RefObject<Element | null>;
 
 function DebugConsoleReact(): JSX.Element {
 	const messagesRef = useRef<Element>(null);

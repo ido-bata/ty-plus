@@ -299,18 +299,6 @@ export type Preset = {
 /** Alias for backward compatibility with code that used the old PresetRecord name. */
 export type PresetRecord = Preset;
 
-type CloudPresetMutation = {
-	id: string;
-	type: PresetType;
-	title: string;
-	filePath: string;
-	description?: string;
-	descriptionImage?: string;
-	category?: string;
-	icon?: PresetIcon | string;
-	data?: Record<string, unknown>;
-};
-
 /** Easing curve preset data (captured from AE and stored in presets catalog). */
 export type PresetEasingCurveV1 = {
 	version: 1;

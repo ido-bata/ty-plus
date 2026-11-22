@@ -503,7 +503,7 @@ export function Align({ widthPx, widgetInstanceId }: Props): JSX.Element {
 		};
 	}, [run]);
 
-	const runAlign = useCallback(
+	const _runAlign = useCallback(
 		(action: Action) => {
 			void run(action);
 		},

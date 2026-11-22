@@ -20,8 +20,6 @@ export const ATTR_PRESET_TILE = "data-workspace-preset-tile";
 export const ATTR_GROUP_TILE = "data-workspace-group-tile";
 export const ATTR_PRESET_ID = "data-preset-id";
 export const ATTR_GROUP_PANEL = "data-workspace-group-panel";
-const ATTR_WIDGET_TEXT_STYLE = "data-widget-text-style";
-const ATTR_TEXT_FONT_SELECT = "data-text-font-select";
 export const ATTR_DRAGGING = "data-dragging";
 /** Quick-actions / merged search palette: ties DOM input to `SurfaceState.quickActionSearchByWidgetInstanceId`. */
 export const ATTR_WIDGET_INSTANCE_ID = "data-widget-instance-id";

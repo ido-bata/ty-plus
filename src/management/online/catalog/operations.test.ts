@@ -200,7 +200,7 @@ describe("downloadAndInstallPreset (runtime install)", () => {
 	});
 
 	it("two distinct downloads produce two distinct UUIDs", async () => {
-		const harness = setupDataServices();
+		const _harness = setupDataServices();
 		const first = await downloadAndInstallPreset(
 			win,
 			"preset.cloud.first",
@@ -268,7 +268,7 @@ describe("downloadAndInstallPreset (runtime install)", () => {
 	});
 
 	it("emits stage progress events without any network body transfer", async () => {
-		const harness = setupDataServices();
+		const _harness = setupDataServices();
 		const events: DownloadProgress[] = [];
 		await downloadAndInstallPreset(
 			win,

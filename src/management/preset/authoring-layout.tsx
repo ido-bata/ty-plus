@@ -47,14 +47,6 @@ const sectionDescriptionClass = css({
 	color: "text.muted",
 });
 
-const inlineActionsClass = css({
-	display: "flex",
-	width: "full",
-	minWidth: "0",
-	flexWrap: "wrap",
-	gap: "2",
-});
-
 export function AuthoringGrid({
 	children,
 }: {
@@ -120,12 +112,4 @@ export function AuthoringSegment({
 			aria-label={ariaLabel}
 		/>
 	);
-}
-
-function AuthoringInlineActions({
-	children,
-}: {
-	children: ReactNode;
-}): JSX.Element {
-	return <div className={inlineActionsClass}>{children}</div>;
 }

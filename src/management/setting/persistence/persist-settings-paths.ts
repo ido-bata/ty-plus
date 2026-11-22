@@ -4,25 +4,13 @@ import {
 	mergeSettings,
 } from "@/management/setting/models/settings";
 import { updateInitializationLocatorUserSupportRoot } from "@/management/setting/onboarding/initialization";
-import {
-	readSettingsPathsJson,
-	writeSettingsPathsJson,
-} from "@/management/setting/persistence/settings-json-files";
+import { writeSettingsPathsJson } from "@/management/setting/persistence/settings-json-files";
 import { resolveTyPlusManagedRootForPersistence } from "@/management/setting/persistence/ty-plus-managed-root";
 import {
 	readSettings,
 	writeSettings,
 } from "@/management/storage/workspace/store";
 import { normalizePathLike } from "@/shared/util/path";
-
-type PathKey = keyof Settings["core"]["paths"];
-
-const PATH_KEYS: readonly PathKey[] = [
-	"supportRoot",
-	"presetRoot",
-	"scriptRoot",
-	"pluginRoot",
-] as const;
 
 const normalizePathsPayload = (
 	paths: Settings["core"]["paths"],
@@ -133,19 +121,3 @@ export const persistSettingsPaths = async (
 };
 
 /** Reads disk paths and returns merged `core.paths` (paths.json wins over settings). */
-const loadPersistedSettingsPaths = async (
-	win: Window,
-	current: Settings["core"]["paths"],
-): Promise<Settings["core"]["paths"]> => {
-	const merged = { ...current };
-	const managedRoot = await resolveTyPlusManagedRootForPersistence(win);
-	const pathsDoc = managedRoot ? await readSettingsPathsJson(win) : null;
-	for (const key of PATH_KEYS) {
-		const raw = pathsDoc?.[key];
-		if (typeof raw === "string" && raw.trim()) {
-			merged[key] =
-				key === "supportRoot" ? normalizePathLike(raw) : normalizePathLike(raw);
-		}
-	}
-	return normalizePathsPayload(merged);
-};

@@ -61,37 +61,6 @@ export const collectPresetRectsFromTiles = (
 	return out;
 };
 
-const resolveMoveTokenLayout = (
-	state: SurfaceState,
-	token: string,
-): { x: number; y: number; width: number; height: number } | null => {
-	const trimmed = token.trim();
-	if (!trimmed) {
-		return null;
-	}
-	const catalogCtx = state;
-	const asIdx = Number.parseInt(trimmed, 10);
-	if (
-		Number.isFinite(asIdx) &&
-		asIdx >= 0 &&
-		asIdx < state.surfaceTiles.length
-	) {
-		const t = state.surfaceTiles[asIdx];
-		if (t && !tileIdResolvesAsWidget(catalogCtx, t.id)) {
-			return normalizeLayoutRect(t);
-		}
-	}
-	for (const t of state.surfaceTiles) {
-		if (tileIdResolvesAsWidget(catalogCtx, t.id)) {
-			continue;
-		}
-		if (t.id === trimmed) {
-			return normalizeLayoutRect(t);
-		}
-	}
-	return null;
-};
-
 export const mergePresetPlacementIntoState = (
 	cur: SurfaceState,
 	pl: PresetPlacementPayload,

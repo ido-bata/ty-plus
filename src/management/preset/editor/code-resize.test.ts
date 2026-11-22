@@ -16,6 +16,10 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 const codeSource = readFileSync(new URL("./Code.tsx", import.meta.url), "utf8");
+const surfacesSource = readFileSync(
+	new URL("../../../../packages/ui/src/styles/surfaces.ts", import.meta.url),
+	"utf8",
+);
 
 describe("CodeEditor has a bottom resize handle", () => {
 	it("declares min and max resize height constants", () => {
@@ -109,11 +113,20 @@ describe("CodeEditor has a bottom resize handle", () => {
 		// a parent div instead, the resize only changes the inner Monaco
 		// height and the outer UI does not move — which was the previous
 		// regression.
-		expect(codeSource).toMatch(/borderRadius:\s*["']shell-sm["']/);
-		expect(codeSource).toMatch(/borderWidth:\s*["']1px["']/);
-		expect(codeSource).toMatch(/borderStyle:\s*["']solid["']/);
-		expect(codeSource).toMatch(/borderColor:\s*["']border\.default["']/);
-		expect(codeSource).toMatch(/backgroundColor:\s*["']surface\.widget["']/);
-		expect(codeSource).toMatch(/overflow:\s*["']hidden["']/);
+		expect(codeSource).toMatch(/widgetSurfaceClass/);
+		const widgetSurfaceBlock = surfacesSource.match(
+			/widgetSurfaceClass = css\(\{[\s\S]*?\}\)/,
+		)?.[0];
+		expect(widgetSurfaceBlock).toBeDefined();
+		expect(widgetSurfaceBlock).toMatch(/borderRadius:\s*["']shell-sm["']/);
+		expect(widgetSurfaceBlock).toMatch(/borderWidth:\s*["']1px["']/);
+		expect(widgetSurfaceBlock).toMatch(/borderStyle:\s*["']solid["']/);
+		expect(widgetSurfaceBlock).toMatch(
+			/borderColor:\s*["']border\.default["']/,
+		);
+		expect(widgetSurfaceBlock).toMatch(
+			/backgroundColor:\s*["']surface\.widget["']/,
+		);
+		expect(widgetSurfaceBlock).toMatch(/overflow:\s*["']hidden["']/);
 	});
 });

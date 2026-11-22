@@ -172,9 +172,6 @@ const flushMicrotasks = async (): Promise<void> => {
 	}
 };
 
-const countRows = (): number =>
-	document.querySelectorAll("[data-debug-msg-id]").length;
-
 const rowText = (id: string): string | null => {
 	const el = document.querySelector(`[data-debug-msg-id="${id}"]`);
 	return el?.textContent ?? null;

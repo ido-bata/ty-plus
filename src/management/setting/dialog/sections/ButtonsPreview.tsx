@@ -26,11 +26,6 @@ const iconButtonsGridStyle = css({
 	},
 });
 
-const homeStyle = css({
-	width: "3.5",
-	height: "3.5",
-});
-
 export function ButtonsPreview(): JSX.Element {
 	return (
 		<>

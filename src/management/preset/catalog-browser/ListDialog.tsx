@@ -1267,11 +1267,7 @@ export function PresetsDialog(): JSX.Element {
 		() => new Set(),
 	);
 
-	const {
-		scale: iconGridScale,
-		setScale: setIconGridScale,
-		hostRef: iconGridHostRef,
-	} = useIconGridScale({
+	const { scale: iconGridScale, hostRef: iconGridHostRef } = useIconGridScale({
 		storageKey: ICON_GRID_SCALE_LS_KEY,
 		enabled: viewMode === "icons",
 	});

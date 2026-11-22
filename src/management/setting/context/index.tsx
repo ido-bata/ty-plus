@@ -112,7 +112,7 @@ async function loadSettingsFromStorage(): Promise<Settings> {
 	}
 }
 
-/**
+/*
  * The key paths this layer owns — i.e. everything reachable from `Settings`.
  *
  * `settings/app.json` is shared: the workspace layer writes
@@ -123,8 +123,6 @@ async function loadSettingsFromStorage(): Promise<Settings> {
  * cleared it). Ownership is therefore an explicit allowlist derived from the
  * `Settings` type, kept next to it so the two cannot drift silently.
  */
-type OwnedKeySpec = true | { readonly [key: string]: OwnedKeySpec };
-
 /**
  * The allowlist shape implied by `Settings`, so the compiler rejects a
  * missing entry. `true` means "this whole subtree is owned"; an object lists

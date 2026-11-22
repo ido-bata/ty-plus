@@ -21,7 +21,6 @@ import {
 	isOpaquePresetPlacementId,
 	stripKnownIdPrefixes,
 } from "@/management/storage/ids";
-import { buildPrimaryPanelWidgets } from "@/management/workspace/layout/default";
 import {
 	type Layout,
 	type LayoutItem,
@@ -180,18 +179,6 @@ export const serialize = (tiles: readonly Tile[]): string =>
 			height: t.height,
 		})),
 	});
-
-const buildDefaultPanelTiles = (): Tile[] =>
-	buildPrimaryPanelWidgets().map((w) => ({
-		id: w.id,
-		x: w.x,
-		y: w.y,
-		width: w.width,
-		height: w.height,
-	}));
-
-const buildTilesForPanel = (panelId: string): Tile[] =>
-	panelId === "panel-1" ? buildDefaultPanelTiles() : [];
 
 /**
  * Build `surfaceTiles` from a persisted workspace layout document (`gridCells`, optional roster)

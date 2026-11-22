@@ -1,7 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { css } from "@/styled-system/css";
-import { PresetsDialogHeader } from "./PresetsDialogHeader";
-import type { LoadPhase, PresetViewMode } from "./use-presets-catalog";
+import {
+	type LoadPhase,
+	PresetsDialogHeader,
+	type PresetViewMode,
+} from "./PresetsDialogHeader";
 
 type Args = {
 	filter: string;

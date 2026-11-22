@@ -42,7 +42,7 @@
 			"correctness": {
 				"noUnusedFunctionParameters": "error",
 				"noUnusedImports": "error",
-				"noUnusedVariables": "off",
+				"noUnusedVariables": "error",
 				"noInnerDeclarations": "off",
 				"noInvalidUseBeforeDeclaration": "off",
 				"useHookAtTopLevel": "off"

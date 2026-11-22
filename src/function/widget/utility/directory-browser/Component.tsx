@@ -1369,29 +1369,6 @@ export function DirectoryBrowserWidget({
 		setFileBrowserDirFocus(null);
 	}, []);
 
-	const iconToolBtnBase = css({
-		height: "full",
-		minHeight: 0,
-		width: "8",
-		flexShrink: 0,
-		alignSelf: "stretch",
-		borderRadius: "shell-sm",
-		borderWidth: "1px",
-		borderStyle: "solid",
-		borderColor: "border.default",
-		backgroundColor: "surface.widget",
-		opacity: 0.5,
-		padding: 0,
-		color: "text.muted",
-		_hover: { color: "text.primary" },
-	});
-	const iconToolBtnActive = css({
-		borderColor: "border.strong",
-		backgroundColor: "surface.widget",
-		opacity: 1,
-		color: "text.primary",
-	});
-
 	return (
 		<div
 			ref={widgetPanelRef}

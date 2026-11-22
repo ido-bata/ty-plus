@@ -132,46 +132,6 @@ export const StorageEnsureDirMethod: StorageRuntimeMethod<
 	name: "storage_ensure_dir",
 };
 
-/** Method for reading JSON via persistence layer. */
-const PersistenceReadJsonMethod: StorageRuntimeMethod<
-	PersistenceReadJsonRequest,
-	PersistenceReadJsonResponse
-> = {
-	name: "storage.persistence.read-json",
-};
-
-/** Method for reading text via persistence layer. */
-const PersistenceReadTextMethod: StorageRuntimeMethod<
-	PersistenceReadTextRequest,
-	PersistenceReadTextResponse
-> = {
-	name: "storage.persistence.read-text",
-};
-
-/** Method for writing JSON via persistence layer. */
-const PersistenceWriteJsonMethod: StorageRuntimeMethod<
-	PersistenceWriteJsonRequest,
-	void
-> = {
-	name: "storage.persistence.write-json",
-};
-
-/**
- * Method for removing (deleting) a JSON file via the persistence layer.
- *
- * Issue #146 / Blocker 9: rollback paths now go through the same gateway
- * as read/write, so a sandboxed storage backend (virtual fs, host bridge,
- * etc.) used in production also handles the "restore to not-exists"
- * rollback state. A backend that does not support removal must reject —
- * the caller's existing catch surfaces it as a rollback failure.
- */
-const PersistenceRemoveJsonMethod: StorageRuntimeMethod<
-	PersistenceRemoveJsonRequest,
-	void
-> = {
-	name: "storage.persistence.remove-json",
-};
-
 // ── Gateway ────────────────────────────────────────────────────────────────
 
 /** Storage gateway interface. */
@@ -268,21 +228,3 @@ export const createStorageGateway = (
 /**
  * Creates a persistence gateway from a dispatcher.
  */
-const createPersistenceGateway = (
-	dispatcher: RuntimeRequestDispatcher,
-): PersistenceGateway => ({
-	readJson: async (request) =>
-		dispatcher.request(
-			PersistenceReadJsonMethod,
-			request,
-		) as Promise<PersistenceReadJsonResponse>,
-	readText: async (request) =>
-		dispatcher.request(
-			PersistenceReadTextMethod,
-			request,
-		) as Promise<PersistenceReadTextResponse>,
-	writeJson: async (request) =>
-		dispatcher.request(PersistenceWriteJsonMethod, request),
-	removeJson: async (request) =>
-		dispatcher.request(PersistenceRemoveJsonMethod, request),
-});

@@ -125,16 +125,6 @@ export const widgetLayoutFromNumber = (
 };
 
 /** Widget row for a surface index (string), if any. */
-const widgetLayout = (
-	state: Pick<
-		SurfaceState,
-		"surfaceTiles" | "widgetInstanceTypes" | "groupCatalogEntries" | "presets"
-	>,
-	surfaceIndex: string,
-): Layout | undefined => {
-	const idx = parseSurfaceIndex(surfaceIndex);
-	return idx === null ? undefined : widgetLayoutFromNumber(state, idx);
-};
 
 /** Catalog ref for a preset/group tile at surface index (number). */
 export const catalogRefFromNumber = (
@@ -182,38 +172,6 @@ export const presetRecordForCatalogRef = (
 	return presets.find(
 		(p) => stripKnownIdPrefixes(String(p.id ?? "").trim()) === idStripped,
 	);
-};
-
-const groupEntryForCatalogRef = (
-	state: Pick<SurfaceState, "groupCatalogEntries">,
-	catalogRef: string,
-) => {
-	const ref = catalogRef.trim();
-	if (!ref) return undefined;
-	const direct = state.groupCatalogEntries.find((g) => g.id.trim() === ref);
-	if (direct) return direct;
-	const refStripped = stripKnownIdPrefixes(ref);
-	if (refStripped !== ref) {
-		const byStrippedRef = state.groupCatalogEntries.find(
-			(g) => g.id.trim() === refStripped,
-		);
-		if (byStrippedRef) return byStrippedRef;
-	}
-	return state.groupCatalogEntries.find(
-		(g) => stripKnownIdPrefixes(g.id.trim()) === refStripped,
-	);
-};
-
-const isGroup = (
-	state: Pick<
-		SurfaceState,
-		"surfaceTiles" | "widgetInstanceTypes" | "groupCatalogEntries" | "presets"
-	>,
-	surfaceIndex: string,
-): boolean => {
-	const ref = catalogRef(state, surfaceIndex);
-	if (!ref) return false;
-	return classifySurfaceTileId(state, ref) === "group";
 };
 
 /** Map surface index strings to catalog refs; drops unknown / widget indices. */

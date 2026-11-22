@@ -23,7 +23,8 @@ const makeMockInterface = (): MockCsInterface => {
 		remove: Mock;
 		dispatch: Mock;
 	} => {
-		const target = kind === "adobe" ? window.__adobe_cep__ : window.CSInterface;
+		const _target =
+			kind === "adobe" ? window.__adobe_cep__ : window.CSInterface;
 		const add: Mock = vi.fn((type: string, h: CloseHandler) => {
 			let set = installedListeners.get(type);
 			if (!set) {

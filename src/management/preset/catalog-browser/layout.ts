@@ -45,38 +45,6 @@ export const ICON_TILE_ASPECT_LS_KEY = "ty.preset-list.icon-tile-aspect";
 
 export type IconTileAspect = "square" | "wide";
 
-function readIconGridScale(): number {
-	if (typeof window === "undefined") {
-		return 1;
-	}
-	try {
-		const raw = window.localStorage.getItem(ICON_GRID_SCALE_LS_KEY);
-		if (!raw) {
-			return 1;
-		}
-		const n = Number.parseFloat(raw);
-		if (!Number.isFinite(n)) {
-			return 1;
-		}
-		return Math.min(1.75, Math.max(0.65, n));
-	} catch {
-		return 1;
-	}
-}
-
-function readIconTileAspect(): IconTileAspect {
-	if (typeof window === "undefined") {
-		return "square";
-	}
-	try {
-		return window.localStorage.getItem(ICON_TILE_ASPECT_LS_KEY) === "wide"
-			? "wide"
-			: "square";
-	} catch {
-		return "square";
-	}
-}
-
 export function iconTileMediaClass(aspect: IconTileAspect): string {
 	return aspect === "wide" ? iconTileMediaWide : iconTileMediaSquare;
 }

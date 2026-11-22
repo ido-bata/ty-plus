@@ -173,7 +173,7 @@ export function GenericPresetCreateDialog(): JSX.Element {
 
 	// Preview only — the save uses the live name below so a rename in the
 	// dialog changes the file that is written, not just the shown path.
-	const filePath = buildSavePath(defaultName);
+	const _filePath = buildSavePath(defaultName);
 
 	const [droppedPath, setDroppedPath] = useState("");
 	const [presetName, setPresetName] = useState(defaultName);

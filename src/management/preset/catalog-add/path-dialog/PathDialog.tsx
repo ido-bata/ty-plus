@@ -107,7 +107,6 @@ function BrowserContent(props: {
 	emptyConfigured: boolean;
 	activeTab: PresetAddFolderType;
 	loadingFiles: boolean;
-	browserError: string | null;
 	browserEntries: FileEntry[];
 	canGoUp: boolean;
 	selectedPath: string;
@@ -121,7 +120,6 @@ function BrowserContent(props: {
 		emptyConfigured,
 		activeTab,
 		loadingFiles,
-		browserError,
 		browserEntries,
 		canGoUp,
 		selectedPath,
@@ -560,7 +558,6 @@ export function PathDialog(): JSX.Element {
 						emptyConfigured={emptyConfigured}
 						activeTab={activeTab}
 						loadingFiles={loadingFiles}
-						browserError={browserError}
 						browserEntries={browserEntries}
 						canGoUp={canGoUp}
 						selectedPath={selectedPath}

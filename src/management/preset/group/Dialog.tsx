@@ -24,8 +24,6 @@ import { NameField } from "./NameField";
  * Create a preset group: select multiple presets from catalog or scan a folder.
  * Supports conditional icon rules based on preset type, name pattern, or specific selections.
  */
-const escapeRegex = (value: string): string =>
-	value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 export function GroupDialog(): JSX.Element {
 	const { t } = useTranslation("presets");

@@ -44,19 +44,6 @@ const _storeResult = async (
 	resultStore.set(resultKey, payload);
 };
 
-const consumeResult = async (
-	win: Window,
-	dialogId: string,
-): Promise<ProbeResultPayload | null> => {
-	void win;
-	const { resultKey } = createBridgeKeys(dialogId);
-	const payload = resultStore.get(resultKey) ?? null;
-	if (payload) {
-		resultStore.delete(resultKey);
-	}
-	return payload;
-};
-
 const _clearBridge = async (win: Window, dialogId: string) => {
 	void win;
 	const { requestKey, resultKey } = createBridgeKeys(dialogId);

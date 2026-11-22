@@ -3,7 +3,8 @@ import { LoaderCircle, RefreshCw, Search } from "lucide-react";
 import type { JSX, ReactNode } from "react";
 import { css } from "@/styled-system/css";
 
-import type { LoadPhase, PresetViewMode } from "./use-presets-catalog";
+export type LoadPhase = "idle" | "reading" | "streaming" | "error";
+export type PresetViewMode = "list" | "icons";
 
 /**
  * The preset list dialog distinguishes a successful terminal load (`"loaded"`)

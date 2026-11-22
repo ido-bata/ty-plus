@@ -32,10 +32,3 @@ export function resolvePresetsForInfoByCatalogIds(
 
 	return out;
 }
-
-function isGroupCatalogRef(
-	state: Pick<SurfaceState, "groupCatalogEntries">,
-	catalogId: string,
-): boolean {
-	return findGroupEntry(state.groupCatalogEntries, catalogId) !== undefined;
-}

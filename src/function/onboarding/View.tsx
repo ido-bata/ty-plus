@@ -1043,7 +1043,7 @@ function useOnboardingFinish(input: OnboardingFinishInput): {
 		setFinishError,
 		onCompleted,
 	} = input;
-	const thumbnailGateway = useAfterEffectsFilesGateway();
+	const _thumbnailGateway = useAfterEffectsFilesGateway();
 	const handleFinish = useCallback(async () => {
 		setSaving(true);
 		setError(null);

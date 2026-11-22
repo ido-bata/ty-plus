@@ -13,7 +13,6 @@ export const register = (descriptor: WidgetDescriptor): void => {
 };
 
 /** All registered descriptors (read-only view). */
-const allWidgetDescriptors = (): readonly WidgetDescriptor[] => descriptors;
 
 /** Lookup a descriptor by its `type` string. */
 export const getWidgetDescriptor = (

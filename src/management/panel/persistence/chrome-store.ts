@@ -9,15 +9,10 @@ import type {
 	CpPosition,
 } from "@/management/panel/control/types";
 import { resolveTyPlusManagedRootForPersistence } from "@/management/setting/persistence/ty-plus-managed-root";
-import { readJson, writeJson } from "@/management/storage/persistence";
+import { readJson } from "@/management/storage/persistence";
 import { readSettings } from "@/management/storage/workspace/store";
 
 const PANEL_CHROME_FILE_VERSION = 1 as const;
-
-type PanelChromeFileV1 = {
-	version: typeof PANEL_CHROME_FILE_VERSION;
-	controlPanel: CpPersistedState;
-};
 
 const VALID_POSITIONS: CpPosition[] = [
 	"top-left",
@@ -149,34 +144,5 @@ const loadChromeControlPanel = async (
 /**
  * Merge-write `controlPanel` into `panels/panel-N.json`, preserving unknown top-level keys.
  */
-const saveChromeControlPanel = async (
-	win: Window,
-	panelId: string,
-	cp: CpPersistedState,
-): Promise<void> => {
-	const managed = await resolveTyPlusManagedRootForPersistence(win);
-	const index = panelIdToIndex(panelId);
-	if (!managed || !index) return;
-
-	// ADR-0006: panels/panel-N.json merge-write inside the managed-root
-	// persistence lock so concurrent chrome saves cannot lose each
-	// other's keys.
-	const { withManagedRootPersistenceLock } = await import(
-		"@/management/storage/lock/persistence-lock"
-	);
-	await withManagedRootPersistenceLock(win, async () => {
-		const existing = await readJson(win, "panelChrome", index);
-		const next: Record<string, unknown> = {
-			...(existing ?? {}),
-			version: PANEL_CHROME_FILE_VERSION,
-			controlPanel: {
-				position: cp.position,
-				orientation: cp.orientation,
-				collapsed: cp.collapsed,
-			},
-		};
-		await writeJson(win, "panelChrome", next, index);
-	});
-};
 
 export { loadChromeControlPanel as loadPanelChromeControlPanel };

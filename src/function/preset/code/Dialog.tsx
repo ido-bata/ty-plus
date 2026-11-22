@@ -404,7 +404,7 @@ export function Dialog(): JSX.Element {
 	const fileName = fileNameFromPath(fullFilePath);
 	const fileExists = useCodeFileExists(displayPath, fileName);
 
-	const { busy, status, message, canSave, handleSave } = useCodePresetSave({
+	const { busy, status, message } = useCodePresetSave({
 		name,
 		codeType,
 		code,

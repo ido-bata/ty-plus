@@ -24,7 +24,6 @@ import {
 	SettingsField,
 	SettingsGrid,
 } from "@/management/setting/dialog/layout/SettingsGrid";
-import type { FileEntry } from "@/management/storage/ui/file-entry/FileEntryList";
 import { css } from "@/styled-system/css";
 import { ButtonsPreview } from "./ButtonsPreview";
 import { DirectoryBrowserPreview } from "./DirectoryBrowserPreview";
@@ -40,37 +39,6 @@ const SELECT_OPTIONS = [
 	{ value: "opt1", label: "Option 1" },
 	{ value: "opt2", label: "Option 2" },
 	{ value: "opt3", label: "Option 3" },
-];
-
-const MOCK_DIR_ENTRIES: FileEntry[] = [
-	{
-		path: "/host/presets/animation",
-		name: "animation",
-		isDirectory: true,
-	},
-	{
-		path: "/host/presets/transitions",
-		name: "transitions",
-		isDirectory: true,
-	},
-	{
-		path: "/host/presets/fade-in.ffx",
-		name: "fade-in.ffx",
-		isDirectory: false,
-		extension: ".ffx",
-	},
-	{
-		path: "/host/presets/slide-left.ffx",
-		name: "slide-left.ffx",
-		isDirectory: false,
-		extension: ".ffx",
-	},
-	{
-		path: "/host/presets/scale-up.ffx",
-		name: "scale-up.ffx",
-		isDirectory: false,
-		extension: ".ffx",
-	},
 ];
 
 const mutedTextStyle = css({
