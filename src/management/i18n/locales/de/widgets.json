@@ -16,7 +16,8 @@
 			"info": "Preset-Metadaten, Pfade und Status in einer breiten Übersichts-Kachel anzeigen.",
 			"quick-actions": "Skripte, Effekte und Dateiaktionen von einer kompakten Befehlspalette aus ausführen.",
 			"directory-browser": "Festplattenordner und Presets innerhalb des Panels durchsuchen.",
-			"font-viewer": "Schriftfamilien, Stile und Beispieltext in der Arbeitsfläche in der Vorschau anzeigen."
+			"font-viewer": "Schriftfamilien, Stile und Beispieltext in der Arbeitsfläche in der Vorschau anzeigen.",
+			"loop": "Bearbeite eine Kurve mit einem Zyklus und wende sie wiederholt auf ausgewählte Keyframes an."
 		},
 		"add": "Hinzufügen",
 		"adding": "Wird hinzugefügt…",
@@ -390,5 +391,25 @@
 	"pickerOverlay": {
 		"targetPanelPrefix": "Zielpanel",
 		"footerHint": "Das Widget wird am unteren Ende des Gitters dieses Panels angehängt."
+	},
+	"loop": {
+		"name": "Loop",
+		"cycles": "Zyklen",
+		"decrement": "Zyklen verringern",
+		"increment": "Zyklen erhöhen",
+		"handle": {
+			"easing": "Easing",
+			"frequency": "Frequenz",
+			"bias": "Bias",
+			"damping": "Daempfung"
+		},
+		"update": "Aktualisieren",
+		"unapply": "Schleife entfernen",
+		"applied": "Angewendet",
+		"conflict": "In AE bearbeitet",
+		"play": "Abspielen",
+		"pause": "Pause",
+		"waveCanvas": "Schleifen-Welleneditor",
+		"previewCanvas": "Schleifen-Bewegungsvorschau"
 	}
 }

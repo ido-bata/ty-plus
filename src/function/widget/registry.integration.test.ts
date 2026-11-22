@@ -54,6 +54,7 @@ vi.mock("./core/anchor-point/Component", () => ({
 	AnchorPointWidget: () => null,
 }));
 vi.mock("./core/easing/Component", () => ({ EasingWidget: () => null }));
+vi.mock("./core/loop/Component", () => ({ LoopWidget: () => null }));
 vi.mock("./core/layout-lock/Component", () => ({
 	LayoutLockWidget: () => null,
 }));
@@ -71,11 +72,12 @@ vi.mock("./utility/quick-actions/QuickActionsWidget", () => ({
 
 // Import each widget descriptor file to trigger defineWidget() -> register() side-effects.
 // SYNC WITH: the glob patterns in registry.ts:
-//   core subdirectories: align, anchor-point, easing, layout-lock, menu
+//   core subdirectories: align, anchor-point, easing, layout-lock, loop, menu
 //   utility subdirectories: directory-browser, font-viewer, info, quick-actions
 import "./core/align/descriptor.ts";
 import "./core/anchor-point/descriptor.ts";
 import "./core/easing/index.ts";
+import "./core/loop/index.ts";
 import "./core/layout-lock/index.ts";
 import "./core/menu/index.ts";
 import "./utility/directory-browser/index.ts";

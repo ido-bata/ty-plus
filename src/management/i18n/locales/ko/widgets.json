@@ -16,7 +16,8 @@
 			"info": "프리셋 메타데이터, 경로, 상태를 넓은 요약 타일에 표시합니다.",
 			"quick-actions": "컴팩트 명령 팔레트에서 스크립트, 이펙트, 파일 작업을 실행합니다.",
 			"directory-browser": "패널 내부에서 디스크 폴더 및 프리셋을 브라우즈합니다.",
-			"font-viewer": "워크스페이스에서 글꼴 제품군, 스타일, 샘플 텍스트를 미리보기합니다."
+			"font-viewer": "워크스페이스에서 글꼴 제품군, 스타일, 샘플 텍스트를 미리보기합니다.",
+			"loop": "한 사이클 커브를 편집해 선택한 키프레임에 반복 적용합니다."
 		},
 		"add": "추가",
 		"adding": "추가 중…",
@@ -390,5 +391,25 @@
 	"pickerOverlay": {
 		"targetPanelPrefix": "대상 패널",
 		"footerHint": "위젯은 이 패널의 그리드 하단에 추가됩니다."
+	},
+	"loop": {
+		"name": "루프",
+		"cycles": "사이클",
+		"decrement": "사이클 줄이기",
+		"increment": "사이클 늘리기",
+		"handle": {
+			"easing": "이징",
+			"frequency": "주파수",
+			"bias": "편향",
+			"damping": "감쇠"
+		},
+		"update": "업데이트",
+		"unapply": "루프 해제",
+		"applied": "적용됨",
+		"conflict": "AE에서 편집됨",
+		"play": "재생",
+		"pause": "일시정지",
+		"waveCanvas": "루프 파형 편집기",
+		"previewCanvas": "루프 모션 미리보기"
 	}
 }

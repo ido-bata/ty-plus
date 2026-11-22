@@ -16,7 +16,8 @@
 			"info": "Afficher les métadonnées, chemins et statut du préréglage dans une tuile récapitulative large.",
 			"quick-actions": "Exécuter des scripts, effets et actions de fichier depuis une palette de commandes compacte.",
 			"directory-browser": "Parcourir les dossiers du disque et les préréglages depuis le panneau.",
-			"font-viewer": "Aperçu des familles, styles de polices et texte exemple dans l'espace de travail."
+			"font-viewer": "Aperçu des familles, styles de polices et texte exemple dans l'espace de travail.",
+			"loop": "Modifiez une courbe à un seul cycle et appliquez-la de façon répétée aux images clés sélectionnées."
 		},
 		"add": "Ajouter",
 		"adding": "Ajout…",
@@ -390,5 +391,25 @@
 	"pickerOverlay": {
 		"targetPanelPrefix": "Panneau cible",
 		"footerHint": "Le widget est ajouté en bas de la grille de ce panneau."
+	},
+	"loop": {
+		"name": "Boucle",
+		"cycles": "Cycles",
+		"decrement": "Diminuer les cycles",
+		"increment": "Augmenter les cycles",
+		"handle": {
+			"easing": "Courbe",
+			"frequency": "Frequence",
+			"bias": "Biais",
+			"damping": "Amortissement"
+		},
+		"update": "Mettre a jour",
+		"unapply": "Supprimer la boucle",
+		"applied": "Applique",
+		"conflict": "Modifie dans AE",
+		"play": "Lecture",
+		"pause": "Pause",
+		"waveCanvas": "Éditeur d'onde de boucle",
+		"previewCanvas": "Aperçu du mouvement en boucle"
 	}
 }
