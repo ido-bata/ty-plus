@@ -1157,7 +1157,6 @@ function useOnboardingFinish(input: OnboardingFinishInput): {
 				importOptions,
 				importPresetRepository,
 				listDirectory,
-				thumbnailGateway,
 			);
 			logWorkspace("onboardingView:after-preset-import", {
 				presetCatalogCount: presets.length,
@@ -1269,7 +1268,6 @@ function useOnboardingFinish(input: OnboardingFinishInput): {
 		setFinishError,
 		setSaving,
 		supportPath,
-		thumbnailGateway,
 	]);
 
 	// Retry the failed write with UAC/osascript elevation. The first call

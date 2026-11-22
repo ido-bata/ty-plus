@@ -41,9 +41,13 @@ import { PresetsDialogHeader } from "@/management/preset/catalog-browser/Presets
 import { CatalogBrowserShell } from "@/management/preset/catalog-browser/shell";
 import { buildPlacementHints } from "@/management/preset/catalog-browser/workspace-placement-hints";
 import type { Preset } from "@/management/preset/contract";
+import { askHostDeleteConfirm } from "@/management/preset/delete-confirm";
 import { traceExecute } from "@/management/preset/execution/lifecycle-trace";
 import type { GroupEntry } from "@/management/preset/group/catalog";
-import { parseGroupFromText } from "@/management/preset/group/catalog";
+import {
+	parseGroupFromText,
+	removeGroupEntry,
+} from "@/management/preset/group/catalog";
 import { tryParsePresetIconValue } from "@/management/preset/icon/normalize";
 import {
 	getPreset,
@@ -1582,8 +1586,19 @@ export function PresetsDialog(): JSX.Element {
 
 	const onDelete = useCallback(
 		async (id: string) => {
+			const title =
+				presets.find((p) => p.id === id)?.title ??
+				groups.find((g) => g.id === id)?.title ??
+				"";
+			const isGroup = groups.some((g) => g.id === id);
 			try {
-				await removeLocalPreset(id);
+				const confirmed = await askHostDeleteConfirm(window, title, isGroup);
+				if (!confirmed) return;
+				if (isGroup) {
+					await removeGroupEntry(window, id);
+				} else {
+					await removeLocalPreset(id);
+				}
 				await loadEverything();
 			} catch (error) {
 				console.warn(
@@ -1592,7 +1607,7 @@ export function PresetsDialog(): JSX.Element {
 				);
 			}
 		},
-		[loadEverything],
+		[groups, loadEverything, presets],
 	);
 
 	const clearSearch = useCallback(() => {

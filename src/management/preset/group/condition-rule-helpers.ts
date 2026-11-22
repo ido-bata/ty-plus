@@ -18,7 +18,7 @@ export type ConditionRule = {
 	draft: PresetIconEditorDraft;
 };
 
-const buildConditionIconRules = (
+export const conditionRulesToIconRules = (
 	rules: readonly ConditionRule[],
 ): IconRule[] => {
 	return rules.flatMap<IconRule>((r) => {

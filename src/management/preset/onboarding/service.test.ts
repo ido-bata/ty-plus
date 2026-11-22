@@ -7,6 +7,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { PresetRecord } from "../contract";
 import { presetIconImage } from "../contract";
+import { coercePersistedPresetIcon } from "../icon/normalize";
 import { importOnboardingPresets } from "./service";
 
 const looksLikeRandomUuid = (id: string): boolean =>
@@ -113,7 +114,7 @@ describe("importOnboardingPresets", () => {
 		expect(result.workspacePanelRefIds).toEqual(result.addedPresetIds);
 	});
 
-	it("uses sibling image as catalog icon when basename matches", async () => {
+	it("does not persist a sibling image as the catalog icon", async () => {
 		const repo = makeRepository();
 		listDirectory.mockImplementation(async (dir: string) => {
 			if (dir === "C:/Ae/Presets") {
@@ -146,10 +147,15 @@ describe("importOnboardingPresets", () => {
 			listDirectory,
 		);
 
+		// Sibling images are derived at render time from filePath; the
+		// catalog stores only the type-derived icon (ADR: derived icons
+		// must not be persisted into preset.icon).
 		expect(result.addedPresets[0]?.icon).toEqual(
+			coercePersistedPresetIcon("preset", undefined),
+		);
+		expect(result.addedPresets[0]?.icon).not.toEqual(
 			presetIconImage("C:/Ae/Presets/MyPreset.png"),
 		);
-		expect(listDirectory).toHaveBeenCalledWith("C:/Ae/Presets");
 	});
 
 	it("suppresses duplicate file paths", async () => {
@@ -338,8 +344,9 @@ describe("importOnboardingPresets", () => {
 
 		expect(result.addedPresetIds).toHaveLength(1);
 		expect(result.workspacePanelRefIds).toHaveLength(1);
-		expect(listDirectory).toHaveBeenCalledTimes(1);
-		expect(listDirectory).toHaveBeenCalledWith("C:/Ae/Presets");
+		// Provided candidates need no directory listing — sibling icon
+		// resolution no longer runs at import time.
+		expect(listDirectory).not.toHaveBeenCalled();
 	});
 
 	it("projects added preset ids", async () => {
