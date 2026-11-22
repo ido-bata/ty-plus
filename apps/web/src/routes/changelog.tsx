@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Badge, Button, Notice } from "@ty-plus/ui";
-import { cx } from "@ty-plus/ui/util/cx";
+import { Badge, Button, cx, Notice } from "@ty-plus/ui";
 import { css } from "@/styled-system/css";
 import { releaseExcerpt } from "../lib/release-excerpt";
 import {

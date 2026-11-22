@@ -29,7 +29,9 @@ let packRoot: string;
 let head: string;
 
 const sha = (file: string): string =>
-	createHash("sha256").update(Buffer.from(`bytes:${path.basename(file)}`)).digest("hex");
+	createHash("sha256")
+		.update(Buffer.from(`bytes:${path.basename(file)}`))
+		.digest("hex");
 
 const write = (file: string, body: string): string => {
 	mkdirSync(path.dirname(file), { recursive: true });
@@ -42,7 +44,9 @@ const artifact = (name: string): { file: string; sha256: string } => {
 	return { file: name, sha256: sha(file) };
 };
 
-const manifest = (overrides: Partial<ReleaseManifest> = {}): ReleaseManifest => ({
+const manifest = (
+	overrides: Partial<ReleaseManifest> = {},
+): ReleaseManifest => ({
 	version: "0.11.0",
 	releaseVersion: "0.11.0-beta.1",
 	channel: "beta",
@@ -131,7 +135,9 @@ describe("release artifact audit", () => {
 	});
 
 	it("rejects a development-unsigned manifest as distribution evidence", () => {
-		const failures = failuresOf(() => audit({ trustMode: "development-unsigned" }));
+		const failures = failuresOf(() =>
+			audit({ trustMode: "development-unsigned" }),
+		);
 		expect(failures.join("\n")).toMatch(/not distribution evidence/);
 	});
 
@@ -429,7 +435,9 @@ describe("archive vs pack integrity", () => {
 		const failures = failuresOf(() =>
 			auditReleaseArtifacts({
 				...auditInput(),
-				compareArchiveToPack: () => ["archive differs from the audited pack: app.ty-plus/CSXS/manifest.xml"],
+				compareArchiveToPack: () => [
+					"archive differs from the audited pack: app.ty-plus/CSXS/manifest.xml",
+				],
 			}),
 		);
 		expect(failures.join("\n")).toMatch(/differs from the audited pack/);
@@ -488,7 +496,9 @@ describe("platform name must match the shipped pack", () => {
 				workerTrust: { mode: "release", signatures: { macos: validSignature } },
 			}),
 		);
-		expect(failures.join("\n")).toMatch(/named for windows but the shipped pack declares macos/);
+		expect(failures.join("\n")).toMatch(
+			/named for windows but the shipped pack declares macos/,
+		);
 	});
 
 	it("accepts an artifact whose name matches the pack platform", () => {

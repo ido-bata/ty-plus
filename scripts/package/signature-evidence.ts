@@ -71,7 +71,9 @@ const AUTHENTICODE_PROBE = [
  * usable for `/sha1` verification. `certificateSha256` is the modern
  * fingerprint of the same certificate.
  */
-export const parseAuthenticodeEvidence = (stdout: string): ArtifactSignature => {
+export const parseAuthenticodeEvidence = (
+	stdout: string,
+): ArtifactSignature => {
 	let parsed: unknown;
 	try {
 		parsed = JSON.parse(stdout);
@@ -96,9 +98,7 @@ export const parseAuthenticodeEvidence = (stdout: string): ArtifactSignature => 
 };
 
 /** Parse `codesign -dvvv` output into the identity part of the evidence. */
-export const parseCodesignDetail = (
-	detail: string,
-): { cdHash: string } => {
+export const parseCodesignDetail = (detail: string): { cdHash: string } => {
 	const cdHash = detail.match(/CDHash=([a-f0-9]{40})/)?.[1];
 	const authorities = [...detail.matchAll(/^Authority=(.+)$/gm)].map(
 		(match) => match[1],
@@ -120,9 +120,7 @@ export const parseCodesignDetail = (
  * ticket Apple's service can confirm. Status-based — output text is not
  * matched against keywords ("invalid" contains "valid").
  */
-const assertGatekeeperAccepts = (
-	spctl: CommandResult,
-): void => {
+const assertGatekeeperAccepts = (spctl: CommandResult): void => {
 	if (spctl.status !== 0) {
 		return fail(
 			`Gatekeeper rejected the binary (spctl --assess exit ${spctl.status}): ${spctl.stdout.trim() || "no output"} — ` +

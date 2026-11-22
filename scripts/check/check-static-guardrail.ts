@@ -255,8 +255,8 @@ function scanWorkspaceHooks(filePath: string, content: string) {
 			if (str) {
 				for (const hook of PROTECTED_HOOKS) {
 					const tokenPattern = new RegExp(
-					`(?<![A-Za-z0-9_-])${hook}(?![A-Za-z0-9_-])`,
-				);
+						`(?<![A-Za-z0-9_-])${hook}(?![A-Za-z0-9_-])`,
+					);
 					if (tokenPattern.test(str)) {
 						violations.push({
 							line: li + 1,

@@ -1,3 +1,4 @@
+import { srOnlyClass } from "@ty-plus/ui";
 import type { JSX, ReactNode } from "react";
 import type { Preset } from "@/management/preset/contract";
 import { dispatchWorkspacePresetHover } from "@/management/preset/group/hover";
@@ -87,18 +88,6 @@ const dragGhostClass = css({
 	position: "fixed",
 	zIndex: "200",
 	opacity: "0.9",
-});
-
-const srOnlyClass = css({
-	position: "absolute",
-	width: "1px",
-	height: "1px",
-	padding: "0",
-	margin: "-1px",
-	overflow: "hidden",
-	clip: "rect(0,0,0,0)",
-	whiteSpace: "nowrap",
-	borderWidth: "0",
 });
 
 function GroupPanelPresetCell({

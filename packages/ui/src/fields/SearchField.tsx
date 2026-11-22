@@ -86,7 +86,6 @@ const innerInput = css({
 	_focus: { borderColor: "transparent" },
 	_focusVisible: {
 		borderColor: "transparent",
-		boxShadow: "none",
 	},
 });
 

@@ -15,13 +15,16 @@ const fail = (message: string): void => {
 };
 
 const config = read("src/management/i18n/config.ts");
-const declaration = /export const SUPPORTED_LOCALES\s*=\s*\[([\s\S]*?)\]\s*as const/.exec(config);
+const declaration =
+	/export const SUPPORTED_LOCALES\s*=\s*\[([\s\S]*?)\]\s*as const/.exec(config);
 if (!declaration) {
 	throw new Error("Cannot find SUPPORTED_LOCALES in i18n/config.ts");
 }
 const locales = [...declaration[1].matchAll(/"([a-z]{2})"/g)].map((m) => m[1]);
 if (!locales.includes("en") || locales.length !== new Set(locales).size) {
-	throw new Error("Locales must be unique and contain the canonical English README");
+	throw new Error(
+		"Locales must be unique and contain the canonical English README",
+	);
 }
 const readmes = locales.map((locale) =>
 	locale === "en" ? "README.md" : "README." + locale + ".md",
@@ -60,7 +63,9 @@ for (const file of readmes) {
 	}
 	for (const target of targets) {
 		if (isRemote(target) || target.startsWith("#")) continue;
-		if (!existsSync(path.resolve(path.dirname(path.join(root, file)), target))) {
+		if (
+			!existsSync(path.resolve(path.dirname(path.join(root, file)), target))
+		) {
 			fail(file + ": local link target not found: " + target);
 		}
 	}
@@ -82,7 +87,8 @@ for (const file of [
 
 if (!process.exitCode) {
 	console.log(
-		"[public-readme] OK: " + readmes.length +
+		"[public-readme] OK: " +
+			readmes.length +
 			" READMEs match supported locales, links resolve, no merge conflicts",
 	);
 }

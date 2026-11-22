@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import {
 	checkAppSource,
 	checkDuplicateRecipes,
+	checkFocusIndicator,
+	checkVocabularyCopies,
 	collectStyleRecipes,
 	parseVarCalls,
 } from "./check-app-ui-design";
@@ -115,17 +117,6 @@ const field = css({
 });
 `;
 		expect(rules(src)).toEqual([]);
-	});
-
-	it("reports a focus rule that paints no indicator", () => {
-		const src = `
-import { css } from "@/styled-system/css";
-const field = css({
-	outline: "none",
-	_focus: { borderColor: "interactive.focus" },
-});
-`;
-		expect(rules(src)).toEqual(["focus-ring-missing"]);
 	});
 
 	it("reports a focus rule that paints a different indicator", () => {
@@ -243,5 +234,77 @@ describe("duplicate style recipes", () => {
 		expect(collectStyleRecipes("a.tsx", `const x = css({${body}});`)).toEqual(
 			[],
 		);
+	});
+});
+
+describe("the vocabulary is the reference", () => {
+	const recipe = (body: string, file: string) =>
+		collectStyleRecipes(file, `const x = css({${body}});`)[0];
+
+	it("reports a treatment the shared package already has", () => {
+		const body =
+			'color: "text.muted", fontSize: "text-xs", fontWeight: "medium"';
+		const violations = checkVocabularyCopies(
+			[recipe(body, "src/app.tsx")],
+			[recipe(body, "packages/ui/src/styles/typography.ts")],
+		);
+		expect(violations.map((v) => v.rule)).toEqual(["vocabulary-copy"]);
+		expect(violations[0]?.message).toContain("typography.ts");
+	});
+
+	it("does not report a treatment the shared package does not have", () => {
+		expect(
+			checkVocabularyCopies(
+				[
+					recipe(
+						'color: "text.muted", fontSize: "text-xs", fontWeight: "medium"',
+						"src/app.tsx",
+					),
+				],
+				[],
+			),
+		).toEqual([]);
+	});
+});
+
+describe("the focus indicator", () => {
+	it("reports a file that takes the indicator away and puts none back", () => {
+		const violations = checkFocusIndicator(
+			"src/app.tsx",
+			'const x = css({ outline: "none", color: "text.muted" });',
+		);
+		expect(violations.map((v) => v.rule)).toEqual(["focus-indicator-missing"]);
+	});
+
+	it("accepts a file that paints the canonical ring", () => {
+		expect(
+			checkFocusIndicator(
+				"src/app.tsx",
+				'const x = css({ outline: "none" }); const y = css({ boxShadow: "var(--color-focus-ring)" });',
+			),
+		).toEqual([]);
+	});
+
+	it("accepts a file that leaves the native indicator alone", () => {
+		expect(
+			checkFocusIndicator(
+				"src/app.tsx",
+				'const x = css({ color: "text.muted" });',
+			),
+		).toEqual([]);
+	});
+});
+
+describe("the shared package implements the controls", () => {
+	it("does not flag a raw button inside the shared package", () => {
+		const src = `export const C = () => <button type="button">x</button>;`;
+		expect(
+			checkAppSource("packages/ui/src/x.tsx", src, { sharedPackage: true }).map(
+				(v) => v.rule,
+			),
+		).toEqual([]);
+		expect(checkAppSource("src/app.tsx", src).map((v) => v.rule)).toEqual([
+			"raw-control",
+		]);
 	});
 });

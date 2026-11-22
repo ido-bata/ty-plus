@@ -1,6 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Button, Notice, Surface } from "@ty-plus/ui";
-import { cx } from "@ty-plus/ui/util/cx";
+import { Button, cx, Notice, Surface } from "@ty-plus/ui";
 import { css } from "@/styled-system/css";
 import { findLatestStable, zxpAsset } from "../lib/releases";
 import { SITE } from "../lib/site";

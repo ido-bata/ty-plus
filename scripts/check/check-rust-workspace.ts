@@ -30,10 +30,7 @@ type CheckStep = Readonly<{
  * `cargo fmt` is source-OS-agnostic and continues to run across the full
  * workspace.
  */
-const HOST_INDEPENDENT_CRATES = [
-	"ty-plus-protocol",
-	"ty-plus-online",
-] as const;
+const HOST_INDEPENDENT_CRATES = ["ty-plus-protocol", "ty-plus-online"] as const;
 
 const isProductHost = (): boolean =>
 	process.platform === "win32" || process.platform === "darwin";

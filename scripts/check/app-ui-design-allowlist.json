@@ -1,5 +1,19 @@
 [
 	{
+		"file": "apps/web/src/components/SiteHeader.tsx",
+		"line": 240,
+		"rule": "raw-svg",
+		"message": "raw <svg> is banned; use `Icon` with a lucide icon",
+		"reason": "hand-drawn icon predates the shared design system; replace it with `Icon` and a lucide icon"
+	},
+	{
+		"file": "apps/web/src/components/SiteMark.tsx",
+		"line": 11,
+		"rule": "raw-svg",
+		"message": "raw <svg> is banned; use `Icon` with a lucide icon",
+		"reason": "hand-drawn icon predates the shared design system; replace it with `Icon` and a lucide icon"
+	},
+	{
 		"file": "src/function/onboarding/ui/SetupRequired.tsx",
 		"line": 41,
 		"rule": "duplicate-style-recipe",
@@ -372,72 +386,65 @@
 	},
 	{
 		"file": "src/function/widget/utility/font-viewer/Component.tsx",
-		"line": 2,
+		"line": 8,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/fields/SearchField\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
 		"file": "src/function/widget/utility/font-viewer/Component.tsx",
-		"line": 3,
+		"line": 9,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
 		"file": "src/function/widget/utility/font-viewer/Component.tsx",
-		"line": 65,
+		"line": 71,
 		"rule": "duplicate-style-recipe",
 		"message": "the same treatment (color: text.muted, fontFamily: mono, fontSize: text-2xs) is written out in 2 files — it belongs to the shared design system",
 		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
 	},
 	{
 		"file": "src/function/widget/utility/font-viewer/Component.tsx",
-		"line": 169,
+		"line": 175,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/function/widget/utility/font-viewer/Component.tsx",
-		"line": 205,
+		"line": 211,
 		"rule": "duplicate-style-recipe",
 		"message": "the same treatment (alignItems: center, color: text.muted, display: flex, height: full, justifyContent: center, width: full) is written out in 2 files — it belongs to the shared design system",
 		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
 	},
 	{
 		"file": "src/function/widget/utility/font-viewer/Component.tsx",
-		"line": 342,
+		"line": 348,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/function/widget/utility/font-viewer/Component.tsx",
-		"line": 538,
+		"line": 544,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/function/widget/utility/font-viewer/Component.tsx",
-		"line": 572,
+		"line": 578,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/function/widget/utility/font-viewer/Component.tsx",
-		"line": 626,
+		"line": 632,
 		"rule": "duplicate-style-recipe",
 		"message": "the same treatment (color: text.muted, fontSize: text-2xs, fontVariantNumeric: tabular-nums) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/function/widget/utility/font-viewer/Component.tsx",
-		"line": 706,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (color: text.primary, fontSize: text-xs, fontWeight: medium) is written out in 2 files — it belongs to the shared design system",
 		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
 	},
 	{
@@ -621,6 +628,13 @@
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/online/catalog/Dialog.tsx",
+		"line": 267,
+		"rule": "vocabulary-copy",
+		"message": "this treatment already exists in the shared package (packages/ui/src/controls/ViewModeToggle.tsx) — use it instead of writing it out again",
+		"reason": "this treatment already exists in the shared package — use it instead of writing it out again"
 	},
 	{
 		"file": "src/management/online/catalog/Dialog.tsx",
@@ -1247,38 +1261,45 @@
 	},
 	{
 		"file": "src/management/preset/group/Panel.tsx",
-		"line": 22,
+		"line": 23,
 		"rule": "duplicate-style-recipe",
 		"message": "the same treatment (borderRadius: shell-sm, inset: 0, minHeight: 0, minWidth: 0, overflow: hidden, position: absolute, zIndex: 0) is written out in 2 files — it belongs to the shared design system",
 		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
 	},
 	{
 		"file": "src/management/preset/group/Panel.tsx",
-		"line": 44,
+		"line": 45,
 		"rule": "duplicate-style-recipe",
 		"message": "the same treatment (borderColor: var(--color-ty-ws-gridcell-ring-border), borderStyle: solid, borderWidth: 1px) is written out in 2 files — it belongs to the shared design system",
 		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
 	},
 	{
 		"file": "src/management/preset/group/Panel.tsx",
-		"line": 171,
+		"line": 160,
 		"rule": "inline-style",
 		"message": "inline style sets backgroundColor — appearance must come from css() and the token system",
 		"reason": "inline style sets appearance; move it into css() and the token system"
 	},
 	{
 		"file": "src/management/preset/group/Panel.tsx",
-		"line": 194,
+		"line": 183,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/preset/group/Panel.tsx",
-		"line": 200,
+		"line": 189,
 		"rule": "inline-style",
 		"message": "inline style sets opacity — appearance must come from css() and the token system",
 		"reason": "inline style sets appearance; move it into css() and the token system"
+	},
+	{
+		"file": "src/management/preset/markdown/EditorLines.tsx",
+		"line": 1,
+		"rule": "focus-indicator-missing",
+		"message": "this file removes the native focus indicator but never paints var(--color-focus-ring) — a focusable control here would show nothing",
+		"reason": "the editable line is a contentEditable: the text caret is its focus indicator, so it does not need the shared ring"
 	},
 	{
 		"file": "src/management/preset/modeless/ToolHost.tsx",
@@ -1345,31 +1366,24 @@
 	},
 	{
 		"file": "src/management/setting/dialog/components/TokenEditor.tsx",
-		"line": 1,
+		"line": 2,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/fields/Input\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
 		"file": "src/management/setting/dialog/components/TokenEditor.tsx",
+		"line": 3,
+		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/setting/dialog/layout/SettingsGrid.tsx",
 		"line": 2,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/setting/dialog/layout/SettingsGrid.tsx",
-		"line": 1,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/setting/dialog/layout/SettingsGrid.tsx",
-		"line": 45,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (color: text.primary, fontSize: text-xs, fontWeight: medium) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
 	},
 	{
 		"file": "src/management/setting/dialog/sections/AccordionSection.tsx",
@@ -1681,14 +1695,14 @@
 	},
 	{
 		"file": "src/management/setting/dialog/SettingsSidebar.tsx",
-		"line": 1,
+		"line": 6,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
 		"file": "src/management/setting/dialog/SettingsSidebar.tsx",
-		"line": 380,
+		"line": 355,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"

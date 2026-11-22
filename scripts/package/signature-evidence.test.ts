@@ -110,6 +110,8 @@ describe("macOS leaf certificate extraction", () => {
 		const der = Buffer.from([0x30, 0x82, 0x01, 0x02, 0x02, 0x01, 0x01]);
 		const direct = createHash("sha256").update(der).digest("hex");
 		const pem = `-----BEGIN CERTIFICATE-----\n${der.toString("base64")}\n-----END CERTIFICATE-----\n`;
-		expect(createHash("sha256").update(pemToDer(pem)).digest("hex")).toBe(direct);
+		expect(createHash("sha256").update(pemToDer(pem)).digest("hex")).toBe(
+			direct,
+		);
 	});
 });

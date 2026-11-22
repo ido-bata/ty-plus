@@ -39,7 +39,20 @@ export { MediaFrame } from "./layout/MediaFrame";
 export { ScrollArea } from "./layout/ScrollArea";
 export { Surface } from "./layout/Surface";
 export { DialogBody } from "./shell/DialogBody";
-export { rowLabelClass, sectionLabelClass } from "./styles/typography";
+export {
+	segmentedButtonActiveClass,
+	segmentedButtonClass,
+	segmentedButtonInactiveClass,
+	segmentedStripClass,
+} from "./styles/segmented";
+
+export {
+	fieldDescriptionClass,
+	fieldLabelClass,
+	rowLabelClass,
+	sectionLabelClass,
+	srOnlyClass,
+} from "./styles/typography";
 
 export { cx } from "./util/cx";
 export { isIMEComposing } from "./util/keyboard";

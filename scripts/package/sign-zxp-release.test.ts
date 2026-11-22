@@ -27,7 +27,9 @@ describe("resolveReleaseSignZxpConfig", () => {
 		// #32 is settled: a persistent self-signed cert is the release identity).
 		const run = () => resolveReleaseSignZxpConfig({});
 		expect(run).toThrow(/TY_PLUS_ZXP_CERT_PATH/);
-		expect(run).toThrow(/automatic development certificate generation is disabled/);
+		expect(run).toThrow(
+			/automatic development certificate generation is disabled/,
+		);
 	});
 
 	it("refuses the self-signed development certificate", () => {

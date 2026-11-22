@@ -36,3 +36,38 @@ export const rowLabelClass = css({
 	lineHeight: "tight",
 	textAlign: "left",
 });
+
+/**
+ * The label of a field — the name of the setting, the name of the row.
+ */
+export const fieldLabelClass = css({
+	fontSize: "text-xs",
+	fontWeight: "medium",
+	color: "text.primary",
+});
+
+/**
+ * The helper text under a field.
+ */
+export const fieldDescriptionClass = css({
+	marginTop: "1",
+	fontSize: "text-xs",
+	color: "text.muted",
+});
+
+/**
+ * Content that is available to assistive technology but not shown. A focus
+ * ring and a legend both need it, and writing it out twice means the two
+ * copies drift.
+ */
+export const srOnlyClass = css({
+	position: "absolute",
+	width: "1px",
+	height: "1px",
+	padding: "0",
+	margin: "-1px",
+	overflow: "hidden",
+	clip: "rect(0,0,0,0)",
+	whiteSpace: "nowrap",
+	borderWidth: "0",
+});

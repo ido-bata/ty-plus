@@ -2,6 +2,7 @@ import { NumberField } from "@ty-plus/ui/fields/NumberField";
 import { cx } from "@ty-plus/ui/util/cx";
 import type { JSX } from "react";
 import { css } from "@/styled-system/css";
+import { fieldLabelClass } from "../styles/typography";
 
 export type RangeFieldProps = {
 	label?: string;
@@ -19,11 +20,7 @@ const clamp = (value: number, min: number, max: number): number =>
 	Math.min(max, Math.max(min, value));
 
 const wrapper = css({ minWidth: 0, width: "full" });
-const labelClass = css({
-	fontSize: "text-xs",
-	fontWeight: "medium",
-	color: "text.primary",
-});
+const labelClass = fieldLabelClass;
 const row = css({
 	display: "flex",
 	width: "full",
