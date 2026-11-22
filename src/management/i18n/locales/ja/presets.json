@@ -177,7 +177,13 @@
 			"lead": "再利用可能なメタデータからローカルプリセットを作成します。",
 			"defaultName": "ローカルプリセット"
 		},
-		"savePathRequired": "まず After Effects の標準ダイアログでアニメーションプリセットを保存してください。"
+		"savePathRequired": "まず After Effects の標準ダイアログでアニメーションプリセットを保存してください。",
+		"easingScript": {
+			"selectComposition": "コンポジションを選択してください。",
+			"selectProperties": "イージングを適用するプロパティを1つ以上選択してください。",
+			"notEnoughKeyframes": "選択したプロパティのキーが不足しています。",
+			"applyFailedPrefix": "イージングの適用エラー: "
+		}
 	},
 	"animationPreset": {
 		"step1": {

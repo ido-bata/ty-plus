@@ -177,7 +177,13 @@
 			"lead": "根据可复用元数据创建本地预设。",
 			"defaultName": "本地预设"
 		},
-		"savePathRequired": "请先使用 After Effects 的原生对话框保存动画预设。"
+		"savePathRequired": "请先使用 After Effects 的原生对话框保存动画预设。",
+		"easingScript": {
+			"selectComposition": "请选择一个合成。",
+			"selectProperties": "请选择至少一个属性以应用缓动。",
+			"notEnoughKeyframes": "所选属性的关键帧不足。",
+			"applyFailedPrefix": "应用缓动时出错："
+		}
 	},
 	"animationPreset": {
 		"step1": {

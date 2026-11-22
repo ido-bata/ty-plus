@@ -732,6 +732,26 @@ const prepareEasingPresetScript = (payload: Record<string, unknown>) => {
 	const pointsLiteral = hasMulti ? JSON.stringify(rawPoints) : "null";
 	const labelColor = Number(payload.labelColor ?? 0) || 0;
 	const target = authorizePayloadSaveDir(payload, "EasingPreset", ".jsx");
+	const rawMessages = (payload.messages ?? {}) as Record<string, unknown>;
+	const msg = (key: string, fallback: string) =>
+		typeof rawMessages[key] === "string" && rawMessages[key]
+			? (rawMessages[key] as string)
+			: fallback;
+	const messagesLiteral = JSON.stringify({
+		selectComposition: msg(
+			"selectComposition",
+			"Please select a composition.",
+		),
+		selectProperties: msg(
+			"selectProperties",
+			"Please select at least one property to apply the easing.",
+		),
+		notEnoughKeyframes: msg(
+			"notEnoughKeyframes",
+			"Selected properties do not have enough keyframes.",
+		),
+		applyFailedPrefix: msg("applyFailedPrefix", "Error applying easing: "),
+	});
 	const content = [
 		"// ty-plus: easing preset",
 		`// cubic: ${JSON.stringify(cubic)}`,
@@ -739,11 +759,10 @@ const prepareEasingPresetScript = (payload: Record<string, unknown>) => {
 		`// labelColor: ${labelColor}`,
 		"(function () {",
 		"  var comp = app.project.activeItem;",
-				// i18n-exempt: alert() text runs inside After Effects ExtendScript, outside CEP i18n
-		"  if (!(comp instanceof CompItem)) { alert('Please select a composition.'); return; }",
+		`  var MSG = ${messagesLiteral};`,
+		"  if (!(comp instanceof CompItem)) { alert(MSG.selectComposition); return; }",
 		"  var props = comp.selectedProperties;",
-				// i18n-exempt: alert() text runs inside After Effects ExtendScript, outside CEP i18n
-		"  if (!props || props.length === 0) { alert('Please select at least one property to apply the easing.'); return; }",
+		"  if (!props || props.length === 0) { alert(MSG.selectProperties); return; }",
 		"  app.beginUndoGroup('ty-plus: apply easing preset');",
 		`  var cubic = ${JSON.stringify(cubic)};`,
 		`  var points = ${pointsLiteral};`,
@@ -819,11 +838,9 @@ const prepareEasingPresetScript = (payload: Record<string, unknown>) => {
 		"        count++;",
 		"      }",
 		"    }",
-				// i18n-exempt: alert() text runs inside After Effects ExtendScript, outside CEP i18n
-		"    if (count === 0) alert('Selected properties do not have enough keyframes.');",
+		"    if (count === 0) alert(MSG.notEnoughKeyframes);",
 		"  } catch (e) {",
-				// i18n-exempt: alert() text runs inside After Effects ExtendScript, outside CEP i18n
-		"    alert('Error applying easing: ' + e.toString());",
+		"    alert(MSG.applyFailedPrefix + e.toString());",
 		"  } finally {",
 		"    app.endUndoGroup();",
 		"  }",

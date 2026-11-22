@@ -179,7 +179,13 @@
 			"lead": "Créez un preset local à partir de métadonnées réutilisables.",
 			"defaultName": "Preset local"
 		},
-		"savePathRequired": "Enregistrez d'abord le préréglage d'animation avec la boîte de dialogue native d'After Effects."
+		"savePathRequired": "Enregistrez d'abord le préréglage d'animation avec la boîte de dialogue native d'After Effects.",
+		"easingScript": {
+			"selectComposition": "Veuillez sélectionner une composition.",
+			"selectProperties": "Veuillez sélectionner au moins une propriété pour appliquer l'easing.",
+			"notEnoughKeyframes": "Les propriétés sélectionnées n'ont pas assez d'images clés.",
+			"applyFailedPrefix": "Erreur lors de l'application de l'easing : "
+		}
 	},
 	"animationPreset": {
 		"step1": {

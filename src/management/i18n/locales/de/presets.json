@@ -178,7 +178,13 @@
 			"lead": "Erstelle ein lokales Preset aus wiederverwendbaren Metadaten.",
 			"defaultName": "Lokales Preset"
 		},
-		"savePathRequired": "Speichern Sie das Animations-Preset zuerst mit dem nativen Dialog von After Effects."
+		"savePathRequired": "Speichern Sie das Animations-Preset zuerst mit dem nativen Dialog von After Effects.",
+		"easingScript": {
+			"selectComposition": "Bitte wählen Sie eine Komposition aus.",
+			"selectProperties": "Bitte wählen Sie mindestens eine Eigenschaft aus, auf die das Easing angewendet werden soll.",
+			"notEnoughKeyframes": "Die ausgewählten Eigenschaften haben nicht genügend Keyframes.",
+			"applyFailedPrefix": "Fehler beim Anwenden des Easings: "
+		}
 	},
 	"animationPreset": {
 		"step1": {

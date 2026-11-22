@@ -180,7 +180,13 @@
 			"lead": "Создайте локальный пресет из переиспользуемых метаданных.",
 			"defaultName": "Локальный пресет"
 		},
-		"savePathRequired": "Сначала сохраните пресет анимации в стандартном диалоговом окне After Effects."
+		"savePathRequired": "Сначала сохраните пресет анимации в стандартном диалоговом окне After Effects.",
+		"easingScript": {
+			"selectComposition": "Выберите компоновку.",
+			"selectProperties": "Выберите хотя бы одно свойство для применения easing.",
+			"notEnoughKeyframes": "У выбранных свойств недостаточно ключевых кадров.",
+			"applyFailedPrefix": "Ошибка применения easing: "
+		}
 	},
 	"animationPreset": {
 		"step1": {

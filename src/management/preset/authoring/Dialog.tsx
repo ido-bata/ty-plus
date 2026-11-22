@@ -232,6 +232,14 @@ export function GenericPresetCreateDialog(): JSX.Element {
 					...(initialLabelColor !== undefined
 						? { labelColor: initialLabelColor }
 						: {}),
+					messages: {
+						selectComposition: t("presetTool.easingScript.selectComposition"),
+						selectProperties: t("presetTool.easingScript.selectProperties"),
+						notEnoughKeyframes: t(
+							"presetTool.easingScript.notEnoughKeyframes",
+						),
+						applyFailedPrefix: t("presetTool.easingScript.applyFailedPrefix"),
+					},
 				});
 				if (!result.ok) {
 					throw new Error(result.error.message);

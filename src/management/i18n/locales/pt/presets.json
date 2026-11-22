@@ -179,7 +179,13 @@
 			"lead": "Crie uma predefinição local a partir de metadados reutilizáveis.",
 			"defaultName": "Predefinição local"
 		},
-		"savePathRequired": "Guarde primeiro a predefinição de animação com a caixa de diálogo nativa do After Effects."
+		"savePathRequired": "Guarde primeiro a predefinição de animação com a caixa de diálogo nativa do After Effects.",
+		"easingScript": {
+			"selectComposition": "Selecione uma composição.",
+			"selectProperties": "Selecione pelo menos uma propriedade para aplicar o easing.",
+			"notEnoughKeyframes": "As propriedades selecionadas não têm quadros-chave suficientes.",
+			"applyFailedPrefix": "Erro ao aplicar o easing: "
+		}
 	},
 	"animationPreset": {
 		"step1": {

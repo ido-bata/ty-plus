@@ -41,6 +41,14 @@ export type PrepareEasingPresetScriptInput = PreparePresetSaveBaseInput & {
 	points?: [number, number, number, number, number, number][];
 	/** Optional: label color (1-16) to apply on the eased keyframes. */
 	labelColor?: number;
+	/** Localized strings baked into the generated .jsx so its ExtendScript
+	 *  `alert()` dialogs match the author's locale. */
+	messages?: {
+		selectComposition: string;
+		selectProperties: string;
+		notEnoughKeyframes: string;
+		applyFailedPrefix: string;
+	};
 };
 
 export type PrepareAnimationPresetTargetInput = PreparePresetSaveBaseInput;

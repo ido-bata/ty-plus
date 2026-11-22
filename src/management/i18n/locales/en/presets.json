@@ -178,7 +178,13 @@
 			"lead": "Create a local preset from reusable metadata.",
 			"defaultName": "Local Preset"
 		},
-		"savePathRequired": "Save the animation preset with After Effects' native dialog first."
+		"savePathRequired": "Save the animation preset with After Effects' native dialog first.",
+		"easingScript": {
+			"selectComposition": "Please select a composition.",
+			"selectProperties": "Please select at least one property to apply the easing.",
+			"notEnoughKeyframes": "Selected properties do not have enough keyframes.",
+			"applyFailedPrefix": "Error applying easing: "
+		}
 	},
 	"animationPreset": {
 		"step1": {

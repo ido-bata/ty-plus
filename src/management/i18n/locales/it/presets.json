@@ -179,7 +179,13 @@
 			"lead": "Crea un preset locale da metadati riutilizzabili.",
 			"defaultName": "Preset locale"
 		},
-		"savePathRequired": "Salva prima la preimpostazione di animazione con la finestra di dialogo nativa di After Effects."
+		"savePathRequired": "Salva prima la preimpostazione di animazione con la finestra di dialogo nativa di After Effects.",
+		"easingScript": {
+			"selectComposition": "Seleziona una composizione.",
+			"selectProperties": "Seleziona almeno una proprietà a cui applicare l'easing.",
+			"notEnoughKeyframes": "Le proprietà selezionate non hanno fotogrammi chiave sufficienti.",
+			"applyFailedPrefix": "Errore durante l'applicazione dell'easing: "
+		}
 	},
 	"animationPreset": {
 		"step1": {
