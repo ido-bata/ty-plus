@@ -7,7 +7,7 @@
  * Easing widget's square value graph.
  */
 
-import { Button } from "@ty-plus/ui/controls/Button";
+import { Button } from "@ty-plus/ui";
 import { Pause, Play } from "lucide-react";
 import type { JSX } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
