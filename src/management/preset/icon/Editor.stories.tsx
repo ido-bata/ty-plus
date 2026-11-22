@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import type { Preset } from "@/management/preset/contract";
 import { presetIconText } from "@/management/preset/contract";
 import { createPresetIconDraft } from "@/management/preset/icon/editor-state";
+import { expectCanvasLayout } from "@/storybook/quality/layout";
 import { css } from "@/styled-system/css";
 import { IconEditor } from "./Editor";
 
@@ -79,7 +80,13 @@ const meta = {
 export default meta;
 type Story = StoryObj<Args>;
 
-export const Default: Story = {};
+export const Default: Story = {
+	// Issue #194: every rendered control (fields, browse button, preview)
+	// must sit inside the viewport unclipped.
+	play: async ({ canvasElement }) => {
+		expectCanvasLayout(canvasElement);
+	},
+};
 
 export const Emoji: Story = {
 	args: { iconType: "emoji" },
@@ -101,6 +108,9 @@ export const Unframed: Story = {
 };
 
 export const WithPresetPreview: Story = {
+	play: async ({ canvasElement }) => {
+		expectCanvasLayout(canvasElement);
+	},
 	render: () => (
 		<IconEditor
 			draft={createPresetIconDraft("HD")}

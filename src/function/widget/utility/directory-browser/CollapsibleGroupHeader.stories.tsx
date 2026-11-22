@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import type { ReactNode } from "react";
+import { expectCanvasLayout } from "@/storybook/quality/layout";
 import { CollapsibleGroupHeader } from "./CollapsibleGroupHeader";
 
 type Args = {
@@ -44,18 +45,36 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {};
+// Issue #194: group header states (open/closed/zero-count) must keep the
+// toggle control inside the layout contract — empty groups are an
+// explicit product state, not a missing render.
+const playGroupLayout = async ({
+	canvasElement,
+}: {
+	canvasElement: HTMLElement;
+}): Promise<void> => {
+	expectCanvasLayout(canvasElement, {
+		requireRenderedSelector: "button",
+	});
+};
+
+export const Default: Story = {
+	play: playGroupLayout,
+};
 
 export const Closed: Story = {
 	args: { defaultOpen: false },
+	play: playGroupLayout,
 };
 
 export const ManyItems: Story = {
 	args: { count: 248, title: "Motion presets" },
+	play: playGroupLayout,
 };
 
 export const ZeroCount: Story = {
 	args: { count: 0, title: "Empty group" },
+	play: playGroupLayout,
 };
 
 export const WithToggleHandler: Story = {

@@ -98,9 +98,7 @@ export const OpenAndSelect: Story = {
 		await expect(trigger.getAttribute("aria-expanded")).toBe("true");
 		// The listbox is portaled to document.body by AnchoredPopover.
 		const optionByText = Array.from(
-			document.querySelectorAll<HTMLButtonElement>(
-				'button[role="option"]',
-			),
+			document.querySelectorAll<HTMLButtonElement>('button[role="option"]'),
 		).find((el) => el.textContent === "Deutsch");
 		if (!optionByText) throw new Error("Deutsch option not found");
 		await userEvent.click(optionByText);
