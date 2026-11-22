@@ -1,3 +1,4 @@
+import { sectionLabelClass } from "@ty-plus/ui";
 import { css } from "@/styled-system/css";
 
 const PANEL_ID = "dialog-background-panel";
@@ -19,13 +20,7 @@ const BG_CTX = {
 	typeImagePrefix: "ty.ctx.background.type.image:",
 } as const;
 
-export const FIELD_LABEL_CLASS = css({
-	fontSize: "text-xs",
-	fontWeight: "medium",
-	textTransform: "uppercase",
-	letterSpacing: "wide",
-	color: "text.muted",
-});
+export const FIELD_LABEL_CLASS = sectionLabelClass;
 
 export const QUIET_CONTROL_CLASS = css({
 	borderColor: "var(--color-ty-widget-border)",

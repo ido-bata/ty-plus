@@ -35,6 +35,19 @@ export { Textarea } from "./fields/Textarea";
 export { Icon } from "./Icon";
 export * as Icons from "./icons";
 
+export {
+	fieldDescriptionClass,
+	fieldLabelClass,
+	rowLabelClass,
+	sectionLabelClass,
+	srOnlyClass,
+} from "./styles/typography";
+export {
+	segmentedButtonActiveClass,
+	segmentedButtonClass,
+	segmentedButtonInactiveClass,
+	segmentedStripClass,
+} from "./styles/segmented";
 export { useAnchorGesture } from "./interaction/use-anchor-gesture";
 
 export { MediaFrame } from "./layout/MediaFrame";

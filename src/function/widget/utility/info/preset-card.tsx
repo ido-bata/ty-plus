@@ -1,3 +1,4 @@
+import { sectionLabelClass } from "@ty-plus/ui";
 import type { JSX, ReactNode } from "react";
 import type { Preset } from "@/management/preset/contract";
 import { WorkspacePresetGlyph } from "@/management/preset/workspace/glyph/WorkspaceGlyph";
@@ -21,20 +22,7 @@ export function presetInfoMode(items: readonly Preset[]): PresetInfoMode {
 }
 
 function SectionLabel({ children }: { children: ReactNode }): JSX.Element {
-	return (
-		<div
-			className={css({
-				marginBottom: "var(--ty-space-1)",
-				fontSize: "text-2xs",
-				fontWeight: "bold",
-				textTransform: "uppercase",
-				letterSpacing: "0.06em",
-				color: "var(--color-text-muted)",
-			})}
-		>
-			{children}
-		</div>
-	);
+	return <div className={sectionLabelClass}>{children}</div>;
 }
 
 const multiItemClass = css({

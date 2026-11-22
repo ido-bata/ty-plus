@@ -1,4 +1,4 @@
-import { Icon } from "@ty-plus/ui";
+import { Icon, sectionLabelClass } from "@ty-plus/ui";
 import { Input } from "@ty-plus/ui/fields/Input";
 import { PathField } from "@ty-plus/ui/fields/PathField";
 import type { TFunction } from "i18next";
@@ -91,14 +91,6 @@ const previewColumnClass = css({
 	gap: "1",
 });
 
-const previewLabelClass = css({
-	fontSize: "text-xs",
-	fontWeight: "medium",
-	textTransform: "uppercase",
-	letterSpacing: "wide",
-	color: "text.muted",
-});
-
 const previewBoxBaseClass = css({
 	fontFamily: "mono",
 	fontSize: "text-xs",
@@ -152,7 +144,7 @@ function SavePreviewSection({
 	if (!fullFilePath) return null;
 	return (
 		<div className={previewColumnClass}>
-			<span className={previewLabelClass}>
+			<span className={sectionLabelClass}>
 				{t("codePreset.savePreview", "Save preview")}
 			</span>
 			<div
@@ -588,7 +580,7 @@ export function Dialog(): JSX.Element {
 
 					<AuthoringField span={6}>
 						<div className={previewColumnClass}>
-							<span className={previewLabelClass}>
+							<span className={sectionLabelClass}>
 								{codeType === "expression"
 									? t("codePreset.editor.expression", "Expression")
 									: t("codePreset.editor.script", "Script code (.jsx)")}

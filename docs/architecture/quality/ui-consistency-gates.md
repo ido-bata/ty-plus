@@ -134,3 +134,5 @@ focus の表示は、共有 token `--color-focus-ring`（accent 2px の ring）�
 - `focus-ring-divergent` — canonical 以外の ring を描画している
 - `unknown-css-var` — 解決できない CSS 変数を参照している（fallback 付き、
   あるいは同じ file が inline で設定する custom property は可）
+- `duplicate-style-recipe` — 同じ待遇（色・border・タイポグラフィ）を 2 箇所以上で
+  書き写していないこと。layout だけの組み合わせは対象外

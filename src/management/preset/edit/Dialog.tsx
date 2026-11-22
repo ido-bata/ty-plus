@@ -1,4 +1,4 @@
-import { Icon } from "@ty-plus/ui";
+import { Icon, sectionLabelClass } from "@ty-plus/ui";
 import { Button } from "@ty-plus/ui/controls/Button";
 import { Input } from "@ty-plus/ui/fields/Input";
 import { PathField } from "@ty-plus/ui/fields/PathField";
@@ -65,14 +65,6 @@ export type PresetEditDialogProps = {
 	onSaved?: () => void;
 	onDeleted?: () => void;
 };
-
-const FIELD_LABEL_CLASS = css({
-	fontSize: "xs",
-	fontWeight: "medium",
-	textTransform: "uppercase",
-	letterSpacing: "wide",
-	color: "text.muted",
-});
 
 const memberRowPendingClass = css({
 	display: "flex",
@@ -657,7 +649,7 @@ const PresetEditFormFields = ({
 			<>
 				{/* Group title */}
 				<div className={stackClass}>
-					<span className={FIELD_LABEL_CLASS}>
+					<span className={sectionLabelClass}>
 						{t("group.fields.groupName")}
 					</span>
 					<Input
@@ -674,7 +666,7 @@ const PresetEditFormFields = ({
 
 				{/* Group members list */}
 				<div className={stackClass}>
-					<span className={FIELD_LABEL_CLASS}>
+					<span className={sectionLabelClass}>
 						Member presets ({memberIds.length})
 					</span>
 					<ul className={memberPickerListClass}>
@@ -774,7 +766,7 @@ const PresetEditFormFields = ({
 		<>
 			{/* Preset name */}
 			<div className={stackClass}>
-				<span className={FIELD_LABEL_CLASS}>{t("edit.fields.presetName")}</span>
+				<span className={sectionLabelClass}>{t("edit.fields.presetName")}</span>
 				<Input
 					label=""
 					placeholder={t("edit.fields.presetNamePlaceholder")}
@@ -789,7 +781,7 @@ const PresetEditFormFields = ({
 
 			{/* File path */}
 			<div className={stackClass}>
-				<span className={FIELD_LABEL_CLASS}>File path</span>
+				<span className={sectionLabelClass}>File path</span>
 				<PathField
 					value={form.filePath}
 					onChange={(next) =>
@@ -830,7 +822,7 @@ const PresetEditFormFields = ({
 			{/* Easing metadata editor */}
 			{showEasingEditor && (
 				<div className={stackClass}>
-					<span className={FIELD_LABEL_CLASS}>Curve</span>
+					<span className={sectionLabelClass}>Curve</span>
 					<Input
 						label=""
 						value={form.easingCurve}
@@ -849,7 +841,7 @@ const PresetEditFormFields = ({
 			{/* Code editor */}
 			{showCodeEditor && (
 				<div className={stackClass}>
-					<span className={FIELD_LABEL_CLASS}>Code</span>
+					<span className={sectionLabelClass}>Code</span>
 					<Editor
 						value={form.codeContent}
 						onChange={(value) =>

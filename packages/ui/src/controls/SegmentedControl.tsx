@@ -2,7 +2,7 @@ import { cx } from "@ty-plus/ui/util/cx";
 import type { ReactElement } from "react";
 import { css } from "@/styled-system/css";
 
-type SegmentedOption = { value: string; label: string };
+type SegmentedOption = { value: string; label: string; disabled?: boolean };
 
 export type SegmentedControlProps = {
 	options: SegmentedOption[];
@@ -80,6 +80,7 @@ export function SegmentedControl(props: SegmentedControlProps): ReactElement {
 					<button
 						key={opt.value}
 						type="button"
+						disabled={opt.disabled}
 						aria-pressed={selected}
 						className={cx(
 							buttonBase,

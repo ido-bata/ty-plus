@@ -1,4 +1,4 @@
-import { Icon, ViewModeToggle } from "@ty-plus/ui";
+import { Icon, rowLabelClass, Surface, ViewModeToggle } from "@ty-plus/ui";
 import { SearchField } from "@ty-plus/ui/fields/SearchField";
 import { cx } from "@ty-plus/ui/util/cx";
 import { ArrowLeft, ChevronDown, ChevronRight, Search } from "lucide-react";
@@ -60,6 +60,14 @@ const FAMILY_LIST_SPECIMEN_FONT_SIZE =
 /** CSS `font-size` for family-level specimen inside icon tiles. */
 const FAMILY_ICON_SPECIMEN_FONT_SIZE =
 	"clamp(0.7rem, 0.62rem + 0.4vw, 1.05rem)";
+
+/** Monospaced PostScript name / full name under a family label. */
+const monoFamilyNameClass = css({
+	truncate: true,
+	fontFamily: "mono",
+	fontSize: "text-2xs",
+	color: "text.muted",
+});
 
 function isUprightFace(row: LocalFontFaceRow): boolean {
 	const s = row.style.toLowerCase();
@@ -185,18 +193,12 @@ function FontNavigateUpCard(props: {
 			aria-label={backLabel}
 			title={contextLabel ? `${backLabel} — ${contextLabel}` : backLabel}
 		>
-			<div
+			<Surface
+				variant="default"
+				padding="none"
 				className={cx(
 					iconTileMediaClass(tileAspect),
-					css({
-						overflow: "hidden",
-						borderRadius: "shell-sm",
-						borderWidth: "1px",
-						borderStyle: "solid",
-						borderColor: "border.default",
-						backgroundColor: "surface.widget",
-						opacity: 0.7,
-					}),
+					css({ overflow: "hidden", opacity: 0.7 }),
 				)}
 			>
 				<div
@@ -211,20 +213,11 @@ function FontNavigateUpCard(props: {
 				>
 					<Icon icon={ArrowLeft} size={11} aria-hidden />
 				</div>
-			</div>
+			</Surface>
 			<div
 				className={css({ marginTop: "0.5", minWidth: 0, paddingInline: "0.5" })}
 			>
-				<div
-					className={css({
-						truncate: true,
-						textAlign: "left",
-						fontSize: "shell-text-sm",
-						fontWeight: "medium",
-						lineHeight: "tight",
-						color: "text.primary",
-					})}
-				>
+				<div className={cx(rowLabelClass, css({ truncate: true }))}>
 					{backLabel}
 				</div>
 			</div>
@@ -420,24 +413,10 @@ function FontListTreeRow(props: {
 						gap: "0.5",
 					})}
 				>
-					<div
-						className={css({
-							truncate: true,
-							fontSize: "shell-text-sm",
-							fontWeight: "medium",
-							color: "text.primary",
-						})}
-					>
+					<div className={cx(rowLabelClass, css({ truncate: true }))}>
 						{family}
 					</div>
-					<div
-						className={css({
-							truncate: true,
-							fontFamily: "mono",
-							fontSize: "text-2xs",
-							color: "text.muted",
-						})}
-					>
+					<div className={monoFamilyNameClass}>
 						{row.postscriptName || row.fullName}
 					</div>
 				</div>
@@ -636,13 +615,10 @@ function FontListTreeFamilyGroup(props: {
 							})}
 						>
 							<span
-								className={css({
-									minWidth: 0,
-									truncate: true,
-									fontSize: "shell-text-sm",
-									fontWeight: "medium",
-									color: "text.primary",
-								})}
+								className={cx(
+									rowLabelClass,
+									css({ minWidth: 0, truncate: true }),
+								)}
 							>
 								{family}
 							</span>
@@ -736,14 +712,7 @@ function FontListTreeFamilyGroup(props: {
 									>
 										{row.style || "—"}
 									</div>
-									<div
-										className={css({
-											truncate: true,
-											fontFamily: "mono",
-											fontSize: "text-2xs",
-											color: "text.muted",
-										})}
-									>
+									<div className={monoFamilyNameClass}>
 										{row.postscriptName || row.fullName}
 									</div>
 								</div>
@@ -1001,14 +970,7 @@ function FontIconFamilyContent(props: {
 						>
 							{row.style || "—"}
 						</div>
-						<div
-							className={css({
-								truncate: true,
-								fontFamily: "mono",
-								fontSize: "text-2xs",
-								color: "text.muted",
-							})}
-						>
+						<div className={monoFamilyNameClass}>
 							{row.postscriptName || row.fullName}
 						</div>
 					</div>
