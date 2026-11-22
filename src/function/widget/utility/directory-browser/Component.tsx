@@ -19,11 +19,11 @@ import {
 	useState,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { resolveEffectMatchName } from "@/function/widget/utility/directory-browser/plugin-match-name";
 import { useCep } from "@/management/ae/cep/contexts/CepContext";
 import { selectFolder } from "@/management/ae/cep/dialog-shim/bolt";
 import { createCepHostExecutor } from "@/management/ae/cep/host-executor";
 import { detectCepHostCode } from "@/management/ae/cep/runtime";
+import { importFile as importAeFile } from "@/management/ae/file-import";
 import { readGroupJson } from "@/management/catalog/json-files";
 import { notificationStore } from "@/management/online/notification/service";
 import {
@@ -53,7 +53,6 @@ import {
 	stemWithoutExtension,
 } from "@/management/preset/sibling-thumbnail";
 import { readSettings } from "@/management/storage";
-import { getCandidatesSnapshot } from "@/management/storage/candidates-cache/runtime";
 import {
 	canUseCepNodeFileBrowser,
 	createCepNodeFileBrowserService,
@@ -792,39 +791,15 @@ export function DirectoryBrowserWidget({
 
 	const importFile = useCallback(async (filePath: string): Promise<string> => {
 		const hostCode = detectCepHostCode();
-		const hostExecutorForAlign =
+		const hostExecutor =
 			hostCode === "AEFT"
 				? createCepHostExecutor(window, "after-effects")
 				: null;
-		if (hostCode !== "AEFT" || !hostExecutorForAlign) {
-			throw new Error(
-				"File import is currently available only in After Effects.",
-			);
-		}
-		const lowerPath = filePath.toLowerCase();
-		const fileName = filePath.split(/[\\/]/).pop() ?? filePath;
-		if (lowerPath.endsWith(".jsx") || lowerPath.endsWith(".jsxbin")) {
-			await hostExecutorForAlign("runScriptFile", [filePath]);
-			return `Ran script: ${fileName}`;
-		}
-		if (lowerPath.endsWith(".ffx")) {
-			await hostExecutorForAlign("applyPreset", [filePath]);
-			return `Applied preset: ${fileName}`;
-		}
-		if (lowerPath.endsWith(".aex") || lowerPath.endsWith(".plugin")) {
-			// Look up the catalog matchName from the candidates cache. The
-			// filename stem is NOT a reliable matchName — After Effects stores
-			// matchName in the plugin's PICA resource, not the filename.
-			const snapshot = getCandidatesSnapshot();
-			const matchName = resolveEffectMatchName(
-				filePath,
-				snapshot?.pluginEffects ?? [],
-			);
-			await hostExecutorForAlign("applyEffectByMatchName", [matchName]);
-			return `Applied effect: ${fileName}`;
-		}
-		await hostExecutorForAlign("addFootage", [{ filePath, toComp: true }]);
-		return `Imported footage: ${fileName}`;
+		const exec = hostExecutor
+			? (method: string, args: unknown[]) =>
+					hostExecutor(method as never, args as never)
+			: null;
+		return importAeFile(filePath, hostCode, exec);
 	}, []);
 
 	const handleImportFile = useCallback(
