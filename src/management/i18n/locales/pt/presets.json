@@ -20,7 +20,8 @@
 		"alertSelectProperty": "Selecione pelo menos uma propriedade para aplicar a Expression.",
 		"alertNoExpressionProps": "As propriedades selecionadas não aceitam Expression.",
 		"alertApplyError": "Erro ao aplicar a Expression:",
-		"defaultDescription": "Predefinição de código: {{name}}"
+		"defaultDescription": "Predefinição de código: {{name}}",
+		"undoGroupName": "Ty Plus: Aplicar expressão"
 	},
 	"common": {
 		"browseFolder": "Procurar pasta",

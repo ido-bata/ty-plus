@@ -20,7 +20,8 @@
 		"alertSelectProperty": "Bitte mindestens eine Eigenschaft auswählen, um den Expression anzuwenden.",
 		"alertNoExpressionProps": "Die ausgewählten Eigenschaften akzeptieren keinen Expression.",
 		"alertApplyError": "Fehler beim Anwenden des Expression:",
-		"defaultDescription": "Code-Voreinstellung: {{name}}"
+		"defaultDescription": "Code-Voreinstellung: {{name}}",
+		"undoGroupName": "Ty Plus: Ausdruck anwenden"
 	},
 	"common": {
 		"browseFolder": "Ordner durchsuchen",

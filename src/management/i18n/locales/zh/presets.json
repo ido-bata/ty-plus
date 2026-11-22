@@ -20,7 +20,8 @@
 		"alertSelectProperty": "请至少选择一个属性以应用 Expression。",
 		"alertNoExpressionProps": "所选属性不支持 Expression。",
 		"alertApplyError": "应用 Expression 时出错：",
-		"defaultDescription": "代码预设：{{name}}"
+		"defaultDescription": "代码预设：{{name}}",
+		"undoGroupName": "Ty Plus: 应用表达式"
 	},
 	"common": {
 		"browseFolder": "浏览文件夹",

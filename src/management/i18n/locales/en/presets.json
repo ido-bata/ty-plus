@@ -20,7 +20,8 @@
 		"alertSelectProperty": "Please select at least one property to apply the expression.",
 		"alertNoExpressionProps": "Selected properties do not accept expressions.",
 		"alertApplyError": "Error applying expression:",
-		"defaultDescription": "Code preset: {{name}}"
+		"defaultDescription": "Code preset: {{name}}",
+		"undoGroupName": "Ty Plus: Apply Expression"
 	},
 	"common": {
 		"browseFolder": "Browse Folder",

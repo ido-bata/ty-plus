@@ -20,7 +20,8 @@
 		"alertSelectProperty": "Expression을 적용할 속성을 하나 이상 선택하세요.",
 		"alertNoExpressionProps": "선택한 속성은 Expression을 지원하지 않습니다.",
 		"alertApplyError": "Expression 적용 오류:",
-		"defaultDescription": "코드 프리셋: {{name}}"
+		"defaultDescription": "코드 프리셋: {{name}}",
+		"undoGroupName": "Ty Plus: 표현식 적용"
 	},
 	"common": {
 		"browseFolder": "폴더 찾아보기",

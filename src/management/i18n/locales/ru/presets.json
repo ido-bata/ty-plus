@@ -20,7 +20,8 @@
 		"alertSelectProperty": "Выберите хотя бы одно свойство для применения Expression.",
 		"alertNoExpressionProps": "Выбранные свойства не поддерживают Expression.",
 		"alertApplyError": "Ошибка применения Expression:",
-		"defaultDescription": "Пресет кода: {{name}}"
+		"defaultDescription": "Пресет кода: {{name}}",
+		"undoGroupName": "Ty Plus: Применить выражение"
 	},
 	"common": {
 		"browseFolder": "Обзор папки",

@@ -218,6 +218,9 @@ const buildExpressionScript = (expression: string): string => {
 	const alertApplyError = JSON.stringify(
 		i18n.t("presets:codePreset.alertApplyError"),
 	);
+	const undoGroupName = JSON.stringify(
+		i18n.t("presets:codePreset.undoGroupName"),
+	);
 	return [
 		"// ty-plus: expression preset",
 		"(function () {",
@@ -225,7 +228,7 @@ const buildExpressionScript = (expression: string): string => {
 		`  if (!(comp instanceof CompItem)) { alert(${alertSelectComp}); return; }`,
 		"  var props = comp.selectedProperties;",
 		`  if (!props || props.length === 0) { alert(${alertSelectProperty}); return; }`,
-		"  app.beginUndoGroup('ty-plus: apply expression');",
+		`  app.beginUndoGroup(${undoGroupName});`,
 		"  try {",
 		"    var count = 0;",
 		"    for (var i = 0; i < props.length; i++) {",

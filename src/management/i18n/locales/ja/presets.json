@@ -20,7 +20,8 @@
 		"alertSelectProperty": "Expression を適用するプロパティを 1 つ以上選択してください。",
 		"alertNoExpressionProps": "選択したプロパティは Expression を受け付けません。",
 		"alertApplyError": "Expression の適用エラー:",
-		"defaultDescription": "コードプリセット: {{name}}"
+		"defaultDescription": "コードプリセット: {{name}}",
+		"undoGroupName": "Ty Plus: 式を適用"
 	},
 	"common": {
 		"browseFolder": "フォルダを参照",

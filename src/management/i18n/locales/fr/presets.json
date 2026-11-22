@@ -20,7 +20,8 @@
 		"alertSelectProperty": "Veuillez sélectionner au moins une propriété pour appliquer l'Expression.",
 		"alertNoExpressionProps": "Les propriétés sélectionnées n'acceptent pas d'Expression.",
 		"alertApplyError": "Erreur lors de l'application de l'Expression :",
-		"defaultDescription": "Préréglage de code : {{name}}"
+		"defaultDescription": "Préréglage de code : {{name}}",
+		"undoGroupName": "Ty Plus: Appliquer l'expression"
 	},
 	"common": {
 		"browseFolder": "Parcourir le dossier",

@@ -20,7 +20,8 @@
 		"alertSelectProperty": "Seleziona almeno una proprietà per applicare l'Expression.",
 		"alertNoExpressionProps": "Le proprietà selezionate non accettano Expression.",
 		"alertApplyError": "Errore durante l'applicazione dell'Expression:",
-		"defaultDescription": "Preimpostazione di codice: {{name}}"
+		"defaultDescription": "Preimpostazione di codice: {{name}}",
+		"undoGroupName": "Ty Plus: Applica espressione"
 	},
 	"common": {
 		"browseFolder": "Sfoglia Cartella",
