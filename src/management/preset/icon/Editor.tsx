@@ -183,12 +183,7 @@ const framedBodyClass = css({
 	padding: "2",
 });
 
-function DefaultEmojiFields({
-	draft,
-	set,
-	disabled,
-	browseDir,
-}: EditorApi & { browseDir?: string }): JSX.Element {
+function DefaultEmojiFields({ draft, set, disabled }: EditorApi): JSX.Element {
 	const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
 	const emojiAnchorRef = useRef<HTMLDivElement | null>(null);
 
@@ -339,9 +334,7 @@ export function IconEditor({
 	const fields = (
 		<div className={fieldsWrapperClass}>
 			{draft.type === "text" ? <DefaultTextFields {...api} /> : null}
-			{draft.type === "emoji" ? (
-				<DefaultEmojiFields {...api} browseDir={browseDir} />
-			) : null}
+			{draft.type === "emoji" ? <DefaultEmojiFields {...api} /> : null}
 			{draft.type === "image" ? (
 				<DefaultImageFields {...api} browseDir={browseDir} />
 			) : null}

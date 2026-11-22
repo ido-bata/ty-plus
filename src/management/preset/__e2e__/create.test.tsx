@@ -209,7 +209,6 @@ vi.mock("@ty-plus/ui/fields/Input", () => ({
 		value,
 		onChange,
 		placeholder,
-		uiSize,
 		disabled,
 	}: {
 		label?: string;

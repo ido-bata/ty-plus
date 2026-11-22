@@ -63,7 +63,7 @@ export class DebugConsole {
 	}
 
 	private _render(): void {
-		this._root.render(<DebugConsoleReact host={this._host} />);
+		this._root.render(<DebugConsoleReact />);
 	}
 
 	private _bind(): void {
@@ -103,13 +103,7 @@ export class DebugConsole {
 
 type MessagesRef = RefObject<Element | null>;
 
-interface DebugConsoleReactProps {
-	host?: Element;
-}
-
-function DebugConsoleReact({
-	host = document.body,
-}: DebugConsoleReactProps): JSX.Element {
+function DebugConsoleReact(): JSX.Element {
 	const messagesRef = useRef<Element>(null);
 	const [messages, setMessages] = useState<readonly LogMessage[]>([]);
 	const [filter, setFilter] = useState<FilterLevel>("all");

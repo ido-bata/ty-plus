@@ -264,7 +264,7 @@ export function GenericPresetCreateDialog(): JSX.Element {
 					...(easingRecord ? { easing: easingRecord } : {}),
 				};
 			}}
-			renderForm={({ name, setName, setValue, values, icon, details }) => {
+			renderForm={({ name, setName, icon, details }) => {
 				// Use presetName if set from drop, otherwise use name from state
 				const displayName = presetName || name;
 				const handleNameChange = (value: string) => {

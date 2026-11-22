@@ -311,7 +311,6 @@ function WidgetCatalogResults({
 	markUserSelection,
 	onSelectType,
 	onActivateType,
-	listboxId,
 }: {
 	linearItems: readonly CatalogEntry[];
 	viewMode: "list" | "icons";
@@ -323,7 +322,6 @@ function WidgetCatalogResults({
 	markUserSelection: () => void;
 	onSelectType: (t: WidgetType) => void;
 	onActivateType: (t: WidgetType) => void;
-	listboxId: string;
 }): JSX.Element {
 	if (linearItems.length === 0) {
 		return (
@@ -699,7 +697,6 @@ export function AddWidgetCatalogPanel({
 					markUserSelection={markUserSelection}
 					onSelectType={onSelectType}
 					onActivateType={onActivateType}
-					listboxId={listboxId}
 				/>
 			</div>
 		</div>

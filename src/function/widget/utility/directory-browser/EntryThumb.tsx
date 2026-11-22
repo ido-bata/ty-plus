@@ -28,7 +28,6 @@ import { useFolderPreview } from "./hooks/useFolderPreview";
  * real timestamp into the wire payload.
  */
 function siblingEntryFor(
-	entry: FileBrowserEntry,
 	sidekickPath: string,
 	size: number,
 	modifiedAt: string,
@@ -125,7 +124,7 @@ export function EntryThumb(props: {
 		if (!sidekickPath) {
 			return null;
 		}
-		return siblingEntryFor(entry, sidekickPath, entry.size, entry.modifiedAt);
+		return siblingEntryFor(sidekickPath, entry.size, entry.modifiedAt);
 	}, [sidekickPath, entry]);
 	const sidekickThumb = useThumbnail(
 		sidekickEntry ?? {

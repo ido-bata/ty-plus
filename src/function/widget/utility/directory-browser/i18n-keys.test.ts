@@ -94,7 +94,7 @@ describe("directory browser i18n keys", () => {
 
 	it.each(extractedTKeys)(
 		"t(%s) in %s resolves to a string in en/widgets.json",
-		({ key, file }) => {
+		({ key }) => {
 			const value = resolveKey(enRoot, key);
 			expect(isLeafString(value)).toBe(true);
 		},
