@@ -99,7 +99,8 @@
 				"saveFolder": "Cartella di salvataggio",
 				"path": "Percorso del preset di animazione",
 				"pathPlaceholder": "Percorso .ffx esistente opzionale"
-			}
+			},
+			"defaultDescription": "Preset di animazione: {{name}}"
 		},
 		"footage": {
 			"title": "Preimpostazione Footage",
@@ -114,7 +115,8 @@
 		"layerComp": {
 			"title": "Preimpostazione Layer / Comp",
 			"lead": "Operazioni di layer e comp (trasforma, duplica, precompose). I file script salvati vengono eseguiti in After Effects.",
-			"defaultName": "Preimpostazione layer/comp"
+			"defaultName": "Preimpostazione layer/comp",
+			"defaultDescription": "Preset di livello/composizione: {{name}}"
 		},
 		"import": {
 			"title": "Importa Preimpostazione",
@@ -330,7 +332,8 @@
 			"noDirectories": "Nessuna directory rilevata",
 			"noPresets": "Nessun preset rilevato",
 			"iconLabel": "Icona della regola"
-		}
+		},
+		"fallbackTitle": "Gruppo"
 	},
 	"catalogAdd": {
 		"dialogTitle": "Aggiungi preset del catalogo da un percorso",
@@ -452,5 +455,10 @@
 		"presetIdsNotFound": "ID preimpostazione non trovati nel catalogo: {{ids}}",
 		"savedStatusManual": "Gruppo salvato ({{total}} elementi): {{id}}",
 		"scanRequiresCepNode": "La scansione delle cartelle richiede il browser di file CEP Node. Inserisci gli ID delle preimpostazioni manualmente o abilita CEP Node."
+	},
+	"deleteConfirm": {
+		"preset": "Eliminare il preset \"{{title}}\"?\n\nL'azione non può essere annullata.",
+		"group": "Eliminare il gruppo \"{{title}}\"?\n\nL'azione non può essere annullata.",
+		"untitled": "(senza titolo)"
 	}
 }

@@ -100,6 +100,7 @@
 		"applyingAnchorPoint": "Applying anchor point: {{pos}}...",
 		"anchorPointRequested": "Anchor point requested: {{pos}}",
 		"presetFailed": "Preset failed: {{message}}",
-		"widgetAdded": "Added {{name}}"
+		"widgetAdded": "Added {{name}}",
+		"layoutReset": "Workspace layout was reset."
 	}
 }

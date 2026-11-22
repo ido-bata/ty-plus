@@ -100,6 +100,7 @@
 		"applyingAnchorPoint": "Aplicando ponto de ancoragem: {{pos}}...",
 		"anchorPointRequested": "Ponto de ancoragem solicitado: {{pos}}",
 		"presetFailed": "Preset falhou: {{message}}",
-		"widgetAdded": "{{name}} adicionado"
+		"widgetAdded": "{{name}} adicionado",
+		"layoutReset": "O layout do espaço de trabalho foi redefinido."
 	}
 }

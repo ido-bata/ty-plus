@@ -91,7 +91,8 @@
 			"selectAnimatedProperty": "Selecciona al menos una propiedad animada",
 			"selectTwoKeyframes": "Selecciona al menos dos fotogramas clave en una propiedad animada",
 			"captureFailed": "No se pudo leer la aceleración de los fotogramas clave seleccionados"
-		}
+		},
+		"noKeyframesSelected": "Easing de Ty Plus: no hay fotogramas clave seleccionados — selecciona fotogramas clave en la línea de tiempo de AE primero"
 	},
 	"menu": {
 		"name": "Menú",
@@ -149,7 +150,9 @@
 		},
 		"noActiveComposition": "Ancla de Ty Plus: no hay ninguna composición activa",
 		"noLayerSelected": "Ancla de Ty Plus: no hay ninguna capa seleccionada",
-		"undoGroupName": "ty-plus establecer punto de anclaje"
+		"undoGroupName": "ty-plus establecer punto de anclaje",
+		"failed": "Error en el punto de anclaje de Ty Plus: {{detail}}",
+		"completedWithErrors": "Punto de anclaje de Ty Plus completado con errores: {{detail}}"
 	},
 	"info": {
 		"name": "Info",

@@ -100,6 +100,7 @@
 		"applyingAnchorPoint": "アンカーポイントを適用中: {{pos}}...",
 		"anchorPointRequested": "アンカーポイントが要求されました: {{pos}}",
 		"presetFailed": "プリセットが失敗しました: {{message}}",
-		"widgetAdded": "{{name}} を追加しました"
+		"widgetAdded": "{{name}} を追加しました",
+		"layoutReset": "ワークスペースレイアウトがリセットされました。"
 	}
 }

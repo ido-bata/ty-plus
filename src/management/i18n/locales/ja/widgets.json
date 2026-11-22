@@ -91,7 +91,8 @@
 			"selectAnimatedProperty": "アニメーション化されたプロパティを1つ以上選択してください",
 			"selectTwoKeyframes": "アニメーション化されたプロパティでキーフレームを2つ以上選択してください",
 			"captureFailed": "選択したキーフレームからイージングを読み取れませんでした"
-		}
+		},
+		"noKeyframesSelected": "Ty Plus イージング: キーフレームが選択されていません — AEタイムラインでキーフレームを選択してください"
 	},
 	"menu": {
 		"name": "メニュー",
@@ -149,7 +150,9 @@
 		},
 		"noActiveComposition": "Ty Plus アンカー: アクティブなコンポジションがありません",
 		"noLayerSelected": "Ty Plus アンカー: レイヤーが選択されていません",
-		"undoGroupName": "ty-plus アンカーポイントを設定"
+		"undoGroupName": "ty-plus アンカーポイントを設定",
+		"failed": "Ty Plus アンカー設定に失敗しました: {{detail}}",
+		"completedWithErrors": "Ty Plus アンカー設定はエラーありで完了しました: {{detail}}"
 	},
 	"info": {
 		"name": "情報",

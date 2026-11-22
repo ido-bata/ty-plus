@@ -12,6 +12,9 @@
 		"edit": "편집",
 		"close": "닫기"
 	},
+	"dialogs": {
+		"unsavedChangesConfirm": "저장되지 않은 변경 사항이 손실됩니다. 대화 상자를 닫으시겠습니까?"
+	},
 	"actions": {
 		"run": "실행",
 		"duplicate": "복제",
@@ -268,6 +271,15 @@
 		"initNotFound": "ty-plus-init.json을 찾을 수 없습니다(앱 루트 없음). 모든 쓰기 전에 온보딩을 완료해야 합니다.",
 		"initIncomplete": "ty-plus가 아직 초기화되지 않았습니다. ty-plus-init.json이 완료를 보고할 때까지 쓰기가 차단됩니다.",
 		"initSupportRootBlank": "ty-plus-init.json이 완료로 표시되어 있지만 supportRoot가 비어 있습니다.",
-		"hostExecFailed": "Ty Plus: {{message}}"
+		"hostExecFailed": "Ty Plus: {{message}}",
+		"notify": {
+			"generic": "오류가 발생했습니다",
+			"fsPermission": "권한이 거부되었습니다. 파일/폴더 권한을 확인하세요.",
+			"fsNotFound": "파일 또는 폴더를 찾을 수 없습니다. 이동되거나 삭제되었을 수 있습니다.",
+			"fsCorrupted": "데이터 파일이 손상되어 백업되었습니다. 다시 시도하세요.",
+			"aeEvalFailed": "After Effects 명령이 실패했습니다. 다시 시도하거나 AE를 재시작하세요.",
+			"aeNotAvailable": "After Effects 연결이 끊어졌습니다. 패널을 다시 시작하세요.",
+			"network": "네트워크 오류입니다. 연결을 확인하세요."
+		}
 	}
 }

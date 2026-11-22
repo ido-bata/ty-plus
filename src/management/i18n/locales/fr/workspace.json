@@ -100,6 +100,7 @@
 		"applyingAnchorPoint": "Application du point d'ancrage : {{pos}}...",
 		"anchorPointRequested": "Point d'ancrage demandé : {{pos}}",
 		"presetFailed": "Préréglage échoué : {{message}}",
-		"widgetAdded": "{{name}} ajouté"
+		"widgetAdded": "{{name}} ajouté",
+		"layoutReset": "La disposition de l'espace de travail a été réinitialisée."
 	}
 }

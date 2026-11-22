@@ -118,9 +118,13 @@ const USER_FACING_KEYS = new Set([
 const USER_FACING_KEY_SUFFIX =
 	/(Label|Text|Message|Description|Title|Hint|Placeholder|Caption|Summary|Tooltip|Heading|Eyebrow|Kicker|Subtitle|Tagline|Footnote|HelperText|ErrorMessage|EmptyMessage|Notice|Banner|Cta)$/;
 
-/** Functions whose string literal argument is shown to the user. */
-const USER_FACING_CALLS =
-	/\b(?:window\.)?(?:alert|confirm|prompt|notificationStore\.add)\s*\(\s*([`"'])/g;
+/**
+ * Functions whose string literal argument is shown to the user. Scanned at
+ * content level (not per line) because the literal may start on the line
+ * after the opening paren, and template literals may span lines.
+ */
+const USER_FACING_CALL_LITERAL_RE =
+	/\b(?:window\.)?(?:alert|confirm|prompt|notificationStore\.add)\s*\(\s*(["'`])((?:\\[\s\S]|(?!\1)[\s\S]){2,400}?)\1/g;
 
 /**
  * Explicit allowlist. Each entry is `relative/path.tsx:<line-substring>` —
@@ -257,13 +261,6 @@ const scanFile = async (file: string): Promise<Finding[]> => {
 			}
 		}
 
-		for (const m of line.matchAll(USER_FACING_CALLS)) {
-			// The regex only proves a quote follows '('; re-extract the literal.
-			const after = line.slice(m.index);
-			const lit = after.match(/^[^(]*\(\s*(["'`])([^"'`\n]{2,300})\1/);
-			if (lit) push(i, "ui-call", lit[2]);
-		}
-
 		for (const m of line.matchAll(TS_KEY_RE)) {
 			const [, key, , value] = m;
 			if (!USER_FACING_KEYS.has(key) && !USER_FACING_KEY_SUFFIX.test(key))
@@ -275,6 +272,16 @@ const scanFile = async (file: string): Promise<Finding[]> => {
 	// Content-level scan: throw literals may span multiple lines.
 	for (const m of content.matchAll(THROW_ERROR_RE)) {
 		pushAt(m.index ?? 0, "throw-error", m[2]);
+	}
+
+	// Content-level scan: user-facing call literals may start on the line
+	// after the opening paren. `${...}` interpolations are data, so require
+	// at least two literal alphabetic words (same rule as jsx-template).
+	for (const m of content.matchAll(USER_FACING_CALL_LITERAL_RE)) {
+		const literalText = (m[2] ?? "").replace(/\$\{[^}]*\}/g, " ");
+		const words = literalText.match(/[A-Za-z]{2,}/g) ?? [];
+		if (words.length < 2) continue;
+		pushAt(m.index ?? 0, "ui-call", m[2]);
 	}
 
 	if (isTsx) {

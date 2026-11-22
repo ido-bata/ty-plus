@@ -12,6 +12,9 @@
 		"edit": "编辑",
 		"close": "关闭"
 	},
+	"dialogs": {
+		"unsavedChangesConfirm": "未保存的更改将丢失。关闭对话框？"
+	},
 	"actions": {
 		"run": "运行",
 		"duplicate": "复制",
@@ -268,6 +271,15 @@
 		"initNotFound": "未找到 ty-plus-init.json（无应用根目录）。任何写入之前必须完成入门引导。",
 		"initIncomplete": "ty-plus 尚未初始化。在 ty-plus-init.json 报告完成之前，写入将被阻止。",
 		"initSupportRootBlank": "ty-plus-init.json 已标记为完成，但 supportRoot 为空。",
-		"hostExecFailed": "Ty Plus：{{message}}"
+		"hostExecFailed": "Ty Plus：{{message}}",
+		"notify": {
+			"generic": "发生错误",
+			"fsPermission": "权限被拒绝。请检查文件/文件夹权限。",
+			"fsNotFound": "未找到文件或文件夹。它可能已被移动或删除。",
+			"fsCorrupted": "数据文件已损坏并已备份。请重试。",
+			"aeEvalFailed": "After Effects 命令失败。请重试或重启 AE。",
+			"aeNotAvailable": "与 After Effects 的连接已断开。请重启面板。",
+			"network": "网络错误。请检查您的连接。"
+		}
 	}
 }

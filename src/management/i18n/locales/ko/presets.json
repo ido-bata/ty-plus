@@ -99,7 +99,8 @@
 				"saveFolder": "저장 폴더",
 				"path": "애니메이션 프리셋 경로",
 				"pathPlaceholder": "선택적 기존 .ffx 경로"
-			}
+			},
+			"defaultDescription": "애니메이션 프리셋: {{name}}"
 		},
 		"footage": {
 			"title": "푸트리지 프리셋",
@@ -114,7 +115,8 @@
 		"layerComp": {
 			"title": "레이어 / 컴프 프리셋",
 			"lead": "레이어 및 컴프 작업(변환, 복제, 프리컴포즈). 저장된 스크립트 파일은 After Effects에서 실행됩니다.",
-			"defaultName": "레이어/컴프 프리셋"
+			"defaultName": "레이어/컴프 프리셋",
+			"defaultDescription": "레이어/컴포지션 프리셋: {{name}}"
 		},
 		"import": {
 			"title": "가져오기 프리셋",
@@ -327,7 +329,8 @@
 			"noDirectories": "디렉터리가 감지되지 않았습니다",
 			"noPresets": "프리셋이 감지되지 않았습니다",
 			"iconLabel": "규칙 아이콘"
-		}
+		},
+		"fallbackTitle": "그룹"
 	},
 	"catalogAdd": {
 		"dialogTitle": "경로에서 카탈로그 프리셋 추가",
@@ -448,5 +451,10 @@
 		"presetIdsNotFound": "카탈로그에서 프리셋 ID를 찾을 수 없습니다: {{ids}}",
 		"savedStatusManual": "그룹 저장됨({{total}}개 항목): {{id}}",
 		"scanRequiresCepNode": "폴더 스캔에는 CEP Node 파일 브라우저가 필요합니다. 프리셋 ID를 직접 입력하거나 CEP Node를 활성화하세요."
+	},
+	"deleteConfirm": {
+		"preset": "프리셋 \"{{title}}\"을(를) 삭제하시겠습니까?\n\n이 작업은 되돌릴 수 없습니다.",
+		"group": "그룹 \"{{title}}\"을(를) 삭제하시겠습니까?\n\n이 작업은 되돌릴 수 없습니다.",
+		"untitled": "(제목 없음)"
 	}
 }

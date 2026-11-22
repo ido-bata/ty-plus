@@ -12,6 +12,9 @@
 		"edit": "Edit",
 		"close": "Close"
 	},
+	"dialogs": {
+		"unsavedChangesConfirm": "Unsaved changes will be lost. Close dialog?"
+	},
 	"actions": {
 		"run": "Run",
 		"duplicate": "Duplicate",
@@ -268,6 +271,15 @@
 		"initNotFound": "ty-plus-init.json not found (no app root). Onboarding must complete before any write.",
 		"initIncomplete": "ty-plus is not yet initialized. Writes are blocked until ty-plus-init.json reports completed.",
 		"initSupportRootBlank": "ty-plus-init.json is marked complete but supportRoot is blank.",
-		"hostExecFailed": "Ty Plus: {{message}}"
+		"hostExecFailed": "Ty Plus: {{message}}",
+		"notify": {
+			"generic": "An error occurred",
+			"fsPermission": "Permission denied. Please check file/folder permissions.",
+			"fsNotFound": "File or folder not found. It may have been moved or deleted.",
+			"fsCorrupted": "Data file is corrupted and has been backed up. Please retry.",
+			"aeEvalFailed": "After Effects command failed. Try again or restart AE.",
+			"aeNotAvailable": "After Effects connection lost. Please restart the panel.",
+			"network": "Network error. Please check your connection."
+		}
 	}
 }

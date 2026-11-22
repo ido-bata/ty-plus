@@ -99,7 +99,8 @@
 				"saveFolder": "Pasta de salvamento",
 				"path": "Caminho do preset de animação",
 				"pathPlaceholder": "Caminho .ffx existente opcional"
-			}
+			},
+			"defaultDescription": "Predefinição de animação: {{name}}"
 		},
 		"footage": {
 			"title": "Predefinição de footage",
@@ -114,7 +115,8 @@
 		"layerComp": {
 			"title": "Predefinição de camada/comp",
 			"lead": "Operações de camada e comp (transformar, duplicar, precompor). Arquivos de script salvos são executados no After Effects.",
-			"defaultName": "Predefinição de layer/comp"
+			"defaultName": "Predefinição de layer/comp",
+			"defaultDescription": "Predefinição de camada/composição: {{name}}"
 		},
 		"import": {
 			"title": "Predefinição de importação",
@@ -330,7 +332,8 @@
 			"noDirectories": "Nenhum diretório detetado",
 			"noPresets": "Nenhuma predefinição detetada",
 			"iconLabel": "Ícone de regra"
-		}
+		},
+		"fallbackTitle": "Grupo"
 	},
 	"catalogAdd": {
 		"dialogTitle": "Adicionar predefinição do catálogo a partir de um caminho",
@@ -452,5 +455,10 @@
 		"presetIdsNotFound": "IDs de predefinição não encontrados no catálogo: {{ids}}",
 		"savedStatusManual": "Grupo guardado ({{total}} itens): {{id}}",
 		"scanRequiresCepNode": "A verificação de pastas requer o navegador de arquivos do CEP Node. Introduza os IDs de predefinição manualmente ou ative o CEP Node."
+	},
+	"deleteConfirm": {
+		"preset": "Excluir a predefinição \"{{title}}\"?\n\nEsta ação não pode ser desfeita.",
+		"group": "Excluir o grupo \"{{title}}\"?\n\nEsta ação não pode ser desfeita.",
+		"untitled": "(sem título)"
 	}
 }

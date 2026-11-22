@@ -99,7 +99,8 @@
 				"saveFolder": "Save folder",
 				"path": "Animation preset path",
 				"pathPlaceholder": "Optional existing .ffx path"
-			}
+			},
+			"defaultDescription": "Animation preset: {{name}}"
 		},
 		"footage": {
 			"title": "Footage Preset",
@@ -114,7 +115,8 @@
 		"layerComp": {
 			"title": "Layer / Comp Preset",
 			"lead": "Layer and comp operations (transform, duplicate, precompose). Saved script files run in After Effects.",
-			"defaultName": "Layer / Comp Preset"
+			"defaultName": "Layer / Comp Preset",
+			"defaultDescription": "Layer/comp preset: {{name}}"
 		},
 		"import": {
 			"title": "Import Preset",
@@ -328,7 +330,8 @@
 			"noDirectories": "No directories detected",
 			"noPresets": "No presets detected",
 			"iconLabel": "Rule icon"
-		}
+		},
+		"fallbackTitle": "Group"
 	},
 	"catalogAdd": {
 		"dialogTitle": "Add catalog preset from path",
@@ -449,5 +452,10 @@
 		"presetIdsNotFound": "Preset IDs not found in catalog: {{ids}}",
 		"savedStatusManual": "Group saved ({{total}} items): {{id}}",
 		"scanRequiresCepNode": "Folder scanning requires CEP Node file browser. Enter preset IDs manually or enable CEP Node."
+	},
+	"deleteConfirm": {
+		"preset": "Delete preset \"{{title}}\"?\n\nThis cannot be undone.",
+		"group": "Delete group \"{{title}}\"?\n\nThis cannot be undone.",
+		"untitled": "(untitled)"
 	}
 }

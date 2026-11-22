@@ -12,6 +12,9 @@
 		"edit": "編集",
 		"close": "閉じる"
 	},
+	"dialogs": {
+		"unsavedChangesConfirm": "未保存の変更は失われます。ダイアログを閉じますか？"
+	},
 	"actions": {
 		"run": "実行",
 		"duplicate": "複製",
@@ -268,6 +271,15 @@
 		"initNotFound": "ty-plus-init.json が見つかりません（アプリルートなし）。書き込みの前にオンボーディングを完了する必要があります。",
 		"initIncomplete": "ty-plus はまだ初期化されていません。ty-plus-init.json が完了を報告するまで書き込みはブロックされます。",
 		"initSupportRootBlank": "ty-plus-init.json は完了とマークされていますが、supportRoot が空です。",
-		"hostExecFailed": "Ty Plus: {{message}}"
+		"hostExecFailed": "Ty Plus: {{message}}",
+		"notify": {
+			"generic": "エラーが発生しました",
+			"fsPermission": "権限がありません。ファイル/フォルダの権限を確認してください。",
+			"fsNotFound": "ファイルまたはフォルダが見つかりません。移動または削除された可能性があります。",
+			"fsCorrupted": "データファイルが破損しているためバックアップされました。再試行してください。",
+			"aeEvalFailed": "After Effectsコマンドが失敗しました。再試行するかAEを再起動してください。",
+			"aeNotAvailable": "After Effectsとの接続が切れました。パネルを再起動してください。",
+			"network": "ネットワークエラー。接続を確認してください。"
+		}
 	}
 }

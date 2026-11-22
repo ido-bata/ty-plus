@@ -99,7 +99,8 @@
 				"saveFolder": "保存フォルダ",
 				"path": "アニメーション・プリセットのパス",
 				"pathPlaceholder": "任意の既存 .ffx パス"
-			}
+			},
+			"defaultDescription": "アニメーションプリセット: {{name}}"
 		},
 		"footage": {
 			"title": "フッテージプリセット",
@@ -114,7 +115,8 @@
 		"layerComp": {
 			"title": "レイヤー / コンププリセット",
 			"lead": "レイヤー・コンポジション操作（変形・複製・プリコンポーズなど）。保存されたスクリプトファイルを実行します。",
-			"defaultName": "レイヤー／コンポジションプリセット"
+			"defaultName": "レイヤー／コンポジションプリセット",
+			"defaultDescription": "レイヤー/コンポジションプリセット: {{name}}"
 		},
 		"import": {
 			"title": "インポートプリセット",
@@ -327,7 +329,8 @@
 			"noDirectories": "ディレクトリが検出されませんでした",
 			"noPresets": "プリセットが検出されませんでした",
 			"iconLabel": "ルールアイコン"
-		}
+		},
+		"fallbackTitle": "グループ"
 	},
 	"catalogAdd": {
 		"dialogTitle": "パスからカタログプリセットを追加",
@@ -448,5 +451,10 @@
 		"presetIdsNotFound": "カタログにプリセット ID が見つかりません: {{ids}}",
 		"savedStatusManual": "グループを保存しました（{{total}} 件）: {{id}}",
 		"scanRequiresCepNode": "フォルダーのスキャンには CEP Node のファイルブラウザーが必要です。プリセット ID を手動で入力するか、CEP Node を有効にしてください。"
+	},
+	"deleteConfirm": {
+		"preset": "プリセット「{{title}}」を削除しますか？\n\nこの操作は取り消せません。",
+		"group": "グループ「{{title}}」を削除しますか？\n\nこの操作は取り消せません。",
+		"untitled": "（無題）"
 	}
 }

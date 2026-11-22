@@ -406,7 +406,11 @@ function useCodePresetSave(input: CodePresetSaveInput): {
 				type: "script",
 				title: name.trim(),
 				filePath: writtenPath,
-				description: description.trim() || `Code preset: ${name.trim()}`,
+				description:
+					description.trim() ||
+					i18n.t("presets:codePreset.defaultDescription", {
+						name: name.trim(),
+					}),
 				...(descriptionImage.trim()
 					? { descriptionImage: descriptionImage.trim() }
 					: {}),
@@ -483,7 +487,7 @@ export function Dialog(): JSX.Element {
 	const previewPreset: Preset = {
 		id: "icon-preview",
 		type: "script",
-		title: name.trim() || "Code Preset",
+		title: name.trim() || t("presetTool.code.defaultName"),
 		filePath: "ty-plus://icon-preview",
 		icon:
 			resolvedIcon ??

@@ -99,7 +99,8 @@
 				"saveFolder": "Dossier d'enregistrement",
 				"path": "Chemin du preset d'animation",
 				"pathPlaceholder": "Chemin .ffx existant facultatif"
-			}
+			},
+			"defaultDescription": "Préréglage d'animation : {{name}}"
 		},
 		"footage": {
 			"title": "Préréglage de footage",
@@ -114,7 +115,8 @@
 		"layerComp": {
 			"title": "Préréglage de calque/comp",
 			"lead": "Opérations de calque et de comp (transformer, dupliquer, précomposer). Les fichiers de script enregistrés s'exécutent dans After Effects.",
-			"defaultName": "Préréglage de calque/comp"
+			"defaultName": "Préréglage de calque/comp",
+			"defaultDescription": "Préréglage de calque/composition : {{name}}"
 		},
 		"import": {
 			"title": "Préréglage d'import",
@@ -330,7 +332,8 @@
 			"noDirectories": "Aucun dossier détecté",
 			"noPresets": "Aucun preset détecté",
 			"iconLabel": "Icône de règle"
-		}
+		},
+		"fallbackTitle": "Groupe"
 	},
 	"catalogAdd": {
 		"dialogTitle": "Ajouter un preset de catalogue depuis un chemin",
@@ -452,5 +455,10 @@
 		"presetIdsNotFound": "IDs de préréglage introuvables dans le catalogue : {{ids}}",
 		"savedStatusManual": "Groupe enregistré ({{total}} éléments) : {{id}}",
 		"scanRequiresCepNode": "L'analyse des dossiers nécessite le navigateur de fichiers CEP Node. Saisissez les IDs de préréglage manuellement ou activez CEP Node."
+	},
+	"deleteConfirm": {
+		"preset": "Supprimer le préréglage « {{title}} » ?\n\nCette action est irréversible.",
+		"group": "Supprimer le groupe « {{title}} » ?\n\nCette action est irréversible.",
+		"untitled": "(sans titre)"
 	}
 }

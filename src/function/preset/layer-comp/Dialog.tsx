@@ -249,7 +249,10 @@ export function Dialog(): JSX.Element {
 			persistOverride={async () => {
 				const recordTitle = name.trim();
 				const recordDescription =
-					description.trim() || `Layer/comp preset: ${name.trim()}`;
+					description.trim() ||
+					t("presetTool.layerComp.defaultDescription", {
+						name: name.trim(),
+					});
 				const resolvedIconValue = resolvedIcon ?? {
 					type: "text" as const,
 					param: { text: previewIconText },

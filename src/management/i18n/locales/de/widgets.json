@@ -91,7 +91,8 @@
 			"selectAnimatedProperty": "Wählen Sie mindestens eine animierte Eigenschaft aus",
 			"selectTwoKeyframes": "Wählen Sie mindestens zwei Keyframes einer animierten Eigenschaft aus",
 			"captureFailed": "Easing konnte nicht aus den ausgewählten Keyframes gelesen werden"
-		}
+		},
+		"noKeyframesSelected": "Ty Plus Easing: keine Keyframes ausgewählt — wählen Sie zuerst Keyframes in der AE-Timeline"
 	},
 	"menu": {
 		"name": "Menü",
@@ -149,7 +150,9 @@
 		},
 		"noActiveComposition": "Ty Plus-Anker: keine aktive Komposition",
 		"noLayerSelected": "Ty Plus-Anker: keine Ebene ausgewählt",
-		"undoGroupName": "ty-plus Ankerpunkt setzen"
+		"undoGroupName": "ty-plus Ankerpunkt setzen",
+		"failed": "Ty Plus Ankerpunkt fehlgeschlagen: {{detail}}",
+		"completedWithErrors": "Ty Plus Ankerpunkt mit Fehlern abgeschlossen: {{detail}}"
 	},
 	"info": {
 		"name": "Info",

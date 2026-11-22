@@ -1472,11 +1472,9 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 				// curve editing never spams notifications.
 				if (notifyEmptySelectionRef.current) {
 					notifyEmptySelectionRef.current = false;
-					notificationStore.add(
-						"Ty Plus easing: no keyframes selected — select keyframes in the AE timeline first",
-						"warning",
-						{ duration: 6000 },
-					);
+					notificationStore.add(t("easing.noKeyframesSelected"), "warning", {
+						duration: 6000,
+					});
 				}
 				return;
 			}

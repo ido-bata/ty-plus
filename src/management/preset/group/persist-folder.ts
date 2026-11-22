@@ -86,7 +86,7 @@ export const persistFolderGroupPreset = async (
 		const iconRules = buildIconRules(input.baseIcon, input.conditionRules);
 		await upsertGroupEntry(win, {
 			id: gid,
-			title: input.groupName.trim() || "Group",
+			title: input.groupName.trim() || i18n.t("presets:group.fallbackTitle"),
 			presetIds: manualIds,
 			...(iconRules && { iconRules }),
 		});

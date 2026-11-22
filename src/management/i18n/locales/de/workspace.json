@@ -100,6 +100,7 @@
 		"applyingAnchorPoint": "Ankerpunkt wird angewendet: {{pos}}...",
 		"anchorPointRequested": "Ankerpunkt angefordert: {{pos}}",
 		"presetFailed": "Preset fehlgeschlagen: {{message}}",
-		"widgetAdded": "{{name}} hinzugefügt"
+		"widgetAdded": "{{name}} hinzugefügt",
+		"layoutReset": "Das Workspace-Layout wurde zurückgesetzt."
 	}
 }

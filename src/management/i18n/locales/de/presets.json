@@ -99,7 +99,8 @@
 				"saveFolder": "Speicherordner",
 				"path": "Animations-Preset-Pfad",
 				"pathPlaceholder": "Optional vorhandener .ffx-Pfad"
-			}
+			},
+			"defaultDescription": "Animationsvorgabe: {{name}}"
 		},
 		"footage": {
 			"title": "Footage-Voreinstellung",
@@ -114,7 +115,8 @@
 		"layerComp": {
 			"title": "Ebene / Komposition-Voreinstellung",
 			"lead": "Ebene- und Kompositions-Operationen (Transform, Duplizieren, Precompose). Gespeicherte Skriptdateien werden in After Effects ausgeführt.",
-			"defaultName": "Layer/Comp-Voreinstellung"
+			"defaultName": "Layer/Comp-Voreinstellung",
+			"defaultDescription": "Ebenen-/Kompositionsvorgabe: {{name}}"
 		},
 		"import": {
 			"title": "Import-Voreinstellung",
@@ -328,7 +330,8 @@
 			"noDirectories": "Keine Verzeichnisse erkannt",
 			"noPresets": "Keine Presets erkannt",
 			"iconLabel": "Regel-Symbol"
-		}
+		},
+		"fallbackTitle": "Gruppe"
 	},
 	"catalogAdd": {
 		"dialogTitle": "Katalog-Preset aus Pfad hinzufügen",
@@ -449,5 +452,10 @@
 		"presetIdsNotFound": "Preset-IDs nicht im Katalog gefunden: {{ids}}",
 		"savedStatusManual": "Gruppe gespeichert ({{total}} Einträge): {{id}}",
 		"scanRequiresCepNode": "Das Scannen von Ordnern erfordert den CEP-Node-Dateibrowser. Preset-IDs manuell eingeben oder CEP Node aktivieren."
+	},
+	"deleteConfirm": {
+		"preset": "Vorgabe „{{title}}“ löschen?\n\nDies kann nicht rückgängig gemacht werden.",
+		"group": "Gruppe „{{title}}“ löschen?\n\nDies kann nicht rückgängig gemacht werden.",
+		"untitled": "(unbenannt)"
 	}
 }

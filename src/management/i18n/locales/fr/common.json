@@ -12,6 +12,9 @@
 		"edit": "Modifier",
 		"close": "Fermer"
 	},
+	"dialogs": {
+		"unsavedChangesConfirm": "Les modifications non enregistrées seront perdues. Fermer la boîte de dialogue ?"
+	},
 	"actions": {
 		"run": "Exécuter",
 		"duplicate": "Dupliquer",
@@ -268,6 +271,15 @@
 		"initNotFound": "ty-plus-init.json introuvable (pas de racine d'application). L'onboarding doit être terminé avant toute écriture.",
 		"initIncomplete": "ty-plus n'est pas encore initialisé. Les écritures sont bloquées jusqu'à ce que ty-plus-init.json signale l'achèvement.",
 		"initSupportRootBlank": "ty-plus-init.json est marqué comme terminé, mais supportRoot est vide.",
-		"hostExecFailed": "Ty Plus : {{message}}"
+		"hostExecFailed": "Ty Plus : {{message}}",
+		"notify": {
+			"generic": "Une erreur s'est produite",
+			"fsPermission": "Autorisation refusée. Vérifiez les autorisations du fichier/dossier.",
+			"fsNotFound": "Fichier ou dossier introuvable. Il a peut-être été déplacé ou supprimé.",
+			"fsCorrupted": "Le fichier de données est corrompu et a été sauvegardé. Veuillez réessayer.",
+			"aeEvalFailed": "La commande After Effects a échoué. Réessayez ou redémarrez AE.",
+			"aeNotAvailable": "Connexion à After Effects perdue. Veuillez redémarrer le panneau.",
+			"network": "Erreur réseau. Vérifiez votre connexion."
+		}
 	}
 }

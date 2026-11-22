@@ -100,6 +100,7 @@
 		"applyingAnchorPoint": "正在应用锚点：{{pos}}...",
 		"anchorPointRequested": "已请求锚点：{{pos}}",
 		"presetFailed": "预设失败：{{message}}",
-		"widgetAdded": "已添加 {{name}}"
+		"widgetAdded": "已添加 {{name}}",
+		"layoutReset": "工作区布局已重置。"
 	}
 }

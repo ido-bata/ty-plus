@@ -91,7 +91,8 @@
 			"selectAnimatedProperty": "Select at least one animated property",
 			"selectTwoKeyframes": "Select at least two keyframes on an animated property",
 			"captureFailed": "Could not read easing from the selected keyframes"
-		}
+		},
+		"noKeyframesSelected": "Ty Plus easing: no keyframes selected — select keyframes in the AE timeline first"
 	},
 	"menu": {
 		"name": "Menu",
@@ -149,7 +150,9 @@
 		},
 		"noActiveComposition": "Ty Plus anchor: no active composition",
 		"noLayerSelected": "Ty Plus anchor: no layer selected",
-		"undoGroupName": "ty-plus anchor (anim-safe)"
+		"undoGroupName": "ty-plus anchor (anim-safe)",
+		"failed": "Ty Plus anchor failed: {{detail}}",
+		"completedWithErrors": "Ty Plus anchor completed with errors: {{detail}}"
 	},
 	"info": {
 		"name": "Info",

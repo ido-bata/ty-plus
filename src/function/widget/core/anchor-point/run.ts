@@ -54,7 +54,9 @@ const notifyAnchorOutcome = (raw: string): void => {
 	}
 	if (result.startsWith("err:")) {
 		notificationStore.add(
-			`Ty Plus anchor failed: ${result.slice(4, 4 + MAX_NOTIFY_DETAIL)}`,
+			i18n.t("widgets:anchorPoint.failed", {
+				detail: result.slice(4, 4 + MAX_NOTIFY_DETAIL),
+			}),
 			"error",
 			{ duration: 8000 },
 		);
@@ -62,7 +64,9 @@ const notifyAnchorOutcome = (raw: string): void => {
 	}
 	if (result.startsWith("partial ")) {
 		notificationStore.add(
-			`Ty Plus anchor completed with errors: ${result.slice(8, 8 + MAX_NOTIFY_DETAIL)}`,
+			i18n.t("widgets:anchorPoint.completedWithErrors", {
+				detail: result.slice(8, 8 + MAX_NOTIFY_DETAIL),
+			}),
 			"warning",
 			{ duration: 8000 },
 		);

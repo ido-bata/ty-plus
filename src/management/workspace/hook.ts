@@ -2288,7 +2288,7 @@ export function useWorkspaceRuntime(root: Element | null): {
 			const runCtxPreset = (presetId: string): void => {
 				if (isPresetAssetMissing(presetId)) {
 					notificationStore.add(
-						"Preset asset is missing on disk — run is disabled.",
+						i18n.t("workspace:statusMessages.presetAssetMissing"),
 						"warning",
 						{ duration: 8000 },
 					);

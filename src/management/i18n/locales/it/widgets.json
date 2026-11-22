@@ -91,7 +91,8 @@
 			"selectAnimatedProperty": "Seleziona almeno una proprietà animata",
 			"selectTwoKeyframes": "Seleziona almeno due fotogrammi chiave su una proprietà animata",
 			"captureFailed": "Impossibile leggere l'easing dai fotogrammi chiave selezionati"
-		}
+		},
+		"noKeyframesSelected": "Easing Ty Plus: nessun fotogramma chiave selezionato — seleziona prima i fotogrammi chiave nella timeline di AE"
 	},
 	"menu": {
 		"name": "Menu",
@@ -149,7 +150,9 @@
 		},
 		"noActiveComposition": "Ancora Ty Plus: nessuna composizione attiva",
 		"noLayerSelected": "Ancora Ty Plus: nessun livello selezionato",
-		"undoGroupName": "ty-plus imposta punto di ancoraggio"
+		"undoGroupName": "ty-plus imposta punto di ancoraggio",
+		"failed": "Punto di ancoraggio Ty Plus non riuscito: {{detail}}",
+		"completedWithErrors": "Punto di ancoraggio Ty Plus completato con errori: {{detail}}"
 	},
 	"info": {
 		"name": "Info",

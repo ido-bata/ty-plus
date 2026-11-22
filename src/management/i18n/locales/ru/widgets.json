@@ -91,7 +91,8 @@
 			"selectAnimatedProperty": "Выберите хотя бы одно анимированное свойство",
 			"selectTwoKeyframes": "Выберите хотя бы два ключевых кадра анимированного свойства",
 			"captureFailed": "Не удалось прочитать сглаживание из выбранных ключевых кадров"
-		}
+		},
+		"noKeyframesSelected": "Сглаживание Ty Plus: не выбраны ключевые кадры — сначала выберите ключевые кадры на таймлайн AE"
 	},
 	"menu": {
 		"name": "Меню",
@@ -149,7 +150,9 @@
 		},
 		"noActiveComposition": "Якорь Ty Plus: нет активной композиции",
 		"noLayerSelected": "Якорь Ty Plus: не выбран слой",
-		"undoGroupName": "ty-plus установка опорной точки"
+		"undoGroupName": "ty-plus установка опорной точки",
+		"failed": "Не удалось установить опорную точку Ty Plus: {{detail}}",
+		"completedWithErrors": "Опорная точка Ty Plus завершена с ошибками: {{detail}}"
 	},
 	"info": {
 		"name": "Info",

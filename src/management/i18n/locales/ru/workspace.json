@@ -100,6 +100,7 @@
 		"applyingAnchorPoint": "Применение точки привязки: {{pos}}...",
 		"anchorPointRequested": "Запрошена точка привязки: {{pos}}",
 		"presetFailed": "Сбой пресета: {{message}}",
-		"widgetAdded": "Добавлено: {{name}}"
+		"widgetAdded": "Добавлено: {{name}}",
+		"layoutReset": "Макет рабочей области был сброшен."
 	}
 }

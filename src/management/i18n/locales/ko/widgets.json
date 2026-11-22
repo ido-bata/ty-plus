@@ -91,7 +91,8 @@
 			"selectAnimatedProperty": "애니메이션 속성을 하나 이상 선택하세요",
 			"selectTwoKeyframes": "애니메이션 속성에서 키프레임을 두 개 이상 선택하세요",
 			"captureFailed": "선택한 키프레임에서 이징을 읽을 수 없습니다"
-		}
+		},
+		"noKeyframesSelected": "Ty Plus 이징: 키프레임이 선택되지 않았습니다 — 먼저 AE 타임라인에서 키프레임을 선택하세요"
 	},
 	"menu": {
 		"name": "메뉴",
@@ -149,7 +150,9 @@
 		},
 		"noActiveComposition": "Ty Plus 앵커: 활성 컴포지션이 없습니다",
 		"noLayerSelected": "Ty Plus 앵커: 레이어가 선택되지 않았습니다",
-		"undoGroupName": "ty-plus 앵커 포인트 설정"
+		"undoGroupName": "ty-plus 앵커 포인트 설정",
+		"failed": "Ty Plus 앵커 포인트 설정 실패: {{detail}}",
+		"completedWithErrors": "Ty Plus 앵커 포인트가 오류와 함께 완료됨: {{detail}}"
 	},
 	"info": {
 		"name": "정보",

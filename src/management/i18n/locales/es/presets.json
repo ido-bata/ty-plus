@@ -99,7 +99,8 @@
 				"saveFolder": "Carpeta de guardado",
 				"path": "Ruta del preset de animación",
 				"pathPlaceholder": "Ruta .ffx existente opcional"
-			}
+			},
+			"defaultDescription": "Preajuste de animación: {{name}}"
 		},
 		"footage": {
 			"title": "Preajuste de metraje",
@@ -114,7 +115,8 @@
 		"layerComp": {
 			"title": "Preajuste de capa/comp",
 			"lead": "Operaciones de capa y comp (transformar, duplicar, precomponer). Los archivos de script guardados se ejecutan en After Effects.",
-			"defaultName": "Preajuste de capa/comp"
+			"defaultName": "Preajuste de capa/comp",
+			"defaultDescription": "Preajuste de capa/composición: {{name}}"
 		},
 		"import": {
 			"title": "Preajuste de importación",
@@ -330,7 +332,8 @@
 			"noDirectories": "No se detectaron directorios",
 			"noPresets": "No se detectaron presets",
 			"iconLabel": "Icono de regla"
-		}
+		},
+		"fallbackTitle": "Grupo"
 	},
 	"catalogAdd": {
 		"dialogTitle": "Añadir preset del catálogo desde una ruta",
@@ -452,5 +455,10 @@
 		"presetIdsNotFound": "IDs de preajuste no encontrados en el catálogo: {{ids}}",
 		"savedStatusManual": "Grupo guardado ({{total}} elementos): {{id}}",
 		"scanRequiresCepNode": "El análisis de carpetas requiere el explorador de archivos de CEP Node. Introduce los IDs de preajuste manualmente o activa CEP Node."
+	},
+	"deleteConfirm": {
+		"preset": "¿Eliminar el preajuste \"{{title}}\"?\n\nEsta acción no se puede deshacer.",
+		"group": "¿Eliminar el grupo \"{{title}}\"?\n\nEsta acción no se puede deshacer.",
+		"untitled": "(sin título)"
 	}
 }

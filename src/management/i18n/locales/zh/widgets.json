@@ -91,7 +91,8 @@
 			"selectAnimatedProperty": "请至少选择一个已动画化的属性",
 			"selectTwoKeyframes": "请在已动画化的属性上选择至少两个关键帧",
 			"captureFailed": "无法从所选关键帧读取缓动"
-		}
+		},
+		"noKeyframesSelected": "Ty Plus 缓动：未选择关键帧 — 请先在 AE 时间轴中选择关键帧"
 	},
 	"menu": {
 		"name": "菜单",
@@ -149,7 +150,9 @@
 		},
 		"noActiveComposition": "Ty Plus 锚点：没有活动的合成",
 		"noLayerSelected": "Ty Plus 锚点：未选择图层",
-		"undoGroupName": "ty-plus 设置锚点"
+		"undoGroupName": "ty-plus 设置锚点",
+		"failed": "Ty Plus 锚点设置失败：{{detail}}",
+		"completedWithErrors": "Ty Plus 锚点设置完成，但存在错误：{{detail}}"
 	},
 	"info": {
 		"name": "Info",

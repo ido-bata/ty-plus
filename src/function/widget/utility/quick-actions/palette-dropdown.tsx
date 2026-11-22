@@ -62,6 +62,7 @@ function PaletteRowsList({
 						selected={selected}
 						widgetInstanceId={widgetInstanceId}
 						tl={tl}
+						t={t}
 						onSelect={onSelect}
 					/>
 				);

@@ -100,6 +100,7 @@
 		"applyingAnchorPoint": "앵커 포인트 적용 중: {{pos}}...",
 		"anchorPointRequested": "앵커 포인트 요청됨: {{pos}}",
 		"presetFailed": "프리셋 실패: {{message}}",
-		"widgetAdded": "{{name}} 추가됨"
+		"widgetAdded": "{{name}} 추가됨",
+		"layoutReset": "워크스페이스 레이아웃이 재설정되었습니다."
 	}
 }

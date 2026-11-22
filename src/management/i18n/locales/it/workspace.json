@@ -100,6 +100,7 @@
 		"applyingAnchorPoint": "Applicazione del punto di ancoraggio: {{pos}}...",
 		"anchorPointRequested": "Punto di ancoraggio richiesto: {{pos}}",
 		"presetFailed": "Preset non riuscito: {{message}}",
-		"widgetAdded": "{{name}} aggiunto"
+		"widgetAdded": "{{name}} aggiunto",
+		"layoutReset": "Il layout dell'area di lavoro è stato reimpostato."
 	}
 }

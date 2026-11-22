@@ -99,7 +99,8 @@
 				"saveFolder": "保存文件夹",
 				"path": "动画预设路径",
 				"pathPlaceholder": "可选的现有 .ffx 路径"
-			}
+			},
+			"defaultDescription": "动画预设：{{name}}"
 		},
 		"footage": {
 			"title": " footage 预设",
@@ -114,7 +115,8 @@
 		"layerComp": {
 			"title": "图层/合成预设",
 			"lead": "图层和合成操作（变换、复制、预合成）。保存的脚本文件在 After Effects 中运行。",
-			"defaultName": "图层/合成预设"
+			"defaultName": "图层/合成预设",
+			"defaultDescription": "图层/合成预设：{{name}}"
 		},
 		"import": {
 			"title": "导入预设",
@@ -327,7 +329,8 @@
 			"noDirectories": "未检测到目录",
 			"noPresets": "未检测到预设",
 			"iconLabel": "规则图标"
-		}
+		},
+		"fallbackTitle": "群组"
 	},
 	"catalogAdd": {
 		"dialogTitle": "从路径添加目录预设",
@@ -448,5 +451,10 @@
 		"presetIdsNotFound": "目录中未找到预设 ID：{{ids}}",
 		"savedStatusManual": "组已保存（{{total}} 项）：{{id}}",
 		"scanRequiresCepNode": "文件夹扫描需要 CEP Node 文件浏览器。请手动输入预设 ID 或启用 CEP Node。"
+	},
+	"deleteConfirm": {
+		"preset": "删除预设“{{title}}”？\n\n此操作无法撤销。",
+		"group": "删除组“{{title}}”？\n\n此操作无法撤销。",
+		"untitled": "（未命名）"
 	}
 }
