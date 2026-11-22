@@ -21,11 +21,17 @@ export const importFile = async (
 	const fileName = fileNameFromPath(filePath);
 	if (lowerPath.endsWith(".jsx") || lowerPath.endsWith(".jsxbin")) {
 		await hostExecutor("runScriptFile", [filePath]);
-		return `Ran script: ${fileName}`;
+		return i18n.t("widgets:directoryBrowser.actions.ranScript", {
+			name: fileName,
+			defaultValue: "Ran script: {{name}}",
+		});
 	}
 	if (lowerPath.endsWith(".ffx")) {
 		await hostExecutor("applyPreset", [filePath]);
-		return `Applied preset: ${fileName}`;
+		return i18n.t("widgets:directoryBrowser.actions.appliedPreset", {
+			name: fileName,
+			defaultValue: "Applied preset: {{name}}",
+		});
 	}
 	if (lowerPath.endsWith(".aex") || lowerPath.endsWith(".plugin")) {
 		const effectId = fileStemFromPath(filePath).trim();
@@ -33,8 +39,14 @@ export const importFile = async (
 			throw new Error(`effectId is required for plugin: ${fileName}`); // i18n-exempt: internal diagnostic — not rendered as UI copy
 		}
 		await hostExecutor("applyEffectByMatchName", [effectId]);
-		return `Applied effect: ${fileName}`;
+		return i18n.t("widgets:directoryBrowser.actions.appliedEffect", {
+			name: fileName,
+			defaultValue: "Applied effect: {{name}}",
+		});
 	}
 	await hostExecutor("addFootage", [{ filePath, toComp: true }]);
-	return `Imported footage: ${fileName}`;
+	return i18n.t("widgets:directoryBrowser.actions.importedFootage", {
+		name: fileName,
+		defaultValue: "Imported footage: {{name}}",
+	});
 };
