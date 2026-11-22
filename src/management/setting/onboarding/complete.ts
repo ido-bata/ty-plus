@@ -20,7 +20,7 @@ import { indexFromPanelId } from "@/management/storage/workspace/layout-store";
 import { writeSettings } from "@/management/storage/workspace/store";
 import { initializeWidgetStorage } from "@/management/widget/initialize";
 import type { WidgetRecord } from "@/management/widget/record/types";
-import { initializeWorkspaceStorage } from "@/management/workspace/initialize";
+import { initializeWorkspaceStorage } from "@/management/workspace/core/initialize";
 import type { LayoutItem } from "@/management/workspace/layout/grid-document";
 import { logWorkspace } from "@/management/workspace/onboarding/flow-log";
 import type {

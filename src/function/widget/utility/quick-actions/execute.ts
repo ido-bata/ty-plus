@@ -11,8 +11,8 @@
  */
 import { detectCepHostCode } from "@/management/ae/cep/runtime";
 import { traceExecute } from "@/management/preset/execution/lifecycle-trace";
-import { getPreset } from "@/management/preset/use-cases";
-import { executeWorkspacePresetForWindow } from "@/management/workspace/runtime";
+import { getPreset } from "@/management/preset/operations";
+import { executeWorkspacePresetForWindow } from "@/management/workspace/core/runtime";
 
 export const executeQuickActionPreset = async (
 	win: Window,

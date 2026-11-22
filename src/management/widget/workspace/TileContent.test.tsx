@@ -13,9 +13,9 @@ import {
 	vi,
 } from "vitest";
 import { Align } from "../../../function/widget/core/align/Component";
+import { createInitialSurfaceState } from "../../workspace/core/state";
 import { DEFAULT_GRID } from "../../workspace/layout/default";
 import type { Layout } from "../../workspace/layout/grid-document";
-import { createInitialSurfaceState } from "../../workspace/state";
 import { getWidgetDescriptor } from "../registry";
 import { Widget } from "./TileContent";
 

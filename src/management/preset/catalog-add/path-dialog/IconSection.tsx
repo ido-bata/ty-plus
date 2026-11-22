@@ -4,8 +4,8 @@ import type { ArchiveIconDraft } from "@/management/preset/catalog-add/archive-i
 import { iconDraftToPresetIcon } from "@/management/preset/catalog-add/archive-icon";
 import type { Preset } from "@/management/preset/contract";
 import { PresetIconEditor } from "@/management/preset/icon/Editor";
-import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
-import { glyphBoxFillClass } from "@/management/preset/workspace/glyph-classes";
+import { glyphBoxFillClass } from "@/management/preset/workspace/glyph/classes";
+import { FramedPresetGlyph } from "@/management/preset/workspace/glyph/WorkspaceGlyph";
 
 export function PathDialogIconSection(props: {
 	draft: ArchiveIconDraft;

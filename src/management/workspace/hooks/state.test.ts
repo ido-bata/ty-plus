@@ -15,7 +15,7 @@ vi.mock("@/management/widget/registry", () => ({
 
 import { createInstanceId } from "@/management/storage/ids";
 import type { Tile } from "@/management/workspace/surface/tiles";
-import { createInitialSurfaceState } from "../state";
+import { createInitialSurfaceState } from "../core/state";
 import { ensurePrimaryPanelWidgets } from "./state";
 
 describe("ensurePrimaryPanelWidgets", () => {

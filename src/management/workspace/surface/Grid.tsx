@@ -17,6 +17,7 @@ import type { Preset } from "@/management/preset/contract";
 import { shouldHideGroupedMemberSurfaceTile } from "@/management/preset/group/surface-visibility";
 import { registry } from "@/management/widget/registry";
 import { toStyle } from "@/management/workspace/background/style";
+import type { SurfaceState } from "@/management/workspace/core/state";
 import {
 	computeGridTracks,
 	getTileRect,
@@ -38,7 +39,6 @@ import {
 	ATTR_WIDGET_INSTANCE_ID,
 	ATTR_WIDGET_TILE,
 } from "@/management/workspace/placement/types";
-import type { SurfaceState } from "@/management/workspace/state";
 import {
 	usePanelState,
 	useSelectedSurfaceIndices,

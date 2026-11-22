@@ -3,8 +3,8 @@ import type {
 	IconRule,
 	IconRuleFilter,
 } from "@/management/preset/group/catalog";
-import type { PresetIconEditorDraft } from "@/management/preset/icon/draft";
-import { presetIconDraftToPresetIcon } from "@/management/preset/icon/draft";
+import type { PresetIconEditorDraft } from "@/management/preset/icon/editor-state";
+import { presetIconDraftToPresetIcon } from "@/management/preset/icon/editor-state";
 
 const escapeRegex = (value: string): string =>
 	value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");

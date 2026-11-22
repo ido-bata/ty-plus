@@ -1,9 +1,9 @@
 import { isWidgetType, type WidgetType } from "@/function/widget/contract";
 import { inferWidgetTypeFromLegacyLayoutId } from "@/function/widget/legacy-parse";
 import { createInstanceId, isOpaqueInstanceId } from "@/management/storage/ids";
+import type { SurfaceState } from "@/management/workspace/core/state";
 import type { Layout } from "@/management/workspace/layout/grid-document";
 import { tileIdResolvesAsWidget } from "@/management/workspace/placement/resolve";
-import type { SurfaceState } from "@/management/workspace/state";
 import type { Tile } from "@/management/workspace/surface/tiles";
 
 const resolveLayoutEntry = (w: Layout): Layout => {

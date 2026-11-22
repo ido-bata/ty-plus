@@ -1,5 +1,5 @@
 import { IconButton } from "@ty-plus/ui/controls/IconButton";
-import { Icon } from "@ty-plus/ui/icons/Icon";
+import { Icon } from "@ty-plus/ui/Icon";
 import { cx } from "@ty-plus/ui/util/cx";
 import { AlertCircle, Check, Download } from "lucide-react";
 import { type ReactElement, useEffect, useRef } from "react";
@@ -10,7 +10,7 @@ import {
 	ringDashOffset,
 	stageToProgress,
 } from "./download-progress";
-import type { DownloadProgress } from "./use-cases";
+import type { DownloadProgress } from "./operations";
 
 type DownloadStage = DownloadProgress["stage"];
 

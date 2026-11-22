@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import type { Preset } from "@/management/preset/contract";
 import { presetIconText } from "@/management/preset/contract";
-import { createPresetIconDraft } from "@/management/preset/icon/draft";
+import { createPresetIconDraft } from "@/management/preset/icon/editor-state";
 import { css } from "@/styled-system/css";
 import { IconEditor } from "./Editor";
 

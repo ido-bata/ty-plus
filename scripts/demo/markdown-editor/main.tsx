@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createRoot } from "react-dom/client";
-import { CepProvider } from "@/management/ae/cep/contexts/Context";
+import { CepProvider } from "@/management/ae/cep/contexts/CepContext";
 import { MarkdownLiveEditor } from "@/management/preset/markdown/LiveEditor";
 
 const INITIAL = `**Bold** and _italic_ text with \`code\` and [links](https://example.com)

@@ -5,7 +5,7 @@ import {
 	useIsPresetAssetUnverifiable,
 } from "@/management/preset/assets/use-health";
 import type { Preset, PresetType } from "@/management/preset/contract";
-import { WorkspacePresetGlyph } from "@/management/preset/workspace/glyph";
+import { WorkspacePresetGlyph } from "@/management/preset/workspace/glyph/WorkspaceGlyph";
 import { css } from "@/styled-system/css";
 import { rootFilePresetType } from "./scoring";
 import type { PluginEffectIndexRow, QuickActionRootFileRow } from "./types";

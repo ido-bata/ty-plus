@@ -145,7 +145,9 @@ export const buildWindowsSignArgs = (
 		];
 	}
 	if (config.pfxPath === undefined || config.pfxPassword === undefined) {
-		throw new Error("[sign-worker] windows sign args require a certificate config");
+		throw new Error(
+			"[sign-worker] windows sign args require a certificate config",
+		);
 	}
 	return [
 		tool,
@@ -203,7 +205,10 @@ export const buildSignPlan = (
 	// Without a notary profile the signature is the whole evidence chain: sign,
 	// verify locally, and ship (ADR-0003 Amendment 1).
 	if (!config.notaryProfile) {
-		return [sign, ["codesign", "--verify", "--strict", "--verbose=2", binaryPath]];
+		return [
+			sign,
+			["codesign", "--verify", "--strict", "--verbose=2", binaryPath],
+		];
 	}
 	return [
 		sign,

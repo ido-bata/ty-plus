@@ -3,8 +3,8 @@
  * Provides computePresetGrid for events.ts.
  */
 
+import type { SurfaceState } from "@/management/workspace/core/state";
 import { tileIdResolvesAsWidget } from "@/management/workspace/placement/resolve";
-import type { SurfaceState } from "@/management/workspace/state";
 import { classifyFromCatalogs } from "@/management/workspace/surface/tiles";
 
 type PresetGridItem = {

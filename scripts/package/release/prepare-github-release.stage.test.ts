@@ -23,7 +23,10 @@ import { stageGitHubRelease } from "./prepare-github-release";
 let distRoot: string;
 const head = "a".repeat(40);
 
-const writeArtifact = (name: string, body: string): { file: string; sha256: string; bytes: number } => {
+const writeArtifact = (
+	name: string,
+	body: string,
+): { file: string; sha256: string; bytes: number } => {
 	const file = path.join(distRoot, name);
 	mkdirSync(path.dirname(file), { recursive: true });
 	writeFileSync(file, body);
@@ -104,7 +107,10 @@ describe("GitHub release staging", () => {
 	it("rejects an artifact whose bytes no longer match the manifest", async () => {
 		const m = manifest();
 		// Tamper *after* hashing: staging must re-hash, not trust the manifest.
-		writeFileSync(path.join(distRoot, "app.ty-plus.zip"), "tampered-after-hash");
+		writeFileSync(
+			path.join(distRoot, "app.ty-plus.zip"),
+			"tampered-after-hash",
+		);
 		await expect(stage({ manifest: m })).rejects.toThrow(
 			/missing or invalid release artifact/,
 		);
@@ -156,7 +162,11 @@ describe("GitHub release staging", () => {
 		};
 		const staged = await stage({ manifest: rebuilt });
 		const onDisk = readFileSync(
-			path.join(distRoot, "github-release", "ty-plus-v0.11.0-insider.2-macos.zip"),
+			path.join(
+				distRoot,
+				"github-release",
+				"ty-plus-v0.11.0-insider.2-macos.zip",
+			),
 			"utf8",
 		);
 		expect(onDisk).toBe("rebuilt-bytes");

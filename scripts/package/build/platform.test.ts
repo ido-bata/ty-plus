@@ -40,9 +40,9 @@ describe("build platform resolution", () => {
 	});
 
 	it("rejects an unknown platform rather than guessing", () => {
-		expect(() => buildPlatformOverride({ TY_PLUS_BUILD_PLATFORM: "linux" })).toThrow(
-			/unsupported TY_PLUS_BUILD_PLATFORM/,
-		);
+		expect(() =>
+			buildPlatformOverride({ TY_PLUS_BUILD_PLATFORM: "linux" }),
+		).toThrow(/unsupported TY_PLUS_BUILD_PLATFORM/);
 		// The rejection must survive resolution too, not silently fall back.
 		expect(() =>
 			resolveBuildPlatform("darwin", { TY_PLUS_BUILD_PLATFORM: "win64" }),

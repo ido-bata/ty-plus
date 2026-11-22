@@ -9,8 +9,8 @@ import {
 	type FileBrowserEntry,
 } from "@/management/storage/file-browser-service";
 import { FileTypeGlyph } from "@/management/storage/file-type-glyph";
-import { ThumbnailTile } from "@/management/storage/thumbnail/ThumbnailTile";
-import { useThumbnail } from "@/management/storage/thumbnail/useThumbnail";
+import { ThumbnailTile } from "@/management/storage/thumbnail/Tile";
+import { useThumbnail } from "@/management/storage/thumbnail/use-thumb";
 import { css } from "@/styled-system/css";
 import { useFolderPreview } from "./hooks/useFolderPreview";
 

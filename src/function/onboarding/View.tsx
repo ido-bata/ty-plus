@@ -34,7 +34,7 @@ import {
 	resolveCurrentFolderPath,
 } from "@/function/onboarding/usePaths";
 import type { WidgetType } from "@/function/widget";
-import { useCep } from "@/management/ae/cep/contexts/Context";
+import { useCep } from "@/management/ae/cep/contexts/CepContext";
 import { selectFolder } from "@/management/ae/cep/dialog-shim/bolt";
 import { createCepSurfaceTransport } from "@/management/ae/cep/transport";
 import { useAfterEffectsFilesGateway } from "@/management/ae/files/gateway-context";
@@ -80,11 +80,11 @@ import {
 } from "@/management/storage/read/scoped-directory";
 import { FileEntryList } from "@/management/storage/ui/file-entry/FileEntryList";
 import type { WidgetRecord } from "@/management/widget/record/types";
+import { createInitialSurfaceState } from "@/management/workspace/core/state";
 import type { Layout } from "@/management/workspace/layout/grid-document";
 import { publishShellMessage } from "@/management/workspace/messaging/publish-shell-message";
 import { logWorkspace } from "@/management/workspace/onboarding/flow-log";
 import { buildOnboardingLayoutItems } from "@/management/workspace/placement/gateway";
-import { createInitialSurfaceState } from "@/management/workspace/state";
 import { SHELL_CHANNELS } from "@/management/workspace/surface/contract";
 import {
 	layoutsFromSurface,

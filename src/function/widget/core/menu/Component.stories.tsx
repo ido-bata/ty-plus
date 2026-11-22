@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
 import { Group, MenuWidget } from "@/function/widget/core/menu/Component";
+import type { SurfaceState } from "@/management/workspace/core/state";
+import { createInitialSurfaceState } from "@/management/workspace/core/state";
 import type { Layout } from "@/management/workspace/layout/grid-document";
-import type { SurfaceState } from "@/management/workspace/state";
-import { createInitialSurfaceState } from "@/management/workspace/state";
 import { css } from "@/styled-system/css";
 
 type Args = {

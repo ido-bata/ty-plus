@@ -13,10 +13,10 @@
 
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { WidgetType } from "@/function/widget";
+import { createInitialSurfaceState, type SurfaceState } from "../core/state";
 import { type EventsOptions, setupInteractionEvents } from "../events/handler";
 import { DEFAULT_GRID } from "../layout/default";
 import { isWidgetSurfaceIndex } from "../placement/resolve";
-import { createInitialSurfaceState, type SurfaceState } from "../state";
 import {
 	classifyFromCatalogs,
 	layoutsFromSurface,

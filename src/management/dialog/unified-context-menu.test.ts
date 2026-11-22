@@ -9,8 +9,8 @@ import {
 	updateEasingSettingsCache,
 } from "@/management/dialog/unified-context-menu";
 import { CTX_MENU_IDS } from "@/management/dialog/unified-context-menu-constants";
+import type { SurfaceState } from "@/management/workspace/core/state";
 import { EASING_CURVE_COLOR_ROWS } from "@/management/workspace/literals/easing-color-catalog";
-import type { SurfaceState } from "@/management/workspace/state";
 import type { Snapshot } from "@/management/workspace/undo/history";
 
 describe("buildEasingLabelColorMenu (per-curve-category label color submenu)", () => {

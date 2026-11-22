@@ -7,15 +7,15 @@ import { type JSX, type ReactNode, useMemo, useState } from "react";
 import type { Preset } from "@/management/preset/contract";
 import type { CodeEditorValue } from "@/management/preset/editor/Code";
 import { Editor } from "@/management/preset/editor/View";
+import { PresetIconEditor } from "@/management/preset/icon/Editor";
 import {
 	createPresetIconDraft,
 	type PresetIconEditorDraft,
 	presetIconDraftToPresetIcon,
-} from "@/management/preset/icon/draft";
-import { PresetIconEditor } from "@/management/preset/icon/Editor";
+} from "@/management/preset/icon/editor-state";
 import { MarkdownLiveEditor } from "@/management/preset/markdown/LiveEditor";
-import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
-import { glyphBoxFillClass } from "@/management/preset/workspace/glyph-classes";
+import { glyphBoxFillClass } from "@/management/preset/workspace/glyph/classes";
+import { FramedPresetGlyph } from "@/management/preset/workspace/glyph/WorkspaceGlyph";
 import { ColorTokenEditor } from "@/management/setting/dialog/components/ColorTokenEditor";
 import { NumberTokenEditor } from "@/management/setting/dialog/components/NumberTokenEditor";
 import { TokenEditor } from "@/management/setting/dialog/components/TokenEditor";

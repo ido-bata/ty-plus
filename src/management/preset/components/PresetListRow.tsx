@@ -7,7 +7,7 @@ import {
 } from "@/management/preset/assets/use-health";
 import { basenamePath } from "@/management/preset/catalog-browser/preset-browser-helpers";
 import type { Preset } from "@/management/preset/contract";
-import { PresetGlyphById } from "@/management/preset/workspace/glyph-by-id";
+import { PresetGlyphById } from "@/management/preset/workspace/glyph/by-id";
 import { css } from "@/styled-system/css";
 
 export type PresetListRowProps = {

@@ -2,7 +2,7 @@ import { PathField } from "@ty-plus/ui/fields/PathField";
 import { isIMEComposing } from "@ty-plus/ui/util/keyboard";
 import { FolderOpen } from "lucide-react";
 import { type JSX, useCallback, useEffect, useRef, useState } from "react";
-import { useCep } from "@/management/ae/cep/contexts/Context";
+import { useCep } from "@/management/ae/cep/contexts/CepContext";
 import { selectFolder } from "@/management/ae/cep/dialog-shim/bolt";
 import { createCepSurfaceTransport } from "@/management/ae/cep/transport";
 import { useSettings } from "@/management/setting/context";

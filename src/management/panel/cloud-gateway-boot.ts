@@ -53,7 +53,7 @@ import { runCepEvalScript } from "@/management/storage/cep";
 import {
 	initCloudGateway,
 	initUpdateInstaller,
-} from "@/management/workspace/services";
+} from "@/management/workspace/core/services";
 
 declare const __APP_VERSION__: string;
 

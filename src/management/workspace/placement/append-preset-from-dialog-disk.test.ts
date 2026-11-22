@@ -55,7 +55,7 @@ vi.mock("@/management/workspace/layout/persistence-root", () => ({
 	resolveWorkspacePersistenceManagedRoot: resolveRootMock,
 }));
 
-vi.mock("@/management/workspace/services", () => ({
+vi.mock("@/management/workspace/core/services", () => ({
 	getDataServices: () => {
 		if (servicesRef.mode === "null") return null as never;
 		if (servicesRef.mode === "throws") {

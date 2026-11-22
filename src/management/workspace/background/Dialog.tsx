@@ -12,7 +12,6 @@ import {
 import { DialogShell } from "@/management/dialog/index";
 import { DialogFooterActions } from "@/management/dialog/shell/Footer";
 import { useDialogClose } from "@/management/dialog/useClose";
-import { BackgroundPreview } from "@/management/workspace/background/BackgroundPreview";
 import type {
 	Background,
 	Layer,
@@ -25,6 +24,7 @@ import {
 	DEFAULT_COLOR,
 	migrateToLayers,
 } from "@/management/workspace/background/layer-factory";
+import { BackgroundPreview } from "@/management/workspace/background/Preview";
 import { parse } from "@/management/workspace/background/parse";
 import { toStyle } from "@/management/workspace/background/style";
 import {

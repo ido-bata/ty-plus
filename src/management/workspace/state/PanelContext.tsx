@@ -1,6 +1,6 @@
 import { createContext, type JSX, type ReactNode, useContext } from "react";
 
-import type { SurfaceState } from "@/management/workspace/state";
+import type { SurfaceState } from "@/management/workspace/core/state";
 
 /**
  * Full panel state. Selection lives in `SelectionContext` so that

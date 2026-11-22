@@ -5,10 +5,10 @@ import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 import { CTX_MENU_IDS } from "@/management/dialog/unified-context-menu-constants";
+import type { SurfaceState } from "@/management/workspace/core/state";
 import type { Layout } from "@/management/workspace/layout/grid-document";
 import { catalogRefsForSurfaceIds } from "@/management/workspace/placement/resolve";
 import { ATTR_WIDGET_INSTANCE_ID } from "@/management/workspace/placement/types";
-import type { SurfaceState } from "@/management/workspace/state";
 import { DATA_OPENER_WORKSPACE_PANEL } from "@/management/workspace/surface/opener-panel-id";
 import { css } from "@/styled-system/css";
 

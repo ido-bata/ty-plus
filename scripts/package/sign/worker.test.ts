@@ -9,9 +9,7 @@ import {
 
 describe("resolveSignWorkerConfig", () => {
 	it("fails closed on Windows when signing is unconfigured", () => {
-		expect(() => resolveSignWorkerConfig("windows", {})).toThrow(
-			/#32 \/ #2/,
-		);
+		expect(() => resolveSignWorkerConfig("windows", {})).toThrow(/#32 \/ #2/);
 	});
 
 	it("prefers the certificate store: no password on the command line", () => {
@@ -161,7 +159,9 @@ describe("sign plans", () => {
 			"a".repeat(40),
 			"worker.exe",
 		]);
-		expect(buildSignPlan(windowsStoreConfig, "worker.exe", "sub.zip")).toHaveLength(1);
+		expect(
+			buildSignPlan(windowsStoreConfig, "worker.exe", "sub.zip"),
+		).toHaveLength(1);
 	});
 
 	it("signs, then notarizes a zip submission — not the raw Mach-O", () => {

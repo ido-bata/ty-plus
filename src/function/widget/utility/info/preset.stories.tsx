@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
-// PresetInfoWidget pulls in `@/management/preset/workspace/glyph` and
+// PresetInfoWidget pulls in `@/management/preset/workspace/glyph/WorkspaceGlyph` and
 // `@/management/preset/group/info-resolution` (via workspace state plumbing),
 // whose barrel re-export chain drags in `@/management/preset` →
 // `editor/textmate.ts`, which requires the CEP-only inline-oniguruma-wasm

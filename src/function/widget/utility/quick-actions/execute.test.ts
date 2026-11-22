@@ -26,11 +26,11 @@ const cepRuntimeState = vi.hoisted(() => {
 	return { hostCode: "AEFT" };
 });
 
-vi.mock("@/management/preset/use-cases", () => ({
+vi.mock("@/management/preset/operations", () => ({
 	getPreset: (id: string) => useCasesState.getPreset(id),
 }));
 
-vi.mock("@/management/workspace/runtime", () => ({
+vi.mock("@/management/workspace/core/runtime", () => ({
 	executeWorkspacePresetForWindow: (
 		win: Window,
 		hostCode: string,

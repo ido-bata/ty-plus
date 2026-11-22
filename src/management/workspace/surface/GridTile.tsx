@@ -11,11 +11,11 @@ import type { CSSProperties, JSX } from "react";
 import { memo } from "react";
 import type { Preset } from "@/management/preset/contract";
 import { Widget } from "@/management/widget/workspace/TileContent";
+import type { SurfaceState, Tile } from "@/management/workspace/core/state";
 import type {
 	GridSettings,
 	Layout,
 } from "@/management/workspace/layout/grid-document";
-import type { SurfaceState, Tile } from "@/management/workspace/state";
 import type { CatalogTileBodyRenderer } from "@/management/workspace/surface/grid-catalog-tile-context";
 import { WorkspaceTileFrame } from "@/management/workspace/surface/TileFrame";
 import { css } from "@/styled-system/css";

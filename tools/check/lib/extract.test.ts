@@ -94,9 +94,9 @@ describe("getNamedSymbols", () => {
 	});
 
 	it("extracts function declarations", () => {
-		const source = `function helper() { return 1; }\n`;
+		const source = `function formatValue() { return 1; }\n`;
 		const symbols = getNamedSymbols("test.ts", source);
-		expect(symbols.map((s) => s.name)).toContain("helper");
+		expect(symbols.map((s) => s.name)).toContain("formatValue");
 	});
 
 	it("extracts class declarations", () => {

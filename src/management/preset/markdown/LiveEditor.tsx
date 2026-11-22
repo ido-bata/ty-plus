@@ -3,7 +3,7 @@ import { css, cx } from "@/styled-system/css";
 import type { EditorState } from "./commands";
 import { EditorLines } from "./EditorLines";
 import { PlaceholderOverlay } from "./PlaceholderOverlay";
-import { useMarkdownContextMenu } from "./useMarkdownContextMenu";
+import { useContextMenu } from "./use-context-menu";
 
 export type MarkdownLiveEditorProps = {
 	id?: string;
@@ -145,7 +145,7 @@ export function MarkdownLiveEditor({
 		[onChange],
 	);
 
-	useMarkdownContextMenu({
+	useContextMenu({
 		getEditorState: () => ({
 			value,
 			selection: selection ?? { start: 0, end: 0 },

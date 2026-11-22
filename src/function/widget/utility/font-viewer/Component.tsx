@@ -20,7 +20,7 @@ import {
 	type IconTileAspect,
 	iconTileMediaClass,
 } from "@/management/preset";
-import type { Layout } from "@/management/workspace/state";
+import type { Layout } from "@/management/workspace/core/state";
 import { useCatalogViewMode } from "@/shared/util/catalog-view-mode";
 import { useIconGridScale } from "@/shared/util/icon-grid-scale";
 import { useTileAspect } from "@/shared/util/tile-aspect";

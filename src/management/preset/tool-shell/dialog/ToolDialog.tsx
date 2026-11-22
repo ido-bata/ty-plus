@@ -28,12 +28,12 @@ import {
 	createPresetIconDraft,
 	presetIconDraftToPresetIcon,
 	presetIconToDraft,
-} from "@/management/preset/icon/draft";
+} from "@/management/preset/icon/editor-state";
+import { upsertLocalPreset } from "@/management/preset/operations";
 import {
 	buildPresetToolContextMenuPayload,
 	PRESET_TOOL_CTX,
 } from "@/management/preset/tool-shell/context-menu";
-import { upsertLocalPreset } from "@/management/preset/use-cases";
 import { createInstanceId } from "@/management/storage/ids";
 import { css } from "@/styled-system/css";
 import {

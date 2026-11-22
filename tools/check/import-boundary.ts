@@ -145,7 +145,7 @@ export const resolveModuleOwner = (
 	// semantics". The effect was that the ownership rules below never fired
 	// for aliased imports — and virtually every import in src/ is aliased —
 	// so `management -> function` was unenforced in practice. That is how
-	// `management/preset/workspace/GlyphCachedImage.tsx` came to import a
+	// `management/preset/workspace/glyph/CachedImage.tsx` came to import a
 	// widget leaf, which `docs/architecture/widget-boundary.md` forbids.
 	if (specifier.startsWith("@/")) {
 		const rest = specifier.slice(2);

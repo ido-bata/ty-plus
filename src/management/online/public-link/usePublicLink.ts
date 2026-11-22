@@ -20,7 +20,7 @@ import { resolveBundledPublicLink } from "@/management/online/public-link/bundle
 import { readPublicLinks } from "@/management/storage/read/cache-store";
 import { resolveSettingsRoot } from "@/management/storage/workspace/store";
 import { writePublicLinks } from "@/management/storage/write/cache-store";
-import { openUrlInDefaultBrowser } from "@/management/workspace/hooks/helpers";
+import { openUrlInDefaultBrowser } from "@/management/workspace/hooks/open-surfaces";
 
 type PublicLinkStatus = "idle" | "loading" | "ready" | "error";
 

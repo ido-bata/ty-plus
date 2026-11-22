@@ -24,7 +24,7 @@ The generated `styled-system/` directory is ignored by Git; the explicit PandaCS
 ## Quality checks
 
 ```sh
-bun scripts/check/check-readme-locales.ts
+bun scripts/check/readme-locales.ts
 bun run ci:static
 bun run ci:unit
 bun run ci:storybook
@@ -46,7 +46,7 @@ Do not open feature PRs directly against `main`. Source code, comments and commi
 
 ## Documentation and translations
 
-The source of truth for in-app supported languages is `src/management/i18n/config.ts` (`SUPPORTED_LOCALES`). English `README.md` is the canonical public entrypoint; each other supported language has `README.<locale>.md`. When changing factual release information or caveats, update all localizations and run `bun scripts/check/check-readme-locales.ts`.
+The source of truth for in-app supported languages is `src/management/i18n/config.ts` (`SUPPORTED_LOCALES`). English `README.md` is the canonical public entrypoint; each other supported language has `README.<locale>.md`. When changing factual release information or caveats, update all localizations and run `bun scripts/check/readme-locales.ts`.
 
 Please do not present illustrative SVG diagrams from the user guide as screenshots of the released version; release screenshots should come from an actual AE session and carry the tested version/platform.
 

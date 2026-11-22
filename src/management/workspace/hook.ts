@@ -10,7 +10,7 @@ import { cx } from "@ty-plus/ui/util/cx";
 import { isIMEComposing } from "@ty-plus/ui/util/keyboard";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { WidgetType } from "@/function/widget";
-import { useCep } from "@/management/ae/cep/contexts/Context";
+import { useCep } from "@/management/ae/cep/contexts/CepContext";
 import { tyPlusExtensionId } from "@/management/ae/cep/extension-id";
 import { createCepHostExecutor } from "@/management/ae/cep/host-executor";
 import { detectCepHostCode } from "@/management/ae/cep/runtime";
@@ -67,14 +67,14 @@ import {
 	releaseDropPlacementFromState,
 	releaseGroupPreset,
 } from "@/management/preset/group/release";
-import { writePresetToolHandoff } from "@/management/preset/tool-handoff-file";
-import { PRESET_TOOL_OPEN_BUS_CHANNEL } from "@/management/preset/tool-open-channel";
 import {
 	duplicatePreset,
 	getPreset,
 	listPresets,
 	removeLocalPreset,
-} from "@/management/preset/use-cases";
+} from "@/management/preset/operations";
+import { writePresetToolHandoff } from "@/management/preset/tool-handoff-file";
+import { PRESET_TOOL_OPEN_BUS_CHANNEL } from "@/management/preset/tool-open-channel";
 import {
 	PRESET_HOVER_EVENT,
 	type WorkspacePresetHoverDetail,
@@ -106,13 +106,20 @@ import {
 } from "@/management/storage/file-browser-service";
 import { openWidgetAddDialogSurface } from "@/management/widget/open-add-dialog";
 import { registry } from "@/management/widget/registry";
+import { executeWorkspacePresetForWindow } from "@/management/workspace/core/runtime";
+import type { SurfaceState } from "@/management/workspace/core/state";
+import {
+	createInitialSurfaceState,
+	type stripObsoleteLayouts,
+	withPresetInfoSnapshot,
+} from "@/management/workspace/core/state";
 import { dispatchWorkspaceWsActionClick } from "@/management/workspace/events/dispatch-ws-action-click";
 import { setupInteractionEvents } from "@/management/workspace/events/handler";
 import { gridSettingsFromSettingsJson } from "@/management/workspace/grid-settings";
 import {
 	resolveDuplicateHit,
 	runDuplicatePreset,
-} from "@/management/workspace/hook-duplicate-preset";
+} from "@/management/workspace/hooks/duplicate-preset";
 import {
 	openPresetEditSurface as openPresetEditSurfaceImpl,
 	openPresetToolSurface as openPresetToolSurfaceImpl,
@@ -155,13 +162,6 @@ import {
 } from "@/management/workspace/placement/resolve";
 import { mergeWidgetPlacementIntoState } from "@/management/workspace/placement/widget-bus";
 import { CommitReconcile } from "@/management/workspace/reconcile-stub";
-import { executeWorkspacePresetForWindow } from "@/management/workspace/runtime";
-import type { SurfaceState } from "@/management/workspace/state";
-import {
-	createInitialSurfaceState,
-	type stripObsoleteLayouts,
-	withPresetInfoSnapshot,
-} from "@/management/workspace/state";
 import { normalizeState } from "@/management/workspace/state/normalize";
 import {
 	type BackgroundPayload,
@@ -189,9 +189,11 @@ import {
 	requestOpenBackgroundPanel,
 	requestOpenWorkspaceShellTool,
 } from "./hooks/dialogs";
-import { openDebugConsole, openUrlInDefaultBrowser } from "./hooks/helpers";
-
 import { importFile } from "./hooks/host-exec";
+import {
+	openDebugConsole,
+	openUrlInDefaultBrowser,
+} from "./hooks/open-surfaces";
 import {
 	ensurePrimaryPanelWidgets,
 	remapSurfaceSelectionByPreservedTileIds,

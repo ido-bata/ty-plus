@@ -388,7 +388,7 @@
 		"file": "src/management/online/catalog/Dialog.tsx",
 		"line": 4,
 		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/icons/Icon\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"message": "import from \"@ty-plus/ui/Icon\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
@@ -423,7 +423,7 @@
 		"file": "src/management/online/catalog/DownloadProgressIconButton.tsx",
 		"line": 2,
 		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/icons/Icon\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"message": "import from \"@ty-plus/ui/Icon\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
@@ -451,7 +451,7 @@
 		"file": "src/management/online/catalog/PresetLibraryEmptyState.tsx",
 		"line": 2,
 		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/icons/Icon\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"message": "import from \"@ty-plus/ui/Icon\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
@@ -465,7 +465,7 @@
 		"file": "src/management/online/notification/Center.tsx",
 		"line": 2,
 		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/icons/Icon\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"message": "import from \"@ty-plus/ui/Icon\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
@@ -910,14 +910,14 @@
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
-		"file": "src/management/preset/workspace/glyph.tsx",
+		"file": "src/management/preset/workspace/glyph/WorkspaceGlyph.tsx",
 		"line": 1,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
-		"file": "src/management/preset/workspace/glyph.tsx",
+		"file": "src/management/preset/workspace/glyph/WorkspaceGlyph.tsx",
 		"line": 212,
 		"rule": "inline-style",
 		"message": "inline style sets fontSize — appearance must come from css() and the token system",
@@ -969,7 +969,7 @@
 		"file": "src/management/setting/dialog/sections/AccordionSection.tsx",
 		"line": 1,
 		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/icons/Icon\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"message": "import from \"@ty-plus/ui/Icon\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{

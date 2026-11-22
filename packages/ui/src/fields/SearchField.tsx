@@ -1,5 +1,5 @@
 import { Input } from "@ty-plus/ui/fields/Input";
-import { Icon } from "@ty-plus/ui/icons/Icon";
+import { Icon } from "@ty-plus/ui/Icon";
 import { cx } from "@ty-plus/ui/util/cx";
 import type { LucideIcon } from "lucide-react";
 import { X } from "lucide-react";

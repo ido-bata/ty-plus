@@ -6,6 +6,7 @@
  */
 
 import { isWidgetType, type WidgetType } from "@/function/widget/contract";
+import type { SurfaceState } from "@/management/workspace/core/state";
 import {
 	autoPlaceRequestsOnGrid,
 	DEFAULT_TILE_HEIGHT,
@@ -13,7 +14,6 @@ import {
 	type PresetPlacementRequest,
 } from "@/management/workspace/placement/gateway";
 import { collectPresetRectsFromTiles } from "@/management/workspace/placement/preset-bus";
-import type { SurfaceState } from "@/management/workspace/state";
 import type { LayoutPayload } from "@/management/workspace/surface/contract";
 import type { Tile } from "@/management/workspace/surface/tiles";
 import {

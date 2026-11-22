@@ -1,4 +1,11 @@
-import { mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import {
+	mkdirSync,
+	mkdtempSync,
+	readdirSync,
+	readFileSync,
+	rmSync,
+	writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
@@ -43,7 +50,9 @@ afterEach(() => {
 
 describe("distribution pack worker pruning", () => {
 	it("keeps the declared worker and prunes a stale other-platform version", async () => {
-		write(path.join(root, "versions", "macos-sha", "macos", "operation-worker"));
+		write(
+			path.join(root, "versions", "macos-sha", "macos", "operation-worker"),
+		);
 		write(
 			path.join(root, "versions", "win-sha", "windows", "operation-worker.exe"),
 		);

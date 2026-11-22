@@ -1,8 +1,8 @@
 import { cx, Icon } from "@ty-plus/ui";
 import { FolderOpen } from "lucide-react";
 import type { JSX } from "react";
+import { PresetIconContent } from "@/management/preset/icon-content";
 import { imageSrcForBrowser } from "@/management/preset/image-src-for-browser";
-import { PresetIconContent } from "@/management/preset/preset-icon";
 import {
 	findSiblingImagePathForPresetFile,
 	type SiblingListingEntry,
@@ -124,7 +124,7 @@ export function FileEntryGlyph({
 		}
 	}
 	// A preset icon is a preset-domain value, so its rendering is the preset
-	// feature's debt (`management/preset/preset-icon.tsx`).
+	// feature's debt (`management/preset/icon-content.tsx`).
 	if (entry.icon) {
 		const content = <PresetIconContent icon={entry.icon} size={s} />;
 		if (content) {

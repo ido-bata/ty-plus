@@ -1,5 +1,5 @@
 import type { JSX, ReactNode } from "react";
-import type { CompInfo } from "@/management/workspace/state";
+import type { CompInfo } from "@/management/workspace/core/state";
 import { css } from "@/styled-system/css";
 import { formatDuration, formatFrameRate, rgbToHex } from "./format";
 

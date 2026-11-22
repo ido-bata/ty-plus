@@ -2,12 +2,12 @@ import { type JSX, useEffect, useMemo, useState } from "react";
 
 import type { Preset } from "@/management/preset/contract";
 import { resolvePresetsForInfoByCatalogIds } from "@/management/preset/group/info-resolution";
-import { catalogRefsForSurfaceIds } from "@/management/workspace/placement/resolve";
 import type {
 	GridSettings,
 	Layout,
 	SurfaceState,
-} from "@/management/workspace/state";
+} from "@/management/workspace/core/state";
+import { catalogRefsForSurfaceIds } from "@/management/workspace/placement/resolve";
 import { css } from "@/styled-system/css";
 import { CompSections } from "./comp-sections";
 import {

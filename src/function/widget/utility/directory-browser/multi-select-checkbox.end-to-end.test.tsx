@@ -29,7 +29,7 @@ import { cleanup, fireEvent, render, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import type { FileBrowserEntry } from "@/management/storage/file-browser-service";
-import type { SurfaceState } from "@/management/workspace/state";
+import type { SurfaceState } from "@/management/workspace/core/state";
 
 const mocks = vi.hoisted(() => {
 	const listDirectory = vi.fn();
@@ -78,7 +78,7 @@ mocks.listDirectory.mockImplementation(async (dir: string) => {
 	return [];
 });
 
-vi.mock("@/management/ae/cep/contexts/Context", () => ({
+vi.mock("@/management/ae/cep/contexts/CepContext", () => ({
 	useCep: () => ({ isCep: true }),
 }));
 
@@ -132,7 +132,7 @@ vi.mock("@/management/preset", () => ({
 	readIconTileAspect: () => "square" as const,
 }));
 
-vi.mock("@/management/preset/use-cases", () => ({
+vi.mock("@/management/preset/operations", () => ({
 	getPreset: vi.fn(),
 }));
 
@@ -154,7 +154,7 @@ vi.mock("@/management/storage/file-browser-service", () => ({
 	}),
 }));
 
-vi.mock("@/management/workspace/runtime", () => ({
+vi.mock("@/management/workspace/core/runtime", () => ({
 	executeWorkspacePresetForWindow: vi.fn(),
 }));
 

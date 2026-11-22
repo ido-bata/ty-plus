@@ -20,7 +20,7 @@ import {
 } from "react";
 import { useTranslation } from "react-i18next";
 import { resolveEffectMatchName } from "@/function/widget/utility/directory-browser/plugin-match-name";
-import { useCep } from "@/management/ae/cep/contexts/Context";
+import { useCep } from "@/management/ae/cep/contexts/CepContext";
 import { selectFolder } from "@/management/ae/cep/dialog-shim/bolt";
 import { createCepHostExecutor } from "@/management/ae/cep/host-executor";
 import { detectCepHostCode } from "@/management/ae/cep/runtime";
@@ -46,12 +46,12 @@ import {
 	type GroupEntry,
 	parseGroupFromText,
 } from "@/management/preset/group/catalog";
+import { getPreset } from "@/management/preset/operations";
 import {
 	parentDirectoryOf,
 	siblingPathKey,
 	stemWithoutExtension,
 } from "@/management/preset/sibling-thumbnail";
-import { getPreset } from "@/management/preset/use-cases";
 import { readSettings } from "@/management/storage";
 import { getCandidatesSnapshot } from "@/management/storage/candidates-cache/runtime";
 import {
@@ -64,8 +64,8 @@ import {
 	type FileEntry,
 	FileEntryList,
 } from "@/management/storage/ui/file-entry/FileEntryList";
-import { executeWorkspacePresetForWindow } from "@/management/workspace/runtime";
-import type { SurfaceState } from "@/management/workspace/state";
+import { executeWorkspacePresetForWindow } from "@/management/workspace/core/runtime";
+import type { SurfaceState } from "@/management/workspace/core/state";
 import { useCatalogViewMode } from "@/shared/util/catalog-view-mode";
 import { useIconGridScale } from "@/shared/util/icon-grid-scale";
 import { useTileAspect } from "@/shared/util/tile-aspect";

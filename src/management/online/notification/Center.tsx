@@ -1,5 +1,5 @@
 import { IconButton } from "@ty-plus/ui/controls/IconButton";
-import { Icon } from "@ty-plus/ui/icons/Icon";
+import { Icon } from "@ty-plus/ui/Icon";
 import { cx } from "@ty-plus/ui/util/cx";
 import { ArrowLeft, Check, LoaderCircle, Mail, RefreshCw } from "lucide-react";
 import {
@@ -20,8 +20,8 @@ import { fetchNotificationFeed } from "@/management/online/notification/feed";
 import {
 	loadNotificationsStore,
 	saveNotificationsStore,
-} from "@/management/online/notification/notifications";
-import { tryGetDataServices } from "@/management/workspace/services";
+} from "@/management/online/notification/store";
+import { tryGetDataServices } from "@/management/workspace/core/services";
 import { css } from "@/styled-system/css";
 
 // ── Style constants ──────────────────────────────────────────────────────────

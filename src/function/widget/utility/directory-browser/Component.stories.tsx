@@ -2,8 +2,8 @@ import type { Meta, StoryObj } from "@storybook/react";
 
 import { DirectoryBrowserWidget } from "@/function/widget/utility/directory-browser/Component";
 import type { Preset } from "@/management/preset/contract";
-import type { SurfaceState } from "@/management/workspace/state";
-import { createInitialSurfaceState } from "@/management/workspace/state";
+import type { SurfaceState } from "@/management/workspace/core/state";
+import { createInitialSurfaceState } from "@/management/workspace/core/state";
 import { css } from "@/styled-system/css";
 
 /**

@@ -3,7 +3,7 @@ import type { Decorator } from "@storybook/react";
 import {
 	type CepContextValue,
 	CepProvider,
-} from "@/management/ae/cep/contexts/Context";
+} from "@/management/ae/cep/contexts/CepContext";
 
 const DEFAULT_CEP_VALUE: CepContextValue = {
 	isCep: false,

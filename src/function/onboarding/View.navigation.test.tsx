@@ -36,7 +36,7 @@ vi.mock("@/function/onboarding/usePaths", async (importOriginal) => {
 	};
 });
 
-vi.mock("@/management/ae/cep/contexts/Context", () => ({
+vi.mock("@/management/ae/cep/contexts/CepContext", () => ({
 	useCep: () => ({ panelSurfaceId: "panel-1" }),
 }));
 
