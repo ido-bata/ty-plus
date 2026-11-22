@@ -9,7 +9,7 @@
 
 import type { NotificationSummary } from "@/management/online/contract";
 
-export const DEFAULT_NOTIFICATION_FEED_URL =
+const DEFAULT_NOTIFICATION_FEED_URL =
 	"https://ty-plus.app/feeds/notifications.json";
 
 export type NotificationSeverity = "info" | "warning" | "critical";
@@ -111,7 +111,7 @@ export const toNotificationSummary = (
 
 export type FetchFeedText = (url: string, timeoutMs: number) => Promise<string>;
 
-export const defaultFetchFeedText: FetchFeedText = async (url, timeoutMs) => {
+const defaultFetchFeedText: FetchFeedText = async (url, timeoutMs) => {
 	const response = await fetch(url, {
 		headers: { Accept: "application/json" },
 		signal: AbortSignal.timeout(timeoutMs),

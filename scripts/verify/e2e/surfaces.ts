@@ -10,7 +10,7 @@ import path from "node:path";
 
 import { type CdpTarget, listTargets } from "./cdp";
 
-export type SurfaceKind = "panel" | "dialog" | "debug-console" | "unknown";
+type SurfaceKind = "panel" | "dialog" | "debug-console" | "unknown";
 
 export type SurfaceRef = {
 	extensionId: string;

@@ -22,10 +22,7 @@ export const listTargets = async (port: number): Promise<CdpTarget[]> => {
 	return (await res.json()) as CdpTarget[];
 };
 
-export type Evaluate = (
-	expression: string,
-	timeoutMs?: number,
-) => Promise<unknown>;
+type Evaluate = (expression: string, timeoutMs?: number) => Promise<unknown>;
 
 export type Cdp = {
 	evaluate: Evaluate;

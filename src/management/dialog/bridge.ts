@@ -5,7 +5,7 @@ export type ProbeRequestPayload = {
 	message?: string;
 };
 
-export type ProbeResultPayload = {
+type ProbeResultPayload = {
 	accepted: boolean;
 	dialogId: string;
 };

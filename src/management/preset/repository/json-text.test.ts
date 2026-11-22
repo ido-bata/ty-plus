@@ -227,7 +227,7 @@ describe("parsePresetCatalogJsonTextStrict (Round-5 / Blocker 13)", () => {
 	});
 
 	it("lenient parsePresetCatalogJsonText still swallows errors to [] (back-compat)", () => {
-		// services.ts and catalog-root-pinned.ts rely on the lenient
+		// Cross-panel placement writes rely on the lenient
 		// behavior; the strict variant is additive.
 		expect(parsePresetCatalogJsonText("not-valid-json{{")).toEqual([]);
 		expect(

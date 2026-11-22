@@ -98,9 +98,8 @@ export class PresetCatalogParseError extends Error {
 /**
  * Lenient variant: returns `[]` on any structural / parse failure.
  *
- * Existing boot paths (`services.ts`, `catalog-root-pinned.ts`) call this
- * helper from inside their own try/catch wrappers, so the "swallow to []"
- * behavior is intentional for the boot-time contract. For the local catalog
+ * Callers of this helper wrap it in their own try/catch or rely on the
+ * "swallow to []" behavior for their contract. For the local catalog
  * fallback that must REJECT on corrupt input, use
  * {@link parsePresetCatalogJsonTextStrict} instead.
  */

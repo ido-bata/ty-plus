@@ -29,9 +29,7 @@ export interface OperationAttemptIdentity {
  * half-filled correlation — an optional field would let a preflight event
  * silently ship without it (Issue #158).
  */
-export type WorkerCorrelationResolver = (
-	sessionId: string,
-) => WorkerCorrelation;
+type WorkerCorrelationResolver = (sessionId: string) => WorkerCorrelation;
 
 export interface OperationInvocationFactory<Request, Response> {
 	readonly methodName: CanonicalMethod;
@@ -47,13 +45,13 @@ export interface OperationInvocationFactory<Request, Response> {
  * logs are attributable to this attempt instead of to an uncorrelated
  * pre-scheduler window (Issue #158).
  */
-export interface PreparedOperationAttempt<Request, Response> {
+interface PreparedOperationAttempt<Request, Response> {
 	readonly invocation: OperationInvocation<Request, Response>;
 	/** Attempt-scoped run options (e.g. the manifest this attempt read). */
 	readonly options?: WorkerRunOptions;
 }
 
-export type OperationAttemptPreparer<Request, Response> = (
+type OperationAttemptPreparer<Request, Response> = (
 	identity: OperationAttemptIdentity,
 	correlation: WorkerCorrelationResolver,
 ) =>

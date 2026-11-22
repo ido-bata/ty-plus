@@ -288,7 +288,7 @@ function SourceFilterTabs({
  * kept, but as an explicit view filter the operator opts into — it is not
  * a retention rule and it never discards history.
  */
-export type FilterScope = "all" | "session";
+type FilterScope = "all" | "session";
 
 const SCOPES: { value: FilterScope; label: string }[] = [
 	{ value: "all", label: "All history" },

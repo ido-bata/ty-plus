@@ -92,7 +92,7 @@ export const setInputValue = async (
 	);
 
 /** Evaluate a selector that picks an element by text content. */
-export const clickButtonByText = async (
+const clickButtonByText = async (
 	ctx: E2EContext,
 	surface: LiveSurface,
 	text: string,

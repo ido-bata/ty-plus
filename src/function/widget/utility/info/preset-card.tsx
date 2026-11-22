@@ -118,7 +118,7 @@ function PresetInfoEmptyContent({
 	);
 }
 
-export function PresetCard({
+function PresetCard({
 	preset,
 	source,
 }: {

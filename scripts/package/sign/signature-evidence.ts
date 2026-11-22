@@ -24,7 +24,7 @@ import type { ArtifactSignature } from "../../../src/management/ipc/operation-wo
 
 export type SignaturePlatform = "windows" | "macos";
 
-export type CommandResult = Readonly<{
+type CommandResult = Readonly<{
 	status: number | null;
 	stdout: string;
 }>;

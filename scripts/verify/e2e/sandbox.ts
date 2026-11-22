@@ -53,7 +53,7 @@ const STATE_FILE = ".tmp/e2e-sandbox-state.json";
  */
 const MANIFEST_EXCLUDES = ["tool-handoff/"];
 
-export type SandboxState = {
+type SandboxState = {
 	active: boolean;
 	realRoot: string;
 	sandboxParent: string;

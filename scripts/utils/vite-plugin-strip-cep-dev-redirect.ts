@@ -67,7 +67,7 @@ export function addDataMainToScripts(html, htmlRelativePath = "") {
  * `../../vendor/CSInterface.js` (two levels up), but from the moved HTML the
  * path is `../vendor/CSInterface.js` (one level up).
  */
-export function rewriteShellHtmlAssetPaths(html, htmlRelativePath = "") {
+function rewriteShellHtmlAssetPaths(html, htmlRelativePath = "") {
 	const segments = htmlRelativePath.split(/[\\/]/).filter(Boolean);
 	if (segments.length < 2) return html;
 	// We only move HTML files that were deeper than 1 segment under distRoot.
@@ -295,7 +295,7 @@ export function patchCepNativeRequireMainPath(html) {
 	}
 	return html.replace("require(tmp.dataset.main);", patchBody);
 }
-export function rewriteCepDevRedirect(html, options = {}) {
+function rewriteCepDevRedirect(html, options = {}) {
 	const host = (options.host ?? "").trim();
 	if (host.length === 0) return html;
 	return html.replace(CEP_DEV_REDIRECT_SCRIPT_RE, (fullMatch, rawUrl) => {
@@ -310,7 +310,7 @@ export function rewriteCepDevRedirect(html, options = {}) {
 		}
 	});
 }
-export function ensureCepDevRedirect(html, options = {}) {
+function ensureCepDevRedirect(html, options = {}) {
 	const host = (options.host ?? "").trim();
 	const pagePath = (options.pagePath ?? "").trim();
 	const port = options.port ?? 3000;
