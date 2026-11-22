@@ -1,3 +1,4 @@
+import { sectionLabelClass } from "@ty-plus/ui";
 import type { JSX } from "react";
 import { readUserHomeOrFallback } from "@/management/preset/catalog-add/browse-start-dir";
 import { PresetIconEditor } from "@/management/preset/components/IconEditor";
@@ -23,14 +24,6 @@ const headerClass = css({
 	justifyContent: "space-between",
 });
 
-const labelClass = css({
-	fontSize: "xs",
-	fontWeight: "medium",
-	textTransform: "uppercase",
-	letterSpacing: "wide",
-	color: "text.muted",
-});
-
 const editorHostClass = css({
 	marginTop: "3",
 });
@@ -45,7 +38,9 @@ export function BaseIconCard({
 	return (
 		<div className={cardClass}>
 			<div className={headerClass}>
-				<span className={labelClass}>Base Icon (default for all presets)</span>
+				<span className={sectionLabelClass}>
+					Base Icon (default for all presets)
+				</span>
 			</div>
 			<div className={editorHostClass}>
 				<PresetIconEditor

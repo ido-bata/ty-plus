@@ -32,17 +32,14 @@ export { RangeField } from "./fields/RangeField";
 export { RegexEditor } from "./fields/RegexEditor";
 export { SearchField } from "./fields/SearchField";
 export { Textarea } from "./fields/Textarea";
-
 export * as Icons from "./icons";
 export { Icon } from "./icons/Icon";
-
 export { useAnchorGesture } from "./interaction/use-anchor-gesture";
-
 export { MediaFrame } from "./layout/MediaFrame";
 export { ScrollArea } from "./layout/ScrollArea";
 export { Surface } from "./layout/Surface";
-
 export { DialogBody } from "./shell/DialogBody";
+export { rowLabelClass, sectionLabelClass } from "./styles/typography";
 
 export { cx } from "./util/cx";
 export { isIMEComposing } from "./util/keyboard";

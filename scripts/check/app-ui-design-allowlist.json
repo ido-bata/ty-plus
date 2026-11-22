@@ -1,5 +1,19 @@
 [
 	{
+		"file": "src/function/onboarding/ui/SetupRequired.tsx",
+		"line": 41,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (color: text.primary, fontSize: lg, fontWeight: semibold) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
+		"file": "src/function/onboarding/ui/SetupRequired.tsx",
+		"line": 47,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (color: text.muted, fontSize: sm, whiteSpace: pre-line) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
 		"file": "src/function/onboarding/View.tsx",
 		"line": 1,
 		"rule": "deep-import",
@@ -14,6 +28,13 @@
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
+		"file": "src/function/onboarding/View.tsx",
+		"line": 195,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (color: text.muted, fontSize: sm, whiteSpace: pre-line) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
 		"file": "src/function/preset/animation/Dialog.tsx",
 		"line": 2,
 		"rule": "deep-import",
@@ -26,6 +47,62 @@
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/fields/Input\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/function/preset/animation/Dialog.tsx",
+		"line": 71,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (alignItems: center, backgroundColor: surface.widget, borderColor: border.default, borderRadius: full, borderStyle: solid, borderWidth: 1px, color: text.primary, display: flex, fontSize: shell-text-sm, fontWeight: bold, height: 6, justifyContent: center, width: 6) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
+		"file": "src/function/preset/animation/Dialog.tsx",
+		"line": 88,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (color: text.primary, fontSize: shell-text-sm, fontWeight: semibold) is written out in 3 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
+		"file": "src/function/preset/animation/Dialog.tsx",
+		"line": 94,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (color: text.muted, fontSize: text-xs, lineHeight: tight) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
+		"file": "src/function/preset/animation/Dialog.tsx",
+		"line": 113,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (alignItems: flex-start, borderRadius: shell-sm, borderStyle: solid, borderWidth: 1px, display: flex, fontSize: text-xs, gap: 2, padding: 2) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
+		"file": "src/function/preset/animation/Dialog.tsx",
+		"line": 125,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (backgroundColor: status.success/10, borderColor: status.success/30, color: status.success) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
+		"file": "src/function/preset/animation/Dialog.tsx",
+		"line": 130,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (backgroundColor: status.warning/10, borderColor: status.warning/30, color: status.warning) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
+		"file": "src/function/preset/animation/Dialog.tsx",
+		"line": 135,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (backgroundColor: status.error/10, borderColor: status.error/30, color: status.error) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
+		"file": "src/function/preset/animation/Dialog.tsx",
+		"line": 145,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (backgroundColor: surface.widget, borderColor: border.default, borderRadius: shell-sm, borderStyle: solid, borderWidth: 1px, display: flex, flexDirection: column, gap: 3, padding: 4, width: full) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
 	},
 	{
 		"file": "src/function/preset/animation/Dialog.tsx",
@@ -49,6 +126,41 @@
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
+		"file": "src/function/preset/code/Dialog.tsx",
+		"line": 51,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (alignItems: flex-start, borderRadius: shell-sm, borderStyle: solid, borderWidth: 1px, display: flex, fontSize: text-xs, gap: 2, padding: 2) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
+		"file": "src/function/preset/code/Dialog.tsx",
+		"line": 63,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (backgroundColor: status.success/10, borderColor: status.success/30, color: status.success) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
+		"file": "src/function/preset/code/Dialog.tsx",
+		"line": 68,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (backgroundColor: status.warning/10, borderColor: status.warning/30, color: status.warning) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
+		"file": "src/function/preset/code/Dialog.tsx",
+		"line": 73,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (backgroundColor: status.error/10, borderColor: status.error/30, color: status.error) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
+		"file": "src/function/preset/code/Dialog.tsx",
+		"line": 94,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (backgroundColor: surface.widget, borderRadius: shell-sm, color: text.primary, fontFamily: mono, fontSize: text-xs, overflowWrap: break-all, paddingBlock: 1, paddingInline: 2) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
 		"file": "src/function/preset/layer-comp/Dialog.tsx",
 		"line": 2,
 		"rule": "deep-import",
@@ -61,6 +173,41 @@
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/fields/PathField\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/function/preset/layer-comp/Dialog.tsx",
+		"line": 35,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (alignItems: center, backgroundColor: surface.widget, borderColor: border.default, borderRadius: full, borderStyle: solid, borderWidth: 1px, color: text.primary, display: flex, fontSize: shell-text-sm, fontWeight: bold, height: 6, justifyContent: center, width: 6) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
+		"file": "src/function/preset/layer-comp/Dialog.tsx",
+		"line": 52,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (color: text.primary, fontSize: shell-text-sm, fontWeight: semibold) is written out in 3 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
+		"file": "src/function/preset/layer-comp/Dialog.tsx",
+		"line": 58,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (color: text.muted, fontSize: text-xs, lineHeight: tight) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
+		"file": "src/function/preset/layer-comp/Dialog.tsx",
+		"line": 64,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (backgroundColor: surface.widget, borderColor: border.default, borderRadius: shell-sm, borderStyle: solid, borderWidth: 1px, display: flex, flexDirection: column, gap: 3, padding: 4, width: full) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
+		"file": "src/function/preset/layer-comp/Dialog.tsx",
+		"line": 113,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (backgroundColor: surface.widget, borderRadius: shell-sm, color: text.primary, fontFamily: mono, fontSize: text-xs, overflowWrap: break-all, paddingBlock: 1, paddingInline: 2) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
 	},
 	{
 		"file": "src/function/widget/core/align/Component.tsx",
@@ -155,6 +302,13 @@
 	},
 	{
 		"file": "src/function/widget/core/easing/Component.tsx",
+		"line": 747,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/function/widget/core/easing/Component.tsx",
 		"line": 753,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
@@ -170,13 +324,6 @@
 	{
 		"file": "src/function/widget/core/easing/Component.tsx",
 		"line": 765,
-		"rule": "raw-control",
-		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
-		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
-	},
-	{
-		"file": "src/function/widget/core/easing/Component.tsx",
-		"line": 771,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
@@ -203,6 +350,27 @@
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
+		"file": "src/function/widget/utility/directory-browser/Component.tsx",
+		"line": 286,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (color: text.muted, fontSize: shell-text-sm, paddingBlock: 8, textAlign: center) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
+		"file": "src/function/widget/utility/directory-browser/Component.tsx",
+		"line": 300,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (borderColor: border.default, borderRadius: shell-sm, borderStyle: solid, borderWidth: 1px, display: flex, flexDirection: column, overflow: hidden) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
+		"file": "src/function/widget/utility/directory-browser/Component.tsx",
+		"line": 1417,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (backgroundColor: surface.dialog, display: flex, flexDirection: column, height: full, overflow: hidden, width: full) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
 		"file": "src/function/widget/utility/font-viewer/Component.tsx",
 		"line": 2,
 		"rule": "deep-import",
@@ -218,38 +386,80 @@
 	},
 	{
 		"file": "src/function/widget/utility/font-viewer/Component.tsx",
-		"line": 161,
+		"line": 65,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (color: text.muted, fontFamily: mono, fontSize: text-2xs) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
+		"file": "src/function/widget/utility/font-viewer/Component.tsx",
+		"line": 169,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/function/widget/utility/font-viewer/Component.tsx",
-		"line": 349,
+		"line": 205,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (alignItems: center, color: text.muted, display: flex, height: full, justifyContent: center, width: full) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
+		"file": "src/function/widget/utility/font-viewer/Component.tsx",
+		"line": 342,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/function/widget/utility/font-viewer/Component.tsx",
-		"line": 559,
+		"line": 538,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/function/widget/utility/font-viewer/Component.tsx",
-		"line": 593,
+		"line": 572,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/function/widget/utility/font-viewer/Component.tsx",
+		"line": 626,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (color: text.muted, fontSize: text-2xs, fontVariantNumeric: tabular-nums) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
+		"file": "src/function/widget/utility/font-viewer/Component.tsx",
+		"line": 706,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (color: text.primary, fontSize: text-xs, fontWeight: medium) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
 	},
 	{
 		"file": "src/function/widget/utility/info/comp-sections.tsx",
-		"line": 41,
+		"line": 42,
 		"rule": "inline-style",
 		"message": "inline style sets background — appearance must come from css() and the token system",
 		"reason": "inline style sets appearance; move it into css() and the token system"
+	},
+	{
+		"file": "src/function/widget/utility/info/comp-sections.tsx",
+		"line": 106,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (display: flex, fontSize: text-xs, gap: var(--ty-space-2), justifyContent: space-between) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
+		"file": "src/function/widget/utility/info/preset.tsx",
+		"line": 159,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (display: flex, fontSize: text-xs, gap: var(--ty-space-2), justifyContent: space-between) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
 	},
 	{
 		"file": "src/function/widget/utility/quick-actions/row-components.tsx",
@@ -292,6 +502,20 @@
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/util/keyboard\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/debug/console/ui/Panel.tsx",
+		"line": 330,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (backgroundColor: surface.dialog, display: flex, flexDirection: column, height: full, overflow: hidden, width: full) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
+		"file": "src/management/debug/console/ui/Panel.tsx",
+		"line": 378,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (color: text.muted, fontFamily: mono, fontSize: text-2xs) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
 	},
 	{
 		"file": "src/management/dialog/dialogs/shell/Content.tsx",
@@ -365,49 +589,56 @@
 	},
 	{
 		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 1,
+		"line": 2,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/controls/Button\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
 		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 2,
+		"line": 3,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/controls/IconButton\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
 		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 3,
+		"line": 4,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/fields/SearchField\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
 		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 4,
+		"line": 5,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/icons/Icon\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
 		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 5,
+		"line": 6,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
 		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 1082,
+		"line": 556,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (color: text.primary, fontSize: sm, fontWeight: semibold) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
+		"file": "src/management/online/catalog/Dialog.tsx",
+		"line": 1080,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 1090,
+		"line": 1088,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
@@ -455,6 +686,13 @@
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
+		"file": "src/management/online/catalog/PresetLibraryEmptyState.tsx",
+		"line": 47,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (color: text.primary, fontSize: sm, fontWeight: medium) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
 		"file": "src/management/online/notification/Center.tsx",
 		"line": 1,
 		"rule": "deep-import",
@@ -474,6 +712,34 @@
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/online/notification/Center.tsx",
+		"line": 53,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (color: text.primary, fontSize: lg, fontWeight: semibold) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
+		"file": "src/management/online/notification/Center.tsx",
+		"line": 63,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (color: text.primary, fontSize: sm, fontWeight: semibold) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
+		"file": "src/management/online/notification/Center.tsx",
+		"line": 195,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (color: text.primary, fontSize: sm, fontWeight: medium) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
+		"file": "src/management/online/notification/Center.tsx",
+		"line": 345,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (color: text.primary, fontSize: sm, fontWeight: semibold) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
 	},
 	{
 		"file": "src/management/online/notification/Center.tsx",
@@ -603,10 +869,24 @@
 	},
 	{
 		"file": "src/management/panel/ErrorBoundary.tsx",
+		"line": 46,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (opacity: 0.8, overflow: hidden, wordBreak: break-all) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
+		"file": "src/management/panel/ErrorBoundary.tsx",
 		"line": 179,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/management/preset/authoring-layout.tsx",
+		"line": 45,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (color: text.primary, fontSize: shell-text-sm, fontWeight: semibold) is written out in 3 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
 	},
 	{
 		"file": "src/management/preset/authoring/Dialog.tsx",
@@ -624,17 +904,87 @@
 	},
 	{
 		"file": "src/management/preset/catalog-add/ArchiveDetailsSection.tsx",
-		"line": 213,
+		"line": 208,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
-		"file": "src/management/preset/catalog-add/FolderTabs.tsx",
-		"line": 67,
-		"rule": "raw-control",
-		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
-		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+		"file": "src/management/preset/catalog-add/PathDialog.tsx",
+		"line": 78,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (backgroundColor: surface.widget, borderColor: border.default, borderRadius: md, borderStyle: solid, borderWidth: 1px, color: text.muted, display: grid, flex: 1, fontSize: shell-text-sm, minHeight: 0, paddingInline: 3, placeItems: center, textAlign: center) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
+		"file": "src/management/preset/catalog-add/PathDialog.tsx",
+		"line": 122,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (backgroundColor: surface.dialog, display: flex, flexDirection: column, overflow: hidden, paddingInline: 0) is written out in 4 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
+		"file": "src/management/preset/catalog-add/PathDialog.tsx",
+		"line": 133,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (borderTopColor: border.default, borderTopStyle: solid, borderTopWidth: 1px, paddingBlock: var(--ty-shell-space), paddingInline: var(--ty-shell-pad-inline)) is written out in 3 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
+		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
+		"line": 90,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (alignItems: center, backgroundColor: surface.widget/50, borderColor: border.default, borderRadius: shell-sm, borderStyle: solid, borderWidth: 1px, color: text.muted, display: inline-flex, flexShrink: 0, height: 5, justifyContent: center, width: 5) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
+		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
+		"line": 135,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (color: text.primary, fontSize: shell-text-sm, fontWeight: medium, overflow: hidden, textOverflow: ellipsis, whiteSpace: nowrap) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
+		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
+		"line": 224,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (color: text.primary, fontSize: shell-text-sm, fontWeight: medium, overflow: hidden, textOverflow: ellipsis, whiteSpace: nowrap) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
+		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
+		"line": 233,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (color: text.muted, fontSize: xs, overflow: hidden, textOverflow: ellipsis, whiteSpace: nowrap) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
+		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
+		"line": 253,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (borderColor: border.default, borderRadius: shell-sm, borderStyle: solid, borderWidth: 1px, display: flex, flexDirection: column, overflow: hidden) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
+		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
+		"line": 299,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (alignItems: center, color: text.muted, display: flex, height: full, justifyContent: center, width: full) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
+		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
+		"line": 452,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (backgroundColor: surface.widget, borderColor: border.default, borderRadius: shell-sm, borderStyle: solid, borderWidth: 1px, overflow: hidden) is written out in 3 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
+		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
+		"line": 487,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (color: text.muted, fontSize: shell-text-sm, paddingBlock: 8, textAlign: center) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
@@ -771,17 +1121,17 @@
 	},
 	{
 		"file": "src/management/preset/components/IconEditor.tsx",
-		"line": 259,
+		"line": 210,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
-		"file": "src/management/preset/components/IconEditor.tsx",
-		"line": 376,
-		"rule": "raw-control",
-		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
-		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+		"file": "src/management/preset/components/PresetIconTile.tsx",
+		"line": 102,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (backgroundColor: surface.widget, borderColor: border.default, borderRadius: shell-sm, borderStyle: solid, borderWidth: 1px, overflow: hidden) is written out in 3 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
 	},
 	{
 		"file": "src/management/preset/edit/Dialog.tsx",
@@ -813,24 +1163,66 @@
 	},
 	{
 		"file": "src/management/preset/edit/Dialog.tsx",
-		"line": 567,
+		"line": 144,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (color: text.primary, fontSize: shell-text-sm, fontWeight: medium, overflow: hidden, textOverflow: ellipsis, whiteSpace: nowrap) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
+		"file": "src/management/preset/edit/Dialog.tsx",
+		"line": 153,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (color: text.muted, fontSize: xs, overflow: hidden, textOverflow: ellipsis, whiteSpace: nowrap) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
+		"file": "src/management/preset/edit/Dialog.tsx",
+		"line": 168,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (alignItems: center, backgroundColor: surface.widget/50, borderColor: border.default, borderRadius: shell-sm, borderStyle: solid, borderWidth: 1px, color: text.muted, display: inline-flex, flexShrink: 0, height: 5, justifyContent: center, width: 5) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
+		"file": "src/management/preset/edit/Dialog.tsx",
+		"line": 243,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (backgroundColor: surface.dialog, display: flex, flexDirection: column, overflow: hidden, paddingInline: 0) is written out in 4 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
+		"file": "src/management/preset/edit/Dialog.tsx",
+		"line": 254,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (borderTopColor: border.default, borderTopStyle: solid, borderTopWidth: 1px, paddingBlock: var(--ty-shell-space), paddingInline: var(--ty-shell-pad-inline)) is written out in 3 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
+		"file": "src/management/preset/edit/Dialog.tsx",
+		"line": 559,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/preset/edit/Dialog.tsx",
-		"line": 577,
+		"line": 569,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/preset/edit/Dialog.tsx",
-		"line": 587,
+		"line": 579,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/management/preset/editor/Code.tsx",
+		"line": 411,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (backgroundColor: surface.widget, borderColor: border.default, borderRadius: shell-sm, borderStyle: solid, borderWidth: 1px, overflow: hidden) is written out in 3 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
 	},
 	{
 		"file": "src/management/preset/group/ConditionRuleCard.tsx",
@@ -852,6 +1244,20 @@
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/fields/RegexEditor\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/preset/group/Panel.tsx",
+		"line": 22,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (borderRadius: shell-sm, inset: 0, minHeight: 0, minWidth: 0, overflow: hidden, position: absolute, zIndex: 0) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
+		"file": "src/management/preset/group/Panel.tsx",
+		"line": 44,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (borderColor: var(--color-ty-ws-gridcell-ring-border), borderStyle: solid, borderWidth: 1px) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
 	},
 	{
 		"file": "src/management/preset/group/Panel.tsx",
@@ -882,32 +1288,25 @@
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
-		"file": "src/management/preset/tool-shell/FolderDirectoryPicker.tsx",
-		"line": 257,
-		"rule": "raw-control",
-		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
-		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+		"file": "src/management/preset/tool-shell/Dialog.tsx",
+		"line": 171,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (backgroundColor: surface.dialog, display: flex, flexDirection: column, overflow: hidden, paddingInline: 0) is written out in 4 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
+		"file": "src/management/preset/tool-shell/Dialog.tsx",
+		"line": 182,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (borderTopColor: border.default, borderTopStyle: solid, borderTopWidth: 1px, paddingBlock: var(--ty-shell-space), paddingInline: var(--ty-shell-pad-inline)) is written out in 3 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
 	},
 	{
 		"file": "src/management/preset/tool-shell/FolderDirectoryPicker.tsx",
-		"line": 268,
-		"rule": "raw-control",
-		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
-		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
-	},
-	{
-		"file": "src/management/preset/tool-shell/FolderDirectoryPicker.tsx",
-		"line": 279,
-		"rule": "raw-control",
-		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
-		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
-	},
-	{
-		"file": "src/management/preset/tool-shell/FolderDirectoryPicker.tsx",
-		"line": 290,
-		"rule": "raw-control",
-		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
-		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+		"line": 53,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (backgroundColor: surface.widget, borderColor: border.default, borderRadius: md, borderStyle: solid, borderWidth: 1px, color: text.muted, display: grid, flex: 1, fontSize: shell-text-sm, minHeight: 0, paddingInline: 3, placeItems: center, textAlign: center) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
 	},
 	{
 		"file": "src/management/preset/workspace/glyph.tsx",
@@ -925,7 +1324,7 @@
 	},
 	{
 		"file": "src/management/preset/workspace/PresetTileButton.tsx",
-		"line": 107,
+		"line": 105,
 		"rule": "ui-override",
 		"message": "<Button> is a shared @ty-plus/ui component; borderWidth, backgroundColor, borderRadius must come from its variant/size/tone props, not className",
 		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
@@ -966,6 +1365,13 @@
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
+		"file": "src/management/setting/dialog/layout/SettingsGrid.tsx",
+		"line": 45,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (color: text.primary, fontSize: text-xs, fontWeight: medium) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
 		"file": "src/management/setting/dialog/sections/AccordionSection.tsx",
 		"line": 1,
 		"rule": "deep-import",
@@ -978,6 +1384,13 @@
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/setting/dialog/sections/AccordionSection.tsx",
+		"line": 41,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (color: text.primary, fontSize: text-sm, fontWeight: medium) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
 	},
 	{
 		"file": "src/management/setting/dialog/sections/AccordionSection.tsx",
@@ -1055,6 +1468,13 @@
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/setting/dialog/sections/ComponentPreviewSection.tsx",
+		"line": 155,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (color: text.primary, fontSize: text-sm, fontWeight: medium) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
 	},
 	{
 		"file": "src/management/setting/dialog/sections/FeedbackSection.tsx",
@@ -1253,6 +1673,13 @@
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
+		"file": "src/management/setting/dialog/Settings.tsx",
+		"line": 81,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (backgroundColor: surface.dialog, display: flex, flexDirection: column, overflow: hidden, paddingInline: 0) is written out in 4 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
 		"file": "src/management/setting/dialog/SettingsSidebar.tsx",
 		"line": 1,
 		"rule": "deep-import",
@@ -1293,6 +1720,13 @@
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/util/keyboard\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/widget/catalog.tsx",
+		"line": 238,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (color: text.muted, fontSize: text-2xs, fontVariantNumeric: tabular-nums) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
 	},
 	{
 		"file": "src/management/widget/catalog.tsx",
@@ -1338,7 +1772,7 @@
 	},
 	{
 		"file": "src/management/workspace/background/Fields.tsx",
-		"line": 1,
+		"line": 2,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/fields/Input\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
@@ -1356,6 +1790,13 @@
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/fields/PathField\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/workspace/background/ImageLayerEditor.tsx",
+		"line": 53,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (borderColor: transparent, borderStyle: solid, borderWidth: 1px) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
 	},
 	{
 		"file": "src/management/workspace/background/LayerEditor.tsx",
@@ -1380,14 +1821,14 @@
 	},
 	{
 		"file": "src/management/workspace/background/LayerListPanel.tsx",
-		"line": 1,
+		"line": 2,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/controls/Button\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
 		"file": "src/management/workspace/background/LayerListPanel.tsx",
-		"line": 2,
+		"line": 3,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/controls/IconButton\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
@@ -1407,11 +1848,39 @@
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
+		"file": "src/management/workspace/background/PatternLayerEditor.tsx",
+		"line": 27,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (borderColor: transparent, borderStyle: solid, borderWidth: 1px) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
 		"file": "src/management/workspace/surface/Grid.tsx",
 		"line": 9,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/workspace/surface/GridTile.tsx",
+		"line": 73,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (opacity: 0.8, overflow: hidden, wordBreak: break-all) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
+		"file": "src/management/workspace/surface/TileFrame.tsx",
+		"line": 22,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (borderRadius: shell-sm, inset: 0, minHeight: 0, minWidth: 0, overflow: hidden, position: absolute, zIndex: 0) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
+	},
+	{
+		"file": "src/management/workspace/surface/TileFrame.tsx",
+		"line": 38,
+		"rule": "duplicate-style-recipe",
+		"message": "the same treatment (borderColor: var(--color-ty-ws-gridcell-ring-border), borderStyle: solid, borderWidth: 1px) is written out in 2 files — it belongs to the shared design system",
+		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
 	},
 	{
 		"file": "src/management/workspace/surface/widget-grid-icons.tsx",

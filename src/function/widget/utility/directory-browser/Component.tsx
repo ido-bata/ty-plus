@@ -1,10 +1,12 @@
 import {
 	Button,
+	cx,
 	Icon,
 	IconButton,
 	isIMEComposing,
 	ListSelect,
 	PathField,
+	rowLabelClass,
 	SearchField,
 } from "@ty-plus/ui";
 import { ChevronRight, FolderOpen, Play, Search } from "lucide-react";
@@ -379,14 +381,7 @@ function AnchorRowButton({
 				</span>
 			</span>
 			<div className={css({ minWidth: 0, flex: "1" })}>
-				<div
-					className={css({
-						truncate: true,
-						fontSize: "shell-text-sm",
-						fontWeight: "medium",
-						color: "text.primary",
-					})}
-				>
+				<div className={cx(rowLabelClass, css({ truncate: true }))}>
 					{label}
 				</div>
 				<div
@@ -1781,14 +1776,7 @@ export function DirectoryBrowserWidget({
 											})}
 										>
 											<div
-												className={css({
-													truncate: true,
-													textAlign: "left",
-													fontSize: "shell-text-sm",
-													fontWeight: "medium",
-													lineHeight: "tight",
-													color: "text.primary",
-												})}
+												className={cx(rowLabelClass, css({ truncate: true }))}
 											>
 												{row.label}
 											</div>

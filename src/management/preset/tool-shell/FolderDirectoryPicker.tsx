@@ -1,3 +1,4 @@
+import { SegmentedControl, sectionLabelClass } from "@ty-plus/ui";
 import { type JSX, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { readUserHomeOrFallback } from "@/management/preset/catalog-add/browse-start-dir";
@@ -14,66 +15,13 @@ import {
 import { readSettings } from "@/management/workspace/persistence/store";
 import { css, cx } from "@/styled-system/css";
 
-const folderTabBaseClass = css({
-	height: "7",
-	minWidth: "0",
-	flex: "1",
-	borderRadius: "shell-sm",
-	paddingInline: "2",
-	fontSize: "shell-text-sm",
-	lineHeight: "tight",
-	transitionProperty: "colors",
-});
-
-const folderTabActiveClass = css({
-	backgroundColor: "text.accent",
-	color: "surface.panel",
-	boxShadow: "sm",
-});
-
-const folderTabInactiveClass = css({
-	backgroundColor: "surface.widget",
-	color: "text.muted",
-	_hover: {
-		backgroundColor: "interactive.hover",
-		color: "text.primary",
-	},
-});
-
-const folderTabClass = (active: boolean): string =>
-	cx(
-		folderTabBaseClass,
-		active ? folderTabActiveClass : folderTabInactiveClass,
-	);
-
-const folderTabsRowClass = css({
-	display: "inline-flex",
-	width: "full",
-	minWidth: "0",
-	maxWidth: "full",
-	flexWrap: "wrap",
-	gap: "1",
-	borderRadius: "shell-sm",
-	borderWidth: "1px",
-	borderStyle: "solid",
-	borderColor: "border.default",
-	backgroundColor: "surface.panel",
-	padding: "0.5",
-});
+type RootKind = "presets" | "scripts" | "plugins" | "other";
 
 const columnClass = css({
 	display: "flex",
 	minWidth: "0",
 	flexDirection: "column",
 	gap: "1",
-});
-
-const labelClass = css({
-	fontSize: "xs",
-	fontWeight: "medium",
-	textTransform: "uppercase",
-	letterSpacing: "wide",
-	color: "text.muted",
 });
 
 const errorClass = css({
@@ -155,9 +103,7 @@ export function FolderDirectoryPicker({
 		pluginRoot: "",
 	});
 	const [_pathsReady, setPathsReady] = useState(false);
-	const [activeRoot, setActiveRoot] = useState<
-		"presets" | "scripts" | "plugins" | "other"
-	>("presets");
+	const [activeRoot, setActiveRoot] = useState<RootKind>("presets");
 
 	// load roots on mount only
 	const initialValueRef = useRef(value);
@@ -249,55 +195,30 @@ export function FolderDirectoryPicker({
 
 	return (
 		<div className={columnClass}>
-			<span className={labelClass}>{label}</span>
+			<span className={sectionLabelClass}>{label}</span>
 			{error ? <div className={errorClass}>{error}</div> : null}
 
 			{/* Root segment (Presets/Scripts/Plug-ins/Other) */}
-			<div className={folderTabsRowClass}>
-				<button
-					type="button"
-					className={folderTabClass(activeRoot === "presets")}
-					onClick={() => {
-						setActiveRoot("presets");
-						if (rootsRef.current.presetRoot.trim())
-							setCurrentPath(rootsRef.current.presetRoot);
-					}}
-				>
-					{t("folderDirectoryPicker.tab.presets")}
-				</button>
-				<button
-					type="button"
-					className={folderTabClass(activeRoot === "scripts")}
-					onClick={() => {
-						setActiveRoot("scripts");
-						if (rootsRef.current.scriptRoot.trim())
-							setCurrentPath(rootsRef.current.scriptRoot);
-					}}
-				>
-					{t("folderDirectoryPicker.tab.scripts")}
-				</button>
-				<button
-					type="button"
-					className={folderTabClass(activeRoot === "plugins")}
-					onClick={() => {
-						setActiveRoot("plugins");
-						if (rootsRef.current.pluginRoot.trim())
-							setCurrentPath(rootsRef.current.pluginRoot);
-					}}
-				>
-					{t("folderDirectoryPicker.tab.plugins")}
-				</button>
-				<button
-					type="button"
-					className={folderTabClass(activeRoot === "other")}
-					onClick={() => {
-						setActiveRoot("other");
-						setCurrentPath(readUserHomeOrFallback());
-					}}
-				>
-					{t("folderDirectoryPicker.tab.other")}
-				</button>
-			</div>
+			<SegmentedControl
+				aria-label={t("folderDirectoryPicker.tab.presets")}
+				value={activeRoot}
+				options={[
+					{ value: "presets", label: t("folderDirectoryPicker.tab.presets") },
+					{ value: "scripts", label: t("folderDirectoryPicker.tab.scripts") },
+					{ value: "plugins", label: t("folderDirectoryPicker.tab.plugins") },
+					{ value: "other", label: t("folderDirectoryPicker.tab.other") },
+				]}
+				onChange={(next) => {
+					setActiveRoot(next as RootKind);
+					if (next === "presets" && rootsRef.current.presetRoot.trim())
+						setCurrentPath(rootsRef.current.presetRoot);
+					else if (next === "scripts" && rootsRef.current.scriptRoot.trim())
+						setCurrentPath(rootsRef.current.scriptRoot);
+					else if (next === "plugins" && rootsRef.current.pluginRoot.trim())
+						setCurrentPath(rootsRef.current.pluginRoot);
+					else if (next === "other") setCurrentPath(readUserHomeOrFallback());
+				}}
+			/>
 
 			<div className={browserContainerClass}>
 				{cepBrowser ? (

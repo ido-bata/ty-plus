@@ -423,6 +423,114 @@ const STYLE_APPEARANCE_PROPS = new Set([
 // Checking
 // ---------------------------------------------------------------------------
 
+/**
+ * The properties that make a style recipe a *treatment* rather than a box
+ * arrangement. A recipe that only lays out (display / flexDirection / gap /
+ * minWidth) says nothing about how the app looks and is left alone; one
+ * that colours, borders or types something is an identity, and identities
+ * belong to the shared design system.
+ */
+const TREATMENT_PROPS = new Set([
+	"background",
+	"backgroundColor",
+	"borderBlock",
+	"borderBlockEnd",
+	"borderBlockStart",
+	"borderBottom",
+	"borderBottomColor",
+	"borderBottomLeftRadius",
+	"borderBottomRightRadius",
+	"borderBottomStyle",
+	"borderBottomWidth",
+	"borderColor",
+	"borderInline",
+	"borderInlineEnd",
+	"borderInlineStart",
+	"borderLeft",
+	"borderLeftColor",
+	"borderLeftStyle",
+	"borderLeftWidth",
+	"borderRadius",
+	"borderRight",
+	"borderRightColor",
+	"borderRightStyle",
+	"borderRightWidth",
+	"borderStyle",
+	"borderTop",
+	"borderTopColor",
+	"borderTopLeftRadius",
+	"borderTopRightRadius",
+	"borderTopStyle",
+	"borderTopWidth",
+	"borderWidth",
+	"boxShadow",
+	"color",
+	"fontFamily",
+	"fontSize",
+	"fontWeight",
+	"letterSpacing",
+	"opacity",
+	"textAlign",
+	"textDecoration",
+	"textTransform",
+]);
+
+/**
+ * A style recipe: the exact property/value pairs of a `css()` object.
+ * Two recipes are the same when every property and every value matches.
+ */
+export type StyleRecipe = {
+	properties: { name: string; value: string }[];
+	/** The file the recipe was found in. */
+	file: string;
+	line: number;
+};
+
+export function collectStyleRecipes(file: string, src: string): StyleRecipe[] {
+	const sf = ts.createSourceFile(
+		file,
+		src,
+		ts.ScriptTarget.Latest,
+		true,
+		ts.ScriptKind.TSX,
+	);
+	const out: StyleRecipe[] = [];
+	const visit = (node: ts.Node): void => {
+		if (ts.isCallExpression(node)) {
+			const callee = node.expression.getText(sf);
+			if (/^css(\.raw)?$/.test(callee)) {
+				for (const arg of node.arguments) {
+					if (!ts.isObjectLiteralExpression(arg)) continue;
+					const properties: { name: string; value: string }[] = [];
+					for (const prop of arg.properties) {
+						if (!ts.isPropertyAssignment(prop)) continue;
+						const name = propName(prop.name);
+						const value = stringValue(prop.initializer);
+						if (!name || value === null) continue;
+						properties.push({ name, value });
+					}
+					if (properties.length < 3) continue;
+					if (!properties.some((prop) => TREATMENT_PROPS.has(prop.name)))
+						continue;
+					out.push({
+						properties: [...properties].sort((a, b) =>
+							a.name.localeCompare(b.name),
+						),
+						file,
+						line: lineOf(sf, arg),
+					});
+				}
+			}
+		}
+		ts.forEachChild(node, visit);
+	};
+	visit(sf);
+	return out;
+}
+
+const recipeKey = (recipe: StyleRecipe): string =>
+	recipe.properties.map((p) => `${p.name}:${p.value}`).join(";");
+
 export function checkAppSource(file: string, src: string): Violation[] {
 	const out: Violation[] = [];
 	const sf = ts.createSourceFile(
@@ -689,12 +797,48 @@ export function checkUiBarrel(uiSrcDir: string, root = ROOT): Violation[] {
 // Driver
 // ---------------------------------------------------------------------------
 
+/**
+ * The same treatment written out in two places is two treatments that will
+ * drift. A recipe that more than one surface uses belongs to the shared
+ * design system, so the app says it once.
+ */
+export function checkDuplicateRecipes(recipes: StyleRecipe[]): Violation[] {
+	const byRecipe = new Map<string, StyleRecipe[]>();
+	for (const recipe of recipes) {
+		const key = recipeKey(recipe);
+		const list = byRecipe.get(key);
+		if (list) list.push(recipe);
+		else byRecipe.set(key, [recipe]);
+	}
+	const out: Violation[] = [];
+	for (const list of byRecipe.values()) {
+		const files = new Set(list.map((r) => r.file));
+		if (files.size < 2) continue;
+		const described = list[0].properties
+			.map((p) => `${p.name}: ${p.value}`)
+			.join(", ");
+		for (const recipe of list) {
+			out.push({
+				file: recipe.file,
+				line: recipe.line,
+				rule: "duplicate-style-recipe",
+				message: `the same treatment (${described}) is written out in ${files.size} files — it belongs to the shared design system`,
+			});
+		}
+	}
+	return out;
+}
+
 export function collectViolations(root = ROOT): Violation[] {
 	const out: Violation[] = [];
+	const recipes: StyleRecipe[] = [];
 	for (const file of walk(join(root, "src"))) {
 		const rel = relative(root, file);
-		out.push(...checkAppSource(rel, readFileSync(file, "utf8")));
+		const src = readFileSync(file, "utf8");
+		out.push(...checkAppSource(rel, src));
+		recipes.push(...collectStyleRecipes(rel, src));
 	}
+	out.push(...checkDuplicateRecipes(recipes));
 	out.push(...checkUiBarrel(join(root, "packages", "ui", "src"), root));
 	return out.sort((a, b) =>
 		a.file === b.file ? a.line - b.line : a.file.localeCompare(b.file),
@@ -719,6 +863,8 @@ const DEFAULT_REASON: Record<string, string> = {
 		"inline style sets appearance; move it into css() and the token system",
 	"barrel-gap":
 		"the shared component is not exported from the barrel; export it or delete it",
+	"duplicate-style-recipe":
+		"this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together",
 };
 
 export type AllowlistEntry = {

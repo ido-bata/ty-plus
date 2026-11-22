@@ -1,4 +1,4 @@
-import { Badge, Button, Icon } from "@ty-plus/ui";
+import { Badge, Button, Icon, rowLabelClass } from "@ty-plus/ui";
 import { ChevronDown } from "lucide-react";
 import { type JSX, type ReactNode, useId, useState } from "react";
 import { css } from "@/styled-system/css";
@@ -75,15 +75,7 @@ export function CollapsibleGroupHeader({
 				aria-expanded={isOpen}
 				aria-controls={panelId}
 			>
-				<span
-					className={css({
-						fontSize: "shell-text-sm",
-						fontWeight: "medium",
-						color: "text.primary",
-					})}
-				>
-					{title}
-				</span>
+				<span className={rowLabelClass}>{title}</span>
 			</Button>
 			{isOpen ? (
 				<div

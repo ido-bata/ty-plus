@@ -1,3 +1,4 @@
+import { sectionLabelClass } from "@ty-plus/ui";
 import type { JSX, ReactNode } from "react";
 import type { CompInfo } from "@/management/workspace/state";
 import { css } from "@/styled-system/css";
@@ -90,20 +91,7 @@ export function CompSections({ comp }: { comp: CompInfo }): JSX.Element {
 }
 
 function SectionTitle({ children }: { children: ReactNode }): JSX.Element {
-	return (
-		<div
-			className={css({
-				marginBottom: "var(--ty-space-1)",
-				fontSize: "text-2xs",
-				fontWeight: "bold",
-				textTransform: "uppercase",
-				letterSpacing: "0.06em",
-				color: "var(--color-text-muted)",
-			})}
-		>
-			{children}
-		</div>
-	);
+	return <div className={sectionLabelClass}>{children}</div>;
 }
 
 function InfoRow({

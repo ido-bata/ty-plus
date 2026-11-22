@@ -1,4 +1,4 @@
-import { Icon } from "@ty-plus/ui";
+import { Icon, sectionLabelClass } from "@ty-plus/ui";
 import { Input } from "@ty-plus/ui/fields/Input";
 import { PathField } from "@ty-plus/ui/fields/PathField";
 import { AlertCircle, FolderOpen } from "lucide-react";
@@ -108,14 +108,6 @@ const previewColumnClass = css({
 	minWidth: 0,
 	flexDirection: "column",
 	gap: "1",
-});
-
-const previewLabelClass = css({
-	fontSize: "text-xs",
-	fontWeight: "medium",
-	textTransform: "uppercase",
-	letterSpacing: "wide",
-	color: "text.muted",
 });
 
 const previewBoxClass = css({
@@ -357,7 +349,7 @@ export function Dialog(): JSX.Element {
 										/>
 										{fullFilePath ? (
 											<div className={previewColumnClass}>
-												<span className={previewLabelClass}>
+												<span className={sectionLabelClass}>
 													{t("layerCompPreset.savePreview", "Save preview")}
 												</span>
 												<div className={previewBoxClass}>{fullFilePath}</div>

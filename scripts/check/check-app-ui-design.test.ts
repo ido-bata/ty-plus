@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { checkAppSource, parseVarCalls } from "./check-app-ui-design";
+import {
+	checkAppSource,
+	checkDuplicateRecipes,
+	collectStyleRecipes,
+	parseVarCalls,
+} from "./check-app-ui-design";
 
 const rules = (src: string): string[] =>
 	checkAppSource("test.tsx", src).map((v) => v.rule);
@@ -186,5 +191,57 @@ describe("parseVarCalls", () => {
 		expect(parseVarCalls("var(--a, var(--b))")).toEqual([
 			{ name: "--a", hasFallback: true },
 		]);
+	});
+});
+
+describe("duplicate style recipes", () => {
+	const recipe = (body: string, file = "a.tsx"): string =>
+		collectStyleRecipes(file, `const x = css({${body}});`)[0]
+			?.properties.map((p) => `${p.name}:${p.value}`)
+			.join(",") ?? "";
+
+	it("reads the property/value pairs of a recipe", () => {
+		expect(
+			recipe('color: "text.muted", fontSize: "text-xs", fontWeight: "medium"'),
+		).toBe("color:text.muted,fontSize:text-xs,fontWeight:medium");
+	});
+
+	it("reports a treatment written in two files", () => {
+		const body =
+			'color: "text.muted", fontSize: "text-xs", fontWeight: "medium"';
+		const violations = checkDuplicateRecipes([
+			...collectStyleRecipes("a.tsx", `const x = css({${body}});`),
+			...collectStyleRecipes("b.tsx", `const x = css({${body}});`),
+		]);
+		expect(violations.map((v) => v.rule)).toEqual([
+			"duplicate-style-recipe",
+			"duplicate-style-recipe",
+		]);
+		expect(violations[0]?.file).toBe("a.tsx");
+		expect(violations[1]?.file).toBe("b.tsx");
+	});
+
+	it("does not report a recipe that only appears once", () => {
+		const body =
+			'color: "text.muted", fontSize: "text-xs", fontWeight: "medium"';
+		expect(
+			checkDuplicateRecipes([
+				...collectStyleRecipes("a.tsx", `const x = css({${body}});`),
+			]),
+		).toEqual([]);
+	});
+
+	it("ignores a layout-only arrangement", () => {
+		const body = 'display: "flex", flexDirection: "column", gap: "1"';
+		expect(collectStyleRecipes("a.tsx", `const x = css({${body}});`)).toEqual(
+			[],
+		);
+	});
+
+	it("ignores a recipe that is shorter than three properties", () => {
+		const body = 'color: "text.muted", fontSize: "text-xs"';
+		expect(collectStyleRecipes("a.tsx", `const x = css({${body}});`)).toEqual(
+			[],
+		);
 	});
 });
