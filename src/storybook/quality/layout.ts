@@ -157,6 +157,7 @@ export function assertWithinViewport(
 		height: viewport.height,
 	};
 	if (!boxWithin(box, outer, tolerance)) {
+		// i18n-exempt: internal diagnostic — storybook layout assertion, not UI copy
 		throw new LayoutAssertionError(
 			`${nameOf(el, options.label)} escapes the viewport: ${describeBox(box)} vs viewport ${describeBox(outer)}`,
 		);
@@ -181,6 +182,7 @@ export function assertWithinAncestor(
 	};
 	const box = measureBox(el);
 	if (!boxWithin(box, outer, tolerance)) {
+		// i18n-exempt: internal diagnostic — storybook layout assertion, not UI copy
 		throw new LayoutAssertionError(
 			`${nameOf(el, options.label)} escapes its container ${describeElement(ancestor)}: ${describeBox(box)} vs container ${describeBox(outer)}`,
 		);
@@ -240,6 +242,7 @@ export function assertNotClipped(
 	options: AssertOptions & { boundary?: Element } = {},
 ): void {
 	if (isClippedByHiddenAncestor(el, options.boundary, options.tolerance)) {
+		// i18n-exempt: internal diagnostic — storybook layout assertion, not UI copy
 		throw new LayoutAssertionError(
 			`${nameOf(el, options.label)} is clipped by an overflow:hidden ancestor before ${describeElement(options.boundary ?? document.body)}`,
 		);
@@ -289,6 +292,7 @@ export function assertNoOverlap(
 		if (other === el) continue;
 		const area = overlapArea(box, measureBox(other));
 		if (area > allowed) {
+			// i18n-exempt: internal diagnostic — storybook layout assertion, not UI copy
 			throw new LayoutAssertionError(
 				`${nameOf(el, options.label)} overlaps ${describeElement(other)} by ${fmt(area)}px²`,
 			);
@@ -299,6 +303,7 @@ export function assertNoOverlap(
 /** Element must be rendered (visible, non-zero box). */
 export function assertRendered(el: Element, options: AssertOptions = {}): void {
 	if (!isRendered(el)) {
+		// i18n-exempt: internal diagnostic — storybook layout assertion, not UI copy
 		throw new LayoutAssertionError(
 			`${nameOf(el, options.label)} is not rendered (display/visibility/box)`,
 		);
@@ -473,6 +478,7 @@ export function expectCanvasLayout(
 ): void {
 	const violations = auditCanvas(root, options);
 	if (violations.length > 0) {
+		// i18n-exempt: internal diagnostic — storybook layout assertion, not UI copy
 		throw new LayoutAssertionError(
 			`layout contract violations (${violations.length}):\n- ${violations.join("\n- ")}`,
 		);
@@ -520,6 +526,7 @@ export async function hoverAndAssert(
 	const { userEvent } = await import("vitest/browser");
 	await userEvent.hover(el);
 	if (!el.matches(":hover")) {
+		// i18n-exempt: internal diagnostic — storybook layout assertion, not UI copy
 		throw new LayoutAssertionError(
 			`${describeElement(el)} did not match :hover after userEvent.hover`,
 		);
@@ -532,6 +539,7 @@ export async function focusAndAssert(el: Element): Promise<void> {
 	const { userEvent } = await import("vitest/browser");
 	await userEvent.click(el);
 	if (!el.matches(":focus")) {
+		// i18n-exempt: internal diagnostic — storybook layout assertion, not UI copy
 		throw new LayoutAssertionError(
 			`${describeElement(el)} did not receive focus`,
 		);
