@@ -26,11 +26,11 @@ import { Profiler, type ProfilerOnRenderCallback, type ReactNode } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import type { Preset } from "@/management/preset/contract";
+import type { SurfaceState } from "@/management/workspace/core/state";
 import type {
 	GridSettings,
 	Layout,
 } from "@/management/workspace/layout/grid-document";
-import type { SurfaceState } from "@/management/workspace/state";
 
 import { PresetInfoWidget } from "./preset";
 

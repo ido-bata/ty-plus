@@ -37,9 +37,9 @@ import {
 	it,
 	vi,
 } from "vitest";
+import { createInitialSurfaceState } from "../../workspace/core/state";
 import { DEFAULT_GRID } from "../../workspace/layout/default";
 import type { Layout } from "../../workspace/layout/grid-document";
-import { createInitialSurfaceState } from "../../workspace/state";
 import { Widget } from "./TileContent";
 
 // Keep non-target widget dependency trees out of this focused isolation

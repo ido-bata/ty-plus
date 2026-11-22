@@ -2,8 +2,8 @@ import { isWidgetType, WIDGET_TYPES } from "@/function/widget/contract";
 import { inferWidgetTypeFromLegacyLayoutId } from "@/function/widget/legacy-parse";
 import type { Preset } from "@/management/preset/contract";
 import { stripKnownIdPrefixes } from "@/management/storage/ids";
+import type { SurfaceState } from "@/management/workspace/core/state";
 import type { Layout } from "@/management/workspace/layout/grid-document";
-import type { SurfaceState } from "@/management/workspace/state";
 import {
 	classifyFromCatalogs,
 	type Role,

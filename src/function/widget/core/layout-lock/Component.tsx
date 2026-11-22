@@ -1,7 +1,7 @@
 import { Icon } from "@ty-plus/ui";
 import { Lock, LockOpen } from "lucide-react";
 import type { JSX } from "react";
-import type { SurfaceState } from "@/management/workspace/state";
+import type { SurfaceState } from "@/management/workspace/core/state";
 import { css } from "@/styled-system/css";
 
 const buttonBaseClass = css({

@@ -23,6 +23,10 @@ import {
 } from "@/management/storage";
 import type { WidgetRecord } from "@/management/widget/record/types";
 import {
+	createInitialSurfaceState,
+	type SurfaceState,
+} from "@/management/workspace/core/state";
+import {
 	LayoutDocumentParseError,
 	parseLayoutDocumentJsonText,
 } from "@/management/workspace/layout/grid-document";
@@ -32,10 +36,6 @@ import {
 } from "@/management/workspace/placement/gateway";
 import { mergePresetPlacementIntoState } from "@/management/workspace/placement/preset-bus";
 import { mergeWidgetPlacementIntoState } from "@/management/workspace/placement/widget-bus";
-import {
-	createInitialSurfaceState,
-	type SurfaceState,
-} from "@/management/workspace/state";
 import {
 	serialize,
 	type Tile,

@@ -41,7 +41,9 @@ describe("scanForSecrets", () => {
 			"a.pem": "-----BEGIN RSA PRIVATE KEY-----\n",
 			"b.ts": "const legacy = 'org.loginc';\n",
 		});
-		const names = scanForSecrets(root).map((f) => f.pattern).sort();
+		const names = scanForSecrets(root)
+			.map((f) => f.pattern)
+			.sort();
 		expect(names).toEqual(["legacy-loginc-identifier", "private-key-header"]);
 	});
 
@@ -50,7 +52,10 @@ describe("scanForSecrets", () => {
 		// scanned (a secret there would ship); a real binary is skipped.
 		const root = mkdtempSync(path.join(tmpdir(), "secret-scan-bin-"));
 		try {
-			writeFileSync(path.join(root, "clean.ts"), "export const version = '0.10.0';\n");
+			writeFileSync(
+				path.join(root, "clean.ts"),
+				"export const version = '0.10.0';\n",
+			);
 			writeFileSync(
 				path.join(root, "worker.bin"),
 				Buffer.from([0x4d, 0x5a, 0x00, 0x01, 0x02, 0x03]),
@@ -83,7 +88,10 @@ describe("files that actually ship are scanned", () => {
 		// *.map — files that do ship — so a secret in them reached the release.
 		const root = mkdtempSync(path.join(tmpdir(), "ty-plus-scan-ship-"));
 		try {
-			writeFileSync(path.join(root, "LICENSE"), "text\nghp_" + "A".repeat(36) + "\n");
+			writeFileSync(
+				path.join(root, "LICENSE"),
+				"text\nghp_" + "A".repeat(36) + "\n",
+			);
 			writeFileSync(path.join(root, ".debug"), "<x/>\nNOTION_TOKEN=abc\n");
 			writeFileSync(
 				path.join(root, "panel.cjs.map"),

@@ -18,9 +18,11 @@
  */
 
 import type { ComponentType } from "react";
-
+import type {
+	GridSettings,
+	SurfaceState,
+} from "@/management/workspace/core/state";
 import type { Layout } from "@/management/workspace/layout/grid-document";
-import type { GridSettings, SurfaceState } from "@/management/workspace/state";
 import { register } from "./registry-core";
 
 // ── Size constraint ──────────────────────────────────────────────────────────────

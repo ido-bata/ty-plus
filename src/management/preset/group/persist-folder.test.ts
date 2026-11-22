@@ -21,7 +21,7 @@ const upsertGroupEntry = vi.fn();
 const canUseCepNodeFileBrowser = vi.fn();
 const createCepNodeFileBrowserService = vi.fn();
 
-vi.mock("@/management/preset/use-cases", () => ({ listPresets }));
+vi.mock("@/management/preset/operations", () => ({ listPresets }));
 vi.mock("@/management/preset/repository/local-catalog", () => ({
 	getLocalPresetCatalog,
 }));
@@ -36,7 +36,7 @@ vi.mock("@/management/storage/file-browser-service", () => ({
 	canUseCepNodeFileBrowser,
 	createCepNodeFileBrowserService,
 }));
-vi.mock("@/management/preset/icon/draft", () => ({
+vi.mock("@/management/preset/icon/editor-state", () => ({
 	presetIconDraftToPresetIcon: vi.fn(() => null),
 }));
 

@@ -120,7 +120,7 @@
 - `--site-*` 独自トークン体系とWeb専用のコントロールCSSは廃止。`apps/web/src/styles/app.css` はドキュメントリセットと `--ty-*` テーマ供給（フォントスタックのみ）のみに縮小した。色・文字・余白・角丸・境界線・シャドウは `--ty-*` セマンティックトークン経由。
 - 表示用タイポグラフィが必要なため、共有トークンに `ty-text-size-display-md/lg`・`ty-text-size-lead`・`ty-font-mono` を追加（CEPパネルでは未使用。両環境で同一契約）。
 - ページ側は `apps/web/src/styles/site.ts` のレイアウトrecipe（css()）と共有コンポーネントのcompositionのみを担当する。装飾目的のeyebrow/番号/罫線要素は削除した。
-- 恒久対策として `scripts/check/check-web-design.ts`（Design lint）を `lint` ゲートへ組み込み、rawコントロール・style属性・リテラル色/フォント/角丸/境界線・Web専用トークン・コントロール類似セレクタをTSX ASTとCSS宣言解析で静的に禁止する。allowlist機構で既存違反を管理し、#293 で全違反を解消（0件）。
+- 恒久対策として `scripts/check/web-design.ts`（Design lint）を `lint` ゲートへ組み込み、rawコントロール・style属性・リテラル色/フォント/角丸/境界線・Web専用トークン・コントロール類似セレクタをTSX ASTとCSS宣言解析で静的に禁止する。allowlist機構で既存違反を管理し、#293 で全違反を解消（0件）。
 - 検証: `docs/verification/web-redesign/review-293/`（6ルート×desktop/tablet/mobile、menu-open状態含む、violations 0）。
 
 ## Revision (#298–#299): platform split + lint hardening

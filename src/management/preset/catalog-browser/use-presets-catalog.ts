@@ -24,16 +24,16 @@ import {
 	type GroupEntry,
 	parseGroupFromText,
 } from "@/management/preset/group/catalog";
-import { getPresetToolDialogEntry } from "@/management/preset/registry";
 import {
 	getPreset,
 	listPresets,
 	removeLocalPreset,
-} from "@/management/preset/use-cases";
+} from "@/management/preset/operations";
+import { getPresetToolDialogEntry } from "@/management/preset/registry";
 import { stripKnownIdPrefixes } from "@/management/storage/ids";
 import { readSettings } from "@/management/storage/workspace/store";
+import { executeWorkspacePresetForWindow } from "@/management/workspace/core/runtime";
 import { openPresetEditSurface } from "@/management/workspace/hooks/preset";
-import { executeWorkspacePresetForWindow } from "@/management/workspace/runtime";
 import { useCatalogViewMode } from "@/shared/util/catalog-view-mode";
 import { useIconGridScale } from "@/shared/util/icon-grid-scale";
 import { useTileAspect } from "@/shared/util/tile-aspect";

@@ -29,7 +29,7 @@ import type { FileBrowserFileType } from "@/management/storage/file-browser-serv
  *
  * Preset icons are NOT resolved here. A preset icon is a preset-domain value
  * (`PresetIcon`), and rendering it is the preset feature's debt
- * (`management/preset/preset-icon.tsx`).
+ * (`management/preset/icon-content.tsx`).
  */
 const FILE_TYPE_ICON: Record<FileBrowserFileType, LucideIcon> = {
 	image: ImageIcon,

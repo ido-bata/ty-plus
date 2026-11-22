@@ -17,14 +17,14 @@ import { hostSafeFileName } from "@/management/preset/authoring/host-safe-file-n
 import { ArchiveDetailsSection } from "@/management/preset/catalog-add/ArchiveDetailsSection";
 import { parseRootPathsFromSettingsJson } from "@/management/preset/catalog-add/parse-root-paths";
 import type { Preset } from "@/management/preset/contract";
+import { PresetIconEditor } from "@/management/preset/icon/Editor";
 import {
 	createPresetIconDraft,
 	presetIconDraftToPresetIcon,
-} from "@/management/preset/icon/draft";
-import { PresetIconEditor } from "@/management/preset/icon/Editor";
-import { upsertLocalPreset } from "@/management/preset/use-cases";
-import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
-import { glyphBoxFillClass } from "@/management/preset/workspace/glyph-classes";
+} from "@/management/preset/icon/editor-state";
+import { upsertLocalPreset } from "@/management/preset/operations";
+import { glyphBoxFillClass } from "@/management/preset/workspace/glyph/classes";
+import { FramedPresetGlyph } from "@/management/preset/workspace/glyph/WorkspaceGlyph";
 import { createInstanceId } from "@/management/storage/ids";
 import { readSettings } from "@/management/workspace/persistence/store";
 import { notifyPanelsAfterPresetSave } from "@/management/workspace/placement/notify-panels-after-preset-save";

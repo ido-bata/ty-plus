@@ -20,7 +20,7 @@ import {
 import { cx } from "@ty-plus/ui/util/cx";
 import { memo, useEffect, useState } from "react";
 import { subscribe } from "@/management/debug";
-import type { SurfaceState } from "@/management/workspace/state";
+import type { SurfaceState } from "@/management/workspace/core/state";
 import type { Snapshot } from "@/management/workspace/undo/history";
 import { css } from "@/styled-system/css";
 

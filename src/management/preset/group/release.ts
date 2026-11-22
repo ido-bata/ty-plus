@@ -20,8 +20,8 @@
 
 import { removeGroupEntry } from "@/management/preset/group/catalog";
 import { findGroupEntry } from "@/management/preset/group/catalog-helpers";
+import type { SurfaceState } from "@/management/workspace/core/state";
 import { notifyPanelsAfterPresetSave } from "@/management/workspace/placement/notify-panels-after-preset-save";
-import type { SurfaceState } from "@/management/workspace/state";
 
 export type ReleaseGroupDropPlacement = {
 	x: number;

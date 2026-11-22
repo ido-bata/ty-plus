@@ -7,7 +7,7 @@
  * - Persisted grid geometry and layout document helpers live in `management/workspace/layout/grid-document.ts`.
  * - Opaque id helpers live in `management/storage/ids` — import them from there.
  * - Prefer `shared/contract/surface` for types (e.g. `AlignTargetId`, `SurfaceInfo`) needed by scripts here
- *   without importing `management/workspace/state` where a narrower contract suffices.
+ *   without importing `management/workspace/core/state` where a narrower contract suffices.
  *
  * `shared/contract/widget` re-exports catalog types from **this** entry.
  */

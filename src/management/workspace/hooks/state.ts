@@ -7,7 +7,7 @@ import { registry } from "@/management/widget/registry";
 import { buildPrimaryPanelWidgets } from "@/management/workspace/layout/default";
 import type { LayoutRestoreNotice } from "@/management/workspace/layout/restore-plan";
 import { logWorkspace } from "@/management/workspace/onboarding/flow-log";
-import type { SurfaceState } from "@/management/workspace/state";
+import type { SurfaceState } from "@/management/workspace/core/state";
 import type { Tile } from "@/management/workspace/surface/tiles";
 import { clipSelection } from "@/management/workspace/surface/tiles";
 import { widgetResolutionFromCatalogContext } from "@/management/workspace/surface/tiles";

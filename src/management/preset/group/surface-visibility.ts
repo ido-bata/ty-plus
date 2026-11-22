@@ -1,6 +1,6 @@
 import { collectGroupedMemberPresetIds } from "@/management/preset/group/catalog-helpers";
+import type { SurfaceState } from "@/management/workspace/core/state";
 import { tileIdResolvesAsWidget } from "@/management/workspace/placement/resolve";
-import type { SurfaceState } from "@/management/workspace/state";
 import { classifyFromCatalogs } from "@/management/workspace/surface/tiles";
 
 const catalogCtxFromState = (state: SurfaceState) => ({

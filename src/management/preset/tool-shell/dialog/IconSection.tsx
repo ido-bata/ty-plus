@@ -1,8 +1,8 @@
 import type { JSX } from "react";
 import type { Preset } from "@/management/preset/contract";
-import type { PresetIconEditorDraft } from "@/management/preset/icon/draft";
 import { PresetIconEditor } from "@/management/preset/icon/Editor";
-import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
+import type { PresetIconEditorDraft } from "@/management/preset/icon/editor-state";
+import { FramedPresetGlyph } from "@/management/preset/workspace/glyph/WorkspaceGlyph";
 import { css } from "@/styled-system/css";
 
 const areaClass = css({ minWidth: "0" });

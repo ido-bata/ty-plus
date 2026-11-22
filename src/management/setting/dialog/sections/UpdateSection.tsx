@@ -23,8 +23,8 @@ import {
 	SettingsFieldLabel,
 	SettingsGrid,
 } from "@/management/setting/dialog/layout/SettingsGrid";
-import { openUrlInDefaultBrowser } from "@/management/workspace/hooks/helpers";
-import { getUpdateInstaller } from "@/management/workspace/services";
+import { getUpdateInstaller } from "@/management/workspace/core/services";
+import { openUrlInDefaultBrowser } from "@/management/workspace/hooks/open-surfaces";
 import { css } from "@/styled-system/css";
 
 const mutedTextStyle = css({

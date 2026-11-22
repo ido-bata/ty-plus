@@ -71,7 +71,7 @@ vi.mock("@/management/preset/group/catalog", () => ({
 	parseGroupFromText: () => [],
 }));
 
-vi.mock("@/management/workspace/services", () => ({
+vi.mock("@/management/workspace/core/services", () => ({
 	getDataServices: () => ({
 		presetRepository: presetRepo,
 		gateway: {
@@ -100,7 +100,7 @@ vi.mock("@/management/workspace/messaging/publish-shell-message", () => ({
 	},
 }));
 
-vi.mock("@/management/preset/use-cases", () => ({
+vi.mock("@/management/preset/operations", () => ({
 	listPresets: async () => [...presetRepo.rows],
 }));
 

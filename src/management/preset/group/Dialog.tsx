@@ -14,13 +14,13 @@ import {
 	createPresetIconDraft,
 	type PresetIconEditorDraft,
 	presetIconDraftToPresetIcon,
-} from "@/management/preset/icon/draft";
+} from "@/management/preset/icon/editor-state";
+import { listPresets } from "@/management/preset/operations";
 import { Dialog } from "@/management/preset/tool-shell/dialog/ToolDialog";
-import { listPresets } from "@/management/preset/use-cases";
 import { ConditionRulesSection } from "./ConditionRulesSection";
 import type { ConditionRule } from "./condition-rule-helpers";
-import { GroupMembersSection } from "./GroupMembersSection";
-import { GroupNameField } from "./GroupNameField";
+import { MembersSection } from "./MembersSection";
+import { NameField } from "./NameField";
 
 /**
  * Create a preset group: select multiple presets from catalog or scan a folder.
@@ -196,13 +196,13 @@ export function GroupDialog(): JSX.Element {
 			renderForm={(ctx) => (
 				<AuthoringGrid>
 					{/* 1. Group name (no section label) */}
-					<GroupNameField
+					<NameField
 						name={ctx.name}
 						busy={ctx.busy}
 						onNameChange={ctx.setName}
 					/>
 					{/* 2. Group Members - Directory browser + Paths list */}
-					<GroupMembersSection
+					<MembersSection
 						ctx={ctx}
 						candidatePresets={candidatePresets}
 						candidateDirs={candidateDirs}

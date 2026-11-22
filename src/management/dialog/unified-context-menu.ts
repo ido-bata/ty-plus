@@ -28,6 +28,7 @@ import {
 } from "@/management/dialog/unified-context-menu-constants";
 import type { Preset } from "@/management/preset/contract";
 import { readWidgetStateJson } from "@/management/storage/widget-state-store";
+import type { SurfaceState } from "@/management/workspace/core/state";
 import {
 	EASING_CURVE_COLOR_DEFAULTS,
 	EASING_CURVE_COLOR_ROWS,
@@ -45,7 +46,6 @@ import {
 	ATTR_PRESET_TILE,
 	ATTR_WIDGET_TILE,
 } from "@/management/workspace/placement/types";
-import type { SurfaceState } from "@/management/workspace/state";
 import type { Snapshot } from "@/management/workspace/undo/history";
 
 export { CTX_MENU_IDS } from "@/management/dialog/unified-context-menu-constants";

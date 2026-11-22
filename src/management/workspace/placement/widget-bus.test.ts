@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createInitialSurfaceState } from "../state";
+import { createInitialSurfaceState } from "../core/state";
 import { mergeWidgetPlacementIntoState } from "./widget-bus";
 
 describe("mergeWidgetPlacementIntoState", () => {

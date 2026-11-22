@@ -1,6 +1,6 @@
 /**
  * Workspace UI / host surface types shared by management and widget scripts.
- * Keeps `function/widget` free of imports from `management/workspace/state`.
+ * Keeps `function/widget` free of imports from `management/workspace/core/state`.
  */
 
 /** Equivalent to archive project-info-widget CompInfo (AE eval JSON) */

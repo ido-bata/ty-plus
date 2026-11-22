@@ -8,11 +8,11 @@ import {
 import type { IconTileAspect } from "@/management/preset/catalog-browser/layout";
 import { iconTileMediaClass } from "@/management/preset/catalog-browser/layout";
 import type { Preset } from "@/management/preset/contract";
-import { PresetGlyphById } from "@/management/preset/workspace/glyph-by-id";
+import { PresetGlyphById } from "@/management/preset/workspace/glyph/by-id";
 import {
 	glyphBoxFlushClass,
 	glyphEmojiProminentClass,
-} from "@/management/preset/workspace/glyph-classes";
+} from "@/management/preset/workspace/glyph/classes";
 import { css } from "@/styled-system/css";
 
 export type PresetIconTileProps = {

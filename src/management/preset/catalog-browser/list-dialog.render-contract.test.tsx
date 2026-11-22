@@ -8,7 +8,7 @@
  * render".
  *
  * The whole chain is real here: `PresetsDialog` → `listPresets` → the local
- * catalog → a mocked storage boundary. `@/management/workspace/services` is
+ * catalog → a mocked storage boundary. `@/management/workspace/core/services` is
  * mocked to *throw* the same error the live boot path raises, so "renders with
  * no gateway booted" is not an assumption — reaching the cloud boundary at all
  * would fail the test.
@@ -55,7 +55,7 @@ vi.mock("@/management/storage/persistence", () => ({
 	readJsonText: storage.readJsonText,
 }));
 
-vi.mock("@/management/workspace/services", () => ({
+vi.mock("@/management/workspace/core/services", () => ({
 	getDataServices: () => {
 		bootBoundaryCalls.count += 1;
 		const error = new Error("Cloud gateway was not booted (Issue #128)");
@@ -122,11 +122,11 @@ vi.mock("@/management/preset/catalog-browser/shell", () => ({
 	),
 }));
 
-vi.mock("@/management/preset/workspace/glyph-by-id", () => ({
+vi.mock("@/management/preset/workspace/glyph/by-id", () => ({
 	PresetGlyphById: () => <span data-testid="preset-glyph" />,
 }));
 
-vi.mock("@/management/preset/workspace/glyph-classes", () => ({
+vi.mock("@/management/preset/workspace/glyph/classes", () => ({
 	glyphBoxCompactClass: "glyph-box-compact",
 	glyphBoxCompactPadClass: "glyph-box-compact-pad",
 	glyphBoxFillClass: "glyph-box-fill",
@@ -184,7 +184,7 @@ vi.mock("@/management/workspace/hooks/preset", () => ({
 	openPresetEditSurface: vi.fn().mockResolvedValue(undefined),
 }));
 
-vi.mock("@/management/workspace/runtime", () => ({
+vi.mock("@/management/workspace/core/runtime", () => ({
 	executeWorkspacePresetForWindow: (
 		win: Window,
 		hostCode: string,

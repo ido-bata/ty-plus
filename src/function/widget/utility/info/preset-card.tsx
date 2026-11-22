@@ -1,6 +1,6 @@
 import type { JSX, ReactNode } from "react";
 import type { Preset } from "@/management/preset/contract";
-import { WorkspacePresetGlyph } from "@/management/preset/workspace/glyph";
+import { WorkspacePresetGlyph } from "@/management/preset/workspace/glyph/WorkspaceGlyph";
 import { css } from "@/styled-system/css";
 
 /**

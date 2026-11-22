@@ -9,11 +9,14 @@ import {
 	useState,
 } from "react";
 import { useWidgetRuntime } from "@/function/widget/runtime-context";
+import type {
+	AlignTargetId,
+	SurfaceState,
+} from "@/management/workspace/core/state";
 import {
 	DRAG_HANDLE_MARGIN,
 	RESIZE_MARGIN,
 } from "@/management/workspace/events/constants";
-import type { AlignTargetId, SurfaceState } from "@/management/workspace/state";
 import {
 	AlignIcon,
 	TargetIcon,

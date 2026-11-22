@@ -108,7 +108,7 @@
 		"reason": "management must not import function implementation directly"
 	},
 	{
-		"from": "src/management/workspace/state.ts",
+		"from": "src/management/workspace/core/state.ts",
 		"to": "@/function/widget",
 		"specifier": "@/function/widget",
 		"reason": "management must not import function implementation directly"

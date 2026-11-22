@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, expectTypeOf, it } from "vitest";
-import { collectDeclarations } from "../../../../scripts/generate/generate-typescript-protocol";
+import { collectDeclarations } from "../../../../scripts/generate/typescript-protocol";
 import {
 	type CanonicalOperationPolicy,
 	canonicalMethods,

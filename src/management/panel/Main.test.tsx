@@ -3,8 +3,8 @@
 import { render } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { Main } from "../../management/panel/Main";
+import { createInitialSurfaceState } from "../../management/workspace/core/state";
 import { ensurePrimaryPanelWidgets } from "../../management/workspace/hooks/state";
-import { createInitialSurfaceState } from "../../management/workspace/state";
 
 vi.mock("@/management/preset/editor/textmate", () => ({
 	ensureExtendscriptLanguage: vi.fn(),

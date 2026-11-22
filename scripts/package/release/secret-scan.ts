@@ -10,9 +10,9 @@
 import {
 	closeSync,
 	openSync,
-	readSync,
 	readdirSync,
 	readFileSync,
+	readSync,
 	statSync,
 } from "node:fs";
 import path from "node:path";
@@ -24,12 +24,22 @@ export type SecretPattern = Readonly<{
 
 export const SECRET_PATTERNS: readonly SecretPattern[] = [
 	{ name: "github-token", pattern: /\bgh[pousr]_[A-Za-z0-9]{20,}\b/ },
-	{ name: "github-fine-grained-token", pattern: /\bgithub_pat_[A-Za-z0-9_]{20,}\b/ },
+	{
+		name: "github-fine-grained-token",
+		pattern: /\bgithub_pat_[A-Za-z0-9_]{20,}\b/,
+	},
 	{ name: "openai-key", pattern: /\bsk-[A-Za-z0-9_-]{20,}\b/ },
 	{ name: "aws-access-key", pattern: /\bAKIA[0-9A-Z]{16}\b/ },
 	{ name: "slack-token", pattern: /\bxox[abprs]-[A-Za-z0-9-]{10,}\b/ },
-	{ name: "jwt", pattern: /\beyJ[A-Za-z0-9_-]{10,}\.eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\b/ },
-	{ name: "private-key-header", pattern: /-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/ },
+	{
+		name: "jwt",
+		pattern:
+			/\beyJ[A-Za-z0-9_-]{10,}\.eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\b/,
+	},
+	{
+		name: "private-key-header",
+		pattern: /-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/,
+	},
 	{ name: "legacy-loginc-identifier", pattern: /\borg\.loginc\b/ },
 	{ name: "legacy-notion-token", pattern: /\bNOTION_TOKEN\b/ },
 	{ name: "legacy-sync-token", pattern: /\bSYNC_TOKEN\b/ },

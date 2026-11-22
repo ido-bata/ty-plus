@@ -2,7 +2,7 @@ import { Checkbox } from "@ty-plus/ui";
 import { Button } from "@ty-plus/ui/controls/Button";
 import { IconButton } from "@ty-plus/ui/controls/IconButton";
 import { SearchField } from "@ty-plus/ui/fields/SearchField";
-import { Icon } from "@ty-plus/ui/icons/Icon";
+import { Icon } from "@ty-plus/ui/Icon";
 import { cx } from "@ty-plus/ui/util/cx";
 import {
 	ExternalLink,
@@ -32,22 +32,22 @@ import {
 } from "@/management/dialog/context-menu";
 import { DownloadProgressIconButton } from "@/management/online/catalog/DownloadProgressIconButton";
 import { gatewayRetryAffordance } from "@/management/online/catalog/gateway-retry";
-import { sanitizeOnlineErrorMessage } from "@/management/online/catalog/sanitize-error";
-import type { DownloadProgress } from "@/management/online/catalog/use-cases";
+import type { DownloadProgress } from "@/management/online/catalog/operations";
 import {
 	downloadAndInstallPreset,
 	searchCatalog,
 	syncCatalog,
-} from "@/management/online/catalog/use-cases";
+} from "@/management/online/catalog/operations";
+import { sanitizeOnlineErrorMessage } from "@/management/online/catalog/sanitize-error";
 import type { PresetSearchItem } from "@/management/online/contract";
 import {
 	readGatewayHealth,
 	subscribeGatewayHealth,
 } from "@/management/online/runtime-gateway-health";
 import type { GatewayBootFailureReason } from "@/management/panel/cloud-gateway-boot";
-import { openUrlInDefaultBrowser } from "@/management/workspace/hooks/helpers";
+import { tryGetDataServices } from "@/management/workspace/core/services";
+import { openUrlInDefaultBrowser } from "@/management/workspace/hooks/open-surfaces";
 import { notifyPanelsAfterPresetSave } from "@/management/workspace/placement/notify-panels-after-preset-save";
-import { tryGetDataServices } from "@/management/workspace/services";
 import { css } from "@/styled-system/css";
 
 const CATALOG_LIMIT = 50;

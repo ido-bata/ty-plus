@@ -43,21 +43,21 @@ import {
 	isGroupCatalogPreset,
 	synthesizeGroupPresetForTile,
 } from "@/management/preset/group/synthesize";
+import { PresetIconEditor } from "@/management/preset/icon/Editor";
 import {
 	createPresetIconDraft,
 	type PresetIconEditorDraft,
 	presetIconDraftToPresetIcon,
-} from "@/management/preset/icon/draft";
-import { PresetIconEditor } from "@/management/preset/icon/Editor";
-import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
+} from "@/management/preset/icon/editor-state";
 import {
 	glyphBoxCompactPadClass,
 	glyphBoxFillClass,
-} from "@/management/preset/workspace/glyph-classes";
+} from "@/management/preset/workspace/glyph/classes";
+import { FramedPresetGlyph } from "@/management/preset/workspace/glyph/WorkspaceGlyph";
 import { readTextFile } from "@/management/storage";
+import { executeWorkspacePresetForWindow } from "@/management/workspace/core/runtime";
 import { openPresetEditSurface } from "@/management/workspace/hooks/preset";
 import { notifyPanelsAfterPresetSave } from "@/management/workspace/placement/notify-panels-after-preset-save";
-import { executeWorkspacePresetForWindow } from "@/management/workspace/runtime";
 import { css } from "@/styled-system/css";
 
 export type PresetEditDialogProps = {

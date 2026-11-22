@@ -333,7 +333,7 @@ describe("Issue #151 round-4 — cross-surface Clear boundary (clearedAt tombsto
 	});
 
 	it("openDebugConsole filters pre-Clear entries via the shared-bridge helper", async () => {
-		// The production helper (`workspace/hooks/helpers.ts#openDebugConsole`)
+		// The production helper (`workspace/hooks/open-surfaces.ts#openDebugConsole`)
 		// delegates to `filterLogsByClearedAt(getMessages(), clearedAt)`
 		// before encoding the snapshot into the dialog open-params. We
 		// verify the filter behaviour directly because the production

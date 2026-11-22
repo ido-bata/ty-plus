@@ -21,7 +21,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 const openUrlSpy = vi.fn();
 const windowOpenSpy = vi.fn();
 
-vi.mock("@/management/workspace/hooks/helpers", () => ({
+vi.mock("@/management/workspace/hooks/open-surfaces", () => ({
 	openUrlInDefaultBrowser: (u: string) => openUrlSpy(u),
 }));
 

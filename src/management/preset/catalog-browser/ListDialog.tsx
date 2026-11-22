@@ -45,23 +45,23 @@ import { traceExecute } from "@/management/preset/execution/lifecycle-trace";
 import type { GroupEntry } from "@/management/preset/group/catalog";
 import { parseGroupFromText } from "@/management/preset/group/catalog";
 import { tryParsePresetIconValue } from "@/management/preset/icon/normalize";
-import { getPresetToolDialogEntry } from "@/management/preset/registry";
 import {
 	getPreset,
 	listPresets,
 	removeLocalPreset,
-} from "@/management/preset/use-cases";
-import { PresetGlyphById } from "@/management/preset/workspace/glyph-by-id";
+} from "@/management/preset/operations";
+import { getPresetToolDialogEntry } from "@/management/preset/registry";
+import { PresetGlyphById } from "@/management/preset/workspace/glyph/by-id";
 import {
 	glyphBoxCompactClass,
 	glyphBoxCompactPadClass,
 	glyphBoxFlushClass,
 	glyphEmojiProminentClass,
-} from "@/management/preset/workspace/glyph-classes";
+} from "@/management/preset/workspace/glyph/classes";
 import { stripKnownIdPrefixes } from "@/management/storage/ids";
 import { readSettings } from "@/management/storage/workspace/store";
+import { executeWorkspacePresetForWindow } from "@/management/workspace/core/runtime";
 import { openPresetEditSurface } from "@/management/workspace/hooks/preset";
-import { executeWorkspacePresetForWindow } from "@/management/workspace/runtime";
 import { useCatalogViewMode } from "@/shared/util/catalog-view-mode";
 import { useIconGridScale } from "@/shared/util/icon-grid-scale";
 import { useTileAspect } from "@/shared/util/tile-aspect";

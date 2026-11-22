@@ -7,7 +7,7 @@ import { PathField } from "@ty-plus/ui/fields/PathField";
 import { FileSearch, Smile } from "lucide-react";
 import { type JSX, type ReactNode, useEffect, useRef, useState } from "react";
 import { selectFile } from "@/management/ae/cep/dialog-shim/bolt";
-import type { PresetIconEditorDraft } from "@/management/preset/icon/draft";
+import type { PresetIconEditorDraft } from "@/management/preset/icon/editor-state";
 import { css, cx } from "@/styled-system/css";
 
 const ICON_TABS = [

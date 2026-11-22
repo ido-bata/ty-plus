@@ -28,14 +28,14 @@ import { ArchiveDetailsSection } from "@/management/preset/catalog-add/ArchiveDe
 import { parseRootPathsFromSettingsJson } from "@/management/preset/catalog-add/parse-root-paths";
 import type { Preset, PresetIcon } from "@/management/preset/contract";
 import { CodeEditor } from "@/management/preset/editor/Code";
+import { PresetIconEditor } from "@/management/preset/icon/Editor";
 import {
 	createPresetIconDraft,
 	presetIconDraftToPresetIcon,
-} from "@/management/preset/icon/draft";
-import { PresetIconEditor } from "@/management/preset/icon/Editor";
-import { upsertLocalPreset } from "@/management/preset/use-cases";
-import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
-import { glyphBoxFillClass } from "@/management/preset/workspace/glyph-classes";
+} from "@/management/preset/icon/editor-state";
+import { upsertLocalPreset } from "@/management/preset/operations";
+import { glyphBoxFillClass } from "@/management/preset/workspace/glyph/classes";
+import { FramedPresetGlyph } from "@/management/preset/workspace/glyph/WorkspaceGlyph";
 import {
 	canUseCepNodeFileBrowser,
 	createCepNodeFileBrowserService,

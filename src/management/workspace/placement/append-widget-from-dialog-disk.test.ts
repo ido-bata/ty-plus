@@ -145,7 +145,7 @@ vi.mock("@/management/debug", () => ({
 	}),
 }));
 
-vi.mock("@/management/workspace/services", () => ({
+vi.mock("@/management/workspace/core/services", () => ({
 	getDataServices: getDataServicesMock,
 }));
 

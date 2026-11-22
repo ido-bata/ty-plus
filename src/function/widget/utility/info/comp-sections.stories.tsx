@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
 import { CompSections } from "@/function/widget/utility/info/comp-sections";
-import type { CompInfo } from "@/management/workspace/state";
+import type { CompInfo } from "@/management/workspace/core/state";
 import { css } from "@/styled-system/css";
 
 type Args = {

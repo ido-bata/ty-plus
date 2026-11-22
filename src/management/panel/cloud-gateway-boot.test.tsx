@@ -91,7 +91,7 @@ vi.mock("@/management/online/catalog/runtime-cloud-gateway", () => ({
 	createRuntimeCloudGateway: cloudGatewayModule.createRuntimeCloudGateway,
 }));
 
-vi.mock("@/management/workspace/services", () => ({
+vi.mock("@/management/workspace/core/services", () => ({
 	initCloudGateway: servicesModule.initCloudGateway,
 	initUpdateInstaller: servicesModule.initUpdateInstaller,
 }));
@@ -107,7 +107,7 @@ vi.mock("@/management/online/runtime-gateway-health", () => ({
 	setHostOnlineStatePublisher: vi.fn(),
 }));
 
-import { initCloudGateway } from "@/management/workspace/services";
+import { initCloudGateway } from "@/management/workspace/core/services";
 
 import {
 	type GatewayBootFailureReason,

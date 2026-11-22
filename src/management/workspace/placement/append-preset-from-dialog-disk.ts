@@ -50,10 +50,10 @@ import {
 	readNJson,
 	readPresetsJson,
 } from "@/management/storage";
+import { getDataServices } from "@/management/workspace/core/services";
 import { parseLayoutDocument } from "@/management/workspace/layout/grid-document";
 import { resolveWorkspacePersistenceManagedRoot } from "@/management/workspace/layout/persistence-root";
 import { persistTargetLayout } from "@/management/workspace/placement/cross-panel-write";
-import { getDataServices } from "@/management/workspace/services";
 
 export type AppendPresetFromDialogDiskInput = {
 	targetPanelId: string;

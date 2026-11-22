@@ -36,7 +36,7 @@
  * and on every mutation. Cloud boot cannot invalidate a local read: there is no
  * gateway in the data path to go stale, which is the point of the fix.
  *
- * Cloud resolve stays where it belongs — `getPreset` in `preset/use-cases.ts`
+ * Cloud resolve stays where it belongs — `getPreset` in `preset/operations.ts`
  * asks the gateway for a remote fallback only after a local miss.
  */
 

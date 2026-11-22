@@ -32,9 +32,8 @@ export { RangeField } from "./fields/RangeField";
 export { RegexEditor } from "./fields/RegexEditor";
 export { SearchField } from "./fields/SearchField";
 export { Textarea } from "./fields/Textarea";
-
+export { Icon } from "./Icon";
 export * as Icons from "./icons";
-export { Icon } from "./icons/Icon";
 
 export { useAnchorGesture } from "./interaction/use-anchor-gesture";
 

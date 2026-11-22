@@ -139,9 +139,7 @@ describe("classifyBoundaryViolation", () => {
 		// K1: management may import the function slice's public vocabulary —
 		// the widget catalog's manifest included.
 		const mgmtFile = "/src/management/widget/catalog.tsx";
-		expect(
-			classifyBoundaryViolation(mgmtFile, "@/function/widget"),
-		).toBeNull();
+		expect(classifyBoundaryViolation(mgmtFile, "@/function/widget")).toBeNull();
 		expect(
 			classifyBoundaryViolation(mgmtFile, "@/function/widget/contract"),
 		).toBeNull();
