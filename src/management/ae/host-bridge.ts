@@ -39,9 +39,13 @@ export const createAdapter = (
 		},
 		ping: () => call("ping", []),
 		runScriptFile: (filePath: string) => call("runScriptFile", [filePath]),
-		applyPreset: (filePath: string) => call("applyPreset", [filePath]),
-		addFootage: (input: { filePath: string; toComp?: boolean }) =>
-			call("addFootage", [input]),
+		applyPreset: (filePath: string, options?: { undoGroupName?: string }) =>
+			call("applyPreset", [filePath, options]),
+		addFootage: (input: {
+			filePath: string;
+			toComp?: boolean;
+			undoGroupName?: string;
+		}) => call("addFootage", [input]),
 		verifyPresetAsset: async (filePath: string) => {
 			const v = await call("verifyPresetAsset", [filePath]);
 			if (
@@ -68,8 +72,10 @@ export const createAdapter = (
 			}
 			return { rows: [] as AexEffectScanRow[] };
 		},
-		applyEffectByMatchName: (matchName: string) =>
-			call("applyEffectByMatchName", [matchName]),
+		applyEffectByMatchName: (
+			matchName: string,
+			options?: { undoGroupName?: string },
+		) => call("applyEffectByMatchName", [matchName, options]),
 		applyEasing: (payload: Record<string, unknown>) =>
 			call("applyEasing", [payload]),
 		applyLoopEasing: (payload: Record<string, unknown>) =>

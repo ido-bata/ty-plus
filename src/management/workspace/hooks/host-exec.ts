@@ -27,7 +27,15 @@ export const importFile = async (
 		});
 	}
 	if (lowerPath.endsWith(".ffx")) {
-		await hostExecutor("applyPreset", [filePath]);
+		await hostExecutor("applyPreset", [
+			filePath,
+			{
+				undoGroupName: i18n.t(
+					"widgets:directoryBrowser.actions.undoGroup.applyPreset",
+					{ defaultValue: "Ty Plus: Apply Preset" },
+				),
+			},
+		]);
 		return i18n.t("widgets:directoryBrowser.actions.appliedPreset", {
 			name: fileName,
 			defaultValue: "Applied preset: {{name}}",
@@ -38,13 +46,30 @@ export const importFile = async (
 		if (!effectId) {
 			throw new Error(`effectId is required for plugin: ${fileName}`); // i18n-exempt: internal diagnostic — not rendered as UI copy
 		}
-		await hostExecutor("applyEffectByMatchName", [effectId]);
+		await hostExecutor("applyEffectByMatchName", [
+			effectId,
+			{
+				undoGroupName: i18n.t(
+					"widgets:directoryBrowser.actions.undoGroup.applyEffect",
+					{ defaultValue: "Ty Plus: Apply effect" },
+				),
+			},
+		]);
 		return i18n.t("widgets:directoryBrowser.actions.appliedEffect", {
 			name: fileName,
 			defaultValue: "Applied effect: {{name}}",
 		});
 	}
-	await hostExecutor("addFootage", [{ filePath, toComp: true }]);
+	await hostExecutor("addFootage", [
+		{
+			filePath,
+			toComp: true,
+			undoGroupName: i18n.t(
+				"widgets:directoryBrowser.actions.undoGroup.addFootage",
+				{ defaultValue: "Ty Plus: Add Footage" },
+			),
+		},
+	]);
 	return i18n.t("widgets:directoryBrowser.actions.importedFootage", {
 		name: fileName,
 		defaultValue: "Imported footage: {{name}}",

@@ -182,7 +182,11 @@
 			"selectComposition": "请选择一个合成。",
 			"selectProperties": "请选择至少一个属性以应用缓动。",
 			"notEnoughKeyframes": "所选属性的关键帧不足。",
-			"applyFailedPrefix": "应用缓动时出错："
+			"applyFailedPrefix": "应用缓动时出错：",
+			"undoGroupName": "ty-plus: 应用缓动预设"
+		},
+		"layerCompScript": {
+			"undoGroupName": "Ty Plus: 应用图层/合成预设"
 		}
 	},
 	"animationPreset": {
@@ -210,7 +214,8 @@
 			"reset": "重置为默认",
 			"notConfigured": "未配置"
 		},
-		"iconText": "动画"
+		"iconText": "动画",
+		"undoGroupName": "Ty Plus: 保存动画预设"
 	},
 	"edit": {
 		"title": "编辑预设",

@@ -18,7 +18,9 @@ describe("plugin operation", () => {
 		});
 
 		expect(mockApplyEffectByMatchName).toHaveBeenCalledOnce();
-		expect(mockApplyEffectByMatchName).toHaveBeenCalledWith("effect");
+		expect(mockApplyEffectByMatchName).toHaveBeenCalledWith("effect", {
+			undoGroupName: "Ty Plus: Apply effect",
+		});
 		expect(result.action).toBe("applyEffectByMatchName");
 	});
 });

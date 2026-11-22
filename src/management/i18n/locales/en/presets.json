@@ -183,7 +183,11 @@
 			"selectComposition": "Please select a composition.",
 			"selectProperties": "Please select at least one property to apply the easing.",
 			"notEnoughKeyframes": "Selected properties do not have enough keyframes.",
-			"applyFailedPrefix": "Error applying easing: "
+			"applyFailedPrefix": "Error applying easing: ",
+			"undoGroupName": "ty-plus: apply easing preset"
+		},
+		"layerCompScript": {
+			"undoGroupName": "Ty Plus: Apply Layer/Comp Preset"
 		}
 	},
 	"animationPreset": {
@@ -211,7 +215,8 @@
 			"reset": "Reset to default",
 			"notConfigured": "Not configured"
 		},
-		"iconText": "ANIM"
+		"iconText": "ANIM",
+		"undoGroupName": "Ty Plus: Save Animation Preset"
 	},
 	"edit": {
 		"title": "Edit Preset",

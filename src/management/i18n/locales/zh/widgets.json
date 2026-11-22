@@ -83,7 +83,9 @@
 			"easeOut": "应用 Ease out Easing 预设",
 			"easeIn": "应用 Ease in Easing 预设",
 			"easeInOut": "应用 Ease in/out Easing 预设"
-		}
+		},
+		"undoGroupName": "Ty Plus: 应用缓动",
+		"pasteValuesUndoGroupName": "Ty Plus: 粘贴值"
 	},
 	"menu": {
 		"name": "菜单",
@@ -117,7 +119,9 @@
 			"distribute": "分布",
 			"spacing": "间距",
 			"time": "时间"
-		}
+		},
+		"undoGroupName": "Ty Plus: 对齐图层",
+		"timeUndoGroupName": "ty-plus 时间对齐"
 	},
 	"anchorPoint": {
 		"name": "Anchor point",
@@ -134,7 +138,8 @@
 			"bottomRight": "右下"
 		},
 		"noActiveComposition": "Ty Plus 锚点：没有活动的合成",
-		"noLayerSelected": "Ty Plus 锚点：未选择图层"
+		"noLayerSelected": "Ty Plus 锚点：未选择图层",
+		"undoGroupName": "ty-plus 设置锚点"
 	},
 	"info": {
 		"name": "Info",
@@ -204,7 +209,12 @@
 			"importedFootage": "已导入素材：{{name}}",
 			"ranScript": "已运行脚本：{{name}}",
 			"appliedPreset": "已应用预设：{{name}}",
-			"runBlockedUnverifiableAsset": "无法验证预设资源（主机不可用）— 重试"
+			"runBlockedUnverifiableAsset": "无法验证预设资源（主机不可用）— 重试",
+			"undoGroup": {
+				"applyPreset": "Ty Plus: 应用预设",
+				"addFootage": "Ty Plus: 添加素材",
+				"applyEffect": "Ty Plus: 应用效果"
+			}
 		},
 		"path": {
 			"pickFolderPrompt": "选择文件夹",

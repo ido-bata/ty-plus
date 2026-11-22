@@ -103,3 +103,12 @@ canonical を逸脱する必要がある場合 (例: マーケ要件で全言語
 - 9 locale は en と同一 namespace・同一 leaf key 集合を持つ。余分な key（他 namespace の複製を含む）は持たない。
 - `t()` が参照する static literal key は en に存在しなければならない。動的組み立て key は対象外。
 - 機械的強制は `bun run scripts/check/i18n-locale-coverage.ts --strict-en-canonical`。未訳値は `TODO: ` prefix で置く。
+
+## 6. ExtendScript artifact の扱い
+
+`src/management/ae/jsx/host-bundle.ext.ts` が生成する `.jsx` は After Effects の ExtendScript 内で実行され、i18next にアクセスできない。それでも生成物内のユーザー向け文字列 (ExtendScript `alert()`、AE の Undo メニューに出る `beginUndoGroup` 名、パネルへ `error.message` として返る事前条件エラー) は **生成時にパネル側でローカライズして payload 経由で焼き込む**。
+
+- 契約: `src/management/ae/host/contract.ts` の各 `Prepare*Input` に `messages?` / `undoGroupName?` を追加し、host-bundle は payload 値を優先・英語リテラルをフォールバックに使う。
+- 呼び出し側: パネルの i18n 機構 (`i18n.t` / `useTranslation`) でロケール文字列を組み立てて渡す。
+- 生成物は著者ロケールで固定される。プリセットを他者へ配布した場合も著者ロケールの文言になるが、ExtendScript 側にロケール機構がない以上これが上限であり、常時英語よりは良い。
+- ExtendScript 内部の不変条件・プロトコル診断 (`Invalid JSON`、パス検証、`is required` 系) は UI に出ないか技術的文脈に留まるため英語のままでよい。

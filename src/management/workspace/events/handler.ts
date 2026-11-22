@@ -1457,8 +1457,16 @@ export const setupInteractionEvents = (
 			(ALIGN_ACTIONS as readonly string[]).includes(action)
 		) {
 			const jsx = (TIME_ALIGN_ACTIONS as readonly string[]).includes(action)
-				? buildTimeAlignScript(action, "selection")
-				: buildAlignLayersScript(action, "selection");
+				? buildTimeAlignScript(
+						action,
+						"selection",
+						i18n.t("widgets:align.timeUndoGroupName"),
+					)
+				: buildAlignLayersScript(
+						action,
+						"selection",
+						i18n.t("widgets:align.undoGroupName"),
+					);
 			if (jsx) runCep(jsx);
 			return;
 		}

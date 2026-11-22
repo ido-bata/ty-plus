@@ -182,7 +182,11 @@
 			"selectComposition": "コンポジションを選択してください。",
 			"selectProperties": "イージングを適用するプロパティを1つ以上選択してください。",
 			"notEnoughKeyframes": "選択したプロパティのキーが不足しています。",
-			"applyFailedPrefix": "イージングの適用エラー: "
+			"applyFailedPrefix": "イージングの適用エラー: ",
+			"undoGroupName": "ty-plus: イージングプリセットを適用"
+		},
+		"layerCompScript": {
+			"undoGroupName": "Ty Plus: レイヤー/コンポジションプリセットを適用"
 		}
 	},
 	"animationPreset": {
@@ -210,7 +214,8 @@
 			"reset": "デフォルトに戻す",
 			"notConfigured": "未設定"
 		},
-		"iconText": "アニメ"
+		"iconText": "アニメ",
+		"undoGroupName": "Ty Plus: アニメーションプリセットを保存"
 	},
 	"edit": {
 		"title": "プリセットを編集",

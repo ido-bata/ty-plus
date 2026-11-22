@@ -183,7 +183,11 @@
 			"selectComposition": "Bitte wählen Sie eine Komposition aus.",
 			"selectProperties": "Bitte wählen Sie mindestens eine Eigenschaft aus, auf die das Easing angewendet werden soll.",
 			"notEnoughKeyframes": "Die ausgewählten Eigenschaften haben nicht genügend Keyframes.",
-			"applyFailedPrefix": "Fehler beim Anwenden des Easings: "
+			"applyFailedPrefix": "Fehler beim Anwenden des Easings: ",
+			"undoGroupName": "ty-plus: Easing-Vorgabe anwenden"
+		},
+		"layerCompScript": {
+			"undoGroupName": "Ty Plus: Ebenen-/Kompositionsvorgabe anwenden"
 		}
 	},
 	"animationPreset": {
@@ -211,7 +215,8 @@
 			"reset": "Auf Standard zurücksetzen",
 			"notConfigured": "Nicht konfiguriert"
 		},
-		"iconText": "ANIM"
+		"iconText": "ANIM",
+		"undoGroupName": "Ty Plus: Animationsvorgabe speichern"
 	},
 	"edit": {
 		"title": "Preset bearbeiten",

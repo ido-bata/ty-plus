@@ -83,7 +83,9 @@
 			"easeOut": "Apply ease-out preset",
 			"easeIn": "Apply ease-in preset",
 			"easeInOut": "Apply ease-in-out preset"
-		}
+		},
+		"undoGroupName": "Ty Plus: Apply Easing",
+		"pasteValuesUndoGroupName": "Ty Plus: Paste Values"
 	},
 	"menu": {
 		"name": "Menu",
@@ -117,7 +119,9 @@
 			"distribute": "Distribute",
 			"spacing": "Spacing",
 			"time": "Time"
-		}
+		},
+		"undoGroupName": "Ty Plus: Align Layers",
+		"timeUndoGroupName": "ty-plus time align"
 	},
 	"anchorPoint": {
 		"name": "Anchor point",
@@ -134,7 +138,8 @@
 			"bottomRight": "Bottom right"
 		},
 		"noActiveComposition": "Ty Plus anchor: no active composition",
-		"noLayerSelected": "Ty Plus anchor: no layer selected"
+		"noLayerSelected": "Ty Plus anchor: no layer selected",
+		"undoGroupName": "ty-plus anchor (anim-safe)"
 	},
 	"info": {
 		"name": "Info",
@@ -204,7 +209,12 @@
 			"appliedEffect": "Applied effect: {{name}}",
 			"importedFootage": "Imported footage: {{name}}",
 			"ranScript": "Ran script: {{name}}",
-			"appliedPreset": "Applied preset: {{name}}"
+			"appliedPreset": "Applied preset: {{name}}",
+			"undoGroup": {
+				"applyPreset": "Ty Plus: Apply Preset",
+				"addFootage": "Ty Plus: Add Footage",
+				"applyEffect": "Ty Plus: Apply effect"
+			}
 		},
 		"path": {
 			"pickFolderPrompt": "Select a folder",

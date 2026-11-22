@@ -228,6 +228,7 @@ export function Dialog(): JSX.Element {
 					type: presetType,
 					saveDir: displayPath,
 					presetId,
+					undoGroupName: t("presetTool.layerCompScript.undoGroupName"),
 				});
 				if (!result.ok) {
 					throw new Error(result.error.message);

@@ -8,11 +8,17 @@
  * Registered via: src/function/preset/operations/index.ts (append-only)
  */
 
+import { i18n } from "@/management/i18n/index";
 import type { PresetOperationResult } from "../operation-contract";
 import { definePresetOperation } from "../operation-contract";
 
 definePresetOperation("preset", async (host, preset) => {
-	await host.applyPreset(preset.filePath);
+	await host.applyPreset(preset.filePath, {
+		undoGroupName: i18n.t(
+			"widgets:directoryBrowser.actions.undoGroup.applyPreset",
+			{ defaultValue: "Ty Plus: Apply Preset" },
+		),
+	});
 	const result: PresetOperationResult<"applyPreset"> = {
 		action: "applyPreset",
 	};

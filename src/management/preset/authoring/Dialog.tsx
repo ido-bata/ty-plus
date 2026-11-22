@@ -235,10 +235,9 @@ export function GenericPresetCreateDialog(): JSX.Element {
 					messages: {
 						selectComposition: t("presetTool.easingScript.selectComposition"),
 						selectProperties: t("presetTool.easingScript.selectProperties"),
-						notEnoughKeyframes: t(
-							"presetTool.easingScript.notEnoughKeyframes",
-						),
+						notEnoughKeyframes: t("presetTool.easingScript.notEnoughKeyframes"),
 						applyFailedPrefix: t("presetTool.easingScript.applyFailedPrefix"),
+						undoGroupName: t("presetTool.easingScript.undoGroupName"),
 					},
 				});
 				if (!result.ok) {

@@ -185,7 +185,11 @@
 			"selectComposition": "Выберите компоновку.",
 			"selectProperties": "Выберите хотя бы одно свойство для применения easing.",
 			"notEnoughKeyframes": "У выбранных свойств недостаточно ключевых кадров.",
-			"applyFailedPrefix": "Ошибка применения easing: "
+			"applyFailedPrefix": "Ошибка применения easing: ",
+			"undoGroupName": "ty-plus: применить пресет сглаживания"
+		},
+		"layerCompScript": {
+			"undoGroupName": "Ty Plus: Применить пресет слоя/композиции"
 		}
 	},
 	"animationPreset": {
@@ -213,7 +217,8 @@
 			"reset": "Сбросить по умолчанию",
 			"notConfigured": "Не настроено"
 		},
-		"iconText": "АНИМ"
+		"iconText": "АНИМ",
+		"undoGroupName": "Ty Plus: Сохранить пресет анимации"
 	},
 	"edit": {
 		"title": "Редактировать пресет",

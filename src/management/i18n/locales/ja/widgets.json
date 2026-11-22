@@ -83,7 +83,9 @@
 			"easeOut": "イーズアウトプリセットを適用",
 			"easeIn": "イーズインプリセットを適用",
 			"easeInOut": "イーズイン/アウトプリセットを適用"
-		}
+		},
+		"undoGroupName": "Ty Plus: イージングを適用",
+		"pasteValuesUndoGroupName": "Ty Plus: 値を貼り付け"
 	},
 	"menu": {
 		"name": "メニュー",
@@ -117,7 +119,9 @@
 			"distribute": "分布",
 			"spacing": "間隔",
 			"time": "時間"
-		}
+		},
+		"undoGroupName": "Ty Plus: レイヤーを整列",
+		"timeUndoGroupName": "ty-plus タイムを整列"
 	},
 	"anchorPoint": {
 		"name": "アンカーポイント",
@@ -134,7 +138,8 @@
 			"bottomRight": "右下"
 		},
 		"noActiveComposition": "Ty Plus アンカー: アクティブなコンポジションがありません",
-		"noLayerSelected": "Ty Plus アンカー: レイヤーが選択されていません"
+		"noLayerSelected": "Ty Plus アンカー: レイヤーが選択されていません",
+		"undoGroupName": "ty-plus アンカーポイントを設定"
 	},
 	"info": {
 		"name": "情報",
@@ -204,7 +209,12 @@
 			"importedFootage": "インポートしたフッテージ: {{name}}",
 			"ranScript": "スクリプトを実行しました: {{name}}",
 			"appliedPreset": "プリセットを適用しました: {{name}}",
-			"runBlockedUnverifiableAsset": "プリセットのアセットを検証できませんでした（ホストに接続できません）— 再試行"
+			"runBlockedUnverifiableAsset": "プリセットのアセットを検証できませんでした（ホストに接続できません）— 再試行",
+			"undoGroup": {
+				"applyPreset": "Ty Plus: プリセットを適用",
+				"addFootage": "Ty Plus: フッテージを追加",
+				"applyEffect": "Ty Plus: エフェクトを適用"
+			}
 		},
 		"path": {
 			"pickFolderPrompt": "フォルダを選択",

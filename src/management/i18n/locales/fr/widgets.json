@@ -83,7 +83,9 @@
 			"easeOut": "Appliquer le préréglage Easing Ease out",
 			"easeIn": "Appliquer le préréglage Easing Ease in",
 			"easeInOut": "Appliquer le préréglage Easing Ease in/out"
-		}
+		},
+		"undoGroupName": "Ty Plus: Appliquer l'easing",
+		"pasteValuesUndoGroupName": "Ty Plus: Coller les valeurs"
 	},
 	"menu": {
 		"name": "Menu",
@@ -117,7 +119,9 @@
 			"distribute": "Distribuer",
 			"spacing": "Espacement",
 			"time": "Temps"
-		}
+		},
+		"undoGroupName": "Ty Plus: Aligner les calques",
+		"timeUndoGroupName": "ty-plus aligner dans le temps"
 	},
 	"anchorPoint": {
 		"name": "Anchor point",
@@ -134,7 +138,8 @@
 			"bottomRight": "En bas à droite"
 		},
 		"noActiveComposition": "Ancre Ty Plus : aucune composition active",
-		"noLayerSelected": "Ancre Ty Plus : aucun calque sélectionné"
+		"noLayerSelected": "Ancre Ty Plus : aucun calque sélectionné",
+		"undoGroupName": "ty-plus définir le point d'ancrage"
 	},
 	"info": {
 		"name": "Info",
@@ -204,7 +209,12 @@
 			"importedFootage": "Métrage importé : {{name}}",
 			"ranScript": "Script exécuté : {{name}}",
 			"appliedPreset": "Préréglage appliqué : {{name}}",
-			"runBlockedUnverifiableAsset": "Impossible de vérifier la ressource du préréglage (hôte indisponible) — réessayer"
+			"runBlockedUnverifiableAsset": "Impossible de vérifier la ressource du préréglage (hôte indisponible) — réessayer",
+			"undoGroup": {
+				"applyPreset": "Ty Plus: Appliquer le préréglage",
+				"addFootage": "Ty Plus: Ajouter des métrages",
+				"applyEffect": "Ty Plus: Appliquer l'effet"
+			}
 		},
 		"path": {
 			"pickFolderPrompt": "Sélectionner un dossier",

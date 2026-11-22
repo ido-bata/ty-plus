@@ -1512,6 +1512,7 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 			labelColor: effectiveLabelColor,
 			detectedType,
 			targeting,
+			undoGroupName: t("easing.undoGroupName"),
 		};
 		if (useLoop) {
 			payload.loopCount = loopCount;
@@ -1561,7 +1562,7 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 			// next apply.
 			applyTargetingRef.current = "both";
 		}
-	}, [activate, applyMode, customColors, host, labelColor, loopCount]);
+	}, [activate, applyMode, customColors, host, labelColor, loopCount, t]);
 
 	// Some CEP/CEF input paths deliver mouse events without the matching
 	// pointerdown/pointerup (only pointermove is synthesized). The mouse
@@ -2031,12 +2032,17 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 				setModeState("curve");
 			}
 			if (options.pasteValues && clip.values) {
-				await host("pasteKeyframeValues", [{ values: clip.values.values }]);
+				await host("pasteKeyframeValues", [
+					{
+						values: clip.values.values,
+						undoGroupName: t("easing.pasteValuesUndoGroupName"),
+					},
+				]);
 			}
 			drawRef.current?.();
 			persistState();
 		},
-		[host, persistState],
+		[host, persistState, t],
 	);
 
 	const contextHandlersRef = useRef({

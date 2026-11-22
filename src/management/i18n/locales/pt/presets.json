@@ -184,7 +184,11 @@
 			"selectComposition": "Selecione uma composição.",
 			"selectProperties": "Selecione pelo menos uma propriedade para aplicar o easing.",
 			"notEnoughKeyframes": "As propriedades selecionadas não têm quadros-chave suficientes.",
-			"applyFailedPrefix": "Erro ao aplicar o easing: "
+			"applyFailedPrefix": "Erro ao aplicar o easing: ",
+			"undoGroupName": "ty-plus: aplicar predefinição de easing"
+		},
+		"layerCompScript": {
+			"undoGroupName": "Ty Plus: Aplicar predefinição de camada/composição"
 		}
 	},
 	"animationPreset": {
@@ -212,7 +216,8 @@
 			"reset": "Restaurar padrão",
 			"notConfigured": "Não configurado"
 		},
-		"iconText": "ANIM"
+		"iconText": "ANIM",
+		"undoGroupName": "Ty Plus: Guardar predefinição de animação"
 	},
 	"edit": {
 		"title": "Editar predefinição",

@@ -18,7 +18,9 @@ describe("preset operation", () => {
 		});
 
 		expect(mockApplyPreset).toHaveBeenCalledOnce();
-		expect(mockApplyPreset).toHaveBeenCalledWith("/path/to/animation.ffx");
+		expect(mockApplyPreset).toHaveBeenCalledWith("/path/to/animation.ffx", {
+			undoGroupName: "Ty Plus: Apply Preset",
+		});
 		expect(result.action).toBe("applyPreset");
 	});
 });

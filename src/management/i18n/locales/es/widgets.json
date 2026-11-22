@@ -83,7 +83,9 @@
 			"easeOut": "Aplicar preajuste de Easing Ease out",
 			"easeIn": "Aplicar preajuste de Easing Ease in",
 			"easeInOut": "Aplicar preajuste de Easing Ease in/out"
-		}
+		},
+		"undoGroupName": "Ty Plus: Aplicar easing",
+		"pasteValuesUndoGroupName": "Ty Plus: Pegar valores"
 	},
 	"menu": {
 		"name": "Menú",
@@ -117,7 +119,9 @@
 			"distribute": "Distribuir",
 			"spacing": "Espaciado",
 			"time": "Tiempo"
-		}
+		},
+		"undoGroupName": "Ty Plus: Alinear capas",
+		"timeUndoGroupName": "ty-plus alinear en el tiempo"
 	},
 	"anchorPoint": {
 		"name": "Anchor point",
@@ -134,7 +138,8 @@
 			"bottomRight": "Abajo derecha"
 		},
 		"noActiveComposition": "Ancla de Ty Plus: no hay ninguna composición activa",
-		"noLayerSelected": "Ancla de Ty Plus: no hay ninguna capa seleccionada"
+		"noLayerSelected": "Ancla de Ty Plus: no hay ninguna capa seleccionada",
+		"undoGroupName": "ty-plus establecer punto de anclaje"
 	},
 	"info": {
 		"name": "Info",
@@ -204,7 +209,12 @@
 			"importedFootage": "Metraje importado: {{name}}",
 			"ranScript": "Script ejecutado: {{name}}",
 			"appliedPreset": "Preajuste aplicado: {{name}}",
-			"runBlockedUnverifiableAsset": "No se pudo verificar el recurso del preset (host no disponible) — reintentar"
+			"runBlockedUnverifiableAsset": "No se pudo verificar el recurso del preset (host no disponible) — reintentar",
+			"undoGroup": {
+				"applyPreset": "Ty Plus: Aplicar preajuste",
+				"addFootage": "Ty Plus: Añadir metraje",
+				"applyEffect": "Ty Plus: Aplicar efecto"
+			}
 		},
 		"path": {
 			"pickFolderPrompt": "Selecciona una carpeta",

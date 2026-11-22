@@ -184,7 +184,11 @@
 			"selectComposition": "Veuillez sélectionner une composition.",
 			"selectProperties": "Veuillez sélectionner au moins une propriété pour appliquer l'easing.",
 			"notEnoughKeyframes": "Les propriétés sélectionnées n'ont pas assez d'images clés.",
-			"applyFailedPrefix": "Erreur lors de l'application de l'easing : "
+			"applyFailedPrefix": "Erreur lors de l'application de l'easing : ",
+			"undoGroupName": "ty-plus: appliquer le préréglage d'easing"
+		},
+		"layerCompScript": {
+			"undoGroupName": "Ty Plus: Appliquer le préréglage de calque/composition"
 		}
 	},
 	"animationPreset": {
@@ -212,7 +216,8 @@
 			"reset": "Rétablir par défaut",
 			"notConfigured": "Non configuré"
 		},
-		"iconText": "ANIM"
+		"iconText": "ANIM",
+		"undoGroupName": "Ty Plus: Enregistrer le préréglage d'animation"
 	},
 	"edit": {
 		"title": "Modifier le préréglage",

@@ -538,6 +538,7 @@ type AnimationScanInput = {
 	errorFallbackMessage: string;
 	onAutoName: (nextName: string) => void;
 	presetId?: string;
+	undoGroupName?: string;
 };
 
 // Owns the scan/save-dialog flow that opens the AE save dialog, waits for the
@@ -558,6 +559,7 @@ function useAnimationPresetDetection(input: AnimationScanInput): {
 		errorFallbackMessage,
 		onAutoName,
 		presetId,
+		undoGroupName,
 	} = input;
 	const [status, setStatus] = useState<PresetStatus>("idle");
 	const [busy, setBusy] = useState(false);
@@ -606,6 +608,7 @@ function useAnimationPresetDetection(input: AnimationScanInput): {
 				name: name.trim() || "AnimationPreset",
 				saveDir: scanPath,
 				presetId,
+				...(undoGroupName ? { undoGroupName } : {}),
 			});
 
 			if (!result.ok) {
@@ -674,6 +677,7 @@ function useAnimationPresetDetection(input: AnimationScanInput): {
 		presetsRoot,
 		scanAllFfxFiles,
 		tyPlusPresetRoot,
+		undoGroupName,
 	]);
 
 	return {
@@ -779,6 +783,7 @@ export function Dialog(): JSX.Element {
 		errorFallbackMessage: t("animationPreset.status.error"),
 		onAutoName: setName,
 		presetId,
+		undoGroupName: t("animationPreset.undoGroupName"),
 	});
 
 	const displayPath = resolveAnimationScanPath(

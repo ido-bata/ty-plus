@@ -203,7 +203,7 @@ const isArrayValue = (value: unknown): value is unknown[] =>
  * `HOST_BUNDLE_SCHEMA_VERSION` too. It is not the package version: an
  * unrelated packaging or UI bump must not force a host reload.
  */
-const HOST_BUNDLE_VERSION = "workspace-preset-scriptui-panel-v4";
+const HOST_BUNDLE_VERSION = "workspace-preset-scriptui-panel-v5";
 
 /**
  * Host API contract revision exported on the resident global so the CEP
@@ -224,6 +224,15 @@ const trimStr = (value: string): string => {
 	}
 	return value.replace(/^\s+|\s+$/g, "");
 };
+
+/**
+ * Resolve the localized undo-group label for `app.beginUndoGroup`.
+ * The panel bakes the author's locale (including the "Ty Plus:" product
+ * prefix) into the payload; the English literal is only the fallback for
+ * callers that predate the `undoGroupName` contract field.
+ */
+const undoGroupLabel = (value: unknown, fallback: string): string =>
+	typeof value === "string" && trimStr(value) ? value : fallback;
 
 const wrapCallable =
 	(fn: (...args: any[]) => unknown) =>
@@ -482,7 +491,10 @@ const runScriptFile = (filePath: string) => {
 	$.evalFile(file);
 };
 
-const applyPresetFile = (filePath: string) => {
+const applyPresetFile = (
+	filePath: string,
+	options?: { undoGroupName?: string },
+) => {
 	const comp = app.project && app.project.activeItem;
 	if (!comp || !("selectedLayers" in comp)) {
 		throw new Error("Open a composition before applying a preset");
@@ -498,7 +510,9 @@ const applyPresetFile = (filePath: string) => {
 	}
 	const targetLayer =
 		comp.selectedLayers.length > 0 ? comp.selectedLayers[0] : comp.layer(1);
-	app.beginUndoGroup("Ty Plus: Apply Preset");
+	app.beginUndoGroup(
+		undoGroupLabel(options && options.undoGroupName, "Ty Plus: Apply Preset"),
+	);
 	try {
 		targetLayer.applyPreset(file);
 	} finally {
@@ -543,13 +557,18 @@ const firstPngSequenceFile = (folderPath: string): File | null => {
 	return best[0] || null;
 };
 
-const addFootageFile = (filePath: string) => {
+const addFootageFile = (
+	filePath: string,
+	input?: { undoGroupName?: string },
+) => {
 	const sequenceFile = firstPngSequenceFile(assertAllowedFilePath(filePath));
 	const file = sequenceFile || new File(filePath);
 	if (!file.exists) {
 		throw new Error(`Footage file not found: ${filePath}`);
 	}
-	app.beginUndoGroup("Ty Plus: Add Footage");
+	app.beginUndoGroup(
+		undoGroupLabel(input && input.undoGroupName, "Ty Plus: Add Footage"),
+	);
 	try {
 		const options = new ImportOptions(file);
 		if (sequenceFile) {
@@ -652,7 +671,12 @@ const openAnimationPresetSaveDialog = (payload: Record<string, unknown>) => {
 	if (!comp || !("selectedLayers" in comp) || comp.selectedLayers.length === 0) {
 		throw new Error("Select at least one layer before saving an animation preset");
 	}
-	app.beginUndoGroup("Ty Plus: Save Animation Preset");
+	app.beginUndoGroup(
+		undoGroupLabel(
+			payload.undoGroupName,
+			"Ty Plus: Save Animation Preset",
+		),
+	);
 	try {
 		comp.selectedLayers[0].selected = true;
 		app.executeCommand(app.findMenuCommandId("Save Animation Preset..."));
@@ -692,12 +716,16 @@ const prepareLayerCompPresetScript = (payload: Record<string, unknown>) => {
 		"LayerCompPreset",
 		".jsx",
 	);
+	const undoGroupName = undoGroupLabel(
+		payload.undoGroupName,
+		"Ty Plus: Apply Layer/Comp Preset",
+	);
 	const script = [
 		"// ty-plus: layer/comp preset",
 		"(function(){",
 		`  var projectPath = ${JSON.stringify(aepPath)};`,
 		`  var presetType = ${JSON.stringify(type)};`,
-		"  app.beginUndoGroup('Ty Plus: Apply Layer/Comp Preset');",
+		`  app.beginUndoGroup(${JSON.stringify(undoGroupName)});`,
 		"  try {",
 		"    var importFile = new File(projectPath);",
 		"    if (!importFile.exists) throw new Error('Source project not found: ' + projectPath);",
@@ -751,6 +779,10 @@ const prepareEasingPresetScript = (payload: Record<string, unknown>) => {
 			"Selected properties do not have enough keyframes.",
 		),
 		applyFailedPrefix: msg("applyFailedPrefix", "Error applying easing: "),
+		undoGroupName: msg(
+			"undoGroupName",
+			"ty-plus: apply easing preset",
+		),
 	});
 	const content = [
 		"// ty-plus: easing preset",
@@ -763,7 +795,7 @@ const prepareEasingPresetScript = (payload: Record<string, unknown>) => {
 		"  if (!(comp instanceof CompItem)) { alert(MSG.selectComposition); return; }",
 		"  var props = comp.selectedProperties;",
 		"  if (!props || props.length === 0) { alert(MSG.selectProperties); return; }",
-		"  app.beginUndoGroup('ty-plus: apply easing preset');",
+		"  app.beginUndoGroup(MSG.undoGroupName);",
 		`  var cubic = ${JSON.stringify(cubic)};`,
 		`  var points = ${pointsLiteral};`,
 		`  var labelColor = ${labelColor};`,
@@ -856,7 +888,9 @@ const setAnchorPoint = (payload: Record<string, unknown>) => {
 	if (!comp || !("selectedLayers" in comp) || comp.selectedLayers.length === 0) {
 		throw new Error("Select at least one layer before setting anchor point");
 	}
-	app.beginUndoGroup("Ty Plus: Set Anchor Point");
+	app.beginUndoGroup(
+		undoGroupLabel(payload.undoGroupName, "Ty Plus: Set Anchor Point"),
+	);
 	try {
 		let changed = 0;
 		for (let i = 0; i < comp.selectedLayers.length; i += 1) {
@@ -1008,7 +1042,9 @@ const writeSelectedTextLayers = (payload: Record<string, unknown>) => {
 		throw new Error("Select text layers in an active composition");
 	}
 	let updated = 0;
-	app.beginUndoGroup("Ty Plus: Apply Font");
+	app.beginUndoGroup(
+		undoGroupLabel(payload.undoGroupName, "Ty Plus: Apply Font"),
+	);
 	try {
 		for (let i = 0; i < comp.selectedLayers.length; i += 1) {
 			const layer = comp.selectedLayers[i] as unknown as { property?: (name: string) => unknown };
@@ -1226,7 +1262,10 @@ const buildPluginEffectScanRows = (
 	return { rows };
 };
 
-const applyEffectByMatchName = (matchName: string) => {
+const applyEffectByMatchName = (
+	matchName: string,
+	options?: { undoGroupName?: string },
+) => {
 	const m = trimStr(String(matchName || ""));
 	if (!m) throw new Error("matchName is required");
 	const installedEffects = getInstalledEffects().rows;
@@ -1243,7 +1282,9 @@ const applyEffectByMatchName = (matchName: string) => {
 		throw new Error("Select at least one layer before applying an effect");
 	}
 	let applied = 0;
-	app.beginUndoGroup("Ty Plus: Apply effect");
+	app.beginUndoGroup(
+		undoGroupLabel(options && options.undoGroupName, "Ty Plus: Apply effect"),
+	);
 	try {
 		for (let i = 0; i < comp.selectedLayers.length; i += 1) {
 			const layer = comp.selectedLayers[i] as unknown as {
@@ -1304,7 +1345,11 @@ const getSelectionCount = () => {
 	return { count: selectedLayers ? selectedLayers.length : 0 };
 };
 
-const alignLayers = (input: { action?: string; target?: string }) => {
+const alignLayers = (input: {
+	action?: string;
+	target?: string;
+	undoGroupName?: string;
+}) => {
 	const action = trimStr(String(input.action || ""));
 	const target = trimStr(String(input.target || "selection"));
 	if (!action) {
@@ -1428,7 +1473,9 @@ const alignLayers = (input: { action?: string; target?: string }) => {
 	const centerX = (minLeft + maxRight) / 2;
 	const centerY = (minTop + maxBottom) / 2;
 
-	app.beginUndoGroup("Ty Plus: Align Layers");
+	app.beginUndoGroup(
+		undoGroupLabel(input.undoGroupName, "Ty Plus: Align Layers"),
+	);
 	try {
 		if (action === "distribute-h" || action === "distribute-v") {
 			const distribute = makeIndexed(bounds);
@@ -1830,7 +1877,9 @@ const applyEasing = (payload: Record<string, unknown>) => {
 	// message instead of the apply silently no-opping. Always returned
 	// (empty array on success) so callers can rely on the shape.
 	const errors: string[] = [];
-	app.beginUndoGroup("Ty Plus: Apply Easing");
+	app.beginUndoGroup(
+		undoGroupLabel(payload.undoGroupName, "Ty Plus: Apply Easing"),
+	);
 	try {
 		for (let p = 0; p < props.length; p += 1) {
 			const prop = props[p];
@@ -2163,11 +2212,16 @@ const getEasingClipboardPath = () => {
 	return { value: { path: base + "/Aescripts/TyPlus/easing-clipboard.json" } };
 };
 
-const pasteKeyframeValues = (input: { values?: number[][] }) => {
+const pasteKeyframeValues = (input: {
+	values?: number[][];
+	undoGroupName?: string;
+}) => {
 	const values = isArrayValue(input?.values) ? input.values : [];
 	const props = collectEasingTargetProperties();
 	const errors: string[] = [];
-	app.beginUndoGroup("Ty Plus: Paste Values");
+	app.beginUndoGroup(
+		undoGroupLabel(input?.undoGroupName, "Ty Plus: Paste Values"),
+	);
 	try {
 		for (let p = 0; p < props.length; p += 1) {
 			const prop = props[p];
@@ -2213,8 +2267,9 @@ const hostBundle = {
 	}),
 	runScriptFile: wrapCallable(runScriptFile),
 	applyPreset: wrapCallable(applyPresetFile),
-	addFootage: wrapCallable((input: { filePath?: string }) =>
-		addFootageFile(String(input.filePath ?? "")),
+	addFootage: wrapCallable(
+		(input: { filePath?: string; undoGroupName?: string }) =>
+			addFootageFile(String(input.filePath ?? ""), input),
 	),
 	// Issue #130: lets the React side ask the host whether the recorded
 	// preset asset is still on disk. Used at startup to mark stale records
@@ -2253,8 +2308,9 @@ const hostBundle = {
 	applyEffectByMatchName: wrapCallable(applyEffectByMatchName),
 	getSelectionCount: wrapCallable(getSelectionCount),
 	getEasingSelectionCount: wrapCallable(getEasingSelectionCount),
-	alignLayers: wrapCallable((input: { action?: string; target?: string }) =>
-		alignLayers(input),
+	alignLayers: wrapCallable(
+		(input: { action?: string; target?: string; undoGroupName?: string }) =>
+			alignLayers(input),
 	),
 	applyEasing: wrapCallable((payload: Record<string, unknown>) =>
 		applyEasing(payload),

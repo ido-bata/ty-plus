@@ -83,7 +83,9 @@
 			"easeOut": "Easing-Voreinstellung Ease out anwenden",
 			"easeIn": "Easing-Voreinstellung Ease in anwenden",
 			"easeInOut": "Easing-Voreinstellung Ease in/out anwenden"
-		}
+		},
+		"undoGroupName": "Ty Plus: Easing anwenden",
+		"pasteValuesUndoGroupName": "Ty Plus: Werte einfügen"
 	},
 	"menu": {
 		"name": "Menü",
@@ -117,7 +119,9 @@
 			"distribute": "Verteilen",
 			"spacing": "Abstand",
 			"time": "Zeit"
-		}
+		},
+		"undoGroupName": "Ty Plus: Ebenen ausrichten",
+		"timeUndoGroupName": "ty-plus Zeitachse ausrichten"
 	},
 	"anchorPoint": {
 		"name": "Anchor point",
@@ -134,7 +138,8 @@
 			"bottomRight": "Unten rechts"
 		},
 		"noActiveComposition": "Ty Plus-Anker: keine aktive Komposition",
-		"noLayerSelected": "Ty Plus-Anker: keine Ebene ausgewählt"
+		"noLayerSelected": "Ty Plus-Anker: keine Ebene ausgewählt",
+		"undoGroupName": "ty-plus Ankerpunkt setzen"
 	},
 	"info": {
 		"name": "Info",
@@ -204,7 +209,12 @@
 			"importedFootage": "Importiertes Filmmaterial: {{name}}",
 			"ranScript": "Skript ausgeführt: {{name}}",
 			"appliedPreset": "Preset angewendet: {{name}}",
-			"runBlockedUnverifiableAsset": "Preset-Asset konnte nicht überprüft werden (Host nicht erreichbar) — erneut versuchen"
+			"runBlockedUnverifiableAsset": "Preset-Asset konnte nicht überprüft werden (Host nicht erreichbar) — erneut versuchen",
+			"undoGroup": {
+				"applyPreset": "Ty Plus: Vorgabe anwenden",
+				"addFootage": "Ty Plus: Footage hinzufügen",
+				"applyEffect": "Ty Plus: Effekt anwenden"
+			}
 		},
 		"path": {
 			"pickFolderPrompt": "Ordner auswählen",

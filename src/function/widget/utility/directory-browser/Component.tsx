@@ -815,7 +815,12 @@ export function DirectoryBrowserWidget({
 				});
 			}
 			if (lowerPath.endsWith(".ffx")) {
-				await hostExecutorForAlign("applyPreset", [filePath]);
+				await hostExecutorForAlign("applyPreset", [
+					filePath,
+					{
+						undoGroupName: t("directoryBrowser.actions.undoGroup.applyPreset"),
+					},
+				]);
 				return t("directoryBrowser.actions.appliedPreset", {
 					name: fileName,
 					defaultValue: "Applied preset: {{name}}",
@@ -830,13 +835,24 @@ export function DirectoryBrowserWidget({
 					filePath,
 					snapshot?.pluginEffects ?? [],
 				);
-				await hostExecutorForAlign("applyEffectByMatchName", [matchName]);
+				await hostExecutorForAlign("applyEffectByMatchName", [
+					matchName,
+					{
+						undoGroupName: t("directoryBrowser.actions.undoGroup.applyEffect"),
+					},
+				]);
 				return t("directoryBrowser.actions.appliedEffect", {
 					name: fileName,
 					defaultValue: "Applied effect: {{name}}",
 				});
 			}
-			await hostExecutorForAlign("addFootage", [{ filePath, toComp: true }]);
+			await hostExecutorForAlign("addFootage", [
+				{
+					filePath,
+					toComp: true,
+					undoGroupName: t("directoryBrowser.actions.undoGroup.addFootage"),
+				},
+			]);
 			return t("directoryBrowser.actions.importedFootage", {
 				name: fileName,
 				defaultValue: "Imported footage: {{name}}",

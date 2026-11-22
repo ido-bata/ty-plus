@@ -78,11 +78,14 @@ const notifyAnchorOutcome = (raw: string): void => {
 export const runAnchorScript = (position: AnchorPosition): void => {
 	const ev = getEvalScript();
 	if (!ev) return;
-	ev(buildAnchorScript(position), (result) => {
-		try {
-			notifyAnchorOutcome(result);
-		} catch {
-			// Notification must never break the widget path.
-		}
-	});
+	ev(
+		buildAnchorScript(position, i18n.t("widgets:anchorPoint.undoGroupName")),
+		(result) => {
+			try {
+				notifyAnchorOutcome(result);
+			} catch {
+				// Notification must never break the widget path.
+			}
+		},
+	);
 };

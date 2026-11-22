@@ -25,6 +25,14 @@ export type PresetSaveRootClass = "ae-support" | "user-data" | "extension";
 export type PreparePresetSaveBaseInput = {
 	name: string;
 	saveDir: string;
+	/**
+	 * Complete localized undo-group label baked into generated `.jsx`
+	 * artifacts (Layer/Comp preset) or shown by live host undo groups
+	 * (Animation preset save dialog). The "Ty Plus:" product prefix is
+	 * part of the translated value, not added host-side. Falls back to
+	 * the English literal inside the host bundle when absent.
+	 */
+	undoGroupName?: string;
 };
 
 export type PrepareLayerCompPresetScriptInput = PreparePresetSaveBaseInput & {
@@ -48,6 +56,8 @@ export type PrepareEasingPresetScriptInput = PreparePresetSaveBaseInput & {
 		selectProperties: string;
 		notEnoughKeyframes: string;
 		applyFailedPrefix: string;
+		/** Localized undo-group label baked into the generated `.jsx`. */
+		undoGroupName?: string;
 	};
 };
 
@@ -76,8 +86,15 @@ export type AfterEffectsHostApi = {
 	getHostContext(): Promise<HostContext>;
 	ping(): Promise<unknown>;
 	runScriptFile(filePath: string): Promise<unknown>;
-	applyPreset(filePath: string): Promise<unknown>;
-	addFootage(input: { filePath: string; toComp?: boolean }): Promise<unknown>;
+	applyPreset(
+		filePath: string,
+		options?: { undoGroupName?: string },
+	): Promise<unknown>;
+	addFootage(input: {
+		filePath: string;
+		toComp?: boolean;
+		undoGroupName?: string;
+	}): Promise<unknown>;
 	/**
 	 * Verify whether a preset asset file currently exists on disk.
 	 * Returns `{ exists, path }` where `path` is the canonical fsName form.
@@ -90,14 +107,20 @@ export type AfterEffectsHostApi = {
 	/** Scan `.aex` under the given folders (typically `pluginRoot`) for effect match names. */
 	scanPluginEffectRoots(roots: string[]): Promise<{ rows: AexEffectScanRow[] }>;
 	/** Apply an effect to selected layers by AE match name (from PiPL / manifest scan). */
-	applyEffectByMatchName(matchName: string): Promise<unknown>;
+	applyEffectByMatchName(
+		matchName: string,
+		options?: { undoGroupName?: string },
+	): Promise<unknown>;
 	applyEasing(payload: Record<string, unknown>): Promise<unknown>;
 	/** Apply a single curve shape replicated `loopCount` times across the
 	 *  (k1, k2) range. Loop is in-targeting-only; other targeting values
 	 *  should use `applyEasing`. See docs/architecture/widget-boundary.md
 	 *  "Easing Widget: Loop モード". */
 	applyLoopEasing(payload: Record<string, unknown>): Promise<unknown>;
-	setAnchorPoint(input: { position: string }): Promise<unknown>;
+	setAnchorPoint(input: {
+		position: string;
+		undoGroupName?: string;
+	}): Promise<unknown>;
 	captureEasingCurve(): Promise<unknown>;
 	/** Read per-keyframe values from the selected keyframes on the active
 	 *  property. Returns `{ values: number[][] }` where each inner array is the
@@ -107,11 +130,17 @@ export type AfterEffectsHostApi = {
 	/** Resolve the path to the easing-clipboard file under userData. */
 	getEasingClipboardPath(): Promise<{ path: string }>;
 	/** Write the provided values to the selected keyframes (preserves timing). */
-	pasteKeyframeValues(input: { values: number[][] }): Promise<unknown>;
+	pasteKeyframeValues(input: {
+		values: number[][];
+		undoGroupName?: string;
+	}): Promise<unknown>;
 	/** Read AE's user-defined label color names (indices 1-16). */
 	getLabelColorNames(): Promise<{ names: Record<string, string> }>;
 	getFontBrowserEntries(): Promise<unknown>;
-	writeSelectedTextLayers(input: { font: string }): Promise<unknown>;
+	writeSelectedTextLayers(input: {
+		font: string;
+		undoGroupName?: string;
+	}): Promise<unknown>;
 	readSelectedTextLayers(): Promise<unknown>;
 	/**
 	 * Issue #160 authoring boundary. These resolve and authorize the
@@ -140,7 +169,11 @@ export type AfterEffectsHostApi = {
 	 *  currently apply to. Used to short-circuit auto-apply when the
 	 *  user has no usable selection so AE never sees a thrown alert. */
 	getEasingSelectionCount(): Promise<{ pairs: number }>;
-	alignLayers(input: { action: string; target: string }): Promise<unknown>;
+	alignLayers(input: {
+		action: string;
+		target: string;
+		undoGroupName?: string;
+	}): Promise<unknown>;
 };
 
 /**
@@ -194,7 +227,7 @@ export const HOST_BUNDLE_SCHEMA_VERSION = 1;
  * on the resident global. It is a standalone ES3 bundle and cannot import
  * this module, so `host-executor.test.ts` pins the two declarations.
  */
-export const HOST_BUNDLE_VERSION = "workspace-preset-scriptui-panel-v4";
+export const HOST_BUNDLE_VERSION = "workspace-preset-scriptui-panel-v5";
 
 type HostCode = "AEFT";
 

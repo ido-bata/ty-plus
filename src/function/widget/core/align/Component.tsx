@@ -449,7 +449,13 @@ export function Align({
 					else if (count >= 2 && target === "comp") setTarget("selection");
 				}
 			}
-			await host("alignLayers", [{ action, target: autoTarget ?? target }]);
+			await host("alignLayers", [
+				{
+					action,
+					target: autoTarget ?? target,
+					undoGroupName: i18n.t("widgets:align.undoGroupName"),
+				},
+			]);
 		},
 		[host, target, isManualTarget, setActiveWidgetInstanceId, widgetInstanceId],
 	);

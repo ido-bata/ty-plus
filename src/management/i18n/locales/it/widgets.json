@@ -83,7 +83,9 @@
 			"easeOut": "Applica preimpostazione Easing Ease out",
 			"easeIn": "Applica preimpostazione Easing Ease in",
 			"easeInOut": "Applica preimpostazione Easing Ease in/out"
-		}
+		},
+		"undoGroupName": "Ty Plus: Applica easing",
+		"pasteValuesUndoGroupName": "Ty Plus: Incolla valori"
 	},
 	"menu": {
 		"name": "Menu",
@@ -117,7 +119,9 @@
 			"distribute": "Distribuisci",
 			"spacing": "Spaziatura",
 			"time": "Tempo"
-		}
+		},
+		"undoGroupName": "Ty Plus: Allinea livelli",
+		"timeUndoGroupName": "ty-plus allinea nel tempo"
 	},
 	"anchorPoint": {
 		"name": "Anchor point",
@@ -134,7 +138,8 @@
 			"bottomRight": "Basso a destra"
 		},
 		"noActiveComposition": "Ancora Ty Plus: nessuna composizione attiva",
-		"noLayerSelected": "Ancora Ty Plus: nessun livello selezionato"
+		"noLayerSelected": "Ancora Ty Plus: nessun livello selezionato",
+		"undoGroupName": "ty-plus imposta punto di ancoraggio"
 	},
 	"info": {
 		"name": "Info",
@@ -204,7 +209,12 @@
 			"importedFootage": "Filmato importato: {{name}}",
 			"ranScript": "Script eseguito: {{name}}",
 			"appliedPreset": "Preimpostazione applicata: {{name}}",
-			"runBlockedUnverifiableAsset": "Impossibile verificare la risorsa del preset (host non raggiungibile) — riprova"
+			"runBlockedUnverifiableAsset": "Impossibile verificare la risorsa del preset (host non raggiungibile) — riprova",
+			"undoGroup": {
+				"applyPreset": "Ty Plus: Applica preset",
+				"addFootage": "Ty Plus: Aggiungi filmato",
+				"applyEffect": "Ty Plus: Applica effetto"
+			}
 		},
 		"path": {
 			"pickFolderPrompt": "Seleziona una cartella",

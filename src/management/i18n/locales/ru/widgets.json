@@ -83,7 +83,9 @@
 			"easeOut": "Применить пресет Easing Ease out",
 			"easeIn": "Применить пресет Easing Ease in",
 			"easeInOut": "Применить пресет Easing Ease in/out"
-		}
+		},
+		"undoGroupName": "Ty Plus: Применить сглаживание",
+		"pasteValuesUndoGroupName": "Ty Plus: Вставить значения"
 	},
 	"menu": {
 		"name": "Меню",
@@ -117,7 +119,9 @@
 			"distribute": "Распределение",
 			"spacing": "Интервал",
 			"time": "Время"
-		}
+		},
+		"undoGroupName": "Ty Plus: Выровнять слои",
+		"timeUndoGroupName": "ty-plus выравнивание по времени"
 	},
 	"anchorPoint": {
 		"name": "Anchor point",
@@ -134,7 +138,8 @@
 			"bottomRight": "Снизу справа"
 		},
 		"noActiveComposition": "Якорь Ty Plus: нет активной композиции",
-		"noLayerSelected": "Якорь Ty Plus: не выбран слой"
+		"noLayerSelected": "Якорь Ty Plus: не выбран слой",
+		"undoGroupName": "ty-plus установка опорной точки"
 	},
 	"info": {
 		"name": "Info",
@@ -204,7 +209,12 @@
 			"importedFootage": "Импортированный футаж: {{name}}",
 			"ranScript": "Скрипт выполнен: {{name}}",
 			"appliedPreset": "Пресет применён: {{name}}",
-			"runBlockedUnverifiableAsset": "Не удалось проверить файл пресета (хост недоступен) — повторить"
+			"runBlockedUnverifiableAsset": "Не удалось проверить файл пресета (хост недоступен) — повторить",
+			"undoGroup": {
+				"applyPreset": "Ty Plus: Применить пресет",
+				"addFootage": "Ty Plus: Добавить видеоматериал",
+				"applyEffect": "Ty Plus: Применить эффект"
+			}
 		},
 		"path": {
 			"pickFolderPrompt": "Выберите папку",

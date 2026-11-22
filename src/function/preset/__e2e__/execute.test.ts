@@ -52,7 +52,9 @@ describe("preset execution via getPresetOperation", () => {
 			filePath: "/path/to/motion.ffx",
 		});
 		expect(host.applyPreset).toHaveBeenCalledOnce();
-		expect(host.applyPreset).toHaveBeenCalledWith("/path/to/motion.ffx");
+		expect(host.applyPreset).toHaveBeenCalledWith("/path/to/motion.ffx", {
+			undoGroupName: "Ty Plus: Apply Preset",
+		});
 		expect(result.action).toBe("applyPreset");
 	});
 
@@ -77,6 +79,7 @@ describe("preset execution via getPresetOperation", () => {
 		expect(host.addFootage).toHaveBeenCalledWith({
 			filePath: "/path/to footage.mp4",
 			toComp: true,
+			undoGroupName: "Ty Plus: Add Footage",
 		});
 		expect(result.action).toBe("addFootage");
 	});
@@ -89,7 +92,9 @@ describe("preset execution via getPresetOperation", () => {
 			type: "plugin",
 			filePath: "/path/to/effect.aex",
 		});
-		expect(host.applyEffectByMatchName).toHaveBeenCalledWith("effect");
+		expect(host.applyEffectByMatchName).toHaveBeenCalledWith("effect", {
+			undoGroupName: "Ty Plus: Apply effect",
+		});
 		expect(result.action).toBe("applyEffectByMatchName");
 	});
 
@@ -101,7 +106,9 @@ describe("preset execution via getPresetOperation", () => {
 			type: "plugin",
 			filePath: "C:/plugins/My Effect.plugin",
 		});
-		expect(host.applyEffectByMatchName).toHaveBeenCalledWith("My Effect");
+		expect(host.applyEffectByMatchName).toHaveBeenCalledWith("My Effect", {
+			undoGroupName: "Ty Plus: Apply effect",
+		});
 	});
 });
 
@@ -118,7 +125,9 @@ describe("executePresetOnHost", () => {
 		});
 
 		expect(host.applyPreset).toHaveBeenCalledOnce();
-		expect(host.applyPreset).toHaveBeenCalledWith("/path/to/motion.ffx");
+		expect(host.applyPreset).toHaveBeenCalledWith("/path/to/motion.ffx", {
+			undoGroupName: "Ty Plus: Apply Preset",
+		});
 		expect(result).toEqual({
 			hostId: "after-effects",
 			action: "applyPreset",
