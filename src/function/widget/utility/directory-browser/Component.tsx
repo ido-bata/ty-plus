@@ -19,11 +19,11 @@ import {
 	useState,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { resolveEffectMatchName } from "@/function/widget/utility/directory-browser/plugin-match-name";
 import { useCep } from "@/management/ae/cep/contexts/CepContext";
 import { selectFolder } from "@/management/ae/cep/dialog-shim/bolt";
 import { createCepHostExecutor } from "@/management/ae/cep/host-executor";
 import { detectCepHostCode } from "@/management/ae/cep/runtime";
+import { importFile as importAeFile } from "@/management/ae/file-import";
 import { readGroupJson } from "@/management/catalog/json-files";
 import { notificationStore } from "@/management/online/notification/service";
 import {
@@ -53,7 +53,6 @@ import {
 	stemWithoutExtension,
 } from "@/management/preset/sibling-thumbnail";
 import { readSettings } from "@/management/storage";
-import { getCandidatesSnapshot } from "@/management/storage/candidates-cache/runtime";
 import {
 	canUseCepNodeFileBrowser,
 	createCepNodeFileBrowserService,
@@ -87,14 +86,9 @@ import {
 import { renderToolbar } from "./toolbar";
 import type { FileBrowserBrowseMode, FileBrowserFilter } from "./types";
 
-async function resolvePresetForRun(
-	presetId: string,
-	t: (key: string, options?: Record<string, unknown>) => string,
-): Promise<Preset> {
+async function resolvePresetForRun(presetId: string): Promise<Preset> {
 	const preset = await getPreset(presetId);
-	if (!preset) {
-		throw new Error(t("directoryBrowser.actions.presetNotFound", { presetId }));
-	}
+	if (!preset) throw new Error(`Preset not found: ${presetId}`);
 	return preset;
 }
 
@@ -795,84 +789,18 @@ export function DirectoryBrowserWidget({
 		runSearch,
 	]);
 
-	const importFile = useCallback(
-		async (filePath: string): Promise<string> => {
-			const hostCode = detectCepHostCode();
-			const hostExecutorForAlign =
-				hostCode === "AEFT"
-					? createCepHostExecutor(window, "after-effects")
-					: null;
-			if (hostCode !== "AEFT" || !hostExecutorForAlign) {
-				throw new Error(t("directoryBrowser.actions.fileImportAeOnly"));
-			}
-			const lowerPath = filePath.toLowerCase();
-			const fileName = filePath.split(/[\\/]/).pop() ?? filePath;
-			if (lowerPath.endsWith(".jsx") || lowerPath.endsWith(".jsxbin")) {
-				await hostExecutorForAlign("runScriptFile", [filePath]);
-				return t("directoryBrowser.actions.ranScript", {
-					name: fileName,
-					defaultValue: "Ran script: {{name}}",
-				});
-			}
-			if (lowerPath.endsWith(".ffx")) {
-				await hostExecutorForAlign("applyPreset", [
-					filePath,
-					{
-						undoGroupName: t("directoryBrowser.actions.undoGroup.applyPreset"),
-						messages: {
-							openComposition: t(
-								"directoryBrowser.actions.errors.openComposition",
-							),
-							addLayerOrSelect: t(
-								"directoryBrowser.actions.errors.addLayerOrSelect",
-							),
-						},
-					},
-				]);
-				return t("directoryBrowser.actions.appliedPreset", {
-					name: fileName,
-					defaultValue: "Applied preset: {{name}}",
-				});
-			}
-			if (lowerPath.endsWith(".aex") || lowerPath.endsWith(".plugin")) {
-				// Look up the catalog matchName from the candidates cache. The
-				// filename stem is NOT a reliable matchName — After Effects stores
-				// matchName in the plugin's PICA resource, not the filename.
-				const snapshot = getCandidatesSnapshot();
-				const matchName = resolveEffectMatchName(
-					filePath,
-					snapshot?.pluginEffects ?? [],
-				);
-				await hostExecutorForAlign("applyEffectByMatchName", [
-					matchName,
-					{
-						undoGroupName: t("directoryBrowser.actions.undoGroup.applyEffect"),
-						messages: {
-							selectLayer: t(
-								"directoryBrowser.actions.errors.selectLayerForEffect",
-							),
-						},
-					},
-				]);
-				return t("directoryBrowser.actions.appliedEffect", {
-					name: fileName,
-					defaultValue: "Applied effect: {{name}}",
-				});
-			}
-			await hostExecutorForAlign("addFootage", [
-				{
-					filePath,
-					toComp: true,
-					undoGroupName: t("directoryBrowser.actions.undoGroup.addFootage"),
-				},
-			]);
-			return t("directoryBrowser.actions.importedFootage", {
-				name: fileName,
-				defaultValue: "Imported footage: {{name}}",
-			});
-		},
-		[t],
-	);
+	const importFile = useCallback(async (filePath: string): Promise<string> => {
+		const hostCode = detectCepHostCode();
+		const hostExecutor =
+			hostCode === "AEFT"
+				? createCepHostExecutor(window, "after-effects")
+				: null;
+		const exec = hostExecutor
+			? (method: string, args: unknown[]) =>
+					hostExecutor(method as never, args as never)
+			: null;
+		return importAeFile(filePath, hostCode, exec);
+	}, []);
 
 	const handleImportFile = useCallback(
 		async (filePath: string) => {
@@ -915,7 +843,7 @@ export function DirectoryBrowserWidget({
 				t("directoryBrowser.actions.runSuccess", { presetId }) ||
 				`Executed preset: ${presetId}`;
 			try {
-				const preset = await resolvePresetForRun(presetId, t);
+				const preset = await resolvePresetForRun(presetId);
 				const hostCode = detectCepHostCode();
 				await traceExecute(preset, "directory-browser:run", () =>
 					executeWorkspacePresetForWindow(window, hostCode, preset),
@@ -2219,9 +2147,7 @@ export function DirectoryBrowserWidget({
 									<span
 										className={css({ height: "7", width: "7", flexShrink: 0 })}
 									/>
-									<span className={listHeaderNameClass}>
-										{t("directoryBrowser.listHeader.name")}
-									</span>
+									<span className={listHeaderNameClass}>Name</span>
 									<span
 										className={css({ height: "5", width: "5", flexShrink: 0 })}
 										aria-hidden

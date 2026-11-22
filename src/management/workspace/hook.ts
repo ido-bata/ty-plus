@@ -3985,6 +3985,16 @@ export function useWorkspaceRuntime(root: Element | null): {
 		// ── Document event listeners ───────────────────────────────────────────
 		root.addEventListener("mousedown", onCpMiddleDown as EventListener, true);
 		root.addEventListener("click", onActionClick as EventListener);
+		// Portaled anchored popovers (AnchoredPopover) render outside `root`,
+		// so their data-ws-action buttons never reach the root delegate.
+		// Admit clicks inside them here and route through the same handler.
+		const onPortaledActionClick = (ev: MouseEvent): void => {
+			const t = ev.target as HTMLElement | null;
+			if (t?.closest("[data-anchored-popover]")) {
+				onActionClick(ev);
+			}
+		};
+		document.addEventListener("click", onPortaledActionClick);
 		document.addEventListener("mousemove", onDocMouseMove);
 		document.addEventListener("mouseup", onDocMouseUp);
 		document.addEventListener("mousedown", onDocMouseDownCloseMenu);
@@ -4023,6 +4033,7 @@ export function useWorkspaceRuntime(root: Element | null): {
 			document.removeEventListener("mouseup", onDocMouseUp);
 			document.removeEventListener("mousedown", onDocMouseDownCloseMenu);
 			root.removeEventListener("click", onActionClick as EventListener);
+			document.removeEventListener("click", onPortaledActionClick);
 			removeExternalPresetDialogListener?.();
 			cpMenuEl?.remove();
 			cpMenuEl = null;
