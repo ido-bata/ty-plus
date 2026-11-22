@@ -411,5 +411,148 @@
 		"pause": "Pausar",
 		"waveCanvas": "Editor de onda de loop",
 		"previewCanvas": "Pré-visualização de movimento em loop"
+	},
+	"tutorial": {
+		"chrome": {
+			"help": "Ajuda",
+			"title": "Ajuda do widget",
+			"close": "Fechar",
+			"dismissHint": "Dispensar dica",
+			"stepProgress": "{{current}} / {{total}}",
+			"back": "Voltar",
+			"skip": "Ignorar",
+			"finish": "Concluir",
+			"next": "Próximo"
+		},
+		"easing": {
+			"summary": "Edite curvas de easing e aplique-as a presets ou à animação de camadas.",
+			"steps": {
+				"chooseCurve": {
+					"title": "Escolher uma curva",
+					"body": "Selecione uma curva predefinida ou desenhe a sua no editor."
+				},
+				"applyCurve": {
+					"title": "Aplicá-la",
+					"body": "Aplique a curva ao preset ou à camada selecionados."
+				}
+			}
+		},
+		"menu": {
+			"summary": "Abra comandos do espaço de trabalho, ações de layout e diálogos a partir de um único bloco.",
+			"steps": {
+				"openMenu": {
+					"title": "Abrir o menu",
+					"body": "Clique no bloco para abrir o menu de comandos."
+				},
+				"runCommand": {
+					"title": "Executar um comando",
+					"body": "Escolha um comando para aplicá-lo ao espaço de trabalho atual."
+				}
+			}
+		},
+		"align": {
+			"summary": "Alinhe presets ou camadas selecionados a posições comuns na grelha.",
+			"steps": {
+				"selectTargets": {
+					"title": "Selecionar alvos",
+					"body": "Selecione os presets ou camadas que quer alinhar."
+				},
+				"pickAlignment": {
+					"title": "Escolher o alinhamento",
+					"body": "Escolha uma opção de alinhamento para ajustá-los."
+				}
+			}
+		},
+		"anchor-point": {
+			"summary": "Coloque uma âncora nomeada para referências de layout e fluxos de snapping.",
+			"steps": {
+				"nameAnchor": {
+					"title": "Nomear a âncora",
+					"body": "Introduza um nome que identifique este ponto de âncora."
+				},
+				"dropAnchor": {
+					"title": "Soltá-la na grelha",
+					"body": "Clique no espaço de trabalho para posicionar a âncora."
+				}
+			}
+		},
+		"layout-lock": {
+			"summary": "Evite movimentos acidentais enquanto organiza a grelha do espaço de trabalho.",
+			"steps": {
+				"turnLockOn": {
+					"title": "Ativar o bloqueio",
+					"body": "Ative o bloqueio para congelar as posições dos widgets."
+				},
+				"unlockToRearrange": {
+					"title": "Desbloquear para reorganizar",
+					"body": "Desative o bloqueio quando quiser mover widgets novamente."
+				}
+			}
+		},
+		"info": {
+			"summary": "Mostre metadados, caminhos e estado de presets num bloco de resumo amplo.",
+			"steps": {
+				"placeWidget": {
+					"title": "Posicionar o widget",
+					"body": "Adicione o widget Info ao seu espaço de trabalho."
+				},
+				"inspectPreset": {
+					"title": "Inspecionar um preset",
+					"body": "Selecione um preset para ver os detalhes aqui."
+				}
+			}
+		},
+		"quick-actions": {
+			"summary": "Execute scripts, efeitos e ações de ficheiros a partir de uma paleta de comandos compacta.",
+			"steps": {
+				"openPalette": {
+					"title": "Abrir a paleta",
+					"body": "Abra a paleta e escreva para pesquisar ações."
+				},
+				"runAction": {
+					"title": "Executar uma ação",
+					"body": "Selecione uma ação para a executar de imediato."
+				}
+			}
+		},
+		"directory-browser": {
+			"summary": "Explore pastas do disco e presets dentro do painel.",
+			"steps": {
+				"navigateFolders": {
+					"title": "Navegar nas pastas",
+					"body": "Use o campo de caminho ou a lista de pastas para se mover."
+				},
+				"openPreset": {
+					"title": "Abrir um preset",
+					"body": "Faça duplo clique num preset para o aplicar ou inspecionar."
+				}
+			}
+		},
+		"font-viewer": {
+			"summary": "Pré-visualize famílias de fontes, estilos e texto de amostra no espaço de trabalho.",
+			"steps": {
+				"loadFonts": {
+					"title": "Carregar fontes",
+					"body": "Carregue as fontes do sistema ou escolha uma família para pré-visualizar."
+				},
+				"editSample": {
+					"title": "Editar a amostra",
+					"body": "Altere o texto de amostra para verificar glifos e estilos."
+				}
+			}
+		},
+		"loop": {
+			"summary": "Edite uma curva de easing em loop e aplique-a aos keyframes selecionados.",
+			"steps": {
+				"chooseCycle": {
+					"title": "Definir o ciclo",
+					"body": "Arraste as alças da curva para definir um ciclo único."
+				},
+				"applyCycle": {
+					"title": "Aplicar o loop",
+					"body": "Defina o número de ciclos e aplique o loop aos keyframes selecionados."
+				}
+			}
+		}
 	}
 }

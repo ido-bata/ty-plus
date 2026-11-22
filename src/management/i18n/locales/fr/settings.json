@@ -196,7 +196,8 @@
 			"workspace-backup": "Sauvegarde de l'espace de travail",
 			"feedback": "Retour",
 			"inputs": "Entrées",
-			"update": "Mises à jour"
+			"update": "Mises à jour",
+			"tips": "Astuces"
 		}
 	},
 	"updates": {
@@ -425,5 +426,20 @@
 		"aeAppRootUnresolved": "Ty Plus : impossible de résoudre le dossier d'installation d'After Effects en cours d'exécution pour ty-plus-init.json.",
 		"copySymlinkRefused": "Refus de copier le lien symbolique/reparse point : {{name}}",
 		"copyDeleteUnsupported": "La suppression récursive nécessite rm ou readdir/stat sur cet hôte."
-	}
+	},
+	"languages": {
+		"english": "Anglais",
+		"japanese": "Japonais",
+		"korean": "Coréen",
+		"chineseSimplified": "Chinois simplifié",
+		"chineseTraditional": "Chinois traditionnel",
+		"spanish": "Espagnol",
+		"french": "Français",
+		"german": "Allemand"
+	},
+	"tipsSectionLabel": "Astuces et tutoriels des widgets",
+	"tipsSectionDescription": "Les résumés d'aide et les infobulles de première utilisation s'affichent une fois par widget. Réinitialisez pour les revoir.",
+	"tipsReset": "Réafficher les astuces",
+	"tipsResetDone": "Astuces réinitialisées. Elles réapparaîtront à la prochaine ouverture de chaque widget.",
+	"tipsResetFailed": "Impossible de réinitialiser les astuces. Veuillez réessayer."
 }

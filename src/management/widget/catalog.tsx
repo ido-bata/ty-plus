@@ -30,6 +30,7 @@ import {
 import type { WidgetType } from "@/function/widget";
 import { useTranslation } from "@/management/i18n/Context";
 import { i18n } from "@/management/i18n/index";
+import { resolveCatalogDescriptionKey } from "@/management/widget/description-key";
 import { registry } from "@/management/widget/registry";
 import { css } from "@/styled-system/css";
 
@@ -483,7 +484,7 @@ export function AddWidgetCatalogPanel({
 
 	const describe = useCallback(
 		(w: CatalogEntry) =>
-			t(`selector.descriptions.${w.type}`, { defaultValue: "" }),
+			t(resolveCatalogDescriptionKey(w), { defaultValue: "" }),
 		[t],
 	);
 

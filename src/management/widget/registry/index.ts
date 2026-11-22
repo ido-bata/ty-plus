@@ -15,6 +15,11 @@ import {
 } from "@/function/widget/registry";
 import { createInstanceId } from "@/management/storage/ids";
 
+export type {
+	TutorialStep,
+	WidgetDescriptor,
+	WidgetTutorial,
+} from "@/function/widget/registry";
 export { getWidgetDescriptor };
 
 // Consume _widgetGlobs to ensure Rollup does not tree-shake the side-effects

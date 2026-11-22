@@ -14,6 +14,22 @@ export const descriptor = defineWidget({
 	type: "loop",
 	nameKey: "widgets.loop.name",
 	descriptionKey: "widgets.selector.descriptions.loop",
+	tutorial: {
+		summaryKey: "widgets.tutorial.loop.summary",
+		contentVersion: "1",
+		steps: [
+			{
+				titleKey: "widgets.tutorial.loop.steps.chooseCycle.title",
+				bodyKey: "widgets.tutorial.loop.steps.chooseCycle.body",
+				targetSelector: '[data-tutorial-target="loop-canvas"]',
+			},
+			{
+				titleKey: "widgets.tutorial.loop.steps.applyCycle.title",
+				bodyKey: "widgets.tutorial.loop.steps.applyCycle.body",
+				targetSelector: '[data-tutorial-target="loop-apply"]',
+			},
+		],
+	},
 	icon: "Repeat",
 	minSize: { cols: 3, rows: 3 },
 	maxSize: { cols: 20, rows: 20 },

@@ -196,7 +196,8 @@
 			"workspace-backup": "Backup dell'area di lavoro",
 			"feedback": "Feedback",
 			"inputs": "Ingressi",
-			"update": "Aggiornamenti"
+			"update": "Aggiornamenti",
+			"tips": "Suggerimenti"
 		}
 	},
 	"updates": {
@@ -425,5 +426,20 @@
 		"aeAppRootUnresolved": "Ty Plus: impossibile risolvere la cartella di installazione di After Effects in esecuzione per ty-plus-init.json.",
 		"copySymlinkRefused": "Rifiutata la copia del collegamento simbolico/reparse point: {{name}}",
 		"copyDeleteUnsupported": "L'eliminazione ricorsiva richiede rm o readdir/stat su questo host."
-	}
+	},
+	"languages": {
+		"english": "Inglese",
+		"japanese": "Giapponese",
+		"korean": "Coreano",
+		"chineseSimplified": "Cinese semplificato",
+		"chineseTraditional": "Cinese tradizionale",
+		"spanish": "Spagnolo",
+		"french": "Francese",
+		"german": "Tedesco"
+	},
+	"tipsSectionLabel": "Suggerimenti e tutorial dei widget",
+	"tipsSectionDescription": "I riepiloghi di aiuto e i suggerimenti al primo utilizzo vengono mostrati una volta per widget. Reimposta per rivederli.",
+	"tipsReset": "Mostra di nuovo i suggerimenti",
+	"tipsResetDone": "Suggerimenti reimpostati. Ricompariranno alla prossima apertura di ogni widget.",
+	"tipsResetFailed": "Impossibile reimpostare i suggerimenti. Riprova."
 }

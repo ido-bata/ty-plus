@@ -262,6 +262,7 @@ export function WaveEditor({
 				ref={canvasRef}
 				aria-label={t("loop.waveCanvas")}
 				data-ws-loop-wave-canvas="1"
+				data-tutorial-target="loop-canvas"
 				style={{ width: "100%", height: "100%", touchAction: "none" }}
 				onPointerDown={handlePointerDown}
 				onPointerMove={handlePointerMove}
