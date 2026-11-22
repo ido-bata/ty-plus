@@ -277,51 +277,51 @@
 	},
 	"demoPresets": {
 		"fadeIn": {
-			"title": "Fade In",
+			"title": "페이드 인",
 			"description": "처음 12프레임 동안 레이어 불투명도를 0에서 100으로 올립니다."
 		},
 		"popIn": {
-			"title": "Pop In",
+			"title": "팝 인",
 			"description": "레이어를 부드러운 오버슈트와 함께 확대한 뒤 안정시킵니다."
 		},
 		"slideIn": {
-			"title": "Slide In",
+			"title": "슬라이드 인",
 			"description": "레이어를 화면 밖에서 부드러운 이즈 아웃으로 미끄러져 들어오게 합니다."
 		},
 		"jumpIn": {
-			"title": "Jump In",
+			"title": "점프 인",
 			"description": "착지 시 스쿼시와 함께 레이어를 아크를 그리며 제자리에 놓습니다."
 		},
 		"spinIn": {
-			"title": "Spin In",
+			"title": "스핀 인",
 			"description": "페이드 인과 함께 레이어를 한 바퀴 회전시킵니다."
 		},
 		"fadeOut": {
-			"title": "Fade Out",
+			"title": "페이드 아웃",
 			"description": "마지막 12프레임 동안 레이어 불투명도를 0으로 내립니다."
 		},
 		"popOut": {
-			"title": "Pop Out",
+			"title": "팝 아웃",
 			"description": "레이어를 빠른 이즈 인으로 축소하며 빠져나가게 합니다."
 		},
 		"breathe": {
-			"title": "Breathe Loop",
+			"title": "호흡 루프",
 			"description": "미세한 스케일 펄스를 반복해 앰비언트 모션을 만듭니다."
 		},
 		"yoyo": {
-			"title": "Yo-yo Loop",
+			"title": "요요 루프",
 			"description": "위치를 한 축을 따라 왕복 반복합니다."
 		},
 		"wobble": {
-			"title": "Pop & Wobble",
+			"title": "팝 & 워블",
 			"description": "스케일이 오버슈트한 뒤 흔들리며 멈춥니다."
 		},
 		"slideOut": {
-			"title": "Slide Out",
+			"title": "슬라이드 아웃",
 			"description": "레이어를 부드러운 이즈 인으로 화면 밖으로 미끄러져 나가게 합니다."
 		},
 		"spinOut": {
-			"title": "Spin Out",
+			"title": "스핀 아웃",
 			"description": "페이드 아웃과 함께 레이어를 한 바퀴 회전시킵니다."
 		}
 	},
@@ -340,7 +340,7 @@
 			"literalFormat": "리터럴 정규식 형식",
 			"testString": "테스트 문자열",
 			"sourcePlaceholder": "정규식 소스",
-			"flagsPlaceholder": "flags",
+			"flagsPlaceholder": "플래그",
 			"matches": "일치",
 			"noMatch": "일치 없음",
 			"literalSuffix": "· 리터럴 /pattern/flags",

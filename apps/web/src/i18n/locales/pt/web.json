@@ -278,51 +278,51 @@
 	},
 	"demoPresets": {
 		"fadeIn": {
-			"title": "Fade In",
+			"title": "Aparecimento",
 			"description": "Eleva a opacidade da camada de 0 a 100 nos primeiros 12 frames."
 		},
 		"popIn": {
-			"title": "Pop In",
+			"title": "Entrada elástica",
 			"description": "Escala a camada com um leve overshoot e depois assenta."
 		},
 		"slideIn": {
-			"title": "Slide In",
+			"title": "Entrada deslizante",
 			"description": "Desliza a camada de fora da tela com um ease-out suave."
 		},
 		"jumpIn": {
-			"title": "Jump In",
+			"title": "Pulo de entrada",
 			"description": "Faz a camada arquear até o lugar com um squash na chegada."
 		},
 		"spinIn": {
-			"title": "Spin In",
+			"title": "Rotação de entrada",
 			"description": "Gira a camada uma volta completa enquanto a faz aparecer."
 		},
 		"fadeOut": {
-			"title": "Fade Out",
+			"title": "Desaparecimento",
 			"description": "Reduz a opacidade da camada até 0 nos últimos 12 frames."
 		},
 		"popOut": {
-			"title": "Pop Out",
+			"title": "Saída elástica",
 			"description": "Reduz a escala da camada com uma saída ease-in rápida."
 		},
 		"breathe": {
-			"title": "Breathe Loop",
+			"title": "Ciclo de respiração",
 			"description": "Repete um pulso de escala sutil para movimento ambiente."
 		},
 		"yoyo": {
-			"title": "Yo-yo Loop",
+			"title": "Ciclo ioiô",
 			"description": "Repete a posição de um lado para o outro ao longo de um eixo."
 		},
 		"wobble": {
-			"title": "Pop & Wobble",
+			"title": "Pop e oscilação",
 			"description": "Overshoot na escala, depois oscila até parar."
 		},
 		"slideOut": {
-			"title": "Slide Out",
+			"title": "Saída deslizante",
 			"description": "Desliza a camada para fora da tela com um ease-in suave."
 		},
 		"spinOut": {
-			"title": "Spin Out",
+			"title": "Rotação de saída",
 			"description": "Gira a camada uma volta completa enquanto a faz desaparecer."
 		}
 	},
@@ -341,7 +341,7 @@
 			"literalFormat": "Formato regex literal",
 			"testString": "String de teste",
 			"sourcePlaceholder": "Fonte regex",
-			"flagsPlaceholder": "flags",
+			"flagsPlaceholder": "sinalizadores",
 			"matches": "Corresponde",
 			"noMatch": "Sem correspondência",
 			"literalSuffix": "· literal /pattern/flags",

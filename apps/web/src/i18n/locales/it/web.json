@@ -278,51 +278,51 @@
 	},
 	"demoPresets": {
 		"fadeIn": {
-			"title": "Fade In",
+			"title": "Comparsa",
 			"description": "Porta l'opacità del layer da 0 a 100 nei primi 12 fotogrammi."
 		},
 		"popIn": {
-			"title": "Pop In",
+			"title": "Ingresso a scatto",
 			"description": "Scala il layer verso l'alto con un leggero overshoot, poi si assesta."
 		},
 		"slideIn": {
-			"title": "Slide In",
+			"title": "Scorrimento in entrata",
 			"description": "Fa scorrere il layer da fuori schermo con un ease-out delicato."
 		},
 		"jumpIn": {
-			"title": "Jump In",
+			"title": "Salto in entrata",
 			"description": "Fa arrivare il layer in arco al suo posto con uno squash all'atterraggio."
 		},
 		"spinIn": {
-			"title": "Spin In",
+			"title": "Rotazione in entrata",
 			"description": "Ruota il layer di un giro completo facendolo comparire."
 		},
 		"fadeOut": {
-			"title": "Fade Out",
+			"title": "Scomparsa",
 			"description": "Porta l'opacità del layer da 100 a 0 negli ultimi 12 fotogrammi."
 		},
 		"popOut": {
-			"title": "Pop Out",
+			"title": "Uscita a scatto",
 			"description": "Scala il layer verso il basso con un'uscita ease-in rapida."
 		},
 		"breathe": {
-			"title": "Breathe Loop",
+			"title": "Ciclo respiro",
 			"description": "Cicla un pulso di scala sottile per un movimento ambientale."
 		},
 		"yoyo": {
-			"title": "Yo-yo Loop",
+			"title": "Ciclo yo-yo",
 			"description": "Cicla la posizione avanti e indietro lungo un asse."
 		},
 		"wobble": {
-			"title": "Pop & Wobble",
+			"title": "Pop e oscillazione",
 			"description": "Overshoot di scala, poi oscillazione fino all'arresto."
 		},
 		"slideOut": {
-			"title": "Slide Out",
+			"title": "Scorrimento in uscita",
 			"description": "Fa scorrere il layer fuori schermo con un ease-in morbido."
 		},
 		"spinOut": {
-			"title": "Spin Out",
+			"title": "Rotazione in uscita",
 			"description": "Ruota il layer di un giro completo facendolo svanire."
 		}
 	},

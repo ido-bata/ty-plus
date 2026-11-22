@@ -277,51 +277,51 @@
 	},
 	"demoPresets": {
 		"fadeIn": {
-			"title": "Fade In",
+			"title": "フェードイン",
 			"description": "レイヤーの不透明度を最初の 12 フレームで 0 から 100 へランプさせます。"
 		},
 		"popIn": {
-			"title": "Pop In",
+			"title": "ポップイン",
 			"description": "レイヤーを柔らかいオーバーシュートで拡大し、その後落ち着かせます。"
 		},
 		"slideIn": {
-			"title": "Slide In",
+			"title": "スライドイン",
 			"description": "画面外からレイヤーを滑り込ませ、穏やかな ease-out で止めます。"
 		},
 		"jumpIn": {
-			"title": "Jump In",
+			"title": "ジャンプイン",
 			"description": "レイヤーを弧を描いて定位置へ飛ばし、着地時にスクワッシュします。"
 		},
 		"spinIn": {
-			"title": "Spin In",
+			"title": "スピンイン",
 			"description": "レイヤーをフェードインしながら 1 回転させます。"
 		},
 		"fadeOut": {
-			"title": "Fade Out",
+			"title": "フェードアウト",
 			"description": "レイヤーの不透明度を最後の 12 フレームで 0 までランプダウンさせます。"
 		},
 		"popOut": {
-			"title": "Pop Out",
+			"title": "ポップアウト",
 			"description": "レイヤーを素早い ease-in で縮小しながら退場させます。"
 		},
 		"breathe": {
-			"title": "Breathe Loop",
+			"title": "呼吸ループ",
 			"description": "環境モーション用に、控えめなスケールの脈動をループさせます。"
 		},
 		"yoyo": {
-			"title": "Yo-yo Loop",
+			"title": "ヨーヨーループ",
 			"description": "1 つの軸に沿って位置を往復ループさせます。"
 		},
 		"wobble": {
-			"title": "Pop & Wobble",
+			"title": "ポップ＆ワブル",
 			"description": "スケールをオーバーシュートさせ、ゆれてから静止させます。"
 		},
 		"slideOut": {
-			"title": "Slide Out",
+			"title": "スライドアウト",
 			"description": "柔らかな ease-in でレイヤーを画面外へ滑らせます。"
 		},
 		"spinOut": {
-			"title": "Spin Out",
+			"title": "スピンアウト",
 			"description": "レイヤーをフェードアウトしながら 1 回転させます。"
 		}
 	},

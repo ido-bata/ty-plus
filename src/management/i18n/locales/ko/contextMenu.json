@@ -1,6 +1,6 @@
 {
 	"preset": {
-		"run": "Run",
+		"run": "실행",
 		"edit": "편집",
 		"duplicate": "복제",
 		"delete": "삭제"
