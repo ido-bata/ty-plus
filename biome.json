@@ -41,6 +41,7 @@
 			"preset": "recommended",
 			"correctness": {
 				"noUnusedFunctionParameters": "off",
+				"noUnusedImports": "error",
 				"noUnusedVariables": "off",
 				"noInnerDeclarations": "off",
 				"noInvalidUseBeforeDeclaration": "off",

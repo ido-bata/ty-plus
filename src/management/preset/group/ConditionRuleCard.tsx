@@ -7,7 +7,6 @@ import { AuthoringSegment } from "@/management/preset/authoring-layout";
 import { readUserHomeOrFallback } from "@/management/preset/catalog-add/browse-start-dir";
 import type { Preset, PresetType } from "@/management/preset/contract";
 import { PresetIconEditor } from "@/management/preset/icon/Editor";
-import type { PresetIconEditorDraft } from "@/management/preset/icon/editor-state";
 import { presetIconDraftToPresetIcon } from "@/management/preset/icon/editor-state";
 import { glyphBoxFillClass } from "@/management/preset/workspace/glyph/classes";
 import { FramedPresetGlyph } from "@/management/preset/workspace/glyph/WorkspaceGlyph";
