@@ -4,7 +4,7 @@
  * and secondary panel launchers.
  */
 
-import { Icon, IconButton } from "@ty-plus/ui";
+import { AnchoredPopover, Icon, IconButton } from "@ty-plus/ui";
 import {
 	Cloud,
 	Layers,
@@ -18,7 +18,7 @@ import {
 	Undo2,
 } from "@ty-plus/ui/icons";
 import { cx } from "@ty-plus/ui/util/cx";
-import { memo, useEffect, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { subscribe } from "@/management/debug";
 import type { SurfaceState } from "@/management/workspace/core/state";
 import type { Snapshot } from "@/management/workspace/undo/history";
@@ -103,9 +103,6 @@ const snapshotsWrap = css({
 });
 
 const snapshotsDropdown = css({
-	position: "absolute",
-	bottom: "100%",
-	right: "0",
 	minWidth: "var(--ty-space-45)",
 	maxWidth: "80",
 	backgroundColor: "var(--color-ty-snap-panel)",
@@ -115,7 +112,6 @@ const snapshotsDropdown = css({
 		"rgba(var(--text-r),var(--text-g),var(--text-b),var(--ty-opacity-ws-snap-panel-border))",
 	borderRadius: "var(--radius-shell)",
 	padding: "1",
-	zIndex: "50",
 });
 
 const snapshotsEmpty = css({
@@ -161,6 +157,7 @@ export const StatusBar = memo(function StatusBarImpl(
 	const [latestConsoleText, setLatestConsoleText] = useState<string>("");
 	const [consoleVisible, setConsoleVisible] = useState(false);
 	const [snapshotsOpen, setSnapshotsOpen] = useState(false);
+	const snapshotsAnchorRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
 		const unsub = subscribe((msgs) => {
@@ -175,18 +172,6 @@ export const StatusBar = memo(function StatusBarImpl(
 		});
 		return unsub;
 	}, []);
-
-	useEffect(() => {
-		if (!snapshotsOpen) return;
-		const close = (e: MouseEvent) => {
-			const target = e.target as HTMLElement;
-			if (target.closest("[data-ws-action='toggle-snapshots']")) return;
-			if (target.closest("[data-snapshots-dropdown]")) return;
-			setSnapshotsOpen(false);
-		};
-		document.addEventListener("click", close);
-		return () => document.removeEventListener("click", close);
-	}, [snapshotsOpen]);
 
 	return (
 		<footer data-ws-status-bar="" className={cx("status-bar", footerBase)}>
@@ -232,7 +217,7 @@ export const StatusBar = memo(function StatusBarImpl(
 					<Icon icon={Save} size={3} />
 				</IconButton>
 
-				<div className={snapshotsWrap}>
+				<div ref={snapshotsAnchorRef} className={snapshotsWrap}>
 					<IconButton
 						data-ws-action="toggle-snapshots"
 						title={
@@ -246,8 +231,14 @@ export const StatusBar = memo(function StatusBarImpl(
 					>
 						<Icon icon={Layers} size={3} />
 					</IconButton>
-					{snapshotsOpen && (
-						<div data-snapshots-dropdown="" className={snapshotsDropdown}>
+					<AnchoredPopover
+						open={snapshotsOpen}
+						onClose={() => setSnapshotsOpen(false)}
+						anchorRef={snapshotsAnchorRef}
+						align="end"
+						className={snapshotsDropdown}
+					>
+						<div data-snapshots-dropdown="">
 							{props.snapshots.length === 0 ? (
 								<span className={snapshotsEmpty}>No saved layouts</span>
 							) : (
@@ -282,7 +273,7 @@ export const StatusBar = memo(function StatusBarImpl(
 									))
 							)}
 						</div>
-					)}
+					</AnchoredPopover>
 				</div>
 
 				<IconButton
