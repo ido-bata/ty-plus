@@ -61,9 +61,6 @@ export function FolderDirectoryPicker({
 	selectionMode = "folders",
 	selectedPaths,
 	onToggleSelected,
-	candidatePresets,
-	candidateDirs,
-	onPickPreset,
 }: {
 	value: string;
 	onChange: (next: string) => void;

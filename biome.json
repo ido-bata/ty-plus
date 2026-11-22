@@ -40,7 +40,7 @@
 		"rules": {
 			"preset": "recommended",
 			"correctness": {
-				"noUnusedFunctionParameters": "off",
+				"noUnusedFunctionParameters": "error",
 				"noUnusedImports": "error",
 				"noUnusedVariables": "off",
 				"noInnerDeclarations": "off",

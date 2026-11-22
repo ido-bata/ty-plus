@@ -110,7 +110,6 @@ const parseControlPanelFromSettingsJson = (
 
 const readLegacyDedicatedControlPanelFile = async (
 	win: Window,
-	managedRoot: string,
 ): Promise<CpPersistedState | null> => {
 	const doc = await readJson(win, "controlPanel");
 	if (!doc) return null;
@@ -140,10 +139,7 @@ const loadChromeControlPanel = async (
 		return null;
 	}
 
-	const legacyDedicated = await readLegacyDedicatedControlPanelFile(
-		win,
-		managed,
-	);
+	const legacyDedicated = await readLegacyDedicatedControlPanelFile(win);
 	if (legacyDedicated) return legacyDedicated;
 
 	const settingsJson = await readSettings(win);

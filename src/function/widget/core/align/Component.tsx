@@ -322,11 +322,7 @@ function TargetSelectorRow({
 	);
 }
 
-export function Align({
-	state,
-	widthPx,
-	widgetInstanceId,
-}: Props): JSX.Element {
+export function Align({ widthPx, widgetInstanceId }: Props): JSX.Element {
 	const { activeWidgetInstanceId, host, setActiveWidgetInstanceId } =
 		useWidgetRuntime();
 	const isActiveWidget = activeWidgetInstanceId === widgetInstanceId;

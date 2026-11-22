@@ -93,7 +93,7 @@ export const writeSettingsPathsJsonForFinish = async (
 		win,
 		jsonText,
 		relativePath: "settings/paths.json",
-		readSupportRoot: (raw) => {
+		readSupportRoot: (_raw) => {
 			// paths.json payload is the bare `core.paths` object, so it
 			// contains `supportRoot` at the top level.
 			const candidate = (payload as { supportRoot?: unknown }).supportRoot;
@@ -152,7 +152,7 @@ const writeJsonFileWithElevationFallback = async (
 ): Promise<FinishWriteSettingsResult> => {
 	const supportRoot = input.readSupportRoot(input.jsonText);
 	if (!supportRoot) {
-		throw buildMissingSupportRootError(input.jsonText, input.relativePath);
+		throw buildMissingSupportRootError(input.relativePath);
 	}
 
 	const platform = detectPlatform(input.win);
@@ -258,7 +258,6 @@ const describeElevationFailure = (result: ElevationWriteResult): string => {
 };
 
 const buildMissingSupportRootError = (
-	jsonText: string,
 	relativePath: string,
 ): OnboardingFinishError => {
 	const fallbackPath = `(merged settings JSON for ${relativePath} missing core.paths.supportRoot)`;
