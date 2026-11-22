@@ -49,20 +49,6 @@
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
-		"file": "src/function/onboarding/ui/SetupRequired.tsx",
-		"line": 41,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (color: text.primary, fontSize: lg, fontWeight: semibold) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/function/onboarding/ui/SetupRequired.tsx",
-		"line": 47,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (color: text.muted, fontSize: sm, whiteSpace: pre-line) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
 		"file": "src/function/onboarding/View.tsx",
 		"line": 1,
 		"rule": "deep-import",
@@ -71,231 +57,98 @@
 	},
 	{
 		"file": "src/function/onboarding/View.tsx",
-		"line": 2,
+		"line": 7,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/util/keyboard\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
-		"file": "src/function/onboarding/View.tsx",
-		"line": 195,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (color: text.muted, fontSize: sm, whiteSpace: pre-line) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
 		"file": "src/function/preset/animation/Dialog.tsx",
-		"line": 2,
+		"line": 9,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/controls/Button\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
 		"file": "src/function/preset/animation/Dialog.tsx",
-		"line": 3,
+		"line": 10,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/fields/Input\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
 		"file": "src/function/preset/animation/Dialog.tsx",
-		"line": 71,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (alignItems: center, backgroundColor: surface.widget, borderColor: border.default, borderRadius: full, borderStyle: solid, borderWidth: 1px, color: text.primary, display: flex, fontSize: shell-text-sm, fontWeight: bold, height: 6, justifyContent: center, width: 6) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/function/preset/animation/Dialog.tsx",
-		"line": 88,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (color: text.primary, fontSize: shell-text-sm, fontWeight: semibold) is written out in 3 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/function/preset/animation/Dialog.tsx",
-		"line": 94,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (color: text.muted, fontSize: text-xs, lineHeight: tight) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/function/preset/animation/Dialog.tsx",
-		"line": 113,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (alignItems: flex-start, borderRadius: shell-sm, borderStyle: solid, borderWidth: 1px, display: flex, fontSize: text-xs, gap: 2, padding: 2) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/function/preset/animation/Dialog.tsx",
-		"line": 125,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (backgroundColor: status.success/10, borderColor: status.success/30, color: status.success) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/function/preset/animation/Dialog.tsx",
-		"line": 130,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (backgroundColor: status.warning/10, borderColor: status.warning/30, color: status.warning) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/function/preset/animation/Dialog.tsx",
-		"line": 135,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (backgroundColor: status.error/10, borderColor: status.error/30, color: status.error) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/function/preset/animation/Dialog.tsx",
-		"line": 145,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (backgroundColor: surface.widget, borderColor: border.default, borderRadius: shell-sm, borderStyle: solid, borderWidth: 1px, display: flex, flexDirection: column, gap: 3, padding: 4, width: full) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/function/preset/animation/Dialog.tsx",
-		"line": 330,
+		"line": 262,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 14px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/function/preset/animation/Dialog.tsx",
-		"line": 343,
+		"line": 275,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 14px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/function/preset/animation/Dialog.tsx",
-		"line": 354,
+		"line": 286,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/function/preset/animation/Dialog.tsx",
-		"line": 400,
+		"line": 332,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 14px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/function/preset/animation/Dialog.tsx",
-		"line": 402,
+		"line": 334,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 14px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/function/preset/code/Dialog.tsx",
-		"line": 2,
+		"line": 7,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/fields/Input\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
 		"file": "src/function/preset/code/Dialog.tsx",
-		"line": 3,
+		"line": 8,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/fields/PathField\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
 		"file": "src/function/preset/code/Dialog.tsx",
-		"line": 51,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (alignItems: flex-start, borderRadius: shell-sm, borderStyle: solid, borderWidth: 1px, display: flex, fontSize: text-xs, gap: 2, padding: 2) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/function/preset/code/Dialog.tsx",
-		"line": 63,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (backgroundColor: status.success/10, borderColor: status.success/30, color: status.success) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/function/preset/code/Dialog.tsx",
-		"line": 68,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (backgroundColor: status.warning/10, borderColor: status.warning/30, color: status.warning) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/function/preset/code/Dialog.tsx",
-		"line": 73,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (backgroundColor: status.error/10, borderColor: status.error/30, color: status.error) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/function/preset/code/Dialog.tsx",
-		"line": 94,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (backgroundColor: surface.widget, borderRadius: shell-sm, color: text.primary, fontFamily: mono, fontSize: text-xs, overflowWrap: break-all, paddingBlock: 1, paddingInline: 2) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/function/preset/code/Dialog.tsx",
-		"line": 129,
+		"line": 91,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 14px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/function/preset/layer-comp/Dialog.tsx",
-		"line": 2,
+		"line": 10,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/fields/Input\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
 		"file": "src/function/preset/layer-comp/Dialog.tsx",
-		"line": 3,
+		"line": 11,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/fields/PathField\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
 		"file": "src/function/preset/layer-comp/Dialog.tsx",
-		"line": 35,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (alignItems: center, backgroundColor: surface.widget, borderColor: border.default, borderRadius: full, borderStyle: solid, borderWidth: 1px, color: text.primary, display: flex, fontSize: shell-text-sm, fontWeight: bold, height: 6, justifyContent: center, width: 6) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/function/preset/layer-comp/Dialog.tsx",
-		"line": 52,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (color: text.primary, fontSize: shell-text-sm, fontWeight: semibold) is written out in 3 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/function/preset/layer-comp/Dialog.tsx",
-		"line": 58,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (color: text.muted, fontSize: text-xs, lineHeight: tight) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/function/preset/layer-comp/Dialog.tsx",
-		"line": 64,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (backgroundColor: surface.widget, borderColor: border.default, borderRadius: shell-sm, borderStyle: solid, borderWidth: 1px, display: flex, flexDirection: column, gap: 3, padding: 4, width: full) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/function/preset/layer-comp/Dialog.tsx",
-		"line": 113,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (backgroundColor: surface.widget, borderRadius: shell-sm, color: text.primary, fontFamily: mono, fontSize: text-xs, overflowWrap: break-all, paddingBlock: 1, paddingInline: 2) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/function/preset/layer-comp/Dialog.tsx",
-		"line": 359,
+		"line": 315,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 14px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
@@ -470,129 +323,87 @@
 	},
 	{
 		"file": "src/function/widget/utility/directory-browser/Component.tsx",
-		"line": 286,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (color: text.muted, fontSize: shell-text-sm, paddingBlock: 8, textAlign: center) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/function/widget/utility/directory-browser/Component.tsx",
-		"line": 300,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (borderColor: border.default, borderRadius: shell-sm, borderStyle: solid, borderWidth: 1px, display: flex, flexDirection: column, overflow: hidden) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/function/widget/utility/directory-browser/Component.tsx",
-		"line": 380,
+		"line": 366,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 14px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/function/widget/utility/directory-browser/Component.tsx",
-		"line": 1417,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (backgroundColor: surface.dialog, display: flex, flexDirection: column, height: full, overflow: hidden, width: full) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/function/widget/utility/directory-browser/Component.tsx",
-		"line": 1760,
+		"line": 1737,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 40px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/function/widget/utility/directory-browser/Component.tsx",
-		"line": 2078,
+		"line": 2055,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 11px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/function/widget/utility/directory-browser/Component.tsx",
-		"line": 2095,
+		"line": 2072,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 11px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/function/widget/utility/font-viewer/Component.tsx",
-		"line": 8,
+		"line": 11,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/fields/SearchField\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
 		"file": "src/function/widget/utility/font-viewer/Component.tsx",
-		"line": 9,
+		"line": 12,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
 		"file": "src/function/widget/utility/font-viewer/Component.tsx",
-		"line": 71,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (color: text.muted, fontFamily: mono, fontSize: text-2xs) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/function/widget/utility/font-viewer/Component.tsx",
-		"line": 175,
+		"line": 173,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/function/widget/utility/font-viewer/Component.tsx",
-		"line": 211,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (alignItems: center, color: text.muted, display: flex, height: full, justifyContent: center, width: full) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/function/widget/utility/font-viewer/Component.tsx",
-		"line": 220,
+		"line": 209,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 11px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/function/widget/utility/font-viewer/Component.tsx",
-		"line": 348,
+		"line": 337,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/function/widget/utility/font-viewer/Component.tsx",
-		"line": 544,
+		"line": 533,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/function/widget/utility/font-viewer/Component.tsx",
-		"line": 572,
+		"line": 561,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 10px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/function/widget/utility/font-viewer/Component.tsx",
-		"line": 578,
+		"line": 567,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
-	},
-	{
-		"file": "src/function/widget/utility/font-viewer/Component.tsx",
-		"line": 632,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (color: text.muted, fontSize: text-2xs, fontVariantNumeric: tabular-nums) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
 	},
 	{
 		"file": "src/function/widget/utility/info/comp-sections.tsx",
@@ -600,20 +411,6 @@
 		"rule": "inline-style",
 		"message": "inline style sets background — appearance must come from css() and the token system",
 		"reason": "inline style sets appearance; move it into css() and the token system"
-	},
-	{
-		"file": "src/function/widget/utility/info/comp-sections.tsx",
-		"line": 106,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (display: flex, fontSize: text-xs, gap: var(--ty-space-2), justifyContent: space-between) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/function/widget/utility/info/preset.tsx",
-		"line": 159,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (display: flex, fontSize: text-xs, gap: var(--ty-space-2), justifyContent: space-between) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
 	},
 	{
 		"file": "src/function/widget/utility/quick-actions/row-components.tsx",
@@ -638,38 +435,24 @@
 	},
 	{
 		"file": "src/management/debug/console/ui/Panel.tsx",
-		"line": 2,
+		"line": 9,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/icons\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
 		"file": "src/management/debug/console/ui/Panel.tsx",
-		"line": 3,
+		"line": 10,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
 		"file": "src/management/debug/console/ui/Panel.tsx",
-		"line": 4,
+		"line": 11,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/util/keyboard\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/debug/console/ui/Panel.tsx",
-		"line": 330,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (backgroundColor: surface.dialog, display: flex, flexDirection: column, height: full, overflow: hidden, width: full) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/management/debug/console/ui/Panel.tsx",
-		"line": 378,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (color: text.muted, fontFamily: mono, fontSize: text-2xs) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
 	},
 	{
 		"file": "src/management/dialog/Root.tsx",
@@ -785,84 +568,77 @@
 	},
 	{
 		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 556,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (color: text.primary, fontSize: sm, fontWeight: semibold) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 782,
+		"line": 776,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 9px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 859,
+		"line": 853,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 10px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 913,
+		"line": 907,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 14px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 928,
+		"line": 922,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 14px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 969,
+		"line": 963,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 10px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 982,
+		"line": 976,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 10px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 995,
+		"line": 989,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 10px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 1080,
+		"line": 1074,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 1088,
+		"line": 1082,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 1148,
+		"line": 1142,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 10px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 1230,
+		"line": 1224,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 10px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
@@ -897,126 +673,91 @@
 	},
 	{
 		"file": "src/management/online/catalog/PresetLibraryEmptyState.tsx",
-		"line": 1,
+		"line": 2,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/controls/IconButton\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
 		"file": "src/management/online/catalog/PresetLibraryEmptyState.tsx",
-		"line": 2,
+		"line": 3,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/Icon\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
 		"file": "src/management/online/catalog/PresetLibraryEmptyState.tsx",
-		"line": 47,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (color: text.primary, fontSize: sm, fontWeight: medium) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/management/online/catalog/PresetLibraryEmptyState.tsx",
-		"line": 93,
+		"line": 88,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 14px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/online/catalog/PresetLibraryEmptyState.tsx",
-		"line": 108,
+		"line": 103,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 14px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/online/notification/Center.tsx",
-		"line": 1,
+		"line": 2,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/controls/IconButton\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/online/notification/Center.tsx",
-		"line": 2,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/Icon\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
 		"file": "src/management/online/notification/Center.tsx",
 		"line": 3,
 		"rule": "deep-import",
+		"message": "import from \"@ty-plus/ui/Icon\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
+		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+	},
+	{
+		"file": "src/management/online/notification/Center.tsx",
+		"line": 4,
+		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
 		"file": "src/management/online/notification/Center.tsx",
-		"line": 53,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (color: text.primary, fontSize: lg, fontWeight: semibold) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/management/online/notification/Center.tsx",
-		"line": 63,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (color: text.primary, fontSize: sm, fontWeight: semibold) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/management/online/notification/Center.tsx",
-		"line": 195,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (color: text.primary, fontSize: sm, fontWeight: medium) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/management/online/notification/Center.tsx",
-		"line": 345,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (color: text.primary, fontSize: sm, fontWeight: semibold) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/management/online/notification/Center.tsx",
-		"line": 605,
+		"line": 585,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/online/notification/Center.tsx",
-		"line": 669,
+		"line": 651,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 14px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/online/notification/Center.tsx",
-		"line": 681,
+		"line": 663,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 14px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/online/notification/Center.tsx",
-		"line": 690,
+		"line": 672,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 14px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/online/notification/Center.tsx",
-		"line": 982,
+		"line": 964,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 14px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/online/notification/Center.tsx",
-		"line": 998,
+		"line": 980,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 24px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
@@ -1142,24 +883,10 @@
 	},
 	{
 		"file": "src/management/panel/ErrorBoundary.tsx",
-		"line": 46,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (opacity: 0.8, overflow: hidden, wordBreak: break-all) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/management/panel/ErrorBoundary.tsx",
-		"line": 179,
+		"line": 173,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
-	},
-	{
-		"file": "src/management/preset/authoring-layout.tsx",
-		"line": 45,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (color: text.primary, fontSize: shell-text-sm, fontWeight: semibold) is written out in 3 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
 	},
 	{
 		"file": "src/management/preset/authoring/Dialog.tsx",
@@ -1183,183 +910,141 @@
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
-		"file": "src/management/preset/catalog-add/path-dialog/PathDialog.tsx",
-		"line": 78,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (backgroundColor: surface.widget, borderColor: border.default, borderRadius: md, borderStyle: solid, borderWidth: 1px, color: text.muted, display: grid, flex: 1, fontSize: shell-text-sm, minHeight: 0, paddingInline: 3, placeItems: center, textAlign: center) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/management/preset/catalog-add/path-dialog/PathDialog.tsx",
-		"line": 122,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (backgroundColor: surface.dialog, display: flex, flexDirection: column, overflow: hidden, paddingInline: 0) is written out in 4 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/management/preset/catalog-add/path-dialog/PathDialog.tsx",
-		"line": 133,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (borderTopColor: border.default, borderTopStyle: solid, borderTopWidth: 1px, paddingBlock: var(--ty-shell-space), paddingInline: var(--ty-shell-pad-inline)) is written out in 3 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 94,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (alignItems: center, backgroundColor: surface.widget/50, borderColor: border.default, borderRadius: shell-sm, borderStyle: solid, borderWidth: 1px, color: text.muted, display: inline-flex, flexShrink: 0, height: 5, justifyContent: center, width: 5) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 139,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (color: text.primary, fontSize: shell-text-sm, fontWeight: medium, overflow: hidden, textOverflow: ellipsis, whiteSpace: nowrap) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 228,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (color: text.primary, fontSize: shell-text-sm, fontWeight: medium, overflow: hidden, textOverflow: ellipsis, whiteSpace: nowrap) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 237,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (color: text.muted, fontSize: xs, overflow: hidden, textOverflow: ellipsis, whiteSpace: nowrap) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 257,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (borderColor: border.default, borderRadius: shell-sm, borderStyle: solid, borderWidth: 1px, display: flex, flexDirection: column, overflow: hidden) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 303,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (alignItems: center, color: text.muted, display: flex, height: full, justifyContent: center, width: full) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 456,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (backgroundColor: surface.widget, borderColor: border.default, borderRadius: shell-sm, borderStyle: solid, borderWidth: 1px, overflow: hidden) is written out in 3 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 491,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (color: text.muted, fontSize: shell-text-sm, paddingBlock: 8, textAlign: center) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 696,
+		"line": 633,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 703,
+		"line": 640,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 11px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 705,
+		"line": 642,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 712,
+		"line": 649,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 11px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 714,
+		"line": 651,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 721,
+		"line": 658,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 11px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 735,
+		"line": 672,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 742,
+		"line": 679,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 11px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 744,
+		"line": 681,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 751,
+		"line": 688,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 11px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 833,
+		"line": 770,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 842,
+		"line": 779,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 13px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 851,
+		"line": 788,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 949,
+		"line": 884,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 964,
+		"line": 899,
+		"rule": "icon-size-off-scale",
+		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 11px is not one of them",
+		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
+	},
+	{
+		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
+		"line": 921,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
+		"line": 947,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
+		"line": 956,
+		"rule": "icon-size-off-scale",
+		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 11px is not one of them",
+		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
+	},
+	{
+		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
+		"line": 958,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
+		"line": 967,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 11px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
@@ -1373,70 +1058,35 @@
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 1012,
+		"line": 1009,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 1021,
+		"line": 1018,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 11px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 1023,
+		"line": 1020,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 1032,
+		"line": 1029,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 11px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 1051,
-		"rule": "raw-control",
-		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
-		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
-	},
-	{
-		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 1074,
-		"rule": "raw-control",
-		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
-		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
-	},
-	{
-		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 1083,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 11px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
-	},
-	{
-		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 1085,
-		"rule": "raw-control",
-		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
-		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
-	},
-	{
-		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 1094,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 11px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
-	},
-	{
-		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 1924,
+		"line": 1859,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
@@ -1457,129 +1107,80 @@
 	},
 	{
 		"file": "src/management/preset/components/PresetIconTile.tsx",
-		"line": 102,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (backgroundColor: surface.widget, borderColor: border.default, borderRadius: shell-sm, borderStyle: solid, borderWidth: 1px, overflow: hidden) is written out in 3 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/management/preset/components/PresetIconTile.tsx",
-		"line": 169,
+		"line": 159,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 11px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/preset/edit/Dialog.tsx",
-		"line": 2,
+		"line": 10,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/controls/Button\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
 		"file": "src/management/preset/edit/Dialog.tsx",
-		"line": 3,
+		"line": 11,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/fields/Input\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
 		"file": "src/management/preset/edit/Dialog.tsx",
-		"line": 4,
+		"line": 12,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/fields/PathField\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
 		"file": "src/management/preset/edit/Dialog.tsx",
-		"line": 5,
+		"line": 13,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/shell/DialogBody\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
 		"file": "src/management/preset/edit/Dialog.tsx",
-		"line": 144,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (color: text.primary, fontSize: shell-text-sm, fontWeight: medium, overflow: hidden, textOverflow: ellipsis, whiteSpace: nowrap) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/management/preset/edit/Dialog.tsx",
-		"line": 153,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (color: text.muted, fontSize: xs, overflow: hidden, textOverflow: ellipsis, whiteSpace: nowrap) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/management/preset/edit/Dialog.tsx",
-		"line": 168,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (alignItems: center, backgroundColor: surface.widget/50, borderColor: border.default, borderRadius: shell-sm, borderStyle: solid, borderWidth: 1px, color: text.muted, display: inline-flex, flexShrink: 0, height: 5, justifyContent: center, width: 5) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/management/preset/edit/Dialog.tsx",
-		"line": 243,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (backgroundColor: surface.dialog, display: flex, flexDirection: column, overflow: hidden, paddingInline: 0) is written out in 4 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/management/preset/edit/Dialog.tsx",
-		"line": 254,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (borderTopColor: border.default, borderTopStyle: solid, borderTopWidth: 1px, paddingBlock: var(--ty-shell-space), paddingInline: var(--ty-shell-pad-inline)) is written out in 3 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/management/preset/edit/Dialog.tsx",
-		"line": 559,
+		"line": 516,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/preset/edit/Dialog.tsx",
-		"line": 567,
+		"line": 524,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 11px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/preset/edit/Dialog.tsx",
-		"line": 569,
+		"line": 526,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/preset/edit/Dialog.tsx",
-		"line": 577,
+		"line": 534,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 11px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/preset/edit/Dialog.tsx",
-		"line": 579,
+		"line": 536,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/preset/edit/Dialog.tsx",
-		"line": 587,
+		"line": 544,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 11px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
-	},
-	{
-		"file": "src/management/preset/editor/Code.tsx",
-		"line": 411,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (backgroundColor: surface.widget, borderColor: border.default, borderRadius: shell-sm, borderStyle: solid, borderWidth: 1px, overflow: hidden) is written out in 3 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
 	},
 	{
 		"file": "src/management/preset/group/ConditionRuleCard.tsx",
@@ -1604,35 +1205,21 @@
 	},
 	{
 		"file": "src/management/preset/group/Panel.tsx",
-		"line": 23,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (borderRadius: shell-sm, inset: 0, minHeight: 0, minWidth: 0, overflow: hidden, position: absolute, zIndex: 0) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/management/preset/group/Panel.tsx",
-		"line": 45,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (borderColor: var(--color-ty-ws-gridcell-ring-border), borderStyle: solid, borderWidth: 1px) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/management/preset/group/Panel.tsx",
-		"line": 160,
+		"line": 141,
 		"rule": "inline-style",
 		"message": "inline style sets backgroundColor — appearance must come from css() and the token system",
 		"reason": "inline style sets appearance; move it into css() and the token system"
 	},
 	{
 		"file": "src/management/preset/group/Panel.tsx",
-		"line": 183,
+		"line": 164,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/preset/group/Panel.tsx",
-		"line": 189,
+		"line": 170,
 		"rule": "inline-style",
 		"message": "inline style sets opacity — appearance must come from css() and the token system",
 		"reason": "inline style sets appearance; move it into css() and the token system"
@@ -1678,27 +1265,6 @@
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/shell/DialogBody\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/preset/tool-shell/dialog/ToolDialog.tsx",
-		"line": 171,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (backgroundColor: surface.dialog, display: flex, flexDirection: column, overflow: hidden, paddingInline: 0) is written out in 4 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/management/preset/tool-shell/dialog/ToolDialog.tsx",
-		"line": 182,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (borderTopColor: border.default, borderTopStyle: solid, borderTopWidth: 1px, paddingBlock: var(--ty-shell-space), paddingInline: var(--ty-shell-pad-inline)) is written out in 3 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/management/preset/tool-shell/FolderDirectoryPicker.tsx",
-		"line": 53,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (backgroundColor: surface.widget, borderColor: border.default, borderRadius: md, borderStyle: solid, borderWidth: 1px, color: text.muted, display: grid, flex: 1, fontSize: shell-text-sm, minHeight: 0, paddingInline: 3, placeItems: center, textAlign: center) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
 	},
 	{
 		"file": "src/management/preset/workspace/glyph/WorkspaceGlyph.tsx",
@@ -1758,28 +1324,21 @@
 	},
 	{
 		"file": "src/management/setting/dialog/sections/AccordionSection.tsx",
-		"line": 1,
+		"line": 2,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/Icon\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
 		"file": "src/management/setting/dialog/sections/AccordionSection.tsx",
-		"line": 2,
+		"line": 3,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
 		"file": "src/management/setting/dialog/sections/AccordionSection.tsx",
-		"line": 41,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (color: text.primary, fontSize: text-sm, fontWeight: medium) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/management/setting/dialog/sections/AccordionSection.tsx",
-		"line": 102,
+		"line": 97,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
@@ -1821,45 +1380,38 @@
 	},
 	{
 		"file": "src/management/setting/dialog/sections/ComponentPreviewSection.tsx",
-		"line": 1,
+		"line": 2,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/controls/SegmentedControl\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
 		"file": "src/management/setting/dialog/sections/ComponentPreviewSection.tsx",
-		"line": 2,
+		"line": 3,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/feedback/LoadingSpinner\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
 		"file": "src/management/setting/dialog/sections/ComponentPreviewSection.tsx",
-		"line": 3,
+		"line": 4,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/fields/ListSelect\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
 		"file": "src/management/setting/dialog/sections/ComponentPreviewSection.tsx",
-		"line": 4,
+		"line": 5,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/layout/ScrollArea\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
 		"file": "src/management/setting/dialog/sections/ComponentPreviewSection.tsx",
-		"line": 5,
+		"line": 6,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/setting/dialog/sections/ComponentPreviewSection.tsx",
-		"line": 155,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (color: text.primary, fontSize: text-sm, fontWeight: medium) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
 	},
 	{
 		"file": "src/management/setting/dialog/sections/FeedbackSection.tsx",
@@ -2052,17 +1604,10 @@
 	},
 	{
 		"file": "src/management/setting/dialog/Settings.tsx",
-		"line": 1,
+		"line": 2,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/controls/Button\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/setting/dialog/Settings.tsx",
-		"line": 81,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (backgroundColor: surface.dialog, display: flex, flexDirection: column, overflow: hidden, paddingInline: 0) is written out in 4 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
 	},
 	{
 		"file": "src/management/setting/dialog/SettingsSidebar.tsx",
@@ -2115,35 +1660,28 @@
 	},
 	{
 		"file": "src/management/widget/catalog.tsx",
-		"line": 238,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (color: text.muted, fontSize: text-2xs, fontVariantNumeric: tabular-nums) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/management/widget/catalog.tsx",
-		"line": 354,
+		"line": 348,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/widget/catalog.tsx",
-		"line": 378,
+		"line": 372,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 18px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/widget/catalog.tsx",
-		"line": 414,
+		"line": 408,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/widget/catalog.tsx",
-		"line": 439,
+		"line": 433,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 18px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
@@ -2185,24 +1723,17 @@
 	},
 	{
 		"file": "src/management/workspace/background/ImageLayerEditor.tsx",
-		"line": 1,
+		"line": 2,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/controls/SegmentedControl\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
 		"file": "src/management/workspace/background/ImageLayerEditor.tsx",
-		"line": 2,
+		"line": 3,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/fields/PathField\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/workspace/background/ImageLayerEditor.tsx",
-		"line": 53,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (borderColor: transparent, borderStyle: solid, borderWidth: 1px) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
 	},
 	{
 		"file": "src/management/workspace/background/LayerEditor.tsx",
@@ -2248,17 +1779,10 @@
 	},
 	{
 		"file": "src/management/workspace/background/PatternLayerEditor.tsx",
-		"line": 1,
+		"line": 2,
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/controls/SegmentedControl\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/workspace/background/PatternLayerEditor.tsx",
-		"line": 27,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (borderColor: transparent, borderStyle: solid, borderWidth: 1px) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
 	},
 	{
 		"file": "src/management/workspace/surface/Grid.tsx",
@@ -2266,27 +1790,6 @@
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/workspace/surface/GridTile.tsx",
-		"line": 73,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (opacity: 0.8, overflow: hidden, wordBreak: break-all) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/management/workspace/surface/TileFrame.tsx",
-		"line": 22,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (borderRadius: shell-sm, inset: 0, minHeight: 0, minWidth: 0, overflow: hidden, position: absolute, zIndex: 0) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
-	},
-	{
-		"file": "src/management/workspace/surface/TileFrame.tsx",
-		"line": 38,
-		"rule": "duplicate-style-recipe",
-		"message": "the same treatment (borderColor: var(--color-ty-ws-gridcell-ring-border), borderStyle: solid, borderWidth: 1px) is written out in 2 files — it belongs to the shared design system",
-		"reason": "this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together"
 	},
 	{
 		"file": "src/management/workspace/surface/widget-grid-icons.tsx",

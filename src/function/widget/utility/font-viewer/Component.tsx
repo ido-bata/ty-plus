@@ -1,6 +1,9 @@
 import {
+	centeredIconClass,
+	countLabelClass,
 	fieldLabelClass,
 	Icon,
+	monoMetaClass,
 	rowLabelClass,
 	Surface,
 	ViewModeToggle,
@@ -68,12 +71,7 @@ const FAMILY_ICON_SPECIMEN_FONT_SIZE =
 	"clamp(0.7rem, 0.62rem + 0.4vw, 1.05rem)";
 
 /** Monospaced PostScript name / full name under a family label. */
-const monoFamilyNameClass = css({
-	truncate: true,
-	fontFamily: "mono",
-	fontSize: "text-2xs",
-	color: "text.muted",
-});
+const monoFamilyNameClass = cx(monoMetaClass, css({ truncate: true }));
 
 function isUprightFace(row: LocalFontFaceRow): boolean {
 	const s = row.style.toLowerCase();
@@ -207,16 +205,7 @@ function FontNavigateUpCard(props: {
 					css({ overflow: "hidden", opacity: 0.7 }),
 				)}
 			>
-				<div
-					className={css({
-						display: "flex",
-						height: "full",
-						width: "full",
-						alignItems: "center",
-						justifyContent: "center",
-						color: "text.muted",
-					})}
-				>
+				<div className={centeredIconClass}>
 					<Icon icon={ArrowLeft} size={11} aria-hidden />
 				</div>
 			</Surface>
@@ -629,13 +618,10 @@ function FontListTreeFamilyGroup(props: {
 								{family}
 							</span>
 							<span
-								className={css({
-									flexShrink: 0,
-									fontVariantNumeric: "tabular-nums",
-									fontSize: "text-2xs",
-									color: "text.muted",
-									opacity: 0.7,
-								})}
+								className={cx(
+									countLabelClass,
+									css({ flexShrink: 0, opacity: 0.7 }),
+								)}
 								title={t("fontViewer.familySummary", {
 									count: faces.length,
 								})}

@@ -1,4 +1,8 @@
-import { SegmentedControl, sectionLabelClass } from "@ty-plus/ui";
+import {
+	browserEmptyClass,
+	SegmentedControl,
+	sectionLabelClass,
+} from "@ty-plus/ui";
 import { type JSX, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { readUserHomeOrFallback } from "@/management/preset/catalog-add/browse-start-dir";
@@ -13,7 +17,7 @@ import {
 	type FileEntrySelectionMode,
 } from "@/management/storage/ui/file-entry/FileEntryList";
 import { readSettings } from "@/management/workspace/persistence/store";
-import { css, cx } from "@/styled-system/css";
+import { css } from "@/styled-system/css";
 
 type RootKind = "presets" | "scripts" | "plugins" | "other";
 
@@ -48,22 +52,6 @@ const browserContainerClass = css({
 const browserInnerClass = css({
 	flex: "1",
 	minHeight: "0",
-});
-
-const browserEmptyClass = css({
-	display: "grid",
-	minHeight: "0",
-	flex: "1",
-	placeItems: "center",
-	borderRadius: "md",
-	borderWidth: "1px",
-	borderStyle: "solid",
-	borderColor: "border.default",
-	backgroundColor: "surface.widget",
-	paddingInline: "3",
-	textAlign: "center",
-	fontSize: "shell-text-sm",
-	color: "text.muted",
 });
 
 export function FolderDirectoryPicker({

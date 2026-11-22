@@ -4,7 +4,7 @@
  * Pure presentation: positioning stays with the caller via `style`.
  */
 
-import { cx } from "@ty-plus/ui";
+import { cx, tileInnerClass, tileRingClass } from "@ty-plus/ui";
 import type { CSSProperties, JSX, ReactNode } from "react";
 import { css } from "@/styled-system/css";
 
@@ -19,26 +19,10 @@ const tileShell = css({
 	color: "text.primary",
 });
 
-const tileInner = css({
-	position: "absolute",
-	inset: "0",
-	zIndex: "0",
-	minHeight: "0",
-	minWidth: "0",
-	overflow: "hidden",
-	borderRadius: "shell-sm",
-});
-
 const tileFrameSelected = css({
 	borderWidth: "1px",
 	borderStyle: "solid",
 	borderColor: "var(--color-ty-ws-gridcell-ring-border-selected)",
-});
-
-const tileFrameDefault = css({
-	borderWidth: "1px",
-	borderStyle: "solid",
-	borderColor: "var(--color-ty-ws-gridcell-ring-border)",
 });
 
 const tileFrameOverlay = css({
@@ -67,11 +51,11 @@ export function WorkspaceTileFrame(
 	props: WorkspaceTileFrameProps,
 ): JSX.Element {
 	const { selected = false, style, attrs, className, children } = props;
-	const frameBorder = selected ? tileFrameSelected : tileFrameDefault;
+	const frameBorder = selected ? tileFrameSelected : tileRingClass;
 
 	return (
 		<div {...attrs} className={cx(tileShell, className)} style={style}>
-			<div className={tileInner}>{children}</div>
+			<div className={tileInnerClass}>{children}</div>
 			<div aria-hidden className={cx(tileFrameOverlay, frameBorder)} />
 		</div>
 	);

@@ -1,6 +1,9 @@
 import {
 	Button,
+	borderedListClass,
 	cx,
+	emptyStateClass,
+	fillSurfaceClass,
 	Icon,
 	IconButton,
 	isIMEComposing,
@@ -283,28 +286,11 @@ const anchorRowIconWrapClass = css({
 
 const anchorRowTrailingClass = css({ flexShrink: 0, color: "text.muted" });
 
-const emptyStateClass = css({
-	paddingBlock: "8",
-	textAlign: "center",
-	fontSize: "shell-text-sm",
-	color: "text.muted",
-});
-
 const emptyStateErrorClass = css({
 	paddingBlock: "4",
 	textAlign: "center",
 	fontSize: "shell-text-sm",
 	color: "status.error",
-});
-
-const fileListClass = css({
-	display: "flex",
-	flexDirection: "column",
-	overflow: "hidden",
-	borderRadius: "shell-sm",
-	borderWidth: "1px",
-	borderStyle: "solid",
-	borderColor: "border.default",
 });
 
 const listHeaderClass = css({
@@ -1414,16 +1400,7 @@ export function DirectoryBrowserWidget({
 			// Select/Deselect label on file rows.
 			data-directory-browser-can-go-up={canGoUpFromCurrent ? "true" : "false"}
 			data-directory-browser-selected-file={fileBrowserSelectedPath}
-			className={css({
-				display: "flex",
-				height: "full",
-				minHeight: 0,
-				width: "full",
-				minWidth: 0,
-				flexDirection: "column",
-				overflow: "hidden",
-				backgroundColor: "surface.dialog",
-			})}
+			className={fillSurfaceClass}
 		>
 			<CatalogBrowserShell
 				domPrefix="directory-browser"
@@ -1664,7 +1641,7 @@ export function DirectoryBrowserWidget({
 							{t("directoryBrowser.empty.noAnchors")}
 						</p>
 					) : viewMode === "list" ? (
-						<ul className={fileListClass}>
+						<ul className={borderedListClass}>
 							{anchorRows.map((row) => (
 								<li
 									key={row.label + row.path}
@@ -1820,7 +1797,7 @@ export function DirectoryBrowserWidget({
 										title={g.group.title}
 										count={g.presets.length}
 									>
-										<ul className={fileListClass}>
+										<ul className={borderedListClass}>
 											{g.presets.map((p: Preset) => (
 												<PresetListRow
 													key={p.id}
@@ -1890,7 +1867,7 @@ export function DirectoryBrowserWidget({
 										count={partitionedCatalog.ungrouped.length}
 									>
 										{viewMode === "list" ? (
-											<ul className={fileListClass}>
+											<ul className={borderedListClass}>
 												{partitionedCatalog.ungrouped.map((p: Preset) => (
 													<PresetListRow
 														key={p.id}
@@ -1947,7 +1924,7 @@ export function DirectoryBrowserWidget({
 										)}
 									</CollapsibleGroupHeader>
 								) : viewMode === "list" ? (
-									<ul className={fileListClass}>
+									<ul className={borderedListClass}>
 										{partitionedCatalog.ungrouped.map((p: Preset) => (
 											<PresetListRow
 												key={p.id}

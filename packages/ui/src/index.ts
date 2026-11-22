@@ -34,27 +34,57 @@ export { SearchField } from "./fields/SearchField";
 export { Textarea } from "./fields/Textarea";
 export { Icon } from "./Icon";
 export * as Icons from "./icons";
-
-export {
-	fieldDescriptionClass,
-	fieldLabelClass,
-	rowLabelClass,
-	sectionLabelClass,
-	srOnlyClass,
-} from "./styles/typography";
+export { useAnchorGesture } from "./interaction/use-anchor-gesture";
+export { MediaFrame } from "./layout/MediaFrame";
+export { ScrollArea } from "./layout/ScrollArea";
+export { Surface } from "./layout/Surface";
+export { DialogBody } from "./shell/DialogBody";
 export {
 	segmentedButtonActiveClass,
 	segmentedButtonClass,
 	segmentedButtonInactiveClass,
+	segmentedButtonQuietClass,
 	segmentedStripClass,
 } from "./styles/segmented";
-export { useAnchorGesture } from "./interaction/use-anchor-gesture";
-
-export { MediaFrame } from "./layout/MediaFrame";
-export { ScrollArea } from "./layout/ScrollArea";
-export { Surface } from "./layout/Surface";
-
-export { DialogBody } from "./shell/DialogBody";
+export type { StatusBannerTone } from "./styles/surfaces";
+export {
+	borderedListClass,
+	browserEmptyClass,
+	centeredIconClass,
+	dialogContentClass,
+	dialogFooterClass,
+	emptyStateClass,
+	fillSurfaceClass,
+	iconActionButtonClass,
+	infoRowClass,
+	monoPreviewBoxClass,
+	statusBannerBaseClass,
+	statusBannerClass,
+	stepBadgeClass,
+	stepCardClass,
+	tileInnerClass,
+	tileRingClass,
+	widgetSurfaceClass,
+} from "./styles/surfaces";
+export {
+	cardTitleClass,
+	clampedTextClass,
+	countLabelClass,
+	fieldDescriptionClass,
+	fieldLabelClass,
+	heading1Class,
+	heading3Class,
+	listItemTitleClass,
+	monoMetaClass,
+	mutedBodyTextClass,
+	rowLabelClass,
+	rowMetaClass,
+	rowTitleClass,
+	sectionLabelClass,
+	sectionTitleClass,
+	srOnlyClass,
+	stepDescriptionClass,
+} from "./styles/typography";
 
 export { cx } from "./util/cx";
 export { isIMEComposing } from "./util/keyboard";

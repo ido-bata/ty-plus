@@ -1,4 +1,4 @@
-import { Icon, ViewModeToggle } from "@ty-plus/ui";
+import { countLabelClass, Icon, ViewModeToggle } from "@ty-plus/ui";
 import { SearchField } from "@ty-plus/ui/fields/SearchField";
 import { cx } from "@ty-plus/ui/util/cx";
 import { isIMEComposing } from "@ty-plus/ui/util/keyboard";
@@ -233,12 +233,6 @@ const searchFieldClass = css({
 	minWidth: 0,
 	flex: "1",
 	paddingBlock: "0",
-});
-
-const searchCountStyle = css({
-	fontVariantNumeric: "tabular-nums",
-	fontSize: "text-2xs",
-	color: "text.muted",
 });
 
 const viewModeWrapperStyle = css({
@@ -679,7 +673,7 @@ export function AddWidgetCatalogPanel({
 					onClear={() => onQueryChange("")}
 					showInlineTrailing
 					inlineTrailing={
-						<span className={searchCountStyle}>{linearItems.length}</span>
+						<span className={countLabelClass}>{linearItems.length}</span>
 					}
 				/>
 				<div className={viewModeWrapperStyle}>

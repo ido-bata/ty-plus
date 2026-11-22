@@ -1,4 +1,12 @@
-import { Icon, sectionLabelClass } from "@ty-plus/ui";
+import {
+	dialogContentClass,
+	dialogFooterClass,
+	Icon,
+	iconActionButtonClass,
+	rowMetaClass,
+	rowTitleClass,
+	sectionLabelClass,
+} from "@ty-plus/ui";
 import { Button } from "@ty-plus/ui/controls/Button";
 import { Input } from "@ty-plus/ui/fields/Input";
 import { PathField } from "@ty-plus/ui/fields/PathField";
@@ -58,7 +66,7 @@ import { readTextFile } from "@/management/storage";
 import { executeWorkspacePresetForWindow } from "@/management/workspace/core/runtime";
 import { openPresetEditSurface } from "@/management/workspace/hooks/preset";
 import { notifyPanelsAfterPresetSave } from "@/management/workspace/placement/notify-panels-after-preset-save";
-import { css } from "@/styled-system/css";
+import { css, cx } from "@/styled-system/css";
 
 export type PresetEditDialogProps = {
 	presetId: string;
@@ -141,21 +149,10 @@ const memberTitleColumnClass = css({
 	minWidth: "0",
 });
 
-const memberTitleClass = css({
-	overflow: "hidden",
-	textOverflow: "ellipsis",
-	whiteSpace: "nowrap",
-	fontSize: "shell-text-sm",
-	fontWeight: "medium",
-	color: "text.primary",
-});
-
-const memberTypeClass = css({
-	overflow: "hidden",
-	textOverflow: "ellipsis",
-	whiteSpace: "nowrap",
-	fontSize: "xs",
-	color: "text.muted",
+const memberActionButtonDisabledClass = css({
+	_disabled: {
+		opacity: 0.3,
+	},
 });
 
 const memberActionsClass = css({
@@ -163,28 +160,6 @@ const memberActionsClass = css({
 	flexShrink: "0",
 	alignItems: "center",
 	gap: "0.5",
-});
-
-const memberActionButtonClass = css({
-	display: "inline-flex",
-	height: "5",
-	width: "5",
-	flexShrink: "0",
-	alignItems: "center",
-	justifyContent: "center",
-	borderRadius: "shell-sm",
-	borderWidth: "1px",
-	borderStyle: "solid",
-	borderColor: "border.default",
-	backgroundColor: "surface.widget/50",
-	color: "text.muted",
-	_hover: {
-		backgroundColor: "interactive.hover",
-		color: "text.primary",
-	},
-	_disabled: {
-		opacity: 0.3,
-	},
 });
 
 const stackClass = css({
@@ -240,25 +215,7 @@ const rootColumnClass = css({
  * class only adjusts padding / overflow so the editor body uses the full
  * panel width without the default shell gutter.
  */
-const editContentClass = css({
-	display: "flex",
-	minHeight: 0,
-	minWidth: 0,
-	flexDirection: "column",
-	overflow: "hidden",
-	paddingInline: "0",
-	backgroundColor: "surface.dialog",
-});
-
 /** Footer adds a divider and shell-aligned padding for the action row. */
-const editFooterClass = css({
-	borderTopWidth: "1px",
-	borderTopStyle: "solid",
-	borderTopColor: "border.default",
-	paddingInline: "var(--ty-shell-pad-inline)",
-	paddingBlock: "var(--ty-shell-space)",
-});
-
 function parseEasingCurveText(value: string): unknown {
 	try {
 		const parsed = JSON.parse(value);
@@ -549,16 +506,16 @@ const GroupMemberItem = ({
 			</div>
 			{/* Title + type */}
 			<div className={memberTitleColumnClass}>
-				<div className={memberTitleClass}>
+				<div className={rowTitleClass}>
 					{member.title || member.filePath.split(/[\\/]/).pop() || member.id}
 				</div>
-				<div className={memberTypeClass}>{member.type}</div>
+				<div className={rowMetaClass}>{member.type}</div>
 			</div>
 			{/* Run + Edit + Delete actions */}
 			<div className={memberActionsClass}>
 				<button
 					type="button"
-					className={memberActionButtonClass}
+					className={cx(iconActionButtonClass, memberActionButtonDisabledClass)}
 					aria-label={`Run ${member.title}`}
 					title="Run"
 					disabled={disabled}
@@ -568,7 +525,7 @@ const GroupMemberItem = ({
 				</button>
 				<button
 					type="button"
-					className={memberActionButtonClass}
+					className={cx(iconActionButtonClass, memberActionButtonDisabledClass)}
 					aria-label={`Edit ${member.title}`}
 					title="Edit"
 					disabled={disabled}
@@ -578,7 +535,7 @@ const GroupMemberItem = ({
 				</button>
 				<button
 					type="button"
-					className={memberActionButtonClass}
+					className={cx(iconActionButtonClass, memberActionButtonDisabledClass)}
 					aria-label={`Delete ${member.title}`}
 					title="Delete"
 					disabled={disabled}
@@ -1142,8 +1099,8 @@ export function PresetEditDialog(props: PresetEditDialogProps): JSX.Element {
 			}
 			surfaceId="dialog-preset-edit"
 			modifier="wsd-root--preset-edit"
-			contentClassName={editContentClass}
-			footerClassName={editFooterClass}
+			contentClassName={dialogContentClass}
+			footerClassName={dialogFooterClass}
 			footer={
 				<DialogFooterActions>
 					<Button

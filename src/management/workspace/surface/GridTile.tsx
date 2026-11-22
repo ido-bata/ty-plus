@@ -7,6 +7,7 @@
  * parent `Grid` inside a single `useMemo`; this module only renders.
  */
 
+import { clampedTextClass } from "@ty-plus/ui";
 import type { CSSProperties, JSX } from "react";
 import { memo } from "react";
 import type { Preset } from "@/management/preset/contract";
@@ -68,13 +69,6 @@ const widgetMissingCard = css({
 const widgetMissingTitle = css({
 	fontWeight: "medium",
 	color: "text.primary",
-});
-
-const widgetMissingBody = css({
-	lineClamp: 2,
-	overflow: "hidden",
-	wordBreak: "break-all",
-	opacity: "0.8",
 });
 
 function WorkspacePlacementTileImpl(
@@ -152,7 +146,7 @@ function TileBodyImpl(props: TileBodyProps): JSX.Element {
 		return (
 			<div className={widgetMissingCard} title={tileId}>
 				<span className={widgetMissingTitle}>Widget</span>
-				<span className={widgetMissingBody}>
+				<span className={clampedTextClass}>
 					Configuration could not be loaded
 				</span>
 			</div>

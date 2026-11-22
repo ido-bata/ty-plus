@@ -20,7 +20,7 @@ DirectoryBrowser の調査から見つかった不整合は widget 固有では�
 | 1 | **focus 表示の分裂** — 4 形態（2px 外側 ring / 1px 内側 ring / border のみ / 壊れている） | `focus-ring-missing` / `focus-ring-divergent` | **済**。`--color-focus-ring` に一元化 |
 | 2 | **未定義 CSS 変数** — 存在しない token を参照（描画されない focus ring を含む） | `unknown-css-var` | **済**（37 箇所を修正） |
 | 3 | **raw なフォーム control** — 手書きの select / checkbox / input / range | `raw-control` | **済**（8 箇所を共有 primitive へ） |
-| 4 | **同じ待遇の重複** — 同じ見た目が複数の file に書き写されている | `duplicate-style-recipe` | **一部**。上位のグループは共有語彙へ移行済み（section label 11 file、tab strip 4 file、row label）。残りは 2 file 単位の組で、共有語彙が未整備 |
+| 4 | **同じ待遇の重複** — 同じ見た目が複数の file に書き写されている | `duplicate-style-recipe` | **済**。共有語彙へ移行（`packages/ui/src/styles/`）。allowlist の `duplicate-style-recipe` は 0 |
 | 5 | **同じ component の再実装** — 汎用 control が feature の folder に置きっぱなし | `check:ui-ownership` の `sharedComponents` | **済**（view toggle / authoring layout） |
 | 6 | **raw な `<button>`** — 共有 Button/IconButton ではなく手書き | `raw-control` | **未了**（production に 62 件、baseline 退避） |
 | 7 | **px リテラル** — 260(px) ではなく `1px` のような直接値 | — | **未了**（225 件、1px が 216） |
@@ -50,6 +50,12 @@ boxShadow）だけが対象。
 | 見出しラベル（uppercase / wide / muted） | `sectionLabelClass` | 11 |
 | タブのストリップ | `SegmentedControl` | 4 |
 | 行の主ラベル | `rowLabelClass` | 3 |
+
+Issue #399 で残りの 71 entry（32 の recipe）をすべて裁いた。すべて同じ概念の
+別書きだったので、共有語彙へ移した。型処理は `typography.ts`（heading / title /
+meta / description 系）、面と chrome は `surfaces.ts`（dialog content・footer、
+status banner、step card、list frame、tile inner/ring 等）、quiet な segmented
+button は `segmented.ts` にある。`allowlist` の `duplicate-style-recipe` は 0。
 
 見出しラベルは 11 file で 2 つのサイズ（10px と 12px）が混在していた。共有の
 `sectionLabelClass` は app の token である `text-xs`（10px）。Panda の既定 `xs`

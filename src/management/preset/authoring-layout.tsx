@@ -1,4 +1,4 @@
-import { SegmentedControl } from "@ty-plus/ui";
+import { SegmentedControl, sectionTitleClass } from "@ty-plus/ui";
 import type { JSX, ReactNode } from "react";
 import { css, cx } from "@/styled-system/css";
 
@@ -35,17 +35,11 @@ const sectionColumnClass = css({
 	gap: "2",
 });
 
-const sectionTitleClass = css({
+const sectionHeadingClass = css({
 	display: "flex",
 	minWidth: "0",
 	flexDirection: "column",
 	gap: "0.5",
-});
-
-const sectionTitleTextClass = css({
-	fontSize: "shell-text-sm",
-	fontWeight: "semibold",
-	color: "text.primary",
 });
 
 const sectionDescriptionClass = css({
@@ -94,8 +88,8 @@ export function AuthoringSection({
 	return (
 		<AuthoringField span={span}>
 			<div className={sectionColumnClass}>
-				<div className={sectionTitleClass}>
-					<span className={sectionTitleTextClass}>{title}</span>
+				<div className={sectionHeadingClass}>
+					<span className={sectionTitleClass}>{title}</span>
 					{description ? (
 						<span className={sectionDescriptionClass}>{description}</span>
 					) : null}

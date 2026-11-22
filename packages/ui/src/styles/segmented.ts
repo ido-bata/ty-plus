@@ -35,6 +35,12 @@ export const segmentedButtonClass = css({
 	transitionProperty: "colors",
 });
 
+export const segmentedButtonQuietClass = css({
+	borderWidth: "1px",
+	borderStyle: "solid",
+	borderColor: "transparent",
+});
+
 export const segmentedButtonActiveClass = css({
 	backgroundColor: "text.accent",
 	color: "surface.panel",
