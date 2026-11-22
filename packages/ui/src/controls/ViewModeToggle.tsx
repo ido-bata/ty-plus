@@ -1,7 +1,7 @@
 import { Icon, IconButton } from "@ty-plus/ui";
 import { LayoutGrid, List as ListIcon } from "lucide-react";
 import type { JSX } from "react";
-import { i18n } from "@/management/i18n/index";
+import { useTranslation } from "react-i18next";
 import { css, cx } from "@/styled-system/css";
 
 export type ViewMode = "list" | "icons";
@@ -81,20 +81,32 @@ export function ViewModeToggle({
 	viewMode,
 	onViewModeChange,
 	onEnterIconView,
-	listViewAriaLabel = i18n.t("widgets:viewModeToggle.listView"),
-	iconViewAriaLabel = i18n.t("widgets:viewModeToggle.iconView"),
-	fieldsetLegend = i18n.t("widgets:viewModeToggle.fieldsetLegend"),
+	listViewAriaLabel,
+	iconViewAriaLabel,
+	fieldsetLegend,
 }: ViewModeToggleProps): JSX.Element {
+	const { t } = useTranslation();
+	const resolvedListViewAriaLabel =
+		listViewAriaLabel ??
+		t("widgets:viewModeToggle.listView", { defaultValue: "List view" });
+	const resolvedIconViewAriaLabel =
+		iconViewAriaLabel ??
+		t("widgets:viewModeToggle.iconView", { defaultValue: "Icon view" });
+	const resolvedFieldsetLegend =
+		fieldsetLegend ??
+		t("widgets:viewModeToggle.fieldsetLegend", {
+			defaultValue: "Catalog layout",
+		});
 	return (
 		<fieldset className={fieldsetClass}>
-			<legend className={srOnlyClass}>{fieldsetLegend}</legend>
+			<legend className={srOnlyClass}>{resolvedFieldsetLegend}</legend>
 			<IconButton
 				variant="ghost"
 				size="sm"
 				type="button"
 				aria-pressed={viewMode === "list"}
-				aria-label={listViewAriaLabel}
-				title={listViewAriaLabel}
+				aria-label={resolvedListViewAriaLabel}
+				title={resolvedListViewAriaLabel}
 				className={cx(
 					buttonBaseClass,
 					viewMode === "list" ? buttonActiveClass : buttonInactiveClass,
@@ -111,8 +123,8 @@ export function ViewModeToggle({
 				size="sm"
 				type="button"
 				aria-pressed={viewMode === "icons"}
-				aria-label={iconViewAriaLabel}
-				title={iconViewAriaLabel}
+				aria-label={resolvedIconViewAriaLabel}
+				title={resolvedIconViewAriaLabel}
 				className={cx(
 					buttonBaseClass,
 					viewMode === "icons" ? buttonActiveClass : buttonInactiveClass,
