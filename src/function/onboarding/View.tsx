@@ -1,4 +1,9 @@
-import { IconButton, ListSelect, PathField } from "@ty-plus/ui/index";
+import {
+	IconButton,
+	ListSelect,
+	mutedBodyTextClass,
+	PathField,
+} from "@ty-plus/ui/index";
 import { isIMEComposing } from "@ty-plus/ui/util/keyboard";
 import {
 	AlertCircle,
@@ -190,12 +195,6 @@ const stepBodyClass = css({
 	gap: "3",
 	flex: "1",
 	minHeight: 0,
-});
-
-const stepBodyTextClass = css({
-	fontSize: "sm",
-	color: "text.muted",
-	whiteSpace: "pre-line",
 });
 
 const animationSlotClass = css({
@@ -513,7 +512,7 @@ type ExtractedPaths = {
 function IntroStep({ body }: { body: string }): JSX.Element {
 	return (
 		<div className={stepBodyClass}>
-			<p className={stepBodyTextClass}>{body}</p>
+			<p className={mutedBodyTextClass}>{body}</p>
 			<div className={animationSlotClass}>
 				<Animation variant="intro" />
 			</div>
@@ -531,7 +530,7 @@ function LanguageStep({
 	const { locale, setLocale } = useI18n();
 	return (
 		<div className={stepBodyClass}>
-			<p className={stepBodyTextClass}>{body}</p>
+			<p className={mutedBodyTextClass}>{body}</p>
 			<div className={css({ width: "full" })}>
 				<ListSelect
 					value={locale}
@@ -564,7 +563,7 @@ function SupportStepBody({
 	const { t } = useTranslation("onboarding");
 	return (
 		<div className={stepBodyClass}>
-			<p className={stepBodyTextClass}>{body}</p>
+			<p className={mutedBodyTextClass}>{body}</p>
 			{isAeAppFolder ? (
 				<p className={supportHintClass}>
 					AE app folder detected — subfolders step will be skipped.
@@ -633,7 +632,7 @@ function SubfoldersStep({
 	const { t } = useTranslation("onboarding");
 	return (
 		<div className={stepBodyClass}>
-			<p className={stepBodyTextClass}>{body}</p>
+			<p className={mutedBodyTextClass}>{body}</p>
 			{SUBFOLDER_KEYS.map((key) => (
 				<div key={key} className={subfoldersStepClass}>
 					<div className={subfoldersLabelClass}>{t(`fields.${key}`)}</div>
@@ -661,7 +660,7 @@ function SubfoldersStep({
 function WorkspaceStep({ body }: { body: string }): JSX.Element {
 	return (
 		<div className={stepBodyClass}>
-			<p className={stepBodyTextClass}>{body}</p>
+			<p className={mutedBodyTextClass}>{body}</p>
 			<div className={animationSlotClass}>
 				<Animation variant="workspace" />
 			</div>
@@ -672,7 +671,7 @@ function WorkspaceStep({ body }: { body: string }): JSX.Element {
 function AddingPresetsStep({ body }: { body: string }): JSX.Element {
 	return (
 		<div className={stepBodyClass}>
-			<p className={stepBodyTextClass}>{body}</p>
+			<p className={mutedBodyTextClass}>{body}</p>
 		</div>
 	);
 }
@@ -680,7 +679,7 @@ function AddingPresetsStep({ body }: { body: string }): JSX.Element {
 function FinishStep({ body }: { body: string }): JSX.Element {
 	return (
 		<div className={stepBodyClass}>
-			<p className={stepBodyTextClass}>{body}</p>
+			<p className={mutedBodyTextClass}>{body}</p>
 			<div className={animationSlotClass}>
 				<Animation variant="intro" />
 			</div>
@@ -740,7 +739,7 @@ function FileStepBrowser({
 		})();
 	return (
 		<div className={fileStepBodyClass}>
-			<p className={stepBodyTextClass}>{t(`step.${kind}.body`)}</p>
+			<p className={mutedBodyTextClass}>{t(`step.${kind}.body`)}</p>
 			<FileEntryList
 				entries={[...folderEntries]}
 				fileNameFilter={STEP_EXTENSIONS[kind]}

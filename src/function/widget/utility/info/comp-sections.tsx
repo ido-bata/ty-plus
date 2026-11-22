@@ -1,4 +1,4 @@
-import { sectionLabelClass } from "@ty-plus/ui";
+import { infoRowClass, sectionLabelClass } from "@ty-plus/ui";
 import type { JSX, ReactNode } from "react";
 import type { CompInfo } from "@/management/workspace/core/state";
 import { css } from "@/styled-system/css";
@@ -102,14 +102,7 @@ function InfoRow({
 	value: ReactNode;
 }): JSX.Element {
 	return (
-		<div
-			className={css({
-				display: "flex",
-				justifyContent: "space-between",
-				gap: "var(--ty-space-2)",
-				fontSize: "text-xs",
-			})}
-		>
+		<div className={infoRowClass}>
 			<span className={css({ color: "var(--color-text-muted)" })}>{label}</span>
 			<span className={css({ color: "var(--color-text-primary)" })}>
 				{value}

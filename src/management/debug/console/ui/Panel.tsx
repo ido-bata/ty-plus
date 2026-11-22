@@ -1,4 +1,11 @@
-import { Button, IconButton, Input, SegmentedControl } from "@ty-plus/ui";
+import {
+	Button,
+	fillSurfaceClass,
+	IconButton,
+	Input,
+	monoMetaClass,
+	SegmentedControl,
+} from "@ty-plus/ui";
 import { ArrowDownToLine } from "@ty-plus/ui/icons";
 import { cx } from "@ty-plus/ui/util/cx";
 import { isIMEComposing } from "@ty-plus/ui/util/keyboard";
@@ -327,15 +334,6 @@ export type PanelProps = {
 	messagesRef?: React.RefObject<Element | null>;
 };
 
-const rootStyle = css({
-	width: "full",
-	height: "full",
-	display: "flex",
-	flexDirection: "column",
-	backgroundColor: "surface.dialog",
-	overflow: "hidden",
-});
-
 const headerStyle = css({
 	display: "flex",
 	alignItems: "center",
@@ -373,13 +371,6 @@ const inputRowStyle = css({
 	borderTopWidth: "1px",
 	borderTopStyle: "solid",
 	borderTopColor: "border.subtle",
-});
-
-const promptStyle = css({
-	flexShrink: 0,
-	fontFamily: "mono",
-	fontSize: "text-2xs",
-	color: "text.muted",
 });
 
 /**
@@ -465,7 +456,7 @@ export function Panel({
 	};
 
 	return (
-		<div className={rootStyle}>
+		<div className={fillSurfaceClass}>
 			{/* Header */}
 			<div className={headerStyle}>
 				<span className={titleStyle}>Console</span>
@@ -509,7 +500,9 @@ export function Panel({
 
 			{/* Input row */}
 			<div className={inputRowStyle}>
-				<span className={promptStyle}>{PROMPT_CHAR}</span>
+				<span className={cx(monoMetaClass, css({ flexShrink: 0 }))}>
+					{PROMPT_CHAR}
+				</span>
 				<Input
 					className={inputStyle}
 					type="text"

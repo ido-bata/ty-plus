@@ -1,4 +1,4 @@
-import { DialogBody } from "@ty-plus/ui";
+import { DialogBody, dialogContentClass, dialogFooterClass } from "@ty-plus/ui";
 import {
 	type JSX,
 	type ReactNode,
@@ -160,31 +160,6 @@ const saveErrorClass = css({
 	padding: "2",
 	fontSize: "shell-text-sm",
 	marginBottom: "3",
-});
-
-/**
- * `DialogShell` content styling for tool-shell dialogs. The shell enforces
- * the 3-area grid (Header=auto, Content=minmax(0,1fr), Footer=auto). This
- * class only adjusts padding / overflow so the editor body uses the full
- * panel width without the default shell gutter.
- */
-const toolShellContentClass = css({
-	display: "flex",
-	minHeight: 0,
-	minWidth: 0,
-	flexDirection: "column",
-	overflow: "hidden",
-	paddingInline: "0",
-	backgroundColor: "surface.dialog",
-});
-
-/** Footer adds a divider and shell-aligned padding for the action row. */
-const toolShellFooterClass = css({
-	borderTopWidth: "1px",
-	borderTopStyle: "solid",
-	borderTopColor: "border.default",
-	paddingInline: "var(--ty-shell-pad-inline)",
-	paddingBlock: "var(--ty-shell-space)",
 });
 
 export function Dialog(props: PresetToolDialogProps): JSX.Element {
@@ -531,8 +506,8 @@ export function Dialog(props: PresetToolDialogProps): JSX.Element {
 			title={props.title}
 			surfaceId={props.surfaceId}
 			modifier="wsd-root--preset-tool"
-			contentClassName={toolShellContentClass}
-			footerClassName={toolShellFooterClass}
+			contentClassName={dialogContentClass}
+			footerClassName={dialogFooterClass}
 			onFileDrop={props.onFileDrop}
 			footer={
 				<ToolDialogFooter close={close} busy={busy} t={t} onSave={onSave} />

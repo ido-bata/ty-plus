@@ -1,4 +1,9 @@
-import { Icon, sectionLabelClass } from "@ty-plus/ui";
+import {
+	Icon,
+	monoPreviewBoxClass,
+	sectionLabelClass,
+	statusBannerClass,
+} from "@ty-plus/ui";
 import { Input } from "@ty-plus/ui/fields/Input";
 import { PathField } from "@ty-plus/ui/fields/PathField";
 import type { TFunction } from "i18next";
@@ -48,38 +53,6 @@ import { css } from "@/styled-system/css";
 type CodeType = "extendscript" | "expression";
 type PresetStatus = "idle" | "saving" | "success" | "error";
 
-const statusBannerBaseClass = css({
-	display: "flex",
-	alignItems: "flex-start",
-	gap: "2",
-	borderRadius: "shell-sm",
-	borderWidth: "1px",
-	borderStyle: "solid",
-	padding: "2",
-	fontSize: "text-xs",
-});
-
-const statusBannerVariant = {
-	success: css({
-		borderColor: "status.success/30",
-		backgroundColor: "status.success/10",
-		color: "status.success",
-	}),
-	warning: css({
-		borderColor: "status.warning/30",
-		backgroundColor: "status.warning/10",
-		color: "status.warning",
-	}),
-	error: css({
-		borderColor: "status.error/30",
-		backgroundColor: "status.error/10",
-		color: "status.error",
-	}),
-} as const;
-
-const statusBannerClass = (variant: "success" | "warning" | "error"): string =>
-	`${statusBannerBaseClass} ${statusBannerVariant[variant]}`;
-
 const bannerTitleClass = css({
 	fontWeight: "semibold",
 });
@@ -89,17 +62,6 @@ const previewColumnClass = css({
 	minWidth: 0,
 	flexDirection: "column",
 	gap: "1",
-});
-
-const previewBoxBaseClass = css({
-	fontFamily: "mono",
-	fontSize: "text-xs",
-	color: "text.primary",
-	overflowWrap: "break-all",
-	borderRadius: "shell-sm",
-	backgroundColor: "surface.widget",
-	paddingInline: "2",
-	paddingBlock: "1",
 });
 
 const previewBoxWarnClass = css({
@@ -150,8 +112,8 @@ function SavePreviewSection({
 			<div
 				className={
 					fileExists
-						? `${previewBoxBaseClass} ${previewBoxWarnClass}`
-						: previewBoxBaseClass
+						? `${monoPreviewBoxClass} ${previewBoxWarnClass}`
+						: monoPreviewBoxClass
 				}
 			>
 				{fullFilePath}

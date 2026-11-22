@@ -1,3 +1,4 @@
+import { cardTitleClass } from "@ty-plus/ui";
 import { SegmentedControl } from "@ty-plus/ui/controls/SegmentedControl";
 import { LoadingSpinner } from "@ty-plus/ui/feedback/LoadingSpinner";
 import { ListSelect } from "@ty-plus/ui/fields/ListSelect";
@@ -152,13 +153,6 @@ const previewCardBodyStyle = css({
 	gap: "0.5",
 });
 
-const previewCardTitleStyle = css({
-	truncate: true,
-	fontSize: "text-sm",
-	fontWeight: "medium",
-	color: "text.primary",
-});
-
 const previewCardDescriptionStyle = css({
 	fontSize: "text-xs",
 	color: "text.muted",
@@ -287,7 +281,9 @@ function PreviewCard({
 				<span className={previewCardIconTextStyle}>🎨</span>
 			</div>
 			<div className={previewCardBodyStyle}>
-				<span className={previewCardTitleStyle}>{title}</span>
+				<span className={cx(cardTitleClass, css({ truncate: true }))}>
+					{title}
+				</span>
 				<span className={previewCardDescriptionStyle}>{description}</span>
 			</div>
 		</div>

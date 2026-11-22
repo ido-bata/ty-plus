@@ -1,4 +1,4 @@
-import { srOnlyClass } from "@ty-plus/ui";
+import { srOnlyClass, tileInnerClass, tileRingClass } from "@ty-plus/ui";
 import type { JSX, ReactNode } from "react";
 import type { Preset } from "@/management/preset/contract";
 import { dispatchWorkspacePresetHover } from "@/management/preset/group/hover";
@@ -20,16 +20,6 @@ const gridCellOuterClass = css({
 	color: "text.primary",
 });
 
-const gridCellInnerClass = css({
-	position: "absolute",
-	inset: "0",
-	zIndex: "0",
-	minHeight: "0",
-	minWidth: "0",
-	overflow: "hidden",
-	borderRadius: "shell-sm",
-});
-
 const gridCellRingBaseClass = css({
 	pointerEvents: "none",
 	position: "absolute",
@@ -40,12 +30,6 @@ const gridCellRingBaseClass = css({
 	transitionProperty: "border-color",
 	transitionDuration: "100ms",
 	transitionTimingFunction: "ease-out",
-});
-
-const gridCellRingBorderClass = css({
-	borderWidth: "1px",
-	borderStyle: "solid",
-	borderColor: "var(--color-ty-ws-gridcell-ring-border)",
 });
 
 const panelClass = css({
@@ -102,11 +86,8 @@ function GroupPanelPresetCell({
 			className={gridCellOuterClass}
 			style={{ width: cellSizePx, height: cellSizePx }}
 		>
-			<div className={gridCellInnerClass}>{children}</div>
-			<div
-				aria-hidden
-				className={cx(gridCellRingBaseClass, gridCellRingBorderClass)}
-			/>
+			<div className={tileInnerClass}>{children}</div>
+			<div aria-hidden className={cx(gridCellRingBaseClass, tileRingClass)} />
 		</div>
 	);
 }
