@@ -411,5 +411,143 @@
 		"pause": "일시정지",
 		"waveCanvas": "루프 파형 편집기",
 		"previewCanvas": "루프 모션 미리보기"
+	},
+	"tutorial": {
+		"chrome": {
+			"help": "도움말",
+			"title": "위젯 도움말",
+			"close": "닫기",
+			"dismissHint": "힌트 닫기"
+		},
+		"easing": {
+			"summary": "이징 커브를 편집하고 프리셋이나 레이어 애니메이션에 적용합니다.",
+			"steps": {
+				"chooseCurve": {
+					"title": "커브 선택",
+					"body": "프리셋 커브를 고르거나 에디터에서 직접 그립니다."
+				},
+				"applyCurve": {
+					"title": "적용하기",
+					"body": "선택한 프리셋이나 레이어에 커브를 적용합니다."
+				}
+			}
+		},
+		"menu": {
+			"summary": "하나의 타일에서 워크스페이스 명령, 레이아웃 작업, 대화 상자를 엽니다.",
+			"steps": {
+				"openMenu": {
+					"title": "메뉴 열기",
+					"body": "타일을 클릭해 워크스페이스 명령 메뉴를 엽니다."
+				},
+				"runCommand": {
+					"title": "명령 실행",
+					"body": "명령을 선택해 현재 워크스페이스에 적용합니다."
+				}
+			}
+		},
+		"align": {
+			"summary": "선택한 프리셋이나 레이어를 그리드의 공통 위치에 맞춥니다.",
+			"steps": {
+				"selectTargets": {
+					"title": "대상 선택",
+					"body": "정렬할 프리셋이나 레이어를 선택합니다."
+				},
+				"pickAlignment": {
+					"title": "정렬 방식 선택",
+					"body": "정렬 옵션을 골라 위치를 맞춥니다."
+				}
+			}
+		},
+		"anchor-point": {
+			"summary": "레이아웃 참조와 스냅 워크플로용 이름 있는 앵커를 배치합니다.",
+			"steps": {
+				"nameAnchor": {
+					"title": "앵커 이름 지정",
+					"body": "이 앵커 지점을 식별할 이름을 입력합니다."
+				},
+				"dropAnchor": {
+					"title": "그리드에 놓기",
+					"body": "워크스페이스를 클릭해 앵커를 배치합니다."
+				}
+			}
+		},
+		"layout-lock": {
+			"summary": "워크스페이스 그리드를 배치하는 동안 실수로 움직이는 것을 막습니다.",
+			"steps": {
+				"turnLockOn": {
+					"title": "잠금 켜기",
+					"body": "잠금을 활성화해 위젯 위치를 고정합니다."
+				},
+				"unlockToRearrange": {
+					"title": "잠금 해제 후 재배치",
+					"body": "위젯을 다시 움직이려면 잠금을 해제합니다."
+				}
+			}
+		},
+		"info": {
+			"summary": "프리셋 메타데이터, 경로, 상태를 넓은 요약 타일로 표시합니다.",
+			"steps": {
+				"placeWidget": {
+					"title": "위젯 배치",
+					"body": "Info 위젯을 워크스페이스에 추가합니다."
+				},
+				"inspectPreset": {
+					"title": "프리셋 확인",
+					"body": "프리셋을 선택하면 여기서 세부 정보를 볼 수 있습니다."
+				}
+			}
+		},
+		"quick-actions": {
+			"summary": "컴팩트한 명령 팔레트에서 스크립트, 효과, 파일 작업을 실행합니다.",
+			"steps": {
+				"openPalette": {
+					"title": "팔레트 열기",
+					"body": "팔레트를 열고 입력해 작업을 검색합니다."
+				},
+				"runAction": {
+					"title": "작업 실행",
+					"body": "작업을 선택하면 바로 실행됩니다."
+				}
+			}
+		},
+		"directory-browser": {
+			"summary": "패널 안에서 디스크 폴더와 프리셋을 탐색합니다.",
+			"steps": {
+				"navigateFolders": {
+					"title": "폴더 이동",
+					"body": "경로 입력란이나 폴더 목록으로 위치를 이동합니다."
+				},
+				"openPreset": {
+					"title": "프리셋 열기",
+					"body": "프리셋을 더블클릭해 적용하거나 확인합니다."
+				}
+			}
+		},
+		"font-viewer": {
+			"summary": "워크스페이스에서 글꼴 패밀리, 스타일, 샘플 텍스트를 미리 봅니다.",
+			"steps": {
+				"loadFonts": {
+					"title": "글꼴 불러오기",
+					"body": "시스템 글꼴을 불러오거나 미리 볼 패밀리를 선택합니다."
+				},
+				"editSample": {
+					"title": "샘플 편집",
+					"body": "샘플 텍스트를 바꿔 글리프와 스타일을 확인합니다."
+				}
+			}
+		},
+		"loop": {
+			"summary": "루프 이징 커브를 편집해 선택한 키프레임에 적용합니다.",
+			"steps": {
+				"chooseCycle": {
+					"title": "사이클 모양 만들기",
+					"body": "커브 핸들을 드래그해 한 사이클의 모양을 만듭니다."
+				},
+				"applyCycle": {
+					"title": "루프 적용하기",
+					"body": "사이클 수를 설정하고 선택한 키프레임에 루프를 적용합니다."
+				}
+			}
+		}
 	}
 }

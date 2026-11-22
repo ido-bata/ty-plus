@@ -26,6 +26,7 @@ import { InputsSection } from "@/management/setting/dialog/sections/InputsSectio
 import { LanguageSection } from "@/management/setting/dialog/sections/LanguageSection";
 import { PathsSection } from "@/management/setting/dialog/sections/PathsSection";
 import { StyleSection } from "@/management/setting/dialog/sections/StyleSection";
+import { TipsSection } from "@/management/setting/dialog/sections/TipsSection";
 import { TokensSection } from "@/management/setting/dialog/sections/TokensSection";
 import { UpdateSection } from "@/management/setting/dialog/sections/UpdateSection";
 import { WorkspaceBackupSection } from "@/management/setting/dialog/sections/WorkspaceBackupSection";
@@ -169,6 +170,12 @@ const SETTINGS_SECTIONS: SettingsSidebarSectionDef[] = [
 		groupId: "display",
 		labelKey: "tabs.section.grid",
 		render: () => <GridSection />,
+	},
+	{
+		sectionId: "tips",
+		groupId: "display",
+		labelKey: "tabs.section.tips",
+		render: () => <TipsSection />,
 	},
 	// データ (data)
 	{

@@ -14,6 +14,21 @@ import { EasingWidget } from "./Component";
 export const descriptor = defineWidget({
 	type: "easing",
 	nameKey: "widgets.easing.name",
+	descriptionKey: "widgets.selector.descriptions.easing",
+	tutorial: {
+		summaryKey: "widgets.tutorial.easing.summary",
+		contentVersion: "1",
+		steps: [
+			{
+				titleKey: "widgets.tutorial.easing.steps.chooseCurve.title",
+				bodyKey: "widgets.tutorial.easing.steps.chooseCurve.body",
+			},
+			{
+				titleKey: "widgets.tutorial.easing.steps.applyCurve.title",
+				bodyKey: "widgets.tutorial.easing.steps.applyCurve.body",
+			},
+		],
+	},
 	icon: "TrendingUp",
 	minSize: { cols: 3, rows: 3 },
 	maxSize: { cols: 20, rows: 20 },

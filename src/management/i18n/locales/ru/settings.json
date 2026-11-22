@@ -196,7 +196,8 @@
 			"workspace-backup": "Резервная копия рабочего пространства",
 			"feedback": "Обратная связь",
 			"inputs": "Ввод",
-			"update": "Обновления"
+			"update": "Обновления",
+			"tips": "Tips"
 		}
 	},
 	"updates": {
@@ -425,5 +426,20 @@
 		"aeAppRootUnresolved": "Ty Plus: не удаётся определить папку установки запущенного After Effects для ty-plus-init.json.",
 		"copySymlinkRefused": "Отказано в копировании символьной ссылки/reparse point: {{name}}",
 		"copyDeleteUnsupported": "Рекурсивное удаление требует rm или readdir/stat на этом хосте."
-	}
+	},
+	"languages": {
+		"english": "Английский",
+		"japanese": "Японский",
+		"korean": "Корейский",
+		"chineseSimplified": "Упрощённый китайский",
+		"chineseTraditional": "Традиционный китайский",
+		"spanish": "Испанский",
+		"french": "Французский",
+		"german": "Немецкий"
+	},
+	"tipsSectionLabel": "Widget tips & tutorials",
+	"tipsSectionDescription": "Widget help summaries and first-run hints are shown once per widget. Reset to show them again.",
+	"tipsReset": "Show tips again",
+	"tipsResetDone": "Tips reset. They will appear again the next time each widget is viewed.",
+	"tipsResetFailed": "Could not reset tips. Please try again."
 }

@@ -85,6 +85,9 @@ import "./utility/font-viewer/descriptor.ts";
 import "./utility/info/index.ts";
 import "./utility/quick-actions/index.ts";
 
+import enWidgetsJson from "@/management/i18n/locales/en/widgets.json";
+import jaWidgetsJson from "@/management/i18n/locales/ja/widgets.json";
+
 import { WIDGET_TYPES } from "./contract";
 
 describe("Widget registry — defineWidget() called for every WIDGET_TYPE", () => {
@@ -123,6 +126,112 @@ describe("Widget registry — defineWidget() called for every WIDGET_TYPE", () =
 				typeof (d as { type: string; component?: unknown }).component,
 				`Descriptor for "${d.type}" is missing a component`,
 			).toBe("function");
+		}
+	});
+});
+
+type WidgetTutorialDescriptor = {
+	type: string;
+	descriptionKey?: string;
+	tutorial?: {
+		summaryKey: string;
+		contentVersion: string;
+		steps?: readonly {
+			titleKey: string;
+			bodyKey: string;
+			targetSelector?: string;
+		}[];
+	};
+};
+
+const resolveWidgetKey = (root: unknown, dottedKey: string): unknown => {
+	// Descriptor keys are namespaced as "widgets.<path>"; the widgets.json
+	// root already IS the widgets namespace, so strip the prefix.
+	const rel = dottedKey.startsWith("widgets.")
+		? dottedKey.slice("widgets.".length)
+		: dottedKey;
+	let cursor: unknown = root;
+	for (const part of rel.split(".")) {
+		if (
+			cursor === null ||
+			typeof cursor !== "object" ||
+			Array.isArray(cursor)
+		) {
+			return undefined;
+		}
+		cursor = (cursor as Record<string, unknown>)[part];
+	}
+	return cursor;
+};
+
+const expectResolvableString = (
+	root: unknown,
+	dottedKey: string,
+	context: string,
+): void => {
+	const value = resolveWidgetKey(root, dottedKey);
+	expect(
+		typeof value === "string" && value.trim().length > 0,
+		`${context}: key "${dottedKey}" must resolve to a non-empty string`,
+	).toBe(true);
+};
+
+describe("Widget tutorial contract (#147 / #157)", () => {
+	const descriptors = collected as WidgetTutorialDescriptor[];
+	const enRoot: unknown = enWidgetsJson;
+	const jaRoot: unknown = jaWidgetsJson;
+
+	it("every registered widget declares tutorial.summaryKey and contentVersion", () => {
+		const missing = descriptors
+			.filter(
+				(d) =>
+					!d.tutorial?.summaryKey ||
+					typeof d.tutorial.contentVersion !== "string" ||
+					d.tutorial.contentVersion.trim().length === 0,
+			)
+			.map((d) => d.type);
+		expect(
+			missing,
+			`Widgets missing tutorial.summaryKey/contentVersion: [${missing.join(", ")}]`,
+		).toEqual([]);
+	});
+
+	it("summaryKey resolves in en and ja widgets namespaces", () => {
+		for (const d of descriptors) {
+			const key = d.tutorial?.summaryKey;
+			if (!key) continue;
+			expect(
+				key.startsWith(`widgets.tutorial.${d.type}.`),
+				`summaryKey "${key}" must live under widgets.tutorial.${d.type}`,
+			).toBe(true);
+			expectResolvableString(enRoot, key, `${d.type} en`);
+			expectResolvableString(jaRoot, key, `${d.type} ja`);
+		}
+	});
+
+	it("descriptionKey resolves in en and ja widgets namespaces (#161)", () => {
+		for (const d of descriptors) {
+			if (!d.descriptionKey) continue;
+			expectResolvableString(enRoot, d.descriptionKey, `${d.type} en`);
+			expectResolvableString(jaRoot, d.descriptionKey, `${d.type} ja`);
+		}
+	});
+
+	it("every tutorial step resolves title/body keys in en and ja", () => {
+		for (const d of descriptors) {
+			for (const [i, step] of (d.tutorial?.steps ?? []).entries()) {
+				const ctx = `${d.type} step ${i}`;
+				expectResolvableString(enRoot, step.titleKey, `${ctx} en`);
+				expectResolvableString(enRoot, step.bodyKey, `${ctx} en`);
+				expectResolvableString(jaRoot, step.titleKey, `${ctx} ja`);
+				expectResolvableString(jaRoot, step.bodyKey, `${ctx} ja`);
+				if (step.targetSelector !== undefined) {
+					expect(
+						step.targetSelector.includes("data-tutorial-target"),
+						`${ctx}: targetSelector must reference a [data-tutorial-target] element`,
+					).toBe(true);
+				}
+			}
 		}
 	});
 });

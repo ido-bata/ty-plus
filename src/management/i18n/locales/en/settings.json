@@ -196,7 +196,8 @@
 			"workspace-backup": "Workspace Backup",
 			"feedback": "Feedback",
 			"inputs": "Inputs",
-			"update": "Updates"
+			"update": "Updates",
+			"tips": "Tips"
 		}
 	},
 	"updates": {
@@ -425,5 +426,20 @@
 		"aeAppRootUnresolved": "Ty Plus: cannot resolve the running After Effects install folder for ty-plus-init.json.",
 		"copySymlinkRefused": "Refusing to copy symlink/reparse point: {{name}}",
 		"copyDeleteUnsupported": "Recursive delete requires rm or readdir/stat on this host."
-	}
+	},
+	"languages": {
+		"english": "English",
+		"japanese": "日本語",
+		"korean": "한국어",
+		"chineseSimplified": "简体中文",
+		"chineseTraditional": "繁體中文",
+		"spanish": "Español",
+		"french": "Français",
+		"german": "Deutsch"
+	},
+	"tipsSectionLabel": "Widget tips & tutorials",
+	"tipsSectionDescription": "Widget help summaries and first-run hints are shown once per widget. Reset to show them again.",
+	"tipsReset": "Show tips again",
+	"tipsResetDone": "Tips reset. They will appear again the next time each widget is viewed.",
+	"tipsResetFailed": "Could not reset tips. Please try again."
 }

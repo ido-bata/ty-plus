@@ -411,5 +411,143 @@
 		"pause": "Pause",
 		"waveCanvas": "Schleifen-Welleneditor",
 		"previewCanvas": "Schleifen-Bewegungsvorschau"
+	},
+	"tutorial": {
+		"chrome": {
+			"help": "Hilfe",
+			"title": "Widget-Hilfe",
+			"close": "Schließen",
+			"dismissHint": "Hinweis schließen"
+		},
+		"easing": {
+			"summary": "Easing-Kurven bearbeiten und auf Presets oder Layer-Animationen anwenden.",
+			"steps": {
+				"chooseCurve": {
+					"title": "Kurve wählen",
+					"body": "Wähle eine Preset-Kurve oder zeichne deine eigene im Editor."
+				},
+				"applyCurve": {
+					"title": "Anwenden",
+					"body": "Wende die Kurve auf das ausgewählte Preset oder den Layer an."
+				}
+			}
+		},
+		"menu": {
+			"summary": "Workspace-Befehle, Layout-Aktionen und Dialoge über eine Kachel öffnen.",
+			"steps": {
+				"openMenu": {
+					"title": "Menü öffnen",
+					"body": "Klicke auf die Kachel, um das Workspace-Befehlsmenü zu öffnen."
+				},
+				"runCommand": {
+					"title": "Befehl ausführen",
+					"body": "Wähle einen Befehl, um ihn auf den aktuellen Workspace anzuwenden."
+				}
+			}
+		},
+		"align": {
+			"summary": "Ausgewählte Presets oder Layer auf gemeinsame Positionen im Raster ausrichten.",
+			"steps": {
+				"selectTargets": {
+					"title": "Ziele auswählen",
+					"body": "Wähle die Presets oder Layer, die ausgerichtet werden sollen."
+				},
+				"pickAlignment": {
+					"title": "Ausrichtung wählen",
+					"body": "Wähle eine Ausrichtungsoption, um sie einrasten zu lassen."
+				}
+			}
+		},
+		"anchor-point": {
+			"summary": "Einen benannten Anker für Layout-Referenzen und Snapping-Workflows platzieren.",
+			"steps": {
+				"nameAnchor": {
+					"title": "Anker benennen",
+					"body": "Gib einen Namen ein, der diesen Ankerpunkt identifiziert."
+				},
+				"dropAnchor": {
+					"title": "Auf das Raster setzen",
+					"body": "Klicke in den Workspace, um den Anker zu platzieren."
+				}
+			}
+		},
+		"layout-lock": {
+			"summary": "Versehentliche Verschiebungen beim Anordnen des Workspace-Rasters verhindern.",
+			"steps": {
+				"turnLockOn": {
+					"title": "Sperre aktivieren",
+					"body": "Aktiviere die Sperre, um Widget-Positionen einzufrieren."
+				},
+				"unlockToRearrange": {
+					"title": "Entsperren zum Neuordnen",
+					"body": "Deaktiviere die Sperre, wenn du Widgets wieder bewegen willst."
+				}
+			}
+		},
+		"info": {
+			"summary": "Preset-Metadaten, Pfade und Status in einer breiten Übersichts-Kachel anzeigen.",
+			"steps": {
+				"placeWidget": {
+					"title": "Widget platzieren",
+					"body": "Füge das Info-Widget zu deinem Workspace hinzu."
+				},
+				"inspectPreset": {
+					"title": "Preset prüfen",
+					"body": "Wähle ein Preset, um seine Details hier zu sehen."
+				}
+			}
+		},
+		"quick-actions": {
+			"summary": "Skripte, Effekte und Dateiaktionen über eine kompakte Befehlspalette ausführen.",
+			"steps": {
+				"openPalette": {
+					"title": "Palette öffnen",
+					"body": "Öffne die Palette und tippe, um Aktionen zu suchen."
+				},
+				"runAction": {
+					"title": "Aktion ausführen",
+					"body": "Wähle eine Aktion, um sie sofort auszuführen."
+				}
+			}
+		},
+		"directory-browser": {
+			"summary": "Festplatten-Ordner und Presets direkt im Panel durchsuchen.",
+			"steps": {
+				"navigateFolders": {
+					"title": "Ordner navigieren",
+					"body": "Nutze das Pfadfeld oder die Ordnerliste zum Bewegen."
+				},
+				"openPreset": {
+					"title": "Preset öffnen",
+					"body": "Doppelklicke ein Preset, um es anzuwenden oder zu prüfen."
+				}
+			}
+		},
+		"font-viewer": {
+			"summary": "Schriftfamilien, Stile und Beispieltext im Workspace in der Vorschau ansehen.",
+			"steps": {
+				"loadFonts": {
+					"title": "Schriften laden",
+					"body": "Lade Systemschriften oder wähle eine Familie zur Vorschau."
+				},
+				"editSample": {
+					"title": "Beispiel bearbeiten",
+					"body": "Ändere den Beispieltext, um Glyphen und Stile zu prüfen."
+				}
+			}
+		},
+		"loop": {
+			"summary": "Bearbeite eine Loop-Easing-Kurve und wende sie auf ausgewählte Keyframes an.",
+			"steps": {
+				"chooseCycle": {
+					"title": "Zyklus formen",
+					"body": "Verschiebe die Kurvengriffe, um einen Zyklus zu formen."
+				},
+				"applyCycle": {
+					"title": "Loop anwenden",
+					"body": "Lege die Anzahl der Zyklen fest und wende den Loop auf die ausgewählten Keyframes an."
+				}
+			}
+		}
 	}
 }

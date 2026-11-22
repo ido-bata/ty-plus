@@ -55,7 +55,8 @@ export type SettingsSidebarSectionId =
 	| "design-tokens"
 	| "workspace-backup"
 	| "feedback"
-	| "inputs";
+	| "inputs"
+	| "tips";
 
 export type SettingsSidebarSectionDef = {
 	sectionId: SettingsSidebarSectionId;

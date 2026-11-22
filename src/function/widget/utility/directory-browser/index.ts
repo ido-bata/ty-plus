@@ -19,6 +19,23 @@ import { DirectoryBrowserWidget } from "./Component";
 const descriptor: WidgetDescriptor = {
 	type: "directory-browser",
 	nameKey: "widgets.directoryBrowser.name",
+	descriptionKey: "widgets.selector.descriptions.directory-browser",
+	tutorial: {
+		summaryKey: "widgets.tutorial.directory-browser.summary",
+		contentVersion: "1",
+		steps: [
+			{
+				titleKey:
+					"widgets.tutorial.directory-browser.steps.navigateFolders.title",
+				bodyKey:
+					"widgets.tutorial.directory-browser.steps.navigateFolders.body",
+			},
+			{
+				titleKey: "widgets.tutorial.directory-browser.steps.openPreset.title",
+				bodyKey: "widgets.tutorial.directory-browser.steps.openPreset.body",
+			},
+		],
+	},
 	icon: "FolderTree",
 	minSize: { cols: 3, rows: 3 },
 	maxSize: { cols: 20, rows: 20 },

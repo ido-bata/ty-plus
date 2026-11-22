@@ -196,7 +196,8 @@
 			"workspace-backup": "Copia de seguridad del espacio de trabajo",
 			"feedback": "Comentarios",
 			"inputs": "Entradas",
-			"update": "Actualizaciones"
+			"update": "Actualizaciones",
+			"tips": "Consejos"
 		}
 	},
 	"updates": {
@@ -425,5 +426,20 @@
 		"aeAppRootUnresolved": "Ty Plus: no se puede resolver la carpeta de instalación de After Effects en ejecución para ty-plus-init.json.",
 		"copySymlinkRefused": "Se rechaza copiar el enlace simbólico/reparse point: {{name}}",
 		"copyDeleteUnsupported": "La eliminación recursiva requiere rm o readdir/stat en este host."
-	}
+	},
+	"languages": {
+		"english": "Inglés",
+		"japanese": "Japonés",
+		"korean": "Coreano",
+		"chineseSimplified": "Chino simplificado",
+		"chineseTraditional": "Chino tradicional",
+		"spanish": "Español",
+		"french": "Francés",
+		"german": "Alemán"
+	},
+	"tipsSectionLabel": "Consejos y tutoriales de widgets",
+	"tipsSectionDescription": "Los resúmenes de ayuda y las sugerencias de primera ejecución se muestran una vez por widget. Restablece para volver a verlos.",
+	"tipsReset": "Volver a mostrar consejos",
+	"tipsResetDone": "Consejos restablecidos. Volverán a aparecer la próxima vez que se abra cada widget.",
+	"tipsResetFailed": "No se pudieron restablecer los consejos. Inténtalo de nuevo."
 }

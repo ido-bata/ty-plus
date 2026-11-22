@@ -196,7 +196,8 @@
 			"workspace-backup": "Arbeitsbereich-Sicherung",
 			"feedback": "Feedback",
 			"inputs": "Eingaben",
-			"update": "Updates"
+			"update": "Updates",
+			"tips": "Tipps"
 		}
 	},
 	"updates": {
@@ -425,5 +426,20 @@
 		"aeAppRootUnresolved": "Ty Plus: Der Installationsordner von After Effects kann für ty-plus-init.json nicht aufgelöst werden.",
 		"copySymlinkRefused": "Kopieren von Symlink/Reparse Point verweigert: {{name}}",
 		"copyDeleteUnsupported": "Rekursives Löschen erfordert rm oder readdir/stat auf diesem Host."
-	}
+	},
+	"languages": {
+		"english": "Englisch",
+		"japanese": "Japanisch",
+		"korean": "Koreanisch",
+		"chineseSimplified": "Vereinfachtes Chinesisch",
+		"chineseTraditional": "Traditionelles Chinesisch",
+		"spanish": "Spanisch",
+		"french": "Französisch",
+		"german": "Deutsch"
+	},
+	"tipsSectionLabel": "Widget-Tipps & Tutorials",
+	"tipsSectionDescription": "Widget-Hilfetexte und Hinweise beim ersten Start werden pro Widget nur einmal angezeigt. Zurücksetzen, um sie erneut anzuzeigen.",
+	"tipsReset": "Tipps erneut anzeigen",
+	"tipsResetDone": "Tipps zurückgesetzt. Sie erscheinen beim nächsten Aufruf des jeweiligen Widgets erneut.",
+	"tipsResetFailed": "Tipps konnten nicht zurückgesetzt werden. Bitte erneut versuchen."
 }
