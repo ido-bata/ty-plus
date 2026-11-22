@@ -17,7 +17,23 @@
 		"src/management/ipc/index.ts",
 		"src/management/ipc/generated/index.ts",
 		"vitest.scenario-spec.config.ts",
-		"packages/ui/package.json"
+		"packages/ui/package.json",
+		"apps/web/cloudflare.config.ts",
+		"apps/web/scripts/audit-layout.ts",
+		"apps/web/scripts/capture-preset-stage.ts",
+		"apps/web/scripts/capture-screens.ts",
+		"scripts/build/install-cep-bundles.ts",
+		"scripts/build/prebuild-clean.ts",
+		"scripts/cep/create-cep-bundles.ts",
+		"scripts/cep/install-cep-single.ts",
+		"scripts/cep/strip-cep-dev-redirect.ts",
+		"scripts/cep/validate-built-syntax.ts",
+		"scripts/security/install-hooks.ts",
+		"scripts/utils/cdp-dump-panels.ts",
+		"scripts/verify/device-smoke.ts",
+		"scripts/verify/e2e/run.ts",
+		"scripts/verify/web-product-capture.ts",
+		"scripts/security/pre-commit-security-check.ts"
 	],
 	"project": [
 		"src/**/*.{ts,tsx}",
@@ -38,13 +54,18 @@
 		"**/*.stories.tsx",
 		"storybook-static/**",
 		"archive/**",
-		"docs/no-use/**"
+		"docs/no-use/**",
+		"apps/web/cloudflare.config.ts",
+		"apps/web/scripts/audit-layout.ts",
+		"apps/web/scripts/capture-preset-stage.ts",
+		"apps/web/scripts/capture-screens.ts"
 	],
 	"ignoreIssues": {
 		"archive/**": ["files", "unlisted", "unresolved", "exports", "types"],
 		"docs/no-use/**": ["files", "unlisted", "unresolved", "exports", "types"]
 	},
 	"ignoreDependencies": [
+		"cf",
 		"@babel/plugin-transform-class-properties",
 		"@babel/plugin-transform-private-methods",
 		"@babel/plugin-transform-private-property-in-object",

@@ -85,7 +85,7 @@
 		"check:storage-forbidden": "bun run scripts/check/storage-forbidden.ts",
 		"check:storage-split": "bun run scripts/check/storage-read-write-split.ts",
 		"check:debug-logger": "cross-env NODE_ENV=production bun run scripts/check/debug-logger-survives-bundle.ts",
-		"knip": "cross-env NODE_OPTIONS=--max-old-space-size=28672 knip --no-exit-code --no-config-hints",
+		"knip": "cross-env NODE_OPTIONS=--max-old-space-size=28672 knip --no-config-hints",
 		"knip:report": "cross-env NODE_OPTIONS=--max-old-space-size=28672 knip --no-exit-code --no-config-hints",
 		"ci": "bun run ci:static && bun run ci:unit && bun run ci:storybook && bun run ci:coverage",
 		"check:skills": "bun scripts/check/vendored-skills.ts",
