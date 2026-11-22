@@ -16,7 +16,8 @@
 			"info": "Mostrar metadatos de preajustes, rutas y estado en una baldosa resumen amplia.",
 			"quick-actions": "Ejecutar scripts, efectos y acciones de archivo desde una paleta de comandos compacta.",
 			"directory-browser": "Explorar carpetas del disco y preajustes desde dentro del panel.",
-			"font-viewer": "Previsualizar familias de fuentes, estilos y texto de ejemplo en el espacio de trabajo."
+			"font-viewer": "Previsualizar familias de fuentes, estilos y texto de ejemplo en el espacio de trabajo.",
+			"loop": "Edita una curva de un solo ciclo y aplícala repetidamente a los keyframes seleccionados."
 		},
 		"add": "Añadir",
 		"adding": "Añadiendo…",
@@ -390,5 +391,25 @@
 	"pickerOverlay": {
 		"targetPanelPrefix": "Panel de destino",
 		"footerHint": "El widget se añade al final de la cuadrícula de este panel."
+	},
+	"loop": {
+		"name": "Bucle",
+		"cycles": "Ciclos",
+		"decrement": "Disminuir ciclos",
+		"increment": "Aumentar ciclos",
+		"handle": {
+			"easing": "Suavizado",
+			"frequency": "Frecuencia",
+			"bias": "Sesgo",
+			"damping": "Amortiguacion"
+		},
+		"update": "Actualizar",
+		"unapply": "Quitar bucle",
+		"applied": "Aplicado",
+		"conflict": "Editado en AE",
+		"play": "Reproducir",
+		"pause": "Pausa",
+		"waveCanvas": "Editor de onda de bucle",
+		"previewCanvas": "Vista previa de movimiento de bucle"
 	}
 }

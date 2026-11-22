@@ -154,6 +154,8 @@ export type AfterEffectsHostApi = {
 	 *  should use `applyEasing`. See docs/architecture/widget-boundary.md
 	 *  "Easing Widget: Loop モード". */
 	applyLoopEasing(payload: Record<string, unknown>): Promise<unknown>;
+	captureLoopState(payload: Record<string, unknown>): Promise<unknown>;
+	unapplyLoopEasing(payload: Record<string, unknown>): Promise<unknown>;
 	setAnchorPoint(input: {
 		position: string;
 		undoGroupName?: string;

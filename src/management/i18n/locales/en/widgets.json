@@ -16,7 +16,8 @@
 			"info": "Show preset metadata, paths, and status in a wide summary tile.",
 			"quick-actions": "Run scripts, effects, and file actions from a compact command palette.",
 			"directory-browser": "Browse disk folders and presets from inside the panel.",
-			"font-viewer": "Preview font families, styles, and sample text in the workspace."
+			"font-viewer": "Preview font families, styles, and sample text in the workspace.",
+			"loop": "Edit a single-cycle curve and apply it repeatedly to selected keyframes."
 		},
 		"add": "Add",
 		"adding": "Adding…",
@@ -390,5 +391,25 @@
 	"pickerOverlay": {
 		"targetPanelPrefix": "Target panel",
 		"footerHint": "Widget is appended at the bottom of the grid for this panel."
+	},
+	"loop": {
+		"name": "Loop",
+		"cycles": "Cycles",
+		"decrement": "Decrease loop cycles",
+		"increment": "Increase loop cycles",
+		"handle": {
+			"easing": "Easing",
+			"frequency": "Frequency",
+			"bias": "Bias",
+			"damping": "Damping"
+		},
+		"update": "Update",
+		"unapply": "Remove loop",
+		"applied": "Applied",
+		"conflict": "Edited in AE",
+		"play": "Play",
+		"pause": "Pause",
+		"waveCanvas": "Loop wave editor",
+		"previewCanvas": "Loop motion preview"
 	}
 }

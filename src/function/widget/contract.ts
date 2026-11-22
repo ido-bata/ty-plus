@@ -8,6 +8,7 @@ export const WIDGET_TYPES = [
 	"menu",
 	"info",
 	"easing",
+	"loop",
 	"align",
 	"anchor-point",
 	"directory-browser",

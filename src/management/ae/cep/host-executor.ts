@@ -39,6 +39,8 @@ export const ALLOWED_HOST_METHODS = new Set<keyof AfterEffectsHostApi>([
 	"applyEffectByMatchName",
 	"applyEasing",
 	"applyLoopEasing",
+	"captureLoopState",
+	"unapplyLoopEasing",
 	"setAnchorPoint",
 	"captureEasingCurve",
 	"captureKeyframeValues",

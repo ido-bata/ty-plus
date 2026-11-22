@@ -22,6 +22,7 @@ export type WidgetStateName =
 	| "directory-browser"
 	| "easing"
 	| "info"
+	| "loop"
 	| "menu"
 	| "quick-actions"
 	| "selection";
@@ -171,4 +172,18 @@ export const writeWidgetStateJson = async (
 	}
 
 	await writeJson(win, "widgetState", value, name);
+};
+
+/**
+ * Path of the sidecar that records the loops the host applied.
+ *
+ * The sidecar is the authority for "what was applied" (so a loop can be
+ * re-opened, updated and undone without guessing from the keyframes).
+ */
+export const resolveLoopAppliedStatePath = async (
+	win: Window,
+): Promise<string | null> => {
+	const managedRoot = await resolveTyPlusManagedRootForPersistence(win);
+	if (!managedRoot) return null;
+	return resolveWidgetStateJsonPath(managedRoot, "loop-applied");
 };
