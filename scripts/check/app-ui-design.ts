@@ -201,7 +201,7 @@ function* walk(dir: string): Generator<string> {
 		const full = join(dir, entry.name);
 		if (entry.isDirectory()) yield* walk(full);
 		else if (
-			/\.tsx$/.test(entry.name) &&
+			/\.(tsx|css)$/.test(entry.name) &&
 			!entry.name.endsWith(".test.tsx") &&
 			!entry.name.endsWith(".stories.tsx")
 		)
@@ -673,6 +673,24 @@ export function checkAppSource(
 					`raw <${tag}> is banned; use a @ty-plus/ui primitive`,
 				);
 			}
+			if (tag === "Icon") {
+				for (const attr of node.attributes.properties) {
+					if (!ts.isJsxAttribute(attr)) continue;
+					if (attr.name.getText(sf) !== "size") continue;
+					const initializer = attr.initializer;
+					if (!initializer || !ts.isJsxExpression(initializer)) continue;
+					const expr = initializer.expression;
+					if (!expr || !ts.isNumericLiteral(expr)) continue;
+					const raw = expr.text;
+					const px = ICON_SIZE_SCALE[raw] ?? Number(raw);
+					if (ICON_SIZES_PX.has(px)) continue;
+					add(
+						attr,
+						"icon-size-off-scale",
+						`the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); ${px}px is not one of them`,
+					);
+				}
+			}
 			if (tag === "svg" && !options.sharedPackage) {
 				add(
 					node,
@@ -846,6 +864,39 @@ export const CONTRACT_SCOPES = [
 ] as const;
 
 /**
+ * The shared icon's size scale: 3 = 12px, 4 = 16px, 5 = 20px. An icon at
+ * another size is an icon the design system does not have, so it renders at an
+ * optical size nothing else matches.
+ */
+const ICON_SIZE_SCALE: Record<string, number> = { "3": 12, "4": 16, "5": 20 };
+const ICON_SIZES_PX = new Set([12, 16, 20]);
+
+/**
+ * The CSS files of the same scopes. They carry custom properties too, and a
+ * name that does not resolve leaves the declaration unset — the same failure
+ * the style objects have.
+ */
+export function checkCssVariables(file: string, src: string): Violation[] {
+	const out: Violation[] = [];
+	// A comment may mention a variable name; only the declarations count.
+	const declarations = src.replace(/\/\*[\s\S]*?\*\//g, "");
+	for (const { name, hasFallback } of parseVarCalls(declarations)) {
+		if (hasFallback) continue;
+		if (DEFINED_VARS.has(name) || EXTERNAL_VARS.has(name)) continue;
+		const line = declarations
+			.slice(0, declarations.indexOf(name))
+			.split("\n").length;
+		out.push({
+			file,
+			line,
+			rule: "unknown-css-var",
+			message: `var(${name}) is not a defined theme variable — it does not resolve, so the declaration it feeds falls back silently`,
+		});
+	}
+	return out;
+}
+
+/**
  * A file that takes the native focus indicator away (`outline: none`) has to
  * put one back. The check is per file, because the indicator and the rule
  * that removes the outline often live in different style objects that are
@@ -877,11 +928,16 @@ export function collectViolations(root = ROOT): Violation[] {
 		for (const file of walk(dir)) {
 			const rel = relative(root, file).replace(/\\/g, "/");
 			const src = readFileSync(file, "utf8");
-			out.push(
-				...checkAppSource(rel, src, {
-					sharedPackage: scope === "packages/ui/src",
-				}),
-			);
+			if (!file.endsWith(".css")) {
+				out.push(
+					...checkAppSource(rel, src, {
+						sharedPackage: scope === "packages/ui/src",
+					}),
+				);
+			}
+			if (file.endsWith(".css")) {
+				out.push(...checkCssVariables(rel, src));
+			}
 			out.push(...checkFocusIndicator(rel, src));
 			const found = collectStyleRecipes(rel, src);
 			if (scope === "packages/ui/src") vocabulary.push(...found);
@@ -945,6 +1001,8 @@ const DEFAULT_REASON: Record<string, string> = {
 		"this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together",
 	"vocabulary-copy":
 		"this treatment already exists in the shared package — use it instead of writing it out again",
+	"icon-size-off-scale":
+		"this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — move it to a step, or say why it is a media glyph rather than an icon",
 	"focus-indicator-missing":
 		"this file removes the native focus indicator — put the shared ring back, or say why the control does not need one",
 };
