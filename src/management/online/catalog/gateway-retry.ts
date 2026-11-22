@@ -1,3 +1,4 @@
+import { i18n } from "@/management/i18n/index";
 import {
 	type GatewayBootFailureReason,
 	labelOfGatewayBootFailureReason,
@@ -30,10 +31,12 @@ export function gatewayRetryAffordance(
 	reasonTag: GatewayBootFailureReason | undefined,
 ): GatewayRetryAffordance {
 	if (!reasonTag) {
-		return { title: "Refresh catalog", disabled: false };
+		return { title: i18n.t("online:catalog.refreshCatalog"), disabled: false };
 	}
 	return {
-		title: `${labelOfGatewayBootFailureReason(reasonTag)} — reload the panel to retry the gateway boot`,
+		title: i18n.t("online:catalog.gatewayBootRetryHint", {
+			reason: labelOfGatewayBootFailureReason(reasonTag),
+		}),
 		disabled: true,
 	};
 }

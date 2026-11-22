@@ -294,8 +294,47 @@ const resolveTReference = (
 	return candidates.some(([ns, dotted]) => {
 		const root = enMaps[ns];
 		if (!root) return false;
-		return isLeafValue(resolveJsonPath(root, dotted));
+		if (isLeafValue(resolveJsonPath(root, dotted))) return true;
+		// i18next plural resolution: t("key", { count }) reads key_one/_other/…
+		for (const suffix of ["_zero", "_one", "_two", "_few", "_many", "_other"]) {
+			if (isLeafValue(resolveJsonPath(root, `${dotted}${suffix}`))) return true;
+		}
+		return false;
 	});
+};
+
+const PLURAL_SUFFIX_RE = /_(zero|one|two|few|many|other)$/;
+
+/** CLDR cardinal plural categories per supported locale (Intl.PluralRules). */
+const PLURAL_CATEGORIES: Record<string, string[]> = {
+	en: ["one", "other"],
+	ja: ["other"],
+	de: ["one", "other"],
+	fr: ["one", "many", "other"],
+	zh: ["other"],
+	es: ["one", "many", "other"],
+	ko: ["other"],
+	pt: ["one", "many", "other"],
+	it: ["one", "many", "other"],
+	ru: ["one", "few", "many", "other"],
+};
+
+const partitionPluralKeys = (
+	keys: string[],
+): { normal: string[]; families: Map<string, Set<string>> } => {
+	const normal: string[] = [];
+	const families = new Map<string, Set<string>>();
+	for (const k of keys) {
+		const m = k.match(PLURAL_SUFFIX_RE);
+		if (m) {
+			const base = k.slice(0, k.length - m[0].length);
+			if (!families.has(base)) families.set(base, new Set());
+			families.get(base)!.add(m[1]);
+		} else {
+			normal.push(k);
+		}
+	}
+	return { normal, families };
 };
 
 export const checkCoverage = async (
@@ -317,28 +356,48 @@ export const checkCoverage = async (
 		for (const [namespace, expectedKeys] of Object.entries(enKeys)) {
 			const actualKeys = localeKeys[namespace] ?? [];
 
-			// Check for missing keys (this is the real error)
-			const missing = expectedKeys.filter((k) => !actualKeys.includes(k));
-			if (missing.length > 0) {
+			// i18next plural families: keys ending in a CLDR plural suffix are
+			// compared by required categories per locale, not by exact key set.
+			const { normal: enNormal, families: enFamilies } =
+				partitionPluralKeys(expectedKeys);
+			const { normal: locNormal, families: locFamilies } =
+				partitionPluralKeys(actualKeys);
+			const locKeySet = new Set(actualKeys);
+
+			// Missing non-plural keys (this is the real error)
+			const missing = enNormal.filter((k) => !locNormal.includes(k));
+			// Missing required plural forms for this locale's CLDR categories
+			const requiredForms = PLURAL_CATEGORIES[locale] ?? ["other"];
+			const missingPlural: string[] = [];
+			for (const base of enFamilies.keys()) {
+				for (const form of requiredForms) {
+					const k = `${base}_${form}`;
+					if (!locKeySet.has(k)) missingPlural.push(k);
+				}
+			}
+			const allMissing = [...missing, ...missingPlural];
+			if (allMissing.length > 0) {
 				errors.push(
-					`${locale}/${namespace}: missing ${missing.length} key(s): ${missing.join(", ")}`,
+					`${locale}/${namespace}: missing ${allMissing.length} key(s): ${allMissing.join(", ")}`,
 				);
 			}
-		}
 
-		// Check for extra namespaces not in en (extra individual keys within a shared namespace are allowed)
-		for (const namespace of Object.keys(localeKeys)) {
-			if (!enKeys[namespace]) {
-				errors.push(`${locale}/${namespace}: extra namespace (not in en)`);
-			}
-		}
-
-		// Check for extra keys within namespaces that exist in en.
-		// Default stage: allowed with a visibility warning. Strict en-canonical
-		// stage: en is the exact key-set authority, so extras are errors.
-		for (const [namespace, actualKeys] of Object.entries(localeKeys)) {
-			const expectedKeys = enKeys[namespace] ?? [];
-			const extra = actualKeys.filter((k) => !expectedKeys.includes(k));
+			// Extra keys within namespaces that exist in en.
+			// Default stage: allowed with a visibility warning. Strict en-canonical
+			// stage: en is the exact key-set authority for non-plural keys; extra
+			// plural variants are tolerated when their base exists in en.
+			const enBaseSet = new Set([
+				...enNormal,
+				...enFamilies.keys(),
+			]);
+			const extraNormal = locNormal.filter((k) => !enNormal.includes(k));
+			const extraPlural = [...locFamilies.entries()].flatMap(
+				([base, suffixes]) =>
+					enBaseSet.has(base)
+						? []
+						: [...suffixes].map((s) => `${base}_${s}`),
+			);
+			const extra = [...extraNormal, ...extraPlural];
 			if (extra.length > 0) {
 				const message = `${locale}/${namespace}: ${extra.length} extra key(s)${strict ? "" : " (allowed)"}: ${extra.join(", ")}`;
 				if (strict) {
@@ -346,6 +405,13 @@ export const checkCoverage = async (
 				} else {
 					warnings.push(message);
 				}
+			}
+		}
+
+		// Check for extra namespaces not in en (extra individual keys within a shared namespace are allowed)
+		for (const namespace of Object.keys(localeKeys)) {
+			if (!enKeys[namespace]) {
+				errors.push(`${locale}/${namespace}: extra namespace (not in en)`);
 			}
 		}
 
@@ -379,11 +445,19 @@ export const checkCoverage = async (
 	return { errors, warnings };
 };
 
+const argValue = (name: string): string | undefined => {
+	const prefix = `--${name}=`;
+	const hit = process.argv.find((a) => a.startsWith(prefix));
+	return hit?.slice(prefix.length);
+};
+
 const main = async (): Promise<void> => {
 	const strict = process.argv.includes("--strict-en-canonical");
-	const { errors, warnings } = await checkCoverage(DEFAULT_LOCALES_DIR, {
+	const localesDir = argValue("locales-dir") ?? DEFAULT_LOCALES_DIR;
+	const srcDir = argValue("src-dir") ?? DEFAULT_SRC_DIR;
+	const { errors, warnings } = await checkCoverage(localesDir, {
 		strictEnCanonical: strict,
-		srcDir: DEFAULT_SRC_DIR,
+		srcDir,
 	});
 	for (const w of warnings) {
 		console.warn(`  ${w}`);

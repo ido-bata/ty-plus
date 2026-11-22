@@ -13,7 +13,8 @@
 		"support": {
 			"label": "Расположение",
 			"title": "Выберите папку AE",
-			"body": "Выберите папку приложения After Effects. В Windows это каталог Support Files; в macOS — папка приложения, содержащая Presets."
+			"body": "Выберите папку приложения After Effects. В Windows это каталог Support Files; в macOS — папка приложения, содержащая Presets.",
+			"aeAppFolderHint": "Обнаружена папка приложения AE — шаг с подпапками будет пропущен."
 		},
 		"subfolders": {
 			"label": "Папки",
@@ -61,8 +62,8 @@
 		"selected": "Выбрано: {{count}}"
 	},
 	"secondaryPanel": {
-		"title": "Setup required",
-		"description": "Complete onboarding in panel-1 first.",
+		"title": "Требуется настройка",
+		"description": "Сначала завершите настройку в panel-1.",
 		"userManual": "Руководство пользователя",
 		"openMainPanel": "Открыть главную панель",
 		"linkUnavailable": "Ссылка на руководство недоступна"
@@ -87,13 +88,24 @@
 		"finishErrorNextActionChooseTrusted": "Файл параметров онбординга не содержал Support Root. Перезапустите онбординг в After Effects.",
 		"finishErrorNextActionAdjust": "Не удалось сохранить параметры в Support Root AE. Проверьте, что путь доступен и After Effects имеет права на запись, затем повторите попытку.",
 		"finishErrorNextActionRetry": "Запрос UAC Windows был отправлен, но повышенная запись не удалась. Нажмите Retry, чтобы снова вызвать диалог UAC, или запустите After Effects от имени администратора.",
-		"finishErrorRetryWithElevation": "Повторить от имени администратора"
+		"finishErrorRetryWithElevation": "Повторить от имени администратора",
+		"supportAndSubfoldersRequired": "Требуются путь Support и подпапки онбординга.",
+		"appRootUnresolved": "Ty Plus: не удалось определить папку приложения After Effects для ty-plus-init.json. Откройте панель внутри After Effects и повторите попытку.",
+		"initWriteFailed": "Не удалось записать ty-plus-init.json в {{path}}: {{message}}",
+		"elevationConsentDenied": "Запрос согласия UAC был закрыт (повышение прав администратора не предоставлено).",
+		"innerExitCodeNote": " Код выхода внутреннего скрипта: {{code}}.",
+		"elevationWriteFailedStderr": "Повышенная запись сообщила об ошибке.{{exitCodeNote}} stderr внутреннего скрипта: {{stderr}}",
+		"elevationWriteFailed": "Повышенная запись сообщила об ошибке.{{exitCodeNote}}"
 	},
 	"actions": {
 		"back": "Назад",
 		"next": "Далее",
 		"finish": "Готово",
 		"toggleFullscreen": "Развернуть на весь экран",
-		"toggleModal": "Вернуться к окну"
+		"toggleModal": "Вернуться к окну",
+		"openManual": "Открыть руководство"
+	},
+	"syncStatus": {
+		"localUpdate": "Локальное обновление"
 	}
 }

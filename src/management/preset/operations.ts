@@ -18,6 +18,7 @@ export type { Preset };
  */
 const hostWindow = (): Window => {
 	if (typeof window === "undefined") {
+		// i18n-exempt: internal diagnostic — not rendered as UI copy
 		throw new Error(
 			"preset use-cases: no window available — the local preset catalog is CEP-storage backed",
 		);

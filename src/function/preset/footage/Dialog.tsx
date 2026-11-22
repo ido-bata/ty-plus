@@ -11,7 +11,7 @@ export function Dialog(): JSX.Element {
 			type="footage"
 			description={t("presetTool.footage.lead")}
 			defaultName={t("presetTool.footage.defaultName")}
-			iconText="MEDIA"
+			iconText={t("presetTool.footage.iconText")}
 			buildFilePath={(values) => values.path.trim()}
 			pathBrowse={{ fieldKey: "path", mode: "file" }}
 			resolveBrowseStartDir={readUserHomeOrFallback}
@@ -19,6 +19,7 @@ export function Dialog(): JSX.Element {
 				{
 					key: "path",
 					label: t("presetTool.footage.fields.path"),
+					// i18n-exempt: file path example, locale-independent
 					placeholder: "C:\\path\\asset.mov",
 				},
 				{

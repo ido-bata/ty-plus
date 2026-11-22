@@ -12,6 +12,9 @@
 		"edit": "编辑",
 		"close": "关闭"
 	},
+	"dialogs": {
+		"unsavedChangesConfirm": "未保存的更改将丢失。关闭对话框？"
+	},
 	"actions": {
 		"run": "运行",
 		"duplicate": "复制",
@@ -179,6 +182,104 @@
 			"copyError": "复制错误详情",
 			"copied": "已复制到剪贴板",
 			"digest": "错误 ID"
+		}
+	},
+	"ui": {
+		"loadingSpinner": {
+			"label": "加载中"
+		},
+		"searchField": {
+			"clearAria": "清除搜索",
+			"clearTitle": "清除"
+		},
+		"regexEditor": {
+			"enterPattern": "请输入模式。",
+			"invalidFlags": "无效标志：{{flags}}",
+			"plainSource": "纯正则表达式源",
+			"literalFormat": "字面正则表达式格式",
+			"testString": "测试字符串",
+			"sourcePlaceholder": "正则表达式源",
+			"flagsPlaceholder": "标志",
+			"matches": "匹配",
+			"noMatch": "无匹配",
+			"literalSuffix": "· 字面量 /pattern/flags",
+			"sourceSuffix": "· 仅源"
+		},
+		"listSelect": {
+			"placeholder": "选择…"
+		}
+	},
+	"directoryBrowser": {
+		"refresh": "刷新",
+		"goUp": "上一级",
+		"open": "打开",
+		"select": "选择",
+		"deselect": "取消选择",
+		"listView": "列表视图",
+		"iconView": "图标视图",
+		"noFilesFound": "未找到文件",
+		"selectFileAria": "选择文件 {{name}}",
+		"selectFolderAria": "选择文件夹 {{name}}"
+	},
+	"debugConsole": {
+		"title": "控制台",
+		"clear": "清除",
+		"evaluateAria": "评估 JavaScript",
+		"evaluatePlaceholder": "评估 JavaScript…",
+		"rowContextHint": "右键点击以复制",
+		"filterLevelAria": "筛选控制台消息",
+		"filterSourceAria": "按来源筛选控制台消息",
+		"filterScopeAria": "按会话范围筛选控制台消息",
+		"levels": {
+			"all": "全部",
+			"log": "日志",
+			"info": "信息",
+			"warn": "警告",
+			"error": "错误"
+		},
+		"sources": {
+			"all": "所有来源",
+			"panel": "面板",
+			"modeless": "无模式",
+			"hostBridge": "主机桥接",
+			"online": "在线",
+			"preset": "预设",
+			"opWorker": "操作工作器",
+			"workspace": "工作区",
+			"boot": "启动",
+			"debugConsole": "调试控制台",
+			"console": "控制台"
+		},
+		"scopes": {
+			"allHistory": "全部历史",
+			"thisSession": "本次会话"
+		},
+		"contextMenu": {
+			"copyMessage": "复制消息",
+			"copyAllMessages": "复制所有消息",
+			"clearConsole": "清除控制台",
+			"enableAutoScroll": "启用自动滚动",
+			"disableAutoScroll": "禁用自动滚动",
+			"itemActive": "{{level}}（已启用）"
+		}
+	},
+	"errors": {
+		"hostContextUnavailable": "主机上下文不可用",
+		"fileAccessUnavailable": "此界面中 CEP Node 文件访问不可用。",
+		"fsApiUnavailable": "此主机运行时中 CEP Node fs API 不可用。",
+		"fileImportAeOnly": "文件导入目前仅在 After Effects 中可用。",
+		"initNotFound": "未找到 ty-plus-init.json（无应用根目录）。任何写入之前必须完成入门引导。",
+		"initIncomplete": "ty-plus 尚未初始化。在 ty-plus-init.json 报告完成之前，写入将被阻止。",
+		"initSupportRootBlank": "ty-plus-init.json 已标记为完成，但 supportRoot 为空。",
+		"hostExecFailed": "Ty Plus：{{message}}",
+		"notify": {
+			"generic": "发生错误",
+			"fsPermission": "权限被拒绝。请检查文件/文件夹权限。",
+			"fsNotFound": "未找到文件或文件夹。它可能已被移动或删除。",
+			"fsCorrupted": "数据文件已损坏并已备份。请重试。",
+			"aeEvalFailed": "After Effects 命令失败。请重试或重启 AE。",
+			"aeNotAvailable": "与 After Effects 的连接已断开。请重启面板。",
+			"network": "网络错误。请检查您的连接。"
 		}
 	}
 }

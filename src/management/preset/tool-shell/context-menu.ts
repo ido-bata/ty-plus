@@ -1,4 +1,5 @@
 import type { CepMenuPayload } from "@/management/dialog/context-menu";
+import { i18n } from "@/management/i18n/index";
 
 export const PRESET_TOOL_CTX = {
 	save: "ty.ctx.presetTool.save",
@@ -17,8 +18,8 @@ export const PRESET_TOOL_CTX = {
 const SEP: CepMenuPayload["menu"][number] = { label: "---" };
 
 const actionsMenu = (): CepMenuPayload["menu"] => [
-	{ id: PRESET_TOOL_CTX.save, label: "Create" },
-	{ id: PRESET_TOOL_CTX.cancel, label: "Cancel" },
+	{ id: PRESET_TOOL_CTX.save, label: i18n.t("common:actions.create") },
+	{ id: PRESET_TOOL_CTX.cancel, label: i18n.t("common:buttons.cancel") },
 ];
 
 const resolveEditableField = (
@@ -48,18 +49,29 @@ const buildTextFieldMenu = (
 	const readOnly = el.readOnly || el.disabled;
 	return {
 		menu: [
-			{ id: PRESET_TOOL_CTX.textSelectAll, label: "Select All" },
+			{
+				id: PRESET_TOOL_CTX.textSelectAll,
+				label: i18n.t("common:actions.selectAll"),
+			},
 			SEP,
 			{
 				id: PRESET_TOOL_CTX.textCut,
-				label: "Cut",
+				label: i18n.t("common:actions.cut"),
 				enabled: !readOnly && hasValue,
 			},
-			{ id: PRESET_TOOL_CTX.textCopy, label: "Copy", enabled: hasValue },
-			{ id: PRESET_TOOL_CTX.textPaste, label: "Paste", enabled: !readOnly },
+			{
+				id: PRESET_TOOL_CTX.textCopy,
+				label: i18n.t("common:actions.copy"),
+				enabled: hasValue,
+			},
+			{
+				id: PRESET_TOOL_CTX.textPaste,
+				label: i18n.t("common:actions.paste"),
+				enabled: !readOnly,
+			},
 			{
 				id: PRESET_TOOL_CTX.textClear,
-				label: "Clear",
+				label: i18n.t("common:actions.clear"),
 				enabled: !readOnly && hasValue,
 			},
 			SEP,
@@ -94,11 +106,15 @@ export function buildPresetToolContextMenuPayload(
 			menu: [
 				{
 					id: PRESET_TOOL_CTX.openEntry,
-					label: isDir ? "Open folder" : "Open file",
+					label: isDir
+						? i18n.t("contextMenu:presetTool.openFolder")
+						: i18n.t("contextMenu:presetTool.openFile"),
 				},
 				{
 					id: PRESET_TOOL_CTX.selectEntry,
-					label: isDir ? "Select folder" : "Select file",
+					label: isDir
+						? i18n.t("contextMenu:presetTool.selectFolder")
+						: i18n.t("contextMenu:presetTool.selectFile"),
 				},
 				SEP,
 				...actionsMenu(),
@@ -112,8 +128,15 @@ export function buildPresetToolContextMenuPayload(
 			input instanceof HTMLInputElement && input.value.length > 0;
 		return {
 			menu: [
-				{ id: PRESET_TOOL_CTX.copyPath, label: "Copy path", enabled: hasValue },
-				{ id: PRESET_TOOL_CTX.browsePath, label: "Browse..." },
+				{
+					id: PRESET_TOOL_CTX.copyPath,
+					label: i18n.t("presets:common.copyPath"),
+					enabled: hasValue,
+				},
+				{
+					id: PRESET_TOOL_CTX.browsePath,
+					label: i18n.t("contextMenu:presetTool.browse"),
+				},
 				SEP,
 				...(input instanceof HTMLInputElement
 					? buildTextFieldMenu(input).menu

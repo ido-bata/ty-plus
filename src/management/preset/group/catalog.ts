@@ -7,6 +7,7 @@
  */
 
 import { readGroupJson, writeGroupJson } from "@/management/catalog/json-files";
+import { i18n } from "@/management/i18n/index";
 import type {
 	Preset,
 	PresetIcon,
@@ -218,7 +219,7 @@ export const upsertGroupEntry = async (
 		const byId = new Map(catalog.groups.map((g) => [g.id, g]));
 		byId.set(entry.id, {
 			id: entry.id,
-			title: entry.title.trim() || "Group",
+			title: entry.title.trim() || i18n.t("presets:group.fallbackTitle"),
 			presetIds: [...entry.presetIds],
 			...(entry.description ? { description: entry.description.trim() } : {}),
 			...(entry.descriptionImage
@@ -346,7 +347,7 @@ export const mergeGroupEntries = async (
 		for (const g of entries) {
 			byId.set(g.id, {
 				id: g.id,
-				title: g.title.trim() || "Group",
+				title: g.title.trim() || i18n.t("presets:group.fallbackTitle"),
 				presetIds: [...g.presetIds],
 				...(g.description ? { description: g.description.trim() } : {}),
 				...(g.descriptionImage

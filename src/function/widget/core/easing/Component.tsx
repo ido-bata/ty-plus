@@ -395,6 +395,7 @@ const collectLabelNamesFrom = (value: unknown): Record<string, string> => {
 };
 
 const mergeLabelNamesInto = (
+	// i18n-exempt: TypeScript type annotation caught by the JSX-text heuristic, not UI copy
 	target: Record<string, string>,
 	source: Record<string, string>,
 ): void => {
@@ -746,25 +747,25 @@ function EasingActionBar({
 			>
 				<button
 					type="button"
-					aria-label="Apply linear easing preset"
+					aria-label={t("easing.presetAria.linear")}
 					data-ws-action="easing-preset"
 					data-easing-preset="linear"
 				/>
 				<button
 					type="button"
-					aria-label="Apply ease-out preset"
+					aria-label={t("easing.presetAria.easeOut")}
 					data-ws-action="easing-preset"
 					data-easing-preset="easeOut"
 				/>
 				<button
 					type="button"
-					aria-label="Apply ease-in preset"
+					aria-label={t("easing.presetAria.easeIn")}
 					data-ws-action="easing-preset"
 					data-easing-preset="easeIn"
 				/>
 				<button
 					type="button"
-					aria-label="Apply ease-in-out preset"
+					aria-label={t("easing.presetAria.easeInOut")}
 					data-ws-action="easing-preset"
 					data-easing-preset="easeInOut"
 				/>
@@ -1431,6 +1432,27 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 		[],
 	);
 
+	// Localized precondition errors for the live host methods. Baked into
+	// each payload so the ExtendScript side can surface them in the
+	// author's locale; the host falls back to English when absent.
+	const easingHostMessages = useCallback(
+		() => ({
+			selectKeyframes: t("easing.errors.selectKeyframes", {
+				defaultValue: "Select keyframes in an active composition",
+			}),
+			selectAnimatedProperty: t("easing.errors.selectAnimatedProperty", {
+				defaultValue: "Select at least one animated property",
+			}),
+			selectTwoKeyframes: t("easing.errors.selectTwoKeyframes", {
+				defaultValue: "Select at least two keyframes on an animated property",
+			}),
+			captureFailed: t("easing.errors.captureFailed", {
+				defaultValue: "Could not read easing from the selected keyframes",
+			}),
+		}),
+		[t],
+	);
+
 	const applyCurve = useCallback(async () => {
 		activate();
 		// Pre-check: if the user has no usable keyframe selection, skip
@@ -1450,11 +1472,9 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 				// curve editing never spams notifications.
 				if (notifyEmptySelectionRef.current) {
 					notifyEmptySelectionRef.current = false;
-					notificationStore.add(
-						"Ty Plus easing: no keyframes selected — select keyframes in the AE timeline first",
-						"warning",
-						{ duration: 6000 },
-					);
+					notificationStore.add(t("easing.noKeyframesSelected"), "warning", {
+						duration: 6000,
+					});
 				}
 				return;
 			}
@@ -1511,6 +1531,8 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 			labelColor: effectiveLabelColor,
 			detectedType,
 			targeting,
+			undoGroupName: t("easing.undoGroupName"),
+			messages: easingHostMessages(),
 		};
 		if (useLoop) {
 			payload.loopCount = loopCount;
@@ -1560,7 +1582,16 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 			// next apply.
 			applyTargetingRef.current = "both";
 		}
-	}, [activate, applyMode, customColors, host, labelColor, loopCount]);
+	}, [
+		activate,
+		applyMode,
+		customColors,
+		host,
+		labelColor,
+		loopCount,
+		t,
+		easingHostMessages,
+	]);
 
 	// Some CEP/CEF input paths deliver mouse events without the matching
 	// pointerdown/pointerup (only pointermove is synthesized). The mouse
@@ -1944,7 +1975,9 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 		};
 
 		try {
-			const result = await host("captureEasingCurve", []);
+			const result = await host("captureEasingCurve", [
+				{ messages: easingHostMessages() },
+			]);
 			const points = computeCapturedPoints(result.value);
 			if (!points) {
 				setStatus("error");
@@ -1965,7 +1998,7 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 			});
 			setStatus("error");
 		}
-	}, [activate, host, persistState]);
+	}, [activate, host, persistState, easingHostMessages]);
 
 	const reverseCurve = useCallback(() => {
 		const state = stateRef.current;
@@ -2005,7 +2038,9 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 	}, [host]);
 
 	const copyValuesToClipboard = useCallback(async () => {
-		const result = await host("captureKeyframeValues", []);
+		const result = await host("captureKeyframeValues", [
+			{ messages: easingHostMessages() },
+		]);
 		const values =
 			(result?.value as { values?: number[][] } | undefined)?.values ?? [];
 		const pathResult = await host("getEasingClipboardPath", []);
@@ -2015,7 +2050,7 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 			await saveValues(window, { version: 1, values }, path);
 			setValuesClipboard(values);
 		}
-	}, [host]);
+	}, [host, easingHostMessages]);
 
 	const pasteFromClipboard = useCallback(
 		async (options: { pasteEase: boolean; pasteValues: boolean }) => {
@@ -2030,12 +2065,18 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 				setModeState("curve");
 			}
 			if (options.pasteValues && clip.values) {
-				await host("pasteKeyframeValues", [{ values: clip.values.values }]);
+				await host("pasteKeyframeValues", [
+					{
+						values: clip.values.values,
+						undoGroupName: t("easing.pasteValuesUndoGroupName"),
+						messages: easingHostMessages(),
+					},
+				]);
 			}
 			drawRef.current?.();
 			persistState();
 		},
-		[host, persistState],
+		[host, persistState, t, easingHostMessages],
 	);
 
 	const contextHandlersRef = useRef({

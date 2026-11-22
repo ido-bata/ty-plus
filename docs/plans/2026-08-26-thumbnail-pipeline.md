@@ -1479,7 +1479,7 @@ git commit -m "feat(directory-browser): integrate useThumbnail + folder_preview.
 
 - [ ] **Step 3: Verify i18n parity check**
 
-Run: `bun run scripts/check/check-i18n-locale-coverage.ts`
+Run: `bun run scripts/check/i18n-locale-coverage.ts`
 Expected: PASS (10/10 parity)
 
 - [ ] **Step 4: Commit**

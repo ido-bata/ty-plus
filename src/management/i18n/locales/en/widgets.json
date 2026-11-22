@@ -18,7 +18,10 @@
 			"directory-browser": "Browse disk folders and presets from inside the panel.",
 			"font-viewer": "Preview font families, styles, and sample text in the workspace.",
 			"loop": "Edit a single-cycle curve and apply it repeatedly to selected keyframes."
-		}
+		},
+		"add": "Add",
+		"adding": "Adding…",
+		"noMatches": "No matching widgets. Try another search."
 	},
 	"types": {
 		"align": "Align",
@@ -75,7 +78,22 @@
 			"easeOut": "Ease out",
 			"easeIn": "Ease in",
 			"easeInOut": "Ease in/out"
-		}
+		},
+		"presetAria": {
+			"linear": "Apply linear easing preset",
+			"easeOut": "Apply ease-out preset",
+			"easeIn": "Apply ease-in preset",
+			"easeInOut": "Apply ease-in-out preset"
+		},
+		"undoGroupName": "Ty Plus: Apply Easing",
+		"pasteValuesUndoGroupName": "Ty Plus: Paste Values",
+		"errors": {
+			"selectKeyframes": "Select keyframes in an active composition",
+			"selectAnimatedProperty": "Select at least one animated property",
+			"selectTwoKeyframes": "Select at least two keyframes on an animated property",
+			"captureFailed": "Could not read easing from the selected keyframes"
+		},
+		"noKeyframesSelected": "Ty Plus easing: no keyframes selected — select keyframes in the AE timeline first"
 	},
 	"menu": {
 		"name": "Menu",
@@ -93,16 +111,77 @@
 		"groupSelectedItems": "Group Selected Items",
 		"moveToPanel": "Move to panel",
 		"deleteSelectedPresets": "Delete {{count}} Presets",
-		"layout": "Layout"
+		"layout": "Layout",
+		"separatorAria": "Menu section separator"
 	},
 	"align": {
-		"name": "Align"
+		"name": "Align",
+		"gestureOverlay": "Gesture path overlay",
+		"targets": {
+			"selection": "Align to selection",
+			"composition": "Align to Composition",
+			"keyObject": "Align to key object",
+			"time": "Time alignment"
+		},
+		"sections": {
+			"distribute": "Distribute",
+			"spacing": "Spacing",
+			"time": "Time"
+		},
+		"undoGroupName": "Ty Plus: Align Layers",
+		"timeUndoGroupName": "ty-plus time align",
+		"errors": {
+			"noActiveComposition": "Select at least one layer in an active composition",
+			"noLayerSelected": "Select at least one layer before aligning"
+		}
 	},
 	"anchorPoint": {
-		"name": "Anchor point"
+		"name": "Anchor point",
+		"gestureOverlay": "Anchor point gesture overlay",
+		"positions": {
+			"topLeft": "Top left",
+			"topCenter": "Top center",
+			"topRight": "Top right",
+			"centerLeft": "Center left",
+			"center": "Center",
+			"centerRight": "Center right",
+			"bottomLeft": "Bottom left",
+			"bottomCenter": "Bottom center",
+			"bottomRight": "Bottom right"
+		},
+		"noActiveComposition": "Ty Plus anchor: no active composition",
+		"noLayerSelected": "Ty Plus anchor: no layer selected",
+		"undoGroupName": "ty-plus anchor (anim-safe)",
+		"failed": "Ty Plus anchor failed: {{detail}}",
+		"completedWithErrors": "Ty Plus anchor completed with errors: {{detail}}"
 	},
 	"info": {
-		"name": "Info"
+		"name": "Info",
+		"activeComp": "Active Comp",
+		"compInfo": "Comp info",
+		"file": "File",
+		"kind": "Kind",
+		"noPresetSelected": "No preset selected",
+		"noDescription": "No description",
+		"source": {
+			"selection": "Selection",
+			"hover": "Hover"
+		},
+		"comp": {
+			"size": "Size",
+			"pixelAspect": "Pixel aspect",
+			"background": "Background",
+			"frameRate": "Frame rate",
+			"duration": "Duration",
+			"shutterAngle": "Shutter angle",
+			"shutterPhase": "Shutter phase",
+			"total": "Total",
+			"selected": "Selected",
+			"motionBlur": "Motion blur",
+			"draft3d": "3D draft",
+			"on": "On",
+			"off": "Off"
+		}
 	},
 	"layoutLock": {
 		"name": "Layout lock"
@@ -138,7 +217,23 @@
 			"openEntry": "Open",
 			"importOnly": "Import",
 			"selectFile": "Select",
-			"deselect": "Deselect"
+			"deselect": "Deselect",
+			"presetNotFound": "Preset not found: {{presetId}}",
+			"fileImportAeOnly": "File import is currently available only in After Effects.",
+			"appliedEffect": "Applied effect: {{name}}",
+			"importedFootage": "Imported footage: {{name}}",
+			"ranScript": "Ran script: {{name}}",
+			"appliedPreset": "Applied preset: {{name}}",
+			"undoGroup": {
+				"applyPreset": "Ty Plus: Apply Preset",
+				"addFootage": "Ty Plus: Add Footage",
+				"applyEffect": "Ty Plus: Apply effect"
+			},
+			"errors": {
+				"openComposition": "Open a composition before applying a preset",
+				"addLayerOrSelect": "Add a layer or select a layer before applying this preset in an empty composition",
+				"selectLayerForEffect": "Select at least one layer before applying an effect"
+			}
 		},
 		"path": {
 			"pickFolderPrompt": "Select a folder",
@@ -207,6 +302,9 @@
 		},
 		"hints": {
 			"iconGridWheel": "Ctrl+scroll to resize"
+		},
+		"listHeader": {
+			"name": "Name"
 		}
 	},
 	"folderDirectoryPicker": {
@@ -269,6 +367,30 @@
 		"hintNoLocalApi": "This Chromium build does not expose queryLocalFonts — only fonts registered on document.fonts are listed.",
 		"localAccessErrorPrefix": "Local font access:",
 		"emptyList": "No fonts loaded yet. Use “Load all system fonts” if available, or reload after the panel finishes loading styles."
+	},
+	"viewModeToggle": {
+		"listView": "List view",
+		"iconView": "Icon view",
+		"fieldsetLegend": "Catalog layout"
+	},
+	"addWidgetDialog": {
+		"addsToPrefix": "Adds to",
+		"addsToSuffix": "at the bottom of the grid.",
+		"addFailure": "Could not add the widget: {{message}}",
+		"introPrefix": "Choose a widget type. Only kinds that are available in the catalog are listed. New tiles go to",
+		"introSuffix": ".",
+		"contextMenu": {
+			"addThisWidget": "Add this widget",
+			"select": "Select",
+			"category": "Category",
+			"clearSearch": "Clear search",
+			"addSelectedWidget": "Add selected widget",
+			"unknownCategory": "Unknown"
+		}
+	},
+	"pickerOverlay": {
+		"targetPanelPrefix": "Target panel",
+		"footerHint": "Widget is appended at the bottom of the grid for this panel."
 	},
 	"loop": {
 		"name": "Loop",

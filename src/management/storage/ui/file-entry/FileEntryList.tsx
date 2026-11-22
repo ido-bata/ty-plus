@@ -9,6 +9,7 @@ import {
 } from "@ty-plus/ui";
 import { FolderOpen, LayoutGrid, List as ListIcon } from "lucide-react";
 import type { JSX, ReactNode } from "react";
+import { i18n } from "@/management/i18n/index";
 import type { PresetIcon } from "@/management/preset/contract";
 import type { FileBrowserFileType } from "@/management/storage/file-browser-service";
 import { FileEntryCard } from "@/management/storage/ui/file-entry/FileEntryCard";
@@ -105,8 +106,8 @@ function FileEntryViewModeToggle({
 				size="sm"
 				active={viewMode === "list"}
 				aria-pressed={viewMode === "list"}
-				aria-label="List view"
-				title="List view"
+				aria-label={i18n.t("common:directoryBrowser.listView")}
+				title={i18n.t("common:directoryBrowser.listView")}
 				onClick={() => {
 					onChange("list");
 				}}
@@ -119,8 +120,8 @@ function FileEntryViewModeToggle({
 				size="sm"
 				active={viewMode === "icons"}
 				aria-pressed={viewMode === "icons"}
-				aria-label="Icon view"
-				title="Icon view"
+				aria-label={i18n.t("common:directoryBrowser.iconView")}
+				title={i18n.t("common:directoryBrowser.iconView")}
 				onClick={() => {
 					onChange("icons");
 				}}
@@ -611,8 +612,10 @@ export const FileEntryList = ({
 	onToggleSelected,
 	selectedSummary = null,
 	showSelectedSummary = true,
-	emptyLabel = "No files found",
-	loadingLabel = "Loading...",
+	emptyLabel = i18n.t("common:directoryBrowser.noFilesFound", {
+		defaultValue: "No files found",
+	}),
+	loadingLabel = i18n.t("common:app.loading", { defaultValue: "Loading..." }),
 	upLabel = "..",
 	viewMode = "list",
 	onViewModeChange,
@@ -753,7 +756,10 @@ export const FileEntryList = ({
 								data-multi-select-path={entry.path}
 								checked={isSelected(entry.path, "file")}
 								onChange={() => onToggleSelected(entry.path, "file")}
-								aria-label={`select file ${entry.name}`}
+								aria-label={i18n.t("common:directoryBrowser.selectFileAria", {
+									name: entry.name,
+									defaultValue: "Select file {{name}}",
+								})}
 							/>
 						</span>
 					) : null}
@@ -767,7 +773,10 @@ export const FileEntryList = ({
 								data-multi-select-path={entry.path}
 								checked={isSelected(entry.path, "folder")}
 								onChange={() => onToggleSelected(entry.path, "folder")}
-								aria-label={`select folder ${entry.name}`}
+								aria-label={i18n.t("common:directoryBrowser.selectFolderAria", {
+									name: entry.name,
+									defaultValue: "Select folder {{name}}",
+								})}
 							/>
 						</span>
 					) : null}

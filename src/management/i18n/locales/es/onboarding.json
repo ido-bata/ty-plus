@@ -13,7 +13,8 @@
 		"support": {
 			"label": "Ubicación",
 			"title": "Seleccionar carpeta de AE",
-			"body": "Elige la carpeta de aplicación de After Effects. En Windows es el directorio de Support Files; en macOS es la carpeta de la app que contiene Presets."
+			"body": "Elige la carpeta de aplicación de After Effects. En Windows es el directorio de Support Files; en macOS es la carpeta de la app que contiene Presets.",
+			"aeAppFolderHint": "Carpeta de la app de AE detectada — se omitirá el paso de subcarpetas."
 		},
 		"subfolders": {
 			"label": "Carpetas",
@@ -87,13 +88,24 @@
 		"finishErrorNextActionChooseTrusted": "El archivo de ajustes del onboarding no incluía un Support Root. Reinicia el onboarding dentro de After Effects.",
 		"finishErrorNextActionAdjust": "No se pudieron guardar los ajustes en el Support Root de AE. Verifica que la ruta sea accesible y que After Effects tenga permisos de escritura, e inténtalo de nuevo.",
 		"finishErrorNextActionRetry": "Se solicitó el UAC de Windows pero la escritura elevada falló. Pulsa Retry para volver a mostrar el cuadro de UAC, o ejecuta After Effects como administrador.",
-		"finishErrorRetryWithElevation": "Reintentar como administrador"
+		"finishErrorRetryWithElevation": "Reintentar como administrador",
+		"supportAndSubfoldersRequired": "Se requieren la ruta de Support y las subcarpetas de onboarding.",
+		"appRootUnresolved": "Ty Plus: no se puede resolver la carpeta de la aplicación de After Effects para ty-plus-init.json. Abre el panel dentro de After Effects e inténtalo de nuevo.",
+		"initWriteFailed": "Error al escribir ty-plus-init.json en {{path}}: {{message}}",
+		"elevationConsentDenied": "El aviso de consentimiento de UAC se descartó (no se concedió la elevación de administrador).",
+		"innerExitCodeNote": " Código de salida del script interno: {{code}}.",
+		"elevationWriteFailedStderr": "La escritura elevada notificó un error.{{exitCodeNote}} stderr del script interno: {{stderr}}",
+		"elevationWriteFailed": "La escritura elevada notificó un error.{{exitCodeNote}}"
 	},
 	"actions": {
 		"back": "Atrás",
 		"next": "Siguiente",
 		"finish": "Finalizar",
 		"toggleFullscreen": "Expandir a pantalla completa",
-		"toggleModal": "Volver al modal"
+		"toggleModal": "Volver al modal",
+		"openManual": "Abrir manual"
+	},
+	"syncStatus": {
+		"localUpdate": "Actualización local"
 	}
 }

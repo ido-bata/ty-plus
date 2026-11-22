@@ -9,6 +9,7 @@ import {
 	runAnchorScript,
 } from "@/function/widget/core/anchor-point";
 import { createCepHostExecutor } from "@/management/ae/cep/host-executor";
+import { i18n } from "@/management/i18n/index";
 import type { Preset } from "@/management/preset/contract";
 import { dispatchGroupWorkspaceRequest } from "@/management/preset/group/events";
 import type { FileBrowserService } from "@/management/storage/file-browser-service";
@@ -1328,9 +1329,9 @@ export const setupInteractionEvents = (
 					void opts?.executePreset?.(presetRecord).catch((error) => {
 						setState({
 							...getState(),
-							statusMessage: `Preset failed: ${
-								error instanceof Error ? error.message : String(error)
-							}`,
+							statusMessage: i18n.t("workspace:statusMessages.presetFailed", {
+								message: error instanceof Error ? error.message : String(error),
+							}),
 						});
 						rerender();
 					});
@@ -1429,9 +1430,9 @@ export const setupInteractionEvents = (
 			void opts?.executePreset?.(presetRecord).catch((error) => {
 				setState({
 					...getState(),
-					statusMessage: `Preset failed: ${
-						error instanceof Error ? error.message : String(error)
-					}`,
+					statusMessage: i18n.t("workspace:statusMessages.presetFailed", {
+						message: error instanceof Error ? error.message : String(error),
+					}),
 				});
 				rerender();
 			});
@@ -1456,8 +1457,16 @@ export const setupInteractionEvents = (
 			(ALIGN_ACTIONS as readonly string[]).includes(action)
 		) {
 			const jsx = (TIME_ALIGN_ACTIONS as readonly string[]).includes(action)
-				? buildTimeAlignScript(action, "selection")
-				: buildAlignLayersScript(action, "selection");
+				? buildTimeAlignScript(
+						action,
+						"selection",
+						i18n.t("widgets:align.timeUndoGroupName"),
+					)
+				: buildAlignLayersScript(
+						action,
+						"selection",
+						i18n.t("widgets:align.undoGroupName"),
+					);
 			if (jsx) runCep(jsx);
 			return;
 		}
@@ -1467,13 +1476,19 @@ export const setupInteractionEvents = (
 			if (!isValidAnchorPosition(pos)) return;
 			setState({
 				...state,
-				statusMessage: `Applying anchor point: ${pos}...`,
+				statusMessage: i18n.t("workspace:statusMessages.applyingAnchorPoint", {
+					pos,
+					defaultValue: "Applying anchor point: {{pos}}...",
+				}),
 			});
 			rerender();
 			runAnchorScript(pos);
 			setState({
 				...getState(),
-				statusMessage: `Anchor point requested: ${pos}`,
+				statusMessage: i18n.t("workspace:statusMessages.anchorPointRequested", {
+					pos,
+					defaultValue: "Anchor point requested: {{pos}}",
+				}),
 			});
 			return;
 		}

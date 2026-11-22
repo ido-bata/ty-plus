@@ -28,6 +28,7 @@ const bootErrorRoot = css({
 function PanelBootError({ message }: { message: string }): JSX.Element {
 	return (
 		<div className={bootErrorRoot}>
+			{/* // i18n-exempt: boot failure fallback can render before i18n init */}
 			{`[ty-plus] panel boot failed:\n${message}`}
 		</div>
 	);

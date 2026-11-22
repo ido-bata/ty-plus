@@ -18,7 +18,10 @@
 			"directory-browser": "Navegar pastas de disco e predefinições de dentro do painel.",
 			"font-viewer": "Visualizar famílias de fontes, estilos e texto de exemplo na área de trabalho.",
 			"loop": "Edite uma curva de ciclo único e aplique-a repetidamente aos keyframes selecionados."
-		}
+		},
+		"add": "Adicionar",
+		"adding": "Adicionando…",
+		"noMatches": "Nenhum widget correspondente. Tente outra pesquisa."
 	},
 	"types": {
 		"align": "Alinhar",
@@ -35,14 +38,14 @@
 	},
 	"easing": {
 		"name": "Easing",
-		"apply": "Apply",
-		"copyFromSelection": "Copy from selection",
-		"reverse": "Reverse",
+		"apply": "Aplicar",
+		"copyFromSelection": "Copiar da seleção",
+		"reverse": "Inverter",
 		"mode": {
-			"curve": "Curve",
+			"curve": "Curva",
 			"loop": "Loop",
-			"bounce": "Bounce",
-			"elastic": "Elastic"
+			"bounce": "Quicar",
+			"elastic": "Elástico"
 		},
 		"loop": {
 			"cycles": "Ciclos",
@@ -50,32 +53,47 @@
 			"increment": "Aumentar ciclos"
 		},
 		"options": {
-			"mode": "Mode",
-			"grid": "Grid",
-			"label": "Label"
+			"mode": "Modo",
+			"grid": "Grelha",
+			"label": "Rótulo"
 		},
 		"background": {
-			"dots": "Dots",
-			"grid": "Grid"
+			"dots": "Pontos",
+			"grid": "Grelha"
 		},
 		"label": {
-			"none": "None"
+			"none": "Nenhum"
 		},
 		"applyMode": {
-			"single": "Single",
-			"pair": "Each"
+			"single": "Único",
+			"pair": "Cada"
 		},
 		"status": {
-			"applying": "Applying",
-			"applied": "Applied",
-			"failed": "Failed"
+			"applying": "A aplicar",
+			"applied": "Aplicado",
+			"failed": "Falhou"
 		},
 		"presets": {
 			"linear": "Linear",
 			"easeOut": "Ease out",
 			"easeIn": "Ease in",
 			"easeInOut": "Ease in/out"
-		}
+		},
+		"presetAria": {
+			"linear": "Aplicar predefinição de Easing Linear",
+			"easeOut": "Aplicar predefinição de Easing Ease out",
+			"easeIn": "Aplicar predefinição de Easing Ease in",
+			"easeInOut": "Aplicar predefinição de Easing Ease in/out"
+		},
+		"undoGroupName": "Ty Plus: Aplicar easing",
+		"pasteValuesUndoGroupName": "Ty Plus: Colar valores",
+		"errors": {
+			"selectKeyframes": "Selecione quadros-chave numa composição ativa",
+			"selectAnimatedProperty": "Selecione pelo menos uma propriedade animada",
+			"selectTwoKeyframes": "Selecione pelo menos dois quadros-chave numa propriedade animada",
+			"captureFailed": "Não foi possível ler o easing dos quadros-chave selecionados"
+		},
+		"noKeyframesSelected": "Easing do Ty Plus: nenhum quadro-chave selecionado — selecione quadros-chave na linha do tempo do AE primeiro"
 	},
 	"menu": {
 		"name": "Menu",
@@ -93,16 +111,77 @@
 		"groupSelectedItems": "Agrupar itens selecionados",
 		"moveToPanel": "Mover para o painel",
 		"deleteSelectedPresets": "Eliminar {{count}} predefinições",
-		"layout": "Layout"
+		"layout": "Layout",
+		"separatorAria": "Separador de seção do menu"
 	},
 	"align": {
-		"name": "Alinhar"
+		"name": "Alinhar",
+		"gestureOverlay": "Sobreposição de trajeto do gesto",
+		"targets": {
+			"selection": "Alinhar à seleção",
+			"composition": "Alinhar à Composition",
+			"keyObject": "Alinhar ao objeto-chave",
+			"time": "Alinhamento temporal"
+		},
+		"sections": {
+			"distribute": "Distribuir",
+			"spacing": "Espaçamento",
+			"time": "Tempo"
+		},
+		"undoGroupName": "Ty Plus: Alinhar camadas",
+		"timeUndoGroupName": "ty-plus alinhar no tempo",
+		"errors": {
+			"noActiveComposition": "Selecione pelo menos uma camada numa composição ativa",
+			"noLayerSelected": "Selecione pelo menos uma camada antes de alinhar"
+		}
 	},
 	"anchorPoint": {
-		"name": "Anchor point"
+		"name": "Anchor point",
+		"gestureOverlay": "Sobreposição do gesto Anchor point",
+		"positions": {
+			"topLeft": "Superior esquerdo",
+			"topCenter": "Superior centro",
+			"topRight": "Superior direito",
+			"centerLeft": "Centro esquerdo",
+			"center": "Centro",
+			"centerRight": "Centro direito",
+			"bottomLeft": "Inferior esquerdo",
+			"bottomCenter": "Inferior centro",
+			"bottomRight": "Inferior direito"
+		},
+		"noActiveComposition": "Âncora do Ty Plus: nenhuma composição ativa",
+		"noLayerSelected": "Âncora do Ty Plus: nenhuma camada selecionada",
+		"undoGroupName": "ty-plus definir ponto de ancoragem",
+		"failed": "Falha no ponto de ancoragem do Ty Plus: {{detail}}",
+		"completedWithErrors": "Ponto de ancoragem do Ty Plus concluído com erros: {{detail}}"
 	},
 	"info": {
-		"name": "Info"
+		"name": "Info",
+		"activeComp": "Comp ativo",
+		"compInfo": "Informações do Comp",
+		"file": "Arquivo",
+		"kind": "Tipo",
+		"noPresetSelected": "Nenhuma predefinição selecionada",
+		"noDescription": "Sem descrição",
+		"source": {
+			"selection": "Seleção",
+			"hover": "Hover"
+		},
+		"comp": {
+			"size": "Tamanho",
+			"pixelAspect": "Proporção de pixel",
+			"background": "Fundo",
+			"frameRate": "Taxa de quadros",
+			"duration": "Duração",
+			"shutterAngle": "Ângulo do obturador",
+			"shutterPhase": "Fase do obturador",
+			"total": "Total",
+			"selected": "Selecionadas",
+			"motionBlur": "Desfoque de movimento",
+			"draft3d": "Rascunho 3D",
+			"on": "Ligado",
+			"off": "Desligado"
+		}
 	},
 	"layoutLock": {
 		"name": "Layout lock"
@@ -112,10 +191,10 @@
 	},
 	"quickActions": {
 		"name": "Quick actions",
-		"palettePlaceholder": "Search presets, scripts, plugins, effects, and files under roots…",
-		"paletteEmpty": "No matching presets or effects.",
-		"effectRowKind": "Effect",
-		"rootFileRowKind": "Disk"
+		"palettePlaceholder": "Pesquisar predefinições, scripts, plugins, efeitos e arquivos nas raízes…",
+		"paletteEmpty": "Nenhuma predefinição ou efeito correspondente.",
+		"effectRowKind": "Efeito",
+		"rootFileRowKind": "Disco"
 	},
 	"fxSearch": "FX search",
 	"directoryBrowser": {
@@ -138,7 +217,23 @@
 			"selectFile": "Selecionar",
 			"deselect": "Desselecionar",
 			"runBlockedMissingAsset": "O recurso do preset não está no disco — a execução está desativada.",
-			"runBlockedUnverifiableAsset": "Não foi possível verificar o recurso do preset (host indisponível) — tentar novamente"
+			"presetNotFound": "Predefinição não encontrada: {{presetId}}",
+			"fileImportAeOnly": "A importação de arquivos está atualmente disponível apenas no After Effects.",
+			"appliedEffect": "Efeito aplicado: {{name}}",
+			"importedFootage": "Conteúdo importado: {{name}}",
+			"ranScript": "Script executado: {{name}}",
+			"appliedPreset": "Predefinição aplicada: {{name}}",
+			"runBlockedUnverifiableAsset": "Não foi possível verificar o recurso do preset (host indisponível) — tentar novamente",
+			"undoGroup": {
+				"applyPreset": "Ty Plus: Aplicar predefinição",
+				"addFootage": "Ty Plus: Adicionar footage",
+				"applyEffect": "Ty Plus: Aplicar efeito"
+			},
+			"errors": {
+				"openComposition": "Abra uma composição antes de aplicar uma predefinição",
+				"addLayerOrSelect": "Adicione uma camada ou selecione uma camada antes de aplicar esta predefinição numa composição vazia",
+				"selectLayerForEffect": "Selecione pelo menos uma camada antes de aplicar um efeito"
+			}
 		},
 		"path": {
 			"pickFolderPrompt": "Selecione uma pasta",
@@ -207,6 +302,9 @@
 		},
 		"hints": {
 			"iconGridWheel": "Ctrl+rolagem para redimensionar"
+		},
+		"listHeader": {
+			"name": "Nome"
 		}
 	},
 	"textEditor": {
@@ -214,47 +312,47 @@
 	},
 	"fontViewer": {
 		"name": "Font viewer",
-		"searchPlaceholder": "Search family, PostScript, style…",
-		"searchAria": "Search fonts",
-		"listView": "List view",
-		"iconView": "Icon cards",
-		"layoutLegend": "Font layout",
-		"reload": "Reload font list",
-		"samplePresets": "Sample",
-		"sampleCustom": "Custom",
-		"samplePresetAria": "Preview sample preset",
-		"previewTextAria": "Preview text",
-		"samplePlaceholder": "Preview text (CJK / emoji / Latin)",
-		"ctxMenuHeading": "Display options",
-		"ctxTileSquare": "Tile aspect 1:1",
-		"ctxTileWide": "Tile aspect 16:9",
-		"ctxShowResolved": "Show resolved-font match column (list)",
-		"ctxHideResolved": "Hide resolved-font match column (list)",
-		"showResolved": "Resolved font check (list)",
-		"loadError": "Could not load fonts.",
-		"loading": "Loading…",
-		"statsLine": "{{families}} families · {{faces}} typefaces ({{total}} loaded)",
-		"familySummary": "{{count}} typefaces",
-		"expandFamily": "Expand family",
-		"collapseFamily": "Collapse family",
-		"backToFamilies": "All font families",
-		"openFamilyIcon": "Open family",
-		"noMatches": "No matching fonts",
-		"phaseAeHost": "Querying After Effects for fonts (evalScript)…",
-		"phaseBrowser": "Reading browser font sources…",
-		"aeHostErrorLabel": "After Effects host:",
-		"previewSectionSummary": "Preview",
-		"sampleCollapsedPlaceholder": "Open to edit sample text and options",
+		"searchPlaceholder": "Pesquisar família, PostScript, estilo…",
+		"searchAria": "Pesquisar fontes",
+		"listView": "Vista de lista",
+		"iconView": "Cartões de ícone",
+		"layoutLegend": "Layout de fontes",
+		"reload": "Recarregar lista de fontes",
+		"samplePresets": "Amostra",
+		"sampleCustom": "Personalizado",
+		"samplePresetAria": "Pré-visualizar predefinição de amostra",
+		"previewTextAria": "Pré-visualizar texto",
+		"samplePlaceholder": "Texto de pré-visualização (CJK / emoji / latim)",
+		"ctxMenuHeading": "Opções de exibição",
+		"ctxTileSquare": "Relação do ladrilho 1:1",
+		"ctxTileWide": "Relação do ladrilho 16:9",
+		"ctxShowResolved": "Mostrar coluna de correspondência de fonte resolvida (lista)",
+		"ctxHideResolved": "Ocultar coluna de correspondência de fonte resolvida (lista)",
+		"showResolved": "Verificação de fonte resolvida (lista)",
+		"loadError": "Não foi possível carregar as fontes.",
+		"loading": "A carregar…",
+		"statsLine": "{{families}} famílias · {{faces}} tipos de letra ({{total}} carregados)",
+		"familySummary": "{{count}} tipos de letra",
+		"expandFamily": "Expandir família",
+		"collapseFamily": "Recolher família",
+		"backToFamilies": "Todas as famílias de fontes",
+		"openFamilyIcon": "Abrir família",
+		"noMatches": "Nenhuma fonte correspondente",
+		"phaseAeHost": "A consultar o After Effects para fontes (evalScript)…",
+		"phaseBrowser": "A ler fontes do navegador…",
+		"aeHostErrorLabel": "Host do After Effects:",
+		"previewSectionSummary": "Pré-visualização",
+		"sampleCollapsedPlaceholder": "Abra para editar o texto e as opções de amostra",
 		"viaLocalApi": "Local Font Access API",
 		"viaAfterEffects": "After Effects (app.fonts)",
-		"viaDocumentFonts": "document.fonts (subset)",
-		"fallbackBadge": "swap",
-		"primaryBadge": "match",
-		"hintNeedUserGesture": "Installed fonts need a button click (Chromium Local Font Access). Until then, this catalog lists only fonts already registered on document.fonts for this panel.",
-		"loadAllSystemFonts": "Load all system fonts…",
-		"hintNoLocalApi": "This Chromium build does not expose queryLocalFonts — only fonts registered on document.fonts are listed.",
-		"localAccessErrorPrefix": "Local font access:",
-		"emptyList": "No fonts loaded yet. Use “Load all system fonts” if available, or reload after the panel finishes loading styles."
+		"viaDocumentFonts": "document.fonts (subconjunto)",
+		"fallbackBadge": "troca",
+		"primaryBadge": "correspondência",
+		"hintNeedUserGesture": "As fontes instaladas precisam de um clique em botão (Chromium Local Font Access). Até lá, este catálogo lista apenas as fontes já registadas em document.fonts para este painel.",
+		"loadAllSystemFonts": "Carregar todas as fontes do sistema…",
+		"hintNoLocalApi": "Esta compilação do Chromium não expõe queryLocalFonts — apenas as fontes registadas em document.fonts são listadas.",
+		"localAccessErrorPrefix": "Acesso a fontes locais:",
+		"emptyList": "Ainda não há fontes carregadas. Use «Carregar todas as fontes do sistema» se disponível, ou recarregue depois que o painel terminar de carregar os estilos."
 	},
 	"folderDirectoryPicker": {
 		"label": "Explorador de pastas",
@@ -269,6 +367,30 @@
 		"emptyItems": "Nenhum item encontrado",
 		"goUp": "Subir nível",
 		"cepNodeRequired": "O explorador de pastas requer CEP Node"
+	},
+	"viewModeToggle": {
+		"listView": "Vista de lista",
+		"iconView": "Vista de ícones",
+		"fieldsetLegend": "Esquema do catálogo"
+	},
+	"addWidgetDialog": {
+		"addsToPrefix": "Adiciona a",
+		"addsToSuffix": "na parte inferior da grade.",
+		"addFailure": "Não foi possível adicionar o widget: {{message}}",
+		"introPrefix": "Escolha um tipo de widget. Apenas os tipos disponíveis no catálogo são listados. Novos blocos vão para",
+		"introSuffix": ".",
+		"contextMenu": {
+			"addThisWidget": "Adicionar este widget",
+			"select": "Selecionar",
+			"category": "Categoria",
+			"clearSearch": "Limpar pesquisa",
+			"addSelectedWidget": "Adicionar widget selecionado",
+			"unknownCategory": "Desconhecido"
+		}
+	},
+	"pickerOverlay": {
+		"targetPanelPrefix": "Painel de destino",
+		"footerHint": "O widget é adicionado ao final da grade deste painel."
 	},
 	"loop": {
 		"name": "Loop",

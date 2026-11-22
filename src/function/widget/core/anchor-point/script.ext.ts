@@ -77,7 +77,7 @@ const ANCHOR_SCRIPT_TEMPLATE = `(function(){
     if (!(comp instanceof CompItem)) { return "no comp"; }
     var selected = comp.selectedLayers;
     if (!selected || selected.length < 1) { return "no layer"; }
-    app.beginUndoGroup("ty-plus anchor (anim-safe)");
+    app.beginUndoGroup(__UNDO_GROUP__);
     var results = [];
     var hadError = false;
     try {
@@ -127,5 +127,11 @@ const ANCHOR_SCRIPT_TEMPLATE = `(function(){
   }
 })()`;
 
-export const buildAnchorScript = (position: AnchorPosition): string =>
-	ANCHOR_SCRIPT_TEMPLATE.replace("__POSITION__", position);
+export const buildAnchorScript = (
+	position: AnchorPosition,
+	undoGroupName = "ty-plus anchor (anim-safe)",
+): string =>
+	ANCHOR_SCRIPT_TEMPLATE.replace("__POSITION__", position).replace(
+		"__UNDO_GROUP__",
+		() => JSON.stringify(undoGroupName),
+	);

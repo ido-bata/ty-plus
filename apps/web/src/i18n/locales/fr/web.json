@@ -1,0 +1,354 @@
+{
+	"tagline": "Vos presets et outils, directement dans Adobe After Effects.",
+	"skipToContent": "Aller au contenu",
+	"languageLabel": "Langue",
+	"nav": {
+		"primary": "Principal",
+		"menu": "Menu",
+		"download": "Télécharger"
+	},
+	"navLinks": {
+		"features": "Fonctionnalités",
+		"download": "Télécharger",
+		"docs": "Documentation",
+		"changelog": "Journal des modifications",
+		"support": "Assistance"
+	},
+	"footer": {
+		"description": "Extension gratuite et open source (MIT) pour After Effects, axée sur le local-first. Aucun compte requis.",
+		"product": "Produit",
+		"resources": "Ressources",
+		"releases": "GitHub Releases",
+		"source": "Code source",
+		"userGuide": "Guide utilisateur",
+		"copyright": "© contributeurs ty-plus",
+		"bottom": "Licence MIT · Fonctionne hors ligne · Panneau CEP"
+	},
+	"notices": {
+		"stale": "Les données de release sont temporairement indisponibles ; affichage du dernier instantané publié. Consultez <1>GitHub Releases</1> pour les dernières versions."
+	},
+	"home": {
+		"metaTitle": "{{name}} — {{tagline}}",
+		"metaDescription": "ty-plus est une extension gratuite et open source pour After Effects, axée sur le local-first. Organisez presets, scripts et widgets dans un espace de travail personnalisable au sein d'After Effects.",
+		"metaOgDescription": "Extension CEP gratuite et open source pour Adobe After Effects, axée sur le local-first.",
+		"hero": {
+			"introAria": "Introduction",
+			"eyebrow": "Gratuit · Open source",
+			"lead": "ty-plus transforme une partie de votre espace de travail After Effects en un accueil personnalisable pour vos presets réutilisables et vos outils du quotidien — sans quitter After Effects.",
+			"download": "Télécharger ty-plus",
+			"explore": "Découvrir les fonctionnalités",
+			"license": "Licence MIT",
+			"noAccount": "Aucun compte requis",
+			"offline": "Fonctionne entièrement hors ligne",
+			"platforms": "Windows · macOS",
+			"stable": "Stable {{version}}",
+			"demoCaption": "Démo interactive — les mêmes surfaces de tuiles et d'infos que le panneau. Survolez ou touchez pour inspecter, ⌘/Ctrl+clic ou Maj+clic pour sélectionner ; un clic simple applique le preset dans After Effects, pas ici."
+		},
+		"surfaces": {
+			"aria": "Surfaces du panneau",
+			"workspaceAlt": "Widgets utilitaires sur l'espace de travail ty-plus — actions rapides, courbes d'easing, outils d'alignement et de point d'ancrage",
+			"workspaceCaption": "La grille de l'espace de travail — presets et widgets sur une même surface, capturée depuis le panneau en cours d'exécution.",
+			"presetsAlt": "Le navigateur Local Presets de ty-plus, listant les presets du catalogue local",
+			"presetsCaption": "Local Presets — parcourez, filtrez et placez les presets du catalogue.",
+			"addWidgetAlt": "Le sélecteur Ajouter un widget de ty-plus, listant les types de widgets disponibles",
+			"addWidgetCaption": "Ajouter un widget — étendez l'espace de travail avec des outils intégrés.",
+			"offlineNote": "Chaque surface s'exécute dans After Effects et continue de fonctionner réseau débranché.",
+			"allFeatures": "Toutes les fonctionnalités"
+		},
+		"principles": {
+			"aria": "Principes",
+			"title": "Local-first, capable de fonctionner hors ligne, à vous de tout organiser",
+			"body": "Presets, widgets et dispositions vivent dans des fichiers locaux sur votre machine. Pas de compte, pas de télémétrie, pas d'abonnement — le panneau fonctionne de la même façon déconnecté."
+		},
+		"resources": {
+			"aria": "Ressources",
+			"download": {
+				"title": "Télécharger",
+				"body": "Versions ZXP gratuites pour Windows et macOS depuis GitHub Releases.",
+				"cta": "Obtenir ty-plus"
+			},
+			"docs": {
+				"title": "Documentation",
+				"body": "Guide utilisateur, installation, espace de travail, widgets, presets, paramètres.",
+				"cta": "Lire le guide"
+			},
+			"changelog": {
+				"title": "Journal des modifications",
+				"body": "Notes de version regroupées par canaux Stable, Beta et Insider.",
+				"cta": "Voir les nouveautés"
+			}
+		}
+	},
+	"features": {
+		"metaTitle": "Fonctionnalités — ty-plus",
+		"metaDescription": "Découvrez les fonctionnalités de ty-plus : un espace de travail personnalisable de tuiles de presets et de widgets dans Adobe After Effects, avec stockage local-first et canaux de release.",
+		"eyebrow": "Dans le panneau",
+		"title": "Fonctionnalités",
+		"lead": "ty-plus est un panneau d'extension CEP pour Adobe After Effects. Il vous offre un accueil personnalisable pour les presets et les outils que vous utilisez constamment — le tout exécuté localement dans After Effects.",
+		"tiles": {
+			"aria": "Tuiles de presets",
+			"eyebrow": "Tuiles de presets",
+			"title": "Votre catalogue, en étagère de tuiles",
+			"body": "Les presets d'animation, presets de code, footage et groupes que vous enregistrez deviennent des tuiles nommées sur la même grille que vos widgets — chacune avec sa propre icône et son titre, le tout dans After Effects. La scène de droite affiche les mêmes surfaces de tuiles et d'infos que le panneau."
+		},
+		"interaction": {
+			"aria": "Interaction",
+			"eyebrow": "Interaction",
+			"title": "Inspecter, sélectionner, appliquer",
+			"body": "Survolez ou touchez une tuile et la surface d'infos affiche le nom, le type et la source du preset — le même affichage que le widget d'infos du panneau. ⌘/Ctrl+clic ajoute ou retire une tuile de la sélection ; Maj+clic l'y ajoute. Un clic simple applique le preset au calque actif dans After Effects — un chemin vérifié de bout en bout sur un projet réel. La démo consigne cette intention sous forme de note plutôt que de simuler l'exécution. Les deux captures montrent le vrai widget d'infos avant et après une sélection.",
+			"beforeAlt": "Le widget d'infos ty-plus dans son état vide, affichant « Aucun preset sélectionné »",
+			"beforeCaption": "Avant — rien de sélectionné : le widget d'infos affiche « Aucun preset sélectionné ».",
+			"afterAlt": "Le widget d'infos ty-plus listant le preset sélectionné — son nom, son type de preset et la sélection comme source",
+			"afterCaption": "Après — une tuile est sélectionnée : le widget affiche le nom du preset, son type et « sélection » comme source."
+		},
+		"surfaces": {
+			"aria": "Surfaces",
+			"eyebrow": "Espace de travail",
+			"title": "Widgets et dialogues sur la même grille",
+			"easingAlt": "Le widget Easing de ty-plus — un éditeur de courbes avec les modes Curve, Loop, Bounce et Elastic et une action Apply — aux côtés des outils d'alignement et de distribution",
+			"easingCaption": "L'éditeur de courbes d'Easing façonne les courbes de vitesse et les applique aux keyframes ; les outils d'alignement, de distribution et d'espacement occupent la même grille.",
+			"presetsAlt": "Le navigateur Local Presets de ty-plus, listant les presets du catalogue avec un avis hors ligne",
+			"presetsCaption": "Local Presets — recherchez dans le catalogue et voyez quel espace de travail contient chaque preset ; la navigation continue de fonctionner hors ligne.",
+			"addWidgetAlt": "Le sélecteur Ajouter un widget de ty-plus, listant les types de widgets CORE et UTILITY",
+			"addWidgetCaption": "Ajouter un widget — choisissez un widget CORE ou UTILITY ; le dialogue indique où il se placera sur la grille.",
+			"widgetsTitle": "Des widgets à la demande",
+			"widgetsBody": "Easing trace une courbe de vitesse que vous appliquez aux keyframes ; Align aligne les calques sélectionnés et Anchor point définit le point d'ancrage. Directory browser, Font viewer, Quick actions, Menu, Info et Layout lock couvrent le reste. Choisissez-les dans Ajouter un widget et ils rejoignent la même grille que vos tuiles de presets — chaque widget continue de fonctionner réseau débranché.",
+			"appearanceTitle": "Apparence personnalisable",
+			"appearanceBody": "Changez l'arrière-plan de l'espace de travail — uni, motif ou image — depuis le widget Menu, et ajustez le thème, l'opacité et la densité dans les paramètres. Les deux sont stockés dans des fichiers locaux sur votre machine."
+		},
+		"availability": {
+			"aria": "Disponibilité",
+			"title": "Conçu pour fonctionner hors ligne",
+			"body": "Les paramètres de l'espace de travail, les presets, la configuration des widgets et l'apparence vivent sur votre machine. L'extension vérifie les mises à jour sur GitHub Releases, mais chaque fonction essentielle fonctionne sans connexion réseau — et sans compte.",
+			"download": "Télécharger",
+			"userGuide": "Guide utilisateur"
+		}
+	},
+	"download": {
+		"metaTitle": "Télécharger — ty-plus",
+		"metaDescription": "Téléchargez ty-plus pour Adobe After Effects sur Windows ou macOS. Versions ZXP gratuites et open source depuis GitHub Releases.",
+		"title": "Télécharger",
+		"lead": "ty-plus est distribué sous forme d'extension ZXP via GitHub Releases. Il est gratuit et open source sous licence MIT — choisissez la version pour votre OS ci-dessous.",
+		"latest": {
+			"fallbackTitle": "GitHub Releases",
+			"published": "{{name}} — publié le {{date}}.",
+			"publishedNoName": "Publié le {{date}}.",
+			"viewNotes": "Voir les notes de version",
+			"none": "La dernière version stable est toujours disponible sur <1>GitHub Releases</1>.",
+			"openReleases": "Ouvrir GitHub Releases"
+		},
+		"prereleaseNotice": "Des versions Beta et Insider sont également publiées — consultez le <1>journal des modifications</1> pour la liste complète.",
+		"os": {
+			"windows": "Windows",
+			"macos": "macOS",
+			"installerNote": "Installez le ZXP avec un installateur compatible CEP (par exemple ZXP Installer ou Extension Manager).",
+			"macosNote": "Consultez le guide d'installation pour les notes relatives à Gatekeeper.",
+			"assetMissing": "Aucun asset {{os}} dans cette release.",
+			"assetDownload": "Télécharger pour {{os}}"
+		},
+		"steps": {
+			"title": "Trois étapes pour installer le panneau",
+			"item1": "Téléchargez le ZXP pour votre OS depuis la release ci-dessus (ou <1>GitHub Releases</1>).",
+			"item2": "Installez le ZXP avec un installateur compatible CEP (par exemple ZXP Installer ou Extension Manager).",
+			"item3": "Redémarrez Adobe After Effects et ouvrez <1>Fenêtre → Extensions → ty-plus</1>."
+		},
+		"signingNotice": "Le worker natif Windows n'est pas signé Authenticode et le worker macOS n'est pas notarisé. Les politiques de sécurité des OS peuvent nécessiter des ajustements — consultez le <1>guide d'installation et de dépannage</1> pour plus de détails."
+	},
+	"docs": {
+		"metaTitle": "Documentation — ty-plus",
+		"metaDescription": "Documentation ty-plus : guide utilisateur, installation, espace de travail, widgets, presets, paramètres et dépannage — maintenue dans le dépôt GitHub.",
+		"title": "Documentation",
+		"lead": "Le guide utilisateur est maintenu dans le dépôt pour qu'il corresponde toujours au produit publié. Il est actuellement rédigé en japonais.",
+		"sectionsTitle": "Sections du guide utilisateur",
+		"sections": {
+			"userGuide": {
+				"title": "Guide utilisateur",
+				"description": "Commencez ici — présentation et concepts essentiels."
+			},
+			"installation": {
+				"title": "Installation et dépannage",
+				"description": "Installation ZXP, hôtes CEP, signature et notes de sécurité OS."
+			},
+			"mainScreen": {
+				"title": "Écran principal et espace de travail",
+				"description": "Tuiles, widgets et disposition de l'espace de travail."
+			},
+			"presets": {
+				"title": "Presets",
+				"description": "Types de presets, groupes et application des presets."
+			},
+			"widgets": {
+				"title": "Widgets",
+				"description": "Widgets intégrés et sélecteur de widgets."
+			},
+			"settings": {
+				"title": "Paramètres et apparence",
+				"description": "Paramètres du panneau, thèmes et canaux de mise à jour."
+			}
+		},
+		"improve": {
+			"title": "Améliorer la documentation",
+			"body": "Les améliorations de la documentation sont les bienvenues — consultez <1>CONTRIBUTING.md</1> pour savoir comment proposer des changements.",
+			"cta": "Ouvrir le guide utilisateur"
+		}
+	},
+	"support": {
+		"metaTitle": "Assistance — ty-plus",
+		"metaDescription": "Obtenez de l'aide avec ty-plus : signalez des bugs, demandez des fonctionnalités, consultez la politique de sécurité ou contribuez au projet sur GitHub.",
+		"title": "Assistance",
+		"lead": "ty-plus est un projet open source communautaire. Le moyen le plus rapide d'obtenir de l'aide passe par GitHub.",
+		"help": {
+			"title": "Documentation et issues",
+			"userGuide": {
+				"term": "Guide utilisateur",
+				"description": "Installation, espace de travail, widgets, presets, paramètres, dépannage."
+			},
+			"installation": {
+				"term": "Installation et dépannage",
+				"description": "Installation ZXP et notes de sécurité OS."
+			},
+			"issues": {
+				"term": "Issues existantes",
+				"description": "Vérifiez si votre problème a déjà été signalé."
+			}
+		},
+		"report": {
+			"title": "Bugs et demandes de fonctionnalités",
+			"body": "Utilisez <1>les modèles d'issues sur GitHub</1> pour signaler un bug ou demander une amélioration. Veuillez indiquer votre OS, votre version d'After Effects, votre version de ty-plus et les étapes pour reproduire le problème.",
+			"cta": "Ouvrir une issue"
+		},
+		"security": {
+			"title": "Divulgation responsable",
+			"body": "Veuillez ne pas ouvrir d'issues publiques pour les vulnérabilités de sécurité. Consultez la <1>politique de sécurité</1> pour la divulgation responsable."
+		},
+		"contribute": {
+			"title": "Développez avec nous",
+			"body": "ty-plus est sous licence MIT et développé en toute transparence. Consultez <1>CONTRIBUTING.md</1> pour commencer, et <2>LICENSE</2> pour les conditions.",
+			"cta": "Code source"
+		}
+	},
+	"changelog": {
+		"metaTitle": "Journal des modifications — ty-plus",
+		"metaDescription": "Notes de version et informations de mise à jour de ty-plus, issues de GitHub Releases.",
+		"title": "Journal des modifications",
+		"lead": "Les notes de version sont publiées sur GitHub Releases, regroupées par canal de mise à jour — les plus récentes en premier dans chaque canal.",
+		"channels": {
+			"stable": {
+				"label": "Stable",
+				"hint": "Recommandé pour la plupart des utilisateurs"
+			},
+			"beta": {
+				"label": "Beta",
+				"hint": "Versions pré-release"
+			},
+			"insider": {
+				"label": "Insider",
+				"hint": "Versions précoces fréquentes"
+			}
+		},
+		"release": {
+			"fullNotes": "Notes de version complètes",
+			"assets_one": "{{count}} asset",
+			"assets_other": "{{count}} assets",
+			"assets_many": "{{count}} assets"
+		},
+		"empty": "Les données de release sont temporairement indisponibles. <1>Parcourez toutes les releases sur GitHub</1>.",
+		"allReleases": "Toutes les releases sur GitHub",
+		"channelsSection": {
+			"title": "Stable, Beta, Insider",
+			"body": "Choisissez Stable, Beta ou Insider dans <1>Paramètres → Mises à jour</1> dans le panneau. Les mises à jour sont vérifiées sur GitHub Releases ; l'installation reste manuelle. Les détails des canaux sont dans le <2>guide utilisateur</2>."
+		}
+	},
+	"presetStage": {
+		"ariaLabel": "Démo de tuiles de presets",
+		"mode": {
+			"empty": "vide",
+			"selected": "sélectionné",
+			"hover": "survol",
+			"lastSelection": "dernière sélection",
+			"lastSelected": "dernier sélectionné",
+			"recent": "récent",
+			"selectedCount": "{{count}} sélectionné(s)"
+		},
+		"applyNote": "« {{title}} » — dans le panneau, un clic simple applique ce preset au calque actif.",
+		"hintFine": "Survolez pour inspecter · ⌘/Ctrl+clic pour basculer la sélection · Maj+clic pour ajouter · clic pour appliquer dans le panneau",
+		"hintCoarse": "Touchez pour inspecter et sélectionner · dans le panneau, un toucher appliquerait le preset au calque actif",
+		"demoNote": "Démo web · la sélection est un état local · s'exécute dans le panneau After Effects"
+	},
+	"demoPresets": {
+		"fadeIn": {
+			"title": "Fondu entrant",
+			"description": "Fait passer l'opacité du calque de 0 à 100 sur les 12 premières images."
+		},
+		"popIn": {
+			"title": "Apparition pop",
+			"description": "Agrandit le calque avec un léger dépassement, puis le stabilise."
+		},
+		"slideIn": {
+			"title": "Glissement entrant",
+			"description": "Fait glisser le calque depuis hors écran avec un ease-out doux."
+		},
+		"jumpIn": {
+			"title": "Saut entrant",
+			"description": "Fait entrer le calque en arc avec un écrasement à l'atterrissage."
+		},
+		"spinIn": {
+			"title": "Rotation entrante",
+			"description": "Fait pivoter le calque d'un tour complet tout en le faisant apparaître en fondu."
+		},
+		"fadeOut": {
+			"title": "Fondu sortant",
+			"description": "Fait passer l'opacité du calque de 100 à 0 sur les 12 dernières images."
+		},
+		"popOut": {
+			"title": "Sortie pop",
+			"description": "Réduit le calque avec une sortie ease-in rapide."
+		},
+		"breathe": {
+			"title": "Boucle de respiration",
+			"description": "Boucle une pulsation de mise à l'échelle subtile pour un mouvement d'ambiance."
+		},
+		"yoyo": {
+			"title": "Boucle yoyo",
+			"description": "Boucle la position d'avant en arrière le long d'un axe."
+		},
+		"wobble": {
+			"title": "Pop et oscillation",
+			"description": "Dépassement de mise à l'échelle, puis oscillation jusqu'au repos."
+		},
+		"slideOut": {
+			"title": "Glissement sortant",
+			"description": "Fait glisser le calque hors écran avec un ease-in doux."
+		},
+		"spinOut": {
+			"title": "Rotation sortante",
+			"description": "Fait pivoter le calque d'un tour complet tout en le faisant disparaître en fondu."
+		}
+	},
+	"ui": {
+		"loadingSpinner": {
+			"label": "Chargement"
+		},
+		"searchField": {
+			"clearAria": "Effacer la recherche",
+			"clearTitle": "Effacer"
+		},
+		"regexEditor": {
+			"enterPattern": "Saisissez un motif.",
+			"invalidFlags": "Drapeaux invalides : {{flags}}",
+			"plainSource": "Source regex en clair",
+			"literalFormat": "Format regex littéral",
+			"testString": "Chaîne de test",
+			"sourcePlaceholder": "Source regex",
+			"flagsPlaceholder": "drapeaux",
+			"matches": "Correspondances",
+			"noMatch": "Aucune correspondance",
+			"literalSuffix": "· littéral /pattern/flags",
+			"sourceSuffix": "· source uniquement"
+		},
+		"listSelect": {
+			"placeholder": "Sélectionner…"
+		}
+	},
+	"metaDescription": "{{tagline}} Gratuit, open source, axé sur le local-first."
+}

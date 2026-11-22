@@ -4,6 +4,7 @@
  * Moves preset repository mutation out of OnboardingView into a dedicated service.
  */
 
+import { i18n } from "@/management/i18n/index";
 import type { Preset } from "@/management/preset/contract";
 import type { GroupCatalogEntry } from "@/management/preset/group/catalog";
 import { coercePersistedPresetIcon } from "@/management/preset/icon/normalize";
@@ -272,7 +273,7 @@ export const importOnboardingPresets = async (
 		const icon = coercePersistedPresetIcon("preset", undefined);
 		addedGroupCatalogEntries.push({
 			id: groupId,
-			title: name || "Group",
+			title: name || i18n.t("presets:group.fallbackTitle"),
 			presetIds: uniqueMembers,
 			icon,
 		});

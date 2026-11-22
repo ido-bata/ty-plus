@@ -94,6 +94,7 @@ const readLocalPresetCatalog = async (
 	try {
 		text = await readPresetsJson(win);
 	} catch (error) {
+		// i18n-exempt: internal diagnostic — not rendered as UI copy
 		throw new Error(
 			`append-preset-from-dialog-disk: readPresetsJson failed — ${
 				error instanceof Error ? error.message : String(error)
@@ -181,6 +182,7 @@ const resolvePresetListWithLocalFallback = async (input: {
 		local = await readLocalPresetCatalog(input.win);
 	} catch (error) {
 		if (error instanceof PresetCatalogParseError) {
+			// i18n-exempt: internal diagnostic — not rendered as UI copy
 			throw new Error(
 				`append-preset-from-dialog-disk: ${
 					cloudFailureReason === "presetRepository.list"
@@ -190,6 +192,7 @@ const resolvePresetListWithLocalFallback = async (input: {
 				{ cause: error },
 			);
 		}
+		// i18n-exempt: internal diagnostic — not rendered as UI copy
 		throw new Error(
 			`append-preset-from-dialog-disk: ${
 				cloudFailureReason === "presetRepository.list"
@@ -203,6 +206,7 @@ const resolvePresetListWithLocalFallback = async (input: {
 	}
 
 	if (local === null) {
+		// i18n-exempt: internal diagnostic — not rendered as UI copy
 		throw new Error(
 			`append-preset-from-dialog-disk: ${
 				cloudFailureReason === "presetRepository.list"

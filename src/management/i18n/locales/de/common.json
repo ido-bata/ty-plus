@@ -12,6 +12,9 @@
 		"edit": "Bearbeiten",
 		"close": "Schließen"
 	},
+	"dialogs": {
+		"unsavedChangesConfirm": "Ungesicherte Änderungen gehen verloren. Dialog schließen?"
+	},
 	"actions": {
 		"run": "Ausführen",
 		"duplicate": "Duplizieren",
@@ -179,6 +182,104 @@
 			"copyError": "Fehlerdetails kopieren",
 			"copied": "In die Zwischenablage kopiert",
 			"digest": "Fehler-ID"
+		}
+	},
+	"ui": {
+		"loadingSpinner": {
+			"label": "Wird geladen"
+		},
+		"searchField": {
+			"clearAria": "Suche löschen",
+			"clearTitle": "Löschen"
+		},
+		"regexEditor": {
+			"enterPattern": "Gib ein Muster ein.",
+			"invalidFlags": "Ungültige Flags: {{flags}}",
+			"plainSource": "Einfacher Regex-Quelltext",
+			"literalFormat": "Literales Regex-Format",
+			"testString": "Testzeichenfolge",
+			"sourcePlaceholder": "Regex-Quelltext",
+			"flagsPlaceholder": "Flags",
+			"matches": "Treffer",
+			"noMatch": "Kein Treffer",
+			"literalSuffix": "· literal /pattern/flags",
+			"sourceSuffix": "· nur Quelltext"
+		},
+		"listSelect": {
+			"placeholder": "Auswählen…"
+		}
+	},
+	"directoryBrowser": {
+		"refresh": "Aktualisieren",
+		"goUp": "Nach oben",
+		"open": "Öffnen",
+		"select": "Auswählen",
+		"deselect": "Auswahl aufheben",
+		"listView": "Listenansicht",
+		"iconView": "Symbolansicht",
+		"noFilesFound": "Keine Dateien gefunden",
+		"selectFileAria": "Datei {{name}} auswählen",
+		"selectFolderAria": "Ordner {{name}} auswählen"
+	},
+	"debugConsole": {
+		"title": "Konsole",
+		"clear": "Leeren",
+		"evaluateAria": "JavaScript auswerten",
+		"evaluatePlaceholder": "JavaScript auswerten…",
+		"rowContextHint": "Rechtsklicken zum Kopieren",
+		"filterLevelAria": "Konsolennachrichten filtern",
+		"filterSourceAria": "Konsolennachrichten nach Quelle filtern",
+		"filterScopeAria": "Konsolennachrichten nach Sitzungsbereich filtern",
+		"levels": {
+			"all": "Alle",
+			"log": "Protokoll",
+			"info": "Info",
+			"warn": "Warnung",
+			"error": "Fehler"
+		},
+		"sources": {
+			"all": "Alle Quellen",
+			"panel": "Panel",
+			"modeless": "Modellos",
+			"hostBridge": "Host-Bridge",
+			"online": "Online",
+			"preset": "Voreinstellung",
+			"opWorker": "Operations-Worker",
+			"workspace": "Arbeitsbereich",
+			"boot": "Start",
+			"debugConsole": "Debug-Konsole",
+			"console": "Konsole"
+		},
+		"scopes": {
+			"allHistory": "Gesamter Verlauf",
+			"thisSession": "Diese Sitzung"
+		},
+		"contextMenu": {
+			"copyMessage": "Nachricht kopieren",
+			"copyAllMessages": "Alle Nachrichten kopieren",
+			"clearConsole": "Konsole leeren",
+			"enableAutoScroll": "Auto-Scroll aktivieren",
+			"disableAutoScroll": "Auto-Scroll deaktivieren",
+			"itemActive": "{{level}} (aktiv)"
+		}
+	},
+	"errors": {
+		"hostContextUnavailable": "Host-Kontext nicht verfügbar",
+		"fileAccessUnavailable": "CEP Node-Dateizugriff ist in dieser Oberfläche nicht verfügbar.",
+		"fsApiUnavailable": "CEP Node fs-API ist in dieser Host-Laufzeit nicht verfügbar.",
+		"fileImportAeOnly": "Dateiimport ist derzeit nur in After Effects verfügbar.",
+		"initNotFound": "ty-plus-init.json nicht gefunden (kein App-Root). Das Onboarding muss vor jedem Schreibzugriff abgeschlossen sein.",
+		"initIncomplete": "ty-plus ist noch nicht initialisiert. Schreibzugriffe sind blockiert, bis ty-plus-init.json den Abschluss meldet.",
+		"initSupportRootBlank": "ty-plus-init.json ist als abgeschlossen markiert, aber supportRoot ist leer.",
+		"hostExecFailed": "Ty Plus: {{message}}",
+		"notify": {
+			"generic": "Ein Fehler ist aufgetreten",
+			"fsPermission": "Keine Berechtigung. Bitte prüfen Sie die Datei-/Ordnerberechtigungen.",
+			"fsNotFound": "Datei oder Ordner nicht gefunden. Möglicherweise wurde sie verschoben oder gelöscht.",
+			"fsCorrupted": "Datendatei ist beschädigt und wurde gesichert. Bitte versuchen Sie es erneut.",
+			"aeEvalFailed": "After-Effects-Befehl fehlgeschlagen. Versuchen Sie es erneut oder starten Sie AE neu.",
+			"aeNotAvailable": "After-Effects-Verbindung unterbrochen. Bitte starten Sie das Panel neu.",
+			"network": "Netzwerkfehler. Bitte prüfen Sie Ihre Verbindung."
 		}
 	}
 }

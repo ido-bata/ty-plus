@@ -1,35 +1,58 @@
 {
 	"widgets": {
 		"align": {
-			"alignLeft": "Align Left",
-			"alignCenterH": "Align Center Horizontal",
-			"alignRight": "Align Right",
-			"alignTop": "Align Top",
-			"alignCenterV": "Align Center Vertical",
-			"alignBottom": "Align Bottom"
+			"alignLeft": "左に整列",
+			"alignCenterH": "水平方向に中央揃え",
+			"alignRight": "右に整列",
+			"alignTop": "上に整列",
+			"alignCenterV": "垂直方向に中央揃え",
+			"alignBottom": "下に整列"
 		},
 		"layoutLock": {
-			"lock": "Lock Layout",
-			"unlock": "Unlock Layout"
+			"lock": "レイアウトロック",
+			"unlock": "レイアウトロック解除"
 		},
 		"projectInfo": {
-			"dimensions": "Dimensions",
-			"timing": "Timing",
-			"layers": "Layers"
+			"dimensions": "サイズ",
+			"timing": "タイミング",
+			"layers": "レイヤー"
 		}
 	},
 	"controlPanel": {
-		"expand": "Expand",
-		"collapse": "Collapse",
-		"position": "Position",
-		"orientation": "Orientation"
+		"expand": "展開",
+		"collapse": "折りたたみ",
+		"position": "位置",
+		"orientation": "方向",
+		"ariaLabel": "プリセット / ウィジェット",
+		"collapseExpand": "折りたたみ/展開",
+		"horizontal": "水平",
+		"vertical": "垂直",
+		"resetToDefaults": "デフォルトにリセット",
+		"buttons": {
+			"localPreset": "ローカルプリセット",
+			"groupPreset": "グループプリセット",
+			"animationPreset": "アニメーションプリセット",
+			"layerCompPreset": "レイヤー/Compプリセット",
+			"codePreset": "コードプリセット",
+			"addWidget": "ウィジェットを追加"
+		},
+		"positionLabels": {
+			"topLeft": "左上",
+			"topCenter": "上中央",
+			"topRight": "右上",
+			"bottomLeft": "左下",
+			"bottomCenter": "下中央",
+			"bottomRight": "右下",
+			"leftCenter": "左中央",
+			"rightCenter": "右中央"
+		}
 	},
 	"context": {
-		"lock": "Lock",
-		"unlock": "Unlock",
-		"addWidget": "Add Widget",
-		"deleteWidget": "Delete Widget",
-		"refresh": "Refresh"
+		"lock": "ロック",
+		"unlock": "ロック解除",
+		"addWidget": "ウィジェットを追加",
+		"deleteWidget": "ウィジェットを削除",
+		"refresh": "更新"
 	},
 	"widgetSearch": {
 		"placeholder": "プリセットを検索…"
@@ -41,5 +64,43 @@
 		"savingPaused": "ファイルが上書きされないよう保存は停止しています。ファイルを修復または復元してから再試行してください。",
 		"file": "ファイル: workspace-{{wsIndex}}.json",
 		"retry": "復元を再試行"
+	},
+	"statusBar": {
+		"undoTitle": "元に戻す (Ctrl+Z)",
+		"redoTitle": "やり直し (Ctrl+Y)",
+		"saveSnapshotTitle": "レイアウトスナップショットを保存",
+		"savedLayoutsTitle": "保存済みレイアウト ({{count}})",
+		"savedLayoutsTitleEmpty": "保存済みレイアウト（なし）",
+		"noSavedLayouts": "保存済みレイアウトはありません",
+		"restoreSnapshotTitle": "\"{{label}}\" を復元",
+		"presetLibraryTitle": "プリセットライブラリ（オンライン）",
+		"debugConsoleTitle": "デバッグコンソール (Ctrl+`)"
+	},
+	"gridTile": {
+		"widgetTitle": "ウィジェット",
+		"configLoadError": "設定を読み込めませんでした"
+	},
+	"debugProbe": {
+		"title": "ダイアログプローブ",
+		"message": "パネル -> ダイアログブリッジチェック"
+	},
+	"easingCurveColors": {
+		"linear": "リニア",
+		"hold": "ホールド",
+		"easeInGentle": "イーズイン",
+		"easeInSharp": "イーズイン（急）",
+		"easeOutGentle": "イーズアウト",
+		"easeOutSharp": "イーズアウト（急）",
+		"easeInOut": "イーズイン/アウト",
+		"overshoot": "オーバーシュート",
+		"bezier": "ベジェ"
+	},
+	"statusMessages": {
+		"presetAssetMissing": "プリセットアセットがディスク上に存在しません — 実行は無効です。",
+		"applyingAnchorPoint": "アンカーポイントを適用中: {{pos}}...",
+		"anchorPointRequested": "アンカーポイントが要求されました: {{pos}}",
+		"presetFailed": "プリセットが失敗しました: {{message}}",
+		"widgetAdded": "{{name}} を追加しました",
+		"layoutReset": "ワークスペースレイアウトがリセットされました。"
 	}
 }

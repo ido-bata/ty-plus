@@ -1,3 +1,4 @@
+import { i18n } from "@/management/i18n/index";
 import { sanitizeOnlineErrorMessage } from "@/management/online/catalog/sanitize-error";
 import type { CloudGateway, SyncStatus } from "@/management/online/contract";
 import type { Preset } from "@/management/preset/contract";
@@ -21,7 +22,7 @@ const createIdleStatus = (
 ): SyncStatus => ({
 	provider,
 	state: "idle",
-	label: "Cloud sync idle",
+	label: i18n.t("online:catalog.sync.idle"),
 	checkedAt,
 });
 
@@ -54,7 +55,7 @@ export const createCloudSyncService = (options: {
 				currentStatus = {
 					provider: options.gateway.provider,
 					state: "ready",
-					label: "Ty Plus OK",
+					label: i18n.t("online:catalog.sync.ok"),
 					checkedAt,
 				};
 
@@ -66,7 +67,7 @@ export const createCloudSyncService = (options: {
 				currentStatus = {
 					provider: options.gateway.provider,
 					state: "error",
-					label: "Cloud sync failed",
+					label: i18n.t("online:catalog.sync.failed"),
 					checkedAt,
 					errorMessage: sanitizeOnlineErrorMessage(
 						error instanceof Error ? error.message : String(error),

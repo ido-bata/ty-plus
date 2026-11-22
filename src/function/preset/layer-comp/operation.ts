@@ -8,14 +8,28 @@
  * Owns: src/function/preset/layer-comp/operation.ts
  */
 
+import { i18n } from "@/management/i18n/index";
 import { fileStemFromPath } from "@/shared/util/path";
 import { definePresetOperation } from "../operation-contract";
 
 definePresetOperation("plugin", async (host, preset) => {
 	const effectId = fileStemFromPath(preset.filePath).trim();
 	if (!effectId) {
-		throw new Error(`effectId is required for plugin: ${preset.filePath}`);
+		throw new Error(`effectId is required for plugin: ${preset.filePath}`); // i18n-exempt: internal diagnostic — not rendered as UI copy
 	}
-	await host.applyEffectByMatchName(effectId);
+	await host.applyEffectByMatchName(effectId, {
+		undoGroupName: i18n.t(
+			"widgets:directoryBrowser.actions.undoGroup.applyEffect",
+			{ defaultValue: "Ty Plus: Apply effect" },
+		),
+		messages: {
+			selectLayer: i18n.t(
+				"widgets:directoryBrowser.actions.errors.selectLayerForEffect",
+				{
+					defaultValue: "Select at least one layer before applying an effect",
+				},
+			),
+		},
+	});
 	return { action: "applyEffectByMatchName" };
 });

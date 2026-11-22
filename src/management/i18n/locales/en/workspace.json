@@ -22,7 +22,30 @@
 		"expand": "Expand",
 		"collapse": "Collapse",
 		"position": "Position",
-		"orientation": "Orientation"
+		"orientation": "Orientation",
+		"ariaLabel": "Presets / Widgets",
+		"collapseExpand": "Collapse/Expand",
+		"horizontal": "Horizontal",
+		"vertical": "Vertical",
+		"resetToDefaults": "Reset to Defaults",
+		"buttons": {
+			"localPreset": "Local Preset",
+			"groupPreset": "Group Preset",
+			"animationPreset": "Animation Preset",
+			"layerCompPreset": "Layer/Comp Preset",
+			"codePreset": "Code Preset",
+			"addWidget": "Add Widget"
+		},
+		"positionLabels": {
+			"topLeft": "Top Left",
+			"topCenter": "Top Center",
+			"topRight": "Top Right",
+			"bottomLeft": "Bottom Left",
+			"bottomCenter": "Bottom Center",
+			"bottomRight": "Bottom Right",
+			"leftCenter": "Left Center",
+			"rightCenter": "Right Center"
+		}
 	},
 	"context": {
 		"lock": "Lock",
@@ -41,5 +64,43 @@
 		"savingPaused": "Saving is paused so this file is not overwritten. Repair or restore the file, then retry.",
 		"file": "File: workspace-{{wsIndex}}.json",
 		"retry": "Retry restore"
+	},
+	"statusBar": {
+		"undoTitle": "Undo (Ctrl+Z)",
+		"redoTitle": "Redo (Ctrl+Y)",
+		"saveSnapshotTitle": "Save layout snapshot",
+		"savedLayoutsTitle": "Saved layouts ({{count}})",
+		"savedLayoutsTitleEmpty": "Saved layouts (none)",
+		"noSavedLayouts": "No saved layouts",
+		"restoreSnapshotTitle": "Restore \"{{label}}\"",
+		"presetLibraryTitle": "Preset Library (Online)",
+		"debugConsoleTitle": "Debug console (Ctrl+`)"
+	},
+	"gridTile": {
+		"widgetTitle": "Widget",
+		"configLoadError": "Configuration could not be loaded"
+	},
+	"debugProbe": {
+		"title": "Dialog Probe",
+		"message": "Panel -> Dialog bridge check"
+	},
+	"easingCurveColors": {
+		"linear": "Linear",
+		"hold": "Hold",
+		"easeInGentle": "Ease In",
+		"easeInSharp": "In (Sharp)",
+		"easeOutGentle": "Ease Out",
+		"easeOutSharp": "Out (Sharp)",
+		"easeInOut": "In-Out",
+		"overshoot": "Overshoot",
+		"bezier": "Bezier"
+	},
+	"statusMessages": {
+		"presetAssetMissing": "Preset asset is missing on disk — run is disabled.",
+		"applyingAnchorPoint": "Applying anchor point: {{pos}}...",
+		"anchorPointRequested": "Anchor point requested: {{pos}}",
+		"presetFailed": "Preset failed: {{message}}",
+		"widgetAdded": "Added {{name}}",
+		"layoutReset": "Workspace layout was reset."
 	}
 }

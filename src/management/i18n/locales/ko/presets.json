@@ -1,47 +1,55 @@
 {
 	"codePreset": {
-		"codeType": "Code type",
+		"codeType": "코드 유형",
 		"editor": {
 			"expression": "Expression",
-			"script": "Script code (.jsx)"
+			"script": "스크립트 코드 (.jsx)"
 		},
-		"saveLocation": "Save location",
-		"savePreview": "Save preview",
+		"saveLocation": "저장 위치",
+		"savePreview": "미리보기 저장",
 		"status": {
-			"fileExists": "File already exists — will be overwritten",
-			"success": "Preset saved successfully!"
+			"fileExists": "파일이 이미 있습니다 — 덮어씁니다",
+			"success": "프리셋이 저장되었습니다!"
 		},
 		"type": {
 			"expression": "Expression",
-			"script": "Script"
-		}
+			"script": "스크립트"
+		},
+		"iconText": "코드",
+		"alertSelectComp": "Composition을 선택하세요.",
+		"alertSelectProperty": "Expression을 적용할 속성을 하나 이상 선택하세요.",
+		"alertNoExpressionProps": "선택한 속성은 Expression을 지원하지 않습니다.",
+		"alertApplyError": "Expression 적용 오류:",
+		"defaultDescription": "코드 프리셋: {{name}}",
+		"undoGroupName": "Ty Plus: 표현식 적용"
 	},
 	"common": {
 		"browseFolder": "폴더 찾아보기",
 		"copyPath": "경로 복사",
-		"selectFile": "파일 선택"
+		"selectFile": "파일 선택",
+		"systemDefault": "시스템 기본값"
 	},
 	"layerCompPreset": {
 		"desc": {
-			"comp": "Open the composition you want to save. Project must be saved first.",
-			"layer": "Select the layers you want to save. Project must be saved first."
+			"comp": "저장할 컴프를 여세요. 먼저 프로젝트를 저장해야 합니다.",
+			"layer": "저장할 레이어를 선택하세요. 먼저 프로젝트를 저장해야 합니다."
 		},
 		"hint": {
-			"saveButton": "Press \"Create\" at the bottom of the dialog to save."
+			"saveButton": "저장하려면 대화상자 하단의 \"생성\"을 누르세요."
 		},
-		"savePreview": "Save preview",
+		"savePreview": "미리보기 저장",
 		"step1": {
-			"title": "Preset type"
+			"title": "프리셋 유형"
 		},
 		"step2": {
-			"title": "Prepare in After Effects"
+			"title": "After Effects에서 준비"
 		},
 		"step3": {
-			"title": "Save location"
+			"title": "저장 위치"
 		},
 		"type": {
 			"comp": "Composition",
-			"layer": "Layer"
+			"layer": "레이어"
 		}
 	},
 	"search": {
@@ -91,7 +99,8 @@
 				"saveFolder": "저장 폴더",
 				"path": "애니메이션 프리셋 경로",
 				"pathPlaceholder": "선택적 기존 .ffx 경로"
-			}
+			},
+			"defaultDescription": "애니메이션 프리셋: {{name}}"
 		},
 		"footage": {
 			"title": "푸트리지 프리셋",
@@ -100,12 +109,14 @@
 			"fields": {
 				"path": "푸트에이지 경로",
 				"mode": "가져오기 모드"
-			}
+			},
+			"iconText": "미디어"
 		},
 		"layerComp": {
 			"title": "레이어 / 컴프 프리셋",
 			"lead": "레이어 및 컴프 작업(변환, 복제, 프리컴포즈). 저장된 스크립트 파일은 After Effects에서 실행됩니다.",
-			"defaultName": "레이어/컴프 프리셋"
+			"defaultName": "레이어/컴프 프리셋",
+			"defaultDescription": "레이어/컴포지션 프리셋: {{name}}"
 		},
 		"import": {
 			"title": "가져오기 프리셋",
@@ -114,7 +125,9 @@
 			"fields": {
 				"path": "가져오기 경로",
 				"strategy": "전략"
-			}
+			},
+			"iconText": "가져오기",
+			"pathPlaceholder": "C:\\path\\asset"
 		},
 		"code": {
 			"title": "코드 프리셋",
@@ -122,10 +135,10 @@
 			"extra": "저장된 스크립트 파일은 After Effects에서 실행됩니다.",
 			"defaultName": "코드 프리셋",
 			"editor": {
-				"format": "Format Document",
-				"formatTooltip": "Format the script body",
-				"diagnosticCount": "{{count}} problem",
-				"diagnosticCount_other": "{{count}} problems"
+				"format": "문서 서식 지정",
+				"formatTooltip": "스크립트 본문 서식 지정",
+				"diagnosticCount": "{{count}}개 문제",
+				"diagnosticCount_other": "{{count}}개 문제"
 			}
 		},
 		"easing": {
@@ -166,32 +179,50 @@
 			"title": "프리셋 만들기",
 			"lead": "재사용 가능한 메타데이터로 로컬 프리셋을 만듭니다.",
 			"defaultName": "로컬 프리셋"
+		},
+		"savePathRequired": "먼저 After Effects 기본 대화 상자에서 애니메이션 프리셋을 저장하세요.",
+		"easingScript": {
+			"selectComposition": "컴포지션을 선택하세요.",
+			"selectProperties": "이징을 적용할 속성을 하나 이상 선택하세요.",
+			"notEnoughKeyframes": "선택한 속성에 키프레임이 충분하지 않습니다.",
+			"applyFailedPrefix": "이징 적용 오류: ",
+			"undoGroupName": "ty-plus: 이징 프리셋 적용"
+		},
+		"layerCompScript": {
+			"undoGroupName": "Ty Plus: 레이어/컴포지션 프리셋 적용",
+			"saveProjectFirst": "이 프리셋을 만들기 전에 After Effects 프로젝트를 저장하세요",
+			"sourceProjectNotFoundPrefix": "소스 프로젝트를 찾을 수 없음: "
 		}
 	},
 	"animationPreset": {
 		"step1": {
-			"title": "Select in After Effects",
-			"desc": "Select properties or layers you want to save as preset"
+			"title": "After Effects에서 선택",
+			"desc": "프리셋으로 저장할 속성 또는 레이어를 선택하세요"
 		},
 		"step2": {
-			"title": "Save to this folder"
+			"title": "이 폴더에 저장"
 		},
 		"step3": {
-			"button": "Save Animation Preset",
-			"detecting": "Detecting..."
+			"button": "애니메이션 프리셋 저장",
+			"detecting": "감지 중..."
 		},
 		"status": {
-			"success": "Detected!",
-			"noSelection": "No selection",
-			"noSelectionHint": "Select properties or layers in AE first",
-			"timeout": "Scan timeout",
-			"timeoutHint": "Choose a smaller folder",
-			"error": "Not detected",
-			"errorHint": "Save to the folder above"
+			"success": "감지됨!",
+			"noSelection": "선택 없음",
+			"noSelectionHint": "먼저 After Effects에서 속성 또는 레이어를 선택하세요",
+			"timeout": "스캔 시간 초과",
+			"timeoutHint": "더 작은 폴더를 선택하세요",
+			"error": "감지되지 않음",
+			"errorHint": "위 폴더에 저장하세요"
 		},
 		"path": {
-			"reset": "Reset to default",
-			"notConfigured": "Not configured"
+			"reset": "기본값으로 재설정",
+			"notConfigured": "구성되지 않음"
+		},
+		"iconText": "애니",
+		"undoGroupName": "Ty Plus: 애니메이션 프리셋 저장",
+		"errors": {
+			"selectLayerToSave": "애니메이션 프리셋을 저장하기 전에 레이어를 하나 이상 선택하세요"
 		}
 	},
 	"edit": {
@@ -204,7 +235,13 @@
 			"saved": "저장됨",
 			"deleted": "삭제됨",
 			"saveFailed": "저장 실패: {{message}}",
-			"deleteFailed": "삭제 실패: {{message}}"
+			"deleteFailed": "삭제 실패: {{message}}",
+			"notFound": "프리셋을 찾을 수 없습니다",
+			"loadFailed": "로드 실패",
+			"saveFailedFallback": "저장 실패",
+			"deleteFailedFallback": "삭제 실패",
+			"saving": "저장 중…",
+			"deleting": "삭제 중…"
 		},
 		"fields": {
 			"presetName": "프리셋 이름",
@@ -223,7 +260,18 @@
 			"script": "스크립트 프리셋",
 			"plugin": "플러그인 프리셋",
 			"footage": "푸트에이지 프리셋"
-		}
+		},
+		"memberLoading": "로드 중…",
+		"memberNotFound": "멤버를 찾을 수 없음: {{id}}",
+		"memberRun": "{{name}} 실행",
+		"memberEdit": "{{name}} 편집",
+		"memberDelete": "{{name}} 삭제",
+		"memberPresets": "멤버 프리셋({{count}})",
+		"noMemberPresets": "멤버 프리셋 없음",
+		"selectJsxFile": "JSX 파일 선택",
+		"browseLoadFile": "파일 로드",
+		"loadFromFilePlaceholder": "파일에서 로드…",
+		"code": "코드"
 	},
 	"group": {
 		"title": "프리셋 그룹 만들기",
@@ -231,7 +279,182 @@
 		"defaultName": "그룹 프리셋",
 		"fields": {
 			"groupName": "그룹 이름",
-			"groupNamePlaceholder": "그룹 이름 입력"
+			"groupNamePlaceholder": "그룹 이름 입력",
+			"folderPaths": "폴더 경로",
+			"folderPathsPlaceholder": "줄당 폴더 경로 하나",
+			"presetIds": "프리셋 ID",
+			"presetIdsPlaceholder": "줄당 프리셋 ID 하나",
+			"recursiveScan": "폴더 재귀 스캔"
+		},
+		"iconText": "그룹",
+		"browseMembers": "추가할 파일 및 폴더 찾아보기",
+		"addPath": "경로 추가",
+		"detectCandidates": "후보 감지",
+		"browseFolder": "폴더 찾아보기",
+		"removePath": "경로 제거",
+		"iconRules": "아이콘 규칙",
+		"baseIcon": {
+			"heading": "기본 아이콘(모든 프리셋의 기본값)",
+			"label": "기본 아이콘"
+		},
+		"rules": "규칙",
+		"addRule": "규칙 추가",
+		"groupIcon": "그룹 아이콘",
+		"advancedSettings": "고급 설정",
+		"scanDepth": "폴더 스캔 깊이",
+		"scanDepthFlat": "직접",
+		"scanDepthRecursive": "하위 항목 포함",
+		"synth": {
+			"noMembers": "멤버 프리셋이 없습니다.",
+			"memberPresets_one": "멤버 프리셋 {{count}}개.",
+			"memberPresets_other": "멤버 프리셋 {{count}}개.",
+			"description": "그룹 컨테이너. {{memberLine}}"
+		},
+		"rule": {
+			"filterName": "이름",
+			"filterPath": "경로",
+			"filterPresetId": "프리셋 ID",
+			"filterPresetType": "프리셋 유형",
+			"removeRule": "규칙 제거",
+			"nameRegexPlaceholder": "이름 정규식(예: ^Header.*$)",
+			"namePatternPlaceholder": "이름 패턴",
+			"matchContains": "포함",
+			"matchStarts": "시작",
+			"matchEnds": "끝",
+			"matchRegex": "정규식",
+			"presetTypePreset": "프리셋",
+			"presetTypeScript": "스크립트",
+			"presetTypePlugin": "플러그인",
+			"presetTypeFootage": "푸티지",
+			"noDirectories": "디렉터리가 감지되지 않았습니다",
+			"noPresets": "프리셋이 감지되지 않았습니다",
+			"iconLabel": "규칙 아이콘"
+		},
+		"fallbackTitle": "그룹"
+	},
+	"catalogAdd": {
+		"dialogTitle": "경로에서 카탈로그 프리셋 추가",
+		"name": "이름",
+		"namePlaceholder": "이름 입력…",
+		"filePath": "파일 경로",
+		"selectFile": "파일 선택",
+		"browseFile": "파일 찾아보기",
+		"icon": "아이콘",
+		"creating": "생성 중…",
+		"pathPlaceholderCurrentFolder": "현재 폴더 표시 중 — 파일을 선택하거나 찾아보세요",
+		"pathPlaceholderSelectFile": "파일 선택…",
+		"browser": {
+			"cepNodeRequired": "파일 브라우저에는 CEP Node가 필요합니다",
+			"noPresetsFolder": "프리셋 폴더가 구성되지 않았습니다",
+			"noScriptsFolder": "스크립트 폴더가 구성되지 않았습니다",
+			"noPluginsFolder": "플러그인 폴더가 구성되지 않았습니다",
+			"noFiles": "파일을 찾을 수 없습니다"
 		}
+	},
+	"iconEditor": {
+		"tabs": {
+			"text": "텍스트",
+			"emoji": "이모지",
+			"image": "이미지",
+			"canvas": "캔버스"
+		},
+		"emojiPicker": "이모지 선택기",
+		"selectImage": "아이콘 이미지 선택",
+		"browseImage": "아이콘 이미지 찾아보기",
+		"imagePlaceholder": "이미지 경로 또는 URL",
+		"iconTextAria": "아이콘 텍스트",
+		"textPlaceholder": "2~6자",
+		"previewAria": "아이콘 미리보기"
+	},
+	"catalogBrowser": {
+		"loading": "로드 중",
+		"searchPlaceholder": "이름, 유형 또는 경로로 검색…",
+		"reload": "카탈로그 다시 로드"
+	},
+	"listDialog": {
+		"workspacePlaced": "작업 공간: {{tags}}",
+		"workspaceGroupPlaced": "작업 공간: {{tags}}(그룹 \"{{label}}\")",
+		"workspaceNotPlaced": "작업 공간: 배치되지 않음",
+		"runPresetAria": "프리셋 실행",
+		"editPresetAria": "프리셋 편집",
+		"deletePresetAria": "프리셋 삭제",
+		"editGroup": "그룹 편집",
+		"deleteGroup": "그룹 삭제",
+		"visibleItems_one": "항목 {{count}}개",
+		"visibleItems_other": "항목 {{count}}개",
+		"filteredSuffix": " · 필터링됨",
+		"collapseGroup": "그룹 접기",
+		"expandGroup": "그룹 펼치기",
+		"returnToAllPresets": "모든 프리셋으로 돌아가기",
+		"leaveGroupTitle": "그룹 \"{{name}}\"을(를) 나가 목록으로 돌아가기",
+		"returnToListTitle": "목록으로 돌아가기",
+		"allPresets": "모든 프리셋",
+		"runPresetNamed": "{{name}} 실행",
+		"loadFailedTitle": "로컬 카탈로그를 로드하지 못했습니다",
+		"tryAgain": "다시 시도",
+		"loadingCatalog": "로컬 카탈로그 로드 중…",
+		"emptyCatalog": "아직 로컬에 저장된 프리셋이 없습니다",
+		"noMatches": "일치하는 프리셋이 없습니다",
+		"cloudOffline": "클라우드 오프라인",
+		"cloudDegradedDetail": "{{message}} — 로컬 카탈로그만 표시합니다.",
+		"cloudOfflineDetail": "이 세션에서는 클라우드 기능이 활성화되지 않았습니다 — 로컬 카탈로그만 표시합니다.",
+		"groupsUnavailable": "그룹을 사용할 수 없습니다",
+		"groupsErrorDetail": "{{error}} — 프리셋이 그룹화되지 않은 상태로 나열됩니다.",
+		"title": "프리셋 목록",
+		"gridResizeHint": "Ctrl을 누른 채 스크롤하면 아이콘 그리드 크기를 조정할 수 있습니다",
+		"openGroupAria": "그룹 {{title}} 열기",
+		"openGroupHint": "{{title}}(두 번 클릭하여 열기)"
+	},
+	"codeEditor": {
+		"snippets": {
+			"ifBlock": "if 블록",
+			"elseBlock": "else 블록",
+			"forLoop": "for 루프",
+			"whileLoop": "while 루프",
+			"function": "함수",
+			"tryCatch": "try / catch",
+			"extendscriptLog": "ExtendScript 로그"
+		},
+		"resizeAria": "코드 편집기 크기 조정"
+	},
+	"glyph": {
+		"loadingPresetIcon": "프리셋 아이콘 로드 중"
+	},
+	"assetWrite": {
+		"pathNotAbsolute": "프리셋 에셋 경로가 절대 경로가 아닙니다: {{path}}",
+		"fsUnavailable": "프리셋 에셋 쓰기를 사용할 수 없습니다: 이 창에서는 CEP Node 파일 시스템에 접근할 수 없습니다.",
+		"writeFailed": "프리셋 에셋 쓰기 실패: {{error}}",
+		"verificationMissing": "쓰기 후 프리셋 에셋이 없습니다: {{path}}",
+		"verificationMismatch": "쓰기 후 프리셋 에셋 내용이 일치하지 않습니다: {{path}}",
+		"elevationUnavailable": "권한으로 인해 프리셋 에셋 쓰기가 거부되었고 이 호스트에서는 권한 상승 메커니즘을 사용할 수 없습니다: {{path}} ({{detail}})",
+		"elevationCancelled": "{{path}}에 대한 관리자 권한이 거부되었습니다. 프리셋 에셋이 저장되지 않았습니다.",
+		"writeDenied": "권한으로 인해 프리셋 에셋 쓰기가 거부되었습니다: {{path}}",
+		"verificationMissingElevated": "권한 상승 쓰기 후 프리셋 에셋이 없습니다: {{path}}",
+		"verificationMismatchElevated": "권한 상승 쓰기 후 프리셋 에셋 내용이 일치하지 않습니다: {{path}}",
+		"dirPathNotAbsolute": "프리셋 에셋 디렉터리가 절대 경로가 아닙니다: {{path}}",
+		"dirFsUnavailable": "프리셋 에셋 디렉터리 생성을 사용할 수 없습니다: 이 창에서는 CEP Node 파일 시스템에 접근할 수 없습니다.",
+		"dirCreateFailed": "프리셋 에셋 디렉터리를 만들 수 없습니다: {{error}}",
+		"dirElevationUnavailable": "권한으로 인해 프리셋 에셋 디렉터리 생성이 거부되었고 이 호스트에서는 권한 상승 메커니즘을 사용할 수 없습니다: {{path}}",
+		"dirElevationCancelled": "{{path}}에 대한 관리자 권한이 거부되었습니다. 프리셋 에셋 디렉터리가 생성되지 않았습니다.",
+		"dirMissingAfterElevated": "권한 상승 생성 후 프리셋 에셋 디렉터리가 없습니다: {{path}}",
+		"dirDenied": "권한으로 인해 프리셋 에셋 디렉터리 생성이 거부되었습니다: {{path}}",
+		"dirMissingAfterCreate": "생성 후 프리셋 에셋 디렉터리가 없습니다: {{path}}",
+		"exitCodeSuffix": " (종료 코드 {{code}})",
+		"elevatedErrorWithDetail": "권한 상승 쓰기에서 오류가 보고되었습니다{{exitNote}}: {{detail}}",
+		"elevatedError": "권한 상승 쓰기에서 오류가 보고되었습니다{{exitNote}}"
+	},
+	"folderGroup": {
+		"noFolderPaths": "폴더 경로를 하나 이상 입력하세요.",
+		"noPresetFiles": "폴더에서 프리셋 파일(.ffx)을 찾을 수 없습니다.",
+		"groupRowFailed": "그룹 행 생성에 실패했습니다.",
+		"savedStatus": "그룹 저장됨: {{id}}(멤버: {{members}}, 새 프리셋: {{added}})",
+		"presetIdsNotFound": "카탈로그에서 프리셋 ID를 찾을 수 없습니다: {{ids}}",
+		"savedStatusManual": "그룹 저장됨({{total}}개 항목): {{id}}",
+		"scanRequiresCepNode": "폴더 스캔에는 CEP Node 파일 브라우저가 필요합니다. 프리셋 ID를 직접 입력하거나 CEP Node를 활성화하세요."
+	},
+	"deleteConfirm": {
+		"preset": "프리셋 \"{{title}}\"을(를) 삭제하시겠습니까?\n\n이 작업은 되돌릴 수 없습니다.",
+		"group": "그룹 \"{{title}}\"을(를) 삭제하시겠습니까?\n\n이 작업은 되돌릴 수 없습니다.",
+		"untitled": "(제목 없음)"
 	}
 }

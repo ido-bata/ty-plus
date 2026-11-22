@@ -39,6 +39,7 @@ export const createCompositionRuntimeDispatcher = (
 				case DownloadMethod:
 					return composition.downloadPreset(payload as DownloadRequestDTO);
 				default:
+					// i18n-exempt: internal diagnostic — not rendered as UI copy
 					throw new Error(
 						`unsupported online method: ${String(method.name ?? method)}`,
 					);

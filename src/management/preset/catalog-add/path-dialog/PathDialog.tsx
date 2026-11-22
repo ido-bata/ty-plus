@@ -9,6 +9,7 @@ import {
 } from "react";
 import { DialogShell } from "@/management/dialog";
 import { useDialogClose } from "@/management/dialog/useClose";
+import { i18n } from "@/management/i18n/index";
 import { createPresetFromFile } from "@/management/preset/authoring/request";
 import { ArchiveDetailsSection } from "@/management/preset/catalog-add/ArchiveDetailsSection";
 import {
@@ -171,16 +172,16 @@ function BrowserContent(props: {
 		<div className={browserContainerClass}>
 			{!cepBrowser ? (
 				<div className={browserEmptyClass}>
-					<span>File browser requires CEP Node</span>
+					<span>{i18n.t("presets:catalogAdd.browser.cepNodeRequired")}</span>
 				</div>
 			) : emptyConfigured ? (
 				<div className={browserEmptyClass}>
 					<span>
 						{activeTab === "presets"
-							? "No presets folder configured"
+							? i18n.t("presets:catalogAdd.browser.noPresetsFolder")
 							: activeTab === "scripts"
-								? "No scripts folder configured"
-								: "No plugins folder configured"}
+								? i18n.t("presets:catalogAdd.browser.noScriptsFolder")
+								: i18n.t("presets:catalogAdd.browser.noPluginsFolder")}
 					</span>
 				</div>
 			) : (
@@ -199,9 +200,9 @@ function BrowserContent(props: {
 						folders: 0,
 					}}
 					showSelectedSummary={Boolean(selectedPath.trim())}
-					loadingLabel="Loading..."
-					emptyLabel="No files found"
-					upLabel="Go up"
+					loadingLabel={i18n.t("widgets:folderDirectoryPicker.loading")}
+					emptyLabel={i18n.t("presets:catalogAdd.browser.noFiles")}
+					upLabel={i18n.t("widgets:folderDirectoryPicker.goUp")}
 				/>
 			)}
 		</div>
@@ -547,7 +548,7 @@ export function PathDialog(): JSX.Element {
 
 	return (
 		<DialogShell
-			title="Add catalog preset from path"
+			title={i18n.t("presets:catalogAdd.dialogTitle")}
 			surfaceId="dialog-preset-add"
 			modifier="wsd-root--preset-tool"
 			contentClassName={pathDialogContentClass}
@@ -578,8 +579,8 @@ export function PathDialog(): JSX.Element {
 						browseHint={browseHint}
 						placeholder={
 							currentPath.trim()
-								? "Current folder shown — pick a file or browse"
-								: "Select a file..."
+								? i18n.t("presets:catalogAdd.pathPlaceholderCurrentFolder")
+								: i18n.t("presets:catalogAdd.pathPlaceholderSelectFile")
 						}
 					/>
 

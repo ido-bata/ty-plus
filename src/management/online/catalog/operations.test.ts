@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+import { i18n } from "@/management/i18n/index";
 import type {
 	PresetDownloadRequest,
 	PresetDownloadResult,
@@ -258,7 +259,9 @@ describe("downloadAndInstallPreset (runtime install)", () => {
 				"https://cdn.example.com/thumbs/MyPreset.png",
 			);
 			expect(stored?.description).toBe(
-				"[Downloaded from catalog] cloud description",
+				i18n.t("online:catalog.downloadedDescription", {
+					description: "cloud description",
+				}),
 			);
 			// NET-010: the preset body is downloaded inside the Rust runtime.
 			expect(fetcher).not.toHaveBeenCalled();
@@ -291,7 +294,7 @@ describe("downloadAndInstallPreset (runtime install)", () => {
 		const harness = setupDataServices();
 		delete (harness.gateway as { downloadPreset?: unknown }).downloadPreset;
 		await expect(downloadAndInstallPreset(win, cloudPresetId)).rejects.toThrow(
-			/Runtime download is unavailable/,
+			i18n.t("online:catalog.downloadUnavailable"),
 		);
 	});
 });

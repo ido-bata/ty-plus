@@ -158,7 +158,7 @@ const TEMPLATE = `(function(){
     var centerX = (minLeft + maxRight) / 2;
     var centerY = (minTop + maxBottom) / 2;
 
-    app.beginUndoGroup("ty-plus align");
+    app.beginUndoGroup(__UNDO_GROUP__);
     try {
       if (ACTION === "distribute-h" || ACTION === "distribute-v") {
         var distribute = makeIndexed(bounds);
@@ -268,7 +268,9 @@ export const buildScriptFromTemplate = (
 	action: string,
 	compTarget: boolean,
 	keyTarget: boolean,
+	undoGroupName = "ty-plus align",
 ): string =>
 	TEMPLATE.replace("__ACTION__", action)
 		.replace("__COMP_TARGET__", compTarget ? "true" : "false")
-		.replace("__KEY_TARGET__", keyTarget ? "true" : "false");
+		.replace("__KEY_TARGET__", keyTarget ? "true" : "false")
+		.replace("__UNDO_GROUP__", () => JSON.stringify(undoGroupName));

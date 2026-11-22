@@ -20,10 +20,11 @@ const isTargetId = (v: string): v is TargetId =>
 export const buildLayersScript = (
 	action: string,
 	target: TargetId,
+	undoGroupName?: string,
 ): string | null => {
 	if (!isAction(action)) return null;
 	if (!isTargetId(target)) return null;
 	const compTarget = target === "comp";
 	const keyTarget = target === "key-object";
-	return buildScriptFromTemplate(action, compTarget, keyTarget);
+	return buildScriptFromTemplate(action, compTarget, keyTarget, undoGroupName);
 };

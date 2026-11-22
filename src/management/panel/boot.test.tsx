@@ -48,6 +48,7 @@ vi.mock("../debug/console/interceptor", () => ({
 
 vi.mock("../i18n", () => ({
 	initializeI18n: vi.fn().mockResolvedValue(undefined),
+	i18n: { t: (key: string) => key },
 }));
 
 vi.mock("../workspace/onboarding/layout-reload-bridge", () => ({

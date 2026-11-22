@@ -1,47 +1,55 @@
 {
 	"codePreset": {
-		"codeType": "Code type",
+		"codeType": "Tipo de código",
 		"editor": {
 			"expression": "Expression",
-			"script": "Script code (.jsx)"
+			"script": "Código de script (.jsx)"
 		},
-		"saveLocation": "Save location",
-		"savePreview": "Save preview",
+		"saveLocation": "Ubicación de guardado",
+		"savePreview": "Vista previa de guardado",
 		"status": {
-			"fileExists": "File already exists — will be overwritten",
-			"success": "Preset saved successfully!"
+			"fileExists": "El archivo ya existe — se sobrescribirá",
+			"success": "¡Preset guardado correctamente!"
 		},
 		"type": {
 			"expression": "Expression",
 			"script": "Script"
-		}
+		},
+		"iconText": "CODE",
+		"alertSelectComp": "Selecciona una Composition.",
+		"alertSelectProperty": "Selecciona al menos una propiedad para aplicar la Expression.",
+		"alertNoExpressionProps": "Las propiedades seleccionadas no aceptan Expression.",
+		"alertApplyError": "Error al aplicar la Expression:",
+		"defaultDescription": "Preajuste de código: {{name}}",
+		"undoGroupName": "Ty Plus: Aplicar expresión"
 	},
 	"common": {
 		"browseFolder": "Examinar carpeta",
 		"copyPath": "Copiar ruta",
-		"selectFile": "Seleccionar archivo"
+		"selectFile": "Seleccionar archivo",
+		"systemDefault": "Valor predeterminado del sistema"
 	},
 	"layerCompPreset": {
 		"desc": {
-			"comp": "Open the composition you want to save. Project must be saved first.",
-			"layer": "Select the layers you want to save. Project must be saved first."
+			"comp": "Abre la composición que quieres guardar. El proyecto debe estar guardado primero.",
+			"layer": "Selecciona las capas que quieres guardar. El proyecto debe estar guardado primero."
 		},
 		"hint": {
-			"saveButton": "Press \"Create\" at the bottom of the dialog to save."
+			"saveButton": "Pulsa \"Crear\" en la parte inferior del diálogo para guardar."
 		},
-		"savePreview": "Save preview",
+		"savePreview": "Vista previa de guardado",
 		"step1": {
-			"title": "Preset type"
+			"title": "Tipo de preset"
 		},
 		"step2": {
-			"title": "Prepare in After Effects"
+			"title": "Prepara en After Effects"
 		},
 		"step3": {
-			"title": "Save location"
+			"title": "Ubicación de guardado"
 		},
 		"type": {
 			"comp": "Composition",
-			"layer": "Layer"
+			"layer": "Capa"
 		}
 	},
 	"search": {
@@ -91,7 +99,8 @@
 				"saveFolder": "Carpeta de guardado",
 				"path": "Ruta del preset de animación",
 				"pathPlaceholder": "Ruta .ffx existente opcional"
-			}
+			},
+			"defaultDescription": "Preajuste de animación: {{name}}"
 		},
 		"footage": {
 			"title": "Preajuste de metraje",
@@ -100,12 +109,14 @@
 			"fields": {
 				"path": "Ruta del footage",
 				"mode": "Modo de importación"
-			}
+			},
+			"iconText": "MEDIA"
 		},
 		"layerComp": {
 			"title": "Preajuste de capa/comp",
 			"lead": "Operaciones de capa y comp (transformar, duplicar, precomponer). Los archivos de script guardados se ejecutan en After Effects.",
-			"defaultName": "Preajuste de capa/comp"
+			"defaultName": "Preajuste de capa/comp",
+			"defaultDescription": "Preajuste de capa/composición: {{name}}"
 		},
 		"import": {
 			"title": "Preajuste de importación",
@@ -114,7 +125,9 @@
 			"fields": {
 				"path": "Ruta de importación",
 				"strategy": "Estrategia"
-			}
+			},
+			"iconText": "IMPORTAR",
+			"pathPlaceholder": "C:\\path\\asset"
 		},
 		"code": {
 			"title": "Preajuste de código",
@@ -122,10 +135,12 @@
 			"extra": "Los archivos de script guardados se ejecutan en After Effects.",
 			"defaultName": "Preajuste de código",
 			"editor": {
-				"format": "Format Document",
-				"formatTooltip": "Format the script body",
-				"diagnosticCount": "{{count}} problem",
-				"diagnosticCount_other": "{{count}} problems"
+				"format": "Formatear documento",
+				"formatTooltip": "Formatear el cuerpo del script",
+				"diagnosticCount": "{{count}} problema",
+				"diagnosticCount_one": "{{count}} problema",
+				"diagnosticCount_many": "{{count}} problemas",
+				"diagnosticCount_other": "{{count}} problemas"
 			}
 		},
 		"easing": {
@@ -166,32 +181,50 @@
 			"title": "Crear preset",
 			"lead": "Crea un preset local a partir de metadatos reutilizables.",
 			"defaultName": "Preset local"
+		},
+		"savePathRequired": "Guarda primero el preajuste de animación con el cuadro de diálogo nativo de After Effects.",
+		"easingScript": {
+			"selectComposition": "Seleccione una composición.",
+			"selectProperties": "Seleccione al menos una propiedad para aplicar el easing.",
+			"notEnoughKeyframes": "Las propiedades seleccionadas no tienen suficientes fotogramas clave.",
+			"applyFailedPrefix": "Error al aplicar el easing: ",
+			"undoGroupName": "ty-plus: aplicar preajuste de easing"
+		},
+		"layerCompScript": {
+			"undoGroupName": "Ty Plus: Aplicar preajuste de capa/composición",
+			"saveProjectFirst": "Guarda el proyecto de After Effects antes de crear este preajuste",
+			"sourceProjectNotFoundPrefix": "Proyecto de origen no encontrado: "
 		}
 	},
 	"animationPreset": {
 		"step1": {
-			"title": "Select in After Effects",
-			"desc": "Select properties or layers you want to save as preset"
+			"title": "Seleccionar en After Effects",
+			"desc": "Selecciona propiedades o capas que quieras guardar como preset"
 		},
 		"step2": {
-			"title": "Save to this folder"
+			"title": "Guardar en esta carpeta"
 		},
 		"step3": {
-			"button": "Save Animation Preset",
-			"detecting": "Detecting..."
+			"button": "Guardar preset de animación",
+			"detecting": "Detectando..."
 		},
 		"status": {
-			"success": "Detected!",
-			"noSelection": "No selection",
-			"noSelectionHint": "Select properties or layers in AE first",
-			"timeout": "Scan timeout",
-			"timeoutHint": "Choose a smaller folder",
-			"error": "Not detected",
-			"errorHint": "Save to the folder above"
+			"success": "¡Detectado!",
+			"noSelection": "Sin selección",
+			"noSelectionHint": "Selecciona primero propiedades o capas en AE",
+			"timeout": "Tiempo de espera de escaneo",
+			"timeoutHint": "Elige una carpeta más pequeña",
+			"error": "No detectado",
+			"errorHint": "Guarda en la carpeta de arriba"
 		},
 		"path": {
-			"reset": "Reset to default",
-			"notConfigured": "Not configured"
+			"reset": "Restablecer al valor predeterminado",
+			"notConfigured": "No configurado"
+		},
+		"iconText": "ANIM",
+		"undoGroupName": "Ty Plus: Guardar preajuste de animación",
+		"errors": {
+			"selectLayerToSave": "Selecciona al menos una capa antes de guardar un preajuste de animación"
 		}
 	},
 	"edit": {
@@ -204,7 +237,13 @@
 			"saved": "Guardado",
 			"deleted": "Eliminado",
 			"saveFailed": "Error al guardar: {{message}}",
-			"deleteFailed": "Error al eliminar: {{message}}"
+			"deleteFailed": "Error al eliminar: {{message}}",
+			"notFound": "Preset no encontrado",
+			"loadFailed": "Error al cargar",
+			"saveFailedFallback": "Error al guardar",
+			"deleteFailedFallback": "Error al eliminar",
+			"saving": "Guardando…",
+			"deleting": "Eliminando…"
 		},
 		"fields": {
 			"presetName": "Nombre del preset",
@@ -223,7 +262,18 @@
 			"script": "Preset de script",
 			"plugin": "Preset de plugin",
 			"footage": "Preset de footage"
-		}
+		},
+		"memberLoading": "Cargando…",
+		"memberNotFound": "Miembro no encontrado: {{id}}",
+		"memberRun": "Ejecutar {{name}}",
+		"memberEdit": "Editar {{name}}",
+		"memberDelete": "Eliminar {{name}}",
+		"memberPresets": "Presets miembros ({{count}})",
+		"noMemberPresets": "No hay presets miembro",
+		"selectJsxFile": "Seleccionar archivo JSX",
+		"browseLoadFile": "Cargar archivo",
+		"loadFromFilePlaceholder": "Cargar desde archivo…",
+		"code": "Código"
 	},
 	"group": {
 		"title": "Crear grupo de presets",
@@ -231,7 +281,184 @@
 		"defaultName": "Preset de grupo",
 		"fields": {
 			"groupName": "Nombre del grupo",
-			"groupNamePlaceholder": "Introduce el nombre del grupo"
+			"groupNamePlaceholder": "Introduce el nombre del grupo",
+			"folderPaths": "Rutas de carpetas",
+			"folderPathsPlaceholder": "Una ruta de carpeta por línea",
+			"presetIds": "IDs de presets",
+			"presetIdsPlaceholder": "Un ID de preset por línea",
+			"recursiveScan": "Escaneo recursivo de carpetas"
+		},
+		"iconText": "GRUPO",
+		"browseMembers": "Examinar archivos y carpetas para añadir",
+		"addPath": "Añadir ruta",
+		"detectCandidates": "Detectar candidatos",
+		"browseFolder": "Examinar carpeta",
+		"removePath": "Quitar ruta",
+		"iconRules": "Reglas de icono",
+		"baseIcon": {
+			"heading": "Icono base (predeterminado para todos los presets)",
+			"label": "Icono base"
+		},
+		"rules": "Reglas",
+		"addRule": "Añadir regla",
+		"groupIcon": "Icono de grupo",
+		"advancedSettings": "Configuración avanzada",
+		"scanDepth": "Profundidad de escaneo de carpetas",
+		"scanDepthFlat": "Directo",
+		"scanDepthRecursive": "Incluir subcarpetas",
+		"synth": {
+			"noMembers": "No hay presets miembro.",
+			"memberPresets_one": "{{count}} preset miembro.",
+			"memberPresets_many": "{{count}} presets miembros.",
+			"memberPresets_other": "{{count}} presets miembros.",
+			"description": "Contenedor de grupo. {{memberLine}}"
+		},
+		"rule": {
+			"filterName": "Nombre",
+			"filterPath": "Ruta",
+			"filterPresetId": "ID de preset",
+			"filterPresetType": "Tipo de preset",
+			"removeRule": "Eliminar regla",
+			"nameRegexPlaceholder": "Regex de nombre (p. ej. ^Header.*$)",
+			"namePatternPlaceholder": "Patrón de nombre",
+			"matchContains": "Contiene",
+			"matchStarts": "Empieza por",
+			"matchEnds": "Termina en",
+			"matchRegex": "Regex",
+			"presetTypePreset": "Preset",
+			"presetTypeScript": "Script",
+			"presetTypePlugin": "Plug-in",
+			"presetTypeFootage": "Footage",
+			"noDirectories": "No se detectaron directorios",
+			"noPresets": "No se detectaron presets",
+			"iconLabel": "Icono de regla"
+		},
+		"fallbackTitle": "Grupo"
+	},
+	"catalogAdd": {
+		"dialogTitle": "Añadir preset del catálogo desde una ruta",
+		"name": "Nombre",
+		"namePlaceholder": "Introduce un nombre…",
+		"filePath": "Ruta del archivo",
+		"selectFile": "Seleccionar archivo",
+		"browseFile": "Examinar archivo",
+		"icon": "Icono",
+		"creating": "Creando…",
+		"pathPlaceholderCurrentFolder": "Carpeta actual mostrada — elige un archivo o examina",
+		"pathPlaceholderSelectFile": "Selecciona un archivo…",
+		"browser": {
+			"cepNodeRequired": "El explorador de archivos requiere CEP Node",
+			"noPresetsFolder": "No hay carpeta de presets configurada",
+			"noScriptsFolder": "No hay carpeta de scripts configurada",
+			"noPluginsFolder": "No hay carpeta de plug-ins configurada",
+			"noFiles": "No se encontraron archivos"
 		}
+	},
+	"iconEditor": {
+		"tabs": {
+			"text": "Texto",
+			"emoji": "Emoji",
+			"image": "Imagen",
+			"canvas": "Lienzo"
+		},
+		"emojiPicker": "Selector de emoji",
+		"selectImage": "Seleccionar imagen del icono",
+		"browseImage": "Examinar imagen del icono",
+		"imagePlaceholder": "Ruta o URL de la imagen",
+		"iconTextAria": "Texto del icono",
+		"textPlaceholder": "2-6 caracteres",
+		"previewAria": "Vista previa del icono"
+	},
+	"catalogBrowser": {
+		"loading": "Cargando",
+		"searchPlaceholder": "Buscar por nombre, tipo o ruta…",
+		"reload": "Recargar catálogo"
+	},
+	"listDialog": {
+		"workspacePlaced": "Espacio de trabajo: {{tags}}",
+		"workspaceGroupPlaced": "Espacio de trabajo: {{tags}} (grupo «{{label}}»)",
+		"workspaceNotPlaced": "Espacio de trabajo: sin colocar",
+		"runPresetAria": "Ejecutar preset",
+		"editPresetAria": "Editar preset",
+		"deletePresetAria": "Eliminar preset",
+		"editGroup": "Editar grupo",
+		"deleteGroup": "Eliminar grupo",
+		"visibleItems_one": "{{count}} elemento",
+		"visibleItems_many": "{{count}} elementos",
+		"visibleItems_other": "{{count}} elementos",
+		"filteredSuffix": " · filtrado",
+		"collapseGroup": "Contraer grupo",
+		"expandGroup": "Expandir grupo",
+		"returnToAllPresets": "Volver a todos los presets",
+		"leaveGroupTitle": "Salir del grupo «{{name}}» y volver a la lista",
+		"returnToListTitle": "Volver a la lista",
+		"allPresets": "Todos los presets",
+		"runPresetNamed": "Ejecutar {{name}}",
+		"loadFailedTitle": "No se pudo cargar el catálogo local",
+		"tryAgain": "Reintentar",
+		"loadingCatalog": "Cargando catálogo local…",
+		"emptyCatalog": "Aún no hay presets guardados localmente",
+		"noMatches": "No hay presets coincidentes",
+		"cloudOffline": "Nube sin conexión",
+		"cloudDegradedDetail": "{{message}} — mostrando solo el catálogo local.",
+		"cloudOfflineDetail": "Las funciones en la nube no están activas en esta sesión — mostrando solo el catálogo local.",
+		"groupsUnavailable": "Grupos no disponibles",
+		"groupsErrorDetail": "{{error}} — los presets se muestran sin agrupar.",
+		"title": "Lista de presets",
+		"gridResizeHint": "Mantén Ctrl y desplázate para cambiar el tamaño de la cuadrícula de iconos",
+		"openGroupAria": "Abrir grupo {{title}}",
+		"openGroupHint": "{{title}} (doble clic para abrir)"
+	},
+	"codeEditor": {
+		"snippets": {
+			"ifBlock": "bloque if",
+			"elseBlock": "bloque else",
+			"forLoop": "bucle for",
+			"whileLoop": "bucle while",
+			"function": "función",
+			"tryCatch": "try / catch",
+			"extendscriptLog": "registro de ExtendScript"
+		},
+		"resizeAria": "Redimensionar el editor de código"
+	},
+	"glyph": {
+		"loadingPresetIcon": "Cargando icono del preset"
+	},
+	"assetWrite": {
+		"pathNotAbsolute": "La ruta del recurso del preajuste no es absoluta: {{path}}",
+		"fsUnavailable": "La escritura del recurso del preajuste no está disponible: el sistema de archivos Node CEP no es accesible en esta ventana.",
+		"writeFailed": "Error al escribir el recurso del preajuste: {{error}}",
+		"verificationMissing": "El recurso del preajuste falta tras la escritura: {{path}}",
+		"verificationMismatch": "El contenido del recurso del preajuste no coincide tras la escritura: {{path}}",
+		"elevationUnavailable": "La escritura del recurso del preajuste fue denegada por permisos y no hay mecanismo de elevación disponible en este host: {{path}} ({{detail}})",
+		"elevationCancelled": "Se rechazó el permiso de administrador para {{path}}. El recurso del preajuste no se guardó.",
+		"writeDenied": "La escritura del recurso del preajuste fue denegada por permisos: {{path}}",
+		"verificationMissingElevated": "El recurso del preajuste falta tras la escritura elevada: {{path}}",
+		"verificationMismatchElevated": "El contenido del recurso del preajuste no coincide tras la escritura elevada: {{path}}",
+		"dirPathNotAbsolute": "El directorio del recurso del preajuste no es una ruta absoluta: {{path}}",
+		"dirFsUnavailable": "La creación del directorio del recurso del preajuste no está disponible: el sistema de archivos Node CEP no es accesible en esta ventana.",
+		"dirCreateFailed": "No se pudo crear el directorio del recurso del preajuste: {{error}}",
+		"dirElevationUnavailable": "La creación del directorio del recurso del preajuste fue denegada por permisos y no hay mecanismo de elevación disponible en este host: {{path}}",
+		"dirElevationCancelled": "Se rechazó el permiso de administrador para {{path}}. El directorio del recurso del preajuste no se creó.",
+		"dirMissingAfterElevated": "El directorio del recurso del preajuste falta tras la creación elevada: {{path}}",
+		"dirDenied": "La creación del directorio del recurso del preajuste fue denegada por permisos: {{path}}",
+		"dirMissingAfterCreate": "El directorio del recurso del preajuste falta tras la creación: {{path}}",
+		"exitCodeSuffix": " (código de salida {{code}})",
+		"elevatedErrorWithDetail": "La escritura elevada notificó un error{{exitNote}}: {{detail}}",
+		"elevatedError": "La escritura elevada notificó un error{{exitNote}}"
+	},
+	"folderGroup": {
+		"noFolderPaths": "Introduce al menos una ruta de carpeta.",
+		"noPresetFiles": "No se encontraron archivos de preajuste (.ffx) en la carpeta.",
+		"groupRowFailed": "Error al generar la fila del grupo.",
+		"savedStatus": "Grupo guardado: {{id}} (miembros: {{members}}, nuevos preajustes: {{added}})",
+		"presetIdsNotFound": "IDs de preajuste no encontrados en el catálogo: {{ids}}",
+		"savedStatusManual": "Grupo guardado ({{total}} elementos): {{id}}",
+		"scanRequiresCepNode": "El análisis de carpetas requiere el explorador de archivos de CEP Node. Introduce los IDs de preajuste manualmente o activa CEP Node."
+	},
+	"deleteConfirm": {
+		"preset": "¿Eliminar el preajuste \"{{title}}\"?\n\nEsta acción no se puede deshacer.",
+		"group": "¿Eliminar el grupo \"{{title}}\"?\n\nEsta acción no se puede deshacer.",
+		"untitled": "(sin título)"
 	}
 }

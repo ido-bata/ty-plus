@@ -57,7 +57,7 @@ export async function bootTyPlusModelessDialog(): Promise<void> {
 
 	const mount = document.getElementById("app");
 	if (!mount) {
-		throw new Error("Missing #app mount point");
+		throw new Error("Missing #app mount point"); // i18n-exempt: internal diagnostic — not rendered as UI copy
 	}
 
 	const isCep =

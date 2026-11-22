@@ -22,7 +22,30 @@
 		"expand": "Développer",
 		"collapse": "Réduire",
 		"position": "Position",
-		"orientation": "Orientation"
+		"orientation": "Orientation",
+		"ariaLabel": "Préréglages / Widgets",
+		"collapseExpand": "Réduire/Développer",
+		"horizontal": "Horizontal",
+		"vertical": "Vertical",
+		"resetToDefaults": "Rétablir les valeurs par défaut",
+		"buttons": {
+			"localPreset": "Préréglage local",
+			"groupPreset": "Préréglage de groupe",
+			"animationPreset": "Préréglage d'animation",
+			"layerCompPreset": "Préréglage calque/comp",
+			"codePreset": "Préréglage de code",
+			"addWidget": "Ajouter un widget"
+		},
+		"positionLabels": {
+			"topLeft": "Haut gauche",
+			"topCenter": "Haut centre",
+			"topRight": "Haut droit",
+			"bottomLeft": "Bas gauche",
+			"bottomCenter": "Bas centre",
+			"bottomRight": "Bas droit",
+			"leftCenter": "Centre gauche",
+			"rightCenter": "Centre droit"
+		}
 	},
 	"context": {
 		"lock": "Verrouiller",
@@ -41,5 +64,43 @@
 		"savingPaused": "La sauvegarde est suspendue afin de ne pas écraser ce fichier. Réparez ou restaurez le fichier, puis réessayez.",
 		"file": "Fichier : workspace-{{wsIndex}}.json",
 		"retry": "Réessayer la restauration"
+	},
+	"statusBar": {
+		"undoTitle": "Annuler (Ctrl+Z)",
+		"redoTitle": "Rétablir (Ctrl+Y)",
+		"saveSnapshotTitle": "Enregistrer l'instantané de la disposition",
+		"savedLayoutsTitle": "Dispositions enregistrées ({{count}})",
+		"savedLayoutsTitleEmpty": "Dispositions enregistrées (aucune)",
+		"noSavedLayouts": "Aucune disposition enregistrée",
+		"restoreSnapshotTitle": "Restaurer « {{label}} »",
+		"presetLibraryTitle": "Bibliothèque de préréglages (en ligne)",
+		"debugConsoleTitle": "Console de débogage (Ctrl+`)"
+	},
+	"gridTile": {
+		"widgetTitle": "Widget",
+		"configLoadError": "Impossible de charger la configuration"
+	},
+	"debugProbe": {
+		"title": "Test de dialogue",
+		"message": "Vérification du pont panneau -> dialogue"
+	},
+	"easingCurveColors": {
+		"linear": "Linear",
+		"hold": "Maintien",
+		"easeInGentle": "Ease in",
+		"easeInSharp": "Ease in (sec)",
+		"easeOutGentle": "Ease out",
+		"easeOutSharp": "Ease out (sec)",
+		"easeInOut": "Ease in/out",
+		"overshoot": "Dépassement",
+		"bezier": "Bézier"
+	},
+	"statusMessages": {
+		"presetAssetMissing": "L'asset du préréglage est manquant sur le disque — l'exécution est désactivée.",
+		"applyingAnchorPoint": "Application du point d'ancrage : {{pos}}...",
+		"anchorPointRequested": "Point d'ancrage demandé : {{pos}}",
+		"presetFailed": "Préréglage échoué : {{message}}",
+		"widgetAdded": "{{name}} ajouté",
+		"layoutReset": "La disposition de l'espace de travail a été réinitialisée."
 	}
 }

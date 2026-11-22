@@ -1,47 +1,55 @@
 {
 	"codePreset": {
-		"codeType": "Code type",
+		"codeType": "コードタイプ",
 		"editor": {
 			"expression": "Expression",
-			"script": "Script code (.jsx)"
+			"script": "スクリプトコード (.jsx)"
 		},
-		"saveLocation": "Save location",
-		"savePreview": "Save preview",
+		"saveLocation": "保存先",
+		"savePreview": "プレビューを保存",
 		"status": {
-			"fileExists": "File already exists — will be overwritten",
-			"success": "Preset saved successfully!"
+			"fileExists": "ファイルはすでに存在します — 上書きされます",
+			"success": "プリセットを保存しました！"
 		},
 		"type": {
 			"expression": "Expression",
-			"script": "Script"
-		}
+			"script": "スクリプト"
+		},
+		"iconText": "コード",
+		"alertSelectComp": "Composition を選択してください。",
+		"alertSelectProperty": "Expression を適用するプロパティを 1 つ以上選択してください。",
+		"alertNoExpressionProps": "選択したプロパティは Expression を受け付けません。",
+		"alertApplyError": "Expression の適用エラー:",
+		"defaultDescription": "コードプリセット: {{name}}",
+		"undoGroupName": "Ty Plus: 式を適用"
 	},
 	"common": {
 		"browseFolder": "フォルダを参照",
 		"copyPath": "パスをコピー",
-		"selectFile": "ファイルを選択"
+		"selectFile": "ファイルを選択",
+		"systemDefault": "システムのデフォルト"
 	},
 	"layerCompPreset": {
 		"desc": {
-			"comp": "Open the composition you want to save. Project must be saved first.",
-			"layer": "Select the layers you want to save. Project must be saved first."
+			"comp": "保存したいコンポジションを開いてください。先にプロジェクトを保存する必要があります。",
+			"layer": "保存したいレイヤーを選択してください。先にプロジェクトを保存する必要があります。"
 		},
 		"hint": {
-			"saveButton": "Press \"Create\" at the bottom of the dialog to save."
+			"saveButton": "ダイアログ下部の「作成」ボタンを押して保存します。"
 		},
-		"savePreview": "Save preview",
+		"savePreview": "プレビューを保存",
 		"step1": {
-			"title": "Preset type"
+			"title": "プリセットタイプ"
 		},
 		"step2": {
-			"title": "Prepare in After Effects"
+			"title": "After Effects で準備"
 		},
 		"step3": {
-			"title": "Save location"
+			"title": "保存先"
 		},
 		"type": {
 			"comp": "Composition",
-			"layer": "Layer"
+			"layer": "レイヤー"
 		}
 	},
 	"search": {
@@ -91,7 +99,8 @@
 				"saveFolder": "保存フォルダ",
 				"path": "アニメーション・プリセットのパス",
 				"pathPlaceholder": "任意の既存 .ffx パス"
-			}
+			},
+			"defaultDescription": "アニメーションプリセット: {{name}}"
 		},
 		"footage": {
 			"title": "フッテージプリセット",
@@ -100,12 +109,14 @@
 			"fields": {
 				"path": "フッテージのパス",
 				"mode": "インポートモード"
-			}
+			},
+			"iconText": "メディア"
 		},
 		"layerComp": {
 			"title": "レイヤー / コンププリセット",
 			"lead": "レイヤー・コンポジション操作（変形・複製・プリコンポーズなど）。保存されたスクリプトファイルを実行します。",
-			"defaultName": "レイヤー／コンポジションプリセット"
+			"defaultName": "レイヤー／コンポジションプリセット",
+			"defaultDescription": "レイヤー/コンポジションプリセット: {{name}}"
 		},
 		"import": {
 			"title": "インポートプリセット",
@@ -114,7 +125,9 @@
 			"fields": {
 				"path": "インポートパス",
 				"strategy": "戦略"
-			}
+			},
+			"iconText": "インポート",
+			"pathPlaceholder": "C:\\path\\asset"
 		},
 		"code": {
 			"title": "コードプリセット",
@@ -122,10 +135,10 @@
 			"extra": "保存済みスクリプトファイルを After Effects 側で実行します。",
 			"defaultName": "コードプリセット",
 			"editor": {
-				"format": "Format Document",
-				"formatTooltip": "Format the script body",
-				"diagnosticCount": "{{count}} problem",
-				"diagnosticCount_other": "{{count}} problems"
+				"format": "ドキュメントをフォーマット",
+				"formatTooltip": "スクリプト本体をフォーマット",
+				"diagnosticCount": "{{count}} 件の問題",
+				"diagnosticCount_other": "{{count}} 件の問題"
 			}
 		},
 		"easing": {
@@ -166,6 +179,19 @@
 			"title": "プリセットを作成",
 			"lead": "再利用可能なメタデータからローカルプリセットを作成します。",
 			"defaultName": "ローカルプリセット"
+		},
+		"savePathRequired": "まず After Effects の標準ダイアログでアニメーションプリセットを保存してください。",
+		"easingScript": {
+			"selectComposition": "コンポジションを選択してください。",
+			"selectProperties": "イージングを適用するプロパティを1つ以上選択してください。",
+			"notEnoughKeyframes": "選択したプロパティのキーが不足しています。",
+			"applyFailedPrefix": "イージングの適用エラー: ",
+			"undoGroupName": "ty-plus: イージングプリセットを適用"
+		},
+		"layerCompScript": {
+			"undoGroupName": "Ty Plus: レイヤー/コンポジションプリセットを適用",
+			"saveProjectFirst": "このプリセットを作成する前にAfter Effectsプロジェクトを保存してください",
+			"sourceProjectNotFoundPrefix": "ソースプロジェクトが見つかりません: "
 		}
 	},
 	"animationPreset": {
@@ -191,7 +217,12 @@
 		},
 		"path": {
 			"reset": "デフォルトに戻す",
-			"notConfigured": "Not configured"
+			"notConfigured": "未設定"
+		},
+		"iconText": "アニメ",
+		"undoGroupName": "Ty Plus: アニメーションプリセットを保存",
+		"errors": {
+			"selectLayerToSave": "アニメーションプリセットを保存する前にレイヤーを1つ以上選択してください"
 		}
 	},
 	"edit": {
@@ -204,7 +235,13 @@
 			"saved": "保存しました",
 			"deleted": "削除しました",
 			"saveFailed": "保存に失敗しました: {{message}}",
-			"deleteFailed": "削除に失敗しました: {{message}}"
+			"deleteFailed": "削除に失敗しました: {{message}}",
+			"notFound": "プリセットが見つかりません",
+			"loadFailed": "読み込みに失敗しました",
+			"saveFailedFallback": "保存に失敗しました",
+			"deleteFailedFallback": "削除に失敗しました",
+			"saving": "保存中…",
+			"deleting": "削除中…"
 		},
 		"fields": {
 			"presetName": "プリセット名",
@@ -223,7 +260,18 @@
 			"script": "スクリプト・プリセット",
 			"plugin": "プラグイン・プリセット",
 			"footage": "フッテージ・プリセット"
-		}
+		},
+		"memberLoading": "読み込み中…",
+		"memberNotFound": "メンバーが見つかりません: {{id}}",
+		"memberRun": "{{name}} を実行",
+		"memberEdit": "{{name}} を編集",
+		"memberDelete": "{{name}} を削除",
+		"memberPresets": "メンバープリセット（{{count}}）",
+		"noMemberPresets": "メンバープリセットはありません",
+		"selectJsxFile": "JSXファイルを選択",
+		"browseLoadFile": "ファイルを読み込む",
+		"loadFromFilePlaceholder": "ファイルから読み込む…",
+		"code": "コード"
 	},
 	"group": {
 		"title": "プリセットグループを作成",
@@ -231,7 +279,182 @@
 		"defaultName": "グループプリセット",
 		"fields": {
 			"groupName": "グループ名",
-			"groupNamePlaceholder": "グループ名を入力"
+			"groupNamePlaceholder": "グループ名を入力",
+			"folderPaths": "フォルダーパス",
+			"folderPathsPlaceholder": "1行に1つのフォルダーパス",
+			"presetIds": "プリセットID",
+			"presetIdsPlaceholder": "1行に1つのプリセットID",
+			"recursiveScan": "フォルダーの再帰スキャン"
+		},
+		"iconText": "グループ",
+		"browseMembers": "追加するファイルとフォルダーを参照",
+		"addPath": "パスを追加",
+		"detectCandidates": "候補を検出",
+		"browseFolder": "フォルダーを参照",
+		"removePath": "パスを削除",
+		"iconRules": "アイコンルール",
+		"baseIcon": {
+			"heading": "ベースアイコン（すべてのプリセットのデフォルト）",
+			"label": "ベースアイコン"
+		},
+		"rules": "ルール",
+		"addRule": "ルールを追加",
+		"groupIcon": "グループアイコン",
+		"advancedSettings": "詳細設定",
+		"scanDepth": "フォルダースキャンの深さ",
+		"scanDepthFlat": "直接",
+		"scanDepthRecursive": "サブフォルダーを含む",
+		"synth": {
+			"noMembers": "メンバープリセットはありません。",
+			"memberPresets_one": "メンバープリセット{{count}}件。",
+			"memberPresets_other": "メンバープリセット{{count}}件。",
+			"description": "グループコンテナー。{{memberLine}}"
+		},
+		"rule": {
+			"filterName": "名前",
+			"filterPath": "パス",
+			"filterPresetId": "プリセットID",
+			"filterPresetType": "プリセットタイプ",
+			"removeRule": "ルールを削除",
+			"nameRegexPlaceholder": "名前の正規表現（例: ^Header.*$）",
+			"namePatternPlaceholder": "名前パターン",
+			"matchContains": "含む",
+			"matchStarts": "先頭一致",
+			"matchEnds": "末尾一致",
+			"matchRegex": "正規表現",
+			"presetTypePreset": "プリセット",
+			"presetTypeScript": "スクリプト",
+			"presetTypePlugin": "プラグイン",
+			"presetTypeFootage": "フッテージ",
+			"noDirectories": "ディレクトリが検出されませんでした",
+			"noPresets": "プリセットが検出されませんでした",
+			"iconLabel": "ルールアイコン"
+		},
+		"fallbackTitle": "グループ"
+	},
+	"catalogAdd": {
+		"dialogTitle": "パスからカタログプリセットを追加",
+		"name": "名前",
+		"namePlaceholder": "名前を入力…",
+		"filePath": "ファイルパス",
+		"selectFile": "ファイルを選択",
+		"browseFile": "ファイルを参照",
+		"icon": "アイコン",
+		"creating": "作成中…",
+		"pathPlaceholderCurrentFolder": "現在のフォルダーを表示中 — ファイルを選択するか参照してください",
+		"pathPlaceholderSelectFile": "ファイルを選択…",
+		"browser": {
+			"cepNodeRequired": "ファイルブラウザーには CEP Node が必要です",
+			"noPresetsFolder": "プリセットフォルダーが設定されていません",
+			"noScriptsFolder": "スクリプトフォルダーが設定されていません",
+			"noPluginsFolder": "プラグインフォルダーが設定されていません",
+			"noFiles": "ファイルが見つかりません"
 		}
+	},
+	"iconEditor": {
+		"tabs": {
+			"text": "テキスト",
+			"emoji": "絵文字",
+			"image": "画像",
+			"canvas": "キャンバス"
+		},
+		"emojiPicker": "絵文字ピッカー",
+		"selectImage": "アイコン画像を選択",
+		"browseImage": "アイコン画像を参照",
+		"imagePlaceholder": "画像パスまたはURL",
+		"iconTextAria": "アイコンテキスト",
+		"textPlaceholder": "2〜6文字",
+		"previewAria": "アイコンプレビュー"
+	},
+	"catalogBrowser": {
+		"loading": "読み込み中",
+		"searchPlaceholder": "名前、タイプ、パスで検索…",
+		"reload": "カタログを再読み込み"
+	},
+	"listDialog": {
+		"workspacePlaced": "ワークスペース: {{tags}}",
+		"workspaceGroupPlaced": "ワークスペース: {{tags}}（グループ「{{label}}」）",
+		"workspaceNotPlaced": "ワークスペース: 未配置",
+		"runPresetAria": "プリセットを実行",
+		"editPresetAria": "プリセットを編集",
+		"deletePresetAria": "プリセットを削除",
+		"editGroup": "グループを編集",
+		"deleteGroup": "グループを削除",
+		"visibleItems_one": "{{count}} 件",
+		"visibleItems_other": "{{count}} 件",
+		"filteredSuffix": " · フィルター適用中",
+		"collapseGroup": "グループを折りたたむ",
+		"expandGroup": "グループを展開",
+		"returnToAllPresets": "すべてのプリセットに戻る",
+		"leaveGroupTitle": "グループ「{{name}}」を離れてリストに戻る",
+		"returnToListTitle": "リストに戻る",
+		"allPresets": "すべてのプリセット",
+		"runPresetNamed": "{{name}} を実行",
+		"loadFailedTitle": "ローカルカタログの読み込みに失敗しました",
+		"tryAgain": "再試行",
+		"loadingCatalog": "ローカルカタログを読み込み中…",
+		"emptyCatalog": "ローカルに保存されたプリセットはまだありません",
+		"noMatches": "一致するプリセットがありません",
+		"cloudOffline": "クラウドオフライン",
+		"cloudDegradedDetail": "{{message}} — ローカルカタログのみを表示しています。",
+		"cloudOfflineDetail": "このセッションではクラウド機能は有効ではありません — ローカルカタログのみを表示しています。",
+		"groupsUnavailable": "グループを利用できません",
+		"groupsErrorDetail": "{{error}} — グループ化なしでプリセットを一覧表示しています。",
+		"title": "プリセットリスト",
+		"gridResizeHint": "Ctrlを押しながらスクロールするとアイコングリッドのサイズを変更できます",
+		"openGroupAria": "グループ {{title}} を開く",
+		"openGroupHint": "{{title}}（ダブルクリックで開く）"
+	},
+	"codeEditor": {
+		"snippets": {
+			"ifBlock": "if ブロック",
+			"elseBlock": "else ブロック",
+			"forLoop": "for ループ",
+			"whileLoop": "while ループ",
+			"function": "関数",
+			"tryCatch": "try / catch",
+			"extendscriptLog": "ExtendScript ログ"
+		},
+		"resizeAria": "コードエディターのサイズを変更"
+	},
+	"glyph": {
+		"loadingPresetIcon": "プリセットアイコンを読み込み中"
+	},
+	"assetWrite": {
+		"pathNotAbsolute": "プリセットアセットのパスが絶対パスではありません: {{path}}",
+		"fsUnavailable": "プリセットアセットを書き込めません: このウィンドウでは CEP Node ファイルシステムにアクセスできません。",
+		"writeFailed": "プリセットアセットの書き込みに失敗しました: {{error}}",
+		"verificationMissing": "書き込み後にプリセットアセットが見つかりません: {{path}}",
+		"verificationMismatch": "書き込み後にプリセットアセットの内容が一致しません: {{path}}",
+		"elevationUnavailable": "権限によりプリセットアセットの書き込みが拒否され、このホストでは昇格メカニズムを利用できません: {{path}} ({{detail}})",
+		"elevationCancelled": "{{path}} への管理者権限が拒否されました。プリセットアセットは保存されませんでした。",
+		"writeDenied": "権限によりプリセットアセットの書き込みが拒否されました: {{path}}",
+		"verificationMissingElevated": "昇格書き込み後にプリセットアセットが見つかりません: {{path}}",
+		"verificationMismatchElevated": "昇格書き込み後にプリセットアセットの内容が一致しません: {{path}}",
+		"dirPathNotAbsolute": "プリセットアセットのディレクトリが絶対パスではありません: {{path}}",
+		"dirFsUnavailable": "プリセットアセットのディレクトリを作成できません: このウィンドウでは CEP Node ファイルシステムにアクセスできません。",
+		"dirCreateFailed": "プリセットアセットのディレクトリを作成できませんでした: {{error}}",
+		"dirElevationUnavailable": "権限によりプリセットアセットのディレクトリ作成が拒否され、このホストでは昇格メカニズムを利用できません: {{path}}",
+		"dirElevationCancelled": "{{path}} への管理者権限が拒否されました。プリセットアセットのディレクトリは作成されませんでした。",
+		"dirMissingAfterElevated": "昇格作成後にプリセットアセットのディレクトリが見つかりません: {{path}}",
+		"dirDenied": "権限によりプリセットアセットのディレクトリ作成が拒否されました: {{path}}",
+		"dirMissingAfterCreate": "作成後にプリセットアセットのディレクトリが見つかりません: {{path}}",
+		"exitCodeSuffix": " (終了コード {{code}})",
+		"elevatedErrorWithDetail": "昇格書き込みでエラーが報告されました{{exitNote}}: {{detail}}",
+		"elevatedError": "昇格書き込みでエラーが報告されました{{exitNote}}"
+	},
+	"folderGroup": {
+		"noFolderPaths": "フォルダーパスを1つ以上入力してください。",
+		"noPresetFiles": "フォルダー内にプリセットファイル（.ffx）が見つかりません。",
+		"groupRowFailed": "グループ行の生成に失敗しました。",
+		"savedStatus": "グループを保存しました: {{id}}（メンバー: {{members}}、新規プリセット: {{added}}）",
+		"presetIdsNotFound": "カタログにプリセット ID が見つかりません: {{ids}}",
+		"savedStatusManual": "グループを保存しました（{{total}} 件）: {{id}}",
+		"scanRequiresCepNode": "フォルダーのスキャンには CEP Node のファイルブラウザーが必要です。プリセット ID を手動で入力するか、CEP Node を有効にしてください。"
+	},
+	"deleteConfirm": {
+		"preset": "プリセット「{{title}}」を削除しますか？\n\nこの操作は取り消せません。",
+		"group": "グループ「{{title}}」を削除しますか？\n\nこの操作は取り消せません。",
+		"untitled": "（無題）"
 	}
 }

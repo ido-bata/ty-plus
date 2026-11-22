@@ -1,0 +1,353 @@
+{
+	"tagline": "あなたのプリセットとツールを、Adobe After Effects の中に。",
+	"metaDescription": "{{tagline}} 無料・オープンソースで、ローカルファースト。",
+	"skipToContent": "コンテンツへスキップ",
+	"languageLabel": "言語",
+	"nav": {
+		"primary": "メインナビゲーション",
+		"menu": "メニュー",
+		"download": "ダウンロード"
+	},
+	"navLinks": {
+		"features": "機能",
+		"download": "ダウンロード",
+		"docs": "ドキュメント",
+		"changelog": "変更履歴",
+		"support": "サポート"
+	},
+	"footer": {
+		"description": "無料・オープンソース（MIT）のローカルファーストな After Effects 拡張です。アカウント登録は不要です。",
+		"product": "プロダクト",
+		"resources": "リソース",
+		"releases": "GitHub Releases",
+		"source": "ソースコード",
+		"userGuide": "ユーザーガイド",
+		"copyright": "© ty-plus contributors",
+		"bottom": "MIT License · オフラインで動作 · CEP パネル"
+	},
+	"notices": {
+		"stale": "リリースデータを一時的に取得できないため、最後に公開されたスナップショットを表示しています。最新のビルドは <1>GitHub Releases</1> で確認してください。"
+	},
+	"home": {
+		"metaTitle": "{{name}} — {{tagline}}",
+		"metaDescription": "ty-plus は無料・オープンソースのローカルファーストな After Effects 拡張です。プリセット、スクリプト、ウィジェットを After Effects 内のカスタマイズ可能なワークスペースで整理できます。",
+		"metaOgDescription": "Adobe After Effects 向けの無料・オープンソースのローカルファースト CEP 拡張です。",
+		"hero": {
+			"introAria": "イントロダクション",
+			"eyebrow": "無料 · オープンソース",
+			"lead": "ty-plus は After Effects のワークスペースの一部を、再利用できるプリセットと日常のツールのためのカスタマイズ可能なホームに変えます。After Effects を離れることなく。",
+			"download": "ty-plus をダウンロード",
+			"explore": "機能を見る",
+			"license": "MIT License",
+			"noAccount": "アカウント登録不要",
+			"offline": "完全オフラインで動作",
+			"platforms": "Windows · macOS",
+			"stable": "Stable {{version}}",
+			"demoCaption": "インタラクティブデモ — パネルと同じタイルと情報サーフェスです。ホバーまたはタップで確認、⌘/Ctrl+クリックまたは Shift+クリックで選択できます。通常のクリックではここでは適用されず、After Effects 内で適用されます。"
+		},
+		"surfaces": {
+			"aria": "パネルのサーフェス",
+			"workspaceAlt": "ty-plus ワークスペースのユーティリティウィジェット — クイックアクション、イージングカーブ、アライメント、アンカーポイントツール",
+			"workspaceCaption": "ワークスペースグリッド — プリセットとウィジェットが 1 つのサーフェスに並びます。実行中のパネルからキャプチャしています。",
+			"presetsAlt": "ty-plus の Local Presets ブラウザがローカルカタログのプリセットを一覧表示している様子",
+			"presetsCaption": "Local Presets — カタログのプリセットを閲覧・絞り込み・配置できます。",
+			"addWidgetAlt": "ty-plus の Add Widget セレクタが利用可能なウィジェットタイプを一覧表示している様子",
+			"addWidgetCaption": "Add Widget — 内蔵ツールでワークスペースを拡張できます。",
+			"offlineNote": "すべてのサーフェスは After Effects 内で動作し、ネットワークが切断されていても動き続けます。",
+			"allFeatures": "すべての機能"
+		},
+		"principles": {
+			"aria": "設計原則",
+			"title": "ローカルファースト・オフライン対応・自由に配置",
+			"body": "プリセット、ウィジェット、レイアウトはすべてお使いのマシン上のローカルファイルに保存されます。アカウントも、テレメトリも、サブスクリプションも不要 — パネルはオフラインでも同じように動作します。"
+		},
+		"resources": {
+			"aria": "リソース",
+			"download": {
+				"title": "ダウンロード",
+				"body": "GitHub Releases から Windows / macOS 向けの無料 ZXP ビルドを入手できます。",
+				"cta": "ty-plus を入手"
+			},
+			"docs": {
+				"title": "ドキュメント",
+				"body": "ユーザーガイド、インストール、ワークスペース、ウィジェット、プリセット、設定。",
+				"cta": "ガイドを読む"
+			},
+			"changelog": {
+				"title": "変更履歴",
+				"body": "リリースノートを Stable、Beta、Insider の各チャンネル別にまとめています。",
+				"cta": "新着を見る"
+			}
+		}
+	},
+	"features": {
+		"metaTitle": "機能 — ty-plus",
+		"metaDescription": "ty-plus の機能を紹介します。Adobe After Effects 内でプリセットタイルとウィジェットからなるカスタマイズ可能なワークスペースを提供し、ローカルファーストのストレージとリリースチャンネルを備えています。",
+		"eyebrow": "パネルの中",
+		"title": "機能",
+		"lead": "ty-plus は Adobe After Effects 向けの CEP 拡張パネルです。常に手が届くプリセットやツールのためのカスタマイズ可能なホームを提供します。すべて After Effects 内でローカルに動作します。",
+		"tiles": {
+			"aria": "プリセットタイル",
+			"eyebrow": "プリセットタイル",
+			"title": "カタログがタイルの棚になる",
+			"body": "アニメーションプリセット、コードプリセット、Footage、登録したグループは、ウィジェットと同じグリッド上に名前付きタイルとして並びます。それぞれが独自のアイコンとタイトルを持ち、すべて After Effects 内で動作します。右側のステージは、パネルと同じタイルと情報サーフェスを描画します。"
+		},
+		"interaction": {
+			"aria": "インタラクション",
+			"eyebrow": "インタラクション",
+			"title": "確認・選択・適用",
+			"body": "タイルにホバーまたはタップすると、情報サーフェスにプリセットの名前・種類・ソースが表示されます — パネルの情報ウィジェットが描画するのと同じ表示です。⌘/Ctrl+クリックでタイルの選択をトグルし、Shift+クリックで選択に追加します。通常のクリックでは After Effects 内のアクティブレイヤーにプリセットが適用されます — 実際のプロジェクトに対してエンドツーエンドで検証済みの経路です。デモではその意図をシミュレートせずメモとして記録しています。2 つのキャプチャは、選択前後の実際の情報ウィジェットを並べたものです。",
+			"beforeAlt": "ty-plus の情報ウィジェットの空の状態。「No preset selected」と表示されている",
+			"beforeCaption": "Before — 未選択の状態：情報ウィジェットは「No preset selected」と表示します。",
+			"afterAlt": "ty-plus の情報ウィジェットが選択したプリセットを一覧表示 — 名前、プリセットの種類、ソースとしての選択情報",
+			"afterCaption": "After — タイルを選択した状態：ウィジェットはプリセットの名前・種類・ソースとしての「selection」を一覧表示します。"
+		},
+		"surfaces": {
+			"aria": "サーフェス",
+			"eyebrow": "ワークスペース",
+			"title": "ウィジェットとダイアログが同じグリッドに",
+			"easingAlt": "ty-plus のイージングウィジェット — Curve、Loop、Bounce、Elastic モードと Apply アクションを持つカーブエディタ。アライメントツールと並んでいる",
+			"easingCaption": "イージングカーブエディタは速度カーブを描き、Keyframe に適用します。アライメント、分布、間隔ツールは同じグリッド上にあります。",
+			"presetsAlt": "オフライン通知付きでカタログプリセットを一覧表示する ty-plus の Local Presets ブラウザ",
+			"presetsCaption": "Local Presets — カタログを検索し、各プリセットがどのワークスペースにあるか確認できます。閲覧はオフラインでも動作します。",
+			"addWidgetAlt": "CORE と UTILITY のウィジェットタイプを一覧表示する ty-plus の Add Widget セレクタ",
+			"addWidgetCaption": "Add Widget — CORE または UTILITY ウィジェットを選択します。ダイアログにはグリッド上の配置先が表示されます。",
+			"widgetsTitle": "オンデマンドのウィジェット",
+			"widgetsBody": "イージングは Keyframe に適用する速度カーブを描き、Align は選択したレイヤーを整列し、アンカーポイントはアンカーを設定します。ディレクトリブラウザ、フォントビューワー、クイックアクション、メニュー、情報、レイアウトロックが残りをカバーします。Add Widget で選択すると、プリセットタイルと同じグリッドに加わります — ネットワークが切断されていてもすべてのウィジェットが動作し続けます。",
+			"appearanceTitle": "カスタマイズ可能な外観",
+			"appearanceBody": "メニューウィジェットからワークスペースの背景 — 単色・パターン・画像 — を変更でき、設定でテーマ、透明度、密度を調整できます。どちらもお使いのマシン上のローカルファイルに保存されます。"
+		},
+		"availability": {
+			"aria": "利用可能性",
+			"title": "設計上オフライン",
+			"body": "ワークスペース設定、プリセット、ウィジェット設定、外観はすべてお使いのマシン上にあります。拡張は更新確認のために GitHub Releases を参照しますが、すべてのコア機能はネットワーク接続なし — アカウントなしでも動作します。",
+			"download": "ダウンロード",
+			"userGuide": "ユーザーガイド"
+		}
+	},
+	"download": {
+		"metaTitle": "ダウンロード — ty-plus",
+		"metaDescription": "Windows または macOS 向けの Adobe After Effects 用 ty-plus をダウンロード。GitHub Releases の無料・オープンソース ZXP ビルド。",
+		"title": "ダウンロード",
+		"lead": "ty-plus は GitHub Releases を通じて ZXP 拡張として配布されています。MIT License のもとで無料・オープンソースです — 以下からお使いの OS 向けのビルドを選んでください。",
+		"latest": {
+			"fallbackTitle": "GitHub Releases",
+			"published": "{{name}} — {{date}} 公開。",
+			"publishedNoName": "{{date}} 公開。",
+			"viewNotes": "リリースノートを見る",
+			"none": "最新の安定版リリースは常に <1>GitHub Releases</1> で入手できます。",
+			"openReleases": "GitHub Releases を開く"
+		},
+		"prereleaseNotice": "Beta および Insider ビルドも公開されています — 全リストは <1>変更履歴</1> を参照してください。",
+		"os": {
+			"windows": "Windows",
+			"macos": "macOS",
+			"installerNote": "ZXP は CEP 対応のインストーラー（例：ZXP Installer または Extension Manager）でインストールしてください。",
+			"macosNote": "Gatekeeper に関する注意事項はインストールガイドを参照してください。",
+			"assetMissing": "このリリースには {{os}} 向けアセットがありません。",
+			"assetDownload": "{{os}} 向けをダウンロード"
+		},
+		"steps": {
+			"title": "パネルまでの 3 ステップ",
+			"item1": "上のリリース（または <1>GitHub Releases</1>）からお使いの OS 向けの ZXP をダウンロードします。",
+			"item2": "ZXP は CEP 対応のインストーラー（例：ZXP Installer または Extension Manager）でインストールします。",
+			"item3": "Adobe After Effects を再起動し、<1>Window → Extensions → ty-plus</1> を開きます。"
+		},
+		"signingNotice": "Windows ネイティブワーカーは Authenticode 署名されておらず、macOS ワーカーは公証されていません。OS のセキュリティポリシーにより調整が必要になる場合があります — 詳細は <1>インストールとトラブルシューティングガイド</1> を参照してください。"
+	},
+	"docs": {
+		"metaTitle": "ドキュメント — ty-plus",
+		"metaDescription": "ty-plus のドキュメント：ユーザーガイド、インストール、ワークスペース、ウィジェット、プリセット、設定、トラブルシューティング — GitHub リポジトリで管理されています。",
+		"title": "ドキュメント",
+		"lead": "ユーザーガイドはリポジトリで管理されており、常にリリース済みの製品と一致しています。現在は日本語で書かれています。",
+		"sectionsTitle": "ユーザーガイドのセクション",
+		"sections": {
+			"userGuide": {
+				"title": "ユーザーガイド",
+				"description": "まずはこちら — 概要とコアコンセプト。"
+			},
+			"installation": {
+				"title": "インストールとトラブルシューティング",
+				"description": "ZXP インストール、CEP ホスト、署名と OS セキュリティに関する注意事項。"
+			},
+			"mainScreen": {
+				"title": "メイン画面とワークスペース",
+				"description": "タイル、ウィジェット、ワークスペースレイアウト。"
+			},
+			"presets": {
+				"title": "プリセット",
+				"description": "プリセットの種類、グループ、プリセットの適用。"
+			},
+			"widgets": {
+				"title": "ウィジェット",
+				"description": "内蔵ウィジェットとウィジェットピッカー。"
+			},
+			"settings": {
+				"title": "設定と外観",
+				"description": "パネル設定、テーマ、更新チャンネル。"
+			}
+		},
+		"improve": {
+			"title": "ドキュメントの改善",
+			"body": "ドキュメントの改善は歓迎します — 変更の提案方法は <1>CONTRIBUTING.md</1> を参照してください。",
+			"cta": "ユーザーガイドを開く"
+		}
+	},
+	"support": {
+		"metaTitle": "サポート — ty-plus",
+		"metaDescription": "ty-plus のサポート：バグ報告、機能リクエスト、セキュリティポリシーの確認、または GitHub でのプロジェクトへの貢献。",
+		"title": "サポート",
+		"lead": "ty-plus はコミュニティ主導のオープンソースプロジェクトです。最も早く助けを得る方法は GitHub を通じることです。",
+		"help": {
+			"title": "ドキュメントと Issue",
+			"userGuide": {
+				"term": "ユーザーガイド",
+				"description": "インストール、ワークスペース、ウィジェット、プリセット、設定、トラブルシューティング。"
+			},
+			"installation": {
+				"term": "インストールとトラブルシューティング",
+				"description": "ZXP インストールと OS セキュリティに関する注意事項。"
+			},
+			"issues": {
+				"term": "既存の Issue",
+				"description": "あなたの問題がすでに報告されていないか確認してください。"
+			}
+		},
+		"report": {
+			"title": "バグと機能リクエスト",
+			"body": "バグの報告や改善リクエストには <1>GitHub の Issue テンプレート</1> をご利用ください。OS、After Effects のバージョン、ty-plus のバージョン、再現手順を含めていただけると助かります。",
+			"cta": "Issue を開く"
+		},
+		"security": {
+			"title": "責任ある開示",
+			"body": "セキュリティ脆弱性は公開 Issue で報告しないでください。責任ある開示については <1>セキュリティポリシー</1> を参照してください。"
+		},
+		"contribute": {
+			"title": "一緒に開発する",
+			"body": "ty-plus は MIT License で公開されている開発プロジェクトです。始め方は <1>CONTRIBUTING.md</1>、ライセンス条件は <2>LICENSE</2> を参照してください。",
+			"cta": "ソースコード"
+		}
+	},
+	"changelog": {
+		"metaTitle": "変更履歴 — ty-plus",
+		"metaDescription": "ty-plus のリリースノートと更新情報。GitHub Releases を情報源としています。",
+		"title": "変更履歴",
+		"lead": "リリースノートは GitHub Releases で公開され、更新チャンネル別にまとめられています — 各チャンネル内では新しい順です。",
+		"channels": {
+			"stable": {
+				"label": "Stable",
+				"hint": "ほとんどのユーザーに推奨"
+			},
+			"beta": {
+				"label": "Beta",
+				"hint": "プレリリースビルド"
+			},
+			"insider": {
+				"label": "Insider",
+				"hint": "頻繁な早期ビルド"
+			}
+		},
+		"release": {
+			"fullNotes": "リリースノート全文",
+			"assets_one": "{{count}} 個のアセット",
+			"assets_other": "{{count}} 個のアセット"
+		},
+		"empty": "リリースデータを一時的に利用できません。<1>GitHub ですべてのリリースを見る</1>。",
+		"allReleases": "GitHub のすべてのリリース",
+		"channelsSection": {
+			"title": "Stable、Beta、Insider",
+			"body": "パネル内の <1>設定 → 更新</1> で Stable、Beta、Insider を選択できます。更新は GitHub Releases と照合され、インストールは手動のままです。チャンネルの詳細は <2>ユーザーガイド</2> にあります。"
+		}
+	},
+	"presetStage": {
+		"ariaLabel": "プリセットタイルのデモ",
+		"mode": {
+			"empty": "未選択",
+			"selected": "選択中",
+			"hover": "ホバー",
+			"lastSelection": "最後の選択",
+			"lastSelected": "最後に選択",
+			"recent": "最近",
+			"selectedCount": "{{count}} 件選択中"
+		},
+		"applyNote": "「{{title}}」— パネルでは通常のクリックでこのプリセットがアクティブレイヤーに適用されます。",
+		"hintFine": "ホバーで確認 · ⌘/Ctrl+クリックで選択をトグル · Shift+クリックで追加 · クリックでパネル内に適用",
+		"hintCoarse": "タップで確認と選択 · パネルではタップでプリセットがアクティブレイヤーに適用されます",
+		"demoNote": "Web デモ · 選択はローカル状態 · After Effects パネルで実行"
+	},
+	"demoPresets": {
+		"fadeIn": {
+			"title": "フェードイン",
+			"description": "レイヤーの不透明度を最初の 12 フレームで 0 から 100 へランプさせます。"
+		},
+		"popIn": {
+			"title": "ポップイン",
+			"description": "レイヤーを柔らかいオーバーシュートで拡大し、その後落ち着かせます。"
+		},
+		"slideIn": {
+			"title": "スライドイン",
+			"description": "画面外からレイヤーを滑り込ませ、穏やかな ease-out で止めます。"
+		},
+		"jumpIn": {
+			"title": "ジャンプイン",
+			"description": "レイヤーを弧を描いて定位置へ飛ばし、着地時にスクワッシュします。"
+		},
+		"spinIn": {
+			"title": "スピンイン",
+			"description": "レイヤーをフェードインしながら 1 回転させます。"
+		},
+		"fadeOut": {
+			"title": "フェードアウト",
+			"description": "レイヤーの不透明度を最後の 12 フレームで 0 までランプダウンさせます。"
+		},
+		"popOut": {
+			"title": "ポップアウト",
+			"description": "レイヤーを素早い ease-in で縮小しながら退場させます。"
+		},
+		"breathe": {
+			"title": "呼吸ループ",
+			"description": "環境モーション用に、控えめなスケールの脈動をループさせます。"
+		},
+		"yoyo": {
+			"title": "ヨーヨーループ",
+			"description": "1 つの軸に沿って位置を往復ループさせます。"
+		},
+		"wobble": {
+			"title": "ポップ＆ワブル",
+			"description": "スケールをオーバーシュートさせ、ゆれてから静止させます。"
+		},
+		"slideOut": {
+			"title": "スライドアウト",
+			"description": "柔らかな ease-in でレイヤーを画面外へ滑らせます。"
+		},
+		"spinOut": {
+			"title": "スピンアウト",
+			"description": "レイヤーをフェードアウトしながら 1 回転させます。"
+		}
+	},
+	"ui": {
+		"loadingSpinner": {
+			"label": "読み込み中"
+		},
+		"searchField": {
+			"clearAria": "検索をクリア",
+			"clearTitle": "クリア"
+		},
+		"regexEditor": {
+			"enterPattern": "パターンを入力してください。",
+			"invalidFlags": "無効なフラグ：{{flags}}",
+			"plainSource": "プレーンな正規表現ソース",
+			"literalFormat": "リテラル正規表現フォーマット",
+			"testString": "テスト文字列",
+			"sourcePlaceholder": "正規表現ソース",
+			"flagsPlaceholder": "フラグ",
+			"matches": "マッチ",
+			"noMatch": "マッチなし",
+			"literalSuffix": "· リテラル /pattern/flags",
+			"sourceSuffix": "· ソースのみ"
+		},
+		"listSelect": {
+			"placeholder": "選択…"
+		}
+	}
+}

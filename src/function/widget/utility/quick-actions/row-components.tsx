@@ -163,9 +163,10 @@ export function PresetRow(
 	props: {
 		preset: Preset;
 		tl: string;
+		t: (key: string) => string;
 	} & RowPropsBase,
 ): JSX.Element {
-	const { preset, idx, selected, widgetInstanceId, tl, onSelect } = props;
+	const { preset, idx, selected, widgetInstanceId, tl, t, onSelect } = props;
 	// Issue #130: subscribe to the boot-time asset-health store so the
 	// row re-renders when the scan completes. Only `missing` disables
 	// the row's run affordance; `unverifiable` keeps it enabled but
@@ -173,9 +174,9 @@ export function PresetRow(
 	const isMissing = useIsPresetAssetMissing(preset.id);
 	const isUnverifiable = useIsPresetAssetUnverifiable(preset.id);
 	const runTitle = isMissing
-		? "Preset asset is missing on disk — run is disabled"
+		? t("directoryBrowser.actions.runBlockedMissingAsset")
 		: isUnverifiable
-			? "Could not verify preset asset (host unavailable) — retry"
+			? t("directoryBrowser.actions.runBlockedUnverifiableAsset")
 			: undefined;
 	return (
 		<div
