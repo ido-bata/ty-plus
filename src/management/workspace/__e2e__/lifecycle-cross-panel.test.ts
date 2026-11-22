@@ -172,6 +172,19 @@ vi.mock("@/management/debug", () => ({
 	}),
 }));
 
+// The persistence lock does real filesystem I/O; this suite exercises the
+// lifecycle logic against the in-memory disk above, so the lock is a
+// pass-through here. Cross-process exclusion is covered by the dedicated
+// lock tests (ADR-0006).
+vi.mock("@/management/storage/lock/persistence-lock", () => ({
+	PersistenceLockTimeoutError: class PersistenceLockTimeoutError extends Error {},
+	PersistenceLockUnavailableError: class PersistenceLockUnavailableError extends Error {},
+	resolvePersistenceLockRoot: vi.fn(async () => "/managed-root"),
+	withPersistenceLock: vi.fn(
+		async (_win: Window, _root: string, fn: () => Promise<unknown>) => fn(),
+	),
+}));
+
 import { applyInterPanelMove } from "@/management/workspace/placement/inter-panel-move";
 import { notifyPanelsAfterPresetSave } from "@/management/workspace/placement/notify-panels-after-preset-save";
 

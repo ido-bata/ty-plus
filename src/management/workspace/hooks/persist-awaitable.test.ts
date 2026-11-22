@@ -198,10 +198,23 @@ describe("persistSurfaceStateAwaitable (Issue #146 / Blocker 8)", () => {
 		// so the fire-and-forget path stayed quiet. The awaitable variant
 		// used by the cross-panel-move chain MUST propagate them so the
 		// rollback-to-source can be evaluated against an exact disk view.
-		const bgMatch = body.match(
-			/writeBackgroundJson\s*\([\s\S]*?\)\s*(?:\.catch\s*\([\s\S]*?\)\s*)?;?/,
+		// ADR-0006: the awaitable variant delegates to the shared locked
+		// writer with `backgroundFatal` — `surface-write.ts` rethrows the
+		// background failure instead of swallowing it when that flag is set.
+		expect(body).toMatch(
+			/persistLatestSurfaceStateLocked\s*\(\s*persistenceRootArg\s*,\s*true\s*\)/,
 		);
-		expect(bgMatch).not.toBeNull();
-		expect(bgMatch?.[0]).not.toMatch(/\.catch\s*\(/);
+		// The fire-and-forget variant must NOT set the flag — background
+		// stays non-fatal there.
+		const ffStart = hookSource.indexOf(
+			"const persistSurfaceState = (): void => {",
+		);
+		const ffBody = hookSource.slice(
+			ffStart,
+			hookSource.indexOf("const persistSurfaceStateAwaitable"),
+		);
+		expect(ffBody).toMatch(
+			/persistLatestSurfaceStateLocked\s*\(\s*persistenceRootArg\s*,\s*false\s*\)/,
+		);
 	});
 });

@@ -56,6 +56,10 @@ import {
 	writeSettings,
 	writeWidgetRecords,
 } from "@/management/storage";
+import {
+	resolvePersistenceLockRoot,
+	withPersistenceLock,
+} from "@/management/storage/lock/persistence-lock";
 import type { WidgetRecord } from "@/management/widget/record/types";
 import { parseLayoutDocument } from "@/management/workspace/layout/grid-document";
 import { persistTargetLayout } from "@/management/workspace/placement/cross-panel-write";
@@ -408,304 +412,325 @@ export const applyInterPanelMove = async (
 
 	const logContext = summarizePayload(input);
 
-	// (read-only) read current settings so we can compute the new settingsJson
-	// in-memory; no side effects up to this point. This is also the pre-image
-	// used to roll back step (3) when step (4) rejects (Blocker 7).
-	const currentSettingsJson: string = (await readSettings(win)) ?? "{}";
-
-	// (compute) the new settingsJson (source presetIds removed, target added).
-	// This is a pure in-memory transform — nothing is persisted yet.
-	const nextSettingsJson: string =
-		catalogIdsToMove.length > 0
-			? movePresetPlacement(currentSettingsJson, {
-					sourcePanelId,
-					targetPanelId,
-					presetIds: [...catalogIdsToMove],
-					sourceFallbackPresetIds: [...sourceFallbackPresetIds],
-				})
-			: currentSettingsJson;
-
-	// Snapshot the target layout file **before** step (1) mutates it.
-	const targetIndex = indexFromPanelId(targetPanelId);
-
-	// Round-6 / Blocker 14: snapshot the widget records file **before**
-	// step (1) UNCONDITIONALLY (regardless of `widgetTilesForCrossPanel.length`).
-	//
-	// Previously the pre-image was only read when widget tiles were being
-	// moved; on a preset-only move failure the rollback path would then
-	// call `writeWidgetRecords(win, [])` and WIPE all existing widget
-	// records from `widgets/widgets.json`. Capturing the pre-image
-	// unconditionally (and tracking `widgetRecordsModified` so the
-	// rollback only fires when something was actually written) makes the
-	// restore safe AND avoids unnecessary disk writes when no widget
-	// records were touched.
-	//
-	// `widgetRecordsModified` is set true AFTER `persistTargetLayout`
-	// returns successfully AND the move requested widget tiles. This
-	// mirrors the condition `input.widgetTiles.length > 0` inside
-	// `persistTargetLayout` (cross-panel-write.ts) which is the gate
-	// for the `upsertWidgetRecords` call. On preset-only moves
-	// (`widgetTilesForCrossPanel.length === 0`) this stays false and
-	// the rollback path SKIPS `rollbackWidgetRecords` entirely — no
-	// write to `widgets/widgets.json`, no risk of wiping records.
-	//
-	// Both pre-images are read in one `Promise.all`: they are separate
-	// stores, neither result feeds the other, and what matters is only
-	// that both have landed before `persistTargetLayout` runs below.
-	const [targetPreImageRaw, widgetRecordsPreImage]: [
-		string | null,
-		WidgetRecord[],
-	] = await Promise.all([readNJson(win, targetIndex), readWidgetRecords(win)]);
-	let widgetRecordsModified = false;
-
-	// Step 1 + Step 2: target.applyMove → target.readBackMove.
-	// Wrapped in try/catch: a failure here means target has a partial state
-	// (or became unreadable), and the source has not been touched yet, so
-	// the only rollback needed is to restore the target to its pre-image.
-	// (Issue #146 / Blocker 5.)
-	let preSourceStep: "apply" | "read-back" = "apply";
-	try {
-		workspaceLog.info("applyInterPanelMove:target-write:start", {
-			context: logContext,
-		});
-		await persistTargetLayout(win, {
-			persistenceRoot,
-			targetPanelId,
-			catalogIdsToMove,
-			widgetTiles: widgetTilesForCrossPanel,
-			widgetTypes: widgetTypesForCrossPanel,
-			presets,
-			groupCatalogEntries,
-			widgetInstanceTypesOverlay,
-		});
-		// Mark widget records as modified only when this move actually
-		// requested widget tiles (see `widgetRecordsPreImage` comment).
-		// `persistTargetLayout` returns AFTER both `writeNJson` and
-		// `upsertWidgetRecords` complete, so by the time we reach this
-		// line any widget-record write the move intended has already
-		// landed on disk.
-		if (widgetTilesForCrossPanel.length > 0) {
-			widgetRecordsModified = true;
-		}
-		preSourceStep = "read-back";
-
-		await readBackMove(
-			win,
-			targetPanelId,
-			catalogIdsToMove,
-			widgetTilesForCrossPanel,
-			widgetTypesForCrossPanel,
-		);
-		workspaceLog.info("applyInterPanelMove:read-back:ok", {
-			context: logContext,
-		});
-	} catch (preSourceError) {
-		const preSourceMessage =
-			preSourceError instanceof Error
-				? preSourceError.message
-				: String(preSourceError);
-
-		const targetOutcome = await rollbackTargetLayout(
-			win,
-			targetIndex,
-			targetPreImageRaw,
-		);
-		const widgetsOutcome = await rollbackWidgetRecordsIfModified(
-			win,
-			widgetRecordsPreImage,
-			widgetRecordsModified,
-		);
-
-		workspaceLog.warn(
-			"applyInterPanelMove:target-write-failed-target-rolled-back",
-			{
-				context: {
-					...logContext,
-					preSourceStep,
-					rollbackSucceeded: targetOutcome.rollbackSucceeded,
-					rollbackErrorMessage: targetOutcome.rollbackErrorMessage,
-					widgetsRollbackSucceeded: widgetsOutcome.rollbackSucceeded,
-					widgetsRollbackErrorMessage: widgetsOutcome.rollbackErrorMessage,
-					widgetRecordsModified,
-					preSourceMessage,
-				},
-			},
-		);
-
+	// ADR-0006: the entire ordered sequence — settings pre-image, target
+	// layout write + read-back, source settings write, source layout persist
+	// AND every compensating rollback — runs inside ONE managed-root
+	// persistence-lock hold. Holding the lock across rollback is what makes
+	// the preimage restores safe: no other CEP process can land a write
+	// between our forward writes and our rollback, so restoring a preimage
+	// cannot clobber a concurrent writer's committed update. Nested calls
+	// (`persistTargetLayout`, `persistSourceLayout` →
+	// `persistSurfaceStateAwaitable`) join this hold via AsyncLocalStorage.
+	const lockRoot = await resolvePersistenceLockRoot(win);
+	if (!lockRoot) {
 		throw new Error(
-			`applyInterPanelMove: target ${preSourceStep} failed; target layout ${
-				targetOutcome.rollbackSucceeded
-					? "rolled back to pre-image"
-					: "ROLLBACK FAILED — manual recovery required"
-			}${
-				widgetsOutcome.rollbackSucceeded
-					? ", widget records restored to pre-image"
-					: ", widget records ROLLBACK FAILED — manual recovery required"
-			}: ${preSourceMessage}`,
-			{ cause: preSourceError },
+			"applyInterPanelMove: no managed persistence root (onboarding incomplete)",
 		);
 	}
+	await withPersistenceLock(win, lockRoot, async () => {
+		// (read-only) read current settings so we can compute the new settingsJson
+		// in-memory; no side effects up to this point. This is also the pre-image
+		// used to roll back step (3) when step (4) rejects (Blocker 7).
+		const currentSettingsJson: string = (await readSettings(win)) ?? "{}";
 
-	// Step 3: source.removeMove (writeSettings). Only after steps 1 + 2
-	// succeeded. If writeSettings() fails, roll back the target layout to
-	// its pre-image so the operation leaves no persistent effect (Round 2).
-	try {
-		await writeSettings(win, nextSettingsJson);
-		workspaceLog.info("applyInterPanelMove:source-write:ok", {
-			context: logContext,
-		});
-	} catch (writeSettingsError) {
-		const writeSettingsMessage =
-			writeSettingsError instanceof Error
-				? writeSettingsError.message
-				: String(writeSettingsError);
+		// (compute) the new settingsJson (source presetIds removed, target added).
+		// This is a pure in-memory transform — nothing is persisted yet.
+		const nextSettingsJson: string =
+			catalogIdsToMove.length > 0
+				? movePresetPlacement(currentSettingsJson, {
+						sourcePanelId,
+						targetPanelId,
+						presetIds: [...catalogIdsToMove],
+						sourceFallbackPresetIds: [...sourceFallbackPresetIds],
+					})
+				: currentSettingsJson;
 
-		const targetOutcome = await rollbackTargetLayout(
-			win,
-			targetIndex,
-			targetPreImageRaw,
-		);
-		const widgetsOutcome = await rollbackWidgetRecordsIfModified(
-			win,
-			widgetRecordsPreImage,
-			widgetRecordsModified,
-		);
+		// Snapshot the target layout file **before** step (1) mutates it.
+		const targetIndex = indexFromPanelId(targetPanelId);
 
-		workspaceLog.warn(
-			"applyInterPanelMove:source-write-failed-target-rolled-back",
-			{
-				context: {
-					...logContext,
-					rollbackSucceeded: targetOutcome.rollbackSucceeded,
-					rollbackErrorMessage: targetOutcome.rollbackErrorMessage,
-					widgetsRollbackSucceeded: widgetsOutcome.rollbackSucceeded,
-					widgetsRollbackErrorMessage: widgetsOutcome.rollbackErrorMessage,
-					widgetRecordsModified,
-					writeSettingsMessage,
-				},
-			},
-		);
+		// Round-6 / Blocker 14: snapshot the widget records file **before**
+		// step (1) UNCONDITIONALLY (regardless of `widgetTilesForCrossPanel.length`).
+		//
+		// Previously the pre-image was only read when widget tiles were being
+		// moved; on a preset-only move failure the rollback path would then
+		// call `writeWidgetRecords(win, [])` and WIPE all existing widget
+		// records from `widgets/widgets.json`. Capturing the pre-image
+		// unconditionally (and tracking `widgetRecordsModified` so the
+		// rollback only fires when something was actually written) makes the
+		// restore safe AND avoids unnecessary disk writes when no widget
+		// records were touched.
+		//
+		// `widgetRecordsModified` is set true AFTER `persistTargetLayout`
+		// returns successfully AND the move requested widget tiles. This
+		// mirrors the condition `input.widgetTiles.length > 0` inside
+		// `persistTargetLayout` (cross-panel-write.ts) which is the gate
+		// for the `upsertWidgetRecords` call. On preset-only moves
+		// (`widgetTilesForCrossPanel.length === 0`) this stays false and
+		// the rollback path SKIPS `rollbackWidgetRecords` entirely — no
+		// write to `widgets/widgets.json`, no risk of wiping records.
+		//
+		// Both pre-images are read in one `Promise.all`: they are separate
+		// stores, neither result feeds the other, and what matters is only
+		// that both have landed before `persistTargetLayout` runs below.
+		const [targetPreImageRaw, widgetRecordsPreImage]: [
+			string | null,
+			WidgetRecord[],
+		] = await Promise.all([
+			readNJson(win, targetIndex),
+			readWidgetRecords(win),
+		]);
+		let widgetRecordsModified = false;
 
-		throw new Error(
-			`applyInterPanelMove: source write failed; target layout ${
-				targetOutcome.rollbackSucceeded
-					? "rolled back to pre-image"
-					: "ROLLBACK FAILED — manual recovery required"
-			}${
-				widgetsOutcome.rollbackSucceeded
-					? ", widget records restored to pre-image"
-					: ", widget records ROLLBACK FAILED — manual recovery required"
-			}: ${writeSettingsMessage}`,
-			{ cause: writeSettingsError },
-		);
-	}
-
-	// Step 4: source.persistLayout (Blocker 7). After steps 1-3 all succeeded,
-	// await the caller's source layout persistence. If it rejects, rollback
-	// BOTH target (Blocker 5 path) AND source settings.json (inverse of step
-	// 3) AND, if provided, await restoreSourceLayout so the source
-	// workspace-N.json is also reverted on disk.
-	try {
-		await persistSourceLayout();
-	} catch (sourceLayoutError) {
-		const sourceLayoutMessage =
-			sourceLayoutError instanceof Error
-				? sourceLayoutError.message
-				: String(sourceLayoutError);
-
-		// The three pre-images are independent stores and each rollback helper
-		// swallows its own error into a `RollbackOutcome`, so running them
-		// together neither short-circuits the others nor changes what the
-		// combined error message below reports.
-		const [targetOutcome, sourceSettingsOutcome, widgetsOutcome] =
-			await Promise.all([
-				rollbackTargetLayout(win, targetIndex, targetPreImageRaw),
-				rollbackSourceSettings(win, currentSettingsJson),
-				rollbackWidgetRecordsIfModified(
-					win,
-					widgetRecordsPreImage,
-					widgetRecordsModified,
-				),
-			]);
-
-		let sourceLayoutOutcome: RollbackOutcome = {
-			rollbackSucceeded: true,
-		};
-		if (restoreSourceLayout) {
-			try {
-				await restoreSourceLayout();
-				sourceLayoutOutcome = { rollbackSucceeded: true };
-			} catch (restoreError) {
-				sourceLayoutOutcome = {
-					rollbackSucceeded: false,
-					rollbackErrorMessage:
-						restoreError instanceof Error
-							? restoreError.message
-							: String(restoreError),
-				};
+		// Step 1 + Step 2: target.applyMove → target.readBackMove.
+		// Wrapped in try/catch: a failure here means target has a partial state
+		// (or became unreadable), and the source has not been touched yet, so
+		// the only rollback needed is to restore the target to its pre-image.
+		// (Issue #146 / Blocker 5.)
+		let preSourceStep: "apply" | "read-back" = "apply";
+		try {
+			workspaceLog.info("applyInterPanelMove:target-write:start", {
+				context: logContext,
+			});
+			await persistTargetLayout(win, {
+				persistenceRoot,
+				targetPanelId,
+				catalogIdsToMove,
+				widgetTiles: widgetTilesForCrossPanel,
+				widgetTypes: widgetTypesForCrossPanel,
+				presets,
+				groupCatalogEntries,
+				widgetInstanceTypesOverlay,
+			});
+			// Mark widget records as modified only when this move actually
+			// requested widget tiles (see `widgetRecordsPreImage` comment).
+			// `persistTargetLayout` returns AFTER both `writeNJson` and
+			// `upsertWidgetRecords` complete, so by the time we reach this
+			// line any widget-record write the move intended has already
+			// landed on disk.
+			if (widgetTilesForCrossPanel.length > 0) {
+				widgetRecordsModified = true;
 			}
+			preSourceStep = "read-back";
+
+			await readBackMove(
+				win,
+				targetPanelId,
+				catalogIdsToMove,
+				widgetTilesForCrossPanel,
+				widgetTypesForCrossPanel,
+			);
+			workspaceLog.info("applyInterPanelMove:read-back:ok", {
+				context: logContext,
+			});
+		} catch (preSourceError) {
+			const preSourceMessage =
+				preSourceError instanceof Error
+					? preSourceError.message
+					: String(preSourceError);
+
+			const targetOutcome = await rollbackTargetLayout(
+				win,
+				targetIndex,
+				targetPreImageRaw,
+			);
+			const widgetsOutcome = await rollbackWidgetRecordsIfModified(
+				win,
+				widgetRecordsPreImage,
+				widgetRecordsModified,
+			);
+
+			workspaceLog.warn(
+				"applyInterPanelMove:target-write-failed-target-rolled-back",
+				{
+					context: {
+						...logContext,
+						preSourceStep,
+						rollbackSucceeded: targetOutcome.rollbackSucceeded,
+						rollbackErrorMessage: targetOutcome.rollbackErrorMessage,
+						widgetsRollbackSucceeded: widgetsOutcome.rollbackSucceeded,
+						widgetsRollbackErrorMessage: widgetsOutcome.rollbackErrorMessage,
+						widgetRecordsModified,
+						preSourceMessage,
+					},
+				},
+			);
+
+			throw new Error(
+				`applyInterPanelMove: target ${preSourceStep} failed; target layout ${
+					targetOutcome.rollbackSucceeded
+						? "rolled back to pre-image"
+						: "ROLLBACK FAILED — manual recovery required"
+				}${
+					widgetsOutcome.rollbackSucceeded
+						? ", widget records restored to pre-image"
+						: ", widget records ROLLBACK FAILED — manual recovery required"
+				}: ${preSourceMessage}`,
+				{ cause: preSourceError },
+			);
 		}
 
-		const allSucceeded =
-			targetOutcome.rollbackSucceeded &&
-			sourceSettingsOutcome.rollbackSucceeded &&
-			sourceLayoutOutcome.rollbackSucceeded &&
-			widgetsOutcome.rollbackSucceeded;
+		// Step 3: source.removeMove (writeSettings). Only after steps 1 + 2
+		// succeeded. If writeSettings() fails, roll back the target layout to
+		// its pre-image so the operation leaves no persistent effect (Round 2).
+		try {
+			await writeSettings(win, nextSettingsJson);
+			workspaceLog.info("applyInterPanelMove:source-write:ok", {
+				context: logContext,
+			});
+		} catch (writeSettingsError) {
+			const writeSettingsMessage =
+				writeSettingsError instanceof Error
+					? writeSettingsError.message
+					: String(writeSettingsError);
 
-		workspaceLog.warn(
-			"applyInterPanelMove:source-layout-failed-full-rollback",
-			{
-				context: {
-					...logContext,
-					sourceLayoutMessage,
-					targetRollbackSucceeded: targetOutcome.rollbackSucceeded,
-					targetRollbackErrorMessage: targetOutcome.rollbackErrorMessage,
-					sourceSettingsRollbackSucceeded:
-						sourceSettingsOutcome.rollbackSucceeded,
-					sourceSettingsRollbackErrorMessage:
-						sourceSettingsOutcome.rollbackErrorMessage,
-					sourceLayoutRollbackSucceeded: sourceLayoutOutcome.rollbackSucceeded,
-					sourceLayoutRollbackErrorMessage:
-						sourceLayoutOutcome.rollbackErrorMessage,
-					widgetsRollbackSucceeded: widgetsOutcome.rollbackSucceeded,
-					widgetsRollbackErrorMessage: widgetsOutcome.rollbackErrorMessage,
-					widgetRecordsModified,
-					allRollbacksSucceeded: allSucceeded,
-					sourcePersistResult: "failed-then-rolled-back",
+			const targetOutcome = await rollbackTargetLayout(
+				win,
+				targetIndex,
+				targetPreImageRaw,
+			);
+			const widgetsOutcome = await rollbackWidgetRecordsIfModified(
+				win,
+				widgetRecordsPreImage,
+				widgetRecordsModified,
+			);
+
+			workspaceLog.warn(
+				"applyInterPanelMove:source-write-failed-target-rolled-back",
+				{
+					context: {
+						...logContext,
+						rollbackSucceeded: targetOutcome.rollbackSucceeded,
+						rollbackErrorMessage: targetOutcome.rollbackErrorMessage,
+						widgetsRollbackSucceeded: widgetsOutcome.rollbackSucceeded,
+						widgetsRollbackErrorMessage: widgetsOutcome.rollbackErrorMessage,
+						widgetRecordsModified,
+						writeSettingsMessage,
+					},
 				},
+			);
+
+			throw new Error(
+				`applyInterPanelMove: source write failed; target layout ${
+					targetOutcome.rollbackSucceeded
+						? "rolled back to pre-image"
+						: "ROLLBACK FAILED — manual recovery required"
+				}${
+					widgetsOutcome.rollbackSucceeded
+						? ", widget records restored to pre-image"
+						: ", widget records ROLLBACK FAILED — manual recovery required"
+				}: ${writeSettingsMessage}`,
+				{ cause: writeSettingsError },
+			);
+		}
+
+		// Step 4: source.persistLayout (Blocker 7). After steps 1-3 all succeeded,
+		// await the caller's source layout persistence. If it rejects, rollback
+		// BOTH target (Blocker 5 path) AND source settings.json (inverse of step
+		// 3) AND, if provided, await restoreSourceLayout so the source
+		// workspace-N.json is also reverted on disk.
+		try {
+			await persistSourceLayout();
+		} catch (sourceLayoutError) {
+			const sourceLayoutMessage =
+				sourceLayoutError instanceof Error
+					? sourceLayoutError.message
+					: String(sourceLayoutError);
+
+			// The three pre-images are independent stores and each rollback helper
+			// swallows its own error into a `RollbackOutcome`, so running them
+			// together neither short-circuits the others nor changes what the
+			// combined error message below reports.
+			const [targetOutcome, sourceSettingsOutcome, widgetsOutcome] =
+				await Promise.all([
+					rollbackTargetLayout(win, targetIndex, targetPreImageRaw),
+					rollbackSourceSettings(win, currentSettingsJson),
+					rollbackWidgetRecordsIfModified(
+						win,
+						widgetRecordsPreImage,
+						widgetRecordsModified,
+					),
+				]);
+
+			let sourceLayoutOutcome: RollbackOutcome = {
+				rollbackSucceeded: true,
+			};
+			if (restoreSourceLayout) {
+				try {
+					await restoreSourceLayout();
+					sourceLayoutOutcome = { rollbackSucceeded: true };
+				} catch (restoreError) {
+					sourceLayoutOutcome = {
+						rollbackSucceeded: false,
+						rollbackErrorMessage:
+							restoreError instanceof Error
+								? restoreError.message
+								: String(restoreError),
+					};
+				}
+			}
+
+			const allSucceeded =
+				targetOutcome.rollbackSucceeded &&
+				sourceSettingsOutcome.rollbackSucceeded &&
+				sourceLayoutOutcome.rollbackSucceeded &&
+				widgetsOutcome.rollbackSucceeded;
+
+			workspaceLog.warn(
+				"applyInterPanelMove:source-layout-failed-full-rollback",
+				{
+					context: {
+						...logContext,
+						sourceLayoutMessage,
+						targetRollbackSucceeded: targetOutcome.rollbackSucceeded,
+						targetRollbackErrorMessage: targetOutcome.rollbackErrorMessage,
+						sourceSettingsRollbackSucceeded:
+							sourceSettingsOutcome.rollbackSucceeded,
+						sourceSettingsRollbackErrorMessage:
+							sourceSettingsOutcome.rollbackErrorMessage,
+						sourceLayoutRollbackSucceeded:
+							sourceLayoutOutcome.rollbackSucceeded,
+						sourceLayoutRollbackErrorMessage:
+							sourceLayoutOutcome.rollbackErrorMessage,
+						widgetsRollbackSucceeded: widgetsOutcome.rollbackSucceeded,
+						widgetsRollbackErrorMessage: widgetsOutcome.rollbackErrorMessage,
+						widgetRecordsModified,
+						allRollbacksSucceeded: allSucceeded,
+						sourcePersistResult: "failed-then-rolled-back",
+					},
+				},
+			);
+
+			throw new Error(
+				`applyInterPanelMove: source layout persistence failed; target layout ${
+					targetOutcome.rollbackSucceeded
+						? "rolled back to pre-image"
+						: "ROLLBACK FAILED — manual recovery required"
+				}, source settings ${
+					sourceSettingsOutcome.rollbackSucceeded
+						? "restored to pre-image"
+						: "ROLLBACK FAILED — manual recovery required"
+				}${
+					restoreSourceLayout
+						? `, source layout ${
+								sourceLayoutOutcome.rollbackSucceeded
+									? "restored to pre-image"
+									: "ROLLBACK FAILED — manual recovery required"
+							}`
+						: ""
+				}${
+					widgetsOutcome.rollbackSucceeded
+						? ", widget records restored to pre-image"
+						: ", widget records ROLLBACK FAILED — manual recovery required"
+				}: ${sourceLayoutMessage}`,
+				{ cause: sourceLayoutError },
+			);
+		}
+
+		workspaceLog.info("applyInterPanelMove:committed", {
+			context: {
+				...logContext,
+				sourcePersistResult: "success",
 			},
-		);
-
-		throw new Error(
-			`applyInterPanelMove: source layout persistence failed; target layout ${
-				targetOutcome.rollbackSucceeded
-					? "rolled back to pre-image"
-					: "ROLLBACK FAILED — manual recovery required"
-			}, source settings ${
-				sourceSettingsOutcome.rollbackSucceeded
-					? "restored to pre-image"
-					: "ROLLBACK FAILED — manual recovery required"
-			}${
-				restoreSourceLayout
-					? `, source layout ${
-							sourceLayoutOutcome.rollbackSucceeded
-								? "restored to pre-image"
-								: "ROLLBACK FAILED — manual recovery required"
-						}`
-					: ""
-			}${
-				widgetsOutcome.rollbackSucceeded
-					? ", widget records restored to pre-image"
-					: ", widget records ROLLBACK FAILED — manual recovery required"
-			}: ${sourceLayoutMessage}`,
-			{ cause: sourceLayoutError },
-		);
-	}
-
-	workspaceLog.info("applyInterPanelMove:committed", {
-		context: {
-			...logContext,
-			sourcePersistResult: "success",
-		},
+		});
 	});
 };

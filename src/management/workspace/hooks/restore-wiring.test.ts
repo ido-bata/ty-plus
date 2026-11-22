@@ -85,8 +85,13 @@ describe("persistSurfaceState routes user edits through the write gate", () => {
 		// background) live in `persistence/surface-write.ts` and are
 		// exercised against real files by
 		// `persistence/surface-write.fault-injection.test.ts` — here we pin
-		// only that the hook's write entry point is gated.
-		expect(body.indexOf("await writeSurfaceState(")).toBeGreaterThan(guardIdx);
+		// only that the hook's write entry point is gated. ADR-0006 moved the
+		// ordered writes into `persistLatestSurfaceStateLocked`, which the
+		// gated body invokes inside `withPersistenceLock`.
+		expect(body.indexOf("withPersistenceLock(")).toBeGreaterThan(guardIdx);
+		expect(body.indexOf("persistLatestSurfaceStateLocked(")).toBeGreaterThan(
+			guardIdx,
+		);
 	});
 
 	it("keeps the awaitable variant gated on writeGate.isReady()", () => {

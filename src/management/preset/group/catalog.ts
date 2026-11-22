@@ -191,32 +191,50 @@ function isPlainRecord(v: unknown): v is Record<string, unknown> {
 export const parseGroupFromText = (raw: string | null): readonly GroupEntry[] =>
 	parseGroupRaw(raw).groups;
 
+/**
+ * ADR-0006: `groups.json` is shared across CEP contexts (panel, settings
+ * dialog, preset dialogs). Every read-modify-write below runs inside the
+ * managed-root persistence lock so concurrent group edits cannot lose each
+ * other's rows.
+ */
+const withGroupCatalogLock = async <T>(
+	win: Window,
+	fn: () => Promise<T>,
+): Promise<T> => {
+	const { withManagedRootPersistenceLock } = await import(
+		"@/management/storage/lock/persistence-lock"
+	);
+	return withManagedRootPersistenceLock(win, fn);
+};
+
 /** Merge one group row into `groups.json` (by id). */
 export const upsertGroupEntry = async (
 	win: Window,
 	entry: GroupEntry,
 ): Promise<void> => {
-	const existingText = await readGroupJson(win);
-	const catalog = parseGroupRaw(existingText);
-	const byId = new Map(catalog.groups.map((g) => [g.id, g]));
-	byId.set(entry.id, {
-		id: entry.id,
-		title: entry.title.trim() || "Group",
-		presetIds: [...entry.presetIds],
-		...(entry.description ? { description: entry.description.trim() } : {}),
-		...(entry.descriptionImage
-			? { descriptionImage: entry.descriptionImage.trim() }
-			: {}),
-		...(entry.icon ? { icon: entry.icon } : {}),
-		...(entry.iconRules && entry.iconRules.length > 0
-			? { iconRules: entry.iconRules }
-			: {}),
+	await withGroupCatalogLock(win, async () => {
+		const existingText = await readGroupJson(win);
+		const catalog = parseGroupRaw(existingText);
+		const byId = new Map(catalog.groups.map((g) => [g.id, g]));
+		byId.set(entry.id, {
+			id: entry.id,
+			title: entry.title.trim() || "Group",
+			presetIds: [...entry.presetIds],
+			...(entry.description ? { description: entry.description.trim() } : {}),
+			...(entry.descriptionImage
+				? { descriptionImage: entry.descriptionImage.trim() }
+				: {}),
+			...(entry.icon ? { icon: entry.icon } : {}),
+			...(entry.iconRules && entry.iconRules.length > 0
+				? { iconRules: entry.iconRules }
+				: {}),
+		});
+		const next: GroupFile = {
+			version: 1,
+			groups: [...byId.values()],
+		};
+		await writeGroupJson(win, `${JSON.stringify(next, null, 2)}\n`);
 	});
-	const next: GroupFile = {
-		version: 1,
-		groups: [...byId.values()],
-	};
-	await writeGroupJson(win, `${JSON.stringify(next, null, 2)}\n`);
 };
 
 /** Remove a group row from `groups.json` by id (no-op if missing). */
@@ -226,13 +244,15 @@ export const removeGroupEntry = async (
 ): Promise<void> => {
 	const id = groupId.trim();
 	if (!id) return;
-	const existingText = await readGroupJson(win);
-	const catalog = parseGroupRaw(existingText);
-	const next: GroupFile = {
-		version: 1,
-		groups: catalog.groups.filter((g) => g.id !== id),
-	};
-	await writeGroupJson(win, `${JSON.stringify(next, null, 2)}\n`);
+	await withGroupCatalogLock(win, async () => {
+		const existingText = await readGroupJson(win);
+		const catalog = parseGroupRaw(existingText);
+		const next: GroupFile = {
+			version: 1,
+			groups: catalog.groups.filter((g) => g.id !== id),
+		};
+		await writeGroupJson(win, `${JSON.stringify(next, null, 2)}\n`);
+	});
 };
 
 /**
@@ -247,27 +267,29 @@ export const removePresetFromGroupEntry = async (
 	const gid = groupId.trim();
 	const pid = presetId.trim();
 	if (!gid || !pid) return;
-	const existingText = await readGroupJson(win);
-	const catalog = parseGroupRaw(existingText);
-	let changed = false;
-	const nextGroups = catalog.groups.map((g) => {
-		if (g.id !== gid) return g;
-		const nextPresetIds = g.presetIds.filter((id) => id.trim() !== pid);
-		if (nextPresetIds.length === g.presetIds.length) {
-			return g;
-		}
-		changed = true;
-		return {
-			...g,
-			presetIds: nextPresetIds,
+	await withGroupCatalogLock(win, async () => {
+		const existingText = await readGroupJson(win);
+		const catalog = parseGroupRaw(existingText);
+		let changed = false;
+		const nextGroups = catalog.groups.map((g) => {
+			if (g.id !== gid) return g;
+			const nextPresetIds = g.presetIds.filter((id) => id.trim() !== pid);
+			if (nextPresetIds.length === g.presetIds.length) {
+				return g;
+			}
+			changed = true;
+			return {
+				...g,
+				presetIds: nextPresetIds,
+			};
+		});
+		if (!changed) return;
+		const next: GroupFile = {
+			version: 1,
+			groups: nextGroups,
 		};
+		await writeGroupJson(win, `${JSON.stringify(next, null, 2)}\n`);
 	});
-	if (!changed) return;
-	const next: GroupFile = {
-		version: 1,
-		groups: nextGroups,
-	};
-	await writeGroupJson(win, `${JSON.stringify(next, null, 2)}\n`);
 };
 
 export const reorderPresetInGroupEntry = async (
@@ -278,30 +300,32 @@ export const reorderPresetInGroupEntry = async (
 ): Promise<void> => {
 	const gid = groupId.trim();
 	if (!gid) return;
-	const existingText = await readGroupJson(win);
-	const catalog = parseGroupRaw(existingText);
-	let changed = false;
-	const nextGroups = catalog.groups.map((g) => {
-		if (g.id !== gid) return g;
-		if (
-			fromIndex < 0 ||
-			fromIndex >= g.presetIds.length ||
-			toIndex < 0 ||
-			toIndex >= g.presetIds.length ||
-			fromIndex === toIndex
-		) {
-			return g;
-		}
-		const nextPresetIds = [...g.presetIds];
-		const [item] = nextPresetIds.splice(fromIndex, 1);
-		if (!item) return g;
-		nextPresetIds.splice(toIndex, 0, item);
-		changed = true;
-		return { ...g, presetIds: nextPresetIds };
+	await withGroupCatalogLock(win, async () => {
+		const existingText = await readGroupJson(win);
+		const catalog = parseGroupRaw(existingText);
+		let changed = false;
+		const nextGroups = catalog.groups.map((g) => {
+			if (g.id !== gid) return g;
+			if (
+				fromIndex < 0 ||
+				fromIndex >= g.presetIds.length ||
+				toIndex < 0 ||
+				toIndex >= g.presetIds.length ||
+				fromIndex === toIndex
+			) {
+				return g;
+			}
+			const nextPresetIds = [...g.presetIds];
+			const [item] = nextPresetIds.splice(fromIndex, 1);
+			if (!item) return g;
+			nextPresetIds.splice(toIndex, 0, item);
+			changed = true;
+			return { ...g, presetIds: nextPresetIds };
+		});
+		if (!changed) return;
+		const next: GroupFile = { version: 1, groups: nextGroups };
+		await writeGroupJson(win, `${JSON.stringify(next, null, 2)}\n`);
 	});
-	if (!changed) return;
-	const next: GroupFile = { version: 1, groups: nextGroups };
-	await writeGroupJson(win, `${JSON.stringify(next, null, 2)}\n`);
 };
 
 /** Merge explicit workspace group rows into `groups.json` (by id). */
@@ -315,27 +339,29 @@ export const mergeGroupEntries = async (
 	logWorkspace("mergeGroupEntries", {
 		incomingGroupCount: entries.length,
 	});
-	const existingText = await readGroupJson(win);
-	const catalog = parseGroupRaw(existingText);
-	const byId = new Map(catalog.groups.map((g) => [g.id, g]));
-	for (const g of entries) {
-		byId.set(g.id, {
-			id: g.id,
-			title: g.title.trim() || "Group",
-			presetIds: [...g.presetIds],
-			...(g.description ? { description: g.description.trim() } : {}),
-			...(g.descriptionImage
-				? { descriptionImage: g.descriptionImage.trim() }
-				: {}),
-			...(g.icon ? { icon: g.icon } : {}),
-			...(g.iconRules && g.iconRules.length > 0
-				? { iconRules: g.iconRules }
-				: {}),
-		});
-	}
-	const next: GroupFile = {
-		version: 1,
-		groups: [...byId.values()],
-	};
-	await writeGroupJson(win, `${JSON.stringify(next, null, 2)}\n`);
+	await withGroupCatalogLock(win, async () => {
+		const existingText = await readGroupJson(win);
+		const catalog = parseGroupRaw(existingText);
+		const byId = new Map(catalog.groups.map((g) => [g.id, g]));
+		for (const g of entries) {
+			byId.set(g.id, {
+				id: g.id,
+				title: g.title.trim() || "Group",
+				presetIds: [...g.presetIds],
+				...(g.description ? { description: g.description.trim() } : {}),
+				...(g.descriptionImage
+					? { descriptionImage: g.descriptionImage.trim() }
+					: {}),
+				...(g.icon ? { icon: g.icon } : {}),
+				...(g.iconRules && g.iconRules.length > 0
+					? { iconRules: g.iconRules }
+					: {}),
+			});
+		}
+		const next: GroupFile = {
+			version: 1,
+			groups: [...byId.values()],
+		};
+		await writeGroupJson(win, `${JSON.stringify(next, null, 2)}\n`);
+	});
 };
