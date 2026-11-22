@@ -5,20 +5,18 @@ import {
 	AuthoringSection,
 } from "@/management/preset/authoring-layout";
 import { readUserHomeOrFallback } from "@/management/preset/catalog-add/browse-start-dir";
-import type {
-	IconRule,
-	IconRuleFilter,
-} from "@/management/preset/group/catalog";
 import { persistFolderGroupPreset } from "@/management/preset/group/persist-folder";
 import {
 	createPresetIconDraft,
 	type PresetIconEditorDraft,
-	presetIconDraftToPresetIcon,
 } from "@/management/preset/icon/editor-state";
 import { listPresets } from "@/management/preset/operations";
 import { Dialog } from "@/management/preset/tool-shell/dialog/ToolDialog";
 import { ConditionRulesSection } from "./ConditionRulesSection";
-import type { ConditionRule } from "./condition-rule-helpers";
+import {
+	type ConditionRule,
+	conditionRulesToIconRules,
+} from "./condition-rule-helpers";
 import { MembersSection } from "./MembersSection";
 import { NameField } from "./NameField";
 
@@ -254,23 +252,7 @@ export function GroupDialog(): JSX.Element {
 					.split(/\r?\n/)
 					.map((l: string) => l.trim())
 					.filter(Boolean);
-				const condRules = conditionRules.flatMap<IconRule>((r) => {
-					const icon = presetIconDraftToPresetIcon(r.draft);
-					let filter: IconRuleFilter | undefined;
-					if (r.filterType === "name" && r.pattern.trim())
-						filter = { namePattern: r.pattern.trim() };
-					if (r.filterType === "path" && r.pattern.trim())
-						filter = { filePathPattern: r.pattern.trim() };
-					if (r.filterType === "preset" && r.pattern.trim())
-						filter = {
-							specificPresetIds: r.pattern.split(/\s*,\s*/).filter(Boolean),
-						};
-					if (r.filterType === "presetType" && r.presetType)
-						filter = { presetType: r.presetType };
-					if (icon && filter) return [{ filter, icon }];
-					if (icon) return [{ icon }];
-					return [];
-				});
+				const condRules = conditionRulesToIconRules(conditionRules);
 				return persistFolderGroupPreset(win, {
 					folderPaths,
 					presetIdsText: values.presetIds ?? "",

@@ -19,10 +19,12 @@ import {
 } from "@/management/preset/catalog-browser/layout";
 import { buildPlacementHints } from "@/management/preset/catalog-browser/workspace-placement-hints";
 import type { Preset } from "@/management/preset/contract";
+import { askHostDeleteConfirm } from "@/management/preset/delete-confirm";
 import { traceExecute } from "@/management/preset/execution/lifecycle-trace";
 import {
 	type GroupEntry,
 	parseGroupFromText,
+	removeGroupEntry,
 } from "@/management/preset/group/catalog";
 import {
 	getPreset,
@@ -401,8 +403,19 @@ function usePresetsCatalog(opts: PresetsCatalogOptions): PresetsCatalogApi {
 
 	const onDelete = useCallback(
 		async (id: string) => {
+			const title =
+				presets.find((p) => p.id === id)?.title ??
+				groups.find((g) => g.id === id)?.title ??
+				"";
+			const isGroup = groups.some((g) => g.id === id);
 			try {
-				await removeLocalPreset(id);
+				const confirmed = await askHostDeleteConfirm(window, title, isGroup);
+				if (!confirmed) return;
+				if (isGroup) {
+					await removeGroupEntry(window, id);
+				} else {
+					await removeLocalPreset(id);
+				}
 				await loadEverything();
 			} catch (error) {
 				console.warn(
@@ -411,7 +424,7 @@ function usePresetsCatalog(opts: PresetsCatalogOptions): PresetsCatalogApi {
 				);
 			}
 		},
-		[loadEverything],
+		[groups, loadEverything, presets],
 	);
 
 	const clearSearch = useCallback(() => {

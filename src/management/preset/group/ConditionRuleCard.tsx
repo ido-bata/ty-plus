@@ -13,18 +13,10 @@ import { glyphBoxFillClass } from "@/management/preset/workspace/glyph/classes";
 import { FramedPresetGlyph } from "@/management/preset/workspace/glyph/WorkspaceGlyph";
 import { FileEntryList } from "@/management/storage/ui/file-entry/FileEntryList";
 import { css } from "@/styled-system/css";
+import type { ConditionRule } from "./condition-rule-helpers";
 
 const escapeRegex = (value: string): string =>
 	value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-
-type ConditionRule = {
-	id: string;
-	filterType: "name" | "path" | "preset" | "presetType";
-	pattern: string;
-	matchMode?: "regex" | "contains" | "startsWith" | "endsWith";
-	presetType?: PresetType;
-	draft: PresetIconEditorDraft;
-};
 
 const cardClass = css({
 	borderRadius: "shell-sm",

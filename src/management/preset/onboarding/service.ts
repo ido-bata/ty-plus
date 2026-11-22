@@ -4,9 +4,7 @@
  * Moves preset repository mutation out of OnboardingView into a dedicated service.
  */
 
-import type { AfterEffectsFilesRuntimeGateway } from "@/management/ae/files/runtime-gateway-impl";
 import type { Preset } from "@/management/preset/contract";
-import { presetIconImage } from "@/management/preset/contract";
 import type { GroupCatalogEntry } from "@/management/preset/group/catalog";
 import { coercePersistedPresetIcon } from "@/management/preset/icon/normalize";
 import {
@@ -16,10 +14,6 @@ import {
 	resolveOnboardingProjectedPresetIds,
 	resolveOnboardingWorkspacePanelRefIds,
 } from "@/management/preset/onboarding/import";
-import {
-	resolveSiblingImageIconSrc,
-	type SiblingListingEntry,
-} from "@/management/preset/sibling-thumbnail";
 import { createLocalPresetCatalogId } from "@/management/storage/ids";
 import { logWorkspace } from "@/management/workspace/onboarding/flow-log";
 
@@ -131,15 +125,6 @@ export const importOnboardingPresets = async (
 	listDirectory: (
 		dirPath: string,
 	) => Promise<Array<{ name: string; path: string; isDirectory: boolean }>>,
-	/**
-	 * Optional thumbnail gateway. When provided, sibling image paths
-	 * are routed through `lookupThumbnail` so the persisted preset
-	 * `icon` references the WebP cache URL instead of the raw source
-	 * path. Without the gateway (tests, missing provider), sibling
-	 * resolution falls back to the raw path so the rest of the import
-	 * keeps working.
-	 */
-	thumbnailGateway?: AfterEffectsFilesRuntimeGateway | null,
 ): Promise<OnboardingImportResult> => {
 	const candidates = await buildCandidates(options, listDirectory);
 
@@ -167,59 +152,6 @@ export const importOnboardingPresets = async (
 	);
 	const knownIds = new Set(before.map((preset) => preset.id));
 
-	const dirListingCache = new Map<string, SiblingListingEntry[]>();
-	const siblingIconSrcByFileKey = new Map<string, string | null>();
-	const uniqueFilePaths: string[] = [];
-	const seenFileKeys = new Set<string>();
-	for (const candidate of candidates) {
-		if (candidate.type === "group") {
-			continue;
-		}
-		const fk = normalizePathKey(candidate.filePath);
-		if (seenFileKeys.has(fk)) {
-			continue;
-		}
-		seenFileKeys.add(fk);
-		uniqueFilePaths.push(candidate.filePath);
-	}
-	const siblingIconResults = await Promise.all(
-		uniqueFilePaths.map(async (fp) => {
-			const siblingPath = await resolveSiblingImageIconSrc(
-				fp,
-				listDirectory,
-				dirListingCache,
-			);
-			if (!siblingPath) {
-				return null;
-			}
-			if (!thumbnailGateway) {
-				return siblingPath;
-			}
-			try {
-				const lookup = await thumbnailGateway.lookupThumbnail({
-					source_path: siblingPath,
-					// Sentinel mtime matches the synthetic entries used by
-					// `EntryThumb` / `GlyphCachedImage` so the cache key is
-					// stable across renders for the same sibling.
-					mtime_ms: Date.parse("2026-01-01T00:00:00.000Z"),
-					size_bytes: 0,
-					file_type: "image",
-				});
-				return lookup.cache_path ?? siblingPath;
-			} catch {
-				// Cache failure is non-fatal for onboarding — fall back
-				// to the raw path so the import still completes.
-				return siblingPath;
-			}
-		}),
-	);
-	for (let i = 0; i < uniqueFilePaths.length; i++) {
-		const fp = uniqueFilePaths[i];
-		const result = siblingIconResults[i];
-		if (fp === undefined || result === undefined) continue;
-		siblingIconSrcByFileKey.set(normalizePathKey(fp), result);
-	}
-
 	const addedFilePresets: Preset[] = [];
 
 	for (const candidate of candidates) {
@@ -236,16 +168,15 @@ export const importOnboardingPresets = async (
 		}
 		knownIds.add(presetId);
 		knownFilePaths.add(filePathKey);
-		const siblingSrc = siblingIconSrcByFileKey.get(filePathKey);
 		addedFilePresets.push({
 			id: presetId,
 			type: candidate.type,
 			title: candidate.title,
 			filePath: candidate.filePath,
-			icon:
-				typeof siblingSrc === "string" && siblingSrc.trim()
-					? presetIconImage(siblingSrc)
-					: coercePersistedPresetIcon(candidate.type, undefined),
+			// ADR: sibling image icons are derived at render time from
+			// filePath (sibling-thumbnail) and must not be persisted into
+			// preset.icon — the catalog stores only type-derived icons.
+			icon: coercePersistedPresetIcon(candidate.type, undefined),
 		});
 	}
 
