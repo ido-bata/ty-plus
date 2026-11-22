@@ -72,7 +72,7 @@ describe("PresetLibrary checkDownloaded — no unhandled rejection (issue 170)",
 	it("uses the non-throwing tryGetDataServices accessor", () => {
 		expect(catalogDialogSource).not.toMatch(/\bgetDataServices\s*\(/);
 		expect(catalogDialogSource).toMatch(
-			/import\s*\{[^}]*\btryGetDataServices\b[^}]*\}\s*from\s*["']@\/management\/workspace\/services["']/,
+			/import\s*\{[^}]*\btryGetDataServices\b[^}]*\}\s*from\s*["']@\/management\/workspace\/core\/services["']/,
 		);
 	});
 });

@@ -131,7 +131,7 @@ describe("useContextMenu", () => {
 		const url = await import("node:url");
 		const here = path.dirname(url.fileURLToPath(import.meta.url));
 		const source = fs.readFileSync(
-			path.resolve(here, "useContextMenu.ts"),
+			path.resolve(here, "use-context-menu.ts"),
 			"utf8",
 		);
 		// Strip JSDoc / line comments so the JSDoc explanation of why we
