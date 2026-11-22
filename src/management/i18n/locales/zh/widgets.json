@@ -85,7 +85,13 @@
 			"easeInOut": "应用 Ease in/out Easing 预设"
 		},
 		"undoGroupName": "Ty Plus: 应用缓动",
-		"pasteValuesUndoGroupName": "Ty Plus: 粘贴值"
+		"pasteValuesUndoGroupName": "Ty Plus: 粘贴值",
+		"errors": {
+			"selectKeyframes": "请在活动合成中选择关键帧",
+			"selectAnimatedProperty": "请至少选择一个已动画化的属性",
+			"selectTwoKeyframes": "请在已动画化的属性上选择至少两个关键帧",
+			"captureFailed": "无法从所选关键帧读取缓动"
+		}
 	},
 	"menu": {
 		"name": "菜单",
@@ -121,7 +127,11 @@
 			"time": "时间"
 		},
 		"undoGroupName": "Ty Plus: 对齐图层",
-		"timeUndoGroupName": "ty-plus 时间对齐"
+		"timeUndoGroupName": "ty-plus 时间对齐",
+		"errors": {
+			"noActiveComposition": "请在活动合成中选择至少一个图层",
+			"noLayerSelected": "对齐前请先选择至少一个图层"
+		}
 	},
 	"anchorPoint": {
 		"name": "Anchor point",
@@ -214,6 +224,11 @@
 				"applyPreset": "Ty Plus: 应用预设",
 				"addFootage": "Ty Plus: 添加素材",
 				"applyEffect": "Ty Plus: 应用效果"
+			},
+			"errors": {
+				"openComposition": "应用预设前请先打开合成",
+				"addLayerOrSelect": "在空合成中应用此预设前，请先添加图层或选择图层",
+				"selectLayerForEffect": "应用效果前请先选择至少一个图层"
 			}
 		},
 		"path": {

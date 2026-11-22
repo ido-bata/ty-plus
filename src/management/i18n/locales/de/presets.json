@@ -187,7 +187,9 @@
 			"undoGroupName": "ty-plus: Easing-Vorgabe anwenden"
 		},
 		"layerCompScript": {
-			"undoGroupName": "Ty Plus: Ebenen-/Kompositionsvorgabe anwenden"
+			"undoGroupName": "Ty Plus: Ebenen-/Kompositionsvorgabe anwenden",
+			"saveProjectFirst": "Speichern Sie das After-Effects-Projekt, bevor Sie diese Voreinstellung erstellen",
+			"sourceProjectNotFoundPrefix": "Quellprojekt nicht gefunden: "
 		}
 	},
 	"animationPreset": {
@@ -216,7 +218,10 @@
 			"notConfigured": "Nicht konfiguriert"
 		},
 		"iconText": "ANIM",
-		"undoGroupName": "Ty Plus: Animationsvorgabe speichern"
+		"undoGroupName": "Ty Plus: Animationsvorgabe speichern",
+		"errors": {
+			"selectLayerToSave": "Wählen Sie mindestens eine Ebene aus, bevor Sie eine Animationsvoreinstellung speichern"
+		}
 	},
 	"edit": {
 		"title": "Preset bearbeiten",

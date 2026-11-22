@@ -34,6 +34,21 @@ export const importFile = async (
 					"widgets:directoryBrowser.actions.undoGroup.applyPreset",
 					{ defaultValue: "Ty Plus: Apply Preset" },
 				),
+				messages: {
+					openComposition: i18n.t(
+						"widgets:directoryBrowser.actions.errors.openComposition",
+						{
+							defaultValue: "Open a composition before applying a preset",
+						},
+					),
+					addLayerOrSelect: i18n.t(
+						"widgets:directoryBrowser.actions.errors.addLayerOrSelect",
+						{
+							defaultValue:
+								"Add a layer or select a layer before applying this preset in an empty composition",
+						},
+					),
+				},
 			},
 		]);
 		return i18n.t("widgets:directoryBrowser.actions.appliedPreset", {
@@ -53,6 +68,15 @@ export const importFile = async (
 					"widgets:directoryBrowser.actions.undoGroup.applyEffect",
 					{ defaultValue: "Ty Plus: Apply effect" },
 				),
+				messages: {
+					selectLayer: i18n.t(
+						"widgets:directoryBrowser.actions.errors.selectLayerForEffect",
+						{
+							defaultValue:
+								"Select at least one layer before applying an effect",
+						},
+					),
+				},
 			},
 		]);
 		return i18n.t("widgets:directoryBrowser.actions.appliedEffect", {

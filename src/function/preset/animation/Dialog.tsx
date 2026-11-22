@@ -539,6 +539,9 @@ type AnimationScanInput = {
 	onAutoName: (nextName: string) => void;
 	presetId?: string;
 	undoGroupName?: string;
+	messages?: {
+		selectLayerToSave?: string;
+	};
 };
 
 // Owns the scan/save-dialog flow that opens the AE save dialog, waits for the
@@ -560,6 +563,7 @@ function useAnimationPresetDetection(input: AnimationScanInput): {
 		onAutoName,
 		presetId,
 		undoGroupName,
+		messages,
 	} = input;
 	const [status, setStatus] = useState<PresetStatus>("idle");
 	const [busy, setBusy] = useState(false);
@@ -609,6 +613,7 @@ function useAnimationPresetDetection(input: AnimationScanInput): {
 				saveDir: scanPath,
 				presetId,
 				...(undoGroupName ? { undoGroupName } : {}),
+				...(messages ? { messages } : {}),
 			});
 
 			if (!result.ok) {
@@ -678,6 +683,7 @@ function useAnimationPresetDetection(input: AnimationScanInput): {
 		scanAllFfxFiles,
 		tyPlusPresetRoot,
 		undoGroupName,
+		messages,
 	]);
 
 	return {
@@ -784,6 +790,12 @@ export function Dialog(): JSX.Element {
 		onAutoName: setName,
 		presetId,
 		undoGroupName: t("animationPreset.undoGroupName"),
+		messages: {
+			selectLayerToSave: t("animationPreset.errors.selectLayerToSave", {
+				defaultValue:
+					"Select at least one layer before saving an animation preset",
+			}),
+		},
 	});
 
 	const displayPath = resolveAnimationScanPath(

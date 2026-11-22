@@ -85,7 +85,13 @@
 			"easeInOut": "Aplicar predefinição de Easing Ease in/out"
 		},
 		"undoGroupName": "Ty Plus: Aplicar easing",
-		"pasteValuesUndoGroupName": "Ty Plus: Colar valores"
+		"pasteValuesUndoGroupName": "Ty Plus: Colar valores",
+		"errors": {
+			"selectKeyframes": "Selecione quadros-chave numa composição ativa",
+			"selectAnimatedProperty": "Selecione pelo menos uma propriedade animada",
+			"selectTwoKeyframes": "Selecione pelo menos dois quadros-chave numa propriedade animada",
+			"captureFailed": "Não foi possível ler o easing dos quadros-chave selecionados"
+		}
 	},
 	"menu": {
 		"name": "Menu",
@@ -121,7 +127,11 @@
 			"time": "Tempo"
 		},
 		"undoGroupName": "Ty Plus: Alinhar camadas",
-		"timeUndoGroupName": "ty-plus alinhar no tempo"
+		"timeUndoGroupName": "ty-plus alinhar no tempo",
+		"errors": {
+			"noActiveComposition": "Selecione pelo menos uma camada numa composição ativa",
+			"noLayerSelected": "Selecione pelo menos uma camada antes de alinhar"
+		}
 	},
 	"anchorPoint": {
 		"name": "Anchor point",
@@ -214,6 +224,11 @@
 				"applyPreset": "Ty Plus: Aplicar predefinição",
 				"addFootage": "Ty Plus: Adicionar footage",
 				"applyEffect": "Ty Plus: Aplicar efeito"
+			},
+			"errors": {
+				"openComposition": "Abra uma composição antes de aplicar uma predefinição",
+				"addLayerOrSelect": "Adicione uma camada ou selecione uma camada antes de aplicar esta predefinição numa composição vazia",
+				"selectLayerForEffect": "Selecione pelo menos uma camada antes de aplicar um efeito"
 			}
 		},
 		"path": {

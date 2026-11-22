@@ -819,6 +819,14 @@ export function DirectoryBrowserWidget({
 					filePath,
 					{
 						undoGroupName: t("directoryBrowser.actions.undoGroup.applyPreset"),
+						messages: {
+							openComposition: t(
+								"directoryBrowser.actions.errors.openComposition",
+							),
+							addLayerOrSelect: t(
+								"directoryBrowser.actions.errors.addLayerOrSelect",
+							),
+						},
 					},
 				]);
 				return t("directoryBrowser.actions.appliedPreset", {
@@ -839,6 +847,11 @@ export function DirectoryBrowserWidget({
 					matchName,
 					{
 						undoGroupName: t("directoryBrowser.actions.undoGroup.applyEffect"),
+						messages: {
+							selectLayer: t(
+								"directoryBrowser.actions.errors.selectLayerForEffect",
+							),
+						},
 					},
 				]);
 				return t("directoryBrowser.actions.appliedEffect", {

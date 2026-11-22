@@ -85,7 +85,13 @@
 			"easeInOut": "Aplicar preajuste de Easing Ease in/out"
 		},
 		"undoGroupName": "Ty Plus: Aplicar easing",
-		"pasteValuesUndoGroupName": "Ty Plus: Pegar valores"
+		"pasteValuesUndoGroupName": "Ty Plus: Pegar valores",
+		"errors": {
+			"selectKeyframes": "Selecciona fotogramas clave en una composición activa",
+			"selectAnimatedProperty": "Selecciona al menos una propiedad animada",
+			"selectTwoKeyframes": "Selecciona al menos dos fotogramas clave en una propiedad animada",
+			"captureFailed": "No se pudo leer la aceleración de los fotogramas clave seleccionados"
+		}
 	},
 	"menu": {
 		"name": "Menú",
@@ -121,7 +127,11 @@
 			"time": "Tiempo"
 		},
 		"undoGroupName": "Ty Plus: Alinear capas",
-		"timeUndoGroupName": "ty-plus alinear en el tiempo"
+		"timeUndoGroupName": "ty-plus alinear en el tiempo",
+		"errors": {
+			"noActiveComposition": "Selecciona al menos una capa en una composición activa",
+			"noLayerSelected": "Selecciona al menos una capa antes de alinear"
+		}
 	},
 	"anchorPoint": {
 		"name": "Anchor point",
@@ -214,6 +224,11 @@
 				"applyPreset": "Ty Plus: Aplicar preajuste",
 				"addFootage": "Ty Plus: Añadir metraje",
 				"applyEffect": "Ty Plus: Aplicar efecto"
+			},
+			"errors": {
+				"openComposition": "Abre una composición antes de aplicar un preajuste",
+				"addLayerOrSelect": "Añade una capa o selecciona una capa antes de aplicar este preajuste en una composición vacía",
+				"selectLayerForEffect": "Selecciona al menos una capa antes de aplicar un efecto"
 			}
 		},
 		"path": {

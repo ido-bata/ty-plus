@@ -85,7 +85,13 @@
 			"easeInOut": "イーズイン/アウトプリセットを適用"
 		},
 		"undoGroupName": "Ty Plus: イージングを適用",
-		"pasteValuesUndoGroupName": "Ty Plus: 値を貼り付け"
+		"pasteValuesUndoGroupName": "Ty Plus: 値を貼り付け",
+		"errors": {
+			"selectKeyframes": "アクティブなコンポジションでキーフレームを選択してください",
+			"selectAnimatedProperty": "アニメーション化されたプロパティを1つ以上選択してください",
+			"selectTwoKeyframes": "アニメーション化されたプロパティでキーフレームを2つ以上選択してください",
+			"captureFailed": "選択したキーフレームからイージングを読み取れませんでした"
+		}
 	},
 	"menu": {
 		"name": "メニュー",
@@ -121,7 +127,11 @@
 			"time": "時間"
 		},
 		"undoGroupName": "Ty Plus: レイヤーを整列",
-		"timeUndoGroupName": "ty-plus タイムを整列"
+		"timeUndoGroupName": "ty-plus タイムを整列",
+		"errors": {
+			"noActiveComposition": "アクティブなコンポジションでレイヤーを1つ以上選択してください",
+			"noLayerSelected": "整列する前にレイヤーを1つ以上選択してください"
+		}
 	},
 	"anchorPoint": {
 		"name": "アンカーポイント",
@@ -214,6 +224,11 @@
 				"applyPreset": "Ty Plus: プリセットを適用",
 				"addFootage": "Ty Plus: フッテージを追加",
 				"applyEffect": "Ty Plus: エフェクトを適用"
+			},
+			"errors": {
+				"openComposition": "プリセットを適用する前にコンポジションを開いてください",
+				"addLayerOrSelect": "空のコンポジションでこのプリセットを適用する前に、レイヤーを追加するかレイヤーを選択してください",
+				"selectLayerForEffect": "エフェクトを適用する前にレイヤーを1つ以上選択してください"
 			}
 		},
 		"path": {

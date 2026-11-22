@@ -189,7 +189,9 @@
 			"undoGroupName": "ty-plus: применить пресет сглаживания"
 		},
 		"layerCompScript": {
-			"undoGroupName": "Ty Plus: Применить пресет слоя/композиции"
+			"undoGroupName": "Ty Plus: Применить пресет слоя/композиции",
+			"saveProjectFirst": "Сохраните проект After Effects перед созданием этого пресета",
+			"sourceProjectNotFoundPrefix": "Исходный проект не найден: "
 		}
 	},
 	"animationPreset": {
@@ -218,7 +220,10 @@
 			"notConfigured": "Не настроено"
 		},
 		"iconText": "АНИМ",
-		"undoGroupName": "Ty Plus: Сохранить пресет анимации"
+		"undoGroupName": "Ty Plus: Сохранить пресет анимации",
+		"errors": {
+			"selectLayerToSave": "Выберите хотя бы один слой перед сохранением пресета анимации"
+		}
 	},
 	"edit": {
 		"title": "Редактировать пресет",

@@ -20,6 +20,11 @@ describe("preset operation", () => {
 		expect(mockApplyPreset).toHaveBeenCalledOnce();
 		expect(mockApplyPreset).toHaveBeenCalledWith("/path/to/animation.ffx", {
 			undoGroupName: "Ty Plus: Apply Preset",
+			messages: {
+				openComposition: "Open a composition before applying a preset",
+				addLayerOrSelect:
+					"Add a layer or select a layer before applying this preset in an empty composition",
+			},
 		});
 		expect(result.action).toBe("applyPreset");
 	});

@@ -187,7 +187,9 @@
 			"undoGroupName": "ty-plus: apply easing preset"
 		},
 		"layerCompScript": {
-			"undoGroupName": "Ty Plus: Apply Layer/Comp Preset"
+			"undoGroupName": "Ty Plus: Apply Layer/Comp Preset",
+			"saveProjectFirst": "Save the After Effects project before creating this preset",
+			"sourceProjectNotFoundPrefix": "Source project not found: "
 		}
 	},
 	"animationPreset": {
@@ -216,7 +218,10 @@
 			"notConfigured": "Not configured"
 		},
 		"iconText": "ANIM",
-		"undoGroupName": "Ty Plus: Save Animation Preset"
+		"undoGroupName": "Ty Plus: Save Animation Preset",
+		"errors": {
+			"selectLayerToSave": "Select at least one layer before saving an animation preset"
+		}
 	},
 	"edit": {
 		"title": "Edit Preset",

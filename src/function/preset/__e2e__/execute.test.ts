@@ -54,6 +54,11 @@ describe("preset execution via getPresetOperation", () => {
 		expect(host.applyPreset).toHaveBeenCalledOnce();
 		expect(host.applyPreset).toHaveBeenCalledWith("/path/to/motion.ffx", {
 			undoGroupName: "Ty Plus: Apply Preset",
+			messages: {
+				openComposition: "Open a composition before applying a preset",
+				addLayerOrSelect:
+					"Add a layer or select a layer before applying this preset in an empty composition",
+			},
 		});
 		expect(result.action).toBe("applyPreset");
 	});
@@ -94,6 +99,9 @@ describe("preset execution via getPresetOperation", () => {
 		});
 		expect(host.applyEffectByMatchName).toHaveBeenCalledWith("effect", {
 			undoGroupName: "Ty Plus: Apply effect",
+			messages: {
+				selectLayer: "Select at least one layer before applying an effect",
+			},
 		});
 		expect(result.action).toBe("applyEffectByMatchName");
 	});
@@ -108,6 +116,9 @@ describe("preset execution via getPresetOperation", () => {
 		});
 		expect(host.applyEffectByMatchName).toHaveBeenCalledWith("My Effect", {
 			undoGroupName: "Ty Plus: Apply effect",
+			messages: {
+				selectLayer: "Select at least one layer before applying an effect",
+			},
 		});
 	});
 });
@@ -127,6 +138,11 @@ describe("executePresetOnHost", () => {
 		expect(host.applyPreset).toHaveBeenCalledOnce();
 		expect(host.applyPreset).toHaveBeenCalledWith("/path/to/motion.ffx", {
 			undoGroupName: "Ty Plus: Apply Preset",
+			messages: {
+				openComposition: "Open a composition before applying a preset",
+				addLayerOrSelect:
+					"Add a layer or select a layer before applying this preset in an empty composition",
+			},
 		});
 		expect(result).toEqual({
 			hostId: "after-effects",

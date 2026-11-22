@@ -188,7 +188,9 @@
 			"undoGroupName": "ty-plus: appliquer le préréglage d'easing"
 		},
 		"layerCompScript": {
-			"undoGroupName": "Ty Plus: Appliquer le préréglage de calque/composition"
+			"undoGroupName": "Ty Plus: Appliquer le préréglage de calque/composition",
+			"saveProjectFirst": "Enregistrez le projet After Effects avant de créer ce préréglage",
+			"sourceProjectNotFoundPrefix": "Projet source introuvable : "
 		}
 	},
 	"animationPreset": {
@@ -217,7 +219,10 @@
 			"notConfigured": "Non configuré"
 		},
 		"iconText": "ANIM",
-		"undoGroupName": "Ty Plus: Enregistrer le préréglage d'animation"
+		"undoGroupName": "Ty Plus: Enregistrer le préréglage d'animation",
+		"errors": {
+			"selectLayerToSave": "Sélectionnez au moins un calque avant d'enregistrer un préréglage d'animation"
+		}
 	},
 	"edit": {
 		"title": "Modifier le préréglage",

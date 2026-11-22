@@ -186,7 +186,9 @@
 			"undoGroupName": "ty-plus: 应用缓动预设"
 		},
 		"layerCompScript": {
-			"undoGroupName": "Ty Plus: 应用图层/合成预设"
+			"undoGroupName": "Ty Plus: 应用图层/合成预设",
+			"saveProjectFirst": "创建此预设前请先保存 After Effects 项目",
+			"sourceProjectNotFoundPrefix": "找不到源项目: "
 		}
 	},
 	"animationPreset": {
@@ -215,7 +217,10 @@
 			"notConfigured": "未配置"
 		},
 		"iconText": "动画",
-		"undoGroupName": "Ty Plus: 保存动画预设"
+		"undoGroupName": "Ty Plus: 保存动画预设",
+		"errors": {
+			"selectLayerToSave": "保存动画预设前请先选择至少一个图层"
+		}
 	},
 	"edit": {
 		"title": "编辑预设",

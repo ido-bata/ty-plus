@@ -22,6 +22,14 @@ definePresetOperation("plugin", async (host, preset) => {
 			"widgets:directoryBrowser.actions.undoGroup.applyEffect",
 			{ defaultValue: "Ty Plus: Apply effect" },
 		),
+		messages: {
+			selectLayer: i18n.t(
+				"widgets:directoryBrowser.actions.errors.selectLayerForEffect",
+				{
+					defaultValue: "Select at least one layer before applying an effect",
+				},
+			),
+		},
 	});
 	return { action: "applyEffectByMatchName" };
 });

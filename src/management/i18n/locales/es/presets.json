@@ -188,7 +188,9 @@
 			"undoGroupName": "ty-plus: aplicar preajuste de easing"
 		},
 		"layerCompScript": {
-			"undoGroupName": "Ty Plus: Aplicar preajuste de capa/composición"
+			"undoGroupName": "Ty Plus: Aplicar preajuste de capa/composición",
+			"saveProjectFirst": "Guarda el proyecto de After Effects antes de crear este preajuste",
+			"sourceProjectNotFoundPrefix": "Proyecto de origen no encontrado: "
 		}
 	},
 	"animationPreset": {
@@ -217,7 +219,10 @@
 			"notConfigured": "No configurado"
 		},
 		"iconText": "ANIM",
-		"undoGroupName": "Ty Plus: Guardar preajuste de animación"
+		"undoGroupName": "Ty Plus: Guardar preajuste de animación",
+		"errors": {
+			"selectLayerToSave": "Selecciona al menos una capa antes de guardar un preajuste de animación"
+		}
 	},
 	"edit": {
 		"title": "Editar preset",

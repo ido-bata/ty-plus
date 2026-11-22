@@ -85,7 +85,13 @@
 			"easeInOut": "Apply ease-in-out preset"
 		},
 		"undoGroupName": "Ty Plus: Apply Easing",
-		"pasteValuesUndoGroupName": "Ty Plus: Paste Values"
+		"pasteValuesUndoGroupName": "Ty Plus: Paste Values",
+		"errors": {
+			"selectKeyframes": "Select keyframes in an active composition",
+			"selectAnimatedProperty": "Select at least one animated property",
+			"selectTwoKeyframes": "Select at least two keyframes on an animated property",
+			"captureFailed": "Could not read easing from the selected keyframes"
+		}
 	},
 	"menu": {
 		"name": "Menu",
@@ -121,7 +127,11 @@
 			"time": "Time"
 		},
 		"undoGroupName": "Ty Plus: Align Layers",
-		"timeUndoGroupName": "ty-plus time align"
+		"timeUndoGroupName": "ty-plus time align",
+		"errors": {
+			"noActiveComposition": "Select at least one layer in an active composition",
+			"noLayerSelected": "Select at least one layer before aligning"
+		}
 	},
 	"anchorPoint": {
 		"name": "Anchor point",
@@ -214,6 +224,11 @@
 				"applyPreset": "Ty Plus: Apply Preset",
 				"addFootage": "Ty Plus: Add Footage",
 				"applyEffect": "Ty Plus: Apply effect"
+			},
+			"errors": {
+				"openComposition": "Open a composition before applying a preset",
+				"addLayerOrSelect": "Add a layer or select a layer before applying this preset in an empty composition",
+				"selectLayerForEffect": "Select at least one layer before applying an effect"
 			}
 		},
 		"path": {

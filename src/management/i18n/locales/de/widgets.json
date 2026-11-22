@@ -85,7 +85,13 @@
 			"easeInOut": "Easing-Voreinstellung Ease in/out anwenden"
 		},
 		"undoGroupName": "Ty Plus: Easing anwenden",
-		"pasteValuesUndoGroupName": "Ty Plus: Werte einfügen"
+		"pasteValuesUndoGroupName": "Ty Plus: Werte einfügen",
+		"errors": {
+			"selectKeyframes": "Wählen Sie Keyframes in einer aktiven Komposition aus",
+			"selectAnimatedProperty": "Wählen Sie mindestens eine animierte Eigenschaft aus",
+			"selectTwoKeyframes": "Wählen Sie mindestens zwei Keyframes einer animierten Eigenschaft aus",
+			"captureFailed": "Easing konnte nicht aus den ausgewählten Keyframes gelesen werden"
+		}
 	},
 	"menu": {
 		"name": "Menü",
@@ -121,7 +127,11 @@
 			"time": "Zeit"
 		},
 		"undoGroupName": "Ty Plus: Ebenen ausrichten",
-		"timeUndoGroupName": "ty-plus Zeitachse ausrichten"
+		"timeUndoGroupName": "ty-plus Zeitachse ausrichten",
+		"errors": {
+			"noActiveComposition": "Wählen Sie mindestens eine Ebene in einer aktiven Komposition aus",
+			"noLayerSelected": "Wählen Sie mindestens eine Ebene aus, bevor Sie ausrichten"
+		}
 	},
 	"anchorPoint": {
 		"name": "Anchor point",
@@ -214,6 +224,11 @@
 				"applyPreset": "Ty Plus: Vorgabe anwenden",
 				"addFootage": "Ty Plus: Footage hinzufügen",
 				"applyEffect": "Ty Plus: Effekt anwenden"
+			},
+			"errors": {
+				"openComposition": "Öffnen Sie eine Komposition, bevor Sie eine Voreinstellung anwenden",
+				"addLayerOrSelect": "Fügen Sie eine Ebene hinzu oder wählen Sie eine Ebene aus, bevor Sie diese Voreinstellung in einer leeren Komposition anwenden",
+				"selectLayerForEffect": "Wählen Sie mindestens eine Ebene aus, bevor Sie einen Effekt anwenden"
 			}
 		},
 		"path": {

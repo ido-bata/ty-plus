@@ -454,6 +454,18 @@ export function Align({
 					action,
 					target: autoTarget ?? target,
 					undoGroupName: i18n.t("widgets:align.undoGroupName"),
+					messages: {
+						noActiveComposition: i18n.t(
+							"widgets:align.errors.noActiveComposition",
+							{
+								defaultValue:
+									"Select at least one layer in an active composition",
+							},
+						),
+						noLayerSelected: i18n.t("widgets:align.errors.noLayerSelected", {
+							defaultValue: "Select at least one layer before aligning",
+						}),
+					},
 				},
 			]);
 		},

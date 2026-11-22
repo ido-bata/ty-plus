@@ -37,6 +37,14 @@ export type PreparePresetSaveBaseInput = {
 
 export type PrepareLayerCompPresetScriptInput = PreparePresetSaveBaseInput & {
 	type?: string;
+	/** Localized strings for the prepare-time precondition error and the
+	 *  generated `.jsx` artifact (which cannot reach i18next). */
+	messages?: {
+		/** Thrown when the AE project has no saved file yet. */
+		saveProjectFirst?: string;
+		/** Prefix for the generated script's "source project not found" error. */
+		sourceProjectNotFoundPrefix?: string;
+	};
 };
 
 export type PrepareCodePresetScriptInput = PreparePresetSaveBaseInput;
@@ -61,7 +69,12 @@ export type PrepareEasingPresetScriptInput = PreparePresetSaveBaseInput & {
 	};
 };
 
-export type PrepareAnimationPresetTargetInput = PreparePresetSaveBaseInput;
+export type PrepareAnimationPresetTargetInput = PreparePresetSaveBaseInput & {
+	/** Localized precondition error shown when no layer is selected. */
+	messages?: {
+		selectLayerToSave?: string;
+	};
+};
 
 /** Authorized authoring target: no bytes have been written yet. */
 export type PreparedPresetSaveTarget = {
@@ -72,6 +85,19 @@ export type PreparedPresetSaveTarget = {
 /** Authorized target plus the AE-dependent script content to write. */
 export type PreparedPresetScriptAsset = PreparedPresetSaveTarget & {
 	content: string;
+};
+
+/** Localized precondition errors thrown by the easing host methods.
+ *  Every field is optional; the host bundle falls back to English. */
+export type EasingHostMessages = {
+	/** "Select keyframes in an active composition" */
+	selectKeyframes?: string;
+	/** "Select at least one animated property" */
+	selectAnimatedProperty?: string;
+	/** "Select at least two keyframes on an animated property" */
+	selectTwoKeyframes?: string;
+	/** "Could not read easing from the selected keyframes" */
+	captureFailed?: string;
 };
 
 /** One row from `scanPluginEffectRoots` (matches `PluginEffectIndexRow` in workspace state). */
@@ -88,7 +114,13 @@ export type AfterEffectsHostApi = {
 	runScriptFile(filePath: string): Promise<unknown>;
 	applyPreset(
 		filePath: string,
-		options?: { undoGroupName?: string },
+		options?: {
+			undoGroupName?: string;
+			messages?: {
+				openComposition?: string;
+				addLayerOrSelect?: string;
+			};
+		},
 	): Promise<unknown>;
 	addFootage(input: {
 		filePath: string;
@@ -109,7 +141,12 @@ export type AfterEffectsHostApi = {
 	/** Apply an effect to selected layers by AE match name (from PiPL / manifest scan). */
 	applyEffectByMatchName(
 		matchName: string,
-		options?: { undoGroupName?: string },
+		options?: {
+			undoGroupName?: string;
+			messages?: {
+				selectLayer?: string;
+			};
+		},
 	): Promise<unknown>;
 	applyEasing(payload: Record<string, unknown>): Promise<unknown>;
 	/** Apply a single curve shape replicated `loopCount` times across the
@@ -120,19 +157,27 @@ export type AfterEffectsHostApi = {
 	setAnchorPoint(input: {
 		position: string;
 		undoGroupName?: string;
+		messages?: {
+			selectLayer?: string;
+		};
 	}): Promise<unknown>;
-	captureEasingCurve(): Promise<unknown>;
+	captureEasingCurve(input?: {
+		messages?: EasingHostMessages;
+	}): Promise<unknown>;
 	/** Read per-keyframe values from the selected keyframes on the active
 	 *  property. Returns `{ values: number[][] }` where each inner array is the
 	 *  keyframe value (1D, 2D, 3D, or color — depending on property type).
 	 *  Does NOT include easing. */
-	captureKeyframeValues(): Promise<unknown>;
+	captureKeyframeValues(input?: {
+		messages?: EasingHostMessages;
+	}): Promise<unknown>;
 	/** Resolve the path to the easing-clipboard file under userData. */
 	getEasingClipboardPath(): Promise<{ path: string }>;
 	/** Write the provided values to the selected keyframes (preserves timing). */
 	pasteKeyframeValues(input: {
 		values: number[][];
 		undoGroupName?: string;
+		messages?: EasingHostMessages;
 	}): Promise<unknown>;
 	/** Read AE's user-defined label color names (indices 1-16). */
 	getLabelColorNames(): Promise<{ names: Record<string, string> }>;
@@ -140,6 +185,9 @@ export type AfterEffectsHostApi = {
 	writeSelectedTextLayers(input: {
 		font: string;
 		undoGroupName?: string;
+		messages?: {
+			selectTextLayers?: string;
+		};
 	}): Promise<unknown>;
 	readSelectedTextLayers(): Promise<unknown>;
 	/**
@@ -173,6 +221,10 @@ export type AfterEffectsHostApi = {
 		action: string;
 		target: string;
 		undoGroupName?: string;
+		messages?: {
+			noActiveComposition?: string;
+			noLayerSelected?: string;
+		};
 	}): Promise<unknown>;
 };
 
@@ -227,7 +279,7 @@ export const HOST_BUNDLE_SCHEMA_VERSION = 1;
  * on the resident global. It is a standalone ES3 bundle and cannot import
  * this module, so `host-executor.test.ts` pins the two declarations.
  */
-export const HOST_BUNDLE_VERSION = "workspace-preset-scriptui-panel-v5";
+export const HOST_BUNDLE_VERSION = "workspace-preset-scriptui-panel-v6";
 
 type HostCode = "AEFT";
 

@@ -203,7 +203,7 @@ const isArrayValue = (value: unknown): value is unknown[] =>
  * `HOST_BUNDLE_SCHEMA_VERSION` too. It is not the package version: an
  * unrelated packaging or UI bump must not force a host reload.
  */
-const HOST_BUNDLE_VERSION = "workspace-preset-scriptui-panel-v5";
+const HOST_BUNDLE_VERSION = "workspace-preset-scriptui-panel-v6";
 
 /**
  * Host API contract revision exported on the resident global so the CEP
@@ -233,6 +233,21 @@ const trimStr = (value: string): string => {
  */
 const undoGroupLabel = (value: unknown, fallback: string): string =>
 	typeof value === "string" && trimStr(value) ? value : fallback;
+
+/**
+ * Resolve a localized precondition error from a payload `messages` object.
+ * Same contract as `undoGroupLabel`: the panel bakes the author's locale
+ * into the payload; the English literal is the fallback.
+ */
+const payloadMessage = (
+	messages: unknown,
+	key: string,
+	fallback: string,
+): string => {
+	if (!messages || typeof messages !== "object") return fallback;
+	const value = (messages as Record<string, unknown>)[key];
+	return typeof value === "string" && value ? value : fallback;
+};
 
 const wrapCallable =
 	(fn: (...args: any[]) => unknown) =>
@@ -493,11 +508,20 @@ const runScriptFile = (filePath: string) => {
 
 const applyPresetFile = (
 	filePath: string,
-	options?: { undoGroupName?: string },
+	options?: {
+		undoGroupName?: string;
+		messages?: { openComposition?: string; addLayerOrSelect?: string };
+	},
 ) => {
 	const comp = app.project && app.project.activeItem;
 	if (!comp || !("selectedLayers" in comp)) {
-		throw new Error("Open a composition before applying a preset");
+		throw new Error(
+			payloadMessage(
+				options && options.messages,
+				"openComposition",
+				"Open a composition before applying a preset",
+			),
+		);
 	}
 	const file = new File(assertAllowedFilePath(filePath));
 	if (!file.exists) {
@@ -505,7 +529,11 @@ const applyPresetFile = (
 	}
 	if (comp.selectedLayers.length === 0 && comp.numLayers < 1) {
 		throw new Error(
-			"Add a layer or select a layer before applying this preset in an empty composition",
+			payloadMessage(
+				options && options.messages,
+				"addLayerOrSelect",
+				"Add a layer or select a layer before applying this preset in an empty composition",
+			),
 		);
 	}
 	const targetLayer =
@@ -669,7 +697,13 @@ const openAnimationPresetSaveDialog = (payload: Record<string, unknown>) => {
 	const target = prepareAnimationPresetTarget(payload);
 	const comp = app.project && app.project.activeItem;
 	if (!comp || !("selectedLayers" in comp) || comp.selectedLayers.length === 0) {
-		throw new Error("Select at least one layer before saving an animation preset");
+		throw new Error(
+			payloadMessage(
+				payload.messages,
+				"selectLayerToSave",
+				"Select at least one layer before saving an animation preset",
+			),
+		);
 	}
 	app.beginUndoGroup(
 		undoGroupLabel(
@@ -708,7 +742,11 @@ const prepareLayerCompPresetScript = (payload: Record<string, unknown>) => {
 		app.project && app.project.file ? app.project.file.fsName : "";
 	if (!aepPath) {
 		throw new Error(
-			"Save the After Effects project before creating this preset",
+			payloadMessage(
+				payload.messages,
+				"saveProjectFirst",
+				"Save the After Effects project before creating this preset",
+			),
 		);
 	}
 	const target = authorizePayloadSaveDir(
@@ -720,15 +758,23 @@ const prepareLayerCompPresetScript = (payload: Record<string, unknown>) => {
 		payload.undoGroupName,
 		"Ty Plus: Apply Layer/Comp Preset",
 	);
+	const messagesLiteral = JSON.stringify({
+		sourceProjectNotFoundPrefix: payloadMessage(
+			payload.messages,
+			"sourceProjectNotFoundPrefix",
+			"Source project not found: ",
+		),
+	});
 	const script = [
 		"// ty-plus: layer/comp preset",
 		"(function(){",
 		`  var projectPath = ${JSON.stringify(aepPath)};`,
 		`  var presetType = ${JSON.stringify(type)};`,
+		`  var MSG = ${messagesLiteral};`,
 		`  app.beginUndoGroup(${JSON.stringify(undoGroupName)});`,
 		"  try {",
 		"    var importFile = new File(projectPath);",
-		"    if (!importFile.exists) throw new Error('Source project not found: ' + projectPath);",
+		"    if (!importFile.exists) throw new Error(MSG.sourceProjectNotFoundPrefix + projectPath);",
 		"    app.open(importFile);",
 		"  } finally {",
 		"    app.endUndoGroup();",
@@ -886,7 +932,13 @@ const setAnchorPoint = (payload: Record<string, unknown>) => {
 	const position = String(payload.position ?? "center");
 	const comp = app.project && app.project.activeItem;
 	if (!comp || !("selectedLayers" in comp) || comp.selectedLayers.length === 0) {
-		throw new Error("Select at least one layer before setting anchor point");
+		throw new Error(
+			payloadMessage(
+				payload.messages,
+				"selectLayer",
+				"Select at least one layer before setting anchor point",
+			),
+		);
 	}
 	app.beginUndoGroup(
 		undoGroupLabel(payload.undoGroupName, "Ty Plus: Set Anchor Point"),
@@ -1039,7 +1091,13 @@ const writeSelectedTextLayers = (payload: Record<string, unknown>) => {
 	if (!font) throw new Error("font is required");
 	const comp = app.project && app.project.activeItem;
 	if (!comp || !("selectedLayers" in comp)) {
-		throw new Error("Select text layers in an active composition");
+		throw new Error(
+			payloadMessage(
+				payload.messages,
+				"selectTextLayers",
+				"Select text layers in an active composition",
+			),
+		);
 	}
 	let updated = 0;
 	app.beginUndoGroup(
@@ -1264,7 +1322,10 @@ const buildPluginEffectScanRows = (
 
 const applyEffectByMatchName = (
 	matchName: string,
-	options?: { undoGroupName?: string },
+	options?: {
+		undoGroupName?: string;
+		messages?: { selectLayer?: string };
+	},
 ) => {
 	const m = trimStr(String(matchName || ""));
 	if (!m) throw new Error("matchName is required");
@@ -1279,7 +1340,13 @@ const applyEffectByMatchName = (
 	if (!isInstalled) throw new Error(`Effect is not installed: ${m}`);
 	const comp = app.project && app.project.activeItem;
 	if (!comp || !("selectedLayers" in comp) || comp.selectedLayers.length === 0) {
-		throw new Error("Select at least one layer before applying an effect");
+		throw new Error(
+			payloadMessage(
+				options && options.messages,
+				"selectLayer",
+				"Select at least one layer before applying an effect",
+			),
+		);
 	}
 	let applied = 0;
 	app.beginUndoGroup(
@@ -1349,6 +1416,7 @@ const alignLayers = (input: {
 	action?: string;
 	target?: string;
 	undoGroupName?: string;
+	messages?: { noActiveComposition?: string; noLayerSelected?: string };
 }) => {
 	const action = trimStr(String(input.action || ""));
 	const target = trimStr(String(input.target || "selection"));
@@ -1357,11 +1425,23 @@ const alignLayers = (input: {
 	}
 	const comp = app.project && app.project.activeItem;
 	if (!comp || !("selectedLayers" in comp)) {
-		throw new Error("Select at least one layer in an active composition");
+		throw new Error(
+			payloadMessage(
+				input.messages,
+				"noActiveComposition",
+				"Select at least one layer in an active composition",
+			),
+		);
 	}
 	const selected = comp.selectedLayers;
 	if (!selected || selected.length < 1) {
-		throw new Error("Select at least one layer before aligning");
+		throw new Error(
+			payloadMessage(
+				input.messages,
+				"noLayerSelected",
+				"Select at least one layer before aligning",
+			),
+		);
 	}
 
 	const getLayerBounds = (layer: any, time: number) => {
@@ -1582,15 +1662,27 @@ const selectedKeyframePairs = (prop: any): number[][] => {
 	return out;
 };
 
-const collectSelectedAnimatedProperties = (): any[] => {
+const collectSelectedAnimatedProperties = (messages?: unknown): any[] => {
 	const comp = app.project && app.project.activeItem;
 	if (!comp || !("selectedProperties" in comp)) {
-		throw new Error("Select keyframes in an active composition");
+		throw new Error(
+			payloadMessage(
+				messages,
+				"selectKeyframes",
+				"Select keyframes in an active composition",
+			),
+		);
 	}
 	const props = (comp as unknown as { selectedProperties?: unknown[] })
 		.selectedProperties;
 	if (!props || props.length === 0) {
-		throw new Error("Select at least one animated property");
+		throw new Error(
+			payloadMessage(
+				messages,
+				"selectAnimatedProperty",
+				"Select at least one animated property",
+			),
+		);
 	}
 	const out: any[] = [];
 	for (let i = 0; i < props.length; i += 1) {
@@ -1598,7 +1690,13 @@ const collectSelectedAnimatedProperties = (): any[] => {
 		if (prop && prop.numKeys && prop.numKeys >= 2) out.push(prop);
 	}
 	if (out.length === 0) {
-		throw new Error("Select at least two keyframes on an animated property");
+		throw new Error(
+			payloadMessage(
+				messages,
+				"selectTwoKeyframes",
+				"Select at least two keyframes on an animated property",
+			),
+		);
 	}
 	return out;
 };
@@ -1626,8 +1724,8 @@ const easingPropertyFollowers = (prop: any): any[] => {
 	return [prop];
 };
 
-const collectEasingTargetProperties = (): any[] => {
-	const props = collectSelectedAnimatedProperties();
+const collectEasingTargetProperties = (messages?: unknown): any[] => {
+	const props = collectSelectedAnimatedProperties(messages);
 	const out: any[] = [];
 	for (let i = 0; i < props.length; i += 1) {
 		const followers = easingPropertyFollowers(props[i]);
@@ -1866,7 +1964,7 @@ const applyEasing = (payload: Record<string, unknown>) => {
 		payload.targeting === "in" || payload.targeting === "out"
 			? payload.targeting
 			: "both";
-	const props = collectEasingTargetProperties();
+	const props = collectEasingTargetProperties(payload.messages);
 	const outInfluence = easingInfluence(0, x1);
 	const inInfluence = easingInfluence(x2, 1);
 	const outSlope = safeEasingSlope(y1, x1);
@@ -2126,8 +2224,9 @@ const applyLoopEasing = (payload: Record<string, unknown>) => {
 	return applyEasing(loopPayload);
 };
 
-const captureEasingCurve = () => {
-	const props = collectEasingTargetProperties();
+const captureEasingCurve = (input?: { messages?: unknown }) => {
+	const messages = input && input.messages;
+	const props = collectEasingTargetProperties(messages);
 	for (let p = 0; p < props.length; p += 1) {
 		const prop = props[p];
 		const pairs = selectedKeyframePairs(prop);
@@ -2180,11 +2279,17 @@ const captureEasingCurve = () => {
 			return { cubic: [x1, 1, x2, 1] };
 		} catch (_error) {}
 	}
-	throw new Error("Could not read easing from the selected keyframes");
+	throw new Error(
+		payloadMessage(
+			input && input.messages,
+			"captureFailed",
+			"Could not read easing from the selected keyframes",
+		),
+	);
 };
 
-const captureKeyframeValues = () => {
-	const props = collectEasingTargetProperties();
+const captureKeyframeValues = (input?: { messages?: unknown }) => {
+	const props = collectEasingTargetProperties(input && input.messages);
 	const out = { values: [] as number[][] };
 	for (let p = 0; p < props.length; p += 1) {
 		const prop = props[p];
@@ -2215,9 +2320,10 @@ const getEasingClipboardPath = () => {
 const pasteKeyframeValues = (input: {
 	values?: number[][];
 	undoGroupName?: string;
+	messages?: unknown;
 }) => {
 	const values = isArrayValue(input?.values) ? input.values : [];
-	const props = collectEasingTargetProperties();
+	const props = collectEasingTargetProperties(input && input.messages);
 	const errors: string[] = [];
 	app.beginUndoGroup(
 		undoGroupLabel(input?.undoGroupName, "Ty Plus: Paste Values"),

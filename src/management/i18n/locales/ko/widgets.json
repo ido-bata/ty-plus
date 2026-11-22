@@ -85,7 +85,13 @@
 			"easeInOut": "Ease in/out Easing 프리셋 적용"
 		},
 		"undoGroupName": "Ty Plus: 이징 적용",
-		"pasteValuesUndoGroupName": "Ty Plus: 값 붙여넣기"
+		"pasteValuesUndoGroupName": "Ty Plus: 값 붙여넣기",
+		"errors": {
+			"selectKeyframes": "활성 컴포지션에서 키프레임을 선택하세요",
+			"selectAnimatedProperty": "애니메이션 속성을 하나 이상 선택하세요",
+			"selectTwoKeyframes": "애니메이션 속성에서 키프레임을 두 개 이상 선택하세요",
+			"captureFailed": "선택한 키프레임에서 이징을 읽을 수 없습니다"
+		}
 	},
 	"menu": {
 		"name": "메뉴",
@@ -121,7 +127,11 @@
 			"time": "시간"
 		},
 		"undoGroupName": "Ty Plus: 레이어 정렬",
-		"timeUndoGroupName": "ty-plus 타임 정렬"
+		"timeUndoGroupName": "ty-plus 타임 정렬",
+		"errors": {
+			"noActiveComposition": "활성 컴포지션에서 레이어를 하나 이상 선택하세요",
+			"noLayerSelected": "정렬하기 전에 레이어를 하나 이상 선택하세요"
+		}
 	},
 	"anchorPoint": {
 		"name": "앵커 포인트",
@@ -214,6 +224,11 @@
 				"applyPreset": "Ty Plus: 프리셋 적용",
 				"addFootage": "Ty Plus: 푸티지 추가",
 				"applyEffect": "Ty Plus: 효과 적용"
+			},
+			"errors": {
+				"openComposition": "프리셋을 적용하기 전에 컴포지션을 여세요",
+				"addLayerOrSelect": "빈 컴포지션에서 이 프리셋을 적용하기 전에 레이어를 추가하거나 레이어를 선택하세요",
+				"selectLayerForEffect": "이펙트를 적용하기 전에 레이어를 하나 이상 선택하세요"
 			}
 		},
 		"path": {

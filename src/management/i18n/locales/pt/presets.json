@@ -188,7 +188,9 @@
 			"undoGroupName": "ty-plus: aplicar predefinição de easing"
 		},
 		"layerCompScript": {
-			"undoGroupName": "Ty Plus: Aplicar predefinição de camada/composição"
+			"undoGroupName": "Ty Plus: Aplicar predefinição de camada/composição",
+			"saveProjectFirst": "Guarde o projeto After Effects antes de criar esta predefinição",
+			"sourceProjectNotFoundPrefix": "Projeto de origem não encontrado: "
 		}
 	},
 	"animationPreset": {
@@ -217,7 +219,10 @@
 			"notConfigured": "Não configurado"
 		},
 		"iconText": "ANIM",
-		"undoGroupName": "Ty Plus: Guardar predefinição de animação"
+		"undoGroupName": "Ty Plus: Guardar predefinição de animação",
+		"errors": {
+			"selectLayerToSave": "Selecione pelo menos uma camada antes de guardar uma predefinição de animação"
+		}
 	},
 	"edit": {
 		"title": "Editar predefinição",

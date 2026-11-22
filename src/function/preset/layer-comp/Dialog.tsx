@@ -229,6 +229,12 @@ export function Dialog(): JSX.Element {
 					saveDir: displayPath,
 					presetId,
 					undoGroupName: t("presetTool.layerCompScript.undoGroupName"),
+					messages: {
+						saveProjectFirst: t("presetTool.layerCompScript.saveProjectFirst"),
+						sourceProjectNotFoundPrefix: t(
+							"presetTool.layerCompScript.sourceProjectNotFoundPrefix",
+						),
+					},
 				});
 				if (!result.ok) {
 					throw new Error(result.error.message);

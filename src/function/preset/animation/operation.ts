@@ -18,6 +18,19 @@ definePresetOperation("preset", async (host, preset) => {
 			"widgets:directoryBrowser.actions.undoGroup.applyPreset",
 			{ defaultValue: "Ty Plus: Apply Preset" },
 		),
+		messages: {
+			openComposition: i18n.t(
+				"widgets:directoryBrowser.actions.errors.openComposition",
+				{ defaultValue: "Open a composition before applying a preset" },
+			),
+			addLayerOrSelect: i18n.t(
+				"widgets:directoryBrowser.actions.errors.addLayerOrSelect",
+				{
+					defaultValue:
+						"Add a layer or select a layer before applying this preset in an empty composition",
+				},
+			),
+		},
 	});
 	const result: PresetOperationResult<"applyPreset"> = {
 		action: "applyPreset",

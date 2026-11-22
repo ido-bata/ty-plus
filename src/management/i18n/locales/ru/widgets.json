@@ -85,7 +85,13 @@
 			"easeInOut": "Применить пресет Easing Ease in/out"
 		},
 		"undoGroupName": "Ty Plus: Применить сглаживание",
-		"pasteValuesUndoGroupName": "Ty Plus: Вставить значения"
+		"pasteValuesUndoGroupName": "Ty Plus: Вставить значения",
+		"errors": {
+			"selectKeyframes": "Выберите ключевые кадры в активной композиции",
+			"selectAnimatedProperty": "Выберите хотя бы одно анимированное свойство",
+			"selectTwoKeyframes": "Выберите хотя бы два ключевых кадра анимированного свойства",
+			"captureFailed": "Не удалось прочитать сглаживание из выбранных ключевых кадров"
+		}
 	},
 	"menu": {
 		"name": "Меню",
@@ -121,7 +127,11 @@
 			"time": "Время"
 		},
 		"undoGroupName": "Ty Plus: Выровнять слои",
-		"timeUndoGroupName": "ty-plus выравнивание по времени"
+		"timeUndoGroupName": "ty-plus выравнивание по времени",
+		"errors": {
+			"noActiveComposition": "Выберите хотя бы один слой в активной композиции",
+			"noLayerSelected": "Выберите хотя бы один слой перед выравниванием"
+		}
 	},
 	"anchorPoint": {
 		"name": "Anchor point",
@@ -214,6 +224,11 @@
 				"applyPreset": "Ty Plus: Применить пресет",
 				"addFootage": "Ty Plus: Добавить видеоматериал",
 				"applyEffect": "Ty Plus: Применить эффект"
+			},
+			"errors": {
+				"openComposition": "Откройте композицию перед применением пресета",
+				"addLayerOrSelect": "Добавьте слой или выберите слой перед применением этого пресета в пустой композиции",
+				"selectLayerForEffect": "Выберите хотя бы один слой перед применением эффекта"
 			}
 		},
 		"path": {

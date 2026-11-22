@@ -85,7 +85,13 @@
 			"easeInOut": "Applica preimpostazione Easing Ease in/out"
 		},
 		"undoGroupName": "Ty Plus: Applica easing",
-		"pasteValuesUndoGroupName": "Ty Plus: Incolla valori"
+		"pasteValuesUndoGroupName": "Ty Plus: Incolla valori",
+		"errors": {
+			"selectKeyframes": "Seleziona i fotogrammi chiave in una composizione attiva",
+			"selectAnimatedProperty": "Seleziona almeno una proprietà animata",
+			"selectTwoKeyframes": "Seleziona almeno due fotogrammi chiave su una proprietà animata",
+			"captureFailed": "Impossibile leggere l'easing dai fotogrammi chiave selezionati"
+		}
 	},
 	"menu": {
 		"name": "Menu",
@@ -121,7 +127,11 @@
 			"time": "Tempo"
 		},
 		"undoGroupName": "Ty Plus: Allinea livelli",
-		"timeUndoGroupName": "ty-plus allinea nel tempo"
+		"timeUndoGroupName": "ty-plus allinea nel tempo",
+		"errors": {
+			"noActiveComposition": "Seleziona almeno un livello in una composizione attiva",
+			"noLayerSelected": "Seleziona almeno un livello prima di allineare"
+		}
 	},
 	"anchorPoint": {
 		"name": "Anchor point",
@@ -214,6 +224,11 @@
 				"applyPreset": "Ty Plus: Applica preset",
 				"addFootage": "Ty Plus: Aggiungi filmato",
 				"applyEffect": "Ty Plus: Applica effetto"
+			},
+			"errors": {
+				"openComposition": "Apri una composizione prima di applicare un preset",
+				"addLayerOrSelect": "Aggiungi un livello o seleziona un livello prima di applicare questo preset in una composizione vuota",
+				"selectLayerForEffect": "Seleziona almeno un livello prima di applicare un effetto"
 			}
 		},
 		"path": {

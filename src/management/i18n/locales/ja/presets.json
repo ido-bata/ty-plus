@@ -186,7 +186,9 @@
 			"undoGroupName": "ty-plus: イージングプリセットを適用"
 		},
 		"layerCompScript": {
-			"undoGroupName": "Ty Plus: レイヤー/コンポジションプリセットを適用"
+			"undoGroupName": "Ty Plus: レイヤー/コンポジションプリセットを適用",
+			"saveProjectFirst": "このプリセットを作成する前にAfter Effectsプロジェクトを保存してください",
+			"sourceProjectNotFoundPrefix": "ソースプロジェクトが見つかりません: "
 		}
 	},
 	"animationPreset": {
@@ -215,7 +217,10 @@
 			"notConfigured": "未設定"
 		},
 		"iconText": "アニメ",
-		"undoGroupName": "Ty Plus: アニメーションプリセットを保存"
+		"undoGroupName": "Ty Plus: アニメーションプリセットを保存",
+		"errors": {
+			"selectLayerToSave": "アニメーションプリセットを保存する前にレイヤーを1つ以上選択してください"
+		}
 	},
 	"edit": {
 		"title": "プリセットを編集",

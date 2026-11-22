@@ -186,7 +186,9 @@
 			"undoGroupName": "ty-plus: 이징 프리셋 적용"
 		},
 		"layerCompScript": {
-			"undoGroupName": "Ty Plus: 레이어/컴포지션 프리셋 적용"
+			"undoGroupName": "Ty Plus: 레이어/컴포지션 프리셋 적용",
+			"saveProjectFirst": "이 프리셋을 만들기 전에 After Effects 프로젝트를 저장하세요",
+			"sourceProjectNotFoundPrefix": "소스 프로젝트를 찾을 수 없음: "
 		}
 	},
 	"animationPreset": {
@@ -215,7 +217,10 @@
 			"notConfigured": "구성되지 않음"
 		},
 		"iconText": "애니",
-		"undoGroupName": "Ty Plus: 애니메이션 프리셋 저장"
+		"undoGroupName": "Ty Plus: 애니메이션 프리셋 저장",
+		"errors": {
+			"selectLayerToSave": "애니메이션 프리셋을 저장하기 전에 레이어를 하나 이상 선택하세요"
+		}
 	},
 	"edit": {
 		"title": "프리셋 편집",

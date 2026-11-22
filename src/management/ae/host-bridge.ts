@@ -1,6 +1,7 @@
 import type {
 	AexEffectScanRow,
 	AfterEffectsHostApi,
+	EasingHostMessages,
 	HostAdapter,
 	HostContext,
 	HostFunctionCaller,
@@ -39,8 +40,13 @@ export const createAdapter = (
 		},
 		ping: () => call("ping", []),
 		runScriptFile: (filePath: string) => call("runScriptFile", [filePath]),
-		applyPreset: (filePath: string, options?: { undoGroupName?: string }) =>
-			call("applyPreset", [filePath, options]),
+		applyPreset: (
+			filePath: string,
+			options?: {
+				undoGroupName?: string;
+				messages?: { openComposition?: string; addLayerOrSelect?: string };
+			},
+		) => call("applyPreset", [filePath, options]),
 		addFootage: (input: {
 			filePath: string;
 			toComp?: boolean;
@@ -74,16 +80,24 @@ export const createAdapter = (
 		},
 		applyEffectByMatchName: (
 			matchName: string,
-			options?: { undoGroupName?: string },
+			options?: {
+				undoGroupName?: string;
+				messages?: { selectLayer?: string };
+			},
 		) => call("applyEffectByMatchName", [matchName, options]),
 		applyEasing: (payload: Record<string, unknown>) =>
 			call("applyEasing", [payload]),
 		applyLoopEasing: (payload: Record<string, unknown>) =>
 			call("applyLoopEasing", [payload]),
-		setAnchorPoint: (input: { position: string }) =>
-			call("setAnchorPoint", [input]),
-		captureEasingCurve: () => call("captureEasingCurve", []),
-		captureKeyframeValues: () => call("captureKeyframeValues", []),
+		setAnchorPoint: (input: {
+			position: string;
+			undoGroupName?: string;
+			messages?: { selectLayer?: string };
+		}) => call("setAnchorPoint", [input]),
+		captureEasingCurve: (input?: { messages?: EasingHostMessages }) =>
+			call("captureEasingCurve", input ? [input] : []),
+		captureKeyframeValues: (input?: { messages?: EasingHostMessages }) =>
+			call("captureKeyframeValues", input ? [input] : []),
 		getEasingClipboardPath: async () => {
 			const v = await call("getEasingClipboardPath", []);
 			if (v && typeof v === "object") {
@@ -91,8 +105,11 @@ export const createAdapter = (
 			}
 			return { path: "" };
 		},
-		pasteKeyframeValues: (input: { values: number[][] }) =>
-			call("pasteKeyframeValues", [input]),
+		pasteKeyframeValues: (input: {
+			values: number[][];
+			undoGroupName?: string;
+			messages?: EasingHostMessages;
+		}) => call("pasteKeyframeValues", [input]),
 		getLabelColorNames: async () => {
 			const v = await call("getLabelColorNames", []);
 			if (
@@ -106,8 +123,11 @@ export const createAdapter = (
 			return { names: {} };
 		},
 		getFontBrowserEntries: () => call("getFontBrowserEntries", []),
-		writeSelectedTextLayers: (input: { font: string }) =>
-			call("writeSelectedTextLayers", [input]),
+		writeSelectedTextLayers: (input: {
+			font: string;
+			undoGroupName?: string;
+			messages?: { selectTextLayers?: string };
+		}) => call("writeSelectedTextLayers", [input]),
 		readSelectedTextLayers: () => call("readSelectedTextLayers", []),
 		prepareAnimationPresetTarget: (input: PrepareAnimationPresetTargetInput) =>
 			call("prepareAnimationPresetTarget", [input]),
@@ -133,7 +153,14 @@ export const createAdapter = (
 			}
 			return { pairs: 0 };
 		},
-		alignLayers: (input: { action: string; target: string }) =>
-			call("alignLayers", [input]),
+		alignLayers: (input: {
+			action: string;
+			target: string;
+			undoGroupName?: string;
+			messages?: {
+				noActiveComposition?: string;
+				noLayerSelected?: string;
+			};
+		}) => call("alignLayers", [input]),
 	};
 };

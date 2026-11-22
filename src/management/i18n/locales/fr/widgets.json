@@ -85,7 +85,13 @@
 			"easeInOut": "Appliquer le préréglage Easing Ease in/out"
 		},
 		"undoGroupName": "Ty Plus: Appliquer l'easing",
-		"pasteValuesUndoGroupName": "Ty Plus: Coller les valeurs"
+		"pasteValuesUndoGroupName": "Ty Plus: Coller les valeurs",
+		"errors": {
+			"selectKeyframes": "Sélectionnez des images clés dans une composition active",
+			"selectAnimatedProperty": "Sélectionnez au moins une propriété animée",
+			"selectTwoKeyframes": "Sélectionnez au moins deux images clés sur une propriété animée",
+			"captureFailed": "Impossible de lire l'easing à partir des images clés sélectionnées"
+		}
 	},
 	"menu": {
 		"name": "Menu",
@@ -121,7 +127,11 @@
 			"time": "Temps"
 		},
 		"undoGroupName": "Ty Plus: Aligner les calques",
-		"timeUndoGroupName": "ty-plus aligner dans le temps"
+		"timeUndoGroupName": "ty-plus aligner dans le temps",
+		"errors": {
+			"noActiveComposition": "Sélectionnez au moins un calque dans une composition active",
+			"noLayerSelected": "Sélectionnez au moins un calque avant d'aligner"
+		}
 	},
 	"anchorPoint": {
 		"name": "Anchor point",
@@ -214,6 +224,11 @@
 				"applyPreset": "Ty Plus: Appliquer le préréglage",
 				"addFootage": "Ty Plus: Ajouter des métrages",
 				"applyEffect": "Ty Plus: Appliquer l'effet"
+			},
+			"errors": {
+				"openComposition": "Ouvrez une composition avant d'appliquer un préréglage",
+				"addLayerOrSelect": "Ajoutez un calque ou sélectionnez un calque avant d'appliquer ce préréglage dans une composition vide",
+				"selectLayerForEffect": "Sélectionnez au moins un calque avant d'appliquer un effet"
 			}
 		},
 		"path": {
