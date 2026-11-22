@@ -417,7 +417,12 @@
 			"help": "Справка",
 			"title": "Справка по виджету",
 			"close": "Закрыть",
-			"dismissHint": "Скрыть подсказку"
+			"dismissHint": "Скрыть подсказку",
+			"stepProgress": "{{current}} / {{total}}",
+			"back": "Назад",
+			"skip": "Пропустить",
+			"finish": "Готово",
+			"next": "Далее"
 		},
 		"easing": {
 			"summary": "Edit easing curves and apply them to presets or layer animation.",

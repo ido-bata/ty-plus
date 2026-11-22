@@ -417,7 +417,12 @@
 			"help": "Help",
 			"title": "Widget help",
 			"close": "Close",
-			"dismissHint": "Dismiss hint"
+			"dismissHint": "Dismiss hint",
+			"stepProgress": "{{current}} / {{total}}",
+			"back": "Back",
+			"skip": "Skip",
+			"finish": "Done",
+			"next": "Next"
 		},
 		"easing": {
 			"summary": "Edit easing curves and apply them to presets or layer animation.",

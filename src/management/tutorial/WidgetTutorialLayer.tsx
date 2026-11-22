@@ -16,12 +16,12 @@
  * the widget.
  */
 
+import { cx } from "@ty-plus/ui/util/cx";
 import { CircleHelp } from "lucide-react";
 import type { JSX, ReactNode } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { getWidgetDescriptor } from "@/function/widget/registry-core";
 import { useTranslation } from "@/management/i18n/Context";
-import { cx } from "@ty-plus/ui/util/cx";
+import { getWidgetDescriptor } from "@/management/widget/registry";
 import { css } from "@/styled-system/css";
 import {
 	dismissTutorialHint,
@@ -88,7 +88,7 @@ export function WidgetTutorialLayer({
 	const { t } = useTranslation("widgets");
 	const layerRef = useRef<HTMLDivElement | null>(null);
 	const [tourOpen, setTourOpen] = useState(false);
-	const [tourAuto, setTourAuto] = useState(false);
+	const tourAutoRef = useRef(false);
 	const tutorial = getWidgetDescriptor(widgetType)?.tutorial;
 	const contentVersion = tutorial?.contentVersion;
 	const hasContent =
@@ -106,7 +106,7 @@ export function WidgetTutorialLayer({
 		])
 			.then(([dismissed, seen]) => {
 				if (!cancelled && !dismissed && !seen) {
-					setTourAuto(true);
+					tourAutoRef.current = true;
 					setTourOpen(true);
 				}
 			})
@@ -117,7 +117,7 @@ export function WidgetTutorialLayer({
 	}, [widgetType, tutorial?.summaryKey, contentVersion]);
 
 	const openHelp = useCallback((): void => {
-		setTourAuto(false);
+		tourAutoRef.current = false;
 		setTourOpen(true);
 		if (contentVersion) {
 			void markTutorialSeen(window, widgetType, contentVersion).catch(() => {});
@@ -126,14 +126,14 @@ export function WidgetTutorialLayer({
 
 	const closeTour = useCallback((): void => {
 		setTourOpen(false);
-		if (tourAuto && contentVersion) {
+		if (tourAutoRef.current && contentVersion) {
 			void dismissTutorialHint(window, widgetType, contentVersion).catch(
 				() => {},
 			);
 			void markTutorialSeen(window, widgetType, contentVersion).catch(() => {});
 		}
-		setTourAuto(false);
-	}, [tourAuto, widgetType, contentVersion]);
+		tourAutoRef.current = false;
+	}, [widgetType, contentVersion]);
 
 	return (
 		<div ref={layerRef} className={layer}>

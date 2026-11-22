@@ -14,21 +14,22 @@
  * control while reading each step.
  */
 
+import { Button } from "@ty-plus/ui";
+import { cx } from "@ty-plus/ui/util/cx";
 import { X } from "lucide-react";
 import type { CSSProperties, JSX, RefObject } from "react";
 import {
 	useCallback,
 	useEffect,
+	useEffectEvent,
 	useLayoutEffect,
 	useRef,
 	useState,
 } from "react";
 import { createPortal } from "react-dom";
-import type { TutorialStep } from "@/function/widget/define";
-import { getWidgetDescriptor } from "@/function/widget/registry-core";
 import { useTranslation } from "@/management/i18n/Context";
-import { Button } from "@ty-plus/ui";
-import { cx } from "@ty-plus/ui/util/cx";
+import type { TutorialStep } from "@/management/widget/registry";
+import { getWidgetDescriptor } from "@/management/widget/registry";
 import { css } from "@/styled-system/css";
 
 const VIEWPORT_MARGIN = 8;
@@ -225,7 +226,7 @@ export function WidgetTutorialTour({
 	const totalSteps = steps.length > 0 ? steps.length : summaryKey ? 1 : 0;
 	const [stepIndex, setStepIndex] = useState(0);
 	const [placement, setPlacement] = useState<Placement | null>(null);
-	const bubbleRef = useRef<HTMLDivElement | null>(null);
+	const bubbleRef = useRef<HTMLDialogElement | null>(null);
 
 	const step: TutorialStep | undefined = steps[stepIndex];
 	const isSummaryOnly = steps.length === 0;
@@ -289,14 +290,17 @@ export function WidgetTutorialTour({
 		};
 	}, [totalSteps, measureAndPlace]);
 
+	const onCloseEvent = useEffectEvent(() => {
+		onClose();
+	});
 	useEffect(() => {
 		if (totalSteps === 0) return;
 		const onKeyDown = (event: KeyboardEvent): void => {
-			if (event.key === "Escape") onClose();
+			if (event.key === "Escape") onCloseEvent();
 		};
 		window.addEventListener("keydown", onKeyDown);
 		return () => window.removeEventListener("keydown", onKeyDown);
-	}, [totalSteps, onClose]);
+	}, [totalSteps]);
 
 	if (totalSteps === 0) {
 		return null;
@@ -359,10 +363,10 @@ export function WidgetTutorialTour({
 					}}
 				/>
 			) : null}
-			<div
+			<dialog
 				ref={bubbleRef}
 				className={bubble}
-				role="dialog"
+				open
 				aria-label={title || undefined}
 				style={{
 					visibility: placement ? "visible" : "hidden",
@@ -414,7 +418,7 @@ export function WidgetTutorialTour({
 						</div>
 					</div>
 				) : null}
-			</div>
+			</dialog>
 		</>,
 		document.body,
 	);

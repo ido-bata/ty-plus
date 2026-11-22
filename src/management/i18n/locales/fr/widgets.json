@@ -417,7 +417,12 @@
 			"help": "Aide",
 			"title": "Aide du widget",
 			"close": "Fermer",
-			"dismissHint": "Masquer l’astuce"
+			"dismissHint": "Masquer l’astuce",
+			"stepProgress": "{{current}} / {{total}}",
+			"back": "Retour",
+			"skip": "Ignorer",
+			"finish": "Terminé",
+			"next": "Suivant"
 		},
 		"easing": {
 			"summary": "Modifiez les courbes d'easing et appliquez-les aux préréglages ou à l'animation des calques.",

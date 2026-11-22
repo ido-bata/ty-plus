@@ -10,8 +10,8 @@ import {
 	waitFor,
 } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { WidgetDescriptor } from "@/function/widget/define";
-import { register } from "@/function/widget/registry-core";
+import type { WidgetDescriptor } from "@/management/widget/registry";
+import { getWidgetDescriptor } from "@/management/widget/registry";
 import {
 	dismissTutorialHint,
 	isTutorialHintDismissed,
@@ -25,6 +25,15 @@ vi.mock("@/management/i18n/Context", () => ({
 		t: (key: string) => key,
 	}),
 }));
+
+vi.mock("@/management/widget/registry", async (importOriginal) => {
+	const actual =
+		await importOriginal<typeof import("@/management/widget/registry")>();
+	return {
+		...actual,
+		getWidgetDescriptor: vi.fn(),
+	};
+});
 
 vi.mock("./state-store", () => ({
 	isTutorialHintDismissed: vi.fn(() => Promise.resolve(false)),
@@ -77,10 +86,13 @@ const descriptorNoTutorial: WidgetDescriptor = {
 	tutorial: undefined,
 };
 
-register(descriptorWithSteps);
-register(descriptorSummaryOnly);
-register(descriptorNoTutorial);
+const DESCRIPTORS: Record<string, WidgetDescriptor> = {
+	"test-tour-widget": descriptorWithSteps,
+	"test-summary-widget": descriptorSummaryOnly,
+	"test-plain-widget": descriptorNoTutorial,
+};
 
+const getDescriptorMock = vi.mocked(getWidgetDescriptor);
 const dismissedMock = vi.mocked(isTutorialHintDismissed);
 const seenMock = vi.mocked(isTutorialSeen);
 const dismissMock = vi.mocked(dismissTutorialHint);
@@ -89,6 +101,9 @@ const seenMarkMock = vi.mocked(markTutorialSeen);
 afterEach(cleanup);
 beforeEach(() => {
 	vi.clearAllMocks();
+	getDescriptorMock.mockImplementation(
+		(type) => DESCRIPTORS[type] as WidgetDescriptor | undefined,
+	);
 	dismissedMock.mockResolvedValue(false);
 	seenMock.mockResolvedValue(false);
 });

@@ -417,7 +417,12 @@
 			"help": "ヘルプ",
 			"title": "ウィジェットヘルプ",
 			"close": "閉じる",
-			"dismissHint": "ヒントを閉じる"
+			"dismissHint": "ヒントを閉じる",
+			"stepProgress": "{{current}} / {{total}}",
+			"back": "戻る",
+			"skip": "スキップ",
+			"finish": "完了",
+			"next": "次へ"
 		},
 		"easing": {
 			"summary": "イージングカーブを編集し、プリセットやレイヤーアニメーションへ適用します。",

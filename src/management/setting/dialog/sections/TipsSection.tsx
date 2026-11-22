@@ -1,3 +1,4 @@
+import { Button } from "@ty-plus/ui";
 import { type JSX, useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -6,7 +7,6 @@ import {
 	SettingsGrid,
 } from "@/management/setting/dialog/layout/SettingsGrid";
 import { resetTutorialState } from "@/management/tutorial/state-store";
-import { Button } from "@ty-plus/ui";
 import { css } from "@/styled-system/css";
 
 const statusStyle = css({

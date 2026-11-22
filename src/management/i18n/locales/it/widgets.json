@@ -417,7 +417,12 @@
 			"help": "Aiuto",
 			"title": "Guida del widget",
 			"close": "Chiudi",
-			"dismissHint": "Chiudi suggerimento"
+			"dismissHint": "Chiudi suggerimento",
+			"stepProgress": "{{current}} / {{total}}",
+			"back": "Indietro",
+			"skip": "Salta",
+			"finish": "Fine",
+			"next": "Avanti"
 		},
 		"easing": {
 			"summary": "Modifica le curve di easing e applicale ai preset o all'animazione dei layer.",

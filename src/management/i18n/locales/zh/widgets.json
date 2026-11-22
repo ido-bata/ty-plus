@@ -417,7 +417,12 @@
 			"help": "帮助",
 			"title": "小部件帮助",
 			"close": "关闭",
-			"dismissHint": "关闭提示"
+			"dismissHint": "关闭提示",
+			"stepProgress": "{{current}} / {{total}}",
+			"back": "上一步",
+			"skip": "跳过",
+			"finish": "完成",
+			"next": "下一步"
 		},
 		"easing": {
 			"summary": "编辑缓动曲线，并将其应用于预设或图层动画。",

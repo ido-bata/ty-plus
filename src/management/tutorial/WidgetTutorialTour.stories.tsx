@@ -1,8 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useRef, useState } from "react";
 import { expect, userEvent, within } from "storybook/test";
-import "@/function/widget/registry";
-import { getWidgetDescriptor } from "@/function/widget/registry-core";
+import { getWidgetDescriptor } from "@/management/widget/registry";
 import { css } from "@/styled-system/css";
 import { WidgetTutorialTour } from "./WidgetTutorialTour";
 
