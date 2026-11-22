@@ -1,6 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Badge, Button, MediaFrame } from "@ty-plus/ui";
-import { cx } from "@ty-plus/ui/util/cx";
+import { Badge, Button, cx, MediaFrame } from "@ty-plus/ui";
 import { css } from "@/styled-system/css";
 import { PresetStage } from "../components/PresetStage";
 import { findLatestStable } from "../lib/releases";
@@ -17,6 +16,7 @@ import {
 	stack,
 } from "../styles/layout";
 import * as s from "../styles/site";
+import { eyebrow } from "../styles/site";
 
 export const Route = createFileRoute("/")({
 	loader: () => listReleases(),
@@ -46,14 +46,6 @@ const metaRow = css({
 	flexWrap: "wrap",
 	alignItems: "center",
 	fontSize: "xs",
-	color: "text.muted",
-});
-
-const sectionLabel = css({
-	fontSize: "xs",
-	fontWeight: "medium",
-	letterSpacing: "wider",
-	textTransform: "uppercase",
 	color: "text.muted",
 });
 
@@ -110,7 +102,7 @@ function HomePage() {
 				<div className={grid({ gap: 3 })}>
 					<div className={cx(span4, stack({ gap: 3 }))}>
 						<div className={stack({ gap: 3 })}>
-							<span className={sectionLabel}>Free · Open source</span>
+							<span className={eyebrow}>Free · Open source</span>
 							<h1 className={s.h1}>{SITE.tagline}</h1>
 							<p className={s.lead}>
 								ty-plus turns part of your After Effects workspace into a

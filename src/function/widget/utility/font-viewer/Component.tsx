@@ -1,4 +1,10 @@
-import { Icon, rowLabelClass, Surface, ViewModeToggle } from "@ty-plus/ui";
+import {
+	fieldLabelClass,
+	Icon,
+	rowLabelClass,
+	Surface,
+	ViewModeToggle,
+} from "@ty-plus/ui";
 import { SearchField } from "@ty-plus/ui/fields/SearchField";
 import { cx } from "@ty-plus/ui/util/cx";
 import { ArrowLeft, ChevronDown, ChevronRight, Search } from "lucide-react";
@@ -702,14 +708,7 @@ function FontListTreeFamilyGroup(props: {
 										gap: "0.5",
 									})}
 								>
-									<div
-										className={css({
-											truncate: true,
-											fontSize: "text-xs",
-											fontWeight: "medium",
-											color: "text.primary",
-										})}
-									>
+									<div className={cx(fieldLabelClass, css({ truncate: true }))}>
 										{row.style || "—"}
 									</div>
 									<div className={monoFamilyNameClass}>

@@ -531,7 +531,11 @@ export function collectStyleRecipes(file: string, src: string): StyleRecipe[] {
 const recipeKey = (recipe: StyleRecipe): string =>
 	recipe.properties.map((p) => `${p.name}:${p.value}`).join(";");
 
-export function checkAppSource(file: string, src: string): Violation[] {
+export function checkAppSource(
+	file: string,
+	src: string,
+	options: { sharedPackage?: boolean } = {},
+): Violation[] {
 	const out: Violation[] = [];
 	const sf = ts.createSourceFile(
 		file,
@@ -582,31 +586,23 @@ export function checkAppSource(file: string, src: string): Violation[] {
 
 			if (key && FOCUS_CONDITIONS.has(key)) {
 				if (!ts.isObjectLiteralExpression(init)) continue;
+				// A focus rule that paints a shadow IS the focus indicator, so
+				// it has to be the canonical one. A focus rule that only
+				// recolours (the error state) or moves (a pressed transform)
+				// is not an indicator and is left alone.
 				let ring: string | null = null;
-				const others: string[] = [];
 				for (const inner of init.properties) {
 					if (!ts.isPropertyAssignment(inner)) continue;
-					const innerKey = propName(inner.name);
-					if (!innerKey) continue;
-					if (innerKey === "boxShadow") {
-						ring = stringValue(inner.initializer);
-					} else {
-						others.push(innerKey);
-					}
+					if (propName(inner.name) !== "boxShadow") continue;
+					ring = stringValue(inner.initializer);
 				}
-				if (ring === null) {
-					add(
-						init,
-						"focus-ring-missing",
-						`${key} paints no focus indicator — every focusable control paints ${CANONICAL_FOCUS_RING}${others.length > 0 ? ` (this rule only sets ${others.join(", ")})` : ""}`,
-					);
-				} else if (ring !== CANONICAL_FOCUS_RING) {
-					add(
-						init,
-						"focus-ring-divergent",
-						`${key} paints "${ring}" — the one focus indicator is ${CANONICAL_FOCUS_RING}`,
-					);
-				}
+				if (ring === null) continue;
+				if (ring === CANONICAL_FOCUS_RING) continue;
+				add(
+					init,
+					"focus-ring-divergent",
+					`${key} paints "${ring}" — the one focus indicator is ${CANONICAL_FOCUS_RING}`,
+				);
 			}
 
 			if (ts.isObjectLiteralExpression(init)) {
@@ -651,7 +647,10 @@ export function checkAppSource(file: string, src: string): Violation[] {
 			// `tokens/*` is the design-token registry, not the component
 			// surface: it stays importable by path. Everything else must go
 			// through the barrel.
+			// Inside the shared package a deep import is how a module reaches
+			// a sibling; the barrel rule is for its consumers.
 			if (
+				!options.sharedPackage &&
 				specifier.startsWith("@ty-plus/ui/") &&
 				!specifier.startsWith("@ty-plus/ui/tokens/")
 			) {
@@ -665,14 +664,16 @@ export function checkAppSource(file: string, src: string): Violation[] {
 
 		if (ts.isJsxSelfClosingElement(node) || ts.isJsxOpeningElement(node)) {
 			const tag = node.tagName.getText(sf);
-			if (RAW_CONTROL_TAGS.has(tag)) {
+			// The shared package *is* the implementation of these controls, so
+			// it is the one place a raw `<button>` belongs.
+			if (RAW_CONTROL_TAGS.has(tag) && !options.sharedPackage) {
 				add(
 					node,
 					"raw-control",
 					`raw <${tag}> is banned; use a @ty-plus/ui primitive`,
 				);
 			}
-			if (tag === "svg") {
+			if (tag === "svg" && !options.sharedPackage) {
 				add(
 					node,
 					"raw-svg",
@@ -829,20 +830,97 @@ export function checkDuplicateRecipes(recipes: StyleRecipe[]): Violation[] {
 	return out;
 }
 
+/**
+ * The scopes the design contract covers.
+ *
+ * - `src` — the CEP panel and the widget layer
+ * - `packages/ui` — the shared design system itself; its own focus and
+ *   variable references are held to the same contract, because the
+ *   vocabulary is what everything else copies
+ * - `apps/web` — the official site, which uses the same shared package
+ */
+export const CONTRACT_SCOPES = [
+	"src",
+	"packages/ui/src",
+	"apps/web/src",
+] as const;
+
+/**
+ * A file that takes the native focus indicator away (`outline: none`) has to
+ * put one back. The check is per file, because the indicator and the rule
+ * that removes the outline often live in different style objects that are
+ * combined at the call site.
+ */
+export function checkFocusIndicator(file: string, src: string): Violation[] {
+	if (!/outline\s*:\s*(?:"none"|none|0)(?![\w-])/.test(src)) return [];
+	if (src.includes(CANONICAL_FOCUS_RING)) return [];
+	return [
+		{
+			file,
+			line: 1,
+			rule: "focus-indicator-missing",
+			message: `this file removes the native focus indicator but never paints ${CANONICAL_FOCUS_RING} — a focusable control here would show nothing`,
+		},
+	];
+}
+
 export function collectViolations(root = ROOT): Violation[] {
 	const out: Violation[] = [];
 	const recipes: StyleRecipe[] = [];
-	for (const file of walk(join(root, "src"))) {
-		const rel = relative(root, file);
-		const src = readFileSync(file, "utf8");
-		out.push(...checkAppSource(rel, src));
-		recipes.push(...collectStyleRecipes(rel, src));
+	// The shared package's own recipes are the reference: a treatment that
+	// the vocabulary already has must be used, not written out again.
+	const vocabulary: StyleRecipe[] = [];
+
+	for (const scope of CONTRACT_SCOPES) {
+		const dir = join(root, scope);
+		if (!existsSync(dir)) continue;
+		for (const file of walk(dir)) {
+			const rel = relative(root, file).replace(/\\/g, "/");
+			const src = readFileSync(file, "utf8");
+			out.push(
+				...checkAppSource(rel, src, {
+					sharedPackage: scope === "packages/ui/src",
+				}),
+			);
+			out.push(...checkFocusIndicator(rel, src));
+			const found = collectStyleRecipes(rel, src);
+			if (scope === "packages/ui/src") vocabulary.push(...found);
+			else recipes.push(...found);
+		}
 	}
 	out.push(...checkDuplicateRecipes(recipes));
+	out.push(...checkVocabularyCopies(recipes, vocabulary));
 	out.push(...checkUiBarrel(join(root, "packages", "ui", "src"), root));
 	return out.sort((a, b) =>
 		a.file === b.file ? a.line - b.line : a.file.localeCompare(b.file),
 	);
+}
+
+/**
+ * A treatment the shared package already provides, written out again in the
+ * app. The vocabulary is the answer; copying it is what makes the two drift.
+ */
+export function checkVocabularyCopies(
+	recipes: StyleRecipe[],
+	vocabulary: StyleRecipe[],
+): Violation[] {
+	const known = new Map<string, StyleRecipe>();
+	for (const recipe of vocabulary) {
+		const key = recipeKey(recipe);
+		if (!known.has(key)) known.set(key, recipe);
+	}
+	const out: Violation[] = [];
+	for (const recipe of recipes) {
+		const owner = known.get(recipeKey(recipe));
+		if (!owner) continue;
+		out.push({
+			file: recipe.file,
+			line: recipe.line,
+			rule: "vocabulary-copy",
+			message: `this treatment already exists in the shared package (${owner.file}) — use it instead of writing it out again`,
+		});
+	}
+	return out;
 }
 
 /**
@@ -865,6 +943,10 @@ const DEFAULT_REASON: Record<string, string> = {
 		"the shared component is not exported from the barrel; export it or delete it",
 	"duplicate-style-recipe":
 		"this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together",
+	"vocabulary-copy":
+		"this treatment already exists in the shared package — use it instead of writing it out again",
+	"focus-indicator-missing":
+		"this file removes the native focus indicator — put the shared ring back, or say why the control does not need one",
 };
 
 export type AllowlistEntry = {

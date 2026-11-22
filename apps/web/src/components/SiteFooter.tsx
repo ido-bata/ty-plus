@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { cx } from "@ty-plus/ui/util/cx";
+import { cx } from "@ty-plus/ui";
 import { css } from "@/styled-system/css";
 import { SITE } from "../lib/site";
 import { container } from "../styles/layout";

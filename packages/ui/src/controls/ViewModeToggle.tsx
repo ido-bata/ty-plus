@@ -2,6 +2,7 @@ import { Icon, IconButton } from "@ty-plus/ui";
 import { LayoutGrid, List as ListIcon } from "lucide-react";
 import type { JSX } from "react";
 import { css, cx } from "@/styled-system/css";
+import { srOnlyClass } from "../styles/typography";
 
 export type ViewMode = "list" | "icons";
 
@@ -30,18 +31,6 @@ const fieldsetClass = css({
 	backgroundColor: "surface.widget",
 	opacity: 0.5,
 	padding: "px",
-});
-
-const srOnlyClass = css({
-	position: "absolute",
-	width: "1px",
-	height: "1px",
-	padding: "0",
-	margin: "-1px",
-	overflow: "hidden",
-	clip: "rect(0,0,0,0)",
-	whiteSpace: "nowrap",
-	borderWidth: "0",
 });
 
 const buttonBaseClass = css({

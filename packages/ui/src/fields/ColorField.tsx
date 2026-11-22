@@ -3,6 +3,7 @@ import { Input } from "@ty-plus/ui/fields/Input";
 import { cx } from "@ty-plus/ui/util/cx";
 import type { JSX } from "react";
 import { css } from "@/styled-system/css";
+import { fieldDescriptionClass, fieldLabelClass } from "../styles/typography";
 
 export type ColorFieldProps = {
 	label?: string;
@@ -13,11 +14,7 @@ export type ColorFieldProps = {
 };
 
 const wrapper = css({ minWidth: 0, width: "full" });
-const labelClass = css({
-	fontSize: "text-xs",
-	fontWeight: "medium",
-	color: "text.primary",
-});
+const labelClass = fieldLabelClass;
 const grid = css({
 	display: "grid",
 	width: "full",
@@ -28,11 +25,7 @@ const grid = css({
 });
 const gridTopGap = css({ marginTop: "1" });
 const inputFull = css({ minWidth: 0, width: "full" });
-const helper = css({
-	marginTop: "1",
-	fontSize: "text-xs",
-	color: "text.muted",
-});
+const helper = fieldDescriptionClass;
 
 /**
  * Rounded color swatch + hex text input.

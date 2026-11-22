@@ -169,3 +169,16 @@ export const releaseMeta = css({
 });
 
 export const muted = css({ color: "text.muted" });
+
+/**
+ * The eyebrow above a section — mono, uppercase, widely tracked. The web's
+ * pages use the recipe module for their layout recipes, so the label lives
+ * here rather than being written out per page.
+ */
+export const eyebrow = css({
+	fontSize: "xs",
+	fontWeight: "medium",
+	letterSpacing: "wider",
+	textTransform: "uppercase",
+	color: "text.muted",
+});

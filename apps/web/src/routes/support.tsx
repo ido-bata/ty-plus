@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Button } from "@ty-plus/ui";
-import { cx } from "@ty-plus/ui/util/cx";
+import { Button, cx } from "@ty-plus/ui";
 import { SITE } from "../lib/site";
 import { container, section, stack } from "../styles/layout";
 import * as s from "../styles/site";

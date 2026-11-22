@@ -1,6 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Button, MediaFrame } from "@ty-plus/ui";
-import { cx } from "@ty-plus/ui/util/cx";
+import { Button, cx, MediaFrame } from "@ty-plus/ui";
 import { css } from "@/styled-system/css";
 import { PresetStage } from "../components/PresetStage";
 import { SITE } from "../lib/site";
@@ -14,6 +13,7 @@ import {
 	stack,
 } from "../styles/layout";
 import * as s from "../styles/site";
+import { eyebrow } from "../styles/site";
 
 export const Route = createFileRoute("/features")({
 	head: () => ({
@@ -28,14 +28,6 @@ export const Route = createFileRoute("/features")({
 		],
 	}),
 	component: FeaturesPage,
-});
-
-const sectionLabel = css({
-	fontSize: "xs",
-	fontWeight: "medium",
-	letterSpacing: "wider",
-	textTransform: "uppercase",
-	color: "text.muted",
 });
 
 const full12 = css({
@@ -90,7 +82,7 @@ function FeaturesPage() {
 				)}
 			>
 				<div className={stack({ gap: 3, align: "center" })}>
-					<span className={sectionLabel}>Inside the panel</span>
+					<span className={eyebrow}>Inside the panel</span>
 					<h1 className={cx(s.h1, css({ textAlign: "center" }))}>Features</h1>
 					<p className={cx(s.lead, css({ textAlign: "center" }))}>
 						ty-plus is a CEP extension panel for Adobe After Effects. It gives
@@ -112,7 +104,7 @@ function FeaturesPage() {
 			>
 				<div className={grid({ gap: 3 })}>
 					<div className={cx(span4, stack({ gap: 3 }))}>
-						<span className={sectionLabel}>Preset tiles</span>
+						<span className={eyebrow}>Preset tiles</span>
 						<h2 className={s.h2}>Your catalog, as a shelf of tiles</h2>
 						<p className={s.body}>
 							Animation presets, code presets, footage, and groups you register
@@ -141,7 +133,7 @@ function FeaturesPage() {
 			>
 				<div className={grid({ gap: 3 })}>
 					<div className={cx(span4, stack({ gap: 2 }))}>
-						<span className={sectionLabel}>Interaction</span>
+						<span className={eyebrow}>Interaction</span>
 						<h2 className={s.h2}>Inspect, select, apply</h2>
 						<p className={s.body}>
 							Hover or tap a tile and the info surface shows the preset's name,
@@ -185,7 +177,7 @@ function FeaturesPage() {
 			>
 				<div className={grid({ gap: 3 })}>
 					<div className={cx(full12, stack({ gap: 2 }))}>
-						<span className={sectionLabel}>Workspace</span>
+						<span className={eyebrow}>Workspace</span>
 						<h2 className={s.h2}>Widgets and dialogs on the same grid</h2>
 					</div>
 					<FeatureShot
