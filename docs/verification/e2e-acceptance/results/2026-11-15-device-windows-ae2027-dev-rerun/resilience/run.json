@@ -1,155 +1,155 @@
 {
-  "schema": "ty-plus.e2e-run/1",
-  "suite": "resilience",
-  "capturedAt": "2026-11-15T12:20:43.734Z",
-  "extensionDir": "D:/ty-plus/dist/cep-dev",
-  "managedRoot": "D:/4_apps/adobe/Adobe After Effects 2027/Support Files/ty-plus",
-  "totals": {
-    "PASS": 5,
-    "FAIL": 0,
-    "BLOCKED": 0,
-    "SKIP": 0
-  },
-  "results": [
-    {
-      "uc": "UC-I01",
-      "title": "corrupt workspaces/workspace-1.json: banner shown, bytes preserved",
-      "status": "PASS",
-      "detail": "D:\\4_apps\\adobe\\Adobe After Effects 2027\\Support Files\\ty-plus\\workspaces\\workspace-1.json",
-      "checks": [
-        {
-          "name": "workspaces/workspace-1.json overwritten with corrupt bytes",
-          "ok": true,
-          "detail": "29 bytes"
-        },
-        {
-          "name": "panel boots with non-trivial DOM after corrupt file",
-          "ok": true,
-          "detail": "body=49826 grid=true tiles=7"
-        },
-        {
-          "name": "layout restore banner reports corrupt",
-          "ok": true,
-          "detail": "present"
-        },
-        {
-          "name": "workspaces/workspace-1.json not silently destroyed on boot",
-          "ok": true,
-          "detail": "corrupt bytes preserved"
-        }
-      ],
-      "evidence": [],
-      "durationMs": 4170
-    },
-    {
-      "uc": "UC-I02",
-      "title": "corrupt widgets/widgets.json: boots, bytes preserved (UC-D12 alias)",
-      "status": "PASS",
-      "detail": "D:\\4_apps\\adobe\\Adobe After Effects 2027\\Support Files\\ty-plus\\widgets\\widgets.json",
-      "checks": [
-        {
-          "name": "widgets/widgets.json overwritten with corrupt bytes",
-          "ok": true,
-          "detail": "39 bytes"
-        },
-        {
-          "name": "panel boots with non-trivial DOM after corrupt file",
-          "ok": true,
-          "detail": "body=49826 grid=true tiles=7"
-        },
-        {
-          "name": "workspace grid still rendered",
-          "ok": true,
-          "detail": "present"
-        },
-        {
-          "name": "widgets/widgets.json not silently destroyed on boot",
-          "ok": true,
-          "detail": "corrupt bytes preserved"
-        }
-      ],
-      "evidence": [],
-      "durationMs": 1860
-    },
-    {
-      "uc": "UC-I04",
-      "title": "corrupt styles/theme.css: defaults fallback, file preserved or repaired",
-      "status": "PASS",
-      "detail": "D:\\4_apps\\adobe\\Adobe After Effects 2027\\Support Files\\ty-plus\\styles\\theme.css",
-      "checks": [
-        {
-          "name": "panel boots and applies fallback theme",
-          "ok": true,
-          "detail": "body=49826 grid=true accent=#58a6ff"
-        },
-        {
-          "name": "styles/theme.css preserved or regenerated",
-          "ok": true,
-          "detail": "corrupt bytes preserved (defaults applied)"
-        }
-      ],
-      "evidence": [],
-      "durationMs": 1780
-    },
-    {
-      "uc": "UC-I05",
-      "title": "corrupt settings/app.json: defaults fallback, bytes preserved",
-      "status": "PASS",
-      "detail": "D:\\4_apps\\adobe\\Adobe After Effects 2027\\Support Files\\ty-plus\\settings\\app.json",
-      "checks": [
-        {
-          "name": "settings/app.json overwritten with corrupt bytes",
-          "ok": true,
-          "detail": "50 bytes"
-        },
-        {
-          "name": "panel boots with non-trivial DOM after corrupt file",
-          "ok": true,
-          "detail": "body=49826 grid=true tiles=7"
-        },
-        {
-          "name": "workspace grid still rendered",
-          "ok": true,
-          "detail": "present"
-        },
-        {
-          "name": "settings/app.json not silently destroyed on boot",
-          "ok": true,
-          "detail": "corrupt bytes preserved"
-        }
-      ],
-      "evidence": [],
-      "durationMs": 1949
-    },
-    {
-      "uc": "UC-C16",
-      "title": "corrupt presets/presets.json: boots, records preserved",
-      "status": "PASS",
-      "detail": "D:\\4_apps\\adobe\\Adobe After Effects 2027\\Support Files\\ty-plus\\presets\\presets.json",
-      "checks": [
-        {
-          "name": "presets/presets.json overwritten with corrupt bytes",
-          "ok": true,
-          "detail": "39 bytes"
-        },
-        {
-          "name": "panel boots with non-trivial DOM after corrupt file",
-          "ok": true,
-          "detail": "body=49826 grid=true tiles=7"
-        },
-        {
-          "name": "workspace grid still rendered",
-          "ok": true,
-          "detail": "present"
-        },
-        {
-          "name": "presets/presets.json not silently destroyed on boot",
-          "ok": true,
-          "detail": "corrupt bytes preserved"
-        }
-      ],
-      "evidence": [],
-      "durationMs": 1723
-    }
-  ]
+	"schema": "ty-plus.e2e-run/1",
+	"suite": "resilience",
+	"capturedAt": "2026-11-15T12:20:43.734Z",
+	"extensionDir": "D:/ty-plus/dist/cep-dev",
+	"managedRoot": "D:/4_apps/adobe/Adobe After Effects 2027/Support Files/ty-plus",
+	"totals": {
+		"PASS": 5,
+		"FAIL": 0,
+		"BLOCKED": 0,
+		"SKIP": 0
+	},
+	"results": [
+		{
+			"uc": "UC-I01",
+			"title": "corrupt workspaces/workspace-1.json: banner shown, bytes preserved",
+			"status": "PASS",
+			"detail": "D:\\4_apps\\adobe\\Adobe After Effects 2027\\Support Files\\ty-plus\\workspaces\\workspace-1.json",
+			"checks": [
+				{
+					"name": "workspaces/workspace-1.json overwritten with corrupt bytes",
+					"ok": true,
+					"detail": "29 bytes"
+				},
+				{
+					"name": "panel boots with non-trivial DOM after corrupt file",
+					"ok": true,
+					"detail": "body=49826 grid=true tiles=7"
+				},
+				{
+					"name": "layout restore banner reports corrupt",
+					"ok": true,
+					"detail": "present"
+				},
+				{
+					"name": "workspaces/workspace-1.json not silently destroyed on boot",
+					"ok": true,
+					"detail": "corrupt bytes preserved"
+				}
+			],
+			"evidence": [],
+			"durationMs": 4170
+		},
+		{
+			"uc": "UC-I02",
+			"title": "corrupt widgets/widgets.json: boots, bytes preserved (UC-D12 alias)",
+			"status": "PASS",
+			"detail": "D:\\4_apps\\adobe\\Adobe After Effects 2027\\Support Files\\ty-plus\\widgets\\widgets.json",
+			"checks": [
+				{
+					"name": "widgets/widgets.json overwritten with corrupt bytes",
+					"ok": true,
+					"detail": "39 bytes"
+				},
+				{
+					"name": "panel boots with non-trivial DOM after corrupt file",
+					"ok": true,
+					"detail": "body=49826 grid=true tiles=7"
+				},
+				{
+					"name": "workspace grid still rendered",
+					"ok": true,
+					"detail": "present"
+				},
+				{
+					"name": "widgets/widgets.json not silently destroyed on boot",
+					"ok": true,
+					"detail": "corrupt bytes preserved"
+				}
+			],
+			"evidence": [],
+			"durationMs": 1860
+		},
+		{
+			"uc": "UC-I04",
+			"title": "corrupt styles/theme.css: defaults fallback, file preserved or repaired",
+			"status": "PASS",
+			"detail": "D:\\4_apps\\adobe\\Adobe After Effects 2027\\Support Files\\ty-plus\\styles\\theme.css",
+			"checks": [
+				{
+					"name": "panel boots and applies fallback theme",
+					"ok": true,
+					"detail": "body=49826 grid=true accent=#58a6ff"
+				},
+				{
+					"name": "styles/theme.css preserved or regenerated",
+					"ok": true,
+					"detail": "corrupt bytes preserved (defaults applied)"
+				}
+			],
+			"evidence": [],
+			"durationMs": 1780
+		},
+		{
+			"uc": "UC-I05",
+			"title": "corrupt settings/app.json: defaults fallback, bytes preserved",
+			"status": "PASS",
+			"detail": "D:\\4_apps\\adobe\\Adobe After Effects 2027\\Support Files\\ty-plus\\settings\\app.json",
+			"checks": [
+				{
+					"name": "settings/app.json overwritten with corrupt bytes",
+					"ok": true,
+					"detail": "50 bytes"
+				},
+				{
+					"name": "panel boots with non-trivial DOM after corrupt file",
+					"ok": true,
+					"detail": "body=49826 grid=true tiles=7"
+				},
+				{
+					"name": "workspace grid still rendered",
+					"ok": true,
+					"detail": "present"
+				},
+				{
+					"name": "settings/app.json not silently destroyed on boot",
+					"ok": true,
+					"detail": "corrupt bytes preserved"
+				}
+			],
+			"evidence": [],
+			"durationMs": 1949
+		},
+		{
+			"uc": "UC-C16",
+			"title": "corrupt presets/presets.json: boots, records preserved",
+			"status": "PASS",
+			"detail": "D:\\4_apps\\adobe\\Adobe After Effects 2027\\Support Files\\ty-plus\\presets\\presets.json",
+			"checks": [
+				{
+					"name": "presets/presets.json overwritten with corrupt bytes",
+					"ok": true,
+					"detail": "39 bytes"
+				},
+				{
+					"name": "panel boots with non-trivial DOM after corrupt file",
+					"ok": true,
+					"detail": "body=49826 grid=true tiles=7"
+				},
+				{
+					"name": "workspace grid still rendered",
+					"ok": true,
+					"detail": "present"
+				},
+				{
+					"name": "presets/presets.json not silently destroyed on boot",
+					"ok": true,
+					"detail": "corrupt bytes preserved"
+				}
+			],
+			"evidence": [],
+			"durationMs": 1723
+		}
+	]
 }
