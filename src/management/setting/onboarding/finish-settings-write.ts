@@ -22,6 +22,7 @@
  * `admin_probe_failed: ENOENT ...` branch the user was seeing.
  */
 
+import { i18n } from "@/management/i18n/index";
 import { writeSettingsPathsJson } from "@/management/setting/persistence/settings-json-files";
 import { writeSettings as writeSettingsViaStorage } from "@/management/storage";
 import {
@@ -247,14 +248,21 @@ const buildWriteRejectedError = (params: {
 
 const describeElevationFailure = (result: ElevationWriteResult): string => {
 	if (result.elevatedConsentDenied) {
-		return "The UAC consent prompt was dismissed (admin escalation was not granted).";
+		return i18n.t("onboarding:errors.elevationConsentDenied");
 	}
 	const exitCodeNote =
-		result.exitCode >= 0 ? ` Inner script exit code: ${result.exitCode}.` : "";
+		result.exitCode >= 0
+			? i18n.t("onboarding:errors.innerExitCodeNote", {
+					code: result.exitCode,
+				})
+			: "";
 	if (result.stderr) {
-		return `The elevated write reported an error.${exitCodeNote} Inner script stderr: ${result.stderr.trim()}`;
+		return i18n.t("onboarding:errors.elevationWriteFailedStderr", {
+			exitCodeNote,
+			stderr: result.stderr.trim(),
+		});
 	}
-	return `The elevated write reported an error.${exitCodeNote}`;
+	return i18n.t("onboarding:errors.elevationWriteFailed", { exitCodeNote });
 };
 
 const buildMissingSupportRootError = (

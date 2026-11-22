@@ -598,7 +598,10 @@ export const DirectoryBrowser = ({
 								className={checkboxClass}
 								checked={isSelected(entry.path, "file")}
 								onChange={() => onToggleSelected(entry.path, "file")}
-								aria-label={`select file ${entry.name}`}
+								aria-label={i18n.t("common:directoryBrowser.selectFileAria", {
+									name: entry.name,
+									defaultValue: "Select file {{name}}",
+								})}
 							/>
 						</label>
 					) : null}
@@ -613,7 +616,10 @@ export const DirectoryBrowser = ({
 								className={checkboxClass}
 								checked={isSelected(entry.path, "folder")}
 								onChange={() => onToggleSelected(entry.path, "folder")}
-								aria-label={`select folder ${entry.name}`}
+								aria-label={i18n.t("common:directoryBrowser.selectFolderAria", {
+									name: entry.name,
+									defaultValue: "Select folder {{name}}",
+								})}
 							/>
 						</label>
 					) : null}

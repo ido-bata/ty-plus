@@ -1189,8 +1189,14 @@ function IconCatalogGroupCard(props: {
 						ev.preventDefault();
 						onOpen();
 					}}
-					aria-label={`Open group ${group.title ?? group.id}`}
-					title={`${group.title?.trim() || group.id} (double-click to open)`}
+					aria-label={i18n.t("presets:listDialog.openGroupAria", {
+						title: group.title ?? group.id,
+						defaultValue: "Open group {{title}}",
+					})}
+					title={i18n.t("presets:listDialog.openGroupHint", {
+						title: group.title?.trim() || group.id,
+						defaultValue: "{{title}} (double-click to open)",
+					})}
 				>
 					<div className={iconGroupButtonInnerClass}>
 						<GroupHeaderGlyph group={group} />

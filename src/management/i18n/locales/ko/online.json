@@ -71,6 +71,13 @@
 			"idle": "클라우드 동기화 대기 중",
 			"ok": "ty-plus OK",
 			"failed": "클라우드 동기화 실패"
+		},
+		"gatewayBootReason": {
+			"unsupportedTrustMode": "지원되지 않는 operation-worker 신뢰 모드",
+			"unsupportedPlatform": "지원되지 않는 호스트 플랫폼",
+			"missingExtensionRoot": "CEP 확장 루트를 사용할 수 없음",
+			"workerRuntimeFailed": "Worker 런타임을 사용할 수 없음",
+			"workerCompositionFailed": "Worker 구성 실패"
 		}
 	},
 	"notificationCenter": {
@@ -95,5 +102,8 @@
 	},
 	"publicLink": {
 		"userManual": "사용자 매뉴얼"
+	},
+	"errors": {
+		"unknownPreset": "프리셋을 찾을 수 없습니다: {{id}}"
 	}
 }

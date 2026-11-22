@@ -1,3 +1,4 @@
+import { i18n } from "@/management/i18n/index";
 import { notificationStore } from "@/management/online/notification/service";
 
 import { type AnchorPosition, buildAnchorScript } from "./script";
@@ -32,15 +33,23 @@ const notifyAnchorOutcome = (raw: string): void => {
 	const result = String(raw ?? "").trim();
 	if (!result) return;
 	if (result === "no comp") {
-		notificationStore.add("Ty Plus anchor: no active composition", "warning", {
-			duration: 6000,
-		});
+		notificationStore.add(
+			i18n.t("widgets:anchorPoint.noActiveComposition"),
+			"warning",
+			{
+				duration: 6000,
+			},
+		);
 		return;
 	}
 	if (result === "no layer") {
-		notificationStore.add("Ty Plus anchor: no layer selected", "warning", {
-			duration: 6000,
-		});
+		notificationStore.add(
+			i18n.t("widgets:anchorPoint.noLayerSelected"),
+			"warning",
+			{
+				duration: 6000,
+			},
+		);
 		return;
 	}
 	if (result.startsWith("err:")) {

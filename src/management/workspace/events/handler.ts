@@ -9,6 +9,7 @@ import {
 	runAnchorScript,
 } from "@/function/widget/core/anchor-point";
 import { createCepHostExecutor } from "@/management/ae/cep/host-executor";
+import { i18n } from "@/management/i18n/index";
 import type { Preset } from "@/management/preset/contract";
 import { dispatchGroupWorkspaceRequest } from "@/management/preset/group/events";
 import type { FileBrowserService } from "@/management/storage/file-browser-service";
@@ -1467,13 +1468,19 @@ export const setupInteractionEvents = (
 			if (!isValidAnchorPosition(pos)) return;
 			setState({
 				...state,
-				statusMessage: `Applying anchor point: ${pos}...`,
+				statusMessage: i18n.t("workspace:statusMessages.applyingAnchorPoint", {
+					pos,
+					defaultValue: "Applying anchor point: {{pos}}...",
+				}),
 			});
 			rerender();
 			runAnchorScript(pos);
 			setState({
 				...getState(),
-				statusMessage: `Anchor point requested: ${pos}`,
+				statusMessage: i18n.t("workspace:statusMessages.anchorPointRequested", {
+					pos,
+					defaultValue: "Anchor point requested: {{pos}}",
+				}),
 			});
 			return;
 		}

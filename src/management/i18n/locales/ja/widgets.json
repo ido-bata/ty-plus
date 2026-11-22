@@ -132,7 +132,9 @@
 			"bottomLeft": "左下",
 			"bottomCenter": "下中央",
 			"bottomRight": "右下"
-		}
+		},
+		"noActiveComposition": "Ty Plus アンカー: アクティブなコンポジションがありません",
+		"noLayerSelected": "Ty Plus アンカー: レイヤーが選択されていません"
 	},
 	"info": {
 		"name": "情報",
@@ -195,7 +197,13 @@
 			"importOnly": "インポート",
 			"selectFile": "選択",
 			"deselect": "選択解除",
-			"runBlockedMissingAsset": "プリセットのアセットがディスク上に存在しないため、実行は無効です。"
+			"runBlockedMissingAsset": "プリセットのアセットがディスク上に存在しないため、実行は無効です。",
+			"presetNotFound": "プリセットが見つかりません: {{presetId}}",
+			"fileImportAeOnly": "ファイルのインポートは現在 After Effects でのみ利用できます。",
+			"appliedEffect": "エフェクトを適用しました: {{name}}",
+			"importedFootage": "インポートしたフッテージ: {{name}}",
+			"ranScript": "スクリプトを実行しました: {{name}}",
+			"appliedPreset": "プリセットを適用しました: {{name}}"
 		},
 		"path": {
 			"pickFolderPrompt": "フォルダを選択",

@@ -214,7 +214,9 @@
 		"deselect": "Снять выбор",
 		"listView": "Список",
 		"iconView": "Значки",
-		"noFilesFound": "Файлы не найдены"
+		"noFilesFound": "Файлы не найдены",
+		"selectFileAria": "Выбрать файл {{name}}",
+		"selectFolderAria": "Выбрать папку {{name}}"
 	},
 	"debugConsole": {
 		"title": "Консоль",
@@ -257,5 +259,15 @@
 			"disableAutoScroll": "Выключить автопрокрутку",
 			"itemActive": "{{level}} (активно)"
 		}
+	},
+	"errors": {
+		"hostContextUnavailable": "Контекст хоста недоступен",
+		"fileAccessUnavailable": "Доступ к файлам через CEP Node недоступен в этой поверхности.",
+		"fsApiUnavailable": "API fs CEP Node недоступен в этой среде выполнения хоста.",
+		"fileImportAeOnly": "Импорт файлов сейчас доступен только в After Effects.",
+		"initNotFound": "ty-plus-init.json не найден (нет корня приложения). Перед любой записью онбординг должен быть завершён.",
+		"initIncomplete": "ty-plus ещё не инициализирован. Запись заблокирована, пока ty-plus-init.json не сообщит о завершении.",
+		"initSupportRootBlank": "ty-plus-init.json помечен как завершённый, но supportRoot пуст.",
+		"hostExecFailed": "Ty Plus: {{message}}"
 	}
 }

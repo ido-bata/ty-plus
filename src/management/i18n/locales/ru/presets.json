@@ -179,7 +179,8 @@
 			"title": "Создать пресет",
 			"lead": "Создайте локальный пресет из переиспользуемых метаданных.",
 			"defaultName": "Локальный пресет"
-		}
+		},
+		"savePathRequired": "Сначала сохраните пресет анимации в стандартном диалоговом окне After Effects."
 	},
 	"animationPreset": {
 		"step1": {
@@ -387,7 +388,9 @@
 		"groupsUnavailable": "Группы недоступны",
 		"groupsErrorDetail": "{{error}} — пресеты показаны без группировки.",
 		"title": "Список пресетов",
-		"gridResizeHint": "Удерживайте Ctrl и прокручивайте, чтобы изменить размер сетки значков"
+		"gridResizeHint": "Удерживайте Ctrl и прокручивайте, чтобы изменить размер сетки значков",
+		"openGroupAria": "Открыть группу {{title}}",
+		"openGroupHint": "{{title}} (двойной щелчок, чтобы открыть)"
 	},
 	"codeEditor": {
 		"snippets": {
@@ -426,5 +429,14 @@
 		"exitCodeSuffix": " (код выхода {{code}})",
 		"elevatedErrorWithDetail": "Повышенная запись сообщила об ошибке{{exitNote}}: {{detail}}",
 		"elevatedError": "Повышенная запись сообщила об ошибке{{exitNote}}"
+	},
+	"folderGroup": {
+		"noFolderPaths": "Введите хотя бы один путь к папке.",
+		"noPresetFiles": "В папке не найдено файлов пресетов (.ffx).",
+		"groupRowFailed": "Не удалось создать строку группы.",
+		"savedStatus": "Группа сохранена: {{id}} (участники: {{members}}, новые пресеты: {{added}})",
+		"presetIdsNotFound": "ID пресетов не найдены в каталоге: {{ids}}",
+		"savedStatusManual": "Группа сохранена ({{total}} элементов): {{id}}",
+		"scanRequiresCepNode": "Сканирование папок требует файлового браузера CEP Node. Введите ID пресетов вручную или включите CEP Node."
 	}
 }

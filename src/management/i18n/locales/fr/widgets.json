@@ -132,7 +132,9 @@
 			"bottomLeft": "En bas à gauche",
 			"bottomCenter": "En bas au centre",
 			"bottomRight": "En bas à droite"
-		}
+		},
+		"noActiveComposition": "Ancre Ty Plus : aucune composition active",
+		"noLayerSelected": "Ancre Ty Plus : aucun calque sélectionné"
 	},
 	"info": {
 		"name": "Info",
@@ -195,7 +197,13 @@
 			"importOnly": "Importer",
 			"selectFile": "Sélectionner",
 			"deselect": "Désélectionner",
-			"runBlockedMissingAsset": "La ressource du préréglage est absente du disque — exécution désactivée."
+			"runBlockedMissingAsset": "La ressource du préréglage est absente du disque — exécution désactivée.",
+			"presetNotFound": "Préréglage introuvable : {{presetId}}",
+			"fileImportAeOnly": "L'importation de fichiers est actuellement disponible uniquement dans After Effects.",
+			"appliedEffect": "Effet appliqué : {{name}}",
+			"importedFootage": "Métrage importé : {{name}}",
+			"ranScript": "Script exécuté : {{name}}",
+			"appliedPreset": "Préréglage appliqué : {{name}}"
 		},
 		"path": {
 			"pickFolderPrompt": "Sélectionner un dossier",

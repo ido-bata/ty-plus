@@ -94,5 +94,11 @@
 		"easeInOut": "Ease in/out",
 		"overshoot": "Sobreimpulso",
 		"bezier": "Bézier"
+	},
+	"statusMessages": {
+		"presetAssetMissing": "Falta el recurso del preset en disco; la ejecución está deshabilitada.",
+		"applyingAnchorPoint": "Aplicando punto de anclaje: {{pos}}...",
+		"anchorPointRequested": "Punto de anclaje solicitado: {{pos}}",
+		"presetFailed": "Preset fallido: {{message}}"
 	}
 }

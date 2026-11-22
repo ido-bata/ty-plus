@@ -214,7 +214,9 @@
 		"deselect": "取消选择",
 		"listView": "列表视图",
 		"iconView": "图标视图",
-		"noFilesFound": "未找到文件"
+		"noFilesFound": "未找到文件",
+		"selectFileAria": "选择文件 {{name}}",
+		"selectFolderAria": "选择文件夹 {{name}}"
 	},
 	"debugConsole": {
 		"title": "控制台",
@@ -257,5 +259,15 @@
 			"disableAutoScroll": "禁用自动滚动",
 			"itemActive": "{{level}}（已启用）"
 		}
+	},
+	"errors": {
+		"hostContextUnavailable": "主机上下文不可用",
+		"fileAccessUnavailable": "此界面中 CEP Node 文件访问不可用。",
+		"fsApiUnavailable": "此主机运行时中 CEP Node fs API 不可用。",
+		"fileImportAeOnly": "文件导入目前仅在 After Effects 中可用。",
+		"initNotFound": "未找到 ty-plus-init.json（无应用根目录）。任何写入之前必须完成入门引导。",
+		"initIncomplete": "ty-plus 尚未初始化。在 ty-plus-init.json 报告完成之前，写入将被阻止。",
+		"initSupportRootBlank": "ty-plus-init.json 已标记为完成，但 supportRoot 为空。",
+		"hostExecFailed": "Ty Plus：{{message}}"
 	}
 }

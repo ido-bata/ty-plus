@@ -416,5 +416,14 @@
 		"statusImported": "Backup dell'area di lavoro importato. Riapri finestre/pannelli per aggiornare.",
 		"statusInvalid": "JSON di backup non valido.",
 		"statusPasteFirst": "Incolla prima il JSON di backup."
+	},
+	"errors": {
+		"pathCopySameFolder": "Origine e destinazione della copia sono la stessa cartella. Scegli un Support Root diverso.",
+		"pathCopyDestInsideSource": "La destinazione della copia è all'interno della cartella di origine. Scegli un Support Root diverso.",
+		"pathCopySourceInsideDest": "L'origine della copia è all'interno della cartella di destinazione. Scegli un Support Root diverso.",
+		"pathCopyUntrustedTarget": "Rifiutata l'eliminazione del contenuto del Support Root: la destinazione è al di fuori di una root di dati utente attendibile.",
+		"aeAppRootUnresolved": "Ty Plus: impossibile risolvere la cartella di installazione di After Effects in esecuzione per ty-plus-init.json.",
+		"copySymlinkRefused": "Rifiutata la copia del collegamento simbolico/reparse point: {{name}}",
+		"copyDeleteUnsupported": "L'eliminazione ricorsiva richiede rm o readdir/stat su questo host."
 	}
 }

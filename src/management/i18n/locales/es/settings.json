@@ -416,5 +416,14 @@
 		"statusImported": "Copia de seguridad del espacio de trabajo importada. Vuelve a abrir diálogos/paneles para actualizar.",
 		"statusInvalid": "JSON de copia de seguridad no válido.",
 		"statusPasteFirst": "Pega primero el JSON de copia de seguridad."
+	},
+	"errors": {
+		"pathCopySameFolder": "El origen y el destino de la copia son la misma carpeta. Elige un Support Root diferente.",
+		"pathCopyDestInsideSource": "El destino de la copia está dentro de la carpeta de origen. Elige un Support Root diferente.",
+		"pathCopySourceInsideDest": "El origen de la copia está dentro de la carpeta de destino. Elige un Support Root diferente.",
+		"pathCopyUntrustedTarget": "Se rechaza eliminar el contenido del Support Root: el destino está fuera de una raíz de datos de usuario de confianza.",
+		"aeAppRootUnresolved": "Ty Plus: no se puede resolver la carpeta de instalación de After Effects en ejecución para ty-plus-init.json.",
+		"copySymlinkRefused": "Se rechaza copiar el enlace simbólico/reparse point: {{name}}",
+		"copyDeleteUnsupported": "La eliminación recursiva requiere rm o readdir/stat en este host."
 	}
 }

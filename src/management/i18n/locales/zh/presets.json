@@ -176,7 +176,8 @@
 			"title": "创建预设",
 			"lead": "根据可复用元数据创建本地预设。",
 			"defaultName": "本地预设"
-		}
+		},
+		"savePathRequired": "请先使用 After Effects 的原生对话框保存动画预设。"
 	},
 	"animationPreset": {
 		"step1": {
@@ -380,7 +381,9 @@
 		"groupsUnavailable": "组不可用",
 		"groupsErrorDetail": "{{error}} — 预设未分组列出。",
 		"title": "预设列表",
-		"gridResizeHint": "按住 Ctrl 并滚动以调整图标网格大小"
+		"gridResizeHint": "按住 Ctrl 并滚动以调整图标网格大小",
+		"openGroupAria": "打开组 {{title}}",
+		"openGroupHint": "{{title}}（双击打开）"
 	},
 	"codeEditor": {
 		"snippets": {
@@ -419,5 +422,14 @@
 		"exitCodeSuffix": "（退出代码 {{code}}）",
 		"elevatedErrorWithDetail": "提升写入报告了错误{{exitNote}}：{{detail}}",
 		"elevatedError": "提升写入报告了错误{{exitNote}}"
+	},
+	"folderGroup": {
+		"noFolderPaths": "请至少输入一个文件夹路径。",
+		"noPresetFiles": "文件夹中未找到预设文件（.ffx）。",
+		"groupRowFailed": "生成组行失败。",
+		"savedStatus": "组已保存：{{id}}（成员：{{members}}，新增预设：{{added}}）",
+		"presetIdsNotFound": "目录中未找到预设 ID：{{ids}}",
+		"savedStatusManual": "组已保存（{{total}} 项）：{{id}}",
+		"scanRequiresCepNode": "文件夹扫描需要 CEP Node 文件浏览器。请手动输入预设 ID 或启用 CEP Node。"
 	}
 }

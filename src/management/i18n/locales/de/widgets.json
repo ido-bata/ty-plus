@@ -132,7 +132,9 @@
 			"bottomLeft": "Unten links",
 			"bottomCenter": "Unten Mitte",
 			"bottomRight": "Unten rechts"
-		}
+		},
+		"noActiveComposition": "Ty Plus-Anker: keine aktive Komposition",
+		"noLayerSelected": "Ty Plus-Anker: keine Ebene ausgewählt"
 	},
 	"info": {
 		"name": "Info",
@@ -195,7 +197,13 @@
 			"importOnly": "Importieren",
 			"selectFile": "Auswählen",
 			"deselect": "Auswahl aufheben",
-			"runBlockedMissingAsset": "Das Preset-Asset fehlt auf der Festplatte — Ausführung ist deaktiviert."
+			"runBlockedMissingAsset": "Das Preset-Asset fehlt auf der Festplatte — Ausführung ist deaktiviert.",
+			"presetNotFound": "Preset nicht gefunden: {{presetId}}",
+			"fileImportAeOnly": "Der Dateiimport ist derzeit nur in After Effects verfügbar.",
+			"appliedEffect": "Effekt angewendet: {{name}}",
+			"importedFootage": "Importiertes Filmmaterial: {{name}}",
+			"ranScript": "Skript ausgeführt: {{name}}",
+			"appliedPreset": "Preset angewendet: {{name}}"
 		},
 		"path": {
 			"pickFolderPrompt": "Ordner auswählen",

@@ -108,9 +108,14 @@ function basenamePath(p: string): string {
 	return i >= 0 ? t.slice(i + 1) : t || "—";
 }
 
-async function resolvePresetForRun(presetId: string): Promise<Preset> {
+async function resolvePresetForRun(
+	presetId: string,
+	t: (key: string, options?: Record<string, unknown>) => string,
+): Promise<Preset> {
 	const preset = await getPreset(presetId);
-	if (!preset) throw new Error(`Preset not found: ${presetId}`);
+	if (!preset) {
+		throw new Error(t("directoryBrowser.actions.presetNotFound", { presetId }));
+	}
 	return preset;
 }
 
@@ -878,42 +883,55 @@ export function DirectoryBrowserWidget({
 		runSearch,
 	]);
 
-	const importFile = useCallback(async (filePath: string): Promise<string> => {
-		const hostCode = detectCepHostCode();
-		const hostExecutorForAlign =
-			hostCode === "AEFT"
-				? createCepHostExecutor(window, "after-effects")
-				: null;
-		if (hostCode !== "AEFT" || !hostExecutorForAlign) {
-			throw new Error(
-				"File import is currently available only in After Effects.",
-			);
-		}
-		const lowerPath = filePath.toLowerCase();
-		const fileName = filePath.split(/[\\/]/).pop() ?? filePath;
-		if (lowerPath.endsWith(".jsx") || lowerPath.endsWith(".jsxbin")) {
-			await hostExecutorForAlign("runScriptFile", [filePath]);
-			return `Ran script: ${fileName}`;
-		}
-		if (lowerPath.endsWith(".ffx")) {
-			await hostExecutorForAlign("applyPreset", [filePath]);
-			return `Applied preset: ${fileName}`;
-		}
-		if (lowerPath.endsWith(".aex") || lowerPath.endsWith(".plugin")) {
-			// Look up the catalog matchName from the candidates cache. The
-			// filename stem is NOT a reliable matchName — After Effects stores
-			// matchName in the plugin's PICA resource, not the filename.
-			const snapshot = getCandidatesSnapshot();
-			const matchName = resolveEffectMatchName(
-				filePath,
-				snapshot?.pluginEffects ?? [],
-			);
-			await hostExecutorForAlign("applyEffectByMatchName", [matchName]);
-			return `Applied effect: ${fileName}`;
-		}
-		await hostExecutorForAlign("addFootage", [{ filePath, toComp: true }]);
-		return `Imported footage: ${fileName}`;
-	}, []);
+	const importFile = useCallback(
+		async (filePath: string): Promise<string> => {
+			const hostCode = detectCepHostCode();
+			const hostExecutorForAlign =
+				hostCode === "AEFT"
+					? createCepHostExecutor(window, "after-effects")
+					: null;
+			if (hostCode !== "AEFT" || !hostExecutorForAlign) {
+				throw new Error(t("directoryBrowser.actions.fileImportAeOnly"));
+			}
+			const lowerPath = filePath.toLowerCase();
+			const fileName = filePath.split(/[\\/]/).pop() ?? filePath;
+			if (lowerPath.endsWith(".jsx") || lowerPath.endsWith(".jsxbin")) {
+				await hostExecutorForAlign("runScriptFile", [filePath]);
+				return t("directoryBrowser.actions.ranScript", {
+					name: fileName,
+					defaultValue: "Ran script: {{name}}",
+				});
+			}
+			if (lowerPath.endsWith(".ffx")) {
+				await hostExecutorForAlign("applyPreset", [filePath]);
+				return t("directoryBrowser.actions.appliedPreset", {
+					name: fileName,
+					defaultValue: "Applied preset: {{name}}",
+				});
+			}
+			if (lowerPath.endsWith(".aex") || lowerPath.endsWith(".plugin")) {
+				// Look up the catalog matchName from the candidates cache. The
+				// filename stem is NOT a reliable matchName — After Effects stores
+				// matchName in the plugin's PICA resource, not the filename.
+				const snapshot = getCandidatesSnapshot();
+				const matchName = resolveEffectMatchName(
+					filePath,
+					snapshot?.pluginEffects ?? [],
+				);
+				await hostExecutorForAlign("applyEffectByMatchName", [matchName]);
+				return t("directoryBrowser.actions.appliedEffect", {
+					name: fileName,
+					defaultValue: "Applied effect: {{name}}",
+				});
+			}
+			await hostExecutorForAlign("addFootage", [{ filePath, toComp: true }]);
+			return t("directoryBrowser.actions.importedFootage", {
+				name: fileName,
+				defaultValue: "Imported footage: {{name}}",
+			});
+		},
+		[t],
+	);
 
 	const handleImportFile = useCallback(
 		async (filePath: string) => {
@@ -956,7 +974,7 @@ export function DirectoryBrowserWidget({
 				t("directoryBrowser.actions.runSuccess", { presetId }) ||
 				`Executed preset: ${presetId}`;
 			try {
-				const preset = await resolvePresetForRun(presetId);
+				const preset = await resolvePresetForRun(presetId, t);
 				const hostCode = detectCepHostCode();
 				await traceExecute(preset, "directory-browser:run", () =>
 					executeWorkspacePresetForWindow(window, hostCode, preset),

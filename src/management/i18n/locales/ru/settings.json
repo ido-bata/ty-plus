@@ -416,5 +416,14 @@
 		"statusImported": "Резервная копия рабочей области импортирована. Переоткройте диалоги/панели для обновления.",
 		"statusInvalid": "Недопустимый JSON резервной копии.",
 		"statusPasteFirst": "Сначала вставьте JSON резервной копии."
+	},
+	"errors": {
+		"pathCopySameFolder": "Источник и назначение копирования — одна и та же папка. Выберите другой Support Root.",
+		"pathCopyDestInsideSource": "Назначение копирования находится внутри исходной папки. Выберите другой Support Root.",
+		"pathCopySourceInsideDest": "Источник копирования находится внутри папки назначения. Выберите другой Support Root.",
+		"pathCopyUntrustedTarget": "Отказано в удалении содержимого Support Root: цель находится вне доверенного корня пользовательских данных.",
+		"aeAppRootUnresolved": "Ty Plus: не удаётся определить папку установки запущенного After Effects для ty-plus-init.json.",
+		"copySymlinkRefused": "Отказано в копировании символьной ссылки/reparse point: {{name}}",
+		"copyDeleteUnsupported": "Рекурсивное удаление требует rm или readdir/stat на этом хосте."
 	}
 }

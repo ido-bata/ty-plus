@@ -71,6 +71,13 @@
 			"idle": "Sincronización en la nube inactiva",
 			"ok": "Ty Plus OK",
 			"failed": "Error en la sincronización en la nube"
+		},
+		"gatewayBootReason": {
+			"unsupportedTrustMode": "Modo de confianza de operation-worker no compatible",
+			"unsupportedPlatform": "Plataforma de host no compatible",
+			"missingExtensionRoot": "Raíz de extensión CEP no disponible",
+			"workerRuntimeFailed": "Runtime de Worker no disponible",
+			"workerCompositionFailed": "Error en la composición de Worker"
 		}
 	},
 	"notificationCenter": {
@@ -95,5 +102,8 @@
 	},
 	"publicLink": {
 		"userManual": "Manual de usuario"
+	},
+	"errors": {
+		"unknownPreset": "Preajuste no encontrado: {{id}}"
 	}
 }

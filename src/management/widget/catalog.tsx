@@ -653,7 +653,7 @@ export function AddWidgetCatalogPanel({
 	});
 	const hintShortcuts = t("selector.hintShortcuts", {
 		defaultValue:
-			"Arrow keys: move · Enter (in search): add · Double-click: add · Esc: close",
+			"Arrows: move · Enter (in search): add · Double-click: add · Esc: close",
 	});
 	const listViewAria = t("selector.listView", { defaultValue: "List view" });
 	const iconViewAria = t("selector.iconView", {

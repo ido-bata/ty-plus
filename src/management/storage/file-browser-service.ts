@@ -2,6 +2,7 @@ import {
 	getCepPathReaderFromWindow,
 	normalizeCepSystemPath,
 } from "@/management/ae/cep/runtime";
+import { i18n } from "@/management/i18n/index";
 import type { Preset, PresetType } from "@/management/preset/contract";
 import { presetIconImage } from "@/management/preset/contract";
 import { coercePersistedPresetIcon } from "@/management/preset/icon-data";
@@ -322,7 +323,7 @@ const buildFileBrowserService = (options: {
 		(options.window ? readCepNodeRequireFromWindow(options.window) : null);
 
 	if (!requireFn) {
-		throw new Error("CEP Node file access is not available in this surface.");
+		throw new Error(i18n.t("common:errors.fileAccessUnavailable"));
 	}
 
 	const fsMod = requireFn("fs") as CepNodeFs;
@@ -330,7 +331,7 @@ const buildFileBrowserService = (options: {
 	const osMod = requireFn("os") as CepNodeOs;
 	const fsPromises = fsMod.promises ?? createLegacyNodeFsAdapter(fsMod);
 	if (!fsPromises) {
-		throw new Error("CEP Node fs API is not available in this host runtime.");
+		throw new Error(i18n.t("common:errors.fsApiUnavailable"));
 	}
 
 	const directoryLooksLikePngSequence = async (

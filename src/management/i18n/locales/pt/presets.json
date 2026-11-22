@@ -178,7 +178,8 @@
 			"title": "Criar predefinição",
 			"lead": "Crie uma predefinição local a partir de metadados reutilizáveis.",
 			"defaultName": "Predefinição local"
-		}
+		},
+		"savePathRequired": "Guarde primeiro a predefinição de animação com a caixa de diálogo nativa do After Effects."
 	},
 	"animationPreset": {
 		"step1": {
@@ -384,7 +385,9 @@
 		"groupsUnavailable": "Grupos indisponíveis",
 		"groupsErrorDetail": "{{error}} — as predefinições são listadas sem agrupamento.",
 		"title": "Lista de predefinições",
-		"gridResizeHint": "Mantenha Ctrl premido e role para redimensionar a grelha de ícones"
+		"gridResizeHint": "Mantenha Ctrl premido e role para redimensionar a grelha de ícones",
+		"openGroupAria": "Abrir grupo {{title}}",
+		"openGroupHint": "{{title}} (clique duplo para abrir)"
 	},
 	"codeEditor": {
 		"snippets": {
@@ -423,5 +426,14 @@
 		"exitCodeSuffix": " (código de saída {{code}})",
 		"elevatedErrorWithDetail": "A escrita elevada relatou um erro{{exitNote}}: {{detail}}",
 		"elevatedError": "A escrita elevada relatou um erro{{exitNote}}"
+	},
+	"folderGroup": {
+		"noFolderPaths": "Introduza pelo menos um caminho de pasta.",
+		"noPresetFiles": "Nenhum arquivo de predefinição (.ffx) encontrado na pasta.",
+		"groupRowFailed": "Falha ao gerar a linha do grupo.",
+		"savedStatus": "Grupo guardado: {{id}} (membros: {{members}}, novas predefinições: {{added}})",
+		"presetIdsNotFound": "IDs de predefinição não encontrados no catálogo: {{ids}}",
+		"savedStatusManual": "Grupo guardado ({{total}} itens): {{id}}",
+		"scanRequiresCepNode": "A verificação de pastas requer o navegador de arquivos do CEP Node. Introduza os IDs de predefinição manualmente ou ative o CEP Node."
 	}
 }

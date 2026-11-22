@@ -94,5 +94,11 @@
 		"easeInOut": "Ease in/out",
 		"overshoot": "Sobressalto",
 		"bezier": "Bézier"
+	},
+	"statusMessages": {
+		"presetAssetMissing": "O asset do preset está ausente no disco — a execução está desabilitada.",
+		"applyingAnchorPoint": "Aplicando ponto de ancoragem: {{pos}}...",
+		"anchorPointRequested": "Ponto de ancoragem solicitado: {{pos}}",
+		"presetFailed": "Preset falhou: {{message}}"
 	}
 }

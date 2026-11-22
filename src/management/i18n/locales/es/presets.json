@@ -178,7 +178,8 @@
 			"title": "Crear preset",
 			"lead": "Crea un preset local a partir de metadatos reutilizables.",
 			"defaultName": "Preset local"
-		}
+		},
+		"savePathRequired": "Guarda primero el preajuste de animación con el cuadro de diálogo nativo de After Effects."
 	},
 	"animationPreset": {
 		"step1": {
@@ -384,7 +385,9 @@
 		"groupsUnavailable": "Grupos no disponibles",
 		"groupsErrorDetail": "{{error}} — los presets se muestran sin agrupar.",
 		"title": "Lista de presets",
-		"gridResizeHint": "Mantén Ctrl y desplázate para cambiar el tamaño de la cuadrícula de iconos"
+		"gridResizeHint": "Mantén Ctrl y desplázate para cambiar el tamaño de la cuadrícula de iconos",
+		"openGroupAria": "Abrir grupo {{title}}",
+		"openGroupHint": "{{title}} (doble clic para abrir)"
 	},
 	"codeEditor": {
 		"snippets": {
@@ -423,5 +426,14 @@
 		"exitCodeSuffix": " (código de salida {{code}})",
 		"elevatedErrorWithDetail": "La escritura elevada notificó un error{{exitNote}}: {{detail}}",
 		"elevatedError": "La escritura elevada notificó un error{{exitNote}}"
+	},
+	"folderGroup": {
+		"noFolderPaths": "Introduce al menos una ruta de carpeta.",
+		"noPresetFiles": "No se encontraron archivos de preajuste (.ffx) en la carpeta.",
+		"groupRowFailed": "Error al generar la fila del grupo.",
+		"savedStatus": "Grupo guardado: {{id}} (miembros: {{members}}, nuevos preajustes: {{added}})",
+		"presetIdsNotFound": "IDs de preajuste no encontrados en el catálogo: {{ids}}",
+		"savedStatusManual": "Grupo guardado ({{total}} elementos): {{id}}",
+		"scanRequiresCepNode": "El análisis de carpetas requiere el explorador de archivos de CEP Node. Introduce los IDs de preajuste manualmente o activa CEP Node."
 	}
 }

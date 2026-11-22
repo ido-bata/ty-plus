@@ -9,6 +9,7 @@ import type {
 	PrepareEasingPresetScriptInput,
 	PrepareLayerCompPresetScriptInput,
 } from "@/management/ae/host/contract";
+import { i18n } from "@/management/i18n/index";
 
 const fallbackResult = async (): Promise<unknown> => undefined;
 
@@ -34,7 +35,7 @@ export const createAdapter = (
 			if (v && typeof v === "object") {
 				return v as HostContext;
 			}
-			throw new Error("Host context unavailable");
+			throw new Error(i18n.t("common:errors.hostContextUnavailable"));
 		},
 		ping: () => call("ping", []),
 		runScriptFile: (filePath: string) => call("runScriptFile", [filePath]),

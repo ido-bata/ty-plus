@@ -88,7 +88,14 @@
 		"finishErrorNextActionChooseTrusted": "Файл параметров онбординга не содержал Support Root. Перезапустите онбординг в After Effects.",
 		"finishErrorNextActionAdjust": "Не удалось сохранить параметры в Support Root AE. Проверьте, что путь доступен и After Effects имеет права на запись, затем повторите попытку.",
 		"finishErrorNextActionRetry": "Запрос UAC Windows был отправлен, но повышенная запись не удалась. Нажмите Retry, чтобы снова вызвать диалог UAC, или запустите After Effects от имени администратора.",
-		"finishErrorRetryWithElevation": "Повторить от имени администратора"
+		"finishErrorRetryWithElevation": "Повторить от имени администратора",
+		"supportAndSubfoldersRequired": "Требуются путь Support и подпапки онбординга.",
+		"appRootUnresolved": "Ty Plus: не удалось определить папку приложения After Effects для ty-plus-init.json. Откройте панель внутри After Effects и повторите попытку.",
+		"initWriteFailed": "Не удалось записать ty-plus-init.json в {{path}}: {{message}}",
+		"elevationConsentDenied": "Запрос согласия UAC был закрыт (повышение прав администратора не предоставлено).",
+		"innerExitCodeNote": " Код выхода внутреннего скрипта: {{code}}.",
+		"elevationWriteFailedStderr": "Повышенная запись сообщила об ошибке.{{exitCodeNote}} stderr внутреннего скрипта: {{stderr}}",
+		"elevationWriteFailed": "Повышенная запись сообщила об ошибке.{{exitCodeNote}}"
 	},
 	"actions": {
 		"back": "Назад",

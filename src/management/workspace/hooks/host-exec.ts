@@ -1,3 +1,4 @@
+import { i18n } from "@/management/i18n/index";
 import { fileStemFromPath } from "@/shared/util/path";
 
 import { fileNameFromPath } from "./state";
@@ -14,9 +15,7 @@ export const importFile = async (
 		| null,
 ): Promise<string> => {
 	if (hostCode !== "AEFT" || !hostExecutor) {
-		throw new Error(
-			"File import is currently available only in After Effects.",
-		);
+		throw new Error(i18n.t("common:errors.fileImportAeOnly"));
 	}
 	const lowerPath = filePath.toLowerCase();
 	const fileName = fileNameFromPath(filePath);
@@ -31,7 +30,7 @@ export const importFile = async (
 	if (lowerPath.endsWith(".aex") || lowerPath.endsWith(".plugin")) {
 		const effectId = fileStemFromPath(filePath).trim();
 		if (!effectId) {
-			throw new Error(`effectId is required for plugin: ${fileName}`);
+			throw new Error(`effectId is required for plugin: ${fileName}`); // i18n-exempt: internal diagnostic — not rendered as UI copy
 		}
 		await hostExecutor("applyEffectByMatchName", [effectId]);
 		return `Applied effect: ${fileName}`;

@@ -1,3 +1,4 @@
+import { i18n } from "@/management/i18n/index";
 import {
 	type IconRule,
 	mergeGroupEntries,
@@ -66,7 +67,7 @@ export const persistFolderGroupPreset = async (
 		return trimmedPath ? [trimmedPath] : [];
 	});
 	if (folderPaths.length === 0) {
-		throw new Error("Please enter at least one folder path.");
+		throw new Error(i18n.t("presets:folderGroup.noFolderPaths"));
 	}
 
 	const manualIds = parseManualPresetIds(input.presetIdsText);
@@ -76,7 +77,9 @@ export const persistFolderGroupPreset = async (
 		const missing = manualIds.filter((id) => !byId.has(id));
 		if (missing.length > 0) {
 			throw new Error(
-				`Preset IDs not found in catalog: ${missing.slice(0, 6).join(", ")}${missing.length > 6 ? " …" : ""}`,
+				i18n.t("presets:folderGroup.presetIdsNotFound", {
+					ids: `${missing.slice(0, 6).join(", ")}${missing.length > 6 ? " …" : ""}`,
+				}),
 			);
 		}
 		const gid = input.groupId.trim();
@@ -88,15 +91,16 @@ export const persistFolderGroupPreset = async (
 			...(iconRules && { iconRules }),
 		});
 		return {
-			status: `Group saved (${manualIds.length} items): ${gid}`,
+			status: i18n.t("presets:folderGroup.savedStatusManual", {
+				total: manualIds.length,
+				id: gid,
+			}),
 			catalogRefIds: [gid],
 		};
 	}
 
 	if (!canUseCepNodeFileBrowser(win)) {
-		throw new Error(
-			"Folder scanning requires CEP Node file browser. Enter preset IDs manually or enable CEP Node.",
-		);
+		throw new Error(i18n.t("presets:folderGroup.scanRequiresCepNode"));
 	}
 
 	const listDirectory = async (dirPath: string) => {
@@ -134,7 +138,7 @@ export const persistFolderGroupPreset = async (
 	);
 
 	if (result.addedGroupCatalogEntries.length === 0) {
-		throw new Error("No preset files (.ffx) found in folder.");
+		throw new Error(i18n.t("presets:folderGroup.noPresetFiles"));
 	}
 
 	// Build icon rules from base icon and condition rules
@@ -150,10 +154,14 @@ export const persistFolderGroupPreset = async (
 
 	const g = result.addedGroupCatalogEntries[0];
 	if (!g) {
-		throw new Error("Failed to generate group row.");
+		throw new Error(i18n.t("presets:folderGroup.groupRowFailed"));
 	}
 	return {
-		status: `Group saved: ${g.id} (members: ${g.presetIds.length}, new presets: ${result.addedPresetIds.length})`,
+		status: i18n.t("presets:folderGroup.savedStatus", {
+			id: g.id,
+			members: g.presetIds.length,
+			added: result.addedPresetIds.length,
+		}),
 		catalogRefIds: [g.id],
 	};
 };

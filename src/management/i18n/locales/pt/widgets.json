@@ -132,7 +132,9 @@
 			"bottomLeft": "Inferior esquerdo",
 			"bottomCenter": "Inferior centro",
 			"bottomRight": "Inferior direito"
-		}
+		},
+		"noActiveComposition": "Âncora do Ty Plus: nenhuma composição ativa",
+		"noLayerSelected": "Âncora do Ty Plus: nenhuma camada selecionada"
 	},
 	"info": {
 		"name": "Info",
@@ -195,7 +197,13 @@
 			"importOnly": "Importar",
 			"selectFile": "Selecionar",
 			"deselect": "Desselecionar",
-			"runBlockedMissingAsset": "O recurso do preset não está no disco — a execução está desativada."
+			"runBlockedMissingAsset": "O recurso do preset não está no disco — a execução está desativada.",
+			"presetNotFound": "Predefinição não encontrada: {{presetId}}",
+			"fileImportAeOnly": "A importação de arquivos está atualmente disponível apenas no After Effects.",
+			"appliedEffect": "Efeito aplicado: {{name}}",
+			"importedFootage": "Conteúdo importado: {{name}}",
+			"ranScript": "Script executado: {{name}}",
+			"appliedPreset": "Predefinição aplicada: {{name}}"
 		},
 		"path": {
 			"pickFolderPrompt": "Selecione uma pasta",

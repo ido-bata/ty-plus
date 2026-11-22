@@ -1474,7 +1474,7 @@ export function FontViewerWidget({
 						<p className={css({ margin: 0, lineHeight: "snug" })}>
 							{t("fontViewer.hintNeedUserGesture", {
 								defaultValue:
-									"Installed fonts need a button click (Chromium Local Font Access). The list below shows fonts already loaded in this panel until then.",
+									"Installed fonts need a button click (Chromium Local Font Access). Until then, this catalog lists only fonts already registered on document.fonts for this panel.",
 							})}
 						</p>
 						<div>

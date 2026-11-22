@@ -63,12 +63,14 @@ const resolveJsonWriteFileSystem = async (
 						u(String(path));
 						return;
 					}
+					// i18n-exempt: internal diagnostic — not rendered as UI copy
 					throw new Error(
 						"CEP Node fs unlink API is not available in this host runtime.",
 					);
 				},
 			};
 		}
+		// i18n-exempt: internal diagnostic — not rendered as UI copy
 		throw new Error(
 			"CEP Node fs write API is not available in this host runtime.",
 		);

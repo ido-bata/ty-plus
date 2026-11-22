@@ -400,15 +400,15 @@ export const labelOfGatewayBootFailureReason = (
 ): string => {
 	switch (reason) {
 		case "unsupported-trust-mode":
-			return "Unsupported operation-worker trust mode";
+			return i18n.t("online:catalog.gatewayBootReason.unsupportedTrustMode");
 		case "unsupported-platform":
-			return "Unsupported host platform";
+			return i18n.t("online:catalog.gatewayBootReason.unsupportedPlatform");
 		case "missing-extension-root":
-			return "CEP extension root unavailable";
+			return i18n.t("online:catalog.gatewayBootReason.missingExtensionRoot");
 		case "worker-runtime-failed":
-			return "Worker runtime unavailable";
+			return i18n.t("online:catalog.gatewayBootReason.workerRuntimeFailed");
 		case "worker-composition-failed":
-			return "Worker composition failed";
+			return i18n.t("online:catalog.gatewayBootReason.workerCompositionFailed");
 	}
 };
 

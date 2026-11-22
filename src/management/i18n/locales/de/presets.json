@@ -177,7 +177,8 @@
 			"title": "Preset erstellen",
 			"lead": "Erstelle ein lokales Preset aus wiederverwendbaren Metadaten.",
 			"defaultName": "Lokales Preset"
-		}
+		},
+		"savePathRequired": "Speichern Sie das Animations-Preset zuerst mit dem nativen Dialog von After Effects."
 	},
 	"animationPreset": {
 		"step1": {
@@ -381,7 +382,9 @@
 		"groupsUnavailable": "Gruppen nicht verfügbar",
 		"groupsErrorDetail": "{{error}} — Presets werden ohne Gruppierung aufgelistet.",
 		"title": "Preset-Liste",
-		"gridResizeHint": "Strg gedrückt halten und scrollen, um das Symbolraster zu skalieren"
+		"gridResizeHint": "Strg gedrückt halten und scrollen, um das Symbolraster zu skalieren",
+		"openGroupAria": "Gruppe {{title}} öffnen",
+		"openGroupHint": "{{title}} (Doppelklick zum Öffnen)"
 	},
 	"codeEditor": {
 		"snippets": {
@@ -420,5 +423,14 @@
 		"exitCodeSuffix": " (Exit-Code {{code}})",
 		"elevatedErrorWithDetail": "Erhöhtes Schreiben meldete einen Fehler{{exitNote}}: {{detail}}",
 		"elevatedError": "Erhöhtes Schreiben meldete einen Fehler{{exitNote}}"
+	},
+	"folderGroup": {
+		"noFolderPaths": "Bitte mindestens einen Ordnerpfad eingeben.",
+		"noPresetFiles": "Keine Preset-Dateien (.ffx) im Ordner gefunden.",
+		"groupRowFailed": "Gruppenzeile konnte nicht erstellt werden.",
+		"savedStatus": "Gruppe gespeichert: {{id}} (Mitglieder: {{members}}, neue Presets: {{added}})",
+		"presetIdsNotFound": "Preset-IDs nicht im Katalog gefunden: {{ids}}",
+		"savedStatusManual": "Gruppe gespeichert ({{total}} Einträge): {{id}}",
+		"scanRequiresCepNode": "Das Scannen von Ordnern erfordert den CEP-Node-Dateibrowser. Preset-IDs manuell eingeben oder CEP Node aktivieren."
 	}
 }

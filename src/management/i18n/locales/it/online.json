@@ -71,6 +71,13 @@
 			"idle": "Sincronizzazione cloud inattiva",
 			"ok": "Ty Plus OK",
 			"failed": "Sincronizzazione cloud non riuscita"
+		},
+		"gatewayBootReason": {
+			"unsupportedTrustMode": "Modalità di attendibilità operation-worker non supportata",
+			"unsupportedPlatform": "Piattaforma host non supportata",
+			"missingExtensionRoot": "Radice estensione CEP non disponibile",
+			"workerRuntimeFailed": "Runtime Worker non disponibile",
+			"workerCompositionFailed": "Composizione Worker non riuscita"
 		}
 	},
 	"notificationCenter": {
@@ -95,5 +102,8 @@
 	},
 	"publicLink": {
 		"userManual": "Manuale utente"
+	},
+	"errors": {
+		"unknownPreset": "Preimpostazione non trovata: {{id}}"
 	}
 }

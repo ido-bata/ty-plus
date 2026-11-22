@@ -14,7 +14,7 @@ import { definePresetOperation } from "../operation-contract";
 definePresetOperation("plugin", async (host, preset) => {
 	const effectId = fileStemFromPath(preset.filePath).trim();
 	if (!effectId) {
-		throw new Error(`effectId is required for plugin: ${preset.filePath}`);
+		throw new Error(`effectId is required for plugin: ${preset.filePath}`); // i18n-exempt: internal diagnostic — not rendered as UI copy
 	}
 	await host.applyEffectByMatchName(effectId);
 	return { action: "applyEffectByMatchName" };

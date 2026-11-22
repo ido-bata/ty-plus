@@ -94,5 +94,11 @@
 		"easeInOut": "イーズイン/アウト",
 		"overshoot": "オーバーシュート",
 		"bezier": "ベジェ"
+	},
+	"statusMessages": {
+		"presetAssetMissing": "プリセットアセットがディスク上に存在しません — 実行は無効です。",
+		"applyingAnchorPoint": "アンカーポイントを適用中: {{pos}}...",
+		"anchorPointRequested": "アンカーポイントが要求されました: {{pos}}",
+		"presetFailed": "プリセットが失敗しました: {{message}}"
 	}
 }

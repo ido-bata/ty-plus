@@ -94,5 +94,11 @@
 		"easeInOut": "缓入缓出",
 		"overshoot": "过冲",
 		"bezier": "贝塞尔"
+	},
+	"statusMessages": {
+		"presetAssetMissing": "预设资源在磁盘上缺失 — 运行已禁用。",
+		"applyingAnchorPoint": "正在应用锚点：{{pos}}...",
+		"anchorPointRequested": "已请求锚点：{{pos}}",
+		"presetFailed": "预设失败：{{message}}"
 	}
 }

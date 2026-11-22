@@ -814,7 +814,7 @@ const runFinishPhase = async <T,>(
 			throw error;
 		}
 		const message = error instanceof Error ? error.message : String(error);
-		throw new Error(`[onboarding finish:${phase}] ${message}`);
+		throw new Error(`[onboarding finish:${phase}] ${message}`); // i18n-exempt: internal diagnostic — not rendered as UI copy
 	}
 };
 
@@ -1043,6 +1043,7 @@ function useOnboardingFinish(input: OnboardingFinishInput): {
 		setFinishError,
 		onCompleted,
 	} = input;
+	const { t } = useTranslation("onboarding");
 	const thumbnailGateway = useAfterEffectsFilesGateway();
 	const handleFinish = useCallback(async () => {
 		setSaving(true);
@@ -1062,13 +1063,11 @@ function useOnboardingFinish(input: OnboardingFinishInput): {
 				!normalizedSubfolders.scriptRoot ||
 				!normalizedSubfolders.pluginRoot
 			) {
-				throw new Error("Support path and onboarding subfolders are required");
+				throw new Error(t("errors.supportAndSubfoldersRequired"));
 			}
 			const appRoot = await resolveInitializationAppRoot(window);
 			if (!appRoot) {
-				throw new Error(
-					"Ty Plus: cannot resolve the After Effects application folder for ty-plus-init.json. Open the panel inside After Effects and try again.",
-				);
+				throw new Error(t("errors.appRootUnresolved"));
 			}
 			await runFinishPhase("init-complete", () =>
 				completeInitialization(window, appRoot, {
@@ -1095,7 +1094,9 @@ function useOnboardingFinish(input: OnboardingFinishInput): {
 			const supportRootFromSettings =
 				readSupportRootFromSettingsJson(mergedSettingsJson);
 			if (!supportRootFromSettings) {
+				// // i18n-exempt: internal diagnostic — not rendered as UI copy
 				throw new Error(
+					// i18n-exempt: internal diagnostic — not rendered as UI copy
 					"[onboarding finish:settings-root] merged settings must include core.paths.supportRoot",
 				);
 			}
@@ -1268,6 +1269,7 @@ function useOnboardingFinish(input: OnboardingFinishInput): {
 		setFinishError,
 		setSaving,
 		supportPath,
+		t,
 		thumbnailGateway,
 	]);
 

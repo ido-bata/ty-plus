@@ -132,7 +132,9 @@
 			"bottomLeft": "Снизу слева",
 			"bottomCenter": "Снизу по центру",
 			"bottomRight": "Снизу справа"
-		}
+		},
+		"noActiveComposition": "Якорь Ty Plus: нет активной композиции",
+		"noLayerSelected": "Якорь Ty Plus: не выбран слой"
 	},
 	"info": {
 		"name": "Info",
@@ -195,7 +197,13 @@
 			"importOnly": "Импорт",
 			"selectFile": "Выбрать",
 			"deselect": "Отменить выбор",
-			"runBlockedMissingAsset": "Файл пресета отсутствует на диске — запуск отключён."
+			"runBlockedMissingAsset": "Файл пресета отсутствует на диске — запуск отключён.",
+			"presetNotFound": "Пресет не найден: {{presetId}}",
+			"fileImportAeOnly": "Импорт файлов в настоящее время доступен только в After Effects.",
+			"appliedEffect": "Применён эффект: {{name}}",
+			"importedFootage": "Импортированный футаж: {{name}}",
+			"ranScript": "Скрипт выполнен: {{name}}",
+			"appliedPreset": "Пресет применён: {{name}}"
 		},
 		"path": {
 			"pickFolderPrompt": "Выберите папку",

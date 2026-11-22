@@ -71,6 +71,13 @@
 			"idle": "Cloud sync idle",
 			"ok": "Ty Plus OK",
 			"failed": "Cloud sync failed"
+		},
+		"gatewayBootReason": {
+			"unsupportedTrustMode": "Unsupported operation-worker trust mode",
+			"unsupportedPlatform": "Unsupported host platform",
+			"missingExtensionRoot": "CEP extension root unavailable",
+			"workerRuntimeFailed": "Worker runtime unavailable",
+			"workerCompositionFailed": "Worker composition failed"
 		}
 	},
 	"notificationCenter": {
@@ -95,5 +102,8 @@
 	},
 	"publicLink": {
 		"userManual": "User Manual"
+	},
+	"errors": {
+		"unknownPreset": "Unknown preset: {{id}}"
 	}
 }

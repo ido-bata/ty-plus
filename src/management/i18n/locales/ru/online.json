@@ -71,6 +71,13 @@
 			"idle": "Облачная синхронизация неактивна",
 			"ok": "ty-plus OK",
 			"failed": "Ошибка облачной синхронизации"
+		},
+		"gatewayBootReason": {
+			"unsupportedTrustMode": "Неподдерживаемый режим доверия operation-worker",
+			"unsupportedPlatform": "Неподдерживаемая платформа хоста",
+			"missingExtensionRoot": "Корень расширения CEP недоступен",
+			"workerRuntimeFailed": "Среда выполнения Worker недоступна",
+			"workerCompositionFailed": "Сбой композиции Worker"
 		}
 	},
 	"notificationCenter": {
@@ -95,5 +102,8 @@
 	},
 	"publicLink": {
 		"userManual": "Руководство пользователя"
+	},
+	"errors": {
+		"unknownPreset": "Пресет не найден: {{id}}"
 	}
 }

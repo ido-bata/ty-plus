@@ -41,7 +41,7 @@ export function SelectionProvider({
 export function usePanelState(): SurfaceState {
 	const v = useContext(PanelStateContext);
 	if (!v) {
-		throw new Error("usePanelState requires PanelStateProvider");
+		throw new Error("usePanelState requires PanelStateProvider"); // i18n-exempt: internal diagnostic — not rendered as UI copy
 	}
 	return v;
 }

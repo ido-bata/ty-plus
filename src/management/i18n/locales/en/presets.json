@@ -177,7 +177,8 @@
 			"title": "Create Preset",
 			"lead": "Create a local preset from reusable metadata.",
 			"defaultName": "Local Preset"
-		}
+		},
+		"savePathRequired": "Save the animation preset with After Effects' native dialog first."
 	},
 	"animationPreset": {
 		"step1": {
@@ -381,7 +382,9 @@
 		"groupsUnavailable": "Groups unavailable",
 		"groupsErrorDetail": "{{error}} — presets are listed without grouping.",
 		"title": "Preset list",
-		"gridResizeHint": "Hold Ctrl and scroll to resize the icon grid"
+		"gridResizeHint": "Hold Ctrl and scroll to resize the icon grid",
+		"openGroupAria": "Open group {{title}}",
+		"openGroupHint": "{{title}} (double-click to open)"
 	},
 	"codeEditor": {
 		"snippets": {
@@ -420,5 +423,14 @@
 		"exitCodeSuffix": " (exit code {{code}})",
 		"elevatedErrorWithDetail": "Elevated write reported an error{{exitNote}}: {{detail}}",
 		"elevatedError": "Elevated write reported an error{{exitNote}}"
+	},
+	"folderGroup": {
+		"noFolderPaths": "Please enter at least one folder path.",
+		"noPresetFiles": "No preset files (.ffx) found in folder.",
+		"groupRowFailed": "Failed to generate group row.",
+		"savedStatus": "Group saved: {{id}} (members: {{members}}, new presets: {{added}})",
+		"presetIdsNotFound": "Preset IDs not found in catalog: {{ids}}",
+		"savedStatusManual": "Group saved ({{total}} items): {{id}}",
+		"scanRequiresCepNode": "Folder scanning requires CEP Node file browser. Enter preset IDs manually or enable CEP Node."
 	}
 }

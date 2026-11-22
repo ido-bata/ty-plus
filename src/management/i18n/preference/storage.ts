@@ -36,7 +36,7 @@ const SUPPORTED_PRIMARY_LOCALES = new Set([
 
 /**
  * Normalize a stored locale string to a supported locale.
- * Legacy builds offered zh-CN / zh-TW; both collapse to the single `zh`
+ * Legacy builds offered zh-CN / zh-TW; both collapse to the single `zh` // i18n-exempt: legacy locale migration
  * resource. Unknown or malformed values fall back to the default.
  */
 const normalizeStoredLocale = (raw: string): CepShellLocale => {
@@ -82,7 +82,7 @@ const resolveWorkspaceNodeFsPromises = async (
 					fsMod.readFileSync!(String(path), encoding as "utf8"),
 			};
 		}
-		throw new Error("CEP Node fs API is not available");
+		throw new Error("CEP Node fs API is not available"); // i18n-exempt: internal diagnostic — not rendered as UI copy
 	}
 	const fsPromises = await import("node:fs/promises");
 	return {

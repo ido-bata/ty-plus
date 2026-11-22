@@ -416,5 +416,14 @@
 		"statusImported": "ワークスペースバックアップをインポートしました。ダイアログ/パネルを開き直して更新してください。",
 		"statusInvalid": "バックアップ JSON が不正です。",
 		"statusPasteFirst": "先にバックアップ JSON を貼り付けてください。"
+	},
+	"errors": {
+		"pathCopySameFolder": "コピー元とコピー先が同じフォルダです。別の Support Root を選択してください。",
+		"pathCopyDestInsideSource": "コピー先がコピー元フォルダの内側にあります。別の Support Root を選択してください。",
+		"pathCopySourceInsideDest": "コピー元がコピー先フォルダの内側にあります。別の Support Root を選択してください。",
+		"pathCopyUntrustedTarget": "Support Root の内容の削除を拒否しました: ターゲットが信頼されたユーザーデータルートの外にあります。",
+		"aeAppRootUnresolved": "Ty Plus: 実行中の After Effects のインストールフォルダを ty-plus-init.json 用に解決できません。",
+		"copySymlinkRefused": "シンボリックリンク/reparse point のコピーを拒否しました: {{name}}",
+		"copyDeleteUnsupported": "再帰的な削除には、このホストで rm または readdir/stat が必要です。"
 	}
 }

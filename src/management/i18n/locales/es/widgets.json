@@ -132,7 +132,9 @@
 			"bottomLeft": "Abajo izquierda",
 			"bottomCenter": "Abajo centro",
 			"bottomRight": "Abajo derecha"
-		}
+		},
+		"noActiveComposition": "Ancla de Ty Plus: no hay ninguna composición activa",
+		"noLayerSelected": "Ancla de Ty Plus: no hay ninguna capa seleccionada"
 	},
 	"info": {
 		"name": "Info",
@@ -195,7 +197,13 @@
 			"importOnly": "Importar",
 			"selectFile": "Seleccionar",
 			"deselect": "Deseleccionar",
-			"runBlockedMissingAsset": "El recurso del preset no está en el disco — la ejecución está deshabilitada."
+			"runBlockedMissingAsset": "El recurso del preset no está en el disco — la ejecución está deshabilitada.",
+			"presetNotFound": "Preajuste no encontrado: {{presetId}}",
+			"fileImportAeOnly": "La importación de archivos está disponible actualmente solo en After Effects.",
+			"appliedEffect": "Efecto aplicado: {{name}}",
+			"importedFootage": "Metraje importado: {{name}}",
+			"ranScript": "Script ejecutado: {{name}}",
+			"appliedPreset": "Preajuste aplicado: {{name}}"
 		},
 		"path": {
 			"pickFolderPrompt": "Selecciona una carpeta",

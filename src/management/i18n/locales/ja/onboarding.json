@@ -88,7 +88,14 @@
 		"finishErrorNextActionChooseTrusted": "オンボーディング設定ファイルに Support Root が含まれていません。After Effects 内でオンボーディングを最初からやり直してください。",
 		"finishErrorNextActionAdjust": "AE の Support Root に設定を保存できませんでした。パスにアクセスでき、After Effects に書き込み権限があるか確認してから、もう一度お試しください。",
 		"finishErrorNextActionRetry": "Windows UAC を要求しましたが昇格した書き込みが失敗しました。Retry を押して UAC を再表示するか、After Effects を管理者として実行してください。",
-		"finishErrorRetryWithElevation": "管理者として再試行"
+		"finishErrorRetryWithElevation": "管理者として再試行",
+		"supportAndSubfoldersRequired": "Support パスとオンボーディングのサブフォルダーが必要です。",
+		"appRootUnresolved": "Ty Plus: ty-plus-init.json 用の After Effects アプリケーションフォルダーを解決できません。After Effects 内でパネルを開いて再試行してください。",
+		"initWriteFailed": "{{path}} 配下への ty-plus-init.json の書き込みに失敗しました: {{message}}",
+		"elevationConsentDenied": "UAC の確認プロンプトが閉じられました（管理者権限への昇格が許可されませんでした）。",
+		"innerExitCodeNote": " 内部スクリプトの終了コード: {{code}}。",
+		"elevationWriteFailedStderr": "昇格した書き込みでエラーが報告されました。{{exitCodeNote}} 内部スクリプトの stderr: {{stderr}}",
+		"elevationWriteFailed": "昇格した書き込みでエラーが報告されました。{{exitCodeNote}}"
 	},
 	"actions": {
 		"back": "戻る",

@@ -829,9 +829,7 @@ export function Dialog(): JSX.Element {
 				// `assertPresetAssetPresent` entirely and let
 				// `persistOverride` commit a record with no file behind it.
 				if (!selectedPath) {
-					throw new Error(
-						"Save the animation preset with After Effects' native dialog first.",
-					);
+					throw new Error(t("presetTool.savePathRequired"));
 				}
 				return { filePath: selectedPath, status: "ok" };
 			}}

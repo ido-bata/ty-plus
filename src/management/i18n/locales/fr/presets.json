@@ -178,7 +178,8 @@
 			"title": "Créer un preset",
 			"lead": "Créez un preset local à partir de métadonnées réutilisables.",
 			"defaultName": "Preset local"
-		}
+		},
+		"savePathRequired": "Enregistrez d'abord le préréglage d'animation avec la boîte de dialogue native d'After Effects."
 	},
 	"animationPreset": {
 		"step1": {
@@ -384,7 +385,9 @@
 		"groupsUnavailable": "Groupes indisponibles",
 		"groupsErrorDetail": "{{error}} — les presets sont listés sans regroupement.",
 		"title": "Liste des presets",
-		"gridResizeHint": "Maintenez Ctrl et faites défiler pour redimensionner la grille d'icônes"
+		"gridResizeHint": "Maintenez Ctrl et faites défiler pour redimensionner la grille d'icônes",
+		"openGroupAria": "Ouvrir le groupe {{title}}",
+		"openGroupHint": "{{title}} (double-clic pour ouvrir)"
 	},
 	"codeEditor": {
 		"snippets": {
@@ -423,5 +426,14 @@
 		"exitCodeSuffix": " (code de sortie {{code}})",
 		"elevatedErrorWithDetail": "L'écriture élevée a signalé une erreur{{exitNote}} : {{detail}}",
 		"elevatedError": "L'écriture élevée a signalé une erreur{{exitNote}}"
+	},
+	"folderGroup": {
+		"noFolderPaths": "Veuillez saisir au moins un chemin de dossier.",
+		"noPresetFiles": "Aucun fichier de préréglage (.ffx) trouvé dans le dossier.",
+		"groupRowFailed": "Échec de la génération de la ligne de groupe.",
+		"savedStatus": "Groupe enregistré : {{id}} (membres : {{members}}, nouveaux préréglages : {{added}})",
+		"presetIdsNotFound": "IDs de préréglage introuvables dans le catalogue : {{ids}}",
+		"savedStatusManual": "Groupe enregistré ({{total}} éléments) : {{id}}",
+		"scanRequiresCepNode": "L'analyse des dossiers nécessite le navigateur de fichiers CEP Node. Saisissez les IDs de préréglage manuellement ou activez CEP Node."
 	}
 }

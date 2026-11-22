@@ -94,5 +94,11 @@
 		"easeInOut": "이즈 인/아웃",
 		"overshoot": "오버슈트",
 		"bezier": "베지어"
+	},
+	"statusMessages": {
+		"presetAssetMissing": "프리셋 에셋이 디스크에 없습니다 — 실행이 비활성화되었습니다.",
+		"applyingAnchorPoint": "앵커 포인트 적용 중: {{pos}}...",
+		"anchorPointRequested": "앵커 포인트 요청됨: {{pos}}",
+		"presetFailed": "프리셋 실패: {{message}}"
 	}
 }

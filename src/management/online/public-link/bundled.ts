@@ -21,5 +21,5 @@ export const resolveBundledPublicLink = (key: string): PublicLink => {
 			label: i18n.t("online:publicLink.userManual"),
 		};
 	}
-	throw new Error(`Unknown public link: ${key}`);
+	throw new Error(`Unknown public link: ${key}`); // i18n-exempt: internal diagnostic — not rendered as UI copy
 };

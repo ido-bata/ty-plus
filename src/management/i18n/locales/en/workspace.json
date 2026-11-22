@@ -94,5 +94,11 @@
 		"easeInOut": "In-Out",
 		"overshoot": "Overshoot",
 		"bezier": "Bezier"
+	},
+	"statusMessages": {
+		"presetAssetMissing": "Preset asset is missing on disk — run is disabled.",
+		"applyingAnchorPoint": "Applying anchor point: {{pos}}...",
+		"anchorPointRequested": "Anchor point requested: {{pos}}",
+		"presetFailed": "Preset failed: {{message}}"
 	}
 }

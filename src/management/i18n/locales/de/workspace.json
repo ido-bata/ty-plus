@@ -94,5 +94,11 @@
 		"easeInOut": "Ease in/out",
 		"overshoot": "Überschwingen",
 		"bezier": "Bézier"
+	},
+	"statusMessages": {
+		"presetAssetMissing": "Preset-Asset fehlt auf dem Datenträger — Ausführung ist deaktiviert.",
+		"applyingAnchorPoint": "Ankerpunkt wird angewendet: {{pos}}...",
+		"anchorPointRequested": "Ankerpunkt angefordert: {{pos}}",
+		"presetFailed": "Preset fehlgeschlagen: {{message}}"
 	}
 }

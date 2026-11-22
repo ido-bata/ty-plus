@@ -178,7 +178,8 @@
 			"title": "Crea preset",
 			"lead": "Crea un preset locale da metadati riutilizzabili.",
 			"defaultName": "Preset locale"
-		}
+		},
+		"savePathRequired": "Salva prima la preimpostazione di animazione con la finestra di dialogo nativa di After Effects."
 	},
 	"animationPreset": {
 		"step1": {
@@ -384,7 +385,9 @@
 		"groupsUnavailable": "Gruppi non disponibili",
 		"groupsErrorDetail": "{{error}} — i preset sono elencati senza raggruppamento.",
 		"title": "Elenco preset",
-		"gridResizeHint": "Tieni premuto Ctrl e scorri per ridimensionare la griglia delle icone"
+		"gridResizeHint": "Tieni premuto Ctrl e scorri per ridimensionare la griglia delle icone",
+		"openGroupAria": "Apri gruppo {{title}}",
+		"openGroupHint": "{{title}} (doppio clic per aprire)"
 	},
 	"codeEditor": {
 		"snippets": {
@@ -423,5 +426,14 @@
 		"exitCodeSuffix": " (codice di uscita {{code}})",
 		"elevatedErrorWithDetail": "La scrittura elevata ha segnalato un errore{{exitNote}}: {{detail}}",
 		"elevatedError": "La scrittura elevata ha segnalato un errore{{exitNote}}"
+	},
+	"folderGroup": {
+		"noFolderPaths": "Inserisci almeno un percorso di cartella.",
+		"noPresetFiles": "Nessun file di preimpostazione (.ffx) trovato nella cartella.",
+		"groupRowFailed": "Generazione della riga del gruppo non riuscita.",
+		"savedStatus": "Gruppo salvato: {{id}} (membri: {{members}}, nuove preimpostazioni: {{added}})",
+		"presetIdsNotFound": "ID preimpostazione non trovati nel catalogo: {{ids}}",
+		"savedStatusManual": "Gruppo salvato ({{total}} elementi): {{id}}",
+		"scanRequiresCepNode": "La scansione delle cartelle richiede il browser di file CEP Node. Inserisci gli ID delle preimpostazioni manualmente o abilita CEP Node."
 	}
 }

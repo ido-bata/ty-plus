@@ -3,6 +3,7 @@
  * Onboarding initialization state and locator JSON codec.
  */
 
+import { i18n } from "@/management/i18n/index";
 import {
 	CEP_INTERACTIVE_DIALOG_TIMEOUT_MS,
 	cepEvalScriptAvailable,
@@ -462,7 +463,10 @@ const writeLocatorAtAppRoot = async (
 		const message =
 			error instanceof Error ? error.message : "Unknown write error";
 		throw new Error(
-			`Failed to write ty-plus-init.json under ${appSupportRoot}: ${message}`,
+			i18n.t("onboarding:errors.initWriteFailed", {
+				path: appSupportRoot,
+				message,
+			}),
 		);
 	}
 };
@@ -484,9 +488,7 @@ export const updateInitializationLocatorUserSupportRoot = async (
 	const appRoot =
 		options?.appRoot?.trim() ?? (await resolveInitializationAppRoot(win));
 	if (!appRoot) {
-		throw new Error(
-			"Ty Plus: cannot resolve the running After Effects install folder for ty-plus-init.json. Open the panel inside After Effects and try again.",
-		);
+		throw new Error(i18n.t("onboarding:errors.appRootUnresolved"));
 	}
 	const locatorJson = buildInitializationLocatorJson(userBrowseRoot.trim());
 	await writeLocatorAtAppRoot(win, appRoot, locatorJson);

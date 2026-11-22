@@ -132,7 +132,9 @@
 			"bottomLeft": "Bottom left",
 			"bottomCenter": "Bottom center",
 			"bottomRight": "Bottom right"
-		}
+		},
+		"noActiveComposition": "Ty Plus anchor: no active composition",
+		"noLayerSelected": "Ty Plus anchor: no layer selected"
 	},
 	"info": {
 		"name": "Info",
@@ -195,7 +197,13 @@
 			"openEntry": "Open",
 			"importOnly": "Import",
 			"selectFile": "Select",
-			"deselect": "Deselect"
+			"deselect": "Deselect",
+			"presetNotFound": "Preset not found: {{presetId}}",
+			"fileImportAeOnly": "File import is currently available only in After Effects.",
+			"appliedEffect": "Applied effect: {{name}}",
+			"importedFootage": "Imported footage: {{name}}",
+			"ranScript": "Ran script: {{name}}",
+			"appliedPreset": "Applied preset: {{name}}"
 		},
 		"path": {
 			"pickFolderPrompt": "Select a folder",

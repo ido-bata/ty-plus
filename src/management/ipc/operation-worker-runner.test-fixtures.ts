@@ -110,7 +110,7 @@ export const invocationFixture: OperationInvocation<{ value: string }> = {
 				message.kind !== "response" ||
 				message.message.outcome.status !== "success"
 			) {
-				throw new Error("unexpected fixture response");
+				throw new Error("unexpected fixture response"); // i18n-exempt: internal diagnostic — not rendered as UI copy
 			}
 			return message.message.outcome.payload as { ok: true };
 		},

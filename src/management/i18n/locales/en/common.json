@@ -214,7 +214,9 @@
 		"deselect": "Deselect",
 		"listView": "List view",
 		"iconView": "Icon view",
-		"noFilesFound": "No files found"
+		"noFilesFound": "No files found",
+		"selectFileAria": "Select file {{name}}",
+		"selectFolderAria": "Select folder {{name}}"
 	},
 	"debugConsole": {
 		"title": "Console",
@@ -257,5 +259,15 @@
 			"disableAutoScroll": "Disable auto-scroll",
 			"itemActive": "{{level}} (active)"
 		}
+	},
+	"errors": {
+		"hostContextUnavailable": "Host context unavailable",
+		"fileAccessUnavailable": "CEP Node file access is not available in this surface.",
+		"fsApiUnavailable": "CEP Node fs API is not available in this host runtime.",
+		"fileImportAeOnly": "File import is currently available only in After Effects.",
+		"initNotFound": "ty-plus-init.json not found (no app root). Onboarding must complete before any write.",
+		"initIncomplete": "ty-plus is not yet initialized. Writes are blocked until ty-plus-init.json reports completed.",
+		"initSupportRootBlank": "ty-plus-init.json is marked complete but supportRoot is blank.",
+		"hostExecFailed": "Ty Plus: {{message}}"
 	}
 }

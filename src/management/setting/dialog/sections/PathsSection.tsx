@@ -5,6 +5,7 @@ import { type JSX, useCallback, useEffect, useRef, useState } from "react";
 import { useCep } from "@/management/ae/cep/contexts/Context";
 import { selectFolder } from "@/management/ae/cep/dialog-shim/bolt";
 import { createCepSurfaceTransport } from "@/management/ae/cep/transport";
+import { i18n } from "@/management/i18n/index";
 import { useSettings } from "@/management/setting/context";
 import {
 	SettingsField,
@@ -90,9 +91,7 @@ const requestWorkspaceLayoutReloadAfterSupportRootChange = async (
 async function resolveLocatorAppRootOrThrow(win: Window): Promise<string> {
 	const locatorAppRoot = await resolveInitializationAppRoot(win);
 	if (!locatorAppRoot) {
-		throw new Error(
-			"Ty Plus: cannot resolve the running After Effects install folder for ty-plus-init.json.",
-		);
+		throw new Error(i18n.t("settings:errors.aeAppRootUnresolved"));
 	}
 	return locatorAppRoot;
 }

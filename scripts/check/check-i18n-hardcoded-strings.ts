@@ -14,10 +14,19 @@
  *    cancelText / searchPlaceholder …)
  *  - .tsx: JSX text nodes containing prose
  *  - .ts/.tsx: literal first arguments to alert() / confirm() / prompt()
+ *  - .ts/.tsx: prose literals thrown via `throw new Error("…")`
+ *    (`.ext.ts` host-bridge files are excluded — host protocol, not UI)
+ *  - .tsx: template literals inside JSX expression containers / attributes
+ *    whose literal segments contain prose (`` {`Open ${name}`} ``)
  *  - .ts/.tsx: prose literals assigned to user-facing object keys
  *    (label / title / message / description / placeholder / hint / caption /
  *    summary / tooltip / legend / heading / confirmText / cancelText /
- *    emptyText / loadingText / ariaLabel / searchPlaceholder)
+ *    emptyText / loadingText / ariaLabel / searchPlaceholder / eyebrow /
+ *    subtitle / tagline / footnote / helperText / errorMessage /
+ *    emptyMessage / noDataText / banner / notice / ctaLabel — plus any key
+ *    ending in Label/Text/Message/Description/Title/Hint/Placeholder/
+ *    Caption/Summary/Tooltip/Heading/Eyebrow/Kicker/Subtitle/Tagline/
+ *    Footnote/HelperText/ErrorMessage/EmptyMessage/Notice/Banner/Cta)
  *
  * Test files, stories, contract tests, generated files, locale resources,
  * and an explicit ALLOWLIST are excluded. Everything else must be reported.
@@ -33,7 +42,7 @@ const SCAN_DIRS = [
 ];
 
 const EXCLUDE_FILE =
-	/\.(test|spec|stories|contract)\.[tj]sx?$|\.gen\.ts$|routeTree\.gen\.ts$|\.d\.ts$|\.stories\./;
+	/\.(test|spec|stories|contract)\.[tj]sx?$|\.gen\.ts$|routeTree\.gen\.ts$|\.d\.ts$|\.stories\.|\.ext\.tsx?$/;
 const EXCLUDE_DIR = /node_modules|styled-system|locales|\/i18n\/locales/;
 
 /** JSX attribute names that always carry user-visible text. */
@@ -54,11 +63,20 @@ const USER_FACING_ATTRS = new Set([
 	"confirmText",
 	"cancelText",
 	"searchPlaceholder",
+	"eyebrow",
+	"subtitle",
+	"tagline",
+	"footnote",
+	"helperText",
+	"errorMessage",
+	"emptyMessage",
+	"banner",
+	"notice",
 ]);
 
 /** JSX attribute suffixes that imply user-visible text. */
 const USER_FACING_ATTR_SUFFIX =
-	/(Label|AriaLabel|Placeholder|Title|Message|Description|Hint|Legend|Caption|Summary|Tooltip|Text|Heading)$/;
+	/(Label|AriaLabel|Placeholder|Title|Message|Description|Hint|Legend|Caption|Summary|Tooltip|Text|Heading|Eyebrow|Kicker|Subtitle|Tagline|Footnote|HelperText|ErrorMessage|EmptyMessage|Banner|Notice|Cta)$/;
 
 /** Object keys in .ts/.tsx whose string literal values are user-visible. */
 const USER_FACING_KEYS = new Set([
@@ -83,11 +101,26 @@ const USER_FACING_KEYS = new Set([
 	"loadingLabel",
 	"browseHint",
 	"selectedSummary",
+	"eyebrow",
+	"subtitle",
+	"tagline",
+	"footnote",
+	"helperText",
+	"errorMessage",
+	"emptyMessage",
+	"noDataText",
+	"banner",
+	"notice",
+	"ctaLabel",
 ]);
+
+/** Object-key suffixes that imply user-visible text (mirrors attr suffixes). */
+const USER_FACING_KEY_SUFFIX =
+	/(Label|Text|Message|Description|Title|Hint|Placeholder|Caption|Summary|Tooltip|Heading|Eyebrow|Kicker|Subtitle|Tagline|Footnote|HelperText|ErrorMessage|EmptyMessage|Notice|Banner|Cta)$/;
 
 /** Functions whose string literal argument is shown to the user. */
 const USER_FACING_CALLS =
-	/\b(?:window\.)?(?:alert|confirm|prompt)\s*\(\s*([`"'])/g;
+	/\b(?:window\.)?(?:alert|confirm|prompt|notificationStore\.add)\s*\(\s*([`"'])/g;
 
 /**
  * Explicit allowlist. Each entry is `relative/path.tsx:<line-substring>` —
@@ -129,7 +162,11 @@ const looksLikeProse = (value: string): boolean => {
 };
 
 const isUserFacingAttr = (name: string): boolean =>
-	USER_FACING_ATTRS.has(name) || USER_FACING_ATTR_SUFFIX.test(name);
+	USER_FACING_ATTRS.has(name) ||
+	USER_FACING_ATTR_SUFFIX.test(name) ||
+	// Any aria-* attribute may carry spoken text (aria-description,
+	// aria-valuetext, …); boolean-ish values are rejected by prose filter.
+	name.startsWith("aria-");
 
 const JSX_ATTR_RE = /([A-Za-z_][A-Za-z0-9_-]*)\s*=\s*(["'])([^"'\n]{2,300})\2/g;
 // JSX text may span lines; `[^<>{}]` keeps expression containers as
@@ -137,6 +174,21 @@ const JSX_ATTR_RE = /([A-Za-z_][A-Za-z0-9_-]*)\s*=\s*(["'])([^"'\n]{2,300})\2/g;
 const JSX_TEXT_RE = />([^<>{}]*[A-Za-z][^<>{}]*)</g;
 const TS_KEY_RE =
 	/(?:^|[\s{,])([A-Za-z_][A-Za-z0-9_]*)\s*:\s*(["'`])([^"'`\n]{2,300})\2/g;
+
+/**
+ * `throw new Error("…")` in app code can surface in dialogs/status UI.
+ * `.ext.ts` host-bridge files are excluded — they speak the host
+ * protocol, not the localized UI.
+ */
+const THROW_ERROR_RE =
+	/throw\s+new\s+\w*Error\(\s*(["'`])((?:(?!\1)[\s\S]){10,400}?)\1/g;
+
+/**
+ * JSX expression containers holding a template literal, e.g.
+ * `{`Open group ${name}`}` or `title={`Select ${file}`}`.
+ * i18next `t()` calls and log prefixes are filtered by the caller.
+ */
+const JSX_TEMPLATE_RE = /\{\s*`([^`]*)`\s*\}/g;
 
 const scanFile = async (file: string): Promise<Finding[]> => {
 	const findings: Finding[] = [];
@@ -150,12 +202,14 @@ const scanFile = async (file: string): Promise<Finding[]> => {
 		if (!looksLikeProse(trimmed)) return;
 		// `// i18n-exempt` on the same or previous line marks intentionally
 		// non-localized literals (protocol payloads, logs, code samples).
+		// For throw-error, the marker may also sit on the next line inside
+		// the call's argument list (biome's canonical comment placement).
 		const exemptRe = /\/\/\s*i18n-exempt\b/;
-		if (
-			exemptRe.test(lines[index] ?? "") ||
-			exemptRe.test(lines[index - 1] ?? "")
-		)
-			return;
+		const exemptCandidates =
+			kind === "throw-error"
+				? [lines[index], lines[index - 1], lines[index + 1]]
+				: [lines[index], lines[index - 1]];
+		if (exemptCandidates.some((l) => exemptRe.test(l ?? ""))) return;
 		if (kind === "jsx-text") {
 			// The multiline JSX-text heuristic also catches `>`/`<` inside
 			// ordinary code (generics, comparisons, arrows, comments, regex
@@ -212,9 +266,15 @@ const scanFile = async (file: string): Promise<Finding[]> => {
 
 		for (const m of line.matchAll(TS_KEY_RE)) {
 			const [, key, , value] = m;
-			if (!USER_FACING_KEYS.has(key)) continue;
+			if (!USER_FACING_KEYS.has(key) && !USER_FACING_KEY_SUFFIX.test(key))
+				continue;
 			push(i, `object-key:${key}`, value);
 		}
+	}
+
+	// Content-level scan: throw literals may span multiple lines.
+	for (const m of content.matchAll(THROW_ERROR_RE)) {
+		pushAt(m.index ?? 0, "throw-error", m[2]);
 	}
 
 	if (isTsx) {
@@ -224,6 +284,29 @@ const scanFile = async (file: string): Promise<Finding[]> => {
 			const prev = content[idx - 1];
 			if (prev === "=" || prev === ">") continue;
 			pushAt(idx, "jsx-text", m[1]);
+		}
+
+		for (const m of content.matchAll(JSX_TEMPLATE_RE)) {
+			const idx = m.index ?? 0;
+			// Skip templates produced by t()/i18n.t()/console/log calls —
+			// those resolve through locale resources or are not UI copy.
+			const before = content.slice(Math.max(0, idx - 30), idx);
+			if (
+				/\b(?:i18n\.t|\bt|console\.\w+|log|throw|import|require)\s*\(?\s*$/.test(
+					before,
+				)
+			)
+				continue;
+			// className / css() / cx() templates are styling, not copy.
+			if (
+				/(?:class|className)\s*=\s*$|\b(?:css|cx|clsx|cn)\s*\(\s*$/.test(before)
+			)
+				continue;
+			// Literal segments only — ${...} interpolations are data.
+			const literalText = m[1].replace(/\$\{[^}]*\}/g, " ");
+			const words = literalText.match(/[A-Za-z]{2,}/g) ?? [];
+			if (words.length < 2) continue;
+			pushAt(idx, "jsx-template", m[1].replace(/\s+/g, " ").trim());
 		}
 	}
 

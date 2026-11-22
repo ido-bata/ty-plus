@@ -131,7 +131,12 @@ export const createFixtureCloudGateway = (): CloudGateway => ({
 		return resolveBundledPublicLink(key);
 	},
 	async resolvePreset(presetId) {
-		throw new Error(`Unknown preset: ${presetId}`);
+		throw new Error(
+			i18n.t("online:errors.unknownPreset", {
+				id: presetId,
+				defaultValue: "Unknown preset: {{id}}",
+			}),
+		);
 	},
 });
 
@@ -176,7 +181,9 @@ export const createRuntimeCloudGateway = (
 		return resolveBundledPublicLink(key);
 	},
 	async resolvePreset(presetId) {
+		// // i18n-exempt: internal diagnostic — not rendered as UI copy
 		throw new Error(
+			// i18n-exempt: internal diagnostic — not rendered as UI copy
 			`Runtime gateway cannot resolve preset details: ${presetId}`,
 		);
 	},

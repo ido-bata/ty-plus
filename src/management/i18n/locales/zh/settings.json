@@ -416,5 +416,14 @@
 		"statusImported": "工作区备份已导入。重新打开对话框/面板以刷新。",
 		"statusInvalid": "备份 JSON 无效。",
 		"statusPasteFirst": "请先粘贴备份 JSON。"
+	},
+	"errors": {
+		"pathCopySameFolder": "复制源和目标是同一文件夹。请选择其他 Support Root。",
+		"pathCopyDestInsideSource": "复制目标位于源文件夹内部。请选择其他 Support Root。",
+		"pathCopySourceInsideDest": "复制源位于目标文件夹内部。请选择其他 Support Root。",
+		"pathCopyUntrustedTarget": "拒绝删除 Support Root 内容：目标位于受信任的用户数据根目录之外。",
+		"aeAppRootUnresolved": "Ty Plus：无法为 ty-plus-init.json 解析正在运行的 After Effects 安装文件夹。",
+		"copySymlinkRefused": "拒绝复制符号链接/reparse point：{{name}}",
+		"copyDeleteUnsupported": "递归删除需要此主机上的 rm 或 readdir/stat。"
 	}
 }

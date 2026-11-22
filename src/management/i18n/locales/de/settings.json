@@ -416,5 +416,14 @@
 		"statusImported": "Workspace-Backup importiert. Öffne Dialoge/Panels erneut, um sie zu aktualisieren.",
 		"statusInvalid": "Ungültiges Backup-JSON.",
 		"statusPasteFirst": "Bitte zuerst Backup-JSON einfügen."
+	},
+	"errors": {
+		"pathCopySameFolder": "Quelle und Ziel des Kopiervorgangs sind derselbe Ordner. Wähle ein anderes Support Root.",
+		"pathCopyDestInsideSource": "Das Kopierziel liegt innerhalb des Quellordners. Wähle ein anderes Support Root.",
+		"pathCopySourceInsideDest": "Die Kopierquelle liegt innerhalb des Zielordners. Wähle ein anderes Support Root.",
+		"pathCopyUntrustedTarget": "Löschen des Support-Root-Inhalts verweigert: Das Ziel liegt außerhalb eines vertrauenswürdigen Benutzer-Daten-Roots.",
+		"aeAppRootUnresolved": "Ty Plus: Der Installationsordner von After Effects kann für ty-plus-init.json nicht aufgelöst werden.",
+		"copySymlinkRefused": "Kopieren von Symlink/Reparse Point verweigert: {{name}}",
+		"copyDeleteUnsupported": "Rekursives Löschen erfordert rm oder readdir/stat auf diesem Host."
 	}
 }

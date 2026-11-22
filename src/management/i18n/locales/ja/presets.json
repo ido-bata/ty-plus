@@ -176,7 +176,8 @@
 			"title": "プリセットを作成",
 			"lead": "再利用可能なメタデータからローカルプリセットを作成します。",
 			"defaultName": "ローカルプリセット"
-		}
+		},
+		"savePathRequired": "まず After Effects の標準ダイアログでアニメーションプリセットを保存してください。"
 	},
 	"animationPreset": {
 		"step1": {
@@ -380,7 +381,9 @@
 		"groupsUnavailable": "グループを利用できません",
 		"groupsErrorDetail": "{{error}} — グループ化なしでプリセットを一覧表示しています。",
 		"title": "プリセットリスト",
-		"gridResizeHint": "Ctrlを押しながらスクロールするとアイコングリッドのサイズを変更できます"
+		"gridResizeHint": "Ctrlを押しながらスクロールするとアイコングリッドのサイズを変更できます",
+		"openGroupAria": "グループ {{title}} を開く",
+		"openGroupHint": "{{title}}（ダブルクリックで開く）"
 	},
 	"codeEditor": {
 		"snippets": {
@@ -419,5 +422,14 @@
 		"exitCodeSuffix": " (終了コード {{code}})",
 		"elevatedErrorWithDetail": "昇格書き込みでエラーが報告されました{{exitNote}}: {{detail}}",
 		"elevatedError": "昇格書き込みでエラーが報告されました{{exitNote}}"
+	},
+	"folderGroup": {
+		"noFolderPaths": "フォルダーパスを1つ以上入力してください。",
+		"noPresetFiles": "フォルダー内にプリセットファイル（.ffx）が見つかりません。",
+		"groupRowFailed": "グループ行の生成に失敗しました。",
+		"savedStatus": "グループを保存しました: {{id}}（メンバー: {{members}}、新規プリセット: {{added}}）",
+		"presetIdsNotFound": "カタログにプリセット ID が見つかりません: {{ids}}",
+		"savedStatusManual": "グループを保存しました（{{total}} 件）: {{id}}",
+		"scanRequiresCepNode": "フォルダーのスキャンには CEP Node のファイルブラウザーが必要です。プリセット ID を手動で入力するか、CEP Node を有効にしてください。"
 	}
 }

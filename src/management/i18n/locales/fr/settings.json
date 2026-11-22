@@ -416,5 +416,14 @@
 		"statusImported": "Sauvegarde de l'espace de travail importée. Rouvrez les dialogues/panneaux pour actualiser.",
 		"statusInvalid": "JSON de sauvegarde invalide.",
 		"statusPasteFirst": "Collez d'abord le JSON de sauvegarde."
+	},
+	"errors": {
+		"pathCopySameFolder": "La source et la destination de la copie sont le même dossier. Choisissez un autre Support Root.",
+		"pathCopyDestInsideSource": "La destination de la copie se trouve dans le dossier source. Choisissez un autre Support Root.",
+		"pathCopySourceInsideDest": "La source de la copie se trouve dans le dossier de destination. Choisissez un autre Support Root.",
+		"pathCopyUntrustedTarget": "Refus de supprimer le contenu du Support Root : la cible est en dehors d'une racine de données utilisateur de confiance.",
+		"aeAppRootUnresolved": "Ty Plus : impossible de résoudre le dossier d'installation d'After Effects en cours d'exécution pour ty-plus-init.json.",
+		"copySymlinkRefused": "Refus de copier le lien symbolique/reparse point : {{name}}",
+		"copyDeleteUnsupported": "La suppression récursive nécessite rm ou readdir/stat sur cet hôte."
 	}
 }

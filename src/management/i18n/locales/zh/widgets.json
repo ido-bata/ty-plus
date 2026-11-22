@@ -132,7 +132,9 @@
 			"bottomLeft": "左下",
 			"bottomCenter": "下中",
 			"bottomRight": "右下"
-		}
+		},
+		"noActiveComposition": "Ty Plus 锚点：没有活动的合成",
+		"noLayerSelected": "Ty Plus 锚点：未选择图层"
 	},
 	"info": {
 		"name": "Info",
@@ -195,7 +197,13 @@
 			"importOnly": "导入",
 			"selectFile": "选择",
 			"deselect": "取消选择",
-			"runBlockedMissingAsset": "预设资源在磁盘上不存在 — 运行已禁用。"
+			"runBlockedMissingAsset": "预设资源在磁盘上不存在 — 运行已禁用。",
+			"presetNotFound": "未找到预设：{{presetId}}",
+			"fileImportAeOnly": "文件导入目前仅在 After Effects 中可用。",
+			"appliedEffect": "已应用效果：{{name}}",
+			"importedFootage": "已导入素材：{{name}}",
+			"ranScript": "已运行脚本：{{name}}",
+			"appliedPreset": "已应用预设：{{name}}"
 		},
 		"path": {
 			"pickFolderPrompt": "选择文件夹",

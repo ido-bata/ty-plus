@@ -346,7 +346,7 @@ export function useWorkspaceRuntime(root: Element | null): {
 	};
 	const getState = (): SurfaceState => {
 		if (!stateRef.current) {
-			throw new Error("Workspace state not initialized");
+			throw new Error("Workspace state not initialized"); // i18n-exempt: internal diagnostic — not rendered as UI copy
 		}
 		return stateRef.current;
 	};
@@ -3802,15 +3802,18 @@ export function useWorkspaceRuntime(root: Element | null): {
 				// blocked: the file may still exist, we just couldn't reach
 				// the host to confirm.
 				if (isPresetAssetMissing(id)) {
+					const missingAssetMsg = i18n.t(
+						"workspace:statusMessages.presetAssetMissing",
+						{
+							defaultValue:
+								"Preset asset is missing on disk — run is disabled.",
+						},
+					);
 					setState({
 						...getState(),
-						statusMessage: "Preset asset is missing on disk — run is disabled.",
+						statusMessage: missingAssetMsg,
 					});
-					notificationStore.add(
-						"Preset asset is missing on disk — run is disabled.",
-						"warning",
-						{ duration: 8000 },
-					);
+					notificationStore.add(missingAssetMsg, "warning", { duration: 8000 });
 					return;
 				}
 				void getPreset(id).then((presetRecord) => {

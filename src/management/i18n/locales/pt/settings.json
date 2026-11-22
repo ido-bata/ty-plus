@@ -416,5 +416,14 @@
 		"statusImported": "Backup do espaço de trabalho importado. Reabra diálogos/painéis para atualizar.",
 		"statusInvalid": "JSON de backup inválido.",
 		"statusPasteFirst": "Cole o JSON de backup primeiro."
+	},
+	"errors": {
+		"pathCopySameFolder": "A origem e o destino da cópia são a mesma pasta. Escolha um Support Root diferente.",
+		"pathCopyDestInsideSource": "O destino da cópia está dentro da pasta de origem. Escolha um Support Root diferente.",
+		"pathCopySourceInsideDest": "A origem da cópia está dentro da pasta de destino. Escolha um Support Root diferente.",
+		"pathCopyUntrustedTarget": "Recusando excluir o conteúdo do Support Root: o destino está fora de uma raiz de dados do usuário confiável.",
+		"aeAppRootUnresolved": "Ty Plus: não foi possível resolver a pasta de instalação do After Effects em execução para ty-plus-init.json.",
+		"copySymlinkRefused": "Recusando copiar symlink/reparse point: {{name}}",
+		"copyDeleteUnsupported": "A exclusão recursiva requer rm ou readdir/stat neste host."
 	}
 }

@@ -71,6 +71,13 @@
 			"idle": "Synchronisation cloud inactive",
 			"ok": "Ty Plus OK",
 			"failed": "Échec de la synchronisation cloud"
+		},
+		"gatewayBootReason": {
+			"unsupportedTrustMode": "Mode de confiance operation-worker non pris en charge",
+			"unsupportedPlatform": "Plateforme hôte non prise en charge",
+			"missingExtensionRoot": "Racine d'extension CEP indisponible",
+			"workerRuntimeFailed": "Runtime Worker indisponible",
+			"workerCompositionFailed": "Échec de la composition Worker"
 		}
 	},
 	"notificationCenter": {
@@ -95,5 +102,8 @@
 	},
 	"publicLink": {
 		"userManual": "Manuel utilisateur"
+	},
+	"errors": {
+		"unknownPreset": "Préréglage introuvable : {{id}}"
 	}
 }

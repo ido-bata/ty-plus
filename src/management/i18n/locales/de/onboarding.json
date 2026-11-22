@@ -88,7 +88,14 @@
 		"finishErrorNextActionChooseTrusted": "Die Onboarding-Einstellungsdatei enthielt keinen Support Root. Starte das Onboarding in After Effects neu.",
 		"finishErrorNextActionAdjust": "Die Einstellungen konnten nicht am AE Support Root gespeichert werden. Überprüfe, dass der Pfad erreichbar ist und After Effects Schreibzugriff hat, und versuche es erneut.",
 		"finishErrorNextActionRetry": "Die Windows-UAC-Abfrage wurde angefordert, aber der erhöhte Schreibvorgang ist fehlgeschlagen. Klicke auf Retry, um die UAC-Abfrage erneut auszulösen, oder führe After Effects als Administrator aus.",
-		"finishErrorRetryWithElevation": "Als Administrator erneut versuchen"
+		"finishErrorRetryWithElevation": "Als Administrator erneut versuchen",
+		"supportAndSubfoldersRequired": "Support-Pfad und Onboarding-Unterordner sind erforderlich.",
+		"appRootUnresolved": "Ty Plus: Der After-Effects-Programmordner für ty-plus-init.json konnte nicht aufgelöst werden. Öffnen Sie das Panel in After Effects und versuchen Sie es erneut.",
+		"initWriteFailed": "ty-plus-init.json unter {{path}} konnte nicht geschrieben werden: {{message}}",
+		"elevationConsentDenied": "Die UAC-Zustimmungsabfrage wurde geschlossen (Admin-Eskalation wurde nicht gewährt).",
+		"innerExitCodeNote": " Interner Skript-Exitcode: {{code}}.",
+		"elevationWriteFailedStderr": "Der privilegierte Schreibvorgang hat einen Fehler gemeldet.{{exitCodeNote}} Interner Skript-stderr: {{stderr}}",
+		"elevationWriteFailed": "Der privilegierte Schreibvorgang hat einen Fehler gemeldet.{{exitCodeNote}}"
 	},
 	"actions": {
 		"back": "Zurück",

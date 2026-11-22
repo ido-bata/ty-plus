@@ -71,6 +71,13 @@
 			"idle": "Sincronização na nuvem inativa",
 			"ok": "ty-plus OK",
 			"failed": "Falha na sincronização na nuvem"
+		},
+		"gatewayBootReason": {
+			"unsupportedTrustMode": "Modo de confiança do operation-worker não suportado",
+			"unsupportedPlatform": "Plataforma do host não suportada",
+			"missingExtensionRoot": "Raiz da extensão CEP indisponível",
+			"workerRuntimeFailed": "Runtime do Worker indisponível",
+			"workerCompositionFailed": "Falha na composição do Worker"
 		}
 	},
 	"notificationCenter": {
@@ -95,5 +102,8 @@
 	},
 	"publicLink": {
 		"userManual": "Manual do usuário"
+	},
+	"errors": {
+		"unknownPreset": "Predefinição não encontrada: {{id}}"
 	}
 }

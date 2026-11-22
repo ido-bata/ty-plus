@@ -132,7 +132,9 @@
 			"bottomLeft": "왼쪽 아래",
 			"bottomCenter": "아래 가운데",
 			"bottomRight": "오른쪽 아래"
-		}
+		},
+		"noActiveComposition": "Ty Plus 앵커: 활성 컴포지션이 없습니다",
+		"noLayerSelected": "Ty Plus 앵커: 레이어가 선택되지 않았습니다"
 	},
 	"info": {
 		"name": "정보",
@@ -195,7 +197,13 @@
 			"importOnly": "가져오기",
 			"selectFile": "선택",
 			"deselect": "선택 해제",
-			"runBlockedMissingAsset": "프리셋 자산이 디스크에 없습니다 — 실행이 비활성화되었습니다."
+			"runBlockedMissingAsset": "프리셋 자산이 디스크에 없습니다 — 실행이 비활성화되었습니다.",
+			"presetNotFound": "프리셋을 찾을 수 없습니다: {{presetId}}",
+			"fileImportAeOnly": "파일 가져오기는 현재 After Effects에서만 사용할 수 있습니다.",
+			"appliedEffect": "효과 적용됨: {{name}}",
+			"importedFootage": "가져온 푸티지: {{name}}",
+			"ranScript": "스크립트 실행됨: {{name}}",
+			"appliedPreset": "프리셋 적용됨: {{name}}"
 		},
 		"path": {
 			"pickFolderPrompt": "폴더 선택",
