@@ -36,6 +36,10 @@ const STALE_LOCALE_RE =
 	/\b(?:zh-CN|zh-TW|zh_Hans|zh_Hant|en-US|en-GB|ja-JP|ko-KR|de-DE|fr-FR|es-ES)\b/g;
 
 const CALL_RE = /(?:\bi18n\.t|\bt)\(\s*(["'])([^"'`]+)\1/g;
+// Positional default: t("key", "Fallback text") — same drift risk as the
+// `defaultValue:` option and must equal the canonical English value.
+const POSITIONAL_DEFAULT_RE =
+	/(?:\bi18n\.t|\bt)\(\s*(["'])([^"'`]+)\1\s*,\s*(["'])([^"'`]*)\3/g;
 const USE_T_RE = /useTranslation\(\s*(?:\[\s*)?(["'])([\w-]+)\1/g;
 const DEFAULT_NS: Record<string, string> = {
 	"src/": "common",
@@ -256,6 +260,41 @@ const scanFile = async (
 					text: `${rawKey} → ${JSON.stringify(dv[2])} (en: ${JSON.stringify(en)})`,
 				});
 			}
+		}
+	}
+
+	// Positional string defaults: t("key", "…") must match en exactly.
+	for (const m of content.matchAll(POSITIONAL_DEFAULT_RE)) {
+		const rawKey = m[2];
+		const fallback = m[4];
+		if (!fallback || rawKey.includes("{") || rawKey.includes("}")) continue;
+		const line = content.slice(0, m.index ?? 0).split("\n").length;
+		if (isExempt(line)) continue;
+		let ns = areaDefault;
+		let keyPath = rawKey;
+		const colon = rawKey.indexOf(":");
+		if (colon > 0) {
+			ns = rawKey.slice(0, colon);
+			keyPath = rawKey.slice(colon + 1);
+		}
+		const explicitNs = colon > 0 || m[0].startsWith("i18n.");
+		const candidates = explicitNs
+			? [ns === "" ? "common" : ns]
+			: hasUseTranslation
+				? [...fileNs, areaDefault, "common", "web"]
+				: [...resources.keys()];
+		const resolvedNs = candidates.find((c) =>
+			resolveKey(resources, c, keyPath),
+		);
+		if (!resolvedNs) continue; // unresolved-key pass reports it
+		const en = resolveKey(resources, resolvedNs, keyPath);
+		if (en !== undefined && fallback !== en) {
+			push({
+				file: rel,
+				line,
+				kind: "positionalDefault-mismatch",
+				text: `${rawKey} → ${JSON.stringify(fallback)} (en: ${JSON.stringify(en)})`,
+			});
 		}
 	}
 

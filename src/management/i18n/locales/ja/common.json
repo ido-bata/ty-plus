@@ -194,14 +194,14 @@
 		},
 		"regexEditor": {
 			"enterPattern": "パターンを入力してください。",
-			"invalidFlags": "無効なフラグ: {{flags}}",
+			"invalidFlags": "無効なフラグ：{{flags}}",
 			"plainSource": "プレーンな正規表現ソース",
 			"literalFormat": "リテラル正規表現フォーマット",
 			"testString": "テスト文字列",
 			"sourcePlaceholder": "正規表現ソース",
 			"flagsPlaceholder": "フラグ",
-			"matches": "一致",
-			"noMatch": "一致なし",
+			"matches": "マッチ",
+			"noMatch": "マッチなし",
 			"literalSuffix": "· リテラル /pattern/flags",
 			"sourceSuffix": "· ソースのみ"
 		},

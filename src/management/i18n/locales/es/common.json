@@ -194,15 +194,15 @@
 		},
 		"regexEditor": {
 			"enterPattern": "Introduce un patrón.",
-			"invalidFlags": "Indicadores no válidos: {{flags}}",
+			"invalidFlags": "Banderas no válidas: {{flags}}",
 			"plainSource": "Fuente regex simple",
 			"literalFormat": "Formato regex literal",
 			"testString": "Cadena de prueba",
 			"sourcePlaceholder": "Fuente regex",
-			"flagsPlaceholder": "indicadores",
+			"flagsPlaceholder": "banderas",
 			"matches": "Coincidencias",
 			"noMatch": "Sin coincidencias",
-			"literalSuffix": "· literal /patrón/flags",
+			"literalSuffix": "· literal /patrón/banderas",
 			"sourceSuffix": "· solo fuente"
 		},
 		"listSelect": {

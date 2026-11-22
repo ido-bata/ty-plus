@@ -336,7 +336,7 @@
 		"regexEditor": {
 			"enterPattern": "Saisissez un motif.",
 			"invalidFlags": "Drapeaux invalides : {{flags}}",
-			"plainSource": "Source regex en clair",
+			"plainSource": "Source regex simple",
 			"literalFormat": "Format regex littéral",
 			"testString": "Chaîne de test",
 			"sourcePlaceholder": "Source regex",

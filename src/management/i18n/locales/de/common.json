@@ -193,7 +193,7 @@
 			"clearTitle": "Löschen"
 		},
 		"regexEditor": {
-			"enterPattern": "Gib ein Muster ein.",
+			"enterPattern": "Geben Sie ein Muster ein.",
 			"invalidFlags": "Ungültige Flags: {{flags}}",
 			"plainSource": "Einfacher Regex-Quelltext",
 			"literalFormat": "Literales Regex-Format",

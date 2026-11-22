@@ -356,7 +356,6 @@ function SourceFilterTabs({
 	);
 }
 
-
 /**
  * View scope (Issue #138, supersedes Issue #79).
  *

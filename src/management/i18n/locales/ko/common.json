@@ -186,7 +186,7 @@
 	},
 	"ui": {
 		"loadingSpinner": {
-			"label": "로드 중"
+			"label": "불러오는 중"
 		},
 		"searchField": {
 			"clearAria": "검색 지우기",
