@@ -172,16 +172,6 @@
 		"deleteSourceTitle": "Cópia concluída",
 		"deleteSourceMessage": "Cópia concluída. Excluir a pasta ty-plus / data de origem?"
 	},
-	"languages": {
-		"english": "Inglês",
-		"japanese": "Japonês",
-		"korean": "Coreano",
-		"chineseSimplified": "Chinês simplificado",
-		"chineseTraditional": "Chinês tradicional",
-		"spanish": "Espanhol",
-		"french": "Francês",
-		"german": "Alemão"
-	},
 	"inputs": {
 		"title": "Entradas",
 		"gestures": {

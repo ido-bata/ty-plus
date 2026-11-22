@@ -172,16 +172,6 @@
 		"deleteSourceTitle": "Copia completada",
 		"deleteSourceMessage": "Copia completada. ¿Eliminar la carpeta ty-plus / data de origen?"
 	},
-	"languages": {
-		"english": "Inglés",
-		"japanese": "Japonés",
-		"korean": "Coreano",
-		"chineseSimplified": "Chino simplificado",
-		"chineseTraditional": "Chino tradicional",
-		"spanish": "Español",
-		"french": "Francés",
-		"german": "Alemán"
-	},
 	"inputs": {
 		"title": "Entradas",
 		"gestures": {

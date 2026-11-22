@@ -172,16 +172,6 @@
 		"deleteSourceTitle": "Копирование завершено",
 		"deleteSourceMessage": "Копирование завершено. Удалить исходную папку ty-plus / data?"
 	},
-	"languages": {
-		"english": "Английский",
-		"japanese": "Японский",
-		"korean": "Корейский",
-		"chineseSimplified": "Упрощённый китайский",
-		"chineseTraditional": "Традиционный китайский",
-		"spanish": "Испанский",
-		"french": "Французский",
-		"german": "Немецкий"
-	},
 	"inputs": {
 		"title": "Ввод",
 		"gestures": {

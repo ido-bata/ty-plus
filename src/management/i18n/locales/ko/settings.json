@@ -172,16 +172,6 @@
 		"deleteSourceTitle": "복사 완료",
 		"deleteSourceMessage": "복사가 완료되었습니다. 원본 ty-plus / data 폴더를 삭제하시겠습니까?"
 	},
-	"languages": {
-		"english": "영어",
-		"japanese": "일본어",
-		"korean": "한국어",
-		"chineseSimplified": "간체 중국어",
-		"chineseTraditional": "번체 중국어",
-		"spanish": "스페인어",
-		"french": "프랑스어",
-		"german": "독일어"
-	},
 	"inputs": {
 		"title": "입력",
 		"gestures": {

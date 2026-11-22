@@ -172,16 +172,6 @@
 		"deleteSourceTitle": "Copy complete",
 		"deleteSourceMessage": "Copy complete. Will you delete the source ty-plus / data folder?"
 	},
-	"languages": {
-		"english": "English",
-		"japanese": "日本語",
-		"korean": "한국어",
-		"chineseSimplified": "简体中文",
-		"chineseTraditional": "繁體中文",
-		"spanish": "Español",
-		"french": "Français",
-		"german": "Deutsch"
-	},
 	"inputs": {
 		"title": "Inputs",
 		"gestures": {

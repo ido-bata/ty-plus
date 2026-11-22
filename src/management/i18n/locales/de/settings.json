@@ -172,16 +172,6 @@
 		"deleteSourceTitle": "Kopieren abgeschlossen",
 		"deleteSourceMessage": "Kopieren abgeschlossen. Soll der Quell-ty-plus-/data-Ordner gelöscht werden?"
 	},
-	"languages": {
-		"english": "Englisch",
-		"japanese": "Japanisch",
-		"korean": "Koreanisch",
-		"chineseSimplified": "Vereinfachtes Chinesisch",
-		"chineseTraditional": "Traditionelles Chinesisch",
-		"spanish": "Spanisch",
-		"french": "Französisch",
-		"german": "Deutsch"
-	},
 	"inputs": {
 		"title": "Eingaben",
 		"gestures": {
