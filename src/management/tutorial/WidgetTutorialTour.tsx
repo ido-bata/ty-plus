@@ -14,8 +14,7 @@
  * control while reading each step.
  */
 
-import { Button } from "@ty-plus/ui";
-import { cx } from "@ty-plus/ui/util/cx";
+import { Button, cx, IconButton } from "@ty-plus/ui";
 import { X } from "lucide-react";
 import type { CSSProperties, JSX, RefObject } from "react";
 import {
@@ -54,7 +53,7 @@ const highlight = css({
 	borderColor: "text.accent",
 	borderRadius: "shell-sm",
 	boxShadow:
-		"0 0 0 4px color-mix(in srgb, var(--colors-text-accent) 25%, transparent)",
+		"0 0 0 4px color-mix(in srgb, var(--color-text-accent) 25%, transparent)",
 });
 
 const bubble = css({
@@ -88,24 +87,7 @@ const bubbleHeader = css({
 const bubbleTitle = css({ fontWeight: "medium" });
 
 const bubbleClose = css({
-	display: "inline-flex",
-	alignItems: "center",
-	justifyContent: "center",
 	flexShrink: "0",
-	height: "5",
-	width: "5",
-	padding: "0",
-	borderWidth: "0",
-	borderRadius: "shell-sm",
-	backgroundColor: "transparent",
-	color: "text.muted",
-	cursor: "pointer",
-	"&:hover": { color: "text.primary" },
-	"&:focus-visible": {
-		outline: "2px solid",
-		outlineColor: "text.accent",
-		outlineOffset: "1px",
-	},
 });
 
 const bubbleBody = css({
@@ -378,8 +360,9 @@ export function WidgetTutorialTour({
 				<span className={cx(caret)} aria-hidden style={caretStyle} />
 				<div className={bubbleHeader}>
 					<span className={bubbleTitle}>{title}</span>
-					<button
-						type="button"
+					<IconButton
+						variant="ghost"
+						size="xs"
 						className={bubbleClose}
 						aria-label={t("tutorial.chrome.close", {
 							defaultValue: "Close",
@@ -387,7 +370,7 @@ export function WidgetTutorialTour({
 						onClick={onClose}
 					>
 						<X size={12} aria-hidden />
-					</button>
+					</IconButton>
 				</div>
 				<p className={bubbleBody}>{body}</p>
 				{totalSteps > 1 ? (

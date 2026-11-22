@@ -16,7 +16,7 @@
  * the widget.
  */
 
-import { cx } from "@ty-plus/ui/util/cx";
+import { cx, IconButton } from "@ty-plus/ui";
 import { CircleHelp } from "lucide-react";
 import type { JSX, ReactNode } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -139,8 +139,9 @@ export function WidgetTutorialLayer({
 		<div ref={layerRef} className={layer}>
 			{children}
 			{hasContent ? (
-				<button
-					type="button"
+				<IconButton
+					variant="ghost"
+					size="xs"
 					className={cx(helpAnchor, helpButton)}
 					aria-label={t("tutorial.chrome.help", { defaultValue: "Help" })}
 					aria-expanded={tourOpen}
@@ -151,7 +152,7 @@ export function WidgetTutorialLayer({
 					}}
 				>
 					<CircleHelp size={14} aria-hidden />
-				</button>
+				</IconButton>
 			) : null}
 			{tourOpen ? (
 				<WidgetTutorialTour
