@@ -193,7 +193,8 @@
 			"undoGroupName": "Ty Plus: Ebenen-/Kompositionsvorgabe anwenden",
 			"saveProjectFirst": "Speichern Sie das After-Effects-Projekt, bevor Sie diese Voreinstellung erstellen",
 			"sourceProjectNotFoundPrefix": "Quellprojekt nicht gefunden: "
-		}
+		},
+		"incompleteData": "Vorgabendaten sind unvollständig"
 	},
 	"animationPreset": {
 		"step1": {

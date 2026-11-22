@@ -194,7 +194,8 @@
 			"undoGroupName": "Ty Plus: Aplicar predefinição de camada/composição",
 			"saveProjectFirst": "Guarde o projeto After Effects antes de criar esta predefinição",
 			"sourceProjectNotFoundPrefix": "Projeto de origem não encontrado: "
-		}
+		},
+		"incompleteData": "Os dados da predefinição estão incompletos"
 	},
 	"animationPreset": {
 		"step1": {

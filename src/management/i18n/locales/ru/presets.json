@@ -195,7 +195,8 @@
 			"undoGroupName": "Ty Plus: Применить пресет слоя/композиции",
 			"saveProjectFirst": "Сохраните проект After Effects перед созданием этого пресета",
 			"sourceProjectNotFoundPrefix": "Исходный проект не найден: "
-		}
+		},
+		"incompleteData": "Данные пресета неполные"
 	},
 	"animationPreset": {
 		"step1": {

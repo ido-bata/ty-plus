@@ -194,7 +194,8 @@
 			"undoGroupName": "Ty Plus: Applica preset di livello/composizione",
 			"saveProjectFirst": "Salva il progetto After Effects prima di creare questo preset",
 			"sourceProjectNotFoundPrefix": "Progetto di origine non trovato: "
-		}
+		},
+		"incompleteData": "I dati del preset sono incompleti"
 	},
 	"animationPreset": {
 		"step1": {
