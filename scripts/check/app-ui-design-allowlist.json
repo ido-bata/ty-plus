@@ -29,14 +29,21 @@
 	},
 	{
 		"file": "packages/ui/src/fields/SearchField.tsx",
-		"line": 171,
+		"line": 89,
+		"rule": "focus-ring-divergent",
+		"message": "_focusVisible paints \"none\" — the one focus indicator is var(--color-focus-ring)",
+		"reason": "the search field's wrapper owns the focus indicator; the inner input must not paint a second one — the wrapper's `_focusWithin` ring is the only ring"
+	},
+	{
+		"file": "packages/ui/src/fields/SearchField.tsx",
+		"line": 174,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 10px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "packages/ui/src/fields/SearchField.tsx",
-		"line": 201,
+		"line": 204,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 10px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"

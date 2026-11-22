@@ -84,8 +84,11 @@ const innerInput = css({
 	// Issue #144: the inner input must never paint its own focus border —
 	// the wrapper's `_focusWithin` ring is the single focus indicator.
 	_focus: { borderColor: "transparent" },
+	// The wrapper owns the focus indicator (its `_focusWithin` ring). The
+	// inner input must not paint a second one.
 	_focusVisible: {
 		borderColor: "transparent",
+		boxShadow: "none",
 	},
 });
 
