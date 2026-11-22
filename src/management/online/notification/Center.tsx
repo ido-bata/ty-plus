@@ -631,7 +631,7 @@ function NotificationListItem(props: {
 						)}
 						<span className={listItemDateClass}>
 							{item.publishedAt
-								? new Date(item.publishedAt).toLocaleString()
+								? new Date(item.publishedAt).toLocaleString(i18n.language)
 								: ""}
 						</span>
 					</div>
@@ -713,7 +713,7 @@ function NotificationDetailView(props: {
 					<>
 						<span className={metaBarSeparatorClass}>·</span>
 						<span className={metaBarTextClass}>
-							{new Date(selected.publishedAt).toLocaleString()}
+							{new Date(selected.publishedAt).toLocaleString(i18n.language)}
 						</span>
 					</>
 				)}
