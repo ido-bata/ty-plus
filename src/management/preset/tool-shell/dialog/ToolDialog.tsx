@@ -368,7 +368,7 @@ export function Dialog(props: PresetToolDialogProps): JSX.Element {
 				presetId,
 			);
 			if (!filePath) {
-				const incomplete = "Preset data is incomplete";
+				const incomplete = t("presetTool.incompleteData");
 				setStatus(incomplete);
 				setSaveError(incomplete);
 				return;

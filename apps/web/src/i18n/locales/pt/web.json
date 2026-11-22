@@ -342,8 +342,8 @@
 			"testString": "String de teste",
 			"sourcePlaceholder": "Fonte regex",
 			"flagsPlaceholder": "sinalizadores",
-			"matches": "Corresponde",
-			"noMatch": "Sem correspondência",
+			"matches": "Correspondências",
+			"noMatch": "Sem correspondências",
 			"literalSuffix": "· literal /pattern/flags",
 			"sourceSuffix": "· somente fonte"
 		},

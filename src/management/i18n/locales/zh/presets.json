@@ -192,7 +192,8 @@
 			"undoGroupName": "Ty Plus: 应用图层/合成预设",
 			"saveProjectFirst": "创建此预设前请先保存 After Effects 项目",
 			"sourceProjectNotFoundPrefix": "找不到源项目: "
-		}
+		},
+		"incompleteData": "预设数据不完整"
 	},
 	"animationPreset": {
 		"step1": {

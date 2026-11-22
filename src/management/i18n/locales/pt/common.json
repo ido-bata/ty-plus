@@ -186,24 +186,24 @@
 	},
 	"ui": {
 		"loadingSpinner": {
-			"label": "A carregar"
+			"label": "Carregando"
 		},
 		"searchField": {
 			"clearAria": "Limpar pesquisa",
 			"clearTitle": "Limpar"
 		},
 		"regexEditor": {
-			"enterPattern": "Introduza um padrão.",
-			"invalidFlags": "Sinalizadores inválidos: {{flags}}",
+			"enterPattern": "Digite um padrão.",
+			"invalidFlags": "Flags inválidas: {{flags}}",
 			"plainSource": "Fonte regex simples",
 			"literalFormat": "Formato regex literal",
-			"testString": "Cadeia de teste",
+			"testString": "String de teste",
 			"sourcePlaceholder": "Fonte regex",
 			"flagsPlaceholder": "sinalizadores",
 			"matches": "Correspondências",
 			"noMatch": "Sem correspondências",
 			"literalSuffix": "· literal /pattern/flags",
-			"sourceSuffix": "· apenas fonte"
+			"sourceSuffix": "· somente fonte"
 		},
 		"listSelect": {
 			"placeholder": "Selecionar…"

@@ -337,15 +337,15 @@
 		"regexEditor": {
 			"enterPattern": "Introduce un patrón.",
 			"invalidFlags": "Banderas no válidas: {{flags}}",
-			"plainSource": "Código fuente regex simple",
+			"plainSource": "Fuente regex simple",
 			"literalFormat": "Formato regex literal",
 			"testString": "Cadena de prueba",
-			"sourcePlaceholder": "Código fuente regex",
+			"sourcePlaceholder": "Fuente regex",
 			"flagsPlaceholder": "banderas",
 			"matches": "Coincidencias",
 			"noMatch": "Sin coincidencias",
 			"literalSuffix": "· literal /patrón/banderas",
-			"sourceSuffix": "· solo código fuente"
+			"sourceSuffix": "· solo fuente"
 		},
 		"listSelect": {
 			"placeholder": "Seleccionar…"

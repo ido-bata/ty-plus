@@ -192,7 +192,8 @@
 			"undoGroupName": "Ty Plus: レイヤー/コンポジションプリセットを適用",
 			"saveProjectFirst": "このプリセットを作成する前にAfter Effectsプロジェクトを保存してください",
 			"sourceProjectNotFoundPrefix": "ソースプロジェクトが見つかりません: "
-		}
+		},
+		"incompleteData": "プリセットデータが不完全です"
 	},
 	"animationPreset": {
 		"step1": {

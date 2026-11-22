@@ -193,7 +193,8 @@
 			"undoGroupName": "Ty Plus: Apply Layer/Comp Preset",
 			"saveProjectFirst": "Save the After Effects project before creating this preset",
 			"sourceProjectNotFoundPrefix": "Source project not found: "
-		}
+		},
+		"incompleteData": "Preset data is incomplete"
 	},
 	"animationPreset": {
 		"step1": {

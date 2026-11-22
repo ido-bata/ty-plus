@@ -194,7 +194,8 @@
 			"undoGroupName": "Ty Plus: Appliquer le préréglage de calque/composition",
 			"saveProjectFirst": "Enregistrez le projet After Effects avant de créer ce préréglage",
 			"sourceProjectNotFoundPrefix": "Projet source introuvable : "
-		}
+		},
+		"incompleteData": "Les données du préréglage sont incomplètes"
 	},
 	"animationPreset": {
 		"step1": {
