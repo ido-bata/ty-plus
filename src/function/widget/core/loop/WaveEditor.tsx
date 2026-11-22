@@ -10,6 +10,7 @@
  */
 
 import { type JSX, useCallback, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
 	applyWaveHandleDrag,
 	attackShare,
@@ -66,6 +67,7 @@ export function WaveEditor({
 	previewTime,
 	onScrub,
 }: WaveEditorProps): JSX.Element {
+	const { t } = useTranslation("widgets");
 	const canvasRef = useRef<HTMLCanvasElement | null>(null);
 	const containerRef = useRef<HTMLDivElement | null>(null);
 	const dragRef = useRef<DragTarget | null>(null);
@@ -258,7 +260,7 @@ export function WaveEditor({
 		>
 			<canvas
 				ref={canvasRef}
-				aria-label="Loop wave editor"
+				aria-label={t("loop.waveCanvas")}
 				data-ws-loop-wave-canvas="1"
 				style={{ width: "100%", height: "100%", touchAction: "none" }}
 				onPointerDown={handlePointerDown}

@@ -408,6 +408,8 @@
 		"applied": "Aplicado",
 		"conflict": "Editado en AE",
 		"play": "Reproducir",
-		"pause": "Pausa"
+		"pause": "Pausa",
+		"waveCanvas": "Editor de onda de bucle",
+		"previewCanvas": "Vista previa de movimiento de bucle"
 	}
 }

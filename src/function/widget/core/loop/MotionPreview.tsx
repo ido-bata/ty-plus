@@ -9,6 +9,7 @@
 
 import type { JSX } from "react";
 import { useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import {
 	buildCyclicWave,
 	type CyclicWaveParams,
@@ -30,6 +31,7 @@ export function MotionPreview({
 	wave,
 	time,
 }: MotionPreviewProps): JSX.Element {
+	const { t } = useTranslation("widgets");
 	const canvasRef = useRef<HTMLCanvasElement | null>(null);
 	const containerRef = useRef<HTMLDivElement | null>(null);
 	const trailRef = useRef<{ x: number; y: number }[]>([]);
@@ -149,7 +151,7 @@ export function MotionPreview({
 		>
 			<canvas
 				ref={canvasRef}
-				aria-label="Loop motion preview"
+				aria-label={t("loop.previewCanvas")}
 				style={{ width: "100%", height: "100%", display: "block" }}
 			/>
 		</div>

@@ -408,6 +408,8 @@
 		"applied": "Applied",
 		"conflict": "Edited in AE",
 		"play": "Play",
-		"pause": "Pause"
+		"pause": "Pause",
+		"waveCanvas": "Loop wave editor",
+		"previewCanvas": "Loop motion preview"
 	}
 }

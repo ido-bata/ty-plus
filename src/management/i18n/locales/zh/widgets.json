@@ -408,6 +408,8 @@
 		"applied": "已应用",
 		"conflict": "已在 AE 中编辑",
 		"play": "播放",
-		"pause": "暂停"
+		"pause": "暂停",
+		"waveCanvas": "循环波形编辑器",
+		"previewCanvas": "循环运动预览"
 	}
 }

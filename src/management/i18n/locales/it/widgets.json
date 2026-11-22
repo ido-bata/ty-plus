@@ -408,6 +408,8 @@
 		"applied": "Applicato",
 		"conflict": "Modificato in AE",
 		"play": "Riproduci",
-		"pause": "Pausa"
+		"pause": "Pausa",
+		"waveCanvas": "Editor dell'onda loop",
+		"previewCanvas": "Anteprima del movimento loop"
 	}
 }

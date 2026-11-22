@@ -408,6 +408,8 @@
 		"applied": "Angewendet",
 		"conflict": "In AE bearbeitet",
 		"play": "Abspielen",
-		"pause": "Pause"
+		"pause": "Pause",
+		"waveCanvas": "Schleifen-Welleneditor",
+		"previewCanvas": "Schleifen-Bewegungsvorschau"
 	}
 }

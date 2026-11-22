@@ -408,6 +408,8 @@
 		"applied": "適用済み",
 		"conflict": "AE側で編集済み",
 		"play": "再生",
-		"pause": "一時停止"
+		"pause": "一時停止",
+		"waveCanvas": "ループ波形エディター",
+		"previewCanvas": "ループモーションプレビュー"
 	}
 }
