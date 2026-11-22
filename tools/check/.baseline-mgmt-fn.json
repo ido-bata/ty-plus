@@ -168,6 +168,12 @@
 		"reason": "management must not import function implementation directly"
 	},
 	{
+		"from": "src/management/workspace/hook.ts",
+		"to": "@/function/widget/contract",
+		"specifier": "@/function/widget/contract",
+		"reason": "management must not import function implementation directly"
+	},
+	{
 		"from": "src/management/workspace/hooks/state.ts",
 		"to": "@/function/widget/contract",
 		"specifier": "@/function/widget/contract",

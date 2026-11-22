@@ -398,4 +398,22 @@ describe("the non-fatal background stage", () => {
 		// …and the failed background write left no file behind.
 		expect(existsSync(BG_PATH)).toBe(false);
 	});
+
+	it("fails the persist when backgroundFatal is set (awaitable variant)", async () => {
+		// ADR-0006: `persistSurfaceStateAwaitable` sets `backgroundFatal`
+		// because `applyInterPanelMove` evaluates its rollback against an
+		// exact on-disk view — a swallowed background failure would leave
+		// disk state the rollback cannot see.
+		const result = await attempt("write-background", {
+			backgroundJsonText: '{"color":"#000000"}\n',
+			backgroundFatal: true,
+		});
+
+		expectFailure(result, "write-background");
+		// Records and layout already landed — the failure is attributed to
+		// the background stage, not rolled back here (rollback is the
+		// caller's transaction decision under the persistence lock).
+		expect(recordIdsOnDisk()).toEqual(["wgt-alpha", "wgt-beta", "wgt-gamma"]);
+		expect(layoutIdsOnDisk()).toContain("wgt-gamma");
+	});
 });

@@ -175,14 +175,25 @@ export const readLocalPresetCatalog = async (
 const wrapFilePresetRepository = (
 	base: ReturnType<typeof createPresetRepository>,
 ): ReturnType<typeof createPresetRepository> =>
-	createSharedPresetRepository(base, {
-		async read() {
-			return readLocalPresetCatalog(window);
+	createSharedPresetRepository(
+		base,
+		{
+			async read() {
+				return readLocalPresetCatalog(window);
+			},
+			async write(presets: Preset[]) {
+				await writePresetsJson(window, serializePresetCatalogJsonText(presets));
+			},
 		},
-		async write(presets: Preset[]) {
-			await writePresetsJson(window, serializePresetCatalogJsonText(presets));
+		{
+			// ADR-0006: presets.json RMW inside the managed-root lock.
+			withLock: (fn) =>
+				import("@/management/storage/lock/persistence-lock").then(
+					({ withManagedRootPersistenceLock }) =>
+						withManagedRootPersistenceLock(window, fn),
+				),
 		},
-	});
+	);
 
 /**
  * Cloud/preset layer shared between panel and modeless dialogs.

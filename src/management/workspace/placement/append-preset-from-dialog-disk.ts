@@ -50,6 +50,10 @@ import {
 	readNJson,
 	readPresetsJson,
 } from "@/management/storage";
+import {
+	resolvePersistenceLockRoot,
+	withPersistenceLock,
+} from "@/management/storage/lock/persistence-lock";
 import { getDataServices } from "@/management/workspace/core/services";
 import { parseLayoutDocument } from "@/management/workspace/layout/grid-document";
 import { resolveWorkspacePersistenceManagedRoot } from "@/management/workspace/layout/persistence-root";
@@ -234,65 +238,71 @@ export async function tryPersistAppendPresetFromDialog(
 	}
 	const targetPanelId = input.targetPanelId.trim() || "panel-1";
 
-	// Resolve preset list with explicit local fallback on gateway offline.
-	// Throws when neither cloud nor local catalog is available — caller
-	// MUST surface the error to the user (round-4 Blocker 10 contract).
-	const presets = await resolvePresetListWithLocalFallback({
-		win,
-		targetPanelId,
-		catalogRefIds: ids,
-	});
-
-	// Filter out preset/group IDs that are already present on the target panel.
-	// When a preset is edited (not newly added), the layout should not be modified.
-	// `groups.json` and the target `workspace-N.json` are different stores, so
-	// the two reads are issued together — each one is a round-trip to the AE
-	// host, and the result of neither depends on the other. The catalog
-	// resolution above stays on its own await so its "throw when both cloud
-	// and local are unavailable" contract still decides the caller's error.
-	const targetIndex = indexFromPanelId(targetPanelId);
-	const [groupText, rawLayout] = await Promise.all([
-		readGroupJson(win),
-		readNJson(win, targetIndex),
-	]);
-	const groupCatalogEntries = parseGroupFromText(groupText ?? "");
-	const existingLayout = rawLayout
-		? parseLayoutDocument(JSON.parse(rawLayout))
-		: { gridCells: [], presetLayoutRoster: [] };
-
-	// Build set of catalog refs already on this panel's layout
-	const existingCatalogIds = new Set<string>();
-	for (const cell of existingLayout.gridCells) {
-		const trimmed = cell.id?.trim();
-		if (trimmed) existingCatalogIds.add(trimmed);
-	}
-	if (existingLayout.presetLayoutRoster) {
-		for (const entry of existingLayout.presetLayoutRoster) {
-			const trimmed = entry.presetRefId?.trim();
-			if (trimmed) existingCatalogIds.add(trimmed);
-		}
-	}
-
-	// Split into new IDs (to add) and existing IDs (edit case — skip layout)
-	const newCatalogIds = ids.filter((id) => !existingCatalogIds.has(id));
-	if (newCatalogIds.length === 0) {
-		// All IDs are already on the layout — this is an edit, not an add.
-		// No layout modification needed.
+	// ADR-0006: the catalog resolution, dedup check and the layout write
+	// are ONE transaction inside the managed-root persistence lock. The
+	// preset list (cloud repository or local `presets/presets.json`
+	// fallback) and the group catalog are read INSIDE the hold — never
+	// before it — because another CEP context may have rewritten those
+	// shared catalog files while we waited for the lock. The layout read
+	// that feeds the write decision happens inside the hold too, and
+	// `persistTargetLayout` joins the same hold via AsyncLocalStorage.
+	// `resolvePresetListWithLocalFallback` still throws when neither the
+	// cloud gateway nor the local catalog is available — the caller MUST
+	// surface that error (round-4 Blocker 10 contract).
+	const lockRoot = await resolvePersistenceLockRoot(win);
+	if (!lockRoot) {
 		return false;
 	}
+	return withPersistenceLock(win, lockRoot, async () => {
+		const targetIndex = indexFromPanelId(targetPanelId);
+		const [presets, groupText, rawLayout] = await Promise.all([
+			resolvePresetListWithLocalFallback({
+				win,
+				targetPanelId,
+				catalogRefIds: ids,
+			}),
+			readGroupJson(win),
+			readNJson(win, targetIndex),
+		]);
+		const groupCatalogEntries = parseGroupFromText(groupText ?? "");
+		const existingLayout = rawLayout
+			? parseLayoutDocument(JSON.parse(rawLayout))
+			: { gridCells: [], presetLayoutRoster: [] };
 
-	// Layout-write path: any failure here still propagates so the caller can
-	// surface the error.
-	await persistTargetLayout(win, {
-		persistenceRoot: root,
-		targetPanelId,
-		catalogIdsToMove: newCatalogIds,
-		widgetTiles: [],
-		widgetTypes: {},
-		presets,
-		groupCatalogEntries,
-		widgetInstanceTypesOverlay: {},
-		dropPlacement: input.dropPlacement,
+		// Build set of catalog refs already on this panel's layout
+		const existingCatalogIds = new Set<string>();
+		for (const cell of existingLayout.gridCells) {
+			const trimmed = cell.id?.trim();
+			if (trimmed) existingCatalogIds.add(trimmed);
+		}
+		if (existingLayout.presetLayoutRoster) {
+			for (const entry of existingLayout.presetLayoutRoster) {
+				const trimmed = entry.presetRefId?.trim();
+				if (trimmed) existingCatalogIds.add(trimmed);
+			}
+		}
+
+		// Split into new IDs (to add) and existing IDs (edit case — skip layout)
+		const newCatalogIds = ids.filter((id) => !existingCatalogIds.has(id));
+		if (newCatalogIds.length === 0) {
+			// All IDs are already on the layout — this is an edit, not an add.
+			// No layout modification needed.
+			return false;
+		}
+
+		// Layout-write path: any failure here still propagates so the caller can
+		// surface the error.
+		await persistTargetLayout(win, {
+			persistenceRoot: root,
+			targetPanelId,
+			catalogIdsToMove: newCatalogIds,
+			widgetTiles: [],
+			widgetTypes: {},
+			presets,
+			groupCatalogEntries,
+			widgetInstanceTypesOverlay: {},
+			dropPlacement: input.dropPlacement,
+		});
+		return true;
 	});
-	return true;
 }
