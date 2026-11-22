@@ -99,6 +99,7 @@
 		"presetAssetMissing": "L'asset del preset manca su disco — l'esecuzione è disabilitata.",
 		"applyingAnchorPoint": "Applicazione del punto di ancoraggio: {{pos}}...",
 		"anchorPointRequested": "Punto di ancoraggio richiesto: {{pos}}",
-		"presetFailed": "Preset non riuscito: {{message}}"
+		"presetFailed": "Preset non riuscito: {{message}}",
+		"widgetAdded": "{{name}} aggiunto"
 	}
 }

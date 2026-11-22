@@ -99,6 +99,7 @@
 		"presetAssetMissing": "预设资源在磁盘上缺失 — 运行已禁用。",
 		"applyingAnchorPoint": "正在应用锚点：{{pos}}...",
 		"anchorPointRequested": "已请求锚点：{{pos}}",
-		"presetFailed": "预设失败：{{message}}"
+		"presetFailed": "预设失败：{{message}}",
+		"widgetAdded": "已添加 {{name}}"
 	}
 }

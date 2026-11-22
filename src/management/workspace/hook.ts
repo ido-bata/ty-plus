@@ -1020,7 +1020,11 @@ export function useWorkspaceRuntime(root: Element | null): {
 					...cur.widgetInstanceTypes,
 					[id]: widgetTypeRaw as WidgetType,
 				},
-				statusMessage: `Added ${i18n.t(cfg.name.replace(/^widgets\./, ""), { defaultValue: cfg.name })}`,
+				statusMessage: i18n.t("workspace:statusMessages.widgetAdded", {
+					name: i18n.t(cfg.name.replace(/^widgets\./, ""), {
+						defaultValue: cfg.name,
+					}),
+				}),
 			});
 			persistSurfaceState();
 			void history.listSnapshots().then((snaps) => {
@@ -2292,9 +2296,9 @@ export function useWorkspaceRuntime(root: Element | null): {
 				}
 				void executeWorkspacePreset(presetId).catch((error) => {
 					notificationStore.add(
-						`Preset failed: ${
-							error instanceof Error ? error.message : String(error)
-						}`,
+						i18n.t("workspace:statusMessages.presetFailed", {
+							message: error instanceof Error ? error.message : String(error),
+						}),
 						"error",
 					);
 				});
@@ -3962,9 +3966,9 @@ export function useWorkspaceRuntime(root: Element | null): {
 					void executePreset(presetRecord).catch((error) => {
 						setState({
 							...getState(),
-							statusMessage: `Preset failed: ${
-								error instanceof Error ? error.message : String(error)
-							}`,
+							statusMessage: i18n.t("workspace:statusMessages.presetFailed", {
+								message: error instanceof Error ? error.message : String(error),
+							}),
 						});
 					});
 				});

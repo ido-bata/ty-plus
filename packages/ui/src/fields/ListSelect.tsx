@@ -2,6 +2,7 @@ import { AnchoredPopover } from "@ty-plus/ui/interaction/AnchoredPopover";
 import { cx } from "@ty-plus/ui/util/cx";
 import type { ReactElement } from "react";
 import { useId, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { css } from "@/styled-system/css";
 
 type ListSelectOption = { value: string; label: string };
@@ -119,11 +120,12 @@ export type ListSelectProps = {
 
 /** Semantic utility in the same family as Input / Select (follows `theme.css` / CEP-injected `--color-*`) */
 export function ListSelect(props: ListSelectProps): ReactElement {
+	const { t } = useTranslation();
 	const {
 		options,
 		value,
 		onChange,
-		placeholder = "Select…",
+		placeholder,
 		uiSize = "md",
 		className,
 		triggerClassName,
@@ -137,7 +139,10 @@ export function ListSelect(props: ListSelectProps): ReactElement {
 	const triggerRef = useRef<HTMLButtonElement>(null);
 
 	const selected = options.find((o) => o.value === value);
-	const label = selected?.label ?? placeholder;
+	const label =
+		selected?.label ??
+		placeholder ??
+		t("ui.listSelect.placeholder", { defaultValue: "Select…" });
 
 	const triggerSize = uiSize === "sm" ? triggerSm : triggerMd;
 

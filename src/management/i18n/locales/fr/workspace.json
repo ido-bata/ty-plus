@@ -99,6 +99,7 @@
 		"presetAssetMissing": "L'asset du préréglage est manquant sur le disque — l'exécution est désactivée.",
 		"applyingAnchorPoint": "Application du point d'ancrage : {{pos}}...",
 		"anchorPointRequested": "Point d'ancrage demandé : {{pos}}",
-		"presetFailed": "Préréglage échoué : {{message}}"
+		"presetFailed": "Préréglage échoué : {{message}}",
+		"widgetAdded": "{{name}} ajouté"
 	}
 }

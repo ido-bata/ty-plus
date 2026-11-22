@@ -99,6 +99,7 @@
 		"presetAssetMissing": "Falta el recurso del preset en disco; la ejecución está deshabilitada.",
 		"applyingAnchorPoint": "Aplicando punto de anclaje: {{pos}}...",
 		"anchorPointRequested": "Punto de anclaje solicitado: {{pos}}",
-		"presetFailed": "Preset fallido: {{message}}"
+		"presetFailed": "Preset fallido: {{message}}",
+		"widgetAdded": "{{name}} añadido"
 	}
 }

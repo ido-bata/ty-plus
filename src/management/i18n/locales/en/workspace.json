@@ -99,6 +99,7 @@
 		"presetAssetMissing": "Preset asset is missing on disk — run is disabled.",
 		"applyingAnchorPoint": "Applying anchor point: {{pos}}...",
 		"anchorPointRequested": "Anchor point requested: {{pos}}",
-		"presetFailed": "Preset failed: {{message}}"
+		"presetFailed": "Preset failed: {{message}}",
+		"widgetAdded": "Added {{name}}"
 	}
 }

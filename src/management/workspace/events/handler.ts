@@ -1329,9 +1329,9 @@ export const setupInteractionEvents = (
 					void opts?.executePreset?.(presetRecord).catch((error) => {
 						setState({
 							...getState(),
-							statusMessage: `Preset failed: ${
-								error instanceof Error ? error.message : String(error)
-							}`,
+							statusMessage: i18n.t("workspace:statusMessages.presetFailed", {
+								message: error instanceof Error ? error.message : String(error),
+							}),
 						});
 						rerender();
 					});
@@ -1430,9 +1430,9 @@ export const setupInteractionEvents = (
 			void opts?.executePreset?.(presetRecord).catch((error) => {
 				setState({
 					...getState(),
-					statusMessage: `Preset failed: ${
-						error instanceof Error ? error.message : String(error)
-					}`,
+					statusMessage: i18n.t("workspace:statusMessages.presetFailed", {
+						message: error instanceof Error ? error.message : String(error),
+					}),
 				});
 				rerender();
 			});

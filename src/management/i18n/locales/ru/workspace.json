@@ -99,6 +99,7 @@
 		"presetAssetMissing": "Ресурс пресета отсутствует на диске — запуск отключён.",
 		"applyingAnchorPoint": "Применение точки привязки: {{pos}}...",
 		"anchorPointRequested": "Запрошена точка привязки: {{pos}}",
-		"presetFailed": "Сбой пресета: {{message}}"
+		"presetFailed": "Сбой пресета: {{message}}",
+		"widgetAdded": "Добавлено: {{name}}"
 	}
 }
