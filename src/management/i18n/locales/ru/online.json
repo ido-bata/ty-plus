@@ -1,5 +1,109 @@
 {
 	"notification": {
-		"fixtureBadge": "заглушка (автономный макет)"
+		"fixtureBadge": "заглушка (автономный макет)",
+		"fixture": {
+			"welcomeName": "Добро пожаловать в ty-plus",
+			"welcomeSummary": "Спасибо за установку ty-plus! Это уведомление-заглушка, отображаемое, когда runtime не подключён (автономный макет).",
+			"updateName": "Доступно обновление",
+			"updateSummary": "Новая версия может включать улучшенную производительность сетки и исправления ошибок.",
+			"maintenanceName": "Уведомление о обслуживании",
+			"maintenanceSummary": "Может быть запланировано обслуживание сервера; проверьте страницу состояния."
+		}
+	},
+	"gatewayBoot": {
+		"connectivityProbeFailed": "Проверка подключения не удалась после запуска композиции воркера.",
+		"catalogProbeFailed": "Проверка каталога не удалась после запуска композиции воркера.",
+		"runtimeInitFailed": "Не удалось создать рантайм операционного воркера при запуске.",
+		"compositionInitFailed": "Не удалось создать композицию операционного воркера при запуске."
+	},
+	"catalog": {
+		"title": "Библиотека онлайн-пресетов",
+		"searchPlaceholder": "Фильтр по имени, ID, описанию, категории, тегу",
+		"filterPlaceholder": "Фильтр…",
+		"showFilters": "Показать фильтры",
+		"hideFilters": "Скрыть фильтры",
+		"category": "Категория",
+		"tags": "Теги",
+		"allCategories": "Все категории",
+		"clear": "Очистить",
+		"clearAll": "Очистить всё",
+		"clearAllFilters": "Очистить все фильтры",
+		"clearSearch": "Очистить поиск",
+		"clearCategoryFilter": "Очистить фильтр категории",
+		"clearTagSelection": "Очистить выбор тегов",
+		"refreshCatalog": "Обновить каталог",
+		"reloadCatalog": "Перезагрузить каталог",
+		"reloadingCatalog": "Перезагрузка…",
+		"openNotion": "Открыть Notion",
+		"openManualNotion": "Открыть руководство (Notion)",
+		"viewMenu": "Вид",
+		"viewMode": "Режим просмотра",
+		"viewGallery": "Вид «Галерея»",
+		"viewGalleryTitle": "Галерея (Ctrl+колесо для масштаба)",
+		"viewGalleryLabel": "Галерея",
+		"viewCards": "Вид «Карточки»",
+		"viewCardsLabel": "Карточки",
+		"viewList": "Вид «Список»",
+		"viewListLabel": "Список",
+		"tableThumb": "Миниатюра",
+		"tableNameId": "Имя / ID",
+		"tableActions": "Действия",
+		"emptyUnavailable": "Библиотека онлайн-пресетов недоступна.",
+		"emptyNoCatalog": "Онлайн-каталог отсутствует.",
+		"emptyNoMatch": "Нет пресетов, соответствующих фильтру.",
+		"footerCount": "{{filtered}} / {{catalog}} элементов",
+		"footerZoom": "Ctrl+колесо: {{percent}}%",
+		"downloadConfirm": "Скачать этот пресет?",
+		"downloadCancelled": "Загрузка отменена пользователем",
+		"downloadUnavailable": "Загрузка через runtime недоступна (нет подключения к онлайн-транспорту)",
+		"systemPathsUnavailable": "Системные пути недоступны",
+		"invalidDownloadPath": "Недопустимый путь загрузки: {{path}}",
+		"downloadFailed": "Ошибка загрузки: {{message}}",
+		"pluginInstalled": "Плагин установлен. Перезапустите After Effects, чтобы использовать его.",
+		"downloadComplete": "Загрузка завершена.",
+		"downloadedDescription": "[Скачано из каталога] {{description}}",
+		"gatewayBootRetryHint": "{{reason}} — перезагрузите панель, чтобы повторить запуск шлюза",
+		"hideSidePanel": "Скрыть боковую панель",
+		"showSidePanel": "Показать боковую панель",
+		"download": "Скачать",
+		"import": "Импорт",
+		"sync": {
+			"idle": "Облачная синхронизация неактивна",
+			"ok": "ty-plus OK",
+			"failed": "Ошибка облачной синхронизации"
+		},
+		"gatewayBootReason": {
+			"unsupportedTrustMode": "Неподдерживаемый режим доверия operation-worker",
+			"unsupportedPlatform": "Неподдерживаемая платформа хоста",
+			"missingExtensionRoot": "Корень расширения CEP недоступен",
+			"workerRuntimeFailed": "Среда выполнения Worker недоступна",
+			"workerCompositionFailed": "Сбой композиции Worker"
+		}
+	},
+	"notificationCenter": {
+		"title": "Уведомления",
+		"loading": "Загрузка…",
+		"empty": "Нет уведомлений",
+		"toggleContent": "Переключить содержимое",
+		"noContent": "Нет содержимого",
+		"backToList": "Назад к списку",
+		"backToListMenu": "Назад к списку",
+		"refresh": "Обновить",
+		"open": "Открыть",
+		"close": "Закрыть",
+		"markRead": "Пометить прочитанным",
+		"markUnread": "Пометить непрочитанным",
+		"markAsRead": "Пометить прочитанным",
+		"markAsUnread": "Пометить непрочитанным",
+		"generalCategory": "общее"
+	},
+	"notificationContainer": {
+		"dismiss": "Закрыть уведомление"
+	},
+	"publicLink": {
+		"userManual": "Руководство пользователя"
+	},
+	"errors": {
+		"unknownPreset": "Пресет не найден: {{id}}"
 	}
 }

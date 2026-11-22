@@ -26,6 +26,7 @@ import type { CepMenuPayload } from "@/management/dialog/context-menu";
 import { registerCepJsonContextMenuSurface } from "@/management/dialog/context-menu";
 import type { ShellProps } from "@/management/dialog/shell/Layout";
 import { useDialogClose } from "@/management/dialog/useClose";
+import { i18n } from "@/management/i18n/index";
 import { useGatewayHealth } from "@/management/online/runtime-gateway-health";
 import { resolvePresetToolSurfaceIdForPreset } from "@/management/preset/authoring/request";
 import {
@@ -613,16 +614,18 @@ function matchesPresetQuery(preset: Preset, q: string): boolean {
 
 function presetWorkspaceSummary(
 	preset: Preset,
-	presetLoc: ReadonlyMap<string, readonly string[]>,
-	groupLoc: ReadonlyMap<string, readonly string[]>,
-	presetToGroupId: ReadonlyMap<string, string>,
-	groupsById: ReadonlyMap<string, GroupEntry>,
+	presetLoc: ReadonlyMap<string, readonly string[]>, // i18n-exempt: generic type parameter, not UI text
+	groupLoc: ReadonlyMap<string, readonly string[]>, // i18n-exempt: generic type parameter, not UI text
+	presetToGroupId: ReadonlyMap<string, string>, // i18n-exempt: generic type parameter, not UI text
+	groupsById: ReadonlyMap<string, GroupEntry>, // i18n-exempt: generic type parameter, not UI text
 ): string {
 	const own =
 		presetLoc.get(preset.id) ??
 		presetLoc.get(stripKnownIdPrefixes(String(preset.id ?? "").trim()));
 	if (own?.length) {
-		return `Workspace: ${own.join(", ")}`;
+		return i18n.t("presets:listDialog.workspacePlaced", {
+			tags: own.join(", "),
+		});
 	}
 	const gid =
 		presetToGroupId.get(preset.id) ??
@@ -634,10 +637,13 @@ function presetWorkspaceSummary(
 		if (gTags?.length) {
 			const g = groupsById.get(gid);
 			const label = g?.title?.trim() || gid;
-			return `Workspace: ${gTags.join(", ")} (group "${label}")`;
+			return i18n.t("presets:listDialog.workspaceGroupPlaced", {
+				tags: gTags.join(", "),
+				label,
+			});
 		}
 	}
-	return "Workspace: not placed";
+	return i18n.t("presets:listDialog.workspaceNotPlaced");
 }
 
 function groupWorkspaceSummary(
@@ -648,9 +654,11 @@ function groupWorkspaceSummary(
 		groupLoc.get(group.id) ??
 		groupLoc.get(stripKnownIdPrefixes(String(group.id ?? "").trim()));
 	if (tags?.length) {
-		return `Workspace: ${tags.join(", ")}`;
+		return i18n.t("presets:listDialog.workspacePlaced", {
+			tags: tags.join(", "),
+		});
 	}
-	return "Workspace: not placed";
+	return i18n.t("presets:listDialog.workspaceNotPlaced");
 }
 
 function sourceLine(preset: Preset): string {
@@ -696,8 +704,8 @@ function PresetRowActions(props: {
 			<button
 				type="button"
 				className={tinyAct}
-				aria-label="Run preset"
-				title="Run"
+				aria-label={i18n.t("presets:listDialog.runPresetAria")}
+				title={i18n.t("common:actions.run")}
 				onClick={() => onRun(presetId)}
 			>
 				<Icon icon={Play} size={11} />
@@ -705,8 +713,8 @@ function PresetRowActions(props: {
 			<button
 				type="button"
 				className={tinyAct}
-				aria-label="Edit preset"
-				title="Edit"
+				aria-label={i18n.t("presets:listDialog.editPresetAria")}
+				title={i18n.t("common:actions.edit")}
 				onClick={() => void onEdit(presetId)}
 			>
 				<Icon icon={Pencil} size={11} />
@@ -714,8 +722,8 @@ function PresetRowActions(props: {
 			<button
 				type="button"
 				className={tinyAct}
-				aria-label="Delete preset"
-				title="Delete"
+				aria-label={i18n.t("presets:listDialog.deletePresetAria")}
+				title={i18n.t("common:actions.delete")}
 				onClick={() => void onDelete(presetId)}
 			>
 				<Icon icon={Trash2} size={11} />
@@ -735,8 +743,8 @@ function GroupRowActions(props: {
 			<button
 				type="button"
 				className={tinyAct}
-				aria-label="Edit group"
-				title="Edit group"
+				aria-label={i18n.t("presets:listDialog.editGroup")}
+				title={i18n.t("presets:listDialog.editGroup")}
 				onClick={() => onEdit(groupId)}
 			>
 				<Icon icon={Pencil} size={11} />
@@ -744,8 +752,8 @@ function GroupRowActions(props: {
 			<button
 				type="button"
 				className={tinyAct}
-				aria-label="Delete group"
-				title="Delete group"
+				aria-label={i18n.t("presets:listDialog.deleteGroup")}
+				title={i18n.t("presets:listDialog.deleteGroup")}
 				onClick={() => onDelete(groupId)}
 			>
 				<Icon icon={Trash2} size={11} />
@@ -834,7 +842,11 @@ function PresetGroupListBlock(props: {
 						type="button"
 						className={groupToggleButtonClass}
 						aria-expanded={open}
-						aria-label={open ? "Collapse group" : "Expand group"}
+						aria-label={
+							open
+								? i18n.t("presets:listDialog.collapseGroup")
+								: i18n.t("presets:listDialog.expandGroup")
+						}
 						onClick={() => onToggle(group.id)}
 					>
 						<Icon
@@ -950,11 +962,13 @@ function IconNavigateUpCard(props: {
 			type="button"
 			className={iconNavigateUpButtonClass}
 			onClick={onNavigateUp}
-			aria-label="Return to all presets"
+			aria-label={i18n.t("presets:listDialog.returnToAllPresets")}
 			title={
 				contextLabel
-					? `Leave group "${contextLabel}" and return to the list`
-					: "Return to list"
+					? i18n.t("presets:listDialog.leaveGroupTitle", {
+							name: contextLabel,
+						})
+					: i18n.t("presets:listDialog.returnToListTitle")
 			}
 		>
 			<div
@@ -965,7 +979,9 @@ function IconNavigateUpCard(props: {
 				</div>
 			</div>
 			<div className={iconNavigateUpTitleClass}>
-				<div className={iconNavigateUpTitleTextClass}>All presets</div>
+				<div className={iconNavigateUpTitleTextClass}>
+					{i18n.t("presets:listDialog.allPresets")}
+				</div>
 			</div>
 		</button>
 	);
@@ -993,8 +1009,14 @@ function IconCatalogGroupCard(props: {
 						ev.preventDefault();
 						onOpen();
 					}}
-					aria-label={`Open group ${group.title ?? group.id}`}
-					title={`${group.title?.trim() || group.id} (double-click to open)`}
+					aria-label={i18n.t("presets:listDialog.openGroupAria", {
+						title: group.title ?? group.id,
+						defaultValue: "Open group {{title}}",
+					})}
+					title={i18n.t("presets:listDialog.openGroupHint", {
+						title: group.title?.trim() || group.id,
+						defaultValue: "{{title}} (double-click to open)",
+					})}
 				>
 					<div className={iconGroupButtonInnerClass}>
 						<GroupHeaderGlyph group={group} />
@@ -1012,7 +1034,7 @@ function IconCatalogGroupCard(props: {
 					<button
 						type="button"
 						className={tinyAct}
-						aria-label="Edit group"
+						aria-label={i18n.t("presets:listDialog.editGroup")}
 						onClick={(e) => {
 							e.stopPropagation();
 							onEdit();
@@ -1023,7 +1045,7 @@ function IconCatalogGroupCard(props: {
 					<button
 						type="button"
 						className={tinyAct}
-						aria-label="Delete group"
+						aria-label={i18n.t("presets:listDialog.deleteGroup")}
 						onClick={(e) => {
 							e.stopPropagation();
 							onDelete();
@@ -1052,7 +1074,9 @@ function IconPresetCard(props: {
 				type="button"
 				className={cx(iconTileMediaClass(tileAspect), iconPresetButtonClass)}
 				onClick={() => onRun(preset.id)}
-				aria-label={`Run ${preset.title || preset.id}`}
+				aria-label={i18n.t("presets:listDialog.runPresetNamed", {
+					name: preset.title || preset.id,
+				})}
 			>
 				<div className={iconPresetButtonInnerClass}>
 					<PresetGlyphById
@@ -1074,7 +1098,7 @@ function IconPresetCard(props: {
 					<button
 						type="button"
 						className={tinyAct}
-						aria-label="Edit"
+						aria-label={i18n.t("common:actions.edit")}
 						onClick={(e) => {
 							e.stopPropagation();
 							void onEdit(preset.id);
@@ -1085,7 +1109,7 @@ function IconPresetCard(props: {
 					<button
 						type="button"
 						className={tinyAct}
-						aria-label="Delete"
+						aria-label={i18n.t("common:actions.delete")}
 						onClick={(e) => {
 							e.stopPropagation();
 							void onDelete(preset.id);
@@ -1686,14 +1710,14 @@ export function PresetsDialog(): JSX.Element {
 			return [
 				{
 					id: CTX.iconTileSquare,
-					label: "Tile shape · 1:1 square",
+					label: i18n.t("contextMenu:presetList.tileShapeSquare"),
 					checkable: true,
 					checked: squareOn,
 					enabled: !squareOn,
 				},
 				{
 					id: CTX.iconTileWide,
-					label: "Tile shape · 16:9 wide",
+					label: i18n.t("contextMenu:presetList.tileShapeWide"),
 					checkable: true,
 					checked: wideOn,
 					enabled: !wideOn,
@@ -1703,7 +1727,10 @@ export function PresetsDialog(): JSX.Element {
 
 		const defaultSurfaceMenu = (): CepMenuPayload => {
 			const menu: CepMenuPayload["menu"] = [
-				{ id: CTX.bodyReload, label: "Reload preset catalog" },
+				{
+					id: CTX.bodyReload,
+					label: i18n.t("contextMenu:presetList.reloadCatalog"),
+				},
 			];
 			if (viewMode === "icons") {
 				menu.push(...aspectMenu());
@@ -1724,18 +1751,33 @@ export function PresetsDialog(): JSX.Element {
 				}
 				const enc = encodeURIComponent(id);
 				const menu: CepMenuPayload["menu"] = [
-					{ id: CTX.bodyReload, label: "Reload preset list" },
+					{
+						id: CTX.bodyReload,
+						label: i18n.t("contextMenu:presetList.reloadList"),
+					},
 				];
 				if (viewMode === "icons") {
 					menu.push(...aspectMenu());
 					menu.push({ label: "---" });
 				}
 				menu.push(
-					{ id: `${CTX.run}${enc}`, label: "Run" },
-					{ id: `${CTX.edit}${enc}`, label: "Edit" },
-					{ id: `${CTX.del}${enc}`, label: "Delete" },
+					{
+						id: `${CTX.run}${enc}`,
+						label: i18n.t("contextMenu:preset.run"),
+					},
+					{
+						id: `${CTX.edit}${enc}`,
+						label: i18n.t("contextMenu:preset.edit"),
+					},
+					{
+						id: `${CTX.del}${enc}`,
+						label: i18n.t("contextMenu:preset.delete"),
+					},
 					{ label: "---" },
-					{ id: `${CTX.copy}${enc}`, label: "Copy preset ID" },
+					{
+						id: `${CTX.copy}${enc}`,
+						label: i18n.t("contextMenu:presetList.copyPresetId"),
+					},
 				);
 				return { menu };
 			}
@@ -1747,22 +1789,34 @@ export function PresetsDialog(): JSX.Element {
 				}
 				const enc = encodeURIComponent(gid);
 				const menu: CepMenuPayload["menu"] = [
-					{ id: CTX.bodyReload, label: "Reload preset list" },
+					{
+						id: CTX.bodyReload,
+						label: i18n.t("contextMenu:presetList.reloadList"),
+					},
 				];
 				if (viewMode === "icons") {
 					menu.push(...aspectMenu());
 					menu.push({ label: "---" });
 				}
 				menu.push(
-					{ id: `${CTX.groupEdit}${enc}`, label: "Edit group" },
-					{ id: `${CTX.groupDel}${enc}`, label: "Delete group" },
+					{
+						id: `${CTX.groupEdit}${enc}`,
+						label: i18n.t("contextMenu:presetList.editGroup"),
+					},
+					{
+						id: `${CTX.groupDel}${enc}`,
+						label: i18n.t("contextMenu:presetList.deleteGroup"),
+					},
 				);
 				return { menu };
 			}
 			if (viewMode === "icons" && t.closest?.("[data-preset-icon-view-port]")) {
 				return {
 					menu: [
-						{ id: CTX.bodyReload, label: "Reload preset list" },
+						{
+							id: CTX.bodyReload,
+							label: i18n.t("contextMenu:presetList.reloadList"),
+						},
 						...aspectMenu(),
 					],
 				};
@@ -1770,20 +1824,32 @@ export function PresetsDialog(): JSX.Element {
 			if (t.closest?.("[data-preset-list-search]")) {
 				return {
 					menu: [
-						{ id: CTX.bodyReload, label: "Reload preset list" },
+						{
+							id: CTX.bodyReload,
+							label: i18n.t("contextMenu:presetList.reloadList"),
+						},
 						{ label: "---" },
-						{ id: CTX.searchClear, label: "Clear search" },
-						{ id: CTX.searchPaste, label: "Paste into search" },
+						{
+							id: CTX.searchClear,
+							label: i18n.t("contextMenu:presetList.clearSearch"),
+						},
+						{
+							id: CTX.searchPaste,
+							label: i18n.t("contextMenu:presetList.pasteIntoSearch"),
+						},
 					],
 				};
 			}
 			if (t.closest?.("[data-preset-list-toolbar]")) {
 				return {
 					menu: [
-						{ id: CTX.bodyReload, label: "Reload preset list" },
+						{
+							id: CTX.bodyReload,
+							label: i18n.t("contextMenu:presetList.reloadList"),
+						},
 						{
 							id: CTX.toolbarToggle,
-							label: "Switch list / icon view",
+							label: i18n.t("contextMenu:presetList.toggleView"),
 						},
 					],
 				};
@@ -1791,8 +1857,14 @@ export function PresetsDialog(): JSX.Element {
 			if (t.closest?.("header[data-preset-list-chrome]")) {
 				return {
 					menu: [
-						{ id: CTX.headerClose, label: "Close window" },
-						{ id: CTX.bodyReload, label: "Reload preset catalog" },
+						{
+							id: CTX.headerClose,
+							label: i18n.t("contextMenu:presetList.closeWindow"),
+						},
+						{
+							id: CTX.bodyReload,
+							label: i18n.t("contextMenu:presetList.reloadCatalog"),
+						},
 					],
 				};
 			}
@@ -1918,7 +1990,7 @@ export function PresetsDialog(): JSX.Element {
 			return (
 				<div className={errorStateClass} role="alert">
 					<div className={errorTitleClass}>
-						Failed to load the local catalog
+						{i18n.t("presets:listDialog.loadFailedTitle")}
 					</div>
 					<div className={errorDetailClass}>{loadError}</div>
 					<button
@@ -1926,33 +1998,47 @@ export function PresetsDialog(): JSX.Element {
 						className={errorRetryClass}
 						onClick={() => void loadEverything()}
 					>
-						Try again
+						{i18n.t("presets:listDialog.tryAgain")}
 					</button>
 				</div>
 			);
 		}
 		if (loadPhase === "idle" || loadPhase === "reading") {
-			return <p className={emptyStateClass}>Loading local catalog…</p>;
+			return (
+				<p className={emptyStateClass}>
+					{i18n.t("presets:listDialog.loadingCatalog")}
+				</p>
+			);
 		}
 		if (loadPhase !== "loaded") {
 			return null;
 		}
 		if (presets.length === 0) {
-			return <p className={emptyStateClass}>No presets saved locally yet</p>;
+			return (
+				<p className={emptyStateClass}>
+					{i18n.t("presets:listDialog.emptyCatalog")}
+				</p>
+			);
 		}
-		return <p className={emptyStateClass}>No matching presets</p>;
+		return (
+			<p className={emptyStateClass}>
+				{i18n.t("presets:listDialog.noMatches")}
+			</p>
+		);
 	};
 
 	const cloudNotice =
 		gatewayHealth.state === "live" ? null : (
 			<p className={cloudNoticeClass} data-preset-list-cloud-notice>
 				<span className={css({ fontWeight: "medium", flexShrink: "0" })}>
-					Cloud offline
+					{i18n.t("presets:listDialog.cloudOffline")}
 				</span>
 				<span>
 					{gatewayHealth.state === "degraded"
-						? `${gatewayHealth.failure.message} — showing the local catalog only.`
-						: "Cloud features are not active in this session — showing the local catalog only."}
+						? i18n.t("presets:listDialog.cloudDegradedDetail", {
+								message: gatewayHealth.failure.message,
+							})
+						: i18n.t("presets:listDialog.cloudOfflineDetail")}
 				</span>
 			</p>
 		);
@@ -1963,15 +2049,19 @@ export function PresetsDialog(): JSX.Element {
 	const groupsNotice = groupsError ? (
 		<p className={cloudNoticeClass} data-preset-list-groups-notice>
 			<span className={css({ fontWeight: "medium", flexShrink: "0" })}>
-				Groups unavailable
+				{i18n.t("presets:listDialog.groupsUnavailable")}
 			</span>
-			<span>{groupsError} — presets are listed without grouping.</span>
+			<span>
+				{i18n.t("presets:listDialog.groupsErrorDetail", {
+					error: groupsError,
+				})}
+			</span>
 		</p>
 	) : null;
 
 	return (
 		<DialogShell
-			title="Preset List"
+			title={i18n.t("presets:listDialog.title")}
 			surfaceId={PRESETS_DIALOG_SURFACE_ID}
 			modifier="wsd-root--presets"
 			contentClassName={contentClass}
@@ -2029,7 +2119,7 @@ export function PresetsDialog(): JSX.Element {
 								"--preset-icon-cell": `${ICON_CELL_BASE_REM * iconGridScale}rem`,
 							} as CSSProperties
 						}
-						title="Hold Ctrl and scroll to resize the icon grid"
+						title={i18n.t("presets:listDialog.gridResizeHint")}
 					>
 						{iconBrowse === "root" ? (
 							visibleCount === 0 && loadPhase !== "streaming" ? (

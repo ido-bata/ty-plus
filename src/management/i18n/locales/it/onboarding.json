@@ -13,7 +13,8 @@
 		"support": {
 			"label": "Posizione",
 			"title": "Seleziona Cartella AE",
-			"body": "Scegli la cartella dell'applicazione After Effects. Su Windows è la directory Support Files; su macOS è la cartella dell'app contenente Presets."
+			"body": "Scegli la cartella dell'applicazione After Effects. Su Windows è la directory Support Files; su macOS è la cartella dell'app contenente Presets.",
+			"aeAppFolderHint": "Cartella dell'app AE rilevata — il passaggio delle sottocartelle verrà saltato."
 		},
 		"subfolders": {
 			"label": "Cartelle",
@@ -87,13 +88,24 @@
 		"finishErrorNextActionChooseTrusted": "Il file delle impostazioni di onboarding non conteneva un Support Root. Riavvia l'onboarding in After Effects.",
 		"finishErrorNextActionAdjust": "Non è stato possibile salvare le impostazioni nel Support Root di AE. Verifica che il percorso sia raggiungibile e che After Effects abbia i permessi di scrittura, quindi riprova.",
 		"finishErrorNextActionRetry": "L'UAC di Windows è stato richiesto ma la scrittura con privilegi elevati non è riuscita. Fai clic su Retry per richiamare di nuovo la finestra UAC, oppure esegui After Effects come amministratore.",
-		"finishErrorRetryWithElevation": "Riprova come amministratore"
+		"finishErrorRetryWithElevation": "Riprova come amministratore",
+		"supportAndSubfoldersRequired": "Sono richiesti il percorso Support e le sottocartelle di onboarding.",
+		"appRootUnresolved": "Ty Plus: impossibile risolvere la cartella dell'applicazione After Effects per ty-plus-init.json. Apri il pannello all'interno di After Effects e riprova.",
+		"initWriteFailed": "Scrittura di ty-plus-init.json in {{path}} non riuscita: {{message}}",
+		"elevationConsentDenied": "La richiesta di consenso UAC è stata chiusa (elevazione amministratore non concessa).",
+		"innerExitCodeNote": " Codice di uscita dello script interno: {{code}}.",
+		"elevationWriteFailedStderr": "La scrittura elevata ha segnalato un errore.{{exitCodeNote}} stderr dello script interno: {{stderr}}",
+		"elevationWriteFailed": "La scrittura elevata ha segnalato un errore.{{exitCodeNote}}"
 	},
 	"actions": {
 		"back": "Indietro",
 		"next": "Avanti",
 		"finish": "Fine",
 		"toggleFullscreen": "Espandi a schermo intero",
-		"toggleModal": "Torna alla finestra"
+		"toggleModal": "Torna alla finestra",
+		"openManual": "Apri manuale"
+	},
+	"syncStatus": {
+		"localUpdate": "Aggiornamento locale"
 	}
 }

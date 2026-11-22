@@ -121,7 +121,7 @@ const browserEmptyClass = css({
 export function FolderDirectoryPicker({
 	value,
 	onChange,
-	label = "Folder browser",
+	label,
 	selectionMode = "folders",
 	selectedPaths,
 	onToggleSelected,
@@ -249,7 +249,9 @@ export function FolderDirectoryPicker({
 
 	return (
 		<div className={columnClass}>
-			<span className={labelClass}>{label}</span>
+			<span className={labelClass}>
+				{label ?? t("folderDirectoryPicker.label")}
+			</span>
 			{error ? <div className={errorClass}>{error}</div> : null}
 
 			{/* Root segment (Presets/Scripts/Plug-ins/Other) */}

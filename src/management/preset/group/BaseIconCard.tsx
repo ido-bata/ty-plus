@@ -1,4 +1,5 @@
 import type { JSX } from "react";
+import { i18n } from "@/management/i18n/index";
 import { readUserHomeOrFallback } from "@/management/preset/catalog-add/browse-start-dir";
 import type { Preset } from "@/management/preset/contract";
 import { PresetIconEditor } from "@/management/preset/icon/Editor";
@@ -45,13 +46,15 @@ export function BaseIconCard({
 	return (
 		<div className={cardClass}>
 			<div className={headerClass}>
-				<span className={labelClass}>Base Icon (default for all presets)</span>
+				<span className={labelClass}>
+					{i18n.t("presets:group.baseIcon.heading")}
+				</span>
 			</div>
 			<div className={editorHostClass}>
 				<PresetIconEditor
 					draft={baseIconDraft}
 					onChange={onBaseIconDraftChange}
-					label="Base icon"
+					label={i18n.t("presets:group.baseIcon.label")}
 					browseDir={readUserHomeOrFallback()}
 					framed={true}
 					preview={
@@ -60,6 +63,7 @@ export function BaseIconCard({
 								{
 									id: "base-icon-preview",
 									type: "preset" as const,
+									// i18n-exempt: synthetic preset record title for the glyph preview, never rendered as a label
 									title: "Preview",
 									filePath: "ty-plus://base-icon-preview",
 									icon: presetIconDraftToPresetIcon(baseIconDraft) ?? {

@@ -18,6 +18,7 @@ type SystemPaths = {
 };
 
 import { evalScript } from "@/management/ae/cep/eval";
+import { i18n } from "@/management/i18n/index";
 import {
 	mapCategoryToType,
 	resolveDownloadFileLayout,
@@ -110,21 +111,22 @@ export const downloadAndInstallPreset = async (
 	options?: DownloadOptions,
 ): Promise<InstallResult> => {
 	// Ask confirmation before downloading
-	const confirmed = await evalScript(win, "confirm('Download this preset?')");
+	const confirmed = await evalScript(
+		win,
+		`confirm(${JSON.stringify(i18n.t("online:catalog.downloadConfirm"))})`,
+	);
 	if (String(confirmed).trim() !== "true") {
-		throw new Error("Download cancelled by user");
+		throw new Error(i18n.t("online:catalog.downloadCancelled"));
 	}
 
 	const { gateway, presetRepository, resolveSystemPaths } = getDataServices();
 	if (!gateway.downloadPreset) {
-		throw new Error(
-			"Runtime download is unavailable (no online transport connected)",
-		);
+		throw new Error(i18n.t("online:catalog.downloadUnavailable"));
 	}
 
 	const systemPaths = resolveSystemPaths();
 	if (!systemPaths) {
-		throw new Error("System paths not available");
+		throw new Error(i18n.t("online:catalog.systemPathsUnavailable"));
 	}
 	const isMacOS = systemPaths.operatingSystem === "mac";
 
@@ -149,7 +151,9 @@ export const downloadAndInstallPreset = async (
 		effectiveType,
 	);
 	if (!fullPath || fullPath.includes("undefined")) {
-		throw new Error(`Invalid download path: ${fullPath}`);
+		throw new Error(
+			i18n.t("online:catalog.invalidDownloadPath", { path: fullPath }),
+		);
 	}
 
 	// The local record id is generated here and reused as the wire record id,
@@ -167,7 +171,11 @@ export const downloadAndInstallPreset = async (
 			title,
 			filePath: fullPath,
 			...(options?.description
-				? { description: `[Downloaded from catalog] ${options.description}` }
+				? {
+						description: i18n.t("online:catalog.downloadedDescription", {
+							description: options.description,
+						}),
+					}
 				: {}),
 			...(category ? { category } : {}),
 			sourceCatalogId: presetId,
@@ -184,7 +192,11 @@ export const downloadAndInstallPreset = async (
 		// lookups match on it.
 		data: { sourceCatalogId: presetId },
 		...(options?.description
-			? { description: `[Downloaded from catalog] ${options.description}` }
+			? {
+					description: i18n.t("online:catalog.downloadedDescription", {
+						description: options.description,
+					}),
+				}
 			: {}),
 		// Description image is stored as a URL reference, not a local
 		// download — the gallery already hosts the asset.
@@ -196,14 +208,11 @@ export const downloadAndInstallPreset = async (
 	await presetRepository.upsertLocalPreset(preset);
 
 	// Show completion alert
-	if (effectiveType === "plugin") {
-		await evalScript(
-			win,
-			"alert('Plugin installed. Restart After Effects to use it.')",
-		);
-	} else {
-		await evalScript(win, "alert('Download complete.')");
-	}
+	const alertMessage =
+		effectiveType === "plugin"
+			? i18n.t("online:catalog.pluginInstalled")
+			: i18n.t("online:catalog.downloadComplete");
+	await evalScript(win, `alert(${JSON.stringify(alertMessage)})`);
 
 	return { preset };
 };

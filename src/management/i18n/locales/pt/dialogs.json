@@ -65,7 +65,16 @@
 			"saved": "Salvo",
 			"loadFailed": "Falha ao carregar: {{message}}",
 			"saveFailed": "Falha ao salvar",
-			"preview": "Pré-visualização"
+			"preview": "Pré-visualização",
+			"contextMenu": {
+				"selectLayer": "Selecionar camada",
+				"enableLayer": "Ativar camada",
+				"disableLayer": "Desativar camada",
+				"layerType": "Tipo de camada",
+				"order": "Ordem",
+				"addLayer": "Adicionar camada",
+				"clearAllLayers": "Limpar todas as camadas"
+			}
 		},
 		"widgetSelector": {
 			"title": "Adicionar widget",
@@ -75,5 +84,17 @@
 			"notInPanelYet": "Este tipo de widget ainda não tem interface de painel — não pode ser colocado.",
 			"footerHint": "Itens acinzentados ainda não estão implementados no renderizador do painel. Os outros fecham este diálogo após enviar a solicitação."
 		}
-	}
+	},
+	"unknownDialog": {
+		"title": "Superfície de diálogo desconhecida",
+		"noBodyForSurfaceId": "Nenhum corpo de diálogo encontrado para surfaceId:",
+		"copySurfaceId": "Copiar id de superfície"
+	},
+	"probe": {
+		"title": "Sonda",
+		"bodyForSurfaceId": "Diálogo de sonda para surfaceId:",
+		"logSurfaceId": "Registrar id de superfície",
+		"copySurfaceId": "Copiar id de superfície"
+	},
+	"loading": "Carregando…"
 }

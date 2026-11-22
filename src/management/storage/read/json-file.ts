@@ -77,6 +77,7 @@ const resolveJsonReadFileSystem = async (
 					readFileSync(String(path), encoding as "utf8"),
 			};
 		}
+		// i18n-exempt: internal diagnostic — not rendered as UI copy
 		throw new Error(
 			"CEP Node fs read API is not available in this host runtime.",
 		);

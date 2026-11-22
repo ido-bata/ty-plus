@@ -80,7 +80,7 @@ function MenuPanelContent({
 				})}
 				role="separator"
 				tabIndex={0}
-				aria-label="Menu section separator"
+				aria-label={t("widgets:menu.separatorAria")}
 			/>
 			{hasMultiPresetSelection ? (
 				<>
@@ -131,7 +131,7 @@ function MenuPanelContent({
 						})}
 						role="separator"
 						tabIndex={0}
-						aria-label="Menu section separator"
+						aria-label={t("widgets:menu.separatorAria")}
 					/>
 				</>
 			) : null}
@@ -150,7 +150,7 @@ function MenuPanelContent({
 				})}
 				role="separator"
 				tabIndex={0}
-				aria-label="Menu section separator"
+				aria-label={t("widgets:menu.separatorAria")}
 			/>
 			<Row
 				action={CTX_MENU_IDS.addWidget}
@@ -173,7 +173,7 @@ function MenuPanelContent({
 				})}
 				role="separator"
 				tabIndex={0}
-				aria-label="Menu section separator"
+				aria-label={t("widgets:menu.separatorAria")}
 			/>
 			{dialogItems.map((item) => (
 				<Row

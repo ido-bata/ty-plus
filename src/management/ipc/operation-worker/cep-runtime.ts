@@ -29,12 +29,13 @@ export class CepNodeRuntimeError extends Error {
 const requireModule = (win: Window, moduleName: string): unknown => {
 	const cepNode = (win as CepNodeWindow).cep_node;
 	if (typeof cepNode?.require !== "function") {
-		throw new CepNodeRuntimeError("CEP Node require is unavailable");
+		throw new CepNodeRuntimeError("CEP Node require is unavailable"); // i18n-exempt: internal diagnostic — not rendered as UI copy
 	}
 	try {
 		return (cepNode.require as CepNodeRequire)(moduleName);
 	} catch {
 		throw new CepNodeRuntimeError(
+			// i18n-exempt: internal diagnostic — not rendered as UI copy
 			`CEP Node module is unavailable: ${moduleName}`,
 		);
 	}
@@ -49,14 +50,14 @@ const requireFunction = <T extends (...args: never[]) => unknown>(
 		typeof module !== "object" ||
 		typeof (module as Record<string, unknown>)[name] !== "function"
 	) {
-		throw new CepNodeRuntimeError(`CEP Node module export is invalid: ${name}`);
+		throw new CepNodeRuntimeError(`CEP Node module export is invalid: ${name}`); // i18n-exempt: internal diagnostic — not rendered as UI copy
 	}
 	return (module as Record<string, unknown>)[name] as T;
 };
 
 const adaptFileStats = (value: unknown): WorkerFileStats => {
 	if (!value || typeof value !== "object") {
-		throw new CepNodeRuntimeError("CEP Node file metadata is invalid");
+		throw new CepNodeRuntimeError("CEP Node file metadata is invalid"); // i18n-exempt: internal diagnostic — not rendered as UI copy
 	}
 	const record = value as Record<string, unknown>;
 	if (
@@ -64,7 +65,7 @@ const adaptFileStats = (value: unknown): WorkerFileStats => {
 		typeof record.isFile !== "function" ||
 		typeof record.isSymbolicLink !== "function"
 	) {
-		throw new CepNodeRuntimeError("CEP Node file metadata is invalid");
+		throw new CepNodeRuntimeError("CEP Node file metadata is invalid"); // i18n-exempt: internal diagnostic — not rendered as UI copy
 	}
 	return {
 		size: record.size,
@@ -76,7 +77,7 @@ const adaptFileStats = (value: unknown): WorkerFileStats => {
 
 const adaptFileHandle = (value: unknown): WorkerFileHandle => {
 	if (!value || typeof value !== "object") {
-		throw new CepNodeRuntimeError("CEP Node file handle is invalid");
+		throw new CepNodeRuntimeError("CEP Node file handle is invalid"); // i18n-exempt: internal diagnostic — not rendered as UI copy
 	}
 	const record = value as Record<string, unknown>;
 	if (
@@ -84,7 +85,7 @@ const adaptFileHandle = (value: unknown): WorkerFileHandle => {
 		typeof record.stat !== "function" ||
 		typeof record.close !== "function"
 	) {
-		throw new CepNodeRuntimeError("CEP Node file handle is invalid");
+		throw new CepNodeRuntimeError("CEP Node file handle is invalid"); // i18n-exempt: internal diagnostic — not rendered as UI copy
 	}
 	return {
 		read: async (buffer, offset, length, position) => {
@@ -97,7 +98,7 @@ const adaptFileHandle = (value: unknown): WorkerFileHandle => {
 				) => Promise<{ bytesRead?: unknown }>
 			)(buffer, offset, length, position);
 			if (!result || typeof result.bytesRead !== "number") {
-				throw new CepNodeRuntimeError("CEP Node read result is invalid");
+				throw new CepNodeRuntimeError("CEP Node read result is invalid"); // i18n-exempt: internal diagnostic — not rendered as UI copy
 			}
 			return { bytesRead: result.bytesRead };
 		},
@@ -142,7 +143,7 @@ export const createCepOperationWorkerRuntime = (
 	const bufferValue =
 		directBuffer ?? (isRecord(bufferModule) ? bufferModule.Buffer : undefined);
 	if (!isRecord(bufferValue) && typeof bufferValue !== "function") {
-		throw new CepNodeRuntimeError("CEP Node Buffer is unavailable");
+		throw new CepNodeRuntimeError("CEP Node Buffer is unavailable"); // i18n-exempt: internal diagnostic — not rendered as UI copy
 	}
 	const bufferRecord = bufferValue as Record<string, unknown>;
 	if (
@@ -150,10 +151,10 @@ export const createCepOperationWorkerRuntime = (
 		typeof bufferRecord.allocUnsafe !== "function" ||
 		typeof bufferRecord.from !== "function"
 	) {
-		throw new CepNodeRuntimeError("CEP Node Buffer shape is invalid");
+		throw new CepNodeRuntimeError("CEP Node Buffer shape is invalid"); // i18n-exempt: internal diagnostic — not rendered as UI copy
 	}
 	if (!isRecord(fsModule) || !isRecord(fsModule.promises)) {
-		throw new CepNodeRuntimeError("CEP Node fs.promises is unavailable");
+		throw new CepNodeRuntimeError("CEP Node fs.promises is unavailable"); // i18n-exempt: internal diagnostic — not rendered as UI copy
 	}
 	const promises = fsModule.promises;
 	const readFile = requireFunction<
@@ -194,14 +195,14 @@ export const createCepOperationWorkerRuntime = (
 		) => WorkerChild
 	>(childProcessModule, "spawn");
 	if (!isRecord(pathModule)) {
-		throw new CepNodeRuntimeError("CEP Node path module is invalid");
+		throw new CepNodeRuntimeError("CEP Node path module is invalid"); // i18n-exempt: internal diagnostic — not rendered as UI copy
 	}
 	const sep = pathRecord.sep;
 	if (typeof sep !== "string") {
-		throw new CepNodeRuntimeError("CEP Node path.sep is unavailable");
+		throw new CepNodeRuntimeError("CEP Node path.sep is unavailable"); // i18n-exempt: internal diagnostic — not rendered as UI copy
 	}
 	if (nodePlatform !== "win32" && nodePlatform !== "darwin") {
-		throw new CepNodeRuntimeError("CEP Node process.platform is invalid");
+		throw new CepNodeRuntimeError("CEP Node process.platform is invalid"); // i18n-exempt: internal diagnostic — not rendered as UI copy
 	}
 	const runtime: OperationWorkerRuntime = {
 		fileSystem: {
@@ -224,7 +225,7 @@ export const createCepOperationWorkerRuntime = (
 				typeof hash.update !== "function" ||
 				typeof hash.digest !== "function"
 			) {
-				throw new CepNodeRuntimeError("CEP Node crypto hash is invalid");
+				throw new CepNodeRuntimeError("CEP Node crypto hash is invalid"); // i18n-exempt: internal diagnostic — not rendered as UI copy
 			}
 			const result = {
 				update: (data: Buffer) => {
@@ -240,7 +241,7 @@ export const createCepOperationWorkerRuntime = (
 			const bytes = randomBytes(16);
 			const value = bytes.toString("hex");
 			if (bytes.length !== 16 || !/^[0-9a-f]{32}$/iu.test(value)) {
-				throw new CepNodeRuntimeError("CEP Node crypto.randomBytes is invalid");
+				throw new CepNodeRuntimeError("CEP Node crypto.randomBytes is invalid"); // i18n-exempt: internal diagnostic — not rendered as UI copy
 			}
 			return `${value.slice(0, 8)}-${value.slice(8, 12)}-4${value.slice(13, 16)}-8${value.slice(17, 20)}-${value.slice(20)}`;
 		},

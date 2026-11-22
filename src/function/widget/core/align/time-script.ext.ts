@@ -28,7 +28,7 @@ const TEMPLATE = `(function(){
     var selected = comp.selectedLayers;
     if (!selected || selected.length < 1) return "no layer";
     var dur = comp.duration;
-    app.beginUndoGroup("ty-plus time align");
+    app.beginUndoGroup(__UNDO_GROUP__);
     try {
       if (COMP_TIME && (ACTION === "align-start" || ACTION === "align-end" || ACTION === "align-duration")) {
         if (ACTION === "align-start") {
@@ -117,8 +117,8 @@ const TEMPLATE = `(function(){
 export const buildScriptFromTemplate = (
 	action: string,
 	compTime: boolean,
+	undoGroupName = "ty-plus time align",
 ): string =>
-	TEMPLATE.replace("__ACTION__", action).replace(
-		"__COMP_TIME__",
-		compTime ? "true" : "false",
-	);
+	TEMPLATE.replace("__ACTION__", action)
+		.replace("__COMP_TIME__", compTime ? "true" : "false")
+		.replace("__UNDO_GROUP__", () => JSON.stringify(undoGroupName));

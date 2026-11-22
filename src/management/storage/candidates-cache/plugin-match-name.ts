@@ -33,6 +33,7 @@ export function resolveEffectMatchName(
 	const key = normalizePathKey(filePath);
 	const hit = candidates.find((c) => normalizePathKey(c.filePath) === key);
 	if (!hit) {
+		// i18n-exempt: internal diagnostic — not rendered as UI copy
 		throw new Error(
 			`No catalog matchName for plugin: ${filePath}. Rebuild the plugin candidates cache and try again.`,
 		);

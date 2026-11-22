@@ -3,6 +3,8 @@
  * React-friendly version using a simple pub/sub pattern for React to render via Portal.
  */
 
+import { i18n } from "@/management/i18n/index";
+
 export type NotificationType = "info" | "warning" | "error";
 
 export type NotificationOptions = {
@@ -124,30 +126,28 @@ const showInfo = (message: string, options?: NotificationOptions): string =>
 
 /** Convert AppError to user-friendly notification message. */
 const notifyError = (error: { code?: string; message?: string }): string => {
-	let message = error.message || "An error occurred";
+	let message = error.message || i18n.t("common:errors.notify.generic");
 
 	if (error.code) {
 		switch (error.code) {
 			case "FS_PERMISSION":
-				message = "Permission denied. Please check file/folder permissions.";
+				message = i18n.t("common:errors.notify.fsPermission");
 				break;
 			case "FS_NOT_FOUND":
-				message =
-					"File or folder not found. It may have been moved or deleted.";
+				message = i18n.t("common:errors.notify.fsNotFound");
 				break;
 			case "FS_CORRUPTED":
-				message =
-					"Data file is corrupted and has been backed up. Please retry.";
+				message = i18n.t("common:errors.notify.fsCorrupted");
 				break;
 			case "AE_EVAL_FAILED":
-				message = "After Effects command failed. Try again or restart AE.";
+				message = i18n.t("common:errors.notify.aeEvalFailed");
 				break;
 			case "AE_NOT_AVAILABLE":
-				message = "After Effects connection lost. Please restart the panel.";
+				message = i18n.t("common:errors.notify.aeNotAvailable");
 				break;
 			case "NETWORK":
 			case "NETWORK_TIMEOUT":
-				message = "Network error. Please check your connection.";
+				message = i18n.t("common:errors.notify.network");
 				break;
 			default:
 				break;

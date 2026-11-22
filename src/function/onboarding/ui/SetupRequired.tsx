@@ -3,6 +3,7 @@ import { Animation } from "@/function/onboarding/ui/Animation";
 import { useCep } from "@/management/ae/cep/contexts/CepContext";
 import { registerCepJsonContextMenuSurface } from "@/management/dialog/context-menu";
 import { useTranslation } from "@/management/i18n/Context";
+import { i18n } from "@/management/i18n/index";
 import { usePublicLink } from "@/management/online/public-link/usePublicLink";
 import { Button } from "@/shared";
 import { css } from "@/styled-system/css";
@@ -90,12 +91,12 @@ export function SetupRequired(): JSX.Element {
 				menu: [
 					{
 						id: "ty.ctx.setup-required.open-manual",
-						label: "Open Manual",
+						label: i18n.t("onboarding:actions.openManual"),
 						enabled: manualUrl != null,
 					},
 					{
 						id: "ty.ctx.setup-required.refresh",
-						label: "Refresh",
+						label: i18n.t("common:actions.refresh"),
 					},
 				],
 			}),

@@ -25,6 +25,7 @@ import { createCepHostExecutor } from "@/management/ae/cep/host-executor";
 import { detectCepHostCode } from "@/management/ae/cep/runtime";
 import { importFile as importAeFile } from "@/management/ae/file-import";
 import { readGroupJson } from "@/management/catalog/json-files";
+import { i18n } from "@/management/i18n/index";
 import { notificationStore } from "@/management/online/notification/service";
 import {
 	CatalogBrowserShell,
@@ -88,7 +89,13 @@ import type { FileBrowserBrowseMode, FileBrowserFilter } from "./types";
 
 async function resolvePresetForRun(presetId: string): Promise<Preset> {
 	const preset = await getPreset(presetId);
-	if (!preset) throw new Error(`Preset not found: ${presetId}`);
+	if (!preset) {
+		throw new Error(
+			i18n.t("widgets:directoryBrowser.actions.presetNotFound", {
+				presetId,
+			}),
+		);
+	}
 	return preset;
 }
 
@@ -2147,7 +2154,9 @@ export function DirectoryBrowserWidget({
 									<span
 										className={css({ height: "7", width: "7", flexShrink: 0 })}
 									/>
-									<span className={listHeaderNameClass}>Name</span>
+									<span className={listHeaderNameClass}>
+										{t("directoryBrowser.listHeader.name")}
+									</span>
 									<span
 										className={css({ height: "5", width: "5", flexShrink: 0 })}
 										aria-hidden

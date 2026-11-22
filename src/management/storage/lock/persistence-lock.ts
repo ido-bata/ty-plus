@@ -86,6 +86,7 @@ const resolveLockFileSystem = async (win: Window): Promise<LockFileSystem> => {
 	if (requireFn) {
 		const fsMod = requireFn("fs") as { promises?: LockFileSystem };
 		if (fsMod.promises) return fsMod.promises;
+		// i18n-exempt: internal diagnostic — not rendered as UI copy
 		throw new PersistenceLockUnavailableError(
 			"CEP Node fs promises API is not available in this host runtime.",
 		);
@@ -571,6 +572,7 @@ export const resolvePersistenceLockRoot = async (
 		return null;
 	}
 	if (probe.status === "invalid") {
+		// i18n-exempt: internal diagnostic — not rendered as UI copy
 		throw new PersistenceLockUnavailableError(
 			"ty-plus-init.json exists but is unreadable or invalid; refusing to run the persistence transaction without the managed-root lock.",
 		);

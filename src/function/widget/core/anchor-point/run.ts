@@ -1,3 +1,4 @@
+import { i18n } from "@/management/i18n/index";
 import { notificationStore } from "@/management/online/notification/service";
 
 import { type AnchorPosition, buildAnchorScript } from "./script";
@@ -32,20 +33,30 @@ const notifyAnchorOutcome = (raw: string): void => {
 	const result = String(raw ?? "").trim();
 	if (!result) return;
 	if (result === "no comp") {
-		notificationStore.add("Ty Plus anchor: no active composition", "warning", {
-			duration: 6000,
-		});
+		notificationStore.add(
+			i18n.t("widgets:anchorPoint.noActiveComposition"),
+			"warning",
+			{
+				duration: 6000,
+			},
+		);
 		return;
 	}
 	if (result === "no layer") {
-		notificationStore.add("Ty Plus anchor: no layer selected", "warning", {
-			duration: 6000,
-		});
+		notificationStore.add(
+			i18n.t("widgets:anchorPoint.noLayerSelected"),
+			"warning",
+			{
+				duration: 6000,
+			},
+		);
 		return;
 	}
 	if (result.startsWith("err:")) {
 		notificationStore.add(
-			`Ty Plus anchor failed: ${result.slice(4, 4 + MAX_NOTIFY_DETAIL)}`,
+			i18n.t("widgets:anchorPoint.failed", {
+				detail: result.slice(4, 4 + MAX_NOTIFY_DETAIL),
+			}),
 			"error",
 			{ duration: 8000 },
 		);
@@ -53,7 +64,9 @@ const notifyAnchorOutcome = (raw: string): void => {
 	}
 	if (result.startsWith("partial ")) {
 		notificationStore.add(
-			`Ty Plus anchor completed with errors: ${result.slice(8, 8 + MAX_NOTIFY_DETAIL)}`,
+			i18n.t("widgets:anchorPoint.completedWithErrors", {
+				detail: result.slice(8, 8 + MAX_NOTIFY_DETAIL),
+			}),
 			"warning",
 			{ duration: 8000 },
 		);
@@ -69,11 +82,14 @@ const notifyAnchorOutcome = (raw: string): void => {
 export const runAnchorScript = (position: AnchorPosition): void => {
 	const ev = getEvalScript();
 	if (!ev) return;
-	ev(buildAnchorScript(position), (result) => {
-		try {
-			notifyAnchorOutcome(result);
-		} catch {
-			// Notification must never break the widget path.
-		}
-	});
+	ev(
+		buildAnchorScript(position, i18n.t("widgets:anchorPoint.undoGroupName")),
+		(result) => {
+			try {
+				notifyAnchorOutcome(result);
+			} catch {
+				// Notification must never break the widget path.
+			}
+		},
+	);
 };

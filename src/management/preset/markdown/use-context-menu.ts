@@ -69,15 +69,16 @@ export function useContextMenu(opts: {
 
 				return {
 					menu: [
-						{ id: "ty.ctx.markdown.bold", label: "Bold" },
-						{ id: "ty.ctx.markdown.italic", label: "Italic" },
-						{ id: "ty.ctx.markdown.code", label: "Inline Code" },
-						{ id: "ty.ctx.markdown.link", label: "Link" },
-						{ id: "ty.ctx.markdown.h1", label: "Heading 1" },
-						{ id: "ty.ctx.markdown.h2", label: "Heading 2" },
-						{ id: "ty.ctx.markdown.h3", label: "Heading 3" },
-						{ id: "ty.ctx.markdown.bullet-list", label: "Bullet List" },
-						{ id: "ty.ctx.markdown.ordered-list", label: "Ordered List" },
+						// i18n-exempt: right-click menu labels intentionally stay English (see JSDoc above and useMarkdownContextMenu.test.tsx guard)
+						{ id: "ty.ctx.markdown.bold", label: "Bold" }, // i18n-exempt: menu labels stay English
+						{ id: "ty.ctx.markdown.italic", label: "Italic" }, // i18n-exempt: menu labels stay English
+						{ id: "ty.ctx.markdown.code", label: "Inline Code" }, // i18n-exempt: menu labels stay English
+						{ id: "ty.ctx.markdown.link", label: "Link" }, // i18n-exempt: menu labels stay English
+						{ id: "ty.ctx.markdown.h1", label: "Heading 1" }, // i18n-exempt: menu labels stay English
+						{ id: "ty.ctx.markdown.h2", label: "Heading 2" }, // i18n-exempt: menu labels stay English
+						{ id: "ty.ctx.markdown.h3", label: "Heading 3" }, // i18n-exempt: menu labels stay English
+						{ id: "ty.ctx.markdown.bullet-list", label: "Bullet List" }, // i18n-exempt: menu labels stay English
+						{ id: "ty.ctx.markdown.ordered-list", label: "Ordered List" }, // i18n-exempt: menu labels stay English
 					],
 				};
 			},

@@ -12,10 +12,12 @@ import {
 } from "@tanstack/react-router";
 import { DESIGN_TOKENS_DEFAULTS } from "@ty-plus/ui/tokens/design-tokens-defaults";
 import { themeVarsToCssBlock } from "@ty-plus/ui/tokens/theme-css";
-import type { ReactNode } from "react";
+import { type ReactNode, useEffect } from "react";
+import { I18nextProvider, useTranslation } from "react-i18next";
 import { css } from "@/styled-system/css";
 import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
+import { applyStoredWebLocale, i18n } from "../i18n";
 import { SITE } from "../lib/site";
 
 const themeCss = themeVarsToCssBlock(DESIGN_TOKENS_DEFAULTS);
@@ -50,7 +52,10 @@ export const Route = createRootRoute({
 			{ title: SITE.name },
 			{
 				name: "description",
-				content: `${SITE.tagline} Free, open-source, local-first.`,
+				content: i18n.t("metaDescription", {
+					ns: "web",
+					tagline: i18n.t("tagline", { ns: "web" }),
+				}),
 			},
 			{ property: "og:site_name", content: SITE.name },
 			{ property: "og:type", content: "website" },
@@ -62,15 +67,25 @@ export const Route = createRootRoute({
 });
 
 function RootComponent() {
+	const { t } = useTranslation("web");
+
+	// Prerendered HTML is always English; switch to the stored/browser
+	// locale after mount so hydration stays deterministic.
+	useEffect(() => {
+		applyStoredWebLocale();
+	}, []);
+
 	return (
-		<RootDocument>
-			<a href="#main" className={skipLink}>
-				Skip to content
-			</a>
-			<SiteHeader />
-			<Outlet />
-			<SiteFooter />
-		</RootDocument>
+		<I18nextProvider i18n={i18n}>
+			<RootDocument>
+				<a href="#main" className={skipLink}>
+					{t("skipToContent")}
+				</a>
+				<SiteHeader />
+				<Outlet />
+				<SiteFooter />
+			</RootDocument>
+		</I18nextProvider>
 	);
 }
 

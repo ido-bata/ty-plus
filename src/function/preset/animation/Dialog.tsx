@@ -536,8 +536,13 @@ type AnimationScanInput = {
 	presetsRoot: string;
 	tyPlusPresetRoot: string;
 	errorFallbackMessage: string;
+	defaultPresetName: string;
 	onAutoName: (nextName: string) => void;
 	presetId?: string;
+	undoGroupName?: string;
+	messages?: {
+		selectLayerToSave?: string;
+	};
 };
 
 // Owns the scan/save-dialog flow that opens the AE save dialog, waits for the
@@ -556,8 +561,11 @@ function useAnimationPresetDetection(input: AnimationScanInput): {
 		presetsRoot,
 		tyPlusPresetRoot,
 		errorFallbackMessage,
+		defaultPresetName,
 		onAutoName,
 		presetId,
+		undoGroupName,
+		messages,
 	} = input;
 	const [status, setStatus] = useState<PresetStatus>("idle");
 	const [busy, setBusy] = useState(false);
@@ -603,9 +611,11 @@ function useAnimationPresetDetection(input: AnimationScanInput): {
 			// dialog opens. The dialog owns the actual `.ffx` write; the
 			// caller verifies the detected file before any record commits.
 			const result = await saveAnimationPresetAsset(window, {
-				name: name.trim() || "AnimationPreset",
+				name: name.trim() || defaultPresetName,
 				saveDir: scanPath,
 				presetId,
+				...(undoGroupName ? { undoGroupName } : {}),
+				...(messages ? { messages } : {}),
 			});
 
 			if (!result.ok) {
@@ -653,7 +663,7 @@ function useAnimationPresetDetection(input: AnimationScanInput): {
 					setDetectedNewFile(newest.path);
 					setStatus("success");
 					const fileName = newest.name.replace(/\.ffx$/i, "");
-					if (!name || name === "Animation Preset") {
+					if (!name || name === defaultPresetName) {
 						onAutoName(fileName);
 					}
 					setMessage(null);
@@ -674,6 +684,9 @@ function useAnimationPresetDetection(input: AnimationScanInput): {
 		presetsRoot,
 		scanAllFfxFiles,
 		tyPlusPresetRoot,
+		undoGroupName,
+		messages,
+		defaultPresetName,
 	]);
 
 	return {
@@ -777,8 +790,16 @@ export function Dialog(): JSX.Element {
 		presetsRoot,
 		tyPlusPresetRoot,
 		errorFallbackMessage: t("animationPreset.status.error"),
+		defaultPresetName: t("presetTool.animation.defaultName"),
 		onAutoName: setName,
 		presetId,
+		undoGroupName: t("animationPreset.undoGroupName"),
+		messages: {
+			selectLayerToSave: t("animationPreset.errors.selectLayerToSave", {
+				defaultValue:
+					"Select at least one layer before saving an animation preset",
+			}),
+		},
 	});
 
 	const displayPath = resolveAnimationScanPath(
@@ -798,11 +819,11 @@ export function Dialog(): JSX.Element {
 		(): Preset => ({
 			id: "icon-preview",
 			type: "preset",
-			title: name.trim() || "Animation Preset",
+			title: name.trim() || t("presetTool.animation.defaultName"),
 			filePath: "ty-plus://icon-preview",
 			icon: resolvedIcon ?? { type: "text", param: { text: "ANIM" } },
 		}),
-		[name, resolvedIcon],
+		[name, resolvedIcon, t],
 	);
 
 	const canCreate = name.trim().length > 0 && selectedPath && !busy;
@@ -814,7 +835,7 @@ export function Dialog(): JSX.Element {
 			type="preset"
 			description={t("presetTool.animation.lead")}
 			defaultName={t("presetTool.animation.defaultName")}
-			iconText="ANIM"
+			iconText={t("animationPreset.iconText")}
 			resolveBrowseStartDir={readUserHomeOrFallback}
 			entryPoint="tool-shell:animation"
 			fields={[
@@ -830,9 +851,7 @@ export function Dialog(): JSX.Element {
 				// `assertPresetAssetPresent` entirely and let
 				// `persistOverride` commit a record with no file behind it.
 				if (!selectedPath) {
-					throw new Error(
-						"Save the animation preset with After Effects' native dialog first.",
-					);
+					throw new Error(t("presetTool.savePathRequired"));
 				}
 				return { filePath: selectedPath, status: "ok" };
 			}}
@@ -840,9 +859,13 @@ export function Dialog(): JSX.Element {
 				const record: Preset = {
 					id: presetId,
 					type: "preset",
-					title: name.trim() || "Animation Preset",
+					title: name.trim() || t("presetTool.animation.defaultName"),
 					filePath: selectedPath ?? "",
-					description: description.trim() || `Animation preset: ${name.trim()}`,
+					description:
+						description.trim() ||
+						t("presetTool.animation.defaultDescription", {
+							name: name.trim(),
+						}),
 					...(descriptionImage.trim()
 						? { descriptionImage: descriptionImage.trim() }
 						: {}),

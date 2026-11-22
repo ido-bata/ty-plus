@@ -1,7 +1,6 @@
 /** Canonical external destinations for the official site. */
 export const SITE = {
 	name: "ty-plus",
-	tagline: "Your presets and tools, right inside Adobe After Effects.",
 	// Vite replaces this public build-time value for workers.dev deployments.
 	// Local builds retain the future brand domain until hosting is configured.
 	url: import.meta.env?.VITE_TY_PLUS_SITE_ORIGIN || "https://ty-plus.app",
@@ -20,9 +19,9 @@ export const SITE = {
 } as const;
 
 export const NAV_LINKS = [
-	{ to: "/features", label: "Features" },
-	{ to: "/download", label: "Download" },
-	{ to: "/docs", label: "Docs" },
-	{ to: "/changelog", label: "Changelog" },
-	{ to: "/support", label: "Support" },
+	{ to: "/features", labelKey: "navLinks.features" },
+	{ to: "/download", labelKey: "navLinks.download" },
+	{ to: "/docs", labelKey: "navLinks.docs" },
+	{ to: "/changelog", labelKey: "navLinks.changelog" },
+	{ to: "/support", labelKey: "navLinks.support" },
 ] as const;

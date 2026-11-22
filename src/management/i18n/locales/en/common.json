@@ -12,6 +12,9 @@
 		"edit": "Edit",
 		"close": "Close"
 	},
+	"dialogs": {
+		"unsavedChangesConfirm": "Unsaved changes will be lost. Close dialog?"
+	},
 	"actions": {
 		"run": "Run",
 		"duplicate": "Duplicate",
@@ -179,6 +182,104 @@
 			"copyError": "Copy error details",
 			"copied": "Copied to clipboard",
 			"digest": "Error ID"
+		}
+	},
+	"ui": {
+		"loadingSpinner": {
+			"label": "Loading"
+		},
+		"searchField": {
+			"clearAria": "Clear search",
+			"clearTitle": "Clear"
+		},
+		"regexEditor": {
+			"enterPattern": "Enter a pattern.",
+			"invalidFlags": "Invalid flags: {{flags}}",
+			"plainSource": "Plain regex source",
+			"literalFormat": "Literal regex format",
+			"testString": "Test string",
+			"sourcePlaceholder": "Regex source",
+			"flagsPlaceholder": "flags",
+			"matches": "Matches",
+			"noMatch": "No match",
+			"literalSuffix": "· literal /pattern/flags",
+			"sourceSuffix": "· source only"
+		},
+		"listSelect": {
+			"placeholder": "Select…"
+		}
+	},
+	"directoryBrowser": {
+		"refresh": "Refresh",
+		"goUp": "Go Up",
+		"open": "Open",
+		"select": "Select",
+		"deselect": "Deselect",
+		"listView": "List view",
+		"iconView": "Icon view",
+		"noFilesFound": "No files found",
+		"selectFileAria": "Select file {{name}}",
+		"selectFolderAria": "Select folder {{name}}"
+	},
+	"debugConsole": {
+		"title": "Console",
+		"clear": "Clear",
+		"evaluateAria": "Evaluate JavaScript",
+		"evaluatePlaceholder": "Evaluate JavaScript...",
+		"rowContextHint": "Right-click to copy",
+		"filterLevelAria": "Filter console messages",
+		"filterSourceAria": "Filter console messages by source",
+		"filterScopeAria": "Filter console messages by session scope",
+		"levels": {
+			"all": "All",
+			"log": "Log",
+			"info": "Info",
+			"warn": "Warn",
+			"error": "Error"
+		},
+		"sources": {
+			"all": "All sources",
+			"panel": "Panel",
+			"modeless": "Modeless",
+			"hostBridge": "Host bridge",
+			"online": "Online",
+			"preset": "Preset",
+			"opWorker": "Op worker",
+			"workspace": "Workspace",
+			"boot": "Boot",
+			"debugConsole": "Debug console",
+			"console": "Console"
+		},
+		"scopes": {
+			"allHistory": "All history",
+			"thisSession": "This session"
+		},
+		"contextMenu": {
+			"copyMessage": "Copy message",
+			"copyAllMessages": "Copy all messages",
+			"clearConsole": "Clear console",
+			"enableAutoScroll": "Enable auto-scroll",
+			"disableAutoScroll": "Disable auto-scroll",
+			"itemActive": "{{level}} (active)"
+		}
+	},
+	"errors": {
+		"hostContextUnavailable": "Host context unavailable",
+		"fileAccessUnavailable": "CEP Node file access is not available in this surface.",
+		"fsApiUnavailable": "CEP Node fs API is not available in this host runtime.",
+		"fileImportAeOnly": "File import is currently available only in After Effects.",
+		"initNotFound": "ty-plus-init.json not found (no app root). Onboarding must complete before any write.",
+		"initIncomplete": "ty-plus is not yet initialized. Writes are blocked until ty-plus-init.json reports completed.",
+		"initSupportRootBlank": "ty-plus-init.json is marked complete but supportRoot is blank.",
+		"hostExecFailed": "Ty Plus: {{message}}",
+		"notify": {
+			"generic": "An error occurred",
+			"fsPermission": "Permission denied. Please check file/folder permissions.",
+			"fsNotFound": "File or folder not found. It may have been moved or deleted.",
+			"fsCorrupted": "Data file is corrupted and has been backed up. Please retry.",
+			"aeEvalFailed": "After Effects command failed. Try again or restart AE.",
+			"aeNotAvailable": "After Effects connection lost. Please restart the panel.",
+			"network": "Network error. Please check your connection."
 		}
 	}
 }

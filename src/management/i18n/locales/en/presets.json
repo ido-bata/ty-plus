@@ -14,12 +14,20 @@
 		"type": {
 			"expression": "Expression",
 			"script": "Script"
-		}
+		},
+		"iconText": "CODE",
+		"alertSelectComp": "Please select a composition.",
+		"alertSelectProperty": "Please select at least one property to apply the expression.",
+		"alertNoExpressionProps": "Selected properties do not accept expressions.",
+		"alertApplyError": "Error applying expression:",
+		"defaultDescription": "Code preset: {{name}}",
+		"undoGroupName": "Ty Plus: Apply Expression"
 	},
 	"common": {
 		"browseFolder": "Browse Folder",
 		"copyPath": "Copy Path",
-		"selectFile": "Select File"
+		"selectFile": "Select File",
+		"systemDefault": "System default"
 	},
 	"layerCompPreset": {
 		"desc": {
@@ -91,7 +99,8 @@
 				"saveFolder": "Save folder",
 				"path": "Animation preset path",
 				"pathPlaceholder": "Optional existing .ffx path"
-			}
+			},
+			"defaultDescription": "Animation preset: {{name}}"
 		},
 		"footage": {
 			"title": "Footage Preset",
@@ -100,12 +109,14 @@
 			"fields": {
 				"path": "Footage path",
 				"mode": "Import mode"
-			}
+			},
+			"iconText": "MEDIA"
 		},
 		"layerComp": {
 			"title": "Layer / Comp Preset",
 			"lead": "Layer and comp operations (transform, duplicate, precompose). Saved script files run in After Effects.",
-			"defaultName": "Layer / Comp Preset"
+			"defaultName": "Layer / Comp Preset",
+			"defaultDescription": "Layer/comp preset: {{name}}"
 		},
 		"import": {
 			"title": "Import Preset",
@@ -114,7 +125,9 @@
 			"fields": {
 				"path": "Import path",
 				"strategy": "Strategy"
-			}
+			},
+			"iconText": "IMPORT",
+			"pathPlaceholder": "C:\\path\\asset"
 		},
 		"code": {
 			"title": "Code Preset",
@@ -125,6 +138,7 @@
 				"format": "Format Document",
 				"formatTooltip": "Format the script body",
 				"diagnosticCount": "{{count}} problem",
+				"diagnosticCount_one": "{{count}} problem",
 				"diagnosticCount_other": "{{count}} problems"
 			}
 		},
@@ -166,6 +180,19 @@
 			"title": "Create Preset",
 			"lead": "Create a local preset from reusable metadata.",
 			"defaultName": "Local Preset"
+		},
+		"savePathRequired": "Save the animation preset with After Effects' native dialog first.",
+		"easingScript": {
+			"selectComposition": "Please select a composition.",
+			"selectProperties": "Please select at least one property to apply the easing.",
+			"notEnoughKeyframes": "Selected properties do not have enough keyframes.",
+			"applyFailedPrefix": "Error applying easing: ",
+			"undoGroupName": "ty-plus: apply easing preset"
+		},
+		"layerCompScript": {
+			"undoGroupName": "Ty Plus: Apply Layer/Comp Preset",
+			"saveProjectFirst": "Save the After Effects project before creating this preset",
+			"sourceProjectNotFoundPrefix": "Source project not found: "
 		}
 	},
 	"animationPreset": {
@@ -192,6 +219,11 @@
 		"path": {
 			"reset": "Reset to default",
 			"notConfigured": "Not configured"
+		},
+		"iconText": "ANIM",
+		"undoGroupName": "Ty Plus: Save Animation Preset",
+		"errors": {
+			"selectLayerToSave": "Select at least one layer before saving an animation preset"
 		}
 	},
 	"edit": {
@@ -210,7 +242,13 @@
 			"saved": "Saved",
 			"deleted": "Deleted",
 			"saveFailed": "Save failed: {{message}}",
-			"deleteFailed": "Delete failed: {{message}}"
+			"deleteFailed": "Delete failed: {{message}}",
+			"notFound": "Preset not found",
+			"loadFailed": "Failed to load",
+			"saveFailedFallback": "Save failed",
+			"deleteFailedFallback": "Delete failed",
+			"saving": "Saving…",
+			"deleting": "Deleting…"
 		},
 		"fields": {
 			"presetName": "Preset name",
@@ -223,7 +261,18 @@
 			"iconEmojiPlaceholder": "Emoji (e.g. ⚡)",
 			"filePath": "File path",
 			"type": "Type"
-		}
+		},
+		"memberLoading": "Loading…",
+		"memberNotFound": "Member not found: {{id}}",
+		"memberRun": "Run {{name}}",
+		"memberEdit": "Edit {{name}}",
+		"memberDelete": "Delete {{name}}",
+		"memberPresets": "Member presets ({{count}})",
+		"noMemberPresets": "No member presets",
+		"selectJsxFile": "Select JSX file",
+		"browseLoadFile": "Load file",
+		"loadFromFilePlaceholder": "Load from file…",
+		"code": "Code"
 	},
 	"group": {
 		"title": "Create preset group",
@@ -231,7 +280,182 @@
 		"defaultName": "Group Preset",
 		"fields": {
 			"groupName": "Group name",
-			"groupNamePlaceholder": "Enter group name"
+			"groupNamePlaceholder": "Enter group name",
+			"folderPaths": "Folder paths",
+			"folderPathsPlaceholder": "One folder path per line",
+			"presetIds": "Preset IDs",
+			"presetIdsPlaceholder": "One preset ID per line",
+			"recursiveScan": "Recursive folder scan"
+		},
+		"iconText": "GROUP",
+		"browseMembers": "Browse files & folders to add",
+		"addPath": "Add path",
+		"detectCandidates": "Detect candidates",
+		"browseFolder": "Browse folder",
+		"removePath": "Remove path",
+		"iconRules": "Icon rules",
+		"baseIcon": {
+			"heading": "Base icon (default for all presets)",
+			"label": "Base icon"
+		},
+		"rules": "Rules",
+		"addRule": "Add rule",
+		"groupIcon": "Group icon",
+		"advancedSettings": "Advanced settings",
+		"scanDepth": "Folder scan depth",
+		"scanDepthFlat": "Direct",
+		"scanDepthRecursive": "Include descendants",
+		"synth": {
+			"noMembers": "No member presets.",
+			"memberPresets_one": "{{count}} member preset.",
+			"memberPresets_other": "{{count}} member presets.",
+			"description": "Group container. {{memberLine}}"
+		},
+		"rule": {
+			"filterName": "Name",
+			"filterPath": "Path",
+			"filterPresetId": "Preset ID",
+			"filterPresetType": "Preset type",
+			"removeRule": "Remove rule",
+			"nameRegexPlaceholder": "Name regex (e.g. ^Header.*$)",
+			"namePatternPlaceholder": "Name pattern",
+			"matchContains": "Contains",
+			"matchStarts": "Starts",
+			"matchEnds": "Ends",
+			"matchRegex": "Regex",
+			"presetTypePreset": "Preset",
+			"presetTypeScript": "Script",
+			"presetTypePlugin": "Plugin",
+			"presetTypeFootage": "Footage",
+			"noDirectories": "No directories detected",
+			"noPresets": "No presets detected",
+			"iconLabel": "Rule icon"
+		},
+		"fallbackTitle": "Group"
+	},
+	"catalogAdd": {
+		"dialogTitle": "Add catalog preset from path",
+		"name": "Name",
+		"namePlaceholder": "Enter name…",
+		"filePath": "File path",
+		"selectFile": "Select file",
+		"browseFile": "Browse file",
+		"icon": "Icon",
+		"creating": "Creating…",
+		"pathPlaceholderCurrentFolder": "Current folder shown — pick a file or browse",
+		"pathPlaceholderSelectFile": "Select a file…",
+		"browser": {
+			"cepNodeRequired": "File browser requires CEP Node",
+			"noPresetsFolder": "No presets folder configured",
+			"noScriptsFolder": "No scripts folder configured",
+			"noPluginsFolder": "No plugins folder configured",
+			"noFiles": "No files found"
 		}
+	},
+	"iconEditor": {
+		"tabs": {
+			"text": "Text",
+			"emoji": "Emoji",
+			"image": "Image",
+			"canvas": "Canvas"
+		},
+		"emojiPicker": "Emoji picker",
+		"selectImage": "Select icon image",
+		"browseImage": "Browse icon image",
+		"imagePlaceholder": "Image path or URL",
+		"iconTextAria": "Icon text",
+		"textPlaceholder": "2-6 characters",
+		"previewAria": "Icon preview"
+	},
+	"catalogBrowser": {
+		"loading": "Loading",
+		"searchPlaceholder": "Search by name, type, or path…",
+		"reload": "Reload catalog"
+	},
+	"listDialog": {
+		"workspacePlaced": "Workspace: {{tags}}",
+		"workspaceGroupPlaced": "Workspace: {{tags}} (group \"{{label}}\")",
+		"workspaceNotPlaced": "Workspace: not placed",
+		"runPresetAria": "Run preset",
+		"editPresetAria": "Edit preset",
+		"deletePresetAria": "Delete preset",
+		"editGroup": "Edit group",
+		"deleteGroup": "Delete group",
+		"visibleItems_one": "{{count}} item",
+		"visibleItems_other": "{{count}} items",
+		"filteredSuffix": " · filtered",
+		"collapseGroup": "Collapse group",
+		"expandGroup": "Expand group",
+		"returnToAllPresets": "Return to all presets",
+		"leaveGroupTitle": "Leave group \"{{name}}\" and return to the list",
+		"returnToListTitle": "Return to list",
+		"allPresets": "All presets",
+		"runPresetNamed": "Run {{name}}",
+		"loadFailedTitle": "Failed to load the local catalog",
+		"tryAgain": "Try again",
+		"loadingCatalog": "Loading local catalog…",
+		"emptyCatalog": "No presets saved locally yet",
+		"noMatches": "No matching presets",
+		"cloudOffline": "Cloud offline",
+		"cloudDegradedDetail": "{{message}} — showing the local catalog only.",
+		"cloudOfflineDetail": "Cloud features are not active in this session — showing the local catalog only.",
+		"groupsUnavailable": "Groups unavailable",
+		"groupsErrorDetail": "{{error}} — presets are listed without grouping.",
+		"title": "Preset list",
+		"gridResizeHint": "Hold Ctrl and scroll to resize the icon grid",
+		"openGroupAria": "Open group {{title}}",
+		"openGroupHint": "{{title}} (double-click to open)"
+	},
+	"codeEditor": {
+		"snippets": {
+			"ifBlock": "if block",
+			"elseBlock": "else block",
+			"forLoop": "for loop",
+			"whileLoop": "while loop",
+			"function": "function",
+			"tryCatch": "try / catch",
+			"extendscriptLog": "ExtendScript log"
+		},
+		"resizeAria": "Resize code editor"
+	},
+	"glyph": {
+		"loadingPresetIcon": "Loading preset icon"
+	},
+	"assetWrite": {
+		"pathNotAbsolute": "Preset asset path is not an absolute path: {{path}}",
+		"fsUnavailable": "Preset asset write is unavailable: the CEP Node filesystem is not accessible in this window.",
+		"writeFailed": "Preset asset write failed: {{error}}",
+		"verificationMissing": "Preset asset is missing after write: {{path}}",
+		"verificationMismatch": "Preset asset content did not match after write: {{path}}",
+		"elevationUnavailable": "Preset asset write was denied by permissions and no elevation mechanism is available on this host: {{path}} ({{detail}})",
+		"elevationCancelled": "Administrator permission was declined for {{path}}. The preset asset was not saved.",
+		"writeDenied": "Preset asset write was denied by permissions: {{path}}",
+		"verificationMissingElevated": "Preset asset is missing after the elevated write: {{path}}",
+		"verificationMismatchElevated": "Preset asset content did not match after the elevated write: {{path}}",
+		"dirPathNotAbsolute": "Preset asset directory is not an absolute path: {{path}}",
+		"dirFsUnavailable": "Preset asset directory creation is unavailable: the CEP Node filesystem is not accessible in this window.",
+		"dirCreateFailed": "Preset asset directory could not be created: {{error}}",
+		"dirElevationUnavailable": "Preset asset directory creation was denied by permissions and no elevation mechanism is available on this host: {{path}}",
+		"dirElevationCancelled": "Administrator permission was declined for {{path}}. The preset asset directory was not created.",
+		"dirMissingAfterElevated": "Preset asset directory is missing after the elevated creation: {{path}}",
+		"dirDenied": "Preset asset directory creation was denied by permissions: {{path}}",
+		"dirMissingAfterCreate": "Preset asset directory is missing after creation: {{path}}",
+		"exitCodeSuffix": " (exit code {{code}})",
+		"elevatedErrorWithDetail": "Elevated write reported an error{{exitNote}}: {{detail}}",
+		"elevatedError": "Elevated write reported an error{{exitNote}}"
+	},
+	"folderGroup": {
+		"noFolderPaths": "Please enter at least one folder path.",
+		"noPresetFiles": "No preset files (.ffx) found in folder.",
+		"groupRowFailed": "Failed to generate group row.",
+		"savedStatus": "Group saved: {{id}} (members: {{members}}, new presets: {{added}})",
+		"presetIdsNotFound": "Preset IDs not found in catalog: {{ids}}",
+		"savedStatusManual": "Group saved ({{total}} items): {{id}}",
+		"scanRequiresCepNode": "Folder scanning requires CEP Node file browser. Enter preset IDs manually or enable CEP Node."
+	},
+	"deleteConfirm": {
+		"preset": "Delete preset \"{{title}}\"?\n\nThis cannot be undone.",
+		"group": "Delete group \"{{title}}\"?\n\nThis cannot be undone.",
+		"untitled": "(untitled)"
 	}
 }

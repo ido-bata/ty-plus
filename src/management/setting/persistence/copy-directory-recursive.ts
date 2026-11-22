@@ -1,3 +1,4 @@
+import { i18n } from "@/management/i18n/index";
 import { resolveSettingsNodeFsPromises } from "@/management/setting/persistence/node-fs";
 import { assertSafeDirectoryCopy } from "@/management/setting/persistence/path-copy-safety";
 import {
@@ -44,7 +45,9 @@ const rejectSymlinkEntry = (info: {
 }): void => {
 	if (info.isSymbolicLink()) {
 		throw new Error(
-			`Refusing to copy symlink/reparse point: ${info.name ?? "entry"}`,
+			i18n.t("settings:errors.copySymlinkRefused", {
+				name: info.name ?? "entry",
+			}),
 		);
 	}
 };
@@ -56,7 +59,7 @@ const copyDirectoryManual = async (
 ): Promise<void> => {
 	const fs = await resolveSettingsNodeFsPromises(win);
 	if (!fs.readdir || !fs.lstat) {
-		throw new Error("Recursive copy requires readdir/lstat on this host.");
+		throw new Error("Recursive copy requires readdir/lstat on this host."); // i18n-exempt: internal diagnostic — not rendered as UI copy
 	}
 	await fs.mkdir(destDir, { recursive: true });
 	const entries = await fs.readdir(sourceDir);
@@ -146,9 +149,7 @@ const removeDirectoryRecursive = async (
 		return;
 	}
 	if (!fs.readdir || !fs.stat) {
-		throw new Error(
-			"Recursive delete requires rm or readdir/stat on this host.",
-		);
+		throw new Error(i18n.t("settings:errors.copyDeleteUnsupported"));
 	}
 	const entries = await fs.readdir(target);
 	for (const entry of entries) {

@@ -114,7 +114,7 @@ const layoutWithAutoPresets = (input: {
 			const rect = narrowGeom[j];
 			const orig = narrowIndices[j];
 			if (rect === undefined || orig === undefined) {
-				throw new Error("workspace placement: narrow band geometry mismatch");
+				throw new Error("workspace placement: narrow band geometry mismatch"); // i18n-exempt: internal diagnostic — not rendered as UI copy
 			}
 			geom[orig] = rect;
 		}
@@ -122,7 +122,7 @@ const layoutWithAutoPresets = (input: {
 			const rect = wideGeom[j];
 			const orig = wideIndices[j];
 			if (rect === undefined || orig === undefined) {
-				throw new Error("workspace placement: wide overflow geometry mismatch");
+				throw new Error("workspace placement: wide overflow geometry mismatch"); // i18n-exempt: internal diagnostic — not rendered as UI copy
 			}
 			geom[orig] = rect;
 		}
@@ -135,7 +135,7 @@ const layoutWithAutoPresets = (input: {
 	const presetItems: LayoutItem[] = sized.map((s, i) => {
 		const g = geom[i];
 		if (g === undefined) {
-			throw new Error("workspace placement: missing geometry for preset tile");
+			throw new Error("workspace placement: missing geometry for preset tile"); // i18n-exempt: internal diagnostic — not rendered as UI copy
 		}
 		return {
 			id: s.presetRefId,

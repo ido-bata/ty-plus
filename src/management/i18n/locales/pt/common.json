@@ -12,6 +12,9 @@
 		"edit": "Editar",
 		"close": "Fechar"
 	},
+	"dialogs": {
+		"unsavedChangesConfirm": "As alterações não salvas serão perdidas. Fechar a caixa de diálogo?"
+	},
 	"actions": {
 		"run": "Executar",
 		"duplicate": "Duplicar",
@@ -140,7 +143,7 @@
 		}
 	},
 	"quickActions": {
-		"presets": "Presets",
+		"presets": "Predefinições",
 		"settings": "Configurações",
 		"messages": "Mensagens",
 		"newNote": "Nova nota",
@@ -158,7 +161,7 @@
 		}
 	},
 	"sidePanel": {
-		"presets": "Presets",
+		"presets": "Predefinições",
 		"debugConsole": "Console de depuração",
 		"messages": "Mensagens",
 		"settings": "Configurações",
@@ -166,7 +169,7 @@
 		"closePanel": "Fechar painel"
 	},
 	"statusBar": {
-		"presets": "Presets",
+		"presets": "Predefinições",
 		"debug": "Depuração",
 		"message": "Mensagens",
 		"settings": "Configurações"
@@ -179,6 +182,104 @@
 			"copyError": "Copiar detalhes do erro",
 			"copied": "Copiado para a área de transferência",
 			"digest": "ID do erro"
+		}
+	},
+	"ui": {
+		"loadingSpinner": {
+			"label": "A carregar"
+		},
+		"searchField": {
+			"clearAria": "Limpar pesquisa",
+			"clearTitle": "Limpar"
+		},
+		"regexEditor": {
+			"enterPattern": "Introduza um padrão.",
+			"invalidFlags": "Sinalizadores inválidos: {{flags}}",
+			"plainSource": "Fonte regex simples",
+			"literalFormat": "Formato regex literal",
+			"testString": "Cadeia de teste",
+			"sourcePlaceholder": "Fonte regex",
+			"flagsPlaceholder": "sinalizadores",
+			"matches": "Correspondências",
+			"noMatch": "Sem correspondências",
+			"literalSuffix": "· literal /pattern/flags",
+			"sourceSuffix": "· apenas fonte"
+		},
+		"listSelect": {
+			"placeholder": "Selecionar…"
+		}
+	},
+	"directoryBrowser": {
+		"refresh": "Atualizar",
+		"goUp": "Subir",
+		"open": "Abrir",
+		"select": "Selecionar",
+		"deselect": "Desmarcar",
+		"listView": "Visualização de lista",
+		"iconView": "Visualização de ícones",
+		"noFilesFound": "Nenhum arquivo encontrado",
+		"selectFileAria": "Selecionar arquivo {{name}}",
+		"selectFolderAria": "Selecionar pasta {{name}}"
+	},
+	"debugConsole": {
+		"title": "Console",
+		"clear": "Limpar",
+		"evaluateAria": "Avaliar JavaScript",
+		"evaluatePlaceholder": "Avaliar JavaScript…",
+		"rowContextHint": "Clique com o botão direito para copiar",
+		"filterLevelAria": "Filtrar mensagens do console",
+		"filterSourceAria": "Filtrar mensagens por origem",
+		"filterScopeAria": "Filtrar mensagens por escopo da sessão",
+		"levels": {
+			"all": "Todos",
+			"log": "Registro",
+			"info": "Info",
+			"warn": "Aviso",
+			"error": "Erro"
+		},
+		"sources": {
+			"all": "Todas as origens",
+			"panel": "Painel",
+			"modeless": "Sem janela",
+			"hostBridge": "Ponte do host",
+			"online": "Online",
+			"preset": "Predefinição",
+			"opWorker": "Trabalhador de operações",
+			"workspace": "Área de trabalho",
+			"boot": "Inicialização",
+			"debugConsole": "Console de depuração",
+			"console": "Console"
+		},
+		"scopes": {
+			"allHistory": "Todo o histórico",
+			"thisSession": "Esta sessão"
+		},
+		"contextMenu": {
+			"copyMessage": "Copiar mensagem",
+			"copyAllMessages": "Copiar todas as mensagens",
+			"clearConsole": "Limpar console",
+			"enableAutoScroll": "Ativar rolagem automática",
+			"disableAutoScroll": "Desativar rolagem automática",
+			"itemActive": "{{level}} (ativo)"
+		}
+	},
+	"errors": {
+		"hostContextUnavailable": "Contexto do host indisponível",
+		"fileAccessUnavailable": "O acesso a arquivos do CEP Node não está disponível nesta superfície.",
+		"fsApiUnavailable": "A API fs do CEP Node não está disponível neste runtime do host.",
+		"fileImportAeOnly": "A importação de arquivos está atualmente disponível apenas no After Effects.",
+		"initNotFound": "ty-plus-init.json não encontrado (sem raiz do app). O onboarding deve ser concluído antes de qualquer escrita.",
+		"initIncomplete": "ty-plus ainda não está inicializado. As escritas ficam bloqueadas até que ty-plus-init.json reporte a conclusão.",
+		"initSupportRootBlank": "ty-plus-init.json está marcado como concluído, mas supportRoot está vazio.",
+		"hostExecFailed": "Ty Plus: {{message}}",
+		"notify": {
+			"generic": "Ocorreu um erro",
+			"fsPermission": "Permissão negada. Verifique as permissões do arquivo/pasta.",
+			"fsNotFound": "Arquivo ou pasta não encontrado. Pode ter sido movido ou excluído.",
+			"fsCorrupted": "O arquivo de dados está corrompido e foi respaldado. Tente novamente.",
+			"aeEvalFailed": "O comando do After Effects falhou. Tente novamente ou reinicie o AE.",
+			"aeNotAvailable": "Conexão com o After Effects perdida. Reinicie o painel.",
+			"network": "Erro de rede. Verifique sua conexão."
 		}
 	}
 }

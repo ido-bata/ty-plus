@@ -8,6 +8,7 @@
 			"!**/dist",
 			"!**/styled-system",
 			"!**/.wrangler",
+			"!**/.cloudflare",
 			"!**/docs/no-use",
 			"!**/archive",
 			"!**/reference",

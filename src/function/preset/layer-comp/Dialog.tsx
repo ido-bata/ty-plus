@@ -228,6 +228,13 @@ export function Dialog(): JSX.Element {
 					type: presetType,
 					saveDir: displayPath,
 					presetId,
+					undoGroupName: t("presetTool.layerCompScript.undoGroupName"),
+					messages: {
+						saveProjectFirst: t("presetTool.layerCompScript.saveProjectFirst"),
+						sourceProjectNotFoundPrefix: t(
+							"presetTool.layerCompScript.sourceProjectNotFoundPrefix",
+						),
+					},
 				});
 				if (!result.ok) {
 					throw new Error(result.error.message);
@@ -242,7 +249,10 @@ export function Dialog(): JSX.Element {
 			persistOverride={async () => {
 				const recordTitle = name.trim();
 				const recordDescription =
-					description.trim() || `Layer/comp preset: ${name.trim()}`;
+					description.trim() ||
+					t("presetTool.layerComp.defaultDescription", {
+						name: name.trim(),
+					});
 				const resolvedIconValue = resolvedIcon ?? {
 					type: "text" as const,
 					param: { text: previewIconText },
@@ -348,11 +358,11 @@ export function Dialog(): JSX.Element {
 											value={saveDir}
 											onChange={(next) => setSaveDir(next)}
 											onBrowse={handleBrowseFolder}
-											browseAriaLabel="Browse folder"
+											browseAriaLabel={t("common.browseFolder")}
 											browseSlot={
 												<Icon icon={FolderOpen} size={16} aria-hidden />
 											}
-											placeholder={defaultSavePath || "System default"}
+											placeholder={defaultSavePath || t("common.systemDefault")}
 											uiSize="md"
 										/>
 										{fullFilePath ? (

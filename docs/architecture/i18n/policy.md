@@ -3,6 +3,17 @@
 この文書は、ty-plus の翻訳作業における **固有名詞** (各言語でうかつに訳すとアイデンティティが壊れる語) の扱いを固定する。
 新規翻訳の追加や既存翻訳の修正は、必ずこのポリシーに照らして行う。
 
+## 0. 判定テスト (英語固定 vs 翻訳キー)
+
+ある文字列を英語のままにするか翻訳キーで表現するかは、次の質問で決める:
+
+> **使い方を説明しようとしたとき、その対象を指す明確な呼称として固有のものが必要か?**
+
+- **必要 → 英語で統一 (固有名詞)**。製品名・ホスト名・API名・ファイル形式・UI上の要素名など、「これを指すにはこの呼称が必要」という語。ユーザーがドキュメントやコミュニティで同じ語を探せることが価値になる。
+- **不要 → 翻訳キー**。`Undo` のように、語そのものより **意味が本題** の動作・状態・説明文。訳語がその言語で自然に意味を伝えればよく、英語表記を維持する理由がない。
+
+迷った場合は「この語を訳したら、ユーザーが製品内のどの要素を指しているか分からなくなるか?」で判断する。分からなくなるなら固有名詞、ならないなら翻訳する。
+
 ## 1. 分類
 
 ### 1.1 完全英語ロック (全言語で英字のまま)
@@ -66,7 +77,7 @@
 
 ## 2. 機械的 enforce
 
-`scripts/check/check-i18n-locked-terms.ts` がこのテーブルの canonical を機械的に検査する。
+`scripts/check/i18n-locked-terms.ts` がこのテーブルの canonical を機械的に検査する。
 
 - 1.1 の語がロケールファイルに存在し、かつ英語原文と一致しない場合 → **エラー**
 - 1.2 の語の値が canonical テーブルにない場合 → **エラー**
@@ -81,8 +92,8 @@ canonical を逸脱する必要がある場合 (例: マーケ要件で全言語
 1. `en/<namespace>.json` に英語原文を追加
 2. 1.1 / 1.2 / 1.3 のどれに該当する語かを確認
 3. 1.1 / 1.2 の場合は本ポリシーの該当行を更新してから翻訳
-4. 残り 9 言語のロケールファイルに翻訳を埋める (`bun run scripts/check/check-i18n-locale-coverage.ts` で確認)
-5. `bun run scripts/check/check-i18n-locked-terms.ts` で canonical 違反がないことを確認
+4. 残り 9 言語のロケールファイルに翻訳を埋める (`bun run scripts/check/i18n-locale-coverage.ts` で確認)
+5. `bun run scripts/check/i18n-locked-terms.ts` で canonical 違反がないことを確認
 6. `bun run lint` で静的検査全体 green を確認
 
 ## 5. en key-set canonical
@@ -91,4 +102,13 @@ canonical を逸脱する必要がある場合 (例: マーケ要件で全言語
 
 - 9 locale は en と同一 namespace・同一 leaf key 集合を持つ。余分な key（他 namespace の複製を含む）は持たない。
 - `t()` が参照する static literal key は en に存在しなければならない。動的組み立て key は対象外。
-- 機械的強制は `bun run scripts/check/check-i18n-locale-coverage.ts --strict-en-canonical`。未訳値は `TODO: ` prefix で置く。
+- 機械的強制は `bun run scripts/check/i18n-locale-coverage.ts --strict-en-canonical`。未訳値は `TODO: ` prefix で置く。
+
+## 6. ExtendScript artifact の扱い
+
+`src/management/ae/jsx/host-bundle.ext.ts` が生成する `.jsx` は After Effects の ExtendScript 内で実行され、i18next にアクセスできない。それでも生成物内のユーザー向け文字列 (ExtendScript `alert()`、AE の Undo メニューに出る `beginUndoGroup` 名、パネルへ `error.message` として返る事前条件エラー) は **生成時にパネル側でローカライズして payload 経由で焼き込む**。
+
+- 契約: `src/management/ae/host/contract.ts` の各 `Prepare*Input` に `messages?` / `undoGroupName?` を追加し、host-bundle は payload 値を優先・英語リテラルをフォールバックに使う。
+- 呼び出し側: パネルの i18n 機構 (`i18n.t` / `useTranslation`) でロケール文字列を組み立てて渡す。
+- 生成物は著者ロケールで固定される。プリセットを他者へ配布した場合も著者ロケールの文言になるが、ExtendScript 側にロケール機構がない以上これが上限であり、常時英語よりは良い。
+- ExtendScript 内部の不変条件・プロトコル診断 (`Invalid JSON`、パス検証、`is required` 系) は UI に出ないか技術的文脈に留まるため英語のままでよい。

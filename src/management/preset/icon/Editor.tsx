@@ -7,13 +7,14 @@ import { PathField } from "@ty-plus/ui/fields/PathField";
 import { FileSearch, Smile } from "lucide-react";
 import { type JSX, type ReactNode, useEffect, useRef, useState } from "react";
 import { selectFile } from "@/management/ae/cep/dialog-shim/bolt";
+import { i18n } from "@/management/i18n/index";
 import type { PresetIconEditorDraft } from "@/management/preset/icon/editor-state";
 import { css, cx } from "@/styled-system/css";
 
-const ICON_TABS = [
-	{ id: "text" as const, label: "Text" },
-	{ id: "emoji" as const, label: "Emoji" },
-	{ id: "image" as const, label: "Image" },
+const ICON_TABS: { id: "text" | "emoji" | "image"; labelKey: string }[] = [
+	{ id: "text", labelKey: "presets:iconEditor.tabs.text" },
+	{ id: "emoji", labelKey: "presets:iconEditor.tabs.emoji" },
+	{ id: "image", labelKey: "presets:iconEditor.tabs.image" },
 ];
 
 const tabBtnBaseClass = css({
@@ -263,7 +264,7 @@ function DefaultEmojiFields({
 					disabled={disabled}
 				>
 					<Smile size={16} aria-hidden />
-					<span>Emoji picker</span>
+					<span>{i18n.t("presets:iconEditor.emojiPicker")}</span>
 				</button>
 				<ColorSwatch
 					value={draft.bgColor}
@@ -303,13 +304,15 @@ function DefaultImageFields({
 			value={draft.imagePath}
 			onChange={(v) => set({ imagePath: v })}
 			onBrowse={() =>
-				selectFile(browseDir ?? "", "Select icon image", (picked) =>
-					set({ imagePath: picked }),
+				selectFile(
+					browseDir ?? "",
+					i18n.t("presets:iconEditor.selectImage"),
+					(picked) => set({ imagePath: picked }),
 				)
 			}
-			browseAriaLabel="Browse icon image"
+			browseAriaLabel={i18n.t("presets:iconEditor.browseImage")}
 			browseSlot={<Icon icon={FileSearch} size={16} aria-hidden />}
-			placeholder="Image path or URL"
+			placeholder={i18n.t("presets:iconEditor.imagePlaceholder")}
 			uiSize="md"
 			disabled={disabled}
 		/>
@@ -326,11 +329,11 @@ function DefaultTextFields({
 		<div className={textFieldsRowClass}>
 			<div className={textInputWrapperClass}>
 				<Input
-					aria-label="Icon text"
+					aria-label={i18n.t("presets:iconEditor.iconTextAria")}
 					value={draft.text}
 					maxLength={textMaxLength}
 					onChange={(e) => set({ text: e.target.value })}
-					placeholder="2-6 characters"
+					placeholder={i18n.t("presets:iconEditor.textPlaceholder")}
 					uiSize="md"
 					disabled={disabled}
 				/>
@@ -366,8 +369,14 @@ export function IconEditor({
 		onChange({ ...draft, ...partial });
 	const api: EditorApi = { draft, set, disabled, textMaxLength };
 
-	const visibleTabs = showCanvasTab
-		? [...ICON_TABS, { id: "canvas" as const, label: "Canvas" }]
+	const visibleTabs: {
+		id: "text" | "emoji" | "image" | "canvas";
+		labelKey: string;
+	}[] = showCanvasTab
+		? [
+				...ICON_TABS,
+				{ id: "canvas" as const, labelKey: "presets:iconEditor.tabs.canvas" },
+			]
 		: ICON_TABS;
 
 	const tabs = (
@@ -380,7 +389,7 @@ export function IconEditor({
 					onClick={() => set({ type: tab.id })}
 					disabled={disabled}
 				>
-					{tab.label}
+					{i18n.t(tab.labelKey)}
 				</button>
 			))}
 		</div>
@@ -414,7 +423,10 @@ export function IconEditor({
 
 	const body = preview ? (
 		<div className={bodyPreviewGridClass}>
-			<div aria-label="Icon preview" className={previewBoxClass}>
+			<div
+				aria-label={i18n.t("presets:iconEditor.previewAria")}
+				className={previewBoxClass}
+			>
 				<div className={previewInnerClass}>{preview}</div>
 			</div>
 			<div className={fieldsWrapperClass}>{tabs}</div>

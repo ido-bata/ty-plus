@@ -1,12 +1,13 @@
 import type { JSX } from "react";
+import { i18n } from "@/management/i18n/index";
 import type { PresetAddFolderType } from "@/management/preset/catalog-add/archive-types";
 import { css, cx } from "@/styled-system/css";
 
-const FOLDER_TABS: { id: PresetAddFolderType; label: string }[] = [
-	{ id: "presets", label: "Presets" },
-	{ id: "scripts", label: "Scripts" },
-	{ id: "plugins", label: "Plug-ins" },
-	{ id: "other", label: "Other" },
+const FOLDER_TABS: { id: PresetAddFolderType; labelKey: string }[] = [
+	{ id: "presets", labelKey: "widgets:folderDirectoryPicker.tab.presets" },
+	{ id: "scripts", labelKey: "widgets:folderDirectoryPicker.tab.scripts" },
+	{ id: "plugins", labelKey: "widgets:folderDirectoryPicker.tab.plugins" },
+	{ id: "other", labelKey: "widgets:folderDirectoryPicker.tab.other" },
 ];
 
 const folderTabsBaseClass = css({
@@ -70,7 +71,7 @@ export function FolderTabs(props: {
 					className={FOLDER_TAB_CLASS(activeTab === tab.id)}
 					onClick={() => onTabChange(tab.id)}
 				>
-					{tab.label}
+					{i18n.t(tab.labelKey)}
 				</button>
 			))}
 		</div>

@@ -16,6 +16,8 @@
 import type { JSX, ReactNode } from "react";
 import { useLayoutEffect, useState } from "react";
 
+import { i18n } from "@/management/i18n/index";
+
 const DIALOG_LOADING_STYLE = {
 	display: "flex",
 	alignItems: "center",
@@ -29,7 +31,11 @@ const DIALOG_LOADING_STYLE = {
 } as const;
 
 function DialogLoadingFallback(): JSX.Element {
-	return <div style={DIALOG_LOADING_STYLE}>Loading…</div>;
+	return (
+		<div style={DIALOG_LOADING_STYLE}>
+			{i18n.t("dialogs:loading", { defaultValue: "Loading…" })}
+		</div>
+	);
 }
 
 export function DeferredDialogBody({

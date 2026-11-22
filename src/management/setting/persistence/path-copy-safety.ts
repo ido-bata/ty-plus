@@ -1,3 +1,5 @@
+import { i18n } from "@/management/i18n/index";
+
 const normalizeComparePath = (value: string): string =>
 	value.trim().replace(/\\/g, "/").replace(/\/+$/, "").toLowerCase();
 
@@ -21,19 +23,13 @@ export const assertSafeDirectoryCopy = (
 		return;
 	}
 	if (normalizeComparePath(source) === normalizeComparePath(dest)) {
-		throw new Error(
-			"Copy source and destination are the same folder. Choose a different Support Root.",
-		);
+		throw new Error(i18n.t("settings:errors.pathCopySameFolder"));
 	}
 	if (isPathSameOrNested(source, dest)) {
-		throw new Error(
-			"Copy destination is inside the source folder. Choose a different Support Root.",
-		);
+		throw new Error(i18n.t("settings:errors.pathCopyDestInsideSource"));
 	}
 	if (isPathSameOrNested(dest, source)) {
-		throw new Error(
-			"Copy source is inside the destination folder. Choose a different Support Root.",
-		);
+		throw new Error(i18n.t("settings:errors.pathCopySourceInsideDest"));
 	}
 };
 
@@ -57,8 +53,6 @@ export const assertSafeSupportRootDelete = (
 		return anchor.length > 0 && isPathSameOrNested(anchor, trimmed);
 	});
 	if (!hit) {
-		throw new Error(
-			"Refusing to delete Support Root contents: target is outside a trusted user-data root.",
-		);
+		throw new Error(i18n.t("settings:errors.pathCopyUntrustedTarget"));
 	}
 };

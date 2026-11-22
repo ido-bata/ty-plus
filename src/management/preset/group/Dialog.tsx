@@ -188,7 +188,7 @@ export function GroupDialog(): JSX.Element {
 			type="preset"
 			description={t("group.lead")}
 			defaultName={t("group.defaultName")}
-			iconText="GROUP"
+			iconText={t("group.iconText")}
 			pathBrowse={{ fieldKey: "path", mode: "folder" }}
 			resolveBrowseStartDir={readUserHomeOrFallback}
 			renderForm={(ctx) => (
@@ -208,7 +208,7 @@ export function GroupDialog(): JSX.Element {
 						onPickPreset={pickPreset}
 					/>
 					{/* 3. Icon Rules (Additive) */}
-					<AuthoringSection title="Icon Rules" span={6}>
+					<AuthoringSection title={t("group.iconRules")} span={6}>
 						<ConditionRulesSection
 							baseIconDraft={baseIconDraft}
 							onBaseIconDraftChange={setBaseIconDraft}
@@ -238,11 +238,11 @@ export function GroupDialog(): JSX.Element {
 						/>
 					</AuthoringSection>
 					{/* 4. Group Icon */}
-					<AuthoringSection title="Group Icon" span={6}>
+					<AuthoringSection title={t("group.groupIcon")} span={6}>
 						{ctx.icon}
 					</AuthoringSection>
 					{/* 5. Advanced Settings (Description + Image) */}
-					<AuthoringSection title="Advanced Settings" span={6}>
+					<AuthoringSection title={t("group.advancedSettings")} span={6}>
 						{ctx.details}
 					</AuthoringSection>
 				</AuthoringGrid>
@@ -266,19 +266,19 @@ export function GroupDialog(): JSX.Element {
 			fields={[
 				{
 					key: "paths",
-					label: "Folder paths",
+					label: t("group.fields.folderPaths"),
 					kind: "textarea",
-					placeholder: "One folder path per line",
+					placeholder: t("group.fields.folderPathsPlaceholder"),
 				},
 				{
 					key: "presetIds",
-					label: "Preset IDs",
+					label: t("group.fields.presetIds"),
 					kind: "textarea",
-					placeholder: "One preset ID per line",
+					placeholder: t("group.fields.presetIdsPlaceholder"),
 				},
 				{
 					key: "recursive",
-					label: "Recursive folder scan",
+					label: t("group.fields.recursiveScan"),
 					kind: "checkbox",
 					defaultValue: "false",
 				},

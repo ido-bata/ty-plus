@@ -2,6 +2,7 @@ import { IconButton } from "@ty-plus/ui/controls/IconButton";
 import { Icon } from "@ty-plus/ui/Icon";
 import { RefreshCw, X } from "lucide-react";
 import type { JSX } from "react";
+import { i18n } from "@/management/i18n/index";
 import { gatewayRetryAffordance } from "@/management/online/catalog/gateway-retry";
 import type { GatewayBootFailureReason } from "@/management/panel/cloud-gateway-boot";
 import { css } from "@/styled-system/css";
@@ -78,7 +79,7 @@ export function PresetLibraryEmptyState(
 				data-gateway-boot-reason={disconnectedReasonTag ?? ""}
 			>
 				<p className={disconnectedTitleClass}>
-					Online preset library is unavailable.
+					{i18n.t("online:catalog.emptyUnavailable")}
 				</p>
 				{disconnectedReason ? (
 					<p className={disconnectedReasonClass}>{disconnectedReason}</p>
@@ -98,11 +99,13 @@ export function PresetLibraryEmptyState(
 	if (catalogLength === 0) {
 		return (
 			<div className={emptyClass} data-online-preset-empty>
-				<p className={emptyTextClass}>No online catalog.</p>
+				<p className={emptyTextClass}>
+					{i18n.t("online:catalog.emptyNoCatalog")}
+				</p>
 				<IconButton
 					size="sm"
 					variant="ghost"
-					title="Refresh catalog"
+					title={i18n.t("online:catalog.refreshCatalog")}
 					onClick={onRefresh}
 				>
 					<Icon icon={RefreshCw} size={14} />
@@ -113,11 +116,13 @@ export function PresetLibraryEmptyState(
 	if (filteredLength === 0) {
 		return (
 			<div className={emptyClass} data-online-preset-empty>
-				<p className={emptyTextClass}>No presets match filter.</p>
+				<p className={emptyTextClass}>
+					{i18n.t("online:catalog.emptyNoMatch")}
+				</p>
 				<IconButton
 					size="sm"
 					variant="ghost"
-					title="Clear all filters"
+					title={i18n.t("online:catalog.clearAllFilters")}
 					onClick={onClearFilters}
 				>
 					<Icon icon={X} size={12} />

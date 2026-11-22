@@ -36,7 +36,7 @@ const _callOpenDialog = (
 const fileUriToPath = (value: string): string => {
 	const url = new URL(value);
 	if (url.protocol !== "file:") {
-		throw new Error("Expected a file URL");
+		throw new Error("Expected a file URL"); // i18n-exempt: internal diagnostic — not rendered as UI copy
 	}
 	const path = decodeURIComponent(url.pathname);
 	return /^\/[a-zA-Z]:\//.test(path) ? path.slice(1) : path;

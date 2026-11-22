@@ -12,6 +12,9 @@
 		"edit": "Editar",
 		"close": "Cerrar"
 	},
+	"dialogs": {
+		"unsavedChangesConfirm": "Los cambios sin guardar se perderán. ¿Cerrar el cuadro de diálogo?"
+	},
 	"actions": {
 		"run": "Ejecutar",
 		"duplicate": "Duplicar",
@@ -179,6 +182,104 @@
 			"copyError": "Copiar detalles del error",
 			"copied": "Copiado al portapapeles",
 			"digest": "ID de error"
+		}
+	},
+	"ui": {
+		"loadingSpinner": {
+			"label": "Cargando"
+		},
+		"searchField": {
+			"clearAria": "Borrar búsqueda",
+			"clearTitle": "Borrar"
+		},
+		"regexEditor": {
+			"enterPattern": "Introduce un patrón.",
+			"invalidFlags": "Indicadores no válidos: {{flags}}",
+			"plainSource": "Fuente regex simple",
+			"literalFormat": "Formato regex literal",
+			"testString": "Cadena de prueba",
+			"sourcePlaceholder": "Fuente regex",
+			"flagsPlaceholder": "indicadores",
+			"matches": "Coincidencias",
+			"noMatch": "Sin coincidencias",
+			"literalSuffix": "· literal /patrón/flags",
+			"sourceSuffix": "· solo fuente"
+		},
+		"listSelect": {
+			"placeholder": "Seleccionar…"
+		}
+	},
+	"directoryBrowser": {
+		"refresh": "Actualizar",
+		"goUp": "Subir",
+		"open": "Abrir",
+		"select": "Seleccionar",
+		"deselect": "Deseleccionar",
+		"listView": "Vista de lista",
+		"iconView": "Vista de iconos",
+		"noFilesFound": "No se encontraron archivos",
+		"selectFileAria": "Seleccionar archivo {{name}}",
+		"selectFolderAria": "Seleccionar carpeta {{name}}"
+	},
+	"debugConsole": {
+		"title": "Consola",
+		"clear": "Borrar",
+		"evaluateAria": "Evaluar JavaScript",
+		"evaluatePlaceholder": "Evaluar JavaScript…",
+		"rowContextHint": "Clic derecho para copiar",
+		"filterLevelAria": "Filtrar mensajes de la consola",
+		"filterSourceAria": "Filtrar mensajes por origen",
+		"filterScopeAria": "Filtrar mensajes por ámbito de sesión",
+		"levels": {
+			"all": "Todos",
+			"log": "Registro",
+			"info": "Info",
+			"warn": "Advertencia",
+			"error": "Error"
+		},
+		"sources": {
+			"all": "Todas las fuentes",
+			"panel": "Panel",
+			"modeless": "Sin ventana",
+			"hostBridge": "Puente de host",
+			"online": "En línea",
+			"preset": "Preajuste",
+			"opWorker": "Worker de operaciones",
+			"workspace": "Área de trabajo",
+			"boot": "Inicio",
+			"debugConsole": "Consola de depuración",
+			"console": "Consola"
+		},
+		"scopes": {
+			"allHistory": "Todo el historial",
+			"thisSession": "Esta sesión"
+		},
+		"contextMenu": {
+			"copyMessage": "Copiar mensaje",
+			"copyAllMessages": "Copiar todos los mensajes",
+			"clearConsole": "Borrar consola",
+			"enableAutoScroll": "Activar desplazamiento automático",
+			"disableAutoScroll": "Desactivar desplazamiento automático",
+			"itemActive": "{{level}} (activo)"
+		}
+	},
+	"errors": {
+		"hostContextUnavailable": "Contexto del host no disponible",
+		"fileAccessUnavailable": "El acceso a archivos de CEP Node no está disponible en esta superficie.",
+		"fsApiUnavailable": "La API fs de CEP Node no está disponible en este entorno de ejecución del host.",
+		"fileImportAeOnly": "La importación de archivos solo está disponible actualmente en After Effects.",
+		"initNotFound": "No se encontró ty-plus-init.json (sin raíz de aplicación). El onboarding debe completarse antes de cualquier escritura.",
+		"initIncomplete": "ty-plus aún no está inicializado. Las escrituras están bloqueadas hasta que ty-plus-init.json indique que se completó.",
+		"initSupportRootBlank": "ty-plus-init.json está marcado como completado, pero supportRoot está vacío.",
+		"hostExecFailed": "Ty Plus: {{message}}",
+		"notify": {
+			"generic": "Se produjo un error",
+			"fsPermission": "Permiso denegado. Comprueba los permisos del archivo o carpeta.",
+			"fsNotFound": "Archivo o carpeta no encontrado. Puede que se haya movido o eliminado.",
+			"fsCorrupted": "El archivo de datos está dañado y se ha realizado una copia de seguridad. Inténtalo de nuevo.",
+			"aeEvalFailed": "El comando de After Effects falló. Inténtalo de nuevo o reinicia AE.",
+			"aeNotAvailable": "Se perdió la conexión con After Effects. Reinicia el panel.",
+			"network": "Error de red. Comprueba tu conexión."
 		}
 	}
 }

@@ -139,8 +139,8 @@ describe("unified workspace context menu composition", () => {
 			"registerCepJsonContextMenuSurface(PANEL_ID",
 		);
 		expect(backgroundDialogSource).toContain("data-background-layer-id");
-		expect(backgroundDialogSource).toContain('label: "Layer Type"');
-		expect(backgroundDialogSource).toContain('label: "Order"');
+		expect(backgroundDialogSource).toContain('contextMenu.layerType"');
+		expect(backgroundDialogSource).toContain('contextMenu.order"');
 		expect(backgroundDialogSource).toContain("checkable: true");
 		expect(backgroundDialogSource).not.toContain("generic");
 	});

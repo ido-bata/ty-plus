@@ -1,6 +1,7 @@
 import { Input } from "@ty-plus/ui/fields/Input";
 import { cx } from "@ty-plus/ui/util/cx";
 import { type JSX, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { css } from "@/styled-system/css";
 
 export type RegexEditorProps = {
@@ -87,13 +88,19 @@ export function RegexEditor({
 	disabled = false,
 	className = "",
 }: RegexEditorProps): JSX.Element {
+	const { t } = useTranslation();
 	const [sample, setSample] = useState("");
 
 	const parsed = useMemo(() => parseRegexValue(value), [value]);
 
 	const validation = useMemo(() => {
 		if (!parsed.source.trim()) {
-			return { ok: true, message: "Enter a pattern." };
+			return {
+				ok: true,
+				message: t("ui.regexEditor.enterPattern", {
+					defaultValue: "Enter a pattern.",
+				}),
+			};
 		}
 		const invalidFlags = parsed.flags
 			.split("")
@@ -101,13 +108,21 @@ export function RegexEditor({
 		if (invalidFlags.length > 0) {
 			return {
 				ok: false,
-				message: `Invalid flags: ${invalidFlags.join(", ")}`,
+				message: t("ui.regexEditor.invalidFlags", {
+					flags: invalidFlags.join(", "),
+					defaultValue: `Invalid flags: ${invalidFlags.join(", ")}`,
+				}),
 			};
 		}
 		try {
 			new RegExp(parsed.source, parsed.flags);
-			let message = "Plain regex source";
-			if (parsed.isLiteral) message = "Literal regex format";
+			const message = parsed.isLiteral
+				? t("ui.regexEditor.literalFormat", {
+						defaultValue: "Literal regex format",
+					})
+				: t("ui.regexEditor.plainSource", {
+						defaultValue: "Plain regex source",
+					});
 			return {
 				ok: true,
 				message,
@@ -117,7 +132,7 @@ export function RegexEditor({
 			if (e instanceof Error) message = e.message;
 			return { ok: false, message };
 		}
-	}, [parsed]);
+	}, [parsed, t]);
 
 	const sampleResult = useMemo(() => {
 		if (!validation.ok || !sample.trim()) {
@@ -125,8 +140,10 @@ export function RegexEditor({
 		}
 		const regex = new RegExp(parsed.source, parsed.flags);
 		const match = regex.exec(sample);
-		return match ? `Matches${match[0] ? `: ${match[0]}` : ""}` : "No match";
-	}, [validation.ok, sample, parsed]);
+		return match
+			? `${t("ui.regexEditor.matches", { defaultValue: "Matches" })}${match[0] ? `: ${match[0]}` : ""}`
+			: t("ui.regexEditor.noMatch", { defaultValue: "No match" });
+	}, [validation.ok, sample, parsed, t]);
 
 	return (
 		<div className={cx(outerGrid, className)}>
@@ -142,7 +159,12 @@ export function RegexEditor({
 							),
 						)
 					}
-					placeholder={placeholder ?? "Regex source"}
+					placeholder={
+						placeholder ??
+						t("ui.regexEditor.sourcePlaceholder", {
+							defaultValue: "Regex source",
+						})
+					}
 					disabled={disabled}
 					uiSize="sm"
 					className={sourceInput}
@@ -154,7 +176,9 @@ export function RegexEditor({
 							composeRegexValue(parsed.source, e.currentTarget.value, true),
 						)
 					}
-					placeholder="flags"
+					placeholder={t("ui.regexEditor.flagsPlaceholder", {
+						defaultValue: "flags",
+					})}
 					disabled={disabled}
 					uiSize="sm"
 					className={flagsInput}
@@ -164,7 +188,9 @@ export function RegexEditor({
 				<Input
 					value={sample}
 					onChange={(e) => setSample(e.currentTarget.value)}
-					placeholder="Test string"
+					placeholder={t("ui.regexEditor.testString", {
+						defaultValue: "Test string",
+					})}
 					disabled={disabled}
 					uiSize="sm"
 					className={sampleInput}
@@ -172,7 +198,11 @@ export function RegexEditor({
 			</div>
 			<div className={cx(statusRow, validation.ok ? statusOk : statusError)}>
 				{validation.message}{" "}
-				{parsed.isLiteral ? "· literal /pattern/flags" : "· source only"}
+				{parsed.isLiteral
+					? t("ui.regexEditor.literalSuffix", {
+							defaultValue: "· literal /pattern/flags",
+						})
+					: t("ui.regexEditor.sourceSuffix", { defaultValue: "· source only" })}
 				{sampleResult ? ` · ${sampleResult}` : ""}
 			</div>
 		</div>

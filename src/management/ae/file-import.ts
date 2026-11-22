@@ -6,6 +6,7 @@
  * (PICA resource) — the filename stem is not a reliable matchName.
  */
 
+import { i18n } from "@/management/i18n/index";
 import { resolveEffectMatchName } from "@/management/storage/candidates-cache/plugin-match-name";
 import { getCandidatesSnapshot } from "@/management/storage/candidates-cache/runtime";
 
@@ -20,19 +21,36 @@ export const importFile = async (
 		| null,
 ): Promise<string> => {
 	if (hostCode !== "AEFT" || !hostExecutor) {
-		throw new Error(
-			"File import is currently available only in After Effects.",
-		);
+		throw new Error(i18n.t("common:errors.fileImportAeOnly"));
 	}
 	const lowerPath = filePath.toLowerCase();
 	const fileName = fileNameFromPath(filePath);
 	if (lowerPath.endsWith(".jsx") || lowerPath.endsWith(".jsxbin")) {
 		await hostExecutor("runScriptFile", [filePath]);
-		return `Ran script: ${fileName}`;
+		return i18n.t("widgets:directoryBrowser.actions.ranScript", {
+			name: fileName,
+		});
 	}
 	if (lowerPath.endsWith(".ffx")) {
-		await hostExecutor("applyPreset", [filePath]);
-		return `Applied preset: ${fileName}`;
+		await hostExecutor("applyPreset", [
+			filePath,
+			{
+				undoGroupName: i18n.t(
+					"widgets:directoryBrowser.actions.undoGroup.applyPreset",
+				),
+				messages: {
+					openComposition: i18n.t(
+						"widgets:directoryBrowser.actions.errors.openComposition",
+					),
+					addLayerOrSelect: i18n.t(
+						"widgets:directoryBrowser.actions.errors.addLayerOrSelect",
+					),
+				},
+			},
+		]);
+		return i18n.t("widgets:directoryBrowser.actions.appliedPreset", {
+			name: fileName,
+		});
 	}
 	if (lowerPath.endsWith(".aex") || lowerPath.endsWith(".plugin")) {
 		const snapshot = getCandidatesSnapshot();
@@ -40,9 +58,33 @@ export const importFile = async (
 			filePath,
 			snapshot?.pluginEffects ?? [],
 		);
-		await hostExecutor("applyEffectByMatchName", [matchName]);
-		return `Applied effect: ${fileName}`;
+		await hostExecutor("applyEffectByMatchName", [
+			matchName,
+			{
+				undoGroupName: i18n.t(
+					"widgets:directoryBrowser.actions.undoGroup.applyEffect",
+				),
+				messages: {
+					selectLayer: i18n.t(
+						"widgets:directoryBrowser.actions.errors.selectLayerForEffect",
+					),
+				},
+			},
+		]);
+		return i18n.t("widgets:directoryBrowser.actions.appliedEffect", {
+			name: fileName,
+		});
 	}
-	await hostExecutor("addFootage", [{ filePath, toComp: true }]);
-	return `Imported footage: ${fileName}`;
+	await hostExecutor("addFootage", [
+		{
+			filePath,
+			toComp: true,
+			undoGroupName: i18n.t(
+				"widgets:directoryBrowser.actions.undoGroup.addFootage",
+			),
+		},
+	]);
+	return i18n.t("widgets:directoryBrowser.actions.importedFootage", {
+		name: fileName,
+	});
 };

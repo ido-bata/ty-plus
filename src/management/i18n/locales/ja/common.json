@@ -12,6 +12,9 @@
 		"edit": "編集",
 		"close": "閉じる"
 	},
+	"dialogs": {
+		"unsavedChangesConfirm": "未保存の変更は失われます。ダイアログを閉じますか？"
+	},
 	"actions": {
 		"run": "実行",
 		"duplicate": "複製",
@@ -179,6 +182,104 @@
 			"copyError": "エラー詳細をコピー",
 			"copied": "クリップボードにコピーしました",
 			"digest": "エラー ID"
+		}
+	},
+	"ui": {
+		"loadingSpinner": {
+			"label": "読み込み中"
+		},
+		"searchField": {
+			"clearAria": "検索をクリア",
+			"clearTitle": "クリア"
+		},
+		"regexEditor": {
+			"enterPattern": "パターンを入力してください。",
+			"invalidFlags": "無効なフラグ: {{flags}}",
+			"plainSource": "プレーンな正規表現ソース",
+			"literalFormat": "リテラル正規表現フォーマット",
+			"testString": "テスト文字列",
+			"sourcePlaceholder": "正規表現ソース",
+			"flagsPlaceholder": "フラグ",
+			"matches": "一致",
+			"noMatch": "一致なし",
+			"literalSuffix": "· リテラル /pattern/flags",
+			"sourceSuffix": "· ソースのみ"
+		},
+		"listSelect": {
+			"placeholder": "選択…"
+		}
+	},
+	"directoryBrowser": {
+		"refresh": "更新",
+		"goUp": "上へ",
+		"open": "開く",
+		"select": "選択",
+		"deselect": "選択解除",
+		"listView": "リスト表示",
+		"iconView": "アイコン表示",
+		"noFilesFound": "ファイルが見つかりません",
+		"selectFileAria": "ファイル {{name}} を選択",
+		"selectFolderAria": "フォルダ {{name}} を選択"
+	},
+	"debugConsole": {
+		"title": "コンソール",
+		"clear": "クリア",
+		"evaluateAria": "JavaScriptを評価",
+		"evaluatePlaceholder": "JavaScriptを評価…",
+		"rowContextHint": "右クリックでコピー",
+		"filterLevelAria": "コンソールメッセージをフィルター",
+		"filterSourceAria": "ソース別にコンソールメッセージをフィルター",
+		"filterScopeAria": "セッション範囲でコンソールメッセージをフィルター",
+		"levels": {
+			"all": "すべて",
+			"log": "ログ",
+			"info": "情報",
+			"warn": "警告",
+			"error": "エラー"
+		},
+		"sources": {
+			"all": "すべてのソース",
+			"panel": "パネル",
+			"modeless": "モードレス",
+			"hostBridge": "ホストブリッジ",
+			"online": "オンライン",
+			"preset": "プリセット",
+			"opWorker": "オペレーションワーカー",
+			"workspace": "ワークスペース",
+			"boot": "起動",
+			"debugConsole": "デバッグコンソール",
+			"console": "コンソール"
+		},
+		"scopes": {
+			"allHistory": "すべての履歴",
+			"thisSession": "このセッション"
+		},
+		"contextMenu": {
+			"copyMessage": "メッセージをコピー",
+			"copyAllMessages": "すべてのメッセージをコピー",
+			"clearConsole": "コンソールをクリア",
+			"enableAutoScroll": "自動スクロールを有効にする",
+			"disableAutoScroll": "自動スクロールを無効にする",
+			"itemActive": "{{level}}（アクティブ）"
+		}
+	},
+	"errors": {
+		"hostContextUnavailable": "ホストコンテキストを利用できません",
+		"fileAccessUnavailable": "このサーフェスでは CEP Node のファイルアクセスを利用できません。",
+		"fsApiUnavailable": "このホストランタイムでは CEP Node の fs API を利用できません。",
+		"fileImportAeOnly": "ファイルのインポートは現在 After Effects でのみ利用できます。",
+		"initNotFound": "ty-plus-init.json が見つかりません（アプリルートなし）。書き込みの前にオンボーディングを完了する必要があります。",
+		"initIncomplete": "ty-plus はまだ初期化されていません。ty-plus-init.json が完了を報告するまで書き込みはブロックされます。",
+		"initSupportRootBlank": "ty-plus-init.json は完了とマークされていますが、supportRoot が空です。",
+		"hostExecFailed": "Ty Plus: {{message}}",
+		"notify": {
+			"generic": "エラーが発生しました",
+			"fsPermission": "権限がありません。ファイル/フォルダの権限を確認してください。",
+			"fsNotFound": "ファイルまたはフォルダが見つかりません。移動または削除された可能性があります。",
+			"fsCorrupted": "データファイルが破損しているためバックアップされました。再試行してください。",
+			"aeEvalFailed": "After Effectsコマンドが失敗しました。再試行するかAEを再起動してください。",
+			"aeNotAvailable": "After Effectsとの接続が切れました。パネルを再起動してください。",
+			"network": "ネットワークエラー。接続を確認してください。"
 		}
 	}
 }

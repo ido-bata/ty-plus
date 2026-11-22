@@ -3,6 +3,7 @@
  */
 
 import type { WidgetType } from "@/function/widget/contract";
+import { i18n } from "@/management/i18n/index";
 import { registry } from "@/management/widget/registry";
 import { buildPrimaryPanelWidgets } from "@/management/workspace/layout/default";
 import type { LayoutRestoreNotice } from "@/management/workspace/layout/restore-plan";
@@ -98,6 +99,7 @@ export const ensurePrimaryPanelWidgets = (
 				],
 			),
 		) as Record<string, WidgetType>,
-		statusMessage: state.statusMessage || "Workspace layout was reset.",
+		statusMessage:
+			state.statusMessage || i18n.t("workspace:statusMessages.layoutReset"),
 	};
 };

@@ -30,10 +30,10 @@ export const readTextFile = async (
 
 	const result = await evalScript(win, script);
 	if (result === "___FILE_NOT_FOUND___") {
-		throw new Error(`File not found: ${filePath}`);
+		throw new Error(`File not found: ${filePath}`); // i18n-exempt: internal diagnostic — not rendered as UI copy
 	}
 	if (result === "___CANNOT_OPEN___") {
-		throw new Error(`Cannot open file: ${filePath}`);
+		throw new Error(`Cannot open file: ${filePath}`); // i18n-exempt: internal diagnostic — not rendered as UI copy
 	}
 	return result;
 };

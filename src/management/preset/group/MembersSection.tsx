@@ -1,6 +1,7 @@
 import { Button, Icon, PathField } from "@ty-plus/ui";
 import { ChevronDown, FolderOpen, Plus, Trash2 } from "lucide-react";
 import type { JSX, ReactNode } from "react";
+import { i18n } from "@/management/i18n/index";
 import { AuthoringSection } from "@/management/preset/authoring-layout";
 import { FolderDirectoryPicker } from "@/management/preset/tool-shell/FolderDirectoryPicker";
 import { css } from "@/styled-system/css";
@@ -118,7 +119,7 @@ export function MembersSection({
 					onToggleSelected={togglePath}
 					onChange={addFromPicker}
 					selectionMode="both"
-					label="Browse files & folders to add"
+					label={i18n.t("presets:group.browseMembers")}
 					candidatePresets={candidatePresets}
 					candidateDirs={candidateDirs}
 					onPickPreset={onPickPreset}
@@ -126,10 +127,10 @@ export function MembersSection({
 
 				<div className={buttonRowClass}>
 					<Button type="button" variant="outline" fullWidth onClick={addPath}>
-						<Plus size={16} /> Add path
+						<Plus size={16} /> {i18n.t("presets:group.addPath")}
 					</Button>
 					<Button type="button" variant="ghost" onClick={detect}>
-						<ChevronDown size={14} /> Detect candidates
+						<ChevronDown size={14} /> {i18n.t("presets:group.detectCandidates")}
 					</Button>
 				</div>
 
@@ -142,7 +143,7 @@ export function MembersSection({
 									value={p}
 									onChange={(next) => updatePath(idx, next)}
 									onBrowse={() => ctx.runPathBrowse(`paths[${idx}]`)}
-									browseAriaLabel="Browse folder"
+									browseAriaLabel={i18n.t("presets:group.browseFolder")}
 									browseSlot={<Icon icon={FolderOpen} size={16} aria-hidden />}
 									placeholder="C:\path\folder"
 									uiSize="md"
@@ -150,7 +151,7 @@ export function MembersSection({
 								/>
 								<Button
 									variant="ghost"
-									aria-label="Remove path"
+									aria-label={i18n.t("presets:group.removePath")}
 									onClick={() => removePath(idx)}
 								>
 									<Trash2 size={16} />

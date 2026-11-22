@@ -52,6 +52,7 @@ const resolveJsonWriteFileSystem = async (
 		if (fsMod.promises) {
 			const rename = fsMod.promises.rename;
 			if (typeof rename !== "function") {
+				// i18n-exempt: internal diagnostic — not rendered as UI copy
 				throw new Error(
 					"CEP Node fs rename API is not available in this host runtime; atomic JSON publish requires it.",
 				);
@@ -68,6 +69,7 @@ const resolveJsonWriteFileSystem = async (
 				fsMod as { renameSync?: (from: string, to: string) => void }
 			).renameSync;
 			if (typeof renameSync !== "function") {
+				// i18n-exempt: internal diagnostic — not rendered as UI copy
 				throw new Error(
 					"CEP Node fs renameSync API is not available in this host runtime; atomic JSON publish requires it.",
 				);
@@ -87,6 +89,7 @@ const resolveJsonWriteFileSystem = async (
 						u(String(path));
 						return;
 					}
+					// i18n-exempt: internal diagnostic — not rendered as UI copy
 					throw new Error(
 						"CEP Node fs unlink API is not available in this host runtime.",
 					);
@@ -96,6 +99,7 @@ const resolveJsonWriteFileSystem = async (
 				},
 			};
 		}
+		// i18n-exempt: internal diagnostic — not rendered as UI copy
 		throw new Error(
 			"CEP Node fs write API is not available in this host runtime.",
 		);
