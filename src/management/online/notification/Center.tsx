@@ -1007,6 +1007,25 @@ export function NotificationCenter(): JSX.Element {
 	// ── List view ──────────────────────────────────────────────────────────────
 
 	return (
+		<NotificationListView
+			items={items}
+			loading={loading}
+			readAtById={readAtById}
+			onRefresh={() => void syncRemote()}
+			onOpen={openDetail}
+		/>
+	);
+}
+
+function NotificationListView(props: {
+	items: NotificationSummary[];
+	loading: boolean;
+	readAtById: Record<string, string>;
+	onRefresh: () => void;
+	onOpen: (item: NotificationSummary) => void;
+}): JSX.Element {
+	const { items, loading, readAtById, onRefresh, onOpen } = props;
+	return (
 		<div className={listContainerClass} data-surface-id="dialog-messages">
 			{/* Header */}
 			<header className={listHeaderClass}>
@@ -1017,7 +1036,7 @@ export function NotificationCenter(): JSX.Element {
 					<IconButton
 						variant="ghost"
 						size="sm"
-						onClick={() => void syncRemote()}
+						onClick={onRefresh}
 						aria-label={i18n.t("online:notificationCenter.refresh")}
 						disabled={loading}
 					>
@@ -1053,7 +1072,7 @@ export function NotificationCenter(): JSX.Element {
 								key={item.notificationId}
 								item={item}
 								readAtById={readAtById}
-								onOpen={openDetail}
+								onOpen={onOpen}
 								isFixture={tryGetDataServices()?.gateway.isFixture === true}
 							/>
 						))}

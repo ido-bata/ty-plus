@@ -353,51 +353,16 @@ export function AddWidgetDialog(): JSX.Element {
 			contentClassName={contentClassName}
 			footerClassName={footerClassName}
 			footer={
-				<div>
-					{addFailure ? (
-						<p className={footerErrorStyle} role="alert">
-							{addFailure}
-						</p>
-					) : null}
-					<div className={footerRowStyle}>
-						<p className={footerHintStyle}>
-							{i18n.t("widgets:addWidgetDialog.addsToPrefix", {
-								defaultValue: "Adds to",
-							})}{" "}
-							<span className={footerPanelStyle}>{targetPanelId}</span>{" "}
-							{i18n.t("widgets:addWidgetDialog.addsToSuffix", {
-								defaultValue: "at the bottom of the grid.",
-							})}
-						</p>
-						<Button
-							variant="default"
-							uiSize="sm"
-							type="button"
-							fullWidth
-							onClick={() => close()}
-						>
-							{i18n.t("common:buttons.cancel")}
-						</Button>
-						<Button
-							variant="primary"
-							uiSize="sm"
-							type="button"
-							fullWidth
-							disabled={!selectedType || busy}
-							onClick={() => {
-								if (selectedType) void addForType(selectedType);
-							}}
-						>
-							{busy
-								? i18n.t("widgets:selector.adding", {
-										defaultValue: "Adding…",
-									})
-								: i18n.t("widgets:selector.add", {
-										defaultValue: "Add",
-									})}
-						</Button>
-					</div>
-				</div>
+				<AddWidgetFooter
+					addFailure={addFailure}
+					targetPanelId={targetPanelId}
+					busy={busy}
+					canAdd={Boolean(selectedType)}
+					onCancel={() => close()}
+					onAdd={() => {
+						if (selectedType) void addForType(selectedType);
+					}}
+				/>
 			}
 		>
 			<AddWidgetCatalogPanel
@@ -424,5 +389,61 @@ export function AddWidgetDialog(): JSX.Element {
 				keyboardEnabled
 			/>
 		</DialogShell>
+	);
+}
+
+function AddWidgetFooter(props: {
+	addFailure: string | null;
+	targetPanelId: string;
+	busy: boolean;
+	canAdd: boolean;
+	onCancel: () => void;
+	onAdd: () => void;
+}): JSX.Element {
+	const { addFailure, targetPanelId, busy, canAdd, onCancel, onAdd } = props;
+	return (
+		<div>
+			{addFailure ? (
+				<p className={footerErrorStyle} role="alert">
+					{addFailure}
+				</p>
+			) : null}
+			<div className={footerRowStyle}>
+				<p className={footerHintStyle}>
+					{i18n.t("widgets:addWidgetDialog.addsToPrefix", {
+						defaultValue: "Adds to",
+					})}{" "}
+					<span className={footerPanelStyle}>{targetPanelId}</span>{" "}
+					{i18n.t("widgets:addWidgetDialog.addsToSuffix", {
+						defaultValue: "at the bottom of the grid.",
+					})}
+				</p>
+				<Button
+					variant="default"
+					uiSize="sm"
+					type="button"
+					fullWidth
+					onClick={onCancel}
+				>
+					{i18n.t("common:buttons.cancel")}
+				</Button>
+				<Button
+					variant="primary"
+					uiSize="sm"
+					type="button"
+					fullWidth
+					disabled={!canAdd || busy}
+					onClick={onAdd}
+				>
+					{busy
+						? i18n.t("widgets:selector.adding", {
+								defaultValue: "Adding…",
+							})
+						: i18n.t("widgets:selector.add", {
+								defaultValue: "Add",
+							})}
+				</Button>
+			</div>
+		</div>
 	);
 }
