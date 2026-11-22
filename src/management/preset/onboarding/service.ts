@@ -30,8 +30,14 @@ export type OnboardingImportOptions = {
 		scripts: Set<string>;
 		plugins: Set<string>;
 	};
-	/** Whether to recursively scan folders for matching file extensions */
+	/** Whether to scan selected folders for matching file extensions */
 	canScanFolders: boolean;
+	/**
+	 * Whether folder scans descend into subdirectories. Defaults to true.
+	 * Flat scans still collect top-level matches — `canScanFolders`
+	 * controls WHETHER to scan, this controls DEPTH.
+	 */
+	recursive?: boolean;
 	/** Optional pre-collected candidates (used when canScanFolders is false and candidates already known) */
 	candidates?: OnboardingPresetCandidate[];
 	/**
@@ -96,6 +102,7 @@ const buildCandidates = async (
 			{
 				selectedFiles: options.selectedFiles,
 				selectedFolders: options.selectedFolders,
+				recursive: options.recursive ?? true,
 			},
 			listDirectory,
 		);

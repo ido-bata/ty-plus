@@ -72,6 +72,7 @@ const walkFolderForExtensions = async (
 	rootPath: string,
 	extensions: readonly string[],
 	listDirectory: (dirPath: string) => Promise<OnboardingFileBrowserEntry[]>,
+	recursive: boolean,
 ): Promise<string[]> => {
 	const collected: string[] = [];
 	const queue = [rootPath];
@@ -94,7 +95,7 @@ const walkFolderForExtensions = async (
 				collected.push(entry.path);
 				continue;
 			}
-			if (!entry.isDirectory) {
+			if (!entry.isDirectory || !recursive) {
 				continue;
 			}
 			queue.push(entry.path);
@@ -107,6 +108,7 @@ const walkFolderForExtensions = async (
 const collectOnboardingFilesFromSelectedFolders = async (
 	selectedFolders: Record<"presets" | "scripts" | "plugins", Set<string>>,
 	listDirectory: (dirPath: string) => Promise<OnboardingFileBrowserEntry[]>,
+	recursive: boolean,
 ): Promise<OnboardingSelectedFiles> => {
 	const collected = createEmptyOnboardingSelectedFiles();
 	const tasks: Array<
@@ -120,9 +122,12 @@ const collectOnboardingFilesFromSelectedFolders = async (
 				continue;
 			}
 			tasks.push(
-				walkFolderForExtensions(folderPath, extensions, listDirectory).then(
-					(filePaths) => ({ kind, filePaths }),
-				),
+				walkFolderForExtensions(
+					folderPath,
+					extensions,
+					listDirectory,
+					recursive,
+				).then((filePaths) => ({ kind, filePaths })),
 			);
 		}
 	}
@@ -190,12 +195,14 @@ export const collectFilePresetCandidatesWithScannedFolders = async (
 	input: {
 		selectedFiles: OnboardingSelectedFiles;
 		selectedFolders: Record<"presets" | "scripts" | "plugins", Set<string>>;
+		recursive?: boolean;
 	},
 	listDirectory: (dirPath: string) => Promise<OnboardingFileBrowserEntry[]>,
 ): Promise<OnboardingPresetCandidate[]> => {
 	const scanned = await collectOnboardingFilesFromSelectedFolders(
 		input.selectedFolders,
 		listDirectory,
+		input.recursive ?? true,
 	);
 	const merged = mergeOnboardingSelectedFiles(input.selectedFiles, scanned);
 	const folderPaths = new Set<string>();
