@@ -1,50 +1,50 @@
 {
-  "schema": "ty-plus.e2e-run/1",
-  "suite": "catalog",
-  "capturedAt": "2026-11-15T12:02:36.373Z",
-  "extensionDir": "C:/Users/rebui/AppData/Roaming/Adobe/CEP/extensions/app.ty-plus.dev",
-  "managedRoot": "D:/4_apps/adobe/Adobe After Effects 2027/Support Files/ty-plus",
-  "totals": {
-    "PASS": 1,
-    "FAIL": 0,
-    "BLOCKED": 0,
-    "SKIP": 0
-  },
-  "results": [
-    {
-      "uc": "UC-C15",
-      "title": "preset with missing asset: record survives boot, host verify reports missing",
-      "status": "PASS",
-      "detail": "stale record 041d4b43-9523-43b3-8a66-c5c2749dae0a → /tmp/ty-plus-e2e-missing-ff0b8a7e-c04b-4632-9fc5-bee914c88b68.ffx",
-      "checks": [
-        {
-          "name": "panel boots with workspace grid after stale record added",
-          "ok": true,
-          "detail": "body=49826 grid=true tiles=7"
-        },
-        {
-          "name": "stale preset record not dropped or rewritten on boot",
-          "ok": true,
-          "detail": "filePath=/tmp/ty-plus-e2e-missing-ff0b8a7e-c04b-4632-9fc5-bee914c88b68.ffx"
-        },
-        {
-          "name": "sibling preset records unaffected",
-          "ok": true,
-          "detail": "before=0 after=1"
-        },
-        {
-          "name": "host verifyPresetAsset reports exists:false for stale path",
-          "ok": true,
-          "detail": "raw={\"ok\":true,\"hostId\":\"after-effects\",\"value\":{\"exists\":false,\"path\":\"D:\\\\tmp\\\\ty-plus-e2e-missing-ff0b8a7e-c04b-4632-9fc5-bee914c88b68.ffx\"}}"
-        },
-        {
-          "name": "presets/presets.json restored after case",
-          "ok": true,
-          "detail": "D:\\4_apps\\adobe\\Adobe After Effects 2027\\Support Files\\ty-plus\\presets\\presets.json 36 bytes"
-        }
-      ],
-      "evidence": [],
-      "durationMs": 2589
-    }
-  ]
+	"schema": "ty-plus.e2e-run/1",
+	"suite": "catalog",
+	"capturedAt": "2026-11-15T12:02:36.373Z",
+	"extensionDir": "C:/Users/rebui/AppData/Roaming/Adobe/CEP/extensions/app.ty-plus.dev",
+	"managedRoot": "D:/4_apps/adobe/Adobe After Effects 2027/Support Files/ty-plus",
+	"totals": {
+		"PASS": 1,
+		"FAIL": 0,
+		"BLOCKED": 0,
+		"SKIP": 0
+	},
+	"results": [
+		{
+			"uc": "UC-C15",
+			"title": "preset with missing asset: record survives boot, host verify reports missing",
+			"status": "PASS",
+			"detail": "stale record 041d4b43-9523-43b3-8a66-c5c2749dae0a → /tmp/ty-plus-e2e-missing-ff0b8a7e-c04b-4632-9fc5-bee914c88b68.ffx",
+			"checks": [
+				{
+					"name": "panel boots with workspace grid after stale record added",
+					"ok": true,
+					"detail": "body=49826 grid=true tiles=7"
+				},
+				{
+					"name": "stale preset record not dropped or rewritten on boot",
+					"ok": true,
+					"detail": "filePath=/tmp/ty-plus-e2e-missing-ff0b8a7e-c04b-4632-9fc5-bee914c88b68.ffx"
+				},
+				{
+					"name": "sibling preset records unaffected",
+					"ok": true,
+					"detail": "before=0 after=1"
+				},
+				{
+					"name": "host verifyPresetAsset reports exists:false for stale path",
+					"ok": true,
+					"detail": "raw={\"ok\":true,\"hostId\":\"after-effects\",\"value\":{\"exists\":false,\"path\":\"D:\\\\tmp\\\\ty-plus-e2e-missing-ff0b8a7e-c04b-4632-9fc5-bee914c88b68.ffx\"}}"
+				},
+				{
+					"name": "presets/presets.json restored after case",
+					"ok": true,
+					"detail": "D:\\4_apps\\adobe\\Adobe After Effects 2027\\Support Files\\ty-plus\\presets\\presets.json 36 bytes"
+				}
+			],
+			"evidence": [],
+			"durationMs": 2589
+		}
+	]
 }
