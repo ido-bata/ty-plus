@@ -5,25 +5,26 @@ import { AlertCircle, FolderOpen } from "lucide-react";
 import { type JSX, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { selectFolder } from "@/management/ae/cep/dialog-shim/bolt";
-import { readUserHomeOrFallback, ToolDialog } from "@/management/preset";
-import { hostSafeFileName } from "@/management/preset/authoring/host-safe-file-name";
-import { ArchiveDetailsSection } from "@/management/preset/catalog-add/ArchiveDetailsSection";
-import { parseRootPathsFromSettingsJson } from "@/management/preset/catalog-add/parse-root-paths";
-import { PresetIconEditor } from "@/management/preset/components/IconEditor";
-import type { Preset } from "@/management/preset/contract";
-import {
-	createPresetIconDraft,
-	presetIconDraftToPresetIcon,
-} from "@/management/preset/icon-editor";
 import {
 	AuthoringField,
 	AuthoringGrid,
 	AuthoringSection,
 	AuthoringSegment,
-} from "@/management/preset/tool-shell/archive-layout";
-import { upsertLocalPreset } from "@/management/preset/use-cases";
-import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
-import { glyphBoxFillClass } from "@/management/preset/workspace/glyph-classes";
+	readUserHomeOrFallback,
+	ToolDialog,
+} from "@/management/preset";
+import { hostSafeFileName } from "@/management/preset/authoring/host-safe-file-name";
+import { ArchiveDetailsSection } from "@/management/preset/catalog-add/ArchiveDetailsSection";
+import { parseRootPathsFromSettingsJson } from "@/management/preset/catalog-add/parse-root-paths";
+import type { Preset } from "@/management/preset/contract";
+import { PresetIconEditor } from "@/management/preset/icon/Editor";
+import {
+	createPresetIconDraft,
+	presetIconDraftToPresetIcon,
+} from "@/management/preset/icon/editor-state";
+import { upsertLocalPreset } from "@/management/preset/operations";
+import { glyphBoxFillClass } from "@/management/preset/workspace/glyph/classes";
+import { FramedPresetGlyph } from "@/management/preset/workspace/glyph/WorkspaceGlyph";
 import { createInstanceId } from "@/management/storage/ids";
 import { readSettings } from "@/management/workspace/persistence/store";
 import { notifyPanelsAfterPresetSave } from "@/management/workspace/placement/notify-panels-after-preset-save";

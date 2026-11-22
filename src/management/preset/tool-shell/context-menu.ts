@@ -1,4 +1,4 @@
-import type { CepMenuPayload } from "@/management/dialog/dialogs/context-menu";
+import type { CepMenuPayload } from "@/management/dialog/context-menu";
 import { i18n } from "@/management/i18n/index";
 
 export const PRESET_TOOL_CTX = {

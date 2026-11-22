@@ -10,7 +10,7 @@ import {
 	SettingsFieldLabel,
 	SettingsGrid,
 } from "@/management/setting/dialog/layout/SettingsGrid";
-import { openUrlInDefaultBrowser } from "@/management/workspace/hooks/helpers";
+import { openUrlInDefaultBrowser } from "@/management/workspace/hooks/open-surfaces";
 import { css } from "@/styled-system/css";
 
 const CATEGORIES: { value: string; labelKey: string }[] = [

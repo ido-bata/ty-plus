@@ -1,12 +1,12 @@
 import type { JSX } from "react";
 import { i18n } from "@/management/i18n/index";
 import { readUserHomeOrFallback } from "@/management/preset/catalog-add/browse-start-dir";
-import { PresetIconEditor } from "@/management/preset/components/IconEditor";
 import type { Preset } from "@/management/preset/contract";
-import type { PresetIconEditorDraft } from "@/management/preset/icon-editor";
-import { presetIconDraftToPresetIcon } from "@/management/preset/icon-editor";
-import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
-import { glyphBoxFillClass } from "@/management/preset/workspace/glyph-classes";
+import { PresetIconEditor } from "@/management/preset/icon/Editor";
+import type { PresetIconEditorDraft } from "@/management/preset/icon/editor-state";
+import { presetIconDraftToPresetIcon } from "@/management/preset/icon/editor-state";
+import { glyphBoxFillClass } from "@/management/preset/workspace/glyph/classes";
+import { FramedPresetGlyph } from "@/management/preset/workspace/glyph/WorkspaceGlyph";
 import { css } from "@/styled-system/css";
 
 const cardClass = css({

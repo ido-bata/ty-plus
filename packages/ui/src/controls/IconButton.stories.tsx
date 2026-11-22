@@ -14,8 +14,9 @@ const meta = {
 		},
 		size: {
 			control: { type: "select" },
-			options: ["sm", "md", "lg"],
+			options: ["xs", "sm", "md", "lg"],
 		},
+		active: { control: "boolean" },
 		disabled: { control: "boolean" },
 		"aria-label": { control: "text" },
 		children: { control: false },
@@ -85,9 +86,26 @@ export const VariantsAndSizes: Story = {
 	),
 };
 
+export const Active: Story = {
+	args: { active: true, "aria-pressed": true },
+	render: (args) => (
+		<div className={css({ display: "flex", alignItems: "center", gap: "2" })}>
+			<IconButton {...args} aria-label="List view" aria-pressed>
+				<Plus />
+			</IconButton>
+			<IconButton {...args} aria-label="Grid view" aria-pressed={false}>
+				<Plus />
+			</IconButton>
+		</div>
+	),
+};
+
 export const AllSizes: Story = {
 	render: (args) => (
 		<div className={css({ display: "flex", alignItems: "center", gap: "2" })}>
+			<IconButton {...args} size="xs" aria-label="Extra small">
+				<Plus />
+			</IconButton>
 			<IconButton {...args} size="sm" aria-label="Small">
 				<Plus />
 			</IconButton>

@@ -120,7 +120,7 @@
 - `--site-*` 独自トークン体系とWeb専用のコントロールCSSは廃止。`apps/web/src/styles/app.css` はドキュメントリセットと `--ty-*` テーマ供給（フォントスタックのみ）のみに縮小した。色・文字・余白・角丸・境界線・シャドウは `--ty-*` セマンティックトークン経由。
 - 表示用タイポグラフィが必要なため、共有トークンに `ty-text-size-display-md/lg`・`ty-text-size-lead`・`ty-font-mono` を追加（CEPパネルでは未使用。両環境で同一契約）。
 - ページ側は `apps/web/src/styles/site.ts` のレイアウトrecipe（css()）と共有コンポーネントのcompositionのみを担当する。装飾目的のeyebrow/番号/罫線要素は削除した。
-- 恒久対策として `scripts/check/check-web-design.ts`（Design lint）を `lint` ゲートへ組み込み、rawコントロール・style属性・リテラル色/フォント/角丸/境界線・Web専用トークン・コントロール類似セレクタをTSX ASTとCSS宣言解析で静的に禁止する。allowlist機構で既存違反を管理し、#293 で全違反を解消（0件）。
+- 恒久対策として `scripts/check/web-design.ts`（Design lint）を `lint` ゲートへ組み込み、rawコントロール・style属性・リテラル色/フォント/角丸/境界線・Web専用トークン・コントロール類似セレクタをTSX ASTとCSS宣言解析で静的に禁止する。allowlist機構で既存違反を管理し、#293 で全違反を解消（0件）。
 - 検証: `docs/verification/web-redesign/review-293/`（6ルート×desktop/tablet/mobile、menu-open状態含む、violations 0）。
 
 ## Revision (#298–#299): platform split + lint hardening
@@ -220,7 +220,7 @@ review-309 で「プリセットタイルが同一の低コントラストカー
 
 `PresetStage` の Web 専用再実装をやめ、製品の preset tile レンダラを直接利用する。
 
-- **モジュール分割**: `glyph.tsx` から catalog id 解決（`getPreset` → storage/CEP 依存）を行う `PresetGlyphById` を `glyph-by-id.tsx` へ分離。`glyph.tsx` は `PresetCatalogGlyphHost` / `FramedPresetGlyph` / `WorkspacePresetGlyph` のみを持ち、ホスト非依存になった。`preset/index.ts` と `ListDialog.tsx` の import を更新し、`ListDialog.issue145.test.tsx` の mock 対象も追従。
+- **モジュール分割**: `glyph.tsx` から catalog id 解決（`getPreset` → storage/CEP 依存）を行う `PresetGlyphById` を `glyph-by-id.tsx` へ分離。`glyph.tsx` は `PresetCatalogGlyphHost` / `FramedPresetGlyph` / `WorkspacePresetGlyph` のみを持ち、ホスト非依存になった。`preset/index.ts` と `ListDialog.tsx` の import を更新し、`list-dialog.render-contract.test.tsx` の mock 対象も追従。
 - **Web 解決経路**: vite に `@/…` → `src/` の catch-all alias（`@/styled-system` より後段）を追加し、製品モジュール内部の `@/management/…` import を解決。web panda.config の include に `../../src/**` を追加し、製品側 `css()` クラスを web バンドルへ生成。vitest.config にも `@ty-plus/product` alias を追加。
 - **再利用した実装**: `Tile`（`data-preset-id` + hover 通知）→ `PresetCatalogGlyphHost` → `WorkspacePresetGlyph` → `resolveWorkspaceGlyphIconVisual` → `CanvasEasingIcon`。デモ preset は実 `Preset` contract オブジェクトで、icon は製品の `presetIconCanvas` で構築（canvas 曲線は fixture 定義の説明用グリフと明記）。
 - **状態モデル**: 選択（ローカル state）を初期値ありで表示し、hover は製品と同じ precedence（selection → hover fallback）で info readout に反映。AE 実行は Web では偽装しない。

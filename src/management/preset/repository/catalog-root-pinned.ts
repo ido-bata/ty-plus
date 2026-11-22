@@ -4,11 +4,11 @@ import {
 } from "@/management/catalog/json-files";
 import { createPresetRepository } from "@/management/online/catalog/repository";
 import type { CloudGateway } from "@/management/online/contract";
+import type { Preset } from "@/management/preset/contract";
 import {
 	parsePresetCatalogJsonText,
 	serializePresetCatalogJsonText,
-} from "@/management/preset/catalog-json-text";
-import type { Preset } from "@/management/preset/contract";
+} from "@/management/preset/repository/json-text";
 import { createSharedPresetRepository } from "@/management/preset/repository/shared";
 import { catalogJsonMayContainLegacyIdPrefixes } from "@/management/storage/ids";
 
@@ -26,21 +26,32 @@ export const createCatalogRootPinnedPresetRepository = (
 	options: CatalogRootPinnedPresetRepositoryOptions,
 ): ReturnType<typeof createPresetRepository> => {
 	const base = createPresetRepository({ cloud: options.cloud });
-	return createSharedPresetRepository(base, {
-		async read() {
-			const raw = await readPresetJson(win);
-			const rows = parsePresetCatalogJsonText(raw);
-			if (
-				rows.length > 0 &&
-				typeof raw === "string" &&
-				catalogJsonMayContainLegacyIdPrefixes(raw)
-			) {
-				await writePresetJson(win, serializePresetCatalogJsonText(rows));
-			}
-			return rows;
+	return createSharedPresetRepository(
+		base,
+		{
+			async read() {
+				const raw = await readPresetJson(win);
+				const rows = parsePresetCatalogJsonText(raw);
+				if (
+					rows.length > 0 &&
+					typeof raw === "string" &&
+					catalogJsonMayContainLegacyIdPrefixes(raw)
+				) {
+					await writePresetJson(win, serializePresetCatalogJsonText(rows));
+				}
+				return rows;
+			},
+			async write(presets: Preset[]) {
+				await writePresetJson(win, serializePresetCatalogJsonText(presets));
+			},
 		},
-		async write(presets: Preset[]) {
-			await writePresetJson(win, serializePresetCatalogJsonText(presets));
+		{
+			// ADR-0006: presets.json RMW inside the managed-root lock.
+			withLock: (fn) =>
+				import("@/management/storage/lock/persistence-lock").then(
+					({ withManagedRootPersistenceLock }) =>
+						withManagedRootPersistenceLock(win, fn),
+				),
 		},
-	});
+	);
 };

@@ -1,4 +1,4 @@
-import { Button, IconButton, SegmentedControl } from "@ty-plus/ui";
+import { Button, IconButton, Input, SegmentedControl } from "@ty-plus/ui";
 import { ArrowDownToLine } from "@ty-plus/ui/icons";
 import { cx } from "@ty-plus/ui/util/cx";
 import { isIMEComposing } from "@ty-plus/ui/util/keyboard";
@@ -484,23 +484,15 @@ const promptStyle = css({
 	color: "text.muted",
 });
 
+/**
+ * Layout-only overrides for the shared `Input`. The console prompt keeps the
+ * monospace face of the log rows; every other aspect (border, background,
+ * focus ring) comes from the shared primitive.
+ */
 const inputStyle = css({
 	flex: "1",
-	height: "6",
-	minHeight: "var(--ty-space-6)",
-	paddingInline: "2",
-	fontSize: "text-2xs",
+	minWidth: 0,
 	fontFamily: "mono",
-	backgroundColor: "surface.widget",
-	borderWidth: "1px",
-	borderStyle: "solid",
-	borderColor: "border.subtle",
-	borderRadius: "shell-sm",
-	color: "text.primary",
-	outline: "none",
-	transitionProperty: "colors",
-	_placeholder: { color: "colorMix(in srgb, text.muted 50%, transparent)" },
-	_focus: { borderColor: "interactive.focus" },
 });
 
 export function Panel({
@@ -622,9 +614,10 @@ export function Panel({
 			{/* Input row */}
 			<div className={inputRowStyle}>
 				<span className={promptStyle}>{PROMPT_CHAR}</span>
-				<input
+				<Input
 					className={inputStyle}
 					type="text"
+					uiSize="sm"
 					aria-label={i18n.t("common:debugConsole.evaluateAria", {
 						defaultValue: "Evaluate JavaScript",
 					})}

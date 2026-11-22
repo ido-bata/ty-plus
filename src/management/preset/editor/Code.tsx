@@ -16,7 +16,7 @@ import { i18n } from "@/management/i18n/index";
 import { css, cx } from "@/styled-system/css";
 import { ensureExtendscriptLanguage, initTextMate } from "./textmate";
 import TsVolarWorker from "./typescript-worker?worker";
-import { type ResizeGestureEvent, useEditorResize } from "./use-editor-resize";
+import { type ResizeGestureEvent, useResize } from "./use-resize";
 
 const MONACO_STYLE_ID = "ty-plus-monaco-library-theme";
 const EXTENDSCRIPT_THEME_ID = "ty-plus-extendscript";
@@ -489,7 +489,7 @@ export function CodeEditor(props: CodeEditorProps): JSX.Element {
 		onResizeMove,
 		onResizeEnd,
 		onResizeMouseStart,
-	} = useEditorResize({
+	} = useResize({
 		minHeight: RESIZE_MIN_HEIGHT,
 		maxHeight: RESIZE_MAX_HEIGHT,
 	});

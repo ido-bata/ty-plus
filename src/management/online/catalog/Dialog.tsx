@@ -1,7 +1,8 @@
+import { Checkbox } from "@ty-plus/ui";
 import { Button } from "@ty-plus/ui/controls/Button";
 import { IconButton } from "@ty-plus/ui/controls/IconButton";
 import { SearchField } from "@ty-plus/ui/fields/SearchField";
-import { Icon } from "@ty-plus/ui/icons/Icon";
+import { Icon } from "@ty-plus/ui/Icon";
 import { cx } from "@ty-plus/ui/util/cx";
 import {
 	ExternalLink,
@@ -18,6 +19,7 @@ import {
 	type JSX,
 	useCallback,
 	useEffect,
+	useId,
 	useMemo,
 	useRef,
 	useState,
@@ -27,26 +29,26 @@ import { showExtendScriptAlert } from "@/management/ae/cep/eval";
 import {
 	type CepMenuPayload,
 	registerCepJsonContextMenuSurface,
-} from "@/management/dialog/dialogs/context-menu";
+} from "@/management/dialog/context-menu";
 import { i18n } from "@/management/i18n/index";
 import { DownloadProgressIconButton } from "@/management/online/catalog/DownloadProgressIconButton";
 import { gatewayRetryAffordance } from "@/management/online/catalog/gateway-retry";
-import { sanitizeOnlineErrorMessage } from "@/management/online/catalog/sanitize-error";
-import type { DownloadProgress } from "@/management/online/catalog/use-cases";
+import type { DownloadProgress } from "@/management/online/catalog/operations";
 import {
 	downloadAndInstallPreset,
 	searchCatalog,
 	syncCatalog,
-} from "@/management/online/catalog/use-cases";
+} from "@/management/online/catalog/operations";
+import { sanitizeOnlineErrorMessage } from "@/management/online/catalog/sanitize-error";
 import type { PresetSearchItem } from "@/management/online/contract";
 import {
 	readGatewayHealth,
 	subscribeGatewayHealth,
 } from "@/management/online/runtime-gateway-health";
 import type { GatewayBootFailureReason } from "@/management/panel/cloud-gateway-boot";
-import { openUrlInDefaultBrowser } from "@/management/workspace/hooks/helpers";
+import { tryGetDataServices } from "@/management/workspace/core/services";
+import { openUrlInDefaultBrowser } from "@/management/workspace/hooks/open-surfaces";
 import { notifyPanelsAfterPresetSave } from "@/management/workspace/placement/notify-panels-after-preset-save";
-import { tryGetDataServices } from "@/management/workspace/services";
 import { css } from "@/styled-system/css";
 
 const CATALOG_LIMIT = 50;
@@ -386,12 +388,6 @@ const sidePanelTagLabelActiveClass = css({
 const sidePanelTagLabelInactiveClass = css({
 	color: "text.muted",
 	_hover: { backgroundColor: "surface.overlay" },
-});
-const sidePanelTagCheckboxClass = css({
-	width: "3",
-	height: "3",
-	flexShrink: 0,
-	accentColor: "ty-text-accent",
 });
 const sidePanelTagTextClass = css({ truncate: true });
 const sidePanelClearRowClass = css({
@@ -1040,6 +1036,8 @@ function SidePanel(props: {
 		onClearFilters,
 	} = props;
 
+	const tagCheckboxIdPrefix = useId();
+
 	if (!showSidePanel) return null;
 
 	const hasFilters = Boolean(
@@ -1127,17 +1125,24 @@ function SidePanel(props: {
 						</div>
 					</div>
 					<div className={sidePanelTagListClass}>
-						{allTags.map((tag) => (
-							<label key={tag} className={tagLabelClass(selectedTags.has(tag))}>
-								<input
-									type="checkbox"
-									checked={selectedTags.has(tag)}
-									onChange={() => onTagToggle(tag)}
-									className={sidePanelTagCheckboxClass}
-								/>
-								<span className={sidePanelTagTextClass}>{tag}</span>
-							</label>
-						))}
+						{allTags.map((tag, index) => {
+							const checkboxId = `${tagCheckboxIdPrefix}-${index}`;
+							return (
+								<label
+									key={tag}
+									htmlFor={checkboxId}
+									className={tagLabelClass(selectedTags.has(tag))}
+								>
+									<Checkbox
+										id={checkboxId}
+										uiSize="sm"
+										checked={selectedTags.has(tag)}
+										onChange={() => onTagToggle(tag)}
+									/>
+									<span className={sidePanelTagTextClass}>{tag}</span>
+								</label>
+							);
+						})}
 					</div>
 				</div>
 			)}

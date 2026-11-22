@@ -1,6 +1,6 @@
 import { i18n } from "@/management/i18n/index";
 import type { Preset } from "@/management/preset/contract";
-import type { GroupEntry } from "@/management/preset/group-catalog";
+import type { GroupEntry } from "@/management/preset/group/catalog";
 
 /** Synthetic catalog row for a workspace group placement (not in `presets.json`). */
 export function synthesizeGroupPresetForTile(entry: GroupEntry): Preset {

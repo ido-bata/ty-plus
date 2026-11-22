@@ -9,7 +9,7 @@ import {
 	useRef,
 	useState,
 } from "react";
-import { useCep } from "@/management/ae/cep/contexts/Context";
+import { useCep } from "@/management/ae/cep/contexts/CepContext";
 import { i18n } from "@/management/i18n/index";
 import { useSettings } from "@/management/setting/context";
 import {

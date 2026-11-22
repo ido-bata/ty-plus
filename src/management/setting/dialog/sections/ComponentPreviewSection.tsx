@@ -5,18 +5,18 @@ import { ScrollArea } from "@ty-plus/ui/layout/ScrollArea";
 import { cx } from "@ty-plus/ui/util/cx";
 import { type JSX, type ReactNode, useMemo, useState } from "react";
 import { i18n } from "@/management/i18n/index";
-import { PresetIconEditor } from "@/management/preset/components/IconEditor";
 import type { Preset } from "@/management/preset/contract";
 import type { CodeEditorValue } from "@/management/preset/editor/Code";
 import { Editor } from "@/management/preset/editor/View";
+import { PresetIconEditor } from "@/management/preset/icon/Editor";
 import {
 	createPresetIconDraft,
 	type PresetIconEditorDraft,
 	presetIconDraftToPresetIcon,
-} from "@/management/preset/icon-editor";
+} from "@/management/preset/icon/editor-state";
 import { MarkdownLiveEditor } from "@/management/preset/markdown/LiveEditor";
-import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
-import { glyphBoxFillClass } from "@/management/preset/workspace/glyph-classes";
+import { glyphBoxFillClass } from "@/management/preset/workspace/glyph/classes";
+import { FramedPresetGlyph } from "@/management/preset/workspace/glyph/WorkspaceGlyph";
 import { ColorTokenEditor } from "@/management/setting/dialog/components/ColorTokenEditor";
 import { NumberTokenEditor } from "@/management/setting/dialog/components/NumberTokenEditor";
 import { TokenEditor } from "@/management/setting/dialog/components/TokenEditor";
@@ -24,7 +24,7 @@ import {
 	SettingsField,
 	SettingsGrid,
 } from "@/management/setting/dialog/layout/SettingsGrid";
-import type { DirectoryBrowserEntry } from "@/management/storage/ui/DirectoryBrowser";
+import type { FileEntry } from "@/management/storage/ui/file-entry/FileEntryList";
 import { css } from "@/styled-system/css";
 import { ButtonsPreview } from "./ButtonsPreview";
 import { DirectoryBrowserPreview } from "./DirectoryBrowserPreview";
@@ -42,7 +42,7 @@ const SELECT_OPTIONS = [
 	{ value: "opt3", labelKey: "settings:componentPreview.option3" },
 ];
 
-const MOCK_DIR_ENTRIES: DirectoryBrowserEntry[] = [
+const MOCK_DIR_ENTRIES: FileEntry[] = [
 	{
 		path: "/host/presets/animation",
 		name: "animation",

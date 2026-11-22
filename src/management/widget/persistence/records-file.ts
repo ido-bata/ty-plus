@@ -132,11 +132,31 @@ export const upsertWidgetRecords = async (
 	win: Window,
 	records: readonly WidgetRecord[],
 ): Promise<void> => {
-	const existing = await readWidgetRecordsFileStrict(win);
-	const base = existing.status === "loaded" ? existing.records : [];
-	const upserted = new Map(base.map((r) => [r.id, r]));
-	for (const record of records) {
-		upserted.set(record.id, record);
+	// ADR-0006: `widgets.json` is shared by every panel and dialog — the
+	// read→merge→write runs inside the managed-root persistence lock so
+	// concurrent upserts cannot lose each other's records. Callers already
+	// inside a hold (cross-panel write, surface persist, dialog append)
+	// join it via AsyncLocalStorage; the dynamic import keeps this module
+	// free of a static dependency cycle through managed-root.
+	const run = async (): Promise<void> => {
+		const existing = await readWidgetRecordsFileStrict(win);
+		const base = existing.status === "loaded" ? existing.records : [];
+		const upserted = new Map(base.map((r) => [r.id, r]));
+		for (const record of records) {
+			upserted.set(record.id, record);
+		}
+		await writeWidgetRecords(win, Array.from(upserted.values()));
+	};
+	const { resolvePersistenceLockRoot, withPersistenceLock } = await import(
+		"@/management/storage/lock/persistence-lock"
+	);
+	const lockRoot = await resolvePersistenceLockRoot(win);
+	if (!lockRoot) {
+		// Pre-onboarding / test contexts without a managed root keep the
+		// previous unlocked behaviour — the write itself resolves (or
+		// refuses) the same root downstream.
+		await run();
+		return;
 	}
-	await writeWidgetRecords(win, Array.from(upserted.values()));
+	await withPersistenceLock(win, lockRoot, run);
 };

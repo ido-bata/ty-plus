@@ -1,10 +1,10 @@
-import { cx } from "@ty-plus/ui/util/cx";
+import { Button, cx } from "@ty-plus/ui";
 import type { CSSProperties, JSX, MouseEvent } from "react";
 import type { Preset } from "@/management/preset/contract";
 import {
 	PresetCatalogGlyphHost,
 	WorkspacePresetGlyph,
-} from "@/management/preset/workspace/glyph";
+} from "@/management/preset/workspace/glyph/WorkspaceGlyph";
 import { WorkspaceTileFrame } from "@/management/workspace/surface/TileFrame";
 import { css } from "@/styled-system/css";
 
@@ -43,11 +43,9 @@ const hitArea = css({
 	cursor: "pointer",
 	borderRadius: "shell-sm",
 	_hover: { backgroundColor: "interactive.hover" },
+	// The one focus indicator: the same ring every focusable control paints.
 	_focusVisible: {
-		outlineWidth: "1px",
-		outlineStyle: "solid",
-		outlineColor: "interactive.focus",
-		outlineOffset: "-1px",
+		boxShadow: "var(--color-focus-ring)",
 	},
 });
 
@@ -100,8 +98,10 @@ export function PresetTileButton(props: PresetTileButtonProps): JSX.Element {
 					<WorkspacePresetGlyph preset={preset} />
 				</PresetCatalogGlyphHost>
 			</WorkspaceTileFrame>
-			<button
+			<Button
 				type="button"
+				variant="bare"
+				uiSize="sm"
 				className={hitArea}
 				aria-pressed={selected}
 				aria-label={accessibleName}

@@ -104,47 +104,62 @@ export function WorkspaceBackupSection(): JSX.Element {
 		}
 		const execImportBackup = async () => {
 			const parsed = JSON.parse(bundleText) as Partial<WorkspaceBackupBundle>;
-			if (typeof parsed.settingsJson === "string") {
-				await writeSettings(window, parsed.settingsJson);
-			}
-			if (typeof parsed.presetsJson === "string") {
-				await writePresetsJson(window, parsed.presetsJson);
-			}
-			if (typeof parsed.themeCss === "string") {
-				// theme.css is shared with the settings dialog's token/grid
-				// writers; serialize through the same per-window queue so a
-				// restore cannot interleave with an in-flight read-modify-write
-				// (Issue #91 review).
-				await enqueueThemeWrite(window, async () => {
-					await writeThemeCss(window, parsed.themeCss as string);
-					cacheCepShellThemeOverridesFromCssText(parsed.themeCss as string);
-				});
-			}
-			const indices = [1, 2, 3, 4, 5] as const;
-			await Promise.all(
-				indices.map(async (index) => {
-					const key = String(index) as keyof NonNullable<
-						WorkspaceBackupBundle["panelLayouts"]
-					>;
-					const panelLayouts = parsed.panelLayouts;
-					const layoutRaw =
-						panelLayouts != null ? panelLayouts[key] : undefined;
-					if (typeof layoutRaw === "string") {
-						if (layoutRaw.trim()) {
-							await writeNJson(window, index, layoutRaw);
-						}
-					}
-					const panelBackgrounds = parsed.panelBackgrounds;
-					const bgRaw =
-						panelBackgrounds != null ? panelBackgrounds[key] : undefined;
-					if (typeof bgRaw === "string") {
-						if (bgRaw.trim()) {
-							await writeBackgroundJson(window, index, bgRaw);
-						}
-					}
-				}),
+			// ADR-0006: a backup restore rewrites settings, catalogs, theme
+			// and all five panel layouts/backgrounds — one multi-file
+			// transaction inside the managed-root persistence lock so it
+			// cannot interleave with a panel persist or dialog write.
+			const { resolvePersistenceLockRoot, withPersistenceLock } = await import(
+				"@/management/storage/lock/persistence-lock"
 			);
-			setStatus(i18n.t("settings:workspaceBackupSection.statusImported"));
+			const lockRoot = await resolvePersistenceLockRoot(window);
+			const run = async () => {
+				if (typeof parsed.settingsJson === "string") {
+					await writeSettings(window, parsed.settingsJson);
+				}
+				if (typeof parsed.presetsJson === "string") {
+					await writePresetsJson(window, parsed.presetsJson);
+				}
+				if (typeof parsed.themeCss === "string") {
+					// theme.css is shared with the settings dialog's token/grid
+					// writers; serialize through the same per-window queue so a
+					// restore cannot interleave with an in-flight read-modify-write
+					// (Issue #91 review).
+					await enqueueThemeWrite(window, async () => {
+						await writeThemeCss(window, parsed.themeCss as string);
+						cacheCepShellThemeOverridesFromCssText(parsed.themeCss as string);
+					});
+				}
+				const indices = [1, 2, 3, 4, 5] as const;
+				await Promise.all(
+					indices.map(async (index) => {
+						const key = String(index) as keyof NonNullable<
+							WorkspaceBackupBundle["panelLayouts"]
+						>;
+						const panelLayouts = parsed.panelLayouts;
+						const layoutRaw =
+							panelLayouts != null ? panelLayouts[key] : undefined;
+						if (typeof layoutRaw === "string") {
+							if (layoutRaw.trim()) {
+								await writeNJson(window, index, layoutRaw);
+							}
+						}
+						const panelBackgrounds = parsed.panelBackgrounds;
+						const bgRaw =
+							panelBackgrounds != null ? panelBackgrounds[key] : undefined;
+						if (typeof bgRaw === "string") {
+							if (bgRaw.trim()) {
+								await writeBackgroundJson(window, index, bgRaw);
+							}
+						}
+					}),
+				);
+				setStatus(i18n.t("settings:workspaceBackupSection.statusImported"));
+			};
+			if (!lockRoot) {
+				await run();
+				return;
+			}
+			await withPersistenceLock(window, lockRoot, run);
 		};
 		try {
 			await execImportBackup();

@@ -1,5 +1,5 @@
 import { IconButton } from "@ty-plus/ui/controls/IconButton";
-import { Icon } from "@ty-plus/ui/icons/Icon";
+import { Icon } from "@ty-plus/ui/Icon";
 import { RefreshCw, X } from "lucide-react";
 import type { JSX } from "react";
 import { i18n } from "@/management/i18n/index";

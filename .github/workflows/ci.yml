@@ -216,7 +216,7 @@ jobs:
           TMPDIR: /mnt/gate-tmp
 
       # Per-story screenshot PNGs + JSON metadata sidecars written by
-      # scripts/verify/storybook-screenshot-capture.ts. `if: always()` so a
+      # scripts/verify/storybook/screenshot-capture.ts. `if: always()` so a
       # failing shard still contributes its captures — the merge job
       # classifies render-failed/capture-error/missing buckets from them.
       # Filenames derive only from storyId, so the four shards never collide.
@@ -340,7 +340,7 @@ jobs:
         run: bun run verify:operation-worker:process
 
       - name: Test real Windows operation worker process
-        run: bun run vitest run scripts/verify/verify-operation-worker-process.test.ts
+        run: bun run vitest run scripts/verify/operation-worker/operation-worker-process.test.ts
 
       - name: Upload Windows operation worker verification evidence
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
@@ -415,7 +415,7 @@ jobs:
         run: bun run verify:operation-worker:process
 
       - name: Test real macOS operation worker process
-        run: bun run vitest run scripts/verify/verify-operation-worker-process.test.ts
+        run: bun run vitest run scripts/verify/operation-worker/operation-worker-process.test.ts
 
       - name: Upload macOS operation worker verification evidence
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02

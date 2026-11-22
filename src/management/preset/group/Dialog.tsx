@@ -1,37 +1,24 @@
-import { Icon } from "@ty-plus/ui";
-import { Button } from "@ty-plus/ui/controls/Button";
-import { Input } from "@ty-plus/ui/fields/Input";
-import { PathField } from "@ty-plus/ui/fields/PathField";
-import { ChevronDown, FolderOpen, Plus, Trash2 } from "lucide-react";
 import { type JSX, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { readUserHomeOrFallback } from "@/management/preset/catalog-add/browse-start-dir";
-import { PresetIconEditor } from "@/management/preset/components/IconEditor";
-import type { Preset, PresetType } from "@/management/preset/contract";
-import type {
-	IconRule,
-	IconRuleFilter,
-} from "@/management/preset/group-catalog";
-import type { PresetIconEditorDraft } from "@/management/preset/icon-editor";
 import {
-	createPresetIconDraft,
-	presetIconDraftToPresetIcon,
-} from "@/management/preset/icon-editor";
-import { persistFolderGroupPreset } from "@/management/preset/persist-folder-group";
-import {
-	AuthoringField,
 	AuthoringGrid,
 	AuthoringSection,
-} from "@/management/preset/tool-shell/archive-layout";
-import { Dialog } from "@/management/preset/tool-shell/Dialog";
-import { FolderDirectoryPicker } from "@/management/preset/tool-shell/FolderDirectoryPicker";
-import { listPresets } from "@/management/preset/use-cases";
-import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
-import { glyphBoxFillClass } from "@/management/preset/workspace/glyph-classes";
-import { AccordionSection } from "@/management/setting/dialog/sections/AccordionSection";
-import { css } from "@/styled-system/css";
-import { ConditionRuleCard } from "./ConditionRuleCard";
-import { FolderScanDepthSelector } from "./FolderScanDepthSelector";
+} from "@/management/preset/authoring-layout";
+import { readUserHomeOrFallback } from "@/management/preset/catalog-add/browse-start-dir";
+import { persistFolderGroupPreset } from "@/management/preset/group/persist-folder";
+import {
+	createPresetIconDraft,
+	type PresetIconEditorDraft,
+} from "@/management/preset/icon/editor-state";
+import { listPresets } from "@/management/preset/operations";
+import { Dialog } from "@/management/preset/tool-shell/dialog/ToolDialog";
+import { ConditionRulesSection } from "./ConditionRulesSection";
+import {
+	type ConditionRule,
+	conditionRulesToIconRules,
+} from "./condition-rule-helpers";
+import { MembersSection } from "./MembersSection";
+import { NameField } from "./NameField";
 
 /**
  * Create a preset group: select multiple presets from catalog or scan a folder.
@@ -39,57 +26,6 @@ import { FolderScanDepthSelector } from "./FolderScanDepthSelector";
  */
 const escapeRegex = (value: string): string =>
 	value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-
-const columnClass = css({
-	display: "flex",
-	flexDirection: "column",
-	gap: "2",
-});
-
-const rulesColumnClass = css({
-	display: "flex",
-	flexDirection: "column",
-	gap: "3",
-});
-
-const buttonRowClass = css({
-	display: "flex",
-	alignItems: "center",
-	gap: "2",
-});
-
-const baseIconCardClass = css({
-	borderRadius: "shell-sm",
-	borderWidth: "1px",
-	borderStyle: "solid",
-	borderColor: "border.default",
-	backgroundColor: "surface.widget",
-	padding: "3",
-});
-
-const baseIconHeaderClass = css({
-	display: "flex",
-	alignItems: "center",
-	justifyContent: "space-between",
-});
-
-const baseIconLabelClass = css({
-	fontSize: "xs",
-	fontWeight: "medium",
-	textTransform: "uppercase",
-	letterSpacing: "wide",
-	color: "text.muted",
-});
-
-const baseIconEditorClass = css({
-	marginTop: "3",
-});
-
-const pathRowClass = css({
-	display: "flex",
-	alignItems: "flex-start",
-	gap: "2",
-});
 
 export function GroupDialog(): JSX.Element {
 	const { t } = useTranslation("presets");
@@ -100,16 +36,7 @@ export function GroupDialog(): JSX.Element {
 
 	// Paths list for group members is stored as newline-separated value in field 'paths'
 	// Condition rules: additive list where each rule has a namePattern and an icon draft
-	const [conditionRules, setConditionRules] = useState<
-		{
-			id: string;
-			filterType: "name" | "path" | "preset" | "presetType";
-			pattern: string;
-			matchMode?: "regex" | "contains" | "startsWith" | "endsWith";
-			presetType?: PresetType;
-			draft: PresetIconEditorDraft;
-		}[]
-	>([
+	const [conditionRules, setConditionRules] = useState<ConditionRule[]>([
 		{
 			id: `init-${Date.now()}`,
 			filterType: "name",
@@ -129,7 +56,7 @@ export function GroupDialog(): JSX.Element {
 	const lastDetectKeyRef = useRef<string | null>(null);
 
 	// Triggered by user action to detect candidates from current paths
-	const detectCandidates = async (paths: string[]) => {
+	const detectCandidates = async (paths: readonly string[]) => {
 		const execDetectCandidates = async () => {
 			if (paths.length === 0) {
 				setCandidatePresets([]);
@@ -183,16 +110,7 @@ export function GroupDialog(): JSX.Element {
 				.join("|");
 			if (idsKey && lastDetectKeyRef.current !== idsKey) {
 				const sampleIds = presets.map((x) => x.id).slice(0, 10);
-				const autoDetectRulesUpdater = (
-					prev: {
-						id: string;
-						filterType: "name" | "path" | "preset" | "presetType";
-						pattern: string;
-						matchMode?: "regex" | "contains" | "startsWith" | "endsWith";
-						presetType?: PresetType;
-						draft: PresetIconEditorDraft;
-					}[],
-				) => {
+				const autoDetectRulesUpdater = (prev: ConditionRule[]) => {
 					const sampleIdsSet = new Set(sampleIds);
 					const hasOverlap = prev.some(
 						(r) =>
@@ -227,6 +145,42 @@ export function GroupDialog(): JSX.Element {
 		}
 	};
 
+	// Toggle a candidate preset in the `preset` rule's pattern list.
+	const pickPreset = (id: string) => {
+		const next = conditionRules.slice();
+		const idx = next.findIndex((r) => r.filterType === "preset");
+		if (idx === -1) {
+			next.push({
+				id: `auto-${Date.now()}`,
+				filterType: "preset",
+				pattern: id,
+				draft: createPresetIconDraft(),
+			});
+		} else {
+			const currentIds = next[idx].pattern.split(/\s*,\s*/).filter(Boolean);
+			const nextPattern = currentIds.includes(id)
+				? currentIds.filter((currentId) => currentId !== id).join(",")
+				: [...currentIds, id].join(",");
+			next[idx] = {
+				...next[idx],
+				pattern: nextPattern,
+			};
+		}
+		setConditionRules(next);
+	};
+
+	const changeRule = (index: number, next: ConditionRule) => {
+		const copy = conditionRules.slice();
+		copy[index] = next;
+		setConditionRules(copy);
+	};
+
+	const removeRule = (index: number) => {
+		const copy = conditionRules.slice();
+		copy.splice(index, 1);
+		setConditionRules(copy);
+	};
+
 	return (
 		<Dialog
 			surfaceId="dialog-preset-add-folder"
@@ -237,288 +191,68 @@ export function GroupDialog(): JSX.Element {
 			iconText={t("group.iconText")}
 			pathBrowse={{ fieldKey: "path", mode: "folder" }}
 			resolveBrowseStartDir={readUserHomeOrFallback}
-			renderForm={(ctx) => {
-				const pathLines = ((ctx.values.paths ?? "") as string)
-					.split(/\r?\n/)
-					.map((l) => l.trim());
-				return (
-					<AuthoringGrid>
-						{/* 1. Group name (no section label) */}
-						<AuthoringField span={6}>
-							<Input
-								label={t("group.fields.groupName")}
-								value={ctx.name}
-								onChange={(event) => ctx.setName(event.currentTarget.value)}
-								uiSize="md"
-								disabled={ctx.busy}
-							/>
-						</AuthoringField>
-						{/* 2. Group Members - Directory browser + Paths list */}
-						<AuthoringSection title="" span={6}>
-							<div className={columnClass}>
-								<FolderScanDepthSelector
-									recursive={ctx.values.recursive ?? "false"}
-									onRecursiveChange={(v) =>
-										ctx.setValue(
-											"recursive",
-											v === "recursive" ? "true" : "false",
-										)
-									}
-								/>
-								{/* Directory browser for adding files or folders */}
-								<FolderDirectoryPicker
-									value={""}
-									selectedPaths={pathLines.filter(Boolean)}
-									onToggleSelected={(p, selected) => {
-										const lines = (ctx.values.paths ?? "")
-											.split(/\r?\n/)
-											.map((l) => l.trim())
-											.filter(Boolean);
-										const has = lines.includes(p);
-										if (selected && !has) lines.push(p);
-										if (!selected && has) lines.splice(lines.indexOf(p), 1);
-										ctx.setValue("paths", lines.join("\n"));
-										detectCandidates(lines.filter(Boolean));
-									}}
-									onChange={(p) => {
-										const lines = (ctx.values.paths ?? "")
-											.split(/\r?\n/)
-											.map((l) => l.trim())
-											.filter(Boolean);
-										if (!lines.includes(p)) lines.push(p);
-										ctx.setValue("paths", lines.join("\n"));
-										detectCandidates(lines.filter(Boolean));
-									}}
-									selectionMode="both"
-									label={t("group.browseMembers")}
-									candidatePresets={candidatePresets}
-									candidateDirs={candidateDirs}
-									onPickPreset={(id) => {
-										const next = conditionRules.slice();
-										const idx = next.findIndex(
-											(r) => r.filterType === "preset",
-										);
-										if (idx === -1) {
-											next.push({
-												id: `auto-${Date.now()}`,
-												filterType: "preset",
-												pattern: id,
-												draft: createPresetIconDraft(),
-											});
-										} else {
-											const currentIds = next[idx].pattern
-												.split(/\s*,\s*/)
-												.filter(Boolean);
-											const nextPattern = currentIds.includes(id)
-												? currentIds
-														.filter((currentId) => currentId !== id)
-														.join(",")
-												: [...currentIds, id].join(",");
-											next[idx] = {
-												...next[idx],
-												pattern: nextPattern,
-											};
-										}
-										setConditionRules(next);
-									}}
-								/>
-
-								<div className={buttonRowClass}>
-									<Button
-										type="button"
-										variant="outline"
-										fullWidth
-										onClick={() => {
-											const lines = pathLines.slice();
-											lines.push("");
-											ctx.setValue("paths", lines.join("\n"));
-											detectCandidates(lines.filter(Boolean));
-										}}
-									>
-										<Plus size={16} /> {t("group.addPath")}
-									</Button>
-									<Button
-										type="button"
-										variant="ghost"
-										onClick={() => {
-											detectCandidates(pathLines.filter(Boolean));
-										}}
-									>
-										<ChevronDown size={14} /> {t("group.detectCandidates")}
-									</Button>
-								</div>
-
-								{/* Paths list: one folder path per item (preserve empty for add) */}
-								<div className={columnClass}>
-									{pathLines.map((p, idx) => {
-										const stableKey = `path-${p.length}-${p.slice(0, 16)}`;
-										return (
-											<div key={stableKey} className={pathRowClass}>
-												<PathField
-													value={p}
-													onChange={(next) => {
-														const raw = ((ctx.values.paths ?? "") as string)
-															.split(/\r?\n/)
-															.map((l) => l.trim());
-														raw[idx] = next;
-														ctx.setValue(
-															"paths",
-															raw.filter(Boolean).join("\n"),
-														);
-														detectCandidates(raw.filter(Boolean));
-													}}
-													onBrowse={() => ctx.runPathBrowse(`paths[${idx}]`)}
-													browseAriaLabel={t("group.browseFolder")}
-													browseSlot={
-														<Icon icon={FolderOpen} size={16} aria-hidden />
-													}
-													placeholder="C:\path\folder"
-													uiSize="md"
-													disabled={ctx.busy}
-												/>
-												<Button
-													variant="ghost"
-													aria-label={t("group.removePath")}
-													onClick={() => {
-														const raw = ((ctx.values.paths ?? "") as string)
-															.split(/\r?\n/)
-															.map((l) => l.trim());
-														raw.splice(idx, 1);
-														ctx.setValue(
-															"paths",
-															raw.filter(Boolean).join("\n"),
-														);
-														detectCandidates(raw.filter(Boolean));
-													}}
-												>
-													<Trash2 size={16} />
-												</Button>
-											</div>
-										);
-									})}
-								</div>
-							</div>
-						</AuthoringSection>
-						{/* 3. Icon Rules (Additive) */}
-						<AuthoringSection title={t("group.iconRules")} span={6}>
-							<div className={rulesColumnClass}>
-								<div className={baseIconCardClass}>
-									<div className={baseIconHeaderClass}>
-										<span className={baseIconLabelClass}>
-											{t("group.baseIcon.heading")}
-										</span>
-									</div>
-									<div className={baseIconEditorClass}>
-										<PresetIconEditor
-											draft={baseIconDraft}
-											onChange={setBaseIconDraft}
-											label={t("group.baseIcon.label")}
-											browseDir={readUserHomeOrFallback()}
-											framed={true}
-											preview={
-												<FramedPresetGlyph
-													preset={
-														{
-															id: "base-icon-preview",
-															type: "preset" as const,
-															// i18n-exempt: synthetic preset record title for the glyph preview, never rendered as a label
-															title: "Preview",
-															filePath: "ty-plus://base-icon-preview",
-															icon: presetIconDraftToPresetIcon(
-																baseIconDraft,
-															) ?? { type: "text", param: { text: "?" } },
-														} satisfies Preset
-													}
-													boxClass={glyphBoxFillClass}
-												/>
-											}
-										/>
-									</div>
-								</div>
-
-								<AccordionSection title={t("group.rules")} defaultOpen={true}>
-									<div className={columnClass}>
-										{conditionRules.map((r, i) => (
-											<ConditionRuleCard
-												key={r.id}
-												rule={r}
-												index={i}
-												candidatePresets={candidatePresets}
-												candidateDirs={candidateDirs}
-												busy={ctx.busy}
-												onChange={(next) => {
-													const copy = conditionRules.slice();
-													copy[i] = next;
-													setConditionRules(copy);
-												}}
-												onRemove={() => {
-													const copy = conditionRules.slice();
-													copy.splice(i, 1);
-													setConditionRules(copy);
-												}}
-											/>
-										))}
-										<Button
-											type="button"
-											variant="outline"
-											fullWidth
-											onClick={() => {
-												setConditionRules([
-													...conditionRules,
-													{
-														id: `${Date.now()}-${Math.random()}`,
-														filterType: "name",
-														pattern: "",
-														matchMode: "contains",
-														draft: createPresetIconDraft(),
-													},
-												]);
-												const lines = (ctx.values.paths ?? "")
-													.split(/\r?\n/)
-													.map((l) => l.trim())
-													.filter(Boolean);
-												detectCandidates(lines);
-											}}
-										>
-											<Plus size={16} /> {t("group.addRule")}
-										</Button>
-									</div>
-								</AccordionSection>
-							</div>
-						</AuthoringSection>
-						{/* 4. Group Icon */}
-						<AuthoringSection title={t("group.groupIcon")} span={6}>
-							{ctx.icon}
-						</AuthoringSection>
-						{/* 5. Advanced Settings (Description + Image) */}
-						<AuthoringSection title={t("group.advancedSettings")} span={6}>
-							{ctx.details}
-						</AuthoringSection>
-					</AuthoringGrid>
-				);
-			}}
+			renderForm={(ctx) => (
+				<AuthoringGrid>
+					{/* 1. Group name (no section label) */}
+					<NameField
+						name={ctx.name}
+						busy={ctx.busy}
+						onNameChange={ctx.setName}
+					/>
+					{/* 2. Group Members - Directory browser + Paths list */}
+					<MembersSection
+						ctx={ctx}
+						candidatePresets={candidatePresets}
+						candidateDirs={candidateDirs}
+						detectCandidates={detectCandidates}
+						onPickPreset={pickPreset}
+					/>
+					{/* 3. Icon Rules (Additive) */}
+					<AuthoringSection title={t("group.iconRules")} span={6}>
+						<ConditionRulesSection
+							baseIconDraft={baseIconDraft}
+							onBaseIconDraftChange={setBaseIconDraft}
+							conditionRules={conditionRules}
+							candidatePresets={candidatePresets}
+							candidateDirs={candidateDirs}
+							busy={ctx.busy}
+							onChangeRule={changeRule}
+							onRemoveRule={removeRule}
+							onAddRule={() => {
+								setConditionRules([
+									...conditionRules,
+									{
+										id: `${Date.now()}-${Math.random()}`,
+										filterType: "name",
+										pattern: "",
+										matchMode: "contains",
+										draft: createPresetIconDraft(),
+									},
+								]);
+								const lines = ((ctx.values.paths ?? "") as string)
+									.split(/\r?\n/)
+									.map((l) => l.trim())
+									.filter(Boolean);
+								detectCandidates(lines);
+							}}
+						/>
+					</AuthoringSection>
+					{/* 4. Group Icon */}
+					<AuthoringSection title={t("group.groupIcon")} span={6}>
+						{ctx.icon}
+					</AuthoringSection>
+					{/* 5. Advanced Settings (Description + Image) */}
+					<AuthoringSection title={t("group.advancedSettings")} span={6}>
+						{ctx.details}
+					</AuthoringSection>
+				</AuthoringGrid>
+			)}
 			persistOverride={async ({ win, presetId, name, values }) => {
 				const folderPaths = (values.paths ?? "")
 					.split(/\r?\n/)
 					.map((l: string) => l.trim())
 					.filter(Boolean);
-				const condRules = conditionRules.flatMap<IconRule>((r) => {
-					const icon = presetIconDraftToPresetIcon(r.draft);
-					let filter: IconRuleFilter | undefined;
-					if (r.filterType === "name" && r.pattern.trim())
-						filter = { namePattern: r.pattern.trim() };
-					if (r.filterType === "path" && r.pattern.trim())
-						filter = { filePathPattern: r.pattern.trim() };
-					if (r.filterType === "preset" && r.pattern.trim())
-						filter = {
-							specificPresetIds: r.pattern.split(/\s*,\s*/).filter(Boolean),
-						};
-					if (r.filterType === "presetType" && r.presetType)
-						filter = { presetType: r.presetType };
-					if (icon && filter) return [{ filter, icon }];
-					if (icon) return [{ icon }];
-					return [];
-				});
+				const condRules = conditionRulesToIconRules(conditionRules);
 				return persistFolderGroupPreset(win, {
 					folderPaths,
 					presetIdsText: values.presetIds ?? "",

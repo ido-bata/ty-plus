@@ -14,7 +14,7 @@ import {
 	Play,
 } from "lucide-react";
 import { memo, useEffect, useState } from "react";
-import { CTX_MENU_IDS } from "@/management/dialog/dialogs/unified-context-menu-constants";
+import { CTX_MENU_IDS } from "@/management/dialog/unified-context-menu-constants";
 import { i18n } from "@/management/i18n/index";
 import {
 	type CpPersistedState,

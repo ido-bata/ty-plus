@@ -1,0 +1,129 @@
+import { Icon, IconButton } from "@ty-plus/ui";
+import { LayoutGrid, List as ListIcon } from "lucide-react";
+import type { JSX } from "react";
+import { i18n } from "@/management/i18n/index";
+import { css, cx } from "@/styled-system/css";
+
+export type ViewMode = "list" | "icons";
+
+export type ViewModeToggleProps = {
+	viewMode: ViewMode;
+	onViewModeChange: (mode: ViewMode) => void;
+	/** Extra hook when entering icon view (e.g. preset dialog resets group browse). */
+	onEnterIconView?: () => void;
+	/** Accessible labels (e.g. from `useTranslation("widgets")`). */
+	listViewAriaLabel?: string;
+	iconViewAriaLabel?: string;
+	fieldsetLegend?: string;
+};
+
+const fieldsetClass = css({
+	margin: "0",
+	display: "flex",
+	height: "full",
+	minWidth: "0",
+	flexShrink: "0",
+	overflow: "hidden",
+	borderRadius: "shell-sm",
+	borderWidth: "1px",
+	borderStyle: "solid",
+	borderColor: "border.default",
+	backgroundColor: "surface.widget",
+	opacity: 0.5,
+	padding: "px",
+});
+
+const srOnlyClass = css({
+	position: "absolute",
+	width: "1px",
+	height: "1px",
+	padding: "0",
+	margin: "-1px",
+	overflow: "hidden",
+	clip: "rect(0,0,0,0)",
+	whiteSpace: "nowrap",
+	borderWidth: "0",
+});
+
+const buttonBaseClass = css({
+	height: "full",
+	minHeight: "0",
+	width: "8",
+	flexShrink: "0",
+	borderRadius: "0",
+	borderWidth: "0",
+	padding: "0",
+});
+
+const buttonActiveClass = css({
+	backgroundColor: "surface.widget",
+	color: "text.primary",
+	boxShadow: "sm",
+});
+
+const buttonInactiveClass = css({ color: "text.muted" });
+
+const separatorClass = css({
+	width: "px",
+	flexShrink: "0",
+	alignSelf: "stretch",
+	backgroundColor: "border.default",
+});
+
+/**
+ * The list / icon view toggle.
+ *
+ * A generic control: it is offered by the preset catalog, the file entry
+ * list, the widget catalog and the font viewer, so it lives in the shared
+ * design system rather than in one of the features that use it.
+ */
+export function ViewModeToggle({
+	viewMode,
+	onViewModeChange,
+	onEnterIconView,
+	listViewAriaLabel = i18n.t("widgets:viewModeToggle.listView"),
+	iconViewAriaLabel = i18n.t("widgets:viewModeToggle.iconView"),
+	fieldsetLegend = i18n.t("widgets:viewModeToggle.fieldsetLegend"),
+}: ViewModeToggleProps): JSX.Element {
+	return (
+		<fieldset className={fieldsetClass}>
+			<legend className={srOnlyClass}>{fieldsetLegend}</legend>
+			<IconButton
+				variant="ghost"
+				size="sm"
+				type="button"
+				aria-pressed={viewMode === "list"}
+				aria-label={listViewAriaLabel}
+				title={listViewAriaLabel}
+				className={cx(
+					buttonBaseClass,
+					viewMode === "list" ? buttonActiveClass : buttonInactiveClass,
+				)}
+				onClick={() => {
+					onViewModeChange("list");
+				}}
+			>
+				<Icon icon={ListIcon} size={10} />
+			</IconButton>
+			<div className={separatorClass} aria-hidden />
+			<IconButton
+				variant="ghost"
+				size="sm"
+				type="button"
+				aria-pressed={viewMode === "icons"}
+				aria-label={iconViewAriaLabel}
+				title={iconViewAriaLabel}
+				className={cx(
+					buttonBaseClass,
+					viewMode === "icons" ? buttonActiveClass : buttonInactiveClass,
+				)}
+				onClick={() => {
+					onEnterIconView?.();
+					onViewModeChange("icons");
+				}}
+			>
+				<Icon icon={LayoutGrid} size={10} />
+			</IconButton>
+		</fieldset>
+	);
+}

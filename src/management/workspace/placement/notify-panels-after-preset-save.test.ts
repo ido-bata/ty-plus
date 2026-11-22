@@ -33,11 +33,11 @@ vi.mock("@/management/ae/cep/transport", () => ({
 	createCepSurfaceTransport: () => ({ publish: publishMock }),
 }));
 
-vi.mock("@/management/preset/use-cases", () => ({
+vi.mock("@/management/preset/operations", () => ({
 	listPresets: listPresetsMock,
 }));
 
-vi.mock("@/management/preset/group-catalog", () => ({
+vi.mock("@/management/preset/group/catalog", () => ({
 	parseGroupFromText: () => [],
 }));
 

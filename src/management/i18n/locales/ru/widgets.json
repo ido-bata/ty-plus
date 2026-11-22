@@ -203,7 +203,8 @@
 			"appliedEffect": "Применён эффект: {{name}}",
 			"importedFootage": "Импортированный футаж: {{name}}",
 			"ranScript": "Скрипт выполнен: {{name}}",
-			"appliedPreset": "Пресет применён: {{name}}"
+			"appliedPreset": "Пресет применён: {{name}}",
+			"runBlockedUnverifiableAsset": "Не удалось проверить файл пресета (хост недоступен) — повторить"
 		},
 		"path": {
 			"pickFolderPrompt": "Выберите папку",
@@ -225,6 +226,7 @@
 			"error": "Предпросмотр недоступен"
 		},
 		"toolbar": {
+			"refresh": "Обновить",
 			"detailedFilters": "Фильтры",
 			"viewModeLegend": "Режим просмотра",
 			"listView": "Список",
@@ -262,6 +264,7 @@
 			"noItems": "Нет элементов"
 		},
 		"entry": {
+			"goUp": "Вверх",
 			"defaultFolderSubtitle": "По умолчанию",
 			"parentRowName": "Наверх",
 			"browseDrives": "Обзор дисков",

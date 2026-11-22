@@ -27,6 +27,7 @@ import {
 } from "@/management/storage/read/json-file";
 import { writeJsonFileText } from "@/management/storage/write/json-file";
 import { parse } from "@/management/workspace/background/parse";
+import type { SurfaceState } from "@/management/workspace/core/state";
 import {
 	type Layout,
 	type LayoutItem,
@@ -34,7 +35,6 @@ import {
 	type PresetLayout,
 	parseGridCells,
 } from "@/management/workspace/layout/grid-document";
-import type { SurfaceState } from "@/management/workspace/state";
 import { normalizeState } from "@/management/workspace/state/normalize";
 import {
 	clipSelection,

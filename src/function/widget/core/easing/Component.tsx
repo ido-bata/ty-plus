@@ -1,4 +1,4 @@
-import { Button, SegmentedControl } from "@ty-plus/ui";
+import { Button, NumberField, SegmentedControl } from "@ty-plus/ui";
 import { isIMEComposing } from "@ty-plus/ui/util/keyboard";
 import type { TFunction } from "i18next";
 import { Check, Copy, GitCompare, Plus, Repeat } from "lucide-react";
@@ -8,6 +8,7 @@ import {
 	type PointerEvent as ReactPointerEvent,
 	useCallback,
 	useEffect,
+	useId,
 	useMemo,
 	useRef,
 	useState,
@@ -17,7 +18,7 @@ import { useWidgetRuntime } from "@/function/widget/runtime-context";
 import {
 	setEasingClipboard,
 	setValuesClipboard,
-} from "@/management/dialog/dialogs/unified-context-menu";
+} from "@/management/dialog/unified-context-menu";
 import { notificationStore } from "@/management/online/notification/service";
 import {
 	loadClipboard,
@@ -587,6 +588,7 @@ function EasingLoopControls({
 	// declares four rows ("auto auto 1fr auto") and relies on auto-placement;
 	// returning null shifts the canvas into the "auto" row and the action bar
 	// into the "1fr" row, collapsing the editor (issue #78 follow-up).
+	const loopCountId = useId();
 	if (mode !== "loop") return <div aria-hidden="true" />;
 	const decrement = (): void => {
 		onLoopCountChange(Math.max(MIN_LOOP_COUNT, loopCount - 1));
@@ -594,10 +596,10 @@ function EasingLoopControls({
 	const increment = (): void => {
 		onLoopCountChange(Math.min(MAX_LOOP_COUNT, loopCount + 1));
 	};
-	const onInputChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-		const raw = Number(event.target.value);
-		if (!Number.isFinite(raw)) return;
-		const next = Math.round(clamp(raw, MIN_LOOP_COUNT, MAX_LOOP_COUNT));
+	const onInputChange = (raw: string): void => {
+		const parsed = Number(raw);
+		if (!Number.isFinite(parsed)) return;
+		const next = Math.round(clamp(parsed, MIN_LOOP_COUNT, MAX_LOOP_COUNT));
 		onLoopCountChange(next);
 	};
 	return (
@@ -617,6 +619,7 @@ function EasingLoopControls({
 				aria-hidden
 			/>
 			<label
+				htmlFor={loopCountId}
 				className={css({
 					display: "flex",
 					alignItems: "center",
@@ -628,29 +631,20 @@ function EasingLoopControls({
 				<span className={css({ whiteSpace: "nowrap" })}>
 					{t("easing.loop.cycles")}
 				</span>
-				<input
-					type="number"
-					inputMode="numeric"
-					min={MIN_LOOP_COUNT}
-					max={MAX_LOOP_COUNT}
-					step={1}
-					value={loopCount}
-					onChange={onInputChange}
-					aria-label={t("easing.loop.cycles")}
-					data-ws-action="easing-loop-count-input"
-					className={css({
-						height: "6",
-						width: "12",
-						borderRadius: "shell-sm",
-						borderWidth: "1px",
-						borderStyle: "solid",
-						borderColor: "border.default",
-						backgroundColor: "surface.panel",
-						paddingInline: "2",
-						fontSize: "text-2xs",
-						color: "text.primary",
-					})}
-				/>
+				<div className={css({ width: "12", flexShrink: 0 })}>
+					<NumberField
+						id={loopCountId}
+						uiSize="sm"
+						inputMode="numeric"
+						min={MIN_LOOP_COUNT}
+						max={MAX_LOOP_COUNT}
+						step={1}
+						value={loopCount}
+						onChange={onInputChange}
+						aria-label={t("easing.loop.cycles")}
+						data-ws-action="easing-loop-count-input"
+					/>
+				</div>
 			</label>
 			<div className={css({ display: "flex", alignItems: "center", gap: "1" })}>
 				<Button

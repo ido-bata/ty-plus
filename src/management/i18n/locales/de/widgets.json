@@ -203,7 +203,8 @@
 			"appliedEffect": "Effekt angewendet: {{name}}",
 			"importedFootage": "Importiertes Filmmaterial: {{name}}",
 			"ranScript": "Skript ausgeführt: {{name}}",
-			"appliedPreset": "Preset angewendet: {{name}}"
+			"appliedPreset": "Preset angewendet: {{name}}",
+			"runBlockedUnverifiableAsset": "Preset-Asset konnte nicht überprüft werden (Host nicht erreichbar) — erneut versuchen"
 		},
 		"path": {
 			"pickFolderPrompt": "Ordner auswählen",
@@ -225,6 +226,7 @@
 			"error": "Vorschau nicht verfügbar"
 		},
 		"toolbar": {
+			"refresh": "Aktualisieren",
 			"detailedFilters": "Filter",
 			"viewModeLegend": "Ansichtsmodus",
 			"listView": "Listenansicht",
@@ -262,6 +264,7 @@
 			"noItems": "Keine Elemente"
 		},
 		"entry": {
+			"goUp": "Nach oben",
 			"defaultFolderSubtitle": "Standard",
 			"parentRowName": "Aufwärts",
 			"browseDrives": "Laufwerke durchsuchen",

@@ -8,7 +8,7 @@ import type { JSX, ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 
-import { WorkspaceShell } from "@/management/ae/cep/dialogs/DialogShell";
+import { WorkspaceShell } from "@/management/ae/cep/dialogs/WorkspaceShell";
 import { createCepSurfaceTransport } from "@/management/ae/cep/transport";
 import { createLogger } from "@/management/debug/logger";
 import {

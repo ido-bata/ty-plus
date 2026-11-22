@@ -5,7 +5,7 @@ import type { Preset } from "@/management/preset/contract";
 import {
 	PresetCatalogGlyphHost,
 	WorkspacePresetGlyph,
-} from "@/management/preset/workspace/glyph";
+} from "@/management/preset/workspace/glyph/WorkspaceGlyph";
 import { css } from "@/styled-system/css";
 
 const missingIconClass = css({

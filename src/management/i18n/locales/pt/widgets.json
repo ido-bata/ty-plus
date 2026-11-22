@@ -203,7 +203,8 @@
 			"appliedEffect": "Efeito aplicado: {{name}}",
 			"importedFootage": "Conteúdo importado: {{name}}",
 			"ranScript": "Script executado: {{name}}",
-			"appliedPreset": "Predefinição aplicada: {{name}}"
+			"appliedPreset": "Predefinição aplicada: {{name}}",
+			"runBlockedUnverifiableAsset": "Não foi possível verificar o recurso do preset (host indisponível) — tentar novamente"
 		},
 		"path": {
 			"pickFolderPrompt": "Selecione uma pasta",
@@ -225,6 +226,7 @@
 			"error": "Pré-visualização indisponível"
 		},
 		"toolbar": {
+			"refresh": "Atualizar",
 			"detailedFilters": "Filtros",
 			"viewModeLegend": "Modo de visualização",
 			"listView": "Visualização em lista",
@@ -262,6 +264,7 @@
 			"noItems": "Nenhum item"
 		},
 		"entry": {
+			"goUp": "Subir",
 			"defaultFolderSubtitle": "Padrão",
 			"parentRowName": "Acima",
 			"browseDrives": "Procurar unidades",

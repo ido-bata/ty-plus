@@ -54,7 +54,12 @@ const errorState = css({
 
 const defaultState = css({
 	borderColor: "border.default",
-	_focus: { borderColor: "interactive.focus" },
+	// The one focus indicator: the border repaints and the shared ring
+	// paints, so a focused field reads like a focused button.
+	_focus: {
+		borderColor: "interactive.focus",
+		boxShadow: "var(--color-focus-ring)",
+	},
 });
 
 const numberSpinnerHidden = css({

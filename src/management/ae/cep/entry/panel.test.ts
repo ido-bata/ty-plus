@@ -7,10 +7,10 @@ const { bootPanelMock, installDevPanelMock } = vi.hoisted(() => ({
 
 vi.mock("@/management/panel/appearance-boot", () => ({}));
 vi.mock("@/management/panel/boot", () => ({ bootPanel: bootPanelMock }));
-vi.mock("@/management/ipc/operation-worker-binary", () => ({
+vi.mock("@/management/ipc/operation-worker/binary", () => ({
 	compiledOperationWorkerTrustMode: "release",
 }));
-vi.mock("@/management/ipc/operation-worker-dev-panel", () => ({
+vi.mock("@/management/ipc/operation-worker/dev-panel", () => ({
 	installOperationWorkerDevPanel: installDevPanelMock,
 }));
 

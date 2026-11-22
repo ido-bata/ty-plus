@@ -36,7 +36,7 @@ vi.mock("@/function/onboarding/usePaths", async (importOriginal) => {
 	};
 });
 
-vi.mock("@/management/ae/cep/contexts/Context", () => ({
+vi.mock("@/management/ae/cep/contexts/CepContext", () => ({
 	useCep: () => ({ panelSurfaceId: "panel-1" }),
 }));
 
@@ -59,7 +59,7 @@ vi.mock("@/management/storage", () => ({
 	writeSettings: vi.fn(),
 }));
 
-vi.mock("@/management/preset/onboarding-directory", () => ({
+vi.mock("@/management/preset/onboarding/directory", () => ({
 	readOnboardingPresetDirectory: ({ dirPath }: { dirPath: string }) => {
 		if (dirPath === "C:/Ae/Presets") {
 			return Promise.resolve([

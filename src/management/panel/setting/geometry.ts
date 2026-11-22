@@ -1,6 +1,6 @@
 /**
  * Align manifest `<Geometry>` of CEP **Panel** (`panel.1`~`panel.5`) for workspace.
- * Shared with panels in `scripts/build/build-cep-dev.ts` and root `cep.config.ts`.
+ * Shared with panels in `scripts/build/cep-dev.ts` and root `cep.config.ts`.
  */
 export const CEP_PANEL_FRAME = {
 	width: 800,
@@ -17,7 +17,7 @@ export const SHELL_MODELESS_FRAME = {
 } as const;
 
 /**
- * `<MinSize>` / `<MaxSize>` for CEP manifest (shared across all Modeless in `scripts/build/build-cep-dev.ts`).
+ * `<MinSize>` / `<MaxSize>` for CEP manifest (shared across all Modeless in `scripts/build/cep-dev.ts`).
  * Host handles window frame resizing. No resize UI inside panel.
  */
 export const MODELESS_MIN_SIZE = { width: 240, height: 240 } as const;

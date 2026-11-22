@@ -48,24 +48,24 @@ vi.mock("@/management/ae/cep/runtime", () => ({
 	normalizeCepSystemPath: vi.fn((value: string) => value),
 }));
 
-vi.mock("@/management/ipc/operation-worker-binary", () => ({
+vi.mock("@/management/ipc/operation-worker/binary", () => ({
 	get compiledOperationWorkerTrustMode() {
 		return trustModeRef.value;
 	},
 }));
 
-vi.mock("@/management/ipc/operation-worker-cep-runtime", () => ({
+vi.mock("@/management/ipc/operation-worker/cep-runtime", () => ({
 	readCepNodePlatform: vi.fn(() => platformRef.value),
 	createCepOperationWorkerRuntime:
 		cepRuntimeModule.createCepOperationWorkerRuntime,
 }));
 
-vi.mock("@/management/ipc/operation-worker-context", () => ({
+vi.mock("@/management/ipc/operation-worker/context", () => ({
 	createOperationWorkerContextProvider:
 		contextProviderModule.createOperationWorkerContextProvider,
 }));
 
-vi.mock("@/management/ipc/operation-worker-composition", () => ({
+vi.mock("@/management/ipc/operation-worker/composition", () => ({
 	createOperationWorkerComposition:
 		compositionModule.createOperationWorkerComposition,
 }));
@@ -91,7 +91,7 @@ vi.mock("@/management/online/catalog/runtime-cloud-gateway", () => ({
 	createRuntimeCloudGateway: cloudGatewayModule.createRuntimeCloudGateway,
 }));
 
-vi.mock("@/management/workspace/services", () => ({
+vi.mock("@/management/workspace/core/services", () => ({
 	initCloudGateway: servicesModule.initCloudGateway,
 	initUpdateInstaller: servicesModule.initUpdateInstaller,
 }));
@@ -107,7 +107,7 @@ vi.mock("@/management/online/runtime-gateway-health", () => ({
 	setHostOnlineStatePublisher: vi.fn(),
 }));
 
-import { initCloudGateway } from "@/management/workspace/services";
+import { initCloudGateway } from "@/management/workspace/core/services";
 
 import {
 	type GatewayBootFailureReason,

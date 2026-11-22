@@ -1,4 +1,4 @@
-import type { GroupEntry } from "@/management/preset/group-catalog";
+import type { GroupEntry } from "@/management/preset/group/catalog";
 import { stripKnownIdPrefixes } from "@/management/storage/ids";
 import { readPanelPresetIdsFromSettingsJson } from "@/management/storage/workspace/store";
 import {

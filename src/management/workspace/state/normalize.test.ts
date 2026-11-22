@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { isOpaqueInstanceId } from "../../storage";
-import type { SurfaceState } from "../state";
-import { createInitialSurfaceState } from "../state";
+import type { SurfaceState } from "../core/state";
+import { createInitialSurfaceState } from "../core/state";
 import { normalizeState } from "./normalize";
 
 describe("normalizeWorkspaceStateForInstanceIds (widget tiles)", () => {

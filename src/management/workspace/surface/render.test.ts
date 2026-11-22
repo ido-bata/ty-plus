@@ -5,7 +5,7 @@
  */
 
 import { describe, expect, it } from "vitest";
-import { createInitialSurfaceState } from "../state";
+import { createInitialSurfaceState } from "../core/state";
 import { computePresetGrid } from "./render";
 
 describe("computePresetGrid", () => {

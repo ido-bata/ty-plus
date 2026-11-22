@@ -1,4 +1,4 @@
-import type { GroupEntry } from "@/management/preset/group-catalog";
+import type { GroupEntry } from "@/management/preset/group/catalog";
 
 export const collectGroupedMemberPresetIds = (
 	groups: readonly GroupEntry[],

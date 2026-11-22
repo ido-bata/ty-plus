@@ -19,21 +19,23 @@ import {
 } from "@/management/preset/catalog-browser/layout";
 import { buildPlacementHints } from "@/management/preset/catalog-browser/workspace-placement-hints";
 import type { Preset } from "@/management/preset/contract";
+import { askHostDeleteConfirm } from "@/management/preset/delete-confirm";
 import { traceExecute } from "@/management/preset/execution/lifecycle-trace";
 import {
 	type GroupEntry,
 	parseGroupFromText,
-} from "@/management/preset/group-catalog";
-import { getPresetToolDialogEntry } from "@/management/preset/registry";
+	removeGroupEntry,
+} from "@/management/preset/group/catalog";
 import {
 	getPreset,
 	listPresets,
 	removeLocalPreset,
-} from "@/management/preset/use-cases";
+} from "@/management/preset/operations";
+import { getPresetToolDialogEntry } from "@/management/preset/registry";
 import { stripKnownIdPrefixes } from "@/management/storage/ids";
 import { readSettings } from "@/management/storage/workspace/store";
+import { executeWorkspacePresetForWindow } from "@/management/workspace/core/runtime";
 import { openPresetEditSurface } from "@/management/workspace/hooks/preset";
-import { executeWorkspacePresetForWindow } from "@/management/workspace/runtime";
 import { useCatalogViewMode } from "@/shared/util/catalog-view-mode";
 import { useIconGridScale } from "@/shared/util/icon-grid-scale";
 import { useTileAspect } from "@/shared/util/tile-aspect";
@@ -401,8 +403,19 @@ function usePresetsCatalog(opts: PresetsCatalogOptions): PresetsCatalogApi {
 
 	const onDelete = useCallback(
 		async (id: string) => {
+			const title =
+				presets.find((p) => p.id === id)?.title ??
+				groups.find((g) => g.id === id)?.title ??
+				"";
+			const isGroup = groups.some((g) => g.id === id);
 			try {
-				await removeLocalPreset(id);
+				const confirmed = await askHostDeleteConfirm(window, title, isGroup);
+				if (!confirmed) return;
+				if (isGroup) {
+					await removeGroupEntry(window, id);
+				} else {
+					await removeLocalPreset(id);
+				}
 				await loadEverything();
 			} catch (error) {
 				console.warn(
@@ -411,7 +424,7 @@ function usePresetsCatalog(opts: PresetsCatalogOptions): PresetsCatalogApi {
 				);
 			}
 		},
-		[loadEverything],
+		[groups, loadEverything, presets],
 	);
 
 	const clearSearch = useCallback(() => {

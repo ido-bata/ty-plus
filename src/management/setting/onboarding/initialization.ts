@@ -436,6 +436,33 @@ export const readInitializationState = async (
 	}
 };
 
+export type InitializationLocatorProbe =
+	| { readonly status: "missing" }
+	| { readonly status: "invalid" }
+	| { readonly status: "ready"; readonly supportRoot: string };
+
+export const probeInitializationLocator = async (
+	win: Window,
+	appSupportRoot: string,
+): Promise<InitializationLocatorProbe> => {
+	const fs = await resolveNodeFsPromises(win);
+	const locatorPath = resolveLocatorPathFromAppRoot(appSupportRoot);
+	let raw: string;
+	try {
+		raw = await fs.readFile(locatorPath, "utf8");
+	} catch (error) {
+		if ((error as { code?: unknown } | null)?.code === "ENOENT") {
+			return { status: "missing" };
+		}
+		throw error;
+	}
+	const locator = parseInitializationLocatorJson(raw);
+	if (!locator) {
+		return { status: "invalid" };
+	}
+	return { status: "ready", supportRoot: locator.supportRoot };
+};
+
 /**
  * Input type for completeInitialization.
  */

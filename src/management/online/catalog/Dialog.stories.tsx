@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
 // IMPORTANT: do NOT import `PresetLibrary` from `./Dialog`. The component
-// pulls in `@/management/workspace/services` and `@/management/preset`
+// pulls in `@/management/workspace/core/services` and `@/management/preset`
 // (via `use-cases` → `@/management/preset/authoring/request`,
-// `notify-panels-after-preset-save` → `@/management/preset/use-cases`,
+// `notify-panels-after-preset-save` → `@/management/preset/operations`,
 // `services` → `@/management/preset/repository/shared`), whose barrel
 // re-export chain is incompatible with the Storybook build (see
 // `.storybook/main.ts`: the CEP-only `ty-plus:inline-oniguruma-wasm`

@@ -6,7 +6,7 @@ import type {
 	GridSettings,
 	Layout,
 	SurfaceState,
-} from "@/management/workspace/state";
+} from "@/management/workspace/core/state";
 import { css } from "@/styled-system/css";
 
 type WidgetProps = {

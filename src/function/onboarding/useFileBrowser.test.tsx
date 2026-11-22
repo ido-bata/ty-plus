@@ -11,7 +11,7 @@ const mocks = vi.hoisted(() => ({
 	readDirectory: vi.fn(),
 }));
 
-vi.mock("@/management/preset/onboarding-directory", () => ({
+vi.mock("@/management/preset/onboarding/directory", () => ({
 	readOnboardingPresetDirectory: mocks.readDirectory,
 }));
 

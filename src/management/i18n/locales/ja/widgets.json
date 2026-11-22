@@ -203,7 +203,8 @@
 			"appliedEffect": "エフェクトを適用しました: {{name}}",
 			"importedFootage": "インポートしたフッテージ: {{name}}",
 			"ranScript": "スクリプトを実行しました: {{name}}",
-			"appliedPreset": "プリセットを適用しました: {{name}}"
+			"appliedPreset": "プリセットを適用しました: {{name}}",
+			"runBlockedUnverifiableAsset": "プリセットのアセットを検証できませんでした（ホストに接続できません）— 再試行"
 		},
 		"path": {
 			"pickFolderPrompt": "フォルダを選択",
@@ -225,6 +226,7 @@
 			"error": "プレビューを表示できません"
 		},
 		"toolbar": {
+			"refresh": "更新",
 			"detailedFilters": "フィルター",
 			"viewModeLegend": "表示モード",
 			"listView": "リスト表示",
@@ -262,6 +264,7 @@
 			"noItems": "項目なし"
 		},
 		"entry": {
+			"goUp": "上へ移動",
 			"defaultFolderSubtitle": "デフォルト",
 			"parentRowName": "上へ",
 			"browseDrives": "ドライブを表示",

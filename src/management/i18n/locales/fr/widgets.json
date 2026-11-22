@@ -203,7 +203,8 @@
 			"appliedEffect": "Effet appliqué : {{name}}",
 			"importedFootage": "Métrage importé : {{name}}",
 			"ranScript": "Script exécuté : {{name}}",
-			"appliedPreset": "Préréglage appliqué : {{name}}"
+			"appliedPreset": "Préréglage appliqué : {{name}}",
+			"runBlockedUnverifiableAsset": "Impossible de vérifier la ressource du préréglage (hôte indisponible) — réessayer"
 		},
 		"path": {
 			"pickFolderPrompt": "Sélectionner un dossier",
@@ -225,6 +226,7 @@
 			"error": "Aperçu indisponible"
 		},
 		"toolbar": {
+			"refresh": "Actualiser",
 			"detailedFilters": "Filtres",
 			"viewModeLegend": "Mode d'affichage",
 			"listView": "Vue liste",
@@ -262,6 +264,7 @@
 			"noItems": "Aucun élément"
 		},
 		"entry": {
+			"goUp": "Monter",
 			"defaultFolderSubtitle": "Par défaut",
 			"parentRowName": "Monter",
 			"browseDrives": "Parcourir les lecteurs",

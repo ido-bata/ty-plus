@@ -34,7 +34,7 @@ import {
 	resolveCurrentFolderPath,
 } from "@/function/onboarding/usePaths";
 import type { WidgetType } from "@/function/widget";
-import { useCep } from "@/management/ae/cep/contexts/Context";
+import { useCep } from "@/management/ae/cep/contexts/CepContext";
 import { selectFolder } from "@/management/ae/cep/dialog-shim/bolt";
 import { createCepSurfaceTransport } from "@/management/ae/cep/transport";
 import { useAfterEffectsFilesGateway } from "@/management/ae/files/gateway-context";
@@ -49,7 +49,7 @@ import { saveCepShellLocale } from "@/management/i18n/locale-storage";
 import {
 	importOnboardingPresets,
 	type OnboardingImportOptions,
-} from "@/management/preset/onboarding-service";
+} from "@/management/preset/onboarding/service";
 import { getLocalPresetCatalog } from "@/management/preset/repository/local-catalog";
 import { completeOnboardingStorage } from "@/management/setting/onboarding/complete";
 import {
@@ -79,13 +79,13 @@ import {
 	readScopedDirectory,
 	resolveScopedParentDirectory,
 } from "@/management/storage/read/scoped-directory";
-import { DirectoryBrowser } from "@/management/storage/ui/DirectoryBrowser";
+import { FileEntryList } from "@/management/storage/ui/file-entry/FileEntryList";
 import type { WidgetRecord } from "@/management/widget/record/types";
+import { createInitialSurfaceState } from "@/management/workspace/core/state";
 import type { Layout } from "@/management/workspace/layout/grid-document";
 import { publishShellMessage } from "@/management/workspace/messaging/publish-shell-message";
 import { logWorkspace } from "@/management/workspace/onboarding/flow-log";
 import { buildOnboardingLayoutItems } from "@/management/workspace/placement/gateway";
-import { createInitialSurfaceState } from "@/management/workspace/state";
 import { SHELL_CHANNELS } from "@/management/workspace/surface/contract";
 import {
 	layoutsFromSurface,
@@ -740,7 +740,7 @@ function FileStepBrowser({
 	return (
 		<div className={fileStepBodyClass}>
 			<p className={stepBodyTextClass}>{t(`step.${kind}.body`)}</p>
-			<DirectoryBrowser
+			<FileEntryList
 				entries={[...folderEntries]}
 				fileNameFilter={STEP_EXTENSIONS[kind]}
 				loading={loadingFiles}
@@ -1157,7 +1157,6 @@ function useOnboardingFinish(input: OnboardingFinishInput): {
 				importOptions,
 				importPresetRepository,
 				listDirectory,
-				thumbnailGateway,
 			);
 			logWorkspace("onboardingView:after-preset-import", {
 				presetCatalogCount: presets.length,
@@ -1270,7 +1269,6 @@ function useOnboardingFinish(input: OnboardingFinishInput): {
 		setSaving,
 		supportPath,
 		t,
-		thumbnailGateway,
 	]);
 
 	// Retry the failed write with UAC/osascript elevation. The first call

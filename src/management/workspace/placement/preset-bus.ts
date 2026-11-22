@@ -3,6 +3,7 @@
  * Ensures auto-packed geometry (gateway) and appends catalog-backed preset/group surface tiles.
  */
 
+import type { SurfaceState } from "@/management/workspace/core/state";
 import type { CellRect } from "@/management/workspace/placement/column-band-pack";
 import {
 	autoPlaceRequestsOnGrid,
@@ -11,7 +12,6 @@ import {
 	type PresetPlacementRequest,
 } from "@/management/workspace/placement/gateway";
 import { tileIdResolvesAsWidget } from "@/management/workspace/placement/resolve";
-import type { SurfaceState } from "@/management/workspace/state";
 import type { LayoutPayload } from "@/management/workspace/surface/contract";
 import type { Tile } from "@/management/workspace/surface/tiles";
 import {

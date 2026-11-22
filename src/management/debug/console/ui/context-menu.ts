@@ -1,4 +1,4 @@
-import type { CepMenuPayload } from "@/management/dialog/dialogs/unified-context-menu";
+import type { CepMenuPayload } from "@/management/dialog/unified-context-menu";
 import { i18n } from "@/management/i18n/index";
 
 export const DEBUG_CTX_IDS = {

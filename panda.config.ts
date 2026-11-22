@@ -7,7 +7,7 @@
  * conditions can never emit media queries inside the panel. Web layout
  * conditions live exclusively in the web config — do not use
  * `base:`/`sm:`/`md:`/`lg:`/`xl:`/`2xl:` responsive keys in `src/` or
- * `packages/` (enforced by scripts/check/check-web-design.ts).
+ * `packages/` (enforced by scripts/check/web-design.ts).
  */
 import { defineConfig } from "@pandacss/dev";
 import {

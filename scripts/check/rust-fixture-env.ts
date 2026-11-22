@@ -11,8 +11,8 @@
  * The remote gate already points `TMPDIR` at a directory inside the workspace;
  * sharing that here gives local runs the same fixture root, so `bun run ci`
  * does not depend on where the runner happens to put temp files. It lives in
- * its own module because two scripts (`check-rust-workspace`,
- * `check-rust-test`) run `cargo test` and either one drifting back to the
+ * its own module because two scripts (`rust-workspace`,
+ * `rust-test`) run `cargo test` and either one drifting back to the
  * inherited value would reintroduce the failure for half the gate
  * (Issue #189).
  *

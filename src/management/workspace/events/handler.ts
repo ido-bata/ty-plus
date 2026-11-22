@@ -14,6 +14,16 @@ import type { Preset } from "@/management/preset/contract";
 import { dispatchGroupWorkspaceRequest } from "@/management/preset/group/events";
 import type { FileBrowserService } from "@/management/storage/file-browser-service";
 import {
+	addPlacement,
+	clearAll,
+	togglePlacement,
+} from "@/management/workspace/core/selection";
+import type {
+	GridSettings,
+	Layout,
+	SurfaceState,
+} from "@/management/workspace/core/state";
+import {
 	DRAG_HANDLE_MARGIN,
 	DRAG_THRESHOLD,
 	PREVIEW_TRANSITION,
@@ -44,16 +54,6 @@ import {
 	getPlacementId,
 } from "@/management/workspace/placement/types";
 import { CommitReconcile } from "@/management/workspace/reconcile-stub";
-import {
-	addPlacement,
-	clearAll,
-	togglePlacement,
-} from "@/management/workspace/selection";
-import type {
-	GridSettings,
-	Layout,
-	SurfaceState,
-} from "@/management/workspace/state";
 import {
 	classifyFromCatalogs,
 	clipSelection,

@@ -22,23 +22,23 @@ import {
 } from "@/management/ae/cep/runtime";
 import { createLogger } from "@/management/debug/logger";
 import { i18n } from "@/management/i18n/index";
-import type { OperationWorkerPlatform } from "@/management/ipc/operation-worker-binary";
-import { compiledOperationWorkerTrustMode } from "@/management/ipc/operation-worker-binary";
+import type { OperationWorkerPlatform } from "@/management/ipc/operation-worker/binary";
+import { compiledOperationWorkerTrustMode } from "@/management/ipc/operation-worker/binary";
 import {
 	createCepOperationWorkerRuntime,
 	readCepNodePlatform,
-} from "@/management/ipc/operation-worker-cep-runtime";
+} from "@/management/ipc/operation-worker/cep-runtime";
 import type {
 	OperationWorkerComposition,
 	OperationWorkerLifecycleObserver,
-} from "@/management/ipc/operation-worker-composition";
-import { createOperationWorkerComposition } from "@/management/ipc/operation-worker-composition";
-import { createOperationWorkerContextProvider } from "@/management/ipc/operation-worker-context";
+} from "@/management/ipc/operation-worker/composition";
+import { createOperationWorkerComposition } from "@/management/ipc/operation-worker/composition";
+import { createOperationWorkerContextProvider } from "@/management/ipc/operation-worker/context";
 import {
 	OperationWorkerError,
 	type WorkerCorrelation,
 	type WorkerLifecycleEvent,
-} from "@/management/ipc/operation-worker-runner";
+} from "@/management/ipc/operation-worker/runner";
 import { createCompositionRuntimeDispatcher } from "@/management/online/catalog/composition-runtime-dispatcher";
 import { createRuntimeCloudGateway } from "@/management/online/catalog/runtime-cloud-gateway";
 import { bindOnlineRuntimeGatewayPort } from "@/management/online/runtime-gateway";
@@ -54,7 +54,7 @@ import { runCepEvalScript } from "@/management/storage/cep";
 import {
 	initCloudGateway,
 	initUpdateInstaller,
-} from "@/management/workspace/services";
+} from "@/management/workspace/core/services";
 
 declare const __APP_VERSION__: string;
 

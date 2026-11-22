@@ -28,6 +28,8 @@ const surfaceWriteLog = createLogger("workspace");
  * or the settings are behind both (Issue #183).
  */
 export type PersistSurfaceStage =
+	| "acquire-lock"
+	| "read-layout"
 	| "write-widget-records"
 	| "write-layout"
 	| "write-ui-settings"
@@ -63,6 +65,23 @@ export type SurfaceWriteRequest = {
 	readonly persistenceRootArg: string | undefined;
 	/** `null` means "this surface has no background"; write failures are non-fatal. */
 	readonly backgroundJsonText: string | null;
+	/**
+	 * ADR-0006: when true a background-write failure rejects the persist
+	 * instead of being logged and swallowed. `persistSurfaceStateAwaitable`
+	 * sets this because its caller (`applyInterPanelMove` step 4) evaluates
+	 * rollback against an exact on-disk view.
+	 */
+	readonly backgroundFatal?: boolean;
+	/**
+	 * ADR-0006: invoked immediately after `workspace-N.json` commits and
+	 * before the remaining stages run. The hook uses it to advance the
+	 * last-persisted tile-id baseline and adopt/remove merged tiles in
+	 * memory — the layout file IS durable at that point, so the baseline
+	 * must reflect it even if a later stage fails (otherwise a rollback
+	 * persist would misclassify our own just-written ids as external
+	 * removals).
+	 */
+	readonly onLayoutCommitted?: () => void;
 };
 
 /**
@@ -128,6 +147,7 @@ export const writeSurfaceState = async (
 
 		stage = "write-layout";
 		await deps.writeNJson(win, wsIndex, request.layoutJsonText);
+		request.onLayoutCommitted?.();
 
 		stage = "write-ui-settings";
 		await deps.writeUiSettings(
@@ -141,6 +161,9 @@ export const writeSurfaceState = async (
 			await deps
 				.writeBackgroundJson(win, wsIndex, request.backgroundJsonText)
 				.catch((error: unknown) => {
+					if (request.backgroundFatal) {
+						throw error;
+					}
 					// Background is non-fatal, but it is still a failure
 					// and this used to be a bare `catch`.
 					surfaceWriteLog.warn("background write failed", {

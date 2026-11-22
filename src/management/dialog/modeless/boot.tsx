@@ -20,8 +20,8 @@ import { createLogger } from "@/management/debug/logger";
 import {
 	installCepJsonContextMenuRewrite,
 	registerCepJsonContextMenuSurface,
-} from "@/management/dialog/dialogs/context-menu";
-import { applyCepModelessShellLayoutGuards } from "@/management/dialog/dialogs/layout";
+} from "@/management/dialog/context-menu";
+import { applyCepModelessShellLayoutGuards } from "@/management/dialog/layout";
 import { ModelessDialogRoot } from "@/management/dialog/modeless/Root";
 import {
 	readPhysicalExtensionId,

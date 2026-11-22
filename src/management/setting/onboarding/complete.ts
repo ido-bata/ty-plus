@@ -11,7 +11,7 @@ import type { Preset } from "@/management/preset/contract";
 import {
 	type GroupCatalogEntry,
 	mergeGroupEntries as mergeGroupCatalogEntries,
-} from "@/management/preset/group-catalog";
+} from "@/management/preset/group/catalog";
 import { initializePresetStorage } from "@/management/preset/initialize";
 import { readSupportRootFromSettingsJson } from "@/management/setting/onboarding/initialization";
 import { writeSettingsPathsJson } from "@/management/setting/persistence/settings-json-files";
@@ -20,7 +20,7 @@ import { indexFromPanelId } from "@/management/storage/workspace/layout-store";
 import { writeSettings } from "@/management/storage/workspace/store";
 import { initializeWidgetStorage } from "@/management/widget/initialize";
 import type { WidgetRecord } from "@/management/widget/record/types";
-import { initializeWorkspaceStorage } from "@/management/workspace/initialize";
+import { initializeWorkspaceStorage } from "@/management/workspace/core/initialize";
 import type { LayoutItem } from "@/management/workspace/layout/grid-document";
 import { logWorkspace } from "@/management/workspace/onboarding/flow-log";
 import type {

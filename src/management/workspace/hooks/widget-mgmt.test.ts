@@ -1,6 +1,6 @@
 import type { Layout, LayoutItem } from "@/management/workspace/layout/grid-document";
-import { createInitialSurfaceState } from "@/management/workspace/state";
-import type { SurfaceState } from "@/management/workspace/state";
+import { createInitialSurfaceState } from "@/management/workspace/core/state";
+import type { SurfaceState } from "@/management/workspace/core/state";
 import { describe, expect, it, vi } from "vitest";
 import { applyWidgets } from "./widget-mgmt";
 

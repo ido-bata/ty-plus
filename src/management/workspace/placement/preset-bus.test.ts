@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { PresetRecord } from "../../../management/preset/contract";
-import { createInitialSurfaceState } from "../state";
+import { createInitialSurfaceState } from "../core/state";
 import { mergePresetPlacementIntoState } from "./preset-bus";
 
 const mockPreset = (id: string): PresetRecord => ({

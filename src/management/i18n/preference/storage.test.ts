@@ -102,6 +102,7 @@ describe("loadPreferenceFromFile", () => {
 describe("savePreferenceToFile", () => {
 	it("writes locale to settings/ui.json only", async () => {
 		const writeCalls: Array<{ path: string; data: string }> = [];
+		const renameCalls: Array<{ from: string; to: string }> = [];
 		const win = fakeWindowWithNodeFs({
 			promises: {
 				readFile: async () => "",
@@ -109,12 +110,21 @@ describe("savePreferenceToFile", () => {
 					writeCalls.push({ path, data });
 				},
 				mkdir: async () => undefined,
+				rename: async (from: string, to: string) => {
+					renameCalls.push({ from, to });
+				},
 			},
 		});
 		await savePreferenceToFile(win, "ko");
-		expect(writeCalls).toHaveLength(1);
-		expect(writeCalls[0].path).toMatch(/ui\.json$/);
-		expect(writeCalls[0].data).toBe('{\n  "locale": "ko"\n}\n');
+		// ADR-0006: the managed-root persistence lock also writes
+		// `locks/persistence.lock/owner.json` through the same fs — only
+		// the ui.json write is under test here. The payload lands via
+		// tmp file + rename, so match the tmp sibling of ui.json.
+		const uiWrites = writeCalls.filter((c) => c.path.includes("ui.json"));
+		expect(uiWrites).toHaveLength(1);
+		expect(uiWrites[0].path).toMatch(/ui\.json\.tmp-/);
+		expect(uiWrites[0].data).toBe('{\n  "locale": "ko"\n}\n');
+		expect(renameCalls.some(({ to }) => /ui\.json$/.test(to))).toBe(true);
 	});
 
 	it("merges locale with existing ui.json fields", async () => {
@@ -133,12 +143,14 @@ describe("savePreferenceToFile", () => {
 					writeCalls.push({ path, data });
 				},
 				mkdir: async () => undefined,
+				rename: async () => undefined,
 			},
 		});
 		await savePreferenceToFile(win, "pt");
-		expect(writeCalls).toHaveLength(1);
-		expect(writeCalls[0].data).toContain('"locale": "pt"');
-		expect(writeCalls[0].data).toContain('"theme": "dark"');
+		const uiWrites = writeCalls.filter((c) => c.path.includes("ui.json"));
+		expect(uiWrites).toHaveLength(1);
+		expect(uiWrites[0].data).toContain('"locale": "pt"');
+		expect(uiWrites[0].data).toContain('"theme": "dark"');
 	});
 
 	it("does NOT write to legacy i18n-preference.json", async () => {
@@ -153,8 +165,11 @@ describe("savePreferenceToFile", () => {
 			},
 		});
 		await savePreferenceToFile(win, "en");
-		expect(writtenPaths.every((p) => p.includes("ui.json"))).toBe(true);
-		expect(writtenPaths.some((p) => p.includes("i18n-preference.json"))).toBe(
+		// The persistence lock writes owner.json under locks/ — exclude it;
+		// the assertion is about the legacy preference file specifically.
+		const dataWrites = writtenPaths.filter((p) => !p.includes("locks/"));
+		expect(dataWrites.every((p) => p.includes("ui.json"))).toBe(true);
+		expect(dataWrites.some((p) => p.includes("i18n-preference.json"))).toBe(
 			false,
 		);
 	});

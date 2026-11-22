@@ -19,6 +19,8 @@ const SEMANTIC_COLOR_BRIDGE = `
   --color-interactive-hover: var(--ty-interactive-hover);
   --color-interactive-active: var(--ty-interactive-active);
   --color-interactive-focus: var(--ty-interactive-focus);
+  /* The one focus indicator every focusable control paints. */
+  --color-focus-ring: var(--ty-focus-ring);
   --color-status-success: var(--ty-status-success);
   --color-status-warning: var(--ty-status-warning);
   --color-status-error: var(--ty-status-error);

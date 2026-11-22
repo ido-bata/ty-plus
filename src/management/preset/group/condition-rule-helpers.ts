@@ -2,9 +2,9 @@ import type { PresetType } from "@/management/preset/contract";
 import type {
 	IconRule,
 	IconRuleFilter,
-} from "@/management/preset/group-catalog";
-import type { PresetIconEditorDraft } from "@/management/preset/icon-editor";
-import { presetIconDraftToPresetIcon } from "@/management/preset/icon-editor";
+} from "@/management/preset/group/catalog";
+import type { PresetIconEditorDraft } from "@/management/preset/icon/editor-state";
+import { presetIconDraftToPresetIcon } from "@/management/preset/icon/editor-state";
 
 const escapeRegex = (value: string): string =>
 	value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -18,7 +18,7 @@ export type ConditionRule = {
 	draft: PresetIconEditorDraft;
 };
 
-const buildConditionIconRules = (
+export const conditionRulesToIconRules = (
 	rules: readonly ConditionRule[],
 ): IconRule[] => {
 	return rules.flatMap<IconRule>((r) => {

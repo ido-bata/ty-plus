@@ -5,7 +5,7 @@ import {
 import { i18n } from "@/management/i18n/index";
 import type { Preset, PresetType } from "@/management/preset/contract";
 import { presetIconImage } from "@/management/preset/contract";
-import { coercePersistedPresetIcon } from "@/management/preset/icon-data";
+import { coercePersistedPresetIcon } from "@/management/preset/icon/normalize";
 import {
 	findSiblingImagePathForPresetFile,
 	type SiblingListingEntry,

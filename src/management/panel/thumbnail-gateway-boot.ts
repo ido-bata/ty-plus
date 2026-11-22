@@ -21,13 +21,13 @@ import { createFilesGatewayFromComposition } from "@/management/ae/files/runtime
 import {
 	compiledOperationWorkerTrustMode,
 	type OperationWorkerPlatform,
-} from "@/management/ipc/operation-worker-binary";
+} from "@/management/ipc/operation-worker/binary";
 import {
 	createCepOperationWorkerRuntime,
 	readCepNodePlatform,
-} from "@/management/ipc/operation-worker-cep-runtime";
-import { createOperationWorkerComposition } from "@/management/ipc/operation-worker-composition";
-import { createOperationWorkerContextProvider } from "@/management/ipc/operation-worker-context";
+} from "@/management/ipc/operation-worker/cep-runtime";
+import { createOperationWorkerComposition } from "@/management/ipc/operation-worker/composition";
+import { createOperationWorkerContextProvider } from "@/management/ipc/operation-worker/context";
 
 declare const __APP_VERSION__: string;
 

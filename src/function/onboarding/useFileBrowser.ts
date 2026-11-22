@@ -3,7 +3,7 @@ import { STEP_EXTENSIONS } from "@/function/onboarding/file-extensions-data";
 import type { FilePickStep } from "@/function/onboarding/steps-data";
 import type { FolderEntry, Paths } from "@/function/onboarding/usePaths";
 import { resolveCurrentFolderPath } from "@/function/onboarding/usePaths";
-import { readOnboardingPresetDirectory } from "@/management/preset/onboarding-directory";
+import { readOnboardingPresetDirectory } from "@/management/preset/onboarding/directory";
 import {
 	canUseCepNodeFileBrowser,
 	createCepNodeFileBrowserService,

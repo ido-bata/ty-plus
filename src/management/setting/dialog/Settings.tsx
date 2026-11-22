@@ -9,7 +9,7 @@ import {
 	useState,
 } from "react";
 import { DialogShell } from "@/management/dialog";
-import { DialogFooterActions } from "@/management/dialog/dialogs/shell/Footer";
+import { DialogFooterActions } from "@/management/dialog/shell/Footer";
 import { useDialogClose } from "@/management/dialog/useClose";
 import { i18n } from "@/management/i18n/index";
 import { useSettings } from "@/management/setting/context";

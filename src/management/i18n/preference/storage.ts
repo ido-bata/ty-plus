@@ -244,12 +244,20 @@ export const savePreferenceToFile = async (
 	locale: CepShellLocale,
 ): Promise<void> => {
 	try {
-		const existing = await readSettingsUiJson(win);
-		const updated =
-			existing && typeof existing === "object"
-				? { ...existing, [UI_JSON_KEY]: locale }
-				: { [UI_JSON_KEY]: locale };
-		await writeSettingsUiJson(win, updated as Record<string, unknown>);
+		// ADR-0006: settings/ui.json is also written by every panel persist
+		// (inside the managed-root persistence lock). This read→merge→write
+		// must hold the same lock or the two writers can interleave.
+		const { withManagedRootPersistenceLock } = await import(
+			"@/management/storage/lock/persistence-lock"
+		);
+		await withManagedRootPersistenceLock(win, async () => {
+			const existing = await readSettingsUiJson(win);
+			const updated =
+				existing && typeof existing === "object"
+					? { ...existing, [UI_JSON_KEY]: locale }
+					: { [UI_JSON_KEY]: locale };
+			await writeSettingsUiJson(win, updated as Record<string, unknown>);
+		});
 	} catch {
 		/* noop */
 	}

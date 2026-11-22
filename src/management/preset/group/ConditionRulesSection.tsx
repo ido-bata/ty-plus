@@ -1,8 +1,8 @@
-import { Button } from "@ty-plus/ui/controls/Button";
+import { Button } from "@ty-plus/ui";
 import { Plus } from "lucide-react";
 import type { JSX } from "react";
 import { i18n } from "@/management/i18n/index";
-import type { PresetIconEditorDraft } from "@/management/preset/icon-editor";
+import type { PresetIconEditorDraft } from "@/management/preset/icon/editor-state";
 import { AccordionSection } from "@/management/setting/dialog/sections/AccordionSection";
 import { css } from "@/styled-system/css";
 import { BaseIconCard } from "./BaseIconCard";

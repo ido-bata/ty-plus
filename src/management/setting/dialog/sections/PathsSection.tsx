@@ -2,7 +2,7 @@ import { PathField } from "@ty-plus/ui/fields/PathField";
 import { isIMEComposing } from "@ty-plus/ui/util/keyboard";
 import { FolderOpen } from "lucide-react";
 import { type JSX, useCallback, useEffect, useRef, useState } from "react";
-import { useCep } from "@/management/ae/cep/contexts/Context";
+import { useCep } from "@/management/ae/cep/contexts/CepContext";
 import { selectFolder } from "@/management/ae/cep/dialog-shim/bolt";
 import { createCepSurfaceTransport } from "@/management/ae/cep/transport";
 import { i18n } from "@/management/i18n/index";
@@ -57,7 +57,7 @@ const PATH_LABELS: Record<PathKey, string> = {
 const errorMessageStyle = css({
 	marginBottom: "2",
 	fontSize: "shell-text-sm",
-	color: "var(--ty-color-danger)",
+	color: "var(--color-status-error)",
 });
 
 const pathFieldClass = css({

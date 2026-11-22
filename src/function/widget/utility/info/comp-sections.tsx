@@ -1,6 +1,6 @@
 import type { JSX, ReactNode } from "react";
 import { i18n } from "@/management/i18n/index";
-import type { CompInfo } from "@/management/workspace/state";
+import type { CompInfo } from "@/management/workspace/core/state";
 import { css } from "@/styled-system/css";
 import { formatDuration, formatFrameRate, rgbToHex } from "./format";
 
@@ -137,7 +137,7 @@ function SectionTitle({ children }: { children: ReactNode }): JSX.Element {
 				fontWeight: "bold",
 				textTransform: "uppercase",
 				letterSpacing: "0.06em",
-				color: "var(--text-muted)",
+				color: "var(--color-text-muted)",
 			})}
 		>
 			{children}
@@ -161,8 +161,10 @@ function InfoRow({
 				fontSize: "text-xs",
 			})}
 		>
-			<span className={css({ color: "var(--text-muted)" })}>{label}</span>
-			<span className={css({ color: "var(--text-main)" })}>{value}</span>
+			<span className={css({ color: "var(--color-text-muted)" })}>{label}</span>
+			<span className={css({ color: "var(--color-text-primary)" })}>
+				{value}
+			</span>
 		</div>
 	);
 }

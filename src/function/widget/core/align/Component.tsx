@@ -10,11 +10,14 @@ import {
 } from "react";
 import { useWidgetRuntime } from "@/function/widget/runtime-context";
 import { i18n } from "@/management/i18n/index";
+import type {
+	AlignTargetId,
+	SurfaceState,
+} from "@/management/workspace/core/state";
 import {
 	DRAG_HANDLE_MARGIN,
 	RESIZE_MARGIN,
 } from "@/management/workspace/events/constants";
-import type { AlignTargetId, SurfaceState } from "@/management/workspace/state";
 import {
 	AlignIcon,
 	TargetIcon,
@@ -206,7 +209,7 @@ function GestureOverlay({
 				<polyline
 					points={path.map((p) => `${p.x},${p.y}`).join(" ")}
 					fill="none"
-					stroke="var(--action-primary)"
+					stroke="var(--color-text-accent)"
 					strokeWidth="2"
 					strokeLinecap="round"
 					strokeLinejoin="round"
@@ -217,7 +220,7 @@ function GestureOverlay({
 					cx={lastPoint.x}
 					cy={lastPoint.y}
 					r="3"
-					fill="var(--action-primary)"
+					fill="var(--color-text-accent)"
 				/>
 			)}
 		</svg>

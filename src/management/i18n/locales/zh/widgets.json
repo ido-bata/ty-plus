@@ -203,7 +203,8 @@
 			"appliedEffect": "已应用效果：{{name}}",
 			"importedFootage": "已导入素材：{{name}}",
 			"ranScript": "已运行脚本：{{name}}",
-			"appliedPreset": "已应用预设：{{name}}"
+			"appliedPreset": "已应用预设：{{name}}",
+			"runBlockedUnverifiableAsset": "无法验证预设资源（主机不可用）— 重试"
 		},
 		"path": {
 			"pickFolderPrompt": "选择文件夹",
@@ -225,6 +226,7 @@
 			"error": "预览不可用"
 		},
 		"toolbar": {
+			"refresh": "刷新",
 			"detailedFilters": "过滤器",
 			"viewModeLegend": "视图模式",
 			"listView": "列表视图",
@@ -262,6 +264,7 @@
 			"noItems": "无项目"
 		},
 		"entry": {
+			"goUp": "上一级",
 			"defaultFolderSubtitle": "默认",
 			"parentRowName": "上一级",
 			"browseDrives": "浏览驱动器",

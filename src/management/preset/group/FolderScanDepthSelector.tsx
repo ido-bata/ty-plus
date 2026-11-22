@@ -1,6 +1,6 @@
 import type { JSX } from "react";
 import { i18n } from "@/management/i18n/index";
-import { AuthoringSegment } from "@/management/preset/tool-shell/archive-layout";
+import { AuthoringSegment } from "@/management/preset/authoring-layout";
 import { css } from "@/styled-system/css";
 
 const wrapperClass = css({

@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
 import { useCallback, useEffect, useState } from "react";
 import { RuntimeProvider } from "@/function/widget/runtime-context";
-import { StatusBar } from "@/management/panel/control/StatusBar";
+import { StatusBar } from "@/management/panel/control/status-bar";
 import { Toolbar } from "@/management/panel/control/Toolbar";
 import { LayoutRestoreBanner } from "@/management/panel/LayoutRestoreBanner";
 import { SurfaceErrorBoundary } from "@/management/panel/surfaces/SurfaceErrorBoundary";
@@ -37,7 +37,7 @@ const gridStage = css({
 	flexDirection: "column",
 	overflow: "hidden",
 	boxSizing: "border-box",
-	backgroundColor: "var(--bg-app)",
+	backgroundColor: "var(--color-surface-panel)",
 });
 
 const gridShell = css({
@@ -46,7 +46,7 @@ const gridShell = css({
 	minHeight: "0",
 	minWidth: "0",
 	overflow: "hidden",
-	backgroundColor: "var(--bg-app)",
+	backgroundColor: "var(--color-surface-panel)",
 });
 
 const toolbarSlot = css({

@@ -1,6 +1,6 @@
 import type { Decorator } from "@storybook/react";
 
-import type { SurfaceState } from "@/management/workspace/state";
+import type { SurfaceState } from "@/management/workspace/core/state";
 import {
 	PanelStateProvider,
 	SelectionProvider,

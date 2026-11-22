@@ -20,7 +20,7 @@ const base = css({
 	transitionProperty: "border-color,box-shadow",
 	_focusVisible: {
 		borderColor: "interactive.focus",
-		boxShadow: "inset 0 0 0 1px var(--color-interactive-focus)",
+		boxShadow: "var(--color-focus-ring)",
 		outline: "none",
 	},
 });

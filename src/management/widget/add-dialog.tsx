@@ -8,14 +8,14 @@ import {
 	useState,
 } from "react";
 import type { WidgetType } from "@/function/widget";
-import { useCep } from "@/management/ae/cep/contexts/Context";
+import { useCep } from "@/management/ae/cep/contexts/CepContext";
 import { createCepSurfaceTransport } from "@/management/ae/cep/transport";
 import { createLogger } from "@/management/debug";
 import { DialogShell } from "@/management/dialog";
 import {
 	type CepMenuPayload,
 	registerCepJsonContextMenuSurface,
-} from "@/management/dialog/dialogs/context-menu";
+} from "@/management/dialog/context-menu";
 import { useDialogClose } from "@/management/dialog/useClose";
 import { i18n } from "@/management/i18n/index";
 import { AddWidgetCatalogPanel } from "@/management/widget/catalog";

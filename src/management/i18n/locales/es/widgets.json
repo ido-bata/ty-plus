@@ -203,7 +203,8 @@
 			"appliedEffect": "Efecto aplicado: {{name}}",
 			"importedFootage": "Metraje importado: {{name}}",
 			"ranScript": "Script ejecutado: {{name}}",
-			"appliedPreset": "Preajuste aplicado: {{name}}"
+			"appliedPreset": "Preajuste aplicado: {{name}}",
+			"runBlockedUnverifiableAsset": "No se pudo verificar el recurso del preset (host no disponible) — reintentar"
 		},
 		"path": {
 			"pickFolderPrompt": "Selecciona una carpeta",
@@ -225,6 +226,7 @@
 			"error": "Vista previa no disponible"
 		},
 		"toolbar": {
+			"refresh": "Actualizar",
 			"detailedFilters": "Filtros",
 			"viewModeLegend": "Modo de vista",
 			"listView": "Vista de lista",
@@ -262,6 +264,7 @@
 			"noItems": "Sin elementos"
 		},
 		"entry": {
+			"goUp": "Subir",
 			"defaultFolderSubtitle": "Predeterminada",
 			"parentRowName": "Subir",
 			"browseDrives": "Explorar unidades",
