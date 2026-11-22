@@ -1,5 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { expect } from "storybook/test";
+
+import { expectCanvasLayout } from "@/storybook/quality/layout";
+
 import { Input } from "./Input";
 
 const meta = {
@@ -55,6 +58,7 @@ export const NumberInput: Story = {
 // screenshots, so the play function drives a real focus.
 export const Focused: Story = {
 	play: async ({ canvasElement }) => {
+		expectCanvasLayout(canvasElement);
 		const input = canvasElement.querySelector<HTMLInputElement>("input");
 		if (!input) throw new Error("input not found");
 		const restingBorderColor = getComputedStyle(input).borderTopColor;
@@ -66,5 +70,6 @@ export const Focused: Story = {
 		await expect(getComputedStyle(input).borderTopColor).not.toBe(
 			restingBorderColor,
 		);
+		expectCanvasLayout(canvasElement);
 	},
 };
