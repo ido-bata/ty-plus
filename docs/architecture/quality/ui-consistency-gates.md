@@ -150,3 +150,5 @@ focus の表示は、共有 token `--color-focus-ring`（accent 2px の ring）�
 - `focus-indicator-missing` — native の focus 表示を消하면서、共有 ring を
   描画していないこと（file 単位。focus 規則と outline 制約は別の style object
   にあるため）
+- `icon-size-off-scale` — icon の size が共有 scale（3 = 12px / 4 = 16px /
+  5 = 20px）に入っていないこと
