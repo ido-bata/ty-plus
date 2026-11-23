@@ -21,7 +21,11 @@
 			"!**/src/function/widget/workspace/components/MenuWidget.tsx",
 			"!**/src/management/workspace/hooks",
 			"!**/src/function/widget/state-slice-contract.ts",
-			"!**/routeTree.gen.ts"
+			"!**/routeTree.gen.ts",
+			"!**/.agents",
+			"!**/docs/verification",
+			"!rust",
+			"!skills-lock.json"
 		]
 	},
 	"css": {

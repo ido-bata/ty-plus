@@ -102,7 +102,7 @@
 		"biome": "bunx @biomejs/biome",
 		"format": "bun run biome format --write .",
 		"prepare": "panda codegen --silent && panda cssgen --silent && panda codegen --config panda.config.ts --cwd apps/web --silent && panda cssgen --config panda.config.ts --cwd apps/web --silent",
-		"lint": "cross-env NODE_OPTIONS=--max-old-space-size=28672 bun run biome check src apps scripts tools packages *.ts && bun run scripts/check/design-tokens.ts && bun run scripts/check/static-guardrail.ts && bun run scripts/check/no-tailwind-literals.ts && bun run check:storage-split && bun run scripts/check/i18n-locale-coverage.ts --strict-en-canonical && bun run scripts/check/i18n-locked-terms.ts && bun run scripts/check/web-design.ts && bun run check:app-ui-design && bun run check:story-only && bun run check:ui-ownership",
+		"lint": "cross-env NODE_OPTIONS=--max-old-space-size=28672 bun run biome check . && bun run scripts/check/design-tokens.ts && bun run scripts/check/static-guardrail.ts && bun run scripts/check/no-tailwind-literals.ts && bun run check:storage-split && bun run scripts/check/i18n-locale-coverage.ts --strict-en-canonical && bun run scripts/check/i18n-locked-terms.ts && bun run scripts/check/web-design.ts && bun run check:app-ui-design && bun run check:story-only && bun run check:ui-ownership",
 		"doctor": "bunx --no-install react-doctor",
 		"agent:snapshot": "bun run scripts/agent/supervisor.ts snapshot .tmp/agent-snapshots/current.json",
 		"agent:verify-result": "bun run scripts/agent/supervisor.ts verify-result",
