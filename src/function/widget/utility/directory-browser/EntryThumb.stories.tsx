@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { expect } from "storybook/test";
 import type { FileBrowserEntry } from "@/management/storage/file-browser-service";
+import { expectFirstImageLoaded } from "@/storybook/await-image";
 import { EntryThumb } from "./EntryThumb";
 
 type Args = {
@@ -71,9 +72,20 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-// useThumbnail() and useFolderPreview() resolve to idle under the
-// Storybook decorators, so all variants render the file-type glyph fallback.
-export const Default: Story = {};
+// FilesGatewayProviderDecorator injects the deterministic fixture
+// gateway (#458), so image entries with a preview resolve a real
+// loadable thumbnail instead of the file-type glyph fallback.
+export const Default: Story = {
+	args: {
+		entry: makeFile({
+			previewUrl:
+				"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'><rect width='8' height='8' fill='%2380a0ff'/></svg>",
+		}),
+	},
+	play: async ({ canvasElement }) => {
+		await expectFirstImageLoaded(canvasElement);
+	},
+};
 
 export const Folder: Story = {
 	args: { entry: makeDir("presets", "/preset/presets") },
