@@ -66,7 +66,7 @@ const messageClass = css({
 	fontWeight: "normal",
 	lineHeight: "normal",
 	color: "text.primary",
-	wordBreak: "break-all",
+	overflowWrap: "anywhere",
 });
 
 const dismissButtonClass = css({

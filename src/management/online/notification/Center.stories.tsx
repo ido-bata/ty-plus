@@ -1,6 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { Icon } from "@ty-plus/ui/Icon";
+import { LoaderCircle, Mail } from "lucide-react";
 import type { CSSProperties, JSX } from "react";
 import { expect } from "storybook/test";
+import { css } from "@/styled-system/css";
 
 // IMPORTANT: do NOT import `NotificationCenter` here. The component is
 // driven by a module-level singleton (the data gateway + the local
@@ -125,6 +128,7 @@ const ListView = (args: Args): JSX.Element => (
 		>
 			{args.loading && args.items.length === 0 ? (
 				<div
+					data-empty-state="loading"
 					style={{
 						display: "flex",
 						flexDirection: "column",
@@ -136,10 +140,16 @@ const ListView = (args: Args): JSX.Element => (
 						fontSize: 12,
 					}}
 				>
+					<Icon
+						icon={LoaderCircle}
+						size={20}
+						className={css({ animation: "spin", color: "#a0a0a0" })}
+					/>
 					<span>Loading…</span>
 				</div>
 			) : args.items.length === 0 ? (
 				<div
+					data-empty-state="empty"
 					style={{
 						display: "flex",
 						flexDirection: "column",
@@ -151,6 +161,7 @@ const ListView = (args: Args): JSX.Element => (
 						fontSize: 12,
 					}}
 				>
+					<Icon icon={Mail} size={24} className={css({ color: "#a0a0a0" })} />
 					<span>No notifications</span>
 				</div>
 			) : (
@@ -338,7 +349,10 @@ const renderBlockSurface = (block: NotificationBlock): JSX.Element | null => {
 			);
 		case "divider":
 			return <hr style={{ borderColor: "#3a3a3a", margin: "12px 0" }} />;
-		case "callout":
+		case "callout": {
+			const calloutIcon = (
+				block.callout as { icon?: { emoji?: string } } | undefined
+			)?.icon?.emoji;
 			return (
 				<div
 					style={{
@@ -350,9 +364,15 @@ const renderBlockSurface = (block: NotificationBlock): JSX.Element | null => {
 						background: "#2c2c2c",
 					}}
 				>
+					{calloutIcon ? (
+						<span data-callout-icon="" style={{ flexShrink: 0 }}>
+							{calloutIcon}
+						</span>
+					) : null}
 					<span style={{ flex: 1, fontSize: 12 }}>{richText}</span>
 				</div>
 			);
+		}
 		case "quote":
 			return (
 				<blockquote
@@ -515,6 +535,7 @@ const DetailSurface = (args: Args): JSX.Element => {
 				) : null}
 				{args.blocksLoading ? (
 					<div
+						data-blocks-loading=""
 						style={{
 							display: "flex",
 							alignItems: "center",
@@ -525,6 +546,11 @@ const DetailSurface = (args: Args): JSX.Element => {
 							fontSize: 12,
 						}}
 					>
+						<Icon
+							icon={LoaderCircle}
+							size={16}
+							className={css({ animation: "spin", color: "#a0a0a0" })}
+						/>
 						<span>Loading…</span>
 					</div>
 				) : args.blocks.length === 0 ? (
@@ -645,7 +671,24 @@ const meta = {
 export default meta;
 type Story = StoryObj<Args>;
 
-export const Default: Story = {};
+export const Default: Story = {
+	play: async ({ canvasElement }) => {
+		// Issue #476: the empty state mirrors the product Mail icon.
+		const empty = canvasElement.querySelector("[data-empty-state='empty']");
+		if (!empty) throw new Error("empty state not found");
+		expect(empty.querySelector("svg")).not.toBeNull();
+	},
+};
+
+export const Loading: Story = {
+	args: { loading: true },
+	play: async ({ canvasElement }) => {
+		// Issue #476: the loading state mirrors the product spinner.
+		const loading = canvasElement.querySelector("[data-empty-state='loading']");
+		if (!loading) throw new Error("loading state not found");
+		expect(loading.querySelector("svg")).not.toBeNull();
+	},
+};
 
 export const WithItems: Story = {
 	args: {
@@ -712,6 +755,11 @@ export const DetailView: Story = {
 		if (!toggle) throw new Error("mark-unread toggle not found");
 		expect(toggle.getAttribute("aria-pressed")).toBe("true");
 		expect(getComputedStyle(toggle).opacity).toBe("1");
+		// Issue #476: fixture callouts render their emoji icon like the
+		// product callout surface.
+		const calloutIcon = canvasElement.querySelector("[data-callout-icon]");
+		if (!calloutIcon) throw new Error("callout icon not found");
+		expect(calloutIcon.textContent).toBe("⚠");
 	},
 };
 
@@ -723,5 +771,11 @@ export const DetailLoading: Story = {
 		selectedId: "n-2",
 		blocks: [],
 		blocksLoading: true,
+	},
+	play: async ({ canvasElement }) => {
+		// Issue #476: the detail loading state mirrors the product spinner.
+		const loading = canvasElement.querySelector("[data-blocks-loading]");
+		if (!loading) throw new Error("blocks loading state not found");
+		expect(loading.querySelector("svg")).not.toBeNull();
 	},
 };
