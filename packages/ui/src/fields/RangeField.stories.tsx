@@ -72,6 +72,43 @@ export const Interactive: Story = {
 	args: {},
 };
 
+// Issue #448: extreme values must not be clipped inside the paired numeric
+// input — the field used to fix the wrapper at 56px, cutting off digits.
+export const ExtremeValues: Story = {
+	render: () => (
+		<div style={{ width: 320 }}>
+			<RangeField
+				label="Scale"
+				value={-2000}
+				onChange={() => {}}
+				min={-5000}
+				max={5000}
+			/>
+			<RangeField
+				label="Scale"
+				value={1234.5}
+				onChange={() => {}}
+				min={0}
+				max={5000}
+				step={0.5}
+			/>
+		</div>
+	),
+	args: {},
+	play: async ({ canvasElement }) => {
+		const inputs = canvasElement.querySelectorAll<HTMLInputElement>(
+			'input[type="number"]',
+		);
+		await expect(inputs.length).toBe(2);
+		for (const input of inputs) {
+			// scrollWidth > clientWidth means the text is clipped horizontally.
+			await expect(input.scrollWidth).toBeLessThanOrEqual(
+				input.clientWidth + 1,
+			);
+		}
+	},
+};
+
 // Issue #166: keyboard interaction — arrow keys on the focused range input
 // must commit a new value through `onChange` (drives both the slider and
 // the paired numeric field from one state source).
