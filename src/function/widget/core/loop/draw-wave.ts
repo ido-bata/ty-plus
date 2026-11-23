@@ -19,6 +19,78 @@ import type { WaveHandleLabels } from "./WaveEditor";
 import { timeToScreen, valueToScreen, type WaveCamera } from "./wave-camera";
 
 const HANDLE_RADIUS = 5;
+const LABEL_HEIGHT = 10;
+const LABEL_MARGIN = 2;
+const LABEL_GAP = 3;
+
+/**
+ * Picks a screen position for a handle label that keeps the label box clear
+ * of the waveform and the sibling handles. Candidates are tried to the
+ * right of the handle first (the historical placement), then above, below,
+ * and to the left; the candidate whose box stays farthest from every
+ * obstacle wins. The result is always clamped inside the canvas.
+ */
+export const placeWaveHandleLabel = (input: {
+	handleX: number;
+	handleY: number;
+	handleRadius?: number;
+	labelWidth: number;
+	canvasWidth: number;
+	canvasHeight: number;
+	obstacles: readonly { x: number; y: number }[];
+}): { x: number; y: number } => {
+	const radius = input.handleRadius ?? HANDLE_RADIUS;
+	const half = LABEL_HEIGHT / 2;
+	const maxX = Math.max(
+		LABEL_MARGIN,
+		input.canvasWidth - LABEL_MARGIN - input.labelWidth,
+	);
+	const clampX = (x: number): number =>
+		Math.min(Math.max(x, LABEL_MARGIN), maxX);
+	const clampY = (y: number): number =>
+		Math.min(
+			Math.max(y, LABEL_MARGIN + half),
+			Math.max(LABEL_MARGIN + half, input.canvasHeight - LABEL_MARGIN - half),
+		);
+	const candidates = [
+		{ x: input.handleX + radius + LABEL_GAP, y: input.handleY },
+		{
+			x: input.handleX - input.labelWidth / 2,
+			y: input.handleY - radius - LABEL_GAP - half,
+		},
+		{
+			x: input.handleX - input.labelWidth / 2,
+			y: input.handleY + radius + LABEL_GAP + half,
+		},
+		{
+			x: input.handleX - radius - LABEL_GAP - input.labelWidth,
+			y: input.handleY,
+		},
+	].map((candidate) => ({ x: clampX(candidate.x), y: clampY(candidate.y) }));
+	const distanceToRect = (
+		px: number,
+		py: number,
+		rect: { x: number; y: number },
+	): number => {
+		const dx = Math.max(rect.x - px, 0, px - (rect.x + input.labelWidth));
+		const dy = Math.max(rect.y - half - py, 0, py - (rect.y + half));
+		return Math.hypot(dx, dy);
+	};
+	let best = candidates[0];
+	let bestDistance = -1;
+	for (const candidate of candidates) {
+		const distance = input.obstacles.reduce(
+			(min, obstacle) =>
+				Math.min(min, distanceToRect(obstacle.x, obstacle.y, candidate)),
+			Number.POSITIVE_INFINITY,
+		);
+		if (distance > bestDistance) {
+			bestDistance = distance;
+			best = candidate;
+		}
+	}
+	return best;
+};
 
 export type WaveScene = {
 	canvas: HTMLCanvasElement;
@@ -69,16 +141,18 @@ export function drawWaveScene(
 	}
 	ctx.stroke();
 	// The waveform itself.
+	const waveScreen = wavePoints.map((point) => ({
+		x: timeToScreen(point.x, cam),
+		y: valueToScreen(point.y, cam),
+	}));
 	ctx.strokeStyle = text;
 	ctx.lineWidth = 2;
 	ctx.lineJoin = "round";
 	ctx.lineCap = "round";
 	ctx.beginPath();
-	wavePoints.forEach((point, index) => {
-		const x = timeToScreen(point.x, cam);
-		const y = valueToScreen(point.y, cam);
-		if (index === 0) ctx.moveTo(x, y);
-		else ctx.lineTo(x, y);
+	waveScreen.forEach((point, index) => {
+		if (index === 0) ctx.moveTo(point.x, point.y);
+		else ctx.lineTo(point.x, point.y);
 	});
 	ctx.stroke();
 	// The damping envelope: the peak of every cycle, connected.
@@ -133,24 +207,43 @@ export function drawWaveScene(
 	}
 	// The parameter handles.
 	const handles = waveHandlePositions(template, wave);
-	for (const key of Object.keys(handles) as (keyof typeof handles)[]) {
-		const position = handles[key];
-		const x = timeToScreen(position.x, cam);
-		const y = valueToScreen(position.y, cam);
-		const active = hover?.kind === "wave-handle" && hover.handle === key;
+	const handleScreen = (Object.keys(handles) as (keyof typeof handles)[]).map(
+		(key) => {
+			const position = handles[key];
+			return {
+				key,
+				x: timeToScreen(position.x, cam),
+				y: valueToScreen(position.y, cam),
+			};
+		},
+	);
+	ctx.font = "10px system-ui, sans-serif";
+	ctx.textAlign = "left";
+	ctx.textBaseline = "middle";
+	for (const handle of handleScreen) {
+		const active = hover?.kind === "wave-handle" && hover.handle === handle.key;
+		const radius = active ? HANDLE_RADIUS + 1 : HANDLE_RADIUS;
 		ctx.fillStyle = active ? accent : text;
 		ctx.beginPath();
-		ctx.arc(x, y, active ? HANDLE_RADIUS + 1 : HANDLE_RADIUS, 0, Math.PI * 2);
+		ctx.arc(handle.x, handle.y, radius, 0, Math.PI * 2);
 		ctx.fill();
 		ctx.fillStyle = active ? accent : muted;
-		ctx.font = "10px system-ui, sans-serif";
-		ctx.textAlign = "left";
-		ctx.textBaseline = "middle";
-		const labelX = Math.min(
-			Math.max(x + HANDLE_RADIUS + 3, 2),
-			Math.max(2, width - ctx.measureText(labels[key]).width - 2),
+		const labelWidth = ctx.measureText(labels[handle.key]).width;
+		const obstacles = waveScreen.concat(
+			handleScreen.flatMap((other) =>
+				other.key === handle.key ? [] : [{ x: other.x, y: other.y }],
+			),
 		);
-		ctx.fillText(labels[key], labelX, y);
+		const label = placeWaveHandleLabel({
+			handleX: handle.x,
+			handleY: handle.y,
+			handleRadius: radius,
+			labelWidth,
+			canvasWidth: width,
+			canvasHeight: height,
+			obstacles,
+		});
+		ctx.fillText(labels[handle.key], label.x, label.y);
 	}
 	// The playhead: the current time and the value at that time.
 	if (previewTime !== null && previewTime !== undefined) {

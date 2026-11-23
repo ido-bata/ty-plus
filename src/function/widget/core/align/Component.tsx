@@ -335,12 +335,14 @@ export function Align({ widthPx, widgetInstanceId }: Props): JSX.Element {
 	const alignSectionRef = useRef<HTMLDivElement>(null);
 	const distributeSectionRef = useRef<HTMLDivElement>(null);
 	const spacingSectionRef = useRef<HTMLDivElement>(null);
+	const timeSectionRef = useRef<HTMLDivElement>(null);
 	const targetRowRef = useRef<HTMLDivElement>(null);
 	const [size, setSize] = useState(() => ({ w: widthPx, h: 0 }));
 	const [sectionHeights, setSectionHeights] = useState(() => ({
 		align: 0,
 		distribute: 0,
 		spacing: 0,
+		time: 0,
 		target: 0,
 	}));
 
@@ -361,20 +363,24 @@ export function Align({ widthPx, widgetInstanceId }: Props): JSX.Element {
 		return () => obs.disconnect();
 	}, []);
 
-	// Measure section heights
+	// Measure section heights. Re-run when the target changes (the Time
+	// section mounts/unmounts) and when the width flips the two-group
+	// layout, since both change the measured offsets.
+	// biome-ignore lint/correctness/useExhaustiveDependencies: target/size.w are re-measure triggers, not effect inputs
 	useLayoutEffect(() => {
 		const measureSections = () => {
 			setSectionHeights({
 				align: alignSectionRef.current?.offsetHeight ?? 0,
 				distribute: distributeSectionRef.current?.offsetHeight ?? 0,
 				spacing: spacingSectionRef.current?.offsetHeight ?? 0,
+				time: timeSectionRef.current?.offsetHeight ?? 0,
 				target: targetRowRef.current?.offsetHeight ?? 0,
 			});
 		};
 		measureSections();
 		const timeoutId = setTimeout(measureSections, 0);
 		return () => clearTimeout(timeoutId);
-	}, []);
+	}, [target, size.w]);
 
 	const showTwoGroups = size.w >= 180;
 
@@ -382,28 +388,40 @@ export function Align({ widthPx, widgetInstanceId }: Props): JSX.Element {
 	const distributeHeight =
 		sectionHeights.distribute || (showTwoGroups ? 60 : 90);
 	const spacingHeight = sectionHeights.spacing || (showTwoGroups ? 60 : 90);
+	const timeHeight = sectionHeights.time || (showTwoGroups ? 60 : 90);
 	const targetHeight = sectionHeights.target || 35;
 	const sectionGap = 10;
 	const buffer = 30;
 
+	// The Time section only exists while `target === "time"`. It consumes
+	// the same budget as the other optional sections: when it does not
+	// fit, the earlier optional sections yield first so the root's
+	// `overflow: hidden` never clips a rendered button row.
+	const showTime =
+		target === "time" &&
+		size.h >= alignHeight + sectionGap + timeHeight - buffer;
+	const timeBlock = showTime ? timeHeight + sectionGap : 0;
+
 	const showDistribute =
-		size.h >= alignHeight + sectionGap + distributeHeight - buffer;
+		size.h >= alignHeight + sectionGap + distributeHeight + timeBlock - buffer;
 	const showSpacing =
 		size.h >=
 		alignHeight +
 			sectionGap +
 			distributeHeight +
 			sectionGap +
-			spacingHeight -
+			spacingHeight +
+			timeBlock -
 			buffer;
 	const showTarget =
-		size.h >= alignHeight + sectionGap + targetHeight - buffer ||
+		size.h >= alignHeight + sectionGap + timeBlock + targetHeight - buffer ||
 		(showDistribute &&
 			size.h >=
 				alignHeight +
 					sectionGap +
 					distributeHeight +
 					sectionGap +
+					timeBlock +
 					targetHeight -
 					buffer) ||
 		(showSpacing &&
@@ -414,6 +432,7 @@ export function Align({ widthPx, widgetInstanceId }: Props): JSX.Element {
 					sectionGap +
 					spacingHeight +
 					sectionGap +
+					timeBlock +
 					targetHeight -
 					buffer);
 
@@ -669,8 +688,8 @@ export function Align({ widthPx, widgetInstanceId }: Props): JSX.Element {
 			)}
 
 			{/* Time Section */}
-			{target === "time" && (
-				<div>
+			{showTime && (
+				<div ref={timeSectionRef} data-ws-align-section="time">
 					<SectionLabel>{i18n.t("widgets:align.sections.time")}</SectionLabel>
 					<div
 						className={cx(

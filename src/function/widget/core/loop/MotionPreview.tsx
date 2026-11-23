@@ -16,6 +16,7 @@ import {
 	sampleWave,
 	type WavePoint,
 } from "@/function/widget/core/loop/cyclic-wave";
+import { motionPreviewX } from "@/function/widget/core/loop/motion-preview";
 
 export type MotionPreviewProps = {
 	template: WavePoint[];
@@ -67,7 +68,7 @@ export function MotionPreview({
 			const bottom = max + pad;
 			const toY = (value: number): number =>
 				height - ((value - top) / (bottom - top)) * height;
-			const toX = (t: number): number => t * width;
+			const toX = (t: number): number => motionPreviewX(t, width);
 			// The travelled path (the motion trail).
 			const trail = trailRef.current;
 			if (trail.length > 1) {

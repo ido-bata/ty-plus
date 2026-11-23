@@ -49,10 +49,15 @@ export const fitWaveCamera = (
 	const span = clamp(viewSpan, 0.05, 1);
 	const scale = width / span;
 	const offset = -viewStart * scale;
-	const pad = viewport.padding ?? 0.08;
 	const range = Math.max(0.1, viewport.valueMax - viewport.valueMin);
+	const pad = Math.max(viewport.padding ?? 0.08, range * 0.08);
 	const valueScale = height / (range + pad * 2);
-	const baseY = height - (viewport.valueMin - pad) * valueScale;
+	// `valueToScreen(v) = baseY - v * valueScale` must place the padded
+	// bottom (`valueMin - pad`) at `height` and the padded top
+	// (`valueMax + pad`) at `0`, so `baseY = height + (valueMin - pad) *
+	// valueScale`. The previous `height - ...` form pushed `valueMin`
+	// below the canvas edge and clipped the waveform and handles.
+	const baseY = height + (viewport.valueMin - pad) * valueScale;
 	return {
 		viewStart,
 		viewSpan: span,

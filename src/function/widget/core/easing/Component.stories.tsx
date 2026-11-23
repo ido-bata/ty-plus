@@ -3,7 +3,11 @@ import { expect } from "storybook/test";
 
 import { EasingWidget } from "@/function/widget/core/easing/Component";
 import type { Layout } from "@/management/workspace/layout/grid-document";
-import { expectCanvasLayout } from "@/storybook/quality/layout";
+import {
+	boxWithin,
+	expectCanvasLayout,
+	measureBox,
+} from "@/storybook/quality/layout";
 import { css } from "@/styled-system/css";
 
 const layout: Layout = {
@@ -54,6 +58,30 @@ export const Default: Story = {
 
 export const Compact: Story = {
 	args: { widthPx: 180, heightPx: 220 },
+	play: async ({ canvasElement }) => {
+		// Issue #473: at compact widths the mode strip wraps onto a second
+		// row. A fixed-height strip used to clip that row (Bounce truncated,
+		// Elastic hidden) — every segment must stay inside the toolbar box.
+		const toolbar =
+			canvasElement.querySelector<HTMLElement>("[role='toolbar']");
+		if (!toolbar) throw new Error("mode toolbar not found");
+		const buttons = toolbar.querySelectorAll("button");
+		expect(buttons.length).toBe(4);
+		const toolbarBox = measureBox(toolbar);
+		for (const button of buttons) {
+			expect(boxWithin(measureBox(button), toolbarBox, 1)).toBe(true);
+		}
+		// The preset "+" button must remain inside the action bar next to
+		// the Apply control — `fullWidth` on Apply used to push it out.
+		const bar = canvasElement.querySelector<HTMLElement>(
+			"[data-ws-easing-action-bar]",
+		);
+		const plus = canvasElement.querySelector<HTMLElement>(
+			"[data-ws-action='open-preset-tool-dialog']",
+		);
+		if (!bar || !plus) throw new Error("action bar or preset button missing");
+		expect(boxWithin(measureBox(plus), measureBox(bar), 1)).toBe(true);
+	},
 };
 
 // Loop mode renders the curve editor (the points array is the single-

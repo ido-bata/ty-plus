@@ -4,6 +4,7 @@ import { expect, waitFor } from "storybook/test";
 import { Align } from "@/function/widget/core/align/Component";
 import type { SurfaceState } from "@/management/workspace/core/state";
 import { createInitialSurfaceState } from "@/management/workspace/core/state";
+import { assertNotClipped } from "@/storybook/quality/layout";
 import { css } from "@/styled-system/css";
 
 type Args = {
@@ -114,8 +115,28 @@ export const SelectTimeTarget: Story = {
 		);
 		const { userEvent } = await import("vitest/browser");
 		await userEvent.click(button);
-		await expect(
-			canvasElement.querySelector("[data-ws-action='align-start']"),
-		).not.toBeNull();
+		await waitFor(() => {
+			expect(
+				canvasElement.querySelector("[data-ws-align-section='time']"),
+			).not.toBeNull();
+		});
+		const section = canvasElement.querySelector<HTMLElement>(
+			"[data-ws-align-section='time']",
+		);
+		if (!section) throw new Error("time section not found");
+		// Issue #473: the Time section must fit the widget's height budget.
+		// The root clips with `overflow: hidden`, so a section that does not
+		// fit loses its bottom button row — assert nothing is clipped.
+		assertNotClipped(section, { boundary: canvasElement });
+		for (const action of [
+			"align-start",
+			"align-end",
+			"align-duration",
+			"distribute-start",
+			"distribute-end",
+		]) {
+			const el = section.querySelector(`[data-ws-action='${action}']`);
+			if (el) assertNotClipped(el, { boundary: canvasElement });
+		}
 	},
 };
