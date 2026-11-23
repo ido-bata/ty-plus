@@ -40,6 +40,26 @@ export const segmentedButtonClass = css({
 	transitionProperty: "colors",
 });
 
+/**
+ * Vertical variant of `segmentedButtonClass` for sidebars and stacked lists.
+ * The horizontal strip shares a fixed height via `flex: 1`; inside a column
+ * that collapses each row to a fraction of the label height, so rows here
+ * fill the width and size to their content instead.
+ */
+export const segmentedColumnButtonClass = css({
+	height: "auto",
+	width: "full",
+	minWidth: 0,
+	flex: "none",
+	borderRadius: "shell-sm",
+	paddingBlock: "1.5",
+	paddingInline: "2",
+	fontSize: "shell-text-sm",
+	lineHeight: "tight",
+	textAlign: "start",
+	transitionProperty: "colors",
+});
+
 export const segmentedButtonQuietClass = css({
 	borderWidth: "1px",
 	borderStyle: "solid",

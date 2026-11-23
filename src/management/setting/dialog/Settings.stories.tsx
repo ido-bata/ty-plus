@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { type JSX, type ReactElement, useMemo } from "react";
+import { expect } from "storybook/test";
 import { SettingsContext } from "@/management/setting/context";
 import {
 	DEFAULT_SETTINGS,
@@ -101,7 +102,17 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 /** Default: 表示 tab, language section is active. Hash is unset. */
-export const DisplayLanguage: Story = {};
+export const DisplayLanguage: Story = {
+	play: async ({ canvasElement }) => {
+		const tabs = canvasElement.querySelectorAll<HTMLElement>(
+			"[data-settings-sidebar-item]",
+		);
+		expect(tabs.length).toBeGreaterThan(0);
+		for (const tab of tabs) {
+			expect(tab.getBoundingClientRect().height).toBeGreaterThanOrEqual(24);
+		}
+	},
+};
 
 /** 表示 → Style / Appearance section. Hash = #appearance. */
 export const DisplayAppearance: Story = {
@@ -161,7 +172,7 @@ export const LowResolution: Story = {
 			</div>
 		),
 	],
-	render: renderDialog(),
+	render: renderDialog("language"),
 };
 
 /**
