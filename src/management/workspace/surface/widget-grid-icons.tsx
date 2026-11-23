@@ -27,9 +27,15 @@ const RECT_V_W = 4;
 const ALIGN_LINE = { stroke: "currentColor", strokeWidth: GUIDE };
 const ALIGN_RECT = { fill: "currentColor" };
 
-export function AlignIcon({ name }: { name: string }): JSX.Element {
+export function AlignIcon({
+	name,
+	size = 20,
+}: {
+	name: string;
+	size?: number;
+}): JSX.Element {
 	return (
-		<Svg size={20} shapeRendering="geometricPrecision">
+		<Svg size={size} shapeRendering="geometricPrecision">
 			{name === "align-left" && (
 				<>
 					<line x1="5" y1="4" x2="5" y2="20" {...ALIGN_LINE} />
@@ -240,12 +246,14 @@ export function AlignIcon({ name }: { name: string }): JSX.Element {
 
 export function TargetIcon({
 	name,
+	size = 14,
 }: {
 	name: "selection" | "comp" | "key-object" | "time";
+	size?: number;
 }): JSX.Element {
 	if (name === "selection") {
 		return (
-			<Svg size={14}>
+			<Svg size={size}>
 				<rect
 					x="5"
 					y="5"
@@ -269,7 +277,7 @@ export function TargetIcon({
 	}
 	if (name === "comp") {
 		return (
-			<Svg size={14}>
+			<Svg size={size}>
 				<rect
 					x="2"
 					y="2"
@@ -284,7 +292,7 @@ export function TargetIcon({
 	}
 	if (name === "time") {
 		return (
-			<Svg size={14}>
+			<Svg size={size}>
 				<circle
 					cx="12"
 					cy="12"
@@ -303,7 +311,7 @@ export function TargetIcon({
 		);
 	}
 	return (
-		<Svg size={14} fill="currentColor">
+		<Svg size={size} fill="currentColor">
 			<path d="M7 11V7h4v4H7z" />
 			<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
 		</Svg>
