@@ -78,21 +78,3 @@ export const valueToScreen = (value: number, camera: WaveCamera): number =>
 /** Pixel y -> value. */
 export const screenToValue = (y: number, camera: WaveCamera): number =>
 	(camera.baseY - y) / camera.valueScale;
-
-/** Minimum horizontal width of one cycle before the view starts to pan. */
-export const MIN_CYCLE_WIDTH_PX = 56;
-
-/**
- * The visible time window: the whole segment while it stays readable,
- * otherwise a window centred on the first cycles.
- */
-export const waveViewSpan = (
-	cycles: number,
-	width: number,
-	zoom = 1,
-): number => {
-	const fitAll = 1;
-	const perCycle = MIN_CYCLE_WIDTH_PX / Math.max(1, width);
-	const needed = Math.max(fitAll, cycles * perCycle);
-	return clamp(needed / Math.max(1, zoom), 0.05, 1);
-};

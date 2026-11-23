@@ -14,7 +14,7 @@
  *   (one-way repeat).
  */
 
-export type LoopMode = "pingpong" | "cycle";
+type LoopMode = "pingpong" | "cycle";
 
 export type WavePoint = {
 	x: number;
@@ -36,11 +36,11 @@ export type CyclicWaveParams = {
 	mode: LoopMode;
 };
 
-export const MIN_CYCLES = 2;
-export const MAX_CYCLES = 16;
+const MIN_CYCLES = 2;
+const MAX_CYCLES = 16;
 export const DEFAULT_CYCLES = 3;
 
-export const clamp = (value: number, min: number, max: number): number =>
+const clamp = (value: number, min: number, max: number): number =>
 	Math.max(min, Math.min(max, value));
 
 /** Share of one cycle spent on the attack leg (0.5 = symmetric). */
@@ -48,8 +48,7 @@ export const attackShare = (bias: number): number =>
 	clamp(0.5 + bias / 2, 0.05, 0.95);
 
 /** Decay factor of the given cycle. */
-export const cycleDecay = (index: number, damping: number): number =>
-	damping ** index;
+const cycleDecay = (index: number, damping: number): number => damping ** index;
 
 /** Normalized x positions of the cycle boundaries (0..1). */
 export const cycleBoundaries = (cycles: number): number[] => {
@@ -146,19 +145,8 @@ export const sampleWave = (wave: WavePoint[], t: number): number => {
 	return last.y;
 };
 
-/** Template points in the host payload row format [x, y, hInX, hInY, hOutX, hOutY]. */
-export const toTemplateRows = (template: WavePoint[]): number[][] =>
-	template.map((point) => [
-		point.x,
-		point.y,
-		point.hIn.x,
-		point.hIn.y,
-		point.hOut.x,
-		point.hOut.y,
-	]);
-
 /** The template point that deviates most from the chord (the wave's bulge). */
-export const waveBulge = (
+const waveBulge = (
 	template: WavePoint[],
 ): { phase: number; deviation: number } => {
 	let best = { phase: 0.5, deviation: 0 };
@@ -230,74 +218,4 @@ export const applyWaveHandleDrag = (
 	if (Math.abs(span) < 1e-6) return params;
 	const damping = clamp((world.y - base) / span, 0, 1);
 	return { ...params, damping };
-};
-
-export type WaveTemplatePosition = {
-	x: number;
-	y: number;
-	/** Index of the template point this position belongs to. */
-	index: number;
-	leg: "attack" | "return";
-};
-
-/**
- * Where the template's points appear in the given cycle.
- *
- * Every cycle shows the same template, so dragging any cycle edits the shared
- * template and the whole wave follows.
- */
-export const waveTemplatePositions = (
-	template: WavePoint[],
-	params: CyclicWaveParams,
-	cycle: number,
-): WaveTemplatePosition[] => {
-	const cycles = Math.max(1, Math.round(params.cycles));
-	const share = attackShare(params.bias);
-	const decay = cycleDecay(cycle, params.damping);
-	const hasReturn = params.mode === "pingpong" && cycle < cycles - 1;
-	const out: WaveTemplatePosition[] = [];
-	for (let j = 0; j < template.length; j += 1) {
-		const point = template[j];
-		const chord = chordValue(template, point.x);
-		const deviation = (point.y - chord) * params.amplitude * decay;
-		const phase = hasReturn ? point.x * share : point.x;
-		out.push({
-			x: (cycle + phase) / cycles,
-			y: chord + deviation,
-			index: j,
-			leg: "attack",
-		});
-		if (hasReturn) {
-			out.push({
-				x: (cycle + share + (1 - point.x) * (1 - share)) / cycles,
-				y: chord - deviation,
-				index: j,
-				leg: "return",
-			});
-		}
-	}
-	return out;
-};
-
-/**
- * The template drawn in the first cycle, in graph coordinates.
- *
- * The loop editor edits the shared template in the first cycle; every other
- * cycle shows the result of the same template.
- */
-export const waveTemplateInGraph = (
-	template: WavePoint[],
-	params: CyclicWaveParams,
-): WavePoint[] => {
-	const cycles = Math.max(1, Math.round(params.cycles));
-	const scale = attackShare(params.bias) / cycles;
-	return template.map((point) => {
-		const chord = chordValue(template, point.x);
-		return {
-			x: point.x * scale,
-			y: chord + (point.y - chord) * params.amplitude,
-			hIn: { x: point.hIn.x * scale, y: point.hIn.y * scale },
-			hOut: { x: point.hOut.x * scale, y: point.hOut.y * scale },
-		};
-	});
 };

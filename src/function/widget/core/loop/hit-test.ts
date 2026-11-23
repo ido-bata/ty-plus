@@ -22,7 +22,7 @@ export type DragTarget =
 	| { kind: "template-handle"; index: number; side: "hIn" | "hOut" }
 	| { kind: "pan" };
 
-export const HANDLE_HIT_PX = 12;
+const HANDLE_HIT_PX = 12;
 
 export function hitTestWave(
 	screenX: number,

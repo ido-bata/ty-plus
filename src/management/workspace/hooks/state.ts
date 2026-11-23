@@ -16,9 +16,6 @@ import { layoutsFromSurface } from "@/management/workspace/surface/tiles";
 
 import type { Snapshot } from "@/management/workspace/undo/history";
 
-export const fileNameFromPath = (value: string): string =>
-	value.split(/[\\/]/).pop() ?? value;
-
 export type WorkspaceUi = {
 	canUndo: boolean;
 	canRedo: boolean;

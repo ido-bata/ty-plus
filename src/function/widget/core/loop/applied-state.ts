@@ -35,11 +35,6 @@ export type AppliedLoopRecord = {
 	appliedAt: number;
 };
 
-export type LoopSidecar = {
-	version: 1;
-	records: AppliedLoopRecord[];
-};
-
 export type CurrentKeyframe = { time: number; value: number[] };
 
 const sameValue = (a: number[], b: number[]): boolean => {

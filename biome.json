@@ -7,6 +7,7 @@
 			"!**/.worktrees",
 			"!**/dist",
 			"!**/coverage",
+			"!**/.tmp",
 			"!**/styled-system",
 			"!**/.wrangler",
 			"!**/.cloudflare",
