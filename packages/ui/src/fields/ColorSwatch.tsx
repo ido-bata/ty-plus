@@ -31,6 +31,10 @@ const swatch = css({
 		border: 0,
 	},
 	_hover: { borderColor: "interactive.focus" },
+	_disabled: {
+		opacity: 0.5,
+		cursor: "not-allowed",
+	},
 	_focusVisible: {
 		borderColor: "interactive.focus",
 		outline: "none",
