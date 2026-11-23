@@ -131,7 +131,10 @@ export const HoverUnselected: Story = {
 		// before comparing computed backgrounds.
 		await new Promise((resolve) => setTimeout(resolve, 300));
 		await expect(getComputedStyle(card).backgroundColor).not.toBe(resting);
-		await userEvent.unhover(card);
+		// Do NOT unhover: the snapshot pipeline captures after play()
+		// resolves, so ending parked on the card is what puts the hover
+		// state into the screenshot (Issue #439).  Cross-story pointer
+		// leaks are handled by the capture setup's pointer parking.
 		spacer.remove();
 	},
 };
@@ -157,7 +160,8 @@ export const HoverSelected: Story = {
 		await expect(card.matches(":hover")).toBe(true);
 		await new Promise((resolve) => setTimeout(resolve, 300));
 		await expect(getComputedStyle(card).backgroundColor).toBe(resting);
-		await userEvent.unhover(card);
+		// Same as HoverUnselected: stay hovered so the capture reflects the
+		// state this story exists to document (Issue #439).
 		spacer.remove();
 	},
 };

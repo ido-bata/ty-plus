@@ -187,7 +187,13 @@ const probeServer = async (port: number): Promise<void> => {
 };
 
 type CaptureOutcome =
-	| { id: string; status: "ok"; bytes: number; ms: number }
+	| {
+			id: string;
+			status: "ok";
+			bytes: number;
+			ms: number;
+			hovered: string | null;
+	  }
 	| { id: string; status: "failed"; reason: string; ms: number }
 	| { id: string; status: "empty"; reason: string; ms: number };
 
@@ -422,6 +428,12 @@ const captureOne = async (
 	const url = `http://localhost:${port}/iframe.html?id=${encodeURIComponent(id)}&viewMode=story`;
 	const t0 = Date.now();
 	try {
+		// Park the real pointer at the viewport corner before every story.
+		// `page.mouse` position persists across `goto`, so a story whose
+		// play() intentionally ends hovered (Issue #439) would otherwise
+		// leak `:hover` onto whatever renders at those coordinates in the
+		// next story's screenshot.
+		await page.mouse.move(0, 0);
 		await page.goto(url, {
 			waitUntil: "domcontentloaded",
 			timeout: 10_000,
@@ -464,6 +476,21 @@ const captureOne = async (
 		const target = join(outDir, `${id}.png`);
 		await page.screenshot({ path: target, fullPage: true });
 		const stat = existsSync(target);
+		// Record whether the capture actually contains a hovered element —
+		// interaction-state stories (hover/focus) are only meaningful if the
+		// pointer survived play() until the shutter (Issue #439).
+		const hovered = await page.evaluate(() => {
+			// `:hover` matches the whole ancestor chain — report the
+			// deepest hovered leaf, i.e. the element under the pointer.
+			const scope = document.getElementById("storybook-root") ?? document.body;
+			const leaf = [...scope.querySelectorAll(":hover")].find(
+				(el) => !el.querySelector(":hover"),
+			);
+			if (!leaf) return null;
+			const cls =
+				typeof leaf.className === "string" ? leaf.className.split(" ")[0] : "";
+			return `${leaf.tagName.toLowerCase()}${cls ? `.${cls}` : ""}`;
+		});
 		if (innerLen <= 0) {
 			return {
 				id,
@@ -477,6 +504,7 @@ const captureOne = async (
 			status: "ok",
 			bytes: stat ? readFileSync(target).byteLength : 0,
 			ms: Date.now() - t0,
+			hovered,
 		};
 	} catch (err) {
 		return {
@@ -513,8 +541,12 @@ const captureAll = async (
 		out.push(result);
 		const stamp = new Date().toISOString().slice(11, 19);
 		const statusLabel = result.status.toUpperCase().padEnd(7);
+		const hoverNote =
+			result.status === "ok" && result.hovered
+				? ` [hover:${result.hovered}]`
+				: "";
 		log(
-			`[${i + 1}/${ids.length}] ${stamp} ${statusLabel} ${id} (${result.ms}ms)` +
+			`[${i + 1}/${ids.length}] ${stamp} ${statusLabel} ${id} (${result.ms}ms)${hoverNote}` +
 				(result.status === "ok" ? "" : ` — ${result.reason}`),
 		);
 	}

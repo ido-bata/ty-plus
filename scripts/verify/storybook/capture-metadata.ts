@@ -52,6 +52,14 @@ export type StorybookCaptureMetadata = {
 	viewport: CaptureViewport;
 	capturedAt: string;
 	status: CaptureStatus;
+	/**
+	 * `tag.class` of the first `:hover`-matched element inside
+	 * `#storybook-root` at shutter time, or `null`.  Interaction-state
+	 * stories (hover/focus) are only meaningful when this is non-null —
+	 * it is the machine-readable proof the pointer survived `play()`
+	 * until the screenshot (Issue #439).
+	 */
+	hoveredElement?: string | null;
 	/** Present only when `page.screenshot()` / PNG write threw. */
 	captureError?: string;
 };
