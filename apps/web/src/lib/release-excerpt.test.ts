@@ -276,6 +276,42 @@ describe("releaseExcerpt against bundled release snapshot", () => {
 		expect(e7.prose).toContain("Insider build");
 	});
 
+	it("extracts concrete changes from the real v0.13.0-insider.1 notes", () => {
+		// Verbatim body of the published GitHub release. The "内容" section
+		// opens with a sourceCommit/branch bookkeeping bullet and a
+		// "主な追加・変更:" lead-in whose indented children carry the real
+		// changes — the excerpt must surface those children, not the
+		// bookkeeping fragments (#482).
+		const body = [
+			"Insider（確認用プレリリース）— v0.13.0 の開発ライン・スナップショットです。Stable ではありません。",
+			"",
+			"## 内容",
+			"",
+			"- sourceCommit `f08a680d`（`release-0-13-0`）。v0.12.0 以降の変更を含みます。",
+			"- 主な追加・変更:",
+			"  - Widget チュートリアル（ヘルプ表示・ステップツアー・初回ヒント）と Settings → Tips からのリセット",
+			"  - Loop widget（サイクリックモーションエディタ）を新規追加",
+			"  - アプリ / 公式Web の多言語対応（10言語）と i18n 静的ゲート",
+			"  - managed-root persistence lock など保存系の整合性強化",
+			"  - 共有UIプリミティブの整備と UI 一貫性の静的ゲート",
+			"- Windows / macOS 両 platform の zip + zxp + release manifest を同梱。",
+			"",
+			"## 検証状況",
+			"",
+			"- 両 platform: `trustMode=release`、manifest / sha256 / ZXP署名の監査 PASS",
+			"- macOS worker: Developer ID 署名・未公証（ADR-0003 Amendment 1）/ Windows worker: 未署名（R0 の正当な形）",
+			"- ZXP: 署名済み・timestamp 無し（#233）",
+			"- **未検証**: Windows 実機、AE 実機でのインストール・更新経路",
+		].join("\n");
+		const { bullets, prose } = releaseExcerpt(body);
+		expect(bullets).toHaveLength(3);
+		expect(bullets.join(" ")).not.toContain("release-0-13-0");
+		expect(bullets.join(" ")).not.toContain("主な追加・変更");
+		expect(bullets[1]).toContain("Widget チュートリアル");
+		expect(bullets[2]).toContain("Loop widget");
+		expect(prose).toContain("Insider");
+	});
+
 	it("scrubs inline provenance tokens from excerpts", () => {
 		for (const tag of [
 			"v0.11.0-insider.4",
