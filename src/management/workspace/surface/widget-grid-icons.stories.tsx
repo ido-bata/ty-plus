@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { expect } from "storybook/test";
 import { css } from "@/styled-system/css";
 
 import { AlignIcon, TargetIcon } from "./widget-grid-icons";
@@ -35,12 +36,22 @@ const meta = {
 export default meta;
 type Story = StoryObj<Args>;
 
+const svgSize = (canvasElement: HTMLElement): string | null =>
+	canvasElement.querySelector("svg")?.getAttribute("width") ?? null;
+
 export const Default: Story = {
-	render: () => <AlignIcon name="align-left" />,
+	render: ({ size }) => <AlignIcon name="align-left" size={size} />,
+	play: async ({ canvasElement }) => {
+		expect(svgSize(canvasElement)).toBe("20");
+	},
 };
 
 export const Large: Story = {
-	render: () => <AlignIcon name="align-left" />,
+	args: { size: 32 },
+	render: ({ size }) => <AlignIcon name="align-left" size={size} />,
+	play: async ({ canvasElement }) => {
+		expect(svgSize(canvasElement)).toBe("32");
+	},
 };
 
 export const Targets: Story = {
