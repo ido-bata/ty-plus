@@ -666,6 +666,7 @@ function EasingActionBar({
 				className={css({ flex: 1, minWidth: 0 })}
 				disabled={status === "busy"}
 				data-ws-action="easing-apply-current"
+				data-tutorial-target="easing-apply"
 				start={
 					<Check className={css({ height: "3", width: "3" })} aria-hidden />
 				}

@@ -26,6 +26,7 @@ export const descriptor = defineWidget({
 			{
 				titleKey: "widgets.tutorial.easing.steps.applyCurve.title",
 				bodyKey: "widgets.tutorial.easing.steps.applyCurve.body",
+				targetSelector: '[data-tutorial-target="easing-apply"]',
 			},
 		],
 	},
