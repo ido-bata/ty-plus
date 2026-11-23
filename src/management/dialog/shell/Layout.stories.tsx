@@ -1,9 +1,11 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Button } from "@ty-plus/ui/controls/Button";
+import { expect } from "storybook/test";
 import { expectCanvasLayout } from "@/storybook/quality/layout";
 import { css } from "@/styled-system/css";
 
 import { Shell } from "./Layout";
+import { DialogFooterActions } from "./Footer";
 
 type Args = {
 	title: string;
@@ -35,6 +37,10 @@ const meta = {
 				height: "96",
 				width: "480px",
 				flexDirection: "column",
+				// `<dialog open>` is absolutely positioned; without a
+				// positioned ancestor it resolves against the viewport and
+				// escapes this fixed-size frame (issue #514).
+				position: "relative",
 			})}
 		>
 			<Shell
@@ -44,20 +50,14 @@ const meta = {
 				rootClassName={args.modifier}
 				footer={
 					args.footer ? (
-						<div
-							className={css({
-								display: "flex",
-								justifyContent: "flex-end",
-								gap: "2",
-							})}
-						>
+						<DialogFooterActions>
 							<Button variant="ghost" fullWidth>
 								Cancel
 							</Button>
 							<Button variant="primary" fullWidth>
 								Apply
 							</Button>
-						</div>
+						</DialogFooterActions>
 					) : null
 				}
 			>
@@ -99,10 +99,54 @@ const meta = {
 export default meta;
 type Story = StoryObj<Args>;
 
-export const Default: Story = {};
+/*
+ * Issue #514: `<dialog open>` is absolutely positioned, so it must stay
+ * inside the story's fixed-size frame — a regression that drops the
+ * frame's `position: relative` lets the shell escape to the viewport.
+ */
+const expectShellInsideFrame = (canvasElement: HTMLElement): void => {
+	const shell = canvasElement.querySelector("[data-dialog-shell]");
+	expect(shell).not.toBeNull();
+	const frame = shell?.parentElement;
+	expect(frame).not.toBeNull();
+	if (!shell || !frame) return;
+	const shellRect = shell.getBoundingClientRect();
+	const frameRect = frame.getBoundingClientRect();
+	expect(shellRect.top).toBeGreaterThanOrEqual(frameRect.top - 1);
+	expect(shellRect.bottom).toBeLessThanOrEqual(frameRect.bottom + 1);
+	expect(shellRect.left).toBeGreaterThanOrEqual(frameRect.left - 1);
+	expect(shellRect.right).toBeLessThanOrEqual(frameRect.right + 1);
+};
+
+export const Default: Story = {
+	play: async ({ canvasElement }) => {
+		expectShellInsideFrame(canvasElement);
+	},
+};
 
 export const WithFooter: Story = {
 	args: { footer: true },
+	play: async ({ canvasElement }) => {
+		expectShellInsideFrame(canvasElement);
+		// Issue #514: the footer must use the canonical
+		// `DialogFooterActions` grid — an ad-hoc flex row cannot reproduce
+		// the equal-width, right-anchored production layout.
+		const actions = canvasElement.querySelector(
+			"[data-dialog-footer-actions]",
+		);
+		expect(actions).not.toBeNull();
+		const footer = canvasElement.querySelector("[data-dialog-footer]");
+		const lastButton = actions?.querySelector("button:last-child");
+		expect(footer).not.toBeNull();
+		expect(lastButton).not.toBeNull();
+		if (!footer || !lastButton) return;
+		expect(
+			Math.abs(
+				lastButton.getBoundingClientRect().right -
+					footer.getBoundingClientRect().right,
+			),
+		).toBeLessThanOrEqual(1);
+	},
 };
 
 export const WithMeta: Story = {
