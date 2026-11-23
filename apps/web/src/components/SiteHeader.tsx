@@ -126,6 +126,10 @@ const menuLink = css({
 const menuPopover = css({
 	position: "fixed",
 	insetBlockStart: "4.5rem",
+	// The UA [popover]:popover-open rule sets `inset: 0`, leaving a definite
+	// inline-start inset that wins over insetInlineEnd once a width is set
+	// (LTR over-constraint ignores the end inset). Reset it to `auto`.
+	insetInlineStart: "auto",
 	insetInlineEnd: "1.25rem",
 	inlineSize: "min(80dvw, 20rem)",
 	maxInlineSize: "calc(100dvw - 2.5rem)",
