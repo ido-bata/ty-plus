@@ -230,9 +230,9 @@ export function drawWaveScene(
 		ctx.fillStyle = active ? accent : muted;
 		const labelWidth = ctx.measureText(labels[handle.key]).width;
 		const obstacles = waveScreen.concat(
-			handleScreen
-				.filter((other) => other.key !== handle.key)
-				.map(({ x, y }) => ({ x, y })),
+			handleScreen.flatMap((other) =>
+				other.key === handle.key ? [] : [{ x: other.x, y: other.y }],
+			),
 		);
 		const label = placeWaveHandleLabel({
 			handleX: handle.x,

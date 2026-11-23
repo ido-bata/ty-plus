@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { motionPreviewX } from "./MotionPreview";
+import { motionPreviewX } from "./motion-preview";
 
 // The marker drawn at the playhead extends ~9px around its anchor (halo
 // radius), so the time-axis mapping must keep `x(t) ± 9` inside [0, width]
