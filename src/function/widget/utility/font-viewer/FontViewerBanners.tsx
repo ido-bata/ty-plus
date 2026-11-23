@@ -39,7 +39,6 @@ export function FontViewerLoadHint({
 					borderStyle: "solid",
 					borderColor: "border.default",
 					backgroundColor: "surface.widget",
-					opacity: 0.4,
 					padding: "2",
 					fontSize: "text-xs",
 					color: "text.muted",
@@ -77,7 +76,6 @@ export function FontViewerLoadHint({
 					borderStyle: "solid",
 					borderColor: "border.default",
 					backgroundColor: "surface.widget",
-					opacity: 0.4,
 					padding: "2",
 					fontSize: "text-xs",
 					color: "text.muted",
@@ -113,7 +111,6 @@ export function FontViewerLoadPhase({
 				borderStyle: "solid",
 				borderColor: "border.default",
 				backgroundColor: "surface.widget",
-				opacity: 0.5,
 				padding: "2",
 				fontSize: "text-xs",
 				color: "text.muted",
@@ -145,11 +142,9 @@ export function FontViewerLocalAccessError({
 				borderStyle: "solid",
 				borderColor: "border.default",
 				backgroundColor: "surface.widget",
-				opacity: 0.5,
 				padding: "2",
 				fontSize: "text-xs",
-				color: "amber.700",
-				_dark: { color: "amber.300" },
+				color: "status.warning",
 			})}
 		>
 			{t("fontViewer.localAccessErrorPrefix", {
@@ -175,11 +170,9 @@ export function FontViewerErrorBanner({
 				borderStyle: "solid",
 				borderColor: "border.default",
 				backgroundColor: "surface.widget",
-				opacity: 0.5,
 				padding: "2",
 				fontSize: "text-xs",
-				color: "amber.700",
-				_dark: { color: "amber.300" },
+				color: "status.warning",
 			})}
 		>
 			{t("fontViewer.loadError", {

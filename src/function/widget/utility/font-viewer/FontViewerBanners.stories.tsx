@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { expect, within } from "storybook/test";
 
 import {
 	FontViewerEmptyState,
@@ -39,6 +40,14 @@ const stubWindow = (hasLocalApi: boolean): WindowWithQueryLocalFonts => {
 		},
 		has: (target, prop) => prop in target,
 	}) as unknown as WindowWithQueryLocalFonts;
+};
+
+const expectOpaqueAncestors = (el: Element): void => {
+	let node: Element | null = el;
+	while (node) {
+		expect(getComputedStyle(node).opacity).toBe("1");
+		node = node.parentElement;
+	}
 };
 
 const baseArgs: Args = {
@@ -92,8 +101,12 @@ const meta = {
 					onLoadAllSystemFonts={noop}
 				/>
 				<FontViewerLoadPhase loadPhase={args.phase} />
-				<FontViewerLocalAccessError error={args.localError} />
-				<FontViewerErrorBanner error={args.loadError} />
+				{args.localError ? (
+					<FontViewerLocalAccessError error={args.localError} />
+				) : null}
+				{args.loadError ? (
+					<FontViewerErrorBanner error={args.loadError} />
+				) : null}
 				<FontViewerEmptyState aeHostError={args.aeHostError} />
 			</>
 		);
@@ -111,6 +124,24 @@ export const Default: Story = {
 		loadError: "",
 		aeHostError: "",
 	},
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		await canvas.findByText(/No fonts loaded yet/);
+		expect(canvas.queryByText(/Local font access:/)).toBeNull();
+		expect(canvas.queryByText(/Could not load fonts/)).toBeNull();
+	},
 };
 
-export const AllBanners: Story = {};
+export const AllBanners: Story = {
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		const button = await canvas.findByRole("button", {
+			name: /Load all system fonts/,
+		});
+		expectOpaqueAncestors(button);
+		const localError = await canvas.findByText(/User denied access/);
+		expectOpaqueAncestors(localError);
+		const loadError = await canvas.findByText(/Could not enumerate fonts/);
+		expectOpaqueAncestors(loadError);
+	},
+};
