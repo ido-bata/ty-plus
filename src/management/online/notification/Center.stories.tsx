@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import type { CSSProperties, JSX } from "react";
+import { expect } from "storybook/test";
 
 // IMPORTANT: do NOT import `NotificationCenter` here. The component is
 // driven by a module-level singleton (the data gateway + the local
@@ -173,7 +174,6 @@ const ListView = (args: Args): JSX.Element => (
 							padding: 12,
 							cursor: "pointer",
 							background: unread ? "#2c2c2c" : "#252525",
-							opacity: args.isFixture ? 0.7 : 1,
 							display: "flex",
 							alignItems: "flex-start",
 							justifyContent: "space-between",
@@ -240,7 +240,7 @@ const ListView = (args: Args): JSX.Element => (
 												{item.summary}
 											</span>
 										) : null}
-										<span style={{ fontSize: 10, color: "#777" }}>
+										<span style={{ fontSize: 10, color: "#a0a0a0" }}>
 											{item.publishedAt
 												? new Date(item.publishedAt).toLocaleString()
 												: ""}
@@ -458,9 +458,10 @@ const DetailSurface = (args: Args): JSX.Element => {
 					<button
 						type="button"
 						aria-label={isRead ? "Mark unread" : "Mark read"}
+						aria-pressed={isRead}
 						style={{
 							...ICON_BTN_STYLE,
-							opacity: isRead ? 0.6 : 1,
+							...(isRead ? { background: "#3a3a3a", color: "#e0e0e0" } : {}),
 						}}
 					>
 						✓
@@ -682,6 +683,16 @@ export const FixtureMode: Story = {
 		readAtById: {},
 		isFixture: true,
 	},
+	play: async ({ canvasElement }) => {
+		// Issue #475: fixture cards must not be dimmed with a global
+		// `opacity` — the fixture badge carries the marker and the card
+		// keeps full text contrast.
+		const card = canvasElement.querySelector<HTMLElement>(
+			"[data-notification-id]",
+		);
+		if (!card) throw new Error("notification card not found");
+		expect(getComputedStyle(card).opacity).toBe("1");
+	},
 };
 
 export const DetailView: Story = {
@@ -691,6 +702,16 @@ export const DetailView: Story = {
 		readAtById: { "n-1": "2026-09-08T11:30:00.000Z" },
 		selectedId: "n-1",
 		blocks: SAMPLE_BLOCKS,
+	},
+	play: async ({ canvasElement }) => {
+		// Issue #475: the read-state toggle uses the shared `active`
+		// surface (aria-pressed), not an opacity dim.
+		const toggle = canvasElement.querySelector<HTMLButtonElement>(
+			"[aria-label='Mark unread']",
+		);
+		if (!toggle) throw new Error("mark-unread toggle not found");
+		expect(toggle.getAttribute("aria-pressed")).toBe("true");
+		expect(getComputedStyle(toggle).opacity).toBe("1");
 	},
 };
 
