@@ -25,7 +25,8 @@ export const colors = defineTokens.colors({
 		strong: { value: "var(--ty-border-strong)" },
 		surface: { value: "var(--ty-border-surface)" },
 		default: { value: "var(--ty-border-surface)" },
-		input: { value: "var(--ty-border-surface)" },
+		control: { value: "var(--ty-border-control)" },
+		input: { value: "var(--ty-border-control)" },
 	},
 	interactive: {
 		hover: { value: "var(--ty-interactive-hover)" },

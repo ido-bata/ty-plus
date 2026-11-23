@@ -125,6 +125,7 @@ export const DESIGN_TOKENS_DEFAULTS: Record<string, string> = {
 	"ty-opacity-text-muted": "0.55",
 	"ty-opacity-action-primary": "1",
 	"ty-opacity-border-default": "0.11",
+	"ty-opacity-border-control": "0.38",
 
 	"ty-opacity-ws-scrollbar-hover": "0.14",
 	"ty-opacity-ws-scrollbar-thumb": "0.12",
@@ -299,6 +300,13 @@ export const DESIGN_TOKENS_DEFAULTS: Record<string, string> = {
 
 	"ty-border-subtle":
 		"rgba(var(--text-r), var(--text-g), var(--text-b), var(--ty-opacity-border-default))",
+	/*
+	 * Boundary for interactive controls (inputs, checkboxes, toggles). Kept
+	 * well above `border-subtle` so an unfocused control stays identifiable;
+	 * ~3.5:1 against the default widget surface.
+	 */
+	"ty-border-control":
+		"rgba(var(--text-r), var(--text-g), var(--text-b), var(--ty-opacity-border-control))",
 	"ty-border-strong": "var(--color-ty-widget-border)",
 	"ty-border-surface": "#0e0e0e",
 

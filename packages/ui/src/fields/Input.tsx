@@ -53,7 +53,7 @@ const errorState = css({
 });
 
 const defaultState = css({
-	borderColor: "border.default",
+	borderColor: "border.control",
 	// The one focus indicator: the border repaints and the shared ring
 	// paints, so a focused field reads like a focused button.
 	_focus: {

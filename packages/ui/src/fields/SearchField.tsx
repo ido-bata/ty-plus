@@ -54,7 +54,7 @@ const root = css({
 	borderRadius: "shell-sm",
 	borderWidth: "1px",
 	borderStyle: "solid",
-	borderColor: "border.default",
+	borderColor: "border.control",
 	backgroundColor: "surface.widget",
 	paddingInline: "1.5",
 	paddingBlock: "0.5",

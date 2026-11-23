@@ -28,7 +28,7 @@ const fieldsetClass = css({
 	borderRadius: "shell-sm",
 	borderWidth: "1px",
 	borderStyle: "solid",
-	borderColor: "border.default",
+	borderColor: "border.control",
 	backgroundColor: "surface.widget",
 	opacity: 0.5,
 	padding: "px",

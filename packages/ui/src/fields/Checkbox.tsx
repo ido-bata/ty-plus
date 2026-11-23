@@ -33,7 +33,7 @@ const box = css({
 	borderRadius: "sm",
 	borderWidth: "1px",
 	borderStyle: "solid",
-	borderColor: "border.default",
+	borderColor: "border.control",
 	backgroundColor: "surface.widget",
 	outline: "none",
 	position: "relative",

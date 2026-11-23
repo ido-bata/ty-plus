@@ -19,7 +19,7 @@ export const segmentedStripClass = css({
 	borderRadius: "shell-sm",
 	borderWidth: "1px",
 	borderStyle: "solid",
-	borderColor: "border.default",
+	borderColor: "border.control",
 	backgroundColor: "surface.panel",
 	padding: "0.5",
 });
