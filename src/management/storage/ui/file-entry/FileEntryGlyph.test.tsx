@@ -8,9 +8,13 @@
  * (or render nothing) instead.
  */
 
-import { cleanup, render } from "@testing-library/react";
+import { cleanup, fireEvent, render } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { FileEntryGlyph, FileEntryMedia } from "./FileEntryGlyph";
+import {
+	FileEntryGlyph,
+	FileEntryMedia,
+	hasFileEntryMedia,
+} from "./FileEntryGlyph";
 import type { FileEntry } from "./FileEntryList";
 
 afterEach(cleanup);
@@ -31,6 +35,38 @@ describe("FileEntryMedia", () => {
 		const img = container.querySelector("img");
 		expect(img).not.toBeNull();
 		expect(img?.getAttribute("src")).toBe(DATA_URI);
+	});
+
+	it("reports no media for preset files so cards fall back to the glyph", () => {
+		// Regression: `<FileEntryMedia>` returns null for `.ffx`, but the JSX
+		// element is truthy — `mediaPreview ?? fallback` kept a blank band.
+		const entry: FileEntry = {
+			path: "/preset/root/preset.ffx",
+			name: "preset.ffx",
+			isDirectory: false,
+			fileType: "ae-preset",
+		};
+		expect(hasFileEntryMedia(entry)).toBe(false);
+		const { container } = render(<FileEntryMedia entry={entry} />);
+		expect(container.firstChild).toBeNull();
+	});
+
+	it("renders the fallback when the preview image fails to load", () => {
+		const entry: FileEntry = {
+			path: "/preset/root/alpha.png",
+			name: "alpha.png",
+			isDirectory: false,
+			fileType: "image",
+			previewUrl: "file:///missing/alpha.png",
+		};
+		const { container, getByTestId } = render(
+			<FileEntryMedia entry={entry} fallback={<div data-testid="fb" />} />,
+		);
+		const img = container.querySelector("img");
+		expect(img).not.toBeNull();
+		fireEvent.error(img as Element);
+		expect(getByTestId("fb")).toBeDefined();
+		expect(container.querySelector("img")).toBeNull();
 	});
 
 	it("renders nothing for a video whose path cannot become a URL", () => {
@@ -92,5 +128,21 @@ describe("FileEntryGlyph", () => {
 		);
 		const img = container.querySelector("img");
 		expect(img?.getAttribute("src")).toBe("file:///preset/root/alpha.png");
+	});
+
+	it("drops a broken preview image instead of showing the browser's broken-image mark", () => {
+		const entry: FileEntry = {
+			path: "/preset/root/alpha.png",
+			name: "alpha.png",
+			isDirectory: false,
+			fileType: "image",
+			previewUrl: "file:///missing/alpha.png",
+		};
+		const { container } = render(<FileEntryGlyph entry={entry} size={24} />);
+		const img = container.querySelector("img");
+		expect(img).not.toBeNull();
+		fireEvent.error(img as Element);
+		expect(container.querySelector("img")).toBeNull();
+		expect(container.querySelector("svg")).not.toBeNull();
 	});
 });

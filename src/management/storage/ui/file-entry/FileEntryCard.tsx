@@ -2,7 +2,11 @@ import { Button, Checkbox, cx } from "@ty-plus/ui";
 import type { JSX, ReactNode } from "react";
 import type { SiblingListingEntry } from "@/management/preset/sibling-thumbnail";
 import { css } from "@/styled-system/css";
-import { FileEntryGlyph, FileEntryMedia } from "./FileEntryGlyph";
+import {
+	FileEntryGlyph,
+	FileEntryMedia,
+	hasFileEntryMedia,
+} from "./FileEntryGlyph";
 import type { FileEntry, FileEntryAspect } from "./FileEntryList";
 import { fileEntryMenuFileType } from "./file-entry-menu";
 
@@ -116,7 +120,7 @@ const labelBaseClass = css({
 	borderTopWidth: "1px",
 	borderTopStyle: "solid",
 	borderTopColor: "border.default",
-	paddingInline: "2",
+	paddingInline: "1",
 	paddingBlock: "1",
 	textAlign: "center",
 	fontSize: "shell-text-sm",
@@ -182,10 +186,24 @@ export function FileEntryCard({
 	renderTile,
 }: FileEntryCardProps): JSX.Element {
 	const tileContent = renderTile?.(entry);
-	const mediaPreview: JSX.Element | null = !entry.isDirectory ? (
-		<FileEntryMedia entry={entry} />
-	) : null;
 	const iconSize = 64;
+	const fallback = (
+		<div className={fallbackIconWrapClass}>
+			<FileEntryGlyph
+				entry={entry}
+				size={iconSize}
+				allEntries={allEntries}
+				fill
+			/>
+		</div>
+	);
+	// `FileEntryMedia` renders `null` for entries without media, but the JSX
+	// element itself is always truthy — `??` cannot detect that, so gate on
+	// `hasFileEntryMedia` or `.ffx`-style cards keep a blank media band.
+	const mediaPreview: JSX.Element | null =
+		!entry.isDirectory && hasFileEntryMedia(entry) ? (
+			<FileEntryMedia entry={entry} fallback={fallback} />
+		) : null;
 
 	return (
 		<div
@@ -205,16 +223,7 @@ export function FileEntryCard({
 				onDoubleClick={onDoubleClick}
 			>
 				<div className={mediaBandClass(aspect)}>
-					{tileContent?.media ?? mediaPreview ?? (
-						<div className={fallbackIconWrapClass}>
-							<FileEntryGlyph
-								entry={entry}
-								size={iconSize}
-								allEntries={allEntries}
-								fill
-							/>
-						</div>
-					)}
+					{tileContent?.media ?? mediaPreview ?? fallback}
 				</div>
 				<span className={labelClass(isSelected)} title={entry.name}>
 					{entry.name}

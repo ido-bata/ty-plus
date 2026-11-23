@@ -347,6 +347,14 @@ const rowInnerClass = css({
  * coexist in the overlap state.
  */
 const rowInnerActiveClass = css({
+	/**
+	 * A faint fill so the active row reads as a state, not just a stray
+	 * separator — the 2px top accent alone was indistinguishable from the
+	 * row border in the visual review.  Kept lighter than the selected
+	 * fill (25%) so active-only stays visually subordinate to selection.
+	 */
+	backgroundColor:
+		"color-mix(in_oklab,var(--color-interactive-hover)_15%,transparent)",
 	boxShadow: "inset 0 2px 0 0 var(--color-border-strong)",
 });
 /**

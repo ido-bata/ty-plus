@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { expect, waitFor } from "storybook/test";
 import {
 	presetIconEmoji,
 	presetIconImage,
@@ -149,6 +150,14 @@ export const Folder: Story = {
 
 export const ImagePreview: Story = {
 	args: { kind: "image", size: 64 },
+	play: async ({ canvasElement }) => {
+		// The fixture is a data: URI, so a broken render means the component
+		// itself dropped the image — catch it here instead of in screenshots.
+		const img = canvasElement.querySelector("img");
+		expect(img).not.toBeNull();
+		await img?.decode();
+		expect(img?.naturalWidth).toBeGreaterThan(0);
+	},
 };
 
 export const PresetIconText: Story = {
@@ -181,6 +190,14 @@ export const SiblingMatch: Story = {
 			</span>
 		</div>
 	),
+	play: async ({ canvasElement }) => {
+		// `/preset/root/alpha.png` resolves to a `file:` URL the storybook
+		// server cannot serve — the glyph must degrade to the type icon
+		// instead of leaving the browser's broken-image mark in the frame.
+		await waitFor(() => {
+			expect(canvasElement.querySelector("img")).toBeNull();
+		});
+	},
 };
 
 export const MediaCardImage: Story = {

@@ -1,6 +1,6 @@
 import { cx, Icon } from "@ty-plus/ui";
 import { FolderOpen } from "lucide-react";
-import type { JSX } from "react";
+import { type JSX, useState } from "react";
 import { PresetIconContent } from "@/management/preset/icon-content";
 import { imageSrcForBrowser } from "@/management/preset/image-src-for-browser";
 import {
@@ -56,6 +56,20 @@ function IconFrame({
 	);
 }
 
+/**
+ * Whether `FileEntryMedia` can render real media for this entry.  Callers
+ * use this to decide between the media band and the glyph fallback — a
+ * mounted-but-empty `<FileEntryMedia>` element is truthy, so `??` alone
+ * cannot detect "no media" (e.g. `.ffx` presets used to leave a blank band).
+ */
+export function hasFileEntryMedia(entry: FileEntry): boolean {
+	if (entry.fileType === "image") return Boolean(entry.previewUrl?.trim());
+	if (entry.fileType === "video") {
+		return Boolean(imageSrcForBrowser(entry.path));
+	}
+	return false;
+}
+
 export function FileEntryGlyph({
 	entry,
 	size,
@@ -67,6 +81,11 @@ export function FileEntryGlyph({
 	allEntries?: readonly SiblingListingEntry[];
 	fill?: boolean;
 }): JSX.Element {
+	// Tracks the src that already failed to load so the next fallback tier
+	// (type icon / preset icon) renders instead of the browser's broken-image
+	// mark.  Missing preview files are a real case — a preset may reference
+	// media that was moved or deleted.
+	const [failedSrc, setFailedSrc] = useState<string | null>(null);
 	if (entry.path === "" && entry.isDirectory) {
 		const s = size ?? 24;
 		return (
@@ -81,15 +100,19 @@ export function FileEntryGlyph({
 		);
 	}
 	const s = size ?? 24;
-	if (entry.fileType === "image" && entry.previewUrl?.trim()) {
+	const previewSrc = entry.previewUrl?.trim() ?? "";
+	if (entry.fileType === "image" && previewSrc && previewSrc !== failedSrc) {
 		return (
 			<IconFrame size={s} fill={fill}>
 				<img
-					src={entry.previewUrl.trim()}
+					src={previewSrc}
 					alt=""
 					decoding="async"
 					draggable={false}
 					className={coverImageClass}
+					onError={() => {
+						setFailedSrc(previewSrc);
+					}}
 				/>
 			</IconFrame>
 		);
@@ -100,7 +123,7 @@ export function FileEntryGlyph({
 		// "" — rendering `<img src="">` logs a console error, so fall through
 		// to the type icon instead.
 		const sidekickSrc = sidekick ? imageSrcForBrowser(sidekick) : "";
-		if (sidekick && sidekickSrc) {
+		if (sidekick && sidekickSrc && sidekickSrc !== failedSrc) {
 			return (
 				<IconFrame size={s} fill={fill}>
 					<img
@@ -109,6 +132,9 @@ export function FileEntryGlyph({
 						decoding="async"
 						draggable={false}
 						className={coverImageClass}
+						onError={() => {
+							setFailedSrc(sidekickSrc);
+						}}
 					/>
 				</IconFrame>
 			);
@@ -140,9 +166,19 @@ export function FileEntryGlyph({
 
 export function FileEntryMedia({
 	entry,
+	fallback,
 }: {
 	entry: FileEntry;
+	/**
+	 * Rendered when the media element fails to load (missing file, decode
+	 * error).  Without it the media band would stay blank — the same defect
+	 * `hasFileEntryMedia` prevents for entries that never had media.
+	 */
+	fallback?: React.ReactNode;
 }): JSX.Element | null {
+	const [failed, setFailed] = useState(false);
+	if (!hasFileEntryMedia(entry)) return null;
+	if (failed) return <>{fallback ?? null}</>;
 	if (entry.fileType === "image" && entry.previewUrl?.trim()) {
 		// `previewUrl` is already a browser-ready URL (`file:` from
 		// file-browser-service, `data:` in previews) — pass it through like
@@ -155,6 +191,9 @@ export function FileEntryMedia({
 				className={coverImageClass}
 				decoding="async"
 				draggable={false}
+				onError={() => {
+					setFailed(true);
+				}}
 			/>
 		);
 	}
@@ -167,6 +206,9 @@ export function FileEntryMedia({
 				className={coverImageClass}
 				muted
 				preload="metadata"
+				onError={() => {
+					setFailed(true);
+				}}
 				onMouseEnter={(e) => {
 					const video = e.currentTarget;
 					video.play().catch(() => {});
