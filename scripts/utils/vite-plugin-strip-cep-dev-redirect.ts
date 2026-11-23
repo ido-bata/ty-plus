@@ -1,6 +1,13 @@
 import fs from "node:fs";
 import path from "node:path";
 
+type CepPluginOptions = {
+	cepDist?: string;
+	host?: string;
+	pagePath?: string;
+	port?: number;
+};
+
 const CEP_DEV_REDIRECT_SCRIPT_RE =
 	/<script>\s*window\.location\.href\s*=\s*['"](http:\/\/(?:localhost|127\.0\.0\.1):\d+\/[^'"]+)['"];\s*<\/script>/g;
 /** Paths under `dist/<cepDist>/` where Vite writes CEP shell HTML (see `cep.config.ts` mainPath). */
@@ -13,7 +20,7 @@ const CEP_VENDOR_FILES = [
 	},
 ];
 
-function copyCepVendorFiles(distRoot) {
+function copyCepVendorFiles(distRoot: string) {
 	for (const file of CEP_VENDOR_FILES) {
 		const srcPath = path.join(process.cwd(), file.src);
 		if (!fs.existsSync(srcPath)) continue;
@@ -23,10 +30,10 @@ function copyCepVendorFiles(distRoot) {
 	}
 }
 
-export function stripCepDevRedirect(html) {
+export function stripCepDevRedirect(html: string) {
 	return html.replace(CEP_DEV_REDIRECT_SCRIPT_RE, "");
 }
-function resolveDataMainFromHtmlPath(src, htmlRelativePath = "") {
+function resolveDataMainFromHtmlPath(src: string, htmlRelativePath = "") {
 	const normalizedSrc = src.replace(/\\/g, "/");
 	const basename = path.posix.basename(normalizedSrc);
 	if (!basename || !/^(?:[^/]+)\.(?:cjs|js)$/.test(basename)) {
@@ -46,10 +53,10 @@ function resolveDataMainFromHtmlPath(src, htmlRelativePath = "") {
 	return relative.startsWith(".") ? relative : `./${relative}`;
 }
 
-export function addDataMainToScripts(html, htmlRelativePath = "") {
+export function addDataMainToScripts(html: string, htmlRelativePath = "") {
 	return html.replace(
 		/<script src="([^"]+\.(?:cjs|js))"([^>]*)><\/script>/g,
-		(match, src, attrs) => {
+		(match: string, src: string, attrs: string) => {
 			const normalizedSrc = src.replace(/\\/g, "/");
 			if (!normalizedSrc.includes("/assets/")) {
 				return match;
@@ -67,17 +74,18 @@ export function addDataMainToScripts(html, htmlRelativePath = "") {
  * `../../vendor/CSInterface.js` (two levels up), but from the moved HTML the
  * path is `../vendor/CSInterface.js` (one level up).
  */
-function rewriteShellHtmlAssetPaths(html, htmlRelativePath = "") {
+function rewriteShellHtmlAssetPaths(html: string, htmlRelativePath = "") {
 	const segments = htmlRelativePath.split(/[\\/]/).filter(Boolean);
 	if (segments.length < 2) return html;
 	// We only move HTML files that were deeper than 1 segment under distRoot.
 	// For those, every `../` beyond the first is "extra" relative depth.
 	const extraDepth = segments.length - 1;
 	if (extraDepth <= 0) return html;
-	const slashCount = (relative) => (relative.match(/\.\.\//g) || []).length;
+	const slashCount = (relative: string) =>
+		(relative.match(/\.\.\//g) || []).length;
 	return html.replace(
 		/(<script[^>]*\s)src="((?:\.\.\/)+[^"]+)"([^>]*>)/g,
-		(match, prefix, src, suffix) => {
+		(match: string, prefix: string, src: string, suffix: string) => {
 			const normalizedSrc = src.replace(/\\/g, "/");
 			const depth = slashCount(normalizedSrc);
 			if (depth <= extraDepth) return match;
@@ -92,11 +100,11 @@ function rewriteShellHtmlAssetPaths(html, htmlRelativePath = "") {
 }
 
 /** Vite HTML output can disagree with final Rollup `entryFileNames`; sync `data-main` to the file that exists on disk. */
-function escapeForRegExp(value) {
+function escapeForRegExp(value: string) {
 	return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-function resolveShellEntryFilename(distRoot, entryBase) {
+function resolveShellEntryFilename(distRoot: string, entryBase: string) {
 	const jsDir = path.join(distRoot, "assets", "js");
 	if (!fs.existsSync(jsDir)) return null;
 	const files = fs.readdirSync(jsDir);
@@ -109,7 +117,11 @@ function resolveShellEntryFilename(distRoot, entryBase) {
 	return hashed.sort()[0] ?? null;
 }
 
-function alignCepShellEntryDataMain(html, distRoot, entryBase) {
+function alignCepShellEntryDataMain(
+	html: string,
+	distRoot: string,
+	entryBase: string,
+) {
 	const filename = resolveShellEntryFilename(distRoot, entryBase);
 	if (!filename) return html;
 	const rel = path.posix.join("..", "assets", "js", filename);
@@ -228,7 +240,7 @@ window.require = function (document) {
 </script>`;
 }
 
-export function patchCepNativeRequireMainPath(html) {
+export function patchCepNativeRequireMainPath(html: string) {
 	const injectedRequireRe =
 		/<script>"use strict";\s*window\.require =[\s\S]*?<\/script>/;
 	if (injectedRequireRe.test(html)) {
@@ -295,22 +307,25 @@ export function patchCepNativeRequireMainPath(html) {
 	}
 	return html.replace("require(tmp.dataset.main);", patchBody);
 }
-function rewriteCepDevRedirect(html, options = {}) {
+function rewriteCepDevRedirect(html: string, options: CepPluginOptions = {}) {
 	const host = (options.host ?? "").trim();
 	if (host.length === 0) return html;
-	return html.replace(CEP_DEV_REDIRECT_SCRIPT_RE, (fullMatch, rawUrl) => {
-		try {
-			const url = new URL(rawUrl);
-			if (url.protocol !== "http:") return fullMatch;
-			if (url.hostname !== "localhost") return fullMatch;
-			url.hostname = host;
-			return fullMatch.replace(rawUrl, url.toString());
-		} catch {
-			return fullMatch;
-		}
-	});
+	return html.replace(
+		CEP_DEV_REDIRECT_SCRIPT_RE,
+		(fullMatch: string, rawUrl: string) => {
+			try {
+				const url = new URL(rawUrl);
+				if (url.protocol !== "http:") return fullMatch;
+				if (url.hostname !== "localhost") return fullMatch;
+				url.hostname = host;
+				return fullMatch.replace(rawUrl, url.toString());
+			} catch {
+				return fullMatch;
+			}
+		},
+	);
 }
-function ensureCepDevRedirect(html, options = {}) {
+function ensureCepDevRedirect(html: string, options: CepPluginOptions = {}) {
 	const host = (options.host ?? "").trim();
 	const pagePath = (options.pagePath ?? "").trim();
 	const port = options.port ?? 3000;
@@ -327,7 +342,10 @@ function ensureCepDevRedirect(html, options = {}) {
 	}
 	return html.replace("</body>", `    ${script}\n  </body>`);
 }
-function processRedirectTargets(cepDist, updater) {
+function processRedirectTargets(
+	cepDist: string,
+	updater: (html: string) => string,
+) {
 	const distRoot = path.join(process.cwd(), "dist", cepDist);
 	if (!fs.existsSync(distRoot)) return { changed: 0 };
 	let changed = 0;
@@ -345,7 +363,7 @@ function processRedirectTargets(cepDist, updater) {
 	}
 	return { changed };
 }
-function resolveCssAssetList(distRoot, htmlRelativePath) {
+function resolveCssAssetList(distRoot: string, htmlRelativePath: string) {
 	const cssDir = path.join(distRoot, "assets", "css");
 	const htmlDir = path.posix.dirname(htmlRelativePath.replace(/\\/g, "/"));
 	const styles = [];
@@ -369,7 +387,11 @@ function resolveCssAssetList(distRoot, htmlRelativePath) {
 		})
 		.join(",");
 }
-function addDataStylesScript(html, distRoot, htmlRelativePath) {
+function addDataStylesScript(
+	html: string,
+	distRoot: string,
+	htmlRelativePath: string,
+) {
 	const styles = resolveCssAssetList(distRoot, htmlRelativePath);
 	if (!styles) return html;
 	const script = `<script data-styles="${styles}"></script>`;
@@ -384,7 +406,7 @@ function addDataStylesScript(html, distRoot, htmlRelativePath) {
 	}
 	return `${html}\n${script}\n`;
 }
-export function stripCepDevRedirectPlugin(opts = {}) {
+export function stripCepDevRedirectPlugin(opts: CepPluginOptions = {}) {
 	const cepDist = opts.cepDist ?? "cep";
 	return {
 		name: "typlus-strip-cep-dev-redirect",
@@ -408,7 +430,7 @@ export function stripCepDevRedirectPlugin(opts = {}) {
  * rewrites there. Source paths and shallow targets stay in sync via
  * `CEP_TARGET_HTMLS`.
  */
-export function addDataMainToScriptsPlugin(opts = {}) {
+export function addDataMainToScriptsPlugin(opts: CepPluginOptions = {}) {
 	const cepDist = opts.cepDist ?? "cep";
 	return {
 		name: "typlus-add-data-main",
@@ -464,7 +486,7 @@ export function addDataMainToScriptsPlugin(opts = {}) {
  * `dist/<cepDist>`, so the path mirrors the source layout. Search a small
  * set of likely locations and return the first match, or null.
  */
-function findCepHtmlSource(distRoot, relativePath) {
+function findCepHtmlSource(distRoot: string, relativePath: string) {
 	const base = path.posix.basename(relativePath);
 	const segments = relativePath.split(/[\\/]/);
 	const leaf = segments[0]; // "panel" or "modeless"
@@ -479,7 +501,7 @@ function findCepHtmlSource(distRoot, relativePath) {
 	}
 	return null;
 }
-function _rewriteCepDevRedirectPlugin(opts = {}) {
+function _rewriteCepDevRedirectPlugin(opts: CepPluginOptions = {}) {
 	const cepDist = opts.cepDist ?? "cep";
 	const host = (opts.host ?? "").trim();
 	return {
@@ -487,13 +509,13 @@ function _rewriteCepDevRedirectPlugin(opts = {}) {
 		apply: "build",
 		closeBundle() {
 			if (!host) return;
-			processRedirectTargets(cepDist, (html) =>
+			processRedirectTargets(cepDist, (html: string) =>
 				rewriteCepDevRedirect(html, { host }),
 			);
 		},
 	};
 }
-export function ensureCepDevRedirectPlugin(opts = {}) {
+export function ensureCepDevRedirectPlugin(opts: CepPluginOptions = {}) {
 	const cepDist = opts.cepDist ?? "cep";
 	const host = (opts.host ?? "").trim();
 	const port = opts.port ?? 3000;

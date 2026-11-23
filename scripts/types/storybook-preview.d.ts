@@ -3,10 +3,7 @@ interface Window {
 		currentRender?: {
 			phase?: string;
 			canvasElement?: HTMLElement;
-			renderToScreen?: (
-				args: unknown,
-				el: HTMLElement,
-			) => Promise<unknown>;
+			renderToScreen?: (args: unknown, el: HTMLElement) => Promise<unknown>;
 		};
 	};
 }

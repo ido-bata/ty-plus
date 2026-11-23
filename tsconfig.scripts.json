@@ -2,11 +2,7 @@
 	"extends": "./tsconfig.json",
 	"compilerOptions": {
 		"noEmit": true,
-		"types": [
-			"node",
-			"bun",
-			"vite/client"
-		],
+		"types": ["node", "bun", "vite/client"],
 		"skipLibCheck": true,
 		"allowImportingTsExtensions": true,
 		"strict": true
@@ -16,9 +12,5 @@
 		".storybook/**/*.ts",
 		"src/vite-env.d.ts",
 		"scripts/**/*.ts"
-	],
-	"exclude": [
-		"scripts/utils",
-		"scripts/cep"
 	]
 }
