@@ -186,7 +186,6 @@ const sourceStyle = css({
 	backgroundColor: "colorMix(in srgb, surface.widget 50%, transparent)",
 	maxWidth: "10rem",
 	truncate: true,
-	opacity: 0.7,
 });
 
 const timeStyle = css({
@@ -194,7 +193,6 @@ const timeStyle = css({
 	color: "text.muted",
 	minWidth: "14.5",
 	fontSize: "text-2xs",
-	opacity: 0.65,
 });
 
 const levelChipStyle = css({
