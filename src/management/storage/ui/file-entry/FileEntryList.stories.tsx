@@ -25,6 +25,7 @@
 import "../../../../storybook/decorators/i18n-init-once";
 
 import type { Meta, StoryObj } from "@storybook/react";
+import { expect } from "storybook/test";
 
 import { type FileEntry, FileEntryList } from "./FileEntryList";
 
@@ -122,6 +123,31 @@ const meta = {
 	render: renderBrowser,
 } satisfies Meta<Args>;
 
+// Row state fills once compiled to an invalid color-mix() call and were
+// dropped by the browser, leaving active/selected rows identical to plain
+// rows (#470). Assert the computed fill actually differs.
+const expectStateFillDiffers = (canvasElement: HTMLElement): void => {
+	const stateRows = canvasElement.querySelectorAll<HTMLElement>(
+		'[data-row-state="active"], [data-row-state="selected"], [data-row-state="active+selected"]',
+	);
+	const plainRows = canvasElement.querySelectorAll<HTMLElement>(
+		'[data-row-state="none"]',
+	);
+	expect(stateRows.length).toBeGreaterThan(0);
+	expect(plainRows.length).toBeGreaterThan(0);
+	const stateBg = getComputedStyle(
+		stateRows[0].querySelector("[data-row-active],[data-row-selected]") ??
+			stateRows[0],
+	).backgroundColor;
+	const plainBg = getComputedStyle(
+		plainRows[0].querySelector("[data-row-active],[data-row-selected]") ??
+			plainRows[0],
+	).backgroundColor;
+	expect(stateBg).not.toBe(plainBg);
+	expect(stateBg).not.toBe("rgba(0, 0, 0, 0)");
+	expect(stateBg).not.toBe("transparent");
+};
+
 export default meta;
 type Story = StoryObj<Args>;
 
@@ -142,6 +168,9 @@ export const ActiveOnly: Story = {
 		activePath: "/preset/root/fade-in.ffx",
 		selectedPath: null,
 	},
+	play: ({ canvasElement }) => {
+		expectStateFillDiffers(canvasElement);
+	},
 };
 
 // 4. Selected-only — checkbox selection without an active path.
@@ -151,6 +180,9 @@ export const SelectedOnly: Story = {
 		activePath: null,
 		selectedPath: "/preset/root/fade-in.ffx",
 		selectionMode: "files",
+	},
+	play: ({ canvasElement }) => {
+		expectStateFillDiffers(canvasElement);
 	},
 };
 
@@ -164,6 +196,9 @@ export const ActiveAndSelected: Story = {
 		activePath: "/preset/root/fade-in.ffx",
 		selectedPath: "/preset/root/fade-in.ffx",
 		selectionMode: "files",
+	},
+	play: ({ canvasElement }) => {
+		expectStateFillDiffers(canvasElement);
 	},
 };
 

@@ -85,6 +85,11 @@ const cardUnselectedClass = css({
 const cardButtonClass = css({
 	height: "auto",
 	paddingInline: "0",
+	// `uiSize="sm"` sizes every descendant svg to 14px, which shrinks the
+	// tile fallback glyph inside the media band. `&&` doubles the class
+	// specificity so this wins regardless of stylesheet order; `auto` lets
+	// the glyph's own width/height attributes apply again.
+	"&& svg": { boxSize: "auto" },
 	flexDirection: "column",
 	alignItems: "stretch",
 	justifyContent: "flex-start",
@@ -219,6 +224,10 @@ export function FileEntryCard({
 				data-entry-path={entry.path}
 				data-entry-file-type={fileEntryMenuFileType(entry)}
 				className={cardButtonClass}
+				// `paddingInline` must be inline: the shared `Button` base
+				// padding is a single-class rule that wins the stylesheet
+				// cascade over `cardButtonClass` (#470).
+				style={{ paddingInline: 0 }}
 				onClick={entry.isDirectory ? onSelect : onClick}
 				onDoubleClick={onDoubleClick}
 			>

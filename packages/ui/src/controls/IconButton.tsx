@@ -81,9 +81,15 @@ const focusRing = css({
  * surface, so `aria-pressed` toggles (e.g. the list/icons view switch)
  * looked pixel-identical in both states.
  */
+// Attribute-scoped so the rule outranks the variant classes regardless of
+// stylesheet order: `.cls[data-active]` (0,2,0) always beats a bare variant
+// class (0,1,0). A plain class lost the cascade to `ghost`'s transparent
+// background, making `aria-pressed` toggles pixel-identical (#470).
 const activeSurface = css({
-	backgroundColor: "interactive.active",
-	color: "text.primary",
+	"&[data-active]": {
+		backgroundColor: "interactive.active",
+		color: "text.primary",
+	},
 });
 
 export function IconButton(props: IconButtonProps): ReactElement {
@@ -100,6 +106,7 @@ export function IconButton(props: IconButtonProps): ReactElement {
 	return (
 		<button
 			type={type ?? "button"}
+			data-active={active || undefined}
 			className={cx(
 				base,
 				sizeMap[size],
