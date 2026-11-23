@@ -1499,6 +1499,7 @@ export function DirectoryBrowserWidget({
 						</div>
 						{fileBrowserFiltersExpanded ? (
 							<div
+								data-directory-browser-filters
 								className={css({
 									display: "flex",
 									minWidth: 0,
@@ -1509,7 +1510,6 @@ export function DirectoryBrowserWidget({
 									borderStyle: "solid",
 									borderColor: "border.default",
 									backgroundColor: "surface.widget",
-									opacity: 0.4,
 									padding: "2",
 								})}
 							>
