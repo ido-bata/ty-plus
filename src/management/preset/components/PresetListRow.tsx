@@ -95,7 +95,7 @@ export function PresetListRow({
 						boxClass={css({ height: "7", width: "7", flexShrink: 0 })}
 						{...presetGlyphSiblingProps}
 					/>
-					<div className={css({ minWidth: 0, flex: "1" })}>
+					<div className={css({ minWidth: 0, flex: "1", textAlign: "left" })}>
 						<div
 							className={css({
 								truncate: true,

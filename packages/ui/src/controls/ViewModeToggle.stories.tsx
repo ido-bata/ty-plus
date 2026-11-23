@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { expect } from "storybook/test";
+import { assertContrast } from "@/storybook/quality/color";
 import { expectCanvasLayout } from "@/storybook/quality/layout";
 import { css } from "@/styled-system/css";
 
@@ -50,6 +51,7 @@ const playViewMode =
 	(expected: "list" | "icons") =>
 	async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
 		expectCanvasLayout(canvasElement);
+		const fieldset = canvasElement.querySelector("fieldset");
 		const buttons = Array.from(canvasElement.querySelectorAll("button"));
 		expect(buttons).toHaveLength(2);
 		const [listButton, iconButton] = buttons;
@@ -59,6 +61,19 @@ const playViewMode =
 		expect(iconButton.getAttribute("aria-pressed")).toBe(
 			expected === "icons" ? "true" : "false",
 		);
+
+		// Issue #454: no whole-control opacity dim, the selected button
+		// must read as a distinct surface, and both icon states must keep
+		// at least 3:1 contrast against their effective background.
+		if (!fieldset) throw new Error("view mode toggle fieldset not found");
+		expect(getComputedStyle(fieldset).opacity).toBe("1");
+		const activeButton = expected === "list" ? listButton : iconButton;
+		const inactiveButton = expected === "list" ? iconButton : listButton;
+		const activeBg = getComputedStyle(activeButton).backgroundColor;
+		const inactiveBg = getComputedStyle(inactiveButton).backgroundColor;
+		expect(activeBg).not.toBe(inactiveBg);
+		assertContrast(activeButton, activeButton, { backdrop: fieldset });
+		assertContrast(inactiveButton, fieldset);
 	};
 
 export const IconView: Story = {

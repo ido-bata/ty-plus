@@ -2,7 +2,7 @@ import { Icon, IconButton } from "@ty-plus/ui";
 import { LayoutGrid, List as ListIcon } from "lucide-react";
 import type { JSX } from "react";
 import { useTranslation } from "react-i18next";
-import { css, cx } from "@/styled-system/css";
+import { css } from "@/styled-system/css";
 import { srOnlyClass } from "../styles/typography";
 
 export type ViewMode = "list" | "icons";
@@ -30,7 +30,6 @@ const fieldsetClass = css({
 	borderStyle: "solid",
 	borderColor: "border.control",
 	backgroundColor: "surface.widget",
-	opacity: 0.5,
 	padding: "px",
 });
 
@@ -43,14 +42,6 @@ const buttonBaseClass = css({
 	borderWidth: "0",
 	padding: "0",
 });
-
-const buttonActiveClass = css({
-	backgroundColor: "surface.widget",
-	color: "text.primary",
-	boxShadow: "sm",
-});
-
-const buttonInactiveClass = css({ color: "text.muted" });
 
 const separatorClass = css({
 	width: "px",
@@ -93,13 +84,11 @@ export function ViewModeToggle({
 				variant="ghost"
 				size="sm"
 				type="button"
+				active={viewMode === "list"}
 				aria-pressed={viewMode === "list"}
 				aria-label={resolvedListViewAriaLabel}
 				title={resolvedListViewAriaLabel}
-				className={cx(
-					buttonBaseClass,
-					viewMode === "list" ? buttonActiveClass : buttonInactiveClass,
-				)}
+				className={buttonBaseClass}
 				onClick={() => {
 					onViewModeChange("list");
 				}}
@@ -111,13 +100,11 @@ export function ViewModeToggle({
 				variant="ghost"
 				size="sm"
 				type="button"
+				active={viewMode === "icons"}
 				aria-pressed={viewMode === "icons"}
 				aria-label={resolvedIconViewAriaLabel}
 				title={resolvedIconViewAriaLabel}
-				className={cx(
-					buttonBaseClass,
-					viewMode === "icons" ? buttonActiveClass : buttonInactiveClass,
-				)}
+				className={buttonBaseClass}
 				onClick={() => {
 					onEnterIconView?.();
 					onViewModeChange("icons");

@@ -122,8 +122,13 @@ export function PresetIconTile({
 					className={css({
 						marginTop: "0.5",
 						minWidth: 0,
-						paddingInline: "0.5",
+						// The run button is absolutely positioned over the
+						// tile's bottom-right corner; reserve its width plus
+						// offset so long titles truncate before it.
+						paddingLeft: "0.5",
+						paddingRight: "8",
 					})}
+					data-preset-tile-title
 				>
 					<div
 						className={css({

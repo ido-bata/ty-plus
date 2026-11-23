@@ -80,6 +80,25 @@ export const LongTitle: Story = {
 	// page-level horizontal overflow or escape the viewport.
 	play: async ({ canvasElement }) => {
 		expectCanvasLayout(canvasElement);
+		// Issue #454: the absolutely-positioned run button must not cover
+		// the title text — the title wrapper reserves its width as
+		// padding, so the text's content box has to end before the button.
+		const tile = canvasElement.querySelector<HTMLElement>("[data-preset-id]");
+		const titleWrap = tile?.querySelector<HTMLElement>(
+			"[data-preset-tile-title]",
+		);
+		const runButton = Array.from(tile?.querySelectorAll("button") ?? []).find(
+			(b) => getComputedStyle(b).position === "absolute",
+		);
+		if (!tile || !titleWrap || !runButton) {
+			throw new Error("preset icon tile title/run button not found");
+		}
+		const paddingRight = Number.parseFloat(
+			getComputedStyle(titleWrap).paddingRight,
+		);
+		const contentRight = titleWrap.getBoundingClientRect().right - paddingRight;
+		const buttonLeft = runButton.getBoundingClientRect().left;
+		expect(contentRight).toBeLessThanOrEqual(buttonLeft + 0.5);
 	},
 	args: {
 		preset: makePreset({

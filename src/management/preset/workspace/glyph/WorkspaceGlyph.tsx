@@ -251,9 +251,10 @@ export function WorkspacePresetGlyph({
 
 	// Use CSS custom property with container query (cqi = container query inline).
 	// Set on outer span so children can inherit. cqi = 1% of container's inline size.
-	// Minimum 4px, max 96px.  The previous 6/8/10 scales rendered ~5-7px glyphs
-	// at typical ~70px previews — below legibility — so single-line marks now
-	// get ~18% of the container width.
+	// Minimum 8px: the previous 4px floor rendered ~4px glyphs inside the
+	// 28px list-row frame — below legibility — so single-line marks now
+	// get ~18% of the container width and the floor keeps small frames
+	// readable instead of collapsing to dots.
 	const lineScale = lines.length >= 3 ? 10 : lines.length >= 2 ? 13 : 18;
 
 	const textStyle = {
@@ -282,7 +283,7 @@ export function WorkspacePresetGlyph({
 					)}
 					style={
 						{
-							fontSize: `clamp(4px, ${lineScale}cqi, 96px)`,
+							fontSize: `clamp(8px, ${lineScale}cqi, 96px)`,
 						} as CSSProperties
 					}
 				>

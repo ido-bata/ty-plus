@@ -28,6 +28,13 @@
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
+		"file": "packages/ui/src/controls/ViewModeToggle.tsx",
+		"line": 91,
+		"rule": "ui-override",
+		"message": "<IconButton> is a shared @ty-plus/ui component; height, width, borderRadius, borderWidth, padding must come from its variant/size/tone props, not className",
+		"reason": "the toggle's flush segmented-cell chrome predates the ui-override gate (it was previously hidden inside an unresolvable cx() call); migrate it into a shared IconButton variant when the segmented control family is consolidated"
+	},
+	{
 		"file": "packages/ui/src/fields/SearchField.tsx",
 		"line": 89,
 		"rule": "focus-ring-divergent",
@@ -558,13 +565,6 @@
 		"rule": "deep-import",
 		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
 		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 267,
-		"rule": "vocabulary-copy",
-		"message": "this treatment already exists in the shared package (packages/ui/src/controls/ViewModeToggle.tsx) — use it instead of writing it out again",
-		"reason": "the dormant online catalog surface still writes out the shared view-mode toggle's treatment; it is removed by Issue #193"
 	},
 	{
 		"file": "src/management/online/catalog/Dialog.tsx",
