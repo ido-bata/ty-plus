@@ -37,7 +37,9 @@ const writeArtifact = (
 	};
 };
 
-const manifest = (overrides: Record<string, unknown> = {}) => ({
+type Manifest = Parameters<typeof stageGitHubRelease>[0]["manifest"];
+
+const manifest = (overrides: Partial<Manifest> = {}): Manifest => ({
 	version: "0.11.0",
 	releaseVersion: "0.11.0-insider.2",
 	channel: "insider",

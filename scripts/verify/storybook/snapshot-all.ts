@@ -254,7 +254,7 @@ const _renderStoryManually = async (
 			while (!w.__STORYBOOK_PREVIEW__) {
 				if (Date.now() > deadline) {
 					return {
-						ok: false,
+						ok: false as const,
 						error: "no __STORYBOOK_PREVIEW__",
 						stage: "init",
 					};
@@ -265,7 +265,7 @@ const _renderStoryManually = async (
 			const store = preview.storyStoreValue;
 			if (!store?.importFn || !store.storyIndex?.entries) {
 				return {
-					ok: false,
+					ok: false as const,
 					error: "no storyStoreValue/importFn/storyIndex",
 					stage: "init",
 				};
@@ -275,7 +275,7 @@ const _renderStoryManually = async (
 			const entry = store.storyIndex.entries[storyId];
 			if (!entry) {
 				return {
-					ok: false,
+					ok: false as const,
 					error: `no entry for ${storyId} in storyIndex`,
 					stage: "index",
 				};
@@ -295,7 +295,7 @@ const _renderStoryManually = async (
 			])) as Record<string, unknown> | undefined;
 			if (!csfModule) {
 				return {
-					ok: false,
+					ok: false as const,
 					error: `importFn returned undefined for ${entry.importPath}`,
 					stage: "import",
 				};
@@ -316,7 +316,7 @@ const _renderStoryManually = async (
 				(typeof meta?.render === "function" ? meta.render : null);
 			if (typeof unboundStoryFn !== "function") {
 				return {
-					ok: false,
+					ok: false as const,
 					error: `no renderable unboundStoryFn in ${entry.importPath} (module keys: ${Object.keys(csfModule).join(", ")})`,
 					stage: "extract",
 				};
@@ -341,7 +341,7 @@ const _renderStoryManually = async (
 			while (!cr?.renderToScreen || !isAttachedCanvas(cr.canvasElement)) {
 				if (Date.now() > deadline) {
 					return {
-						ok: false,
+						ok: false as const,
 						error:
 							"no currentRender.renderToScreen / attached canvasElement after init",
 						stage: "renderRef",
