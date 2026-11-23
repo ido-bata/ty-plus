@@ -1,1 +1,0 @@
-{"extends":"./tsconfig.scripts.json","include":["scripts/**/*.ts"],"exclude":[]}

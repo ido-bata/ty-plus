@@ -116,7 +116,6 @@ export default defineConfig({
 				"src/management/online/catalog/composition-runtime-dispatcher.ts",
 				"src/management/panel/cloud-gateway-boot.ts",
 			],
-			perFile: true,
 			exclude: [
 				"node_modules/**",
 				"dist/**",
@@ -137,6 +136,7 @@ export default defineConfig({
 				statements: 80,
 				functions: 80,
 				branches: 80,
+				perFile: true,
 			},
 		},
 		projects: [
