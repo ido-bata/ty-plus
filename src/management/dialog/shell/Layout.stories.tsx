@@ -3,9 +3,8 @@ import { Button } from "@ty-plus/ui/controls/Button";
 import { expect } from "storybook/test";
 import { expectCanvasLayout } from "@/storybook/quality/layout";
 import { css } from "@/styled-system/css";
-
-import { Shell } from "./Layout";
 import { DialogFooterActions } from "./Footer";
+import { Shell } from "./Layout";
 
 type Args = {
 	title: string;
@@ -131,9 +130,7 @@ export const WithFooter: Story = {
 		// Issue #514: the footer must use the canonical
 		// `DialogFooterActions` grid — an ad-hoc flex row cannot reproduce
 		// the equal-width, right-anchored production layout.
-		const actions = canvasElement.querySelector(
-			"[data-dialog-footer-actions]",
-		);
+		const actions = canvasElement.querySelector("[data-dialog-footer-actions]");
 		expect(actions).not.toBeNull();
 		const footer = canvasElement.querySelector("[data-dialog-footer]");
 		const lastButton = actions?.querySelector("button:last-child");
