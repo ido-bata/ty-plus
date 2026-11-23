@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { expect } from "storybook/test";
 import { css } from "@/styled-system/css";
 
 import { NumberTokenEditor } from "./NumberTokenEditor";
@@ -64,7 +65,18 @@ type Story = StoryObj<Args>;
 export const Default: Story = {};
 
 export const Percent: Story = {
-	args: { label: "Opacity", unit: "%", value: 50, min: 0, max: 100, step: 5 },
+	args: {
+		label: "Opacity",
+		unit: "%",
+		value: 50,
+		min: 0,
+		max: 100,
+		step: 5,
+		description: "design.token.opacity",
+	},
+	play: async ({ canvasElement }) => {
+		expect(canvasElement.textContent).not.toContain("design.token.radius");
+	},
 };
 
 export const NoDescription: Story = {

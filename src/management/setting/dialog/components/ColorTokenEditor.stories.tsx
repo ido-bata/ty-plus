@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { expect } from "storybook/test";
 import { css } from "@/styled-system/css";
 
 import { ColorTokenEditor } from "./ColorTokenEditor";
@@ -48,7 +49,14 @@ type Story = StoryObj<Args>;
 export const Default: Story = {};
 
 export const Neutral: Story = {
-	args: { value: "#888888", label: "Neutral" },
+	args: {
+		value: "#888888",
+		label: "Neutral",
+		description: "Used for neutral surfaces and borders.",
+	},
+	play: async ({ canvasElement }) => {
+		expect(canvasElement.textContent).not.toContain("accent");
+	},
 };
 
 export const NoDescription: Story = {
