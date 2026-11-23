@@ -4,7 +4,7 @@ import { renderLineToReact } from "./renderSegments";
 
 const lineClass = css({
 	minHeight: "1.5rem",
-	lineHeight: "6",
+	lineHeight: "1.5rem",
 	outline: "none",
 });
 

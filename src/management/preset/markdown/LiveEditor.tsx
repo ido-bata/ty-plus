@@ -48,7 +48,7 @@ const editorBaseClass = css({
 	paddingInline: "3",
 	paddingBlock: "3",
 	fontSize: "sm",
-	lineHeight: "6",
+	lineHeight: "1.5rem",
 	color: "text.primary",
 	transitionProperty: "border-color,box-shadow",
 	outline: "none",
