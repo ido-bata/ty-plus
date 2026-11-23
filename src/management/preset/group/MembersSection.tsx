@@ -2,9 +2,12 @@ import { Button, Icon, PathField } from "@ty-plus/ui";
 import { ChevronDown, FolderOpen, Plus, Trash2 } from "lucide-react";
 import type { JSX, ReactNode } from "react";
 import { i18n } from "@/management/i18n/index";
-import { AuthoringSection } from "@/management/preset/authoring-layout";
+import {
+	AuthoringSection,
+	authoringBusyClass,
+} from "@/management/preset/authoring-layout";
 import { FolderDirectoryPicker } from "@/management/preset/tool-shell/FolderDirectoryPicker";
-import { css } from "@/styled-system/css";
+import { css, cx } from "@/styled-system/css";
 import { FolderScanDepthSelector } from "./FolderScanDepthSelector";
 
 const columnClass = css({
@@ -106,7 +109,10 @@ export function MembersSection({
 
 	return (
 		<AuthoringSection title="" span={6}>
-			<div className={columnClass}>
+			<div
+				className={cx(columnClass, ctx.busy && authoringBusyClass)}
+				inert={ctx.busy}
+			>
 				<FolderScanDepthSelector
 					recursive={ctx.values.recursive ?? "false"}
 					onRecursiveChange={(v) =>
@@ -126,10 +132,21 @@ export function MembersSection({
 				/>
 
 				<div className={buttonRowClass}>
-					<Button type="button" variant="outline" fullWidth onClick={addPath}>
+					<Button
+						type="button"
+						variant="outline"
+						fullWidth
+						disabled={ctx.busy}
+						onClick={addPath}
+					>
 						<Plus size={16} /> {i18n.t("presets:group.addPath")}
 					</Button>
-					<Button type="button" variant="ghost" onClick={detect}>
+					<Button
+						type="button"
+						variant="ghost"
+						disabled={ctx.busy}
+						onClick={detect}
+					>
 						<ChevronDown size={14} /> {i18n.t("presets:group.detectCandidates")}
 					</Button>
 				</div>
@@ -152,6 +169,7 @@ export function MembersSection({
 								<Button
 									variant="ghost"
 									aria-label={i18n.t("presets:group.removePath")}
+									disabled={ctx.busy}
 									onClick={() => removePath(idx)}
 								>
 									<Trash2 size={16} />

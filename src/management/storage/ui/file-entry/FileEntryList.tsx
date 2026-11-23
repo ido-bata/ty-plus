@@ -65,7 +65,7 @@ function FileEntrySelectedSummary({
 	summary,
 }: {
 	summary: FileEntrySummary;
-}): JSX.Element {
+}): JSX.Element | null {
 	if (typeof summary === "string") {
 		return (
 			<span
@@ -83,7 +83,15 @@ function FileEntrySelectedSummary({
 	if (summary.folders > 0) {
 		parts.push(`${summary.folders} folder${summary.folders !== 1 ? "s" : ""}`);
 	}
+	// A zero-count summary used to render a bare " selected" label — hide it
+	// entirely instead of showing an empty count.
+	if (parts.length === 0) return null;
 	return <span className={summaryClass}>{parts.join(" ")} selected</span>;
+}
+
+function hasVisibleSummary(summary: FileEntrySummary): boolean {
+	if (typeof summary === "string") return summary.trim().length > 0;
+	return summary.files > 0 || summary.folders > 0;
 }
 
 /**
@@ -178,7 +186,9 @@ function FileEntryListFooter({
 }): JSX.Element {
 	return (
 		<div className={footerClass}>
-			{showSelectedSummary && selectedSummary ? (
+			{showSelectedSummary &&
+			selectedSummary &&
+			hasVisibleSummary(selectedSummary) ? (
 				<div className={summaryWrapClass}>
 					<FileEntrySelectedSummary summary={selectedSummary} />
 				</div>
