@@ -160,7 +160,7 @@ export function findStoryOnlyFiles(
 	files: SourceFile[],
 	root = ROOT,
 ): StoryOnlyFinding[] {
-	const known = new Set(files.map((f) => f.path));
+	const _known = new Set(files.map((f) => f.path));
 
 	// Reverse edges: who imports this file.
 	const prodImporters = new Map<string, string[]>();

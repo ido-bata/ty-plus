@@ -343,7 +343,7 @@ export function checkOwnership(
 export function checkSharedComponents(
 	shared: SharedComponent[],
 	sources: SourceFile[],
-	root = ROOT,
+	_root = ROOT,
 ): Violation[] {
 	const out: Violation[] = [];
 

@@ -19,7 +19,7 @@ export default defineConfig({
 		alias: [
 			{
 				find: /^@\/(?!styled-system)/,
-				replacement: path.resolve(__dirname, "src") + "/",
+				replacement: `${path.resolve(__dirname, "src")}/`,
 			},
 			{
 				find: "@/styled-system",

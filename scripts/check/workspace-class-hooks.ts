@@ -51,7 +51,7 @@ const SKIP_DIRS = new Set(["node_modules", ".git", "docs", "archive"]);
 /**
  * Scan a JS/TS/TSX file for class attribute values that contain workspace hooks.
  */
-function scanFile(filePath, content) {
+function scanFile(_filePath, content) {
 	const violations = [];
 	const lines = content.split("\n");
 

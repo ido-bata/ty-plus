@@ -157,7 +157,7 @@ export const runPresetFromCatalog = async (
 
 /** userData dir on the AE host (allowed root for script/preset files). */
 export const aeUserDataDir = async (ctx: E2EContext): Promise<string> => {
-	const panel = await ctx.requireSurface({ surfaceId: "panel-1" });
+	const _panel = await ctx.requireSurface({ surfaceId: "panel-1" });
 	const out = await ctx.evalScriptOnPanel1("Folder.userData.fsName");
 	const dir = String(out ?? "").trim();
 	if (!dir || dir.startsWith("e2e-error")) {

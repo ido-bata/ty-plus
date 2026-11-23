@@ -251,8 +251,7 @@ export function parseVarCalls(
 ): { name: string; hasFallback: boolean }[] {
 	const out: { name: string; hasFallback: boolean }[] = [];
 	const re = /var\(\s*(--[\w-]+)/g;
-	let match: RegExpExecArray | null;
-	while ((match = re.exec(value)) !== null) {
+	for (let match = re.exec(value); match !== null; match = re.exec(value)) {
 		const start = match.index + match[0].length;
 		let depth = 1;
 		let i = start;

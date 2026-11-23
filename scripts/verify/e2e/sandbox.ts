@@ -488,7 +488,7 @@ export const recoverInterruptedSandbox = async (
 export const prepareSandbox = async (
 	ctx: E2EContext,
 	realRoot: string,
-	evidenceDir: string,
+	_evidenceDir: string,
 	statePath = STATE_FILE,
 ): Promise<SandboxSession> => {
 	const locator = await findLocator(realRoot);

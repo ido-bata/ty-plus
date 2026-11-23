@@ -122,7 +122,7 @@ export const parseCodesignDetail = (detail: string): { cdHash: string } => {
  */
 const assertGatekeeperAccepts = (spctl: CommandResult): void => {
 	if (spctl.status !== 0) {
-		return fail(
+		fail(
 			`Gatekeeper rejected the binary (spctl --assess exit ${spctl.status}): ${spctl.stdout.trim() || "no output"} — ` +
 				"the signature or its notarization is not valid distribution evidence",
 		);

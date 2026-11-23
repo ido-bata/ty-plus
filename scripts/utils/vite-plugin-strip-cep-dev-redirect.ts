@@ -479,7 +479,7 @@ function findCepHtmlSource(distRoot, relativePath) {
 	}
 	return null;
 }
-function rewriteCepDevRedirectPlugin(opts = {}) {
+function _rewriteCepDevRedirectPlugin(opts = {}) {
 	const cepDist = opts.cepDist ?? "cep";
 	const host = (opts.host ?? "").trim();
 	return {

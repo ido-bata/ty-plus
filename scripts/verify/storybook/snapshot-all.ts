@@ -209,7 +209,7 @@ type CaptureOutcome =
  * Returns the rendered root innerHTML length and preview, or a `{error}`
  * object describing the failure.
  */
-const renderStoryManually = async (
+const _renderStoryManually = async (
 	page: Page,
 	id: string,
 	timeoutMs: number,
@@ -505,7 +505,10 @@ const captureAll = async (
 	// cannot stall the entire sweep.
 	page.setDefaultTimeout(timeoutMs + 5_000);
 	for (let i = 0; i < ids.length; i += 1) {
-		const id = ids[i]!;
+		const id = ids[i];
+		if (id === undefined) {
+			continue;
+		}
 		const result = await captureOne(page, id, port, timeoutMs);
 		out.push(result);
 		const stamp = new Date().toISOString().slice(11, 19);
@@ -568,17 +571,20 @@ const buildGallery = (outcomes: readonly CaptureOutcome[]): void => {
 
 	const counts = { ok: 0, empty: 0, failed: 0, skipped: 0 };
 	for (const o of outcomes) counts[o.status] += 1;
-	const totalTried = outcomes.length;
+	const _totalTried = outcomes.length;
 	const totalPresent = counts.ok;
 
 	const sectionsHtml = sortedTitles
 		.map((title) => {
-			const items = groups
-				.get(title)!
+			const group = groups.get(title);
+			if (!group) {
+				return "";
+			}
+			const items = group
 				.sort((a, b) => a.name.localeCompare(b.name))
 				.map((e) => {
 					const status = statusOf(e.id);
-					const isPresent = status === "ok";
+					const _isPresent = status === "ok";
 					return `<li class="${status}">
   <a href="./${e.id}.png" target="_blank" rel="noopener">
     <img src="./${e.id}.png" alt="${escapeHtml(e.title)} / ${escapeHtml(e.name)}" loading="lazy">
@@ -592,7 +598,7 @@ const buildGallery = (outcomes: readonly CaptureOutcome[]): void => {
 				})
 				.join("\n");
 			return `<section>
-  <h2>${escapeHtml(title)} <span class="count">(${groups.get(title)!.length})</span></h2>
+  <h2>${escapeHtml(title)} <span class="count">(${group.length})</span></h2>
   <ul>${items}</ul>
 </section>`;
 		})

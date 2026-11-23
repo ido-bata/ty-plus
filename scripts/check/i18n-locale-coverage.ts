@@ -207,7 +207,7 @@ const collectSourceFiles = async (srcDir: string): Promise<string[]> => {
 
 const declaredNamespaces = (src: string): string[] => {
 	const match = USE_TRANSLATION_RE.exec(src);
-	if (!match || !match[1]) return [];
+	if (!match?.[1]) return [];
 	const raw = match[1].trim();
 	if (raw.startsWith("[")) {
 		return Array.from(raw.matchAll(STRING_LIST_RE), (m) => m[1] ?? "").filter(

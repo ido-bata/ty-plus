@@ -208,16 +208,6 @@ const iconCanvasFor = (title: string | undefined): unknown => {
 	return { type: "canvas", param: { ...s } };
 };
 
-type WorkspaceDoc = {
-	gridCells?: {
-		id: string;
-		x: number;
-		y: number;
-		width: number;
-		height: number;
-	}[];
-};
-
 type WidgetsDoc = {
 	widgets?: { id: string; type: string; param?: unknown }[];
 };

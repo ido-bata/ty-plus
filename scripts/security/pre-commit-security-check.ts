@@ -89,7 +89,7 @@ for (const pkgFile of packageJsonFiles) {
 				// Warning only, not blocking
 			}
 		}
-	} catch (err) {
+	} catch (_err) {
 		// Ignore parse errors
 	}
 }
@@ -128,7 +128,7 @@ for (const jsFile of jsFiles) {
 			error("This file may contain malicious code.");
 			hasErrors = true;
 		}
-	} catch (err) {
+	} catch (_err) {
 		// Ignore read errors
 	}
 }

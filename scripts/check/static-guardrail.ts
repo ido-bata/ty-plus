@@ -201,7 +201,7 @@ const CLASS_ATTR_PATTERN = /(?:className|class)=["']([^"']+)["']/g;
 const LITERAL_CLASS_EXTRACT =
 	/"([^"\\]*(?:\\.[^"\\]*)*)"|'([^'\\]*(?:\\.[^'\\]*)*)'/g;
 
-function scanWorkspaceHooks(filePath: string, content: string) {
+function scanWorkspaceHooks(_filePath: string, content: string) {
 	const violations = [];
 	const lines = content.split("\n");
 
@@ -345,7 +345,7 @@ const DIALOG_ROOT_GLOB = [
 
 // Pattern to detect: export const DialogRoot = (...) => { ... return null; }
 // where null is the only return (unconditional stub)
-const DIALOG_NULL_PATTERN = /return\s+null\s*;?\s*\}\s*$/;
+const _DIALOG_NULL_PATTERN = /return\s+null\s*;?\s*\}\s*$/;
 
 function scanDialogRoots(filePath: string, content: string) {
 	const violations = [];
