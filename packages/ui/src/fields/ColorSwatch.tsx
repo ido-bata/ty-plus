@@ -19,7 +19,7 @@ const swatch = css({
 	borderRadius: "shell",
 	borderWidth: "1px",
 	borderStyle: "solid",
-	borderColor: "border.default",
+	borderColor: "border.control",
 	backgroundColor: "surface.widget",
 	padding: 0,
 	transitionProperty: "colors",

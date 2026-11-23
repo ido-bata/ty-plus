@@ -44,10 +44,10 @@ const RANGE_INPUT_CLASS = cx(
 		"&::-webkit-slider-runnable-track": {
 			height: "1",
 			borderRadius: "full",
-			backgroundColor: "border.default",
+			backgroundColor: "border.control",
 		},
 		"&::-webkit-slider-thumb": {
-			marginTop: "calc((1 - 4) / 2)",
+			marginTop: "-1.5",
 			height: "4",
 			width: "4",
 			cursor: "pointer",
@@ -55,7 +55,7 @@ const RANGE_INPUT_CLASS = cx(
 			borderRadius: "full",
 			borderWidth: "2px",
 			borderStyle: "solid",
-			borderColor: "border.default",
+			borderColor: "border.control",
 			backgroundColor: "text.primary",
 		},
 	}),

@@ -12,7 +12,7 @@ const base = css({
 	borderRadius: "shell-sm",
 	borderWidth: "1px",
 	borderStyle: "solid",
-	borderColor: "border.default",
+	borderColor: "border.control",
 	backgroundColor: "surface.widget",
 	color: "text.primary",
 	"&::placeholder": { color: "text.muted" },
@@ -23,6 +23,7 @@ const base = css({
 		boxShadow: "var(--color-focus-ring)",
 		outline: "none",
 	},
+	_disabled: { opacity: 0.5, cursor: "not-allowed" },
 });
 
 const sizeSm = css({

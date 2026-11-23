@@ -9,6 +9,7 @@
 			"!**/coverage",
 			"!**/.tmp",
 			"!**/styled-system",
+			"!**/storybook-static",
 			"!**/.wrangler",
 			"!**/.cloudflare",
 			"!**/docs/no-use",
