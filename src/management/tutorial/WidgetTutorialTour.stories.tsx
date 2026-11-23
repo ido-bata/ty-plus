@@ -126,5 +126,26 @@ export const AnchoredSteps: Story = {
 			{ name: /done|完了|fertig/i },
 			{ timeout: 10_000 },
 		);
+
+		// Step 2 targets the Apply button: the portal renders the highlight
+		// frame as the dialog's previous sibling, padded 4px around the
+		// anchor rect.
+		const applyButton = canvasElement.querySelector<HTMLElement>(
+			'[data-tutorial-target="easing-apply"]',
+		);
+		expect(applyButton).not.toBeNull();
+		const highlight = dialog.previousElementSibling as HTMLElement | null;
+		expect(highlight?.style.width).toBeTruthy();
+		expect(highlight?.style.height).toBeTruthy();
+		const hr = highlight?.getBoundingClientRect();
+		const br = applyButton?.getBoundingClientRect();
+		expect(hr && br).toBeTruthy();
+		if (hr && br) {
+			// Highlight = anchor rect + 4px padding on every side.
+			expect(Math.abs(hr.left - (br.left - 4))).toBeLessThanOrEqual(1);
+			expect(Math.abs(hr.top - (br.top - 4))).toBeLessThanOrEqual(1);
+			expect(Math.abs(hr.width - (br.width + 8))).toBeLessThanOrEqual(1);
+			expect(Math.abs(hr.height - (br.height + 8))).toBeLessThanOrEqual(1);
+		}
 	},
 };
