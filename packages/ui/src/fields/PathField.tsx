@@ -82,8 +82,6 @@ const browseButton = css({
 	borderStyle: "solid",
 	borderColor: "border.control",
 	backgroundColor: "surface.widget",
-	opacity: 0.5,
-	color: "text.muted",
 	_hover: {
 		backgroundColor: "interactive.hover",
 		color: "text.primary",

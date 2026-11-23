@@ -41,6 +41,16 @@ export const Default: Story = {
 	args: {
 		browseSlot: BrowseIcon,
 	},
+	play: async ({ canvasElement }) => {
+		const button = canvasElement.querySelector<HTMLButtonElement>(
+			"[data-path-field] button",
+		);
+		if (!button) throw new Error("browse button not found");
+		expect(button.disabled).toBe(false);
+		// The enabled browse button must not carry the disabled dim: it once
+		// rendered at opacity 0.5 and looked identical to the disabled state.
+		expect(getComputedStyle(button).opacity).toBe("1");
+	},
 };
 
 export const WithoutBrowse: Story = {

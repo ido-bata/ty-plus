@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
+import { expect } from "storybook/test";
 import { ColorSwatch } from "./ColorSwatch";
 
 const meta = {
@@ -29,6 +30,13 @@ export const Default: Story = {
 export const Disabled: Story = {
 	args: {
 		disabled: true,
+	},
+	play: async ({ canvasElement }) => {
+		const swatch = canvasElement.querySelector("input[type='color']");
+		if (!swatch) throw new Error("swatch not found");
+		const style = getComputedStyle(swatch);
+		expect(Number(style.opacity)).toBeLessThan(1);
+		expect(style.cursor).toBe("not-allowed");
 	},
 };
 
