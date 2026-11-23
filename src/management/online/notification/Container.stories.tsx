@@ -67,6 +67,14 @@ const ContainerStub = (args: Args): JSX.Element => {
 	return (
 		<div
 			style={{
+				// Issue #518: mirror the production placement — the real
+				// container portals to document.body as `position: fixed`
+				// at the top-right of the panel (Container.tsx portalClass).
+				position: "fixed",
+				top: "var(--spacing-shell, 12px)",
+				right: "var(--spacing-shell, 12px)",
+				zIndex: 9999,
+				pointerEvents: "none",
 				display: "flex",
 				flexDirection: "column",
 				gap: 8,
@@ -91,6 +99,7 @@ const ContainerStub = (args: Args): JSX.Element => {
 					color: "#e0e0e0",
 					fontFamily: "sans-serif",
 					boxSizing: "border-box",
+					pointerEvents: "auto",
 				};
 				return (
 					<div
@@ -167,6 +176,20 @@ const meta = {
 export default meta;
 type Story = StoryObj<Args>;
 
+// Issue #518: the stub must sit at the top-right of the viewport like the
+// production portal — a normal-flow stub used to render at the canvas's
+// top-left and hid placement regressions.
+const expectTopRightPlacement = (canvasElement: HTMLElement): void => {
+	const stub = canvasElement.querySelector<HTMLElement>(
+		"[data-storybook-stub='NotificationContainer']",
+	);
+	if (!stub) throw new Error("notification stub not found");
+	const rect = stub.getBoundingClientRect();
+	const viewportWidth = canvasElement.ownerDocument.documentElement.clientWidth;
+	expect(rect.top).toBeLessThan(64);
+	expect(viewportWidth - rect.right).toBeLessThan(64);
+};
+
 export const Default: Story = {};
 
 export const WithItems: Story = {
@@ -193,6 +216,7 @@ export const WithItems: Story = {
 		],
 	},
 	play: async ({ canvasElement }) => {
+		expectTopRightPlacement(canvasElement);
 		// Issue #476: messages must not use `word-break: break-all`,
 		// which split English words mid-word ("netwo/rk"). Overflow
 		// wrapping only kicks in when a token cannot fit on its own.
