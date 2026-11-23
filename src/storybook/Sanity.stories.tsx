@@ -61,11 +61,13 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
 	play: async ({ canvasElement }) => {
 		// Issue #480: the language field must show the active locale code,
-		// not a missing translation key.
+		// not a missing translation key. Issue #467: Storybook is
+		// English-fixed — the stored-preference upgrade must never flip
+		// the UI to another locale after mount.
 		const language = canvasElement.querySelector<HTMLElement>(
 			"[data-sanity='i18n-language']",
 		);
 		if (!language) throw new Error("i18n language field not found");
-		expect(language.textContent).toMatch(/^[a-z]{2}(-[A-Za-z]+)?$/);
+		expect(language.textContent).toBe("en");
 	},
 };
