@@ -1,9 +1,12 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { expect } from "storybook/test";
 import type { FileBrowserEntry } from "@/management/storage/file-browser-service";
 import { ThumbnailTile } from "./Tile";
 
 type Args = {
 	entry: FileBrowserEntry;
+	frameWidth: number;
+	frameHeight: number;
 };
 
 const makeFile = (
@@ -24,10 +27,23 @@ const meta = {
 	component: ThumbnailTile,
 	args: {
 		entry: makeFile(),
+		frameWidth: 96,
+		frameHeight: 96,
+	},
+	argTypes: {
+		frameWidth: { control: { type: "number" } },
+		frameHeight: { control: { type: "number" } },
 	},
 	decorators: [
-		(Story) => (
-			<div style={{ height: 96, width: 96, border: "1px solid #3a3a3a" }}>
+		(Story, context) => (
+			<div
+				data-tile-frame=""
+				style={{
+					height: context.args.frameHeight,
+					width: context.args.frameWidth,
+					border: "1px solid #3a3a3a",
+				}}
+			>
 				<Story />
 			</div>
 		),
@@ -54,14 +70,27 @@ export const Loading: Story = {
 export const WideAspect: Story = {
 	args: {
 		entry: makeFile({ name: "wide.png", path: "/preset/root/wide.png" }),
+		frameWidth: 160,
+		frameHeight: 72,
 	},
-	decorators: [
-		(Story) => (
-			<div style={{ height: 72, width: 160, border: "1px solid #3a3a3a" }}>
-				<Story />
-			</div>
-		),
-	],
+	play: async ({ canvasElement }) => {
+		// Issue #471: story-level decorators stack on top of the meta
+		// decorator, so a second frame used to cut across the tile. There
+		// must be exactly one frame and the tile must stay inside it.
+		const frames = canvasElement.querySelectorAll("[data-tile-frame]");
+		expect(frames).toHaveLength(1);
+		const frame = frames[0];
+		const tile = canvasElement.querySelector<HTMLElement>(
+			"[aria-label='wide.png']",
+		);
+		if (!frame || !tile) throw new Error("frame or tile not found");
+		const frameRect = frame.getBoundingClientRect();
+		const tileRect = tile.getBoundingClientRect();
+		expect(tileRect.left).toBeGreaterThanOrEqual(frameRect.left);
+		expect(tileRect.top).toBeGreaterThanOrEqual(frameRect.top);
+		expect(tileRect.right).toBeLessThanOrEqual(frameRect.right);
+		expect(tileRect.bottom).toBeLessThanOrEqual(frameRect.bottom);
+	},
 };
 
 // The IO-gated mount variant forces the IntersectionObserver to start
