@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { expect } from "storybook/test";
 
 import { expectCanvasLayout } from "@/storybook/quality/layout";
+import { css } from "@/styled-system/css";
 
 import { ErrorBoundary } from "./ErrorBoundary";
 
@@ -47,15 +48,44 @@ export const Fallback: Story = {
 	// the viewport without horizontal page overflow.
 	play: async ({ canvasElement }) => {
 		expect(canvasElement.textContent).toContain("Something went wrong.");
+		// Issue #517: the fallback card must actually be styled — dead
+		// utility classes used to leave it as bare text on the canvas.
+		const card = canvasElement.querySelector<HTMLElement>(
+			"[data-error-fallback]",
+		);
+		if (!card) throw new Error("fallback card not found");
+		const style = getComputedStyle(card);
+		expect(style.borderWidth).not.toBe("0px");
+		expect(style.backgroundColor).not.toBe("rgba(0, 0, 0, 0)");
+		expect(style.backgroundColor).not.toBe("transparent");
 		expectCanvasLayout(canvasElement);
 	},
 	render: (args) => (
 		<ErrorBoundary
 			{...args}
 			fallback={
-				<div className="rounded-shell-sm border border-border-default bg-surface-widget p-3">
-					<p className="text-text-primary">Something went wrong.</p>
-					<p className="text-(length:--ty-shell-text-size-sm) text-text-muted">
+				// Issue #517: Tailwind-style utility literals produce no CSS
+				// in the Panda-only bundle — the card rendered unstyled.
+				<div
+					data-error-fallback
+					className={css({
+						borderRadius: "shell-sm",
+						borderWidth: "1px",
+						borderStyle: "solid",
+						borderColor: "border.default",
+						backgroundColor: "surface.widget",
+						padding: "3",
+					})}
+				>
+					<p className={css({ color: "text.primary" })}>
+						Something went wrong.
+					</p>
+					<p
+						className={css({
+							fontSize: "shell-text-sm",
+							color: "text.muted",
+						})}
+					>
 						The owner of this boundary provides this message.
 					</p>
 				</div>
