@@ -1247,6 +1247,7 @@ export function FontViewerWidget({
 
 				<div
 					ref={hostRef}
+					data-font-viewer-list
 					className={css({
 						minHeight: 0,
 						flex: 1,
@@ -1256,7 +1257,6 @@ export function FontViewerWidget({
 						borderStyle: "solid",
 						borderColor: "border.default",
 						backgroundColor: "surface.widget",
-						opacity: 0.3,
 					})}
 					style={
 						viewMode === "icons"
