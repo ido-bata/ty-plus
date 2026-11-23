@@ -58,12 +58,27 @@ const meta = {
 export default meta;
 type Story = StoryObj<Args>;
 
-export const Default: Story = {};
+// Issue #516: the list region holds rows, the empty state and the host
+// error — a global `opacity` dim made all of them look disabled.
+const expectListRegionOpaque = (canvasElement: HTMLElement): void => {
+	const list = canvasElement.querySelector<HTMLElement>(
+		"[data-font-viewer-list]",
+	);
+	if (!list) throw new Error("font list region not found");
+	expect(getComputedStyle(list).opacity).toBe("1");
+};
+
+export const Default: Story = {
+	play: async ({ canvasElement }) => {
+		expectListRegionOpaque(canvasElement);
+	},
+};
 
 /** Narrow panel — the widget collapses the catalog into a scrollable list. */
 export const Compact: Story = {
 	args: { widthPx: 280, heightPx: 320 },
 	play: async ({ canvasElement }) => {
+		expectListRegionOpaque(canvasElement);
 		// Issue #474: the search placeholder must fit inside the input
 		// without clipping mid-word (input placeholders cannot show an
 		// ellipsis, so the text itself has to be short enough).
