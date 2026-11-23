@@ -7,6 +7,7 @@ import {
 	presetIconImage,
 	presetIconText,
 } from "@/management/preset/contract";
+import { expectFirstImageLoaded } from "@/storybook/await-image";
 import { css } from "@/styled-system/css";
 import { WorkspacePresetGlyph } from "./WorkspaceGlyph";
 
@@ -92,6 +93,9 @@ export const Canvas: Story = {
 export const ImagePath: Story = {
 	args: {
 		preset: makePreset("img", presetIconImage("https://placehold.co/120")),
+	},
+	play: async ({ canvasElement }) => {
+		await expectFirstImageLoaded(canvasElement);
 	},
 };
 

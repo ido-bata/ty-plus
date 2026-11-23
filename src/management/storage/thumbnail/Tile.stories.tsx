@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { expect } from "storybook/test";
 import type { FileBrowserEntry } from "@/management/storage/file-browser-service";
+import { expectFirstImageLoaded } from "@/storybook/await-image";
 import { ThumbnailTile } from "./Tile";
 
 type Args = {
@@ -53,13 +54,16 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-// useThumbnail() resolves to idle under the Storybook decorators
-// (FilesGatewayProviderDecorator passes `value={null}`), so all
-// variants render the muted placeholder square. The wrapper `<div>`
-// is always mounted with a stable ref so the IntersectionObserver
-// stays bound to a single DOM node — even when the inner content
-// swaps from placeholder to `<img>`.
-export const Default: Story = {};
+// FilesGatewayProviderDecorator injects the deterministic fixture
+// gateway (#458), so on-screen tiles resolve a real loadable image.
+// The wrapper `<div>` is always mounted with a stable ref so the
+// IntersectionObserver stays bound to a single DOM node — even when
+// the inner content swaps from placeholder to `<img>`.
+export const Default: Story = {
+	play: async ({ canvasElement }) => {
+		await expectFirstImageLoaded(canvasElement);
+	},
+};
 
 export const Loading: Story = {
 	args: {
@@ -77,15 +81,17 @@ export const WideAspect: Story = {
 		// Issue #471: story-level decorators stack on top of the meta
 		// decorator, so a second frame used to cut across the tile. There
 		// must be exactly one frame and the tile must stay inside it.
+		// The tile is measured through its loaded `<img>` (#458): once the
+		// fixture gateway resolves, the wrapper's `aria-label` moves off
+		// the container and onto the image `alt`.
+		await expectFirstImageLoaded(canvasElement);
 		const frames = canvasElement.querySelectorAll("[data-tile-frame]");
 		expect(frames).toHaveLength(1);
 		const frame = frames[0];
-		const tile = canvasElement.querySelector<HTMLElement>(
-			"[aria-label='wide.png']",
-		);
-		if (!frame || !tile) throw new Error("frame or tile not found");
+		const img = canvasElement.querySelector("img");
+		if (!frame || !img) throw new Error("frame or tile not found");
 		const frameRect = frame.getBoundingClientRect();
-		const tileRect = tile.getBoundingClientRect();
+		const tileRect = img.getBoundingClientRect();
 		expect(tileRect.left).toBeGreaterThanOrEqual(frameRect.left);
 		expect(tileRect.top).toBeGreaterThanOrEqual(frameRect.top);
 		expect(tileRect.right).toBeLessThanOrEqual(frameRect.right);

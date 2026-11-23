@@ -161,6 +161,24 @@ describe("useThumbnail", () => {
 		expect(result.current.animatedUrl).toBeNull();
 	});
 
+	it("passes URL-scheme cache paths through verbatim", async () => {
+		// The Storybook fixture gateway returns `data:` URIs; they must
+		// not be wrapped in `file://` (#458).
+		const dataUri =
+			"data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'/%3E";
+		const gw = makeGatewayMock({
+			batchThumbnails: successfulBatch(() => ({
+				cache_path: dataUri,
+				animated_source_path: null,
+			})),
+		});
+		const { result } = renderHook(() => useThumbnail(makeEntry("foo.png")), {
+			wrapper: withGateway(gw).wrapper,
+		});
+		await waitFor(() => expect(result.current.status).toBe("ready"));
+		expect(result.current.staticUrl).toBe(dataUri);
+	});
+
 	it("deduplicates concurrent calls for the same entry", async () => {
 		const batchSpy = successfulBatch(() => ({
 			cache_path: "/x/foo.webp",

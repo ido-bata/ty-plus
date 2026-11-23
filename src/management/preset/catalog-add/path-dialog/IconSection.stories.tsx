@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { expectFirstImageLoaded } from "@/storybook/await-image";
 import { css } from "@/styled-system/css";
 
 import { createArchiveIconDraft } from "../archive-icon";
@@ -58,4 +59,7 @@ export const Emoji: Story = {
 
 export const Image: Story = {
 	args: { iconType: "image" },
+	play: async ({ canvasElement }) => {
+		await expectFirstImageLoaded(canvasElement);
+	},
 };

@@ -268,6 +268,12 @@ export const __resetThumbnailStateForTests = (): void => {
  * round-trip to the renderer.
  */
 function toFileUrl(p: string): string {
+	// Gateways on non-filesystem runtimes (e.g. the Storybook fixture
+	// gateway) may return ready-made URLs such as `data:` URIs — those
+	// must pass through verbatim instead of being wrapped in `file://`.
+	// The scheme needs at least two characters so Windows drive letters
+	// ("C:\…") are not mistaken for a scheme.
+	if (/^[a-zA-Z][a-zA-Z0-9+.-]{1,}:/.test(p)) return p;
 	const norm = p.replaceAll("\\", "/");
 	if (/^[A-Za-z]:\//.test(norm)) {
 		return `file:///${encodeURI(norm)}`;

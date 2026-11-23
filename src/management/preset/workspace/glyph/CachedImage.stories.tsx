@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { expectFirstImageLoaded } from "@/storybook/await-image";
 import { css } from "@/styled-system/css";
 
 import { GlyphCachedImage } from "./CachedImage";
@@ -43,7 +44,11 @@ const meta = {
 export default meta;
 type Story = StoryObj<Args>;
 
-export const Default: Story = {};
+export const Default: Story = {
+	play: async ({ canvasElement }) => {
+		await expectFirstImageLoaded(canvasElement);
+	},
+};
 
 export const EmptyPath: Story = {
 	args: { imagePath: "" },
@@ -51,4 +56,7 @@ export const EmptyPath: Story = {
 
 export const LocalPath: Story = {
 	args: { imagePath: "/preset/root/icon.png" },
+	play: async ({ canvasElement }) => {
+		await expectFirstImageLoaded(canvasElement);
+	},
 };
