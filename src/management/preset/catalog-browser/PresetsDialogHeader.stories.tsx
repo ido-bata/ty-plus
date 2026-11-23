@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { expect } from "storybook/test";
 import { css } from "@/styled-system/css";
 import {
 	type LoadPhase,
@@ -8,7 +9,10 @@ import {
 
 type Args = {
 	filter: string;
-	loadPhase: LoadPhase;
+	// `"loaded"` is the terminal phase `ListDialog` passes once the
+	// catalog read finishes — a filtered, settled header never stays
+	// on `"idle"` (#455).
+	loadPhase: LoadPhase | "loaded";
 	loadError: string | null;
 	streamTotal: number;
 	presetsLength: number;
@@ -38,7 +42,7 @@ const meta = {
 		filter: { control: "text" },
 		loadPhase: {
 			control: { type: "select" },
-			options: ["idle", "reading", "streaming", "error"],
+			options: ["idle", "reading", "streaming", "loaded", "error"],
 		},
 		loadError: { control: "text" },
 		streamTotal: { control: { type: "range", min: 0, max: 100, step: 1 } },
@@ -94,8 +98,19 @@ export const Streaming: Story = {
 export const Filtered: Story = {
 	args: {
 		filter: "header",
+		loadPhase: "loaded",
 		presetsLength: 12,
 		visibleCount: 4,
+	},
+	play: async ({ canvasElement }) => {
+		// #455: a filtered catalog shows the search term and the settled
+		// count together — never the "Loading" status bar.
+		const input = canvasElement.querySelector("input");
+		expect(input?.value).toBe("header");
+		const text = canvasElement.textContent ?? "";
+		expect(text).toContain("4 items");
+		expect(text).toContain("filtered");
+		expect(text).not.toContain("Loading");
 	},
 };
 
