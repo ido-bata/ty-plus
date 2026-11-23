@@ -96,8 +96,10 @@ export const HoveredSegment: Story = {
 		await expect(target.matches(":hover")).toBe(true);
 		await new Promise((resolve) => setTimeout(resolve, 300));
 		await expect(getComputedStyle(target).backgroundColor).not.toBe(resting);
-		await userEvent.unhover(target);
+		// Keep the hover state: the screenshot is captured after play ends,
+		// so unhovering here would leave only the resting state on film.
 		spacer.remove();
+		await expect(target.matches(":hover")).toBe(true);
 		expectCanvasLayout(canvasElement);
 	},
 };
