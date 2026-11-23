@@ -19,6 +19,7 @@
  *   1 - One or more violations detected
  */
 
+import type { Dirent } from "node:fs";
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
@@ -56,7 +57,7 @@ const T_PROP_RE = /\bt=\{/;
 
 const collectFiles = (dir: string): string[] => {
 	const out: string[] = [];
-	let entries: ReturnType<typeof readdirSync>;
+	let entries: Dirent[];
 	try {
 		entries = readdirSync(dir, { withFileTypes: true });
 	} catch {
