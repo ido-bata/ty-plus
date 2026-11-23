@@ -20,7 +20,7 @@ for (const name of ["app.ty-plus", "app.ty-plus.dev", "org.loginc.ty-plus"]) {
 			rmSync(extensionPath, { recursive: true, force: true });
 			console.log(`[prebuild] Removed existing CEP extension ${name}`);
 		}
-	} catch (error) {
+	} catch (_error) {
 		// Ignore errors - directory might not exist or be in use
 		console.log(
 			`[prebuild] No existing extension ${name} to remove (or in use)`,

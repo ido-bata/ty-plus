@@ -89,7 +89,6 @@ export function WaveEditor({
 			valueMin: valueRange.min,
 			valueMax: valueRange.max,
 		},
-		wave.cycles,
 		view.start,
 		view.span,
 	);

@@ -1,3 +1,4 @@
+import { dialogContentClass } from "@ty-plus/ui";
 import { Button } from "@ty-plus/ui/controls/Button";
 import {
 	Component,
@@ -78,16 +79,6 @@ const loadingContainerStyle = css({
 const loadingTextStyle = css({
 	fontSize: "text-sm",
 	color: "text.muted",
-});
-
-const contentClassName = css({
-	display: "flex",
-	minHeight: 0,
-	minWidth: 0,
-	flexDirection: "column",
-	overflow: "hidden",
-	paddingInline: "0",
-	backgroundColor: "surface.dialog",
 });
 
 const footerClassName = css({
@@ -321,7 +312,7 @@ function SettingsDialogBody(): JSX.Element {
 		<DialogShell
 			title={i18n.t("settings:title")}
 			surfaceId="dialog-settings"
-			contentClassName={contentClassName}
+			contentClassName={dialogContentClass}
 			footerClassName={footerClassName}
 			footer={
 				<DialogFooterActions>

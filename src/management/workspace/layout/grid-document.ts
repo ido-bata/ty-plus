@@ -244,9 +244,6 @@ export type GridSettings = {
 /** Opaque widget **instance** id (persisted). Never encode widget kind in this string. */
 type InstanceId = string;
 
-/** @deprecated Use `InstanceId`; kept for incremental refactors. */
-type WidgetId = string;
-
 export type Layout = {
 	id: InstanceId;
 	/** @deprecated same as `id`; some persisted rows only had `widgetId` */

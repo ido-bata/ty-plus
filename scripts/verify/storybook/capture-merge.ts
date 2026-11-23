@@ -354,7 +354,7 @@ const parseArgs = (argv: readonly string[]) => {
 
 const main = (): void => {
 	const args = parseArgs(process.argv.slice(2));
-	const projectRoot = resolve(import.meta.dirname, "..", "..");
+	const projectRoot = resolve(import.meta.dirname, "..", "..", "..");
 	const capturesDir = resolve(projectRoot, args.capturesDir);
 	const indexPath = resolve(projectRoot, args.indexPath);
 	const outPath = resolve(projectRoot, args.outPath);

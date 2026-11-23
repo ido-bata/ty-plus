@@ -6,7 +6,10 @@
 			"!**/node_modules",
 			"!**/.worktrees",
 			"!**/dist",
+			"!**/coverage",
+			"!**/.tmp",
 			"!**/styled-system",
+			"!**/storybook-static",
 			"!**/.wrangler",
 			"!**/.cloudflare",
 			"!**/docs/no-use",
@@ -22,7 +25,11 @@
 			"!**/src/function/widget/workspace/components/MenuWidget.tsx",
 			"!**/src/management/workspace/hooks",
 			"!**/src/function/widget/state-slice-contract.ts",
-			"!**/routeTree.gen.ts"
+			"!**/routeTree.gen.ts",
+			"!**/.agents",
+			"!**/docs/verification",
+			"!rust",
+			"!skills-lock.json"
 		]
 	},
 	"css": {
@@ -41,8 +48,9 @@
 		"rules": {
 			"preset": "recommended",
 			"correctness": {
-				"noUnusedFunctionParameters": "off",
-				"noUnusedVariables": "off",
+				"noUnusedFunctionParameters": "error",
+				"noUnusedImports": "error",
+				"noUnusedVariables": "error",
 				"noInnerDeclarations": "off",
 				"noInvalidUseBeforeDeclaration": "off",
 				"useHookAtTopLevel": "off"

@@ -4,10 +4,7 @@
  */
 
 import { evalScript } from "@/management/ae/cep/eval";
-import {
-	buildEnsureDirScriptWithParents,
-	buildWriteBase64FileScript,
-} from "@/management/storage/extendscript/file-operations.ext";
+import { buildWriteBase64FileScript } from "@/management/storage/extendscript/file-operations.ext";
 import { bytesToBase64 } from "@/shared/util/bytes-to-base64";
 
 /**
@@ -51,7 +48,3 @@ export const writeBytesToFile = async (
 /**
  * Ensure a directory exists, creating it if necessary.
  */
-const ensureDir = async (win: Window, dirPath: string): Promise<void> => {
-	const script = buildEnsureDirScriptWithParents(dirPath);
-	await evalScript(win, script);
-};

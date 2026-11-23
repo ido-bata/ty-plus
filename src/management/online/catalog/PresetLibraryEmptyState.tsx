@@ -1,3 +1,4 @@
+import { listItemTitleClass } from "@ty-plus/ui";
 import { IconButton } from "@ty-plus/ui/controls/IconButton";
 import { Icon } from "@ty-plus/ui/Icon";
 import { RefreshCw, X } from "lucide-react";
@@ -45,12 +46,6 @@ const emptyTextClass = css({
 	color: "text.muted",
 });
 
-const disconnectedTitleClass = css({
-	fontSize: "sm",
-	fontWeight: "medium",
-	color: "text.primary",
-});
-
 const disconnectedReasonClass = css({
 	fontSize: "xs",
 	color: "text.muted",
@@ -78,7 +73,7 @@ export function PresetLibraryEmptyState(
 				data-online-preset-empty
 				data-gateway-boot-reason={disconnectedReasonTag ?? ""}
 			>
-				<p className={disconnectedTitleClass}>
+				<p className={listItemTitleClass}>
 					{i18n.t("online:catalog.emptyUnavailable")}
 				</p>
 				{disconnectedReason ? (

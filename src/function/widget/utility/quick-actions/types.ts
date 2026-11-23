@@ -6,8 +6,6 @@ export type PluginEffectIndexRow = {
 	displayName: string;
 };
 
-type QuickActionRootSourceKind = "preset" | "script" | "plugin";
-
 export type QuickActionRootFileRow = {
 	id: string;
 	type: PresetType;

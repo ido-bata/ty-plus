@@ -1,5 +1,3 @@
-type Size = { width: number; height: number };
-
 /**
  * For CEP **Modeless extension windows** (manifest dialogs / other panels).
  * Workaround for cases where the containing block height stays at 0 on the first frame,

@@ -111,14 +111,6 @@ export interface GherkinBlock {
 	readonly examples: readonly ExampleBlock[];
 }
 
-export interface GherkinFeature {
-	readonly featureName: string;
-	readonly featureDescription: string;
-	readonly rules: readonly GherkinRule[];
-	/** Source file path (relative to repo root). */
-	readonly source: string;
-}
-
 export interface GherkinRule {
 	readonly ruleName: string;
 	readonly scenarios: readonly GherkinScenario[];

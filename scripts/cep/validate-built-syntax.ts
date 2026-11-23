@@ -3,27 +3,21 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import ts from "typescript";
+import ts from "typescript5";
 
 const SCRIPT_EXTENSIONS = new Set([".js", ".cjs", ".mjs"]);
 
-/**
- * @typedef {{
- *   filePath: string;
- *   message: string;
- *   line: number;
- *   column: number;
- * }} SyntaxValidationError
- */
+type SyntaxValidationError = {
+	filePath: string;
+	message: string;
+	line: number;
+	column: number;
+};
 
-/**
- * @param {string} rootDir
- * @returns {string[]}
- */
-export function listGeneratedScriptFiles(rootDir) {
+export function listGeneratedScriptFiles(rootDir: string): string[] {
 	if (!fs.existsSync(rootDir)) return [];
 	const entries = fs.readdirSync(rootDir, { withFileTypes: true });
-	const files = [];
+	const files: string[] = [];
 
 	for (const entry of entries) {
 		const fullPath = path.join(rootDir, entry.name);
@@ -40,11 +34,9 @@ export function listGeneratedScriptFiles(rootDir) {
 	return files;
 }
 
-/**
- * @param {string} filePath
- * @returns {SyntaxValidationError[]}
- */
-export function validateScriptFileSyntax(filePath) {
+export function validateScriptFileSyntax(
+	filePath: string,
+): SyntaxValidationError[] {
 	const text = fs.readFileSync(filePath, "utf8");
 	const sourceFile = ts.createSourceFile(
 		filePath,
@@ -54,7 +46,10 @@ export function validateScriptFileSyntax(filePath) {
 		ts.ScriptKind.JS,
 	);
 
-	return sourceFile.parseDiagnostics.map((diag) => {
+	const diagnostics = (
+		sourceFile as ts.SourceFile & { parseDiagnostics: ts.Diagnostic[] }
+	).parseDiagnostics;
+	return diagnostics.map((diag) => {
 		const start = diag.start ?? 0;
 		const pos = sourceFile.getLineAndCharacterOfPosition(start);
 		return {
@@ -66,11 +61,10 @@ export function validateScriptFileSyntax(filePath) {
 	});
 }
 
-/**
- * @param {string} distRoot
- * @returns {{ checkedFiles: string[]; errors: SyntaxValidationError[] }}
- */
-export function validateGeneratedScripts(distRoot) {
+export function validateGeneratedScripts(distRoot: string): {
+	checkedFiles: string[];
+	errors: SyntaxValidationError[];
+} {
 	const checkedFiles = listGeneratedScriptFiles(distRoot);
 	const errors = checkedFiles.flatMap((filePath) =>
 		validateScriptFileSyntax(filePath),
@@ -78,24 +72,21 @@ export function validateGeneratedScripts(distRoot) {
 	return { checkedFiles, errors };
 }
 
-/**
- * @typedef {{
- *   env?: Record<string, string | undefined>;
- *   existsSync?: (p: string) => boolean;
- *   readdirSync?: (p: string) => fs.Dirent[];
- *   platform?: NodeJS.Platform;
- * }} AfterFxLookupOptions
- */
+type AfterFxLookupOptions = {
+	env?: Record<string, string | undefined>;
+	existsSync?: (p: string) => boolean;
+	readdirSync?: (p: string) => fs.Dirent[];
+	platform?: NodeJS.Platform;
+};
 
-/**
- * @param {AfterFxLookupOptions} [options]
- * @returns {string | null}
- */
-export function findAfterFxExecutable(options = {}) {
+export function findAfterFxExecutable(
+	options: AfterFxLookupOptions = {},
+): string | null {
 	const env = options.env ?? process.env;
 	const existsSync = options.existsSync ?? fs.existsSync;
 	const readdirSync =
-		options.readdirSync ?? ((p) => fs.readdirSync(p, { withFileTypes: true }));
+		options.readdirSync ??
+		((p: string) => fs.readdirSync(p, { withFileTypes: true }));
 	const platform = options.platform ?? process.platform;
 	if (platform !== "win32") return null;
 
@@ -129,7 +120,10 @@ export function findAfterFxExecutable(options = {}) {
 	return null;
 }
 
-function createHostCheckScript(targetScriptPath, resultFilePath) {
+function createHostCheckScript(
+	targetScriptPath: string,
+	resultFilePath: string,
+) {
 	const targetLiteral = JSON.stringify(targetScriptPath.replace(/\\/g, "/"));
 	const resultLiteral = JSON.stringify(resultFilePath.replace(/\\/g, "/"));
 	return [
@@ -159,11 +153,14 @@ function createHostCheckScript(targetScriptPath, resultFilePath) {
 	].join("\n");
 }
 
-/**
- * @param {string} raw
- * @returns {{ ok: boolean; message: string; line: number; fileName: string } | null}
- */
-function parseHostCheckResult(raw) {
+type HostCheckResult = {
+	ok: boolean;
+	message: string;
+	line: number;
+	fileName: string;
+};
+
+function parseHostCheckResult(raw: string): HostCheckResult | null {
 	const text = String(raw ?? "");
 	if (!text) return null;
 	const lines = text.split(/\r?\n/);
@@ -176,11 +173,17 @@ function parseHostCheckResult(raw) {
 	};
 }
 
-/**
- * @param {string} jsxEntryPath
- * @returns {{ ok: true } | { ok: false; reason: string; message?: string; line?: number; fileName?: string }}
- */
-export function validateWithAfterFx(jsxEntryPath) {
+type AfterFxCheckResult =
+	| { ok: true }
+	| {
+			ok: false;
+			reason: string;
+			message?: string;
+			line?: number;
+			fileName?: string;
+	  };
+
+export function validateWithAfterFx(jsxEntryPath: string): AfterFxCheckResult {
 	const afterfxPath = findAfterFxExecutable();
 	if (!afterfxPath) {
 		return { ok: false, reason: "afterfx-not-found" };
@@ -254,10 +257,6 @@ export function validateWithAfterFx(jsxEntryPath) {
 	}
 }
 
-/**
- * @param {string} distRoot
- * @returns {number}
- */
 export function runSyntaxValidation(
 	distRoot = path.resolve(process.cwd(), "dist", "cep"),
 ) {

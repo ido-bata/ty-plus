@@ -351,7 +351,8 @@
 			"noScriptsFolder": "Kein Skript-Ordner konfiguriert",
 			"noPluginsFolder": "Kein Plug-in-Ordner konfiguriert",
 			"noFiles": "Keine Dateien gefunden"
-		}
+		},
+		"folderTypeAria": "Ordner-Typ"
 	},
 	"iconEditor": {
 		"tabs": {
@@ -366,7 +367,8 @@
 		"imagePlaceholder": "Bildpfad oder URL",
 		"iconTextAria": "Symboltext",
 		"textPlaceholder": "2–6 Zeichen",
-		"previewAria": "Symbolvorschau"
+		"previewAria": "Symbolvorschau",
+		"tabsAria": "Symboltyp"
 	},
 	"catalogBrowser": {
 		"loading": "Wird geladen",

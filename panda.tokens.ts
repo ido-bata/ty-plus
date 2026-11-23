@@ -25,7 +25,8 @@ export const colors = defineTokens.colors({
 		strong: { value: "var(--ty-border-strong)" },
 		surface: { value: "var(--ty-border-surface)" },
 		default: { value: "var(--ty-border-surface)" },
-		input: { value: "var(--ty-border-surface)" },
+		control: { value: "var(--ty-border-control)" },
+		input: { value: "var(--ty-border-control)" },
 	},
 	interactive: {
 		hover: { value: "var(--ty-interactive-hover)" },
@@ -88,7 +89,7 @@ export const colors = defineTokens.colors({
 	},
 });
 
-export const opacities = defineTokens.opacities({
+export const opacities = defineTokens.opacity({
 	"text-main": { value: "var(--ty-opacity-text-main)" },
 	"text-muted": { value: "var(--ty-opacity-text-muted)" },
 	"action-primary": { value: "var(--ty-opacity-action-primary)" },

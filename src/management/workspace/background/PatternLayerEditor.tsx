@@ -1,3 +1,4 @@
+import { segmentedButtonQuietClass } from "@ty-plus/ui";
 import { SegmentedControl } from "@ty-plus/ui/controls/SegmentedControl";
 import type { JSX } from "react";
 import type {
@@ -22,12 +23,6 @@ const fieldGroup = css({
 
 const segmentedOverrides = css({
 	borderColor: "var(--color-ty-widget-border)",
-});
-
-const segmentedButton = css({
-	borderWidth: "1px",
-	borderStyle: "solid",
-	borderColor: "transparent",
 });
 
 const unselected = css({
@@ -63,7 +58,7 @@ export function PatternLayerEditor({
 						label: t(`workspaceShell.backgroundPanel.patterns.${pattern}`),
 					}))}
 					className={segmentedOverrides}
-					buttonClassName={segmentedButton}
+					buttonClassName={segmentedButtonQuietClass}
 					selectedClassName={QUIET_SELECTED_CLASS}
 					unselectedClassName={unselected}
 				/>

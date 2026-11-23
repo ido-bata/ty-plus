@@ -79,7 +79,7 @@ const checkSteps: readonly CheckStep[] = [
 	{ label: "test", args: buildCheckArgs("test") },
 ];
 
-const FMT_STEP_LABEL = "format";
+const _FMT_STEP_LABEL = "format";
 
 const parsePinnedToolchain = (contents: string): string => {
 	const channel = contents.match(/^\s*channel\s*=\s*"([^"]+)"\s*$/m)?.[1];

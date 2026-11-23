@@ -6,12 +6,6 @@
 
 import type { Resource } from "i18next";
 
-/**
- * Minimal type for locale JSON content.
- * Settings copy structure used by settings panel.
- */
-type LocaleJson = Record<string, unknown>;
-
 import de_contextMenu from "@/management/i18n/locales/de/contextMenu.json";
 import de_dialogs from "@/management/i18n/locales/de/dialogs.json";
 import de_localeNames from "@/management/i18n/locales/de/locale-names.json";
@@ -104,19 +98,6 @@ import zh_presets from "@/management/i18n/locales/zh/presets.json";
 import zh_settings from "@/management/i18n/locales/zh/settings.json";
 import zh_widgets from "@/management/i18n/locales/zh/widgets.json";
 import zh_workspace from "@/management/i18n/locales/zh/workspace.json";
-
-const BUNDLED_SETTINGS: Record<string, LocaleJson> = {
-	en: en_settings,
-	ja: ja_settings,
-	de: de_settings,
-	fr: fr_settings,
-	es: es_settings,
-	it: it_settings,
-	ko: ko_settings,
-	pt: pt_settings,
-	ru: ru_settings,
-	zh: zh_settings,
-};
 
 /** Locale display names indexed by locale code, for each UI locale */
 export const BUNDLED_LOCALE_NAMES: Record<string, Record<string, string>> = {

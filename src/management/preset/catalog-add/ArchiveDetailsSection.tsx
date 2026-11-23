@@ -1,4 +1,4 @@
-import { Icon } from "@ty-plus/ui";
+import { Icon, sectionLabelClass } from "@ty-plus/ui";
 import { PathField } from "@ty-plus/ui/fields/PathField";
 import { ChevronDown, FileSearch } from "lucide-react";
 import { forwardRef, type JSX, useImperativeHandle, useState } from "react";
@@ -40,14 +40,6 @@ const blockClass = css({
 	display: "flex",
 	flexDirection: "column",
 	gap: "1",
-});
-
-const fieldLabelClass = css({
-	fontSize: "xs",
-	fontWeight: "medium",
-	textTransform: "uppercase",
-	letterSpacing: "wide",
-	color: "text.muted",
 });
 
 const previewBoxClass = css({
@@ -151,7 +143,10 @@ export const ArchiveDetailsSection = forwardRef<
 
 	const descriptionBlock = (
 		<div className={blockClass}>
-			<label htmlFor="archive-details-description" className={fieldLabelClass}>
+			<label
+				htmlFor="archive-details-description"
+				className={sectionLabelClass}
+			>
 				{t("presetTool.form.description")}
 			</label>
 			<MarkdownLiveEditor
@@ -170,7 +165,7 @@ export const ArchiveDetailsSection = forwardRef<
 		<div className={blockClass}>
 			<label
 				htmlFor="archive-details-description-image"
-				className={fieldLabelClass}
+				className={sectionLabelClass}
 			>
 				{t("presetTool.form.descriptionImage")}
 			</label>

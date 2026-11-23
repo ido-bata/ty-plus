@@ -26,7 +26,7 @@ export const WEB_LOCALES = [
 
 export type WebLocale = (typeof WEB_LOCALES)[number];
 
-export const DEFAULT_WEB_LOCALE: WebLocale = "en";
+const DEFAULT_WEB_LOCALE: WebLocale = "en";
 
 const LOCALE_STORAGE_KEY = "ty-plus.web.locale";
 
@@ -68,7 +68,7 @@ const toWebLocale = (value: string | null | undefined): WebLocale | null =>
  * always English so hydration stays deterministic; the stored/browser
  * locale is applied after mount via `applyStoredWebLocale`.
  */
-export function detectWebLocale(): WebLocale {
+function detectWebLocale(): WebLocale {
 	if (typeof window === "undefined") return DEFAULT_WEB_LOCALE;
 	try {
 		const stored = toWebLocale(window.localStorage.getItem(LOCALE_STORAGE_KEY));

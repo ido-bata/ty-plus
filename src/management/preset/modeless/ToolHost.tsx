@@ -101,19 +101,6 @@ const placeholderFieldTightClass = css({
 	gap: "2",
 });
 
-const placeholderLineClass = css({
-	display: "block",
-	borderRadius: "shell-sm",
-	backgroundColor: "surface.widget",
-	animation: "pulse",
-});
-
-const placeholderLabelClass = css({
-	borderRadius: "shell-sm",
-	backgroundColor: "surface.widget",
-	animation: "pulse",
-});
-
 function parsePresetToolSurfaceId(payload: unknown): string | null {
 	if (!payload || typeof payload !== "object") {
 		return null;

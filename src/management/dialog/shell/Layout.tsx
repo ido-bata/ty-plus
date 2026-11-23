@@ -134,7 +134,7 @@ export function Shell({
 	onFileDrop,
 }: ShellProps): JSX.Element {
 	const { surfaceId } = useSurface(explicitSurfaceId);
-	const { close, onBeforeUnload } = useClose({
+	const { onBeforeUnload } = useClose({
 		confirmOnClose: Boolean(hasUnsavedChanges),
 		confirmMessage: closeConfirmMessage,
 		beforeUnloadGuard,

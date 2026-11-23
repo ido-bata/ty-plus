@@ -6,7 +6,6 @@ import {
 } from "@/management/panel/theme/storage";
 import { enqueueThemeWrite } from "@/management/panel/theme/write-queue";
 import type { Settings } from "@/management/setting/models/settings";
-import { DEFAULT_THEME } from "@/management/style/default-values";
 import { publishShellMessage } from "@/management/workspace/messaging/publish-shell-message";
 import { SHELL_CHANNELS } from "@/management/workspace/surface/contract";
 
@@ -22,7 +21,7 @@ export type GridMetrics = {
 	radius: number;
 };
 
-const parsePx = (raw: string | undefined, fallback: number): number => {
+const _parsePx = (raw: string | undefined, fallback: number): number => {
 	const trimmed = raw?.trim() ?? "";
 	if (!trimmed) {
 		return fallback;
@@ -33,34 +32,6 @@ const parsePx = (raw: string | undefined, fallback: number): number => {
 	}
 	const num = Number(trimmed);
 	return Number.isFinite(num) ? Math.round(num) : fallback;
-};
-
-/** Read effective grid metrics from `:root` CSS variables (theme tokens). */
-export const readGridMetricsFromTheme = (
-	fallback: GridMetrics,
-	doc: Document = document,
-): GridMetrics => {
-	const style = doc.documentElement.style;
-	const computed = getComputedStyle(doc.documentElement);
-	const read = (
-		key: keyof typeof GRID_THEME_TOKEN_KEYS,
-		fb: number,
-	): number => {
-		const tokenKey = GRID_THEME_TOKEN_KEYS[key];
-		const fallbackToken = DEFAULT_THEME[tokenKey as keyof typeof DEFAULT_THEME];
-		return parsePx(
-			style.getPropertyValue(`--${tokenKey}`).trim() ||
-				computed.getPropertyValue(`--${tokenKey}`).trim() ||
-				fallbackToken,
-			fb,
-		);
-	};
-
-	return {
-		cellSize: read("cellSize", fallback.cellSize),
-		gap: read("gap", fallback.gap),
-		radius: read("radius", fallback.radius),
-	};
 };
 
 export const gridMetricsToThemeOverrides = (

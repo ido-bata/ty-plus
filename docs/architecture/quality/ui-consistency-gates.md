@@ -40,7 +40,17 @@ DirectoryBrowser を調査した結果、UI の不整合は次の4つの構造�
 | `inline-style` | `style={{...}}` による**外観**指定を禁止（runtime の位置指定と CSS custom property は許可） |
 | `barrel-gap` | `packages/ui` の public component が barrel から export されていない状態を禁止 |
 
-`packages/ui` 自身は契約の実装なので対象外。
+### 検査の対象範囲
+
+| スコープ | 適用する規則 |
+| --- | --- |
+| `src/**` | 全部 |
+| `packages/ui/src/**` | focus / CSS 変数 / 重複待遇 / vocabulary 参照（`raw-control` と `raw-svg` は除く — 共有 package こそがこれらの実装である） |
+| `apps/web/src/**` | 全部（公式サイトも同じ共有 package を使う） |
+
+「lint を作り直してからの漏れ」の確認として、範囲を extension すると
+Packages/ui 自身と公式サイトに同じ不整合が現れた。共有 package は語彙であり、
+語彙が崩れていればそれをコピーした全部が崩れるため、語彙も検査に含める。
 
 既存違反は `scripts/check/app-ui-design-allowlist.json` に 1 違反 1 エントリで
 退避する。エントリが違反しなくなった場合は stale として失敗し、allowlist は
@@ -134,3 +144,11 @@ focus の表示は、共有 token `--color-focus-ring`（accent 2px の ring）�
 - `focus-ring-divergent` — canonical 以外の ring を描画している
 - `unknown-css-var` — 解決できない CSS 変数を参照している（fallback 付き、
   あるいは同じ file が inline で設定する custom property は可）
+- `duplicate-style-recipe` — 同じ待遇（色・border・タイポグラフィ）を 2 箇所以上で
+  書き写していないこと。layout だけの組み合わせは対象外
+- `vocabulary-copy` — 共有 package が既に持つ待遇を app 側で書き写さないこと
+- `focus-indicator-missing` — native の focus 表示を消하면서、共有 ring を
+  描画していないこと（file 単位。focus 規則と outline 制約は別の style object
+  にあるため）
+- `icon-size-off-scale` — icon の size が共有 scale（3 = 12px / 4 = 16px /
+  5 = 20px）に入っていないこと

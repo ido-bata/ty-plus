@@ -21,16 +21,3 @@ export const findGroupEntry = (
 	if (!t) return undefined;
 	return groups.find((g) => g.id.trim() === t);
 };
-
-const reorderLinearIds = (
-	ids: readonly string[],
-	fromIndex: number,
-	toIndex: number,
-): string[] => {
-	if (fromIndex === toIndex) return [...ids];
-	const next = [...ids];
-	const [item] = next.splice(fromIndex, 1);
-	if (item === undefined) return [...ids];
-	next.splice(toIndex, 0, item);
-	return next;
-};

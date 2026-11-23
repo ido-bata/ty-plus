@@ -1,3 +1,4 @@
+import { heading1Class, mutedBodyTextClass } from "@ty-plus/ui";
 import { type JSX, useCallback, useEffect } from "react";
 import { Animation } from "@/function/onboarding/ui/Animation";
 import { useCep } from "@/management/ae/cep/contexts/CepContext";
@@ -37,18 +38,6 @@ const headerClass = css({
 	display: "flex",
 	flexDirection: "column",
 	gap: "2",
-});
-
-const titleClass = css({
-	fontSize: "lg",
-	fontWeight: "semibold",
-	color: "text.primary",
-});
-
-const bodyClass = css({
-	fontSize: "sm",
-	color: "text.muted",
-	whiteSpace: "pre-line",
 });
 
 const animationSlotClass = css({
@@ -114,8 +103,10 @@ export function SetupRequired(): JSX.Element {
 		<div className={wrapperClass} data-testid="setup-required">
 			<div className={innerClass}>
 				<div className={headerClass}>
-					<h2 className={titleClass}>{t("secondaryPanel.title")}</h2>
-					<p className={bodyClass}>{t("secondaryPanel.description")}</p>
+					<h2 className={heading1Class}>{t("secondaryPanel.title")}</h2>
+					<p className={mutedBodyTextClass}>
+						{t("secondaryPanel.description")}
+					</p>
 				</div>
 				<div className={animationSlotClass}>
 					<Animation variant="intro" />

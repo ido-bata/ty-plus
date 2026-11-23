@@ -47,7 +47,7 @@ export default defineConfig({
 			},
 			{
 				find: /^@ty-plus\/ui\/(.*)$/,
-				replacement: path.resolve(__dirname, "packages/ui/src") + "/$1",
+				replacement: `${path.resolve(__dirname, "packages/ui/src")}/$1`,
 			},
 			{
 				find: "@ty-plus/ui",
@@ -55,7 +55,7 @@ export default defineConfig({
 			},
 			{
 				find: /^@\/(?!styled-system)/,
-				replacement: path.resolve(__dirname, "src") + "/",
+				replacement: `${path.resolve(__dirname, "src")}/`,
 			},
 			{
 				find: "@/styled-system",
@@ -116,7 +116,6 @@ export default defineConfig({
 				"src/management/online/catalog/composition-runtime-dispatcher.ts",
 				"src/management/panel/cloud-gateway-boot.ts",
 			],
-			perFile: true,
 			exclude: [
 				"node_modules/**",
 				"dist/**",
@@ -137,6 +136,7 @@ export default defineConfig({
 				statements: 80,
 				functions: 80,
 				branches: 80,
+				perFile: true,
 			},
 		},
 		projects: [

@@ -1,4 +1,4 @@
-import { Button, cx, Icon, IconButton } from "@ty-plus/ui";
+import { Button, cx, Icon, IconButton, widgetSurfaceClass } from "@ty-plus/ui";
 import { Play } from "lucide-react";
 import type { JSX } from "react";
 import {
@@ -97,17 +97,7 @@ export function PresetIconTile({
 				title={p.filePath}
 			>
 				<div
-					className={cx(
-						iconTileMediaClass(iconTileAspect),
-						css({
-							overflow: "hidden",
-							borderRadius: "shell-sm",
-							borderWidth: "1px",
-							borderStyle: "solid",
-							borderColor: "border.default",
-							backgroundColor: "surface.widget",
-						}),
-					)}
+					className={cx(iconTileMediaClass(iconTileAspect), widgetSurfaceClass)}
 				>
 					<div
 						className={css({

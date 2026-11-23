@@ -1,4 +1,9 @@
-import { DialogBody } from "@ty-plus/ui";
+import {
+	browserEmptyClass,
+	DialogBody,
+	dialogContentClass,
+	dialogFooterClass,
+} from "@ty-plus/ui";
 import {
 	type JSX,
 	useCallback,
@@ -76,22 +81,6 @@ const browserContainerClass = css({
 	flexDirection: "column",
 });
 
-const browserEmptyClass = css({
-	display: "grid",
-	minHeight: "0",
-	flex: "1",
-	placeItems: "center",
-	borderRadius: "md",
-	borderWidth: "1px",
-	borderStyle: "solid",
-	borderColor: "border.default",
-	backgroundColor: "surface.widget",
-	paddingInline: "3",
-	textAlign: "center",
-	fontSize: "shell-text-sm",
-	color: "text.muted",
-});
-
 const formColumnClass = css({
 	display: "flex",
 	minWidth: "0",
@@ -114,37 +103,11 @@ const errorClass = css({
 	color: "status.error",
 });
 
-/**
- * `DialogShell` content styling for path-add dialogs. The shell enforces
- * the 3-area grid (Header=auto, Content=minmax(0,1fr), Footer=auto). This
- * class only adjusts padding / overflow so the editor body uses the full
- * panel width without the default shell gutter.
- */
-const pathDialogContentClass = css({
-	display: "flex",
-	minHeight: 0,
-	minWidth: 0,
-	flexDirection: "column",
-	overflow: "hidden",
-	paddingInline: "0",
-	backgroundColor: "surface.dialog",
-});
-
-/** Footer adds a divider and shell-aligned padding for the action row. */
-const pathDialogFooterClass = css({
-	borderTopWidth: "1px",
-	borderTopStyle: "solid",
-	borderTopColor: "border.default",
-	paddingInline: "var(--ty-shell-pad-inline)",
-	paddingBlock: "var(--ty-shell-space)",
-});
-
 function BrowserContent(props: {
 	cepBrowser: boolean;
 	emptyConfigured: boolean;
 	activeTab: PresetAddFolderType;
 	loadingFiles: boolean;
-	browserError: string | null;
 	browserEntries: FileEntry[];
 	canGoUp: boolean;
 	selectedPath: string;
@@ -158,7 +121,6 @@ function BrowserContent(props: {
 		emptyConfigured,
 		activeTab,
 		loadingFiles,
-		browserError,
 		browserEntries,
 		canGoUp,
 		selectedPath,
@@ -551,8 +513,8 @@ export function PathDialog(): JSX.Element {
 			title={i18n.t("presets:catalogAdd.dialogTitle")}
 			surfaceId="dialog-preset-add"
 			modifier="wsd-root--preset-tool"
-			contentClassName={pathDialogContentClass}
-			footerClassName={pathDialogFooterClass}
+			contentClassName={dialogContentClass}
+			footerClassName={dialogFooterClass}
 			onFileDrop={handleFileDrop}
 			footer={
 				<PathDialogFooterActions
@@ -597,7 +559,6 @@ export function PathDialog(): JSX.Element {
 						emptyConfigured={emptyConfigured}
 						activeTab={activeTab}
 						loadingFiles={loadingFiles}
-						browserError={browserError}
 						browserEntries={browserEntries}
 						canGoUp={canGoUp}
 						selectedPath={selectedPath}

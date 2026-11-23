@@ -499,7 +499,7 @@ const buildFileBrowserService = (options: {
 			".webp",
 			".svg",
 		]);
-		let visitedEntries = 0;
+		let _visitedEntries = 0;
 		let lastProgressFileCount = 0;
 		let lastProgressDirectoryCount = 0;
 		let lastProgressAt = 0;
@@ -571,7 +571,7 @@ const buildFileBrowserService = (options: {
 				const $chunkReportPromises: Promise<void>[] = [];
 				for (let j = chunkStart; j < chunkEnd; j++) {
 					const dirent = dirents[j];
-					visitedEntries += 1;
+					_visitedEntries += 1;
 					const isPluginBundle =
 						dirent.isDirectory() && isPluginBundleName(dirent.name);
 					if (dirent.isDirectory() && skipDir.has(dirent.name.toLowerCase())) {

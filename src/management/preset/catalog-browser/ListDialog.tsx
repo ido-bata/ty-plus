@@ -1,4 +1,15 @@
-import { cx, Icon, isIMEComposing } from "@ty-plus/ui";
+import {
+	borderedListClass,
+	centeredIconClass,
+	cx,
+	emptyStateClass,
+	Icon,
+	iconActionButtonClass,
+	isIMEComposing,
+	rowMetaClass,
+	rowTitleClass,
+	widgetSurfaceClass,
+} from "@ty-plus/ui";
 import {
 	ArrowLeft,
 	ChevronDown,
@@ -92,25 +103,6 @@ const folderIconClass = css({
 	width: "3.5",
 });
 
-const tinyAct = css({
-	display: "inline-flex",
-	height: "5",
-	width: "5",
-	flexShrink: "0",
-	alignItems: "center",
-	justifyContent: "center",
-	borderRadius: "shell-sm",
-	borderWidth: "1px",
-	borderStyle: "solid",
-	borderColor: "border.default",
-	backgroundColor: "surface.widget/50",
-	color: "text.muted",
-	_hover: {
-		backgroundColor: "interactive.hover",
-		color: "text.primary",
-	},
-});
-
 const actionsRowClass = css({
 	display: "flex",
 	flexShrink: "0",
@@ -135,15 +127,6 @@ const presetRowCenterClass = css({
 	display: "flex",
 	alignItems: "center",
 	justifyContent: "center",
-});
-
-const presetRowTitleClass = css({
-	overflow: "hidden",
-	textOverflow: "ellipsis",
-	whiteSpace: "nowrap",
-	fontSize: "shell-text-sm",
-	fontWeight: "medium",
-	color: "text.primary",
 });
 
 const presetRowMetaClass = css({
@@ -226,23 +209,6 @@ const groupTitleButtonClass = css({
 	},
 });
 
-const groupTitleClass = css({
-	overflow: "hidden",
-	textOverflow: "ellipsis",
-	whiteSpace: "nowrap",
-	fontSize: "shell-text-sm",
-	fontWeight: "medium",
-	color: "text.primary",
-});
-
-const groupSubtitleClass = css({
-	overflow: "hidden",
-	textOverflow: "ellipsis",
-	whiteSpace: "nowrap",
-	fontSize: "xs",
-	color: "text.muted",
-});
-
 const groupSubtitleDividerClass = css({
 	marginInline: "1.5",
 	color: "border.default",
@@ -255,20 +221,16 @@ const groupMembersListClass = css({
 	backgroundColor: "surface.widget/15",
 });
 
-const treeListClass = css({
-	display: "flex",
-	flexDirection: "column",
-	overflow: "hidden",
-	borderRadius: "shell-sm",
-	borderWidth: "1px",
-	borderStyle: "solid",
-	borderColor: "border.default",
-	"& > li + li": {
-		borderTopWidth: "1px",
-		borderTopStyle: "solid",
-		borderColor: "border.default",
-	},
-});
+const treeListClass = cx(
+	borderedListClass,
+	css({
+		"& > li + li": {
+			borderTopWidth: "1px",
+			borderTopStyle: "solid",
+			borderColor: "border.default",
+		},
+	}),
+);
 
 const iconNavigateUpButtonClass = css({
 	display: "flex",
@@ -299,15 +261,6 @@ const iconNavigateUpMediaClass = css({
 	borderStyle: "solid",
 	borderColor: "border.default",
 	backgroundColor: "surface.widget/70",
-});
-
-const iconNavigateUpInnerClass = css({
-	display: "flex",
-	height: "full",
-	width: "full",
-	alignItems: "center",
-	justifyContent: "center",
-	color: "text.muted",
 });
 
 const iconNavigateUpTitleClass = css({
@@ -454,15 +407,6 @@ const iconPresetCardClass = cx(
 	}),
 );
 
-const iconPresetButtonClass = css({
-	overflow: "hidden",
-	borderRadius: "shell-sm",
-	borderWidth: "1px",
-	borderStyle: "solid",
-	borderColor: "border.default",
-	backgroundColor: "surface.widget",
-});
-
 const iconPresetButtonInnerClass = css({
 	display: "flex",
 	height: "full",
@@ -487,13 +431,6 @@ const iconPresetTitleClass = css({
 	fontWeight: "medium",
 	lineHeight: "tight",
 	color: "text.primary",
-});
-
-const emptyStateClass = css({
-	paddingBlock: "8",
-	textAlign: "center",
-	fontSize: "shell-text-sm",
-	color: "text.muted",
 });
 
 /**
@@ -703,7 +640,7 @@ function PresetRowActions(props: {
 		<div className={actionsRowClass}>
 			<button
 				type="button"
-				className={tinyAct}
+				className={iconActionButtonClass}
 				aria-label={i18n.t("presets:listDialog.runPresetAria")}
 				title={i18n.t("common:actions.run")}
 				onClick={() => onRun(presetId)}
@@ -712,7 +649,7 @@ function PresetRowActions(props: {
 			</button>
 			<button
 				type="button"
-				className={tinyAct}
+				className={iconActionButtonClass}
 				aria-label={i18n.t("presets:listDialog.editPresetAria")}
 				title={i18n.t("common:actions.edit")}
 				onClick={() => void onEdit(presetId)}
@@ -721,7 +658,7 @@ function PresetRowActions(props: {
 			</button>
 			<button
 				type="button"
-				className={tinyAct}
+				className={iconActionButtonClass}
 				aria-label={i18n.t("presets:listDialog.deletePresetAria")}
 				title={i18n.t("common:actions.delete")}
 				onClick={() => void onDelete(presetId)}
@@ -742,7 +679,7 @@ function GroupRowActions(props: {
 		<div className={actionsRowClass}>
 			<button
 				type="button"
-				className={tinyAct}
+				className={iconActionButtonClass}
 				aria-label={i18n.t("presets:listDialog.editGroup")}
 				title={i18n.t("presets:listDialog.editGroup")}
 				onClick={() => onEdit(groupId)}
@@ -751,7 +688,7 @@ function GroupRowActions(props: {
 			</button>
 			<button
 				type="button"
-				className={tinyAct}
+				className={iconActionButtonClass}
 				aria-label={i18n.t("presets:listDialog.deleteGroup")}
 				title={i18n.t("presets:listDialog.deleteGroup")}
 				onClick={() => onDelete(groupId)}
@@ -787,7 +724,7 @@ function PresetListTreeItem(props: {
 				/>
 			</div>
 			<div className={presetRowTitleMinWidthClass}>
-				<div className={presetRowTitleClass}>
+				<div className={rowTitleClass}>
 					{preset.title || basenamePath(preset.filePath)}
 				</div>
 				<div className={presetRowMetaClass}>
@@ -865,10 +802,8 @@ function PresetGroupListBlock(props: {
 					className={groupTitleButtonClass}
 					onClick={() => onToggle(group.id)}
 				>
-					<div className={groupTitleClass}>
-						{group.title?.trim() || group.id}
-					</div>
-					<div className={groupSubtitleClass}>
+					<div className={rowTitleClass}>{group.title?.trim() || group.id}</div>
+					<div className={rowMetaClass}>
 						Group · {members.length} items
 						<span className={groupSubtitleDividerClass}>|</span>
 						{groupWorkspaceSummary(group, groupPlacement)}
@@ -974,7 +909,7 @@ function IconNavigateUpCard(props: {
 			<div
 				className={cx(iconTileMediaClass(tileAspect), iconNavigateUpMediaClass)}
 			>
-				<div className={iconNavigateUpInnerClass}>
+				<div className={centeredIconClass}>
 					<Icon icon={ArrowLeft} size={11} aria-hidden />
 				</div>
 			</div>
@@ -1033,7 +968,7 @@ function IconCatalogGroupCard(props: {
 				<div className={iconGroupActionsClass}>
 					<button
 						type="button"
-						className={tinyAct}
+						className={iconActionButtonClass}
 						aria-label={i18n.t("presets:listDialog.editGroup")}
 						onClick={(e) => {
 							e.stopPropagation();
@@ -1044,7 +979,7 @@ function IconCatalogGroupCard(props: {
 					</button>
 					<button
 						type="button"
-						className={tinyAct}
+						className={iconActionButtonClass}
 						aria-label={i18n.t("presets:listDialog.deleteGroup")}
 						onClick={(e) => {
 							e.stopPropagation();
@@ -1072,7 +1007,7 @@ function IconPresetCard(props: {
 		<div data-preset-id={preset.id} className={iconPresetCardClass}>
 			<button
 				type="button"
-				className={cx(iconTileMediaClass(tileAspect), iconPresetButtonClass)}
+				className={cx(iconTileMediaClass(tileAspect), widgetSurfaceClass)}
 				onClick={() => onRun(preset.id)}
 				aria-label={i18n.t("presets:listDialog.runPresetNamed", {
 					name: preset.title || preset.id,
@@ -1097,7 +1032,7 @@ function IconPresetCard(props: {
 				<div className={iconGroupActionsClass}>
 					<button
 						type="button"
-						className={tinyAct}
+						className={iconActionButtonClass}
 						aria-label={i18n.t("common:actions.edit")}
 						onClick={(e) => {
 							e.stopPropagation();
@@ -1108,7 +1043,7 @@ function IconPresetCard(props: {
 					</button>
 					<button
 						type="button"
-						className={tinyAct}
+						className={iconActionButtonClass}
 						aria-label={i18n.t("common:actions.delete")}
 						onClick={(e) => {
 							e.stopPropagation();
@@ -1356,11 +1291,7 @@ export function PresetsDialog(): JSX.Element {
 		() => new Set(),
 	);
 
-	const {
-		scale: iconGridScale,
-		setScale: setIconGridScale,
-		hostRef: iconGridHostRef,
-	} = useIconGridScale({
+	const { scale: iconGridScale, hostRef: iconGridHostRef } = useIconGridScale({
 		storageKey: ICON_GRID_SCALE_LS_KEY,
 		enabled: viewMode === "icons",
 	});

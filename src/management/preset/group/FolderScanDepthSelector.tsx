@@ -1,3 +1,4 @@
+import { sectionLabelClass } from "@ty-plus/ui";
 import type { JSX } from "react";
 import { i18n } from "@/management/i18n/index";
 import { AuthoringSegment } from "@/management/preset/authoring-layout";
@@ -9,14 +10,6 @@ const wrapperClass = css({
 	gap: "1",
 });
 
-const labelClass = css({
-	fontSize: "xs",
-	fontWeight: "medium",
-	textTransform: "uppercase",
-	letterSpacing: "wide",
-	color: "text.muted",
-});
-
 export function FolderScanDepthSelector({
 	recursive,
 	onRecursiveChange,
@@ -26,7 +19,9 @@ export function FolderScanDepthSelector({
 }): JSX.Element {
 	return (
 		<div className={wrapperClass}>
-			<span className={labelClass}>{i18n.t("presets:group.scanDepth")}</span>
+			<span className={sectionLabelClass}>
+				{i18n.t("presets:group.scanDepth")}
+			</span>
 			<AuthoringSegment
 				value={recursive === "true" ? "recursive" : "flat"}
 				onChange={onRecursiveChange}

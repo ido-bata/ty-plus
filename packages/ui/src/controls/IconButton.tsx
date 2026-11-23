@@ -75,9 +75,14 @@ const focusRing = css({
  * The selected surface of a toggle button. It is a fill plus a text colour —
  * not a border, not a size change — so the button keeps the same box in
  * both states and only the surface changes.
+ *
+ * `interactive.active` (ink-12) rather than `surface.widget`: on the ghost
+ * variant the old fill was nearly identical to the surrounding dialog
+ * surface, so `aria-pressed` toggles (e.g. the list/icons view switch)
+ * looked pixel-identical in both states.
  */
 const activeSurface = css({
-	backgroundColor: "surface.widget",
+	backgroundColor: "interactive.active",
 	color: "text.primary",
 });
 

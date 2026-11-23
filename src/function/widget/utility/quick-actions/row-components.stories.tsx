@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
 import type { PresetType } from "@/management/preset/contract";
+import { storyT } from "@/storybook/i18n-story-t";
 import { EffectRow, PresetRow, RootFileRow } from "./row-components";
 import type { PluginEffectIndexRow, QuickActionRootFileRow } from "./types";
 
@@ -10,7 +11,6 @@ type Args = {
 };
 
 const noop = (): void => undefined;
-const stubT = (key: string): string => key;
 const typeLabel = (ty: PresetType): string => {
 	if (ty === "preset") return "Preset root";
 	if (ty === "script") return "Script root";
@@ -78,7 +78,7 @@ const meta = {
 					idx={0}
 					selected={args.selected}
 					widgetInstanceId="row-storybook-1"
-					t={stubT}
+					t={storyT("widgets")}
 					onSelect={noop}
 				/>
 			);
@@ -90,7 +90,7 @@ const meta = {
 					idx={0}
 					selected={args.selected}
 					widgetInstanceId="row-storybook-1"
-					t={stubT}
+					t={storyT("widgets")}
 					typeLabel={typeLabel}
 					onSelect={noop}
 				/>
@@ -103,7 +103,7 @@ const meta = {
 				selected={args.selected}
 				widgetInstanceId="row-storybook-1"
 				tl={typeLabel(samplePreset.type)}
-				t={stubT}
+				t={storyT("widgets")}
 				onSelect={noop}
 			/>
 		);

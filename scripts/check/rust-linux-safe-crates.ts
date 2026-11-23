@@ -48,8 +48,6 @@ export const LINUX_SAFE_CRATES = [
 	"ty-plus-online",
 ] as const;
 
-type LinuxSafeCrate = (typeof LINUX_SAFE_CRATES)[number];
-
 interface CargoDependency {
 	readonly name: string;
 	/** `null` for workspace path dependencies, registry URL for external crates. */

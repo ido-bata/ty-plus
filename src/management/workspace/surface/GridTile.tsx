@@ -7,6 +7,7 @@
  * parent `Grid` inside a single `useMemo`; this module only renders.
  */
 
+import { clampedTextClass } from "@ty-plus/ui";
 import type { CSSProperties, JSX } from "react";
 import { memo } from "react";
 import { i18n } from "@/management/i18n/index";
@@ -70,13 +71,6 @@ const widgetMissingCard = css({
 const widgetMissingTitle = css({
 	fontWeight: "medium",
 	color: "text.primary",
-});
-
-const widgetMissingBody = css({
-	lineClamp: 2,
-	overflow: "hidden",
-	wordBreak: "break-all",
-	opacity: "0.8",
 });
 
 function WorkspacePlacementTileImpl(
@@ -162,7 +156,7 @@ function TileBodyImpl(props: TileBodyProps): JSX.Element {
 						defaultValue: "Widget",
 					})}
 				</span>
-				<span className={widgetMissingBody}>
+				<span className={clampedTextClass}>
 					{i18n.t("workspace:gridTile.configLoadError", {
 						defaultValue: "Configuration could not be loaded",
 					})}

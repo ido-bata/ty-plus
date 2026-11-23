@@ -101,7 +101,7 @@ function buildPrefixRe(prefix: string): RegExp {
 	// Match: opening quote, any non-quote chars, prefix, any non-quote chars, same quote
 	// The regex is built from string parts to avoid template literal issues
 	const quote = "(['\"`])";
-	const middle = "[^'\"`]*" + escaped + "[^'\"`]*";
+	const middle = `[^'"\`]*${escaped}[^'"\`]*`;
 	const backref = "\\1";
 	return new RegExp(quote + middle + backref, "gi");
 }
@@ -115,8 +115,11 @@ function checkMeaningBearingIds(file: string, content: string): Finding[] {
 
 	for (const prefix of FORBIDDEN_PREFIXES) {
 		const re = buildPrefixRe(prefix);
-		let match: RegExpExecArray | null;
-		while ((match = re.exec(content)) !== null) {
+		for (
+			let match = re.exec(content);
+			match !== null;
+			match = re.exec(content)
+		) {
 			const line = content.slice(0, match.index).split("\n").length;
 			const severity = classifyPrefixSeverity(prefix);
 			findings.push(

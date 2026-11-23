@@ -18,7 +18,7 @@ export type DeferredRunner = OperationWorkerRunner & {
 export const deferredRunnerFactory = () => {
 	const runners: DeferredRunner[] = [];
 	const create = (): DeferredRunner => {
-		let release!: () => void;
+		let _release!: () => void;
 		let resolveRun!: (value: unknown) => void;
 		const done = new Promise<unknown>((resolve) => {
 			resolveRun = resolve;

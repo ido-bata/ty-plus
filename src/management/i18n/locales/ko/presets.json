@@ -350,7 +350,8 @@
 			"noScriptsFolder": "스크립트 폴더가 구성되지 않았습니다",
 			"noPluginsFolder": "플러그인 폴더가 구성되지 않았습니다",
 			"noFiles": "파일을 찾을 수 없습니다"
-		}
+		},
+		"folderTypeAria": "폴더 유형"
 	},
 	"iconEditor": {
 		"tabs": {
@@ -365,7 +366,8 @@
 		"imagePlaceholder": "이미지 경로 또는 URL",
 		"iconTextAria": "아이콘 텍스트",
 		"textPlaceholder": "2~6자",
-		"previewAria": "아이콘 미리보기"
+		"previewAria": "아이콘 미리보기",
+		"tabsAria": "아이콘 유형"
 	},
 	"catalogBrowser": {
 		"loading": "로드 중",

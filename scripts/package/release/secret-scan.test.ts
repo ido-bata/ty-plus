@@ -90,12 +90,12 @@ describe("files that actually ship are scanned", () => {
 		try {
 			writeFileSync(
 				path.join(root, "LICENSE"),
-				"text\nghp_" + "A".repeat(36) + "\n",
+				`text\nghp_${"A".repeat(36)}\n`,
 			);
 			writeFileSync(path.join(root, ".debug"), "<x/>\nNOTION_TOKEN=abc\n");
 			writeFileSync(
 				path.join(root, "panel.cjs.map"),
-				'{"x":"ghp_' + "B".repeat(36) + '"}',
+				`{"x":"ghp_${"B".repeat(36)}"}`,
 			);
 			const findings = scanForSecrets(root);
 			const files = findings.map((f) => path.basename(f.file));
@@ -114,7 +114,7 @@ describe("files that actually ship are scanned", () => {
 			// a text finding, and must not crash the scan.
 			writeFileSync(
 				path.join(root, "worker.exe"),
-				Buffer.from("MZghp_" + "C".repeat(36), "utf8"),
+				Buffer.from(`MZghp_${"C".repeat(36)}`, "utf8"),
 			);
 			expect(scanForSecrets(root)).toHaveLength(0);
 		} finally {

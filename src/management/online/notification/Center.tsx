@@ -1,3 +1,4 @@
+import { heading1Class, heading3Class, listItemTitleClass } from "@ty-plus/ui";
 import { IconButton } from "@ty-plus/ui/controls/IconButton";
 import { Icon } from "@ty-plus/ui/Icon";
 import { cx } from "@ty-plus/ui/util/cx";
@@ -51,18 +52,8 @@ const paragraphClass = css({
 	lineHeight: "relaxed",
 	color: "text.primary",
 });
-const heading1Class = css({
-	fontSize: "lg",
-	fontWeight: "semibold",
-	color: "text.primary",
-});
 const heading2Class = css({
 	fontSize: "base",
-	fontWeight: "semibold",
-	color: "text.primary",
-});
-const heading3Class = css({
-	fontSize: "sm",
 	fontWeight: "semibold",
 	color: "text.primary",
 });
@@ -192,12 +183,6 @@ const listItemTitleRowClass = css({
 	display: "flex",
 	alignItems: "center",
 	gap: "0",
-});
-const listItemTitleClass = css({
-	fontSize: "sm",
-	fontWeight: "medium",
-	color: "text.primary",
-	truncate: true,
 });
 const listItemFixtureBadgeClass = css({
 	marginLeft: "2",
@@ -342,11 +327,6 @@ const listHeaderClass = css({
 	borderBottomWidth: "1px",
 	borderBottomStyle: "solid",
 	borderColor: "border.strong",
-});
-const listHeaderTitleClass = css({
-	fontSize: "sm",
-	fontWeight: "semibold",
-	color: "text.primary",
 });
 const listHeaderActionsClass = css({
 	display: "flex",
@@ -619,7 +599,9 @@ function NotificationListItem(props: {
 				<div className={listItemHeaderClass}>
 					<div className={listItemColumnClass}>
 						<div className={listItemTitleRowClass}>
-							<span className={listItemTitleClass}>{item.name}</span>
+							<span className={cx(listItemTitleClass, css({ truncate: true }))}>
+								{item.name}
+							</span>
 							{isFixture && (
 								<span className={listItemFixtureBadgeClass}>
 									{t("notification.fixtureBadge")}
@@ -1029,7 +1011,7 @@ function NotificationListView(props: {
 		<div className={listContainerClass} data-surface-id="dialog-messages">
 			{/* Header */}
 			<header className={listHeaderClass}>
-				<h1 className={listHeaderTitleClass}>
+				<h1 className={heading3Class}>
 					{i18n.t("online:notificationCenter.title")}
 				</h1>
 				<div className={listHeaderActionsClass}>

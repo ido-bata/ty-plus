@@ -150,8 +150,7 @@ function parseImports(content: string): string[] {
 	// Match static import paths: import ... from 'path' or import "path"
 	const re =
 		/import\s+(?:(?:type\s+)?(?:\{[^}]*\}|\*\s+as\s+\w+|\w+)\s+from\s+)?['"]([^'"]+)['"]/g;
-	let m: RegExpExecArray | null;
-	while ((m = re.exec(content)) !== null) {
+	for (let m = re.exec(content); m !== null; m = re.exec(content)) {
 		imports.push(m[1]);
 	}
 	return imports;

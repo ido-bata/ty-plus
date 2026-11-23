@@ -65,7 +65,7 @@ function FileEntrySelectedSummary({
 	summary,
 }: {
 	summary: FileEntrySummary;
-}): JSX.Element {
+}): JSX.Element | null {
 	if (typeof summary === "string") {
 		return (
 			<span
@@ -83,7 +83,15 @@ function FileEntrySelectedSummary({
 	if (summary.folders > 0) {
 		parts.push(`${summary.folders} folder${summary.folders !== 1 ? "s" : ""}`);
 	}
+	// A zero-count summary used to render a bare " selected" label — hide it
+	// entirely instead of showing an empty count.
+	if (parts.length === 0) return null;
 	return <span className={summaryClass}>{parts.join(" ")} selected</span>;
+}
+
+function hasVisibleSummary(summary: FileEntrySummary): boolean {
+	if (typeof summary === "string") return summary.trim().length > 0;
+	return summary.files > 0 || summary.folders > 0;
 }
 
 /**
@@ -178,7 +186,9 @@ function FileEntryListFooter({
 }): JSX.Element {
 	return (
 		<div className={footerClass}>
-			{showSelectedSummary && selectedSummary ? (
+			{showSelectedSummary &&
+			selectedSummary &&
+			hasVisibleSummary(selectedSummary) ? (
 				<div className={summaryWrapClass}>
 					<FileEntrySelectedSummary summary={selectedSummary} />
 				</div>
@@ -347,6 +357,14 @@ const rowInnerClass = css({
  * coexist in the overlap state.
  */
 const rowInnerActiveClass = css({
+	/**
+	 * A faint fill so the active row reads as a state, not just a stray
+	 * separator — the 2px top accent alone was indistinguishable from the
+	 * row border in the visual review.  Kept lighter than the selected
+	 * fill (25%) so active-only stays visually subordinate to selection.
+	 */
+	backgroundColor:
+		"color-mix(in_oklab,var(--color-interactive-hover)_15%,transparent)",
 	boxShadow: "inset 0 2px 0 0 var(--color-border-strong)",
 });
 /**

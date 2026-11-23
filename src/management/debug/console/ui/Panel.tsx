@@ -1,4 +1,11 @@
-import { Button, IconButton, Input, SegmentedControl } from "@ty-plus/ui";
+import {
+	Button,
+	fillSurfaceClass,
+	IconButton,
+	Input,
+	monoMetaClass,
+	SegmentedControl,
+} from "@ty-plus/ui";
 import { ArrowDownToLine } from "@ty-plus/ui/icons";
 import { cx } from "@ty-plus/ui/util/cx";
 import { isIMEComposing } from "@ty-plus/ui/util/keyboard";
@@ -179,7 +186,6 @@ const sourceStyle = css({
 	backgroundColor: "colorMix(in srgb, surface.widget 50%, transparent)",
 	maxWidth: "10rem",
 	truncate: true,
-	opacity: 0.7,
 });
 
 const timeStyle = css({
@@ -187,7 +193,6 @@ const timeStyle = css({
 	color: "text.muted",
 	minWidth: "14.5",
 	fontSize: "text-2xs",
-	opacity: 0.65,
 });
 
 const levelChipStyle = css({
@@ -366,7 +371,7 @@ function SourceFilterTabs({
  * kept, but as an explicit view filter the operator opts into — it is not
  * a retention rule and it never discards history.
  */
-export type FilterScope = "all" | "session";
+type FilterScope = "all" | "session";
 
 const SCOPES: {
 	value: FilterScope;
@@ -427,15 +432,6 @@ export type PanelProps = {
 	messagesRef?: React.RefObject<Element | null>;
 };
 
-const rootStyle = css({
-	width: "full",
-	height: "full",
-	display: "flex",
-	flexDirection: "column",
-	backgroundColor: "surface.dialog",
-	overflow: "hidden",
-});
-
 const headerStyle = css({
 	display: "flex",
 	alignItems: "center",
@@ -473,13 +469,6 @@ const inputRowStyle = css({
 	borderTopWidth: "1px",
 	borderTopStyle: "solid",
 	borderTopColor: "border.subtle",
-});
-
-const promptStyle = css({
-	flexShrink: 0,
-	fontFamily: "mono",
-	fontSize: "text-2xs",
-	color: "text.muted",
 });
 
 /**
@@ -565,7 +554,7 @@ export function Panel({
 	};
 
 	return (
-		<div className={rootStyle}>
+		<div className={fillSurfaceClass}>
 			{/* Header */}
 			<div className={headerStyle}>
 				<span className={titleStyle}>
@@ -611,7 +600,9 @@ export function Panel({
 
 			{/* Input row */}
 			<div className={inputRowStyle}>
-				<span className={promptStyle}>{PROMPT_CHAR}</span>
+				<span className={cx(monoMetaClass, css({ flexShrink: 0 }))}>
+					{PROMPT_CHAR}
+				</span>
 				<Input
 					className={inputStyle}
 					type="text"

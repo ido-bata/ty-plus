@@ -149,7 +149,7 @@ const variants: Record<ButtonVariant, string> = {
 	ghost: css({
 		borderWidth: "1px",
 		borderStyle: "solid",
-		borderColor: "border.default",
+		borderColor: "border.control",
 		backgroundColor: "transparent",
 		color: "text.muted",
 		_hover: {

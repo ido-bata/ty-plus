@@ -145,16 +145,12 @@ export const cluster = cva({
  * Column spans on the 12-column grid. Compose with `grid()`:
  *   <div className={grid()}>
  *     <div className={span5}>…</div>
- *     <div className={span7}>…</div>
+ *     <div className={span8}>…</div>
  *   </div>
  * On mobile every span collapses to full width. These must stay literal
  * css() objects — Panda's static extraction cannot see values returned
  * from helper functions.
  */
-export const span3 = css({
-	minWidth: 0,
-	gridColumn: { base: "1 / -1", md: "span 3" },
-});
 export const span4 = css({
 	minWidth: 0,
 	gridColumn: { base: "1 / -1", md: "span 4" },
@@ -163,17 +159,9 @@ export const span5 = css({
 	minWidth: 0,
 	gridColumn: { base: "1 / -1", md: "span 5" },
 });
-export const span7 = css({
-	minWidth: 0,
-	gridColumn: { base: "1 / -1", md: "span 7" },
-});
 export const span8 = css({
 	minWidth: 0,
 	gridColumn: { base: "1 / -1", md: "span 8" },
-});
-export const span9 = css({
-	minWidth: 0,
-	gridColumn: { base: "1 / -1", md: "span 9" },
 });
 
 /**
@@ -181,8 +169,3 @@ export const span9 = css({
  * viewport edge. Use sparingly for media that should feel edge-to-edge
  * inside a narrow column.
  */
-export const breakout = css({
-	width: "100vw",
-	marginInline: "calc(50% - 50vw)",
-	maxWidth: "100vw",
-});

@@ -1,16 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { storyT } from "@/storybook/i18n-story-t";
 import { css } from "@/styled-system/css";
 
 import { ToolDialogFooter } from "./Footer";
-
-const stubT = (key: string): string => {
-	const map: Record<string, string> = {
-		"presetTool.cancel": "Cancel",
-		"presetTool.create": "Create",
-		"presetTool.status.saving": "Saving...",
-	};
-	return map[key] ?? key;
-};
 
 type Args = {
 	busy: boolean;
@@ -42,7 +34,7 @@ const meta = {
 		<ToolDialogFooter
 			close={() => undefined}
 			busy={args.busy}
-			t={stubT}
+			t={storyT("presets")}
 			onSave={async () => undefined}
 		/>
 	),

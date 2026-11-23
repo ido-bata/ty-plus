@@ -1,4 +1,4 @@
-import { Checkbox } from "@ty-plus/ui";
+import { Checkbox, heading3Class } from "@ty-plus/ui";
 import { Button } from "@ty-plus/ui/controls/Button";
 import { IconButton } from "@ty-plus/ui/controls/IconButton";
 import { SearchField } from "@ty-plus/ui/fields/SearchField";
@@ -553,12 +553,6 @@ const headerRowClass = css({
 	borderBottomWidth: "1px",
 	borderBottomStyle: "solid",
 	borderBottomColor: "border.default",
-});
-const headerTitleClass = css({
-	fontSize: "sm",
-	fontWeight: "semibold",
-	color: "text.primary",
-	truncate: true,
 });
 const headerSpacerClass = css({
 	marginLeft: "auto",
@@ -1884,7 +1878,9 @@ export function PresetLibrary(): JSX.Element {
 							<Icon icon={PanelLeftClose} size={12} />
 						</IconButton>
 					)}
-					<h1 className={headerTitleClass}>{i18n.t("online:catalog.title")}</h1>
+					<h1 className={cx(heading3Class, css({ truncate: true }))}>
+						{i18n.t("online:catalog.title")}
+					</h1>
 					<div className={headerSpacerClass}>
 						<IconButton
 							size="sm"

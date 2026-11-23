@@ -19,7 +19,7 @@ const owner: Owner = {
 };
 
 function source(rel: string, src: string): SourceFile {
-	return { path: `/repo/${rel}`, rel, src };
+	return { path: `/repo/${rel}`, rel, src, imports: [] };
 }
 
 describe("exportedComponents", () => {

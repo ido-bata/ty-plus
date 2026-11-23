@@ -5,7 +5,7 @@ export type ProbeRequestPayload = {
 	message?: string;
 };
 
-export type ProbeResultPayload = {
+type ProbeResultPayload = {
 	accepted: boolean;
 	dialogId: string;
 };
@@ -42,19 +42,6 @@ const _storeResult = async (
 	void win;
 	const { resultKey } = createBridgeKeys(dialogId);
 	resultStore.set(resultKey, payload);
-};
-
-const consumeResult = async (
-	win: Window,
-	dialogId: string,
-): Promise<ProbeResultPayload | null> => {
-	void win;
-	const { resultKey } = createBridgeKeys(dialogId);
-	const payload = resultStore.get(resultKey) ?? null;
-	if (payload) {
-		resultStore.delete(resultKey);
-	}
-	return payload;
 };
 
 const _clearBridge = async (win: Window, dialogId: string) => {

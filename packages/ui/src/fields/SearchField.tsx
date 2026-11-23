@@ -54,7 +54,7 @@ const root = css({
 	borderRadius: "shell-sm",
 	borderWidth: "1px",
 	borderStyle: "solid",
-	borderColor: "border.default",
+	borderColor: "border.control",
 	backgroundColor: "surface.widget",
 	paddingInline: "1.5",
 	paddingBlock: "0.5",
@@ -85,6 +85,8 @@ const innerInput = css({
 	// Issue #144: the inner input must never paint its own focus border —
 	// the wrapper's `_focusWithin` ring is the single focus indicator.
 	_focus: { borderColor: "transparent" },
+	// The wrapper owns the focus indicator (its `_focusWithin` ring). The
+	// inner input must not paint a second one.
 	_focusVisible: {
 		borderColor: "transparent",
 		boxShadow: "none",

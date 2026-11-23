@@ -1,7 +1,4 @@
-import {
-	snapPosition,
-	tracksToPixels,
-} from "@/management/workspace/layout/engine";
+import { tracksToPixels } from "@/management/workspace/layout/engine";
 import type { GridSettings } from "@/management/workspace/layout/grid-document";
 import type { Tile } from "@/management/workspace/surface/tiles";
 
@@ -56,42 +53,5 @@ export function computeGroupPanelFrame(
 		innerCols: tile.width,
 		innerRows: tile.height,
 		memberGridCols,
-	};
-}
-
-function memberIndexFromPanelPoint(
-	localX: number,
-	localY: number,
-	cols: number,
-	itemStridePx: number,
-	memberCount: number,
-): number {
-	if (memberCount <= 0) return 0;
-	const n = Math.max(1, Math.trunc(cols));
-	const stride = Math.max(1, itemStridePx);
-	const col = Math.min(
-		n - 1,
-		Math.max(0, Math.floor(Math.max(0, localX) / stride)),
-	);
-	const row = Math.max(0, Math.floor(Math.max(0, localY) / stride));
-	const idx = row * n + col;
-	return Math.min(memberCount - 1, idx);
-}
-
-function workspaceCellFromClientPoint(
-	scrollEl: Element,
-	gridEl: Element,
-	clientX: number,
-	clientY: number,
-	offsetX: number,
-	offsetY: number,
-	grid: GridSettings,
-): { x: number; y: number } {
-	const gridRect = gridEl.getBoundingClientRect();
-	const localX = clientX - offsetX - gridRect.left + scrollEl.scrollLeft;
-	const localY = clientY - offsetY - gridRect.top + scrollEl.scrollTop;
-	return {
-		x: snapPosition(localX, grid),
-		y: snapPosition(localY, grid),
 	};
 }

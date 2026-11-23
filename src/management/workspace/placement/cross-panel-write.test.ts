@@ -105,7 +105,6 @@ vi.mock("@/management/storage", async () => {
 const win = {} as Window;
 
 const LAYOUT_WITH_PRESET = (
-	presetId: string,
 	rows: Array<{
 		id: string;
 		x: number;
@@ -135,7 +134,7 @@ describe("persistTargetLayout (Issue #146 / Blocker 11 — retry idempotency)", 
 
 	it("calling persistTargetLayout twice with the same catalogIdsToMove → exactly ONE tile on disk; no duplicate", async () => {
 		const presetId = "preset-already-on-target";
-		const initialLayout = LAYOUT_WITH_PRESET(presetId, [
+		const initialLayout = LAYOUT_WITH_PRESET([
 			{ id: presetId, x: 0, y: 0, width: 1, height: 1 },
 		]);
 		// The on-disk layout is a tiny in-memory JSON string per index so the
@@ -193,7 +192,7 @@ describe("persistTargetLayout (Issue #146 / Blocker 11 — retry idempotency)", 
 	it("mixed existing + new ids → only the new id is appended; existing remains singleton", async () => {
 		const existingId = "preset-existing";
 		const newId = "preset-new";
-		const initialLayout = LAYOUT_WITH_PRESET(existingId, [
+		const initialLayout = LAYOUT_WITH_PRESET([
 			{ id: existingId, x: 0, y: 0, width: 1, height: 1 },
 		]);
 		const disk = new Map<1 | 2 | 3 | 4 | 5, string>();

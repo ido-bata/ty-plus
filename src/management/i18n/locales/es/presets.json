@@ -353,7 +353,8 @@
 			"noScriptsFolder": "No hay carpeta de scripts configurada",
 			"noPluginsFolder": "No hay carpeta de plug-ins configurada",
 			"noFiles": "No se encontraron archivos"
-		}
+		},
+		"folderTypeAria": "Tipo de carpeta"
 	},
 	"iconEditor": {
 		"tabs": {
@@ -368,7 +369,8 @@
 		"imagePlaceholder": "Ruta o URL de la imagen",
 		"iconTextAria": "Texto del icono",
 		"textPlaceholder": "2-6 caracteres",
-		"previewAria": "Vista previa del icono"
+		"previewAria": "Vista previa del icono",
+		"tabsAria": "Tipo de icono"
 	},
 	"catalogBrowser": {
 		"loading": "Cargando",

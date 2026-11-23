@@ -1,4 +1,12 @@
-import { Icon } from "@ty-plus/ui";
+import {
+	dialogContentClass,
+	dialogFooterClass,
+	Icon,
+	iconActionButtonClass,
+	rowMetaClass,
+	rowTitleClass,
+	sectionLabelClass,
+} from "@ty-plus/ui";
 import { Button } from "@ty-plus/ui/controls/Button";
 import { Input } from "@ty-plus/ui/fields/Input";
 import { PathField } from "@ty-plus/ui/fields/PathField";
@@ -58,21 +66,13 @@ import { readTextFile } from "@/management/storage";
 import { executeWorkspacePresetForWindow } from "@/management/workspace/core/runtime";
 import { openPresetEditSurface } from "@/management/workspace/hooks/preset";
 import { notifyPanelsAfterPresetSave } from "@/management/workspace/placement/notify-panels-after-preset-save";
-import { css } from "@/styled-system/css";
+import { css, cx } from "@/styled-system/css";
 
 export type PresetEditDialogProps = {
 	presetId: string;
 	onSaved?: () => void;
 	onDeleted?: () => void;
 };
-
-const FIELD_LABEL_CLASS = css({
-	fontSize: "xs",
-	fontWeight: "medium",
-	textTransform: "uppercase",
-	letterSpacing: "wide",
-	color: "text.muted",
-});
 
 const memberRowPendingClass = css({
 	display: "flex",
@@ -149,21 +149,10 @@ const memberTitleColumnClass = css({
 	minWidth: "0",
 });
 
-const memberTitleClass = css({
-	overflow: "hidden",
-	textOverflow: "ellipsis",
-	whiteSpace: "nowrap",
-	fontSize: "shell-text-sm",
-	fontWeight: "medium",
-	color: "text.primary",
-});
-
-const memberTypeClass = css({
-	overflow: "hidden",
-	textOverflow: "ellipsis",
-	whiteSpace: "nowrap",
-	fontSize: "xs",
-	color: "text.muted",
+const memberActionButtonDisabledClass = css({
+	_disabled: {
+		opacity: 0.3,
+	},
 });
 
 const memberActionsClass = css({
@@ -171,28 +160,6 @@ const memberActionsClass = css({
 	flexShrink: "0",
 	alignItems: "center",
 	gap: "0.5",
-});
-
-const memberActionButtonClass = css({
-	display: "inline-flex",
-	height: "5",
-	width: "5",
-	flexShrink: "0",
-	alignItems: "center",
-	justifyContent: "center",
-	borderRadius: "shell-sm",
-	borderWidth: "1px",
-	borderStyle: "solid",
-	borderColor: "border.default",
-	backgroundColor: "surface.widget/50",
-	color: "text.muted",
-	_hover: {
-		backgroundColor: "interactive.hover",
-		color: "text.primary",
-	},
-	_disabled: {
-		opacity: 0.3,
-	},
 });
 
 const stackClass = css({
@@ -248,25 +215,7 @@ const rootColumnClass = css({
  * class only adjusts padding / overflow so the editor body uses the full
  * panel width without the default shell gutter.
  */
-const editContentClass = css({
-	display: "flex",
-	minHeight: 0,
-	minWidth: 0,
-	flexDirection: "column",
-	overflow: "hidden",
-	paddingInline: "0",
-	backgroundColor: "surface.dialog",
-});
-
 /** Footer adds a divider and shell-aligned padding for the action row. */
-const editFooterClass = css({
-	borderTopWidth: "1px",
-	borderTopStyle: "solid",
-	borderTopColor: "border.default",
-	paddingInline: "var(--ty-shell-pad-inline)",
-	paddingBlock: "var(--ty-shell-space)",
-});
-
 function parseEasingCurveText(value: string): unknown {
 	try {
 		const parsed = JSON.parse(value);
@@ -560,16 +509,16 @@ const GroupMemberItem = ({
 			</div>
 			{/* Title + type */}
 			<div className={memberTitleColumnClass}>
-				<div className={memberTitleClass}>
+				<div className={rowTitleClass}>
 					{member.title || member.filePath.split(/[\\/]/).pop() || member.id}
 				</div>
-				<div className={memberTypeClass}>{member.type}</div>
+				<div className={rowMetaClass}>{member.type}</div>
 			</div>
 			{/* Run + Edit + Delete actions */}
 			<div className={memberActionsClass}>
 				<button
 					type="button"
-					className={memberActionButtonClass}
+					className={cx(iconActionButtonClass, memberActionButtonDisabledClass)}
 					aria-label={t("edit.memberRun", {
 						name: member.title || member.id,
 					})}
@@ -581,7 +530,7 @@ const GroupMemberItem = ({
 				</button>
 				<button
 					type="button"
-					className={memberActionButtonClass}
+					className={cx(iconActionButtonClass, memberActionButtonDisabledClass)}
 					aria-label={t("edit.memberEdit", {
 						name: member.title || member.id,
 					})}
@@ -593,7 +542,7 @@ const GroupMemberItem = ({
 				</button>
 				<button
 					type="button"
-					className={memberActionButtonClass}
+					className={cx(iconActionButtonClass, memberActionButtonDisabledClass)}
 					aria-label={t("edit.memberDelete", {
 						name: member.title || member.id,
 					})}
@@ -666,7 +615,7 @@ const PresetEditFormFields = ({
 			<>
 				{/* Group title */}
 				<div className={stackClass}>
-					<span className={FIELD_LABEL_CLASS}>
+					<span className={sectionLabelClass}>
 						{t("group.fields.groupName")}
 					</span>
 					<Input
@@ -683,7 +632,7 @@ const PresetEditFormFields = ({
 
 				{/* Group members list */}
 				<div className={stackClass}>
-					<span className={FIELD_LABEL_CLASS}>
+					<span className={sectionLabelClass}>
 						{t("edit.memberPresets", { count: memberIds.length })}
 					</span>
 					<ul className={memberPickerListClass}>
@@ -786,7 +735,7 @@ const PresetEditFormFields = ({
 		<>
 			{/* Preset name */}
 			<div className={stackClass}>
-				<span className={FIELD_LABEL_CLASS}>{t("edit.fields.presetName")}</span>
+				<span className={sectionLabelClass}>{t("edit.fields.presetName")}</span>
 				<Input
 					label=""
 					placeholder={t("edit.fields.presetNamePlaceholder")}
@@ -801,7 +750,7 @@ const PresetEditFormFields = ({
 
 			{/* File path */}
 			<div className={stackClass}>
-				<span className={FIELD_LABEL_CLASS}>{t("edit.fields.filePath")}</span>
+				<span className={sectionLabelClass}>{t("edit.fields.filePath")}</span>
 				<PathField
 					value={form.filePath}
 					onChange={(next) =>
@@ -842,7 +791,7 @@ const PresetEditFormFields = ({
 			{/* Easing metadata editor */}
 			{showEasingEditor && (
 				<div className={stackClass}>
-					<span className={FIELD_LABEL_CLASS}>
+					<span className={sectionLabelClass}>
 						{t("presetTool.easing.curve")}
 					</span>
 					<Input
@@ -863,7 +812,7 @@ const PresetEditFormFields = ({
 			{/* Code editor */}
 			{showCodeEditor && (
 				<div className={stackClass}>
-					<span className={FIELD_LABEL_CLASS}>{t("edit.code")}</span>
+					<span className={sectionLabelClass}>{t("edit.code")}</span>
 					<Editor
 						value={form.codeContent}
 						onChange={(value) =>
@@ -1168,8 +1117,8 @@ export function PresetEditDialog(props: PresetEditDialogProps): JSX.Element {
 			}
 			surfaceId="dialog-preset-edit"
 			modifier="wsd-root--preset-edit"
-			contentClassName={editContentClass}
-			footerClassName={editFooterClass}
+			contentClassName={dialogContentClass}
+			footerClassName={dialogFooterClass}
 			footer={
 				<DialogFooterActions>
 					<Button

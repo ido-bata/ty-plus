@@ -85,7 +85,6 @@ const PATTERNS: readonly RegExp[] = [
 
 	// Workspace widget anchors.
 	attr("data-widget-instance-id"),
-	attr("data-widget-text-style"),
 	attr("data-widget-quick-actions"),
 
 	// Panel surface / dialog surface anchors.
@@ -126,12 +125,6 @@ const PATTERNS: readonly RegExp[] = [
  * want the loose behaviour can opt in.  The validator (rule E015) and
  * all production call sites use the strict variant.
  */
-const isSelectorWhitelisted = (selector: string): boolean => {
-	if (typeof selector !== "string" || selector.length === 0) return false;
-	const tokens = selector.split(/\s+/).filter((t) => t.length > 0);
-	if (tokens.length === 0) return false;
-	return tokens.some((token) => PATTERNS.some((re) => re.test(token)));
-};
 
 /**
  * Round-3 Blocker 2 — strict whitelist check.

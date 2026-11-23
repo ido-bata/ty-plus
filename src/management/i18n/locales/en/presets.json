@@ -351,7 +351,8 @@
 			"noScriptsFolder": "No scripts folder configured",
 			"noPluginsFolder": "No plugins folder configured",
 			"noFiles": "No files found"
-		}
+		},
+		"folderTypeAria": "Folder type"
 	},
 	"iconEditor": {
 		"tabs": {
@@ -366,7 +367,8 @@
 		"imagePlaceholder": "Image path or URL",
 		"iconTextAria": "Icon text",
 		"textPlaceholder": "2-6 characters",
-		"previewAria": "Icon preview"
+		"previewAria": "Icon preview",
+		"tabsAria": "Icon type"
 	},
 	"catalogBrowser": {
 		"loading": "Loading",

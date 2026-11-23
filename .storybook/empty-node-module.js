@@ -32,7 +32,6 @@ export const execFileSync = noop;
 export const ChildProcess = class {};
 
 export const EventEmitter = class {
-	constructor() {}
 	on() {
 		return this;
 	}

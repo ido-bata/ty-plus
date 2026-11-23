@@ -18,6 +18,7 @@
  * the same way a controlled state reset would be.
  */
 
+import { clampedTextClass } from "@ty-plus/ui";
 import { Component, type ErrorInfo, type JSX, type ReactNode } from "react";
 import { i18n } from "@/management/i18n/index";
 import { css } from "@/styled-system/css";
@@ -42,13 +43,6 @@ const fallbackCard = css({
 const fallbackTitle = css({
 	fontWeight: "medium",
 	color: "text.primary",
-});
-
-const fallbackDigest = css({
-	lineClamp: 2,
-	overflow: "hidden",
-	wordBreak: "break-all",
-	opacity: "0.8",
 });
 
 const retryButton = css({
@@ -176,7 +170,7 @@ export function DefaultWidgetErrorFallback(
 			className={fallbackCard}
 		>
 			<span className={fallbackTitle}>{name}</span>
-			<span className={fallbackDigest}>{digest}</span>
+			<span className={clampedTextClass}>{digest}</span>
 			<button type="button" onClick={onRetry} className={retryButton}>
 				{i18n.t("common:panel.errorBoundary.retry")}
 			</button>

@@ -103,45 +103,45 @@ export const extendscriptConfig = (
 			nodeResolve({
 				extensions,
 			}),
-		babel({
-			extensions,
-			exclude: /node_modules/,
-			babelrc: false,
-			babelHelpers: "inline",
-			presets: [
-				[
-					"@babel/preset-env",
-					{
-						targets: { ie: "6" }, // IE6 is roughly equivalent to ES3
-						modules: false,
-					},
+			babel({
+				extensions,
+				exclude: /node_modules/,
+				babelrc: false,
+				babelHelpers: "inline",
+				presets: [
+					[
+						"@babel/preset-env",
+						{
+							targets: { ie: "6" }, // IE6 is roughly equivalent to ES3
+							modules: false,
+						},
+					],
+					"@babel/preset-typescript",
 				],
-				"@babel/preset-typescript",
-			],
-			assumptions: {
-				arrayLikeIsIterable: true,
-				constantReexports: true,
-				ignoreFunctionLength: true,
-				ignoreToPrimitiveHint: true,
-				mutableTemplateObject: true,
-				noClassCalls: true,
-				noDocumentAll: true,
-				objectRestNoSymbols: true,
-				privateFieldsAsProperties: true,
-				pureGetters: true,
-				setClassMethods: true,
-				setComputedProperties: true,
-				setPublicClassFields: true,
-				setSpreadProperties: true,
-				skipForOfIteratorClosing: true,
-				superIsCallableConstructor: true,
-			},
-			plugins: [
-				"@babel/plugin-transform-class-properties",
-				"@babel/plugin-transform-private-methods",
-				"@babel/plugin-transform-private-property-in-object",
-			],
-		}),
+				assumptions: {
+					arrayLikeIsIterable: true,
+					constantReexports: true,
+					ignoreFunctionLength: true,
+					ignoreToPrimitiveHint: true,
+					mutableTemplateObject: true,
+					noClassCalls: true,
+					noDocumentAll: true,
+					objectRestNoSymbols: true,
+					privateFieldsAsProperties: true,
+					pureGetters: true,
+					setClassMethods: true,
+					setComputedProperties: true,
+					setPublicClassFields: true,
+					setSpreadProperties: true,
+					skipForOfIteratorClosing: true,
+					superIsCallableConstructor: true,
+				},
+				plugins: [
+					"@babel/plugin-transform-class-properties",
+					"@babel/plugin-transform-private-methods",
+					"@babel/plugin-transform-private-property-in-object",
+				],
+			}),
 			// Temporarily disable jsxPonyfill due to ExtendScript regex compatibility issues
 			// The minified JSON polyfill contains \n and \r in regex character classes
 			// which ExtendScript misinterprets as line terminators
@@ -166,7 +166,7 @@ export const extendscriptConfig = (
 		// Vite exposes no API to trigger HMR from this Rollup watcher; touch each panel
 		// HTML entry under src/js so the dev server reloads (see vite.config root = src/js).
 		console.log("ExtendScript Change");
-		cepConfig.panels.map((panel) => {
+		cepConfig.panels.forEach((panel) => {
 			const tmpPath = path.join(process.cwd(), "src", "js", panel.mainPath);
 			if (fs.existsSync(tmpPath)) {
 				const txt = fs.readFileSync(tmpPath, { encoding: "utf-8" });

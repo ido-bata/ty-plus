@@ -35,7 +35,7 @@ import * as pandaTokens from "../../panda.tokens";
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, "..", "..");
 const WEB_DIR = join(ROOT, "apps", "web", "src");
-const SHARED_UI_DIR = join(ROOT, "packages", "ui", "src");
+const _SHARED_UI_DIR = join(ROOT, "packages", "ui", "src");
 const ALLOWLIST_PATH = join(ROOT, "apps", "web", "design-lint-allowlist.json");
 
 export type Violation = {

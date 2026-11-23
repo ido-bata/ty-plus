@@ -82,7 +82,7 @@ export type AppendWidgetFromDialogDiskInput = {
  * emitted for the same operation, so `reason` is a stable diagnostic key rather
  * than a user-facing sentence.
  */
-export type AppendWidgetFailureReason =
+type AppendWidgetFailureReason =
 	/** The managed `…/ty-plus` persistence root could not be resolved. */
 	| "persistence-root-unavailable"
 	/** The requested widget type is not in the registry, or is not available. */

@@ -40,6 +40,9 @@ try {
 	console.log("  - Obfuscated code patterns");
 	console.log("  - Malicious package.json scripts");
 } catch (err) {
-	console.log("Failed to install git hooks:", err.message);
+	console.log(
+		"Failed to install git hooks:",
+		err instanceof Error ? err.message : String(err),
+	);
 	process.exit(1);
 }

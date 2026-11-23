@@ -88,8 +88,6 @@ export const SHELL_CHANNELS = {
 	debug: "com.typlus.workspace.debug",
 } as const;
 
-type ShellChannel = (typeof SHELL_CHANNELS)[keyof typeof SHELL_CHANNELS];
-
 /** For `SurfaceMessageEnvelope.payload` (preset list / sync state. Used for market fetch result sharing) */
 export type PresetsPayload =
 	| {
@@ -103,18 +101,6 @@ export type PresetsPayload =
 			requestId: string;
 			sourceSurfaceId: string;
 	  };
-
-/**
- * Single line displayed on receiver side (notification / system delivery).
- * Data equivalent to archive notification list is assumed to be fetched from backend later and placed here.
- * Dialog itself does **not send** (receive only).
- */
-type MessagesPayload = {
-	kind: "line";
-	text: string;
-	sourceSurfaceId: string;
-	at: string;
-};
 
 /** Settings summary (for backend connection status display. Excludes secrets) */
 export type SettingsPayload =
@@ -235,74 +221,3 @@ export type OnboardingPayload = {
 	/** ISO timestamp at which completion was published. */
 	at: string;
 };
-
-/**
- * Issue #129: cross-surface diagnostic log replay (request/response).
- *
- * Carried on `SHELL_CHANNELS.debug`. Live log entries flow as
- * `kind: "publish"` envelopes (see `LogWirePayload` below). When a
- * Debug Console opens *after* boot, it must ask surfaces for a snapshot
- * of their LogBus ring buffer to see entries that already happened —
- * the CEP event bus does not retain history.
- *
- * Request shape (`kind: "request"`, `targetSurfaceId` optional — omit
- * to broadcast to all surfaces; the panel processes only requests
- * addressed to it OR broadcast requests):
- */
-type DebugLogReplayRequest = {
-	kind: "replay-request";
-	/** Identifier the requester puts in `correlationId` so it can pair the response. */
-	requestId: string;
-	/** ISO timestamp of the requester's session start; respondents may filter older entries out. */
-	since?: string;
-	/** Optional upper bound on entries the requester is willing to receive. */
-	maxEntries?: number;
-};
-
-/**
- * Response to a `DebugLogReplayRequest`. Sent via
- * `kind: "response"` with `targetSurfaceId` set to the requester's
- * surfaceId and `correlationId` echoed from the request.
- *
- * `entries` is the requester's view of the respondent's LogBus
- * snapshot, already converted to wire-payload form (JSON-safe). The
- * respondent is responsible for any sanitization; the size cap and
- * field caps are enforced at conversion time.
- */
-type DebugLogReplayResponse = {
-	kind: "replay-response";
-	requestId: string;
-	/** Surface that produced this snapshot. */
-	sourceSurfaceId: string;
-	entries: ReadonlyArray<{
-		readonly v: 1;
-		readonly id: string;
-		readonly level: string;
-		readonly text: string;
-		readonly timestamp: string;
-		readonly source?: string;
-	}>;
-	/** ISO timestamp the snapshot was taken; the requester dedupes against live events by `id`. */
-	takenAt: string;
-};
-
-/**
- * Live log entry broadcast on `SHELL_CHANNELS.debug` (`kind: "publish"`).
- * Same shape as the legacy `WirePayload` (debug-console contract); the
- * canonical type lives in `management/debug/console/types.ts` but is
- * duplicated here so the surface contract is self-describing.
- */
-type DebugLogWirePayload = {
-	readonly v: 1;
-	readonly id: string;
-	readonly level: string;
-	readonly text: string;
-	readonly timestamp: string;
-	readonly source?: string;
-};
-
-/** Union of all payloads carried on `SHELL_CHANNELS.debug`. */
-type DebugChannelPayload =
-	| DebugLogWirePayload
-	| DebugLogReplayRequest
-	| DebugLogReplayResponse;

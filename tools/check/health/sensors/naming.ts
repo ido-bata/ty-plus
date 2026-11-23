@@ -9,7 +9,7 @@
  */
 
 import { existsSync, readdirSync, readFileSync } from "node:fs";
-import { join, relative, resolve } from "node:path";
+import { join, relative } from "node:path";
 import {
 	getNamedSymbols as extractNamedSymbols,
 	type NamedSymbol,
@@ -42,7 +42,7 @@ export function run(srcRoot: string): Finding[] {
 // Path redundancy
 // ---------------------------------------------------------------------------
 
-function checkPathRedundancy(file: string, srcRoot: string): Finding[] {
+function checkPathRedundancy(file: string, _srcRoot: string): Finding[] {
 	const findings: Finding[] = [];
 	const rel = relative(process.cwd(), file).replace(/\\/g, "/");
 	const segments = rel.split(/[/\\]/u);

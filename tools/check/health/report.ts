@@ -4,7 +4,7 @@
  */
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { dirname, join } from "node:path";
+import { dirname } from "node:path";
 import type {
 	Finding,
 	HealthReport,
@@ -33,7 +33,7 @@ function scoreReport(findings: Finding[]): number {
 	return clamp(100 - total, 0, 100);
 }
 
-export function loadTrend(trendPath: string): TrendEntry | null {
+function loadTrend(trendPath: string): TrendEntry | null {
 	if (!existsSync(trendPath)) return null;
 	try {
 		return JSON.parse(readFileSync(trendPath, "utf-8")) as TrendEntry;

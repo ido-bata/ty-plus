@@ -1,4 +1,4 @@
-import { SegmentedControl } from "@ty-plus/ui";
+import { SegmentedControl, sectionTitleClass } from "@ty-plus/ui";
 import type { JSX, ReactNode } from "react";
 import { css, cx } from "@/styled-system/css";
 
@@ -35,17 +35,11 @@ const sectionColumnClass = css({
 	gap: "2",
 });
 
-const sectionTitleClass = css({
+const sectionHeadingClass = css({
 	display: "flex",
 	minWidth: "0",
 	flexDirection: "column",
 	gap: "0.5",
-});
-
-const sectionTitleTextClass = css({
-	fontSize: "shell-text-sm",
-	fontWeight: "semibold",
-	color: "text.primary",
 });
 
 const sectionDescriptionClass = css({
@@ -53,12 +47,14 @@ const sectionDescriptionClass = css({
 	color: "text.muted",
 });
 
-const inlineActionsClass = css({
-	display: "flex",
-	width: "full",
-	minWidth: "0",
-	flexWrap: "wrap",
-	gap: "2",
+/**
+ * Visual treatment for an authoring region while its dialog is busy
+ * (saving).  Pair it with the `inert` attribute on the same element — the
+ * dim alone does not block interaction and `inert` alone gives no visual
+ * cue, so a busy section needs both to read as disabled.
+ */
+export const authoringBusyClass = css({
+	opacity: "0.5",
 });
 
 export function AuthoringGrid({
@@ -94,8 +90,8 @@ export function AuthoringSection({
 	return (
 		<AuthoringField span={span}>
 			<div className={sectionColumnClass}>
-				<div className={sectionTitleClass}>
-					<span className={sectionTitleTextClass}>{title}</span>
+				<div className={sectionHeadingClass}>
+					<span className={sectionTitleClass}>{title}</span>
 					{description ? (
 						<span className={sectionDescriptionClass}>{description}</span>
 					) : null}
@@ -126,12 +122,4 @@ export function AuthoringSegment({
 			aria-label={ariaLabel}
 		/>
 	);
-}
-
-function AuthoringInlineActions({
-	children,
-}: {
-	children: ReactNode;
-}): JSX.Element {
-	return <div className={inlineActionsClass}>{children}</div>;
 }

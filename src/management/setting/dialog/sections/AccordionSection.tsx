@@ -1,3 +1,4 @@
+import { cardTitleClass } from "@ty-plus/ui";
 import { Icon } from "@ty-plus/ui/Icon";
 import { cx } from "@ty-plus/ui/util/cx";
 import { ChevronDown } from "lucide-react";
@@ -36,12 +37,6 @@ const triggerStyle = css({
 	textAlign: "left",
 	borderRadius: "shell-sm",
 	_hover: { backgroundColor: "interactive.hover" },
-});
-
-const triggerTitleStyle = css({
-	fontSize: "text-sm",
-	fontWeight: "medium",
-	color: "text.primary",
 });
 
 const triggerIconStyle = css({
@@ -106,7 +101,7 @@ export function AccordionSection({
 				onClick={() => setIsOpen(!isOpen)}
 				aria-expanded={isOpen}
 			>
-				<span className={triggerTitleStyle}>{title}</span>
+				<span className={cardTitleClass}>{title}</span>
 				<Icon
 					icon={ChevronDown}
 					size={16}

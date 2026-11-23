@@ -10,7 +10,7 @@ const root = process.cwd();
 const read = (relativePath: string): string =>
 	readFileSync(path.join(root, relativePath), "utf8");
 const fail = (message: string): void => {
-	console.error("[public-readme] " + message);
+	console.error(`[public-readme] ${message}`);
 	process.exitCode = 1;
 };
 
@@ -27,7 +27,7 @@ if (!locales.includes("en") || locales.length !== new Set(locales).size) {
 	);
 }
 const readmes = locales.map((locale) =>
-	locale === "en" ? "README.md" : "README." + locale + ".md",
+	locale === "en" ? "README.md" : `README.${locale}.md`,
 );
 
 const requiredTargets = [
@@ -46,19 +46,19 @@ const isRemote = (target: string): boolean =>
 
 for (const file of readmes) {
 	if (!existsSync(path.join(root, file))) {
-		fail("missing supported locale README: " + file);
+		fail(`missing supported locale README: ${file}`);
 		continue;
 	}
 	const content = read(file);
 	const targets = [...content.matchAll(localMarkdownLink)].map((m) => m[1]);
 	for (const linked of readmes) {
 		if (!targets.includes(linked)) {
-			fail(file + ": language navigation omits " + linked);
+			fail(`${file}: language navigation omits ${linked}`);
 		}
 	}
 	for (const required of requiredTargets) {
 		if (!content.includes(required)) {
-			fail(file + ": missing public entrypoint link " + required);
+			fail(`${file}: missing public entrypoint link ${required}`);
 		}
 	}
 	for (const target of targets) {
@@ -66,11 +66,11 @@ for (const file of readmes) {
 		if (
 			!existsSync(path.resolve(path.dirname(path.join(root, file)), target))
 		) {
-			fail(file + ": local link target not found: " + target);
+			fail(`${file}: local link target not found: ${target}`);
 		}
 	}
 	if (/^(?:<{7}|={7}|>{7})/m.test(content)) {
-		fail(file + ": unresolved merge conflict marker");
+		fail(`${file}: unresolved merge conflict marker`);
 	}
 }
 
@@ -81,7 +81,7 @@ for (const file of [
 	"SECURITY.md",
 ]) {
 	if (/^(?:<{7}|={7}|>{7})/m.test(read(file))) {
-		fail(file + ": unresolved merge conflict marker");
+		fail(`${file}: unresolved merge conflict marker`);
 	}
 }
 
