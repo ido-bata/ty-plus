@@ -453,7 +453,7 @@ const captureOne = async (
 		await page.waitForFunction(
 			() =>
 				window.__STORYBOOK_PREVIEW__?.currentRender?.phase === "finished" &&
-				(document.getElementById("storybook-root")?.childElementCount ?? 0) > 0,
+				(document.getElementById("storybook-root")?.childNodes.length ?? 0) > 0,
 			{ timeout: timeoutMs },
 		);
 		// Give React + decorators a beat for layout effects.
