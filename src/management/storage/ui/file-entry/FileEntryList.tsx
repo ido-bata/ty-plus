@@ -334,7 +334,7 @@ const shellRowWrap = css({
 	 */
 	_hover: {
 		backgroundColor:
-			"color-mix(in oklab,var(--color-interactive-hover)_38%,transparent)",
+			"color-mix(in oklab, var(--color-interactive-hover) 38%, transparent)",
 	},
 	"&:last-child": { borderBottomWidth: 0 },
 });
@@ -364,7 +364,7 @@ const rowInnerActiveClass = css({
 	 * fill (25%) so active-only stays visually subordinate to selection.
 	 */
 	backgroundColor:
-		"color-mix(in_oklab,var(--color-interactive-hover)_15%,transparent)",
+		"color-mix(in oklab, var(--color-interactive-hover) 15%, transparent)",
 	boxShadow: "inset 0 2px 0 0 var(--color-border-strong)",
 });
 /**
@@ -383,7 +383,7 @@ const rowInnerActiveClass = css({
  */
 const rowInnerSelectedClass = css({
 	backgroundColor:
-		"color-mix(in_oklab,var(--color-interactive-hover)_25%,transparent)",
+		"color-mix(in oklab, var(--color-interactive-hover) 25%, transparent)",
 	boxShadow: "inset 2px 0 0 0 var(--color-border-strong)",
 });
 /**
@@ -399,7 +399,7 @@ const rowInnerSelectedClass = css({
  */
 const rowInnerActiveAndSelectedClass = css({
 	backgroundColor:
-		"color-mix(in_oklab,var(--color-interactive-hover)_25%,transparent)",
+		"color-mix(in oklab, var(--color-interactive-hover) 25%, transparent)",
 	boxShadow:
 		"inset 0 2px 0 0 var(--color-border-strong), inset 2px 0 0 0 var(--color-border-strong)",
 });
@@ -600,7 +600,7 @@ const upRowClass = css({
 	borderBottomStyle: "solid",
 	borderBottomColor: "border.default",
 	backgroundColor:
-		"color-mix(in_oklab,var(--color-surface-widget)_50%,var(--color-surface-dialog))",
+		"color-mix(in oklab, var(--color-surface-widget) 50%, var(--color-surface-dialog))",
 });
 const listEmptyLabelClass = css({
 	paddingInline: "2",

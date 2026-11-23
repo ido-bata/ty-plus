@@ -13,6 +13,10 @@
  *     multiplier, so values like 1 / 1.2 / 1.5 are legitimate; anything larger
  *     is a spacing-token confusion. Use rem/px, a named token (tight/snug/
  *     normal/relaxed), or an explicit multiplier <= 2.9.
+ *   - `color-mix(...)` arguments must not contain `_`. Panda does not turn
+ *     underscores into spaces inside these strings, so `in_oklab` or
+ *     `)_15%` reach the stylesheet verbatim and the whole declaration is
+ *     dropped by the browser (observed: FileEntryList row state fills, #470).
  *
  * Exit codes:
  *   0 - All checks pass
@@ -46,6 +50,21 @@ const SKIP_FILES = /\.(test|spec)\.[tj]sx?$/;
 const LINE_HEIGHT_VALUE =
 	/lineHeight\s*:\s*(?:"([^"]*)"|'([^']*)'|([0-9]+(?:\.[0-9]+)?))/g;
 
+/**
+ * Matches one `color-mix(...)` call, tolerating a single level of nested
+ * parens (`var(--x)`). Args live inside a JS string, so the match runs on
+ * the raw source line.
+ */
+const COLOR_MIX_CALL = /color-mix\((?:[^()]|\([^()]*\))*\)/g;
+
+const colorMixHasUnderscore = (call: string): boolean => {
+	// Custom property names inside var() may legitimately contain `_`;
+	// everywhere else in a color-mix argument an underscore is a space that
+	// Panda failed to emit.
+	const stripped = call.replace(/var\([^)]*\)/g, "var()");
+	return stripped.includes("_");
+};
+
 const isUnitlessMultiplier = (raw: string): boolean => {
 	if (!/^[0-9]+(?:\.[0-9]+)?$/.test(raw)) return false;
 	return Number(raw) >= 3;
@@ -70,12 +89,17 @@ const collectFiles = (dir: string): string[] => {
 	return out;
 };
 
-const violations: { file: string; line: number; value: string }[] = [];
+const violations: {
+	file: string;
+	line: number;
+	kind: "lineHeight" | "color-mix";
+	value: string;
+}[] = [];
 
 for (const dir of SCAN_DIRS) {
 	for (const file of collectFiles(join(REPO_ROOT, dir))) {
 		const text = readFileSync(file, "utf8");
-		if (!text.includes("lineHeight")) continue;
+		if (!text.includes("lineHeight") && !text.includes("color-mix(")) continue;
 		const lines = text.split("\n");
 		for (let i = 0; i < lines.length; i++) {
 			const line = lines[i] ?? "";
@@ -90,7 +114,23 @@ for (const dir of SCAN_DIRS) {
 					violations.push({
 						file: file.slice(REPO_ROOT.length + 1),
 						line: i + 1,
+						kind: "lineHeight",
 						value: raw,
+					});
+				}
+			}
+			COLOR_MIX_CALL.lastIndex = 0;
+			for (
+				let m = COLOR_MIX_CALL.exec(line);
+				m !== null;
+				m = COLOR_MIX_CALL.exec(line)
+			) {
+				if (colorMixHasUnderscore(m[0])) {
+					violations.push({
+						file: file.slice(REPO_ROOT.length + 1),
+						line: i + 1,
+						kind: "color-mix",
+						value: m[0],
 					});
 				}
 			}
@@ -99,14 +139,26 @@ for (const dir of SCAN_DIRS) {
 }
 
 if (violations.length > 0) {
-	console.error(
-		"panda-token-values: unitless lineHeight >= 3 detected (spacing-token confusion?):",
-	);
-	for (const v of violations) {
-		console.error(`  ${v.file}:${v.line}  lineHeight: "${v.value}"`);
+	const lineHeightHits = violations.filter((v) => v.kind === "lineHeight");
+	const colorMixHits = violations.filter((v) => v.kind === "color-mix");
+	if (lineHeightHits.length > 0) {
+		console.error(
+			"panda-token-values: unitless lineHeight >= 3 detected (spacing-token confusion?):",
+		);
+		for (const v of lineHeightHits) {
+			console.error(`  ${v.file}:${v.line}  lineHeight: "${v.value}"`);
+		}
+	}
+	if (colorMixHits.length > 0) {
+		console.error(
+			"panda-token-values: underscore inside color-mix() (Panda emits it verbatim; the declaration is dropped):",
+		);
+		for (const v of colorMixHits) {
+			console.error(`  ${v.file}:${v.line}  ${v.value}`);
+		}
 	}
 	console.error(
-		"\nUse a rem/px value, a named token (tight/snug/normal/relaxed), or an explicit multiplier <= 2.9.",
+		"\nUse a rem/px value or named token for lineHeight; write color-mix() arguments as valid CSS with real spaces.",
 	);
 	process.exit(1);
 }

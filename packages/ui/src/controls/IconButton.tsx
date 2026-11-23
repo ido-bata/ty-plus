@@ -81,11 +81,11 @@ const focusRing = css({
  * surface, so `aria-pressed` toggles (e.g. the list/icons view switch)
  * looked pixel-identical in both states.
  */
+// Attribute-scoped so the rule outranks the variant classes regardless of
+// stylesheet order: `.cls[data-active]` (0,2,0) always beats a bare variant
+// class (0,1,0). A plain class lost the cascade to `ghost`'s transparent
+// background, making `aria-pressed` toggles pixel-identical (#470).
 const activeSurface = css({
-	// Scoped by attribute (specificity 0-2-0): the variant classes set
-	// `backgroundColor`/`color` at 0-1-0 and stylesheet order between
-	// atomic classes is not guaranteed, so a plain class here could lose
-	// to e.g. the ghost variant's transparent fill.
 	"&[data-active]": {
 		backgroundColor: "interactive.active",
 		color: "text.primary",
@@ -106,6 +106,7 @@ export function IconButton(props: IconButtonProps): ReactElement {
 	return (
 		<button
 			type={type ?? "button"}
+			data-active={active || undefined}
 			className={cx(
 				base,
 				sizeMap[size],
@@ -114,7 +115,6 @@ export function IconButton(props: IconButtonProps): ReactElement {
 				focusRing,
 				className,
 			)}
-			data-active={active ? "" : undefined}
 			{...rest}
 		>
 			{children}
