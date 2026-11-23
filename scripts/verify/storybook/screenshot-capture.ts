@@ -303,6 +303,28 @@ afterEach(async (ctx) => {
 
 	await settle();
 
+	// Snapshot the hovered element before the screenshot so the sidecar
+	// proves interaction-state captures actually contain the state
+	// (Issue #439).  Runs in-page; `#storybook-root` scopes the query to
+	// the story canvas.
+	let hoveredElement: string | null = null;
+	try {
+		// `:hover` matches the whole ancestor chain, so pick the deepest
+		// hovered leaf — the element the pointer is actually over.  The
+		// capture pointer-parker counts as neutral (null), not a state.
+		const scope = document.getElementById("storybook-root") ?? document.body;
+		const leaf = [...scope.querySelectorAll(":hover")].find(
+			(el) => !el.querySelector(":hover"),
+		);
+		if (leaf && leaf.id !== POINTER_PARKER_ID) {
+			const cls =
+				typeof leaf.className === "string" ? leaf.className.split(" ")[0] : "";
+			hoveredElement = `${leaf.tagName.toLowerCase()}${cls ? `.${cls}` : ""}`;
+		}
+	} catch {
+		hoveredElement = null;
+	}
+
 	let pngBase64: string | null = null;
 	let pngPersisted = false;
 	try {
@@ -368,6 +390,7 @@ afterEach(async (ctx) => {
 		},
 		capturedAt: new Date().toISOString(),
 		status,
+		hoveredElement,
 		...(captureError !== undefined ? { captureError } : {}),
 	};
 
