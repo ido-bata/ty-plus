@@ -275,9 +275,13 @@ describe("tryBuildCloudGateway", () => {
 			lookupCatalog: ReturnType<typeof vi.fn>;
 			installUpdate: ReturnType<typeof vi.fn>;
 		};
-		const lifecycleOf = (call: unknown[] | undefined) =>
-			(call?.[1] as { run: { onLifecycle: (e: unknown) => void } }).run
-				.onLifecycle;
+		const lifecycleOf = (call: unknown[] | undefined) => {
+			const run = (
+				call?.[1] as { run: { onLifecycle: (e: unknown) => void } } | undefined
+			)?.run;
+			if (!run) throw new Error("expected run options on gateway call");
+			return run.onLifecycle;
+		};
 		lifecycleOf(composition.checkConnectivity.mock.calls[0])({
 			type: "worker-spawned",
 		});

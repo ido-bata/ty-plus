@@ -327,7 +327,7 @@ export function IconEditor({
 
 	const tabs = (
 		<SegmentedControl
-			aria-label="Icon type"
+			aria-label={i18n.t("presets:iconEditor.tabsAria")}
 			value={draft.type}
 			options={visibleTabs.map((tab) => ({
 				value: tab.id,

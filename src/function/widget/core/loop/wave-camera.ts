@@ -41,7 +41,6 @@ const clamp = (value: number, min: number, max: number): number =>
  */
 export const fitWaveCamera = (
 	viewport: WaveViewport,
-	cycles: number,
 	viewStart = 0,
 	viewSpan = 1,
 ): WaveCamera => {

@@ -17,7 +17,7 @@ export function FolderTabs(props: {
 	const { activeTab, onTabChange } = props;
 	return (
 		<SegmentedControl
-			aria-label="Folder type"
+			aria-label={i18n.t("presets:catalogAdd.folderTypeAria")}
 			value={activeTab}
 			options={FOLDER_TABS.map((tab) => ({
 				value: tab.id,

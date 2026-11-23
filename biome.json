@@ -6,6 +6,7 @@
 			"!**/node_modules",
 			"!**/.worktrees",
 			"!**/dist",
+			"!**/coverage",
 			"!**/styled-system",
 			"!**/.wrangler",
 			"!**/.cloudflare",
