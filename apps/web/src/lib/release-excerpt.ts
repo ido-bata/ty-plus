@@ -35,6 +35,10 @@ const EXCERPT_META = [
 	/\bchannel=\w+/gi,
 	/\bADR-\d+\b/g,
 	/[（(]\s*[0-9a-f]{7,40}\s*[)）]/g,
+	// Branch/ref names cited in parentheses, e.g. （release-0-13-0）or
+	// （feat/123-topic）. Once the commit hash is scrubbed the bare branch
+	// fragment reads as noise, so the whole parenthetical goes.
+	/[（(]\s*(?:[A-Za-z0-9_.-]+\/[A-Za-z0-9_./-]+|release-[\w.-]+)\s*[)）]/gi,
 ];
 
 function scrubExcerptMeta(text: string): string {
@@ -48,6 +52,9 @@ function scrubExcerptMeta(text: string): string {
 			// "acceptance (metadata)." leaves ")." → "."; keep "> .7" arrow spacing.
 			.replace(/(?<![>-])\s+(?=[.;:!?])/g, "")
 			.replace(/([（(])\s+/g, "$1")
+			// Scrubbing a token can leave a dangling sentence mark at the
+			// front ("（branch）。text" → "。text").
+			.replace(/^[。．.,、;；:：)\]）］>\s]+/, "")
 			.trim()
 	);
 }
@@ -175,7 +182,10 @@ function bulletLines(lines: string[], max: number): string[] {
 	for (const line of lines) {
 		if (out.length >= max || !BULLET_MARKER.test(line)) continue;
 		const cleaned = line.replace(BULLET_MARKER, "");
-		if (cleaned.trim().length === 0) continue;
+		const text = cleaned.trim();
+		// A bullet that ends with ":" is a lead-in for a nested list, not a
+		// change item itself — the indented children carry the content.
+		if (text.length === 0 || text.endsWith(":")) continue;
 		out.push(cleaned);
 	}
 	return out;
