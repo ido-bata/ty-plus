@@ -46,7 +46,7 @@
  *   1 - violations detected
  */
 
-import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { type Dirent, existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -124,7 +124,7 @@ export function loadSharedComponents(path = MANIFEST_PATH): SharedComponent[] {
 // Source scanning
 // ---------------------------------------------------------------------------
 
-type SourceFile = {
+export type SourceFile = {
 	path: string;
 	rel: string;
 	src: string;
@@ -182,7 +182,7 @@ export function importedModules(
 function collectSources(dir: string, root = ROOT): SourceFile[] {
 	const out: SourceFile[] = [];
 	const walk = (current: string): void => {
-		let entries: ReturnType<typeof readdirSync>;
+		let entries: Dirent[];
 		try {
 			entries = readdirSync(current, { withFileTypes: true });
 		} catch {

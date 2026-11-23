@@ -48,7 +48,13 @@
  *   1 - violations detected
  */
 
-import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import {
+	type Dirent,
+	existsSync,
+	readdirSync,
+	readFileSync,
+	writeFileSync,
+} from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import ts from "typescript5";
@@ -191,7 +197,7 @@ const CONTROL_COMPONENTS = new Set([
 // ---------------------------------------------------------------------------
 
 function* walk(dir: string): Generator<string> {
-	let entries: ReturnType<typeof readdirSync>;
+	let entries: Dirent[];
 	try {
 		entries = readdirSync(dir, { withFileTypes: true });
 	} catch {
@@ -227,6 +233,7 @@ function collectRuntimeCustomProps(sf: ts.SourceFile): Set<string> {
 			const initializer = node.initializer;
 			if (!initializer || !ts.isJsxExpression(initializer)) return;
 			const expr = initializer.expression;
+			if (!expr) return;
 			const object = ts.isAsExpression(expr) ? expr.expression : expr;
 			if (!object || !ts.isObjectLiteralExpression(object)) return;
 			for (const prop of object.properties) {

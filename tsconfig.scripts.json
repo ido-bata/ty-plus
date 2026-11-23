@@ -24,6 +24,10 @@
 		"scripts/package/build/platform.ts",
 		"tools/**/*.ts",
 		".storybook/**/*.ts",
-		"src/vite-env.d.ts"
+		"src/vite-env.d.ts",
+		"scripts/check/**/*.ts",
+		"scripts/security/**/*.ts",
+		"scripts/build/**/*.ts",
+		"scripts/types/**/*.d.ts"
 	]
 }

@@ -113,7 +113,7 @@ const FORBIDDEN_DATA_PATTERNS = [
 ];
 
 function scanForbiddenStorage(filePath: string, content: string) {
-	const violations = [];
+	const violations: Record<string, unknown>[] = [];
 	const normalized = normalizeForImportSearch(stripComments(content));
 
 	for (const imp of FORBIDDEN_IMPORTS) {
@@ -202,7 +202,7 @@ const LITERAL_CLASS_EXTRACT =
 	/"([^"\\]*(?:\\.[^"\\]*)*)"|'([^'\\]*(?:\\.[^'\\]*)*)'/g;
 
 function scanWorkspaceHooks(_filePath: string, content: string) {
-	const violations = [];
+	const violations: Record<string, unknown>[] = [];
 	const lines = content.split("\n");
 
 	for (let li = 0; li < lines.length; li++) {
@@ -295,7 +295,7 @@ const PRODUCTION_PATH_PREFIXES = [
 ];
 
 function scanPreviewMocks(filePath: string, content: string) {
-	const violations = [];
+	const violations: Record<string, unknown>[] = [];
 
 	// Only scan production paths
 	const isProduction = PRODUCTION_PATH_PREFIXES.some((prefix) =>
@@ -348,7 +348,7 @@ const DIALOG_ROOT_GLOB = [
 const _DIALOG_NULL_PATTERN = /return\s+null\s*;?\s*\}\s*$/;
 
 function scanDialogRoots(filePath: string, content: string) {
-	const violations = [];
+	const violations: Record<string, unknown>[] = [];
 
 	// Only scan dialog root files
 	const isDialogRoot = DIALOG_ROOT_GLOB.some((prefix) =>

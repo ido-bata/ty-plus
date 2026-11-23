@@ -1,8 +1,17 @@
 import fs from "node:fs/promises";
 import path from "node:path";
+
 // vite-cep-plugin doesn't emit <Position> in manifest.xml. Modeless dialogs can
 // open off-screen without an explicit position, so we patch it post-build.
-export function cepManifestPositionPlugin(opts = {}) {
+interface CepManifestPositionOptions {
+	cepDist?: string;
+	x?: number;
+	y?: number;
+}
+
+export function cepManifestPositionPlugin(
+	opts: CepManifestPositionOptions = {},
+) {
 	const cepDist = opts.cepDist ?? "cep";
 	const x = opts.x ?? 100;
 	const y = opts.y ?? 100;

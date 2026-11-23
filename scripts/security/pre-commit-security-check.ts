@@ -16,11 +16,11 @@ const RED = "\x1b[31m";
 const YELLOW = "\x1b[33m";
 const RESET = "\x1b[0m";
 
-function error(msg) {
+function error(msg: string) {
 	console.log(`${RED}✖ SECURITY ALERT:${RESET} ${msg}`);
 }
 
-function warn(msg) {
+function warn(msg: string) {
 	console.warn(`${YELLOW}⚠ WARNING:${RESET} ${msg}`);
 }
 
@@ -33,7 +33,10 @@ try {
 		.split("\n")
 		.filter(Boolean);
 } catch (err) {
-	console.log("Failed to get staged files:", err.message);
+	console.log(
+		"Failed to get staged files:",
+		err instanceof Error ? err.message : String(err),
+	);
 	process.exit(1);
 }
 

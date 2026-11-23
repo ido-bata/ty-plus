@@ -60,12 +60,9 @@ for (const mainPath of [...new Set(mainPaths)]) {
 		fail(`data-main asset does not exist for ${htmlPath}: ${dataMain}`);
 	}
 
-	const csInterfaceSrc = html.match(
-		/<script src="([^"]*CSInterface\.js)"/,
-	)?.[1];
-	if (!csInterfaceSrc) {
+	const csInterfaceSrc =
+		html.match(/<script src="([^"]*CSInterface\.js)"/)?.[1] ??
 		fail(`Missing CSInterface.js script in ${htmlPath}`);
-	}
 
 	const csInterfacePath = path.resolve(path.dirname(htmlPath), csInterfaceSrc);
 	if (!existsSync(csInterfacePath)) {

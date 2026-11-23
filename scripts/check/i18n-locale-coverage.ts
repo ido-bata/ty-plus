@@ -1,3 +1,4 @@
+import type { Dirent } from "node:fs";
 import { readdir, readFile, stat } from "node:fs/promises";
 import path from "node:path";
 
@@ -177,7 +178,7 @@ const SKIP_SRC_FILE_SUFFIXES = [".test.ts", ".test.tsx", ".stories.tsx"];
 const collectSourceFiles = async (srcDir: string): Promise<string[]> => {
 	const out: string[] = [];
 	const walk = async (dir: string): Promise<void> => {
-		let entries: Awaited<ReturnType<typeof readdir>> | undefined;
+		let entries: Dirent[] | undefined;
 		try {
 			entries = await readdir(dir, { withFileTypes: true });
 		} catch {

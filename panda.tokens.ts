@@ -88,7 +88,7 @@ export const colors = defineTokens.colors({
 	},
 });
 
-export const opacities = defineTokens.opacities({
+export const opacities = defineTokens.opacity({
 	"text-main": { value: "var(--ty-opacity-text-main)" },
 	"text-muted": { value: "var(--ty-opacity-text-muted)" },
 	"action-primary": { value: "var(--ty-opacity-action-primary)" },
