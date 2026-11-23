@@ -31,7 +31,6 @@ export function FontViewerStatusLine({
 				borderBottomWidth: "1px",
 				borderBottomStyle: "solid",
 				borderColor: "border.default",
-				opacity: 0.5,
 				paddingInline: "0.5",
 				paddingBottom: "1",
 				fontSize: "text-xs",

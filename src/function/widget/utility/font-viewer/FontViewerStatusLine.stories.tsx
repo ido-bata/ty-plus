@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { expect } from "storybook/test";
 
 import { FontViewerStatusLine } from "./FontViewerStatusLine";
 import type { FontLoadVia } from "./use-font-catalog";
@@ -42,19 +43,44 @@ const meta = {
 	],
 } satisfies Meta<Args>;
 
+const expectOpaqueStatusLine = async (
+	canvasElement: HTMLElement,
+): Promise<void> => {
+	const span = canvasElement.querySelector("span");
+	expect(span).not.toBeNull();
+	let node: Element | null = span;
+	while (node) {
+		expect(getComputedStyle(node).opacity).toBe("1");
+		node = node.parentElement;
+	}
+};
+
 export default meta;
 type Story = StoryObj<Args>;
 
-export const Default: Story = {};
+export const Default: Story = {
+	play: async ({ canvasElement }) => {
+		await expectOpaqueStatusLine(canvasElement);
+	},
+};
 
 export const Loading: Story = {
 	args: { loading: true },
+	play: async ({ canvasElement }) => {
+		await expectOpaqueStatusLine(canvasElement);
+	},
 };
 
 export const Empty: Story = {
 	args: { familyCount: 0, filteredFaceCount: 0, total: 0, via: null },
+	play: async ({ canvasElement }) => {
+		await expectOpaqueStatusLine(canvasElement);
+	},
 };
 
 export const LocalApi: Story = {
 	args: { via: "queryLocalFonts" },
+	play: async ({ canvasElement }) => {
+		await expectOpaqueStatusLine(canvasElement);
+	},
 };
