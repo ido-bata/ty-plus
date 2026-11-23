@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { expect } from "storybook/test";
 
 import { FontViewerWidget } from "@/function/widget/utility/font-viewer/Component";
 import type { Layout } from "@/management/workspace/layout/grid-document";
@@ -62,4 +63,20 @@ export const Default: Story = {};
 /** Narrow panel — the widget collapses the catalog into a scrollable list. */
 export const Compact: Story = {
 	args: { widthPx: 280, heightPx: 320 },
+	play: async ({ canvasElement }) => {
+		// Issue #474: the search placeholder must fit inside the input
+		// without clipping mid-word (input placeholders cannot show an
+		// ellipsis, so the text itself has to be short enough).
+		const input = canvasElement.querySelector<HTMLInputElement>(
+			'input[type="search"]',
+		);
+		if (!input) throw new Error("search input not found");
+		const style = getComputedStyle(input);
+		const ctx = document.createElement("canvas").getContext("2d");
+		if (!ctx) throw new Error("2d context unavailable");
+		ctx.font = `${style.fontStyle} ${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+		expect(ctx.measureText(input.placeholder).width).toBeLessThanOrEqual(
+			input.clientWidth,
+		);
+	},
 };

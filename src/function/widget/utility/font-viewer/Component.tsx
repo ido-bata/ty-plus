@@ -1188,7 +1188,7 @@ export function FontViewerWidget({
 						<SearchField
 							icon={Search}
 							placeholder={t("fontViewer.searchPlaceholder", {
-								defaultValue: "Search family, PostScript, style…",
+								defaultValue: "Search fonts…",
 							})}
 							value={query}
 							onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -1245,10 +1245,6 @@ export function FontViewerWidget({
 
 				{error ? <FontViewerErrorBanner error={error} /> : null}
 
-				{!loading && rows.length === 0 ? (
-					<FontViewerEmptyState aeHostError={aeHostError} />
-				) : null}
-
 				<div
 					ref={hostRef}
 					className={css({
@@ -1275,7 +1271,11 @@ export function FontViewerWidget({
 							: undefined
 					}
 				>
-					{viewMode === "list" ? (
+					{!loading && rows.length === 0 ? (
+						<div className={css({ padding: "2" })}>
+							<FontViewerEmptyState aeHostError={aeHostError} />
+						</div>
+					) : viewMode === "list" ? (
 						filteredFaceCount === 0 && !loading ? (
 							<p
 								className={css({

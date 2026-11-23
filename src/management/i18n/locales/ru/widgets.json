@@ -312,7 +312,7 @@
 	},
 	"fontViewer": {
 		"name": "Font viewer",
-		"searchPlaceholder": "Поиск по семейству, PostScript, стилю…",
+		"searchPlaceholder": "Поиск шрифтов…",
 		"searchAria": "Поиск шрифтов",
 		"listView": "Вид списка",
 		"iconView": "Карточки значков",

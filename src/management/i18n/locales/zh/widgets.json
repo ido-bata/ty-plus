@@ -312,7 +312,7 @@
 	},
 	"fontViewer": {
 		"name": "Font viewer",
-		"searchPlaceholder": "搜索字体系列、PostScript、样式…",
+		"searchPlaceholder": "搜索字体…",
 		"searchAria": "搜索字体",
 		"listView": "列表视图",
 		"iconView": "图标卡片",

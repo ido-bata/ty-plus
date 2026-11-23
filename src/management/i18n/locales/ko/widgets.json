@@ -312,7 +312,7 @@
 	},
 	"fontViewer": {
 		"name": "폰트 뷰어",
-		"searchPlaceholder": "패밀리, PostScript, 스타일 검색…",
+		"searchPlaceholder": "글꼴 검색…",
 		"searchAria": "글꼴 검색",
 		"listView": "목록 보기",
 		"iconView": "아이콘 카드",

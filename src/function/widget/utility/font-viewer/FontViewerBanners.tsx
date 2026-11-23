@@ -215,7 +215,7 @@ export function FontViewerEmptyState({
 				<p
 					className={css({
 						margin: 0,
-						wordBreak: "break-all",
+						overflowWrap: "anywhere",
 						fontFamily: "mono",
 						fontSize: "text-2xs",
 						color: "text.muted",

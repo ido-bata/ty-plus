@@ -326,7 +326,7 @@
 	},
 	"fontViewer": {
 		"name": "フォントビューア",
-		"searchPlaceholder": "ファミリー名・PostScript・スタイルで検索…",
+		"searchPlaceholder": "フォントを検索…",
 		"searchAria": "フォントを検索",
 		"listView": "リスト表示",
 		"iconView": "カード表示",
