@@ -36,7 +36,6 @@ export function CollapsibleGroupHeader({
 				borderStyle: "solid",
 				borderColor: "border.default",
 				backgroundColor: "surface.widget",
-				opacity: 0.4,
 			})}
 			data-directory-browser-group
 			data-group-id={title}

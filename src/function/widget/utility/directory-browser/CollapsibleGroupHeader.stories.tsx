@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import type { ReactNode } from "react";
+import { expect } from "storybook/test";
 import { expectCanvasLayout } from "@/storybook/quality/layout";
 import { CollapsibleGroupHeader } from "./CollapsibleGroupHeader";
 
@@ -56,6 +57,14 @@ const playGroupLayout = async ({
 	expectCanvasLayout(canvasElement, {
 		requireRenderedSelector: "button",
 	});
+	// Issue #475: the group must not dim its whole subtree — a global
+	// `opacity` on the container used to drop header/count/body contrast
+	// to ~2:1. The surface/border tokens carry the grouping instead.
+	const group = canvasElement.querySelector<HTMLElement>(
+		"[data-directory-browser-group]",
+	);
+	if (!group) throw new Error("group container not found");
+	expect(getComputedStyle(group).opacity).toBe("1");
 };
 
 export const Default: Story = {

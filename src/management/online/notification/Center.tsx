@@ -307,7 +307,6 @@ const mutedTextClass = css({
 	fontSize: "sm",
 	color: "text.muted",
 });
-const opacity60Class = css({ opacity: 0.6 });
 
 const listContainerClass = css({
 	display: "flex",
@@ -594,7 +593,6 @@ function NotificationListItem(props: {
 				className={listItemButtonClass(unread)}
 				data-notification-id={item.notificationId}
 				onClick={() => void onOpen(item)}
-				style={isFixture ? { opacity: 0.7 } : undefined}
 			>
 				<div className={listItemHeaderClass}>
 					<div className={listItemColumnClass}>
@@ -663,13 +661,15 @@ function NotificationDetailView(props: {
 					<IconButton
 						variant="ghost"
 						size="sm"
+						active={isRead}
+						aria-pressed={isRead}
 						onClick={() => onToggleRead(selected.notificationId)}
 						aria-label={
 							isRead
 								? i18n.t("online:notificationCenter.markUnread")
 								: i18n.t("online:notificationCenter.markRead")
 						}
-						className={cx(borderedIconBtnClass, isRead && opacity60Class)}
+						className={borderedIconBtnClass}
 					>
 						<Icon icon={Check} size={14} />
 					</IconButton>
