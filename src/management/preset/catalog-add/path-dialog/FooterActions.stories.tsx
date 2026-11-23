@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { expect } from "storybook/test";
 import { css } from "@/styled-system/css";
 
 import { PathDialogFooterActions } from "./FooterActions";
@@ -52,5 +53,15 @@ export const Disabled: Story = {
 };
 
 export const Busy: Story = {
-	args: { busy: true },
+	// PathDialog derives `canAdd` as `... && !busy` (PathDialog.tsx), so
+	// the busy state never leaves the create button enabled (#455).
+	args: { busy: true, canAdd: false },
+	play: async ({ canvasElement }) => {
+		const buttons = canvasElement.querySelectorAll("button");
+		expect(buttons).toHaveLength(2);
+		for (const button of buttons) {
+			expect(button).toBeDisabled();
+		}
+		expect(buttons[1]?.textContent).toContain("Creating");
+	},
 };
