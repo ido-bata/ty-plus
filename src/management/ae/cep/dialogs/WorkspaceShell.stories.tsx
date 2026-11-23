@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { cx } from "@ty-plus/ui";
 import { Button } from "@ty-plus/ui/controls/Button";
 import { expect } from "storybook/test";
 import { css } from "@/styled-system/css";
@@ -13,12 +14,22 @@ import { WorkspaceShell } from "./WorkspaceShell";
  */
 const panelModifierClass = css({ bg: "surface.panel" });
 
+const expectRectInside = (inner: Element, outer: Element): void => {
+	const innerRect = inner.getBoundingClientRect();
+	const outerRect = outer.getBoundingClientRect();
+	expect(innerRect.top).toBeGreaterThanOrEqual(outerRect.top - 1);
+	expect(innerRect.bottom).toBeLessThanOrEqual(outerRect.bottom + 1);
+	expect(innerRect.left).toBeGreaterThanOrEqual(outerRect.left - 1);
+	expect(innerRect.right).toBeLessThanOrEqual(outerRect.right + 1);
+};
+
 type Args = {
 	title: string;
 	meta: string;
 	modifier: string;
 	withFooter: boolean;
 	withAfterBody: boolean;
+	bodyRows: number;
 };
 
 const baseArgs: Args = {
@@ -27,6 +38,7 @@ const baseArgs: Args = {
 	modifier: "",
 	withFooter: false,
 	withAfterBody: false,
+	bodyRows: 6,
 };
 
 const meta = {
@@ -38,6 +50,7 @@ const meta = {
 		modifier: { control: { type: "select" }, options: ["", "panel"] },
 		withFooter: { control: "boolean" },
 		withAfterBody: { control: "boolean" },
+		bodyRows: { control: { type: "number", min: 0, max: 12, step: 1 } },
 	},
 	render: (args: Args) => (
 		<div
@@ -75,15 +88,18 @@ const meta = {
 				afterBody={
 					args.withAfterBody ? (
 						<div
-							className={css({
-								borderTopWidth: "1px",
-								borderTopStyle: "solid",
-								borderColor: "border.default",
-								px: "3",
-								py: "2",
-								fontSize: "text-xs",
-								color: "text.muted",
-							})}
+							className={cx(
+								"wsd-after-body",
+								css({
+									borderTopWidth: "1px",
+									borderTopStyle: "solid",
+									borderColor: "border.default",
+									px: "3",
+									py: "2",
+									fontSize: "text-xs",
+									color: "text.muted",
+								}),
+							)}
 						>
 							After-body strip — status / quick actions
 						</div>
@@ -102,7 +118,7 @@ const meta = {
 						storybook-incompatible due to the file-drop plugin chain; this stub
 						mirrors the shell frame).
 					</p>
-					{Array.from({ length: 6 }).map((_, i) => (
+					{Array.from({ length: args.bodyRows }).map((_, i) => (
 						<div
 							key={`row-${i}`}
 							className={css({
@@ -133,10 +149,44 @@ export const Default: Story = {};
 
 export const WithFooter: Story = {
 	args: { withFooter: true },
+	/*
+	 * Regression guard (#478): the footer must stay pinned below the scroll
+	 * region — Cancel/Apply buttons clipped at the scrollport bottom edge
+	 * made the labels unreadable in the fixed-height frame.
+	 */
+	play: async ({ canvasElement }) => {
+		const root = canvasElement.querySelector(".wsd-root") as Element | null;
+		const footer = canvasElement.querySelector(".wsd-footer") as Element | null;
+		expect(root).not.toBeNull();
+		expect(footer).not.toBeNull();
+		expect((footer as Element).closest(".wsd-main-scroll")).toBeNull();
+		expectRectInside(footer as Element, root as Element);
+		const buttons = (footer as Element).querySelectorAll("button");
+		expect(buttons.length).toBe(2);
+		for (const button of buttons) {
+			expectRectInside(button, footer as Element);
+		}
+	},
 };
 
 export const WithAfterBody: Story = {
-	args: { withAfterBody: true },
+	args: { withAfterBody: true, bodyRows: 3 },
+	/*
+	 * Regression guard (#478): the after-body strip renders inside the
+	 * scroll region, so the story keeps the body short enough that the
+	 * whole strip is visible at the initial scroll position.
+	 */
+	play: async ({ canvasElement }) => {
+		const scroll = canvasElement.querySelector(
+			".wsd-main-scroll",
+		) as Element | null;
+		const strip = canvasElement.querySelector(
+			".wsd-after-body",
+		) as Element | null;
+		expect(scroll).not.toBeNull();
+		expect(strip).not.toBeNull();
+		expectRectInside(strip as Element, scroll as Element);
+	},
 };
 
 export const WithModifier: Story = {
