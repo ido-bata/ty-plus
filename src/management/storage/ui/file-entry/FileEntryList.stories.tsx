@@ -159,6 +159,25 @@ export const ListView: Story = {
 // 2. Icons view baseline — both states off.
 export const IconsView: Story = {
 	args: { viewMode: "icons" },
+	play: async ({ canvasElement }) => {
+		// #507: fallback glyphs must fit inside the media band — a fixed
+		// 64px glyph used to overflow small grid cells and get clipped.
+		// The clip happens inside the glyph frame's own `overflow: hidden`,
+		// so scroll sizes stay clean; compare rendered rects instead.
+		const bands = canvasElement.querySelectorAll("[data-media-band]");
+		expect(bands.length).toBeGreaterThan(0);
+		for (const band of bands) {
+			const bandRect = (band as HTMLElement).getBoundingClientRect();
+			for (const el of band.querySelectorAll("*")) {
+				const rect = el.getBoundingClientRect();
+				if (rect.width === 0 && rect.height === 0) continue;
+				expect(rect.top).toBeGreaterThanOrEqual(bandRect.top - 1);
+				expect(rect.bottom).toBeLessThanOrEqual(bandRect.bottom + 1);
+				expect(rect.left).toBeGreaterThanOrEqual(bandRect.left - 1);
+				expect(rect.right).toBeLessThanOrEqual(bandRect.right + 1);
+			}
+		}
+	},
 };
 
 // 3. Active-only — on-disk "current" path is highlighted, no checkbox selection.

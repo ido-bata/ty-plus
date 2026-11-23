@@ -88,8 +88,10 @@ const cardButtonClass = css({
 	// `uiSize="sm"` sizes every descendant svg to 14px, which shrinks the
 	// tile fallback glyph inside the media band. `&&` doubles the class
 	// specificity so this wins regardless of stylesheet order; `auto` lets
-	// the glyph's own width/height attributes apply again.
-	"&& svg": { boxSize: "auto" },
+	// the glyph's own width/height attributes apply again, and the max
+	// constraints keep a fixed-size glyph inside a smaller media band
+	// instead of letting `overflow: hidden` clip it (#507).
+	"&& svg": { boxSize: "auto", maxWidth: "full", maxHeight: "full" },
 	flexDirection: "column",
 	alignItems: "stretch",
 	justifyContent: "flex-start",
@@ -231,7 +233,7 @@ export function FileEntryCard({
 				onClick={entry.isDirectory ? onSelect : onClick}
 				onDoubleClick={onDoubleClick}
 			>
-				<div className={mediaBandClass(aspect)}>
+				<div className={mediaBandClass(aspect)} data-media-band>
 					{tileContent?.media ?? mediaPreview ?? fallback}
 				</div>
 				<span className={labelClass(isSelected)} title={entry.name}>

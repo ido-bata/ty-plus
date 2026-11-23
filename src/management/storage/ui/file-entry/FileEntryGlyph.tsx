@@ -22,6 +22,9 @@ const iconFrameBaseClass = css({
 const iconFrameFillClass = css({
 	height: "full",
 	width: "full",
+	// Size container so fill-mode glyph content (e.g. the preset text
+	// glyph's `cqh`-relative font) can scale to the rendered frame (#507).
+	containerType: "size",
 });
 const fullSizeClass = css({
 	height: "full",
