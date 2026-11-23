@@ -123,7 +123,6 @@ const meta = {
 	render: renderBrowser,
 } satisfies Meta<Args>;
 
-
 // Row state fills once compiled to an invalid color-mix() call and were
 // dropped by the browser, leaving active/selected rows identical to plain
 // rows (#470). Assert the computed fill actually differs.
