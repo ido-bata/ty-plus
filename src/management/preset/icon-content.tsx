@@ -24,7 +24,11 @@ const monoTextClass = css({
 	fontFamily: "mono",
 	fontWeight: "semibold",
 	lineHeight: "none",
-	fontSize: "var(--preset-glyph-font-size)",
+	// `size` is a nominal px value; inside a `container-type: size` frame
+	// (FileEntryGlyph fill mode) the glyph must also fit the rendered
+	// frame, so cap the font at a container-relative share (#507). Outside
+	// a container `cqh` resolves against the viewport and the var wins.
+	fontSize: "min(var(--preset-glyph-font-size), 52cqh)",
 });
 
 const emojiTextClass = css({
