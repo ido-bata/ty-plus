@@ -43,7 +43,12 @@ export function CanvasEasingIcon({
 		ctx.lineTo(pad, h - pad);
 		ctx.stroke();
 
-		ctx.strokeStyle = color;
+		// `currentColor` is not a valid canvas color — assigning it is
+		// silently ignored and the curve keeps the previous (faint axes)
+		// stroke, which is what made the curve disappear into dark tile
+		// backgrounds. Resolve it against the element's computed color.
+		ctx.strokeStyle =
+			color === "currentColor" ? getComputedStyle(canvas).color : color;
 		ctx.lineWidth = 1.5;
 		ctx.beginPath();
 
