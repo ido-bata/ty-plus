@@ -3,11 +3,7 @@ import { initReactI18next } from "react-i18next";
 
 import { initializeI18n } from "@/management/i18n";
 import { BUNDLED_I18N_RESOURCES } from "@/management/i18n/bundled-resources";
-import {
-	DEFAULT_LOCALE,
-	getStoredLocaleAsync,
-	NAMESPACES,
-} from "@/management/i18n/config";
+import { DEFAULT_LOCALE, NAMESPACES } from "@/management/i18n/config";
 
 /**
  * Module-singleton guard for the synchronous init below. Even if the
@@ -67,27 +63,6 @@ export const ensureI18nInitialized = async (
 		});
 	}
 	return upgradePromise;
-};
-
-let localeUpgradePromise: Promise<void> | null = null;
-
-/**
- * Read the user's stored locale (CEP file API in production, gracefully
- * degrades to `DEFAULT_LOCALE` in browser tests) and switch i18next to
- * it if it differs from the current language. Fire-and-forget — never
- * blocks first paint.
- */
-export const upgradeLocaleFromStoredPreference = (
-	win: Window,
-): Promise<void> => {
-	if (localeUpgradePromise) return localeUpgradePromise;
-	localeUpgradePromise = (async () => {
-		const stored = await getStoredLocaleAsync(win);
-		if (stored !== i18n.language) {
-			await i18n.changeLanguage(stored);
-		}
-	})();
-	return localeUpgradePromise;
 };
 
 /**
