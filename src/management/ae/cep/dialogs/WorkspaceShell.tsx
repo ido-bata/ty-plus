@@ -128,10 +128,10 @@ export function WorkspaceShell({
 				<div className={cx("wsd-main-scroll", mainScrollClass)}>
 					<section className={cx("wsd-body", bodyClass)}>{children}</section>
 					{afterBody}
-					{footer ? (
-						<footer className={cx("wsd-footer", footerClass)}>{footer}</footer>
-					) : null}
 				</div>
+				{footer ? (
+					<footer className={cx("wsd-footer", footerClass)}>{footer}</footer>
+				) : null}
 			</div>
 		</div>
 	);
