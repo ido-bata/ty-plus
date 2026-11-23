@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
-import { expect } from "storybook/test";
+import { expect, within } from "storybook/test";
 import { ColorField } from "./ColorField";
 
 const meta = {
@@ -24,14 +24,43 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+// The swatch and the hex input must share one grid row: the column template
+// once used a unitless `8` that browsers dropped, stacking them vertically.
+const expectSwatchAndInputInline = async (
+	canvasElement: HTMLElement,
+): Promise<void> => {
+	const canvas = within(canvasElement);
+	const input = canvas.getByLabelText(/value$/);
+	const swatch = canvasElement.querySelector(
+		"button, [role='button'], input[type='color']",
+	);
+	expect(swatch).not.toBeNull();
+	const swatchRect = swatch?.getBoundingClientRect();
+	const inputRect = input.getBoundingClientRect();
+	expect(
+		Math.abs(
+			(swatchRect?.top ?? 0) +
+				(swatchRect?.height ?? 0) / 2 -
+				(inputRect.top + inputRect.height / 2),
+		),
+	).toBeLessThan(8);
+	expect(inputRect.left).toBeGreaterThan((swatchRect?.right ?? 0) - 1);
+};
+
 export const Default: Story = {
 	args: {},
+	play: async ({ canvasElement }) => {
+		await expectSwatchAndInputInline(canvasElement);
+	},
 };
 
 export const WithoutLabel: Story = {
 	args: {
 		label: undefined,
 		description: undefined,
+	},
+	play: async ({ canvasElement }) => {
+		await expectSwatchAndInputInline(canvasElement);
 	},
 };
 

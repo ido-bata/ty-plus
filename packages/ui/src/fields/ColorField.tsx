@@ -19,7 +19,7 @@ const grid = css({
 	display: "grid",
 	width: "full",
 	minWidth: 0,
-	gridTemplateColumns: "8 minmax(0, 1fr)",
+	gridTemplateColumns: "2rem minmax(0, 1fr)",
 	alignItems: "center",
 	gap: "2",
 });
