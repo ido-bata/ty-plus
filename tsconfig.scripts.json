@@ -2,7 +2,7 @@
 	"extends": "./tsconfig.json",
 	"compilerOptions": {
 		"noEmit": true,
-		"types": ["node", "bun"],
+		"types": ["node", "bun", "vite/client"],
 		"skipLibCheck": true,
 		"allowImportingTsExtensions": true,
 		"strict": true
@@ -21,6 +21,9 @@
 		"scripts/verify/storybook/capture-merge.ts",
 		"scripts/verify/storybook/capture-gallery.ts",
 		"scripts/verify/storybook/screenshot-capture.ts",
-		"scripts/package/build/platform.ts"
+		"scripts/package/build/platform.ts",
+		"tools/**/*.ts",
+		".storybook/**/*.ts",
+		"src/vite-env.d.ts"
 	]
 }
