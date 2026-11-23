@@ -29,6 +29,8 @@ import {
 } from "react";
 import type { WidgetType } from "@/function/widget";
 import { useTranslation } from "@/management/i18n/Context";
+import { i18n } from "@/management/i18n/index";
+import { resolveCatalogDescriptionKey } from "@/management/widget/description-key";
 import { registry } from "@/management/widget/registry";
 import { css } from "@/styled-system/css";
 
@@ -37,11 +39,11 @@ type WidgetCategory = NonNullable<CatalogEntry["category"]>;
 
 const CATEGORY_ORDER: WidgetCategory[] = ["core", "utility", "media", "phase4"];
 
-const CATEGORY_LABELS: Record<WidgetCategory, string> = {
-	core: "Core",
-	utility: "Utility",
-	media: "Media",
-	phase4: "Experimental",
+const CATEGORY_LABEL_KEYS: Record<WidgetCategory, string> = {
+	core: "widgets:categories.core",
+	utility: "widgets:categories.utility",
+	media: "widgets:categories.media",
+	phase4: "widgets:categories.phase4",
 };
 
 const WIDGET_ICONS: Record<string, LucideIcon> = {
@@ -326,7 +328,9 @@ function WidgetCatalogResults({
 	if (linearItems.length === 0) {
 		return (
 			<p className={emptyResultsStyle}>
-				No matching widgets. Try another search.
+				{i18n.t("widgets:selector.noMatches", {
+					defaultValue: "No matching widgets. Try another search.",
+				})}
 			</p>
 		);
 	}
@@ -335,7 +339,9 @@ function WidgetCatalogResults({
 			<div className={resultsContainerStyle}>
 				{groups.map(({ category, items }) => (
 					<section key={category} className={sectionStyle}>
-						<h3 className={sectionTitleStyle}>{CATEGORY_LABELS[category]}</h3>
+						<h3 className={sectionTitleStyle}>
+							{i18n.t(CATEGORY_LABEL_KEYS[category])}
+						</h3>
 						<ul className={listStyle}>
 							{items.map((w) => {
 								const active = selectedType === w.type;
@@ -395,7 +401,7 @@ function WidgetCatalogResults({
 			{groups.map(({ category, items }) => (
 				<section key={category} className={sectionStyle}>
 					<h3 className={cx(sectionTitleStyle, sectionTitleGapStyle)}>
-						{CATEGORY_LABELS[category]}
+						{i18n.t(CATEGORY_LABEL_KEYS[category])}
 					</h3>
 					<div className={iconGridStyle}>
 						{items.map((w) => {
@@ -470,7 +476,7 @@ export function AddWidgetCatalogPanel({
 
 	const describe = useCallback(
 		(w: CatalogEntry) =>
-			t(`selector.descriptions.${w.type}`, { defaultValue: "" }),
+			t(resolveCatalogDescriptionKey(w), { defaultValue: "" }),
 		[t],
 	);
 
@@ -639,7 +645,7 @@ export function AddWidgetCatalogPanel({
 	});
 	const hintShortcuts = t("selector.hintShortcuts", {
 		defaultValue:
-			"Arrow keys: move · Enter (in search): add · Double-click: add · Esc: close",
+			"Arrows: move · Enter (in search): add · Double-click: add · Esc: close",
 	});
 	const listViewAria = t("selector.listView", { defaultValue: "List view" });
 	const iconViewAria = t("selector.iconView", {

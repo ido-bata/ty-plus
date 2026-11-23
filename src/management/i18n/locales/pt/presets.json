@@ -1,47 +1,55 @@
 {
 	"codePreset": {
-		"codeType": "Code type",
+		"codeType": "Tipo de código",
 		"editor": {
 			"expression": "Expression",
-			"script": "Script code (.jsx)"
+			"script": "Código de script (.jsx)"
 		},
-		"saveLocation": "Save location",
-		"savePreview": "Save preview",
+		"saveLocation": "Local de salvamento",
+		"savePreview": "Pré-visualização antes de salvar",
 		"status": {
-			"fileExists": "File already exists — will be overwritten",
-			"success": "Preset saved successfully!"
+			"fileExists": "O arquivo já existe — será sobrescrito",
+			"success": "Predefinição salva com sucesso!"
 		},
 		"type": {
 			"expression": "Expression",
 			"script": "Script"
-		}
+		},
+		"iconText": "CÓDIGO",
+		"alertSelectComp": "Selecione uma Composition.",
+		"alertSelectProperty": "Selecione pelo menos uma propriedade para aplicar a Expression.",
+		"alertNoExpressionProps": "As propriedades selecionadas não aceitam Expression.",
+		"alertApplyError": "Erro ao aplicar a Expression:",
+		"defaultDescription": "Predefinição de código: {{name}}",
+		"undoGroupName": "Ty Plus: Aplicar expressão"
 	},
 	"common": {
 		"browseFolder": "Procurar pasta",
 		"copyPath": "Copiar caminho",
-		"selectFile": "Selecionar arquivo"
+		"selectFile": "Selecionar arquivo",
+		"systemDefault": "Predefinição do sistema"
 	},
 	"layerCompPreset": {
 		"desc": {
-			"comp": "Open the composition you want to save. Project must be saved first.",
-			"layer": "Select the layers you want to save. Project must be saved first."
+			"comp": "Abra a composição que deseja salvar. O projeto deve ser salvo primeiro.",
+			"layer": "Selecione as camadas que deseja salvar. O projeto deve ser salvo primeiro."
 		},
 		"hint": {
-			"saveButton": "Press \"Create\" at the bottom of the dialog to save."
+			"saveButton": "Pressione \"Criar\" na parte inferior do diálogo para salvar."
 		},
-		"savePreview": "Save preview",
+		"savePreview": "Pré-visualização antes de salvar",
 		"step1": {
-			"title": "Preset type"
+			"title": "Tipo de predefinição"
 		},
 		"step2": {
-			"title": "Prepare in After Effects"
+			"title": "Preparar no After Effects"
 		},
 		"step3": {
-			"title": "Save location"
+			"title": "Local de salvamento"
 		},
 		"type": {
 			"comp": "Composition",
-			"layer": "Layer"
+			"layer": "Camada"
 		}
 	},
 	"search": {
@@ -91,7 +99,8 @@
 				"saveFolder": "Pasta de salvamento",
 				"path": "Caminho do preset de animação",
 				"pathPlaceholder": "Caminho .ffx existente opcional"
-			}
+			},
+			"defaultDescription": "Predefinição de animação: {{name}}"
 		},
 		"footage": {
 			"title": "Predefinição de footage",
@@ -100,12 +109,14 @@
 			"fields": {
 				"path": "Caminho do footage",
 				"mode": "Modo de importação"
-			}
+			},
+			"iconText": "MÍDIA"
 		},
 		"layerComp": {
 			"title": "Predefinição de camada/comp",
 			"lead": "Operações de camada e comp (transformar, duplicar, precompor). Arquivos de script salvos são executados no After Effects.",
-			"defaultName": "Predefinição de layer/comp"
+			"defaultName": "Predefinição de layer/comp",
+			"defaultDescription": "Predefinição de camada/composição: {{name}}"
 		},
 		"import": {
 			"title": "Predefinição de importação",
@@ -114,7 +125,9 @@
 			"fields": {
 				"path": "Caminho de importação",
 				"strategy": "Estratégia"
-			}
+			},
+			"iconText": "IMPORTAR",
+			"pathPlaceholder": "C:\\path\\asset"
 		},
 		"code": {
 			"title": "Predefinição de código",
@@ -122,10 +135,12 @@
 			"extra": "Arquivos de script salvos são executados no After Effects.",
 			"defaultName": "Predefinição de código",
 			"editor": {
-				"format": "Format Document",
-				"formatTooltip": "Format the script body",
-				"diagnosticCount": "{{count}} problem",
-				"diagnosticCount_other": "{{count}} problems"
+				"format": "Formatar documento",
+				"formatTooltip": "Formatar o corpo do script",
+				"diagnosticCount": "{{count}} problema",
+				"diagnosticCount_one": "{{count}} problema",
+				"diagnosticCount_other": "{{count}} problemas",
+				"diagnosticCount_many": "{{count}} problemas"
 			}
 		},
 		"easing": {
@@ -166,32 +181,51 @@
 			"title": "Criar predefinição",
 			"lead": "Crie uma predefinição local a partir de metadados reutilizáveis.",
 			"defaultName": "Predefinição local"
-		}
+		},
+		"savePathRequired": "Guarde primeiro a predefinição de animação com a caixa de diálogo nativa do After Effects.",
+		"easingScript": {
+			"selectComposition": "Selecione uma composição.",
+			"selectProperties": "Selecione pelo menos uma propriedade para aplicar o easing.",
+			"notEnoughKeyframes": "As propriedades selecionadas não têm quadros-chave suficientes.",
+			"applyFailedPrefix": "Erro ao aplicar o easing: ",
+			"undoGroupName": "ty-plus: aplicar predefinição de easing"
+		},
+		"layerCompScript": {
+			"undoGroupName": "Ty Plus: Aplicar predefinição de camada/composição",
+			"saveProjectFirst": "Guarde o projeto After Effects antes de criar esta predefinição",
+			"sourceProjectNotFoundPrefix": "Projeto de origem não encontrado: "
+		},
+		"incompleteData": "Os dados da predefinição estão incompletos"
 	},
 	"animationPreset": {
 		"step1": {
-			"title": "Select in After Effects",
-			"desc": "Select properties or layers you want to save as preset"
+			"title": "Selecionar no After Effects",
+			"desc": "Selecione propriedades ou camadas que deseja salvar como predefinição"
 		},
 		"step2": {
-			"title": "Save to this folder"
+			"title": "Salvar nesta pasta"
 		},
 		"step3": {
-			"button": "Save Animation Preset",
-			"detecting": "Detecting..."
+			"button": "Salvar predefinição de animação",
+			"detecting": "Detectando..."
 		},
 		"status": {
-			"success": "Detected!",
-			"noSelection": "No selection",
-			"noSelectionHint": "Select properties or layers in AE first",
-			"timeout": "Scan timeout",
-			"timeoutHint": "Choose a smaller folder",
-			"error": "Not detected",
-			"errorHint": "Save to the folder above"
+			"success": "Detectado!",
+			"noSelection": "Nenhuma seleção",
+			"noSelectionHint": "Selecione primeiro propriedades ou camadas no AE",
+			"timeout": "Tempo limite de varredura",
+			"timeoutHint": "Escolha uma pasta menor",
+			"error": "Não detectado",
+			"errorHint": "Salve na pasta acima"
 		},
 		"path": {
-			"reset": "Reset to default",
-			"notConfigured": "Not configured"
+			"reset": "Restaurar padrão",
+			"notConfigured": "Não configurado"
+		},
+		"iconText": "ANIM",
+		"undoGroupName": "Ty Plus: Guardar predefinição de animação",
+		"errors": {
+			"selectLayerToSave": "Selecione pelo menos uma camada antes de guardar uma predefinição de animação"
 		}
 	},
 	"edit": {
@@ -204,7 +238,13 @@
 			"saved": "Salvo",
 			"deleted": "Excluído",
 			"saveFailed": "Falha ao salvar: {{message}}",
-			"deleteFailed": "Falha ao excluir: {{message}}"
+			"deleteFailed": "Falha ao excluir: {{message}}",
+			"notFound": "Predefinição não encontrada",
+			"loadFailed": "Falha ao carregar",
+			"saveFailedFallback": "Falha ao guardar",
+			"deleteFailedFallback": "Falha ao eliminar",
+			"saving": "A guardar…",
+			"deleting": "A eliminar…"
 		},
 		"fields": {
 			"presetName": "Nome da predefinição",
@@ -219,11 +259,22 @@
 			"presetNamePlaceholder": "Digite o nome do preset"
 		},
 		"titleForType": {
-			"preset": "Preset",
+			"preset": "Predefinição",
 			"script": "Preset de script",
 			"plugin": "Preset de plugin",
 			"footage": "Preset de footage"
-		}
+		},
+		"memberLoading": "A carregar…",
+		"memberNotFound": "Membro não encontrado: {{id}}",
+		"memberRun": "Executar {{name}}",
+		"memberEdit": "Editar {{name}}",
+		"memberDelete": "Eliminar {{name}}",
+		"memberPresets": "Predefinições membro ({{count}})",
+		"noMemberPresets": "Sem predefinições membro",
+		"selectJsxFile": "Selecionar ficheiro JSX",
+		"browseLoadFile": "Carregar ficheiro",
+		"loadFromFilePlaceholder": "Carregar a partir de ficheiro…",
+		"code": "Código"
 	},
 	"group": {
 		"title": "Criar grupo de presets",
@@ -231,7 +282,184 @@
 		"defaultName": "Preset de grupo",
 		"fields": {
 			"groupName": "Nome do grupo",
-			"groupNamePlaceholder": "Digite o nome do grupo"
+			"groupNamePlaceholder": "Digite o nome do grupo",
+			"folderPaths": "Caminhos de pastas",
+			"folderPathsPlaceholder": "Um caminho de pasta por linha",
+			"presetIds": "IDs de predefinições",
+			"presetIdsPlaceholder": "Um ID de predefinição por linha",
+			"recursiveScan": "Análise recursiva de pastas"
+		},
+		"iconText": "GRUPO",
+		"browseMembers": "Procurar ficheiros e pastas a adicionar",
+		"addPath": "Adicionar caminho",
+		"detectCandidates": "Detetar candidatos",
+		"browseFolder": "Procurar pasta",
+		"removePath": "Remover caminho",
+		"iconRules": "Regras de ícone",
+		"baseIcon": {
+			"heading": "Ícone base (predefinição para todos os presets)",
+			"label": "Ícone base"
+		},
+		"rules": "Regras",
+		"addRule": "Adicionar regra",
+		"groupIcon": "Ícone de grupo",
+		"advancedSettings": "Definições avançadas",
+		"scanDepth": "Profundidade de análise de pastas",
+		"scanDepthFlat": "Direto",
+		"scanDepthRecursive": "Incluir subpastas",
+		"synth": {
+			"noMembers": "Sem predefinições membro.",
+			"memberPresets_one": "{{count}} predefinição membro.",
+			"memberPresets_other": "{{count}} predefinições membro.",
+			"memberPresets_many": "{{count}} predefinições membro.",
+			"description": "Contentor de grupo. {{memberLine}}"
+		},
+		"rule": {
+			"filterName": "Nome",
+			"filterPath": "Caminho",
+			"filterPresetId": "ID de predefinição",
+			"filterPresetType": "Tipo de predefinição",
+			"removeRule": "Remover regra",
+			"nameRegexPlaceholder": "Regex de nome (ex.: ^Header.*$)",
+			"namePatternPlaceholder": "Padrão de nome",
+			"matchContains": "Contém",
+			"matchStarts": "Começa com",
+			"matchEnds": "Termina com",
+			"matchRegex": "Regex",
+			"presetTypePreset": "Predefinição",
+			"presetTypeScript": "Script",
+			"presetTypePlugin": "Plug-in",
+			"presetTypeFootage": "Footage",
+			"noDirectories": "Nenhum diretório detetado",
+			"noPresets": "Nenhuma predefinição detetada",
+			"iconLabel": "Ícone de regra"
+		},
+		"fallbackTitle": "Grupo"
+	},
+	"catalogAdd": {
+		"dialogTitle": "Adicionar predefinição do catálogo a partir de um caminho",
+		"name": "Nome",
+		"namePlaceholder": "Introduzir nome…",
+		"filePath": "Caminho do ficheiro",
+		"selectFile": "Selecionar ficheiro",
+		"browseFile": "Procurar ficheiro",
+		"icon": "Ícone",
+		"creating": "A criar…",
+		"pathPlaceholderCurrentFolder": "Pasta atual visível — escolha um ficheiro ou procure",
+		"pathPlaceholderSelectFile": "Selecionar um ficheiro…",
+		"browser": {
+			"cepNodeRequired": "O navegador de ficheiros requer CEP Node",
+			"noPresetsFolder": "Nenhuma pasta de predefinições configurada",
+			"noScriptsFolder": "Nenhuma pasta de scripts configurada",
+			"noPluginsFolder": "Nenhuma pasta de plug-ins configurada",
+			"noFiles": "Nenhum ficheiro encontrado"
 		}
+	},
+	"iconEditor": {
+		"tabs": {
+			"text": "Texto",
+			"emoji": "Emoji",
+			"image": "Imagem",
+			"canvas": "Tela"
+		},
+		"emojiPicker": "Seletor de emoji",
+		"selectImage": "Selecionar imagem do ícone",
+		"browseImage": "Procurar imagem do ícone",
+		"imagePlaceholder": "Caminho ou URL da imagem",
+		"iconTextAria": "Texto do ícone",
+		"textPlaceholder": "2 a 6 caracteres",
+		"previewAria": "Pré-visualização do ícone"
+	},
+	"catalogBrowser": {
+		"loading": "A carregar",
+		"searchPlaceholder": "Pesquisar por nome, tipo ou caminho…",
+		"reload": "Recarregar catálogo"
+	},
+	"listDialog": {
+		"workspacePlaced": "Espaço de trabalho: {{tags}}",
+		"workspaceGroupPlaced": "Espaço de trabalho: {{tags}} (grupo \"{{label}}\")",
+		"workspaceNotPlaced": "Espaço de trabalho: não colocado",
+		"runPresetAria": "Executar predefinição",
+		"editPresetAria": "Editar predefinição",
+		"deletePresetAria": "Eliminar predefinição",
+		"editGroup": "Editar grupo",
+		"deleteGroup": "Eliminar grupo",
+		"visibleItems_one": "{{count}} item",
+		"visibleItems_other": "{{count}} itens",
+		"visibleItems_many": "{{count}} itens",
+		"filteredSuffix": " · filtrado",
+		"collapseGroup": "Recolher grupo",
+		"expandGroup": "Expandir grupo",
+		"returnToAllPresets": "Voltar a todas as predefinições",
+		"leaveGroupTitle": "Sair do grupo \"{{name}}\" e voltar à lista",
+		"returnToListTitle": "Voltar à lista",
+		"allPresets": "Todas as predefinições",
+		"runPresetNamed": "Executar {{name}}",
+		"loadFailedTitle": "Falha ao carregar o catálogo local",
+		"tryAgain": "Tentar novamente",
+		"loadingCatalog": "A carregar catálogo local…",
+		"emptyCatalog": "Ainda não há predefinições guardadas localmente",
+		"noMatches": "Sem predefinições correspondentes",
+		"cloudOffline": "Nuvem offline",
+		"cloudDegradedDetail": "{{message}} — a mostrar apenas o catálogo local.",
+		"cloudOfflineDetail": "As funções cloud não estão ativas nesta sessão — a mostrar apenas o catálogo local.",
+		"groupsUnavailable": "Grupos indisponíveis",
+		"groupsErrorDetail": "{{error}} — as predefinições são listadas sem agrupamento.",
+		"title": "Lista de predefinições",
+		"gridResizeHint": "Mantenha Ctrl premido e role para redimensionar a grelha de ícones",
+		"openGroupAria": "Abrir grupo {{title}}",
+		"openGroupHint": "{{title}} (clique duplo para abrir)"
+	},
+	"codeEditor": {
+		"snippets": {
+			"ifBlock": "bloco if",
+			"elseBlock": "bloco else",
+			"forLoop": "ciclo for",
+			"whileLoop": "ciclo while",
+			"function": "função",
+			"tryCatch": "try / catch",
+			"extendscriptLog": "registo ExtendScript"
+		},
+		"resizeAria": "Redimensionar o editor de código"
+	},
+	"glyph": {
+		"loadingPresetIcon": "A carregar ícone da predefinição"
+	},
+	"assetWrite": {
+		"pathNotAbsolute": "O caminho do recurso da predefinição não é absoluto: {{path}}",
+		"fsUnavailable": "A escrita do recurso da predefinição não está disponível: o sistema de arquivos Node CEP não é acessível nesta janela.",
+		"writeFailed": "Falha ao escrever o recurso da predefinição: {{error}}",
+		"verificationMissing": "O recurso da predefinição está ausente após a escrita: {{path}}",
+		"verificationMismatch": "O conteúdo do recurso da predefinição não corresponde após a escrita: {{path}}",
+		"elevationUnavailable": "A escrita do recurso da predefinição foi negada por permissões e não há mecanismo de elevação disponível neste host: {{path}} ({{detail}})",
+		"elevationCancelled": "A permissão de administrador para {{path}} foi recusada. O recurso da predefinição não foi salvo.",
+		"writeDenied": "A escrita do recurso da predefinição foi negada por permissões: {{path}}",
+		"verificationMissingElevated": "O recurso da predefinição está ausente após a escrita elevada: {{path}}",
+		"verificationMismatchElevated": "O conteúdo do recurso da predefinição não corresponde após a escrita elevada: {{path}}",
+		"dirPathNotAbsolute": "O diretório do recurso da predefinição não é um caminho absoluto: {{path}}",
+		"dirFsUnavailable": "A criação do diretório do recurso da predefinição não está disponível: o sistema de arquivos Node CEP não é acessível nesta janela.",
+		"dirCreateFailed": "Não foi possível criar o diretório do recurso da predefinição: {{error}}",
+		"dirElevationUnavailable": "A criação do diretório do recurso da predefinição foi negada por permissões e não há mecanismo de elevação disponível neste host: {{path}}",
+		"dirElevationCancelled": "A permissão de administrador para {{path}} foi recusada. O diretório do recurso da predefinição não foi criado.",
+		"dirMissingAfterElevated": "O diretório do recurso da predefinição está ausente após a criação elevada: {{path}}",
+		"dirDenied": "A criação do diretório do recurso da predefinição foi negada por permissões: {{path}}",
+		"dirMissingAfterCreate": "O diretório do recurso da predefinição está ausente após a criação: {{path}}",
+		"exitCodeSuffix": " (código de saída {{code}})",
+		"elevatedErrorWithDetail": "A escrita elevada relatou um erro{{exitNote}}: {{detail}}",
+		"elevatedError": "A escrita elevada relatou um erro{{exitNote}}"
+	},
+	"folderGroup": {
+		"noFolderPaths": "Introduza pelo menos um caminho de pasta.",
+		"noPresetFiles": "Nenhum arquivo de predefinição (.ffx) encontrado na pasta.",
+		"groupRowFailed": "Falha ao gerar a linha do grupo.",
+		"savedStatus": "Grupo guardado: {{id}} (membros: {{members}}, novas predefinições: {{added}})",
+		"presetIdsNotFound": "IDs de predefinição não encontrados no catálogo: {{ids}}",
+		"savedStatusManual": "Grupo guardado ({{total}} itens): {{id}}",
+		"scanRequiresCepNode": "A verificação de pastas requer o navegador de arquivos do CEP Node. Introduza os IDs de predefinição manualmente ou ative o CEP Node."
+	},
+	"deleteConfirm": {
+		"preset": "Excluir a predefinição \"{{title}}\"?\n\nEsta ação não pode ser desfeita.",
+		"group": "Excluir o grupo \"{{title}}\"?\n\nEsta ação não pode ser desfeita.",
+		"untitled": "(sem título)"
 	}
 }

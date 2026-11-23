@@ -1,6 +1,6 @@
 import { infoRowClass } from "@ty-plus/ui";
 import { type JSX, useEffect, useMemo, useState } from "react";
-
+import { i18n } from "@/management/i18n/index";
 import type { Preset } from "@/management/preset/contract";
 import { resolvePresetsForInfoByCatalogIds } from "@/management/preset/group/info-resolution";
 import type {
@@ -30,7 +30,7 @@ function HostFooter({ state }: { state: SurfaceState }): JSX.Element | null {
 					paddingTop: "var(--ty-space-2)",
 				})}
 			>
-				<SectionLabel>Active comp</SectionLabel>
+				<SectionLabel>{i18n.t("widgets:info.activeComp")}</SectionLabel>
 				<CompSections comp={state.compInfo} />
 			</div>
 		) : state.compInfoError?.trim() ? (
@@ -51,7 +51,7 @@ function HostFooter({ state }: { state: SurfaceState }): JSX.Element | null {
 						color: "var(--color-text-primary)",
 					})}
 				>
-					Comp info
+					{i18n.t("widgets:info.compInfo")}
 				</span>
 				{": "}
 				{state.compInfoError.trim()}
@@ -148,7 +148,7 @@ function _PresetMeta({
 				paddingTop: "var(--ty-space-2)",
 			})}
 		>
-			<SectionLabel>Details</SectionLabel>
+			<SectionLabel>{i18n.t("presets:presetTool.form.details")}</SectionLabel>
 			<div
 				className={css({
 					display: "flex",
@@ -160,7 +160,7 @@ function _PresetMeta({
 					<span
 						className={css({ flexShrink: 0, color: "var(--color-text-muted)" })}
 					>
-						File
+						{i18n.t("widgets:info.file")}
 					</span>
 					<span
 						className={css({
@@ -181,7 +181,7 @@ function _PresetMeta({
 					})}
 				>
 					<span className={css({ color: "var(--color-text-muted)" })}>
-						Kind
+						{i18n.t("widgets:info.kind")}
 					</span>
 					<span className={css({ color: "var(--color-text-primary)" })}>
 						{kindLabel ?? "-"}

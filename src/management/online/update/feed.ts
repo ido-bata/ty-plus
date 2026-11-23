@@ -232,7 +232,7 @@ const fetchWithDeadline = async (
 		});
 		const response = await Promise.race([request, deadline]);
 		if (!response.ok) {
-			throw new Error(`GitHub release request failed: HTTP ${response.status}`);
+			throw new Error(`GitHub release request failed: HTTP ${response.status}`); // i18n-exempt: internal diagnostic — not rendered as UI copy
 		}
 		return await Promise.race([response.text(), deadline]);
 	} finally {

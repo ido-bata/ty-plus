@@ -1,5 +1,6 @@
 import { infoRowClass, sectionLabelClass } from "@ty-plus/ui";
 import type { JSX, ReactNode } from "react";
+import { i18n } from "@/management/i18n/index";
 import type { CompInfo } from "@/management/workspace/core/state";
 import { css } from "@/styled-system/css";
 import { formatDuration, formatFrameRate, rgbToHex } from "./format";
@@ -16,12 +17,20 @@ export function CompSections({ comp }: { comp: CompInfo }): JSX.Element {
 					paddingBottom: "var(--ty-space-2)",
 				})}
 			>
-				<SectionTitle>Dimensions</SectionTitle>
-				<InfoRow label="Size" value={`${comp.width} x ${comp.height} px`} />
-				<InfoRow label="Pixel Aspect" value={comp.pixelAspect.toFixed(3)} />
+				<SectionTitle>
+					{i18n.t("workspace:widgets.projectInfo.dimensions")}
+				</SectionTitle>
+				<InfoRow
+					label={i18n.t("widgets:info.comp.size")}
+					value={`${comp.width} x ${comp.height} px`}
+				/>
+				<InfoRow
+					label={i18n.t("widgets:info.comp.pixelAspect")}
+					value={comp.pixelAspect.toFixed(3)}
+				/>
 				{comp.bgColor ? (
 					<InfoRow
-						label="Background"
+						label={i18n.t("widgets:info.comp.background")}
 						value={
 							<span
 								className={css({
@@ -56,17 +65,25 @@ export function CompSections({ comp }: { comp: CompInfo }): JSX.Element {
 					paddingBottom: "var(--ty-space-2)",
 				})}
 			>
-				<SectionTitle>Timing</SectionTitle>
+				<SectionTitle>
+					{i18n.t("workspace:widgets.projectInfo.timing")}
+				</SectionTitle>
 				<InfoRow
-					label="Frame Rate"
+					label={i18n.t("widgets:info.comp.frameRate")}
 					value={formatFrameRate(comp.frameRate, comp.dropFrame)}
 				/>
 				<InfoRow
-					label="Duration"
+					label={i18n.t("widgets:info.comp.duration")}
 					value={formatDuration(comp.duration, comp.frameRate)}
 				/>
-				<InfoRow label="Shutter Angle" value={`${comp.shutterAngle} deg`} />
-				<InfoRow label="Shutter Phase" value={`${comp.shutterPhase} deg`} />
+				<InfoRow
+					label={i18n.t("widgets:info.comp.shutterAngle")}
+					value={`${comp.shutterAngle} deg`}
+				/>
+				<InfoRow
+					label={i18n.t("widgets:info.comp.shutterPhase")}
+					value={`${comp.shutterPhase} deg`}
+				/>
 			</div>
 			<div
 				className={css({
@@ -77,14 +94,36 @@ export function CompSections({ comp }: { comp: CompInfo }): JSX.Element {
 					paddingBottom: "var(--ty-space-2)",
 				})}
 			>
-				<SectionTitle>Layers</SectionTitle>
-				<InfoRow label="Total" value={String(comp.layers)} />
-				<InfoRow label="Selected" value={String(comp.selectedLayers)} />
+				<SectionTitle>
+					{i18n.t("workspace:widgets.projectInfo.layers")}
+				</SectionTitle>
+				<InfoRow
+					label={i18n.t("widgets:info.comp.total")}
+					value={String(comp.layers)}
+				/>
+				<InfoRow
+					label={i18n.t("widgets:info.comp.selected")}
+					value={String(comp.selectedLayers)}
+				/>
 			</div>
 			<div className={css({ marginBottom: "var(--ty-space-2)" })}>
-				<SectionTitle>Settings</SectionTitle>
-				<InfoRow label="Motion Blur" value={comp.motionBlur ? "On" : "Off"} />
-				<InfoRow label="3D Draft" value={comp.draft3d ? "On" : "Off"} />
+				<SectionTitle>{i18n.t("presets:presetTool.settings")}</SectionTitle>
+				<InfoRow
+					label={i18n.t("widgets:info.comp.motionBlur")}
+					value={
+						comp.motionBlur
+							? i18n.t("widgets:info.comp.on")
+							: i18n.t("widgets:info.comp.off")
+					}
+				/>
+				<InfoRow
+					label={i18n.t("widgets:info.comp.draft3d")}
+					value={
+						comp.draft3d
+							? i18n.t("widgets:info.comp.on")
+							: i18n.t("widgets:info.comp.off")
+					}
+				/>
 			</div>
 		</>
 	);

@@ -1,5 +1,6 @@
 import { sectionLabelClass } from "@ty-plus/ui";
 import type { JSX, ReactNode } from "react";
+import { useTranslation } from "react-i18next";
 import type { Preset } from "@/management/preset/contract";
 import { WorkspacePresetGlyph } from "@/management/preset/workspace/glyph/WorkspaceGlyph";
 import { css } from "@/styled-system/css";
@@ -12,6 +13,20 @@ import { css } from "@/styled-system/css";
  */
 
 export type PresetInfoSource = "selection" | "hover";
+
+/**
+ * This module is also rendered by host-free surfaces (the official Web
+ * demo) that run a different i18next resource set without the `widgets`
+ * namespace. Resolve the instance from react-i18next context (never the
+ * app singleton — that would break the web product boundary) and fall
+ * back to the English literal when the key is absent.
+ */
+type WidgetT = (key: string, fallback: string) => string;
+
+const makeWidgetT =
+	(i18n: { exists: (key: string) => boolean; t: (key: string) => string }) =>
+	(key: string, fallback: string): string =>
+		i18n.exists(key) ? i18n.t(key) : fallback;
 
 export type PresetInfoMode = "single" | "multi" | "empty";
 
@@ -62,6 +77,8 @@ function PresetInfoEmptyContent({
 }: {
 	source: PresetInfoSource;
 }): JSX.Element {
+	const { i18n } = useTranslation();
+	const tWidget = makeWidgetT(i18n);
 	return (
 		<div
 			className={css({
@@ -101,7 +118,7 @@ function PresetInfoEmptyContent({
 							opacity: 0.5,
 						})}
 					>
-						No preset selected
+						{tWidget("widgets:info.noPresetSelected", "No preset selected")}
 					</span>
 					<span
 						className={css({
@@ -110,7 +127,7 @@ function PresetInfoEmptyContent({
 							color: "var(--color-text-muted)",
 						})}
 					>
-						{source}
+						{tWidget(`widgets:info.source.${source}`, source)}
 					</span>
 				</div>
 			</div>
@@ -125,6 +142,8 @@ function PresetCard({
 	preset: Preset;
 	source: PresetInfoSource;
 }): JSX.Element {
+	const { i18n } = useTranslation();
+	const tWidget = makeWidgetT(i18n);
 	const name = preset.title?.trim() ? preset.title.trim() : preset.id;
 	const fileName = fileNameFromExecutionData(preset);
 	const kindLabel = preset.type;
@@ -208,7 +227,7 @@ function PresetCard({
 								color: "var(--color-text-muted)",
 							})}
 						>
-							{source}
+							{tWidget(`widgets:info.source.${source}`, source)}
 						</span>
 					</div>
 					<div
@@ -302,12 +321,13 @@ function PresetCard({
 								color: "var(--color-text-muted)",
 							})}
 						>
-							{formatPresetDescription(preset.description).map((part) =>
-								part.value === "\n" ? (
-									<br key={part.key} />
-								) : (
-									<span key={part.key}>{part.value}</span>
-								),
+							{formatPresetDescription(preset.description, tWidget).map(
+								(part) =>
+									part.value === "\n" ? (
+										<br key={part.key} />
+									) : (
+										<span key={part.key}>{part.value}</span>
+									),
 							)}
 						</div>
 					) : null}
@@ -388,8 +408,11 @@ function fileNameFromExecutionData(preset: Preset): string | null {
 
 function formatPresetDescription(
 	raw: string | undefined,
+	tWidget: WidgetT,
 ): { key: string; value: string }[] {
-	const parts = raw?.trim() ? raw.trim().split(/(\n)/) : ["No description"];
+	const parts = raw?.trim()
+		? raw.trim().split(/(\n)/)
+		: [tWidget("widgets:info.noDescription", "No description")];
 	return parts.map((value, index) => ({
 		key: `${value}-${index}-${parts.length}`,
 		value,

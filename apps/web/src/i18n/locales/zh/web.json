@@ -1,0 +1,353 @@
+{
+	"tagline": "您的预设与工具，尽在 Adobe After Effects 之中。",
+	"skipToContent": "跳转到内容",
+	"languageLabel": "语言",
+	"nav": {
+		"primary": "主导航",
+		"menu": "菜单",
+		"download": "下载"
+	},
+	"navLinks": {
+		"features": "功能",
+		"download": "下载",
+		"docs": "文档",
+		"changelog": "更新日志",
+		"support": "支持"
+	},
+	"footer": {
+		"description": "免费、开源（MIT）、本地优先的 After Effects 扩展。无需账户。",
+		"product": "产品",
+		"resources": "资源",
+		"releases": "GitHub Releases",
+		"source": "源代码",
+		"userGuide": "用户指南",
+		"copyright": "© ty-plus 贡献者",
+		"bottom": "MIT 许可证 · 可完全离线使用 · CEP 面板"
+	},
+	"notices": {
+		"stale": "版本数据暂时不可用；正在显示上次发布的快照。请查看 <1>GitHub Releases</1> 获取最新构建。"
+	},
+	"home": {
+		"metaTitle": "{{name}} — {{tagline}}",
+		"metaDescription": "ty-plus 是一款免费、开源、本地优先的 After Effects 扩展。您可以在 After Effects 内部的可自定义工作区中整理预设、脚本和小组件。",
+		"metaOgDescription": "免费、开源、本地优先的 Adobe After Effects CEP 扩展。",
+		"hero": {
+			"introAria": "简介",
+			"eyebrow": "免费 · 开源",
+			"lead": "ty-plus 将您的 After Effects 工作区的一部分，变成可复用预设与日常工具的可自定义之家——无需离开 After Effects。",
+			"download": "下载 ty-plus",
+			"explore": "了解功能",
+			"license": "MIT 许可证",
+			"noAccount": "无需账户",
+			"offline": "完全支持离线使用",
+			"platforms": "Windows · macOS",
+			"stable": "Stable {{version}}",
+			"demoCaption": "交互式演示——与面板相同的图块和信息界面。悬停或轻点可查看详情，⌘/Ctrl+点击或 Shift+点击可选择；普通点击会在 After Effects 中应用预设，而不是在这里。"
+		},
+		"surfaces": {
+			"aria": "面板界面",
+			"workspaceAlt": "ty-plus 工作区上的实用小组件——快捷操作、缓动曲线、对齐和锚点工具",
+			"workspaceCaption": "工作区网格——预设与小组件共处于同一界面，截图来自正在运行的面板。",
+			"presetsAlt": "ty-plus 中的 Local Presets 浏览器，列出本地目录中的预设",
+			"presetsCaption": "Local Presets——浏览、筛选并放置目录预设。",
+			"addWidgetAlt": "ty-plus 中的 Add Widget 选择器，列出可用的小组件类型",
+			"addWidgetCaption": "Add Widget——用内置工具扩展工作区。",
+			"offlineNote": "每个界面都在 After Effects 内部运行，拔掉网线也能正常工作。",
+			"allFeatures": "全部功能"
+		},
+		"principles": {
+			"aria": "设计原则",
+			"title": "本地优先、支持离线、布局由您决定",
+			"body": "预设、小组件和布局都保存在您机器上的本地文件中。没有账户、没有遥测、没有订阅——拔掉网线，面板照常工作。"
+		},
+		"resources": {
+			"aria": "资源",
+			"download": {
+				"title": "下载",
+				"body": "从 GitHub Releases 获取适用于 Windows 和 macOS 的免费 ZXP 构建。",
+				"cta": "获取 ty-plus"
+			},
+			"docs": {
+				"title": "文档",
+				"body": "用户指南、安装、工作区、小组件、预设、设置。",
+				"cta": "阅读指南"
+			},
+			"changelog": {
+				"title": "更新日志",
+				"body": "按 Stable、Beta 和 Insider 通道分组的发布说明。",
+				"cta": "查看新功能"
+			}
+		}
+	},
+	"features": {
+		"metaTitle": "功能 — ty-plus",
+		"metaDescription": "了解 ty-plus 的功能：在 Adobe After Effects 内部，以可自定义的预设图块和小组件组成工作区，数据本地优先，并提供多条发布通道。",
+		"eyebrow": "面板之内",
+		"title": "功能",
+		"lead": "ty-plus 是 Adobe After Effects 的 CEP 扩展面板。它为您常用的预设和工具提供一个可自定义的家园——一切都在 After Effects 内部本地运行。",
+		"tiles": {
+			"aria": "预设图块",
+			"eyebrow": "预设图块",
+			"title": "您的目录，变成一排图块",
+			"body": "动画预设、代码预设、Footage 以及您注册的组，都会成为与小组件同一网格上的具名图块——各自带有独立的图标和标题，全部位于 After Effects 内。右侧的舞台渲染的，正是面板所用的相同图块和信息界面。"
+		},
+		"interaction": {
+			"aria": "交互",
+			"eyebrow": "交互",
+			"title": "查看、选择、应用",
+			"body": "悬停或轻点图块，信息界面会显示该预设的名称、类型和来源——与面板信息小组件的读数相同。⌘/Ctrl+点击可切换图块的选中状态；Shift+点击可追加选择。普通点击会把预设应用到 After Effects 中的活动图层——这条路径已在真实项目中端到端验证。演示把这一意图记录为一条注释，而非模拟运行。两张截图分别是选择前后真实信息小组件的样子。",
+			"beforeAlt": "ty-plus 信息小组件的空状态，显示“未选择预设”",
+			"beforeCaption": "之前——未选择任何内容：信息小组件显示“未选择预设”。",
+			"afterAlt": "ty-plus 信息小组件列出所选预设——其名称、预设类型，以及来源为“选择”",
+			"afterCaption": "之后——选中了一个图块：小组件列出该预设的名称、类型，以及来源“选择”。"
+		},
+		"surfaces": {
+			"aria": "界面",
+			"eyebrow": "工作区",
+			"title": "小组件与对话框，同在一张网格上",
+			"easingAlt": "ty-plus 的 Easing 小组件——带 Curve、Loop、Bounce 和 Elastic 模式及 Apply 操作的曲线编辑器——旁边是对齐与分布工具",
+			"easingCaption": "Easing 曲线编辑器用于绘制速度曲线并应用到 Keyframe；对齐、分布和间距工具位于同一网格上。",
+			"presetsAlt": "ty-plus 中的 Local Presets 浏览器，列出目录预设并带有离线提示",
+			"presetsCaption": "Local Presets——搜索目录，查看每个预设位于哪个工作区；即使离线，浏览依然可用。",
+			"addWidgetAlt": "ty-plus 中的 Add Widget 选择器，列出 CORE 和 UTILITY 小组件类型",
+			"addWidgetCaption": "Add Widget——选择 CORE 或 UTILITY 小组件；对话框会说明它将落在网格的哪个位置。",
+			"widgetsTitle": "随需取用的小组件",
+			"widgetsBody": "Easing 绘制速度曲线并应用到 Keyframe；对齐把选中的图层排成一线，锚点设置锚点位置。目录浏览器、字体查看器、快捷操作、菜单、信息和布局锁定覆盖了其余场景。在 Add Widget 中挑选，它们会加入与预设图块相同的网格——每个小组件在拔掉网线时依然可用。",
+			"appearanceTitle": "可自定义的外观",
+			"appearanceBody": "通过菜单小组件更改工作区背景——纯色、图案或图片——并在设置中调节主题、不透明度和密度。两者都保存在您机器上的本地文件中。"
+		},
+		"availability": {
+			"aria": "可用性",
+			"title": "天生支持离线",
+			"body": "工作区设置、预设、小组件配置和外观都保存在您的机器上。扩展会检查 GitHub Releases 的更新，但每个核心功能都无需网络连接即可工作——也无需账户。",
+			"download": "下载",
+			"userGuide": "用户指南"
+		}
+	},
+	"download": {
+		"metaTitle": "下载 — ty-plus",
+		"metaDescription": "为 Windows 或 macOS 下载 Adobe After Effects 的 ty-plus。来自 GitHub Releases 的免费开源 ZXP 构建。",
+		"title": "下载",
+		"lead": "ty-plus 以 ZXP 扩展的形式通过 GitHub Releases 分发。它在 MIT 许可证下免费且开源——请在下方选择适用于您操作系统的构建。",
+		"latest": {
+			"fallbackTitle": "GitHub Releases",
+			"published": "{{name}} — 发布于 {{date}}。",
+			"publishedNoName": "发布于 {{date}}。",
+			"viewNotes": "查看发布说明",
+			"none": "最新稳定版始终可在 <1>GitHub Releases</1> 上获取。",
+			"openReleases": "打开 GitHub Releases"
+		},
+		"prereleaseNotice": "同时也会发布 Beta 和 Insider 构建——完整列表见<1>更新日志</1>。",
+		"os": {
+			"windows": "Windows",
+			"macos": "macOS",
+			"installerNote": "请使用兼容 CEP 的安装器安装 ZXP（例如 ZXP Installer 或 Extension Manager）。",
+			"macosNote": "关于 Gatekeeper 的说明请参阅安装指南。",
+			"assetMissing": "此版本中没有适用于 {{os}} 的资源文件。",
+			"assetDownload": "下载适用于 {{os}} 的版本"
+		},
+		"steps": {
+			"title": "三步安装到面板",
+			"item1": "从上方的版本（或 <1>GitHub Releases</1>）下载适用于您操作系统的 ZXP。",
+			"item2": "请使用兼容 CEP 的安装器安装 ZXP（例如 ZXP Installer 或 Extension Manager）。",
+			"item3": "重启 Adobe After Effects，打开 <1>窗口 → 扩展 → ty-plus</1>。"
+		},
+		"signingNotice": "Windows 原生工作进程未进行 Authenticode 签名，macOS 工作进程也未公证。操作系统的安全策略可能需要相应调整——详情请参阅<1>安装与故障排除指南</1>。"
+	},
+	"docs": {
+		"metaTitle": "文档 — ty-plus",
+		"metaDescription": "ty-plus 文档：用户指南、安装、工作区、小组件、预设、设置与故障排除——在 GitHub 仓库中维护。",
+		"title": "文档",
+		"lead": "用户指南在仓库中维护，因此始终与已发布的产品保持一致。目前内容为日语。",
+		"sectionsTitle": "用户指南章节",
+		"sections": {
+			"userGuide": {
+				"title": "用户指南",
+				"description": "从这里开始——概述与核心概念。"
+			},
+			"installation": {
+				"title": "安装与故障排除",
+				"description": "ZXP 安装、CEP 宿主、签名与操作系统安全说明。"
+			},
+			"mainScreen": {
+				"title": "主界面与工作区",
+				"description": "图块、小组件与工作区布局。"
+			},
+			"presets": {
+				"title": "预设",
+				"description": "预设类型、分组与应用预设。"
+			},
+			"widgets": {
+				"title": "小组件",
+				"description": "内置小组件与小组件选择器。"
+			},
+			"settings": {
+				"title": "设置与外观",
+				"description": "面板设置、主题与更新通道。"
+			}
+		},
+		"improve": {
+			"title": "改进文档",
+			"body": "欢迎改进文档——查看 <1>CONTRIBUTING.md</1> 了解如何提出修改建议。",
+			"cta": "打开用户指南"
+		}
+	},
+	"support": {
+		"metaTitle": "支持 — ty-plus",
+		"metaDescription": "获取 ty-plus 的帮助：报告问题、请求功能、查看安全政策，或在 GitHub 上为项目做贡献。",
+		"title": "支持",
+		"lead": "ty-plus 是一个社区驱动的开源项目。获得帮助最快的方式是通过 GitHub。",
+		"help": {
+			"title": "文档与议题",
+			"userGuide": {
+				"term": "用户指南",
+				"description": "安装、工作区、小组件、预设、设置、故障排除。"
+			},
+			"installation": {
+				"term": "安装与故障排除",
+				"description": "ZXP 安装与操作系统安全说明。"
+			},
+			"issues": {
+				"term": "已有议题",
+				"description": "查看您的问题是否已被报告。"
+			}
+		},
+		"report": {
+			"title": "问题反馈与功能请求",
+			"body": "请使用 <1>GitHub 上的议题模板</1>报告问题或请求改进。请附上您的操作系统、After Effects 版本、ty-plus 版本以及复现步骤。",
+			"cta": "提交议题"
+		},
+		"security": {
+			"title": "负责任的披露",
+			"body": "请勿为安全漏洞公开创建议题。负责任的披露流程请参阅<1>安全政策</1>。"
+		},
+		"contribute": {
+			"title": "与我们一起开发",
+			"body": "ty-plus 采用 MIT 许可证并在公开环境中开发。请参阅 <1>CONTRIBUTING.md</1> 开始，许可条款见 <2>LICENSE</2>。",
+			"cta": "源代码"
+		}
+	},
+	"changelog": {
+		"metaTitle": "更新日志 — ty-plus",
+		"metaDescription": "ty-plus 的发布说明与更新信息，来源于 GitHub Releases。",
+		"title": "更新日志",
+		"lead": "发布说明发布在 GitHub Releases 上，按更新通道分组——每个通道内最新的在前。",
+		"channels": {
+			"stable": {
+				"label": "Stable",
+				"hint": "推荐大多数用户使用"
+			},
+			"beta": {
+				"label": "Beta",
+				"hint": "预发布构建"
+			},
+			"insider": {
+				"label": "Insider",
+				"hint": "频繁的早期构建"
+			}
+		},
+		"release": {
+			"fullNotes": "完整发布说明",
+			"assets_one": "{{count}} 个资源文件",
+			"assets_other": "{{count}} 个资源文件"
+		},
+		"empty": "版本数据暂时不可用。<1>在 GitHub 上浏览所有版本</1>。",
+		"allReleases": "GitHub 上的所有版本",
+		"channelsSection": {
+			"title": "Stable、Beta、Insider",
+			"body": "在面板内的 <1>设置 → 更新</1> 中选择 Stable、Beta 或 Insider。更新会与 GitHub Releases 比对；安装仍需手动进行。通道详情见<2>用户指南</2>。"
+		}
+	},
+	"presetStage": {
+		"ariaLabel": "预设图块演示",
+		"mode": {
+			"empty": "空",
+			"selected": "已选择",
+			"hover": "悬停",
+			"lastSelection": "上次选择",
+			"lastSelected": "上次选中",
+			"recent": "最近",
+			"selectedCount": "已选择 {{count}} 个"
+		},
+		"applyNote": "“{{title}}”——在面板中，普通点击会把此预设应用到活动图层。",
+		"hintFine": "悬停查看详情 · ⌘/Ctrl+点击切换选择 · Shift+点击追加 · 点击在面板中应用",
+		"hintCoarse": "轻点查看并选择 · 在面板中，轻点会把预设应用到活动图层",
+		"demoNote": "网页演示 · 选择仅为本地状态 · 在 After Effects 面板中运行"
+	},
+	"demoPresets": {
+		"fadeIn": {
+			"title": "淡入",
+			"description": "在前 12 帧内将图层不透明度从 0 提升到 100。"
+		},
+		"popIn": {
+			"title": "弹入",
+			"description": "让图层带轻微过冲地放大，然后回落。"
+		},
+		"slideIn": {
+			"title": "滑入",
+			"description": "让图层以柔和的减速缓动从画面外滑入。"
+		},
+		"jumpIn": {
+			"title": "跳入",
+			"description": "让图层划弧线入位，落地时带挤压。"
+		},
+		"spinIn": {
+			"title": "旋入",
+			"description": "让图层旋转一整圈的同时淡入。"
+		},
+		"fadeOut": {
+			"title": "淡出",
+			"description": "在最后 12 帧内将图层不透明度降到 0。"
+		},
+		"popOut": {
+			"title": "弹出",
+			"description": "让图层以快速加速缓动缩小并退出。"
+		},
+		"breathe": {
+			"title": "呼吸循环",
+			"description": "循环播放细微的缩放脉动，营造环境动感。"
+		},
+		"yoyo": {
+			"title": "溜溜球循环",
+			"description": "让图层沿单一轴来回循环移动。"
+		},
+		"wobble": {
+			"title": "弹跳摇晃",
+			"description": "先过冲缩放，再摇晃着回到静止。"
+		},
+		"slideOut": {
+			"title": "滑出",
+			"description": "让图层以柔和的加速缓动滑出画面。"
+		},
+		"spinOut": {
+			"title": "旋出",
+			"description": "让图层旋转一整圈的同时淡出。"
+		}
+	},
+	"ui": {
+		"loadingSpinner": {
+			"label": "加载中"
+		},
+		"searchField": {
+			"clearAria": "清除搜索",
+			"clearTitle": "清除"
+		},
+		"regexEditor": {
+			"enterPattern": "请输入模式。",
+			"invalidFlags": "无效标志：{{flags}}",
+			"plainSource": "纯正则表达式源",
+			"literalFormat": "字面正则表达式格式",
+			"testString": "测试字符串",
+			"sourcePlaceholder": "正则表达式源",
+			"flagsPlaceholder": "标志",
+			"matches": "匹配",
+			"noMatch": "无匹配",
+			"literalSuffix": "· 字面量 /pattern/flags",
+			"sourceSuffix": "· 仅源"
+		},
+		"listSelect": {
+			"placeholder": "选择…"
+		}
+	},
+	"metaDescription": "{{tagline}} 免费、开源、本地优先。"
+}

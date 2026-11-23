@@ -17,6 +17,7 @@
  * preserved.
  */
 
+import { i18n } from "@/management/i18n/index";
 import {
 	isInitializationComplete,
 	readInitializationState,
@@ -41,22 +42,16 @@ const ensureManagedSuffix = (supportRoot: string): string => {
 export const resolveWriteManagedRoot = async (win: Window): Promise<string> => {
 	const appRoot = await resolveInitializationAppRoot(win);
 	if (!appRoot) {
-		throw new Error(
-			"ty-plus-init.json not found (no app root). Onboarding must complete before any write.",
-		);
+		throw new Error(i18n.t("common:errors.initNotFound"));
 	}
 	const state = await readInitializationState(win, appRoot);
 	const gate = isInitializationComplete(state);
 	if (!gate.completed) {
-		throw new Error(
-			"ty-plus is not yet initialized. Writes are blocked until ty-plus-init.json reports completed.",
-		);
+		throw new Error(i18n.t("common:errors.initIncomplete"));
 	}
 	const supportRoot = gate.supportRoot?.trim();
 	if (!supportRoot) {
-		throw new Error(
-			"ty-plus-init.json is marked complete but supportRoot is blank.",
-		);
+		throw new Error(i18n.t("common:errors.initSupportRootBlank"));
 	}
 	return ensureManagedSuffix(supportRoot);
 };

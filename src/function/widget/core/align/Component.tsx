@@ -9,6 +9,7 @@ import {
 	useState,
 } from "react";
 import { useWidgetRuntime } from "@/function/widget/runtime-context";
+import { i18n } from "@/management/i18n/index";
 import type {
 	AlignTargetId,
 	SurfaceState,
@@ -201,9 +202,9 @@ function GestureOverlay({
 				zIndex: 100,
 				overflow: "visible",
 			})}
-			aria-label="Gesture path overlay"
+			aria-label={i18n.t("widgets:align.gestureOverlay")}
 		>
-			<title>Gesture path overlay</title>
+			<title>{i18n.t("widgets:align.gestureOverlay")}</title>
 			{path.length > 1 && (
 				<polyline
 					points={path.map((p) => `${p.x},${p.y}`).join(" ")}
@@ -287,7 +288,7 @@ function TargetSelectorRow({
 				className={btnClass("selection")}
 				data-ws-action="align-target-selection"
 				onClick={pickTarget("selection")}
-				title="Align to Selection"
+				title={i18n.t("widgets:align.targets.selection")}
 			>
 				<TargetIcon name="selection" />
 			</button>
@@ -296,7 +297,7 @@ function TargetSelectorRow({
 				className={btnClass("comp")}
 				data-ws-action="align-target-comp"
 				onClick={pickTarget("comp")}
-				title="Align to Composition"
+				title={i18n.t("widgets:align.targets.composition")}
 			>
 				<TargetIcon name="comp" />
 			</button>
@@ -305,7 +306,7 @@ function TargetSelectorRow({
 				className={btnClass("key-object")}
 				data-ws-action="align-target-key-object"
 				onClick={pickTarget("key-object")}
-				title="Align to Key Object"
+				title={i18n.t("widgets:align.targets.keyObject")}
 			>
 				<TargetIcon name="key-object" />
 			</button>
@@ -314,7 +315,7 @@ function TargetSelectorRow({
 				className={btnClass("time")}
 				data-ws-action="align-target-time"
 				onClick={pickTarget("time")}
-				title="Time Alignment"
+				title={i18n.t("widgets:align.targets.time")}
 			>
 				<TargetIcon name="time" />
 			</button>
@@ -444,7 +445,25 @@ export function Align({ widthPx, widgetInstanceId }: Props): JSX.Element {
 					else if (count >= 2 && target === "comp") setTarget("selection");
 				}
 			}
-			await host("alignLayers", [{ action, target: autoTarget ?? target }]);
+			await host("alignLayers", [
+				{
+					action,
+					target: autoTarget ?? target,
+					undoGroupName: i18n.t("widgets:align.undoGroupName"),
+					messages: {
+						noActiveComposition: i18n.t(
+							"widgets:align.errors.noActiveComposition",
+							{
+								defaultValue:
+									"Select at least one layer in an active composition",
+							},
+						),
+						noLayerSelected: i18n.t("widgets:align.errors.noLayerSelected", {
+							defaultValue: "Select at least one layer before aligning",
+						}),
+					},
+				},
+			]);
 		},
 		[host, target, isManualTarget, setActiveWidgetInstanceId, widgetInstanceId],
 	);
@@ -540,7 +559,9 @@ export function Align({ widthPx, widgetInstanceId }: Props): JSX.Element {
 
 			{/* Align Section */}
 			<div ref={alignSectionRef}>
-				{(showDistribute || showSpacing) && <SectionLabel>Align</SectionLabel>}
+				{(showDistribute || showSpacing) && (
+					<SectionLabel>{i18n.t("widgets:align.name")}</SectionLabel>
+				)}
 				<div
 					className={cx(
 						css({
@@ -572,7 +593,9 @@ export function Align({ widthPx, widgetInstanceId }: Props): JSX.Element {
 			{/* Distribute Section */}
 			{showDistribute && (
 				<div ref={distributeSectionRef}>
-					<SectionLabel>Distribute</SectionLabel>
+					<SectionLabel>
+						{i18n.t("widgets:align.sections.distribute")}
+					</SectionLabel>
 					<div
 						className={cx(
 							css({
@@ -613,7 +636,9 @@ export function Align({ widthPx, widgetInstanceId }: Props): JSX.Element {
 			{/* Spacing Section */}
 			{showSpacing && (
 				<div ref={spacingSectionRef}>
-					<SectionLabel>Spacing</SectionLabel>
+					<SectionLabel>
+						{i18n.t("widgets:align.sections.spacing")}
+					</SectionLabel>
 					<div
 						className={cx(
 							css({
@@ -646,7 +671,7 @@ export function Align({ widthPx, widgetInstanceId }: Props): JSX.Element {
 			{/* Time Section */}
 			{target === "time" && (
 				<div>
-					<SectionLabel>Time</SectionLabel>
+					<SectionLabel>{i18n.t("widgets:align.sections.time")}</SectionLabel>
 					<div
 						className={cx(
 							css({

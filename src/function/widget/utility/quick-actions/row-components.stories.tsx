@@ -103,6 +103,7 @@ const meta = {
 				selected={args.selected}
 				widgetInstanceId="row-storybook-1"
 				tl={typeLabel(samplePreset.type)}
+				t={stubT}
 				onSelect={noop}
 			/>
 		);

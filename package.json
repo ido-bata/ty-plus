@@ -1,7 +1,7 @@
 {
 	"name": "ty-plus",
 	"private": true,
-	"version": "0.12.0",
+	"version": "0.13.0",
 	"packageManager": "bun@1.3.10",
 	"workspaces": [
 		"apps/*",
@@ -102,7 +102,7 @@
 		"biome": "bunx @biomejs/biome",
 		"format": "bun run biome format --write .",
 		"prepare": "panda codegen --silent && panda cssgen --silent && panda codegen --config panda.config.ts --cwd apps/web --silent && panda cssgen --config panda.config.ts --cwd apps/web --silent",
-		"lint": "cross-env NODE_OPTIONS=--max-old-space-size=28672 bun run biome check . && bun run scripts/check/design-tokens.ts && bun run scripts/check/static-guardrail.ts && bun run scripts/check/no-tailwind-literals.ts && bun run check:storage-split && bun run scripts/check/i18n-locale-coverage.ts --strict-en-canonical && bun run scripts/check/i18n-locked-terms.ts && bun run scripts/check/web-design.ts && bun run check:app-ui-design && bun run check:story-only && bun run check:ui-ownership",
+		"lint": "cross-env NODE_OPTIONS=--max-old-space-size=28672 bun run biome check . && bun run scripts/check/design-tokens.ts && bun run scripts/check/static-guardrail.ts && bun run scripts/check/no-tailwind-literals.ts && bun run check:storage-split && bun run scripts/check/i18n-locale-coverage.ts --strict-en-canonical && bun run scripts/check/i18n-locale-coverage.ts --strict-en-canonical --locales-dir=apps/web/src/i18n/locales --src-dir=apps/web/src && bun run scripts/check/i18n-locked-terms.ts && bun run scripts/check/i18n-hardcoded-strings.ts && bun run scripts/check/i18n-t-keys.ts && bun run scripts/check/i18n-placeholders.ts && bun run scripts/check/web-design.ts && bun run check:app-ui-design && bun run check:story-only && bun run check:ui-ownership",
 		"doctor": "bunx --no-install react-doctor",
 		"agent:snapshot": "bun run scripts/agent/supervisor.ts snapshot .tmp/agent-snapshots/current.json",
 		"agent:verify-result": "bun run scripts/agent/supervisor.ts verify-result",

@@ -1,6 +1,7 @@
 import { Button } from "@ty-plus/ui";
 import { Plus } from "lucide-react";
 import type { JSX } from "react";
+import { i18n } from "@/management/i18n/index";
 import type { PresetIconEditorDraft } from "@/management/preset/icon/editor-state";
 import { AccordionSection } from "@/management/setting/dialog/sections/AccordionSection";
 import { css } from "@/styled-system/css";
@@ -49,7 +50,10 @@ export function ConditionRulesSection({
 				baseIconDraft={baseIconDraft}
 				onBaseIconDraftChange={onBaseIconDraftChange}
 			/>
-			<AccordionSection title="Rules" defaultOpen={true}>
+			<AccordionSection
+				title={i18n.t("presets:group.rules")}
+				defaultOpen={true}
+			>
 				<div className={rulesColumnClass}>
 					{conditionRules.map((r, i) => (
 						<ConditionRuleCard
@@ -64,7 +68,7 @@ export function ConditionRulesSection({
 						/>
 					))}
 					<Button type="button" variant="outline" fullWidth onClick={onAddRule}>
-						<Plus size={16} /> Add rule
+						<Plus size={16} /> {i18n.t("presets:group.addRule")}
 					</Button>
 				</div>
 			</AccordionSection>

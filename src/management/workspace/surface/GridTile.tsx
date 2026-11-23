@@ -10,7 +10,9 @@
 import { clampedTextClass } from "@ty-plus/ui";
 import type { CSSProperties, JSX } from "react";
 import { memo } from "react";
+import { i18n } from "@/management/i18n/index";
 import type { Preset } from "@/management/preset/contract";
+import { WidgetTutorialLayer } from "@/management/tutorial/WidgetTutorialLayer";
 import { Widget } from "@/management/widget/workspace/TileContent";
 import type { SurfaceState, Tile } from "@/management/workspace/core/state";
 import type {
@@ -141,13 +143,23 @@ function TileBodyImpl(props: TileBodyProps): JSX.Element {
 	} = props;
 	if (isWidget) {
 		if (layout) {
-			return <Widget layout={layout} state={state} grid={grid} />;
+			return (
+				<WidgetTutorialLayer widgetType={layout.widgetType}>
+					<Widget layout={layout} state={state} grid={grid} />
+				</WidgetTutorialLayer>
+			);
 		}
 		return (
 			<div className={widgetMissingCard} title={tileId}>
-				<span className={widgetMissingTitle}>Widget</span>
+				<span className={widgetMissingTitle}>
+					{i18n.t("workspace:gridTile.widgetTitle", {
+						defaultValue: "Widget",
+					})}
+				</span>
 				<span className={clampedTextClass}>
-					Configuration could not be loaded
+					{i18n.t("workspace:gridTile.configLoadError", {
+						defaultValue: "Configuration could not be loaded",
+					})}
 				</span>
 			</div>
 		);

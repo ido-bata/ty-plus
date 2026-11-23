@@ -7,6 +7,7 @@
 import { createCepHostExecutor } from "@/management/ae/cep/host-executor";
 import type { HostId } from "@/management/ae/host/contract";
 import { createAdapter } from "@/management/ae/host-bridge";
+import { i18n } from "@/management/i18n/index";
 import { notificationStore } from "@/management/online/notification/service";
 import type { Preset } from "@/management/preset/contract";
 import { executePresetOnHost } from "@/management/preset/execution/pipeline";
@@ -36,9 +37,13 @@ export const executeWorkspacePresetForWindow = async (
 		// emitted here once. The error is re-thrown so callers keep their
 		// existing statusMessage / logging behavior.
 		const message = error instanceof Error ? error.message : String(error);
-		notificationStore.add(`Preset failed: ${message}`, "error", {
-			duration: 8000,
-		});
+		notificationStore.add(
+			i18n.t("workspace:statusMessages.presetFailed", { message }),
+			"error",
+			{
+				duration: 8000,
+			},
+		);
 		throw error;
 	}
 };

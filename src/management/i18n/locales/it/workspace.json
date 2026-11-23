@@ -13,7 +13,30 @@
 		"expand": "Espandi",
 		"collapse": "Comprimi",
 		"position": "Posizione",
-		"orientation": "Orientamento"
+		"orientation": "Orientamento",
+		"ariaLabel": "Preimpostazioni / Widget",
+		"collapseExpand": "Comprimi/Espandi",
+		"horizontal": "Orizzontale",
+		"vertical": "Verticale",
+		"resetToDefaults": "Ripristina predefiniti",
+		"buttons": {
+			"localPreset": "Preimpostazione locale",
+			"groupPreset": "Preimpostazione di gruppo",
+			"animationPreset": "Preimpostazione di animazione",
+			"layerCompPreset": "Preimpostazione livello/comp",
+			"codePreset": "Preimpostazione di codice",
+			"addWidget": "Aggiungi widget"
+		},
+		"positionLabels": {
+			"topLeft": "In alto a sinistra",
+			"topCenter": "In alto al centro",
+			"topRight": "In alto a destra",
+			"bottomLeft": "In basso a sinistra",
+			"bottomCenter": "In basso al centro",
+			"bottomRight": "In basso a destra",
+			"leftCenter": "Centro sinistra",
+			"rightCenter": "Centro destra"
+		}
 	},
 	"widgets": {
 		"align": {
@@ -41,5 +64,43 @@
 		"savingPaused": "Il salvataggio è in pausa per non sovrascrivere questo file. Ripara o ripristina il file, poi riprova.",
 		"file": "File: workspace-{{wsIndex}}.json",
 		"retry": "Riprova il ripristino"
+	},
+	"statusBar": {
+		"undoTitle": "Annulla (Ctrl+Z)",
+		"redoTitle": "Ripeti (Ctrl+Y)",
+		"saveSnapshotTitle": "Salva snapshot del layout",
+		"savedLayoutsTitle": "Layout salvati ({{count}})",
+		"savedLayoutsTitleEmpty": "Layout salvati (nessuno)",
+		"noSavedLayouts": "Nessun layout salvato",
+		"restoreSnapshotTitle": "Ripristina \"{{label}}\"",
+		"presetLibraryTitle": "Libreria di preimpostazioni (online)",
+		"debugConsoleTitle": "Console di debug (Ctrl+`)"
+	},
+	"gridTile": {
+		"widgetTitle": "Widget",
+		"configLoadError": "Impossibile caricare la configurazione"
+	},
+	"debugProbe": {
+		"title": "Sonda dialogo",
+		"message": "Controllo del ponte pannello -> dialogo"
+	},
+	"easingCurveColors": {
+		"linear": "Lineare",
+		"hold": "Mantieni",
+		"easeInGentle": "Ease in",
+		"easeInSharp": "Ease in (brusco)",
+		"easeOutGentle": "Ease out",
+		"easeOutSharp": "Ease out (brusco)",
+		"easeInOut": "Ease in/out",
+		"overshoot": "Oltrepassamento",
+		"bezier": "Bézier"
+	},
+	"statusMessages": {
+		"presetAssetMissing": "L'asset del preset manca su disco — l'esecuzione è disabilitata.",
+		"applyingAnchorPoint": "Applicazione del punto di ancoraggio: {{pos}}...",
+		"anchorPointRequested": "Punto di ancoraggio richiesto: {{pos}}",
+		"presetFailed": "Preset non riuscito: {{message}}",
+		"widgetAdded": "{{name}} aggiunto",
+		"layoutReset": "Il layout dell'area di lavoro è stato reimpostato."
 	}
 }

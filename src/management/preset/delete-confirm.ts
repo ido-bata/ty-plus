@@ -2,6 +2,7 @@
  * Host (ExtendScript) confirm dialog for destructive preset/group operations.
  */
 
+import { i18n } from "@/management/i18n/index";
 import {
 	CEP_INTERACTIVE_DIALOG_TIMEOUT_MS,
 	cepEvalScriptAvailable,
@@ -25,8 +26,11 @@ export const askHostDeleteConfirm = async (
 	presetTitle: string,
 	isGroup: boolean,
 ): Promise<boolean> => {
-	const what = isGroup ? "group" : "preset";
-	const message = `Delete ${what} "${presetTitle || "(untitled)"}"?\n\nThis cannot be undone.`;
+	const title = presetTitle || i18n.t("presets:deleteConfirm.untitled");
+	const message = i18n.t(
+		isGroup ? "presets:deleteConfirm.group" : "presets:deleteConfirm.preset",
+		{ title },
+	);
 	if (cepEvalScriptAvailable(win)) {
 		const script = `(function () { return confirm(${JSON.stringify(message)}) ? 'yes' : 'no'; }());`;
 		const result = (await runInteractiveHostScript(win, script)).trim();

@@ -53,7 +53,7 @@ async function mountWorkspaceShellAsync(
 
 	const root = target ?? document.getElementById("app");
 	if (!root) {
-		throw new Error("Missing #app");
+		throw new Error("Missing #app"); // i18n-exempt: internal diagnostic — not rendered as UI copy
 	}
 
 	const surfaceId =

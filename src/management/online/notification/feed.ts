@@ -117,7 +117,7 @@ const defaultFetchFeedText: FetchFeedText = async (url, timeoutMs) => {
 		signal: AbortSignal.timeout(timeoutMs),
 	});
 	if (!response.ok) {
-		throw new Error(`feed request failed: HTTP ${response.status}`);
+		throw new Error(`feed request failed: HTTP ${response.status}`); // i18n-exempt: internal diagnostic — not rendered as UI copy
 	}
 	return response.text();
 };

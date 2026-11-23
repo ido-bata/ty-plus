@@ -357,7 +357,7 @@ export function useWorkspaceRuntime(root: Element | null): {
 	};
 	const getState = (): SurfaceState => {
 		if (!stateRef.current) {
-			throw new Error("Workspace state not initialized");
+			throw new Error("Workspace state not initialized"); // i18n-exempt: internal diagnostic — not rendered as UI copy
 		}
 		return stateRef.current;
 	};
@@ -1020,7 +1020,11 @@ export function useWorkspaceRuntime(root: Element | null): {
 					...cur.widgetInstanceTypes,
 					[id]: widgetTypeRaw as WidgetType,
 				},
-				statusMessage: `Added ${i18n.t(cfg.name.replace(/^widgets\./, ""), { defaultValue: cfg.name })}`,
+				statusMessage: i18n.t("workspace:statusMessages.widgetAdded", {
+					name: i18n.t(cfg.name.replace(/^widgets\./, ""), {
+						defaultValue: cfg.name,
+					}),
+				}),
 			});
 			persistSurfaceState();
 			void history.listSnapshots().then((snaps) => {
@@ -1732,46 +1736,119 @@ export function useWorkspaceRuntime(root: Element | null): {
 				wrap.appendChild(b);
 			};
 
-			addBtn("Collapse/Expand", () => {
-				const st = readCpState(panelId);
-				commitCpState({ ...st, collapsed: !st.collapsed });
-			});
+			addBtn(
+				i18n.t("workspace:controlPanel.collapseExpand", {
+					defaultValue: "Collapse/Expand",
+				}),
+				() => {
+					const st = readCpState(panelId);
+					commitCpState({ ...st, collapsed: !st.collapsed });
+				},
+			);
 			addSep();
-			addHeading("Position");
-			const posDefs: { p: CpPosition; o: CpOrientation; label: string }[] = [
-				{ p: "top-left", o: "horizontal", label: "Top Left" },
-				{ p: "top-center", o: "horizontal", label: "Top Center" },
-				{ p: "top-right", o: "horizontal", label: "Top Right" },
-				{ p: "bottom-left", o: "horizontal", label: "Bottom Left" },
-				{ p: "bottom-center", o: "horizontal", label: "Bottom Center" },
-				{ p: "bottom-right", o: "horizontal", label: "Bottom Right" },
-				{ p: "left-center", o: "vertical", label: "Left Center" },
-				{ p: "right-center", o: "vertical", label: "Right Center" },
+			addHeading(
+				i18n.t("workspace:controlPanel.position", {
+					defaultValue: "Position",
+				}),
+			);
+			const posDefs: {
+				p: CpPosition;
+				o: CpOrientation;
+				labelKey: string;
+				labelFallback: string;
+			}[] = [
+				{
+					p: "top-left",
+					o: "horizontal",
+					labelKey: "workspace:controlPanel.positionLabels.topLeft",
+					labelFallback: "Top Left",
+				},
+				{
+					p: "top-center",
+					o: "horizontal",
+					labelKey: "workspace:controlPanel.positionLabels.topCenter",
+					labelFallback: "Top Center",
+				},
+				{
+					p: "top-right",
+					o: "horizontal",
+					labelKey: "workspace:controlPanel.positionLabels.topRight",
+					labelFallback: "Top Right",
+				},
+				{
+					p: "bottom-left",
+					o: "horizontal",
+					labelKey: "workspace:controlPanel.positionLabels.bottomLeft",
+					labelFallback: "Bottom Left",
+				},
+				{
+					p: "bottom-center",
+					o: "horizontal",
+					labelKey: "workspace:controlPanel.positionLabels.bottomCenter",
+					labelFallback: "Bottom Center",
+				},
+				{
+					p: "bottom-right",
+					o: "horizontal",
+					labelKey: "workspace:controlPanel.positionLabels.bottomRight",
+					labelFallback: "Bottom Right",
+				},
+				{
+					p: "left-center",
+					o: "vertical",
+					labelKey: "workspace:controlPanel.positionLabels.leftCenter",
+					labelFallback: "Left Center",
+				},
+				{
+					p: "right-center",
+					o: "vertical",
+					labelKey: "workspace:controlPanel.positionLabels.rightCenter",
+					labelFallback: "Right Center",
+				},
 			];
-			for (const { p, o, label } of posDefs) {
-				addBtn(label, () => {
+			for (const { p, o, labelKey, labelFallback } of posDefs) {
+				addBtn(i18n.t(labelKey, { defaultValue: labelFallback }), () => {
 					const st = readCpState(panelId);
 					commitCpState({ ...st, position: p, orientation: o });
 				});
 			}
 			addSep();
-			addHeading("Orientation");
-			addBtn("Horizontal", () => {
-				const st = readCpState(panelId);
-				commitCpState({ ...st, orientation: "horizontal" });
-			});
-			addBtn("Vertical", () => {
-				const st = readCpState(panelId);
-				commitCpState({ ...st, orientation: "vertical" });
-			});
+			addHeading(
+				i18n.t("workspace:controlPanel.orientation", {
+					defaultValue: "Orientation",
+				}),
+			);
+			addBtn(
+				i18n.t("workspace:controlPanel.horizontal", {
+					defaultValue: "Horizontal",
+				}),
+				() => {
+					const st = readCpState(panelId);
+					commitCpState({ ...st, orientation: "horizontal" });
+				},
+			);
+			addBtn(
+				i18n.t("workspace:controlPanel.vertical", {
+					defaultValue: "Vertical",
+				}),
+				() => {
+					const st = readCpState(panelId);
+					commitCpState({ ...st, orientation: "vertical" });
+				},
+			);
 			addSep();
-			addBtn("Reset to Defaults", () => {
-				commitCpState({
-					position: "bottom-right",
-					orientation: "horizontal",
-					collapsed: false,
-				});
-			});
+			addBtn(
+				i18n.t("workspace:controlPanel.resetToDefaults", {
+					defaultValue: "Reset to Defaults",
+				}),
+				() => {
+					commitCpState({
+						position: "bottom-right",
+						orientation: "horizontal",
+						collapsed: false,
+					});
+				},
+			);
 
 			document.body.appendChild(wrap);
 			cpMenuEl = wrap;
@@ -1908,6 +1985,7 @@ export function useWorkspaceRuntime(root: Element | null): {
 						syncStatus: {
 							provider: "supabase",
 							state: "idle",
+							// i18n-exempt: syncStatus is write-only payload data; the presets bus subscriber ignores it and no UI renders label
 							label: "Local Update",
 							checkedAt: new Date().toISOString(),
 						},
@@ -2210,7 +2288,7 @@ export function useWorkspaceRuntime(root: Element | null): {
 			const runCtxPreset = (presetId: string): void => {
 				if (isPresetAssetMissing(presetId)) {
 					notificationStore.add(
-						"Preset asset is missing on disk — run is disabled.",
+						i18n.t("workspace:statusMessages.presetAssetMissing"),
 						"warning",
 						{ duration: 8000 },
 					);
@@ -2218,9 +2296,9 @@ export function useWorkspaceRuntime(root: Element | null): {
 				}
 				void executeWorkspacePreset(presetId).catch((error) => {
 					notificationStore.add(
-						`Preset failed: ${
-							error instanceof Error ? error.message : String(error)
-						}`,
+						i18n.t("workspace:statusMessages.presetFailed", {
+							message: error instanceof Error ? error.message : String(error),
+						}),
 						"error",
 					);
 				});
@@ -2368,8 +2446,12 @@ export function useWorkspaceRuntime(root: Element | null): {
 				case CTX_MENU_IDS.probeOpenDebug:
 					void openDialogProbe(
 						{
-							title: "Dialog Probe",
-							message: "Panel -> Dialog bridge check",
+							title: i18n.t("workspace:debugProbe.title", {
+								defaultValue: "Dialog Probe",
+							}),
+							message: i18n.t("workspace:debugProbe.message", {
+								defaultValue: "Panel -> Dialog bridge check",
+							}),
 						},
 						isCep,
 						panelId,
@@ -3865,15 +3947,18 @@ export function useWorkspaceRuntime(root: Element | null): {
 				// blocked: the file may still exist, we just couldn't reach
 				// the host to confirm.
 				if (isPresetAssetMissing(id)) {
+					const missingAssetMsg = i18n.t(
+						"workspace:statusMessages.presetAssetMissing",
+						{
+							defaultValue:
+								"Preset asset is missing on disk — run is disabled.",
+						},
+					);
 					setState({
 						...getState(),
-						statusMessage: "Preset asset is missing on disk — run is disabled.",
+						statusMessage: missingAssetMsg,
 					});
-					notificationStore.add(
-						"Preset asset is missing on disk — run is disabled.",
-						"warning",
-						{ duration: 8000 },
-					);
+					notificationStore.add(missingAssetMsg, "warning", { duration: 8000 });
 					return;
 				}
 				void getPreset(id).then((presetRecord) => {
@@ -3881,9 +3966,9 @@ export function useWorkspaceRuntime(root: Element | null): {
 					void executePreset(presetRecord).catch((error) => {
 						setState({
 							...getState(),
-							statusMessage: `Preset failed: ${
-								error instanceof Error ? error.message : String(error)
-							}`,
+							statusMessage: i18n.t("workspace:statusMessages.presetFailed", {
+								message: error instanceof Error ? error.message : String(error),
+							}),
 						});
 					});
 				});
@@ -3904,6 +3989,16 @@ export function useWorkspaceRuntime(root: Element | null): {
 		// ── Document event listeners ───────────────────────────────────────────
 		root.addEventListener("mousedown", onCpMiddleDown as EventListener, true);
 		root.addEventListener("click", onActionClick as EventListener);
+		// Portaled anchored popovers (AnchoredPopover) render outside `root`,
+		// so their data-ws-action buttons never reach the root delegate.
+		// Admit clicks inside them here and route through the same handler.
+		const onPortaledActionClick = (ev: MouseEvent): void => {
+			const t = ev.target as HTMLElement | null;
+			if (t?.closest("[data-anchored-popover]")) {
+				onActionClick(ev);
+			}
+		};
+		document.addEventListener("click", onPortaledActionClick);
 		document.addEventListener("mousemove", onDocMouseMove);
 		document.addEventListener("mouseup", onDocMouseUp);
 		document.addEventListener("mousedown", onDocMouseDownCloseMenu);
@@ -3942,6 +4037,7 @@ export function useWorkspaceRuntime(root: Element | null): {
 			document.removeEventListener("mouseup", onDocMouseUp);
 			document.removeEventListener("mousedown", onDocMouseDownCloseMenu);
 			root.removeEventListener("click", onActionClick as EventListener);
+			document.removeEventListener("click", onPortaledActionClick);
 			removeExternalPresetDialogListener?.();
 			cpMenuEl?.remove();
 			cpMenuEl = null;

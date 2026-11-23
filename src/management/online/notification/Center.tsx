@@ -16,6 +16,7 @@ import {
 	type CepMenuPayload,
 	registerCepJsonContextMenuSurface,
 } from "@/management/dialog/context-menu";
+import { i18n } from "@/management/i18n/index";
 import type { NotificationSummary } from "@/management/online/contract";
 import { fetchNotificationFeed } from "@/management/online/notification/feed";
 import {
@@ -547,7 +548,9 @@ function renderBlock(block: NotificationBlock): React.ReactNode {
 					<summary className={detailsSummaryClass}>
 						{renderRichText(rt)}
 					</summary>
-					<div className={detailsBodyClass}>Toggle content</div>
+					<div className={detailsBodyClass}>
+						{i18n.t("online:notificationCenter.toggleContent")}
+					</div>
 				</details>
 			);
 		}
@@ -558,7 +561,11 @@ function renderBlock(block: NotificationBlock): React.ReactNode {
 
 function BlockList({ blocks }: { blocks: NotificationBlock[] }) {
 	if (blocks.length === 0) {
-		return <p className={noContentClass}>No content</p>;
+		return (
+			<p className={noContentClass}>
+				{i18n.t("online:notificationCenter.noContent")}
+			</p>
+		);
 	}
 	return (
 		<div className={blockListClass}>
@@ -606,7 +613,7 @@ function NotificationListItem(props: {
 						)}
 						<span className={listItemDateClass}>
 							{item.publishedAt
-								? new Date(item.publishedAt).toLocaleString()
+								? new Date(item.publishedAt).toLocaleString(i18n.language)
 								: ""}
 						</span>
 					</div>
@@ -645,7 +652,7 @@ function NotificationDetailView(props: {
 						variant="ghost"
 						size="sm"
 						onClick={onClose}
-						aria-label="Back to list"
+						aria-label={i18n.t("online:notificationCenter.backToList")}
 						className={borderedIconBtnClass}
 					>
 						<Icon icon={ArrowLeft} size={14} />
@@ -657,7 +664,11 @@ function NotificationDetailView(props: {
 						variant="ghost"
 						size="sm"
 						onClick={() => onToggleRead(selected.notificationId)}
-						aria-label={isRead ? "Mark unread" : "Mark read"}
+						aria-label={
+							isRead
+								? i18n.t("online:notificationCenter.markUnread")
+								: i18n.t("online:notificationCenter.markRead")
+						}
 						className={cx(borderedIconBtnClass, isRead && opacity60Class)}
 					>
 						<Icon icon={Check} size={14} />
@@ -666,7 +677,7 @@ function NotificationDetailView(props: {
 						variant="ghost"
 						size="sm"
 						onClick={() => void onRefresh()}
-						aria-label="Refresh"
+						aria-label={i18n.t("online:notificationCenter.refresh")}
 						className={borderedIconBtnClass}
 					>
 						<Icon icon={RefreshCw} size={14} />
@@ -677,13 +688,14 @@ function NotificationDetailView(props: {
 			{/* Meta bar */}
 			<div className={metaBarClass}>
 				<span className={metaBarTextClass}>
-					{selected.category ?? "general"}
+					{selected.category ??
+						i18n.t("online:notificationCenter.generalCategory")}
 				</span>
 				{selected.publishedAt && (
 					<>
 						<span className={metaBarSeparatorClass}>·</span>
 						<span className={metaBarTextClass}>
-							{new Date(selected.publishedAt).toLocaleString()}
+							{new Date(selected.publishedAt).toLocaleString(i18n.language)}
 						</span>
 					</>
 				)}
@@ -697,7 +709,9 @@ function NotificationDetailView(props: {
 				{blocksLoading ? (
 					<div className={loadingStateClass}>
 						<Icon icon={LoaderCircle} size={16} className={spinningIconClass} />
-						<span className={mutedTextClass}>Loading…</span>
+						<span className={mutedTextClass}>
+							{i18n.t("online:notificationCenter.loading")}
+						</span>
 					</div>
 				) : (
 					<BlockList blocks={blocks} />
@@ -863,17 +877,28 @@ export function NotificationCenter(): JSX.Element {
 					const isRead = Boolean(readAtById[item.notificationId]);
 					return {
 						menu: [
-							{ id: `ctx.open.${id}`, label: "Open" },
+							{
+								id: `ctx.open.${id}`,
+								label: i18n.t("online:notificationCenter.open"),
+							},
 							sep(),
 							{
 								id: `ctx.toggle.${id}`,
-								label: isRead ? "Mark as Unread" : "Mark as Read",
+								label: isRead
+									? i18n.t("online:notificationCenter.markAsUnread")
+									: i18n.t("online:notificationCenter.markAsRead"),
 								checkable: true,
 								checked: isRead,
 							},
 							sep(),
-							{ id: "ctx.refresh", label: "Refresh" },
-							{ id: "ctx.close", label: "Close" },
+							{
+								id: "ctx.refresh",
+								label: i18n.t("online:notificationCenter.refresh"),
+							},
+							{
+								id: "ctx.close",
+								label: i18n.t("online:notificationCenter.close"),
+							},
 						],
 					};
 				}
@@ -883,17 +908,28 @@ export function NotificationCenter(): JSX.Element {
 					const isRead = Boolean(readAtById[selected.notificationId]);
 					return {
 						menu: [
-							{ id: "ctx.refresh", label: "Refresh" },
+							{
+								id: "ctx.refresh",
+								label: i18n.t("online:notificationCenter.refresh"),
+							},
 							sep(),
 							{
 								id: `ctx.toggle.${selected.notificationId}`,
-								label: isRead ? "Mark as Unread" : "Mark as Read",
+								label: isRead
+									? i18n.t("online:notificationCenter.markAsUnread")
+									: i18n.t("online:notificationCenter.markAsRead"),
 								checkable: true,
 								checked: isRead,
 							},
 							sep(),
-							{ id: "ctx.back", label: "Back to List" },
-							{ id: "ctx.close", label: "Close" },
+							{
+								id: "ctx.back",
+								label: i18n.t("online:notificationCenter.backToListMenu"),
+							},
+							{
+								id: "ctx.close",
+								label: i18n.t("online:notificationCenter.close"),
+							},
 						],
 					};
 				}
@@ -901,9 +937,15 @@ export function NotificationCenter(): JSX.Element {
 				// List view fallback
 				return {
 					menu: [
-						{ id: "ctx.refresh", label: "Refresh" },
+						{
+							id: "ctx.refresh",
+							label: i18n.t("online:notificationCenter.refresh"),
+						},
 						sep(),
-						{ id: "ctx.close", label: "Close" },
+						{
+							id: "ctx.close",
+							label: i18n.t("online:notificationCenter.close"),
+						},
 					],
 				};
 			},
@@ -947,16 +989,37 @@ export function NotificationCenter(): JSX.Element {
 	// ── List view ──────────────────────────────────────────────────────────────
 
 	return (
+		<NotificationListView
+			items={items}
+			loading={loading}
+			readAtById={readAtById}
+			onRefresh={() => void syncRemote()}
+			onOpen={openDetail}
+		/>
+	);
+}
+
+function NotificationListView(props: {
+	items: NotificationSummary[];
+	loading: boolean;
+	readAtById: Record<string, string>;
+	onRefresh: () => void;
+	onOpen: (item: NotificationSummary) => void;
+}): JSX.Element {
+	const { items, loading, readAtById, onRefresh, onOpen } = props;
+	return (
 		<div className={listContainerClass} data-surface-id="dialog-messages">
 			{/* Header */}
 			<header className={listHeaderClass}>
-				<h1 className={heading3Class}>Notifications</h1>
+				<h1 className={heading3Class}>
+					{i18n.t("online:notificationCenter.title")}
+				</h1>
 				<div className={listHeaderActionsClass}>
 					<IconButton
 						variant="ghost"
 						size="sm"
-						onClick={() => void syncRemote()}
-						aria-label="Refresh"
+						onClick={onRefresh}
+						aria-label={i18n.t("online:notificationCenter.refresh")}
 						disabled={loading}
 					>
 						<Icon
@@ -973,12 +1036,16 @@ export function NotificationCenter(): JSX.Element {
 				{loading && items.length === 0 ? (
 					<div className={emptyStateClass}>
 						<Icon icon={LoaderCircle} size={20} className={spinningIconClass} />
-						<span className={mutedTextClass}>Loading…</span>
+						<span className={mutedTextClass}>
+							{i18n.t("online:notificationCenter.loading")}
+						</span>
 					</div>
 				) : items.length === 0 ? (
 					<div className={emptyStateClass}>
 						<Icon icon={Mail} size={24} className={emptyStateIconClass} />
-						<span className={mutedTextClass}>No notifications</span>
+						<span className={mutedTextClass}>
+							{i18n.t("online:notificationCenter.empty")}
+						</span>
 					</div>
 				) : (
 					<ul className={notificationListClass}>
@@ -987,7 +1054,7 @@ export function NotificationCenter(): JSX.Element {
 								key={item.notificationId}
 								item={item}
 								readAtById={readAtById}
-								onOpen={openDetail}
+								onOpen={onOpen}
 								isFixture={tryGetDataServices()?.gateway.isFixture === true}
 							/>
 						))}

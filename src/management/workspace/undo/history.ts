@@ -1,3 +1,4 @@
+import { i18n } from "@/management/i18n/index";
 import type { WorkspaceSnapshot } from "@/management/storage/snapshot-store";
 import type { Layout } from "@/management/workspace/layout/grid-document";
 import { parseLayoutDocument } from "@/management/workspace/layout/grid-document";
@@ -95,8 +96,11 @@ export const createHistoryManager = (panelIdArg: string, win: Window) => {
 
 		async saveSnapshot(widgets: Layout[], label?: string): Promise<void> {
 			const ts = new Date();
-			const defaultLabel = `${ts.toLocaleDateString()} ${ts
-				.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+			const defaultLabel = `${ts.toLocaleDateString(i18n.language)} ${ts
+				.toLocaleTimeString(i18n.language, {
+					hour: "2-digit",
+					minute: "2-digit",
+				})
 				.replace(/\s*(AM|PM)/i, "")}`;
 			// Read all 5 workspace files to build combined panel snapshot
 			const panelLayouts: Record<string, Layout[]> = {};

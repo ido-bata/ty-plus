@@ -16,8 +16,12 @@
 			"info": "在宽摘要图块中显示预设元数据、路径和状态。",
 			"quick-actions": "从紧凑命令面板运行脚本、效果和文件操作。",
 			"directory-browser": "从面板内浏览磁盘文件夹和预设。",
-			"font-viewer": "在工作区中预览字体系列、样式和示例文本。"
-		}
+			"font-viewer": "在工作区中预览字体系列、样式和示例文本。",
+			"loop": "编辑单个循环的曲线，并重复应用到选中的关键帧。"
+		},
+		"add": "添加",
+		"adding": "正在添加…",
+		"noMatches": "没有匹配的小组件。请尝试其他搜索。"
 	},
 	"types": {
 		"align": "对齐",
@@ -34,14 +38,14 @@
 	},
 	"easing": {
 		"name": "Easing",
-		"apply": "Apply",
-		"copyFromSelection": "Copy from selection",
-		"reverse": "Reverse",
+		"apply": "应用",
+		"copyFromSelection": "从选中项复制",
+		"reverse": "反转",
 		"mode": {
-			"curve": "Curve",
-			"loop": "Loop",
-			"bounce": "Bounce",
-			"elastic": "Elastic"
+			"curve": "曲线",
+			"loop": "循环",
+			"bounce": "弹跳",
+			"elastic": "弹性"
 		},
 		"loop": {
 			"cycles": "循环",
@@ -49,32 +53,47 @@
 			"increment": "增加循环"
 		},
 		"options": {
-			"mode": "Mode",
-			"grid": "Grid",
-			"label": "Label"
+			"mode": "模式",
+			"grid": "网格",
+			"label": "标签"
 		},
 		"background": {
-			"dots": "Dots",
-			"grid": "Grid"
+			"dots": "点阵",
+			"grid": "网格"
 		},
 		"label": {
-			"none": "None"
+			"none": "无"
 		},
 		"applyMode": {
-			"single": "Single",
-			"pair": "Each"
+			"single": "单个",
+			"pair": "每个"
 		},
 		"status": {
-			"applying": "Applying",
-			"applied": "Applied",
-			"failed": "Failed"
+			"applying": "正在应用",
+			"applied": "已应用",
+			"failed": "失败"
 		},
 		"presets": {
-			"linear": "Linear",
-			"easeOut": "Ease out",
-			"easeIn": "Ease in",
-			"easeInOut": "Ease in/out"
-		}
+			"linear": "线性",
+			"easeOut": "缓出",
+			"easeIn": "缓入",
+			"easeInOut": "缓入/缓出"
+		},
+		"presetAria": {
+			"linear": "应用 Linear Easing 预设",
+			"easeOut": "应用 Ease out Easing 预设",
+			"easeIn": "应用 Ease in Easing 预设",
+			"easeInOut": "应用 Ease in/out Easing 预设"
+		},
+		"undoGroupName": "Ty Plus: 应用缓动",
+		"pasteValuesUndoGroupName": "Ty Plus: 粘贴值",
+		"errors": {
+			"selectKeyframes": "请在活动合成中选择关键帧",
+			"selectAnimatedProperty": "请至少选择一个已动画化的属性",
+			"selectTwoKeyframes": "请在已动画化的属性上选择至少两个关键帧",
+			"captureFailed": "无法从所选关键帧读取缓动"
+		},
+		"noKeyframesSelected": "Ty Plus 缓动：未选择关键帧 — 请先在 AE 时间轴中选择关键帧"
 	},
 	"menu": {
 		"name": "菜单",
@@ -92,16 +111,77 @@
 		"groupSelectedItems": "将选中项目分组",
 		"moveToPanel": "移动到面板",
 		"deleteSelectedPresets": "删除 {{count}} 个预设",
-		"layout": "布局"
+		"layout": "布局",
+		"separatorAria": "菜单分隔线"
 	},
 	"align": {
-		"name": "对齐"
+		"name": "对齐",
+		"gestureOverlay": "手势路径覆盖层",
+		"targets": {
+			"selection": "对齐到选择",
+			"composition": "对齐到 Composition",
+			"keyObject": "对齐到关键对象",
+			"time": "时间对齐"
+		},
+		"sections": {
+			"distribute": "分布",
+			"spacing": "间距",
+			"time": "时间"
+		},
+		"undoGroupName": "Ty Plus: 对齐图层",
+		"timeUndoGroupName": "ty-plus 时间对齐",
+		"errors": {
+			"noActiveComposition": "请在活动合成中选择至少一个图层",
+			"noLayerSelected": "对齐前请先选择至少一个图层"
+		}
 	},
 	"anchorPoint": {
-		"name": "Anchor point"
+		"name": "Anchor point",
+		"gestureOverlay": "Anchor point 手势覆盖层",
+		"positions": {
+			"topLeft": "左上",
+			"topCenter": "上中",
+			"topRight": "右上",
+			"centerLeft": "左中",
+			"center": "中",
+			"centerRight": "右中",
+			"bottomLeft": "左下",
+			"bottomCenter": "下中",
+			"bottomRight": "右下"
+		},
+		"noActiveComposition": "Ty Plus 锚点：没有活动的合成",
+		"noLayerSelected": "Ty Plus 锚点：未选择图层",
+		"undoGroupName": "ty-plus 设置锚点",
+		"failed": "Ty Plus 锚点设置失败：{{detail}}",
+		"completedWithErrors": "Ty Plus 锚点设置完成，但存在错误：{{detail}}"
 	},
 	"info": {
-		"name": "Info"
+		"name": "Info",
+		"activeComp": "活动 Comp",
+		"compInfo": "Comp 信息",
+		"file": "文件",
+		"kind": "类型",
+		"noPresetSelected": "未选择预设",
+		"noDescription": "无描述",
+		"source": {
+			"selection": "选择",
+			"hover": "悬停"
+		},
+		"comp": {
+			"size": "尺寸",
+			"pixelAspect": "像素纵横比",
+			"background": "背景",
+			"frameRate": "帧率",
+			"duration": "时长",
+			"shutterAngle": "快门角度",
+			"shutterPhase": "快门相位",
+			"total": "总计",
+			"selected": "已选",
+			"motionBlur": "运动模糊",
+			"draft3d": "3D 预览",
+			"on": "开",
+			"off": "关"
+		}
 	},
 	"layoutLock": {
 		"name": "Layout lock"
@@ -111,10 +191,10 @@
 	},
 	"quickActions": {
 		"name": "Quick actions",
-		"palettePlaceholder": "Search presets, scripts, plugins, effects, and files under roots…",
-		"paletteEmpty": "No matching presets or effects.",
-		"effectRowKind": "Effect",
-		"rootFileRowKind": "Disk"
+		"palettePlaceholder": "搜索根目录下的预设、脚本、插件、效果和文件…",
+		"paletteEmpty": "没有匹配的预设或效果。",
+		"effectRowKind": "效果",
+		"rootFileRowKind": "磁盘"
 	},
 	"fxSearch": "FX search",
 	"directoryBrowser": {
@@ -137,7 +217,23 @@
 			"selectFile": "选择",
 			"deselect": "取消选择",
 			"runBlockedMissingAsset": "预设资源在磁盘上不存在 — 运行已禁用。",
-			"runBlockedUnverifiableAsset": "无法验证预设资源（主机不可用）— 重试"
+			"presetNotFound": "未找到预设：{{presetId}}",
+			"fileImportAeOnly": "文件导入目前仅在 After Effects 中可用。",
+			"appliedEffect": "已应用效果：{{name}}",
+			"importedFootage": "已导入素材：{{name}}",
+			"ranScript": "已运行脚本：{{name}}",
+			"appliedPreset": "已应用预设：{{name}}",
+			"runBlockedUnverifiableAsset": "无法验证预设资源（主机不可用）— 重试",
+			"undoGroup": {
+				"applyPreset": "Ty Plus: 应用预设",
+				"addFootage": "Ty Plus: 添加素材",
+				"applyEffect": "Ty Plus: 应用效果"
+			},
+			"errors": {
+				"openComposition": "应用预设前请先打开合成",
+				"addLayerOrSelect": "在空合成中应用此预设前，请先添加图层或选择图层",
+				"selectLayerForEffect": "应用效果前请先选择至少一个图层"
+			}
 		},
 		"path": {
 			"pickFolderPrompt": "选择文件夹",
@@ -206,6 +302,9 @@
 		},
 		"hints": {
 			"iconGridWheel": "Ctrl+滚轮 调整大小"
+		},
+		"listHeader": {
+			"name": "名称"
 		}
 	},
 	"textEditor": {
@@ -213,47 +312,47 @@
 	},
 	"fontViewer": {
 		"name": "Font viewer",
-		"searchPlaceholder": "Search family, PostScript, style…",
-		"searchAria": "Search fonts",
-		"listView": "List view",
-		"iconView": "Icon cards",
-		"layoutLegend": "Font layout",
-		"reload": "Reload font list",
-		"samplePresets": "Sample",
-		"sampleCustom": "Custom",
-		"samplePresetAria": "Preview sample preset",
-		"previewTextAria": "Preview text",
-		"samplePlaceholder": "Preview text (CJK / emoji / Latin)",
-		"ctxMenuHeading": "Display options",
-		"ctxTileSquare": "Tile aspect 1:1",
-		"ctxTileWide": "Tile aspect 16:9",
-		"ctxShowResolved": "Show resolved-font match column (list)",
-		"ctxHideResolved": "Hide resolved-font match column (list)",
-		"showResolved": "Resolved font check (list)",
-		"loadError": "Could not load fonts.",
-		"loading": "Loading…",
-		"statsLine": "{{families}} families · {{faces}} typefaces ({{total}} loaded)",
-		"familySummary": "{{count}} typefaces",
-		"expandFamily": "Expand family",
-		"collapseFamily": "Collapse family",
-		"backToFamilies": "All font families",
-		"openFamilyIcon": "Open family",
-		"noMatches": "No matching fonts",
-		"phaseAeHost": "Querying After Effects for fonts (evalScript)…",
-		"phaseBrowser": "Reading browser font sources…",
-		"aeHostErrorLabel": "After Effects host:",
-		"previewSectionSummary": "Preview",
-		"sampleCollapsedPlaceholder": "Open to edit sample text and options",
+		"searchPlaceholder": "搜索字体系列、PostScript、样式…",
+		"searchAria": "搜索字体",
+		"listView": "列表视图",
+		"iconView": "图标卡片",
+		"layoutLegend": "字体布局",
+		"reload": "重新加载字体列表",
+		"samplePresets": "示例",
+		"sampleCustom": "自定义",
+		"samplePresetAria": "预览示例预设",
+		"previewTextAria": "预览文本",
+		"samplePlaceholder": "预览文本（CJK / emoji / Latin）",
+		"ctxMenuHeading": "显示选项",
+		"ctxTileSquare": "磁贴比例 1:1",
+		"ctxTileWide": "磁贴比例 16:9",
+		"ctxShowResolved": "显示已解析字体匹配列（列表）",
+		"ctxHideResolved": "隐藏已解析字体匹配列（列表）",
+		"showResolved": "已解析字体检查（列表）",
+		"loadError": "无法加载字体。",
+		"loading": "加载中…",
+		"statsLine": "{{families}} 个字体系列 · {{faces}} 种字体（已加载 {{total}}）",
+		"familySummary": "{{count}} 种字体",
+		"expandFamily": "展开字体系列",
+		"collapseFamily": "折叠字体系列",
+		"backToFamilies": "所有字体系列",
+		"openFamilyIcon": "打开字体系列",
+		"noMatches": "没有匹配的字体",
+		"phaseAeHost": "正在通过 After Effects 查询字体（evalScript）…",
+		"phaseBrowser": "正在读取浏览器字体源…",
+		"aeHostErrorLabel": "After Effects 主机：",
+		"previewSectionSummary": "预览",
+		"sampleCollapsedPlaceholder": "打开以编辑示例文本和选项",
 		"viaLocalApi": "Local Font Access API",
 		"viaAfterEffects": "After Effects (app.fonts)",
-		"viaDocumentFonts": "document.fonts (subset)",
-		"fallbackBadge": "swap",
-		"primaryBadge": "match",
-		"hintNeedUserGesture": "Installed fonts need a button click (Chromium Local Font Access). Until then, this catalog lists only fonts already registered on document.fonts for this panel.",
-		"loadAllSystemFonts": "Load all system fonts…",
-		"hintNoLocalApi": "This Chromium build does not expose queryLocalFonts — only fonts registered on document.fonts are listed.",
-		"localAccessErrorPrefix": "Local font access:",
-		"emptyList": "No fonts loaded yet. Use “Load all system fonts” if available, or reload after the panel finishes loading styles."
+		"viaDocumentFonts": "document.fonts（子集）",
+		"fallbackBadge": "替换",
+		"primaryBadge": "匹配",
+		"hintNeedUserGesture": "已安装的字体需要点击按钮（Chromium Local Font Access）。在此之前，此目录仅列出已在 document.fonts 中注册、供此面板使用的字体。",
+		"loadAllSystemFonts": "加载所有系统字体…",
+		"hintNoLocalApi": "此 Chromium 版本未暴露 queryLocalFonts — 仅列出已在 document.fonts 中注册的字体。",
+		"localAccessErrorPrefix": "本地字体访问：",
+		"emptyList": "尚未加载字体。如可用，请使用“加载所有系统字体”，或在面板完成样式加载后重新加载。"
 	},
 	"folderDirectoryPicker": {
 		"label": "文件夹浏览器",
@@ -268,5 +367,192 @@
 		"emptyItems": "未找到项目",
 		"goUp": "上一级",
 		"cepNodeRequired": "文件夹浏览器需要 CEP Node"
+	},
+	"viewModeToggle": {
+		"listView": "列表视图",
+		"iconView": "图标视图",
+		"fieldsetLegend": "目录布局"
+	},
+	"addWidgetDialog": {
+		"addsToPrefix": "添加到",
+		"addsToSuffix": "网格底部。",
+		"addFailure": "无法添加小组件：{{message}}",
+		"introPrefix": "选择小组件类型。仅列出目录中可用的类型。新磁贴将添加到",
+		"introSuffix": "。",
+		"contextMenu": {
+			"addThisWidget": "添加此小组件",
+			"select": "选择",
+			"category": "类别",
+			"clearSearch": "清除搜索",
+			"addSelectedWidget": "添加所选小组件",
+			"unknownCategory": "未知"
+		}
+	},
+	"pickerOverlay": {
+		"targetPanelPrefix": "目标面板",
+		"footerHint": "小组件将添加到此面板网格的底部。"
+	},
+	"loop": {
+		"name": "循环",
+		"cycles": "循环",
+		"decrement": "减少循环",
+		"increment": "增加循环",
+		"handle": {
+			"easing": "缓动",
+			"frequency": "频率",
+			"bias": "偏置",
+			"damping": "阻尼"
+		},
+		"update": "更新",
+		"unapply": "移除循环",
+		"applied": "已应用",
+		"conflict": "已在 AE 中编辑",
+		"play": "播放",
+		"pause": "暂停",
+		"waveCanvas": "循环波形编辑器",
+		"previewCanvas": "循环运动预览"
+	},
+	"tutorial": {
+		"chrome": {
+			"help": "帮助",
+			"title": "小部件帮助",
+			"close": "关闭",
+			"dismissHint": "关闭提示",
+			"stepProgress": "{{current}} / {{total}}",
+			"back": "上一步",
+			"skip": "跳过",
+			"finish": "完成",
+			"next": "下一步"
+		},
+		"easing": {
+			"summary": "编辑缓动曲线，并将其应用于预设或图层动画。",
+			"steps": {
+				"chooseCurve": {
+					"title": "选择曲线",
+					"body": "选择预设曲线，或在编辑器中自行绘制。"
+				},
+				"applyCurve": {
+					"title": "应用曲线",
+					"body": "将曲线应用到选中的预设或图层。"
+				}
+			}
+		},
+		"menu": {
+			"summary": "从一个磁贴打开工作区命令、布局操作和对话框。",
+			"steps": {
+				"openMenu": {
+					"title": "打开菜单",
+					"body": "点击磁贴以打开工作区命令菜单。"
+				},
+				"runCommand": {
+					"title": "运行命令",
+					"body": "选择一条命令，将其应用于当前工作区。"
+				}
+			}
+		},
+		"align": {
+			"summary": "将选中的预设或图层对齐到网格上的共同位置。",
+			"steps": {
+				"selectTargets": {
+					"title": "选择对象",
+					"body": "选择要对齐的预设或图层。"
+				},
+				"pickAlignment": {
+					"title": "选择对齐方式",
+					"body": "选择对齐选项，使它们对齐到位。"
+				}
+			}
+		},
+		"anchor-point": {
+			"summary": "放置命名锚点，用于布局参考和吸附工作流。",
+			"steps": {
+				"nameAnchor": {
+					"title": "命名锚点",
+					"body": "输入用于标识此锚点的名称。"
+				},
+				"dropAnchor": {
+					"title": "放到网格上",
+					"body": "点击工作区以放置锚点。"
+				}
+			}
+		},
+		"layout-lock": {
+			"summary": "在排列工作区网格时防止意外移动。",
+			"steps": {
+				"turnLockOn": {
+					"title": "开启锁定",
+					"body": "启用锁定以固定小组件位置。"
+				},
+				"unlockToRearrange": {
+					"title": "解锁以重新排列",
+					"body": "需要再次移动小组件时关闭锁定。"
+				}
+			}
+		},
+		"info": {
+			"summary": "在宽大的摘要磁贴中显示预设元数据、路径和状态。",
+			"steps": {
+				"placeWidget": {
+					"title": "放置小组件",
+					"body": "将 Info 小组件添加到工作区。"
+				},
+				"inspectPreset": {
+					"title": "查看预设",
+					"body": "选择一个预设即可在此查看其详情。"
+				}
+			}
+		},
+		"quick-actions": {
+			"summary": "从紧凑的命令面板运行脚本、效果和文件操作。",
+			"steps": {
+				"openPalette": {
+					"title": "打开面板",
+					"body": "打开命令面板并输入以搜索操作。"
+				},
+				"runAction": {
+					"title": "运行操作",
+					"body": "选择一项操作即可立即执行。"
+				}
+			}
+		},
+		"directory-browser": {
+			"summary": "直接在面板中浏览磁盘文件夹和预设。",
+			"steps": {
+				"navigateFolders": {
+					"title": "浏览文件夹",
+					"body": "使用路径栏或文件夹列表进行移动。"
+				},
+				"openPreset": {
+					"title": "打开预设",
+					"body": "双击预设即可应用或查看。"
+				}
+			}
+		},
+		"font-viewer": {
+			"summary": "在工作区中预览字体系列、样式和示例文本。",
+			"steps": {
+				"loadFonts": {
+					"title": "加载字体",
+					"body": "加载系统字体，或选择要预览的字体系列。"
+				},
+				"editSample": {
+					"title": "编辑示例",
+					"body": "更改示例文本以检查字形和样式。"
+				}
+			}
+		},
+		"loop": {
+			"summary": "编辑循环缓动曲线，并将其应用到选中的关键帧。",
+			"steps": {
+				"chooseCycle": {
+					"title": "调整循环形状",
+					"body": "拖动曲线控制点，调整单个循环的形状。"
+				},
+				"applyCycle": {
+					"title": "应用循环",
+					"body": "设置循环次数，并将循环应用到选中的关键帧。"
+				}
+			}
+		}
 	}
 }

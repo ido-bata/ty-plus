@@ -99,11 +99,11 @@ export async function fetchGitHubReleases(): Promise<ReleaseInfo[]> {
 		signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
 	});
 	if (!response.ok) {
-		throw new Error(`GitHub Releases API responded ${response.status}`);
+		throw new Error(`GitHub Releases API responded ${response.status}`); // i18n-exempt: internal diagnostic — not rendered as UI copy
 	}
 	const body: unknown = await response.json();
 	if (!Array.isArray(body)) {
-		throw new Error("GitHub Releases API returned a non-array body");
+		throw new Error("GitHub Releases API returned a non-array body"); // i18n-exempt: internal diagnostic — not rendered as UI copy
 	}
 	return body
 		.map(mapRelease)

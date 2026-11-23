@@ -114,7 +114,7 @@ export const resolveSettingsNodeFsPromises = async (
 					: undefined,
 			};
 		}
-		throw new Error("CEP Node fs API is not available in this host runtime.");
+		throw new Error("CEP Node fs API is not available in this host runtime."); // i18n-exempt: internal diagnostic — not rendered as UI copy
 	}
 	const fsPromises = await import("node:fs/promises");
 	return {

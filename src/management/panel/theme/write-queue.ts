@@ -78,6 +78,7 @@ const acquireThemeWriteLock = async (
 			lastError = error;
 		}
 		if (Date.now() >= deadline) {
+			// i18n-exempt: internal diagnostic — not rendered as UI copy
 			throw new Error(
 				`theme.css write lock timed out after ${THEME_WRITE_LOCK_WAIT_MS}ms`,
 				{ cause: lastError },

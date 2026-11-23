@@ -1,6 +1,7 @@
 import { Icon, IconButton, SearchField, ViewModeToggle } from "@ty-plus/ui";
 import { LoaderCircle, RefreshCw, Search } from "lucide-react";
 import type { JSX, ReactNode } from "react";
+import { i18n } from "@/management/i18n/index";
 import { css } from "@/styled-system/css";
 
 export type LoadPhase = "idle" | "reading" | "streaming" | "error";
@@ -136,14 +137,16 @@ function SearchStatusBar(props: SearchStatusBarProps): ReactNode {
 		return (
 			<span className={loadingInlineClass}>
 				<LoaderCircle className={loadingSpinnerClass} aria-hidden />
-				<span className={loadingTextClass}>Loading</span>
+				<span className={loadingTextClass}>
+					{i18n.t("presets:catalogBrowser.loading")}
+				</span>
 			</span>
 		);
 	}
 	if (loadPhase === "error") {
 		return (
 			<span className={errorTextClass} title={loadError ?? undefined}>
-				{loadError ?? "Error"}
+				{loadError ?? i18n.t("common:status.error")}
 			</span>
 		);
 	}
@@ -168,7 +171,8 @@ function SearchStatusBar(props: SearchStatusBarProps): ReactNode {
 				</>
 			) : null}
 			<span className={countClass}>
-				{visibleCount} items{filter.trim() ? " · filtered" : ""}
+				{i18n.t("presets:listDialog.visibleItems", { count: visibleCount })}
+				{filter.trim() ? i18n.t("presets:listDialog.filteredSuffix") : ""}
 			</span>
 		</span>
 	);
@@ -210,7 +214,7 @@ export function PresetsDialogHeader(
 				<SearchField
 					className={searchFieldClass}
 					icon={Search}
-					placeholder="Search by name, type, or path…"
+					placeholder={i18n.t("presets:catalogBrowser.searchPlaceholder")}
 					value={filter}
 					onChange={(e) => onFilterChange(e.currentTarget.value)}
 					showClearButton
@@ -238,8 +242,8 @@ export function PresetsDialogHeader(
 					variant="ghost"
 					size="sm"
 					className={reloadButtonClass}
-					aria-label="Reload catalog"
-					title="Reload catalog"
+					aria-label={i18n.t("presets:catalogBrowser.reload")}
+					title={i18n.t("presets:catalogBrowser.reload")}
 					onClick={() => void onReload()}
 				>
 					<Icon icon={RefreshCw} size={10} />

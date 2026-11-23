@@ -1,12 +1,13 @@
 import { SegmentedControl } from "@ty-plus/ui";
 import type { JSX } from "react";
+import { i18n } from "@/management/i18n/index";
 import type { PresetAddFolderType } from "@/management/preset/catalog-add/archive-types";
 
-const FOLDER_TABS: { id: PresetAddFolderType; label: string }[] = [
-	{ id: "presets", label: "Presets" },
-	{ id: "scripts", label: "Scripts" },
-	{ id: "plugins", label: "Plug-ins" },
-	{ id: "other", label: "Other" },
+const FOLDER_TABS: { id: PresetAddFolderType; labelKey: string }[] = [
+	{ id: "presets", labelKey: "widgets:folderDirectoryPicker.tab.presets" },
+	{ id: "scripts", labelKey: "widgets:folderDirectoryPicker.tab.scripts" },
+	{ id: "plugins", labelKey: "widgets:folderDirectoryPicker.tab.plugins" },
+	{ id: "other", labelKey: "widgets:folderDirectoryPicker.tab.other" },
 ];
 
 export function FolderTabs(props: {
@@ -18,7 +19,10 @@ export function FolderTabs(props: {
 		<SegmentedControl
 			aria-label="Folder type"
 			value={activeTab}
-			options={FOLDER_TABS.map((tab) => ({ value: tab.id, label: tab.label }))}
+			options={FOLDER_TABS.map((tab) => ({
+				value: tab.id,
+				label: i18n.t(tab.labelKey),
+			}))}
 			onChange={(next) => {
 				onTabChange(next as PresetAddFolderType);
 			}}

@@ -12,7 +12,7 @@ export function ImportDialog(): JSX.Element {
 			type="footage"
 			description={t("presetTool.import.lead")}
 			defaultName={t("presetTool.import.defaultName")}
-			iconText="IMPORT"
+			iconText={t("presetTool.import.iconText")}
 			buildFilePath={(values) => values.path.trim()}
 			pathBrowse={{ fieldKey: "path", mode: "file" }}
 			resolveBrowseStartDir={readUserHomeOrFallback}
@@ -20,7 +20,7 @@ export function ImportDialog(): JSX.Element {
 				{
 					key: "path",
 					label: t("presetTool.import.fields.path"),
-					placeholder: "C:\\path\\asset",
+					placeholder: t("presetTool.import.pathPlaceholder"),
 				},
 				{
 					key: "strategy",

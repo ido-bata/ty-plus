@@ -10,6 +10,7 @@ import type {
 	ReactNode,
 	Ref,
 } from "react";
+import { useTranslation } from "react-i18next";
 import { css } from "@/styled-system/css";
 
 export type SearchFieldProps = {
@@ -143,6 +144,7 @@ export function SearchField({
 	onChange,
 	...rest
 }: SearchFieldProps): JSX.Element {
+	const { t } = useTranslation();
 	const str = uncontrolled
 		? typeof rest.defaultValue === "string"
 			? rest.defaultValue
@@ -197,8 +199,10 @@ export function SearchField({
 				<button
 					type="button"
 					className={clearButton}
-					aria-label="Clear search"
-					title="Clear"
+					aria-label={t("ui.searchField.clearAria", {
+						defaultValue: "Clear search",
+					})}
+					title={t("ui.searchField.clearTitle", { defaultValue: "Clear" })}
 					onClick={handleClear}
 				>
 					<Icon icon={X} size={10} aria-hidden />

@@ -203,7 +203,7 @@ const isArrayValue = (value: unknown): value is unknown[] =>
  * `HOST_BUNDLE_SCHEMA_VERSION` too. It is not the package version: an
  * unrelated packaging or UI bump must not force a host reload.
  */
-const HOST_BUNDLE_VERSION = "workspace-preset-scriptui-panel-v4";
+const HOST_BUNDLE_VERSION = "workspace-preset-scriptui-panel-v6";
 
 /**
  * Host API contract revision exported on the resident global so the CEP
@@ -223,6 +223,30 @@ const trimStr = (value: string): string => {
 		return "";
 	}
 	return value.replace(/^\s+|\s+$/g, "");
+};
+
+/**
+ * Resolve the localized undo-group label for `app.beginUndoGroup`.
+ * The panel bakes the author's locale (including the "Ty Plus:" product
+ * prefix) into the payload; the English literal is only the fallback for
+ * callers that predate the `undoGroupName` contract field.
+ */
+const undoGroupLabel = (value: unknown, fallback: string): string =>
+	typeof value === "string" && trimStr(value) ? value : fallback;
+
+/**
+ * Resolve a localized precondition error from a payload `messages` object.
+ * Same contract as `undoGroupLabel`: the panel bakes the author's locale
+ * into the payload; the English literal is the fallback.
+ */
+const payloadMessage = (
+	messages: unknown,
+	key: string,
+	fallback: string,
+): string => {
+	if (!messages || typeof messages !== "object") return fallback;
+	const value = (messages as Record<string, unknown>)[key];
+	return typeof value === "string" && value ? value : fallback;
 };
 
 const wrapCallable =
@@ -482,10 +506,22 @@ const runScriptFile = (filePath: string) => {
 	$.evalFile(file);
 };
 
-const applyPresetFile = (filePath: string) => {
+const applyPresetFile = (
+	filePath: string,
+	options?: {
+		undoGroupName?: string;
+		messages?: { openComposition?: string; addLayerOrSelect?: string };
+	},
+) => {
 	const comp = app.project && app.project.activeItem;
 	if (!comp || !("selectedLayers" in comp)) {
-		throw new Error("Open a composition before applying a preset");
+		throw new Error(
+			payloadMessage(
+				options && options.messages,
+				"openComposition",
+				"Open a composition before applying a preset",
+			),
+		);
 	}
 	const file = new File(assertAllowedFilePath(filePath));
 	if (!file.exists) {
@@ -493,12 +529,18 @@ const applyPresetFile = (filePath: string) => {
 	}
 	if (comp.selectedLayers.length === 0 && comp.numLayers < 1) {
 		throw new Error(
-			"Add a layer or select a layer before applying this preset in an empty composition",
+			payloadMessage(
+				options && options.messages,
+				"addLayerOrSelect",
+				"Add a layer or select a layer before applying this preset in an empty composition",
+			),
 		);
 	}
 	const targetLayer =
 		comp.selectedLayers.length > 0 ? comp.selectedLayers[0] : comp.layer(1);
-	app.beginUndoGroup("Ty Plus: Apply Preset");
+	app.beginUndoGroup(
+		undoGroupLabel(options && options.undoGroupName, "Ty Plus: Apply Preset"),
+	);
 	try {
 		targetLayer.applyPreset(file);
 	} finally {
@@ -543,13 +585,18 @@ const firstPngSequenceFile = (folderPath: string): File | null => {
 	return best[0] || null;
 };
 
-const addFootageFile = (filePath: string) => {
+const addFootageFile = (
+	filePath: string,
+	input?: { undoGroupName?: string },
+) => {
 	const sequenceFile = firstPngSequenceFile(assertAllowedFilePath(filePath));
 	const file = sequenceFile || new File(filePath);
 	if (!file.exists) {
 		throw new Error(`Footage file not found: ${filePath}`);
 	}
-	app.beginUndoGroup("Ty Plus: Add Footage");
+	app.beginUndoGroup(
+		undoGroupLabel(input && input.undoGroupName, "Ty Plus: Add Footage"),
+	);
 	try {
 		const options = new ImportOptions(file);
 		if (sequenceFile) {
@@ -650,9 +697,20 @@ const openAnimationPresetSaveDialog = (payload: Record<string, unknown>) => {
 	const target = prepareAnimationPresetTarget(payload);
 	const comp = app.project && app.project.activeItem;
 	if (!comp || !("selectedLayers" in comp) || comp.selectedLayers.length === 0) {
-		throw new Error("Select at least one layer before saving an animation preset");
+		throw new Error(
+			payloadMessage(
+				payload.messages,
+				"selectLayerToSave",
+				"Select at least one layer before saving an animation preset",
+			),
+		);
 	}
-	app.beginUndoGroup("Ty Plus: Save Animation Preset");
+	app.beginUndoGroup(
+		undoGroupLabel(
+			payload.undoGroupName,
+			"Ty Plus: Save Animation Preset",
+		),
+	);
 	try {
 		comp.selectedLayers[0].selected = true;
 		app.executeCommand(app.findMenuCommandId("Save Animation Preset..."));
@@ -684,7 +742,11 @@ const prepareLayerCompPresetScript = (payload: Record<string, unknown>) => {
 		app.project && app.project.file ? app.project.file.fsName : "";
 	if (!aepPath) {
 		throw new Error(
-			"Save the After Effects project before creating this preset",
+			payloadMessage(
+				payload.messages,
+				"saveProjectFirst",
+				"Save the After Effects project before creating this preset",
+			),
 		);
 	}
 	const target = authorizePayloadSaveDir(
@@ -692,15 +754,27 @@ const prepareLayerCompPresetScript = (payload: Record<string, unknown>) => {
 		"LayerCompPreset",
 		".jsx",
 	);
+	const undoGroupName = undoGroupLabel(
+		payload.undoGroupName,
+		"Ty Plus: Apply Layer/Comp Preset",
+	);
+	const messagesLiteral = JSON.stringify({
+		sourceProjectNotFoundPrefix: payloadMessage(
+			payload.messages,
+			"sourceProjectNotFoundPrefix",
+			"Source project not found: ",
+		),
+	});
 	const script = [
 		"// ty-plus: layer/comp preset",
 		"(function(){",
 		`  var projectPath = ${JSON.stringify(aepPath)};`,
 		`  var presetType = ${JSON.stringify(type)};`,
-		"  app.beginUndoGroup('Ty Plus: Apply Layer/Comp Preset');",
+		`  var MSG = ${messagesLiteral};`,
+		`  app.beginUndoGroup(${JSON.stringify(undoGroupName)});`,
 		"  try {",
 		"    var importFile = new File(projectPath);",
-		"    if (!importFile.exists) throw new Error('Source project not found: ' + projectPath);",
+		"    if (!importFile.exists) throw new Error(MSG.sourceProjectNotFoundPrefix + projectPath);",
 		"    app.open(importFile);",
 		"  } finally {",
 		"    app.endUndoGroup();",
@@ -732,6 +806,30 @@ const prepareEasingPresetScript = (payload: Record<string, unknown>) => {
 	const pointsLiteral = hasMulti ? JSON.stringify(rawPoints) : "null";
 	const labelColor = Number(payload.labelColor ?? 0) || 0;
 	const target = authorizePayloadSaveDir(payload, "EasingPreset", ".jsx");
+	const rawMessages = (payload.messages ?? {}) as Record<string, unknown>;
+	const msg = (key: string, fallback: string) =>
+		typeof rawMessages[key] === "string" && rawMessages[key]
+			? (rawMessages[key] as string)
+			: fallback;
+	const messagesLiteral = JSON.stringify({
+		selectComposition: msg(
+			"selectComposition",
+			"Please select a composition.",
+		),
+		selectProperties: msg(
+			"selectProperties",
+			"Please select at least one property to apply the easing.",
+		),
+		notEnoughKeyframes: msg(
+			"notEnoughKeyframes",
+			"Selected properties do not have enough keyframes.",
+		),
+		applyFailedPrefix: msg("applyFailedPrefix", "Error applying easing: "),
+		undoGroupName: msg(
+			"undoGroupName",
+			"ty-plus: apply easing preset",
+		),
+	});
 	const content = [
 		"// ty-plus: easing preset",
 		`// cubic: ${JSON.stringify(cubic)}`,
@@ -739,10 +837,11 @@ const prepareEasingPresetScript = (payload: Record<string, unknown>) => {
 		`// labelColor: ${labelColor}`,
 		"(function () {",
 		"  var comp = app.project.activeItem;",
-		"  if (!(comp instanceof CompItem)) { alert('Please select a composition.'); return; }",
+		`  var MSG = ${messagesLiteral};`,
+		"  if (!(comp instanceof CompItem)) { alert(MSG.selectComposition); return; }",
 		"  var props = comp.selectedProperties;",
-		"  if (!props || props.length === 0) { alert('Please select at least one property to apply the easing.'); return; }",
-		"  app.beginUndoGroup('ty-plus: apply easing preset');",
+		"  if (!props || props.length === 0) { alert(MSG.selectProperties); return; }",
+		"  app.beginUndoGroup(MSG.undoGroupName);",
 		`  var cubic = ${JSON.stringify(cubic)};`,
 		`  var points = ${pointsLiteral};`,
 		`  var labelColor = ${labelColor};`,
@@ -817,9 +916,9 @@ const prepareEasingPresetScript = (payload: Record<string, unknown>) => {
 		"        count++;",
 		"      }",
 		"    }",
-		"    if (count === 0) alert('Selected properties do not have enough keyframes.');",
+		"    if (count === 0) alert(MSG.notEnoughKeyframes);",
 		"  } catch (e) {",
-		"    alert('Error applying easing: ' + e.toString());",
+		"    alert(MSG.applyFailedPrefix + e.toString());",
 		"  } finally {",
 		"    app.endUndoGroup();",
 		"  }",
@@ -833,9 +932,17 @@ const setAnchorPoint = (payload: Record<string, unknown>) => {
 	const position = String(payload.position ?? "center");
 	const comp = app.project && app.project.activeItem;
 	if (!comp || !("selectedLayers" in comp) || comp.selectedLayers.length === 0) {
-		throw new Error("Select at least one layer before setting anchor point");
+		throw new Error(
+			payloadMessage(
+				payload.messages,
+				"selectLayer",
+				"Select at least one layer before setting anchor point",
+			),
+		);
 	}
-	app.beginUndoGroup("Ty Plus: Set Anchor Point");
+	app.beginUndoGroup(
+		undoGroupLabel(payload.undoGroupName, "Ty Plus: Set Anchor Point"),
+	);
 	try {
 		let changed = 0;
 		for (let i = 0; i < comp.selectedLayers.length; i += 1) {
@@ -984,10 +1091,18 @@ const writeSelectedTextLayers = (payload: Record<string, unknown>) => {
 	if (!font) throw new Error("font is required");
 	const comp = app.project && app.project.activeItem;
 	if (!comp || !("selectedLayers" in comp)) {
-		throw new Error("Select text layers in an active composition");
+		throw new Error(
+			payloadMessage(
+				payload.messages,
+				"selectTextLayers",
+				"Select text layers in an active composition",
+			),
+		);
 	}
 	let updated = 0;
-	app.beginUndoGroup("Ty Plus: Apply Font");
+	app.beginUndoGroup(
+		undoGroupLabel(payload.undoGroupName, "Ty Plus: Apply Font"),
+	);
 	try {
 		for (let i = 0; i < comp.selectedLayers.length; i += 1) {
 			const layer = comp.selectedLayers[i] as unknown as { property?: (name: string) => unknown };
@@ -1205,7 +1320,13 @@ const buildPluginEffectScanRows = (
 	return { rows };
 };
 
-const applyEffectByMatchName = (matchName: string) => {
+const applyEffectByMatchName = (
+	matchName: string,
+	options?: {
+		undoGroupName?: string;
+		messages?: { selectLayer?: string };
+	},
+) => {
 	const m = trimStr(String(matchName || ""));
 	if (!m) throw new Error("matchName is required");
 	const installedEffects = getInstalledEffects().rows;
@@ -1219,10 +1340,18 @@ const applyEffectByMatchName = (matchName: string) => {
 	if (!isInstalled) throw new Error(`Effect is not installed: ${m}`);
 	const comp = app.project && app.project.activeItem;
 	if (!comp || !("selectedLayers" in comp) || comp.selectedLayers.length === 0) {
-		throw new Error("Select at least one layer before applying an effect");
+		throw new Error(
+			payloadMessage(
+				options && options.messages,
+				"selectLayer",
+				"Select at least one layer before applying an effect",
+			),
+		);
 	}
 	let applied = 0;
-	app.beginUndoGroup("Ty Plus: Apply effect");
+	app.beginUndoGroup(
+		undoGroupLabel(options && options.undoGroupName, "Ty Plus: Apply effect"),
+	);
 	try {
 		for (let i = 0; i < comp.selectedLayers.length; i += 1) {
 			const layer = comp.selectedLayers[i] as unknown as {
@@ -1283,7 +1412,12 @@ const getSelectionCount = () => {
 	return { count: selectedLayers ? selectedLayers.length : 0 };
 };
 
-const alignLayers = (input: { action?: string; target?: string }) => {
+const alignLayers = (input: {
+	action?: string;
+	target?: string;
+	undoGroupName?: string;
+	messages?: { noActiveComposition?: string; noLayerSelected?: string };
+}) => {
 	const action = trimStr(String(input.action || ""));
 	const target = trimStr(String(input.target || "selection"));
 	if (!action) {
@@ -1291,11 +1425,23 @@ const alignLayers = (input: { action?: string; target?: string }) => {
 	}
 	const comp = app.project && app.project.activeItem;
 	if (!comp || !("selectedLayers" in comp)) {
-		throw new Error("Select at least one layer in an active composition");
+		throw new Error(
+			payloadMessage(
+				input.messages,
+				"noActiveComposition",
+				"Select at least one layer in an active composition",
+			),
+		);
 	}
 	const selected = comp.selectedLayers;
 	if (!selected || selected.length < 1) {
-		throw new Error("Select at least one layer before aligning");
+		throw new Error(
+			payloadMessage(
+				input.messages,
+				"noLayerSelected",
+				"Select at least one layer before aligning",
+			),
+		);
 	}
 
 	const getLayerBounds = (layer: any, time: number) => {
@@ -1407,7 +1553,9 @@ const alignLayers = (input: { action?: string; target?: string }) => {
 	const centerX = (minLeft + maxRight) / 2;
 	const centerY = (minTop + maxBottom) / 2;
 
-	app.beginUndoGroup("Ty Plus: Align Layers");
+	app.beginUndoGroup(
+		undoGroupLabel(input.undoGroupName, "Ty Plus: Align Layers"),
+	);
 	try {
 		if (action === "distribute-h" || action === "distribute-v") {
 			const distribute = makeIndexed(bounds);
@@ -1514,15 +1662,27 @@ const selectedKeyframePairs = (prop: any): number[][] => {
 	return out;
 };
 
-const collectSelectedAnimatedProperties = (): any[] => {
+const collectSelectedAnimatedProperties = (messages?: unknown): any[] => {
 	const comp = app.project && app.project.activeItem;
 	if (!comp || !("selectedProperties" in comp)) {
-		throw new Error("Select keyframes in an active composition");
+		throw new Error(
+			payloadMessage(
+				messages,
+				"selectKeyframes",
+				"Select keyframes in an active composition",
+			),
+		);
 	}
 	const props = (comp as unknown as { selectedProperties?: unknown[] })
 		.selectedProperties;
 	if (!props || props.length === 0) {
-		throw new Error("Select at least one animated property");
+		throw new Error(
+			payloadMessage(
+				messages,
+				"selectAnimatedProperty",
+				"Select at least one animated property",
+			),
+		);
 	}
 	const out: any[] = [];
 	for (let i = 0; i < props.length; i += 1) {
@@ -1530,7 +1690,13 @@ const collectSelectedAnimatedProperties = (): any[] => {
 		if (prop && prop.numKeys && prop.numKeys >= 2) out.push(prop);
 	}
 	if (out.length === 0) {
-		throw new Error("Select at least two keyframes on an animated property");
+		throw new Error(
+			payloadMessage(
+				messages,
+				"selectTwoKeyframes",
+				"Select at least two keyframes on an animated property",
+			),
+		);
 	}
 	return out;
 };
@@ -1558,8 +1724,8 @@ const easingPropertyFollowers = (prop: any): any[] => {
 	return [prop];
 };
 
-const collectEasingTargetProperties = (): any[] => {
-	const props = collectSelectedAnimatedProperties();
+const collectEasingTargetProperties = (messages?: unknown): any[] => {
+	const props = collectSelectedAnimatedProperties(messages);
 	const out: any[] = [];
 	for (let i = 0; i < props.length; i += 1) {
 		const followers = easingPropertyFollowers(props[i]);
@@ -1798,7 +1964,7 @@ const applyEasing = (payload: Record<string, unknown>) => {
 		payload.targeting === "in" || payload.targeting === "out"
 			? payload.targeting
 			: "both";
-	const props = collectEasingTargetProperties();
+	const props = collectEasingTargetProperties(payload.messages);
 	const outInfluence = easingInfluence(0, x1);
 	const inInfluence = easingInfluence(x2, 1);
 	const outSlope = safeEasingSlope(y1, x1);
@@ -1809,7 +1975,9 @@ const applyEasing = (payload: Record<string, unknown>) => {
 	// message instead of the apply silently no-opping. Always returned
 	// (empty array on success) so callers can rely on the shape.
 	const errors: string[] = [];
-	app.beginUndoGroup("Ty Plus: Apply Easing");
+	app.beginUndoGroup(
+		undoGroupLabel(payload.undoGroupName, "Ty Plus: Apply Easing"),
+	);
 	try {
 		for (let p = 0; p < props.length; p += 1) {
 			const prop = props[p];
@@ -1991,35 +2159,95 @@ const applyEasing = (payload: Record<string, unknown>) => {
 const buildLoopReplicatedPoints = (
 	segmentPoints: number[][],
 	loopCount: number,
+	wave?: Record<string, unknown>,
 ): number[][] => {
 	if (segmentPoints.length < 2) return segmentPoints;
 	if (loopCount < 2) return segmentPoints;
-	const last = segmentPoints.length - 1;
+	if (wave === undefined) {
+		// Legacy easing-loop-mode path (no wave params): plain N-fold
+		// replication with per-cycle x compression, kept until the Easing
+		// widget's loop mode is retired in favor of the Loop widget.
+		const last = segmentPoints.length - 1;
+		const legacy: number[][] = [];
+		for (let i = 0; i < loopCount; i += 1) {
+			const offset = i / loopCount;
+			const scale = 1 / loopCount;
+			for (let j = 0; j < segmentPoints.length; j += 1) {
+				if (i === 0 && j === 0) continue;
+				if (i === loopCount - 1 && j === last) continue;
+				const pnt = segmentPoints[j];
+				legacy.push([
+					offset + clampEasingNumber(pnt[0], 0) * scale,
+					pnt[1],
+					pnt[2] * scale,
+					pnt[3],
+					pnt[4] * scale,
+					pnt[5],
+				]);
+			}
+		}
+		legacy.sort((a, b) => a[0] - b[0]);
+		return legacy;
+	}
+	const cycles = Math.max(1, Math.round(loopCount));
+	const amplitude = wave && typeof wave.amplitude === "number" ? wave.amplitude : 1;
+	const damping = wave && typeof wave.damping === "number" ? wave.damping : 1;
+	const bias = wave && typeof wave.bias === "number" ? wave.bias : 0;
+	const oneWay = !!wave && wave.mode === "cycle";
+	const share = Math.max(0.05, Math.min(0.95, 0.5 + bias / 2));
+	const first = segmentPoints[0];
+	const lastPoint = segmentPoints[segmentPoints.length - 1];
+	const span = lastPoint[0] - first[0];
+	const chordAt = (x: number): number => {
+		if (Math.abs(span) < 1e-9) return first[1];
+		const ratio = Math.max(0, Math.min(1, (x - first[0]) / span));
+		return first[1] + (lastPoint[1] - first[1]) * ratio;
+	};
 	const out: number[][] = [];
-	for (let i = 0; i < loopCount; i += 1) {
-		const offset = i / loopCount;
-		const scale = 1 / loopCount;
+	for (let i = 0; i < cycles; i += 1) {
+		const decay = Math.pow(damping, i);
+		const hasReturn = !oneWay && i < cycles - 1;
+		const leg = hasReturn ? share : 1;
 		for (let j = 0; j < segmentPoints.length; j += 1) {
-			// Skip the original segment endpoints when they coincide with
-			// the outer keyframes (k1 for cycle 0 / p0, k2 for the final
-			// cycle / p_last). All other points are emitted so the curve
-			// is piecewise continuous across cycle boundaries.
-			if (i === 0 && j === 0) continue;
-			if (i === loopCount - 1 && j === last) continue;
 			const pnt = segmentPoints[j];
+			const chord = chordAt(pnt[0]);
+			const deviation = (pnt[1] - chord) * amplitude * decay;
+			// The attack leg. The handle offsets stay unscaled: AE reads the
+			// ease influence relative to the segment, so scaling them would
+			// distort the shape (the previous host rule scaled them by
+			// 1 / loopCount).
+			const isOuterStart = i === 0 && j === 0;
+			const isOuterEnd =
+				i === cycles - 1 && j === segmentPoints.length - 1;
+			if (!isOuterStart && !isOuterEnd) {
+				out.push([
+					(i + pnt[0] * leg) / cycles,
+					chord + deviation,
+					pnt[2],
+					pnt[3],
+					pnt[4],
+					pnt[5],
+				]);
+			}
+			if (!hasReturn) continue;
+			// The mirrored return leg (the template traversed backwards).
+			const back = segmentPoints[segmentPoints.length - 1 - j];
+			const backChord = chordAt(back[0]);
+			const backDeviation = (back[1] - backChord) * amplitude * decay;
 			out.push([
-				offset + clampEasingNumber(pnt[0], 0) * scale,
-				pnt[1],
-				pnt[2] * scale,
-				pnt[3],
-				pnt[4] * scale,
-				pnt[5],
+				(i + share + (1 - back[0]) * (1 - share)) / cycles,
+				backChord - backDeviation,
+				back[4],
+				-back[5],
+				back[2],
+				-back[3],
 			]);
 		}
 	}
 	out.sort((a, b) => a[0] - b[0]);
 	return out;
 };
+
 
 // Apply a single curve shape replicated N times across the (k1, k2) range.
 // Loop mode only makes sense for the `in` targeting: outgoing and both
@@ -2028,6 +2256,218 @@ const buildLoopReplicatedPoints = (
 // multi-point shape), fall through to applyEasing so the caller still
 // gets the same single-cycle behavior they would have without this
 // command.
+const easingPropertyId = (prop: any): string => {
+	try {
+		const parent = prop.parentProperty;
+		const layerName = parent && parent.name ? parent.name : "";
+		return layerName + "." + prop.matchName;
+	} catch (_e) {
+		return "";
+	}
+};
+
+const snapshotEasingKeyframes = (prop: any, start: number, end: number): any[] => {
+	const out: any[] = [];
+	for (let i = 1; i <= prop.numKeys; i += 1) {
+		const time = Number(prop.keyTime(i));
+		if (time < start - 0.001 || time > end + 0.001) continue;
+		let inEase: any[] = [];
+		let outEase: any[] = [];
+		try {
+			const ins = prop.keyInTemporalEase(i);
+			for (let d = 0; d < ins.length; d += 1)
+				inEase.push({ speed: ins[d].speed, influence: ins[d].influence });
+			const outs = prop.keyOutTemporalEase(i);
+			for (let d = 0; d < outs.length; d += 1)
+				outEase.push({ speed: outs[d].speed, influence: outs[d].influence });
+		} catch (_e) {
+			inEase = [];
+			outEase = [];
+		}
+		let interpolationType = 6612;
+		try {
+			interpolationType = prop.keyInterpolationType(i);
+		} catch (_e) {
+			interpolationType = 6612;
+		}
+		out.push({
+			time,
+			value: prop.keyValue(i),
+			inEase,
+			outEase,
+			interpolationType,
+		});
+	}
+	return out;
+};
+
+const loopKeyframesOf = (prop: any): any[] => {
+	const out: any[] = [];
+	for (let i = 1; i <= prop.numKeys; i += 1) {
+		out.push({ time: Number(prop.keyTime(i)), value: prop.keyValue(i) });
+	}
+	return out;
+};
+
+const sameLoopValue = (a: any, b: any): boolean => {
+	const av = a instanceof Array ? a : [a];
+	const bv = b instanceof Array ? b : [b];
+	if (av.length !== bv.length) return false;
+	for (let i = 0; i < av.length; i += 1) {
+		if (Math.abs(Number(av[i]) - Number(bv[i])) > 0.000001) return false;
+	}
+	return true;
+};
+
+/** Detect a manual edit made after the loop was applied. */
+const loopRecordConflict = (record: any, prop: any): boolean => {
+	const written = record.writtenKeyframes || [];
+	const current = loopKeyframesOf(prop);
+	const range = record.range || { start: 0, end: 0 };
+	const inRange: any[] = [];
+	for (let i = 0; i < current.length; i += 1) {
+		const time = current[i].time;
+		if (time < range.start - 0.001 || time > range.end + 0.001) continue;
+		inRange.push(current[i]);
+	}
+	if (inRange.length !== written.length) return true;
+	for (let i = 0; i < written.length; i += 1) {
+		if (Math.abs(inRange[i].time - written[i].time) > 0.001) return true;
+		if (!sameLoopValue(inRange[i].value, written[i].value)) return true;
+	}
+	return false;
+};
+
+/** Restore the snapshotted keyframes (undo the applied loop). */
+const restoreEasingKeyframes = (prop: any, snapshot: any[]): number => {
+	if (!snapshot || snapshot.length === 0) return 0;
+	let start = Number.MAX_VALUE;
+	let end = -Number.MAX_VALUE;
+	for (let i = 0; i < snapshot.length; i += 1) {
+		if (snapshot[i].time < start) start = snapshot[i].time;
+		if (snapshot[i].time > end) end = snapshot[i].time;
+	}
+	for (let i = prop.numKeys; i >= 1; i -= 1) {
+		const time = Number(prop.keyTime(i));
+		if (time < start - 0.001 || time > end + 0.001) continue;
+		try {
+			prop.removeKey(i);
+		} catch (_e) {
+		}
+	}
+	for (let i = 0; i < snapshot.length; i += 1) {
+		const frame = snapshot[i];
+		let index = 0;
+		try {
+			index = prop.addKey(frame.time);
+			prop.setValueAtKey(index, frame.value);
+		} catch (_e) {
+			continue;
+		}
+		try {
+			const inArr: any[] = [];
+			for (let d = 0; d < frame.inEase.length; d += 1)
+				inArr.push(new KeyframeEase(frame.inEase[d].speed, frame.inEase[d].influence));
+			const outArr: any[] = [];
+			for (let d = 0; d < frame.outEase.length; d += 1)
+				outArr.push(new KeyframeEase(frame.outEase[d].speed, frame.outEase[d].influence));
+			prop.setTemporalEaseAtKey(index, inArr, outArr);
+			prop.setInterpolationTypeAtKey(index, frame.interpolationType, frame.interpolationType);
+		} catch (_e) {
+		}
+	}
+	return snapshot.length;
+};
+
+/** The applied-loop commands the Loop widget drives. */
+const captureLoopState = (payload: Record<string, unknown>) => {
+	const stored = (payload.records || []) as any[];
+	const records: any[] = [];
+	const conflicts: string[] = [];
+	if (stored.length > 0) {
+		const selected = collectEasingTargetProperties();
+		for (let i = 0; i < selected.length; i += 1) {
+			const prop = selected[i];
+			const id = easingPropertyId(prop);
+			for (let r = 0; r < stored.length; r += 1) {
+				const record = stored[r];
+				if (record.propertyId !== id) continue;
+				records.push(record);
+				if (loopRecordConflict(record, prop)) conflicts.push(id);
+			}
+		}
+	}
+	return { records, conflicts };
+};
+
+const unapplyLoopEasing = (payload: Record<string, unknown>) => {
+	const stored = (payload.records || []) as any[];
+	let restored = 0;
+	const restoredIds: string[] = [];
+	const conflicts: string[] = [];
+	const errors: string[] = [];
+	const selected = collectEasingTargetProperties();
+	for (let r = 0; r < stored.length; r += 1) {
+		const record = stored[r];
+		let prop = null;
+		for (let i = 0; i < selected.length; i += 1) {
+			if (easingPropertyId(selected[i]) === record.propertyId) {
+				prop = selected[i];
+				break;
+			}
+		}
+		if (!prop) continue;
+		if (loopRecordConflict(record, prop)) {
+			conflicts.push(record.propertyId);
+			continue;
+		}
+		restored += restoreEasingKeyframes(prop, record.originalKeyframes);
+		restoredIds.push(record.propertyId);
+	}
+	return { restored, restoredIds, conflicts, errors };
+};
+
+/** The time range the loop covers on a property. */
+const easingSelectionRange = (prop: any): { start: number; end: number } => {
+	let start = Number.MAX_VALUE;
+	let end = -Number.MAX_VALUE;
+	let keys: number[] = [];
+	try {
+		const raw = prop.selectedKeys;
+		if (raw && raw.length) {
+			for (let k = 0; k < raw.length; k += 1) keys.push(Number(raw[k]));
+		}
+	} catch (_e) {
+		keys = [];
+	}
+	if (keys.length < 2) {
+		for (let i = 1; i <= prop.numKeys; i += 1) keys.push(i);
+	}
+	for (let i = 0; i < keys.length; i += 1) {
+		let time = 0;
+		try {
+			time = Number(prop.keyTime(keys[i]));
+		} catch (_e) {
+			continue;
+		}
+		if (time < start) start = time;
+		if (time > end) end = time;
+	}
+	if (start > end) return { start: 0, end: 0 };
+	return { start, end };
+};
+
+/** Find a selected property by its id (layer name + property match name). */
+const findSelectedProperty = (id: string): any => {
+	const props = collectEasingTargetProperties();
+	for (let i = 0; i < props.length; i += 1) {
+		if (easingPropertyId(props[i]) === id) return props[i];
+	}
+	return null;
+};
+
+/** Keep the first snapshot of a property when a loop is updated. */
+
 const applyLoopEasing = (payload: Record<string, unknown>) => {
 	const loopCount = Math.max(
 		0,
@@ -2043,7 +2483,30 @@ const applyLoopEasing = (payload: Record<string, unknown>) => {
 		// the user's intent (a curve in a single cycle) still applies.
 		return applyEasing(payload);
 	}
-	const replicated = buildLoopReplicatedPoints(segmentPoints, loopCount);
+	// Snapshot the keyframes the wave is about to replace so the loop can
+	// be re-opened and undone later.
+	const snapshots: any[] = [];
+	{
+		const props = collectEasingTargetProperties();
+		for (let i = 0; i < props.length; i += 1) {
+			const prop = props[i];
+			const range = easingSelectionRange(prop);
+			snapshots.push({
+				propertyId: easingPropertyId(prop),
+				range,
+				originalKeyframes: snapshotEasingKeyframes(
+					prop,
+					range.start,
+					range.end,
+				),
+			});
+		}
+	}
+	const replicated = buildLoopReplicatedPoints(
+		segmentPoints,
+		loopCount,
+		payload.wave as Record<string, unknown> | undefined,
+	);
 	const loopPayload: Record<string, unknown> = {
 		...payload,
 		points: replicated,
@@ -2053,11 +2516,44 @@ const applyLoopEasing = (payload: Record<string, unknown>) => {
 	// incoming handles. The outer keyframes' outgoing handles are kept
 	// as the user already had them.
 	loopPayload.targeting = "in";
-	return applyEasing(loopPayload);
+	const result = applyEasing(loopPayload);
+	{
+		const incoming: any[] = [];
+		for (let i = 0; i < snapshots.length; i += 1) {
+			const snapshot = snapshots[i];
+			const prop = findSelectedProperty(snapshot.propertyId);
+			if (!prop) continue;
+			const written: any[] = [];
+			const current = loopKeyframesOf(prop);
+			for (let k = 0; k < current.length; k += 1) {
+				const time = current[k].time;
+				if (
+					time < snapshot.range.start - 0.001 ||
+					time > snapshot.range.end + 0.001
+				)
+					continue;
+				written.push(current[k]);
+			}
+			incoming.push({
+				propertyId: snapshot.propertyId,
+				range: snapshot.range,
+				loopParams: payload.wave || {},
+				template: payload.points || [],
+				originalKeyframes: snapshot.originalKeyframes,
+				writtenKeyframes: written,
+				appliedAt: new Date().getTime(),
+			});
+		}
+		const merged = result && typeof result === "object" ? result : {};
+		(merged as any).applied = incoming;
+		return merged;
+	}
+	return result;
 };
 
-const captureEasingCurve = () => {
-	const props = collectEasingTargetProperties();
+const captureEasingCurve = (input?: { messages?: unknown }) => {
+	const messages = input && input.messages;
+	const props = collectEasingTargetProperties(messages);
 	for (let p = 0; p < props.length; p += 1) {
 		const prop = props[p];
 		const pairs = selectedKeyframePairs(prop);
@@ -2110,11 +2606,17 @@ const captureEasingCurve = () => {
 			return { cubic: [x1, 1, x2, 1] };
 		} catch (_error) {}
 	}
-	throw new Error("Could not read easing from the selected keyframes");
+	throw new Error(
+		payloadMessage(
+			input && input.messages,
+			"captureFailed",
+			"Could not read easing from the selected keyframes",
+		),
+	);
 };
 
-const captureKeyframeValues = () => {
-	const props = collectEasingTargetProperties();
+const captureKeyframeValues = (input?: { messages?: unknown }) => {
+	const props = collectEasingTargetProperties(input && input.messages);
 	const out = { values: [] as number[][] };
 	for (let p = 0; p < props.length; p += 1) {
 		const prop = props[p];
@@ -2142,11 +2644,17 @@ const getEasingClipboardPath = () => {
 	return { value: { path: base + "/Aescripts/TyPlus/easing-clipboard.json" } };
 };
 
-const pasteKeyframeValues = (input: { values?: number[][] }) => {
+const pasteKeyframeValues = (input: {
+	values?: number[][];
+	undoGroupName?: string;
+	messages?: unknown;
+}) => {
 	const values = isArrayValue(input?.values) ? input.values : [];
-	const props = collectEasingTargetProperties();
+	const props = collectEasingTargetProperties(input && input.messages);
 	const errors: string[] = [];
-	app.beginUndoGroup("Ty Plus: Paste Values");
+	app.beginUndoGroup(
+		undoGroupLabel(input?.undoGroupName, "Ty Plus: Paste Values"),
+	);
 	try {
 		for (let p = 0; p < props.length; p += 1) {
 			const prop = props[p];
@@ -2192,8 +2700,9 @@ const hostBundle = {
 	}),
 	runScriptFile: wrapCallable(runScriptFile),
 	applyPreset: wrapCallable(applyPresetFile),
-	addFootage: wrapCallable((input: { filePath?: string }) =>
-		addFootageFile(String(input.filePath ?? "")),
+	addFootage: wrapCallable(
+		(input: { filePath?: string; undoGroupName?: string }) =>
+			addFootageFile(String(input.filePath ?? ""), input),
 	),
 	// Issue #130: lets the React side ask the host whether the recorded
 	// preset asset is still on disk. Used at startup to mark stale records
@@ -2232,14 +2741,21 @@ const hostBundle = {
 	applyEffectByMatchName: wrapCallable(applyEffectByMatchName),
 	getSelectionCount: wrapCallable(getSelectionCount),
 	getEasingSelectionCount: wrapCallable(getEasingSelectionCount),
-	alignLayers: wrapCallable((input: { action?: string; target?: string }) =>
-		alignLayers(input),
+	alignLayers: wrapCallable(
+		(input: { action?: string; target?: string; undoGroupName?: string }) =>
+			alignLayers(input),
 	),
 	applyEasing: wrapCallable((payload: Record<string, unknown>) =>
 		applyEasing(payload),
 	),
 	applyLoopEasing: wrapCallable((payload: Record<string, unknown>) =>
 		applyLoopEasing(payload),
+	),
+	captureLoopState: wrapCallable((payload: Record<string, unknown>) =>
+		captureLoopState(payload),
+	),
+	unapplyLoopEasing: wrapCallable((payload: Record<string, unknown>) =>
+		unapplyLoopEasing(payload),
 	),
 	captureEasingCurve: wrapCallable(captureEasingCurve),
 	captureKeyframeValues: wrapCallable(captureKeyframeValues),

@@ -12,6 +12,9 @@
 		"edit": "Modifier",
 		"close": "Fermer"
 	},
+	"dialogs": {
+		"unsavedChangesConfirm": "Les modifications non enregistrées seront perdues. Fermer la boîte de dialogue ?"
+	},
 	"actions": {
 		"run": "Exécuter",
 		"duplicate": "Dupliquer",
@@ -179,6 +182,104 @@
 			"copyError": "Copier les détails de l'erreur",
 			"copied": "Copié dans le presse-papier",
 			"digest": "ID d'erreur"
+		}
+	},
+	"ui": {
+		"loadingSpinner": {
+			"label": "Chargement"
+		},
+		"searchField": {
+			"clearAria": "Effacer la recherche",
+			"clearTitle": "Effacer"
+		},
+		"regexEditor": {
+			"enterPattern": "Saisissez un motif.",
+			"invalidFlags": "Drapeaux invalides : {{flags}}",
+			"plainSource": "Source regex simple",
+			"literalFormat": "Format regex littéral",
+			"testString": "Chaîne de test",
+			"sourcePlaceholder": "Source regex",
+			"flagsPlaceholder": "drapeaux",
+			"matches": "Correspondances",
+			"noMatch": "Aucune correspondance",
+			"literalSuffix": "· littéral /pattern/flags",
+			"sourceSuffix": "· source uniquement"
+		},
+		"listSelect": {
+			"placeholder": "Sélectionner…"
+		}
+	},
+	"directoryBrowser": {
+		"refresh": "Actualiser",
+		"goUp": "Remonter",
+		"open": "Ouvrir",
+		"select": "Sélectionner",
+		"deselect": "Désélectionner",
+		"listView": "Vue liste",
+		"iconView": "Vue icônes",
+		"noFilesFound": "Aucun fichier trouvé",
+		"selectFileAria": "Sélectionner le fichier {{name}}",
+		"selectFolderAria": "Sélectionner le dossier {{name}}"
+	},
+	"debugConsole": {
+		"title": "Console",
+		"clear": "Effacer",
+		"evaluateAria": "Évaluer le JavaScript",
+		"evaluatePlaceholder": "Évaluer le JavaScript…",
+		"rowContextHint": "Clic droit pour copier",
+		"filterLevelAria": "Filtrer les messages de la console",
+		"filterSourceAria": "Filtrer les messages par source",
+		"filterScopeAria": "Filtrer les messages par portée de session",
+		"levels": {
+			"all": "Tous",
+			"log": "Journal",
+			"info": "Info",
+			"warn": "Avertissement",
+			"error": "Erreur"
+		},
+		"sources": {
+			"all": "Toutes les sources",
+			"panel": "Panneau",
+			"modeless": "Sans fenêtre",
+			"hostBridge": "Pont hôte",
+			"online": "En ligne",
+			"preset": "Préréglage",
+			"opWorker": "Outil d'opération",
+			"workspace": "Espace de travail",
+			"boot": "Démarrage",
+			"debugConsole": "Console de débogage",
+			"console": "Console"
+		},
+		"scopes": {
+			"allHistory": "Tout l'historique",
+			"thisSession": "Cette session"
+		},
+		"contextMenu": {
+			"copyMessage": "Copier le message",
+			"copyAllMessages": "Copier tous les messages",
+			"clearConsole": "Effacer la console",
+			"enableAutoScroll": "Activer le défilement automatique",
+			"disableAutoScroll": "Désactiver le défilement automatique",
+			"itemActive": "{{level}} (actif)"
+		}
+	},
+	"errors": {
+		"hostContextUnavailable": "Contexte hôte indisponible",
+		"fileAccessUnavailable": "L'accès aux fichiers via CEP Node n'est pas disponible dans cette surface.",
+		"fsApiUnavailable": "L'API fs de CEP Node n'est pas disponible dans cet environnement hôte.",
+		"fileImportAeOnly": "L'import de fichiers n'est actuellement disponible que dans After Effects.",
+		"initNotFound": "ty-plus-init.json introuvable (pas de racine d'application). L'onboarding doit être terminé avant toute écriture.",
+		"initIncomplete": "ty-plus n'est pas encore initialisé. Les écritures sont bloquées jusqu'à ce que ty-plus-init.json signale l'achèvement.",
+		"initSupportRootBlank": "ty-plus-init.json est marqué comme terminé, mais supportRoot est vide.",
+		"hostExecFailed": "Ty Plus : {{message}}",
+		"notify": {
+			"generic": "Une erreur s'est produite",
+			"fsPermission": "Autorisation refusée. Vérifiez les autorisations du fichier/dossier.",
+			"fsNotFound": "Fichier ou dossier introuvable. Il a peut-être été déplacé ou supprimé.",
+			"fsCorrupted": "Le fichier de données est corrompu et a été sauvegardé. Veuillez réessayer.",
+			"aeEvalFailed": "La commande After Effects a échoué. Réessayez ou redémarrez AE.",
+			"aeNotAvailable": "Connexion à After Effects perdue. Veuillez redémarrer le panneau.",
+			"network": "Erreur réseau. Vérifiez votre connexion."
 		}
 	}
 }

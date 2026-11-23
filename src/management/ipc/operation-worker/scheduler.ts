@@ -74,7 +74,7 @@ const canonicalWireMethodValues = canonicalMethods.map(
 if (
 	new Set(canonicalWireMethodValues).size !== canonicalWireMethodValues.length
 )
-	throw new Error("canonical wire method mapping contains a collision");
+	throw new Error("canonical wire method mapping contains a collision"); // i18n-exempt: internal diagnostic — not rendered as UI copy
 
 /** Maps a generated policy key to its dotted Rust wire method name. */
 export const canonicalWireMethodName = (
@@ -177,7 +177,7 @@ export class OperationWorkerScheduler {
 		createId: () => string,
 	) {
 		if (limit !== 4)
-			throw new RangeError("operation worker limit must be four");
+			throw new RangeError("operation worker limit must be four"); // i18n-exempt: internal diagnostic — not rendered as UI copy
 		this.createId = createId;
 	}
 

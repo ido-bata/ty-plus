@@ -90,6 +90,7 @@ interface ParsedFeature {
 const readFeatureFile = (relPath: string): ParsedFeature => {
 	const absPath = join(repoRoot(), relPath);
 	if (!existsSync(absPath)) {
+		// i18n-exempt: internal diagnostic — not rendered as UI copy
 		throw new Error(
 			`Feature file declared in bindings does not exist: ${absPath}`,
 		);
@@ -100,7 +101,7 @@ const readFeatureFile = (relPath: string): ParsedFeature => {
 	const parser = new Parser(builder, matcher);
 	const doc: GherkinDocument = parser.parse(source);
 	if (!doc.feature) {
-		throw new Error(`Feature file ${relPath} has no Feature element.`);
+		throw new Error(`Feature file ${relPath} has no Feature element.`); // i18n-exempt: internal diagnostic — not rendered as UI copy
 	}
 	const feature = doc.feature;
 
@@ -268,6 +269,7 @@ interface ScenarioBindingsFile {
 const readProcedure = (scenarioId: string, relPath: string): ProcedureFile => {
 	const absPath = join(repoRoot(), relPath);
 	if (!existsSync(absPath)) {
+		// i18n-exempt: internal diagnostic — not rendered as UI copy
 		throw new Error(
 			`Procedure file declared in binding for scenario "${scenarioId}" does not exist: ${relPath}. ` +
 				`The loader refuses silent fallbacks (round-2 Blocker B); rename the binding's procedureFile or restore the file at the declared path.`,
@@ -276,6 +278,7 @@ const readProcedure = (scenarioId: string, relPath: string): ProcedureFile => {
 	const raw = readFileSync(absPath, "utf8");
 	const parsed = JSON.parse(raw) as ProcedureFile;
 	if (parsed.scenarioId !== scenarioId) {
+		// i18n-exempt: internal diagnostic — not rendered as UI copy
 		throw new Error(
 			`Procedure file ${relPath} declares scenarioId "${parsed.scenarioId}" but was bound to scenario "${scenarioId}". ` +
 				`The binding is the canonical mapping; either rename the procedure's scenarioId field or remove the binding.`,
@@ -287,6 +290,7 @@ const readProcedure = (scenarioId: string, relPath: string): ProcedureFile => {
 const readBindings = (): ScenarioBindingsFile => {
 	const path = join(repoRoot(), BINDINGS_FILE);
 	if (!existsSync(path)) {
+		// i18n-exempt: internal diagnostic — not rendered as UI copy
 		throw new Error(
 			`Scenario bindings file does not exist: ${BINDINGS_FILE}. The loader is binding-driven (round-2 Blocker B); restore the file or the suite cannot load.`,
 		);
@@ -321,6 +325,7 @@ const buildScenarioSpec = (
 ): ScenarioSpec => {
 	const feature = featuresByFile.get(binding.featureFile);
 	if (!feature) {
+		// i18n-exempt: internal diagnostic — not rendered as UI copy
 		throw new Error(
 			`Binding for scenario "${binding.scenarioId}" references featureFile "${binding.featureFile}" but no feature parsed for that path.`,
 		);
@@ -331,6 +336,7 @@ const buildScenarioSpec = (
 		binding.scenarioName,
 	);
 	if (!matched) {
+		// i18n-exempt: internal diagnostic — not rendered as UI copy
 		throw new Error(
 			`No Gherkin scenario found in "${binding.featureFile}" for binding "${binding.scenarioId}" (name="${binding.scenarioName}"). ` +
 				`The binding is the canonical mapping; check that the .feature file declares a scenario whose name matches the binding.scenarioName.`,

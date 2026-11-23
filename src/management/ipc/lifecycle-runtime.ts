@@ -71,7 +71,7 @@ export class RuntimeLifecycle {
 	 */
 	start(): void {
 		if (this.state !== "idle" && this.state !== "stopped") {
-			throw new Error(`cannot start from state ${this.state}`);
+			throw new Error(`cannot start from state ${this.state}`); // i18n-exempt: internal diagnostic — not rendered as UI copy
 		}
 		this.setState("starting");
 	}
@@ -81,7 +81,7 @@ export class RuntimeLifecycle {
 	 */
 	running(): void {
 		if (this.state !== "starting" && this.state !== "restarting") {
-			throw new Error(`cannot transition to running from ${this.state}`);
+			throw new Error(`cannot transition to running from ${this.state}`); // i18n-exempt: internal diagnostic — not rendered as UI copy
 		}
 		this.setState("running");
 	}
@@ -116,7 +116,7 @@ export class RuntimeLifecycle {
 	 */
 	restart(): void {
 		if (this.state !== "crashed") {
-			throw new Error(`cannot restart from state ${this.state}`);
+			throw new Error(`cannot restart from state ${this.state}`); // i18n-exempt: internal diagnostic — not rendered as UI copy
 		}
 		this.setState("restarting");
 	}

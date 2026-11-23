@@ -113,7 +113,7 @@ const loadGrammar = async (
 		/* configuration */ {},
 	);
 	if (!grammar) {
-		throw new Error(`Failed to load TextMate grammar for ${scopeName}`);
+		throw new Error(`Failed to load TextMate grammar for ${scopeName}`); // i18n-exempt: internal diagnostic — not rendered as UI copy
 	}
 	return grammar;
 };

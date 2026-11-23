@@ -17,8 +17,9 @@ const isAction = (s: string): s is TimeAction =>
 export const buildTimeScript = (
 	action: string,
 	target: string,
+	undoGroupName?: string,
 ): string | null => {
 	if (!isAction(action)) return null;
 	const compTime = target === "comp";
-	return buildScriptFromTemplate(action, compTime);
+	return buildScriptFromTemplate(action, compTime, undoGroupName);
 };

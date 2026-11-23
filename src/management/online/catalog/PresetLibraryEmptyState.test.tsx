@@ -2,6 +2,8 @@
 
 import { cleanup, fireEvent, render } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { i18n } from "@/management/i18n/index";
+import { labelOfGatewayBootFailureReason } from "@/management/panel/cloud-gateway-boot";
 import { PresetLibraryEmptyState } from "./PresetLibraryEmptyState";
 
 afterEach(cleanup);
@@ -17,7 +19,7 @@ describe("PresetLibraryEmptyState — Issue #128 disconnected state", () => {
 				onClearFilters={() => {}}
 			/>,
 		);
-		expect(container.textContent).toBe("No online catalog.");
+		expect(container.textContent).toBe(i18n.t("online:catalog.emptyNoCatalog"));
 		expect(container.querySelector("[data-gateway-boot-reason]")).toBeNull();
 	});
 
@@ -42,7 +44,7 @@ describe("PresetLibraryEmptyState — Issue #128 disconnected state", () => {
 			"worker-runtime-failed",
 		);
 		expect(container.textContent).toContain(
-			"Online preset library is unavailable.",
+			i18n.t("online:catalog.emptyUnavailable"),
 		);
 		expect(container.textContent).toContain(
 			"Worker runtime unavailable on this host",
@@ -67,7 +69,11 @@ describe("PresetLibraryEmptyState — Issue #128 disconnected state", () => {
 		);
 		const button = getByRole("button");
 		expect(button).toBeDisabled();
-		expect(button.getAttribute("title")).toContain("reload the panel");
+		expect(button.getAttribute("title")).toBe(
+			i18n.t("online:catalog.gatewayBootRetryHint", {
+				reason: labelOfGatewayBootFailureReason("missing-extension-root"),
+			}),
+		);
 		fireEvent.click(button);
 		expect(onRefresh).not.toHaveBeenCalled();
 	});
@@ -86,7 +92,9 @@ describe("PresetLibraryEmptyState — Issue #128 disconnected state", () => {
 		);
 		const button = getByRole("button");
 		expect(button).toBeEnabled();
-		expect(button.getAttribute("title")).toBe("Refresh catalog");
+		expect(button.getAttribute("title")).toBe(
+			i18n.t("online:catalog.refreshCatalog"),
+		);
 		fireEvent.click(button);
 		expect(onRefresh).toHaveBeenCalledTimes(1);
 	});
@@ -114,6 +122,6 @@ describe("PresetLibraryEmptyState — Issue #128 disconnected state", () => {
 				onClearFilters={() => {}}
 			/>,
 		);
-		expect(container.textContent).toBe("No presets match filter.");
+		expect(container.textContent).toBe(i18n.t("online:catalog.emptyNoMatch"));
 	});
 });

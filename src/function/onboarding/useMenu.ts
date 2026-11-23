@@ -4,6 +4,7 @@ import {
 	installCepJsonContextMenuRewrite,
 	registerCepJsonContextMenuSurface,
 } from "@/management/dialog/context-menu";
+import { i18n } from "@/management/i18n/index";
 import {
 	buildFileEntryMenu,
 	handleFileEntryMenuSelect,
@@ -39,11 +40,17 @@ export function useMenu({
 		const surfaceId = panelSurfaceId || "onboarding";
 		const onboardingMenu = {
 			menu: [
-				{ id: "ty.onboarding.next", label: "Next" },
-				{ id: "ty.onboarding.back", label: "Back" },
-				{ id: "ty.onboarding.refresh", label: "Refresh" },
+				{ id: "ty.onboarding.next", label: i18n.t("onboarding:actions.next") },
+				{ id: "ty.onboarding.back", label: i18n.t("onboarding:actions.back") },
+				{
+					id: "ty.onboarding.refresh",
+					label: i18n.t("common:actions.refresh"),
+				},
 				{ id: "ty.onboarding.divider1", label: "---" },
-				{ id: "ty.onboarding.openManual", label: "Open Manual" },
+				{
+					id: "ty.onboarding.openManual",
+					label: i18n.t("onboarding:actions.openManual"),
+				},
 			],
 		};
 		const handleSelect = (menuId: string) => {

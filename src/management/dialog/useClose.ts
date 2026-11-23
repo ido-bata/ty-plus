@@ -1,5 +1,7 @@
 import { useCallback } from "react";
 
+import { i18n } from "@/management/i18n/index";
+
 export type CloseOptions = {
 	confirmOnClose?: boolean;
 	confirmMessage?: string;
@@ -7,7 +9,8 @@ export type CloseOptions = {
 	hasUnsavedChanges?: () => boolean;
 };
 
-const DEFAULT_CONFIRM_MESSAGE = "Unsaved changes will be lost. Close dialog?";
+const defaultConfirmMessage = () =>
+	i18n.t("common:dialogs.unsavedChangesConfirm");
 
 export function useClose(options?: CloseOptions) {
 	const {
@@ -25,7 +28,7 @@ export function useClose(options?: CloseOptions) {
 
 	const close = useCallback(() => {
 		if (confirmOnClose && hasUnsaved()) {
-			const message = confirmMessage ?? DEFAULT_CONFIRM_MESSAGE;
+			const message = confirmMessage ?? defaultConfirmMessage();
 			if (!window.confirm(message)) {
 				return false;
 			}

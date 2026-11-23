@@ -30,6 +30,7 @@ import {
 	type CepMenuPayload,
 	registerCepJsonContextMenuSurface,
 } from "@/management/dialog/context-menu";
+import { i18n } from "@/management/i18n/index";
 import { DownloadProgressIconButton } from "@/management/online/catalog/DownloadProgressIconButton";
 import { gatewayRetryAffordance } from "@/management/online/catalog/gateway-retry";
 import type { DownloadProgress } from "@/management/online/catalog/operations";
@@ -767,7 +768,7 @@ function GalleryCard(props: {
 							<IconButton
 								size="sm"
 								variant="ghost"
-								title="Open Notion"
+								title={i18n.t("online:catalog.openNotion")}
 								onClick={() =>
 									openUrlInDefaultBrowser(item.notionPageUrl ?? "")
 								}
@@ -844,7 +845,7 @@ function CardItem(props: {
 							<IconButton
 								size="sm"
 								variant="ghost"
-								title="Open Notion"
+								title={i18n.t("online:catalog.openNotion")}
 								onClick={() =>
 									openUrlInDefaultBrowser(item.notionPageUrl ?? "")
 								}
@@ -892,7 +893,7 @@ function EmptyState(props: {
 				data-gateway-boot-reason={disconnectedReasonTag ?? ""}
 			>
 				<p className={emptyStateTextClass}>
-					Online preset library is unavailable.
+					{i18n.t("online:catalog.emptyUnavailable")}
 				</p>
 				{disconnectedReason ? (
 					<p className={emptyStateTextClass}>{disconnectedReason}</p>
@@ -912,11 +913,13 @@ function EmptyState(props: {
 	if (catalogLength === 0) {
 		return (
 			<div className={emptyStateClass} data-online-preset-empty>
-				<p className={emptyStateTextClass}>No online catalog.</p>
+				<p className={emptyStateTextClass}>
+					{i18n.t("online:catalog.emptyNoCatalog")}
+				</p>
 				<IconButton
 					size="sm"
 					variant="ghost"
-					title="Refresh catalog"
+					title={i18n.t("online:catalog.refreshCatalog")}
 					onClick={onRefresh}
 				>
 					<Icon icon={RefreshCw} size={14} />
@@ -927,11 +930,13 @@ function EmptyState(props: {
 	if (filteredLength === 0) {
 		return (
 			<div className={emptyStateClass} data-online-preset-empty>
-				<p className={emptyStateTextClass}>No presets match filter.</p>
+				<p className={emptyStateTextClass}>
+					{i18n.t("online:catalog.emptyNoMatch")}
+				</p>
 				<IconButton
 					size="sm"
 					variant="ghost"
-					title="Clear all filters"
+					title={i18n.t("online:catalog.clearAllFilters")}
 					onClick={onClearFilters}
 				>
 					<Icon icon={X} size={12} />
@@ -949,14 +954,16 @@ function ViewModeToggle(props: {
 	const { mode, onModeChange } = props;
 	return (
 		<fieldset className={viewModeFieldsetClass}>
-			<legend className={css({ srOnly: true })}>View mode</legend>
+			<legend className={css({ srOnly: true })}>
+				{i18n.t("online:catalog.viewMode")}
+			</legend>
 			<IconButton
 				variant="ghost"
 				size="sm"
 				type="button"
 				aria-pressed={mode === "gallery"}
-				aria-label="Gallery view"
-				title="Gallery (Ctrl+Wheel to zoom)"
+				aria-label={i18n.t("online:catalog.viewGallery")}
+				title={i18n.t("online:catalog.viewGalleryTitle")}
 				className={viewModeBtnClass(mode === "gallery")}
 				onClick={() => onModeChange("gallery")}
 			>
@@ -968,8 +975,8 @@ function ViewModeToggle(props: {
 				size="sm"
 				type="button"
 				aria-pressed={mode === "cards"}
-				aria-label="Cards view"
-				title="Cards"
+				aria-label={i18n.t("online:catalog.viewCards")}
+				title={i18n.t("online:catalog.viewCardsLabel")}
 				className={viewModeBtnClass(mode === "cards")}
 				onClick={() => onModeChange("cards")}
 			>
@@ -981,8 +988,8 @@ function ViewModeToggle(props: {
 				size="sm"
 				type="button"
 				aria-pressed={mode === "list"}
-				aria-label="List view"
-				title="List"
+				aria-label={i18n.t("online:catalog.viewList")}
+				title={i18n.t("online:catalog.viewListLabel")}
 				className={viewModeBtnClass(mode === "list")}
 				onClick={() => onModeChange("list")}
 			>
@@ -1038,7 +1045,7 @@ function SidePanel(props: {
 				<IconButton
 					size="sm"
 					variant="ghost"
-					title="Hide filters"
+					title={i18n.t("online:catalog.hideFilters")}
 					onClick={onTogglePanel}
 				>
 					<Icon icon={PanelLeftClose} size={12} />
@@ -1046,7 +1053,7 @@ function SidePanel(props: {
 				<div className={sidePanelSearchWrapperClass}>
 					<SearchField
 						icon={Search}
-						placeholder="Filter…"
+						placeholder={i18n.t("online:catalog.filterPlaceholder")}
 						value={query}
 						onChange={(e) => onQueryChange(e.currentTarget.value)}
 						onClear={onClearQuery}
@@ -1060,14 +1067,16 @@ function SidePanel(props: {
 			{/* Category filter */}
 			<div className={sidePanelSectionClass}>
 				<div className={sidePanelSectionHeaderClass}>
-					<span className={sidePanelSectionTitleClass}>Category</span>
+					<span className={sidePanelSectionTitleClass}>
+						{i18n.t("online:catalog.category")}
+					</span>
 					<Button
 						variant="ghost"
 						uiSize="sm"
 						disabled={!selectedCategory}
 						onClick={() => onCategoryChange("")}
 					>
-						Clear
+						{i18n.t("online:catalog.clear")}
 					</Button>
 				</div>
 				<div className={sidePanelCategoryListClass}>
@@ -1076,7 +1085,7 @@ function SidePanel(props: {
 						className={categoryBtnClass(selectedCategory === "")}
 						onClick={() => onCategoryChange("")}
 					>
-						All categories
+						{i18n.t("online:catalog.allCategories")}
 					</button>
 					{categories.map((cat) => (
 						<button
@@ -1095,7 +1104,9 @@ function SidePanel(props: {
 			{allTags.length > 0 && (
 				<div className={sidePanelTagSectionClass}>
 					<div className={sidePanelSectionHeaderClass}>
-						<span className={sidePanelSectionTitleClass}>Tags</span>
+						<span className={sidePanelSectionTitleClass}>
+							{i18n.t("online:catalog.tags")}
+						</span>
 						<div className={sidePanelTagHeaderClass}>
 							<Button
 								variant="ghost"
@@ -1103,7 +1114,7 @@ function SidePanel(props: {
 								disabled={selectedTags.size === 0}
 								onClick={onClearAllTags}
 							>
-								Clear
+								{i18n.t("online:catalog.clear")}
 							</Button>
 						</div>
 					</div>
@@ -1140,7 +1151,9 @@ function SidePanel(props: {
 						className={sidePanelClearBtnFullClass}
 					>
 						<Icon icon={X} size={10} />
-						<span className={sidePanelClearLabelClass}>Clear all</span>
+						<span className={sidePanelClearLabelClass}>
+							{i18n.t("online:catalog.clearAll")}
+						</span>
 					</Button>
 				</div>
 			)}
@@ -1177,10 +1190,18 @@ function ListTableView(props: {
 			<table className={listTableClass}>
 				<thead className={listTableHeaderClass}>
 					<tr>
-						<th className={listTableThumbHeaderClass}>Thumb</th>
-						<th className={listTableHeaderCellClass}>Name / ID</th>
-						<th className={listTableActionsHeaderClass}>Category</th>
-						<th className={listTableActionsHeaderClass}>Actions</th>
+						<th className={listTableThumbHeaderClass}>
+							{i18n.t("online:catalog.tableThumb")}
+						</th>
+						<th className={listTableHeaderCellClass}>
+							{i18n.t("online:catalog.tableNameId")}
+						</th>
+						<th className={listTableActionsHeaderClass}>
+							{i18n.t("online:catalog.category")}
+						</th>
+						<th className={listTableActionsHeaderClass}>
+							{i18n.t("online:catalog.tableActions")}
+						</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -1215,7 +1236,7 @@ function ListTableView(props: {
 										<IconButton
 											size="sm"
 											variant="ghost"
-											title="Open Notion"
+											title={i18n.t("online:catalog.openNotion")}
 											onClick={() =>
 												openUrlInDefaultBrowser(item.notionPageUrl ?? "")
 											}
@@ -1270,11 +1291,16 @@ function LibraryFooter({
 	return (
 		<div className={footerClass}>
 			<span className={footerTextClass}>
-				{filtered} / {catalog} items
+				{i18n.t("online:catalog.footerCount", {
+					filtered,
+					catalog,
+				})}
 			</span>
 			{mode === "gallery" && (
 				<span className={footerZoomTextClass}>
-					Ctrl+Wheel: {Math.round(scale * 100)}%
+					{i18n.t("online:catalog.footerZoom", {
+						percent: Math.round(scale * 100),
+					})}
 				</span>
 			)}
 		</div>
@@ -1524,7 +1550,10 @@ export function PresetLibrary(): JSX.Element {
 				await syncCatalog();
 			} catch (err) {
 				const msg = err instanceof Error ? err.message : String(err);
-				await showExtendScriptAlert(window, `Download failed: ${msg}`);
+				await showExtendScriptAlert(
+					window,
+					i18n.t("online:catalog.downloadFailed", { message: msg }),
+				);
 			}
 			setDownloadingId(null);
 			setDownloadState(null);
@@ -1586,32 +1615,34 @@ export function PresetLibrary(): JSX.Element {
 					checked?: boolean;
 				}>;
 			}> = [
-				{ id: CTX.bodyReload, label: "Reload catalog" },
+				{ id: CTX.bodyReload, label: i18n.t("online:catalog.reloadCatalog") },
 				{
 					id: CTX.sidePanelToggle,
-					label: showSidePanel ? "Hide side panel" : "Show side panel",
+					label: showSidePanel
+						? i18n.t("online:catalog.hideSidePanel")
+						: i18n.t("online:catalog.showSidePanel"),
 					checkable: true,
 					checked: showSidePanel,
 				},
 				{
 					id: "ty.ctx.online-preset-library.view",
-					label: "View",
+					label: i18n.t("online:catalog.viewMenu"),
 					menu: [
 						{
 							id: CTX.viewGallery,
-							label: "Gallery",
+							label: i18n.t("online:catalog.viewGalleryLabel"),
 							checkable: true,
 							checked: mode === "gallery",
 						},
 						{
 							id: CTX.viewCards,
-							label: "Cards",
+							label: i18n.t("online:catalog.viewCardsLabel"),
 							checkable: true,
 							checked: mode === "cards",
 						},
 						{
 							id: CTX.viewList,
-							label: "List",
+							label: i18n.t("online:catalog.viewListLabel"),
 							checkable: true,
 							checked: mode === "list",
 						},
@@ -1620,31 +1651,40 @@ export function PresetLibrary(): JSX.Element {
 			];
 			if (hoveredItem) {
 				menu.push({ label: "---" });
-				menu.push({ id: CTX.itemDownload, label: "Download" });
-				menu.push({ id: CTX.itemImport, label: "Import" });
+				menu.push({
+					id: CTX.itemDownload,
+					label: i18n.t("online:catalog.download"),
+				});
+				menu.push({
+					id: CTX.itemImport,
+					label: i18n.t("online:catalog.import"),
+				});
 				if (hoveredItem.notionPageUrl) {
-					menu.push({ id: CTX.itemOpenNotion, label: "Open manual (Notion)" });
+					menu.push({
+						id: CTX.itemOpenNotion,
+						label: i18n.t("online:catalog.openManualNotion"),
+					});
 				}
 			} else {
 				menu.push({ label: "---" });
 				menu.push({
 					id: CTX.searchClear,
-					label: "Clear search",
+					label: i18n.t("online:catalog.clearSearch"),
 					enabled: query.length > 0,
 				});
 				menu.push({
 					id: CTX.categoryClear,
-					label: "Clear category filter",
+					label: i18n.t("online:catalog.clearCategoryFilter"),
 					enabled: selectedCategory !== "",
 				});
 				menu.push({
 					id: CTX.tagClearAll,
-					label: "Clear tag selection",
+					label: i18n.t("online:catalog.clearTagSelection"),
 					enabled: selectedTags.size > 0,
 				});
 				menu.push({
 					id: CTX.clearAllFilters,
-					label: "Clear all filters",
+					label: i18n.t("online:catalog.clearAllFilters"),
 					enabled: hasFilters,
 				});
 			}
@@ -1832,20 +1872,24 @@ export function PresetLibrary(): JSX.Element {
 						<IconButton
 							size="sm"
 							variant="ghost"
-							title="Show filters"
+							title={i18n.t("online:catalog.showFilters")}
 							onClick={() => setShowSidePanel(true)}
 						>
 							<Icon icon={PanelLeftClose} size={12} />
 						</IconButton>
 					)}
 					<h1 className={cx(heading3Class, css({ truncate: true }))}>
-						Online Preset Library
+						{i18n.t("online:catalog.title")}
 					</h1>
 					<div className={headerSpacerClass}>
 						<IconButton
 							size="sm"
 							variant="ghost"
-							title={isReloading ? "Reloading…" : "Reload catalog"}
+							title={
+								isReloading
+									? i18n.t("online:catalog.reloadingCatalog")
+									: i18n.t("online:catalog.reloadCatalog")
+							}
 							onClick={() => void loadCatalog()}
 							disabled={isReloading}
 							className={cx(isReloading && spinningClass)}
@@ -1860,7 +1904,7 @@ export function PresetLibrary(): JSX.Element {
 					<div className={searchRowInputWrapperClass}>
 						<SearchField
 							icon={Search}
-							placeholder="Filter by name, ID, description, category, tag"
+							placeholder={i18n.t("online:catalog.searchPlaceholder")}
 							value={query}
 							onChange={(e) => setQuery(e.currentTarget.value)}
 							onClear={handleClearQuery}

@@ -14,6 +14,7 @@ import type { JSX } from "react";
 import { useCallback, useMemo, useState } from "react";
 import { currentSessionStartedAt } from "@/management/debug/console/interceptor";
 import type { LogMessage } from "@/management/debug/console/types";
+import { i18n } from "@/management/i18n/index";
 import { css } from "@/styled-system/css";
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
@@ -26,12 +27,36 @@ const fmtTime = (d: Date): string =>
 
 const PROMPT_CHAR = "\x3e";
 
-const FILTERS: { value: FilterLevel; label: string }[] = [
-	{ value: "all", label: "All" },
-	{ value: "log", label: "Log" },
-	{ value: "info", label: "Info" },
-	{ value: "warn", label: "Warn" },
-	{ value: "error", label: "Error" },
+const FILTERS: {
+	value: FilterLevel;
+	labelKey: string;
+	labelFallback: string;
+}[] = [
+	{
+		value: "all",
+		labelKey: "common:debugConsole.levels.all",
+		labelFallback: "All",
+	},
+	{
+		value: "log",
+		labelKey: "common:debugConsole.levels.log",
+		labelFallback: "Log",
+	},
+	{
+		value: "info",
+		labelKey: "common:debugConsole.levels.info",
+		labelFallback: "Info",
+	},
+	{
+		value: "warn",
+		labelKey: "common:debugConsole.levels.warn",
+		labelFallback: "Warn",
+	},
+	{
+		value: "error",
+		labelKey: "common:debugConsole.levels.error",
+		labelFallback: "Error",
+	},
 ];
 
 /**
@@ -39,18 +64,66 @@ const FILTERS: { value: FilterLevel; label: string }[] = [
  * the `LogSource` union in `logger.ts`. "All" is the default that does not
  * filter by source.
  */
-const SOURCE_FILTERS: { value: FilterSource; label: string }[] = [
-	{ value: "all", label: "All sources" },
-	{ value: "panel", label: "Panel" },
-	{ value: "modeless", label: "Modeless" },
-	{ value: "host-bridge", label: "Host bridge" },
-	{ value: "online-runtime", label: "Online" },
-	{ value: "preset-execution", label: "Preset" },
-	{ value: "operation-worker", label: "Op worker" },
-	{ value: "workspace", label: "Workspace" },
-	{ value: "boot", label: "Boot" },
-	{ value: "debug-console", label: "Debug console" },
-	{ value: "console-interceptor", label: "Console" },
+const SOURCE_FILTERS: {
+	value: FilterSource;
+	labelKey: string;
+	labelFallback: string;
+}[] = [
+	{
+		value: "all",
+		labelKey: "common:debugConsole.sources.all",
+		labelFallback: "All sources",
+	},
+	{
+		value: "panel",
+		labelKey: "common:debugConsole.sources.panel",
+		labelFallback: "Panel",
+	},
+	{
+		value: "modeless",
+		labelKey: "common:debugConsole.sources.modeless",
+		labelFallback: "Modeless",
+	},
+	{
+		value: "host-bridge",
+		labelKey: "common:debugConsole.sources.hostBridge",
+		labelFallback: "Host bridge",
+	},
+	{
+		value: "online-runtime",
+		labelKey: "common:debugConsole.sources.online",
+		labelFallback: "Online",
+	},
+	{
+		value: "preset-execution",
+		labelKey: "common:debugConsole.sources.preset",
+		labelFallback: "Preset",
+	},
+	{
+		value: "operation-worker",
+		labelKey: "common:debugConsole.sources.opWorker",
+		labelFallback: "Op worker",
+	},
+	{
+		value: "workspace",
+		labelKey: "common:debugConsole.sources.workspace",
+		labelFallback: "Workspace",
+	},
+	{
+		value: "boot",
+		labelKey: "common:debugConsole.sources.boot",
+		labelFallback: "Boot",
+	},
+	{
+		value: "debug-console",
+		labelKey: "common:debugConsole.sources.debugConsole",
+		labelFallback: "Debug console",
+	},
+	{
+		value: "console-interceptor",
+		labelKey: "common:debugConsole.sources.console",
+		labelFallback: "Console",
+	},
 ];
 
 const LOG_SOURCE_VALUES: ReadonlySet<string> = new Set([
@@ -190,7 +263,9 @@ function MessageRow({ msg, onContextMenu }: MessageRowProps): JSX.Element {
 		<div
 			className={cx(rowBaseStyle, rowBg)}
 			data-debug-msg-id={msg.id}
-			title="Right-click to copy"
+			title={i18n.t("common:debugConsole.rowContextHint", {
+				defaultValue: "Right-click to copy",
+			})}
 			onContextMenu={handleContextMenu}
 		>
 			<span className={timeStyle}>{fmtTime(msg.timestamp)}</span>
@@ -243,10 +318,15 @@ function FilterTabs({ filter, onChange }: FilterTabsProps): JSX.Element {
 	return (
 		<div className={filterTabsStyle}>
 			<SegmentedControl
-				options={FILTERS}
+				options={FILTERS.map((f) => ({
+					value: f.value,
+					label: i18n.t(f.labelKey, { defaultValue: f.labelFallback }),
+				}))}
 				value={filter}
 				onChange={(v) => onChange(v as FilterLevel)}
-				aria-label="Filter console messages"
+				aria-label={i18n.t("common:debugConsole.filterLevelAria", {
+					defaultValue: "Filter console messages",
+				})}
 			/>
 		</div>
 	);
@@ -269,10 +349,15 @@ function SourceFilterTabs({
 	return (
 		<div className={sourceFilterStyle}>
 			<SegmentedControl
-				options={SOURCE_FILTERS}
+				options={SOURCE_FILTERS.map((f) => ({
+					value: f.value,
+					label: i18n.t(f.labelKey, { defaultValue: f.labelFallback }),
+				}))}
 				value={sourceFilter}
 				onChange={(v) => onChange(v as FilterSource)}
-				aria-label="Filter console messages by source"
+				aria-label={i18n.t("common:debugConsole.filterSourceAria", {
+					defaultValue: "Filter console messages by source",
+				})}
 			/>
 		</div>
 	);
@@ -290,9 +375,21 @@ function SourceFilterTabs({
  */
 type FilterScope = "all" | "session";
 
-const SCOPES: { value: FilterScope; label: string }[] = [
-	{ value: "all", label: "All history" },
-	{ value: "session", label: "This session" },
+const SCOPES: {
+	value: FilterScope;
+	labelKey: string;
+	labelFallback: string;
+}[] = [
+	{
+		value: "all",
+		labelKey: "common:debugConsole.scopes.allHistory",
+		labelFallback: "All history",
+	},
+	{
+		value: "session",
+		labelKey: "common:debugConsole.scopes.thisSession",
+		labelFallback: "This session",
+	},
 ];
 
 interface ScopeFilterTabsProps {
@@ -307,10 +404,15 @@ function ScopeFilterTabs({
 	return (
 		<div className={filterTabsStyle}>
 			<SegmentedControl
-				options={SCOPES}
+				options={SCOPES.map((f) => ({
+					value: f.value,
+					label: i18n.t(f.labelKey, { defaultValue: f.labelFallback }),
+				}))}
 				value={scope}
 				onChange={(v) => onChange(v as FilterScope)}
-				aria-label="Filter console messages by session scope"
+				aria-label={i18n.t("common:debugConsole.filterScopeAria", {
+					defaultValue: "Filter console messages by session scope",
+				})}
 			/>
 		</div>
 	);
@@ -457,9 +559,11 @@ export function Panel({
 		<div className={fillSurfaceClass}>
 			{/* Header */}
 			<div className={headerStyle}>
-				<span className={titleStyle}>Console</span>
+				<span className={titleStyle}>
+					{i18n.t("common:debugConsole.title", { defaultValue: "Console" })}
+				</span>
 				<Button variant="ghost" uiSize="sm" onClick={onClear}>
-					Clear
+					{i18n.t("common:debugConsole.clear", { defaultValue: "Clear" })}
 				</Button>
 				<IconButton
 					size="sm"
@@ -505,8 +609,12 @@ export function Panel({
 					className={inputStyle}
 					type="text"
 					uiSize="sm"
-					aria-label="Evaluate JavaScript"
-					placeholder="Evaluate JavaScript..."
+					aria-label={i18n.t("common:debugConsole.evaluateAria", {
+						defaultValue: "Evaluate JavaScript",
+					})}
+					placeholder={i18n.t("common:debugConsole.evaluatePlaceholder", {
+						defaultValue: "Evaluate JavaScript...",
+					})}
 					autoComplete="off"
 					spellCheck={false}
 					onKeyDown={handleKeyDown}

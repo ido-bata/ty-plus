@@ -1,7 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Button, cx, MediaFrame } from "@ty-plus/ui";
+import { useTranslation } from "react-i18next";
 import { css } from "@/styled-system/css";
 import { PresetStage } from "../components/PresetStage";
+import { i18n } from "../i18n";
 import { SITE } from "../lib/site";
 import {
 	cluster,
@@ -18,13 +20,15 @@ import { eyebrow } from "../styles/site";
 export const Route = createFileRoute("/features")({
 	head: () => ({
 		meta: [
-			{ title: `Features — ${SITE.name}` },
+			{ title: i18n.t("features.metaTitle", { ns: "web" }) },
 			{
 				name: "description",
-				content:
-					"Explore ty-plus features: a customizable workspace of preset tiles and widgets inside Adobe After Effects, with local-first storage and release channels.",
+				content: i18n.t("features.metaDescription", { ns: "web" }),
 			},
-			{ property: "og:title", content: `Features — ${SITE.name}` },
+			{
+				property: "og:title",
+				content: i18n.t("features.metaTitle", { ns: "web" }),
+			},
 		],
 	}),
 	component: FeaturesPage,
@@ -73,6 +77,7 @@ function FeatureShot({
 }
 
 function FeaturesPage() {
+	const { t } = useTranslation("web");
 	return (
 		<main>
 			<header
@@ -82,12 +87,12 @@ function FeaturesPage() {
 				)}
 			>
 				<div className={stack({ gap: 3, align: "center" })}>
-					<span className={eyebrow}>Inside the panel</span>
-					<h1 className={cx(s.h1, css({ textAlign: "center" }))}>Features</h1>
+					<span className={eyebrow}>{t("features.eyebrow")}</span>
+					<h1 className={cx(s.h1, css({ textAlign: "center" }))}>
+						{t("features.title")}
+					</h1>
 					<p className={cx(s.lead, css({ textAlign: "center" }))}>
-						ty-plus is a CEP extension panel for Adobe After Effects. It gives
-						you a customizable home for the presets and tools you reach for
-						constantly — all running locally inside After Effects.
+						{t("features.lead")}
 					</p>
 				</div>
 			</header>
@@ -100,19 +105,13 @@ function FeaturesPage() {
 					container({ size: "wide" }),
 					section({ variant: "band" }),
 				)}
-				aria-label="Preset tiles"
+				aria-label={t("features.tiles.aria")}
 			>
 				<div className={grid({ gap: 3 })}>
 					<div className={cx(span4, stack({ gap: 3 }))}>
-						<span className={eyebrow}>Preset tiles</span>
-						<h2 className={s.h2}>Your catalog, as a shelf of tiles</h2>
-						<p className={s.body}>
-							Animation presets, code presets, footage, and groups you register
-							become named tiles on the same grid as your widgets — each
-							carrying its own icon and title, all inside After Effects. The
-							stage on the right renders the same tile and info surfaces the
-							panel does.
-						</p>
+						<span className={eyebrow}>{t("features.tiles.eyebrow")}</span>
+						<h2 className={s.h2}>{t("features.tiles.title")}</h2>
+						<p className={s.body}>{t("features.tiles.body")}</p>
 					</div>
 					<div className={cx(span8, css({ minWidth: 0 }))}>
 						<PresetStage />
@@ -129,37 +128,28 @@ function FeaturesPage() {
 					container({ size: "content" }),
 					section({ variant: "band" }),
 				)}
-				aria-label="Interaction"
+				aria-label={t("features.interaction.aria")}
 			>
 				<div className={grid({ gap: 3 })}>
 					<div className={cx(span4, stack({ gap: 2 }))}>
-						<span className={eyebrow}>Interaction</span>
-						<h2 className={s.h2}>Inspect, select, apply</h2>
-						<p className={s.body}>
-							Hover or tap a tile and the info surface shows the preset's name,
-							kind, and source — the same readout the panel's info widget
-							renders. ⌘/Ctrl+click toggles a tile in the selection; Shift+click
-							adds to it. A plain click applies the preset to the active layer
-							in After Effects — a path verified end to end against a real
-							project. The demo records that intent as a note rather than
-							simulating the run. The two captures pair the real info widget
-							before and after a selection.
-						</p>
+						<span className={eyebrow}>{t("features.interaction.eyebrow")}</span>
+						<h2 className={s.h2}>{t("features.interaction.title")}</h2>
+						<p className={s.body}>{t("features.interaction.body")}</p>
 					</div>
 					<FeatureShot
 						image="/images/preset-info-empty.png"
-						alt="The ty-plus info widget in its empty state, reading 'No preset selected'"
+						alt={t("features.interaction.beforeAlt")}
 						width={685}
 						height={625}
-						caption="Before — nothing selected: the info widget reads 'No preset selected'."
+						caption={t("features.interaction.beforeCaption")}
 						className={span4}
 					/>
 					<FeatureShot
 						image="/images/preset-info-selected.png"
-						alt="The ty-plus info widget listing the selected preset — its name, preset kind, and selection as the source"
+						alt={t("features.interaction.afterAlt")}
 						width={685}
 						height={660}
-						caption="After — a tile is selected: the widget lists the preset's name, kind, and 'selection' as its source."
+						caption={t("features.interaction.afterCaption")}
 						className={span4}
 					/>
 				</div>
@@ -173,55 +163,44 @@ function FeaturesPage() {
 					container({ size: "content" }),
 					section({ variant: "band" }),
 				)}
-				aria-label="Surfaces"
+				aria-label={t("features.surfaces.aria")}
 			>
 				<div className={grid({ gap: 3 })}>
 					<div className={cx(full12, stack({ gap: 2 }))}>
-						<span className={eyebrow}>Workspace</span>
-						<h2 className={s.h2}>Widgets and dialogs on the same grid</h2>
+						<span className={eyebrow}>{t("features.surfaces.eyebrow")}</span>
+						<h2 className={s.h2}>{t("features.surfaces.title")}</h2>
 					</div>
 					<FeatureShot
 						image="/images/workspace-widgets.png"
-						alt="The ty-plus easing widget — a curve editor with Curve, Loop, Bounce, and Elastic modes and an Apply action — beside align and distribute tools"
+						alt={t("features.surfaces.easingAlt")}
 						width={2160}
 						height={1040}
-						caption="The easing curve editor shapes speed curves and applies them to keyframes; align, distribute, and spacing tools sit on the same grid."
+						caption={t("features.surfaces.easingCaption")}
 						className={span8}
 					/>
 					<FeatureShot
 						image="/images/presets-dialog.png"
-						alt="The Local Presets browser in ty-plus listing catalog presets with an offline notice"
+						alt={t("features.surfaces.presetsAlt")}
 						width={1760}
 						height={1520}
-						caption="Local Presets — search the catalog and see which workspace holds each preset; browsing keeps working offline."
+						caption={t("features.surfaces.presetsCaption")}
 						className={span4}
 					/>
 					<FeatureShot
 						image="/images/add-widget.png"
-						alt="The Add Widget selector in ty-plus listing CORE and UTILITY widget types"
+						alt={t("features.surfaces.addWidgetAlt")}
 						width={1760}
 						height={1520}
-						caption="Add Widget — pick a CORE or UTILITY widget; the dialog states where it lands on the grid."
+						caption={t("features.surfaces.addWidgetCaption")}
 						className={span4}
 					/>
 					<div className={cx(span4, stack({ gap: 2 }))}>
-						<h3 className={s.h3}>Widgets on demand</h3>
-						<p className={s.body}>
-							Easing draws a speed curve you apply to keyframes; Align lines up
-							selected layers and Anchor Point sets the anchor. Directory
-							Browser, Font Viewer, Quick Actions, Menu, Info, and Layout Lock
-							cover the rest. Pick them in Add Widget and they join the same
-							grid as your preset tiles — every widget keeps working with the
-							network unplugged.
-						</p>
+						<h3 className={s.h3}>{t("features.surfaces.widgetsTitle")}</h3>
+						<p className={s.body}>{t("features.surfaces.widgetsBody")}</p>
 					</div>
 					<div className={cx(span4, stack({ gap: 2 }))}>
-						<h3 className={s.h3}>Customizable appearance</h3>
-						<p className={s.body}>
-							Change the workspace background — solid, pattern, or image — from
-							the Menu widget, and tune theme, opacity, and density in Settings.
-							Both are stored in local files on your machine.
-						</p>
+						<h3 className={s.h3}>{t("features.surfaces.appearanceTitle")}</h3>
+						<p className={s.body}>{t("features.surfaces.appearanceBody")}</p>
 					</div>
 				</div>
 			</section>
@@ -232,26 +211,23 @@ function FeaturesPage() {
 					container({ size: "narrow" }),
 					section({ variant: "prose" }),
 				)}
-				aria-label="Availability"
+				aria-label={t("features.availability.aria")}
 			>
 				<div className={stack({ gap: 4, align: "center" })}>
 					<div className={stack({ gap: 2, align: "center" })}>
 						<h2 className={cx(s.h2, css({ textAlign: "center" }))}>
-							Offline by design
+							{t("features.availability.title")}
 						</h2>
 						<p className={cx(s.body, css({ textAlign: "center" }))}>
-							Workspace settings, presets, widget configuration, and appearance
-							live on your machine. The extension checks GitHub Releases for
-							updates, but every core function works without a network
-							connection — and without an account.
+							{t("features.availability.body")}
 						</p>
 					</div>
 					<div className={cluster({ gap: 3 })}>
 						<Button as={Link} to="/download" variant="primary">
-							Download
+							{t("features.availability.download")}
 						</Button>
 						<Button as="a" href={SITE.userGuide} variant="secondary">
-							User guide
+							{t("features.availability.userGuide")}
 						</Button>
 					</div>
 				</div>

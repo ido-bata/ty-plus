@@ -34,6 +34,8 @@ export { SearchField } from "./fields/SearchField";
 export { Textarea } from "./fields/Textarea";
 export { Icon } from "./Icon";
 export * as Icons from "./icons";
+export type { AnchoredPopoverProps } from "./interaction/AnchoredPopover";
+export { AnchoredPopover } from "./interaction/AnchoredPopover";
 export { useAnchorGesture } from "./interaction/use-anchor-gesture";
 export { MediaFrame } from "./layout/MediaFrame";
 export { ScrollArea } from "./layout/ScrollArea";

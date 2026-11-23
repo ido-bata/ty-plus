@@ -233,7 +233,7 @@ const correlationContextOf = (
 			};
 
 const parseManifest = (value: unknown): OperationWorkerManifest => {
-	if (!isRecord(value)) throw new Error("operation-worker manifest is invalid");
+	if (!isRecord(value)) throw new Error("operation-worker manifest is invalid"); // i18n-exempt: internal diagnostic — not rendered as UI copy
 	return value as unknown as OperationWorkerManifest;
 };
 
@@ -333,10 +333,10 @@ const createHostPluginEffectScanFactory = (
 					message.kind !== "response" ||
 					message.message.outcome.status !== "success"
 				)
-					throw new Error("host plugin scan response is invalid");
+					throw new Error("host plugin scan response is invalid"); // i18n-exempt: internal diagnostic — not rendered as UI copy
 				const result = message.message.outcome.payload;
 				if (!isRecord(result) || !Array.isArray(result.rows))
-					throw new Error("host plugin scan result is invalid");
+					throw new Error("host plugin scan result is invalid"); // i18n-exempt: internal diagnostic — not rendered as UI copy
 				return result as unknown as HostPluginEffectScanResult;
 			},
 		},
@@ -355,10 +355,10 @@ const decodeThumbnailResponse = <Res>(message: WireMessage): Res => {
 		message.kind !== "response" ||
 		message.message.outcome.status !== "success"
 	) {
-		throw new Error("thumbnail response is invalid");
+		throw new Error("thumbnail response is invalid"); // i18n-exempt: internal diagnostic — not rendered as UI copy
 	}
 	const payload = message.message.outcome.payload;
-	if (!isRecord(payload)) throw new Error("thumbnail response payload missing");
+	if (!isRecord(payload)) throw new Error("thumbnail response payload missing"); // i18n-exempt: internal diagnostic — not rendered as UI copy
 	return payload as unknown as Res;
 };
 
@@ -507,11 +507,11 @@ const createOnlineFactory = <Req, Res>(
 					message.kind !== "response" ||
 					message.message.outcome.status !== "success"
 				) {
-					throw new Error(`${methodName} response is invalid`);
+					throw new Error(`${methodName} response is invalid`); // i18n-exempt: internal diagnostic — not rendered as UI copy
 				}
 				const payload = message.message.outcome.payload;
 				if (!isRecord(payload)) {
-					throw new Error(`${methodName} response payload missing`);
+					throw new Error(`${methodName} response payload missing`); // i18n-exempt: internal diagnostic — not rendered as UI copy
 				}
 				return payload as unknown as Res;
 			},
@@ -523,7 +523,7 @@ export const createOperationWorkerComposition = (
 	options: OperationWorkerCompositionOptions,
 ): OperationWorkerComposition => {
 	if (options.expectedTrustMode === undefined)
-		throw new TypeError("operation-worker trust mode is required");
+		throw new TypeError("operation-worker trust mode is required"); // i18n-exempt: internal diagnostic — not rendered as UI copy
 	operationWorkerCompositionLog.info(
 		"[ty-plus] cloud gateway: composition construction started",
 		{

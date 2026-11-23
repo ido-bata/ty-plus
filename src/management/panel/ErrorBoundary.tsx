@@ -20,6 +20,7 @@
 
 import { clampedTextClass } from "@ty-plus/ui";
 import { Component, type ErrorInfo, type JSX, type ReactNode } from "react";
+import { i18n } from "@/management/i18n/index";
 import { css } from "@/styled-system/css";
 
 const fallbackCard = css({
@@ -171,7 +172,7 @@ export function DefaultWidgetErrorFallback(
 			<span className={fallbackTitle}>{name}</span>
 			<span className={clampedTextClass}>{digest}</span>
 			<button type="button" onClick={onRetry} className={retryButton}>
-				Retry
+				{i18n.t("common:panel.errorBoundary.retry")}
 			</button>
 		</div>
 	);

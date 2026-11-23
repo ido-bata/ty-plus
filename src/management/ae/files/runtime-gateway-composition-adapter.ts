@@ -82,6 +82,7 @@ export const createFilesGatewayFromComposition = (
 					batch.requests ?? [],
 				) as unknown as Promise<Response>;
 			}
+			// i18n-exempt: internal diagnostic — not rendered as UI copy
 			throw new Error(
 				`createFilesGatewayFromComposition does not route method ${method.name}`,
 			);

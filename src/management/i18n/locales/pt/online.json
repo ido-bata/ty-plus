@@ -1,5 +1,109 @@
 {
 	"notification": {
-		"fixtureBadge": "espaço reservado (fixture offline)"
+		"fixtureBadge": "espaço reservado (fixture offline)",
+		"fixture": {
+			"welcomeName": "Bem-vindo ao ty-plus",
+			"welcomeSummary": "Obrigado por instalar o ty-plus! Esta é uma notificação de espaço reservado exibida quando o runtime não está conectado (fixture offline).",
+			"updateName": "Atualização disponível",
+			"updateSummary": "Uma nova versão pode incluir melhorias de desempenho da grade e correções de bugs.",
+			"maintenanceName": "Aviso de manutenção",
+			"maintenanceSummary": "Uma manutenção do servidor pode estar agendada; verifique a página de status."
+		}
+	},
+	"gatewayBoot": {
+		"connectivityProbeFailed": "A verificação de conectividade falhou após o início da composição do worker.",
+		"catalogProbeFailed": "A verificação do catálogo falhou após o início da composição do worker.",
+		"runtimeInitFailed": "Não foi possível criar o runtime do trabalhador de operações durante a inicialização.",
+		"compositionInitFailed": "Não foi possível criar a composição do trabalhador de operações durante a inicialização."
+	},
+	"catalog": {
+		"title": "Biblioteca de presets online",
+		"searchPlaceholder": "Filtrar por nome, ID, descrição, categoria, tag",
+		"filterPlaceholder": "Filtrar…",
+		"showFilters": "Mostrar filtros",
+		"hideFilters": "Ocultar filtros",
+		"category": "Categoria",
+		"tags": "Tags",
+		"allCategories": "Todas as categorias",
+		"clear": "Limpar",
+		"clearAll": "Limpar tudo",
+		"clearAllFilters": "Limpar todos os filtros",
+		"clearSearch": "Limpar pesquisa",
+		"clearCategoryFilter": "Limpar filtro de categoria",
+		"clearTagSelection": "Limpar seleção de tags",
+		"refreshCatalog": "Atualizar catálogo",
+		"reloadCatalog": "Recarregar catálogo",
+		"reloadingCatalog": "Recarregando…",
+		"openNotion": "Abrir Notion",
+		"openManualNotion": "Abrir manual (Notion)",
+		"viewMenu": "Visualização",
+		"viewMode": "Modo de visualização",
+		"viewGallery": "Visualização de galeria",
+		"viewGalleryTitle": "Galeria (Ctrl+scroll para zoom)",
+		"viewGalleryLabel": "Galeria",
+		"viewCards": "Visualização de cartões",
+		"viewCardsLabel": "Cartões",
+		"viewList": "Visualização de lista",
+		"viewListLabel": "Lista",
+		"tableThumb": "Miniatura",
+		"tableNameId": "Nome / ID",
+		"tableActions": "Ações",
+		"emptyUnavailable": "A biblioteca de presets online está indisponível.",
+		"emptyNoCatalog": "Nenhum catálogo online.",
+		"emptyNoMatch": "Nenhum preset corresponde ao filtro.",
+		"footerCount": "{{filtered}} / {{catalog}} itens",
+		"footerZoom": "Ctrl+scroll: {{percent}}%",
+		"downloadConfirm": "Baixar este preset?",
+		"downloadCancelled": "Download cancelado pelo usuário",
+		"downloadUnavailable": "Download em runtime indisponível (nenhum transporte online conectado)",
+		"systemPathsUnavailable": "Caminhos do sistema indisponíveis",
+		"invalidDownloadPath": "Caminho de download inválido: {{path}}",
+		"downloadFailed": "Falha no download: {{message}}",
+		"pluginInstalled": "Plugin instalado. Reinicie o After Effects para usá-lo.",
+		"downloadComplete": "Download concluído.",
+		"downloadedDescription": "[Baixado do catálogo] {{description}}",
+		"gatewayBootRetryHint": "{{reason}} — recarregue o painel para tentar novamente a inicialização do gateway",
+		"hideSidePanel": "Ocultar painel lateral",
+		"showSidePanel": "Mostrar painel lateral",
+		"download": "Baixar",
+		"import": "Importar",
+		"sync": {
+			"idle": "Sincronização na nuvem inativa",
+			"ok": "ty-plus OK",
+			"failed": "Falha na sincronização na nuvem"
+		},
+		"gatewayBootReason": {
+			"unsupportedTrustMode": "Modo de confiança do operation-worker não suportado",
+			"unsupportedPlatform": "Plataforma do host não suportada",
+			"missingExtensionRoot": "Raiz da extensão CEP indisponível",
+			"workerRuntimeFailed": "Runtime do Worker indisponível",
+			"workerCompositionFailed": "Falha na composição do Worker"
+		}
+	},
+	"notificationCenter": {
+		"title": "Notificações",
+		"loading": "Carregando…",
+		"empty": "Nenhuma notificação",
+		"toggleContent": "Alternar conteúdo",
+		"noContent": "Sem conteúdo",
+		"backToList": "Voltar à lista",
+		"backToListMenu": "Voltar à lista",
+		"refresh": "Atualizar",
+		"open": "Abrir",
+		"close": "Fechar",
+		"markRead": "Marcar como lida",
+		"markUnread": "Marcar como não lida",
+		"markAsRead": "Marcar como lida",
+		"markAsUnread": "Marcar como não lida",
+		"generalCategory": "geral"
+	},
+	"notificationContainer": {
+		"dismiss": "Dispensar notificação"
+	},
+	"publicLink": {
+		"userManual": "Manual do usuário"
+	},
+	"errors": {
+		"unknownPreset": "Predefinição não encontrada: {{id}}"
 	}
 }
