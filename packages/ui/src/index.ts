@@ -46,6 +46,7 @@ export {
 	segmentedButtonClass,
 	segmentedButtonInactiveClass,
 	segmentedButtonQuietClass,
+	segmentedColumnButtonClass,
 	segmentedStripClass,
 } from "./styles/segmented";
 export type { StatusBannerTone } from "./styles/surfaces";

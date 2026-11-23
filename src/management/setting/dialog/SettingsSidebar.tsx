@@ -1,7 +1,7 @@
 import {
 	segmentedButtonActiveClass,
-	segmentedButtonClass,
 	segmentedButtonInactiveClass,
+	segmentedColumnButtonClass,
 } from "@ty-plus/ui";
 import { cx } from "@ty-plus/ui/util/cx";
 import {
@@ -124,7 +124,7 @@ const groupHeaderStyle = css({
 
 const TAB_CLASS = (active: boolean): string =>
 	cx(
-		segmentedButtonClass,
+		segmentedColumnButtonClass,
 		active ? segmentedButtonActiveClass : segmentedButtonInactiveClass,
 	);
 

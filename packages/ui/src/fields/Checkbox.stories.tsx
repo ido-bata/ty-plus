@@ -43,6 +43,30 @@ export const Disabled: Story = {
 
 export const SmallSize: Story = {
 	args: { checked: true, uiSize: "sm" },
+	play: async ({ canvasElement }) => {
+		const input = canvasElement.querySelector("input");
+		if (!input) throw new Error("input not found");
+		const after = getComputedStyle(input, "::after");
+		const sizeOf = (value: string): { v: number; unit: string } => {
+			const m = value.match(/^([\d.]+)(px|%)$/);
+			if (!m) throw new Error(`unexpected computed size: ${value}`);
+			return { v: Number(m[1]), unit: m[2] };
+		};
+		const w = sizeOf(after.width);
+		const h = sizeOf(after.height);
+		// The check glyph must stay legible on the 14px `sm` box: it once
+		// collapsed to ~4px wide and read as a stray slash.
+		if (w.unit === "%") {
+			expect(w.v).toBeGreaterThanOrEqual(30);
+		} else {
+			expect(w.v).toBeGreaterThanOrEqual(4);
+		}
+		if (h.unit === "%") {
+			expect(h.v).toBeGreaterThanOrEqual(55);
+		} else {
+			expect(h.v).toBeGreaterThanOrEqual(7);
+		}
+	},
 };
 
 export const Interactive: Story = {
