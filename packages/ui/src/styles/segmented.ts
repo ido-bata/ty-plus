@@ -26,7 +26,12 @@ export const segmentedStripClass = css({
 
 export const segmentedButtonClass = css({
 	height: "7",
-	minWidth: 0,
+	// `max-content`, not 0: with `minWidth: 0` + `flex: 1` a crowded strip
+	// (e.g. the debug console's 11 source filters at 360px) shrank every
+	// segment below its label width and clipped the text.  Content-sized
+	// minimums let the strip's `flexWrap: wrap` move whole segments to the
+	// next row instead.
+	minWidth: "max-content",
 	flex: 1,
 	borderRadius: "shell-sm",
 	paddingInline: "2",
