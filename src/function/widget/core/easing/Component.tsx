@@ -506,7 +506,9 @@ function EasingModeToolbar({
 					value: button.mode,
 					label: button.label,
 				}))}
-				className={css({ height: "7" })}
+				// No fixed height: the strip wraps whole segments onto a
+				// second row at compact widths, and a fixed height clipped
+				// the wrapped row (Bounce truncated, Elastic hidden).
 				buttonClassName={css({
 					height: "6",
 					fontSize: "text-2xs",
@@ -632,6 +634,7 @@ function EasingActionBar({
 }): JSX.Element {
 	return (
 		<div
+			data-ws-easing-action-bar="1"
 			className={css({
 				display: "flex",
 				height: "8",
@@ -660,7 +663,7 @@ function EasingActionBar({
 			<Button
 				variant="primary"
 				uiSize="sm"
-				fullWidth
+				className={css({ flex: 1, minWidth: 0 })}
 				disabled={status === "busy"}
 				data-ws-action="easing-apply-current"
 				start={
