@@ -33,7 +33,7 @@ type IndexEntry = {
 	tags?: readonly string[];
 };
 
-const projectRoot = resolve(import.meta.dirname, "..", "..");
+const projectRoot = resolve(import.meta.dirname, "..", "..", "..");
 const staticDir = join(projectRoot, "storybook-static");
 const indexJsonPath = join(staticDir, "index.json");
 const outDir = join(projectRoot, ".tmp", "storybook-screenshots");

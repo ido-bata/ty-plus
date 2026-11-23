@@ -129,7 +129,7 @@ const parseArgs = (argv: readonly string[]): Args => {
 	return out;
 };
 
-const projectRoot = resolve(import.meta.dirname, "..", "..");
+const projectRoot = resolve(import.meta.dirname, "..", "..", "..");
 const staticDir = join(projectRoot, "storybook-static");
 const indexJsonPath = join(staticDir, "index.json");
 const outDir = join(projectRoot, ".tmp", "storybook-screenshots");
@@ -713,11 +713,8 @@ const main = async (): Promise<void> => {
 		process.exit(143);
 	});
 
-	const chromePath =
-		process.env.CHROME_PATH ??
-		`${process.env.HOME}/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome`;
 	const browser = await chromium.launch({
-		executablePath: chromePath,
+		executablePath: process.env.CHROME_PATH,
 		headless: true,
 		args: [
 			"--no-sandbox",
