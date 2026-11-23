@@ -522,15 +522,6 @@ export const updateInitializationLocatorUserSupportRoot = async (
 };
 
 /** Absolute path to `ty-plus-init.json` under the running AE install folder. */
-const resolveTyPlusInitJsonPath = async (
-	win: Window,
-): Promise<string | null> => {
-	const appRoot = await resolveInitializationAppRoot(win);
-	if (!appRoot) {
-		return null;
-	}
-	return resolveLocatorPathFromAppRoot(appRoot);
-};
 
 /**
  * Writes `ty-plus-init.json` under `appSupportRoot` (host application folder).

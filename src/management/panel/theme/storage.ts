@@ -31,7 +31,7 @@ export const sanitizeCepShellThemeOverrides = (
 };
 
 /** Normalized form for persistence with keys equal to DEFAULT discarded */
-export const buildPrunedCepShellThemeRecord = (
+const buildPrunedCepShellThemeRecord = (
 	cleaned: Partial<Record<string, string>>,
 ): Record<string, string> => {
 	const pruned: Record<string, string> = {};

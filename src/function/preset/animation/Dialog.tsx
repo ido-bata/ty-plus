@@ -1,4 +1,11 @@
-import { Icon } from "@ty-plus/ui";
+import {
+	Icon,
+	sectionTitleClass,
+	statusBannerClass,
+	stepBadgeClass,
+	stepCardClass,
+	stepDescriptionClass,
+} from "@ty-plus/ui";
 import { Button } from "@ty-plus/ui/controls/Button";
 import { Input } from "@ty-plus/ui/fields/Input";
 import type { TFunction } from "i18next";
@@ -68,35 +75,6 @@ type FileItem = {
 	modifiedTime?: number;
 };
 
-const stepNumberClass = css({
-	display: "flex",
-	height: "6",
-	width: "6",
-	flexShrink: 0,
-	alignItems: "center",
-	justifyContent: "center",
-	borderRadius: "full",
-	borderWidth: "1px",
-	borderStyle: "solid",
-	borderColor: "border.default",
-	backgroundColor: "surface.widget",
-	fontSize: "shell-text-sm",
-	fontWeight: "bold",
-	color: "text.primary",
-});
-
-const stepTitleClass = css({
-	fontSize: "shell-text-sm",
-	fontWeight: "semibold",
-	color: "text.primary",
-});
-
-const stepDescClass = css({
-	fontSize: "text-xs",
-	color: "text.muted",
-	lineHeight: "tight",
-});
-
 const pathBoxClass = css({
 	fontFamily: "mono",
 	fontSize: "text-xs",
@@ -108,52 +86,6 @@ const pathBoxClass = css({
 	paddingBlock: "1",
 	direction: "rtl",
 	textAlign: "left",
-});
-
-const statusBannerBaseClass = css({
-	display: "flex",
-	alignItems: "flex-start",
-	gap: "2",
-	borderRadius: "shell-sm",
-	borderWidth: "1px",
-	borderStyle: "solid",
-	padding: "2",
-	fontSize: "text-xs",
-});
-
-const statusBannerVariant = {
-	success: css({
-		borderColor: "status.success/30",
-		backgroundColor: "status.success/10",
-		color: "status.success",
-	}),
-	warning: css({
-		borderColor: "status.warning/30",
-		backgroundColor: "status.warning/10",
-		color: "status.warning",
-	}),
-	error: css({
-		borderColor: "status.error/30",
-		backgroundColor: "status.error/10",
-		color: "status.error",
-	}),
-} as const;
-
-const statusBannerClass = (variant: "success" | "warning" | "error"): string =>
-	`${statusBannerBaseClass} ${statusBannerVariant[variant]}`;
-
-const stepCardClass = css({
-	display: "flex",
-	width: "full",
-	minWidth: 0,
-	flexDirection: "column",
-	gap: "3",
-	borderRadius: "shell-sm",
-	borderWidth: "1px",
-	borderStyle: "solid",
-	borderColor: "border.default",
-	backgroundColor: "surface.widget",
-	padding: "4",
 });
 
 const headerRowClass = css({
@@ -254,10 +186,10 @@ function StepHeader({
 }): JSX.Element {
 	return (
 		<div className={headerRowClass}>
-			<span className={stepNumberClass}>{number}</span>
+			<span className={stepBadgeClass}>{number}</span>
 			<div className={headerColumnClass}>
-				<span className={stepTitleClass}>{title}</span>
-				<span className={stepDescClass}>{description}</span>
+				<span className={sectionTitleClass}>{title}</span>
+				<span className={stepDescriptionClass}>{description}</span>
 			</div>
 		</div>
 	);
@@ -311,10 +243,10 @@ function FolderPathSection({
 		<div className={stepCardClass}>
 			<div className={sectionRowClass}>
 				<div className={sectionRowInnerClass}>
-					<span className={stepNumberClass}>2</span>
+					<span className={stepBadgeClass}>2</span>
 					<div className={sectionColumnClass}>
 						<div className={folderTitleRowClass}>
-							<span className={stepTitleClass}>
+							<span className={sectionTitleClass}>
 								{t("animationPreset.step2.title")}
 							</span>
 							<div className={folderActionRowClass}>
@@ -388,7 +320,7 @@ function AnimationStatusSection({
 	return (
 		<div className={stepCardClass}>
 			<div className={sectionRowInnerClass}>
-				<span className={stepNumberClass}>3</span>
+				<span className={stepBadgeClass}>3</span>
 				<div className={sectionColumnClass}>
 					<Button
 						type="button"
@@ -826,7 +758,7 @@ export function Dialog(): JSX.Element {
 		[name, resolvedIcon, t],
 	);
 
-	const canCreate = name.trim().length > 0 && selectedPath && !busy;
+	const _canCreate = name.trim().length > 0 && selectedPath && !busy;
 
 	return (
 		<ToolDialog

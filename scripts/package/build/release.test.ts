@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import type { SignZxpConfig, SignZxpOptions } from "../sign/zxp";
 
 const state = vi.hoisted(() => ({
 	order: [] as string[],
@@ -12,10 +13,10 @@ const mocks = vi.hoisted(() => ({
 	assertNoSecrets: vi.fn(() => {
 		state.order.push("secret-scan");
 	}),
-	signZxp: vi.fn(() => {
+	signZxp: vi.fn((_config: SignZxpConfig, _options?: SignZxpOptions) => {
 		state.order.push("sign-zxp");
 	}),
-	verifyZxp: vi.fn(() => {
+	verifyZxp: vi.fn((_config: SignZxpConfig) => {
 		state.order.push("verify-zxp");
 	}),
 }));

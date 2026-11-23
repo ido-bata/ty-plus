@@ -99,7 +99,7 @@ export type AuthoringWriteFailure = AuthoringWriteBase & {
 	readonly message: string;
 };
 
-export type AuthoringWriteSuccess = Omit<
+type AuthoringWriteSuccess = Omit<
 	AuthoringWriteFailure,
 	"ok" | "code" | "verification"
 > & {

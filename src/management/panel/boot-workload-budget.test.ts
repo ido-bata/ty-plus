@@ -93,7 +93,7 @@ describe("boot workload budget — Issue #131", () => {
 	it("emits boot.workload.report covering every workload — finished or pending", () => {
 		const budget = createBootWorkloadBudget({ budgetMs: 1_000 });
 		const a = budget.start("a");
-		const b = budget.start("b");
+		const _b = budget.start("b");
 		vi.advanceTimersByTime(50);
 		a.finish("completed");
 		// `b` remains pending.

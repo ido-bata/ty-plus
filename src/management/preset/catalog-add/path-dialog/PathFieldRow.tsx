@@ -1,4 +1,4 @@
-import { Icon, PathField } from "@ty-plus/ui";
+import { Icon, PathField, sectionLabelClass } from "@ty-plus/ui";
 import { FileSearch } from "lucide-react";
 import type { JSX } from "react";
 import { selectFile } from "@/management/ae/cep/dialog-shim/bolt";
@@ -11,14 +11,6 @@ const fieldColumnClass = css({
 	gap: "1",
 });
 
-const fieldLabelClass = css({
-	fontSize: "xs",
-	fontWeight: "medium",
-	textTransform: "uppercase",
-	letterSpacing: "wide",
-	color: "text.muted",
-});
-
 export function PathDialogPathFieldRow(props: {
 	value: string;
 	onChange: (next: string) => void;
@@ -28,7 +20,7 @@ export function PathDialogPathFieldRow(props: {
 	const { value, onChange, browseHint, placeholder } = props;
 	return (
 		<div className={fieldColumnClass}>
-			<span className={fieldLabelClass}>
+			<span className={sectionLabelClass}>
 				{i18n.t("presets:catalogAdd.filePath")}
 			</span>
 			<PathField

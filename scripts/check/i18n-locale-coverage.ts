@@ -1,3 +1,4 @@
+import type { Dirent } from "node:fs";
 import { readdir, readFile, stat } from "node:fs/promises";
 import path from "node:path";
 
@@ -177,7 +178,7 @@ const SKIP_SRC_FILE_SUFFIXES = [".test.ts", ".test.tsx", ".stories.tsx"];
 const collectSourceFiles = async (srcDir: string): Promise<string[]> => {
 	const out: string[] = [];
 	const walk = async (dir: string): Promise<void> => {
-		let entries: Awaited<ReturnType<typeof readdir>> | undefined;
+		let entries: Dirent[] | undefined;
 		try {
 			entries = await readdir(dir, { withFileTypes: true });
 		} catch {
@@ -207,7 +208,7 @@ const collectSourceFiles = async (srcDir: string): Promise<string[]> => {
 
 const declaredNamespaces = (src: string): string[] => {
 	const match = USE_TRANSLATION_RE.exec(src);
-	if (!match || !match[1]) return [];
+	if (!match?.[1]) return [];
 	const raw = match[1].trim();
 	if (raw.startsWith("[")) {
 		return Array.from(raw.matchAll(STRING_LIST_RE), (m) => m[1] ?? "").filter(
@@ -328,8 +329,12 @@ const partitionPluralKeys = (
 		const m = k.match(PLURAL_SUFFIX_RE);
 		if (m) {
 			const base = k.slice(0, k.length - m[0].length);
-			if (!families.has(base)) families.set(base, new Set());
-			families.get(base)!.add(m[1]);
+			let family = families.get(base);
+			if (!family) {
+				family = new Set();
+				families.set(base, family);
+			}
+			family.add(m[1]);
 		} else {
 			normal.push(k);
 		}
@@ -386,16 +391,11 @@ export const checkCoverage = async (
 			// Default stage: allowed with a visibility warning. Strict en-canonical
 			// stage: en is the exact key-set authority for non-plural keys; extra
 			// plural variants are tolerated when their base exists in en.
-			const enBaseSet = new Set([
-				...enNormal,
-				...enFamilies.keys(),
-			]);
+			const enBaseSet = new Set([...enNormal, ...enFamilies.keys()]);
 			const extraNormal = locNormal.filter((k) => !enNormal.includes(k));
 			const extraPlural = [...locFamilies.entries()].flatMap(
 				([base, suffixes]) =>
-					enBaseSet.has(base)
-						? []
-						: [...suffixes].map((s) => `${base}_${s}`),
+					enBaseSet.has(base) ? [] : [...suffixes].map((s) => `${base}_${s}`),
 			);
 			const extra = [...extraNormal, ...extraPlural];
 			if (extra.length > 0) {

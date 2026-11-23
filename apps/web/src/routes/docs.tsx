@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Button } from "@ty-plus/ui";
-import { cx } from "@ty-plus/ui/util/cx";
+import { Button, cx } from "@ty-plus/ui";
 import { Trans, useTranslation } from "react-i18next";
 import { i18n } from "../i18n";
 import { SITE } from "../lib/site";

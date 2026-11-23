@@ -1,3 +1,4 @@
+import { infoRowClass, sectionLabelClass } from "@ty-plus/ui";
 import type { JSX, ReactNode } from "react";
 import { i18n } from "@/management/i18n/index";
 import type { CompInfo } from "@/management/workspace/core/state";
@@ -129,20 +130,7 @@ export function CompSections({ comp }: { comp: CompInfo }): JSX.Element {
 }
 
 function SectionTitle({ children }: { children: ReactNode }): JSX.Element {
-	return (
-		<div
-			className={css({
-				marginBottom: "var(--ty-space-1)",
-				fontSize: "text-2xs",
-				fontWeight: "bold",
-				textTransform: "uppercase",
-				letterSpacing: "0.06em",
-				color: "var(--color-text-muted)",
-			})}
-		>
-			{children}
-		</div>
-	);
+	return <div className={sectionLabelClass}>{children}</div>;
 }
 
 function InfoRow({
@@ -153,14 +141,7 @@ function InfoRow({
 	value: ReactNode;
 }): JSX.Element {
 	return (
-		<div
-			className={css({
-				display: "flex",
-				justifyContent: "space-between",
-				gap: "var(--ty-space-2)",
-				fontSize: "text-xs",
-			})}
-		>
+		<div className={infoRowClass}>
 			<span className={css({ color: "var(--color-text-muted)" })}>{label}</span>
 			<span className={css({ color: "var(--color-text-primary)" })}>
 				{value}

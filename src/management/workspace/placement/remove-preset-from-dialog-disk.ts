@@ -32,7 +32,7 @@ export type RemovePresetFromDialogDiskInput = {
 };
 
 /** Which step was in flight when the removal could not finish. */
-export type RemovePresetDiskStage =
+type RemovePresetDiskStage =
 	| "resolve-root"
 	| "acquire-lock"
 	| "read-layout"

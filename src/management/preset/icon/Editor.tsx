@@ -1,6 +1,6 @@
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
-import { Icon } from "@ty-plus/ui";
+import { Icon, SegmentedControl, sectionLabelClass } from "@ty-plus/ui";
 import { ColorSwatch } from "@ty-plus/ui/fields/ColorSwatch";
 import { Input } from "@ty-plus/ui/fields/Input";
 import { PathField } from "@ty-plus/ui/fields/PathField";
@@ -16,35 +16,6 @@ const ICON_TABS: { id: "text" | "emoji" | "image"; labelKey: string }[] = [
 	{ id: "emoji", labelKey: "presets:iconEditor.tabs.emoji" },
 	{ id: "image", labelKey: "presets:iconEditor.tabs.image" },
 ];
-
-const tabBtnBaseClass = css({
-	height: "7",
-	minWidth: "0",
-	flex: "1",
-	borderRadius: "shell-sm",
-	paddingInline: "2",
-	fontSize: "shell-text-sm",
-	lineHeight: "tight",
-	transitionProperty: "colors",
-});
-
-const tabBtnActiveClass = css({
-	backgroundColor: "text.accent",
-	color: "surface.panel",
-	boxShadow: "sm",
-});
-
-const tabBtnInactiveClass = css({
-	backgroundColor: "surface.widget",
-	color: "text.muted",
-	_hover: {
-		backgroundColor: "interactive.hover",
-		color: "text.primary",
-	},
-});
-
-const tabBtnClass = (active: boolean): string =>
-	cx(tabBtnBaseClass, active ? tabBtnActiveClass : tabBtnInactiveClass);
 
 type EditorApi = {
 	draft: PresetIconEditorDraft;
@@ -141,18 +112,6 @@ const canvasFieldsRowClass = css({
 	gap: "2",
 });
 
-const tabsRowClass = css({
-	display: "flex",
-	minWidth: "0",
-	gap: "1",
-	borderRadius: "shell-sm",
-	borderWidth: "1px",
-	borderStyle: "solid",
-	borderColor: "border.default",
-	backgroundColor: "surface.panel",
-	padding: "0.5",
-});
-
 const fieldsWrapperClass = css({
 	minWidth: "0",
 });
@@ -225,20 +184,7 @@ const framedBodyClass = css({
 	padding: "2",
 });
 
-const fieldLabelClass = css({
-	fontSize: "xs",
-	fontWeight: "medium",
-	textTransform: "uppercase",
-	letterSpacing: "wide",
-	color: "text.muted",
-});
-
-function DefaultEmojiFields({
-	draft,
-	set,
-	disabled,
-	browseDir,
-}: EditorApi & { browseDir?: string }): JSX.Element {
+function DefaultEmojiFields({ draft, set, disabled }: EditorApi): JSX.Element {
 	const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
 	const emojiAnchorRef = useRef<HTMLDivElement | null>(null);
 
@@ -380,27 +326,24 @@ export function IconEditor({
 		: ICON_TABS;
 
 	const tabs = (
-		<div className={tabsRowClass}>
-			{visibleTabs.map((tab) => (
-				<button
-					key={tab.id}
-					type="button"
-					className={tabBtnClass(draft.type === tab.id)}
-					onClick={() => set({ type: tab.id })}
-					disabled={disabled}
-				>
-					{i18n.t(tab.labelKey)}
-				</button>
-			))}
-		</div>
+		<SegmentedControl
+			aria-label={i18n.t("presets:iconEditor.tabsAria")}
+			value={draft.type}
+			options={visibleTabs.map((tab) => ({
+				value: tab.id,
+				label: i18n.t(tab.labelKey),
+				disabled,
+			}))}
+			onChange={(next) => {
+				set({ type: next as PresetIconEditorDraft["type"] });
+			}}
+		/>
 	);
 
 	const fields = (
 		<div className={fieldsWrapperClass}>
 			{draft.type === "text" ? <DefaultTextFields {...api} /> : null}
-			{draft.type === "emoji" ? (
-				<DefaultEmojiFields {...api} browseDir={browseDir} />
-			) : null}
+			{draft.type === "emoji" ? <DefaultEmojiFields {...api} /> : null}
 			{draft.type === "image" ? (
 				<DefaultImageFields {...api} browseDir={browseDir} />
 			) : null}
@@ -442,7 +385,7 @@ export function IconEditor({
 	if (!framed) {
 		return (
 			<>
-				{label ? <span className={fieldLabelClass}>{label}</span> : null}
+				{label ? <span className={sectionLabelClass}>{label}</span> : null}
 				<div className={cx(unframedBodyClass, className)}>{body}</div>
 			</>
 		);
@@ -450,7 +393,7 @@ export function IconEditor({
 
 	return (
 		<>
-			{label ? <span className={fieldLabelClass}>{label}</span> : null}
+			{label ? <span className={sectionLabelClass}>{label}</span> : null}
 			<div className={cx(framedBodyClass, className)}>{body}</div>
 		</>
 	);

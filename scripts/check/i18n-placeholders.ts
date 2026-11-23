@@ -50,10 +50,9 @@ const loadLocale = async (dir: string, locale: string) => {
 	for (const ent of await readdir(base)) {
 		if (!ent.endsWith(".json")) continue;
 		const ns = ent.replace(/\.json$/, "");
-		const data = JSON.parse(await readFile(path.join(base, ent), "utf8")) as Record<
-			string,
-			unknown
-		>;
+		const data = JSON.parse(
+			await readFile(path.join(base, ent), "utf8"),
+		) as Record<string, unknown>;
 		const flat = new Map<string, string>();
 		flatten(data, "", flat);
 		for (const [k, v] of flat) merged.set(`${ns}:${k}`, v);

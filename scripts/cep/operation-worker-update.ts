@@ -321,7 +321,7 @@ const artifactPath = (
 ): string =>
 	`worker/versions/${digest}/${platform}/${platform === "windows" ? "operation-worker.exe" : "operation-worker"}`;
 
-export type WorkerBuildResult = Readonly<{
+type WorkerBuildResult = Readonly<{
 	manifestPath: string;
 	manifest: OperationWorkerManifest;
 	binaryPath: string;

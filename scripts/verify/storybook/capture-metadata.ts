@@ -20,9 +20,9 @@
 
 export const CAPTURE_METADATA_VERSION = 1;
 
-export type CaptureStatus = "ok" | "render-failed" | "capture-error";
+type CaptureStatus = "ok" | "render-failed" | "capture-error";
 
-export type CaptureViewport = {
+type CaptureViewport = {
 	width: number;
 	height: number;
 };

@@ -48,7 +48,13 @@
  *   1 - violations detected
  */
 
-import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import {
+	type Dirent,
+	existsSync,
+	readdirSync,
+	readFileSync,
+	writeFileSync,
+} from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import ts from "typescript5";
@@ -191,7 +197,7 @@ const CONTROL_COMPONENTS = new Set([
 // ---------------------------------------------------------------------------
 
 function* walk(dir: string): Generator<string> {
-	let entries: ReturnType<typeof readdirSync>;
+	let entries: Dirent[];
 	try {
 		entries = readdirSync(dir, { withFileTypes: true });
 	} catch {
@@ -201,7 +207,7 @@ function* walk(dir: string): Generator<string> {
 		const full = join(dir, entry.name);
 		if (entry.isDirectory()) yield* walk(full);
 		else if (
-			/\.tsx$/.test(entry.name) &&
+			/\.(tsx|css)$/.test(entry.name) &&
 			!entry.name.endsWith(".test.tsx") &&
 			!entry.name.endsWith(".stories.tsx")
 		)
@@ -227,6 +233,7 @@ function collectRuntimeCustomProps(sf: ts.SourceFile): Set<string> {
 			const initializer = node.initializer;
 			if (!initializer || !ts.isJsxExpression(initializer)) return;
 			const expr = initializer.expression;
+			if (!expr) return;
 			const object = ts.isAsExpression(expr) ? expr.expression : expr;
 			if (!object || !ts.isObjectLiteralExpression(object)) return;
 			for (const prop of object.properties) {
@@ -251,8 +258,7 @@ export function parseVarCalls(
 ): { name: string; hasFallback: boolean }[] {
 	const out: { name: string; hasFallback: boolean }[] = [];
 	const re = /var\(\s*(--[\w-]+)/g;
-	let match: RegExpExecArray | null;
-	while ((match = re.exec(value)) !== null) {
+	for (let match = re.exec(value); match !== null; match = re.exec(value)) {
 		const start = match.index + match[0].length;
 		let depth = 1;
 		let i = start;
@@ -423,7 +429,119 @@ const STYLE_APPEARANCE_PROPS = new Set([
 // Checking
 // ---------------------------------------------------------------------------
 
-export function checkAppSource(file: string, src: string): Violation[] {
+/**
+ * The properties that make a style recipe a *treatment* rather than a box
+ * arrangement. A recipe that only lays out (display / flexDirection / gap /
+ * minWidth) says nothing about how the app looks and is left alone; one
+ * that colours, borders or types something is an identity, and identities
+ * belong to the shared design system.
+ */
+const TREATMENT_PROPS = new Set([
+	"background",
+	"backgroundColor",
+	"borderBlock",
+	"borderBlockEnd",
+	"borderBlockStart",
+	"borderBottom",
+	"borderBottomColor",
+	"borderBottomLeftRadius",
+	"borderBottomRightRadius",
+	"borderBottomStyle",
+	"borderBottomWidth",
+	"borderColor",
+	"borderInline",
+	"borderInlineEnd",
+	"borderInlineStart",
+	"borderLeft",
+	"borderLeftColor",
+	"borderLeftStyle",
+	"borderLeftWidth",
+	"borderRadius",
+	"borderRight",
+	"borderRightColor",
+	"borderRightStyle",
+	"borderRightWidth",
+	"borderStyle",
+	"borderTop",
+	"borderTopColor",
+	"borderTopLeftRadius",
+	"borderTopRightRadius",
+	"borderTopStyle",
+	"borderTopWidth",
+	"borderWidth",
+	"boxShadow",
+	"color",
+	"fontFamily",
+	"fontSize",
+	"fontWeight",
+	"letterSpacing",
+	"opacity",
+	"textAlign",
+	"textDecoration",
+	"textTransform",
+]);
+
+/**
+ * A style recipe: the exact property/value pairs of a `css()` object.
+ * Two recipes are the same when every property and every value matches.
+ */
+export type StyleRecipe = {
+	properties: { name: string; value: string }[];
+	/** The file the recipe was found in. */
+	file: string;
+	line: number;
+};
+
+export function collectStyleRecipes(file: string, src: string): StyleRecipe[] {
+	const sf = ts.createSourceFile(
+		file,
+		src,
+		ts.ScriptTarget.Latest,
+		true,
+		ts.ScriptKind.TSX,
+	);
+	const out: StyleRecipe[] = [];
+	const visit = (node: ts.Node): void => {
+		if (ts.isCallExpression(node)) {
+			const callee = node.expression.getText(sf);
+			if (/^css(\.raw)?$/.test(callee)) {
+				for (const arg of node.arguments) {
+					if (!ts.isObjectLiteralExpression(arg)) continue;
+					const properties: { name: string; value: string }[] = [];
+					for (const prop of arg.properties) {
+						if (!ts.isPropertyAssignment(prop)) continue;
+						const name = propName(prop.name);
+						const value = stringValue(prop.initializer);
+						if (!name || value === null) continue;
+						properties.push({ name, value });
+					}
+					if (properties.length < 3) continue;
+					if (!properties.some((prop) => TREATMENT_PROPS.has(prop.name)))
+						continue;
+					out.push({
+						properties: [...properties].sort((a, b) =>
+							a.name.localeCompare(b.name),
+						),
+						file,
+						line: lineOf(sf, arg),
+					});
+				}
+			}
+		}
+		ts.forEachChild(node, visit);
+	};
+	visit(sf);
+	return out;
+}
+
+const recipeKey = (recipe: StyleRecipe): string =>
+	recipe.properties.map((p) => `${p.name}:${p.value}`).join(";");
+
+export function checkAppSource(
+	file: string,
+	src: string,
+	options: { sharedPackage?: boolean } = {},
+): Violation[] {
 	const out: Violation[] = [];
 	const sf = ts.createSourceFile(
 		file,
@@ -474,31 +592,23 @@ export function checkAppSource(file: string, src: string): Violation[] {
 
 			if (key && FOCUS_CONDITIONS.has(key)) {
 				if (!ts.isObjectLiteralExpression(init)) continue;
+				// A focus rule that paints a shadow IS the focus indicator, so
+				// it has to be the canonical one. A focus rule that only
+				// recolours (the error state) or moves (a pressed transform)
+				// is not an indicator and is left alone.
 				let ring: string | null = null;
-				const others: string[] = [];
 				for (const inner of init.properties) {
 					if (!ts.isPropertyAssignment(inner)) continue;
-					const innerKey = propName(inner.name);
-					if (!innerKey) continue;
-					if (innerKey === "boxShadow") {
-						ring = stringValue(inner.initializer);
-					} else {
-						others.push(innerKey);
-					}
+					if (propName(inner.name) !== "boxShadow") continue;
+					ring = stringValue(inner.initializer);
 				}
-				if (ring === null) {
-					add(
-						init,
-						"focus-ring-missing",
-						`${key} paints no focus indicator — every focusable control paints ${CANONICAL_FOCUS_RING}${others.length > 0 ? ` (this rule only sets ${others.join(", ")})` : ""}`,
-					);
-				} else if (ring !== CANONICAL_FOCUS_RING) {
-					add(
-						init,
-						"focus-ring-divergent",
-						`${key} paints "${ring}" — the one focus indicator is ${CANONICAL_FOCUS_RING}`,
-					);
-				}
+				if (ring === null) continue;
+				if (ring === CANONICAL_FOCUS_RING) continue;
+				add(
+					init,
+					"focus-ring-divergent",
+					`${key} paints "${ring}" — the one focus indicator is ${CANONICAL_FOCUS_RING}`,
+				);
 			}
 
 			if (ts.isObjectLiteralExpression(init)) {
@@ -543,7 +653,10 @@ export function checkAppSource(file: string, src: string): Violation[] {
 			// `tokens/*` is the design-token registry, not the component
 			// surface: it stays importable by path. Everything else must go
 			// through the barrel.
+			// Inside the shared package a deep import is how a module reaches
+			// a sibling; the barrel rule is for its consumers.
 			if (
+				!options.sharedPackage &&
 				specifier.startsWith("@ty-plus/ui/") &&
 				!specifier.startsWith("@ty-plus/ui/tokens/")
 			) {
@@ -557,14 +670,34 @@ export function checkAppSource(file: string, src: string): Violation[] {
 
 		if (ts.isJsxSelfClosingElement(node) || ts.isJsxOpeningElement(node)) {
 			const tag = node.tagName.getText(sf);
-			if (RAW_CONTROL_TAGS.has(tag)) {
+			// The shared package *is* the implementation of these controls, so
+			// it is the one place a raw `<button>` belongs.
+			if (RAW_CONTROL_TAGS.has(tag) && !options.sharedPackage) {
 				add(
 					node,
 					"raw-control",
 					`raw <${tag}> is banned; use a @ty-plus/ui primitive`,
 				);
 			}
-			if (tag === "svg") {
+			if (tag === "Icon") {
+				for (const attr of node.attributes.properties) {
+					if (!ts.isJsxAttribute(attr)) continue;
+					if (attr.name.getText(sf) !== "size") continue;
+					const initializer = attr.initializer;
+					if (!initializer || !ts.isJsxExpression(initializer)) continue;
+					const expr = initializer.expression;
+					if (!expr || !ts.isNumericLiteral(expr)) continue;
+					const raw = expr.text;
+					const px = ICON_SIZE_SCALE[raw] ?? Number(raw);
+					if (ICON_SIZES_PX.has(px)) continue;
+					add(
+						attr,
+						"icon-size-off-scale",
+						`the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); ${px}px is not one of them`,
+					);
+				}
+			}
+			if (tag === "svg" && !options.sharedPackage) {
 				add(
 					node,
 					"raw-svg",
@@ -689,16 +822,167 @@ export function checkUiBarrel(uiSrcDir: string, root = ROOT): Violation[] {
 // Driver
 // ---------------------------------------------------------------------------
 
+/**
+ * The same treatment written out in two places is two treatments that will
+ * drift. A recipe that more than one surface uses belongs to the shared
+ * design system, so the app says it once.
+ */
+export function checkDuplicateRecipes(recipes: StyleRecipe[]): Violation[] {
+	const byRecipe = new Map<string, StyleRecipe[]>();
+	for (const recipe of recipes) {
+		const key = recipeKey(recipe);
+		const list = byRecipe.get(key);
+		if (list) list.push(recipe);
+		else byRecipe.set(key, [recipe]);
+	}
+	const out: Violation[] = [];
+	for (const list of byRecipe.values()) {
+		const files = new Set(list.map((r) => r.file));
+		if (files.size < 2) continue;
+		const described = list[0].properties
+			.map((p) => `${p.name}: ${p.value}`)
+			.join(", ");
+		for (const recipe of list) {
+			out.push({
+				file: recipe.file,
+				line: recipe.line,
+				rule: "duplicate-style-recipe",
+				message: `the same treatment (${described}) is written out in ${files.size} files — it belongs to the shared design system`,
+			});
+		}
+	}
+	return out;
+}
+
+/**
+ * The scopes the design contract covers.
+ *
+ * - `src` — the CEP panel and the widget layer
+ * - `packages/ui` — the shared design system itself; its own focus and
+ *   variable references are held to the same contract, because the
+ *   vocabulary is what everything else copies
+ * - `apps/web` — the official site, which uses the same shared package
+ */
+export const CONTRACT_SCOPES = [
+	"src",
+	"packages/ui/src",
+	"apps/web/src",
+] as const;
+
+/**
+ * The shared icon's size scale: 3 = 12px, 4 = 16px, 5 = 20px. An icon at
+ * another size is an icon the design system does not have, so it renders at an
+ * optical size nothing else matches.
+ */
+const ICON_SIZE_SCALE: Record<string, number> = { "3": 12, "4": 16, "5": 20 };
+const ICON_SIZES_PX = new Set([12, 16, 20]);
+
+/**
+ * The CSS files of the same scopes. They carry custom properties too, and a
+ * name that does not resolve leaves the declaration unset — the same failure
+ * the style objects have.
+ */
+export function checkCssVariables(file: string, src: string): Violation[] {
+	const out: Violation[] = [];
+	// A comment may mention a variable name; only the declarations count.
+	const declarations = src.replace(/\/\*[\s\S]*?\*\//g, "");
+	for (const { name, hasFallback } of parseVarCalls(declarations)) {
+		if (hasFallback) continue;
+		if (DEFINED_VARS.has(name) || EXTERNAL_VARS.has(name)) continue;
+		const line = declarations
+			.slice(0, declarations.indexOf(name))
+			.split("\n").length;
+		out.push({
+			file,
+			line,
+			rule: "unknown-css-var",
+			message: `var(${name}) is not a defined theme variable — it does not resolve, so the declaration it feeds falls back silently`,
+		});
+	}
+	return out;
+}
+
+/**
+ * A file that takes the native focus indicator away (`outline: none`) has to
+ * put one back. The check is per file, because the indicator and the rule
+ * that removes the outline often live in different style objects that are
+ * combined at the call site.
+ */
+export function checkFocusIndicator(file: string, src: string): Violation[] {
+	if (!/outline\s*:\s*(?:"none"|none|0)(?![\w-])/.test(src)) return [];
+	if (src.includes(CANONICAL_FOCUS_RING)) return [];
+	return [
+		{
+			file,
+			line: 1,
+			rule: "focus-indicator-missing",
+			message: `this file removes the native focus indicator but never paints ${CANONICAL_FOCUS_RING} — a focusable control here would show nothing`,
+		},
+	];
+}
+
 export function collectViolations(root = ROOT): Violation[] {
 	const out: Violation[] = [];
-	for (const file of walk(join(root, "src"))) {
-		const rel = relative(root, file);
-		out.push(...checkAppSource(rel, readFileSync(file, "utf8")));
+	const recipes: StyleRecipe[] = [];
+	// The shared package's own recipes are the reference: a treatment that
+	// the vocabulary already has must be used, not written out again.
+	const vocabulary: StyleRecipe[] = [];
+
+	for (const scope of CONTRACT_SCOPES) {
+		const dir = join(root, scope);
+		if (!existsSync(dir)) continue;
+		for (const file of walk(dir)) {
+			const rel = relative(root, file).replace(/\\/g, "/");
+			const src = readFileSync(file, "utf8");
+			if (!file.endsWith(".css")) {
+				out.push(
+					...checkAppSource(rel, src, {
+						sharedPackage: scope === "packages/ui/src",
+					}),
+				);
+			}
+			if (file.endsWith(".css")) {
+				out.push(...checkCssVariables(rel, src));
+			}
+			out.push(...checkFocusIndicator(rel, src));
+			const found = collectStyleRecipes(rel, src);
+			if (scope === "packages/ui/src") vocabulary.push(...found);
+			else recipes.push(...found);
+		}
 	}
+	out.push(...checkDuplicateRecipes(recipes));
+	out.push(...checkVocabularyCopies(recipes, vocabulary));
 	out.push(...checkUiBarrel(join(root, "packages", "ui", "src"), root));
 	return out.sort((a, b) =>
 		a.file === b.file ? a.line - b.line : a.file.localeCompare(b.file),
 	);
+}
+
+/**
+ * A treatment the shared package already provides, written out again in the
+ * app. The vocabulary is the answer; copying it is what makes the two drift.
+ */
+export function checkVocabularyCopies(
+	recipes: StyleRecipe[],
+	vocabulary: StyleRecipe[],
+): Violation[] {
+	const known = new Map<string, StyleRecipe>();
+	for (const recipe of vocabulary) {
+		const key = recipeKey(recipe);
+		if (!known.has(key)) known.set(key, recipe);
+	}
+	const out: Violation[] = [];
+	for (const recipe of recipes) {
+		const owner = known.get(recipeKey(recipe));
+		if (!owner) continue;
+		out.push({
+			file: recipe.file,
+			line: recipe.line,
+			rule: "vocabulary-copy",
+			message: `this treatment already exists in the shared package (${owner.file}) — use it instead of writing it out again`,
+		});
+	}
+	return out;
 }
 
 /**
@@ -719,6 +1003,14 @@ const DEFAULT_REASON: Record<string, string> = {
 		"inline style sets appearance; move it into css() and the token system",
 	"barrel-gap":
 		"the shared component is not exported from the barrel; export it or delete it",
+	"duplicate-style-recipe":
+		"this treatment is written out in more than one place; it belongs to the shared design system — migrate it when the surfaces change together",
+	"vocabulary-copy":
+		"this treatment already exists in the shared package — use it instead of writing it out again",
+	"icon-size-off-scale":
+		"this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — move it to a step, or say why it is a media glyph rather than an icon",
+	"focus-indicator-missing":
+		"this file removes the native focus indicator — put the shared ring back, or say why the control does not need one",
 };
 
 export type AllowlistEntry = {

@@ -53,7 +53,7 @@ const STATE_FILE = ".tmp/e2e-sandbox-state.json";
  */
 const MANIFEST_EXCLUDES = ["tool-handoff/"];
 
-export type SandboxState = {
+type SandboxState = {
 	active: boolean;
 	realRoot: string;
 	sandboxParent: string;
@@ -488,7 +488,7 @@ export const recoverInterruptedSandbox = async (
 export const prepareSandbox = async (
 	ctx: E2EContext,
 	realRoot: string,
-	evidenceDir: string,
+	_evidenceDir: string,
 	statePath = STATE_FILE,
 ): Promise<SandboxSession> => {
 	const locator = await findLocator(realRoot);

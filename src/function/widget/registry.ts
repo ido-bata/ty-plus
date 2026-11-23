@@ -33,7 +33,6 @@ import { type RenderWidgetProps, renderDescriptor } from "./render";
 export type {
 	TutorialStep,
 	WidgetDescriptor,
-	WidgetTutorial,
 } from "./define";
 export * from "./registry-core";
 export type { RenderWidgetProps };

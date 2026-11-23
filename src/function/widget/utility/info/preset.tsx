@@ -1,3 +1,4 @@
+import { infoRowClass } from "@ty-plus/ui";
 import { type JSX, useEffect, useMemo, useState } from "react";
 import { i18n } from "@/management/i18n/index";
 import type { Preset } from "@/management/preset/contract";
@@ -155,14 +156,7 @@ function _PresetMeta({
 					gap: "var(--ty-space-0-5)",
 				})}
 			>
-				<div
-					className={css({
-						display: "flex",
-						justifyContent: "space-between",
-						gap: "var(--ty-space-2)",
-						fontSize: "text-xs",
-					})}
-				>
+				<div className={infoRowClass}>
 					<span
 						className={css({ flexShrink: 0, color: "var(--color-text-muted)" })}
 					>

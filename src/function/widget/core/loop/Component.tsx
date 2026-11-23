@@ -188,7 +188,7 @@ export function LoopWidget({
 		setActiveWidgetInstanceId(instanceId);
 		setStatus("busy");
 		try {
-			const sidecarPath = await resolveLoopAppliedStatePath(window);
+			const _sidecarPath = await resolveLoopAppliedStatePath(window);
 			const result = (await host("applyLoopEasing", [
 				{
 					version: 1,

@@ -34,8 +34,7 @@ const swatch = css({
 	_focusVisible: {
 		borderColor: "interactive.focus",
 		outline: "none",
-		boxShadow:
-			"0 0 0 2px color-mix(in srgb, var(--color-interactive-focus) 30%, transparent)",
+		boxShadow: "var(--color-focus-ring)",
 	},
 });
 

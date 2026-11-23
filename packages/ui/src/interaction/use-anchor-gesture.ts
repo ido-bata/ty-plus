@@ -195,7 +195,7 @@ const isInEdgeZone = (
 };
 
 /** Public helper: returns resize edge info for the legacy convention. */
-const getEdgeInfo = (
+const _getEdgeInfo = (
 	pointerX: number,
 	pointerY: number,
 	el: Element,

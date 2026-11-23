@@ -6,9 +6,6 @@ import type {
 import type { PresetIconEditorDraft } from "@/management/preset/icon/editor-state";
 import { presetIconDraftToPresetIcon } from "@/management/preset/icon/editor-state";
 
-const escapeRegex = (value: string): string =>
-	value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-
 export type ConditionRule = {
 	id: string;
 	filterType: "name" | "path" | "preset" | "presetType";

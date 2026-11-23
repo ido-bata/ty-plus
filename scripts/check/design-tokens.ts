@@ -50,7 +50,7 @@ const walkCss = async (dir: string): Promise<string[]> => {
 };
 
 const lineViolationsTs = (
-	file: string,
+	_file: string,
 	text: string,
 ): { line: number; reason: string }[] => {
 	const bad: { line: number; reason: string }[] = [];

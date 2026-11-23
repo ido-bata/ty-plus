@@ -18,7 +18,6 @@ import { createInstanceId } from "@/management/storage/ids";
 export type {
 	TutorialStep,
 	WidgetDescriptor,
-	WidgetTutorial,
 } from "@/function/widget/registry";
 export { getWidgetDescriptor };
 

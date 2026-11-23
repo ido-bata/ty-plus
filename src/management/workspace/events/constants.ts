@@ -10,5 +10,3 @@ export const DRAG_THRESHOLD = 5;
 
 export const PREVIEW_TRANSITION =
 	"left 0.12s ease,top 0.12s ease,width 0.12s ease,height 0.12s ease";
-
-const PRESET_LAYOUT_ID_PREFIX = "preset:";

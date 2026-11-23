@@ -1,4 +1,12 @@
-import { Icon } from "@ty-plus/ui";
+import {
+	Icon,
+	monoPreviewBoxClass,
+	sectionLabelClass,
+	sectionTitleClass,
+	stepBadgeClass,
+	stepCardClass,
+	stepDescriptionClass,
+} from "@ty-plus/ui";
 import { Input } from "@ty-plus/ui/fields/Input";
 import { PathField } from "@ty-plus/ui/fields/PathField";
 import { AlertCircle, FolderOpen } from "lucide-react";
@@ -31,49 +39,6 @@ import { notifyPanelsAfterPresetSave } from "@/management/workspace/placement/no
 import { css } from "@/styled-system/css";
 
 type LayerCompType = "layer" | "comp";
-
-const stepNumberClass = css({
-	display: "flex",
-	height: "6",
-	width: "6",
-	flexShrink: 0,
-	alignItems: "center",
-	justifyContent: "center",
-	borderRadius: "full",
-	borderWidth: "1px",
-	borderStyle: "solid",
-	borderColor: "border.default",
-	backgroundColor: "surface.widget",
-	fontSize: "shell-text-sm",
-	fontWeight: "bold",
-	color: "text.primary",
-});
-
-const stepTitleClass = css({
-	fontSize: "shell-text-sm",
-	fontWeight: "semibold",
-	color: "text.primary",
-});
-
-const stepDescClass = css({
-	fontSize: "text-xs",
-	color: "text.muted",
-	lineHeight: "tight",
-});
-
-const stepCardClass = css({
-	display: "flex",
-	width: "full",
-	minWidth: 0,
-	flexDirection: "column",
-	gap: "3",
-	borderRadius: "shell-sm",
-	borderWidth: "1px",
-	borderStyle: "solid",
-	borderColor: "border.default",
-	backgroundColor: "surface.widget",
-	padding: "4",
-});
 
 const headerRowClass = css({
 	display: "flex",
@@ -108,25 +73,6 @@ const previewColumnClass = css({
 	minWidth: 0,
 	flexDirection: "column",
 	gap: "1",
-});
-
-const previewLabelClass = css({
-	fontSize: "text-xs",
-	fontWeight: "medium",
-	textTransform: "uppercase",
-	letterSpacing: "wide",
-	color: "text.muted",
-});
-
-const previewBoxClass = css({
-	fontFamily: "mono",
-	fontSize: "text-xs",
-	color: "text.primary",
-	overflowWrap: "break-all",
-	borderRadius: "shell-sm",
-	backgroundColor: "surface.widget",
-	paddingInline: "2",
-	paddingBlock: "1",
 });
 
 const hintRowClass = css({
@@ -292,9 +238,9 @@ export function Dialog(): JSX.Element {
 					<AuthoringField span={6}>
 						<div className={stepCardClass}>
 							<div className={headerRowClass}>
-								<span className={stepNumberClass}>1</span>
+								<span className={stepBadgeClass}>1</span>
 								<div className={headerColumnFullClass}>
-									<span className={stepTitleClass}>
+									<span className={sectionTitleClass}>
 										{t("layerCompPreset.step1.title", "Preset type")}
 									</span>
 									<AuthoringSegment
@@ -320,15 +266,15 @@ export function Dialog(): JSX.Element {
 					<AuthoringField span={6}>
 						<div className={stepCardClass}>
 							<div className={headerRowClass}>
-								<span className={stepNumberClass}>2</span>
+								<span className={stepBadgeClass}>2</span>
 								<div className={headerColumnClass}>
-									<span className={stepTitleClass}>
+									<span className={sectionTitleClass}>
 										{t(
 											"layerCompPreset.step2.title",
 											"Prepare in After Effects",
 										)}
 									</span>
-									<span className={stepDescClass}>
+									<span className={stepDescriptionClass}>
 										{presetType === "layer"
 											? t(
 													"layerCompPreset.desc.layer",
@@ -349,9 +295,9 @@ export function Dialog(): JSX.Element {
 						<div className={stepCardClass}>
 							<div className={step3ColumnClass}>
 								<div className={headerRowClass}>
-									<span className={stepNumberClass}>3</span>
+									<span className={stepBadgeClass}>3</span>
 									<div className={headerColumnFullClass}>
-										<span className={stepTitleClass}>
+										<span className={sectionTitleClass}>
 											{t("layerCompPreset.step3.title", "Save location")}
 										</span>
 										<PathField
@@ -367,10 +313,12 @@ export function Dialog(): JSX.Element {
 										/>
 										{fullFilePath ? (
 											<div className={previewColumnClass}>
-												<span className={previewLabelClass}>
+												<span className={sectionLabelClass}>
 													{t("layerCompPreset.savePreview", "Save preview")}
 												</span>
-												<div className={previewBoxClass}>{fullFilePath}</div>
+												<div className={monoPreviewBoxClass}>
+													{fullFilePath}
+												</div>
 											</div>
 										) : null}
 										<div className={hintRowClass}>

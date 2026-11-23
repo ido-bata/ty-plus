@@ -21,9 +21,9 @@ import {
 	writeJson,
 } from "@/management/storage/persistence";
 
-export const TUTORIAL_STATE_VERSION = 1 as const;
+const TUTORIAL_STATE_VERSION = 1 as const;
 
-export type TutorialEntryState = {
+type TutorialEntryState = {
 	/** Content version this entry was recorded against. */
 	contentVersion: string;
 	/** ISO timestamp of first help view, if any. */

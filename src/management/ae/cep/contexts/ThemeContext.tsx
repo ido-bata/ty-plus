@@ -42,7 +42,6 @@ const syncOverridesState = async (
 
 export const ThemeProvider = ({
 	children,
-	panelSurfaceId,
 }: {
 	children: ReactNode;
 	panelSurfaceId?: string;

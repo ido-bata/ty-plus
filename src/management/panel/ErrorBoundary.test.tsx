@@ -36,7 +36,7 @@ describe("ErrorBoundary", () => {
 	});
 
 	it("catches a render exception and renders the default fallback", () => {
-		const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+		const _errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 		render(
 			<ErrorBoundary name="broken">
 				<ThrowingChild message="boom" />
@@ -48,7 +48,7 @@ describe("ErrorBoundary", () => {
 	});
 
 	it("still renders a sibling outside the boundary when a child throws", () => {
-		const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+		const _errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 		render(
 			<>
 				<ErrorBoundary name="left">
@@ -62,7 +62,7 @@ describe("ErrorBoundary", () => {
 	});
 
 	it("recovers via the retry button after reset", () => {
-		const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+		const _errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 		let shouldThrow = true;
 		function MaybeThrow(): ReactElement | null {
 			if (shouldThrow) {
@@ -82,7 +82,7 @@ describe("ErrorBoundary", () => {
 	});
 
 	it("recovers via onResetRef handle (imperative reset)", () => {
-		const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+		const _errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 		const handleRef: { current: { reset: () => void } | null } = {
 			current: null,
 		};
@@ -124,7 +124,7 @@ describe("ErrorBoundary", () => {
 	});
 
 	it("honors a custom fallback prop", () => {
-		const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+		const _errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 		const customFallback = vi.fn(
 			({ name, error }: { name: string; error: Error }) => (
 				<div data-testid="custom-fallback">
@@ -142,7 +142,7 @@ describe("ErrorBoundary", () => {
 	});
 
 	it("invokes onError with the captured error and info", () => {
-		const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+		const _errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 		const onError = vi.fn();
 		render(
 			<ErrorBoundary name="probe" onError={onError}>

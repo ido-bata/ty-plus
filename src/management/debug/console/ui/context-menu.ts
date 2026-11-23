@@ -14,8 +14,6 @@ export const DEBUG_CTX_IDS = {
 	filterError: "dbg.ctx.filter-error",
 } as const;
 
-type DebugCtxAction = (typeof DEBUG_CTX_IDS)[keyof typeof DEBUG_CTX_IDS];
-
 export type DebugConsoleContextState = {
 	filterLevel: "all" | "log" | "info" | "warn" | "error";
 	autoScroll: boolean;

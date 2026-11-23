@@ -1,4 +1,9 @@
-import { Icon } from "@ty-plus/ui";
+import {
+	Icon,
+	monoPreviewBoxClass,
+	sectionLabelClass,
+	statusBannerClass,
+} from "@ty-plus/ui";
 import { Input } from "@ty-plus/ui/fields/Input";
 import { PathField } from "@ty-plus/ui/fields/PathField";
 import type { TFunction } from "i18next";
@@ -49,38 +54,6 @@ import { css } from "@/styled-system/css";
 type CodeType = "extendscript" | "expression";
 type PresetStatus = "idle" | "saving" | "success" | "error";
 
-const statusBannerBaseClass = css({
-	display: "flex",
-	alignItems: "flex-start",
-	gap: "2",
-	borderRadius: "shell-sm",
-	borderWidth: "1px",
-	borderStyle: "solid",
-	padding: "2",
-	fontSize: "text-xs",
-});
-
-const statusBannerVariant = {
-	success: css({
-		borderColor: "status.success/30",
-		backgroundColor: "status.success/10",
-		color: "status.success",
-	}),
-	warning: css({
-		borderColor: "status.warning/30",
-		backgroundColor: "status.warning/10",
-		color: "status.warning",
-	}),
-	error: css({
-		borderColor: "status.error/30",
-		backgroundColor: "status.error/10",
-		color: "status.error",
-	}),
-} as const;
-
-const statusBannerClass = (variant: "success" | "warning" | "error"): string =>
-	`${statusBannerBaseClass} ${statusBannerVariant[variant]}`;
-
 const bannerTitleClass = css({
 	fontWeight: "semibold",
 });
@@ -90,25 +63,6 @@ const previewColumnClass = css({
 	minWidth: 0,
 	flexDirection: "column",
 	gap: "1",
-});
-
-const previewLabelClass = css({
-	fontSize: "text-xs",
-	fontWeight: "medium",
-	textTransform: "uppercase",
-	letterSpacing: "wide",
-	color: "text.muted",
-});
-
-const previewBoxBaseClass = css({
-	fontFamily: "mono",
-	fontSize: "text-xs",
-	color: "text.primary",
-	overflowWrap: "break-all",
-	borderRadius: "shell-sm",
-	backgroundColor: "surface.widget",
-	paddingInline: "2",
-	paddingBlock: "1",
 });
 
 const previewBoxWarnClass = css({
@@ -153,14 +107,14 @@ function SavePreviewSection({
 	if (!fullFilePath) return null;
 	return (
 		<div className={previewColumnClass}>
-			<span className={previewLabelClass}>
+			<span className={sectionLabelClass}>
 				{t("codePreset.savePreview", "Save preview")}
 			</span>
 			<div
 				className={
 					fileExists
-						? `${previewBoxBaseClass} ${previewBoxWarnClass}`
-						: previewBoxBaseClass
+						? `${monoPreviewBoxClass} ${previewBoxWarnClass}`
+						: monoPreviewBoxClass
 				}
 			>
 				{fullFilePath}
@@ -472,7 +426,7 @@ export function Dialog(): JSX.Element {
 	const fileName = fileNameFromPath(fullFilePath);
 	const fileExists = useCodeFileExists(displayPath, fileName);
 
-	const { busy, status, message, canSave, handleSave } = useCodePresetSave({
+	const { busy, status, message } = useCodePresetSave({
 		name,
 		codeType,
 		code,
@@ -612,7 +566,7 @@ export function Dialog(): JSX.Element {
 
 					<AuthoringField span={6}>
 						<div className={previewColumnClass}>
-							<span className={previewLabelClass}>
+							<span className={sectionLabelClass}>
 								{codeType === "expression"
 									? t("codePreset.editor.expression", "Expression")
 									: t("codePreset.editor.script", "Script code (.jsx)")}

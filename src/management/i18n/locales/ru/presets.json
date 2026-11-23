@@ -355,7 +355,8 @@
 			"noScriptsFolder": "Папка скриптов не настроена",
 			"noPluginsFolder": "Папка плагинов не настроена",
 			"noFiles": "Файлы не найдены"
-		}
+		},
+		"folderTypeAria": "Тип папки"
 	},
 	"iconEditor": {
 		"tabs": {
@@ -370,7 +371,8 @@
 		"imagePlaceholder": "Путь или URL изображения",
 		"iconTextAria": "Текст значка",
 		"textPlaceholder": "2–6 символов",
-		"previewAria": "Предпросмотр значка"
+		"previewAria": "Предпросмотр значка",
+		"tabsAria": "Тип значка"
 	},
 	"catalogBrowser": {
 		"loading": "Загрузка",

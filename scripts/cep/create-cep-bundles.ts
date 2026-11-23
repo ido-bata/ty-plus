@@ -2,35 +2,35 @@ import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
 
-function argValue(args, name, fallback) {
+function argValue(args: string[], name: string, fallback: string) {
 	const idx = args.indexOf(name);
 	if (idx === -1) return fallback;
 	const v = args[idx + 1];
 	return v ?? fallback;
 }
 
-function argFlag(args, name) {
+function argFlag(args: string[], name: string) {
 	return args.includes(name);
 }
 
-function extractOne(text, re, label) {
+function extractOne(text: string, re: RegExp, label: string) {
 	const m = text.match(re);
 	if (!m) throw new Error(`Failed to extract ${label}`);
 	return m[1];
 }
 
-function escapeRegExp(s) {
+function escapeRegExp(s: string) {
 	return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-function detectExtensionIds(manifestXml) {
-	const ids = [];
+function detectExtensionIds(manifestXml: string): string[] {
+	const ids: string[] = [];
 	const re = /<Extension\s+Id="([^"]+)"\s+Version="[^"]+"\s*\/>/g;
 	for (const m of manifestXml.matchAll(re)) ids.push(m[1]);
 	return ids;
 }
 
-function panelNumberFromId(id) {
+function panelNumberFromId(id: string) {
 	const m = id.match(/panel(\d+)\s*$/);
 	if (!m) return null;
 	return Number.parseInt(m[1], 10);
@@ -41,6 +41,11 @@ function buildManifestForId({
 	extensionId,
 	bundleId,
 	bundleName,
+}: {
+	originalManifestXml: string;
+	extensionId: string;
+	bundleId: string;
+	bundleName: string;
 }) {
 	const bundleVersion = extractOne(
 		originalManifestXml,
@@ -72,12 +77,18 @@ function buildManifestForId({
 	return `<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n<ExtensionManifest\nVersion="${manifestVersion}"\nExtensionBundleId="${bundleId}"\nExtensionBundleVersion="${bundleVersion}"\nExtensionBundleName="${bundleName}"${xmlns}\n>\n<ExtensionList>\n  <Extension Id="${extensionId}" Version="${bundleVersion}" />\n</ExtensionList>\n${executionEnv}\n<DispatchInfoList>\n${dispatchBlock}\n</DispatchInfoList>\n</ExtensionManifest>\n`;
 }
 
-function buildDebugForId({ extensionId, port }) {
+function buildDebugForId({
+	extensionId,
+	port,
+}: {
+	extensionId: string;
+	port: number;
+}) {
 	return `<?xml version="1.0" encoding="UTF-8"?>\n<ExtensionList>\n  <Extension Id="${extensionId}">\n    <HostList>\n      <Host Name="AEFT" Port="${port}"/>\n    </HostList>\n  </Extension>\n</ExtensionList>\n`;
 }
 
-function detectPorts(debugXml) {
-	const map = new Map();
+function detectPorts(debugXml: string): Map<string, number> {
+	const map = new Map<string, number>();
 	const re =
 		/<Extension\s+Id="([^"]+)">[\s\S]*?<Host\s+Name="AEFT"\s+Port="(\d+)"\s*\/>[\s\S]*?<\/Extension>/g;
 	for (const m of debugXml.matchAll(re)) {

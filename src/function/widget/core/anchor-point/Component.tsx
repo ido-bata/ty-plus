@@ -126,10 +126,7 @@ function AnchorPointGestureOverlay({
 	);
 }
 
-export function AnchorPointWidget({
-	layout,
-	widgetInstanceId,
-}: WidgetRenderProps): JSX.Element {
+export function AnchorPointWidget(_props: WidgetRenderProps): JSX.Element {
 	const [currentAnchor, setCurrentAnchor] = React.useState<string>("center");
 
 	React.useEffect(() => {

@@ -78,8 +78,6 @@ export type DebugDialogRootProps = {
 export function DebugDialogRoot({
 	surfaceId: _surfaceId,
 	onContextMenuSelect,
-	isCep = false,
-	hostCode = "",
 }: DebugDialogRootProps): JSX.Element {
 	const messagesRef = useRef<Element>(null);
 	const [messages, setMessages] = useState<readonly LogMessage[]>([]);

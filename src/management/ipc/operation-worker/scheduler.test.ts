@@ -171,7 +171,7 @@ describe("operation worker scheduler", () => {
 			create: (): OperationWorkerRunner => {
 				runnerCreates += 1;
 				return {
-					invoke: async <Request, Response>() => {
+					invoke: async <_Request, Response>() => {
 						if (runnerCreates === 1)
 							throw new OperationWorkerAttemptError(
 								"worker_crashed",
@@ -230,7 +230,7 @@ describe("operation worker scheduler", () => {
 		const seen: Array<{ requestId: string; idempotencyKey?: string }> = [];
 		const scheduler = newTestScheduler({
 			create: () => ({
-				invoke: async <Request, Response>() => undefined as Response,
+				invoke: async <_Request, Response>() => undefined as Response,
 				stopAccepting: () => undefined,
 				drain: async () => true,
 			}),
@@ -251,7 +251,7 @@ describe("operation worker scheduler", () => {
 			create: () => {
 				created += 1;
 				return {
-					invoke: async <Request, Response>() => undefined as Response,
+					invoke: async <_Request, Response>() => undefined as Response,
 					stopAccepting: () => undefined,
 					drain: async () => true,
 				};
@@ -288,7 +288,7 @@ describe("operation worker scheduler", () => {
 	it("uses own-property policy lookup when Object.hasOwn is unavailable", async () => {
 		const scheduler = newTestScheduler({
 			create: () => ({
-				invoke: async <Request, Response>() => undefined as Response,
+				invoke: async <_Request, Response>() => undefined as Response,
 				stopAccepting: () => undefined,
 				drain: async () => true,
 			}),
@@ -327,7 +327,7 @@ describe("operation worker scheduler", () => {
 			create: () => {
 				created += 1;
 				return {
-					invoke: async <Request, Response>() => undefined as Response,
+					invoke: async <_Request, Response>() => undefined as Response,
 					stopAccepting: () => undefined,
 					drain: async () => true,
 				};

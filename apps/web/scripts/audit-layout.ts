@@ -48,7 +48,7 @@ for (const vp of VIEWPORTS) {
 					y: Math.round(r.y + window.scrollY),
 				};
 			};
-			const parse = (v: string) => parseFloat(v) || 0;
+			const _parse = (v: string) => parseFloat(v) || 0;
 
 			const body = document.body;
 			const bodyCs = getComputedStyle(body);

@@ -65,8 +65,7 @@ function parseImports(content: string): string[] {
 	// Match static import paths: import ... from 'path' or import "path"
 	const re =
 		/import\s+(?:(?:type\s+)?(?:\{[^}]*\}|\*\s+as\s+\w+|\w+)\s+from\s+)?['"]([^'"]+)['"]/g;
-	let m: RegExpExecArray | null;
-	while ((m = re.exec(content)) !== null) {
+	for (let m = re.exec(content); m !== null; m = re.exec(content)) {
 		imports.push(m[1]);
 	}
 	return imports;
@@ -196,7 +195,7 @@ function detectDeepIntoFeature(srcRoot: string, files: string[]): Finding[] {
 
 			// management may only import shared (no function internals)
 			if (targetParts[0] === "function") {
-				const featurePath = targetParts.slice(0, 3).join("/"); // e.g. function/widget/core/align
+				const _featurePath = targetParts.slice(0, 3).join("/"); // e.g. function/widget/core/align
 				findings.push(
 					makeFinding(
 						"critical",

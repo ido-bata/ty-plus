@@ -1,3 +1,4 @@
+import { cardTitleClass } from "@ty-plus/ui";
 import { SegmentedControl } from "@ty-plus/ui/controls/SegmentedControl";
 import { LoadingSpinner } from "@ty-plus/ui/feedback/LoadingSpinner";
 import { ListSelect } from "@ty-plus/ui/fields/ListSelect";
@@ -24,7 +25,6 @@ import {
 	SettingsField,
 	SettingsGrid,
 } from "@/management/setting/dialog/layout/SettingsGrid";
-import type { FileEntry } from "@/management/storage/ui/file-entry/FileEntryList";
 import { css } from "@/styled-system/css";
 import { ButtonsPreview } from "./ButtonsPreview";
 import { DirectoryBrowserPreview } from "./DirectoryBrowserPreview";
@@ -40,37 +40,6 @@ const SELECT_OPTIONS = [
 	{ value: "opt1", labelKey: "settings:componentPreview.option1" },
 	{ value: "opt2", labelKey: "settings:componentPreview.option2" },
 	{ value: "opt3", labelKey: "settings:componentPreview.option3" },
-];
-
-const MOCK_DIR_ENTRIES: FileEntry[] = [
-	{
-		path: "/host/presets/animation",
-		name: "animation",
-		isDirectory: true,
-	},
-	{
-		path: "/host/presets/transitions",
-		name: "transitions",
-		isDirectory: true,
-	},
-	{
-		path: "/host/presets/fade-in.ffx",
-		name: "fade-in.ffx",
-		isDirectory: false,
-		extension: ".ffx",
-	},
-	{
-		path: "/host/presets/slide-left.ffx",
-		name: "slide-left.ffx",
-		isDirectory: false,
-		extension: ".ffx",
-	},
-	{
-		path: "/host/presets/scale-up.ffx",
-		name: "scale-up.ffx",
-		isDirectory: false,
-		extension: ".ffx",
-	},
 ];
 
 const mutedTextStyle = css({
@@ -151,13 +120,6 @@ const previewCardBodyStyle = css({
 	minWidth: 0,
 	flexDirection: "column",
 	gap: "0.5",
-});
-
-const previewCardTitleStyle = css({
-	truncate: true,
-	fontSize: "text-sm",
-	fontWeight: "medium",
-	color: "text.primary",
 });
 
 const previewCardDescriptionStyle = css({
@@ -288,7 +250,9 @@ function PreviewCard({
 				<span className={previewCardIconTextStyle}>🎨</span>
 			</div>
 			<div className={previewCardBodyStyle}>
-				<span className={previewCardTitleStyle}>{title}</span>
+				<span className={cx(cardTitleClass, css({ truncate: true }))}>
+					{title}
+				</span>
 				<span className={previewCardDescriptionStyle}>{description}</span>
 			</div>
 		</div>
