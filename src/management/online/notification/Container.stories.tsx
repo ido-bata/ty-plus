@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import type { CSSProperties, JSX } from "react";
+import { expect } from "storybook/test";
 
 // IMPORTANT: do NOT import `NotificationContainer` here. The component
 // reads from a module-level singleton (`notificationStore`) and renders
@@ -114,11 +115,12 @@ const ContainerStub = (args: Args): JSX.Element => {
 							{ICON_BY_TYPE[entry.type]}
 						</span>
 						<span
+							data-notification-message=""
 							style={{
 								flex: 1,
 								fontSize: 11,
 								lineHeight: 1.4,
-								wordBreak: "break-all",
+								overflowWrap: "anywhere",
 							}}
 						>
 							{entry.message}
@@ -189,6 +191,18 @@ export const WithItems: Story = {
 				dismissible: true,
 			},
 		],
+	},
+	play: async ({ canvasElement }) => {
+		// Issue #476: messages must not use `word-break: break-all`,
+		// which split English words mid-word ("netwo/rk"). Overflow
+		// wrapping only kicks in when a token cannot fit on its own.
+		const message = canvasElement.querySelector<HTMLElement>(
+			"[data-notification-message]",
+		);
+		if (!message) throw new Error("notification message not found");
+		const style = getComputedStyle(message);
+		expect(style.wordBreak).not.toBe("break-all");
+		expect(style.overflowWrap).toBe("anywhere");
 	},
 };
 
