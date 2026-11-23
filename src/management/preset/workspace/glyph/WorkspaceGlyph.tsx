@@ -251,8 +251,10 @@ export function WorkspacePresetGlyph({
 
 	// Use CSS custom property with container query (cqi = container query inline).
 	// Set on outer span so children can inherit. cqi = 1% of container's inline size.
-	// Minimum 4px, max 96px.
-	const lineScale = lines.length >= 3 ? 6 : lines.length >= 2 ? 8 : 10;
+	// Minimum 4px, max 96px.  The previous 6/8/10 scales rendered ~5-7px glyphs
+	// at typical ~70px previews — below legibility — so single-line marks now
+	// get ~18% of the container width.
+	const lineScale = lines.length >= 3 ? 10 : lines.length >= 2 ? 13 : 18;
 
 	const textStyle = {
 		...(visual.backgroundColor

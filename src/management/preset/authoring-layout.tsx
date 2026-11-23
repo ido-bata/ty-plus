@@ -47,6 +47,16 @@ const sectionDescriptionClass = css({
 	color: "text.muted",
 });
 
+/**
+ * Visual treatment for an authoring region while its dialog is busy
+ * (saving).  Pair it with the `inert` attribute on the same element — the
+ * dim alone does not block interaction and `inert` alone gives no visual
+ * cue, so a busy section needs both to read as disabled.
+ */
+export const authoringBusyClass = css({
+	opacity: "0.5",
+});
+
 export function AuthoringGrid({
 	children,
 }: {

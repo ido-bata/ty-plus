@@ -4,13 +4,20 @@ import { presetIconText } from "@/management/preset/contract";
 import { css } from "@/styled-system/css";
 import { GroupContainerCatalogTile } from "./ContainerCatalogTile";
 
+// Mirrors `synthesizeGroupPresetForTile`: the badge count comes from
+// `data.presetIds`, and `isGroupCatalogPreset` requires `data.groupId`.
+// The old `{ members: [...] }` fixture matched neither, so every story
+// rendered the same "0" badge.
 const makeGroupPreset = (id: string, members: number): Preset => ({
 	id,
 	type: "preset",
 	title: id,
 	filePath: `ty-plus://${id}`,
 	icon: presetIconText(id.slice(0, 2).toUpperCase() || "GP"),
-	data: { members: Array.from({ length: members }, (_, i) => `m${i}`) },
+	data: {
+		groupId: id,
+		presetIds: Array.from({ length: members }, (_, i) => `m${i}`),
+	},
 });
 
 type Args = {

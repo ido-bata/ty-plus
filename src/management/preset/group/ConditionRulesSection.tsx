@@ -2,9 +2,10 @@ import { Button } from "@ty-plus/ui";
 import { Plus } from "lucide-react";
 import type { JSX } from "react";
 import { i18n } from "@/management/i18n/index";
+import { authoringBusyClass } from "@/management/preset/authoring-layout";
 import type { PresetIconEditorDraft } from "@/management/preset/icon/editor-state";
 import { AccordionSection } from "@/management/setting/dialog/sections/AccordionSection";
-import { css } from "@/styled-system/css";
+import { css, cx } from "@/styled-system/css";
 import { BaseIconCard } from "./BaseIconCard";
 import { ConditionRuleCard } from "./ConditionRuleCard";
 import type { ConditionRule } from "./condition-rule-helpers";
@@ -45,7 +46,7 @@ export function ConditionRulesSection({
 	onAddRule: () => void;
 }): JSX.Element {
 	return (
-		<div className={columnClass}>
+		<div className={cx(columnClass, busy && authoringBusyClass)} inert={busy}>
 			<BaseIconCard
 				baseIconDraft={baseIconDraft}
 				onBaseIconDraftChange={onBaseIconDraftChange}
@@ -67,7 +68,13 @@ export function ConditionRulesSection({
 							onRemove={() => onRemoveRule(i)}
 						/>
 					))}
-					<Button type="button" variant="outline" fullWidth onClick={onAddRule}>
+					<Button
+						type="button"
+						variant="outline"
+						fullWidth
+						disabled={busy}
+						onClick={onAddRule}
+					>
 						<Plus size={16} /> {i18n.t("presets:group.addRule")}
 					</Button>
 				</div>

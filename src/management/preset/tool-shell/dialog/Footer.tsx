@@ -2,6 +2,17 @@ import { Button } from "@ty-plus/ui";
 import { Save } from "lucide-react";
 import type { JSX } from "react";
 import { DialogFooterActions } from "@/management/dialog/shell/Footer";
+import { css } from "@/styled-system/css";
+
+/**
+ * Busy save button.  `disabled` would apply the shared 50% opacity and drop
+ * the label's contrast to ~2.7:1 — unreadable "Saving...".  `aria-disabled`
+ * plus a progress cursor keeps the full-contrast label while the click
+ * guard and AT announcement carry the disabled semantics.
+ */
+const savingButtonClass = css({
+	cursor: "progress",
+});
 
 export type ToolDialogFooterProps = {
 	close: () => void;
@@ -34,8 +45,11 @@ export function ToolDialogFooter({
 				uiSize="sm"
 				fullWidth
 				start={<Save size={14} />}
-				disabled={busy}
-				onClick={() => void onSave()}
+				aria-disabled={busy || undefined}
+				className={busy ? savingButtonClass : undefined}
+				onClick={() => {
+					if (!busy) void onSave();
+				}}
 			>
 				{busy ? t("presetTool.status.saving") : t("presetTool.create")}
 			</Button>
