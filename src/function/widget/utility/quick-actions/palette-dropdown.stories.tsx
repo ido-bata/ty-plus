@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { useRef } from "react";
 
 import type { Preset, PresetType } from "@/management/preset/contract";
+import { storyT } from "@/storybook/i18n-story-t";
 import { PaletteDropdown } from "./palette-dropdown";
 import type { PluginEffectIndexRow, QuickActionRootFileRow } from "./types";
 
@@ -11,7 +12,6 @@ type Args = {
 };
 
 const noop = (): void => undefined;
-const stubT = (key: string): string => key;
 const typeLabel = (ty: PresetType): string => {
 	if (ty === "preset") return "Preset root";
 	if (ty === "script") return "Script root";
@@ -110,7 +110,7 @@ const meta = {
 					clampedActiveIdx={0}
 					widgetInstanceId="palette-dropdown-storybook-1"
 					dropdownBox={{ top: 40, left: 16, width: 280 }}
-					t={stubT}
+					t={storyT("widgets")}
 					typeLabel={typeLabel}
 					instanceAttr={{}}
 					onSelect={noop}

@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import type { Layer } from "@/management/workspace/background/contract";
 import { ImageLayerEditor } from "@/management/workspace/background/ImageLayerEditor";
+import { storyT } from "@/storybook/i18n-story-t";
 import { css } from "@/styled-system/css";
 
 type Args = {
@@ -11,16 +12,6 @@ type Args = {
 };
 
 const noop = (): void => undefined;
-const stubT = (key: string, options?: Record<string, unknown>): string => {
-	if (
-		options &&
-		"defaultValue" in options &&
-		typeof options.defaultValue === "string"
-	) {
-		return options.defaultValue as string;
-	}
-	return key;
-};
 
 const baseArgs: Args = {
 	imageFit: "cover",
@@ -60,7 +51,11 @@ const meta = {
 	},
 	render: (args: Args) => (
 		<div className={css({ width: "320px", p: "3" })}>
-			<ImageLayerEditor layer={buildLayer(args)} updateLayer={noop} t={stubT} />
+			<ImageLayerEditor
+				layer={buildLayer(args)}
+				updateLayer={noop}
+				t={storyT("dialogs")}
+			/>
 		</div>
 	),
 } satisfies Meta<Args>;

@@ -1,23 +1,13 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import type { CSSProperties } from "react";
 import { BackgroundPreview } from "@/management/workspace/background/Preview";
+import { storyT } from "@/storybook/i18n-story-t";
 import { css } from "@/styled-system/css";
 
 type Args = {
 	status: string;
 	background: string;
 	withPattern: boolean;
-};
-
-const stubT = (key: string, options?: Record<string, unknown>): string => {
-	if (
-		options &&
-		"defaultValue" in options &&
-		typeof options.defaultValue === "string"
-	) {
-		return options.defaultValue as string;
-	}
-	return key;
 };
 
 const baseArgs: Args = {
@@ -55,7 +45,7 @@ const meta = {
 			<BackgroundPreview
 				previewStyle={buildStyle(args)}
 				status={args.status}
-				t={stubT}
+				t={storyT("dialogs")}
 			/>
 		</div>
 	),

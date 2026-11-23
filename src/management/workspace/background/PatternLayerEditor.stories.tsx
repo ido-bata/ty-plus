@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import type { Layer } from "@/management/workspace/background/contract";
 import { PatternLayerEditor } from "@/management/workspace/background/PatternLayerEditor";
+import { storyT } from "@/storybook/i18n-story-t";
 import { css } from "@/styled-system/css";
 
 type Args = {
@@ -12,16 +13,6 @@ type Args = {
 };
 
 const noop = (): void => undefined;
-const stubT = (key: string, options?: Record<string, unknown>): string => {
-	if (
-		options &&
-		"defaultValue" in options &&
-		typeof options.defaultValue === "string"
-	) {
-		return options.defaultValue as string;
-	}
-	return key;
-};
 
 const baseArgs: Args = {
 	patternType: "dots",
@@ -62,7 +53,7 @@ const meta = {
 			<PatternLayerEditor
 				layer={buildLayer(args)}
 				updateLayer={noop}
-				t={stubT}
+				t={storyT("dialogs")}
 			/>
 		</div>
 	),
