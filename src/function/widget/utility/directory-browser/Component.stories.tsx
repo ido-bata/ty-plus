@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { expect, waitFor } from "storybook/test";
 
 import { DirectoryBrowserWidget } from "@/function/widget/utility/directory-browser/Component";
 import type { Preset } from "@/management/preset/contract";
@@ -93,4 +94,37 @@ export const Default: Story = {};
  */
 export const WithPresets: Story = {
 	args: { withPresets: true },
+};
+
+/**
+ * Issue #508: the expanded filter panel is fully interactive, so it must
+ * not be dimmed — `opacity` on the wrapper makes every control look
+ * disabled and breaks contrast.
+ */
+export const FiltersExpanded: Story = {
+	play: async ({ canvasElement }) => {
+		let toggle: HTMLElement | null = null;
+		await waitFor(() => {
+			toggle = canvasElement.querySelector<HTMLElement>(
+				'button[aria-label="Filters"]',
+			);
+			expect(toggle).not.toBeNull();
+		});
+		if (!toggle) throw new Error("filters toggle not found");
+		const { userEvent } = await import("vitest/browser");
+		await userEvent.click(toggle);
+		await waitFor(() => {
+			expect(
+				canvasElement.querySelector("[data-directory-browser-filters]"),
+			).not.toBeNull();
+		});
+		const panel = canvasElement.querySelector<HTMLElement>(
+			"[data-directory-browser-filters]",
+		);
+		if (!panel) throw new Error("filter panel not found");
+		expect(getComputedStyle(panel).opacity).toBe("1");
+		const chip = panel.querySelector<HTMLButtonElement>("button");
+		expect(chip).not.toBeNull();
+		expect(chip?.disabled).toBe(false);
+	},
 };
