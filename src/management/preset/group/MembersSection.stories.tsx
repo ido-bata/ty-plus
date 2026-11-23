@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { expect } from "storybook/test";
 import { css } from "@/styled-system/css";
 
 import type { DialogFormContext } from "./MembersSection";
@@ -58,8 +59,25 @@ const meta = {
 export default meta;
 type Story = StoryObj<Args>;
 
-export const Default: Story = {};
+// #459: the I18nDecorator locale upgrade used to flip mid-render and
+// produce ja/en mixed chrome. Storybook is english-fixed, so both
+// stories must render the English labels and no CJK text.
+const expectEnglishChrome = (canvasElement: HTMLElement): void => {
+	const text = canvasElement.textContent ?? "";
+	expect(text).toContain("Add path");
+	expect(text).toContain("Detect candidates");
+	expect(text).not.toMatch(/[぀-ヿ一-鿿]/);
+};
+
+export const Default: Story = {
+	play: async ({ canvasElement }) => {
+		expectEnglishChrome(canvasElement);
+	},
+};
 
 export const Busy: Story = {
 	args: { busy: true },
+	play: async ({ canvasElement }) => {
+		expectEnglishChrome(canvasElement);
+	},
 };

@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { type JSX, useRef } from "react";
+import { type JSX, useLayoutEffect, useRef } from "react";
+import { expect } from "storybook/test";
 import { css } from "@/styled-system/css";
 
 import { EditorLines } from "./EditorLines";
@@ -39,6 +40,15 @@ const meta = {
 			const cursorRef = useRef<HTMLSpanElement | null>(null);
 			const split = args.lines.split("\n");
 			const idx = Math.max(0, Math.min(args.cursorLineIndex, split.length - 1));
+			// LiveEditor keeps the cursor line's DOM text in sync with the
+			// controlled value via useLayoutEffect (LiveEditor.tsx) — React
+			// intentionally renders the span empty. Mirror that here so the
+			// story shows the real editable-line state (#459).
+			useLayoutEffect(() => {
+				if (cursorRef.current) {
+					cursorRef.current.textContent = split[idx] ?? "";
+				}
+			}, [split, idx]);
 			return (
 				<EditorLines
 					lines={split}
@@ -54,7 +64,13 @@ const meta = {
 export default meta;
 type Story = StoryObj<Args>;
 
-export const Default: Story = {};
+export const Default: Story = {
+	play: async ({ canvasElement }) => {
+		// The cursor line is the editable one and must show its raw text.
+		const cursorLine = canvasElement.querySelector("[data-line='0']");
+		expect(cursorLine?.textContent).toContain("# Title");
+	},
+};
 
 export const Empty: Story = {
 	args: { lines: "", cursorLineIndex: 0 },
@@ -63,7 +79,14 @@ export const Empty: Story = {
 export const LongBody: Story = {
 	args: {
 		lines:
-			"## Section\n\nFirst paragraph with **strong** and *italic*.\n\n- bullet\n- bullet\n- bullet",
+			"## Section\n\nFirst paragraph with **strong** and _italic_.\n\n- bullet\n- bullet\n- bullet",
 		cursorLineIndex: 1,
+	},
+	play: async ({ canvasElement }) => {
+		// `_…_` is the renderer's italic syntax (render.ts) — `*…*` would
+		// stay literal asterisks (#459).
+		const em = canvasElement.querySelector("em");
+		expect(em?.textContent).toBe("italic");
+		expect(canvasElement.textContent).not.toContain("*italic*");
 	},
 };
