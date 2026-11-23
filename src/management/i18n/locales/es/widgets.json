@@ -326,7 +326,7 @@
 	},
 	"fontViewer": {
 		"name": "Font viewer",
-		"searchPlaceholder": "Buscar familia, PostScript, estilo…",
+		"searchPlaceholder": "Buscar fuentes…",
 		"searchAria": "Buscar fuentes",
 		"listView": "Vista de lista",
 		"iconView": "Tarjetas de iconos",
