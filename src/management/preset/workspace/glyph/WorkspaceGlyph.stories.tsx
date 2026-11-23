@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { expect } from "storybook/test";
 import type { Preset } from "@/management/preset/contract";
 import {
 	presetIconCanvas,
@@ -24,6 +25,10 @@ const baseArgs = {
 const decoratorBoxClass = css({
 	height: "32",
 	width: "32",
+	// Product glyphs always render inside a `containerType: "size"`
+	// host (frameBase / PresetCatalogGlyphHost). Without it the `cqi`
+	// font sizes resolve against the viewport and clip the glyph.
+	containerType: "size",
 });
 
 const meta = {
@@ -53,6 +58,26 @@ export const Emoji: Story = {
 
 export const LongText: Story = {
 	args: { preset: makePreset("long", presetIconText("Header")) },
+	play: async ({ canvasElement }) => {
+		// Issue #457: every rendered glyph line must stay inside the
+		// 32px frame — previously `cqi` units resolved against the
+		// viewport (no container) and the two "Header" lines overflowed
+		// top/bottom/right.
+		const frame = canvasElement.querySelector<HTMLElement>(
+			"[data-ws-preset-text-fit]",
+		);
+		if (!frame) throw new Error("text glyph not found");
+		const frameRect = frame.getBoundingClientRect();
+		const lines = frame.querySelectorAll<HTMLElement>("span > span");
+		expect(lines.length).toBeGreaterThan(0);
+		for (const line of lines) {
+			const rect = line.getBoundingClientRect();
+			expect(rect.top).toBeGreaterThanOrEqual(frameRect.top - 0.5);
+			expect(rect.bottom).toBeLessThanOrEqual(frameRect.bottom + 0.5);
+			expect(rect.left).toBeGreaterThanOrEqual(frameRect.left - 0.5);
+			expect(rect.right).toBeLessThanOrEqual(frameRect.right + 0.5);
+		}
+	},
 };
 
 export const Canvas: Story = {
