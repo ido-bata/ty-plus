@@ -111,7 +111,14 @@ export function RangeField({
 					aria-label={label ? `${label} value` : "Range value"}
 					uiSize="sm"
 					numberSpinners={false}
-					className={css({ width: "14", flexShrink: 0, flexBasis: "14" })}
+					className={css({
+						// Issue #448: 14 (56px) clipped multi-digit values such as
+						// "-2000.5" — the input needs ~7ch plus inline padding.
+						// (spacing "18" does not exist in the token scale.)
+						width: "20",
+						flexShrink: 0,
+						flexBasis: "20",
+					})}
 					inputClassName={css({
 						paddingInline: "1.5",
 						textAlign: "center",
