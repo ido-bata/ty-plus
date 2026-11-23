@@ -99,6 +99,8 @@ const meta: Record<string, unknown> = {
 	routes: ROUTES,
 	menuClosedAssertions: [] as string[],
 	menuHiddenViolations: [] as string[],
+	menuAnchorAssertions: [] as string[],
+	menuAnchorViolations: [] as string[],
 };
 
 /**
@@ -156,6 +158,36 @@ async function checkMenuHidden(page: import("playwright").Page, label: string) {
 	const line = `${label}: ${JSON.stringify(state)} -> ${pass ? "ok" : "FAIL"}`;
 	(meta.menuClosedAssertions as string[]).push(line);
 	if (!pass) (meta.menuHiddenViolations as string[]).push(line);
+	return pass;
+}
+
+/**
+ * The open collapsed menu must anchor to the menu button: its inline-end
+ * edge aligns with the button's inline-end edge. The UA popover rule sets
+ * `inset: 0`, so a missing `inset-inline-start: auto` makes the definite
+ * start inset win over `inset-inline-end` and the menu paints at the
+ * inline-start edge instead.
+ */
+async function checkMenuAnchor(page: import("playwright").Page, label: string) {
+	const geometry = await page.evaluate(() => {
+		const menu = document.querySelector<HTMLElement>("#site-menu");
+		const button = document.querySelector<HTMLElement>("[data-menu-button]");
+		if (!menu || !button) return null;
+		const mr = menu.getBoundingClientRect();
+		const br = button.getBoundingClientRect();
+		return { menuRight: mr.right, buttonRight: br.right };
+	});
+	if (!geometry) {
+		const line = `${label}: menu or button missing -> FAIL`;
+		(meta.menuAnchorAssertions as string[]).push(line);
+		(meta.menuAnchorViolations as string[]).push(line);
+		return false;
+	}
+	const delta = Math.abs(geometry.menuRight - geometry.buttonRight);
+	const pass = delta <= 4;
+	const line = `${label}: menuRight=${geometry.menuRight.toFixed(1)} buttonRight=${geometry.buttonRight.toFixed(1)} delta=${delta.toFixed(1)} -> ${pass ? "ok" : "FAIL"}`;
+	(meta.menuAnchorAssertions as string[]).push(line);
+	if (!pass) (meta.menuAnchorViolations as string[]).push(line);
 	return pass;
 }
 
@@ -275,6 +307,7 @@ for (const vp of VIEWPORTS) {
 				if (open) {
 					// Interaction state: the open menu must actually paint.
 					await checkMenuHidden(page, `${vp.name} ${route} menu-open`);
+					await checkMenuAnchor(page, `${vp.name} ${route} menu-open`);
 					const menuFile = join(
 						outDir,
 						`${tag}-${vp.name}-${name}-menu-open.png`,
@@ -294,10 +327,13 @@ await browser.close();
 writeFileSync(join(outDir, "capture-meta.json"), JSON.stringify(meta, null, 2));
 console.log(`saved ${join(outDir, "capture-meta.json")}`);
 
-const violations = meta.menuHiddenViolations as string[];
+const violations = [
+	...(meta.menuHiddenViolations as string[]),
+	...(meta.menuAnchorViolations as string[]),
+];
 if (violations.length > 0) {
 	console.error(
-		`menu visibility check FAILED (${violations.length}):\n${violations.join("\n")}`,
+		`menu check FAILED (${violations.length}):\n${violations.join("\n")}`,
 	);
 	process.exit(1);
 }
