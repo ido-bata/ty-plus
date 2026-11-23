@@ -158,16 +158,6 @@ export const finalFrame: WireMessage = {
 	},
 };
 
-const responseFrame = (payload: unknown): WireMessage => ({
-	kind: "response",
-	message: {
-		outcome: { payload, status: "success" },
-		protocol_version: protocolVersion,
-		request_id: requestId,
-		session_id: sessionId,
-	},
-});
-
 export const malformedFirstFrame = new Uint8Array([0, 0, 0, 2, 123, 125]);
 
 type FakeStream = EventEmitter & { readonly chunks: Uint8Array[] };

@@ -43,13 +43,13 @@ import {
 	writeAuthoredTextAsset,
 } from "@/management/storage/write/authoring-write";
 
-export type PresetAuthoringFailureCode =
+type PresetAuthoringFailureCode =
 	| AuthoringWriteErrorCode
 	| "path-rejected"
 	| "invalid-input"
 	| "host-preparation-failed";
 
-export type PresetAuthoringSuccess = {
+type PresetAuthoringSuccess = {
 	readonly ok: true;
 	readonly presetPath: string;
 	readonly rootClass: PresetSaveRootClass;
@@ -60,7 +60,7 @@ export type PresetAuthoringSuccess = {
 	readonly verification: AuthoringVerification;
 };
 
-export type PresetAuthoringFailure = {
+type PresetAuthoringFailure = {
 	readonly ok: false;
 	readonly error: {
 		readonly code: PresetAuthoringFailureCode;
@@ -324,7 +324,7 @@ export const authorCodePresetAsset = async (
 };
 
 /** Easing preset: the host generates the apply script, CEP writes it. */
-export const authorEasingPresetAsset = async (
+const authorEasingPresetAsset = async (
 	win: Window,
 	input: EasingAuthoringInput,
 ): Promise<PresetAuthoringResult> => {

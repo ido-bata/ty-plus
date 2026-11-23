@@ -22,7 +22,7 @@ export type HostContext = {
  */
 export type PresetSaveRootClass = "ae-support" | "user-data" | "extension";
 
-export type PreparePresetSaveBaseInput = {
+type PreparePresetSaveBaseInput = {
 	name: string;
 	saveDir: string;
 	/**
@@ -77,16 +77,7 @@ export type PrepareAnimationPresetTargetInput = PreparePresetSaveBaseInput & {
 };
 
 /** Authorized authoring target: no bytes have been written yet. */
-export type PreparedPresetSaveTarget = {
-	targetPath: string;
-	rootClass: PresetSaveRootClass;
-};
-
 /** Authorized target plus the AE-dependent script content to write. */
-export type PreparedPresetScriptAsset = PreparedPresetSaveTarget & {
-	content: string;
-};
-
 /** Localized precondition errors thrown by the easing host methods.
  *  Every field is optional; the host bundle falls back to English. */
 export type EasingHostMessages = {

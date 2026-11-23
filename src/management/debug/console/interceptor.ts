@@ -44,7 +44,7 @@ import {
 	log,
 	subscribeLog,
 } from "@/management/debug/logger";
-import { getCepSharedData, setCepSharedData } from "@/management/storage/cep";
+import { setCepSharedData } from "@/management/storage/cep";
 import { SHELL_CHANNELS } from "@/management/workspace/surface/contract";
 
 export type { LogMessage, WirePayload } from "@/management/debug/console/types";
@@ -186,25 +186,6 @@ const writeSessionMarker = async (
 		await setCepSharedData(win, SESSION_MARKER_KEY, marker);
 	} catch {
 		/* best-effort: the marker is observability, not a hard dependency */
-	}
-};
-
-const readSessionMarker = async (
-	win: Window,
-): Promise<SessionMarkerRecord | null> => {
-	try {
-		const raw = await getCepSharedData<unknown>(win, SESSION_MARKER_KEY);
-		if (!raw || typeof raw !== "object") return null;
-		const o = raw as Record<string, unknown>;
-		if (o.kind !== "started" && o.kind !== "closed") return null;
-		if (typeof o.startedAt !== "string") return null;
-		return {
-			kind: o.kind,
-			startedAt: o.startedAt,
-			closedAt: typeof o.closedAt === "string" ? o.closedAt : undefined,
-		};
-	} catch {
-		return null;
 	}
 };
 

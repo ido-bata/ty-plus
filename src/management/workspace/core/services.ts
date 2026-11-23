@@ -244,7 +244,7 @@ export const getDataServices = (): DataServices => {
 		throw new GatewayBootRequiredError();
 	}
 
-	const useCepFilePresetStore = shouldUseSharedPresetRepository();
+	const _useCepFilePresetStore = shouldUseSharedPresetRepository();
 	const presetRepository = createPresetRepository({
 		cloud: gateway,
 	});

@@ -34,8 +34,6 @@ export const NAMESPACES = [
 	"online",
 ] as const;
 
-type Namespace = (typeof NAMESPACES)[number];
-
 /**
  * runtime storage keys for locale persistence
  * Archive compatibility: 'i18n-language' is primary

@@ -9,6 +9,7 @@ import * as monaco from "monaco-editor/esm/vs/editor/editor.api.js";
 // with TextMate via `setTokensProvider` further down.
 import "monaco-editor/esm/vs/basic-languages/javascript/javascript.contribution.js";
 import "monaco-editor/esm/vs/basic-languages/typescript/typescript.contribution.js";
+import { widgetSurfaceClass } from "@ty-plus/ui";
 import EditorWorker from "monaco-editor/esm/vs/editor/editor.worker?worker";
 import monacoEditorCss from "monaco-editor/min/vs/editor/editor.main.css?raw";
 import { type JSX, useEffect, useRef, useState } from "react";
@@ -409,15 +410,6 @@ const resizeHandleClass = css({
 	userSelect: "none",
 });
 
-const editorShellClass = css({
-	borderRadius: "shell-sm",
-	borderWidth: "1px",
-	borderStyle: "solid",
-	borderColor: "border.default",
-	backgroundColor: "surface.widget",
-	overflow: "hidden",
-});
-
 const editorErrorClass = css({
 	display: "flex",
 	alignItems: "flex-start",
@@ -701,7 +693,7 @@ export function CodeEditor(props: CodeEditorProps): JSX.Element {
 	}, [value, readOnly]);
 
 	return (
-		<div className={cx(editorShellClass, className)}>
+		<div className={cx(widgetSurfaceClass, className)}>
 			{volarError && (
 				<div role="alert" className={editorErrorClass}>
 					[Volar] {volarError}

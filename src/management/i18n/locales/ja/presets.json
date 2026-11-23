@@ -350,7 +350,8 @@
 			"noScriptsFolder": "スクリプトフォルダーが設定されていません",
 			"noPluginsFolder": "プラグインフォルダーが設定されていません",
 			"noFiles": "ファイルが見つかりません"
-		}
+		},
+		"folderTypeAria": "フォルダタイプ"
 	},
 	"iconEditor": {
 		"tabs": {
@@ -365,7 +366,8 @@
 		"imagePlaceholder": "画像パスまたはURL",
 		"iconTextAria": "アイコンテキスト",
 		"textPlaceholder": "2〜6文字",
-		"previewAria": "アイコンプレビュー"
+		"previewAria": "アイコンプレビュー",
+		"tabsAria": "アイコンタイプ"
 	},
 	"catalogBrowser": {
 		"loading": "読み込み中",

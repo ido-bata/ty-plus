@@ -105,10 +105,7 @@ export type UpdateInstallRequestDTO = Readonly<{
 	}>;
 }>;
 
-export type UpdateInstallStatusDTO =
-	| "installed"
-	| "pending"
-	| "manual_required";
+type UpdateInstallStatusDTO = "installed" | "pending" | "manual_required";
 
 export type UpdateInstallResultDTO = Readonly<{
 	readonly status: UpdateInstallStatusDTO;

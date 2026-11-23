@@ -46,7 +46,7 @@ export const createFilesGatewayFromComposition = (
 	composition: OperationWorkerComposition,
 ): AfterEffectsFilesRuntimeGateway => {
 	const dispatcher = {
-		request: <Scope, Request, Response>(
+		request: <_Scope, Request, Response>(
 			method: { name: string },
 			request: Request,
 		): Promise<Response> => {

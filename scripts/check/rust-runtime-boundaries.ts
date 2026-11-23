@@ -138,7 +138,7 @@ const TEMPORARY_ALLOWLIST: readonly AllowlistEntry[] = [
 		file: "src/management/preset/tool-handoff-file.ts",
 		rule: "node-fs",
 		removalTask: "STO-019",
-		expectedMatches: 6,
+		expectedMatches: 5,
 	},
 	{
 		file: "src/management/setting/onboarding/initialization.ts",

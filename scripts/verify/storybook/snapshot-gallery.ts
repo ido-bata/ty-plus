@@ -33,7 +33,7 @@ type IndexEntry = {
 	tags?: readonly string[];
 };
 
-const projectRoot = resolve(import.meta.dirname, "..", "..");
+const projectRoot = resolve(import.meta.dirname, "..", "..", "..");
 const staticDir = join(projectRoot, "storybook-static");
 const indexJsonPath = join(staticDir, "index.json");
 const outDir = join(projectRoot, ".tmp", "storybook-screenshots");
@@ -106,8 +106,11 @@ const buildGallery = (): void => {
 
 	const sectionsHtml = sortedTitles
 		.map((title) => {
-			const items = groups
-				.get(title)!
+			const group = groups.get(title);
+			if (!group) {
+				return "";
+			}
+			const items = group
 				.sort((a, b) => a.name.localeCompare(b.name))
 				.map((e) => {
 					const status = statusOf(e.id);
@@ -131,7 +134,7 @@ const buildGallery = (): void => {
 				})
 				.join("\n");
 			return `<section>
-  <h2>${escapeHtml(title)} <span class="count">(${groups.get(title)!.length})</span></h2>
+  <h2>${escapeHtml(title)} <span class="count">(${group.length})</span></h2>
   <ul>${items}</ul>
 </section>`;
 		})

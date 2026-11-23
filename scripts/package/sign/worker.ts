@@ -44,7 +44,7 @@ export type SignWorkerConfig = Readonly<{
 	signToolPath?: string;
 }>;
 
-export const DEFAULT_TIMESTAMP_URL = "http://timestamp.digicert.com";
+const DEFAULT_TIMESTAMP_URL = "http://timestamp.digicert.com";
 
 const pick = (value: string | undefined): string | undefined => {
 	const trimmed = value?.trim();

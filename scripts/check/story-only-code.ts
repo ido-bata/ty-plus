@@ -50,7 +50,13 @@
  *   1 - violations detected
  */
 
-import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import {
+	type Dirent,
+	existsSync,
+	readdirSync,
+	readFileSync,
+	writeFileSync,
+} from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -97,7 +103,7 @@ function classify(name: string): FileKind {
 export function collectSourceFiles(dir: string): SourceFile[] {
 	const out: SourceFile[] = [];
 	const walk = (current: string): void => {
-		let entries: ReturnType<typeof readdirSync>;
+		let entries: Dirent[];
 		try {
 			entries = readdirSync(current, { withFileTypes: true });
 		} catch {
@@ -160,7 +166,7 @@ export function findStoryOnlyFiles(
 	files: SourceFile[],
 	root = ROOT,
 ): StoryOnlyFinding[] {
-	const known = new Set(files.map((f) => f.path));
+	const _known = new Set(files.map((f) => f.path));
 
 	// Reverse edges: who imports this file.
 	const prodImporters = new Map<string, string[]>();

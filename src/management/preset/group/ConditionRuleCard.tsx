@@ -64,7 +64,6 @@ const fullWidthMinHeightClass = css({
 
 export function ConditionRuleCard({
 	rule,
-	index,
 	candidatePresets,
 	candidateDirs,
 	busy,
@@ -80,7 +79,6 @@ export function ConditionRuleCard({
 	onRemove: () => void;
 }): JSX.Element {
 	const r = rule;
-	const i = index;
 	return (
 		<div className={cardClass}>
 			<div className={rowClass}>

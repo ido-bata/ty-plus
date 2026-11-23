@@ -11,15 +11,15 @@
  * modules, not copy the rules again.
  */
 
-export const RELEASE_CHANNELS = ["stable", "beta", "insider"] as const;
+const RELEASE_CHANNELS = ["stable", "beta", "insider"] as const;
 
 export type ReleaseChannel = (typeof RELEASE_CHANNELS)[number];
 
-export const RELEASE_PLATFORMS = ["windows", "macos"] as const;
+const RELEASE_PLATFORMS = ["windows", "macos"] as const;
 
 export type ReleasePlatform = (typeof RELEASE_PLATFORMS)[number];
 
-export const isReleaseChannel = (value: unknown): value is ReleaseChannel =>
+const isReleaseChannel = (value: unknown): value is ReleaseChannel =>
 	value === "stable" || value === "beta" || value === "insider";
 
 export const isReleasePlatform = (value: unknown): value is ReleasePlatform =>

@@ -350,7 +350,8 @@
 			"noScriptsFolder": "未配置脚本文件夹",
 			"noPluginsFolder": "未配置插件文件夹",
 			"noFiles": "未找到文件"
-		}
+		},
+		"folderTypeAria": "文件夹类型"
 	},
 	"iconEditor": {
 		"tabs": {
@@ -365,7 +366,8 @@
 		"imagePlaceholder": "图片路径或 URL",
 		"iconTextAria": "图标文本",
 		"textPlaceholder": "2–6 个字符",
-		"previewAria": "图标预览"
+		"previewAria": "图标预览",
+		"tabsAria": "图标类型"
 	},
 	"catalogBrowser": {
 		"loading": "加载中",

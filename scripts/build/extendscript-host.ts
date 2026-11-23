@@ -87,7 +87,7 @@ const babelResult = transformSync(es5Content, {
 	compact: false,
 });
 
-if (!babelResult || !babelResult.code) {
+if (!babelResult?.code) {
 	console.error("Babel transform failed");
 	process.exit(1);
 }

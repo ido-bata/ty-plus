@@ -24,7 +24,7 @@ import type { ArtifactSignature } from "../../../src/management/ipc/operation-wo
 
 export type SignaturePlatform = "windows" | "macos";
 
-export type CommandResult = Readonly<{
+type CommandResult = Readonly<{
 	status: number | null;
 	stdout: string;
 }>;
@@ -122,7 +122,7 @@ export const parseCodesignDetail = (detail: string): { cdHash: string } => {
  */
 const assertGatekeeperAccepts = (spctl: CommandResult): void => {
 	if (spctl.status !== 0) {
-		return fail(
+		fail(
 			`Gatekeeper rejected the binary (spctl --assess exit ${spctl.status}): ${spctl.stdout.trim() || "no output"} — ` +
 				"the signature or its notarization is not valid distribution evidence",
 		);

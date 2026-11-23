@@ -12,7 +12,7 @@ export type Check = {
 	detail: string;
 };
 
-export type CaseStatus = "PASS" | "FAIL" | "BLOCKED" | "SKIP";
+type CaseStatus = "PASS" | "FAIL" | "BLOCKED" | "SKIP";
 
 export type CaseResult = {
 	uc: string;

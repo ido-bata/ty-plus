@@ -9,7 +9,11 @@ import {
 	canonicalMethods,
 	protocolVersion,
 } from "../../src/management/ipc/generated/wire.ts";
-import { resolveOperationWorkerBinary } from "../../src/management/ipc/operation-worker/binary.ts";
+import {
+	type OperationWorkerManifest,
+	resolveOperationWorkerBinary,
+} from "../../src/management/ipc/operation-worker/binary.ts";
+import { createNodeOperationWorkerRuntime } from "../../src/management/ipc/operation-worker/node-runtime.ts";
 import {
 	addDataMainToScripts,
 	patchCepNativeRequireMainPath,
@@ -23,18 +27,18 @@ import {
 
 const CEP_TARGET_HTMLS = ["panel/index.html", "modeless/index.html"];
 
-function argValue(args, name, fallback) {
+function argValue(args: string[], name: string, fallback: string) {
 	const idx = args.indexOf(name);
 	if (idx === -1) return fallback;
 	const v = args[idx + 1];
 	return v ?? fallback;
 }
 
-function argFlag(args, name) {
+function argFlag(args: string[], name: string) {
 	return args.includes(name);
 }
 
-function resolveCepExtensionsRoot(target) {
+function resolveCepExtensionsRoot(target: string) {
 	const platform = process.platform;
 	if (platform === "win32") {
 		if (target === "common") {
@@ -63,7 +67,7 @@ function resolveCepExtensionsRoot(target) {
 	return path.join(home, ".adobe", "CEP", "extensions");
 }
 
-async function exists(p) {
+async function exists(p: string) {
 	try {
 		await lstat(p);
 		return true;
@@ -72,17 +76,21 @@ async function exists(p) {
 	}
 }
 
-async function safeRemove(p, label) {
+async function safeRemove(p: string, label: string) {
 	if (!(await exists(p))) return;
 	try {
 		await rm(p, { recursive: true, force: true });
 	} catch (e) {
 		console.warn(`[${label}] failed to remove: ${p}`);
-		console.warn(e?.message ?? e);
+		console.warn(e instanceof Error ? e.message : e);
 	}
 }
 
-async function safeRemoveIfManifestMatches(folderPath, idNeedle, label) {
+async function safeRemoveIfManifestMatches(
+	folderPath: string,
+	idNeedle: string,
+	label: string,
+) {
 	try {
 		const manifestPath = path.join(folderPath, "CSXS", "manifest.xml");
 		const xml = await readFile(manifestPath, "utf-8").catch(() => "");
@@ -91,13 +99,15 @@ async function safeRemoveIfManifestMatches(folderPath, idNeedle, label) {
 	} catch {}
 }
 
-async function validateReleaseWorkerManifest(rootDir) {
+async function validateReleaseWorkerManifest(rootDir: string) {
 	const workerManifestPath = path.join(rootDir, "worker", "manifest.json");
 	if (!(await exists(workerManifestPath)))
 		throw new Error("Missing operation-worker release manifest");
-	let manifest: { trust?: { mode?: string } };
+	let manifest: OperationWorkerManifest;
 	try {
-		manifest = JSON.parse(await readFile(workerManifestPath, "utf8"));
+		manifest = JSON.parse(
+			await readFile(workerManifestPath, "utf8"),
+		) as OperationWorkerManifest;
 	} catch {
 		throw new Error("Malformed operation-worker manifest");
 	}
@@ -110,20 +120,23 @@ async function validateReleaseWorkerManifest(rootDir) {
 		await readFile(path.resolve("package.json"), "utf8"),
 	);
 	const platform = process.platform === "win32" ? "windows" : "macos";
-	const resolved = await resolveOperationWorkerBinary({
-		extensionRoot: path.resolve(rootDir),
-		manifest,
-		platform,
-		expectedProductVersion: packageJson.version,
-		expectedExtensionVersion: packageJson.version,
-		expectedProtocolVersion: protocolVersion,
-		expectedCapabilities: [...canonicalMethods],
-		expectedTrustMode: "release",
-	});
+	const resolved = await resolveOperationWorkerBinary(
+		{
+			extensionRoot: path.resolve(rootDir),
+			manifest,
+			platform,
+			expectedProductVersion: packageJson.version,
+			expectedExtensionVersion: packageJson.version,
+			expectedProtocolVersion: protocolVersion,
+			expectedCapabilities: [...canonicalMethods],
+			expectedTrustMode: "release",
+		},
+		createNodeOperationWorkerRuntime(),
+	);
 	return { manifest, binaryPath: resolved.absolutePath };
 }
 
-export function sanitizeInstalledHtml(rootDir) {
+export function sanitizeInstalledHtml(rootDir: string) {
 	let changed = 0;
 	for (const relativePath of CEP_TARGET_HTMLS) {
 		const filePath = path.join(rootDir, relativePath);

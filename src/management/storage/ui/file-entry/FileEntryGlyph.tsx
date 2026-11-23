@@ -33,15 +33,6 @@ const coverImageClass = css({
 	objectFit: "cover",
 	objectPosition: "center",
 });
-const monoTextClass = css({
-	fontFamily: "mono",
-	fontWeight: "semibold",
-	lineHeight: "none",
-});
-const emojiTextClass = css({
-	fontSize: "base",
-	lineHeight: "none",
-});
 
 function IconFrame({
 	size,

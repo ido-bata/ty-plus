@@ -260,59 +260,6 @@ const cubicFromPoints = (points: CurvePoint[]): Cubic => {
 	];
 };
 
-const buildPresetOpenParams = (
-	points: CurvePoint[],
-	defaultName: string,
-	labelColor: number,
-	options: { mode: Mode; handle: Point } = {
-		mode: "curve",
-		handle: { x: 0.4, y: 0.6 },
-	},
-): string => {
-	// In procedural (bounce/elastic) mode, `points` is still the 2-point
-	// (0,0)→(1,1) skeleton. Expand to the full procedural curve here so
-	// the saved preset captures the actual shape. On reload, the preset
-	// is treated as a Curve-mode multi-point curve (the host already
-	// understands the points array), which keeps backward compatibility
-	// with presets authored before procedural modes existed. Loop mode
-	// shares the curve-mode points (the host replicates them at apply
-	// time), so it's saved as a regular curve preset without cycle info.
-	const pointsForSave: CurvePoint[] =
-		options.mode === "curve" || options.mode === "loop"
-			? points
-			: (buildCurvePointsFromProcedural(
-					options.mode,
-					options.handle,
-				) as CurvePoint[]);
-	const cubic = cubicFromPoints(pointsForSave);
-	const isMulti = pointsForSave.length > 2;
-	const presetPoints:
-		| [number, number, number, number, number, number][]
-		| undefined = isMulti
-		? pointsForSave.map((p) => [p.x, p.y, p.hIn.x, p.hIn.y, p.hOut.x, p.hOut.y])
-		: undefined;
-	return JSON.stringify({
-		presetTemplate: "easing",
-		presetType: "script",
-		defaultName,
-		data: {
-			easing: {
-				version: 1,
-				cubic,
-				...(presetPoints ? { points: presetPoints } : {}),
-				labelColor,
-			},
-		},
-		icon: {
-			type: "canvas",
-			param: {
-				cubic,
-				...(presetPoints ? { points: presetPoints } : {}),
-			},
-		},
-	});
-};
-
 const proceduralPointsForApply = (mode: Mode, handle: Point): CurvePoint[] => {
 	if (mode === "curve" || mode === "loop")
 		return pointsFromCubic(PRESET_CURVES.easeOut);

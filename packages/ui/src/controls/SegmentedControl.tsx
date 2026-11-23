@@ -1,8 +1,13 @@
+import {
+	segmentedButtonActiveClass,
+	segmentedButtonClass,
+	segmentedButtonInactiveClass,
+	segmentedStripClass,
+} from "@ty-plus/ui/styles/segmented";
 import { cx } from "@ty-plus/ui/util/cx";
 import type { ReactElement } from "react";
-import { css } from "@/styled-system/css";
 
-type SegmentedOption = { value: string; label: string };
+type SegmentedOption = { value: string; label: string; disabled?: boolean };
 
 export type SegmentedControlProps = {
 	options: SegmentedOption[];
@@ -15,47 +20,6 @@ export type SegmentedControlProps = {
 	/** Accessible name for the group (i18n is the caller's responsibility). */
 	"aria-label"?: string;
 };
-
-const toolbar = css({
-	display: "inline-flex",
-	width: "full",
-	minWidth: 0,
-	maxWidth: "full",
-	flexWrap: "wrap",
-	gap: "1",
-	borderRadius: "shell-sm",
-	borderWidth: "1px",
-	borderStyle: "solid",
-	borderColor: "border.default",
-	backgroundColor: "surface.panel",
-	padding: "0.5",
-});
-
-const buttonBase = css({
-	height: "7",
-	minWidth: 0,
-	flex: 1,
-	borderRadius: "shell-sm",
-	paddingInline: "2",
-	fontSize: "shell-text-sm",
-	lineHeight: "tight",
-	transitionProperty: "colors",
-});
-
-const buttonSelected = css({
-	backgroundColor: "text.accent",
-	color: "surface.panel",
-	boxShadow: "sm",
-});
-
-const buttonUnselected = css({
-	backgroundColor: "surface.widget",
-	color: "text.muted",
-	_hover: {
-		backgroundColor: "interactive.hover",
-		color: "text.primary",
-	},
-});
 
 export function SegmentedControl(props: SegmentedControlProps): ReactElement {
 	const {
@@ -72,7 +36,7 @@ export function SegmentedControl(props: SegmentedControlProps): ReactElement {
 		<div
 			role="toolbar"
 			aria-label={ariaLabel}
-			className={cx(toolbar, className)}
+			className={cx(segmentedStripClass, className)}
 		>
 			{options.map((opt) => {
 				const selected = opt.value === value;
@@ -80,12 +44,13 @@ export function SegmentedControl(props: SegmentedControlProps): ReactElement {
 					<button
 						key={opt.value}
 						type="button"
+						disabled={opt.disabled}
 						aria-pressed={selected}
 						className={cx(
-							buttonBase,
+							segmentedButtonClass,
 							selected
-								? (selectedClassName ?? buttonSelected)
-								: (unselectedClassName ?? buttonUnselected),
+								? (selectedClassName ?? segmentedButtonActiveClass)
+								: (unselectedClassName ?? segmentedButtonInactiveClass),
 							buttonClassName,
 						)}
 						onClick={() => onChange(opt.value)}

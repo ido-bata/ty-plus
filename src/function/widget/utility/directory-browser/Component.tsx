@@ -1,10 +1,15 @@
 import {
 	Button,
+	borderedListClass,
+	cx,
+	emptyStateClass,
+	fillSurfaceClass,
 	Icon,
 	IconButton,
 	isIMEComposing,
 	ListSelect,
 	PathField,
+	rowLabelClass,
 	SearchField,
 } from "@ty-plus/ui";
 import { ChevronRight, FolderOpen, Play, Search } from "lucide-react";
@@ -287,28 +292,11 @@ const anchorRowIconWrapClass = css({
 
 const anchorRowTrailingClass = css({ flexShrink: 0, color: "text.muted" });
 
-const emptyStateClass = css({
-	paddingBlock: "8",
-	textAlign: "center",
-	fontSize: "shell-text-sm",
-	color: "text.muted",
-});
-
 const emptyStateErrorClass = css({
 	paddingBlock: "4",
 	textAlign: "center",
 	fontSize: "shell-text-sm",
 	color: "status.error",
-});
-
-const fileListClass = css({
-	display: "flex",
-	flexDirection: "column",
-	overflow: "hidden",
-	borderRadius: "shell-sm",
-	borderWidth: "1px",
-	borderStyle: "solid",
-	borderColor: "border.default",
 });
 
 const listHeaderClass = css({
@@ -385,14 +373,7 @@ function AnchorRowButton({
 				</span>
 			</span>
 			<div className={css({ minWidth: 0, flex: "1" })}>
-				<div
-					className={css({
-						truncate: true,
-						fontSize: "shell-text-sm",
-						fontWeight: "medium",
-						color: "text.primary",
-					})}
-				>
+				<div className={cx(rowLabelClass, css({ truncate: true }))}>
 					{label}
 				</div>
 				<div
@@ -1370,29 +1351,6 @@ export function DirectoryBrowserWidget({
 		setFileBrowserDirFocus(null);
 	}, []);
 
-	const iconToolBtnBase = css({
-		height: "full",
-		minHeight: 0,
-		width: "8",
-		flexShrink: 0,
-		alignSelf: "stretch",
-		borderRadius: "shell-sm",
-		borderWidth: "1px",
-		borderStyle: "solid",
-		borderColor: "border.default",
-		backgroundColor: "surface.widget",
-		opacity: 0.5,
-		padding: 0,
-		color: "text.muted",
-		_hover: { color: "text.primary" },
-	});
-	const iconToolBtnActive = css({
-		borderColor: "border.strong",
-		backgroundColor: "surface.widget",
-		opacity: 1,
-		color: "text.primary",
-	});
-
 	return (
 		<div
 			ref={widgetPanelRef}
@@ -1401,16 +1359,7 @@ export function DirectoryBrowserWidget({
 			// Select/Deselect label on file rows.
 			data-directory-browser-can-go-up={canGoUpFromCurrent ? "true" : "false"}
 			data-directory-browser-selected-file={fileBrowserSelectedPath}
-			className={css({
-				display: "flex",
-				height: "full",
-				minHeight: 0,
-				width: "full",
-				minWidth: 0,
-				flexDirection: "column",
-				overflow: "hidden",
-				backgroundColor: "surface.dialog",
-			})}
+			className={fillSurfaceClass}
 		>
 			<CatalogBrowserShell
 				domPrefix="directory-browser"
@@ -1651,7 +1600,7 @@ export function DirectoryBrowserWidget({
 							{t("directoryBrowser.empty.noAnchors")}
 						</p>
 					) : viewMode === "list" ? (
-						<ul className={fileListClass}>
+						<ul className={borderedListClass}>
 							{anchorRows.map((row) => (
 								<li
 									key={row.label + row.path}
@@ -1763,14 +1712,7 @@ export function DirectoryBrowserWidget({
 											})}
 										>
 											<div
-												className={css({
-													truncate: true,
-													textAlign: "left",
-													fontSize: "shell-text-sm",
-													fontWeight: "medium",
-													lineHeight: "tight",
-													color: "text.primary",
-												})}
+												className={cx(rowLabelClass, css({ truncate: true }))}
 											>
 												{row.label}
 											</div>
@@ -1814,7 +1756,7 @@ export function DirectoryBrowserWidget({
 										title={g.group.title}
 										count={g.presets.length}
 									>
-										<ul className={fileListClass}>
+										<ul className={borderedListClass}>
 											{g.presets.map((p: Preset) => (
 												<PresetListRow
 													key={p.id}
@@ -1884,7 +1826,7 @@ export function DirectoryBrowserWidget({
 										count={partitionedCatalog.ungrouped.length}
 									>
 										{viewMode === "list" ? (
-											<ul className={fileListClass}>
+											<ul className={borderedListClass}>
 												{partitionedCatalog.ungrouped.map((p: Preset) => (
 													<PresetListRow
 														key={p.id}
@@ -1941,7 +1883,7 @@ export function DirectoryBrowserWidget({
 										)}
 									</CollapsibleGroupHeader>
 								) : viewMode === "list" ? (
-									<ul className={fileListClass}>
+									<ul className={borderedListClass}>
 										{partitionedCatalog.ungrouped.map((p: Preset) => (
 											<PresetListRow
 												key={p.id}

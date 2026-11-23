@@ -80,7 +80,7 @@ const parseCatalog = (): ProtocolCatalog => {
 		"catalog.protocolVersion",
 	);
 	const limits = expectObject(catalog.limits, "catalog.limits");
-	const documents = expectObject(catalog.documents, "catalog.documents");
+	const _documents = expectObject(catalog.documents, "catalog.documents");
 	const canonicalMethods = catalog.canonicalMethods;
 	const canonicalOperationPolicies = expectObject(
 		catalog.canonicalOperationPolicies,

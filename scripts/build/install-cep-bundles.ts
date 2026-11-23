@@ -11,14 +11,14 @@ import os from "node:os";
 import path from "node:path";
 import process from "node:process";
 
-function argValue(args, name, fallback) {
+function argValue(args: string[], name: string, fallback: string) {
 	const idx = args.indexOf(name);
 	if (idx === -1) return fallback;
 	const v = args[idx + 1];
 	return v ?? fallback;
 }
 
-function resolveCepExtensionsRoot(target) {
+function resolveCepExtensionsRoot(target: string) {
 	const platform = process.platform;
 	if (platform === "win32") {
 		if (target === "common") {
@@ -49,7 +49,7 @@ function resolveCepExtensionsRoot(target) {
 	return path.join(home, ".adobe", "CEP", "extensions");
 }
 
-async function exists(p) {
+async function exists(p: string) {
 	try {
 		await lstat(p);
 		return true;
@@ -103,7 +103,7 @@ if (!dstRootOverride && !noClean) {
 				await rm(p, { recursive: true, force: true });
 			} catch (e) {
 				console.warn(`[clean] failed to remove: ${p}`);
-				console.warn(e?.message ?? e);
+				console.warn(e instanceof Error ? e.message : e);
 			}
 		}
 	}
@@ -118,7 +118,7 @@ for (const name of entries) {
 			await rm(dst, { recursive: true, force: true });
 		} catch (e) {
 			console.warn(`[install] failed to remove existing: ${dst}`);
-			console.warn(e?.message ?? e);
+			console.warn(e instanceof Error ? e.message : e);
 		}
 	}
 

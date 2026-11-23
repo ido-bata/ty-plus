@@ -133,7 +133,7 @@ describe("operation worker correlation (Issue #158)", () => {
 		const seen: Array<{ requestId: string; idempotencyKey?: string }> = [];
 		const scheduler = newScheduler({
 			create: () => ({
-				invoke: async <Request, Response>() => {
+				invoke: async <_Request, Response>() => {
 					attempt += 1;
 					if (attempt === 1) {
 						throw new OperationWorkerAttemptError("worker_crashed", undefined, {
@@ -183,7 +183,7 @@ describe("operation worker correlation (Issue #158)", () => {
 		const seen: Array<{ requestId: string; idempotencyKey?: string }> = [];
 		const scheduler = newScheduler({
 			create: () => ({
-				invoke: async <Request, Response>() => {
+				invoke: async <_Request, _Response>() => {
 					throw new Error("child crashed before the handshake");
 				},
 				stopAccepting: () => undefined,

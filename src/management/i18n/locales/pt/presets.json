@@ -353,7 +353,8 @@
 			"noScriptsFolder": "Nenhuma pasta de scripts configurada",
 			"noPluginsFolder": "Nenhuma pasta de plug-ins configurada",
 			"noFiles": "Nenhum ficheiro encontrado"
-		}
+		},
+		"folderTypeAria": "Tipo de pasta"
 	},
 	"iconEditor": {
 		"tabs": {
@@ -368,7 +369,8 @@
 		"imagePlaceholder": "Caminho ou URL da imagem",
 		"iconTextAria": "Texto do ícone",
 		"textPlaceholder": "2 a 6 caracteres",
-		"previewAria": "Pré-visualização do ícone"
+		"previewAria": "Pré-visualização do ícone",
+		"tabsAria": "Tipo de ícone"
 	},
 	"catalogBrowser": {
 		"loading": "A carregar",

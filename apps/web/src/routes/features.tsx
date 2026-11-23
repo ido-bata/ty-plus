@@ -1,6 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Button, MediaFrame } from "@ty-plus/ui";
-import { cx } from "@ty-plus/ui/util/cx";
+import { Button, cx, MediaFrame } from "@ty-plus/ui";
 import { useTranslation } from "react-i18next";
 import { css } from "@/styled-system/css";
 import { PresetStage } from "../components/PresetStage";
@@ -16,6 +15,7 @@ import {
 	stack,
 } from "../styles/layout";
 import * as s from "../styles/site";
+import { eyebrow } from "../styles/site";
 
 export const Route = createFileRoute("/features")({
 	head: () => ({
@@ -32,14 +32,6 @@ export const Route = createFileRoute("/features")({
 		],
 	}),
 	component: FeaturesPage,
-});
-
-const sectionLabel = css({
-	fontSize: "xs",
-	fontWeight: "medium",
-	letterSpacing: "wider",
-	textTransform: "uppercase",
-	color: "text.muted",
 });
 
 const full12 = css({
@@ -95,7 +87,7 @@ function FeaturesPage() {
 				)}
 			>
 				<div className={stack({ gap: 3, align: "center" })}>
-					<span className={sectionLabel}>{t("features.eyebrow")}</span>
+					<span className={eyebrow}>{t("features.eyebrow")}</span>
 					<h1 className={cx(s.h1, css({ textAlign: "center" }))}>
 						{t("features.title")}
 					</h1>
@@ -117,7 +109,7 @@ function FeaturesPage() {
 			>
 				<div className={grid({ gap: 3 })}>
 					<div className={cx(span4, stack({ gap: 3 }))}>
-						<span className={sectionLabel}>{t("features.tiles.eyebrow")}</span>
+						<span className={eyebrow}>{t("features.tiles.eyebrow")}</span>
 						<h2 className={s.h2}>{t("features.tiles.title")}</h2>
 						<p className={s.body}>{t("features.tiles.body")}</p>
 					</div>
@@ -140,9 +132,7 @@ function FeaturesPage() {
 			>
 				<div className={grid({ gap: 3 })}>
 					<div className={cx(span4, stack({ gap: 2 }))}>
-						<span className={sectionLabel}>
-							{t("features.interaction.eyebrow")}
-						</span>
+						<span className={eyebrow}>{t("features.interaction.eyebrow")}</span>
 						<h2 className={s.h2}>{t("features.interaction.title")}</h2>
 						<p className={s.body}>{t("features.interaction.body")}</p>
 					</div>
@@ -177,9 +167,7 @@ function FeaturesPage() {
 			>
 				<div className={grid({ gap: 3 })}>
 					<div className={cx(full12, stack({ gap: 2 }))}>
-						<span className={sectionLabel}>
-							{t("features.surfaces.eyebrow")}
-						</span>
+						<span className={eyebrow}>{t("features.surfaces.eyebrow")}</span>
 						<h2 className={s.h2}>{t("features.surfaces.title")}</h2>
 					</div>
 					<FeatureShot

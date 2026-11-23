@@ -29,7 +29,6 @@ const uuid = (): string => {
 export const createInstanceId = (): string => uuid();
 
 /** New preset placement id (grid tile key when distinct from catalog ref). */
-const createPresetPlacementInstanceId = (): string => uuid();
 
 /**
  * New local preset row in `presets.json`.

@@ -1,6 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Button, Notice, Surface } from "@ty-plus/ui";
-import { cx } from "@ty-plus/ui/util/cx";
+import { Button, cx, Notice, Surface } from "@ty-plus/ui";
 import { Trans, useTranslation } from "react-i18next";
 import { css } from "@/styled-system/css";
 import { i18n } from "../i18n";

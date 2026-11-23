@@ -17,12 +17,12 @@ import {
 } from "node:fs";
 import path from "node:path";
 
-export type SecretPattern = Readonly<{
+type SecretPattern = Readonly<{
 	name: string;
 	pattern: RegExp;
 }>;
 
-export const SECRET_PATTERNS: readonly SecretPattern[] = [
+const SECRET_PATTERNS: readonly SecretPattern[] = [
 	{ name: "github-token", pattern: /\bgh[pousr]_[A-Za-z0-9]{20,}\b/ },
 	{
 		name: "github-fine-grained-token",

@@ -13,10 +13,9 @@
 
 import { existsSync, readdirSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
-import { fileURLToPath } from "url";
+import { fileURLToPath } from "node:url";
 import {
 	buildReport,
-	loadTrend,
 	printHumanReport,
 	printJsonReport,
 	saveTrend,

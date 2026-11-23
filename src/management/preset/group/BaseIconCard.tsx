@@ -1,3 +1,4 @@
+import { sectionLabelClass } from "@ty-plus/ui";
 import type { JSX } from "react";
 import { i18n } from "@/management/i18n/index";
 import { readUserHomeOrFallback } from "@/management/preset/catalog-add/browse-start-dir";
@@ -24,14 +25,6 @@ const headerClass = css({
 	justifyContent: "space-between",
 });
 
-const labelClass = css({
-	fontSize: "xs",
-	fontWeight: "medium",
-	textTransform: "uppercase",
-	letterSpacing: "wide",
-	color: "text.muted",
-});
-
 const editorHostClass = css({
 	marginTop: "3",
 });
@@ -46,7 +39,7 @@ export function BaseIconCard({
 	return (
 		<div className={cardClass}>
 			<div className={headerClass}>
-				<span className={labelClass}>
+				<span className={sectionLabelClass}>
 					{i18n.t("presets:group.baseIcon.heading")}
 				</span>
 			</div>

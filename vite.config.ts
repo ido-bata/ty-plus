@@ -3,9 +3,8 @@ import path from "node:path";
 
 import react from "@vitejs/plugin-react";
 import Icons from "unplugin-icons/vite";
-import { type Plugin, defineConfig, loadEnv } from "vite";
+import { defineConfig, loadEnv, type Plugin } from "vite";
 import { type CepOptions, cep, runAction } from "vite-cep-plugin";
-import { LOGGER_MODULE_PATH_SUFFIX } from "./src/management/debug/logger.js";
 import cepConfig, {
 	OPERATION_WORKER_EXPECTED_TRUST_MODE,
 } from "./cep.config.js";
@@ -16,6 +15,7 @@ import {
 	ensureCepDevRedirectPlugin,
 	stripCepDevRedirectPlugin,
 } from "./scripts/utils/vite-plugin-strip-cep-dev-redirect.js";
+import { LOGGER_MODULE_PATH_SUFFIX } from "./src/management/debug/logger.js";
 
 const __dirname = import.meta.dirname;
 
@@ -38,9 +38,7 @@ const __dirname = import.meta.dirname;
  * `LOGGER_MODULE_PATH_SUFFIX` is imported from the module itself so the
  * plugin and the codebase cannot drift.
  */
-const dropConsoleLogInfoPlugin = (
-	loggerWhitelistSuffix: string,
-): Plugin => ({
+const dropConsoleLogInfoPlugin = (loggerWhitelistSuffix: string): Plugin => ({
 	name: "ty-plus:drop-console-log-info",
 	transform(code, id) {
 		if (!isProduction) return null;
@@ -80,7 +78,8 @@ const APP_VERSION = pkg.version;
  * downgrade and never offer). An unrecognised suffix is a build error, not a
  * silent fallback.
  */
-const releaseVersion = (process.env.TY_PLUS_RELEASE_VERSION ?? "").trim() || APP_VERSION;
+const releaseVersion =
+	(process.env.TY_PLUS_RELEASE_VERSION ?? "").trim() || APP_VERSION;
 const releaseChannelFromVersion =
 	/(?:-(beta|insider)\.\d+)?$/.exec(releaseVersion)?.[1] ?? "stable";
 const releaseChannelEnv = (process.env.TY_PLUS_RELEASE_CHANNEL ?? "").trim();
@@ -184,7 +183,7 @@ const seenInputs = new Set<string>();
 const htmlEntries = new Set<string>();
 
 // Add panel HTML entry points first
-cepConfig.panels.map((panel) => {
+cepConfig.panels.forEach((panel) => {
 	const sourceMainPath =
 		CEP_SHELL_HTML_SOURCE[panel.mainPath] ?? panel.mainPath;
 	const resolved = path.resolve(root, sourceMainPath.replace(/^[.][\\/]/, ""));
@@ -204,10 +203,7 @@ cepConfig.panels.map((panel) => {
 // `assetFileNames` below so the appearance boot can pin the link href.
 const SHELL_CSS_ENTRY = "cep-shell";
 {
-	const shellCssPath = path.resolve(
-		root,
-		"management/panel/styles/app.css",
-	);
+	const shellCssPath = path.resolve(root, "management/panel/styles/app.css");
 	if (!seenInputs.has(shellCssPath)) {
 		seenInputs.add(shellCssPath);
 		input[SHELL_CSS_ENTRY] = shellCssPath;
@@ -259,15 +255,15 @@ export default defineConfig({
 		alias: [
 			{
 				find: /^@\/styled-system\/(.*)$/,
-				replacement: path.resolve(__dirname, "styled-system") + "/$1",
+				replacement: `${path.resolve(__dirname, "styled-system")}/$1`,
 			},
 			{
 				find: /^@styled-system\/(.*)$/,
-				replacement: path.resolve(__dirname, "styled-system") + "/$1",
+				replacement: `${path.resolve(__dirname, "styled-system")}/$1`,
 			},
 			{
 				find: /^@ty-plus\/ui\/(.*)$/,
-				replacement: path.resolve(__dirname, "packages/ui/src") + "/$1",
+				replacement: `${path.resolve(__dirname, "packages/ui/src")}/$1`,
 			},
 			{
 				find: "@ty-plus/ui",

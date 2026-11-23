@@ -129,7 +129,7 @@ const parseArgs = (argv: readonly string[]): Args => {
 	return out;
 };
 
-const projectRoot = resolve(import.meta.dirname, "..", "..");
+const projectRoot = resolve(import.meta.dirname, "..", "..", "..");
 const staticDir = join(projectRoot, "storybook-static");
 const indexJsonPath = join(staticDir, "index.json");
 const outDir = join(projectRoot, ".tmp", "storybook-screenshots");
@@ -209,7 +209,7 @@ type CaptureOutcome =
  * Returns the rendered root innerHTML length and preview, or a `{error}`
  * object describing the failure.
  */
-const renderStoryManually = async (
+const _renderStoryManually = async (
 	page: Page,
 	id: string,
 	timeoutMs: number,
@@ -254,7 +254,7 @@ const renderStoryManually = async (
 			while (!w.__STORYBOOK_PREVIEW__) {
 				if (Date.now() > deadline) {
 					return {
-						ok: false,
+						ok: false as const,
 						error: "no __STORYBOOK_PREVIEW__",
 						stage: "init",
 					};
@@ -265,7 +265,7 @@ const renderStoryManually = async (
 			const store = preview.storyStoreValue;
 			if (!store?.importFn || !store.storyIndex?.entries) {
 				return {
-					ok: false,
+					ok: false as const,
 					error: "no storyStoreValue/importFn/storyIndex",
 					stage: "init",
 				};
@@ -275,7 +275,7 @@ const renderStoryManually = async (
 			const entry = store.storyIndex.entries[storyId];
 			if (!entry) {
 				return {
-					ok: false,
+					ok: false as const,
 					error: `no entry for ${storyId} in storyIndex`,
 					stage: "index",
 				};
@@ -295,7 +295,7 @@ const renderStoryManually = async (
 			])) as Record<string, unknown> | undefined;
 			if (!csfModule) {
 				return {
-					ok: false,
+					ok: false as const,
 					error: `importFn returned undefined for ${entry.importPath}`,
 					stage: "import",
 				};
@@ -316,7 +316,7 @@ const renderStoryManually = async (
 				(typeof meta?.render === "function" ? meta.render : null);
 			if (typeof unboundStoryFn !== "function") {
 				return {
-					ok: false,
+					ok: false as const,
 					error: `no renderable unboundStoryFn in ${entry.importPath} (module keys: ${Object.keys(csfModule).join(", ")})`,
 					stage: "extract",
 				};
@@ -341,7 +341,7 @@ const renderStoryManually = async (
 			while (!cr?.renderToScreen || !isAttachedCanvas(cr.canvasElement)) {
 				if (Date.now() > deadline) {
 					return {
-						ok: false,
+						ok: false as const,
 						error:
 							"no currentRender.renderToScreen / attached canvasElement after init",
 						stage: "renderRef",
@@ -453,7 +453,7 @@ const captureOne = async (
 		await page.waitForFunction(
 			() =>
 				window.__STORYBOOK_PREVIEW__?.currentRender?.phase === "finished" &&
-				(document.getElementById("storybook-root")?.childElementCount ?? 0) > 0,
+				(document.getElementById("storybook-root")?.childNodes.length ?? 0) > 0,
 			{ timeout: timeoutMs },
 		);
 		// Give React + decorators a beat for layout effects.
@@ -505,7 +505,10 @@ const captureAll = async (
 	// cannot stall the entire sweep.
 	page.setDefaultTimeout(timeoutMs + 5_000);
 	for (let i = 0; i < ids.length; i += 1) {
-		const id = ids[i]!;
+		const id = ids[i];
+		if (id === undefined) {
+			continue;
+		}
 		const result = await captureOne(page, id, port, timeoutMs);
 		out.push(result);
 		const stamp = new Date().toISOString().slice(11, 19);
@@ -568,17 +571,20 @@ const buildGallery = (outcomes: readonly CaptureOutcome[]): void => {
 
 	const counts = { ok: 0, empty: 0, failed: 0, skipped: 0 };
 	for (const o of outcomes) counts[o.status] += 1;
-	const totalTried = outcomes.length;
+	const _totalTried = outcomes.length;
 	const totalPresent = counts.ok;
 
 	const sectionsHtml = sortedTitles
 		.map((title) => {
-			const items = groups
-				.get(title)!
+			const group = groups.get(title);
+			if (!group) {
+				return "";
+			}
+			const items = group
 				.sort((a, b) => a.name.localeCompare(b.name))
 				.map((e) => {
 					const status = statusOf(e.id);
-					const isPresent = status === "ok";
+					const _isPresent = status === "ok";
 					return `<li class="${status}">
   <a href="./${e.id}.png" target="_blank" rel="noopener">
     <img src="./${e.id}.png" alt="${escapeHtml(e.title)} / ${escapeHtml(e.name)}" loading="lazy">
@@ -592,7 +598,7 @@ const buildGallery = (outcomes: readonly CaptureOutcome[]): void => {
 				})
 				.join("\n");
 			return `<section>
-  <h2>${escapeHtml(title)} <span class="count">(${groups.get(title)!.length})</span></h2>
+  <h2>${escapeHtml(title)} <span class="count">(${group.length})</span></h2>
   <ul>${items}</ul>
 </section>`;
 		})
@@ -707,11 +713,8 @@ const main = async (): Promise<void> => {
 		process.exit(143);
 	});
 
-	const chromePath =
-		process.env.CHROME_PATH ??
-		`${process.env.HOME}/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome`;
 	const browser = await chromium.launch({
-		executablePath: chromePath,
+		executablePath: process.env.CHROME_PATH,
 		headless: true,
 		args: [
 			"--no-sandbox",

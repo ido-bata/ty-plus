@@ -4,8 +4,8 @@ import process from "node:process";
 
 const DEFAULT_PORTS = [8970, 8971, 8972, 8973, 8974];
 
-function parsePortsFromArgs(args) {
-	const ports = [];
+function parsePortsFromArgs(args: string[]): number[] {
+	const ports: number[] = [];
 	for (const arg of args) {
 		const trimmed = String(arg).trim();
 		if (!trimmed) continue;
@@ -29,7 +29,7 @@ async function portsFromLocalDebugFile() {
 	const debugPath = path.resolve("dist/cep/.debug");
 	try {
 		const xml = await readFile(debugPath, "utf-8");
-		const ports = [];
+		const ports: number[] = [];
 		const re = /Port="(\d+)"/g;
 		for (const m of xml.matchAll(re)) ports.push(Number.parseInt(m[1], 10));
 		const unique = [...new Set(ports)]
@@ -41,7 +41,7 @@ async function portsFromLocalDebugFile() {
 	}
 }
 
-async function getJson(port, endpoint) {
+async function getJson(port: number, endpoint: string) {
 	const url = `http://127.0.0.1:${port}${endpoint}`;
 	const controller = new AbortController();
 	const timeout = setTimeout(() => controller.abort(), 1000);
@@ -54,12 +54,26 @@ async function getJson(port, endpoint) {
 	}
 }
 
+type CdpResponse = {
+	result?: { result?: { value?: unknown } };
+	data?: string;
+};
+
+type CdpPending = {
+	resolve: (value: CdpResponse) => void;
+	reject: (reason?: unknown) => void;
+};
+
 class CDPClient {
-	constructor(wsUrl) {
+	ws: WebSocket;
+	nextId: number;
+	pending: Map<number, CdpPending>;
+
+	constructor(wsUrl: string) {
 		this.ws = new WebSocket(wsUrl);
 		this.nextId = 1;
 		this.pending = new Map();
-		this.ws.addEventListener("message", (ev) => {
+		this.ws.addEventListener("message", (ev: MessageEvent) => {
 			const msg = JSON.parse(ev.data);
 			const pending = this.pending.get(msg.id);
 			if (!pending) return;
@@ -72,12 +86,12 @@ class CDPClient {
 
 	async waitOpen() {
 		if (this.ws.readyState === 1) return;
-		await new Promise((resolve, reject) => {
+		await new Promise<void>((resolve, reject) => {
 			const onOpen = () => {
 				cleanup();
 				resolve();
 			};
-			const onError = (e) => {
+			const onError = (e: unknown) => {
 				cleanup();
 				reject(e);
 			};
@@ -90,11 +104,14 @@ class CDPClient {
 		});
 	}
 
-	send(method, params = {}) {
+	send(
+		method: string,
+		params: Record<string, unknown> = {},
+	): Promise<CdpResponse> {
 		const id = this.nextId++;
 		const payload = { id, method, params };
 		this.ws.send(JSON.stringify(payload));
-		return new Promise((resolve, reject) => {
+		return new Promise<CdpResponse>((resolve, reject) => {
 			this.pending.set(id, { resolve, reject });
 			setTimeout(() => {
 				if (!this.pending.has(id)) return;
@@ -111,7 +128,7 @@ class CDPClient {
 	}
 }
 
-function safeString(v, max = 2000) {
+function safeString(v: unknown, max = 2000) {
 	const s = typeof v === "string" ? v : JSON.stringify(v);
 	if (s.length <= max) return s;
 	return `${s.slice(0, max)}… (+${s.length - max} chars)`;
@@ -156,12 +173,12 @@ for (const port of ports) {
 		await cdp.send("Runtime.enable");
 		await cdp.send("Page.enable");
 
-		const evalExpr = async (expression) => {
+		const evalExpr = async (expression: string) => {
 			const r = await cdp.send("Runtime.evaluate", {
 				expression,
 				returnByValue: true,
 			});
-			return r?.result?.value;
+			return r?.result?.result?.value;
 		};
 
 		const info = {
@@ -211,8 +228,15 @@ for (const port of ports) {
 
 		cdp.close();
 	} catch (e) {
-		const msg = e?.message ?? String(e);
-		const cause = e?.cause?.code ? ` (cause=${e.cause.code})` : "";
+		const msg = e instanceof Error ? e.message : String(e);
+		const causeValue = e instanceof Error ? e.cause : undefined;
+		const causeCode =
+			typeof causeValue === "object" &&
+			causeValue !== null &&
+			"code" in causeValue
+				? String(causeValue.code)
+				: undefined;
+		const cause = causeCode ? ` (cause=${causeCode})` : "";
 		console.log(`${port}: failed (${msg}${cause})`);
 	}
 }

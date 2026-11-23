@@ -49,7 +49,7 @@
  *     procedure file surfaces as a clear error.
  */
 
-import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
 import {
@@ -58,7 +58,6 @@ import {
 	Parser,
 } from "@cucumber/gherkin";
 import type {
-	Background as GherkinBackground,
 	GherkinDocument,
 	Examples as GherkinExamples,
 	Step as GherkinStepRaw,
@@ -69,7 +68,6 @@ import type {
 import type {
 	ExampleBlock,
 	GherkinBlock,
-	GherkinFeature,
 	GherkinKind,
 	GherkinRule,
 	GherkinScenario,
@@ -77,8 +75,6 @@ import type {
 	ScenarioSpec,
 } from "./types";
 
-const FEATURES_DIR = "src/shared/scenario/features";
-const PROCEDURES_DIR = "src/shared/scenario/procedures";
 const BINDINGS_FILE = "src/shared/scenario/scenario-bindings.json";
 
 const repoRoot = (): string => process.cwd();
@@ -410,36 +406,3 @@ export const loadScenarioSpecs = (): readonly ScenarioSpec[] => {
  * without exposing the loader surface area.
  */
 export const specs = loadScenarioSpecs();
-
-/**
- * Re-export the canonical feature index for tooling that needs to walk
- * the `.feature` files without binding context (e.g. the validator's
- * feature-name whitelist scan).
- */
-interface LoadedFeature extends GherkinFeature {
-	readonly source: string;
-	readonly background: readonly GherkinStep[];
-}
-
-const loadFeatures = (): readonly LoadedFeature[] => {
-	// No binding context — discover all .feature files directly.
-	const dir = join(repoRoot(), FEATURES_DIR);
-	const files = readdirSync(dir).filter((f) => f.endsWith(".feature"));
-	const out: LoadedFeature[] = [];
-	for (const file of files) {
-		const parsed = readFeatureFile(`${FEATURES_DIR}/${file}`);
-		out.push({
-			featureName: parsed.featureName,
-			featureDescription: parsed.featureDescription,
-			rules: parsed.rules,
-			source: parsed.source,
-			background: parsed.background,
-		});
-	}
-	return out;
-};
-
-// Silence the unused-import warning when GherkinBackground is not
-// referenced elsewhere — keeping the explicit type import so the
-// dependency on @cucumber/messages is documented.
-type _GherkinBackgroundReference = GherkinBackground;

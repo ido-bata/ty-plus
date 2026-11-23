@@ -17,7 +17,6 @@ export {
 	ICON_TILE_ASPECT_LS_KEY,
 	type IconTileAspect,
 	iconTileMediaClass,
-	LIST_ROW_GRID,
 } from "@/management/preset/catalog-browser/layout";
 export { CatalogBrowserShell } from "@/management/preset/catalog-browser/shell";
 export * from "@/management/preset/contract";
@@ -30,12 +29,3 @@ export {
 	upsertLocalPreset,
 } from "@/management/preset/operations";
 export { Dialog as ToolDialog } from "@/management/preset/tool-shell/dialog/ToolDialog";
-export { PresetGlyphById } from "@/management/preset/workspace/glyph/by-id";
-export {
-	glyphBoxCompactClass,
-	glyphBoxCompactPadClass,
-	glyphBoxFillClass,
-	glyphBoxFlushClass,
-	glyphEmojiProminentClass,
-} from "@/management/preset/workspace/glyph/classes";
-export { WorkspacePresetGlyph } from "@/management/preset/workspace/glyph/WorkspaceGlyph";

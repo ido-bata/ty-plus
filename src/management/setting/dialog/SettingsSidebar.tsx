@@ -1,3 +1,8 @@
+import {
+	segmentedButtonActiveClass,
+	segmentedButtonClass,
+	segmentedButtonInactiveClass,
+} from "@ty-plus/ui";
 import { cx } from "@ty-plus/ui/util/cx";
 import {
 	type JSX,
@@ -117,41 +122,11 @@ const groupHeaderStyle = css({
 	color: "text.muted",
 });
 
-const tabBaseStyle = css({
-	display: "flex",
-	width: "full",
-	minWidth: 0,
-	alignItems: "center",
-	gap: "2",
-	paddingInline: "2.5",
-	paddingBlock: "2",
-	borderRadius: "shell-sm",
-	fontSize: "shell-text-sm",
-	lineHeight: "tight",
-	color: "text.primary",
-	textAlign: "left",
-	transitionProperty: "colors",
-	whiteSpace: "nowrap",
-	truncate: true,
-});
-
-const tabActiveStyle = css({
-	backgroundColor: "text.accent",
-	color: "surface.panel",
-	boxShadow: "sm",
-});
-
-const tabInactiveStyle = css({
-	backgroundColor: "surface.widget",
-	color: "text.muted",
-	_hover: {
-		backgroundColor: "interactive.hover",
-		color: "text.primary",
-	},
-});
-
 const TAB_CLASS = (active: boolean): string =>
-	cx(tabBaseStyle, active ? tabActiveStyle : tabInactiveStyle);
+	cx(
+		segmentedButtonClass,
+		active ? segmentedButtonActiveClass : segmentedButtonInactiveClass,
+	);
 
 const bodyStyle = css({
 	flex: "1",

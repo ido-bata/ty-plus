@@ -129,7 +129,7 @@ const detectManagedRoot = async (): Promise<string | undefined> => {
 				path.join(
 					base,
 					dir,
-					"Adobe After Effects " + dir.split(" ").pop(),
+					`Adobe After Effects ${dir.split(" ").pop()}`,
 					"ty-plus-init.json",
 				),
 			]) {

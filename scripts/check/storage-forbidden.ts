@@ -81,7 +81,7 @@ const SKIP_DIRS = new Set(["node_modules", ".git", "docs", "archive"]);
 /**
  * Strip comments from content to avoid false positives in documentation.
  */
-function stripComments(content) {
+function stripComments(content: string) {
 	// Remove single-line comments
 	let stripped = content.replace(/\/\/[^\n]*/g, "");
 	// Remove multi-line comments
@@ -93,7 +93,7 @@ function stripComments(content) {
  * Join multi-line import statements into a single line for regex matching.
  * Detects when a line ends with a continuation character or is inside brackets.
  */
-function normalizeForImportSearch(content) {
+function normalizeForImportSearch(content: string) {
 	// Join lines that appear to continue import statements
 	const lines = content.split("\n");
 	const joined = [];
@@ -117,8 +117,8 @@ function normalizeForImportSearch(content) {
 /**
  * Detect forbidden imports or API usage in a file's text content.
  */
-function scanFile(filePath, content) {
-	const violations = [];
+function scanFile(filePath: string, content: string) {
+	const violations: Record<string, unknown>[] = [];
 
 	// Check for forbidden imports — normalize multi-line imports first
 	const normalized = normalizeForImportSearch(stripComments(content));
@@ -190,7 +190,7 @@ function scanFile(filePath, content) {
 	return violations;
 }
 
-function isExempt(filePath) {
+function isExempt(filePath: string) {
 	for (const prefix of EXEMPT_PREFIXES) {
 		if (filePath.startsWith(prefix)) {
 			return true;
@@ -199,8 +199,8 @@ function isExempt(filePath) {
 	return false;
 }
 
-function walkFiles(dir) {
-	const results = [];
+function walkFiles(dir: string): string[] {
+	const results: string[] = [];
 	try {
 		const entries = readdirSync(dir, { withFileTypes: true });
 		for (const entry of entries) {

@@ -1,5 +1,3 @@
-type PresetPathBrowseBucket = "presets" | "scripts" | "plugins" | "other";
-
 /** User home / profile directory for "Other" browse tab (archive `getDefaultOtherPath`). */
 export const readUserHomeOrFallback = (): string => {
 	try {
@@ -18,11 +16,3 @@ export const readUserHomeOrFallback = (): string => {
 };
 
 /** Initial directory for CEP `showOpenDialog` (archive-style bucket tabs). */
-function defaultDirForBrowseBucket(bucket: PresetPathBrowseBucket): string {
-	const home = readUserHomeOrFallback();
-	if (bucket === "other") {
-		return home;
-	}
-	const sep = home.includes("\\") ? "\\" : "/";
-	return `${home.replace(/[/\\]+$/, "")}${sep}Documents`;
-}

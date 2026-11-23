@@ -18,7 +18,7 @@ export const DEFAULT_UPDATE_FEED_URL =
 
 export type UpdatePlatform = "windows" | "macos";
 
-export type UpdateFeedAsset = {
+type UpdateFeedAsset = {
 	platform: UpdatePlatform;
 	url: string;
 	sha256: string;
@@ -240,7 +240,7 @@ const fetchWithDeadline = async (
 	}
 };
 
-export const defaultFetchFeedText: FetchFeedText = fetchWithDeadline;
+const defaultFetchFeedText: FetchFeedText = fetchWithDeadline;
 
 /**
  * The host platform of the running panel. `navigator.platform` is deprecated

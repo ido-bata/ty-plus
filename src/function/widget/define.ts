@@ -80,7 +80,7 @@ export type TutorialStep = {
  * list of tutorial steps; consumers may render them as a help panel or as
  * dismissible first-run hints.
  */
-export type WidgetTutorial = {
+type WidgetTutorial = {
 	summaryKey: string;
 	/**
 	 * Content version for this widget's tutorial/help copy. Part of the

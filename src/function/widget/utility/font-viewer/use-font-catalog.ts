@@ -6,7 +6,7 @@ export type FontLoadVia = "after-effects" | "queryLocalFonts" | "documentFonts";
 
 type FontLoadPhase = "ae-host" | "browser";
 
-export type FontLoadState = {
+type FontLoadState = {
 	rows: readonly LocalFontFaceRow[];
 	via: FontLoadVia | null;
 	loadPhase: FontLoadPhase | null;
