@@ -1,5 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { Icon } from "@ty-plus/ui/Icon";
+import { Upload } from "lucide-react";
 import { type JSX, useCallback, useState } from "react";
+import { expect } from "storybook/test";
 import { css } from "@/styled-system/css";
 
 import { type DroppedFile, FileDropZone } from "./FileDropZone";
@@ -80,6 +83,7 @@ const dragOverClass = css({
 function FileDropZoneDragOver(): JSX.Element {
 	return (
 		<div className={dragOverClass} data-dragover>
+			<Icon icon={Upload} size={20} aria-hidden />
 			<span
 				className={css({
 					fontSize: "shell-text-sm",
@@ -128,6 +132,11 @@ type Story = StoryObj<typeof meta>;
  */
 export const Default: Story = {
 	render: (args) => <FileDropZoneDemo {...args} />,
+	play: async ({ canvasElement }) => {
+		const zone = canvasElement.querySelector("[data-file-drop-zone]");
+		expect(zone).not.toBeNull();
+		expect(getComputedStyle(zone as Element).opacity).toBe("1");
+	},
 };
 
 /**
@@ -138,6 +147,11 @@ export const Disabled: Story = {
 		disabled: true,
 	},
 	render: (args) => <FileDropZoneDemo {...args} />,
+	play: async ({ canvasElement }) => {
+		const zone = canvasElement.querySelector("[data-file-drop-zone]");
+		expect(zone).not.toBeNull();
+		expect(Number(getComputedStyle(zone as Element).opacity)).toBeLessThan(1);
+	},
 };
 
 /**
@@ -148,4 +162,9 @@ export const Disabled: Story = {
  */
 export const DragOver: Story = {
 	render: () => <FileDropZoneDragOver />,
+	play: async ({ canvasElement }) => {
+		const zone = canvasElement.querySelector("[data-dragover]");
+		expect(zone).not.toBeNull();
+		expect(zone?.querySelector("svg")).not.toBeNull();
+	},
 };

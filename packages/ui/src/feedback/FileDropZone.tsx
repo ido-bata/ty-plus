@@ -27,7 +27,6 @@ const dropZoneDefault = css({
 	borderStyle: "dashed",
 	borderColor: "border.subtle",
 	backgroundColor: "surface.widget",
-	opacity: 0.3,
 	paddingInline: "4",
 	paddingBlock: "6",
 	color: "text.muted",
@@ -40,7 +39,6 @@ const dropZoneHover = css({
 	borderStyle: "solid",
 	borderColor: "interactive.focus",
 	backgroundColor: "surface.widget",
-	opacity: 0.6,
 	color: "text.primary",
 });
 
@@ -149,6 +147,7 @@ export function FileDropZone(props: DropZoneProps): JSX.Element {
 				disabled ? dropZoneDisabled : "",
 				className,
 			)}
+			data-file-drop-zone=""
 			onDragEnter={handleDragEnter}
 			onDragLeave={handleDragLeave}
 			onDragOver={handleDragOver}
