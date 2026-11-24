@@ -1,5 +1,9 @@
 import type { PresetIcon } from "@/management/preset/contract";
 import {
+	PRESET_ICON_DEFAULT_BG_COLOR,
+	PRESET_ICON_DEFAULT_FG_COLOR,
+} from "@/management/preset/literals/icon-colors";
+import {
 	presetIconCanvas,
 	presetIconEmoji,
 	presetIconImage,
@@ -28,8 +32,8 @@ export const createPresetIconDraft = (
 		text,
 		emoji: "",
 		imagePath: "",
-		bgColor: "#2b2b2b",
-		color: "#ffffff",
+		bgColor: PRESET_ICON_DEFAULT_BG_COLOR,
+		color: PRESET_ICON_DEFAULT_FG_COLOR,
 	};
 };
 
@@ -41,8 +45,8 @@ export const presetIconToDraft = (icon: PresetIcon): PresetIconEditorDraft => {
 			text: "",
 			emoji: "",
 			imagePath: "",
-			bgColor: icon.param.backgroundColor ?? "#2b2b2b",
-			color: icon.param.color ?? "#ffffff",
+			bgColor: icon.param.backgroundColor ?? PRESET_ICON_DEFAULT_BG_COLOR,
+			color: icon.param.color ?? PRESET_ICON_DEFAULT_FG_COLOR,
 			canvasCubic: icon.param.cubic,
 		};
 	}
@@ -52,8 +56,8 @@ export const presetIconToDraft = (icon: PresetIcon): PresetIconEditorDraft => {
 			text: "",
 			emoji: icon.param.emoji,
 			imagePath: "",
-			bgColor: icon.param.backgroundColor ?? "#2b2b2b",
-			color: "#ffffff",
+			bgColor: icon.param.backgroundColor ?? PRESET_ICON_DEFAULT_BG_COLOR,
+			color: PRESET_ICON_DEFAULT_FG_COLOR,
 		};
 	}
 	if (icon.type === "image") {
@@ -62,8 +66,8 @@ export const presetIconToDraft = (icon: PresetIcon): PresetIconEditorDraft => {
 			text: "",
 			emoji: "",
 			imagePath: icon.param.src,
-			bgColor: "#2b2b2b",
-			color: "#ffffff",
+			bgColor: PRESET_ICON_DEFAULT_BG_COLOR,
+			color: PRESET_ICON_DEFAULT_FG_COLOR,
 		};
 	}
 	return {
@@ -71,8 +75,8 @@ export const presetIconToDraft = (icon: PresetIcon): PresetIconEditorDraft => {
 		text: icon.param.text,
 		emoji: "",
 		imagePath: "",
-		bgColor: icon.param.backgroundColor ?? "#2b2b2b",
-		color: icon.param.color ?? "#ffffff",
+		bgColor: icon.param.backgroundColor ?? PRESET_ICON_DEFAULT_BG_COLOR,
+		color: icon.param.color ?? PRESET_ICON_DEFAULT_FG_COLOR,
 	};
 };
 

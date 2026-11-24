@@ -6,6 +6,11 @@ import {
 	registerCepJsonContextMenuSurface,
 } from "@/management/dialog/context-menu";
 import { DeferredDialogBody } from "@/management/dialog/lazy-body";
+import {
+	DIALOG_LOADING_COLOR,
+	PRE_THEME_CODE_BG_COLOR,
+	PRE_THEME_MUTED_COLOR,
+} from "@/management/dialog/literals/pre-theme-colors";
 import { resolveFunctionDialog } from "@/management/dialog/routes";
 import { i18n } from "@/management/i18n/index";
 import { PresetsDialog } from "@/management/preset/catalog-browser/ListDialog";
@@ -81,11 +86,11 @@ function UnknownDialog({ surfaceId }: { surfaceId: string }): JSX.Element {
 					defaultValue: "Unknown Dialog Surface",
 				})}
 			</h1>
-			<p style={{ color: "#666" }}>
+			<p style={{ color: PRE_THEME_MUTED_COLOR }}>
 				{i18n.t("dialogs:unknownDialog.noBodyForSurfaceId", {
 					defaultValue: "No dialog body found for surfaceId:",
 				})}{" "}
-				<code style={{ background: "#f0f0f0", padding: "0.125rem 0.375rem" }}>
+				<code style={{ background: PRE_THEME_CODE_BG_COLOR, padding: "0.125rem 0.375rem" }}>
 					{surfaceId}
 				</code>
 			</p>
@@ -137,11 +142,11 @@ function ProbeDialogBody({ surfaceId }: { surfaceId: string }): JSX.Element {
 			<h1 style={{ fontSize: "1.25rem", marginBottom: "0.5rem" }}>
 				{i18n.t("dialogs:probe.title", { defaultValue: "Probe" })}
 			</h1>
-			<p style={{ color: "#666" }}>
+			<p style={{ color: PRE_THEME_MUTED_COLOR }}>
 				{i18n.t("dialogs:probe.bodyForSurfaceId", {
 					defaultValue: "Probe dialog for surfaceId:",
 				})}{" "}
-				<code style={{ background: "#f0f0f0", padding: "0.125rem 0.375rem" }}>
+				<code style={{ background: PRE_THEME_CODE_BG_COLOR, padding: "0.125rem 0.375rem" }}>
 					{surfaceId}
 				</code>
 			</p>

@@ -25,6 +25,7 @@ import {
 	SettingsGrid,
 	SettingsSectionHeading,
 } from "@/management/setting/dialog/layout/SettingsGrid";
+import { COLOR_TOKEN_EMPTY_VALUE } from "@/management/setting/literals/ui-colors";
 import { DEFAULT_THEME } from "@/management/style/default-values";
 import { css } from "@/styled-system/css";
 
@@ -469,7 +470,7 @@ export function TokensSection(): JSX.Element {
 									<ColorTokenEditor
 										label={i18n.t(token.labelKey)}
 										description={token.key}
-										value={values[token.key] ?? "#000000"}
+										value={values[token.key] ?? COLOR_TOKEN_EMPTY_VALUE}
 										onChange={(value) => handleTokenChange(token.key, value)}
 									/>
 								) : token.type === "number" || token.type === "opacity" ? (

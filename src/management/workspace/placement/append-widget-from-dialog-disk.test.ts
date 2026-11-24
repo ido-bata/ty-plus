@@ -54,7 +54,7 @@ const {
 	// cloud gateway was never registered. Every other bug in this file was
 	// downstream of that throw.
 	getDataServicesMock: vi.fn(() => {
-		throw new Error("Cloud gateway was not booted (Issue #128)");
+		throw new Error("Cloud gateway was not booted (issue 128)");
 	}),
 	errorLogCalls: [] as Array<{
 		message: string;

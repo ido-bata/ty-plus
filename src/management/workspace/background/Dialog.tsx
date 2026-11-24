@@ -19,9 +19,9 @@ import { LayerEditor } from "@/management/workspace/background/LayerEditor";
 import { LayerListPanel } from "@/management/workspace/background/LayerListPanel";
 import {
 	createNewLayer,
-	DEFAULT_COLOR,
 	migrateToLayers,
 } from "@/management/workspace/background/layer-factory";
+import { DEFAULT_LAYER_COLOR } from "@/management/workspace/literals/layer-colors";
 import { BackgroundPreview } from "@/management/workspace/background/Preview";
 import { parse } from "@/management/workspace/background/parse";
 import { toStyle } from "@/management/workspace/background/style";
@@ -494,7 +494,7 @@ export function WorkspaceBackgroundDialog(
 			if (menuId.startsWith(BG_CTX.typeColorPrefix)) {
 				updateLayer(menuId.slice(BG_CTX.typeColorPrefix.length), {
 					type: "color",
-					color: DEFAULT_COLOR,
+					color: DEFAULT_LAYER_COLOR,
 				});
 				return;
 			}

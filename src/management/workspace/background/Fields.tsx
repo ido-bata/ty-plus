@@ -1,7 +1,7 @@
 import { Input, RangeField } from "@ty-plus/ui";
 import type { JSX } from "react";
 import { FIELD_LABEL_CLASS } from "@/management/workspace/background/constants";
-import { DEFAULT_COLOR } from "@/management/workspace/background/layer-factory";
+import { DEFAULT_LAYER_COLOR } from "@/management/workspace/literals/layer-colors";
 import { css } from "@/styled-system/css";
 
 export function FieldLabel(props: { children: string }): JSX.Element {
@@ -62,7 +62,7 @@ export function ColorField(props: {
 	onColorChange: (value: string) => void;
 }): JSX.Element {
 	const colorValue =
-		props.value === "transparent" ? DEFAULT_COLOR : props.value;
+		props.value === "transparent" ? DEFAULT_LAYER_COLOR : props.value;
 	return (
 		<div className={colorRow}>
 			<span className={FIELD_LABEL_CLASS}>{props.label}</span>

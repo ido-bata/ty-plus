@@ -45,7 +45,7 @@ vi.mock("@/management/storage/persistence", () => ({
 vi.mock("@/management/workspace/core/services", () => ({
 	getDataServices: () => {
 		bootBoundaryCalls.count += 1;
-		const error = new Error("Cloud gateway was not booted (Issue #128)");
+		const error = new Error("Cloud gateway was not booted (issue 128)");
 		error.name = "GatewayBootRequiredError";
 		throw error;
 	},

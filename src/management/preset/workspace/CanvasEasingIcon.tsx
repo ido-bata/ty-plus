@@ -7,6 +7,7 @@ import {
 	easingCurveSegments,
 	type MultiPointParams,
 } from "./easing-curve";
+import { CANVAS_EASING_AXES_COLOR } from "@/management/preset/literals/canvas-colors";
 
 /** Renders a cubic bezier easing curve in a small canvas. If `points` is
  *  provided (multi-ease), draws the full multi-segment curve. Otherwise
@@ -44,7 +45,7 @@ export function CanvasEasingIcon({
 		ctx.clearRect(0, 0, w, h);
 
 		// Draw axes
-		ctx.strokeStyle = "rgba(128,128,128,0.3)";
+		ctx.strokeStyle = CANVAS_EASING_AXES_COLOR;
 		ctx.lineWidth = 0.5;
 		ctx.beginPath();
 		ctx.moveTo(pad, h - pad);
