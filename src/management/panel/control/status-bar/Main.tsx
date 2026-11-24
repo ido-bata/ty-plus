@@ -4,9 +4,12 @@
  * and secondary panel launchers.
  */
 
-import { AnchoredPopover, Icon, IconButton } from "@ty-plus/ui";
 import {
+	AnchoredPopover,
 	Cloud,
+	cx,
+	Icon,
+	IconButton,
 	Layers,
 	Library,
 	MessageSquare,
@@ -16,8 +19,7 @@ import {
 	Terminal,
 	Trash2,
 	Undo2,
-} from "@ty-plus/ui/icons";
-import { cx } from "@ty-plus/ui/util/cx";
+} from "@ty-plus/ui";
 import { memo, useEffect, useRef, useState } from "react";
 import { subscribe } from "@/management/debug";
 import { i18n } from "@/management/i18n/index";

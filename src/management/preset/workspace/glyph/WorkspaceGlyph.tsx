@@ -1,4 +1,4 @@
-import { cx } from "@ty-plus/ui/util/cx";
+import { cx } from "@ty-plus/ui";
 import type { CSSProperties, HTMLAttributes, JSX, ReactNode } from "react";
 import { resolveWorkspaceGlyphIconVisual } from "@/management/preset/assets/icons";
 import type { Preset } from "@/management/preset/contract";

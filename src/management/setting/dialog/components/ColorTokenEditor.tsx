@@ -1,4 +1,4 @@
-import { ColorField } from "@ty-plus/ui/fields/ColorField";
+import { ColorField } from "@ty-plus/ui";
 import type { JSX } from "react";
 
 export type ColorTokenEditorProps = {

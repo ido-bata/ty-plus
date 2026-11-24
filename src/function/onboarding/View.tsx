@@ -1,10 +1,10 @@
 import {
 	IconButton,
+	isIMEComposing,
 	ListSelect,
 	mutedBodyTextClass,
 	PathField,
-} from "@ty-plus/ui/index";
-import { isIMEComposing } from "@ty-plus/ui/util/keyboard";
+} from "@ty-plus/ui";
 import {
 	AlertCircle,
 	FolderOpen,

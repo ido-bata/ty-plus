@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { cx } from "@ty-plus/ui";
-import { Button } from "@ty-plus/ui/controls/Button";
+import { Button, cx } from "@ty-plus/ui";
 import { expect } from "storybook/test";
 import { css } from "@/styled-system/css";
 

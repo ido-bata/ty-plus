@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Button } from "@ty-plus/ui/controls/Button";
+import { Button } from "@ty-plus/ui";
 import { expect } from "storybook/test";
 import { expectCanvasLayout } from "@/storybook/quality/layout";
 import { css } from "@/styled-system/css";

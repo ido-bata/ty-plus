@@ -1,6 +1,4 @@
-import { Button } from "@ty-plus/ui/controls/Button";
-import { ScrollArea } from "@ty-plus/ui/layout/ScrollArea";
-import { cx } from "@ty-plus/ui/util/cx";
+import { Button, cx, ScrollArea } from "@ty-plus/ui";
 import { RotateCcw, Save } from "lucide-react";
 import { type JSX, useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";

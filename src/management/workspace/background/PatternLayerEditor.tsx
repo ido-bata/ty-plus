@@ -1,5 +1,4 @@
-import { segmentedButtonQuietClass } from "@ty-plus/ui";
-import { SegmentedControl } from "@ty-plus/ui/controls/SegmentedControl";
+import { SegmentedControl, segmentedButtonQuietClass } from "@ty-plus/ui";
 import type { JSX } from "react";
 import type {
 	Layer,

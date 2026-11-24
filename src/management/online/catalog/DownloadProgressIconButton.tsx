@@ -1,6 +1,4 @@
-import { IconButton } from "@ty-plus/ui/controls/IconButton";
-import { Icon } from "@ty-plus/ui/Icon";
-import { cx } from "@ty-plus/ui/util/cx";
+import { cx, Icon, IconButton } from "@ty-plus/ui";
 import { AlertCircle, Check, Download } from "lucide-react";
 import { type ReactElement, useEffect, useRef } from "react";
 import { css } from "@/styled-system/css";

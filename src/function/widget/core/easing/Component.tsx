@@ -1,5 +1,9 @@
-import { Button, NumberField, SegmentedControl } from "@ty-plus/ui";
-import { isIMEComposing } from "@ty-plus/ui/util/keyboard";
+import {
+	Button,
+	isIMEComposing,
+	NumberField,
+	SegmentedControl,
+} from "@ty-plus/ui";
 import type { TFunction } from "i18next";
 import { Check, Copy, GitCompare, Plus, Repeat } from "lucide-react";
 import {

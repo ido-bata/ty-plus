@@ -1,9 +1,11 @@
-import { cardTitleClass } from "@ty-plus/ui";
-import { SegmentedControl } from "@ty-plus/ui/controls/SegmentedControl";
-import { LoadingSpinner } from "@ty-plus/ui/feedback/LoadingSpinner";
-import { ListSelect } from "@ty-plus/ui/fields/ListSelect";
-import { ScrollArea } from "@ty-plus/ui/layout/ScrollArea";
-import { cx } from "@ty-plus/ui/util/cx";
+import {
+	cardTitleClass,
+	cx,
+	ListSelect,
+	LoadingSpinner,
+	ScrollArea,
+	SegmentedControl,
+} from "@ty-plus/ui";
 import { type JSX, type ReactNode, useMemo, useState } from "react";
 import { i18n } from "@/management/i18n/index";
 import type { Preset } from "@/management/preset/contract";

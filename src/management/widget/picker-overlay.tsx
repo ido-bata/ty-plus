@@ -1,4 +1,4 @@
-import { Button } from "@ty-plus/ui/controls/Button";
+import { Button } from "@ty-plus/ui";
 import { type JSX, useCallback, useRef, useState } from "react";
 import type { WidgetType } from "@/function/widget";
 import { i18n } from "@/management/i18n/index";

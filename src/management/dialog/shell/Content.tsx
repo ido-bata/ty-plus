@@ -1,4 +1,4 @@
-import { cx } from "@ty-plus/ui/util/cx";
+import { cx } from "@ty-plus/ui";
 import type { JSX, ReactNode } from "react";
 import { css } from "@/styled-system/css";
 

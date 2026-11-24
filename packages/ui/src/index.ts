@@ -34,9 +34,32 @@ export { SearchField } from "./fields/SearchField";
 export { Textarea } from "./fields/Textarea";
 export { Icon } from "./Icon";
 export * as Icons from "./icons";
+export {
+	ArrowDownToLine,
+	Cloud,
+	Layers,
+	Library,
+	MessageSquare,
+	Redo2,
+	Save,
+	Settings,
+	Terminal,
+	Trash2,
+	Undo2,
+} from "./icons";
 export type { AnchoredPopoverProps } from "./interaction/AnchoredPopover";
 export { AnchoredPopover } from "./interaction/AnchoredPopover";
-export { useAnchorGesture } from "./interaction/use-anchor-gesture";
+export type {
+	AnchorGestureConfig,
+	AnchorGestureRecognizeFn,
+	AnchorGestureState,
+	GestureDirection,
+	GesturePoint,
+} from "./interaction/use-anchor-gesture";
+export {
+	gestureDirection,
+	useAnchorGesture,
+} from "./interaction/use-anchor-gesture";
 export { MediaFrame } from "./layout/MediaFrame";
 export { ScrollArea } from "./layout/ScrollArea";
 export { Surface } from "./layout/Surface";

@@ -1,4 +1,4 @@
-import { ListSelect } from "@ty-plus/ui/fields/ListSelect";
+import { ListSelect } from "@ty-plus/ui";
 import { type JSX, useCallback, useState } from "react";
 import { BUNDLED_LOCALE_NAMES } from "@/management/i18n/bundled-resources";
 import {

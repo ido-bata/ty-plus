@@ -1,7 +1,4 @@
-import { Checkbox } from "@ty-plus/ui";
-import { Button } from "@ty-plus/ui/controls/Button";
-import { IconButton } from "@ty-plus/ui/controls/IconButton";
-import { cx } from "@ty-plus/ui/util/cx";
+import { Button, Checkbox, cx, IconButton } from "@ty-plus/ui";
 import {
 	ArrowDown,
 	ArrowUp,

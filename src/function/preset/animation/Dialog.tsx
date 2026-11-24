@@ -1,13 +1,13 @@
 import {
+	Button,
 	Icon,
+	Input,
 	sectionTitleClass,
 	statusBannerClass,
 	stepBadgeClass,
 	stepCardClass,
 	stepDescriptionClass,
 } from "@ty-plus/ui";
-import { Button } from "@ty-plus/ui/controls/Button";
-import { Input } from "@ty-plus/ui/fields/Input";
 import type { TFunction } from "i18next";
 import {
 	AlertCircle,

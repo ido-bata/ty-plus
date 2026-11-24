@@ -1,5 +1,4 @@
-import { Button } from "@ty-plus/ui/controls/Button";
-import { cx } from "@ty-plus/ui/util/cx";
+import { Button, cx } from "@ty-plus/ui";
 import { Grid2X2, Image, Palette } from "lucide-react";
 import type { JSX } from "react";
 import type { Layer } from "@/management/workspace/background/contract";

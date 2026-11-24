@@ -1,5 +1,4 @@
-import { Icon, sectionLabelClass } from "@ty-plus/ui";
-import { PathField } from "@ty-plus/ui/fields/PathField";
+import { Icon, PathField, sectionLabelClass } from "@ty-plus/ui";
 import { ChevronDown, FileSearch } from "lucide-react";
 import { forwardRef, type JSX, useImperativeHandle, useState } from "react";
 import { useTranslation } from "react-i18next";

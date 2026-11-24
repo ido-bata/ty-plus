@@ -1,14 +1,14 @@
 import {
+	ArrowDownToLine,
 	Button,
+	cx,
 	fillSurfaceClass,
 	IconButton,
 	Input,
+	isIMEComposing,
 	monoMetaClass,
 	SegmentedControl,
 } from "@ty-plus/ui";
-import { ArrowDownToLine } from "@ty-plus/ui/icons";
-import { cx } from "@ty-plus/ui/util/cx";
-import { isIMEComposing } from "@ty-plus/ui/util/keyboard";
 import type React from "react";
 import type { JSX } from "react";
 import { useCallback, useMemo, useState } from "react";

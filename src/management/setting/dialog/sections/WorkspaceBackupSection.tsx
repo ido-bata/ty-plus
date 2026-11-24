@@ -1,6 +1,4 @@
-import { Button } from "@ty-plus/ui/controls/Button";
-import { Textarea } from "@ty-plus/ui/fields/Textarea";
-import { cx } from "@ty-plus/ui/util/cx";
+import { Button, cx, Textarea } from "@ty-plus/ui";
 import { type JSX, useCallback, useEffect, useRef, useState } from "react";
 import { i18n } from "@/management/i18n/index";
 import { cacheCepShellThemeOverridesFromCssText } from "@/management/panel/theme/storage";

@@ -1,5 +1,4 @@
-import { RangeField } from "@ty-plus/ui";
-import { Input } from "@ty-plus/ui/fields/Input";
+import { Input, RangeField } from "@ty-plus/ui";
 import type { JSX } from "react";
 import { FIELD_LABEL_CLASS } from "@/management/workspace/background/constants";
 import { DEFAULT_COLOR } from "@/management/workspace/background/layer-factory";

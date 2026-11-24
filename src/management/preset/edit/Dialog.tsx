@@ -1,16 +1,16 @@
 import {
+	Button,
+	DialogBody,
 	dialogContentClass,
 	dialogFooterClass,
 	Icon,
+	Input,
 	iconActionButtonClass,
+	PathField,
 	rowMetaClass,
 	rowTitleClass,
 	sectionLabelClass,
 } from "@ty-plus/ui";
-import { Button } from "@ty-plus/ui/controls/Button";
-import { Input } from "@ty-plus/ui/fields/Input";
-import { PathField } from "@ty-plus/ui/fields/PathField";
-import { DialogBody } from "@ty-plus/ui/shell/DialogBody";
 import { FileSearch, Pencil, Play, Save, Trash2 } from "lucide-react";
 import {
 	type JSX,

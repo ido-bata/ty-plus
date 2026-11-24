@@ -1,6 +1,4 @@
-import { listItemTitleClass } from "@ty-plus/ui";
-import { IconButton } from "@ty-plus/ui/controls/IconButton";
-import { Icon } from "@ty-plus/ui/Icon";
+import { Icon, IconButton, listItemTitleClass } from "@ty-plus/ui";
 import { RefreshCw, X } from "lucide-react";
 import type { JSX } from "react";
 import { i18n } from "@/management/i18n/index";

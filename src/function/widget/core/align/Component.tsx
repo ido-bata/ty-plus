@@ -1,5 +1,4 @@
-import { useAnchorGesture } from "@ty-plus/ui/interaction/use-anchor-gesture";
-import { cx } from "@ty-plus/ui/util/cx";
+import { cx, useAnchorGesture } from "@ty-plus/ui";
 import {
 	type JSX,
 	useCallback,

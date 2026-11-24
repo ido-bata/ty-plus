@@ -1,5 +1,4 @@
-import { Button } from "@ty-plus/ui/controls/Button";
-import { Textarea } from "@ty-plus/ui/fields/Textarea";
+import { Button, Textarea } from "@ty-plus/ui";
 import {
 	Fragment,
 	type JSX,

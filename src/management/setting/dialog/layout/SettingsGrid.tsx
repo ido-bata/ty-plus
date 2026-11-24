@@ -1,5 +1,4 @@
-import { fieldLabelClass } from "@ty-plus/ui";
-import { cx } from "@ty-plus/ui/util/cx";
+import { cx, fieldLabelClass } from "@ty-plus/ui";
 import type { JSX, ReactNode } from "react";
 import { css } from "@/styled-system/css";
 

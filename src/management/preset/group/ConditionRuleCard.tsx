@@ -1,6 +1,4 @@
-import { Button } from "@ty-plus/ui/controls/Button";
-import { Input } from "@ty-plus/ui/fields/Input";
-import { RegexEditor } from "@ty-plus/ui/fields/RegexEditor";
+import { Button, Input, RegexEditor } from "@ty-plus/ui";
 import { Trash2 } from "lucide-react";
 import type { JSX } from "react";
 import { i18n } from "@/management/i18n/index";

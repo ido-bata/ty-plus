@@ -6,7 +6,7 @@
  * cells whose derived data didn't change when the parent `state` ref churns.
  */
 
-import { cx } from "@ty-plus/ui/util/cx";
+import { cx } from "@ty-plus/ui";
 import type { CSSProperties, JSX } from "react";
 import { useEffect, useMemo } from "react";
 import type { WidgetType } from "@/function/widget";

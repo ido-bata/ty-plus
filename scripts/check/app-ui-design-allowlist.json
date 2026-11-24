@@ -1,7 +1,7 @@
 [
 	{
 		"file": "apps/web/src/components/SiteHeader.tsx",
-		"line": 240,
+		"line": 252,
 		"rule": "raw-svg",
 		"message": "raw <svg> is banned; use `Icon` with a lucide icon",
 		"reason": "hand-drawn icon predates the shared design system; replace it with `Icon` and a lucide icon"
@@ -15,10 +15,24 @@
 	},
 	{
 		"file": "packages/ui/src/controls/ViewModeToggle.tsx",
-		"line": 94,
+		"line": 91,
+		"rule": "ui-override",
+		"message": "<IconButton> is a shared @ty-plus/ui component; height, width, borderRadius, borderWidth, padding must come from its variant/size/tone props, not className",
+		"reason": "the toggle's flush segmented-cell chrome predates the ui-override gate (it was previously hidden inside an unresolvable cx() call); migrate it into a shared IconButton variant when the segmented control family is consolidated"
+	},
+	{
+		"file": "packages/ui/src/controls/ViewModeToggle.tsx",
+		"line": 96,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 10px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
+	},
+	{
+		"file": "packages/ui/src/controls/ViewModeToggle.tsx",
+		"line": 107,
+		"rule": "ui-override",
+		"message": "<IconButton> is a shared @ty-plus/ui component; height, width, borderRadius, borderWidth, padding must come from its variant/size/tone props, not className",
+		"reason": "the toggle's flush segmented-cell chrome predates the ui-override gate (it was previously hidden inside an unresolvable cx() call); migrate it into a shared IconButton variant when the segmented control family is consolidated"
 	},
 	{
 		"file": "packages/ui/src/controls/ViewModeToggle.tsx",
@@ -28,60 +42,25 @@
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
-		"file": "packages/ui/src/controls/ViewModeToggle.tsx",
-		"line": 91,
-		"rule": "ui-override",
-		"message": "<IconButton> is a shared @ty-plus/ui component; height, width, borderRadius, borderWidth, padding must come from its variant/size/tone props, not className",
-		"reason": "the toggle's flush segmented-cell chrome predates the ui-override gate (it was previously hidden inside an unresolvable cx() call); migrate it into a shared IconButton variant when the segmented control family is consolidated"
-	},
-	{
 		"file": "packages/ui/src/fields/SearchField.tsx",
-		"line": 89,
+		"line": 90,
 		"rule": "focus-ring-divergent",
 		"message": "_focusVisible paints \"none\" — the one focus indicator is var(--color-focus-ring)",
 		"reason": "the search field's wrapper owns the focus indicator; the inner input must not paint a second one — the wrapper's `_focusWithin` ring is the only ring"
 	},
 	{
 		"file": "packages/ui/src/fields/SearchField.tsx",
-		"line": 174,
+		"line": 176,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 10px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "packages/ui/src/fields/SearchField.tsx",
-		"line": 204,
+		"line": 208,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 10px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
-	},
-	{
-		"file": "src/function/onboarding/View.tsx",
-		"line": 1,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/index\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/function/onboarding/View.tsx",
-		"line": 7,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/util/keyboard\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/function/preset/animation/Dialog.tsx",
-		"line": 9,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/controls/Button\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/function/preset/animation/Dialog.tsx",
-		"line": 10,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/fields/Input\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
 		"file": "src/function/preset/animation/Dialog.tsx",
@@ -120,59 +99,17 @@
 	},
 	{
 		"file": "src/function/preset/code/Dialog.tsx",
-		"line": 7,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/fields/Input\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/function/preset/code/Dialog.tsx",
-		"line": 8,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/fields/PathField\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/function/preset/code/Dialog.tsx",
-		"line": 91,
+		"line": 92,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 14px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/function/preset/layer-comp/Dialog.tsx",
-		"line": 10,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/fields/Input\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/function/preset/layer-comp/Dialog.tsx",
-		"line": 11,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/fields/PathField\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/function/preset/layer-comp/Dialog.tsx",
-		"line": 315,
+		"line": 325,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 14px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
-	},
-	{
-		"file": "src/function/widget/core/align/Component.tsx",
-		"line": 1,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/interaction/use-anchor-gesture\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/function/widget/core/align/Component.tsx",
-		"line": 2,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
 		"file": "src/function/widget/core/align/Component.tsx",
@@ -218,63 +155,49 @@
 	},
 	{
 		"file": "src/function/widget/core/anchor-point/Component.tsx",
-		"line": 1,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/interaction/use-anchor-gesture\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/function/widget/core/anchor-point/Component.tsx",
-		"line": 82,
+		"line": 79,
 		"rule": "raw-svg",
 		"message": "raw <svg> is banned; use `Icon` with a lucide icon",
 		"reason": "hand-drawn icon predates the shared design system; replace it with `Icon` and a lucide icon"
 	},
 	{
 		"file": "src/function/widget/core/anchor-point/Component.tsx",
-		"line": 120,
+		"line": 117,
 		"rule": "inline-style",
 		"message": "inline style sets stroke — appearance must come from css() and the token system",
 		"reason": "inline style sets appearance; move it into css() and the token system"
 	},
 	{
 		"file": "src/function/widget/core/anchor-point/Component.tsx",
-		"line": 202,
+		"line": 196,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/function/widget/core/easing/Component.tsx",
-		"line": 2,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/util/keyboard\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/function/widget/core/easing/Component.tsx",
-		"line": 747,
+		"line": 703,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/function/widget/core/easing/Component.tsx",
-		"line": 753,
+		"line": 709,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/function/widget/core/easing/Component.tsx",
-		"line": 759,
+		"line": 715,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/function/widget/core/easing/Component.tsx",
-		"line": 765,
+		"line": 721,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
@@ -302,73 +225,59 @@
 	},
 	{
 		"file": "src/function/widget/core/menu/Component.tsx",
-		"line": 456,
+		"line": 450,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/function/widget/core/menu/Component.tsx",
-		"line": 489,
+		"line": 483,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 14px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/function/widget/core/menu/Component.tsx",
-		"line": 511,
+		"line": 505,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/function/widget/utility/directory-browser/CollapsibleGroupHeader.tsx",
-		"line": 56,
+		"line": 55,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 14px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/function/widget/utility/directory-browser/Component.tsx",
-		"line": 366,
+		"line": 372,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 14px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/function/widget/utility/directory-browser/Component.tsx",
-		"line": 1737,
+		"line": 1696,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 40px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/function/widget/utility/directory-browser/Component.tsx",
-		"line": 2055,
+		"line": 2014,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 11px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/function/widget/utility/directory-browser/Component.tsx",
-		"line": 2072,
+		"line": 2031,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 11px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
-	},
-	{
-		"file": "src/function/widget/utility/font-viewer/Component.tsx",
-		"line": 11,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/fields/SearchField\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/function/widget/utility/font-viewer/Component.tsx",
-		"line": 12,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
 		"file": "src/function/widget/utility/font-viewer/Component.tsx",
@@ -414,7 +323,7 @@
 	},
 	{
 		"file": "src/function/widget/utility/info/comp-sections.tsx",
-		"line": 42,
+		"line": 51,
 		"rule": "inline-style",
 		"message": "inline style sets background — appearance must come from css() and the token system",
 		"reason": "inline style sets appearance; move it into css() and the token system"
@@ -435,413 +344,280 @@
 	},
 	{
 		"file": "src/function/widget/utility/quick-actions/row-components.tsx",
-		"line": 186,
+		"line": 187,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
-		"file": "src/management/debug/console/ui/Panel.tsx",
-		"line": 9,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/icons\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/debug/console/ui/Panel.tsx",
-		"line": 10,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/debug/console/ui/Panel.tsx",
-		"line": 11,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/util/keyboard\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/dialog/Root.tsx",
-		"line": 74,
-		"rule": "inline-style",
-		"message": "inline style sets fontSize — appearance must come from css() and the token system",
-		"reason": "inline style sets appearance; move it into css() and the token system"
-	},
-	{
-		"file": "src/management/dialog/Root.tsx",
-		"line": 77,
-		"rule": "inline-style",
-		"message": "inline style sets color — appearance must come from css() and the token system",
-		"reason": "inline style sets appearance; move it into css() and the token system"
-	},
-	{
 		"file": "src/management/dialog/Root.tsx",
 		"line": 79,
 		"rule": "inline-style",
-		"message": "inline style sets background — appearance must come from css() and the token system",
-		"reason": "inline style sets appearance; move it into css() and the token system"
-	},
-	{
-		"file": "src/management/dialog/Root.tsx",
-		"line": 115,
-		"rule": "inline-style",
 		"message": "inline style sets fontSize — appearance must come from css() and the token system",
 		"reason": "inline style sets appearance; move it into css() and the token system"
 	},
 	{
 		"file": "src/management/dialog/Root.tsx",
-		"line": 116,
+		"line": 84,
 		"rule": "inline-style",
 		"message": "inline style sets color — appearance must come from css() and the token system",
 		"reason": "inline style sets appearance; move it into css() and the token system"
 	},
 	{
 		"file": "src/management/dialog/Root.tsx",
-		"line": 118,
+		"line": 88,
 		"rule": "inline-style",
 		"message": "inline style sets background — appearance must come from css() and the token system",
 		"reason": "inline style sets appearance; move it into css() and the token system"
 	},
 	{
-		"file": "src/management/dialog/shell/Content.tsx",
-		"line": 1,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+		"file": "src/management/dialog/Root.tsx",
+		"line": 137,
+		"rule": "inline-style",
+		"message": "inline style sets fontSize — appearance must come from css() and the token system",
+		"reason": "inline style sets appearance; move it into css() and the token system"
 	},
 	{
-		"file": "src/management/dialog/shell/Footer.tsx",
-		"line": 29,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+		"file": "src/management/dialog/Root.tsx",
+		"line": 140,
+		"rule": "inline-style",
+		"message": "inline style sets color — appearance must come from css() and the token system",
+		"reason": "inline style sets appearance; move it into css() and the token system"
 	},
 	{
-		"file": "src/management/dialog/shell/Header.tsx",
-		"line": 1,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/dialog/shell/Layout.tsx",
-		"line": 1,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+		"file": "src/management/dialog/Root.tsx",
+		"line": 144,
+		"rule": "inline-style",
+		"message": "inline style sets background — appearance must come from css() and the token system",
+		"reason": "inline style sets appearance; move it into css() and the token system"
 	},
 	{
 		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 2,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/controls/Button\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+		"line": 778,
+		"rule": "ui-override",
+		"message": "<IconButton> is a shared @ty-plus/ui component; height, width, borderWidth, borderStyle, borderColor must come from its variant/size/tone props, not className",
+		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
 	},
 	{
 		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 3,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/controls/IconButton\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 4,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/fields/SearchField\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 5,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/Icon\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 6,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 776,
+		"line": 780,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 9px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 853,
+		"line": 855,
+		"rule": "ui-override",
+		"message": "<IconButton> is a shared @ty-plus/ui component; borderWidth, borderStyle, borderColor must come from its variant/size/tone props, not className",
+		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
+	},
+	{
+		"file": "src/management/online/catalog/Dialog.tsx",
+		"line": 857,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 10px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 907,
+		"line": 911,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 14px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 922,
+		"line": 928,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 14px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 963,
+		"line": 973,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 10px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 976,
+		"line": 986,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 10px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 989,
+		"line": 999,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 10px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 1074,
+		"line": 1086,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 1082,
+		"line": 1094,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 1142,
+		"line": 1156,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 10px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 1224,
+		"line": 1246,
+		"rule": "ui-override",
+		"message": "<IconButton> is a shared @ty-plus/ui component; borderWidth, borderStyle, borderColor must come from its variant/size/tone props, not className",
+		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
+	},
+	{
+		"file": "src/management/online/catalog/Dialog.tsx",
+		"line": 1248,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 10px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/online/catalog/DownloadProgressIconButton.tsx",
-		"line": 1,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/controls/IconButton\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/online/catalog/DownloadProgressIconButton.tsx",
-		"line": 2,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/Icon\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/online/catalog/DownloadProgressIconButton.tsx",
-		"line": 3,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/online/catalog/DownloadProgressIconButton.tsx",
-		"line": 186,
+		"line": 184,
 		"rule": "raw-svg",
 		"message": "raw <svg> is banned; use `Icon` with a lucide icon",
 		"reason": "hand-drawn icon predates the shared design system; replace it with `Icon` and a lucide icon"
 	},
 	{
 		"file": "src/management/online/catalog/PresetLibraryEmptyState.tsx",
-		"line": 2,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/controls/IconButton\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/online/catalog/PresetLibraryEmptyState.tsx",
-		"line": 3,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/Icon\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/online/catalog/PresetLibraryEmptyState.tsx",
-		"line": 88,
+		"line": 87,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 14px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/online/catalog/PresetLibraryEmptyState.tsx",
-		"line": 103,
+		"line": 104,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 14px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/online/notification/Center.tsx",
-		"line": 2,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/controls/IconButton\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/online/notification/Center.tsx",
-		"line": 3,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/Icon\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/online/notification/Center.tsx",
-		"line": 4,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/online/notification/Center.tsx",
-		"line": 585,
+		"line": 595,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/online/notification/Center.tsx",
-		"line": 651,
+		"line": 658,
+		"rule": "ui-override",
+		"message": "<IconButton> is a shared @ty-plus/ui component; borderWidth, borderStyle, borderColor must come from its variant/size/tone props, not className",
+		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
+	},
+	{
+		"file": "src/management/online/notification/Center.tsx",
+		"line": 660,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 14px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/online/notification/Center.tsx",
-		"line": 663,
+		"line": 676,
+		"rule": "ui-override",
+		"message": "<IconButton> is a shared @ty-plus/ui component; borderWidth, borderStyle, borderColor must come from its variant/size/tone props, not className",
+		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
+	},
+	{
+		"file": "src/management/online/notification/Center.tsx",
+		"line": 678,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 14px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/online/notification/Center.tsx",
-		"line": 672,
+		"line": 685,
+		"rule": "ui-override",
+		"message": "<IconButton> is a shared @ty-plus/ui component; borderWidth, borderStyle, borderColor must come from its variant/size/tone props, not className",
+		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
+	},
+	{
+		"file": "src/management/online/notification/Center.tsx",
+		"line": 687,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 14px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/online/notification/Center.tsx",
-		"line": 964,
+		"line": 1031,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 14px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/online/notification/Center.tsx",
-		"line": 980,
+		"line": 1049,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 24px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/online/notification/Container.tsx",
-		"line": 1,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/online/notification/Container.tsx",
-		"line": 127,
+		"line": 128,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/panel/control/status-bar/Main.tsx",
-		"line": 8,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/icons\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/panel/control/status-bar/Main.tsx",
-		"line": 20,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/panel/control/status-bar/Main.tsx",
-		"line": 213,
+		"line": 203,
 		"rule": "ui-override",
 		"message": "<IconButton> is a shared @ty-plus/ui component; height, width must come from its variant/size/tone props, not className",
 		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
 	},
 	{
 		"file": "src/management/panel/control/status-bar/Main.tsx",
-		"line": 222,
+		"line": 214,
 		"rule": "ui-override",
 		"message": "<IconButton> is a shared @ty-plus/ui component; height, width must come from its variant/size/tone props, not className",
 		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
 	},
 	{
 		"file": "src/management/panel/control/status-bar/Main.tsx",
-		"line": 230,
+		"line": 224,
 		"rule": "ui-override",
 		"message": "<IconButton> is a shared @ty-plus/ui component; height, width must come from its variant/size/tone props, not className",
 		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
 	},
 	{
 		"file": "src/management/panel/control/status-bar/Main.tsx",
-		"line": 244,
+		"line": 243,
 		"rule": "ui-override",
 		"message": "<IconButton> is a shared @ty-plus/ui component; height, width must come from its variant/size/tone props, not className",
 		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
 	},
 	{
 		"file": "src/management/panel/control/status-bar/Main.tsx",
-		"line": 263,
+		"line": 272,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/panel/control/status-bar/Main.tsx",
-		"line": 277,
-		"rule": "ui-override",
-		"message": "<IconButton> is a shared @ty-plus/ui component; height, width must come from its variant/size/tone props, not className",
-		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
-	},
-	{
-		"file": "src/management/panel/control/status-bar/Main.tsx",
-		"line": 293,
-		"rule": "ui-override",
-		"message": "<IconButton> is a shared @ty-plus/ui component; height, width must come from its variant/size/tone props, not className",
-		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
-	},
-	{
-		"file": "src/management/panel/control/status-bar/Main.tsx",
-		"line": 302,
+		"line": 292,
 		"rule": "ui-override",
 		"message": "<IconButton> is a shared @ty-plus/ui component; height, width must come from its variant/size/tone props, not className",
 		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
@@ -855,353 +631,304 @@
 	},
 	{
 		"file": "src/management/panel/control/status-bar/Main.tsx",
-		"line": 319,
+		"line": 321,
 		"rule": "ui-override",
 		"message": "<IconButton> is a shared @ty-plus/ui component; height, width must come from its variant/size/tone props, not className",
 		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
 	},
 	{
 		"file": "src/management/panel/control/status-bar/Main.tsx",
-		"line": 328,
+		"line": 331,
+		"rule": "ui-override",
+		"message": "<IconButton> is a shared @ty-plus/ui component; height, width must come from its variant/size/tone props, not className",
+		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
+	},
+	{
+		"file": "src/management/panel/control/status-bar/Main.tsx",
+		"line": 340,
+		"rule": "ui-override",
+		"message": "<IconButton> is a shared @ty-plus/ui component; height, width must come from its variant/size/tone props, not className",
+		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
+	},
+	{
+		"file": "src/management/panel/control/status-bar/Main.tsx",
+		"line": 349,
 		"rule": "ui-override",
 		"message": "<IconButton> is a shared @ty-plus/ui component; height, width must come from its variant/size/tone props, not className",
 		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
 	},
 	{
 		"file": "src/management/panel/control/Toolbar.tsx",
-		"line": 6,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/panel/control/Toolbar.tsx",
-		"line": 168,
+		"line": 177,
 		"rule": "ui-override",
 		"message": "<IconButton> is a shared @ty-plus/ui component; height, width must come from its variant/size/tone props, not className",
 		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
 	},
 	{
 		"file": "src/management/panel/ErrorBoundary.tsx",
-		"line": 173,
+		"line": 174,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
-	},
-	{
-		"file": "src/management/preset/authoring/Dialog.tsx",
-		"line": 1,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/fields/Input\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
 		"file": "src/management/preset/catalog-add/ArchiveDetailsSection.tsx",
-		"line": 2,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/fields/PathField\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/preset/catalog-add/ArchiveDetailsSection.tsx",
-		"line": 208,
+		"line": 207,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 633,
+		"line": 656,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 640,
+		"line": 663,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 11px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 642,
+		"line": 665,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
-	},
-	{
-		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 649,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 11px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
-	},
-	{
-		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 651,
-		"rule": "raw-control",
-		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
-		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
-	},
-	{
-		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 658,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 11px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
 		"line": 672,
-		"rule": "raw-control",
-		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
-		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
-	},
-	{
-		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 679,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 11px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
+	},
+	{
+		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
+		"line": 674,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
 		"line": 681,
-		"rule": "raw-control",
-		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
-		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
-	},
-	{
-		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 688,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 11px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 770,
+		"line": 695,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 779,
+		"line": 702,
+		"rule": "icon-size-off-scale",
+		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 11px is not one of them",
+		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
+	},
+	{
+		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
+		"line": 704,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
+		"line": 711,
+		"rule": "icon-size-off-scale",
+		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 11px is not one of them",
+		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
+	},
+	{
+		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
+		"line": 793,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
+		"line": 806,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 13px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 788,
+		"line": 815,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 884,
+		"line": 911,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 899,
+		"line": 928,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 11px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 921,
+		"line": 952,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 947,
+		"line": 984,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 956,
+		"line": 993,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 11px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 958,
+		"line": 995,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 967,
+		"line": 1004,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 11px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 986,
+		"line": 1023,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 1009,
+		"line": 1048,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 1018,
+		"line": 1057,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 11px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 1020,
+		"line": 1059,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 1029,
+		"line": 1068,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 11px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 1859,
+		"line": 1942,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
+	},
+	{
+		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
+		"line": 1971,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/PresetsDialogHeader.tsx",
-		"line": 239,
+		"line": 244,
 		"rule": "ui-override",
 		"message": "<IconButton> is a shared @ty-plus/ui component; height, width, borderRadius, borderWidth, borderStyle, borderColor, backgroundColor, padding, color must come from its variant/size/tone props, not className",
 		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/PresetsDialogHeader.tsx",
-		"line": 244,
+		"line": 249,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 10px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/preset/components/PresetIconTile.tsx",
-		"line": 159,
+		"line": 164,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 11px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/preset/edit/Dialog.tsx",
-		"line": 10,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/controls/Button\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/preset/edit/Dialog.tsx",
-		"line": 11,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/fields/Input\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/preset/edit/Dialog.tsx",
-		"line": 12,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/fields/PathField\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/preset/edit/Dialog.tsx",
-		"line": 13,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/shell/DialogBody\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/preset/edit/Dialog.tsx",
-		"line": 516,
+		"line": 519,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/preset/edit/Dialog.tsx",
-		"line": 524,
+		"line": 529,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 11px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/preset/edit/Dialog.tsx",
-		"line": 526,
+		"line": 531,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/preset/edit/Dialog.tsx",
-		"line": 534,
+		"line": 541,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 11px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/preset/edit/Dialog.tsx",
-		"line": 536,
+		"line": 543,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/preset/edit/Dialog.tsx",
-		"line": 544,
+		"line": 553,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 11px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
-	},
-	{
-		"file": "src/management/preset/group/ConditionRuleCard.tsx",
-		"line": 1,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/controls/Button\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/preset/group/ConditionRuleCard.tsx",
-		"line": 2,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/fields/Input\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/preset/group/ConditionRuleCard.tsx",
-		"line": 3,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/fields/RegexEditor\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
 		"file": "src/management/preset/group/Panel.tsx",
@@ -1226,27 +953,6 @@
 	},
 	{
 		"file": "src/management/preset/icon/Editor.tsx",
-		"line": 4,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/fields/ColorSwatch\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/preset/icon/Editor.tsx",
-		"line": 5,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/fields/Input\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/preset/icon/Editor.tsx",
-		"line": 6,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/fields/PathField\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/preset/icon/Editor.tsx",
 		"line": 210,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
@@ -1258,20 +964,6 @@
 		"rule": "focus-indicator-missing",
 		"message": "this file removes the native focus indicator but never paints var(--color-focus-ring) — a focusable control here would show nothing",
 		"reason": "the editable line is a contentEditable: the text caret is its focus indicator, so it does not need the shared ring"
-	},
-	{
-		"file": "src/management/preset/modeless/ToolHost.tsx",
-		"line": 1,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/shell/DialogBody\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/preset/workspace/glyph/WorkspaceGlyph.tsx",
-		"line": 1,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
 		"file": "src/management/preset/workspace/glyph/WorkspaceGlyph.tsx",
@@ -1288,270 +980,11 @@
 		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
 	},
 	{
-		"file": "src/management/setting/dialog/components/ColorTokenEditor.tsx",
-		"line": 1,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/fields/ColorField\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/setting/dialog/components/NumberTokenEditor.tsx",
-		"line": 1,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/fields/NumberField\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/setting/dialog/components/TokenEditor.tsx",
-		"line": 2,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/fields/Input\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/setting/dialog/components/TokenEditor.tsx",
-		"line": 3,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/setting/dialog/layout/SettingsGrid.tsx",
-		"line": 2,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
 		"file": "src/management/setting/dialog/sections/AccordionSection.tsx",
-		"line": 2,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/Icon\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/setting/dialog/sections/AccordionSection.tsx",
-		"line": 3,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/setting/dialog/sections/AccordionSection.tsx",
-		"line": 97,
+		"line": 95,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
-	},
-	{
-		"file": "src/management/setting/dialog/sections/BackgroundSection.tsx",
-		"line": 1,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/controls/Button\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/setting/dialog/sections/BackgroundSection.tsx",
-		"line": 2,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/fields/ListSelect\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/setting/dialog/sections/BackgroundSection.tsx",
-		"line": 3,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/setting/dialog/sections/ButtonsPreview.tsx",
-		"line": 1,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/controls/Button\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/setting/dialog/sections/ButtonsPreview.tsx",
-		"line": 2,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/controls/IconButton\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/setting/dialog/sections/ComponentPreviewSection.tsx",
-		"line": 2,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/controls/SegmentedControl\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/setting/dialog/sections/ComponentPreviewSection.tsx",
-		"line": 3,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/feedback/LoadingSpinner\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/setting/dialog/sections/ComponentPreviewSection.tsx",
-		"line": 4,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/fields/ListSelect\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/setting/dialog/sections/ComponentPreviewSection.tsx",
-		"line": 5,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/layout/ScrollArea\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/setting/dialog/sections/ComponentPreviewSection.tsx",
-		"line": 6,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/setting/dialog/sections/FeedbackSection.tsx",
-		"line": 1,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/controls/Button\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/setting/dialog/sections/FeedbackSection.tsx",
-		"line": 2,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/fields/Input\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/setting/dialog/sections/FeedbackSection.tsx",
-		"line": 3,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/fields/ListSelect\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/setting/dialog/sections/FeedbackSection.tsx",
-		"line": 4,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/fields/Textarea\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/setting/dialog/sections/FeedbackSection.tsx",
-		"line": 5,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/setting/dialog/sections/GridSection.tsx",
-		"line": 1,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/fields/NumberField\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/setting/dialog/sections/InputsPreview.tsx",
-		"line": 1,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/fields/Input\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/setting/dialog/sections/InputsPreview.tsx",
-		"line": 2,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/fields/NumberField\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/setting/dialog/sections/InputsPreview.tsx",
-		"line": 3,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/fields/PathField\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/setting/dialog/sections/InputsPreview.tsx",
-		"line": 4,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/fields/RangeField\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/setting/dialog/sections/InputsPreview.tsx",
-		"line": 5,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/fields/SearchField\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/setting/dialog/sections/InputsPreview.tsx",
-		"line": 6,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/fields/Textarea\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/setting/dialog/sections/LanguageSection.tsx",
-		"line": 1,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/fields/ListSelect\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/setting/dialog/sections/PathsSection.tsx",
-		"line": 1,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/fields/PathField\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/setting/dialog/sections/PathsSection.tsx",
-		"line": 2,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/util/keyboard\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/setting/dialog/sections/StyleSection.tsx",
-		"line": 1,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/fields/ColorField\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/setting/dialog/sections/StyleSection.tsx",
-		"line": 2,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/fields/RangeField\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/setting/dialog/sections/TokensSection.tsx",
-		"line": 1,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/controls/Button\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/setting/dialog/sections/TokensSection.tsx",
-		"line": 2,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/fields/Textarea\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/setting/dialog/sections/UpdateSection.tsx",
-		"line": 1,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/fields/ListSelect\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
 		"file": "src/management/setting/dialog/sections/UpdateSection.tsx",
@@ -1582,214 +1015,102 @@
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
-		"file": "src/management/setting/dialog/sections/WorkspaceBackupSection.tsx",
-		"line": 1,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/controls/Button\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/setting/dialog/sections/WorkspaceBackupSection.tsx",
-		"line": 2,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/fields/Textarea\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/setting/dialog/sections/WorkspaceBackupSection.tsx",
-		"line": 3,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/setting/dialog/Settings.tsx",
-		"line": 2,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/controls/Button\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
 		"file": "src/management/setting/dialog/SettingsSidebar.tsx",
-		"line": 6,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/setting/dialog/SettingsSidebar.tsx",
-		"line": 355,
+		"line": 356,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/storage/ui/file-entry/FileEntryList.tsx",
-		"line": 839,
+		"line": 877,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 64px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
-		"file": "src/management/widget/add-dialog.tsx",
-		"line": 1,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/controls/Button\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
 		"file": "src/management/widget/catalog.tsx",
-		"line": 2,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/fields/SearchField\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/widget/catalog.tsx",
-		"line": 3,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/widget/catalog.tsx",
-		"line": 4,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/util/keyboard\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/widget/catalog.tsx",
-		"line": 348,
+		"line": 356,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/widget/catalog.tsx",
-		"line": 372,
+		"line": 380,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 18px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/widget/catalog.tsx",
-		"line": 408,
+		"line": 416,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/widget/catalog.tsx",
-		"line": 433,
+		"line": 441,
 		"rule": "icon-size-off-scale",
 		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 18px is not one of them",
 		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
-	},
-	{
-		"file": "src/management/widget/picker-overlay.tsx",
-		"line": 1,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/controls/Button\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/workspace/background/Dialog.tsx",
-		"line": 1,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/controls/Button\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/workspace/background/Dialog.tsx",
-		"line": 2,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/layout/ScrollArea\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/workspace/background/Dialog.tsx",
-		"line": 3,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
 	},
 	{
 		"file": "src/management/workspace/background/Fields.tsx",
-		"line": 2,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/fields/Input\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+		"line": 72,
+		"rule": "ui-override",
+		"message": "<Input> is a shared @ty-plus/ui component; borderRadius, borderWidth, borderStyle, borderColor, backgroundColor must come from its variant/size/tone props, not className",
+		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
+	},
+	{
+		"file": "src/management/workspace/background/Fields.tsx",
+		"line": 81,
+		"rule": "ui-override",
+		"message": "<Input> is a shared @ty-plus/ui component; borderColor must come from its variant/size/tone props, not className",
+		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
 	},
 	{
 		"file": "src/management/workspace/background/ImageLayerEditor.tsx",
-		"line": 2,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/controls/SegmentedControl\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+		"line": 121,
+		"rule": "ui-override",
+		"message": "<SegmentedControl> is a shared @ty-plus/ui component; borderColor must come from its variant/size/tone props, not className",
+		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
 	},
 	{
 		"file": "src/management/workspace/background/ImageLayerEditor.tsx",
-		"line": 3,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/fields/PathField\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+		"line": 143,
+		"rule": "ui-override",
+		"message": "<SegmentedControl> is a shared @ty-plus/ui component; borderColor must come from its variant/size/tone props, not className",
+		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
 	},
 	{
 		"file": "src/management/workspace/background/LayerEditor.tsx",
-		"line": 1,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/controls/Button\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/workspace/background/LayerEditor.tsx",
-		"line": 2,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/workspace/background/LayerEditor.tsx",
-		"line": 104,
+		"line": 103,
 		"rule": "inline-style",
 		"message": "inline style sets backgroundColor — appearance must come from css() and the token system",
 		"reason": "inline style sets appearance; move it into css() and the token system"
 	},
 	{
 		"file": "src/management/workspace/background/LayerListPanel.tsx",
-		"line": 2,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/controls/Button\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+		"line": 235,
+		"rule": "ui-override",
+		"message": "<IconButton> is a shared @ty-plus/ui component; borderWidth, borderStyle, borderColor, backgroundColor, padding must come from its variant/size/tone props, not className",
+		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
 	},
 	{
 		"file": "src/management/workspace/background/LayerListPanel.tsx",
-		"line": 3,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/controls/IconButton\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/workspace/background/LayerListPanel.tsx",
-		"line": 4,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+		"line": 248,
+		"rule": "ui-override",
+		"message": "<IconButton> is a shared @ty-plus/ui component; borderWidth, borderStyle, borderColor, backgroundColor, padding must come from its variant/size/tone props, not className",
+		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
 	},
 	{
 		"file": "src/management/workspace/background/PatternLayerEditor.tsx",
-		"line": 2,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/controls/SegmentedControl\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
-	},
-	{
-		"file": "src/management/workspace/surface/Grid.tsx",
-		"line": 9,
-		"rule": "deep-import",
-		"message": "import from \"@ty-plus/ui/util/cx\" bypasses the @ty-plus/ui barrel — import from \"@ty-plus/ui\"",
-		"reason": "deep import of the shared package; move it to the @ty-plus/ui barrel"
+		"line": 59,
+		"rule": "ui-override",
+		"message": "<SegmentedControl> is a shared @ty-plus/ui component; borderColor must come from its variant/size/tone props, not className",
+		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
 	},
 	{
 		"file": "src/management/workspace/surface/widget-grid-icons.tsx",

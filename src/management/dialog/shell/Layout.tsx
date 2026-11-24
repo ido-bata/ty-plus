@@ -1,4 +1,4 @@
-import { cx } from "@ty-plus/ui/util/cx";
+import { cx } from "@ty-plus/ui";
 import type { CSSProperties, HTMLAttributes, JSX, ReactNode } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Content } from "@/management/dialog/shell/Content";

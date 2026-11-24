@@ -6,8 +6,7 @@
  * control panel drag, workspace event wiring).
  */
 
-import { cx } from "@ty-plus/ui/util/cx";
-import { isIMEComposing } from "@ty-plus/ui/util/keyboard";
+import { cx, isIMEComposing } from "@ty-plus/ui";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { WidgetType } from "@/function/widget";
 import { isWidgetType } from "@/function/widget/contract";

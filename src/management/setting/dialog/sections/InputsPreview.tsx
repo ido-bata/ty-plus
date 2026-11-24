@@ -1,9 +1,11 @@
-import { Input } from "@ty-plus/ui/fields/Input";
-import { NumberField } from "@ty-plus/ui/fields/NumberField";
-import { PathField } from "@ty-plus/ui/fields/PathField";
-import { RangeField } from "@ty-plus/ui/fields/RangeField";
-import { SearchField } from "@ty-plus/ui/fields/SearchField";
-import { Textarea } from "@ty-plus/ui/fields/Textarea";
+import {
+	Input,
+	NumberField,
+	PathField,
+	RangeField,
+	SearchField,
+	Textarea,
+} from "@ty-plus/ui";
 import { FolderOpen, Search } from "lucide-react";
 import type { JSX } from "react";
 import { i18n } from "@/management/i18n/index";
