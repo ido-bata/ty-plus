@@ -72,6 +72,12 @@ const meta = {
 						<div
 							className={css({
 								display: "flex",
+								// Issue #531: the footer element is itself a flex
+								// row, so this wrapper shrink-wraps to its content
+								// unless it claims the full width — without it
+								// `justifyContent: "flex-end"` has no room to work
+								// and the buttons stick to the left edge.
+								width: "full",
 								justifyContent: "flex-end",
 								gap: "2",
 							})}
@@ -166,6 +172,19 @@ export const WithFooter: Story = {
 		for (const button of buttons) {
 			expectRectInside(button, footer as Element);
 		}
+		// Issue #531: `justifyContent: "flex-end"` must actually reach the
+		// footer's inner right edge — the last button's right edge should
+		// match the footer content-box right edge (minus its padding).
+		const footerEl = footer as HTMLElement;
+		const footerRect = footerEl.getBoundingClientRect();
+		const footerPaddingRight = Number.parseFloat(
+			getComputedStyle(footerEl).paddingRight,
+		);
+		const lastButton = buttons[buttons.length - 1] as HTMLElement;
+		const buttonRect = lastButton.getBoundingClientRect();
+		expect(
+			Math.abs(footerRect.right - footerPaddingRight - buttonRect.right),
+		).toBeLessThanOrEqual(1);
 	},
 };
 
