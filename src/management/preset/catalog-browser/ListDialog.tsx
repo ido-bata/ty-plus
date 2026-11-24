@@ -1,10 +1,11 @@
 import {
+	Button,
 	borderedListClass,
 	centeredIconClass,
 	cx,
 	emptyStateClass,
 	Icon,
-	iconActionButtonClass,
+	IconButton,
 	isIMEComposing,
 	rowMetaClass,
 	rowTitleClass,
@@ -171,17 +172,6 @@ const groupRowTopClass = css({
 	},
 });
 
-const groupToggleButtonClass = css({
-	display: "inline-flex",
-	borderRadius: "shell-sm",
-	padding: "0.5",
-	color: "text.muted",
-	_hover: {
-		backgroundColor: "surface.widget",
-		color: "text.primary",
-	},
-});
-
 const groupToggleIconClass = css({
 	transitionProperty: "transform",
 });
@@ -194,20 +184,10 @@ const groupRowCenterClass = css({
 
 const groupTitleButtonClass = css({
 	minWidth: "0",
-	borderWidth: "0",
-	backgroundColor: "transparent",
-	padding: "0",
+	flexDirection: "column",
+	alignItems: "stretch",
+	justifyContent: "flex-start",
 	textAlign: "left",
-	font: "inherit",
-	boxShadow: "none",
-	outline: "none",
-	color: "text.muted",
-	_hover: {
-		color: "text.primary",
-	},
-	_focusVisible: {
-		boxShadow: "var(--color-focus-ring)",
-	},
 });
 
 const groupSubtitleDividerClass = css({
@@ -482,21 +462,6 @@ const errorDetailClass = css({
 	overflowWrap: "anywhere",
 });
 
-const actionButtonClass = css({
-	height: "6",
-	paddingInline: "3",
-	borderRadius: "shell-sm",
-	borderWidth: "hairline",
-	borderStyle: "solid",
-	borderColor: "border.default",
-	backgroundColor: "surface.widget",
-	fontSize: "xs",
-	color: "text.primary",
-	_hover: {
-		backgroundColor: "interactive.hover",
-	},
-});
-
 const emptyCatalogClass = css({
 	display: "flex",
 	flexDirection: "column",
@@ -653,33 +618,33 @@ function PresetRowActions(props: {
 	const { presetId, onRun, onEdit, onDelete } = props;
 	return (
 		<div className={actionsRowClass}>
-			<button
-				type="button"
-				className={iconActionButtonClass}
+			<IconButton
+				variant="default"
+				size="xs"
 				aria-label={i18n.t("presets:listDialog.runPresetAria")}
 				title={i18n.t("common:actions.run")}
 				onClick={() => onRun(presetId)}
 			>
 				<Icon icon={Play} size={12} />
-			</button>
-			<button
-				type="button"
-				className={iconActionButtonClass}
+			</IconButton>
+			<IconButton
+				variant="default"
+				size="xs"
 				aria-label={i18n.t("presets:listDialog.editPresetAria")}
 				title={i18n.t("common:actions.edit")}
 				onClick={() => void onEdit(presetId)}
 			>
 				<Icon icon={Pencil} size={12} />
-			</button>
-			<button
-				type="button"
-				className={iconActionButtonClass}
+			</IconButton>
+			<IconButton
+				variant="default"
+				size="xs"
 				aria-label={i18n.t("presets:listDialog.deletePresetAria")}
 				title={i18n.t("common:actions.delete")}
 				onClick={() => void onDelete(presetId)}
 			>
 				<Icon icon={Trash2} size={12} />
-			</button>
+			</IconButton>
 		</div>
 	);
 }
@@ -692,24 +657,24 @@ function GroupRowActions(props: {
 	const { groupId, onEdit, onDelete } = props;
 	return (
 		<div className={actionsRowClass}>
-			<button
-				type="button"
-				className={iconActionButtonClass}
+			<IconButton
+				variant="default"
+				size="xs"
 				aria-label={i18n.t("presets:listDialog.editGroup")}
 				title={i18n.t("presets:listDialog.editGroup")}
 				onClick={() => onEdit(groupId)}
 			>
 				<Icon icon={Pencil} size={12} />
-			</button>
-			<button
-				type="button"
-				className={iconActionButtonClass}
+			</IconButton>
+			<IconButton
+				variant="default"
+				size="xs"
 				aria-label={i18n.t("presets:listDialog.deleteGroup")}
 				title={i18n.t("presets:listDialog.deleteGroup")}
 				onClick={() => onDelete(groupId)}
 			>
 				<Icon icon={Trash2} size={12} />
-			</button>
+			</IconButton>
 		</div>
 	);
 }
@@ -790,9 +755,8 @@ function PresetGroupListBlock(props: {
 		>
 			<div className={cx(LIST_ROW_GRID, groupRowTopClass)}>
 				<div className={groupRowCenterClass}>
-					<button
-						type="button"
-						className={groupToggleButtonClass}
+					<IconButton
+						size="xs"
 						aria-expanded={open}
 						aria-label={
 							open
@@ -807,13 +771,14 @@ function PresetGroupListBlock(props: {
 							className={groupToggleIconClass}
 							aria-hidden
 						/>
-					</button>
+					</IconButton>
 				</div>
 				<div className={groupRowCenterClass}>
 					<GroupHeaderGlyph group={group} />
 				</div>
-				<button
-					type="button"
+				<Button
+					variant="bare"
+					uiSize="content"
 					className={groupTitleButtonClass}
 					onClick={() => onToggle(group.id)}
 				>
@@ -823,7 +788,7 @@ function PresetGroupListBlock(props: {
 						<span className={groupSubtitleDividerClass}>|</span>
 						{groupWorkspaceSummary(group, groupPlacement)}
 					</div>
-				</button>
+				</Button>
 				<GroupRowActions
 					groupId={group.id}
 					onEdit={onEdit}
@@ -981,9 +946,9 @@ function IconCatalogGroupCard(props: {
 					{group.title?.trim() || group.id}
 				</div>
 				<div className={iconGroupActionsClass}>
-					<button
-						type="button"
-						className={iconActionButtonClass}
+					<IconButton
+						variant="default"
+						size="xs"
 						aria-label={i18n.t("presets:listDialog.editGroup")}
 						onClick={(e) => {
 							e.stopPropagation();
@@ -991,10 +956,10 @@ function IconCatalogGroupCard(props: {
 						}}
 					>
 						<Icon icon={Pencil} size={12} />
-					</button>
-					<button
-						type="button"
-						className={iconActionButtonClass}
+					</IconButton>
+					<IconButton
+						variant="default"
+						size="xs"
 						aria-label={i18n.t("presets:listDialog.deleteGroup")}
 						onClick={(e) => {
 							e.stopPropagation();
@@ -1002,7 +967,7 @@ function IconCatalogGroupCard(props: {
 						}}
 					>
 						<Icon icon={Trash2} size={12} />
-					</button>
+					</IconButton>
 				</div>
 			</div>
 		</div>
@@ -1045,9 +1010,9 @@ function IconPresetCard(props: {
 					{preset.title || basenamePath(preset.filePath)}
 				</div>
 				<div className={iconGroupActionsClass}>
-					<button
-						type="button"
-						className={iconActionButtonClass}
+					<IconButton
+						variant="default"
+						size="xs"
 						aria-label={i18n.t("common:actions.edit")}
 						onClick={(e) => {
 							e.stopPropagation();
@@ -1055,10 +1020,10 @@ function IconPresetCard(props: {
 						}}
 					>
 						<Icon icon={Pencil} size={12} />
-					</button>
-					<button
-						type="button"
-						className={iconActionButtonClass}
+					</IconButton>
+					<IconButton
+						variant="default"
+						size="xs"
 						aria-label={i18n.t("common:actions.delete")}
 						onClick={(e) => {
 							e.stopPropagation();
@@ -1066,7 +1031,7 @@ function IconPresetCard(props: {
 						}}
 					>
 						<Icon icon={Trash2} size={12} />
-					</button>
+					</IconButton>
 				</div>
 			</div>
 		</div>
@@ -1939,13 +1904,9 @@ export function PresetsDialog(): JSX.Element {
 						{i18n.t("presets:listDialog.loadFailedTitle")}
 					</div>
 					<div className={errorDetailClass}>{loadError}</div>
-					<button
-						type="button"
-						className={actionButtonClass}
-						onClick={() => void loadEverything()}
-					>
+					<Button uiSize="sm" onClick={() => void loadEverything()}>
 						{i18n.t("presets:listDialog.tryAgain")}
-					</button>
+					</Button>
 				</div>
 			);
 		}
@@ -1968,9 +1929,8 @@ export function PresetsDialog(): JSX.Element {
 					<p className={emptyCatalogHintClass}>
 						{i18n.t("presets:listDialog.emptyCatalogHint")}
 					</p>
-					<button
-						type="button"
-						className={actionButtonClass}
+					<Button
+						uiSize="sm"
 						onClick={() =>
 							void openPresetToolSurface(
 								window,
@@ -1980,7 +1940,7 @@ export function PresetsDialog(): JSX.Element {
 						}
 					>
 						{i18n.t("presets:listDialog.addPresets")}
-					</button>
+					</Button>
 				</div>
 			);
 		}
