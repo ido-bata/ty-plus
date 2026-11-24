@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { expect } from "storybook/test";
+import { AfterEffectsFilesGatewayProvider } from "@/management/ae/files/gateway-context";
 import type { FileBrowserEntry } from "@/management/storage/file-browser-service";
 import { expectFirstImageLoaded } from "@/storybook/await-image";
 import { ThumbnailTile } from "./Tile";
@@ -65,9 +66,33 @@ export const Default: Story = {
 	},
 };
 
+// Issue #525: the fixture gateway always resolves, so renaming the file
+// never produced the loading state. A `null` gateway keeps
+// `useThumbnail` in `"idle"` — `staticUrl` stays null and the muted
+// placeholder renders, which is the same pixels the loading branch
+// paints. (A never-resolving gateway would also pin "loading", but its
+// batch flush never settles and starves every later `batchThumbnails`
+// caller through the module-level single-flight guard.)
 export const Loading: Story = {
 	args: {
 		entry: makeFile({ name: "loading.png", path: "/preset/root/loading.png" }),
+	},
+	decorators: [
+		(Story) => (
+			<AfterEffectsFilesGatewayProvider value={null}>
+				<Story />
+			</AfterEffectsFilesGatewayProvider>
+		),
+	],
+	play: async ({ canvasElement }) => {
+		// The tile must stay in the placeholder branch: no <img> mounted
+		// and the wrapper keeps the entry name as its aria-label.
+		await new Promise((resolve) => setTimeout(resolve, 300));
+		expect(canvasElement.querySelector("img")).toBeNull();
+		const wrapper = canvasElement.querySelector<HTMLElement>(
+			"[aria-label='loading.png']",
+		);
+		expect(wrapper).not.toBeNull();
 	},
 };
 
