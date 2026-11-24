@@ -408,7 +408,6 @@
 	},
 	"tutorial": {
 		"chrome": {
-			"help": "도움말",
 			"title": "위젯 도움말",
 			"close": "닫기",
 			"dismissHint": "힌트 닫기",

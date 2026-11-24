@@ -408,7 +408,6 @@
 	},
 	"tutorial": {
 		"chrome": {
-			"help": "帮助",
 			"title": "小部件帮助",
 			"close": "关闭",
 			"dismissHint": "关闭提示",

@@ -408,7 +408,6 @@
 	},
 	"tutorial": {
 		"chrome": {
-			"help": "Ayuda",
 			"title": "Ayuda del widget",
 			"close": "Cerrar",
 			"dismissHint": "Descartar sugerencia",
