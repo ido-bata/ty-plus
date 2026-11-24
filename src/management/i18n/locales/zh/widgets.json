@@ -43,14 +43,8 @@
 		"reverse": "反转",
 		"mode": {
 			"curve": "曲线",
-			"loop": "循环",
 			"bounce": "弹跳",
 			"elastic": "弹性"
-		},
-		"loop": {
-			"cycles": "循环",
-			"decrement": "减少循环",
-			"increment": "增加循环"
 		},
 		"options": {
 			"mode": "模式",

@@ -43,14 +43,8 @@
 		"reverse": "반전",
 		"mode": {
 			"curve": "커브",
-			"loop": "루프",
 			"bounce": "바운스",
 			"elastic": "엘라스틱"
-		},
-		"loop": {
-			"cycles": "사이클",
-			"decrement": "사이클 줄이기",
-			"increment": "사이클 늘리기"
 		},
 		"options": {
 			"mode": "모드",

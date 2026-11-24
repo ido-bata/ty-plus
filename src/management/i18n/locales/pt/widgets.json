@@ -43,14 +43,8 @@
 		"reverse": "Inverter",
 		"mode": {
 			"curve": "Curva",
-			"loop": "Loop",
 			"bounce": "Quicar",
 			"elastic": "Elástico"
-		},
-		"loop": {
-			"cycles": "Ciclos",
-			"decrement": "Diminuir ciclos",
-			"increment": "Aumentar ciclos"
 		},
 		"options": {
 			"mode": "Modo",

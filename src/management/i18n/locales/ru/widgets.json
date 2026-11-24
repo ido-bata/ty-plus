@@ -43,14 +43,8 @@
 		"reverse": "Обратить",
 		"mode": {
 			"curve": "Кривая",
-			"loop": "Цикл",
 			"bounce": "Отскок",
 			"elastic": "Эластичный"
-		},
-		"loop": {
-			"cycles": "Циклы",
-			"decrement": "Уменьшить циклы",
-			"increment": "Увеличить циклы"
 		},
 		"options": {
 			"mode": "Режим",

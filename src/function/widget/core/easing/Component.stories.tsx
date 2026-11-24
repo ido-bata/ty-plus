@@ -66,7 +66,7 @@ export const Compact: Story = {
 			canvasElement.querySelector<HTMLElement>("[role='toolbar']");
 		if (!toolbar) throw new Error("mode toolbar not found");
 		const buttons = toolbar.querySelectorAll("button");
-		expect(buttons.length).toBe(4);
+		expect(buttons.length).toBe(3);
 		const toolbarBox = measureBox(toolbar);
 		for (const button of buttons) {
 			expect(boxWithin(measureBox(button), toolbarBox, 1)).toBe(true);
@@ -81,26 +81,6 @@ export const Compact: Story = {
 		);
 		if (!bar || !plus) throw new Error("action bar or preset button missing");
 		expect(boxWithin(measureBox(plus), measureBox(bar), 1)).toBe(true);
-	},
-};
-
-// Loop mode renders the curve editor (the points array is the single-
-// cycle template) plus the cycle-count input. We force the mode into
-// "loop" via the segmented control's aria-label + data attribute pair
-// so the loop controls row becomes visible in Storybook without needing
-// a runtime click sequence.
-export const LoopMode: Story = {
-	args: { widthPx: 280, heightPx: 280 },
-	play: async ({ canvasElement }) => {
-		const buttons = canvasElement.querySelectorAll<HTMLButtonElement>(
-			"[role='toolbar'] button",
-		);
-		for (const button of buttons) {
-			if (button.textContent?.trim() === "Loop") {
-				button.click();
-				break;
-			}
-		}
 	},
 };
 

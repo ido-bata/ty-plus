@@ -243,25 +243,6 @@ describe("decideReverseAction (the editor's Reverse button)", () => {
 		decideReverseAction("curve", curve, []);
 		expect(curve).toEqual(snapshot);
 	});
-
-	it("treats loop mode as a curve for reverse so the single-cycle template mirrors, not promotes", () => {
-		// Loop mode's underlying data is the single-cycle curve template.
-		// Reverse must mirror that template (the same as curve mode) so
-		// the next loop-apply replicates a reversed shape. Promoting to a
-		// procedural preview here would silently drop the user's edits.
-		const curve: Pt[] = [
-			{ x: 0, y: 0, hIn: { x: 0, y: 0 }, hOut: { x: 0.3, y: 0.4 } },
-			{ x: 1, y: 1, hIn: { x: -0.5, y: -0.1 }, hOut: { x: 0, y: 0 } },
-		];
-		const result = decideReverseAction("loop", curve, []);
-		expect(result.mode).toBe("curve");
-		// The mirrored curve's first point's outgoing handle is the
-		// negation of the input's last point's incoming handle.
-		expect(result.points[0].hOut.x).toBeCloseTo(0.5, 10);
-		expect(result.points[0].hOut.y).toBeCloseTo(0.1, 10);
-		expect(result.points[1].hIn.x).toBeCloseTo(-0.3, 10);
-		expect(result.points[1].hIn.y).toBeCloseTo(-0.4, 10);
-	});
 });
 
 type Point = { x: number; y: number };
