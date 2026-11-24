@@ -96,6 +96,9 @@ export const ParentUp: Story = {
 };
 
 export const Video: Story = {
+	// #561: match the production icons-view tile (`Component.tsx` passes
+	// glyphSize=48 into a ~96px frame). The previous 14px value was copied
+	// from SmallGlyph and rendered a tiny glyph in a large frame.
 	args: {
 		entry: makeFile({
 			name: "clip.mp4",
@@ -103,8 +106,13 @@ export const Video: Story = {
 			fileType: "video",
 			extension: ".mp4",
 		}),
-		glyphSize: 14,
-		glyphClassName: "shrink-0",
+		glyphSize: 48,
+	},
+	play: async ({ canvasElement }) => {
+		const svg = canvasElement.querySelector("svg");
+		if (!svg) throw new Error("video glyph not found");
+		const rect = svg.getBoundingClientRect();
+		expect(rect.width).toBeGreaterThan(24);
 	},
 };
 
