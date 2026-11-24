@@ -7,7 +7,6 @@ import {
 } from "@/management/dialog/context-menu";
 import { DeferredDialogBody } from "@/management/dialog/lazy-body";
 import {
-	DIALOG_LOADING_COLOR,
 	PRE_THEME_CODE_BG_COLOR,
 	PRE_THEME_MUTED_COLOR,
 } from "@/management/dialog/literals/pre-theme-colors";
@@ -90,7 +89,12 @@ function UnknownDialog({ surfaceId }: { surfaceId: string }): JSX.Element {
 				{i18n.t("dialogs:unknownDialog.noBodyForSurfaceId", {
 					defaultValue: "No dialog body found for surfaceId:",
 				})}{" "}
-				<code style={{ background: PRE_THEME_CODE_BG_COLOR, padding: "0.125rem 0.375rem" }}>
+				<code
+					style={{
+						background: PRE_THEME_CODE_BG_COLOR,
+						padding: "0.125rem 0.375rem",
+					}}
+				>
 					{surfaceId}
 				</code>
 			</p>
@@ -146,7 +150,12 @@ function ProbeDialogBody({ surfaceId }: { surfaceId: string }): JSX.Element {
 				{i18n.t("dialogs:probe.bodyForSurfaceId", {
 					defaultValue: "Probe dialog for surfaceId:",
 				})}{" "}
-				<code style={{ background: PRE_THEME_CODE_BG_COLOR, padding: "0.125rem 0.375rem" }}>
+				<code
+					style={{
+						background: PRE_THEME_CODE_BG_COLOR,
+						padding: "0.125rem 0.375rem",
+					}}
+				>
 					{surfaceId}
 				</code>
 			</p>

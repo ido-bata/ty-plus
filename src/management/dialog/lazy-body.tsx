@@ -15,9 +15,8 @@
 
 import type { JSX, ReactNode } from "react";
 import { useLayoutEffect, useState } from "react";
-
-import { i18n } from "@/management/i18n/index";
 import { DIALOG_LOADING_COLOR } from "@/management/dialog/literals/pre-theme-colors";
+import { i18n } from "@/management/i18n/index";
 
 const DIALOG_LOADING_STYLE = {
 	display: "flex",

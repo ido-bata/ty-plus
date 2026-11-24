@@ -21,7 +21,6 @@ import {
 	createNewLayer,
 	migrateToLayers,
 } from "@/management/workspace/background/layer-factory";
-import { DEFAULT_LAYER_COLOR } from "@/management/workspace/literals/layer-colors";
 import { BackgroundPreview } from "@/management/workspace/background/Preview";
 import { parse } from "@/management/workspace/background/parse";
 import { toStyle } from "@/management/workspace/background/style";
@@ -29,6 +28,7 @@ import {
 	readBackgroundJson,
 	writeBackgroundJson,
 } from "@/management/workspace/layout/panel-json-files";
+import { DEFAULT_LAYER_COLOR } from "@/management/workspace/literals/layer-colors";
 import { publishShellMessage } from "@/management/workspace/messaging/publish-shell-message";
 import {
 	type BackgroundPayload,

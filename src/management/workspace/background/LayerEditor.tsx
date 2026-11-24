@@ -4,11 +4,11 @@ import type { JSX } from "react";
 import type { Layer } from "@/management/workspace/background/contract";
 import { ImageLayerEditor } from "@/management/workspace/background/ImageLayerEditor";
 import { clampNumber } from "@/management/workspace/background/layer-factory";
+import { PatternLayerEditor } from "@/management/workspace/background/PatternLayerEditor";
 import {
 	DEFAULT_LAYER_COLOR,
 	LAYER_PRESET_COLORS,
 } from "@/management/workspace/literals/layer-colors";
-import { PatternLayerEditor } from "@/management/workspace/background/PatternLayerEditor";
 import { css } from "@/styled-system/css";
 import { ColorField, NumberField } from "./Fields";
 

@@ -18,6 +18,12 @@ import {
 	useState,
 } from "react";
 import { useTranslation } from "react-i18next";
+import {
+	CANVAS_FALLBACK_GRID_COLOR,
+	CANVAS_FALLBACK_MUTED_COLOR,
+	CANVAS_FALLBACK_TEXT_COLOR,
+	CANVAS_HOLLOW_DOT_FILL,
+} from "@/function/widget/literals/canvas-colors";
 import { useWidgetRuntime } from "@/function/widget/runtime-context";
 import {
 	setEasingClipboard,
@@ -904,13 +910,21 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 		const state = stateRef.current;
 		ctx.clearRect(0, 0, state.width, state.height);
 
-		const text = readCssColor(canvas, "--ty-text-primary", "#ffffff");
-		const muted = readCssColor(canvas, "--ty-text-muted", "#999999");
+		const text = readCssColor(
+			canvas,
+			"--ty-text-primary",
+			CANVAS_FALLBACK_TEXT_COLOR,
+		);
+		const muted = readCssColor(
+			canvas,
+			"--ty-text-muted",
+			CANVAS_FALLBACK_MUTED_COLOR,
+		);
 		const accent = readCssColor(canvas, "--ty-text-accent", text);
 		const grid = readCssColor(
 			canvas,
 			"--ty-border-surface",
-			"rgba(255,255,255,0.14)",
+			CANVAS_FALLBACK_GRID_COLOR,
 		);
 
 		const { zoom, x: cx, y: cy } = state.camera;
@@ -977,7 +991,7 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 			ctx.arc(point.x, point.y, size, 0, Math.PI * 2);
 			ctx.fill();
 			if (hollow) {
-				ctx.fillStyle = "rgba(0,0,0,0.6)";
+				ctx.fillStyle = CANVAS_HOLLOW_DOT_FILL;
 				ctx.beginPath();
 				ctx.arc(point.x, point.y, size * 0.4, 0, Math.PI * 2);
 				ctx.fill();

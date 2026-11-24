@@ -41,12 +41,8 @@ export function Animation({ variant = "intro" }: AnimationProps): JSX.Element {
 			ctx.clearRect(0, 0, cssW, cssH);
 
 			const root = getComputedStyle(document.documentElement);
-			const accent =
-				root.getPropertyValue("--color-ty-accent").trim() ||
-				"var(--color-ty-accent, #b0b0b0)";
-			const muted =
-				root.getPropertyValue("--color-ty-text-secondary").trim() ||
-				"var(--color-ty-text-secondary, #a0a0b6)";
+			const accent = root.getPropertyValue("--color-ty-accent").trim();
+			const muted = root.getPropertyValue("--color-ty-text-secondary").trim();
 
 			const cell = Math.max(20, Math.floor(cssH * 0.42));
 			const gap = Math.max(6, Math.floor(cell * 0.12));

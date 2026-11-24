@@ -1,13 +1,12 @@
 import type { CSSProperties, JSX } from "react";
 import { useEffect, useRef } from "react";
-
+import { CANVAS_EASING_AXES_COLOR } from "@/management/preset/literals/canvas-colors";
 import {
 	type CubicParams,
 	easingCurveBounds,
 	easingCurveSegments,
 	type MultiPointParams,
 } from "./easing-curve";
-import { CANVAS_EASING_AXES_COLOR } from "@/management/preset/literals/canvas-colors";
 
 /** Renders a cubic bezier easing curve in a small canvas. If `points` is
  *  provided (multi-ease), draws the full multi-segment curve. Otherwise

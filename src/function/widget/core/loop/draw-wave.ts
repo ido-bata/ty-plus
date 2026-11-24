@@ -14,6 +14,11 @@ import {
 	type WavePoint,
 	waveHandlePositions,
 } from "@/function/widget/core/loop/cyclic-wave";
+import {
+	CANVAS_FALLBACK_GRID_COLOR,
+	CANVAS_FALLBACK_MUTED_COLOR,
+	CANVAS_FALLBACK_TEXT_COLOR,
+} from "@/function/widget/literals/canvas-colors";
 import type { DragTarget } from "./hit-test";
 import type { WaveHandleLabels } from "./WaveEditor";
 import { timeToScreen, valueToScreen, type WaveCamera } from "./wave-camera";
@@ -123,12 +128,16 @@ export function drawWaveScene(
 	} = scene;
 	ctx.clearRect(0, 0, width, height);
 	const style = getComputedStyle(canvas);
-	const text = style.getPropertyValue("--ty-text-primary").trim() || "#fff";
-	const muted = style.getPropertyValue("--ty-text-muted").trim() || "#999";
+	const text =
+		style.getPropertyValue("--ty-text-primary").trim() ||
+		CANVAS_FALLBACK_TEXT_COLOR;
+	const muted =
+		style.getPropertyValue("--ty-text-muted").trim() ||
+		CANVAS_FALLBACK_MUTED_COLOR;
 	const accent = style.getPropertyValue("--ty-text-accent").trim() || text;
 	const grid =
 		style.getPropertyValue("--ty-border-surface").trim() ||
-		"rgba(255,255,255,0.14)";
+		CANVAS_FALLBACK_GRID_COLOR;
 	// Cycle boundaries and the segment ends.
 	ctx.strokeStyle = grid;
 	ctx.lineWidth = 1;

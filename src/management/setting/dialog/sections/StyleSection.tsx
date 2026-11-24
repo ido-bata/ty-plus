@@ -8,13 +8,13 @@ import {
 	SettingsGrid,
 	SettingsSectionHeading,
 } from "@/management/setting/dialog/layout/SettingsGrid";
-import type { Settings } from "@/management/setting/models/settings";
 import {
 	DEFAULT_UI_ACCENT_COLOR,
 	DEFAULT_UI_PANEL_BG_COLOR,
 	DEFAULT_UI_TEXT_COLOR,
 	DEFAULT_UI_WIDGET_BG_COLOR,
 } from "@/management/setting/literals/ui-colors";
+import type { Settings } from "@/management/setting/models/settings";
 import { applyUiSettingsTheme } from "@/management/setting/ui-theme-sync";
 import { css } from "@/styled-system/css";
 
@@ -81,7 +81,8 @@ export function StyleSection(): JSX.Element {
 			commitUi({
 				...settings.ui,
 				widget: {
-					backgroundColor: settings.ui.widget?.backgroundColor ?? DEFAULT_UI_WIDGET_BG_COLOR,
+					backgroundColor:
+						settings.ui.widget?.backgroundColor ?? DEFAULT_UI_WIDGET_BG_COLOR,
 					opacity,
 				},
 			});
@@ -107,7 +108,8 @@ export function StyleSection(): JSX.Element {
 			commitUi({
 				...settings.ui,
 				panel: {
-					backgroundColor: settings.ui.panel?.backgroundColor ?? DEFAULT_UI_PANEL_BG_COLOR,
+					backgroundColor:
+						settings.ui.panel?.backgroundColor ?? DEFAULT_UI_PANEL_BG_COLOR,
 					opacity,
 				},
 			});
@@ -115,9 +117,11 @@ export function StyleSection(): JSX.Element {
 		[settings.ui, commitUi],
 	);
 
-	const widgetBg = settings.ui.widget?.backgroundColor ?? DEFAULT_UI_WIDGET_BG_COLOR;
+	const widgetBg =
+		settings.ui.widget?.backgroundColor ?? DEFAULT_UI_WIDGET_BG_COLOR;
 	const widgetOpacity = settings.ui.widget?.opacity ?? 80;
-	const panelBg = settings.ui.panel?.backgroundColor ?? DEFAULT_UI_PANEL_BG_COLOR;
+	const panelBg =
+		settings.ui.panel?.backgroundColor ?? DEFAULT_UI_PANEL_BG_COLOR;
 	const panelOpacity = settings.ui.panel?.opacity ?? 95;
 
 	return (

@@ -48,10 +48,6 @@ import {
 } from "@/management/preset/group/catalog";
 import { findGroupEntry } from "@/management/preset/group/catalog-helpers";
 import {
-	PRESET_ICON_DEFAULT_BG_COLOR,
-	PRESET_ICON_DEFAULT_FG_COLOR,
-} from "@/management/preset/literals/icon-colors";
-import {
 	isGroupCatalogPreset,
 	synthesizeGroupPresetForTile,
 } from "@/management/preset/group/synthesize";
@@ -61,6 +57,10 @@ import {
 	type PresetIconEditorDraft,
 	presetIconDraftToPresetIcon,
 } from "@/management/preset/icon/editor-state";
+import {
+	PRESET_ICON_DEFAULT_BG_COLOR,
+	PRESET_ICON_DEFAULT_FG_COLOR,
+} from "@/management/preset/literals/icon-colors";
 import {
 	glyphBoxCompactPadClass,
 	glyphBoxFillClass,

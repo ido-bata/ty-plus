@@ -1,14 +1,14 @@
 import type { PresetIcon } from "@/management/preset/contract";
 import {
-	PRESET_ICON_DEFAULT_BG_COLOR,
-	PRESET_ICON_DEFAULT_FG_COLOR,
-} from "@/management/preset/literals/icon-colors";
-import {
 	presetIconCanvas,
 	presetIconEmoji,
 	presetIconImage,
 	presetIconText,
 } from "@/management/preset/contract";
+import {
+	PRESET_ICON_DEFAULT_BG_COLOR,
+	PRESET_ICON_DEFAULT_FG_COLOR,
+} from "@/management/preset/literals/icon-colors";
 
 export type PresetIconEditorDraft = {
 	type: "text" | "emoji" | "image" | "canvas";
