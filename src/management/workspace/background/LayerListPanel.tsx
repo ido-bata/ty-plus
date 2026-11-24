@@ -108,8 +108,11 @@ const actionBar = css({
 });
 
 const iconBtn = css({
-	height: "6",
-	width: "full",
+	// Issue #536: `IconButton size="sm"` applies a fixed `width: 7` via
+	// `sizeMap`; a plain `width: "full"` here loses the single-class
+	// cascade and the buttons stay small squares at the left of each grid
+	// column. `&&` doubles the selector specificity so the stretch wins.
+	"&&": { height: "6", width: "full" },
 	borderWidth: "1px",
 	borderStyle: "solid",
 	borderColor: "var(--color-ty-widget-border)",
@@ -227,7 +230,7 @@ export function LayerListPanel(props: {
 						</div>
 					)}
 				</div>
-				<div className={actionBar}>
+				<div className={actionBar} data-background-layer-actions>
 					<IconButton
 						type="button"
 						variant="ghost"
