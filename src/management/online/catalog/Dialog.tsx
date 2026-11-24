@@ -127,7 +127,7 @@ const galleryOverlayClass = css({
 	position: "absolute",
 	insetInline: 0,
 	bottom: 0,
-	zIndex: 10,
+	zIndex: "var(--ty-z-overlay)",
 	backgroundColor: "surface.panel",
 	padding: "2",
 });
@@ -421,7 +421,7 @@ const listTableClass = css({
 const listTableHeaderClass = css({
 	position: "sticky",
 	top: 0,
-	zIndex: 10,
+	zIndex: "var(--ty-z-overlay)",
 	backgroundColor: "surface.panel",
 });
 const listTableHeaderCellClass = css({

@@ -106,7 +106,7 @@ export function PaletteDropdown({
 			ref={portalRef}
 			className={css({
 				pointerEvents: "auto",
-				zIndex: 100000,
+				zIndex: "var(--ty-z-widget-overlay)",
 				maxHeight: "min(50vh,22rem)",
 				overflow: "hidden",
 				borderRadius: "var(--ty-space-1)",

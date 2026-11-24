@@ -16,7 +16,7 @@ type Props = {
 const backdropStyle = css({
 	position: "fixed",
 	inset: "0",
-	zIndex: "100000",
+	zIndex: "var(--ty-z-widget-overlay)",
 	display: "flex",
 	alignItems: "stretch",
 	justifyContent: "center",

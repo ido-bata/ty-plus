@@ -18,7 +18,7 @@ const MENU_ID = "site-menu";
 const header = css({
 	position: "sticky",
 	top: 0,
-	zIndex: 40,
+	zIndex: "var(--ty-z-header)",
 	borderBottomWidth: "hairline",
 	borderBottomStyle: "solid",
 	borderBottomColor: "border.subtle",

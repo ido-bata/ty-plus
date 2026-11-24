@@ -216,7 +216,7 @@ import { applyWidgets as applyWidgetsFromModule } from "./hooks/widget-mgmt";
  */
 const cpMenuWrap = css({
 	position: "fixed",
-	zIndex: 200,
+	zIndex: "var(--ty-z-menu)",
 	minWidth: "45",
 	maxHeight: "105",
 	overflowY: "auto",

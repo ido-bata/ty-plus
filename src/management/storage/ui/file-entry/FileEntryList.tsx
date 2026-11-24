@@ -475,7 +475,7 @@ const iconLoadingClass = css({
 const stickyHeaderClass = css({
 	position: "sticky",
 	top: 0,
-	zIndex: 10,
+	zIndex: "var(--ty-z-overlay)",
 });
 
 /**

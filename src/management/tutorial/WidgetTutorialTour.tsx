@@ -39,14 +39,14 @@ const FALLBACK_MAX_HEIGHT_RATIO = 0.9;
 const scrim = css({
 	position: "fixed",
 	inset: "0",
-	zIndex: "2147483000",
+	zIndex: "var(--ty-z-tutorial-scrim)",
 	pointerEvents: "none",
 	backgroundColor: "var(--color-ty-scrim)",
 });
 
 const highlight = css({
 	position: "fixed",
-	zIndex: "2147483001",
+	zIndex: "var(--ty-z-tutorial-highlight)",
 	pointerEvents: "none",
 	borderWidth: "2px",
 	borderStyle: "solid",
@@ -58,7 +58,7 @@ const highlight = css({
 
 const bubble = css({
 	position: "fixed",
-	zIndex: "2147483002",
+	zIndex: "var(--ty-z-tutorial-bubble)",
 	boxSizing: "border-box",
 	width: "max-content",
 	maxWidth: `${BUBBLE_MAX_WIDTH}px`,

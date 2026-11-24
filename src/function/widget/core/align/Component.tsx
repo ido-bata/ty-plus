@@ -204,7 +204,7 @@ function GestureOverlay({
 				position: "absolute",
 				inset: 0,
 				pointerEvents: "none",
-				zIndex: 100,
+				zIndex: "var(--ty-z-gesture)",
 				overflow: "visible",
 			})}
 			aria-label={i18n.t("widgets:align.gestureOverlay")}

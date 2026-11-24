@@ -24,7 +24,7 @@ const gridCellRingBaseClass = css({
 	pointerEvents: "none",
 	position: "absolute",
 	inset: "0",
-	zIndex: "1",
+	zIndex: "var(--ty-z-chrome)",
 	boxSizing: "border-box",
 	borderRadius: "shell-sm",
 	transitionProperty: "border-color",
@@ -34,7 +34,7 @@ const gridCellRingBaseClass = css({
 
 const panelClass = css({
 	position: "absolute",
-	zIndex: "120",
+	zIndex: "var(--ty-z-panel)",
 	boxSizing: "border-box",
 	overflowX: "hidden",
 	overflowY: "auto",
@@ -70,7 +70,7 @@ const cellButtonClass = css({
 const dragGhostClass = css({
 	pointerEvents: "none",
 	position: "fixed",
-	zIndex: "200",
+	zIndex: "var(--ty-z-drag-ghost)",
 	opacity: "0.9",
 });
 

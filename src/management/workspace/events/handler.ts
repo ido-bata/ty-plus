@@ -560,7 +560,7 @@ export const setupInteractionEvents = (
 					border: 1px solid var(--color-ty-ws-selrect-border);
 					background: var(--color-ty-ws-selrect-fill);
 					border-radius: var(--ty-ws-grid-radius, 4px);
-					z-index: 9999;
+					z-index: var(--ty-z-workspace-overlay);
 				`;
 				rect.style.left = `${startX}px`;
 				rect.style.top = `${startY}px`;
@@ -776,7 +776,7 @@ export const setupInteractionEvents = (
 				const selectedEl = resolvePlacementElement(container, String(idx));
 				selectedEl?.setAttribute(ATTR_DRAGGING, "");
 				if (selectedEl) {
-					selectedEl.style.zIndex = "100";
+					selectedEl.style.zIndex = "var(--ty-z-workspace-drag)";
 				}
 			}
 		}

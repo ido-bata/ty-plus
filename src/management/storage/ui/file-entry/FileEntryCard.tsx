@@ -156,7 +156,7 @@ const checkboxClass = css({
 	position: "absolute",
 	top: "1",
 	right: "1",
-	zIndex: 10,
+	zIndex: "var(--ty-z-overlay)",
 });
 
 function cardClass(isSelected: boolean): string {

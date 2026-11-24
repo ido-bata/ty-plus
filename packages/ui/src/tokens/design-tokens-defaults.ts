@@ -549,6 +549,38 @@ export const DESIGN_TOKENS_DEFAULTS: Record<string, string> = {
 	/** Floating shadows for control panels etc. (for `box-shadow`. Color refers to separate token) */
 	"ty-shadow-control-panel": "0 8px 24px var(--color-ty-shadow-40)",
 
+	/*
+	 * Stacking layers (`--ty-z-*`). Two scopes share the scale:
+	 *  - `content`–`gesture` order elements *inside* one positioned ancestor
+	 *    (tile, card, dialog body, scroll container). Each stacking context
+	 *    is independent, so band reuse across components is safe.
+	 *  - `header` and above order document-level chrome (portals, fixed
+	 *    panels, fullscreen blockers) against each other — keep ascending.
+	 * `workspace-*` bands order overlays inside the workspace grid surface.
+	 * Consumers reference `var(--ty-z-…)` in css(), inline styles, DOM
+	 * writes, and injected CSS alike.
+	 */
+	"ty-z-content": "0",
+	"ty-z-chrome": "1",
+	"ty-z-help": "2",
+	"ty-z-overlay": "10",
+	"ty-z-gesture": "100",
+	"ty-z-workspace-drag": "100",
+	"ty-z-workspace-overlay": "9999",
+	"ty-z-header": "40",
+	"ty-z-popover": "50",
+	"ty-z-skip-link": "100",
+	"ty-z-panel": "120",
+	"ty-z-control-panel": "150",
+	"ty-z-menu": "200",
+	"ty-z-drag-ghost": "200",
+	"ty-z-notification": "9999",
+	"ty-z-widget-overlay": "100000",
+	"ty-z-tutorial-scrim": "2147483000",
+	"ty-z-tutorial-highlight": "2147483001",
+	"ty-z-tutorial-bubble": "2147483002",
+	"ty-z-blocking": "2147483647",
+
 	/** For preview / dialog max-width */
 	"ty-max-w-3xl": "48rem",
 

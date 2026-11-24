@@ -12,6 +12,9 @@ const NUMERIC_RGB = /rgba?\(\s*[0-9]/;
 /* biome-ignore format: keep grouped alternatives readable */
 const ALLOWED_NUMERIC_RGB =
   /rgba?\(\s*(?:var\(--color-ws-transparent-rgb-|var\(--color-ty-)/;
+// zIndex / z-index must reference a --ty-z-* layer token, never a bare
+// number (css(), inline style objects, el.style.zIndex writes, cssText).
+const Z_INDEX_LITERAL = /(?:zIndex|z-index)\s*[=:]\s*["']?\d/;
 
 const SRC_DIR = path.resolve("src");
 const UI_DIR = path.resolve("packages", "ui", "src");
@@ -97,6 +100,9 @@ const lineViolationsTs = (
 				reason: "numeric rgb/rgba",
 			});
 		}
+		if (Z_INDEX_LITERAL.test(line)) {
+			bad.push({ line: i + 1, reason: "z-index literal" });
+		}
 	}
 	return bad;
 };
@@ -117,6 +123,9 @@ const lineViolationsCss = (
 		}
 		if (NUMERIC_RGB.test(line)) {
 			bad.push({ line: i + 1, reason: "numeric rgb/rgba in CSS" });
+		}
+		if (Z_INDEX_LITERAL.test(line)) {
+			bad.push({ line: i + 1, reason: "z-index literal in CSS" });
 		}
 	}
 	return bad;

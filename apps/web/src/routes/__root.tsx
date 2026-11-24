@@ -26,7 +26,7 @@ const skipLink = css({
 	position: "absolute",
 	insetBlockStart: "0.5rem",
 	insetInlineStart: "0.5rem",
-	zIndex: 100,
+	zIndex: "var(--ty-z-skip-link)",
 	padding: "0.5rem 0.75rem",
 	borderRadius: "shell-sm",
 	backgroundColor: "surface.overlay",

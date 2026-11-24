@@ -28,7 +28,7 @@ const svgOverlayClass = css({
 
 const iconLayerClass = css({
 	position: "relative",
-	zIndex: 10,
+	zIndex: "var(--ty-z-overlay)",
 	display: "inline-flex",
 	alignItems: "center",
 	justifyContent: "center",
