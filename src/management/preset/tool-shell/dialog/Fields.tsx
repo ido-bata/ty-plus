@@ -126,14 +126,17 @@ function PlainInputField({
 }: PlainInputFieldProps): JSX.Element {
 	if (!spec) {
 		return (
-			<Input
-				label={field.label}
-				placeholder={field.placeholder}
-				value={value}
-				onChange={(event) => setValue(field.key, event.currentTarget.value)}
-				uiSize="md"
-				disabled={busy}
-			/>
+			<div className={fieldColumnClass}>
+				<span className={shellFieldLabelClass}>{field.label}</span>
+				<Input
+					aria-label={field.label}
+					placeholder={field.placeholder}
+					value={value}
+					onChange={(event) => setValue(field.key, event.currentTarget.value)}
+					uiSize="md"
+					disabled={busy}
+				/>
+			</div>
 		);
 	}
 	return (

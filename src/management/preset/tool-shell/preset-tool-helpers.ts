@@ -4,7 +4,7 @@ import { css } from "@/styled-system/css";
 import type { PresetToolDialogProps } from "./dialog/ToolDialog";
 
 export const shellFieldLabelClass = css({
-	fontSize: "xs",
+	fontSize: "shell-text",
 	fontWeight: "medium",
 	textTransform: "uppercase",
 	letterSpacing: "wide",
