@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import type { JSX, ReactNode } from "react";
+import { expect } from "storybook/test";
 import { css } from "@/styled-system/css";
 
 import {
@@ -37,6 +38,23 @@ const TilePreview = ({ children }: { children: ReactNode }): JSX.Element => (
 	</div>
 );
 
+// Issue #530: the hook must run inside `GridCatalogTileBodyProvider` —
+// calling `useGridCatalogTileBody()` in the story render function (the
+// provider's parent) resolves the fallback renderer, so the first tile
+// silently bypassed the custom renderer it was meant to demonstrate.
+const ProviderTile = ({
+	label,
+	tileId,
+}: {
+	label: string;
+	tileId: string;
+}): JSX.Element => {
+	const render = useGridCatalogTileBody();
+	return (
+		<TilePreview>{render({ preset: undefined, label, tileId })}</TilePreview>
+	);
+};
+
 const renderProvider = (args: Args) => {
 	const render = ({
 		label,
@@ -64,15 +82,9 @@ const renderProvider = (args: Args) => {
 			<span className={css({ color: "text.muted" })}>id: {tileId}</span>
 		</div>
 	);
-	const tiles = useGridCatalogTileBody();
-	const cell = tiles({
-		preset: undefined,
-		label: args.label,
-		tileId: args.tileId,
-	});
 	return (
 		<GridCatalogTileBodyProvider render={render}>
-			<TilePreview>{cell}</TilePreview>
+			<ProviderTile label={args.label} tileId={args.tileId} />
 			<TilePreview>
 				{render({ label: args.label, tileId: args.tileId })}
 			</TilePreview>
@@ -111,7 +123,22 @@ const meta = {
 export default meta;
 type Story = StoryObj<Args>;
 
-export const CustomRenderer: Story = {};
+export const CustomRenderer: Story = {
+	// Issue #530: all three tiles must go through the provider-supplied
+	// renderer — the first one used to be produced by the fallback because
+	// the hook ran above the provider and never showed `id: tile-1`.
+	play: async ({ canvasElement }) => {
+		const labels = Array.from(
+			canvasElement.querySelectorAll("[title='tile preview']"),
+		);
+		expect(labels).toHaveLength(3);
+		for (const tile of labels) {
+			expect(tile.textContent).toContain("id: ");
+		}
+		expect(labels[0]?.textContent).toContain("id: tile-1");
+		expect(labels[2]?.textContent).toContain("id: tile-2");
+	},
+};
 
 export const FallbackRenderer: Story = {
 	render: () => {
