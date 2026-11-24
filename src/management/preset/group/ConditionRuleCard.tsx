@@ -20,7 +20,7 @@ const escapeRegex = (value: string): string =>
 
 const cardClass = css({
 	borderRadius: "shell-sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 	backgroundColor: "surface.panel",

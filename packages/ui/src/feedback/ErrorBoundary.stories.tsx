@@ -70,7 +70,7 @@ export const Fallback: Story = {
 					data-error-fallback
 					className={css({
 						borderRadius: "shell-sm",
-						borderWidth: "1px",
+						borderWidth: "hairline",
 						borderStyle: "solid",
 						borderColor: "border.default",
 						backgroundColor: "surface.widget",

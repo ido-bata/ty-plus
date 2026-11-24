@@ -100,7 +100,7 @@ const variants: Record<ButtonVariant, string> = {
 	default: css({
 		backgroundColor: "surface.widget",
 		color: "text.primary",
-		borderWidth: "1px",
+		borderWidth: "hairline",
 		borderStyle: "solid",
 		borderColor: "border.subtle",
 		_hover: { backgroundColor: "interactive.hover" },
@@ -123,7 +123,7 @@ const variants: Record<ButtonVariant, string> = {
 	secondary: css({
 		backgroundColor: "surface.panel",
 		color: "text.primary",
-		borderWidth: "1px",
+		borderWidth: "hairline",
 		borderStyle: "solid",
 		borderColor: "border.subtle",
 		_hover: { backgroundColor: "interactive.hover" },
@@ -136,7 +136,7 @@ const variants: Record<ButtonVariant, string> = {
 	outline: css({
 		backgroundColor: "transparent",
 		color: "text.primary",
-		borderWidth: "1px",
+		borderWidth: "hairline",
 		borderStyle: "solid",
 		borderColor: "border.strong",
 		_hover: { backgroundColor: "interactive.hover" },
@@ -147,7 +147,7 @@ const variants: Record<ButtonVariant, string> = {
 		},
 	}),
 	ghost: css({
-		borderWidth: "1px",
+		borderWidth: "hairline",
 		borderStyle: "solid",
 		borderColor: "border.control",
 		backgroundColor: "transparent",
@@ -178,7 +178,7 @@ const variants: Record<ButtonVariant, string> = {
 	danger: css({
 		backgroundColor: "transparent",
 		color: "status.error",
-		borderWidth: "1px",
+		borderWidth: "hairline",
 		borderStyle: "solid",
 		borderColor: "border.subtle",
 		_hover: { backgroundColor: "interactive.hover" },

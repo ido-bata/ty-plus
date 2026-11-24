@@ -58,7 +58,7 @@ export function PresetIconTile({
 				flexDirection: "column",
 				overflow: "hidden",
 				borderRadius: "shell-sm",
-				borderWidth: "1px",
+				borderWidth: "hairline",
 				borderStyle: "solid",
 				borderColor: "border.default",
 				backgroundColor: "surface.dialog",

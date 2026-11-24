@@ -66,7 +66,7 @@ const bubble = css({
 	flexDirection: "column",
 	gap: "1.5",
 	padding: "2",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.subtle",
 	borderRadius: "md",

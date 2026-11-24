@@ -20,7 +20,7 @@ function TourHarness({ widgetType }: { widgetType: string }) {
 				position: "relative",
 				width: "80",
 				height: "60",
-				borderWidth: "1px",
+				borderWidth: "hairline",
 				borderStyle: "dashed",
 				borderColor: "border.default",
 				display: "flex",
@@ -35,7 +35,7 @@ function TourHarness({ widgetType }: { widgetType: string }) {
 					flex: "1",
 					borderRadius: "shell-sm",
 					backgroundColor: "surface.panel",
-					borderWidth: "1px",
+					borderWidth: "hairline",
 					borderStyle: "solid",
 					borderColor: "border.subtle",
 				})}

@@ -41,7 +41,7 @@ const editorBaseClass = css({
 	position: "relative",
 	overflow: "hidden",
 	borderRadius: "shell-sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 	backgroundColor: "surface.widget",

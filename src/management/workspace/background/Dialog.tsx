@@ -71,7 +71,7 @@ const contentClass = css({
 });
 
 const footerClass = css({
-	borderTopWidth: "1px",
+	borderTopWidth: "hairline",
 	borderTopStyle: "solid",
 	borderTopColor: "var(--color-ty-widget-border)",
 	paddingInline: "var(--ty-shell-pad-inline)",

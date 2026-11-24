@@ -12,7 +12,7 @@ import { css } from "@/styled-system/css";
 
 const cardClass = css({
 	borderRadius: "shell-sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 	backgroundColor: "surface.widget",

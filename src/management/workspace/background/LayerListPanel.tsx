@@ -44,7 +44,7 @@ const cardClass = css({
 	minHeight: "0",
 	gridTemplateRows: "auto minmax(0,1fr) auto",
 	borderRadius: "shell-sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "var(--color-ty-widget-border)",
 });
@@ -53,7 +53,7 @@ const addBar = css({
 	display: "grid",
 	gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
 	gap: "1",
-	borderBottomWidth: "1px",
+	borderBottomWidth: "hairline",
 	borderBottomStyle: "solid",
 	borderBottomColor: "var(--color-ty-widget-border)",
 	padding: "2",
@@ -101,7 +101,7 @@ const actionBar = css({
 	display: "grid",
 	gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
 	gap: "1",
-	borderTopWidth: "1px",
+	borderTopWidth: "hairline",
 	borderTopStyle: "solid",
 	borderTopColor: "var(--color-ty-widget-border)",
 	padding: "1",
@@ -113,7 +113,7 @@ const iconBtn = css({
 	// cascade and the buttons stay small squares at the left of each grid
 	// column. `&&` doubles the selector specificity so the stretch wins.
 	"&&": { height: "6", width: "full" },
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "var(--color-ty-widget-border)",
 	backgroundColor: "transparent",

@@ -11,7 +11,7 @@ export function CompSections({ comp }: { comp: CompInfo }): JSX.Element {
 			<div
 				className={css({
 					marginBottom: "var(--ty-space-2)",
-					borderBottomWidth: "1px",
+					borderBottomWidth: "hairline",
 					borderBottomStyle: "solid",
 					borderColor: "border.subtle",
 					paddingBottom: "var(--ty-space-2)",
@@ -44,7 +44,7 @@ export function CompSections({ comp }: { comp: CompInfo }): JSX.Element {
 										height: "var(--ty-space-3)",
 										width: "var(--ty-space-3)",
 										borderRadius: "var(--ty-space-0-5)",
-										borderWidth: "1px",
+										borderWidth: "hairline",
 										borderStyle: "solid",
 										borderColor: "border.subtle",
 									})}
@@ -59,7 +59,7 @@ export function CompSections({ comp }: { comp: CompInfo }): JSX.Element {
 			<div
 				className={css({
 					marginBottom: "var(--ty-space-2)",
-					borderBottomWidth: "1px",
+					borderBottomWidth: "hairline",
 					borderBottomStyle: "solid",
 					borderColor: "border.subtle",
 					paddingBottom: "var(--ty-space-2)",
@@ -88,7 +88,7 @@ export function CompSections({ comp }: { comp: CompInfo }): JSX.Element {
 			<div
 				className={css({
 					marginBottom: "var(--ty-space-2)",
-					borderBottomWidth: "1px",
+					borderBottomWidth: "hairline",
 					borderBottomStyle: "solid",
 					borderColor: "border.subtle",
 					paddingBottom: "var(--ty-space-2)",

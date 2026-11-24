@@ -84,7 +84,7 @@ const CP_EVENT = "ty-plus-cp-state-change";
 
 const shellBase = css({
 	display: "flex",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "var(--color-ty-widget-border-strong)",
 	backgroundColor: "surface.dialog",

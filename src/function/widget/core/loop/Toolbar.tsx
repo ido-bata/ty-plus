@@ -36,7 +36,7 @@ export function Toolbar({
 				gap: "2",
 				paddingInline: "2",
 				paddingBlock: "1",
-				borderBottomWidth: "1px",
+				borderBottomWidth: "hairline",
 				borderBottomStyle: "solid",
 				borderBottomColor: "border.default",
 				fontSize: "text-2xs",

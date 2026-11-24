@@ -28,7 +28,7 @@ export const dialogContentClass = css({
  * The footer strip of a dialog — a top divider with shell-aligned padding.
  */
 export const dialogFooterClass = css({
-	borderTopWidth: "1px",
+	borderTopWidth: "hairline",
 	borderTopStyle: "solid",
 	borderTopColor: "border.default",
 	paddingInline: "var(--ty-shell-pad-inline)",
@@ -44,7 +44,7 @@ export const statusBannerBaseClass = css({
 	alignItems: "flex-start",
 	gap: "2",
 	borderRadius: "shell-sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	padding: "2",
 	fontSize: "text-xs",
@@ -88,7 +88,7 @@ export const stepBadgeClass = css({
 	alignItems: "center",
 	justifyContent: "center",
 	borderRadius: "full",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 	backgroundColor: "surface.widget",
@@ -107,7 +107,7 @@ export const stepCardClass = css({
 	flexDirection: "column",
 	gap: "3",
 	borderRadius: "shell-sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 	backgroundColor: "surface.widget",
@@ -135,7 +135,7 @@ export const monoPreviewBoxClass = css({
 export const widgetSurfaceClass = css({
 	overflow: "hidden",
 	borderRadius: "shell-sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 	backgroundColor: "surface.widget",
@@ -151,7 +151,7 @@ export const browserEmptyClass = css({
 	flex: "1",
 	placeItems: "center",
 	borderRadius: "md",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 	backgroundColor: "surface.widget",
@@ -170,7 +170,7 @@ export const borderedListClass = css({
 	flexDirection: "column",
 	overflow: "hidden",
 	borderRadius: "shell-sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 });
@@ -208,7 +208,7 @@ export const tileInnerClass = css({
  * The default (unselected) ring border of a workspace tile or grid cell.
  */
 export const tileRingClass = css({
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "var(--color-ty-ws-gridcell-ring-border)",
 });
@@ -258,7 +258,7 @@ export const iconActionButtonClass = css({
 	alignItems: "center",
 	justifyContent: "center",
 	borderRadius: "shell-sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 	backgroundColor: "surface.widget/50",

@@ -18,7 +18,7 @@ type RowPropsBase = {
 };
 
 const rowContainerBase = css({
-	borderBottomWidth: "1px",
+	borderBottomWidth: "hairline",
 	borderBottomStyle: "solid",
 	borderColor: "border.default",
 	_last: { borderBottomWidth: 0 },
@@ -46,7 +46,7 @@ const rowIconBoxClass = css({
 	alignItems: "center",
 	justifyContent: "center",
 	borderRadius: "var(--ty-space-1)",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 	backgroundColor: "surface.panel",

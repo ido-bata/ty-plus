@@ -110,7 +110,7 @@ export function PaletteDropdown({
 				maxHeight: "min(50vh,22rem)",
 				overflow: "hidden",
 				borderRadius: "var(--ty-space-1)",
-				borderWidth: "1px",
+				borderWidth: "hairline",
 				borderStyle: "solid",
 				borderColor: "border.default",
 				backgroundColor: "surface.widget",

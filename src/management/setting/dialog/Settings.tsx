@@ -36,7 +36,7 @@ import { css } from "@/styled-system/css";
 
 const errorFallbackStyle = css({
 	borderRadius: "1",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 	backgroundColor: "surface.widget",
@@ -59,7 +59,7 @@ const saveErrorBannerStyle = css({
 	margin: "2",
 	marginBottom: "0",
 	borderRadius: "1",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "colorMix(in srgb, status.error 30%, transparent)",
 	backgroundColor: "colorMix(in srgb, status.error 10%, transparent)",
@@ -85,7 +85,7 @@ const footerClassName = css({
 	width: "full",
 	minWidth: 0,
 	alignItems: "stretch",
-	borderTopWidth: "1px",
+	borderTopWidth: "hairline",
 	borderTopStyle: "solid",
 	borderTopColor: "border.default",
 	paddingInline: "var(--ty-shell-pad-inline)",

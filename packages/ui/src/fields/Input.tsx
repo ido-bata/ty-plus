@@ -36,7 +36,7 @@ const sizes: Record<NonNullable<InputProps["uiSize"]>, string> = {
 const base = css({
 	width: "full",
 	borderRadius: "shell-sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	backgroundColor: "surface.widget",
 	paddingInline: "2.5",

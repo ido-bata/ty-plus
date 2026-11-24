@@ -20,7 +20,7 @@ const tileShell = css({
 });
 
 const tileFrameSelected = css({
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "var(--color-ty-ws-gridcell-ring-border-selected)",
 });

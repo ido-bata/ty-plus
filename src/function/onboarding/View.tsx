@@ -109,7 +109,7 @@ const errorBannerClass = css({
 	backgroundColor:
 		"color-mix(in srgb, var(--color-ty-status-error), 15%, var(--color-ty-bg-surface))",
 	color: "text.primary",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor:
 		"color-mix(in srgb, var(--color-ty-status-error), 55%, transparent)",
@@ -135,7 +135,7 @@ const finishErrorPanelClass = css({
 	backgroundColor:
 		"color-mix(in srgb, var(--color-ty-status-error), 15%, var(--color-ty-bg-surface))",
 	color: "text.primary",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor:
 		"color-mix(in srgb, var(--color-ty-status-error), 55%, transparent)",
@@ -185,7 +185,7 @@ const stepNavClass = css({
 	gap: "2",
 	paddingBlock: "3",
 	paddingInline: "5",
-	borderTopWidth: "1px",
+	borderTopWidth: "hairline",
 	borderTopStyle: "solid",
 	borderTopColor: "border.default",
 });
@@ -269,7 +269,7 @@ const dialogFullscreenClass = css({
 	display: "flex",
 	flexDirection: "column",
 	overflow: "hidden",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 	backgroundColor: "surface.dialog",
@@ -285,7 +285,7 @@ const dialogModalClass = css({
 	flexDirection: "column",
 	overflow: "hidden",
 	borderRadius: "shell-lg",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 	backgroundColor: "surface.dialog",

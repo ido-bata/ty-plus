@@ -17,7 +17,7 @@ export const segmentedStripClass = css({
 	flexWrap: "wrap",
 	gap: "1",
 	borderRadius: "shell-sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.control",
 	backgroundColor: "surface.panel",
@@ -61,7 +61,7 @@ export const segmentedColumnButtonClass = css({
 });
 
 export const segmentedButtonQuietClass = css({
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "transparent",
 });

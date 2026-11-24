@@ -93,7 +93,7 @@ const errorClass = css({
 	alignItems: "center",
 	gap: "2",
 	borderRadius: "shell-sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "status.error",
 	backgroundColor: "status.error/10",

@@ -144,7 +144,7 @@ const footerClass = css({
 	display: "flex",
 	alignItems: "center",
 	gap: "2",
-	borderTopWidth: "1px",
+	borderTopWidth: "hairline",
 	borderTopStyle: "solid",
 	borderTopColor: "border.default",
 	backgroundColor: "surface.widget",
@@ -323,7 +323,7 @@ const shellRowBtn = css({
 });
 
 const shellRowWrap = css({
-	borderBottomWidth: "1px",
+	borderBottomWidth: "hairline",
 	borderBottomStyle: "solid",
 	borderBottomColor: "border.default",
 	/**
@@ -445,7 +445,7 @@ const iconBodyClass = css({
 	flexDirection: "column",
 	overflow: "hidden",
 	borderRadius: "md",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 	backgroundColor: "surface.dialog",
@@ -497,7 +497,7 @@ const upTileClass = css({
 	alignSelf: "stretch",
 	overflow: "hidden",
 	borderRadius: "shell-sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 	backgroundColor: "surface.dialog",
@@ -555,7 +555,7 @@ const upIconSvgClass = css({
 const upLabelClass = css({
 	width: "full",
 	truncate: true,
-	borderTopWidth: "1px",
+	borderTopWidth: "hairline",
 	borderTopStyle: "solid",
 	borderTopColor: "border.default",
 	paddingInline: "1",
@@ -579,7 +579,7 @@ const listBodyClass = css({
 	minWidth: 0,
 	flexDirection: "column",
 	borderRadius: "md",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 	backgroundColor: "surface.dialog",
@@ -602,7 +602,7 @@ const listLoadingClass = css({
 	color: "text.muted",
 });
 const upRowClass = css({
-	borderBottomWidth: "1px",
+	borderBottomWidth: "hairline",
 	borderBottomStyle: "solid",
 	borderBottomColor: "border.default",
 	backgroundColor:

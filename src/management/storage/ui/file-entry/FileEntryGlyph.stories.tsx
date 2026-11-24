@@ -217,7 +217,7 @@ export const MediaCardImage: Story = {
 					alignItems: "center",
 					justifyContent: "center",
 					borderRadius: "shell-sm",
-					borderWidth: "1px",
+					borderWidth: "hairline",
 					borderStyle: "solid",
 					borderColor: "border.default",
 					bg: "surface.dialog",

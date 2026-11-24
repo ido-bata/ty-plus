@@ -27,7 +27,7 @@ const TilePreview = ({ children }: { children: ReactNode }): JSX.Element => (
 			alignItems: "center",
 			justifyContent: "center",
 			borderRadius: "shell-sm",
-			borderWidth: "1px",
+			borderWidth: "hairline",
 			borderStyle: "solid",
 			borderColor: "border.default",
 			bg: "surface.widget",

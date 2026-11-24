@@ -29,7 +29,7 @@ export function Actions({
 				gap: "1",
 				paddingInline: "2",
 				paddingBlock: "1",
-				borderTopWidth: "1px",
+				borderTopWidth: "hairline",
 				borderTopStyle: "solid",
 				borderTopColor: "border.default",
 			})}

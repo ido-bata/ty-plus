@@ -28,7 +28,7 @@ export function FontViewerStatusLine({
 				justifyContent: "space-between",
 				columnGap: "2",
 				rowGap: "0.5",
-				borderBottomWidth: "1px",
+				borderBottomWidth: "hairline",
 				borderBottomStyle: "solid",
 				borderColor: "border.default",
 				paddingInline: "0.5",

@@ -30,7 +30,7 @@ const columnClass = css({
 
 const errorClass = css({
 	borderRadius: "shell-sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 	backgroundColor: "surface.widget",

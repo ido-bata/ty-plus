@@ -24,7 +24,7 @@ function HostFooter({ state }: { state: SurfaceState }): JSX.Element | null {
 			<div
 				className={css({
 					marginTop: "var(--ty-space-2)",
-					borderTopWidth: "1px",
+					borderTopWidth: "hairline",
 					borderTopStyle: "solid",
 					borderColor: "border.subtle",
 					paddingTop: "var(--ty-space-2)",
@@ -37,7 +37,7 @@ function HostFooter({ state }: { state: SurfaceState }): JSX.Element | null {
 			<div
 				className={css({
 					marginTop: "var(--ty-space-2)",
-					borderTopWidth: "1px",
+					borderTopWidth: "hairline",
 					borderTopStyle: "solid",
 					borderColor: "border.subtle",
 					paddingTop: "var(--ty-space-2)",
@@ -142,7 +142,7 @@ function _PresetMeta({
 				display: "flex",
 				flexDirection: "column",
 				gap: "var(--ty-space-1)",
-				borderTopWidth: "1px",
+				borderTopWidth: "hairline",
 				borderTopStyle: "solid",
 				borderColor: "border.subtle",
 				paddingTop: "var(--ty-space-2)",

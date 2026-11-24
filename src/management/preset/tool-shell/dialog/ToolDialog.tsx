@@ -152,7 +152,7 @@ const saveErrorClass = css({
 	alignItems: "flex-start",
 	gap: "2",
 	borderRadius: "shell-sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "status.error/30",
 	backgroundColor: "status.error/10",

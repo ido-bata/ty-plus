@@ -14,7 +14,7 @@ const base = css({
 	gap: "2.5",
 	padding: "3.5",
 	borderRadius: "surface-card",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	fontSize: "text-body",
 	lineHeight: "relaxed",

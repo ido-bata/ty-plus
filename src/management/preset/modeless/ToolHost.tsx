@@ -49,7 +49,7 @@ const preparingRowClass = css({
 	alignItems: "center",
 	gap: "3",
 	borderRadius: "shell-sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 	backgroundColor: "surface.panel",

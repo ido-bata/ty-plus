@@ -10,7 +10,7 @@ const base = css({
 	width: "full",
 	minWidth: 0,
 	borderRadius: "shell-sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.control",
 	backgroundColor: "surface.widget",

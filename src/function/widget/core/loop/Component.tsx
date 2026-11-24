@@ -296,7 +296,7 @@ export function LoopWidget({
 				className={css({
 					position: "relative",
 					minHeight: 0,
-					borderBottomWidth: "1px",
+					borderBottomWidth: "hairline",
 					borderBottomStyle: "solid",
 					borderBottomColor: "border.default",
 				})}
