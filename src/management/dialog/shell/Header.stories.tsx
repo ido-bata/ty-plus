@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { expect } from "storybook/test";
 import { css } from "@/styled-system/css";
 
 import { Header } from "./Header";
@@ -54,6 +55,23 @@ export const Default: Story = {};
 
 export const WithMeta: Story = {
 	args: { meta: "panel-1 · 3 layers" },
+	play: async ({ canvasElement }) => {
+		// Issue #450: `justifyContent: "between"` was an invalid CSS value and
+		// the browser dropped it, leaving the meta text next to the title.
+		// Lock the computed value and the right-edge alignment.
+		const header = canvasElement.querySelector("[data-dialog-header]");
+		expect(header).not.toBeNull();
+		if (!header) return;
+		expect(getComputedStyle(header).justifyContent).toBe("space-between");
+		const meta = header.querySelector("span");
+		expect(meta).not.toBeNull();
+		if (!meta) return;
+		const headerRect = header.getBoundingClientRect();
+		const metaRect = meta.getBoundingClientRect();
+		expect(metaRect.right).toBeGreaterThan(
+			headerRect.left + headerRect.width / 2,
+		);
+	},
 };
 
 export const LongTitle: Story = {
