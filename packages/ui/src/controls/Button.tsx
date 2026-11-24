@@ -191,7 +191,7 @@ const variants: Record<ButtonVariant, string> = {
 	link: css({
 		backgroundColor: "transparent",
 		borderWidth: "0",
-		color: "text.link",
+		color: "text.accent",
 		fontSize: "text-sm",
 		fontWeight: "normal",
 		textDecoration: "underline",

@@ -145,10 +145,6 @@ const folderActionRowClass = css({
 
 const resetButtonClass = css({
 	alignSelf: "flex-start",
-	fontSize: "text-xs",
-	color: "text.muted",
-	textDecoration: "underline",
-	_hover: { color: "text.primary" },
 });
 
 const busyButtonClass = css({
@@ -283,13 +279,14 @@ function FolderPathSection({
 								t("animationPreset.path.notConfigured", "Not configured")}
 						</div>
 						{customScanPath ? (
-							<button
-								type="button"
+							<Button
+								variant="link"
+								uiSize="content"
 								className={resetButtonClass}
 								onClick={onResetPath}
 							>
 								{t("animationPreset.path.reset")}
-							</button>
+							</Button>
 						) : null}
 					</div>
 				</div>
