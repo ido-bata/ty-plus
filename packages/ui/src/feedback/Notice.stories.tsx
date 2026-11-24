@@ -47,6 +47,15 @@ export const Tones: Story = {
 		for (const tone of ["info", "success", "warning", "error"]) {
 			expect(canvas.getByText(`${tone} notice`)).toBeVisible();
 		}
+		// #550: status tones must render as colors, not the grayscale
+		// --ty-status-* defaults that were ported from the debug palette.
+		// Assert real channel spread on the computed text color.
+		for (const tone of ["success", "warning", "error"]) {
+			const el = canvas.getByText(`${tone} notice`);
+			const { color } = getComputedStyle(el);
+			const [r, g, b] = color.match(/\d+/g)?.map(Number) ?? [0, 0, 0];
+			expect(Math.max(r, g, b) - Math.min(r, g, b)).toBeGreaterThan(20);
+		}
 	},
 };
 

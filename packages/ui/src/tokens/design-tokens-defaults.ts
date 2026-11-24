@@ -394,9 +394,9 @@ export const DESIGN_TOKENS_DEFAULTS: Record<string, string> = {
 	"ty-widget-gap": "6px",
 	"ty-widget-header-height": "26px",
 
-	"ty-status-success": "#b0b0b0",
-	"ty-status-warning": "#c0c0c0",
-	"ty-status-error": "#c8c8c8",
+	"ty-status-success": "#4ade80",
+	"ty-status-warning": "#fbbf24",
+	"ty-status-error": "#f87171",
 
 	/* Workspace background defaults */
 	"color-ws-bg-default": "#1d1d1d",
