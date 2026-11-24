@@ -42,7 +42,7 @@ const helpAnchor = css({
 	position: "absolute",
 	top: "1",
 	right: "1",
-	zIndex: "2",
+	zIndex: "var(--ty-z-help)",
 });
 
 const helpButton = css({

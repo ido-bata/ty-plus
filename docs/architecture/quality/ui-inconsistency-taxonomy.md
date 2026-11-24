@@ -24,8 +24,8 @@ DirectoryBrowser の調査から見つかった不整合は widget 固有では�
 | 5 | **同じ component の再実装** — 汎用 control が feature の folder に置きっぱなし | `check:ui-ownership` の `sharedComponents` | **済**（view toggle / authoring layout） |
 | 6 | **raw な `<button>`** — 共有 Button/IconButton ではなく手書き | `raw-control` | **未了**（production に 62 件、baseline 退避） |
 | 7 | **px リテラル** — 260(px) ではなく `1px` のような直接値 | — | **未了**（225 件、1px が 216） |
-| 8 | **raw な色リテラル** — token ではなく hex / rgba | `check-design-tokens` は cep-shell のみ | **未了**（73 件） |
-| 9 | **z-index リテラル** — 層順序の語彙が無い | — | **未了**（39 件、150 / 100000 / 2147483647 が混在） |
+| 8 | **raw な色リテラル** — token ではなく hex / rgba | `check-design-tokens`（`src/**` + `packages/ui/src`） | **済**（Issue #397。ドメイン色は各 `literals/` モジュールへ集約） |
+| 9 | **z-index リテラル** — 層順序の語彙が無い | `check-design-tokens` の `z-index literal` | **済**（Issue #398。`--ty-z-*` 層 token へ集約） |
 | 10 | **preset dialog 4 種のクローン** — 同じダイアログが 4 つ | `duplicate-style-recipe` | **未了**（最大の未了項目） |
 | 11 | **i18n を通さない UI テキスト** — JSX に直書きの英語 | — | **未了**（31 箇所。加えて共有 kit の選択数サマリが英語のまま-owner が文言を渡せない） |
 | 12 | **icon の size が scale 外** — 共有 scale は 12/16/20 だが 8 種類を使っている | `icon-size-off-scale` | **未了**（55 箇所。判定は「寄せるか scale を広げるか」が未決） |

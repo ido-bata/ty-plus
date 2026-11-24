@@ -210,7 +210,7 @@ function moveToPanelItems(currentPanelId: string): Item[] {
 
 const panelClass = css({
 	pointerEvents: "auto",
-	zIndex: 100000,
+	zIndex: "var(--ty-z-widget-overlay)",
 	maxHeight: "min(70vh,26rem)",
 	minWidth: "4",
 	overflowY: "auto",

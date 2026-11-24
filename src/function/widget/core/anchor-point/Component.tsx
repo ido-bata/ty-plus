@@ -81,7 +81,7 @@ function AnchorPointGestureOverlay({
 				pointerEvents: "none",
 				position: "absolute",
 				inset: 0,
-				zIndex: 10,
+				zIndex: "var(--ty-z-overlay)",
 				height: "full",
 				width: "full",
 				overflow: "visible",

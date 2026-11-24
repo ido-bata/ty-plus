@@ -35,7 +35,7 @@ const renderIcon = (type: NotificationEntry["type"]): JSX.Element => {
 
 const portalClass = css({
 	position: "fixed",
-	zIndex: 9999,
+	zIndex: "var(--ty-z-notification)",
 	display: "flex",
 	flexDirection: "column",
 	gap: "2",

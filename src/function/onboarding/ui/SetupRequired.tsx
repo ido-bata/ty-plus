@@ -18,7 +18,7 @@ declare global {
 const wrapperClass = css({
 	position: "fixed",
 	inset: 0,
-	zIndex: 2147483647,
+	zIndex: "var(--ty-z-blocking)",
 	display: "flex",
 	alignItems: "center",
 	justifyContent: "center",

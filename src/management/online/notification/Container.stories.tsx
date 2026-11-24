@@ -62,7 +62,7 @@ const ContainerStub = (args: Args): JSX.Element => {
 				position: "fixed",
 				top: "var(--spacing-shell, 12px)",
 				right: "var(--spacing-shell, 12px)",
-				zIndex: 9999,
+				zIndex: "var(--ty-z-notification)",
 				pointerEvents: "none",
 				display: "flex",
 				flexDirection: "column",

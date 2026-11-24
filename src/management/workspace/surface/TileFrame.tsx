@@ -29,7 +29,7 @@ const tileFrameOverlay = css({
 	pointerEvents: "none",
 	position: "absolute",
 	inset: "0",
-	zIndex: "1",
+	zIndex: "var(--ty-z-chrome)",
 	boxSizing: "border-box",
 	borderRadius: "shell-sm",
 	borderStyle: "solid",

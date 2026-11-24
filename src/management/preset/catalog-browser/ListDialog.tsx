@@ -335,7 +335,7 @@ const iconGroupBadgeClass = css({
 	position: "absolute",
 	top: "0.5",
 	right: "0.5",
-	zIndex: "1",
+	zIndex: "var(--ty-z-chrome)",
 	borderRadius: "shell-sm",
 	borderWidth: "hairline",
 	borderStyle: "solid",

@@ -197,7 +197,7 @@ export const fillSurfaceClass = css({
 export const tileInnerClass = css({
 	position: "absolute",
 	inset: "0",
-	zIndex: "0",
+	zIndex: "var(--ty-z-content)",
 	minHeight: "0",
 	minWidth: "0",
 	overflow: "hidden",

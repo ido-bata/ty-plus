@@ -83,7 +83,7 @@ const emojiPickerPopoverClass = css({
 	position: "absolute",
 	left: "0",
 	top: "100%",
-	zIndex: "50",
+	zIndex: "var(--ty-z-popover)",
 	marginTop: "1",
 	maxHeight: "min(22rem,55vh)",
 	width: "min(100%,22rem)",

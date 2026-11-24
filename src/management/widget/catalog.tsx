@@ -83,7 +83,7 @@ const sectionStyle = css({
 const sectionTitleStyle = css({
 	position: "sticky",
 	top: "0",
-	zIndex: "1",
+	zIndex: "var(--ty-z-chrome)",
 	marginBottom: "1.5",
 	borderBottomWidth: "hairline",
 	borderBottomStyle: "solid",
