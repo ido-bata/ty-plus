@@ -9,7 +9,7 @@
 			"lead": "Stack solid, image, and pattern layers behind the workspace grid. Click Apply to sync to the panel and save.",
 			"applyToWorkspace": "Apply to workspace",
 			"clearAll": "Clear all",
-			"emptyLayers": "No layers yet — add one with the buttons on the left.",
+			"emptyLayers": "No layers yet — add one with the buttons above.",
 			"selectLayer": "Select a layer in the list to edit it.",
 			"enabled": "Visible",
 			"opacity": "Opacity",
