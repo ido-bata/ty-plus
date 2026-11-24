@@ -119,7 +119,7 @@ describe("CodeEditor has a bottom resize handle", () => {
 		)?.[0];
 		expect(widgetSurfaceBlock).toBeDefined();
 		expect(widgetSurfaceBlock).toMatch(/borderRadius:\s*["']shell-sm["']/);
-		expect(widgetSurfaceBlock).toMatch(/borderWidth:\s*["']1px["']/);
+		expect(widgetSurfaceBlock).toMatch(/borderWidth:\s*["']hairline["']/);
 		expect(widgetSurfaceBlock).toMatch(/borderStyle:\s*["']solid["']/);
 		expect(widgetSurfaceBlock).toMatch(
 			/borderColor:\s*["']border\.default["']/,
