@@ -44,12 +44,14 @@ const COLOR_BY_TYPE: Record<NotificationType, string> = {
 	error: "#e35b5b",
 };
 
-const ContainerStub = (args: Args): JSX.Element | null => {
+const ContainerStub = (args: Args): JSX.Element => {
 	// Issue #528: mirror the production component — `NotificationContainer`
 	// returns `null` when there are no notifications, so the stub must not
-	// invent an empty-state label the real UI never renders.
+	// invent an empty-state label the real UI never renders. (An empty
+	// fragment stands in for `null` because the story render type requires
+	// a `JSX.Element`.)
 	if (args.entries.length === 0) {
-		return null;
+		return <></>;
 	}
 	return (
 		<div
