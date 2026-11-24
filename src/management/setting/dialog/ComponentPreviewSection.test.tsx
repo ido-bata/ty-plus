@@ -28,6 +28,8 @@ describe("ComponentPreviewSection", () => {
 		const { container } = render(<ComponentPreviewSection />);
 
 		expect(screen.getByText("Preset Icon Editor")).toBeInTheDocument();
-		expect(container.querySelector(".asp_square.grid-r_span_2")).toBeTruthy();
+		const preview = container.querySelector('[aria-label="Icon preview"]');
+		expect(preview).toBeTruthy();
+		expect(preview?.className).toContain("grid-r_span_2");
 	});
 });
