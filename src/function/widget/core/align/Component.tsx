@@ -413,28 +413,20 @@ export function Align({ widthPx, widgetInstanceId }: Props): JSX.Element {
 			spacingHeight +
 			timeBlock -
 			buffer;
+	// The target row must budget every section that actually renders —
+	// align (always), distribute/spacing (when they fit), and the time
+	// block. The previous disjunction let the first clause pass on
+	// `align + time + target` alone, so a shown distribute/spacing section
+	// pushed the target row past the root's `overflow: hidden` clip (#560).
 	const showTarget =
-		size.h >= alignHeight + sectionGap + timeBlock + targetHeight - buffer ||
-		(showDistribute &&
-			size.h >=
-				alignHeight +
-					sectionGap +
-					distributeHeight +
-					sectionGap +
-					timeBlock +
-					targetHeight -
-					buffer) ||
-		(showSpacing &&
-			size.h >=
-				alignHeight +
-					sectionGap +
-					distributeHeight +
-					sectionGap +
-					spacingHeight +
-					sectionGap +
-					timeBlock +
-					targetHeight -
-					buffer);
+		size.h >=
+		alignHeight +
+			sectionGap +
+			(showDistribute ? distributeHeight + sectionGap : 0) +
+			(showSpacing ? spacingHeight + sectionGap : 0) +
+			timeBlock +
+			targetHeight -
+			buffer;
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: isActiveWidget triggers re-fetch on activation
 	useEffect(() => {

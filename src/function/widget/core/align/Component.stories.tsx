@@ -138,5 +138,17 @@ export const SelectTimeTarget: Story = {
 			const el = section.querySelector(`[data-ws-action='${action}']`);
 			if (el) assertNotClipped(el, { boundary: canvasElement });
 		}
+		// #560: the target selector row sits below the sections and is the
+		// row agy observed clipped when the Time section consumed the
+		// height budget — it was not covered by the section assertions.
+		for (const target of [
+			"align-target-selection",
+			"align-target-comp",
+			"align-target-key-object",
+			"align-target-time",
+		]) {
+			const el = canvasElement.querySelector(`[data-ws-action='${target}']`);
+			if (el) assertNotClipped(el, { boundary: canvasElement });
+		}
 	},
 };
