@@ -1,0 +1,14 @@
+{
+  "realRoot": "/Applications/Adobe After Effects 2027/ty-plus",
+  "checkedAt": "2026-11-24T12:02:37.600Z",
+  "driftBeforeRepair": {
+    "changed": 1,
+    "added": 1,
+    "removed": 0
+  },
+  "filesRepaired": [
+    "cache/layout-undo/panel-1/stack.json",
+    "removed:locks/persistence.lock/owner.json"
+  ],
+  "cleanAfterRepair": true
+}
