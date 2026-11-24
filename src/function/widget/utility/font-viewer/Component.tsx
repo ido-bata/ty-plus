@@ -1,4 +1,5 @@
 import {
+	Button,
 	centeredIconClass,
 	countLabelClass,
 	cx,
@@ -163,6 +164,19 @@ function resolvedMatchesRequested(
 	return a.includes(b) || b.includes(a);
 }
 
+/**
+ * The click target overlaid on a tile surface. The surface div owns the
+ * chrome (border, fill, hover); this bare Button only provides semantics,
+ * the shared focus ring and the disabled treatment.
+ */
+const tileHitAreaClass = css({
+	position: "absolute",
+	inset: "0",
+	_focusVisible: {
+		boxShadow: "var(--color-focus-ring)",
+	},
+});
+
 function FontNavigateUpCard(props: {
 	tileAspect: IconTileAspect;
 	onNavigateUp: () => void;
@@ -171,10 +185,10 @@ function FontNavigateUpCard(props: {
 }): JSX.Element {
 	const { tileAspect, onNavigateUp, contextLabel, backLabel } = props;
 	return (
-		<button
-			type="button"
+		<div
 			className={css({
 				display: "flex",
+				position: "relative",
 				width: "full",
 				minWidth: 0,
 				flexDirection: "column",
@@ -188,15 +202,8 @@ function FontNavigateUpCard(props: {
 				opacity: 0.4,
 				padding: "1",
 				textAlign: "left",
-				outline: "none",
 				_hover: { backgroundColor: "interactive.hover" },
-				_focusVisible: {
-					boxShadow: "var(--color-focus-ring)",
-				},
 			})}
-			onClick={onNavigateUp}
-			aria-label={backLabel}
-			title={contextLabel ? `${backLabel} — ${contextLabel}` : backLabel}
 		>
 			<Surface
 				variant="default"
@@ -217,7 +224,15 @@ function FontNavigateUpCard(props: {
 					{backLabel}
 				</div>
 			</div>
-		</button>
+			<Button
+				variant="bare"
+				uiSize="content"
+				className={tileHitAreaClass}
+				onClick={onNavigateUp}
+				aria-label={backLabel}
+				title={contextLabel ? `${backLabel} — ${contextLabel}` : backLabel}
+			/>
+		</div>
 	);
 }
 
@@ -335,25 +350,26 @@ function FontIconCatalogTile(props: {
 	);
 	if (onOpen) {
 		return (
-			<button
-				type="button"
+			<div
 				className={cx(
 					tileClass,
 					css({
+						position: "relative",
 						textAlign: "left",
-						outline: "none",
 						_hover: { backgroundColor: "interactive.hover" },
-						_focusVisible: {
-							boxShadow: "var(--color-focus-ring)",
-						},
 					}),
 				)}
-				onClick={onOpen}
-				aria-label={`${openLabel ?? ""}: ${primaryLabel}`}
 				data-font-family={primaryLabel}
 			>
 				{body}
-			</button>
+				<Button
+					variant="bare"
+					uiSize="content"
+					className={tileHitAreaClass}
+					onClick={onOpen}
+					aria-label={`${openLabel ?? ""}: ${primaryLabel}`}
+				/>
+			</div>
 		);
 	}
 	return (
@@ -555,23 +571,20 @@ function FontListTreeFamilyGroup(props: {
 						/>
 					</IconButton>
 				</div>
-				<button
-					type="button"
+				<Button
+					variant="bare"
+					uiSize="content"
 					className={css({
 						display: "flex",
 						minWidth: 0,
 						flex: 1,
 						flexDirection: "row",
 						alignItems: "center",
+						justifyContent: "flex-start",
 						gap: "2",
 						overflow: "hidden",
-						borderWidth: 0,
-						backgroundColor: "transparent",
 						padding: 0,
 						textAlign: "left",
-						fontFamily: "inherit",
-						boxShadow: "none",
-						outline: "none",
 						_hover: { color: "text.primary" },
 						_focusVisible: {
 							boxShadow: "var(--color-focus-ring)",
@@ -638,7 +651,7 @@ function FontListTreeFamilyGroup(props: {
 					>
 						{sample || "—"}
 					</div>
-				</button>
+				</Button>
 			</div>
 			{open ? (
 				<ul
