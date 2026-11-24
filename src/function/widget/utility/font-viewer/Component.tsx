@@ -4,6 +4,7 @@ import {
 	cx,
 	fieldLabelClass,
 	Icon,
+	IconButton,
 	monoMetaClass,
 	rowLabelClass,
 	SearchField,
@@ -530,18 +531,8 @@ function FontListTreeFamilyGroup(props: {
 						justifyContent: "center",
 					})}
 				>
-					<button
-						type="button"
-						className={css({
-							display: "inline-flex",
-							borderRadius: "shell-sm",
-							padding: 0,
-							color: "text.muted",
-							_hover: {
-								backgroundColor: "surface.widget",
-								color: "text.primary",
-							},
-						})}
+					<IconButton
+						size="xs"
 						aria-expanded={open}
 						aria-label={
 							open
@@ -562,7 +553,7 @@ function FontListTreeFamilyGroup(props: {
 							className={css({ transitionProperty: "transform" })}
 							aria-hidden
 						/>
-					</button>
+					</IconButton>
 				</div>
 				<button
 					type="button"

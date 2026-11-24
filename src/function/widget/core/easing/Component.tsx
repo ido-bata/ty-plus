@@ -706,25 +706,33 @@ function EasingActionBar({
 					borderWidth: 0,
 				})}
 			>
-				<button
+				<Button
+					variant="bare"
+					uiSize="content"
 					type="button"
 					aria-label={t("easing.presetAria.linear")}
 					data-ws-action="easing-preset"
 					data-easing-preset="linear"
 				/>
-				<button
+				<Button
+					variant="bare"
+					uiSize="content"
 					type="button"
 					aria-label={t("easing.presetAria.easeOut")}
 					data-ws-action="easing-preset"
 					data-easing-preset="easeOut"
 				/>
-				<button
+				<Button
+					variant="bare"
+					uiSize="content"
 					type="button"
 					aria-label={t("easing.presetAria.easeIn")}
 					data-ws-action="easing-preset"
 					data-easing-preset="easeIn"
 				/>
-				<button
+				<Button
+					variant="bare"
+					uiSize="content"
 					type="button"
 					aria-label={t("easing.presetAria.easeInOut")}
 					data-ws-action="easing-preset"

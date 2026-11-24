@@ -23,7 +23,13 @@ type ButtonVariant =
 	 * the shared size scale, so the control still behaves like every other
 	 * button in the app.
 	 */
-	| "bare";
+	| "bare"
+	/**
+	 * Inline text link: no box at all — the caller pairs it with
+	 * `uiSize="content"`. Used for actions that read as links inside prose
+	 * or status text (release notes, check-now, browse).
+	 */
+	| "link";
 type ButtonSize = "sm" | "md" | "lg" | "content";
 
 type ButtonOwnProps = {
@@ -177,6 +183,18 @@ const variants: Record<ButtonVariant, string> = {
 		borderWidth: "0",
 		color: "text.primary",
 		fontWeight: "normal",
+		_focusVisible: {
+			boxShadow: "var(--color-focus-ring)",
+			outlineOffset: "0",
+		},
+	}),
+	link: css({
+		backgroundColor: "transparent",
+		borderWidth: "0",
+		color: "text.link",
+		fontSize: "text-sm",
+		fontWeight: "normal",
+		textDecoration: "underline",
 		_focusVisible: {
 			boxShadow: "var(--color-focus-ring)",
 			outlineOffset: "0",
