@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { expect, within } from "storybook/test";
 import { css } from "@/styled-system/css";
 import { ToolDialogFields } from "./Fields";
 import type { PresetToolField } from "./ToolDialog";
@@ -68,4 +69,27 @@ export const Default: Story = {};
 
 export const Busy: Story = {
 	args: { busy: true },
+};
+
+// #552: every field label must share the shell label style — the plain
+// input branch used to render `Input`'s built-in label (10px) while the
+// other kinds rendered `shellFieldLabelClass` (12px uppercase).
+const playLabelsConsistent = async ({
+	canvasElement,
+}: {
+	canvasElement: HTMLElement;
+}): Promise<void> => {
+	const canvas = within(canvasElement);
+	const titleLabel = canvas.getByText("Title");
+	const modeLabel = canvas.getByText("Mode");
+	const notesLabel = canvas.getByText("Notes");
+	for (const el of [titleLabel, modeLabel, notesLabel]) {
+		const style = getComputedStyle(el);
+		expect(style.textTransform).toBe("uppercase");
+		expect(style.fontSize).toBe(getComputedStyle(modeLabel).fontSize);
+	}
+};
+
+export const LabelsConsistent: Story = {
+	play: playLabelsConsistent,
 };
