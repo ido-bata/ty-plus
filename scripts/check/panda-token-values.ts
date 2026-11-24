@@ -17,6 +17,13 @@
  *     underscores into spaces inside these strings, so `in_oklab` or
  *     `)_15%` reach the stylesheet verbatim and the whole declaration is
  *     dropped by the browser (observed: FileEntryList row state fills, #470).
+ *   - Quoted css() values must not place `_` inside `[...]` arbitrary-value
+ *     brackets. Panda keeps underscores verbatim there too, so
+ *     `"[2.25rem_2rem_minmax(0,1fr)_auto]"` compiles to an invalid
+ *     `grid-template-columns` declaration the browser drops — the grid
+ *     collapses to a single column and every row stacks (observed:
+ *     preset list icons centered in a broken row, #582). Write the value
+ *     as a plain space-separated string instead.
  *
  * Exit codes:
  *   0 - All checks pass
@@ -65,6 +72,16 @@ const colorMixHasUnderscore = (call: string): boolean => {
 	return stripped.includes("_");
 };
 
+/**
+ * Matches a css-object property whose quoted value is a `[...]` arbitrary
+ * value containing `_`. Inside Panda arbitrary-value brackets underscores
+ * are emitted verbatim (not converted to spaces), producing invalid
+ * declarations. Scoped to `key: "value"` pairs so attribute-selector
+ * strings (`"[data-x=...]"`) and template literals do not match.
+ */
+const BRACKET_UNDERSCORE_VALUE =
+	/\b[A-Za-z_$][\w$]*\s*:\s*["'](\[[^\]"']*_[^\]"']*\][^"']*)["']/g;
+
 const isUnitlessMultiplier = (raw: string): boolean => {
 	if (!/^[0-9]+(?:\.[0-9]+)?$/.test(raw)) return false;
 	return Number(raw) >= 3;
@@ -92,14 +109,19 @@ const collectFiles = (dir: string): string[] => {
 const violations: {
 	file: string;
 	line: number;
-	kind: "lineHeight" | "color-mix";
+	kind: "lineHeight" | "color-mix" | "bracket-underscore";
 	value: string;
 }[] = [];
 
 for (const dir of SCAN_DIRS) {
 	for (const file of collectFiles(join(REPO_ROOT, dir))) {
 		const text = readFileSync(file, "utf8");
-		if (!text.includes("lineHeight") && !text.includes("color-mix(")) continue;
+		if (
+			!text.includes("lineHeight") &&
+			!text.includes("color-mix(") &&
+			!text.includes("[")
+		)
+			continue;
 		const lines = text.split("\n");
 		for (let i = 0; i < lines.length; i++) {
 			const line = lines[i] ?? "";
@@ -134,6 +156,19 @@ for (const dir of SCAN_DIRS) {
 					});
 				}
 			}
+			BRACKET_UNDERSCORE_VALUE.lastIndex = 0;
+			for (
+				let m = BRACKET_UNDERSCORE_VALUE.exec(line);
+				m !== null;
+				m = BRACKET_UNDERSCORE_VALUE.exec(line)
+			) {
+				violations.push({
+					file: file.slice(REPO_ROOT.length + 1),
+					line: i + 1,
+					kind: "bracket-underscore",
+					value: m[1] ?? m[0],
+				});
+			}
 		}
 	}
 }
@@ -141,6 +176,7 @@ for (const dir of SCAN_DIRS) {
 if (violations.length > 0) {
 	const lineHeightHits = violations.filter((v) => v.kind === "lineHeight");
 	const colorMixHits = violations.filter((v) => v.kind === "color-mix");
+	const bracketHits = violations.filter((v) => v.kind === "bracket-underscore");
 	if (lineHeightHits.length > 0) {
 		console.error(
 			"panda-token-values: unitless lineHeight >= 3 detected (spacing-token confusion?):",
@@ -157,8 +193,16 @@ if (violations.length > 0) {
 			console.error(`  ${v.file}:${v.line}  ${v.value}`);
 		}
 	}
+	if (bracketHits.length > 0) {
+		console.error(
+			"panda-token-values: underscore inside [...] arbitrary value (Panda emits it verbatim; the declaration is dropped):",
+		);
+		for (const v of bracketHits) {
+			console.error(`  ${v.file}:${v.line}  "${v.value}"`);
+		}
+	}
 	console.error(
-		"\nUse a rem/px value or named token for lineHeight; write color-mix() arguments as valid CSS with real spaces.",
+		"\nUse a rem/px value or named token for lineHeight; write color-mix() arguments and bracket arbitrary values as valid CSS with real spaces.",
 	);
 	process.exit(1);
 }

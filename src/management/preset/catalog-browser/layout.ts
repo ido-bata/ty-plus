@@ -9,7 +9,7 @@ import { css } from "@/styled-system/css";
  */
 export const LIST_ROW_GRID = css({
 	display: "grid",
-	gridTemplateColumns: "[2.25rem_2rem_minmax(0,1fr)_auto]",
+	gridTemplateColumns: "2.25rem 2rem minmax(0,1fr) auto",
 	alignItems: "center",
 	columnGap: "2",
 	rowGap: "0.5",
