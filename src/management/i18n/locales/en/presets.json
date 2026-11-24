@@ -398,6 +398,8 @@
 		"tryAgain": "Try again",
 		"loadingCatalog": "Loading local catalog…",
 		"emptyCatalog": "No presets saved locally yet",
+		"emptyCatalogHint": "Presets you add from a folder or file path appear here.",
+		"addPresets": "Add presets",
 		"noMatches": "No matching presets",
 		"cloudOffline": "Cloud offline",
 		"cloudDegradedDetail": "{{message}} — showing the local catalog only.",

@@ -397,6 +397,8 @@
 		"tryAgain": "다시 시도",
 		"loadingCatalog": "로컬 카탈로그 로드 중…",
 		"emptyCatalog": "아직 로컬에 저장된 프리셋이 없습니다",
+		"emptyCatalogHint": "폴더나 파일 경로에서 추가한 프리셋이 여기에 표시됩니다.",
+		"addPresets": "프리셋 추가",
 		"noMatches": "일치하는 프리셋이 없습니다",
 		"cloudOffline": "클라우드 오프라인",
 		"cloudDegradedDetail": "{{message}} — 로컬 카탈로그만 표시합니다.",

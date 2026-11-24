@@ -401,6 +401,8 @@
 		"tryAgain": "Tentar novamente",
 		"loadingCatalog": "A carregar catálogo local…",
 		"emptyCatalog": "Ainda não há predefinições guardadas localmente",
+		"emptyCatalogHint": "As predefinições adicionadas a partir de uma pasta ou caminho de ficheiro aparecem aqui.",
+		"addPresets": "Adicionar predefinições",
 		"noMatches": "Sem predefinições correspondentes",
 		"cloudOffline": "Nuvem offline",
 		"cloudDegradedDetail": "{{message}} — a mostrar apenas o catálogo local.",

@@ -401,6 +401,8 @@
 		"tryAgain": "Réessayer",
 		"loadingCatalog": "Chargement du catalogue local…",
 		"emptyCatalog": "Aucun preset enregistré localement pour le moment",
+		"emptyCatalogHint": "Les presets ajoutés depuis un dossier ou un chemin de fichier apparaissent ici.",
+		"addPresets": "Ajouter des presets",
 		"noMatches": "Aucun preset correspondant",
 		"cloudOffline": "Cloud hors ligne",
 		"cloudDegradedDetail": "{{message}} — affichage du catalogue local uniquement.",

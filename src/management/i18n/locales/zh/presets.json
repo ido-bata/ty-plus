@@ -397,6 +397,8 @@
 		"tryAgain": "重试",
 		"loadingCatalog": "正在加载本地目录…",
 		"emptyCatalog": "尚未在本地保存预设",
+		"emptyCatalogHint": "从文件夹或文件路径添加的预设将显示在这里。",
+		"addPresets": "添加预设",
 		"noMatches": "没有匹配的预设",
 		"cloudOffline": "云端离线",
 		"cloudDegradedDetail": "{{message}} — 仅显示本地目录。",

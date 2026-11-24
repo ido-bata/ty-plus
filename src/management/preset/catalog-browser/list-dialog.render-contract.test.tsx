@@ -184,6 +184,10 @@ vi.mock("@/management/workspace/hooks/preset", () => ({
 	openPresetEditSurface: vi.fn().mockResolvedValue(undefined),
 }));
 
+vi.mock("@/management/workspace/hooks/dialogs", () => ({
+	openPresetToolSurface: vi.fn().mockResolvedValue(undefined),
+}));
+
 vi.mock("@/management/workspace/core/runtime", () => ({
 	executeWorkspacePresetForWindow: (
 		win: Window,
@@ -343,6 +347,17 @@ describe("empty catalog is not the same sentence as a failed read", () => {
 		});
 		expect(screen.queryByText("No matching presets")).toBeNull();
 		expect(screen.queryByText("Failed to load the local catalog")).toBeNull();
+	});
+
+	it("offers an add-presets action when the catalog is empty (Issue #287)", async () => {
+		storage.readJsonText.mockResolvedValue(catalogText([]));
+
+		await renderDialog();
+
+		await waitFor(() => {
+			expect(screen.getByText("Add presets")).toBeInTheDocument();
+		});
+		expect(screen.getByText(/appear here|add them from/i)).toBeInTheDocument();
 	});
 
 	it("shows a load error when the catalog cannot be read", async () => {
