@@ -10,6 +10,9 @@ export type ToolDialogDetailsSectionProps = {
 	descriptionImage: string;
 	onDescriptionImageChange: (next: string) => void;
 	browseDir: string;
+	/** Forwarded to `ArchiveDetailsSection` — the accordion starts closed
+	 *  unless the caller opts in. */
+	defaultOpen?: boolean;
 };
 
 export function ToolDialogDetailsSection({
@@ -18,6 +21,7 @@ export function ToolDialogDetailsSection({
 	descriptionImage,
 	onDescriptionImageChange,
 	browseDir,
+	defaultOpen,
 }: ToolDialogDetailsSectionProps): JSX.Element {
 	return (
 		<div data-preset-tool-area="details" className={areaClass}>
@@ -27,6 +31,7 @@ export function ToolDialogDetailsSection({
 				descriptionImage={descriptionImage}
 				onDescriptionImageChange={onDescriptionImageChange}
 				browseDir={browseDir}
+				defaultOpen={defaultOpen}
 			/>
 		</div>
 	);
