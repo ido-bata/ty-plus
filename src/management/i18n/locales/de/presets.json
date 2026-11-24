@@ -398,6 +398,8 @@
 		"tryAgain": "Erneut versuchen",
 		"loadingCatalog": "Lokaler Katalog wird geladen…",
 		"emptyCatalog": "Noch keine Presets lokal gespeichert",
+		"emptyCatalogHint": "Presets, die Sie aus einem Ordner oder Dateipfad hinzufügen, erscheinen hier.",
+		"addPresets": "Presets hinzufügen",
 		"noMatches": "Keine passenden Presets",
 		"cloudOffline": "Cloud offline",
 		"cloudDegradedDetail": "{{message}} — es wird nur der lokale Katalog angezeigt.",

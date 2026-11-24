@@ -397,6 +397,8 @@
 		"tryAgain": "再試行",
 		"loadingCatalog": "ローカルカタログを読み込み中…",
 		"emptyCatalog": "ローカルに保存されたプリセットはまだありません",
+		"emptyCatalogHint": "フォルダやファイルパスから追加したプリセットがここに表示されます。",
+		"addPresets": "プリセットを追加",
 		"noMatches": "一致するプリセットがありません",
 		"cloudOffline": "クラウドオフライン",
 		"cloudDegradedDetail": "{{message}} — ローカルカタログのみを表示しています。",

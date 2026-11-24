@@ -77,6 +77,7 @@ import {
 import { stripKnownIdPrefixes } from "@/management/storage/ids";
 import { readSettings } from "@/management/storage/workspace/store";
 import { executeWorkspacePresetForWindow } from "@/management/workspace/core/runtime";
+import { openPresetToolSurface } from "@/management/workspace/hooks/dialogs";
 import { openPresetEditSurface } from "@/management/workspace/hooks/preset";
 import { useCatalogViewMode } from "@/shared/util/catalog-view-mode";
 import { useIconGridScale } from "@/shared/util/icon-grid-scale";
@@ -481,7 +482,7 @@ const errorDetailClass = css({
 	overflowWrap: "anywhere",
 });
 
-const errorRetryClass = css({
+const actionButtonClass = css({
 	height: "6",
 	paddingInline: "3",
 	borderRadius: "shell-sm",
@@ -494,6 +495,20 @@ const errorRetryClass = css({
 	_hover: {
 		backgroundColor: "interactive.hover",
 	},
+});
+
+const emptyCatalogClass = css({
+	display: "flex",
+	flexDirection: "column",
+	alignItems: "center",
+	gap: "2",
+});
+
+const emptyCatalogHintClass = css({
+	maxWidth: "52ch",
+	fontSize: "xs",
+	color: "text.muted",
+	textAlign: "center",
 });
 
 const iconViewPortClass = css({
@@ -1926,7 +1941,7 @@ export function PresetsDialog(): JSX.Element {
 					<div className={errorDetailClass}>{loadError}</div>
 					<button
 						type="button"
-						className={errorRetryClass}
+						className={actionButtonClass}
 						onClick={() => void loadEverything()}
 					>
 						{i18n.t("presets:listDialog.tryAgain")}
@@ -1946,9 +1961,27 @@ export function PresetsDialog(): JSX.Element {
 		}
 		if (presets.length === 0) {
 			return (
-				<p className={emptyStateClass}>
-					{i18n.t("presets:listDialog.emptyCatalog")}
-				</p>
+				<div className={emptyCatalogClass}>
+					<p className={emptyStateClass}>
+						{i18n.t("presets:listDialog.emptyCatalog")}
+					</p>
+					<p className={emptyCatalogHintClass}>
+						{i18n.t("presets:listDialog.emptyCatalogHint")}
+					</p>
+					<button
+						type="button"
+						className={actionButtonClass}
+						onClick={() =>
+							void openPresetToolSurface(
+								window,
+								PRESETS_DIALOG_SURFACE_ID,
+								"dialog-preset-add",
+							)
+						}
+					>
+						{i18n.t("presets:listDialog.addPresets")}
+					</button>
+				</div>
 			);
 		}
 		return (

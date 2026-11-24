@@ -401,6 +401,8 @@
 		"tryAgain": "Reintentar",
 		"loadingCatalog": "Cargando catálogo local…",
 		"emptyCatalog": "Aún no hay presets guardados localmente",
+		"emptyCatalogHint": "Los presets que añadas desde una carpeta o ruta de archivo aparecen aquí.",
+		"addPresets": "Añadir presets",
 		"noMatches": "No hay presets coincidentes",
 		"cloudOffline": "Nube sin conexión",
 		"cloudDegradedDetail": "{{message}} — mostrando solo el catálogo local.",
