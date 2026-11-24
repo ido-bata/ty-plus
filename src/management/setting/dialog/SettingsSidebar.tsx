@@ -1,4 +1,5 @@
 import {
+	Button,
 	cx,
 	segmentedButtonActiveClass,
 	segmentedButtonInactiveClass,
@@ -127,6 +128,21 @@ const TAB_CLASS = (active: boolean): string =>
 		segmentedColumnButtonClass,
 		active ? segmentedButtonActiveClass : segmentedButtonInactiveClass,
 	);
+
+const tabSurfacePositionClass = css({ position: "relative" });
+
+/**
+ * Full-row click target overlaid on a settings tab surface. The tab div owns
+ * the segmented active/inactive treatment; this bare Button carries the tab
+ * semantics, the shared focus ring and the disabled treatment.
+ */
+const tabHitAreaClass = css({
+	position: "absolute",
+	inset: "0",
+	_focusVisible: {
+		boxShadow: "var(--color-focus-ring)",
+	},
+});
 
 const bodyStyle = css({
 	flex: "1",
@@ -353,26 +369,31 @@ export function SettingsSidebar({
 						{group.sections.map((section) => {
 							const active = section.sectionId === activeSectionId;
 							return (
-								<button
+								<div
 									key={section.sectionId}
-									type="button"
-									role="tab"
-									id={`${tablistId}-tab-${section.sectionId}`}
-									aria-selected={active}
-									aria-controls={active ? activePanelId : undefined}
-									tabIndex={active ? 0 : -1}
-									className={TAB_CLASS(active)}
-									data-settings-sidebar-item={section.sectionId}
-									data-settings-sidebar-active={active ? "true" : "false"}
-									onClick={() => {
-										setActiveSectionId(section.sectionId);
-									}}
-									onKeyDown={(event) => {
-										onTabKeyDown(event, section.sectionId);
-									}}
+									className={cx(TAB_CLASS(active), tabSurfacePositionClass)}
 								>
 									{t(normalizeLabelKey(section.labelKey))}
-								</button>
+									<Button
+										variant="bare"
+										uiSize="content"
+										className={tabHitAreaClass}
+										role="tab"
+										aria-label={t(normalizeLabelKey(section.labelKey))}
+										id={`${tablistId}-tab-${section.sectionId}`}
+										aria-selected={active}
+										aria-controls={active ? activePanelId : undefined}
+										tabIndex={active ? 0 : -1}
+										data-settings-sidebar-item={section.sectionId}
+										data-settings-sidebar-active={active ? "true" : "false"}
+										onClick={() => {
+											setActiveSectionId(section.sectionId);
+										}}
+										onKeyDown={(event) => {
+											onTabKeyDown(event, section.sectionId);
+										}}
+									/>
+								</div>
 							);
 						})}
 					</div>

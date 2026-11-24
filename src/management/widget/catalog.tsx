@@ -1,4 +1,5 @@
 import {
+	Button,
 	countLabelClass,
 	cx,
 	Icon,
@@ -106,6 +107,7 @@ const listStyle = css({
 
 const itemBaseStyle = css({
 	display: "flex",
+	position: "relative",
 	width: "full",
 	gap: "3",
 	borderRadius: "shell-sm",
@@ -195,6 +197,7 @@ const iconGridStyle = css({
 
 const iconItemBaseStyle = css({
 	display: "flex",
+	position: "relative",
 	minHeight: 0,
 	width: "full",
 	flexDirection: "row",
@@ -208,6 +211,19 @@ const iconItemBaseStyle = css({
 	paddingBlock: "2",
 	textAlign: "left",
 	transitionProperty: "colors",
+});
+
+/**
+ * Full-item click target overlaid on a catalog item surface. The item div
+ * owns the border/fill/active treatment; this bare Button only provides
+ * semantics, the shared focus ring and the disabled treatment.
+ */
+const catalogItemHitAreaClass = css({
+	position: "absolute",
+	inset: "0",
+	_focusVisible: {
+		boxShadow: "var(--color-focus-ring)",
+	},
 });
 
 const rootStyle = css({
@@ -353,22 +369,11 @@ function WidgetCatalogResults({
 								const description = describe(w);
 								return (
 									<li key={w.type}>
-										<button
-											type="button"
-											id={`add-widget-opt-${w.type}`}
-											data-add-widget-type={w.type}
-											data-add-widget-category={category}
-											aria-pressed={active}
-											title={w.type}
+										<div
 											className={cx(
 												itemBaseStyle,
 												active ? itemActiveStyle : itemInactiveStyle,
 											)}
-											onClick={() => {
-												markUserSelection();
-												onSelectType(w.type);
-											}}
-											onDoubleClick={() => onActivateType(w.type)}
 										>
 											<span
 												className={cx(
@@ -390,7 +395,22 @@ function WidgetCatalogResults({
 													{description}
 												</span>
 											</span>
-										</button>
+											<Button
+												variant="bare"
+												uiSize="content"
+												className={catalogItemHitAreaClass}
+												id={`add-widget-opt-${w.type}`}
+												data-add-widget-type={w.type}
+												data-add-widget-category={category}
+												aria-pressed={active}
+												title={w.type}
+												onClick={() => {
+													markUserSelection();
+													onSelectType(w.type);
+												}}
+												onDoubleClick={() => onActivateType(w.type)}
+											/>
+										</div>
 									</li>
 								);
 							})}
@@ -413,23 +433,12 @@ function WidgetCatalogResults({
 							const icon = resolveWidgetIcon(w.icon);
 							const description = describe(w);
 							return (
-								<button
+								<div
 									key={w.type}
-									type="button"
-									id={`add-widget-opt-${w.type}`}
-									data-add-widget-type={w.type}
-									data-add-widget-category={category}
-									aria-pressed={active}
-									title={w.type}
 									className={cx(
 										iconItemBaseStyle,
 										active ? itemActiveStyle : itemInactiveStyle,
 									)}
-									onClick={() => {
-										markUserSelection();
-										onSelectType(w.type);
-									}}
-									onDoubleClick={() => onActivateType(w.type)}
 								>
 									<span
 										className={cx(
@@ -451,7 +460,22 @@ function WidgetCatalogResults({
 											{description}
 										</p>
 									</span>
-								</button>
+									<Button
+										variant="bare"
+										uiSize="content"
+										className={catalogItemHitAreaClass}
+										id={`add-widget-opt-${w.type}`}
+										data-add-widget-type={w.type}
+										data-add-widget-category={category}
+										aria-pressed={active}
+										title={w.type}
+										onClick={() => {
+											markUserSelection();
+											onSelectType(w.type);
+										}}
+										onDoubleClick={() => onActivateType(w.type)}
+									/>
+								</div>
 							);
 						})}
 					</div>

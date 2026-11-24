@@ -1,4 +1,9 @@
-import { srOnlyClass, tileInnerClass, tileRingClass } from "@ty-plus/ui";
+import {
+	Button,
+	srOnlyClass,
+	tileInnerClass,
+	tileRingClass,
+} from "@ty-plus/ui";
 import type { JSX, ReactNode } from "react";
 import type { Preset } from "@/management/preset/contract";
 import { dispatchWorkspacePresetHover } from "@/management/preset/group/hover";
@@ -51,20 +56,6 @@ const gridClass = css({
 	marginRight: "auto",
 	display: "grid",
 	justifyContent: "center",
-});
-
-const cellButtonClass = css({
-	display: "block",
-	flexShrink: "0",
-	cursor: "pointer",
-	userSelect: "none",
-	borderWidth: "0",
-	backgroundColor: "transparent",
-	padding: "0",
-	_disabled: {
-		cursor: "not-allowed",
-		opacity: "0.5",
-	},
 });
 
 const dragGhostClass = css({
@@ -161,12 +152,12 @@ export function GroupPanel({
 				{orderedMemberPresets.map((meta, index) => {
 					const preset = presetsById.get(meta.id);
 					return (
-						<button
+						<Button
 							key={meta.id}
-							type="button"
+							variant="bare"
+							uiSize="content"
 							{...{ [ATTR_GROUP_PANEL_ITEM]: "" }}
 							data-preset-id={meta.id}
-							className={cellButtonClass}
 							style={{
 								width: cellSizePx,
 								height: cellSizePx,
@@ -187,7 +178,7 @@ export function GroupPanel({
 									onHoverChange={dispatchWorkspacePresetHover}
 								/>
 							</GroupPanelPresetCell>
-						</button>
+						</Button>
 					);
 				})}
 				{groupDrag ? (
