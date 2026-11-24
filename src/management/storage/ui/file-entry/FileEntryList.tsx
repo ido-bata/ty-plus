@@ -518,6 +518,12 @@ const upTileButtonClass = css({
 	flexDirection: "column",
 	alignItems: "stretch",
 	gap: "0",
+	// `uiSize="sm"` sizes every descendant svg to 14px, which shrinks the
+	// tile glyph inside the media band. `&&` doubles the class
+	// specificity so this wins regardless of stylesheet order; `auto` lets
+	// the glyph's own width/height attributes apply again, and the max
+	// constraints keep it inside a smaller media band (#507, #554).
+	"&& svg": { boxSize: "auto", maxWidth: "full", maxHeight: "full" },
 });
 const mediaBandBaseClass = css({
 	display: "flex",
@@ -552,7 +558,7 @@ const upLabelClass = css({
 	borderTopWidth: "1px",
 	borderTopStyle: "solid",
 	borderTopColor: "border.default",
-	paddingInline: "2",
+	paddingInline: "1",
 	paddingBlock: "1",
 	textAlign: "center",
 	fontSize: "shell-text-sm",
@@ -855,6 +861,11 @@ export const FileEntryList = ({
 											variant="bare"
 											uiSize="sm"
 											className={upTileButtonClass}
+											// `paddingInline` must be inline: the shared
+											// `Button` base padding is a single-class rule
+											// that wins the stylesheet cascade over
+											// `upTileButtonClass` (#470, #554).
+											style={{ paddingInline: 0 }}
 											onClick={() => {
 												onGoUp?.();
 											}}
