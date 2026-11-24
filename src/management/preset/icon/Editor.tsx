@@ -116,16 +116,22 @@ const bodyPreviewGridClass = css({
 	rowGap: "1",
 });
 
+/**
+ * Fixed-size preview tile. The preview must not stretch with the right
+ * column's content height: `alignSelf: "center"` keeps the grid item from
+ * stretching across the two auto rows, and the fixed `width` + square
+ * `aspectRatio` pin the tile size regardless of the fields column.
+ */
 const previewBoxClass = css({
 	gridRow: "span 2",
 	display: "grid",
-	aspectRatio: "square",
-	height: "full",
-	width: "auto",
+	width: "6rem",
+	aspectRatio: "1/1",
 	flexShrink: "0",
 	gridTemplateColumns: "minmax(0, 1fr)",
 	gridTemplateRows: "minmax(0, 1fr)",
 	justifySelf: "start",
+	alignSelf: "center",
 	overflow: "hidden",
 	borderRadius: "shell-sm",
 	backgroundColor: "surface.widget",
