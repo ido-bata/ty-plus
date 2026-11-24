@@ -1,3 +1,4 @@
+import { COLOR_INPUT_FALLBACK_HEX } from "@ty-plus/ui/literals/color-input";
 import { cx } from "@ty-plus/ui/util/cx";
 import type { JSX } from "react";
 import { css } from "@/styled-system/css";
@@ -47,7 +48,7 @@ function normalizeHexForColorInput(value: string): string {
 	if (trimmed.startsWith("#") && trimmed.length >= 4) {
 		return trimmed;
 	}
-	return "#000000";
+	return COLOR_INPUT_FALLBACK_HEX;
 }
 
 /**

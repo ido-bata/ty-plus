@@ -58,6 +58,10 @@ import {
 	presetIconDraftToPresetIcon,
 } from "@/management/preset/icon/editor-state";
 import {
+	PRESET_ICON_DEFAULT_BG_COLOR,
+	PRESET_ICON_DEFAULT_FG_COLOR,
+} from "@/management/preset/literals/icon-colors";
+import {
 	glyphBoxCompactPadClass,
 	glyphBoxFillClass,
 } from "@/management/preset/workspace/glyph/classes";
@@ -282,8 +286,8 @@ const createEditIconDraft = (
 			...createPresetIconDraft(),
 			type: "text",
 			text: coerced.param.text,
-			bgColor: coerced.param.backgroundColor ?? "#2b2b2b",
-			color: coerced.param.color ?? "#ffffff",
+			bgColor: coerced.param.backgroundColor ?? PRESET_ICON_DEFAULT_BG_COLOR,
+			color: coerced.param.color ?? PRESET_ICON_DEFAULT_FG_COLOR,
 		};
 	}
 	if (coerced.type === "emoji") {
@@ -291,8 +295,8 @@ const createEditIconDraft = (
 			...createPresetIconDraft(),
 			type: "emoji",
 			emoji: coerced.param.emoji,
-			bgColor: coerced.param.backgroundColor ?? "#2b2b2b",
-			color: "#ffffff",
+			bgColor: coerced.param.backgroundColor ?? PRESET_ICON_DEFAULT_BG_COLOR,
+			color: PRESET_ICON_DEFAULT_FG_COLOR,
 		};
 	}
 	if (coerced.type === "image") {
@@ -883,8 +887,8 @@ const initialFormState: FormState = {
 		text: "",
 		emoji: "",
 		imagePath: "",
-		bgColor: "#2b2b2b",
-		color: "#ffffff",
+		bgColor: PRESET_ICON_DEFAULT_BG_COLOR,
+		color: PRESET_ICON_DEFAULT_FG_COLOR,
 	},
 	codeContent: "",
 	easingCurve: "",

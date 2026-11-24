@@ -1,6 +1,6 @@
 import type { CSSProperties, JSX } from "react";
 import { useEffect, useRef } from "react";
-
+import { CANVAS_EASING_AXES_COLOR } from "@/management/preset/literals/canvas-colors";
 import {
 	type CubicParams,
 	easingCurveBounds,
@@ -44,7 +44,7 @@ export function CanvasEasingIcon({
 		ctx.clearRect(0, 0, w, h);
 
 		// Draw axes
-		ctx.strokeStyle = "rgba(128,128,128,0.3)";
+		ctx.strokeStyle = CANVAS_EASING_AXES_COLOR;
 		ctx.lineWidth = 0.5;
 		ctx.beginPath();
 		ctx.moveTo(pad, h - pad);

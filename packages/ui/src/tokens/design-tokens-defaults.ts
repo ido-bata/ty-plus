@@ -235,6 +235,8 @@ export const DESIGN_TOKENS_DEFAULTS: Record<string, string> = {
 	"color-ty-shadow-30": "rgb(0 0 0 / 0.3)",
 	"color-ty-shadow-40": "rgb(0 0 0 / 0.4)",
 	"color-ty-shadow-50": "rgb(0 0 0 / 0.5)",
+	/* Dim veil behind guided overlays (tutorial tour scrim). */
+	"color-ty-scrim": "rgb(0 0 0 / 0.35)",
 	"color-ty-accent-border": "rgba(180 180 180 / 0.6)",
 	"color-ty-accent-bg": "rgba(180 180 180 / 0.12)",
 

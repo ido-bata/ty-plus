@@ -92,7 +92,7 @@ const ALIGN_BTN_CLASS = css({
 	backgroundColor: "transparent",
 	borderWidth: 0,
 	borderRadius: "sm",
-	color: "var(--text,#e8e8ec)",
+	color: "text.primary",
 	cursor: "pointer",
 	paddingInline: "1",
 	paddingBlock: "1.5",
@@ -101,8 +101,14 @@ const ALIGN_BTN_CLASS = css({
 	boxSizing: "border-box",
 	transitionProperty: "colors",
 	transitionDuration: "100",
-	_hover: { backgroundColor: "rgba(255,255,255,0.1)" },
-	_active: { backgroundColor: "rgba(255,255,255,0.15)" },
+	_hover: {
+		backgroundColor:
+			"rgba(var(--text-r), var(--text-g), var(--text-b), var(--ty-opacity-ws-align-hover))",
+	},
+	_active: {
+		backgroundColor:
+			"rgba(var(--text-r), var(--text-g), var(--text-b), var(--ty-opacity-ws-align-active))",
+	},
 });
 
 const SECTION_LABEL_CLASS = css({
@@ -258,14 +264,16 @@ function TargetSelectorRow({
 				transitionDuration: "100",
 				minWidth: 0,
 				_hover: {
-					backgroundColor: "rgba(255,255,255,0.05)",
+					backgroundColor:
+						"rgba(var(--text-r), var(--text-g), var(--text-b), var(--ty-opacity-ws-target-hover))",
 					color: "text.primary",
 				},
 			}),
 			target === t
 				? css({
-						backgroundColor: "rgba(255,255,255,0.1)",
-						color: "var(--action-primary,#4facfe)",
+						backgroundColor:
+							"rgba(var(--text-r), var(--text-g), var(--text-b), var(--ty-opacity-ws-target-active-bg))",
+						color: "text.accent",
 					})
 				: "",
 		);
@@ -278,7 +286,7 @@ function TargetSelectorRow({
 				paddingTop: "1.5",
 				borderTopWidth: "hairline",
 				borderTopStyle: "solid",
-				borderTopColor: "rgba(255,255,255,0.1)",
+				borderTopColor: "border.subtle",
 				width: "full",
 			})}
 		>
@@ -556,9 +564,9 @@ export function Align({ widthPx, widgetInstanceId }: Props): JSX.Element {
 				boxSizing: "border-box",
 				overflow: "hidden",
 				userSelect: "none",
-				backgroundColor: "var(--widget-background,rgba(30,30,30,0.8))",
+				backgroundColor: "surface.widget",
 				borderWidth: 0,
-				borderRadius: "var(--radius,6px)",
+				borderRadius: "shell-lg",
 			})}
 			onFocusCapture={() => setActiveWidgetInstanceId(widgetInstanceId)}
 			onPointerDown={gesture.onPointerDown}

@@ -3,12 +3,12 @@ import { Grid2X2, Image, Palette } from "lucide-react";
 import type { JSX } from "react";
 import type { Layer } from "@/management/workspace/background/contract";
 import { ImageLayerEditor } from "@/management/workspace/background/ImageLayerEditor";
-import {
-	clampNumber,
-	DEFAULT_COLOR,
-	PRESET_COLORS,
-} from "@/management/workspace/background/layer-factory";
+import { clampNumber } from "@/management/workspace/background/layer-factory";
 import { PatternLayerEditor } from "@/management/workspace/background/PatternLayerEditor";
+import {
+	DEFAULT_LAYER_COLOR,
+	LAYER_PRESET_COLORS,
+} from "@/management/workspace/literals/layer-colors";
 import { css } from "@/styled-system/css";
 import { ColorField, NumberField } from "./Fields";
 
@@ -85,11 +85,11 @@ export function LayerEditor(props: {
 				<div className={colorEditor}>
 					<ColorField
 						label={t("workspaceShell.backgroundPanel.color")}
-						value={layer.color ?? DEFAULT_COLOR}
+						value={layer.color ?? DEFAULT_LAYER_COLOR}
 						onColorChange={(value) => updateLayer(layer.id, { color: value })}
 					/>
 					<div className={presetGrid}>
-						{PRESET_COLORS.map((color) => (
+						{LAYER_PRESET_COLORS.map((color) => (
 							<Button
 								key={color}
 								type="button"

@@ -27,6 +27,7 @@ import {
 	SettingsField,
 	SettingsGrid,
 } from "@/management/setting/dialog/layout/SettingsGrid";
+import { DEFAULT_UI_ACCENT_COLOR } from "@/management/setting/literals/ui-colors";
 import { css } from "@/styled-system/css";
 import { ButtonsPreview } from "./ButtonsPreview";
 import { DirectoryBrowserPreview } from "./DirectoryBrowserPreview";
@@ -272,7 +273,9 @@ export function ComponentPreviewSection(): JSX.Element {
 	const [pathValue, setPathValue] = useState("/host/presets/example.zip");
 	const [tokenValue, setTokenValue] = useState("token-value");
 	const [numberTokenValue, setNumberTokenValue] = useState("128");
-	const [colorTokenValue, setColorTokenValue] = useState("#5886ff");
+	const [colorTokenValue, setColorTokenValue] = useState(
+		DEFAULT_UI_ACCENT_COLOR,
+	);
 	const [markdownValue, setMarkdownValue] = useState(
 		"**Bold** and _italic_ text with `code` and [links](https://example.com)",
 	);

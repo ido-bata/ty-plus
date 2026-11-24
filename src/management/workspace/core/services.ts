@@ -61,7 +61,7 @@ export type DataServices = {
  */
 export class GatewayBootRequiredError extends Error {
 	override readonly name = "GatewayBootRequiredError";
-	constructor(message = "Cloud gateway was not booted (Issue #128)") {
+	constructor(message = "Cloud gateway was not booted (issue 128)") {
 		super(message);
 	}
 }

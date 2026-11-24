@@ -41,7 +41,7 @@ const scrim = css({
 	inset: "0",
 	zIndex: "2147483000",
 	pointerEvents: "none",
-	backgroundColor: "rgba(0, 0, 0, 0.35)",
+	backgroundColor: "var(--color-ty-scrim)",
 });
 
 const highlight = css({

@@ -4,6 +4,7 @@ import type {
 	Layer,
 	PatternValue,
 } from "@/management/workspace/background/contract";
+import { DEFAULT_PATTERN_COLOR } from "@/management/workspace/literals/layer-colors";
 import { css } from "@/styled-system/css";
 import { QUIET_SELECTED_CLASS } from "./constants";
 import { ColorField, FieldLabel, NumberField } from "./Fields";
@@ -71,7 +72,7 @@ export function PatternLayerEditor({
 			/>
 			<ColorField
 				label={t("workspaceShell.backgroundPanel.patternColor")}
-				value={layer.patternColor ?? "#444444"}
+				value={layer.patternColor ?? DEFAULT_PATTERN_COLOR}
 				onColorChange={(value) =>
 					updateLayer(layer.id, { patternColor: value })
 				}

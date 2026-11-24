@@ -1,6 +1,9 @@
-// Raw color literals only in src/cep-shell/theme/literals/*.ts
-// Forbid hex / numeric rgb in: cep-shell src TS, theme TS (except default-values), styles CSS.
+// Raw color literals are confined to token / literals modules.
+// Scans production source under src/** and packages/ui/src (ts + tsx + css).
+// Excluded: tests, stories, e2e/fixture/demo dirs, token & literals modules,
+// and generated styled-system output — none of those are shipped UI surfaces.
 
+import type { Dirent } from "node:fs";
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 
@@ -10,41 +13,57 @@ const NUMERIC_RGB = /rgba?\(\s*[0-9]/;
 const ALLOWED_NUMERIC_RGB =
   /rgba?\(\s*(?:var\(--color-ws-transparent-rgb-|var\(--color-ty-)/;
 
-const THEME_DIR = path.resolve("packages", "ui", "src");
-const THEME_LITERALS_DIR = path.join(THEME_DIR, "tokens");
-const STYLES_DIR = path.resolve("src", "management", "ae", "cep", "styles");
-const SHELL_SRC = path.resolve("src", "management", "ae", "cep");
+const SRC_DIR = path.resolve("src");
+const UI_DIR = path.resolve("packages", "ui", "src");
 
-const walkTs = async (dir: string): Promise<string[]> => {
-	const out: string[] = [];
-	try {
-		for (const ent of await readdir(dir, { withFileTypes: true })) {
-			const p = path.join(dir, ent.name);
-			if (ent.isDirectory()) {
-				out.push(...(await walkTs(p)));
-			} else if (ent.name.endsWith(".ts") && !ent.name.endsWith(".d.ts")) {
-				out.push(p);
-			}
-		}
-	} catch {
-		// Directory doesn't exist, return empty array
-	}
-	return out;
+/** Directory segments that never contain shipped UI source. */
+const EXCLUDED_SEGMENTS = new Set([
+	"node_modules",
+	"styled-system",
+	"tokens",
+	"literals",
+	"storybook",
+	"__tests__",
+	"__e2e__",
+	"e2e",
+	"fixtures",
+	"demo",
+	"test",
+	"tests",
+	"scripts",
+]);
+
+/** Test / story / declaration files are not production code. */
+const EXCLUDED_FILE = /\.(?:test|spec|stories)\.[tj]sx?$|\.d\.ts$/;
+
+const isExcludedPath = (abs: string): boolean => {
+	const rel = path.relative(process.cwd(), abs);
+	if (EXCLUDED_FILE.test(rel)) return true;
+	return rel.split(path.sep).some((seg) => EXCLUDED_SEGMENTS.has(seg));
 };
 
-const walkCss = async (dir: string): Promise<string[]> => {
+const walk = async (
+	dir: string,
+	exts: readonly string[],
+): Promise<string[]> => {
 	const out: string[] = [];
+	let ents: Dirent[];
 	try {
-		for (const ent of await readdir(dir, { withFileTypes: true })) {
-			const p = path.join(dir, ent.name);
-			if (ent.isDirectory()) {
-				out.push(...(await walkCss(p)));
-			} else if (ent.name.endsWith(".css")) {
-				out.push(p);
-			}
-		}
+		ents = await readdir(dir, { withFileTypes: true });
 	} catch {
 		// Directory doesn't exist, return empty array
+		return out;
+	}
+	for (const ent of ents) {
+		const p = path.join(dir, ent.name);
+		if (ent.isDirectory()) {
+			out.push(...(await walk(p, exts)));
+		} else if (
+			exts.some((ext) => ent.name.endsWith(ext)) &&
+			!isExcludedPath(p)
+		) {
+			out.push(p);
+		}
 	}
 	return out;
 };
@@ -54,11 +73,19 @@ const lineViolationsTs = (
 	text: string,
 ): { line: number; reason: string }[] => {
 	const bad: { line: number; reason: string }[] = [];
-	const lines = text.split("\n");
+	// JSX comments may span lines and can mention issue numbers like `#140`,
+	// which look like 3-digit hex colors to the line scan.
+	const stripped = text.replace(/\{\/\*[\s\S]*?\*\//g, "");
+	const lines = stripped.split("\n");
 	for (let i = 0; i < lines.length; i++) {
 		const line = lines[i] ?? "";
 		const trimmed = line.trim();
-		if (trimmed.startsWith("//") || trimmed.startsWith("*")) {
+		if (
+			trimmed.startsWith("//") ||
+			trimmed.startsWith("*") ||
+			trimmed.startsWith("/*") ||
+			trimmed.startsWith("{/*")
+		) {
 			continue;
 		}
 		if (HEX_COLOR.test(line)) {
@@ -287,36 +314,21 @@ const runContrastValidation = async (): Promise<string[]> => {
 const main = async (): Promise<void> => {
 	const all: string[] = [];
 
-	for (const file of await walkTs(SHELL_SRC)) {
-		const rel = path.relative(process.cwd(), file);
-		const text = await readFile(file, "utf8");
-		for (const v of lineViolationsTs(rel, text)) {
-			all.push(`${rel}:${v.line} — ${v.reason}`);
+	for (const root of [SRC_DIR, UI_DIR]) {
+		for (const file of await walk(root, [".ts", ".tsx"])) {
+			const rel = path.relative(process.cwd(), file);
+			const text = await readFile(file, "utf8");
+			for (const v of lineViolationsTs(rel, text)) {
+				all.push(`${rel}:${v.line} — ${v.reason}`);
+			}
 		}
-	}
-
-	for (const file of await walkTs(THEME_DIR)) {
-		const abs = path.resolve(file);
-		if (abs.startsWith(path.resolve(THEME_LITERALS_DIR) + path.sep)) {
-			continue;
-		}
-		const rel = path.relative(process.cwd(), file);
-		const text = await readFile(file, "utf8");
-		for (const v of lineViolationsTs(rel, text)) {
-			all.push(`${rel}:${v.line} — ${v.reason}`);
-		}
-	}
-
-	try {
-		for (const file of await walkCss(STYLES_DIR)) {
+		for (const file of await walk(root, [".css"])) {
 			const rel = path.relative(process.cwd(), file);
 			const text = await readFile(file, "utf8");
 			for (const v of lineViolationsCss(text)) {
 				all.push(`${rel}:${v.line} — ${v.reason}`);
 			}
 		}
-	} catch {
-		// STYLES_DIR doesn't exist, skip CSS check
 	}
 
 	for (const item of await runContrastValidation()) {
@@ -329,7 +341,7 @@ const main = async (): Promise<void> => {
 			console.error(`  ${m}`);
 		}
 		console.error(
-			"\nLiterals only in src/cep-shell/theme/literals/*.ts. CSS uses var(--…).\n",
+			"\nLiterals only under tokens/ or literals/ modules. CSS uses var(--…).\n",
 		);
 		process.exit(1);
 	}

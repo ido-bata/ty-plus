@@ -114,7 +114,10 @@ function AnchorPointGestureOverlay({
 					className={css({ fill: "var(--accent, var(--color-text-accent))" })}
 					fontSize={11}
 					fontWeight="bold"
-					style={{ paintOrder: "stroke", stroke: "rgba(0,0,0,0.5)" }}
+					style={{
+						paintOrder: "stroke",
+						stroke: "var(--color-ty-shadow-50)",
+					}}
 				>
 					{label}
 				</text>
