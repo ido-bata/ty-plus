@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 import { expect } from "storybook/test";
 import { expectCanvasLayout } from "@/storybook/quality/layout";
+import { css } from "@/styled-system/css";
 
 import {
 	SegmentedControl,
@@ -64,13 +65,41 @@ export const CustomLabels: Story = {
 	render: (args) => <ControlledSegmentedControl {...args} />,
 };
 
+// Issue #524: class overrides must be real Panda classes — Tailwind-style
+// literals generate no CSS in the Panda-only bundle, and because
+// `selectedClassName` *replaces* the default active style, dead classes
+// left every segment unstyled and identical.
+const customSelectedClass = css({
+	backgroundColor: "text.primary",
+	color: "surface.panel",
+});
+const customUnselectedClass = css({
+	backgroundColor: "surface.panel",
+	color: "text.primary",
+	_hover: { backgroundColor: "interactive.hover" },
+});
+
 export const CustomColors: Story = {
 	args: {
-		selectedClassName: "bg-text-primary text-surface-panel",
-		unselectedClassName:
-			"bg-surface-widget text-text-muted hover:bg-interactive-hover hover:text-text-primary",
+		selectedClassName: customSelectedClass,
+		unselectedClassName: customUnselectedClass,
 	},
 	render: (args) => <ControlledSegmentedControl {...args} />,
+	play: async ({ canvasElement }) => {
+		const buttons = Array.from(
+			canvasElement.querySelectorAll<HTMLButtonElement>("button"),
+		);
+		const selected = buttons.find(
+			(b) => b.getAttribute("aria-pressed") === "true",
+		);
+		const unselected = buttons.find(
+			(b) => b.getAttribute("aria-pressed") === "false",
+		);
+		if (!selected || !unselected) throw new Error("segments not found");
+		expect(getComputedStyle(selected).backgroundColor).not.toBe(
+			getComputedStyle(unselected).backgroundColor,
+		);
+	},
 };
 
 // Issue #166: hover must lift an unselected segment to
