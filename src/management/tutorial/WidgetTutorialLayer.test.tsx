@@ -116,12 +116,12 @@ const renderLayer = (widgetType: string) =>
 	);
 
 describe("WidgetTutorialLayer coach-mark tour", () => {
-	it("renders children and the help affordance for tutorial widgets", () => {
+	it("renders children with no persistent help affordance", () => {
 		renderLayer("test-tour-widget");
 		expect(screen.getByText("target")).toBeInTheDocument();
 		expect(
-			screen.getByRole("button", { name: "tutorial.chrome.help" }),
-		).toBeInTheDocument();
+			screen.queryByRole("button", { name: "tutorial.chrome.help" }),
+		).not.toBeInTheDocument();
 	});
 
 	it("renders no help affordance without tutorial content", () => {
@@ -168,22 +168,8 @@ describe("WidgetTutorialLayer coach-mark tour", () => {
 		).not.toBeInTheDocument();
 	});
 
-	it("steps forward with Next and back with Back via the help affordance", async () => {
+	it("steps forward with Next and back with Back in the auto-opened tour", async () => {
 		renderLayer("test-tour-widget");
-		// Auto tour opens; close it first so the manual flow is isolated.
-		fireEvent.click(
-			await screen.findByRole("button", { name: "tutorial.chrome.skip" }),
-		);
-		await waitFor(() =>
-			expect(
-				screen.queryByText("tutorial.test-tour-widget.steps.one.title"),
-			).not.toBeInTheDocument(),
-		);
-
-		fireEvent.click(
-			screen.getByRole("button", { name: "tutorial.chrome.help" }),
-		);
-		expect(seenMarkMock).toHaveBeenCalledWith(window, "test-tour-widget", "7");
 		expect(
 			await screen.findByText("tutorial.test-tour-widget.steps.one.title"),
 		).toBeInTheDocument();

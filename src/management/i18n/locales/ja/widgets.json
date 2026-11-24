@@ -408,7 +408,6 @@
 	},
 	"tutorial": {
 		"chrome": {
-			"help": "ヘルプ",
 			"title": "ウィジェットヘルプ",
 			"close": "閉じる",
 			"dismissHint": "ヒントを閉じる",
