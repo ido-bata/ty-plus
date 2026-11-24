@@ -38,10 +38,7 @@ const hitArea = css({
 	position: "absolute",
 	inset: "0",
 	padding: "0",
-	borderWidth: "0",
-	backgroundColor: "transparent",
 	cursor: "pointer",
-	borderRadius: "shell-sm",
 	_hover: { backgroundColor: "interactive.hover" },
 	// The one focus indicator: the same ring every focusable control paints.
 	_focusVisible: {

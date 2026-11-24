@@ -462,13 +462,6 @@
 		"reason": "inline style sets appearance; move it into css() and the token system"
 	},
 	{
-		"file": "src/management/preset/workspace/PresetTileButton.tsx",
-		"line": 105,
-		"rule": "ui-override",
-		"message": "<Button> is a shared @ty-plus/ui component; borderWidth, backgroundColor, borderRadius must come from its variant/size/tone props, not className",
-		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
-	},
-	{
 		"file": "src/management/setting/dialog/SettingsSidebar.tsx",
 		"line": 356,
 		"rule": "raw-control",
