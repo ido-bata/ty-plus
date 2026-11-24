@@ -1,0 +1,128 @@
+{
+  "schema": "ty-plus.e2e-run/1",
+  "suite": "journey",
+  "capturedAt": "2026-11-24T12:03:43.718Z",
+  "extensionDir": "/Users/rebui/Library/Application Support/Adobe/CEP/extensions/app.ty-plus.dev",
+  "managedRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-24T12-02-37-959Z-43556/ty-plus",
+  "realManagedRoot": "/Applications/Adobe After Effects 2027/ty-plus",
+  "sandbox": {
+    "enabled": true,
+    "sandboxRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-24T12-02-37-959Z-43556/ty-plus",
+    "integrity": {
+      "realRoot": "/Applications/Adobe After Effects 2027/ty-plus",
+      "checkedAt": "2026-11-24T12:03:43.715Z",
+      "driftBeforeRepair": {
+        "changed": 0,
+        "added": 0,
+        "removed": 0
+      },
+      "filesRepaired": [],
+      "cleanAfterRepair": true
+    }
+  },
+  "totals": {
+    "PASS": 0,
+    "FAIL": 3,
+    "BLOCKED": 0,
+    "SKIP": 0
+  },
+  "results": [
+    {
+      "uc": "UC-C11",
+      "title": "script preset (.jsx) run from catalog executes in AE",
+      "status": "FAIL",
+      "detail": "marker=none",
+      "checks": [
+        {
+          "name": "catalog lists dg-script-marker preset",
+          "ok": true,
+          "detail": "true"
+        },
+        {
+          "name": "catalog Run button clicked",
+          "ok": false,
+          "detail": "missing-run-button"
+        },
+        {
+          "name": "ExtendScript side effect: marker.txt written by AE",
+          "ok": false,
+          "detail": "marker.txt absent after run"
+        }
+      ],
+      "evidence": [],
+      "durationMs": 26661
+    },
+    {
+      "uc": "UC-C10",
+      "title": ".ffx preset run applies effect to selected AE layer",
+      "status": "FAIL",
+      "detail": "effects 0→0: []",
+      "checks": [
+        {
+          "name": "AE comp + selected layer ready",
+          "ok": true,
+          "detail": "{\"comp\":\"TYPlus E2E Comp\",\"layers\":1,\"effectsBefore\":0}"
+        },
+        {
+          "name": "catalog lists dg-ffx-fadein preset",
+          "ok": true,
+          "detail": "true"
+        },
+        {
+          "name": "catalog Run button clicked",
+          "ok": false,
+          "detail": "missing-run-button"
+        },
+        {
+          "name": "layer gained effects from .ffx preset",
+          "ok": false,
+          "detail": "before=0 after=0 fx=[]"
+        }
+      ],
+      "evidence": [],
+      "durationMs": 2748
+    },
+    {
+      "uc": "UC-H02",
+      "title": "preset journey: create via dialog → tile placed → run → reload → re-run (UC-J02 chain)",
+      "status": "FAIL",
+      "detail": "preset journey completed (presetId=none)",
+      "checks": [
+        {
+          "name": "toolbar create-file-preset clicked",
+          "ok": true,
+          "detail": "clicked"
+        },
+        {
+          "name": "preset path field accepts file path",
+          "ok": true,
+          "detail": "/Users/rebui/Library/Application Support/ty-plus-e2e/e2e-journey.jsx"
+        },
+        {
+          "name": "preset name field accepts title",
+          "ok": false,
+          "detail": "missing:input[placeholder=\"Enter name...\"]"
+        },
+        {
+          "name": "Create submitted",
+          "ok": false,
+          "detail": "missing-button:Create"
+        },
+        {
+          "name": "presets.json persisted new record",
+          "ok": false,
+          "detail": "no record with fixture path"
+        },
+        {
+          "name": "presets.json restored after journey",
+          "ok": true,
+          "detail": "before=2 after=2"
+        }
+      ],
+      "evidence": [
+        "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-24T12-02-37-959Z-43556/ty-plus/presets/presets.json"
+      ],
+      "durationMs": 28802
+    }
+  ]
+}
