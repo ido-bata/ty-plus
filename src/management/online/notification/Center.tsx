@@ -657,7 +657,7 @@ function NotificationDetailView(props: {
 						aria-label={i18n.t("online:notificationCenter.backToList")}
 						className={borderedIconBtnClass}
 					>
-						<Icon icon={ArrowLeft} size={14} />
+						<Icon icon={ArrowLeft} size={16} />
 					</IconButton>
 					<h1 className={detailTitleClass}>{selected.name}</h1>
 				</div>
@@ -675,7 +675,7 @@ function NotificationDetailView(props: {
 						}
 						className={borderedIconBtnClass}
 					>
-						<Icon icon={Check} size={14} />
+						<Icon icon={Check} size={16} />
 					</IconButton>
 					<IconButton
 						variant="ghost"
@@ -684,7 +684,7 @@ function NotificationDetailView(props: {
 						aria-label={i18n.t("online:notificationCenter.refresh")}
 						className={borderedIconBtnClass}
 					>
-						<Icon icon={RefreshCw} size={14} />
+						<Icon icon={RefreshCw} size={16} />
 					</IconButton>
 				</div>
 			</header>
@@ -1028,7 +1028,7 @@ function NotificationListView(props: {
 					>
 						<Icon
 							icon={RefreshCw}
-							size={14}
+							size={16}
 							className={cx(loading && spinningIconClass)}
 						/>
 					</IconButton>
@@ -1046,7 +1046,7 @@ function NotificationListView(props: {
 					</div>
 				) : items.length === 0 ? (
 					<div className={emptyStateClass}>
-						<Icon icon={Mail} size={24} className={emptyStateIconClass} />
+						<Icon icon={Mail} size={20} className={emptyStateIconClass} />
 						<span className={mutedTextClass}>
 							{i18n.t("online:notificationCenter.empty")}
 						</span>

@@ -52,7 +52,7 @@ export function CollapsibleGroupHeader({
 				start={
 					<Icon
 						icon={ChevronDown}
-						size={14}
+						size={16}
 						className={css({
 							flexShrink: 0,
 							transitionProperty: "transform",

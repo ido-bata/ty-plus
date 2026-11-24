@@ -84,7 +84,7 @@ export function PresetLibraryEmptyState(
 					disabled={retry.disabled}
 					onClick={onRefresh}
 				>
-					<Icon icon={RefreshCw} size={14} />
+					<Icon icon={RefreshCw} size={16} />
 				</IconButton>
 			</div>
 		);
@@ -101,7 +101,7 @@ export function PresetLibraryEmptyState(
 					title={i18n.t("online:catalog.refreshCatalog")}
 					onClick={onRefresh}
 				>
-					<Icon icon={RefreshCw} size={14} />
+					<Icon icon={RefreshCw} size={16} />
 				</IconButton>
 			</div>
 		);

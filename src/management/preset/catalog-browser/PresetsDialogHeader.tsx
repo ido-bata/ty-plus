@@ -246,7 +246,7 @@ export function PresetsDialogHeader(
 					title={i18n.t("presets:catalogBrowser.reload")}
 					onClick={() => void onReload()}
 				>
-					<Icon icon={RefreshCw} size={10} />
+					<Icon icon={RefreshCw} size={12} />
 				</IconButton>
 			</div>
 		</div>

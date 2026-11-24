@@ -28,7 +28,7 @@ DirectoryBrowser の調査から見つかった不整合は widget 固有では�
 | 9 | **z-index リテラル** — 層順序の語彙が無い | `check-design-tokens` の `z-index literal` | **済**（Issue #398。`--ty-z-*` 層 token へ集約） |
 | 10 | **preset dialog 4 種のクローン** — 同じダイアログが 4 つ | `duplicate-style-recipe` | **未了**（最大の未了項目） |
 | 11 | **i18n を通さない UI テキスト** — JSX に直書きの英語 | — | **未了**（31 箇所。加えて共有 kit の選択数サマリが英語のまま-owner が文言を渡せない） |
-| 12 | **icon の size が scale 外** — 共有 scale は 12/16/20 だが 8 種類を使っている | `icon-size-off-scale` | **未了**（55 箇所。判定は「寄せるか scale を広げるか」が未決） |
+| 12 | **icon の size が scale 外** — 共有 scale は 12/16/20px | `icon-size-off-scale` | **済**（Issue #405。scale に snap。>=32px は media glyph として規則の例外） |
 
 ## 4 について: 同じ待遇の重複
 

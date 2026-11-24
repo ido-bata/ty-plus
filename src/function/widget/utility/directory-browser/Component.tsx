@@ -369,7 +369,7 @@ function AnchorRowButton({
 				})}
 			>
 				<span className={anchorRowIconWrapClass}>
-					<Icon icon={FolderOpen} size={14} aria-hidden />
+					<Icon icon={FolderOpen} size={16} aria-hidden />
 				</span>
 			</span>
 			<div className={css({ minWidth: 0, flex: "1" })}>
@@ -2011,7 +2011,7 @@ export function DirectoryBrowserWidget({
 										}}
 										aria-label={t("directoryBrowser.actions.openEntry")}
 									>
-										<Icon icon={FolderOpen} size={11} />
+										<Icon icon={FolderOpen} size={12} />
 									</IconButton>
 								) : (
 									<IconButton
@@ -2028,7 +2028,7 @@ export function DirectoryBrowserWidget({
 										}}
 										aria-label={t("directoryBrowser.actions.importOnly")}
 									>
-										<Icon icon={Play} size={11} />
+										<Icon icon={Play} size={12} />
 									</IconButton>
 								);
 								return { media, overlay };

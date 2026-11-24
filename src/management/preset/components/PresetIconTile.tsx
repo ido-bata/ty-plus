@@ -161,7 +161,7 @@ export function PresetIconTile({
 				aria-label={runTitle}
 				title={runTitle}
 			>
-				<Icon icon={Play} size={11} />
+				<Icon icon={Play} size={12} />
 			</IconButton>
 		</div>
 	);

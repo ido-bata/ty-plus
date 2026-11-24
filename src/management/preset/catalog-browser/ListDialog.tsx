@@ -660,7 +660,7 @@ function PresetRowActions(props: {
 				title={i18n.t("common:actions.run")}
 				onClick={() => onRun(presetId)}
 			>
-				<Icon icon={Play} size={11} />
+				<Icon icon={Play} size={12} />
 			</button>
 			<button
 				type="button"
@@ -669,7 +669,7 @@ function PresetRowActions(props: {
 				title={i18n.t("common:actions.edit")}
 				onClick={() => void onEdit(presetId)}
 			>
-				<Icon icon={Pencil} size={11} />
+				<Icon icon={Pencil} size={12} />
 			</button>
 			<button
 				type="button"
@@ -678,7 +678,7 @@ function PresetRowActions(props: {
 				title={i18n.t("common:actions.delete")}
 				onClick={() => void onDelete(presetId)}
 			>
-				<Icon icon={Trash2} size={11} />
+				<Icon icon={Trash2} size={12} />
 			</button>
 		</div>
 	);
@@ -699,7 +699,7 @@ function GroupRowActions(props: {
 				title={i18n.t("presets:listDialog.editGroup")}
 				onClick={() => onEdit(groupId)}
 			>
-				<Icon icon={Pencil} size={11} />
+				<Icon icon={Pencil} size={12} />
 			</button>
 			<button
 				type="button"
@@ -708,7 +708,7 @@ function GroupRowActions(props: {
 				title={i18n.t("presets:listDialog.deleteGroup")}
 				onClick={() => onDelete(groupId)}
 			>
-				<Icon icon={Trash2} size={11} />
+				<Icon icon={Trash2} size={12} />
 			</button>
 		</div>
 	);
@@ -803,7 +803,7 @@ function PresetGroupListBlock(props: {
 					>
 						<Icon
 							icon={open ? ChevronDown : ChevronRight}
-							size={13}
+							size={12}
 							className={groupToggleIconClass}
 							aria-hidden
 						/>
@@ -925,7 +925,7 @@ function IconNavigateUpCard(props: {
 				className={cx(iconTileMediaClass(tileAspect), iconNavigateUpMediaClass)}
 			>
 				<div className={centeredIconClass}>
-					<Icon icon={ArrowLeft} size={11} aria-hidden />
+					<Icon icon={ArrowLeft} size={12} aria-hidden />
 				</div>
 			</div>
 			<div className={iconNavigateUpTitleClass}>
@@ -990,7 +990,7 @@ function IconCatalogGroupCard(props: {
 							onEdit();
 						}}
 					>
-						<Icon icon={Pencil} size={11} />
+						<Icon icon={Pencil} size={12} />
 					</button>
 					<button
 						type="button"
@@ -1001,7 +1001,7 @@ function IconCatalogGroupCard(props: {
 							onDelete();
 						}}
 					>
-						<Icon icon={Trash2} size={11} />
+						<Icon icon={Trash2} size={12} />
 					</button>
 				</div>
 			</div>
@@ -1054,7 +1054,7 @@ function IconPresetCard(props: {
 							void onEdit(preset.id);
 						}}
 					>
-						<Icon icon={Pencil} size={11} />
+						<Icon icon={Pencil} size={12} />
 					</button>
 					<button
 						type="button"
@@ -1065,7 +1065,7 @@ function IconPresetCard(props: {
 							void onDelete(preset.id);
 						}}
 					>
-						<Icon icon={Trash2} size={11} />
+						<Icon icon={Trash2} size={12} />
 					</button>
 				</div>
 			</div>
