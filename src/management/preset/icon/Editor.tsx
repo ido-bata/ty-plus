@@ -1,9 +1,13 @@
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
-import { Icon, SegmentedControl, sectionLabelClass } from "@ty-plus/ui";
-import { ColorSwatch } from "@ty-plus/ui/fields/ColorSwatch";
-import { Input } from "@ty-plus/ui/fields/Input";
-import { PathField } from "@ty-plus/ui/fields/PathField";
+import {
+	ColorSwatch,
+	Icon,
+	Input,
+	PathField,
+	SegmentedControl,
+	sectionLabelClass,
+} from "@ty-plus/ui";
 import { FileSearch, Smile } from "lucide-react";
 import { type JSX, type ReactNode, useEffect, useRef, useState } from "react";
 import { selectFile } from "@/management/ae/cep/dialog-shim/bolt";

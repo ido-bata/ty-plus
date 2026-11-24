@@ -1,9 +1,9 @@
 import {
+	cx,
 	segmentedButtonActiveClass,
 	segmentedButtonInactiveClass,
 	segmentedColumnButtonClass,
 } from "@ty-plus/ui";
-import { cx } from "@ty-plus/ui/util/cx";
 import {
 	type JSX,
 	type KeyboardEvent,

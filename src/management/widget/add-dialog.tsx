@@ -1,4 +1,4 @@
-import { Button } from "@ty-plus/ui/controls/Button";
+import { Button } from "@ty-plus/ui";
 import {
 	type JSX,
 	useCallback,

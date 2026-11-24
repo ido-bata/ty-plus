@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Input } from "@ty-plus/ui/fields/Input";
+import { Input } from "@ty-plus/ui";
 import { css } from "@/styled-system/css";
 
 import {

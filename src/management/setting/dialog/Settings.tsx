@@ -1,5 +1,4 @@
-import { dialogContentClass } from "@ty-plus/ui";
-import { Button } from "@ty-plus/ui/controls/Button";
+import { Button, dialogContentClass } from "@ty-plus/ui";
 import {
 	Component,
 	type ErrorInfo,

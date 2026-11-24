@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Icon } from "@ty-plus/ui/Icon";
+import { Icon } from "@ty-plus/ui";
 import { LoaderCircle, Mail } from "lucide-react";
 import type { CSSProperties, JSX } from "react";
 import { expect } from "storybook/test";

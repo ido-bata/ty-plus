@@ -1,5 +1,4 @@
-import { ColorField } from "@ty-plus/ui/fields/ColorField";
-import { RangeField } from "@ty-plus/ui/fields/RangeField";
+import { ColorField, RangeField } from "@ty-plus/ui";
 import { type JSX, useCallback } from "react";
 import { useCep } from "@/management/ae/cep/contexts/CepContext";
 import { i18n } from "@/management/i18n/index";

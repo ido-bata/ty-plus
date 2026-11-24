@@ -1,11 +1,11 @@
 import {
 	Icon,
+	Input,
 	monoPreviewBoxClass,
+	PathField,
 	sectionLabelClass,
 	statusBannerClass,
 } from "@ty-plus/ui";
-import { Input } from "@ty-plus/ui/fields/Input";
-import { PathField } from "@ty-plus/ui/fields/PathField";
 import type { TFunction } from "i18next";
 import { AlertCircle, FolderOpen } from "lucide-react";
 import {

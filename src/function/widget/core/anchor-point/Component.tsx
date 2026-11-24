@@ -1,7 +1,4 @@
-import {
-	type GesturePoint,
-	useAnchorGesture,
-} from "@ty-plus/ui/interaction/use-anchor-gesture";
+import { type GesturePoint, useAnchorGesture } from "@ty-plus/ui";
 import React, { type JSX } from "react";
 import type { WidgetRenderProps } from "@/function/widget/define";
 import { i18n } from "@/management/i18n/index";

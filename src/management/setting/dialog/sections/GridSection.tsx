@@ -1,4 +1,4 @@
-import { NumberField } from "@ty-plus/ui/fields/NumberField";
+import { NumberField } from "@ty-plus/ui";
 import { type JSX, useCallback, useEffect, useRef, useState } from "react";
 import { useCep } from "@/management/ae/cep/contexts/CepContext";
 import { i18n } from "@/management/i18n/index";

@@ -1,14 +1,14 @@
 import {
 	Icon,
+	Input,
 	monoPreviewBoxClass,
+	PathField,
 	sectionLabelClass,
 	sectionTitleClass,
 	stepBadgeClass,
 	stepCardClass,
 	stepDescriptionClass,
 } from "@ty-plus/ui";
-import { Input } from "@ty-plus/ui/fields/Input";
-import { PathField } from "@ty-plus/ui/fields/PathField";
 import { AlertCircle, FolderOpen } from "lucide-react";
 import { type JSX, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";

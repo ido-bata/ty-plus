@@ -1,5 +1,4 @@
-import { Button } from "@ty-plus/ui/controls/Button";
-import { IconButton } from "@ty-plus/ui/controls/IconButton";
+import { Button, IconButton } from "@ty-plus/ui";
 import { Folder, Home as HomeIcon, Settings } from "lucide-react";
 import type { JSX } from "react";
 import { i18n } from "@/management/i18n/index";

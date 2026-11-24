@@ -1,7 +1,11 @@
-import { countLabelClass, Icon, ViewModeToggle } from "@ty-plus/ui";
-import { SearchField } from "@ty-plus/ui/fields/SearchField";
-import { cx } from "@ty-plus/ui/util/cx";
-import { isIMEComposing } from "@ty-plus/ui/util/keyboard";
+import {
+	countLabelClass,
+	cx,
+	Icon,
+	isIMEComposing,
+	SearchField,
+	ViewModeToggle,
+} from "@ty-plus/ui";
 import type { LucideIcon } from "lucide-react";
 import {
 	AlignCenter,

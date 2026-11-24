@@ -1,6 +1,4 @@
-import { cardTitleClass } from "@ty-plus/ui";
-import { Icon } from "@ty-plus/ui/Icon";
-import { cx } from "@ty-plus/ui/util/cx";
+import { cardTitleClass, cx, Icon } from "@ty-plus/ui";
 import { ChevronDown } from "lucide-react";
 import { type JSX, type ReactNode, useEffect, useState } from "react";
 import { settingsSectionIdFromTitle } from "@/management/setting/dialog/settings-context-menu-build";

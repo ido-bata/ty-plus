@@ -1,9 +1,12 @@
-import { Checkbox, heading3Class } from "@ty-plus/ui";
-import { Button } from "@ty-plus/ui/controls/Button";
-import { IconButton } from "@ty-plus/ui/controls/IconButton";
-import { SearchField } from "@ty-plus/ui/fields/SearchField";
-import { Icon } from "@ty-plus/ui/Icon";
-import { cx } from "@ty-plus/ui/util/cx";
+import {
+	Button,
+	Checkbox,
+	cx,
+	heading3Class,
+	Icon,
+	IconButton,
+	SearchField,
+} from "@ty-plus/ui";
 import {
 	ExternalLink,
 	Grid3x3,

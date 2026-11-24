@@ -1,7 +1,11 @@
-import { heading1Class, heading3Class, listItemTitleClass } from "@ty-plus/ui";
-import { IconButton } from "@ty-plus/ui/controls/IconButton";
-import { Icon } from "@ty-plus/ui/Icon";
-import { cx } from "@ty-plus/ui/util/cx";
+import {
+	cx,
+	heading1Class,
+	heading3Class,
+	Icon,
+	IconButton,
+	listItemTitleClass,
+} from "@ty-plus/ui";
 import { ArrowLeft, Check, LoaderCircle, Mail, RefreshCw } from "lucide-react";
 import {
 	type JSX,

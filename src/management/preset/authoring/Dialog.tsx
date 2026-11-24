@@ -1,4 +1,4 @@
-import { Input } from "@ty-plus/ui/fields/Input";
+import { Input } from "@ty-plus/ui";
 import { type JSX, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { readCepOpenParams } from "@/management/ae/cep/transport";
