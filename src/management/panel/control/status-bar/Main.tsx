@@ -6,6 +6,7 @@
 
 import {
 	AnchoredPopover,
+	Button,
 	Cloud,
 	cx,
 	Icon,
@@ -139,11 +140,10 @@ const snapshotsLabel = css({
 	overflow: "hidden",
 	textOverflow: "ellipsis",
 	whiteSpace: "nowrap",
+	justifyContent: "flex-start",
 	paddingInline: "2",
 	paddingBlock: "1",
 	textAlign: "left",
-	fontSize: "text-xs",
-	color: "text.primary",
 });
 
 const panelIndexHidden = css({
@@ -269,8 +269,9 @@ export const StatusBar = memo(function StatusBarImpl(
 											data-snapshots-row=""
 											className={snapshotsRow}
 										>
-											<button
-												type="button"
+											<Button
+												variant="bare"
+												uiSize="content"
 												data-ws-action="restore-snapshot"
 												data-snap-id={snp.id}
 												title={i18n.t(
@@ -283,7 +284,7 @@ export const StatusBar = memo(function StatusBarImpl(
 												className={snapshotsLabel}
 											>
 												{snp.label}
-											</button>
+											</Button>
 											<IconButton
 												data-ws-action="delete-snapshot"
 												data-snap-id={snp.id}

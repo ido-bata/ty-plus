@@ -24,7 +24,7 @@ type ButtonVariant =
 	 * button in the app.
 	 */
 	| "bare";
-type ButtonSize = "sm" | "md" | "lg";
+type ButtonSize = "sm" | "md" | "lg" | "content";
 
 type ButtonOwnProps = {
 	variant?: ButtonVariant;
@@ -57,7 +57,6 @@ const base = css({
 	whiteSpace: "nowrap",
 	cursor: "pointer",
 	borderRadius: "shell-sm",
-	paddingInline: "2.5",
 	fontSize: "shell-text-sm",
 	lineHeight: "tight",
 	fontWeight: "medium",
@@ -93,6 +92,16 @@ const sizes: Record<ButtonSize, string> = {
 		paddingInline: "3",
 		fontSize: "text-md",
 		"& svg": { boxSize: "1.125rem" },
+	}),
+	/**
+	 * No box metrics of its own: the caller's className owns sizing, padding,
+	 * and layout (list rows, accordion triggers, tab strips). Still keeps the
+	 * shared focus ring and disabled treatment.
+	 */
+	content: css({
+		height: "auto",
+		minHeight: "0",
+		paddingInline: "0",
 	}),
 };
 
@@ -168,8 +177,6 @@ const variants: Record<ButtonVariant, string> = {
 		borderWidth: "0",
 		color: "text.primary",
 		fontWeight: "normal",
-		_hover: { backgroundColor: "transparent" },
-		_active: { backgroundColor: "transparent" },
 		_focusVisible: {
 			boxShadow: "var(--color-focus-ring)",
 			outlineOffset: "0",
