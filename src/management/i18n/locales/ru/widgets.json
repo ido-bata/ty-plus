@@ -16,8 +16,12 @@
 			"info": "Метаданные пресета, пути и статус в широкой плитке.",
 			"quick-actions": "Скрипты, эффекты и файловые действия из компактной палитры команд.",
 			"directory-browser": "Просмотр папок и пресетов внутри панели.",
-			"font-viewer": "Предпросмотр семейств, стилей и примера текста в рабочей области."
-		}
+			"font-viewer": "Предпросмотр семейств, стилей и примера текста в рабочей области.",
+			"loop": "Редактирование кривой с одним циклом и её многократное применение к выбранным ключевым кадрам."
+		},
+		"add": "Добавить",
+		"adding": "Добавление…",
+		"noMatches": "Нет подходящих виджетов. Попробуйте другой запрос."
 	},
 	"types": {
 		"align": "Выравнивание",
@@ -34,47 +38,56 @@
 	},
 	"easing": {
 		"name": "Easing",
-		"apply": "Apply",
-		"copyFromSelection": "Copy from selection",
-		"reverse": "Reverse",
+		"apply": "Применить",
+		"copyFromSelection": "Копировать из выделения",
+		"reverse": "Обратить",
 		"mode": {
-			"curve": "Curve",
-			"loop": "Loop",
-			"bounce": "Bounce",
-			"elastic": "Elastic"
-		},
-		"loop": {
-			"cycles": "Циклы",
-			"decrement": "Уменьшить циклы",
-			"increment": "Увеличить циклы"
+			"curve": "Кривая",
+			"bounce": "Отскок",
+			"elastic": "Эластичный"
 		},
 		"options": {
-			"mode": "Mode",
-			"grid": "Grid",
-			"label": "Label"
+			"mode": "Режим",
+			"grid": "Сетка",
+			"label": "Метка"
 		},
 		"background": {
-			"dots": "Dots",
-			"grid": "Grid"
+			"dots": "Точки",
+			"grid": "Сетка"
 		},
 		"label": {
-			"none": "None"
+			"none": "Нет"
 		},
 		"applyMode": {
-			"single": "Single",
-			"pair": "Each"
+			"single": "Один",
+			"pair": "Каждый"
 		},
 		"status": {
-			"applying": "Applying",
-			"applied": "Applied",
-			"failed": "Failed"
+			"applying": "Применение…",
+			"applied": "Применено",
+			"failed": "Ошибка"
 		},
 		"presets": {
-			"linear": "Linear",
-			"easeOut": "Ease out",
-			"easeIn": "Ease in",
-			"easeInOut": "Ease in/out"
-		}
+			"linear": "Линейная",
+			"easeOut": "Плавный выход",
+			"easeIn": "Плавный вход",
+			"easeInOut": "Плавный вход/выход"
+		},
+		"presetAria": {
+			"linear": "Применить пресет Easing Linear",
+			"easeOut": "Применить пресет Easing Ease out",
+			"easeIn": "Применить пресет Easing Ease in",
+			"easeInOut": "Применить пресет Easing Ease in/out"
+		},
+		"undoGroupName": "Ty Plus: Применить сглаживание",
+		"pasteValuesUndoGroupName": "Ty Plus: Вставить значения",
+		"errors": {
+			"selectKeyframes": "Выберите ключевые кадры в активной композиции",
+			"selectAnimatedProperty": "Выберите хотя бы одно анимированное свойство",
+			"selectTwoKeyframes": "Выберите хотя бы два ключевых кадра анимированного свойства",
+			"captureFailed": "Не удалось прочитать сглаживание из выбранных ключевых кадров"
+		},
+		"noKeyframesSelected": "Сглаживание Ty Plus: не выбраны ключевые кадры — сначала выберите ключевые кадры на таймлайн AE"
 	},
 	"menu": {
 		"name": "Меню",
@@ -92,16 +105,77 @@
 		"groupSelectedItems": "Группировать выбранное",
 		"moveToPanel": "Переместить на панель",
 		"deleteSelectedPresets": "Удалить {{count}} пресетов",
-		"layout": "Макет"
+		"layout": "Макет",
+		"separatorAria": "Разделитель раздела меню"
 	},
 	"align": {
-		"name": "Выравнивание"
+		"name": "Выравнивание",
+		"gestureOverlay": "Оверлей траектории жеста",
+		"targets": {
+			"selection": "Выровнять по выделенному",
+			"composition": "Выровнять по Composition",
+			"keyObject": "Выровнять по ключевому объекту",
+			"time": "Выравнивание по времени"
+		},
+		"sections": {
+			"distribute": "Распределение",
+			"spacing": "Интервал",
+			"time": "Время"
+		},
+		"undoGroupName": "Ty Plus: Выровнять слои",
+		"timeUndoGroupName": "ty-plus выравнивание по времени",
+		"errors": {
+			"noActiveComposition": "Выберите хотя бы один слой в активной композиции",
+			"noLayerSelected": "Выберите хотя бы один слой перед выравниванием"
+		}
 	},
 	"anchorPoint": {
-		"name": "Anchor point"
+		"name": "Anchor point",
+		"gestureOverlay": "Оверлей жеста Anchor point",
+		"positions": {
+			"topLeft": "Сверху слева",
+			"topCenter": "Сверху по центру",
+			"topRight": "Сверху справа",
+			"centerLeft": "Слева по центру",
+			"center": "Центр",
+			"centerRight": "Справа по центру",
+			"bottomLeft": "Снизу слева",
+			"bottomCenter": "Снизу по центру",
+			"bottomRight": "Снизу справа"
+		},
+		"noActiveComposition": "Якорь Ty Plus: нет активной композиции",
+		"noLayerSelected": "Якорь Ty Plus: не выбран слой",
+		"undoGroupName": "ty-plus установка опорной точки",
+		"failed": "Не удалось установить опорную точку Ty Plus: {{detail}}",
+		"completedWithErrors": "Опорная точка Ty Plus завершена с ошибками: {{detail}}"
 	},
 	"info": {
-		"name": "Info"
+		"name": "Info",
+		"activeComp": "Активный Comp",
+		"compInfo": "Информация о Comp",
+		"file": "Файл",
+		"kind": "Тип",
+		"noPresetSelected": "Пресет не выбран",
+		"noDescription": "Нет описания",
+		"source": {
+			"selection": "Выделение",
+			"hover": "Наведение"
+		},
+		"comp": {
+			"size": "Размер",
+			"pixelAspect": "Пиксельное соотношение",
+			"background": "Фон",
+			"frameRate": "Частота кадров",
+			"duration": "Длительность",
+			"shutterAngle": "Угол затвора",
+			"shutterPhase": "Фаза затвора",
+			"total": "Всего",
+			"selected": "Выбрано",
+			"motionBlur": "Размытие движения",
+			"draft3d": "Черновик 3D",
+			"on": "Вкл",
+			"off": "Выкл"
+		}
 	},
 	"layoutLock": {
 		"name": "Layout lock"
@@ -111,10 +185,10 @@
 	},
 	"quickActions": {
 		"name": "Quick actions",
-		"palettePlaceholder": "Search presets, scripts, plugins, effects, and files under roots…",
-		"paletteEmpty": "No matching presets or effects.",
-		"effectRowKind": "Effect",
-		"rootFileRowKind": "Disk"
+		"palettePlaceholder": "Поиск пресетов, скриптов, плагинов, эффектов и файлов в корневых папках…",
+		"paletteEmpty": "Нет подходящих пресетов или эффектов.",
+		"effectRowKind": "Эффект",
+		"rootFileRowKind": "Диск"
 	},
 	"fxSearch": "FX search",
 	"directoryBrowser": {
@@ -136,7 +210,24 @@
 			"importOnly": "Импорт",
 			"selectFile": "Выбрать",
 			"deselect": "Отменить выбор",
-			"runBlockedMissingAsset": "Файл пресета отсутствует на диске — запуск отключён."
+			"runBlockedMissingAsset": "Файл пресета отсутствует на диске — запуск отключён.",
+			"presetNotFound": "Пресет не найден: {{presetId}}",
+			"fileImportAeOnly": "Импорт файлов в настоящее время доступен только в After Effects.",
+			"appliedEffect": "Применён эффект: {{name}}",
+			"importedFootage": "Импортированный футаж: {{name}}",
+			"ranScript": "Скрипт выполнен: {{name}}",
+			"appliedPreset": "Пресет применён: {{name}}",
+			"runBlockedUnverifiableAsset": "Не удалось проверить файл пресета (хост недоступен) — повторить",
+			"undoGroup": {
+				"applyPreset": "Ty Plus: Применить пресет",
+				"addFootage": "Ty Plus: Добавить видеоматериал",
+				"applyEffect": "Ty Plus: Применить эффект"
+			},
+			"errors": {
+				"openComposition": "Откройте композицию перед применением пресета",
+				"addLayerOrSelect": "Добавьте слой или выберите слой перед применением этого пресета в пустой композиции",
+				"selectLayerForEffect": "Выберите хотя бы один слой перед применением эффекта"
+			}
 		},
 		"path": {
 			"pickFolderPrompt": "Выберите папку",
@@ -158,6 +249,7 @@
 			"error": "Предпросмотр недоступен"
 		},
 		"toolbar": {
+			"refresh": "Обновить",
 			"detailedFilters": "Фильтры",
 			"viewModeLegend": "Режим просмотра",
 			"listView": "Список",
@@ -195,6 +287,7 @@
 			"noItems": "Нет элементов"
 		},
 		"entry": {
+			"goUp": "Вверх",
 			"defaultFolderSubtitle": "По умолчанию",
 			"parentRowName": "Наверх",
 			"browseDrives": "Обзор дисков",
@@ -203,6 +296,9 @@
 		},
 		"hints": {
 			"iconGridWheel": "Ctrl+колесо для изменения размера"
+		},
+		"listHeader": {
+			"name": "Имя"
 		}
 	},
 	"textEditor": {
@@ -210,47 +306,47 @@
 	},
 	"fontViewer": {
 		"name": "Font viewer",
-		"searchPlaceholder": "Search family, PostScript, style…",
-		"searchAria": "Search fonts",
-		"listView": "List view",
-		"iconView": "Icon cards",
-		"layoutLegend": "Font layout",
-		"reload": "Reload font list",
-		"samplePresets": "Sample",
-		"sampleCustom": "Custom",
-		"samplePresetAria": "Preview sample preset",
-		"previewTextAria": "Preview text",
-		"samplePlaceholder": "Preview text (CJK / emoji / Latin)",
-		"ctxMenuHeading": "Display options",
-		"ctxTileSquare": "Tile aspect 1:1",
-		"ctxTileWide": "Tile aspect 16:9",
-		"ctxShowResolved": "Show resolved-font match column (list)",
-		"ctxHideResolved": "Hide resolved-font match column (list)",
-		"showResolved": "Resolved font check (list)",
-		"loadError": "Could not load fonts.",
-		"loading": "Loading…",
-		"statsLine": "{{families}} families · {{faces}} typefaces ({{total}} loaded)",
-		"familySummary": "{{count}} typefaces",
-		"expandFamily": "Expand family",
-		"collapseFamily": "Collapse family",
-		"backToFamilies": "All font families",
-		"openFamilyIcon": "Open family",
-		"noMatches": "No matching fonts",
-		"phaseAeHost": "Querying After Effects for fonts (evalScript)…",
-		"phaseBrowser": "Reading browser font sources…",
-		"aeHostErrorLabel": "After Effects host:",
-		"previewSectionSummary": "Preview",
-		"sampleCollapsedPlaceholder": "Open to edit sample text and options",
+		"searchPlaceholder": "Поиск шрифтов…",
+		"searchAria": "Поиск шрифтов",
+		"listView": "Вид списка",
+		"iconView": "Карточки значков",
+		"layoutLegend": "Макет просмотра шрифтов",
+		"reload": "Перезагрузить список шрифтов",
+		"samplePresets": "Образец",
+		"sampleCustom": "Свой",
+		"samplePresetAria": "Предпросмотр образца",
+		"previewTextAria": "Предпросмотр текста",
+		"samplePlaceholder": "Текст предпросмотра (CJK / эмодзи / латиница)",
+		"ctxMenuHeading": "Варианты отображения",
+		"ctxTileSquare": "Пропорции плитки 1:1",
+		"ctxTileWide": "Пропорции плитки 16:9",
+		"ctxShowResolved": "Показать столбец совпадения разрешённого шрифта (список)",
+		"ctxHideResolved": "Скрыть столбец совпадения разрешённого шрифта (список)",
+		"showResolved": "Проверка разрешённого шрифта (список)",
+		"loadError": "Не удалось загрузить шрифты.",
+		"loading": "Загрузка…",
+		"statsLine": "{{families}} семейств · {{faces}} начертаний (загружено {{total}})",
+		"familySummary": "{{count}} начертаний",
+		"expandFamily": "Развернуть семейство",
+		"collapseFamily": "Свернуть семейство",
+		"backToFamilies": "Все семейства шрифтов",
+		"openFamilyIcon": "Открыть семейство",
+		"noMatches": "Нет подходящих шрифтов",
+		"phaseAeHost": "Запрос шрифтов у After Effects (evalScript)…",
+		"phaseBrowser": "Чтение источников шрифтов браузера…",
+		"aeHostErrorLabel": "Хост After Effects:",
+		"previewSectionSummary": "Предпросмотр",
+		"sampleCollapsedPlaceholder": "Откройте, чтобы изменить текст и параметры образца",
 		"viaLocalApi": "Local Font Access API",
 		"viaAfterEffects": "After Effects (app.fonts)",
 		"viaDocumentFonts": "document.fonts (subset)",
-		"fallbackBadge": "swap",
-		"primaryBadge": "match",
-		"hintNeedUserGesture": "Installed fonts need a button click (Chromium Local Font Access). Until then, this catalog lists only fonts already registered on document.fonts for this panel.",
-		"loadAllSystemFonts": "Load all system fonts…",
-		"hintNoLocalApi": "This Chromium build does not expose queryLocalFonts — only fonts registered on document.fonts are listed.",
-		"localAccessErrorPrefix": "Local font access:",
-		"emptyList": "No fonts loaded yet. Use “Load all system fonts” if available, or reload after the panel finishes loading styles."
+		"fallbackBadge": "замена",
+		"primaryBadge": "совпадение",
+		"hintNeedUserGesture": "Для установленных шрифтов нужен клик по кнопке (Chromium Local Font Access). До этого каталог содержит только шрифты, уже зарегистрированные в document.fonts для этой панели.",
+		"loadAllSystemFonts": "Загрузить все системные шрифты…",
+		"hintNoLocalApi": "Эта сборка Chromium не предоставляет queryLocalFonts — перечислены только шрифты, зарегистрированные в document.fonts.",
+		"localAccessErrorPrefix": "Доступ к локальным шрифтам:",
+		"emptyList": "Шрифты ещё не загружены. Используйте «Загрузить все системные шрифты», если доступно, или перезагрузите после завершения загрузки стилей панелью."
 	},
 	"folderDirectoryPicker": {
 		"label": "Обзор папок",
@@ -265,5 +361,191 @@
 		"emptyItems": "Элементы не найдены",
 		"goUp": "На уровень вверх",
 		"cepNodeRequired": "Обзору папок требуется CEP Node"
+	},
+	"viewModeToggle": {
+		"listView": "Вид списка",
+		"iconView": "Вид значков",
+		"fieldsetLegend": "Макет каталога"
+	},
+	"addWidgetDialog": {
+		"addsToPrefix": "Добавляется в",
+		"addsToSuffix": "в нижнюю часть сетки.",
+		"addFailure": "Не удалось добавить виджет: {{message}}",
+		"introPrefix": "Выберите тип виджета. Перечислены только типы, доступные в каталоге. Новые плитки будут добавлены в",
+		"introSuffix": ".",
+		"contextMenu": {
+			"addThisWidget": "Добавить этот виджет",
+			"select": "Выбрать",
+			"category": "Категория",
+			"clearSearch": "Очистить поиск",
+			"addSelectedWidget": "Добавить выбранный виджет",
+			"unknownCategory": "Неизвестно"
+		}
+	},
+	"pickerOverlay": {
+		"targetPanelPrefix": "Целевая панель",
+		"footerHint": "Виджет будет добавлен в нижнюю часть сетки этой панели."
+	},
+	"loop": {
+		"name": "Цикл",
+		"cycles": "Циклы",
+		"decrement": "Уменьшить циклы",
+		"increment": "Увеличить циклы",
+		"handle": {
+			"easing": "Сглаживание",
+			"frequency": "Частота",
+			"bias": "Смещение",
+			"damping": "Затухание"
+		},
+		"update": "Обновить",
+		"unapply": "Убрать цикл",
+		"applied": "Применено",
+		"conflict": "Изменено в AE",
+		"play": "Воспроизвести",
+		"pause": "Пауза",
+		"waveCanvas": "Редактор волны цикла",
+		"previewCanvas": "Предпросмотр циклического движения"
+	},
+	"tutorial": {
+		"chrome": {
+			"title": "Справка по виджету",
+			"close": "Закрыть",
+			"dismissHint": "Скрыть подсказку",
+			"stepProgress": "{{current}} / {{total}}",
+			"back": "Назад",
+			"skip": "Пропустить",
+			"finish": "Готово",
+			"next": "Далее"
+		},
+		"easing": {
+			"summary": "Edit easing curves and apply them to presets or layer animation.",
+			"steps": {
+				"chooseCurve": {
+					"title": "Choose a curve",
+					"body": "Pick a preset curve or draw your own in the editor."
+				},
+				"applyCurve": {
+					"title": "Apply it",
+					"body": "Apply the curve to the selected preset or layer."
+				}
+			}
+		},
+		"menu": {
+			"summary": "Open workspace commands, layout actions, and dialogs from one tile.",
+			"steps": {
+				"openMenu": {
+					"title": "Open the menu",
+					"body": "Click the tile to open the workspace command menu."
+				},
+				"runCommand": {
+					"title": "Run a command",
+					"body": "Choose a command to run it on the current workspace."
+				}
+			}
+		},
+		"align": {
+			"summary": "Align selected presets or layers to common positions on the grid.",
+			"steps": {
+				"selectTargets": {
+					"title": "Select targets",
+					"body": "Select the presets or layers you want to align."
+				},
+				"pickAlignment": {
+					"title": "Pick an alignment",
+					"body": "Choose an alignment option to snap them into place."
+				}
+			}
+		},
+		"anchor-point": {
+			"summary": "Place a named anchor for layout references and snapping workflows.",
+			"steps": {
+				"nameAnchor": {
+					"title": "Name the anchor",
+					"body": "Enter a name that identifies this anchor point."
+				},
+				"dropAnchor": {
+					"title": "Drop it on the grid",
+					"body": "Click the workspace to place the anchor."
+				}
+			}
+		},
+		"layout-lock": {
+			"summary": "Prevent accidental moves while you arrange the workspace grid.",
+			"steps": {
+				"turnLockOn": {
+					"title": "Turn the lock on",
+					"body": "Enable the lock to freeze widget positions."
+				},
+				"unlockToRearrange": {
+					"title": "Unlock to rearrange",
+					"body": "Disable the lock when you want to move widgets again."
+				}
+			}
+		},
+		"info": {
+			"summary": "Show preset metadata, paths, and status in a wide summary tile.",
+			"steps": {
+				"placeWidget": {
+					"title": "Place the widget",
+					"body": "Add the Info widget to your workspace."
+				},
+				"inspectPreset": {
+					"title": "Inspect a preset",
+					"body": "Select a preset to view its details here."
+				}
+			}
+		},
+		"quick-actions": {
+			"summary": "Run scripts, effects, and file actions from a compact command palette.",
+			"steps": {
+				"openPalette": {
+					"title": "Open the palette",
+					"body": "Open the palette and type to search actions."
+				},
+				"runAction": {
+					"title": "Run an action",
+					"body": "Select an action to execute it right away."
+				}
+			}
+		},
+		"directory-browser": {
+			"summary": "Browse disk folders and presets from inside the panel.",
+			"steps": {
+				"navigateFolders": {
+					"title": "Navigate folders",
+					"body": "Use the path field or folder list to move around."
+				},
+				"openPreset": {
+					"title": "Open a preset",
+					"body": "Double-click a preset to apply or inspect it."
+				}
+			}
+		},
+		"font-viewer": {
+			"summary": "Preview font families, styles, and sample text in the workspace.",
+			"steps": {
+				"loadFonts": {
+					"title": "Load fonts",
+					"body": "Load system fonts or choose a family to preview."
+				},
+				"editSample": {
+					"title": "Edit the sample",
+					"body": "Change the sample text to check glyphs and styles."
+				}
+			}
+		},
+		"loop": {
+			"summary": "Редактирование зацикленной кривой сглаживания и её применение к выбранным ключевым кадрам.",
+			"steps": {
+				"chooseCycle": {
+					"title": "Форма цикла",
+					"body": "Перетащите маркеры кривой, чтобы задать форму одного цикла."
+				},
+				"applyCycle": {
+					"title": "Применение цикла",
+					"body": "Задайте число циклов и примените цикл к выбранным ключевым кадрам."
+				}
+			}
+		}
 	}
 }

@@ -1,14 +1,15 @@
 import { useEffect } from "react";
-import { useCep } from "@/management/ae/cep/contexts/Context";
+import { useCep } from "@/management/ae/cep/contexts/CepContext";
 import {
 	installCepJsonContextMenuRewrite,
 	registerCepJsonContextMenuSurface,
-} from "@/management/dialog/dialogs/context-menu";
+} from "@/management/dialog/context-menu";
+import { i18n } from "@/management/i18n/index";
 import {
-	buildDirectoryBrowserMenu,
-	handleDirectoryBrowserMenuSelect,
-	parseDirectoryBrowserMenuHit,
-} from "@/management/storage/ui/DirectoryBrowserMenu";
+	buildFileEntryMenu,
+	handleFileEntryMenuSelect,
+	parseFileEntryMenuHit,
+} from "@/management/storage/ui/file-entry/file-entry-menu";
 
 export function useMenu({
 	onNext,
@@ -39,11 +40,17 @@ export function useMenu({
 		const surfaceId = panelSurfaceId || "onboarding";
 		const onboardingMenu = {
 			menu: [
-				{ id: "ty.onboarding.next", label: "Next" },
-				{ id: "ty.onboarding.back", label: "Back" },
-				{ id: "ty.onboarding.refresh", label: "Refresh" },
+				{ id: "ty.onboarding.next", label: i18n.t("onboarding:actions.next") },
+				{ id: "ty.onboarding.back", label: i18n.t("onboarding:actions.back") },
+				{
+					id: "ty.onboarding.refresh",
+					label: i18n.t("common:actions.refresh"),
+				},
 				{ id: "ty.onboarding.divider1", label: "---" },
-				{ id: "ty.onboarding.openManual", label: "Open Manual" },
+				{
+					id: "ty.onboarding.openManual",
+					label: i18n.t("onboarding:actions.openManual"),
+				},
 			],
 		};
 		const handleSelect = (menuId: string) => {
@@ -57,11 +64,11 @@ export function useMenu({
 			buildPayload: (event) => {
 				const target = event.target;
 				const el = target instanceof Element ? target : null;
-				const hit = parseDirectoryBrowserMenuHit(el);
+				const hit = parseFileEntryMenuHit(el);
 				if (!hit) {
 					return onboardingMenu;
 				}
-				return buildDirectoryBrowserMenu(
+				return buildFileEntryMenu(
 					{
 						surface: "onboarding",
 						selectionMode: "both",
@@ -74,7 +81,7 @@ export function useMenu({
 				);
 			},
 			onMenuSelect: (menuId) => {
-				handleDirectoryBrowserMenuSelect(
+				handleFileEntryMenuSelect(
 					menuId,
 					{
 						surface: "onboarding",

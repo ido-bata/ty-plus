@@ -1,7 +1,7 @@
 /**
  * Bridge a production `OperationWorkerComposition` to the
  * `AfterEffectsFilesRuntimeGateway` interface used by `useThumbnail` /
- * `EntryThumb` / `GlyphCachedImage` / `SiblingThumbnail`.
+ * `EntryThumb` / `GlyphCachedImage`.
  *
  * The runtime gateway abstraction in `runtime-gateway-impl.ts` was
  * originally written against `RuntimeRequestDispatcher` so tests could
@@ -28,7 +28,7 @@
  * need the gateway surface.
  */
 
-import type { OperationWorkerComposition } from "@/management/ipc/operation-worker-composition";
+import type { OperationWorkerComposition } from "@/management/ipc/operation-worker/composition";
 import type { BatchThumbnailResult } from "./runtime-gateway";
 import type { AfterEffectsFilesRuntimeGateway } from "./runtime-gateway-impl";
 import { createAfterEffectsFilesRuntimeGateway } from "./runtime-gateway-impl";
@@ -46,7 +46,7 @@ export const createFilesGatewayFromComposition = (
 	composition: OperationWorkerComposition,
 ): AfterEffectsFilesRuntimeGateway => {
 	const dispatcher = {
-		request: <Scope, Request, Response>(
+		request: <_Scope, Request, Response>(
 			method: { name: string },
 			request: Request,
 		): Promise<Response> => {
@@ -82,6 +82,7 @@ export const createFilesGatewayFromComposition = (
 					batch.requests ?? [],
 				) as unknown as Promise<Response>;
 			}
+			// i18n-exempt: internal diagnostic — not rendered as UI copy
 			throw new Error(
 				`createFilesGatewayFromComposition does not route method ${method.name}`,
 			);

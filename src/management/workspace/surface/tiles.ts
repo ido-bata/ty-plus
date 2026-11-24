@@ -17,11 +17,7 @@ import {
 } from "@/function/widget/contract";
 import { inferWidgetTypeFromLegacyLayoutId } from "@/function/widget/legacy-parse";
 import type { Preset } from "@/management/preset/contract";
-import {
-	isOpaquePresetPlacementId,
-	stripKnownIdPrefixes,
-} from "@/management/storage/ids";
-import { buildPrimaryPanelWidgets } from "@/management/workspace/layout/default";
+import { stripKnownIdPrefixes } from "@/management/storage/ids";
 import {
 	type Layout,
 	type LayoutItem,
@@ -181,18 +177,6 @@ export const serialize = (tiles: readonly Tile[]): string =>
 		})),
 	});
 
-const buildDefaultPanelTiles = (): Tile[] =>
-	buildPrimaryPanelWidgets().map((w) => ({
-		id: w.id,
-		x: w.x,
-		y: w.y,
-		width: w.width,
-		height: w.height,
-	}));
-
-const buildTilesForPanel = (panelId: string): Tile[] =>
-	panelId === "panel-1" ? buildDefaultPanelTiles() : [];
-
 /**
  * Build `surfaceTiles` from a persisted workspace layout document (`gridCells`, optional roster)
  * plus widget records and preset catalog (primary disk / runtime path).
@@ -289,26 +273,4 @@ export const tilesFromDocument = (input: {
 		}
 	}
 	return tiles;
-};
-
-/** Map legacy string selection (placement ids / widget ids) to surface indices if possible. */
-export const indicesFromLegacy = (
-	tiles: readonly Tile[],
-	legacySelectedPlacementIds: readonly string[],
-): number[] => {
-	const out: number[] = [];
-	const seen = new Set<number>();
-	for (const raw of legacySelectedPlacementIds) {
-		const id = raw.trim();
-		if (!id) continue;
-		const idx = tiles.findIndex((t) => {
-			if (isOpaquePresetPlacementId(id)) return false;
-			return t.id === id;
-		});
-		if (idx >= 0 && !seen.has(idx)) {
-			seen.add(idx);
-			out.push(idx);
-		}
-	}
-	return out;
 };

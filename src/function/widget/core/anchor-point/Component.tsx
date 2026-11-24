@@ -1,9 +1,7 @@
-import {
-	type GesturePoint,
-	useAnchorGesture,
-} from "@ty-plus/ui/interaction/use-anchor-gesture";
+import { Button, type GesturePoint, useAnchorGesture } from "@ty-plus/ui";
 import React, { type JSX } from "react";
 import type { WidgetRenderProps } from "@/function/widget/define";
+import { i18n } from "@/management/i18n/index";
 import { css } from "@/styled-system/css";
 import { runAnchorScript } from "./run";
 import { type AnchorPosition, isValidAnchorPosition } from "./script";
@@ -52,15 +50,15 @@ const ANCHOR_GESTURE_MAP: Readonly<Record<string, AnchorPosition>> = {
 };
 
 const ANCHOR_LABELS: Readonly<Record<string, string>> = {
-	"top-left": "Top Left",
-	"top-center": "Top Center",
-	"top-right": "Top Right",
-	"center-left": "Center Left",
-	center: "Center",
-	"center-right": "Center Right",
-	"bottom-left": "Bottom Left",
-	"bottom-center": "Bottom Center",
-	"bottom-right": "Bottom Right",
+	"top-left": "widgets:anchorPoint.positions.topLeft",
+	"top-center": "widgets:anchorPoint.positions.topCenter",
+	"top-right": "widgets:anchorPoint.positions.topRight",
+	"center-left": "widgets:anchorPoint.positions.centerLeft",
+	center: "widgets:anchorPoint.positions.center",
+	"center-right": "widgets:anchorPoint.positions.centerRight",
+	"bottom-left": "widgets:anchorPoint.positions.bottomLeft",
+	"bottom-center": "widgets:anchorPoint.positions.bottomCenter",
+	"bottom-right": "widgets:anchorPoint.positions.bottomRight",
 };
 
 function AnchorPointGestureOverlay({
@@ -74,29 +72,28 @@ function AnchorPointGestureOverlay({
 }): JSX.Element | null {
 	if (!isActive) return null;
 	const points = path.map((p) => `${p.x},${p.y}`).join(" ");
-	const label =
-		recognizedAction !== null
-			? (ANCHOR_LABELS[recognizedAction] ?? null)
-			: null;
+	const labelKey =
+		recognizedAction !== null ? ANCHOR_LABELS[recognizedAction] : undefined;
+	const label = labelKey !== undefined ? i18n.t(labelKey) : null;
 	return (
 		<svg
 			className={css({
 				pointerEvents: "none",
 				position: "absolute",
 				inset: 0,
-				zIndex: 10,
+				zIndex: "var(--ty-z-overlay)",
 				height: "full",
 				width: "full",
 				overflow: "visible",
 			})}
-			aria-label="Anchor point gesture overlay"
+			aria-label={i18n.t("widgets:anchorPoint.gestureOverlay")}
 		>
-			<title>Anchor point gesture overlay</title>
+			<title>{i18n.t("widgets:anchorPoint.gestureOverlay")}</title>
 			{points.length > 0 && (
 				<polyline
 					points={points}
 					fill="none"
-					stroke="var(--action-primary)"
+					stroke="var(--color-text-accent)"
 					strokeWidth={2}
 					strokeLinecap="round"
 					strokeLinejoin="round"
@@ -107,17 +104,20 @@ function AnchorPointGestureOverlay({
 					cx={path[path.length - 1]?.x ?? 0}
 					cy={path[path.length - 1]?.y ?? 0}
 					r={3}
-					fill="var(--action-primary)"
+					fill="var(--color-text-accent)"
 				/>
 			)}
 			{label !== null && (
 				<text
 					x={4}
 					y={14}
-					className={css({ fill: "var(--accent, var(--action-primary))" })}
+					className={css({ fill: "var(--accent, var(--color-text-accent))" })}
 					fontSize={11}
 					fontWeight="bold"
-					style={{ paintOrder: "stroke", stroke: "rgba(0,0,0,0.5)" }}
+					style={{
+						paintOrder: "stroke",
+						stroke: "var(--color-ty-shadow-50)",
+					}}
 				>
 					{label}
 				</text>
@@ -126,10 +126,20 @@ function AnchorPointGestureOverlay({
 	);
 }
 
-export function AnchorPointWidget({
-	layout,
-	widgetInstanceId,
-}: WidgetRenderProps): JSX.Element {
+/**
+ * Full-cell click target overlaid on an anchor-point grid cell. The cell div
+ * owns the hover/active fill and the crosshair; this bare Button only
+ * provides semantics, the shared focus ring and the disabled treatment.
+ */
+const anchorHitAreaClass = css({
+	position: "absolute",
+	inset: "0",
+	_focusVisible: {
+		boxShadow: "var(--color-focus-ring)",
+	},
+});
+
+export function AnchorPointWidget(_props: WidgetRenderProps): JSX.Element {
 	const [currentAnchor, setCurrentAnchor] = React.useState<string>("center");
 
 	React.useEffect(() => {
@@ -199,25 +209,11 @@ export function AnchorPointWidget({
 				{ANCHOR_POSITIONS.map(([pos, xPct, yPct]) => {
 					const isSelected = pos === currentAnchor;
 					return (
-						<button
+						<div
 							key={pos}
-							type="button"
-							data-ws-action="anchor-point"
-							data-anchor={pos}
-							title={pos}
-							onClick={(e) => {
-								if (gesture.isActive) {
-									e.stopPropagation();
-									return;
-								}
-								e.stopPropagation();
-								setCurrentAnchor(pos);
-								runAnchorScript(pos);
-							}}
 							className={css({
 								position: "relative",
 								cursor: "pointer",
-								backgroundColor: "transparent",
 								padding: 0,
 								transitionProperty: "colors",
 								transitionDuration: "150",
@@ -263,7 +259,24 @@ export function AnchorPointWidget({
 									style={{ left: xPct }}
 								/>
 							</span>
-						</button>
+							<Button
+								variant="bare"
+								uiSize="content"
+								className={anchorHitAreaClass}
+								data-ws-action="anchor-point"
+								data-anchor={pos}
+								title={pos}
+								onClick={(e) => {
+									if (gesture.isActive) {
+										e.stopPropagation();
+										return;
+									}
+									e.stopPropagation();
+									setCurrentAnchor(pos);
+									runAnchorScript(pos);
+								}}
+							/>
+						</div>
 					);
 				})}
 			</div>

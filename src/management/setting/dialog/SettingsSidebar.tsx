@@ -1,4 +1,10 @@
-import { cx } from "@ty-plus/ui/util/cx";
+import {
+	Button,
+	cx,
+	segmentedButtonActiveClass,
+	segmentedButtonInactiveClass,
+	segmentedColumnButtonClass,
+} from "@ty-plus/ui";
 import {
 	type JSX,
 	type KeyboardEvent,
@@ -55,7 +61,8 @@ export type SettingsSidebarSectionId =
 	| "design-tokens"
 	| "workspace-backup"
 	| "feedback"
-	| "inputs";
+	| "inputs"
+	| "tips";
 
 export type SettingsSidebarSectionDef = {
 	sectionId: SettingsSidebarSectionId;
@@ -98,7 +105,7 @@ const sidebarStyle = css({
 	gap: "1",
 	paddingInline: "2",
 	paddingBlock: "2",
-	borderRightWidth: "1px",
+	borderRightWidth: "hairline",
 	borderRightStyle: "solid",
 	borderRightColor: "border.default",
 	backgroundColor: "surface.dialog",
@@ -116,41 +123,26 @@ const groupHeaderStyle = css({
 	color: "text.muted",
 });
 
-const tabBaseStyle = css({
-	display: "flex",
-	width: "full",
-	minWidth: 0,
-	alignItems: "center",
-	gap: "2",
-	paddingInline: "2.5",
-	paddingBlock: "2",
-	borderRadius: "shell-sm",
-	fontSize: "shell-text-sm",
-	lineHeight: "tight",
-	color: "text.primary",
-	textAlign: "left",
-	transitionProperty: "colors",
-	whiteSpace: "nowrap",
-	truncate: true,
-});
+const TAB_CLASS = (active: boolean): string =>
+	cx(
+		segmentedColumnButtonClass,
+		active ? segmentedButtonActiveClass : segmentedButtonInactiveClass,
+	);
 
-const tabActiveStyle = css({
-	backgroundColor: "text.accent",
-	color: "surface.panel",
-	boxShadow: "sm",
-});
+const tabSurfacePositionClass = css({ position: "relative" });
 
-const tabInactiveStyle = css({
-	backgroundColor: "surface.widget",
-	color: "text.muted",
-	_hover: {
-		backgroundColor: "interactive.hover",
-		color: "text.primary",
+/**
+ * Full-row click target overlaid on a settings tab surface. The tab div owns
+ * the segmented active/inactive treatment; this bare Button carries the tab
+ * semantics, the shared focus ring and the disabled treatment.
+ */
+const tabHitAreaClass = css({
+	position: "absolute",
+	inset: "0",
+	_focusVisible: {
+		boxShadow: "var(--color-focus-ring)",
 	},
 });
-
-const TAB_CLASS = (active: boolean): string =>
-	cx(tabBaseStyle, active ? tabActiveStyle : tabInactiveStyle);
 
 const bodyStyle = css({
 	flex: "1",
@@ -174,7 +166,7 @@ const sectionTitleStyle = css({
 	fontSize: "var(--ty-text-size-md)",
 	fontWeight: "semibold",
 	color: "text.primary",
-	borderBottomWidth: "1px",
+	borderBottomWidth: "hairline",
 	borderBottomStyle: "solid",
 	borderBottomColor: "border.default",
 	backgroundColor: "surface.dialog",
@@ -377,26 +369,31 @@ export function SettingsSidebar({
 						{group.sections.map((section) => {
 							const active = section.sectionId === activeSectionId;
 							return (
-								<button
+								<div
 									key={section.sectionId}
-									type="button"
-									role="tab"
-									id={`${tablistId}-tab-${section.sectionId}`}
-									aria-selected={active}
-									aria-controls={active ? activePanelId : undefined}
-									tabIndex={active ? 0 : -1}
-									className={TAB_CLASS(active)}
-									data-settings-sidebar-item={section.sectionId}
-									data-settings-sidebar-active={active ? "true" : "false"}
-									onClick={() => {
-										setActiveSectionId(section.sectionId);
-									}}
-									onKeyDown={(event) => {
-										onTabKeyDown(event, section.sectionId);
-									}}
+									className={cx(TAB_CLASS(active), tabSurfacePositionClass)}
 								>
 									{t(normalizeLabelKey(section.labelKey))}
-								</button>
+									<Button
+										variant="bare"
+										uiSize="content"
+										className={tabHitAreaClass}
+										role="tab"
+										aria-label={t(normalizeLabelKey(section.labelKey))}
+										id={`${tablistId}-tab-${section.sectionId}`}
+										aria-selected={active}
+										aria-controls={active ? activePanelId : undefined}
+										tabIndex={active ? 0 : -1}
+										data-settings-sidebar-item={section.sectionId}
+										data-settings-sidebar-active={active ? "true" : "false"}
+										onClick={() => {
+											setActiveSectionId(section.sectionId);
+										}}
+										onKeyDown={(event) => {
+											onTabKeyDown(event, section.sectionId);
+										}}
+									/>
+								</div>
 							);
 						})}
 					</div>

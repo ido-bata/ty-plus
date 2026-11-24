@@ -1,6 +1,6 @@
-import { Icon } from "@ty-plus/ui";
+import { Badge, Button, Icon, rowLabelClass } from "@ty-plus/ui";
 import { ChevronDown } from "lucide-react";
-import { type JSX, type ReactNode, useState } from "react";
+import { type JSX, type ReactNode, useId, useState } from "react";
 import { css } from "@/styled-system/css";
 
 export type CollapsibleGroupHeaderProps = {
@@ -23,6 +23,7 @@ export function CollapsibleGroupHeader({
 	onToggle,
 }: CollapsibleGroupHeaderProps): JSX.Element {
 	const [isOpen, setIsOpen] = useState(defaultOpen);
+	const panelId = useId();
 
 	return (
 		<div
@@ -31,97 +32,60 @@ export function CollapsibleGroupHeader({
 				width: "full",
 				minWidth: 0,
 				borderRadius: "shell-sm",
-				borderWidth: "1px",
+				borderWidth: "hairline",
 				borderStyle: "solid",
 				borderColor: "border.default",
 				backgroundColor: "surface.widget",
-				opacity: 0.4,
 			})}
 			data-directory-browser-group
 			data-group-id={title}
 		>
-			<button
+			<Button
 				type="button"
+				variant="bare"
+				uiSize="sm"
+				fullWidth
 				className={css({
-					display: "flex",
-					width: "full",
-					alignItems: "center",
-					justifyContent: "space-between",
-					gap: "2",
-					borderRadius: "shell-sm",
-					paddingInline: "2.5",
-					paddingBlock: "1.5",
+					justifyContent: "flex-start",
 					textAlign: "left",
-					fontFamily: "inherit",
-					_hover: { backgroundColor: "interactive.hover" },
-					_focusVisible: {
-						boxShadow: "0 0 0 2px var(--color-interactive-focus)",
-					},
 				})}
+				start={
+					<Icon
+						icon={ChevronDown}
+						size={16}
+						className={css({
+							flexShrink: 0,
+							transitionProperty: "transform",
+							transform: isOpen ? "rotate(0)" : "rotate(-90deg)",
+						})}
+						aria-hidden
+					/>
+				}
+				end={
+					<span className={css({ marginLeft: "auto" })}>
+						<Badge tone="neutral">{count}</Badge>
+					</span>
+				}
 				onClick={() => {
 					const next = !isOpen;
 					setIsOpen(next);
 					onToggle?.(next);
 				}}
 				aria-expanded={isOpen}
+				aria-controls={panelId}
 			>
-				<span
-					className={css({
-						display: "flex",
-						minWidth: 0,
-						alignItems: "center",
-						gap: "2",
-					})}
-				>
-					<Icon
-						icon={ChevronDown}
-						size={14}
-						className={css({
-							flexShrink: 0,
-							color: "text.muted",
-							transitionProperty: "transform",
-							transform: isOpen ? "rotate(0)" : "rotate(-90deg)",
-						})}
-						aria-hidden
-					/>
-					<span
-						className={css({
-							truncate: true,
-							fontSize: "shell-text-sm",
-							fontWeight: "medium",
-							color: "text.primary",
-						})}
-					>
-						{title}
-					</span>
-				</span>
-				<span
-					className={css({
-						flexShrink: 0,
-						borderRadius: "shell-sm",
-						borderWidth: "1px",
-						borderStyle: "solid",
-						borderColor: "border.default",
-						backgroundColor: "surface.dialog",
-						paddingInline: "1.5",
-						paddingBlock: "0.5",
-						fontSize: "text-2xs",
-						color: "text.muted",
-						fontVariantNumeric: "tabular-nums",
-					})}
-				>
-					{count}
-				</span>
-			</button>
+				<span className={rowLabelClass}>{title}</span>
+			</Button>
 			{isOpen ? (
 				<div
+					id={panelId}
 					className={css({
 						display: "flex",
 						width: "full",
 						minWidth: 0,
 						flexDirection: "column",
 						gap: "1",
-						borderTopWidth: "1px",
+						borderTopWidth: "hairline",
 						borderTopStyle: "solid",
 						borderTopColor: "border.default",
 						paddingInline: "1.5",

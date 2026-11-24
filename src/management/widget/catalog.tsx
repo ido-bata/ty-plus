@@ -1,7 +1,12 @@
-import { Icon } from "@ty-plus/ui";
-import { SearchField } from "@ty-plus/ui/fields/SearchField";
-import { cx } from "@ty-plus/ui/util/cx";
-import { isIMEComposing } from "@ty-plus/ui/util/keyboard";
+import {
+	Button,
+	countLabelClass,
+	cx,
+	Icon,
+	isIMEComposing,
+	SearchField,
+	ViewModeToggle,
+} from "@ty-plus/ui";
 import type { LucideIcon } from "lucide-react";
 import {
 	AlignCenter,
@@ -29,7 +34,8 @@ import {
 } from "react";
 import type { WidgetType } from "@/function/widget";
 import { useTranslation } from "@/management/i18n/Context";
-import { CatalogBrowserViewModeToggle } from "@/management/preset/catalog-browser/view-mode-toggle";
+import { i18n } from "@/management/i18n/index";
+import { resolveCatalogDescriptionKey } from "@/management/widget/description-key";
 import { registry } from "@/management/widget/registry";
 import { css } from "@/styled-system/css";
 
@@ -38,11 +44,11 @@ type WidgetCategory = NonNullable<CatalogEntry["category"]>;
 
 const CATEGORY_ORDER: WidgetCategory[] = ["core", "utility", "media", "phase4"];
 
-const CATEGORY_LABELS: Record<WidgetCategory, string> = {
-	core: "Core",
-	utility: "Utility",
-	media: "Media",
-	phase4: "Experimental",
+const CATEGORY_LABEL_KEYS: Record<WidgetCategory, string> = {
+	core: "widgets:categories.core",
+	utility: "widgets:categories.utility",
+	media: "widgets:categories.media",
+	phase4: "widgets:categories.phase4",
 };
 
 const WIDGET_ICONS: Record<string, LucideIcon> = {
@@ -78,9 +84,9 @@ const sectionStyle = css({
 const sectionTitleStyle = css({
 	position: "sticky",
 	top: "0",
-	zIndex: "1",
+	zIndex: "var(--ty-z-chrome)",
 	marginBottom: "1.5",
-	borderBottomWidth: "1px",
+	borderBottomWidth: "hairline",
 	borderBottomStyle: "solid",
 	borderBottomColor: "border.default",
 	backgroundColor: "surface.widget",
@@ -101,10 +107,11 @@ const listStyle = css({
 
 const itemBaseStyle = css({
 	display: "flex",
+	position: "relative",
 	width: "full",
 	gap: "3",
 	borderRadius: "shell-sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 	paddingInline: "2",
@@ -133,7 +140,7 @@ const itemIconStyle = css({
 	alignItems: "center",
 	justifyContent: "center",
 	borderRadius: "md",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 	backgroundColor: "surface.panel",
@@ -190,19 +197,33 @@ const iconGridStyle = css({
 
 const iconItemBaseStyle = css({
 	display: "flex",
+	position: "relative",
 	minHeight: 0,
 	width: "full",
 	flexDirection: "row",
 	alignItems: "flex-start",
 	gap: "3",
 	borderRadius: "shell-sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 	paddingInline: "2",
 	paddingBlock: "2",
 	textAlign: "left",
 	transitionProperty: "colors",
+});
+
+/**
+ * Full-item click target overlaid on a catalog item surface. The item div
+ * owns the border/fill/active treatment; this bare Button only provides
+ * semantics, the shared focus ring and the disabled treatment.
+ */
+const catalogItemHitAreaClass = css({
+	position: "absolute",
+	inset: "0",
+	_focusVisible: {
+		boxShadow: "var(--color-focus-ring)",
+	},
 });
 
 const rootStyle = css({
@@ -236,12 +257,6 @@ const searchFieldClass = css({
 	paddingBlock: "0",
 });
 
-const searchCountStyle = css({
-	fontVariantNumeric: "tabular-nums",
-	fontSize: "text-2xs",
-	color: "text.muted",
-});
-
 const viewModeWrapperStyle = css({
 	display: "flex",
 	flexShrink: 0,
@@ -263,7 +278,7 @@ const listboxStyle = css({
 	flex: "1",
 	overflow: "auto",
 	borderRadius: "shell-sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 	backgroundColor: "colorMix(in srgb, surface.widget 35%, transparent)",
@@ -318,7 +333,6 @@ function WidgetCatalogResults({
 	markUserSelection,
 	onSelectType,
 	onActivateType,
-	listboxId,
 }: {
 	linearItems: readonly CatalogEntry[];
 	viewMode: "list" | "icons";
@@ -330,12 +344,13 @@ function WidgetCatalogResults({
 	markUserSelection: () => void;
 	onSelectType: (t: WidgetType) => void;
 	onActivateType: (t: WidgetType) => void;
-	listboxId: string;
 }): JSX.Element {
 	if (linearItems.length === 0) {
 		return (
 			<p className={emptyResultsStyle}>
-				No matching widgets. Try another search.
+				{i18n.t("widgets:selector.noMatches", {
+					defaultValue: "No matching widgets. Try another search.",
+				})}
 			</p>
 		);
 	}
@@ -344,7 +359,9 @@ function WidgetCatalogResults({
 			<div className={resultsContainerStyle}>
 				{groups.map(({ category, items }) => (
 					<section key={category} className={sectionStyle}>
-						<h3 className={sectionTitleStyle}>{CATEGORY_LABELS[category]}</h3>
+						<h3 className={sectionTitleStyle}>
+							{i18n.t(CATEGORY_LABEL_KEYS[category])}
+						</h3>
 						<ul className={listStyle}>
 							{items.map((w) => {
 								const active = selectedType === w.type;
@@ -352,22 +369,11 @@ function WidgetCatalogResults({
 								const description = describe(w);
 								return (
 									<li key={w.type}>
-										<button
-											type="button"
-											id={`add-widget-opt-${w.type}`}
-											data-add-widget-type={w.type}
-											data-add-widget-category={category}
-											aria-pressed={active}
-											title={w.type}
+										<div
 											className={cx(
 												itemBaseStyle,
 												active ? itemActiveStyle : itemInactiveStyle,
 											)}
-											onClick={() => {
-												markUserSelection();
-												onSelectType(w.type);
-											}}
-											onDoubleClick={() => onActivateType(w.type)}
 										>
 											<span
 												className={cx(
@@ -376,7 +382,7 @@ function WidgetCatalogResults({
 												)}
 												aria-hidden
 											>
-												<Icon icon={icon} size={18} className={iconSpanClass} />
+												<Icon icon={icon} size={16} className={iconSpanClass} />
 											</span>
 											<span className={itemBodyStyle}>
 												<span className={itemTitleStyle}>{getName(w)}</span>
@@ -389,7 +395,22 @@ function WidgetCatalogResults({
 													{description}
 												</span>
 											</span>
-										</button>
+											<Button
+												variant="bare"
+												uiSize="content"
+												className={catalogItemHitAreaClass}
+												id={`add-widget-opt-${w.type}`}
+												data-add-widget-type={w.type}
+												data-add-widget-category={category}
+												aria-pressed={active}
+												title={w.type}
+												onClick={() => {
+													markUserSelection();
+													onSelectType(w.type);
+												}}
+												onDoubleClick={() => onActivateType(w.type)}
+											/>
+										</div>
 									</li>
 								);
 							})}
@@ -404,7 +425,7 @@ function WidgetCatalogResults({
 			{groups.map(({ category, items }) => (
 				<section key={category} className={sectionStyle}>
 					<h3 className={cx(sectionTitleStyle, sectionTitleGapStyle)}>
-						{CATEGORY_LABELS[category]}
+						{i18n.t(CATEGORY_LABEL_KEYS[category])}
 					</h3>
 					<div className={iconGridStyle}>
 						{items.map((w) => {
@@ -412,23 +433,12 @@ function WidgetCatalogResults({
 							const icon = resolveWidgetIcon(w.icon);
 							const description = describe(w);
 							return (
-								<button
+								<div
 									key={w.type}
-									type="button"
-									id={`add-widget-opt-${w.type}`}
-									data-add-widget-type={w.type}
-									data-add-widget-category={category}
-									aria-pressed={active}
-									title={w.type}
 									className={cx(
 										iconItemBaseStyle,
 										active ? itemActiveStyle : itemInactiveStyle,
 									)}
-									onClick={() => {
-										markUserSelection();
-										onSelectType(w.type);
-									}}
-									onDoubleClick={() => onActivateType(w.type)}
 								>
 									<span
 										className={cx(
@@ -437,7 +447,7 @@ function WidgetCatalogResults({
 										)}
 										aria-hidden
 									>
-										<Icon icon={icon} size={18} className={iconSpanClass} />
+										<Icon icon={icon} size={16} className={iconSpanClass} />
 									</span>
 									<span className={itemBodyStyle}>
 										<span className={itemTitleStyle}>{getName(w)}</span>
@@ -450,7 +460,22 @@ function WidgetCatalogResults({
 											{description}
 										</p>
 									</span>
-								</button>
+									<Button
+										variant="bare"
+										uiSize="content"
+										className={catalogItemHitAreaClass}
+										id={`add-widget-opt-${w.type}`}
+										data-add-widget-type={w.type}
+										data-add-widget-category={category}
+										aria-pressed={active}
+										title={w.type}
+										onClick={() => {
+											markUserSelection();
+											onSelectType(w.type);
+										}}
+										onDoubleClick={() => onActivateType(w.type)}
+									/>
+								</div>
 							);
 						})}
 					</div>
@@ -479,7 +504,7 @@ export function AddWidgetCatalogPanel({
 
 	const describe = useCallback(
 		(w: CatalogEntry) =>
-			t(`selector.descriptions.${w.type}`, { defaultValue: "" }),
+			t(resolveCatalogDescriptionKey(w), { defaultValue: "" }),
 		[t],
 	);
 
@@ -648,7 +673,7 @@ export function AddWidgetCatalogPanel({
 	});
 	const hintShortcuts = t("selector.hintShortcuts", {
 		defaultValue:
-			"Arrow keys: move · Enter (in search): add · Double-click: add · Esc: close",
+			"Arrows: move · Enter (in search): add · Double-click: add · Esc: close",
 	});
 	const listViewAria = t("selector.listView", { defaultValue: "List view" });
 	const iconViewAria = t("selector.iconView", {
@@ -680,11 +705,11 @@ export function AddWidgetCatalogPanel({
 					onClear={() => onQueryChange("")}
 					showInlineTrailing
 					inlineTrailing={
-						<span className={searchCountStyle}>{linearItems.length}</span>
+						<span className={countLabelClass}>{linearItems.length}</span>
 					}
 				/>
 				<div className={viewModeWrapperStyle}>
-					<CatalogBrowserViewModeToggle
+					<ViewModeToggle
 						viewMode={viewMode}
 						onViewModeChange={setViewMode}
 						listViewAriaLabel={listViewAria}
@@ -706,7 +731,6 @@ export function AddWidgetCatalogPanel({
 					markUserSelection={markUserSelection}
 					onSelectType={onSelectType}
 					onActivateType={onActivateType}
-					listboxId={listboxId}
 				/>
 			</div>
 		</div>

@@ -62,6 +62,7 @@ function PaletteRowsList({
 						selected={selected}
 						widgetInstanceId={widgetInstanceId}
 						tl={tl}
+						t={t}
 						onSelect={onSelect}
 					/>
 				);
@@ -105,11 +106,11 @@ export function PaletteDropdown({
 			ref={portalRef}
 			className={css({
 				pointerEvents: "auto",
-				zIndex: 100000,
+				zIndex: "var(--ty-z-widget-overlay)",
 				maxHeight: "min(50vh,22rem)",
 				overflow: "hidden",
 				borderRadius: "var(--ty-space-1)",
-				borderWidth: "1px",
+				borderWidth: "hairline",
 				borderStyle: "solid",
 				borderColor: "border.default",
 				backgroundColor: "surface.widget",

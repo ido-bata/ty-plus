@@ -12,7 +12,7 @@
  * The worker itself is excluded from CI (it runs inside a Web Worker
  * that the test harness cannot stand up), so source-level assertions
  * are the practical way to lock this in. Same pattern as
- * `Code-volar.test.ts`.
+ * `code-volar.test.ts`.
  */
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";

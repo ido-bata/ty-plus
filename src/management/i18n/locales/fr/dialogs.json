@@ -9,7 +9,7 @@
 			"lead": "Empilez les calques solides, images et motifs derrière la grille de l'espace de travail. Cliquez sur Appliquer pour synchroniser avec le panneau et enregistrer.",
 			"applyToWorkspace": "Appliquer à l'espace de travail",
 			"clearAll": "Tout effacer",
-			"emptyLayers": "Aucun calque — ajoutez-en avec les boutons à gauche.",
+			"emptyLayers": "Aucun calque — ajoutez-en avec les boutons ci-dessus.",
 			"selectLayer": "Sélectionnez un calque dans la liste pour le modifier.",
 			"enabled": "Visible",
 			"opacity": "Opacité",
@@ -65,7 +65,16 @@
 			"saved": "Enregistré",
 			"loadFailed": "Échec du chargement : {{message}}",
 			"saveFailed": "Échec de l'enregistrement",
-			"preview": "Aperçu"
+			"preview": "Aperçu",
+			"contextMenu": {
+				"selectLayer": "Sélectionner le calque",
+				"enableLayer": "Activer le calque",
+				"disableLayer": "Désactiver le calque",
+				"layerType": "Type de calque",
+				"order": "Ordre",
+				"addLayer": "Ajouter un calque",
+				"clearAllLayers": "Effacer tous les calques"
+			}
 		},
 		"widgetSelector": {
 			"title": "Ajouter un widget",
@@ -75,5 +84,17 @@
 			"notInPanelYet": "Ce type de widget n'a pas encore d'interface de panneau — il ne peut pas être placé.",
 			"footerHint": "Les éléments grisés ne sont pas encore implémentés dans le moteur du panneau. Les autres ferment ce dialogue après l'envoi de la requête."
 		}
-	}
+	},
+	"unknownDialog": {
+		"title": "Surface de dialogue inconnue",
+		"noBodyForSurfaceId": "Aucun corps de dialogue trouvé pour surfaceId :",
+		"copySurfaceId": "Copier l'id de surface"
+	},
+	"probe": {
+		"title": "Sonde",
+		"bodyForSurfaceId": "Dialogue de sonde pour surfaceId :",
+		"logSurfaceId": "Journaliser l'id de surface",
+		"copySurfaceId": "Copier l'id de surface"
+	},
+	"loading": "Chargement…"
 }

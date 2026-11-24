@@ -1,11 +1,12 @@
+import { Button } from "@ty-plus/ui";
 import { Wand2 } from "lucide-react";
 import type { CSSProperties, JSX } from "react";
-import type { Preset, PresetType } from "@/management/preset/contract";
 import {
 	useIsPresetAssetMissing,
 	useIsPresetAssetUnverifiable,
-} from "@/management/preset/use-preset-asset-health";
-import { WorkspacePresetGlyph } from "@/management/preset/workspace/glyph";
+} from "@/management/preset/assets/use-health";
+import type { Preset, PresetType } from "@/management/preset/contract";
+import { WorkspacePresetGlyph } from "@/management/preset/workspace/glyph/WorkspaceGlyph";
 import { css } from "@/styled-system/css";
 import { rootFilePresetType } from "./scoring";
 import type { PluginEffectIndexRow, QuickActionRootFileRow } from "./types";
@@ -18,7 +19,7 @@ type RowPropsBase = {
 };
 
 const rowContainerBase = css({
-	borderBottomWidth: "1px",
+	borderBottomWidth: "hairline",
 	borderBottomStyle: "solid",
 	borderColor: "border.default",
 	_last: { borderBottomWidth: 0 },
@@ -26,6 +27,7 @@ const rowContainerBase = css({
 
 const rowButtonClass = css({
 	display: "flex",
+	position: "relative",
 	width: "full",
 	cursor: "pointer",
 	alignItems: "stretch",
@@ -38,6 +40,19 @@ const rowButtonClass = css({
 	color: "text.primary",
 });
 
+/**
+ * Full-row click target overlaid on the row surface. The row div owns the
+ * layout and text styling; this bare Button only provides semantics, the
+ * shared focus ring and the disabled treatment.
+ */
+const rowHitAreaClass = css({
+	position: "absolute",
+	inset: "0",
+	_focusVisible: {
+		boxShadow: "var(--color-focus-ring)",
+	},
+});
+
 const rowIconBoxClass = css({
 	display: "flex",
 	height: "9",
@@ -46,7 +61,7 @@ const rowIconBoxClass = css({
 	alignItems: "center",
 	justifyContent: "center",
 	borderRadius: "var(--ty-space-1)",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 	backgroundColor: "surface.panel",
@@ -90,14 +105,7 @@ export function EffectRow(
 			data-palette-index={idx}
 			className={`${rowContainerBase} ${selected ? rowSelectedClass : ""}`}
 		>
-			<button
-				type="button"
-				className={rowButtonClass}
-				data-ws-action="apply-effect"
-				data-effect-match={effect.matchName}
-				onMouseEnter={() => onSelect(idx)}
-				onFocus={() => onSelect(idx)}
-			>
+			<div className={rowButtonClass}>
 				<span className={rowIconBoxClass} aria-hidden>
 					<Wand2 className={css({ height: "4", width: "4" })} strokeWidth={2} />
 				</span>
@@ -108,7 +116,16 @@ export function EffectRow(
 						{effect.filePath ? ` · ${effect.filePath}` : ""}
 					</span>
 				</span>
-			</button>
+				<Button
+					variant="bare"
+					uiSize="content"
+					className={rowHitAreaClass}
+					data-ws-action="apply-effect"
+					data-effect-match={effect.matchName}
+					onMouseEnter={() => onSelect(idx)}
+					onFocus={() => onSelect(idx)}
+				/>
+			</div>
 		</div>
 	);
 }
@@ -129,14 +146,7 @@ export function RootFileRow(
 			data-palette-index={idx}
 			className={`${rowContainerBase} ${selected ? rowSelectedClass : ""}`}
 		>
-			<button
-				type="button"
-				className={rowButtonClass}
-				data-ws-action="quick-action-root-file"
-				data-file-path={rootFile.filePath}
-				onMouseEnter={() => onSelect(idx)}
-				onFocus={() => onSelect(idx)}
-			>
+			<div className={rowButtonClass}>
 				<span
 					className={`${rowIconBoxClass} ${rowIconGlyphClass}`}
 					style={
@@ -154,7 +164,16 @@ export function RootFileRow(
 						{rootFile.filePath ? ` · ${rootFile.filePath}` : ""}
 					</span>
 				</span>
-			</button>
+				<Button
+					variant="bare"
+					uiSize="content"
+					className={rowHitAreaClass}
+					data-ws-action="quick-action-root-file"
+					data-file-path={rootFile.filePath}
+					onMouseEnter={() => onSelect(idx)}
+					onFocus={() => onSelect(idx)}
+				/>
+			</div>
 		</div>
 	);
 }
@@ -163,9 +182,10 @@ export function PresetRow(
 	props: {
 		preset: Preset;
 		tl: string;
+		t: (key: string) => string;
 	} & RowPropsBase,
 ): JSX.Element {
-	const { preset, idx, selected, widgetInstanceId, tl, onSelect } = props;
+	const { preset, idx, selected, widgetInstanceId, tl, t, onSelect } = props;
 	// Issue #130: subscribe to the boot-time asset-health store so the
 	// row re-renders when the scan completes. Only `missing` disables
 	// the row's run affordance; `unverifiable` keeps it enabled but
@@ -173,9 +193,9 @@ export function PresetRow(
 	const isMissing = useIsPresetAssetMissing(preset.id);
 	const isUnverifiable = useIsPresetAssetUnverifiable(preset.id);
 	const runTitle = isMissing
-		? "Preset asset is missing on disk — run is disabled"
+		? t("directoryBrowser.actions.runBlockedMissingAsset")
 		: isUnverifiable
-			? "Could not verify preset asset (host unavailable) — retry"
+			? t("directoryBrowser.actions.runBlockedUnverifiableAsset")
 			: undefined;
 	return (
 		<div
@@ -183,17 +203,7 @@ export function PresetRow(
 			data-palette-index={idx}
 			className={`${rowContainerBase} ${selected ? rowSelectedClass : ""}`}
 		>
-			<button
-				type="button"
-				className={rowButtonClass}
-				data-ws-action="run-preset"
-				data-preset-id={preset.id}
-				disabled={isMissing}
-				aria-disabled={isMissing}
-				title={runTitle}
-				onMouseEnter={() => onSelect(idx)}
-				onFocus={() => onSelect(idx)}
-			>
+			<div className={rowButtonClass}>
 				<span
 					className={`${rowIconBoxClass} ${rowIconGlyphClass}`}
 					style={
@@ -213,7 +223,19 @@ export function PresetRow(
 						{preset.filePath ? ` · ${preset.filePath}` : ""}
 					</span>
 				</span>
-			</button>
+				<Button
+					variant="bare"
+					uiSize="content"
+					className={rowHitAreaClass}
+					data-ws-action="run-preset"
+					data-preset-id={preset.id}
+					disabled={isMissing}
+					aria-disabled={isMissing}
+					title={runTitle}
+					onMouseEnter={() => onSelect(idx)}
+					onFocus={() => onSelect(idx)}
+				/>
+			</div>
 		</div>
 	);
 }

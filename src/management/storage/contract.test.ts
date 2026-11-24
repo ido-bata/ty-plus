@@ -15,7 +15,7 @@ import type { PresetRecord } from "../../management/preset/contract";
 import { completeOnboardingStorage } from "../setting/onboarding/complete";
 import { resolveInitializationLocatorPath } from "../setting/onboarding/initialization";
 import type { WidgetRecord } from "../widget/record/types";
-import type { WorkspaceInitializationInput } from "../workspace/initialize";
+import type { WorkspaceInitializationInput } from "../workspace/core/initialize";
 import type {
 	LayoutItem,
 	PanelLayoutSeed,
@@ -121,9 +121,9 @@ vi.mock("../storage/workspace/store", () => ({
 	writeSettings: mockwriteSettings,
 }));
 
-vi.mock("../preset/group-catalog", async (importOriginal) => {
+vi.mock("../preset/group/catalog", async (importOriginal) => {
 	const actual =
-		await importOriginal<typeof import("../preset/group-catalog")>();
+		await importOriginal<typeof import("../preset/group/catalog")>();
 	return {
 		...actual,
 		mergeGroupCatalogEntries: vi.fn().mockResolvedValue(undefined),
@@ -131,7 +131,7 @@ vi.mock("../preset/group-catalog", async (importOriginal) => {
 	};
 });
 
-vi.mock("../workspace/initialize", () => ({
+vi.mock("../workspace/core/initialize", () => ({
 	initializeWorkspaceStorage: mockInitializeWorkspaceStorage,
 }));
 

@@ -1,11 +1,13 @@
+import { AnchoredPopover } from "@ty-plus/ui/interaction/AnchoredPopover";
 import { cx } from "@ty-plus/ui/util/cx";
 import type { ReactElement } from "react";
-import { useEffect, useId, useRef, useState } from "react";
+import { useId, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { css } from "@/styled-system/css";
 
 type ListSelectOption = { value: string; label: string };
 
-const root = css({ position: "relative", width: "full", minWidth: 0 });
+const root = css({ width: "full", minWidth: 0 });
 
 const optionBase = css({
 	display: "flex",
@@ -57,9 +59,9 @@ const triggerBase = css({
 	justifyContent: "space-between",
 	gap: "2",
 	borderRadius: "shell-sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
-	borderColor: "border.default",
+	borderColor: "border.control",
 	backgroundColor: "surface.widget",
 	textAlign: "left",
 	color: "text.primary",
@@ -68,7 +70,7 @@ const triggerBase = css({
 	_hover: { backgroundColor: "interactive.hover" },
 	_focusVisible: {
 		borderColor: "interactive.focus",
-		boxShadow: "inset 0 0 0 1px var(--color-interactive-focus)",
+		boxShadow: "var(--color-focus-ring)",
 		outline: "none",
 	},
 	_disabled: {
@@ -78,18 +80,12 @@ const triggerBase = css({
 });
 
 const listBox = css({
-	position: "absolute",
-	left: 0,
-	right: 0,
-	top: "calc(100% + 4px)",
-	zIndex: 50,
-	maxHeight: "60",
 	minWidth: 0,
 	overflowY: "auto",
 	borderRadius: "shell-sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
-	borderColor: "border.default",
+	borderColor: "border.control",
 	backgroundColor: "surface.dialog",
 	paddingBlock: "1",
 	color: "text.primary",
@@ -124,11 +120,12 @@ export type ListSelectProps = {
 
 /** Semantic utility in the same family as Input / Select (follows `theme.css` / CEP-injected `--color-*`) */
 export function ListSelect(props: ListSelectProps): ReactElement {
+	const { t } = useTranslation();
 	const {
 		options,
 		value,
 		onChange,
-		placeholder = "Select…",
+		placeholder,
 		uiSize = "md",
 		className,
 		triggerClassName,
@@ -139,30 +136,20 @@ export function ListSelect(props: ListSelectProps): ReactElement {
 	const autoId = useId();
 	const id = idProp ?? `ty-listselect-${autoId}`;
 	const [open, setOpen] = useState(false);
-	const rootRef = useRef<HTMLDivElement>(null);
+	const triggerRef = useRef<HTMLButtonElement>(null);
 
 	const selected = options.find((o) => o.value === value);
-	const label = selected?.label ?? placeholder;
-
-	useEffect(() => {
-		if (!open) {
-			return;
-		}
-		const onDoc = (e: MouseEvent) => {
-			const el = rootRef.current;
-			if (el && !el.contains(e.target as Node)) {
-				setOpen(false);
-			}
-		};
-		document.addEventListener("mousedown", onDoc, true);
-		return () => document.removeEventListener("mousedown", onDoc, true);
-	}, [open]);
+	const label =
+		selected?.label ??
+		placeholder ??
+		t("ui.listSelect.placeholder", { defaultValue: "Select…" });
 
 	const triggerSize = uiSize === "sm" ? triggerSm : triggerMd;
 
 	return (
-		<div ref={rootRef} className={cx(root, className)}>
+		<div className={cx(root, className)}>
 			<button
+				ref={triggerRef}
 				id={id}
 				type="button"
 				disabled={disabled}
@@ -178,39 +165,43 @@ export function ListSelect(props: ListSelectProps): ReactElement {
 					▾
 				</span>
 			</button>
-			{open ? (
-				<div
-					// biome-disable-next-line useSemanticElements -- listbox role requires div for proper ARIA structure
-					id={`${id}-listbox`}
-					role="listbox"
-					tabIndex={-1}
-					aria-labelledby={id}
-					className={listBox}
-				>
-					{options.map((opt) => {
-						const isSel = opt.value === value;
-						return (
-							<div
-								// biome-disable-next-line useSemanticElements -- option role requires div for button containment
-								key={opt.value}
+			<AnchoredPopover
+				open={open}
+				onClose={() => setOpen(false)}
+				anchorRef={triggerRef}
+				align="start"
+				matchAnchorWidth
+				maxHeight="15rem"
+				// biome-disable-next-line useSemanticElements -- listbox role requires div for proper ARIA structure
+				id={`${id}-listbox`}
+				role="listbox"
+				aria-labelledby={id}
+				tabIndex={-1}
+				className={listBox}
+			>
+				{options.map((opt) => {
+					const isSel = opt.value === value;
+					return (
+						<div
+							// biome-disable-next-line useSemanticElements -- option role requires div for button containment
+							key={opt.value}
+						>
+							<button
+								type="button"
+								role="option"
+								aria-selected={isSel}
+								className={optionCls(isSel)}
+								onClick={() => {
+									onChange(opt.value);
+									setOpen(false);
+								}}
 							>
-								<button
-									type="button"
-									role="option"
-									aria-selected={isSel}
-									className={optionCls(isSel)}
-									onClick={() => {
-										onChange(opt.value);
-										setOpen(false);
-									}}
-								>
-									{opt.label}
-								</button>
-							</div>
-						);
-					})}
-				</div>
-			) : null}
+								{opt.label}
+							</button>
+						</div>
+					);
+				})}
+			</AnchoredPopover>
 		</div>
 	);
 }

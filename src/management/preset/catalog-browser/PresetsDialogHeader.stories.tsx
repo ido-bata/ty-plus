@@ -1,11 +1,18 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { expect } from "storybook/test";
 import { css } from "@/styled-system/css";
-import { PresetsDialogHeader } from "./PresetsDialogHeader";
-import type { LoadPhase, PresetViewMode } from "./use-presets-catalog";
+import {
+	type LoadPhase,
+	PresetsDialogHeader,
+	type PresetViewMode,
+} from "./PresetsDialogHeader";
 
 type Args = {
 	filter: string;
-	loadPhase: LoadPhase;
+	// `"loaded"` is the terminal phase `ListDialog` passes once the
+	// catalog read finishes — a filtered, settled header never stays
+	// on `"idle"` (#455).
+	loadPhase: LoadPhase | "loaded";
 	loadError: string | null;
 	streamTotal: number;
 	presetsLength: number;
@@ -35,7 +42,7 @@ const meta = {
 		filter: { control: "text" },
 		loadPhase: {
 			control: { type: "select" },
-			options: ["idle", "reading", "streaming", "error"],
+			options: ["idle", "reading", "streaming", "loaded", "error"],
 		},
 		loadError: { control: "text" },
 		streamTotal: { control: { type: "range", min: 0, max: 100, step: 1 } },
@@ -73,7 +80,19 @@ const meta = {
 export default meta;
 type Story = StoryObj<Args>;
 
-export const Default: Story = {};
+export const Default: Story = {
+	args: {
+		// Issue #543: `"idle"` renders the same Loading status as `"reading"`
+		// — Default must show the settled state ListDialog reaches after the
+		// catalog read finishes.
+		loadPhase: "loaded",
+	},
+	play: async ({ canvasElement }) => {
+		const text = canvasElement.textContent ?? "";
+		expect(text).not.toContain("Loading");
+		expect(text).toContain("12 items");
+	},
+};
 
 export const Loading: Story = {
 	args: { loadPhase: "reading" },
@@ -91,8 +110,19 @@ export const Streaming: Story = {
 export const Filtered: Story = {
 	args: {
 		filter: "header",
+		loadPhase: "loaded",
 		presetsLength: 12,
 		visibleCount: 4,
+	},
+	play: async ({ canvasElement }) => {
+		// #455: a filtered catalog shows the search term and the settled
+		// count together — never the "Loading" status bar.
+		const input = canvasElement.querySelector("input");
+		expect(input?.value).toBe("header");
+		const text = canvasElement.textContent ?? "";
+		expect(text).toContain("4 items");
+		expect(text).toContain("filtered");
+		expect(text).not.toContain("Loading");
 	},
 };
 

@@ -5,14 +5,14 @@ import "@/management/panel/appearance-boot";
 import type { JSX } from "react";
 import { createRoot } from "react-dom/client";
 import { createLogger } from "@/management/debug/logger";
-import { compiledOperationWorkerTrustMode } from "@/management/ipc/operation-worker-binary";
+import { compiledOperationWorkerTrustMode } from "@/management/ipc/operation-worker/binary";
 import { bootPanel } from "@/management/panel/boot";
 import { css } from "@/styled-system/css";
 
 const entryLog = createLogger("panel");
 
 if (compiledOperationWorkerTrustMode === "development-unsigned") {
-	void import("@/management/ipc/operation-worker-dev-panel").then(
+	void import("@/management/ipc/operation-worker/dev-panel").then(
 		({ installOperationWorkerDevPanel }) =>
 			installOperationWorkerDevPanel(window),
 	);
@@ -28,6 +28,7 @@ const bootErrorRoot = css({
 function PanelBootError({ message }: { message: string }): JSX.Element {
 	return (
 		<div className={bootErrorRoot}>
+			{/* // i18n-exempt: boot failure fallback can render before i18n init */}
 			{`[ty-plus] panel boot failed:\n${message}`}
 		</div>
 	);

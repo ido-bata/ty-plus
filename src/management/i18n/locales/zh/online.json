@@ -1,5 +1,109 @@
 {
 	"notification": {
-		"fixtureBadge": "占位符（离线模拟数据）"
+		"fixtureBadge": "占位符（离线模拟数据）",
+		"fixture": {
+			"welcomeName": "欢迎使用 ty-plus",
+			"welcomeSummary": "感谢安装 ty-plus！这是一条占位通知，在运行时未连接时显示（离线模拟数据）。",
+			"updateName": "有可用更新",
+			"updateSummary": "新版本可能包含改进的网格性能和错误修复。",
+			"maintenanceName": "维护通知",
+			"maintenanceSummary": "服务器维护可能已排期；请查看状态页面。"
+		}
+	},
+	"gatewayBoot": {
+		"connectivityProbeFailed": "工作器组合启动后，连接检查失败。",
+		"catalogProbeFailed": "工作器组合启动后，目录检查失败。",
+		"runtimeInitFailed": "无法在启动期间创建操作工作器运行时。",
+		"compositionInitFailed": "无法在启动期间创建操作工作器组合。"
+	},
+	"catalog": {
+		"title": "在线预设库",
+		"searchPlaceholder": "按名称、ID、描述、类别、标签筛选",
+		"filterPlaceholder": "筛选…",
+		"showFilters": "显示筛选器",
+		"hideFilters": "隐藏筛选器",
+		"category": "类别",
+		"tags": "标签",
+		"allCategories": "所有类别",
+		"clear": "清除",
+		"clearAll": "全部清除",
+		"clearAllFilters": "清除所有筛选",
+		"clearSearch": "清除搜索",
+		"clearCategoryFilter": "清除类别筛选",
+		"clearTagSelection": "清除标签选择",
+		"refreshCatalog": "刷新目录",
+		"reloadCatalog": "重新加载目录",
+		"reloadingCatalog": "正在重新加载…",
+		"openNotion": "打开 Notion",
+		"openManualNotion": "打开手册（Notion）",
+		"viewMenu": "视图",
+		"viewMode": "视图模式",
+		"viewGallery": "画廊视图",
+		"viewGalleryTitle": "画廊（Ctrl+滚轮缩放）",
+		"viewGalleryLabel": "画廊",
+		"viewCards": "卡片视图",
+		"viewCardsLabel": "卡片",
+		"viewList": "列表视图",
+		"viewListLabel": "列表",
+		"tableThumb": "缩略图",
+		"tableNameId": "名称 / ID",
+		"tableActions": "操作",
+		"emptyUnavailable": "在线预设库不可用。",
+		"emptyNoCatalog": "没有在线目录。",
+		"emptyNoMatch": "没有符合筛选条件的预设。",
+		"footerCount": "{{filtered}} / {{catalog}} 项",
+		"footerZoom": "Ctrl+滚轮：{{percent}}%",
+		"downloadConfirm": "下载此预设？",
+		"downloadCancelled": "用户已取消下载",
+		"downloadUnavailable": "运行时下载不可用（未连接在线传输）",
+		"systemPathsUnavailable": "系统路径不可用",
+		"invalidDownloadPath": "下载路径无效：{{path}}",
+		"downloadFailed": "下载失败：{{message}}",
+		"pluginInstalled": "插件已安装。请重启 After Effects 以使用。",
+		"downloadComplete": "下载完成。",
+		"downloadedDescription": "[从目录下载] {{description}}",
+		"gatewayBootRetryHint": "{{reason}} — 重新加载面板以重试网关启动",
+		"hideSidePanel": "隐藏侧面板",
+		"showSidePanel": "显示侧面板",
+		"download": "下载",
+		"import": "导入",
+		"sync": {
+			"idle": "云同步空闲",
+			"ok": "Ty Plus 正常",
+			"failed": "云同步失败"
+		},
+		"gatewayBootReason": {
+			"unsupportedTrustMode": "不支持的 operation-worker 信任模式",
+			"unsupportedPlatform": "不支持的主机平台",
+			"missingExtensionRoot": "CEP 扩展根目录不可用",
+			"workerRuntimeFailed": "Worker 运行时不可用",
+			"workerCompositionFailed": "Worker 组合失败"
+		}
+	},
+	"notificationCenter": {
+		"title": "通知",
+		"loading": "加载中…",
+		"empty": "没有通知",
+		"toggleContent": "切换内容",
+		"noContent": "无内容",
+		"backToList": "返回列表",
+		"backToListMenu": "返回列表",
+		"refresh": "刷新",
+		"open": "打开",
+		"close": "关闭",
+		"markRead": "标为已读",
+		"markUnread": "标为未读",
+		"markAsRead": "标为已读",
+		"markAsUnread": "标为未读",
+		"generalCategory": "常规"
+	},
+	"notificationContainer": {
+		"dismiss": "关闭通知"
+	},
+	"publicLink": {
+		"userManual": "用户手册"
+	},
+	"errors": {
+		"unknownPreset": "未找到预设：{{id}}"
 	}
 }

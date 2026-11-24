@@ -4,6 +4,7 @@ import {
 	LayerEditor,
 	LayerIcon,
 } from "@/management/workspace/background/LayerEditor";
+import { storyT } from "@/storybook/i18n-story-t";
 import { css } from "@/styled-system/css";
 
 type Args = {
@@ -13,16 +14,6 @@ type Args = {
 };
 
 const noop = (): void => undefined;
-const stubT = (key: string, options?: Record<string, unknown>): string => {
-	if (
-		options &&
-		"defaultValue" in options &&
-		typeof options.defaultValue === "string"
-	) {
-		return options.defaultValue as string;
-	}
-	return key;
-};
 
 const buildLayer = (args: Args): Layer => {
 	if (args.layerType === "color") {
@@ -90,7 +81,7 @@ const meta = {
 					alignItems: "center",
 					gap: "2",
 					borderRadius: "shell-sm",
-					borderWidth: "1px",
+					borderWidth: "hairline",
 					borderStyle: "solid",
 					borderColor: "border.default",
 					bg: "surface.widget",
@@ -102,7 +93,11 @@ const meta = {
 				<LayerIcon layer={buildLayer(args)} />
 				<span>Layer icon preview</span>
 			</div>
-			<LayerEditor layer={buildLayer(args)} updateLayer={noop} t={stubT} />
+			<LayerEditor
+				layer={buildLayer(args)}
+				updateLayer={noop}
+				t={storyT("dialogs")}
+			/>
 		</div>
 	),
 } satisfies Meta<Args>;

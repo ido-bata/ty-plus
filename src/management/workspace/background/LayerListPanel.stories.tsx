@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { expect } from "storybook/test";
 import type { Layer } from "@/management/workspace/background/contract";
 import { LayerListPanel } from "@/management/workspace/background/LayerListPanel";
+import { storyT } from "@/storybook/i18n-story-t";
 import { css } from "@/styled-system/css";
 
 type Args = {
@@ -9,16 +11,6 @@ type Args = {
 };
 
 const noop = (): void => undefined;
-const stubT = (key: string, options?: Record<string, unknown>): string => {
-	if (
-		options &&
-		"defaultValue" in options &&
-		typeof options.defaultValue === "string"
-	) {
-		return options.defaultValue as string;
-	}
-	return key;
-};
 
 const baseLayers: Layer[] = [
 	{
@@ -84,7 +76,7 @@ const meta = {
 					onAddLayer={noop}
 					onMoveLayer={noop}
 					onRemoveLayer={noop}
-					t={stubT}
+					t={storyT("dialogs")}
 				/>
 			</div>
 		);
@@ -94,12 +86,46 @@ const meta = {
 export default meta;
 type Story = StoryObj<Args>;
 
-export const Default: Story = {};
+// Issue #536: the bottom action bar is a 3-column grid — each IconButton
+// must stretch to its column like the add buttons above, not stay a small
+// square pinned to the column's left edge.
+const expectActionButtonsFillColumns = (canvasElement: HTMLElement): void => {
+	const bar = canvasElement.querySelector<HTMLElement>(
+		"[data-background-layer-actions]",
+	);
+	if (!bar) throw new Error("layer action bar not found");
+	const barRect = bar.getBoundingClientRect();
+	const buttons = Array.from(bar.querySelectorAll("button"));
+	expect(buttons.length).toBe(3);
+	// content width = bar width - padding "1" (4px) x2; 3 cols + gap "1" x2
+	const columnWidth = (barRect.width - 16) / 3;
+	for (const button of buttons) {
+		const rect = button.getBoundingClientRect();
+		expect(Math.abs(rect.width - columnWidth)).toBeLessThanOrEqual(2);
+	}
+	const last = buttons[buttons.length - 1]?.getBoundingClientRect();
+	const padRight = Number.parseFloat(getComputedStyle(bar).paddingRight);
+	expect(
+		Math.abs(barRect.right - padRight - (last?.right ?? 0)),
+	).toBeLessThanOrEqual(2);
+};
+
+export const Default: Story = {
+	play: async ({ canvasElement }) => {
+		expectActionButtonsFillColumns(canvasElement);
+	},
+};
 
 export const NoSelection: Story = {
 	args: { selectedIndex: -1 },
+	play: async ({ canvasElement }) => {
+		expectActionButtonsFillColumns(canvasElement);
+	},
 };
 
 export const Empty: Story = {
 	args: { showEmpty: true, selectedIndex: -1 },
+	play: async ({ canvasElement }) => {
+		expectActionButtonsFillColumns(canvasElement);
+	},
 };

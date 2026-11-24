@@ -6,7 +6,7 @@
  * cells whose derived data didn't change when the parent `state` ref churns.
  */
 
-import { cx } from "@ty-plus/ui/util/cx";
+import { cx } from "@ty-plus/ui";
 import type { CSSProperties, JSX } from "react";
 import { useEffect, useMemo } from "react";
 import type { WidgetType } from "@/function/widget";
@@ -17,6 +17,7 @@ import type { Preset } from "@/management/preset/contract";
 import { shouldHideGroupedMemberSurfaceTile } from "@/management/preset/group/surface-visibility";
 import { registry } from "@/management/widget/registry";
 import { toStyle } from "@/management/workspace/background/style";
+import type { SurfaceState } from "@/management/workspace/core/state";
 import {
 	computeGridTracks,
 	getTileRect,
@@ -38,7 +39,6 @@ import {
 	ATTR_WIDGET_INSTANCE_ID,
 	ATTR_WIDGET_TILE,
 } from "@/management/workspace/placement/types";
-import type { SurfaceState } from "@/management/workspace/state";
 import {
 	usePanelState,
 	useSelectedSurfaceIndices,

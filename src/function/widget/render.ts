@@ -15,10 +15,12 @@
  */
 
 import { createElement } from "react";
-
+import type {
+	GridSettings,
+	SurfaceState,
+} from "@/management/workspace/core/state";
 import { getTileRect } from "@/management/workspace/layout/engine";
 import type { Layout } from "@/management/workspace/layout/grid-document";
-import type { GridSettings, SurfaceState } from "@/management/workspace/state";
 import type { WidgetDescriptor } from "./define";
 
 export type RenderWidgetProps = {

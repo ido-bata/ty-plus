@@ -1,5 +1,8 @@
-import { SegmentedControl } from "@ty-plus/ui/controls/SegmentedControl";
-import { PathField } from "@ty-plus/ui/fields/PathField";
+import {
+	PathField,
+	SegmentedControl,
+	segmentedButtonQuietClass,
+} from "@ty-plus/ui";
 import { FileSearch } from "lucide-react";
 import type { JSX } from "react";
 import { selectFile } from "@/management/ae/cep/dialog-shim/bolt";
@@ -48,12 +51,6 @@ const pathFieldOverrides = css({
 
 const segmentedOverrides = css({
 	borderColor: "var(--color-ty-widget-border)",
-});
-
-const segmentedButton = css({
-	borderWidth: "1px",
-	borderStyle: "solid",
-	borderColor: "transparent",
 });
 
 const unselected = css({
@@ -122,7 +119,7 @@ export function ImageLayerEditor({
 						label: t(`workspaceShell.backgroundPanel.imageFits.${fit}`),
 					}))}
 					className={segmentedOverrides}
-					buttonClassName={segmentedButton}
+					buttonClassName={segmentedButtonQuietClass}
 					selectedClassName={QUIET_SELECTED_CLASS}
 					unselectedClassName={unselected}
 				/>
@@ -144,7 +141,7 @@ export function ImageLayerEditor({
 						label: t(`workspaceShell.backgroundPanel.imageRepeats.${repeat}`),
 					}))}
 					className={segmentedOverrides}
-					buttonClassName={segmentedButton}
+					buttonClassName={segmentedButtonQuietClass}
 					selectedClassName={QUIET_SELECTED_CLASS}
 					unselectedClassName={unselected}
 				/>

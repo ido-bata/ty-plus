@@ -1,6 +1,12 @@
 import { IconButton } from "@ty-plus/ui/controls/IconButton";
 import { cx } from "@ty-plus/ui/util/cx";
-import type { InputHTMLAttributes, ReactElement, ReactNode } from "react";
+import {
+	type InputHTMLAttributes,
+	type ReactElement,
+	type ReactNode,
+	useLayoutEffect,
+	useRef,
+} from "react";
 import { css } from "@/styled-system/css";
 
 export type PathFieldProps = {
@@ -49,14 +55,17 @@ const inputClass = css({
 	minWidth: 0,
 	flex: 1,
 	borderRadius: "shell-sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.input",
 	backgroundColor: "surface.widget",
 	color: "text.primary",
 	outline: "none",
 	transitionProperty: "colors",
-	_focus: { borderColor: "interactive.focus" },
+	_focus: {
+		borderColor: "interactive.focus",
+		boxShadow: "var(--color-focus-ring)",
+	},
 	_disabled: { opacity: 0.5 },
 });
 
@@ -69,22 +78,15 @@ const wrapper = css({
 
 const browseButton = css({
 	flexShrink: 0,
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
-	borderColor: "border.default",
+	borderColor: "border.control",
 	backgroundColor: "surface.widget",
-	opacity: 0.5,
-	color: "text.muted",
 	_hover: {
 		backgroundColor: "interactive.hover",
 		color: "text.primary",
 	},
 });
-
-// RTL direction with LTR text alignment keeps the trailing portion of long
-// paths pinned to the start of the field (so the browse button can sit flush
-// against it) while still rendering paths left-to-right.
-const PATH_INPUT_STYLE = { direction: "rtl", textAlign: "left" } as const;
 
 export function PathField(props: PathFieldProps): ReactElement {
 	const {
@@ -102,16 +104,28 @@ export function PathField(props: PathFieldProps): ReactElement {
 		inputProps,
 	} = props;
 	const resolvedSize = size ?? uiSize;
+	const inputRef = useRef<HTMLInputElement | null>(null);
+
+	// Pin the tail of long paths (the filename end) into view. The previous
+	// `direction: rtl` trick reordered leading neutral characters such as `/`,
+	// so absolute paths rendered as `sample/preset/bg.png/`.
+	// biome-ignore lint/correctness/useExhaustiveDependencies: re-pin the tail whenever the value changes
+	useLayoutEffect(() => {
+		const el = inputRef.current;
+		if (el) {
+			el.scrollLeft = el.scrollWidth;
+		}
+	}, [value]);
 
 	return (
 		<div className={cx(wrapper, className)} data-path-field>
 			<input
+				ref={inputRef}
 				type="text"
 				{...inputProps}
 				value={value}
 				onChange={(e) => onChange(e.target.value)}
 				placeholder={placeholder}
-				style={PATH_INPUT_STYLE}
 				className={cx("ty-ui-input", inputClass, sizes[resolvedSize])}
 				disabled={disabled}
 				readOnly={readOnly}

@@ -11,10 +11,10 @@
 
 import { describe, expect, it, vi } from "vitest";
 import type { WidgetType } from "@/function/widget";
+import type { SurfaceState } from "../core/state";
+import { createInitialSurfaceState } from "../core/state";
 import { packTopLeft } from "../layout/engine";
 import { mergeWidgetPlacementIntoState } from "../placement/widget-bus";
-import type { SurfaceState } from "../state";
-import { createInitialSurfaceState } from "../state";
 import type { LayoutPayload } from "../surface/contract";
 import {
 	layoutsFromSurface,

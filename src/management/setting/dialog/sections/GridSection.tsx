@@ -1,6 +1,7 @@
-import { NumberField } from "@ty-plus/ui/fields/NumberField";
+import { NumberField } from "@ty-plus/ui";
 import { type JSX, useCallback, useEffect, useRef, useState } from "react";
-import { useCep } from "@/management/ae/cep/contexts/Context";
+import { useCep } from "@/management/ae/cep/contexts/CepContext";
+import { i18n } from "@/management/i18n/index";
 import { useSettings } from "@/management/setting/context";
 import { WorkspaceGridPreview } from "@/management/setting/dialog/components/WorkspaceGridPreview";
 import {
@@ -62,9 +63,7 @@ export function GridSection(): JSX.Element {
 					// app.json committed but the theme.css projection failed:
 					// surface it through the shared saveError banner and
 					// saveNotice broadcast instead of console-only (#91 review).
-					reportSaveError(
-						"Failed to save workspace grid. The theme file may be read-only.",
-					);
+					reportSaveError(i18n.t("settings:gridSection.saveError"));
 				},
 			);
 		},
@@ -75,7 +74,7 @@ export function GridSection(): JSX.Element {
 		<SettingsGrid>
 			<SettingsField span={2}>
 				<NumberField
-					label="Cell"
+					label={i18n.t("settings:gridSection.cell")}
 					value={metrics.cellSize}
 					onChange={(value) => commit({ cellSize: Number(value) })}
 					min={8}
@@ -84,7 +83,7 @@ export function GridSection(): JSX.Element {
 			</SettingsField>
 			<SettingsField span={2}>
 				<NumberField
-					label="Gap"
+					label={i18n.t("common:settings.labels.gap")}
 					value={metrics.gap}
 					onChange={(value) => commit({ gap: Number(value) })}
 					min={0}
@@ -93,7 +92,7 @@ export function GridSection(): JSX.Element {
 			</SettingsField>
 			<SettingsField span={2}>
 				<NumberField
-					label="Radius"
+					label={i18n.t("settings:gridSection.radius")}
 					value={metrics.radius}
 					onChange={(value) => commit({ radius: Number(value) })}
 					min={0}
@@ -101,7 +100,9 @@ export function GridSection(): JSX.Element {
 				/>
 			</SettingsField>
 
-			<SettingsSectionHeading>Preview</SettingsSectionHeading>
+			<SettingsSectionHeading>
+				{i18n.t("settings:gridSection.preview")}
+			</SettingsSectionHeading>
 			<SettingsField span={6}>
 				<WorkspaceGridPreview />
 			</SettingsField>

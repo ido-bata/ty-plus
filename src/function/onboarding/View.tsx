@@ -1,5 +1,10 @@
-import { IconButton, ListSelect, PathField } from "@ty-plus/ui/index";
-import { isIMEComposing } from "@ty-plus/ui/util/keyboard";
+import {
+	IconButton,
+	isIMEComposing,
+	ListSelect,
+	mutedBodyTextClass,
+	PathField,
+} from "@ty-plus/ui";
 import {
 	AlertCircle,
 	FolderOpen,
@@ -34,7 +39,7 @@ import {
 	resolveCurrentFolderPath,
 } from "@/function/onboarding/usePaths";
 import type { WidgetType } from "@/function/widget";
-import { useCep } from "@/management/ae/cep/contexts/Context";
+import { useCep } from "@/management/ae/cep/contexts/CepContext";
 import { selectFolder } from "@/management/ae/cep/dialog-shim/bolt";
 import { createCepSurfaceTransport } from "@/management/ae/cep/transport";
 import { useAfterEffectsFilesGateway } from "@/management/ae/files/gateway-context";
@@ -44,11 +49,12 @@ import {
 	SUPPORTED_LOCALES,
 	type SupportedLocale,
 } from "@/management/i18n/config";
+import { i18n } from "@/management/i18n/index";
 import { saveCepShellLocale } from "@/management/i18n/locale-storage";
 import {
 	importOnboardingPresets,
 	type OnboardingImportOptions,
-} from "@/management/preset/onboarding-service";
+} from "@/management/preset/onboarding/service";
 import { getLocalPresetCatalog } from "@/management/preset/repository/local-catalog";
 import { completeOnboardingStorage } from "@/management/setting/onboarding/complete";
 import {
@@ -78,13 +84,13 @@ import {
 	readScopedDirectory,
 	resolveScopedParentDirectory,
 } from "@/management/storage/read/scoped-directory";
-import { DirectoryBrowser } from "@/management/storage/ui/DirectoryBrowser";
+import { FileEntryList } from "@/management/storage/ui/file-entry/FileEntryList";
 import type { WidgetRecord } from "@/management/widget/record/types";
+import { createInitialSurfaceState } from "@/management/workspace/core/state";
 import type { Layout } from "@/management/workspace/layout/grid-document";
 import { publishShellMessage } from "@/management/workspace/messaging/publish-shell-message";
 import { logWorkspace } from "@/management/workspace/onboarding/flow-log";
 import { buildOnboardingLayoutItems } from "@/management/workspace/placement/gateway";
-import { createInitialSurfaceState } from "@/management/workspace/state";
 import { SHELL_CHANNELS } from "@/management/workspace/surface/contract";
 import {
 	layoutsFromSurface,
@@ -103,7 +109,7 @@ const errorBannerClass = css({
 	backgroundColor:
 		"color-mix(in srgb, var(--color-ty-status-error), 15%, var(--color-ty-bg-surface))",
 	color: "text.primary",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor:
 		"color-mix(in srgb, var(--color-ty-status-error), 55%, transparent)",
@@ -129,7 +135,7 @@ const finishErrorPanelClass = css({
 	backgroundColor:
 		"color-mix(in srgb, var(--color-ty-status-error), 15%, var(--color-ty-bg-surface))",
 	color: "text.primary",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor:
 		"color-mix(in srgb, var(--color-ty-status-error), 55%, transparent)",
@@ -179,7 +185,7 @@ const stepNavClass = css({
 	gap: "2",
 	paddingBlock: "3",
 	paddingInline: "5",
-	borderTopWidth: "1px",
+	borderTopWidth: "hairline",
 	borderTopStyle: "solid",
 	borderTopColor: "border.default",
 });
@@ -190,12 +196,6 @@ const stepBodyClass = css({
 	gap: "3",
 	flex: "1",
 	minHeight: 0,
-});
-
-const stepBodyTextClass = css({
-	fontSize: "sm",
-	color: "text.muted",
-	whiteSpace: "pre-line",
 });
 
 const animationSlotClass = css({
@@ -241,7 +241,7 @@ const subfoldersLabelClass = css({
 const shellFullscreenClass = css({
 	position: "fixed",
 	inset: 0,
-	zIndex: 2147483647,
+	zIndex: "var(--ty-z-blocking)",
 	display: "flex",
 	alignItems: "stretch",
 	justifyContent: "stretch",
@@ -250,7 +250,7 @@ const shellFullscreenClass = css({
 const shellModalClass = css({
 	position: "fixed",
 	inset: 0,
-	zIndex: 2147483647,
+	zIndex: "var(--ty-z-blocking)",
 	display: "flex",
 	alignItems: "center",
 	justifyContent: "center",
@@ -259,12 +259,17 @@ const shellModalClass = css({
 
 const dialogFullscreenClass = css({
 	pointerEvents: "auto",
-	width: "screen",
-	height: "screen",
+	// Issue #541: `screen` resolves to 100vw/100vh, which include the
+	// scrollbar and can overflow the shell by the scrollbar width. The
+	// parent shell is already `position: fixed; inset: 0`, so `full`
+	// (100%) yields the same box without the vw/vh pitfall — matching
+	// `dialogModalClass`.
+	width: "full",
+	height: "full",
 	display: "flex",
 	flexDirection: "column",
 	overflow: "hidden",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 	backgroundColor: "surface.dialog",
@@ -280,7 +285,7 @@ const dialogModalClass = css({
 	flexDirection: "column",
 	overflow: "hidden",
 	borderRadius: "shell-lg",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 	backgroundColor: "surface.dialog",
@@ -513,7 +518,7 @@ type ExtractedPaths = {
 function IntroStep({ body }: { body: string }): JSX.Element {
 	return (
 		<div className={stepBodyClass}>
-			<p className={stepBodyTextClass}>{body}</p>
+			<p className={mutedBodyTextClass}>{body}</p>
 			<div className={animationSlotClass}>
 				<Animation variant="intro" />
 			</div>
@@ -531,7 +536,7 @@ function LanguageStep({
 	const { locale, setLocale } = useI18n();
 	return (
 		<div className={stepBodyClass}>
-			<p className={stepBodyTextClass}>{body}</p>
+			<p className={mutedBodyTextClass}>{body}</p>
 			<div className={css({ width: "full" })}>
 				<ListSelect
 					value={locale}
@@ -564,11 +569,9 @@ function SupportStepBody({
 	const { t } = useTranslation("onboarding");
 	return (
 		<div className={stepBodyClass}>
-			<p className={stepBodyTextClass}>{body}</p>
+			<p className={mutedBodyTextClass}>{body}</p>
 			{isAeAppFolder ? (
-				<p className={supportHintClass}>
-					AE app folder detected — subfolders step will be skipped.
-				</p>
+				<p className={supportHintClass}>{t("step.support.aeAppFolderHint")}</p>
 			) : null}
 			<div
 				className={supportBrowseClass}
@@ -633,7 +636,7 @@ function SubfoldersStep({
 	const { t } = useTranslation("onboarding");
 	return (
 		<div className={stepBodyClass}>
-			<p className={stepBodyTextClass}>{body}</p>
+			<p className={mutedBodyTextClass}>{body}</p>
 			{SUBFOLDER_KEYS.map((key) => (
 				<div key={key} className={subfoldersStepClass}>
 					<div className={subfoldersLabelClass}>{t(`fields.${key}`)}</div>
@@ -661,7 +664,7 @@ function SubfoldersStep({
 function WorkspaceStep({ body }: { body: string }): JSX.Element {
 	return (
 		<div className={stepBodyClass}>
-			<p className={stepBodyTextClass}>{body}</p>
+			<p className={mutedBodyTextClass}>{body}</p>
 			<div className={animationSlotClass}>
 				<Animation variant="workspace" />
 			</div>
@@ -672,7 +675,7 @@ function WorkspaceStep({ body }: { body: string }): JSX.Element {
 function AddingPresetsStep({ body }: { body: string }): JSX.Element {
 	return (
 		<div className={stepBodyClass}>
-			<p className={stepBodyTextClass}>{body}</p>
+			<p className={mutedBodyTextClass}>{body}</p>
 		</div>
 	);
 }
@@ -680,7 +683,7 @@ function AddingPresetsStep({ body }: { body: string }): JSX.Element {
 function FinishStep({ body }: { body: string }): JSX.Element {
 	return (
 		<div className={stepBodyClass}>
-			<p className={stepBodyTextClass}>{body}</p>
+			<p className={mutedBodyTextClass}>{body}</p>
 			<div className={animationSlotClass}>
 				<Animation variant="intro" />
 			</div>
@@ -740,8 +743,8 @@ function FileStepBrowser({
 		})();
 	return (
 		<div className={fileStepBodyClass}>
-			<p className={stepBodyTextClass}>{t(`step.${kind}.body`)}</p>
-			<DirectoryBrowser
+			<p className={mutedBodyTextClass}>{t(`step.${kind}.body`)}</p>
+			<FileEntryList
 				entries={[...folderEntries]}
 				fileNameFilter={STEP_EXTENSIONS[kind]}
 				loading={loadingFiles}
@@ -793,7 +796,7 @@ function FileStepBrowser({
 				onViewModeChange={setViewMode}
 				scale={1}
 				aspect="square"
-				loadingLabel="Loading..."
+				loadingLabel={t("common:status.loading")}
 				emptyLabel={t("empty")}
 				upLabel={t("goUp")}
 			/>
@@ -815,7 +818,7 @@ const runFinishPhase = async <T,>(
 			throw error;
 		}
 		const message = error instanceof Error ? error.message : String(error);
-		throw new Error(`[onboarding finish:${phase}] ${message}`);
+		throw new Error(`[onboarding finish:${phase}] ${message}`); // i18n-exempt: internal diagnostic — not rendered as UI copy
 	}
 };
 
@@ -1044,7 +1047,8 @@ function useOnboardingFinish(input: OnboardingFinishInput): {
 		setFinishError,
 		onCompleted,
 	} = input;
-	const thumbnailGateway = useAfterEffectsFilesGateway();
+	const { t } = useTranslation("onboarding");
+	const _thumbnailGateway = useAfterEffectsFilesGateway();
 	const handleFinish = useCallback(async () => {
 		setSaving(true);
 		setError(null);
@@ -1063,13 +1067,11 @@ function useOnboardingFinish(input: OnboardingFinishInput): {
 				!normalizedSubfolders.scriptRoot ||
 				!normalizedSubfolders.pluginRoot
 			) {
-				throw new Error("Support path and onboarding subfolders are required");
+				throw new Error(t("errors.supportAndSubfoldersRequired"));
 			}
 			const appRoot = await resolveInitializationAppRoot(window);
 			if (!appRoot) {
-				throw new Error(
-					"Ty Plus: cannot resolve the After Effects application folder for ty-plus-init.json. Open the panel inside After Effects and try again.",
-				);
+				throw new Error(t("errors.appRootUnresolved"));
 			}
 			await runFinishPhase("init-complete", () =>
 				completeInitialization(window, appRoot, {
@@ -1096,7 +1098,9 @@ function useOnboardingFinish(input: OnboardingFinishInput): {
 			const supportRootFromSettings =
 				readSupportRootFromSettingsJson(mergedSettingsJson);
 			if (!supportRootFromSettings) {
+				// // i18n-exempt: internal diagnostic — not rendered as UI copy
 				throw new Error(
+					// i18n-exempt: internal diagnostic — not rendered as UI copy
 					"[onboarding finish:settings-root] merged settings must include core.paths.supportRoot",
 				);
 			}
@@ -1157,7 +1161,6 @@ function useOnboardingFinish(input: OnboardingFinishInput): {
 				importOptions,
 				importPresetRepository,
 				listDirectory,
-				thumbnailGateway,
 			);
 			logWorkspace("onboardingView:after-preset-import", {
 				presetCatalogCount: presets.length,
@@ -1182,7 +1185,7 @@ function useOnboardingFinish(input: OnboardingFinishInput): {
 						syncStatus: {
 							provider: "supabase",
 							state: "idle" as const,
-							label: "Local Update",
+							label: i18n.t("onboarding:syncStatus.localUpdate"),
 							checkedAt: new Date().toISOString(),
 						},
 						sourceSurfaceId: panelSurfaceId,
@@ -1269,7 +1272,7 @@ function useOnboardingFinish(input: OnboardingFinishInput): {
 		setFinishError,
 		setSaving,
 		supportPath,
-		thumbnailGateway,
+		t,
 	]);
 
 	// Retry the failed write with UAC/osascript elevation. The first call

@@ -1,6 +1,6 @@
 import { createCepSurfaceTransport } from "@/management/ae/cep/transport";
 import { createLogger } from "@/management/debug";
-import { listPresets } from "@/management/preset/use-cases";
+import { listPresets } from "@/management/preset/operations";
 import { publishShellMessage } from "@/management/workspace/messaging/publish-shell-message";
 import { tryPersistAppendPresetFromDialog } from "@/management/workspace/placement/append-preset-from-dialog-disk";
 import { tryPersistRemovePresetFromDialog } from "@/management/workspace/placement/remove-preset-from-dialog-disk";
@@ -170,6 +170,7 @@ export async function notifyPanelsAfterPresetSave(
 		syncStatus: {
 			provider: "supabase",
 			state: "idle",
+			// i18n-exempt: syncStatus is write-only payload data; the presets bus subscriber ignores it and no UI renders label
 			label: "Local Update",
 			checkedAt: new Date().toISOString(),
 		},

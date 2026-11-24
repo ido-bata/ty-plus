@@ -1,12 +1,20 @@
-import { Button, IconButton, SegmentedControl } from "@ty-plus/ui";
-import { ArrowDownToLine } from "@ty-plus/ui/icons";
-import { cx } from "@ty-plus/ui/util/cx";
-import { isIMEComposing } from "@ty-plus/ui/util/keyboard";
+import {
+	ArrowDownToLine,
+	Button,
+	cx,
+	fillSurfaceClass,
+	IconButton,
+	Input,
+	isIMEComposing,
+	monoMetaClass,
+	SegmentedControl,
+} from "@ty-plus/ui";
 import type React from "react";
 import type { JSX } from "react";
 import { useCallback, useMemo, useState } from "react";
 import { currentSessionStartedAt } from "@/management/debug/console/interceptor";
 import type { LogMessage } from "@/management/debug/console/types";
+import { i18n } from "@/management/i18n/index";
 import { css } from "@/styled-system/css";
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
@@ -19,12 +27,36 @@ const fmtTime = (d: Date): string =>
 
 const PROMPT_CHAR = "\x3e";
 
-const FILTERS: { value: FilterLevel; label: string }[] = [
-	{ value: "all", label: "All" },
-	{ value: "log", label: "Log" },
-	{ value: "info", label: "Info" },
-	{ value: "warn", label: "Warn" },
-	{ value: "error", label: "Error" },
+const FILTERS: {
+	value: FilterLevel;
+	labelKey: string;
+	labelFallback: string;
+}[] = [
+	{
+		value: "all",
+		labelKey: "common:debugConsole.levels.all",
+		labelFallback: "All",
+	},
+	{
+		value: "log",
+		labelKey: "common:debugConsole.levels.log",
+		labelFallback: "Log",
+	},
+	{
+		value: "info",
+		labelKey: "common:debugConsole.levels.info",
+		labelFallback: "Info",
+	},
+	{
+		value: "warn",
+		labelKey: "common:debugConsole.levels.warn",
+		labelFallback: "Warn",
+	},
+	{
+		value: "error",
+		labelKey: "common:debugConsole.levels.error",
+		labelFallback: "Error",
+	},
 ];
 
 /**
@@ -32,18 +64,66 @@ const FILTERS: { value: FilterLevel; label: string }[] = [
  * the `LogSource` union in `logger.ts`. "All" is the default that does not
  * filter by source.
  */
-const SOURCE_FILTERS: { value: FilterSource; label: string }[] = [
-	{ value: "all", label: "All sources" },
-	{ value: "panel", label: "Panel" },
-	{ value: "modeless", label: "Modeless" },
-	{ value: "host-bridge", label: "Host bridge" },
-	{ value: "online-runtime", label: "Online" },
-	{ value: "preset-execution", label: "Preset" },
-	{ value: "operation-worker", label: "Op worker" },
-	{ value: "workspace", label: "Workspace" },
-	{ value: "boot", label: "Boot" },
-	{ value: "debug-console", label: "Debug console" },
-	{ value: "console-interceptor", label: "Console" },
+const SOURCE_FILTERS: {
+	value: FilterSource;
+	labelKey: string;
+	labelFallback: string;
+}[] = [
+	{
+		value: "all",
+		labelKey: "common:debugConsole.sources.all",
+		labelFallback: "All sources",
+	},
+	{
+		value: "panel",
+		labelKey: "common:debugConsole.sources.panel",
+		labelFallback: "Panel",
+	},
+	{
+		value: "modeless",
+		labelKey: "common:debugConsole.sources.modeless",
+		labelFallback: "Modeless",
+	},
+	{
+		value: "host-bridge",
+		labelKey: "common:debugConsole.sources.hostBridge",
+		labelFallback: "Host bridge",
+	},
+	{
+		value: "online-runtime",
+		labelKey: "common:debugConsole.sources.online",
+		labelFallback: "Online",
+	},
+	{
+		value: "preset-execution",
+		labelKey: "common:debugConsole.sources.preset",
+		labelFallback: "Preset",
+	},
+	{
+		value: "operation-worker",
+		labelKey: "common:debugConsole.sources.opWorker",
+		labelFallback: "Op worker",
+	},
+	{
+		value: "workspace",
+		labelKey: "common:debugConsole.sources.workspace",
+		labelFallback: "Workspace",
+	},
+	{
+		value: "boot",
+		labelKey: "common:debugConsole.sources.boot",
+		labelFallback: "Boot",
+	},
+	{
+		value: "debug-console",
+		labelKey: "common:debugConsole.sources.debugConsole",
+		labelFallback: "Debug console",
+	},
+	{
+		value: "console-interceptor",
+		labelKey: "common:debugConsole.sources.console",
+		labelFallback: "Console",
+	},
 ];
 
 const LOG_SOURCE_VALUES: ReadonlySet<string> = new Set([
@@ -106,7 +186,6 @@ const sourceStyle = css({
 	backgroundColor: "colorMix(in srgb, surface.widget 50%, transparent)",
 	maxWidth: "10rem",
 	truncate: true,
-	opacity: 0.7,
 });
 
 const timeStyle = css({
@@ -114,7 +193,6 @@ const timeStyle = css({
 	color: "text.muted",
 	minWidth: "14.5",
 	fontSize: "text-2xs",
-	opacity: 0.65,
 });
 
 const levelChipStyle = css({
@@ -183,7 +261,9 @@ function MessageRow({ msg, onContextMenu }: MessageRowProps): JSX.Element {
 		<div
 			className={cx(rowBaseStyle, rowBg)}
 			data-debug-msg-id={msg.id}
-			title="Right-click to copy"
+			title={i18n.t("common:debugConsole.rowContextHint", {
+				defaultValue: "Right-click to copy",
+			})}
 			onContextMenu={handleContextMenu}
 		>
 			<span className={timeStyle}>{fmtTime(msg.timestamp)}</span>
@@ -236,10 +316,15 @@ function FilterTabs({ filter, onChange }: FilterTabsProps): JSX.Element {
 	return (
 		<div className={filterTabsStyle}>
 			<SegmentedControl
-				options={FILTERS}
+				options={FILTERS.map((f) => ({
+					value: f.value,
+					label: i18n.t(f.labelKey, { defaultValue: f.labelFallback }),
+				}))}
 				value={filter}
 				onChange={(v) => onChange(v as FilterLevel)}
-				aria-label="Filter console messages"
+				aria-label={i18n.t("common:debugConsole.filterLevelAria", {
+					defaultValue: "Filter console messages",
+				})}
 			/>
 		</div>
 	);
@@ -262,16 +347,19 @@ function SourceFilterTabs({
 	return (
 		<div className={sourceFilterStyle}>
 			<SegmentedControl
-				options={SOURCE_FILTERS}
+				options={SOURCE_FILTERS.map((f) => ({
+					value: f.value,
+					label: i18n.t(f.labelKey, { defaultValue: f.labelFallback }),
+				}))}
 				value={sourceFilter}
 				onChange={(v) => onChange(v as FilterSource)}
-				aria-label="Filter console messages by source"
+				aria-label={i18n.t("common:debugConsole.filterSourceAria", {
+					defaultValue: "Filter console messages by source",
+				})}
 			/>
 		</div>
 	);
 }
-
-const SOURCE_FILTER_TOOLBAR_LABEL = "Filter console messages by source";
 
 /**
  * View scope (Issue #138, supersedes Issue #79).
@@ -283,11 +371,23 @@ const SOURCE_FILTER_TOOLBAR_LABEL = "Filter console messages by source";
  * kept, but as an explicit view filter the operator opts into — it is not
  * a retention rule and it never discards history.
  */
-export type FilterScope = "all" | "session";
+type FilterScope = "all" | "session";
 
-const SCOPES: { value: FilterScope; label: string }[] = [
-	{ value: "all", label: "All history" },
-	{ value: "session", label: "This session" },
+const SCOPES: {
+	value: FilterScope;
+	labelKey: string;
+	labelFallback: string;
+}[] = [
+	{
+		value: "all",
+		labelKey: "common:debugConsole.scopes.allHistory",
+		labelFallback: "All history",
+	},
+	{
+		value: "session",
+		labelKey: "common:debugConsole.scopes.thisSession",
+		labelFallback: "This session",
+	},
 ];
 
 interface ScopeFilterTabsProps {
@@ -302,10 +402,15 @@ function ScopeFilterTabs({
 	return (
 		<div className={filterTabsStyle}>
 			<SegmentedControl
-				options={SCOPES}
+				options={SCOPES.map((f) => ({
+					value: f.value,
+					label: i18n.t(f.labelKey, { defaultValue: f.labelFallback }),
+				}))}
 				value={scope}
 				onChange={(v) => onChange(v as FilterScope)}
-				aria-label="Filter console messages by session scope"
+				aria-label={i18n.t("common:debugConsole.filterScopeAria", {
+					defaultValue: "Filter console messages by session scope",
+				})}
 			/>
 		</div>
 	);
@@ -326,15 +431,6 @@ export type PanelProps = {
 	onMessageContextMenu?: (messageId: string, message: LogMessage) => void;
 	messagesRef?: React.RefObject<Element | null>;
 };
-
-const rootStyle = css({
-	width: "full",
-	height: "full",
-	display: "flex",
-	flexDirection: "column",
-	backgroundColor: "surface.dialog",
-	overflow: "hidden",
-});
 
 const headerStyle = css({
 	display: "flex",
@@ -370,35 +466,20 @@ const inputRowStyle = css({
 	paddingInline: "2",
 	paddingBlock: "1.5",
 	flexShrink: 0,
-	borderTopWidth: "1px",
+	borderTopWidth: "hairline",
 	borderTopStyle: "solid",
 	borderTopColor: "border.subtle",
 });
 
-const promptStyle = css({
-	flexShrink: 0,
-	fontFamily: "mono",
-	fontSize: "text-2xs",
-	color: "text.muted",
-});
-
+/**
+ * Layout-only overrides for the shared `Input`. The console prompt keeps the
+ * monospace face of the log rows; every other aspect (border, background,
+ * focus ring) comes from the shared primitive.
+ */
 const inputStyle = css({
 	flex: "1",
-	height: "6",
-	minHeight: "var(--ty-space-6)",
-	paddingInline: "2",
-	fontSize: "text-2xs",
+	minWidth: 0,
 	fontFamily: "mono",
-	backgroundColor: "surface.widget",
-	borderWidth: "1px",
-	borderStyle: "solid",
-	borderColor: "border.subtle",
-	borderRadius: "shell-sm",
-	color: "text.primary",
-	outline: "none",
-	transitionProperty: "colors",
-	_placeholder: { color: "colorMix(in srgb, text.muted 50%, transparent)" },
-	_focus: { borderColor: "interactive.focus" },
 });
 
 export function Panel({
@@ -473,12 +554,14 @@ export function Panel({
 	};
 
 	return (
-		<div className={rootStyle}>
+		<div className={fillSurfaceClass}>
 			{/* Header */}
 			<div className={headerStyle}>
-				<span className={titleStyle}>Console</span>
+				<span className={titleStyle}>
+					{i18n.t("common:debugConsole.title", { defaultValue: "Console" })}
+				</span>
 				<Button variant="ghost" uiSize="sm" onClick={onClear}>
-					Clear
+					{i18n.t("common:debugConsole.clear", { defaultValue: "Clear" })}
 				</Button>
 				<IconButton
 					size="sm"
@@ -517,12 +600,19 @@ export function Panel({
 
 			{/* Input row */}
 			<div className={inputRowStyle}>
-				<span className={promptStyle}>{PROMPT_CHAR}</span>
-				<input
+				<span className={cx(monoMetaClass, css({ flexShrink: 0 }))}>
+					{PROMPT_CHAR}
+				</span>
+				<Input
 					className={inputStyle}
 					type="text"
-					aria-label="Evaluate JavaScript"
-					placeholder="Evaluate JavaScript..."
+					uiSize="sm"
+					aria-label={i18n.t("common:debugConsole.evaluateAria", {
+						defaultValue: "Evaluate JavaScript",
+					})}
+					placeholder={i18n.t("common:debugConsole.evaluatePlaceholder", {
+						defaultValue: "Evaluate JavaScript...",
+					})}
 					autoComplete="off"
 					spellCheck={false}
 					onKeyDown={handleKeyDown}

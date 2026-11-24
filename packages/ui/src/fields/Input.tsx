@@ -36,7 +36,7 @@ const sizes: Record<NonNullable<InputProps["uiSize"]>, string> = {
 const base = css({
 	width: "full",
 	borderRadius: "shell-sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	backgroundColor: "surface.widget",
 	paddingInline: "2.5",
@@ -53,8 +53,13 @@ const errorState = css({
 });
 
 const defaultState = css({
-	borderColor: "border.default",
-	_focus: { borderColor: "interactive.focus" },
+	borderColor: "border.control",
+	// The one focus indicator: the border repaints and the shared ring
+	// paints, so a focused field reads like a focused button.
+	_focus: {
+		borderColor: "interactive.focus",
+		boxShadow: "var(--color-focus-ring)",
+	},
 });
 
 const numberSpinnerHidden = css({

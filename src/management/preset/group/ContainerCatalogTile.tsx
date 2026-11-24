@@ -17,7 +17,7 @@ const badgeClass = css({
 	position: "absolute",
 	bottom: "0.5",
 	right: "0.5",
-	zIndex: "10",
+	zIndex: "var(--ty-z-overlay)",
 	boxSizing: "border-box",
 	minHeight: "3.5",
 	minWidth: "3.5",

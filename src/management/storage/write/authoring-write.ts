@@ -33,6 +33,7 @@
  */
 import type { PresetSaveRootClass } from "@/management/ae/host/contract";
 import { createLogger } from "@/management/debug/logger";
+import { i18n } from "@/management/i18n/index";
 import {
 	createFolderWithElevation,
 	isElevationAvailable,
@@ -98,7 +99,7 @@ export type AuthoringWriteFailure = AuthoringWriteBase & {
 	readonly message: string;
 };
 
-export type AuthoringWriteSuccess = Omit<
+type AuthoringWriteSuccess = Omit<
 	AuthoringWriteFailure,
 	"ok" | "code" | "verification"
 > & {
@@ -305,11 +306,25 @@ const classifyElevationFailure = (
 };
 
 const describeElevationFailure = (stderr: string, exitCode: number): string => {
-	const exitNote = exitCode >= 0 ? ` (exit code ${exitCode})` : "";
+	const exitNote =
+		exitCode >= 0
+			? i18n.t("presets:assetWrite.exitCodeSuffix", {
+					code: exitCode,
+					defaultValue: " (exit code {{code}})",
+				})
+			: "";
 	const detail = stderr.trim();
 	return detail
-		? `Elevated write reported an error${exitNote}: ${detail}`
-		: `Elevated write reported an error${exitNote}`;
+		? i18n.t("presets:assetWrite.elevatedErrorWithDetail", {
+				exitNote,
+				detail,
+				defaultValue:
+					"Elevated write reported an error{{exitNote}}: {{detail}}",
+			})
+		: i18n.t("presets:assetWrite.elevatedError", {
+				exitNote,
+				defaultValue: "Elevated write reported an error{{exitNote}}",
+			});
 };
 
 /**
@@ -335,7 +350,10 @@ export const writeAuthoredTextAsset = async (
 		const result = failure({
 			...base,
 			code: "malformed-path",
-			message: `Preset asset path is not an absolute path: ${input.targetPath}`,
+			message: i18n.t("presets:assetWrite.pathNotAbsolute", {
+				path: input.targetPath,
+				defaultValue: "Preset asset path is not an absolute path: {{path}}",
+			}),
 		});
 		logAuthoringWrite(result, "preset.asset.write", input);
 		return result;
@@ -346,8 +364,10 @@ export const writeAuthoredTextAsset = async (
 		const result = failure({
 			...base,
 			code: "fs-unavailable",
-			message:
-				"Preset asset write is unavailable: the CEP Node filesystem is not accessible in this window.",
+			message: i18n.t("presets:assetWrite.fsUnavailable", {
+				defaultValue:
+					"Preset asset write is unavailable: the CEP Node filesystem is not accessible in this window.",
+			}),
 		});
 		logAuthoringWrite(result, "preset.asset.write", input);
 		return result;
@@ -363,7 +383,10 @@ export const writeAuthoredTextAsset = async (
 			const result = failure({
 				...base,
 				code: "write-failed",
-				message: `Preset asset write failed: ${errorMessage(error)}`,
+				message: i18n.t("presets:assetWrite.writeFailed", {
+					error: errorMessage(error),
+					defaultValue: "Preset asset write failed: {{error}}",
+				}),
 				firstAttempt: "failed",
 			});
 			logAuthoringWrite(result, "preset.asset.write", input);
@@ -379,8 +402,15 @@ export const writeAuthoredTextAsset = async (
 			code: "verification-failed",
 			message:
 				verification === "missing"
-					? `Preset asset is missing after write: ${input.targetPath}`
-					: `Preset asset content did not match after write: ${input.targetPath}`,
+					? i18n.t("presets:assetWrite.verificationMissing", {
+							path: input.targetPath,
+							defaultValue: "Preset asset is missing after write: {{path}}",
+						})
+					: i18n.t("presets:assetWrite.verificationMismatch", {
+							path: input.targetPath,
+							defaultValue:
+								"Preset asset content did not match after write: {{path}}",
+						}),
 			firstAttempt: "success",
 			verification,
 		});
@@ -413,7 +443,12 @@ const escalateWrite = (
 		const result = failure({
 			...base,
 			code: "elevation-unavailable",
-			message: `Preset asset write was denied by permissions and no elevation mechanism is available on this host: ${input.targetPath} (${permissionMessage})`,
+			message: i18n.t("presets:assetWrite.elevationUnavailable", {
+				path: input.targetPath,
+				detail: permissionMessage,
+				defaultValue:
+					"Preset asset write was denied by permissions and no elevation mechanism is available on this host: {{path}} ({{detail}})",
+			}),
 			firstAttempt: "permission-denied",
 			elevationRequested: false,
 			elevationResult: "unavailable",
@@ -434,7 +469,11 @@ const escalateWrite = (
 		const result = failure({
 			...elevatedBase,
 			code: "elevation-cancelled",
-			message: `Administrator permission was declined for ${input.targetPath}. The preset asset was not saved.`,
+			message: i18n.t("presets:assetWrite.elevationCancelled", {
+				path: input.targetPath,
+				defaultValue:
+					"Administrator permission was declined for {{path}}. The preset asset was not saved.",
+			}),
 			firstAttempt: "permission-denied",
 			elevationRequested: true,
 			elevationResult: "requested-consent-denied",
@@ -449,7 +488,11 @@ const escalateWrite = (
 			code,
 			message:
 				code === "permission-denied"
-					? `Preset asset write was denied by permissions: ${input.targetPath}`
+					? i18n.t("presets:assetWrite.writeDenied", {
+							path: input.targetPath,
+							defaultValue:
+								"Preset asset write was denied by permissions: {{path}}",
+						})
 					: `${describeElevationFailure(elevated.stderr, elevated.exitCode)} (${input.targetPath})`,
 			firstAttempt: "permission-denied",
 			elevationRequested: true,
@@ -469,8 +512,16 @@ const escalateWrite = (
 			code: "verification-failed",
 			message:
 				verification === "missing"
-					? `Preset asset is missing after the elevated write: ${input.targetPath}`
-					: `Preset asset content did not match after the elevated write: ${input.targetPath}`,
+					? i18n.t("presets:assetWrite.verificationMissingElevated", {
+							path: input.targetPath,
+							defaultValue:
+								"Preset asset is missing after the elevated write: {{path}}",
+						})
+					: i18n.t("presets:assetWrite.verificationMismatchElevated", {
+							path: input.targetPath,
+							defaultValue:
+								"Preset asset content did not match after the elevated write: {{path}}",
+						}),
 			firstAttempt: "permission-denied",
 			elevationRequested: true,
 			elevationResult: "requested-granted",
@@ -514,7 +565,11 @@ export const ensureAuthoredDirectory = async (
 		const result = failure({
 			...base,
 			code: "malformed-path",
-			message: `Preset asset directory is not an absolute path: ${input.targetDir}`,
+			message: i18n.t("presets:assetWrite.dirPathNotAbsolute", {
+				path: input.targetDir,
+				defaultValue:
+					"Preset asset directory is not an absolute path: {{path}}",
+			}),
 		});
 		logAuthoringWrite(result, "preset.asset.directory", input);
 		return result;
@@ -525,8 +580,10 @@ export const ensureAuthoredDirectory = async (
 		const result = failure({
 			...base,
 			code: "fs-unavailable",
-			message:
-				"Preset asset directory creation is unavailable: the CEP Node filesystem is not accessible in this window.",
+			message: i18n.t("presets:assetWrite.dirFsUnavailable", {
+				defaultValue:
+					"Preset asset directory creation is unavailable: the CEP Node filesystem is not accessible in this window.",
+			}),
 		});
 		logAuthoringWrite(result, "preset.asset.directory", input);
 		return result;
@@ -539,7 +596,11 @@ export const ensureAuthoredDirectory = async (
 			const result = failure({
 				...base,
 				code: "write-failed",
-				message: `Preset asset directory could not be created: ${errorMessage(error)}`,
+				message: i18n.t("presets:assetWrite.dirCreateFailed", {
+					error: errorMessage(error),
+					defaultValue:
+						"Preset asset directory could not be created: {{error}}",
+				}),
 				firstAttempt: "failed",
 			});
 			logAuthoringWrite(result, "preset.asset.directory", input);
@@ -549,7 +610,11 @@ export const ensureAuthoredDirectory = async (
 			const result = failure({
 				...base,
 				code: "elevation-unavailable",
-				message: `Preset asset directory creation was denied by permissions and no elevation mechanism is available on this host: ${input.targetDir}`,
+				message: i18n.t("presets:assetWrite.dirElevationUnavailable", {
+					path: input.targetDir,
+					defaultValue:
+						"Preset asset directory creation was denied by permissions and no elevation mechanism is available on this host: {{path}}",
+				}),
 				firstAttempt: "permission-denied",
 				elevationResult: "unavailable",
 			});
@@ -562,7 +627,11 @@ export const ensureAuthoredDirectory = async (
 			const result = failure({
 				...base,
 				code: "elevation-cancelled",
-				message: `Administrator permission was declined for ${input.targetDir}. The preset asset directory was not created.`,
+				message: i18n.t("presets:assetWrite.dirElevationCancelled", {
+					path: input.targetDir,
+					defaultValue:
+						"Administrator permission was declined for {{path}}. The preset asset directory was not created.",
+				}),
 				writer: "elevated-native",
 				firstAttempt: "permission-denied",
 				elevationRequested: true,
@@ -580,9 +649,17 @@ export const ensureAuthoredDirectory = async (
 				...base,
 				code,
 				message: elevated.ok
-					? `Preset asset directory is missing after the elevated creation: ${input.targetDir}`
+					? i18n.t("presets:assetWrite.dirMissingAfterElevated", {
+							path: input.targetDir,
+							defaultValue:
+								"Preset asset directory is missing after the elevated creation: {{path}}",
+						})
 					: code === "permission-denied"
-						? `Preset asset directory creation was denied by permissions: ${input.targetDir}`
+						? i18n.t("presets:assetWrite.dirDenied", {
+								path: input.targetDir,
+								defaultValue:
+									"Preset asset directory creation was denied by permissions: {{path}}",
+							})
 						: `${describeElevationFailure(elevated.stderr, elevated.exitCode)} (${input.targetDir})`,
 				writer: "elevated-native",
 				firstAttempt: "permission-denied",
@@ -608,7 +685,11 @@ export const ensureAuthoredDirectory = async (
 		const result = failure({
 			...base,
 			code: "verification-failed",
-			message: `Preset asset directory is missing after creation: ${input.targetDir}`,
+			message: i18n.t("presets:assetWrite.dirMissingAfterCreate", {
+				path: input.targetDir,
+				defaultValue:
+					"Preset asset directory is missing after creation: {{path}}",
+			}),
 			firstAttempt: "success",
 			verification: "missing",
 		});

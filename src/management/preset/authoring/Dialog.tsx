@@ -1,9 +1,14 @@
-import { Input } from "@ty-plus/ui/fields/Input";
+import { Input } from "@ty-plus/ui";
 import { type JSX, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { readCepOpenParams } from "@/management/ae/cep/transport";
 import { readUserHomeOrFallback, ToolDialog } from "@/management/preset";
 import { hostSafeFileName } from "@/management/preset/authoring/host-safe-file-name";
+import {
+	AuthoringField,
+	AuthoringGrid,
+	AuthoringSection,
+} from "@/management/preset/authoring-layout";
 import { parseRootPathsFromSettingsJson } from "@/management/preset/catalog-add/parse-root-paths";
 import type {
 	PresetEasingCurveV1,
@@ -11,11 +16,6 @@ import type {
 	PresetType,
 } from "@/management/preset/contract";
 import { getCachedPresetToolHandoffPayload } from "@/management/preset/tool-handoff-file";
-import {
-	AuthoringField,
-	AuthoringGrid,
-	AuthoringSection,
-} from "@/management/preset/tool-shell/archive-layout";
 import { openPresetToolSurface } from "@/management/workspace/hooks/dialogs";
 import { readSettings } from "@/management/workspace/persistence/store";
 import { css } from "@/styled-system/css";
@@ -34,7 +34,7 @@ const savePathClass = css({
 	alignItems: "center",
 	gap: "2",
 	borderRadius: "shell-sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 	backgroundColor: "surface.panel",
@@ -173,7 +173,7 @@ export function GenericPresetCreateDialog(): JSX.Element {
 
 	// Preview only — the save uses the live name below so a rename in the
 	// dialog changes the file that is written, not just the shown path.
-	const filePath = buildSavePath(defaultName);
+	const _filePath = buildSavePath(defaultName);
 
 	const [droppedPath, setDroppedPath] = useState("");
 	const [presetName, setPresetName] = useState(defaultName);
@@ -232,6 +232,13 @@ export function GenericPresetCreateDialog(): JSX.Element {
 					...(initialLabelColor !== undefined
 						? { labelColor: initialLabelColor }
 						: {}),
+					messages: {
+						selectComposition: t("presetTool.easingScript.selectComposition"),
+						selectProperties: t("presetTool.easingScript.selectProperties"),
+						notEnoughKeyframes: t("presetTool.easingScript.notEnoughKeyframes"),
+						applyFailedPrefix: t("presetTool.easingScript.applyFailedPrefix"),
+						undoGroupName: t("presetTool.easingScript.undoGroupName"),
+					},
 				});
 				if (!result.ok) {
 					throw new Error(result.error.message);
@@ -264,7 +271,7 @@ export function GenericPresetCreateDialog(): JSX.Element {
 					...(easingRecord ? { easing: easingRecord } : {}),
 				};
 			}}
-			renderForm={({ name, setName, setValue, values, icon, details }) => {
+			renderForm={({ name, setName, icon, details }) => {
 				// Use presetName if set from drop, otherwise use name from state
 				const displayName = presetName || name;
 				const handleNameChange = (value: string) => {

@@ -54,7 +54,7 @@ const {
 	// cloud gateway was never registered. Every other bug in this file was
 	// downstream of that throw.
 	getDataServicesMock: vi.fn(() => {
-		throw new Error("Cloud gateway was not booted (Issue #128)");
+		throw new Error("Cloud gateway was not booted (issue 128)");
 	}),
 	errorLogCalls: [] as Array<{
 		message: string;
@@ -116,7 +116,7 @@ vi.mock("@/management/catalog/json-files", () => ({
 	readGroupJson: readGroupJsonMock,
 }));
 
-vi.mock("@/management/preset/group-catalog", () => ({
+vi.mock("@/management/preset/group/catalog", () => ({
 	parseGroupFromText: () => [],
 }));
 
@@ -145,8 +145,17 @@ vi.mock("@/management/debug", () => ({
 	}),
 }));
 
-vi.mock("@/management/workspace/services", () => ({
+vi.mock("@/management/workspace/core/services", () => ({
 	getDataServices: getDataServicesMock,
+}));
+
+vi.mock("@/management/storage/lock/persistence-lock", () => ({
+	PersistenceLockTimeoutError: class PersistenceLockTimeoutError extends Error {},
+	PersistenceLockUnavailableError: class PersistenceLockUnavailableError extends Error {},
+	resolvePersistenceLockRoot: vi.fn(async () => "/test/managed-root"),
+	withPersistenceLock: vi.fn(
+		async (_win: Window, _root: string, fn: () => Promise<unknown>) => fn(),
+	),
 }));
 
 import { persistAppendWidgetFromDialog } from "@/management/workspace/placement/append-widget-from-dialog-disk";

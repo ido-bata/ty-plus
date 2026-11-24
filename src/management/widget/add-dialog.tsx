@@ -1,4 +1,4 @@
-import { Button } from "@ty-plus/ui/controls/Button";
+import { Button } from "@ty-plus/ui";
 import {
 	type JSX,
 	useCallback,
@@ -8,15 +8,16 @@ import {
 	useState,
 } from "react";
 import type { WidgetType } from "@/function/widget";
-import { useCep } from "@/management/ae/cep/contexts/Context";
+import { useCep } from "@/management/ae/cep/contexts/CepContext";
 import { createCepSurfaceTransport } from "@/management/ae/cep/transport";
 import { createLogger } from "@/management/debug";
 import { DialogShell } from "@/management/dialog";
 import {
 	type CepMenuPayload,
 	registerCepJsonContextMenuSurface,
-} from "@/management/dialog/dialogs/context-menu";
+} from "@/management/dialog/context-menu";
 import { useDialogClose } from "@/management/dialog/useClose";
+import { i18n } from "@/management/i18n/index";
 import { AddWidgetCatalogPanel } from "@/management/widget/catalog";
 import { defaultFirstWidgetType } from "@/management/widget/default-first-widget-type";
 import { publishShellMessage } from "@/management/workspace/messaging/publish-shell-message";
@@ -50,7 +51,7 @@ const contentClassName = css({
 });
 
 const footerClassName = css({
-	borderTopWidth: "1px",
+	borderTopWidth: "hairline",
 	borderTopStyle: "solid",
 	borderTopColor: "border.default",
 	paddingInline: "var(--ty-shell-pad-inline)",
@@ -156,7 +157,12 @@ export function AddWidgetDialog(): JSX.Element {
 					widgetType: type,
 				});
 				if (!result.ok) {
-					setAddFailure(`Could not add the widget: ${result.message}`);
+					setAddFailure(
+						i18n.t("widgets:addWidgetDialog.addFailure", {
+							message: result.message,
+							defaultValue: "Could not add the widget: {{message}}",
+						}),
+					);
 					return;
 				}
 				const layoutPayload: LayoutPayload = {
@@ -208,23 +214,37 @@ export function AddWidgetDialog(): JSX.Element {
 					menu: [
 						{
 							id: `${WIDGET_SELECTOR_CTX.addPrefix}${hitType}`,
-							label: "Add this widget",
+							label: i18n.t(
+								"widgets:addWidgetDialog.contextMenu.addThisWidget",
+								{
+									defaultValue: "Add this widget",
+								},
+							),
 							enabled: !busy,
 						},
 						{
 							id: `${WIDGET_SELECTOR_CTX.selectPrefix}${hitType}`,
-							label: "Select",
+							label: i18n.t("widgets:addWidgetDialog.contextMenu.select", {
+								defaultValue: "Select",
+							}),
 							checkable: true,
 							checked: isSelected,
 						},
 						{ label: "---" },
 						{
 							id: "ty.ctx.widget-selector.category",
-							label: "Category",
+							label: i18n.t("widgets:addWidgetDialog.contextMenu.category", {
+								defaultValue: "Category",
+							}),
 							menu: [
 								{
 									id: "ty.ctx.widget-selector.category.current",
-									label: hitCategory || "Unknown",
+									label:
+										hitCategory ||
+										i18n.t(
+											"widgets:addWidgetDialog.contextMenu.unknownCategory",
+											{ defaultValue: "Unknown" },
+										),
 									enabled: false,
 									checkable: true,
 									checked: true,
@@ -232,7 +252,10 @@ export function AddWidgetDialog(): JSX.Element {
 							],
 						},
 						{ label: "---" },
-						{ id: WIDGET_SELECTOR_CTX.cancel, label: "Cancel" },
+						{
+							id: WIDGET_SELECTOR_CTX.cancel,
+							label: i18n.t("common:buttons.cancel"),
+						},
 					],
 				};
 			}
@@ -242,16 +265,24 @@ export function AddWidgetDialog(): JSX.Element {
 					menu: [
 						{
 							id: WIDGET_SELECTOR_CTX.clearSearch,
-							label: "Clear search",
+							label: i18n.t("widgets:addWidgetDialog.contextMenu.clearSearch", {
+								defaultValue: "Clear search",
+							}),
 							enabled: query.length > 0,
 						},
 						{ label: "---" },
 						{
 							id: WIDGET_SELECTOR_CTX.addSelected,
-							label: "Add selected widget",
+							label: i18n.t(
+								"widgets:addWidgetDialog.contextMenu.addSelectedWidget",
+								{ defaultValue: "Add selected widget" },
+							),
 							enabled: Boolean(selectedType) && !busy,
 						},
-						{ id: WIDGET_SELECTOR_CTX.cancel, label: "Cancel" },
+						{
+							id: WIDGET_SELECTOR_CTX.cancel,
+							label: i18n.t("common:buttons.cancel"),
+						},
 					],
 				};
 			}
@@ -259,16 +290,24 @@ export function AddWidgetDialog(): JSX.Element {
 				menu: [
 					{
 						id: WIDGET_SELECTOR_CTX.addSelected,
-						label: "Add selected widget",
+						label: i18n.t(
+							"widgets:addWidgetDialog.contextMenu.addSelectedWidget",
+							{ defaultValue: "Add selected widget" },
+						),
 						enabled: Boolean(selectedType) && !busy,
 					},
 					{
 						id: WIDGET_SELECTOR_CTX.clearSearch,
-						label: "Clear search",
+						label: i18n.t("widgets:addWidgetDialog.contextMenu.clearSearch", {
+							defaultValue: "Clear search",
+						}),
 						enabled: query.length > 0,
 					},
 					{ label: "---" },
-					{ id: WIDGET_SELECTOR_CTX.cancel, label: "Cancel" },
+					{
+						id: WIDGET_SELECTOR_CTX.cancel,
+						label: i18n.t("common:buttons.cancel"),
+					},
 				],
 			};
 		};
@@ -307,45 +346,23 @@ export function AddWidgetDialog(): JSX.Element {
 	return (
 		<DialogShell
 			surfaceId={DIALOG_SURFACE_ID}
-			title="Add widget"
+			title={i18n.t("widgets:selector.addWidget", {
+				defaultValue: "Add widget",
+			})}
 			headerMeta={targetPanelId}
 			contentClassName={contentClassName}
 			footerClassName={footerClassName}
 			footer={
-				<div>
-					{addFailure ? (
-						<p className={footerErrorStyle} role="alert">
-							{addFailure}
-						</p>
-					) : null}
-					<div className={footerRowStyle}>
-						<p className={footerHintStyle}>
-							Adds to <span className={footerPanelStyle}>{targetPanelId}</span>{" "}
-							at the bottom of the grid.
-						</p>
-						<Button
-							variant="default"
-							uiSize="sm"
-							type="button"
-							fullWidth
-							onClick={() => close()}
-						>
-							Cancel
-						</Button>
-						<Button
-							variant="primary"
-							uiSize="sm"
-							type="button"
-							fullWidth
-							disabled={!selectedType || busy}
-							onClick={() => {
-								if (selectedType) void addForType(selectedType);
-							}}
-						>
-							{busy ? "Adding…" : "Add"}
-						</Button>
-					</div>
-				</div>
+				<AddWidgetFooter
+					addFailure={addFailure}
+					targetPanelId={targetPanelId}
+					busy={busy}
+					canAdd={Boolean(selectedType)}
+					onCancel={() => close()}
+					onAdd={() => {
+						if (selectedType) void addForType(selectedType);
+					}}
+				/>
 			}
 		>
 			<AddWidgetCatalogPanel
@@ -353,9 +370,14 @@ export function AddWidgetDialog(): JSX.Element {
 				className={catalogClass}
 				intro={
 					<p className={catalogIntroStyle}>
-						Choose a widget type. Only kinds that are available in the catalog
-						are listed. New tiles go to{" "}
-						<span className={catalogIntroPanelStyle}>{targetPanelId}</span>.
+						{i18n.t("widgets:addWidgetDialog.introPrefix", {
+							defaultValue:
+								"Choose a widget type. Only kinds that are available in the catalog are listed. New tiles go to",
+						})}{" "}
+						<span className={catalogIntroPanelStyle}>{targetPanelId}</span>
+						{i18n.t("widgets:addWidgetDialog.introSuffix", {
+							defaultValue: ".",
+						})}
 					</p>
 				}
 				query={query}
@@ -367,5 +389,61 @@ export function AddWidgetDialog(): JSX.Element {
 				keyboardEnabled
 			/>
 		</DialogShell>
+	);
+}
+
+function AddWidgetFooter(props: {
+	addFailure: string | null;
+	targetPanelId: string;
+	busy: boolean;
+	canAdd: boolean;
+	onCancel: () => void;
+	onAdd: () => void;
+}): JSX.Element {
+	const { addFailure, targetPanelId, busy, canAdd, onCancel, onAdd } = props;
+	return (
+		<div>
+			{addFailure ? (
+				<p className={footerErrorStyle} role="alert">
+					{addFailure}
+				</p>
+			) : null}
+			<div className={footerRowStyle}>
+				<p className={footerHintStyle}>
+					{i18n.t("widgets:addWidgetDialog.addsToPrefix", {
+						defaultValue: "Adds to",
+					})}{" "}
+					<span className={footerPanelStyle}>{targetPanelId}</span>{" "}
+					{i18n.t("widgets:addWidgetDialog.addsToSuffix", {
+						defaultValue: "at the bottom of the grid.",
+					})}
+				</p>
+				<Button
+					variant="default"
+					uiSize="sm"
+					type="button"
+					fullWidth
+					onClick={onCancel}
+				>
+					{i18n.t("common:buttons.cancel")}
+				</Button>
+				<Button
+					variant="primary"
+					uiSize="sm"
+					type="button"
+					fullWidth
+					disabled={!canAdd || busy}
+					onClick={onAdd}
+				>
+					{busy
+						? i18n.t("widgets:selector.adding", {
+								defaultValue: "Adding…",
+							})
+						: i18n.t("widgets:selector.add", {
+								defaultValue: "Add",
+							})}
+				</Button>
+			</div>
+		</div>
 	);
 }

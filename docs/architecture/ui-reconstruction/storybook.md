@@ -21,6 +21,10 @@ preview での見た目は token レベル一致する。
 src/
 ├── storybook/
 │   ├── Sanity.stories.tsx                    # Smoke test for decorators
+│   ├── quality/                              # Render-quality assertion layer (Issue #194)
+│   │   ├── layout.ts                         #   DOM layout contract helpers + auditCanvas
+│   │   ├── layout.test.ts                    #   pure-geometry unit tests (unit project)
+│   │   └── contract.stories.tsx              #   positive + negative fixtures
 │   └── decorators/
 │       ├── cep-shim.ts                       # Module-load side-effect: window.__adobe_cep__
 │       ├── CepMockDecorator.tsx              # Imports cep-shim
@@ -269,6 +273,18 @@ bunx storybook build        # preview / module resolution が壊れていない�
 `bunx storybook build` は `MISSING_EXPORT` や module not found で失敗する。
 これらは CEP build では検出できない (CEP では webpack が緩く fallback する)
 
+### Render quality contract (Issue #194)
+
+capture pipeline の PNG/metadata は網羅性の証拠であり、視覚品質の合格
+判定ではない。story `play()` から `src/storybook/quality/layout.ts` の
+`expectCanvasLayout` / granular `assert*` helpers を呼び、実 DOM の
+viewport bounds・`overflow:hidden` clip・重なり・操作状態
+（hover/focus/selected/drag）を assert する。契約の詳細・適用状況・
+machine-checkable vs human acceptance の区別は
+[ui-render-contract.md](../quality/ui-render-contract.md) を正本とする。
+negative fixture (`src/storybook/quality/contract.stories.tsx`) が
+検査の拒否能力を常設で証明する。
+
 ---
 
 ## Verification status (2026-09-10)
@@ -355,7 +371,7 @@ What was proven:
   `sb-snapshot-all.ts` PNGs were in the "empty" bucket
   (`BackgroundPreview`, `DownloadProgressIconButton`,
   `PresetLibrarySidePanel`, `BrowserFilterPanel`, `EntryGlyph`,
-  `EntryThumb`, `CatalogPresetIconTile`, `SearchField`, `Settings`)
+  `EntryThumb`, `PresetIconTile`, `SearchField`, `Settings`)
   and stories whose PNGs were "missing" (`Sanity/DecoratorChain`).
   Every one of them renders correctly under the official path.
 - Root cause is identified to a **single common-cause failure mode** in
@@ -609,8 +625,7 @@ LD_LIBRARY_PATH=~/chrome-libs/usr/lib/x86_64-linux-gnu \
     src/management/online/catalog/download/DownloadProgressIconButton.stories.tsx \
     src/management/online/catalog/PresetLibrarySidePanel.stories.tsx \
     src/function/widget/utility/directory-browser/BrowserFilterPanel.stories.tsx \
-    src/function/widget/utility/directory-browser/EntryGlyph.stories.tsx \
-    src/function/widget/utility/directory-browser/CatalogPresetIconTile.stories.tsx \
+    src/management/preset/components/PresetIconTile.stories.tsx \
     src/function/widget/utility/directory-browser/EntryThumb.stories.tsx \
     src/management/setting/dialog/Settings.stories.tsx
 ```

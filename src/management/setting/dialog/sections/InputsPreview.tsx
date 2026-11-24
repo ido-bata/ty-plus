@@ -1,11 +1,14 @@
-import { Input } from "@ty-plus/ui/fields/Input";
-import { NumberField } from "@ty-plus/ui/fields/NumberField";
-import { PathField } from "@ty-plus/ui/fields/PathField";
-import { RangeField } from "@ty-plus/ui/fields/RangeField";
-import { SearchField } from "@ty-plus/ui/fields/SearchField";
-import { Textarea } from "@ty-plus/ui/fields/Textarea";
+import {
+	Input,
+	NumberField,
+	PathField,
+	RangeField,
+	SearchField,
+	Textarea,
+} from "@ty-plus/ui";
 import { FolderOpen, Search } from "lucide-react";
 import type { JSX } from "react";
+import { i18n } from "@/management/i18n/index";
 import { css } from "@/styled-system/css";
 import { PreviewGroup } from "./ComponentPreviewSection";
 
@@ -42,24 +45,24 @@ export function InputsPreview({
 }): JSX.Element {
 	return (
 		<>
-			<PreviewGroup title="Inputs">
+			<PreviewGroup title={i18n.t("settings:componentPreview.inputs")}>
 				<div className={inputsGridStyle}>
 					<Input
-						label="Text input"
+						label={i18n.t("settings:componentPreview.textInput")}
 						value={textValue}
 						onChange={(e) => onTextChange(e.target.value)}
-						placeholder="Text"
+						placeholder={i18n.t("settings:componentPreview.textPlaceholder")}
 						className={fullWidthClass}
 					/>
 					<NumberField
-						label="Number field"
+						label={i18n.t("settings:componentPreview.numberField")}
 						value={numberValue}
 						onChange={onNumberChange}
 						placeholder="42"
 						className={fullWidthClass}
 					/>
 					<RangeField
-						label="Slider with numeric input"
+						label={i18n.t("settings:componentPreview.sliderWithNumericInput")}
 						value={sliderValue}
 						onChange={onSliderChange}
 						min={0}
@@ -68,44 +71,54 @@ export function InputsPreview({
 						unit="%"
 					/>
 					<Input
-						label="Error state"
+						label={i18n.t("settings:componentPreview.errorState")}
 						value=""
 						onChange={() => {}}
-						error="Example validation message"
-						placeholder="Error"
+						error={i18n.t("settings:componentPreview.errorMessage")}
+						placeholder={i18n.t("settings:componentPreview.errorPlaceholder")}
 						className={fullWidthClass}
 					/>
 				</div>
 			</PreviewGroup>
-			<PreviewGroup title="Search Field">
+			<PreviewGroup title={i18n.t("settings:componentPreview.searchField")}>
 				<SearchField
 					icon={Search}
 					value={searchValue}
 					onChange={(e) => onSearchChange(e.target.value)}
-					placeholder="Search..."
+					placeholder={i18n.t("settings:componentPreview.searchPlaceholder")}
 					showInlineTrailing={true}
-					inlineTrailing={<span>12 results</span>}
+					inlineTrailing={
+						<span>
+							{i18n.t("settings:componentPreview.resultsCount", {
+								count: 12,
+							})}
+						</span>
+					}
 					showClearButton={true}
 					onClear={() => onSearchChange("")}
 				/>
 			</PreviewGroup>
-			<PreviewGroup title="Path Field">
+			<PreviewGroup title={i18n.t("settings:componentPreview.pathField")}>
 				<PathField
 					value={pathValue}
 					onChange={onPathChange}
 					onBrowse={() => onPathChange("/host/presets/example.zip")}
 					browseSlot={<FolderOpen size={16} strokeWidth={2} aria-hidden />}
-					browseAriaLabel="Browse preset path"
-					placeholder="Preset path"
+					browseAriaLabel={i18n.t("settings:componentPreview.browsePresetPath")}
+					placeholder={i18n.t(
+						"settings:componentPreview.presetPathPlaceholder",
+					)}
 					uiSize="sm"
 					className={fullWidthClass}
 				/>
 			</PreviewGroup>
-			<PreviewGroup title="Text Area">
+			<PreviewGroup title={i18n.t("settings:componentPreview.textArea")}>
 				<Textarea
 					value="Sample multiline text"
 					onChange={() => {}}
-					placeholder="Enter description..."
+					placeholder={i18n.t(
+						"settings:componentPreview.enterDescriptionPlaceholder",
+					)}
 					rows={3}
 					className={fullWidthClass}
 				/>

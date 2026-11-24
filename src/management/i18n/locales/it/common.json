@@ -12,6 +12,9 @@
 		"edit": "Modifica",
 		"close": "Chiudi"
 	},
+	"dialogs": {
+		"unsavedChangesConfirm": "Le modifiche non salvate andranno perse. Chiudere la finestra di dialogo?"
+	},
 	"actions": {
 		"run": "Esegui",
 		"duplicate": "Duplica",
@@ -179,6 +182,104 @@
 			"copyError": "Copia dettagli errore",
 			"copied": "Copiato negli appunti",
 			"digest": "ID errore"
+		}
+	},
+	"ui": {
+		"loadingSpinner": {
+			"label": "Caricamento"
+		},
+		"searchField": {
+			"clearAria": "Cancella ricerca",
+			"clearTitle": "Cancella"
+		},
+		"regexEditor": {
+			"enterPattern": "Inserisci un pattern.",
+			"invalidFlags": "Flag non validi: {{flags}}",
+			"plainSource": "Sorgente regex semplice",
+			"literalFormat": "Formato regex letterale",
+			"testString": "Stringa di test",
+			"sourcePlaceholder": "Sorgente regex",
+			"flagsPlaceholder": "flag",
+			"matches": "Corrispondenze",
+			"noMatch": "Nessuna corrispondenza",
+			"literalSuffix": "· letterale /pattern/flags",
+			"sourceSuffix": "· solo sorgente"
+		},
+		"listSelect": {
+			"placeholder": "Seleziona…"
+		}
+	},
+	"directoryBrowser": {
+		"refresh": "Aggiorna",
+		"goUp": "Vai su",
+		"open": "Apri",
+		"select": "Seleziona",
+		"deselect": "Deseleziona",
+		"listView": "Vista elenco",
+		"iconView": "Vista icone",
+		"noFilesFound": "Nessun file trovato",
+		"selectFileAria": "Seleziona file {{name}}",
+		"selectFolderAria": "Seleziona cartella {{name}}"
+	},
+	"debugConsole": {
+		"title": "Console",
+		"clear": "Cancella",
+		"evaluateAria": "Valuta JavaScript",
+		"evaluatePlaceholder": "Valuta JavaScript…",
+		"rowContextHint": "Clic destro per copiare",
+		"filterLevelAria": "Filtra i messaggi della console",
+		"filterSourceAria": "Filtra i messaggi per origine",
+		"filterScopeAria": "Filtra i messaggi per ambito della sessione",
+		"levels": {
+			"all": "Tutti",
+			"log": "Registro",
+			"info": "Info",
+			"warn": "Avviso",
+			"error": "Errore"
+		},
+		"sources": {
+			"all": "Tutte le origini",
+			"panel": "Pannello",
+			"modeless": "Senza finestra",
+			"hostBridge": "Ponte host",
+			"online": "Online",
+			"preset": "Preimpostazione",
+			"opWorker": "Worker operazioni",
+			"workspace": "Area di lavoro",
+			"boot": "Avvio",
+			"debugConsole": "Console di debug",
+			"console": "Console"
+		},
+		"scopes": {
+			"allHistory": "Cronologia completa",
+			"thisSession": "Questa sessione"
+		},
+		"contextMenu": {
+			"copyMessage": "Copia messaggio",
+			"copyAllMessages": "Copia tutti i messaggi",
+			"clearConsole": "Cancella console",
+			"enableAutoScroll": "Attiva scorrimento automatico",
+			"disableAutoScroll": "Disattiva scorrimento automatico",
+			"itemActive": "{{level}} (attivo)"
+		}
+	},
+	"errors": {
+		"hostContextUnavailable": "Contesto host non disponibile",
+		"fileAccessUnavailable": "L'accesso ai file tramite CEP Node non è disponibile in questa superficie.",
+		"fsApiUnavailable": "L'API fs di CEP Node non è disponibile in questo runtime host.",
+		"fileImportAeOnly": "L'importazione di file è attualmente disponibile solo in After Effects.",
+		"initNotFound": "ty-plus-init.json non trovato (nessuna root dell'app). L'onboarding deve essere completato prima di qualsiasi scrittura.",
+		"initIncomplete": "ty-plus non è ancora inizializzato. Le scritture sono bloccate finché ty-plus-init.json non segnala il completamento.",
+		"initSupportRootBlank": "ty-plus-init.json è contrassegnato come completato, ma supportRoot è vuoto.",
+		"hostExecFailed": "Ty Plus: {{message}}",
+		"notify": {
+			"generic": "Si è verificato un errore",
+			"fsPermission": "Autorizzazione negata. Controlla le autorizzazioni di file/cartella.",
+			"fsNotFound": "File o cartella non trovato. Potrebbe essere stato spostato o eliminato.",
+			"fsCorrupted": "Il file di dati è danneggiato ed è stato eseguito il backup. Riprova.",
+			"aeEvalFailed": "Il comando di After Effects non è riuscito. Riprova o riavvia AE.",
+			"aeNotAvailable": "Connessione a After Effects persa. Riavvia il pannello.",
+			"network": "Errore di rete. Controlla la connessione."
 		}
 	}
 }

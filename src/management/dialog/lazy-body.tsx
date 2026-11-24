@@ -15,6 +15,8 @@
 
 import type { JSX, ReactNode } from "react";
 import { useLayoutEffect, useState } from "react";
+import { DIALOG_LOADING_COLOR } from "@/management/dialog/literals/pre-theme-colors";
+import { i18n } from "@/management/i18n/index";
 
 const DIALOG_LOADING_STYLE = {
 	display: "flex",
@@ -25,11 +27,15 @@ const DIALOG_LOADING_STYLE = {
 	opacity: 0.5,
 	fontFamily: "sans-serif",
 	fontSize: "0.875rem",
-	color: "#888",
+	color: DIALOG_LOADING_COLOR,
 } as const;
 
 function DialogLoadingFallback(): JSX.Element {
-	return <div style={DIALOG_LOADING_STYLE}>Loading…</div>;
+	return (
+		<div style={DIALOG_LOADING_STYLE}>
+			{i18n.t("dialogs:loading", { defaultValue: "Loading…" })}
+		</div>
+	);
 }
 
 export function DeferredDialogBody({

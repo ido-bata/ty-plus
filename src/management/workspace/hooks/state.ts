@@ -3,20 +3,18 @@
  */
 
 import type { WidgetType } from "@/function/widget/contract";
+import { i18n } from "@/management/i18n/index";
 import { registry } from "@/management/widget/registry";
 import { buildPrimaryPanelWidgets } from "@/management/workspace/layout/default";
 import type { LayoutRestoreNotice } from "@/management/workspace/layout/restore-plan";
 import { logWorkspace } from "@/management/workspace/onboarding/flow-log";
-import type { SurfaceState } from "@/management/workspace/state";
+import type { SurfaceState } from "@/management/workspace/core/state";
 import type { Tile } from "@/management/workspace/surface/tiles";
 import { clipSelection } from "@/management/workspace/surface/tiles";
 import { widgetResolutionFromCatalogContext } from "@/management/workspace/surface/tiles";
 import { layoutsFromSurface } from "@/management/workspace/surface/tiles";
 
 import type { Snapshot } from "@/management/workspace/undo/history";
-
-export const fileNameFromPath = (value: string): string =>
-	value.split(/[\\/]/).pop() ?? value;
 
 export type WorkspaceUi = {
 	canUndo: boolean;
@@ -98,6 +96,7 @@ export const ensurePrimaryPanelWidgets = (
 				],
 			),
 		) as Record<string, WidgetType>,
-		statusMessage: state.statusMessage || "Workspace layout was reset.",
+		statusMessage:
+			state.statusMessage || i18n.t("workspace:statusMessages.layoutReset"),
 	};
 };

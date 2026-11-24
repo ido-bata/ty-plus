@@ -1,40 +1,12 @@
-import { Input } from "@ty-plus/ui/fields/Input";
-import type { ChangeEventHandler, JSX } from "react";
+import { Input, RangeField } from "@ty-plus/ui";
+import type { JSX } from "react";
 import { FIELD_LABEL_CLASS } from "@/management/workspace/background/constants";
-import { DEFAULT_COLOR } from "@/management/workspace/background/layer-factory";
+import { DEFAULT_LAYER_COLOR } from "@/management/workspace/literals/layer-colors";
 import { css } from "@/styled-system/css";
 
 export function FieldLabel(props: { children: string }): JSX.Element {
 	return <span className={FIELD_LABEL_CLASS}>{props.children}</span>;
 }
-
-const numberRow = css({
-	display: "grid",
-	gridTemplateColumns:
-		"minmax(0,var(--ty-space-24)) minmax(0,1fr) minmax(var(--ty-space-14),var(--ty-space-20))",
-	alignItems: "center",
-	gap: "2",
-});
-
-const numberLabel = css({
-	overflow: "hidden",
-	textOverflow: "ellipsis",
-	whiteSpace: "nowrap",
-	fontSize: "text-xs",
-	color: "text.muted",
-});
-
-const numberRange = css({
-	height: "4",
-	width: "full",
-	cursor: "pointer",
-	accentColor: "var(--ty-text-muted)",
-	colorScheme: "dark",
-});
-
-const numberInput = css({
-	borderColor: "var(--color-ty-widget-border)",
-});
 
 const colorRow = css({
 	display: "grid",
@@ -55,7 +27,7 @@ const colorSwatch = css({
 	minWidth: "12",
 	cursor: "pointer",
 	borderRadius: "shell-sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "var(--color-ty-widget-border)",
 	backgroundColor: "surface.widget",
@@ -73,33 +45,14 @@ export function NumberField(props: {
 	max: number;
 	onValueChange: (value: number) => void;
 }): JSX.Element {
-	const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {
-		props.onValueChange(Number(e.currentTarget.value));
-	};
-
 	return (
-		<div className={numberRow}>
-			<span className={numberLabel}>{props.label}</span>
-			<input
-				type="range"
-				min={props.min}
-				max={props.max}
-				value={props.value}
-				onChange={handleChange}
-				aria-label={props.label}
-				className={numberRange}
-			/>
-			<Input
-				type="number"
-				min={props.min}
-				max={props.max}
-				value={props.value}
-				onChange={handleChange}
-				aria-label={props.label}
-				uiSize="md"
-				className={numberInput}
-			/>
-		</div>
+		<RangeField
+			label={props.label}
+			value={props.value}
+			min={props.min}
+			max={props.max}
+			onChange={props.onValueChange}
+		/>
 	);
 }
 
@@ -109,7 +62,7 @@ export function ColorField(props: {
 	onColorChange: (value: string) => void;
 }): JSX.Element {
 	const colorValue =
-		props.value === "transparent" ? DEFAULT_COLOR : props.value;
+		props.value === "transparent" ? DEFAULT_LAYER_COLOR : props.value;
 	return (
 		<div className={colorRow}>
 			<span className={FIELD_LABEL_CLASS}>{props.label}</span>

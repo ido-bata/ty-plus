@@ -6,14 +6,15 @@
 			"body": "Vamos começar a configuração"
 		},
 		"language": {
-			"label": "Language",
+			"label": "Idioma",
 			"title": "Choose Language",
 			"body": "Select your preferred language"
 		},
 		"support": {
 			"label": "Localização",
 			"title": "Selecionar pasta do AE",
-			"body": "Escolha a pasta do aplicativo After Effects. No Windows, este é o diretório Support Files; no macOS, é a pasta do aplicativo que contém Presets."
+			"body": "Escolha a pasta do aplicativo After Effects. No Windows, este é o diretório Support Files; no macOS, é a pasta do aplicativo que contém Presets.",
+			"aeAppFolderHint": "Pasta do app AE detectada — a etapa de subpastas será ignorada."
 		},
 		"subfolders": {
 			"label": "Pastas",
@@ -87,13 +88,24 @@
 		"finishErrorNextActionChooseTrusted": "O arquivo de configurações de onboarding não incluía um Support Root. Reinicie o onboarding dentro do After Effects.",
 		"finishErrorNextActionAdjust": "Não foi possível salvar as configurações no Support Root do AE. Verifique se o caminho está acessível e se o After Effects tem permissão de gravação e tente novamente.",
 		"finishErrorNextActionRetry": "O UAC do Windows foi solicitado, mas a gravação com privilégios elevados falhou. Clique em Retry para reabrir a caixa do UAC, ou execute o After Effects como administrador.",
-		"finishErrorRetryWithElevation": "Tentar novamente como administrador"
+		"finishErrorRetryWithElevation": "Tentar novamente como administrador",
+		"supportAndSubfoldersRequired": "São necessários o caminho Support e as subpastas de onboarding.",
+		"appRootUnresolved": "Ty Plus: não foi possível resolver a pasta da aplicação After Effects para ty-plus-init.json. Abra o painel dentro do After Effects e tente novamente.",
+		"initWriteFailed": "Falha ao escrever ty-plus-init.json em {{path}}: {{message}}",
+		"elevationConsentDenied": "O prompt de consentimento do UAC foi dispensado (a elevação de administrador não foi concedida).",
+		"innerExitCodeNote": " Código de saída do script interno: {{code}}.",
+		"elevationWriteFailedStderr": "A escrita elevada relatou um erro.{{exitCodeNote}} stderr do script interno: {{stderr}}",
+		"elevationWriteFailed": "A escrita elevada relatou um erro.{{exitCodeNote}}"
 	},
 	"actions": {
 		"back": "Voltar",
 		"next": "Avançar",
 		"finish": "Concluir",
 		"toggleFullscreen": "Expandir para tela cheia",
-		"toggleModal": "Voltar para modal"
+		"toggleModal": "Voltar para modal",
+		"openManual": "Abrir manual"
+	},
+	"syncStatus": {
+		"localUpdate": "Atualização local"
 	}
 }

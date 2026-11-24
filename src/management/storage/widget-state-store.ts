@@ -22,6 +22,7 @@ export type WidgetStateName =
 	| "directory-browser"
 	| "easing"
 	| "info"
+	| "loop"
 	| "menu"
 	| "quick-actions"
 	| "selection";
@@ -137,28 +138,52 @@ export const writeWidgetStateJson = async (
 		typeof value === "object" &&
 		!Array.isArray(value)
 	) {
-		const existing = await readJson(win, "widgetState", name);
-		const { instances } = parseWidgetStatePayload(
-			existing === null ? null : JSON.stringify(existing),
+		// ADR-0006: the catalog upsert is a read→merge→write on a file
+		// shared by every panel hosting this widget — run it inside the
+		// managed-root persistence lock. Pre-onboarding / test contexts
+		// without a managed root keep the previous unlocked behaviour.
+		const run = async (): Promise<void> => {
+			const existing = await readJson(win, "widgetState", name);
+			const { instances } = parseWidgetStatePayload(
+				existing === null ? null : JSON.stringify(existing),
+			);
+			const map = new Map(
+				instances.map((r) => [r.id, { ...r } as StateCatalogRow]),
+			);
+			map.set(instanceId, {
+				id: instanceId,
+				...(value as Record<string, unknown>),
+			});
+			await writeJson(
+				win,
+				"widgetState",
+				{
+					version: CATALOG_VERSION,
+					instances: [...map.values()],
+				},
+				name,
+			);
+		};
+		const { withManagedRootPersistenceLock } = await import(
+			"@/management/storage/lock/persistence-lock"
 		);
-		const map = new Map(
-			instances.map((r) => [r.id, { ...r } as StateCatalogRow]),
-		);
-		map.set(instanceId, {
-			id: instanceId,
-			...(value as Record<string, unknown>),
-		});
-		await writeJson(
-			win,
-			"widgetState",
-			{
-				version: CATALOG_VERSION,
-				instances: [...map.values()],
-			},
-			name,
-		);
+		await withManagedRootPersistenceLock(win, run);
 		return;
 	}
 
 	await writeJson(win, "widgetState", value, name);
+};
+
+/**
+ * Path of the sidecar that records the loops the host applied.
+ *
+ * The sidecar is the authority for "what was applied" (so a loop can be
+ * re-opened, updated and undone without guessing from the keyframes).
+ */
+export const resolveLoopAppliedStatePath = async (
+	win: Window,
+): Promise<string | null> => {
+	const managedRoot = await resolveTyPlusManagedRootForPersistence(win);
+	if (!managedRoot) return null;
+	return resolveWidgetStateJsonPath(managedRoot, "loop-applied");
 };

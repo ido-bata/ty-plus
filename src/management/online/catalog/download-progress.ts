@@ -7,7 +7,7 @@
  * list views without duplicating the stage-to-percent mapping.
  */
 
-import type { DownloadProgress } from "./use-cases";
+import type { DownloadProgress } from "./operations";
 
 type DownloadStage = DownloadProgress["stage"];
 

@@ -21,9 +21,6 @@ import {
 export const DEFAULT_TILE_WIDTH = 1;
 export const DEFAULT_TILE_HEIGHT = 1;
 
-/** -1: column-band packing; 0|1: anchor-based axis priority for near-anchor growth. */
-type AutoAxis = -1 | 0 | 1;
-
 export type PresetPlacementRequest = {
 	/** Catalog preset or folder-group preset id */
 	presetRefId: string;
@@ -114,7 +111,7 @@ const layoutWithAutoPresets = (input: {
 			const rect = narrowGeom[j];
 			const orig = narrowIndices[j];
 			if (rect === undefined || orig === undefined) {
-				throw new Error("workspace placement: narrow band geometry mismatch");
+				throw new Error("workspace placement: narrow band geometry mismatch"); // i18n-exempt: internal diagnostic — not rendered as UI copy
 			}
 			geom[orig] = rect;
 		}
@@ -122,7 +119,7 @@ const layoutWithAutoPresets = (input: {
 			const rect = wideGeom[j];
 			const orig = wideIndices[j];
 			if (rect === undefined || orig === undefined) {
-				throw new Error("workspace placement: wide overflow geometry mismatch");
+				throw new Error("workspace placement: wide overflow geometry mismatch"); // i18n-exempt: internal diagnostic — not rendered as UI copy
 			}
 			geom[orig] = rect;
 		}
@@ -135,7 +132,7 @@ const layoutWithAutoPresets = (input: {
 	const presetItems: LayoutItem[] = sized.map((s, i) => {
 		const g = geom[i];
 		if (g === undefined) {
-			throw new Error("workspace placement: missing geometry for preset tile");
+			throw new Error("workspace placement: missing geometry for preset tile"); // i18n-exempt: internal diagnostic — not rendered as UI copy
 		}
 		return {
 			id: s.presetRefId,

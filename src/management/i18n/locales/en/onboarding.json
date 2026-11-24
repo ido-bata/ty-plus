@@ -13,7 +13,8 @@
 		"support": {
 			"label": "Location",
 			"title": "Select AE Folder",
-			"body": "Choose your After Effects application folder. On Windows this is the Support Files directory; on macOS it's the app folder containing Presets."
+			"body": "Choose your After Effects application folder. On Windows this is the Support Files directory; on macOS it's the app folder containing Presets.",
+			"aeAppFolderHint": "AE app folder detected — subfolders step will be skipped."
 		},
 		"subfolders": {
 			"label": "Folders",
@@ -87,13 +88,24 @@
 		"finishErrorNextActionChooseTrusted": "The onboarding settings file did not include a Support Root. Restart onboarding inside After Effects.",
 		"finishErrorNextActionAdjust": "Settings could not be saved at the AE Support Root. Verify the path is reachable and that the After Effects process has write permission, then try again.",
 		"finishErrorNextActionRetry": "Windows UAC was requested but the elevated write still failed. Click Retry to re-trigger the UAC dialog and confirm the prompt, or run After Effects as Administrator.",
-		"finishErrorRetryWithElevation": "Retry with administrator"
+		"finishErrorRetryWithElevation": "Retry with administrator",
+		"supportAndSubfoldersRequired": "Support path and onboarding subfolders are required.",
+		"appRootUnresolved": "Ty Plus: cannot resolve the After Effects application folder for ty-plus-init.json. Open the panel inside After Effects and try again.",
+		"initWriteFailed": "Failed to write ty-plus-init.json under {{path}}: {{message}}",
+		"elevationConsentDenied": "The UAC consent prompt was dismissed (admin escalation was not granted).",
+		"innerExitCodeNote": " Inner script exit code: {{code}}.",
+		"elevationWriteFailedStderr": "The elevated write reported an error.{{exitCodeNote}} Inner script stderr: {{stderr}}",
+		"elevationWriteFailed": "The elevated write reported an error.{{exitCodeNote}}"
 	},
 	"actions": {
 		"back": "Back",
 		"next": "Next",
 		"finish": "Finish",
 		"toggleFullscreen": "Expand to fullscreen",
-		"toggleModal": "Return to modal"
+		"toggleModal": "Return to modal",
+		"openManual": "Open Manual"
+	},
+	"syncStatus": {
+		"localUpdate": "Local Update"
 	}
 }

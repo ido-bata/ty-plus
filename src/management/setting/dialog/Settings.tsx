@@ -1,4 +1,4 @@
-import { Button } from "@ty-plus/ui/controls/Button";
+import { Button, dialogContentClass } from "@ty-plus/ui";
 import {
 	Component,
 	type ErrorInfo,
@@ -9,8 +9,9 @@ import {
 	useState,
 } from "react";
 import { DialogShell } from "@/management/dialog";
-import { DialogFooterActions } from "@/management/dialog/dialogs/shell/Footer";
+import { DialogFooterActions } from "@/management/dialog/shell/Footer";
 import { useDialogClose } from "@/management/dialog/useClose";
+import { i18n } from "@/management/i18n/index";
 import { useSettings } from "@/management/setting/context";
 import {
 	DEFAULT_SETTINGS_SECTION,
@@ -25,6 +26,7 @@ import { InputsSection } from "@/management/setting/dialog/sections/InputsSectio
 import { LanguageSection } from "@/management/setting/dialog/sections/LanguageSection";
 import { PathsSection } from "@/management/setting/dialog/sections/PathsSection";
 import { StyleSection } from "@/management/setting/dialog/sections/StyleSection";
+import { TipsSection } from "@/management/setting/dialog/sections/TipsSection";
 import { TokensSection } from "@/management/setting/dialog/sections/TokensSection";
 import { UpdateSection } from "@/management/setting/dialog/sections/UpdateSection";
 import { WorkspaceBackupSection } from "@/management/setting/dialog/sections/WorkspaceBackupSection";
@@ -33,7 +35,7 @@ import { css } from "@/styled-system/css";
 
 const errorFallbackStyle = css({
 	borderRadius: "1",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 	backgroundColor: "surface.widget",
@@ -56,7 +58,7 @@ const saveErrorBannerStyle = css({
 	margin: "2",
 	marginBottom: "0",
 	borderRadius: "1",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "colorMix(in srgb, status.error 30%, transparent)",
 	backgroundColor: "colorMix(in srgb, status.error 10%, transparent)",
@@ -78,21 +80,11 @@ const loadingTextStyle = css({
 	color: "text.muted",
 });
 
-const contentClassName = css({
-	display: "flex",
-	minHeight: 0,
-	minWidth: 0,
-	flexDirection: "column",
-	overflow: "hidden",
-	paddingInline: "0",
-	backgroundColor: "surface.dialog",
-});
-
 const footerClassName = css({
 	width: "full",
 	minWidth: 0,
 	alignItems: "stretch",
-	borderTopWidth: "1px",
+	borderTopWidth: "hairline",
 	borderTopStyle: "solid",
 	borderTopColor: "border.default",
 	paddingInline: "var(--ty-shell-pad-inline)",
@@ -123,12 +115,14 @@ class SettingsDialogErrorBoundary extends Component<
 		}
 		return (
 			<DialogShell
-				title="Settings"
+				title={i18n.t("settings:title")}
 				surfaceId="dialog-settings"
 				contentClassName={css({ padding: "3" })}
 			>
 				<div className={errorFallbackStyle}>
-					<div className={errorHeadingStyle}>Settings UI failed to render</div>
+					<div className={errorHeadingStyle}>
+						{i18n.t("settings:renderError")}
+					</div>
 					{/* Issue #140: never render a raw stack trace into the panel
 					    UI — name + message only; the full error is already in the
 					    diagnostic channel via componentDidCatch. */}
@@ -166,6 +160,12 @@ const SETTINGS_SECTIONS: SettingsSidebarSectionDef[] = [
 		groupId: "display",
 		labelKey: "tabs.section.grid",
 		render: () => <GridSection />,
+	},
+	{
+		sectionId: "tips",
+		groupId: "display",
+		labelKey: "tabs.section.tips",
+		render: () => <TipsSection />,
 	},
 	// データ (data)
 	{
@@ -238,7 +238,9 @@ function SettingsContent(): JSX.Element {
 	if (!isLoaded) {
 		return (
 			<div className={loadingContainerStyle}>
-				<span className={loadingTextStyle}>Loading settings...</span>
+				<span className={loadingTextStyle}>
+					{i18n.t("settings:loadingSettings")}
+				</span>
 			</div>
 		);
 	}
@@ -277,9 +279,7 @@ function SettingsDialogBody(): JSX.Element {
 	}, [close, persistSettingsNow]);
 
 	const handleReset = useCallback(() => {
-		const message =
-			"Reset all settings to defaults? " +
-			"This will clear the Support Root, Script Root, and other paths.";
+		const message = i18n.t("settings:resetAllConfirm");
 		if (!window.confirm(message)) {
 			return;
 		}
@@ -309,9 +309,9 @@ function SettingsDialogBody(): JSX.Element {
 
 	return (
 		<DialogShell
-			title="Settings"
+			title={i18n.t("settings:title")}
 			surfaceId="dialog-settings"
-			contentClassName={contentClassName}
+			contentClassName={dialogContentClass}
 			footerClassName={footerClassName}
 			footer={
 				<DialogFooterActions>
@@ -322,7 +322,7 @@ function SettingsDialogBody(): JSX.Element {
 						onClick={handleReset}
 						data-settings-footer-action="reset"
 					>
-						Reset
+						{i18n.t("common:actions.reset")}
 					</Button>
 					<Button
 						variant="ghost"
@@ -331,7 +331,7 @@ function SettingsDialogBody(): JSX.Element {
 						onClick={close}
 						data-settings-footer-action="cancel"
 					>
-						Cancel
+						{i18n.t("common:actions.cancel")}
 					</Button>
 					<Button
 						variant="primary"
@@ -341,7 +341,9 @@ function SettingsDialogBody(): JSX.Element {
 						disabled={saving}
 						data-settings-footer-action="save"
 					>
-						{saving ? "Saving..." : "Save"}
+						{saving
+							? i18n.t("common:status.saving")
+							: i18n.t("common:actions.save")}
 					</Button>
 				</DialogFooterActions>
 			}

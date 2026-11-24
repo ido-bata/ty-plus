@@ -48,6 +48,3 @@ export const buildPrimaryPanelWidgets = (): Layout[] =>
 			height: t.height,
 		};
 	});
-
-const getDefaultWidgetsForPanel = (panelId: string): Layout[] =>
-	panelId === "panel-1" ? buildPrimaryPanelWidgets() : [];

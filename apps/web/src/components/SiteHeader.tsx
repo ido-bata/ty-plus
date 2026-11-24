@@ -1,8 +1,14 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Button, IconButton } from "@ty-plus/ui";
-import { cx } from "@ty-plus/ui/util/cx";
+import { Button, cx, IconButton, ListSelect } from "@ty-plus/ui";
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { css } from "@/styled-system/css";
+import {
+	setWebLocale,
+	WEB_LOCALES,
+	type WebLocale,
+	webLocaleName,
+} from "../i18n";
 import { NAV_LINKS, SITE } from "../lib/site";
 import { container } from "../styles/layout";
 import { SiteMark } from "./SiteMark";
@@ -12,7 +18,7 @@ const MENU_ID = "site-menu";
 const header = css({
 	position: "sticky",
 	top: 0,
-	zIndex: 40,
+	zIndex: "var(--ty-z-header)",
 	borderBottomWidth: "hairline",
 	borderBottomStyle: "solid",
 	borderBottomColor: "border.subtle",
@@ -120,6 +126,10 @@ const menuLink = css({
 const menuPopover = css({
 	position: "fixed",
 	insetBlockStart: "4.5rem",
+	// The UA [popover]:popover-open rule sets `inset: 0`, leaving a definite
+	// inline-start inset that wins over insetInlineEnd once a width is set
+	// (LTR over-constraint ignores the end inset). Reset it to `auto`.
+	insetInlineStart: "auto",
 	insetInlineEnd: "1.25rem",
 	inlineSize: "min(80dvw, 20rem)",
 	maxInlineSize: "calc(100dvw - 2.5rem)",
@@ -146,6 +156,7 @@ const menuPopover = css({
  * the inline row actually fits — no hard-coded breakpoint.
  */
 export function SiteHeader() {
+	const { t, i18n: activeI18n } = useTranslation("web");
 	const headerRef = useRef<HTMLElement | null>(null);
 	const innerRef = useRef<HTMLDivElement | null>(null);
 	const menuRef = useRef<HTMLUListElement | null>(null);
@@ -230,10 +241,10 @@ export function SiteHeader() {
 					<span>{SITE.name}</span>
 				</Link>
 
-				<nav className={nav} aria-label="Primary">
+				<nav className={nav} aria-label={t("nav.primary")}>
 					<IconButton
 						data-menu-button
-						aria-label="Menu"
+						aria-label={t("nav.menu")}
 						aria-controls={MENU_ID}
 						popoverTarget={MENU_ID}
 						popoverTargetAction="toggle"
@@ -265,14 +276,28 @@ export function SiteHeader() {
 									className={menuLink}
 									aria-current={pathname === link.to ? "page" : undefined}
 								>
-									{link.label}
+									{t(link.labelKey)}
 								</Link>
 							</li>
 						))}
+						<li>
+							<div className={css({ inlineSize: "10rem" })}>
+								<ListSelect
+									aria-label={t("languageLabel")}
+									uiSize="sm"
+									value={activeI18n.language}
+									onChange={(value) => setWebLocale(value as WebLocale)}
+									options={WEB_LOCALES.map((locale) => ({
+										value: locale,
+										label: webLocaleName(locale),
+									}))}
+								/>
+							</div>
+						</li>
 					</ul>
 					<span data-header-cta>
 						<Button as={Link} to="/download" uiSize="sm">
-							Download
+							{t("nav.download")}
 						</Button>
 					</span>
 				</nav>

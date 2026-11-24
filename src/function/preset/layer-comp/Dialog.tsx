@@ -1,78 +1,44 @@
-import { Icon } from "@ty-plus/ui";
-import { Input } from "@ty-plus/ui/fields/Input";
-import { PathField } from "@ty-plus/ui/fields/PathField";
+import {
+	Icon,
+	Input,
+	monoPreviewBoxClass,
+	PathField,
+	sectionLabelClass,
+	sectionTitleClass,
+	stepBadgeClass,
+	stepCardClass,
+	stepDescriptionClass,
+} from "@ty-plus/ui";
 import { AlertCircle, FolderOpen } from "lucide-react";
 import { type JSX, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { selectFolder } from "@/management/ae/cep/dialog-shim/bolt";
-import { readUserHomeOrFallback, ToolDialog } from "@/management/preset";
-import { hostSafeFileName } from "@/management/preset/authoring/host-safe-file-name";
-import { ArchiveDetailsSection } from "@/management/preset/catalog-add/ArchiveDetailsSection";
-import { parseRootPathsFromSettingsJson } from "@/management/preset/catalog-add/parse-root-paths";
-import { PresetIconEditor } from "@/management/preset/components/IconEditor";
-import type { Preset } from "@/management/preset/contract";
-import {
-	createPresetIconDraft,
-	presetIconDraftToPresetIcon,
-} from "@/management/preset/icon-editor";
 import {
 	AuthoringField,
 	AuthoringGrid,
 	AuthoringSection,
 	AuthoringSegment,
-} from "@/management/preset/tool-shell/archive-layout";
-import { upsertLocalPreset } from "@/management/preset/use-cases";
-import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
-import { glyphBoxFillClass } from "@/management/preset/workspace/glyph-classes";
+	readUserHomeOrFallback,
+	ToolDialog,
+} from "@/management/preset";
+import { hostSafeFileName } from "@/management/preset/authoring/host-safe-file-name";
+import { ArchiveDetailsSection } from "@/management/preset/catalog-add/ArchiveDetailsSection";
+import { parseRootPathsFromSettingsJson } from "@/management/preset/catalog-add/parse-root-paths";
+import type { Preset } from "@/management/preset/contract";
+import { PresetIconEditor } from "@/management/preset/icon/Editor";
+import {
+	createPresetIconDraft,
+	presetIconDraftToPresetIcon,
+} from "@/management/preset/icon/editor-state";
+import { upsertLocalPreset } from "@/management/preset/operations";
+import { glyphBoxFillClass } from "@/management/preset/workspace/glyph/classes";
+import { FramedPresetGlyph } from "@/management/preset/workspace/glyph/WorkspaceGlyph";
 import { createInstanceId } from "@/management/storage/ids";
 import { readSettings } from "@/management/workspace/persistence/store";
 import { notifyPanelsAfterPresetSave } from "@/management/workspace/placement/notify-panels-after-preset-save";
 import { css } from "@/styled-system/css";
 
 type LayerCompType = "layer" | "comp";
-
-const stepNumberClass = css({
-	display: "flex",
-	height: "6",
-	width: "6",
-	flexShrink: 0,
-	alignItems: "center",
-	justifyContent: "center",
-	borderRadius: "full",
-	borderWidth: "1px",
-	borderStyle: "solid",
-	borderColor: "border.default",
-	backgroundColor: "surface.widget",
-	fontSize: "shell-text-sm",
-	fontWeight: "bold",
-	color: "text.primary",
-});
-
-const stepTitleClass = css({
-	fontSize: "shell-text-sm",
-	fontWeight: "semibold",
-	color: "text.primary",
-});
-
-const stepDescClass = css({
-	fontSize: "text-xs",
-	color: "text.muted",
-	lineHeight: "tight",
-});
-
-const stepCardClass = css({
-	display: "flex",
-	width: "full",
-	minWidth: 0,
-	flexDirection: "column",
-	gap: "3",
-	borderRadius: "shell-sm",
-	borderWidth: "1px",
-	borderStyle: "solid",
-	borderColor: "border.default",
-	backgroundColor: "surface.widget",
-	padding: "4",
-});
 
 const headerRowClass = css({
 	display: "flex",
@@ -107,25 +73,6 @@ const previewColumnClass = css({
 	minWidth: 0,
 	flexDirection: "column",
 	gap: "1",
-});
-
-const previewLabelClass = css({
-	fontSize: "text-xs",
-	fontWeight: "medium",
-	textTransform: "uppercase",
-	letterSpacing: "wide",
-	color: "text.muted",
-});
-
-const previewBoxClass = css({
-	fontFamily: "mono",
-	fontSize: "text-xs",
-	color: "text.primary",
-	overflowWrap: "break-all",
-	borderRadius: "shell-sm",
-	backgroundColor: "surface.widget",
-	paddingInline: "2",
-	paddingBlock: "1",
 });
 
 const hintRowClass = css({
@@ -227,6 +174,13 @@ export function Dialog(): JSX.Element {
 					type: presetType,
 					saveDir: displayPath,
 					presetId,
+					undoGroupName: t("presetTool.layerCompScript.undoGroupName"),
+					messages: {
+						saveProjectFirst: t("presetTool.layerCompScript.saveProjectFirst"),
+						sourceProjectNotFoundPrefix: t(
+							"presetTool.layerCompScript.sourceProjectNotFoundPrefix",
+						),
+					},
 				});
 				if (!result.ok) {
 					throw new Error(result.error.message);
@@ -241,7 +195,10 @@ export function Dialog(): JSX.Element {
 			persistOverride={async () => {
 				const recordTitle = name.trim();
 				const recordDescription =
-					description.trim() || `Layer/comp preset: ${name.trim()}`;
+					description.trim() ||
+					t("presetTool.layerComp.defaultDescription", {
+						name: name.trim(),
+					});
 				const resolvedIconValue = resolvedIcon ?? {
 					type: "text" as const,
 					param: { text: previewIconText },
@@ -281,9 +238,9 @@ export function Dialog(): JSX.Element {
 					<AuthoringField span={6}>
 						<div className={stepCardClass}>
 							<div className={headerRowClass}>
-								<span className={stepNumberClass}>1</span>
+								<span className={stepBadgeClass}>1</span>
 								<div className={headerColumnFullClass}>
-									<span className={stepTitleClass}>
+									<span className={sectionTitleClass}>
 										{t("layerCompPreset.step1.title", "Preset type")}
 									</span>
 									<AuthoringSegment
@@ -309,15 +266,15 @@ export function Dialog(): JSX.Element {
 					<AuthoringField span={6}>
 						<div className={stepCardClass}>
 							<div className={headerRowClass}>
-								<span className={stepNumberClass}>2</span>
+								<span className={stepBadgeClass}>2</span>
 								<div className={headerColumnClass}>
-									<span className={stepTitleClass}>
+									<span className={sectionTitleClass}>
 										{t(
 											"layerCompPreset.step2.title",
 											"Prepare in After Effects",
 										)}
 									</span>
-									<span className={stepDescClass}>
+									<span className={stepDescriptionClass}>
 										{presetType === "layer"
 											? t(
 													"layerCompPreset.desc.layer",
@@ -338,32 +295,34 @@ export function Dialog(): JSX.Element {
 						<div className={stepCardClass}>
 							<div className={step3ColumnClass}>
 								<div className={headerRowClass}>
-									<span className={stepNumberClass}>3</span>
+									<span className={stepBadgeClass}>3</span>
 									<div className={headerColumnFullClass}>
-										<span className={stepTitleClass}>
+										<span className={sectionTitleClass}>
 											{t("layerCompPreset.step3.title", "Save location")}
 										</span>
 										<PathField
 											value={saveDir}
 											onChange={(next) => setSaveDir(next)}
 											onBrowse={handleBrowseFolder}
-											browseAriaLabel="Browse folder"
+											browseAriaLabel={t("common.browseFolder")}
 											browseSlot={
 												<Icon icon={FolderOpen} size={16} aria-hidden />
 											}
-											placeholder={defaultSavePath || "System default"}
+											placeholder={defaultSavePath || t("common.systemDefault")}
 											uiSize="md"
 										/>
 										{fullFilePath ? (
 											<div className={previewColumnClass}>
-												<span className={previewLabelClass}>
+												<span className={sectionLabelClass}>
 													{t("layerCompPreset.savePreview", "Save preview")}
 												</span>
-												<div className={previewBoxClass}>{fullFilePath}</div>
+												<div className={monoPreviewBoxClass}>
+													{fullFilePath}
+												</div>
 											</div>
 										) : null}
 										<div className={hintRowClass}>
-											<Icon icon={AlertCircle} size={14} aria-hidden />
+											<Icon icon={AlertCircle} size={16} aria-hidden />
 											<span>
 												{t(
 													"layerCompPreset.hint.saveButton",

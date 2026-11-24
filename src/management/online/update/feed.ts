@@ -18,7 +18,7 @@ export const DEFAULT_UPDATE_FEED_URL =
 
 export type UpdatePlatform = "windows" | "macos";
 
-export type UpdateFeedAsset = {
+type UpdateFeedAsset = {
 	platform: UpdatePlatform;
 	url: string;
 	sha256: string;
@@ -232,7 +232,7 @@ const fetchWithDeadline = async (
 		});
 		const response = await Promise.race([request, deadline]);
 		if (!response.ok) {
-			throw new Error(`GitHub release request failed: HTTP ${response.status}`);
+			throw new Error(`GitHub release request failed: HTTP ${response.status}`); // i18n-exempt: internal diagnostic — not rendered as UI copy
 		}
 		return await Promise.race([response.text(), deadline]);
 	} finally {
@@ -240,7 +240,7 @@ const fetchWithDeadline = async (
 	}
 };
 
-export const defaultFetchFeedText: FetchFeedText = fetchWithDeadline;
+const defaultFetchFeedText: FetchFeedText = fetchWithDeadline;
 
 /**
  * The host platform of the running panel. `navigator.platform` is deprecated

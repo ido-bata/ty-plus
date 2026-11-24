@@ -60,7 +60,7 @@ export function getPresetOperation(type: PresetType): PresetOperation {
 	const op = registry[type];
 	if (!op) {
 		return async () => {
-			throw new Error(`No preset operation registered for type: ${type}`);
+			throw new Error(`No preset operation registered for type: ${type}`); // i18n-exempt: internal diagnostic — not rendered as UI copy
 		};
 	}
 	return op;

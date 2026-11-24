@@ -1,5 +1,4 @@
-import { useAnchorGesture } from "@ty-plus/ui/interaction/use-anchor-gesture";
-import { cx } from "@ty-plus/ui/util/cx";
+import { Button, cx, useAnchorGesture } from "@ty-plus/ui";
 import {
 	type JSX,
 	useCallback,
@@ -9,11 +8,15 @@ import {
 	useState,
 } from "react";
 import { useWidgetRuntime } from "@/function/widget/runtime-context";
+import { i18n } from "@/management/i18n/index";
+import type {
+	AlignTargetId,
+	SurfaceState,
+} from "@/management/workspace/core/state";
 import {
 	DRAG_HANDLE_MARGIN,
 	RESIZE_MARGIN,
 } from "@/management/workspace/events/constants";
-import type { AlignTargetId, SurfaceState } from "@/management/workspace/state";
 import {
 	AlignIcon,
 	TargetIcon,
@@ -84,12 +87,13 @@ const isDisabled = (action: string, selectionCount: number) =>
 
 const ALIGN_BTN_CLASS = css({
 	display: "flex",
+	position: "relative",
 	alignItems: "center",
 	justifyContent: "center",
 	backgroundColor: "transparent",
 	borderWidth: 0,
 	borderRadius: "sm",
-	color: "var(--text,#e8e8ec)",
+	color: "text.primary",
 	cursor: "pointer",
 	paddingInline: "1",
 	paddingBlock: "1.5",
@@ -98,8 +102,14 @@ const ALIGN_BTN_CLASS = css({
 	boxSizing: "border-box",
 	transitionProperty: "colors",
 	transitionDuration: "100",
-	_hover: { backgroundColor: "rgba(255,255,255,0.1)" },
-	_active: { backgroundColor: "rgba(255,255,255,0.15)" },
+	_hover: {
+		backgroundColor:
+			"rgba(var(--text-r), var(--text-g), var(--text-b), var(--ty-opacity-ws-align-hover))",
+	},
+	_active: {
+		backgroundColor:
+			"rgba(var(--text-r), var(--text-g), var(--text-b), var(--ty-opacity-ws-align-active))",
+	},
 });
 
 const SECTION_LABEL_CLASS = css({
@@ -114,6 +124,19 @@ const SECTION_LABEL_CLASS = css({
 	color: "text.muted",
 	opacity: 0.8,
 	_first: { marginTop: 0 },
+});
+
+/**
+ * Full-cell click target overlaid on an align action/target surface. The
+ * surface div owns the custom hover/active treatment; this bare Button only
+ * provides semantics, the shared focus ring and the disabled treatment.
+ */
+const alignHitAreaClass = css({
+	position: "absolute",
+	inset: "0",
+	_focusVisible: {
+		boxShadow: "var(--color-focus-ring)",
+	},
 });
 
 type AlignAction = Action | null;
@@ -143,9 +166,8 @@ function AlignButtonGrid({
 		>
 			{actions.map((action, index) =>
 				action ? (
-					<button
+					<div
 						key={action}
-						type="button"
 						className={cx(
 							ALIGN_BTN_CLASS,
 							isDisabled(action, selectionCount)
@@ -156,18 +178,23 @@ function AlignButtonGrid({
 									})
 								: "",
 						)}
-						title={action}
-						disabled={isDisabled(action, selectionCount)}
-						data-ws-action={action}
-						onClick={(e) => {
-							if (!isGestureActive && !isDisabled(action, selectionCount)) {
-								e.stopPropagation();
-								onAction(action);
-							}
-						}}
 					>
 						<AlignIcon name={action} />
-					</button>
+						<Button
+							variant="bare"
+							uiSize="content"
+							className={alignHitAreaClass}
+							title={action}
+							disabled={isDisabled(action, selectionCount)}
+							data-ws-action={action}
+							onClick={(e) => {
+								if (!isGestureActive && !isDisabled(action, selectionCount)) {
+									e.stopPropagation();
+									onAction(action);
+								}
+							}}
+						/>
+					</div>
 				) : (
 					<div key={`spacer-${index}`} className={css({ minWidth: 0 })} />
 				),
@@ -195,17 +222,17 @@ function GestureOverlay({
 				position: "absolute",
 				inset: 0,
 				pointerEvents: "none",
-				zIndex: 100,
+				zIndex: "var(--ty-z-gesture)",
 				overflow: "visible",
 			})}
-			aria-label="Gesture path overlay"
+			aria-label={i18n.t("widgets:align.gestureOverlay")}
 		>
-			<title>Gesture path overlay</title>
+			<title>{i18n.t("widgets:align.gestureOverlay")}</title>
 			{path.length > 1 && (
 				<polyline
 					points={path.map((p) => `${p.x},${p.y}`).join(" ")}
 					fill="none"
-					stroke="var(--action-primary)"
+					stroke="var(--color-text-accent)"
 					strokeWidth="2"
 					strokeLinecap="round"
 					strokeLinejoin="round"
@@ -216,7 +243,7 @@ function GestureOverlay({
 					cx={lastPoint.x}
 					cy={lastPoint.y}
 					r="3"
-					fill="var(--action-primary)"
+					fill="var(--color-text-accent)"
 				/>
 			)}
 		</svg>
@@ -241,6 +268,7 @@ function TargetSelectorRow({
 			css({
 				flex: 1,
 				display: "flex",
+				position: "relative",
 				alignItems: "center",
 				justifyContent: "center",
 				backgroundColor: "transparent",
@@ -255,14 +283,16 @@ function TargetSelectorRow({
 				transitionDuration: "100",
 				minWidth: 0,
 				_hover: {
-					backgroundColor: "rgba(255,255,255,0.05)",
+					backgroundColor:
+						"rgba(var(--text-r), var(--text-g), var(--text-b), var(--ty-opacity-ws-target-hover))",
 					color: "text.primary",
 				},
 			}),
 			target === t
 				? css({
-						backgroundColor: "rgba(255,255,255,0.1)",
-						color: "var(--action-primary,#4facfe)",
+						backgroundColor:
+							"rgba(var(--text-r), var(--text-g), var(--text-b), var(--ty-opacity-ws-target-active-bg))",
+						color: "text.accent",
 					})
 				: "",
 		);
@@ -273,57 +303,61 @@ function TargetSelectorRow({
 				display: "flex",
 				gap: "3px",
 				paddingTop: "1.5",
-				borderTopWidth: "1px",
+				borderTopWidth: "hairline",
 				borderTopStyle: "solid",
-				borderTopColor: "rgba(255,255,255,0.1)",
+				borderTopColor: "border.subtle",
 				width: "full",
 			})}
 		>
-			<button
-				type="button"
-				className={btnClass("selection")}
-				data-ws-action="align-target-selection"
-				onClick={pickTarget("selection")}
-				title="Align to Selection"
-			>
+			<div className={btnClass("selection")}>
 				<TargetIcon name="selection" />
-			</button>
-			<button
-				type="button"
-				className={btnClass("comp")}
-				data-ws-action="align-target-comp"
-				onClick={pickTarget("comp")}
-				title="Align to Composition"
-			>
+				<Button
+					variant="bare"
+					uiSize="content"
+					className={alignHitAreaClass}
+					data-ws-action="align-target-selection"
+					onClick={pickTarget("selection")}
+					title={i18n.t("widgets:align.targets.selection")}
+				/>
+			</div>
+			<div className={btnClass("comp")}>
 				<TargetIcon name="comp" />
-			</button>
-			<button
-				type="button"
-				className={btnClass("key-object")}
-				data-ws-action="align-target-key-object"
-				onClick={pickTarget("key-object")}
-				title="Align to Key Object"
-			>
+				<Button
+					variant="bare"
+					uiSize="content"
+					className={alignHitAreaClass}
+					data-ws-action="align-target-comp"
+					onClick={pickTarget("comp")}
+					title={i18n.t("widgets:align.targets.composition")}
+				/>
+			</div>
+			<div className={btnClass("key-object")}>
 				<TargetIcon name="key-object" />
-			</button>
-			<button
-				type="button"
-				className={btnClass("time")}
-				data-ws-action="align-target-time"
-				onClick={pickTarget("time")}
-				title="Time Alignment"
-			>
+				<Button
+					variant="bare"
+					uiSize="content"
+					className={alignHitAreaClass}
+					data-ws-action="align-target-key-object"
+					onClick={pickTarget("key-object")}
+					title={i18n.t("widgets:align.targets.keyObject")}
+				/>
+			</div>
+			<div className={btnClass("time")}>
 				<TargetIcon name="time" />
-			</button>
+				<Button
+					variant="bare"
+					uiSize="content"
+					className={alignHitAreaClass}
+					data-ws-action="align-target-time"
+					onClick={pickTarget("time")}
+					title={i18n.t("widgets:align.targets.time")}
+				/>
+			</div>
 		</div>
 	);
 }
 
-export function Align({
-	state,
-	widthPx,
-	widgetInstanceId,
-}: Props): JSX.Element {
+export function Align({ widthPx, widgetInstanceId }: Props): JSX.Element {
 	const { activeWidgetInstanceId, host, setActiveWidgetInstanceId } =
 		useWidgetRuntime();
 	const isActiveWidget = activeWidgetInstanceId === widgetInstanceId;
@@ -335,12 +369,14 @@ export function Align({
 	const alignSectionRef = useRef<HTMLDivElement>(null);
 	const distributeSectionRef = useRef<HTMLDivElement>(null);
 	const spacingSectionRef = useRef<HTMLDivElement>(null);
+	const timeSectionRef = useRef<HTMLDivElement>(null);
 	const targetRowRef = useRef<HTMLDivElement>(null);
 	const [size, setSize] = useState(() => ({ w: widthPx, h: 0 }));
 	const [sectionHeights, setSectionHeights] = useState(() => ({
 		align: 0,
 		distribute: 0,
 		spacing: 0,
+		time: 0,
 		target: 0,
 	}));
 
@@ -361,20 +397,24 @@ export function Align({
 		return () => obs.disconnect();
 	}, []);
 
-	// Measure section heights
+	// Measure section heights. Re-run when the target changes (the Time
+	// section mounts/unmounts) and when the width flips the two-group
+	// layout, since both change the measured offsets.
+	// biome-ignore lint/correctness/useExhaustiveDependencies: target/size.w are re-measure triggers, not effect inputs
 	useLayoutEffect(() => {
 		const measureSections = () => {
 			setSectionHeights({
 				align: alignSectionRef.current?.offsetHeight ?? 0,
 				distribute: distributeSectionRef.current?.offsetHeight ?? 0,
 				spacing: spacingSectionRef.current?.offsetHeight ?? 0,
+				time: timeSectionRef.current?.offsetHeight ?? 0,
 				target: targetRowRef.current?.offsetHeight ?? 0,
 			});
 		};
 		measureSections();
 		const timeoutId = setTimeout(measureSections, 0);
 		return () => clearTimeout(timeoutId);
-	}, []);
+	}, [target, size.w]);
 
 	const showTwoGroups = size.w >= 180;
 
@@ -382,40 +422,45 @@ export function Align({
 	const distributeHeight =
 		sectionHeights.distribute || (showTwoGroups ? 60 : 90);
 	const spacingHeight = sectionHeights.spacing || (showTwoGroups ? 60 : 90);
+	const timeHeight = sectionHeights.time || (showTwoGroups ? 60 : 90);
 	const targetHeight = sectionHeights.target || 35;
 	const sectionGap = 10;
 	const buffer = 30;
 
+	// The Time section only exists while `target === "time"`. It consumes
+	// the same budget as the other optional sections: when it does not
+	// fit, the earlier optional sections yield first so the root's
+	// `overflow: hidden` never clips a rendered button row.
+	const showTime =
+		target === "time" &&
+		size.h >= alignHeight + sectionGap + timeHeight - buffer;
+	const timeBlock = showTime ? timeHeight + sectionGap : 0;
+
 	const showDistribute =
-		size.h >= alignHeight + sectionGap + distributeHeight - buffer;
+		size.h >= alignHeight + sectionGap + distributeHeight + timeBlock - buffer;
 	const showSpacing =
 		size.h >=
 		alignHeight +
 			sectionGap +
 			distributeHeight +
 			sectionGap +
-			spacingHeight -
+			spacingHeight +
+			timeBlock -
 			buffer;
+	// The target row must budget every section that actually renders —
+	// align (always), distribute/spacing (when they fit), and the time
+	// block. The previous disjunction let the first clause pass on
+	// `align + time + target` alone, so a shown distribute/spacing section
+	// pushed the target row past the root's `overflow: hidden` clip (#560).
 	const showTarget =
-		size.h >= alignHeight + sectionGap + targetHeight - buffer ||
-		(showDistribute &&
-			size.h >=
-				alignHeight +
-					sectionGap +
-					distributeHeight +
-					sectionGap +
-					targetHeight -
-					buffer) ||
-		(showSpacing &&
-			size.h >=
-				alignHeight +
-					sectionGap +
-					distributeHeight +
-					sectionGap +
-					spacingHeight +
-					sectionGap +
-					targetHeight -
-					buffer);
+		size.h >=
+		alignHeight +
+			sectionGap +
+			(showDistribute ? distributeHeight + sectionGap : 0) +
+			(showSpacing ? spacingHeight + sectionGap : 0) +
+			timeBlock +
+			targetHeight -
+			buffer;
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: isActiveWidget triggers re-fetch on activation
 	useEffect(() => {
@@ -445,7 +490,25 @@ export function Align({
 					else if (count >= 2 && target === "comp") setTarget("selection");
 				}
 			}
-			await host("alignLayers", [{ action, target: autoTarget ?? target }]);
+			await host("alignLayers", [
+				{
+					action,
+					target: autoTarget ?? target,
+					undoGroupName: i18n.t("widgets:align.undoGroupName"),
+					messages: {
+						noActiveComposition: i18n.t(
+							"widgets:align.errors.noActiveComposition",
+							{
+								defaultValue:
+									"Select at least one layer in an active composition",
+							},
+						),
+						noLayerSelected: i18n.t("widgets:align.errors.noLayerSelected", {
+							defaultValue: "Select at least one layer before aligning",
+						}),
+					},
+				},
+			]);
 		},
 		[host, target, isManualTarget, setActiveWidgetInstanceId, widgetInstanceId],
 	);
@@ -504,7 +567,7 @@ export function Align({
 		};
 	}, [run]);
 
-	const runAlign = useCallback(
+	const _runAlign = useCallback(
 		(action: Action) => {
 			void run(action);
 		},
@@ -528,9 +591,9 @@ export function Align({
 				boxSizing: "border-box",
 				overflow: "hidden",
 				userSelect: "none",
-				backgroundColor: "var(--widget-background,rgba(30,30,30,0.8))",
+				backgroundColor: "surface.widget",
 				borderWidth: 0,
-				borderRadius: "var(--radius,6px)",
+				borderRadius: "shell-lg",
 			})}
 			onFocusCapture={() => setActiveWidgetInstanceId(widgetInstanceId)}
 			onPointerDown={gesture.onPointerDown}
@@ -541,7 +604,9 @@ export function Align({
 
 			{/* Align Section */}
 			<div ref={alignSectionRef}>
-				{(showDistribute || showSpacing) && <SectionLabel>Align</SectionLabel>}
+				{(showDistribute || showSpacing) && (
+					<SectionLabel>{i18n.t("widgets:align.name")}</SectionLabel>
+				)}
 				<div
 					className={cx(
 						css({
@@ -573,7 +638,9 @@ export function Align({
 			{/* Distribute Section */}
 			{showDistribute && (
 				<div ref={distributeSectionRef}>
-					<SectionLabel>Distribute</SectionLabel>
+					<SectionLabel>
+						{i18n.t("widgets:align.sections.distribute")}
+					</SectionLabel>
 					<div
 						className={cx(
 							css({
@@ -614,7 +681,9 @@ export function Align({
 			{/* Spacing Section */}
 			{showSpacing && (
 				<div ref={spacingSectionRef}>
-					<SectionLabel>Spacing</SectionLabel>
+					<SectionLabel>
+						{i18n.t("widgets:align.sections.spacing")}
+					</SectionLabel>
 					<div
 						className={cx(
 							css({
@@ -645,9 +714,9 @@ export function Align({
 			)}
 
 			{/* Time Section */}
-			{target === "time" && (
-				<div>
-					<SectionLabel>Time</SectionLabel>
+			{showTime && (
+				<div ref={timeSectionRef} data-ws-align-section="time">
+					<SectionLabel>{i18n.t("widgets:align.sections.time")}</SectionLabel>
 					<div
 						className={cx(
 							css({

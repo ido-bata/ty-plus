@@ -4,30 +4,20 @@ import type {
 	LayerType,
 	PatternValue,
 } from "@/management/workspace/background/contract";
+import {
+	DEFAULT_LAYER_COLOR,
+	DEFAULT_PATTERN_COLOR,
+} from "@/management/workspace/literals/layer-colors";
 
-export const DEFAULT_COLOR = "#1e1e1e";
-const DEFAULT_PATTERN_COLOR = "#444444";
-export const PRESET_COLORS = [
-	"#1e1e1e",
-	"#0d1117",
-	"#1a1a2e",
-	"#16213e",
-	"#0f3460",
-	"#2d2d2d",
-	"#3c3c3c",
-	"#252525",
-	"#1b1b2f",
-	"#162447",
-];
 const PATTERNS: readonly PatternValue[] = ["dots", "grid", "lines"];
 
-function createNewLayer(type: LayerType): Layer {
+export function createNewLayer(type: LayerType): Layer {
 	return {
 		id: `layer-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
 		type,
 		enabled: true,
 		opacity: 100,
-		color: type === "color" ? DEFAULT_COLOR : undefined,
+		color: type === "color" ? DEFAULT_LAYER_COLOR : undefined,
 		colorOpacity: 100,
 		imagePath: undefined,
 		imageSource: type === "image" ? "file" : undefined,
@@ -45,7 +35,7 @@ function createNewLayer(type: LayerType): Layer {
 	};
 }
 
-function migrateToLayers(bg: Background | null): Layer[] {
+export function migrateToLayers(bg: Background | null): Layer[] {
 	if (!bg) {
 		return [createNewLayer("color")];
 	}
@@ -89,8 +79,4 @@ function migrateToLayers(bg: Background | null): Layer[] {
 
 export function clampNumber(value: number, min: number, max: number): number {
 	return Math.max(min, Math.min(max, Number.isFinite(value) ? value : min));
-}
-
-function isUrlImagePath(value: string): boolean {
-	return /^(https?:|data:image\/)/i.test(value.trim());
 }

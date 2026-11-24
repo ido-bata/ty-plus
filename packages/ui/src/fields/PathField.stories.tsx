@@ -1,8 +1,11 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Icon } from "@ty-plus/ui/icons/Icon";
+import { Icon } from "@ty-plus/ui/Icon";
 import { FolderOpen } from "lucide-react";
 import { useState } from "react";
 import { expect } from "storybook/test";
+
+import { expectCanvasLayout } from "@/storybook/quality/layout";
+
 import { PathField } from "./PathField";
 
 const meta = {
@@ -37,6 +40,16 @@ const BrowseIcon = <Icon icon={FolderOpen} size={12} aria-hidden />;
 export const Default: Story = {
 	args: {
 		browseSlot: BrowseIcon,
+	},
+	play: async ({ canvasElement }) => {
+		const button = canvasElement.querySelector<HTMLButtonElement>(
+			"[data-path-field] button",
+		);
+		if (!button) throw new Error("browse button not found");
+		expect(button.disabled).toBe(false);
+		// The enabled browse button must not carry the disabled dim: it once
+		// rendered at opacity 0.5 and looked identical to the disabled state.
+		expect(getComputedStyle(button).opacity).toBe("1");
 	},
 };
 
@@ -85,6 +98,7 @@ export const Focused: Story = {
 		browseSlot: BrowseIcon,
 	},
 	play: async ({ canvasElement }) => {
+		expectCanvasLayout(canvasElement);
 		const input = canvasElement.querySelector<HTMLInputElement>(
 			"[data-path-field] input",
 		);
@@ -97,5 +111,6 @@ export const Focused: Story = {
 		await expect(getComputedStyle(input).borderTopColor).not.toBe(
 			restingBorderColor,
 		);
+		expectCanvasLayout(canvasElement);
 	},
 };

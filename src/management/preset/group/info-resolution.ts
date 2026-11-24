@@ -1,7 +1,7 @@
 import type { Preset } from "@/management/preset/contract";
 import { findGroupEntry } from "@/management/preset/group/catalog-helpers";
 import { synthesizeGroupPresetForTile } from "@/management/preset/group/synthesize";
-import type { SurfaceState } from "@/management/workspace/state";
+import type { SurfaceState } from "@/management/workspace/core/state";
 
 /**
  * Resolve catalog ids for the info widget: real presets from `presets.json`,
@@ -31,11 +31,4 @@ export function resolvePresetsForInfoByCatalogIds(
 	}
 
 	return out;
-}
-
-function isGroupCatalogRef(
-	state: Pick<SurfaceState, "groupCatalogEntries">,
-	catalogId: string,
-): boolean {
-	return findGroupEntry(state.groupCatalogEntries, catalogId) !== undefined;
 }

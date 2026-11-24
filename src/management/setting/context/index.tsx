@@ -16,6 +16,7 @@ import {
 } from "react";
 import { resolvePanelSurfaceId } from "@/management/ae/cep/entry/id";
 import { createCepSurfaceTransport } from "@/management/ae/cep/transport";
+import { i18n } from "@/management/i18n/index";
 import {
 	coerceSettings,
 	DEFAULT_SETTINGS,
@@ -85,7 +86,7 @@ export { SettingsContext };
 export function useSettings(): SettingsContextValue {
 	const context = useContext(SettingsContext);
 	if (!context) {
-		throw new Error("useSettings must be used within SettingsProvider");
+		throw new Error("useSettings must be used within SettingsProvider"); // i18n-exempt: internal diagnostic — not rendered as UI copy
 	}
 	return context;
 }
@@ -112,7 +113,7 @@ async function loadSettingsFromStorage(): Promise<Settings> {
 	}
 }
 
-/**
+/*
  * The key paths this layer owns — i.e. everything reachable from `Settings`.
  *
  * `settings/app.json` is shared: the workspace layer writes
@@ -123,8 +124,6 @@ async function loadSettingsFromStorage(): Promise<Settings> {
  * cleared it). Ownership is therefore an explicit allowlist derived from the
  * `Settings` type, kept next to it so the two cannot drift silently.
  */
-type OwnedKeySpec = true | { readonly [key: string]: OwnedKeySpec };
-
 /**
  * The allowlist shape implied by `Settings`, so the compiler rejects a
  * missing entry. `true` means "this whole subtree is owned"; an object lists
@@ -133,6 +132,7 @@ type OwnedKeySpec = true | { readonly [key: string]: OwnedKeySpec };
  * when a new field is added.
  */
 type OwnedSpecFor<T> = {
+	// i18n-exempt: TypeScript mapped-type syntax, not UI copy.
 	readonly [K in keyof T]-?: NonNullable<T[K]> extends object
 		? true | OwnedSpecFor<NonNullable<T[K]>>
 		: true;
@@ -232,8 +232,7 @@ export function mergeOwnedSettingsIntoSettingsJson(
  * overwrite from memory would restore workspace keys the workspace layer has
  * deleted since this panel loaded them.
  */
-const SETTINGS_SAVE_FAILED_MESSAGE =
-	"Failed to save settings. The settings folder may be read-only.";
+const SETTINGS_SAVE_FAILED_MESSAGE_KEY = "settings:saveFailed";
 
 /**
  * Best-effort broadcast of a settings write failure on the shell bus so the
@@ -267,11 +266,21 @@ function publishSettingsSaveFailure(win: Window, message: string): void {
 
 async function saveSettingsToStorage(settings: Settings): Promise<boolean> {
 	try {
-		const raw = await readSettings(window);
-		const onDisk = raw?.trim() ? (JSON.parse(raw) as unknown) : {};
-		const merged = mergeOwnedSettingsIntoSettingsJson(onDisk, settings);
-		await writeSettings(window, `${JSON.stringify(merged, null, 2)}\n`);
-		return true;
+		// ADR-0006: settings/app.json is shared with the workspace layer
+		// (panel persists, inter-panel moves, backup restore), which writes
+		// under the managed-root persistence lock. This read→merge→write
+		// must hold the same lock or a concurrent workspace write can be
+		// lost. The per-window queue above only serializes THIS context.
+		const { withManagedRootPersistenceLock } = await import(
+			"@/management/storage/lock/persistence-lock"
+		);
+		return await withManagedRootPersistenceLock(window, async () => {
+			const raw = await readSettings(window);
+			const onDisk = raw?.trim() ? (JSON.parse(raw) as unknown) : {};
+			const merged = mergeOwnedSettingsIntoSettingsJson(onDisk, settings);
+			await writeSettings(window, `${JSON.stringify(merged, null, 2)}\n`);
+			return true;
+		});
 	} catch (error) {
 		console.error("[Settings] Failed to save settings:", error);
 		return false;
@@ -321,9 +330,10 @@ export function SettingsProvider({
 	const runSettingsSave = useCallback(
 		(snapshot: Settings): Promise<boolean> =>
 			enqueueSettingsSave(snapshot).then((ok) => {
-				setSaveError(ok ? null : SETTINGS_SAVE_FAILED_MESSAGE);
+				const message = i18n.t(SETTINGS_SAVE_FAILED_MESSAGE_KEY);
+				setSaveError(ok ? null : message);
 				if (!ok) {
-					publishSettingsSaveFailure(window, SETTINGS_SAVE_FAILED_MESSAGE);
+					publishSettingsSaveFailure(window, message);
 				}
 				return ok;
 			}),
@@ -408,7 +418,7 @@ export function SettingsProvider({
 		settingsRef.current = DEFAULT_SETTINGS;
 		setSettings(DEFAULT_SETTINGS);
 		const ok = await runSettingsSave(DEFAULT_SETTINGS);
-		setSaveError(ok ? null : SETTINGS_SAVE_FAILED_MESSAGE);
+		setSaveError(ok ? null : i18n.t(SETTINGS_SAVE_FAILED_MESSAGE_KEY));
 	}, [runSettingsSave]);
 
 	const reloadSettingsFromDisk = useCallback(async () => {

@@ -17,39 +17,6 @@ const Svg = ({ size = 20, children, ...props }: IconProps): JSX.Element => (
 	</svg>
 );
 
-export function SearchIcon(props: IconProps): JSX.Element {
-	return (
-		<Svg size={14} fill="none" stroke="currentColor" strokeWidth={2} {...props}>
-			<circle cx="11" cy="11" r="8" />
-			<line x1="21" y1="21" x2="16.65" y2="16.65" />
-		</Svg>
-	);
-}
-
-export function LockIcon(props: IconProps): JSX.Element {
-	return (
-		<Svg fill="currentColor" {...props}>
-			<path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" />
-		</Svg>
-	);
-}
-
-export function UnlockIcon(props: IconProps): JSX.Element {
-	return (
-		<Svg fill="currentColor" {...props}>
-			<path d="M12 1C9.24 1 7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2h-7V6c0-1.66 1.34-3 3-3s3 1.34 3 3h2c0-2.76-2.24-5-5-5zm0 14c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z" />
-		</Svg>
-	);
-}
-
-export function MenuIcon(props: IconProps): JSX.Element {
-	return (
-		<Svg fill="currentColor" {...props}>
-			<path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
-		</Svg>
-	);
-}
-
 const GUIDE = 1.0;
 const RECT_W_SMALL = 7;
 const RECT_W_LARGE = 11;
@@ -60,9 +27,15 @@ const RECT_V_W = 4;
 const ALIGN_LINE = { stroke: "currentColor", strokeWidth: GUIDE };
 const ALIGN_RECT = { fill: "currentColor" };
 
-export function AlignIcon({ name }: { name: string }): JSX.Element {
+export function AlignIcon({
+	name,
+	size = 20,
+}: {
+	name: string;
+	size?: number;
+}): JSX.Element {
 	return (
-		<Svg size={20} shapeRendering="geometricPrecision">
+		<Svg size={size} shapeRendering="geometricPrecision">
 			{name === "align-left" && (
 				<>
 					<line x1="5" y1="4" x2="5" y2="20" {...ALIGN_LINE} />
@@ -273,12 +246,14 @@ export function AlignIcon({ name }: { name: string }): JSX.Element {
 
 export function TargetIcon({
 	name,
+	size = 14,
 }: {
 	name: "selection" | "comp" | "key-object" | "time";
+	size?: number;
 }): JSX.Element {
 	if (name === "selection") {
 		return (
-			<Svg size={14}>
+			<Svg size={size}>
 				<rect
 					x="5"
 					y="5"
@@ -302,7 +277,7 @@ export function TargetIcon({
 	}
 	if (name === "comp") {
 		return (
-			<Svg size={14}>
+			<Svg size={size}>
 				<rect
 					x="2"
 					y="2"
@@ -317,7 +292,7 @@ export function TargetIcon({
 	}
 	if (name === "time") {
 		return (
-			<Svg size={14}>
+			<Svg size={size}>
 				<circle
 					cx="12"
 					cy="12"
@@ -336,7 +311,7 @@ export function TargetIcon({
 		);
 	}
 	return (
-		<Svg size={14} fill="currentColor">
+		<Svg size={size} fill="currentColor">
 			<path d="M7 11V7h4v4H7z" />
 			<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
 		</Svg>

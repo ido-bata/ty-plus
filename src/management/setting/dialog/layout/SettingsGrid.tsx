@@ -1,4 +1,4 @@
-import { cx } from "@ty-plus/ui/util/cx";
+import { cx, fieldLabelClass } from "@ty-plus/ui";
 import type { JSX, ReactNode } from "react";
 import { css } from "@/styled-system/css";
 
@@ -42,12 +42,6 @@ const fieldStyle = css({
 	gap: "var(--ty-space-1)",
 });
 
-const fieldLabelStyle = css({
-	fontSize: "text-xs",
-	fontWeight: "medium",
-	color: "text.primary",
-});
-
 const sectionHeadingStyle = css({
 	fontSize: "text-xs",
 	fontWeight: "semibold",
@@ -87,7 +81,7 @@ export function SettingsFieldLabel({
 }: {
 	children: ReactNode;
 }): JSX.Element {
-	return <span className={fieldLabelStyle}>{children}</span>;
+	return <span className={fieldLabelClass}>{children}</span>;
 }
 
 export function SettingsSectionHeading({

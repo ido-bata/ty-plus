@@ -56,7 +56,7 @@ export const gridSettingsFromSettingsJson = (
 };
 
 /** Theme token keys carrying grid metrics inside a `themeLive` payload. */
-export const GRID_LIVE_TOKEN_KEYS = {
+const GRID_LIVE_TOKEN_KEYS = {
 	cellSize: "ty-ws-cell",
 	gap: "ty-ws-grid-gap",
 	radius: "ty-ws-grid-radius",

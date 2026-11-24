@@ -11,3 +11,12 @@ declare module "vscode-oniguruma/release/onig.wasm" {
 	const base64: string;
 	export default base64;
 }
+
+// Shared Window globals used by panel/dialog surfaces. The canonical
+// declaration also lives next to its writer in
+// `src/management/dialog/modeless/surface-id.ts`; keeping a copy here makes
+// the ambient type visible to narrower programs (scripts/storybook scope)
+// that do not include that module.
+interface Window {
+	__TY_PLUS_DIALOG_SURFACE_ID__?: string;
+}

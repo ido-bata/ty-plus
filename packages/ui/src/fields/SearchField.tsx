@@ -1,5 +1,6 @@
-import { Icon } from "@ty-plus/ui/icons/Icon";
-import { cx, Input } from "@ty-plus/ui/index";
+import { Input } from "@ty-plus/ui/fields/Input";
+import { Icon } from "@ty-plus/ui/Icon";
+import { cx } from "@ty-plus/ui/util/cx";
 import type { LucideIcon } from "lucide-react";
 import { X } from "lucide-react";
 import type {
@@ -9,10 +10,17 @@ import type {
 	ReactNode,
 	Ref,
 } from "react";
+import { useTranslation } from "react-i18next";
 import { css } from "@/styled-system/css";
 
 export type SearchFieldProps = {
 	icon: LucideIcon;
+	/**
+	 * Control height in spacing units, matching the shared control scale.
+	 * Callers must not override the height with `className` — the field's
+	 * height is part of its contract.
+	 */
+	uiSize?: "sm" | "md" | "lg";
 	/**
 	 * When true, the inner input is uncontrolled (no `value` passed through to DOM).
 	 * Use with `defaultValue` when a parent listens on bubble (e.g. `data-ws-action` + container `input`).
@@ -44,19 +52,26 @@ const root = css({
 	alignItems: "center",
 	gap: "1",
 	borderRadius: "shell-sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
-	borderColor: "border.default",
+	borderColor: "border.control",
 	backgroundColor: "surface.widget",
 	paddingInline: "1.5",
 	paddingBlock: "0.5",
 	transitionProperty: "border-color,box-shadow",
 	_focusWithin: {
 		borderColor: "interactive.focus",
+		boxShadow: "var(--color-focus-ring)",
 	},
 });
 
 const iconSlot = css({ flexShrink: 0, color: "text.muted" });
+
+const sizeMap: Record<NonNullable<SearchFieldProps["uiSize"]>, string> = {
+	sm: css({ height: "7", minHeight: "7", paddingBlock: 0 }),
+	md: css({ height: "8", minHeight: "8", paddingBlock: 0 }),
+	lg: css({ height: "9", minHeight: "9", paddingBlock: 0 }),
+};
 
 const innerInput = css({
 	minWidth: 0,
@@ -70,6 +85,8 @@ const innerInput = css({
 	// Issue #144: the inner input must never paint its own focus border —
 	// the wrapper's `_focusWithin` ring is the single focus indicator.
 	_focus: { borderColor: "transparent" },
+	// The wrapper owns the focus indicator (its `_focusWithin` ring). The
+	// inner input must not paint a second one.
 	_focusVisible: {
 		borderColor: "transparent",
 		boxShadow: "none",
@@ -99,14 +116,21 @@ const clearButton = css({
 	borderRadius: "shell-sm",
 	padding: "0.5",
 	color: "text.muted",
+	outline: "none",
+	transitionProperty: "colors",
 	_hover: {
 		backgroundColor: "interactive.hover",
 		color: "text.primary",
+	},
+	_focusVisible: {
+		boxShadow: "var(--color-focus-ring)",
+		outlineOffset: "0",
 	},
 });
 
 export function SearchField({
 	icon,
+	uiSize = "md",
 	uncontrolled = false,
 	className,
 	inputClassName,
@@ -120,6 +144,7 @@ export function SearchField({
 	onChange,
 	...rest
 }: SearchFieldProps): JSX.Element {
+	const { t } = useTranslation();
 	const str = uncontrolled
 		? typeof rest.defaultValue === "string"
 			? rest.defaultValue
@@ -147,8 +172,8 @@ export function SearchField({
 	};
 
 	return (
-		<div className={cx(root, className)}>
-			<Icon icon={icon} size={10} className={iconSlot} aria-hidden />
+		<div className={cx(root, sizeMap[uiSize], className)}>
+			<Icon icon={icon} size={12} className={iconSlot} aria-hidden />
 			<Input
 				ref={inputRef}
 				type="search"
@@ -174,11 +199,13 @@ export function SearchField({
 				<button
 					type="button"
 					className={clearButton}
-					aria-label="Clear search"
-					title="Clear"
+					aria-label={t("ui.searchField.clearAria", {
+						defaultValue: "Clear search",
+					})}
+					title={t("ui.searchField.clearTitle", { defaultValue: "Clear" })}
 					onClick={handleClear}
 				>
-					<Icon icon={X} size={10} aria-hidden />
+					<Icon icon={X} size={12} aria-hidden />
 				</button>
 			) : null}
 		</div>

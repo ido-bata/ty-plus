@@ -13,6 +13,10 @@
 
 import { createLogger } from "@/management/debug";
 import { indexFromPanelId, readNJson, writeNJson } from "@/management/storage";
+import {
+	resolvePersistenceLockRoot,
+	withPersistenceLock,
+} from "@/management/storage/lock/persistence-lock";
 import type {
 	LayoutItem,
 	PersistedLayoutDocument,
@@ -28,8 +32,9 @@ export type RemovePresetFromDialogDiskInput = {
 };
 
 /** Which step was in flight when the removal could not finish. */
-export type RemovePresetDiskStage =
+type RemovePresetDiskStage =
 	| "resolve-root"
+	| "acquire-lock"
 	| "read-layout"
 	| "parse-layout"
 	| "write-layout";
@@ -76,53 +81,65 @@ export async function tryPersistRemovePresetFromDialog(
 			return { status: "unchanged", reason: "no-catalog-refs" };
 		}
 
-		stage = "read-layout";
-		const rawLayout = await readNJson(win, targetIndex);
-		if (!rawLayout?.trim()) {
-			return { status: "unchanged", reason: "no-layout-file" };
+		// ADR-0006: the read→filter→write runs inside the managed-root
+		// persistence lock so a concurrent owner persist cannot interleave.
+		// External writers remove tiles too — the owner panel's merge
+		// (external-layout-merge.ts) is what keeps this removal from being
+		// resurrected by the owner's next persist.
+		const lockRoot = await resolvePersistenceLockRoot(win);
+		if (!lockRoot) {
+			return { status: "unchanged", reason: "no-persistence-root" };
 		}
+		stage = "acquire-lock";
+		return await withPersistenceLock(win, lockRoot, async () => {
+			stage = "read-layout";
+			const rawLayout = await readNJson(win, targetIndex);
+			if (!rawLayout?.trim()) {
+				return { status: "unchanged", reason: "no-layout-file" } as const;
+			}
 
-		// A corrupt body throws here and is reported as `parse-layout`; an
-		// object that is not a layout parses to an empty grid, finds nothing to
-		// remove, and returns `not-present` — neither path writes.
-		stage = "parse-layout";
-		const layout = parseLayoutDocument(
-			JSON.parse(rawLayout),
-		) as PersistedLayoutDocument;
-		const idSet = new Set(ids);
+			// A corrupt body throws here and is reported as `parse-layout`; an
+			// object that is not a layout parses to an empty grid, finds nothing to
+			// remove, and returns `not-present` — neither path writes.
+			stage = "parse-layout";
+			const layout = parseLayoutDocument(
+				JSON.parse(rawLayout),
+			) as PersistedLayoutDocument;
+			const idSet = new Set(ids);
 
-		// Filter out tiles whose id matches a deleted preset/group
-		const nextGridCells: LayoutItem[] = layout.gridCells.filter(
-			(cell) => !idSet.has(cell.id.trim()),
-		);
+			// Filter out tiles whose id matches a deleted preset/group
+			const nextGridCells: LayoutItem[] = layout.gridCells.filter(
+				(cell) => !idSet.has(cell.id.trim()),
+			);
 
-		// Also filter presetLayoutRoster entries
-		const nextRoster =
-			layout.presetLayoutRoster?.filter(
-				(entry) => !idSet.has(entry.presetRefId.trim()),
-			) ?? [];
+			// Also filter presetLayoutRoster entries
+			const nextRoster =
+				layout.presetLayoutRoster?.filter(
+					(entry) => !idSet.has(entry.presetRefId.trim()),
+				) ?? [];
 
-		// Check if anything actually changed
-		const didChange =
-			nextGridCells.length !== layout.gridCells.length ||
-			nextRoster.length !== (layout.presetLayoutRoster?.length ?? 0);
+			// Check if anything actually changed
+			const didChange =
+				nextGridCells.length !== layout.gridCells.length ||
+				nextRoster.length !== (layout.presetLayoutRoster?.length ?? 0);
 
-		if (!didChange) {
-			return { status: "unchanged", reason: "not-present" };
-		}
+			if (!didChange) {
+				return { status: "unchanged", reason: "not-present" } as const;
+			}
 
-		const updatedLayout: PersistedLayoutDocument = {
-			gridCells: nextGridCells,
-			...(nextRoster.length > 0 ? { presetLayoutRoster: nextRoster } : {}),
-		};
+			const updatedLayout: PersistedLayoutDocument = {
+				gridCells: nextGridCells,
+				...(nextRoster.length > 0 ? { presetLayoutRoster: nextRoster } : {}),
+			};
 
-		stage = "write-layout";
-		await writeNJson(
-			win,
-			targetIndex,
-			`${JSON.stringify(updatedLayout, null, 2)}\n`,
-		);
-		return { status: "removed" };
+			stage = "write-layout";
+			await writeNJson(
+				win,
+				targetIndex,
+				`${JSON.stringify(updatedLayout, null, 2)}\n`,
+			);
+			return { status: "removed" } as const;
+		});
 	} catch (error) {
 		const message = error instanceof Error ? error.message : String(error);
 		removePresetLog.error("preset tile removal failed", {

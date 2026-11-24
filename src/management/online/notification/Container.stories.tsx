@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import type { CSSProperties, JSX } from "react";
+import { expect } from "storybook/test";
 
 // IMPORTANT: do NOT import `NotificationContainer` here. The component
 // reads from a module-level singleton (`notificationStore`) and renders
@@ -44,28 +45,25 @@ const COLOR_BY_TYPE: Record<NotificationType, string> = {
 };
 
 const ContainerStub = (args: Args): JSX.Element => {
+	// Issue #528: mirror the production component — `NotificationContainer`
+	// returns `null` when there are no notifications, so the stub must not
+	// invent an empty-state label the real UI never renders. (An empty
+	// fragment stands in for `null` because the story render type requires
+	// a `JSX.Element`.)
 	if (args.entries.length === 0) {
-		return (
-			<div
-				style={{
-					padding: 24,
-					color: "#a0a0a0",
-					fontFamily: "sans-serif",
-					fontSize: 11,
-					textAlign: "center",
-					minWidth: 280,
-					boxSizing: "border-box",
-				}}
-				data-storybook-stub="NotificationContainer"
-				data-entry-count="0"
-			>
-				No active notifications
-			</div>
-		);
+		return <></>;
 	}
 	return (
 		<div
 			style={{
+				// Issue #518: mirror the production placement — the real
+				// container portals to document.body as `position: fixed`
+				// at the top-right of the panel (Container.tsx portalClass).
+				position: "fixed",
+				top: "var(--spacing-shell, 12px)",
+				right: "var(--spacing-shell, 12px)",
+				zIndex: "var(--ty-z-notification)",
+				pointerEvents: "none",
 				display: "flex",
 				flexDirection: "column",
 				gap: 8,
@@ -90,6 +88,7 @@ const ContainerStub = (args: Args): JSX.Element => {
 					color: "#e0e0e0",
 					fontFamily: "sans-serif",
 					boxSizing: "border-box",
+					pointerEvents: "auto",
 				};
 				return (
 					<div
@@ -114,11 +113,12 @@ const ContainerStub = (args: Args): JSX.Element => {
 							{ICON_BY_TYPE[entry.type]}
 						</span>
 						<span
+							data-notification-message=""
 							style={{
 								flex: 1,
 								fontSize: 11,
 								lineHeight: 1.4,
-								wordBreak: "break-all",
+								overflowWrap: "anywhere",
 							}}
 						>
 							{entry.message}
@@ -165,7 +165,27 @@ const meta = {
 export default meta;
 type Story = StoryObj<Args>;
 
-export const Default: Story = {};
+// Issue #518: the stub must sit at the top-right of the viewport like the
+// production portal — a normal-flow stub used to render at the canvas's
+// top-left and hid placement regressions.
+const expectTopRightPlacement = (canvasElement: HTMLElement): void => {
+	const stub = canvasElement.querySelector<HTMLElement>(
+		"[data-storybook-stub='NotificationContainer']",
+	);
+	if (!stub) throw new Error("notification stub not found");
+	const rect = stub.getBoundingClientRect();
+	const viewportWidth = canvasElement.ownerDocument.documentElement.clientWidth;
+	expect(rect.top).toBeLessThan(64);
+	expect(viewportWidth - rect.right).toBeLessThan(64);
+};
+
+export const Default: Story = {
+	// Issue #528: with zero entries the production container renders
+	// nothing — the stub must stay empty too (no placeholder label).
+	play: async ({ canvasElement }) => {
+		expect(canvasElement.querySelector("[data-storybook-stub]")).toBeNull();
+	},
+};
 
 export const WithItems: Story = {
 	args: {
@@ -189,6 +209,19 @@ export const WithItems: Story = {
 				dismissible: true,
 			},
 		],
+	},
+	play: async ({ canvasElement }) => {
+		expectTopRightPlacement(canvasElement);
+		// Issue #476: messages must not use `word-break: break-all`,
+		// which split English words mid-word ("netwo/rk"). Overflow
+		// wrapping only kicks in when a token cannot fit on its own.
+		const message = canvasElement.querySelector<HTMLElement>(
+			"[data-notification-message]",
+		);
+		if (!message) throw new Error("notification message not found");
+		const style = getComputedStyle(message);
+		expect(style.wordBreak).not.toBe("break-all");
+		expect(style.overflowWrap).toBe("anywhere");
 	},
 };
 

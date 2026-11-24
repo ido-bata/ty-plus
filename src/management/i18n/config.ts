@@ -34,8 +34,6 @@ export const NAMESPACES = [
 	"online",
 ] as const;
 
-type Namespace = (typeof NAMESPACES)[number];
-
 /**
  * runtime storage keys for locale persistence
  * Archive compatibility: 'i18n-language' is primary
@@ -61,7 +59,7 @@ function _detectBrowserLocale(): SupportedLocale {
 		nav.language || (nav as { userLanguage?: string }).userLanguage;
 	if (!browserLang) return DEFAULT_LOCALE;
 
-	// Extract primary language code (en-US ↁEen)
+	// Extract primary language code (en-US → en) // i18n-exempt: locale-code example
 	const primary = browserLang.split("-")[0].toLowerCase();
 
 	// Check if it's directly supported

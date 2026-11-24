@@ -22,11 +22,6 @@ let lastConsumedPayload: Record<string, unknown> | null = null;
 /**
  * Stores the handoff payload so dialogs can read it after the file is deleted.
  */
-const cachePresetToolHandoffPayload = (
-	payload: Record<string, unknown>,
-): void => {
-	lastConsumedPayload = payload;
-};
 
 /**
  * Returns the cached handoff payload from the last call to cachePresetToolHandoffPayload.
@@ -40,78 +35,6 @@ export const getCachedPresetToolHandoffPayload = (): Record<
  * Reads the full handoff payload from the preset tool handoff file.
  * Returns null if the file cannot be read or is stale/invalid.
  */
-const readPresetToolHandoffPayload = async <T extends Record<string, unknown>>(
-	win: Window,
-	myExtensionId: string,
-): Promise<T | null> => {
-	if (!myExtensionId.trim()) {
-		return null;
-	}
-
-	// Try persistence layer first
-	const data = await readJson(win, "toolHandoff", myExtensionId);
-	if (data && typeof data === "object") {
-		const parsed = data as {
-			writtenAt?: unknown;
-			[key: string]: unknown;
-		};
-
-		// Check stale (older than 2 minutes)
-		if (
-			typeof parsed.writtenAt === "number" &&
-			Number.isFinite(parsed.writtenAt) &&
-			Date.now() - parsed.writtenAt > 120_000
-		) {
-			return null;
-		}
-
-		// Return the full payload excluding internal fields
-		const { targetExtensionId, writtenAt, presetToolSurfaceId, ...rest } =
-			parsed;
-		return rest as T;
-	}
-
-	// Legacy fallback for CEP userData paths
-	const paths = handoffDirAndFile(win, myExtensionId);
-	if (!paths) {
-		return null;
-	}
-	const requireFn = readCepNodeRequireFromWindow(win);
-	if (!requireFn) {
-		return null;
-	}
-	const fsMod = requireFn("fs") as {
-		readFileSync?: (p: string, enc: "utf8") => string;
-	};
-
-	if (!fsMod.readFileSync) {
-		return null;
-	}
-
-	try {
-		const raw = fsMod.readFileSync(paths.filePath, "utf8");
-		const parsed = JSON.parse(raw) as {
-			writtenAt?: unknown;
-			[key: string]: unknown;
-		};
-
-		// Check stale (older than 2 minutes)
-		if (
-			typeof parsed.writtenAt === "number" &&
-			Number.isFinite(parsed.writtenAt) &&
-			Date.now() - parsed.writtenAt > 120_000
-		) {
-			return null;
-		}
-
-		// Return the full payload excluding internal fields
-		const { targetExtensionId, writtenAt, presetToolSurfaceId, ...rest } =
-			parsed;
-		return rest as T;
-	} catch {
-		return null;
-	}
-};
 
 const handoffDirAndFile = (
 	win: Window,

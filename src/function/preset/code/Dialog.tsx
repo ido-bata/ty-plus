@@ -1,6 +1,11 @@
-import { Icon } from "@ty-plus/ui";
-import { Input } from "@ty-plus/ui/fields/Input";
-import { PathField } from "@ty-plus/ui/fields/PathField";
+import {
+	Icon,
+	Input,
+	monoPreviewBoxClass,
+	PathField,
+	sectionLabelClass,
+	statusBannerClass,
+} from "@ty-plus/ui";
 import type { TFunction } from "i18next";
 import { AlertCircle, FolderOpen } from "lucide-react";
 import {
@@ -13,28 +18,30 @@ import {
 } from "react";
 import { useTranslation } from "react-i18next";
 import { selectFolder } from "@/management/ae/cep/dialog-shim/bolt";
-import { readUserHomeOrFallback, ToolDialog } from "@/management/preset";
-import { assertPresetAssetPresent } from "@/management/preset/asset-verification";
-import { hostSafeFileName } from "@/management/preset/authoring/host-safe-file-name";
-import { authorCodePresetAsset } from "@/management/preset/authoring/write-preset-asset";
-import { ArchiveDetailsSection } from "@/management/preset/catalog-add/ArchiveDetailsSection";
-import { parseRootPathsFromSettingsJson } from "@/management/preset/catalog-add/parse-root-paths";
-import { PresetIconEditor } from "@/management/preset/components/IconEditor";
-import type { Preset, PresetIcon } from "@/management/preset/contract";
-import { CodeEditor } from "@/management/preset/editor/Code";
-import {
-	createPresetIconDraft,
-	presetIconDraftToPresetIcon,
-} from "@/management/preset/icon-editor";
+import { i18n } from "@/management/i18n/index";
 import {
 	AuthoringField,
 	AuthoringGrid,
 	AuthoringSection,
 	AuthoringSegment,
-} from "@/management/preset/tool-shell/archive-layout";
-import { upsertLocalPreset } from "@/management/preset/use-cases";
-import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
-import { glyphBoxFillClass } from "@/management/preset/workspace/glyph-classes";
+	readUserHomeOrFallback,
+	ToolDialog,
+} from "@/management/preset";
+import { assertPresetAssetPresent } from "@/management/preset/assets/verification";
+import { hostSafeFileName } from "@/management/preset/authoring/host-safe-file-name";
+import { authorCodePresetAsset } from "@/management/preset/authoring/write-preset-asset";
+import { ArchiveDetailsSection } from "@/management/preset/catalog-add/ArchiveDetailsSection";
+import { parseRootPathsFromSettingsJson } from "@/management/preset/catalog-add/parse-root-paths";
+import type { Preset, PresetIcon } from "@/management/preset/contract";
+import { CodeEditor } from "@/management/preset/editor/Code";
+import { PresetIconEditor } from "@/management/preset/icon/Editor";
+import {
+	createPresetIconDraft,
+	presetIconDraftToPresetIcon,
+} from "@/management/preset/icon/editor-state";
+import { upsertLocalPreset } from "@/management/preset/operations";
+import { glyphBoxFillClass } from "@/management/preset/workspace/glyph/classes";
+import { FramedPresetGlyph } from "@/management/preset/workspace/glyph/WorkspaceGlyph";
 import {
 	canUseCepNodeFileBrowser,
 	createCepNodeFileBrowserService,
@@ -47,38 +54,6 @@ import { css } from "@/styled-system/css";
 type CodeType = "extendscript" | "expression";
 type PresetStatus = "idle" | "saving" | "success" | "error";
 
-const statusBannerBaseClass = css({
-	display: "flex",
-	alignItems: "flex-start",
-	gap: "2",
-	borderRadius: "shell-sm",
-	borderWidth: "1px",
-	borderStyle: "solid",
-	padding: "2",
-	fontSize: "text-xs",
-});
-
-const statusBannerVariant = {
-	success: css({
-		borderColor: "status.success/30",
-		backgroundColor: "status.success/10",
-		color: "status.success",
-	}),
-	warning: css({
-		borderColor: "status.warning/30",
-		backgroundColor: "status.warning/10",
-		color: "status.warning",
-	}),
-	error: css({
-		borderColor: "status.error/30",
-		backgroundColor: "status.error/10",
-		color: "status.error",
-	}),
-} as const;
-
-const statusBannerClass = (variant: "success" | "warning" | "error"): string =>
-	`${statusBannerBaseClass} ${statusBannerVariant[variant]}`;
-
 const bannerTitleClass = css({
 	fontWeight: "semibold",
 });
@@ -90,27 +65,8 @@ const previewColumnClass = css({
 	gap: "1",
 });
 
-const previewLabelClass = css({
-	fontSize: "text-xs",
-	fontWeight: "medium",
-	textTransform: "uppercase",
-	letterSpacing: "wide",
-	color: "text.muted",
-});
-
-const previewBoxBaseClass = css({
-	fontFamily: "mono",
-	fontSize: "text-xs",
-	color: "text.primary",
-	overflowWrap: "break-all",
-	borderRadius: "shell-sm",
-	backgroundColor: "surface.widget",
-	paddingInline: "2",
-	paddingBlock: "1",
-});
-
 const previewBoxWarnClass = css({
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "status.warning/50",
 });
@@ -133,7 +89,7 @@ function StatusBanner({
 }): JSX.Element {
 	return (
 		<div className={statusBannerClass(variant)} role="alert">
-			<Icon icon={BannerIcon} size={14} aria-hidden />
+			<Icon icon={BannerIcon} size={16} aria-hidden />
 			<span className={bannerTitleClass}>{children}</span>
 		</div>
 	);
@@ -151,14 +107,14 @@ function SavePreviewSection({
 	if (!fullFilePath) return null;
 	return (
 		<div className={previewColumnClass}>
-			<span className={previewLabelClass}>
+			<span className={sectionLabelClass}>
 				{t("codePreset.savePreview", "Save preview")}
 			</span>
 			<div
 				className={
 					fileExists
-						? `${previewBoxBaseClass} ${previewBoxWarnClass}`
-						: previewBoxBaseClass
+						? `${monoPreviewBoxClass} ${previewBoxWarnClass}`
+						: monoPreviewBoxClass
 				}
 			>
 				{fullFilePath}
@@ -202,14 +158,31 @@ function CodeActionStatusSection({
 
 const buildExpressionScript = (expression: string): string => {
 	const encoded = JSON.stringify(expression);
+	// Alert strings are embedded into the generated ExtendScript, so they are
+	// JSON-encoded to stay safe inside single-quoted script literals.
+	const alertSelectComp = JSON.stringify(
+		i18n.t("presets:codePreset.alertSelectComp"),
+	);
+	const alertSelectProperty = JSON.stringify(
+		i18n.t("presets:codePreset.alertSelectProperty"),
+	);
+	const alertNoExpressionProps = JSON.stringify(
+		i18n.t("presets:codePreset.alertNoExpressionProps"),
+	);
+	const alertApplyError = JSON.stringify(
+		i18n.t("presets:codePreset.alertApplyError"),
+	);
+	const undoGroupName = JSON.stringify(
+		i18n.t("presets:codePreset.undoGroupName"),
+	);
 	return [
 		"// ty-plus: expression preset",
 		"(function () {",
 		"  var comp = app.project.activeItem;",
-		"  if (!(comp instanceof CompItem)) { alert('Please select a composition.'); return; }",
+		`  if (!(comp instanceof CompItem)) { alert(${alertSelectComp}); return; }`,
 		"  var props = comp.selectedProperties;",
-		"  if (!props || props.length === 0) { alert('Please select at least one property to apply the expression.'); return; }",
-		"  app.beginUndoGroup('ty-plus: apply expression');",
+		`  if (!props || props.length === 0) { alert(${alertSelectProperty}); return; }`,
+		`  app.beginUndoGroup(${undoGroupName});`,
 		"  try {",
 		"    var count = 0;",
 		"    for (var i = 0; i < props.length; i++) {",
@@ -220,9 +193,9 @@ const buildExpressionScript = (expression: string): string => {
 		"        count++;",
 		"      }",
 		"    }",
-		"    if (count === 0) alert('Selected properties do not accept expressions.');",
+		`    if (count === 0) alert(${alertNoExpressionProps});`,
 		"  } catch (e) {",
-		"    alert('Error applying expression: ' + e.toString());",
+		`    alert(${alertApplyError} + " " + e.toString());`,
 		"  } finally {",
 		"    app.endUndoGroup();",
 		"  }",
@@ -387,7 +360,11 @@ function useCodePresetSave(input: CodePresetSaveInput): {
 				type: "script",
 				title: name.trim(),
 				filePath: writtenPath,
-				description: description.trim() || `Code preset: ${name.trim()}`,
+				description:
+					description.trim() ||
+					i18n.t("presets:codePreset.defaultDescription", {
+						name: name.trim(),
+					}),
 				...(descriptionImage.trim()
 					? { descriptionImage: descriptionImage.trim() }
 					: {}),
@@ -449,7 +426,7 @@ export function Dialog(): JSX.Element {
 	const fileName = fileNameFromPath(fullFilePath);
 	const fileExists = useCodeFileExists(displayPath, fileName);
 
-	const { busy, status, message, canSave, handleSave } = useCodePresetSave({
+	const { busy, status, message } = useCodePresetSave({
 		name,
 		codeType,
 		code,
@@ -464,7 +441,7 @@ export function Dialog(): JSX.Element {
 	const previewPreset: Preset = {
 		id: "icon-preview",
 		type: "script",
-		title: name.trim() || "Code Preset",
+		title: name.trim() || t("presetTool.code.defaultName"),
 		filePath: "ty-plus://icon-preview",
 		icon:
 			resolvedIcon ??
@@ -490,7 +467,7 @@ export function Dialog(): JSX.Element {
 			type="script"
 			description={t("presetTool.code.lead")}
 			defaultName={t("presetTool.code.defaultName")}
-			iconText="CODE"
+			iconText={t("codePreset.iconText")}
 			resolveBrowseStartDir={readUserHomeOrFallback}
 			entryPoint="tool-shell:code"
 			fields={[]}
@@ -520,7 +497,9 @@ export function Dialog(): JSX.Element {
 					title: name.trim(),
 					// The path the writer verified, never the preview string.
 					filePath: authoredPathRef.current || fullFilePath,
-					description: description.trim() || `Code preset: ${name.trim()}`,
+					description: description.trim()
+						? description.trim()
+						: t("codePreset.defaultDescription", { name: name.trim() }),
 					...(descriptionImage.trim()
 						? { descriptionImage: descriptionImage.trim() }
 						: {}),
@@ -557,9 +536,9 @@ export function Dialog(): JSX.Element {
 							value={saveDir}
 							onChange={(next) => setSaveDir(next)}
 							onBrowse={handleBrowseFolder}
-							browseAriaLabel="Browse folder"
+							browseAriaLabel={t("common.browseFolder")}
 							browseSlot={<Icon icon={FolderOpen} size={16} aria-hidden />}
-							placeholder={defaultSavePath || "System default"}
+							placeholder={defaultSavePath || t("common.systemDefault")}
 							uiSize="md"
 							disabled={busy}
 						/>
@@ -587,7 +566,7 @@ export function Dialog(): JSX.Element {
 
 					<AuthoringField span={6}>
 						<div className={previewColumnClass}>
-							<span className={previewLabelClass}>
+							<span className={sectionLabelClass}>
 								{codeType === "expression"
 									? t("codePreset.editor.expression", "Expression")
 									: t("codePreset.editor.script", "Script code (.jsx)")}

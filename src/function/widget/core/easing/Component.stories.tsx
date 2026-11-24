@@ -3,6 +3,11 @@ import { expect } from "storybook/test";
 
 import { EasingWidget } from "@/function/widget/core/easing/Component";
 import type { Layout } from "@/management/workspace/layout/grid-document";
+import {
+	boxWithin,
+	expectCanvasLayout,
+	measureBox,
+} from "@/storybook/quality/layout";
 import { css } from "@/styled-system/css";
 
 const layout: Layout = {
@@ -44,29 +49,38 @@ const meta = {
 export default meta;
 type Story = StoryObj<Args>;
 
-export const Default: Story = {};
+export const Default: Story = {
+	// Issue #194: initial-state layout contract.
+	play: async ({ canvasElement }) => {
+		expectCanvasLayout(canvasElement);
+	},
+};
 
 export const Compact: Story = {
 	args: { widthPx: 180, heightPx: 220 },
-};
-
-// Loop mode renders the curve editor (the points array is the single-
-// cycle template) plus the cycle-count input. We force the mode into
-// "loop" via the segmented control's aria-label + data attribute pair
-// so the loop controls row becomes visible in Storybook without needing
-// a runtime click sequence.
-export const LoopMode: Story = {
-	args: { widthPx: 280, heightPx: 280 },
 	play: async ({ canvasElement }) => {
-		const buttons = canvasElement.querySelectorAll<HTMLButtonElement>(
-			"[role='toolbar'] button",
-		);
+		// Issue #473: at compact widths the mode strip wraps onto a second
+		// row. A fixed-height strip used to clip that row (Bounce truncated,
+		// Elastic hidden) — every segment must stay inside the toolbar box.
+		const toolbar =
+			canvasElement.querySelector<HTMLElement>("[role='toolbar']");
+		if (!toolbar) throw new Error("mode toolbar not found");
+		const buttons = toolbar.querySelectorAll("button");
+		expect(buttons.length).toBe(3);
+		const toolbarBox = measureBox(toolbar);
 		for (const button of buttons) {
-			if (button.textContent?.trim() === "Loop") {
-				button.click();
-				break;
-			}
+			expect(boxWithin(measureBox(button), toolbarBox, 1)).toBe(true);
 		}
+		// The preset "+" button must remain inside the action bar next to
+		// the Apply control — `fullWidth` on Apply used to push it out.
+		const bar = canvasElement.querySelector<HTMLElement>(
+			"[data-ws-easing-action-bar]",
+		);
+		const plus = canvasElement.querySelector<HTMLElement>(
+			"[data-ws-action='open-preset-tool-dialog']",
+		);
+		if (!bar || !plus) throw new Error("action bar or preset button missing");
+		expect(boxWithin(measureBox(plus), measureBox(bar), 1)).toBe(true);
 	},
 };
 
@@ -83,6 +97,9 @@ export const LoopMode: Story = {
 export const MouseOnlyDrag: Story = {
 	args: { widthPx: 240, heightPx: 240 },
 	play: async ({ canvasElement }) => {
+		// Issue #194: widget controls must satisfy the layout contract
+		// before and after the drag gesture.
+		expectCanvasLayout(canvasElement);
 		const canvas = canvasElement.querySelector<HTMLCanvasElement>(
 			"[data-ws-easing-editor-canvas]",
 		);
@@ -107,6 +124,7 @@ export const MouseOnlyDrag: Story = {
 		fire("mouseup", 45, 45);
 		await new Promise((resolve) => setTimeout(resolve, 300));
 		await expect(canvas.toDataURL()).not.toBe(before);
+		expectCanvasLayout(canvasElement);
 	},
 };
 
@@ -117,6 +135,9 @@ export const MouseOnlyDrag: Story = {
 export const SpacePanDrag: Story = {
 	args: { widthPx: 240, heightPx: 240 },
 	play: async ({ canvasElement }) => {
+		// Issue #194: widget controls must satisfy the layout contract
+		// before and after the drag gesture.
+		expectCanvasLayout(canvasElement);
 		const canvas = canvasElement.querySelector<HTMLCanvasElement>(
 			"[data-ws-easing-editor-canvas]",
 		);
@@ -150,5 +171,6 @@ export const SpacePanDrag: Story = {
 		}
 		await new Promise((resolve) => setTimeout(resolve, 300));
 		await expect(canvas.toDataURL()).not.toBe(before);
+		expectCanvasLayout(canvasElement);
 	},
 };

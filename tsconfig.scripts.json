@@ -2,25 +2,16 @@
 	"extends": "./tsconfig.json",
 	"compilerOptions": {
 		"noEmit": true,
-		"types": ["node", "bun"],
+		"types": ["node", "bun", "vite/client"],
 		"skipLibCheck": true,
 		"allowImportingTsExtensions": true,
 		"strict": true
 	},
 	"include": [
-		"scripts/package/release-version.ts",
-		"scripts/package/release-manifest.ts",
-		"scripts/package/prepare-github-release.ts",
-		"scripts/package/build-github-release.ts",
-		"scripts/verify/verify-release-artifacts.ts",
-		"scripts/verify/device-smoke.ts",
-		"scripts/verify/device-smoke-cdp.ts",
-		"scripts/verify/e2e/**/*.ts",
-		"scripts/verify/capture-metadata.ts",
-		"scripts/verify/screenshot-path.ts",
-		"scripts/verify/storybook-capture-merge.ts",
-		"scripts/verify/storybook-capture-gallery.ts",
-		"scripts/verify/storybook-screenshot-capture.ts",
-		"scripts/package/build-platform.ts"
+		"tools/**/*.ts",
+		".storybook/**/*.ts",
+		"src/vite-env.d.ts",
+		"scripts/**/*.ts",
+		"*.ts"
 	]
 }

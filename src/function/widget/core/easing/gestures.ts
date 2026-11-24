@@ -129,7 +129,7 @@ export type NearestDragTargetArgs = {
 	proceduralHandle: Vec2;
 	camera: Camera;
 	/**
-	 * True for curve/loop modes (hit-test interior points and handles);
+	 * True for curve mode (hit-test interior points and handles);
 	 * false for procedural modes (bounce/elastic), where the single handle
 	 * dot is the only draggable target.
 	 */

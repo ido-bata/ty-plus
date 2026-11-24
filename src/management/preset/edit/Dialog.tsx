@@ -1,8 +1,16 @@
-import { Icon } from "@ty-plus/ui";
-import { Button } from "@ty-plus/ui/controls/Button";
-import { Input } from "@ty-plus/ui/fields/Input";
-import { PathField } from "@ty-plus/ui/fields/PathField";
-import { DialogBody } from "@ty-plus/ui/shell/DialogBody";
+import {
+	Button,
+	DialogBody,
+	dialogContentClass,
+	dialogFooterClass,
+	Icon,
+	IconButton,
+	Input,
+	PathField,
+	rowMetaClass,
+	rowTitleClass,
+	sectionLabelClass,
+} from "@ty-plus/ui";
 import { FileSearch, Pencil, Play, Save, Trash2 } from "lucide-react";
 import {
 	type JSX,
@@ -16,7 +24,7 @@ import { useTranslation } from "react-i18next";
 import { selectFile } from "@/management/ae/cep/dialog-shim/bolt";
 import { readGroupJson } from "@/management/catalog/json-files";
 import { DialogShell } from "@/management/dialog";
-import { DialogFooterActions } from "@/management/dialog/dialogs/shell/Footer";
+import { DialogFooterActions } from "@/management/dialog/shell/Footer";
 import { useDialogClose } from "@/management/dialog/useClose";
 import {
 	coercePersistedPresetIcon,
@@ -28,36 +36,40 @@ import {
 	ArchiveDetailsSection,
 	type ArchiveDetailsSectionHandle,
 } from "@/management/preset/catalog-add/ArchiveDetailsSection";
-import { PresetIconEditor } from "@/management/preset/components/IconEditor";
 import type { Preset, PresetIcon } from "@/management/preset/contract";
 import { askHostDeleteConfirm } from "@/management/preset/delete-confirm";
 import type { CodeEditorValue } from "@/management/preset/editor/Code";
 import { Editor } from "@/management/preset/editor/View";
 import { traceExecute } from "@/management/preset/execution/lifecycle-trace";
+import {
+	parseGroupFromText,
+	removeGroupEntry,
+	upsertGroupEntry,
+} from "@/management/preset/group/catalog";
 import { findGroupEntry } from "@/management/preset/group/catalog-helpers";
 import {
 	isGroupCatalogPreset,
 	synthesizeGroupPresetForTile,
 } from "@/management/preset/group/synthesize";
-import {
-	parseGroupFromText,
-	removeGroupEntry,
-	upsertGroupEntry,
-} from "@/management/preset/group-catalog";
+import { PresetIconEditor } from "@/management/preset/icon/Editor";
 import {
 	createPresetIconDraft,
 	type PresetIconEditorDraft,
 	presetIconDraftToPresetIcon,
-} from "@/management/preset/icon-editor";
-import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
+} from "@/management/preset/icon/editor-state";
+import {
+	PRESET_ICON_DEFAULT_BG_COLOR,
+	PRESET_ICON_DEFAULT_FG_COLOR,
+} from "@/management/preset/literals/icon-colors";
 import {
 	glyphBoxCompactPadClass,
 	glyphBoxFillClass,
-} from "@/management/preset/workspace/glyph-classes";
+} from "@/management/preset/workspace/glyph/classes";
+import { FramedPresetGlyph } from "@/management/preset/workspace/glyph/WorkspaceGlyph";
 import { readTextFile } from "@/management/storage";
+import { executeWorkspacePresetForWindow } from "@/management/workspace/core/runtime";
 import { openPresetEditSurface } from "@/management/workspace/hooks/preset";
 import { notifyPanelsAfterPresetSave } from "@/management/workspace/placement/notify-panels-after-preset-save";
-import { executeWorkspacePresetForWindow } from "@/management/workspace/runtime";
 import { css } from "@/styled-system/css";
 
 export type PresetEditDialogProps = {
@@ -65,14 +77,6 @@ export type PresetEditDialogProps = {
 	onSaved?: () => void;
 	onDeleted?: () => void;
 };
-
-const FIELD_LABEL_CLASS = css({
-	fontSize: "xs",
-	fontWeight: "medium",
-	textTransform: "uppercase",
-	letterSpacing: "wide",
-	color: "text.muted",
-});
 
 const memberRowPendingClass = css({
 	display: "flex",
@@ -112,7 +116,7 @@ const memberMissingGlyphClass = css({
 	width: "7",
 	flexShrink: "0",
 	borderRadius: "shell-sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 	backgroundColor: "surface.widget",
@@ -149,50 +153,11 @@ const memberTitleColumnClass = css({
 	minWidth: "0",
 });
 
-const memberTitleClass = css({
-	overflow: "hidden",
-	textOverflow: "ellipsis",
-	whiteSpace: "nowrap",
-	fontSize: "shell-text-sm",
-	fontWeight: "medium",
-	color: "text.primary",
-});
-
-const memberTypeClass = css({
-	overflow: "hidden",
-	textOverflow: "ellipsis",
-	whiteSpace: "nowrap",
-	fontSize: "xs",
-	color: "text.muted",
-});
-
 const memberActionsClass = css({
 	display: "flex",
 	flexShrink: "0",
 	alignItems: "center",
 	gap: "0.5",
-});
-
-const memberActionButtonClass = css({
-	display: "inline-flex",
-	height: "5",
-	width: "5",
-	flexShrink: "0",
-	alignItems: "center",
-	justifyContent: "center",
-	borderRadius: "shell-sm",
-	borderWidth: "1px",
-	borderStyle: "solid",
-	borderColor: "border.default",
-	backgroundColor: "surface.widget/50",
-	color: "text.muted",
-	_hover: {
-		backgroundColor: "interactive.hover",
-		color: "text.primary",
-	},
-	_disabled: {
-		opacity: 0.3,
-	},
 });
 
 const stackClass = css({
@@ -204,14 +169,14 @@ const stackClass = css({
 const memberPickerListClass = css({
 	overflow: "hidden",
 	borderRadius: "shell-sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 	backgroundColor: "surface.widget",
 	maxHeight: "300px",
 	overflowY: "auto",
 	"& > li + li": {
-		borderTopWidth: "1px",
+		borderTopWidth: "hairline",
 		borderTopStyle: "solid",
 		borderColor: "border.default",
 	},
@@ -248,25 +213,7 @@ const rootColumnClass = css({
  * class only adjusts padding / overflow so the editor body uses the full
  * panel width without the default shell gutter.
  */
-const editContentClass = css({
-	display: "flex",
-	minHeight: 0,
-	minWidth: 0,
-	flexDirection: "column",
-	overflow: "hidden",
-	paddingInline: "0",
-	backgroundColor: "surface.dialog",
-});
-
 /** Footer adds a divider and shell-aligned padding for the action row. */
-const editFooterClass = css({
-	borderTopWidth: "1px",
-	borderTopStyle: "solid",
-	borderTopColor: "border.default",
-	paddingInline: "var(--ty-shell-pad-inline)",
-	paddingBlock: "var(--ty-shell-space)",
-});
-
 function parseEasingCurveText(value: string): unknown {
 	try {
 		const parsed = JSON.parse(value);
@@ -333,8 +280,8 @@ const createEditIconDraft = (
 			...createPresetIconDraft(),
 			type: "text",
 			text: coerced.param.text,
-			bgColor: coerced.param.backgroundColor ?? "#2b2b2b",
-			color: coerced.param.color ?? "#ffffff",
+			bgColor: coerced.param.backgroundColor ?? PRESET_ICON_DEFAULT_BG_COLOR,
+			color: coerced.param.color ?? PRESET_ICON_DEFAULT_FG_COLOR,
 		};
 	}
 	if (coerced.type === "emoji") {
@@ -342,8 +289,8 @@ const createEditIconDraft = (
 			...createPresetIconDraft(),
 			type: "emoji",
 			emoji: coerced.param.emoji,
-			bgColor: coerced.param.backgroundColor ?? "#2b2b2b",
-			color: "#ffffff",
+			bgColor: coerced.param.backgroundColor ?? PRESET_ICON_DEFAULT_BG_COLOR,
+			color: PRESET_ICON_DEFAULT_FG_COLOR,
 		};
 	}
 	if (coerced.type === "image") {
@@ -505,6 +452,7 @@ const GroupMemberItem = ({
 	onEdit: (id: string) => void;
 	onDelete: (id: string) => void;
 }) => {
+	const { t } = useTranslation("presets");
 	const [member, setMember] = useState<Preset | null>(null);
 	const [loading, setLoading] = useState(true);
 
@@ -531,7 +479,9 @@ const GroupMemberItem = ({
 		return (
 			<li className={memberRowPendingClass}>
 				<div className={memberPendingGlyphClass} />
-				<span className={memberPendingLabelClass}>Loading…</span>
+				<span className={memberPendingLabelClass}>
+					{t("edit.memberLoading")}
+				</span>
 			</li>
 		);
 	}
@@ -541,7 +491,7 @@ const GroupMemberItem = ({
 			<li className={memberRowMissingClass} data-preset-id={memberId}>
 				<div className={memberMissingGlyphClass} />
 				<span className={memberMissingLabelClass}>
-					Member not found: {memberId}
+					{t("edit.memberNotFound", { id: memberId })}
 				</span>
 			</li>
 		);
@@ -557,43 +507,49 @@ const GroupMemberItem = ({
 			</div>
 			{/* Title + type */}
 			<div className={memberTitleColumnClass}>
-				<div className={memberTitleClass}>
+				<div className={rowTitleClass}>
 					{member.title || member.filePath.split(/[\\/]/).pop() || member.id}
 				</div>
-				<div className={memberTypeClass}>{member.type}</div>
+				<div className={rowMetaClass}>{member.type}</div>
 			</div>
 			{/* Run + Edit + Delete actions */}
 			<div className={memberActionsClass}>
-				<button
-					type="button"
-					className={memberActionButtonClass}
-					aria-label={`Run ${member.title}`}
-					title="Run"
+				<IconButton
+					variant="default"
+					size="xs"
 					disabled={disabled}
+					aria-label={t("edit.memberRun", {
+						name: member.title || member.id,
+					})}
+					title={t("common:actions.run")}
 					onClick={() => onRun(member.id)}
 				>
-					<Icon icon={Play} size={11} />
-				</button>
-				<button
-					type="button"
-					className={memberActionButtonClass}
-					aria-label={`Edit ${member.title}`}
-					title="Edit"
+					<Icon icon={Play} size={12} />
+				</IconButton>
+				<IconButton
+					variant="default"
+					size="xs"
 					disabled={disabled}
+					aria-label={t("edit.memberEdit", {
+						name: member.title || member.id,
+					})}
+					title={t("common:actions.edit")}
 					onClick={() => onEdit(member.id)}
 				>
-					<Icon icon={Pencil} size={11} />
-				</button>
-				<button
-					type="button"
-					className={memberActionButtonClass}
-					aria-label={`Delete ${member.title}`}
-					title="Delete"
+					<Icon icon={Pencil} size={12} />
+				</IconButton>
+				<IconButton
+					variant="default"
+					size="xs"
 					disabled={disabled}
+					aria-label={t("edit.memberDelete", {
+						name: member.title || member.id,
+					})}
+					title={t("common:actions.delete")}
 					onClick={() => onDelete(member.id)}
 				>
-					<Icon icon={Trash2} size={11} />
-				</button>
+					<Icon icon={Trash2} size={12} />
+				</IconButton>
 			</div>
 		</li>
 	);
@@ -657,7 +613,7 @@ const PresetEditFormFields = ({
 			<>
 				{/* Group title */}
 				<div className={stackClass}>
-					<span className={FIELD_LABEL_CLASS}>
+					<span className={sectionLabelClass}>
 						{t("group.fields.groupName")}
 					</span>
 					<Input
@@ -674,12 +630,14 @@ const PresetEditFormFields = ({
 
 				{/* Group members list */}
 				<div className={stackClass}>
-					<span className={FIELD_LABEL_CLASS}>
-						Member presets ({memberIds.length})
+					<span className={sectionLabelClass}>
+						{t("edit.memberPresets", { count: memberIds.length })}
 					</span>
 					<ul className={memberPickerListClass}>
 						{memberIds.length === 0 ? (
-							<li className={memberPickerEmptyClass}>No member presets</li>
+							<li className={memberPickerEmptyClass}>
+								{t("edit.noMemberPresets")}
+							</li>
 						) : (
 							<GroupMembersList
 								memberIds={memberIds}
@@ -729,13 +687,14 @@ const PresetEditFormFields = ({
 					}
 					disabled={busy}
 					browseDir={form.filePath}
-					label="Icon"
+					label={t("edit.fields.icon")}
 					preview={
 						<FramedPresetGlyph
 							preset={
 								{
 									id: "icon-preview",
 									type: "preset",
+									// i18n-exempt: synthetic preset record title for the glyph preview, never rendered as a label
 									title: "Preview",
 									filePath: "ty-plus://icon-preview",
 									icon: presetIconDraftToPresetIcon(form.iconDraft) ?? {
@@ -774,7 +733,7 @@ const PresetEditFormFields = ({
 		<>
 			{/* Preset name */}
 			<div className={stackClass}>
-				<span className={FIELD_LABEL_CLASS}>{t("edit.fields.presetName")}</span>
+				<span className={sectionLabelClass}>{t("edit.fields.presetName")}</span>
 				<Input
 					label=""
 					placeholder={t("edit.fields.presetNamePlaceholder")}
@@ -789,14 +748,14 @@ const PresetEditFormFields = ({
 
 			{/* File path */}
 			<div className={stackClass}>
-				<span className={FIELD_LABEL_CLASS}>File path</span>
+				<span className={sectionLabelClass}>{t("edit.fields.filePath")}</span>
 				<PathField
 					value={form.filePath}
 					onChange={(next) =>
 						dispatch({ type: "UPDATE_FILE_PATH", filePath: next })
 					}
 					onBrowse={() => {
-						selectFile(preset.filePath, "Select JSX file", (file) => {
+						selectFile(preset.filePath, t("edit.selectJsxFile"), (file) => {
 							if (!file) return;
 							dispatch({ type: "UPDATE_FILE_PATH", filePath: file });
 							// Load file content into code editor (only for JSX script type)
@@ -819,9 +778,9 @@ const PresetEditFormFields = ({
 							}
 						});
 					}}
-					browseAriaLabel="Load file"
+					browseAriaLabel={t("edit.browseLoadFile")}
 					browseSlot={<Icon icon={FileSearch} size={16} aria-hidden />}
-					placeholder="Load from file…"
+					placeholder={t("edit.loadFromFilePlaceholder")}
 					uiSize="md"
 					disabled={busy}
 				/>
@@ -830,7 +789,9 @@ const PresetEditFormFields = ({
 			{/* Easing metadata editor */}
 			{showEasingEditor && (
 				<div className={stackClass}>
-					<span className={FIELD_LABEL_CLASS}>Curve</span>
+					<span className={sectionLabelClass}>
+						{t("presetTool.easing.curve")}
+					</span>
 					<Input
 						label=""
 						value={form.easingCurve}
@@ -849,7 +810,7 @@ const PresetEditFormFields = ({
 			{/* Code editor */}
 			{showCodeEditor && (
 				<div className={stackClass}>
-					<span className={FIELD_LABEL_CLASS}>Code</span>
+					<span className={sectionLabelClass}>{t("edit.code")}</span>
 					<Editor
 						value={form.codeContent}
 						onChange={(value) =>
@@ -870,13 +831,14 @@ const PresetEditFormFields = ({
 				}
 				disabled={busy}
 				browseDir={preset.filePath}
-				label="Icon"
+				label={t("edit.fields.icon")}
 				preview={
 					<FramedPresetGlyph
 						preset={
 							{
 								id: "icon-preview",
 								type: "preset",
+								// i18n-exempt: synthetic preset record title for the glyph preview, never rendered as a label
 								title: "Preview",
 								filePath: "ty-plus://icon-preview",
 								icon: presetIconDraftToPresetIcon(form.iconDraft) ?? {
@@ -919,8 +881,8 @@ const initialFormState: FormState = {
 		text: "",
 		emoji: "",
 		imagePath: "",
-		bgColor: "#2b2b2b",
-		color: "#ffffff",
+		bgColor: PRESET_ICON_DEFAULT_BG_COLOR,
+		color: PRESET_ICON_DEFAULT_FG_COLOR,
 	},
 	codeContent: "",
 	easingCurve: "",
@@ -967,7 +929,10 @@ export function PresetEditDialog(props: PresetEditDialogProps): JSX.Element {
 
 			if (cancelled) return;
 			if (!p) {
-				dispatchDialog({ type: "LOAD_ERROR", message: "Preset not found" });
+				dispatchDialog({
+					type: "LOAD_ERROR",
+					message: t("edit.status.notFound"),
+				});
 				return;
 			}
 			if (cancelled) return;
@@ -1017,7 +982,7 @@ export function PresetEditDialog(props: PresetEditDialogProps): JSX.Element {
 				await execLoadPreset();
 			} catch (e) {
 				if (cancelled) return;
-				let message = "Failed to load";
+				let message = t("edit.status.loadFailed");
 				if (e instanceof Error) message = e.message;
 				dispatchDialog({
 					type: "LOAD_ERROR",
@@ -1029,7 +994,7 @@ export function PresetEditDialog(props: PresetEditDialogProps): JSX.Element {
 		return () => {
 			cancelled = true;
 		};
-	}, [presetId]);
+	}, [presetId, t]);
 
 	const handleSave = useCallback(async () => {
 		if (dialogStatus.phase !== "loaded" || !dialogStatus.preset) return;
@@ -1078,14 +1043,14 @@ export function PresetEditDialog(props: PresetEditDialogProps): JSX.Element {
 			if (onSaved) onSaved();
 			close();
 		} catch (e) {
-			let message = "Save failed";
+			let message = t("edit.status.saveFailedFallback");
 			if (e instanceof Error) message = e.message;
 			dispatchDialog({
 				type: "SAVE_ERROR",
 				message,
 			});
 		}
-	}, [dialogStatus, form, onSaved, close]);
+	}, [dialogStatus, form, onSaved, close, t]);
 
 	const handleDelete = useCallback(async () => {
 		if (dialogStatus.phase !== "loaded" || !dialogStatus.preset) return;
@@ -1116,24 +1081,24 @@ export function PresetEditDialog(props: PresetEditDialogProps): JSX.Element {
 			if (onDeleted) onDeleted();
 			close();
 		} catch (e) {
-			let message = "Delete failed";
+			let message = t("edit.status.deleteFailedFallback");
 			if (e instanceof Error) message = e.message;
 			dispatchDialog({
 				type: "DELETE_ERROR",
 				message,
 			});
 		}
-	}, [dialogStatus, onDeleted, close]);
+	}, [dialogStatus, onDeleted, close, t]);
 
 	const isBusy =
 		dialogStatus.phase === "saving" || dialogStatus.phase === "deleting";
 	const _statusMessage =
 		dialogStatus.phase === "loading"
-			? "Loading preset…"
+			? t("edit.status.loading")
 			: dialogStatus.phase === "saving"
-				? "Saving…"
+				? t("edit.status.saving")
 				: dialogStatus.phase === "deleting"
-					? "Deleting…"
+					? t("edit.status.deleting")
 					: dialogStatus.phase === "error"
 						? dialogStatus.message
 						: "";
@@ -1149,9 +1114,8 @@ export function PresetEditDialog(props: PresetEditDialogProps): JSX.Element {
 					: t("edit.title")
 			}
 			surfaceId="dialog-preset-edit"
-			modifier="wsd-root--preset-edit"
-			contentClassName={editContentClass}
-			footerClassName={editFooterClass}
+			contentClassName={dialogContentClass}
+			footerClassName={dialogFooterClass}
 			footer={
 				<DialogFooterActions>
 					<Button
@@ -1162,7 +1126,7 @@ export function PresetEditDialog(props: PresetEditDialogProps): JSX.Element {
 						onClick={() => close()}
 						disabled={isBusy}
 					>
-						Cancel
+						{t("common:buttons.cancel")}
 					</Button>
 					<Button
 						type="button"
@@ -1173,7 +1137,9 @@ export function PresetEditDialog(props: PresetEditDialogProps): JSX.Element {
 						onClick={() => void handleDelete()}
 						disabled={isBusy}
 					>
-						{dialogStatus.phase === "deleting" ? "Deleting…" : "Delete"}
+						{dialogStatus.phase === "deleting"
+							? t("edit.status.deleting")
+							: t("edit.delete")}
 					</Button>
 					<Button
 						type="button"
@@ -1184,14 +1150,16 @@ export function PresetEditDialog(props: PresetEditDialogProps): JSX.Element {
 						onClick={() => void handleSave()}
 						disabled={isBusy}
 					>
-						{dialogStatus.phase === "saving" ? "Saving…" : "Save"}
+						{dialogStatus.phase === "saving"
+							? t("edit.status.saving")
+							: t("edit.save")}
 					</Button>
 				</DialogFooterActions>
 			}
 		>
 			<DialogBody>
 				{dialogStatus.phase === "loading" && (
-					<div className={emptyStateClass}>Loading preset…</div>
+					<div className={emptyStateClass}>{t("edit.status.loading")}</div>
 				)}
 				{dialogStatus.phase === "error" && (
 					<div className={emptyStateClass}>{dialogStatus.message}</div>

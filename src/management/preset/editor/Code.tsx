@@ -9,13 +9,15 @@ import * as monaco from "monaco-editor/esm/vs/editor/editor.api.js";
 // with TextMate via `setTokensProvider` further down.
 import "monaco-editor/esm/vs/basic-languages/javascript/javascript.contribution.js";
 import "monaco-editor/esm/vs/basic-languages/typescript/typescript.contribution.js";
+import { widgetSurfaceClass } from "@ty-plus/ui";
 import EditorWorker from "monaco-editor/esm/vs/editor/editor.worker?worker";
 import monacoEditorCss from "monaco-editor/min/vs/editor/editor.main.css?raw";
 import { type JSX, useEffect, useRef, useState } from "react";
+import { i18n } from "@/management/i18n/index";
 import { css, cx } from "@/styled-system/css";
 import { ensureExtendscriptLanguage, initTextMate } from "./textmate";
 import TsVolarWorker from "./typescript-worker?worker";
-import { type ResizeGestureEvent, useEditorResize } from "./use-editor-resize";
+import { type ResizeGestureEvent, useResize } from "./use-resize";
 
 const MONACO_STYLE_ID = "ty-plus-monaco-library-theme";
 const EXTENDSCRIPT_THEME_ID = "ty-plus-extendscript";
@@ -270,42 +272,42 @@ const ensureLanguageConfigurations = () => {
 // completion items.
 const SNIPPETS: Record<
 	string,
-	{ prefix: string; body: string; description: string }
+	{ prefix: string; body: string; descriptionKey: string }
 > = {
 	if: {
 		prefix: "if",
 		body: "if ($1) {\n\t$0\n}",
-		description: "if block",
+		descriptionKey: "presets:codeEditor.snippets.ifBlock",
 	},
 	else: {
 		prefix: "else",
 		body: "else {\n\t$0\n}",
-		description: "else block",
+		descriptionKey: "presets:codeEditor.snippets.elseBlock",
 	},
 	for: {
 		prefix: "for",
 		body: "for (let ${1:i} = 0; $1 < ${2:N}; $1++) {\n\t$0\n}",
-		description: "for loop",
+		descriptionKey: "presets:codeEditor.snippets.forLoop",
 	},
 	while: {
 		prefix: "while",
 		body: "while ($1) {\n\t$0\n}",
-		description: "while loop",
+		descriptionKey: "presets:codeEditor.snippets.whileLoop",
 	},
 	fn: {
 		prefix: "fn",
 		body: "function ${1:name}($2) {\n\t$0\n}",
-		description: "function",
+		descriptionKey: "presets:codeEditor.snippets.function",
 	},
 	try: {
 		prefix: "try",
 		body: "try {\n\t$1\n} catch (${2:e}) {\n\t$0\n}",
-		description: "try / catch",
+		descriptionKey: "presets:codeEditor.snippets.tryCatch",
 	},
 	log: {
 		prefix: "log",
 		body: "$.writeln(${1:value});",
-		description: "ExtendScript log",
+		descriptionKey: "presets:codeEditor.snippets.extendscriptLog",
 	},
 };
 
@@ -330,7 +332,7 @@ const ensureSnippets = () => {
 						insertText: s.body,
 						insertTextRules:
 							monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-						documentation: s.description,
+						documentation: i18n.t(s.descriptionKey),
 						range,
 					}));
 					return { suggestions };
@@ -408,21 +410,12 @@ const resizeHandleClass = css({
 	userSelect: "none",
 });
 
-const editorShellClass = css({
-	borderRadius: "shell-sm",
-	borderWidth: "1px",
-	borderStyle: "solid",
-	borderColor: "border.default",
-	backgroundColor: "surface.widget",
-	overflow: "hidden",
-});
-
 const editorErrorClass = css({
 	display: "flex",
 	alignItems: "flex-start",
 	gap: "2",
 	borderRadius: "shell-sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "status.error",
 	backgroundColor: "status.error/10",
@@ -450,7 +443,7 @@ function ResizeHandle(props: {
 			role="separator"
 			aria-orientation="horizontal"
 			tabIndex={0}
-			aria-label="Resize code editor"
+			aria-label={i18n.t("presets:codeEditor.resizeAria")}
 			aria-valuenow={editorHeight}
 			aria-valuemin={RESIZE_MIN_HEIGHT}
 			aria-valuemax={RESIZE_MAX_HEIGHT}
@@ -488,7 +481,7 @@ export function CodeEditor(props: CodeEditorProps): JSX.Element {
 		onResizeMove,
 		onResizeEnd,
 		onResizeMouseStart,
-	} = useEditorResize({
+	} = useResize({
 		minHeight: RESIZE_MIN_HEIGHT,
 		maxHeight: RESIZE_MAX_HEIGHT,
 	});
@@ -700,7 +693,7 @@ export function CodeEditor(props: CodeEditorProps): JSX.Element {
 	}, [value, readOnly]);
 
 	return (
-		<div className={cx(editorShellClass, className)}>
+		<div className={cx(widgetSurfaceClass, className)}>
 			{volarError && (
 				<div role="alert" className={editorErrorClass}>
 					[Volar] {volarError}

@@ -1,7 +1,6 @@
-import { Button, SegmentedControl } from "@ty-plus/ui";
-import { isIMEComposing } from "@ty-plus/ui/util/keyboard";
+import { Button, isIMEComposing, SegmentedControl } from "@ty-plus/ui";
 import type { TFunction } from "i18next";
-import { Check, Copy, GitCompare, Plus, Repeat } from "lucide-react";
+import { Check, Copy, GitCompare, Plus } from "lucide-react";
 import {
 	type JSX,
 	type MouseEvent as ReactMouseEvent,
@@ -13,11 +12,17 @@ import {
 	useState,
 } from "react";
 import { useTranslation } from "react-i18next";
+import {
+	CANVAS_FALLBACK_GRID_COLOR,
+	CANVAS_FALLBACK_MUTED_COLOR,
+	CANVAS_FALLBACK_TEXT_COLOR,
+	CANVAS_HOLLOW_DOT_FILL,
+} from "@/function/widget/literals/canvas-colors";
 import { useWidgetRuntime } from "@/function/widget/runtime-context";
 import {
 	setEasingClipboard,
 	setValuesClipboard,
-} from "@/management/dialog/dialogs/unified-context-menu";
+} from "@/management/dialog/unified-context-menu";
 import { notificationStore } from "@/management/online/notification/service";
 import {
 	loadClipboard,
@@ -48,7 +53,7 @@ import {
 } from "./gestures";
 import { buildCurvePointsFromProcedural } from "./procedural-points";
 
-type Mode = "curve" | "bounce" | "elastic" | "loop";
+type Mode = "curve" | "bounce" | "elastic";
 type ApplyMode = "single" | "pair";
 type BackgroundPattern = "dot" | "grid";
 type Point = { x: number; y: number };
@@ -90,12 +95,7 @@ type StoredState = {
 	customColors?: CustomColors;
 	points?: CurvePoint[];
 	procedural?: { handle: Point };
-	loopCount?: number;
 };
-
-const MIN_LOOP_COUNT = 2;
-const MAX_LOOP_COUNT = 16;
-const DEFAULT_LOOP_COUNT = 3;
 
 const PREVIEW_DURATION_MS = 900;
 const POINTER_MOUSE_DEDUP_MS = 16;
@@ -259,62 +259,8 @@ const cubicFromPoints = (points: CurvePoint[]): Cubic => {
 	];
 };
 
-const buildPresetOpenParams = (
-	points: CurvePoint[],
-	defaultName: string,
-	labelColor: number,
-	options: { mode: Mode; handle: Point } = {
-		mode: "curve",
-		handle: { x: 0.4, y: 0.6 },
-	},
-): string => {
-	// In procedural (bounce/elastic) mode, `points` is still the 2-point
-	// (0,0)→(1,1) skeleton. Expand to the full procedural curve here so
-	// the saved preset captures the actual shape. On reload, the preset
-	// is treated as a Curve-mode multi-point curve (the host already
-	// understands the points array), which keeps backward compatibility
-	// with presets authored before procedural modes existed. Loop mode
-	// shares the curve-mode points (the host replicates them at apply
-	// time), so it's saved as a regular curve preset without cycle info.
-	const pointsForSave: CurvePoint[] =
-		options.mode === "curve" || options.mode === "loop"
-			? points
-			: (buildCurvePointsFromProcedural(
-					options.mode,
-					options.handle,
-				) as CurvePoint[]);
-	const cubic = cubicFromPoints(pointsForSave);
-	const isMulti = pointsForSave.length > 2;
-	const presetPoints:
-		| [number, number, number, number, number, number][]
-		| undefined = isMulti
-		? pointsForSave.map((p) => [p.x, p.y, p.hIn.x, p.hIn.y, p.hOut.x, p.hOut.y])
-		: undefined;
-	return JSON.stringify({
-		presetTemplate: "easing",
-		presetType: "script",
-		defaultName,
-		data: {
-			easing: {
-				version: 1,
-				cubic,
-				...(presetPoints ? { points: presetPoints } : {}),
-				labelColor,
-			},
-		},
-		icon: {
-			type: "canvas",
-			param: {
-				cubic,
-				...(presetPoints ? { points: presetPoints } : {}),
-			},
-		},
-	});
-};
-
 const proceduralPointsForApply = (mode: Mode, handle: Point): CurvePoint[] => {
-	if (mode === "curve" || mode === "loop")
-		return pointsFromCubic(PRESET_CURVES.easeOut);
+	if (mode === "curve") return pointsFromCubic(PRESET_CURVES.easeOut);
 	return buildCurvePointsFromProcedural(mode, handle) as CurvePoint[];
 };
 
@@ -394,6 +340,7 @@ const collectLabelNamesFrom = (value: unknown): Record<string, string> => {
 };
 
 const mergeLabelNamesInto = (
+	// i18n-exempt: TypeScript type annotation caught by the JSX-text heuristic, not UI copy
 	target: Record<string, string>,
 	source: Record<string, string>,
 ): void => {
@@ -409,7 +356,6 @@ const serializeState = (
 	autoApply: boolean,
 	labelColor: number | null,
 	customColors: CustomColors,
-	loopCount: number,
 ): StoredState => ({
 	mode: state.mode,
 	applyMode,
@@ -419,7 +365,6 @@ const serializeState = (
 	customColors,
 	points: clonePoints(state.points),
 	procedural: { handle: { ...state.procedural.handle } },
-	loopCount,
 });
 
 const coerceCustomColors = (value: unknown): CustomColors | undefined => {
@@ -452,13 +397,16 @@ const coerceStoredState = (
 	value: Record<string, unknown> | null,
 ): StoredState | null => {
 	if (!value) return null;
+	// "loop" was split into its own widget; stored loop states degrade to
+	// the curve mode they were based on.
 	const mode =
-		value.mode === "curve" ||
-		value.mode === "bounce" ||
-		value.mode === "elastic" ||
 		value.mode === "loop"
-			? value.mode
-			: undefined;
+			? "curve"
+			: value.mode === "curve" ||
+					value.mode === "bounce" ||
+					value.mode === "elastic"
+				? value.mode
+				: undefined;
 	const applyMode =
 		value.applyMode === "single" || value.applyMode === "pair"
 			? value.applyMode
@@ -487,13 +435,6 @@ const coerceStoredState = (
 		"handle" in value.procedural
 			? (value.procedural as { handle?: { x?: unknown; y?: unknown } }).handle
 			: undefined;
-	const rawLoopCount = Number(value.loopCount);
-	const loopCount =
-		Number.isFinite(rawLoopCount) &&
-		rawLoopCount >= MIN_LOOP_COUNT &&
-		rawLoopCount <= MAX_LOOP_COUNT
-			? Math.round(rawLoopCount)
-			: undefined;
 	return {
 		mode,
 		applyMode,
@@ -516,7 +457,6 @@ const coerceStoredState = (
 						},
 					}
 				: undefined,
-		loopCount,
 	};
 };
 
@@ -557,122 +497,15 @@ function EasingModeToolbar({
 					value: button.mode,
 					label: button.label,
 				}))}
-				className={css({ height: "7" })}
+				// No fixed height: the strip wraps whole segments onto a
+				// second row at compact widths, and a fixed height clipped
+				// the wrapped row (Bounce truncated, Elastic hidden).
 				buttonClassName={css({
 					height: "6",
 					fontSize: "text-2xs",
 					whiteSpace: "nowrap",
 				})}
 			/>
-		</div>
-	);
-}
-
-function EasingLoopControls({
-	mode,
-	loopCount,
-	onLoopCountChange,
-	t,
-}: {
-	mode: Mode;
-	loopCount: number;
-	onLoopCountChange: (value: number) => void;
-	t: TFunction;
-}): JSX.Element | null {
-	// Loop only makes sense with curve mode; bounce/elastic disable the
-	// cycle-count input because the host's multi-point replication is
-	// keyed on the curve-mode points array.
-	// NOTE: this component must always render an element. The parent grid
-	// declares four rows ("auto auto 1fr auto") and relies on auto-placement;
-	// returning null shifts the canvas into the "auto" row and the action bar
-	// into the "1fr" row, collapsing the editor (issue #78 follow-up).
-	if (mode !== "loop") return <div aria-hidden="true" />;
-	const decrement = (): void => {
-		onLoopCountChange(Math.max(MIN_LOOP_COUNT, loopCount - 1));
-	};
-	const increment = (): void => {
-		onLoopCountChange(Math.min(MAX_LOOP_COUNT, loopCount + 1));
-	};
-	const onInputChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-		const raw = Number(event.target.value);
-		if (!Number.isFinite(raw)) return;
-		const next = Math.round(clamp(raw, MIN_LOOP_COUNT, MAX_LOOP_COUNT));
-		onLoopCountChange(next);
-	};
-	return (
-		<div
-			className={css({
-				display: "grid",
-				minHeight: "8",
-				gridTemplateColumns: "auto 1fr auto",
-				alignItems: "center",
-				gap: "1",
-				paddingInline: "1",
-				paddingBlock: "1",
-			})}
-		>
-			<Repeat
-				className={css({ height: "4", width: "4", color: "text.muted" })}
-				aria-hidden
-			/>
-			<label
-				className={css({
-					display: "flex",
-					alignItems: "center",
-					gap: "2",
-					fontSize: "text-2xs",
-					color: "text.muted",
-				})}
-			>
-				<span className={css({ whiteSpace: "nowrap" })}>
-					{t("easing.loop.cycles")}
-				</span>
-				<input
-					type="number"
-					inputMode="numeric"
-					min={MIN_LOOP_COUNT}
-					max={MAX_LOOP_COUNT}
-					step={1}
-					value={loopCount}
-					onChange={onInputChange}
-					aria-label={t("easing.loop.cycles")}
-					data-ws-action="easing-loop-count-input"
-					className={css({
-						height: "6",
-						width: "12",
-						borderRadius: "shell-sm",
-						borderWidth: "1px",
-						borderStyle: "solid",
-						borderColor: "border.default",
-						backgroundColor: "surface.panel",
-						paddingInline: "2",
-						fontSize: "text-2xs",
-						color: "text.primary",
-					})}
-				/>
-			</label>
-			<div className={css({ display: "flex", alignItems: "center", gap: "1" })}>
-				<Button
-					variant="outline"
-					uiSize="sm"
-					aria-label={t("easing.loop.decrement")}
-					data-ws-action="easing-loop-decrement"
-					onClick={decrement}
-					disabled={loopCount <= MIN_LOOP_COUNT}
-				>
-					-
-				</Button>
-				<Button
-					variant="outline"
-					uiSize="sm"
-					aria-label={t("easing.loop.increment")}
-					data-ws-action="easing-loop-increment"
-					onClick={increment}
-					disabled={loopCount >= MAX_LOOP_COUNT}
-				>
-					+
-				</Button>
-			</div>
 		</div>
 	);
 }
@@ -690,6 +523,7 @@ function EasingActionBar({
 }): JSX.Element {
 	return (
 		<div
+			data-ws-easing-action-bar="1"
 			className={css({
 				display: "flex",
 				height: "8",
@@ -718,9 +552,10 @@ function EasingActionBar({
 			<Button
 				variant="primary"
 				uiSize="sm"
-				fullWidth
+				className={css({ flex: 1, minWidth: 0 })}
 				disabled={status === "busy"}
 				data-ws-action="easing-apply-current"
+				data-tutorial-target="easing-apply"
 				start={
 					<Check className={css({ height: "3", width: "3" })} aria-hidden />
 				}
@@ -750,27 +585,35 @@ function EasingActionBar({
 					borderWidth: 0,
 				})}
 			>
-				<button
+				<Button
+					variant="bare"
+					uiSize="content"
 					type="button"
-					aria-label="Apply linear easing preset"
+					aria-label={t("easing.presetAria.linear")}
 					data-ws-action="easing-preset"
 					data-easing-preset="linear"
 				/>
-				<button
+				<Button
+					variant="bare"
+					uiSize="content"
 					type="button"
-					aria-label="Apply ease-out preset"
+					aria-label={t("easing.presetAria.easeOut")}
 					data-ws-action="easing-preset"
 					data-easing-preset="easeOut"
 				/>
-				<button
+				<Button
+					variant="bare"
+					uiSize="content"
 					type="button"
-					aria-label="Apply ease-in preset"
+					aria-label={t("easing.presetAria.easeIn")}
 					data-ws-action="easing-preset"
 					data-easing-preset="easeIn"
 				/>
-				<button
+				<Button
+					variant="bare"
+					uiSize="content"
 					type="button"
-					aria-label="Apply ease-in-out preset"
+					aria-label={t("easing.presetAria.easeInOut")}
 					data-ws-action="easing-preset"
 					data-easing-preset="easeInOut"
 				/>
@@ -811,7 +654,6 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 	const [labelColorNames, setLabelColorNames] = useState<
 		Record<string, string>
 	>({});
-	const [loopCount, setLoopCountState] = useState<number>(DEFAULT_LOOP_COUNT);
 	const [status, setStatus] = useState<"idle" | "busy" | "done" | "error">(
 		"idle",
 	);
@@ -835,15 +677,6 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 		drawRef.current?.();
 	}, []);
 
-	const setLoopCount = useCallback((next: number) => {
-		const clamped = clamp(Math.round(next), MIN_LOOP_COUNT, MAX_LOOP_COUNT);
-		setLoopCountState(clamped);
-		// The loop count changes the apply path, not the curve editor.
-		// Reset status so an in-flight busy doesn't strand the editor
-		// after the user changes cycle count mid-apply.
-		setStatus("idle");
-	}, []);
-
 	const persistState = useCallback(() => {
 		if (!widgetInstanceId || !stateLoadedRef.current) return;
 		stateRef.current.mode = mode;
@@ -857,7 +690,6 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 				autoApply,
 				labelColor,
 				customColors,
-				loopCount,
 			),
 			{ instanceId: widgetInstanceId },
 		).catch(() => {});
@@ -867,7 +699,6 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 		backgroundPattern,
 		customColors,
 		labelColor,
-		loopCount,
 		mode,
 		widgetInstanceId,
 	]);
@@ -905,9 +736,6 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 				}
 				if (stored.customColors) {
 					setCustomColors(stored.customColors);
-				}
-				if (typeof stored.loopCount === "number") {
-					setLoopCountState(stored.loopCount);
 				}
 				drawRef.current?.();
 				stateLoadedRef.current = true;
@@ -954,13 +782,21 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 		const state = stateRef.current;
 		ctx.clearRect(0, 0, state.width, state.height);
 
-		const text = readCssColor(canvas, "--ty-text-primary", "#ffffff");
-		const muted = readCssColor(canvas, "--ty-text-muted", "#999999");
+		const text = readCssColor(
+			canvas,
+			"--ty-text-primary",
+			CANVAS_FALLBACK_TEXT_COLOR,
+		);
+		const muted = readCssColor(
+			canvas,
+			"--ty-text-muted",
+			CANVAS_FALLBACK_MUTED_COLOR,
+		);
 		const accent = readCssColor(canvas, "--ty-text-accent", text);
 		const grid = readCssColor(
 			canvas,
 			"--ty-border-surface",
-			"rgba(255,255,255,0.14)",
+			CANVAS_FALLBACK_GRID_COLOR,
 		);
 
 		const { zoom, x: cx, y: cy } = state.camera;
@@ -1027,7 +863,7 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 			ctx.arc(point.x, point.y, size, 0, Math.PI * 2);
 			ctx.fill();
 			if (hollow) {
-				ctx.fillStyle = "rgba(0,0,0,0.6)";
+				ctx.fillStyle = CANVAS_HOLLOW_DOT_FILL;
 				ctx.beginPath();
 				ctx.arc(point.x, point.y, size * 0.4, 0, Math.PI * 2);
 				ctx.fill();
@@ -1046,7 +882,7 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 						state.hoverTarget.index === index),
 			);
 
-		if (state.mode === "curve" || state.mode === "loop") {
+		if (state.mode === "curve") {
 			ctx.strokeStyle = text;
 			ctx.lineWidth = 2;
 			ctx.lineJoin = "round";
@@ -1148,7 +984,7 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 			const elapsed = performance.now() - previewStartRef.current;
 			const tValue = clamp(elapsed / PREVIEW_DURATION_MS, 0, 1);
 			const y =
-				state.mode === "curve" || state.mode === "loop"
+				state.mode === "curve"
 					? solveCurveYForX(tValue, state.points)
 					: proceduralValue(state.mode, tValue, state.procedural.handle);
 			const preview = worldToScreen({ x: tValue, y }, state.camera);
@@ -1265,17 +1101,15 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 	const findClosestWithDistance = useCallback(
 		(screen: Point): { target: DragTarget; distance: number } => {
 			const state = stateRef.current;
-			// Loop mode renders the curve editor (the points array is the
-			// single-cycle template), so hit testing uses the curve path
-			// exactly as in curve mode. The lookup itself is uncapped —
-			// plain left-click always selects the nearest draggable element
-			// (issue #145); pan is an explicit gesture handled before this.
+			// The lookup is uncapped — plain left-click always selects the
+			// nearest draggable element (issue #145); pan is an explicit
+			// gesture handled before this.
 			return findNearestDragTarget({
 				screen,
 				points: state.points,
 				proceduralHandle: state.procedural.handle,
 				camera: state.camera,
-				useCurvePoints: state.mode === "curve" || state.mode === "loop",
+				useCurvePoints: state.mode === "curve",
 			});
 		},
 		[],
@@ -1437,6 +1271,27 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 		[],
 	);
 
+	// Localized precondition errors for the live host methods. Baked into
+	// each payload so the ExtendScript side can surface them in the
+	// author's locale; the host falls back to English when absent.
+	const easingHostMessages = useCallback(
+		() => ({
+			selectKeyframes: t("easing.errors.selectKeyframes", {
+				defaultValue: "Select keyframes in an active composition",
+			}),
+			selectAnimatedProperty: t("easing.errors.selectAnimatedProperty", {
+				defaultValue: "Select at least one animated property",
+			}),
+			selectTwoKeyframes: t("easing.errors.selectTwoKeyframes", {
+				defaultValue: "Select at least two keyframes on an animated property",
+			}),
+			captureFailed: t("easing.errors.captureFailed", {
+				defaultValue: "Could not read easing from the selected keyframes",
+			}),
+		}),
+		[t],
+	);
+
 	const applyCurve = useCallback(async () => {
 		activate();
 		// Pre-check: if the user has no usable keyframe selection, skip
@@ -1456,11 +1311,9 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 				// curve editing never spams notifications.
 				if (notifyEmptySelectionRef.current) {
 					notifyEmptySelectionRef.current = false;
-					notificationStore.add(
-						"Ty Plus easing: no keyframes selected — select keyframes in the AE timeline first",
-						"warning",
-						{ duration: 6000 },
-					);
+					notificationStore.add(t("easing.noKeyframesSelected"), "warning", {
+						duration: 6000,
+					});
 				}
 				return;
 			}
@@ -1472,13 +1325,8 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 		notifyEmptySelectionRef.current = false;
 		setStatus("busy");
 		const state = stateRef.current;
-		// Loop mode uses the curve-mode points as a single-cycle template;
-		// the host replicates them `loopCount` times. Procedural modes
-		// (bounce/elastic) don't participate in loop replication, so they
-		// always go through the regular applyEasing path with their own
-		// procedural points.
 		const points =
-			state.mode === "curve" || state.mode === "loop"
+			state.mode === "curve"
 				? clonePoints(state.points)
 				: proceduralPointsForApply(state.mode, state.procedural.handle);
 		const cubic = cubicFromPoints(points);
@@ -1494,19 +1342,8 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 		// null = no override (use per-category). 0 also = no color in AE.
 		const effectiveLabelColor = labelColor ?? resolvedLabelColor;
 		const detectedType =
-			state.mode === "curve" || state.mode === "loop"
-				? mapCategoryToType(category)
-				: "bezier";
+			state.mode === "curve" ? mapCategoryToType(category) : "bezier";
 		const targeting = applyTargetingRef.current;
-		// Loop is in-targeting-only: when the modifier-based targeting is
-		// "both" or "out", fall back to a single-cycle applyEasing so the
-		// user's chosen targeting is honored. This matches the documented
-		// behavior — loop semantics only exist for the "in" handle side.
-		const useLoop =
-			state.mode === "loop" &&
-			targeting === "in" &&
-			loopCount >= MIN_LOOP_COUNT;
-		const hostCommand = useLoop ? "applyLoopEasing" : "applyEasing";
 		const payload: Record<string, unknown> = {
 			version: 1,
 			graph: "value",
@@ -1517,43 +1354,35 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 			labelColor: effectiveLabelColor,
 			detectedType,
 			targeting,
+			undoGroupName: t("easing.undoGroupName"),
+			messages: easingHostMessages(),
 		};
-		if (useLoop) {
-			payload.loopCount = loopCount;
-		}
 		try {
-			const result = await host(hostCommand, [payload]);
+			const result = await host("applyEasing", [payload]);
 			// DEBUG: always log so we can confirm the new React code is loaded
 			// and inspect the raw return value from the executor.
-			console.log(`[ty-plus:widget:easing] ${hostCommand} result`, {
+			console.log("[ty-plus:widget:easing] applyEasing result", {
 				mode: state.mode,
 				pointCount: points.length,
-				loopCount: useLoop ? loopCount : undefined,
 				applyMode,
 				targeting,
 				result,
 			});
 			const hostErrors = extractApplyEasingErrors(result);
 			if (hasHostErrors(hostErrors)) {
-				console.error(
-					`[ty-plus:widget:easing] ${hostCommand} reported errors`,
-					{
-						mode: state.mode,
-						pointCount: points.length,
-						loopCount: useLoop ? loopCount : undefined,
-						applyMode,
-						errors: hostErrors,
-					},
-				);
+				console.error("[ty-plus:widget:easing] applyEasing reported errors", {
+					mode: state.mode,
+					pointCount: points.length,
+					applyMode,
+					errors: hostErrors,
+				});
 			}
 			applyTargetingRef.current = "both";
 			setStatus("idle");
 		} catch (err) {
 			console.error("[ty-plus:widget:easing] apply host call threw", {
-				hostCommand,
 				mode: state.mode,
 				pointCount: points.length,
-				loopCount: useLoop ? loopCount : undefined,
 				applyMode,
 				error:
 					err instanceof Error
@@ -1566,7 +1395,15 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 			// next apply.
 			applyTargetingRef.current = "both";
 		}
-	}, [activate, applyMode, customColors, host, labelColor, loopCount]);
+	}, [
+		activate,
+		applyMode,
+		customColors,
+		host,
+		labelColor,
+		t,
+		easingHostMessages,
+	]);
 
 	// Some CEP/CEF input paths deliver mouse events without the matching
 	// pointerdown/pointerup (only pointermove is synthesized). The mouse
@@ -1950,7 +1787,9 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 		};
 
 		try {
-			const result = await host("captureEasingCurve", []);
+			const result = await host("captureEasingCurve", [
+				{ messages: easingHostMessages() },
+			]);
 			const points = computeCapturedPoints(result.value);
 			if (!points) {
 				setStatus("error");
@@ -1971,7 +1810,7 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 			});
 			setStatus("error");
 		}
-	}, [activate, host, persistState]);
+	}, [activate, host, persistState, easingHostMessages]);
 
 	const reverseCurve = useCallback(() => {
 		const state = stateRef.current;
@@ -2011,7 +1850,9 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 	}, [host]);
 
 	const copyValuesToClipboard = useCallback(async () => {
-		const result = await host("captureKeyframeValues", []);
+		const result = await host("captureKeyframeValues", [
+			{ messages: easingHostMessages() },
+		]);
 		const values =
 			(result?.value as { values?: number[][] } | undefined)?.values ?? [];
 		const pathResult = await host("getEasingClipboardPath", []);
@@ -2021,7 +1862,7 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 			await saveValues(window, { version: 1, values }, path);
 			setValuesClipboard(values);
 		}
-	}, [host]);
+	}, [host, easingHostMessages]);
 
 	const pasteFromClipboard = useCallback(
 		async (options: { pasteEase: boolean; pasteValues: boolean }) => {
@@ -2036,12 +1877,18 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 				setModeState("curve");
 			}
 			if (options.pasteValues && clip.values) {
-				await host("pasteKeyframeValues", [{ values: clip.values.values }]);
+				await host("pasteKeyframeValues", [
+					{
+						values: clip.values.values,
+						undoGroupName: t("easing.pasteValuesUndoGroupName"),
+						messages: easingHostMessages(),
+					},
+				]);
 			}
 			drawRef.current?.();
 			persistState();
 		},
-		[host, persistState],
+		[host, persistState, t, easingHostMessages],
 	);
 
 	const contextHandlersRef = useRef({
@@ -2221,7 +2068,6 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 
 	const modeButtons: Array<{ mode: Mode; label: string }> = [
 		{ mode: "curve", label: t("easing.mode.curve") },
-		{ mode: "loop", label: t("easing.mode.loop") },
 		{ mode: "bounce", label: t("easing.mode.bounce") },
 		{ mode: "elastic", label: t("easing.mode.elastic") },
 	];
@@ -2240,7 +2086,7 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 				minHeight: 0,
 				width: "full",
 				minWidth: 0,
-				gridTemplateRows: "auto auto 1fr auto",
+				gridTemplateRows: "auto 1fr auto",
 				overflow: "hidden",
 				borderRadius: "shell-sm",
 				backgroundColor: "surface.widget",
@@ -2255,13 +2101,6 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 				modeButtons={modeButtons}
 				mode={mode}
 				onModeChange={setMode}
-				t={t}
-			/>
-
-			<EasingLoopControls
-				mode={mode}
-				loopCount={loopCount}
-				onLoopCountChange={setLoopCount}
 				t={t}
 			/>
 

@@ -12,6 +12,9 @@
 		"edit": "Изменить",
 		"close": "Закрыть"
 	},
+	"dialogs": {
+		"unsavedChangesConfirm": "Несохраненные изменения будут потеряны. Закрыть диалоговое окно?"
+	},
 	"actions": {
 		"run": "Запустить",
 		"duplicate": "Дублировать",
@@ -179,6 +182,104 @@
 			"copyError": "Скопировать сведения об ошибке",
 			"copied": "Скопировано в буфер обмена",
 			"digest": "Идентификатор ошибки"
+		}
+	},
+	"ui": {
+		"loadingSpinner": {
+			"label": "Загрузка"
+		},
+		"searchField": {
+			"clearAria": "Очистить поиск",
+			"clearTitle": "Очистить"
+		},
+		"regexEditor": {
+			"enterPattern": "Введите шаблон.",
+			"invalidFlags": "Недопустимые флаги: {{flags}}",
+			"plainSource": "Простой regex-шаблон",
+			"literalFormat": "Литеральный формат regex",
+			"testString": "Тестовая строка",
+			"sourcePlaceholder": "Шаблон regex",
+			"flagsPlaceholder": "флаги",
+			"matches": "Совпадения",
+			"noMatch": "Нет совпадений",
+			"literalSuffix": "· литерал /pattern/flags",
+			"sourceSuffix": "· только исходник"
+		},
+		"listSelect": {
+			"placeholder": "Выбрать…"
+		}
+	},
+	"directoryBrowser": {
+		"refresh": "Обновить",
+		"goUp": "Наверх",
+		"open": "Открыть",
+		"select": "Выбрать",
+		"deselect": "Снять выбор",
+		"listView": "Список",
+		"iconView": "Значки",
+		"noFilesFound": "Файлы не найдены",
+		"selectFileAria": "Выбрать файл {{name}}",
+		"selectFolderAria": "Выбрать папку {{name}}"
+	},
+	"debugConsole": {
+		"title": "Консоль",
+		"clear": "Очистить",
+		"evaluateAria": "Вычислить JavaScript",
+		"evaluatePlaceholder": "Вычислить JavaScript…",
+		"rowContextHint": "Щелчок правой кнопкой для копирования",
+		"filterLevelAria": "Фильтровать сообщения консоли",
+		"filterSourceAria": "Фильтровать сообщения консоли по источнику",
+		"filterScopeAria": "Фильтровать сообщения консоли по области сеанса",
+		"levels": {
+			"all": "Все",
+			"log": "Журнал",
+			"info": "Инфо",
+			"warn": "Предупреждение",
+			"error": "Ошибка"
+		},
+		"sources": {
+			"all": "Все источники",
+			"panel": "Панель",
+			"modeless": "Без окна",
+			"hostBridge": "Мост хоста",
+			"online": "Онлайн",
+			"preset": "Пресет",
+			"opWorker": "Операционный воркер",
+			"workspace": "Рабочая область",
+			"boot": "Загрузка",
+			"debugConsole": "Консоль отладки",
+			"console": "Консоль"
+		},
+		"scopes": {
+			"allHistory": "Вся история",
+			"thisSession": "Этот сеанс"
+		},
+		"contextMenu": {
+			"copyMessage": "Копировать сообщение",
+			"copyAllMessages": "Копировать все сообщения",
+			"clearConsole": "Очистить консоль",
+			"enableAutoScroll": "Включить автопрокрутку",
+			"disableAutoScroll": "Выключить автопрокрутку",
+			"itemActive": "{{level}} (активно)"
+		}
+	},
+	"errors": {
+		"hostContextUnavailable": "Контекст хоста недоступен",
+		"fileAccessUnavailable": "Доступ к файлам через CEP Node недоступен в этой поверхности.",
+		"fsApiUnavailable": "API fs CEP Node недоступен в этой среде выполнения хоста.",
+		"fileImportAeOnly": "Импорт файлов сейчас доступен только в After Effects.",
+		"initNotFound": "ty-plus-init.json не найден (нет корня приложения). Перед любой записью онбординг должен быть завершён.",
+		"initIncomplete": "ty-plus ещё не инициализирован. Запись заблокирована, пока ty-plus-init.json не сообщит о завершении.",
+		"initSupportRootBlank": "ty-plus-init.json помечен как завершённый, но supportRoot пуст.",
+		"hostExecFailed": "Ty Plus: {{message}}",
+		"notify": {
+			"generic": "Произошла ошибка",
+			"fsPermission": "Доступ запрещен. Проверьте разрешения файла/папки.",
+			"fsNotFound": "Файл или папка не найдены. Возможно, они были перемещены или удалены.",
+			"fsCorrupted": "Файл данных поврежден и был сохранен в резервную копию. Повторите попытку.",
+			"aeEvalFailed": "Команда After Effects не выполнена. Повторите попытку или перезапустите AE.",
+			"aeNotAvailable": "Соединение с After Effects потеряно. Перезапустите панель.",
+			"network": "Ошибка сети. Проверьте подключение."
 		}
 	}
 }

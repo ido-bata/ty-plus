@@ -1,7 +1,8 @@
-import { cx } from "@ty-plus/ui/util/cx";
+import { cx, IconButton } from "@ty-plus/ui";
 import { AlertTriangle, Info, X, XCircle } from "lucide-react";
 import { type JSX, useEffect, useState } from "react";
 import ReactDOM from "react-dom";
+import { i18n } from "@/management/i18n/index";
 import { css } from "@/styled-system/css";
 import { type NotificationEntry, notificationStore } from "./service";
 
@@ -34,7 +35,7 @@ const renderIcon = (type: NotificationEntry["type"]): JSX.Element => {
 
 const portalClass = css({
 	position: "fixed",
-	zIndex: 9999,
+	zIndex: "var(--ty-z-notification)",
 	display: "flex",
 	flexDirection: "column",
 	gap: "2",
@@ -49,7 +50,7 @@ const notificationCardClass = css({
 	borderRadius: "shell-sm",
 	backgroundColor: "surface.dialog/95",
 	backdropBlur: "6px",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.subtle",
 	boxShadow: "control-panel",
@@ -65,23 +66,7 @@ const messageClass = css({
 	fontWeight: "normal",
 	lineHeight: "normal",
 	color: "text.primary",
-	wordBreak: "break-all",
-});
-
-const dismissButtonClass = css({
-	display: "flex",
-	height: "4",
-	width: "4",
-	alignItems: "center",
-	justifyContent: "center",
-	padding: "0",
-	borderStyle: "none",
-	backgroundColor: "transparent",
-	color: "text.muted",
-	cursor: "pointer",
-	transitionProperty: "colors",
-	_hover: { color: "text.primary" },
-	flexShrink: 0,
+	overflowWrap: "anywhere",
 });
 
 const dismissIconClass = css({
@@ -124,14 +109,14 @@ export function NotificationContainer(): JSX.Element | null {
 					{renderIcon(n.type)}
 					<div className={messageClass}>{n.message}</div>
 					{n.dismissible && (
-						<button
-							type="button"
+						<IconButton
+							size="xs"
+							className={css({ flexShrink: 0 })}
 							onClick={() => notificationStore.remove(n.id)}
-							className={dismissButtonClass}
-							aria-label="Dismiss notification"
+							aria-label={i18n.t("online:notificationContainer.dismiss")}
 						>
 							<X className={dismissIconClass} />
-						</button>
+						</IconButton>
 					)}
 				</div>
 			))}

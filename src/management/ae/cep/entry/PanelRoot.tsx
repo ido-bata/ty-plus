@@ -3,7 +3,7 @@ import { type ReactNode, StrictMode } from "react";
 import {
 	type CepContextValue,
 	CepProvider,
-} from "@/management/ae/cep/contexts/Context";
+} from "@/management/ae/cep/contexts/CepContext";
 import { ThemeProvider } from "@/management/ae/cep/contexts/ThemeContext";
 import { AfterEffectsFilesGatewayProvider } from "@/management/ae/files/gateway-context";
 import type { AfterEffectsFilesRuntimeGateway } from "@/management/ae/files/runtime-gateway-impl";

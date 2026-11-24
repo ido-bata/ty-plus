@@ -1,4 +1,4 @@
-import type { SurfaceState } from "@/management/workspace/state";
+import type { SurfaceState } from "@/management/workspace/core/state";
 
 /**
  * @deprecated Easing widget removed. Stub kept to avoid breaking imports.

@@ -1,5 +1,4 @@
-import { Icon } from "@ty-plus/ui/icons/Icon";
-import { cx } from "@ty-plus/ui/util/cx";
+import { Button, cardTitleClass, cx, Icon } from "@ty-plus/ui";
 import { ChevronDown } from "lucide-react";
 import { type JSX, type ReactNode, useEffect, useState } from "react";
 import { settingsSectionIdFromTitle } from "@/management/setting/dialog/settings-context-menu-build";
@@ -20,7 +19,7 @@ const sectionStyle = css({
 	minWidth: 0,
 	maxWidth: "none",
 	borderRadius: "shell-sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 	backgroundColor: "surface.widget",
@@ -34,14 +33,7 @@ const triggerStyle = css({
 	paddingInline: "3",
 	paddingBlock: "2",
 	textAlign: "left",
-	borderRadius: "shell-sm",
 	_hover: { backgroundColor: "interactive.hover" },
-});
-
-const triggerTitleStyle = css({
-	fontSize: "text-sm",
-	fontWeight: "medium",
-	color: "text.primary",
 });
 
 const triggerIconStyle = css({
@@ -56,7 +48,7 @@ const triggerIconOpenStyle = css({
 const bodyStyle = css({
 	width: "full",
 	minWidth: 0,
-	borderTopWidth: "1px",
+	borderTopWidth: "hairline",
 	borderTopStyle: "solid",
 	borderTopColor: "border.default",
 	paddingInline: "3",
@@ -99,20 +91,21 @@ export function AccordionSection({
 			data-search-terms={searchTerms}
 			data-settings-section={sectionId}
 		>
-			<button
-				type="button"
+			<Button
+				variant="bare"
+				uiSize="content"
 				data-settings-accordion-trigger
 				className={triggerStyle}
 				onClick={() => setIsOpen(!isOpen)}
 				aria-expanded={isOpen}
 			>
-				<span className={triggerTitleStyle}>{title}</span>
+				<span className={cardTitleClass}>{title}</span>
 				<Icon
 					icon={ChevronDown}
 					size={16}
 					className={cx(triggerIconStyle, isOpen ? triggerIconOpenStyle : "")}
 				/>
-			</button>
+			</Button>
 			{isOpen ? <div className={bodyStyle}>{children}</div> : null}
 		</div>
 	);

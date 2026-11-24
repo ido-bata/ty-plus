@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef } from "react";
-import { registerCepJsonContextMenuSurface } from "@/management/dialog/dialogs/context-menu";
+import { registerCepJsonContextMenuSurface } from "@/management/dialog/context-menu";
 import { useSettings } from "@/management/setting/context";
 import { buildSettingsContextMenuPayload } from "@/management/setting/dialog/settings-context-menu-build";
 import {

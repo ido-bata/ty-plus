@@ -1,3 +1,9 @@
+import {
+	Button,
+	srOnlyClass,
+	tileInnerClass,
+	tileRingClass,
+} from "@ty-plus/ui";
 import type { JSX, ReactNode } from "react";
 import type { Preset } from "@/management/preset/contract";
 import { dispatchWorkspacePresetHover } from "@/management/preset/group/hover";
@@ -6,7 +12,7 @@ import { Tile } from "@/management/preset/workspace/Tile";
 import type { GridSettings } from "@/management/workspace/layout/grid-document";
 import { ATTR_GROUP_PANEL } from "@/management/workspace/placement/types";
 import { css, cx } from "@/styled-system/css";
-import { useGroupPanelDrag } from "./use-group-panel-drag";
+import { useGroupPanelDrag } from "./use-panel-drag";
 
 const ATTR_GROUP_PANEL_ITEM = "data-workspace-group-panel-item";
 
@@ -19,21 +25,11 @@ const gridCellOuterClass = css({
 	color: "text.primary",
 });
 
-const gridCellInnerClass = css({
-	position: "absolute",
-	inset: "0",
-	zIndex: "0",
-	minHeight: "0",
-	minWidth: "0",
-	overflow: "hidden",
-	borderRadius: "shell-sm",
-});
-
 const gridCellRingBaseClass = css({
 	pointerEvents: "none",
 	position: "absolute",
 	inset: "0",
-	zIndex: "1",
+	zIndex: "var(--ty-z-chrome)",
 	boxSizing: "border-box",
 	borderRadius: "shell-sm",
 	transitionProperty: "border-color",
@@ -41,20 +37,14 @@ const gridCellRingBaseClass = css({
 	transitionTimingFunction: "ease-out",
 });
 
-const gridCellRingBorderClass = css({
-	borderWidth: "1px",
-	borderStyle: "solid",
-	borderColor: "var(--color-ty-ws-gridcell-ring-border)",
-});
-
 const panelClass = css({
 	position: "absolute",
-	zIndex: "120",
+	zIndex: "var(--ty-z-panel)",
 	boxSizing: "border-box",
 	overflowX: "hidden",
 	overflowY: "auto",
 	borderRadius: "shell-sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 	backgroundColor: "surface.widget",
@@ -68,37 +58,11 @@ const gridClass = css({
 	justifyContent: "center",
 });
 
-const cellButtonClass = css({
-	display: "block",
-	flexShrink: "0",
-	cursor: "pointer",
-	userSelect: "none",
-	borderWidth: "0",
-	backgroundColor: "transparent",
-	padding: "0",
-	_disabled: {
-		cursor: "not-allowed",
-		opacity: "0.5",
-	},
-});
-
 const dragGhostClass = css({
 	pointerEvents: "none",
 	position: "fixed",
-	zIndex: "200",
+	zIndex: "var(--ty-z-drag-ghost)",
 	opacity: "0.9",
-});
-
-const srOnlyClass = css({
-	position: "absolute",
-	width: "1px",
-	height: "1px",
-	padding: "0",
-	margin: "-1px",
-	overflow: "hidden",
-	clip: "rect(0,0,0,0)",
-	whiteSpace: "nowrap",
-	borderWidth: "0",
 });
 
 function GroupPanelPresetCell({
@@ -113,11 +77,8 @@ function GroupPanelPresetCell({
 			className={gridCellOuterClass}
 			style={{ width: cellSizePx, height: cellSizePx }}
 		>
-			<div className={gridCellInnerClass}>{children}</div>
-			<div
-				aria-hidden
-				className={cx(gridCellRingBaseClass, gridCellRingBorderClass)}
-			/>
+			<div className={tileInnerClass}>{children}</div>
+			<div aria-hidden className={cx(gridCellRingBaseClass, tileRingClass)} />
 		</div>
 	);
 }
@@ -191,12 +152,12 @@ export function GroupPanel({
 				{orderedMemberPresets.map((meta, index) => {
 					const preset = presetsById.get(meta.id);
 					return (
-						<button
+						<Button
 							key={meta.id}
-							type="button"
+							variant="bare"
+							uiSize="content"
 							{...{ [ATTR_GROUP_PANEL_ITEM]: "" }}
 							data-preset-id={meta.id}
-							className={cellButtonClass}
 							style={{
 								width: cellSizePx,
 								height: cellSizePx,
@@ -217,7 +178,7 @@ export function GroupPanel({
 									onHoverChange={dispatchWorkspacePresetHover}
 								/>
 							</GroupPanelPresetCell>
-						</button>
+						</Button>
 					);
 				})}
 				{groupDrag ? (

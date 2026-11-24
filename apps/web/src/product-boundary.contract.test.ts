@@ -32,9 +32,11 @@ const HOST_BOUNDARY_PATTERNS = [
 	/extendscript/i,
 	/\/cep\//,
 	/\/js\/lib\//,
-	// `storage/ids.ts` is pure ID utilities (no I/O) — everything else under
-	// storage/ is host persistence and stays out of the web bundle.
-	/management\/storage\/(?!ids\.ts$)/,
+	// `storage/ids.ts` is pure ID utilities (no I/O) and
+	// `storage/thumbnail/` renders a preview through the injected thumbnail
+	// gateway client — both are host-free. Everything else under storage/ is
+	// host persistence and stays out of the web bundle.
+	/management\/storage\/(?!ids\.ts$|thumbnail\/)/,
 	/management\/ae\/(?!files\/gateway-context)/,
 	/management\/preset\/use-cases/,
 	/management\/preset\/repository\//,

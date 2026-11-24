@@ -83,13 +83,13 @@ export const reloadPanel1 = async (
 };
 
 /** Poll `expression` (must evaluate truthy) until it passes or times out. */
-export const waitForDom = async (
+export const waitForDom = async <T = unknown>(
 	ctx: E2EContext,
 	surface: LiveSurface,
 	expression: string,
 	timeoutMs = 30_000,
 	intervalMs = 500,
-): Promise<unknown> => {
+): Promise<T> => {
 	const deadline = Date.now() + timeoutMs;
 	let last: unknown = null;
 	while (Date.now() < deadline) {
@@ -98,10 +98,10 @@ export const waitForDom = async (
 		} catch {
 			last = null;
 		}
-		if (last) return last;
+		if (last) return last as T;
 		await sleep(intervalMs);
 	}
-	return last;
+	return last as T;
 };
 
 /**

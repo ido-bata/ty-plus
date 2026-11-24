@@ -1,6 +1,8 @@
+import { sectionLabelClass } from "@ty-plus/ui";
 import type { JSX, ReactNode } from "react";
+import { useTranslation } from "react-i18next";
 import type { Preset } from "@/management/preset/contract";
-import { WorkspacePresetGlyph } from "@/management/preset/workspace/glyph";
+import { WorkspacePresetGlyph } from "@/management/preset/workspace/glyph/WorkspaceGlyph";
 import { css } from "@/styled-system/css";
 
 /**
@@ -12,6 +14,20 @@ import { css } from "@/styled-system/css";
 
 export type PresetInfoSource = "selection" | "hover";
 
+/**
+ * This module is also rendered by host-free surfaces (the official Web
+ * demo) that run a different i18next resource set without the `widgets`
+ * namespace. Resolve the instance from react-i18next context (never the
+ * app singleton — that would break the web product boundary) and fall
+ * back to the English literal when the key is absent.
+ */
+type WidgetT = (key: string, fallback: string) => string;
+
+const makeWidgetT =
+	(i18n: { exists: (key: string) => boolean; t: (key: string) => string }) =>
+	(key: string, fallback: string): string =>
+		i18n.exists(key) ? i18n.t(key) : fallback;
+
 export type PresetInfoMode = "single" | "multi" | "empty";
 
 export function presetInfoMode(items: readonly Preset[]): PresetInfoMode {
@@ -21,25 +37,12 @@ export function presetInfoMode(items: readonly Preset[]): PresetInfoMode {
 }
 
 function SectionLabel({ children }: { children: ReactNode }): JSX.Element {
-	return (
-		<div
-			className={css({
-				marginBottom: "var(--ty-space-1)",
-				fontSize: "text-2xs",
-				fontWeight: "bold",
-				textTransform: "uppercase",
-				letterSpacing: "0.06em",
-				color: "var(--text-muted)",
-			})}
-		>
-			{children}
-		</div>
-	);
+	return <div className={sectionLabelClass}>{children}</div>;
 }
 
 const multiItemClass = css({
-	borderRadius: "var(--radius)",
-	borderWidth: "1px",
+	borderRadius: "var(--radius-shell)",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.strong",
 	backgroundColor: "rgba(var(--text-r),var(--text-g),var(--text-b),0.03)",
@@ -57,7 +60,7 @@ const emptyGlyphClass = css({
 	justifyContent: "center",
 	overflow: "hidden",
 	borderRadius: "var(--ty-space-1)",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.strong",
 	backgroundColor: "surface.widget",
@@ -65,7 +68,7 @@ const emptyGlyphClass = css({
 
 const emptyGlyphMarkClass = css({
 	fontSize: "var(--ty-shell-text-size)",
-	color: "var(--text-muted)",
+	color: "var(--color-text-muted)",
 	opacity: 0.5,
 });
 
@@ -74,6 +77,8 @@ function PresetInfoEmptyContent({
 }: {
 	source: PresetInfoSource;
 }): JSX.Element {
+	const { i18n } = useTranslation();
+	const tWidget = makeWidgetT(i18n);
 	return (
 		<div
 			className={css({
@@ -109,20 +114,20 @@ function PresetInfoEmptyContent({
 							truncate: true,
 							fontSize: "var(--ty-shell-text-size)",
 							fontWeight: "semibold",
-							color: "var(--text-muted)",
+							color: "var(--color-text-muted)",
 							opacity: 0.5,
 						})}
 					>
-						No preset selected
+						{tWidget("widgets:info.noPresetSelected", "No preset selected")}
 					</span>
 					<span
 						className={css({
 							flexShrink: 0,
 							fontSize: "text-3xs",
-							color: "var(--text-muted)",
+							color: "var(--color-text-muted)",
 						})}
 					>
-						{source}
+						{tWidget(`widgets:info.source.${source}`, source)}
 					</span>
 				</div>
 			</div>
@@ -130,13 +135,15 @@ function PresetInfoEmptyContent({
 	);
 }
 
-export function PresetCard({
+function PresetCard({
 	preset,
 	source,
 }: {
 	preset: Preset;
 	source: PresetInfoSource;
 }): JSX.Element {
+	const { i18n } = useTranslation();
+	const tWidget = makeWidgetT(i18n);
 	const name = preset.title?.trim() ? preset.title.trim() : preset.id;
 	const fileName = fileNameFromExecutionData(preset);
 	const kindLabel = preset.type;
@@ -207,7 +214,7 @@ export function PresetCard({
 								truncate: true,
 								fontSize: "var(--ty-shell-text-size)",
 								fontWeight: "semibold",
-								color: "var(--text-main)",
+								color: "var(--color-text-primary)",
 							})}
 							title={name}
 						>
@@ -217,10 +224,10 @@ export function PresetCard({
 							className={css({
 								flexShrink: 0,
 								fontSize: "text-3xs",
-								color: "var(--text-muted)",
+								color: "var(--color-text-muted)",
 							})}
 						>
-							{source}
+							{tWidget(`widgets:info.source.${source}`, source)}
 						</span>
 					</div>
 					<div
@@ -238,7 +245,7 @@ export function PresetCard({
 									minWidth: 0,
 									wordBreak: "break-all",
 									fontSize: "text-3xs",
-									color: "var(--text-muted)",
+									color: "var(--color-text-muted)",
 								})}
 							>
 								{fileName}
@@ -248,11 +255,11 @@ export function PresetCard({
 							className={css({
 								flexShrink: 0,
 								borderRadius: "var(--ty-space-0-5)",
-								backgroundColor: "var(--surface-glass)",
+								backgroundColor: "var(--color-surface-overlay)",
 								paddingInline: "var(--ty-space-1)",
 								paddingBlock: "var(--ty-space-0-5)",
 								fontSize: "text-3xs",
-								color: "var(--text-main)",
+								color: "var(--color-text-primary)",
 							})}
 						>
 							{kindLabel}
@@ -286,7 +293,7 @@ export function PresetCard({
 								justifyContent: "center",
 								overflow: "hidden",
 								borderRadius: "var(--ty-space-1)",
-								borderWidth: "1px",
+								borderWidth: "hairline",
 								borderStyle: "solid",
 								borderColor: "border.strong",
 								backgroundColor: "surface.widget",
@@ -311,15 +318,16 @@ export function PresetCard({
 							className={css({
 								fontSize: "text-xs",
 								lineHeight: "relaxed",
-								color: "var(--text-muted)",
+								color: "var(--color-text-muted)",
 							})}
 						>
-							{formatPresetDescription(preset.description).map((part) =>
-								part.value === "\n" ? (
-									<br key={part.key} />
-								) : (
-									<span key={part.key}>{part.value}</span>
-								),
+							{formatPresetDescription(preset.description, tWidget).map(
+								(part) =>
+									part.value === "\n" ? (
+										<br key={part.key} />
+									) : (
+										<span key={part.key}>{part.value}</span>
+									),
 							)}
 						</div>
 					) : null}
@@ -400,8 +408,11 @@ function fileNameFromExecutionData(preset: Preset): string | null {
 
 function formatPresetDescription(
 	raw: string | undefined,
+	tWidget: WidgetT,
 ): { key: string; value: string }[] {
-	const parts = raw?.trim() ? raw.trim().split(/(\n)/) : ["No description"];
+	const parts = raw?.trim()
+		? raw.trim().split(/(\n)/)
+		: [tWidget("widgets:info.noDescription", "No description")];
 	return parts.map((value, index) => ({
 		key: `${value}-${index}-${parts.length}`,
 		value,

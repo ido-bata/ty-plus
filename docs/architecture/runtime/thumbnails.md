@@ -138,7 +138,7 @@ protocol source は `rust/crates/protocol/src/`。
 
 ## パネル側フック
 
-`src/function/widget/utility/directory-browser/hooks/useThumbnail.ts` を新規追加:
+`src/management/storage/thumbnail/useThumbnail.ts` を新規追加:
 
 ```ts
 type UseThumbnailResult = {

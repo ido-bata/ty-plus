@@ -1,5 +1,109 @@
 {
 	"notification": {
-		"fixtureBadge": "Platzhalter (Offline-Fixture)"
+		"fixtureBadge": "Platzhalter (Offline-Fixture)",
+		"fixture": {
+			"welcomeName": "Willkommen bei ty-plus",
+			"welcomeSummary": "Danke, dass Sie ty-plus installiert haben! Dies ist eine Platzhalter-Mitteilung, die angezeigt wird, wenn die Runtime nicht verbunden ist (Offline-Fixture).",
+			"updateName": "Update verfügbar",
+			"updateSummary": "Eine neue Version kann verbesserte Rasterleistung und Fehlerbehebungen enthalten.",
+			"maintenanceName": "Wartungshinweis",
+			"maintenanceSummary": "Es kann eine Serverwartung geplant sein; prüfen Sie die Statusseite."
+		}
+	},
+	"gatewayBoot": {
+		"connectivityProbeFailed": "Die Konnektivitätsprüfung ist nach dem Start der Worker-Zusammensetzung fehlgeschlagen.",
+		"catalogProbeFailed": "Die Katalogprüfung ist nach dem Start der Worker-Zusammensetzung fehlgeschlagen.",
+		"runtimeInitFailed": "Die Operations-Worker-Laufzeit konnte beim Start nicht erstellt werden.",
+		"compositionInitFailed": "Die Operations-Worker-Zusammensetzung konnte beim Start nicht erstellt werden."
+	},
+	"catalog": {
+		"title": "Online-Preset-Bibliothek",
+		"searchPlaceholder": "Nach Name, ID, Beschreibung, Kategorie, Tag filtern",
+		"filterPlaceholder": "Filtern…",
+		"showFilters": "Filter anzeigen",
+		"hideFilters": "Filter ausblenden",
+		"category": "Kategorie",
+		"tags": "Tags",
+		"allCategories": "Alle Kategorien",
+		"clear": "Löschen",
+		"clearAll": "Alle löschen",
+		"clearAllFilters": "Alle Filter löschen",
+		"clearSearch": "Suche löschen",
+		"clearCategoryFilter": "Kategoriefilter löschen",
+		"clearTagSelection": "Tag-Auswahl löschen",
+		"refreshCatalog": "Katalog aktualisieren",
+		"reloadCatalog": "Katalog neu laden",
+		"reloadingCatalog": "Wird neu geladen…",
+		"openNotion": "Notion öffnen",
+		"openManualNotion": "Handbuch öffnen (Notion)",
+		"viewMenu": "Ansicht",
+		"viewMode": "Ansichtsmodus",
+		"viewGallery": "Galerieansicht",
+		"viewGalleryTitle": "Galerie (Ctrl+Mausrad zum Zoomen)",
+		"viewGalleryLabel": "Galerie",
+		"viewCards": "Kartenansicht",
+		"viewCardsLabel": "Karten",
+		"viewList": "Listenansicht",
+		"viewListLabel": "Liste",
+		"tableThumb": "Vorschaubild",
+		"tableNameId": "Name / ID",
+		"tableActions": "Aktionen",
+		"emptyUnavailable": "Die Online-Preset-Bibliothek ist nicht verfügbar.",
+		"emptyNoCatalog": "Kein Online-Katalog.",
+		"emptyNoMatch": "Keine Presets entsprechen dem Filter.",
+		"footerCount": "{{filtered}} / {{catalog}} Einträge",
+		"footerZoom": "Ctrl+Mausrad: {{percent}}%",
+		"downloadConfirm": "Dieses Preset herunterladen?",
+		"downloadCancelled": "Download vom Benutzer abgebrochen",
+		"downloadUnavailable": "Runtime-Download ist nicht verfügbar (keine Online-Verbindung)",
+		"systemPathsUnavailable": "Systempfade nicht verfügbar",
+		"invalidDownloadPath": "Ungültiger Download-Pfad: {{path}}",
+		"downloadFailed": "Download fehlgeschlagen: {{message}}",
+		"pluginInstalled": "Plugin installiert. Starten Sie After Effects neu, um es zu verwenden.",
+		"downloadComplete": "Download abgeschlossen.",
+		"downloadedDescription": "[Aus Katalog heruntergeladen] {{description}}",
+		"gatewayBootRetryHint": "{{reason}} — laden Sie das Panel neu, um den Gateway-Start erneut zu versuchen",
+		"hideSidePanel": "Seitenleiste ausblenden",
+		"showSidePanel": "Seitenleiste anzeigen",
+		"download": "Herunterladen",
+		"import": "Importieren",
+		"sync": {
+			"idle": "Cloud-Synchronisierung im Leerlauf",
+			"ok": "Ty Plus OK",
+			"failed": "Cloud-Synchronisierung fehlgeschlagen"
+		},
+		"gatewayBootReason": {
+			"unsupportedTrustMode": "Nicht unterstützter operation-worker-Vertrauensmodus",
+			"unsupportedPlatform": "Nicht unterstützte Host-Plattform",
+			"missingExtensionRoot": "CEP-Erweiterungsstamm nicht verfügbar",
+			"workerRuntimeFailed": "Worker-Laufzeit nicht verfügbar",
+			"workerCompositionFailed": "Worker-Zusammenstellung fehlgeschlagen"
+		}
+	},
+	"notificationCenter": {
+		"title": "Mitteilungen",
+		"loading": "Wird geladen…",
+		"empty": "Keine Mitteilungen",
+		"toggleContent": "Inhalt ein-/ausblenden",
+		"noContent": "Kein Inhalt",
+		"backToList": "Zurück zur Liste",
+		"backToListMenu": "Zurück zur Liste",
+		"refresh": "Aktualisieren",
+		"open": "Öffnen",
+		"close": "Schließen",
+		"markRead": "Als gelesen markieren",
+		"markUnread": "Als ungelesen markieren",
+		"markAsRead": "Als gelesen markieren",
+		"markAsUnread": "Als ungelesen markieren",
+		"generalCategory": "allgemein"
+	},
+	"notificationContainer": {
+		"dismiss": "Mitteilung schließen"
+	},
+	"publicLink": {
+		"userManual": "Benutzerhandbuch"
+	},
+	"errors": {
+		"unknownPreset": "Preset nicht gefunden: {{id}}"
 	}
 }

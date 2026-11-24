@@ -1,7 +1,7 @@
 import type { JSX } from "react";
 import { useTranslation } from "react-i18next";
 import { readUserHomeOrFallback } from "@/management/preset/catalog-add/browse-start-dir";
-import { Dialog } from "@/management/preset/tool-shell/Dialog";
+import { Dialog } from "@/management/preset/tool-shell/dialog/ToolDialog";
 
 export function ImportDialog(): JSX.Element {
 	const { t } = useTranslation("presets");
@@ -12,7 +12,7 @@ export function ImportDialog(): JSX.Element {
 			type="footage"
 			description={t("presetTool.import.lead")}
 			defaultName={t("presetTool.import.defaultName")}
-			iconText="IMPORT"
+			iconText={t("presetTool.import.iconText")}
 			buildFilePath={(values) => values.path.trim()}
 			pathBrowse={{ fieldKey: "path", mode: "file" }}
 			resolveBrowseStartDir={readUserHomeOrFallback}
@@ -20,7 +20,7 @@ export function ImportDialog(): JSX.Element {
 				{
 					key: "path",
 					label: t("presetTool.import.fields.path"),
-					placeholder: "C:\\path\\asset",
+					placeholder: t("presetTool.import.pathPlaceholder"),
 				},
 				{
 					key: "strategy",

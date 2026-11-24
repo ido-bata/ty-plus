@@ -10,19 +10,19 @@
  *
  * These tests verify the wiring at the source level:
  *
- * - `duplicatePreset` is imported from the preset use-case API.
+ * - `duplicatePreset` is imported from the preset operations API.
  * - The `CTX_MENU_IDS.duplicatePreset` case routes through the extracted
  *   `runDuplicatePreset` orchestrator with a freshly generated id.
  * - The Duplicate case is registered next to `editPreset` / `deletePreset`
  *   in the switch.
  *
  * Behavioral coverage of the public API itself lives in
- * `src/management/preset/use-cases.test.ts`; the deterministic helpers
+ * `src/management/preset/operations.test.ts`; the deterministic helpers
  * (`resolveDuplicateHit`, `computeNextPresetSelectedIds`,
  * `runDuplicatePreset`) are covered in
- * `src/management/workspace/hook-duplicate-preset.test.ts`; the menu
+ * `src/management/workspace/hooks/duplicate-preset.test.ts`; the menu
  * payload shape is covered by
- * `src/management/dialog/dialogs/unified-context-menu.test.ts`.
+ * `src/management/dialog/unified-context-menu.test.ts`.
  */
 import fs from "node:fs";
 import { describe, expect, it } from "vitest";
@@ -32,33 +32,30 @@ const hookSource = fs.readFileSync(
 	"utf8",
 );
 const helpersSource = fs.readFileSync(
-	new URL("./hook-duplicate-preset.ts", import.meta.url),
+	new URL("./hooks/duplicate-preset.ts", import.meta.url),
 	"utf8",
 );
 const constantsSource = fs.readFileSync(
-	new URL(
-		"../dialog/dialogs/unified-context-menu-constants.ts",
-		import.meta.url,
-	),
+	new URL("../dialog/unified-context-menu-constants.ts", import.meta.url),
 	"utf8",
 );
 
 describe("useWorkspaceRuntime hook (Duplicate preset case)", () => {
-	it("imports duplicatePreset from the preset use-case API", () => {
+	it("imports duplicatePreset from the preset operations API", () => {
 		// Match either an inline import or a multi-name import — but require
 		// the symbol to be named `duplicatePreset` and the source to be the
-		// public use-case module.
+		// public preset operations module.
 		expect(hookSource).toMatch(
-			/import\s*\{[^}]*\bduplicatePreset\b[^}]*\}\s*from\s*["']@\/management\/preset\/use-cases["']/,
+			/import\s*\{[^}]*\bduplicatePreset\b[^}]*\}\s*from\s*["']@\/management\/preset\/operations["']/,
 		);
 	});
 
-	it("imports the extracted Duplicate helpers from hook-duplicate-preset", () => {
+	it("imports the extracted Duplicate helpers from hooks/duplicate-preset", () => {
 		expect(hookSource).toMatch(
-			/import\s*\{[^}]*\bresolveDuplicateHit\b[^}]*\}\s*from\s*["']@\/management\/workspace\/hook-duplicate-preset["']/,
+			/import\s*\{[^}]*\bresolveDuplicateHit\b[^}]*\}\s*from\s*["']@\/management\/workspace\/hooks\/duplicate-preset["']/,
 		);
 		expect(hookSource).toMatch(
-			/import\s*\{[^}]*\brunDuplicatePreset\b[^}]*\}\s*from\s*["']@\/management\/workspace\/hook-duplicate-preset["']/,
+			/import\s*\{[^}]*\brunDuplicatePreset\b[^}]*\}\s*from\s*["']@\/management\/workspace\/hooks\/duplicate-preset["']/,
 		);
 	});
 

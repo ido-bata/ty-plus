@@ -1,3 +1,4 @@
+import { i18n } from "@/management/i18n/index";
 import type { WorkspaceSnapshot } from "@/management/storage/snapshot-store";
 import type { Layout } from "@/management/workspace/layout/grid-document";
 import { parseLayoutDocument } from "@/management/workspace/layout/grid-document";
@@ -95,8 +96,11 @@ export const createHistoryManager = (panelIdArg: string, win: Window) => {
 
 		async saveSnapshot(widgets: Layout[], label?: string): Promise<void> {
 			const ts = new Date();
-			const defaultLabel = `${ts.toLocaleDateString()} ${ts
-				.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+			const defaultLabel = `${ts.toLocaleDateString(i18n.language)} ${ts
+				.toLocaleTimeString(i18n.language, {
+					hour: "2-digit",
+					minute: "2-digit",
+				})
 				.replace(/\s*(AM|PM)/i, "")}`;
 			// Read all 5 workspace files to build combined panel snapshot
 			const panelLayouts: Record<string, Layout[]> = {};
@@ -144,19 +148,33 @@ export const createHistoryManager = (panelIdArg: string, win: Window) => {
 				});
 			}
 
+			// ADR-0006: snapshots.json is shared across panels — the
+			// read→append→write runs inside the managed-root persistence
+			// lock so two panels saving at once cannot lose each other's
+			// snapshot.
 			const { readSnapshots, writeSnapshots } = await import(
 				"../../storage/snapshot-store"
 			);
-			const existing = await readSnapshots(win, panelIdArg);
-
-			const full: WorkspaceSnapshot = {
-				id: String(ts.getTime()),
-				label: label ?? defaultLabel,
-				createdAt: ts.toISOString(),
-				panels: panelLayouts,
-			};
-			const next = [...existing, full].slice(-MAX_SNAPSHOTS);
-			await writeSnapshots(win, panelIdArg, next);
+			const { resolvePersistenceLockRoot, withPersistenceLock } = await import(
+				"@/management/storage/lock/persistence-lock"
+			);
+			const lockRoot = await resolvePersistenceLockRoot(win);
+			if (!lockRoot) {
+				throw new Error(
+					"saveSnapshot: no managed persistence root for the persistence lock",
+				);
+			}
+			await withPersistenceLock(win, lockRoot, async () => {
+				const existing = await readSnapshots(win, panelIdArg);
+				const full: WorkspaceSnapshot = {
+					id: String(ts.getTime()),
+					label: label ?? defaultLabel,
+					createdAt: ts.toISOString(),
+					panels: panelLayouts,
+				};
+				const next = [...existing, full].slice(-MAX_SNAPSHOTS);
+				await writeSnapshots(win, panelIdArg, next);
+			});
 		},
 
 		async listSnapshots(): Promise<Snapshot[]> {
@@ -182,9 +200,20 @@ export const createHistoryManager = (panelIdArg: string, win: Window) => {
 			const { readSnapshots, writeSnapshots } = await import(
 				"../../storage/snapshot-store"
 			);
-			const existing = await readSnapshots(win, panelIdArg);
-			const next = existing.filter((s) => s.id !== id);
-			await writeSnapshots(win, panelIdArg, next);
+			const { resolvePersistenceLockRoot, withPersistenceLock } = await import(
+				"@/management/storage/lock/persistence-lock"
+			);
+			const lockRoot = await resolvePersistenceLockRoot(win);
+			if (!lockRoot) {
+				throw new Error(
+					"deleteSnapshot: no managed persistence root for the persistence lock",
+				);
+			}
+			await withPersistenceLock(win, lockRoot, async () => {
+				const existing = await readSnapshots(win, panelIdArg);
+				const next = existing.filter((s) => s.id !== id);
+				await writeSnapshots(win, panelIdArg, next);
+			});
 		},
 	};
 };

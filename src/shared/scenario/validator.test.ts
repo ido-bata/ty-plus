@@ -402,7 +402,7 @@ describe("scenario validator", () => {
 	});
 
 	it("E015: synthetic selector on screenshotSelectors → E015_SYNTHETIC_SELECTOR", () => {
-		const base = makeSpec();
+		const _base = makeSpec();
 		const spec = makeSpec({
 			evidence: {
 				screenshotSelectors: ['[data-testid="cloud-status-widget"]'],

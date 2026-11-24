@@ -10,7 +10,7 @@ import { runInNewContext } from "node:vm";
 import { transformSync } from "@babel/core";
 import { build } from "esbuild";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
-import { createOperationWorkerContextProvider } from "@/management/ipc/operation-worker-context";
+import { createOperationWorkerContextProvider } from "@/management/ipc/operation-worker/context";
 import { ALLOWED_HOST_METHODS } from "../cep/host-executor";
 
 const source = readFileSync(
@@ -572,7 +572,12 @@ describe("ExtendScript host bundle command wrappers", () => {
 			// last point of the final cycle (== k2) so we don't double-
 			// write the outer keyframes.
 			expect(body).toMatch(/i === 0 && j === 0/);
-			expect(body).toMatch(/i === loopCount - 1 && j === last/);
+			// Endpoint handling: the outer keyframes of the first/last
+			// cycle are kept (isOuterStart / isOuterEnd) and intermediate
+			// cycles emit a mirrored return leg (hasReturn).
+			expect(body).toMatch(/isOuterStart/);
+			expect(body).toMatch(/isOuterEnd/);
+			expect(body).toMatch(/hasReturn/);
 		});
 
 		test("applyLoopEasing falls back to applyEasing when loopCount < 2", () => {

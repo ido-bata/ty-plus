@@ -6,6 +6,7 @@ import {
 	type HostId,
 } from "@/management/ae/host/contract";
 import { createLogger } from "@/management/debug/logger";
+import { i18n } from "@/management/i18n/index";
 import { notificationStore } from "@/management/online/notification/service";
 
 const hostBridgeLog = createLogger("host-bridge");
@@ -38,6 +39,8 @@ export const ALLOWED_HOST_METHODS = new Set<keyof AfterEffectsHostApi>([
 	"applyEffectByMatchName",
 	"applyEasing",
 	"applyLoopEasing",
+	"captureLoopState",
+	"unapplyLoopEasing",
 	"setAnchorPoint",
 	"captureEasingCurve",
 	"captureKeyframeValues",
@@ -123,7 +126,30 @@ const runEvalScript = (win: Window, script: string) =>
 		}
 
 		evalScript(script, (result: string) => {
-			resolve(result ?? "null");
+			// Issue #71: some CEP hosts invoke the evalScript callback with a
+			// DOM Event (or another non-string) instead of the script result —
+			// the same value the host reports as "Uncaught [object Event]".
+			// Guard the contract here so the raw value cannot reach
+			// JSON.parse downstream; an unusable result resolves as "null".
+			const value: unknown = result;
+			if (typeof value !== "string") {
+				hostBridgeLog.warn(
+					"[ty-plus] evalScript callback returned a non-string result",
+					{
+						context: {
+							resultKind:
+								typeof Event !== "undefined" && value instanceof Event
+									? `Event[${value.type}]`
+									: value === null
+										? "null"
+										: typeof value,
+						},
+					},
+				);
+				resolve("null");
+				return;
+			}
+			resolve(value);
 		});
 	});
 
@@ -134,9 +160,15 @@ const runEvalScript = (win: Window, script: string) =>
 // surface. Standalone generated `.jsx` keeps `alert()` (see Issue #72).
 const notifyHostExecutionFailure = (message: string) => {
 	try {
-		notificationStore.add(`Ty Plus: ${message.slice(0, 300)}`, "error", {
-			duration: 8000,
-		});
+		notificationStore.add(
+			i18n.t("common:errors.hostExecFailed", {
+				message: message.slice(0, 300),
+			}),
+			"error",
+			{
+				duration: 8000,
+			},
+		);
 	} catch (_notifyError) {
 		// Notification delivery must never mask the original failure.
 	}
@@ -145,12 +177,14 @@ const notifyHostExecutionFailure = (message: string) => {
 const parseHostJsonResult = <T>(result: string, stage: string): T => {
 	const normalized = typeof result === "string" ? result.trim() : "";
 	if (!normalized) {
-		throw new Error(`${stage} returned an empty evalScript result`);
+		throw new Error(`${stage} returned an empty evalScript result`); // i18n-exempt: internal diagnostic — not rendered as UI copy
 	}
 	try {
 		return JSON.parse(normalized) as T;
 	} catch (_error) {
+		// // i18n-exempt: internal diagnostic — not rendered as UI copy
 		throw new Error(
+			// i18n-exempt: internal diagnostic — not rendered as UI copy
 			`${stage} returned non-JSON evalScript result: ${normalized.slice(0, 240)}`,
 		);
 	}
@@ -367,7 +401,10 @@ const buildHostBundleLoadScript = (jsxPath: string): string => `
   } catch (error) {
     return JSON.stringify({
       ok: false,
-      error: { message: "Host bundle load failed: " + String(error) }
+      error: {
+        // i18n-exempt: host bridge error payload consumed by the panel, not rendered UI
+        message: "Host bundle load failed: " + String(error),
+      }
     });
   }
 })();
@@ -395,16 +432,18 @@ const readHostBundleProbe = async (win: Window): Promise<HostBundleProbe> => {
 	const result = await runEvalScript(win, HOST_BUNDLE_PROBE_SCRIPT);
 	const normalized = typeof result === "string" ? result.trim() : "";
 	if (!normalized) {
-		throw new Error("Host bundle probe returned an empty evalScript result");
+		throw new Error("Host bundle probe returned an empty evalScript result"); // i18n-exempt: internal diagnostic — not rendered as UI copy
 	}
 	let parsed: unknown;
 	try {
 		parsed = JSON.parse(normalized);
 	} catch {
-		throw new Error("Host bundle probe returned a non-JSON evalScript result");
+		throw new Error("Host bundle probe returned a non-JSON evalScript result"); // i18n-exempt: internal diagnostic — not rendered as UI copy
 	}
 	if (parsed === null || typeof parsed !== "object") {
+		// // i18n-exempt: internal diagnostic — not rendered as UI copy
 		throw new Error(
+			// i18n-exempt: internal diagnostic — not rendered as UI copy
 			"Host bundle probe returned an unexpected evalScript result",
 		);
 	}
@@ -416,7 +455,7 @@ const readHostBundleProbe = async (win: Window): Promise<HostBundleProbe> => {
 		contractComplete?: unknown;
 	};
 	if (value.ok !== true) {
-		throw new Error("Host bundle probe failed");
+		throw new Error("Host bundle probe failed"); // i18n-exempt: internal diagnostic — not rendered as UI copy
 	}
 	return {
 		present: value.present === true,
@@ -443,7 +482,9 @@ const runHostBundleLoad = async (
 		// No path to load: this is a configuration problem, not a transient
 		// failure, so it surfaces as its own typed error rather than being
 		// folded into a generic load failure.
+		// // i18n-exempt: internal diagnostic — not rendered as UI copy
 		throw new Error(
+			// i18n-exempt: internal diagnostic — not rendered as UI copy
 			"Extension root is null. Host bundle path could not be resolved.",
 		);
 	}
@@ -930,7 +971,7 @@ const buildCepHostExecutor = (
 		args: Parameters<AfterEffectsHostApi[K]>,
 	) => {
 		if (!ALLOWED_HOST_METHODS.has(method)) {
-			throw new Error(`Host method is not allowed: ${String(method)}`);
+			throw new Error(`Host method is not allowed: ${String(method)}`); // i18n-exempt: internal diagnostic — not rendered as UI copy
 		}
 		const rawArgs = escapeScriptString(JSON.stringify(args));
 		const escapedMethod = escapeScriptString(String(method));
@@ -943,7 +984,11 @@ const buildCepHostExecutor = (
     if (!hostBundle) {
       return JSON.stringify({
         ok: false,
-        error: { message: "Host bundle is not resident", code: "host_bundle_missing" }
+        error: {
+        // i18n-exempt: host bridge error payload consumed by the panel, not rendered UI
+        message: "Host bundle is not resident",
+        code: "host_bundle_missing",
+      }
       });
     }
     var hostMethod = typeof hostBundle['${escapedMethod}'] === "function"
@@ -952,11 +997,16 @@ const buildCepHostExecutor = (
     if (hostMethod) {
       return hostMethod('${rawArgs}');
     }
-    return JSON.stringify({ ok: false, error: { message: "__TY_PLUS_HOST__.${escapedMethod} is not available", code: "host_method_missing" } });
+    return JSON.stringify({ ok: false, error: {
+        // i18n-exempt: host bridge error payload consumed by the panel, not rendered UI
+        message: "__TY_PLUS_HOST__.${escapedMethod} is not available",
+        code: "host_method_missing",
+      } });
   } catch (error) {
     return JSON.stringify({
       ok: false,
       error: {
+        // i18n-exempt: host bridge error payload consumed by the panel, not rendered UI
         message: "Host function wrapper failed for ${escapedMethod}: " + String(error)
       }
     });

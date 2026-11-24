@@ -1,4 +1,5 @@
 import { tyPlusExtensionId } from "@/management/ae/cep/extension-id";
+import { createLogger } from "@/management/debug/logger";
 import {
 	SHELL_CHANNELS,
 	type SurfaceMessageEnvelope,
@@ -117,6 +118,79 @@ export const isSurfaceMessageEnvelope = (
 	);
 };
 
+// ── Subscriber failure diagnostics (Issue #71) ─────────────────────────────
+//
+// Issue #139 deliberately lets subscriber exceptions propagate out of the
+// CEP `dispatchEvent` listener so they reach the host's "Uncaught" path
+// instead of being swallowed. On some CEP hosts that path reports the
+// thrown value opaquely — "Uncaught [object Event]" — with no stack and no
+// `window.onerror` / `unhandledrejection` delivery, so the failure is
+// undiagnosable. Before rethrowing we record a bounded diagnostic on the
+// canonical log bus naming the channel, the envelope and the thrown value.
+//
+// The policy mirrors the interceptor's transport-failure policy (Issue
+// #138): a recursion guard plus a per-module-load budget. Logging a
+// subscriber failure publishes a log envelope, which can dispatch back
+// into this same listener — without the guard a persistently throwing
+// subscriber would recurse log → publish → throw → log forever.
+const transportLog = createLogger("workspace");
+const TRANSPORT_SUBSCRIBER_LOG_BUDGET = 5;
+let _transportSubscriberFailureCount = 0;
+let _inTransportSubscriberDiagnostic = false;
+
+/** Short, secret-free description of a thrown value for the diagnostic. */
+const describeThrownValue = (error: unknown): string => {
+	if (error instanceof Error) {
+		return `${error.name}: ${error.message.slice(0, 160)}`;
+	}
+	if (typeof Event !== "undefined" && error instanceof Event) {
+		return `${error.constructor?.name ?? "Event"}[${error.type}]`;
+	}
+	return String(error).slice(0, 160);
+};
+
+const reportSubscriberFailure = (
+	envelope: SurfaceMessageEnvelope,
+	error: unknown,
+): void => {
+	_transportSubscriberFailureCount += 1;
+	if (_inTransportSubscriberDiagnostic) return;
+	if (_transportSubscriberFailureCount > TRANSPORT_SUBSCRIBER_LOG_BUDGET) {
+		return;
+	}
+	_inTransportSubscriberDiagnostic = true;
+	try {
+		transportLog.warn("surface transport subscriber threw", {
+			action: "transport:subscriber-error",
+			context: {
+				channel: envelope.channel,
+				kind: envelope.kind,
+				sourceSurfaceId: envelope.sourceSurfaceId,
+				messageId: envelope.messageId,
+				thrown: describeThrownValue(error),
+				stackHead:
+					error instanceof Error
+						? error.stack?.split("\n")[1]?.trim().slice(0, 200)
+						: undefined,
+				suppressedAfter: TRANSPORT_SUBSCRIBER_LOG_BUDGET,
+			},
+		});
+	} finally {
+		_inTransportSubscriberDiagnostic = false;
+	}
+};
+
+/**
+ * Test-only reset for the subscriber-failure budget, mirroring
+ * `__resetTransportDiagnosticsForTest` in the console interceptor.
+ * Production code MUST NOT call this — the budget is the anti-flood
+ * mechanism.
+ */
+export const __resetTransportSubscriberDiagnosticsForTest = (): void => {
+	_transportSubscriberFailureCount = 0;
+	_inTransportSubscriberDiagnostic = false;
+};
+
 const createSurfaceLink = (win: Window): SurfaceTransport => {
 	const addListener = (handler: (event: { data: string }) => void) => {
 		const wrapped = (ev: unknown) => {
@@ -196,7 +270,15 @@ const createSurfaceLink = (win: Window): SurfaceTransport => {
 				// silently, which made drops "not place" with zero diagnostics.
 				// Letting the error propagate surfaces it through the global
 				// error path instead of eating it inside the transport.
-				handler(parsed);
+				// Issue #71: record a bounded diagnostic first — on CEP hosts
+				// the propagated value can surface only as "Uncaught
+				// [object Event]" with no other trace.
+				try {
+					handler(parsed);
+				} catch (error) {
+					reportSubscriberFailure(parsed, error);
+					throw error;
+				}
 			});
 		},
 	};

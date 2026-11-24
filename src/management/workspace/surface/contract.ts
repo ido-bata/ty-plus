@@ -1,6 +1,6 @@
 /**
  * Workspace UI / host surface types shared by management and widget scripts.
- * Keeps `function/widget` free of imports from `management/workspace/state`.
+ * Keeps `function/widget` free of imports from `management/workspace/core/state`.
  */
 
 /** Equivalent to archive project-info-widget CompInfo (AE eval JSON) */
@@ -86,9 +86,15 @@ export const SHELL_CHANNELS = {
 	 * message at the receiving side.
 	 */
 	debug: "com.typlus.workspace.debug",
+	/**
+	 * In-app updater relay (Issue #243): the settings dialog cannot reach the
+	 * operation worker — only panel surfaces boot the worker composition — so
+	 * install requests are relayed panel-ward over this channel. Requests are
+	 * non-idempotent and always carry an explicit `targetSurfaceId` (the
+	 * opener panel); exactly one panel executes them.
+	 */
+	updates: "com.typlus.workspace.updates",
 } as const;
-
-type ShellChannel = (typeof SHELL_CHANNELS)[keyof typeof SHELL_CHANNELS];
 
 /** For `SurfaceMessageEnvelope.payload` (preset list / sync state. Used for market fetch result sharing) */
 export type PresetsPayload =
@@ -103,18 +109,6 @@ export type PresetsPayload =
 			requestId: string;
 			sourceSurfaceId: string;
 	  };
-
-/**
- * Single line displayed on receiver side (notification / system delivery).
- * Data equivalent to archive notification list is assumed to be fetched from backend later and placed here.
- * Dialog itself does **not send** (receive only).
- */
-type MessagesPayload = {
-	kind: "line";
-	text: string;
-	sourceSurfaceId: string;
-	at: string;
-};
 
 /** Settings summary (for backend connection status display. Excludes secrets) */
 export type SettingsPayload =
@@ -237,72 +231,42 @@ export type OnboardingPayload = {
 };
 
 /**
- * Issue #129: cross-surface diagnostic log replay (request/response).
+ * Issue #243: update.install relay payloads on `SHELL_CHANNELS.updates`.
  *
- * Carried on `SHELL_CHANNELS.debug`. Live log entries flow as
- * `kind: "publish"` envelopes (see `LogWirePayload` below). When a
- * Debug Console opens *after* boot, it must ask surfaces for a snapshot
- * of their LogBus ring buffer to see entries that already happened —
- * the CEP event bus does not retain history.
- *
- * Request shape (`kind: "request"`, `targetSurfaceId` optional — omit
- * to broadcast to all surfaces; the panel processes only requests
- * addressed to it OR broadcast requests):
+ * `install-request` is sent by a non-panel surface (settings dialog) to the
+ * panel named by the envelope's `targetSurfaceId`. `install-result` is the
+ * panel's reply, addressed back to the requester's `sourceSurfaceId` and
+ * correlated by `requestId`.
  */
-type DebugLogReplayRequest = {
-	kind: "replay-request";
-	/** Identifier the requester puts in `correlationId` so it can pair the response. */
-	requestId: string;
-	/** ISO timestamp of the requester's session start; respondents may filter older entries out. */
-	since?: string;
-	/** Optional upper bound on entries the requester is willing to receive. */
-	maxEntries?: number;
-};
-
-/**
- * Response to a `DebugLogReplayRequest`. Sent via
- * `kind: "response"` with `targetSurfaceId` set to the requester's
- * surfaceId and `correlationId` echoed from the request.
- *
- * `entries` is the requester's view of the respondent's LogBus
- * snapshot, already converted to wire-payload form (JSON-safe). The
- * respondent is responsible for any sanitization; the size cap and
- * field caps are enforced at conversion time.
- */
-type DebugLogReplayResponse = {
-	kind: "replay-response";
-	requestId: string;
-	/** Surface that produced this snapshot. */
-	sourceSurfaceId: string;
-	entries: ReadonlyArray<{
-		readonly v: 1;
-		readonly id: string;
-		readonly level: string;
-		readonly text: string;
-		readonly timestamp: string;
-		readonly source?: string;
+export type UpdateInstallWireRequest = Readonly<{
+	release_version: string;
+	tag: string;
+	asset: Readonly<{
+		url: string;
+		file_name: string;
+		sha256: string;
 	}>;
-	/** ISO timestamp the snapshot was taken; the requester dedupes against live events by `id`. */
-	takenAt: string;
-};
+}>;
 
-/**
- * Live log entry broadcast on `SHELL_CHANNELS.debug` (`kind: "publish"`).
- * Same shape as the legacy `WirePayload` (debug-console contract); the
- * canonical type lives in `management/debug/console/types.ts` but is
- * duplicated here so the surface contract is self-describing.
- */
-type DebugLogWirePayload = {
-	readonly v: 1;
-	readonly id: string;
-	readonly level: string;
-	readonly text: string;
-	readonly timestamp: string;
-	readonly source?: string;
-};
-
-/** Union of all payloads carried on `SHELL_CHANNELS.debug`. */
-type DebugChannelPayload =
-	| DebugLogWirePayload
-	| DebugLogReplayRequest
-	| DebugLogReplayResponse;
+export type UpdateInstallWirePayload =
+	| {
+			kind: "install-request";
+			requestId: string;
+			sourceSurfaceId: string;
+			request: UpdateInstallWireRequest;
+	  }
+	| {
+			kind: "install-result";
+			requestId: string;
+			sourceSurfaceId: string;
+			/** Panel surface that executed the install. */
+			executorSurfaceId: string;
+			ok: boolean;
+			/** Worker result on success (`installed`/`pending`/`manual_required`). */
+			status?: "installed" | "pending" | "manual_required";
+			version?: string;
+			restart_required?: boolean;
+			reason?: string | null;
+			/** Stable worker error code on failure (e.g. `integrity_mismatch`). */
+			errorCode?: string;
+	  };

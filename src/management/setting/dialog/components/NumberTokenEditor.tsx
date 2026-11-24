@@ -1,4 +1,4 @@
-import { NumberField } from "@ty-plus/ui/fields/NumberField";
+import { NumberField } from "@ty-plus/ui";
 import type { JSX } from "react";
 
 export type NumberTokenEditorProps = {

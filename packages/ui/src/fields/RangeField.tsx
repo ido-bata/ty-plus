@@ -2,6 +2,7 @@ import { NumberField } from "@ty-plus/ui/fields/NumberField";
 import { cx } from "@ty-plus/ui/util/cx";
 import type { JSX } from "react";
 import { css } from "@/styled-system/css";
+import { fieldLabelClass } from "../styles/typography";
 
 export type RangeFieldProps = {
 	label?: string;
@@ -19,11 +20,7 @@ const clamp = (value: number, min: number, max: number): number =>
 	Math.min(max, Math.max(min, value));
 
 const wrapper = css({ minWidth: 0, width: "full" });
-const labelClass = css({
-	fontSize: "text-xs",
-	fontWeight: "medium",
-	color: "text.primary",
-});
+const labelClass = fieldLabelClass;
 const row = css({
 	display: "flex",
 	width: "full",
@@ -47,10 +44,10 @@ const RANGE_INPUT_CLASS = cx(
 		"&::-webkit-slider-runnable-track": {
 			height: "1",
 			borderRadius: "full",
-			backgroundColor: "border.default",
+			backgroundColor: "border.control",
 		},
 		"&::-webkit-slider-thumb": {
-			marginTop: "calc((1 - 4) / 2)",
+			marginTop: "-1.5",
 			height: "4",
 			width: "4",
 			cursor: "pointer",
@@ -58,7 +55,7 @@ const RANGE_INPUT_CLASS = cx(
 			borderRadius: "full",
 			borderWidth: "2px",
 			borderStyle: "solid",
-			borderColor: "border.default",
+			borderColor: "border.control",
 			backgroundColor: "text.primary",
 		},
 	}),
@@ -114,7 +111,14 @@ export function RangeField({
 					aria-label={label ? `${label} value` : "Range value"}
 					uiSize="sm"
 					numberSpinners={false}
-					className={css({ width: "14", flexShrink: 0, flexBasis: "14" })}
+					className={css({
+						// Issue #448: 14 (56px) clipped multi-digit values such as
+						// "-2000.5" — the input needs ~7ch plus inline padding.
+						// (spacing "18" does not exist in the token scale.)
+						width: "20",
+						flexShrink: 0,
+						flexBasis: "20",
+					})}
 					inputClassName={css({
 						paddingInline: "1.5",
 						textAlign: "center",

@@ -55,7 +55,7 @@ vi.mock("@/management/workspace/layout/persistence-root", () => ({
 	resolveWorkspacePersistenceManagedRoot: resolveRootMock,
 }));
 
-vi.mock("@/management/workspace/services", () => ({
+vi.mock("@/management/workspace/core/services", () => ({
 	getDataServices: () => {
 		if (servicesRef.mode === "null") return null as never;
 		if (servicesRef.mode === "throws") {
@@ -102,7 +102,7 @@ vi.mock("@/management/catalog/json-files", () => ({
 	readGroupJson: async () => "",
 }));
 
-vi.mock("@/management/preset/group-catalog", () => ({
+vi.mock("@/management/preset/group/catalog", () => ({
 	parseGroupFromText: () => [],
 }));
 
@@ -151,6 +151,15 @@ vi.mock("@/management/debug", () => ({
 		debug: () => {},
 		log: () => {},
 	}),
+}));
+
+vi.mock("@/management/storage/lock/persistence-lock", () => ({
+	PersistenceLockTimeoutError: class PersistenceLockTimeoutError extends Error {},
+	PersistenceLockUnavailableError: class PersistenceLockUnavailableError extends Error {},
+	resolvePersistenceLockRoot: vi.fn(async () => "/test/managed-root"),
+	withPersistenceLock: vi.fn(
+		async (_win: Window, _root: string, fn: () => Promise<unknown>) => fn(),
+	),
 }));
 
 import { tryPersistAppendPresetFromDialog } from "@/management/workspace/placement/append-preset-from-dialog-disk";

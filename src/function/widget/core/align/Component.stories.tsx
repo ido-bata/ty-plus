@@ -2,8 +2,9 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { expect, waitFor } from "storybook/test";
 
 import { Align } from "@/function/widget/core/align/Component";
-import type { SurfaceState } from "@/management/workspace/state";
-import { createInitialSurfaceState } from "@/management/workspace/state";
+import type { SurfaceState } from "@/management/workspace/core/state";
+import { createInitialSurfaceState } from "@/management/workspace/core/state";
+import { assertNotClipped } from "@/storybook/quality/layout";
 import { css } from "@/styled-system/css";
 
 type Args = {
@@ -93,13 +94,17 @@ export const HoverTarget: Story = {
 		// (dynamic import keeps Storybook dev/build from evaluating the
 		// browser-only module).
 		const { userEvent } = await import("vitest/browser");
-		const resting = getComputedStyle(button).backgroundColor;
+		// The target button is a bare hit area; the hover treatment lives
+		// on its surface parent one level up.
+		const surface = button.parentElement;
+		if (!surface) throw new Error("align target surface not found");
+		const resting = getComputedStyle(surface).backgroundColor;
 		await userEvent.hover(button);
-		await expect(button.matches(":hover")).toBe(true);
-		// The button transitions colors — wait for it to settle before
+		await expect(surface.matches(":hover")).toBe(true);
+		// The surface transitions colors — wait for it to settle before
 		// comparing computed styles.
 		await new Promise((resolve) => setTimeout(resolve, 300));
-		await expect(getComputedStyle(button).backgroundColor).not.toBe(resting);
+		await expect(getComputedStyle(surface).backgroundColor).not.toBe(resting);
 	},
 };
 
@@ -114,8 +119,40 @@ export const SelectTimeTarget: Story = {
 		);
 		const { userEvent } = await import("vitest/browser");
 		await userEvent.click(button);
-		await expect(
-			canvasElement.querySelector("[data-ws-action='align-start']"),
-		).not.toBeNull();
+		await waitFor(() => {
+			expect(
+				canvasElement.querySelector("[data-ws-align-section='time']"),
+			).not.toBeNull();
+		});
+		const section = canvasElement.querySelector<HTMLElement>(
+			"[data-ws-align-section='time']",
+		);
+		if (!section) throw new Error("time section not found");
+		// Issue #473: the Time section must fit the widget's height budget.
+		// The root clips with `overflow: hidden`, so a section that does not
+		// fit loses its bottom button row — assert nothing is clipped.
+		assertNotClipped(section, { boundary: canvasElement });
+		for (const action of [
+			"align-start",
+			"align-end",
+			"align-duration",
+			"distribute-start",
+			"distribute-end",
+		]) {
+			const el = section.querySelector(`[data-ws-action='${action}']`);
+			if (el) assertNotClipped(el, { boundary: canvasElement });
+		}
+		// #560: the target selector row sits below the sections and is the
+		// row agy observed clipped when the Time section consumed the
+		// height budget — it was not covered by the section assertions.
+		for (const target of [
+			"align-target-selection",
+			"align-target-comp",
+			"align-target-key-object",
+			"align-target-time",
+		]) {
+			const el = canvasElement.querySelector(`[data-ws-action='${target}']`);
+			if (el) assertNotClipped(el, { boundary: canvasElement });
+		}
 	},
 };

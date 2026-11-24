@@ -1,3 +1,4 @@
+import { COLOR_INPUT_FALLBACK_HEX } from "@ty-plus/ui/literals/color-input";
 import { cx } from "@ty-plus/ui/util/cx";
 import type { JSX } from "react";
 import { css } from "@/styled-system/css";
@@ -17,9 +18,9 @@ const swatch = css({
 	cursor: "pointer",
 	appearance: "none",
 	borderRadius: "shell",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
-	borderColor: "border.default",
+	borderColor: "border.control",
 	backgroundColor: "surface.widget",
 	padding: 0,
 	transitionProperty: "colors",
@@ -31,11 +32,14 @@ const swatch = css({
 		border: 0,
 	},
 	_hover: { borderColor: "interactive.focus" },
+	_disabled: {
+		opacity: 0.5,
+		cursor: "not-allowed",
+	},
 	_focusVisible: {
 		borderColor: "interactive.focus",
 		outline: "none",
-		boxShadow:
-			"0 0 0 2px color-mix(in srgb, var(--color-interactive-focus) 30%, transparent)",
+		boxShadow: "var(--color-focus-ring)",
 	},
 });
 
@@ -44,7 +48,7 @@ function normalizeHexForColorInput(value: string): string {
 	if (trimmed.startsWith("#") && trimmed.length >= 4) {
 		return trimmed;
 	}
-	return "#000000";
+	return COLOR_INPUT_FALLBACK_HEX;
 }
 
 /**

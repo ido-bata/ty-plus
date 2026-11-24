@@ -41,6 +41,7 @@ const servicesModule = vi.hoisted(() => ({
 }));
 const healthStoreModule = vi.hoisted(() => ({
 	publish: vi.fn(),
+	setPublisher: vi.fn(),
 }));
 
 vi.mock("@/management/ae/cep/runtime", () => ({
@@ -48,24 +49,24 @@ vi.mock("@/management/ae/cep/runtime", () => ({
 	normalizeCepSystemPath: vi.fn((value: string) => value),
 }));
 
-vi.mock("@/management/ipc/operation-worker-binary", () => ({
+vi.mock("@/management/ipc/operation-worker/binary", () => ({
 	get compiledOperationWorkerTrustMode() {
 		return trustModeRef.value;
 	},
 }));
 
-vi.mock("@/management/ipc/operation-worker-cep-runtime", () => ({
+vi.mock("@/management/ipc/operation-worker/cep-runtime", () => ({
 	readCepNodePlatform: vi.fn(() => platformRef.value),
 	createCepOperationWorkerRuntime:
 		cepRuntimeModule.createCepOperationWorkerRuntime,
 }));
 
-vi.mock("@/management/ipc/operation-worker-context", () => ({
+vi.mock("@/management/ipc/operation-worker/context", () => ({
 	createOperationWorkerContextProvider:
 		contextProviderModule.createOperationWorkerContextProvider,
 }));
 
-vi.mock("@/management/ipc/operation-worker-composition", () => ({
+vi.mock("@/management/ipc/operation-worker/composition", () => ({
 	createOperationWorkerComposition:
 		compositionModule.createOperationWorkerComposition,
 }));
@@ -91,7 +92,7 @@ vi.mock("@/management/online/catalog/runtime-cloud-gateway", () => ({
 	createRuntimeCloudGateway: cloudGatewayModule.createRuntimeCloudGateway,
 }));
 
-vi.mock("@/management/workspace/services", () => ({
+vi.mock("@/management/workspace/core/services", () => ({
 	initCloudGateway: servicesModule.initCloudGateway,
 	initUpdateInstaller: servicesModule.initUpdateInstaller,
 }));
@@ -104,10 +105,10 @@ vi.mock("@/management/online/runtime-gateway-health", () => ({
 	})),
 	subscribeGatewayHealth: vi.fn(() => () => {}),
 	markGatewayNotBooted: vi.fn(),
-	setHostOnlineStatePublisher: vi.fn(),
+	setHostOnlineStatePublisher: healthStoreModule.setPublisher,
 }));
 
-import { initCloudGateway } from "@/management/workspace/services";
+import { initCloudGateway } from "@/management/workspace/core/services";
 
 import {
 	type GatewayBootFailureReason,
@@ -142,7 +143,9 @@ const resetMocks = () => {
 		portSpy,
 		cloudGatewayModule.createRuntimeCloudGateway,
 		servicesModule.initCloudGateway,
+		servicesModule.initUpdateInstaller,
 		healthStoreModule.publish,
+		healthStoreModule.setPublisher,
 	]) {
 		mock.mockReset();
 	}
@@ -164,6 +167,7 @@ const resetMocks = () => {
 			checked_at: new Date().toISOString(),
 		})),
 		lookupCatalog: vi.fn(async () => ({ items: [] })),
+		installUpdate: vi.fn(async () => ({ status: "installed" })),
 	});
 	dispatcherFactoryModule.factory.mockReturnValue({
 		request: vi.fn(async () => undefined),
@@ -240,9 +244,9 @@ describe("tryBuildCloudGateway", () => {
 			checkConnectivity: ReturnType<typeof vi.fn>;
 			lookupCatalog: ReturnType<typeof vi.fn>;
 		};
-		// probes are fire-and-forget; flush microtasks before asserting
-		await Promise.resolve();
-		await Promise.resolve();
+		// probes are fire-and-forget; flush microtasks and macrotasks so the
+		// .then continuations of the probe promises actually run
+		await new Promise((resolve) => setTimeout(resolve, 0));
 		expect(composition.checkConnectivity).toHaveBeenCalledWith(
 			undefined,
 			expect.objectContaining({
@@ -256,6 +260,68 @@ describe("tryBuildCloudGateway", () => {
 			expect.objectContaining({
 				run: expect.objectContaining({
 					onLifecycle: expect.any(Function),
+				}),
+			}),
+		);
+	});
+
+	it("wires lifecycle callbacks, host-state publisher, and installUpdate", async () => {
+		const win = buildWindow();
+		const result = tryBuildCloudGateway(win, { probesEnabled: true });
+		expect(isLiveGatewayBootResult(result)).toBe(true);
+		const composition = compositionModule.createOperationWorkerComposition.mock
+			.results[0]?.value as {
+			checkConnectivity: ReturnType<typeof vi.fn>;
+			lookupCatalog: ReturnType<typeof vi.fn>;
+			installUpdate: ReturnType<typeof vi.fn>;
+		};
+		const lifecycleOf = (call: unknown[] | undefined) => {
+			const run = (
+				call?.[1] as { run: { onLifecycle: (e: unknown) => void } } | undefined
+			)?.run;
+			if (!run) throw new Error("expected run options on gateway call");
+			return run.onLifecycle;
+		};
+		lifecycleOf(composition.checkConnectivity.mock.calls[0])({
+			type: "worker-spawned",
+		});
+		lifecycleOf(composition.lookupCatalog.mock.calls[0])({
+			type: "worker-spawned",
+		});
+		const publisher = healthStoreModule.setPublisher.mock.calls[0]?.[0] as
+			| ((state: "online" | "degraded" | "offline") => void)
+			| undefined;
+		publisher?.("online");
+		const installer = servicesModule.initUpdateInstaller.mock.calls[0]?.[0] as
+			| { installUpdate: (request: unknown) => Promise<unknown> }
+			| undefined;
+		await installer?.installUpdate({ version: "0.0.0" });
+		await new Promise((resolve) => setTimeout(resolve, 0));
+		expect(composition.installUpdate).toHaveBeenCalledWith({
+			version: "0.0.0",
+		});
+	});
+
+	it("publishes degraded health when a boot probe rejects", async () => {
+		compositionModule.createOperationWorkerComposition.mockReturnValue({
+			composition: "sentinel",
+			checkConnectivity: vi.fn(async () => {
+				throw new Error("probe wire failure");
+			}),
+			lookupCatalog: vi.fn(async () => {
+				throw new Error("catalog wire failure");
+			}),
+		});
+		const win = buildWindow();
+		const result = tryBuildCloudGateway(win, { probesEnabled: true });
+		expect(isLiveGatewayBootResult(result)).toBe(true);
+		await new Promise((resolve) => setTimeout(resolve, 0));
+		await new Promise((resolve) => setTimeout(resolve, 0));
+		expect(healthStoreModule.publish).toHaveBeenCalledWith(
+			expect.objectContaining({
+				state: "degraded",
+				failure: expect.objectContaining({
+					reason: "worker-runtime-failed",
 				}),
 			}),
 		);

@@ -11,27 +11,5 @@
  */
 
 export type { Preset } from "@/management/preset/contract";
-export type {
-	FramedPresetGlyphProps,
-	PresetCatalogGlyphHostProps,
-} from "@/management/preset/workspace/glyph";
-export {
-	FramedPresetGlyph,
-	PresetCatalogGlyphHost,
-	WorkspacePresetGlyph,
-} from "@/management/preset/workspace/glyph";
-export {
-	DEFAULT_EMOJI_CLASS,
-	frameBase,
-	framedTextClass,
-	glyphBoxCompactClass,
-	glyphBoxCompactPadClass,
-	glyphBoxFillClass,
-	glyphBoxFlushClass,
-	glyphEmojiProminentClass,
-} from "@/management/preset/workspace/glyph-classes";
-export type { PresetTileButtonProps } from "@/management/preset/workspace/PresetTileButton";
 export { PresetTileButton } from "@/management/preset/workspace/PresetTileButton";
 export { Tile } from "@/management/preset/workspace/Tile";
-export type { WorkspaceTileFrameProps } from "@/management/workspace/surface/TileFrame";
-export { WorkspaceTileFrame } from "@/management/workspace/surface/TileFrame";

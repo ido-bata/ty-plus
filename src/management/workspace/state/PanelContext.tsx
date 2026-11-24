@@ -1,6 +1,6 @@
 import { createContext, type JSX, type ReactNode, useContext } from "react";
 
-import type { SurfaceState } from "@/management/workspace/state";
+import type { SurfaceState } from "@/management/workspace/core/state";
 
 /**
  * Full panel state. Selection lives in `SelectionContext` so that
@@ -41,7 +41,7 @@ export function SelectionProvider({
 export function usePanelState(): SurfaceState {
 	const v = useContext(PanelStateContext);
 	if (!v) {
-		throw new Error("usePanelState requires PanelStateProvider");
+		throw new Error("usePanelState requires PanelStateProvider"); // i18n-exempt: internal diagnostic — not rendered as UI copy
 	}
 	return v;
 }

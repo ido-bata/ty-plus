@@ -1,5 +1,5 @@
 {
-	"title": "Dialogs",
+	"title": "Dialoge",
 	"close": "Schließen",
 	"save": "Speichern",
 	"cancel": "Abbrechen",
@@ -9,7 +9,7 @@
 			"lead": "Solid-, Bild- und Musterschichten hinter dem Arbeitsbereich-Raster stapeln. Klicken Sie auf Anwenden, um mit dem Panel zu synchronisieren und zu speichern.",
 			"applyToWorkspace": "Auf Arbeitsbereich anwenden",
 			"clearAll": "Alle löschen",
-			"emptyLayers": "Noch keine Ebenen — fügen Sie eine mit den Schaltflächen links hinzu.",
+			"emptyLayers": "Noch keine Ebenen — fügen Sie eine mit den Schaltflächen oben hinzu.",
 			"selectLayer": "Wählen Sie eine Ebene in der Liste zum Bearbeiten.",
 			"enabled": "Sichtbar",
 			"opacity": "Deckkraft",
@@ -65,7 +65,16 @@
 			"saved": "Gespeichert",
 			"loadFailed": "Laden fehlgeschlagen: {{message}}",
 			"saveFailed": "Speichern fehlgeschlagen",
-			"preview": "Vorschau"
+			"preview": "Vorschau",
+			"contextMenu": {
+				"selectLayer": "Ebene auswählen",
+				"enableLayer": "Ebene aktivieren",
+				"disableLayer": "Ebene deaktivieren",
+				"layerType": "Ebenentyp",
+				"order": "Reihenfolge",
+				"addLayer": "Ebene hinzufügen",
+				"clearAllLayers": "Alle Ebenen löschen"
+			}
 		},
 		"widgetSelector": {
 			"title": "Widget hinzufügen",
@@ -75,5 +84,17 @@
 			"notInPanelYet": "Dieser Widget-Typ hat noch keine Panel-UI — es kann nicht platziert werden.",
 			"footerHint": "Ausgegraute Elemente sind noch nicht im Panel-Renderer implementiert. Andere schließen diesen Dialog nach dem Senden der Anfrage."
 		}
-	}
+	},
+	"unknownDialog": {
+		"title": "Unbekannte Dialog-Oberfläche",
+		"noBodyForSurfaceId": "Kein Dialoginhalt für surfaceId gefunden:",
+		"copySurfaceId": "surface id kopieren"
+	},
+	"probe": {
+		"title": "Probe",
+		"bodyForSurfaceId": "Probe-Dialog für surfaceId:",
+		"logSurfaceId": "surface id protokollieren",
+		"copySurfaceId": "surface id kopieren"
+	},
+	"loading": "Laden…"
 }

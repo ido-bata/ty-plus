@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Badge, Button, Notice } from "@ty-plus/ui";
-import { cx } from "@ty-plus/ui/util/cx";
+import { Badge, Button, cx, Notice } from "@ty-plus/ui";
+import { Trans, useTranslation } from "react-i18next";
 import { css } from "@/styled-system/css";
+import { i18n } from "../i18n";
 import { releaseExcerpt } from "../lib/release-excerpt";
 import {
 	classifyChannel,
@@ -17,22 +18,36 @@ export const Route = createFileRoute("/changelog")({
 	loader: () => listReleases(),
 	head: () => ({
 		meta: [
-			{ title: `Changelog — ${SITE.name}` },
+			{ title: i18n.t("changelog.metaTitle", { ns: "web" }) },
 			{
 				name: "description",
-				content:
-					"ty-plus release notes and update information, sourced from GitHub Releases.",
+				content: i18n.t("changelog.metaDescription", { ns: "web" }),
 			},
-			{ property: "og:title", content: `Changelog — ${SITE.name}` },
+			{
+				property: "og:title",
+				content: i18n.t("changelog.metaTitle", { ns: "web" }),
+			},
 		],
 	}),
 	component: ChangelogPage,
 });
 
-const CHANNELS: { id: ReleaseChannel; label: string; hint: string }[] = [
-	{ id: "stable", label: "Stable", hint: "Recommended for most users" },
-	{ id: "beta", label: "Beta", hint: "Pre-release builds" },
-	{ id: "insider", label: "Insider", hint: "Frequent early builds" },
+const CHANNELS: { id: ReleaseChannel; labelKey: string; hintKey: string }[] = [
+	{
+		id: "stable",
+		labelKey: "changelog.channels.stable.label",
+		hintKey: "changelog.channels.stable.hint",
+	},
+	{
+		id: "beta",
+		labelKey: "changelog.channels.beta.label",
+		hintKey: "changelog.channels.beta.hint",
+	},
+	{
+		id: "insider",
+		labelKey: "changelog.channels.insider.label",
+		hintKey: "changelog.channels.insider.hint",
+	},
 ];
 
 const channelTone: Record<ReleaseChannel, "neutral" | "accent" | "warning"> = {
@@ -72,6 +87,7 @@ function notesToText(body: string): string {
 }
 
 function ReleaseRow({ release }: { release: ReleaseInfo }) {
+	const { t } = useTranslation("web");
 	const channel = classifyChannel(release);
 	const notes = notesToText(release.body ?? "");
 	// The excerpt parser needs the raw markdown: notesToText strips heading
@@ -93,12 +109,14 @@ function ReleaseRow({ release }: { release: ReleaseInfo }) {
 					{release.publishedAt.slice(0, 10)}
 				</time>
 				<Badge tone={channelTone[channel]}>
-					{CHANNELS.find((c) => c.id === channel)?.label}
+					{t(
+						CHANNELS.find((c) => c.id === channel)?.labelKey ??
+							"changelog.channels.stable.label",
+					)}
 				</Badge>
 				{release.assets.length > 0 ? (
 					<span>
-						{release.assets.length} asset
-						{release.assets.length === 1 ? "" : "s"}
+						{t("changelog.release.assets", { count: release.assets.length })}
 					</span>
 				) : null}
 			</div>
@@ -115,7 +133,7 @@ function ReleaseRow({ release }: { release: ReleaseInfo }) {
 			) : null}
 			{notes ? (
 				<details className={notesDetails}>
-					<summary>Full release notes</summary>
+					<summary>{t("changelog.release.fullNotes")}</summary>
 					<p className={notesBody}>{notes}</p>
 				</details>
 			) : null}
@@ -124,6 +142,7 @@ function ReleaseRow({ release }: { release: ReleaseInfo }) {
 }
 
 function ChangelogPage() {
+	const { t } = useTranslation("web");
 	const { releases, source } = Route.useLoaderData();
 	const byChannel = CHANNELS.map((c) => ({
 		...c,
@@ -138,11 +157,8 @@ function ChangelogPage() {
 					section({ variant: "prose" }),
 				)}
 			>
-				<h1 className={s.h1}>Changelog</h1>
-				<p className={s.lead}>
-					Release notes are published on GitHub Releases, grouped by update
-					channel — newest first within each channel.
-				</p>
+				<h1 className={s.h1}>{t("changelog.title")}</h1>
+				<p className={s.lead}>{t("changelog.lead")}</p>
 			</header>
 
 			{source !== "live" && (
@@ -153,12 +169,14 @@ function ChangelogPage() {
 					)}
 				>
 					<Notice tone="warning" role="status">
-						Release data is temporarily unavailable; showing the last published
-						snapshot. Check{" "}
-						<a className={s.link} href={SITE.releases}>
-							GitHub Releases
-						</a>{" "}
-						for the newest builds.
+						<Trans
+							i18nKey="notices.stale"
+							ns="web"
+							components={{
+								// biome-ignore lint/a11y/useAnchorContent: link text is injected by <Trans>
+								1: <a className={s.link} href={SITE.releases} />,
+							}}
+						/>
 					</Notice>
 				</div>
 			)}
@@ -171,11 +189,14 @@ function ChangelogPage() {
 					)}
 				>
 					<p className={s.body}>
-						Release data is temporarily unavailable.{" "}
-						<a className={s.link} href={SITE.releases}>
-							Browse all releases on GitHub
-						</a>
-						.
+						<Trans
+							i18nKey="changelog.empty"
+							ns="web"
+							components={{
+								// biome-ignore lint/a11y/useAnchorContent: link text is injected by <Trans>
+								1: <a className={s.link} href={SITE.releases} />,
+							}}
+						/>
 					</p>
 				</section>
 			) : (
@@ -189,8 +210,8 @@ function ChangelogPage() {
 					>
 						<div className={stack({ gap: 4 })}>
 							<div className={stack({ gap: 1 })}>
-								<h2 className={s.h2}>{group.label}</h2>
-								<p className={s.body}>{group.hint}</p>
+								<h2 className={s.h2}>{t(group.labelKey)}</h2>
+								<p className={s.body}>{t(group.hintKey)}</p>
 							</div>
 							<ul className={s.releaseList}>
 								{group.releases.map((r) => (
@@ -210,7 +231,7 @@ function ChangelogPage() {
 			>
 				<div>
 					<Button as="a" href={SITE.releases} variant="secondary">
-						All releases on GitHub
+						{t("changelog.allReleases")}
 					</Button>
 				</div>
 			</section>
@@ -222,16 +243,17 @@ function ChangelogPage() {
 				)}
 			>
 				<div className={stack({ gap: 2 })}>
-					<h2 className={s.h2}>Stable, Beta, Insider</h2>
+					<h2 className={s.h2}>{t("changelog.channelsSection.title")}</h2>
 					<p className={s.body}>
-						Choose Stable, Beta, or Insider under{" "}
-						<strong>Settings → Updates</strong> inside the panel. Updates are
-						checked against GitHub Releases; installation stays manual. Channel
-						details are in the{" "}
-						<a className={s.link} href={SITE.userGuide}>
-							user guide
-						</a>
-						.
+						<Trans
+							i18nKey="changelog.channelsSection.body"
+							ns="web"
+							components={{
+								1: <strong />,
+								// biome-ignore lint/a11y/useAnchorContent: link text is injected by <Trans>
+								2: <a className={s.link} href={SITE.userGuide} />,
+							}}
+						/>
 					</p>
 				</div>
 			</section>

@@ -1,11 +1,17 @@
-import { Icon, IconButton } from "@ty-plus/ui";
-import { SearchField } from "@ty-plus/ui/fields/SearchField";
+import { Icon, IconButton, SearchField, ViewModeToggle } from "@ty-plus/ui";
 import { LoaderCircle, RefreshCw, Search } from "lucide-react";
 import type { JSX, ReactNode } from "react";
-import { CatalogBrowserViewModeToggle } from "@/management/preset/catalog-browser/view-mode-toggle";
+import { i18n } from "@/management/i18n/index";
 import { css } from "@/styled-system/css";
 
-import type { LoadPhase, PresetViewMode } from "./use-presets-catalog";
+export type LoadPhase = "idle" | "reading" | "streaming" | "error";
+export type PresetViewMode = "list" | "icons";
+
+/**
+ * The preset list dialog distinguishes a successful terminal load (`"loaded"`)
+ * from the catalog hook's phases, so the header accepts the wider union.
+ */
+type HeaderLoadPhase = LoadPhase | "loaded";
 
 const headerRowClass = css({
 	display: "flex",
@@ -36,7 +42,7 @@ const searchFieldClass = css({
 	height: "8",
 	minHeight: "8",
 	flex: "1",
-	padding: "0",
+	paddingBlock: "0",
 });
 
 const reloadButtonClass = css({
@@ -46,11 +52,10 @@ const reloadButtonClass = css({
 	flexShrink: "0",
 	alignSelf: "stretch",
 	borderRadius: "shell-sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
-	backgroundColor: "surface.widget",
-	opacity: 0.5,
+	backgroundColor: "surface.widget/50",
 	padding: "0",
 	color: "text.muted",
 	_hover: { color: "text.primary" },
@@ -109,7 +114,7 @@ const progressFillClass = css({
 const countClass = css({ flexShrink: "0", fontVariantNumeric: "tabular-nums" });
 
 type SearchStatusBarProps = {
-	loadPhase: LoadPhase;
+	loadPhase: HeaderLoadPhase;
 	loadError: string | null;
 	streamTotal: number;
 	presetsLength: number;
@@ -126,18 +131,22 @@ function SearchStatusBar(props: SearchStatusBarProps): ReactNode {
 		visibleCount,
 		filter,
 	} = props;
-	if (loadPhase === "reading") {
+	// "idle" means the first read has not finished yet — showing a count there
+	// would claim "0 items" about a catalog we have not read.
+	if (loadPhase === "idle" || loadPhase === "reading") {
 		return (
 			<span className={loadingInlineClass}>
 				<LoaderCircle className={loadingSpinnerClass} aria-hidden />
-				<span className={loadingTextClass}>Loading</span>
+				<span className={loadingTextClass}>
+					{i18n.t("presets:catalogBrowser.loading")}
+				</span>
 			</span>
 		);
 	}
 	if (loadPhase === "error") {
 		return (
 			<span className={errorTextClass} title={loadError ?? undefined}>
-				{loadError ?? "Error"}
+				{loadError ?? i18n.t("common:status.error")}
 			</span>
 		);
 	}
@@ -162,7 +171,8 @@ function SearchStatusBar(props: SearchStatusBarProps): ReactNode {
 				</>
 			) : null}
 			<span className={countClass}>
-				{visibleCount} items{filter.trim() ? " · filtered" : ""}
+				{i18n.t("presets:listDialog.visibleItems", { count: visibleCount })}
+				{filter.trim() ? i18n.t("presets:listDialog.filteredSuffix") : ""}
 			</span>
 		</span>
 	);
@@ -172,7 +182,7 @@ export type PresetsDialogHeaderProps = {
 	filter: string;
 	onFilterChange: (value: string) => void;
 	onReload: () => void;
-	loadPhase: LoadPhase;
+	loadPhase: HeaderLoadPhase;
 	loadError: string | null;
 	streamTotal: number;
 	presetsLength: number;
@@ -204,7 +214,7 @@ export function PresetsDialogHeader(
 				<SearchField
 					className={searchFieldClass}
 					icon={Search}
-					placeholder="Search by name, type, or path…"
+					placeholder={i18n.t("presets:catalogBrowser.searchPlaceholder")}
 					value={filter}
 					onChange={(e) => onFilterChange(e.currentTarget.value)}
 					showClearButton
@@ -223,7 +233,7 @@ export function PresetsDialogHeader(
 				/>
 			</div>
 			<div data-preset-list-toolbar className={toolbarSlotClass}>
-				<CatalogBrowserViewModeToggle
+				<ViewModeToggle
 					viewMode={viewMode}
 					onViewModeChange={onViewModeChange}
 					onEnterIconView={onEnterIconView}
@@ -232,11 +242,11 @@ export function PresetsDialogHeader(
 					variant="ghost"
 					size="sm"
 					className={reloadButtonClass}
-					aria-label="Reload catalog"
-					title="Reload catalog"
+					aria-label={i18n.t("presets:catalogBrowser.reload")}
+					title={i18n.t("presets:catalogBrowser.reload")}
 					onClick={() => void onReload()}
 				>
-					<Icon icon={RefreshCw} size={10} />
+					<Icon icon={RefreshCw} size={12} />
 				</IconButton>
 			</div>
 		</div>

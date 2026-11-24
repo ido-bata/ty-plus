@@ -1,8 +1,12 @@
-import { Button } from "@ty-plus/ui/controls/Button";
-import { IconButton } from "@ty-plus/ui/controls/IconButton";
-import { SearchField } from "@ty-plus/ui/fields/SearchField";
-import { Icon } from "@ty-plus/ui/icons/Icon";
-import { cx } from "@ty-plus/ui/util/cx";
+import {
+	Button,
+	Checkbox,
+	cx,
+	heading3Class,
+	Icon,
+	IconButton,
+	SearchField,
+} from "@ty-plus/ui";
 import {
 	ExternalLink,
 	Grid3x3,
@@ -18,6 +22,7 @@ import {
 	type JSX,
 	useCallback,
 	useEffect,
+	useId,
 	useMemo,
 	useRef,
 	useState,
@@ -27,25 +32,26 @@ import { showExtendScriptAlert } from "@/management/ae/cep/eval";
 import {
 	type CepMenuPayload,
 	registerCepJsonContextMenuSurface,
-} from "@/management/dialog/dialogs/context-menu";
+} from "@/management/dialog/context-menu";
+import { i18n } from "@/management/i18n/index";
 import { DownloadProgressIconButton } from "@/management/online/catalog/DownloadProgressIconButton";
 import { gatewayRetryAffordance } from "@/management/online/catalog/gateway-retry";
-import { sanitizeOnlineErrorMessage } from "@/management/online/catalog/sanitize-error";
-import type { DownloadProgress } from "@/management/online/catalog/use-cases";
+import type { DownloadProgress } from "@/management/online/catalog/operations";
 import {
 	downloadAndInstallPreset,
 	searchCatalog,
 	syncCatalog,
-} from "@/management/online/catalog/use-cases";
+} from "@/management/online/catalog/operations";
+import { sanitizeOnlineErrorMessage } from "@/management/online/catalog/sanitize-error";
 import type { PresetSearchItem } from "@/management/online/contract";
 import {
 	readGatewayHealth,
 	subscribeGatewayHealth,
 } from "@/management/online/runtime-gateway-health";
 import type { GatewayBootFailureReason } from "@/management/panel/cloud-gateway-boot";
-import { openUrlInDefaultBrowser } from "@/management/workspace/hooks/helpers";
+import { tryGetDataServices } from "@/management/workspace/core/services";
+import { openUrlInDefaultBrowser } from "@/management/workspace/hooks/open-surfaces";
 import { notifyPanelsAfterPresetSave } from "@/management/workspace/placement/notify-panels-after-preset-save";
-import { tryGetDataServices } from "@/management/workspace/services";
 import { css } from "@/styled-system/css";
 
 const CATALOG_LIMIT = 50;
@@ -93,7 +99,7 @@ const categoryBadgeClass = css({
 	borderRadius: "sm",
 	backgroundColor: "surface.panel",
 	color: "text.muted",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 });
@@ -103,7 +109,7 @@ const galleryCardClass = css({
 	display: "flex",
 	flexDirection: "column",
 	borderRadius: "sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 	backgroundColor: "surface.panel",
@@ -121,7 +127,7 @@ const galleryOverlayClass = css({
 	position: "absolute",
 	insetInline: 0,
 	bottom: 0,
-	zIndex: 10,
+	zIndex: "var(--ty-z-overlay)",
 	backgroundColor: "surface.panel",
 	padding: "2",
 });
@@ -152,7 +158,7 @@ const galleryActionsClass = css({
 const iconSquareSmallClass = css({
 	height: "6",
 	width: "6",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 });
@@ -161,7 +167,7 @@ const iconSquareSmallClass = css({
 const itemCardClass = css({
 	display: "flex",
 	borderRadius: "sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 	backgroundColor: "surface.panel",
@@ -219,7 +225,7 @@ const itemActionsClass = css({
 	gap: "1",
 });
 const borderedButtonClass = css({
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 });
@@ -247,7 +253,7 @@ const viewModeFieldsetClass = css({
 	flexShrink: 0,
 	overflow: "hidden",
 	borderRadius: "shell-sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 	backgroundColor: "surface.panel",
@@ -281,7 +287,7 @@ const viewModeDividerClass = css({
 const sidePanelClass = css({
 	width: "56",
 	flexShrink: 0,
-	borderRightWidth: "1px",
+	borderRightWidth: "hairline",
 	borderRightStyle: "solid",
 	borderRightColor: "border.default",
 	display: "flex",
@@ -294,7 +300,7 @@ const sidePanelHeaderRowClass = css({
 	gap: "2",
 	paddingInline: "3",
 	paddingBlock: "2",
-	borderBottomWidth: "1px",
+	borderBottomWidth: "hairline",
 	borderBottomStyle: "solid",
 	borderBottomColor: "border.default",
 });
@@ -326,6 +332,7 @@ const sidePanelCategoryListClass = css({
 	gap: "0.5",
 });
 const sidePanelCategoryBtnBaseClass = css({
+	position: "relative",
 	textAlign: "left",
 	fontSize: "sm",
 	paddingInline: "2",
@@ -345,13 +352,26 @@ const sidePanelCategoryBtnInactiveClass = css({
 	},
 });
 const sidePanelCategoryBtnTruncateClass = css({ truncate: true });
+/**
+ * Full-row click target overlaid on a category filter surface. The row div
+ * owns the active/inactive treatment; this bare Button only provides
+ * semantics, the shared focus ring and the disabled treatment.
+ */
+const sidePanelCategoryHitAreaClass = css({
+	position: "absolute",
+	inset: "0",
+	_focusVisible: {
+		boxShadow: "var(--color-focus-ring)",
+	},
+});
+
 const sidePanelTagSectionClass = css({
 	display: "flex",
 	flexDirection: "column",
 	gap: "1",
 	paddingInline: "3",
 	paddingBlock: "2",
-	borderTopWidth: "1px",
+	borderTopWidth: "hairline",
 	borderTopStyle: "solid",
 	borderTopColor: "border.default",
 	flex: "1",
@@ -386,17 +406,11 @@ const sidePanelTagLabelInactiveClass = css({
 	color: "text.muted",
 	_hover: { backgroundColor: "surface.overlay" },
 });
-const sidePanelTagCheckboxClass = css({
-	width: "3",
-	height: "3",
-	flexShrink: 0,
-	accentColor: "ty-text-accent",
-});
 const sidePanelTagTextClass = css({ truncate: true });
 const sidePanelClearRowClass = css({
 	paddingInline: "3",
 	paddingBlock: "2",
-	borderTopWidth: "1px",
+	borderTopWidth: "hairline",
 	borderTopStyle: "solid",
 	borderTopColor: "border.default",
 });
@@ -421,7 +435,7 @@ const listTableClass = css({
 const listTableHeaderClass = css({
 	position: "sticky",
 	top: 0,
-	zIndex: 10,
+	zIndex: "var(--ty-z-overlay)",
 	backgroundColor: "surface.panel",
 });
 const listTableHeaderCellClass = css({
@@ -433,7 +447,7 @@ const listTableHeaderCellClass = css({
 	letterSpacing: "wider",
 	color: "text.muted",
 	fontWeight: "medium",
-	borderBottomWidth: "1px",
+	borderBottomWidth: "hairline",
 	borderBottomStyle: "solid",
 	borderBottomColor: "border.default",
 });
@@ -447,7 +461,7 @@ const listTableThumbHeaderClass = css({
 	letterSpacing: "wider",
 	color: "text.muted",
 	fontWeight: "medium",
-	borderBottomWidth: "1px",
+	borderBottomWidth: "hairline",
 	borderBottomStyle: "solid",
 	borderBottomColor: "border.default",
 });
@@ -461,7 +475,7 @@ const listTableActionsHeaderClass = css({
 	letterSpacing: "wider",
 	color: "text.muted",
 	fontWeight: "medium",
-	borderBottomWidth: "1px",
+	borderBottomWidth: "hairline",
 	borderBottomStyle: "solid",
 	borderBottomColor: "border.default",
 });
@@ -471,7 +485,7 @@ const listTableRowClass = css({
 const listTableCellClass = css({
 	paddingInline: "2",
 	paddingBlock: "2",
-	borderBottomWidth: "1px",
+	borderBottomWidth: "hairline",
 	borderBottomStyle: "solid",
 	borderBottomColor: "border.default",
 	verticalAlign: "middle",
@@ -479,7 +493,7 @@ const listTableCellClass = css({
 const listTableCellRightClass = css({
 	paddingInline: "2",
 	paddingBlock: "2",
-	borderBottomWidth: "1px",
+	borderBottomWidth: "hairline",
 	borderBottomStyle: "solid",
 	borderBottomColor: "border.default",
 	verticalAlign: "middle",
@@ -518,7 +532,7 @@ const footerClass = css({
 	paddingInline: "4",
 	paddingBlock: "1.5",
 	flexShrink: 0,
-	borderTopWidth: "1px",
+	borderTopWidth: "hairline",
 	borderTopStyle: "solid",
 	borderTopColor: "border.default",
 });
@@ -553,15 +567,9 @@ const headerRowClass = css({
 	paddingInline: "4",
 	paddingBlock: "2",
 	flexShrink: 0,
-	borderBottomWidth: "1px",
+	borderBottomWidth: "hairline",
 	borderBottomStyle: "solid",
 	borderBottomColor: "border.default",
-});
-const headerTitleClass = css({
-	fontSize: "sm",
-	fontWeight: "semibold",
-	color: "text.primary",
-	truncate: true,
 });
 const headerSpacerClass = css({
 	marginLeft: "auto",
@@ -577,7 +585,7 @@ const searchRowClass = css({
 	paddingInline: "4",
 	paddingBlock: "2",
 	flexShrink: 0,
-	borderBottomWidth: "1px",
+	borderBottomWidth: "hairline",
 	borderBottomStyle: "solid",
 	borderBottomColor: "border.default",
 });
@@ -777,13 +785,13 @@ function GalleryCard(props: {
 							<IconButton
 								size="sm"
 								variant="ghost"
-								title="Open Notion"
+								title={i18n.t("online:catalog.openNotion")}
 								onClick={() =>
 									openUrlInDefaultBrowser(item.notionPageUrl ?? "")
 								}
 								className={iconSquareSmallClass}
 							>
-								<Icon icon={ExternalLink} size={9} />
+								<Icon icon={ExternalLink} size={12} />
 							</IconButton>
 						) : null}
 					</div>
@@ -854,13 +862,13 @@ function CardItem(props: {
 							<IconButton
 								size="sm"
 								variant="ghost"
-								title="Open Notion"
+								title={i18n.t("online:catalog.openNotion")}
 								onClick={() =>
 									openUrlInDefaultBrowser(item.notionPageUrl ?? "")
 								}
 								className={borderedButtonClass}
 							>
-								<Icon icon={ExternalLink} size={10} />
+								<Icon icon={ExternalLink} size={12} />
 							</IconButton>
 						) : null}
 					</div>
@@ -902,7 +910,7 @@ function EmptyState(props: {
 				data-gateway-boot-reason={disconnectedReasonTag ?? ""}
 			>
 				<p className={emptyStateTextClass}>
-					Online preset library is unavailable.
+					{i18n.t("online:catalog.emptyUnavailable")}
 				</p>
 				{disconnectedReason ? (
 					<p className={emptyStateTextClass}>{disconnectedReason}</p>
@@ -914,7 +922,7 @@ function EmptyState(props: {
 					disabled={retry.disabled}
 					onClick={onRefresh}
 				>
-					<Icon icon={RefreshCw} size={14} />
+					<Icon icon={RefreshCw} size={16} />
 				</IconButton>
 			</div>
 		);
@@ -922,14 +930,16 @@ function EmptyState(props: {
 	if (catalogLength === 0) {
 		return (
 			<div className={emptyStateClass} data-online-preset-empty>
-				<p className={emptyStateTextClass}>No online catalog.</p>
+				<p className={emptyStateTextClass}>
+					{i18n.t("online:catalog.emptyNoCatalog")}
+				</p>
 				<IconButton
 					size="sm"
 					variant="ghost"
-					title="Refresh catalog"
+					title={i18n.t("online:catalog.refreshCatalog")}
 					onClick={onRefresh}
 				>
-					<Icon icon={RefreshCw} size={14} />
+					<Icon icon={RefreshCw} size={16} />
 				</IconButton>
 			</div>
 		);
@@ -937,11 +947,13 @@ function EmptyState(props: {
 	if (filteredLength === 0) {
 		return (
 			<div className={emptyStateClass} data-online-preset-empty>
-				<p className={emptyStateTextClass}>No presets match filter.</p>
+				<p className={emptyStateTextClass}>
+					{i18n.t("online:catalog.emptyNoMatch")}
+				</p>
 				<IconButton
 					size="sm"
 					variant="ghost"
-					title="Clear all filters"
+					title={i18n.t("online:catalog.clearAllFilters")}
 					onClick={onClearFilters}
 				>
 					<Icon icon={X} size={12} />
@@ -959,18 +971,20 @@ function ViewModeToggle(props: {
 	const { mode, onModeChange } = props;
 	return (
 		<fieldset className={viewModeFieldsetClass}>
-			<legend className={css({ srOnly: true })}>View mode</legend>
+			<legend className={css({ srOnly: true })}>
+				{i18n.t("online:catalog.viewMode")}
+			</legend>
 			<IconButton
 				variant="ghost"
 				size="sm"
 				type="button"
 				aria-pressed={mode === "gallery"}
-				aria-label="Gallery view"
-				title="Gallery (Ctrl+Wheel to zoom)"
+				aria-label={i18n.t("online:catalog.viewGallery")}
+				title={i18n.t("online:catalog.viewGalleryTitle")}
 				className={viewModeBtnClass(mode === "gallery")}
 				onClick={() => onModeChange("gallery")}
 			>
-				<Icon icon={Grid3x3} size={10} />
+				<Icon icon={Grid3x3} size={12} />
 			</IconButton>
 			<div className={viewModeDividerClass} aria-hidden />
 			<IconButton
@@ -978,12 +992,12 @@ function ViewModeToggle(props: {
 				size="sm"
 				type="button"
 				aria-pressed={mode === "cards"}
-				aria-label="Cards view"
-				title="Cards"
+				aria-label={i18n.t("online:catalog.viewCards")}
+				title={i18n.t("online:catalog.viewCardsLabel")}
 				className={viewModeBtnClass(mode === "cards")}
 				onClick={() => onModeChange("cards")}
 			>
-				<Icon icon={LayoutGrid} size={10} />
+				<Icon icon={LayoutGrid} size={12} />
 			</IconButton>
 			<div className={viewModeDividerClass} aria-hidden />
 			<IconButton
@@ -991,12 +1005,12 @@ function ViewModeToggle(props: {
 				size="sm"
 				type="button"
 				aria-pressed={mode === "list"}
-				aria-label="List view"
-				title="List"
+				aria-label={i18n.t("online:catalog.viewList")}
+				title={i18n.t("online:catalog.viewListLabel")}
 				className={viewModeBtnClass(mode === "list")}
 				onClick={() => onModeChange("list")}
 			>
-				<Icon icon={List} size={10} />
+				<Icon icon={List} size={12} />
 			</IconButton>
 		</fieldset>
 	);
@@ -1033,6 +1047,8 @@ function SidePanel(props: {
 		onClearFilters,
 	} = props;
 
+	const tagCheckboxIdPrefix = useId();
+
 	if (!showSidePanel) return null;
 
 	const hasFilters = Boolean(
@@ -1046,7 +1062,7 @@ function SidePanel(props: {
 				<IconButton
 					size="sm"
 					variant="ghost"
-					title="Hide filters"
+					title={i18n.t("online:catalog.hideFilters")}
 					onClick={onTogglePanel}
 				>
 					<Icon icon={PanelLeftClose} size={12} />
@@ -1054,7 +1070,7 @@ function SidePanel(props: {
 				<div className={sidePanelSearchWrapperClass}>
 					<SearchField
 						icon={Search}
-						placeholder="Filter…"
+						placeholder={i18n.t("online:catalog.filterPlaceholder")}
 						value={query}
 						onChange={(e) => onQueryChange(e.currentTarget.value)}
 						onClear={onClearQuery}
@@ -1068,33 +1084,41 @@ function SidePanel(props: {
 			{/* Category filter */}
 			<div className={sidePanelSectionClass}>
 				<div className={sidePanelSectionHeaderClass}>
-					<span className={sidePanelSectionTitleClass}>Category</span>
+					<span className={sidePanelSectionTitleClass}>
+						{i18n.t("online:catalog.category")}
+					</span>
 					<Button
 						variant="ghost"
 						uiSize="sm"
 						disabled={!selectedCategory}
 						onClick={() => onCategoryChange("")}
 					>
-						Clear
+						{i18n.t("online:catalog.clear")}
 					</Button>
 				</div>
 				<div className={sidePanelCategoryListClass}>
-					<button
-						type="button"
-						className={categoryBtnClass(selectedCategory === "")}
-						onClick={() => onCategoryChange("")}
-					>
-						All categories
-					</button>
+					<div className={categoryBtnClass(selectedCategory === "")}>
+						{i18n.t("online:catalog.allCategories")}
+						<Button
+							variant="bare"
+							uiSize="content"
+							className={sidePanelCategoryHitAreaClass}
+							onClick={() => onCategoryChange("")}
+						/>
+					</div>
 					{categories.map((cat) => (
-						<button
+						<div
 							key={cat}
-							type="button"
 							className={categoryBtnClass(selectedCategory === cat, true)}
-							onClick={() => onCategoryChange(cat)}
 						>
 							{cat}
-						</button>
+							<Button
+								variant="bare"
+								uiSize="content"
+								className={sidePanelCategoryHitAreaClass}
+								onClick={() => onCategoryChange(cat)}
+							/>
+						</div>
 					))}
 				</div>
 			</div>
@@ -1103,7 +1127,9 @@ function SidePanel(props: {
 			{allTags.length > 0 && (
 				<div className={sidePanelTagSectionClass}>
 					<div className={sidePanelSectionHeaderClass}>
-						<span className={sidePanelSectionTitleClass}>Tags</span>
+						<span className={sidePanelSectionTitleClass}>
+							{i18n.t("online:catalog.tags")}
+						</span>
 						<div className={sidePanelTagHeaderClass}>
 							<Button
 								variant="ghost"
@@ -1111,22 +1137,29 @@ function SidePanel(props: {
 								disabled={selectedTags.size === 0}
 								onClick={onClearAllTags}
 							>
-								Clear
+								{i18n.t("online:catalog.clear")}
 							</Button>
 						</div>
 					</div>
 					<div className={sidePanelTagListClass}>
-						{allTags.map((tag) => (
-							<label key={tag} className={tagLabelClass(selectedTags.has(tag))}>
-								<input
-									type="checkbox"
-									checked={selectedTags.has(tag)}
-									onChange={() => onTagToggle(tag)}
-									className={sidePanelTagCheckboxClass}
-								/>
-								<span className={sidePanelTagTextClass}>{tag}</span>
-							</label>
-						))}
+						{allTags.map((tag, index) => {
+							const checkboxId = `${tagCheckboxIdPrefix}-${index}`;
+							return (
+								<label
+									key={tag}
+									htmlFor={checkboxId}
+									className={tagLabelClass(selectedTags.has(tag))}
+								>
+									<Checkbox
+										id={checkboxId}
+										uiSize="sm"
+										checked={selectedTags.has(tag)}
+										onChange={() => onTagToggle(tag)}
+									/>
+									<span className={sidePanelTagTextClass}>{tag}</span>
+								</label>
+							);
+						})}
 					</div>
 				</div>
 			)}
@@ -1140,8 +1173,10 @@ function SidePanel(props: {
 						onClick={onClearFilters}
 						className={sidePanelClearBtnFullClass}
 					>
-						<Icon icon={X} size={10} />
-						<span className={sidePanelClearLabelClass}>Clear all</span>
+						<Icon icon={X} size={12} />
+						<span className={sidePanelClearLabelClass}>
+							{i18n.t("online:catalog.clearAll")}
+						</span>
 					</Button>
 				</div>
 			)}
@@ -1178,10 +1213,18 @@ function ListTableView(props: {
 			<table className={listTableClass}>
 				<thead className={listTableHeaderClass}>
 					<tr>
-						<th className={listTableThumbHeaderClass}>Thumb</th>
-						<th className={listTableHeaderCellClass}>Name / ID</th>
-						<th className={listTableActionsHeaderClass}>Category</th>
-						<th className={listTableActionsHeaderClass}>Actions</th>
+						<th className={listTableThumbHeaderClass}>
+							{i18n.t("online:catalog.tableThumb")}
+						</th>
+						<th className={listTableHeaderCellClass}>
+							{i18n.t("online:catalog.tableNameId")}
+						</th>
+						<th className={listTableActionsHeaderClass}>
+							{i18n.t("online:catalog.category")}
+						</th>
+						<th className={listTableActionsHeaderClass}>
+							{i18n.t("online:catalog.tableActions")}
+						</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -1216,13 +1259,13 @@ function ListTableView(props: {
 										<IconButton
 											size="sm"
 											variant="ghost"
-											title="Open Notion"
+											title={i18n.t("online:catalog.openNotion")}
 											onClick={() =>
 												openUrlInDefaultBrowser(item.notionPageUrl ?? "")
 											}
 											className={borderedButtonClass}
 										>
-											<Icon icon={ExternalLink} size={10} />
+											<Icon icon={ExternalLink} size={12} />
 										</IconButton>
 									) : null}
 									<DownloadProgressIconButton
@@ -1271,11 +1314,16 @@ function LibraryFooter({
 	return (
 		<div className={footerClass}>
 			<span className={footerTextClass}>
-				{filtered} / {catalog} items
+				{i18n.t("online:catalog.footerCount", {
+					filtered,
+					catalog,
+				})}
 			</span>
 			{mode === "gallery" && (
 				<span className={footerZoomTextClass}>
-					Ctrl+Wheel: {Math.round(scale * 100)}%
+					{i18n.t("online:catalog.footerZoom", {
+						percent: Math.round(scale * 100),
+					})}
 				</span>
 			)}
 		</div>
@@ -1525,7 +1573,10 @@ export function PresetLibrary(): JSX.Element {
 				await syncCatalog();
 			} catch (err) {
 				const msg = err instanceof Error ? err.message : String(err);
-				await showExtendScriptAlert(window, `Download failed: ${msg}`);
+				await showExtendScriptAlert(
+					window,
+					i18n.t("online:catalog.downloadFailed", { message: msg }),
+				);
 			}
 			setDownloadingId(null);
 			setDownloadState(null);
@@ -1587,32 +1638,34 @@ export function PresetLibrary(): JSX.Element {
 					checked?: boolean;
 				}>;
 			}> = [
-				{ id: CTX.bodyReload, label: "Reload catalog" },
+				{ id: CTX.bodyReload, label: i18n.t("online:catalog.reloadCatalog") },
 				{
 					id: CTX.sidePanelToggle,
-					label: showSidePanel ? "Hide side panel" : "Show side panel",
+					label: showSidePanel
+						? i18n.t("online:catalog.hideSidePanel")
+						: i18n.t("online:catalog.showSidePanel"),
 					checkable: true,
 					checked: showSidePanel,
 				},
 				{
 					id: "ty.ctx.online-preset-library.view",
-					label: "View",
+					label: i18n.t("online:catalog.viewMenu"),
 					menu: [
 						{
 							id: CTX.viewGallery,
-							label: "Gallery",
+							label: i18n.t("online:catalog.viewGalleryLabel"),
 							checkable: true,
 							checked: mode === "gallery",
 						},
 						{
 							id: CTX.viewCards,
-							label: "Cards",
+							label: i18n.t("online:catalog.viewCardsLabel"),
 							checkable: true,
 							checked: mode === "cards",
 						},
 						{
 							id: CTX.viewList,
-							label: "List",
+							label: i18n.t("online:catalog.viewListLabel"),
 							checkable: true,
 							checked: mode === "list",
 						},
@@ -1621,31 +1674,40 @@ export function PresetLibrary(): JSX.Element {
 			];
 			if (hoveredItem) {
 				menu.push({ label: "---" });
-				menu.push({ id: CTX.itemDownload, label: "Download" });
-				menu.push({ id: CTX.itemImport, label: "Import" });
+				menu.push({
+					id: CTX.itemDownload,
+					label: i18n.t("online:catalog.download"),
+				});
+				menu.push({
+					id: CTX.itemImport,
+					label: i18n.t("online:catalog.import"),
+				});
 				if (hoveredItem.notionPageUrl) {
-					menu.push({ id: CTX.itemOpenNotion, label: "Open manual (Notion)" });
+					menu.push({
+						id: CTX.itemOpenNotion,
+						label: i18n.t("online:catalog.openManualNotion"),
+					});
 				}
 			} else {
 				menu.push({ label: "---" });
 				menu.push({
 					id: CTX.searchClear,
-					label: "Clear search",
+					label: i18n.t("online:catalog.clearSearch"),
 					enabled: query.length > 0,
 				});
 				menu.push({
 					id: CTX.categoryClear,
-					label: "Clear category filter",
+					label: i18n.t("online:catalog.clearCategoryFilter"),
 					enabled: selectedCategory !== "",
 				});
 				menu.push({
 					id: CTX.tagClearAll,
-					label: "Clear tag selection",
+					label: i18n.t("online:catalog.clearTagSelection"),
 					enabled: selectedTags.size > 0,
 				});
 				menu.push({
 					id: CTX.clearAllFilters,
-					label: "Clear all filters",
+					label: i18n.t("online:catalog.clearAllFilters"),
 					enabled: hasFilters,
 				});
 			}
@@ -1833,18 +1895,24 @@ export function PresetLibrary(): JSX.Element {
 						<IconButton
 							size="sm"
 							variant="ghost"
-							title="Show filters"
+							title={i18n.t("online:catalog.showFilters")}
 							onClick={() => setShowSidePanel(true)}
 						>
 							<Icon icon={PanelLeftClose} size={12} />
 						</IconButton>
 					)}
-					<h1 className={headerTitleClass}>Online Preset Library</h1>
+					<h1 className={cx(heading3Class, css({ truncate: true }))}>
+						{i18n.t("online:catalog.title")}
+					</h1>
 					<div className={headerSpacerClass}>
 						<IconButton
 							size="sm"
 							variant="ghost"
-							title={isReloading ? "Reloading…" : "Reload catalog"}
+							title={
+								isReloading
+									? i18n.t("online:catalog.reloadingCatalog")
+									: i18n.t("online:catalog.reloadCatalog")
+							}
 							onClick={() => void loadCatalog()}
 							disabled={isReloading}
 							className={cx(isReloading && spinningClass)}
@@ -1859,7 +1927,7 @@ export function PresetLibrary(): JSX.Element {
 					<div className={searchRowInputWrapperClass}>
 						<SearchField
 							icon={Search}
-							placeholder="Filter by name, ID, description, category, tag"
+							placeholder={i18n.t("online:catalog.searchPlaceholder")}
 							value={query}
 							onChange={(e) => setQuery(e.currentTarget.value)}
 							onClear={handleClearQuery}

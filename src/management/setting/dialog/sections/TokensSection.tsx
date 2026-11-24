@@ -1,5 +1,4 @@
-import { Button } from "@ty-plus/ui/controls/Button";
-import { Textarea } from "@ty-plus/ui/fields/Textarea";
+import { Button, Textarea } from "@ty-plus/ui";
 import {
 	Fragment,
 	type JSX,
@@ -9,6 +8,7 @@ import {
 	useRef,
 	useState,
 } from "react";
+import { i18n } from "@/management/i18n/index";
 import { applyCepShellTheme } from "@/management/panel/inject-styles";
 import {
 	loadCepShellThemeFromCss,
@@ -25,121 +25,258 @@ import {
 	SettingsGrid,
 	SettingsSectionHeading,
 } from "@/management/setting/dialog/layout/SettingsGrid";
+import { COLOR_TOKEN_EMPTY_VALUE } from "@/management/setting/literals/ui-colors";
 import { DEFAULT_THEME } from "@/management/style/default-values";
 import { css } from "@/styled-system/css";
 
 interface TokenCategory {
-	name: string;
+	nameKey: string;
 	tokens: {
 		key: string;
-		label: string;
+		labelKey: string;
 		type: "color" | "text" | "opacity" | "number";
 	}[];
 }
 
 const TOKEN_CATEGORIES: TokenCategory[] = [
 	{
-		name: "Surface Colors",
+		nameKey: "settings:tokensSection.categories.surfaceColors",
 		tokens: [
-			{ key: "color-ty-bg-app", label: "App Background", type: "color" },
-			{ key: "color-ty-bg-surface", label: "Surface", type: "color" },
-			{ key: "color-ty-widget-bg", label: "Widget Background", type: "color" },
-			{ key: "color-ty-widget-border", label: "Widget Border", type: "color" },
+			{
+				key: "color-ty-bg-app",
+				labelKey: "settings:tokensSection.tokens.appBackground",
+				type: "color",
+			},
+			{
+				key: "color-ty-bg-surface",
+				labelKey: "settings:tokensSection.tokens.surface",
+				type: "color",
+			},
+			{
+				key: "color-ty-widget-bg",
+				labelKey: "settings:tokensSection.tokens.widgetBackground",
+				type: "color",
+			},
+			{
+				key: "color-ty-widget-border",
+				labelKey: "settings:tokensSection.tokens.widgetBorder",
+				type: "color",
+			},
 			{
 				key: "color-ty-widget-border-strong",
-				label: "Widget Border Strong",
+				labelKey: "settings:tokensSection.tokens.widgetBorderStrong",
 				type: "color",
 			},
 		],
 	},
 	{
-		name: "Text Colors",
+		nameKey: "settings:tokensSection.categories.textColors",
 		tokens: [
-			{ key: "text-r", label: "Text Red Channel", type: "text" },
-			{ key: "text-g", label: "Text Green Channel", type: "text" },
-			{ key: "text-b", label: "Text Blue Channel", type: "text" },
-			{ key: "accent-r", label: "Accent Red Channel", type: "text" },
-			{ key: "accent-g", label: "Accent Green Channel", type: "text" },
-			{ key: "accent-b", label: "Accent Blue Channel", type: "text" },
+			{
+				key: "text-r",
+				labelKey: "settings:tokensSection.tokens.textRedChannel",
+				type: "text",
+			},
+			{
+				key: "text-g",
+				labelKey: "settings:tokensSection.tokens.textGreenChannel",
+				type: "text",
+			},
+			{
+				key: "text-b",
+				labelKey: "settings:tokensSection.tokens.textBlueChannel",
+				type: "text",
+			},
+			{
+				key: "accent-r",
+				labelKey: "settings:tokensSection.tokens.accentRedChannel",
+				type: "text",
+			},
+			{
+				key: "accent-g",
+				labelKey: "settings:tokensSection.tokens.accentGreenChannel",
+				type: "text",
+			},
+			{
+				key: "accent-b",
+				labelKey: "settings:tokensSection.tokens.accentBlueChannel",
+				type: "text",
+			},
 		],
 	},
 	{
-		name: "Text Alpha",
+		nameKey: "settings:tokensSection.categories.textAlpha",
 		tokens: [
 			{
 				key: "ty-opacity-text-main",
-				label: "Text Primary Alpha",
+				labelKey: "settings:tokensSection.tokens.textPrimaryAlpha",
 				type: "opacity",
 			},
 			{
 				key: "ty-opacity-text-muted",
-				label: "Text Muted Alpha",
+				labelKey: "settings:tokensSection.tokens.textMutedAlpha",
 				type: "opacity",
 			},
 			{
 				key: "ty-opacity-action-primary",
-				label: "Action Primary Alpha",
+				labelKey: "settings:tokensSection.tokens.actionPrimaryAlpha",
 				type: "opacity",
 			},
 			{
 				key: "ty-opacity-border-default",
-				label: "Border Default Alpha",
+				labelKey: "settings:tokensSection.tokens.borderDefaultAlpha",
 				type: "opacity",
 			},
 		],
 	},
 	{
-		name: "Accent Colors",
+		nameKey: "settings:tokensSection.categories.accentColors",
 		tokens: [
-			{ key: "color-ty-accent", label: "Accent Color", type: "color" },
-			{ key: "color-ty-accent-border", label: "Accent Border", type: "color" },
-			{ key: "color-ty-accent-bg", label: "Accent Background", type: "color" },
+			{
+				key: "color-ty-accent",
+				labelKey: "settings:tokensSection.tokens.accentColor",
+				type: "color",
+			},
+			{
+				key: "color-ty-accent-border",
+				labelKey: "settings:tokensSection.tokens.accentBorder",
+				type: "color",
+			},
+			{
+				key: "color-ty-accent-bg",
+				labelKey: "settings:tokensSection.tokens.accentBackground",
+				type: "color",
+			},
 		],
 	},
 	{
-		name: "Interactive States",
+		nameKey: "settings:tokensSection.categories.interactiveStates",
 		tokens: [
-			{ key: "color-ty-ink-08", label: "Hover (8%)", type: "color" },
-			{ key: "color-ty-ink-12", label: "Active (12%)", type: "color" },
+			{
+				key: "color-ty-ink-08",
+				labelKey: "settings:tokensSection.tokens.hoverState",
+				type: "color",
+			},
+			{
+				key: "color-ty-ink-12",
+				labelKey: "settings:tokensSection.tokens.activeState",
+				type: "color",
+			},
 		],
 	},
 	{
-		name: "Ink Steps",
+		nameKey: "settings:tokensSection.categories.inkSteps",
 		tokens: [
-			{ key: "color-ty-ink-02", label: "Ink 2%", type: "color" },
-			{ key: "color-ty-ink-04", label: "Ink 4%", type: "color" },
-			{ key: "color-ty-ink-06", label: "Ink 6%", type: "color" },
-			{ key: "color-ty-ink-10", label: "Ink 10%", type: "color" },
-			{ key: "color-ty-ink-14", label: "Ink 14%", type: "color" },
-			{ key: "color-ty-ink-18", label: "Ink 18%", type: "color" },
-			{ key: "color-ty-ink-22", label: "Ink 22%", type: "color" },
-			{ key: "color-ty-ink-30", label: "Ink 30%", type: "color" },
+			{
+				key: "color-ty-ink-02",
+				labelKey: "settings:tokensSection.tokens.ink02",
+				type: "color",
+			},
+			{
+				key: "color-ty-ink-04",
+				labelKey: "settings:tokensSection.tokens.ink04",
+				type: "color",
+			},
+			{
+				key: "color-ty-ink-06",
+				labelKey: "settings:tokensSection.tokens.ink06",
+				type: "color",
+			},
+			{
+				key: "color-ty-ink-10",
+				labelKey: "settings:tokensSection.tokens.ink10",
+				type: "color",
+			},
+			{
+				key: "color-ty-ink-14",
+				labelKey: "settings:tokensSection.tokens.ink14",
+				type: "color",
+			},
+			{
+				key: "color-ty-ink-18",
+				labelKey: "settings:tokensSection.tokens.ink18",
+				type: "color",
+			},
+			{
+				key: "color-ty-ink-22",
+				labelKey: "settings:tokensSection.tokens.ink22",
+				type: "color",
+			},
+			{
+				key: "color-ty-ink-30",
+				labelKey: "settings:tokensSection.tokens.ink30",
+				type: "color",
+			},
 		],
 	},
 	{
-		name: "Status Colors",
+		nameKey: "settings:tokensSection.categories.statusColors",
 		tokens: [
-			{ key: "ty-status-success", label: "Success", type: "color" },
-			{ key: "ty-status-warning", label: "Warning", type: "color" },
-			{ key: "ty-status-error", label: "Error", type: "color" },
+			{
+				key: "ty-status-success",
+				labelKey: "settings:tokensSection.tokens.success",
+				type: "color",
+			},
+			{
+				key: "ty-status-warning",
+				labelKey: "settings:tokensSection.tokens.warning",
+				type: "color",
+			},
+			{
+				key: "ty-status-error",
+				labelKey: "settings:tokensSection.tokens.error",
+				type: "color",
+			},
 		],
 	},
 	{
-		name: "Shell",
+		nameKey: "settings:tokensSection.categories.shell",
 		tokens: [
-			{ key: "color-ty-shell-border", label: "Shell Border", type: "color" },
-			{ key: "color-ty-shell-panel", label: "Shell Panel", type: "color" },
-			{ key: "color-ty-shell-text", label: "Shell Text", type: "color" },
-			{ key: "color-ty-shell-muted", label: "Shell Muted", type: "color" },
+			{
+				key: "color-ty-shell-border",
+				labelKey: "settings:tokensSection.tokens.shellBorder",
+				type: "color",
+			},
+			{
+				key: "color-ty-shell-panel",
+				labelKey: "settings:tokensSection.tokens.shellPanel",
+				type: "color",
+			},
+			{
+				key: "color-ty-shell-text",
+				labelKey: "settings:tokensSection.tokens.shellText",
+				type: "color",
+			},
+			{
+				key: "color-ty-shell-muted",
+				labelKey: "settings:tokensSection.tokens.shellMuted",
+				type: "color",
+			},
 		],
 	},
 	{
-		name: "Workspace",
+		nameKey: "settings:tokensSection.categories.workspace",
 		tokens: [
-			{ key: "color-ty-ws-error-text", label: "Error Text", type: "color" },
-			{ key: "color-ty-ws-error-bg", label: "Error Background", type: "color" },
-			{ key: "color-ty-ws-error-border", label: "Error Border", type: "color" },
-			{ key: "color-ty-surface-muted", label: "Surface Muted", type: "color" },
+			{
+				key: "color-ty-ws-error-text",
+				labelKey: "settings:tokensSection.tokens.errorText",
+				type: "color",
+			},
+			{
+				key: "color-ty-ws-error-bg",
+				labelKey: "settings:tokensSection.tokens.errorBackground",
+				type: "color",
+			},
+			{
+				key: "color-ty-ws-error-border",
+				labelKey: "settings:tokensSection.tokens.errorBorder",
+				type: "color",
+			},
+			{
+				key: "color-ty-surface-muted",
+				labelKey: "settings:tokensSection.tokens.surfaceMuted",
+				type: "color",
+			},
 		],
 	},
 ];
@@ -192,7 +329,7 @@ export function TokensSection(): JSX.Element {
 		const output = `{\n${lines.join("\n")}\n}`;
 		setOutput(output);
 		void navigator.clipboard.writeText(output);
-		setStatus("Copied token JSON to clipboard.");
+		setStatus(i18n.t("settings:tokensSection.statusCopied"));
 	}, [values]);
 
 	const handleImport = useCallback(() => {
@@ -209,9 +346,9 @@ export function TokensSection(): JSX.Element {
 				}
 				return next;
 			});
-			setStatus("Imported token JSON into editor values.");
+			setStatus(i18n.t("settings:tokensSection.statusImported"));
 		} catch {
-			setStatus("Invalid JSON format.");
+			setStatus(i18n.t("settings:tokensSection.statusInvalidJson"));
 		}
 	}, [output]);
 
@@ -237,9 +374,9 @@ export function TokensSection(): JSX.Element {
 				await saveCepShellThemeToCss(window, merged);
 				applyCepShellTheme(document, { themeOverrides: merged });
 			});
-			setStatus("Applied and saved tokens to theme.css.");
+			setStatus(i18n.t("settings:tokensSection.statusApplied"));
 		} catch {
-			setStatus("Failed to save tokens: theme.css could not be written.");
+			setStatus(i18n.t("settings:tokensSection.statusApplyFailed"));
 		}
 	}, [values, tokenKeys]);
 
@@ -249,7 +386,7 @@ export function TokensSection(): JSX.Element {
 			next[key] = DEFAULT_THEME[key] ?? "";
 		}
 		setValues(next);
-		setStatus("Reset all tokens to defaults (not saved until Apply & Save).");
+		setStatus(i18n.t("settings:tokensSection.statusResetAll"));
 	}, [tokenKeys]);
 
 	const handleResetOne = useCallback((tokenKey: string) => {
@@ -257,7 +394,9 @@ export function TokensSection(): JSX.Element {
 			...prev,
 			[tokenKey]: DEFAULT_THEME[tokenKey] ?? "",
 		}));
-		setStatus(`Reset ${tokenKey} to default.`);
+		setStatus(
+			i18n.t("settings:tokensSection.statusResetOne", { key: tokenKey }),
+		);
 	}, []);
 
 	const handlersRef = useRef({
@@ -315,34 +454,35 @@ export function TokensSection(): JSX.Element {
 		<SettingsGrid>
 			<SettingsField span={6}>
 				<p className={mutedTextStyle}>
-					Customize Tailwind CSS design tokens. Export/Import to share
-					configurations.
+					{i18n.t("settings:tokensSection.intro")}
 				</p>
 			</SettingsField>
 
 			{TOKEN_CATEGORIES.map((category) => (
-				<Fragment key={category.name}>
-					<SettingsSectionHeading>{category.name}</SettingsSectionHeading>
+				<Fragment key={category.nameKey}>
+					<SettingsSectionHeading>
+						{i18n.t(category.nameKey)}
+					</SettingsSectionHeading>
 					{category.tokens.map((token) => (
 						<SettingsField key={token.key} span={3}>
 							<div data-design-token-key={token.key}>
 								{token.type === "color" ? (
 									<ColorTokenEditor
-										label={token.label}
+										label={i18n.t(token.labelKey)}
 										description={token.key}
-										value={values[token.key] ?? "#000000"}
+										value={values[token.key] ?? COLOR_TOKEN_EMPTY_VALUE}
 										onChange={(value) => handleTokenChange(token.key, value)}
 									/>
 								) : token.type === "number" || token.type === "opacity" ? (
 									<NumberTokenEditor
-										label={token.label}
+										label={i18n.t(token.labelKey)}
 										description={token.key}
 										value={values[token.key] ?? ""}
 										onChange={(value) => handleTokenChange(token.key, value)}
 									/>
 								) : (
 									<TokenEditor
-										label={token.label}
+										label={i18n.t(token.labelKey)}
 										description={token.key}
 										value={values[token.key] ?? ""}
 										onChange={(value) => handleTokenChange(token.key, value)}
@@ -354,26 +494,28 @@ export function TokensSection(): JSX.Element {
 				</Fragment>
 			))}
 
-			<SettingsSectionHeading>Export / Import</SettingsSectionHeading>
+			<SettingsSectionHeading>
+				{i18n.t("settings:tokensSection.exportImport")}
+			</SettingsSectionHeading>
 			<SettingsField span={6}>
 				<div data-settings-tokens-io>
 					<Textarea
 						value={output}
 						onChange={(e) => setOutput(e.target.value)}
-						placeholder="JSON configuration will appear here after export"
+						placeholder={i18n.t("settings:tokensSection.jsonPlaceholder")}
 						rows={4}
 					/>
 				</div>
 			</SettingsField>
 			<SettingsField span={6}>
 				<Button variant="primary" uiSize="sm" onClick={handleApply}>
-					Apply & Save
+					{i18n.t("settings:tokensSection.applyAndSave")}
 				</Button>
 				<Button variant="primary" uiSize="sm" onClick={handleExport}>
-					Export to Clipboard
+					{i18n.t("settings:tokensSection.exportToClipboard")}
 				</Button>
 				<Button variant="default" uiSize="sm" onClick={handleImport}>
-					Import from Text
+					{i18n.t("settings:tokensSection.importFromText")}
 				</Button>
 			</SettingsField>
 			{status ? (

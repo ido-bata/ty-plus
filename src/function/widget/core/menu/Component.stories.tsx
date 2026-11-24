@@ -1,9 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
 import { Group, MenuWidget } from "@/function/widget/core/menu/Component";
+import type { SurfaceState } from "@/management/workspace/core/state";
+import { createInitialSurfaceState } from "@/management/workspace/core/state";
 import type { Layout } from "@/management/workspace/layout/grid-document";
-import type { SurfaceState } from "@/management/workspace/state";
-import { createInitialSurfaceState } from "@/management/workspace/state";
+import { expectCanvasLayout } from "@/storybook/quality/layout";
 import { css } from "@/styled-system/css";
 
 type Args = {
@@ -76,14 +77,28 @@ const meta = {
 export default meta;
 type Story = StoryObj<Args>;
 
-export const Default: Story = {};
+// Issue #194: menu items are the interactive surface — every rendered
+// item must satisfy the layout contract in each lock/selection state.
+const playMenuLayout = async ({
+	canvasElement,
+}: {
+	canvasElement: HTMLElement;
+}): Promise<void> => {
+	expectCanvasLayout(canvasElement);
+};
+
+export const Default: Story = {
+	play: playMenuLayout,
+};
 
 export const LayoutLocked: Story = {
 	args: { layoutLocked: true },
+	play: playMenuLayout,
 };
 
 export const MultiSelection: Story = {
 	args: { presetSelectedCount: 3 },
+	play: playMenuLayout,
 };
 
 /**

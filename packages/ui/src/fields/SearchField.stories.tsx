@@ -2,12 +2,16 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { Search } from "lucide-react";
 import { useState } from "react";
 import { expect } from "storybook/test";
+
+import { expectCanvasLayout } from "@/storybook/quality/layout";
+
 import { SearchField } from "./SearchField";
 
 const meta = {
 	title: "Shared/Fields/SearchField",
 	component: SearchField,
 	argTypes: {
+		uiSize: { control: "select", options: ["sm", "md", "lg"] },
 		placeholder: { control: "text" },
 		disabled: { control: "boolean" },
 		showClearButton: { control: "boolean" },
@@ -60,6 +64,7 @@ export const FocusVisible: Story = {
 		placeholder: "Search…",
 	},
 	play: async ({ canvasElement }) => {
+		expectCanvasLayout(canvasElement);
 		const input = canvasElement.querySelector<HTMLInputElement>("input");
 		if (!input) throw new Error("search input not found");
 		const wrapper = input.parentElement;
@@ -79,6 +84,7 @@ export const FocusVisible: Story = {
 
 		const wrapperStyle = getComputedStyle(wrapper);
 		expect(wrapperStyle.borderTopColor).not.toBe(restingBorderColor);
+		expectCanvasLayout(canvasElement);
 	},
 };
 

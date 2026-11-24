@@ -1,34 +1,24 @@
-import { Button } from "@ty-plus/ui/controls/Button";
-import { Input } from "@ty-plus/ui/fields/Input";
-import { RegexEditor } from "@ty-plus/ui/fields/RegexEditor";
+import { Button, Input, RegexEditor } from "@ty-plus/ui";
 import { Trash2 } from "lucide-react";
 import type { JSX } from "react";
+import { i18n } from "@/management/i18n/index";
+import { AuthoringSegment } from "@/management/preset/authoring-layout";
 import { readUserHomeOrFallback } from "@/management/preset/catalog-add/browse-start-dir";
-import { PresetIconEditor } from "@/management/preset/components/IconEditor";
 import type { Preset, PresetType } from "@/management/preset/contract";
-import type { PresetIconEditorDraft } from "@/management/preset/icon-editor";
-import { presetIconDraftToPresetIcon } from "@/management/preset/icon-editor";
-import { AuthoringSegment } from "@/management/preset/tool-shell/archive-layout";
-import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
-import { glyphBoxFillClass } from "@/management/preset/workspace/glyph-classes";
-import { DirectoryBrowser } from "@/management/storage/ui/DirectoryBrowser";
+import { PresetIconEditor } from "@/management/preset/icon/Editor";
+import { presetIconDraftToPresetIcon } from "@/management/preset/icon/editor-state";
+import { glyphBoxFillClass } from "@/management/preset/workspace/glyph/classes";
+import { FramedPresetGlyph } from "@/management/preset/workspace/glyph/WorkspaceGlyph";
+import { FileEntryList } from "@/management/storage/ui/file-entry/FileEntryList";
 import { css } from "@/styled-system/css";
+import type { ConditionRule } from "./condition-rule-helpers";
 
 const escapeRegex = (value: string): string =>
 	value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
-type ConditionRule = {
-	id: string;
-	filterType: "name" | "path" | "preset" | "presetType";
-	pattern: string;
-	matchMode?: "regex" | "contains" | "startsWith" | "endsWith";
-	presetType?: PresetType;
-	draft: PresetIconEditorDraft;
-};
-
 const cardClass = css({
 	borderRadius: "shell-sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 	backgroundColor: "surface.panel",
@@ -72,7 +62,6 @@ const fullWidthMinHeightClass = css({
 
 export function ConditionRuleCard({
 	rule,
-	index,
 	candidatePresets,
 	candidateDirs,
 	busy,
@@ -88,7 +77,6 @@ export function ConditionRuleCard({
 	onRemove: () => void;
 }): JSX.Element {
 	const r = rule;
-	const i = index;
 	return (
 		<div className={cardClass}>
 			<div className={rowClass}>
@@ -101,13 +89,23 @@ export function ConditionRuleCard({
 						});
 					}}
 					options={[
-						{ value: "name", label: "Name" },
-						{ value: "path", label: "Path" },
-						{ value: "preset", label: "Preset ID" },
-						{ value: "presetType", label: "Preset Type" },
+						{ value: "name", label: i18n.t("presets:group.rule.filterName") },
+						{ value: "path", label: i18n.t("presets:group.rule.filterPath") },
+						{
+							value: "preset",
+							label: i18n.t("presets:group.rule.filterPresetId"),
+						},
+						{
+							value: "presetType",
+							label: i18n.t("presets:group.rule.filterPresetType"),
+						},
 					]}
 				/>
-				<Button variant="ghost" aria-label="Remove rule" onClick={onRemove}>
+				<Button
+					variant="ghost"
+					aria-label={i18n.t("presets:group.rule.removeRule")}
+					onClick={onRemove}
+				>
 					<Trash2 size={16} />
 				</Button>
 			</div>
@@ -119,7 +117,7 @@ export function ConditionRuleCard({
 							<RegexEditor
 								value={r.pattern}
 								onChange={(v) => onChange({ ...r, pattern: v })}
-								placeholder="Name regex (e.g. ^Header.*$)"
+								placeholder={i18n.t("presets:group.rule.nameRegexPlaceholder")}
 								className={fullWidthMinHeightClass}
 								disabled={busy}
 							/>
@@ -129,7 +127,9 @@ export function ConditionRuleCard({
 								onChange={(e) =>
 									onChange({ ...r, pattern: e.currentTarget.value })
 								}
-								placeholder="Name pattern"
+								placeholder={i18n.t(
+									"presets:group.rule.namePatternPlaceholder",
+								)}
 								uiSize="sm"
 								disabled={busy}
 								className={fullWidthClass}
@@ -137,10 +137,22 @@ export function ConditionRuleCard({
 						)}
 						<div className={matchModeGridClass}>
 							{[
-								{ value: "contains", label: "Contains" },
-								{ value: "startsWith", label: "Starts" },
-								{ value: "endsWith", label: "Ends" },
-								{ value: "regex", label: "Regex" },
+								{
+									value: "contains",
+									label: i18n.t("presets:group.rule.matchContains"),
+								},
+								{
+									value: "startsWith",
+									label: i18n.t("presets:group.rule.matchStarts"),
+								},
+								{
+									value: "endsWith",
+									label: i18n.t("presets:group.rule.matchEnds"),
+								},
+								{
+									value: "regex",
+									label: i18n.t("presets:group.rule.matchRegex"),
+								},
 							].map((mode) => (
 								<Button
 									key={mode.value}
@@ -167,17 +179,29 @@ export function ConditionRuleCard({
 						value={r.presetType ?? "preset"}
 						onChange={(v) => onChange({ ...r, presetType: v as PresetType })}
 						options={[
-							{ value: "preset", label: "Preset" },
-							{ value: "script", label: "Script" },
-							{ value: "plugin", label: "Plugin" },
-							{ value: "footage", label: "Footage" },
+							{
+								value: "preset",
+								label: i18n.t("presets:group.rule.presetTypePreset"),
+							},
+							{
+								value: "script",
+								label: i18n.t("presets:group.rule.presetTypeScript"),
+							},
+							{
+								value: "plugin",
+								label: i18n.t("presets:group.rule.presetTypePlugin"),
+							},
+							{
+								value: "footage",
+								label: i18n.t("presets:group.rule.presetTypeFootage"),
+							},
 						]}
 					/>
 				) : null}
 
 				{r.filterType === "path" ? (
 					<div className={directoryHostClass}>
-						<DirectoryBrowser
+						<FileEntryList
 							selectionMode="folders"
 							entries={candidateDirs.map((d) => ({
 								path: d,
@@ -185,10 +209,8 @@ export function ConditionRuleCard({
 								isDirectory: true,
 							}))}
 							loading={false}
-							canGoUp={false}
 							onEntryClick={() => {}}
 							onEntryActivate={() => {}}
-							onGoUp={() => {}}
 							isSelected={(entryPath) =>
 								r.pattern === `^${escapeRegex(entryPath)}(?:\\\\|/|$)`
 							}
@@ -199,13 +221,11 @@ export function ConditionRuleCard({
 								});
 							}}
 							selectedSummary={{ files: 0, folders: 0 }}
-							viewMode="list"
-							onViewModeChange={() => {}}
-							scale={1}
-							aspect="square"
 							loadingLabel=""
 							emptyLabel={
-								candidateDirs.length === 0 ? "No directories detected" : ""
+								candidateDirs.length === 0
+									? i18n.t("presets:group.rule.noDirectories")
+									: ""
 							}
 							upLabel=""
 						/>
@@ -222,7 +242,7 @@ export function ConditionRuleCard({
 							);
 							return (
 								<div className={directoryHostClass}>
-									<DirectoryBrowser
+									<FileEntryList
 										selectionMode="files"
 										entries={candidatePresets.map((p) => ({
 											path: p.filePath,
@@ -230,10 +250,8 @@ export function ConditionRuleCard({
 											isDirectory: false,
 										}))}
 										loading={false}
-										canGoUp={false}
 										onEntryClick={() => {}}
 										onEntryActivate={() => {}}
-										onGoUp={() => {}}
 										isSelected={(entryPath) => {
 											const p = candidateByPath.get(entryPath);
 											if (!p) return false;
@@ -259,7 +277,9 @@ export function ConditionRuleCard({
 										aspect="square"
 										loadingLabel=""
 										emptyLabel={
-											candidatePresets.length === 0 ? "No presets detected" : ""
+											candidatePresets.length === 0
+												? i18n.t("presets:group.rule.noPresets")
+												: ""
 										}
 										upLabel=""
 									/>
@@ -272,7 +292,7 @@ export function ConditionRuleCard({
 			<PresetIconEditor
 				draft={r.draft}
 				onChange={(d) => onChange({ ...r, draft: d })}
-				label="Rule icon"
+				label={i18n.t("presets:group.rule.iconLabel")}
 				browseDir={readUserHomeOrFallback()}
 				framed={true}
 				preview={
@@ -281,6 +301,7 @@ export function ConditionRuleCard({
 							{
 								id: `rule-preview-${r.id}`,
 								type: "preset" as const,
+								// i18n-exempt: synthetic preset record title for the glyph preview, never rendered as a label
 								title: "Preview",
 								filePath: `ty-plus://rule-preview-${r.id}`,
 								icon: presetIconDraftToPresetIcon(r.draft) ?? {

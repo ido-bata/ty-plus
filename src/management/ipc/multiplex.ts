@@ -64,7 +64,7 @@ export class SurfaceMultiplex {
 				request: Request,
 			): Promise<Response> => {
 				if (!connection.isConnected) {
-					throw new Error(`surface ${surfaceId.id} is disconnected`);
+					throw new Error(`surface ${surfaceId.id} is disconnected`); // i18n-exempt: internal diagnostic — not rendered as UI copy
 				}
 				return this.transport.request(method, request);
 			},

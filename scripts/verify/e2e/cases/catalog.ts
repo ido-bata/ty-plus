@@ -1,7 +1,7 @@
 /**
  * Preset catalog suite (Issue #108; matrix UC-C15).
  *
- * Contract verified against `management/preset/asset-verification.ts` and
+ * Contract verified against `management/preset/assets/verification.ts` and
  * `panel/boot.tsx`: there is deliberately NO boot-time catalog scan
  * (Issue #131 — `Promise.race` was not true cancellation and flooded the
  * AE host). Stale detection is lazy: `verifyPresetAsset` on the host

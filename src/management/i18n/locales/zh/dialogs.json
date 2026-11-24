@@ -9,7 +9,7 @@
 			"lead": "在 workspace 网格后面堆叠纯色、图片和图案图层。点击应用以同步到面板并保存。",
 			"applyToWorkspace": "应用到 workspace",
 			"clearAll": "清除全部",
-			"emptyLayers": "暂无图层 — 使用左侧按钮添加。",
+			"emptyLayers": "暂无图层 — 使用上方按钮添加。",
 			"selectLayer": "在列表中选择图层以编辑。",
 			"enabled": "可见",
 			"opacity": "不透明度",
@@ -65,7 +65,16 @@
 			"saved": "已保存",
 			"loadFailed": "加载失败：{{message}}",
 			"saveFailed": "保存失败",
-			"preview": "预览"
+			"preview": "预览",
+			"contextMenu": {
+				"selectLayer": "选择图层",
+				"enableLayer": "启用图层",
+				"disableLayer": "禁用图层",
+				"layerType": "图层类型",
+				"order": "顺序",
+				"addLayer": "添加图层",
+				"clearAllLayers": "清除所有图层"
+			}
 		},
 		"widgetSelector": {
 			"title": "添加小部件",
@@ -75,5 +84,17 @@
 			"notInPanelYet": "此小部件类型尚无面板 UI — 无法放置。",
 			"footerHint": "灰色的项目尚未在面板渲染器中实现。其他项会在发送请求后关闭此对话框。"
 		}
-	}
+	},
+	"unknownDialog": {
+		"title": "未知对话框界面",
+		"noBodyForSurfaceId": "未找到 surfaceId 对应的对话框主体：",
+		"copySurfaceId": "复制 surface id"
+	},
+	"probe": {
+		"title": "探针",
+		"bodyForSurfaceId": "surfaceId 探针对话框：",
+		"logSurfaceId": "记录 surface id",
+		"copySurfaceId": "复制 surface id"
+	},
+	"loading": "加载中…"
 }

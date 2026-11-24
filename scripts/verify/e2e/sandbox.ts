@@ -53,7 +53,7 @@ const STATE_FILE = ".tmp/e2e-sandbox-state.json";
  */
 const MANIFEST_EXCLUDES = ["tool-handoff/"];
 
-export type SandboxState = {
+type SandboxState = {
 	active: boolean;
 	realRoot: string;
 	sandboxParent: string;
@@ -488,7 +488,7 @@ export const recoverInterruptedSandbox = async (
 export const prepareSandbox = async (
 	ctx: E2EContext,
 	realRoot: string,
-	evidenceDir: string,
+	_evidenceDir: string,
 	statePath = STATE_FILE,
 ): Promise<SandboxSession> => {
 	const locator = await findLocator(realRoot);
@@ -573,16 +573,22 @@ export const prepareSandbox = async (
 		// 5. Prove a panel resolved the sandbox: the marker accent color is
 		//    only present if boot read the sandbox's settings/theme. A file-
 		//    existence probe cannot distinguish roots — both see the same fs.
+		//    The accent is applied by the async boot-time theme reconcile
+		//    (theme-reconcile.ts), which lands a few seconds after
+		//    Page.reload — poll instead of sampling once.
 		const panel = await ctx.requireSurface({ surfaceId: "panel-1" });
-		const probe = await ctx.evalJs(
-			panel,
-			`(() => {
-				const v = getComputedStyle(document.documentElement)
-					.getPropertyValue("--color-ty-accent") || "";
-				return v.trim().toLowerCase().includes("e2b701") ? "sandbox" : "real:" + v.trim();
-			})()`,
-			15_000,
-		);
+		const accentProbe = `(() => {
+			const v = getComputedStyle(document.documentElement)
+				.getPropertyValue("--color-ty-accent") || "";
+			return v.trim().toLowerCase().includes("e2b701") ? "sandbox" : "real:" + v.trim();
+		})()`;
+		const probeDeadline = Date.now() + 20_000;
+		let probe: unknown = null;
+		while (Date.now() < probeDeadline) {
+			probe = await ctx.evalJs(panel, accentProbe, 15_000);
+			if (probe === "sandbox") break;
+			await sleep(500);
+		}
 		if (probe !== "sandbox") {
 			return await abortSandbox(
 				`panel did not resolve sandbox root (probe=${String(probe)}, ` +

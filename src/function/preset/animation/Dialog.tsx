@@ -1,6 +1,13 @@
-import { Icon } from "@ty-plus/ui";
-import { Button } from "@ty-plus/ui/controls/Button";
-import { Input } from "@ty-plus/ui/fields/Input";
+import {
+	Button,
+	Icon,
+	Input,
+	sectionTitleClass,
+	statusBannerClass,
+	stepBadgeClass,
+	stepCardClass,
+	stepDescriptionClass,
+} from "@ty-plus/ui";
 import type { TFunction } from "i18next";
 import {
 	AlertCircle,
@@ -22,24 +29,25 @@ import {
 } from "react";
 import { useTranslation } from "react-i18next";
 import { selectFolder } from "@/management/ae/cep/dialog-shim/bolt";
-import { readUserHomeOrFallback, ToolDialog } from "@/management/preset";
-import { saveAnimationPresetAsset } from "@/management/preset/authoring/write-preset-asset";
-import { ArchiveDetailsSection } from "@/management/preset/catalog-add/ArchiveDetailsSection";
-import { parseRootPathsFromSettingsJson } from "@/management/preset/catalog-add/parse-root-paths";
-import { PresetIconEditor } from "@/management/preset/components/IconEditor";
-import type { Preset } from "@/management/preset/contract";
-import {
-	createPresetIconDraft,
-	presetIconDraftToPresetIcon,
-} from "@/management/preset/icon-editor";
 import {
 	AuthoringField,
 	AuthoringGrid,
 	AuthoringSection,
-} from "@/management/preset/tool-shell/archive-layout";
-import { upsertLocalPreset } from "@/management/preset/use-cases";
-import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
-import { glyphBoxFillClass } from "@/management/preset/workspace/glyph-classes";
+	readUserHomeOrFallback,
+	ToolDialog,
+} from "@/management/preset";
+import { saveAnimationPresetAsset } from "@/management/preset/authoring/write-preset-asset";
+import { ArchiveDetailsSection } from "@/management/preset/catalog-add/ArchiveDetailsSection";
+import { parseRootPathsFromSettingsJson } from "@/management/preset/catalog-add/parse-root-paths";
+import type { Preset } from "@/management/preset/contract";
+import { PresetIconEditor } from "@/management/preset/icon/Editor";
+import {
+	createPresetIconDraft,
+	presetIconDraftToPresetIcon,
+} from "@/management/preset/icon/editor-state";
+import { upsertLocalPreset } from "@/management/preset/operations";
+import { glyphBoxFillClass } from "@/management/preset/workspace/glyph/classes";
+import { FramedPresetGlyph } from "@/management/preset/workspace/glyph/WorkspaceGlyph";
 import {
 	createCepNodeFileBrowserService,
 	type FileBrowserEntry,
@@ -67,35 +75,6 @@ type FileItem = {
 	modifiedTime?: number;
 };
 
-const stepNumberClass = css({
-	display: "flex",
-	height: "6",
-	width: "6",
-	flexShrink: 0,
-	alignItems: "center",
-	justifyContent: "center",
-	borderRadius: "full",
-	borderWidth: "1px",
-	borderStyle: "solid",
-	borderColor: "border.default",
-	backgroundColor: "surface.widget",
-	fontSize: "shell-text-sm",
-	fontWeight: "bold",
-	color: "text.primary",
-});
-
-const stepTitleClass = css({
-	fontSize: "shell-text-sm",
-	fontWeight: "semibold",
-	color: "text.primary",
-});
-
-const stepDescClass = css({
-	fontSize: "text-xs",
-	color: "text.muted",
-	lineHeight: "tight",
-});
-
 const pathBoxClass = css({
 	fontFamily: "mono",
 	fontSize: "text-xs",
@@ -107,52 +86,6 @@ const pathBoxClass = css({
 	paddingBlock: "1",
 	direction: "rtl",
 	textAlign: "left",
-});
-
-const statusBannerBaseClass = css({
-	display: "flex",
-	alignItems: "flex-start",
-	gap: "2",
-	borderRadius: "shell-sm",
-	borderWidth: "1px",
-	borderStyle: "solid",
-	padding: "2",
-	fontSize: "text-xs",
-});
-
-const statusBannerVariant = {
-	success: css({
-		borderColor: "status.success/30",
-		backgroundColor: "status.success/10",
-		color: "status.success",
-	}),
-	warning: css({
-		borderColor: "status.warning/30",
-		backgroundColor: "status.warning/10",
-		color: "status.warning",
-	}),
-	error: css({
-		borderColor: "status.error/30",
-		backgroundColor: "status.error/10",
-		color: "status.error",
-	}),
-} as const;
-
-const statusBannerClass = (variant: "success" | "warning" | "error"): string =>
-	`${statusBannerBaseClass} ${statusBannerVariant[variant]}`;
-
-const stepCardClass = css({
-	display: "flex",
-	width: "full",
-	minWidth: 0,
-	flexDirection: "column",
-	gap: "3",
-	borderRadius: "shell-sm",
-	borderWidth: "1px",
-	borderStyle: "solid",
-	borderColor: "border.default",
-	backgroundColor: "surface.widget",
-	padding: "4",
 });
 
 const headerRowClass = css({
@@ -212,10 +145,6 @@ const folderActionRowClass = css({
 
 const resetButtonClass = css({
 	alignSelf: "flex-start",
-	fontSize: "text-xs",
-	color: "text.muted",
-	textDecoration: "underline",
-	_hover: { color: "text.primary" },
 });
 
 const busyButtonClass = css({
@@ -253,10 +182,10 @@ function StepHeader({
 }): JSX.Element {
 	return (
 		<div className={headerRowClass}>
-			<span className={stepNumberClass}>{number}</span>
+			<span className={stepBadgeClass}>{number}</span>
 			<div className={headerColumnClass}>
-				<span className={stepTitleClass}>{title}</span>
-				<span className={stepDescClass}>{description}</span>
+				<span className={sectionTitleClass}>{title}</span>
+				<span className={stepDescriptionClass}>{description}</span>
 			</div>
 		</div>
 	);
@@ -310,10 +239,10 @@ function FolderPathSection({
 		<div className={stepCardClass}>
 			<div className={sectionRowClass}>
 				<div className={sectionRowInnerClass}>
-					<span className={stepNumberClass}>2</span>
+					<span className={stepBadgeClass}>2</span>
 					<div className={sectionColumnClass}>
 						<div className={folderTitleRowClass}>
-							<span className={stepTitleClass}>
+							<span className={sectionTitleClass}>
 								{t("animationPreset.step2.title")}
 							</span>
 							<div className={folderActionRowClass}>
@@ -326,7 +255,7 @@ function FolderPathSection({
 									disabled={busy}
 									title={t("common.browseFolder")}
 								>
-									<Icon icon={FolderOpen} size={14} aria-hidden />
+									<Icon icon={FolderOpen} size={16} aria-hidden />
 								</Button>
 								<Button
 									type="button"
@@ -339,7 +268,7 @@ function FolderPathSection({
 								>
 									<Icon
 										icon={pathCopied ? CheckCircle : Copy}
-										size={14}
+										size={16}
 										aria-hidden
 									/>
 								</Button>
@@ -350,13 +279,14 @@ function FolderPathSection({
 								t("animationPreset.path.notConfigured", "Not configured")}
 						</div>
 						{customScanPath ? (
-							<button
-								type="button"
+							<Button
+								variant="link"
+								uiSize="content"
 								className={resetButtonClass}
 								onClick={onResetPath}
 							>
 								{t("animationPreset.path.reset")}
-							</button>
+							</Button>
 						) : null}
 					</div>
 				</div>
@@ -387,7 +317,7 @@ function AnimationStatusSection({
 	return (
 		<div className={stepCardClass}>
 			<div className={sectionRowInnerClass}>
-				<span className={stepNumberClass}>3</span>
+				<span className={stepBadgeClass}>3</span>
 				<div className={sectionColumnClass}>
 					<Button
 						type="button"
@@ -396,9 +326,9 @@ function AnimationStatusSection({
 						onClick={onOpenSaveDialog}
 						start={
 							busy ? (
-								<Icon icon={Loader} size={14} aria-hidden />
+								<Icon icon={Loader} size={16} aria-hidden />
 							) : (
-								<Icon icon={Save} size={14} aria-hidden />
+								<Icon icon={Save} size={16} aria-hidden />
 							)
 						}
 						className={busy ? busyButtonClass : ""}
@@ -535,8 +465,13 @@ type AnimationScanInput = {
 	presetsRoot: string;
 	tyPlusPresetRoot: string;
 	errorFallbackMessage: string;
+	defaultPresetName: string;
 	onAutoName: (nextName: string) => void;
 	presetId?: string;
+	undoGroupName?: string;
+	messages?: {
+		selectLayerToSave?: string;
+	};
 };
 
 // Owns the scan/save-dialog flow that opens the AE save dialog, waits for the
@@ -555,8 +490,11 @@ function useAnimationPresetDetection(input: AnimationScanInput): {
 		presetsRoot,
 		tyPlusPresetRoot,
 		errorFallbackMessage,
+		defaultPresetName,
 		onAutoName,
 		presetId,
+		undoGroupName,
+		messages,
 	} = input;
 	const [status, setStatus] = useState<PresetStatus>("idle");
 	const [busy, setBusy] = useState(false);
@@ -602,9 +540,11 @@ function useAnimationPresetDetection(input: AnimationScanInput): {
 			// dialog opens. The dialog owns the actual `.ffx` write; the
 			// caller verifies the detected file before any record commits.
 			const result = await saveAnimationPresetAsset(window, {
-				name: name.trim() || "AnimationPreset",
+				name: name.trim() || defaultPresetName,
 				saveDir: scanPath,
 				presetId,
+				...(undoGroupName ? { undoGroupName } : {}),
+				...(messages ? { messages } : {}),
 			});
 
 			if (!result.ok) {
@@ -652,7 +592,7 @@ function useAnimationPresetDetection(input: AnimationScanInput): {
 					setDetectedNewFile(newest.path);
 					setStatus("success");
 					const fileName = newest.name.replace(/\.ffx$/i, "");
-					if (!name || name === "Animation Preset") {
+					if (!name || name === defaultPresetName) {
 						onAutoName(fileName);
 					}
 					setMessage(null);
@@ -673,6 +613,9 @@ function useAnimationPresetDetection(input: AnimationScanInput): {
 		presetsRoot,
 		scanAllFfxFiles,
 		tyPlusPresetRoot,
+		undoGroupName,
+		messages,
+		defaultPresetName,
 	]);
 
 	return {
@@ -776,8 +719,16 @@ export function Dialog(): JSX.Element {
 		presetsRoot,
 		tyPlusPresetRoot,
 		errorFallbackMessage: t("animationPreset.status.error"),
+		defaultPresetName: t("presetTool.animation.defaultName"),
 		onAutoName: setName,
 		presetId,
+		undoGroupName: t("animationPreset.undoGroupName"),
+		messages: {
+			selectLayerToSave: t("animationPreset.errors.selectLayerToSave", {
+				defaultValue:
+					"Select at least one layer before saving an animation preset",
+			}),
+		},
 	});
 
 	const displayPath = resolveAnimationScanPath(
@@ -797,14 +748,14 @@ export function Dialog(): JSX.Element {
 		(): Preset => ({
 			id: "icon-preview",
 			type: "preset",
-			title: name.trim() || "Animation Preset",
+			title: name.trim() || t("presetTool.animation.defaultName"),
 			filePath: "ty-plus://icon-preview",
 			icon: resolvedIcon ?? { type: "text", param: { text: "ANIM" } },
 		}),
-		[name, resolvedIcon],
+		[name, resolvedIcon, t],
 	);
 
-	const canCreate = name.trim().length > 0 && selectedPath && !busy;
+	const _canCreate = name.trim().length > 0 && selectedPath && !busy;
 
 	return (
 		<ToolDialog
@@ -813,7 +764,7 @@ export function Dialog(): JSX.Element {
 			type="preset"
 			description={t("presetTool.animation.lead")}
 			defaultName={t("presetTool.animation.defaultName")}
-			iconText="ANIM"
+			iconText={t("animationPreset.iconText")}
 			resolveBrowseStartDir={readUserHomeOrFallback}
 			entryPoint="tool-shell:animation"
 			fields={[
@@ -829,9 +780,7 @@ export function Dialog(): JSX.Element {
 				// `assertPresetAssetPresent` entirely and let
 				// `persistOverride` commit a record with no file behind it.
 				if (!selectedPath) {
-					throw new Error(
-						"Save the animation preset with After Effects' native dialog first.",
-					);
+					throw new Error(t("presetTool.savePathRequired"));
 				}
 				return { filePath: selectedPath, status: "ok" };
 			}}
@@ -839,9 +788,13 @@ export function Dialog(): JSX.Element {
 				const record: Preset = {
 					id: presetId,
 					type: "preset",
-					title: name.trim() || "Animation Preset",
+					title: name.trim() || t("presetTool.animation.defaultName"),
 					filePath: selectedPath ?? "",
-					description: description.trim() || `Animation preset: ${name.trim()}`,
+					description:
+						description.trim() ||
+						t("presetTool.animation.defaultDescription", {
+							name: name.trim(),
+						}),
 					...(descriptionImage.trim()
 						? { descriptionImage: descriptionImage.trim() }
 						: {}),

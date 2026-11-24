@@ -9,15 +9,10 @@ import type {
 	CpPosition,
 } from "@/management/panel/control/types";
 import { resolveTyPlusManagedRootForPersistence } from "@/management/setting/persistence/ty-plus-managed-root";
-import { readJson, writeJson } from "@/management/storage/persistence";
+import { readJson } from "@/management/storage/persistence";
 import { readSettings } from "@/management/storage/workspace/store";
 
 const PANEL_CHROME_FILE_VERSION = 1 as const;
-
-type PanelChromeFileV1 = {
-	version: typeof PANEL_CHROME_FILE_VERSION;
-	controlPanel: CpPersistedState;
-};
 
 const VALID_POSITIONS: CpPosition[] = [
 	"top-left",
@@ -110,7 +105,6 @@ const parseControlPanelFromSettingsJson = (
 
 const readLegacyDedicatedControlPanelFile = async (
 	win: Window,
-	managedRoot: string,
 ): Promise<CpPersistedState | null> => {
 	const doc = await readJson(win, "controlPanel");
 	if (!doc) return null;
@@ -140,10 +134,7 @@ const loadChromeControlPanel = async (
 		return null;
 	}
 
-	const legacyDedicated = await readLegacyDedicatedControlPanelFile(
-		win,
-		managed,
-	);
+	const legacyDedicated = await readLegacyDedicatedControlPanelFile(win);
 	if (legacyDedicated) return legacyDedicated;
 
 	const settingsJson = await readSettings(win);
@@ -153,26 +144,5 @@ const loadChromeControlPanel = async (
 /**
  * Merge-write `controlPanel` into `panels/panel-N.json`, preserving unknown top-level keys.
  */
-const saveChromeControlPanel = async (
-	win: Window,
-	panelId: string,
-	cp: CpPersistedState,
-): Promise<void> => {
-	const managed = await resolveTyPlusManagedRootForPersistence(win);
-	const index = panelIdToIndex(panelId);
-	if (!managed || !index) return;
-
-	const existing = await readJson(win, "panelChrome", index);
-	const next: Record<string, unknown> = {
-		...(existing ?? {}),
-		version: PANEL_CHROME_FILE_VERSION,
-		controlPanel: {
-			position: cp.position,
-			orientation: cp.orientation,
-			collapsed: cp.collapsed,
-		},
-	};
-	await writeJson(win, "panelChrome", next, index);
-};
 
 export { loadChromeControlPanel as loadPanelChromeControlPanel };

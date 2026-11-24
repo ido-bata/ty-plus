@@ -125,6 +125,7 @@ export const DESIGN_TOKENS_DEFAULTS: Record<string, string> = {
 	"ty-opacity-text-muted": "0.55",
 	"ty-opacity-action-primary": "1",
 	"ty-opacity-border-default": "0.11",
+	"ty-opacity-border-control": "0.38",
 
 	"ty-opacity-ws-scrollbar-hover": "0.14",
 	"ty-opacity-ws-scrollbar-thumb": "0.12",
@@ -234,6 +235,8 @@ export const DESIGN_TOKENS_DEFAULTS: Record<string, string> = {
 	"color-ty-shadow-30": "rgb(0 0 0 / 0.3)",
 	"color-ty-shadow-40": "rgb(0 0 0 / 0.4)",
 	"color-ty-shadow-50": "rgb(0 0 0 / 0.5)",
+	/* Dim veil behind guided overlays (tutorial tour scrim). */
+	"color-ty-scrim": "rgb(0 0 0 / 0.35)",
 	"color-ty-accent-border": "rgba(180 180 180 / 0.6)",
 	"color-ty-accent-bg": "rgba(180 180 180 / 0.12)",
 
@@ -299,6 +302,13 @@ export const DESIGN_TOKENS_DEFAULTS: Record<string, string> = {
 
 	"ty-border-subtle":
 		"rgba(var(--text-r), var(--text-g), var(--text-b), var(--ty-opacity-border-default))",
+	/*
+	 * Boundary for interactive controls (inputs, checkboxes, toggles). Kept
+	 * well above `border-subtle` so an unfocused control stays identifiable;
+	 * ~3.5:1 against the default widget surface.
+	 */
+	"ty-border-control":
+		"rgba(var(--text-r), var(--text-g), var(--text-b), var(--ty-opacity-border-control))",
 	"ty-border-strong": "var(--color-ty-widget-border)",
 	"ty-border-surface": "#0e0e0e",
 
@@ -306,6 +316,12 @@ export const DESIGN_TOKENS_DEFAULTS: Record<string, string> = {
 	"ty-interactive-active": "var(--color-ty-ink-12)",
 	"ty-interactive-focus":
 		"rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.45)",
+	/*
+	 * The one focus indicator: a 2px accent ring outside the control. Every
+	 * focusable control paints this ring, so a focused field looks the same
+	 * as a focused button.
+	 */
+	"ty-focus-ring": "0 0 0 2px var(--ty-interactive-focus)",
 
 	/* Shell (packages/workspace inline CSS) */
 	"color-ty-shell-canvas-start": "#1a1a1a",
@@ -380,9 +396,9 @@ export const DESIGN_TOKENS_DEFAULTS: Record<string, string> = {
 	"ty-widget-gap": "6px",
 	"ty-widget-header-height": "26px",
 
-	"ty-status-success": "#b0b0b0",
-	"ty-status-warning": "#c0c0c0",
-	"ty-status-error": "#c8c8c8",
+	"ty-status-success": "#4ade80",
+	"ty-status-warning": "#fbbf24",
+	"ty-status-error": "#f87171",
 
 	/* Workspace background defaults */
 	"color-ws-bg-default": "#1d1d1d",
@@ -532,6 +548,38 @@ export const DESIGN_TOKENS_DEFAULTS: Record<string, string> = {
 
 	/** Floating shadows for control panels etc. (for `box-shadow`. Color refers to separate token) */
 	"ty-shadow-control-panel": "0 8px 24px var(--color-ty-shadow-40)",
+
+	/*
+	 * Stacking layers (`--ty-z-*`). Two scopes share the scale:
+	 *  - `content`–`gesture` order elements *inside* one positioned ancestor
+	 *    (tile, card, dialog body, scroll container). Each stacking context
+	 *    is independent, so band reuse across components is safe.
+	 *  - `header` and above order document-level chrome (portals, fixed
+	 *    panels, fullscreen blockers) against each other — keep ascending.
+	 * `workspace-*` bands order overlays inside the workspace grid surface.
+	 * Consumers reference `var(--ty-z-…)` in css(), inline styles, DOM
+	 * writes, and injected CSS alike.
+	 */
+	"ty-z-content": "0",
+	"ty-z-chrome": "1",
+	"ty-z-help": "2",
+	"ty-z-overlay": "10",
+	"ty-z-gesture": "100",
+	"ty-z-workspace-drag": "100",
+	"ty-z-workspace-overlay": "9999",
+	"ty-z-header": "40",
+	"ty-z-popover": "50",
+	"ty-z-skip-link": "100",
+	"ty-z-panel": "120",
+	"ty-z-control-panel": "150",
+	"ty-z-menu": "200",
+	"ty-z-drag-ghost": "200",
+	"ty-z-notification": "9999",
+	"ty-z-widget-overlay": "100000",
+	"ty-z-tutorial-scrim": "2147483000",
+	"ty-z-tutorial-highlight": "2147483001",
+	"ty-z-tutorial-bubble": "2147483002",
+	"ty-z-blocking": "2147483647",
 
 	/** For preview / dialog max-width */
 	"ty-max-w-3xl": "48rem",

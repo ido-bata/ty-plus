@@ -2,6 +2,7 @@ import "../src/management/panel/styles/app.css";
 import "../src/storybook/decorators";
 
 import type { Preview } from "@storybook/react";
+import { createElement, type JSX } from "react";
 import { applyCepShellTheme } from "../src/management/panel/inject-styles";
 import {
 	CepContextDecorator,
@@ -23,8 +24,29 @@ if (typeof document !== "undefined") {
 	);
 }
 
+/**
+ * Outermost canvas padding. Focus rings and outlines paint 2px *outside* an
+ * element's border box; without breathing room a story that places a control
+ * flush against the canvas edge loses that ring in captures (and looks
+ * clipped to reviewers). 8px keeps every side visible while leaving
+ * `layout: "fullscreen"` stories effectively unchanged.
+ */
+const CanvasPaddingDecorator = (Story: () => JSX.Element): JSX.Element =>
+	createElement(
+		"div",
+		{
+			className: css({
+				height: "100%",
+				padding: "2",
+				boxSizing: "border-box",
+			}),
+		},
+		createElement(Story),
+	);
+
 const preview: Preview = {
 	decorators: [
+		CanvasPaddingDecorator,
 		CepMockDecorator,
 		CepContextDecorator,
 		SettingsProviderDecorator,
@@ -47,7 +69,7 @@ const preview: Preview = {
 		// every story renders at the addon's 1200x900 default and the
 		// tester-iframe scale makes PNG dimensions window-dependent.
 		// Keep `capture` in sync with CAPTURE_VIEWPORT in
-		// scripts/verify/storybook-screenshot-capture.ts and the provider
+		// scripts/verify/storybook/screenshot-capture.ts and the provider
 		// `contextOptions.viewport` in vitest.config.ts.
 		viewport: {
 			options: {

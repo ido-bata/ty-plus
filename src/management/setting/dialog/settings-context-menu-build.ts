@@ -1,4 +1,5 @@
-import type { CepMenuPayload } from "@/management/dialog/dialogs/context-menu";
+import type { CepMenuPayload } from "@/management/dialog/context-menu";
+import { i18n } from "@/management/i18n/index";
 import {
 	SETTINGS_CTX,
 	SETTINGS_DIALOG_SURFACE_ID,
@@ -17,11 +18,14 @@ export function settingsSectionIdFromTitle(title: string): string {
 
 export function dialogActionsMenu(): CepMenuItem[] {
 	return [
-		{ id: SETTINGS_CTX.dialogSave, label: "Save" },
-		{ id: SETTINGS_CTX.dialogCancel, label: "Cancel" },
-		{ id: SETTINGS_CTX.dialogReset, label: "Reset" },
+		{ id: SETTINGS_CTX.dialogSave, label: i18n.t("common:actions.save") },
+		{ id: SETTINGS_CTX.dialogCancel, label: i18n.t("common:actions.cancel") },
+		{ id: SETTINGS_CTX.dialogReset, label: i18n.t("common:actions.reset") },
 		SETTINGS_MENU_SEP,
-		{ id: SETTINGS_CTX.dialogReload, label: "Reload from disk" },
+		{
+			id: SETTINGS_CTX.dialogReload,
+			label: i18n.t("contextMenu:settingsDialog.reloadFromDisk"),
+		},
 	];
 }
 
@@ -29,25 +33,48 @@ function sectionMenuItems(sectionId: string): CepMenuItem[] | null {
 	switch (sectionId) {
 		case "design-tokens":
 			return [
-				{ id: SETTINGS_CTX.tokensApply, label: "Apply & Save" },
-				{ id: SETTINGS_CTX.tokensExport, label: "Export to Clipboard" },
-				{ id: SETTINGS_CTX.tokensImport, label: "Import from Text" },
+				{
+					id: SETTINGS_CTX.tokensApply,
+					label: i18n.t("settings:tokensSection.applyAndSave"),
+				},
+				{
+					id: SETTINGS_CTX.tokensExport,
+					label: i18n.t("settings:tokensSection.exportToClipboard"),
+				},
+				{
+					id: SETTINGS_CTX.tokensImport,
+					label: i18n.t("settings:tokensSection.importFromText"),
+				},
 				SETTINGS_MENU_SEP,
 				{
 					id: SETTINGS_CTX.tokensResetAll,
-					label: "Reset all tokens to defaults",
+					label: i18n.t("contextMenu:settingsDialog.resetAllTokens"),
 				},
 			];
 		case "workspace-backup":
 			return [
-				{ id: SETTINGS_CTX.backupExport, label: "Export workspace backup" },
-				{ id: SETTINGS_CTX.backupImport, label: "Import workspace backup" },
+				{
+					id: SETTINGS_CTX.backupExport,
+					label: i18n.t("contextMenu:settingsDialog.exportBackup"),
+				},
+				{
+					id: SETTINGS_CTX.backupImport,
+					label: i18n.t("contextMenu:settingsDialog.importBackup"),
+				},
 			];
 		case "feedback":
-			return [{ id: SETTINGS_CTX.feedbackClear, label: "Clear feedback form" }];
+			return [
+				{
+					id: SETTINGS_CTX.feedbackClear,
+					label: i18n.t("contextMenu:settingsDialog.clearFeedback"),
+				},
+			];
 		case "paths":
 			return [
-				{ id: SETTINGS_CTX.pathsRefresh, label: "Refresh paths from disk" },
+				{
+					id: SETTINGS_CTX.pathsRefresh,
+					label: i18n.t("contextMenu:settingsDialog.refreshPaths"),
+				},
 			];
 		default:
 			return null;
@@ -76,22 +103,29 @@ function buildTextFieldMenu(
 	const readOnly = el.readOnly || el.disabled;
 	return {
 		menu: [
-			{ id: SETTINGS_CTX.textSelectAll, label: "Select All" },
+			{
+				id: SETTINGS_CTX.textSelectAll,
+				label: i18n.t("common:actions.selectAll"),
+			},
 			SETTINGS_MENU_SEP,
 			{
 				id: SETTINGS_CTX.textCut,
-				label: "Cut",
+				label: i18n.t("common:actions.cut"),
 				enabled: !readOnly && hasValue,
 			},
 			{
 				id: SETTINGS_CTX.textCopy,
-				label: "Copy",
+				label: i18n.t("common:actions.copy"),
 				enabled: hasValue,
 			},
-			{ id: SETTINGS_CTX.textPaste, label: "Paste", enabled: !readOnly },
+			{
+				id: SETTINGS_CTX.textPaste,
+				label: i18n.t("common:actions.paste"),
+				enabled: !readOnly,
+			},
 			{
 				id: SETTINGS_CTX.textClear,
-				label: "Clear",
+				label: i18n.t("common:actions.clear"),
 				enabled: !readOnly && hasValue,
 			},
 			SETTINGS_MENU_SEP,
@@ -113,17 +147,17 @@ function buildPathFieldMenu(
 		menu: [
 			{
 				id: SETTINGS_CTX.pathCopy,
-				label: "Copy path",
+				label: i18n.t("contextMenu:settingsDialog.copyPath"),
 				enabled: hasValue,
 			},
 			{
 				id: SETTINGS_CTX.pathPaste,
-				label: "Paste into path",
+				label: i18n.t("contextMenu:settingsDialog.pasteIntoPath"),
 				enabled: !readOnly,
 			},
 			{
 				id: SETTINGS_CTX.pathBrowse,
-				label: "Browse…",
+				label: i18n.t("contextMenu:settingsDialog.browse"),
 				enabled: Boolean(browse),
 			},
 			SETTINGS_MENU_SEP,
@@ -137,7 +171,7 @@ function buildTokenFieldMenu(tokenKey: string): CepMenuPayload {
 		menu: [
 			{
 				id: `${SETTINGS_CTX.tokenResetPrefix}${encodeURIComponent(tokenKey)}`,
-				label: "Reset token to default",
+				label: i18n.t("contextMenu:settingsDialog.resetToken"),
 			},
 			SETTINGS_MENU_SEP,
 			...(sectionMenuItems("design-tokens") ?? []),
@@ -202,7 +236,7 @@ export function buildSettingsContextMenuPayload(
 	if (target.closest("[data-dialog-header]")) {
 		return {
 			menu: [
-				{ id: SETTINGS_CTX.headerClose, label: "Close" },
+				{ id: SETTINGS_CTX.headerClose, label: i18n.t("common:actions.close") },
 				SETTINGS_MENU_SEP,
 				...dialogActionsMenu(),
 			],
@@ -223,8 +257,14 @@ export function buildSettingsContextMenuPayload(
 			const menu = buildTextFieldMenu(editable).menu;
 			return {
 				menu: [
-					{ id: SETTINGS_CTX.backupExport, label: "Export workspace backup" },
-					{ id: SETTINGS_CTX.backupImport, label: "Import workspace backup" },
+					{
+						id: SETTINGS_CTX.backupExport,
+						label: i18n.t("contextMenu:settingsDialog.exportBackup"),
+					},
+					{
+						id: SETTINGS_CTX.backupImport,
+						label: i18n.t("contextMenu:settingsDialog.importBackup"),
+					},
 					SETTINGS_MENU_SEP,
 					...menu,
 				],

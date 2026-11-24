@@ -21,6 +21,32 @@ import {
 const LEGACY_I18N_FILE_NAME = "i18n-preference.json";
 const UI_JSON_KEY = "locale";
 
+const SUPPORTED_PRIMARY_LOCALES = new Set([
+	"en",
+	"ja",
+	"de",
+	"fr",
+	"zh",
+	"es",
+	"ko",
+	"pt",
+	"it",
+	"ru",
+]);
+
+/**
+ * Normalize a stored locale string to a supported locale.
+ * Legacy builds offered zh-CN / zh-TW; both collapse to the single `zh` // i18n-exempt: legacy locale migration
+ * resource. Unknown or malformed values fall back to the default.
+ */
+const normalizeStoredLocale = (raw: string): CepShellLocale => {
+	const primary = raw.trim().toLowerCase().split(/[-_]/)[0];
+	if (SUPPORTED_PRIMARY_LOCALES.has(primary)) {
+		return primary as CepShellLocale;
+	}
+	return DEFAULT_CEP_SHELL_LOCALE;
+};
+
 const resolveLegacyPrefPath = (baseRoot: string): string => {
 	const normalized = String(baseRoot).replace(/[\\/]+$/, "");
 	return `${normalized}/data/${LEGACY_I18N_FILE_NAME}`;
@@ -56,7 +82,7 @@ const resolveWorkspaceNodeFsPromises = async (
 					fsMod.readFileSync!(String(path), encoding as "utf8"),
 			};
 		}
-		throw new Error("CEP Node fs API is not available");
+		throw new Error("CEP Node fs API is not available"); // i18n-exempt: internal diagnostic — not rendered as UI copy
 	}
 	const fsPromises = await import("node:fs/promises");
 	return {
@@ -179,7 +205,7 @@ export const loadPreferenceFromFile = async (
 				unknown
 			>;
 			if (typeof ui.language === "string") {
-				return ui.language as CepShellLocale;
+				return normalizeStoredLocale(ui.language);
 			}
 		}
 	} catch {
@@ -194,9 +220,7 @@ export const loadPreferenceFromFile = async (
 			typeof uiSettings === "object" &&
 			typeof (uiSettings as Record<string, unknown>)[UI_JSON_KEY] === "string"
 		) {
-			return (uiSettings as Record<string, unknown>)[
-				UI_JSON_KEY
-			] as CepShellLocale;
+			return normalizeStoredLocale(uiSettings[UI_JSON_KEY] as string);
 		}
 	} catch {
 		/* noop */
@@ -206,7 +230,7 @@ export const loadPreferenceFromFile = async (
 	try {
 		const legacy = await readLegacyPrefFile(win);
 		if (legacy && typeof legacy.locale === "string") {
-			return legacy.locale as CepShellLocale;
+			return normalizeStoredLocale(legacy.locale);
 		}
 	} catch {
 		/* noop */
@@ -220,12 +244,20 @@ export const savePreferenceToFile = async (
 	locale: CepShellLocale,
 ): Promise<void> => {
 	try {
-		const existing = await readSettingsUiJson(win);
-		const updated =
-			existing && typeof existing === "object"
-				? { ...existing, [UI_JSON_KEY]: locale }
-				: { [UI_JSON_KEY]: locale };
-		await writeSettingsUiJson(win, updated as Record<string, unknown>);
+		// ADR-0006: settings/ui.json is also written by every panel persist
+		// (inside the managed-root persistence lock). This read→merge→write
+		// must hold the same lock or the two writers can interleave.
+		const { withManagedRootPersistenceLock } = await import(
+			"@/management/storage/lock/persistence-lock"
+		);
+		await withManagedRootPersistenceLock(win, async () => {
+			const existing = await readSettingsUiJson(win);
+			const updated =
+				existing && typeof existing === "object"
+					? { ...existing, [UI_JSON_KEY]: locale }
+					: { [UI_JSON_KEY]: locale };
+			await writeSettingsUiJson(win, updated as Record<string, unknown>);
+		});
 	} catch {
 		/* noop */
 	}

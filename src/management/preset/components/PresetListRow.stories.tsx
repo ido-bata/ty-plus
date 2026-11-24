@@ -1,0 +1,156 @@
+import type { Meta, StoryObj } from "@storybook/react";
+import { expect } from "storybook/test";
+import type { Preset } from "@/management/preset/contract";
+import { expectCanvasLayout } from "@/storybook/quality/layout";
+import { PresetListRow } from "./PresetListRow";
+
+const makePreset = (overrides: Partial<Preset> = {}): Preset => ({
+	id: "preset-glow",
+	type: "preset",
+	title: "Glow Pulse",
+	filePath: "/preset/root/glow.ffx",
+	...overrides,
+});
+
+const noop = (): void => undefined;
+
+type Args = {
+	preset: Preset;
+};
+
+const baseArgs: Args = {
+	preset: makePreset(),
+};
+
+const rowProps = {
+	presetGlyphSiblingProps: {},
+	activateCatalogPresetRow: noop,
+	runPreset: noop,
+	actionsRunLabel: "Run",
+	actionsRunBlockedMissingLabel: "Preset asset is missing on disk",
+	actionsRunBlockedUnverifiableLabel: "Could not verify preset asset",
+};
+
+const meta = {
+	title: "Preset/Components/PresetListRow",
+	args: baseArgs,
+	render: (args: Args) => (
+		<ul
+			style={{
+				listStyle: "none",
+				padding: 0,
+				margin: 0,
+				minWidth: 360,
+			}}
+		>
+			<PresetListRow preset={args.preset} {...rowProps} />
+		</ul>
+	),
+} satisfies Meta<Args>;
+
+export default meta;
+type Story = StoryObj<Args>;
+
+// Issue #454: kind glyphs (FFX / SCRIPT / PLUGIN) render as container-query
+// text inside the 28px framed box. The font must stay at the 8px legibility
+// floor and each line must fit inside the frame instead of collapsing to
+// dots or clipping.
+const expectLegibleKindGlyph = (canvasElement: HTMLElement): void => {
+	const lines = Array.from(
+		canvasElement.querySelectorAll<HTMLElement>(".ws-preset-icon--text > span"),
+	);
+	expect(lines.length).toBeGreaterThan(0);
+	for (const line of lines) {
+		const fontSize = Number.parseFloat(getComputedStyle(line).fontSize);
+		expect(fontSize).toBeGreaterThanOrEqual(8);
+		expect(line.scrollWidth).toBeLessThanOrEqual(line.clientWidth + 1);
+	}
+};
+
+export const Default: Story = {
+	play: async ({ canvasElement }) => {
+		expectCanvasLayout(canvasElement);
+	},
+};
+
+export const ScriptPreset: Story = {
+	args: {
+		preset: makePreset({
+			id: "script-anim",
+			type: "script",
+			title: "Bounce Animator",
+			filePath: "/preset/root/bounce.jsx",
+		}),
+	},
+	play: async ({ canvasElement }) => {
+		expectCanvasLayout(canvasElement);
+		expectLegibleKindGlyph(canvasElement);
+	},
+};
+
+export const PluginPreset: Story = {
+	args: {
+		preset: makePreset({
+			id: "plugin-fx",
+			type: "plugin",
+			title: "Color Suite",
+			filePath: "/preset/root/color.aex",
+		}),
+	},
+	play: async ({ canvasElement }) => {
+		expectCanvasLayout(canvasElement);
+		expectLegibleKindGlyph(canvasElement);
+	},
+};
+
+export const LongTitle: Story = {
+	args: {
+		preset: makePreset({
+			title: "Glow Pulse with Extra Long Display Name",
+			filePath: "/preset/root/glow-extended-title.ffx",
+		}),
+	},
+	play: async ({ canvasElement }) => {
+		expectCanvasLayout(canvasElement);
+	},
+};
+
+// Issue #454: rows with different title lengths must start their name and
+// file-info text at the same x — right after the kind glyph — instead of
+// drifting toward the row center.
+export const AlignedTitles: Story = {
+	render: () => (
+		<ul
+			style={{
+				listStyle: "none",
+				padding: 0,
+				margin: 0,
+				minWidth: 360,
+			}}
+		>
+			<PresetListRow preset={makePreset({ title: "Glow" })} {...rowProps} />
+			<PresetListRow
+				preset={makePreset({
+					id: "preset-long",
+					title: "Glow Pulse with Extra Long Display Name",
+					filePath: "/preset/root/glow-extended-title.ffx",
+				})}
+				{...rowProps}
+			/>
+		</ul>
+	),
+	play: async ({ canvasElement }) => {
+		expectCanvasLayout(canvasElement);
+		const titleBoxes = Array.from(canvasElement.querySelectorAll("li")).map(
+			(li) => {
+				const button = li.querySelector("button");
+				const textColumn = button?.children[1];
+				const title = textColumn?.firstElementChild;
+				if (!title) throw new Error("preset row title not found");
+				return title.getBoundingClientRect().x;
+			},
+		);
+		expect(titleBoxes).toHaveLength(2);
+		expect(Math.abs(titleBoxes[0] - titleBoxes[1])).toBeLessThanOrEqual(1);
+	},
+};

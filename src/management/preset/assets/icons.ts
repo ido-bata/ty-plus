@@ -1,6 +1,10 @@
-import type { Preset, PresetIcon } from "@/management/preset/contract";
+import type {
+	CanvasParams,
+	Preset,
+	PresetIcon,
+} from "@/management/preset/contract";
 
-import { tryParsePresetIconValue } from "@/management/preset/icon-data";
+import { tryParsePresetIconValue } from "@/management/preset/icon/normalize";
 
 export type PresetIconVisual =
 	| { kind: "image"; value: string }
@@ -45,6 +49,34 @@ const nameFallbackText = (preset: Pick<Preset, "title" | "id">): string => {
 	return clampIconText(raw) || "?";
 };
 
+/**
+ * Factory-default cubic written by legacy catalog ingestion. A canvas icon
+ * carrying only this value (no points, no paint) is content-free: every
+ * auto-detected preset rendered the identical curve, making tiles
+ * indistinguishable (Issue #325). Such icons resolve to the name-based text
+ * fallback instead of the canvas visual.
+ */
+const FACTORY_CANVAS_CUBIC: [number, number, number, number] = [
+	0.25, 0.1, 0.25, 1,
+];
+
+const isFactoryCanvasCubic = (
+	cubic: CanvasParams["cubic"],
+): cubic is [number, number, number, number] =>
+	cubic !== undefined &&
+	cubic[0] === FACTORY_CANVAS_CUBIC[0] &&
+	cubic[1] === FACTORY_CANVAS_CUBIC[1] &&
+	cubic[2] === FACTORY_CANVAS_CUBIC[2] &&
+	cubic[3] === FACTORY_CANVAS_CUBIC[3];
+
+const hasCanvasPaint = (param: CanvasParams): boolean =>
+	Boolean(param.color?.trim() || param.backgroundColor?.trim());
+
+const isContentlessCanvasParams = (param: CanvasParams): boolean =>
+	(param.points === undefined || param.points.length === 0) &&
+	(param.cubic === undefined || isFactoryCanvasCubic(param.cubic)) &&
+	!hasCanvasPaint(param);
+
 const presetIconToVisual = (
 	preset: Pick<Preset, "title" | "id" | "type">,
 	icon: PresetIcon,
@@ -66,9 +98,12 @@ const presetIconToVisual = (
 				backgroundColor: icon.param.backgroundColor,
 			};
 		case "canvas": {
+			if (isContentlessCanvasParams(icon.param)) {
+				return { kind: "text", value: nameFallbackText(preset) };
+			}
 			return {
 				kind: "canvas",
-				cubic: icon.param.cubic ?? [0.25, 0.1, 0.25, 1],
+				cubic: icon.param.cubic ?? FACTORY_CANVAS_CUBIC,
 				color: icon.param.color,
 				backgroundColor: icon.param.backgroundColor,
 			};

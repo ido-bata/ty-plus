@@ -19,13 +19,10 @@
  *   - the rows come from `presets/presets.json` through the STRICT parser;
  *   - a missing file is an EMPTY catalog, a corrupt file is a LOAD FAILURE.
  *
- * The last point is deliberate. The boot-path store in
- * `workspace/services.ts` and `repository/catalog-root-pinned.ts` both use the
- * lenient parser, which returns `[]` for corrupt input — a corrupt catalog
- * rendered as "no presets", which is the same empty-success lie this issue is
- * about. The Preset List reads through this module, so it can tell the two
- * apart. Those two boot-path callers keep their lenient contract; reconciling
- * them is a separate change with its own blast radius.
+ * The last point is deliberate. Callers of the lenient parser
+ * (`parsePresetCatalogJsonText`) intentionally get `[]` for corrupt input.
+ * The Preset List reads through this module, so it can tell the two
+ * apart.
  *
  * ## Caching / staleness
  *
@@ -36,15 +33,15 @@
  * and on every mutation. Cloud boot cannot invalidate a local read: there is no
  * gateway in the data path to go stale, which is the point of the fix.
  *
- * Cloud resolve stays where it belongs — `getPreset` in `preset/use-cases.ts`
+ * Cloud resolve stays where it belongs — `getPreset` in `preset/operations.ts`
  * asks the gateway for a remote fallback only after a local miss.
  */
 
+import type { Preset } from "@/management/preset/contract";
 import {
 	parsePresetCatalogJsonTextStrict,
 	serializePresetCatalogJsonText,
-} from "@/management/preset/catalog-json-text";
-import type { Preset } from "@/management/preset/contract";
+} from "@/management/preset/repository/json-text";
 import { createSharedPresetRepository } from "@/management/preset/repository/shared";
 import { writePresetsJson } from "@/management/storage";
 import { catalogJsonMayContainLegacyIdPrefixes } from "@/management/storage/ids";
@@ -123,6 +120,14 @@ export const createLocalPresetCatalog = (win: Window): LocalPresetCatalog =>
 	createSharedPresetRepository(
 		LOCAL_ONLY_BASE,
 		createLocalPresetFileStore(win),
+		{
+			// ADR-0006: presets.json RMW inside the managed-root lock.
+			withLock: (fn) =>
+				import("@/management/storage/lock/persistence-lock").then(
+					({ withManagedRootPersistenceLock }) =>
+						withManagedRootPersistenceLock(win, fn),
+				),
+		},
 	);
 
 let catalogs = new WeakMap<Window, LocalPresetCatalog>();

@@ -15,7 +15,7 @@ import { defineConfig } from "vitest/config";
  * 2. `storybook` (inside `test.projects`) — browser-environment tests that
  *    render stories under headless Chromium. This is the official path
  *    for headless story validation, replacing the manual
- *    `scripts/verify/sb-snapshot-all.ts` workaround. The storybookTest
+ *    `scripts/verify/storybook/snapshot-all.ts` workaround. The storybookTest
  *    plugin pulls in everything Storybook needs (story glob, aliases,
  *    decorators, CEP-plugin stripping) through `.storybook/main.ts →
  *    viteFinal`, so this project deliberately does NOT use
@@ -47,7 +47,7 @@ export default defineConfig({
 			},
 			{
 				find: /^@ty-plus\/ui\/(.*)$/,
-				replacement: path.resolve(__dirname, "packages/ui/src") + "/$1",
+				replacement: `${path.resolve(__dirname, "packages/ui/src")}/$1`,
 			},
 			{
 				find: "@ty-plus/ui",
@@ -55,7 +55,7 @@ export default defineConfig({
 			},
 			{
 				find: /^@\/(?!styled-system)/,
-				replacement: path.resolve(__dirname, "src") + "/",
+				replacement: `${path.resolve(__dirname, "src")}/`,
 			},
 			{
 				find: "@/styled-system",
@@ -116,7 +116,6 @@ export default defineConfig({
 				"src/management/online/catalog/composition-runtime-dispatcher.ts",
 				"src/management/panel/cloud-gateway-boot.ts",
 			],
-			perFile: true,
 			exclude: [
 				"node_modules/**",
 				"dist/**",
@@ -137,6 +136,7 @@ export default defineConfig({
 				statements: 80,
 				functions: 80,
 				branches: 80,
+				perFile: true,
 			},
 		},
 		projects: [
@@ -197,7 +197,7 @@ export default defineConfig({
 						// never clipped by a smaller viewport — requirement
 						// 4 of docs/architecture/ui-reconstruction/storybook.md.
 						// Keep in sync with CAPTURE_VIEWPORT in
-						// scripts/verify/storybook-screenshot-capture.ts.
+						// scripts/verify/storybook/screenshot-capture.ts.
 						provider: playwright({
 							contextOptions: {
 								viewport: { width: 1280, height: 720 },
@@ -220,13 +220,13 @@ export default defineConfig({
 					// (CepMock → CepContext → Settings → License →
 					// I18n → FilesGateway → Theme → Surface) never
 					// reaches the test render — same effect we see
-					// in `sb-snapshot-all.ts` where stories render as
+					// in `snapshot-all.ts` where stories render as
 					// empty if decorators are not re-applied. The
 					// second entry is the diagnostic screenshot
 					// capture hook (see the file header).
 					setupFiles: [
 						"@storybook/addon-vitest/internal/setup-file-with-project-annotations",
-						"./scripts/verify/storybook-screenshot-capture.ts",
+						"./scripts/verify/storybook/screenshot-capture.ts",
 					],
 				},
 			},

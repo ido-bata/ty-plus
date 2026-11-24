@@ -6,7 +6,7 @@ export * from "@/management/workspace/placement/resolve";
 export * from "@/management/workspace/placement/types";
 export * from "@/management/workspace/placement/widget-bus";
 
-import type { SurfaceState } from "@/management/workspace/state";
+import type { SurfaceState } from "@/management/workspace/core/state";
 
 export type Cell = {
 	/** Stringified surface index (matches ATTR_PLACEMENT_INDEX / legacy placement id call sites). */

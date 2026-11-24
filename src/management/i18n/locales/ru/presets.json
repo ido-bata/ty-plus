@@ -1,47 +1,55 @@
 {
 	"codePreset": {
-		"codeType": "Code type",
+		"codeType": "Тип кода",
 		"editor": {
 			"expression": "Expression",
-			"script": "Script code (.jsx)"
+			"script": "Код скрипта (.jsx)"
 		},
-		"saveLocation": "Save location",
-		"savePreview": "Save preview",
+		"saveLocation": "Место сохранения",
+		"savePreview": "Сохранить превью",
 		"status": {
-			"fileExists": "File already exists — will be overwritten",
-			"success": "Preset saved successfully!"
+			"fileExists": "Файл уже существует — будет перезаписан",
+			"success": "Пресет успешно сохранён!"
 		},
 		"type": {
 			"expression": "Expression",
-			"script": "Script"
-		}
+			"script": "Скрипт"
+		},
+		"iconText": "КОД",
+		"alertSelectComp": "Выберите Composition.",
+		"alertSelectProperty": "Выберите хотя бы одно свойство для применения Expression.",
+		"alertNoExpressionProps": "Выбранные свойства не поддерживают Expression.",
+		"alertApplyError": "Ошибка применения Expression:",
+		"defaultDescription": "Пресет кода: {{name}}",
+		"undoGroupName": "Ty Plus: Применить выражение"
 	},
 	"common": {
 		"browseFolder": "Обзор папки",
 		"copyPath": "Копировать путь",
-		"selectFile": "Выбрать файл"
+		"selectFile": "Выбрать файл",
+		"systemDefault": "Системное значение по умолчанию"
 	},
 	"layerCompPreset": {
 		"desc": {
-			"comp": "Open the composition you want to save. Project must be saved first.",
-			"layer": "Select the layers you want to save. Project must be saved first."
+			"comp": "Откройте Composition, который хотите сохранить. Проект должен быть сохранён заранее.",
+			"layer": "Выберите слои, которые хотите сохранить. Проект должен быть сохранён заранее."
 		},
 		"hint": {
-			"saveButton": "Press \"Create\" at the bottom of the dialog to save."
+			"saveButton": "Нажмите «Создать» внизу диалога, чтобы сохранить."
 		},
-		"savePreview": "Save preview",
+		"savePreview": "Сохранить превью",
 		"step1": {
-			"title": "Preset type"
+			"title": "Тип пресета"
 		},
 		"step2": {
-			"title": "Prepare in After Effects"
+			"title": "Подготовка в After Effects"
 		},
 		"step3": {
-			"title": "Save location"
+			"title": "Место сохранения"
 		},
 		"type": {
 			"comp": "Composition",
-			"layer": "Layer"
+			"layer": "Слой"
 		}
 	},
 	"search": {
@@ -91,7 +99,8 @@
 				"saveFolder": "Папка сохранения",
 				"path": "Путь к пресету анимации",
 				"pathPlaceholder": "Необязательный путь к существующему .ffx"
-			}
+			},
+			"defaultDescription": "Пресет анимации: {{name}}"
 		},
 		"footage": {
 			"title": "Пресет footage",
@@ -100,12 +109,14 @@
 			"fields": {
 				"path": "Путь к футажу",
 				"mode": "Режим импорта"
-			}
+			},
+			"iconText": "МЕДИА"
 		},
 		"layerComp": {
 			"title": "Пресет слоя / композиции",
 			"lead": "Операции со слоями и композициями (трансформация, дублирование, прекомпоз). Сохранённые скрипты выполняются в After Effects.",
-			"defaultName": "Пресет слоя/композиции"
+			"defaultName": "Пресет слоя/композиции",
+			"defaultDescription": "Пресет слоя/композиции: {{name}}"
 		},
 		"import": {
 			"title": "Пресет импорта",
@@ -114,7 +125,9 @@
 			"fields": {
 				"path": "Путь импорта",
 				"strategy": "Стратегия"
-			}
+			},
+			"iconText": "ИМПОРТ",
+			"pathPlaceholder": "C:\\путь\\ресурс"
 		},
 		"code": {
 			"title": "Пресет кода",
@@ -122,10 +135,13 @@
 			"extra": "Сохранённые скрипты выполняются в After Effects.",
 			"defaultName": "Пресет кода",
 			"editor": {
-				"format": "Format Document",
-				"formatTooltip": "Format the script body",
-				"diagnosticCount": "{{count}} problem",
-				"diagnosticCount_other": "{{count}} problems"
+				"format": "Форматировать документ",
+				"formatTooltip": "Форматировать тело скрипта",
+				"diagnosticCount": "{{count}} проблем",
+				"diagnosticCount_one": "{{count}} проблема",
+				"diagnosticCount_few": "{{count}} проблемы",
+				"diagnosticCount_many": "{{count}} проблем",
+				"diagnosticCount_other": "{{count}} проблем"
 			}
 		},
 		"easing": {
@@ -166,32 +182,51 @@
 			"title": "Создать пресет",
 			"lead": "Создайте локальный пресет из переиспользуемых метаданных.",
 			"defaultName": "Локальный пресет"
-		}
+		},
+		"savePathRequired": "Сначала сохраните пресет анимации в стандартном диалоговом окне After Effects.",
+		"easingScript": {
+			"selectComposition": "Выберите компоновку.",
+			"selectProperties": "Выберите хотя бы одно свойство для применения easing.",
+			"notEnoughKeyframes": "У выбранных свойств недостаточно ключевых кадров.",
+			"applyFailedPrefix": "Ошибка применения easing: ",
+			"undoGroupName": "ty-plus: применить пресет сглаживания"
+		},
+		"layerCompScript": {
+			"undoGroupName": "Ty Plus: Применить пресет слоя/композиции",
+			"saveProjectFirst": "Сохраните проект After Effects перед созданием этого пресета",
+			"sourceProjectNotFoundPrefix": "Исходный проект не найден: "
+		},
+		"incompleteData": "Данные пресета неполные"
 	},
 	"animationPreset": {
 		"step1": {
-			"title": "Select in After Effects",
-			"desc": "Select properties or layers you want to save as preset"
+			"title": "Выберите в After Effects",
+			"desc": "Выберите свойства или слои, которые хотите сохранить как пресет"
 		},
 		"step2": {
-			"title": "Save to this folder"
+			"title": "Сохранить в эту папку"
 		},
 		"step3": {
-			"button": "Save Animation Preset",
-			"detecting": "Detecting..."
+			"button": "Сохранить анимационный пресет",
+			"detecting": "Поиск…"
 		},
 		"status": {
-			"success": "Detected!",
-			"noSelection": "No selection",
-			"noSelectionHint": "Select properties or layers in AE first",
-			"timeout": "Scan timeout",
-			"timeoutHint": "Choose a smaller folder",
-			"error": "Not detected",
-			"errorHint": "Save to the folder above"
+			"success": "Найдено!",
+			"noSelection": "Нет выбора",
+			"noSelectionHint": "Сначала выберите свойства или слои в AE",
+			"timeout": "Превышено время сканирования",
+			"timeoutHint": "Выберите папку меньшего размера",
+			"error": "Не найдено",
+			"errorHint": "Сохраните в папку выше"
 		},
 		"path": {
-			"reset": "Reset to default",
-			"notConfigured": "Not configured"
+			"reset": "Сбросить по умолчанию",
+			"notConfigured": "Не настроено"
+		},
+		"iconText": "АНИМ",
+		"undoGroupName": "Ty Plus: Сохранить пресет анимации",
+		"errors": {
+			"selectLayerToSave": "Выберите хотя бы один слой перед сохранением пресета анимации"
 		}
 	},
 	"edit": {
@@ -204,7 +239,13 @@
 			"saved": "Сохранено",
 			"deleted": "Удалено",
 			"saveFailed": "Ошибка сохранения: {{message}}",
-			"deleteFailed": "Ошибка удаления: {{message}}"
+			"deleteFailed": "Ошибка удаления: {{message}}",
+			"notFound": "Пресет не найден",
+			"loadFailed": "Не удалось загрузить",
+			"saveFailedFallback": "Не удалось сохранить",
+			"deleteFailedFallback": "Не удалось удалить",
+			"saving": "Сохранение…",
+			"deleting": "Удаление…"
 		},
 		"fields": {
 			"presetName": "Название пресета",
@@ -223,7 +264,18 @@
 			"script": "Скрипт-пресет",
 			"plugin": "Плагин-пресет",
 			"footage": "Футаж-пресет"
-		}
+		},
+		"memberLoading": "Загрузка…",
+		"memberNotFound": "Участник не найден: {{id}}",
+		"memberRun": "Запустить {{name}}",
+		"memberEdit": "Изменить {{name}}",
+		"memberDelete": "Удалить {{name}}",
+		"memberPresets": "Пресеты-участники ({{count}})",
+		"noMemberPresets": "Нет пресетов-участников",
+		"selectJsxFile": "Выбрать файл JSX",
+		"browseLoadFile": "Загрузить файл",
+		"loadFromFilePlaceholder": "Загрузить из файла…",
+		"code": "Код"
 	},
 	"group": {
 		"title": "Создать группу пресетов",
@@ -231,7 +283,190 @@
 		"defaultName": "Группа пресетов",
 		"fields": {
 			"groupName": "Имя группы",
-			"groupNamePlaceholder": "Введите имя группы"
-		}
+			"groupNamePlaceholder": "Введите имя группы",
+			"folderPaths": "Пути папок",
+			"folderPathsPlaceholder": "Один путь к папке в строке",
+			"presetIds": "ID пресетов",
+			"presetIdsPlaceholder": "Один ID пресета в строке",
+			"recursiveScan": "Рекурсивное сканирование папок"
+		},
+		"iconText": "ГРУППА",
+		"browseMembers": "Обзор файлов и папок для добавления",
+		"addPath": "Добавить путь",
+		"detectCandidates": "Найти кандидатов",
+		"browseFolder": "Обзор папки",
+		"removePath": "Удалить путь",
+		"iconRules": "Правила значков",
+		"baseIcon": {
+			"heading": "Базовый значок (по умолчанию для всех пресетов)",
+			"label": "Базовый значок"
+		},
+		"rules": "Правила",
+		"addRule": "Добавить правило",
+		"groupIcon": "Значок группы",
+		"advancedSettings": "Расширенные настройки",
+		"scanDepth": "Глубина сканирования папок",
+		"scanDepthFlat": "Напрямую",
+		"scanDepthRecursive": "Включая вложенные",
+		"synth": {
+			"noMembers": "Пресетов-участников нет.",
+			"memberPresets_one": "{{count}} пресет-участник.",
+			"memberPresets_few": "{{count}} пресета-участника.",
+			"memberPresets_many": "{{count}} пресетов-участников.",
+			"memberPresets_other": "{{count}} пресета-участника.",
+			"description": "Контейнер группы. {{memberLine}}"
+		},
+		"rule": {
+			"filterName": "Имя",
+			"filterPath": "Путь",
+			"filterPresetId": "ID пресета",
+			"filterPresetType": "Тип пресета",
+			"removeRule": "Удалить правило",
+			"nameRegexPlaceholder": "Regex имени (напр. ^Header.*$)",
+			"namePatternPlaceholder": "Шаблон имени",
+			"matchContains": "Содержит",
+			"matchStarts": "Начинается с",
+			"matchEnds": "Заканчивается на",
+			"matchRegex": "Regex",
+			"presetTypePreset": "Пресет",
+			"presetTypeScript": "Скрипт",
+			"presetTypePlugin": "Плагин",
+			"presetTypeFootage": "Футаж",
+			"noDirectories": "Каталоги не обнаружены",
+			"noPresets": "Пресеты не обнаружены",
+			"iconLabel": "Значок правила"
+		},
+		"fallbackTitle": "Группа"
+	},
+	"catalogAdd": {
+		"dialogTitle": "Добавить пресет каталога из пути",
+		"name": "Имя",
+		"namePlaceholder": "Введите имя…",
+		"filePath": "Путь к файлу",
+		"selectFile": "Выбрать файл",
+		"browseFile": "Обзор файлов",
+		"icon": "Значок",
+		"creating": "Создание…",
+		"pathPlaceholderCurrentFolder": "Показана текущая папка — выберите файл или выполните обзор",
+		"pathPlaceholderSelectFile": "Выберите файл…",
+		"browser": {
+			"cepNodeRequired": "Для файлового браузера требуется CEP Node",
+			"noPresetsFolder": "Папка пресетов не настроена",
+			"noScriptsFolder": "Папка скриптов не настроена",
+			"noPluginsFolder": "Папка плагинов не настроена",
+			"noFiles": "Файлы не найдены"
+		},
+		"folderTypeAria": "Тип папки"
+	},
+	"iconEditor": {
+		"tabs": {
+			"text": "Текст",
+			"emoji": "Эмодзи",
+			"image": "Изображение",
+			"canvas": "Холст"
+		},
+		"emojiPicker": "Выбор эмодзи",
+		"selectImage": "Выбрать изображение значка",
+		"browseImage": "Обзор изображения значка",
+		"imagePlaceholder": "Путь или URL изображения",
+		"iconTextAria": "Текст значка",
+		"textPlaceholder": "2–6 символов",
+		"previewAria": "Предпросмотр значка",
+		"tabsAria": "Тип значка"
+	},
+	"catalogBrowser": {
+		"loading": "Загрузка",
+		"searchPlaceholder": "Поиск по имени, типу или пути…",
+		"reload": "Перезагрузить каталог"
+	},
+	"listDialog": {
+		"workspacePlaced": "Рабочая область: {{tags}}",
+		"workspaceGroupPlaced": "Рабочая область: {{tags}} (группа «{{label}}»)",
+		"workspaceNotPlaced": "Рабочая область: не размещено",
+		"runPresetAria": "Запустить пресет",
+		"editPresetAria": "Изменить пресет",
+		"deletePresetAria": "Удалить пресет",
+		"editGroup": "Изменить группу",
+		"deleteGroup": "Удалить группу",
+		"visibleItems_one": "{{count}} элемент",
+		"visibleItems_few": "{{count}} элемента",
+		"visibleItems_many": "{{count}} элементов",
+		"visibleItems_other": "{{count}} элемента",
+		"filteredSuffix": " · фильтр",
+		"collapseGroup": "Свернуть группу",
+		"expandGroup": "Развернуть группу",
+		"returnToAllPresets": "Вернуться ко всем пресетам",
+		"leaveGroupTitle": "Выйти из группы «{{name}}» и вернуться к списку",
+		"returnToListTitle": "Вернуться к списку",
+		"allPresets": "Все пресеты",
+		"runPresetNamed": "Запустить {{name}}",
+		"loadFailedTitle": "Не удалось загрузить локальный каталог",
+		"tryAgain": "Повторить",
+		"loadingCatalog": "Загрузка локального каталога…",
+		"emptyCatalog": "Локально сохранённых пресетов пока нет",
+		"emptyCatalogHint": "Пресеты, добавленные из папки или пути к файлу, появятся здесь.",
+		"addPresets": "Добавить пресеты",
+		"noMatches": "Подходящих пресетов нет",
+		"cloudOffline": "Облако недоступно",
+		"cloudDegradedDetail": "{{message}} — показан только локальный каталог.",
+		"cloudOfflineDetail": "Облачные функции не активны в этом сеансе — показан только локальный каталог.",
+		"groupsUnavailable": "Группы недоступны",
+		"groupsErrorDetail": "{{error}} — пресеты показаны без группировки.",
+		"title": "Список пресетов",
+		"gridResizeHint": "Удерживайте Ctrl и прокручивайте, чтобы изменить размер сетки значков",
+		"openGroupAria": "Открыть группу {{title}}",
+		"openGroupHint": "{{title}} (двойной щелчок, чтобы открыть)"
+	},
+	"codeEditor": {
+		"snippets": {
+			"ifBlock": "блок if",
+			"elseBlock": "блок else",
+			"forLoop": "цикл for",
+			"whileLoop": "цикл while",
+			"function": "функция",
+			"tryCatch": "try / catch",
+			"extendscriptLog": "журнал ExtendScript"
+		},
+		"resizeAria": "Изменить размер редактора кода"
+	},
+	"glyph": {
+		"loadingPresetIcon": "Загрузка значка пресета"
+	},
+	"assetWrite": {
+		"pathNotAbsolute": "Путь к ресурсу пресета не является абсолютным: {{path}}",
+		"fsUnavailable": "Запись ресурса пресета недоступна: файловая система CEP Node не доступна в этом окне.",
+		"writeFailed": "Не удалось записать ресурс пресета: {{error}}",
+		"verificationMissing": "Ресурс пресета отсутствует после записи: {{path}}",
+		"verificationMismatch": "Содержимое ресурса пресета не совпало после записи: {{path}}",
+		"elevationUnavailable": "Запись ресурса пресета была отклонена разрешениями, и на этом хосте нет механизма повышения прав: {{path}} ({{detail}})",
+		"elevationCancelled": "Разрешение администратора для {{path}} было отклонено. Ресурс пресета не был сохранён.",
+		"writeDenied": "Запись ресурса пресета была отклонена разрешениями: {{path}}",
+		"verificationMissingElevated": "Ресурс пресета отсутствует после повышенной записи: {{path}}",
+		"verificationMismatchElevated": "Содержимое ресурса пресета не совпало после повышенной записи: {{path}}",
+		"dirPathNotAbsolute": "Каталог ресурса пресета не является абсолютным путём: {{path}}",
+		"dirFsUnavailable": "Создание каталога ресурса пресета недоступно: файловая система CEP Node не доступна в этом окне.",
+		"dirCreateFailed": "Не удалось создать каталог ресурса пресета: {{error}}",
+		"dirElevationUnavailable": "Создание каталога ресурса пресета было отклонено разрешениями, и на этом хосте нет механизма повышения прав: {{path}}",
+		"dirElevationCancelled": "Разрешение администратора для {{path}} было отклонено. Каталог ресурса пресета не был создан.",
+		"dirMissingAfterElevated": "Каталог ресурса пресета отсутствует после повышенного создания: {{path}}",
+		"dirDenied": "Создание каталога ресурса пресета было отклонено разрешениями: {{path}}",
+		"dirMissingAfterCreate": "Каталог ресурса пресета отсутствует после создания: {{path}}",
+		"exitCodeSuffix": " (код выхода {{code}})",
+		"elevatedErrorWithDetail": "Повышенная запись сообщила об ошибке{{exitNote}}: {{detail}}",
+		"elevatedError": "Повышенная запись сообщила об ошибке{{exitNote}}"
+	},
+	"folderGroup": {
+		"noFolderPaths": "Введите хотя бы один путь к папке.",
+		"noPresetFiles": "В папке не найдено файлов пресетов (.ffx).",
+		"groupRowFailed": "Не удалось создать строку группы.",
+		"savedStatus": "Группа сохранена: {{id}} (участники: {{members}}, новые пресеты: {{added}})",
+		"presetIdsNotFound": "ID пресетов не найдены в каталоге: {{ids}}",
+		"savedStatusManual": "Группа сохранена ({{total}} элементов): {{id}}",
+		"scanRequiresCepNode": "Сканирование папок требует файлового браузера CEP Node. Введите ID пресетов вручную или включите CEP Node."
+	},
+	"deleteConfirm": {
+		"preset": "Удалить пресет «{{title}}»?\n\nЭто действие нельзя отменить.",
+		"group": "Удалить группу «{{title}}»?\n\nЭто действие нельзя отменить.",
+		"untitled": "(без названия)"
 	}
 }

@@ -25,7 +25,7 @@ import {
 } from "@/management/debug/console/interceptor";
 import { installGlobalErrorReporting } from "@/management/debug/global-error-reporter";
 import { createLogger } from "@/management/debug/logger";
-import { installCepJsonContextMenuRewrite } from "@/management/dialog/dialogs/context-menu";
+import { installCepJsonContextMenuRewrite } from "@/management/dialog/context-menu";
 import { initializeI18n } from "@/management/i18n";
 import { NotificationContainer } from "@/management/online/notification/Container";
 import { readBootProbeFlag } from "@/management/panel/boot-feature-flags";
@@ -207,7 +207,7 @@ export async function bootPanel(): Promise<void> {
 	const mount = document.getElementById("app");
 	if (!mount) {
 		bootLog.error("[ty-plus] panel boot aborted: missing #app mount point");
-		throw new Error("Missing #app mount point");
+		throw new Error("Missing #app mount point"); // i18n-exempt: internal diagnostic — not rendered as UI copy
 	}
 
 	const panelSurfaceId = await resolvePanelSurfaceIdForBoot();

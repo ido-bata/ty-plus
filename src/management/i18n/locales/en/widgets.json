@@ -16,8 +16,12 @@
 			"info": "Show preset metadata, paths, and status in a wide summary tile.",
 			"quick-actions": "Run scripts, effects, and file actions from a compact command palette.",
 			"directory-browser": "Browse disk folders and presets from inside the panel.",
-			"font-viewer": "Preview font families, styles, and sample text in the workspace."
-		}
+			"font-viewer": "Preview font families, styles, and sample text in the workspace.",
+			"loop": "Edit a single-cycle curve and apply it repeatedly to selected keyframes."
+		},
+		"add": "Add",
+		"adding": "Adding…",
+		"noMatches": "No matching widgets. Try another search."
 	},
 	"types": {
 		"align": "Align",
@@ -39,14 +43,8 @@
 		"reverse": "Reverse",
 		"mode": {
 			"curve": "Curve",
-			"loop": "Loop",
 			"bounce": "Bounce",
 			"elastic": "Elastic"
-		},
-		"loop": {
-			"cycles": "Cycles",
-			"decrement": "Decrease loop cycles",
-			"increment": "Increase loop cycles"
 		},
 		"options": {
 			"mode": "Mode",
@@ -74,7 +72,22 @@
 			"easeOut": "Ease out",
 			"easeIn": "Ease in",
 			"easeInOut": "Ease in/out"
-		}
+		},
+		"presetAria": {
+			"linear": "Apply linear easing preset",
+			"easeOut": "Apply ease-out preset",
+			"easeIn": "Apply ease-in preset",
+			"easeInOut": "Apply ease-in-out preset"
+		},
+		"undoGroupName": "Ty Plus: Apply Easing",
+		"pasteValuesUndoGroupName": "Ty Plus: Paste Values",
+		"errors": {
+			"selectKeyframes": "Select keyframes in an active composition",
+			"selectAnimatedProperty": "Select at least one animated property",
+			"selectTwoKeyframes": "Select at least two keyframes on an animated property",
+			"captureFailed": "Could not read easing from the selected keyframes"
+		},
+		"noKeyframesSelected": "Ty Plus easing: no keyframes selected — select keyframes in the AE timeline first"
 	},
 	"menu": {
 		"name": "Menu",
@@ -92,16 +105,77 @@
 		"groupSelectedItems": "Group Selected Items",
 		"moveToPanel": "Move to panel",
 		"deleteSelectedPresets": "Delete {{count}} Presets",
-		"layout": "Layout"
+		"layout": "Layout",
+		"separatorAria": "Menu section separator"
 	},
 	"align": {
-		"name": "Align"
+		"name": "Align",
+		"gestureOverlay": "Gesture path overlay",
+		"targets": {
+			"selection": "Align to selection",
+			"composition": "Align to Composition",
+			"keyObject": "Align to key object",
+			"time": "Time alignment"
+		},
+		"sections": {
+			"distribute": "Distribute",
+			"spacing": "Spacing",
+			"time": "Time"
+		},
+		"undoGroupName": "Ty Plus: Align Layers",
+		"timeUndoGroupName": "ty-plus time align",
+		"errors": {
+			"noActiveComposition": "Select at least one layer in an active composition",
+			"noLayerSelected": "Select at least one layer before aligning"
+		}
 	},
 	"anchorPoint": {
-		"name": "Anchor point"
+		"name": "Anchor point",
+		"gestureOverlay": "Anchor point gesture overlay",
+		"positions": {
+			"topLeft": "Top left",
+			"topCenter": "Top center",
+			"topRight": "Top right",
+			"centerLeft": "Center left",
+			"center": "Center",
+			"centerRight": "Center right",
+			"bottomLeft": "Bottom left",
+			"bottomCenter": "Bottom center",
+			"bottomRight": "Bottom right"
+		},
+		"noActiveComposition": "Ty Plus anchor: no active composition",
+		"noLayerSelected": "Ty Plus anchor: no layer selected",
+		"undoGroupName": "ty-plus anchor (anim-safe)",
+		"failed": "Ty Plus anchor failed: {{detail}}",
+		"completedWithErrors": "Ty Plus anchor completed with errors: {{detail}}"
 	},
 	"info": {
-		"name": "Info"
+		"name": "Info",
+		"activeComp": "Active Comp",
+		"compInfo": "Comp info",
+		"file": "File",
+		"kind": "Kind",
+		"noPresetSelected": "No preset selected",
+		"noDescription": "No description",
+		"source": {
+			"selection": "Selection",
+			"hover": "Hover"
+		},
+		"comp": {
+			"size": "Size",
+			"pixelAspect": "Pixel aspect",
+			"background": "Background",
+			"frameRate": "Frame rate",
+			"duration": "Duration",
+			"shutterAngle": "Shutter angle",
+			"shutterPhase": "Shutter phase",
+			"total": "Total",
+			"selected": "Selected",
+			"motionBlur": "Motion blur",
+			"draft3d": "3D draft",
+			"on": "On",
+			"off": "Off"
+		}
 	},
 	"layoutLock": {
 		"name": "Layout lock"
@@ -130,13 +204,30 @@
 			"runSuccess": "Executed: {{presetId}}",
 			"runFailed": "Failed: {{message}}",
 			"runBlockedMissingAsset": "Preset asset is missing on disk — run is disabled.",
+			"runBlockedUnverifiableAsset": "Could not verify preset asset (host unavailable) — retry",
 			"run": "Run",
 			"importRun": "Import & Run",
 			"openFolder": "Open folder",
 			"openEntry": "Open",
 			"importOnly": "Import",
 			"selectFile": "Select",
-			"deselect": "Deselect"
+			"deselect": "Deselect",
+			"presetNotFound": "Preset not found: {{presetId}}",
+			"fileImportAeOnly": "File import is currently available only in After Effects.",
+			"appliedEffect": "Applied effect: {{name}}",
+			"importedFootage": "Imported footage: {{name}}",
+			"ranScript": "Ran script: {{name}}",
+			"appliedPreset": "Applied preset: {{name}}",
+			"undoGroup": {
+				"applyPreset": "Ty Plus: Apply Preset",
+				"addFootage": "Ty Plus: Add Footage",
+				"applyEffect": "Ty Plus: Apply effect"
+			},
+			"errors": {
+				"openComposition": "Open a composition before applying a preset",
+				"addLayerOrSelect": "Add a layer or select a layer before applying this preset in an empty composition",
+				"selectLayerForEffect": "Select at least one layer before applying an effect"
+			}
 		},
 		"path": {
 			"pickFolderPrompt": "Select a folder",
@@ -158,6 +249,7 @@
 			"error": "Preview unavailable"
 		},
 		"toolbar": {
+			"refresh": "Refresh",
 			"detailedFilters": "Filters",
 			"viewModeLegend": "View mode",
 			"listView": "List view",
@@ -195,6 +287,7 @@
 			"noItems": "No items"
 		},
 		"entry": {
+			"goUp": "Go up",
 			"defaultFolderSubtitle": "Default",
 			"parentRowName": "Up",
 			"browseDrives": "Browse drives",
@@ -203,6 +296,9 @@
 		},
 		"hints": {
 			"iconGridWheel": "Ctrl+scroll to resize"
+		},
+		"listHeader": {
+			"name": "Name"
 		}
 	},
 	"folderDirectoryPicker": {
@@ -224,7 +320,7 @@
 	},
 	"fontViewer": {
 		"name": "Font viewer",
-		"searchPlaceholder": "Search family, PostScript, style…",
+		"searchPlaceholder": "Search fonts…",
 		"searchAria": "Search fonts",
 		"listView": "List view",
 		"iconView": "Icon cards",
@@ -265,5 +361,191 @@
 		"hintNoLocalApi": "This Chromium build does not expose queryLocalFonts — only fonts registered on document.fonts are listed.",
 		"localAccessErrorPrefix": "Local font access:",
 		"emptyList": "No fonts loaded yet. Use “Load all system fonts” if available, or reload after the panel finishes loading styles."
+	},
+	"viewModeToggle": {
+		"listView": "List view",
+		"iconView": "Icon view",
+		"fieldsetLegend": "Catalog layout"
+	},
+	"addWidgetDialog": {
+		"addsToPrefix": "Adds to",
+		"addsToSuffix": "at the bottom of the grid.",
+		"addFailure": "Could not add the widget: {{message}}",
+		"introPrefix": "Choose a widget type. Only kinds that are available in the catalog are listed. New tiles go to",
+		"introSuffix": ".",
+		"contextMenu": {
+			"addThisWidget": "Add this widget",
+			"select": "Select",
+			"category": "Category",
+			"clearSearch": "Clear search",
+			"addSelectedWidget": "Add selected widget",
+			"unknownCategory": "Unknown"
+		}
+	},
+	"pickerOverlay": {
+		"targetPanelPrefix": "Target panel",
+		"footerHint": "Widget is appended at the bottom of the grid for this panel."
+	},
+	"loop": {
+		"name": "Loop",
+		"cycles": "Cycles",
+		"decrement": "Decrease loop cycles",
+		"increment": "Increase loop cycles",
+		"handle": {
+			"easing": "Easing",
+			"frequency": "Frequency",
+			"bias": "Bias",
+			"damping": "Damping"
+		},
+		"update": "Update",
+		"unapply": "Remove loop",
+		"applied": "Applied",
+		"conflict": "Edited in AE",
+		"play": "Play",
+		"pause": "Pause",
+		"waveCanvas": "Loop wave editor",
+		"previewCanvas": "Loop motion preview"
+	},
+	"tutorial": {
+		"chrome": {
+			"title": "Widget help",
+			"close": "Close",
+			"dismissHint": "Dismiss hint",
+			"stepProgress": "{{current}} / {{total}}",
+			"back": "Back",
+			"skip": "Skip",
+			"finish": "Done",
+			"next": "Next"
+		},
+		"easing": {
+			"summary": "Edit easing curves and apply them to presets or layer animation.",
+			"steps": {
+				"chooseCurve": {
+					"title": "Choose a curve",
+					"body": "Pick a preset curve or draw your own in the editor."
+				},
+				"applyCurve": {
+					"title": "Apply it",
+					"body": "Apply the curve to the selected preset or layer."
+				}
+			}
+		},
+		"menu": {
+			"summary": "Open workspace commands, layout actions, and dialogs from one tile.",
+			"steps": {
+				"openMenu": {
+					"title": "Open the menu",
+					"body": "Click the tile to open the workspace command menu."
+				},
+				"runCommand": {
+					"title": "Run a command",
+					"body": "Choose a command to run it on the current workspace."
+				}
+			}
+		},
+		"align": {
+			"summary": "Align selected presets or layers to common positions on the grid.",
+			"steps": {
+				"selectTargets": {
+					"title": "Select targets",
+					"body": "Select the presets or layers you want to align."
+				},
+				"pickAlignment": {
+					"title": "Pick an alignment",
+					"body": "Choose an alignment option to snap them into place."
+				}
+			}
+		},
+		"anchor-point": {
+			"summary": "Place a named anchor for layout references and snapping workflows.",
+			"steps": {
+				"nameAnchor": {
+					"title": "Name the anchor",
+					"body": "Enter a name that identifies this anchor point."
+				},
+				"dropAnchor": {
+					"title": "Drop it on the grid",
+					"body": "Click the workspace to place the anchor."
+				}
+			}
+		},
+		"layout-lock": {
+			"summary": "Prevent accidental moves while you arrange the workspace grid.",
+			"steps": {
+				"turnLockOn": {
+					"title": "Turn the lock on",
+					"body": "Enable the lock to freeze widget positions."
+				},
+				"unlockToRearrange": {
+					"title": "Unlock to rearrange",
+					"body": "Disable the lock when you want to move widgets again."
+				}
+			}
+		},
+		"info": {
+			"summary": "Show preset metadata, paths, and status in a wide summary tile.",
+			"steps": {
+				"placeWidget": {
+					"title": "Place the widget",
+					"body": "Add the Info widget to your workspace."
+				},
+				"inspectPreset": {
+					"title": "Inspect a preset",
+					"body": "Select a preset to view its details here."
+				}
+			}
+		},
+		"quick-actions": {
+			"summary": "Run scripts, effects, and file actions from a compact command palette.",
+			"steps": {
+				"openPalette": {
+					"title": "Open the palette",
+					"body": "Open the palette and type to search actions."
+				},
+				"runAction": {
+					"title": "Run an action",
+					"body": "Select an action to execute it right away."
+				}
+			}
+		},
+		"directory-browser": {
+			"summary": "Browse disk folders and presets from inside the panel.",
+			"steps": {
+				"navigateFolders": {
+					"title": "Navigate folders",
+					"body": "Use the path field or folder list to move around."
+				},
+				"openPreset": {
+					"title": "Open a preset",
+					"body": "Double-click a preset to apply or inspect it."
+				}
+			}
+		},
+		"font-viewer": {
+			"summary": "Preview font families, styles, and sample text in the workspace.",
+			"steps": {
+				"loadFonts": {
+					"title": "Load fonts",
+					"body": "Load system fonts or choose a family to preview."
+				},
+				"editSample": {
+					"title": "Edit the sample",
+					"body": "Change the sample text to check glyphs and styles."
+				}
+			}
+		},
+		"loop": {
+			"summary": "Edit a looping easing curve and apply it to selected keyframes.",
+			"steps": {
+				"chooseCycle": {
+					"title": "Shape the cycle",
+					"body": "Drag the curve handles to shape a single cycle."
+				},
+				"applyCycle": {
+					"title": "Apply the loop",
+					"body": "Set the cycle count and apply the loop to the selected keyframes."
+				}
+			}
+		}
 	}
 }

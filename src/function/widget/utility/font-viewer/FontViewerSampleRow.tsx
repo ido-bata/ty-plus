@@ -1,5 +1,4 @@
-import { ListSelect } from "@ty-plus/ui";
-import { Input } from "@ty-plus/ui/fields/Input";
+import { Input, ListSelect } from "@ty-plus/ui";
 import type { ChangeEvent, JSX } from "react";
 import { useTranslation } from "react-i18next";
 import { css } from "@/styled-system/css";
@@ -66,7 +65,6 @@ export function FontViewerSampleRow({
 					minWidth: 0,
 					flex: 1,
 					fontFamily: "mono",
-					fontSize: "text-xs",
 				})}
 				value={sample}
 				onChange={(e: ChangeEvent<HTMLInputElement>) => {

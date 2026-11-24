@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Check, MoreHorizontal, Plus } from "lucide-react";
+import { expect } from "storybook/test";
 import { css } from "@/styled-system/css";
 
 import { IconButton } from "./IconButton";
@@ -14,8 +15,9 @@ const meta = {
 		},
 		size: {
 			control: { type: "select" },
-			options: ["sm", "md", "lg"],
+			options: ["xs", "sm", "md", "lg"],
 		},
+		active: { control: "boolean" },
 		disabled: { control: "boolean" },
 		"aria-label": { control: "text" },
 		children: { control: false },
@@ -85,9 +87,49 @@ export const VariantsAndSizes: Story = {
 	),
 };
 
+export const Active: Story = {
+	args: { active: true, "aria-pressed": true },
+	render: (args) => (
+		<div className={css({ display: "flex", alignItems: "center", gap: "2" })}>
+			<IconButton {...args} aria-label="List view" aria-pressed>
+				<Plus />
+			</IconButton>
+			<IconButton
+				{...args}
+				active={false}
+				aria-label="Grid view"
+				aria-pressed={false}
+			>
+				<Plus />
+			</IconButton>
+		</div>
+	),
+	play: async ({ canvasElement }) => {
+		const pressed = canvasElement.querySelector<HTMLElement>(
+			'button[aria-pressed="true"]',
+		);
+		const unpressed = canvasElement.querySelector<HTMLElement>(
+			'button[aria-pressed="false"]',
+		);
+		if (!pressed || !unpressed) throw new Error("toggle buttons not found");
+		const pressedStyle = getComputedStyle(pressed);
+		const unpressedStyle = getComputedStyle(unpressed);
+		// The selected surface must differ from the ghost default — it once
+		// lost the stylesheet-order cascade and both states rendered
+		// pixel-identical (#470).
+		expect(pressedStyle.backgroundColor).not.toBe(
+			unpressedStyle.backgroundColor,
+		);
+		expect(pressedStyle.color).not.toBe(unpressedStyle.color);
+	},
+};
+
 export const AllSizes: Story = {
 	render: (args) => (
 		<div className={css({ display: "flex", alignItems: "center", gap: "2" })}>
+			<IconButton {...args} size="xs" aria-label="Extra small">
+				<Plus />
+			</IconButton>
 			<IconButton {...args} size="sm" aria-label="Small">
 				<Plus />
 			</IconButton>

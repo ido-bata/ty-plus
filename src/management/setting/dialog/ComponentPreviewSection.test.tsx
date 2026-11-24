@@ -10,8 +10,8 @@ vi.mock("@/management/preset/markdown/LiveEditor", () => ({
 	MarkdownLiveEditor: () => <div data-testid="markdown-editor" />,
 }));
 
-vi.mock("@/management/storage/ui/DirectoryBrowser", () => ({
-	DirectoryBrowser: () => <div data-testid="directory-browser" />,
+vi.mock("@/management/storage/ui/file-entry/FileEntryList", () => ({
+	FileEntryList: () => <div data-testid="directory-browser" />,
 }));
 
 vi.mock("@/management/preset/editor/View", () => ({
@@ -28,6 +28,8 @@ describe("ComponentPreviewSection", () => {
 		const { container } = render(<ComponentPreviewSection />);
 
 		expect(screen.getByText("Preset Icon Editor")).toBeInTheDocument();
-		expect(container.querySelector(".asp_square.grid-r_span_2")).toBeTruthy();
+		const preview = container.querySelector('[aria-label="Icon preview"]');
+		expect(preview).toBeTruthy();
+		expect(preview?.className).toContain("grid-r_span_2");
 	});
 });

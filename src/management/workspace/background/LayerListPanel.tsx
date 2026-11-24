@@ -1,7 +1,4 @@
-import { Button } from "@ty-plus/ui/controls/Button";
-import { IconButton } from "@ty-plus/ui/controls/IconButton";
-import { Input } from "@ty-plus/ui/fields/Input";
-import { cx } from "@ty-plus/ui/util/cx";
+import { Button, Checkbox, cx, IconButton } from "@ty-plus/ui";
 import {
 	ArrowDown,
 	ArrowUp,
@@ -44,7 +41,7 @@ const cardClass = css({
 	minHeight: "0",
 	gridTemplateRows: "auto minmax(0,1fr) auto",
 	borderRadius: "shell-sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "var(--color-ty-widget-border)",
 });
@@ -53,7 +50,7 @@ const addBar = css({
 	display: "grid",
 	gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
 	gap: "1",
-	borderBottomWidth: "1px",
+	borderBottomWidth: "hairline",
 	borderBottomStyle: "solid",
 	borderBottomColor: "var(--color-ty-widget-border)",
 	padding: "2",
@@ -84,11 +81,6 @@ const layerRow = css({
 	gap: "1",
 });
 
-const layerCheckbox = css({
-	height: "4",
-	width: "4",
-});
-
 const layerButton = css({
 	minWidth: "0",
 	justifyContent: "flex-start",
@@ -106,16 +98,19 @@ const actionBar = css({
 	display: "grid",
 	gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
 	gap: "1",
-	borderTopWidth: "1px",
+	borderTopWidth: "hairline",
 	borderTopStyle: "solid",
 	borderTopColor: "var(--color-ty-widget-border)",
 	padding: "1",
 });
 
 const iconBtn = css({
-	height: "6",
-	width: "full",
-	borderWidth: "1px",
+	// Issue #536: `IconButton size="sm"` applies a fixed `width: 7` via
+	// `sizeMap`; a plain `width: "full"` here loses the single-class
+	// cascade and the buttons stay small squares at the left of each grid
+	// column. `&&` doubles the selector specificity so the stretch wins.
+	"&&": { height: "6", width: "full" },
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "var(--color-ty-widget-border)",
 	backgroundColor: "transparent",
@@ -201,12 +196,10 @@ export function LayerListPanel(props: {
 									data-background-layer-id={layer.id}
 									className={layerRow}
 								>
-									<Input
-										type="checkbox"
-										className={layerCheckbox}
+									<Checkbox
 										checked={layer.enabled}
 										aria-label={t("workspaceShell.backgroundPanel.enabled")}
-										uiSize="sm"
+										uiSize="md"
 										onChange={(e) =>
 											onToggleLayer(layer.id, e.currentTarget.checked)
 										}
@@ -234,7 +227,7 @@ export function LayerListPanel(props: {
 						</div>
 					)}
 				</div>
-				<div className={actionBar}>
+				<div className={actionBar} data-background-layer-actions>
 					<IconButton
 						type="button"
 						variant="ghost"

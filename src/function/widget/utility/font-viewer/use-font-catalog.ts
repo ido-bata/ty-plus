@@ -103,7 +103,7 @@ type FontCatalogHook = {
  * (document.fonts, then optional `queryLocalFonts`). Owns the load lifecycle,
  * mount log, and the initial reload effect.
  */
-function useFontCatalog(): FontCatalogHook {
+export function useFontCatalog(): FontCatalogHook {
 	const [state, dispatch] = useReducer(
 		fontLoadReducer,
 		INITIAL_FONT_LOAD_STATE,

@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Button } from "@ty-plus/ui";
-import { cx } from "@ty-plus/ui/util/cx";
+import { Button, cx } from "@ty-plus/ui";
+import { Trans, useTranslation } from "react-i18next";
+import { i18n } from "../i18n";
 import { SITE } from "../lib/site";
 import { container, section, stack } from "../styles/layout";
 import * as s from "../styles/site";
@@ -8,13 +9,15 @@ import * as s from "../styles/site";
 export const Route = createFileRoute("/support")({
 	head: () => ({
 		meta: [
-			{ title: `Support — ${SITE.name}` },
+			{ title: i18n.t("support.metaTitle", { ns: "web" }) },
 			{
 				name: "description",
-				content:
-					"Get help with ty-plus: report bugs, request features, review the security policy, or contribute to the project on GitHub.",
+				content: i18n.t("support.metaDescription", { ns: "web" }),
 			},
-			{ property: "og:title", content: `Support — ${SITE.name}` },
+			{
+				property: "og:title",
+				content: i18n.t("support.metaTitle", { ns: "web" }),
+			},
 		],
 	}),
 	component: SupportPage,
@@ -22,24 +25,24 @@ export const Route = createFileRoute("/support")({
 
 const HELP_TOPICS = [
 	{
-		term: "User guide",
-		description:
-			"Installation, workspace, widgets, presets, settings, troubleshooting.",
+		termKey: "support.help.userGuide.term",
+		descriptionKey: "support.help.userGuide.description",
 		href: SITE.userGuide,
 	},
 	{
-		term: "Installation & troubleshooting",
-		description: "ZXP install and OS security notes.",
+		termKey: "support.help.installation.term",
+		descriptionKey: "support.help.installation.description",
 		href: SITE.installation,
 	},
 	{
-		term: "Existing issues",
-		description: "Check whether your problem is already reported.",
+		termKey: "support.help.issues.term",
+		descriptionKey: "support.help.issues.description",
 		href: SITE.issues,
 	},
 ] as const;
 
 function SupportPage() {
+	const { t } = useTranslation("web");
 	return (
 		<main>
 			<header
@@ -48,11 +51,8 @@ function SupportPage() {
 					section({ variant: "prose" }),
 				)}
 			>
-				<h1 className={s.h1}>Support</h1>
-				<p className={s.lead}>
-					ty-plus is a community open-source project. The fastest way to get
-					help is through GitHub.
-				</p>
+				<h1 className={s.h1}>{t("support.title")}</h1>
+				<p className={s.lead}>{t("support.lead")}</p>
 			</header>
 
 			<section
@@ -64,17 +64,17 @@ function SupportPage() {
 			>
 				<div className={stack({ gap: 4 })}>
 					<h2 className={s.h2} id="help">
-						Documentation &amp; issues
+						{t("support.help.title")}
 					</h2>
 					<dl className={s.defList}>
-						{HELP_TOPICS.map((t) => (
-							<div className={s.defRow} key={t.term}>
+						{HELP_TOPICS.map((topic) => (
+							<div className={s.defRow} key={topic.termKey}>
 								<dt className={s.defTerm}>
-									<a className={s.link} href={t.href}>
-										{t.term}
+									<a className={s.link} href={topic.href}>
+										{t(topic.termKey)}
 									</a>
 								</dt>
-								<dd className={s.defDesc}>{t.description}</dd>
+								<dd className={s.defDesc}>{t(topic.descriptionKey)}</dd>
 							</div>
 						))}
 					</dl>
@@ -91,20 +91,22 @@ function SupportPage() {
 				<div className={stack({ gap: 4 })}>
 					<div className={stack({ gap: 2 })}>
 						<h2 className={s.h2} id="report">
-							Bugs &amp; feature requests
+							{t("support.report.title")}
 						</h2>
 						<p className={s.body}>
-							Use{" "}
-							<a className={s.link} href={SITE.newIssue}>
-								the issue templates on GitHub
-							</a>{" "}
-							to report a bug or request an improvement. Please include your OS,
-							After Effects version, ty-plus version, and steps to reproduce.
+							<Trans
+								i18nKey="support.report.body"
+								ns="web"
+								components={{
+									// biome-ignore lint/a11y/useAnchorContent: link text is injected by <Trans>
+									1: <a className={s.link} href={SITE.newIssue} />,
+								}}
+							/>
 						</p>
 					</div>
 					<div>
 						<Button as="a" href={SITE.newIssue} variant="primary">
-							Open an issue
+							{t("support.report.cta")}
 						</Button>
 					</div>
 				</div>
@@ -119,15 +121,17 @@ function SupportPage() {
 			>
 				<div className={stack({ gap: 2 })}>
 					<h2 className={s.h2} id="security">
-						Responsible disclosure
+						{t("support.security.title")}
 					</h2>
 					<p className={s.body}>
-						Please do not open public issues for security vulnerabilities. See
-						the{" "}
-						<a className={s.link} href={SITE.security}>
-							security policy
-						</a>{" "}
-						for responsible disclosure.
+						<Trans
+							i18nKey="support.security.body"
+							ns="web"
+							components={{
+								// biome-ignore lint/a11y/useAnchorContent: link text is injected by <Trans>
+								1: <a className={s.link} href={SITE.security} />,
+							}}
+						/>
 					</p>
 				</div>
 			</section>
@@ -142,23 +146,24 @@ function SupportPage() {
 				<div className={stack({ gap: 4 })}>
 					<div className={stack({ gap: 2 })}>
 						<h2 className={s.h2} id="contribute">
-							Develop with us
+							{t("support.contribute.title")}
 						</h2>
 						<p className={s.body}>
-							ty-plus is MIT licensed and developed in the open. See{" "}
-							<a className={s.link} href={SITE.contributing}>
-								CONTRIBUTING.md
-							</a>{" "}
-							to get started, and{" "}
-							<a className={s.link} href={SITE.license}>
-								LICENSE
-							</a>{" "}
-							for terms.
+							<Trans
+								i18nKey="support.contribute.body"
+								ns="web"
+								components={{
+									// biome-ignore lint/a11y/useAnchorContent: link text is injected by <Trans>
+									1: <a className={s.link} href={SITE.contributing} />,
+									// biome-ignore lint/a11y/useAnchorContent: link text is injected by <Trans>
+									2: <a className={s.link} href={SITE.license} />,
+								}}
+							/>
 						</p>
 					</div>
 					<div>
 						<Button as="a" href={SITE.repo} variant="secondary">
-							Source code
+							{t("support.contribute.cta")}
 						</Button>
 					</div>
 				</div>

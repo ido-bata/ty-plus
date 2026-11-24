@@ -7,6 +7,12 @@ import {
 	type ReleaseChannel,
 } from "@/management/online/update/channel";
 import { buildReleaseChannel } from "@/management/online/update/current-version";
+import {
+	DEFAULT_UI_ACCENT_COLOR,
+	DEFAULT_UI_PANEL_BG_COLOR,
+	DEFAULT_UI_TEXT_COLOR,
+	DEFAULT_UI_WIDGET_BG_COLOR,
+} from "@/management/setting/literals/ui-colors";
 
 export type Settings = {
 	version: 2;
@@ -72,14 +78,14 @@ export const DEFAULT_SETTINGS: Settings = {
 		language: "en",
 		updateChannel: buildReleaseChannel,
 		theme: "system",
-		accentColor: "#5886ff",
-		textColor: "#f0f0f0",
+		accentColor: DEFAULT_UI_ACCENT_COLOR,
+		textColor: DEFAULT_UI_TEXT_COLOR,
 		widget: {
-			backgroundColor: "#1a1a1a",
+			backgroundColor: DEFAULT_UI_WIDGET_BG_COLOR,
 			opacity: 80,
 		},
 		panel: {
-			backgroundColor: "#0f0f0f",
+			backgroundColor: DEFAULT_UI_PANEL_BG_COLOR,
 			opacity: 95,
 		},
 	},

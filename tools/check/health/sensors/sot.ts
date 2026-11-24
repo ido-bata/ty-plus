@@ -52,8 +52,11 @@ export function run(srcRoot: string): Finding[] {
 			// Detect assignments like: fieldName: ..., fieldName = ..., fieldName?;
 			// but exclude comments and strings
 			const assignmentRe = new RegExp(`(?<![//\\*])\\b${field}\\s*[?:=]`, "g");
-			let match: RegExpExecArray | null;
-			while ((match = assignmentRe.exec(content)) !== null) {
+			for (
+				let match = assignmentRe.exec(content);
+				match !== null;
+				match = assignmentRe.exec(content)
+			) {
 				const line = content.slice(0, match.index).split("\n").length;
 				findings.push(
 					makeFinding(

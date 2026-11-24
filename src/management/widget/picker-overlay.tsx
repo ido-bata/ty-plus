@@ -1,6 +1,7 @@
-import { Button } from "@ty-plus/ui/controls/Button";
+import { Button } from "@ty-plus/ui";
 import { type JSX, useCallback, useRef, useState } from "react";
 import type { WidgetType } from "@/function/widget";
+import { i18n } from "@/management/i18n/index";
 import { AddWidgetCatalogPanel } from "@/management/widget/catalog";
 import { defaultFirstWidgetType } from "@/management/widget/default-first-widget-type";
 import { css } from "@/styled-system/css";
@@ -15,7 +16,7 @@ type Props = {
 const backdropStyle = css({
 	position: "fixed",
 	inset: "0",
-	zIndex: "100000",
+	zIndex: "var(--ty-z-widget-overlay)",
 	display: "flex",
 	alignItems: "stretch",
 	justifyContent: "center",
@@ -35,7 +36,7 @@ const dialogStyle = css({
 	flexDirection: "column",
 	overflow: "hidden",
 	borderRadius: "shell-lg",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 	backgroundColor: "surface.dialog",
@@ -48,7 +49,7 @@ const headerStyle = css({
 	alignItems: "center",
 	justifyContent: "space-between",
 	gap: "3",
-	borderBottomWidth: "1px",
+	borderBottomWidth: "hairline",
 	borderBottomStyle: "solid",
 	borderBottomColor: "border.default",
 	paddingInline: "var(--ty-shell-pad-inline)",
@@ -99,7 +100,7 @@ const footerStyle = css({
 	alignItems: "center",
 	justifyContent: "space-between",
 	gap: "3",
-	borderTopWidth: "1px",
+	borderTopWidth: "hairline",
 	borderTopStyle: "solid",
 	borderTopColor: "border.default",
 	paddingInline: "var(--ty-shell-pad-inline)",
@@ -164,7 +165,9 @@ export function AddWidgetPickerOverlay({
 				<header className={headerStyle}>
 					<div className={headerBodyStyle}>
 						<h2 id="add-widget-overlay-title" className={titleStyle}>
-							Add widget
+							{i18n.t("widgets:selector.addWidget", {
+								defaultValue: "Add widget",
+							})}
 						</h2>
 						<p className={panelIdStyle}>{panelId}</p>
 					</div>
@@ -174,7 +177,9 @@ export function AddWidgetPickerOverlay({
 					className={catalogClass}
 					intro={
 						<p className={catalogIntroStyle}>
-							Target panel{" "}
+							{i18n.t("widgets:pickerOverlay.targetPanelPrefix", {
+								defaultValue: "Target panel",
+							})}{" "}
 							<span className={catalogIntroPanelStyle}>{panelId}</span>
 						</p>
 					}
@@ -188,7 +193,10 @@ export function AddWidgetPickerOverlay({
 				/>
 				<footer className={footerStyle}>
 					<p className={footerHintStyle}>
-						Widget is appended at the bottom of the grid for this panel.
+						{i18n.t("widgets:pickerOverlay.footerHint", {
+							defaultValue:
+								"Widget is appended at the bottom of the grid for this panel.",
+						})}
 					</p>
 					<div className={footerActionsStyle}>
 						<Button
@@ -197,7 +205,7 @@ export function AddWidgetPickerOverlay({
 							type="button"
 							onClick={onClose}
 						>
-							Cancel
+							{i18n.t("common:buttons.cancel")}
 						</Button>
 						<Button
 							variant="primary"
@@ -208,7 +216,7 @@ export function AddWidgetPickerOverlay({
 								if (selectedType) emitAdd(selectedType);
 							}}
 						>
-							Add
+							{i18n.t("widgets:selector.add", { defaultValue: "Add" })}
 						</Button>
 					</div>
 				</footer>

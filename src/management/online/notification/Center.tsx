@@ -1,6 +1,12 @@
-import { IconButton } from "@ty-plus/ui/controls/IconButton";
-import { Icon } from "@ty-plus/ui/icons/Icon";
-import { cx } from "@ty-plus/ui/util/cx";
+import {
+	Button,
+	cx,
+	heading1Class,
+	heading3Class,
+	Icon,
+	IconButton,
+	listItemTitleClass,
+} from "@ty-plus/ui";
 import { ArrowLeft, Check, LoaderCircle, Mail, RefreshCw } from "lucide-react";
 import {
 	type JSX,
@@ -14,21 +20,22 @@ import { useTranslation } from "react-i18next";
 import {
 	type CepMenuPayload,
 	registerCepJsonContextMenuSurface,
-} from "@/management/dialog/dialogs/context-menu";
+} from "@/management/dialog/context-menu";
+import { i18n } from "@/management/i18n/index";
 import type { NotificationSummary } from "@/management/online/contract";
 import { fetchNotificationFeed } from "@/management/online/notification/feed";
 import {
 	loadNotificationsStore,
 	saveNotificationsStore,
-} from "@/management/online/notification/notifications";
-import { tryGetDataServices } from "@/management/workspace/services";
+} from "@/management/online/notification/store";
+import { tryGetDataServices } from "@/management/workspace/core/services";
 import { css } from "@/styled-system/css";
 
 // ── Style constants ──────────────────────────────────────────────────────────
 
 const codeClass = css({
 	borderRadius: "sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.strong",
 	backgroundColor: "surface.panel",
@@ -50,18 +57,8 @@ const paragraphClass = css({
 	lineHeight: "relaxed",
 	color: "text.primary",
 });
-const heading1Class = css({
-	fontSize: "lg",
-	fontWeight: "semibold",
-	color: "text.primary",
-});
 const heading2Class = css({
 	fontSize: "base",
-	fontWeight: "semibold",
-	color: "text.primary",
-});
-const heading3Class = css({
-	fontSize: "sm",
 	fontWeight: "semibold",
 	color: "text.primary",
 });
@@ -86,7 +83,7 @@ const calloutClass = css({
 	alignItems: "flex-start",
 	gap: "2",
 	borderRadius: "sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.strong",
 	backgroundColor: "surface.panel",
@@ -109,7 +106,7 @@ const quoteClass = css({
 const quoteTextClass = css({ fontSize: "sm" });
 const imageWrapClass = css({
 	borderRadius: "sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.strong",
 	overflow: "hidden",
@@ -122,7 +119,7 @@ const imageClass = css({
 });
 const detailsClass = css({
 	borderRadius: "sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.strong",
 	backgroundColor: "surface.panel",
@@ -155,10 +152,11 @@ const noContentClass = css({
 });
 
 const listItemButtonBaseClass = css({
+	position: "relative",
 	width: "full",
 	textAlign: "left",
 	borderRadius: "sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	padding: "3",
 	cursor: "pointer",
@@ -192,12 +190,6 @@ const listItemTitleRowClass = css({
 	alignItems: "center",
 	gap: "0",
 });
-const listItemTitleClass = css({
-	fontSize: "sm",
-	fontWeight: "medium",
-	color: "text.primary",
-	truncate: true,
-});
 const listItemFixtureBadgeClass = css({
 	marginLeft: "2",
 	borderRadius: "shell-sm",
@@ -223,6 +215,19 @@ const unreadDotClass = css({
 	backgroundColor: "text.accent",
 });
 
+/**
+ * Full-row click target overlaid on a notification list item surface. The
+ * item div owns the border/fill/hover treatment; this bare Button only
+ * provides semantics, the shared focus ring and the disabled treatment.
+ */
+const listItemHitAreaClass = css({
+	position: "absolute",
+	inset: "0",
+	_focusVisible: {
+		boxShadow: "var(--color-focus-ring)",
+	},
+});
+
 function listItemButtonClass(unread: boolean): string {
 	return cx(
 		listItemButtonBaseClass,
@@ -245,7 +250,7 @@ const detailHeaderClass = css({
 	gap: "3",
 	paddingBlock: "2",
 	paddingInline: "4",
-	borderBottomWidth: "1px",
+	borderBottomWidth: "hairline",
 	borderBottomStyle: "solid",
 	borderColor: "border.strong",
 });
@@ -262,7 +267,7 @@ const detailHeaderRightClass = css({
 	flexShrink: 0,
 });
 const borderedIconBtnClass = css({
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.strong",
 });
@@ -281,7 +286,7 @@ const metaBarClass = css({
 	gap: "2",
 	paddingInline: "4",
 	paddingBlock: "1.5",
-	borderBottomWidth: "1px",
+	borderBottomWidth: "hairline",
 	borderBottomStyle: "solid",
 	borderColor: "border.strong",
 	backgroundColor: "surface.panel",
@@ -321,7 +326,6 @@ const mutedTextClass = css({
 	fontSize: "sm",
 	color: "text.muted",
 });
-const opacity60Class = css({ opacity: 0.6 });
 
 const listContainerClass = css({
 	display: "flex",
@@ -338,14 +342,9 @@ const listHeaderClass = css({
 	gap: "3",
 	paddingBlock: "2",
 	paddingInline: "4",
-	borderBottomWidth: "1px",
+	borderBottomWidth: "hairline",
 	borderBottomStyle: "solid",
 	borderColor: "border.strong",
-});
-const listHeaderTitleClass = css({
-	fontSize: "sm",
-	fontWeight: "semibold",
-	color: "text.primary",
 });
 const listHeaderActionsClass = css({
 	display: "flex",
@@ -567,7 +566,9 @@ function renderBlock(block: NotificationBlock): React.ReactNode {
 					<summary className={detailsSummaryClass}>
 						{renderRichText(rt)}
 					</summary>
-					<div className={detailsBodyClass}>Toggle content</div>
+					<div className={detailsBodyClass}>
+						{i18n.t("online:notificationCenter.toggleContent")}
+					</div>
 				</details>
 			);
 		}
@@ -578,7 +579,11 @@ function renderBlock(block: NotificationBlock): React.ReactNode {
 
 function BlockList({ blocks }: { blocks: NotificationBlock[] }) {
 	if (blocks.length === 0) {
-		return <p className={noContentClass}>No content</p>;
+		return (
+			<p className={noContentClass}>
+				{i18n.t("online:notificationCenter.noContent")}
+			</p>
+		);
 	}
 	return (
 		<div className={blockListClass}>
@@ -602,17 +607,13 @@ function NotificationListItem(props: {
 	const { t } = useTranslation("online");
 	return (
 		<li key={item.notificationId}>
-			<button
-				type="button"
-				className={listItemButtonClass(unread)}
-				data-notification-id={item.notificationId}
-				onClick={() => void onOpen(item)}
-				style={isFixture ? { opacity: 0.7 } : undefined}
-			>
+			<div className={listItemButtonClass(unread)}>
 				<div className={listItemHeaderClass}>
 					<div className={listItemColumnClass}>
 						<div className={listItemTitleRowClass}>
-							<span className={listItemTitleClass}>{item.name}</span>
+							<span className={cx(listItemTitleClass, css({ truncate: true }))}>
+								{item.name}
+							</span>
 							{isFixture && (
 								<span className={listItemFixtureBadgeClass}>
 									{t("notification.fixtureBadge")}
@@ -624,13 +625,20 @@ function NotificationListItem(props: {
 						)}
 						<span className={listItemDateClass}>
 							{item.publishedAt
-								? new Date(item.publishedAt).toLocaleString()
+								? new Date(item.publishedAt).toLocaleString(i18n.language)
 								: ""}
 						</span>
 					</div>
 					{unread && <span className={unreadDotClass} />}
 				</div>
-			</button>
+				<Button
+					variant="bare"
+					uiSize="content"
+					className={listItemHitAreaClass}
+					data-notification-id={item.notificationId}
+					onClick={() => void onOpen(item)}
+				/>
+			</div>
 		</li>
 	);
 }
@@ -663,10 +671,10 @@ function NotificationDetailView(props: {
 						variant="ghost"
 						size="sm"
 						onClick={onClose}
-						aria-label="Back to list"
+						aria-label={i18n.t("online:notificationCenter.backToList")}
 						className={borderedIconBtnClass}
 					>
-						<Icon icon={ArrowLeft} size={14} />
+						<Icon icon={ArrowLeft} size={16} />
 					</IconButton>
 					<h1 className={detailTitleClass}>{selected.name}</h1>
 				</div>
@@ -674,20 +682,26 @@ function NotificationDetailView(props: {
 					<IconButton
 						variant="ghost"
 						size="sm"
+						active={isRead}
+						aria-pressed={isRead}
 						onClick={() => onToggleRead(selected.notificationId)}
-						aria-label={isRead ? "Mark unread" : "Mark read"}
-						className={cx(borderedIconBtnClass, isRead && opacity60Class)}
+						aria-label={
+							isRead
+								? i18n.t("online:notificationCenter.markUnread")
+								: i18n.t("online:notificationCenter.markRead")
+						}
+						className={borderedIconBtnClass}
 					>
-						<Icon icon={Check} size={14} />
+						<Icon icon={Check} size={16} />
 					</IconButton>
 					<IconButton
 						variant="ghost"
 						size="sm"
 						onClick={() => void onRefresh()}
-						aria-label="Refresh"
+						aria-label={i18n.t("online:notificationCenter.refresh")}
 						className={borderedIconBtnClass}
 					>
-						<Icon icon={RefreshCw} size={14} />
+						<Icon icon={RefreshCw} size={16} />
 					</IconButton>
 				</div>
 			</header>
@@ -695,13 +709,14 @@ function NotificationDetailView(props: {
 			{/* Meta bar */}
 			<div className={metaBarClass}>
 				<span className={metaBarTextClass}>
-					{selected.category ?? "general"}
+					{selected.category ??
+						i18n.t("online:notificationCenter.generalCategory")}
 				</span>
 				{selected.publishedAt && (
 					<>
 						<span className={metaBarSeparatorClass}>·</span>
 						<span className={metaBarTextClass}>
-							{new Date(selected.publishedAt).toLocaleString()}
+							{new Date(selected.publishedAt).toLocaleString(i18n.language)}
 						</span>
 					</>
 				)}
@@ -715,7 +730,9 @@ function NotificationDetailView(props: {
 				{blocksLoading ? (
 					<div className={loadingStateClass}>
 						<Icon icon={LoaderCircle} size={16} className={spinningIconClass} />
-						<span className={mutedTextClass}>Loading…</span>
+						<span className={mutedTextClass}>
+							{i18n.t("online:notificationCenter.loading")}
+						</span>
 					</div>
 				) : (
 					<BlockList blocks={blocks} />
@@ -881,17 +898,28 @@ export function NotificationCenter(): JSX.Element {
 					const isRead = Boolean(readAtById[item.notificationId]);
 					return {
 						menu: [
-							{ id: `ctx.open.${id}`, label: "Open" },
+							{
+								id: `ctx.open.${id}`,
+								label: i18n.t("online:notificationCenter.open"),
+							},
 							sep(),
 							{
 								id: `ctx.toggle.${id}`,
-								label: isRead ? "Mark as Unread" : "Mark as Read",
+								label: isRead
+									? i18n.t("online:notificationCenter.markAsUnread")
+									: i18n.t("online:notificationCenter.markAsRead"),
 								checkable: true,
 								checked: isRead,
 							},
 							sep(),
-							{ id: "ctx.refresh", label: "Refresh" },
-							{ id: "ctx.close", label: "Close" },
+							{
+								id: "ctx.refresh",
+								label: i18n.t("online:notificationCenter.refresh"),
+							},
+							{
+								id: "ctx.close",
+								label: i18n.t("online:notificationCenter.close"),
+							},
 						],
 					};
 				}
@@ -901,17 +929,28 @@ export function NotificationCenter(): JSX.Element {
 					const isRead = Boolean(readAtById[selected.notificationId]);
 					return {
 						menu: [
-							{ id: "ctx.refresh", label: "Refresh" },
+							{
+								id: "ctx.refresh",
+								label: i18n.t("online:notificationCenter.refresh"),
+							},
 							sep(),
 							{
 								id: `ctx.toggle.${selected.notificationId}`,
-								label: isRead ? "Mark as Unread" : "Mark as Read",
+								label: isRead
+									? i18n.t("online:notificationCenter.markAsUnread")
+									: i18n.t("online:notificationCenter.markAsRead"),
 								checkable: true,
 								checked: isRead,
 							},
 							sep(),
-							{ id: "ctx.back", label: "Back to List" },
-							{ id: "ctx.close", label: "Close" },
+							{
+								id: "ctx.back",
+								label: i18n.t("online:notificationCenter.backToListMenu"),
+							},
+							{
+								id: "ctx.close",
+								label: i18n.t("online:notificationCenter.close"),
+							},
 						],
 					};
 				}
@@ -919,9 +958,15 @@ export function NotificationCenter(): JSX.Element {
 				// List view fallback
 				return {
 					menu: [
-						{ id: "ctx.refresh", label: "Refresh" },
+						{
+							id: "ctx.refresh",
+							label: i18n.t("online:notificationCenter.refresh"),
+						},
 						sep(),
-						{ id: "ctx.close", label: "Close" },
+						{
+							id: "ctx.close",
+							label: i18n.t("online:notificationCenter.close"),
+						},
 					],
 				};
 			},
@@ -965,21 +1010,42 @@ export function NotificationCenter(): JSX.Element {
 	// ── List view ──────────────────────────────────────────────────────────────
 
 	return (
+		<NotificationListView
+			items={items}
+			loading={loading}
+			readAtById={readAtById}
+			onRefresh={() => void syncRemote()}
+			onOpen={openDetail}
+		/>
+	);
+}
+
+function NotificationListView(props: {
+	items: NotificationSummary[];
+	loading: boolean;
+	readAtById: Record<string, string>;
+	onRefresh: () => void;
+	onOpen: (item: NotificationSummary) => void;
+}): JSX.Element {
+	const { items, loading, readAtById, onRefresh, onOpen } = props;
+	return (
 		<div className={listContainerClass} data-surface-id="dialog-messages">
 			{/* Header */}
 			<header className={listHeaderClass}>
-				<h1 className={listHeaderTitleClass}>Notifications</h1>
+				<h1 className={heading3Class}>
+					{i18n.t("online:notificationCenter.title")}
+				</h1>
 				<div className={listHeaderActionsClass}>
 					<IconButton
 						variant="ghost"
 						size="sm"
-						onClick={() => void syncRemote()}
-						aria-label="Refresh"
+						onClick={onRefresh}
+						aria-label={i18n.t("online:notificationCenter.refresh")}
 						disabled={loading}
 					>
 						<Icon
 							icon={RefreshCw}
-							size={14}
+							size={16}
 							className={cx(loading && spinningIconClass)}
 						/>
 					</IconButton>
@@ -991,12 +1057,16 @@ export function NotificationCenter(): JSX.Element {
 				{loading && items.length === 0 ? (
 					<div className={emptyStateClass}>
 						<Icon icon={LoaderCircle} size={20} className={spinningIconClass} />
-						<span className={mutedTextClass}>Loading…</span>
+						<span className={mutedTextClass}>
+							{i18n.t("online:notificationCenter.loading")}
+						</span>
 					</div>
 				) : items.length === 0 ? (
 					<div className={emptyStateClass}>
-						<Icon icon={Mail} size={24} className={emptyStateIconClass} />
-						<span className={mutedTextClass}>No notifications</span>
+						<Icon icon={Mail} size={20} className={emptyStateIconClass} />
+						<span className={mutedTextClass}>
+							{i18n.t("online:notificationCenter.empty")}
+						</span>
 					</div>
 				) : (
 					<ul className={notificationListClass}>
@@ -1005,7 +1075,7 @@ export function NotificationCenter(): JSX.Element {
 								key={item.notificationId}
 								item={item}
 								readAtById={readAtById}
-								onOpen={openDetail}
+								onOpen={onOpen}
 								isFixture={tryGetDataServices()?.gateway.isFixture === true}
 							/>
 						))}

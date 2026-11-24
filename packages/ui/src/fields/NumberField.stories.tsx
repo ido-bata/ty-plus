@@ -35,8 +35,29 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+// #551: the unit must sit on the same row as the input (right-hand
+// suffix), not wrap to a helper line underneath it.
+const playUnitBesideInput = async ({
+	canvasElement,
+}: {
+	canvasElement: HTMLElement;
+}): Promise<void> => {
+	const input = canvasElement.querySelector<HTMLInputElement>("input");
+	const unit = canvasElement.querySelector<HTMLElement>(
+		"[data-number-field-unit]",
+	);
+	if (!input || !unit) throw new Error("number field unit row not found");
+	const inputRect = input.getBoundingClientRect();
+	const unitRect = unit.getBoundingClientRect();
+	expect(unitRect.left).toBeGreaterThanOrEqual(inputRect.right - 1);
+	const inputCenter = inputRect.top + inputRect.height / 2;
+	const unitCenter = unitRect.top + unitRect.height / 2;
+	expect(Math.abs(unitCenter - inputCenter)).toBeLessThan(4);
+};
+
 export const Default: Story = {
 	args: {},
+	play: playUnitBesideInput,
 };
 
 export const WithBoundedRange: Story = {

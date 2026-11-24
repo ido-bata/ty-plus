@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import { cx } from "@ty-plus/ui/util/cx";
+import { cx } from "@ty-plus/ui";
+import { useTranslation } from "react-i18next";
 import { css } from "@/styled-system/css";
 import { SITE } from "../lib/site";
 import { container } from "../styles/layout";
@@ -91,20 +92,21 @@ const bottom = css({
 });
 
 const PRODUCT_LINKS = [
-	{ to: "/features", label: "Features" },
-	{ to: "/download", label: "Download" },
-	{ to: "/docs", label: "Docs" },
-	{ to: "/changelog", label: "Changelog" },
+	{ to: "/features", labelKey: "navLinks.features" },
+	{ to: "/download", labelKey: "navLinks.download" },
+	{ to: "/docs", labelKey: "navLinks.docs" },
+	{ to: "/changelog", labelKey: "navLinks.changelog" },
 ] as const;
 
 const RESOURCE_LINKS = [
-	{ href: SITE.releases, label: "GitHub Releases" },
-	{ href: SITE.repo, label: "Source code" },
-	{ href: SITE.userGuide, label: "User guide" },
-	{ to: "/support", label: "Support" },
+	{ href: SITE.releases, labelKey: "footer.releases" },
+	{ href: SITE.repo, labelKey: "footer.source" },
+	{ href: SITE.userGuide, labelKey: "footer.userGuide" },
+	{ to: "/support", labelKey: "navLinks.support" },
 ] as const;
 
 export function SiteFooter() {
+	const { t } = useTranslation("web");
 	return (
 		<footer className={footer}>
 			<div className={cx(container({ size: "content" }), inner)}>
@@ -115,35 +117,32 @@ export function SiteFooter() {
 						/>
 						{SITE.name}
 					</Link>
-					<p className={tagline}>
-						Free, open-source (MIT), local-first After Effects extension. No
-						account required.
-					</p>
+					<p className={tagline}>{t("footer.description")}</p>
 				</div>
-				<nav className={col} aria-label="Product">
-					<h2 className={colTitle}>Product</h2>
+				<nav className={col} aria-label={t("footer.product")}>
+					<h2 className={colTitle}>{t("footer.product")}</h2>
 					<ul className={colList}>
 						{PRODUCT_LINKS.map((link) => (
 							<li key={link.to}>
 								<Link to={link.to} className={colLink}>
-									{link.label}
+									{t(link.labelKey)}
 								</Link>
 							</li>
 						))}
 					</ul>
 				</nav>
-				<nav className={col} aria-label="Resources">
-					<h2 className={colTitle}>Resources</h2>
+				<nav className={col} aria-label={t("footer.resources")}>
+					<h2 className={colTitle}>{t("footer.resources")}</h2>
 					<ul className={colList}>
 						{RESOURCE_LINKS.map((link) => (
-							<li key={link.label}>
+							<li key={link.labelKey}>
 								{"href" in link ? (
 									<a href={link.href} className={colLink}>
-										{link.label}
+										{t(link.labelKey)}
 									</a>
 								) : (
 									<Link to={link.to} className={colLink}>
-										{link.label}
+										{t(link.labelKey)}
 									</Link>
 								)}
 							</li>
@@ -152,8 +151,8 @@ export function SiteFooter() {
 				</nav>
 			</div>
 			<div className={cx(container({ size: "content" }), bottom)}>
-				<span>© ty-plus contributors</span>
-				<span>MIT License · Works offline · CEP panel</span>
+				<span>{t("footer.copyright")}</span>
+				<span>{t("footer.bottom")}</span>
 			</div>
 		</footer>
 	);

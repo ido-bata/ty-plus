@@ -1,7 +1,5 @@
-import { Input } from "@ty-plus/ui/fields/Input";
-import { cx } from "@ty-plus/ui/util/cx";
+import { cx, fieldDescriptionClass, Input } from "@ty-plus/ui";
 import { type JSX, useId } from "react";
-import { css } from "@/styled-system/css";
 
 export type TokenEditorProps = {
 	label: string;
@@ -10,12 +8,6 @@ export type TokenEditorProps = {
 	description?: string;
 	className?: string;
 };
-
-const descriptionStyle = css({
-	marginTop: "1",
-	fontSize: "text-xs",
-	color: "text.muted",
-});
 
 export function TokenEditor({
 	label,
@@ -36,7 +28,7 @@ export function TokenEditor({
 				uiSize="sm"
 			/>
 			{description ? (
-				<div className={cx(descriptionStyle)}>{description}</div>
+				<div className={cx(fieldDescriptionClass)}>{description}</div>
 			) : null}
 		</div>
 	);

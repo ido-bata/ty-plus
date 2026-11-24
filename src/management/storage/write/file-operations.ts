@@ -4,10 +4,7 @@
  */
 
 import { evalScript } from "@/management/ae/cep/eval";
-import {
-	buildEnsureDirScriptWithParents,
-	buildWriteBase64FileScript,
-} from "@/management/storage/extendscript/file-operations.ext";
+import { buildWriteBase64FileScript } from "@/management/storage/extendscript/file-operations.ext";
 import { bytesToBase64 } from "@/shared/util/bytes-to-base64";
 
 /**
@@ -34,13 +31,14 @@ export const writeBytesToFile = async (
 	const result = await evalScript(win, script);
 	const trimmed = (result ?? "").trim();
 	if (!trimmed) {
-		throw new Error("writeBytesToFile failed: empty result");
+		throw new Error("writeBytesToFile failed: empty result"); // i18n-exempt: internal diagnostic — not rendered as UI copy
 	}
 	const writtenLength = Number(trimmed);
 	if (!Number.isFinite(writtenLength)) {
-		throw new Error(`writeBytesToFile failed: ${trimmed}`);
+		throw new Error(`writeBytesToFile failed: ${trimmed}`); // i18n-exempt: internal diagnostic — not rendered as UI copy
 	}
 	if (writtenLength !== bytes.length) {
+		// i18n-exempt: internal diagnostic — not rendered as UI copy
 		throw new Error(
 			`writeBytesToFile failed: expected ${bytes.length} bytes, got ${writtenLength}`,
 		);
@@ -50,7 +48,3 @@ export const writeBytesToFile = async (
 /**
  * Ensure a directory exists, creating it if necessary.
  */
-const ensureDir = async (win: Window, dirPath: string): Promise<void> => {
-	const script = buildEnsureDirScriptWithParents(dirPath);
-	await evalScript(win, script);
-};

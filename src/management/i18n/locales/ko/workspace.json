@@ -22,7 +22,30 @@
 		"expand": "펼치기",
 		"collapse": "접기",
 		"position": "위치",
-		"orientation": "방향"
+		"orientation": "방향",
+		"ariaLabel": "프리셋 / 위젯",
+		"collapseExpand": "접기/펼치기",
+		"horizontal": "가로",
+		"vertical": "세로",
+		"resetToDefaults": "기본값으로 재설정",
+		"buttons": {
+			"localPreset": "로컬 프리셋",
+			"groupPreset": "그룹 프리셋",
+			"animationPreset": "애니메이션 프리셋",
+			"layerCompPreset": "레이어/Comp 프리셋",
+			"codePreset": "코드 프리셋",
+			"addWidget": "위젯 추가"
+		},
+		"positionLabels": {
+			"topLeft": "왼쪽 위",
+			"topCenter": "위쪽 가운데",
+			"topRight": "오른쪽 위",
+			"bottomLeft": "왼쪽 아래",
+			"bottomCenter": "아래쪽 가운데",
+			"bottomRight": "오른쪽 아래",
+			"leftCenter": "왼쪽 가운데",
+			"rightCenter": "오른쪽 가운데"
+		}
 	},
 	"context": {
 		"lock": "잠금",
@@ -41,5 +64,43 @@
 		"savingPaused": "이 파일이 덮어쓰이지 않도록 저장이 일시 중지되었습니다. 파일을 복구하거나 복원한 후 다시 시도하세요.",
 		"file": "파일: workspace-{{wsIndex}}.json",
 		"retry": "복원 다시 시도"
+	},
+	"statusBar": {
+		"undoTitle": "실행 취소 (Ctrl+Z)",
+		"redoTitle": "다시 실행 (Ctrl+Y)",
+		"saveSnapshotTitle": "레이아웃 스냅샷 저장",
+		"savedLayoutsTitle": "저장된 레이아웃 ({{count}})",
+		"savedLayoutsTitleEmpty": "저장된 레이아웃(없음)",
+		"noSavedLayouts": "저장된 레이아웃이 없습니다",
+		"restoreSnapshotTitle": "\"{{label}}\" 복원",
+		"presetLibraryTitle": "프리셋 라이브러리(온라인)",
+		"debugConsoleTitle": "디버그 콘솔 (Ctrl+`)"
+	},
+	"gridTile": {
+		"widgetTitle": "위젯",
+		"configLoadError": "구성을 불러올 수 없습니다"
+	},
+	"debugProbe": {
+		"title": "대화상자 프로브",
+		"message": "패널 -> 대화상자 브리지 확인"
+	},
+	"easingCurveColors": {
+		"linear": "선형",
+		"hold": "홀드",
+		"easeInGentle": "이즈 인",
+		"easeInSharp": "이즈 인(급격)",
+		"easeOutGentle": "이즈 아웃",
+		"easeOutSharp": "이즈 아웃(급격)",
+		"easeInOut": "이즈 인/아웃",
+		"overshoot": "오버슈트",
+		"bezier": "베지어"
+	},
+	"statusMessages": {
+		"presetAssetMissing": "프리셋 에셋이 디스크에 없습니다 — 실행이 비활성화되었습니다.",
+		"applyingAnchorPoint": "앵커 포인트 적용 중: {{pos}}...",
+		"anchorPointRequested": "앵커 포인트 요청됨: {{pos}}",
+		"presetFailed": "프리셋 실패: {{message}}",
+		"widgetAdded": "{{name}} 추가됨",
+		"layoutReset": "워크스페이스 레이아웃이 재설정되었습니다."
 	}
 }

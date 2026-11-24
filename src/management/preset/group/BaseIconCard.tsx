@@ -1,16 +1,18 @@
+import { sectionLabelClass } from "@ty-plus/ui";
 import type { JSX } from "react";
+import { i18n } from "@/management/i18n/index";
 import { readUserHomeOrFallback } from "@/management/preset/catalog-add/browse-start-dir";
-import { PresetIconEditor } from "@/management/preset/components/IconEditor";
 import type { Preset } from "@/management/preset/contract";
-import type { PresetIconEditorDraft } from "@/management/preset/icon-editor";
-import { presetIconDraftToPresetIcon } from "@/management/preset/icon-editor";
-import { FramedPresetGlyph } from "@/management/preset/workspace/glyph";
-import { glyphBoxFillClass } from "@/management/preset/workspace/glyph-classes";
+import { PresetIconEditor } from "@/management/preset/icon/Editor";
+import type { PresetIconEditorDraft } from "@/management/preset/icon/editor-state";
+import { presetIconDraftToPresetIcon } from "@/management/preset/icon/editor-state";
+import { glyphBoxFillClass } from "@/management/preset/workspace/glyph/classes";
+import { FramedPresetGlyph } from "@/management/preset/workspace/glyph/WorkspaceGlyph";
 import { css } from "@/styled-system/css";
 
 const cardClass = css({
 	borderRadius: "shell-sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 	backgroundColor: "surface.widget",
@@ -21,14 +23,6 @@ const headerClass = css({
 	display: "flex",
 	alignItems: "center",
 	justifyContent: "space-between",
-});
-
-const labelClass = css({
-	fontSize: "xs",
-	fontWeight: "medium",
-	textTransform: "uppercase",
-	letterSpacing: "wide",
-	color: "text.muted",
 });
 
 const editorHostClass = css({
@@ -45,13 +39,15 @@ export function BaseIconCard({
 	return (
 		<div className={cardClass}>
 			<div className={headerClass}>
-				<span className={labelClass}>Base Icon (default for all presets)</span>
+				<span className={sectionLabelClass}>
+					{i18n.t("presets:group.baseIcon.heading")}
+				</span>
 			</div>
 			<div className={editorHostClass}>
 				<PresetIconEditor
 					draft={baseIconDraft}
 					onChange={onBaseIconDraftChange}
-					label="Base icon"
+					label={i18n.t("presets:group.baseIcon.label")}
 					browseDir={readUserHomeOrFallback()}
 					framed={true}
 					preview={
@@ -60,6 +56,7 @@ export function BaseIconCard({
 								{
 									id: "base-icon-preview",
 									type: "preset" as const,
+									// i18n-exempt: synthetic preset record title for the glyph preview, never rendered as a label
 									title: "Preview",
 									filePath: "ty-plus://base-icon-preview",
 									icon: presetIconDraftToPresetIcon(baseIconDraft) ?? {

@@ -85,6 +85,7 @@ type CepPathReader = {
 };
 
 const unsupportedCepFileAccess = async (): Promise<never> => {
+	// i18n-exempt: internal diagnostic — not rendered as UI copy
 	throw new Error(
 		"CEP browser runtime does not provide direct filesystem access. Use host services for file mutations.",
 	);

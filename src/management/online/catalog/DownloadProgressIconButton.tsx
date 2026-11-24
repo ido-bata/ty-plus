@@ -1,6 +1,4 @@
-import { IconButton } from "@ty-plus/ui/controls/IconButton";
-import { Icon } from "@ty-plus/ui/icons/Icon";
-import { cx } from "@ty-plus/ui/util/cx";
+import { cx, Icon, IconButton } from "@ty-plus/ui";
 import { AlertCircle, Check, Download } from "lucide-react";
 import { type ReactElement, useEffect, useRef } from "react";
 import { css } from "@/styled-system/css";
@@ -10,7 +8,7 @@ import {
 	ringDashOffset,
 	stageToProgress,
 } from "./download-progress";
-import type { DownloadProgress } from "./use-cases";
+import type { DownloadProgress } from "./operations";
 
 type DownloadStage = DownloadProgress["stage"];
 
@@ -30,7 +28,7 @@ const svgOverlayClass = css({
 
 const iconLayerClass = css({
 	position: "relative",
-	zIndex: 10,
+	zIndex: "var(--ty-z-overlay)",
 	display: "inline-flex",
 	alignItems: "center",
 	justifyContent: "center",

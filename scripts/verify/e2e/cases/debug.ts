@@ -8,7 +8,7 @@
  * UC-G03: dev builds install `__TY_PLUS_OPERATION_WORKER_VERIFY__` on the
  * panel (operation-worker-dev-panel.ts, development-unsigned trust mode
  * only). The case calls that probe — the same entry point
- * `scripts/verify/verify-operation-worker-cep.ts` drives — and asserts the
+ * `scripts/verify/operation-worker/operation-worker-cep.ts` drives — and asserts the
  * spawn → accept → result → exit evidence shape.
  */
 

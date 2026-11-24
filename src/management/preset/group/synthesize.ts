@@ -1,21 +1,20 @@
+import { i18n } from "@/management/i18n/index";
 import type { Preset } from "@/management/preset/contract";
-import type { GroupEntry } from "@/management/preset/group-catalog";
+import type { GroupEntry } from "@/management/preset/group/catalog";
 
 /** Synthetic catalog row for a workspace group placement (not in `presets.json`). */
 export function synthesizeGroupPresetForTile(entry: GroupEntry): Preset {
 	const memberCount = entry.presetIds.length;
 	const memberLine =
 		memberCount === 0
-			? "No member presets."
-			: memberCount === 1
-				? "1 member preset."
-				: `${memberCount} member presets.`;
+			? i18n.t("presets:group.synth.noMembers")
+			: i18n.t("presets:group.synth.memberPresets", { count: memberCount });
 	return {
 		id: entry.id,
 		type: "preset",
 		title: entry.title?.trim() ?? entry.id,
 		filePath: "",
-		description: `Group container. ${memberLine}`,
+		description: i18n.t("presets:group.synth.description", { memberLine }),
 		data: {
 			groupId: entry.id,
 			presetIds: [...entry.presetIds],

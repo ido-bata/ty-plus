@@ -1,9 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { expect, waitFor } from "storybook/test";
 
 // IMPORTANT: do NOT import `PresetLibrary` from `./Dialog`. The component
-// pulls in `@/management/workspace/services` and `@/management/preset`
+// pulls in `@/management/workspace/core/services` and `@/management/preset`
 // (via `use-cases` → `@/management/preset/authoring/request`,
-// `notify-panels-after-preset-save` → `@/management/preset/use-cases`,
+// `notify-panels-after-preset-save` → `@/management/preset/operations`,
 // `services` → `@/management/preset/repository/shared`), whose barrel
 // re-export chain is incompatible with the Storybook build (see
 // `.storybook/main.ts`: the CEP-only `ty-plus:inline-oniguruma-wasm`
@@ -150,6 +151,16 @@ const DialogStub = (args: Args) => {
 						alignItems: "center",
 					}}
 				>
+					{!args.showSidePanel && (
+						<button
+							type="button"
+							style={btnStyle}
+							aria-label="Show filters"
+							title="Show filters"
+						>
+							◧
+						</button>
+					)}
 					<h1 style={{ fontSize: 13, fontWeight: 600 }}>
 						Online Preset Library
 					</h1>
@@ -229,9 +240,90 @@ const DialogStub = (args: Args) => {
 								color: "#a0a0a0",
 							}}
 						>
-							{args.catalogCount === 0
-								? "No online catalog."
-								: "No presets match filter."}
+							{args.catalogCount === 0 ? (
+								<>
+									<span>No online catalog.</span>
+									<button
+										type="button"
+										style={btnStyle}
+										aria-label="Refresh catalog"
+										title="Refresh catalog"
+									>
+										↻
+									</button>
+								</>
+							) : (
+								<>
+									<span>No presets match filter.</span>
+									<button
+										type="button"
+										style={btnStyle}
+										aria-label="Clear all filters"
+										title="Clear all filters"
+									>
+										×
+									</button>
+								</>
+							)}
+						</div>
+					) : args.viewMode === "cards" ? (
+						<div
+							data-preset-cards
+							style={{ display: "flex", flexDirection: "column", gap: 8 }}
+						>
+							{tiles.slice(0, 6).map((i) => (
+								<div
+									key={i}
+									data-preset-card={i}
+									style={{
+										display: "flex",
+										gap: 12,
+										padding: 8,
+										border: "1px solid #3a3a3a",
+										borderRadius: 4,
+										background: "#252525",
+									}}
+								>
+									<div
+										data-card-thumb
+										style={{
+											width: 96,
+											height: 96,
+											flexShrink: 0,
+											background: "#2c2c2c",
+											borderRadius: 4,
+										}}
+									/>
+									<div style={{ flex: 1, minWidth: 0 }}>
+										<div style={{ fontWeight: 600 }}>Preset {i}</div>
+										<div style={{ fontSize: 11, color: "#a0a0a0" }}>
+											Color · Short description for preset {i}
+										</div>
+										<div
+											style={{
+												marginTop: 8,
+												display: "flex",
+												gap: 4,
+											}}
+										>
+											<button
+												type="button"
+												style={btnStyle}
+												aria-label="Download"
+											>
+												↓
+											</button>
+											<button
+												type="button"
+												style={btnStyle}
+												aria-label="Open Notion"
+											>
+												↗
+											</button>
+										</div>
+									</div>
+								</div>
+							))}
 						</div>
 					) : args.viewMode === "list" ? (
 						<table style={{ width: "100%", borderCollapse: "collapse" }}>
@@ -404,10 +496,35 @@ export const ListView: Story = {
 
 export const CardsView: Story = {
 	args: { viewMode: "cards" },
+	play: async ({ canvasElement }) => {
+		const cards = canvasElement.querySelector("[data-preset-cards]");
+		expect(cards).not.toBeNull();
+		expect(canvasElement.querySelector("[data-preset-gallery]")).toBeNull();
+		const firstCard = canvasElement.querySelector("[data-preset-card]");
+		expect(firstCard).not.toBeNull();
+		const thumb = firstCard?.querySelector("[data-card-thumb]");
+		const title = Array.from(firstCard?.querySelectorAll("div") ?? []).find(
+			(el) => /^Preset \d+$/.test(el.textContent ?? ""),
+		);
+		expect(thumb).not.toBeNull();
+		expect(title).toBeTruthy();
+		const thumbRect = thumb?.getBoundingClientRect();
+		const titleRect = title?.getBoundingClientRect();
+		expect(thumbRect && titleRect).toBeTruthy();
+		if (!thumbRect || !titleRect) return;
+		expect(thumbRect.right).toBeLessThanOrEqual(titleRect.left + 1);
+	},
 };
 
 export const SidePanelHidden: Story = {
 	args: { showSidePanel: false },
+	play: async ({ canvasElement }) => {
+		await waitFor(() => {
+			expect(
+				canvasElement.querySelector('[aria-label="Show filters"]'),
+			).not.toBeNull();
+		});
+	},
 };
 
 export const WithQuery: Story = {
@@ -416,10 +533,24 @@ export const WithQuery: Story = {
 
 export const NoCatalog: Story = {
 	args: { catalogCount: 0, filteredCount: 0 },
+	play: async ({ canvasElement }) => {
+		await waitFor(() => {
+			expect(
+				canvasElement.querySelector('[aria-label="Refresh catalog"]'),
+			).not.toBeNull();
+		});
+	},
 };
 
 export const NoMatches: Story = {
 	args: { catalogCount: 20, filteredCount: 0 },
+	play: async ({ canvasElement }) => {
+		await waitFor(() => {
+			expect(
+				canvasElement.querySelector('[aria-label="Clear all filters"]'),
+			).not.toBeNull();
+		});
+	},
 };
 
 export const GalleryZoomedIn: Story = {

@@ -12,6 +12,9 @@
 		"edit": "편집",
 		"close": "닫기"
 	},
+	"dialogs": {
+		"unsavedChangesConfirm": "저장되지 않은 변경 사항이 손실됩니다. 대화 상자를 닫으시겠습니까?"
+	},
 	"actions": {
 		"run": "실행",
 		"duplicate": "복제",
@@ -179,6 +182,104 @@
 			"copyError": "오류 세부 정보 복사",
 			"copied": "클립보드에 복사됨",
 			"digest": "오류 ID"
+		}
+	},
+	"ui": {
+		"loadingSpinner": {
+			"label": "불러오는 중"
+		},
+		"searchField": {
+			"clearAria": "검색 지우기",
+			"clearTitle": "지우기"
+		},
+		"regexEditor": {
+			"enterPattern": "패턴을 입력하세요.",
+			"invalidFlags": "잘못된 플래그: {{flags}}",
+			"plainSource": "일반 정규식 소스",
+			"literalFormat": "리터럴 정규식 형식",
+			"testString": "테스트 문자열",
+			"sourcePlaceholder": "정규식 소스",
+			"flagsPlaceholder": "플래그",
+			"matches": "일치",
+			"noMatch": "일치 없음",
+			"literalSuffix": "· 리터럴 /pattern/flags",
+			"sourceSuffix": "· 소스만"
+		},
+		"listSelect": {
+			"placeholder": "선택…"
+		}
+	},
+	"directoryBrowser": {
+		"refresh": "새로 고침",
+		"goUp": "위로",
+		"open": "열기",
+		"select": "선택",
+		"deselect": "선택 해제",
+		"listView": "목록 보기",
+		"iconView": "아이콘 보기",
+		"noFilesFound": "파일을 찾을 수 없음",
+		"selectFileAria": "파일 {{name}} 선택",
+		"selectFolderAria": "폴더 {{name}} 선택"
+	},
+	"debugConsole": {
+		"title": "콘솔",
+		"clear": "지우기",
+		"evaluateAria": "JavaScript 평가",
+		"evaluatePlaceholder": "JavaScript 평가…",
+		"rowContextHint": "오른쪽 클릭으로 복사",
+		"filterLevelAria": "콘솔 메시지 필터링",
+		"filterSourceAria": "소스별 콘솔 메시지 필터링",
+		"filterScopeAria": "세션 범위별 콘솔 메시지 필터링",
+		"levels": {
+			"all": "전체",
+			"log": "로그",
+			"info": "정보",
+			"warn": "경고",
+			"error": "오류"
+		},
+		"sources": {
+			"all": "모든 소스",
+			"panel": "패널",
+			"modeless": "모드리스",
+			"hostBridge": "호스트 브리지",
+			"online": "온라인",
+			"preset": "프리셋",
+			"opWorker": "작업 워커",
+			"workspace": "작업 영역",
+			"boot": "부팅",
+			"debugConsole": "디버그 콘솔",
+			"console": "콘솔"
+		},
+		"scopes": {
+			"allHistory": "전체 기록",
+			"thisSession": "이번 세션"
+		},
+		"contextMenu": {
+			"copyMessage": "메시지 복사",
+			"copyAllMessages": "모든 메시지 복사",
+			"clearConsole": "콘솔 지우기",
+			"enableAutoScroll": "자동 스크롤 활성화",
+			"disableAutoScroll": "자동 스크롤 비활성화",
+			"itemActive": "{{level}}(활성)"
+		}
+	},
+	"errors": {
+		"hostContextUnavailable": "호스트 컨텍스트를 사용할 수 없습니다.",
+		"fileAccessUnavailable": "이 화면에서는 CEP Node 파일 접근을 사용할 수 없습니다.",
+		"fsApiUnavailable": "이 호스트 런타임에서는 CEP Node fs API를 사용할 수 없습니다.",
+		"fileImportAeOnly": "파일 가져오기는 현재 After Effects에서만 사용할 수 있습니다.",
+		"initNotFound": "ty-plus-init.json을 찾을 수 없습니다(앱 루트 없음). 모든 쓰기 전에 온보딩을 완료해야 합니다.",
+		"initIncomplete": "ty-plus가 아직 초기화되지 않았습니다. ty-plus-init.json이 완료를 보고할 때까지 쓰기가 차단됩니다.",
+		"initSupportRootBlank": "ty-plus-init.json이 완료로 표시되어 있지만 supportRoot가 비어 있습니다.",
+		"hostExecFailed": "Ty Plus: {{message}}",
+		"notify": {
+			"generic": "오류가 발생했습니다",
+			"fsPermission": "권한이 거부되었습니다. 파일/폴더 권한을 확인하세요.",
+			"fsNotFound": "파일 또는 폴더를 찾을 수 없습니다. 이동되거나 삭제되었을 수 있습니다.",
+			"fsCorrupted": "데이터 파일이 손상되어 백업되었습니다. 다시 시도하세요.",
+			"aeEvalFailed": "After Effects 명령이 실패했습니다. 다시 시도하거나 AE를 재시작하세요.",
+			"aeNotAvailable": "After Effects 연결이 끊어졌습니다. 패널을 다시 시작하세요.",
+			"network": "네트워크 오류입니다. 연결을 확인하세요."
 		}
 	}
 }

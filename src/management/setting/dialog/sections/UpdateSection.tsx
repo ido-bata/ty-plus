@@ -1,7 +1,7 @@
-import { ListSelect } from "@ty-plus/ui/fields/ListSelect";
+import { Button, ListSelect } from "@ty-plus/ui";
 import { type JSX, useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { OperationWorkerAttemptError } from "@/management/ipc/operation-worker-runner";
+import { OperationWorkerAttemptError } from "@/management/ipc/operation-worker/runner";
 import {
 	isReleaseChannel,
 	type ReleaseChannel,
@@ -17,14 +17,18 @@ import {
 	type UpdateCheckResult,
 	type UpdateFeed,
 } from "@/management/online/update/feed";
+import {
+	requestPanelUpdateInstall,
+	UpdateInstallRelayError,
+} from "@/management/online/update/install-relay";
 import { useSettings } from "@/management/setting/context";
 import {
 	SettingsField,
 	SettingsFieldLabel,
 	SettingsGrid,
 } from "@/management/setting/dialog/layout/SettingsGrid";
-import { openUrlInDefaultBrowser } from "@/management/workspace/hooks/helpers";
-import { getUpdateInstaller } from "@/management/workspace/services";
+import { getUpdateInstaller } from "@/management/workspace/core/services";
+import { openUrlInDefaultBrowser } from "@/management/workspace/hooks/open-surfaces";
 import { css } from "@/styled-system/css";
 
 const mutedTextStyle = css({
@@ -48,13 +52,6 @@ const statusMutedStyle = css({
 	fontSize: "text-sm",
 	fontWeight: "medium",
 	color: "text.muted",
-});
-
-const linkStyle = css({
-	fontSize: "text-sm",
-	color: "text.link",
-	textDecoration: "underline",
-	cursor: "pointer",
 });
 
 const linkRowStyle = css({
@@ -169,21 +166,28 @@ export function UpdateSection(): JSX.Element {
 		const installer = getUpdateInstaller();
 		const platform = detectUpdatePlatform();
 		const asset = installableZipAsset(result.feed, platform);
-		if (installer === null || asset === null) {
+		if (asset === null) {
 			setInstallState({ kind: "done", status: "manual_required" });
 			return;
 		}
+		const request = {
+			release_version: result.feed.version,
+			tag: `v${result.feed.version}`,
+			asset: {
+				url: asset.url,
+				file_name: asset.fileName,
+				sha256: asset.sha256,
+			},
+		};
 		setInstallState({ kind: "installing" });
 		try {
-			const installed = await installer.installUpdate({
-				release_version: result.feed.version,
-				tag: `v${result.feed.version}`,
-				asset: {
-					url: asset.url,
-					file_name: asset.fileName,
-					sha256: asset.sha256,
-				},
-			});
+			// Issue #243: this dialog runs in its own CEP surface without a
+			// worker composition; relay to the opener panel over the updates
+			// channel when no local installer is registered.
+			const installed =
+				installer !== null
+					? await installer.installUpdate(request)
+					: await requestPanelUpdateInstall(request);
 			setInstallState({
 				kind: "done",
 				status:
@@ -197,7 +201,11 @@ export function UpdateSection(): JSX.Element {
 			setInstallState({
 				kind: "failed",
 				code:
-					error instanceof OperationWorkerAttemptError ? error.code : undefined,
+					error instanceof OperationWorkerAttemptError
+						? error.code
+						: error instanceof UpdateInstallRelayError
+							? error.code
+							: undefined,
 			});
 		}
 	}, [result]);
@@ -255,14 +263,14 @@ export function UpdateSection(): JSX.Element {
 			<SettingsField span={3}>
 				<SettingsFieldLabel>{t("updates.installed")}</SettingsFieldLabel>
 				<span className={mutedTextStyle}>{currentReleaseVersion}</span>
-				<button
-					type="button"
-					className={linkStyle}
+				<Button
+					variant="link"
+					uiSize="content"
 					onClick={() => void runCheck()}
 					disabled={checking}
 				>
 					{t("updates.checkNow")}
-				</button>
+				</Button>
 			</SettingsField>
 			<SettingsField span={3}>
 				<span className={mutedTextStyle}>{t("updates.status")}</span>
@@ -273,28 +281,28 @@ export function UpdateSection(): JSX.Element {
 				<span className={linkRowStyle}>
 					{result?.status === "update-available" ? (
 						<>
-							<button
-								type="button"
-								className={linkStyle}
+							<Button
+								variant="link"
+								uiSize="content"
 								onClick={() =>
 									openUrlInDefaultBrowser(result.feed.releaseNotesUrl)
 								}
 							>
 								{t("updates.releaseNotes")}
-							</button>
+							</Button>
 							{installAllowed &&
 							(installState.kind !== "done" ||
 								installState.status === "manual_required") ? (
-								<button
-									type="button"
-									className={linkStyle}
+								<Button
+									variant="link"
+									uiSize="content"
 									onClick={() => void runInstall()}
 									disabled={installState.kind === "installing"}
 								>
 									{installState.kind === "installing"
 										? t("updates.installing")
 										: t("updates.install")}
-								</button>
+								</Button>
 							) : null}
 						</>
 					) : (
@@ -320,13 +328,13 @@ export function UpdateSection(): JSX.Element {
 									: t("updates.installManual")}
 					</span>
 				) : null}
-				<button
-					type="button"
-					className={linkStyle}
+				<Button
+					variant="link"
+					uiSize="content"
 					onClick={() => openUrlInDefaultBrowser(OFFICIAL_RELEASES_URL)}
 				>
 					{t("updates.browse")}
-				</button>
+				</Button>
 			</SettingsField>
 		</SettingsGrid>
 	);

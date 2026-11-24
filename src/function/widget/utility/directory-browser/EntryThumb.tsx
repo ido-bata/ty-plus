@@ -1,3 +1,5 @@
+import { Icon } from "@ty-plus/ui";
+import { ArrowUp } from "lucide-react";
 import type { JSX } from "react";
 import { useMemo } from "react";
 import { findSiblingImagePathForPresetFile } from "@/management/preset/sibling-thumbnail";
@@ -6,11 +8,11 @@ import {
 	createCepNodeFileBrowserService,
 	type FileBrowserEntry,
 } from "@/management/storage/file-browser-service";
+import { FileTypeGlyph } from "@/management/storage/file-type-glyph";
+import { ThumbnailTile } from "@/management/storage/thumbnail/Tile";
+import { useThumbnail } from "@/management/storage/thumbnail/use-thumb";
 import { css } from "@/styled-system/css";
-import { EntryGlyph } from "./EntryGlyph";
 import { useFolderPreview } from "./hooks/useFolderPreview";
-import { useThumbnail } from "./hooks/useThumbnail";
-import { ThumbnailTile } from "./ThumbnailTile";
 
 /**
  * Build a synthetic `FileBrowserEntry` for a sidecar sibling image so
@@ -26,7 +28,6 @@ import { ThumbnailTile } from "./ThumbnailTile";
  * real timestamp into the wire payload.
  */
 function siblingEntryFor(
-	entry: FileBrowserEntry,
 	sidekickPath: string,
 	size: number,
 	modifiedAt: string,
@@ -58,7 +59,7 @@ function siblingEntryFor(
  * 3. **Preset files** with a sibling image — render the sibling image
  *    via `useThumbnail`, falling back to the entry glyph while the
  *    cache URL is resolving.
- * 4. **Everything else** — fall back to `EntryGlyph`.
+ * 4. **Everything else** — fall back to the file-type glyph.
  *
  * The `FileBrowserService` is created lazily inside the component
  * (matching the `useFileBrowserDirectory` pattern) so we don't have to
@@ -79,6 +80,26 @@ export function EntryThumb(props: {
 	glyphClassName: string;
 }): JSX.Element {
 	const { entry, siblingSourceEntries, glyphSize, glyphClassName } = props;
+	// The parent-directory entry ("..") is not a real directory row, so it
+	// gets an up-arrow instead of the folder glyph. Every other entry uses
+	// the shared file-type mapping (`FileTypeGlyph`), which owns the
+	// file-type -> icon taxonomy.
+	const entryGlyph =
+		entry.name === ".." && entry.isDirectory ? (
+			<Icon
+				icon={ArrowUp}
+				size={glyphSize}
+				className={glyphClassName}
+				aria-hidden
+			/>
+		) : (
+			<FileTypeGlyph
+				fileType={entry.fileType}
+				isDirectory={entry.isDirectory}
+				size={glyphSize}
+				className={glyphClassName}
+			/>
+		);
 	const service = useMemo(() => {
 		if (typeof window !== "undefined" && canUseCepNodeFileBrowser(window)) {
 			return createCepNodeFileBrowserService({ win: window });
@@ -103,7 +124,7 @@ export function EntryThumb(props: {
 		if (!sidekickPath) {
 			return null;
 		}
-		return siblingEntryFor(entry, sidekickPath, entry.size, entry.modifiedAt);
+		return siblingEntryFor(sidekickPath, entry.size, entry.modifiedAt);
 	}, [sidekickPath, entry]);
 	const sidekickThumb = useThumbnail(
 		sidekickEntry ?? {
@@ -144,7 +165,7 @@ export function EntryThumb(props: {
 					padding: "0.5",
 				})}
 			>
-				<EntryGlyph entry={entry} size={glyphSize} className={glyphClassName} />
+				{entryGlyph}
 			</div>
 		);
 	}
@@ -203,7 +224,7 @@ export function EntryThumb(props: {
 				padding: "0.5",
 			})}
 		>
-			<EntryGlyph entry={entry} size={glyphSize} className={glyphClassName} />
+			{entryGlyph}
 		</div>
 	);
 }

@@ -55,12 +55,12 @@ export const initCpStateCache = (
 /**
  * Floating positioning base applied to every Control Panel anchor.
  *
- * `z-index: 150` sits above the workspace surface (z=0) but below the debug console
- * overlay (z=9999) and modeless dialogs (z=1000).
+ * `var(--ty-z-control-panel)` sits above the workspace surface but below the
+ * debug console overlay and modeless dialogs.
  */
 const floatingBase = css({
 	position: "fixed",
-	zIndex: 150,
+	zIndex: "var(--ty-z-control-panel)",
 });
 
 /**
@@ -77,7 +77,7 @@ const plainBottomInset = css({ bottom: "4" });
 const POSITION_CLASS_BY_KEY: Record<CpPosition, string> = {
 	"top-left": css({
 		position: "fixed",
-		zIndex: 150,
+		zIndex: "var(--ty-z-control-panel)",
 		top: "4",
 		left: "4",
 		right: "auto",
@@ -85,7 +85,7 @@ const POSITION_CLASS_BY_KEY: Record<CpPosition, string> = {
 	}),
 	"top-center": css({
 		position: "fixed",
-		zIndex: 150,
+		zIndex: "var(--ty-z-control-panel)",
 		top: "4",
 		left: "0",
 		right: "0",
@@ -95,7 +95,7 @@ const POSITION_CLASS_BY_KEY: Record<CpPosition, string> = {
 	}),
 	"top-right": css({
 		position: "fixed",
-		zIndex: 150,
+		zIndex: "var(--ty-z-control-panel)",
 		top: "4",
 		right: "4",
 		left: "auto",
@@ -103,14 +103,14 @@ const POSITION_CLASS_BY_KEY: Record<CpPosition, string> = {
 	}),
 	"bottom-left": css({
 		position: "fixed",
-		zIndex: 150,
+		zIndex: "var(--ty-z-control-panel)",
 		left: "4",
 		right: "auto",
 		top: "auto",
 	}),
 	"bottom-center": css({
 		position: "fixed",
-		zIndex: 150,
+		zIndex: "var(--ty-z-control-panel)",
 		left: "0",
 		right: "0",
 		top: "auto",
@@ -119,14 +119,14 @@ const POSITION_CLASS_BY_KEY: Record<CpPosition, string> = {
 	}),
 	"bottom-right": css({
 		position: "fixed",
-		zIndex: 150,
+		zIndex: "var(--ty-z-control-panel)",
 		right: "4",
 		left: "auto",
 		top: "auto",
 	}),
 	"left-top": css({
 		position: "fixed",
-		zIndex: 150,
+		zIndex: "var(--ty-z-control-panel)",
 		top: "4",
 		left: "4",
 		right: "auto",
@@ -134,7 +134,7 @@ const POSITION_CLASS_BY_KEY: Record<CpPosition, string> = {
 	}),
 	"left-center": css({
 		position: "fixed",
-		zIndex: 150,
+		zIndex: "var(--ty-z-control-panel)",
 		top: "0",
 		bottom: "0",
 		left: "4",
@@ -144,14 +144,14 @@ const POSITION_CLASS_BY_KEY: Record<CpPosition, string> = {
 	}),
 	"left-bottom": css({
 		position: "fixed",
-		zIndex: 150,
+		zIndex: "var(--ty-z-control-panel)",
 		left: "4",
 		right: "auto",
 		top: "auto",
 	}),
 	"right-top": css({
 		position: "fixed",
-		zIndex: 150,
+		zIndex: "var(--ty-z-control-panel)",
 		top: "4",
 		right: "4",
 		left: "auto",
@@ -159,7 +159,7 @@ const POSITION_CLASS_BY_KEY: Record<CpPosition, string> = {
 	}),
 	"right-center": css({
 		position: "fixed",
-		zIndex: 150,
+		zIndex: "var(--ty-z-control-panel)",
 		top: "0",
 		bottom: "0",
 		right: "4",
@@ -169,7 +169,7 @@ const POSITION_CLASS_BY_KEY: Record<CpPosition, string> = {
 	}),
 	"right-bottom": css({
 		position: "fixed",
-		zIndex: 150,
+		zIndex: "var(--ty-z-control-panel)",
 		right: "4",
 		left: "auto",
 		top: "auto",

@@ -1,7 +1,7 @@
-import { Button } from "@ty-plus/ui/controls/Button";
-import { IconButton } from "@ty-plus/ui/controls/IconButton";
+import { Button, IconButton } from "@ty-plus/ui";
 import { Folder, Home as HomeIcon, Settings } from "lucide-react";
 import type { JSX } from "react";
+import { i18n } from "@/management/i18n/index";
 import { css } from "@/styled-system/css";
 import { PreviewGroup } from "./ComponentPreviewSection";
 
@@ -26,51 +26,46 @@ const iconButtonsGridStyle = css({
 	},
 });
 
-const homeStyle = css({
-	width: "3.5",
-	height: "3.5",
-});
-
 export function ButtonsPreview(): JSX.Element {
 	return (
 		<>
-			<PreviewGroup title="Buttons">
+			<PreviewGroup title={i18n.t("settings:previewButtons")}>
 				<div className={buttonsGridStyle}>
 					<Button variant="default" uiSize="sm">
-						Default
+						{i18n.t("settings:componentPreview.buttonDefault")}
 					</Button>
 					<Button variant="secondary" uiSize="sm">
-						Secondary
+						{i18n.t("settings:componentPreview.buttonSecondary")}
 					</Button>
 					<Button variant="primary" uiSize="sm">
-						Primary
+						{i18n.t("settings:componentPreview.buttonPrimary")}
 					</Button>
 					<Button variant="outline" uiSize="sm">
-						Outline
+						{i18n.t("settings:componentPreview.buttonOutline")}
 					</Button>
 					<Button variant="ghost" uiSize="sm">
-						Ghost
+						{i18n.t("settings:componentPreview.buttonGhost")}
 					</Button>
 					<Button variant="danger" uiSize="sm">
-						Danger
+						{i18n.t("settings:componentPreview.buttonDanger")}
 					</Button>
 					<Button variant="primary" uiSize="sm" start={<HomeIcon size={14} />}>
-						With Icon
+						{i18n.t("settings:componentPreview.buttonWithIcon")}
 					</Button>
 				</div>
 				<div className={buttonsGridStyle}>
 					<Button variant="default" uiSize="md">
-						Medium
+						{i18n.t("settings:componentPreview.buttonMedium")}
 					</Button>
 					<Button variant="primary" uiSize="lg">
-						Large
+						{i18n.t("settings:componentPreview.buttonLarge")}
 					</Button>
 					<Button variant="default" uiSize="sm" disabled>
-						Disabled
+						{i18n.t("settings:componentPreview.buttonDisabled")}
 					</Button>
 				</div>
 			</PreviewGroup>
-			<PreviewGroup title="Icon Buttons">
+			<PreviewGroup title={i18n.t("settings:componentPreview.iconButtons")}>
 				<div className={iconButtonsGridStyle}>
 					<IconButton variant="ghost" size="sm">
 						<HomeIcon size={14} />

@@ -10,9 +10,9 @@ const base = css({
 	width: "full",
 	minWidth: 0,
 	borderRadius: "shell-sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
-	borderColor: "border.default",
+	borderColor: "border.control",
 	backgroundColor: "surface.widget",
 	color: "text.primary",
 	"&::placeholder": { color: "text.muted" },
@@ -20,9 +20,10 @@ const base = css({
 	transitionProperty: "border-color,box-shadow",
 	_focusVisible: {
 		borderColor: "interactive.focus",
-		boxShadow: "inset 0 0 0 1px var(--color-interactive-focus)",
+		boxShadow: "var(--color-focus-ring)",
 		outline: "none",
 	},
+	_disabled: { opacity: 0.5, cursor: "not-allowed" },
 });
 
 const sizeSm = css({

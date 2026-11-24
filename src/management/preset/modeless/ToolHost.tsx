@@ -1,4 +1,4 @@
-import { DialogBody } from "@ty-plus/ui/shell/DialogBody";
+import { DialogBody } from "@ty-plus/ui";
 import { type JSX, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -8,13 +8,13 @@ import {
 import { Shell } from "@/management/dialog";
 import { readPhysicalExtensionId } from "@/management/dialog/modeless/surface-id";
 import { DialogRoot } from "@/management/dialog/Root";
-import { isPresetToolDialogSurfaceId } from "@/management/preset/registry";
-import { tryConsumePresetToolHandoff } from "@/management/preset/tool-handoff-file";
-import { PRESET_TOOL_OPEN_BUS_CHANNEL } from "@/management/preset/tool-open-channel";
 import {
 	AuthoringField,
 	AuthoringGrid,
-} from "@/management/preset/tool-shell/archive-layout";
+} from "@/management/preset/authoring-layout";
+import { isPresetToolDialogSurfaceId } from "@/management/preset/registry";
+import { tryConsumePresetToolHandoff } from "@/management/preset/tool-handoff-file";
+import { PRESET_TOOL_OPEN_BUS_CHANNEL } from "@/management/preset/tool-open-channel";
 import type { SurfaceMessageEnvelope } from "@/management/workspace/surface/contract";
 import { css } from "@/styled-system/css";
 
@@ -49,7 +49,7 @@ const preparingRowClass = css({
 	alignItems: "center",
 	gap: "3",
 	borderRadius: "shell-sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 	backgroundColor: "surface.panel",
@@ -99,19 +99,6 @@ const placeholderFieldTightClass = css({
 	minWidth: "0",
 	flexDirection: "column",
 	gap: "2",
-});
-
-const placeholderLineClass = css({
-	display: "block",
-	borderRadius: "shell-sm",
-	backgroundColor: "surface.widget",
-	animation: "pulse",
-});
-
-const placeholderLabelClass = css({
-	borderRadius: "shell-sm",
-	backgroundColor: "surface.widget",
-	animation: "pulse",
 });
 
 function parsePresetToolSurfaceId(payload: unknown): string | null {

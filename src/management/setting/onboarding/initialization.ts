@@ -3,6 +3,7 @@
  * Onboarding initialization state and locator JSON codec.
  */
 
+import { i18n } from "@/management/i18n/index";
 import {
 	CEP_INTERACTIVE_DIALOG_TIMEOUT_MS,
 	cepEvalScriptAvailable,
@@ -435,6 +436,33 @@ export const readInitializationState = async (
 	}
 };
 
+export type InitializationLocatorProbe =
+	| { readonly status: "missing" }
+	| { readonly status: "invalid" }
+	| { readonly status: "ready"; readonly supportRoot: string };
+
+export const probeInitializationLocator = async (
+	win: Window,
+	appSupportRoot: string,
+): Promise<InitializationLocatorProbe> => {
+	const fs = await resolveNodeFsPromises(win);
+	const locatorPath = resolveLocatorPathFromAppRoot(appSupportRoot);
+	let raw: string;
+	try {
+		raw = await fs.readFile(locatorPath, "utf8");
+	} catch (error) {
+		if ((error as { code?: unknown } | null)?.code === "ENOENT") {
+			return { status: "missing" };
+		}
+		throw error;
+	}
+	const locator = parseInitializationLocatorJson(raw);
+	if (!locator) {
+		return { status: "invalid" };
+	}
+	return { status: "ready", supportRoot: locator.supportRoot };
+};
+
 /**
  * Input type for completeInitialization.
  */
@@ -462,7 +490,10 @@ const writeLocatorAtAppRoot = async (
 		const message =
 			error instanceof Error ? error.message : "Unknown write error";
 		throw new Error(
-			`Failed to write ty-plus-init.json under ${appSupportRoot}: ${message}`,
+			i18n.t("onboarding:errors.initWriteFailed", {
+				path: appSupportRoot,
+				message,
+			}),
 		);
 	}
 };
@@ -484,24 +515,13 @@ export const updateInitializationLocatorUserSupportRoot = async (
 	const appRoot =
 		options?.appRoot?.trim() ?? (await resolveInitializationAppRoot(win));
 	if (!appRoot) {
-		throw new Error(
-			"Ty Plus: cannot resolve the running After Effects install folder for ty-plus-init.json. Open the panel inside After Effects and try again.",
-		);
+		throw new Error(i18n.t("onboarding:errors.appRootUnresolved"));
 	}
 	const locatorJson = buildInitializationLocatorJson(userBrowseRoot.trim());
 	await writeLocatorAtAppRoot(win, appRoot, locatorJson);
 };
 
 /** Absolute path to `ty-plus-init.json` under the running AE install folder. */
-const resolveTyPlusInitJsonPath = async (
-	win: Window,
-): Promise<string | null> => {
-	const appRoot = await resolveInitializationAppRoot(win);
-	if (!appRoot) {
-		return null;
-	}
-	return resolveLocatorPathFromAppRoot(appRoot);
-};
 
 /**
  * Writes `ty-plus-init.json` under `appSupportRoot` (host application folder).

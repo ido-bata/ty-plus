@@ -20,8 +20,8 @@ import { createLogger } from "@/management/debug/logger";
 import {
 	installCepJsonContextMenuRewrite,
 	registerCepJsonContextMenuSurface,
-} from "@/management/dialog/dialogs/context-menu";
-import { applyCepModelessShellLayoutGuards } from "@/management/dialog/dialogs/layout";
+} from "@/management/dialog/context-menu";
+import { applyCepModelessShellLayoutGuards } from "@/management/dialog/layout";
 import { ModelessDialogRoot } from "@/management/dialog/modeless/Root";
 import {
 	readPhysicalExtensionId,
@@ -57,7 +57,7 @@ export async function bootTyPlusModelessDialog(): Promise<void> {
 
 	const mount = document.getElementById("app");
 	if (!mount) {
-		throw new Error("Missing #app mount point");
+		throw new Error("Missing #app mount point"); // i18n-exempt: internal diagnostic — not rendered as UI copy
 	}
 
 	const isCep =
@@ -69,9 +69,20 @@ export async function bootTyPlusModelessDialog(): Promise<void> {
 	const hostCode = detectCepHostCode();
 	const extensionId = readPhysicalExtensionId();
 	const isPresetToolPool = isPresetAddPoolExtensionId(extensionId);
+	// Issue #71: boot-stage markers. "Uncaught [object Event]" reports on
+	// dialog-settings gave no indication of how far boot progressed; these
+	// debug entries bracket the async gaps so the debug console shows the
+	// last completed stage.
+	modelessLog.debug("[modeless] boot: resolving dialog surface id", {
+		action: "boot:surface-id",
+	});
 	const surfaceId = isPresetToolPool
 		? ""
 		: await resolveDialogSurfaceIdForBoot();
+	modelessLog.debug("[modeless] boot: dialog surface id resolved", {
+		action: "boot:surface-id",
+		context: { surfaceId, isPresetToolPool },
+	});
 
 	if (surfaceId === "debug-console") {
 		void initializeLogRetention(window).catch((error) => {
@@ -122,6 +133,9 @@ export async function bootTyPlusModelessDialog(): Promise<void> {
 		isPresetToolPool && extensionId.trim().length > 0 ? extensionId : surfaceId;
 	const openerWorkspacePanelId = resolveOpenerWorkspacePanelId(window);
 
+	modelessLog.debug("[modeless] boot: i18n initialized", {
+		action: "boot:i18n",
+	});
 	createRoot(mount).render(
 		<PanelRoot
 			value={{
@@ -144,4 +158,8 @@ export async function bootTyPlusModelessDialog(): Promise<void> {
 			</ErrorBoundary>
 		</PanelRoot>,
 	);
+	modelessLog.debug("[modeless] boot: initial render scheduled", {
+		action: "boot:render",
+		context: { surfaceId },
+	});
 }

@@ -9,7 +9,7 @@
 			"lead": "Stack solid, image, and pattern layers behind the workspace grid. Click Apply to sync to the panel and save.",
 			"applyToWorkspace": "Apply to workspace",
 			"clearAll": "Clear all",
-			"emptyLayers": "No layers yet — add one with the buttons on the left.",
+			"emptyLayers": "No layers yet — add one with the buttons above.",
 			"selectLayer": "Select a layer in the list to edit it.",
 			"enabled": "Visible",
 			"opacity": "Opacity",
@@ -65,7 +65,16 @@
 			"saved": "Saved",
 			"loadFailed": "Failed to load: {{message}}",
 			"saveFailed": "Save failed",
-			"preview": "Preview"
+			"preview": "Preview",
+			"contextMenu": {
+				"selectLayer": "Select layer",
+				"enableLayer": "Enable layer",
+				"disableLayer": "Disable layer",
+				"layerType": "Layer type",
+				"order": "Order",
+				"addLayer": "Add layer",
+				"clearAllLayers": "Clear all layers"
+			}
 		},
 		"widgetSelector": {
 			"title": "Add widget",
@@ -75,5 +84,17 @@
 			"notInPanelYet": "This widget type does not have a panel UI yet — it cannot be placed.",
 			"footerHint": "Grayed items are not yet implemented in the panel renderer. Others close this dialog after sending the request."
 		}
-	}
+	},
+	"unknownDialog": {
+		"title": "Unknown Dialog Surface",
+		"noBodyForSurfaceId": "No dialog body found for surfaceId:",
+		"copySurfaceId": "Copy surface id"
+	},
+	"probe": {
+		"title": "Probe",
+		"bodyForSurfaceId": "Probe dialog for surfaceId:",
+		"logSurfaceId": "Log surface id",
+		"copySurfaceId": "Copy surface id"
+	},
+	"loading": "Loading…"
 }

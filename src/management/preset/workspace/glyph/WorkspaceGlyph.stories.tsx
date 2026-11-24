@@ -1,0 +1,110 @@
+import type { Meta, StoryObj } from "@storybook/react";
+import { expect } from "storybook/test";
+import type { Preset } from "@/management/preset/contract";
+import {
+	presetIconCanvas,
+	presetIconEmoji,
+	presetIconImage,
+	presetIconText,
+} from "@/management/preset/contract";
+import { expectFirstImageLoaded } from "@/storybook/await-image";
+import { css } from "@/styled-system/css";
+import { WorkspacePresetGlyph } from "./WorkspaceGlyph";
+
+const makePreset = (id: string, icon: Preset["icon"]): Preset => ({
+	id,
+	type: "preset",
+	title: id,
+	filePath: `ty-plus://${id}`,
+	icon,
+});
+
+const baseArgs = {
+	preset: makePreset("alpha", presetIconText("AB")),
+};
+
+const decoratorBoxClass = css({
+	height: "32",
+	width: "32",
+	// Product glyphs always render inside a `containerType: "size"`
+	// host (frameBase / PresetCatalogGlyphHost). Without it the `cqi`
+	// font sizes resolve against the viewport and clip the glyph.
+	containerType: "size",
+});
+
+const meta = {
+	title: "Preset/Workspace/Glyph",
+	component: WorkspacePresetGlyph,
+	args: baseArgs,
+	argTypes: {
+		preset: { control: false },
+	},
+	decorators: [
+		(Story) => (
+			<div className={decoratorBoxClass}>
+				<Story />
+			</div>
+		),
+	],
+} satisfies Meta<typeof baseArgs>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const Default: Story = {};
+
+export const Emoji: Story = {
+	args: { preset: makePreset("emoji", presetIconEmoji("✨")) },
+};
+
+export const LongText: Story = {
+	args: { preset: makePreset("long", presetIconText("Header")) },
+	play: async ({ canvasElement }) => {
+		// Issue #457: every rendered glyph line must stay inside the
+		// 32px frame — previously `cqi` units resolved against the
+		// viewport (no container) and the two "Header" lines overflowed
+		// top/bottom/right.
+		const frame = canvasElement.querySelector<HTMLElement>(
+			"[data-ws-preset-text-fit]",
+		);
+		if (!frame) throw new Error("text glyph not found");
+		const frameRect = frame.getBoundingClientRect();
+		const lines = frame.querySelectorAll<HTMLElement>("span > span");
+		expect(lines.length).toBeGreaterThan(0);
+		for (const line of lines) {
+			const rect = line.getBoundingClientRect();
+			expect(rect.top).toBeGreaterThanOrEqual(frameRect.top - 0.5);
+			expect(rect.bottom).toBeLessThanOrEqual(frameRect.bottom + 0.5);
+			expect(rect.left).toBeGreaterThanOrEqual(frameRect.left - 0.5);
+			expect(rect.right).toBeLessThanOrEqual(frameRect.right + 0.5);
+		}
+	},
+};
+
+export const Canvas: Story = {
+	args: {
+		preset: makePreset(
+			"curve",
+			presetIconCanvas({ cubic: [0.42, 0, 0.58, 1] }),
+		),
+	},
+};
+
+export const ImagePath: Story = {
+	args: {
+		preset: makePreset("img", presetIconImage("https://placehold.co/120")),
+	},
+	play: async ({ canvasElement }) => {
+		await expectFirstImageLoaded(canvasElement);
+	},
+};
+
+export const Missing: Story = {
+	render: () => (
+		<div className={decoratorBoxClass}>
+			<WorkspacePresetGlyph
+				preset={makePreset("missing", presetIconText("?"))}
+			/>
+		</div>
+	),
+};

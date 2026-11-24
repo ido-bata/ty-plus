@@ -4,12 +4,12 @@
 
 import { render } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
-import type { Layout } from "@/management/workspace/layout/grid-document";
 import {
 	createInitialSurfaceState,
 	type GridSettings,
 	type SurfaceState,
-} from "@/management/workspace/state";
+} from "@/management/workspace/core/state";
+import type { Layout } from "@/management/workspace/layout/grid-document";
 import { Widget } from "../workspace/TileContent";
 
 // ── Mock widget registry ────────────────────────────────────────────────────

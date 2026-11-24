@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Button, Notice, Surface } from "@ty-plus/ui";
-import { cx } from "@ty-plus/ui/util/cx";
+import { Button, cx, Notice, Surface } from "@ty-plus/ui";
+import { Trans, useTranslation } from "react-i18next";
 import { css } from "@/styled-system/css";
+import { i18n } from "../i18n";
 import { findLatestStable, zxpAsset } from "../lib/releases";
 import { SITE } from "../lib/site";
 import { listReleases } from "../server/releases";
@@ -12,13 +13,15 @@ export const Route = createFileRoute("/download")({
 	loader: () => listReleases(),
 	head: () => ({
 		meta: [
-			{ title: `Download — ${SITE.name}` },
+			{ title: i18n.t("download.metaTitle", { ns: "web" }) },
 			{
 				name: "description",
-				content:
-					"Download ty-plus for Adobe After Effects on Windows or macOS. Free, open-source ZXP builds from GitHub Releases.",
+				content: i18n.t("download.metaDescription", { ns: "web" }),
 			},
-			{ property: "og:title", content: `Download — ${SITE.name}` },
+			{
+				property: "og:title",
+				content: i18n.t("download.metaTitle", { ns: "web" }),
+			},
 		],
 	}),
 	component: DownloadPage,
@@ -57,12 +60,14 @@ function AssetDownload({
 	asset: { name: string; url: string; size: number | null } | undefined;
 	os: string;
 }) {
-	if (!asset) return <p className={s.body}>No {os} asset in this release.</p>;
+	const { t } = useTranslation("web");
+	if (!asset)
+		return <p className={s.body}>{t("download.os.assetMissing", { os })}</p>;
 	return (
 		<div className={stack({ gap: 3 })}>
 			<div>
 				<Button as="a" href={asset.url} variant="primary">
-					Download for {os}
+					{t("download.os.assetDownload", { os })}
 				</Button>
 			</div>
 			<p className={fileRow}>
@@ -76,6 +81,7 @@ function AssetDownload({
 }
 
 function DownloadPage() {
+	const { t } = useTranslation("web");
 	const { releases, source } = Route.useLoaderData();
 	const latest = findLatestStable(releases);
 	const windows = latest ? zxpAsset(latest, "windows") : undefined;
@@ -90,12 +96,8 @@ function DownloadPage() {
 					section({ variant: "prose" }),
 				)}
 			>
-				<h1 className={s.h1}>Download</h1>
-				<p className={s.lead}>
-					ty-plus is distributed as a ZXP extension through GitHub Releases. It
-					is free and open source under the MIT License — pick the build for
-					your OS below.
-				</p>
+				<h1 className={s.h1}>{t("download.title")}</h1>
+				<p className={s.lead}>{t("download.lead")}</p>
 			</header>
 
 			{source !== "live" && (
@@ -106,12 +108,14 @@ function DownloadPage() {
 					)}
 				>
 					<Notice tone="warning" role="status">
-						Release data is temporarily unavailable; showing the last published
-						snapshot. Check{" "}
-						<a className={s.link} href={SITE.releases}>
-							GitHub Releases
-						</a>{" "}
-						for the newest builds.
+						<Trans
+							i18nKey="notices.stale"
+							ns="web"
+							components={{
+								// biome-ignore lint/a11y/useAnchorContent: link text is injected by <Trans>
+								1: <a className={s.link} href={SITE.releases} />,
+							}}
+						/>
 					</Notice>
 				</div>
 			)}
@@ -129,37 +133,48 @@ function DownloadPage() {
 					>
 						<div className={stack({ gap: 3 })}>
 							<h2 className={s.h2} id="get">
-								{latest ? latest.tagName : "GitHub Releases"}
+								{latest ? latest.tagName : t("download.latest.fallbackTitle")}
 							</h2>
 							{latest ? (
 								<p className={s.body}>
-									{latest.name ? `${latest.name} — ` : ""}published{" "}
-									{latest.publishedAt.slice(0, 10)}.{" "}
+									{latest.name
+										? t("download.latest.published", {
+												name: latest.name,
+												date: latest.publishedAt.slice(0, 10),
+											})
+										: t("download.latest.publishedNoName", {
+												date: latest.publishedAt.slice(0, 10),
+											})}{" "}
 									<a className={s.link} href={latest.htmlUrl}>
-										View release notes
+										{t("download.latest.viewNotes")}
 									</a>
 								</p>
 							) : (
 								<p className={s.body}>
-									The latest stable release is always available on{" "}
-									<a className={s.link} href={SITE.latestRelease}>
-										GitHub Releases
-									</a>
-									.
+									<Trans
+										i18nKey="download.latest.none"
+										ns="web"
+										components={{
+											// biome-ignore lint/a11y/useAnchorContent: link text is injected by <Trans>
+											1: <a className={s.link} href={SITE.latestRelease} />,
+										}}
+									/>
 								</p>
 							)}
 							<div className={cluster({ gap: 3 })}>
 								<Button as="a" href={SITE.latestRelease} variant="secondary">
-									Open GitHub Releases
+									{t("download.latest.openReleases")}
 								</Button>
 							</div>
 							{prereleases.length > 0 && (
 								<Notice tone="info">
-									Beta and Insider builds are also published — see the{" "}
-									<Link className={s.link} to="/changelog">
-										changelog
-									</Link>{" "}
-									for the full list.
+									<Trans
+										i18nKey="download.prereleaseNotice"
+										ns="web"
+										components={{
+											1: <Link className={s.link} to="/changelog" />,
+										}}
+									/>
 								</Notice>
 							)}
 						</div>
@@ -170,21 +185,16 @@ function DownloadPage() {
 						<div className={osGrid}>
 							<Surface variant="raised" padding="md">
 								<div className={stack({ gap: 3 })}>
-									<h3 className={s.h3}>Windows</h3>
+									<h3 className={s.h3}>{t("download.os.windows")}</h3>
 									<AssetDownload asset={windows} os="Windows" />
-									<p className={s.body}>
-										Install the ZXP with a CEP-compatible installer (for example
-										ZXP Installer or Extension Manager).
-									</p>
+									<p className={s.body}>{t("download.os.installerNote")}</p>
 								</div>
 							</Surface>
 							<Surface variant="raised" padding="md">
 								<div className={stack({ gap: 3 })}>
-									<h3 className={s.h3}>macOS</h3>
+									<h3 className={s.h3}>{t("download.os.macos")}</h3>
 									<AssetDownload asset={macos} os="macOS" />
-									<p className={s.body}>
-										See the installation guide for Gatekeeper notes.
-									</p>
+									<p className={s.body}>{t("download.os.macosNote")}</p>
 								</div>
 							</Surface>
 						</div>
@@ -201,39 +211,43 @@ function DownloadPage() {
 			>
 				<div className={stack({ gap: 4 })}>
 					<h2 className={s.h2} id="install">
-						Three steps to the panel
+						{t("download.steps.title")}
 					</h2>
 					<ol className={s.steps}>
 						<li>
 							<span>
-								Download the ZXP for your OS from the release above (or{" "}
-								<a className={s.link} href={SITE.latestRelease}>
-									GitHub Releases
-								</a>
-								).
+								<Trans
+									i18nKey="download.steps.item1"
+									ns="web"
+									components={{
+										// biome-ignore lint/a11y/useAnchorContent: link text is injected by <Trans>
+										1: <a className={s.link} href={SITE.latestRelease} />,
+									}}
+								/>
 							</span>
 						</li>
 						<li>
-							<span>
-								Install the ZXP with a CEP-compatible installer (for example ZXP
-								Installer or Extension Manager).
-							</span>
+							<span>{t("download.steps.item2")}</span>
 						</li>
 						<li>
 							<span>
-								Restart Adobe After Effects and open{" "}
-								<strong>Window → Extensions → ty-plus</strong>.
+								<Trans
+									i18nKey="download.steps.item3"
+									ns="web"
+									components={{ 1: <strong /> }}
+								/>
 							</span>
 						</li>
 					</ol>
 					<Notice tone="warning">
-						The Windows native worker is not Authenticode-signed and the macOS
-						worker is not notarized. OS security policies may require
-						adjustments — see the{" "}
-						<a className={s.link} href={SITE.installation}>
-							installation and troubleshooting guide
-						</a>{" "}
-						for details.
+						<Trans
+							i18nKey="download.signingNotice"
+							ns="web"
+							components={{
+								// biome-ignore lint/a11y/useAnchorContent: link text is injected by <Trans>
+								1: <a className={s.link} href={SITE.installation} />,
+							}}
+						/>
 					</Notice>
 				</div>
 			</section>

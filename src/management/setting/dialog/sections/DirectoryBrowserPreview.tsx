@@ -1,10 +1,11 @@
 import type { JSX } from "react";
-import type { DirectoryBrowserEntry } from "@/management/storage/ui/DirectoryBrowser";
-import { DirectoryBrowser } from "@/management/storage/ui/DirectoryBrowser";
+import { i18n } from "@/management/i18n/index";
+import type { FileEntry } from "@/management/storage/ui/file-entry/FileEntryList";
+import { FileEntryList } from "@/management/storage/ui/file-entry/FileEntryList";
 import { css } from "@/styled-system/css";
 import { PreviewGroup } from "./ComponentPreviewSection";
 
-const MOCK_DIR_ENTRIES: DirectoryBrowserEntry[] = [
+const MOCK_DIR_ENTRIES: FileEntry[] = [
 	{
 		path: "/host/presets/animation",
 		name: "animation",
@@ -55,14 +56,17 @@ export function DirectoryBrowserPreview({
 }): JSX.Element {
 	return (
 		<PreviewGroup
-			title={viewMode === "icons" ? "Icon Card View" : "Directory Browser"}
+			title={i18n.t(
+				viewMode === "icons"
+					? "settings:componentPreview.iconCardView"
+					: "settings:componentPreview.directoryBrowser",
+			)}
 		>
 			<div className={browserContainerStyle}>
-				<DirectoryBrowser
+				<FileEntryList
 					entries={MOCK_DIR_ENTRIES}
 					loading={false}
 					canGoUp={true}
-					onGoUp={() => {}}
 					onEntryClick={() => {}}
 					onEntryActivate={() => {}}
 					selectionMode="both"
@@ -87,11 +91,9 @@ export function DirectoryBrowserPreview({
 					}}
 					showSelectedSummary={true}
 					viewMode={viewMode}
-					onViewModeChange={() => {}}
-					scale={1}
 					aspect="square"
-					emptyLabel="No files found"
-					loadingLabel="Loading..."
+					emptyLabel={i18n.t("settings:componentPreview.noFilesFound")}
+					loadingLabel={i18n.t("common:app.loading")}
 					upLabel=".."
 				/>
 			</div>

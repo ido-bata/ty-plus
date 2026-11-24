@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Button } from "@ty-plus/ui";
-import { cx } from "@ty-plus/ui/util/cx";
+import { Button, cx } from "@ty-plus/ui";
+import { Trans, useTranslation } from "react-i18next";
+import { i18n } from "../i18n";
 import { SITE } from "../lib/site";
 import { container, section, stack } from "../styles/layout";
 import * as s from "../styles/site";
@@ -8,13 +9,15 @@ import * as s from "../styles/site";
 export const Route = createFileRoute("/docs")({
 	head: () => ({
 		meta: [
-			{ title: `Documentation — ${SITE.name}` },
+			{ title: i18n.t("docs.metaTitle", { ns: "web" }) },
 			{
 				name: "description",
-				content:
-					"ty-plus documentation: user guide, installation, workspace, widgets, presets, settings, and troubleshooting — maintained in the GitHub repository.",
+				content: i18n.t("docs.metaDescription", { ns: "web" }),
 			},
-			{ property: "og:title", content: `Documentation — ${SITE.name}` },
+			{
+				property: "og:title",
+				content: i18n.t("docs.metaTitle", { ns: "web" }),
+			},
 		],
 	}),
 	component: DocsPage,
@@ -22,38 +25,39 @@ export const Route = createFileRoute("/docs")({
 
 const DOC_SECTIONS = [
 	{
-		title: "User guide",
-		description: "Start here — overview and core concepts.",
+		titleKey: "docs.sections.userGuide.title",
+		descriptionKey: "docs.sections.userGuide.description",
 		href: SITE.userGuide,
 	},
 	{
-		title: "Installation & troubleshooting",
-		description: "ZXP install, CEP hosts, signing and OS security notes.",
+		titleKey: "docs.sections.installation.title",
+		descriptionKey: "docs.sections.installation.description",
 		href: SITE.installation,
 	},
 	{
-		title: "Main screen & workspace",
-		description: "Tiles, widgets, and workspace layout.",
+		titleKey: "docs.sections.mainScreen.title",
+		descriptionKey: "docs.sections.mainScreen.description",
 		href: `${SITE.repo}/blob/main/docs/user-guide/main-screen/`,
 	},
 	{
-		title: "Presets",
-		description: "Preset types, groups, and applying presets.",
+		titleKey: "docs.sections.presets.title",
+		descriptionKey: "docs.sections.presets.description",
 		href: `${SITE.repo}/blob/main/docs/user-guide/presets/`,
 	},
 	{
-		title: "Widgets",
-		description: "Built-in widgets and the widget picker.",
+		titleKey: "docs.sections.widgets.title",
+		descriptionKey: "docs.sections.widgets.description",
 		href: `${SITE.repo}/blob/main/docs/user-guide/widgets/`,
 	},
 	{
-		title: "Settings & appearance",
-		description: "Panel settings, themes, and update channels.",
+		titleKey: "docs.sections.settings.title",
+		descriptionKey: "docs.sections.settings.description",
 		href: `${SITE.repo}/blob/main/docs/user-guide/settings/`,
 	},
 ] as const;
 
 function DocsPage() {
+	const { t } = useTranslation("web");
 	return (
 		<main>
 			<header
@@ -62,11 +66,8 @@ function DocsPage() {
 					section({ variant: "prose" }),
 				)}
 			>
-				<h1 className={s.h1}>Documentation</h1>
-				<p className={s.lead}>
-					The user guide is maintained in the repository so it always matches
-					the released product. It is currently written in Japanese.
-				</p>
+				<h1 className={s.h1}>{t("docs.title")}</h1>
+				<p className={s.lead}>{t("docs.lead")}</p>
 			</header>
 
 			<section
@@ -78,17 +79,17 @@ function DocsPage() {
 			>
 				<div className={stack({ gap: 4 })}>
 					<h2 className={s.h2} id="sections">
-						User guide sections
+						{t("docs.sectionsTitle")}
 					</h2>
 					<dl className={s.defList}>
 						{DOC_SECTIONS.map((d) => (
-							<div className={s.defRow} key={d.title}>
+							<div className={s.defRow} key={d.titleKey}>
 								<dt className={s.defTerm}>
 									<a className={s.link} href={d.href}>
-										{d.title}
+										{t(d.titleKey)}
 									</a>
 								</dt>
-								<dd className={s.defDesc}>{d.description}</dd>
+								<dd className={s.defDesc}>{t(d.descriptionKey)}</dd>
 							</div>
 						))}
 					</dl>
@@ -103,18 +104,21 @@ function DocsPage() {
 			>
 				<div className={stack({ gap: 4 })}>
 					<div className={stack({ gap: 2 })}>
-						<h2 className={s.h2}>Improve the docs</h2>
+						<h2 className={s.h2}>{t("docs.improve.title")}</h2>
 						<p className={s.body}>
-							Documentation improvements are welcome — see{" "}
-							<a className={s.link} href={SITE.contributing}>
-								CONTRIBUTING.md
-							</a>{" "}
-							for how to propose changes.
+							<Trans
+								i18nKey="docs.improve.body"
+								ns="web"
+								components={{
+									// biome-ignore lint/a11y/useAnchorContent: link text is injected by <Trans>
+									1: <a className={s.link} href={SITE.contributing} />,
+								}}
+							/>
 						</p>
 					</div>
 					<div>
 						<Button as="a" href={SITE.userGuide} variant="primary">
-							Open user guide
+							{t("docs.improve.cta")}
 						</Button>
 					</div>
 				</div>

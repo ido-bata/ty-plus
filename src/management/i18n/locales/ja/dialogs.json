@@ -9,7 +9,7 @@
 			"lead": "格子の背面に色・画像・パターンのレイヤーを重ねます。「ワークスペースへ適用」でパネルに反映・保存されます。",
 			"applyToWorkspace": "ワークスペースへ適用",
 			"clearAll": "すべてクリア",
-			"emptyLayers": "レイヤーがありません。左のボタンから追加してください。",
+			"emptyLayers": "レイヤーがありません。上のボタンから追加してください。",
 			"selectLayer": "一覧からレイヤーを選んで編集します。",
 			"enabled": "表示",
 			"opacity": "不透明度",
@@ -65,7 +65,16 @@
 			"saved": "保存しました",
 			"loadFailed": "読み込みに失敗しました: {{message}}",
 			"saveFailed": "保存に失敗しました",
-			"preview": "プレビュー"
+			"preview": "プレビュー",
+			"contextMenu": {
+				"selectLayer": "レイヤーを選択",
+				"enableLayer": "レイヤーを有効化",
+				"disableLayer": "レイヤーを無効化",
+				"layerType": "レイヤータイプ",
+				"order": "順序",
+				"addLayer": "レイヤーを追加",
+				"clearAllLayers": "すべてのレイヤーをクリア"
+			}
 		},
 		"widgetSelector": {
 			"title": "ウィジェットを追加",
@@ -75,5 +84,17 @@
 			"notInPanelYet": "この型はパネル側の UI が未実装のため配置できません。",
 			"footerHint": "グレー表示はパネル描画が未対応です。対応タイプは送信後にこのダイアログを閉じます。"
 		}
-	}
+	},
+	"unknownDialog": {
+		"title": "不明なダイアログサーフェス",
+		"noBodyForSurfaceId": "surfaceId に対応するダイアログ本体が見つかりません:",
+		"copySurfaceId": "surface id をコピー"
+	},
+	"probe": {
+		"title": "プローブ",
+		"bodyForSurfaceId": "surfaceId 用プローブダイアログ:",
+		"logSurfaceId": "surface id をログ出力",
+		"copySurfaceId": "surface id をコピー"
+	},
+	"loading": "読み込み中…"
 }

@@ -15,7 +15,7 @@
 
 ## 検証
 
-- `PanelRoot.offline.test.ts` — panel起動経路にlicense providerが再導入されていないことのwiring契約。
+- `panel-root.offline.test.ts` — panel起動経路にlicense providerが再導入されていないことのwiring契約。
 - `persistence/boot-restore-fault-injection.test.ts` — 破損fixtureでも既存データを破壊しない復元の行動契約。
 - `persistence/surface-write.fault-injection.test.ts` — 書込順と部分失敗の整合。
 - unit suite全体はネットワークなしで実行され、成功する。

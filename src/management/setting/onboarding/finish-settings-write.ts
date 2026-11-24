@@ -22,6 +22,7 @@
  * `admin_probe_failed: ENOENT ...` branch the user was seeing.
  */
 
+import { i18n } from "@/management/i18n/index";
 import { writeSettingsPathsJson } from "@/management/setting/persistence/settings-json-files";
 import { writeSettings as writeSettingsViaStorage } from "@/management/storage";
 import {
@@ -93,7 +94,7 @@ export const writeSettingsPathsJsonForFinish = async (
 		win,
 		jsonText,
 		relativePath: "settings/paths.json",
-		readSupportRoot: (raw) => {
+		readSupportRoot: (_raw) => {
 			// paths.json payload is the bare `core.paths` object, so it
 			// contains `supportRoot` at the top level.
 			const candidate = (payload as { supportRoot?: unknown }).supportRoot;
@@ -152,7 +153,7 @@ const writeJsonFileWithElevationFallback = async (
 ): Promise<FinishWriteSettingsResult> => {
 	const supportRoot = input.readSupportRoot(input.jsonText);
 	if (!supportRoot) {
-		throw buildMissingSupportRootError(input.jsonText, input.relativePath);
+		throw buildMissingSupportRootError(input.relativePath);
 	}
 
 	const platform = detectPlatform(input.win);
@@ -247,18 +248,24 @@ const buildWriteRejectedError = (params: {
 
 const describeElevationFailure = (result: ElevationWriteResult): string => {
 	if (result.elevatedConsentDenied) {
-		return "The UAC consent prompt was dismissed (admin escalation was not granted).";
+		return i18n.t("onboarding:errors.elevationConsentDenied");
 	}
 	const exitCodeNote =
-		result.exitCode >= 0 ? ` Inner script exit code: ${result.exitCode}.` : "";
+		result.exitCode >= 0
+			? i18n.t("onboarding:errors.innerExitCodeNote", {
+					code: result.exitCode,
+				})
+			: "";
 	if (result.stderr) {
-		return `The elevated write reported an error.${exitCodeNote} Inner script stderr: ${result.stderr.trim()}`;
+		return i18n.t("onboarding:errors.elevationWriteFailedStderr", {
+			exitCodeNote,
+			stderr: result.stderr.trim(),
+		});
 	}
-	return `The elevated write reported an error.${exitCodeNote}`;
+	return i18n.t("onboarding:errors.elevationWriteFailed", { exitCodeNote });
 };
 
 const buildMissingSupportRootError = (
-	jsonText: string,
 	relativePath: string,
 ): OnboardingFinishError => {
 	const fallbackPath = `(merged settings JSON for ${relativePath} missing core.paths.supportRoot)`;

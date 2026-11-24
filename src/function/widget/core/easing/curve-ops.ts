@@ -5,7 +5,7 @@
  * rendering the React tree. Keep this file dependency-free.
  */
 
-type Mode = "curve" | "bounce" | "elastic" | "loop";
+type Mode = "curve" | "bounce" | "elastic";
 type Point = { x: number; y: number };
 type CurvePoint = { x: number; y: number; hIn: Point; hOut: Point };
 
@@ -75,12 +75,6 @@ export const cloneCurvePoints = (points: CurvePoint[]): CurvePoint[] =>
  *                            already-reversed curve returns to the
  *                            original — this is what makes the action
  *                            useful as a toggle.
- *   loop → curve           : loop mode is conceptually a curve whose
- *                            shape is replicated by the host. Reverse
- *                            mirrors the underlying single-cycle curve
- *                            and keeps the loop intent intact (the next
- *                            apply re-enters loop mode and replicates
- *                            the reversed shape).
  *
  * The `proceduralPointsForCurve` argument is the list to use when
  * promoting a procedural mode to a curve (typically the result of
@@ -93,7 +87,7 @@ export const decideReverseAction = (
 	currentPoints: CurvePoint[],
 	proceduralPointsForCurve: CurvePoint[],
 ): { mode: "curve"; points: CurvePoint[] } => {
-	if (currentMode === "curve" || currentMode === "loop") {
+	if (currentMode === "curve") {
 		return { mode: "curve", points: reverseCurvePoints(currentPoints) };
 	}
 	return {

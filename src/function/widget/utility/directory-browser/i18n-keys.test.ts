@@ -23,6 +23,17 @@ const indexPath = resolve(here, "index.ts");
 const componentSrc = readFileSync(componentPath, "utf8");
 const indexSrc = readFileSync(indexPath, "utf8");
 
+// The widget is composed from the modules next to it (the widget-local
+// chrome and the preset rows it renders). Their `t()` calls are part of the
+// same use-side surface, so they are covered by the same key check.
+const extractedSrcs: readonly { file: string; src: string }[] = [
+	"toolbar.tsx",
+	"filter-panel.tsx",
+	"../../../../management/preset/components/PresetListRow.tsx",
+	"../../../../management/preset/components/PresetIconTile.tsx",
+	"CollapsibleGroupHeader.tsx",
+].map((file) => ({ file, src: readFileSync(resolve(here, file), "utf8") }));
+
 const resolveKey = (root: Json, key: string): Json => {
 	const parts = key.split(".");
 	let cursor: Json = root;
@@ -62,6 +73,9 @@ const isLeafString = (value: Json): value is string =>
 
 describe("directory browser i18n keys", () => {
 	const tKeys = extractTCalls(componentSrc);
+	const extractedTKeys = extractedSrcs.flatMap(({ file, src }) =>
+		extractTCalls(src).map((key) => ({ file, key })),
+	);
 	const nameKeys = extractNameKeys(indexSrc);
 	const enRoot = enWidgets as unknown as Json;
 
@@ -77,6 +91,14 @@ describe("directory browser i18n keys", () => {
 		const value = resolveKey(enRoot, key);
 		expect(isLeafString(value)).toBe(true);
 	});
+
+	it.each(extractedTKeys)(
+		"t(%s) in %s resolves to a string in en/widgets.json",
+		({ key }) => {
+			const value = resolveKey(enRoot, key);
+			expect(isLeafString(value)).toBe(true);
+		},
+	);
 
 	it.each(nameKeys)(
 		"nameKey %s resolves to a string in en/widgets.json",

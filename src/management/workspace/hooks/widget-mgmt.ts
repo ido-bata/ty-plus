@@ -10,7 +10,7 @@ import { buildPrimaryPanelWidgets as buildPrimaryPanelWidgetsFn } from "@/manage
 import type { Layout } from "@/management/workspace/layout/grid-document";
 import { stripObsoleteLayouts as stripObsoleteLayoutsFn } from "@/management/workspace/layout/grid-document";
 import { tileIdResolvesAsWidget as tileIdResolvesAsWidgetFn } from "@/management/workspace/placement/resolve";
-import type { SurfaceState } from "@/management/workspace/state";
+import type { SurfaceState } from "@/management/workspace/core/state";
 import type { Tile } from "@/management/workspace/surface/tiles";
 import {
 	clipSelection,

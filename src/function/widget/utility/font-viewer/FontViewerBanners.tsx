@@ -35,11 +35,10 @@ export function FontViewerLoadHint({
 					flexDirection: "column",
 					gap: "2",
 					borderRadius: "shell-sm",
-					borderWidth: "1px",
+					borderWidth: "hairline",
 					borderStyle: "solid",
 					borderColor: "border.default",
 					backgroundColor: "surface.widget",
-					opacity: 0.4,
 					padding: "2",
 					fontSize: "text-xs",
 					color: "text.muted",
@@ -48,7 +47,7 @@ export function FontViewerLoadHint({
 				<p className={css({ margin: 0, lineHeight: "snug" })}>
 					{t("fontViewer.hintNeedUserGesture", {
 						defaultValue:
-							"Installed fonts need a button click (Chromium Local Font Access). The list below shows fonts already loaded in this panel until then.",
+							"Installed fonts need a button click (Chromium Local Font Access). Until then, this catalog lists only fonts already registered on document.fonts for this panel.",
 					})}
 				</p>
 				<div>
@@ -73,11 +72,10 @@ export function FontViewerLoadHint({
 				className={css({
 					flexShrink: 0,
 					borderRadius: "shell-sm",
-					borderWidth: "1px",
+					borderWidth: "hairline",
 					borderStyle: "solid",
 					borderColor: "border.default",
 					backgroundColor: "surface.widget",
-					opacity: 0.4,
 					padding: "2",
 					fontSize: "text-xs",
 					color: "text.muted",
@@ -109,11 +107,10 @@ export function FontViewerLoadPhase({
 			className={css({
 				flexShrink: 0,
 				borderRadius: "shell-sm",
-				borderWidth: "1px",
+				borderWidth: "hairline",
 				borderStyle: "solid",
 				borderColor: "border.default",
 				backgroundColor: "surface.widget",
-				opacity: 0.5,
 				padding: "2",
 				fontSize: "text-xs",
 				color: "text.muted",
@@ -141,15 +138,13 @@ export function FontViewerLocalAccessError({
 			className={css({
 				flexShrink: 0,
 				borderRadius: "shell-sm",
-				borderWidth: "1px",
+				borderWidth: "hairline",
 				borderStyle: "solid",
 				borderColor: "border.default",
 				backgroundColor: "surface.widget",
-				opacity: 0.5,
 				padding: "2",
 				fontSize: "text-xs",
-				color: "amber.700",
-				_dark: { color: "amber.300" },
+				color: "status.warning",
 			})}
 		>
 			{t("fontViewer.localAccessErrorPrefix", {
@@ -171,15 +166,13 @@ export function FontViewerErrorBanner({
 			className={css({
 				flexShrink: 0,
 				borderRadius: "shell-sm",
-				borderWidth: "1px",
+				borderWidth: "hairline",
 				borderStyle: "solid",
 				borderColor: "border.default",
 				backgroundColor: "surface.widget",
-				opacity: 0.5,
 				padding: "2",
 				fontSize: "text-xs",
-				color: "amber.700",
-				_dark: { color: "amber.300" },
+				color: "status.warning",
 			})}
 		>
 			{t("fontViewer.loadError", {
@@ -204,7 +197,7 @@ export function FontViewerEmptyState({
 				flexDirection: "column",
 				gap: "2",
 				borderRadius: "shell-sm",
-				borderWidth: "1px",
+				borderWidth: "hairline",
 				borderStyle: "dashed",
 				borderColor: "border.default",
 				padding: "2",
@@ -222,7 +215,7 @@ export function FontViewerEmptyState({
 				<p
 					className={css({
 						margin: 0,
-						wordBreak: "break-all",
+						overflowWrap: "anywhere",
 						fontFamily: "mono",
 						fontSize: "text-2xs",
 						color: "text.muted",

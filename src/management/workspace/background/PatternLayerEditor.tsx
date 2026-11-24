@@ -1,9 +1,10 @@
-import { SegmentedControl } from "@ty-plus/ui/controls/SegmentedControl";
+import { SegmentedControl, segmentedButtonQuietClass } from "@ty-plus/ui";
 import type { JSX } from "react";
 import type {
 	Layer,
 	PatternValue,
 } from "@/management/workspace/background/contract";
+import { DEFAULT_PATTERN_COLOR } from "@/management/workspace/literals/layer-colors";
 import { css } from "@/styled-system/css";
 import { QUIET_SELECTED_CLASS } from "./constants";
 import { ColorField, FieldLabel, NumberField } from "./Fields";
@@ -22,12 +23,6 @@ const fieldGroup = css({
 
 const segmentedOverrides = css({
 	borderColor: "var(--color-ty-widget-border)",
-});
-
-const segmentedButton = css({
-	borderWidth: "1px",
-	borderStyle: "solid",
-	borderColor: "transparent",
 });
 
 const unselected = css({
@@ -63,7 +58,7 @@ export function PatternLayerEditor({
 						label: t(`workspaceShell.backgroundPanel.patterns.${pattern}`),
 					}))}
 					className={segmentedOverrides}
-					buttonClassName={segmentedButton}
+					buttonClassName={segmentedButtonQuietClass}
 					selectedClassName={QUIET_SELECTED_CLASS}
 					unselectedClassName={unselected}
 				/>
@@ -77,7 +72,7 @@ export function PatternLayerEditor({
 			/>
 			<ColorField
 				label={t("workspaceShell.backgroundPanel.patternColor")}
-				value={layer.patternColor ?? "#444444"}
+				value={layer.patternColor ?? DEFAULT_PATTERN_COLOR}
 				onColorChange={(value) =>
 					updateLayer(layer.id, { patternColor: value })
 				}

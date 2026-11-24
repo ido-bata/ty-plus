@@ -1,5 +1,5 @@
 /** Public update channels, independent of the distribution provider. */
-export const RELEASE_CHANNELS = ["stable", "beta", "insider"] as const;
+const RELEASE_CHANNELS = ["stable", "beta", "insider"] as const;
 
 export type ReleaseChannel = (typeof RELEASE_CHANNELS)[number];
 

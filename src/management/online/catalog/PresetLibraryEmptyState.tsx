@@ -1,7 +1,7 @@
-import { IconButton } from "@ty-plus/ui/controls/IconButton";
-import { Icon } from "@ty-plus/ui/icons/Icon";
+import { Icon, IconButton, listItemTitleClass } from "@ty-plus/ui";
 import { RefreshCw, X } from "lucide-react";
 import type { JSX } from "react";
+import { i18n } from "@/management/i18n/index";
 import { gatewayRetryAffordance } from "@/management/online/catalog/gateway-retry";
 import type { GatewayBootFailureReason } from "@/management/panel/cloud-gateway-boot";
 import { css } from "@/styled-system/css";
@@ -44,12 +44,6 @@ const emptyTextClass = css({
 	color: "text.muted",
 });
 
-const disconnectedTitleClass = css({
-	fontSize: "sm",
-	fontWeight: "medium",
-	color: "text.primary",
-});
-
 const disconnectedReasonClass = css({
 	fontSize: "xs",
 	color: "text.muted",
@@ -77,8 +71,8 @@ export function PresetLibraryEmptyState(
 				data-online-preset-empty
 				data-gateway-boot-reason={disconnectedReasonTag ?? ""}
 			>
-				<p className={disconnectedTitleClass}>
-					Online preset library is unavailable.
+				<p className={listItemTitleClass}>
+					{i18n.t("online:catalog.emptyUnavailable")}
 				</p>
 				{disconnectedReason ? (
 					<p className={disconnectedReasonClass}>{disconnectedReason}</p>
@@ -90,7 +84,7 @@ export function PresetLibraryEmptyState(
 					disabled={retry.disabled}
 					onClick={onRefresh}
 				>
-					<Icon icon={RefreshCw} size={14} />
+					<Icon icon={RefreshCw} size={16} />
 				</IconButton>
 			</div>
 		);
@@ -98,14 +92,16 @@ export function PresetLibraryEmptyState(
 	if (catalogLength === 0) {
 		return (
 			<div className={emptyClass} data-online-preset-empty>
-				<p className={emptyTextClass}>No online catalog.</p>
+				<p className={emptyTextClass}>
+					{i18n.t("online:catalog.emptyNoCatalog")}
+				</p>
 				<IconButton
 					size="sm"
 					variant="ghost"
-					title="Refresh catalog"
+					title={i18n.t("online:catalog.refreshCatalog")}
 					onClick={onRefresh}
 				>
-					<Icon icon={RefreshCw} size={14} />
+					<Icon icon={RefreshCw} size={16} />
 				</IconButton>
 			</div>
 		);
@@ -113,11 +109,13 @@ export function PresetLibraryEmptyState(
 	if (filteredLength === 0) {
 		return (
 			<div className={emptyClass} data-online-preset-empty>
-				<p className={emptyTextClass}>No presets match filter.</p>
+				<p className={emptyTextClass}>
+					{i18n.t("online:catalog.emptyNoMatch")}
+				</p>
 				<IconButton
 					size="sm"
 					variant="ghost"
-					title="Clear all filters"
+					title={i18n.t("online:catalog.clearAllFilters")}
 					onClick={onClearFilters}
 				>
 					<Icon icon={X} size={12} />

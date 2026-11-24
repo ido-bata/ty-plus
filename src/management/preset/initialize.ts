@@ -9,7 +9,7 @@ import {
 	writePresetJson,
 } from "@/management/catalog/json-files";
 import type { Preset } from "@/management/preset/contract";
-import { normalizePresets } from "@/management/preset/icon-data";
+import { normalizePresets } from "@/management/preset/icon/normalize";
 import { logWorkspace } from "@/management/workspace/onboarding/flow-log";
 
 export type InitializationInput = {

@@ -11,9 +11,9 @@ import {
 	enableInterceptor,
 } from "@/management/debug/console/interceptor";
 import { installGlobalErrorReporting } from "@/management/debug/global-error-reporter";
-import { installCepJsonContextMenuRewrite } from "@/management/dialog/dialogs/context-menu";
-import { resolveWorkspaceModelessExtensionId } from "@/management/dialog/dialogs/ids";
-import { applyCepModelessShellLayoutGuards } from "@/management/dialog/dialogs/layout";
+import { installCepJsonContextMenuRewrite } from "@/management/dialog/context-menu";
+import { resolveWorkspaceModelessExtensionId } from "@/management/dialog/ids";
+import { applyCepModelessShellLayoutGuards } from "@/management/dialog/layout";
 import { ModelessDialogRoot } from "@/management/dialog/modeless/Root";
 import { initializeI18n } from "@/management/i18n";
 import { ErrorBoundary } from "@/management/panel/ErrorBoundary";
@@ -43,7 +43,7 @@ async function bootWorkspaceShellDialogs(): Promise<void> {
 
 	const mount = document.getElementById("app");
 	if (!mount) {
-		throw new Error("Missing #app mount point");
+		throw new Error("Missing #app mount point"); // i18n-exempt: internal diagnostic — not rendered as UI copy
 	}
 
 	const isCep =

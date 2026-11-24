@@ -19,6 +19,7 @@ import {
 	it,
 	vi,
 } from "vitest";
+import { i18n } from "@/management/i18n/index";
 
 const mocks = vi.hoisted(() => {
 	const unregisterMock = vi.fn();
@@ -45,7 +46,7 @@ type Registration = {
 	onMenuSelect?: (menuId: string) => void;
 };
 
-vi.mock("@/management/dialog/dialogs/context-menu", () => ({
+vi.mock("@/management/dialog/context-menu", () => ({
 	registerCepJsonContextMenuSurface: (
 		surfaceId: string,
 		registration: Registration,
@@ -98,7 +99,7 @@ vi.mock("@/shared", () => ({
 	),
 }));
 
-vi.mock("@/management/ae/cep/contexts/Context", () => ({
+vi.mock("@/management/ae/cep/contexts/CepContext", () => ({
 	useCep: () => mocks.cepContext.value,
 }));
 
@@ -174,12 +175,12 @@ describe("SetupRequired", () => {
 		expect(payload?.menu).toHaveLength(2);
 		expect(payload?.menu[0]).toEqual({
 			id: "ty.ctx.setup-required.open-manual",
-			label: "Open Manual",
+			label: i18n.t("onboarding:actions.openManual"),
 			enabled: true,
 		});
 		expect(payload?.menu[1]).toEqual({
 			id: "ty.ctx.setup-required.refresh",
-			label: "Refresh",
+			label: i18n.t("common:actions.refresh"),
 		});
 	});
 

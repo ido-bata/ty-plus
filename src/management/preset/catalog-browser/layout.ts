@@ -9,7 +9,7 @@ import { css } from "@/styled-system/css";
  */
 export const LIST_ROW_GRID = css({
 	display: "grid",
-	gridTemplateColumns: "[2.25rem_2rem_minmax(0,1fr)_auto]",
+	gridTemplateColumns: "2.25rem 2rem minmax(0,1fr) auto",
 	alignItems: "center",
 	columnGap: "2",
 	rowGap: "0.5",
@@ -44,38 +44,6 @@ export const ICON_GRID_SCALE_LS_KEY = "ty.preset-list.icon-grid-scale";
 export const ICON_TILE_ASPECT_LS_KEY = "ty.preset-list.icon-tile-aspect";
 
 export type IconTileAspect = "square" | "wide";
-
-function readIconGridScale(): number {
-	if (typeof window === "undefined") {
-		return 1;
-	}
-	try {
-		const raw = window.localStorage.getItem(ICON_GRID_SCALE_LS_KEY);
-		if (!raw) {
-			return 1;
-		}
-		const n = Number.parseFloat(raw);
-		if (!Number.isFinite(n)) {
-			return 1;
-		}
-		return Math.min(1.75, Math.max(0.65, n));
-	} catch {
-		return 1;
-	}
-}
-
-function readIconTileAspect(): IconTileAspect {
-	if (typeof window === "undefined") {
-		return "square";
-	}
-	try {
-		return window.localStorage.getItem(ICON_TILE_ASPECT_LS_KEY) === "wide"
-			? "wide"
-			: "square";
-	} catch {
-		return "square";
-	}
-}
 
 export function iconTileMediaClass(aspect: IconTileAspect): string {
 	return aspect === "wide" ? iconTileMediaWide : iconTileMediaSquare;

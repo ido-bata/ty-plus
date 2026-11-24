@@ -1,14 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { expect } from "storybook/test";
 import { css } from "@/styled-system/css";
 
-import {
-	AlignIcon,
-	LockIcon,
-	MenuIcon,
-	SearchIcon,
-	TargetIcon,
-	UnlockIcon,
-} from "./widget-grid-icons";
+import { AlignIcon, TargetIcon } from "./widget-grid-icons";
 
 type Args = {
 	size: number;
@@ -18,78 +12,9 @@ const baseArgs: Args = {
 	size: 20,
 };
 
-const renderTopIcons = (args: Args) => (
-	<div
-		className={css({
-			display: "flex",
-			flexWrap: "wrap",
-			alignItems: "center",
-			gap: "4",
-			p: "4",
-			color: "text.primary",
-		})}
-	>
-		<div
-			className={css({
-				display: "flex",
-				flexDirection: "column",
-				alignItems: "center",
-				gap: "1",
-			})}
-		>
-			<SearchIcon size={args.size} />
-			<span className={css({ fontSize: "text-2xs", color: "text.muted" })}>
-				search
-			</span>
-		</div>
-		<div
-			className={css({
-				display: "flex",
-				flexDirection: "column",
-				alignItems: "center",
-				gap: "1",
-			})}
-		>
-			<LockIcon size={args.size} />
-			<span className={css({ fontSize: "text-2xs", color: "text.muted" })}>
-				lock
-			</span>
-		</div>
-		<div
-			className={css({
-				display: "flex",
-				flexDirection: "column",
-				alignItems: "center",
-				gap: "1",
-			})}
-		>
-			<UnlockIcon size={args.size} />
-			<span className={css({ fontSize: "text-2xs", color: "text.muted" })}>
-				unlock
-			</span>
-		</div>
-		<div
-			className={css({
-				display: "flex",
-				flexDirection: "column",
-				alignItems: "center",
-				gap: "1",
-			})}
-		>
-			<MenuIcon size={args.size} />
-			<span className={css({ fontSize: "text-2xs", color: "text.muted" })}>
-				menu
-			</span>
-		</div>
-	</div>
-);
-
 const meta = {
 	title: "Workspace/WidgetGridIcons",
 	args: baseArgs,
-	argTypes: {
-		size: { control: { type: "range", min: 12, max: 48, step: 2 } },
-	},
 	decorators: [
 		(Story) => (
 			<div
@@ -106,16 +31,27 @@ const meta = {
 			</div>
 		),
 	],
-	render: renderTopIcons,
 } satisfies Meta<Args>;
 
 export default meta;
 type Story = StoryObj<Args>;
 
-export const Default: Story = {};
+const svgSize = (canvasElement: HTMLElement): string | null =>
+	canvasElement.querySelector("svg")?.getAttribute("width") ?? null;
+
+export const Default: Story = {
+	render: ({ size }) => <AlignIcon name="align-left" size={size} />,
+	play: async ({ canvasElement }) => {
+		expect(svgSize(canvasElement)).toBe("20");
+	},
+};
 
 export const Large: Story = {
 	args: { size: 32 },
+	render: ({ size }) => <AlignIcon name="align-left" size={size} />,
+	play: async ({ canvasElement }) => {
+		expect(svgSize(canvasElement)).toBe("32");
+	},
 };
 
 export const Targets: Story = {
@@ -184,51 +120,4 @@ export const Targets: Story = {
 			</div>
 		</div>
 	),
-};
-
-export const AlignIcons: Story = {
-	render: () => {
-		const names = [
-			"align-left",
-			"align-center-h",
-			"align-right",
-			"align-top",
-			"align-center-v",
-			"align-bottom",
-			"distribute-h",
-			"distribute-v",
-			"align-start",
-			"align-end",
-		];
-		return (
-			<div
-				className={css({
-					display: "grid",
-					gridTemplateColumns: "repeat(5, minmax(0, 1fr))",
-					gap: "3",
-					p: "4",
-					color: "text.primary",
-				})}
-			>
-				{names.map((name) => (
-					<div
-						key={name}
-						className={css({
-							display: "flex",
-							flexDirection: "column",
-							alignItems: "center",
-							gap: "1",
-						})}
-					>
-						<AlignIcon name={name} />
-						<span
-							className={css({ fontSize: "text-2xs", color: "text.muted" })}
-						>
-							{name}
-						</span>
-					</div>
-				))}
-			</div>
-		);
-	},
 };

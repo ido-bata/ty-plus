@@ -1,5 +1,4 @@
-import { Icon } from "@ty-plus/ui";
-import { PathField } from "@ty-plus/ui/fields/PathField";
+import { Button, Icon, PathField, sectionLabelClass } from "@ty-plus/ui";
 import { ChevronDown, FileSearch } from "lucide-react";
 import { forwardRef, type JSX, useImperativeHandle, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -42,19 +41,11 @@ const blockClass = css({
 	gap: "1",
 });
 
-const fieldLabelClass = css({
-	fontSize: "xs",
-	fontWeight: "medium",
-	textTransform: "uppercase",
-	letterSpacing: "wide",
-	color: "text.muted",
-});
-
 const previewBoxClass = css({
 	marginTop: "2",
 	overflow: "hidden",
 	borderRadius: "shell-sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 	backgroundColor: "surface.widget",
@@ -83,13 +74,14 @@ const containerAccordionClass = css({
 
 const accordionTriggerClass = css({
 	display: "flex",
+	position: "relative",
 	width: "full",
 	minWidth: "0",
 	alignItems: "center",
 	justifyContent: "space-between",
 	gap: "2",
 	borderRadius: "shell-sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 	backgroundColor: "surface.widget",
@@ -102,15 +94,28 @@ const accordionTriggerClass = css({
 	_hover: { backgroundColor: "interactive.hover" },
 });
 
+/**
+ * Full-width click target overlaid on the accordion trigger surface. The
+ * trigger div owns the chrome (border, hover fill); this bare Button only
+ * provides semantics, the shared focus ring and the disabled treatment.
+ */
+const accordionHitAreaClass = css({
+	position: "absolute",
+	inset: "0",
+	_focusVisible: {
+		boxShadow: "var(--color-focus-ring)",
+	},
+});
+
 const accordionPanelClass = css({
 	display: "flex",
 	width: "full",
 	minWidth: "0",
 	flexDirection: "column",
 	gap: "4",
-	borderLeftWidth: "1px",
-	borderRightWidth: "1px",
-	borderBottomWidth: "1px",
+	borderLeftWidth: "hairline",
+	borderRightWidth: "hairline",
+	borderBottomWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 	backgroundColor: "surface.widget",
@@ -151,7 +156,10 @@ export const ArchiveDetailsSection = forwardRef<
 
 	const descriptionBlock = (
 		<div className={blockClass}>
-			<label htmlFor="archive-details-description" className={fieldLabelClass}>
+			<label
+				htmlFor="archive-details-description"
+				className={sectionLabelClass}
+			>
 				{t("presetTool.form.description")}
 			</label>
 			<MarkdownLiveEditor
@@ -170,7 +178,7 @@ export const ArchiveDetailsSection = forwardRef<
 		<div className={blockClass}>
 			<label
 				htmlFor="archive-details-description-image"
-				className={fieldLabelClass}
+				className={sectionLabelClass}
 			>
 				{t("presetTool.form.descriptionImage")}
 			</label>
@@ -210,14 +218,7 @@ export const ArchiveDetailsSection = forwardRef<
 
 	return (
 		<div className={containerAccordionClass}>
-			<button
-				type="button"
-				className={accordionTriggerClass}
-				onClick={() => setIsOpen((open) => !open)}
-				aria-expanded={isOpen}
-				aria-controls="archive-details-section"
-				data-archive-details-trigger
-			>
+			<div className={accordionTriggerClass}>
 				<span>{t("presetTool.form.details")}</span>
 				<Icon
 					icon={ChevronDown}
@@ -228,7 +229,16 @@ export const ArchiveDetailsSection = forwardRef<
 						isOpen ? accordionChevronOpenClass : "",
 					)}
 				/>
-			</button>
+				<Button
+					variant="bare"
+					uiSize="content"
+					className={accordionHitAreaClass}
+					onClick={() => setIsOpen((open) => !open)}
+					aria-expanded={isOpen}
+					aria-controls="archive-details-section"
+					data-archive-details-trigger
+				/>
+			</div>
 			{isOpen ? (
 				<div
 					id="archive-details-section"

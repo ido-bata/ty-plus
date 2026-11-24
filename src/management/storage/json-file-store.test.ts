@@ -266,6 +266,7 @@ describe("writeJsonFileText", () => {
 	it("pretty-prints valid JSON before writing", async () => {
 		const mkdirCalls: string[] = [];
 		const writeCalls: Array<{ path: string; data: string }> = [];
+		const renameCalls: Array<{ from: string; to: string }> = [];
 
 		const win = fakeWindowWithNodeFs({
 			promises: {
@@ -276,20 +277,28 @@ describe("writeJsonFileText", () => {
 				writeFile: async (path: string, data: string) => {
 					writeCalls.push({ path, data });
 				},
+				rename: async (from: string, to: string) => {
+					renameCalls.push({ from, to });
+				},
 			},
 		});
 
 		await writeJsonFileText(win, "/data/settings.json", '{"key":"value"}\n');
 
-		expect(writeCalls).toContainEqual({
-			path: "/data/settings.json",
-			data: '{\n  "key": "value"\n}\n',
-		});
+		// ADR-0006 §6: the payload lands via tmp file + rename, never a
+		// direct write to the target path.
+		expect(writeCalls).toHaveLength(1);
+		expect(writeCalls[0].path).toMatch(/^\/data\/settings\.json\.tmp-/);
+		expect(writeCalls[0].data).toBe('{\n  "key": "value"\n}\n');
+		expect(renameCalls).toEqual([
+			{ from: writeCalls[0].path, to: "/data/settings.json" },
+		]);
 	});
 
 	it("creates parent directory with recursive mkdir before write", async () => {
 		const mkdirCalls: string[] = [];
 		const writeCalls: Array<{ path: string; data: string }> = [];
+		const renameCalls: Array<{ from: string; to: string }> = [];
 
 		const win = fakeWindowWithNodeFs({
 			promises: {
@@ -300,6 +309,9 @@ describe("writeJsonFileText", () => {
 				writeFile: async (path: string, data: string) => {
 					writeCalls.push({ path, data });
 				},
+				rename: async (from: string, to: string) => {
+					renameCalls.push({ from, to });
+				},
 			},
 		});
 
@@ -307,15 +319,18 @@ describe("writeJsonFileText", () => {
 
 		// mkdir should be called for parent dir only
 		expect(mkdirCalls).toContain("/a/b/c");
-		expect(writeCalls).toContainEqual({
-			path: "/a/b/c/data.json",
-			data: '{\n  "nested": true\n}\n',
-		});
+		expect(writeCalls).toHaveLength(1);
+		expect(writeCalls[0].path).toMatch(/^\/a\/b\/c\/data\.json\.tmp-/);
+		expect(writeCalls[0].data).toBe('{\n  "nested": true\n}\n');
+		expect(renameCalls).toEqual([
+			{ from: writeCalls[0].path, to: "/a/b/c/data.json" },
+		]);
 	});
 
 	it("skips mkdir when path has no parent directory", async () => {
 		const mkdirCalls: string[] = [];
 		const writeCalls: Array<{ path: string; data: string }> = [];
+		const renameCalls: Array<{ from: string; to: string }> = [];
 
 		const win = fakeWindowWithNodeFs({
 			promises: {
@@ -326,21 +341,45 @@ describe("writeJsonFileText", () => {
 				writeFile: async (path: string, data: string) => {
 					writeCalls.push({ path, data });
 				},
+				rename: async (from: string, to: string) => {
+					renameCalls.push({ from, to });
+				},
 			},
 		});
 
 		await writeJsonFileText(win, "file.json", '{"single": true}\n');
 
 		expect(mkdirCalls).toHaveLength(0);
-		expect(writeCalls).toContainEqual({
-			path: "file.json",
-			data: '{\n  "single": true\n}\n',
+		expect(writeCalls).toHaveLength(1);
+		expect(writeCalls[0].path).toMatch(/^file\.json\.tmp-/);
+		expect(writeCalls[0].data).toBe('{\n  "single": true\n}\n');
+		expect(renameCalls).toEqual([
+			{ from: writeCalls[0].path, to: "file.json" },
+		]);
+	});
+
+	it("fails closed when the host fs has no rename — no torn-write fallback", async () => {
+		const writeCalls: Array<{ path: string; data: string }> = [];
+		const win = fakeWindowWithNodeFs({
+			promises: {
+				mkdir: async () => undefined,
+				writeFile: async (path: string, data: string) => {
+					writeCalls.push({ path, data });
+				},
+				// No `rename`: atomic publish is impossible on this host.
+			},
 		});
+
+		await expect(
+			writeJsonFileText(win, "/data/settings.json", '{"key":"value"}\n'),
+		).rejects.toThrow(/rename API is not available/);
+		expect(writeCalls).toHaveLength(0);
 	});
 
 	it("uses sync fallback when promises not available", async () => {
 		const mkdirCalls: string[] = [];
 		const writeCalls: Array<{ path: string; data: string }> = [];
+		const renameCalls: Array<{ from: string; to: string }> = [];
 
 		const win = fakeWindowWithNodeFs({
 			readFileSync: (_path: string) => "{}",
@@ -350,14 +389,19 @@ describe("writeJsonFileText", () => {
 			writeFileSync: (path: string, data: string) => {
 				writeCalls.push({ path, data });
 			},
+			renameSync: (from: string, to: string) => {
+				renameCalls.push({ from, to });
+			},
 		});
 
 		await writeJsonFileText(win, "/sync/path.json", '{"sync": true}\n');
 
 		expect(mkdirCalls).toContain("/sync");
-		expect(writeCalls).toContainEqual({
-			path: "/sync/path.json",
-			data: '{\n  "sync": true\n}\n',
-		});
+		expect(writeCalls).toHaveLength(1);
+		expect(writeCalls[0].path).toMatch(/^\/sync\/path\.json\.tmp-/);
+		expect(writeCalls[0].data).toBe('{\n  "sync": true\n}\n');
+		expect(renameCalls).toEqual([
+			{ from: writeCalls[0].path, to: "/sync/path.json" },
+		]);
 	});
 });

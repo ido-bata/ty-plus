@@ -1,14 +1,15 @@
+import { Button, Icon } from "@ty-plus/ui";
+import { Menu } from "lucide-react";
 import type { JSX, MouseEvent as ReactMouseEvent, ReactNode } from "react";
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
-import { CTX_MENU_IDS } from "@/management/dialog/dialogs/unified-context-menu-constants";
+import { CTX_MENU_IDS } from "@/management/dialog/unified-context-menu-constants";
+import type { SurfaceState } from "@/management/workspace/core/state";
 import type { Layout } from "@/management/workspace/layout/grid-document";
 import { catalogRefsForSurfaceIds } from "@/management/workspace/placement/resolve";
 import { ATTR_WIDGET_INSTANCE_ID } from "@/management/workspace/placement/types";
-import type { SurfaceState } from "@/management/workspace/state";
 import { DATA_OPENER_WORKSPACE_PANEL } from "@/management/workspace/surface/opener-panel-id";
-import { MenuIcon } from "@/management/workspace/surface/widget-grid-icons";
 import { css } from "@/styled-system/css";
 
 type Item = { action: string; label: string };
@@ -79,7 +80,7 @@ function MenuPanelContent({
 				})}
 				role="separator"
 				tabIndex={0}
-				aria-label="Menu section separator"
+				aria-label={t("widgets:menu.separatorAria")}
 			/>
 			{hasMultiPresetSelection ? (
 				<>
@@ -130,7 +131,7 @@ function MenuPanelContent({
 						})}
 						role="separator"
 						tabIndex={0}
-						aria-label="Menu section separator"
+						aria-label={t("widgets:menu.separatorAria")}
 					/>
 				</>
 			) : null}
@@ -149,7 +150,7 @@ function MenuPanelContent({
 				})}
 				role="separator"
 				tabIndex={0}
-				aria-label="Menu section separator"
+				aria-label={t("widgets:menu.separatorAria")}
 			/>
 			<Row
 				action={CTX_MENU_IDS.addWidget}
@@ -172,7 +173,7 @@ function MenuPanelContent({
 				})}
 				role="separator"
 				tabIndex={0}
-				aria-label="Menu section separator"
+				aria-label={t("widgets:menu.separatorAria")}
 			/>
 			{dialogItems.map((item) => (
 				<Row
@@ -209,13 +210,13 @@ function moveToPanelItems(currentPanelId: string): Item[] {
 
 const panelClass = css({
 	pointerEvents: "auto",
-	zIndex: 100000,
+	zIndex: "var(--ty-z-widget-overlay)",
 	maxHeight: "min(70vh,26rem)",
-	minWidth: "var(--ty-widget-icon-size)",
+	minWidth: "4",
 	overflowY: "auto",
 	whiteSpace: "nowrap",
 	borderRadius: "var(--ty-space-1)",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 	backgroundColor: "surface.dialog",
@@ -224,6 +225,7 @@ const panelClass = css({
 
 const itemClass = css({
 	display: "flex",
+	position: "relative",
 	width: "full",
 	minWidth: 0,
 	cursor: "pointer",
@@ -236,11 +238,17 @@ const itemClass = css({
 	color: "text.primary",
 	_hover: { backgroundColor: "interactive.hover" },
 });
-
-const sepClass = css({
-	marginBlock: "var(--ty-space-1)",
-	height: "1px",
-	backgroundColor: "border.subtle",
+/**
+ * The click target overlaid on a menu surface row. The row div owns the
+ * chrome (padding, hover fill); this bare Button only provides semantics,
+ * the shared focus ring and the disabled treatment.
+ */
+const hitAreaClass = css({
+	position: "absolute",
+	inset: "0",
+	_focusVisible: {
+		boxShadow: "var(--color-focus-ring)",
+	},
 });
 
 const groupSummaryClass = css({
@@ -356,7 +364,7 @@ export function MenuWidget({
 
 	const [open, setOpen] = useState(false);
 	const [box, setBox] = useState({ top: 0, left: 0, width: 160 });
-	const anchorRef = useRef<HTMLButtonElement>(null);
+	const anchorRef = useRef<HTMLDivElement>(null);
 	const portalRef = useRef<HTMLDivElement>(null);
 
 	const updatePosition = useCallback(() => {
@@ -452,11 +460,11 @@ export function MenuWidget({
 			: null;
 
 	return (
-		<button
+		<div
 			ref={anchorRef}
-			type="button"
 			className={css({
 				display: "flex",
+				position: "relative",
 				height: "full",
 				width: "full",
 				minHeight: 0,
@@ -465,7 +473,7 @@ export function MenuWidget({
 				alignItems: "center",
 				justifyContent: "center",
 				borderRadius: "var(--ty-space-1)",
-				borderWidth: "1px",
+				borderWidth: "hairline",
 				borderStyle: "solid",
 				borderColor: "border.default",
 				backgroundColor: "surface.panel",
@@ -477,17 +485,22 @@ export function MenuWidget({
 					color: "text.primary",
 				},
 			})}
-			data-ws-action="open-widget-menu-context"
-			title={t("widgets:menu.name")}
-			aria-label={t("widgets:menu.name")}
-			aria-expanded={open}
-			aria-haspopup="menu"
-			onClick={onToggle}
-			{...instanceAttr}
 		>
-			<MenuIcon size={14} />
+			<Icon icon={Menu} size={16} />
 			{panel}
-		</button>
+			<Button
+				variant="bare"
+				uiSize="content"
+				className={hitAreaClass}
+				data-ws-action="open-widget-menu-context"
+				title={t("widgets:menu.name")}
+				aria-label={t("widgets:menu.name")}
+				aria-expanded={open}
+				aria-haspopup="menu"
+				onClick={onToggle}
+				{...instanceAttr}
+			/>
+		</div>
 	);
 }
 
@@ -507,16 +520,18 @@ function Row({
 			? { [DATA_OPENER_WORKSPACE_PANEL]: openerWorkspacePanelId }
 			: {};
 	return (
-		<button
-			type="button"
-			className={itemClass}
-			role="menuitem"
-			data-ws-action={action}
-			onClick={onActivate}
-			{...openerAttr}
-		>
+		<div className={itemClass}>
 			{children}
-		</button>
+			<Button
+				variant="bare"
+				uiSize="content"
+				className={hitAreaClass}
+				role="menuitem"
+				data-ws-action={action}
+				onClick={onActivate}
+				{...openerAttr}
+			/>
+		</div>
 	);
 }
 

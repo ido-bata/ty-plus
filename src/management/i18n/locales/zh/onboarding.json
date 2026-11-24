@@ -13,7 +13,8 @@
 		"support": {
 			"label": "位置",
 			"title": "选择 AE 文件夹",
-			"body": "选择 After Effects 应用程序文件夹。在 Windows 上，这是 Support Files 目录；在 macOS 上，它是包含 Presets 的应用文件夹。"
+			"body": "选择 After Effects 应用程序文件夹。在 Windows 上，这是 Support Files 目录；在 macOS 上，它是包含 Presets 的应用文件夹。",
+			"aeAppFolderHint": "检测到 AE 应用文件夹 — 将跳过子文件夹步骤。"
 		},
 		"subfolders": {
 			"label": "文件夹",
@@ -87,13 +88,24 @@
 		"finishErrorNextActionChooseTrusted": "引导设置文件中未包含 Support Root。请在 After Effects 中重新开始引导。",
 		"finishErrorNextActionAdjust": "无法在 AE Support Root 保存设置。请确认路径可访问且 After Effects 拥有写入权限,然后重试。",
 		"finishErrorNextActionRetry": "已请求 Windows UAC,但提权写入仍然失败。请点击 Retry 重新触发 UAC 对话框,或以管理员身份运行 After Effects。",
-		"finishErrorRetryWithElevation": "以管理员身份重试"
+		"finishErrorRetryWithElevation": "以管理员身份重试",
+		"supportAndSubfoldersRequired": "需要 Support 路径和 onboarding 子文件夹。",
+		"appRootUnresolved": "Ty Plus：无法为 ty-plus-init.json 解析 After Effects 应用程序文件夹。请在 After Effects 内打开面板后重试。",
+		"initWriteFailed": "写入 {{path}} 下的 ty-plus-init.json 失败：{{message}}",
+		"elevationConsentDenied": "UAC 确认提示已被关闭（未授予管理员提升权限）。",
+		"innerExitCodeNote": " 内部脚本退出代码：{{code}}。",
+		"elevationWriteFailedStderr": "提升写入报告了错误。{{exitCodeNote}} 内部脚本 stderr：{{stderr}}",
+		"elevationWriteFailed": "提升写入报告了错误。{{exitCodeNote}}"
 	},
 	"actions": {
 		"back": "返回",
 		"next": "下一步",
 		"finish": "完成",
 		"toggleFullscreen": "切换到全屏",
-		"toggleModal": "返回模态框"
+		"toggleModal": "返回模态框",
+		"openManual": "打开手册"
+	},
+	"syncStatus": {
+		"localUpdate": "本地更新"
 	}
 }

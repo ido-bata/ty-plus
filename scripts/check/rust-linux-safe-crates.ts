@@ -12,7 +12,7 @@
  * NOT depend on host-filesystem.
  *
  * This module derives that subset from `cargo metadata` so the wrapper
- * scripts (`check-rust-clippy.ts`, `check-rust-test.ts`) can assert at
+ * scripts (`rust-clippy.ts`, `rust-test.ts`) can assert at
  * self-test time that the canonical `LINUX_SAFE_CRATES` list matches
  * the derivation. Adding a workspace member without updating the list
  * fails the gate; flipping a previously-safe crate to depend on
@@ -47,8 +47,6 @@ export const LINUX_SAFE_CRATES = [
 	"ty-plus-protocol",
 	"ty-plus-online",
 ] as const;
-
-type LinuxSafeCrate = (typeof LINUX_SAFE_CRATES)[number];
 
 interface CargoDependency {
 	readonly name: string;

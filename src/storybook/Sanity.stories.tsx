@@ -10,13 +10,15 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useTranslation } from "react-i18next";
 
-import { useCep } from "@/management/ae/cep/contexts/Context";
+import { expect } from "storybook/test";
+
+import { useCep } from "@/management/ae/cep/contexts/CepContext";
 import { useAfterEffectsFilesGateway } from "@/management/ae/files/gateway-context";
 
 function SanityPanel() {
 	const cep = useCep();
 	const filesGateway = useAfterEffectsFilesGateway();
-	const { t } = useTranslation("common");
+	const { t, i18n } = useTranslation("common");
 
 	return (
 		<div
@@ -42,7 +44,7 @@ function SanityPanel() {
 				<dt>filesGateway</dt>
 				<dd data-sanity="files-gateway">{filesGateway ? "present" : "null"}</dd>
 				<dt>i18n.language</dt>
-				<dd data-sanity="i18n-language">{t("language")}</dd>
+				<dd data-sanity="i18n-language">{i18n.language}</dd>
 			</dl>
 		</div>
 	);
@@ -56,4 +58,16 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {};
+export const Default: Story = {
+	play: async ({ canvasElement }) => {
+		// Issue #480: the language field must show the active locale code,
+		// not a missing translation key. Issue #467: Storybook is
+		// English-fixed — the stored-preference upgrade must never flip
+		// the UI to another locale after mount.
+		const language = canvasElement.querySelector<HTMLElement>(
+			"[data-sanity='i18n-language']",
+		);
+		if (!language) throw new Error("i18n language field not found");
+		expect(language.textContent).toBe("en");
+	},
+};

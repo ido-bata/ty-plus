@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { expect } from "storybook/test";
+import { expectCanvasLayout } from "@/storybook/quality/layout";
 import { css } from "@/styled-system/css";
 
 import { Button } from "./Button";
@@ -11,6 +12,7 @@ const meta = {
 		variant: {
 			control: { type: "select" },
 			options: [
+				"bare",
 				"primary",
 				"default",
 				"secondary",
@@ -41,7 +43,14 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {};
+export const Default: Story = {
+	// Issue #194: initial-state layout contract — every rendered control
+	// must sit inside the viewport and not be clipped by hidden-overflow
+	// ancestors. Capture success alone is not a visual pass.
+	play: async ({ canvasElement }) => {
+		expectCanvasLayout(canvasElement);
+	},
+};
 
 export const Disabled: Story = {
 	args: { disabled: true },
@@ -51,6 +60,7 @@ export const Disabled: Story = {
 // button to `interactive.hover`; the post-play state is screenshotted.
 export const Hovered: Story = {
 	play: async ({ canvasElement }) => {
+		expectCanvasLayout(canvasElement);
 		const button = canvasElement.querySelector("button");
 		if (!button) throw new Error("button not found");
 		const { userEvent } = await import("vitest/browser");
@@ -59,6 +69,32 @@ export const Hovered: Story = {
 		await expect(button.matches(":hover")).toBe(true);
 		await new Promise((resolve) => setTimeout(resolve, 300));
 		await expect(getComputedStyle(button).backgroundColor).not.toBe(resting);
+		expectCanvasLayout(canvasElement);
+	},
+};
+
+// Issue #194: keyboard focus must reach the button and the layout
+// contract must still hold while focused.
+export const Focused: Story = {
+	play: async ({ canvasElement }) => {
+		const button = canvasElement.querySelector("button");
+		if (!button) throw new Error("button not found");
+		button.focus();
+		await expect(document.activeElement).toBe(button);
+		await expect(button.matches(":focus")).toBe(true);
+		expectCanvasLayout(canvasElement);
+	},
+};
+
+// Issue #194: long-string coverage — an over-long label must not push
+// page-level horizontal overflow or escape the viewport.
+export const LongLabel: Story = {
+	args: {
+		children:
+			"Apply this preset to the selected layers with an extremely long descriptive label that keeps going",
+	},
+	play: async ({ canvasElement }) => {
+		expectCanvasLayout(canvasElement);
 	},
 };
 

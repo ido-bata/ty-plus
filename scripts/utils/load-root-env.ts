@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 const scriptsDir = path.dirname(fileURLToPath(import.meta.url));
 
 /** `scripts/` path references `@ty-plus/contracts`. */
-const REPO_ROOT = path.resolve(scriptsDir, "..");
+const _REPO_ROOT = path.resolve(scriptsDir, "..");
 
 /**
  * Parse root `.env` (`#` comment, `KEY=value`, simple quotes).
@@ -46,7 +46,7 @@ const readRepoDotenv = (repoRoot: string): Record<string, string> => {
 };
 
 /** Fill `.env` only for keys not set in OS env (for Bun build) */
-const mergeRepoDotenvIntoBunEnv = (repoRoot: string): void => {
+const _mergeRepoDotenvIntoBunEnv = (repoRoot: string): void => {
 	if (typeof Bun === "undefined") {
 		return;
 	}
@@ -59,7 +59,7 @@ const mergeRepoDotenvIntoBunEnv = (repoRoot: string): void => {
 };
 
 /** Node (Vite config load time): fill `.env` only for keys not set in process.env */
-const mergeRepoDotenvIntoProcessEnv = (repoRoot: string): void => {
+const _mergeRepoDotenvIntoProcessEnv = (repoRoot: string): void => {
 	const fromFile = readRepoDotenv(repoRoot);
 	for (const [k, v] of Object.entries(fromFile)) {
 		if (process.env[k] === undefined) {

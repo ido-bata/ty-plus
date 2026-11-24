@@ -95,19 +95,19 @@ export const getImportEntries = (
 			/(?:import|export)\s+(?:type\s+)?[\s\S]*?\s+from\s+["']([^"']+)["']/.exec(
 				code,
 			);
-		if (fromMatch && fromMatch[1]) {
+		if (fromMatch?.[1]) {
 			pushSpecifier(fromMatch[1], lineNo);
 			continue;
 		}
 
 		const sideEffectMatch = /import\s+["']([^"']+)["']/.exec(code);
-		if (sideEffectMatch && sideEffectMatch[1]) {
+		if (sideEffectMatch?.[1]) {
 			pushSpecifier(sideEffectMatch[1], lineNo);
 			continue;
 		}
 
 		const dynamicMatch = /\bimport\s*\(\s*["']([^"']+)["']/.exec(code);
-		if (dynamicMatch && dynamicMatch[1]) {
+		if (dynamicMatch?.[1]) {
 			pushSpecifier(dynamicMatch[1], lineNo);
 		}
 	}
@@ -146,7 +146,7 @@ export const getNamedSymbols = (
 
 		const extract = (re: RegExp): string | null => {
 			const m = re.exec(code);
-			return m && m[1] ? m[1] : null;
+			return m?.[1] ? m[1] : null;
 		};
 
 		const candidates: Array<string | null> = [

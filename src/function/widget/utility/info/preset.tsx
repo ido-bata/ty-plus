@@ -1,13 +1,14 @@
+import { infoRowClass } from "@ty-plus/ui";
 import { type JSX, useEffect, useMemo, useState } from "react";
-
+import { i18n } from "@/management/i18n/index";
 import type { Preset } from "@/management/preset/contract";
 import { resolvePresetsForInfoByCatalogIds } from "@/management/preset/group/info-resolution";
-import { catalogRefsForSurfaceIds } from "@/management/workspace/placement/resolve";
 import type {
 	GridSettings,
 	Layout,
 	SurfaceState,
-} from "@/management/workspace/state";
+} from "@/management/workspace/core/state";
+import { catalogRefsForSurfaceIds } from "@/management/workspace/placement/resolve";
 import { css } from "@/styled-system/css";
 import { CompSections } from "./comp-sections";
 import {
@@ -23,31 +24,34 @@ function HostFooter({ state }: { state: SurfaceState }): JSX.Element | null {
 			<div
 				className={css({
 					marginTop: "var(--ty-space-2)",
-					borderTopWidth: "1px",
+					borderTopWidth: "hairline",
 					borderTopStyle: "solid",
 					borderColor: "border.subtle",
 					paddingTop: "var(--ty-space-2)",
 				})}
 			>
-				<SectionLabel>Active comp</SectionLabel>
+				<SectionLabel>{i18n.t("widgets:info.activeComp")}</SectionLabel>
 				<CompSections comp={state.compInfo} />
 			</div>
 		) : state.compInfoError?.trim() ? (
 			<div
 				className={css({
 					marginTop: "var(--ty-space-2)",
-					borderTopWidth: "1px",
+					borderTopWidth: "hairline",
 					borderTopStyle: "solid",
 					borderColor: "border.subtle",
 					paddingTop: "var(--ty-space-2)",
 					fontSize: "text-xs",
-					color: "var(--text-muted)",
+					color: "var(--color-text-muted)",
 				})}
 			>
 				<span
-					className={css({ fontWeight: "semibold", color: "var(--text-main)" })}
+					className={css({
+						fontWeight: "semibold",
+						color: "var(--color-text-primary)",
+					})}
 				>
-					Comp info
+					{i18n.t("widgets:info.compInfo")}
 				</span>
 				{": "}
 				{state.compInfoError.trim()}
@@ -64,8 +68,8 @@ const infoContainerClass = css({
 	width: "full",
 	flexDirection: "column",
 	overflow: "auto",
-	borderRadius: "var(--radius)",
-	backgroundColor: "var(--widget-background)",
+	borderRadius: "var(--radius-shell)",
+	backgroundColor: "var(--color-surface-widget)",
 	padding: "var(--ty-ws-grid-padding-clamp)",
 });
 
@@ -138,13 +142,13 @@ function _PresetMeta({
 				display: "flex",
 				flexDirection: "column",
 				gap: "var(--ty-space-1)",
-				borderTopWidth: "1px",
+				borderTopWidth: "hairline",
 				borderTopStyle: "solid",
 				borderColor: "border.subtle",
 				paddingTop: "var(--ty-space-2)",
 			})}
 		>
-			<SectionLabel>Details</SectionLabel>
+			<SectionLabel>{i18n.t("presets:presetTool.form.details")}</SectionLabel>
 			<div
 				className={css({
 					display: "flex",
@@ -152,23 +156,18 @@ function _PresetMeta({
 					gap: "var(--ty-space-0-5)",
 				})}
 			>
-				<div
-					className={css({
-						display: "flex",
-						justifyContent: "space-between",
-						gap: "var(--ty-space-2)",
-						fontSize: "text-xs",
-					})}
-				>
-					<span className={css({ flexShrink: 0, color: "var(--text-muted)" })}>
-						File
+				<div className={infoRowClass}>
+					<span
+						className={css({ flexShrink: 0, color: "var(--color-text-muted)" })}
+					>
+						{i18n.t("widgets:info.file")}
 					</span>
 					<span
 						className={css({
 							minWidth: 0,
 							wordBreak: "break-all",
 							textAlign: "right",
-							color: "var(--text-main)",
+							color: "var(--color-text-primary)",
 						})}
 					>
 						{fileName ?? "-"}
@@ -181,8 +180,10 @@ function _PresetMeta({
 						fontSize: "text-xs",
 					})}
 				>
-					<span className={css({ color: "var(--text-muted)" })}>Kind</span>
-					<span className={css({ color: "var(--text-main)" })}>
+					<span className={css({ color: "var(--color-text-muted)" })}>
+						{i18n.t("widgets:info.kind")}
+					</span>
+					<span className={css({ color: "var(--color-text-primary)" })}>
 						{kindLabel ?? "-"}
 					</span>
 				</div>

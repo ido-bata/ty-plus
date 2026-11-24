@@ -49,7 +49,7 @@
  *     procedure file surfaces as a clear error.
  */
 
-import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
 import {
@@ -58,7 +58,6 @@ import {
 	Parser,
 } from "@cucumber/gherkin";
 import type {
-	Background as GherkinBackground,
 	GherkinDocument,
 	Examples as GherkinExamples,
 	Step as GherkinStepRaw,
@@ -69,7 +68,6 @@ import type {
 import type {
 	ExampleBlock,
 	GherkinBlock,
-	GherkinFeature,
 	GherkinKind,
 	GherkinRule,
 	GherkinScenario,
@@ -77,8 +75,6 @@ import type {
 	ScenarioSpec,
 } from "./types";
 
-const FEATURES_DIR = "src/shared/scenario/features";
-const PROCEDURES_DIR = "src/shared/scenario/procedures";
 const BINDINGS_FILE = "src/shared/scenario/scenario-bindings.json";
 
 const repoRoot = (): string => process.cwd();
@@ -94,6 +90,7 @@ interface ParsedFeature {
 const readFeatureFile = (relPath: string): ParsedFeature => {
 	const absPath = join(repoRoot(), relPath);
 	if (!existsSync(absPath)) {
+		// i18n-exempt: internal diagnostic — not rendered as UI copy
 		throw new Error(
 			`Feature file declared in bindings does not exist: ${absPath}`,
 		);
@@ -104,7 +101,7 @@ const readFeatureFile = (relPath: string): ParsedFeature => {
 	const parser = new Parser(builder, matcher);
 	const doc: GherkinDocument = parser.parse(source);
 	if (!doc.feature) {
-		throw new Error(`Feature file ${relPath} has no Feature element.`);
+		throw new Error(`Feature file ${relPath} has no Feature element.`); // i18n-exempt: internal diagnostic — not rendered as UI copy
 	}
 	const feature = doc.feature;
 
@@ -272,6 +269,7 @@ interface ScenarioBindingsFile {
 const readProcedure = (scenarioId: string, relPath: string): ProcedureFile => {
 	const absPath = join(repoRoot(), relPath);
 	if (!existsSync(absPath)) {
+		// i18n-exempt: internal diagnostic — not rendered as UI copy
 		throw new Error(
 			`Procedure file declared in binding for scenario "${scenarioId}" does not exist: ${relPath}. ` +
 				`The loader refuses silent fallbacks (round-2 Blocker B); rename the binding's procedureFile or restore the file at the declared path.`,
@@ -280,6 +278,7 @@ const readProcedure = (scenarioId: string, relPath: string): ProcedureFile => {
 	const raw = readFileSync(absPath, "utf8");
 	const parsed = JSON.parse(raw) as ProcedureFile;
 	if (parsed.scenarioId !== scenarioId) {
+		// i18n-exempt: internal diagnostic — not rendered as UI copy
 		throw new Error(
 			`Procedure file ${relPath} declares scenarioId "${parsed.scenarioId}" but was bound to scenario "${scenarioId}". ` +
 				`The binding is the canonical mapping; either rename the procedure's scenarioId field or remove the binding.`,
@@ -291,6 +290,7 @@ const readProcedure = (scenarioId: string, relPath: string): ProcedureFile => {
 const readBindings = (): ScenarioBindingsFile => {
 	const path = join(repoRoot(), BINDINGS_FILE);
 	if (!existsSync(path)) {
+		// i18n-exempt: internal diagnostic — not rendered as UI copy
 		throw new Error(
 			`Scenario bindings file does not exist: ${BINDINGS_FILE}. The loader is binding-driven (round-2 Blocker B); restore the file or the suite cannot load.`,
 		);
@@ -325,6 +325,7 @@ const buildScenarioSpec = (
 ): ScenarioSpec => {
 	const feature = featuresByFile.get(binding.featureFile);
 	if (!feature) {
+		// i18n-exempt: internal diagnostic — not rendered as UI copy
 		throw new Error(
 			`Binding for scenario "${binding.scenarioId}" references featureFile "${binding.featureFile}" but no feature parsed for that path.`,
 		);
@@ -335,6 +336,7 @@ const buildScenarioSpec = (
 		binding.scenarioName,
 	);
 	if (!matched) {
+		// i18n-exempt: internal diagnostic — not rendered as UI copy
 		throw new Error(
 			`No Gherkin scenario found in "${binding.featureFile}" for binding "${binding.scenarioId}" (name="${binding.scenarioName}"). ` +
 				`The binding is the canonical mapping; check that the .feature file declares a scenario whose name matches the binding.scenarioName.`,
@@ -404,36 +406,3 @@ export const loadScenarioSpecs = (): readonly ScenarioSpec[] => {
  * without exposing the loader surface area.
  */
 export const specs = loadScenarioSpecs();
-
-/**
- * Re-export the canonical feature index for tooling that needs to walk
- * the `.feature` files without binding context (e.g. the validator's
- * feature-name whitelist scan).
- */
-interface LoadedFeature extends GherkinFeature {
-	readonly source: string;
-	readonly background: readonly GherkinStep[];
-}
-
-const loadFeatures = (): readonly LoadedFeature[] => {
-	// No binding context — discover all .feature files directly.
-	const dir = join(repoRoot(), FEATURES_DIR);
-	const files = readdirSync(dir).filter((f) => f.endsWith(".feature"));
-	const out: LoadedFeature[] = [];
-	for (const file of files) {
-		const parsed = readFeatureFile(`${FEATURES_DIR}/${file}`);
-		out.push({
-			featureName: parsed.featureName,
-			featureDescription: parsed.featureDescription,
-			rules: parsed.rules,
-			source: parsed.source,
-			background: parsed.background,
-		});
-	}
-	return out;
-};
-
-// Silence the unused-import warning when GherkinBackground is not
-// referenced elsewhere — keeping the explicit type import so the
-// dependency on @cucumber/messages is documented.
-type _GherkinBackgroundReference = GherkinBackground;

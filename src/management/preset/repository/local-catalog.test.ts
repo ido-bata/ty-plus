@@ -41,14 +41,14 @@ vi.mock("@/management/storage/ids", async (importOriginal) => ({
 // whole module explode on import is the strongest available assertion: any
 // accidental import of `getDataServices` from this dependency graph fails the
 // suite instead of silently working in tests and breaking in the host.
-vi.mock("@/management/workspace/services", () => {
+vi.mock("@/management/workspace/core/services", () => {
 	throw new Error(
 		"local-catalog must not depend on the cloud boot boundary (Issue #145)",
 	);
 });
 
-import { PresetCatalogParseError } from "@/management/preset/catalog-json-text";
 import type { Preset } from "@/management/preset/contract";
+import { PresetCatalogParseError } from "@/management/preset/repository/json-text";
 import {
 	__resetLocalPresetCatalogForTests,
 	createLocalPresetCatalog,

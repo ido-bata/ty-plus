@@ -95,7 +95,7 @@ export class LogBus {
 
 	constructor(capacity: number = DEFAULT_CAPACITY) {
 		if (!Number.isFinite(capacity) || capacity <= 0) {
-			throw new Error(`LogBus capacity must be > 0, got ${capacity}`);
+			throw new Error(`LogBus capacity must be > 0, got ${capacity}`); // i18n-exempt: internal diagnostic — not rendered as UI copy
 		}
 		this._capacity = Math.floor(capacity);
 	}

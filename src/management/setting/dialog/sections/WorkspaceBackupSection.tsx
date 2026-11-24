@@ -1,7 +1,6 @@
-import { Button } from "@ty-plus/ui/controls/Button";
-import { Textarea } from "@ty-plus/ui/fields/Textarea";
-import { cx } from "@ty-plus/ui/util/cx";
+import { Button, cx, Textarea } from "@ty-plus/ui";
 import { type JSX, useCallback, useEffect, useRef, useState } from "react";
+import { i18n } from "@/management/i18n/index";
 import { cacheCepShellThemeOverridesFromCssText } from "@/management/panel/theme/storage";
 import { enqueueThemeWrite } from "@/management/panel/theme/write-queue";
 import { SettingsGrid } from "@/management/setting/dialog/layout/SettingsGrid";
@@ -93,62 +92,77 @@ export function WorkspaceBackupSection(): JSX.Element {
 		const text = `${JSON.stringify(bundle, null, 2)}\n`;
 		setBundleText(text);
 		void navigator.clipboard.writeText(text);
-		setStatus("Exported workspace backup JSON and copied to clipboard.");
+		setStatus(i18n.t("settings:workspaceBackupSection.statusExported"));
 	}, []);
 
 	const handleImport = useCallback(async () => {
 		if (!bundleText.trim()) {
-			setStatus("Paste backup JSON first.");
+			setStatus(i18n.t("settings:workspaceBackupSection.statusPasteFirst"));
 			return;
 		}
 		const execImportBackup = async () => {
 			const parsed = JSON.parse(bundleText) as Partial<WorkspaceBackupBundle>;
-			if (typeof parsed.settingsJson === "string") {
-				await writeSettings(window, parsed.settingsJson);
-			}
-			if (typeof parsed.presetsJson === "string") {
-				await writePresetsJson(window, parsed.presetsJson);
-			}
-			if (typeof parsed.themeCss === "string") {
-				// theme.css is shared with the settings dialog's token/grid
-				// writers; serialize through the same per-window queue so a
-				// restore cannot interleave with an in-flight read-modify-write
-				// (Issue #91 review).
-				await enqueueThemeWrite(window, async () => {
-					await writeThemeCss(window, parsed.themeCss as string);
-					cacheCepShellThemeOverridesFromCssText(parsed.themeCss as string);
-				});
-			}
-			const indices = [1, 2, 3, 4, 5] as const;
-			await Promise.all(
-				indices.map(async (index) => {
-					const key = String(index) as keyof NonNullable<
-						WorkspaceBackupBundle["panelLayouts"]
-					>;
-					const panelLayouts = parsed.panelLayouts;
-					const layoutRaw =
-						panelLayouts != null ? panelLayouts[key] : undefined;
-					if (typeof layoutRaw === "string") {
-						if (layoutRaw.trim()) {
-							await writeNJson(window, index, layoutRaw);
-						}
-					}
-					const panelBackgrounds = parsed.panelBackgrounds;
-					const bgRaw =
-						panelBackgrounds != null ? panelBackgrounds[key] : undefined;
-					if (typeof bgRaw === "string") {
-						if (bgRaw.trim()) {
-							await writeBackgroundJson(window, index, bgRaw);
-						}
-					}
-				}),
+			// ADR-0006: a backup restore rewrites settings, catalogs, theme
+			// and all five panel layouts/backgrounds — one multi-file
+			// transaction inside the managed-root persistence lock so it
+			// cannot interleave with a panel persist or dialog write.
+			const { resolvePersistenceLockRoot, withPersistenceLock } = await import(
+				"@/management/storage/lock/persistence-lock"
 			);
-			setStatus("Imported workspace backup. Reopen dialogs/panels to refresh.");
+			const lockRoot = await resolvePersistenceLockRoot(window);
+			const run = async () => {
+				if (typeof parsed.settingsJson === "string") {
+					await writeSettings(window, parsed.settingsJson);
+				}
+				if (typeof parsed.presetsJson === "string") {
+					await writePresetsJson(window, parsed.presetsJson);
+				}
+				if (typeof parsed.themeCss === "string") {
+					// theme.css is shared with the settings dialog's token/grid
+					// writers; serialize through the same per-window queue so a
+					// restore cannot interleave with an in-flight read-modify-write
+					// (Issue #91 review).
+					await enqueueThemeWrite(window, async () => {
+						await writeThemeCss(window, parsed.themeCss as string);
+						cacheCepShellThemeOverridesFromCssText(parsed.themeCss as string);
+					});
+				}
+				const indices = [1, 2, 3, 4, 5] as const;
+				await Promise.all(
+					indices.map(async (index) => {
+						const key = String(index) as keyof NonNullable<
+							WorkspaceBackupBundle["panelLayouts"]
+						>;
+						const panelLayouts = parsed.panelLayouts;
+						const layoutRaw =
+							panelLayouts != null ? panelLayouts[key] : undefined;
+						if (typeof layoutRaw === "string") {
+							if (layoutRaw.trim()) {
+								await writeNJson(window, index, layoutRaw);
+							}
+						}
+						const panelBackgrounds = parsed.panelBackgrounds;
+						const bgRaw =
+							panelBackgrounds != null ? panelBackgrounds[key] : undefined;
+						if (typeof bgRaw === "string") {
+							if (bgRaw.trim()) {
+								await writeBackgroundJson(window, index, bgRaw);
+							}
+						}
+					}),
+				);
+				setStatus(i18n.t("settings:workspaceBackupSection.statusImported"));
+			};
+			if (!lockRoot) {
+				await run();
+				return;
+			}
+			await withPersistenceLock(window, lockRoot, run);
 		};
 		try {
 			await execImportBackup();
 		} catch {
-			setStatus("Invalid backup JSON.");
+			setStatus(i18n.t("settings:workspaceBackupSection.statusInvalid"));
 		}
 	}, [bundleText]);
 
@@ -175,14 +189,14 @@ export function WorkspaceBackupSection(): JSX.Element {
 	return (
 		<SettingsGrid>
 			<p className={cx(bundleContainerStyle, mutedTextStyle)}>
-				Export or import your workspace configuration.
+				{i18n.t("settings:workspaceBackupSection.intro")}
 			</p>
 			<div className={bundleContainerStyle} data-settings-backup-bundle>
 				<Textarea
 					value={bundleText}
 					onChange={(e) => setBundleText(e.target.value)}
 					rows={8}
-					placeholder="Workspace backup JSON"
+					placeholder={i18n.t("settings:workspaceBackupSection.placeholder")}
 				/>
 			</div>
 			<div className={buttonsRowStyle}>
@@ -192,7 +206,7 @@ export function WorkspaceBackupSection(): JSX.Element {
 					uiSize="sm"
 					className={exportButtonStyle}
 				>
-					Export
+					{i18n.t("common:actions.export")}
 				</Button>
 				<Button
 					onClick={handleImport}
@@ -200,7 +214,7 @@ export function WorkspaceBackupSection(): JSX.Element {
 					uiSize="sm"
 					className={importButtonStyle}
 				>
-					Import
+					{i18n.t("common:actions.import")}
 				</Button>
 			</div>
 			{status ? (

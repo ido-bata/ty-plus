@@ -15,9 +15,9 @@ import { cleanup, fireEvent, render, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import type { Preset } from "@/management/preset/contract";
-import type { SurfaceState } from "@/management/workspace/state";
+import type { SurfaceState } from "@/management/workspace/core/state";
 
-vi.mock("@/management/ae/cep/contexts/Context", () => ({
+vi.mock("@/management/ae/cep/contexts/CepContext", () => ({
 	useCep: () => ({ isCep: true, panelSurfaceId: "test-panel" }),
 }));
 
@@ -37,6 +37,14 @@ vi.mock("@/management/online/notification/service", () => ({
 	notificationStore: { add: vi.fn() },
 }));
 
+vi.mock("@ty-plus/ui", async (importOriginal) => {
+	const actual = await importOriginal<typeof import("@ty-plus/ui")>();
+	return {
+		...actual,
+		ViewModeToggle: () => <div data-testid="view-mode-toggle" />,
+	};
+});
+
 vi.mock("@/management/preset", () => ({
 	CatalogBrowserShell: ({
 		children,
@@ -50,7 +58,6 @@ vi.mock("@/management/preset", () => ({
 			{children}
 		</div>
 	),
-	CatalogBrowserViewModeToggle: () => <div data-testid="view-mode-toggle" />,
 	ICON_CELL_BASE_REM: 4,
 	ICON_GRID_CLASS: "icon-grid",
 	ICON_GRID_SCALE_LS_KEY: "ty-plus.iconGridScale",
@@ -64,7 +71,7 @@ vi.mock("@/management/preset", () => ({
 	readIconTileAspect: () => "square" as const,
 }));
 
-vi.mock("@/management/preset/use-cases", () => ({
+vi.mock("@/management/preset/operations", () => ({
 	getPreset: vi.fn(),
 }));
 
@@ -86,7 +93,7 @@ vi.mock("@/management/storage/file-browser-service", () => ({
 	}),
 }));
 
-vi.mock("@/management/workspace/runtime", () => ({
+vi.mock("@/management/workspace/core/runtime", () => ({
 	executeWorkspacePresetForWindow: vi.fn(),
 }));
 
@@ -222,7 +229,7 @@ describe("DirectoryBrowserWidget catalog grouping (integration)", () => {
 			"./partition-catalog-presets"
 		);
 		const { parseGroupFromText } = await import(
-			"@/management/preset/group-catalog"
+			"@/management/preset/group/catalog"
 		);
 		const groups = parseGroupFromText(groupsJson);
 		const partitioned = partitionCatalogPresetsByGroup(

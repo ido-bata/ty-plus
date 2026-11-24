@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { type JSX, useRef } from "react";
+import { expect } from "storybook/test";
 import { css } from "@/styled-system/css";
 
 import {
@@ -10,11 +11,13 @@ import {
 type Args = {
 	description: string;
 	descriptionImage: string;
+	defaultOpen: boolean;
 };
 
 const baseArgs: Args = {
 	description: "",
 	descriptionImage: "",
+	defaultOpen: false,
 };
 
 const decoratorBoxClass = css({
@@ -28,6 +31,7 @@ const meta = {
 	argTypes: {
 		description: { control: "text" },
 		descriptionImage: { control: "text" },
+		defaultOpen: { control: "boolean" },
 	},
 	decorators: [
 		(Story) => (
@@ -46,6 +50,7 @@ const meta = {
 					onDescriptionChange={() => undefined}
 					descriptionImage={args.descriptionImage}
 					onDescriptionImageChange={() => undefined}
+					defaultOpen={args.defaultOpen}
 					browseDir="/preset/root"
 				/>
 			);
@@ -63,5 +68,15 @@ export const WithContent: Story = {
 	args: {
 		description: "Header animation preset for fade-in transitions.",
 		descriptionImage: "https://placehold.co/240x120/png",
+		// Issue #542: the accordion starts closed (`defaultOpen ?? false`),
+		// so "with-content" rendered identically to Default. Production
+		// opens this section in the edit dialog — mirror that here.
+		defaultOpen: true,
+	},
+	play: async ({ canvasElement }) => {
+		// The description field must actually be mounted, not hidden
+		// behind the collapsed header.
+		const field = canvasElement.querySelector("textarea, input[type='text']");
+		expect(field).not.toBeNull();
 	},
 };

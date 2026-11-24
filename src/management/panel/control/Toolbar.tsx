@@ -2,8 +2,7 @@
  * Floating compact toolbar with position/orientation logic and storage persistence.
  */
 
-import { Icon, IconButton } from "@ty-plus/ui";
-import { cx } from "@ty-plus/ui/util/cx";
+import { cx, Icon, IconButton } from "@ty-plus/ui";
 import type { LucideIcon } from "lucide-react";
 import {
 	Code2,
@@ -14,7 +13,8 @@ import {
 	Play,
 } from "lucide-react";
 import { memo, useEffect, useState } from "react";
-import { CTX_MENU_IDS } from "@/management/dialog/dialogs/unified-context-menu-constants";
+import { CTX_MENU_IDS } from "@/management/dialog/unified-context-menu-constants";
+import { i18n } from "@/management/i18n/index";
 import {
 	type CpPersistedState,
 	cpPositionToClasses,
@@ -28,7 +28,8 @@ export type ToolbarProps = {
 
 type CpButton = {
 	id: string;
-	title: string;
+	titleKey: string;
+	titleFallback: string;
 	icon: LucideIcon;
 	action: string;
 };
@@ -36,37 +37,43 @@ type CpButton = {
 const CP_BUTTONS: CpButton[] = [
 	{
 		id: "create-file-preset",
-		title: "Local Preset",
+		titleKey: "workspace:controlPanel.buttons.localPreset",
+		titleFallback: "Local Preset",
 		action: "ty.ctx.create-file-preset",
 		icon: FileText,
 	},
 	{
 		id: "create-folder-preset",
-		title: "Group Preset",
+		titleKey: "workspace:controlPanel.buttons.groupPreset",
+		titleFallback: "Group Preset",
 		action: "ty.ctx.create-folder-preset",
 		icon: FolderOpen,
 	},
 	{
 		id: "create-animation-preset",
-		title: "Animation Preset",
+		titleKey: "workspace:controlPanel.buttons.animationPreset",
+		titleFallback: "Animation Preset",
 		action: "ty.ctx.create-animation-preset",
 		icon: Play,
 	},
 	{
 		id: "create-layer-comp-preset",
-		title: "Layer/Comp Preset",
+		titleKey: "workspace:controlPanel.buttons.layerCompPreset",
+		titleFallback: "Layer/Comp Preset",
 		action: "ty.ctx.create-layer-comp-preset",
 		icon: Layers,
 	},
 	{
 		id: "create-code-preset",
-		title: "Code Preset",
+		titleKey: "workspace:controlPanel.buttons.codePreset",
+		titleFallback: "Code Preset",
 		action: "ty.ctx.create-code-preset",
 		icon: Code2,
 	},
 	{
 		id: "add-widget",
-		title: "Add Widget",
+		titleKey: "workspace:controlPanel.buttons.addWidget",
+		titleFallback: "Add Widget",
 		action: CTX_MENU_IDS.addWidget,
 		icon: Grid2x2Plus,
 	},
@@ -76,7 +83,7 @@ const CP_EVENT = "ty-plus-cp-state-change";
 
 const shellBase = css({
 	display: "flex",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "var(--color-ty-widget-border-strong)",
 	backgroundColor: "surface.dialog",
@@ -153,7 +160,9 @@ export const Toolbar = memo(function ToolbarImpl(
 				positionClasses,
 			)}
 			role="toolbar"
-			aria-label="Presets / Widgets"
+			aria-label={i18n.t("workspace:controlPanel.ariaLabel", {
+				defaultValue: "Presets / Widgets",
+			})}
 			data-cp=""
 			data-orientation={st.orientation}
 			data-collapsed={st.collapsed ? "true" : undefined}
@@ -164,7 +173,7 @@ export const Toolbar = memo(function ToolbarImpl(
 						key={b.id}
 						size="sm"
 						data-ws-action={b.action}
-						title={b.title}
+						title={i18n.t(b.titleKey, { defaultValue: b.titleFallback })}
 						className={iconBtnSize}
 					>
 						<Icon icon={b.icon} size={3} />

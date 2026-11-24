@@ -1,8 +1,10 @@
+import { heading1Class, mutedBodyTextClass } from "@ty-plus/ui";
 import { type JSX, useCallback, useEffect } from "react";
 import { Animation } from "@/function/onboarding/ui/Animation";
-import { useCep } from "@/management/ae/cep/contexts/Context";
-import { registerCepJsonContextMenuSurface } from "@/management/dialog/dialogs/context-menu";
+import { useCep } from "@/management/ae/cep/contexts/CepContext";
+import { registerCepJsonContextMenuSurface } from "@/management/dialog/context-menu";
 import { useTranslation } from "@/management/i18n/Context";
+import { i18n } from "@/management/i18n/index";
 import { usePublicLink } from "@/management/online/public-link/usePublicLink";
 import { Button } from "@/shared";
 import { css } from "@/styled-system/css";
@@ -16,7 +18,7 @@ declare global {
 const wrapperClass = css({
 	position: "fixed",
 	inset: 0,
-	zIndex: 2147483647,
+	zIndex: "var(--ty-z-blocking)",
 	display: "flex",
 	alignItems: "center",
 	justifyContent: "center",
@@ -36,18 +38,6 @@ const headerClass = css({
 	display: "flex",
 	flexDirection: "column",
 	gap: "2",
-});
-
-const titleClass = css({
-	fontSize: "lg",
-	fontWeight: "semibold",
-	color: "text.primary",
-});
-
-const bodyClass = css({
-	fontSize: "sm",
-	color: "text.muted",
-	whiteSpace: "pre-line",
 });
 
 const animationSlotClass = css({
@@ -90,12 +80,12 @@ export function SetupRequired(): JSX.Element {
 				menu: [
 					{
 						id: "ty.ctx.setup-required.open-manual",
-						label: "Open Manual",
+						label: i18n.t("onboarding:actions.openManual"),
 						enabled: manualUrl != null,
 					},
 					{
 						id: "ty.ctx.setup-required.refresh",
-						label: "Refresh",
+						label: i18n.t("common:actions.refresh"),
 					},
 				],
 			}),
@@ -113,8 +103,10 @@ export function SetupRequired(): JSX.Element {
 		<div className={wrapperClass} data-testid="setup-required">
 			<div className={innerClass}>
 				<div className={headerClass}>
-					<h2 className={titleClass}>{t("secondaryPanel.title")}</h2>
-					<p className={bodyClass}>{t("secondaryPanel.description")}</p>
+					<h2 className={heading1Class}>{t("secondaryPanel.title")}</h2>
+					<p className={mutedBodyTextClass}>
+						{t("secondaryPanel.description")}
+					</p>
 				</div>
 				<div className={animationSlotClass}>
 					<Animation variant="intro" />

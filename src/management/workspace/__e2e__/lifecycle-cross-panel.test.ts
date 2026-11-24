@@ -67,11 +67,11 @@ vi.mock("@/management/catalog/json-files", () => ({
 	readGroupJson: async () => "",
 }));
 
-vi.mock("@/management/preset/group-catalog", () => ({
+vi.mock("@/management/preset/group/catalog", () => ({
 	parseGroupFromText: () => [],
 }));
 
-vi.mock("@/management/workspace/services", () => ({
+vi.mock("@/management/workspace/core/services", () => ({
 	getDataServices: () => ({
 		presetRepository: presetRepo,
 		gateway: {
@@ -100,7 +100,7 @@ vi.mock("@/management/workspace/messaging/publish-shell-message", () => ({
 	},
 }));
 
-vi.mock("@/management/preset/use-cases", () => ({
+vi.mock("@/management/preset/operations", () => ({
 	listPresets: async () => [...presetRepo.rows],
 }));
 
@@ -170,6 +170,19 @@ vi.mock("@/management/debug", () => ({
 		debug: () => {},
 		log: () => {},
 	}),
+}));
+
+// The persistence lock does real filesystem I/O; this suite exercises the
+// lifecycle logic against the in-memory disk above, so the lock is a
+// pass-through here. Cross-process exclusion is covered by the dedicated
+// lock tests (ADR-0006).
+vi.mock("@/management/storage/lock/persistence-lock", () => ({
+	PersistenceLockTimeoutError: class PersistenceLockTimeoutError extends Error {},
+	PersistenceLockUnavailableError: class PersistenceLockUnavailableError extends Error {},
+	resolvePersistenceLockRoot: vi.fn(async () => "/managed-root"),
+	withPersistenceLock: vi.fn(
+		async (_win: Window, _root: string, fn: () => Promise<unknown>) => fn(),
+	),
 }));
 
 import { applyInterPanelMove } from "@/management/workspace/placement/inter-panel-move";

@@ -4,12 +4,17 @@
  * Widget state lives in `widgets/state/<name>.json`. The easing widget is
  * the cleanest round-trip: it reads its per-instance row at mount
  * (`readWidgetStateJson(window, "easing", { instanceId })` in
- * `function/widget/core/easing/Component.tsx`) and renders the loop-count
- * input only in `loop` mode, so a file-level write is observable in the DOM
- * after a real panel reload — no widget UI driving required.
+ * `function/widget/core/easing/Component.tsx`) and renders the mode
+ * segmented control from the restored state, so a file-level write is
+ * observable in the DOM after a real panel reload — no widget UI driving
+ * required.
  *
  * File shape (written by `writeWidgetStateJson` with `instanceId`):
- * `{ version: 1, instances: [{ id, mode, loopCount, ... }] }`.
+ * `{ version: 1, instances: [{ id, mode, ... }] }`.
+ *
+ * The legacy `"loop"` mode was split into its own widget; a stored loop
+ * state must coerce to `"curve"` (the mode it was based on) and the mode
+ * strip must expose only curve/bounce/elastic.
  */
 
 import type { E2EContext } from "../ctx";
@@ -48,7 +53,8 @@ const findEasingInstanceId = async (
 export const widgetCases: E2ECase[] = [
 	{
 		uc: "UC-D11",
-		title: "easing widget state file restores mode/loopCount after reload",
+		title:
+			"easing widget state file restores mode after reload (legacy loop coerces to curve)",
 		precondition: async (ctx) => {
 			const typed = ctx as E2EContext;
 			try {
@@ -71,7 +77,6 @@ export const widgetCases: E2ECase[] = [
 		async run(ctx: E2EContext) {
 			const checks: ReturnType<typeof check>[] = [];
 			const instanceId = (await findEasingInstanceId(ctx)) as string;
-			const loopCount = 7; // inside MIN_LOOP_COUNT(2)..MAX_LOOP_COUNT(16)
 
 			await withManagedRootSnapshot(ctx, "uc-d11-widget-state", async () => {
 				// Merge into any existing catalog rows for other instances.
@@ -99,7 +104,6 @@ export const widgetCases: E2ECase[] = [
 					autoApply: true,
 					labelColor: 0,
 					customColors: {},
-					loopCount,
 				});
 				await writeManagedFile(
 					ctx,
@@ -112,20 +116,25 @@ export const widgetCases: E2ECase[] = [
 				const probe = `(() => {
 					const host = document.querySelector(${JSON.stringify(scope)});
 					if (!host) return { mounted: false };
-					const input = host.querySelector(
-						'[data-ws-action="easing-loop-count-input"]'
-					);
+					const buttons = [...host.querySelectorAll("[role='toolbar'] button")];
 					return {
 						mounted: true,
-						loopInput: input ? String(input.value) : null,
+						modeCount: buttons.length,
+						pressed: buttons.findIndex(
+							(b) => b.getAttribute("aria-pressed") === "true"
+						),
 					};
 				})()`;
 				const state = (await waitForDom(
 					ctx,
 					panel,
-					`(() => { const r = ${probe}; return r.mounted && r.loopInput !== null ? r : null; })()`,
+					`(() => { const r = ${probe}; return r.mounted && r.modeCount === 3 ? r : null; })()`,
 					30_000,
-				)) as { mounted?: boolean; loopInput?: string | null } | null;
+				)) as {
+					mounted?: boolean;
+					modeCount?: number;
+					pressed?: number;
+				} | null;
 
 				checks.push(
 					check(
@@ -136,9 +145,16 @@ export const widgetCases: E2ECase[] = [
 				);
 				checks.push(
 					check(
-						"loop mode + loopCount restored from widgets/state/easing.json",
-						state?.loopInput === String(loopCount),
-						`loopCount input=${state?.loopInput ?? "absent"} expected=${loopCount}`,
+						"mode strip exposes only curve/bounce/elastic (3 segments)",
+						state?.modeCount === 3,
+						`modeCount=${state?.modeCount ?? "absent"} expected=3`,
+					),
+				);
+				checks.push(
+					check(
+						"stored loop mode coerced to curve (first segment pressed)",
+						state?.pressed === 0,
+						`pressedIndex=${state?.pressed ?? "none"} expected=0`,
 					),
 				);
 			});
@@ -156,7 +172,7 @@ export const widgetCases: E2ECase[] = [
 				),
 			);
 			return {
-				detail: `instance=${instanceId} loopCount=${loopCount}`,
+				detail: `instance=${instanceId}`,
 				checks,
 			};
 		},

@@ -128,7 +128,7 @@ export class RuntimeTransport
 
 	async send(frame: string): Promise<void> {
 		if (this.state !== "connected" || !this.process?.stdin) {
-			throw new Error("not connected");
+			throw new Error("not connected"); // i18n-exempt: internal diagnostic — not rendered as UI copy
 		}
 
 		const stdin = this.process.stdin;
@@ -155,7 +155,7 @@ export class RuntimeTransport
 		request: Request,
 	): Promise<Response> {
 		if (this.state !== "connected") {
-			throw new Error("not connected");
+			throw new Error("not connected"); // i18n-exempt: internal diagnostic — not rendered as UI copy
 		}
 
 		const id = String(++this.requestIdCounter);

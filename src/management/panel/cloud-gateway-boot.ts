@@ -21,23 +21,24 @@ import {
 	normalizeCepSystemPath,
 } from "@/management/ae/cep/runtime";
 import { createLogger } from "@/management/debug/logger";
-import type { OperationWorkerPlatform } from "@/management/ipc/operation-worker-binary";
-import { compiledOperationWorkerTrustMode } from "@/management/ipc/operation-worker-binary";
+import { i18n } from "@/management/i18n/index";
+import type { OperationWorkerPlatform } from "@/management/ipc/operation-worker/binary";
+import { compiledOperationWorkerTrustMode } from "@/management/ipc/operation-worker/binary";
 import {
 	createCepOperationWorkerRuntime,
 	readCepNodePlatform,
-} from "@/management/ipc/operation-worker-cep-runtime";
+} from "@/management/ipc/operation-worker/cep-runtime";
 import type {
 	OperationWorkerComposition,
 	OperationWorkerLifecycleObserver,
-} from "@/management/ipc/operation-worker-composition";
-import { createOperationWorkerComposition } from "@/management/ipc/operation-worker-composition";
-import { createOperationWorkerContextProvider } from "@/management/ipc/operation-worker-context";
+} from "@/management/ipc/operation-worker/composition";
+import { createOperationWorkerComposition } from "@/management/ipc/operation-worker/composition";
+import { createOperationWorkerContextProvider } from "@/management/ipc/operation-worker/context";
 import {
 	OperationWorkerError,
 	type WorkerCorrelation,
 	type WorkerLifecycleEvent,
-} from "@/management/ipc/operation-worker-runner";
+} from "@/management/ipc/operation-worker/runner";
 import { createCompositionRuntimeDispatcher } from "@/management/online/catalog/composition-runtime-dispatcher";
 import { createRuntimeCloudGateway } from "@/management/online/catalog/runtime-cloud-gateway";
 import { bindOnlineRuntimeGatewayPort } from "@/management/online/runtime-gateway";
@@ -49,11 +50,12 @@ import {
 	isBootProbeEnabled,
 	readBootProbeFlag,
 } from "@/management/panel/boot-feature-flags";
+import { installUpdateBusResponder } from "@/management/panel/update-install-bus";
 import { runCepEvalScript } from "@/management/storage/cep";
 import {
 	initCloudGateway,
 	initUpdateInstaller,
-} from "@/management/workspace/services";
+} from "@/management/workspace/core/services";
 
 declare const __APP_VERSION__: string;
 
@@ -233,7 +235,10 @@ const fireBootConnectivityProbe = (
 				state: "degraded",
 				failure: {
 					reason: "worker-runtime-failed",
-					message: "connectivity probe rejection after successful composition",
+					message: i18n.t("online:gatewayBoot.connectivityProbeFailed", {
+						defaultValue:
+							"The connectivity check failed after the worker composition started.",
+					}),
 					cause: err,
 				},
 			});
@@ -287,7 +292,10 @@ const fireBootCatalogProbe = (
 				state: "degraded",
 				failure: {
 					reason: "worker-runtime-failed",
-					message: "catalog probe rejection after successful composition",
+					message: i18n.t("online:gatewayBoot.catalogProbeFailed", {
+						defaultValue:
+							"The catalog check failed after the worker composition started.",
+					}),
 					cause: err,
 				},
 			});
@@ -393,15 +401,15 @@ export const labelOfGatewayBootFailureReason = (
 ): string => {
 	switch (reason) {
 		case "unsupported-trust-mode":
-			return "Unsupported operation-worker trust mode";
+			return i18n.t("online:catalog.gatewayBootReason.unsupportedTrustMode");
 		case "unsupported-platform":
-			return "Unsupported host platform";
+			return i18n.t("online:catalog.gatewayBootReason.unsupportedPlatform");
 		case "missing-extension-root":
-			return "CEP extension root unavailable";
+			return i18n.t("online:catalog.gatewayBootReason.missingExtensionRoot");
 		case "worker-runtime-failed":
-			return "Worker runtime unavailable";
+			return i18n.t("online:catalog.gatewayBootReason.workerRuntimeFailed");
 		case "worker-composition-failed":
-			return "Worker composition failed";
+			return i18n.t("online:catalog.gatewayBootReason.workerCompositionFailed");
 	}
 };
 
@@ -550,7 +558,10 @@ export const tryBuildCloudGateway = (
 	} catch (err) {
 		const failure: GatewayBootFailure = {
 			reason: "worker-runtime-failed",
-			message: "createCepOperationWorkerRuntime threw during boot",
+			message: i18n.t("online:gatewayBoot.runtimeInitFailed", {
+				defaultValue:
+					"The operation worker runtime could not be created during startup.",
+			}),
 			cause: err,
 		};
 		operationWorkerLog.error(
@@ -595,6 +606,11 @@ export const tryBuildCloudGateway = (
 		initUpdateInstaller({
 			installUpdate: (request) => composition.installUpdate(request),
 		});
+		// Issue #243: non-panel surfaces (settings dialog) cannot reach the
+		// worker; relay their install requests to this panel's composition.
+		installUpdateBusResponder(win, (request) =>
+			composition.installUpdate(request),
+		);
 		cloudGatewayLog.info(
 			"[ty-plus] cloud gateway: initCloudGateway registered",
 			{
@@ -634,7 +650,10 @@ export const tryBuildCloudGateway = (
 	} catch (err) {
 		const failure: GatewayBootFailure = {
 			reason: "worker-composition-failed",
-			message: "createOperationWorkerComposition threw during boot",
+			message: i18n.t("online:gatewayBoot.compositionInitFailed", {
+				defaultValue:
+					"The operation worker composition could not be created during startup.",
+			}),
 			cause: err,
 		};
 		operationWorkerLog.error(
