@@ -44,6 +44,18 @@ const helper = css({
 	color: "text.muted",
 });
 const inputTopGap = css({ marginTop: "1" });
+const unitRowClass = css({
+	display: "flex",
+	alignItems: "center",
+	gap: "1.5",
+	minWidth: "0",
+});
+const unitInputClass = css({ flex: "1", minWidth: "0" });
+const unitClass = css({
+	flexShrink: "0",
+	fontSize: "text-xs",
+	color: "text.muted",
+});
 
 /**
  * Standalone numeric input (no slider). Spinners show on focus only by default.
@@ -65,25 +77,39 @@ export function NumberField({
 	...inputProps
 }: NumberFieldProps): JSX.Element {
 	const inputId = useId();
+	const control = (
+		<Input
+			id={inputId}
+			type="number"
+			value={value}
+			onChange={(e) => onChange(e.target.value)}
+			min={min}
+			max={max}
+			step={step}
+			uiSize={uiSize}
+			numberSpinners={numberSpinners}
+			disabled={disabled}
+			className={cx(
+				unit ? unitInputClass : label ? inputTopGap : "",
+				inputClassName,
+			)}
+			{...inputProps}
+		/>
+	);
 
 	return (
 		<div className={cx(wrapper, className)}>
 			{label ? <div className={labelClass}>{label}</div> : null}
-			<Input
-				id={inputId}
-				type="number"
-				value={value}
-				onChange={(e) => onChange(e.target.value)}
-				min={min}
-				max={max}
-				step={step}
-				uiSize={uiSize}
-				numberSpinners={numberSpinners}
-				disabled={disabled}
-				className={cx(label ? inputTopGap : "", inputClassName)}
-				{...inputProps}
-			/>
-			{unit ? <div className={helper}>{unit}</div> : null}
+			{unit ? (
+				<div className={cx(unitRowClass, label ? inputTopGap : "")}>
+					{control}
+					<span className={unitClass} data-number-field-unit>
+						{unit}
+					</span>
+				</div>
+			) : (
+				control
+			)}
 			{description ? <div className={helper}>{description}</div> : null}
 		</div>
 	);
