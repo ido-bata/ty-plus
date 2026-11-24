@@ -95,13 +95,16 @@ export const DragToTopLeft: Story = {
 		// Issue #194: widget controls satisfy the layout contract before
 		// and after the drag gesture commits the anchor.
 		expectCanvasLayout(canvasElement);
-		const grid = canvasElement.querySelector<HTMLElement>(
-			"[data-anchor='center']",
-		)?.parentElement;
+		// `data-anchor` lives on the cell's hit-area button; the visible
+		// crosshair lines are siblings under the cell surface one level up.
+		const cellOf = (pos: string): HTMLElement | null =>
+			canvasElement.querySelector<HTMLElement>(`[data-anchor='${pos}']`)
+				?.parentElement ?? null;
+		const grid = cellOf("center")?.parentElement;
 		if (!grid) throw new Error("anchor grid not found");
 		const lineOf = (pos: string): CSSStyleDeclaration => {
-			const line = canvasElement.querySelector<HTMLElement>(
-				`[data-anchor='${pos}'] > span > span`,
+			const line = cellOf(pos)?.querySelector<HTMLElement>(
+				":scope > span > span",
 			);
 			if (!line) throw new Error(`anchor line for ${pos} not found`);
 			return getComputedStyle(line);

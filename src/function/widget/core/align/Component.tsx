@@ -1,4 +1,4 @@
-import { cx, useAnchorGesture } from "@ty-plus/ui";
+import { Button, cx, useAnchorGesture } from "@ty-plus/ui";
 import {
 	type JSX,
 	useCallback,
@@ -87,6 +87,7 @@ const isDisabled = (action: string, selectionCount: number) =>
 
 const ALIGN_BTN_CLASS = css({
 	display: "flex",
+	position: "relative",
 	alignItems: "center",
 	justifyContent: "center",
 	backgroundColor: "transparent",
@@ -125,6 +126,19 @@ const SECTION_LABEL_CLASS = css({
 	_first: { marginTop: 0 },
 });
 
+/**
+ * Full-cell click target overlaid on an align action/target surface. The
+ * surface div owns the custom hover/active treatment; this bare Button only
+ * provides semantics, the shared focus ring and the disabled treatment.
+ */
+const alignHitAreaClass = css({
+	position: "absolute",
+	inset: "0",
+	_focusVisible: {
+		boxShadow: "var(--color-focus-ring)",
+	},
+});
+
 type AlignAction = Action | null;
 
 function AlignButtonGrid({
@@ -152,9 +166,8 @@ function AlignButtonGrid({
 		>
 			{actions.map((action, index) =>
 				action ? (
-					<button
+					<div
 						key={action}
-						type="button"
 						className={cx(
 							ALIGN_BTN_CLASS,
 							isDisabled(action, selectionCount)
@@ -165,18 +178,23 @@ function AlignButtonGrid({
 									})
 								: "",
 						)}
-						title={action}
-						disabled={isDisabled(action, selectionCount)}
-						data-ws-action={action}
-						onClick={(e) => {
-							if (!isGestureActive && !isDisabled(action, selectionCount)) {
-								e.stopPropagation();
-								onAction(action);
-							}
-						}}
 					>
 						<AlignIcon name={action} />
-					</button>
+						<Button
+							variant="bare"
+							uiSize="content"
+							className={alignHitAreaClass}
+							title={action}
+							disabled={isDisabled(action, selectionCount)}
+							data-ws-action={action}
+							onClick={(e) => {
+								if (!isGestureActive && !isDisabled(action, selectionCount)) {
+									e.stopPropagation();
+									onAction(action);
+								}
+							}}
+						/>
+					</div>
 				) : (
 					<div key={`spacer-${index}`} className={css({ minWidth: 0 })} />
 				),
@@ -250,6 +268,7 @@ function TargetSelectorRow({
 			css({
 				flex: 1,
 				display: "flex",
+				position: "relative",
 				alignItems: "center",
 				justifyContent: "center",
 				backgroundColor: "transparent",
@@ -290,42 +309,50 @@ function TargetSelectorRow({
 				width: "full",
 			})}
 		>
-			<button
-				type="button"
-				className={btnClass("selection")}
-				data-ws-action="align-target-selection"
-				onClick={pickTarget("selection")}
-				title={i18n.t("widgets:align.targets.selection")}
-			>
+			<div className={btnClass("selection")}>
 				<TargetIcon name="selection" />
-			</button>
-			<button
-				type="button"
-				className={btnClass("comp")}
-				data-ws-action="align-target-comp"
-				onClick={pickTarget("comp")}
-				title={i18n.t("widgets:align.targets.composition")}
-			>
+				<Button
+					variant="bare"
+					uiSize="content"
+					className={alignHitAreaClass}
+					data-ws-action="align-target-selection"
+					onClick={pickTarget("selection")}
+					title={i18n.t("widgets:align.targets.selection")}
+				/>
+			</div>
+			<div className={btnClass("comp")}>
 				<TargetIcon name="comp" />
-			</button>
-			<button
-				type="button"
-				className={btnClass("key-object")}
-				data-ws-action="align-target-key-object"
-				onClick={pickTarget("key-object")}
-				title={i18n.t("widgets:align.targets.keyObject")}
-			>
+				<Button
+					variant="bare"
+					uiSize="content"
+					className={alignHitAreaClass}
+					data-ws-action="align-target-comp"
+					onClick={pickTarget("comp")}
+					title={i18n.t("widgets:align.targets.composition")}
+				/>
+			</div>
+			<div className={btnClass("key-object")}>
 				<TargetIcon name="key-object" />
-			</button>
-			<button
-				type="button"
-				className={btnClass("time")}
-				data-ws-action="align-target-time"
-				onClick={pickTarget("time")}
-				title={i18n.t("widgets:align.targets.time")}
-			>
+				<Button
+					variant="bare"
+					uiSize="content"
+					className={alignHitAreaClass}
+					data-ws-action="align-target-key-object"
+					onClick={pickTarget("key-object")}
+					title={i18n.t("widgets:align.targets.keyObject")}
+				/>
+			</div>
+			<div className={btnClass("time")}>
 				<TargetIcon name="time" />
-			</button>
+				<Button
+					variant="bare"
+					uiSize="content"
+					className={alignHitAreaClass}
+					data-ws-action="align-target-time"
+					onClick={pickTarget("time")}
+					title={i18n.t("widgets:align.targets.time")}
+				/>
+			</div>
 		</div>
 	);
 }

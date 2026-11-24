@@ -1,4 +1,5 @@
 import {
+	Button,
 	cx,
 	heading1Class,
 	heading3Class,
@@ -151,6 +152,7 @@ const noContentClass = css({
 });
 
 const listItemButtonBaseClass = css({
+	position: "relative",
 	width: "full",
 	textAlign: "left",
 	borderRadius: "sm",
@@ -211,6 +213,19 @@ const unreadDotClass = css({
 	marginTop: "1",
 	borderRadius: "full",
 	backgroundColor: "text.accent",
+});
+
+/**
+ * Full-row click target overlaid on a notification list item surface. The
+ * item div owns the border/fill/hover treatment; this bare Button only
+ * provides semantics, the shared focus ring and the disabled treatment.
+ */
+const listItemHitAreaClass = css({
+	position: "absolute",
+	inset: "0",
+	_focusVisible: {
+		boxShadow: "var(--color-focus-ring)",
+	},
 });
 
 function listItemButtonClass(unread: boolean): string {
@@ -592,12 +607,7 @@ function NotificationListItem(props: {
 	const { t } = useTranslation("online");
 	return (
 		<li key={item.notificationId}>
-			<button
-				type="button"
-				className={listItemButtonClass(unread)}
-				data-notification-id={item.notificationId}
-				onClick={() => void onOpen(item)}
-			>
+			<div className={listItemButtonClass(unread)}>
 				<div className={listItemHeaderClass}>
 					<div className={listItemColumnClass}>
 						<div className={listItemTitleRowClass}>
@@ -621,7 +631,14 @@ function NotificationListItem(props: {
 					</div>
 					{unread && <span className={unreadDotClass} />}
 				</div>
-			</button>
+				<Button
+					variant="bare"
+					uiSize="content"
+					className={listItemHitAreaClass}
+					data-notification-id={item.notificationId}
+					onClick={() => void onOpen(item)}
+				/>
+			</div>
 		</li>
 	);
 }

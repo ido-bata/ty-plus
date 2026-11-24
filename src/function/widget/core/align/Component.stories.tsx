@@ -94,13 +94,17 @@ export const HoverTarget: Story = {
 		// (dynamic import keeps Storybook dev/build from evaluating the
 		// browser-only module).
 		const { userEvent } = await import("vitest/browser");
-		const resting = getComputedStyle(button).backgroundColor;
+		// The target button is a bare hit area; the hover treatment lives
+		// on its surface parent one level up.
+		const surface = button.parentElement;
+		if (!surface) throw new Error("align target surface not found");
+		const resting = getComputedStyle(surface).backgroundColor;
 		await userEvent.hover(button);
-		await expect(button.matches(":hover")).toBe(true);
-		// The button transitions colors — wait for it to settle before
+		await expect(surface.matches(":hover")).toBe(true);
+		// The surface transitions colors — wait for it to settle before
 		// comparing computed styles.
 		await new Promise((resolve) => setTimeout(resolve, 300));
-		await expect(getComputedStyle(button).backgroundColor).not.toBe(resting);
+		await expect(getComputedStyle(surface).backgroundColor).not.toBe(resting);
 	},
 };
 
