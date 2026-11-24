@@ -1,4 +1,4 @@
-import { ListSelect } from "@ty-plus/ui";
+import { Button, ListSelect } from "@ty-plus/ui";
 import { type JSX, useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { OperationWorkerAttemptError } from "@/management/ipc/operation-worker/runner";
@@ -48,13 +48,6 @@ const statusMutedStyle = css({
 	fontSize: "text-sm",
 	fontWeight: "medium",
 	color: "text.muted",
-});
-
-const linkStyle = css({
-	fontSize: "text-sm",
-	color: "text.link",
-	textDecoration: "underline",
-	cursor: "pointer",
 });
 
 const linkRowStyle = css({
@@ -255,14 +248,14 @@ export function UpdateSection(): JSX.Element {
 			<SettingsField span={3}>
 				<SettingsFieldLabel>{t("updates.installed")}</SettingsFieldLabel>
 				<span className={mutedTextStyle}>{currentReleaseVersion}</span>
-				<button
-					type="button"
-					className={linkStyle}
+				<Button
+					variant="link"
+					uiSize="content"
 					onClick={() => void runCheck()}
 					disabled={checking}
 				>
 					{t("updates.checkNow")}
-				</button>
+				</Button>
 			</SettingsField>
 			<SettingsField span={3}>
 				<span className={mutedTextStyle}>{t("updates.status")}</span>
@@ -273,28 +266,28 @@ export function UpdateSection(): JSX.Element {
 				<span className={linkRowStyle}>
 					{result?.status === "update-available" ? (
 						<>
-							<button
-								type="button"
-								className={linkStyle}
+							<Button
+								variant="link"
+								uiSize="content"
 								onClick={() =>
 									openUrlInDefaultBrowser(result.feed.releaseNotesUrl)
 								}
 							>
 								{t("updates.releaseNotes")}
-							</button>
+							</Button>
 							{installAllowed &&
 							(installState.kind !== "done" ||
 								installState.status === "manual_required") ? (
-								<button
-									type="button"
-									className={linkStyle}
+								<Button
+									variant="link"
+									uiSize="content"
 									onClick={() => void runInstall()}
 									disabled={installState.kind === "installing"}
 								>
 									{installState.kind === "installing"
 										? t("updates.installing")
 										: t("updates.install")}
-								</button>
+								</Button>
 							) : null}
 						</>
 					) : (
@@ -320,13 +313,13 @@ export function UpdateSection(): JSX.Element {
 									: t("updates.installManual")}
 					</span>
 				) : null}
-				<button
-					type="button"
-					className={linkStyle}
+				<Button
+					variant="link"
+					uiSize="content"
 					onClick={() => openUrlInDefaultBrowser(OFFICIAL_RELEASES_URL)}
 				>
 					{t("updates.browse")}
-				</button>
+				</Button>
 			</SettingsField>
 		</SettingsGrid>
 	);
