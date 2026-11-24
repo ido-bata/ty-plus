@@ -177,6 +177,29 @@ export const IconsView: Story = {
 				expect(rect.right).toBeLessThanOrEqual(bandRect.right + 1);
 			}
 		}
+		// #554: the ".." up-tile glyph must render at the same size as the
+		// card tiles' fallback glyphs — it used its own icon wrap and could
+		// drift smaller than the cards.
+		const upLabel = Array.from(canvasElement.querySelectorAll("*"));
+		const upTile = upLabel.find(
+			(el) => el.children.length === 0 && el.textContent === "..",
+		);
+		const upSvg = upTile?.closest("button")?.querySelector("svg");
+		expect(upSvg).toBeTruthy();
+		const cardSvgs = Array.from(
+			canvasElement.querySelectorAll<SVGSVGElement>(
+				"[data-directory-browser-entry] svg",
+			),
+		);
+		expect(cardSvgs.length).toBeGreaterThan(0);
+		const upWidth = upSvg?.getBoundingClientRect().width ?? 0;
+		for (const cardSvg of cardSvgs) {
+			const cardWidth = cardSvg.getBoundingClientRect().width;
+			if (cardWidth === 0) continue;
+			expect(Math.abs(upWidth - cardWidth)).toBeLessThanOrEqual(
+				cardWidth * 0.25,
+			);
+		}
 	},
 };
 
