@@ -213,8 +213,9 @@ const treeListClass = cx(
 	}),
 );
 
-const iconNavigateUpButtonClass = css({
+const iconNavigateUpCardClass = css({
 	display: "flex",
+	position: "relative",
 	width: "full",
 	minWidth: "0",
 	flexDirection: "column",
@@ -226,10 +227,19 @@ const iconNavigateUpButtonClass = css({
 	backgroundColor: "surface.dialog",
 	padding: "1",
 	textAlign: "left",
-	outline: "none",
 	_hover: {
 		backgroundColor: "interactive.hover",
 	},
+});
+
+/**
+ * The click target overlaid on a tile surface. The surface div owns the
+ * chrome (border, fill, hover); this bare Button only provides semantics,
+ * the shared focus ring and the disabled treatment.
+ */
+const tileHitAreaClass = css({
+	position: "absolute",
+	inset: "0",
 	_focusVisible: {
 		boxShadow: "var(--color-focus-ring)",
 	},
@@ -291,14 +301,14 @@ const iconGroupMediaWrapperClass = css({
 	width: "full",
 });
 
-const iconGroupButtonClass = css({
+const iconGroupTileClass = css({
+	position: "relative",
 	overflow: "hidden",
 	borderRadius: "shell-sm",
 	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 	backgroundColor: "surface.widget",
-	outline: "none",
 });
 
 const iconGroupButtonInnerClass = css({
@@ -873,19 +883,7 @@ function IconNavigateUpCard(props: {
 }): JSX.Element {
 	const { tileAspect, onNavigateUp, contextLabel } = props;
 	return (
-		<button
-			type="button"
-			className={iconNavigateUpButtonClass}
-			onClick={onNavigateUp}
-			aria-label={i18n.t("presets:listDialog.returnToAllPresets")}
-			title={
-				contextLabel
-					? i18n.t("presets:listDialog.leaveGroupTitle", {
-							name: contextLabel,
-						})
-					: i18n.t("presets:listDialog.returnToListTitle")
-			}
-		>
+		<div className={iconNavigateUpCardClass}>
 			<div
 				className={cx(iconTileMediaClass(tileAspect), iconNavigateUpMediaClass)}
 			>
@@ -898,7 +896,21 @@ function IconNavigateUpCard(props: {
 					{i18n.t("presets:listDialog.allPresets")}
 				</div>
 			</div>
-		</button>
+			<Button
+				variant="bare"
+				uiSize="content"
+				className={tileHitAreaClass}
+				onClick={onNavigateUp}
+				aria-label={i18n.t("presets:listDialog.returnToAllPresets")}
+				title={
+					contextLabel
+						? i18n.t("presets:listDialog.leaveGroupTitle", {
+								name: contextLabel,
+							})
+						: i18n.t("presets:listDialog.returnToListTitle")
+				}
+			/>
+		</div>
 	);
 }
 
@@ -914,29 +926,31 @@ function IconCatalogGroupCard(props: {
 	return (
 		<div data-preset-group-id={group.id} className={iconGroupCardClass}>
 			<div className={iconGroupMediaWrapperClass}>
-				<button
-					type="button"
-					className={cx(iconTileMediaClass(tileAspect), iconGroupButtonClass)}
-					onDoubleClick={onOpen}
-					onKeyDown={(ev) => {
-						if (isIMEComposing(ev)) return;
-						if (ev.key !== "Enter") return;
-						ev.preventDefault();
-						onOpen();
-					}}
-					aria-label={i18n.t("presets:listDialog.openGroupAria", {
-						title: group.title ?? group.id,
-						defaultValue: "Open group {{title}}",
-					})}
-					title={i18n.t("presets:listDialog.openGroupHint", {
-						title: group.title?.trim() || group.id,
-						defaultValue: "{{title}} (double-click to open)",
-					})}
-				>
+				<div className={cx(iconTileMediaClass(tileAspect), iconGroupTileClass)}>
 					<div className={iconGroupButtonInnerClass}>
 						<GroupHeaderGlyph group={group} />
 					</div>
-				</button>
+					<Button
+						variant="bare"
+						uiSize="content"
+						className={tileHitAreaClass}
+						onDoubleClick={onOpen}
+						onKeyDown={(ev) => {
+							if (isIMEComposing(ev)) return;
+							if (ev.key !== "Enter") return;
+							ev.preventDefault();
+							onOpen();
+						}}
+						aria-label={i18n.t("presets:listDialog.openGroupAria", {
+							title: group.title ?? group.id,
+							defaultValue: "Open group {{title}}",
+						})}
+						title={i18n.t("presets:listDialog.openGroupHint", {
+							title: group.title?.trim() || group.id,
+							defaultValue: "{{title}} (double-click to open)",
+						})}
+					/>
+				</div>
 				<span className={iconGroupBadgeClass} aria-hidden>
 					{memberCount}
 				</span>
@@ -985,13 +999,12 @@ function IconPresetCard(props: {
 	const { tileAspect, preset, workspaceLine, onRun, onEdit, onDelete } = props;
 	return (
 		<div data-preset-id={preset.id} className={iconPresetCardClass}>
-			<button
-				type="button"
-				className={cx(iconTileMediaClass(tileAspect), widgetSurfaceClass)}
-				onClick={() => onRun(preset.id)}
-				aria-label={i18n.t("presets:listDialog.runPresetNamed", {
-					name: preset.title || preset.id,
-				})}
+			<div
+				className={cx(
+					iconTileMediaClass(tileAspect),
+					widgetSurfaceClass,
+					css({ position: "relative" }),
+				)}
 			>
 				<div className={iconPresetButtonInnerClass}>
 					<PresetGlyphById
@@ -1001,7 +1014,16 @@ function IconPresetCard(props: {
 						emojiClass={glyphEmojiProminentClass}
 					/>
 				</div>
-			</button>
+				<Button
+					variant="bare"
+					uiSize="content"
+					className={tileHitAreaClass}
+					onClick={() => onRun(preset.id)}
+					aria-label={i18n.t("presets:listDialog.runPresetNamed", {
+						name: preset.title || preset.id,
+					})}
+				/>
+			</div>
 			<div
 				className={iconPresetTitleWrapperClass}
 				title={`${preset.title || basenamePath(preset.filePath)}\n${sourceLine(preset)}\n${workspaceLine}`}

@@ -371,27 +371,6 @@
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
-		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 876,
-		"rule": "raw-control",
-		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
-		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
-	},
-	{
-		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 917,
-		"rule": "raw-control",
-		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
-		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
-	},
-	{
-		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 988,
-		"rule": "raw-control",
-		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
-		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
-	},
-	{
 		"file": "src/management/preset/catalog-browser/PresetsDialogHeader.tsx",
 		"line": 244,
 		"rule": "ui-override",
