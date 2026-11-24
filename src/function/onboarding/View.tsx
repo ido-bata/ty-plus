@@ -259,8 +259,13 @@ const shellModalClass = css({
 
 const dialogFullscreenClass = css({
 	pointerEvents: "auto",
-	width: "screen",
-	height: "screen",
+	// Issue #541: `screen` resolves to 100vw/100vh, which include the
+	// scrollbar and can overflow the shell by the scrollbar width. The
+	// parent shell is already `position: fixed; inset: 0`, so `full`
+	// (100%) yields the same box without the vw/vh pitfall — matching
+	// `dialogModalClass`.
+	width: "full",
+	height: "full",
 	display: "flex",
 	flexDirection: "column",
 	overflow: "hidden",
