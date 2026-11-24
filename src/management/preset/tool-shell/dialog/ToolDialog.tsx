@@ -505,7 +505,6 @@ export function Dialog(props: PresetToolDialogProps): JSX.Element {
 		<DialogShell
 			title={props.title}
 			surfaceId={props.surfaceId}
-			modifier="wsd-root--preset-tool"
 			contentClassName={dialogContentClass}
 			footerClassName={dialogFooterClass}
 			onFileDrop={props.onFileDrop}

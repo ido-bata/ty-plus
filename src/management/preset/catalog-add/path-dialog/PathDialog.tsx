@@ -512,7 +512,6 @@ export function PathDialog(): JSX.Element {
 		<DialogShell
 			title={i18n.t("presets:catalogAdd.dialogTitle")}
 			surfaceId="dialog-preset-add"
-			modifier="wsd-root--preset-tool"
 			contentClassName={dialogContentClass}
 			footerClassName={dialogFooterClass}
 			onFileDrop={handleFileDrop}

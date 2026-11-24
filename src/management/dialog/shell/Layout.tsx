@@ -89,7 +89,6 @@ export type ShellProps = {
 	footer?: ReactNode;
 	footerClassName?: string;
 	columnMaxWidth?: string;
-	modifier?: string;
 	rootClassName?: string;
 	contentClassName?: string;
 	dialogColumnClassName?: string;
@@ -122,7 +121,6 @@ export function Shell({
 	footer,
 	footerClassName = "",
 	columnMaxWidth,
-	modifier = "",
 	rootClassName = "",
 	contentClassName = "",
 	dialogColumnClassName = "",
@@ -266,7 +264,6 @@ export function Shell({
 
 	const rootClasses = cx(
 		rootShellBase,
-		modifier,
 		rootClassName,
 		isDragOver ? rootShellDragOver : undefined,
 	);

@@ -1116,7 +1116,6 @@ export function PresetEditDialog(props: PresetEditDialogProps): JSX.Element {
 					: t("edit.title")
 			}
 			surfaceId="dialog-preset-edit"
-			modifier="wsd-root--preset-edit"
 			contentClassName={dialogContentClass}
 			footerClassName={dialogFooterClass}
 			footer={

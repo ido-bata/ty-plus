@@ -6,6 +6,15 @@ import { css } from "@/styled-system/css";
 import { DialogFooterActions } from "./Footer";
 import { Shell } from "./Layout";
 
+/*
+ * Modifier demo (issue #450): the legacy `wsd-root--*` names never had a
+ * stylesheet, so they could not produce a visible difference. The story now
+ * passes a real Panda class through `rootClassName` — the contract being
+ * tested is "a modifier class reaches the shell root and changes its
+ * appearance".
+ */
+const modifierDemoClass = css({ bg: "surface.panel" });
+
 type Args = {
 	title: string;
 	meta: string;
@@ -151,7 +160,7 @@ export const WithMeta: Story = {
 };
 
 export const WithModifier: Story = {
-	args: { modifier: "wsd-root--shell-flush" },
+	args: { modifier: modifierDemoClass },
 };
 
 /**

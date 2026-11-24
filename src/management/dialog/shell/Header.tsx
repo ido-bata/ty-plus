@@ -26,7 +26,7 @@ export function Header({
 					flexShrink: 0,
 					display: "flex",
 					alignItems: "center",
-					justifyContent: "between",
+					justifyContent: "space-between",
 					gap: "3",
 					py: "2.5",
 					paddingInline: "var(--ty-shell-pad-inline)",

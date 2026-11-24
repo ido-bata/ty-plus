@@ -1994,7 +1994,6 @@ export function PresetsDialog(): JSX.Element {
 		<DialogShell
 			title={i18n.t("presets:listDialog.title")}
 			surfaceId={PRESETS_DIALOG_SURFACE_ID}
-			modifier="wsd-root--presets"
 			contentClassName={contentClass}
 			headerChromeProps={
 				{
