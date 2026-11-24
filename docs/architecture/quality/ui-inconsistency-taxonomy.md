@@ -22,11 +22,11 @@ DirectoryBrowser の調査から見つかった不整合は widget 固有では�
 | 3 | **raw なフォーム control** — 手書きの select / checkbox / input / range | `raw-control` | **済**（8 箇所を共有 primitive へ） |
 | 4 | **同じ待遇の重複** — 同じ見た目が複数の file に書き写されている | `duplicate-style-recipe` | **済**。共有語彙へ移行（`packages/ui/src/styles/`）。allowlist の `duplicate-style-recipe` は 0 |
 | 5 | **同じ component の再実装** — 汎用 control が feature の folder に置きっぱなし | `check:ui-ownership` の `sharedComponents` | **済**（view toggle / authoring layout） |
-| 6 | **raw な `<button>`** — 共有 Button/IconButton ではなく手書き | `raw-control` | **未了**（production に 62 件、baseline 退避） |
+| 6 | **raw な `<button>`** — 共有 Button/IconButton ではなく手書き | `raw-control` | **済**（Issue #395。allowlist の `raw-control` は 0） |
 | 7 | **px リテラル** — 260(px) ではなく `1px` のような直接値 | — | **未了**（225 件、1px が 216） |
 | 8 | **raw な色リテラル** — token ではなく hex / rgba | `check-design-tokens`（`src/**` + `packages/ui/src`） | **済**（Issue #397。ドメイン色は各 `literals/` モジュールへ集約） |
 | 9 | **z-index リテラル** — 層順序の語彙が無い | `check-design-tokens` の `z-index literal` | **済**（Issue #398。`--ty-z-*` 層 token へ集約） |
-| 10 | **preset dialog 4 種のクローン** — 同じダイアログが 4 つ | `duplicate-style-recipe` | **未了**（最大の未了項目） |
+| 10 | **preset dialog 4 種のクローン** — 同じダイアログが 4 つ | `duplicate-style-recipe` | **済**（`tool-shell/dialog/ToolDialog` に chrome を集約。Issue #394） |
 | 11 | **i18n を通さない UI テキスト** — JSX に直書きの英語 | — | **未了**（31 箇所。加えて共有 kit の選択数サマリが英語のまま-owner が文言を渡せない） |
 | 12 | **icon の size が scale 外** — 共有 scale は 12/16/20px | `icon-size-off-scale` | **済**（Issue #405。scale に snap。>=32px は media glyph として規則の例外） |
 
