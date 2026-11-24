@@ -4,8 +4,8 @@ import {
 	dialogContentClass,
 	dialogFooterClass,
 	Icon,
+	IconButton,
 	Input,
-	iconActionButtonClass,
 	PathField,
 	rowMetaClass,
 	rowTitleClass,
@@ -70,7 +70,7 @@ import { readTextFile } from "@/management/storage";
 import { executeWorkspacePresetForWindow } from "@/management/workspace/core/runtime";
 import { openPresetEditSurface } from "@/management/workspace/hooks/preset";
 import { notifyPanelsAfterPresetSave } from "@/management/workspace/placement/notify-panels-after-preset-save";
-import { css, cx } from "@/styled-system/css";
+import { css } from "@/styled-system/css";
 
 export type PresetEditDialogProps = {
 	presetId: string;
@@ -151,12 +151,6 @@ const memberIconCenterClass = css({
 
 const memberTitleColumnClass = css({
 	minWidth: "0",
-});
-
-const memberActionButtonDisabledClass = css({
-	_disabled: {
-		opacity: 0.3,
-	},
 });
 
 const memberActionsClass = css({
@@ -520,42 +514,42 @@ const GroupMemberItem = ({
 			</div>
 			{/* Run + Edit + Delete actions */}
 			<div className={memberActionsClass}>
-				<button
-					type="button"
-					className={cx(iconActionButtonClass, memberActionButtonDisabledClass)}
+				<IconButton
+					variant="default"
+					size="xs"
+					disabled={disabled}
 					aria-label={t("edit.memberRun", {
 						name: member.title || member.id,
 					})}
 					title={t("common:actions.run")}
-					disabled={disabled}
 					onClick={() => onRun(member.id)}
 				>
 					<Icon icon={Play} size={12} />
-				</button>
-				<button
-					type="button"
-					className={cx(iconActionButtonClass, memberActionButtonDisabledClass)}
+				</IconButton>
+				<IconButton
+					variant="default"
+					size="xs"
+					disabled={disabled}
 					aria-label={t("edit.memberEdit", {
 						name: member.title || member.id,
 					})}
 					title={t("common:actions.edit")}
-					disabled={disabled}
 					onClick={() => onEdit(member.id)}
 				>
 					<Icon icon={Pencil} size={12} />
-				</button>
-				<button
-					type="button"
-					className={cx(iconActionButtonClass, memberActionButtonDisabledClass)}
+				</IconButton>
+				<IconButton
+					variant="default"
+					size="xs"
+					disabled={disabled}
 					aria-label={t("edit.memberDelete", {
 						name: member.title || member.id,
 					})}
 					title={t("common:actions.delete")}
-					disabled={disabled}
 					onClick={() => onDelete(member.id)}
 				>
 					<Icon icon={Trash2} size={12} />
-				</button>
+				</IconButton>
 			</div>
 		</li>
 	);

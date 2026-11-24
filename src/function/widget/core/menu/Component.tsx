@@ -1,4 +1,4 @@
-import { Icon } from "@ty-plus/ui";
+import { Button, Icon } from "@ty-plus/ui";
 import { Menu } from "lucide-react";
 import type { JSX, MouseEvent as ReactMouseEvent, ReactNode } from "react";
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
@@ -225,6 +225,7 @@ const panelClass = css({
 
 const itemClass = css({
 	display: "flex",
+	position: "relative",
 	width: "full",
 	minWidth: 0,
 	cursor: "pointer",
@@ -236,6 +237,18 @@ const itemClass = css({
 	fontSize: "text-2xs",
 	color: "text.primary",
 	_hover: { backgroundColor: "interactive.hover" },
+});
+/**
+ * The click target overlaid on a menu surface row. The row div owns the
+ * chrome (padding, hover fill); this bare Button only provides semantics,
+ * the shared focus ring and the disabled treatment.
+ */
+const hitAreaClass = css({
+	position: "absolute",
+	inset: "0",
+	_focusVisible: {
+		boxShadow: "var(--color-focus-ring)",
+	},
 });
 
 const groupSummaryClass = css({
@@ -351,7 +364,7 @@ export function MenuWidget({
 
 	const [open, setOpen] = useState(false);
 	const [box, setBox] = useState({ top: 0, left: 0, width: 160 });
-	const anchorRef = useRef<HTMLButtonElement>(null);
+	const anchorRef = useRef<HTMLDivElement>(null);
 	const portalRef = useRef<HTMLDivElement>(null);
 
 	const updatePosition = useCallback(() => {
@@ -447,11 +460,11 @@ export function MenuWidget({
 			: null;
 
 	return (
-		<button
+		<div
 			ref={anchorRef}
-			type="button"
 			className={css({
 				display: "flex",
+				position: "relative",
 				height: "full",
 				width: "full",
 				minHeight: 0,
@@ -472,17 +485,22 @@ export function MenuWidget({
 					color: "text.primary",
 				},
 			})}
-			data-ws-action="open-widget-menu-context"
-			title={t("widgets:menu.name")}
-			aria-label={t("widgets:menu.name")}
-			aria-expanded={open}
-			aria-haspopup="menu"
-			onClick={onToggle}
-			{...instanceAttr}
 		>
 			<Icon icon={Menu} size={16} />
 			{panel}
-		</button>
+			<Button
+				variant="bare"
+				uiSize="content"
+				className={hitAreaClass}
+				data-ws-action="open-widget-menu-context"
+				title={t("widgets:menu.name")}
+				aria-label={t("widgets:menu.name")}
+				aria-expanded={open}
+				aria-haspopup="menu"
+				onClick={onToggle}
+				{...instanceAttr}
+			/>
+		</div>
 	);
 }
 
@@ -502,16 +520,18 @@ function Row({
 			? { [DATA_OPENER_WORKSPACE_PANEL]: openerWorkspacePanelId }
 			: {};
 	return (
-		<button
-			type="button"
-			className={itemClass}
-			role="menuitem"
-			data-ws-action={action}
-			onClick={onActivate}
-			{...openerAttr}
-		>
+		<div className={itemClass}>
 			{children}
-		</button>
+			<Button
+				variant="bare"
+				uiSize="content"
+				className={hitAreaClass}
+				role="menuitem"
+				data-ws-action={action}
+				onClick={onActivate}
+				{...openerAttr}
+			/>
+		</div>
 	);
 }
 
