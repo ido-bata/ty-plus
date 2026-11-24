@@ -25,10 +25,10 @@ import {
 } from "@/management/storage/widget-state-store";
 import type { Layout } from "@/management/workspace/layout/grid-document";
 import { css } from "@/styled-system/css";
+import { Actions } from "./Actions";
 import { type AppliedLoopRecord, templateRowsToPoints } from "./applied-state";
-import { LoopActions } from "./LoopActions";
-import { LoopToolbar } from "./LoopToolbar";
 import { MotionPreview } from "./MotionPreview";
+import { Toolbar } from "./Toolbar";
 import { WaveEditor } from "./WaveEditor";
 
 const DEFAULT_TEMPLATE: WavePoint[] = [
@@ -283,7 +283,7 @@ export function LoopWidget({
 				void capture();
 			}}
 		>
-			<LoopToolbar
+			<Toolbar
 				cycles={wave.cycles}
 				applied={applied !== null}
 				conflict={conflict}
@@ -322,7 +322,7 @@ export function LoopWidget({
 					}}
 				/>
 			</div>
-			<LoopActions
+			<Actions
 				applied={applied !== null}
 				disabled={status === "busy" || conflict}
 				onApply={() => {
