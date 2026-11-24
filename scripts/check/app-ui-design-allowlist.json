@@ -126,27 +126,6 @@
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
-		"file": "src/function/widget/utility/font-viewer/Component.tsx",
-		"line": 174,
-		"rule": "raw-control",
-		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
-		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
-	},
-	{
-		"file": "src/function/widget/utility/font-viewer/Component.tsx",
-		"line": 338,
-		"rule": "raw-control",
-		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
-		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
-	},
-	{
-		"file": "src/function/widget/utility/font-viewer/Component.tsx",
-		"line": 558,
-		"rule": "raw-control",
-		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
-		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
-	},
-	{
 		"file": "src/function/widget/utility/info/comp-sections.tsx",
 		"line": 51,
 		"rule": "inline-style",
