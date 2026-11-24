@@ -1,4 +1,4 @@
-import { cardTitleClass, cx, Icon } from "@ty-plus/ui";
+import { Button, cardTitleClass, cx, Icon } from "@ty-plus/ui";
 import { ChevronDown } from "lucide-react";
 import { type JSX, type ReactNode, useEffect, useState } from "react";
 import { settingsSectionIdFromTitle } from "@/management/setting/dialog/settings-context-menu-build";
@@ -33,7 +33,6 @@ const triggerStyle = css({
 	paddingInline: "3",
 	paddingBlock: "2",
 	textAlign: "left",
-	borderRadius: "shell-sm",
 	_hover: { backgroundColor: "interactive.hover" },
 });
 
@@ -92,8 +91,9 @@ export function AccordionSection({
 			data-search-terms={searchTerms}
 			data-settings-section={sectionId}
 		>
-			<button
-				type="button"
+			<Button
+				variant="bare"
+				uiSize="content"
 				data-settings-accordion-trigger
 				className={triggerStyle}
 				onClick={() => setIsOpen(!isOpen)}
@@ -105,7 +105,7 @@ export function AccordionSection({
 					size={16}
 					className={cx(triggerIconStyle, isOpen ? triggerIconOpenStyle : "")}
 				/>
-			</button>
+			</Button>
 			{isOpen ? <div className={bodyStyle}>{children}</div> : null}
 		</div>
 	);

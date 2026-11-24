@@ -1,4 +1,4 @@
-import { cx } from "@ty-plus/ui";
+import { cx, IconButton } from "@ty-plus/ui";
 import { AlertTriangle, Info, X, XCircle } from "lucide-react";
 import { type JSX, useEffect, useState } from "react";
 import ReactDOM from "react-dom";
@@ -69,22 +69,6 @@ const messageClass = css({
 	overflowWrap: "anywhere",
 });
 
-const dismissButtonClass = css({
-	display: "flex",
-	height: "4",
-	width: "4",
-	alignItems: "center",
-	justifyContent: "center",
-	padding: "0",
-	borderStyle: "none",
-	backgroundColor: "transparent",
-	color: "text.muted",
-	cursor: "pointer",
-	transitionProperty: "colors",
-	_hover: { color: "text.primary" },
-	flexShrink: 0,
-});
-
 const dismissIconClass = css({
 	height: "3",
 	width: "3",
@@ -125,14 +109,14 @@ export function NotificationContainer(): JSX.Element | null {
 					{renderIcon(n.type)}
 					<div className={messageClass}>{n.message}</div>
 					{n.dismissible && (
-						<button
-							type="button"
+						<IconButton
+							size="xs"
+							className={css({ flexShrink: 0 })}
 							onClick={() => notificationStore.remove(n.id)}
-							className={dismissButtonClass}
 							aria-label={i18n.t("online:notificationContainer.dismiss")}
 						>
 							<X className={dismissIconClass} />
-						</button>
+						</IconButton>
 					)}
 				</div>
 			))}
