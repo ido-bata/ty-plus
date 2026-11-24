@@ -7,7 +7,7 @@ export type MediaFrameProps = HTMLAttributes<HTMLDivElement>;
 const frame = css({
 	overflow: "hidden",
 	borderRadius: "surface-card",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.subtle",
 	backgroundColor: "surface.widget",

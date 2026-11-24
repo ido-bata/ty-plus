@@ -66,7 +66,7 @@ const previewColumnClass = css({
 });
 
 const previewBoxWarnClass = css({
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "status.warning/50",
 });

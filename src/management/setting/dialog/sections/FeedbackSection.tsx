@@ -76,7 +76,7 @@ function feedbackReducer(
 
 const messageBaseStyle = css({
 	borderRadius: "shell-sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	paddingInline: "var(--ty-shell-space)",
 	paddingBlock: "var(--ty-space-2)",

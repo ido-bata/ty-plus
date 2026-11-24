@@ -51,7 +51,7 @@ const contentClassName = css({
 });
 
 const footerClassName = css({
-	borderTopWidth: "1px",
+	borderTopWidth: "hairline",
 	borderTopStyle: "solid",
 	borderTopColor: "border.default",
 	paddingInline: "var(--ty-shell-pad-inline)",

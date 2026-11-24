@@ -16,7 +16,7 @@ const base = css({
 	paddingInline: "2",
 	paddingBlock: "0.5",
 	borderRadius: "full",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.subtle",
 	backgroundColor: "surface.widget",

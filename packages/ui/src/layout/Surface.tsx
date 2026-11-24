@@ -12,7 +12,7 @@ export type SurfaceProps = HTMLAttributes<HTMLDivElement> & {
 
 const base = css({
 	borderRadius: "surface-card",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 });
 

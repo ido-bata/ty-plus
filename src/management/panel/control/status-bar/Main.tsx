@@ -40,7 +40,7 @@ const footerBase = css({
 	flexShrink: 0,
 	alignItems: "center",
 	justifyContent: "space-between",
-	borderTopWidth: "1px",
+	borderTopWidth: "hairline",
 	borderTopStyle: "solid",
 	borderTopColor: "border.subtle",
 	backgroundColor: "surface.dialog",
@@ -107,7 +107,7 @@ const snapshotsDropdown = css({
 	minWidth: "var(--ty-space-45)",
 	maxWidth: "80",
 	backgroundColor: "var(--color-ty-snap-panel)",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor:
 		"rgba(var(--text-r),var(--text-g),var(--text-b),var(--ty-opacity-ws-snap-panel-border))",

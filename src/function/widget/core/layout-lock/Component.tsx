@@ -12,7 +12,7 @@ const buttonBaseClass = css({
 	alignItems: "center",
 	justifyContent: "center",
 	borderRadius: "var(--ty-space-1)",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	transitionDuration: "100ms",
 	transitionProperty: "color, background-color",

@@ -52,7 +52,7 @@ const helpButton = css({
 	height: "6",
 	width: "6",
 	padding: "0",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.subtle",
 	borderRadius: "shell-sm",

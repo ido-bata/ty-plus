@@ -277,7 +277,7 @@ function TargetSelectorRow({
 				display: "flex",
 				gap: "3px",
 				paddingTop: "1.5",
-				borderTopWidth: "1px",
+				borderTopWidth: "hairline",
 				borderTopStyle: "solid",
 				borderTopColor: "rgba(255,255,255,0.1)",
 				width: "full",

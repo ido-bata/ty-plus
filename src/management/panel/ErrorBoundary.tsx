@@ -47,7 +47,7 @@ const fallbackTitle = css({
 
 const retryButton = css({
 	borderRadius: "sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 	backgroundColor: "surface.dialog",

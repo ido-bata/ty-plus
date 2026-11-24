@@ -226,7 +226,7 @@ const cpMenuWrap = css({
 	listStyle: "none",
 	margin: "0",
 	backgroundColor: "var(--bg-surface)",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "var(--border-default)",
 	borderRadius: "shell-sm",

@@ -39,7 +39,7 @@ const cardBaseClass = css({
 	alignSelf: "stretch",
 	overflow: "hidden",
 	borderRadius: "shell-sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	transitionProperty: "colors",
 	minWidth: 0,
@@ -124,7 +124,7 @@ const fallbackIconWrapClass = css({
 const labelBaseClass = css({
 	width: "full",
 	truncate: true,
-	borderTopWidth: "1px",
+	borderTopWidth: "hairline",
 	borderTopStyle: "solid",
 	borderTopColor: "border.default",
 	paddingInline: "1",

@@ -31,7 +31,7 @@ const box = css({
 	margin: 0,
 	flexShrink: 0,
 	borderRadius: "sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.control",
 	backgroundColor: "surface.widget",

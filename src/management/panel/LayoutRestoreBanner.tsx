@@ -29,7 +29,7 @@ const banner = css({
 	gap: "1",
 	padding: "2",
 	backgroundColor: "surface.dialog",
-	borderBottomWidth: "1px",
+	borderBottomWidth: "hairline",
 	borderBottomStyle: "solid",
 	borderBottomColor: "border.subtle",
 	color: "text.primary",

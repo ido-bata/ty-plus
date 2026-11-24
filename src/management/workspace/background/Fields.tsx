@@ -28,7 +28,7 @@ const colorSwatch = css({
 	minWidth: "12",
 	cursor: "pointer",
 	borderRadius: "shell-sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "var(--color-ty-widget-border)",
 	backgroundColor: "surface.widget",

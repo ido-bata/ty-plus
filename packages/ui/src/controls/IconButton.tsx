@@ -41,7 +41,7 @@ const sizeMap: Record<NonNullable<IconButtonProps["size"]>, string> = {
 
 const variantMap: Record<NonNullable<IconButtonProps["variant"]>, string> = {
 	default: css({
-		borderWidth: "1px",
+		borderWidth: "hairline",
 		borderStyle: "solid",
 		borderColor: "border.subtle",
 		backgroundColor: "surface.widget",

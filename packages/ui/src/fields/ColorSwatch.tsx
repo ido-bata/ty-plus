@@ -17,7 +17,7 @@ const swatch = css({
 	cursor: "pointer",
 	appearance: "none",
 	borderRadius: "shell",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.control",
 	backgroundColor: "surface.widget",

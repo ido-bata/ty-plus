@@ -21,7 +21,7 @@ const sectionStyle = css({
 	minWidth: 0,
 	maxWidth: "none",
 	borderRadius: "shell-sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 	backgroundColor: "surface.widget",
@@ -51,7 +51,7 @@ const triggerIconOpenStyle = css({
 const bodyStyle = css({
 	width: "full",
 	minWidth: 0,
-	borderTopWidth: "1px",
+	borderTopWidth: "hairline",
 	borderTopStyle: "solid",
 	borderTopColor: "border.default",
 	paddingInline: "3",

@@ -35,7 +35,7 @@ export function FontViewerLoadHint({
 					flexDirection: "column",
 					gap: "2",
 					borderRadius: "shell-sm",
-					borderWidth: "1px",
+					borderWidth: "hairline",
 					borderStyle: "solid",
 					borderColor: "border.default",
 					backgroundColor: "surface.widget",
@@ -72,7 +72,7 @@ export function FontViewerLoadHint({
 				className={css({
 					flexShrink: 0,
 					borderRadius: "shell-sm",
-					borderWidth: "1px",
+					borderWidth: "hairline",
 					borderStyle: "solid",
 					borderColor: "border.default",
 					backgroundColor: "surface.widget",
@@ -107,7 +107,7 @@ export function FontViewerLoadPhase({
 			className={css({
 				flexShrink: 0,
 				borderRadius: "shell-sm",
-				borderWidth: "1px",
+				borderWidth: "hairline",
 				borderStyle: "solid",
 				borderColor: "border.default",
 				backgroundColor: "surface.widget",
@@ -138,7 +138,7 @@ export function FontViewerLocalAccessError({
 			className={css({
 				flexShrink: 0,
 				borderRadius: "shell-sm",
-				borderWidth: "1px",
+				borderWidth: "hairline",
 				borderStyle: "solid",
 				borderColor: "border.default",
 				backgroundColor: "surface.widget",
@@ -166,7 +166,7 @@ export function FontViewerErrorBanner({
 			className={css({
 				flexShrink: 0,
 				borderRadius: "shell-sm",
-				borderWidth: "1px",
+				borderWidth: "hairline",
 				borderStyle: "solid",
 				borderColor: "border.default",
 				backgroundColor: "surface.widget",
@@ -197,7 +197,7 @@ export function FontViewerEmptyState({
 				flexDirection: "column",
 				gap: "2",
 				borderRadius: "shell-sm",
-				borderWidth: "1px",
+				borderWidth: "hairline",
 				borderStyle: "dashed",
 				borderColor: "border.default",
 				padding: "2",

@@ -130,7 +130,7 @@ const layerRowStyle = css({
 	justifyContent: "space-between",
 	gap: "var(--ty-shell-space)",
 	borderRadius: "shell-sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 	backgroundColor: "surface.widget",

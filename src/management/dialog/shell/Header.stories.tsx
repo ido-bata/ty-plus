@@ -30,7 +30,7 @@ const meta = {
 			className={css({
 				width: "80",
 				borderRadius: "shell-sm",
-				borderWidth: "1px",
+				borderWidth: "hairline",
 				borderStyle: "solid",
 				borderColor: "border.default",
 				bg: "surface.dialog",

@@ -97,7 +97,7 @@ const meta = {
 							className={cx(
 								"wsd-after-body",
 								css({
-									borderTopWidth: "1px",
+									borderTopWidth: "hairline",
 									borderTopStyle: "solid",
 									borderColor: "border.default",
 									px: "3",
@@ -129,7 +129,7 @@ const meta = {
 							key={`row-${i}`}
 							className={css({
 								borderRadius: "shell-sm",
-								borderWidth: "1px",
+								borderWidth: "hairline",
 								borderStyle: "solid",
 								borderColor: "border.default",
 								bg: "surface.widget",

@@ -30,7 +30,7 @@ import { css } from "@/styled-system/css";
 
 const codeClass = css({
 	borderRadius: "sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.strong",
 	backgroundColor: "surface.panel",
@@ -78,7 +78,7 @@ const calloutClass = css({
 	alignItems: "flex-start",
 	gap: "2",
 	borderRadius: "sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.strong",
 	backgroundColor: "surface.panel",
@@ -101,7 +101,7 @@ const quoteClass = css({
 const quoteTextClass = css({ fontSize: "sm" });
 const imageWrapClass = css({
 	borderRadius: "sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.strong",
 	overflow: "hidden",
@@ -114,7 +114,7 @@ const imageClass = css({
 });
 const detailsClass = css({
 	borderRadius: "sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.strong",
 	backgroundColor: "surface.panel",
@@ -150,7 +150,7 @@ const listItemButtonBaseClass = css({
 	width: "full",
 	textAlign: "left",
 	borderRadius: "sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	padding: "3",
 	cursor: "pointer",
@@ -231,7 +231,7 @@ const detailHeaderClass = css({
 	gap: "3",
 	paddingBlock: "2",
 	paddingInline: "4",
-	borderBottomWidth: "1px",
+	borderBottomWidth: "hairline",
 	borderBottomStyle: "solid",
 	borderColor: "border.strong",
 });
@@ -248,7 +248,7 @@ const detailHeaderRightClass = css({
 	flexShrink: 0,
 });
 const borderedIconBtnClass = css({
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.strong",
 });
@@ -267,7 +267,7 @@ const metaBarClass = css({
 	gap: "2",
 	paddingInline: "4",
 	paddingBlock: "1.5",
-	borderBottomWidth: "1px",
+	borderBottomWidth: "hairline",
 	borderBottomStyle: "solid",
 	borderColor: "border.strong",
 	backgroundColor: "surface.panel",
@@ -323,7 +323,7 @@ const listHeaderClass = css({
 	gap: "3",
 	paddingBlock: "2",
 	paddingInline: "4",
-	borderBottomWidth: "1px",
+	borderBottomWidth: "hairline",
 	borderBottomStyle: "solid",
 	borderColor: "border.strong",
 });

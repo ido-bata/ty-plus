@@ -466,7 +466,7 @@ const inputRowStyle = css({
 	paddingInline: "2",
 	paddingBlock: "1.5",
 	flexShrink: 0,
-	borderTopWidth: "1px",
+	borderTopWidth: "hairline",
 	borderTopStyle: "solid",
 	borderTopColor: "border.subtle",
 });

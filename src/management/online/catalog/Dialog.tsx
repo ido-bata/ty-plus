@@ -96,7 +96,7 @@ const categoryBadgeClass = css({
 	borderRadius: "sm",
 	backgroundColor: "surface.panel",
 	color: "text.muted",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 });
@@ -106,7 +106,7 @@ const galleryCardClass = css({
 	display: "flex",
 	flexDirection: "column",
 	borderRadius: "sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 	backgroundColor: "surface.panel",
@@ -155,7 +155,7 @@ const galleryActionsClass = css({
 const iconSquareSmallClass = css({
 	height: "6",
 	width: "6",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 });
@@ -164,7 +164,7 @@ const iconSquareSmallClass = css({
 const itemCardClass = css({
 	display: "flex",
 	borderRadius: "sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 	backgroundColor: "surface.panel",
@@ -222,7 +222,7 @@ const itemActionsClass = css({
 	gap: "1",
 });
 const borderedButtonClass = css({
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 });
@@ -250,7 +250,7 @@ const viewModeFieldsetClass = css({
 	flexShrink: 0,
 	overflow: "hidden",
 	borderRadius: "shell-sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 	backgroundColor: "surface.panel",
@@ -284,7 +284,7 @@ const viewModeDividerClass = css({
 const sidePanelClass = css({
 	width: "56",
 	flexShrink: 0,
-	borderRightWidth: "1px",
+	borderRightWidth: "hairline",
 	borderRightStyle: "solid",
 	borderRightColor: "border.default",
 	display: "flex",
@@ -297,7 +297,7 @@ const sidePanelHeaderRowClass = css({
 	gap: "2",
 	paddingInline: "3",
 	paddingBlock: "2",
-	borderBottomWidth: "1px",
+	borderBottomWidth: "hairline",
 	borderBottomStyle: "solid",
 	borderBottomColor: "border.default",
 });
@@ -354,7 +354,7 @@ const sidePanelTagSectionClass = css({
 	gap: "1",
 	paddingInline: "3",
 	paddingBlock: "2",
-	borderTopWidth: "1px",
+	borderTopWidth: "hairline",
 	borderTopStyle: "solid",
 	borderTopColor: "border.default",
 	flex: "1",
@@ -393,7 +393,7 @@ const sidePanelTagTextClass = css({ truncate: true });
 const sidePanelClearRowClass = css({
 	paddingInline: "3",
 	paddingBlock: "2",
-	borderTopWidth: "1px",
+	borderTopWidth: "hairline",
 	borderTopStyle: "solid",
 	borderTopColor: "border.default",
 });
@@ -430,7 +430,7 @@ const listTableHeaderCellClass = css({
 	letterSpacing: "wider",
 	color: "text.muted",
 	fontWeight: "medium",
-	borderBottomWidth: "1px",
+	borderBottomWidth: "hairline",
 	borderBottomStyle: "solid",
 	borderBottomColor: "border.default",
 });
@@ -444,7 +444,7 @@ const listTableThumbHeaderClass = css({
 	letterSpacing: "wider",
 	color: "text.muted",
 	fontWeight: "medium",
-	borderBottomWidth: "1px",
+	borderBottomWidth: "hairline",
 	borderBottomStyle: "solid",
 	borderBottomColor: "border.default",
 });
@@ -458,7 +458,7 @@ const listTableActionsHeaderClass = css({
 	letterSpacing: "wider",
 	color: "text.muted",
 	fontWeight: "medium",
-	borderBottomWidth: "1px",
+	borderBottomWidth: "hairline",
 	borderBottomStyle: "solid",
 	borderBottomColor: "border.default",
 });
@@ -468,7 +468,7 @@ const listTableRowClass = css({
 const listTableCellClass = css({
 	paddingInline: "2",
 	paddingBlock: "2",
-	borderBottomWidth: "1px",
+	borderBottomWidth: "hairline",
 	borderBottomStyle: "solid",
 	borderBottomColor: "border.default",
 	verticalAlign: "middle",
@@ -476,7 +476,7 @@ const listTableCellClass = css({
 const listTableCellRightClass = css({
 	paddingInline: "2",
 	paddingBlock: "2",
-	borderBottomWidth: "1px",
+	borderBottomWidth: "hairline",
 	borderBottomStyle: "solid",
 	borderBottomColor: "border.default",
 	verticalAlign: "middle",
@@ -515,7 +515,7 @@ const footerClass = css({
 	paddingInline: "4",
 	paddingBlock: "1.5",
 	flexShrink: 0,
-	borderTopWidth: "1px",
+	borderTopWidth: "hairline",
 	borderTopStyle: "solid",
 	borderTopColor: "border.default",
 });
@@ -550,7 +550,7 @@ const headerRowClass = css({
 	paddingInline: "4",
 	paddingBlock: "2",
 	flexShrink: 0,
-	borderBottomWidth: "1px",
+	borderBottomWidth: "hairline",
 	borderBottomStyle: "solid",
 	borderBottomColor: "border.default",
 });
@@ -568,7 +568,7 @@ const searchRowClass = css({
 	paddingInline: "4",
 	paddingBlock: "2",
 	flexShrink: 0,
-	borderBottomWidth: "1px",
+	borderBottomWidth: "hairline",
 	borderBottomStyle: "solid",
 	borderBottomColor: "border.default",
 });

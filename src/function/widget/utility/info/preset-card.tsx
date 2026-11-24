@@ -42,7 +42,7 @@ function SectionLabel({ children }: { children: ReactNode }): JSX.Element {
 
 const multiItemClass = css({
 	borderRadius: "var(--radius-shell)",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.strong",
 	backgroundColor: "rgba(var(--text-r),var(--text-g),var(--text-b),0.03)",
@@ -60,7 +60,7 @@ const emptyGlyphClass = css({
 	justifyContent: "center",
 	overflow: "hidden",
 	borderRadius: "var(--ty-space-1)",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.strong",
 	backgroundColor: "surface.widget",
@@ -293,7 +293,7 @@ function PresetCard({
 								justifyContent: "center",
 								overflow: "hidden",
 								borderRadius: "var(--ty-space-1)",
-								borderWidth: "1px",
+								borderWidth: "hairline",
 								borderStyle: "solid",
 								borderColor: "border.strong",
 								backgroundColor: "surface.widget",

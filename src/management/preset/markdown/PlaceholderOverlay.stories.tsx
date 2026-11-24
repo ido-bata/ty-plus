@@ -24,7 +24,7 @@ const surfaceBoxClass = css({
 	height: "32",
 	width: "full",
 	borderRadius: "sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 	backgroundColor: "surface.widget",

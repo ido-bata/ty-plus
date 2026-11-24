@@ -84,7 +84,7 @@ const footerClass = css({
 	flexShrink: 0,
 	alignItems: "center",
 	gap: "2",
-	borderTopWidth: "1px",
+	borderTopWidth: "hairline",
 	borderTopStyle: "solid",
 	borderTopColor: "border.default",
 	paddingBlock: "2",

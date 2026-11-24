@@ -52,7 +52,7 @@ const root = css({
 	alignItems: "center",
 	gap: "1",
 	borderRadius: "shell-sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.control",
 	backgroundColor: "surface.widget",

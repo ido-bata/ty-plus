@@ -50,7 +50,7 @@ const notificationCardClass = css({
 	borderRadius: "shell-sm",
 	backgroundColor: "surface.dialog/95",
 	backdropBlur: "6px",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.subtle",
 	boxShadow: "control-panel",

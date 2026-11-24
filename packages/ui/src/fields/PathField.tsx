@@ -55,7 +55,7 @@ const inputClass = css({
 	minWidth: 0,
 	flex: 1,
 	borderRadius: "shell-sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.input",
 	backgroundColor: "surface.widget",
@@ -78,7 +78,7 @@ const wrapper = css({
 
 const browseButton = css({
 	flexShrink: 0,
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.control",
 	backgroundColor: "surface.widget",

@@ -6,7 +6,7 @@ import { DialogBody } from "./DialogBody";
 
 const sectionStyle = css({
 	borderRadius: "shell-sm",
-	borderWidth: "1px",
+	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
 	bg: "surface.widget",
