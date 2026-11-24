@@ -71,7 +71,7 @@ export function Tile({
 				>
 					<span
 						className={missingLabelClass}
-						style={{ fontSize: "clamp(4px, 10cqi, 96px)" } as CSSProperties}
+						style={{ fontSize: "clamp(8px, 10cqi, 96px)" } as CSSProperties}
 					>
 						?
 					</span>
