@@ -480,7 +480,7 @@ export function MenuWidget({
 			onClick={onToggle}
 			{...instanceAttr}
 		>
-			<Icon icon={Menu} size={14} />
+			<Icon icon={Menu} size={16} />
 			{panel}
 		</button>
 	);

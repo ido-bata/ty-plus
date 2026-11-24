@@ -322,7 +322,7 @@ export function Dialog(): JSX.Element {
 											</div>
 										) : null}
 										<div className={hintRowClass}>
-											<Icon icon={AlertCircle} size={14} aria-hidden />
+											<Icon icon={AlertCircle} size={16} aria-hidden />
 											<span>
 												{t(
 													"layerCompPreset.hint.saveButton",

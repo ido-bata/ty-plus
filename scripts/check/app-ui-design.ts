@@ -689,11 +689,11 @@ export function checkAppSource(
 					if (!expr || !ts.isNumericLiteral(expr)) continue;
 					const raw = expr.text;
 					const px = ICON_SIZE_SCALE[raw] ?? Number(raw);
-					if (ICON_SIZES_PX.has(px)) continue;
+					if (ICON_SIZES_PX.has(px) || px >= MEDIA_GLYPH_MIN_PX) continue;
 					add(
 						attr,
 						"icon-size-off-scale",
-						`the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); ${px}px is not one of them`,
+						`the shared icon scale is 12px, 16px and 20px (keys 3/4/5); ${px}px is not one of them — sizes >= ${MEDIA_GLYPH_MIN_PX}px are media glyphs, not icons`,
 					);
 				}
 			}
@@ -870,12 +870,18 @@ export const CONTRACT_SCOPES = [
 ] as const;
 
 /**
- * The shared icon's size scale: 3 = 12px, 4 = 16px, 5 = 20px. An icon at
- * another size is an icon the design system does not have, so it renders at an
- * optical size nothing else matches.
+ * The shared icon's size scale: keys 3/4/5 map to 12/16/20px, and bare
+ * pixel literals must land on one of those three steps. An icon at
+ * another size is an icon the design system does not have, so it renders
+ * at an optical size nothing else matches.
+ *
+ * Sizes >= 32px are exempt: at that scale the glyph is a media
+ * illustration (e.g. the folder artwork inside file-entry tiles), not an
+ * icon in running UI, and the icon scale does not apply to it.
  */
 const ICON_SIZE_SCALE: Record<string, number> = { "3": 12, "4": 16, "5": 20 };
 const ICON_SIZES_PX = new Set([12, 16, 20]);
+const MEDIA_GLYPH_MIN_PX = 32;
 
 /**
  * The CSS files of the same scopes. They carry custom properties too, and a
@@ -1008,7 +1014,7 @@ const DEFAULT_REASON: Record<string, string> = {
 	"vocabulary-copy":
 		"this treatment already exists in the shared package — use it instead of writing it out again",
 	"icon-size-off-scale":
-		"this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — move it to a step, or say why it is a media glyph rather than an icon",
+		"this icon is not at a size the shared scale has (12px / 16px / 20px) — move it to a step; sizes >= 32px are media glyphs and do not need an entry",
 	"focus-indicator-missing":
 		"this file removes the native focus indicator — put the shared ring back, or say why the control does not need one",
 };

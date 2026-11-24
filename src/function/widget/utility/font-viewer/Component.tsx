@@ -206,7 +206,7 @@ function FontNavigateUpCard(props: {
 				)}
 			>
 				<div className={centeredIconClass}>
-					<Icon icon={ArrowLeft} size={11} aria-hidden />
+					<Icon icon={ArrowLeft} size={12} aria-hidden />
 				</div>
 			</Surface>
 			<div
@@ -558,7 +558,7 @@ function FontListTreeFamilyGroup(props: {
 					>
 						<Icon
 							icon={open ? ChevronDown : ChevronRight}
-							size={10}
+							size={12}
 							className={css({ transitionProperty: "transform" })}
 							aria-hidden
 						/>

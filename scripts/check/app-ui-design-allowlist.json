@@ -22,24 +22,10 @@
 	},
 	{
 		"file": "packages/ui/src/controls/ViewModeToggle.tsx",
-		"line": 96,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 10px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
-	},
-	{
-		"file": "packages/ui/src/controls/ViewModeToggle.tsx",
 		"line": 107,
 		"rule": "ui-override",
 		"message": "<IconButton> is a shared @ty-plus/ui component; height, width, borderRadius, borderWidth, padding must come from its variant/size/tone props, not className",
 		"reason": "the toggle's flush segmented-cell chrome predates the ui-override gate (it was previously hidden inside an unresolvable cx() call); migrate it into a shared IconButton variant when the segmented control family is consolidated"
-	},
-	{
-		"file": "packages/ui/src/controls/ViewModeToggle.tsx",
-		"line": 113,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 10px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "packages/ui/src/fields/SearchField.tsx",
@@ -49,34 +35,6 @@
 		"reason": "the search field's wrapper owns the focus indicator; the inner input must not paint a second one — the wrapper's `_focusWithin` ring is the only ring"
 	},
 	{
-		"file": "packages/ui/src/fields/SearchField.tsx",
-		"line": 176,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 10px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
-	},
-	{
-		"file": "packages/ui/src/fields/SearchField.tsx",
-		"line": 208,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 10px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
-	},
-	{
-		"file": "src/function/preset/animation/Dialog.tsx",
-		"line": 262,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 14px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
-	},
-	{
-		"file": "src/function/preset/animation/Dialog.tsx",
-		"line": 275,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 14px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
-	},
-	{
 		"file": "src/function/preset/animation/Dialog.tsx",
 		"line": 286,
 		"rule": "raw-control",
@@ -84,71 +42,43 @@
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
-		"file": "src/function/preset/animation/Dialog.tsx",
-		"line": 332,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 14px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
-	},
-	{
-		"file": "src/function/preset/animation/Dialog.tsx",
-		"line": 334,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 14px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
-	},
-	{
-		"file": "src/function/preset/code/Dialog.tsx",
-		"line": 92,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 14px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
-	},
-	{
-		"file": "src/function/preset/layer-comp/Dialog.tsx",
-		"line": 325,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 14px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
-	},
-	{
 		"file": "src/function/widget/core/align/Component.tsx",
-		"line": 149,
+		"line": 155,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/function/widget/core/align/Component.tsx",
-		"line": 196,
+		"line": 202,
 		"rule": "raw-svg",
 		"message": "raw <svg> is banned; use `Icon` with a lucide icon",
 		"reason": "hand-drawn icon predates the shared design system; replace it with `Icon` and a lucide icon"
 	},
 	{
 		"file": "src/function/widget/core/align/Component.tsx",
-		"line": 285,
+		"line": 293,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/function/widget/core/align/Component.tsx",
-		"line": 294,
+		"line": 302,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/function/widget/core/align/Component.tsx",
-		"line": 303,
+		"line": 311,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/function/widget/core/align/Component.tsx",
-		"line": 312,
+		"line": 320,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
@@ -169,14 +99,7 @@
 	},
 	{
 		"file": "src/function/widget/core/anchor-point/Component.tsx",
-		"line": 196,
-		"rule": "raw-control",
-		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
-		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
-	},
-	{
-		"file": "src/function/widget/core/easing/Component.tsx",
-		"line": 703,
+		"line": 199,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
@@ -203,25 +126,18 @@
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
-		"file": "src/function/widget/core/layout-lock/Component.tsx",
-		"line": 45,
+		"file": "src/function/widget/core/easing/Component.tsx",
+		"line": 727,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/function/widget/core/layout-lock/Component.tsx",
-		"line": 52,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 14px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
-	},
-	{
-		"file": "src/function/widget/core/layout-lock/Component.tsx",
-		"line": 54,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 14px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
+		"line": 45,
+		"rule": "raw-control",
+		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
+		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/function/widget/core/menu/Component.tsx",
@@ -232,52 +148,10 @@
 	},
 	{
 		"file": "src/function/widget/core/menu/Component.tsx",
-		"line": 483,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 14px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
-	},
-	{
-		"file": "src/function/widget/core/menu/Component.tsx",
 		"line": 505,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
-	},
-	{
-		"file": "src/function/widget/utility/directory-browser/CollapsibleGroupHeader.tsx",
-		"line": 55,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 14px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
-	},
-	{
-		"file": "src/function/widget/utility/directory-browser/Component.tsx",
-		"line": 372,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 14px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
-	},
-	{
-		"file": "src/function/widget/utility/directory-browser/Component.tsx",
-		"line": 1696,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 40px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
-	},
-	{
-		"file": "src/function/widget/utility/directory-browser/Component.tsx",
-		"line": 2014,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 11px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
-	},
-	{
-		"file": "src/function/widget/utility/directory-browser/Component.tsx",
-		"line": 2031,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 11px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/function/widget/utility/font-viewer/Component.tsx",
@@ -285,13 +159,6 @@
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
-	},
-	{
-		"file": "src/function/widget/utility/font-viewer/Component.tsx",
-		"line": 209,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 11px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/function/widget/utility/font-viewer/Component.tsx",
@@ -306,13 +173,6 @@
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
-	},
-	{
-		"file": "src/function/widget/utility/font-viewer/Component.tsx",
-		"line": 561,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 10px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/function/widget/utility/font-viewer/Component.tsx",
@@ -351,42 +211,42 @@
 	},
 	{
 		"file": "src/management/dialog/Root.tsx",
-		"line": 79,
+		"line": 83,
 		"rule": "inline-style",
 		"message": "inline style sets fontSize — appearance must come from css() and the token system",
-		"reason": "inline style sets appearance; move it into css() and the token system"
-	},
-	{
-		"file": "src/management/dialog/Root.tsx",
-		"line": 84,
-		"rule": "inline-style",
-		"message": "inline style sets color — appearance must come from css() and the token system",
 		"reason": "inline style sets appearance; move it into css() and the token system"
 	},
 	{
 		"file": "src/management/dialog/Root.tsx",
 		"line": 88,
 		"rule": "inline-style",
+		"message": "inline style sets color — appearance must come from css() and the token system",
+		"reason": "inline style sets appearance; move it into css() and the token system"
+	},
+	{
+		"file": "src/management/dialog/Root.tsx",
+		"line": 93,
+		"rule": "inline-style",
 		"message": "inline style sets background — appearance must come from css() and the token system",
 		"reason": "inline style sets appearance; move it into css() and the token system"
 	},
 	{
 		"file": "src/management/dialog/Root.tsx",
-		"line": 137,
+		"line": 146,
 		"rule": "inline-style",
 		"message": "inline style sets fontSize — appearance must come from css() and the token system",
 		"reason": "inline style sets appearance; move it into css() and the token system"
 	},
 	{
 		"file": "src/management/dialog/Root.tsx",
-		"line": 140,
+		"line": 149,
 		"rule": "inline-style",
 		"message": "inline style sets color — appearance must come from css() and the token system",
 		"reason": "inline style sets appearance; move it into css() and the token system"
 	},
 	{
 		"file": "src/management/dialog/Root.tsx",
-		"line": 144,
+		"line": 154,
 		"rule": "inline-style",
 		"message": "inline style sets background — appearance must come from css() and the token system",
 		"reason": "inline style sets appearance; move it into css() and the token system"
@@ -400,59 +260,10 @@
 	},
 	{
 		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 780,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 9px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
-	},
-	{
-		"file": "src/management/online/catalog/Dialog.tsx",
 		"line": 855,
 		"rule": "ui-override",
 		"message": "<IconButton> is a shared @ty-plus/ui component; borderWidth, borderStyle, borderColor must come from its variant/size/tone props, not className",
 		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
-	},
-	{
-		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 857,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 10px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
-	},
-	{
-		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 911,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 14px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
-	},
-	{
-		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 928,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 14px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
-	},
-	{
-		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 973,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 10px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
-	},
-	{
-		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 986,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 10px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
-	},
-	{
-		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 999,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 10px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/online/catalog/Dialog.tsx",
@@ -470,24 +281,10 @@
 	},
 	{
 		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 1156,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 10px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
-	},
-	{
-		"file": "src/management/online/catalog/Dialog.tsx",
 		"line": 1246,
 		"rule": "ui-override",
 		"message": "<IconButton> is a shared @ty-plus/ui component; borderWidth, borderStyle, borderColor must come from its variant/size/tone props, not className",
 		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
-	},
-	{
-		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 1248,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 10px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/online/catalog/DownloadProgressIconButton.tsx",
@@ -495,20 +292,6 @@
 		"rule": "raw-svg",
 		"message": "raw <svg> is banned; use `Icon` with a lucide icon",
 		"reason": "hand-drawn icon predates the shared design system; replace it with `Icon` and a lucide icon"
-	},
-	{
-		"file": "src/management/online/catalog/PresetLibraryEmptyState.tsx",
-		"line": 87,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 14px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
-	},
-	{
-		"file": "src/management/online/catalog/PresetLibraryEmptyState.tsx",
-		"line": 104,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 14px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/online/notification/Center.tsx",
@@ -526,13 +309,6 @@
 	},
 	{
 		"file": "src/management/online/notification/Center.tsx",
-		"line": 660,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 14px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
-	},
-	{
-		"file": "src/management/online/notification/Center.tsx",
 		"line": 676,
 		"rule": "ui-override",
 		"message": "<IconButton> is a shared @ty-plus/ui component; borderWidth, borderStyle, borderColor must come from its variant/size/tone props, not className",
@@ -540,38 +316,10 @@
 	},
 	{
 		"file": "src/management/online/notification/Center.tsx",
-		"line": 678,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 14px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
-	},
-	{
-		"file": "src/management/online/notification/Center.tsx",
 		"line": 685,
 		"rule": "ui-override",
 		"message": "<IconButton> is a shared @ty-plus/ui component; borderWidth, borderStyle, borderColor must come from its variant/size/tone props, not className",
 		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
-	},
-	{
-		"file": "src/management/online/notification/Center.tsx",
-		"line": 687,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 14px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
-	},
-	{
-		"file": "src/management/online/notification/Center.tsx",
-		"line": 1031,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 14px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
-	},
-	{
-		"file": "src/management/online/notification/Center.tsx",
-		"line": 1049,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 24px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/online/notification/Container.tsx",
@@ -687,24 +435,10 @@
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 663,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 11px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
-	},
-	{
-		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
 		"line": 665,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
-	},
-	{
-		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 672,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 11px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
@@ -715,24 +449,10 @@
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 681,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 11px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
-	},
-	{
-		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
 		"line": 695,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
-	},
-	{
-		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 702,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 11px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
@@ -743,24 +463,10 @@
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 711,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 11px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
-	},
-	{
-		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
 		"line": 793,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
-	},
-	{
-		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 806,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 13px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
@@ -778,13 +484,6 @@
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 928,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 11px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
-	},
-	{
-		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
 		"line": 952,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
@@ -799,24 +498,10 @@
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 993,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 11px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
-	},
-	{
-		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
 		"line": 995,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
-	},
-	{
-		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 1004,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 11px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
@@ -834,24 +519,10 @@
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 1057,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 11px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
-	},
-	{
-		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
 		"line": 1059,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
-	},
-	{
-		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
-		"line": 1068,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 11px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/preset/catalog-browser/ListDialog.tsx",
@@ -875,60 +546,25 @@
 		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
 	},
 	{
-		"file": "src/management/preset/catalog-browser/PresetsDialogHeader.tsx",
-		"line": 249,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 10px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
-	},
-	{
-		"file": "src/management/preset/components/PresetIconTile.tsx",
-		"line": 164,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 11px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
-	},
-	{
 		"file": "src/management/preset/edit/Dialog.tsx",
-		"line": 519,
+		"line": 523,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/preset/edit/Dialog.tsx",
-		"line": 529,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 11px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
-	},
-	{
-		"file": "src/management/preset/edit/Dialog.tsx",
-		"line": 531,
+		"line": 535,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/preset/edit/Dialog.tsx",
-		"line": 541,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 11px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
-	},
-	{
-		"file": "src/management/preset/edit/Dialog.tsx",
-		"line": 543,
+		"line": 547,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
-	},
-	{
-		"file": "src/management/preset/edit/Dialog.tsx",
-		"line": 553,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 11px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/preset/group/Panel.tsx",
@@ -1022,13 +658,6 @@
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
-		"file": "src/management/storage/ui/file-entry/FileEntryList.tsx",
-		"line": 877,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 64px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
-	},
-	{
 		"file": "src/management/widget/catalog.tsx",
 		"line": 356,
 		"rule": "raw-control",
@@ -1037,24 +666,10 @@
 	},
 	{
 		"file": "src/management/widget/catalog.tsx",
-		"line": 380,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 18px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
-	},
-	{
-		"file": "src/management/widget/catalog.tsx",
 		"line": 416,
 		"rule": "raw-control",
 		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
-	},
-	{
-		"file": "src/management/widget/catalog.tsx",
-		"line": 441,
-		"rule": "icon-size-off-scale",
-		"message": "the shared icon scale is 3 (12px), 4 (16px) and 5 (20px); 18px is not one of them",
-		"reason": "this icon is not at a size the shared scale has (3 = 12px, 4 = 16px, 5 = 20px) — the migration is tracked in the issue for the icon scale"
 	},
 	{
 		"file": "src/management/workspace/background/Fields.tsx",
@@ -1107,7 +722,7 @@
 	},
 	{
 		"file": "src/management/workspace/background/PatternLayerEditor.tsx",
-		"line": 59,
+		"line": 60,
 		"rule": "ui-override",
 		"message": "<SegmentedControl> is a shared @ty-plus/ui component; borderColor must come from its variant/size/tone props, not className",
 		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"

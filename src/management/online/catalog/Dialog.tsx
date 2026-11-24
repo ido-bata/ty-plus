@@ -777,7 +777,7 @@ function GalleryCard(props: {
 								}
 								className={iconSquareSmallClass}
 							>
-								<Icon icon={ExternalLink} size={9} />
+								<Icon icon={ExternalLink} size={12} />
 							</IconButton>
 						) : null}
 					</div>
@@ -854,7 +854,7 @@ function CardItem(props: {
 								}
 								className={borderedButtonClass}
 							>
-								<Icon icon={ExternalLink} size={10} />
+								<Icon icon={ExternalLink} size={12} />
 							</IconButton>
 						) : null}
 					</div>
@@ -908,7 +908,7 @@ function EmptyState(props: {
 					disabled={retry.disabled}
 					onClick={onRefresh}
 				>
-					<Icon icon={RefreshCw} size={14} />
+					<Icon icon={RefreshCw} size={16} />
 				</IconButton>
 			</div>
 		);
@@ -925,7 +925,7 @@ function EmptyState(props: {
 					title={i18n.t("online:catalog.refreshCatalog")}
 					onClick={onRefresh}
 				>
-					<Icon icon={RefreshCw} size={14} />
+					<Icon icon={RefreshCw} size={16} />
 				</IconButton>
 			</div>
 		);
@@ -970,7 +970,7 @@ function ViewModeToggle(props: {
 				className={viewModeBtnClass(mode === "gallery")}
 				onClick={() => onModeChange("gallery")}
 			>
-				<Icon icon={Grid3x3} size={10} />
+				<Icon icon={Grid3x3} size={12} />
 			</IconButton>
 			<div className={viewModeDividerClass} aria-hidden />
 			<IconButton
@@ -983,7 +983,7 @@ function ViewModeToggle(props: {
 				className={viewModeBtnClass(mode === "cards")}
 				onClick={() => onModeChange("cards")}
 			>
-				<Icon icon={LayoutGrid} size={10} />
+				<Icon icon={LayoutGrid} size={12} />
 			</IconButton>
 			<div className={viewModeDividerClass} aria-hidden />
 			<IconButton
@@ -996,7 +996,7 @@ function ViewModeToggle(props: {
 				className={viewModeBtnClass(mode === "list")}
 				onClick={() => onModeChange("list")}
 			>
-				<Icon icon={List} size={10} />
+				<Icon icon={List} size={12} />
 			</IconButton>
 		</fieldset>
 	);
@@ -1153,7 +1153,7 @@ function SidePanel(props: {
 						onClick={onClearFilters}
 						className={sidePanelClearBtnFullClass}
 					>
-						<Icon icon={X} size={10} />
+						<Icon icon={X} size={12} />
 						<span className={sidePanelClearLabelClass}>
 							{i18n.t("online:catalog.clearAll")}
 						</span>
@@ -1245,7 +1245,7 @@ function ListTableView(props: {
 											}
 											className={borderedButtonClass}
 										>
-											<Icon icon={ExternalLink} size={10} />
+											<Icon icon={ExternalLink} size={12} />
 										</IconButton>
 									) : null}
 									<DownloadProgressIconButton

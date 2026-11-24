@@ -173,7 +173,7 @@ export function SearchField({
 
 	return (
 		<div className={cx(root, sizeMap[uiSize], className)}>
-			<Icon icon={icon} size={10} className={iconSlot} aria-hidden />
+			<Icon icon={icon} size={12} className={iconSlot} aria-hidden />
 			<Input
 				ref={inputRef}
 				type="search"
@@ -205,7 +205,7 @@ export function SearchField({
 					title={t("ui.searchField.clearTitle", { defaultValue: "Clear" })}
 					onClick={handleClear}
 				>
-					<Icon icon={X} size={10} aria-hidden />
+					<Icon icon={X} size={12} aria-hidden />
 				</button>
 			) : null}
 		</div>

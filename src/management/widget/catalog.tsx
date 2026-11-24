@@ -377,7 +377,7 @@ function WidgetCatalogResults({
 												)}
 												aria-hidden
 											>
-												<Icon icon={icon} size={18} className={iconSpanClass} />
+												<Icon icon={icon} size={16} className={iconSpanClass} />
 											</span>
 											<span className={itemBodyStyle}>
 												<span className={itemTitleStyle}>{getName(w)}</span>
@@ -438,7 +438,7 @@ function WidgetCatalogResults({
 										)}
 										aria-hidden
 									>
-										<Icon icon={icon} size={18} className={iconSpanClass} />
+										<Icon icon={icon} size={16} className={iconSpanClass} />
 									</span>
 									<span className={itemBodyStyle}>
 										<span className={itemTitleStyle}>{getName(w)}</span>

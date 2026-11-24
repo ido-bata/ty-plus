@@ -530,7 +530,7 @@ const GroupMemberItem = ({
 					disabled={disabled}
 					onClick={() => onRun(member.id)}
 				>
-					<Icon icon={Play} size={11} />
+					<Icon icon={Play} size={12} />
 				</button>
 				<button
 					type="button"
@@ -542,7 +542,7 @@ const GroupMemberItem = ({
 					disabled={disabled}
 					onClick={() => onEdit(member.id)}
 				>
-					<Icon icon={Pencil} size={11} />
+					<Icon icon={Pencil} size={12} />
 				</button>
 				<button
 					type="button"
@@ -554,7 +554,7 @@ const GroupMemberItem = ({
 					disabled={disabled}
 					onClick={() => onDelete(member.id)}
 				>
-					<Icon icon={Trash2} size={11} />
+					<Icon icon={Trash2} size={12} />
 				</button>
 			</div>
 		</li>

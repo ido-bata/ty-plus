@@ -49,9 +49,9 @@ export function LayoutLockWidget({
 			type="button"
 		>
 			{state.layoutLocked ? (
-				<Icon icon={Lock} size={14} />
+				<Icon icon={Lock} size={16} />
 			) : (
-				<Icon icon={LockOpen} size={14} />
+				<Icon icon={LockOpen} size={16} />
 			)}
 		</button>
 	);

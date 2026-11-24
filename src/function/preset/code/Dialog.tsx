@@ -89,7 +89,7 @@ function StatusBanner({
 }): JSX.Element {
 	return (
 		<div className={statusBannerClass(variant)} role="alert">
-			<Icon icon={BannerIcon} size={14} aria-hidden />
+			<Icon icon={BannerIcon} size={16} aria-hidden />
 			<span className={bannerTitleClass}>{children}</span>
 		</div>
 	);

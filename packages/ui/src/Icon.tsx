@@ -1,6 +1,8 @@
 /**
  * Icon wrapper for Lucide icons
- * Accepts Tailwind size tokens (3=12px, 4=16px, 5=20px)
+ * Scale: 3 = 12px, 4 = 16px, 5 = 20px; bare px literals must be one of
+ * 12 / 16 / 20 (enforced by app-ui-design `icon-size-off-scale`).
+ * Sizes >= 32px are media glyphs, not icons, and sit outside the scale.
  */
 
 import type { LucideIcon } from "lucide-react";

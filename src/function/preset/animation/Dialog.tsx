@@ -259,7 +259,7 @@ function FolderPathSection({
 									disabled={busy}
 									title={t("common.browseFolder")}
 								>
-									<Icon icon={FolderOpen} size={14} aria-hidden />
+									<Icon icon={FolderOpen} size={16} aria-hidden />
 								</Button>
 								<Button
 									type="button"
@@ -272,7 +272,7 @@ function FolderPathSection({
 								>
 									<Icon
 										icon={pathCopied ? CheckCircle : Copy}
-										size={14}
+										size={16}
 										aria-hidden
 									/>
 								</Button>
@@ -329,9 +329,9 @@ function AnimationStatusSection({
 						onClick={onOpenSaveDialog}
 						start={
 							busy ? (
-								<Icon icon={Loader} size={14} aria-hidden />
+								<Icon icon={Loader} size={16} aria-hidden />
 							) : (
-								<Icon icon={Save} size={14} aria-hidden />
+								<Icon icon={Save} size={16} aria-hidden />
 							)
 						}
 						className={busy ? busyButtonClass : ""}

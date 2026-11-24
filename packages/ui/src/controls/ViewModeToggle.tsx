@@ -93,7 +93,7 @@ export function ViewModeToggle({
 					onViewModeChange("list");
 				}}
 			>
-				<Icon icon={ListIcon} size={10} />
+				<Icon icon={ListIcon} size={12} />
 			</IconButton>
 			<div className={separatorClass} aria-hidden />
 			<IconButton
@@ -110,7 +110,7 @@ export function ViewModeToggle({
 					onViewModeChange("icons");
 				}}
 			>
-				<Icon icon={LayoutGrid} size={10} />
+				<Icon icon={LayoutGrid} size={12} />
 			</IconButton>
 		</fieldset>
 	);
