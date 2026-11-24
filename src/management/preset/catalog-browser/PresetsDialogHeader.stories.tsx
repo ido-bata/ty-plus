@@ -80,7 +80,19 @@ const meta = {
 export default meta;
 type Story = StoryObj<Args>;
 
-export const Default: Story = {};
+export const Default: Story = {
+	args: {
+		// Issue #543: `"idle"` renders the same Loading status as `"reading"`
+		// — Default must show the settled state ListDialog reaches after the
+		// catalog read finishes.
+		loadPhase: "loaded",
+	},
+	play: async ({ canvasElement }) => {
+		const text = canvasElement.textContent ?? "";
+		expect(text).not.toContain("Loading");
+		expect(text).toContain("12 items");
+	},
+};
 
 export const Loading: Story = {
 	args: { loadPhase: "reading" },
