@@ -35,13 +35,6 @@
 		"reason": "the search field's wrapper owns the focus indicator; the inner input must not paint a second one — the wrapper's `_focusWithin` ring is the only ring"
 	},
 	{
-		"file": "src/function/preset/animation/Dialog.tsx",
-		"line": 286,
-		"rule": "raw-control",
-		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
-		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
-	},
-	{
 		"file": "src/function/widget/core/align/Component.tsx",
 		"line": 155,
 		"rule": "raw-control",
@@ -105,39 +98,11 @@
 		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
-		"file": "src/function/widget/core/layout-lock/Component.tsx",
-		"line": 45,
-		"rule": "raw-control",
-		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
-		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
-	},
-	{
 		"file": "src/function/widget/utility/info/comp-sections.tsx",
 		"line": 51,
 		"rule": "inline-style",
 		"message": "inline style sets background — appearance must come from css() and the token system",
 		"reason": "inline style sets appearance; move it into css() and the token system"
-	},
-	{
-		"file": "src/function/widget/utility/quick-actions/row-components.tsx",
-		"line": 93,
-		"rule": "raw-control",
-		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
-		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
-	},
-	{
-		"file": "src/function/widget/utility/quick-actions/row-components.tsx",
-		"line": 132,
-		"rule": "raw-control",
-		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
-		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
-	},
-	{
-		"file": "src/function/widget/utility/quick-actions/row-components.tsx",
-		"line": 187,
-		"rule": "raw-control",
-		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
-		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/dialog/Root.tsx",
@@ -183,35 +148,21 @@
 	},
 	{
 		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 778,
+		"line": 792,
 		"rule": "ui-override",
 		"message": "<IconButton> is a shared @ty-plus/ui component; height, width, borderWidth, borderStyle, borderColor must come from its variant/size/tone props, not className",
 		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
 	},
 	{
 		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 855,
+		"line": 869,
 		"rule": "ui-override",
 		"message": "<IconButton> is a shared @ty-plus/ui component; borderWidth, borderStyle, borderColor must come from its variant/size/tone props, not className",
 		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
 	},
 	{
 		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 1086,
-		"rule": "raw-control",
-		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
-		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
-	},
-	{
-		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 1094,
-		"rule": "raw-control",
-		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
-		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
-	},
-	{
-		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 1246,
+		"line": 1266,
 		"rule": "ui-override",
 		"message": "<IconButton> is a shared @ty-plus/ui component; borderWidth, borderStyle, borderColor must come from its variant/size/tone props, not className",
 		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
@@ -329,13 +280,6 @@
 		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
 	},
 	{
-		"file": "src/management/preset/catalog-add/ArchiveDetailsSection.tsx",
-		"line": 207,
-		"rule": "raw-control",
-		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
-		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
-	},
-	{
 		"file": "src/management/preset/catalog-browser/PresetsDialogHeader.tsx",
 		"line": 244,
 		"rule": "ui-override",
@@ -362,13 +306,6 @@
 		"rule": "inline-style",
 		"message": "inline style sets opacity — appearance must come from css() and the token system",
 		"reason": "inline style sets appearance; move it into css() and the token system"
-	},
-	{
-		"file": "src/management/preset/icon/Editor.tsx",
-		"line": 210,
-		"rule": "raw-control",
-		"message": "raw <button> is banned; use a @ty-plus/ui primitive",
-		"reason": "hand-rolled control predates the shared design system; replace it with the matching @ty-plus/ui primitive"
 	},
 	{
 		"file": "src/management/preset/markdown/EditorLines.tsx",

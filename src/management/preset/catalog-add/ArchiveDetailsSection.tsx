@@ -1,4 +1,4 @@
-import { Icon, PathField, sectionLabelClass } from "@ty-plus/ui";
+import { Button, Icon, PathField, sectionLabelClass } from "@ty-plus/ui";
 import { ChevronDown, FileSearch } from "lucide-react";
 import { forwardRef, type JSX, useImperativeHandle, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -74,6 +74,7 @@ const containerAccordionClass = css({
 
 const accordionTriggerClass = css({
 	display: "flex",
+	position: "relative",
 	width: "full",
 	minWidth: "0",
 	alignItems: "center",
@@ -91,6 +92,19 @@ const accordionTriggerClass = css({
 	fontWeight: "medium",
 	color: "text.primary",
 	_hover: { backgroundColor: "interactive.hover" },
+});
+
+/**
+ * Full-width click target overlaid on the accordion trigger surface. The
+ * trigger div owns the chrome (border, hover fill); this bare Button only
+ * provides semantics, the shared focus ring and the disabled treatment.
+ */
+const accordionHitAreaClass = css({
+	position: "absolute",
+	inset: "0",
+	_focusVisible: {
+		boxShadow: "var(--color-focus-ring)",
+	},
 });
 
 const accordionPanelClass = css({
@@ -204,14 +218,7 @@ export const ArchiveDetailsSection = forwardRef<
 
 	return (
 		<div className={containerAccordionClass}>
-			<button
-				type="button"
-				className={accordionTriggerClass}
-				onClick={() => setIsOpen((open) => !open)}
-				aria-expanded={isOpen}
-				aria-controls="archive-details-section"
-				data-archive-details-trigger
-			>
+			<div className={accordionTriggerClass}>
 				<span>{t("presetTool.form.details")}</span>
 				<Icon
 					icon={ChevronDown}
@@ -222,7 +229,16 @@ export const ArchiveDetailsSection = forwardRef<
 						isOpen ? accordionChevronOpenClass : "",
 					)}
 				/>
-			</button>
+				<Button
+					variant="bare"
+					uiSize="content"
+					className={accordionHitAreaClass}
+					onClick={() => setIsOpen((open) => !open)}
+					aria-expanded={isOpen}
+					aria-controls="archive-details-section"
+					data-archive-details-trigger
+				/>
+			</div>
 			{isOpen ? (
 				<div
 					id="archive-details-section"

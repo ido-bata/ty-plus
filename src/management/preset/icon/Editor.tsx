@@ -1,6 +1,7 @@
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import {
+	Button,
 	ColorSwatch,
 	Icon,
 	Input,
@@ -60,23 +61,9 @@ const emojiAnchorRowClass = css({
 	gap: "3",
 });
 
-const emojiPickerBtnClass = css({
-	display: "flex",
-	height: "8",
+const emojiPickerBtnLayoutClass = css({
 	minWidth: "0",
 	flex: "1",
-	alignItems: "center",
-	gap: "1.5",
-	borderRadius: "shell-sm",
-	borderWidth: "hairline",
-	borderStyle: "solid",
-	borderColor: "border.default",
-	backgroundColor: "surface.widget",
-	paddingInline: "2",
-	fontSize: "xs",
-	color: "text.muted",
-	_hover: { backgroundColor: "interactive.hover" },
-	_disabled: { opacity: 0.5 },
 });
 
 const emojiPickerPopoverClass = css({
@@ -207,15 +194,16 @@ function DefaultEmojiFields({ draft, set, disabled }: EditorApi): JSX.Element {
 	return (
 		<div ref={emojiAnchorRef} className={emojiAnchorClass}>
 			<div className={emojiAnchorRowClass}>
-				<button
-					type="button"
-					className={emojiPickerBtnClass}
+				<Button
+					variant="default"
+					uiSize="md"
+					className={emojiPickerBtnLayoutClass}
 					onClick={() => setEmojiPickerOpen((open) => !open)}
 					disabled={disabled}
+					start={<Smile size={16} aria-hidden />}
 				>
-					<Smile size={16} aria-hidden />
-					<span>{i18n.t("presets:iconEditor.emojiPicker")}</span>
-				</button>
+					{i18n.t("presets:iconEditor.emojiPicker")}
+				</Button>
 				<ColorSwatch
 					value={draft.bgColor}
 					onChange={(v) => set({ bgColor: v })}

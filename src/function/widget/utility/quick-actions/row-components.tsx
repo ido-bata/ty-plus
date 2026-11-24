@@ -1,3 +1,4 @@
+import { Button } from "@ty-plus/ui";
 import { Wand2 } from "lucide-react";
 import type { CSSProperties, JSX } from "react";
 import {
@@ -26,6 +27,7 @@ const rowContainerBase = css({
 
 const rowButtonClass = css({
 	display: "flex",
+	position: "relative",
 	width: "full",
 	cursor: "pointer",
 	alignItems: "stretch",
@@ -36,6 +38,19 @@ const rowButtonClass = css({
 	fontFamily: "inherit",
 	fontSize: "text-xs",
 	color: "text.primary",
+});
+
+/**
+ * Full-row click target overlaid on the row surface. The row div owns the
+ * layout and text styling; this bare Button only provides semantics, the
+ * shared focus ring and the disabled treatment.
+ */
+const rowHitAreaClass = css({
+	position: "absolute",
+	inset: "0",
+	_focusVisible: {
+		boxShadow: "var(--color-focus-ring)",
+	},
 });
 
 const rowIconBoxClass = css({
@@ -90,14 +105,7 @@ export function EffectRow(
 			data-palette-index={idx}
 			className={`${rowContainerBase} ${selected ? rowSelectedClass : ""}`}
 		>
-			<button
-				type="button"
-				className={rowButtonClass}
-				data-ws-action="apply-effect"
-				data-effect-match={effect.matchName}
-				onMouseEnter={() => onSelect(idx)}
-				onFocus={() => onSelect(idx)}
-			>
+			<div className={rowButtonClass}>
 				<span className={rowIconBoxClass} aria-hidden>
 					<Wand2 className={css({ height: "4", width: "4" })} strokeWidth={2} />
 				</span>
@@ -108,7 +116,16 @@ export function EffectRow(
 						{effect.filePath ? ` · ${effect.filePath}` : ""}
 					</span>
 				</span>
-			</button>
+				<Button
+					variant="bare"
+					uiSize="content"
+					className={rowHitAreaClass}
+					data-ws-action="apply-effect"
+					data-effect-match={effect.matchName}
+					onMouseEnter={() => onSelect(idx)}
+					onFocus={() => onSelect(idx)}
+				/>
+			</div>
 		</div>
 	);
 }
@@ -129,14 +146,7 @@ export function RootFileRow(
 			data-palette-index={idx}
 			className={`${rowContainerBase} ${selected ? rowSelectedClass : ""}`}
 		>
-			<button
-				type="button"
-				className={rowButtonClass}
-				data-ws-action="quick-action-root-file"
-				data-file-path={rootFile.filePath}
-				onMouseEnter={() => onSelect(idx)}
-				onFocus={() => onSelect(idx)}
-			>
+			<div className={rowButtonClass}>
 				<span
 					className={`${rowIconBoxClass} ${rowIconGlyphClass}`}
 					style={
@@ -154,7 +164,16 @@ export function RootFileRow(
 						{rootFile.filePath ? ` · ${rootFile.filePath}` : ""}
 					</span>
 				</span>
-			</button>
+				<Button
+					variant="bare"
+					uiSize="content"
+					className={rowHitAreaClass}
+					data-ws-action="quick-action-root-file"
+					data-file-path={rootFile.filePath}
+					onMouseEnter={() => onSelect(idx)}
+					onFocus={() => onSelect(idx)}
+				/>
+			</div>
 		</div>
 	);
 }
@@ -184,17 +203,7 @@ export function PresetRow(
 			data-palette-index={idx}
 			className={`${rowContainerBase} ${selected ? rowSelectedClass : ""}`}
 		>
-			<button
-				type="button"
-				className={rowButtonClass}
-				data-ws-action="run-preset"
-				data-preset-id={preset.id}
-				disabled={isMissing}
-				aria-disabled={isMissing}
-				title={runTitle}
-				onMouseEnter={() => onSelect(idx)}
-				onFocus={() => onSelect(idx)}
-			>
+			<div className={rowButtonClass}>
 				<span
 					className={`${rowIconBoxClass} ${rowIconGlyphClass}`}
 					style={
@@ -214,7 +223,19 @@ export function PresetRow(
 						{preset.filePath ? ` · ${preset.filePath}` : ""}
 					</span>
 				</span>
-			</button>
+				<Button
+					variant="bare"
+					uiSize="content"
+					className={rowHitAreaClass}
+					data-ws-action="run-preset"
+					data-preset-id={preset.id}
+					disabled={isMissing}
+					aria-disabled={isMissing}
+					title={runTitle}
+					onMouseEnter={() => onSelect(idx)}
+					onFocus={() => onSelect(idx)}
+				/>
+			</div>
 		</div>
 	);
 }

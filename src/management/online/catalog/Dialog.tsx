@@ -332,6 +332,7 @@ const sidePanelCategoryListClass = css({
 	gap: "0.5",
 });
 const sidePanelCategoryBtnBaseClass = css({
+	position: "relative",
 	textAlign: "left",
 	fontSize: "sm",
 	paddingInline: "2",
@@ -351,6 +352,19 @@ const sidePanelCategoryBtnInactiveClass = css({
 	},
 });
 const sidePanelCategoryBtnTruncateClass = css({ truncate: true });
+/**
+ * Full-row click target overlaid on a category filter surface. The row div
+ * owns the active/inactive treatment; this bare Button only provides
+ * semantics, the shared focus ring and the disabled treatment.
+ */
+const sidePanelCategoryHitAreaClass = css({
+	position: "absolute",
+	inset: "0",
+	_focusVisible: {
+		boxShadow: "var(--color-focus-ring)",
+	},
+});
+
 const sidePanelTagSectionClass = css({
 	display: "flex",
 	flexDirection: "column",
@@ -1083,22 +1097,28 @@ function SidePanel(props: {
 					</Button>
 				</div>
 				<div className={sidePanelCategoryListClass}>
-					<button
-						type="button"
-						className={categoryBtnClass(selectedCategory === "")}
-						onClick={() => onCategoryChange("")}
-					>
+					<div className={categoryBtnClass(selectedCategory === "")}>
 						{i18n.t("online:catalog.allCategories")}
-					</button>
+						<Button
+							variant="bare"
+							uiSize="content"
+							className={sidePanelCategoryHitAreaClass}
+							onClick={() => onCategoryChange("")}
+						/>
+					</div>
 					{categories.map((cat) => (
-						<button
+						<div
 							key={cat}
-							type="button"
 							className={categoryBtnClass(selectedCategory === cat, true)}
-							onClick={() => onCategoryChange(cat)}
 						>
 							{cat}
-						</button>
+							<Button
+								variant="bare"
+								uiSize="content"
+								className={sidePanelCategoryHitAreaClass}
+								onClick={() => onCategoryChange(cat)}
+							/>
+						</div>
 					))}
 				</div>
 			</div>
