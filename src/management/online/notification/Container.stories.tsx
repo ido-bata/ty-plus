@@ -45,24 +45,13 @@ const COLOR_BY_TYPE: Record<NotificationType, string> = {
 };
 
 const ContainerStub = (args: Args): JSX.Element => {
+	// Issue #528: mirror the production component — `NotificationContainer`
+	// returns `null` when there are no notifications, so the stub must not
+	// invent an empty-state label the real UI never renders. (An empty
+	// fragment stands in for `null` because the story render type requires
+	// a `JSX.Element`.)
 	if (args.entries.length === 0) {
-		return (
-			<div
-				style={{
-					padding: 24,
-					color: "#a0a0a0",
-					fontFamily: "sans-serif",
-					fontSize: 11,
-					textAlign: "center",
-					minWidth: 280,
-					boxSizing: "border-box",
-				}}
-				data-storybook-stub="NotificationContainer"
-				data-entry-count="0"
-			>
-				No active notifications
-			</div>
-		);
+		return <></>;
 	}
 	return (
 		<div
@@ -190,7 +179,13 @@ const expectTopRightPlacement = (canvasElement: HTMLElement): void => {
 	expect(viewportWidth - rect.right).toBeLessThan(64);
 };
 
-export const Default: Story = {};
+export const Default: Story = {
+	// Issue #528: with zero entries the production container renders
+	// nothing — the stub must stay empty too (no placeholder label).
+	play: async ({ canvasElement }) => {
+		expect(canvasElement.querySelector("[data-storybook-stub]")).toBeNull();
+	},
+};
 
 export const WithItems: Story = {
 	args: {
