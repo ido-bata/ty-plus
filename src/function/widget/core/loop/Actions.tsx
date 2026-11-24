@@ -7,19 +7,19 @@ import type { JSX } from "react";
 import { useTranslation } from "react-i18next";
 import { css } from "@/styled-system/css";
 
-export type LoopActionsProps = {
+export type ActionsProps = {
 	applied: boolean;
 	disabled: boolean;
 	onApply: () => void;
 	onUnapply: () => void;
 };
 
-export function LoopActions({
+export function Actions({
 	applied,
 	disabled,
 	onApply,
 	onUnapply,
-}: LoopActionsProps): JSX.Element {
+}: ActionsProps): JSX.Element {
 	const { t } = useTranslation("widgets");
 	return (
 		<div

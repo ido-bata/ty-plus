@@ -9,7 +9,7 @@ import type { JSX } from "react";
 import { useTranslation } from "react-i18next";
 import { css } from "@/styled-system/css";
 
-export type LoopToolbarProps = {
+export type ToolbarProps = {
 	cycles: number;
 	applied: boolean;
 	conflict: boolean;
@@ -19,14 +19,14 @@ export type LoopToolbarProps = {
 	onTogglePlay: () => void;
 };
 
-export function LoopToolbar({
+export function Toolbar({
 	cycles,
 	applied,
 	conflict,
 	currentValue,
 	playing,
 	onTogglePlay,
-}: LoopToolbarProps): JSX.Element {
+}: ToolbarProps): JSX.Element {
 	const { t } = useTranslation("widgets");
 	return (
 		<div
