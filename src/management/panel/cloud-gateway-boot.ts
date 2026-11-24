@@ -50,6 +50,7 @@ import {
 	isBootProbeEnabled,
 	readBootProbeFlag,
 } from "@/management/panel/boot-feature-flags";
+import { installUpdateBusResponder } from "@/management/panel/update-install-bus";
 import { runCepEvalScript } from "@/management/storage/cep";
 import {
 	initCloudGateway,
@@ -605,6 +606,11 @@ export const tryBuildCloudGateway = (
 		initUpdateInstaller({
 			installUpdate: (request) => composition.installUpdate(request),
 		});
+		// Issue #243: non-panel surfaces (settings dialog) cannot reach the
+		// worker; relay their install requests to this panel's composition.
+		installUpdateBusResponder(win, (request) =>
+			composition.installUpdate(request),
+		);
 		cloudGatewayLog.info(
 			"[ty-plus] cloud gateway: initCloudGateway registered",
 			{

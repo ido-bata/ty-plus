@@ -86,6 +86,14 @@ export const SHELL_CHANNELS = {
 	 * message at the receiving side.
 	 */
 	debug: "com.typlus.workspace.debug",
+	/**
+	 * In-app updater relay (Issue #243): the settings dialog cannot reach the
+	 * operation worker — only panel surfaces boot the worker composition — so
+	 * install requests are relayed panel-ward over this channel. Requests are
+	 * non-idempotent and always carry an explicit `targetSurfaceId` (the
+	 * opener panel); exactly one panel executes them.
+	 */
+	updates: "com.typlus.workspace.updates",
 } as const;
 
 /** For `SurfaceMessageEnvelope.payload` (preset list / sync state. Used for market fetch result sharing) */
@@ -221,3 +229,44 @@ export type OnboardingPayload = {
 	/** ISO timestamp at which completion was published. */
 	at: string;
 };
+
+/**
+ * Issue #243: update.install relay payloads on `SHELL_CHANNELS.updates`.
+ *
+ * `install-request` is sent by a non-panel surface (settings dialog) to the
+ * panel named by the envelope's `targetSurfaceId`. `install-result` is the
+ * panel's reply, addressed back to the requester's `sourceSurfaceId` and
+ * correlated by `requestId`.
+ */
+export type UpdateInstallWireRequest = Readonly<{
+	release_version: string;
+	tag: string;
+	asset: Readonly<{
+		url: string;
+		file_name: string;
+		sha256: string;
+	}>;
+}>;
+
+export type UpdateInstallWirePayload =
+	| {
+			kind: "install-request";
+			requestId: string;
+			sourceSurfaceId: string;
+			request: UpdateInstallWireRequest;
+	  }
+	| {
+			kind: "install-result";
+			requestId: string;
+			sourceSurfaceId: string;
+			/** Panel surface that executed the install. */
+			executorSurfaceId: string;
+			ok: boolean;
+			/** Worker result on success (`installed`/`pending`/`manual_required`). */
+			status?: "installed" | "pending" | "manual_required";
+			version?: string;
+			restart_required?: boolean;
+			reason?: string | null;
+			/** Stable worker error code on failure (e.g. `integrity_mismatch`). */
+			errorCode?: string;
+	  };
