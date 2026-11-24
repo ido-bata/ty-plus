@@ -171,5 +171,20 @@ export const Fullscreen: Story = {
 	),
 	play: async ({ canvasElement }) => {
 		expectShellInsideFrame(canvasElement);
+		// Issue #541: the dialog used `width/height: screen` (100vw/100vh),
+		// which includes the scrollbar and pushed the right/bottom edges
+		// outside the frame. Assert the dialog box itself stays inside.
+		const shell = canvasElement.querySelector<HTMLElement>(
+			'[data-testid="onboarding-shell"]',
+		);
+		const frame = canvasElement.querySelector<HTMLElement>("[data-frame]");
+		const dialog = shell?.firstElementChild as HTMLElement | null;
+		if (!frame || !dialog) throw new Error("frame or dialog not found");
+		const frameRect = frame.getBoundingClientRect();
+		const dialogRect = dialog.getBoundingClientRect();
+		expect(dialogRect.left).toBeGreaterThanOrEqual(frameRect.left - 0.5);
+		expect(dialogRect.top).toBeGreaterThanOrEqual(frameRect.top - 0.5);
+		expect(dialogRect.right).toBeLessThanOrEqual(frameRect.right + 0.5);
+		expect(dialogRect.bottom).toBeLessThanOrEqual(frameRect.bottom + 0.5);
 	},
 };
