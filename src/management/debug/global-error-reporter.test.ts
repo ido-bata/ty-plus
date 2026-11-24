@@ -68,6 +68,38 @@ describe("installGlobalErrorReporting (Issue #140)", () => {
 		expect(entries[0]?.message).toBe("unhandled promise rejection");
 	});
 
+	it("describes a rejected DOM Event by type instead of '[object Event]' (Issue #71)", () => {
+		install();
+
+		dispatchUnhandledRejection(new Event("com.typlus.surfaceMessage"));
+
+		const entries = getEntries().filter(
+			(e) => e.action === "global:unhandledrejection",
+		);
+		expect(entries).toHaveLength(1);
+		expect(entries[0]?.context?.reason).toBe(
+			"Event[com.typlus.surfaceMessage]",
+		);
+		expect(entries[0]?.context?.reasonKind).toBe(
+			"Event[com.typlus.surfaceMessage]",
+		);
+	});
+
+	it("includes the first stack frame for Error rejection reasons", () => {
+		install();
+
+		const error = new Error("async boom");
+		error.stack = "Error: async boom\n    at somewhere.ts:1:1";
+		dispatchUnhandledRejection(error);
+
+		const entries = getEntries().filter(
+			(e) => e.action === "global:unhandledrejection",
+		);
+		expect(entries).toHaveLength(1);
+		expect(String(entries[0]?.context?.reason)).toContain("async boom");
+		expect(String(entries[0]?.context?.reason)).toContain("somewhere.ts");
+	});
+
 	it("stops reporting after uninstall", () => {
 		install()();
 
