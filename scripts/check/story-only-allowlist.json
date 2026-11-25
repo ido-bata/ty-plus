@@ -1,1 +1,6 @@
-[]
+[
+	{
+		"file": "src/storybook/online-services.tsx",
+		"reason": "Storybook fixture infrastructure (gateway/persistence/notification-store seeds) that exists only to feed singleton-driven components inside stories; it is not production code by design"
+	}
+]

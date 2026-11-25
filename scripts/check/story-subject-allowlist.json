@@ -1,0 +1,6 @@
+[
+	{
+		"file": "src/storybook/Sanity.stories.tsx",
+		"reason": "Sanity story that validates the global decorator chain itself; it deliberately renders no component subject"
+	}
+]

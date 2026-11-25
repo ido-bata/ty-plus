@@ -8,7 +8,7 @@
  * React: a window-level `dragover`/`drop` pair that cancels the default
  * action for any drag the app did not handle itself.
  *
- * Legitimate drop targets (`FileDropZone`, the dialog shell `Layout`)
+ * Legitimate drop targets (the dialog shell `Layout`)
  * call `stopPropagation()` on both events, so their drops never reach
  * these bubble-phase window listeners; only unhandled drops are
  * swallowed here.
