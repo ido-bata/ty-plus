@@ -54,10 +54,14 @@ Issue #591（PR #430 merge による UI/UX ロールバック）の収束作業�
 ### 視覚レビュー（Storybook capture 468枚）
 
 - capture: `.tmp/vitest-screenshots/`（vitest browser project、1280×720、storybook CI と同一 harness）
-- レビュー: codex vision による全件トリアージ + 問題件の単発再レビュー
-- 結果サマリは最終報告および `docs/verification/ui-surface-ledger-0-13-1.md` を参照
-- 検出→解消済み: whole-dialog stories の blank capture は旧 capture の stale artifact と判明（release head で再 capture すると実描画を確認、#625 の layout 修正後も production 描画は正常）
-- `preset-workspace-canvaseasingicon` の curve コントラスト MINOR 指摘、`fontviewer-statusline--empty` の低コントラスト MINOR 指摘を記録（後述の残存事項）
+- レビュー: codex vision による全468件のトリアージ（複数画像バッチ + 問題件の単発再レビュー）
+- 最終判定: **OK=417 / MINOR=22 / MAJOR=28 → MAJOR全件を個別検証し実害0件**（weak/unreviewed は1件のみで再取得済み）
+  - `preset-dialog-*` blank capture 群（24枚）: 旧 capture の stale artifact。release head で再 capture すると実描画を確認（#625 の layout 修正後も production 描画は正常）
+  - `quality-layoutcontract--*` 3枚: 意図的な negative fixture
+  - `catalog-presetlibraryemptystate--with-results`: `PresetLibraryEmptyState` は結果あり時に `null` を返す仕様で blank が正しい描画
+  - `shared-interaction-anchoredpopover--closed`: story の `play` が anchor を click して open にするため capture は open 状態 — story 側の軽微な設計ミス（production の `!open → null` は正しい）。#610 の残件として記録
+  - `preset-workspace-tile` / `gridcatalogtile` の "ST" 表示・`widgetutility-fontviewer` の host probe error: 意図的 placeholder / fixture
+- MINOR 残件（機能美・磨き上げ観点、ブロッカーではない）: easing icon curve の dark 背景コントラスト、fontviewer statusline 空状態の低コントラスト、downloadprogressiconbutton の faint check icon、grid preview の low-contrast outline 等 22件。#610 の tracking に含める。
 
 ### merge-stale detector 実効性
 
