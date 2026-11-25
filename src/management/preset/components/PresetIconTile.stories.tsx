@@ -1,7 +1,12 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { expect } from "storybook/test";
 import type { Preset } from "@/management/preset/contract";
-import { expectCanvasLayout } from "@/storybook/quality/layout";
+import {
+	assertRendered,
+	assertWithinAncestor,
+	expectCanvasLayout,
+	measureBox,
+} from "@/storybook/quality/layout";
 import { css } from "@/styled-system/css";
 import { PresetIconTile } from "./PresetIconTile";
 
@@ -53,15 +58,42 @@ const meta = {
 export default meta;
 type Story = StoryObj<Args>;
 
+/**
+ * Issue #582 regression guard: the tile is a column surface — the icon
+ * media must render above the title with a non-zero box and stay inside
+ * the tile frame; the grid must not collapse either region.
+ */
+const expectTileIconAboveTitle = (canvasElement: HTMLElement): void => {
+	const tile = canvasElement.querySelector<HTMLElement>("[data-preset-id]");
+	const icon = tile?.querySelector<HTMLElement>(".ws-preset-icon");
+	const title = tile?.querySelector<HTMLElement>("[data-preset-tile-title]");
+	if (!tile || !icon || !title) {
+		throw new Error("preset icon tile/icon/title not found");
+	}
+	assertRendered(tile, { label: "preset icon tile" });
+	assertRendered(icon, { label: "preset tile icon" });
+	assertWithinAncestor(icon, tile);
+	const iconBox = measureBox(icon);
+	const titleBox = measureBox(title);
+	expect(iconBox.width).toBeGreaterThan(0);
+	expect(iconBox.height).toBeGreaterThan(0);
+	expect(iconBox.y + iconBox.height).toBeLessThanOrEqual(titleBox.y + 1);
+};
+
 export const Default: Story = {
 	// Issue #194: initial-state layout contract for the catalog tile.
 	play: async ({ canvasElement }) => {
 		expectCanvasLayout(canvasElement);
+		expectTileIconAboveTitle(canvasElement);
 	},
 };
 
 export const Wide: Story = {
 	args: { iconTileAspect: "wide" },
+	play: async ({ canvasElement }) => {
+		expectCanvasLayout(canvasElement);
+		expectTileIconAboveTitle(canvasElement);
+	},
 };
 
 export const ScriptPreset: Story = {
