@@ -58,9 +58,14 @@ const aeAppPathForManagedRoot = async (
 
 const aePidForApp = async (appPath: string): Promise<number | undefined> => {
 	try {
-		const { stdout } = await execFileAsync("pgrep", ["-f", appPath], {
-			timeout: 10_000,
-		});
+		// Match the main executable only — helper processes (crashpad_handler,
+		// dynamiclinkmanager) also live under the .app bundle and would be
+		// returned first by a bare app-path match.
+		const { stdout } = await execFileAsync(
+			"pgrep",
+			["-f", `${appPath}/Contents/MacOS/After Effects`],
+			{ timeout: 10_000 },
+		);
 		const pid = Number.parseInt(stdout.trim().split("\n")[0] ?? "", 10);
 		return Number.isFinite(pid) ? pid : undefined;
 	} catch {
@@ -137,13 +142,20 @@ export const dismissHostConfirmDialog = async (
 	if (!pid) {
 		return { dismissed: false, reason: `no running process for ${appPath}` };
 	}
-	// Prefer the negative answer first for non-destructive verification;
-	// if no cancel-style button exists, fall back to any affirmative button
-	// only when accept was requested.
-	const button = await clickDialogButton(
-		pid,
-		accept ? OK_BUTTONS : CANCEL_BUTTONS,
-	);
-	if (button) return { dismissed: true, button };
-	return { dismissed: false, reason: "no matching dialog button found" };
+	// The confirm() modal can take several seconds to appear after the
+	// destructive action; poll for it instead of checking once.
+	const deadline = Date.now() + 20_000;
+	const buttonNames = accept ? OK_BUTTONS : CANCEL_BUTTONS;
+	let lastError = "no matching dialog button found";
+	while (Date.now() < deadline) {
+		const button = await clickDialogButton(pid, buttonNames).catch(
+			(error: unknown) => {
+				lastError = String(error);
+				return undefined;
+			},
+		);
+		if (button) return { dismissed: true, button };
+		await new Promise((resolve) => setTimeout(resolve, 1_000));
+	}
+	return { dismissed: false, reason: lastError };
 };
