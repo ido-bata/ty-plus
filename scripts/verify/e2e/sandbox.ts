@@ -38,6 +38,7 @@ import os from "node:os";
 import path from "node:path";
 import { reloadSurface, sleep } from "./cases/shared";
 import type { E2EContext } from "./ctx";
+import { seedRealPresetPack } from "./real-preset-pack";
 import { listLiveSurfaces } from "./surfaces";
 
 const LOCATOR_NAME = "ty-plus-init.json";
@@ -528,6 +529,22 @@ export const prepareSandbox = async (
 	} catch (error) {
 		console.warn(
 			`sandbox: fixture seeding skipped — ${error instanceof Error ? error.message : String(error)}`,
+		);
+	}
+
+	// 2c. Real preset pack (Issue #633): nested folder groups + sibling
+	//     .gif thumbnails + CJK/symbol paths, mirroring onboarding import.
+	//     Best-effort like the dg-* fixtures — absent pack only warns.
+	try {
+		const pack = await seedRealPresetPack(sandboxRoot);
+		if (pack) {
+			console.log(
+				`sandbox: real preset pack seeded — ${pack.presets} presets, ${pack.groups} groups (${pack.packRoot})`,
+			);
+		}
+	} catch (error) {
+		console.warn(
+			`sandbox: real preset pack seeding skipped — ${error instanceof Error ? error.message : String(error)}`,
 		);
 	}
 
