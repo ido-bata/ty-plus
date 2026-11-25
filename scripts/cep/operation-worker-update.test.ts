@@ -3,7 +3,10 @@ import { promises as fileSystem } from "node:fs";
 import path from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { OperationWorkerManifest } from "../../src/management/ipc/operation-worker/binary";
-import { replaceBundleUnderLease } from "./install-cep-dev";
+import {
+	migrateLegacyStagingEntries,
+	replaceBundleUnderLease,
+} from "./install-cep-dev";
 import {
 	InstallLeaseDeadlineError,
 	type InstallLeaseProvider,
@@ -306,8 +309,44 @@ describe("updateExtension", () => {
 			await fileSystem.readFile(path.join(destination, "marker"), "utf8"),
 		).toBe("old");
 		expect(
-			await fileSystem.stat(`${destination}.next`).catch(() => undefined),
+			await fileSystem
+				.stat(path.join(root, ".ty-plus-dev-staging", "destination.next"))
+				.catch(() => undefined),
 		).toBeUndefined();
+	});
+
+	it("moves legacy next/previous entries out of the scanned extensions root", async () => {
+		const root = await makeRoot();
+		const destination = path.join(root, "destination");
+		await fileSystem.mkdir(destination, { recursive: true });
+		await fileSystem.mkdir(`${destination}.next`, { recursive: true });
+		await fileSystem.mkdir(path.join(root, "destination.previous-abc"), {
+			recursive: true,
+		});
+		await fileSystem.mkdir(path.join(root, "unrelated-dir"), {
+			recursive: true,
+		});
+
+		await migrateLegacyStagingEntries(destination);
+
+		const staging = path.join(root, ".ty-plus-dev-staging");
+		await expect(
+			fileSystem.stat(path.join(staging, "destination.next")),
+		).resolves.toBeTruthy();
+		await expect(
+			fileSystem.stat(path.join(staging, "destination.previous-abc")),
+		).resolves.toBeTruthy();
+		await expect(
+			fileSystem.stat(`${destination}.next`).catch(() => undefined),
+		).resolves.toBeUndefined();
+		await expect(
+			fileSystem
+				.stat(path.join(root, "destination.previous-abc"))
+				.catch(() => undefined),
+		).resolves.toBeUndefined();
+		await expect(
+			fileSystem.stat(path.join(root, "unrelated-dir")),
+		).resolves.toBeTruthy();
 	});
 
 	it.skipIf(process.platform !== "win32" && process.platform !== "darwin")(
@@ -333,6 +372,7 @@ describe("updateExtension", () => {
 			).toBe("new");
 			const previous = path.join(
 				root,
+				".ty-plus-dev-staging",
 				`destination.previous-${"e".repeat(64)}`,
 			);
 			expect(
@@ -348,10 +388,13 @@ describe("updateExtension", () => {
 			const source = path.join(root, "source");
 			const destination = path.join(root, "destination");
 			await fileSystem.mkdir(source, { recursive: true });
-			await fileSystem.mkdir(`${destination}.next`, { recursive: true });
+			const nextDir = path.join(root, ".ty-plus-dev-staging");
+			await fileSystem.mkdir(path.join(nextDir, "destination.next"), {
+				recursive: true,
+			});
 			await fileSystem.writeFile(path.join(source, "marker"), "new");
 			await fileSystem.writeFile(
-				path.join(`${destination}.next`, "marker"),
+				path.join(nextDir, "destination.next", "marker"),
 				"recovered",
 			);
 
@@ -367,7 +410,12 @@ describe("updateExtension", () => {
 			).toBe("new");
 			expect(
 				await fileSystem.readFile(
-					path.join(root, `destination.previous-${"f".repeat(64)}`, "marker"),
+					path.join(
+						root,
+						".ty-plus-dev-staging",
+						`destination.previous-${"f".repeat(64)}`,
+						"marker",
+					),
 					"utf8",
 				),
 			).toBe("recovered");

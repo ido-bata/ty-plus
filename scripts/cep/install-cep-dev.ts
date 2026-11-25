@@ -76,10 +76,24 @@ export const validateCepDevWorker = async (): Promise<{
 	return { manifest, binaryPath: resolved.absolutePath };
 };
 
+/**
+ * Staging and rollback trees must live outside the CEP-scanned extension
+ * slots: After Effects loads every subdirectory of the extensions root as an
+ * extension, so a `*.next` / `*.previous-*` sibling of the install dir is
+ * picked up as a duplicate extension with identical Extension Ids (duplicate
+ * panels, CDP port contention — Issue #643). Dot-directories are not scanned,
+ * matching the `.n/` / `.ty-plus-update-staging/` convention used by the
+ * release updater.
+ */
+const stagingRootFor = (destination: string): string =>
+	path.join(path.dirname(destination), ".ty-plus-dev-staging");
+
 const recoverInterruptedBundleReplacement = async (
 	destination: string,
 	next: string,
 ): Promise<void> => {
+	const stagingRoot = stagingRootFor(destination);
+	const base = path.basename(destination);
 	if (existsSync(destination)) {
 		await rm(next, { force: true, recursive: true });
 		return;
@@ -88,15 +102,41 @@ const recoverInterruptedBundleReplacement = async (
 		await rename(next, destination);
 		return;
 	}
-	const parent = path.dirname(destination);
-	const prefix = `${path.basename(destination)}.previous-`;
+	const prefix = `${base}.previous-`;
 	const previous = (
-		await readdir(parent, { withFileTypes: true }).catch(() => [])
+		await readdir(stagingRoot, { withFileTypes: true }).catch(() => [])
 	)
 		.filter((entry) => entry.name.startsWith(prefix))
 		.sort((left, right) => right.name.localeCompare(left.name))[0];
 	if (previous !== undefined) {
-		await rename(path.join(parent, previous.name), destination);
+		await rename(path.join(stagingRoot, previous.name), destination);
+	}
+};
+
+/**
+ * Move legacy `*.next` / `*.previous-*` entries left in the scanned
+ * extensions root by older installers into the staging dir, so After
+ * Effects stops loading them as duplicate extensions.
+ */
+export const migrateLegacyStagingEntries = async (
+	destination: string,
+): Promise<void> => {
+	const parent = path.dirname(destination);
+	const stagingRoot = stagingRootFor(destination);
+	const base = path.basename(destination);
+	const legacy = [
+		...(await readdir(parent, { withFileTypes: true }).catch(() => [])),
+	]
+		.map((entry) => entry.name)
+		.filter(
+			(name) => name === `${base}.next` || name.startsWith(`${base}.previous-`),
+		);
+	if (legacy.length === 0) return;
+	await mkdir(stagingRoot, { recursive: true });
+	for (const name of legacy) {
+		await rename(path.join(parent, name), path.join(stagingRoot, name)).catch(
+			() => undefined,
+		);
 	}
 };
 
@@ -106,15 +146,18 @@ export const replaceBundleUnderLease = async (
 	mode: "copy" | "junction",
 	pair: OperationWorkerManifest,
 ): Promise<void> => {
-	const next = `${destination}.next`;
+	const stagingRoot = stagingRootFor(destination);
+	const base = path.basename(destination);
+	const next = path.join(stagingRoot, `${base}.next`);
 	const digest = pair.workers[currentPlatform()]?.sha256 ?? "unknown";
-	const previousBase = `${destination}.previous-${digest}`;
+	const previousBase = path.join(stagingRoot, `${base}.previous-${digest}`);
 	let previous = previousBase;
 	let suffix = 0;
 	while (existsSync(previous)) {
 		suffix += 1;
 		previous = `${previousBase}-${suffix}`;
 	}
+	await mkdir(stagingRoot, { recursive: true });
 	await recoverInterruptedBundleReplacement(destination, next);
 	await rm(next, { force: true, recursive: true });
 	if (mode === "copy") {
@@ -169,6 +212,7 @@ export const installCepDevBundle = async ({
 	}
 
 	await mkdir(dstRoot, { recursive: true });
+	await migrateLegacyStagingEntries(dst);
 
 	ensurePlayerDebugMode();
 	const leases = new NativeInstallLeaseProvider(
