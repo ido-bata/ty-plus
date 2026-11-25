@@ -14,6 +14,12 @@
  */
 import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
+import {
+	acquireAeLock,
+	aeScopeForManagedRoot,
+	describeOwner,
+	releaseAeLock,
+} from "./ae-lock";
 import { catalogCases } from "./cases/catalog";
 import { debugCases } from "./cases/debug";
 import { hostCases } from "./cases/host";
@@ -212,6 +218,72 @@ const main = async (): Promise<void> => {
 		throw new Error("managed root not found — pass --managed-root");
 	}
 
+	// Exclusive AE-instance lock (Issue #641): everything past this point
+	// mutates or drives the host (locator rewrite, panel reloads,
+	// evalScript cases), so it must not overlap another automation —
+	// Aulymo_v04 holds the same lock for its `--owned` runs. Surface
+	// discovery and the read-only version probe above run unlocked by
+	// necessity (the scope needs the managed root first).
+	const aeScope = aeScopeForManagedRoot(realManagedRoot);
+	let aeLock: { lockDir: string; runId: string } | null = null;
+	if (aeScope) {
+		const acquired = acquireAeLock({
+			scope: aeScope,
+			target: `ty-plus-e2e:${suiteName}`,
+		});
+		if (acquired.status === "busy") {
+			const owner = describeOwner(acquired.owner);
+			const alive =
+				acquired.holderAlive === null
+					? "unknown"
+					: acquired.holderAlive
+						? "alive"
+						: "dead";
+			const recoverHint =
+				"bun scripts/verify/e2e/ae-lock.ts --recover " +
+				`--managed-root=${realManagedRoot}`;
+			throw new Error(
+				`AE instance lock is held (${owner}; holder ${alive}). ` +
+					"Wait for the other run to finish. If the holder is dead, " +
+					`confirm After Effects is idle and run \`${recoverHint}\`.`,
+			);
+		}
+		const runId = (
+			JSON.parse(
+				await readFile(path.join(acquired.lockDir, "owner.json"), "utf8"),
+			) as { runId: string }
+		).runId;
+		aeLock = { lockDir: acquired.lockDir, runId };
+		for (const sig of ["SIGINT", "SIGTERM"] as const) {
+			process.once(sig, () => {
+				releaseAeLock(acquired.lockDir, runId);
+				process.exit(130);
+			});
+		}
+		console.log(`ae-lock: acquired ${aeScope.path} (${acquired.lockDir})`);
+	} else {
+		console.warn(
+			`ae-lock: could not derive AE app name from ${realManagedRoot} — running without the shared lock`,
+		);
+	}
+
+	try {
+		await runSuites(ctx, suiteName, cases, realManagedRoot, outDir);
+	} finally {
+		if (aeLock) {
+			releaseAeLock(aeLock.lockDir, aeLock.runId);
+			console.log("ae-lock: released");
+		}
+	}
+};
+
+const runSuites = async (
+	ctx: E2EContext,
+	suiteName: string,
+	cases: E2ECase[],
+	realManagedRoot: string,
+	outDir: string,
+): Promise<void> => {
 	// Put the locator back if a previous run died mid-sandbox.
 	const recovery = await recoverInterruptedSandbox(ctx);
 	if (recovery) console.log(`sandbox: ${recovery}`);
@@ -234,7 +306,7 @@ const main = async (): Promise<void> => {
 	}
 
 	console.log(`suite=${suiteName} cases=${cases.length}`);
-	console.log(`extensionDir=${extensionDir}`);
+	console.log(`extensionDir=${ctx.options.extensionDir}`);
 	console.log(`managedRoot=${managedRoot}`);
 	if (sandbox) {
 		console.log(`realManagedRoot=${sandbox.realRoot} (untouched)`);
@@ -319,7 +391,7 @@ const main = async (): Promise<void> => {
 		schema: "ty-plus.e2e-run/1",
 		suite: suiteName,
 		capturedAt: new Date().toISOString(),
-		extensionDir,
+		extensionDir: ctx.options.extensionDir,
 		managedRoot,
 		realManagedRoot: sandbox?.realRoot ?? managedRoot,
 		sandbox: sandbox
