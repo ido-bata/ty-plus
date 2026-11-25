@@ -23,6 +23,7 @@
 		"verify:operation-worker:cep": "bun run scripts/verify/operation-worker/operation-worker-cep.ts",
 		"verify:online-gateway:package": "bun run scripts/verify/online-gateway-package.ts",
 		"check:e2e-coverage": "bun run scripts/verify/e2e/coverage.ts",
+		"worker:assert": "bun run scripts/worktree/assert-worker-env.ts",
 		"install:git-hooks": "bun run scripts/install-git-hooks.ts",
 		"build:operation-worker": "bun run scripts/build/operation-worker.ts",
 		"secrets:doctor": "pwsh -NoProfile -File scripts/infisical/secrets-doctor.ps1",
