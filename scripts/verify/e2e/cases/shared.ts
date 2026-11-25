@@ -154,8 +154,7 @@ export const withManagedRootSnapshot = async <T>(
 };
 
 /** Selector for the StatusBar debug-console toggle (panel boot dependent). */
-const DEBUG_CONSOLE_TOGGLE_SELECTOR =
-	'[data-ws-action="toggle-console"]';
+const DEBUG_CONSOLE_TOGGLE_SELECTOR = '[data-ws-action="toggle-console"]';
 
 /**
  * Click the StatusBar debug-console toggle. Waits for the button to mount
