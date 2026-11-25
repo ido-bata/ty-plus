@@ -55,8 +55,7 @@
 		"debugConsole": "Debug Console",
 		"updateCompInfo": "Update Comp Info",
 		"probe": {
-			"logToConsole": "Test: Log to Console",
-			"openDebugConsole": "Test: Open Debug Console"
+			"logToConsole": "Test: Log to Console"
 		},
 		"hideCategory": "Hide Category \"{{cat}}\"",
 		"showCategory": "Show Category \"{{cat}}\"",

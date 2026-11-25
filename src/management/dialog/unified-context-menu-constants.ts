@@ -99,7 +99,6 @@ export const CTX_MENU_IDS = {
 	openPanelPrefix: "ty.ctx.open-panel-",
 	/** Lower-right probe tile (minimal menu) */
 	probeLog: "ty.ctx.probe.log",
-	probeOpenDebug: "ty.ctx.probe.open-debug",
 	/** Bottom `.ty-control-panel` (fixed toolbar) */
 	cpToggleCollapse: "ty.ctx.cp.toggle-collapse",
 	cpLayoutTopLeft: "ty.ctx.cp.layout.top-left.horizontal",

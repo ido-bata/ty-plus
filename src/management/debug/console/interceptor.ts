@@ -830,7 +830,7 @@ export const executeCommand = (code: string): void => {
 	}
 };
 
-// ── CEP cross-surface broadcast (same bus as dialog.tsx / dialog-probe-boot) ─
+// ── CEP cross-surface broadcast (same bus as dialog.tsx) ─
 
 let _broadcastEnabled = false;
 let _broadcastWin: Window | null = null;

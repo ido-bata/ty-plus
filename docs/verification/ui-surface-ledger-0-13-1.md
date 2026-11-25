@@ -28,9 +28,7 @@ Storybook. Snapshot: `release-0-13-1` @ `15dd8017` (2026-11-25).
 | Modeless dialogs | 16 routed surfaceIds | ~9 | ListDialog, PresetEditDialog, Settings sections ×11, AddWidgetDialog, PathDialog, GroupDialog, GenericPresetCreate, ImportDialog, code Dialog, ToolDialog shell, ToolHost, WorkspaceBackgroundDialog — **no/partial story** |
 | Shared (`@ty-plus/ui`) | ~20 components | ~18 | `AnchoredPopover` (used by StatusBar), `MediaFrame` — no story |
 
-Dead/unreachable (tracked in #609): `WorkspaceShell` + `entry/dialogs.tsx` /
-`dialog-bootstrap.tsx` (no HTML references them), routes
-`dialog-workspace-background`, `dialog-probe`, `DebugConsole` overlay class
+Dead/unreachable (tracked in #609): `DebugConsole` overlay class
 (`!isCep` only).
 
 ## Storybook ↔ production parity status (post #595/#596)

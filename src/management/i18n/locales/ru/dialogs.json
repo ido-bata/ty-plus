@@ -90,11 +90,5 @@
 		"noBodyForSurfaceId": "Тело диалога для surfaceId не найдено:",
 		"copySurfaceId": "Копировать id поверхности"
 	},
-	"probe": {
-		"title": "Зонд",
-		"bodyForSurfaceId": "Диалог зонда для surfaceId:",
-		"logSurfaceId": "Записать id поверхности",
-		"copySurfaceId": "Копировать id поверхности"
-	},
 	"loading": "Загрузка…"
 }

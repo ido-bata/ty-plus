@@ -80,10 +80,6 @@
 		"widgetTitle": "위젯",
 		"configLoadError": "구성을 불러올 수 없습니다"
 	},
-	"debugProbe": {
-		"title": "대화상자 프로브",
-		"message": "패널 -> 대화상자 브리지 확인"
-	},
 	"easingCurveColors": {
 		"linear": "선형",
 		"hold": "홀드",

@@ -80,10 +80,6 @@
 		"widgetTitle": "Виджет",
 		"configLoadError": "Не удалось загрузить конфигурацию"
 	},
-	"debugProbe": {
-		"title": "Проверка диалога",
-		"message": "Проверка моста панель -> диалог"
-	},
 	"easingCurveColors": {
 		"linear": "Линейная",
 		"hold": "Удержание",

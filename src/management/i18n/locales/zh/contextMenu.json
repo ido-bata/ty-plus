@@ -55,8 +55,7 @@
 		"debugConsole": "调试控制台",
 		"updateCompInfo": "更新合成信息",
 		"probe": {
-			"logToConsole": "测试：输出到控制台",
-			"openDebugConsole": "测试：打开调试控制台"
+			"logToConsole": "测试：输出到控制台"
 		},
 		"hideCategory": "隐藏类别“{{cat}}”",
 		"showCategory": "显示类别“{{cat}}”",

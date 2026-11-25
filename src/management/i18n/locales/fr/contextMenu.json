@@ -55,8 +55,7 @@
 		"debugConsole": "Console de débogage",
 		"updateCompInfo": "Mettre à jour les infos de comp",
 		"probe": {
-			"logToConsole": "Test : journaliser dans la console",
-			"openDebugConsole": "Test : ouvrir la console de débogage"
+			"logToConsole": "Test : journaliser dans la console"
 		},
 		"hideCategory": "Masquer la catégorie « {{cat}} »",
 		"showCategory": "Afficher la catégorie « {{cat}} »",

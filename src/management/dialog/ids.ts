@@ -26,7 +26,6 @@ import {
 
 /** CEP Extension Id (matches the `Extension Id` in `CSXS/manifest.xml`) */
 export const TY_PLUS_DIALOG_EXTENSION = {
-	probe: tyPlusExtensionId("dialog-probe"),
 	presets: tyPlusExtensionId("dialog-presets"),
 	presetLibrary: tyPlusExtensionId("dialog-preset-library"),
 	messages: tyPlusExtensionId("dialog-messages"),
@@ -117,9 +116,6 @@ export function resolveDialogExtensionIdForOpen(
 	}
 	if (surfaceId === "debug-console") {
 		return TY_PLUS_DIALOG_EXTENSION.debugConsole;
-	}
-	if (surfaceId === "dialog-probe") {
-		return TY_PLUS_DIALOG_EXTENSION.probe;
 	}
 	if (surfaceId === "dialog-widget-selector") {
 		return TY_PLUS_DIALOG_EXTENSION.widgetSelector;

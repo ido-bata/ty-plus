@@ -80,10 +80,6 @@
 		"widgetTitle": "Widget",
 		"configLoadError": "Impossibile caricare la configurazione"
 	},
-	"debugProbe": {
-		"title": "Sonda dialogo",
-		"message": "Controllo del ponte pannello -> dialogo"
-	},
 	"easingCurveColors": {
 		"linear": "Lineare",
 		"hold": "Mantieni",

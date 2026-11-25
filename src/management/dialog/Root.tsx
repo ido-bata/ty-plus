@@ -31,17 +31,6 @@ const UNKNOWN_DIALOG_OUTER_STYLE = {
 	fontFamily: "sans-serif",
 } as const;
 
-const PROBE_DIALOG_OUTER_STYLE = {
-	display: "flex",
-	flexDirection: "column",
-	alignItems: "center",
-	justifyContent: "center",
-	height: "100vh",
-	padding: "2rem",
-	textAlign: "center",
-	fontFamily: "sans-serif",
-} as const;
-
 /** Fallback for unknown or unimplemented dialog surfaces */
 function UnknownDialog({ surfaceId }: { surfaceId: string }): JSX.Element {
 	useEffect(() => {
@@ -102,67 +91,6 @@ function UnknownDialog({ surfaceId }: { surfaceId: string }): JSX.Element {
 	);
 }
 
-/** Placeholder for probe dialog (not yet implemented) */
-function ProbeDialogBody({ surfaceId }: { surfaceId: string }): JSX.Element {
-	useEffect(() => {
-		return registerCepJsonContextMenuSurface(surfaceId, {
-			buildPayload: () => ({
-				menu: [
-					{
-						id: "ty.ctx.probe.log-surface",
-						label: i18n.t("dialogs:probe.logSurfaceId", {
-							defaultValue: "Log surface id",
-						}),
-					},
-					{
-						id: "ty.ctx.probe.copy-surface",
-						label: i18n.t("dialogs:probe.copySurfaceId", {
-							defaultValue: "Copy surface id",
-						}),
-					},
-					{ label: "---" },
-					{
-						id: "ty.ctx.probe.close",
-						label: i18n.t("dialogs:close", { defaultValue: "Close" }),
-					},
-				],
-			}),
-			onMenuSelect: (menuId) => {
-				if (menuId === "ty.ctx.probe.log-surface") {
-					console.info("[DialogRoot] probe surface", surfaceId);
-				}
-				if (menuId === "ty.ctx.probe.copy-surface") {
-					void navigator.clipboard?.writeText?.(surfaceId);
-				}
-				if (menuId === "ty.ctx.probe.close") {
-					window.close();
-				}
-			},
-		});
-	}, [surfaceId]);
-
-	return (
-		<div style={PROBE_DIALOG_OUTER_STYLE}>
-			<h1 style={{ fontSize: "1.25rem", marginBottom: "0.5rem" }}>
-				{i18n.t("dialogs:probe.title", { defaultValue: "Probe" })}
-			</h1>
-			<p style={{ color: PRE_THEME_MUTED_COLOR }}>
-				{i18n.t("dialogs:probe.bodyForSurfaceId", {
-					defaultValue: "Probe dialog for surfaceId:",
-				})}{" "}
-				<code
-					style={{
-						background: PRE_THEME_CODE_BG_COLOR,
-						padding: "0.125rem 0.375rem",
-					}}
-				>
-					{surfaceId}
-				</code>
-			</p>
-		</div>
-	);
-}
-
 /**
  * Routes to the appropriate dialog body based on surfaceId.
  *
@@ -171,7 +99,6 @@ function ProbeDialogBody({ surfaceId }: { surfaceId: string }): JSX.Element {
  * - "dialog-preset-library" → management/online/catalog (via `routes`)
  * - "dialog-messages" → management/online/notification (via `routes`)
  * - "dialog-settings" → SettingsDialog
- * - "dialog-probe" → ProbeDialogBody (placeholder)
  * - "dialog-widget-selector" → AddWidgetDialog (management/widget)
  * - Unknown → UnknownDialog (visible error fallback)
  */
@@ -186,8 +113,6 @@ export function Root({ surfaceId }: RootProps): ReactNode {
 			return <DeferredDialogBody body={() => <SettingsDialog />} />;
 		case "dialog-widget-selector":
 			return <DeferredDialogBody body={() => <AddWidgetDialog />} />;
-		case "dialog-probe":
-			return <ProbeDialogBody surfaceId={surfaceId} />;
 		default: {
 			// Surfaces registered in `routes.tsx` (preset / notification / import flows)
 			const fnDialog = resolveFunctionDialog(surfaceId);

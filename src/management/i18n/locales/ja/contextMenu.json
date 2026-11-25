@@ -55,8 +55,7 @@
 		"debugConsole": "デバッグコンソール",
 		"updateCompInfo": "コンポ情報を更新",
 		"probe": {
-			"logToConsole": "テスト: コンソールにログ出力",
-			"openDebugConsole": "テスト: デバッグコンソールを開く"
+			"logToConsole": "テスト: コンソールにログ出力"
 		},
 		"hideCategory": "カテゴリ「{{cat}}」を非表示",
 		"showCategory": "カテゴリ「{{cat}}」を表示",
