@@ -56,6 +56,7 @@ import { createInstanceId } from "@/management/storage/ids";
 import { readSettings } from "@/management/workspace/persistence/store";
 import { notifyPanelsAfterPresetSave } from "@/management/workspace/placement/notify-panels-after-preset-save";
 import { css } from "@/styled-system/css";
+import { isNoSelectionHostError } from "./no-selection";
 
 type PresetStatus =
 	| "idle"
@@ -548,10 +549,7 @@ function useAnimationPresetDetection(input: AnimationScanInput): {
 			});
 
 			if (!result.ok) {
-				if (
-					result.error.code === "host-preparation-failed" &&
-					/select at least one layer/i.test(result.error.message)
-				) {
+				if (isNoSelectionHostError(result.error, messages?.selectLayerToSave)) {
 					setStatus("no-selection");
 					setMessage(null);
 				} else {
