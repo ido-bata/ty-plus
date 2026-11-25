@@ -30,7 +30,6 @@
 | `dialog-settings` | 設定ダイアログ | 9189 |
 | `dialog-widget-selector` | Add Widget ピッカー | 9190 |
 | `dialog-background-panel` | ワークスペース背景エディタ | 9191 |
-| `dialog-probe` | 診断プローブ（dev 用）| — |
 | `debug-console` | 集約デバッグコンソール | 9185 |
 | `dialog-presets` | プリセット一覧 | 9186 |
 

@@ -55,8 +55,7 @@
 		"debugConsole": "Отладочная консоль",
 		"updateCompInfo": "Обновить информацию о компе",
 		"probe": {
-			"logToConsole": "Тест: записать в консоль",
-			"openDebugConsole": "Тест: открыть отладочную консоль"
+			"logToConsole": "Тест: записать в консоль"
 		},
 		"hideCategory": "Скрыть категорию «{{cat}}»",
 		"showCategory": "Показать категорию «{{cat}}»",

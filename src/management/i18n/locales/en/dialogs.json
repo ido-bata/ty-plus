@@ -90,11 +90,5 @@
 		"noBodyForSurfaceId": "No dialog body found for surfaceId:",
 		"copySurfaceId": "Copy surface id"
 	},
-	"probe": {
-		"title": "Probe",
-		"bodyForSurfaceId": "Probe dialog for surfaceId:",
-		"logSurfaceId": "Log surface id",
-		"copySurfaceId": "Copy surface id"
-	},
 	"loading": "Loading…"
 }

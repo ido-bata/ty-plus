@@ -2059,14 +2059,6 @@ export function buildWorkspaceContextMenuPayload(
 						defaultValue: "Test: Log to Console",
 					}),
 				},
-				sep(),
-				{
-					id: CTX_MENU_IDS.probeOpenDebug,
-					label: i18n.t("contextMenu:unified.probe.openDebugConsole", {
-						defaultValue: "Test: Open Debug Console",
-					}),
-					enabled: includeCep,
-				},
 			],
 		};
 	}

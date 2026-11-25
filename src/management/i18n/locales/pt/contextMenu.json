@@ -55,8 +55,7 @@
 		"debugConsole": "Console de depuração",
 		"updateCompInfo": "Atualizar info do comp",
 		"probe": {
-			"logToConsole": "Teste: registrar no console",
-			"openDebugConsole": "Teste: abrir console de depuração"
+			"logToConsole": "Teste: registrar no console"
 		},
 		"hideCategory": "Ocultar categoria \"{{cat}}\"",
 		"showCategory": "Mostrar categoria \"{{cat}}\"",

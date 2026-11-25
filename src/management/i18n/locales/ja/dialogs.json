@@ -90,11 +90,5 @@
 		"noBodyForSurfaceId": "surfaceId に対応するダイアログ本体が見つかりません:",
 		"copySurfaceId": "surface id をコピー"
 	},
-	"probe": {
-		"title": "プローブ",
-		"bodyForSurfaceId": "surfaceId 用プローブダイアログ:",
-		"logSurfaceId": "surface id をログ出力",
-		"copySurfaceId": "surface id をコピー"
-	},
 	"loading": "読み込み中…"
 }

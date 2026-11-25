@@ -90,11 +90,5 @@
 		"noBodyForSurfaceId": "Nenhum corpo de diálogo encontrado para surfaceId:",
 		"copySurfaceId": "Copiar id de superfície"
 	},
-	"probe": {
-		"title": "Sonda",
-		"bodyForSurfaceId": "Diálogo de sonda para surfaceId:",
-		"logSurfaceId": "Registrar id de superfície",
-		"copySurfaceId": "Copiar id de superfície"
-	},
 	"loading": "Carregando…"
 }

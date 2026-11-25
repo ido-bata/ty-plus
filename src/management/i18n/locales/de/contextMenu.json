@@ -55,8 +55,7 @@
 		"debugConsole": "Debug-Konsole",
 		"updateCompInfo": "Comp-Info aktualisieren",
 		"probe": {
-			"logToConsole": "Test: In Konsole protokollieren",
-			"openDebugConsole": "Test: Debug-Konsole öffnen"
+			"logToConsole": "Test: In Konsole protokollieren"
 		},
 		"hideCategory": "Kategorie „{{cat}}“ ausblenden",
 		"showCategory": "Kategorie „{{cat}}“ einblenden",

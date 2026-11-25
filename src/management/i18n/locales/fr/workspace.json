@@ -80,10 +80,6 @@
 		"widgetTitle": "Widget",
 		"configLoadError": "Impossible de charger la configuration"
 	},
-	"debugProbe": {
-		"title": "Test de dialogue",
-		"message": "Vérification du pont panneau -> dialogue"
-	},
 	"easingCurveColors": {
 		"linear": "Linear",
 		"hold": "Maintien",

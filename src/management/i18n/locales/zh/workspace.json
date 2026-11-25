@@ -80,10 +80,6 @@
 		"widgetTitle": "小组件",
 		"configLoadError": "无法加载配置"
 	},
-	"debugProbe": {
-		"title": "对话框探测",
-		"message": "面板 -> 对话框桥接检查"
-	},
 	"easingCurveColors": {
 		"linear": "线性",
 		"hold": "保持",

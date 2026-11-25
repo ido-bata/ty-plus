@@ -67,7 +67,6 @@ This document describes runtime surfaces and UI execution structure, not source 
 - `dialog-settings`
 - `dialog-background-panel`
 - `debug-console`
-- `dialog-probe`
 - `dialog`
 
 ## Surface Notes
