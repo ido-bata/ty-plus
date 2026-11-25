@@ -20,13 +20,9 @@
  * Both singletons are reset on unmount so stories stay isolated.
  */
 
-import { type JSX, type ReactNode, useLayoutEffect, useRef } from "react";
+import { type JSX, type ReactNode, useLayoutEffect, useState } from "react";
 
-import type {
-	CloudGateway,
-	NotificationSummary,
-	PresetSearchItem,
-} from "@/management/online/contract";
+import type { CloudGateway } from "@/management/online/contract";
 import { notificationStore } from "@/management/online/notification/service";
 import {
 	__resetPersistenceGatewayForTests,
@@ -86,28 +82,27 @@ export type OnlineServicesBoundaryProps = {
  * Installs the fixture singletons before the wrapped story renders and
  * restores the unbooted defaults on unmount.
  *
- * The singletons are assigned during render (guarded by a ref) rather than
- * in an effect: the story's own `useEffect`s run before a parent's, so an
- * effect-time install would race the component's first data load. The
- * assignment itself is idempotent — `__resetDataServicesForTests` clears
- * the cached singleton so `getDataServices()` rebuilds it around the new
- * gateway on first use.
+ * The singletons are assigned in a state initializer (which runs once per
+ * mount, before children render) rather than in an effect: the story's own
+ * `useEffect`s run before a parent's, so an effect-time install would race
+ * the component's first data load. The assignment itself is idempotent —
+ * `__resetDataServicesForTests` clears the cached singleton so
+ * `getDataServices()` rebuilds it around the new gateway on first use.
  */
 export function OnlineServicesBoundary({
 	cloudGateway,
 	persistenceSeed,
 	children,
 }: OnlineServicesBoundaryProps): JSX.Element {
-	const didInitRef = useRef(false);
-	if (!didInitRef.current) {
-		didInitRef.current = true;
+	useState(() => {
 		__resetDataServicesForTests();
 		__resetPersistenceGatewayForTests();
 		if (cloudGateway) {
 			initCloudGateway(cloudGateway);
 		}
 		initPersistenceGateway(createMemoryPersistenceGateway(persistenceSeed));
-	}
+		return true;
+	});
 	useLayoutEffect(
 		() => () => {
 			__resetDataServicesForTests();
@@ -117,53 +112,6 @@ export function OnlineServicesBoundary({
 	);
 	return <>{children}</>;
 }
-
-// ── Cloud gateway fixtures ───────────────────────────────────────────────────
-
-/**
- * `CloudGateway` fixture for the online catalog (`PresetLibrary`) and the
- * notification center. `searchPresets` returns `catalogItems` regardless of
- * params — the dialog filters client-side. `listNotifications` /
- * `getNotificationBlocks` feed `NotificationCenter`; leave them undefined
- * to exercise the static-feed fallback instead.
- */
-export const createStorybookCloudGateway = (options: {
-	catalogItems?: readonly PresetSearchItem[];
-	notifications?: readonly NotificationSummary[];
-	notificationBlocks?: Readonly<Record<string, unknown[]>>;
-	isFixture?: boolean;
-}): CloudGateway => {
-	const { catalogItems, notifications, notificationBlocks, isFixture } =
-		options;
-	return {
-		provider: "supabase",
-		...(isFixture ? { isFixture: true as const } : {}),
-		async resolvePreset(presetId) {
-			throw new Error(`storybook-gateway:unresolved-preset:${presetId}`);
-		},
-		...(catalogItems
-			? {
-					async searchPresets() {
-						return { items: [...catalogItems] };
-					},
-				}
-			: {}),
-		...(notifications
-			? {
-					async listNotifications() {
-						return [...notifications];
-					},
-				}
-			: {}),
-		...(notificationBlocks
-			? {
-					async getNotificationBlocks(notificationId: string) {
-						return notificationBlocks[notificationId] ?? [];
-					},
-				}
-			: {}),
-	};
-};
 
 // ── Notification toast store seeding ─────────────────────────────────────────
 

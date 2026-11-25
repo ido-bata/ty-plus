@@ -5,10 +5,8 @@ import type {
 	CloudGateway,
 	NotificationSummary,
 } from "@/management/online/contract";
-import {
-	createStorybookCloudGateway,
-	OnlineServicesBoundary,
-} from "@/storybook/online-services";
+import { createStorybookCloudGateway } from "@/storybook/cloud-gateway-fixture";
+import { OnlineServicesBoundary } from "@/storybook/online-services";
 
 import { NotificationCenter } from "./Center";
 

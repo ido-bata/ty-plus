@@ -2,10 +2,8 @@ import type { Decorator, Meta, StoryObj } from "@storybook/react";
 import { expect, waitFor } from "storybook/test";
 
 import type { PresetSearchItem } from "@/management/online/contract";
-import {
-	createStorybookCloudGateway,
-	OnlineServicesBoundary,
-} from "@/storybook/online-services";
+import { createStorybookCloudGateway } from "@/storybook/cloud-gateway-fixture";
+import { OnlineServicesBoundary } from "@/storybook/online-services";
 
 import { PresetLibrary } from "./Dialog";
 
