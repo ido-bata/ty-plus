@@ -1,11 +1,28 @@
 import { describe, expect, it } from "vitest";
 
 import {
+	assertRendered,
+	assertWithinAncestor,
+	auditCanvas,
+	boxBottom,
 	boxesOverlap,
 	boxHasArea,
+	boxRight,
 	boxWithin,
+	captureLayoutError,
+	currentViewport,
+	describeElement,
+	expectCanvasLayout,
+	focusAndAssert,
+	hasScrollableAncestor,
+	hoverAndAssert,
+	isClippedByHiddenAncestor,
+	isRendered,
 	type LayoutBox,
+	measureBox,
+	nextPaint,
 	overlapArea,
+	type PageOverflowAxis,
 } from "./layout";
 
 const box = (
@@ -76,5 +93,37 @@ describe("boxHasArea", () => {
 		expect(boxHasArea(box(0, 0, 10, 10))).toBe(true);
 		expect(boxHasArea(box(0, 0, 0, 10))).toBe(false);
 		expect(boxHasArea(box(0, 0, 10, 0))).toBe(false);
+	});
+});
+
+// The DOM adapters below are the documented public surface of
+// docs/architecture/quality/ui-render-contract.md. They are exercised by
+// story play() functions in the storybook project; this test only pins the
+// export surface so a dead-code pass cannot silently strip them again.
+describe("documented assertion API surface", () => {
+	it.each([
+		["assertWithinAncestor", assertWithinAncestor],
+		["assertRendered", assertRendered],
+		["auditCanvas", auditCanvas],
+		["captureLayoutError", captureLayoutError],
+		["currentViewport", currentViewport],
+		["describeElement", describeElement],
+		["expectCanvasLayout", expectCanvasLayout],
+		["focusAndAssert", focusAndAssert],
+		["hasScrollableAncestor", hasScrollableAncestor],
+		["hoverAndAssert", hoverAndAssert],
+		["isClippedByHiddenAncestor", isClippedByHiddenAncestor],
+		["isRendered", isRendered],
+		["measureBox", measureBox],
+		["nextPaint", nextPaint],
+		["boxRight", boxRight],
+		["boxBottom", boxBottom],
+	] as const)("exports %s", (_name, fn) => {
+		expect(typeof fn).toBe("function");
+	});
+
+	it("exports the PageOverflowAxis type", () => {
+		const axis: PageOverflowAxis = "both";
+		expect(axis).toBe("both");
 	});
 });

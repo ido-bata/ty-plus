@@ -62,7 +62,8 @@
 	],
 	"ignoreIssues": {
 		"archive/**": ["files", "unlisted", "unresolved", "exports", "types"],
-		"docs/no-use/**": ["files", "unlisted", "unresolved", "exports", "types"]
+		"docs/no-use/**": ["files", "unlisted", "unresolved", "exports", "types"],
+		"src/storybook/quality/layout.ts": ["exports", "types"]
 	},
 	"ignoreDependencies": [
 		"cf",
