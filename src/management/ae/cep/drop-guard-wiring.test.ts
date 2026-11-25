@@ -9,7 +9,7 @@
 import fs from "node:fs";
 import { describe, expect, it } from "vitest";
 
-for (const entry of ["panel.tsx", "dialog.tsx", "dialogs.tsx"]) {
+for (const entry of ["panel.tsx", "dialog.tsx"]) {
 	describe(`CEP entry shim ${entry}`, () => {
 		it("imports install-drop-guard", () => {
 			const source = fs.readFileSync(

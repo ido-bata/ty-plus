@@ -133,8 +133,20 @@ export const MatchAnchorWidth: Story = {
 	args: { matchAnchorWidth: true },
 };
 
-/** Closed — renders nothing; toggling the anchor opens it. */
+/** Closed — renders nothing; the anchor click path is covered by ToggleOpens. */
 export const Closed: Story = {
+	args: { open: false },
+	play: async () => {
+		// The popover portals to document.body, so a closed story must not
+		// render any of its rows anywhere in the document.
+		await expect(
+			within(document.body).queryByText("First option"),
+		).not.toBeInTheDocument();
+	},
+};
+
+/** Clicking the anchor toggles the popover open (portaled to body). */
+export const ToggleOpens: Story = {
 	args: { open: false },
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);

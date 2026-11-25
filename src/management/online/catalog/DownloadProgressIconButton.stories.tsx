@@ -11,13 +11,18 @@ async function expectRingPercent(
 	percent: number,
 ): Promise<void> {
 	const expected = RING_CIRCUMFERENCE * (1 - percent / 100);
-	await waitFor(() => {
-		const circle = canvasElement.querySelector("circle[stroke-dasharray]");
-		expect(circle).not.toBeNull();
-		const offset = Number(circle?.getAttribute("stroke-dashoffset"));
-		expect(Number.isFinite(offset)).toBe(true);
-		expect(Math.abs(offset - expected)).toBeLessThan(0.5);
-	});
+	// The ease runs on a real `setInterval`; under a loaded CI/browser the
+	// default 1s `waitFor` budget can expire before the ~10 ticks settle.
+	await waitFor(
+		() => {
+			const circle = canvasElement.querySelector("circle[stroke-dasharray]");
+			expect(circle).not.toBeNull();
+			const offset = Number(circle?.getAttribute("stroke-dashoffset"));
+			expect(Number.isFinite(offset)).toBe(true);
+			expect(Math.abs(offset - expected)).toBeLessThan(0.5);
+		},
+		{ timeout: 5000 },
+	);
 }
 
 type Args = {
@@ -92,8 +97,23 @@ export const Writing: Story = {
 	args: { stage: "write", bytesLoaded: 800, bytesTotal: 1000 },
 };
 
+// The terminal check is a status indicator, not an unavailable action:
+// the disabled dim must not halve its opacity or mute its color, or the
+// "done" glyph fades into the dark tile background.
+const expectTerminalCheckLegible = async ({
+	canvasElement,
+}: {
+	canvasElement: HTMLElement;
+}): Promise<void> => {
+	const button = canvasElement.querySelector("button");
+	if (!button) throw new Error("icon button not found");
+	expect(button.disabled).toBe(true);
+	expect(getComputedStyle(button).opacity).toBe("1");
+};
+
 export const Complete: Story = {
 	args: { isComplete: true },
+	play: expectTerminalCheckLegible,
 };
 
 export const InError: Story = {
@@ -102,4 +122,5 @@ export const InError: Story = {
 
 export const AlreadyDownloaded: Story = {
 	args: { isDownloaded: true },
+	play: expectTerminalCheckLegible,
 };

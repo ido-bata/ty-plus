@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { expect } from "storybook/test";
+import { assertContrast } from "@/storybook/quality/color";
 
 import { FontViewerStatusLine } from "./FontViewerStatusLine";
 import type { FontLoadVia } from "./use-font-catalog";
@@ -55,12 +56,27 @@ const expectOpaqueStatusLine = async (
 	}
 };
 
+// The status line is `text.muted` at 10px — legibility was questioned in
+// visual review, so pin the WCAG ratio against the panel surface the
+// widget actually sits on.
+const expectStatusLineContrast = (canvasElement: HTMLElement): void => {
+	const spans = canvasElement.querySelectorAll("span");
+	expect(spans.length).toBeGreaterThan(0);
+	for (const span of spans) {
+		assertContrast(span, document.body, {
+			minRatio: 4.5,
+			label: "font viewer status line",
+		});
+	}
+};
+
 export default meta;
 type Story = StoryObj<Args>;
 
 export const Default: Story = {
 	play: async ({ canvasElement }) => {
 		await expectOpaqueStatusLine(canvasElement);
+		expectStatusLineContrast(canvasElement);
 	},
 };
 
@@ -68,6 +84,7 @@ export const Loading: Story = {
 	args: { loading: true },
 	play: async ({ canvasElement }) => {
 		await expectOpaqueStatusLine(canvasElement);
+		expectStatusLineContrast(canvasElement);
 	},
 };
 
@@ -75,6 +92,7 @@ export const Empty: Story = {
 	args: { familyCount: 0, filteredFaceCount: 0, total: 0, via: null },
 	play: async ({ canvasElement }) => {
 		await expectOpaqueStatusLine(canvasElement);
+		expectStatusLineContrast(canvasElement);
 	},
 };
 
@@ -82,5 +100,6 @@ export const LocalApi: Story = {
 	args: { via: "queryLocalFonts" },
 	play: async ({ canvasElement }) => {
 		await expectOpaqueStatusLine(canvasElement);
+		expectStatusLineContrast(canvasElement);
 	},
 };

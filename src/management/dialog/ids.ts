@@ -62,14 +62,6 @@ export function resolveWorkspaceShellDialogExtensionId(
 	}
 }
 
-/** Modeless surface id → canonical extension id (telemetry / `CepContext`). */
-export function resolveWorkspaceModelessExtensionId(surfaceId: string): string {
-	if (isPresetToolDialogSurfaceId(surfaceId)) {
-		return getPresetToolDialogEntry(surfaceId)?.extensionId ?? "";
-	}
-	return resolveWorkspaceShellDialogExtensionId(surfaceId);
-}
-
 export function tyPlusWorkspaceToolDialogId(kind: ToolDialogKind): string {
 	switch (kind) {
 		case "presets":

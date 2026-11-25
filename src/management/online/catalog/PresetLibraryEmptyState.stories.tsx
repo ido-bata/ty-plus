@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { expect } from "storybook/test";
 import { PresetLibraryEmptyState } from "./PresetLibraryEmptyState";
 
 type Args = {
@@ -59,6 +60,14 @@ export const NoMatches: Story = {
 	args: { catalogLength: 25, filteredLength: 0 },
 };
 
+// With results on screen the empty state must render nothing — this
+// story pins that contract so the blank capture is intentional, not a
+// missing-results defect.
 export const WithResults: Story = {
 	args: { catalogLength: 25, filteredLength: 12 },
+	play: async ({ canvasElement }) => {
+		expect(
+			canvasElement.querySelector("[data-online-preset-empty]"),
+		).toBeNull();
+	},
 };
