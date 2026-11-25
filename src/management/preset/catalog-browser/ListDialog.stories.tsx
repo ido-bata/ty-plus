@@ -198,3 +198,127 @@ export const IconsView: Story = {
 		expect(shell.textContent).toContain("Delta Keyer");
 	},
 };
+
+const searchInput = (canvasElement: HTMLElement): HTMLInputElement => {
+	const input = canvasElement.querySelector<HTMLInputElement>(
+		'[data-preset-list-search] input[type="search"]',
+	);
+	if (!input) throw new Error("preset list search input not found");
+	return input;
+};
+
+export const ListGroupExpand: Story = {
+	play: async ({ canvasElement }) => {
+		expectCanvasLayout(canvasElement);
+		expectShell(canvasElement);
+		await waitForRows(canvasElement);
+		const { userEvent } = await import("vitest/browser");
+		// Groups start collapsed: only the two ungrouped presets render rows.
+		await waitFor(() => {
+			expect(canvasElement.textContent).toContain("Delta Keyer");
+		});
+		expect(canvasElement.querySelectorAll("[data-preset-id]").length).toBe(2);
+		const expand = canvasElement.querySelector<HTMLButtonElement>(
+			'button[aria-label="Expand group"]',
+		);
+		if (!expand) throw new Error("group expand toggle not found");
+		await userEvent.click(expand);
+		// Expanding mounts the member rows inside the group block.
+		await waitFor(() => {
+			expect(canvasElement.querySelectorAll("[data-preset-id]").length).toBe(4);
+		});
+		expect(canvasElement.textContent).toContain("Alpha Glow");
+		expect(canvasElement.textContent).toContain("Beta Shake");
+		const collapse = canvasElement.querySelector<HTMLButtonElement>(
+			'button[aria-label="Collapse group"]',
+		);
+		if (!collapse) throw new Error("group collapse toggle not found");
+		await userEvent.click(collapse);
+		await waitFor(() => {
+			expect(canvasElement.querySelectorAll("[data-preset-id]").length).toBe(2);
+		});
+	},
+};
+
+export const SearchFilter: Story = {
+	play: async ({ canvasElement }) => {
+		expectCanvasLayout(canvasElement);
+		expectShell(canvasElement);
+		await waitForRows(canvasElement);
+		const { userEvent } = await import("vitest/browser");
+		const input = searchInput(canvasElement);
+		await userEvent.click(input);
+		// "delta" matches only the ungrouped plugin preset, so its row stays
+		// visible without expanding the (now empty) group block.
+		await userEvent.keyboard("delta");
+		await waitFor(() => {
+			expect(canvasElement.textContent).toContain("filtered");
+		});
+		expect(canvasElement.textContent).toContain("Delta Keyer");
+		expect(canvasElement.textContent).not.toContain("Gamma Plate");
+		// The seeded group had no surviving members, so its block is gone.
+		expect(canvasElement.textContent).not.toContain("Favourites");
+	},
+};
+
+export const NoSearchMatches: Story = {
+	play: async ({ canvasElement }) => {
+		expectCanvasLayout(canvasElement);
+		expectShell(canvasElement);
+		await waitForRows(canvasElement);
+		const { userEvent } = await import("vitest/browser");
+		const input = searchInput(canvasElement);
+		await userEvent.click(input);
+		await userEvent.keyboard("zzz-no-match");
+		// Distinct from the empty-catalog copy: the catalog loaded fine, the
+		// filter just matched nothing (issue #145 states must not blur).
+		await waitFor(() => {
+			expect(canvasElement.textContent).toContain("No matching presets");
+		});
+		expect(canvasElement.textContent).not.toContain(
+			"No presets saved locally yet",
+		);
+	},
+};
+
+export const IconGroupDrilldown: Story = {
+	play: async ({ canvasElement }) => {
+		expectCanvasLayout(canvasElement);
+		expectShell(canvasElement);
+		await waitForRows(canvasElement);
+		const { userEvent } = await import("vitest/browser");
+		const toggle = canvasElement.querySelector<HTMLButtonElement>(
+			'button[aria-label="Icon view"]',
+		);
+		if (!toggle) throw new Error("icon view toggle not found");
+		await userEvent.click(toggle);
+		await waitFor(() => {
+			expect(
+				canvasElement.querySelector("[data-preset-icon-view-port]"),
+			).not.toBeNull();
+		});
+		const openGroup = canvasElement.querySelector<HTMLButtonElement>(
+			'button[aria-label="Open group Favourites"]',
+		);
+		if (!openGroup) throw new Error("group open button not found");
+		await userEvent.click(openGroup);
+		// Enter on the focused tile hit-area opens the group (same path as
+		// double-click; see IconCatalogGroupCard).
+		await userEvent.keyboard("{Enter}");
+		await waitFor(() => {
+			expect(canvasElement.textContent).toContain("All presets");
+			expect(canvasElement.textContent).toContain("Alpha Glow");
+			expect(canvasElement.textContent).toContain("Beta Shake");
+		});
+		// Ungrouped presets stay on the root page, not inside the group view.
+		expect(canvasElement.textContent).not.toContain("Gamma Plate");
+		const back = canvasElement.querySelector<HTMLButtonElement>(
+			'button[aria-label="Return to all presets"]',
+		);
+		if (!back) throw new Error("navigate-up card not found");
+		await userEvent.click(back);
+		await waitFor(() => {
+			expect(canvasElement.textContent).toContain("Delta Keyer");
+		});
+	},
+};
