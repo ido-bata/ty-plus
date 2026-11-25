@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import type { JSX } from "react";
 import { expect } from "storybook/test";
 
-import type { WidgetType } from "@/function/widget/contract";
+import type { WidgetType } from "@/management/widget/contract";
 import {
 	createInitialSurfaceState,
 	type SurfaceState,
@@ -90,7 +90,7 @@ export const AlignWidget: Story = {
  */
 export const UnknownWidgetType: Story = {
 	args: {
-		layout: makeLayout("w-retired-1", "retired-widget" as WidgetType, 1, 1),
+		layout: makeLayout("w-retired-1", "retired-widget", 1, 1),
 	},
 	play: async ({ canvasElement }) => {
 		expect(canvasElement.textContent).toContain("retired-widget");
