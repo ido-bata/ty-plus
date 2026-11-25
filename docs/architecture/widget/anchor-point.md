@@ -102,9 +102,9 @@ Issue #77 の背景として「Alt オーバーによる微調整ができない
 ## 検証
 
 - `bun run test -- function/widget/core/anchor-point` — 直接クリック
-  回帰（4 ケース）
-- `bun run test -- shared/component/interaction` — ジェスチャー hook
-  単独テスト（21 ケース）
+  回帰
+- `bun run test -- packages/ui/src/interaction` — ジェスチャー hook
+  単独テスト（`use-anchor-gesture.test.tsx`）
 - Storybook: `WidgetCore/AnchorPoint` に `Default`, `Large`,
   `GesturePreview` の 3 variant
 
