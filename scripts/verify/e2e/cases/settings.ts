@@ -52,30 +52,36 @@ export const openSettingsDialog = async (
 	ctx: E2EContext,
 ): Promise<LiveSurface | null> => {
 	const panel = await ctx.requireSurface({ surfaceId: "panel-1" });
-	await ctx.evalJs(
-		panel,
-		`(() => {
-			const btn = document.querySelector(
-				'[data-ws-action="open-dialog"][data-dialog-kind="settings"]'
-			);
-			if (!btn) return "no-button";
-			btn.click();
-			return "clicked";
-		})()`,
-	);
-	const deadline = Date.now() + 15_000;
+	// The status-bar button can exist before React attaches its handler
+	// (post-reload hydration), so a single click may be a no-op. Retry the
+	// toggle until the pooled dialog surface actually mounts.
+	const deadline = Date.now() + 30_000;
 	while (Date.now() < deadline) {
-		await sleep(700);
-		const live = await listLiveSurfaces(await ctx.surfaces());
-		const dialog = live.find((s) => s.surfaceId === "dialog-settings");
-		if (dialog) {
-			const mounted = await waitForDom(
-				ctx,
-				dialog,
-				`document.body ? document.body.innerHTML.length > 500 : false`,
-				10_000,
-			);
-			if (mounted) return dialog;
+		await ctx.evalJs(
+			panel,
+			`(() => {
+				const btn = document.querySelector(
+					'[data-ws-action="open-dialog"][data-dialog-kind="settings"]'
+				);
+				if (!btn) return "no-button";
+				btn.click();
+				return "clicked";
+			})()`,
+		);
+		const innerDeadline = Date.now() + 6_000;
+		while (Date.now() < innerDeadline && Date.now() < deadline) {
+			await sleep(700);
+			const live = await listLiveSurfaces(await ctx.surfaces());
+			const dialog = live.find((s) => s.surfaceId === "dialog-settings");
+			if (dialog) {
+				const mounted = await waitForDom(
+					ctx,
+					dialog,
+					`document.body ? document.body.innerHTML.length > 500 : false`,
+					10_000,
+				);
+				if (mounted) return dialog;
+			}
 		}
 	}
 	return null;

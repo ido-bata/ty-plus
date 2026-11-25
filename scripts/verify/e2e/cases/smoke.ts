@@ -284,22 +284,36 @@ export const smokeCases: E2ECase[] = [
 		async run(ctx: E2EContext) {
 			const checks = [];
 			// The console is a Modeless surface opened from the StatusBar
-			// toggle (or Ctrl+`). Click it, then re-resolve live targets.
+			// toggle (or Ctrl+`). The toggle can exist before React attaches
+			// its handler, so retry the click until the surface mounts.
 			const panel = await ctx.requireSurface({ surfaceId: "panel-1" });
-			await ctx.evalJs(
-				panel,
-				`(() => {
-					const btn = document.querySelector('[data-ws-action="toggle-console"]');
-					if (!btn) return "no-toggle";
-					btn.click();
-					return "clicked";
-				})()`,
-			);
-			await new Promise((r) => setTimeout(r, 2500));
-			const live = await listLiveSurfaces(await ctx.surfaces());
-			const consoleSurface = live.find(
-				(s) => s.kind === "debug-console" || s.surfaceId.includes("debug"),
-			);
+			let consoleSurface:
+				| Awaited<ReturnType<typeof listLiveSurfaces>>[number]
+				| null = null;
+			const openDeadline = Date.now() + 30_000;
+			while (Date.now() < openDeadline && !consoleSurface) {
+				await ctx.evalJs(
+					panel,
+					`(() => {
+						const btn = document.querySelector('[data-ws-action="toggle-console"]');
+						if (!btn) return "no-toggle";
+						btn.click();
+						return "clicked";
+					})()`,
+				);
+				const innerDeadline = Date.now() + 6_000;
+				while (Date.now() < innerDeadline && Date.now() < openDeadline) {
+					await new Promise((r) => setTimeout(r, 700));
+					const live = await listLiveSurfaces(await ctx.surfaces());
+					const found = live.find(
+						(s) => s.kind === "debug-console" || s.surfaceId.includes("debug"),
+					);
+					if (found) {
+						consoleSurface = found;
+						break;
+					}
+				}
+			}
 			if (!consoleSurface) {
 				checks.push(
 					check("debug console surface open", false, "not live after toggle"),

@@ -21,8 +21,11 @@ import type { E2EContext } from "../ctx";
 import { check, type E2ECase } from "../report";
 import type { LiveSurface } from "../surfaces";
 import { listLiveSurfaces } from "../surfaces";
+import { resolveLocaleKey, surfaceLang } from "./i18n";
 import {
 	aeUserDataDir,
+	clickButtonByLabels,
+	clickCatalogRowAction,
 	e2eFixtureDir,
 	findLive,
 	openPresetCatalog,
@@ -118,21 +121,31 @@ const openBackupSection = async (ctx: E2EContext): Promise<LiveSurface> => {
 	return dialog;
 };
 
+/**
+ * Resolve the localized labels for i18n keys on a surface (drops keys the
+ * locale does not define). Used for button text that `i18n.t()` renders.
+ */
+const labelsFor = async (
+	ctx: E2EContext,
+	surface: LiveSurface,
+	keys: readonly string[],
+): Promise<string[]> => {
+	const lang = await surfaceLang(ctx, surface);
+	const out: string[] = [];
+	for (const key of keys) {
+		const value = await resolveLocaleKey(lang, key);
+		if (value) out.push(value);
+	}
+	return out;
+};
+
 /** Click Export in the backup section; returns the bundle JSON text. */
 const exportBackupBundle = async (
 	ctx: E2EContext,
 	dialog: LiveSurface,
 ): Promise<string> => {
-	const clicked = await ctx.evalJs(
-		dialog,
-		`(() => {
-			const btn = [...document.querySelectorAll("button")].find(
-				(b) => (b.textContent || "").trim() === "Export" && !b.disabled);
-			if (!btn) return "missing-export";
-			btn.click();
-			return "clicked";
-		})()`,
-	);
+	const labels = await labelsFor(ctx, dialog, ["common:actions.export"]);
+	const clicked = await clickButtonByLabels(ctx, dialog, labels);
 	if (clicked !== "clicked") {
 		throw new Error(`backup Export not clickable: ${String(clicked)}`);
 	}
@@ -180,25 +193,22 @@ const importBackupBundle = async (
 	}
 	// React state flushes async; give the Import button a beat to enable.
 	await sleep(800);
-	const clicked = await ctx.evalJs(
-		dialog,
-		`(() => {
-			const btn = [...document.querySelectorAll("button")].find(
-				(b) => (b.textContent || "").trim() === "Import" && !b.disabled);
-			if (!btn) return "missing-import";
-			btn.click();
-			return "clicked";
-		})()`,
-	);
+	const labels = await labelsFor(ctx, dialog, ["common:actions.import"]);
+	const clicked = await clickButtonByLabels(ctx, dialog, labels);
 	if (clicked !== "clicked") {
 		throw new Error(`backup Import not clickable: ${String(clicked)}`);
 	}
-	// Import writes files async; wait for the status line.
+	// Import writes files async; wait for the localized status line
+	// (`settings:workspaceBackupSection.statusImported` / `statusInvalid`).
+	const statusLabels = await labelsFor(ctx, dialog, [
+		"settings:workspaceBackupSection.statusImported",
+		"settings:workspaceBackupSection.statusInvalid",
+	]);
 	await waitForDom(
 		ctx,
 		dialog,
 		`[...document.querySelectorAll("p")].some(
-			(p) => /imported|invalid/i.test(p.textContent || ""))`,
+			(p) => ${JSON.stringify(statusLabels)}.includes((p.textContent || "").trim()))`,
 		20_000,
 	);
 };
@@ -208,8 +218,16 @@ const typeQuickActionsQuery = async (
 	ctx: E2EContext,
 	panel: LiveSurface,
 	query: string,
-): Promise<unknown> =>
-	ctx.evalJs(
+): Promise<unknown> => {
+	// The tile hydrates asynchronously; wait for the input before typing
+	// so a slow mount does not surface as "missing-input".
+	await waitForDom(
+		ctx,
+		panel,
+		`Boolean(document.querySelector('[data-widget-quick-actions] [data-ws-action="search"]'))`,
+		30_000,
+	);
+	return ctx.evalJs(
 		panel,
 		`(() => {
 			const host = document.querySelector("[data-widget-quick-actions]");
@@ -227,13 +245,25 @@ const typeQuickActionsQuery = async (
 				: "not-focused";
 		})()`,
 	);
+};
 
 const clickPaletteRun = async (
 	ctx: E2EContext,
 	panel: LiveSurface,
 	presetId: string,
-): Promise<unknown> =>
-	ctx.evalJs(
+): Promise<unknown> => {
+	// Palette rows render asynchronously after the query lands (candidate
+	// snapshot + scoring); a fixed sleep races that on a busy host. Wait
+	// for the run affordance itself, then click it.
+	const seen = await waitForDom(
+		ctx,
+		panel,
+		`Boolean(document.querySelector(
+			'button[data-ws-action="run-preset"][data-preset-id="${presetId}"]'))`,
+		20_000,
+	);
+	if (!seen) return "missing-run";
+	return ctx.evalJs(
 		panel,
 		`(() => {
 			const btn = document.querySelector(
@@ -243,6 +273,7 @@ const clickPaletteRun = async (
 			return "clicked";
 		})()`,
 	);
+};
 
 // ---------------------------------------------------------------------------
 // cases
@@ -322,18 +353,12 @@ export const journeySuiteCases: E2ECase[] = [
 						`Boolean(document.querySelector('[data-preset-id="${presetId}"]'))`,
 						20_000,
 					);
-					const editClicked = await ctx.evalJs(
+					const editClicked = await clickCatalogRowAction(
+						ctx,
 						dialog,
-						`(() => {
-						const row = document.querySelector(
-							${JSON.stringify(`[data-preset-id="${presetId}"]`)});
-						if (!row) return "missing-row";
-						const btn = row.querySelector('[aria-label="Edit preset"]')
-							|| row.querySelector('[aria-label="Edit"]');
-						if (!btn) return "missing-edit";
-						btn.click();
-						return "clicked";
-					})()`,
+						presetId,
+						["presets:listDialog.editPresetAria", "common:actions.edit"],
+						1,
 					);
 					checks.push(
 						check(
@@ -373,15 +398,14 @@ export const journeySuiteCases: E2ECase[] = [
 						})()`,
 						);
 						await sleep(600);
-						const saved = await ctx.evalJs(
+						const saveLabels = await labelsFor(ctx, editDialog, [
+							"presets:edit.save",
+							"presets:edit.status.saving",
+						]);
+						const saved = await clickButtonByLabels(
+							ctx,
 							editDialog,
-							`(() => {
-							const btn = [...document.querySelectorAll("button")].find(
-								(b) => (b.textContent || "").trim() === "Save" && !b.disabled);
-							if (!btn) return "missing-save";
-							btn.click();
-							return "clicked";
-						})()`,
+							saveLabels,
 						);
 						checks.push(
 							check("edit Save clicked", saved === "clicked", String(saved)),
@@ -421,18 +445,12 @@ export const journeySuiteCases: E2ECase[] = [
 						`Boolean(document.querySelector('[data-preset-id="${presetId}"]'))`,
 						20_000,
 					);
-					const delClicked = await ctx.evalJs(
+					const delClicked = await clickCatalogRowAction(
+						ctx,
 						catalog2,
-						`(() => {
-						const row = document.querySelector(
-							${JSON.stringify(`[data-preset-id="${presetId}"]`)});
-						if (!row) return "missing-row";
-						const btn = row.querySelector('[aria-label="Delete preset"]')
-							|| row.querySelector('[aria-label="Delete"]');
-						if (!btn) return "missing-delete";
-						btn.click();
-						return "clicked";
-					})()`,
+						presetId,
+						["presets:listDialog.deletePresetAria", "common:actions.delete"],
+						2,
 					);
 					checks.push(
 						check(
@@ -616,7 +634,13 @@ export const journeySuiteCases: E2ECase[] = [
 				const ws = (app.workspace ?? {}) as Record<string, unknown>;
 				const grid = (ws.grid ?? {}) as Record<string, unknown>;
 				app.ui = { ...ui, accentColor: ACCENT, language: "ja" };
-				app.workspace = { ...ws, grid: { ...grid, cellSize: 120 } };
+				// gridSettingsFromSettingsJson rejects a partial grid section
+				// (cellSize+gap+radius all required), so fill the metrics the
+				// persisted file may not carry yet.
+				app.workspace = {
+					...ws,
+					grid: { ...grid, cellSize: 120, gap: 4, radius: 2 },
+				};
 				await writeManagedFile(
 					ctx,
 					["settings", "app.json"],
@@ -639,10 +663,18 @@ export const journeySuiteCases: E2ECase[] = [
 					),
 				);
 
-				const accent = await ctx.evalJs(
+				// Theme reconcile runs async after boot; poll for the accent
+				// token instead of sampling once (a single read races the
+				// theme.css rewrite + applyCepShellTheme).
+				const accent = await waitForDom(
+					ctx,
 					panel,
-					`getComputedStyle(document.documentElement)
-						.getPropertyValue("--color-ty-accent")`,
+					`(() => {
+						const v = getComputedStyle(document.documentElement)
+							.getPropertyValue("--color-ty-accent") || "";
+						return v.toLowerCase().includes("336699") ? v : null;
+					})()`,
+					20_000,
 				);
 				checks.push(
 					check(
@@ -652,10 +684,15 @@ export const journeySuiteCases: E2ECase[] = [
 					),
 				);
 
-				const cell = await ctx.evalJs(
+				const cell = await waitForDom(
+					ctx,
 					panel,
-					`getComputedStyle(document.documentElement)
-						.getPropertyValue("--ty-ws-cell")`,
+					`(() => {
+						const v = getComputedStyle(document.documentElement)
+							.getPropertyValue("--ty-ws-cell") || "";
+						return v.includes("120") ? v : null;
+					})()`,
+					20_000,
 				);
 				checks.push(
 					check(
