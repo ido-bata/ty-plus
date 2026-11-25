@@ -306,18 +306,15 @@ describe("Phase 3 dependency rules", () => {
 			).not.toBeNull();
 		});
 
-		it("flags contract -> shared/component", () => {
+		it("flags contract -> shared UI", () => {
 			const contractFile = "/src/contract/widget.ts";
 			expect(
-				classifyBoundaryViolation(
-					contractFile,
-					"../../shared/component/Button",
-				),
+				classifyBoundaryViolation(contractFile, "@ty-plus/ui/Button"),
 			).not.toBeNull();
 		});
 	});
 
-	describe("management may import contract, shared/component, shared/util", () => {
+	describe("management may import contract, @ty-plus/ui, shared/util", () => {
 		it("allows management -> contract", () => {
 			const mgmtFile = "/src/management/style/index.ts";
 			expect(
@@ -325,10 +322,10 @@ describe("Phase 3 dependency rules", () => {
 			).toBeNull();
 		});
 
-		it("allows management -> shared/component", () => {
+		it("allows management -> @ty-plus/ui", () => {
 			const mgmtFile = "/src/management/style/index.ts";
 			expect(
-				classifyBoundaryViolation(mgmtFile, "../../shared/component/Button"),
+				classifyBoundaryViolation(mgmtFile, "@ty-plus/ui/Button"),
 			).toBeNull();
 		});
 
@@ -339,9 +336,9 @@ describe("Phase 3 dependency rules", () => {
 			).toBeNull();
 		});
 
-		it("flags management -> shared (non-component, non-util)", () => {
+		it("flags management -> shared (non-UI, non-util)", () => {
 			const mgmtFile = "/src/management/style/index.ts";
-			// The rule is: management may only import shared/component or shared/util
+			// The rule is: management may only import @ty-plus/ui or shared/util
 			// Importing shared directly is not allowed
 			expect(
 				classifyBoundaryViolation(mgmtFile, "../../shared"),
@@ -349,7 +346,7 @@ describe("Phase 3 dependency rules", () => {
 		});
 	});
 
-	describe("function may import contract, management, shared/component, shared/util", () => {
+	describe("function may import contract, management, @ty-plus/ui, shared/util", () => {
 		it("allows function -> contract", () => {
 			const fnFile = "/src/function/widget/align/align-widget.tsx";
 			expect(
@@ -364,10 +361,10 @@ describe("Phase 3 dependency rules", () => {
 			).toBeNull();
 		});
 
-		it("allows function -> shared/component", () => {
+		it("allows function -> @ty-plus/ui", () => {
 			const fnFile = "/src/function/widget/align/align-widget.tsx";
 			expect(
-				classifyBoundaryViolation(fnFile, "../../../shared/component/Button"),
+				classifyBoundaryViolation(fnFile, "@ty-plus/ui/Button"),
 			).toBeNull();
 		});
 

@@ -303,18 +303,6 @@ const CHECKERS: ViolationChecker[] = [
 		}
 		return null;
 	},
-	// Active source must not import src/js (legacy UI - must migrate to src/cep-shell)
-	(_filePath, specifier, _lineNumber, _rawLine) => {
-		if (
-			specifier.includes("src/js") ||
-			specifier === "./js" ||
-			specifier === "../js" ||
-			specifier.endsWith("/js")
-		) {
-			return "Active source must not import from src/js (legacy UI - migrate to src/cep-shell)";
-		}
-		return null;
-	},
 ];
 
 // Phase 1 ownership rules: shared may not flow to management or function
@@ -352,7 +340,7 @@ export const classifyBoundaryViolation = (
 		return `contract -> ${targetOwner} (contract may import only contract or external packages)`;
 	}
 
-	// Phase 3: contract must NOT import management, function, or shared/component
+	// Phase 3: contract must NOT import management or function
 	// Even when resolution escapes /src/ (returns null), detect intent from specifier
 	if (srcOwner === "contract" && targetOwner === null) {
 		const normalizedSpec = specifier.replace(/\\/g, "/");
@@ -364,16 +352,9 @@ export const classifyBoundaryViolation = (
 		) {
 			return "contract -> function/management (contract must not import function or management)";
 		}
-		// Also check for shared/component intent
-		if (
-			normalizedSpec.includes("/shared/component") ||
-			normalizedSpec.startsWith("shared/component")
-		) {
-			return "contract -> shared/component (contract must not import shared/component)";
-		}
 	}
 
-	// Phase 3: contract must NOT import management, function, or shared/component
+	// Phase 3: contract must NOT import management or function
 	if (srcOwner === "contract" && targetOwner !== null) {
 		if (targetOwner === "management") {
 			return "contract -> management (contract must not import management)";
@@ -381,21 +362,14 @@ export const classifyBoundaryViolation = (
 		if (targetOwner === "function") {
 			return "contract -> function (contract must not import function)";
 		}
-		// shared/component is checked via specifier path
-		const normalizedSpec = specifier.replace(/\\/g, "/");
-		if (normalizedSpec.includes("/shared/component")) {
-			return "contract -> shared/component (contract must not import shared/component)";
-		}
 	}
 
-	// Phase 3: management may import contract, shared/component, shared/util
+	// Phase 3: management may import contract, @ty-plus/ui, shared/util
 	// Note: management->function is tracked via mgmtFnEdges baseline, not a hard violation here
 	// Note: management->management (intra-slice) is always allowed
 	if (srcOwner === "management" && targetOwner === "shared") {
 		const normalizedSpec = specifier.replace(/\\/g, "/");
-		const isSharedUi =
-			normalizedSpec.startsWith("@ty-plus/ui") ||
-			normalizedSpec.includes("/shared/component");
+		const isSharedUi = normalizedSpec.startsWith("@ty-plus/ui");
 		const isSharedUtil = normalizedSpec.includes("/shared/util");
 		if (!isSharedUi && !isSharedUtil) {
 			return "management -> shared (management may import only contract, @ty-plus/ui, shared/util)";
@@ -422,7 +396,7 @@ export const classifyBoundaryViolation = (
 		}
 	}
 
-	// Phase 3: function may import contract, management, shared/component, shared/util
+	// Phase 3: function may import contract, management, @ty-plus/ui, shared/util
 	// Note: function->function (intra-slice) is always allowed
 	// External packages return null and are always allowed
 	if (
@@ -434,9 +408,7 @@ export const classifyBoundaryViolation = (
 		targetOwner !== "shared"
 	) {
 		const normalizedSpec = specifier.replace(/\\/g, "/");
-		const isSharedUi =
-			normalizedSpec.startsWith("@ty-plus/ui") ||
-			normalizedSpec.includes("/shared/component");
+		const isSharedUi = normalizedSpec.startsWith("@ty-plus/ui");
 		const isSharedUtil = normalizedSpec.includes("/shared/util");
 		if (!isSharedUi && !isSharedUtil) {
 			return `function -> ${targetOwner} (function may import only contract, management, @ty-plus/ui, shared/util)`;
@@ -526,8 +498,7 @@ const scanDirectory = (dir: string, extensions: string[]): string[] => {
 					!entry.name.includes("node_modules") &&
 					!entry.name.includes("dist") &&
 					!entry.name.includes(".git") &&
-					!entry.name.includes("archive") &&
-					entry.name !== "js" // legacy UI being migrated
+					!entry.name.includes("archive")
 				) {
 					files.push(...scanDirectory(fullPath, extensions));
 				}

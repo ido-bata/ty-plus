@@ -7,7 +7,7 @@ layer, not the feature itself.
 
 ## Canonical Source Paths
 
-The authoritative source paths under `src/` are:
+The authoritative source paths are:
 
 | Surface | Path |
 |---|---|
@@ -16,7 +16,7 @@ The authoritative source paths under `src/` are:
 | workspace messaging | `src/management/workspace/messaging/` |
 | dialog components | `src/management/dialog/` |
 | dialog root / id resolution | `src/management/dialog/` |
-| shared UI components | `src/shared/component/` |
+| shared UI components | `packages/ui/src/`（`@ty-plus/ui`） |
 | widget registry | `src/function/widget/registry-v2.ts`, `src/function/widget/` |
 | widget implementations | `src/function/widget/` |
 | preset operations | `src/function/preset/` |

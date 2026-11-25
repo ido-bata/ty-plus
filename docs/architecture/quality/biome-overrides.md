@@ -14,7 +14,7 @@
 
 ## 各 override
 
-### `**/src/shared/component/fields/ListSelect.tsx`
+### `**/packages/ui/src/fields/ListSelect.tsx`
 
 - **Off rule**: `a11y/useSemanticElements`
 - **理由**: `<select>` を含む複数選択 UI で semantic HTML 上問題のない構造を取りながら、biome が `useSemanticElements` を過剰検出する既知 pattern。当該 file では semantic markup を維持しているため suppression。
@@ -74,7 +74,7 @@
 - **理由**: font-viewer は Adobe CEP font enumeration API が `string | null` を返し、`!` で narrow する箇所が頻出する。
 - **復元時の影響**: API 呼び出し結果を stored 時点で non-null に限定する layer を追加。
 
-### `**/src/shared/component/feedback/LoadingSpinner.tsx`
+### `**/packages/ui/src/feedback/LoadingSpinner.tsx`
 
 - **Off rule**: `a11y/useSemanticElements`, `a11y/noRedundantRoles`
 - **理由**: spinner は `role="status"` で意味を担保しつつ `<div>` を使う構造。biome が semantic element を要求する箇所で `role` が重複していると判定する既知 false positive。
