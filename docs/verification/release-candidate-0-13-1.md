@@ -55,7 +55,7 @@ Issue #591（PR #430 merge による UI/UX ロールバック）の収束作業�
 
 - capture: `.tmp/vitest-screenshots/`（vitest browser project、1280×720、storybook CI と同一 harness）
 - レビュー: codex vision による全468件のトリアージ（複数画像バッチ + 問題件の単発再レビュー）
-- 最終判定: **OK=417 / MINOR=22 / MAJOR=28 → MAJOR全件を個別検証し実害0件**（weak/unreviewed は1件のみで再取得済み）
+- 最終判定: **468件 = OK 417 + MINOR 22 + MAJOR 28 + weak判定1件（再レビューで解消）**。MAJOR全件を個別検証し実害0件
   - `preset-dialog-*` blank capture 群（24枚）: 旧 capture の stale artifact。release head で再 capture すると実描画を確認（#625 の layout 修正後も production 描画は正常）
   - `quality-layoutcontract--*` 3枚: 意図的な negative fixture
   - `catalog-presetlibraryemptystate--with-results`: `PresetLibraryEmptyState` は結果あり時に `null` を返す仕様で blank が正しい描画
