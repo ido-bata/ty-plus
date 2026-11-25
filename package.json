@@ -95,6 +95,7 @@
 		"check:ui-ownership": "bun run scripts/check/ui-ownership.ts",
 		"check:panda-values": "bun run scripts/check/panda-token-values.ts",
 		"check:story-i18n": "bun run scripts/check/story-i18n.ts",
+		"check:merge-stale": "bun run scripts/check/merge-stale-resolution.ts",
 		"ci:pr": "bun run ci:static && bun run ci:unit && bun run ci:coverage && bun run check:readme-locales",
 		"ci:static": "cross-env NODE_OPTIONS=--max-old-space-size=28672 bun run lint && bun run build && bun run build:cep:worker && bun run verify:online-gateway:package && bun run check:debug-logger && bun run check:cep-artifacts && bun run check:es3 && cross-env TY_PLUS_PANEL_GZIP_MAX_BYTES=3500000 bun run check:bundle-size && bun run typecheck && bun run check:boundaries && bun run check:react-doctor && bun run check:rust && bun run knip && bun run check:skills",
 		"ci:unit": "cross-env NODE_OPTIONS=--max-old-space-size=28672 SKIP_OPERATION_WORKER_VERIFICATION=1 bun run vitest run --project=unit",
