@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 /**
  * merge-stale-resolution — detects merge results that silently discarded
- * work the target side had landed since the branches diverged.
+ * work either side had landed since the branches diverged.
  *
  * WHY THIS EXISTS
  *
@@ -11,32 +11,61 @@
  * copies — including documented UI exports — and every gate passed because
  * nothing compared the merge result against what the target side had added.
  * This script is the mechanical check for that pattern (Issue #597, parent
- * audit #591).
+ * audit #591), extended by Issue #608 after forensic verification showed
+ * the original detector produced zero findings on the real damage merge
+ * `bdd1168b` (a release→feature merge where the stale take equals the
+ * FIRST parent, not the second).
  *
- * THE HEURISTIC
+ * THE TWO CHECKS
  *
- * For a merge with first parent P1 (the target the merge lands on), second
- * parent P2 (the incoming side), and merge base B = merge-base(P1, P2):
+ * Both checks share the same inputs: for a merge with first parent P1 (the
+ * target the merge lands on), second parent P2 (the incoming side), merge
+ * base B = merge-base(P1, P2), and merge result R:
  *
- *   1. Restrict to files BOTH sides changed since B
- *      (content at P1 differs from B AND content at P2 differs from B).
- *   2. Flag a file when the merge RESULT is byte-identical to P2's version
- *      — the resolution took the incoming side wholesale. A merge that
- *      merely happens to agree with P2 on a file P1 also rewrote is only
- *      suspicious when P1's version carried identifiers that are now gone.
- *   3. Within a flagged file, compute the identifiers P1 added relative to
- *      B (tokens present in P1's content but absent from B's) and report
- *      the ones missing from the merge result. If none survive, the target
- *      side's work on that file was discarded.
+ *   1. WHOLESALE TAKE (fail-level on UI paths, `kind: "wholesale"`)
+ *      For files BOTH sides changed since B, flag when R is byte-identical
+ *      to one parent's version — the resolution took that side wholesale
+ *      and may have discarded the other side's work. This now runs in BOTH
+ *      directions: R == P2 loses target-side (P1) work; R == P1 loses
+ *      incoming-side (P2) work. Within a flagged file, the identifiers the
+ *      losing side added relative to B (tokens present in that side's
+ *      content but absent from B's) are reported when missing from R.
+ *      Deletion edge cases report sentinels (`<target-side deletion>`,
+ *      `<incoming-side deletion>`).
  *
- * Severity: findings on UI-relevant paths (`src/**` code and styles,
- * `packages/ui/**`, `panda.config.ts`, `panda.tokens.ts`) fail the check;
- * findings elsewhere are warnings. `--warn-only` downgrades everything to
- * warnings. The detector is intentionally conservative: it only fires when
- * the result is *identical* to the incoming blob, so hand-resolved merges
- * that kept any target-side edit are not flagged (they may still be wrong —
- * this is a tripwire for the wholesale-take pattern, not a correctness
- * proof).
+ *   2. SEMANTIC LOSS (always warn-level, `kind: "semantic"`)
+ *      For files changed on AT LEAST ONE side since B (text-like paths
+ *      only, see isSemanticCandidate), compute the identifier set each side
+ *      added relative to B and flag when more than half of a side's added
+ *      identifiers are absent from R (and at least SEMANTIC_MIN_MISSING = 3
+ *      are missing). This catches hand-resolved partial reverts — the
+ *      dominant real-world shape, where 71 of 72 both-side files in the
+ *      incident merge were mixed results no byte check can see — and both
+ *      merge directions, including R == B (revert-to-base), where every
+ *      added identifier is missing. Semantic findings NEVER fail the check,
+ *      even on UI paths: the token heuristic can over- or under-report on
+ *      hand-resolved merges, so they are review prompts, not gates.
+ *
+ * DETECTION LIMITS (read before trusting a clean run)
+ *
+ *   - Identifier extraction is a token heuristic: identifiers surviving only
+ *     inside comments or string literals still count as present, and a side
+ *     whose added work is mostly prose or short lowercase words yields few
+ *     or no tokens (under-detection).
+ *   - The >50% / >=3-missing threshold means small losses (1-2 identifiers)
+ *     and losses where most added identifiers coincidentally survive are
+ *     not flagged (under-detection, deliberate to limit noise).
+ *   - A hand-resolved merge that kept the identifiers but reverted the
+ *     logic around them is invisible to both checks.
+ *   - Semantic mode is capped by --max-semantic-files; truncated files are
+ *     reported on stderr. Both-side files are analysed first.
+ *   - Binary and non-text files are skipped by semantic mode; the wholesale
+ *     check still applies to them via byte comparison.
+ *
+ * Severity: wholesale findings on UI-relevant paths (`src/**` code and
+ * styles, `packages/ui/**`, `panda.config.ts`, `panda.tokens.ts`) fail the
+ * check; findings elsewhere are warnings. `--warn-only` downgrades
+ * everything to warnings. Semantic findings are always warnings.
  *
  * USAGE
  *
@@ -54,8 +83,10 @@
  *       the eventual merge resolves to the head's content, which real
  *       merges may not — treat findings as review prompts.
  *
- *   Options: --warn-only (never fail), --max-files <n> (cap analysed files,
- *   default 200), --json (machine-readable findings on stdout).
+ *   Options: --warn-only (never fail), --max-files <n> (cap analysed
+ *   both-side files for the wholesale check, default 200),
+ *   --max-semantic-files <n> (cap analysed union files for the semantic
+ *   check, default 500), --json (machine-readable findings on stdout).
  *
  * CI wiring: the `merge-stale` job in .github/workflows/ci.yml runs this on
  * every pull_request and push with fetch-depth: 0. On pull_request the
@@ -65,7 +96,7 @@
  *
  * Exit codes:
  *   0 - no failing findings (warnings may be printed)
- *   1 - at least one failing (UI-path) finding, or a usage/git error
+ *   1 - at least one failing (UI-path wholesale) finding, or a usage/git error
  */
 
 import { spawnSync } from "node:child_process";
@@ -95,11 +126,22 @@ export type MergeFileSnapshot = {
 
 export type FindingSeverity = "fail" | "warn";
 
+/** Which merge parent a finding says lost work. */
+export type MergeSide = "target" | "incoming";
+
+/** Which detector produced a finding. */
+export type FindingKind = "wholesale" | "semantic";
+
 export type StaleFinding = {
 	path: string;
-	/** Target-side identifiers absent from the merge result. */
+	/** Identifiers added by the losing side(s) that are absent from the
+	 * merge result (or a `<...-side deletion>` sentinel). */
 	missing: string[];
 	severity: FindingSeverity;
+	kind: FindingKind;
+	/** Side(s) whose added work is missing. Wholesale findings always name
+	 * the losing parent; semantic findings may be "both". */
+	side: MergeSide | "both";
 };
 
 /**
@@ -233,39 +275,89 @@ export function extractIdentifiers(content: string): Set<string> {
 	return out;
 }
 
+// ---------------------------------------------------------------------------
+// Wholesale-take check (byte-identical, fail-level on UI paths)
+// ---------------------------------------------------------------------------
+
+/** Result of the wholesale-take analysis for one file. */
+export type WholesaleTake = {
+	/** The parent whose added work may have been discarded. */
+	lostSide: MergeSide;
+	/** Losing-side identifiers absent from the result, or a sentinel. */
+	missing: string[];
+};
+
+function contentOnSide(
+	file: MergeFileSnapshot,
+	side: MergeSide,
+): string | null {
+	return side === "target" ? file.target : file.incoming;
+}
+
+function baseIdentifiers(file: MergeFileSnapshot): Set<string> {
+	return file.base === null ? new Set<string>() : extractIdentifiers(file.base);
+}
+
 /**
- * Decide whether one file's merge resolution discarded target-side work.
- * Returns the missing identifiers, or null when the file is not a stale
- * wholesale-take.
+ * Decide whether one file's merge resolution took one parent wholesale.
+ * Returns the losing side and its missing identifiers, or null when the
+ * result is not byte-identical to a single parent's version (hand-resolved
+ * merges are left to the semantic check) or when nothing was lost.
+ *
+ * Symmetric in both directions: result == P2 loses target-side work,
+ * result == P1 loses incoming-side work.
+ */
+export function wholesaleTakeMissing(
+	file: MergeFileSnapshot,
+): WholesaleTake | null {
+	// Both sides must have changed the file since the merge base.
+	if (file.target === file.base || file.incoming === file.base) return null;
+
+	// The merge result must be byte-identical to exactly one parent's
+	// version. When all three agree there is nothing to lose.
+	let lostSide: MergeSide;
+	if (file.result === file.incoming && file.result !== file.target) {
+		lostSide = "target";
+	} else if (file.result === file.target && file.result !== file.incoming) {
+		lostSide = "incoming";
+	} else {
+		return null;
+	}
+	const takenSide: MergeSide = lostSide === "target" ? "incoming" : "target";
+
+	const lost = contentOnSide(file, lostSide);
+	const taken = contentOnSide(file, takenSide);
+
+	// The losing side deleted the file but the merge kept the taken side's
+	// copy: the deletion was overridden.
+	if (lost === null) {
+		return { lostSide, missing: [`<${lostSide}-side deletion>`] };
+	}
+	// The taken side deleted the file and that deletion won over the losing
+	// side's edits.
+	if (taken === null) {
+		return { lostSide, missing: [`<${takenSide}-side deletion>`] };
+	}
+
+	const baseIds = baseIdentifiers(file);
+	const lostIds = extractIdentifiers(lost);
+	const resultIds = extractIdentifiers(file.result ?? "");
+
+	const missing = [...lostIds]
+		.filter((token) => !baseIds.has(token) && !resultIds.has(token))
+		.sort();
+	return missing.length > 0 ? { lostSide, missing } : null;
+}
+
+/**
+ * Backwards-compatible wrapper returning only the missing identifiers of
+ * the wholesale-take check (null when the file is not a stale wholesale
+ * take).
  */
 export function staleMissingIdentifiers(
 	file: MergeFileSnapshot,
 ): string[] | null {
-	// Both sides must have changed the file since the merge base.
-	if (file.target === file.base || file.incoming === file.base) return null;
-	// The merge result must be the incoming side's version, byte for byte.
-	if (file.result !== file.incoming) return null;
-
-	// Target deleted the file but the merge resurrected the incoming copy:
-	// everything the target removed is back. Report a sentinel.
-	if (file.target === null) {
-		return file.incoming === null ? null : ["<target-side deletion>"];
-	}
-	if (file.result === null) {
-		// Incoming deleted the file; target modified it. Result == incoming
-		// means the deletion won — flag with a sentinel.
-		return ["<incoming-side deletion>"];
-	}
-
-	const baseIds =
-		file.base === null ? new Set<string>() : extractIdentifiers(file.base);
-	const targetIds = extractIdentifiers(file.target);
-	const resultIds = extractIdentifiers(file.result);
-
-	const missing = [...targetIds]
-		.filter((token) => !baseIds.has(token) && !resultIds.has(token))
-		.sort();
-	return missing.length > 0 ? missing : null;
+	return wholesaleTakeMissing(file)?.missing ?? null;
 }
 
 export function analyzeMergeStaleness(
@@ -274,11 +366,123 @@ export function analyzeMergeStaleness(
 ): StaleFinding[] {
 	const findings: StaleFinding[] = [];
 	for (const file of files) {
-		const missing = staleMissingIdentifiers(file);
-		if (missing === null) continue;
+		const take = wholesaleTakeMissing(file);
+		if (take === null) continue;
 		const severity: FindingSeverity =
 			isUiPath(file.path) && !opts.warnOnly ? "fail" : "warn";
-		findings.push({ path: file.path, missing, severity });
+		findings.push({
+			path: file.path,
+			missing: take.missing,
+			severity,
+			kind: "wholesale",
+			side: take.lostSide,
+		});
+	}
+	return findings;
+}
+
+// ---------------------------------------------------------------------------
+// Semantic-loss check (identifier sets, always warn-level)
+// ---------------------------------------------------------------------------
+
+/** Minimum number of a side's added identifiers that must be absent from
+ * the result before the semantic check fires. */
+export const SEMANTIC_MIN_MISSING = 3;
+
+/** Strict lower bound on the fraction of a side's added identifiers that
+ * must be absent from the result (missing / added > this). */
+export const SEMANTIC_MISSING_RATIO = 0.5;
+
+/**
+ * Path filter for the semantic check: identifier extraction is only
+ * meaningful on text-like source, docs, and config files. Lockfiles,
+ * snapshots, and minified bundles are excluded — they are huge, change on
+ * both sides constantly, and their "identifiers" are noise.
+ */
+const SEMANTIC_TEXT_RE =
+	/\.(?:ts|tsx|js|jsx|mjs|cjs|css|scss|sass|less|json|jsonc|md|mdx|rs|py|toml|yaml|yml|html|vue|svelte)$/i;
+const SEMANTIC_SKIP_RE =
+	/(?:^|\/)(?:bun\.lock|package-lock\.json|pnpm-lock\.yaml|yarn\.lock|Cargo\.lock)$|\.snap$|\.min\.(?:js|css)$/;
+
+export function isSemanticCandidate(path: string): boolean {
+	return SEMANTIC_TEXT_RE.test(path) && !SEMANTIC_SKIP_RE.test(path);
+}
+
+/** Identifiers `side` added relative to the merge base; empty when the
+ * side did not change the file or deleted it. */
+function sideAddedIdentifiers(
+	file: MergeFileSnapshot,
+	side: MergeSide,
+): Set<string> {
+	const content = contentOnSide(file, side);
+	if (content === null || content === file.base) return new Set<string>();
+	const baseIds = baseIdentifiers(file);
+	const added = new Set<string>();
+	for (const token of extractIdentifiers(content)) {
+		if (!baseIds.has(token)) added.add(token);
+	}
+	return added;
+}
+
+/**
+ * Semantic staleness for one file: for each side, the identifiers it added
+ * since the merge base that are absent from the merge result. A side is
+ * "mostly reverted" when more than SEMANTIC_MISSING_RATIO of its added
+ * identifiers are missing AND at least SEMANTIC_MIN_MISSING are missing.
+ * Returns the losing side(s) and the union of missing identifiers, or null.
+ */
+export function semanticLoss(
+	file: MergeFileSnapshot,
+): { sides: (MergeSide | "both")[]; missing: string[] } | null {
+	// Wholesale takes are reported (and possibly failed) by the other check;
+	// skip them here so one file never produces two findings.
+	if (wholesaleTakeMissing(file) !== null) return null;
+
+	const resultIds =
+		file.result === null ? new Set<string>() : extractIdentifiers(file.result);
+	const flagged: MergeSide[] = [];
+	const missing = new Set<string>();
+
+	for (const side of ["target", "incoming"] as const) {
+		const added = sideAddedIdentifiers(file, side);
+		if (added.size === 0) continue;
+		const sideMissing = [...added].filter((t) => !resultIds.has(t));
+		if (
+			sideMissing.length >= SEMANTIC_MIN_MISSING &&
+			sideMissing.length / added.size > SEMANTIC_MISSING_RATIO
+		) {
+			flagged.push(side);
+			for (const t of sideMissing) missing.add(t);
+		}
+	}
+
+	if (flagged.length === 0) return null;
+	const sides: (MergeSide | "both")[] =
+		flagged.length === 2 ? ["both"] : flagged;
+	return { sides, missing: [...missing].sort() };
+}
+
+/**
+ * Semantic check over files changed on at least one side since the merge
+ * base. Every finding is a warning — even on UI paths — because the token
+ * heuristic cannot prove a hand-resolved merge is wrong.
+ */
+export function analyzeSemanticStaleness(
+	files: MergeFileSnapshot[],
+): StaleFinding[] {
+	const findings: StaleFinding[] = [];
+	for (const file of files) {
+		const loss = semanticLoss(file);
+		if (loss === null) continue;
+		for (const side of loss.sides) {
+			findings.push({
+				path: file.path,
+				missing: loss.missing,
+				severity: "warn",
+				kind: "semantic",
+				side,
+			});
+		}
 	}
 	return findings;
 }
@@ -331,31 +535,76 @@ type MergeSpec = {
 	label: string;
 	p1: string;
 	p2: string;
-	/** Rev whose tree is the merge result. Defaults to p1 for --base/--head
-	 * simulation is NOT used; pass result explicitly. */
+	/** Rev whose tree is the merge result. */
 	result: string;
+};
+
+type CollectedSnapshots = {
+	files: MergeFileSnapshot[];
+	/** Paths changed on BOTH sides — the wholesale check's domain. */
+	bothSidePaths: Set<string>;
+	/** Paths fed to the semantic check (union, text-like, capped). */
+	semanticPaths: Set<string>;
 };
 
 function collectSnapshots(
 	spec: MergeSpec,
 	maxFiles: number,
-): MergeFileSnapshot[] {
+	maxSemanticFiles: number,
+): CollectedSnapshots {
 	const base = mergeBase(spec.p1, spec.p2);
 	const targetChanged = changedFiles(base, spec.p1);
 	const incomingChanged = changedFiles(base, spec.p2);
 	const both = [...targetChanged].filter((p) => incomingChanged.has(p));
 	if (both.length > maxFiles) {
 		console.error(
-			`merge-stale-resolution: ${both.length} files changed on both sides; analysing the first ${maxFiles}`,
+			`merge-stale-resolution: ${both.length} files changed on both sides; analysing the first ${maxFiles} for the wholesale check`,
 		);
 	}
-	return both.slice(0, maxFiles).map((path) => ({
-		path,
-		base: showFile(base, path),
-		target: showFile(spec.p1, path),
-		incoming: showFile(spec.p2, path),
-		result: showFile(spec.result, path),
-	}));
+	const bothCapped = both.slice(0, maxFiles);
+	const bothSet = new Set(both);
+
+	// Semantic domain: files changed on at least one side, restricted to
+	// text-like paths. Both-side files are ordered first because conflict
+	// resolutions concentrate there; the cap then keeps the most suspicious
+	// files when a merge touches thousands.
+	const union = new Set([...targetChanged, ...incomingChanged]);
+	const oneSide = [...union].filter((p) => !bothSet.has(p)).sort();
+	const semanticOrdered = [...both].sort().concat(oneSide);
+	const semanticPaths = new Set(
+		semanticOrdered.filter(isSemanticCandidate).slice(0, maxSemanticFiles),
+	);
+	const semanticTotal = semanticOrdered.filter(isSemanticCandidate).length;
+	if (semanticTotal > maxSemanticFiles) {
+		console.error(
+			`merge-stale-resolution: ${semanticTotal} text files changed on at least one side; analysing the first ${maxSemanticFiles} for the semantic check`,
+		);
+	}
+
+	// Fetch snapshots for the union of both domains: all both-side files
+	// (wholesale needs every type, including non-text) plus the capped
+	// semantic set. bothCapped may overlap semanticPaths; dedupe below.
+	const bothCappedSet = new Set(bothCapped);
+	const ordered = [
+		...bothCapped,
+		...[...semanticPaths].filter((p) => !bothCappedSet.has(p)),
+	];
+	const seen = new Set<string>();
+	const files = ordered
+		.filter((p) => {
+			if (seen.has(p)) return false;
+			seen.add(p);
+			return true;
+		})
+		.map((path) => ({
+			path,
+			base: showFile(base, path),
+			target: showFile(spec.p1, path),
+			incoming: showFile(spec.p2, path),
+			result: showFile(spec.result, path),
+		}));
+
+	return { files, bothSidePaths: new Set(bothCapped), semanticPaths };
 }
 
 // ---------------------------------------------------------------------------
@@ -367,13 +616,16 @@ function usage(): never {
   bun scripts/check/merge-stale-resolution.ts [--commit <rev>]
   bun scripts/check/merge-stale-resolution.ts --base <rev> --head <rev>
 Options:
-  --commit <rev>     analyse <rev> as a merge commit (default: HEAD)
-  --base <rev>       first parent / merge target for simulated merges
-  --head <rev>       second parent / incoming side for simulated merges
-                     (result is taken as <rev> itself)
-  --warn-only        report everything as warnings; never fail
-  --max-files <n>    cap analysed both-side files (default 200)
-  --json             print findings as JSON`);
+  --commit <rev>          analyse <rev> as a merge commit (default: HEAD)
+  --base <rev>            first parent / merge target for simulated merges
+  --head <rev>            second parent / incoming side for simulated merges
+                          (result is taken as <rev> itself)
+  --warn-only             report everything as warnings; never fail
+  --max-files <n>         cap analysed both-side files, wholesale check
+                          (default 200)
+  --max-semantic-files <n> cap analysed union files, semantic check
+                          (default 500)
+  --json                  print findings as JSON`);
 	process.exit(2);
 }
 
@@ -384,6 +636,7 @@ function parseArgs(argv: string[]) {
 		head: undefined as string | undefined,
 		warnOnly: false,
 		maxFiles: 200,
+		maxSemanticFiles: 500,
 		json: false,
 	};
 	for (let i = 0; i < argv.length; i++) {
@@ -394,9 +647,18 @@ function parseArgs(argv: string[]) {
 		else if (a === "--base") args.base = argv[++i];
 		else if (a === "--head") args.head = argv[++i];
 		else if (a === "--max-files") args.maxFiles = Number(argv[++i]);
+		else if (a === "--max-semantic-files")
+			args.maxSemanticFiles = Number(argv[++i]);
 		else usage();
 	}
-	if (args.maxFiles <= 0 || !Number.isFinite(args.maxFiles)) usage();
+	if (
+		args.maxFiles <= 0 ||
+		!Number.isFinite(args.maxFiles) ||
+		args.maxSemanticFiles <= 0 ||
+		!Number.isFinite(args.maxSemanticFiles)
+	) {
+		usage();
+	}
 	return args;
 }
 
@@ -437,27 +699,54 @@ function resolveSpec(args: ReturnType<typeof parseArgs>): MergeSpec | null {
 	};
 }
 
+function describeFinding(f: StaleFinding): string {
+	const shown = f.missing.slice(0, 12).join(", ");
+	const rest = f.missing.length > 12 ? ", …" : "";
+	if (f.kind === "wholesale") {
+		const dir =
+			f.side === "target"
+				? "took the incoming side wholesale"
+				: "took the target side wholesale";
+		return `${f.path}: merge result ${dir}; ${f.side}-side identifiers missing: ${shown}${rest}`;
+	}
+	return `${f.path}: semantic check — ${f.side}-side identifiers added since base are mostly absent from the merge result: ${shown}${rest}`;
+}
+
 function main() {
 	const args = parseArgs(process.argv.slice(2));
 	const spec = resolveSpec(args);
 	if (spec === null) return;
 
-	const files = collectSnapshots(spec, args.maxFiles);
-	const findings = analyzeMergeStaleness(files, { warnOnly: args.warnOnly });
+	const collected = collectSnapshots(
+		spec,
+		args.maxFiles,
+		args.maxSemanticFiles,
+	);
+	const wholesaleFiles = collected.files.filter((f) =>
+		collected.bothSidePaths.has(f.path),
+	);
+	const semanticFiles = collected.files.filter((f) =>
+		collected.semanticPaths.has(f.path),
+	);
+
+	const findings = [
+		...analyzeMergeStaleness(wholesaleFiles, { warnOnly: args.warnOnly }),
+		// Semantic findings are always warnings; warnOnly is irrelevant but
+		// accepted for a uniform call shape.
+		...analyzeSemanticStaleness(semanticFiles),
+	];
 
 	if (args.json) {
 		console.log(JSON.stringify({ spec: spec.label, findings }, null, 2));
 	} else {
 		for (const f of findings) {
 			const tag = f.severity === "fail" ? "STALE" : "warn ";
-			console.log(
-				`${tag} ${f.path}: merge result matches the incoming side; target-side identifiers missing: ${f.missing.slice(0, 12).join(", ")}${f.missing.length > 12 ? ", …" : ""}`,
-			);
+			console.log(`${tag} ${describeFinding(f)}`);
 		}
 		const fails = findings.filter((f) => f.severity === "fail");
 		const warns = findings.length - fails.length;
 		console.log(
-			`merge-stale-resolution: ${files.length} both-side files checked, ${findings.length} findings (${fails.length} failing, ${warns} warnings) for ${spec.label.slice(0, 12)}`,
+			`merge-stale-resolution: ${collected.bothSidePaths.size} both-side files + ${collected.semanticPaths.size} union files checked, ${findings.length} findings (${fails.length} failing, ${warns} warnings) for ${spec.label.slice(0, 12)}`,
 		);
 	}
 
