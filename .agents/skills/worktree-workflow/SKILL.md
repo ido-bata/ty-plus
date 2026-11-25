@@ -25,15 +25,6 @@ Worktrunk自体はConstitutionではない。採用理由はworkspace lifecycle 
 - worktree path等のmachine preferenceはuser configであり、project truthにしない。
 - WSLでは高頻度build/watch用worktreeをLinux filesystemへ置き、`/mnt/c`を標準にしない。
 
-## Worker isolation contract
-
-並列implementation workerをdispatchする場合、各workerは必ず自分専用のlinked worktree内で動く。main checkout（`git rev-parse --git-dir` == `--git-common-dir`のcheckout）をworkerの作業場所にしてはならない。shared checkout上でのbranch切替・commit・install・buildは、他workerのHEAD・index・未commit状態を破壊する（release-0-13-1統合時に実際に発生）。
-
-- supervisorはworkerごとにworktree pathとticket branchを割り当て、promptへ絶対pathを明記する。
-- workerは最初のmutation（file編集・install・build・commit）の前に `bun run worker:assert`（`scripts/worktree/assert-worker-env.ts`）を自分のworktree内で実行し、OKを確認する。main checkout・未provision・`main`/`release-*`上の実装作業はexit 1で拒否される。監査・read-only作業のみ `--read-only` を付けられる。
-- worktreeを用意できない環境では、shared checkoutでの並列実装を行わず、read-only調査の並列化または安全な直列実装へ縮退する（`parallel-orchestration` Skillのisolation規則に従う）。
-- worktree作成は `wt switch --create <issue> --base=<base>` または `git worktree add` + `mise run worktree:setup`。削除は `mise run worktree:teardown` 経由。
-
 ## Prerequisites
 
 最初に `wt --version` で利用可否を確認する。未導入ならrepositoryのreproducible toolchainに含められるかを確認し、安全にprovision可能なら導入する。導入不能・非対応・権限不足の場合だけnative `git worktree`へfallbackし、恒常的な制約ならproject documentationへ理由を残す。

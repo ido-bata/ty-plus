@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+import { execFileSync } from "node:child_process";
 /**
  * assert-worker-env.ts
  *
@@ -24,7 +25,6 @@
  */
 import { existsSync, readFileSync } from "node:fs";
 import { isAbsolute, join, resolve } from "node:path";
-import { execFileSync } from "node:child_process";
 
 const readOnly = process.argv.includes("--read-only");
 
