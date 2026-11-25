@@ -153,6 +153,61 @@ export const withManagedRootSnapshot = async <T>(
 	}
 };
 
+/** Selector for the StatusBar debug-console toggle (panel boot dependent). */
+const DEBUG_CONSOLE_TOGGLE_SELECTOR = '[data-ws-action="toggle-console"]';
+
+/**
+ * Click the StatusBar debug-console toggle. Waits for the button to mount
+ * first: right after a surface reload the status bar is not in the DOM yet,
+ * and a blind `btn.click()` silently returns "no-toggle" — the caller then
+ * polls for a console surface that was never asked to open (observed as
+ * UC-G01/UC-G02 "not live" flakes right after sandbox prepare reloads).
+ */
+export const clickDebugConsoleToggle = async (
+	ctx: E2EContext,
+	panel: LiveSurface,
+): Promise<boolean> => {
+	const mounted = await waitForDom(
+		ctx,
+		panel,
+		`Boolean(document.querySelector(${JSON.stringify(DEBUG_CONSOLE_TOGGLE_SELECTOR)}))`,
+		20_000,
+	);
+	if (!mounted) return false;
+	const result = await ctx.evalJs(
+		panel,
+		`(() => {
+			const btn = document.querySelector(${JSON.stringify(DEBUG_CONSOLE_TOGGLE_SELECTOR)});
+			if (!btn) return "no-toggle";
+			btn.click();
+			return "clicked";
+		})()`,
+	);
+	return result === "clicked";
+};
+
+/** Best-effort close for a live surface (Page.close → window.close). */
+export const closeLiveSurface = async (
+	ctx: E2EContext,
+	surface: LiveSurface,
+): Promise<void> => {
+	try {
+		const conn = await ctx.cdp(surface);
+		await conn.send("Page.close", {}, 5_000);
+		return;
+	} catch {
+		// fall through to window.close
+	}
+	try {
+		await ctx.evalJs(
+			surface,
+			`(() => { try { window.close(); return "ok"; } catch (e) { return String(e); } })()`,
+		);
+	} catch {
+		// best-effort only
+	}
+};
+
 export const managedFilePath = (
 	ctx: E2EContext,
 	...segments: string[]
