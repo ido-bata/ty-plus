@@ -15,12 +15,7 @@
 import type { E2EContext } from "../ctx";
 import { check, type E2ECase } from "../report";
 import { type LiveSurface, listLiveSurfaces } from "../surfaces";
-import {
-	clickDebugConsoleToggle,
-	closeSurfaceSettled,
-	sleep,
-	waitForDom,
-} from "./shared";
+import { closeSurfaceSettled, sleep, waitForDom } from "./shared";
 
 const MARKER = "e2e-g02-replay-marker";
 
@@ -68,45 +63,73 @@ const closeSurface = async (
 			);
 		},
 	];
-	for (const attempt of attempts) {
-		try {
-			await attempt();
-		} catch {
-			// try the next close path
+	for (let round = 0; round < 3; round += 1) {
+		for (const attempt of attempts) {
+			try {
+				await attempt();
+			} catch {
+				// try the next close path
+			}
+			const deadline = Date.now() + 4_000;
+			while (Date.now() < deadline) {
+				await sleep(400);
+				if ((await findConsole(ctx)) === null) break;
+			}
+			if ((await findConsole(ctx)) === null) break;
 		}
-		const deadline = Date.now() + 4_000;
-		while (Date.now() < deadline) {
-			await sleep(400);
-			if ((await findConsole(ctx)) === null) return true;
-		}
+		if ((await findConsole(ctx)) !== null) continue;
+		// A surface can be "closed" yet resurrect: every toggle-console click
+		// schedules ~a dozen requestOpenExtension retries spread over several
+		// seconds (open-surfaces.ts / transport openDialogSurface), so a click
+		// that landed shortly before this close can reopen the window after
+		// Page.close succeeds. Confirm the console stays gone across that
+		// retry window before reporting success.
+		await sleep(3_000);
+		if ((await findConsole(ctx)) === null) return true;
 	}
 	return false;
 };
 
 const openConsole = async (ctx: E2EContext): Promise<LiveSurface | null> => {
 	const panel = await ctx.requireSurface({ surfaceId: "panel-1" });
-	// The toggle only exists once the status bar has mounted; a blind click
-	// right after a reload returns "no-toggle" and no open is ever
-	// requested. Retry once before giving up so a slow panel boot does not
-	// masquerade as a broken console.
-	if (!(await clickDebugConsoleToggle(ctx, panel))) {
-		await sleep(2_000);
-		if (!(await clickDebugConsoleToggle(ctx, panel))) return null;
-	}
-	const deadline = Date.now() + 15_000;
+	// Same hydration race as the settings dialog: the toggle can exist
+	// before its handler attaches, so retry the click until the console
+	// surface mounts — but only while no console surface is live, since
+	// every click schedules another burst of requestOpenExtension retries.
+	const deadline = Date.now() + 30_000;
+	let lastClickAt = 0;
 	while (Date.now() < deadline) {
-		await sleep(700);
 		const consoleSurface = await findConsole(ctx);
 		if (consoleSurface) {
+			// The surface existing is enough to stop clicking: each click
+			// schedules more requestOpenExtension retries, and extra opens
+			// racing a later close make the console resurrect. Wait for the
+			// DOM to mount without firing another open.
 			const mounted = await waitForDom(
 				ctx,
 				consoleSurface,
 				`document.querySelectorAll("[data-debug-msg-id]").length > 0 ||
 				 (document.body ? document.body.innerHTML.length > 500 : false)`,
-				10_000,
+				Math.max(1_000, deadline - Date.now()),
 			);
 			if (mounted) return consoleSurface;
+			// Surface exists but DOM never mounted — keep polling; do not
+			// click again (the open is already in flight).
+		} else if (lastClickAt === 0 || Date.now() - lastClickAt > 8_000) {
+			// No console surface yet — the first click may have landed before
+			// the toggle handler attached, so retry on a slow cadence.
+			await ctx.evalJs(
+				panel,
+				`(() => {
+					const btn = document.querySelector('[data-ws-action="toggle-console"]');
+					if (!btn) return "no-toggle";
+					btn.click();
+					return "clicked";
+				})()`,
+			);
+			lastClickAt = Date.now();
 		}
+		await sleep(700);
 	}
 	return null;
 };

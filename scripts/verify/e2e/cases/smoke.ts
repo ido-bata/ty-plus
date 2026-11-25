@@ -291,7 +291,8 @@ export const smokeCases: E2ECase[] = [
 		async run(ctx: E2EContext) {
 			const checks = [];
 			// The console is a Modeless surface opened from the StatusBar
-			// toggle (or Ctrl+`). Click it, then re-resolve live targets.
+			// toggle (or Ctrl+`). The toggle can exist before React attaches
+			// its handler, so retry the click until the surface mounts.
 			const panel = await ctx.requireSurface({ surfaceId: "panel-1" });
 			const findConsole = async (): Promise<LiveSurface | null> => {
 				const live = await listLiveSurfaces(await ctx.surfaces());
