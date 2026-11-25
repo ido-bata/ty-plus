@@ -179,10 +179,19 @@ const detectManagedRootForLiveAe = async (
 
 const main = async (): Promise<void> => {
 	const suiteName = option("suite") ?? "smoke";
-	const cases = SUITES[suiteName];
-	if (!cases) {
+	const allCases = SUITES[suiteName];
+	if (!allCases) {
 		throw new Error(
 			`unknown suite "${suiteName}" (available: ${Object.keys(SUITES).join(", ")})`,
+		);
+	}
+	const caseFilter = option("case");
+	const cases = caseFilter
+		? allCases.filter((c) => c.uc === caseFilter)
+		: allCases;
+	if (cases.length === 0) {
+		throw new Error(
+			`no case "${caseFilter}" in suite "${suiteName}" (available: ${allCases.map((c) => c.uc).join(", ")})`,
 		);
 	}
 	const extensionDir = option("extension-dir");
@@ -300,6 +309,7 @@ const runSuites = async (
 	if (!sandbox) {
 		ctx.options.managedRoot = realManagedRoot;
 	}
+	ctx.options.realManagedRoot = sandbox?.realRoot ?? realManagedRoot;
 	const managedRoot = ctx.options.managedRoot;
 	if (!managedRoot) {
 		throw new Error("managed root not configured");
@@ -417,7 +427,10 @@ const runSuites = async (
 	console.log(`evidence: ${outFile}`);
 	await ctx.close();
 	if (summary.totals.FAIL > 0 || summary.totals.BLOCKED > 0) {
-		process.exit(1);
+		// Set exitCode instead of process.exit(): exiting inside runSuites
+		// would skip the caller's finally that releases the AE instance lock
+		// and leave a stale owner.json behind (Issue #645).
+		process.exitCode = 1;
 	}
 };
 

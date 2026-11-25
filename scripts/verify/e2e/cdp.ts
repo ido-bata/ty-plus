@@ -121,7 +121,11 @@ export const connect = async (
 				awaitPromise: true,
 			},
 			evalTimeoutMs,
-		)) as {
+		).catch((error: unknown) => {
+			throw new Error(
+				`${error instanceof Error ? error.message : String(error)} :: ${expression.slice(0, 120)}`,
+			);
+		})) as {
 			result?: { value?: unknown };
 			exceptionDetails?: {
 				text?: string;
