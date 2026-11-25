@@ -1,9 +1,11 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { type JSX, useRef, useState } from "react";
-import type { WidgetType } from "@/function/widget";
 import { css } from "@/styled-system/css";
 
-import { AddWidgetCatalogPanel } from "./catalog";
+import {
+	AddWidgetCatalogPanel,
+	type AddWidgetCatalogPanelProps,
+} from "./catalog";
 
 /**
  * Storybook harness for the shared widget catalog panel (Issue #610).
@@ -33,7 +35,8 @@ const frameStyle = css({
 function CatalogHarness(props: { initialQuery?: string }): JSX.Element {
 	const containerRef = useRef<HTMLDivElement | null>(null);
 	const [query, setQuery] = useState(props.initialQuery ?? "");
-	const [selectedType, setSelectedType] = useState<WidgetType | null>(null);
+	const [selectedType, setSelectedType] =
+		useState<AddWidgetCatalogPanelProps["selectedType"]>(null);
 	return (
 		<AddWidgetCatalogPanel
 			containerRef={containerRef}
