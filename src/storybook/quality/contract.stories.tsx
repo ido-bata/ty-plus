@@ -143,6 +143,58 @@ export const ClippedOverflow: Story = {
 	},
 };
 
+/**
+ * Positive case: a control below the fold of a scrollable body inside an
+ * `overflow:hidden` shell (the whole-dialog shape — `DialogShell` root is
+ * `overflow:hidden`, `[data-dialog-content]` scrolls). The control's
+ * border box extends past the shell, but the scrollport owns that clip:
+ * the control is reachable by scrolling, so no ancestor may flag it.
+ * Guards the scroll-aware clip accounting in `isClippedByHiddenAncestor`.
+ */
+export const ScrolledBodyInsideClippedShell: Story = {
+	render: () => (
+		<div
+			className={css({
+				position: "relative",
+				height: "12rem",
+				width: "20rem",
+				overflow: "hidden",
+				borderWidth: "hairline",
+				borderStyle: "solid",
+				borderColor: "border.default",
+			})}
+			data-testid="scroll-shell"
+		>
+			<div
+				className={css({
+					height: "100%",
+					overflowY: "auto",
+					display: "flex",
+					flexDirection: "column",
+					gap: "1",
+					padding: "2",
+				})}
+				data-testid="scroll-body"
+			>
+				{Array.from({ length: 30 }, (_, i) => (
+					<div key={i} style={{ height: "2rem" }}>
+						Row {i}
+					</div>
+				))}
+				<button type="button" className={buttonClass}>
+					Below fold action
+				</button>
+			</div>
+		</div>
+	),
+	play: async ({ canvasElement }) => {
+		const button = requireButton(canvasElement);
+		// The scrollport legitimately owns the below-fold clip.
+		assertNotClipped(button);
+		expectCanvasLayout(canvasElement);
+	},
+};
+
 /** Anti-case: a control rendered outside the viewport is unreachable. */
 export const ViewportEscape: Story = {
 	render: () => (

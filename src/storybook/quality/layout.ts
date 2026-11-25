@@ -190,19 +190,28 @@ export function assertWithinAncestor(
 }
 
 const CLIPPING_OVERFLOW = new Set(["hidden", "clip"]);
+const SCROLLING_OVERFLOW = new Set(["auto", "scroll"]);
 
 /**
- * True when `el`'s box is fully inside the visible (non-scroll-clipped)
- * region of every ancestor that uses `overflow: hidden|clip`. Scroll/auto
- * ancestors are ignored: scrolling is their intended clipping mechanism.
- * `text-overflow: ellipsis` ancestors are also ignored because truncated
- * text is an intentional, user-visible affordance.
+ * True when `el`'s *visible* region is cut by an `overflow:hidden|clip`
+ * ancestor before `boundary`. Scroll/auto ancestors are ignored: scrolling
+ * is their intended clipping mechanism. That ownership extends upward —
+ * once a scrollport between `el` and a hidden ancestor bounds what can
+ * paint, the hidden ancestor only clips what remains inside that
+ * scrollport, so the check tracks the visible interval per axis instead of
+ * `el`'s raw border box. `text-overflow: ellipsis` ancestors are ignored
+ * because truncated text is an intentional, user-visible affordance.
  */
 export function isClippedByHiddenAncestor(
 	el: Element,
 	boundary: Element = document.body,
 	tolerance = 0.5,
 ): boolean {
+	const box = measureBox(el);
+	let visLeft = box.x;
+	let visTop = box.y;
+	let visRight = boxRight(box);
+	let visBottom = boxBottom(box);
 	for (
 		let ancestor = el.parentElement;
 		ancestor && ancestor !== boundary.parentElement;
@@ -212,8 +221,10 @@ export function isClippedByHiddenAncestor(
 		const style = getComputedStyle(ancestor);
 		const clipsX = CLIPPING_OVERFLOW.has(style.overflowX);
 		const clipsY = CLIPPING_OVERFLOW.has(style.overflowY);
-		if (!clipsX && !clipsY) continue;
-		if (style.textOverflow === "ellipsis") continue;
+		const scrollsX = SCROLLING_OVERFLOW.has(style.overflowX);
+		const scrollsY = SCROLLING_OVERFLOW.has(style.overflowY);
+		if (!clipsX && !clipsY && !scrollsX && !scrollsY) continue;
+		if ((clipsX || clipsY) && style.textOverflow === "ellipsis") continue;
 		const rect = ancestor.getBoundingClientRect();
 		const clipBox: LayoutBox = {
 			x: rect.x + ancestor.clientLeft,
@@ -221,16 +232,30 @@ export function isClippedByHiddenAncestor(
 			width: ancestor.clientWidth,
 			height: ancestor.clientHeight,
 		};
-		const box = measureBox(el);
-		// Only flag the axis the ancestor actually clips.
+		if (scrollsX || scrollsY) {
+			// The scrollport (padding box) is the clip region for anything
+			// scrolled out of view; shrink the visible interval accordingly.
+			if (scrollsX) {
+				visLeft = Math.max(visLeft, clipBox.x);
+				visRight = Math.min(visRight, boxRight(clipBox));
+			}
+			if (scrollsY) {
+				visTop = Math.max(visTop, clipBox.y);
+				visBottom = Math.min(visBottom, boxBottom(clipBox));
+			}
+			if (visLeft > visRight || visTop > visBottom) return false;
+		}
+		if (!clipsX && !clipsY) continue;
+		// Only flag the axis the ancestor actually clips, and only when the
+		// still-visible region escapes its padding box.
 		const insideX =
 			!clipsX ||
-			(box.x >= clipBox.x - tolerance &&
-				boxRight(box) <= boxRight(clipBox) + tolerance);
+			(visLeft >= clipBox.x - tolerance &&
+				visRight <= boxRight(clipBox) + tolerance);
 		const insideY =
 			!clipsY ||
-			(box.y >= clipBox.y - tolerance &&
-				boxBottom(box) <= boxBottom(clipBox) + tolerance);
+			(visTop >= clipBox.y - tolerance &&
+				visBottom <= boxBottom(clipBox) + tolerance);
 		if (!insideX || !insideY) return true;
 	}
 	return false;
