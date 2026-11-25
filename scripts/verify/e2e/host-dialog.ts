@@ -20,9 +20,9 @@ import type { E2EContext } from "./ctx";
 
 const execFileAsync = promisify(execFile);
 
-/** Buttons ExtendScript `confirm()` can show, localized. */
-const CANCEL_BUTTONS = ["Cancel", "キャンセル", "キャンセル"];
-const OK_BUTTONS = ["OK", "はい", "OK"];
+/** Buttons ExtendScript `confirm()` can show, localized (EN + JA). */
+const CANCEL_BUTTONS = ["No", "Cancel", "キャンセル", "いいえ"];
+const OK_BUTTONS = ["Yes", "OK", "はい"];
 
 const osascript = async (source: string): Promise<string> => {
 	const { stdout } = await execFileAsync("osascript", ["-e", source], {
