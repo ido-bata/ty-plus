@@ -88,23 +88,9 @@ const expectFooterActions = (shell: HTMLElement): void => {
 	expect(labels).toContain("Create");
 };
 
-/*
- * The group form is taller than the fixed-size CEP window: the body
- * scrolls (`[data-dialog-content]` is `overflow-y: auto`) and below-fold
- * controls legitimately sit outside the shell's clip box, so the generic
- * clipped-by-hidden-ancestor sweep is scoped to the header/footer chrome
- * that must always stay fully visible. The viewport-escape sweep still
- * covers every interactive element (scrolled ones are exempt via their
- * scrollable ancestor).
- */
-const GROUP_DIALOG_AUDIT = {
-	unclippedSelector:
-		"[data-dialog-header], [data-dialog-header] *, [data-dialog-footer], [data-dialog-footer] *",
-} as const;
-
 export const Default: Story = {
 	play: async ({ canvasElement }) => {
-		expectCanvasLayout(canvasElement, GROUP_DIALOG_AUDIT);
+		expectCanvasLayout(canvasElement);
 		const shell = expectShell(canvasElement);
 		// Group form sections render synchronously.
 		expect(canvasElement.textContent).toContain("Group name");
@@ -116,7 +102,7 @@ export const Default: Story = {
 
 export const DetectCandidates: Story = {
 	play: async ({ canvasElement }) => {
-		expectCanvasLayout(canvasElement, GROUP_DIALOG_AUDIT);
+		expectCanvasLayout(canvasElement);
 		const shell = expectShell(canvasElement);
 		const { userEvent } = await import("vitest/browser");
 		// Paths are edited through `PathField` rows (the `paths` textarea
