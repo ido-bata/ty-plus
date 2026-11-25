@@ -105,29 +105,6 @@ export const surfaceLang = async (
 	}
 };
 
-/** Resolve one i18n key for the surface's current locale. */
-export const tFor = async (
-	ctx: E2EContext,
-	surface: LiveSurface,
-	key: string,
-): Promise<string | null> =>
-	resolveLocaleKey(await surfaceLang(ctx, surface), key);
-
-/** Resolve several keys; missing keys are dropped. */
-export const tAllFor = async (
-	ctx: E2EContext,
-	surface: LiveSurface,
-	keys: readonly string[],
-): Promise<string[]> => {
-	const lang = await surfaceLang(ctx, surface);
-	const out: string[] = [];
-	for (const key of keys) {
-		const value = await resolveLocaleKey(lang, key);
-		if (value) out.push(value);
-	}
-	return out;
-};
-
 /**
  * Split an i18n template containing `{{name}}` into the literal prefix
  * and suffix around the placeholder, for in-page aria-label matching.

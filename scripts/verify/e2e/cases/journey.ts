@@ -72,7 +72,7 @@ export const clickFirst = async (
 	);
 
 /** Set a React-controlled input value (native setter + input event). */
-export const setInputValue = async (
+const setInputValue = async (
 	ctx: E2EContext,
 	surface: LiveSurface,
 	selector: string,
@@ -90,7 +90,7 @@ export const setInputValue = async (
  * Same as `setInputValue` but takes a JS expression that evaluates to the
  * input element (or null). Used where no stable selector exists.
  */
-export const setInputValueByFinder = async (
+const setInputValueByFinder = async (
 	ctx: E2EContext,
 	surface: LiveSurface,
 	finder: string,
@@ -329,7 +329,7 @@ export const findPresetAddDialog = async (
  * the only text input that is not inside a `[data-path-field]` wrapper
  * (the file-path and description-image fields both are).
  */
-export const PRESET_NAME_INPUT = `[...document.querySelectorAll("input")].find(
+const PRESET_NAME_INPUT = `[...document.querySelectorAll("input")].find(
 	(i) => !i.closest("[data-path-field]")
 		&& !["hidden", "checkbox", "file", "password", "submit", "button", "range", "color"]
 			.includes(i.type))`;
