@@ -115,10 +115,9 @@ const DIALOG_ROUTES: readonly DialogRoute[] = [
 		surfaceId: "dialog-background-panel",
 		body: () => <WorkspaceBackgroundDialogRoute />,
 	},
-	{
-		surfaceId: "dialog-workspace-background",
-		body: () => <WorkspaceBackgroundDialogRoute />,
-	},
+	// `dialog-workspace-background` was a stale duplicate of the route
+	// above: no manifest Extension Id or DIALOG_SURFACE_IDS entry can
+	// produce that surfaceId, so it was unreachable (#609).
 ];
 
 function PresetEditDialogRoute(): ReactNode {
