@@ -616,7 +616,15 @@ export const journeySuiteCases: E2ECase[] = [
 				const ws = (app.workspace ?? {}) as Record<string, unknown>;
 				const grid = (ws.grid ?? {}) as Record<string, unknown>;
 				app.ui = { ...ui, accentColor: ACCENT, language: "ja" };
-				app.workspace = { ...ws, grid: { ...grid, cellSize: 120 } };
+				// The settings dialog always persists the full grid triple
+				// (cellSize+gap+radius, defaults 48/4/2); `gridSettingsFrom-
+				// SettingsJson` treats a partial section as unusable and the
+				// boot reconcile then REMOVES the grid theme tokens. Write the
+				// same shape the dialog writes or the projection never lands.
+				app.workspace = {
+					...ws,
+					grid: { gap: 4, radius: 2, ...grid, cellSize: 120 },
+				};
 				await writeManagedFile(
 					ctx,
 					["settings", "app.json"],
@@ -639,28 +647,45 @@ export const journeySuiteCases: E2ECase[] = [
 					),
 				);
 
-				const accent = await ctx.evalJs(
+				// theme.css is re-projected from app.json by the async
+				// boot-time reconcile (theme-reconcile.ts, Issue #112) — it
+				// lands a few seconds AFTER reload completes, so sampling the
+				// computed tokens immediately races it and reads the stale
+				// sandbox sentinel (#e2b701) / defaults. Poll for convergence.
+				const accent = await waitForDom(
+					ctx,
 					panel,
-					`getComputedStyle(document.documentElement)
-						.getPropertyValue("--color-ty-accent")`,
+					`(() => {
+						const v = getComputedStyle(document.documentElement)
+							.getPropertyValue("--color-ty-accent") || "";
+						return v.toLowerCase().includes("336699") ? v.trim() : null;
+					})()`,
+					30_000,
 				);
 				checks.push(
 					check(
 						"accent color reached theme.css token",
-						String(accent).toLowerCase().includes("336699"),
+						String(accent ?? "")
+							.toLowerCase()
+							.includes("336699"),
 						`accent=${String(accent).trim()}`,
 					),
 				);
 
-				const cell = await ctx.evalJs(
+				const cell = await waitForDom(
+					ctx,
 					panel,
-					`getComputedStyle(document.documentElement)
-						.getPropertyValue("--ty-ws-cell")`,
+					`(() => {
+						const v = getComputedStyle(document.documentElement)
+							.getPropertyValue("--ty-ws-cell") || "";
+						return v.includes("120") ? v.trim() : null;
+					})()`,
+					30_000,
 				);
 				checks.push(
 					check(
 						"grid cell size reached panel CSS var",
-						String(cell).includes("120"),
+						String(cell ?? "").includes("120"),
 						`cell=${String(cell).trim()}`,
 					),
 				);

@@ -15,7 +15,12 @@
 import type { E2EContext } from "../ctx";
 import { check, type E2ECase } from "../report";
 import { type LiveSurface, listLiveSurfaces } from "../surfaces";
-import { closeSurfaceSettled, sleep, waitForDom } from "./shared";
+import {
+	clickDebugConsoleToggle,
+	closeSurfaceSettled,
+	sleep,
+	waitForDom,
+} from "./shared";
 
 const MARKER = "e2e-g02-replay-marker";
 
@@ -80,15 +85,14 @@ const closeSurface = async (
 
 const openConsole = async (ctx: E2EContext): Promise<LiveSurface | null> => {
 	const panel = await ctx.requireSurface({ surfaceId: "panel-1" });
-	await ctx.evalJs(
-		panel,
-		`(() => {
-			const btn = document.querySelector('[data-ws-action="toggle-console"]');
-			if (!btn) return "no-toggle";
-			btn.click();
-			return "clicked";
-		})()`,
-	);
+	// The toggle only exists once the status bar has mounted; a blind click
+	// right after a reload returns "no-toggle" and no open is ever
+	// requested. Retry once before giving up so a slow panel boot does not
+	// masquerade as a broken console.
+	if (!(await clickDebugConsoleToggle(ctx, panel))) {
+		await sleep(2_000);
+		if (!(await clickDebugConsoleToggle(ctx, panel))) return null;
+	}
 	const deadline = Date.now() + 15_000;
 	while (Date.now() < deadline) {
 		await sleep(700);
