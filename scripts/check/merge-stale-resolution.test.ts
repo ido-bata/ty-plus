@@ -250,6 +250,52 @@ export const RELEASE_ONLY_I18N = "release.only.key";
 		expect(missing).toEqual(["<incoming-side deletion>"]);
 	});
 
+	it("flags the Issue #627 shape in relaxed mode: taken side equals the line base", () => {
+		// Degenerate ancestor merge: the base is the two lines' fork point,
+		// not a direct ancestor of both parents. The incoming side never
+		// touched the file (incoming == base) yet the merge result kept that
+		// stale base content over the target side's work — a pure
+		// revert-to-base take. Strict mode ignores it (only one side
+		// "changed"); relaxed mode must flag it.
+		const file = snap({
+			base: BASE_TS,
+			target: TARGET_TS,
+			incoming: BASE_TS, // incoming side unchanged since the fork
+			result: BASE_TS, // merge kept the stale base copy
+		});
+		expect(wholesaleTakeMissing(file)).toBeNull();
+		const take = wholesaleTakeMissing(file, { relaxed: true });
+		expect(take?.lostSide).toBe("target");
+		expect(take?.missing).toContain("FileEntryActions");
+		expect(take?.missing).toContain("FILE_ENTRY_I18N_KEY");
+	});
+
+	it("stays silent in relaxed mode when the taken blob kept the losing work", () => {
+		// Incoming side synced the file: its blob contains the target-side
+		// additions plus its own change. Result == incoming loses nothing.
+		const synced = `${TARGET_TS}
+// incoming-side addition on top of the synced file
+`;
+		const file = snap({
+			base: BASE_TS,
+			target: TARGET_TS,
+			incoming: synced,
+			result: synced,
+		});
+		expect(wholesaleTakeMissing(file, { relaxed: true })).toBeNull();
+	});
+
+	it("relaxed mode still requires the result to equal exactly one parent", () => {
+		const merged = `${TARGET_TS}\n// hand-resolved mix\n`;
+		const file = snap({
+			base: BASE_TS,
+			target: TARGET_TS,
+			incoming: BASE_TS,
+			result: merged,
+		});
+		expect(wholesaleTakeMissing(file, { relaxed: true })).toBeNull();
+	});
+
 	it("flags the symmetric deletion: target deletion won over incoming edits", () => {
 		const take = wholesaleTakeMissing(
 			snap({
@@ -407,6 +453,19 @@ export const INCOMING_GAMMA_KEY = "i.gamma";\n`;
 				}),
 			),
 		).not.toBeNull();
+	});
+
+	it("skips relaxed-mode wholesale takes so files are not reported twice", () => {
+		// Same Issue #627 shape fed to the semantic check: the wholesale
+		// check (relaxed) owns this file, so semanticLoss must return null.
+		const file = snap({
+			base: BASE_TS,
+			target: TARGET_WORK,
+			incoming: BASE_TS,
+			result: BASE_TS,
+		});
+		expect(semanticLoss(file)).not.toBeNull(); // strict: not a wholesale take
+		expect(semanticLoss(file, { relaxed: true })).toBeNull();
 	});
 
 	it("does not flag files where neither side added identifiers", () => {

@@ -39,6 +39,11 @@ const mockCanvasStyle = css({
 	borderWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.subtle",
+	// Stand-in for the easing curve the tour text refers to — an empty
+	// well reads as a broken fixture in captures.
+	display: "flex",
+	alignItems: "center",
+	justifyContent: "center",
 });
 
 const mockApplyStyle = css({
@@ -53,7 +58,32 @@ const mockApplyStyle = css({
 function MockWidgetBody(): JSX.Element {
 	return (
 		<>
-			<div data-tutorial-target="easing-canvas" className={mockCanvasStyle} />
+			<div data-tutorial-target="easing-canvas" className={mockCanvasStyle}>
+				<svg width="120" height="48" viewBox="0 0 120 48" aria-hidden="true">
+					<line
+						x1="8"
+						y1="42"
+						x2="112"
+						y2="42"
+						stroke="var(--ty-text-muted)"
+						strokeWidth="1"
+					/>
+					<line
+						x1="8"
+						y1="6"
+						x2="8"
+						y2="42"
+						stroke="var(--ty-text-muted)"
+						strokeWidth="1"
+					/>
+					<path
+						d="M 8 42 C 40 42, 48 6, 80 6 S 104 42, 112 30"
+						fill="none"
+						stroke="var(--color-text-accent)"
+						strokeWidth="2"
+					/>
+				</svg>
+			</div>
 			<button
 				type="button"
 				data-tutorial-target="easing-apply"

@@ -6,7 +6,14 @@
 import { DEFAULT_SETTINGS } from "../../../../src/management/setting/models/settings";
 import type { E2EContext } from "../ctx";
 import { check, type E2ECase } from "../report";
-import { listLiveSurfaces } from "../surfaces";
+import { type LiveSurface, listLiveSurfaces } from "../surfaces";
+import {
+	clickDebugConsoleToggle,
+	closeLiveSurface,
+	closeSurfaceSettled,
+	sleep,
+	waitForDom,
+} from "./shared";
 
 const bootExpression = `(() => {
 	const root = document.querySelector("#root, [data-ty-shell], body");
@@ -287,58 +294,70 @@ export const smokeCases: E2ECase[] = [
 			// toggle (or Ctrl+`). The toggle can exist before React attaches
 			// its handler, so retry the click until the surface mounts.
 			const panel = await ctx.requireSurface({ surfaceId: "panel-1" });
-			let consoleSurface:
-				| Awaited<ReturnType<typeof listLiveSurfaces>>[number]
-				| null = null;
-			const openDeadline = Date.now() + 30_000;
-			while (Date.now() < openDeadline && !consoleSurface) {
-				await ctx.evalJs(
-					panel,
-					`(() => {
-						const btn = document.querySelector('[data-ws-action="toggle-console"]');
-						if (!btn) return "no-toggle";
-						btn.click();
-						return "clicked";
-					})()`,
-				);
-				const innerDeadline = Date.now() + 6_000;
-				while (Date.now() < innerDeadline && Date.now() < openDeadline) {
-					await new Promise((r) => setTimeout(r, 700));
-					const live = await listLiveSurfaces(await ctx.surfaces());
-					const found = live.find(
+			const findConsole = async (): Promise<LiveSurface | null> => {
+				const live = await listLiveSurfaces(await ctx.surfaces());
+				return (
+					live.find(
 						(s) => s.kind === "debug-console" || s.surfaceId.includes("debug"),
-					);
-					if (found) {
-						consoleSurface = found;
-						break;
-					}
-				}
-			}
-			if (!consoleSurface) {
-				checks.push(
-					check("debug console surface open", false, "not live after toggle"),
+					) ?? null
 				);
-				return {
-					detail: "debug-console surface did not open — open it from StatusBar",
-					checks,
-				};
+			};
+			try {
+				await clickDebugConsoleToggle(ctx, panel);
+				// requestOpenExtension re-issues on a multi-second retry
+				// schedule while CEF spawns the window — a single sample after
+				// a fixed sleep flakes whenever boot is slower than the sleep.
+				let consoleSurface: LiveSurface | null = null;
+				const deadline = Date.now() + 20_000;
+				while (Date.now() < deadline) {
+					await sleep(700);
+					consoleSurface = await findConsole();
+					if (consoleSurface) break;
+				}
+				if (!consoleSurface) {
+					checks.push(
+						check("debug console surface open", false, "not live after toggle"),
+					);
+					return {
+						detail:
+							"debug-console surface did not open — open it from StatusBar",
+						checks,
+					};
+				}
+				const mounted = await waitForDom(
+					ctx,
+					consoleSurface,
+					`document.body ? document.body.innerHTML.length > 100 : false`,
+					10_000,
+				);
+				const state = mounted
+					? ((await ctx.evalJs(
+							consoleSurface,
+							`(() => ({
+								url: location.href,
+								bodyLength: document.body ? document.body.innerHTML.length : 0,
+								msgCount: document.querySelectorAll("[data-debug-msg-id]").length,
+							}))()`,
+						)) as {
+							url?: string;
+							bodyLength?: number;
+							msgCount?: number;
+						})
+					: null;
+				checks.push(
+					check(
+						"debug console DOM mounted",
+						(state?.bodyLength ?? 0) > 100,
+						`body=${state?.bodyLength} msgs=${state?.msgCount}`,
+					),
+				);
+				return { detail: "debug console", checks };
+			} finally {
+				// Never leak an open console into later suites — a leftover
+				// surface becomes the next run's `preExisting` and skews open
+				// timing (same discipline as cases/debug.ts).
+				await closeSurfaceSettled(findConsole, (s) => closeLiveSurface(ctx, s));
 			}
-			const state = (await ctx.evalJs(
-				consoleSurface,
-				`(() => ({
-					url: location.href,
-					bodyLength: document.body ? document.body.innerHTML.length : 0,
-					msgCount: document.querySelectorAll("[data-debug-msg-id]").length,
-				}))()`,
-			)) as { url?: string; bodyLength?: number; msgCount?: number };
-			checks.push(
-				check(
-					"debug console DOM mounted",
-					(state.bodyLength ?? 0) > 100,
-					`body=${state.bodyLength} msgs=${state.msgCount}`,
-				),
-			);
-			return { detail: "debug console", checks };
 		},
 	},
 ];

@@ -34,6 +34,18 @@ const iconLayerClass = css({
 	justifyContent: "center",
 });
 
+// `disabled` here marks a finished state ("Already downloaded" / just
+// completed), not an unavailable action — the check glyph is a status
+// indicator and must stay legible, so restore full opacity over
+// IconButton's 50% disabled dim. `[disabled]:disabled` raises specificity
+// above the base `_disabled` rule regardless of stylesheet order.
+const terminalStateClass = css({
+	"&[disabled]:disabled": {
+		opacity: "1",
+		color: "text.primary",
+	},
+});
+
 // Easing per tick: the displayed percent moves 20% of the remaining
 // distance toward the target on every tick. With a 16ms tick that
 // settles in ~10 ticks (~160ms) — fast enough to feel responsive,
@@ -178,7 +190,7 @@ export function DownloadProgressIconButton(
 			title={title}
 			onClick={onClick}
 			disabled={disabled}
-			className={cx(wrapperBaseClass, className ?? "")}
+			className={cx(wrapperBaseClass, terminalStateClass, className ?? "")}
 		>
 			{isActive ? (
 				<svg className={svgOverlayClass} viewBox="0 0 24 24" aria-hidden>

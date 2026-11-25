@@ -158,6 +158,15 @@ export async function bootTyPlusModelessDialog(): Promise<void> {
 			</ErrorBoundary>
 		</PanelRoot>,
 	);
+	if (!isPresetToolPool) {
+		// SCN-HOST-01 log oracle: panel-originated workspace-shell dialog
+		// opens must leave a modeless-scope boot marker. This line used to
+		// come from the removed `entry/dialog-bootstrap.tsx` path (#609).
+		modelessLog.info("[ty-plus] workspace shell dialog boot started", {
+			action: "boot:workspace-shell-dialog",
+			context: { surfaceId },
+		});
+	}
 	modelessLog.debug("[modeless] boot: initial render scheduled", {
 		action: "boot:render",
 		context: { surfaceId },

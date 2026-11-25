@@ -47,7 +47,7 @@ export const applyCepShellTheme = (
 /**
  * On CEP boot: load styles/theme.css and reflect into DOM.
  */
-export async function mirrorHostCepShellThemeToCss(win: Window): Promise<void> {
+async function mirrorHostCepShellThemeToCss(win: Window): Promise<void> {
 	try {
 		const fromCss = await loadCepShellThemeFromCss(win);
 		if (fromCss && Object.keys(fromCss).length > 0) {
@@ -210,7 +210,7 @@ export function bootstrapCepShellThemeHydration(win: Window): void {
  * 1) Theme variables (initial + loadThemeOverrides + themeOverrides)
  * 2) Tailwind / component CSS bundle
  */
-export const injectCepShellStyles = (
+const injectCepShellStyles = (
 	target: Document = document,
 	options: InjectCepShellStylesOptions = {},
 ): void => {

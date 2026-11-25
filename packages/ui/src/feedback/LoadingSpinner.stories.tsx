@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { expect } from "storybook/test";
 import { css } from "@/styled-system/css";
 
 import { LoadingSpinner } from "./LoadingSpinner";
@@ -93,5 +94,15 @@ export const Sizes: Story = {
 export const CustomLabel: Story = {
 	args: {
 		label: "Fetching thumbnails",
+	},
+	// The label is an accessible name only — it is intentionally NOT
+	// painted next to the spinner (the sr-only span + aria-label carry
+	// it). Pin that contract so a "missing label" capture stays
+	// intentional.
+	play: async ({ canvasElement }) => {
+		const output = canvasElement.querySelector("output");
+		if (!output) throw new Error("spinner output not found");
+		expect(output.getAttribute("aria-label")).toBe("Fetching thumbnails");
+		expect(output.textContent).toContain("Fetching thumbnails");
 	},
 };

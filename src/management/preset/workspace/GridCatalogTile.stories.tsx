@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { cx, tileRingClass } from "@ty-plus/ui";
 import { expect } from "storybook/test";
 import type { Preset } from "@/management/preset/contract";
 import { presetIconText } from "@/management/preset/contract";
@@ -23,9 +24,13 @@ const baseArgs: Args = {
 	label: "Grid catalog tile",
 };
 
+// Same product chrome as `Tile.stories`: `WorkspaceTileFrame` supplies
+// the widget surface + gridcell ring around the glyph in the real grid.
 const decoratorBoxClass = css({
 	height: "32",
 	width: "32",
+	borderRadius: "shell-sm",
+	backgroundColor: "surface.widget",
 });
 
 const meta = {
@@ -37,7 +42,7 @@ const meta = {
 	},
 	decorators: [
 		(Story) => (
-			<div className={decoratorBoxClass}>
+			<div className={cx(decoratorBoxClass, tileRingClass)}>
 				<Story />
 			</div>
 		),

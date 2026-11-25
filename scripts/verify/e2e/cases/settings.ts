@@ -168,15 +168,27 @@ export const settingsCases: E2ECase[] = [
 						// before the locale change. Reload it so i18n re-reads the
 						// preference, then assert the translated tablist label.
 						await reloadSurface(ctx, dialogSurface, 30_000);
+						// Re-resolve the live target: Page.reload can replace the
+						// CDP target on some CEF builds, and polling a dead
+						// websocket yields null forever (observed as
+						// `aria-label=null` flakes).
+						const freshLive = await listLiveSurfaces(await ctx.surfaces());
+						const settledDialog =
+							freshLive.find((s) => s.surfaceId === "dialog-settings") ??
+							dialogSurface;
 						const expected = expectedTablistAriaLabel(target);
+						// Boot is bounded but slow: surface-id resolution retries
+						// for ~2.5s and the settings store load has a 12s timeout
+						// fallback, so the tablist can legitimately appear ~15s
+						// after reload. Poll long enough to cover that budget.
 						const aria = (await waitForDom(
 							ctx,
-							dialogSurface,
+							settledDialog,
 							`(() => {
 								const el = document.querySelector('[role="tablist"]');
 								return el ? el.getAttribute("aria-label") : null;
 							})()`,
-							15_000,
+							30_000,
 						)) as string | null;
 						checks.push(
 							check(

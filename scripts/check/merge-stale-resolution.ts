@@ -14,7 +14,13 @@
  * audit #591), extended by Issue #608 after forensic verification showed
  * the original detector produced zero findings on the real damage merge
  * `bdd1168b` (a release→feature merge where the stale take equals the
- * FIRST parent, not the second).
+ * FIRST parent, not the second), and by Issue #627 after the same audit
+ * showed zero findings on `3a0593b3` — the merge that actually landed the
+ * PR #430 rollback. There the FIRST parent was already an ancestor of the
+ * second (the target tip had been merged into the incoming line earlier,
+ * and THAT earlier merge took the stale blobs), so merge-base(P1, P2) ==
+ * P1, diff(base→P1) is empty, and both checks saw nothing while the merge
+ * result was byte-identical to the stale incoming tree.
  *
  * THE TWO CHECKS
  *
@@ -45,6 +51,29 @@
  *      added identifier is missing. Semantic findings NEVER fail the check,
  *      even on UI paths: the token heuristic can over- or under-report on
  *      hand-resolved merges, so they are review prompts, not gates.
+ *
+ * DEGENERATE MERGE-BASE (Issue #627)
+ *
+ *   When one parent is an ancestor of the other, merge-base(P1, P2) IS that
+ *   parent, so "changed since base" is empty on the ancestor side and the
+ *   checks above have no domain — yet the merge can still take the stale
+ *   descendant-side tree wholesale (the descendant absorbed the ancestor
+ *   tip earlier through a merge that itself took stale blobs). For this
+ *   case the script substitutes the LINE base: it walks the descendant's
+ *   first-parent chain to the first commit that does not contain the
+ *   ancestor (the side parent below the merge that absorbed it) and takes
+ *   merge-base(ancestor, that commit) — the last commit the two lines
+ *   shared. Both checks then run against that base, and the wholesale
+ *   check relaxes its "both sides changed" precondition: the taken side
+ *   may equal the line base (a pure revert-to-base take is exactly the
+ *   damage shape), so a file is flagged whenever the result is
+ *   byte-identical to one parent and the OTHER side's identifiers added
+ *   since the line base are absent from the result. Candidate files are
+ *   pre-filtered by blob SHA (result == one parent's blob while the other
+ *   parent's blob differs from both the taken blob and the base blob) so
+ *   only genuinely suspicious files get content-fetched. Synced files —
+ *   where the incoming blob already contains the target side's work —
+ *   produce no missing identifiers and stay silent.
  *
  * DETECTION LIMITS (read before trusting a clean run)
  *
@@ -309,9 +338,24 @@ function baseIdentifiers(file: MergeFileSnapshot): Set<string> {
  */
 export function wholesaleTakeMissing(
 	file: MergeFileSnapshot,
+	opts: { relaxed?: boolean } = {},
 ): WholesaleTake | null {
-	// Both sides must have changed the file since the merge base.
-	if (file.target === file.base || file.incoming === file.base) return null;
+	// Normally both sides must have changed the file since the merge base:
+	// when only one side touched it, a result equal to that side's blob is
+	// what a clean merge produces anyway. In degenerate ancestor-merge mode
+	// (Issue #627) the base is the line fork point, not a direct ancestor of
+	// both parents, and the taken side may legitimately equal the base — a
+	// pure revert-to-base take is exactly the damage shape — so the
+	// precondition relaxes to "at least one side changed". Precision is kept
+	// by the missing-identifier requirement below: a taken blob that still
+	// contains the losing side's added work yields an empty `missing`.
+	const targetChanged = file.target !== file.base;
+	const incomingChanged = file.incoming !== file.base;
+	if (opts.relaxed) {
+		if (!targetChanged && !incomingChanged) return null;
+	} else if (!targetChanged || !incomingChanged) {
+		return null;
+	}
 
 	// The merge result must be byte-identical to exactly one parent's
 	// version. When all three agree there is nothing to lose.
@@ -362,11 +406,11 @@ export function staleMissingIdentifiers(
 
 export function analyzeMergeStaleness(
 	files: MergeFileSnapshot[],
-	opts: { warnOnly?: boolean } = {},
+	opts: { warnOnly?: boolean; relaxed?: boolean } = {},
 ): StaleFinding[] {
 	const findings: StaleFinding[] = [];
 	for (const file of files) {
-		const take = wholesaleTakeMissing(file);
+		const take = wholesaleTakeMissing(file, { relaxed: opts.relaxed });
 		if (take === null) continue;
 		const severity: FindingSeverity =
 			isUiPath(file.path) && !opts.warnOnly ? "fail" : "warn";
@@ -433,10 +477,15 @@ function sideAddedIdentifiers(
  */
 export function semanticLoss(
 	file: MergeFileSnapshot,
+	opts: { relaxed?: boolean } = {},
 ): { sides: (MergeSide | "both")[]; missing: string[] } | null {
 	// Wholesale takes are reported (and possibly failed) by the other check;
-	// skip them here so one file never produces two findings.
-	if (wholesaleTakeMissing(file) !== null) return null;
+	// skip them here so one file never produces two findings. The relaxed
+	// flag must match the wholesale check's mode or degenerate-mode takes
+	// would be reported twice.
+	if (wholesaleTakeMissing(file, { relaxed: opts.relaxed }) !== null) {
+		return null;
+	}
 
 	const resultIds =
 		file.result === null ? new Set<string>() : extractIdentifiers(file.result);
@@ -469,10 +518,11 @@ export function semanticLoss(
  */
 export function analyzeSemanticStaleness(
 	files: MergeFileSnapshot[],
+	opts: { relaxed?: boolean } = {},
 ): StaleFinding[] {
 	const findings: StaleFinding[] = [];
 	for (const file of files) {
-		const loss = semanticLoss(file);
+		const loss = semanticLoss(file, { relaxed: opts.relaxed });
 		if (loss === null) continue;
 		for (const side of loss.sides) {
 			findings.push({
@@ -530,6 +580,111 @@ function mergeBase(p1: string, p2: string): string {
 	return git(["merge-base", p1, p2]).trim();
 }
 
+/**
+ * First commit on `descendant`'s first-parent chain that does NOT have
+ * `ancestor` as an ancestor — i.e. the side parent just below the merge
+ * that absorbed `ancestor`'s line. Containment is monotonic along the
+ * chain (a deeper commit containing `ancestor` would make every shallower
+ * commit contain it too), so the first non-containing commit marks the
+ * boundary. Returns null when the whole chain contains `ancestor`.
+ */
+function firstParentOutsideAncestor(
+	descendant: string,
+	ancestor: string,
+): string | null {
+	const chain = git(["rev-list", "--first-parent", descendant])
+		.split("\n")
+		.filter((line) => line.length > 0);
+	for (const commit of chain) {
+		const contains =
+			spawnSync("git", ["merge-base", "--is-ancestor", ancestor, commit], {
+				cwd: ROOT,
+			}).status === 0;
+		if (!contains) return commit;
+	}
+	return null;
+}
+
+type EffectiveBase = {
+	/** Rev whose tree is the analysis base (merge-base or line base). */
+	base: string;
+	/** True when one parent is an ancestor of the other and the base had
+	 * to be replaced by the two lines' fork point (Issue #627). */
+	degenerate: boolean;
+};
+
+/**
+ * The analysis base for a merge. Normally merge-base(P1, P2). When one
+ * parent is an ancestor of the other that base IS the ancestor, leaving
+ * the ancestor side with an empty changed-set — the blind spot behind
+ * Issue #627. In that case substitute the LINE base: the fork point of
+ * the descendant's own line and the ancestor's line, found via the first
+ * first-parent commit that does not contain the ancestor. Falls back to
+ * the plain merge-base when the topology cannot be resolved.
+ */
+function effectiveMergeBase(p1: string, p2: string): EffectiveBase {
+	const base = mergeBase(p1, p2);
+	if (base !== p1 && base !== p2) return { base, degenerate: false };
+	const ancestor = base === p1 ? p1 : p2;
+	const descendant = base === p1 ? p2 : p1;
+	const frontier = firstParentOutsideAncestor(descendant, ancestor);
+	if (frontier === null) return { base, degenerate: false };
+	const lineBase = mergeBase(ancestor, frontier);
+	if (lineBase === ancestor) return { base, degenerate: false };
+	return { base: lineBase, degenerate: true };
+}
+
+/** Blob SHA per path at a rev; absent paths are simply missing keys. */
+function blobMap(rev: string): Map<string, string> {
+	const map = new Map<string, string>();
+	for (const line of git(["ls-tree", "-r", rev]).split("\n")) {
+		if (line.length === 0) continue;
+		const tab = line.indexOf("\t");
+		if (tab < 0) continue;
+		const sha = line.slice(0, tab).split(" ")[2];
+		if (sha !== undefined) map.set(line.slice(tab + 1), sha);
+	}
+	return map;
+}
+
+/**
+ * Degenerate-mode wholesale candidates (Issue #627): paths where the
+ * result is byte-identical to one parent's blob while the OTHER parent's
+ * blob differs both from the taken blob and from the line-base blob —
+ * i.e. the losing side changed the file since the lines diverged and its
+ * version was overwritten by a stale take. Blob SHAs make this filter
+ * cheap; content is only fetched for survivors. Sorted for determinism.
+ */
+function degenerateWholesalePaths(
+	spec: MergeSpec,
+	base: string,
+	maxFiles: number,
+): { paths: string[]; total: number } {
+	const targetBlobs = blobMap(spec.p1);
+	const incomingBlobs = blobMap(spec.p2);
+	const resultBlobs = blobMap(spec.result);
+	const baseBlobs = blobMap(base);
+	const get = (map: Map<string, string>, path: string) => map.get(path) ?? null;
+
+	const candidates: string[] = [];
+	const allPaths = new Set([
+		...targetBlobs.keys(),
+		...incomingBlobs.keys(),
+		...resultBlobs.keys(),
+	]);
+	for (const path of allPaths) {
+		const r = get(resultBlobs, path);
+		const t = get(targetBlobs, path);
+		const i = get(incomingBlobs, path);
+		const b = get(baseBlobs, path);
+		const incomingTake = r === i && t !== i && t !== b;
+		const targetTake = r === t && i !== t && i !== b;
+		if (incomingTake || targetTake) candidates.push(path);
+	}
+	candidates.sort();
+	return { paths: candidates.slice(0, maxFiles), total: candidates.length };
+}
+
 type MergeSpec = {
 	/** Label used in messages, e.g. the merge commit sha. */
 	label: string;
@@ -541,10 +696,14 @@ type MergeSpec = {
 
 type CollectedSnapshots = {
 	files: MergeFileSnapshot[];
-	/** Paths changed on BOTH sides — the wholesale check's domain. */
-	bothSidePaths: Set<string>;
+	/** Paths fed to the wholesale check: both-side files normally, blob-SHA
+	 * candidates in degenerate ancestor-merge mode. */
+	wholesalePaths: Set<string>;
 	/** Paths fed to the semantic check (union, text-like, capped). */
 	semanticPaths: Set<string>;
+	/** True when the analysis ran against the line base because one merge
+	 * parent is an ancestor of the other (Issue #627). */
+	degenerate: boolean;
 };
 
 function collectSnapshots(
@@ -552,16 +711,35 @@ function collectSnapshots(
 	maxFiles: number,
 	maxSemanticFiles: number,
 ): CollectedSnapshots {
-	const base = mergeBase(spec.p1, spec.p2);
+	const effective = effectiveMergeBase(spec.p1, spec.p2);
+	const base = effective.base;
 	const targetChanged = changedFiles(base, spec.p1);
 	const incomingChanged = changedFiles(base, spec.p2);
 	const both = [...targetChanged].filter((p) => incomingChanged.has(p));
-	if (both.length > maxFiles) {
-		console.error(
-			`merge-stale-resolution: ${both.length} files changed on both sides; analysing the first ${maxFiles} for the wholesale check`,
-		);
+
+	// Wholesale domain. Normal merges: files BOTH sides changed since the
+	// merge base. Degenerate ancestor merges (Issue #627): the merge-base
+	// is one parent itself, so that set is empty; instead take every path
+	// whose result blob equals one parent's blob while the other parent's
+	// blob differs from both — pre-filtered by SHA so only suspicious
+	// files get content-fetched.
+	let wholesaleOrdered: string[];
+	if (effective.degenerate) {
+		const candidates = degenerateWholesalePaths(spec, base, maxFiles);
+		if (candidates.total > maxFiles) {
+			console.error(
+				`merge-stale-resolution: ${candidates.total} stale-take candidates in degenerate ancestor merge; analysing the first ${maxFiles}`,
+			);
+		}
+		wholesaleOrdered = candidates.paths;
+	} else {
+		if (both.length > maxFiles) {
+			console.error(
+				`merge-stale-resolution: ${both.length} files changed on both sides; analysing the first ${maxFiles} for the wholesale check`,
+			);
+		}
+		wholesaleOrdered = both.slice(0, maxFiles);
 	}
-	const bothCapped = both.slice(0, maxFiles);
 	const bothSet = new Set(both);
 
 	// Semantic domain: files changed on at least one side, restricted to
@@ -581,13 +759,14 @@ function collectSnapshots(
 		);
 	}
 
-	// Fetch snapshots for the union of both domains: all both-side files
-	// (wholesale needs every type, including non-text) plus the capped
-	// semantic set. bothCapped may overlap semanticPaths; dedupe below.
-	const bothCappedSet = new Set(bothCapped);
+	// Fetch snapshots for the union of both domains: all wholesale-domain
+	// files (wholesale needs every type, including non-text) plus the
+	// capped semantic set. wholesaleOrdered may overlap semanticPaths;
+	// dedupe below.
+	const wholesaleSet = new Set(wholesaleOrdered);
 	const ordered = [
-		...bothCapped,
-		...[...semanticPaths].filter((p) => !bothCappedSet.has(p)),
+		...wholesaleOrdered,
+		...[...semanticPaths].filter((p) => !wholesaleSet.has(p)),
 	];
 	const seen = new Set<string>();
 	const files = ordered
@@ -604,7 +783,12 @@ function collectSnapshots(
 			result: showFile(spec.result, path),
 		}));
 
-	return { files, bothSidePaths: new Set(bothCapped), semanticPaths };
+	return {
+		files,
+		wholesalePaths: wholesaleSet,
+		semanticPaths,
+		degenerate: effective.degenerate,
+	};
 }
 
 // ---------------------------------------------------------------------------
@@ -723,17 +907,23 @@ function main() {
 		args.maxSemanticFiles,
 	);
 	const wholesaleFiles = collected.files.filter((f) =>
-		collected.bothSidePaths.has(f.path),
+		collected.wholesalePaths.has(f.path),
 	);
 	const semanticFiles = collected.files.filter((f) =>
 		collected.semanticPaths.has(f.path),
 	);
 
 	const findings = [
-		...analyzeMergeStaleness(wholesaleFiles, { warnOnly: args.warnOnly }),
+		...analyzeMergeStaleness(wholesaleFiles, {
+			warnOnly: args.warnOnly,
+			relaxed: collected.degenerate,
+		}),
 		// Semantic findings are always warnings; warnOnly is irrelevant but
-		// accepted for a uniform call shape.
-		...analyzeSemanticStaleness(semanticFiles),
+		// accepted for a uniform call shape. `relaxed` must match the
+		// wholesale mode so degenerate takes are not reported twice.
+		...analyzeSemanticStaleness(semanticFiles, {
+			relaxed: collected.degenerate,
+		}),
 	];
 
 	if (args.json) {
@@ -745,8 +935,11 @@ function main() {
 		}
 		const fails = findings.filter((f) => f.severity === "fail");
 		const warns = findings.length - fails.length;
+		const mode = collected.degenerate
+			? " (degenerate ancestor merge: line base)"
+			: "";
 		console.log(
-			`merge-stale-resolution: ${collected.bothSidePaths.size} both-side files + ${collected.semanticPaths.size} union files checked, ${findings.length} findings (${fails.length} failing, ${warns} warnings) for ${spec.label.slice(0, 12)}`,
+			`merge-stale-resolution: ${collected.wholesalePaths.size} wholesale-domain files + ${collected.semanticPaths.size} union files checked, ${findings.length} findings (${fails.length} failing, ${warns} warnings) for ${spec.label.slice(0, 12)}${mode}`,
 		);
 	}
 

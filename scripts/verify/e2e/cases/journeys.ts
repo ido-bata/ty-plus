@@ -18,6 +18,7 @@ import { rm } from "node:fs/promises";
 import path from "node:path";
 
 import type { E2EContext } from "../ctx";
+import { scanRealPresetPack } from "../real-preset-pack";
 import { check, type E2ECase } from "../report";
 import type { LiveSurface } from "../surfaces";
 import { listLiveSurfaces } from "../surfaces";
@@ -634,12 +635,14 @@ export const journeySuiteCases: E2ECase[] = [
 				const ws = (app.workspace ?? {}) as Record<string, unknown>;
 				const grid = (ws.grid ?? {}) as Record<string, unknown>;
 				app.ui = { ...ui, accentColor: ACCENT, language: "ja" };
-				// gridSettingsFromSettingsJson rejects a partial grid section
-				// (cellSize+gap+radius all required), so fill the metrics the
-				// persisted file may not carry yet.
+				// The settings dialog always persists the full grid triple
+				// (cellSize+gap+radius, defaults 48/4/2); `gridSettingsFrom-
+				// SettingsJson` treats a partial section as unusable and the
+				// boot reconcile then REMOVES the grid theme tokens. Write the
+				// same shape the dialog writes or the projection never lands.
 				app.workspace = {
 					...ws,
-					grid: { ...grid, cellSize: 120, gap: 4, radius: 2 },
+					grid: { gap: 4, radius: 2, ...grid, cellSize: 120 },
 				};
 				await writeManagedFile(
 					ctx,
@@ -663,23 +666,27 @@ export const journeySuiteCases: E2ECase[] = [
 					),
 				);
 
-				// Theme reconcile runs async after boot; poll for the accent
-				// token instead of sampling once (a single read races the
-				// theme.css rewrite + applyCepShellTheme).
+				// theme.css is re-projected from app.json by the async
+				// boot-time reconcile (theme-reconcile.ts, Issue #112) — it
+				// lands a few seconds AFTER reload completes, so sampling the
+				// computed tokens immediately races it and reads the stale
+				// sandbox sentinel (#e2b701) / defaults. Poll for convergence.
 				const accent = await waitForDom(
 					ctx,
 					panel,
 					`(() => {
 						const v = getComputedStyle(document.documentElement)
 							.getPropertyValue("--color-ty-accent") || "";
-						return v.toLowerCase().includes("336699") ? v : null;
+						return v.toLowerCase().includes("336699") ? v.trim() : null;
 					})()`,
-					20_000,
+					30_000,
 				);
 				checks.push(
 					check(
 						"accent color reached theme.css token",
-						String(accent).toLowerCase().includes("336699"),
+						String(accent ?? "")
+							.toLowerCase()
+							.includes("336699"),
 						`accent=${String(accent).trim()}`,
 					),
 				);
@@ -690,14 +697,14 @@ export const journeySuiteCases: E2ECase[] = [
 					`(() => {
 						const v = getComputedStyle(document.documentElement)
 							.getPropertyValue("--ty-ws-cell") || "";
-						return v.includes("120") ? v : null;
+						return v.includes("120") ? v.trim() : null;
 					})()`,
-					20_000,
+					30_000,
 				);
 				checks.push(
 					check(
 						"grid cell size reached panel CSS var",
-						String(cell).includes("120"),
+						String(cell ?? "").includes("120"),
 						`cell=${String(cell).trim()}`,
 					),
 				);
@@ -1024,6 +1031,163 @@ export const journeySuiteCases: E2ECase[] = [
 				detail: `consecutive quick-action runs: script marker + ffx effects=${fx}`,
 				checks,
 				evidence: marker ? [markerPath] : [],
+			};
+		},
+	},
+	{
+		uc: "UC-J08",
+		title:
+			"real preset pack: grouped catalog, sibling thumbnails, .ffx execution",
+		precondition: async () => {
+			const scan = await scanRealPresetPack();
+			return scan.presetPaths.length > 0
+				? null
+				: "real preset pack not found (TY_PLUS_E2E_PRESET_PACK / ../ty-plus-e2e-assets)";
+		},
+		async run(ctx: E2EContext) {
+			const checks: ReturnType<typeof check>[] = [];
+
+			// Run candidates: EN "Background" .ffx presets apply render
+			// effects that succeed on a plain solid layer (text/object
+			// presets would need specialized layers).
+			const catalogJson = await ctx.readManagedJson<{
+				presets?: { id?: string; filePath?: string }[];
+			}>("presets", "presets.json");
+			const runCandidates = (catalogJson?.presets ?? [])
+				.filter(
+					(p) =>
+						typeof p.id === "string" &&
+						p.id.startsWith("mvfx-") &&
+						typeof p.filePath === "string" &&
+						/[\\/]Background[\\/]/.test(p.filePath) &&
+						p.filePath.toLowerCase().endsWith(".ffx"),
+				)
+				.map((p) => p.id as string)
+				.slice(0, 3);
+			checks.push(
+				check(
+					"real preset pack seeded into sandbox catalog",
+					runCandidates.length > 0,
+					`candidates=${runCandidates.join(",")}`,
+				),
+			);
+			if (runCandidates.length === 0) {
+				return { detail: "mvfx presets missing from catalog", checks };
+			}
+
+			const dialog = await openPresetCatalog(ctx);
+
+			// Folder hierarchy: every pack directory became a group tile.
+			const groupCount = Number(
+				await ctx.evalJs(
+					dialog,
+					`document.querySelectorAll('[data-preset-group-id^="mvfx-grp-"]').length`,
+				),
+			);
+			checks.push(
+				check(
+					"catalog lists real-pack group tiles",
+					groupCount >= 10,
+					`groups=${groupCount}`,
+				),
+			);
+
+			// Drill into the EN Background group (title unique vs JP 背景).
+			const opened = await ctx.evalJs(
+				dialog,
+				`(() => {
+					const els = [...document.querySelectorAll('[data-preset-group-id^="mvfx-grp-"]')];
+					const el = els.find((e) => (e.textContent || "").includes("Background"));
+					if (!el) return "missing-group:" + els.length;
+					el.click();
+					return "clicked";
+				})()`,
+			);
+			checks.push(
+				check("Background group opened", opened === "clicked", String(opened)),
+			);
+			const rowSeen = await waitForDom(
+				ctx,
+				dialog,
+				`document.querySelectorAll('[data-preset-id^="mvfx-"]').length > 0`,
+				20_000,
+			);
+			checks.push(check("group view lists member presets", Boolean(rowSeen)));
+
+			// Sibling .gif thumbnails resolve through the same-stem lookup.
+			const thumbSeen = await waitForDom(
+				ctx,
+				dialog,
+				`Boolean(document.querySelector('[data-preset-id^="mvfx-"] [data-glyph-cached-image]'))`,
+				20_000,
+			);
+			checks.push(
+				check(
+					"sibling .gif thumbnail rendered on preset row",
+					Boolean(thumbSeen),
+					String(thumbSeen).slice(0, 120),
+				),
+			);
+
+			// AE-side execution: comp + solid layer, then Run from catalog.
+			await ctx.evalScriptOnPanel1(`(function(){
+				var comp = null;
+				for (var i = 1; i <= app.project.numItems; i++) {
+					var it = app.project.item(i);
+					if (it instanceof CompItem && it.name === "TYPlus E2E MVFX Comp") { comp = it; break; }
+				}
+				if (!comp) {
+					comp = app.project.items.addComp("TYPlus E2E MVFX Comp", 320, 240, 1, 10, 30);
+					comp.layers.addSolid([0.5, 0.5, 0.5], "E2E MVFX Solid", 320, 240, 1, 10);
+				}
+				try { comp.openInViewer(); } catch (e) {}
+				for (var j = 1; j <= comp.numLayers; j++) comp.layer(j).selected = (j === 1);
+				return "ready";
+			})()`);
+
+			const countEffects = `(() => {
+				for (var i = 1; i <= app.project.numItems; i++) {
+					var it = app.project.item(i);
+					if (it instanceof CompItem && it.name === "TYPlus E2E MVFX Comp") {
+						return String(it.numLayers > 0 ? it.layer(1).Effects.numProperties : -1);
+					}
+				}
+				return "no-comp";
+			})()`;
+
+			let ranId: string | null = null;
+			let effects = "0";
+			for (const id of runCandidates) {
+				const ran = await runPresetFromCatalog(ctx, dialog, id);
+				if (ran !== "clicked") continue;
+				await sleep(2000);
+				effects = String(await ctx.evalScriptOnPanel1(countEffects));
+				if (Number(effects) > 0) {
+					ranId = id;
+					break;
+				}
+			}
+			checks.push(
+				check(
+					"real .ffx preset applied effects in AE",
+					ranId !== null,
+					`preset=${ranId} effects=${effects}`,
+				),
+			);
+
+			await ctx.evalScriptOnPanel1(`(function(){
+				for (var i = app.project.numItems; i >= 1; i--) {
+					var it = app.project.item(i);
+					if (it instanceof CompItem && it.name === "TYPlus E2E MVFX Comp") it.remove();
+					else if (it.name === "E2E MVFX Solid") it.remove();
+				}
+				return "cleaned";
+			})()`);
+			await closeDialogById(ctx, "dialog-presets");
+
+			return {
+				detail: `real pack: ${groupCount} groups, thumb=${Boolean(thumbSeen)}, ran=${ranId} effects=${effects}`,
+				checks,
 			};
 		},
 	},

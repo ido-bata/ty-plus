@@ -1,0 +1,63 @@
+{
+  "schema": "ty-plus.e2e-run/1",
+  "suite": "settings",
+  "capturedAt": "2026-11-25T07:52:37.800Z",
+  "extensionDir": "/Users/rebui/Library/Application Support/Adobe/CEP/extensions/app.ty-plus.dev",
+  "managedRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-25T07-52-07-263Z-36666/ty-plus",
+  "realManagedRoot": "/Applications/Adobe After Effects 2027/ty-plus",
+  "sandbox": {
+    "enabled": true,
+    "sandboxRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-25T07-52-07-263Z-36666/ty-plus",
+    "integrity": {
+      "realRoot": "/Applications/Adobe After Effects 2027/ty-plus",
+      "checkedAt": "2026-11-25T07:52:37.796Z",
+      "driftBeforeRepair": {
+        "changed": 1,
+        "added": 0,
+        "removed": 0
+      },
+      "filesRepaired": [
+        "cache/layout-undo/panel-1/stack.json"
+      ],
+      "cleanAfterRepair": true
+    }
+  },
+  "totals": {
+    "PASS": 1,
+    "FAIL": 0,
+    "BLOCKED": 0,
+    "SKIP": 0
+  },
+  "results": [
+    {
+      "uc": "UC-E01",
+      "title": "ui.language in app.json drives panel locale across reload",
+      "status": "PASS",
+      "detail": "locale en → ja → restored",
+      "checks": [
+        {
+          "name": "settings/app.json ui.language set to ja",
+          "ok": true,
+          "detail": "language=ja"
+        },
+        {
+          "name": "document.documentElement.lang reflects locale",
+          "ok": true,
+          "detail": "lang=ja expected=ja"
+        },
+        {
+          "name": "settings dialog renders ja strings",
+          "ok": true,
+          "detail": "tablist aria-label=\"設定セクション\" expected=\"設定セクション\""
+        },
+        {
+          "name": "settings/app.json restored after case",
+          "ok": true,
+          "detail": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-25T07-52-07-263Z-36666/ty-plus/settings/app.json 865 bytes"
+        }
+      ],
+      "evidence": [],
+      "durationMs": 16350
+    }
+  ]
+}
