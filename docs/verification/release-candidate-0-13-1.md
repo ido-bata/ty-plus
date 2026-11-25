@@ -88,3 +88,43 @@ Issue #591（PR #430 merge による UI/UX ロールバック）の収束作業�
 - PR #605（release-0-13-1 → main）の merge 承認
 - Windows artifact の構築・検証（または Windows 対象外の明示判断）
 - #626 の残存 E2E FAIL が release blocker かどうかの判断（harness 要因なら別 issue で継続可能）
+
+---
+
+## 収束作業 追記（2026-11-25 第2ラウンド、head `682fcbe6`）
+
+前回報告の残存事項に対する収束結果。全て ticket PR 経由で `release-0-13-1` へ統合済み。
+
+### E2E FAIL/BLOCKED の原因実証と解消（#626 → #628/#629 で全件分類完了）
+
+| PR | Issue | 結果 |
+|---|---|---|
+| #632 | #629 | debug console replay・settings locale・appearance round-trip：**全て harness bug**（status bar mount 待ち欠如・CDP target stale polling・boot-time theme reconcile との race・grid fixture の部分形状）。製品コード変更なし。UC-G02/UC-E01/UC-J04 を AE2027 で PASS 確認 |
+| #637 | #628 | journey/workspace 系：**全て harness bug**。selector の英語 literal 依存を i18n key 解決へ置換、preset-add dialog の pool slot stale surface 誤取得を `[data-path-field]` probe で修正（UC-C12/C14 BLOCKED 解消）、console close の requestOpenExtension retry-resurrect を settle 検証付き close で対策。workspace 5/5・smoke 6/6・settings PASS を AE2027 で確認 |
+| #634 | #633 | 実プリセットパック `MV-Effects(α) essential`（.ffx 69件 + 同名 .gif サムネイル、EN/JP・入れ子フォルダ）を sandbox の `presets.json`/`groups.json` へ onboarding import 同等契約でシード（`scripts/verify/e2e/real-preset-pack.ts`）。UC-J08 で group tile・サムネイル描画・実 .ffx 実行を検証 |
+
+- locale-selector 仮説は**否定的に実証**：原因は selector だけでなく boot timing・surface pool・fixture 形状・retry resurrect の複合 harness bug であり、製品不具合の証拠は得られなかった
+- テスト削除・期待値緩和なし（むしろ待機・retry・settle 検証を強化）
+
+### merge-stale detector の実事故対応（#627 → #631 merged）
+
+- `check:merge-stale` が報告された実事故コミット `3a0593b3`（PR #430 merge）を**検出できなかった欠陥**を修正：first parent が second parent の ancestor となる degenerate merge で merge-base が退化し検査 domain が空になる問題へ、`effectiveMergeBase()`（祖先側 first-parent chain を辿り実 fork point を再計算）+ wholesale-take の blob-SHA 前段フィルタ + relaxed 前提で対応
+- `--commit 3a0593b3` で **8 fail findings**（`layout.ts`, `notification/service.ts`, `widget/registry` 等）を検出、`bdd1168b` でも従来通り検出。8件の通常 merge + 大規模 release merge で false positive 0、テスト 29/29 pass
+
+### 視覚・構造残件（#630 → #636 merged）
+
+- 視覚 MINOR の実修正: `DownloadProgressIconButton` terminal-state legibility、`Tile`/`GridCatalogTile` decorator の WorkspaceTileFrame chrome 整合、`WidgetTutorialLayer` easing mock、`FontViewerStatusLine`/`PathField`/`PresetLibraryEmptyState`/`LoadingSpinner` への assertion 追加。残りは意図的 fixture/placeholder として文書化
+- AnchoredPopover `Closed` story を実態に合わせ修正 + `ToggleOpens` 追加（前回 MAJOR 判定の story 設計ミスを解消）
+- #609 dead UI: `WorkspaceShell`・`entry/dialog-bootstrap`・`entry/dialogs`・dead route を削除（残件 `dialog-probe` chain は継続対応中）
+- #610: `MediaFrame`/`TileFrame`/`GridTile`/`CatalogBrowserShell`/`WorkspaceCatalogTileBody`/`PresetGlyphById`/`MarkdownLiveEditor` の story 追加（未カバー大物 dialogs は継続対応中）
+
+### 両 OS 配布物
+
+- **Windows**: `ty-plus-v0.13.1-windows.{zip,zxp}` + manifest を `e2d909f8` で構築・検証済み（unsigned worker = R0 正当形、ZXP 署名検証済み）。最終 freeze 後に head 不変ならそのまま有効、変更があれば再構築
+- **macOS**: 旧 artifact は `ca4f97a8` で stale。最終 freeze 後に `TY_PLUS_SIGN_IDENTITY` 付きで再構築する
+
+### 残存事項（更新）
+
+1. **AE2027 環境障害**: E2E 中に panel-1 が `No Valid MenuItem(s) found` で消滅し AE 本体が window 0 のゾンビ状態に。quit がモーダルに拒否されており、ユーザーによる AE2027 の確認・再起動が必要。復旧後に journeys suite（UC-J02/J05/J06 BLOCKED 再試行 + UC-J08 実機検証）と全 suite の最終再検証を実施する
+2. **#609/#610 残件**: `dialog-probe` chain 削除、preset/settings/widget 系の未カバー dialog stories — worker 対応中
+3. **最終 freeze → macOS artifact 再構築 → 全 E2E 再検証 → RC 記録確定**
