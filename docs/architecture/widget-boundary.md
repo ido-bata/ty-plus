@@ -70,17 +70,11 @@ function/widget/contract   →  function-local implementation details only
 
 `function/widget/` の widget leaf は UI コンポーネント、コマンドの振る舞い、機能ローカルの型を所有する。management 側のシステム (registry、workspace、placement) は、management のオーケストレーションと機能実装の間を疎結合に保つため、manifest index 経由でのみ widget にアクセスしなければならない。
 
-## Easing Widget: Loop モード
+## Loop Widget
 
-`function/widget/core/easing` は `Mode` 拡張として `"loop"` を持つ。
-loop モードは **in ターゲットにのみ** 意味を持つ — `applyTargetingRef` が
-`"both"` / `"out"` のときは単一 cycle の適用にフォールバックする。
-bounce / elastic モードでは loop トグルを disable し、`applyEasing` 経路のみ
-が走る。loop 経路はホスト側に専用の `applyLoopEasing` コマンドを追加する:
-
-- 1 アクションで `(k1, k2)` 区間内に `loopCount` cycle の同形 curve を再生成
-- `loopCount` は整数 1..N (host 側でクランプ)
-- `cubic` / `points` / `labelColor` / `detectedType` の payload shape は `applyEasing` と共通
-- host 実装は `src/management/ae/jsx/host-bundle.ext.ts` の既存 multi-point
-  apply 経路を `loopCount` 回複製する形に拡張する。React 側で point 配列を
-  膨らませて送る形にはしない (handle の segment-relative 座標が歪むため)
+loop 機能は easing の mode ではなく独立 widget (`function/widget/core/loop`)
+として実装される。設計正本は `docs/architecture/widget/loop.md` と
+`docs/decisions/2026-11-21-loop-cyclic-wave-model.md`。easing の `Mode` に
+`"loop"` は存在せず、過去に保存された `mode: "loop"` state は
+`coerceStoredState` で `"curve"` に degrade する。host 側の
+`applyLoopEasing` コマンドは loop widget が利用する。

@@ -12,8 +12,6 @@ export const register = (descriptor: WidgetDescriptor): void => {
 	descriptors.push(descriptor);
 };
 
-/** All registered descriptors (read-only view). */
-
 /** Lookup a descriptor by its `type` string. */
 export const getWidgetDescriptor = (
 	type: string,

@@ -12,7 +12,7 @@ This document describes runtime surfaces and UI execution structure, not source 
 | dialog root | `src/management/dialog/` |
 | dialog id normalization | `src/management/dialog/` |
 | dialog shell components | `src/management/dialog/` |
-| shared UI component exports | `src/shared/component/` |
+| shared UI component exports | `packages/ui` (`@ty-plus/ui`) |
 | widget registry | `src/function/widget/` |
 | widget implementations | `src/function/widget/` |
 | theme storage | `src/management/` |
@@ -123,7 +123,7 @@ New dialogs and widgets assemble from:
 - Do not add custom layout shells per screen.
 - dialogs use `DialogShell` families.
 - widgets use `WidgetShell` and `WidgetRenderer`.
-- If common controls are insufficient, extract to `src/shared/component/` first, then reuse.
+- If common controls are insufficient, extract to `packages/ui` (`@ty-plus/ui`) first, then reuse.
 - `type`-driven differences are reasons to switch displayed fields and editor blocks, not the shell.
 
 ## Style and Appearance
