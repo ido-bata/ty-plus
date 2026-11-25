@@ -18,6 +18,7 @@ import { rm } from "node:fs/promises";
 import path from "node:path";
 
 import type { E2EContext } from "../ctx";
+import { dismissHostConfirmDialog } from "../host-dialog";
 import { scanRealPresetPack } from "../real-preset-pack";
 import { check, type E2ECase } from "../report";
 import type { LiveSurface } from "../surfaces";
@@ -461,6 +462,18 @@ export const journeySuiteCases: E2ECase[] = [
 						),
 					);
 					await sleep(3_000);
+					// The host confirm() modal blocks every CDP evaluate on the
+					// panel until it is answered. Dismiss it with the negative
+					// answer so the preset is retained (the gate stays
+					// non-destructive) and the rest of the case can proceed.
+					const dismissal = await dismissHostConfirmDialog(ctx);
+					checks.push(
+						check(
+							"host confirm dialog dismissed (cancel)",
+							dismissal.dismissed,
+							dismissal.button ?? dismissal.reason ?? "no dialog",
+						),
+					);
 					const stillThere = await ctx.readManagedJson<{
 						presets?: { id?: string }[];
 					}>("presets", "presets.json");

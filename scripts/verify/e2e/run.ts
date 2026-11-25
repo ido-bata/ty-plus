@@ -300,6 +300,7 @@ const runSuites = async (
 	if (!sandbox) {
 		ctx.options.managedRoot = realManagedRoot;
 	}
+	ctx.options.realManagedRoot = sandbox?.realRoot ?? realManagedRoot;
 	const managedRoot = ctx.options.managedRoot;
 	if (!managedRoot) {
 		throw new Error("managed root not configured");
@@ -417,7 +418,10 @@ const runSuites = async (
 	console.log(`evidence: ${outFile}`);
 	await ctx.close();
 	if (summary.totals.FAIL > 0 || summary.totals.BLOCKED > 0) {
-		process.exit(1);
+		// Set exitCode instead of process.exit(): exiting inside runSuites
+		// would skip the caller's finally that releases the AE instance lock
+		// and leave a stale owner.json behind (Issue #645).
+		process.exitCode = 1;
 	}
 };
 

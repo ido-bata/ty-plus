@@ -24,6 +24,8 @@ const sleep = (ms: number): Promise<void> =>
 export type E2EOptions = {
 	extensionDir: string;
 	managedRoot?: string;
+	/** Real (non-sandbox) managed root — used to locate the hosting AE app. */
+	realManagedRoot?: string;
 	evidenceDir: string;
 };
 
