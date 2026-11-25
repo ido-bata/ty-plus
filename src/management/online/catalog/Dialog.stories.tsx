@@ -1,562 +1,276 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Decorator, Meta, StoryObj } from "@storybook/react";
 import { expect, waitFor } from "storybook/test";
 
-// IMPORTANT: do NOT import `PresetLibrary` from `./Dialog`. The component
-// pulls in `@/management/workspace/core/services` and `@/management/preset`
-// (via `use-cases` → `@/management/preset/authoring/request`,
-// `notify-panels-after-preset-save` → `@/management/preset/operations`,
-// `services` → `@/management/preset/repository/shared`), whose barrel
-// re-export chain is incompatible with the Storybook build (see
-// `.storybook/main.ts`: the CEP-only `ty-plus:inline-oniguruma-wasm`
-// plugin is stripped, so `editor/textmate`'s raw `vscode-oniguruma`
-// WASM import fails to resolve). The render stub below mirrors the
-// Dialog's visual surface — header, search bar, side panel, results
-// area, footer — for design review and prop inspection.
+import type { PresetSearchItem } from "@/management/online/contract";
+import {
+	createStorybookCloudGateway,
+	OnlineServicesBoundary,
+} from "@/storybook/online-services";
 
-type Args = {
-	showSidePanel: boolean;
-	viewMode: "gallery" | "list" | "cards";
-	query: string;
-	catalogCount: number;
-	filteredCount: number;
-	scale: number;
-};
+import { PresetLibrary } from "./Dialog";
 
-const baseArgs: Args = {
-	showSidePanel: true,
-	viewMode: "gallery",
-	query: "",
-	catalogCount: 12,
-	filteredCount: 12,
-	scale: 1,
-};
+// PresetLibrary renders the real production component. It has no props —
+// the catalog arrives through `searchCatalog` → `getDataServices().gateway`.
+// `OnlineServicesBoundary` installs an in-memory `CloudGateway` fixture
+// (plus an in-memory persistence gateway so the downloaded-preset lookup
+// resolves deterministically) for the lifetime of each story.
 
-const surfaceStyle = {
-	display: "flex" as const,
-	flexDirection: "row" as const,
-	height: 480,
-	width: 720,
-	background: "#1f1f1f",
-	color: "#e0e0e0",
-	fontFamily: "sans-serif",
-	fontSize: 12,
-	boxSizing: "border-box" as const,
-};
+const SAMPLE_CATALOG: PresetSearchItem[] = [
+	{
+		presetId: "cat-glow-01",
+		name: "Glow Essentials",
+		description: "Soft glow presets for text and shapes.",
+		category: "Color",
+		tag: ["glow", "light"],
+		notionPageUrl: "https://example.com/glow",
+	},
+	{
+		presetId: "cat-glow-02",
+		name: "Glow Intense",
+		description: "High-intensity glow for hero titles.",
+		category: "Color",
+		tag: ["glow"],
+	},
+	{
+		presetId: "cat-chroma-01",
+		name: "Chroma Key Kit",
+		description: "Green-screen keying presets.",
+		category: "Keying",
+		tag: ["chroma", "keying"],
+	},
+	{
+		presetId: "cat-vignette-01",
+		name: "Vignette Pack",
+		description: "Edge darkening presets.",
+		category: "Color",
+		tag: ["vignette"],
+	},
+	{
+		presetId: "cat-shake-01",
+		name: "Camera Shake",
+		description: "Handheld shake expressions.",
+		category: "Motion",
+		tag: ["shake", "camera"],
+	},
+	{
+		presetId: "cat-type-01",
+		name: "Typewriter",
+		description: "Character-by-character reveal.",
+		category: "Text",
+		tag: ["type", "text"],
+	},
+	{
+		presetId: "cat-grade-01",
+		name: "Film Grade",
+		description: "35mm film look presets.",
+		category: "Color",
+		tag: ["grade", "film"],
+	},
+	{
+		presetId: "cat-glitch-01",
+		name: "Glitch Burst",
+		description: "Digital glitch transitions.",
+		category: "Motion",
+		tag: ["glitch"],
+	},
+	{
+		presetId: "cat-bokeh-01",
+		name: "Bokeh Blur",
+		description: "Depth-of-field blur presets.",
+		category: "Blur",
+		tag: ["bokeh", "blur"],
+	},
+	{
+		presetId: "cat-noise-01",
+		name: "Film Grain",
+		description: "Analog noise overlays.",
+		category: "Texture",
+		tag: ["grain", "noise"],
+	},
+	{
+		presetId: "cat-slide-01",
+		name: "Slide Deck",
+		description: "Presentation slide presets.",
+		category: "Layout",
+		tag: ["slides"],
+	},
+	{
+		presetId: "cat-chroma-02",
+		name: "Ultra Key",
+		description: "Fine-detail keying for hair and glass.",
+		category: "Keying",
+		tag: ["chroma", "keying"],
+	},
+];
 
-const sidePanelStyle = {
-	width: 224,
-	flexShrink: 0,
-	borderRight: "1px solid #3a3a3a",
-	display: "flex" as const,
-	flexDirection: "column" as const,
-	background: "#252525",
-};
+const SEARCH_PLACEHOLDER = "Filter by name, ID, description, category, tag";
 
-const mainStyle = {
-	display: "flex" as const,
-	flexDirection: "column" as const,
-	flex: 1,
-	minWidth: 0,
-};
-
-const btnStyle = {
-	height: 24,
-	width: 24,
-	border: "1px solid #3a3a3a",
-	borderRadius: 4,
-	background: "#2c2c2c",
-	color: "#a0a0a0",
-	cursor: "pointer",
-};
-
-const DialogStub = (args: Args) => {
-	const tiles = Array.from({ length: args.filteredCount }, (_, i) => i + 1);
-	return (
-		<div style={surfaceStyle} data-storybook-stub="PresetLibraryDialog">
-			{args.showSidePanel && (
-				<aside style={sidePanelStyle} data-side-panel>
-					<div
-						style={{
-							display: "flex",
-							gap: 4,
-							padding: 8,
-							borderBottom: "1px solid #3a3a3a",
-							alignItems: "center",
-						}}
-					>
-						<button type="button" style={btnStyle} aria-label="Hide filters">
-							◀
-						</button>
-						<input
-							type="text"
-							value={args.query}
-							readOnly
-							placeholder="Filter…"
-							style={{
-								flex: 1,
-								height: 24,
-								padding: "0 6px",
-								border: "1px solid #3a3a3a",
-								borderRadius: 4,
-								background: "#1f1f1f",
-								color: "#e0e0e0",
-								fontSize: 11,
-							}}
-						/>
-					</div>
-					<div style={{ padding: 8 }}>
-						<div
-							style={{
-								display: "flex",
-								justifyContent: "space-between",
-								fontSize: 11,
-								textTransform: "uppercase",
-								letterSpacing: "0.05em",
-								color: "#a0a0a0",
-								marginBottom: 4,
-							}}
-						>
-							<span>Category</span>
-							<button
-								type="button"
-								style={{
-									background: "none",
-									border: "none",
-									color: "#a0a0a0",
-									cursor: "pointer",
-								}}
-							>
-								Clear
-							</button>
-						</div>
-						<div
-							style={{
-								padding: "4px 8px",
-								background: "#2c2c2c",
-								borderRadius: 4,
-							}}
-						>
-							All categories
-						</div>
-					</div>
-				</aside>
-			)}
-			<div style={mainStyle}>
-				<div
-					style={{
-						display: "flex",
-						gap: 8,
-						padding: 8,
-						borderBottom: "1px solid #3a3a3a",
-						alignItems: "center",
-					}}
-				>
-					{!args.showSidePanel && (
-						<button
-							type="button"
-							style={btnStyle}
-							aria-label="Show filters"
-							title="Show filters"
-						>
-							◧
-						</button>
-					)}
-					<h1 style={{ fontSize: 13, fontWeight: 600 }}>
-						Online Preset Library
-					</h1>
-					<div style={{ marginLeft: "auto", display: "flex", gap: 4 }}>
-						<button type="button" style={btnStyle} aria-label="Reload">
-							↻
-						</button>
-					</div>
-				</div>
-				<div
-					style={{
-						display: "flex",
-						gap: 8,
-						padding: 8,
-						borderBottom: "1px solid #3a3a3a",
-						alignItems: "center",
-					}}
-				>
-					<input
-						type="text"
-						value={args.query}
-						readOnly
-						placeholder="Filter by name, ID, description, category, tag"
-						style={{
-							flex: 1,
-							height: 28,
-							padding: "0 8px",
-							border: "1px solid #3a3a3a",
-							borderRadius: 4,
-							background: "#1f1f1f",
-							color: "#e0e0e0",
-							fontSize: 12,
-						}}
-					/>
-					<div
-						style={{
-							display: "flex",
-							border: "1px solid #3a3a3a",
-							borderRadius: 4,
-							overflow: "hidden",
-						}}
-					>
-						{(["gallery", "cards", "list"] as const).map((m) => (
-							<button
-								key={m}
-								type="button"
-								aria-pressed={args.viewMode === m}
-								style={{
-									...btnStyle,
-									borderRadius: 0,
-									border: "none",
-									background: args.viewMode === m ? "#3a3a3a" : "#2c2c2c",
-									width: 28,
-								}}
-							>
-								{m === "gallery" ? "▦" : m === "cards" ? "▤" : "≡"}
-							</button>
-						))}
-					</div>
-				</div>
-				<div
-					style={{
-						flex: 1,
-						overflow: "auto",
-						padding: 12,
-					}}
-				>
-					{args.filteredCount === 0 ? (
-						<div
-							style={{
-								display: "flex",
-								flexDirection: "column",
-								alignItems: "center",
-								justifyContent: "center",
-								padding: 32,
-								gap: 12,
-								color: "#a0a0a0",
-							}}
-						>
-							{args.catalogCount === 0 ? (
-								<>
-									<span>No online catalog.</span>
-									<button
-										type="button"
-										style={btnStyle}
-										aria-label="Refresh catalog"
-										title="Refresh catalog"
-									>
-										↻
-									</button>
-								</>
-							) : (
-								<>
-									<span>No presets match filter.</span>
-									<button
-										type="button"
-										style={btnStyle}
-										aria-label="Clear all filters"
-										title="Clear all filters"
-									>
-										×
-									</button>
-								</>
-							)}
-						</div>
-					) : args.viewMode === "cards" ? (
-						<div
-							data-preset-cards
-							style={{ display: "flex", flexDirection: "column", gap: 8 }}
-						>
-							{tiles.slice(0, 6).map((i) => (
-								<div
-									key={i}
-									data-preset-card={i}
-									style={{
-										display: "flex",
-										gap: 12,
-										padding: 8,
-										border: "1px solid #3a3a3a",
-										borderRadius: 4,
-										background: "#252525",
-									}}
-								>
-									<div
-										data-card-thumb
-										style={{
-											width: 96,
-											height: 96,
-											flexShrink: 0,
-											background: "#2c2c2c",
-											borderRadius: 4,
-										}}
-									/>
-									<div style={{ flex: 1, minWidth: 0 }}>
-										<div style={{ fontWeight: 600 }}>Preset {i}</div>
-										<div style={{ fontSize: 11, color: "#a0a0a0" }}>
-											Color · Short description for preset {i}
-										</div>
-										<div
-											style={{
-												marginTop: 8,
-												display: "flex",
-												gap: 4,
-											}}
-										>
-											<button
-												type="button"
-												style={btnStyle}
-												aria-label="Download"
-											>
-												↓
-											</button>
-											<button
-												type="button"
-												style={btnStyle}
-												aria-label="Open Notion"
-											>
-												↗
-											</button>
-										</div>
-									</div>
-								</div>
-							))}
-						</div>
-					) : args.viewMode === "list" ? (
-						<table style={{ width: "100%", borderCollapse: "collapse" }}>
-							<thead>
-								<tr style={{ background: "#252525" }}>
-									<th
-										style={{
-											padding: 6,
-											textAlign: "left",
-											fontSize: 11,
-											color: "#a0a0a0",
-										}}
-									>
-										Thumb
-									</th>
-									<th
-										style={{
-											padding: 6,
-											textAlign: "left",
-											fontSize: 11,
-											color: "#a0a0a0",
-										}}
-									>
-										Name / ID
-									</th>
-									<th
-										style={{
-											padding: 6,
-											textAlign: "right",
-											fontSize: 11,
-											color: "#a0a0a0",
-										}}
-									>
-										Category
-									</th>
-									<th
-										style={{
-											padding: 6,
-											textAlign: "right",
-											fontSize: 11,
-											color: "#a0a0a0",
-										}}
-									>
-										Actions
-									</th>
-								</tr>
-							</thead>
-							<tbody>
-								{tiles.slice(0, 6).map((i) => (
-									<tr key={i}>
-										<td
-											style={{ padding: 6, borderBottom: "1px solid #3a3a3a" }}
-										>
-											<div
-												style={{
-													width: 48,
-													height: 48,
-													background: "#2c2c2c",
-													borderRadius: 4,
-												}}
-											/>
-										</td>
-										<td
-											style={{ padding: 6, borderBottom: "1px solid #3a3a3a" }}
-										>
-											Preset {i}
-										</td>
-										<td
-											style={{
-												padding: 6,
-												borderBottom: "1px solid #3a3a3a",
-												textAlign: "right",
-											}}
-										>
-											Color
-										</td>
-										<td
-											style={{
-												padding: 6,
-												borderBottom: "1px solid #3a3a3a",
-												textAlign: "right",
-											}}
-										>
-											↓
-										</td>
-									</tr>
-								))}
-							</tbody>
-						</table>
-					) : (
-						<div
-							style={{
-								display: "grid",
-								gap: 8,
-								gridTemplateColumns: `repeat(auto-fill, minmax(${140 * args.scale}px, 1fr))`,
-							}}
-							data-preset-gallery={args.viewMode}
-						>
-							{tiles.map((i) => (
-								<div
-									key={i}
-									style={{
-										aspectRatio: "1 / 1",
-										background: "#252525",
-										border: "1px solid #3a3a3a",
-										borderRadius: 4,
-										display: "flex",
-										flexDirection: "column",
-										padding: 8,
-									}}
-								>
-									<div
-										style={{ flex: 1, background: "#2c2c2c", borderRadius: 4 }}
-									/>
-									<div style={{ marginTop: 4, fontSize: 11, fontWeight: 500 }}>
-										Preset {i}
-									</div>
-								</div>
-							))}
-						</div>
-					)}
-				</div>
-				<div
-					style={{
-						display: "flex",
-						justifyContent: "space-between",
-						padding: "6px 12px",
-						borderTop: "1px solid #3a3a3a",
-						fontSize: 11,
-						color: "#a0a0a0",
-					}}
-				>
-					<span>
-						{args.filteredCount} / {args.catalogCount} items
-					</span>
-					{args.viewMode === "gallery" && (
-						<span>Ctrl+Wheel: {Math.round(args.scale * 100)}%</span>
-					)}
-				</div>
+const catalogDecorator =
+	(items: readonly PresetSearchItem[]): Decorator =>
+	(Story) => (
+		<OnlineServicesBoundary
+			cloudGateway={createStorybookCloudGateway({ catalogItems: items })}
+		>
+			<div
+				style={{
+					display: "flex",
+					height: 480,
+					width: 720,
+					flexDirection: "column",
+				}}
+			>
+				<Story />
 			</div>
-		</div>
+		</OnlineServicesBoundary>
 	);
-};
 
 const meta = {
 	title: "Catalog/Dialog",
-	args: baseArgs,
-	argTypes: {
-		viewMode: {
-			control: { type: "inline-radio" },
-			options: ["gallery", "list", "cards"],
-		},
-		showSidePanel: { control: "boolean" },
-		query: { control: "text" },
-		scale: { control: { type: "range", min: 0.5, max: 2, step: 0.1 } },
-		catalogCount: { control: { type: "number", min: 0, max: 50 } },
-		filteredCount: { control: { type: "number", min: 0, max: 50 } },
-	},
-	render: DialogStub,
-} satisfies Meta<Args>;
+	component: PresetLibrary,
+	decorators: [catalogDecorator(SAMPLE_CATALOG)],
+} satisfies Meta;
 
 export default meta;
-type Story = StoryObj<Args>;
+type Story = StoryObj;
 
-export const Default: Story = {};
+const waitForCards = async (canvasElement: HTMLElement): Promise<void> => {
+	await waitFor(() => {
+		expect(
+			canvasElement.querySelectorAll("[data-ws-preset-card]").length,
+		).toBeGreaterThan(0);
+	});
+};
+
+export const Default: Story = {
+	play: async ({ canvasElement }) => {
+		await waitForCards(canvasElement);
+		expect(canvasElement.querySelector("[data-preset-gallery]")).not.toBeNull();
+	},
+};
 
 export const ListView: Story = {
-	args: { viewMode: "list" },
+	play: async ({ canvasElement }) => {
+		await waitForCards(canvasElement);
+		const { userEvent } = await import("vitest/browser");
+		const toggle = canvasElement.querySelector<HTMLButtonElement>(
+			'button[aria-label="List view"]',
+		);
+		if (!toggle) throw new Error("list view toggle not found");
+		await userEvent.click(toggle);
+		await waitFor(() => {
+			expect(canvasElement.querySelector("table")).not.toBeNull();
+		});
+	},
 };
 
 export const CardsView: Story = {
-	args: { viewMode: "cards" },
 	play: async ({ canvasElement }) => {
-		const cards = canvasElement.querySelector("[data-preset-cards]");
-		expect(cards).not.toBeNull();
-		expect(canvasElement.querySelector("[data-preset-gallery]")).toBeNull();
-		const firstCard = canvasElement.querySelector("[data-preset-card]");
-		expect(firstCard).not.toBeNull();
-		const thumb = firstCard?.querySelector("[data-card-thumb]");
-		const title = Array.from(firstCard?.querySelectorAll("div") ?? []).find(
-			(el) => /^Preset \d+$/.test(el.textContent ?? ""),
+		await waitForCards(canvasElement);
+		const { userEvent } = await import("vitest/browser");
+		const toggle = canvasElement.querySelector<HTMLButtonElement>(
+			'button[aria-label="Cards view"]',
 		);
-		expect(thumb).not.toBeNull();
-		expect(title).toBeTruthy();
-		const thumbRect = thumb?.getBoundingClientRect();
-		const titleRect = title?.getBoundingClientRect();
-		expect(thumbRect && titleRect).toBeTruthy();
-		if (!thumbRect || !titleRect) return;
-		expect(thumbRect.right).toBeLessThanOrEqual(titleRect.left + 1);
+		if (!toggle) throw new Error("cards view toggle not found");
+		await userEvent.click(toggle);
+		await waitFor(() => {
+			expect(canvasElement.querySelector("[data-preset-cards]")).not.toBeNull();
+		});
+		const firstCard = canvasElement.querySelector("[data-ws-preset-card]");
+		expect(firstCard).not.toBeNull();
 	},
 };
 
 export const SidePanelHidden: Story = {
-	args: { showSidePanel: false },
 	play: async ({ canvasElement }) => {
+		await waitForCards(canvasElement);
+		const { userEvent } = await import("vitest/browser");
+		const hideButton = canvasElement.querySelector<HTMLButtonElement>(
+			'button[title="Hide filters"]',
+		);
+		if (!hideButton) throw new Error("hide filters button not found");
+		await userEvent.click(hideButton);
 		await waitFor(() => {
 			expect(
-				canvasElement.querySelector('[aria-label="Show filters"]'),
+				canvasElement.querySelector('button[title="Show filters"]'),
 			).not.toBeNull();
 		});
 	},
 };
 
 export const WithQuery: Story = {
-	args: { query: "glow" },
-};
-
-export const NoCatalog: Story = {
-	args: { catalogCount: 0, filteredCount: 0 },
 	play: async ({ canvasElement }) => {
+		await waitForCards(canvasElement);
+		const { userEvent } = await import("vitest/browser");
+		const input = canvasElement.querySelector<HTMLInputElement>(
+			`input[placeholder="${SEARCH_PLACEHOLDER}"]`,
+		);
+		if (!input) throw new Error("catalog search input not found");
+		await userEvent.click(input);
+		await userEvent.keyboard("glow");
 		await waitFor(() => {
-			expect(
-				canvasElement.querySelector('[aria-label="Refresh catalog"]'),
-			).not.toBeNull();
+			const cards = canvasElement.querySelectorAll("[data-ws-preset-card]");
+			expect(cards.length).toBe(2);
+			expect(canvasElement.textContent).toContain("2 / 12 items");
 		});
 	},
 };
 
-export const NoMatches: Story = {
-	args: { catalogCount: 20, filteredCount: 0 },
+export const NoCatalog: Story = {
+	decorators: [catalogDecorator([])],
 	play: async ({ canvasElement }) => {
 		await waitFor(() => {
 			expect(
-				canvasElement.querySelector('[aria-label="Clear all filters"]'),
+				canvasElement.querySelector("[data-online-preset-empty]"),
 			).not.toBeNull();
+		});
+		expect(canvasElement.textContent).toContain("No online catalog.");
+	},
+};
+
+export const NoMatches: Story = {
+	play: async ({ canvasElement }) => {
+		await waitForCards(canvasElement);
+		const { userEvent } = await import("vitest/browser");
+		const input = canvasElement.querySelector<HTMLInputElement>(
+			`input[placeholder="${SEARCH_PLACEHOLDER}"]`,
+		);
+		if (!input) throw new Error("catalog search input not found");
+		await userEvent.click(input);
+		await userEvent.keyboard("zzz-no-match");
+		await waitFor(() => {
+			expect(canvasElement.textContent).toContain("No presets match filter.");
 		});
 	},
 };
 
 export const GalleryZoomedIn: Story = {
-	args: { scale: 1.5 },
+	play: async ({ canvasElement }) => {
+		await waitForCards(canvasElement);
+		const gallery = canvasElement.querySelector<HTMLElement>(
+			"[data-preset-gallery]",
+		);
+		if (!gallery) throw new Error("gallery grid not found");
+		gallery.dispatchEvent(
+			new WheelEvent("wheel", { ctrlKey: true, deltaY: -100, bubbles: true }),
+		);
+		await waitFor(() => {
+			expect(canvasElement.textContent).toContain("Ctrl+Wheel: 110%");
+		});
+	},
 };
 
 export const GalleryZoomedOut: Story = {
-	args: { scale: 0.5 },
+	play: async ({ canvasElement }) => {
+		await waitForCards(canvasElement);
+		const gallery = canvasElement.querySelector<HTMLElement>(
+			"[data-preset-gallery]",
+		);
+		if (!gallery) throw new Error("gallery grid not found");
+		gallery.dispatchEvent(
+			new WheelEvent("wheel", { ctrlKey: true, deltaY: 100, bubbles: true }),
+		);
+		await waitFor(() => {
+			expect(canvasElement.textContent).toContain("Ctrl+Wheel: 90%");
+		});
+	},
 };

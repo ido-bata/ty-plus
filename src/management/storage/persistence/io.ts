@@ -51,6 +51,15 @@ export const initPersistenceGateway = (gateway: PersistenceGateway): void => {
 	persistenceGateway = gateway;
 };
 
+/**
+ * Test/storybook-only reset hook. Clears the cached gateway so each suite
+ * (or story decorator) starts from the local-fs fallback path. Mirrors
+ * `__resetDataServicesForTests` in `management/workspace/core/services`.
+ */
+export const __resetPersistenceGatewayForTests = (): void => {
+	persistenceGateway = null;
+};
+
 export const writeJson = async <K extends PersistenceKey>(
 	win: Window,
 	key: K,

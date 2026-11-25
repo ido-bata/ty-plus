@@ -64,7 +64,18 @@ import { getImportEntries } from "../../tools/check/lib/extract";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(HERE, "..", "..");
-const SRC_DIR = join(ROOT, "src");
+/**
+ * Directories scanned for the import graph. `src/` is the CEP panel;
+ * `packages/ui/src` is the shared UI package (consumed through the
+ * `@ty-plus/ui` barrel); `apps/web/src` is the official web product.
+ * Story-only dead code in any of them is the same defect: a component
+ * Storybook can reach but no production bundle can.
+ */
+const SCAN_DIRS = [
+	join(ROOT, "src"),
+	join(ROOT, "packages", "ui", "src"),
+	join(ROOT, "apps", "web", "src"),
+];
 const ALLOWLIST_PATH = join(
 	ROOT,
 	"scripts",
@@ -81,7 +92,7 @@ export type StoryOnlyFinding = {
 
 type FileKind = "source" | "story" | "test";
 
-type SourceFile = {
+export type SourceFile = {
 	path: string;
 	kind: FileKind;
 	/** Resolved repo-relative paths this file imports. */
@@ -132,21 +143,62 @@ export function collectSourceFiles(dir: string): SourceFile[] {
 
 const EXTENSIONS = [".tsx", ".ts", ".jsx", ".js"];
 
-function resolveSpecifier(
+/**
+ * Path-alias table mirroring `tsconfig.base.json` / `apps/web/tsconfig.json`
+ * for specifiers that resolve into the scanned directories. Anything not
+ * listed (bare package imports, `@/styled-system/*`, legacy `@ui`/`@infra`
+ * aliases) stays an external leaf — same as before this checker learned
+ * about `packages/ui` and `apps/web`.
+ */
+const EXACT_ALIASES: Record<string, string> = {
+	"@ty-plus/ui": "packages/ui/src/index.ts",
+	"@ty-plus/shared": "src/shared/index.ts",
+	"@ty-plus/workspace": "src/management/workspace/index.ts",
+	"@ty-plus/management/workspaces": "src/management/workspace/index.ts",
+	"@ty-plus/management/preset/registry": "src/management/preset/registry.ts",
+	"@ty-plus/management/ae/cep/runtime": "src/management/ae/cep/runtime.ts",
+	"@ty-plus/management/ae/cep/host-executor":
+		"src/management/ae/cep/host-executor.ts",
+	"@ty-plus/management/ae/cep/transport/transport":
+		"src/management/ae/cep/transport/transport.ts",
+	"@ty-plus/management/ae/cep/shared-storage":
+		"src/management/ae/cep/shared-storage.ts",
+	"@ty-plus/cep-shell": "src/management/ae/cep/entry/panel.tsx",
+	"@ty-plus/management/online/licensing":
+		"src/management/online/licensing/index.ts",
+	"@ty-plus/licensing": "src/management/online/licensing/index.ts",
+};
+
+const PREFIX_ALIASES: [string, string][] = [
+	["@ty-plus/ui/", "packages/ui/src/"],
+	["@ty-plus/product/", "src/"],
+];
+
+export function resolveSpecifier(
 	fromFile: string,
 	specifier: string,
 	known: Set<string>,
 	root = ROOT,
 ): string | null {
-	let base: string;
-	if (specifier.startsWith("@/")) {
-		base = join(root, "src", specifier.slice(2));
-	} else if (specifier.startsWith(".")) {
-		base = resolve(dirname(fromFile), specifier);
+	let base: string | null = null;
+	const exact = EXACT_ALIASES[specifier];
+	if (exact) {
+		base = join(root, exact);
 	} else {
-		// Package imports (including "@ty-plus/ui") are external leaves.
-		return null;
+		const prefix = PREFIX_ALIASES.find(([p]) => specifier.startsWith(p));
+		if (prefix) {
+			base = join(root, prefix[1], specifier.slice(prefix[0].length));
+		} else if (specifier.startsWith("@/")) {
+			base = join(root, "src", specifier.slice(2));
+		} else if (specifier.startsWith(".")) {
+			base = resolve(dirname(fromFile), specifier);
+		} else {
+			// Package imports (including unmapped "@ty-plus/*" specifiers)
+			// are external leaves.
+			return null;
+		}
 	}
+	if (base === null) return null;
 	const candidates = [
 		base,
 		...EXTENSIONS.map((ext) => `${base}${ext}`),
@@ -270,6 +322,14 @@ export function resolveImports(files: SourceFile[], root = ROOT): SourceFile[] {
 		const src = readFileSync(file.path, "utf8");
 		const resolved: string[] = [];
 		for (const entry of getImportEntries(file.path, src)) {
+			// Type-only edges (`import type … from`, `export type … from`)
+			// are erased at build time, so they cannot make a module
+			// production-reachable. Counting them also lets generated
+			// files (e.g. apps/web's routeTree.gen.ts, which type-imports
+			// ./router.tsx while router.tsx value-imports the tree) form
+			// import cycles with no entry root. `import { type X }` mixed
+			// specifiers still start with `import {` and keep their edge.
+			if (/^\s*(?:import|export)\s+type\b/.test(entry.rawLine)) continue;
 			const target = resolveSpecifier(file.path, entry.specifier, known, root);
 			if (target) resolved.push(target);
 		}
@@ -342,13 +402,16 @@ function defaultReason(file: string): string {
 }
 
 export function collectStoryOnlyFiles(root = ROOT): StoryOnlyFinding[] {
-	const files = resolveImports(collectSourceFiles(join(root, "src")), root);
+	const files = SCAN_DIRS.filter((dir) => existsSync(dir)).flatMap((dir) =>
+		collectSourceFiles(dir),
+	);
+	resolveImports(files, root);
 	return findStoryOnlyFiles(files, root);
 }
 
 function main(): void {
-	if (!existsSync(SRC_DIR)) {
-		console.error("story-only-code: src/ not found");
+	if (!SCAN_DIRS.some((dir) => existsSync(dir))) {
+		console.error("story-only-code: no scan directories found");
 		process.exit(1);
 	}
 	const findings = collectStoryOnlyFiles();
