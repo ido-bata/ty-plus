@@ -51,7 +51,6 @@
 		"scripts/demo/markdown-editor/vite.config.ts",
 		"scripts/lib/cep-bundle.ts",
 		".storybook/**",
-		"**/*.stories.tsx",
 		"storybook-static/**",
 		"archive/**",
 		"docs/no-use/**",
@@ -62,8 +61,7 @@
 	],
 	"ignoreIssues": {
 		"archive/**": ["files", "unlisted", "unresolved", "exports", "types"],
-		"docs/no-use/**": ["files", "unlisted", "unresolved", "exports", "types"],
-		"src/storybook/quality/layout.ts": ["exports", "types"]
+		"docs/no-use/**": ["files", "unlisted", "unresolved", "exports", "types"]
 	},
 	"ignoreDependencies": [
 		"cf",
