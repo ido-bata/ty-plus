@@ -53,6 +53,17 @@ export const Default: Story = {
 	// Issue #194: initial-state layout contract.
 	play: async ({ canvasElement }) => {
 		expectCanvasLayout(canvasElement);
+		// Issue #581 regression guard: the mode strip must offer exactly
+		// curve / bounce / elastic. "loop" was split into its own widget —
+		// a reintroduced entry (or a renamed/dropped mode) fails here.
+		const toolbar =
+			canvasElement.querySelector<HTMLElement>("[role='toolbar']");
+		if (!toolbar) throw new Error("easing mode toolbar not found");
+		const labels = Array.from(toolbar.querySelectorAll("button")).map(
+			(button) => button.textContent?.trim() ?? "",
+		);
+		expect(labels).toEqual(["Curve", "Bounce", "Elastic"]);
+		expect(toolbar.textContent ?? "").not.toMatch(/loop/i);
 	},
 };
 

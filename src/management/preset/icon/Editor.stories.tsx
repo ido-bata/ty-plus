@@ -1,8 +1,13 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { expect } from "storybook/test";
 import type { Preset } from "@/management/preset/contract";
 import { presetIconText } from "@/management/preset/contract";
 import { createPresetIconDraft } from "@/management/preset/icon/editor-state";
-import { expectCanvasLayout } from "@/storybook/quality/layout";
+import {
+	assertRendered,
+	expectCanvasLayout,
+	measureBox,
+} from "@/storybook/quality/layout";
 import { css } from "@/styled-system/css";
 import { IconEditor } from "./Editor";
 
@@ -47,6 +52,28 @@ const previewLabelClass = css({
 	color: "text.primary",
 	fontSize: "sm",
 });
+
+/**
+ * Issue #587 regression guard: the preview tile is a fixed 6rem square. It
+ * must not stretch with the fields column height or shrink/grow with the
+ * container width — `NarrowContainer` and `WideContainer` pin both axes.
+ */
+const expectFixedPreviewTile = (canvasElement: HTMLElement): void => {
+	const tile = canvasElement.querySelector<HTMLElement>(
+		'[aria-label="Icon preview"]',
+	);
+	if (!tile) throw new Error("icon preview tile not found");
+	assertRendered(tile, { label: "icon preview tile" });
+	const box = measureBox(tile);
+	const rootFontSize = Number.parseFloat(
+		getComputedStyle(document.documentElement).fontSize,
+	);
+	const rem =
+		Number.isFinite(rootFontSize) && rootFontSize > 0 ? rootFontSize : 16;
+	expect(Math.abs(box.width - box.height)).toBeLessThanOrEqual(1);
+	expect(Math.abs(box.width - 6 * rem)).toBeLessThanOrEqual(1);
+	expect(Math.abs(box.height - 6 * rem)).toBeLessThanOrEqual(1);
+};
 
 const meta = {
 	title: "Preset/Icon/Editor",
@@ -116,11 +143,19 @@ export const Image: Story = {
  */
 export const NarrowContainer: Story = {
 	args: { containerWidthRem: 16 },
+	play: async ({ canvasElement }) => {
+		expectCanvasLayout(canvasElement);
+		expectFixedPreviewTile(canvasElement);
+	},
 };
 
 /** Wide container: the preview tile must stay the same size as NarrowContainer. */
 export const WideContainer: Story = {
 	args: { containerWidthRem: 44 },
+	play: async ({ canvasElement }) => {
+		expectCanvasLayout(canvasElement);
+		expectFixedPreviewTile(canvasElement);
+	},
 };
 
 export const Unframed: Story = {
