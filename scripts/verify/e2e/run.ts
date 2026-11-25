@@ -179,10 +179,19 @@ const detectManagedRootForLiveAe = async (
 
 const main = async (): Promise<void> => {
 	const suiteName = option("suite") ?? "smoke";
-	const cases = SUITES[suiteName];
-	if (!cases) {
+	const allCases = SUITES[suiteName];
+	if (!allCases) {
 		throw new Error(
 			`unknown suite "${suiteName}" (available: ${Object.keys(SUITES).join(", ")})`,
+		);
+	}
+	const caseFilter = option("case");
+	const cases = caseFilter
+		? allCases.filter((c) => c.uc === caseFilter)
+		: allCases;
+	if (cases.length === 0) {
+		throw new Error(
+			`no case "${caseFilter}" in suite "${suiteName}" (available: ${allCases.map((c) => c.uc).join(", ")})`,
 		);
 	}
 	const extensionDir = option("extension-dir");

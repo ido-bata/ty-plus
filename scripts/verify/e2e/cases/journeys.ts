@@ -447,13 +447,31 @@ export const journeySuiteCases: E2ECase[] = [
 						`Boolean(document.querySelector('[data-preset-id="${presetId}"]'))`,
 						20_000,
 					);
-					const delClicked = await clickCatalogRowAction(
+					// The delete click synchronously enters the host
+					// ExtendScript confirm(), which freezes the surface's JS
+					// thread — awaiting the click eval before dismissing the
+					// dialog would deadlock until the CDP timeout. Fire the
+					// click without awaiting, dismiss the native modal, then
+					// collect the click result.
+					let delClicked: unknown = "pending";
+					const clickPromise = clickCatalogRowAction(
 						ctx,
 						catalog2,
 						presetId,
 						["presets:listDialog.deletePresetAria", "common:actions.delete"],
 						2,
-					);
+					)
+						.then((value) => {
+							delClicked = value;
+						})
+						.catch((error: unknown) => {
+							delClicked = `eval-error:${String(error)}`;
+						});
+					// Answer the native confirm with the negative response so
+					// the preset is retained (the gate stays non-destructive)
+					// and the surface's JS thread unfreezes.
+					const dismissal = await dismissHostConfirmDialog(ctx);
+					await clickPromise;
 					checks.push(
 						check(
 							"catalog Delete clicked",
@@ -461,12 +479,6 @@ export const journeySuiteCases: E2ECase[] = [
 							String(delClicked),
 						),
 					);
-					await sleep(3_000);
-					// The host confirm() modal blocks every CDP evaluate on the
-					// panel until it is answered. Dismiss it with the negative
-					// answer so the preset is retained (the gate stays
-					// non-destructive) and the rest of the case can proceed.
-					const dismissal = await dismissHostConfirmDialog(ctx);
 					checks.push(
 						check(
 							"host confirm dialog dismissed (cancel)",
