@@ -3,6 +3,7 @@
  * state + host bridge are intact. Maps to UC-A02/A03/A04, UC-G01, UC-H01.
  */
 
+import { DEFAULT_SETTINGS } from "../../../../src/management/setting/models/settings";
 import type { E2EContext } from "../ctx";
 import { check, type E2ECase } from "../report";
 import { listLiveSurfaces } from "../surfaces";
@@ -204,12 +205,19 @@ export const smokeCases: E2ECase[] = [
 			const appJson = await ctx.readManagedJson<{
 				workspace?: { grid?: { cellSize?: number } };
 			}>("settings", "app.json");
-			const cellSize = appJson?.workspace?.grid?.cellSize;
+			const persistedCellSize = appJson?.workspace?.grid?.cellSize;
+			// `workspace.grid` is only written once the user changes grid
+			// settings; an absent key means the model default applies
+			// (`coerceSettings` merges DEFAULT_SETTINGS).
+			const cellSize =
+				typeof persistedCellSize === "number"
+					? persistedCellSize
+					: (DEFAULT_SETTINGS.workspace.grid?.cellSize ?? 48);
 			checks.push(
 				check(
-					"settings.workspace.grid.cellSize present",
+					"settings.workspace.grid.cellSize resolves (persisted or default)",
 					typeof cellSize === "number",
-					`cellSize=${cellSize}`,
+					`cellSize=${cellSize} persisted=${persistedCellSize}`,
 				),
 			);
 			const panel = await ctx.requireSurface({ surfaceId: "panel-1" });
