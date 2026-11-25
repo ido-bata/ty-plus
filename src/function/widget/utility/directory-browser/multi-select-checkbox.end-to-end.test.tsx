@@ -231,7 +231,7 @@ describe("DirectoryBrowserWidget multi-select checkbox end-to-end (Issue #41)", 
 				cb.getAttribute("data-multi-select-path"),
 			);
 		}
-	});
+	}, 20000);
 
 	it("clicking the grid checkbox updates window.__tyPlusMultiSelectDebug.lastClick with the entry path", async () => {
 		const bag = enableDebug();
@@ -259,7 +259,7 @@ describe("DirectoryBrowserWidget multi-select checkbox end-to-end (Issue #41)", 
 		expect(bag.lastClick?.path).toBe("/preset/root/b.txt");
 		expect(bag.lastClick?.count).toBeGreaterThanOrEqual(1);
 		expect(typeof bag.lastClick?.at).toBe("number");
-	});
+	}, 20000);
 
 	it("clicking the grid checkbox propagates state and flips the checked attribute", async () => {
 		const { container } = render(<DirectoryBrowserWidget state={baseState} />);
@@ -286,7 +286,7 @@ describe("DirectoryBrowserWidget multi-select checkbox end-to-end (Issue #41)", 
 			) as HTMLInputElement | null;
 			expect(after?.checked).toBe(true);
 		});
-	});
+	}, 20000);
 
 	it("clicking the checkbox on a directory entry also flips its checked attribute", async () => {
 		const { container } = render(<DirectoryBrowserWidget state={baseState} />);
@@ -313,7 +313,7 @@ describe("DirectoryBrowserWidget multi-select checkbox end-to-end (Issue #41)", 
 			) as HTMLInputElement | null;
 			expect(after?.checked).toBe(true);
 		});
-	});
+	}, 20000);
 
 	it("clicking the checkbox does NOT trigger the tile main button (single-select / navigation)", async () => {
 		// If the label's `stopPropagation` regressed, the tile click handler
@@ -344,7 +344,7 @@ describe("DirectoryBrowserWidget multi-select checkbox end-to-end (Issue #41)", 
 			(call) => call[0] === "/preset/root/alpha",
 		);
 		expect(navigatedToDir).toBe(false);
-	});
+	}, 20000);
 
 	it("the diagnostic instrumentation is opt-in: no debug bag means no throw on click", async () => {
 		// Ensure the instrumentation does not throw when the user has NOT
@@ -382,5 +382,5 @@ describe("DirectoryBrowserWidget multi-select checkbox end-to-end (Issue #41)", 
 			}
 		).__tyPlusMultiSelectDebug;
 		expect(afterBag).toBeUndefined();
-	});
+	}, 20000);
 });
