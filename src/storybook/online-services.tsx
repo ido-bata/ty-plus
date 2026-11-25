@@ -139,7 +139,7 @@ export const createStorybookCloudGateway = (options: {
 		provider: "supabase",
 		...(isFixture ? { isFixture: true as const } : {}),
 		async resolvePreset(presetId) {
-			throw new Error(`Storybook gateway cannot resolve preset: ${presetId}`);
+			throw new Error(`storybook-gateway:unresolved-preset:${presetId}`);
 		},
 		...(catalogItems
 			? {
