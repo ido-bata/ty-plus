@@ -143,10 +143,9 @@
   - `container({size})`: narrow 48rem / content 72rem / wide 90rem。ページの外幅とガター（1.25/2/2.5rem）の単一正本。Header/Footer も同じ container に揃え、ページ端の整列軸を統一した。
   - `section({variant})`: flow（hero/showcase, py 4→7rem）/ band（標準, 3→5rem）/ prose（参照系, 2.5→3.5rem）/ flush。セクション単位の垂直リズムを recipe が所有し、ページ側で paddingBlock を書かない。
   - `grid({cols,gap})`: 12カラム座標系（mobile は1カラム）。`cols` で対称グリッド（2/3/4）へ切替。
-  - `span3..span9`: 12カラム上の span。mobile では全幅へ退避。**Panda の静的抽出はリテラルオブジェクトしか読めないため、関数で値を返す span ヘルパーは禁止**（`css(span(n))` は class 名だけ生成され CSS が出ない欠陥を実測で確認し、リテラル recipe へ変更した）。
+  - `span4` / `span5` / `span8`: 12カラム上の span（現行 export はこの3種のみ）。mobile では全幅へ退避。**Panda の静的抽出はリテラルオブジェクトしか読めないため、関数で値を返す span ヘルパーは禁止**（`css(span(n))` は class 名だけ生成され CSS が出ない欠陥を実測で確認し、リテラル recipe へ変更した）。
   - `stack` / `cluster`: 縦リズムと折返し行。
-  - `breakout`: 意図的なフル幅表現のルール（現状未使用。安易な使用は禁止）。
-  - `site.ts` はタイポグラフィとコンテンツ primitive（h1-h3/lead/body/link/figure/defList/releaseList 等）に縮小し、`page`/`section`/`pageHead`/`grid`/`cardBody`/`btnRow`/`ctaBand` のページ毎レイアウト recipe は削除した。
+    - `site.ts` はタイポグラフィとコンテンツ primitive（h1-h3/lead/body/link/figure/defList/releaseList 等）に縮小し、`page`/`section`/`pageHead`/`grid`/`cardBody`/`btnRow`/`ctaBand` のページ毎レイアウト recipe は削除した。
 
 - **トップページ再構築**: 縦積みHero＋大判画像＋均等カードの反復を廃止し、セクション毎に異なる構図を共通座標系上に配置した。
   - Hero: 5:7 非対称グリッド（コピー列 + `hero.png` 実機キャプチャ 780×467px@desktop）。
