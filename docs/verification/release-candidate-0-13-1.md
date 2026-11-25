@@ -118,6 +118,13 @@ Issue #591（PR #430 merge による UI/UX ロールバック）の収束作業�
 - #609 dead UI: `WorkspaceShell`・`entry/dialog-bootstrap`・`entry/dialogs`・dead route を削除（残件 `dialog-probe` chain は継続対応中）
 - #610: `MediaFrame`/`TileFrame`/`GridTile`/`CatalogBrowserShell`/`WorkspaceCatalogTileBody`/`PresetGlyphById`/`MarkdownLiveEditor` の story 追加（未カバー大物 dialogs は継続対応中）
 
+### 収束作業 追記（2026-11-25 第3ラウンド、head `fcb1fbbf`）
+
+- **#609 close**: `dialog-probe` サーフェスを到達経路ごと削除（PR #638、44ファイル: `ProbeDialogBody`・`openDialogProbe`・`dialog/probe/session.ts`・`dialog/bridge.ts`・context menu `probeOpenDebug`・i18n 10言語）。あわせて PR #636 で `WorkspaceShell` 系を削除済み
+- **#610 close**: story 未カバー領域を全て解消。PR #639（workspace `Grid`・widget `TileContent`・`SettingsSidebar` の9 story）+ PR #640（`PresetsDialog`/`ListDialog` の検索・group 展開・icon drilldown 4 story）。統合シェル（`panel/Main`・`dialog/Root`・`modeless/Root`）は CEP host executor 直結で fixture 化不能のため対象外として各 PR に根拠を記録
+- **#639 CI 修正**: `TileContent.stories.tsx` が `@/function/widget` を直接 import し import-boundary 違反 → management 側 contract（`@/management/widget/contract`）経由に修正して merge
+- **AE2027 環境の追加判明事項**: user CEP extensions に `app.ty-plus.p1225-hidden`（`dist/cep-dev` への symlink、manifest/.debug は `app.ty-plus.dev.*` と同一 ID・port を主張）が残存し、AE2027 再起動後は dev パネルの menu/port を p1225-hidden 側が占有する状態になっていた（コードは同一のため機能差なしだが、E2E の surface 同一性の観点では環境衛生上の残件）。また外部自動化 `Aulymo_v04`（`operation-effects-ui` spec）が AE2027 を占有して E2E と競合 — 停止・完了待ちが必要
+
 ### 両 OS 配布物
 
 - **Windows**: `ty-plus-v0.13.1-windows.{zip,zxp}` + manifest を `e2d909f8` で構築・検証済み（unsigned worker = R0 正当形、ZXP 署名検証済み）。最終 freeze 後に head 不変ならそのまま有効、変更があれば再構築
