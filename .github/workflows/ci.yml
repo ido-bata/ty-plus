@@ -12,15 +12,23 @@ name: CI
 #   actions/download-artifact tag v4 -> d3f86a106a0bac45b974a628896c90dbdf5c8093
 
 on:
-  # Gate tiers (Issue #167, quality-gate §8.3):
+  # Gate tiers (Issue #167, quality-gate §8.3; Issue #597):
   #
-  # - pull_request: fast ticket gate only — skills / static / unit / coverage.
-  #   The `full-ci` label opts a PR into the storybook partitions and
-  #   `native-build` opts into the operation-worker partitions.
-  # - push to release-*: same fast gate (validates the merge commit cheaply).
+  # - pull_request: fast ticket gate (skills / static / unit / coverage)
+  #   plus the storybook matrix when the diff touches UI paths or the PR
+  #   carries the `full-ci` label. The `native-build` label still opts into
+  #   the operation-worker partitions.
+  # - push to release-*: fast gate AND the storybook matrix — release-*
+  #   pushes are integration merges, the exact gap that let PR #430's UI
+  #   rollback ship undetected.
   # - push to main / workflow_dispatch: every partition, including the
   #   storybook matrix, capture report, and both native worker jobs. This is
   #   also the RC freeze gate: dispatch this workflow on the frozen SHA.
+  #
+  # The `changes` job is a plain-git path filter (no external action): it
+  # diffs the PR head against the merge base and reports whether UI-relevant
+  # paths changed. It only has an output on pull_request; pushes decide by
+  # ref name instead.
   #
   # The release gate is `bun run ci` partitioned across the jobs below. Every
   # job calls one of the `ci:*` scripts in package.json; individual lint /
@@ -153,6 +161,57 @@ jobs:
       - name: Coverage
         run: bun run ci:coverage
 
+  # Path filter for the storybook tier (Issue #597). On pull_request the
+  # checked-out commit is the refs/pull/N/merge test merge, so HEAD^2 is the
+  # PR head; diffing merge-base..HEAD^2 lists exactly the files the PR
+  # changed — base-side drift since the branch point cannot false-trigger.
+  # UI paths mirror isUiPath() in scripts/check/merge-stale-resolution.ts.
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      ui: ${{ steps.filter.outputs.ui }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 0
+
+      - id: filter
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          # Fail-safe: `ui` starts true and is only cleared after a
+          # successful diff proves no UI path changed. Any git/merge-base
+          # failure therefore runs the storybook matrix rather than
+          # silently skipping it.
+          ui=true
+          diffed=false
+          if [ "${{ github.event_name }}" != "pull_request" ]; then
+            ui=false
+          elif git fetch --no-tags origin "+refs/heads/${BASE_REF}:refs/remotes/origin/${BASE_REF}" 2>/dev/null; then
+            head=HEAD
+            if git rev-parse --verify --quiet 'HEAD^2' >/dev/null; then
+              head=HEAD^2
+            fi
+            # merge-base must be computed against the PR head, not the merge
+            # commit: the base tip is itself a parent of the merge commit, so
+            # merge-base(base, HEAD) would collapse to the base tip and the
+            # diff would include base-side drift as if the PR made it.
+            base=$(git merge-base "refs/remotes/origin/${BASE_REF}" "$head" 2>/dev/null || true)
+            if [ -n "$base" ]; then
+              git diff --name-only "$base" "$head" > /tmp/changed.txt 2>/dev/null && diffed=true
+            else
+              # No common ancestor found (e.g. shallow or unrelated history):
+              # fall back to the two-dot diff, which can over-report but never
+              # under-report UI changes.
+              git diff --name-only "refs/remotes/origin/${BASE_REF}" "$head" > /tmp/changed.txt 2>/dev/null && diffed=true
+            fi
+            if [ "$diffed" = true ] && ! grep -Eq '^(src/.*\.(ts|tsx|css)$|packages/ui/|panda\.config\.ts$|panda\.tokens\.ts$)' /tmp/changed.txt; then
+              ui=false
+            fi
+            cat /tmp/changed.txt 2>/dev/null || true
+          fi
+          echo "ui=${ui}" >> "$GITHUB_OUTPUT"
+
   # The `storybook` project drives headless Chromium, which holds its shared
   # memory as unlinked temp files for the lifetime of each browser process.
   # Left unbounded it emptied an ubuntu runner's filesystem twice mid-run
@@ -163,14 +222,19 @@ jobs:
   # toolchains to make room; a tmpfs was tried and is the wrong tool (it is
   # RAM, so it doubled the charge instead of buying disk).
   storybook:
-    # Full storybook matrix is an expensive gate: it runs on main pushes,
-    # on workflow_dispatch (the RC freeze path), and on PRs that opt in with
-    # the `full-ci` label. Ordinary ticket PRs and release-* pushes get the
-    # fast gate only (Issue #167).
+    # Storybook matrix is an expensive gate. It runs on main pushes,
+    # workflow_dispatch (the RC freeze path), release-* pushes (integration
+    # merges — Issue #597), PRs that opt in with the `full-ci` label, and PRs
+    # whose diff touches UI paths (the `changes` job output). Ordinary
+    # non-UI ticket PRs still get the fast gate only (Issue #167).
+    needs: changes
     if: >-
       github.event_name == 'workflow_dispatch' ||
-      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
-      (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'full-ci'))
+      (github.event_name == 'push' &&
+        (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release-'))) ||
+      (github.event_name == 'pull_request' &&
+        (contains(github.event.pull_request.labels.*.name, 'full-ci') ||
+         needs.changes.outputs.ui == 'true'))
     runs-on: ubuntu-latest
     timeout-minutes: 30
     strategy:
@@ -238,12 +302,15 @@ jobs:
   # themselves passed". Whether capture health should become gating is a
   # separate decision once pixel-diff/reg-suit lands.
   storybook-capture-report:
-    needs: storybook
+    needs: [storybook, changes]
     if: >-
       always() && needs.storybook.result != 'cancelled' &&
       (github.event_name == 'workflow_dispatch' ||
-       (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
-       (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'full-ci')))
+       (github.event_name == 'push' &&
+         (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release-'))) ||
+       (github.event_name == 'pull_request' &&
+         (contains(github.event.pull_request.labels.*.name, 'full-ci') ||
+          needs.changes.outputs.ui == 'true')))
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -424,6 +491,27 @@ jobs:
           path: .tmp/operation-worker-verification/macos-process.json
           if-no-files-found: error
 
+  # Merge-time stale-resolution detector (Issue #597). On pull_request the
+  # checked-out commit is the refs/pull/N/merge test merge, so HEAD is a
+  # real merge commit and the script analyses exactly what merging would
+  # produce. On push it analyses merge commits landed on main / release-*.
+  # Non-merge HEADs are skipped inside the script. Needs full history for
+  # merge-base, hence fetch-depth: 0; no `bun install` — the script uses
+  # only node builtins and the git CLI.
+  merge-stale:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 0
+
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6
+        with:
+          bun-version: 1.3.10
+
+      - name: Detect stale merge resolutions
+        run: bun run check:merge-stale
+
   # The release gate's verdict. It runs no checks of its own — it exists so
   # that "the release gate passed" is one job whose conclusion can be read,
   # rather than an inference from the others. `if: always()` because a skipped
@@ -437,6 +525,7 @@ jobs:
       - unit
       - coverage
       - storybook
+      - merge-stale
       - operation-worker-windows
       - operation-worker-macos
     runs-on: ubuntu-latest
