@@ -29,7 +29,7 @@ const repoRoot = path.resolve(
 );
 
 /** Pack dir: `TY_PLUS_E2E_PRESET_PACK` env, else sibling `ty-plus-e2e-assets/`. */
-export const resolvePresetPackDir = (): string =>
+const resolvePresetPackDir = (): string =>
 	process.env[PACK_ENV]?.trim() ||
 	path.resolve(repoRoot, "..", "ty-plus-e2e-assets");
 
