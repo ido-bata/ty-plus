@@ -79,6 +79,13 @@ export const Compact: Story = {
 	args: { widthPx: 280, heightPx: 320 },
 	play: async ({ canvasElement }) => {
 		expectListRegionOpaque(canvasElement);
+		// Issue #675: at compact sizes the chrome banners must compress
+		// instead of squeezing the result region into a clipped sliver.
+		const list = canvasElement.querySelector<HTMLElement>(
+			"[data-font-viewer-list]",
+		);
+		if (!list) throw new Error("font list region not found");
+		expect(list.getBoundingClientRect().height).toBeGreaterThanOrEqual(40);
 		// Issue #474: the search placeholder must fit inside the input
 		// without clipping mid-word (input placeholders cannot show an
 		// ellipsis, so the text itself has to be short enough).
