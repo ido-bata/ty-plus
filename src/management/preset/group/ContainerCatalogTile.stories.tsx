@@ -33,6 +33,7 @@ const baseArgs: Args = {
 const decoratorBoxClass = css({
 	height: "8rem",
 	width: "8rem",
+	backgroundColor: "surface.panel",
 });
 
 const meta = {
