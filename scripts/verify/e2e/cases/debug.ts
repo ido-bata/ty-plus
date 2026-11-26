@@ -154,6 +154,32 @@ const consoleState = `(() => ({
 	hasMarker: (document.body ? document.body.innerText : "").includes(${JSON.stringify(MARKER)}),
 }))()`;
 
+/**
+ * Poll the CEP shared log store (ExtendScript `$__TYPLUS_STORAGE_V1`) until
+ * the marker entry has actually persisted. `console.log` reaches the store
+ * through an async subscriber chain, and the console's replay snapshot is
+ * taken at open time — opening before the write lands loses the entry
+ * permanently, which surfaced as UC-G02 marker timeouts under load.
+ */
+const markerPersisted = async (ctx: E2EContext): Promise<boolean> => {
+	const panel = await ctx.requireSurface({ surfaceId: "panel-1" });
+	const deadline = Date.now() + 20_000;
+	while (Date.now() < deadline) {
+		const raw = await ctx.evalScript(
+			panel,
+			`(function(){
+				if (typeof $__TYPLUS_STORAGE_V1 === 'undefined' || typeof $__TYPLUS_STORAGE_V1.$$__data === 'undefined') return 'null';
+				var v = $__TYPLUS_STORAGE_V1.$$__data['ty_plus_debug_logs_v1'];
+				return v === undefined ? 'null' : JSON.stringify(v);
+			})()`,
+			15_000,
+		);
+		if (raw.includes(MARKER)) return true;
+		await sleep(500);
+	}
+	return false;
+};
+
 export const debugCases: E2ECase[] = [
 	{
 		uc: "UC-G02",
@@ -161,10 +187,19 @@ export const debugCases: E2ECase[] = [
 		async run(ctx: E2EContext) {
 			const checks: ReturnType<typeof check>[] = [];
 			try {
-				// Guarantee at least one replayable message exists.
+				// Guarantee at least one replayable message exists — and that
+				// it has actually reached the shared store the console replays
+				// from, not just the panel's console pipeline.
 				const panel = await ctx.requireSurface({ surfaceId: "panel-1" });
 				await ctx.evalJs(panel, `console.log(${JSON.stringify(MARKER)})`);
-				await sleep(500);
+				const persisted = await markerPersisted(ctx);
+				checks.push(
+					check(
+						"marker persisted to shared log store",
+						persisted,
+						persisted ? "in ty_plus_debug_logs_v1" : "not found within 20s",
+					),
+				);
 
 				// Start from a closed console so open/close/reopen is exercised.
 				const preExisting = await findConsole(ctx);
