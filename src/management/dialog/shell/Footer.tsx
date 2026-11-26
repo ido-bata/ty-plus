@@ -24,6 +24,11 @@
  * `fullWidth` so the grid stretches them to equal columns.
  *
  * 4+ action buttons are forbidden — split into an overflow menu.
+ *
+ * The footer band owns the canonical horizontal inset
+ * (`--ty-shell-pad-inline`), matching `Header` and `Content`, so footer
+ * actions never sit flush against the dialog edge regardless of the
+ * caller-supplied `footerClassName`.
  */
 
 import { cx } from "@ty-plus/ui";
@@ -38,6 +43,7 @@ const footerShell = css({
 	justifyContent: "space-between",
 	gap: "2",
 	minHeight: "7",
+	paddingInline: "var(--ty-shell-pad-inline)",
 	fontSize: "xs",
 	color: "text.muted",
 	bg: "surface.dialog",
