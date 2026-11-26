@@ -1,4 +1,4 @@
-import type { JSX } from "react";
+import type { CSSProperties, JSX } from "react";
 import { useEffect, useRef } from "react";
 import { logCatalogTileDisplay } from "@/management/catalog-tile-display-log";
 import type { Preset } from "@/management/preset/contract";
@@ -34,6 +34,7 @@ const missingLabelClass = css({
 	textAlign: "center",
 	lineHeight: "none",
 	color: "text.primary",
+	fontSize: "var(--missing-glyph-font-px)",
 });
 
 /**
@@ -55,7 +56,14 @@ function MissingGlyph(): JSX.Element {
 			className={`ws-preset-icon ws-preset-icon--text ${missingIconClass}`}
 			aria-hidden="true"
 		>
-			<span className={missingLabelClass} style={{ fontSize: `${fontPx}px` }}>
+			<span
+				className={missingLabelClass}
+				style={
+					{
+						"--missing-glyph-font-px": `${fontPx}px`,
+					} as CSSProperties
+				}
+			>
 				?
 			</span>
 		</span>

@@ -154,6 +154,7 @@ const wsEmojiInnerClass = css({
 	alignItems: "center",
 	justifyContent: "center",
 	textAlign: "center",
+	fontSize: "var(--ws-glyph-emoji-font-px, 4px)",
 });
 
 const wsPresetCanvasShellClass = css({
@@ -196,6 +197,7 @@ const wsPresetTextLineClass = css({
 	whiteSpace: "nowrap",
 	textAlign: "center",
 	lineHeight: "none",
+	fontSize: "var(--ws-glyph-text-font-px, 8px)",
 });
 
 const textInheritClass = css({ color: "inherit" });
@@ -223,20 +225,18 @@ function EmojiGlyph({ visual }: { visual: EmojiVisual }): JSX.Element {
 			ref={shellRef}
 			data-ws-preset-text-fit="scale"
 			className={`ws-preset-icon ws-preset-icon--emoji ${wsPresetEmojiShellClass}`}
-			style={{
-				...backgroundStyle(visual.backgroundColor),
-				...(metrics
-					? { borderRadius: `${glyphFrameRadiusPx(metrics.boxWidth)}px` }
-					: {}),
-			}}
+			style={
+				{
+					...backgroundStyle(visual.backgroundColor),
+					"--ws-glyph-emoji-font-px": fontPx === null ? "4px" : `${fontPx}px`,
+					...(metrics
+						? { borderRadius: `${glyphFrameRadiusPx(metrics.boxWidth)}px` }
+						: {}),
+				} as CSSProperties
+			}
 			aria-hidden="true"
 		>
-			<span
-				className={wsEmojiInnerClass}
-				style={{ fontSize: fontPx === null ? "4px" : `${fontPx}px` }}
-			>
-				{visual.value}
-			</span>
+			<span className={wsEmojiInnerClass}>{visual.value}</span>
 		</span>
 	);
 }
@@ -336,6 +336,7 @@ function TextGlyph({ visual }: { visual: TextVisual }): JSX.Element {
 	const textStyle = {
 		...backgroundStyle(visual.backgroundColor),
 		...(visual.color ? { color: visual.color } : {}),
+		"--ws-glyph-text-font-px": `${fontPx ?? fit.minFontPx}px`,
 		...(metrics
 			? { borderRadius: `${glyphFrameRadiusPx(metrics.boxWidth)}px` }
 			: {}),
@@ -359,11 +360,6 @@ function TextGlyph({ visual }: { visual: TextVisual }): JSX.Element {
 						wsPresetTextLineClass,
 						visual.color ? textInheritClass : textPrimaryClass,
 					)}
-					style={
-						{
-							fontSize: `${fontPx ?? fit.minFontPx}px`,
-						} as CSSProperties
-					}
 				>
 					{line}
 				</span>

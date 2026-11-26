@@ -1,4 +1,4 @@
-import type { JSX } from "react";
+import type { CSSProperties, JSX } from "react";
 import { useEffect, useRef, useState } from "react";
 import type { PresetIcon } from "@/management/preset/contract";
 import { measureFrame, observeFrameSize } from "@/management/preset/frame-fit";
@@ -27,6 +27,7 @@ const monoTextClass = css({
 	fontFamily: "mono",
 	fontWeight: "semibold",
 	lineHeight: "none",
+	fontSize: "var(--preset-text-icon-px)",
 });
 
 const emojiTextClass = css({
@@ -83,7 +84,11 @@ function PresetTextIcon({
 		<span
 			ref={ref}
 			className={monoTextClass}
-			style={{ fontSize: `${fontPx ?? size * 0.52}px` }}
+			style={
+				{
+					"--preset-text-icon-px": `${fontPx ?? size * 0.52}px`,
+				} as CSSProperties
+			}
 		>
 			{text.slice(0, 2)}
 		</span>
