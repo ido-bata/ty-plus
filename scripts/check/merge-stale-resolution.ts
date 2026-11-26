@@ -91,6 +91,17 @@
  *   - Binary and non-text files are skipped by semantic mode; the wholesale
  *     check still applies to them via byte comparison.
  *
+ * INTENT EVIDENCE (Issue #664)
+ *
+ *   Findings cannot tell "the merge dropped work" from "the taken side
+ *   intentionally removed or moved it". `scripts/check/merge-stale-allowlist.json`
+ *   (read from the merge RESULT tree) registers reviewed divergences as
+ *   (commit, path, PR/Issue) tuples. A finding is excused only when the
+ *   taken side's most recent first-parent commit touching its path is
+ *   exactly the entry's commit AND that commit's message references the
+ *   declared PR/Issue. Anything else still fails — there is no warn-only
+ *   default change and no branch-trust mode.
+ *
  * Severity: wholesale findings on UI-relevant paths (`src/**` code and
  * styles, `packages/ui/**`, `panda.config.ts`, `panda.tokens.ts`) fail the
  * check; findings elsewhere are warnings. `--warn-only` downgrades
@@ -161,6 +172,15 @@ export type MergeSide = "target" | "incoming";
 /** Which detector produced a finding. */
 export type FindingKind = "wholesale" | "semantic";
 
+/** Verified evidence that a finding is an intentional, reviewed change
+ * rather than accidental loss (Issue #664). */
+export type IntentEvidence = {
+	/** Full commit SHA on the taken side that last touched the path. */
+	commit: string;
+	pr?: number;
+	issue?: number;
+};
+
 export type StaleFinding = {
 	path: string;
 	/** Identifiers added by the losing side(s) that are absent from the
@@ -171,6 +191,9 @@ export type StaleFinding = {
 	/** Side(s) whose added work is missing. Wholesale findings always name
 	 * the losing parent; semantic findings may be "both". */
 	side: MergeSide | "both";
+	/** Present only when the finding matched verified intent evidence:
+	 * the divergence traces to reviewed commit(s), not accidental loss. */
+	intent?: IntentEvidence[];
 };
 
 /**
@@ -538,6 +561,240 @@ export function analyzeSemanticStaleness(
 }
 
 // ---------------------------------------------------------------------------
+// Intent evidence allowlist (Issue #664)
+// ---------------------------------------------------------------------------
+//
+// Findings alone cannot distinguish "the merge dropped work" from "the
+// taken side intentionally removed or moved it". The allowlist binds each
+// excused finding to concrete evidence — a (commit, path, PR/Issue) tuple —
+// and the checker verifies the binding mechanically instead of trusting a
+// bare path list:
+//
+//   - `commit` must be the MOST RECENT first-parent commit on the taken
+//     side's own line that touched the finding's path. That commit is the
+//     reviewed unit that produced the content the merge result carries;
+//     any later unreviewed touch re-attributes the file and invalidates
+//     the entry (fail-closed).
+//   - `commit` must exist and its message must reference `pr` (`#<n>`) and/or
+//     `issue` (`#<n>` or the `/<n>` branch suffix in a merge subject).
+//   - `paths` are exact repo-relative paths. Globs and directory prefixes
+//     are rejected at parse time so an entry can never widen itself.
+//
+// A finding is excused only when EVERY side it names has a matching entry:
+// `side: "target"` findings require evidence on the incoming parent (P2),
+// `side: "incoming"` on the target parent (P1), and `side: "both"` on both.
+// Anything without verified evidence still fails.
+
+/** Repo-relative path of the intent-evidence registry, read from the merge
+ * RESULT tree so the evidence travels with the branch being merged. */
+export const INTENT_ALLOWLIST_REPO_PATH =
+	"scripts/check/merge-stale-allowlist.json";
+
+export type IntentAllowlistEntry = {
+	/** Full lowercase SHA of the reviewed commit on the taken side. */
+	commit: string;
+	/** Pull request that landed the change (verified as `#<n>` in the
+	 * commit message). */
+	pr?: number;
+	/** Issue justifying the intentional difference (verified as `#<n>` or
+	 * `/<n>` in the commit message). */
+	issue?: number;
+	/** Human justification kept for reviewers. */
+	reason: string;
+	/** Exact repo-relative paths covered by this entry. */
+	paths: string[];
+};
+
+const FULL_SHA_RE = /^[0-9a-f]{40}$/;
+const GLOB_CHARS_RE = /[*?[\]{}]/;
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+	return typeof value === "object" && value !== null;
+}
+
+function parsePositiveInt(value: unknown, field: string): number | undefined {
+	if (value === undefined) return undefined;
+	if (typeof value !== "number" || !Number.isInteger(value) || value <= 0) {
+		throw new Error(`intent allowlist: ${field} must be a positive integer`);
+	}
+	return value;
+}
+
+/**
+ * Parse and shape-validate the allowlist JSON. Throws on any malformed
+ * entry — a broken registry must fail the check, not silently widen or
+ * shrink coverage.
+ */
+export function parseIntentAllowlist(json: string): IntentAllowlistEntry[] {
+	const parsed: unknown = JSON.parse(json);
+	const raw =
+		isRecord(parsed) && Array.isArray(parsed.entries) ? parsed.entries : parsed;
+	if (!Array.isArray(raw)) {
+		throw new Error(
+			"intent allowlist: top level must be an array or {entries: [...]}",
+		);
+	}
+	return raw.map((item, index) => {
+		const where = `intent allowlist entry ${index}`;
+		if (!isRecord(item)) throw new Error(`${where}: not an object`);
+		const { commit, pr, issue, reason, paths } = item;
+		if (typeof commit !== "string" || !FULL_SHA_RE.test(commit)) {
+			throw new Error(`${where}: commit must be a full lowercase SHA`);
+		}
+		const prNum = parsePositiveInt(pr, `${where}.pr`);
+		const issueNum = parsePositiveInt(issue, `${where}.issue`);
+		if (prNum === undefined && issueNum === undefined) {
+			throw new Error(
+				`${where}: at least one of pr/issue evidence is required`,
+			);
+		}
+		if (typeof reason !== "string" || reason.trim().length === 0) {
+			throw new Error(`${where}: reason must be a non-empty string`);
+		}
+		if (
+			!Array.isArray(paths) ||
+			paths.length === 0 ||
+			paths.some(
+				(p) =>
+					typeof p !== "string" ||
+					p.length === 0 ||
+					GLOB_CHARS_RE.test(p) ||
+					p.startsWith("/") ||
+					p.endsWith("/") ||
+					p.includes("..") ||
+					p.includes("//"),
+			)
+		) {
+			throw new Error(
+				`${where}: paths must be a non-empty array of exact repo-relative paths (no globs)`,
+			);
+		}
+		return {
+			commit,
+			...(prNum !== undefined ? { pr: prNum } : {}),
+			...(issueNum !== undefined ? { issue: issueNum } : {}),
+			reason,
+			paths: [...new Set(paths as string[])],
+		};
+	});
+}
+
+/** Lookups the matcher needs; the CLI binds these to git, tests bind stubs. */
+export type IntentEvidenceResolver = {
+	/** Whether `commit` resolves to a commit object in the repository. */
+	commitExists(commit: string): boolean;
+	/** Subject + body of `commit`; only called for existing commits. */
+	commitMessage(commit: string): string;
+	/** Full SHA of the most recent first-parent commit on `rev`'s own line
+	 * that touched `path`, or null when the path has no such commit. */
+	attributeCommit(rev: string, path: string): string | null;
+};
+
+/**
+ * Verify every entry's evidence against the repository: the commit must
+ * exist and its message must reference the declared PR (`#<n>`) and/or
+ * Issue (`#<n>` or the `/<n>` branch suffix). Returns human-readable
+ * problems; an empty array means the registry is sound. Entries that
+ * later match nothing are reported separately as stale, not errors.
+ */
+export function validateIntentAllowlist(
+	entries: IntentAllowlistEntry[],
+	resolver: IntentEvidenceResolver,
+): string[] {
+	const problems: string[] = [];
+	for (const entry of entries) {
+		const where = `intent allowlist entry for ${entry.paths[0] ?? "?"} @ ${entry.commit.slice(0, 12)}`;
+		if (!resolver.commitExists(entry.commit)) {
+			problems.push(`${where}: commit does not exist`);
+			continue;
+		}
+		const message = resolver.commitMessage(entry.commit);
+		if (entry.pr !== undefined && !message.includes(`#${entry.pr}`)) {
+			problems.push(
+				`${where}: commit message does not reference PR #${entry.pr}`,
+			);
+		}
+		if (
+			entry.issue !== undefined &&
+			!message.includes(`#${entry.issue}`) &&
+			!message.includes(`/${entry.issue}`)
+		) {
+			problems.push(
+				`${where}: commit message does not reference Issue #${entry.issue}`,
+			);
+		}
+	}
+	return problems;
+}
+
+/** Merge parents whose taken-side content a finding's `side` blames. */
+function evidenceRevsForSide(
+	side: MergeSide | "both",
+	spec: { p1: string; p2: string },
+): string[] {
+	// side "target" lost work → the result took the incoming side (P2), so
+	// the intentional change must live on P2's line; mirrored for
+	// "incoming". "both" demands evidence on each parent.
+	if (side === "target") return [spec.p2];
+	if (side === "incoming") return [spec.p1];
+	return [spec.p1, spec.p2];
+}
+
+export type IntentAllowlistResult = {
+	findings: StaleFinding[];
+	/** Entries that matched no finding — likely stale registry rows. */
+	unmatchedEntries: IntentAllowlistEntry[];
+};
+
+/**
+ * Annotate findings whose divergence is fully explained by verified
+ * allowlist entries. Non-mutating: returns new finding objects; unmatched
+ * findings are returned unchanged (still failing/warning as before).
+ */
+export function applyIntentAllowlist(
+	findings: StaleFinding[],
+	entries: IntentAllowlistEntry[],
+	spec: { p1: string; p2: string },
+	resolver: IntentEvidenceResolver,
+): IntentAllowlistResult {
+	const matchedEntry = new Set<IntentAllowlistEntry>();
+	const annotated = findings.map((finding) => {
+		const evidence: IntentEvidence[] = [];
+		for (const rev of evidenceRevsForSide(finding.side, spec)) {
+			const attributed = resolver.attributeCommit(rev, finding.path);
+			const entry =
+				attributed === null
+					? undefined
+					: entries.find(
+							(e) => e.commit === attributed && e.paths.includes(finding.path),
+						);
+			if (entry === undefined) return finding;
+			matchedEntry.add(entry);
+			const evidenceItem: IntentEvidence = {
+				commit: entry.commit,
+				...(entry.pr !== undefined ? { pr: entry.pr } : {}),
+				...(entry.issue !== undefined ? { issue: entry.issue } : {}),
+			};
+			if (
+				!evidence.some(
+					(e) =>
+						e.commit === evidenceItem.commit &&
+						e.pr === evidenceItem.pr &&
+						e.issue === evidenceItem.issue,
+				)
+			) {
+				evidence.push(evidenceItem);
+			}
+		}
+		return evidence.length > 0 ? { ...finding, intent: evidence } : finding;
+	});
+	return {
+		findings: annotated,
+		unmatchedEntries: entries.filter((e) => !matchedEntry.has(e)),
+	};
+}
+
+// ---------------------------------------------------------------------------
 // Git layer
 // ---------------------------------------------------------------------------
 
@@ -574,6 +831,66 @@ function showFile(rev: string, path: string): string | null {
 function changedFiles(base: string, rev: string): Set<string> {
 	const out = git(["diff", "--name-only", "-z", base, rev]);
 	return new Set(out.split("\0").filter((p) => p.length > 0));
+}
+
+/**
+ * Evidence resolver backed by git (Issue #664). `attributeCommit` walks
+ * the taken side's FIRST-PARENT chain so ticket-PR merge commits — the
+ * reviewed unit — are what entries must name. Results are cached per
+ * (rev, path): a merge can produce hundreds of findings over the same
+ * handful of commits.
+ */
+export function createGitIntentResolver(): IntentEvidenceResolver {
+	const attrCache = new Map<string, string | null>();
+	const msgCache = new Map<string, string>();
+	const existsCache = new Map<string, boolean>();
+	return {
+		commitExists(commit) {
+			const cached = existsCache.get(commit);
+			if (cached !== undefined) return cached;
+			const ok =
+				spawnSync(
+					"git",
+					["rev-parse", "--verify", "--quiet", `${commit}^{commit}`],
+					{
+						cwd: ROOT,
+					},
+				).status === 0;
+			existsCache.set(commit, ok);
+			return ok;
+		},
+		commitMessage(commit) {
+			const cached = msgCache.get(commit);
+			if (cached !== undefined) return cached;
+			const message = git(["log", "-1", "--format=%B", commit]);
+			msgCache.set(commit, message);
+			return message;
+		},
+		attributeCommit(rev, path) {
+			const key = `${rev}\0${path}`;
+			const cached = attrCache.get(key);
+			if (cached !== undefined) return cached;
+			const out = git(
+				["log", "--first-parent", "-n", "1", "--format=%H", rev, "--", path],
+				{ allowFail: true },
+			).trim();
+			const sha = out === "" ? null : out;
+			attrCache.set(key, sha);
+			return sha;
+		},
+	};
+}
+
+/**
+ * Load the intent allowlist from the merge RESULT tree. A missing file
+ * means no evidence is registered for this merge — every finding then
+ * stands on its own (fail-closed). A malformed file throws: a broken
+ * registry must fail the check.
+ */
+function loadIntentAllowlist(result: string): IntentAllowlistEntry[] {
+	const content = showFile(result, INTENT_ALLOWLIST_REPO_PATH);
+	if (content === null) return [];
+	return parseIntentAllowlist(content);
 }
 
 function mergeBase(p1: string, p2: string): string {
@@ -886,14 +1203,26 @@ function resolveSpec(args: ReturnType<typeof parseArgs>): MergeSpec | null {
 function describeFinding(f: StaleFinding): string {
 	const shown = f.missing.slice(0, 12).join(", ");
 	const rest = f.missing.length > 12 ? ", …" : "";
+	let line: string;
 	if (f.kind === "wholesale") {
 		const dir =
 			f.side === "target"
 				? "took the incoming side wholesale"
 				: "took the target side wholesale";
-		return `${f.path}: merge result ${dir}; ${f.side}-side identifiers missing: ${shown}${rest}`;
+		line = `${f.path}: merge result ${dir}; ${f.side}-side identifiers missing: ${shown}${rest}`;
+	} else {
+		line = `${f.path}: semantic check — ${f.side}-side identifiers added since base are mostly absent from the merge result: ${shown}${rest}`;
 	}
-	return `${f.path}: semantic check — ${f.side}-side identifiers added since base are mostly absent from the merge result: ${shown}${rest}`;
+	if (f.intent !== undefined) {
+		const refs = f.intent
+			.map(
+				(e) =>
+					`PR #${e.pr ?? "?"} / Issue #${e.issue ?? "?"} @ ${e.commit.slice(0, 12)}`,
+			)
+			.join(" + ");
+		line += ` [intentional: ${refs}]`;
+	}
+	return line;
 }
 
 function main() {
@@ -913,7 +1242,7 @@ function main() {
 		collected.semanticPaths.has(f.path),
 	);
 
-	const findings = [
+	const rawFindings = [
 		...analyzeMergeStaleness(wholesaleFiles, {
 			warnOnly: args.warnOnly,
 			relaxed: collected.degenerate,
@@ -926,24 +1255,79 @@ function main() {
 		}),
 	];
 
+	// Intent evidence (Issue #664): findings fully explained by verified
+	// allowlist entries are annotated and no longer fail the check. The
+	// registry is read from the merge RESULT tree; anything not backed by
+	// verified (commit, path, PR/Issue) evidence still fails.
+	const intentEntries = loadIntentAllowlist(spec.result);
+	const resolver = createGitIntentResolver();
+	const problems = validateIntentAllowlist(intentEntries, resolver);
+	if (problems.length > 0) {
+		for (const problem of problems) console.error(problem);
+		process.exit(1);
+	}
+	const { findings, unmatchedEntries } = applyIntentAllowlist(
+		rawFindings,
+		intentEntries,
+		spec,
+		resolver,
+	);
+	if (intentEntries.length > 0) {
+		const intentional = findings.filter((f) => f.intent !== undefined).length;
+		console.error(
+			`merge-stale-resolution: intent allowlist — ${intentEntries.length} entr${intentEntries.length === 1 ? "y" : "ies"}, ${intentional} finding(s) excused as intentional`,
+		);
+		for (const entry of unmatchedEntries) {
+			console.error(
+				`merge-stale-resolution: intent allowlist entry @ ${entry.commit.slice(0, 12)} matched no finding (stale?)`,
+			);
+		}
+	}
+
 	if (args.json) {
-		console.log(JSON.stringify({ spec: spec.label, findings }, null, 2));
+		console.log(
+			JSON.stringify(
+				{
+					spec: spec.label,
+					findings,
+					allowlist: {
+						entries: intentEntries.length,
+						intentional: findings.filter((f) => f.intent !== undefined).length,
+						unmatched: unmatchedEntries.length,
+					},
+				},
+				null,
+				2,
+			),
+		);
 	} else {
 		for (const f of findings) {
-			const tag = f.severity === "fail" ? "STALE" : "warn ";
+			const tag =
+				f.intent !== undefined
+					? "ok "
+					: f.severity === "fail"
+						? "STALE"
+						: "warn ";
 			console.log(`${tag} ${describeFinding(f)}`);
 		}
-		const fails = findings.filter((f) => f.severity === "fail");
-		const warns = findings.length - fails.length;
+		const fails = findings.filter(
+			(f) => f.severity === "fail" && f.intent === undefined,
+		).length;
+		const warns = findings.filter(
+			(f) => f.severity === "warn" && f.intent === undefined,
+		).length;
+		const excused = findings.length - fails - warns;
 		const mode = collected.degenerate
 			? " (degenerate ancestor merge: line base)"
 			: "";
 		console.log(
-			`merge-stale-resolution: ${collected.wholesalePaths.size} wholesale-domain files + ${collected.semanticPaths.size} union files checked, ${findings.length} findings (${fails.length} failing, ${warns} warnings) for ${spec.label.slice(0, 12)}${mode}`,
+			`merge-stale-resolution: ${collected.wholesalePaths.size} wholesale-domain files + ${collected.semanticPaths.size} union files checked, ${findings.length} findings (${fails} failing, ${warns} warnings, ${excused} excused-intentional) for ${spec.label.slice(0, 12)}${mode}`,
 		);
 	}
 
-	const failed = findings.some((f) => f.severity === "fail");
+	const failed = findings.some(
+		(f) => f.severity === "fail" && f.intent === undefined,
+	);
 	if (failed) process.exit(1);
 }
 

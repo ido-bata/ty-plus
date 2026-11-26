@@ -1,0 +1,89 @@
+{
+	"version": 1,
+	"entries": [
+		{
+			"commit": "fd05ab0bbe632b5247e4fea5ce2f0352d76123e7",
+			"pr": 603,
+			"issue": 595,
+			"reason": "PR #603 (#595) rewrote stub stories to render real components, removed the dead packages/ui ErrorBoundary/FileDropZone components and their barrel exports, and added the story-subject guard; reviewed intentional divergence from main",
+			"paths": [
+				"packages/ui/src/feedback/ErrorBoundary.stories.tsx",
+				"packages/ui/src/feedback/FileDropZone.stories.tsx",
+				"packages/ui/src/feedback/FileDropZone.tsx",
+				"packages/ui/src/index.ts",
+				"scripts/check/story-only-code.ts",
+				"src/function/widget/utility/info/preset.stories.tsx",
+				"src/function/widget/utility/quick-actions/QuickActionsWidget.stories.tsx",
+				"src/management/online/catalog/Dialog.stories.tsx",
+				"src/management/online/notification/Center.stories.tsx",
+				"src/management/online/notification/Container.stories.tsx"
+			]
+		},
+		{
+			"commit": "faa2982dc161146a0cde3f0d5784215eaeefe2ee",
+			"pr": 636,
+			"issue": 630,
+			"reason": "PR #636 (#630) deleted the unreachable WorkspaceShell surface and dialog bootstrap entries as dead UI; reviewed intentional divergence from main",
+			"paths": [
+				"src/management/ae/cep/dialogs/WorkspaceShell.stories.tsx",
+				"src/management/ae/cep/dialogs/WorkspaceShell.tsx",
+				"src/management/ae/cep/entry/dialog-bootstrap.tsx",
+				"src/management/ae/cep/entry/dialogs.tsx"
+			]
+		},
+		{
+			"commit": "ecc13eefeec68750fa369e66514dbd1428d95545",
+			"pr": 638,
+			"issue": 609,
+			"reason": "PR #638 (#609) removed the unreachable dialog-probe chain and moved surface-id resolution into the workspace hooks; locale keys for the deleted UI were dropped with it; reviewed intentional divergence from main",
+			"paths": [
+				"src/management/dialog/Root.tsx",
+				"src/management/dialog/bridge.ts",
+				"src/management/dialog/ids.ts",
+				"src/management/dialog/probe/session.ts",
+				"src/management/dialog/unified-context-menu-constants.ts",
+				"src/management/dialog/unified-context-menu.ts",
+				"src/management/workspace/hook.ts",
+				"src/management/i18n/locales/de/contextMenu.json",
+				"src/management/i18n/locales/de/dialogs.json",
+				"src/management/i18n/locales/de/workspace.json",
+				"src/management/i18n/locales/en/contextMenu.json",
+				"src/management/i18n/locales/en/dialogs.json",
+				"src/management/i18n/locales/en/workspace.json",
+				"src/management/i18n/locales/es/contextMenu.json",
+				"src/management/i18n/locales/es/dialogs.json",
+				"src/management/i18n/locales/es/workspace.json",
+				"src/management/i18n/locales/fr/contextMenu.json",
+				"src/management/i18n/locales/fr/dialogs.json",
+				"src/management/i18n/locales/fr/workspace.json",
+				"src/management/i18n/locales/it/contextMenu.json",
+				"src/management/i18n/locales/it/dialogs.json",
+				"src/management/i18n/locales/it/workspace.json",
+				"src/management/i18n/locales/ja/contextMenu.json",
+				"src/management/i18n/locales/ja/dialogs.json",
+				"src/management/i18n/locales/ja/workspace.json",
+				"src/management/i18n/locales/ko/contextMenu.json",
+				"src/management/i18n/locales/ko/dialogs.json",
+				"src/management/i18n/locales/ko/workspace.json",
+				"src/management/i18n/locales/pt/contextMenu.json",
+				"src/management/i18n/locales/pt/dialogs.json",
+				"src/management/i18n/locales/pt/workspace.json",
+				"src/management/i18n/locales/ru/contextMenu.json",
+				"src/management/i18n/locales/ru/dialogs.json",
+				"src/management/i18n/locales/ru/workspace.json",
+				"src/management/i18n/locales/zh/contextMenu.json",
+				"src/management/i18n/locales/zh/dialogs.json",
+				"src/management/i18n/locales/zh/workspace.json"
+			]
+		},
+		{
+			"commit": "a524d0ee9d8a827d98285f4cba324f9f05a6650e",
+			"pr": 651,
+			"issue": 647,
+			"reason": "PR #651 (#647) routed catalog preset edit to the edit dialog and updated the render-contract test mock to match; reviewed intentional divergence from main",
+			"paths": [
+				"src/management/preset/catalog-browser/list-dialog.render-contract.test.tsx"
+			]
+		}
+	]
+}

@@ -1,15 +1,27 @@
+import { spawnSync } from "node:child_process";
+import { readFileSync } from "node:fs";
+import { dirname, join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import {
 	analyzeMergeStaleness,
 	analyzeSemanticStaleness,
+	applyIntentAllowlist,
+	createGitIntentResolver,
 	extractIdentifiers,
+	INTENT_ALLOWLIST_REPO_PATH,
+	type IntentAllowlistEntry,
+	type IntentEvidenceResolver,
 	isSemanticCandidate,
 	isUiPath,
 	type MergeFileSnapshot,
+	parseIntentAllowlist,
 	SEMANTIC_MIN_MISSING,
 	SEMANTIC_MISSING_RATIO,
+	type StaleFinding,
 	semanticLoss,
 	staleMissingIdentifiers,
+	validateIntentAllowlist,
 	wholesaleTakeMissing,
 } from "./merge-stale-resolution";
 
@@ -583,3 +595,350 @@ ${INCOMING_WORK.split("\n").slice(1).join("\n")}
 		expect(findings).toHaveLength(0);
 	});
 });
+
+// ---------------------------------------------------------------------------
+// Issue #664 — intent evidence allowlist
+// ---------------------------------------------------------------------------
+
+const TEST_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..", "..");
+
+function revExists(rev: string): boolean {
+	return (
+		spawnSync("git", ["rev-parse", "--verify", "--quiet", `${rev}^{commit}`], {
+			cwd: TEST_ROOT,
+		}).status === 0
+	);
+}
+
+// Merge 7503087b = PR #605 (release-0-13-1 -> main). Its second parent is
+// the release tip the ticket PRs landed on; findings' taken side is P2.
+const PR605_P1 = "3a34010cdf155161f13c89f8d71cd9a5afdd0f8f";
+const PR605_P2 = "0f4960110bc1d0eb415d0f1e503ae4036993356d";
+// Merge 3a0593b3 = PR #430, the real rollback incident (Issue #597/#627).
+const PR430_P1 = "22a49858779aaaa1d96467d0a19830b94cf5b799";
+const PR430_P2 = "9f91b93e66510f4ca9e0d3765d854cb5dbc79c79";
+
+const GIT_HISTORY =
+	revExists(PR605_P2) && revExists(PR430_P1) && revExists(PR430_P2);
+
+function wholesale(path: string, severity: "fail" | "warn"): StaleFinding {
+	return { path, missing: [], severity, kind: "wholesale", side: "target" };
+}
+
+// The 21 fail-level findings reported on PR #605 (see the review record in
+// the PR comments): dead-code deletions, story rewrites, identifier moves,
+// and test mock updates — all intentional, all reviewed per ticket PR.
+const PR605_FAIL_PATHS = [
+	"packages/ui/src/feedback/ErrorBoundary.stories.tsx",
+	"packages/ui/src/feedback/FileDropZone.stories.tsx",
+	"packages/ui/src/feedback/FileDropZone.tsx",
+	"packages/ui/src/index.ts",
+	"src/function/widget/utility/info/preset.stories.tsx",
+	"src/function/widget/utility/quick-actions/QuickActionsWidget.stories.tsx",
+	"src/management/ae/cep/dialogs/WorkspaceShell.stories.tsx",
+	"src/management/ae/cep/dialogs/WorkspaceShell.tsx",
+	"src/management/ae/cep/entry/dialog-bootstrap.tsx",
+	"src/management/ae/cep/entry/dialogs.tsx",
+	"src/management/dialog/Root.tsx",
+	"src/management/dialog/bridge.ts",
+	"src/management/dialog/ids.ts",
+	"src/management/dialog/probe/session.ts",
+	"src/management/dialog/unified-context-menu-constants.ts",
+	"src/management/dialog/unified-context-menu.ts",
+	"src/management/online/catalog/Dialog.stories.tsx",
+	"src/management/online/notification/Center.stories.tsx",
+	"src/management/online/notification/Container.stories.tsx",
+	"src/management/preset/catalog-browser/list-dialog.render-contract.test.tsx",
+	"src/management/workspace/hook.ts",
+];
+
+// The warn-level findings from the same merge: story-only-code and the
+// i18n locale keys dropped together with the deleted dialog-probe UI.
+const PR605_WARN_PATHS = [
+	"scripts/check/story-only-code.ts",
+	...["de", "en", "es", "fr", "it", "ja", "ko", "pt", "ru", "zh"].flatMap(
+		(locale) => [
+			`src/management/i18n/locales/${locale}/contextMenu.json`,
+			`src/management/i18n/locales/${locale}/dialogs.json`,
+			`src/management/i18n/locales/${locale}/workspace.json`,
+		],
+	),
+];
+
+const PR605_FINDINGS: StaleFinding[] = [
+	...PR605_FAIL_PATHS.map((p) => wholesale(p, "fail")),
+	...PR605_WARN_PATHS.map((p) => wholesale(p, "warn")),
+];
+
+// The 8 fail findings the detector reports on the real rollback merge
+// 3a0593b3 (PR #430). None may ever be excused by the allowlist.
+const PR430_FINDINGS: StaleFinding[] = [
+	"src/function/widget/core/loop/applied-state.ts",
+	"src/function/widget/core/loop/cyclic-wave.ts",
+	"src/function/widget/core/loop/wave-camera.ts",
+	"src/function/widget/registry.ts",
+	"src/management/ae/host/loop-replication.ts",
+	"src/management/online/notification/service.ts",
+	"src/management/widget/registry/index.ts",
+	"src/storybook/quality/layout.ts",
+].map((p) => wholesale(p, "fail"));
+
+function loadShippedAllowlist(): IntentAllowlistEntry[] {
+	return parseIntentAllowlist(
+		readFileSync(join(TEST_ROOT, INTENT_ALLOWLIST_REPO_PATH), "utf8"),
+	);
+}
+
+describe("parseIntentAllowlist", () => {
+	const SHA = "a".repeat(40);
+	const valid = JSON.stringify({
+		entries: [
+			{
+				commit: SHA,
+				pr: 100,
+				issue: 50,
+				reason: "reviewed change",
+				paths: ["src/x.ts"],
+			},
+		],
+	});
+
+	it("accepts a well-formed registry", () => {
+		const entries = parseIntentAllowlist(valid);
+		expect(entries).toHaveLength(1);
+		expect(entries[0]?.commit).toBe(SHA);
+	});
+
+	it("rejects glob widening and non-exact paths", () => {
+		for (const bad of ["src/**", "src/", "../x.ts", "/abs.ts"]) {
+			expect(() =>
+				parseIntentAllowlist(
+					JSON.stringify({
+						entries: [
+							{
+								commit: SHA,
+								pr: 1,
+								reason: "r",
+								paths: [bad],
+							},
+						],
+					}),
+				),
+			).toThrow(/paths/);
+		}
+	});
+
+	it("requires at least one PR/Issue evidence ref and a full SHA", () => {
+		expect(() =>
+			parseIntentAllowlist(
+				JSON.stringify({
+					entries: [{ commit: SHA, reason: "r", paths: ["src/x.ts"] }],
+				}),
+			),
+		).toThrow(/pr\/issue/);
+		expect(() =>
+			parseIntentAllowlist(
+				JSON.stringify({
+					entries: [
+						{
+							commit: "abc123",
+							pr: 1,
+							reason: "r",
+							paths: ["src/x.ts"],
+						},
+					],
+				}),
+			),
+		).toThrow(/SHA/);
+	});
+});
+
+describe("validateIntentAllowlist", () => {
+	const SHA = "a".repeat(40);
+	const entry: IntentAllowlistEntry = {
+		commit: SHA,
+		pr: 638,
+		issue: 609,
+		reason: "reviewed",
+		paths: ["src/x.ts"],
+	};
+	const resolver = (
+		message: string | null,
+		exists = true,
+	): IntentEvidenceResolver => ({
+		commitExists: () => exists,
+		commitMessage: () => message ?? "",
+		attributeCommit: () => null,
+	});
+
+	it("passes when the commit message references the PR and Issue", () => {
+		expect(
+			validateIntentAllowlist(
+				[entry],
+				resolver("Merge pull request #638 from ido-bata/609"),
+			),
+		).toEqual([]);
+	});
+
+	it("fails closed on missing commits and missing references", () => {
+		expect(
+			validateIntentAllowlist([entry], resolver(null, false)),
+		).toHaveLength(1);
+		expect(
+			validateIntentAllowlist([entry], resolver("unrelated commit message")),
+		).toHaveLength(2);
+	});
+});
+
+describe("applyIntentAllowlist", () => {
+	const SHA_A = "a".repeat(40);
+	const SHA_B = "b".repeat(40);
+	const entry: IntentAllowlistEntry = {
+		commit: SHA_A,
+		pr: 638,
+		issue: 609,
+		reason: "reviewed",
+		paths: ["src/x.ts"],
+	};
+	const spec = { p1: "P1", p2: "P2" };
+	const attrs = (
+		map: Record<string, string | null>,
+	): IntentEvidenceResolver => ({
+		commitExists: () => true,
+		commitMessage: () => "",
+		attributeCommit: (rev, path) => map[`${rev}:${path}`] ?? null,
+	});
+	const finding = (side: StaleFinding["side"]): StaleFinding => ({
+		path: "src/x.ts",
+		missing: [],
+		severity: "fail",
+		kind: "wholesale",
+		side,
+	});
+
+	it("excuses a finding when the taken side's last-touch commit matches", () => {
+		const { findings } = applyIntentAllowlist(
+			[finding("target")],
+			[entry],
+			spec,
+			attrs({ "P2:src/x.ts": SHA_A }),
+		);
+		expect(findings[0]?.intent).toEqual([
+			{ commit: SHA_A, pr: 638, issue: 609 },
+		]);
+	});
+
+	it("does not excuse on a different attributed commit (future rollback)", () => {
+		const { findings } = applyIntentAllowlist(
+			[finding("target")],
+			[entry],
+			spec,
+			attrs({ "P2:src/x.ts": SHA_B }),
+		);
+		expect(findings[0]?.intent).toBeUndefined();
+	});
+
+	it("does not excuse when the path has no attributed commit", () => {
+		const { findings } = applyIntentAllowlist(
+			[finding("target")],
+			[entry],
+			spec,
+			attrs({}),
+		);
+		expect(findings[0]?.intent).toBeUndefined();
+	});
+
+	it("attributes incoming-side losses to P1, not P2", () => {
+		const { findings } = applyIntentAllowlist(
+			[finding("incoming")],
+			[entry],
+			spec,
+			attrs({ "P1:src/x.ts": SHA_A, "P2:src/x.ts": SHA_B }),
+		);
+		expect(findings[0]?.intent?.[0]?.commit).toBe(SHA_A);
+	});
+
+	it("requires evidence on BOTH parents for side=both findings", () => {
+		const partial = applyIntentAllowlist(
+			[finding("both")],
+			[entry],
+			spec,
+			attrs({ "P2:src/x.ts": SHA_A }),
+		);
+		expect(partial.findings[0]?.intent).toBeUndefined();
+		const full = applyIntentAllowlist(
+			[finding("both")],
+			[entry],
+			spec,
+			attrs({ "P1:src/x.ts": SHA_A, "P2:src/x.ts": SHA_A }),
+		);
+		expect(full.findings[0]?.intent).toHaveLength(1);
+	});
+
+	it("reports entries that matched no finding as unmatched", () => {
+		const other: IntentAllowlistEntry = {
+			...entry,
+			commit: SHA_B,
+			paths: ["src/other.ts"],
+		};
+		const { unmatchedEntries } = applyIntentAllowlist(
+			[finding("target")],
+			[entry, other],
+			spec,
+			attrs({ "P2:src/x.ts": SHA_A }),
+		);
+		expect(unmatchedEntries).toEqual([other]);
+	});
+});
+
+describe.skipIf(!GIT_HISTORY)(
+	"intent allowlist — real-history fixtures (Issue #664)",
+	() => {
+		const entries = loadShippedAllowlist();
+		const resolver = createGitIntentResolver();
+
+		it("every shipped entry's evidence verifies against the repository", () => {
+			expect(validateIntentAllowlist(entries, resolver)).toEqual([]);
+			expect(entries.length).toBeGreaterThan(0);
+		});
+
+		// Each finding costs one `git log -- path` attribution; the real
+		// history fixture needs well over the default 5s test timeout.
+		it("all 52 PR #605 findings classify as intentional", () => {
+			expect(PR605_FINDINGS).toHaveLength(52);
+			expect(PR605_FINDINGS.filter((f) => f.severity === "fail")).toHaveLength(
+				21,
+			);
+			const { findings, unmatchedEntries } = applyIntentAllowlist(
+				PR605_FINDINGS,
+				entries,
+				{ p1: PR605_P1, p2: PR605_P2 },
+				resolver,
+			);
+			expect(findings.every((f) => f.intent !== undefined)).toBe(true);
+			expect(unmatchedEntries).toEqual([]);
+			const commits = new Set(
+				findings.flatMap((f) => f.intent?.map((e) => e.commit) ?? []),
+			);
+			expect(commits).toEqual(
+				new Set([
+					"fd05ab0bbe632b5247e4fea5ce2f0352d76123e7",
+					"faa2982dc161146a0cde3f0d5784215eaeefe2ee",
+					"ecc13eefeec68750fa369e66514dbd1428d95545",
+					"a524d0ee9d8a827d98285f4cba324f9f05a6650e",
+				]),
+			);
+		}, 120_000);
+
+		it("the PR #430 rollback findings are never excused", () => {
+			expect(PR430_FINDINGS).toHaveLength(8);
+			const { findings } = applyIntentAllowlist(
+				PR430_FINDINGS,
+				entries,
+				{ p1: PR430_P1, p2: PR430_P2 },
+				resolver,
+			);
+			expect(findings.every((f) => f.intent === undefined)).toBe(true);
+		});
+	},
+);
