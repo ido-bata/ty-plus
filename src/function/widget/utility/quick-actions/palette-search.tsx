@@ -31,7 +31,7 @@ export function PaletteSearch({
 				display: "flex",
 				minHeight: 0,
 				minWidth: 0,
-				flex: 1,
+				flexShrink: 0,
 				alignItems: "stretch",
 				gap: "var(--ty-space-1-5)",
 			})}
