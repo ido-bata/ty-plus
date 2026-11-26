@@ -231,7 +231,12 @@ export function PresetGlyphById(props: PresetGlyphByIdProps): JSX.Element {
 		if (!t) {
 			return record;
 		}
-		return { ...record, descriptionImage: t };
+		// Catalog reads inject a structured fallback icon ("FFX" etc.) into
+		// every row, and `resolveWorkspaceGlyphIconVisual` prefers any
+		// structured icon over `descriptionImage` — so the sibling thumbnail
+		// would never render. Drop the icon here: the same-stem image is the
+		// pack author's intended preview and must win over a generic glyph.
+		return { ...record, descriptionImage: t, icon: undefined };
 	}, [record, siblingThumbSrc]);
 
 	if (phase === "loading" && !record) {
