@@ -90,7 +90,7 @@ export const KindBadge: Story = {
 		);
 		if (!frame) throw new Error("text glyph not found");
 		const lines = Array.from(
-			frame.querySelectorAll<HTMLElement>(":scope > span"),
+			frame.querySelectorAll<HTMLElement>(":scope > span > span"),
 		);
 		expect(lines).toHaveLength(1);
 		const line = lines[0];
