@@ -19,6 +19,15 @@ const isDevelopmentBuild =
 const startingDebugPort = Number(
 	process.env.CEP_DEBUG_BASE ?? (isDevelopmentBuild ? 9170 : 8970),
 );
+
+/**
+ * First port of the OS ephemeral/dynamic range on macOS and Windows
+ * (49152-65535). `.debug` ports are baked into the bundle at build time and
+ * cannot be reprobed on the machine that installs it, so they must stay below
+ * this floor: Windows Hyper-V/WSL `excludedportrange` reservations live in the
+ * ephemeral range and made CEPHtmlEngine fail to bind devtools there (#682).
+ */
+const CEP_DEBUG_EPHEMERAL_PORT_FLOOR = 49152;
 const disableGpu = /^(1|true|yes)$/i.test(
 	String(process.env.CEP_DISABLE_GPU ?? ""),
 );
@@ -309,4 +318,22 @@ const config: CEP_Config = {
 	copyAssets: [],
 	copyZipAssets: [],
 };
+
+// vite-cep-plugin assigns `.debug` ports sequentially from
+// `startingDebugPort`, one per panel per host. Warn when the span reaches the
+// OS ephemeral range — the baked ports may fail to bind on some machines.
+const lastDebugPort =
+	startingDebugPort + config.panels.length * config.hosts.length - 1;
+if (
+	startingDebugPort < 1024 ||
+	lastDebugPort >= CEP_DEBUG_EPHEMERAL_PORT_FLOOR
+) {
+	console.warn(
+		`[cep.config] .debug port span ${startingDebugPort}-${lastDebugPort} ` +
+			`reaches the OS ephemeral range (>=${CEP_DEBUG_EPHEMERAL_PORT_FLOOR}); ` +
+			"devtools/CDP may fail to bind on machines with reserved port ranges " +
+			"(#682). Set CEP_DEBUG_BASE below 49152.",
+	);
+}
+
 export default config;
