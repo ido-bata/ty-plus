@@ -1,7 +1,22 @@
 import { cx } from "@ty-plus/ui";
-import type { CSSProperties, HTMLAttributes, JSX, ReactNode } from "react";
+import {
+	type CSSProperties,
+	type HTMLAttributes,
+	type JSX,
+	type ReactNode,
+	useEffect,
+	useMemo,
+	useRef,
+	useState,
+} from "react";
+import type { PresetIconVisual } from "@/management/preset/assets/icons";
 import { resolveWorkspaceGlyphIconVisual } from "@/management/preset/assets/icons";
 import type { Preset } from "@/management/preset/contract";
+import {
+	fitTextFontPx,
+	glyphFrameRadiusPx,
+	useFrameMetrics,
+} from "@/management/preset/frame-fit";
 import { CanvasEasingIcon } from "@/management/preset/workspace/CanvasEasingIcon";
 import { GlyphCachedImage } from "@/management/preset/workspace/glyph/CachedImage";
 import {
@@ -21,7 +36,6 @@ const presetCatalogGlyphHostBase = css({
 	alignItems: "center",
 	justifyContent: "center",
 	padding: "0.5",
-	containerType: "size",
 	"& [data-ws-preset-icon='image']": {
 		display: "flex",
 		height: "full",
@@ -127,7 +141,9 @@ const wsPresetEmojiShellClass = css({
 	alignItems: "center",
 	justifyContent: "center",
 	overflow: "hidden",
-	borderRadius: "min(12px,15cqi)",
+	// Fallback radius; the measured `min(12px, 15% of frame width)` px
+	// value is applied inline once the frame size is known (#700).
+	borderRadius: "shell-sm",
 	padding: "0.5px",
 });
 
@@ -151,7 +167,7 @@ const wsPresetCanvasShellClass = css({
 	alignItems: "center",
 	justifyContent: "center",
 	overflow: "hidden",
-	borderRadius: "min(12px,15cqi)",
+	borderRadius: "shell-sm",
 	padding: "1",
 });
 
@@ -167,7 +183,7 @@ const wsPresetTextShellClass = css({
 	alignItems: "center",
 	justifyContent: "center",
 	overflow: "hidden",
-	borderRadius: "min(12px,15cqi)",
+	borderRadius: "shell-sm",
 	padding: "0.5px",
 	fontWeight: "medium",
 });
@@ -185,6 +201,177 @@ const wsPresetTextLineClass = css({
 const textInheritClass = css({ color: "inherit" });
 const textPrimaryClass = css({ color: "text.primary" });
 
+type EmojiVisual = Extract<PresetIconVisual, { kind: "emoji" }>;
+type CanvasVisual = Extract<PresetIconVisual, { kind: "canvas" }>;
+type TextVisual = Extract<PresetIconVisual, { kind: "text" }>;
+
+function backgroundStyle(
+	backgroundColor: string | undefined,
+): CSSProperties | undefined {
+	return backgroundColor ? { backgroundColor } : undefined;
+}
+
+function EmojiGlyph({ visual }: { visual: EmojiVisual }): JSX.Element {
+	const shellRef = useRef<HTMLSpanElement>(null);
+	const metrics = useFrameMetrics(shellRef);
+	// Old `clamp(4px, 100cqi, 96px)`: the emoji fills the frame's inline
+	// size. CEF 99 has no container units, so the shell's own border-box
+	// width — the same reference `cqi` resolved against — drives the size.
+	const fontPx = metrics ? Math.min(96, Math.max(4, metrics.boxWidth)) : null;
+	return (
+		<span
+			ref={shellRef}
+			data-ws-preset-text-fit="scale"
+			className={`ws-preset-icon ws-preset-icon--emoji ${wsPresetEmojiShellClass}`}
+			style={{
+				...backgroundStyle(visual.backgroundColor),
+				...(metrics
+					? { borderRadius: `${glyphFrameRadiusPx(metrics.boxWidth)}px` }
+					: {}),
+			}}
+			aria-hidden="true"
+		>
+			<span
+				className={wsEmojiInnerClass}
+				style={{ fontSize: fontPx === null ? "4px" : `${fontPx}px` }}
+			>
+				{visual.value}
+			</span>
+		</span>
+	);
+}
+
+function CanvasGlyph({ visual }: { visual: CanvasVisual }): JSX.Element {
+	const shellRef = useRef<HTMLSpanElement>(null);
+	const metrics = useFrameMetrics(shellRef);
+	const [_x1, _y1, _x2, _y2] = visual.cubic;
+	return (
+		<span
+			ref={shellRef}
+			className={`ws-preset-icon ws-preset-icon--canvas ${wsPresetCanvasShellClass}`}
+			style={{
+				...backgroundStyle(visual.backgroundColor),
+				...(metrics
+					? { borderRadius: `${glyphFrameRadiusPx(metrics.boxWidth)}px` }
+					: {}),
+			}}
+			aria-hidden="true"
+		>
+			<CanvasEasingIcon
+				cubic={visual.cubic}
+				color={visual.color ?? "currentColor"}
+			/>
+		</span>
+	);
+}
+
+type TextFit = {
+	lines: string[];
+	lineScale: number;
+	minFontPx: number;
+};
+
+function TextGlyph({ visual }: { visual: TextVisual }): JSX.Element {
+	const raw = visual.value || "?";
+	const fit = useMemo<TextFit>(() => {
+		const graphemes = Array.from(raw);
+		const ch = Math.max(1, graphemes.length);
+
+		// Issue #673: kind badges (FFX / SCRIPT / PLUGIN / MEDIA / …)
+		// are single words — the previous ~sqrt(n) split wrapped them
+		// mid-word ("PLUGIN" → "PLU"/"GIN", "FFX" → "FF"/"X") and made the
+		// badge unreadable. Badge-length text (the editor caps icon text
+		// at PRESET_ICON_TEXT_MAX = 6 graphemes) now stays on one line and
+		// shrinks via the fitted font size instead of wrapping. Longer
+		// legacy strings keep the packed multi-line layout because a
+		// single line cannot fit inside the frame.
+		const badgeLength = ch <= 6;
+
+		// Multi-line (long strings only): break into lines of ~sqrt(n)
+		// graphemes so boxes stay roughly square.
+		const charsPerLine = badgeLength ? ch : Math.ceil(Math.sqrt(ch));
+		const lines: string[] = [];
+		for (let i = 0; i < graphemes.length; i += charsPerLine) {
+			lines.push(graphemes.slice(i, i + charsPerLine).join(""));
+		}
+
+		// `lineScale` is the preferred size as a percentage of the frame's
+		// inline size — the same proportion the old `NNcqi` font-size
+		// declarations expressed. Minimum floors preserve legibility:
+		// 8px keeps single-line marks readable inside the ~28px list-row
+		// frame (the previous 4px floor rendered dot-sized glyphs), and
+		// five- and six-grapheme badges (PLUGIN / SCRIPT / IMPORT /
+		// PRESET) cannot hold 8px on one line inside that frame, so their
+		// floor drops to 5px — still above the dot-collapse range.
+		const lineScale = lines.length >= 3 ? 10 : lines.length >= 2 ? 13 : 18;
+		const minFontPx = badgeLength && ch > 4 ? 5 : 8;
+		return { lines, lineScale, minFontPx };
+	}, [raw]);
+
+	const shellRef = useRef<HTMLSpanElement>(null);
+	const metrics = useFrameMetrics(shellRef);
+	const [fontPx, setFontPx] = useState<number | null>(null);
+
+	useEffect(() => {
+		const el = shellRef.current;
+		if (!metrics || !el) {
+			setFontPx(null);
+			return;
+		}
+		const style = getComputedStyle(el);
+		const px = fitTextFontPx({
+			lines: fit.lines,
+			boxWidth: metrics.boxWidth,
+			contentWidth: metrics.contentWidth,
+			contentHeight: metrics.contentHeight,
+			preferredPct: fit.lineScale,
+			minFontPx: fit.minFontPx,
+			fontFamily: style.fontFamily,
+			fontWeight: style.fontWeight,
+			fontStyle: style.fontStyle,
+		});
+		setFontPx((prev) => (prev === px ? prev : px));
+	}, [metrics, fit]);
+
+	const textStyle = {
+		...backgroundStyle(visual.backgroundColor),
+		...(visual.color ? { color: visual.color } : {}),
+		...(metrics
+			? { borderRadius: `${glyphFrameRadiusPx(metrics.boxWidth)}px` }
+			: {}),
+	} as CSSProperties;
+
+	return (
+		<span
+			ref={shellRef}
+			data-ws-preset-text-fit="scale"
+			className={cx(
+				`ws-preset-icon ws-preset-icon--text ${wsPresetTextShellClass}`,
+				visual.color ? "" : textPrimaryClass,
+			)}
+			style={textStyle}
+			aria-hidden="true"
+		>
+			{fit.lines.map((line) => (
+				<span
+					key={line}
+					className={cx(
+						wsPresetTextLineClass,
+						visual.color ? textInheritClass : textPrimaryClass,
+					)}
+					style={
+						{
+							fontSize: `${fontPx ?? fit.minFontPx}px`,
+						} as CSSProperties
+					}
+				>
+					{line}
+				</span>
+			))}
+		</span>
+	);
+}
+
 export function WorkspacePresetGlyph({
 	preset,
 }: {
@@ -195,116 +382,10 @@ export function WorkspacePresetGlyph({
 		return <GlyphCachedImage imagePath={visual.value} />;
 	}
 	if (visual.kind === "emoji") {
-		const emojiStyle = {
-			...(visual.backgroundColor
-				? { backgroundColor: visual.backgroundColor }
-				: {}),
-		} as CSSProperties;
-		return (
-			<span
-				data-ws-preset-text-fit="scale"
-				className={`ws-preset-icon ws-preset-icon--emoji ${wsPresetEmojiShellClass}`}
-				style={emojiStyle}
-				aria-hidden="true"
-			>
-				<span
-					className={wsEmojiInnerClass}
-					style={{ fontSize: "clamp(4px, 100cqi, 96px)" }}
-				>
-					{visual.value}
-				</span>
-			</span>
-		);
+		return <EmojiGlyph visual={visual} />;
 	}
-
 	if (visual.kind === "canvas") {
-		const [_x1, _y1, _x2, _y2] = visual.cubic;
-		const canvasStyle = {
-			...(visual.backgroundColor
-				? { backgroundColor: visual.backgroundColor }
-				: {}),
-		} as CSSProperties;
-		return (
-			<span
-				className={`ws-preset-icon ws-preset-icon--canvas ${wsPresetCanvasShellClass}`}
-				style={canvasStyle}
-				aria-hidden="true"
-			>
-				<CanvasEasingIcon
-					cubic={visual.cubic}
-					color={visual.color ?? "currentColor"}
-				/>
-			</span>
-		);
+		return <CanvasGlyph visual={visual} />;
 	}
-
-	const raw = visual.value || "?";
-	const graphemes = Array.from(raw);
-	const ch = Math.max(1, graphemes.length);
-
-	// Issue #673: kind badges (FFX / SCRIPT / PLUGIN / MEDIA / …) are
-	// single words — the previous ~sqrt(n) split wrapped them mid-word
-	// ("PLUGIN" → "PLU"/"GIN", "FFX" → "FF"/"X") and made the badge
-	// unreadable. Badge-length text (the editor caps icon text at
-	// PRESET_ICON_TEXT_MAX = 6 graphemes) now stays on one line and
-	// shrinks via the container-query font size instead of wrapping.
-	// Longer legacy strings keep the packed multi-line layout because a
-	// single line cannot fit inside the frame.
-	const badgeLength = ch <= 6;
-
-	// Multi-line (long strings only): break into lines of ~sqrt(n)
-	// graphemes so boxes stay roughly square.
-	const charsPerLine = badgeLength ? ch : Math.ceil(Math.sqrt(ch));
-	const lines: string[] = [];
-	for (let i = 0; i < graphemes.length; i += charsPerLine) {
-		lines.push(graphemes.slice(i, i + charsPerLine).join(""));
-	}
-
-	// Use CSS custom property with container query (cqi = container query inline).
-	// Set on outer span so children can inherit. cqi = 1% of container's inline size.
-	// Minimum 8px: the previous 4px floor rendered ~4px glyphs inside the
-	// 28px list-row frame — below legibility — so single-line marks now
-	// get ~18% of the container width and the floor keeps small frames
-	// readable instead of collapsing to dots. Five- and six-grapheme
-	// badges (PLUGIN / SCRIPT / IMPORT / PRESET) cannot hold 8px on one
-	// line inside the 28px frame, so their floor drops to 5px — still
-	// above the dot-collapse range — while shorter badges keep 8px.
-	const lineScale = lines.length >= 3 ? 10 : lines.length >= 2 ? 13 : 18;
-	const minFontPx = badgeLength && ch > 4 ? 5 : 8;
-
-	const textStyle = {
-		...(visual.backgroundColor
-			? { backgroundColor: visual.backgroundColor }
-			: {}),
-		...(visual.color ? { color: visual.color } : {}),
-	} as CSSProperties;
-
-	return (
-		<span
-			data-ws-preset-text-fit="scale"
-			className={cx(
-				`ws-preset-icon ws-preset-icon--text ${wsPresetTextShellClass}`,
-				visual.color ? "" : textPrimaryClass,
-			)}
-			style={textStyle}
-			aria-hidden="true"
-		>
-			{lines.map((line) => (
-				<span
-					key={line}
-					className={cx(
-						wsPresetTextLineClass,
-						visual.color ? textInheritClass : textPrimaryClass,
-					)}
-					style={
-						{
-							fontSize: `clamp(${minFontPx}px, ${lineScale}cqi, 96px)`,
-						} as CSSProperties
-					}
-				>
-					{line}
-				</span>
-			))}
-		</span>
-	);
+	return <TextGlyph visual={visual} />;
 }

@@ -1,7 +1,8 @@
-import type { CSSProperties, JSX } from "react";
-import { useEffect } from "react";
+import type { JSX } from "react";
+import { useEffect, useRef } from "react";
 import { logCatalogTileDisplay } from "@/management/catalog-tile-display-log";
 import type { Preset } from "@/management/preset/contract";
+import { useFrameMetrics } from "@/management/preset/frame-fit";
 import {
 	PresetCatalogGlyphHost,
 	WorkspacePresetGlyph,
@@ -35,6 +36,32 @@ const missingLabelClass = css({
 	color: "text.primary",
 });
 
+/**
+ * Missing-preset "?" mark. Owns its frame measurement so the hook mounts
+ * with the shell (the branch only renders when `preset` is undefined).
+ */
+function MissingGlyph(): JSX.Element {
+	const shellRef = useRef<HTMLSpanElement>(null);
+	const metrics = useFrameMetrics(shellRef);
+	// Old `clamp(8px, 10cqi, 96px)`: 10% of the frame's inline size,
+	// floored at 8px for legibility (Issue #522) and capped at 96px.
+	const fontPx = metrics
+		? Math.min(96, Math.max(8, metrics.boxWidth * 0.1))
+		: 8;
+	return (
+		<span
+			ref={shellRef}
+			data-ws-preset-text-fit="scale"
+			className={`ws-preset-icon ws-preset-icon--text ${missingIconClass}`}
+			aria-hidden="true"
+		>
+			<span className={missingLabelClass} style={{ fontSize: `${fontPx}px` }}>
+				?
+			</span>
+		</span>
+	);
+}
+
 export function Tile({
 	preset,
 	label,
@@ -61,22 +88,7 @@ export function Tile({
 				if (presetId) onHoverChange?.(null);
 			}}
 		>
-			{preset ? (
-				<WorkspacePresetGlyph preset={preset} />
-			) : (
-				<span
-					data-ws-preset-text-fit="scale"
-					className={`ws-preset-icon ws-preset-icon--text ${missingIconClass}`}
-					aria-hidden="true"
-				>
-					<span
-						className={missingLabelClass}
-						style={{ fontSize: "clamp(8px, 10cqi, 96px)" } as CSSProperties}
-					>
-						?
-					</span>
-				</span>
-			)}
+			{preset ? <WorkspacePresetGlyph preset={preset} /> : <MissingGlyph />}
 		</PresetCatalogGlyphHost>
 	);
 }

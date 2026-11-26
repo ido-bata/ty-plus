@@ -1,6 +1,6 @@
 import { Button } from "@ty-plus/ui";
 import { Wand2 } from "lucide-react";
-import type { CSSProperties, JSX } from "react";
+import type { JSX } from "react";
 import {
 	useIsPresetAssetMissing,
 	useIsPresetAssetUnverifiable,
@@ -147,14 +147,7 @@ export function RootFileRow(
 			className={`${rowContainerBase} ${selected ? rowSelectedClass : ""}`}
 		>
 			<div className={rowButtonClass}>
-				<span
-					className={`${rowIconBoxClass} ${rowIconGlyphClass}`}
-					style={
-						{
-							containerType: "size",
-						} as CSSProperties
-					}
-				>
+				<span className={`${rowIconBoxClass} ${rowIconGlyphClass}`}>
 					<WorkspacePresetGlyph preset={rootFile} />
 				</span>
 				<span className={rowTextBlockClass}>
@@ -204,14 +197,7 @@ export function PresetRow(
 			className={`${rowContainerBase} ${selected ? rowSelectedClass : ""}`}
 		>
 			<div className={rowButtonClass}>
-				<span
-					className={`${rowIconBoxClass} ${rowIconGlyphClass}`}
-					style={
-						{
-							containerType: "size",
-						} as CSSProperties
-					}
-				>
+				<span className={`${rowIconBoxClass} ${rowIconGlyphClass}`}>
 					<WorkspacePresetGlyph preset={preset} />
 				</span>
 				<span className={rowTextBlockClass}>

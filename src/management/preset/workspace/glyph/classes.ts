@@ -52,7 +52,9 @@ export const frameBase = css({
 	backgroundColor: "surface.widget",
 	minHeight: "0",
 	minWidth: "0",
-	containerType: "size",
+	// No `container-type`: the CEP host (CEF 99 / Chromium 99) has no
+	// container queries, and glyph sizing is measured in JS instead
+	// (#700). Keeping the declaration would only diverge Storybook.
 	"& [data-ws-preset-icon='image']": {
 		display: "flex",
 		height: "full",

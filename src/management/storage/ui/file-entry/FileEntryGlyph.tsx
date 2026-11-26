@@ -22,9 +22,9 @@ const iconFrameBaseClass = css({
 const iconFrameFillClass = css({
 	height: "full",
 	width: "full",
-	// Size container so fill-mode glyph content (e.g. the preset text
-	// glyph's `cqh`-relative font) can scale to the rendered frame (#507).
-	containerType: "size",
+	// No `container-type`: the CEP host (CEF 99) has no container queries.
+	// Fill-mode glyph content (the preset text icon) measures this frame
+	// with ResizeObserver instead of `cqh` units (#700, #507).
 });
 const fullSizeClass = css({
 	height: "full",
