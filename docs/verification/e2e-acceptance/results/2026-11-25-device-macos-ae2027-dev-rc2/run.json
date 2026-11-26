@@ -1,0 +1,179 @@
+{
+  "schema": "ty-plus.e2e-run/1",
+  "suite": "journeys",
+  "capturedAt": "2026-11-25T09:16:02.320Z",
+  "extensionDir": "/Users/rebui/Library/Application Support/Adobe/CEP/extensions/app.ty-plus.dev",
+  "managedRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-25T09-10-55-464Z-68783/ty-plus",
+  "realManagedRoot": "/Applications/Adobe After Effects 2027/ty-plus",
+  "sandbox": {
+    "enabled": true,
+    "sandboxRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-25T09-10-55-464Z-68783/ty-plus",
+    "integrity": {
+      "realRoot": "/Applications/Adobe After Effects 2027/ty-plus",
+      "checkedAt": "2026-11-25T09:16:02.316Z",
+      "driftBeforeRepair": {
+        "changed": 5,
+        "added": 0,
+        "removed": 0
+      },
+      "filesRepaired": [
+        "cache/layout-undo/panel-2/stack.json",
+        "cache/layout-undo/panel-5/stack.json",
+        "cache/layout-undo/panel-4/stack.json",
+        "cache/layout-undo/panel-3/stack.json",
+        "cache/layout-undo/panel-1/stack.json"
+      ],
+      "cleanAfterRepair": true
+    }
+  },
+  "totals": {
+    "PASS": 2,
+    "FAIL": 1,
+    "BLOCKED": 4,
+    "SKIP": 0
+  },
+  "results": [
+    {
+      "uc": "UC-J02",
+      "title": "preset journey: create → place → run → edit → delete-attempt (host confirm gate)",
+      "status": "BLOCKED",
+      "detail": "preset-add dialog did not open",
+      "checks": [],
+      "evidence": [],
+      "durationMs": 31247
+    },
+    {
+      "uc": "UC-J03",
+      "title": "layout journey: widget + preset tile + snapshot → reload → restore",
+      "status": "FAIL",
+      "detail": "widget+preset layout snapshot round-trip",
+      "checks": [
+        {
+          "name": "widget added via Add Widget dialog",
+          "ok": false,
+          "detail": "id="
+        },
+        {
+          "name": "snapshot saved to snapshots.json",
+          "ok": true,
+          "detail": "snap=1795597962873"
+        },
+        {
+          "name": "layout mutated with second widget",
+          "ok": false,
+          "detail": "second="
+        },
+        {
+          "name": "mutated layout survives reload",
+          "ok": false,
+          "detail": "cells=7"
+        },
+        {
+          "name": "snapshot restore returned gridCells to saved state",
+          "ok": true,
+          "detail": "start=7 after=7"
+        }
+      ],
+      "evidence": [
+        "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-25T09-10-55-464Z-68783/ty-plus/workspaces/history/snapshots.json"
+      ],
+      "durationMs": 164283
+    },
+    {
+      "uc": "UC-J04",
+      "title": "appearance journey: accent/grid/locale change → live → reload persists",
+      "status": "PASS",
+      "detail": "accent/grid/locale round-trip through settings files",
+      "checks": [
+        {
+          "name": "locale ja applied after reload",
+          "ok": true,
+          "detail": "lang=ja"
+        },
+        {
+          "name": "accent color reached theme.css token",
+          "ok": true,
+          "detail": "accent=#336699"
+        },
+        {
+          "name": "grid cell size reached panel CSS var",
+          "ok": true,
+          "detail": "cell=120px"
+        },
+        {
+          "name": "app.json persisted accent+locale+grid",
+          "ok": true,
+          "detail": "accent=#336699 lang=ja cell=120"
+        },
+        {
+          "name": "theme.css persisted accent token",
+          "ok": true,
+          "detail": ""
+        }
+      ],
+      "evidence": [
+        "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-25T09-10-55-464Z-68783/ty-plus/settings/app.json"
+      ],
+      "durationMs": 2816
+    },
+    {
+      "uc": "UC-J05",
+      "title": "recovery journey: backup export → corrupt files → boot fallback → import restore",
+      "status": "BLOCKED",
+      "detail": "settings dialog did not open",
+      "checks": [],
+      "evidence": [],
+      "durationMs": 31746
+    },
+    {
+      "uc": "UC-J06",
+      "title": "preset handoff: export bundle → wipe catalog → import → run preset in AE",
+      "status": "BLOCKED",
+      "detail": "settings dialog did not open",
+      "checks": [],
+      "evidence": [],
+      "durationMs": 31527
+    },
+    {
+      "uc": "UC-J07",
+      "title": "daily work: quick-actions runs script then ffx preset consecutively",
+      "status": "PASS",
+      "detail": "consecutive quick-action runs: script marker + ffx effects=2",
+      "checks": [
+        {
+          "name": "quick-actions run #1 (script) clicked",
+          "ok": true,
+          "detail": "clicked"
+        },
+        {
+          "name": "script preset produced AE-side marker",
+          "ok": true,
+          "detail": "1795598123104|27.0x78"
+        },
+        {
+          "name": "quick-actions run #2 (ffx) clicked",
+          "ok": true,
+          "detail": "clicked"
+        },
+        {
+          "name": "ffx preset applied effects to selected layer",
+          "ok": true,
+          "detail": "effects=2"
+        }
+      ],
+      "evidence": [
+        "/Users/rebui/Library/Application Support/ty-plus/dg-presets/marker.txt"
+      ],
+      "durationMs": 4986
+    },
+    {
+      "uc": "UC-J08",
+      "title": "real preset pack: grouped catalog, sibling thumbnails, .ffx execution",
+      "status": "BLOCKED",
+      "detail": "dialog-presets surface did not open",
+      "checks": [],
+      "evidence": [],
+      "durationMs": 30230
+    }
+  ]
+}
