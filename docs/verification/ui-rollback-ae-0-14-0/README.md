@@ -1,13 +1,20 @@
 # UI/UX ロールバック解消の実機視覚検証 (release-0-14-0, Issue #591 系)
 
 `release-0-14-0` に merge された UI 修正群について、Storybook / unit test
-だけでなく After Effects 実機 (macOS / AE2027) 上の dev bundle
+だけでなく After Effects 実機 (macOS / AE2026 26.5.3) 上の dev bundle
 (`app.ty-plus.dev` → `dist/cep-dev`、HEAD `493cdc36` 時点の build) で
 描画・操作結果を確認した記録。
 
+> **ホストに関する注意**: 検証時に AE2026 (pid 55912) と AE2027 (pid 65119)
+> の両方が起動しており、`.debug` の debug port (31010–) は先に bind した
+> **AE2026 側の CEPHtmlEngine が占有**していた (`lsof` で確認)。
+> したがって本記録の実機確認は全て AE2026 / 26.5.3 上の描画である。
+> AE2027 側の panel は同一 dev bundle を読み込んでいるが CDP port が
+> 衝突しており、本記録の DOM 検査は AE2027 では未実施。
+
 ## 環境・手法
 
-- AE2027 (pid 65119) に Window > Extensions から dev panel 1–5 と
+- AE2026 (pid 55912) に Window > Extensions から dev panel 1–5 と
   modeless dialog 群を起動。`.debug` の debug port (panel1=31010、
   widget-selector=31030、preset-edit=31024、settings=31029 等) 経由で
   CDP (`Runtime.evaluate` / `Page.captureScreenshot`) を使用。
@@ -25,18 +32,18 @@
 | #677 | WidgetTutorialLayer の tooltip を widget 領域基準に | panel1 で tutorial bubble「Shape the cycle」が widget highlight (518,722,346x191) 直上 (566,621) に表示 |
 | #679 | RangeField のラベル値二重表示を解消 | settings `#component-preview` の「Slider with numeric input」でラベルは名前のみ、NumberField の aria-label が `... value %`、unit `%` は 1 箇所のみ (`settings-component-preview.png`) |
 | #680 | StatusBar の badge / aria-label / status text | panel1 status bar に「After Effects」+ 件数 badge (1 / 36) と全ボタンの aria-label を確認 |
-| #673 | preset type badge の単語途中 wrap 解消 | preset list dialog の glyph が 5 grapheme 名称で 1 行 (h=16px = font-size) に収まることを確認 (`preset-list-badges.png`) |
+| #673 | preset type badge の単語途中 wrap 解消 | preset list dialog の glyph が 5 grapheme 名称で 1 行 (h=16px = font-size) に収まることを確認。group edit dialog の FFX badge 301 件も全て単一行 (h=16px) (`preset-list-badges.png`, `group-edit-members.png`) |
 | #674 | dialog footer の水平 inset を shell primitive に統一 | settings dialog と preset edit dialog の `footer[data-dialog-footer]` で `padding-inline: 8px` (= `--ty-shell-pad-inline`) を確認 |
 | #681 | preset edit dialog の error kind 区別 | preset edit dialog (31024) が正常系で開き、Cancel/Delete/Save が有効・footer inset 正常 (`preset-edit-dialog.png`)。失敗系 (delete 失敗後の retry) は unit test で担保 |
 | #684 | 折りたたみ時 control panel の展開 affordance | panel2–5 は既定で collapsed 描画。`[data-cp]` に `data-collapsed="true"` + `ty.ctx.cp.toggle-collapse` IconButton (ChevronsUpDown) が存在し、click で 20x20 → 164x38 に展開・6 ボタン表示を確認 |
+| #676 | group catalog tile の keyline / count badge | group preset「Verify Group」(300 members) を作成し workspace catalog tile で確認。surface は `inset:1px` + `1px solid border.subtle` + `surface.widget`、badge は「99+」chip (surface.dialog / border.subtle / radius full) (`group-catalog-tile.png`) |
+| #686 | MembersSection の path key 安定化 | group preset edit dialog で MEMBER PRESETS (300) が描画され、各行に FFX badge + 名前を確認。300 行で render 破綻なし (`group-edit-members.png`)。key 安定性自体は unit test で担保 |
 
 ## コード・テストで担保し実機未踏の項目
 
 | Issue | 内容 | 状態 |
 | --- | --- | --- |
 | #672 | Loop wave の label obstacle sampling (`waveLabelObstacles`) | canvas 描画のため DOM 検査不可。`loop-wave-labels.png` を証跡として保存。配置ロジックは unit test で担保 |
-| #676 | group catalog tile の keyline / count badge | workspace catalog grid に group preset tile が必要で、ローカル catalog に group preset が存在しないため未踏 |
-| #686 | MembersSection の path key 安定化 | group preset 編集面が必要。render 契約は unit test で担保 |
 | #682 | `.debug` port band 修正 | build 時の port 採番であり、今回の build (31010–31031) が ephemeral range (49152+) を避けていることを `.debug` で確認済み |
 
 ## 証跡ファイル
@@ -50,10 +57,25 @@
 | `settings-component-preview.png` | settings Component Preview (RangeField 等) |
 | `align-target-row.png` | align widget の対象切替行 |
 | `widget-selector.png` | Add widget modeless dialog |
+| `group-catalog-tile.png` | workspace catalog の group tile (FFX + 99+ badge) |
+| `group-edit-members.png` | group preset edit dialog (MEMBER PRESETS 300) |
 
 ## 残件
 
-- 上表「実機未踏」3 件は fixture (group preset) が必要。E2E fixture
-  整備または Storybook 実描画との照合で補完する。
+- #672 の label 配置は canvas 描画のため DOM 検査が効かず、
+  `loop-wave-labels.png` の証跡 + unit test が現状の保証範囲。
+- 検証用に作成した group preset「Verify Group」(300 members) は
+  preset list dialog から削除済み (native confirm dialog
+  「Delete group "Verify Group"? This cannot be undone.」の Yes を
+  AX 経由で押下。`presets.json` から消失・孤立 .ffx なしを確認)。
+- **AE2027 での同項目検証は未実施**。両 AE 同時起動時は `.debug` port が
+  衝突するため、AE2027 側を検証するには AE2026 の dev panel を閉じるか
+  port 割当を分離する必要がある (#682 の port band は 31010– 固定のため
+  同一マシン複数 AE ホストでは常に先勝ち)。
 - Windows 実機での同項目検証は未実施 (v0.13.1 配布物検証は
   `distributed-0-13-1/` を参照)。
+- 副次的観察: preset/group の削除確認は `window.confirm`
+  (`src/management/preset/delete-confirm.ts`) で、CEF では **native
+  modal dialog** として描画され応答まで renderer 全体 (CDP 含む) が
+  ブロックされる。実利用では問題ないが、自動化経路では AX 経由の
+  ダイアログ操作が必要になる。
