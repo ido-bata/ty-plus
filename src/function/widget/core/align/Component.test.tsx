@@ -68,6 +68,22 @@ describe("Align action controls", () => {
 		}
 	});
 
+	it("always renders the target selector row (Issue #670)", () => {
+		// jsdom keeps `size.h` at 0 because ResizeObserver is a no-op stub,
+		// which used to force `showTarget` false and hide the switcher.
+		const { container } = renderAlign();
+		for (const action of [
+			"align-target-selection",
+			"align-target-comp",
+			"align-target-key-object",
+			"align-target-time",
+		]) {
+			expect(
+				container.querySelector(`[data-ws-action='${action}']`),
+			).not.toBeNull();
+		}
+	});
+
 	it("runs the align action on click without starting a gesture", async () => {
 		const { container, host } = renderAlign();
 
