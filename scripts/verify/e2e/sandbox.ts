@@ -612,10 +612,16 @@ export const prepareSandbox = async (
 				.getPropertyValue("--color-ty-accent") || "";
 			return v.trim().toLowerCase().includes("e2b701") ? "sandbox" : "real:" + v.trim();
 		})()`;
-		const probeDeadline = Date.now() + 20_000;
+		const probeDeadline = Date.now() + 45_000;
 		let probe: unknown = null;
 		while (Date.now() < probeDeadline) {
-			probe = await ctx.evalJs(panel, accentProbe, 15_000);
+			try {
+				probe = await ctx.evalJs(panel, accentProbe, 15_000);
+			} catch {
+				// Transient CDP stall (host under load): keep polling until the
+				// deadline instead of aborting the whole sandbox activation.
+				probe = null;
+			}
 			if (probe === "sandbox") break;
 			await sleep(500);
 		}

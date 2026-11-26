@@ -20,6 +20,13 @@ import {
 	describeOwner,
 	releaseAeLock,
 } from "./ae-lock";
+import {
+	type AeSessionEvidence,
+	type AeSessionHandle,
+	attachAeSession,
+	collectAeDiagnostics,
+	describeAeSession,
+} from "./ae-session";
 import { catalogCases } from "./cases/catalog";
 import { debugCases } from "./cases/debug";
 import { hostCases } from "./cases/host";
@@ -277,7 +284,20 @@ const main = async (): Promise<void> => {
 	}
 
 	try {
-		await runSuites(ctx, suiteName, cases, realManagedRoot, outDir);
+		// Read-only AE session attach (Issue #657): proves which host process
+		// this run drives and gives failure paths a diagnostics bundle.
+		// Best-effort — never blocks the suite.
+		const aeSession = await attachAeSession(outDir);
+		const aeEvidence = await describeAeSession(aeSession);
+		await runSuites(
+			ctx,
+			suiteName,
+			cases,
+			realManagedRoot,
+			outDir,
+			aeSession,
+			aeEvidence,
+		);
 	} finally {
 		if (aeLock) {
 			releaseAeLock(aeLock.lockDir, aeLock.runId);
@@ -292,6 +312,8 @@ const runSuites = async (
 	cases: E2ECase[],
 	realManagedRoot: string,
 	outDir: string,
+	aeSession: AeSessionHandle | AeSessionEvidence,
+	aeEvidence: AeSessionEvidence,
 ): Promise<void> => {
 	// Put the locator back if a previous run died mid-sandbox.
 	const recovery = await recoverInterruptedSandbox(ctx);
@@ -397,6 +419,18 @@ const runSuites = async (
 		}
 	}
 
+	// Host-side evidence for FAIL/BLOCKED runs (Issue #657): crash reports,
+	// host logs, session trace, supervision + GUI state via ae-a8n.
+	let aeDiagnostics: { dir: string | null; error?: string } | null = null;
+	if (results.some((r) => r.status === "FAIL" || r.status === "BLOCKED")) {
+		aeDiagnostics = await collectAeDiagnostics(aeSession, outDir);
+		if (aeDiagnostics.dir) {
+			console.log(`ae-diagnostics: ${aeDiagnostics.dir}`);
+		} else if (aeDiagnostics.error) {
+			console.warn(`ae-diagnostics: ${aeDiagnostics.error}`);
+		}
+	}
+
 	const summary = {
 		schema: "ty-plus.e2e-run/1",
 		suite: suiteName,
@@ -404,6 +438,8 @@ const runSuites = async (
 		extensionDir: ctx.options.extensionDir,
 		managedRoot,
 		realManagedRoot: sandbox?.realRoot ?? managedRoot,
+		aeSession: aeEvidence,
+		aeDiagnostics,
 		sandbox: sandbox
 			? {
 					enabled: true,

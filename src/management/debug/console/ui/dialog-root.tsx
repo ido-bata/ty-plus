@@ -68,6 +68,12 @@ const logEntryToMessage = (entry: LogEntry): LogMessage => ({
 
 const debugConsoleLog = createLogger("debug-console");
 
+// Issue #655: replay-response collection window. Each accepted response
+// extends the window by the grace period so straggler surfaces still
+// merge; the deadline caps total collection time.
+const REPLAY_COLLECT_GRACE_MS = 3000;
+const REPLAY_COLLECT_MAX_MS = 45000;
+
 export type DebugDialogRootProps = {
 	surfaceId: string;
 	onContextMenuSelect?: (menuId: string) => void;
@@ -368,13 +374,23 @@ export function DebugDialogRoot({
 			myReplayRequestIds.add(id);
 			return id;
 		};
+		// Issue #655: a broadcast replay-request is answered by EVERY live
+		// surface, and each responder snapshots only its own in-memory
+		// LogBus — the entries differ per surface. Consuming the first
+		// response therefore shows whichever responder happened to answer
+		// first, silently dropping history held only by slower peers.
+		// Collect responses until a short grace window after the last
+		// accepted one, bounded by an overall deadline, and let
+		// `mergeLogMessages` dedupe the union.
+		let replayCollectUntil = 0;
+		let replayCollectDeadline = 0;
 		const unsubTransport = transport.subscribe(
 			(envelope: SurfaceMessageEnvelope) => {
 				if (!mounted) return;
 				if (envelope.channel !== LOG_SURFACE_CHANNEL) return;
-				// Replay response: ingest the entries it carries, then drop
-				// the correlation id so subsequent responses for the same
-				// id (impossible in practice, but defensive) do not retry.
+				// Replay response: ingest the entries it carries. Issue #655:
+				// keep the correlation id alive until the collection window
+				// closes so every peer's snapshot merges into the union.
 				if (
 					envelope.kind === "response" &&
 					envelope.correlationId &&
@@ -393,7 +409,15 @@ export function DebugDialogRoot({
 						}
 					}
 					if (accepted.length === 0) return;
-					myReplayRequestIds.delete(envelope.correlationId);
+					const now = Date.now();
+					if (now > replayCollectUntil) {
+						myReplayRequestIds.delete(envelope.correlationId);
+						return;
+					}
+					replayCollectUntil = Math.min(
+						now + REPLAY_COLLECT_GRACE_MS,
+						replayCollectDeadline,
+					);
 					// Issue #151 round-6: consumer-arrival clearedAt re-check.
 					// The peer's snapshot may have been generated before the
 					// operator pressed Clear; re-read the tombstone as the
@@ -446,7 +470,12 @@ export function DebugDialogRoot({
 		// Send the replay request AFTER the listener is attached so the
 		// response handler is ready to receive the response envelope.
 		// No `targetSurfaceId` → broadcast; every surface answers.
+		// Issue #655: open the collection window — it starts with one
+		// grace period and each accepted response extends it (bounded by
+		// the overall deadline) so straggler responders still merge.
 		const replayRequestId = makeReplayRequestId();
+		replayCollectDeadline = Date.now() + REPLAY_COLLECT_MAX_MS;
+		replayCollectUntil = Date.now() + REPLAY_COLLECT_GRACE_MS;
 		const publishPromise = transport.publish({
 			messageId: replayRequestId,
 			correlationId: replayRequestId,

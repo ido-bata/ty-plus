@@ -40,7 +40,6 @@ import type { ShellProps } from "@/management/dialog/shell/Layout";
 import { useDialogClose } from "@/management/dialog/useClose";
 import { i18n } from "@/management/i18n/index";
 import { useGatewayHealth } from "@/management/online/runtime-gateway-health";
-import { resolvePresetToolSurfaceIdForPreset } from "@/management/preset/authoring/request";
 import {
 	ICON_CELL_BASE_REM,
 	ICON_GRID_CLASS,
@@ -67,7 +66,6 @@ import {
 	listPresets,
 	removeLocalPreset,
 } from "@/management/preset/operations";
-import { getPresetToolDialogEntry } from "@/management/preset/registry";
 import type { SiblingListingEntry } from "@/management/preset/sibling-thumbnail";
 import { PresetGlyphById } from "@/management/preset/workspace/glyph/by-id";
 import {
@@ -1550,10 +1548,7 @@ export function PresetsDialog(): JSX.Element {
 				if (!preset) {
 					return;
 				}
-				const toolSurface = resolvePresetToolSurfaceIdForPreset(preset);
-				if (!getPresetToolDialogEntry(toolSurface)) {
-					return;
-				}
+				await openPresetEditSurface(window, PRESETS_DIALOG_SURFACE_ID, id);
 			} catch (error) {
 				console.warn(
 					"preset-list: edit failed",

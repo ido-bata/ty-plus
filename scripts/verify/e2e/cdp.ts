@@ -19,7 +19,10 @@ export const listTargets = async (port: number): Promise<CdpTarget[]> => {
 	if (!res.ok) {
 		throw new Error(`CDP target list failed on port ${port}: ${res.status}`);
 	}
-	return (await res.json()) as CdpTarget[];
+	const body: unknown = await res.json();
+	// A wedged CEF endpoint can answer /json/list with a non-array payload;
+	// treat that as "no targets" rather than crashing callers on .find().
+	return Array.isArray(body) ? (body as CdpTarget[]) : [];
 };
 
 type Evaluate = (expression: string, timeoutMs?: number) => Promise<unknown>;
