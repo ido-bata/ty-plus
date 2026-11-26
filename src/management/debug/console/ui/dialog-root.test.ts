@@ -139,8 +139,8 @@ const subscribeSharedLogsSpy = vi.fn(() => () => {});
 const subscribeSpy = vi.fn(() => () => {});
 const subscribeDebugLogEventsSpy = vi.fn(() => () => {});
 const subscribeLogSpy = vi.fn(() => () => {});
-const cepTransportSubscribeSpy = vi.fn(() => () => {});
-const cepTransportPublishSpy = vi.fn(async () => {});
+const cepTransportSubscribeSpy = vi.fn((_envelope: unknown) => () => {});
+const cepTransportPublishSpy = vi.fn(async (_envelope: unknown) => {});
 // Issue #151 round-7: spies on the three primitives that
 // `handleClear` and the context-menu Clear path now drive directly,
 // in the round-7 reorder order.
