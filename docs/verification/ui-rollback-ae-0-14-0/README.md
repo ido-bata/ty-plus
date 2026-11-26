@@ -59,6 +59,36 @@
 | `widget-selector.png` | Add widget modeless dialog |
 | `group-catalog-tile.png` | workspace catalog の group tile (FFX + 99+ badge) |
 | `group-edit-members.png` | group preset edit dialog (MEMBER PRESETS 300) |
+| `cef-font-floor-glyphs-0-14-0.png` | preset catalog dialog の text glyph 310 件 (#704 修正後、10px+scale 描画) |
+
+## 追記: CEF 描画制約の修正検証 (#700 / #701 / #704)
+
+#665 の実機 DOM 監査で発見した CEF 固有の 2 制約について、修正 merge 後の
+build (`909c2a89`、`dist/cep-dev`) で AE2026 実機再検証を実施した。
+
+### #700: container query 無効 → px 実測 fit
+
+- `CSS.supports('container-type','inline-size')` / `CSS.supports('width','1cqi')`
+  が本番 CEF (Chromium 99 系) で共に `false` であることを再確認。
+- 修正後は glyph の font-size / borderRadius を JS 実測 px + CSS custom
+  property (`--ws-glyph-text-font-px`) 経由で適用するため、container query
+  非対応環境でも値が落ちない。
+
+### #704: font-size 10px フロア → 10px 描画 + transform scale
+
+- CEF は computed font-size を ~10px 未満にできない (inline
+  `font-size:3px` でも computed は `10px`)。#700 の fit 値が 10px 未満に
+  なるケースで文字が overflow する問題を、`resolveFittedTextFont` で
+  「10px 描画 + `transform: scale(desired/10)`」に分解して解消。
+- **実機確認**: preset catalog dialog (`dialog-presets`) に実 preset
+  310 件分の text glyph が描画され、全件で `--ws-glyph-text-font-px=10`、
+  `--ws-glyph-text-scale` = 0.343–0.396、wrapper に
+  `transform: matrix(scale,…)` が適用されていることを DOM で確認。
+  全 glyph の行が frame 内に収まり (`inside=true`)、text clip なし
+  (`badLines=0`)。証跡: `cef-font-floor-glyphs-0-14-0.png`。
+- #701 (preset/group 削除後の ghost info widget) は #703 で修正済み。
+  削除後の info widget 残留は本検証では preset 削除を再実施していない
+  ため unit test 担保の範囲。
 
 ## 残件
 
