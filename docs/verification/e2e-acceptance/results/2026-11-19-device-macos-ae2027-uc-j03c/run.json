@@ -1,0 +1,40 @@
+{
+  "schema": "ty-plus.e2e-run/1",
+  "suite": "journeys",
+  "capturedAt": "2026-11-18T14:55:54.546Z",
+  "extensionDir": "/Users/rebui/Library/Application Support/Adobe/CEP/extensions/app.ty-plus.dev",
+  "managedRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-18T14-55-44-780Z-36570/ty-plus",
+  "realManagedRoot": "/Applications/Adobe After Effects 2027/ty-plus",
+  "sandbox": {
+    "enabled": true,
+    "sandboxRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-18T14-55-44-780Z-36570/ty-plus",
+    "integrity": {
+      "realRoot": "/Applications/Adobe After Effects 2027/ty-plus",
+      "checkedAt": "2026-11-18T14:55:54.545Z",
+      "driftBeforeRepair": {
+        "changed": 0,
+        "added": 0,
+        "removed": 0
+      },
+      "filesRepaired": [],
+      "cleanAfterRepair": true
+    }
+  },
+  "totals": {
+    "PASS": 0,
+    "FAIL": 0,
+    "BLOCKED": 1,
+    "SKIP": 0
+  },
+  "results": [
+    {
+      "uc": "UC-J03",
+      "title": "layout journey: widget + preset tile + snapshot → reload → restore",
+      "status": "BLOCKED",
+      "detail": "add-widget button not found: missing:[data-ws-action=\"ty.ctx.add-widget\"]",
+      "checks": [],
+      "evidence": [],
+      "durationMs": 3886
+    }
+  ]
+}
