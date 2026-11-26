@@ -49,3 +49,30 @@ slug: `ty-plus` / 監督Issue: rebuildup/my-web-2026#1225 / 子Issue: ido-bata/t
 
 - 本納品は既存検証済み画像の再利用。現行 v0.13.0 での新規実機撮影（AE ウィンドウ + パネルの複合ショット）は、作業時点で AE2027 が外部自動化（Aulymo_v04）に占有され、かつ panel-1 消失・モーダル残存のゾンビ状態にあるため未実施。復旧にはユーザーによる AE2027 の再起動が必要（`docs/verification/release-candidate-0-13-1.md` に同一 blocker の記録あり）。復旧後に `web-product-capture.ts` で v0.13.x の再撮影が可能。
 - `docs/user-guide/assets/screenshots/v0.10.1-hero.png`（v0.10.1 実機 composite、同ディレクトリの `capture-notes.md` に ZXP SHA-256・AE バージョン・撮影手順を含む完全な provenance あり）も評価した。パネル UI が現行版（ワークスペースグリッド・検索・Loop widget・i18n）と世代が異なるため主画像には採用せず、「コンポジション共存」構図の代替候補として補足に同梱する。
+
+---
+
+## 2026-11-26 追記: v0.13.0 真正再撮影版（main.png 以下が正本）
+
+owner 判断により既存再利用品を暫定とし、v0.13.x の実機再撮影を実施。AE2026 (26.5.3x9) + 公開 Stable `app.ty-plus` v0.13.0（`/Library/.../CEP/extensions/app.ty-plus`、manifest Version=0.13.0、Host AEFT [17.0,99.9]）で取得。
+
+| 区分 | ファイル | 寸法 | 内容 |
+| --- | --- | --- | --- |
+| 主画像 main | `main.png` | 3685×1248 | 左: AE2026 ウィンドウ実写（Portfolio Demo コンポジション + ty-plus パネル同居）、右: v0.13.0 パネルのプリセットゾーン 4x キャプチャの composite |
+| 補足 | `v0.13.0-preset-tiles.png` | 2544×1812 | 検証済みデモワークスペースのプリセットタイル10面（CDP 4x capture） |
+| 補足 | `v0.13.0-workspace-top.png` | 2544×1812 | ウィジェット帯（Curve/Bounce/Elastic・Align/Distribute/Spacing） |
+| 補足 | `v0.13.0-preset-zone-2.png` | 2544×1812 | 下部ゾーン（情報ウィジェット + フォントビューア） |
+| 補足 | `v0.13.0-presets-dialog.png` | 1760×1520 | Local Presets ダイアログ実画面 |
+| 補足 | `v0.13.0-add-widget-dialog.png` | 1760×1520 | Add Widget ダイアログ実画面 |
+
+### 撮影対象版・再現手順（v0.13.0）
+
+- 版: ty-plus v0.13.0 Stable（GitHub Release `v0.13.0`、2026-11-24 公開）。ホスト: Adobe After Effects 2026 (26.5.3x9)、macOS。
+- 手順: `scripts/verify/web-product-capture.ts`（repo 正本、Issue #309/#319/#322 系）を `--extension-dir=/Library/.../app.ty-plus --managed-root="/Applications/Adobe After Effects 2026/ty-plus"` で実行。managed root と AE プロジェクトは snapshot/restore 済み。パネル静止画は `Emulation.setDeviceMetricsOverride` (DSF=4) による高解像度化（レイアウトは等倍、画素密度のみ向上）。
+- 検証: スクリプトログで `preset tiles rendered: 10`、プリセット実適用を ExtendScript で確認（`effects after run: [ADBE Slider Control, Pseudo/…, ADBE Geometry2]`、`preset application verified: true`）。
+- `main.png` の右側は同一実行の `product-preset-tiles.png`。左側は `screencapture -l <AE window>` の実ウィンドウ。コンポジション「Portfolio Demo」は撮影用に ExtendScript で生成した検証用デモ（単色ソリッド + テキストのみ、個人情報なし）。撮影後にコンポジションはプロジェクトから削除済み。
+- alt（main）: 「After Effects 上で ty-plus パネルとコンポジションが共存する画面。パネルにはプリセットタイルとユーティリティウィジェットがグリッド配置されている」
+- caption（main）: 「ty-plus v0.13.0 — プリセットをタイルとして整理し、ワークスペース上でプレビュー・適用できる After Effects 拡張」
+- 権利/公開境界: 自社プロダクトの実機キャプチャ。写るのは製品同梱プリセット名・デモ用コンポジション・AE 標準 UI のみ。個人情報・非公開名・ファイルパスなし（OCR 確認）。
+- 注意: hover/selection の info-widget 検証は既知の未解決項目（#322）のため、選択状態の静止画は未取得。
+- 旧ファイル（`preset-grid.png` 等）と `v0.10.1-hero.png` は前回納品の暫定・参考品として残置。正本は `main.png` 以下の v0.13.0 群。
