@@ -21,9 +21,10 @@ import {
 	Trash2,
 	Undo2,
 } from "@ty-plus/ui";
-import { memo, useEffect, useRef, useState } from "react";
+import { memo, type ReactNode, useEffect, useRef, useState } from "react";
 import { subscribe } from "@/management/debug";
 import { i18n } from "@/management/i18n/index";
+import { loadNotificationsStore } from "@/management/online/notification/store";
 import type { SurfaceState } from "@/management/workspace/core/state";
 import type { Snapshot } from "@/management/workspace/undo/history";
 import { css } from "@/styled-system/css";
@@ -85,9 +86,32 @@ const statusTextVisible = css({
 	color: "text.muted",
 });
 
-const statusTextHidden = css({
-	opacity: "0",
-	color: "text.muted",
+const consoleText = css({
+	color: "text.primary",
+});
+
+const badgeAnchor = css({
+	position: "relative",
+	display: "inline-flex",
+});
+
+const countBadge = css({
+	position: "absolute",
+	top: "-1",
+	right: "-1",
+	display: "inline-flex",
+	minWidth: "3.5",
+	height: "3.5",
+	alignItems: "center",
+	justifyContent: "center",
+	paddingInline: "0.5",
+	borderRadius: "full",
+	backgroundColor: "text.accent",
+	color: "surface.panel",
+	fontSize: "text-3xs",
+	fontWeight: "medium",
+	lineHeight: "1",
+	pointerEvents: "none",
 });
 
 const actionGroup = css({
@@ -150,6 +174,13 @@ const panelIndexHidden = css({
 	display: "none",
 });
 
+const renderCountBadge = (count: number): ReactNode =>
+	count > 0 ? (
+		<span className={countBadge} data-ws-badge="" aria-hidden="true">
+			{count > 99 ? "99+" : count}
+		</span>
+	) : null;
+
 export const StatusBar = memo(function StatusBarImpl(
 	props: StatusBarProps,
 ): React.ReactElement {
@@ -159,6 +190,8 @@ export const StatusBar = memo(function StatusBarImpl(
 
 	const [latestConsoleText, setLatestConsoleText] = useState<string>("");
 	const [consoleVisible, setConsoleVisible] = useState(false);
+	const [consoleCount, setConsoleCount] = useState(0);
+	const [unreadNotifications, setUnreadNotifications] = useState(0);
 	const [snapshotsOpen, setSnapshotsOpen] = useState(false);
 	const snapshotsAnchorRef = useRef<HTMLDivElement>(null);
 
@@ -167,6 +200,7 @@ export const StatusBar = memo(function StatusBarImpl(
 			const last = msgs[msgs.length - 1];
 			const text = last ? last.text : "";
 			setLatestConsoleText(text);
+			setConsoleCount(msgs.length);
 			if (text) {
 				setConsoleVisible(true);
 				const timer = setTimeout(() => setConsoleVisible(false), 3000);
@@ -176,26 +210,54 @@ export const StatusBar = memo(function StatusBarImpl(
 		return unsub;
 	}, []);
 
+	// Unread notification count for the messages badge. The notification
+	// center owns the read/unread store (cache/notifications.json); there is
+	// no push channel, so re-read on mount and when the panel regains focus.
+	useEffect(() => {
+		let cancelled = false;
+		const refresh = (): void => {
+			void loadNotificationsStore(window)
+				.then((store) => {
+					if (cancelled) return;
+					const readAtById = store.readAtById;
+					setUnreadNotifications(
+						store.items.filter((item) => !readAtById[item.notificationId])
+							.length,
+					);
+				})
+				.catch(() => {});
+		};
+		refresh();
+		window.addEventListener("focus", refresh);
+		return () => {
+			cancelled = true;
+			window.removeEventListener("focus", refresh);
+		};
+	}, []);
+
 	return (
 		<footer data-ws-status-bar="" className={cx("status-bar", footerBase)}>
 			<div className={statusTextGroup}>
 				<span className={statusDot} aria-hidden="true" />
-				<span
-					className={cx(
-						statusTextBase,
-						consoleVisible && latestConsoleText
-							? statusTextVisible
-							: statusTextHidden,
-					)}
-				>
-					{latestConsoleText ||
-						`${s.hostName}${s.mode === "live" ? " · Live" : ""}`}
+				{/* Issue #680: host/mode info stays visible at all times; the
+				    latest console message appears next to it for ~3s. */}
+				<span className={cx(statusTextBase, statusTextVisible)}>
+					{s.hostName}
+					{s.mode === "live" ? " · Live" : ""}
 				</span>
+				{consoleVisible && latestConsoleText ? (
+					<span className={cx(statusTextBase, statusTextVisible, consoleText)}>
+						{latestConsoleText}
+					</span>
+				) : null}
 			</div>
 			<div className={actionGroup}>
 				<IconButton
 					data-ws-action="undo"
 					title={i18n.t("workspace:statusBar.undoTitle", {
+						defaultValue: "Undo (Ctrl+Z)",
+					})}
+					aria-label={i18n.t("workspace:statusBar.undoTitle", {
 						defaultValue: "Undo (Ctrl+Z)",
 					})}
 					disabled={!props.canUndo}
@@ -209,6 +271,9 @@ export const StatusBar = memo(function StatusBarImpl(
 					title={i18n.t("workspace:statusBar.redoTitle", {
 						defaultValue: "Redo (Ctrl+Y)",
 					})}
+					aria-label={i18n.t("workspace:statusBar.redoTitle", {
+						defaultValue: "Redo (Ctrl+Y)",
+					})}
 					disabled={!props.canRedo}
 					size="sm"
 					className={iconBtnSize}
@@ -220,6 +285,9 @@ export const StatusBar = memo(function StatusBarImpl(
 					title={i18n.t("workspace:statusBar.saveSnapshotTitle", {
 						defaultValue: "Save layout snapshot",
 					})}
+					aria-label={i18n.t("workspace:statusBar.saveSnapshotTitle", {
+						defaultValue: "Save layout snapshot",
+					})}
 					size="sm"
 					className={iconBtnSize}
 				>
@@ -227,24 +295,37 @@ export const StatusBar = memo(function StatusBarImpl(
 				</IconButton>
 
 				<div ref={snapshotsAnchorRef} className={snapshotsWrap}>
-					<IconButton
-						data-ws-action="toggle-snapshots"
-						title={
-							props.snapshots.length === 0
-								? i18n.t("workspace:statusBar.savedLayoutsTitleEmpty", {
-										defaultValue: "Saved layouts (none)",
-									})
-								: i18n.t("workspace:statusBar.savedLayoutsTitle", {
-										count: props.snapshots.length,
-										defaultValue: "Saved layouts ({{count}})",
-									})
-						}
-						size="sm"
-						className={iconBtnSize}
-						onClick={() => setSnapshotsOpen((v) => !v)}
-					>
-						<Icon icon={Layers} size={3} />
-					</IconButton>
+					<span className={badgeAnchor}>
+						<IconButton
+							data-ws-action="toggle-snapshots"
+							title={
+								props.snapshots.length === 0
+									? i18n.t("workspace:statusBar.savedLayoutsTitleEmpty", {
+											defaultValue: "Saved layouts (none)",
+										})
+									: i18n.t("workspace:statusBar.savedLayoutsTitle", {
+											count: props.snapshots.length,
+											defaultValue: "Saved layouts ({{count}})",
+										})
+							}
+							aria-label={
+								props.snapshots.length === 0
+									? i18n.t("workspace:statusBar.savedLayoutsTitleEmpty", {
+											defaultValue: "Saved layouts (none)",
+										})
+									: i18n.t("workspace:statusBar.savedLayoutsTitle", {
+											count: props.snapshots.length,
+											defaultValue: "Saved layouts ({{count}})",
+										})
+							}
+							size="sm"
+							className={iconBtnSize}
+							onClick={() => setSnapshotsOpen((v) => !v)}
+						>
+							<Icon icon={Layers} size={3} />
+						</IconButton>
+						{renderCountBadge(props.snapshots.length)}
+					</span>
 					<AnchoredPopover
 						open={snapshotsOpen}
 						onClose={() => setSnapshotsOpen(false)}
@@ -289,6 +370,7 @@ export const StatusBar = memo(function StatusBarImpl(
 												data-ws-action="delete-snapshot"
 												data-snap-id={snp.id}
 												title={i18n.t("common:buttons.delete")}
+												aria-label={i18n.t("common:buttons.delete")}
 												size="sm"
 												className={iconBtnSize}
 											>
@@ -307,6 +389,9 @@ export const StatusBar = memo(function StatusBarImpl(
 					title={i18n.t("workspace:controlPanel.buttons.localPreset", {
 						defaultValue: "Local Preset",
 					})}
+					aria-label={i18n.t("workspace:controlPanel.buttons.localPreset", {
+						defaultValue: "Local Preset",
+					})}
 					size="sm"
 					className={iconBtnSize}
 				>
@@ -318,34 +403,48 @@ export const StatusBar = memo(function StatusBarImpl(
 					title={i18n.t("workspace:statusBar.presetLibraryTitle", {
 						defaultValue: "Preset Library (Online)",
 					})}
+					aria-label={i18n.t("workspace:statusBar.presetLibraryTitle", {
+						defaultValue: "Preset Library (Online)",
+					})}
 					size="sm"
 					className={iconBtnSize}
 				>
 					<Icon icon={Cloud} size={3} />
 				</IconButton>
-				<IconButton
-					data-ws-action="toggle-console"
-					title={i18n.t("workspace:statusBar.debugConsoleTitle", {
-						defaultValue: "Debug console (Ctrl+`)",
-					})}
-					size="sm"
-					className={iconBtnSize}
-				>
-					<Icon icon={Terminal} size={3} />
-				</IconButton>
-				<IconButton
-					data-ws-action="open-dialog"
-					data-dialog-kind="messages"
-					title={i18n.t("common:statusBar.message")}
-					size="sm"
-					className={iconBtnSize}
-				>
-					<Icon icon={MessageSquare} size={3} />
-				</IconButton>
+				<span className={badgeAnchor}>
+					<IconButton
+						data-ws-action="toggle-console"
+						title={i18n.t("workspace:statusBar.debugConsoleTitle", {
+							defaultValue: "Debug console (Ctrl+`)",
+						})}
+						aria-label={i18n.t("workspace:statusBar.debugConsoleTitle", {
+							defaultValue: "Debug console (Ctrl+`)",
+						})}
+						size="sm"
+						className={iconBtnSize}
+					>
+						<Icon icon={Terminal} size={3} />
+					</IconButton>
+					{renderCountBadge(consoleCount)}
+				</span>
+				<span className={badgeAnchor}>
+					<IconButton
+						data-ws-action="open-dialog"
+						data-dialog-kind="messages"
+						title={i18n.t("common:statusBar.message")}
+						aria-label={i18n.t("common:statusBar.message")}
+						size="sm"
+						className={iconBtnSize}
+					>
+						<Icon icon={MessageSquare} size={3} />
+					</IconButton>
+					{renderCountBadge(unreadNotifications)}
+				</span>
 				<IconButton
 					data-ws-action="open-dialog"
 					data-dialog-kind="settings"
 					title={i18n.t("common:statusBar.settings")}
+					aria-label={i18n.t("common:statusBar.settings")}
 					size="sm"
 					className={iconBtnSize}
 				>
