@@ -66,10 +66,10 @@ export const Compact: Story = {
 // the only place hover and click states can be exercised. Hovering an
 // inactive target must lift its background; the post-play state is what
 // the screenshot pipeline captures.
-// The target-selector row only renders once the widget's ResizeObserver
-// has reported a height large enough for `showTarget` — `size.h` starts
-// at 0, so the row is absent during the first frames. Poll for it
-// instead of asserting synchronously (CI timing differs from local).
+// The target-selector row is always rendered and pinned below the
+// sections area, but the action sections still wait on the widget's
+// ResizeObserver before they mount — poll instead of asserting
+// synchronously (CI timing differs from local).
 const waitForAlignButton = async (
 	canvasElement: HTMLElement,
 	selector: string,
@@ -142,9 +142,11 @@ export const SelectTimeTarget: Story = {
 			const el = section.querySelector(`[data-ws-action='${action}']`);
 			if (el) assertNotClipped(el, { boundary: canvasElement });
 		}
-		// #560: the target selector row sits below the sections and is the
-		// row agy observed clipped when the Time section consumed the
-		// height budget — it was not covered by the section assertions.
+		// #560 / #670: the target selector row is pinned below the
+		// sections area and must always be present — the Time target
+		// used to consume the whole height budget and hide the row,
+		// leaving no way back to another target. Assert presence, not
+		// just non-clipping when it happens to exist.
 		for (const target of [
 			"align-target-selection",
 			"align-target-comp",
@@ -152,7 +154,8 @@ export const SelectTimeTarget: Story = {
 			"align-target-time",
 		]) {
 			const el = canvasElement.querySelector(`[data-ws-action='${target}']`);
-			if (el) assertNotClipped(el, { boundary: canvasElement });
+			if (!el) throw new Error(`align target button not found: ${target}`);
+			assertNotClipped(el, { boundary: canvasElement });
 		}
 	},
 };

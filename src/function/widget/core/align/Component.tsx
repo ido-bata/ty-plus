@@ -299,7 +299,6 @@ function TargetSelectorRow({
 	return (
 		<div
 			className={css({
-				marginTop: "auto",
 				display: "flex",
 				gap: "3px",
 				paddingTop: "1.5",
@@ -426,40 +425,32 @@ export function Align({ widthPx, widgetInstanceId }: Props): JSX.Element {
 	const targetHeight = sectionHeights.target || 35;
 	const sectionGap = 10;
 	const buffer = 30;
+	// The target row is pinned below the clipped sections area and always
+	// rendered, so every section budget reserves its height up front.
+	// Hiding the row when the Time section consumed the budget left the
+	// widget stuck on `target === "time"` with no way back (#670).
+	const availableHeight = size.h - targetHeight;
 
 	// The Time section only exists while `target === "time"`. It consumes
 	// the same budget as the other optional sections: when it does not
-	// fit, the earlier optional sections yield first so the root's
-	// `overflow: hidden` never clips a rendered button row.
+	// fit, the earlier optional sections yield first so the sections
+	// area never clips a rendered button row.
 	const showTime =
 		target === "time" &&
-		size.h >= alignHeight + sectionGap + timeHeight - buffer;
+		availableHeight >= alignHeight + sectionGap + timeHeight - buffer;
 	const timeBlock = showTime ? timeHeight + sectionGap : 0;
 
 	const showDistribute =
-		size.h >= alignHeight + sectionGap + distributeHeight + timeBlock - buffer;
+		availableHeight >=
+		alignHeight + sectionGap + distributeHeight + timeBlock - buffer;
 	const showSpacing =
-		size.h >=
+		availableHeight >=
 		alignHeight +
 			sectionGap +
 			distributeHeight +
 			sectionGap +
 			spacingHeight +
 			timeBlock -
-			buffer;
-	// The target row must budget every section that actually renders —
-	// align (always), distribute/spacing (when they fit), and the time
-	// block. The previous disjunction let the first clause pass on
-	// `align + time + target` alone, so a shown distribute/spacing section
-	// pushed the target row past the root's `overflow: hidden` clip (#560).
-	const showTarget =
-		size.h >=
-		alignHeight +
-			sectionGap +
-			(showDistribute ? distributeHeight + sectionGap : 0) +
-			(showSpacing ? spacingHeight + sectionGap : 0) +
-			timeBlock +
-			targetHeight -
 			buffer;
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: isActiveWidget triggers re-fetch on activation
@@ -602,160 +593,171 @@ export function Align({ widthPx, widgetInstanceId }: Props): JSX.Element {
 		>
 			<GestureOverlay isActive={gesture.isActive} path={gesture.path} />
 
-			{/* Align Section */}
-			<div ref={alignSectionRef}>
-				{(showDistribute || showSpacing) && (
-					<SectionLabel>{i18n.t("widgets:align.name")}</SectionLabel>
-				)}
-				<div
-					className={cx(
-						css({
-							display: "flex",
-							gap: "0.5",
-							width: "full",
-							boxSizing: "border-box",
-						}),
-						showTwoGroups
-							? css({ flexDirection: "row" })
-							: css({ flexDirection: "column" }),
+			{/* Sections — clipped here so the pinned target row below never
+			    loses its place when the Time section consumes the budget. */}
+			<div
+				className={css({
+					flex: 1,
+					minHeight: 0,
+					overflow: "hidden",
+					display: "flex",
+					flexDirection: "column",
+				})}
+			>
+				{/* Align Section */}
+				<div ref={alignSectionRef}>
+					{(showDistribute || showSpacing) && (
+						<SectionLabel>{i18n.t("widgets:align.name")}</SectionLabel>
 					)}
-				>
-					<AlignButtonGrid
-						actions={["align-left", "align-center-h", "align-right"]}
-						selectionCount={selectionCount}
-						isGestureActive={gesture.isActive}
-						onAction={run}
-					/>
-					<AlignButtonGrid
-						actions={["align-top", "align-center-v", "align-bottom"]}
-						selectionCount={selectionCount}
-						isGestureActive={gesture.isActive}
-						onAction={run}
-					/>
+					<div
+						className={cx(
+							css({
+								display: "flex",
+								gap: "0.5",
+								width: "full",
+								boxSizing: "border-box",
+							}),
+							showTwoGroups
+								? css({ flexDirection: "row" })
+								: css({ flexDirection: "column" }),
+						)}
+					>
+						<AlignButtonGrid
+							actions={["align-left", "align-center-h", "align-right"]}
+							selectionCount={selectionCount}
+							isGestureActive={gesture.isActive}
+							onAction={run}
+						/>
+						<AlignButtonGrid
+							actions={["align-top", "align-center-v", "align-bottom"]}
+							selectionCount={selectionCount}
+							isGestureActive={gesture.isActive}
+							onAction={run}
+						/>
+					</div>
 				</div>
+
+				{/* Distribute Section */}
+				{showDistribute && (
+					<div ref={distributeSectionRef}>
+						<SectionLabel>
+							{i18n.t("widgets:align.sections.distribute")}
+						</SectionLabel>
+						<div
+							className={cx(
+								css({
+									display: "flex",
+									gap: "0.5",
+									width: "full",
+									boxSizing: "border-box",
+								}),
+								showTwoGroups
+									? css({ flexDirection: "row" })
+									: css({ flexDirection: "column" }),
+							)}
+						>
+							<AlignButtonGrid
+								actions={[
+									"distribute-left",
+									"distribute-center-h",
+									"distribute-right",
+								]}
+								selectionCount={selectionCount}
+								isGestureActive={gesture.isActive}
+								onAction={run}
+							/>
+							<AlignButtonGrid
+								actions={[
+									"distribute-top",
+									"distribute-center-v",
+									"distribute-bottom",
+								]}
+								selectionCount={selectionCount}
+								isGestureActive={gesture.isActive}
+								onAction={run}
+							/>
+						</div>
+					</div>
+				)}
+
+				{/* Spacing Section */}
+				{showSpacing && (
+					<div ref={spacingSectionRef}>
+						<SectionLabel>
+							{i18n.t("widgets:align.sections.spacing")}
+						</SectionLabel>
+						<div
+							className={cx(
+								css({
+									display: "flex",
+									gap: "0.5",
+									width: "full",
+									boxSizing: "border-box",
+								}),
+								showTwoGroups
+									? css({ flexDirection: "row" })
+									: css({ flexDirection: "column" }),
+							)}
+						>
+							<AlignButtonGrid
+								actions={["distribute-spacing-h", "distribute-h", null]}
+								selectionCount={selectionCount}
+								isGestureActive={gesture.isActive}
+								onAction={run}
+							/>
+							<AlignButtonGrid
+								actions={["distribute-spacing-v", "distribute-v", null]}
+								selectionCount={selectionCount}
+								isGestureActive={gesture.isActive}
+								onAction={run}
+							/>
+						</div>
+					</div>
+				)}
+
+				{/* Time Section */}
+				{showTime && (
+					<div ref={timeSectionRef} data-ws-align-section="time">
+						<SectionLabel>{i18n.t("widgets:align.sections.time")}</SectionLabel>
+						<div
+							className={cx(
+								css({
+									display: "flex",
+									gap: "0.5",
+									width: "full",
+									boxSizing: "border-box",
+								}),
+								showTwoGroups
+									? css({ flexDirection: "row" })
+									: css({ flexDirection: "column" }),
+							)}
+						>
+							<AlignButtonGrid
+								actions={["align-start", "align-end", "align-duration"]}
+								selectionCount={selectionCount}
+								isGestureActive={gesture.isActive}
+								onAction={run}
+							/>
+							<AlignButtonGrid
+								actions={["distribute-start", "distribute-end", null]}
+								selectionCount={selectionCount}
+								isGestureActive={gesture.isActive}
+								onAction={run}
+							/>
+						</div>
+					</div>
+				)}
 			</div>
 
-			{/* Distribute Section */}
-			{showDistribute && (
-				<div ref={distributeSectionRef}>
-					<SectionLabel>
-						{i18n.t("widgets:align.sections.distribute")}
-					</SectionLabel>
-					<div
-						className={cx(
-							css({
-								display: "flex",
-								gap: "0.5",
-								width: "full",
-								boxSizing: "border-box",
-							}),
-							showTwoGroups
-								? css({ flexDirection: "row" })
-								: css({ flexDirection: "column" }),
-						)}
-					>
-						<AlignButtonGrid
-							actions={[
-								"distribute-left",
-								"distribute-center-h",
-								"distribute-right",
-							]}
-							selectionCount={selectionCount}
-							isGestureActive={gesture.isActive}
-							onAction={run}
-						/>
-						<AlignButtonGrid
-							actions={[
-								"distribute-top",
-								"distribute-center-v",
-								"distribute-bottom",
-							]}
-							selectionCount={selectionCount}
-							isGestureActive={gesture.isActive}
-							onAction={run}
-						/>
-					</div>
-				</div>
-			)}
-
-			{/* Spacing Section */}
-			{showSpacing && (
-				<div ref={spacingSectionRef}>
-					<SectionLabel>
-						{i18n.t("widgets:align.sections.spacing")}
-					</SectionLabel>
-					<div
-						className={cx(
-							css({
-								display: "flex",
-								gap: "0.5",
-								width: "full",
-								boxSizing: "border-box",
-							}),
-							showTwoGroups
-								? css({ flexDirection: "row" })
-								: css({ flexDirection: "column" }),
-						)}
-					>
-						<AlignButtonGrid
-							actions={["distribute-spacing-h", "distribute-h", null]}
-							selectionCount={selectionCount}
-							isGestureActive={gesture.isActive}
-							onAction={run}
-						/>
-						<AlignButtonGrid
-							actions={["distribute-spacing-v", "distribute-v", null]}
-							selectionCount={selectionCount}
-							isGestureActive={gesture.isActive}
-							onAction={run}
-						/>
-					</div>
-				</div>
-			)}
-
-			{/* Time Section */}
-			{showTime && (
-				<div ref={timeSectionRef} data-ws-align-section="time">
-					<SectionLabel>{i18n.t("widgets:align.sections.time")}</SectionLabel>
-					<div
-						className={cx(
-							css({
-								display: "flex",
-								gap: "0.5",
-								width: "full",
-								boxSizing: "border-box",
-							}),
-							showTwoGroups
-								? css({ flexDirection: "row" })
-								: css({ flexDirection: "column" }),
-						)}
-					>
-						<AlignButtonGrid
-							actions={["align-start", "align-end", "align-duration"]}
-							selectionCount={selectionCount}
-							isGestureActive={gesture.isActive}
-							onAction={run}
-						/>
-						<AlignButtonGrid
-							actions={["distribute-start", "distribute-end", null]}
-							selectionCount={selectionCount}
-							isGestureActive={gesture.isActive}
-							onAction={run}
-						/>
-					</div>
-				</div>
-			)}
-
-			{/* Target Row */}
-			{showTarget && (
-				<div ref={targetRowRef}>
-					<TargetSelectorRow
-						target={target}
-						setIsManualTarget={setIsManualTarget}
-						setTarget={setTarget}
-					/>
-				</div>
-			)}
+			{/* Target Row — always rendered and pinned so the user can
+			    always switch back from `target === "time"` (#670). */}
+			<div ref={targetRowRef} className={css({ flexShrink: 0 })}>
+				<TargetSelectorRow
+					target={target}
+					setIsManualTarget={setIsManualTarget}
+					setTarget={setTarget}
+				/>
+			</div>
 		</div>
 	);
 }
