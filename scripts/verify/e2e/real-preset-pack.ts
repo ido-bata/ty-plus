@@ -13,7 +13,7 @@
  * any linked worktree). Missing pack → returns null and the caller
  * warns; suites still run.
  */
-import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
+import { cp, mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -101,20 +101,39 @@ export type RealPresetPackSeed = {
  * Merge pack records into the sandbox catalogs. Idempotent: previous
  * `mvfx-*` rows are replaced, other catalog content (dg-* fixtures,
  * user presets copied with the managed root) is preserved.
+ *
+ * `assetRoot` stages a copy of the pack (presets + sibling images) under
+ * an executable root — the host's `assertAllowedFilePath` only accepts
+ * `Folder.userData`, the extension dir, and AE Support Files, so records
+ * pointing at the original pack location can never run. Group ids and
+ * titles derive from pack-relative structure, which the copy preserves.
  */
 export const seedRealPresetPack = async (
 	sandboxRoot: string,
+	assetRoot?: string,
 ): Promise<RealPresetPackSeed | null> => {
-	const packRoot = resolvePresetPackDir();
-	const scan = await scanRealPresetPack(packRoot);
+	const sourceRoot = resolvePresetPackDir();
+	const scan = await scanRealPresetPack(sourceRoot);
 	if (scan.presetPaths.length === 0) return null;
 
+	let recordRoot = sourceRoot;
+	if (assetRoot) {
+		// Recreate the staging dir so `cp` lands the pack contents at
+		// assetRoot itself and stale files from earlier packs cannot leak
+		// into the seeded catalog.
+		await rm(assetRoot, { recursive: true, force: true });
+		await cp(sourceRoot, assetRoot, { recursive: true });
+		recordRoot = assetRoot;
+	}
+	const recordScan =
+		recordRoot === sourceRoot ? scan : await scanRealPresetPack(recordRoot);
+
 	const presetIdByPath = new Map<string, string>();
-	const presetRecords = scan.presetPaths.map((filePath, i) => {
+	const presetRecords = recordScan.presetPaths.map((filePath, i) => {
 		const id = `${PRESET_ID_PREFIX}${String(i + 1).padStart(3, "0")}`;
 		presetIdByPath.set(path.resolve(filePath), id);
 		const stem = path.basename(filePath).replace(/\.[^.]+$/, "");
-		const rel = path.relative(packRoot, filePath).split(path.sep).join("/");
+		const rel = path.relative(recordRoot, filePath).split(path.sep).join("/");
 		return {
 			id,
 			type: "preset",
@@ -126,10 +145,10 @@ export const seedRealPresetPack = async (
 
 	// Group per directory with descendant presets; members are resolved
 	// by path containment, mirroring the onboarding import contract.
-	const groupRecords = scan.groupDirs
+	const groupRecords = recordScan.groupDirs
 		.map((dir) => {
 			const dirKey = path.resolve(dir);
-			const memberIds = scan.presetPaths
+			const memberIds = recordScan.presetPaths
 				.filter((p) => {
 					const rel = path.relative(dirKey, path.resolve(p));
 					return rel !== "" && !rel.startsWith("..") && !path.isAbsolute(rel);
@@ -137,7 +156,7 @@ export const seedRealPresetPack = async (
 				.map((p) => presetIdByPath.get(path.resolve(p)))
 				.filter((id): id is string => Boolean(id));
 			return {
-				id: slugifyGroupId(path.relative(packRoot, dir)),
+				id: slugifyGroupId(path.relative(recordRoot, dir)),
 				title: path.basename(dir),
 				presetIds: [...new Set(memberIds)],
 			};
@@ -184,6 +203,6 @@ export const seedRealPresetPack = async (
 	return {
 		presets: presetRecords.length,
 		groups: groupRecords.length,
-		packRoot,
+		packRoot: recordRoot,
 	};
 };
