@@ -9,6 +9,7 @@ import { coercePersistedPresetIcon } from "@/management/preset/icon/normalize";
 import {
 	findSiblingImagePathForPresetFile,
 	type SiblingListingEntry,
+	siblingPathKey,
 } from "@/management/preset/sibling-thumbnail";
 
 export type FileBrowserFileType =
@@ -800,3 +801,36 @@ export const createCepNodeFileBrowserService = (options: {
 	buildFileBrowserService({
 		window: options.win,
 	});
+
+/**
+ * Directory lister for preset sibling thumbnails — the
+ * `thumbnailListDirectory` prop of `PresetGlyphById`. Returns `undefined`
+ * outside CEP or when node fs is unavailable so callers can pass the prop
+ * unconditionally. Listings are cached per directory while in flight.
+ */
+export const createSiblingThumbnailLister = (
+	win: Window,
+): ((dirPath: string) => Promise<readonly FileBrowserEntry[]>) | undefined => {
+	if (!canUseCepNodeFileBrowser(win)) {
+		return undefined;
+	}
+	try {
+		const svc = createCepNodeFileBrowserService({ win });
+		const inflight = new Map<string, Promise<readonly FileBrowserEntry[]>>();
+		return (dirPath: string) => {
+			const key = siblingPathKey(dirPath);
+			const existing = inflight.get(key);
+			if (existing) {
+				return existing;
+			}
+			const p = svc.listDirectory(dirPath);
+			inflight.set(key, p);
+			void p.finally(() => {
+				inflight.delete(key);
+			});
+			return p;
+		};
+	} catch {
+		return undefined;
+	}
+};

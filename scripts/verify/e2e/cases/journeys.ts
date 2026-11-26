@@ -1118,18 +1118,33 @@ export const journeySuiteCases: E2ECase[] = [
 			);
 
 			// Drill into the EN Background group (title unique vs JP 背景).
+			// List view renders groups as collapsible rows: the `<li>` itself
+			// has no click handler — expansion goes through the chevron
+			// (`button[aria-expanded]`) or the title button. Icon view opens a
+			// group via double-click on the tile hit area instead.
 			const opened = await ctx.evalJs(
 				dialog,
 				`(() => {
 					const els = [...document.querySelectorAll('[data-preset-group-id^="mvfx-grp-"]')];
 					const el = els.find((e) => (e.textContent || "").includes("Background"));
 					if (!el) return "missing-group:" + els.length;
-					el.click();
-					return "clicked";
+					const toggle = el.querySelector("button[aria-expanded]");
+					if (toggle) {
+						toggle.click();
+						return "clicked-toggle";
+					}
+					const hit = el.querySelector("button");
+					if (!hit) return "missing-open-control";
+					hit.dispatchEvent(new MouseEvent("dblclick", { bubbles: true }));
+					return "dblclicked";
 				})()`,
 			);
 			checks.push(
-				check("Background group opened", opened === "clicked", String(opened)),
+				check(
+					"Background group opened",
+					opened === "clicked-toggle" || opened === "dblclicked",
+					String(opened),
+				),
 			);
 			const rowSeen = await waitForDom(
 				ctx,
@@ -1170,7 +1185,7 @@ export const journeySuiteCases: E2ECase[] = [
 				return "ready";
 			})()`);
 
-			const countEffects = `(() => {
+			const countEffects = `(function() {
 				for (var i = 1; i <= app.project.numItems; i++) {
 					var it = app.project.item(i);
 					if (it instanceof CompItem && it.name === "TYPlus E2E MVFX Comp") {
