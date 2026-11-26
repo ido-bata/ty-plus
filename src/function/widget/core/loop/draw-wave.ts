@@ -27,6 +27,36 @@ const HANDLE_RADIUS = 5;
 const LABEL_HEIGHT = 10;
 const LABEL_MARGIN = 2;
 const LABEL_GAP = 3;
+/** Max gap between wave samples used as label obstacles (px). */
+const WAVE_OBSTACLE_STEP = 4;
+
+/**
+ * The waveform is stroked as a polyline, but label placement only sees
+ * points. Sample every segment densely enough that a straight stroke
+ * cannot slip between two obstacle points and cross a label box.
+ */
+export const waveLabelObstacles = (
+	points: readonly { x: number; y: number }[],
+): { x: number; y: number }[] => {
+	const obstacles: { x: number; y: number }[] = [];
+	for (let i = 0; i < points.length; i += 1) {
+		const point = points[i];
+		obstacles.push(point);
+		const next = points[i + 1];
+		if (!next) break;
+		const steps = Math.ceil(
+			Math.hypot(next.x - point.x, next.y - point.y) / WAVE_OBSTACLE_STEP,
+		);
+		for (let step = 1; step < steps; step += 1) {
+			const ratio = step / steps;
+			obstacles.push({
+				x: point.x + (next.x - point.x) * ratio,
+				y: point.y + (next.y - point.y) * ratio,
+			});
+		}
+	}
+	return obstacles;
+};
 
 /**
  * Picks a screen position for a handle label that keeps the label box clear
@@ -229,6 +259,7 @@ export function drawWaveScene(
 	ctx.font = "10px system-ui, sans-serif";
 	ctx.textAlign = "left";
 	ctx.textBaseline = "middle";
+	const waveObstacles = waveLabelObstacles(waveScreen);
 	for (const handle of handleScreen) {
 		const active = hover?.kind === "wave-handle" && hover.handle === handle.key;
 		const radius = active ? HANDLE_RADIUS + 1 : HANDLE_RADIUS;
@@ -238,7 +269,7 @@ export function drawWaveScene(
 		ctx.fill();
 		ctx.fillStyle = active ? accent : muted;
 		const labelWidth = ctx.measureText(labels[handle.key]).width;
-		const obstacles = waveScreen.concat(
+		const obstacles = waveObstacles.concat(
 			handleScreen.flatMap((other) =>
 				other.key === handle.key ? [] : [{ x: other.x, y: other.y }],
 			),

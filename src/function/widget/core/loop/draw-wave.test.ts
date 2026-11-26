@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { placeWaveHandleLabel } from "./draw-wave";
+import { placeWaveHandleLabel, waveLabelObstacles } from "./draw-wave";
 
 const CANVAS = { width: 320, height: 140 };
 const LABEL_WIDTH = 40;
@@ -58,6 +58,24 @@ describe("placeWaveHandleLabel", () => {
 		);
 		expect(minObstacleDistance).toBeGreaterThan(0);
 		expect(label).not.toEqual(rightSide);
+	});
+
+	it("densifies wave segments so a stroke cannot cross a label box", () => {
+		// A single long diagonal segment: without sampling, both endpoints
+		// can be far from the label while the stroke passes straight
+		// through it.
+		const obstacles = waveLabelObstacles([
+			{ x: 0, y: 0 },
+			{ x: 200, y: 100 },
+		]);
+		const maxGap = Math.max(
+			...obstacles.slice(1).map((point, i) => {
+				const prev = obstacles[i];
+				return Math.hypot(point.x - prev.x, point.y - prev.y);
+			}),
+		);
+		expect(maxGap).toBeLessThanOrEqual(4);
+		expect(obstacles.length).toBeGreaterThan(2);
 	});
 
 	it("keeps the label box fully inside the canvas at the edges", () => {
