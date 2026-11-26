@@ -149,5 +149,11 @@ export const NotFound: Story = {
 			expect(canvasElement.textContent).toContain("Preset not found");
 		});
 		expectFooterActions(shell);
+		const buttons = Array.from(shell.querySelectorAll("button"));
+		const byLabel = (label: string) =>
+			buttons.find((button) => button.textContent?.trim() === label);
+		expect(byLabel("Save")?.disabled).toBe(true);
+		expect(byLabel("Delete")?.disabled).toBe(true);
+		expect(byLabel("Cancel")?.disabled).toBe(false);
 	},
 };
