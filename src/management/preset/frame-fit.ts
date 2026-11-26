@@ -1,4 +1,4 @@
-import { type RefObject, useEffect, useState } from "react";
+import { type RefObject, useEffect, useMemo, useState } from "react";
 
 /**
  * Runtime frame fitting for preset glyphs.
@@ -252,6 +252,48 @@ export function fitTextFontPx(opts: FitTextFontOptions): number {
 		);
 	}
 	return Math.min(Math.max(px, opts.minFontPx), maxFontPx);
+}
+
+export type TextFitSpec = {
+	/** Lines sharing one font size; the widest line drives the fit. */
+	lines: readonly string[];
+	/** Preferred size as a percentage of the frame's inline size. */
+	preferredPct: number;
+	minFontPx: number;
+};
+
+/**
+ * Computes the fitted px font size for `shellRef`'s text from the frame
+ * metrics and the element's computed font. Returns `null` until the first
+ * measurement so callers can keep their CSS/inline fallback.
+ *
+ * Derived during render (not in an effect) because the value is a pure
+ * function of `metrics` + `fit` + the already-mounted element — the same
+ * inputs that trigger the re-render. Font metrics are read through
+ * `getComputedStyle` on the committed element; like the previous effect
+ * version, the result refreshes whenever the frame is re-measured.
+ */
+export function useFittedTextFontPx(
+	shellRef: RefObject<HTMLElement | null>,
+	metrics: FrameMetrics | null,
+	fit: TextFitSpec,
+): number | null {
+	return useMemo(() => {
+		const el = shellRef.current;
+		if (!metrics || !el) return null;
+		const style = getComputedStyle(el);
+		return fitTextFontPx({
+			lines: fit.lines,
+			boxWidth: metrics.boxWidth,
+			contentWidth: metrics.contentWidth,
+			contentHeight: metrics.contentHeight,
+			preferredPct: fit.preferredPct,
+			minFontPx: fit.minFontPx,
+			fontFamily: style.fontFamily,
+			fontWeight: style.fontWeight,
+			fontStyle: style.fontStyle,
+		});
+	}, [shellRef, metrics, fit]);
 }
 
 /**
