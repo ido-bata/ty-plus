@@ -110,6 +110,7 @@ import {
 import { openWidgetAddDialogSurface } from "@/management/widget/open-add-dialog";
 import { registry } from "@/management/widget/registry";
 import { executeWorkspacePresetForWindow } from "@/management/workspace/core/runtime";
+import { pruneStalePresetRefs } from "@/management/workspace/core/selection";
 import type { SurfaceState } from "@/management/workspace/core/state";
 import {
 	createInitialSurfaceState,
@@ -958,19 +959,23 @@ export function useWorkspaceRuntime(root: Element | null): {
 				.then((groupRaw) => {
 					const groupCatalogEntries = parseGroupFromText(groupRaw);
 					commit(
-						withPresetInfoSnapshot({
-							...getState(),
-							presets: snap.presets as Preset[],
-							groupCatalogEntries,
-						}),
+						pruneStalePresetRefs(
+							withPresetInfoSnapshot({
+								...getState(),
+								presets: snap.presets as Preset[],
+								groupCatalogEntries,
+							}),
+						),
 					);
 				})
 				.catch(() => {
 					commit(
-						withPresetInfoSnapshot({
-							...getState(),
-							presets: snap.presets as Preset[],
-						}),
+						pruneStalePresetRefs(
+							withPresetInfoSnapshot({
+								...getState(),
+								presets: snap.presets as Preset[],
+							}),
+						),
 					);
 				});
 		});
@@ -1108,10 +1113,12 @@ export function useWorkspaceRuntime(root: Element | null): {
 			.then((presets) => {
 				const cur = getState();
 				commit(
-					withPresetInfoSnapshot({
-						...cur,
-						presets: presets,
-					}),
+					pruneStalePresetRefs(
+						withPresetInfoSnapshot({
+							...cur,
+							presets: presets,
+						}),
+					),
 				);
 			})
 			.catch((error) => {
@@ -1292,8 +1299,10 @@ export function useWorkspaceRuntime(root: Element | null): {
 
 					const cur = getState();
 					commit(
-						ensurePrimaryPanelWidgets(
-							normalizeState({ ...cur, ...loadedState }),
+						pruneStalePresetRefs(
+							ensurePrimaryPanelWidgets(
+								normalizeState({ ...cur, ...loadedState }),
+							),
 						),
 					);
 
@@ -1939,10 +1948,12 @@ export function useWorkspaceRuntime(root: Element | null): {
 					.then((presets) => {
 						const cur = getState();
 						commit(
-							withPresetInfoSnapshot({
-								...cur,
-								presets: presets,
-							}),
+							pruneStalePresetRefs(
+								withPresetInfoSnapshot({
+									...cur,
+									presets: presets,
+								}),
+							),
 						);
 					})
 					.catch((error) => {
@@ -1969,10 +1980,12 @@ export function useWorkspaceRuntime(root: Element | null): {
 					const presets = await listPresets();
 					const cur = getState();
 					commit(
-						withPresetInfoSnapshot({
-							...cur,
-							presets: presets,
-						}),
+						pruneStalePresetRefs(
+							withPresetInfoSnapshot({
+								...cur,
+								presets: presets,
+							}),
+						),
 					);
 					const presetPayload: PresetsPayload = {
 						kind: "snapshot",

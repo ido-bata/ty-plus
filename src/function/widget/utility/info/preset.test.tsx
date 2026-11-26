@@ -195,3 +195,66 @@ describe("PresetInfoWidget — Issue #87 regression", () => {
 		expect(container.querySelector('[data-mode="single"]')).not.toBeNull();
 	});
 });
+
+describe("PresetInfoWidget — Issue #701 ghost card regression", () => {
+	it("does not resurrect a deleted preset via presetInfoLast", () => {
+		const before = makeState();
+		const { rerender, container } = render(
+			<PresetInfoWidget state={before} layout={layout} grid={grid} />,
+		);
+		expect(container.querySelector('[data-mode="single"]')).not.toBeNull();
+
+		// Post-delete catalog snapshot: the preset is gone from `presets`,
+		// but the in-memory selection may still reference the stale id
+		// (widget must not depend on the state-layer prune ordering).
+		const after = makeState({
+			presets: [],
+			presetSelectedIds: ["preset-1"],
+			presetHoverId: null,
+		});
+		rerender(<PresetInfoWidget state={after} layout={layout} grid={grid} />);
+		expect(container.querySelector('[data-mode="empty"]')).not.toBeNull();
+		expect(container.textContent).not.toContain("Glow preset");
+	});
+
+	it("does not resurrect a deleted group via presetInfoLast", () => {
+		const group = {
+			id: "group-1",
+			title: "Verify Group",
+			presetIds: ["preset-1"],
+		};
+		const before = makeState({
+			presetSelectedIds: ["group-1"],
+			groupCatalogEntries: [group],
+		});
+		const { rerender, container } = render(
+			<PresetInfoWidget state={before} layout={layout} grid={grid} />,
+		);
+		expect(container.querySelector('[data-mode="single"]')).not.toBeNull();
+		expect(container.textContent).toContain("Verify Group");
+
+		const after = makeState({
+			presetSelectedIds: ["group-1"],
+			groupCatalogEntries: [],
+		});
+		rerender(<PresetInfoWidget state={after} layout={layout} grid={grid} />);
+		expect(container.querySelector('[data-mode="empty"]')).not.toBeNull();
+		expect(container.textContent).not.toContain("Verify Group");
+	});
+
+	it("keeps the last-known-good card while the cached presets still exist", () => {
+		// Transient-empty UX (Issue #87 intent): clearing the selection does
+		// not blank the card as long as the cached presets remain in the
+		// catalog.
+		const before = makeState();
+		const { rerender, container } = render(
+			<PresetInfoWidget state={before} layout={layout} grid={grid} />,
+		);
+		const after = makeState({
+			presetSelectedIds: [],
+			presetHoverId: null,
+		});
+		rerender(<PresetInfoWidget state={after} layout={layout} grid={grid} />);
+		expect(container.querySelector('[data-mode="single"]')).not.toBeNull();
+	});
+});
