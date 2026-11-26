@@ -242,8 +242,19 @@ export function WorkspacePresetGlyph({
 	const graphemes = Array.from(raw);
 	const ch = Math.max(1, graphemes.length);
 
-	// Multi-line: break into lines of ~sqrt(n) graphemes so boxes stay roughly square.
-	const charsPerLine = Math.ceil(Math.sqrt(ch));
+	// Issue #673: kind badges (FFX / SCRIPT / PLUGIN / MEDIA / …) are
+	// single words — the previous ~sqrt(n) split wrapped them mid-word
+	// ("PLUGIN" → "PLU"/"GIN", "FFX" → "FF"/"X") and made the badge
+	// unreadable. Badge-length text (the editor caps icon text at
+	// PRESET_ICON_TEXT_MAX = 6 graphemes) now stays on one line and
+	// shrinks via the container-query font size instead of wrapping.
+	// Longer legacy strings keep the packed multi-line layout because a
+	// single line cannot fit inside the frame.
+	const badgeLength = ch <= 6;
+
+	// Multi-line (long strings only): break into lines of ~sqrt(n)
+	// graphemes so boxes stay roughly square.
+	const charsPerLine = badgeLength ? ch : Math.ceil(Math.sqrt(ch));
 	const lines: string[] = [];
 	for (let i = 0; i < graphemes.length; i += charsPerLine) {
 		lines.push(graphemes.slice(i, i + charsPerLine).join(""));
@@ -254,8 +265,12 @@ export function WorkspacePresetGlyph({
 	// Minimum 8px: the previous 4px floor rendered ~4px glyphs inside the
 	// 28px list-row frame — below legibility — so single-line marks now
 	// get ~18% of the container width and the floor keeps small frames
-	// readable instead of collapsing to dots.
+	// readable instead of collapsing to dots. Five- and six-grapheme
+	// badges (PLUGIN / SCRIPT / IMPORT / PRESET) cannot hold 8px on one
+	// line inside the 28px frame, so their floor drops to 5px — still
+	// above the dot-collapse range — while shorter badges keep 8px.
 	const lineScale = lines.length >= 3 ? 10 : lines.length >= 2 ? 13 : 18;
+	const minFontPx = badgeLength && ch > 4 ? 5 : 8;
 
 	const textStyle = {
 		...(visual.backgroundColor
@@ -283,7 +298,7 @@ export function WorkspacePresetGlyph({
 					)}
 					style={
 						{
-							fontSize: `clamp(8px, ${lineScale}cqi, 96px)`,
+							fontSize: `clamp(${minFontPx}px, ${lineScale}cqi, 96px)`,
 						} as CSSProperties
 					}
 				>

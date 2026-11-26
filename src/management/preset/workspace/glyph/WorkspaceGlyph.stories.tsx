@@ -62,7 +62,7 @@ export const LongText: Story = {
 	play: async ({ canvasElement }) => {
 		// Issue #457: every rendered glyph line must stay inside the
 		// 32px frame — previously `cqi` units resolved against the
-		// viewport (no container) and the two "Header" lines overflowed
+		// viewport (no container) and the "Header" lines overflowed
 		// top/bottom/right.
 		const frame = canvasElement.querySelector<HTMLElement>(
 			"[data-ws-preset-text-fit]",
@@ -78,6 +78,27 @@ export const LongText: Story = {
 			expect(rect.left).toBeGreaterThanOrEqual(frameRect.left - 0.5);
 			expect(rect.right).toBeLessThanOrEqual(frameRect.right + 0.5);
 		}
+	},
+};
+
+// Issue #673: kind badges are single words — they must render on ONE
+// `nowrap` line inside the frame. The container-query font shrinks to
+// fit instead of wrapping mid-word ("PLUGIN" → "PLU"/"GIN").
+export const KindBadge: Story = {
+	args: { preset: makePreset("badge", presetIconText("PLUGIN")) },
+	play: async ({ canvasElement }) => {
+		const frame = canvasElement.querySelector<HTMLElement>(
+			"[data-ws-preset-text-fit]",
+		);
+		if (!frame) throw new Error("text glyph not found");
+		const lines = Array.from(
+			frame.querySelectorAll<HTMLElement>(":scope > span"),
+		);
+		expect(lines).toHaveLength(1);
+		const line = lines[0];
+		expect(getComputedStyle(line).whiteSpace).toBe("nowrap");
+		expect(line.textContent).toBe("PLUGIN");
+		expect(line.scrollWidth).toBeLessThanOrEqual(line.clientWidth + 1);
 	},
 };
 
