@@ -146,10 +146,22 @@ export const WithFooter: Story = {
 		expect(footer).not.toBeNull();
 		expect(lastButton).not.toBeNull();
 		if (!footer || !lastButton) return;
+		// Issue #674: the footer band owns the canonical inline inset, so the
+		// last action sits one `padding-inline` inside the footer edge — the
+		// same inset `Content` applies to the body.
+		const footerStyle = getComputedStyle(footer);
+		const content = canvasElement.querySelector("[data-dialog-content]");
+		if (content) {
+			const contentStyle = getComputedStyle(content);
+			expect(footerStyle.paddingLeft).toBe(contentStyle.paddingLeft);
+			expect(footerStyle.paddingRight).toBe(contentStyle.paddingRight);
+		}
+		const insetRight = Number.parseFloat(footerStyle.paddingRight);
 		expect(
 			Math.abs(
-				lastButton.getBoundingClientRect().right -
-					footer.getBoundingClientRect().right,
+				footer.getBoundingClientRect().right -
+					insetRight -
+					lastButton.getBoundingClientRect().right,
 			),
 		).toBeLessThanOrEqual(1);
 	},
@@ -242,6 +254,22 @@ export const ComputedStyleShellWithFooter: Story = {
 		if (footerStyle.justifyContent !== "space-between") {
 			throw new Error(
 				`Dialog footer justify-content expected "space-between", got "${footerStyle.justifyContent}"`,
+			);
+		}
+		// Issue #674: footer horizontal inset must match the content inset.
+		const content = canvasElement.querySelector(
+			"[data-dialog-content]",
+		) as HTMLElement | null;
+		if (!content) throw new Error("Dialog content not rendered");
+		const contentStyle = getComputedStyle(content);
+		if (footerStyle.paddingLeft !== contentStyle.paddingLeft) {
+			throw new Error(
+				`Dialog footer padding-left "${footerStyle.paddingLeft}" does not match content "${contentStyle.paddingLeft}"`,
+			);
+		}
+		if (footerStyle.paddingRight !== contentStyle.paddingRight) {
+			throw new Error(
+				`Dialog footer padding-right "${footerStyle.paddingRight}" does not match content "${contentStyle.paddingRight}"`,
 			);
 		}
 		expectCanvasLayout(canvasElement);
