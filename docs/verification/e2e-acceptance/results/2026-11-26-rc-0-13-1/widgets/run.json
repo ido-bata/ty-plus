@@ -1,0 +1,61 @@
+{
+  "schema": "ty-plus.e2e-run/1",
+  "suite": "widgets",
+  "capturedAt": "2026-11-26T10:35:44.504Z",
+  "extensionDir": "/Users/rebui/Library/Application Support/Adobe/CEP/extensions/app.ty-plus.dev",
+  "managedRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-26T10-34-58-352Z-30010/ty-plus",
+  "realManagedRoot": "/Applications/Adobe After Effects 2027/ty-plus",
+  "sandbox": {
+    "enabled": true,
+    "sandboxRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-26T10-34-58-352Z-30010/ty-plus",
+    "integrity": {
+      "realRoot": "/Applications/Adobe After Effects 2027/ty-plus",
+      "checkedAt": "2026-11-26T10:35:44.458Z",
+      "driftBeforeRepair": {
+        "changed": 0,
+        "added": 0,
+        "removed": 0
+      },
+      "filesRepaired": [],
+      "cleanAfterRepair": true
+    }
+  },
+  "totals": {
+    "PASS": 1,
+    "FAIL": 0,
+    "BLOCKED": 0,
+    "SKIP": 0
+  },
+  "results": [
+    {
+      "uc": "UC-D11",
+      "title": "easing widget state file restores mode after reload (legacy loop coerces to curve)",
+      "status": "PASS",
+      "detail": "instance=6cf7a658-6bad-4b74-a732-6b0afbf4959a",
+      "checks": [
+        {
+          "name": "easing widget tile mounted after reload",
+          "ok": true,
+          "detail": "mounted"
+        },
+        {
+          "name": "mode strip exposes only curve/bounce/elastic (3 segments)",
+          "ok": true,
+          "detail": "modeCount=3 expected=3"
+        },
+        {
+          "name": "stored loop mode coerced to curve (first segment pressed)",
+          "ok": true,
+          "detail": "pressedIndex=0 expected=0"
+        },
+        {
+          "name": "widgets/state/easing.json restored after case",
+          "ok": true,
+          "detail": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-26T10-34-58-352Z-30010/ty-plus/widgets/state/easing.json"
+        }
+      ],
+      "evidence": [],
+      "durationMs": 12612
+    }
+  ]
+}

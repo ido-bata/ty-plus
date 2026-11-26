@@ -1,0 +1,283 @@
+{
+  "schema": "ty-plus.e2e-run/1",
+  "suite": "journeys",
+  "capturedAt": "2026-11-26T10:42:35.865Z",
+  "extensionDir": "/Users/rebui/Library/Application Support/Adobe/CEP/extensions/app.ty-plus.dev",
+  "managedRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-26T10-40-32-124Z-91912/ty-plus",
+  "realManagedRoot": "/Applications/Adobe After Effects 2027/ty-plus",
+  "sandbox": {
+    "enabled": true,
+    "sandboxRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-26T10-40-32-124Z-91912/ty-plus",
+    "integrity": {
+      "realRoot": "/Applications/Adobe After Effects 2027/ty-plus",
+      "checkedAt": "2026-11-26T10:42:35.860Z",
+      "driftBeforeRepair": {
+        "changed": 4,
+        "added": 0,
+        "removed": 0
+      },
+      "filesRepaired": [
+        "cache/layout-undo/panel-2/stack.json",
+        "cache/layout-undo/panel-5/stack.json",
+        "cache/layout-undo/panel-4/stack.json",
+        "cache/layout-undo/panel-1/stack.json"
+      ],
+      "cleanAfterRepair": true
+    }
+  },
+  "totals": {
+    "PASS": 6,
+    "FAIL": 0,
+    "BLOCKED": 1,
+    "SKIP": 0
+  },
+  "results": [
+    {
+      "uc": "UC-J02",
+      "title": "preset journey: create → place → run → edit → delete-attempt (host confirm gate)",
+      "status": "PASS",
+      "detail": "preset lifecycle incl. edit; delete requires manual host confirm",
+      "checks": [
+        {
+          "name": "preset created via dialog",
+          "ok": true,
+          "detail": "id=be348db4-f442-45d0-a05e-966dc25da93f"
+        },
+        {
+          "name": "preset tile placed on workspace",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "preset run produced AE-side artifact",
+          "ok": true,
+          "detail": "1795689665545|27.0x78"
+        },
+        {
+          "name": "catalog Edit clicked",
+          "ok": true,
+          "detail": "clicked"
+        },
+        {
+          "name": "edit Save clicked",
+          "ok": true,
+          "detail": "clicked"
+        },
+        {
+          "name": "presets.json reflects rename",
+          "ok": true,
+          "detail": "title=E2E J02 Renamed"
+        },
+        {
+          "name": "catalog Delete clicked",
+          "ok": true,
+          "detail": "clicked"
+        },
+        {
+          "name": "host confirm dialog dismissed (cancel)",
+          "ok": true,
+          "detail": "No"
+        },
+        {
+          "name": "delete gated by host confirm — preset retained until manual confirm",
+          "ok": true,
+          "detail": "host confirm pending; record intact"
+        }
+      ],
+      "evidence": [
+        "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-26T10-40-32-124Z-91912/ty-plus/presets/presets.json"
+      ],
+      "durationMs": 32863
+    },
+    {
+      "uc": "UC-J03",
+      "title": "layout journey: widget + preset tile + snapshot → reload → restore",
+      "status": "PASS",
+      "detail": "widget+preset layout snapshot round-trip",
+      "checks": [
+        {
+          "name": "widget added via Add Widget dialog",
+          "ok": true,
+          "detail": "id=62345d2f-baf9-4b20-9ad9-85bb2f53fc97"
+        },
+        {
+          "name": "snapshot saved to snapshots.json",
+          "ok": true,
+          "detail": "snap=1795689694745"
+        },
+        {
+          "name": "layout mutated with second widget",
+          "ok": true,
+          "detail": "second=1efc4715-ce45-4eb0-8ea7-d99e6c198331"
+        },
+        {
+          "name": "mutated layout survives reload",
+          "ok": true,
+          "detail": "cells=9"
+        },
+        {
+          "name": "snapshot restore returned gridCells to saved state",
+          "ok": true,
+          "detail": "start=7 after=8"
+        }
+      ],
+      "evidence": [
+        "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-26T10-40-32-124Z-91912/ty-plus/workspaces/history/snapshots.json"
+      ],
+      "durationMs": 11467
+    },
+    {
+      "uc": "UC-J04",
+      "title": "appearance journey: accent/grid/locale change → live → reload persists",
+      "status": "PASS",
+      "detail": "accent/grid/locale round-trip through settings files",
+      "checks": [
+        {
+          "name": "locale ja applied after reload",
+          "ok": true,
+          "detail": "lang=ja"
+        },
+        {
+          "name": "accent color reached theme.css token",
+          "ok": true,
+          "detail": "accent=#336699"
+        },
+        {
+          "name": "grid cell size reached panel CSS var",
+          "ok": true,
+          "detail": "cell=120px"
+        },
+        {
+          "name": "app.json persisted accent+locale+grid",
+          "ok": true,
+          "detail": "accent=#336699 lang=ja cell=120"
+        },
+        {
+          "name": "theme.css persisted accent token",
+          "ok": true,
+          "detail": ""
+        }
+      ],
+      "evidence": [
+        "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-26T10-40-32-124Z-91912/ty-plus/settings/app.json"
+      ],
+      "durationMs": 4295
+    },
+    {
+      "uc": "UC-J05",
+      "title": "recovery journey: backup export → corrupt files → boot fallback → import restore",
+      "status": "PASS",
+      "detail": "export→corrupt→boot→import→verify recovery chain",
+      "checks": [
+        {
+          "name": "backup bundle exported via settings UI",
+          "ok": true,
+          "detail": "26497 bytes"
+        },
+        {
+          "name": "panel responsive after corruption",
+          "ok": true,
+          "detail": "eval=2"
+        },
+        {
+          "name": "corrupt workspace file not silently destroyed",
+          "ok": true,
+          "detail": "file still present"
+        },
+        {
+          "name": "app.json restored by backup import",
+          "ok": true,
+          "detail": "after={\"core\":{\"paths\":{\"supportRoot\":\"/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-26T10-40-3"
+        },
+        {
+          "name": "workspace-1.json restored to valid JSON",
+          "ok": true,
+          "detail": "parses"
+        }
+      ],
+      "evidence": [],
+      "durationMs": 20592
+    },
+    {
+      "uc": "UC-J06",
+      "title": "preset handoff: export bundle → wipe catalog → import → run preset in AE",
+      "status": "BLOCKED",
+      "detail": "cannot resolve Folder.userData: e2e-error:ReferenceError: CSInterface is not defined",
+      "checks": [],
+      "evidence": [],
+      "durationMs": 209
+    },
+    {
+      "uc": "UC-J07",
+      "title": "daily work: quick-actions runs script then ffx preset consecutively",
+      "status": "PASS",
+      "detail": "consecutive quick-action runs: script marker + ffx effects=2",
+      "checks": [
+        {
+          "name": "quick-actions run #1 (script) clicked",
+          "ok": true,
+          "detail": "clicked"
+        },
+        {
+          "name": "script preset produced AE-side marker",
+          "ok": true,
+          "detail": "1795689732011|27.0x78"
+        },
+        {
+          "name": "quick-actions run #2 (ffx) clicked",
+          "ok": true,
+          "detail": "clicked"
+        },
+        {
+          "name": "ffx preset applied effects to selected layer",
+          "ok": true,
+          "detail": "effects=2"
+        }
+      ],
+      "evidence": [
+        "/Users/rebui/Library/Application Support/ty-plus/dg-presets/marker.txt"
+      ],
+      "durationMs": 7413
+    },
+    {
+      "uc": "UC-J08",
+      "title": "real preset pack: grouped catalog, sibling thumbnails, .ffx execution",
+      "status": "PASS",
+      "detail": "real pack: 22 groups, thumb=true, ran=mvfx-001 effects=2",
+      "checks": [
+        {
+          "name": "real preset pack seeded into sandbox catalog",
+          "ok": true,
+          "detail": "candidates=mvfx-001,mvfx-002,mvfx-003"
+        },
+        {
+          "name": "catalog lists real-pack group tiles",
+          "ok": true,
+          "detail": "groups=22"
+        },
+        {
+          "name": "Background group opened",
+          "ok": true,
+          "detail": "clicked-toggle"
+        },
+        {
+          "name": "group view lists member presets",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "sibling .gif thumbnail rendered on preset row",
+          "ok": true,
+          "detail": "true"
+        },
+        {
+          "name": "real .ffx preset applied effects in AE",
+          "ok": true,
+          "detail": "preset=mvfx-001 effects=2"
+        }
+      ],
+      "evidence": [],
+      "durationMs": 11475
+    }
+  ]
+}

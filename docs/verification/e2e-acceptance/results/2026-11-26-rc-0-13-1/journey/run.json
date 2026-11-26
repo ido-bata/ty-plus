@@ -1,0 +1,168 @@
+{
+  "schema": "ty-plus.e2e-run/1",
+  "suite": "journey",
+  "capturedAt": "2026-11-26T10:40:27.895Z",
+  "extensionDir": "/Users/rebui/Library/Application Support/Adobe/CEP/extensions/app.ty-plus.dev",
+  "managedRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-26T10-39-12-105Z-79401/ty-plus",
+  "realManagedRoot": "/Applications/Adobe After Effects 2027/ty-plus",
+  "sandbox": {
+    "enabled": true,
+    "sandboxRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-26T10-39-12-105Z-79401/ty-plus",
+    "integrity": {
+      "realRoot": "/Applications/Adobe After Effects 2027/ty-plus",
+      "checkedAt": "2026-11-26T10:40:27.886Z",
+      "driftBeforeRepair": {
+        "changed": 2,
+        "added": 1,
+        "removed": 2
+      },
+      "filesRepaired": [
+        "cache/layout-undo/panel-2/stack.json",
+        "cache/layout-undo/panel-1/stack.json",
+        "restored:cache/layout-undo/panel-2/stack.json.tmp-25057-2-7a3e861a-4072-49b5-882c-aedad0b9f8d7",
+        "restored:cache/layout-undo/panel-3/stack.json.tmp-25049-2-6ca00eb5-1887-44ce-8794-5029f94f6380",
+        "removed:cache/layout-undo/panel-5/stack.json.tmp-25030-1-899098eb-925c-4aa6-a8f9-97ed53b922fb",
+        "cache/layout-undo/panel-4/stack.json",
+        "cache/layout-undo/panel-5/stack.json"
+      ],
+      "cleanAfterRepair": false
+    }
+  },
+  "totals": {
+    "PASS": 3,
+    "FAIL": 0,
+    "BLOCKED": 0,
+    "SKIP": 0
+  },
+  "results": [
+    {
+      "uc": "UC-C11",
+      "title": "script preset (.jsx) run from catalog executes in AE",
+      "status": "PASS",
+      "detail": "marker=1795689582267|27.0x78",
+      "checks": [
+        {
+          "name": "catalog lists dg-script-marker preset",
+          "ok": true,
+          "detail": "true"
+        },
+        {
+          "name": "catalog Run button clicked",
+          "ok": true,
+          "detail": "clicked"
+        },
+        {
+          "name": "ExtendScript side effect: marker.txt written by AE",
+          "ok": true,
+          "detail": "content=1795689582267|27.0x78"
+        }
+      ],
+      "evidence": [
+        "/Users/rebui/Library/Application Support/ty-plus/dg-presets/marker.txt"
+      ],
+      "durationMs": 1569
+    },
+    {
+      "uc": "UC-C10",
+      "title": ".ffx preset run applies effect to selected AE layer",
+      "status": "PASS",
+      "detail": "effects 0→2: [\"ADBE CM OpacityFlashRandom|不透明フラッシュ (ランダム)\",\"ADBE Solid Composite|(Solid Composite)\"]",
+      "checks": [
+        {
+          "name": "AE comp + selected layer ready",
+          "ok": true,
+          "detail": "{\"comp\":\"TYPlus E2E Comp\",\"layers\":1,\"effectsBefore\":0}"
+        },
+        {
+          "name": "catalog lists dg-ffx-fadein preset",
+          "ok": true,
+          "detail": "true"
+        },
+        {
+          "name": "catalog Run button clicked",
+          "ok": true,
+          "detail": "clicked"
+        },
+        {
+          "name": "layer gained effects from .ffx preset",
+          "ok": true,
+          "detail": "before=0 after=2 fx=[\"ADBE CM OpacityFlashRandom|不透明フラッシュ (ランダム)\",\"ADBE Solid Composite|(Solid Composite)\"]"
+        }
+      ],
+      "evidence": [],
+      "durationMs": 4540
+    },
+    {
+      "uc": "UC-H02",
+      "title": "preset journey: create via dialog → tile placed → run → reload → re-run (UC-J02 chain)",
+      "status": "PASS",
+      "detail": "preset journey completed (presetId=21bffa30-2d4c-470e-9163-9ecc39eefc66)",
+      "checks": [
+        {
+          "name": "toolbar create-file-preset clicked",
+          "ok": true,
+          "detail": "clicked"
+        },
+        {
+          "name": "preset path field accepts file path",
+          "ok": true,
+          "detail": "/Users/rebui/Library/Application Support/ty-plus-e2e/e2e-journey.jsx"
+        },
+        {
+          "name": "preset name field accepts title",
+          "ok": true,
+          "detail": "E2E Journey Script"
+        },
+        {
+          "name": "Create submitted",
+          "ok": true,
+          "detail": "clicked"
+        },
+        {
+          "name": "presets.json persisted new record",
+          "ok": true,
+          "detail": "id=21bffa30-2d4c-470e-9163-9ecc39eefc66"
+        },
+        {
+          "name": "workspace tile rendered for new preset",
+          "ok": true,
+          "detail": "true"
+        },
+        {
+          "name": "workspace-1.json gridCells grew (tile persisted)",
+          "ok": true,
+          "detail": "before=7 after=8"
+        },
+        {
+          "name": "tile click dispatched",
+          "ok": true,
+          "detail": "clicked"
+        },
+        {
+          "name": "run #1 produced AE-side artifact",
+          "ok": true,
+          "detail": "content=1795689592112|27.0x78"
+        },
+        {
+          "name": "tile survives panel reload",
+          "ok": true,
+          "detail": "true"
+        },
+        {
+          "name": "run #2 after reload re-executed script",
+          "ok": true,
+          "detail": "click=clicked marker1=1795689592112|27.0x78 marker2=1795689601276|27.0x78"
+        },
+        {
+          "name": "presets.json restored after journey",
+          "ok": true,
+          "detail": "before=71 after=71"
+        }
+      ],
+      "evidence": [
+        "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-26T10-39-12-105Z-79401/ty-plus/presets/presets.json"
+      ],
+      "durationMs": 18806
+    }
+  ]
+}

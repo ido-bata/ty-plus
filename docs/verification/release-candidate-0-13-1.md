@@ -135,3 +135,58 @@ Issue #591（PR #430 merge による UI/UX ロールバック）の収束作業�
 1. **AE2027 環境障害**: E2E 中に panel-1 が `No Valid MenuItem(s) found` で消滅し AE 本体が window 0 のゾンビ状態に。quit がモーダルに拒否されており、ユーザーによる AE2027 の確認・再起動が必要。復旧後に journeys suite（UC-J02/J05/J06 BLOCKED 再試行 + UC-J08 実機検証）と全 suite の最終再検証を実施する
 2. **#609/#610 残件**: `dialog-probe` chain 削除、preset/settings/widget 系の未カバー dialog stories — worker 対応中
 3. **最終 freeze → macOS artifact 再構築 → 全 E2E 再検証 → RC 記録確定**
+
+---
+
+## 収束作業 追記（2026-11-26 第4ラウンド、最終 head `e68cd693`）
+
+#626 の残 FAIL 4件と #655 を全て修正し、最終 head で全 E2E suite を再実行。**FAIL=0 を確認し RC を収束**。
+
+その後 CI で `dialog-root.test.ts` の typecheck エラー（PR #656 由来、test のみ・product code 非影響）を検出し #661→PR #662 で修正。最終 head は `e68cd693`。
+
+### E2E FAIL の修正（全て ticket PR 経由で `release-0-13-1` へ merge 済み）
+
+| PR | Issue | 内容 |
+|---|---|---|
+| #651 | #647 | UC-J02: preset edit が preset-add pool の tool dialog を開く問題を harness 側で正しく検出（`findPresetAddDialog` pool-aware） |
+| #652 | #648 | UC-J08: group 展開 toggle・sibling thumbnail・.ffx 実行を修正。**製品不具合を1件含む**: `PresetGlyphById` が catalog preset の構造化 icon（"FFX"）を優先し sibling thumbnail を dead code 化していたため、sibling thumb 解決時に icon を落とす修正。pack を userData 配下へステージングして .ffx の `assertAllowedFilePath` を通す harness 修正も含む |
+| #654 | #649 | UC-G02: debug console close が stale CDP target に対して retry し続ける問題を、attempt 毎の live surface 再解決で修正 |
+| #653 | #650 | UC-I04: corrupt theme.css fallback 判定が `waitForDom` を欠いていた harness 修正 |
+| #656 | #655 | UC-G02 根本原因（製品不具合）: debug console の replay consumer が broadcast request に first-response-wins で応答していたが、各 surface responder は自分の in-memory LogBus のみ snapshot するため応答順で履歴が変わる race。consumer 側に collection window（grace 3s/延長・上限 45s）を入れて全 response を union merge |
+| #662 | #661 | `dialog-root.test.ts` の spy 型を修正（`typecheck:test` の TS2493/TS2352、static/release gate fail の release blocker。test のみで product code 非影響） |
+| #658 | #657 | E2E harness の AE session 診断を `@ido-bata/ae-a8n@0.6.0` へ委譲（crash report/host log/session trace/supervision+GUI state を FAIL/BLOCKED 時に収集）。CDP stall 耐性（`listTargets` 非配列応答ガード、sandbox activation probe timeout 許容）も追加 |
+
+### 最終 E2E（AE2027 実機、dev bundle = release-trust build と同一ソース。E2E 実行時 head は `4dbdf8ce`、最終 head `e68cd693` との差分は test ファイルの型注釈のみで product code 同一）
+
+- 実行: 2026-11-26、`docs/verification/e2e-acceptance/results/2026-11-26-rc-0-13-1/<suite>/run.json`
+- 結果: **PASS=32 / FAIL=0 / BLOCKED=0**（33 case 実行、journeys UC-J06 のみ surface boot race で1回 BLOCKED → retry PASS。flaky infra で製品不具合ではない）
+- 詳細: `docs/verification/e2e-acceptance/results/2026-11-26-rc-0-13-1.md`
+- #626 close 済み
+
+### dialog-presets wedge の根本原因（製品不具合ではないことを実証）
+
+E2E 中に `dialog-presets` surface が CDP 無応答になる事象を観測。ae-a8n attach（ownership `attached`、pid 23970）+ `sample` stack dump + `/json/list` CDP probe + CEP 公式ログ（`~/Library/Logs/CSXS/CEPHtmlEngine12-AEFT-27.0-*.log`）で切り分けた結果:
+
+- wedge した renderer（pid 31862/31863）は main thread が `mach_msg` runloop 待機・CPU 0% — 無限ループではなく CEF renderer の stall
+- `Runtime.evaluate` が `1+1` すら timeout する一方、同一 bundle の debug-console / panel-1〜5 は正常
+- surface を閉じて `requestOpenExtension` で再 trigger すると新 renderer（pid 68508）が 144ms で正常 boot
+- 結論: **transient CEF/CDP stall（環境・ホスト層）であり製品コードの不具合ではない**。証跡収集の恒久的欠落として ae-a8n#336 を起票
+
+### 両 OS 配布物（最終 head `e68cd693` で再構築・検証済み）
+
+- **Windows**: `TY_PLUS_BUILD_PLATFORM=windows` + `TY_PLUS_SIGN_IDENTITY` + `TY_PLUS_ZXP_CERT_*` で `bun run release:candidate --channel=stable --release-version=0.13.1`
+  - `ty-plus-v0.13.1-windows.zip` sha256 `cad756bd2b02b90b08bce15dec546981c16e36d7331e9a27ef727bd4ce790735`（11,542,171 bytes）
+  - `ty-plus-v0.13.1-windows.zxp` sha256 `dbc94d51203427102de6077106e1c38007097a000e6b4cfbc9732f81d8ed1d07`（11,558,035 bytes）
+  - unsigned worker = R0 正当形、`ZXPSignCmd -verify` PASS、`verify-release-artifacts` OK（sourceCommit=`e68cd693…`、hash-verified、secret scan clean）
+- **macOS**: `TY_PLUS_SIGN_IDENTITY="Developer ID Application: Yusuke Kimura (JK49RJ2CK2)"` + 同上 ZXP 設定で実行（notarization は ADR-0003 Amendment 1 により optional、未公証）
+  - `ty-plus-v0.13.1-macos.zip` sha256 `1c896ec957aa7e48d6aeaecba680017a5023b6b3af42d4e7d4f312bd1ca3597f`（14,668,892 bytes）
+  - `ty-plus-v0.13.1-macos.zxp` sha256 `b9cccf5189534940927d9e1281ab88eebf40b889f5e2dc1cf6f19e521aa3e964`（14,683,149 bytes）
+  - operation-worker Developer ID 署名（`valid on disk` / `satisfies its Designated Requirement`）、`ZXPSignCmd -verify` PASS、`verify-release-artifacts` OK（sourceCommit=`e68cd693…`）
+- staging: `dist/github-release/` に両 OS の zip/zxp/manifest。tag/release/upload は未実施 — owner 承認が必要
+
+### 残存事項（最終更新）
+
+1. **正式リリース**: PR #605（release-0-13-1 → main）の merge 承認 + tag/release 作成 + 公開が owner 判断待ち
+2. **#609/#610 残件**: tracking issue として継続（本 RC のブロッカーではない）
+3. **`Workers Builds: ty-plus`**: main からの既存 CI 失敗（無関係）
+4. **ae-a8n#336**: CEP surface の証跡収集欠落（tooling gap、ty-plus のブロッカーではない）
