@@ -1253,7 +1253,10 @@ export function FontViewerWidget({
 					ref={hostRef}
 					data-font-viewer-list
 					className={css({
-						minHeight: 0,
+						// Compact heights: chrome banners compress first, but the
+						// result region keeps a floor so rows and the empty state
+						// stay readable instead of collapsing to a sliver (#675).
+						minHeight: "20",
 						flex: 1,
 						overflow: "auto",
 						borderRadius: "shell-sm",

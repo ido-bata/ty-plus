@@ -31,7 +31,8 @@ export function FontViewerLoadHint({
 			<div
 				className={css({
 					display: "flex",
-					flexShrink: 0,
+					minHeight: "0",
+					overflowY: "auto",
 					flexDirection: "column",
 					gap: "2",
 					borderRadius: "shell-sm",
@@ -70,7 +71,8 @@ export function FontViewerLoadHint({
 		return (
 			<div
 				className={css({
-					flexShrink: 0,
+					minHeight: "0",
+					overflowY: "auto",
 					borderRadius: "shell-sm",
 					borderWidth: "hairline",
 					borderStyle: "solid",
@@ -105,7 +107,8 @@ export function FontViewerLoadPhase({
 	return (
 		<div
 			className={css({
-				flexShrink: 0,
+				minHeight: "0",
+				overflowY: "auto",
 				borderRadius: "shell-sm",
 				borderWidth: "hairline",
 				borderStyle: "solid",
@@ -136,7 +139,8 @@ export function FontViewerLocalAccessError({
 	return (
 		<div
 			className={css({
-				flexShrink: 0,
+				minHeight: "0",
+				overflowY: "auto",
 				borderRadius: "shell-sm",
 				borderWidth: "hairline",
 				borderStyle: "solid",
@@ -164,7 +168,8 @@ export function FontViewerErrorBanner({
 	return (
 		<div
 			className={css({
-				flexShrink: 0,
+				minHeight: "0",
+				overflowY: "auto",
 				borderRadius: "shell-sm",
 				borderWidth: "hairline",
 				borderStyle: "solid",
@@ -193,7 +198,8 @@ export function FontViewerEmptyState({
 		<div
 			className={css({
 				display: "flex",
-				flexShrink: 0,
+				minHeight: "0",
+				overflowY: "auto",
 				flexDirection: "column",
 				gap: "2",
 				borderRadius: "shell-sm",
