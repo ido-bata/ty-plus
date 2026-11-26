@@ -55,18 +55,24 @@ const meta = {
 export default meta;
 type Story = StoryObj<Args>;
 
-// Issue #454: kind glyphs (FFX / SCRIPT / PLUGIN) render as container-query
-// text inside the 28px framed box. The font must stay at the 8px legibility
-// floor and each line must fit inside the frame instead of collapsing to
-// dots or clipping.
-const expectLegibleKindGlyph = (canvasElement: HTMLElement): void => {
-	const lines = Array.from(
-		canvasElement.querySelectorAll<HTMLElement>(".ws-preset-icon--text > span"),
+// Issue #673: kind badges (FFX / SCRIPT / PLUGIN / …) are single words —
+// they must render on ONE line inside the 28px framed box. Wrapping
+// mid-word ("PLUGIN" → "PLU"/"GIN") made the badge unreadable; the fix
+// keeps `white-space: nowrap` and shrinks the font via container-query
+// units instead, so the badge may render below the 8px short-badge floor
+// but must never clip or split.
+const expectSingleLineKindGlyph = (canvasElement: HTMLElement): void => {
+	const glyphs = Array.from(
+		canvasElement.querySelectorAll<HTMLElement>(".ws-preset-icon--text"),
 	);
-	expect(lines.length).toBeGreaterThan(0);
-	for (const line of lines) {
-		const fontSize = Number.parseFloat(getComputedStyle(line).fontSize);
-		expect(fontSize).toBeGreaterThanOrEqual(8);
+	expect(glyphs.length).toBeGreaterThan(0);
+	for (const glyph of glyphs) {
+		const lines = Array.from(
+			glyph.querySelectorAll<HTMLElement>(":scope > span"),
+		);
+		expect(lines).toHaveLength(1);
+		const line = lines[0];
+		expect(getComputedStyle(line).whiteSpace).toBe("nowrap");
 		expect(line.scrollWidth).toBeLessThanOrEqual(line.clientWidth + 1);
 	}
 };
@@ -119,7 +125,7 @@ export const ScriptPreset: Story = {
 	},
 	play: async ({ canvasElement }) => {
 		expectCanvasLayout(canvasElement);
-		expectLegibleKindGlyph(canvasElement);
+		expectSingleLineKindGlyph(canvasElement);
 		expectIconLeftOfTitle(canvasElement);
 	},
 };
@@ -135,7 +141,7 @@ export const PluginPreset: Story = {
 	},
 	play: async ({ canvasElement }) => {
 		expectCanvasLayout(canvasElement);
-		expectLegibleKindGlyph(canvasElement);
+		expectSingleLineKindGlyph(canvasElement);
 		expectIconLeftOfTitle(canvasElement);
 	},
 };
