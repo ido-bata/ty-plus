@@ -119,7 +119,29 @@ export function PresetInfoWidget({
 			setPresetInfoLast(items);
 		}
 	}, [items]);
-	const effective = items.length > 0 ? items : presetInfoLast;
+	// Issue #701: `presetInfoLast` is a last-known-good cache for transient
+	// empty resolutions, but a preset/group deleted from the catalog must
+	// not resurrect as a ghost card. Fall back only while every cached
+	// entry still exists in `presets` ∪ `groupCatalogEntries`.
+	const catalogIds = useMemo(() => {
+		const ids = new Set<string>();
+		for (const preset of state.presets) {
+			const id = preset.id.trim();
+			if (id) ids.add(id);
+		}
+		for (const group of state.groupCatalogEntries) {
+			const id = group.id.trim();
+			if (id) ids.add(id);
+		}
+		return ids;
+	}, [state.presets, state.groupCatalogEntries]);
+	const effective =
+		items.length > 0
+			? items
+			: presetInfoLast.length > 0 &&
+					presetInfoLast.every((preset) => catalogIds.has(preset.id.trim()))
+				? presetInfoLast
+				: [];
 
 	return (
 		<div className={infoContainerClass} data-mode={presetInfoMode(effective)}>

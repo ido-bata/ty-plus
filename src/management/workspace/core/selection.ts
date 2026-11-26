@@ -61,3 +61,46 @@ const clearPlacement = (state: SurfaceState): SurfaceState => ({
 
 export const clearAll = (state: SurfaceState): SurfaceState =>
 	clearPlacement(state);
+
+/**
+ * Issue #701: drop preset refs (`presetHoverId` / `presetSelectedIds` /
+ * `presetFocusId`) that no longer resolve against the catalog
+ * (`presets` ∪ `groupCatalogEntries`).
+ *
+ * Apply only at catalog-authoritative commits (preset/group snapshot
+ * refresh, initial load, layout restore) — never inside the generic
+ * `commit`, because flows like Duplicate legitimately select an id before
+ * `state.presets` catches up. Returns the same reference when nothing is
+ * stale so callers can wrap unconditionally.
+ */
+export const pruneStalePresetRefs = (state: SurfaceState): SurfaceState => {
+	const known = new Set<string>();
+	for (const preset of state.presets) {
+		const id = preset.id.trim();
+		if (id) known.add(id);
+	}
+	for (const group of state.groupCatalogEntries) {
+		const id = group.id.trim();
+		if (id) known.add(id);
+	}
+	const keepNullable = (id: string | null): string | null =>
+		id !== null && known.has(id.trim()) ? id : null;
+	const nextHoverId = keepNullable(state.presetHoverId);
+	const nextFocusId = keepNullable(state.presetFocusId);
+	const nextSelectedIds = state.presetSelectedIds.filter((id) =>
+		known.has(id.trim()),
+	);
+	if (
+		nextHoverId === state.presetHoverId &&
+		nextFocusId === state.presetFocusId &&
+		nextSelectedIds.length === state.presetSelectedIds.length
+	) {
+		return state;
+	}
+	return {
+		...state,
+		presetHoverId: nextHoverId,
+		presetFocusId: nextFocusId,
+		presetSelectedIds: nextSelectedIds,
+	};
+};
