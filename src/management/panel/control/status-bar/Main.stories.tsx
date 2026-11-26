@@ -76,6 +76,18 @@ type Story = StoryObj<typeof meta>;
 /** Live mode, undo/redo available, no saved layouts. */
 export const Live: Story = {
 	render: renderBar({ canUndo: true, canRedo: true }),
+	play: async ({ canvasElement }) => {
+		// Issue #680: host/mode status text is always visible (previously it
+		// was opacity-0 unless a console message was fresh), and every
+		// icon-only button exposes an accessible name.
+		const canvas = within(canvasElement);
+		expect(canvas.getByText(/After Effects · Live/)).toBeVisible();
+		for (const button of canvas.getAllByRole("button")) {
+			const name =
+				button.getAttribute("aria-label") ?? button.textContent ?? "";
+			expect(name.trim().length).toBeGreaterThan(0);
+		}
+	},
 };
 
 /** Static mode with two saved layouts; play opens the snapshots popover. */
@@ -88,6 +100,9 @@ export const SnapshotsOpen: Story = {
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		const toggle = canvas.getByTitle(/Saved layouts/);
+		// Issue #680: the saved-layouts count badge reflects snapshots.length.
+		const badge = toggle.parentElement?.querySelector("[data-ws-badge]");
+		expect(badge?.textContent).toBe("2");
 		await userEvent.click(toggle);
 		// The popover portals to document.body — query the whole document.
 		await expect(
