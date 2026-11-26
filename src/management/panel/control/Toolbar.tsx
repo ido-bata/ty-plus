@@ -5,6 +5,7 @@
 import { cx, Icon, IconButton } from "@ty-plus/ui";
 import type { LucideIcon } from "lucide-react";
 import {
+	ChevronsUpDown,
 	Code2,
 	FileText,
 	FolderOpen,
@@ -114,6 +115,11 @@ const iconBtnSize = css({
 	width: "6",
 });
 
+const collapsedBtnSize = css({
+	height: "4",
+	width: "4",
+});
+
 export const Toolbar = memo(function ToolbarImpl(
 	props: ToolbarProps,
 ): React.ReactElement {
@@ -167,7 +173,21 @@ export const Toolbar = memo(function ToolbarImpl(
 			data-orientation={st.orientation}
 			data-collapsed={st.collapsed ? "true" : undefined}
 		>
-			{!st.collapsed &&
+			{st.collapsed ? (
+				<IconButton
+					size="xs"
+					data-ws-action={CTX_MENU_IDS.cpToggleCollapse}
+					title={i18n.t("workspace:controlPanel.collapseExpand", {
+						defaultValue: "Collapse/Expand",
+					})}
+					aria-label={i18n.t("workspace:controlPanel.collapseExpand", {
+						defaultValue: "Collapse/Expand",
+					})}
+					className={collapsedBtnSize}
+				>
+					<Icon icon={ChevronsUpDown} size={3} />
+				</IconButton>
+			) : (
 				CP_BUTTONS.map((b) => (
 					<IconButton
 						key={b.id}
@@ -178,7 +198,8 @@ export const Toolbar = memo(function ToolbarImpl(
 					>
 						<Icon icon={b.icon} size={3} />
 					</IconButton>
-				))}
+				))
+			)}
 		</div>
 	);
 });
