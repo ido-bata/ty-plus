@@ -1,8 +1,10 @@
 import { describe, expect, it } from "vitest";
 import {
 	fitTextFontPx,
+	GLYPH_HOST_MIN_FONT_PX,
 	glyphFrameRadiusPx,
 	measureTextWidth100,
+	resolveFittedTextFont,
 } from "./frame-fit";
 
 // `measureTextWidth100` falls back to a per-grapheme em estimate when
@@ -71,6 +73,25 @@ describe("fitTextFontPx", () => {
 				contentHeight: 1998,
 			}),
 		).toBe(96);
+	});
+});
+
+describe("resolveFittedTextFont", () => {
+	it("passes sizes at or above the host floor through unscaled", () => {
+		expect(resolveFittedTextFont(18)).toEqual({ fontPx: 18, scale: 1 });
+		expect(resolveFittedTextFont(GLYPH_HOST_MIN_FONT_PX)).toEqual({
+			fontPx: GLYPH_HOST_MIN_FONT_PX,
+			scale: 1,
+		});
+	});
+
+	it("renders sub-floor sizes at the floor and scales them down", () => {
+		// CEF clamps font-size below ~10px, so a 3.43px fit must paint at
+		// 10px and shrink visually to the same effective size (#704).
+		const result = resolveFittedTextFont(3.43);
+		expect(result.fontPx).toBe(GLYPH_HOST_MIN_FONT_PX);
+		expect(result.scale).toBeCloseTo(0.343, 3);
+		expect(result.fontPx * result.scale).toBeCloseTo(3.43, 5);
 	});
 });
 

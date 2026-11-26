@@ -263,9 +263,55 @@ export type TextFitSpec = {
 };
 
 /**
- * Computes the fitted px font size for `shellRef`'s text from the frame
+ * The smallest font size the fit will ever request. Below this the glyph
+ * degrades to an unreadable smudge anyway, so clipping is preferred over
+ * rendering dust.
+ */
+export const GLYPH_ABS_MIN_FONT_PX = 2;
+
+/**
+ * Smallest `font-size` the CEP host actually paints. CEF clamps any
+ * computed font-size below ~10px up to 10px (verified on AE2026: inline
+ * `font-size: 3px` computes to `10px`), so sub-10px glyph text must be
+ * rendered at 10px and shrunk visually with `transform: scale()` instead.
+ */
+export const GLYPH_HOST_MIN_FONT_PX = 10;
+
+export type FittedTextFont = {
+	/**
+	 * CSS `font-size` to apply. Always ≥ {@link GLYPH_HOST_MIN_FONT_PX}
+	 * so the host never clamps it away from the intended value.
+	 */
+	fontPx: number;
+	/**
+	 * `transform: scale()` factor that brings `fontPx` down to the
+	 * fitted size. `1` whenever the fit is at or above the host floor.
+	 */
+	scale: number;
+};
+
+/**
+ * Maps a desired (already fit-to-frame) font size to the paintable
+ * `fontPx` + `scale` pair. Sizes below the host floor are rendered at the
+ * floor and shrunk visually, which produces the same effective size on
+ * hosts with and without the clamp.
+ */
+export function resolveFittedTextFont(desiredPx: number): FittedTextFont {
+	const fontPx = Math.max(desiredPx, GLYPH_HOST_MIN_FONT_PX);
+	return { fontPx, scale: desiredPx / fontPx };
+}
+
+/**
+ * Computes the fitted text size for `shellRef`'s text from the frame
  * metrics and the element's computed font. Returns `null` until the first
  * measurement so callers can keep their CSS/inline fallback.
+ *
+ * The legibility `minFontPx` floor is deliberately soft here: when the
+ * frame is too small for even that size, the fit keeps shrinking down to
+ * {@link GLYPH_ABS_MIN_FONT_PX} — a complete tiny badge beats a clipped
+ * one. Because the host clamps painted font-size at ~10px, sizes below
+ * that are expressed as `fontPx = 10` + `scale = desired / 10`, which
+ * renders identically on CEF and on hosts without the floor.
  *
  * Derived during render (not in an effect) because the value is a pure
  * function of `metrics` + `fit` + the already-mounted element — the same
@@ -276,23 +322,24 @@ export type TextFitSpec = {
 export function useFittedTextFontPx(
 	shellRef: RefObject<HTMLElement | null>,
 	metrics: FrameMetrics | null,
-	fit: TextFitSpec,
-): number | null {
+	fit: Pick<TextFitSpec, "lines" | "preferredPct">,
+): FittedTextFont | null {
 	return useMemo(() => {
 		const el = shellRef.current;
 		if (!metrics || !el) return null;
 		const style = getComputedStyle(el);
-		return fitTextFontPx({
+		const desired = fitTextFontPx({
 			lines: fit.lines,
 			boxWidth: metrics.boxWidth,
 			contentWidth: metrics.contentWidth,
 			contentHeight: metrics.contentHeight,
 			preferredPct: fit.preferredPct,
-			minFontPx: fit.minFontPx,
+			minFontPx: GLYPH_ABS_MIN_FONT_PX,
 			fontFamily: style.fontFamily,
 			fontWeight: style.fontWeight,
 			fontStyle: style.fontStyle,
 		});
+		return resolveFittedTextFont(desired);
 	}, [shellRef, metrics, fit]);
 }
 

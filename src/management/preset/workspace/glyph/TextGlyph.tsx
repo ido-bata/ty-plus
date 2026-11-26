@@ -28,6 +28,17 @@ const wsPresetTextShellClass = css({
 	fontWeight: "medium",
 });
 
+const wsPresetTextLinesClass = css({
+	display: "flex",
+	flexDirection: "column",
+	alignItems: "center",
+	// Sub-10px fits are painted at 10px and shrunk here: CEF clamps
+	// font-size below ~10px, so the scale carries the real size (#704).
+	// Scaling the wrapper (not each line) keeps multi-line leading intact.
+	transform: "scale(var(--ws-glyph-text-scale, 1))",
+	transformOrigin: "center",
+});
+
 const wsPresetTextLineClass = css({
 	display: "inline-block",
 	maxWidth: "full",
@@ -82,12 +93,13 @@ export function TextGlyph({ visual }: { visual: TextVisual }): JSX.Element {
 
 	const shellRef = useRef<HTMLSpanElement>(null);
 	const metrics = useFrameMetrics(shellRef);
-	const fontPx = useFittedTextFontPx(shellRef, metrics, fit);
+	const fitted = useFittedTextFontPx(shellRef, metrics, fit);
 
 	const textStyle = {
 		...glyphBackgroundStyle(visual.backgroundColor),
 		...(visual.color ? { color: visual.color } : {}),
-		"--ws-glyph-text-font-px": `${fontPx ?? fit.minFontPx}px`,
+		"--ws-glyph-text-font-px": `${fitted?.fontPx ?? fit.minFontPx}px`,
+		"--ws-glyph-text-scale": `${fitted?.scale ?? 1}`,
 		...(metrics
 			? { borderRadius: `${glyphFrameRadiusPx(metrics.boxWidth)}px` }
 			: {}),
@@ -104,17 +116,19 @@ export function TextGlyph({ visual }: { visual: TextVisual }): JSX.Element {
 			style={textStyle}
 			aria-hidden="true"
 		>
-			{fit.lines.map((line) => (
-				<span
-					key={line}
-					className={cx(
-						wsPresetTextLineClass,
-						visual.color ? textInheritClass : textPrimaryClass,
-					)}
-				>
-					{line}
-				</span>
-			))}
+			<span className={wsPresetTextLinesClass}>
+				{fit.lines.map((line) => (
+					<span
+						key={line}
+						className={cx(
+							wsPresetTextLineClass,
+							visual.color ? textInheritClass : textPrimaryClass,
+						)}
+					>
+						{line}
+					</span>
+				))}
+			</span>
 		</span>
 	);
 }
