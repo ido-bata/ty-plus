@@ -1,14 +1,16 @@
 import { cx } from "@ty-plus/ui";
-import type { CSSProperties, HTMLAttributes, JSX, ReactNode } from "react";
+import type { HTMLAttributes, JSX, ReactNode } from "react";
 import { resolveWorkspaceGlyphIconVisual } from "@/management/preset/assets/icons";
 import type { Preset } from "@/management/preset/contract";
-import { CanvasEasingIcon } from "@/management/preset/workspace/CanvasEasingIcon";
 import { GlyphCachedImage } from "@/management/preset/workspace/glyph/CachedImage";
+import { CanvasGlyph } from "@/management/preset/workspace/glyph/CanvasGlyph";
 import {
 	DEFAULT_EMOJI_CLASS,
 	frameBase,
 	framedTextClass,
 } from "@/management/preset/workspace/glyph/classes";
+import { EmojiGlyph } from "@/management/preset/workspace/glyph/EmojiGlyph";
+import { TextGlyph } from "@/management/preset/workspace/glyph/TextGlyph";
 import { css } from "@/styled-system/css";
 
 /** Same host as the workspace `PresetTile` (the source of truth for the in-grid-cell appearance). */
@@ -21,7 +23,6 @@ const presetCatalogGlyphHostBase = css({
 	alignItems: "center",
 	justifyContent: "center",
 	padding: "0.5",
-	containerType: "size",
 	"& [data-ws-preset-icon='image']": {
 		display: "flex",
 		height: "full",
@@ -115,76 +116,6 @@ export function FramedPresetGlyph(props: FramedPresetGlyphProps): JSX.Element {
 	);
 }
 
-const wsPresetEmojiShellClass = css({
-	boxSizing: "border-box",
-	display: "flex",
-	aspectRatio: "square",
-	height: "full",
-	minHeight: "0",
-	width: "full",
-	minWidth: "0",
-	cursor: "pointer",
-	alignItems: "center",
-	justifyContent: "center",
-	overflow: "hidden",
-	borderRadius: "min(12px,15cqi)",
-	padding: "0.5px",
-});
-
-const wsEmojiInnerClass = css({
-	display: "flex",
-	width: "full",
-	height: "full",
-	alignItems: "center",
-	justifyContent: "center",
-	textAlign: "center",
-});
-
-const wsPresetCanvasShellClass = css({
-	boxSizing: "border-box",
-	display: "flex",
-	height: "full",
-	minHeight: "0",
-	width: "full",
-	minWidth: "0",
-	cursor: "pointer",
-	alignItems: "center",
-	justifyContent: "center",
-	overflow: "hidden",
-	borderRadius: "min(12px,15cqi)",
-	padding: "1",
-});
-
-const wsPresetTextShellClass = css({
-	boxSizing: "border-box",
-	display: "flex",
-	height: "full",
-	minHeight: "0",
-	width: "full",
-	minWidth: "0",
-	cursor: "pointer",
-	flexDirection: "column",
-	alignItems: "center",
-	justifyContent: "center",
-	overflow: "hidden",
-	borderRadius: "min(12px,15cqi)",
-	padding: "0.5px",
-	fontWeight: "medium",
-});
-
-const wsPresetTextLineClass = css({
-	display: "inline-block",
-	maxWidth: "full",
-	minWidth: "0",
-	cursor: "pointer",
-	whiteSpace: "nowrap",
-	textAlign: "center",
-	lineHeight: "none",
-});
-
-const textInheritClass = css({ color: "inherit" });
-const textPrimaryClass = css({ color: "text.primary" });
-
 export function WorkspacePresetGlyph({
 	preset,
 }: {
@@ -195,116 +126,10 @@ export function WorkspacePresetGlyph({
 		return <GlyphCachedImage imagePath={visual.value} />;
 	}
 	if (visual.kind === "emoji") {
-		const emojiStyle = {
-			...(visual.backgroundColor
-				? { backgroundColor: visual.backgroundColor }
-				: {}),
-		} as CSSProperties;
-		return (
-			<span
-				data-ws-preset-text-fit="scale"
-				className={`ws-preset-icon ws-preset-icon--emoji ${wsPresetEmojiShellClass}`}
-				style={emojiStyle}
-				aria-hidden="true"
-			>
-				<span
-					className={wsEmojiInnerClass}
-					style={{ fontSize: "clamp(4px, 100cqi, 96px)" }}
-				>
-					{visual.value}
-				</span>
-			</span>
-		);
+		return <EmojiGlyph visual={visual} />;
 	}
-
 	if (visual.kind === "canvas") {
-		const [_x1, _y1, _x2, _y2] = visual.cubic;
-		const canvasStyle = {
-			...(visual.backgroundColor
-				? { backgroundColor: visual.backgroundColor }
-				: {}),
-		} as CSSProperties;
-		return (
-			<span
-				className={`ws-preset-icon ws-preset-icon--canvas ${wsPresetCanvasShellClass}`}
-				style={canvasStyle}
-				aria-hidden="true"
-			>
-				<CanvasEasingIcon
-					cubic={visual.cubic}
-					color={visual.color ?? "currentColor"}
-				/>
-			</span>
-		);
+		return <CanvasGlyph visual={visual} />;
 	}
-
-	const raw = visual.value || "?";
-	const graphemes = Array.from(raw);
-	const ch = Math.max(1, graphemes.length);
-
-	// Issue #673: kind badges (FFX / SCRIPT / PLUGIN / MEDIA / …) are
-	// single words — the previous ~sqrt(n) split wrapped them mid-word
-	// ("PLUGIN" → "PLU"/"GIN", "FFX" → "FF"/"X") and made the badge
-	// unreadable. Badge-length text (the editor caps icon text at
-	// PRESET_ICON_TEXT_MAX = 6 graphemes) now stays on one line and
-	// shrinks via the container-query font size instead of wrapping.
-	// Longer legacy strings keep the packed multi-line layout because a
-	// single line cannot fit inside the frame.
-	const badgeLength = ch <= 6;
-
-	// Multi-line (long strings only): break into lines of ~sqrt(n)
-	// graphemes so boxes stay roughly square.
-	const charsPerLine = badgeLength ? ch : Math.ceil(Math.sqrt(ch));
-	const lines: string[] = [];
-	for (let i = 0; i < graphemes.length; i += charsPerLine) {
-		lines.push(graphemes.slice(i, i + charsPerLine).join(""));
-	}
-
-	// Use CSS custom property with container query (cqi = container query inline).
-	// Set on outer span so children can inherit. cqi = 1% of container's inline size.
-	// Minimum 8px: the previous 4px floor rendered ~4px glyphs inside the
-	// 28px list-row frame — below legibility — so single-line marks now
-	// get ~18% of the container width and the floor keeps small frames
-	// readable instead of collapsing to dots. Five- and six-grapheme
-	// badges (PLUGIN / SCRIPT / IMPORT / PRESET) cannot hold 8px on one
-	// line inside the 28px frame, so their floor drops to 5px — still
-	// above the dot-collapse range — while shorter badges keep 8px.
-	const lineScale = lines.length >= 3 ? 10 : lines.length >= 2 ? 13 : 18;
-	const minFontPx = badgeLength && ch > 4 ? 5 : 8;
-
-	const textStyle = {
-		...(visual.backgroundColor
-			? { backgroundColor: visual.backgroundColor }
-			: {}),
-		...(visual.color ? { color: visual.color } : {}),
-	} as CSSProperties;
-
-	return (
-		<span
-			data-ws-preset-text-fit="scale"
-			className={cx(
-				`ws-preset-icon ws-preset-icon--text ${wsPresetTextShellClass}`,
-				visual.color ? "" : textPrimaryClass,
-			)}
-			style={textStyle}
-			aria-hidden="true"
-		>
-			{lines.map((line) => (
-				<span
-					key={line}
-					className={cx(
-						wsPresetTextLineClass,
-						visual.color ? textInheritClass : textPrimaryClass,
-					)}
-					style={
-						{
-							fontSize: `clamp(${minFontPx}px, ${lineScale}cqi, 96px)`,
-						} as CSSProperties
-					}
-				>
-					{line}
-				</span>
-			))}
-		</span>
-	);
+	return <TextGlyph visual={visual} />;
 }

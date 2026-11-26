@@ -259,13 +259,6 @@
 		"reason": "the editable line is a contentEditable: the text caret is its focus indicator, so it does not need the shared ring"
 	},
 	{
-		"file": "src/management/preset/workspace/glyph/WorkspaceGlyph.tsx",
-		"line": 212,
-		"rule": "inline-style",
-		"message": "inline style sets fontSize — appearance must come from css() and the token system",
-		"reason": "inline style sets appearance; move it into css() and the token system"
-	},
-	{
 		"file": "src/management/workspace/background/Fields.tsx",
 		"line": 72,
 		"rule": "ui-override",

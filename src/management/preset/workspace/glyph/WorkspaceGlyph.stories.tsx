@@ -26,10 +26,8 @@ const baseArgs = {
 const decoratorBoxClass = css({
 	height: "32",
 	width: "32",
-	// Product glyphs always render inside a `containerType: "size"`
-	// host (frameBase / PresetCatalogGlyphHost). Without it the `cqi`
-	// font sizes resolve against the viewport and clip the glyph.
-	containerType: "size",
+	// Glyph frames measure themselves via ResizeObserver (#700); no
+	// `container-type` is needed — and none exists on the CEF 99 host.
 });
 
 const meta = {
