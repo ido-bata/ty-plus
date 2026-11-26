@@ -71,8 +71,8 @@ const debugConsoleLog = createLogger("debug-console");
 // Issue #655: replay-response collection window. Each accepted response
 // extends the window by the grace period so straggler surfaces still
 // merge; the deadline caps total collection time.
-const REPLAY_COLLECT_GRACE_MS = 1500;
-const REPLAY_COLLECT_MAX_MS = 15000;
+const REPLAY_COLLECT_GRACE_MS = 3000;
+const REPLAY_COLLECT_MAX_MS = 45000;
 
 export type DebugDialogRootProps = {
 	surfaceId: string;
