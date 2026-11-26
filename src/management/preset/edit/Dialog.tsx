@@ -312,7 +312,11 @@ type DialogStatus =
 	| { phase: "saving" }
 	| { phase: "deleting" }
 	| { phase: "done" }
-	| { phase: "error"; message: string };
+	| {
+			phase: "error";
+			message: string;
+			kind: "load" | "save" | "delete";
+	  };
 
 type DialogAction =
 	| { type: "LOAD_START" }
@@ -336,19 +340,19 @@ function dialogReducer(
 		case "LOAD_SUCCESS":
 			return { phase: "loaded", preset: action.preset };
 		case "LOAD_ERROR":
-			return { phase: "error", message: action.message };
+			return { phase: "error", message: action.message, kind: "load" };
 		case "SAVE_START":
 			return { phase: "saving" };
 		case "SAVE_SUCCESS":
 			return { phase: "done" };
 		case "SAVE_ERROR":
-			return { phase: "error", message: action.message };
+			return { phase: "error", message: action.message, kind: "save" };
 		case "DELETE_START":
 			return { phase: "deleting" };
 		case "DELETE_SUCCESS":
 			return { phase: "done" };
 		case "DELETE_ERROR":
-			return { phase: "error", message: action.message };
+			return { phase: "error", message: action.message, kind: "delete" };
 		case "RESET":
 			return { phase: "idle" };
 		default:
@@ -1092,7 +1096,9 @@ export function PresetEditDialog(props: PresetEditDialogProps): JSX.Element {
 
 	const isBusy =
 		dialogStatus.phase === "saving" || dialogStatus.phase === "deleting";
-	const canMutate = dialogStatus.phase === "loaded";
+	const canMutate =
+		dialogStatus.phase === "loaded" ||
+		(dialogStatus.phase === "error" && dialogStatus.kind !== "load");
 	const _statusMessage =
 		dialogStatus.phase === "loading"
 			? t("edit.status.loading")
