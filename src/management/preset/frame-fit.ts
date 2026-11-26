@@ -267,7 +267,7 @@ export type TextFitSpec = {
  * degrades to an unreadable smudge anyway, so clipping is preferred over
  * rendering dust.
  */
-export const GLYPH_ABS_MIN_FONT_PX = 2;
+const GLYPH_ABS_MIN_FONT_PX = 2;
 
 /**
  * Smallest `font-size` the CEP host actually paints. CEF clamps any
