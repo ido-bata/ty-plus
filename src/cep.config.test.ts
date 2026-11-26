@@ -72,3 +72,47 @@ describe("CEP debug port band (#100)", () => {
 		expect(rel.startingDebugPort).toBe(9300);
 	});
 });
+
+describe("CEP debug port ephemeral-range guard (#682)", () => {
+	// vite-cep-plugin assigns .debug ports sequentially from
+	// startingDebugPort, one per panel per host.
+	const portSpan = config.panels.length * config.hosts.length;
+	const EPHEMERAL_FLOOR = 49152;
+
+	test("warns when the .debug span reaches the ephemeral range", async () => {
+		const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+		// last port = base + span - 1 = 49152 -> inside the ephemeral range.
+		await loadConfigWithEnv({
+			NODE_ENV: "production",
+			TY_PLUS_CEP_BUILD_MODE: undefined,
+			CEP_DEBUG_BASE: String(EPHEMERAL_FLOOR - portSpan + 1),
+		});
+		expect(warn).toHaveBeenCalledWith(expect.stringContaining("49152"));
+	});
+
+	test("does not warn while the whole span stays below the floor", async () => {
+		const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+		// last port = base + span - 1 = 49151 -> still below the floor.
+		await loadConfigWithEnv({
+			NODE_ENV: "production",
+			TY_PLUS_CEP_BUILD_MODE: undefined,
+			CEP_DEBUG_BASE: String(EPHEMERAL_FLOOR - portSpan),
+		});
+		expect(warn).not.toHaveBeenCalled();
+	});
+
+	test("does not warn for the built-in dev and release bands", async () => {
+		const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+		await loadConfigWithEnv({
+			NODE_ENV: "production",
+			TY_PLUS_CEP_BUILD_MODE: undefined,
+			CEP_DEBUG_BASE: undefined,
+		});
+		await loadConfigWithEnv({
+			NODE_ENV: "production",
+			TY_PLUS_CEP_BUILD_MODE: "development",
+			CEP_DEBUG_BASE: undefined,
+		});
+		expect(warn).not.toHaveBeenCalled();
+	});
+});
