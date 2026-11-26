@@ -16,8 +16,6 @@ export type { ViewMode, ViewModeToggleProps } from "./controls/ViewModeToggle";
 export { ViewModeToggle } from "./controls/ViewModeToggle";
 
 export { Badge } from "./feedback/Badge";
-export { ErrorBoundary } from "./feedback/ErrorBoundary";
-export { FileDropZone } from "./feedback/FileDropZone";
 export { LoadingSpinner } from "./feedback/LoadingSpinner";
 export { Notice } from "./feedback/Notice";
 

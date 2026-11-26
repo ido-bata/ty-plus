@@ -1,0 +1,71 @@
+{
+  "schema": "ty-plus.e2e-run/1",
+  "suite": "catalog",
+  "capturedAt": "2026-11-25T06:40:02.601Z",
+  "extensionDir": "/Users/rebui/Library/Application Support/Adobe/CEP/extensions/app.ty-plus.dev",
+  "managedRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-25T06-39-29-240Z-31604/ty-plus",
+  "realManagedRoot": "/Applications/Adobe After Effects 2027/ty-plus",
+  "sandbox": {
+    "enabled": true,
+    "sandboxRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-25T06-39-29-240Z-31604/ty-plus",
+    "integrity": {
+      "realRoot": "/Applications/Adobe After Effects 2027/ty-plus",
+      "checkedAt": "2026-11-25T06:40:02.600Z",
+      "driftBeforeRepair": {
+        "changed": 4,
+        "added": 0,
+        "removed": 0
+      },
+      "filesRepaired": [
+        "cache/layout-undo/panel-2/stack.json",
+        "cache/layout-undo/panel-5/stack.json",
+        "cache/layout-undo/panel-4/stack.json",
+        "cache/layout-undo/panel-3/stack.json"
+      ],
+      "cleanAfterRepair": true
+    }
+  },
+  "totals": {
+    "PASS": 1,
+    "FAIL": 0,
+    "BLOCKED": 0,
+    "SKIP": 0
+  },
+  "results": [
+    {
+      "uc": "UC-C15",
+      "title": "preset with missing asset: record survives boot, host verify reports missing",
+      "status": "PASS",
+      "detail": "stale record 0316fce8-943b-4a31-b082-f0a2b4c75c2e → /tmp/ty-plus-e2e-missing-5abd48b0-279d-4ce7-b973-a76ecd986e6a.ffx",
+      "checks": [
+        {
+          "name": "panel boots with workspace grid after stale record added",
+          "ok": true,
+          "detail": "body=63087 grid=true tiles=7"
+        },
+        {
+          "name": "stale preset record not dropped or rewritten on boot",
+          "ok": true,
+          "detail": "filePath=/tmp/ty-plus-e2e-missing-5abd48b0-279d-4ce7-b973-a76ecd986e6a.ffx"
+        },
+        {
+          "name": "sibling preset records unaffected",
+          "ok": true,
+          "detail": "before=2 after=3"
+        },
+        {
+          "name": "host verifyPresetAsset reports exists:false for stale path",
+          "ok": true,
+          "detail": "raw={\"ok\":true,\"hostId\":\"after-effects\",\"value\":{\"exists\":false,\"path\":\"/tmp/ty-plus-e2e-missing-5abd48b0-279d-4ce7-b973-a76ecd986e6a.ffx\"}}"
+        },
+        {
+          "name": "presets/presets.json restored after case",
+          "ok": true,
+          "detail": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-25T06-39-29-240Z-31604/ty-plus/presets/presets.json 534 bytes"
+        }
+      ],
+      "evidence": [],
+      "durationMs": 6052
+    }
+  ]
+}

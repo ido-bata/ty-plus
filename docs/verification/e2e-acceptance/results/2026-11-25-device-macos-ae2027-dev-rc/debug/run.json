@@ -1,0 +1,60 @@
+{
+  "schema": "ty-plus.e2e-run/1",
+  "suite": "debug",
+  "capturedAt": "2026-11-25T06:39:29.158Z",
+  "extensionDir": "/Users/rebui/Library/Application Support/Adobe/CEP/extensions/app.ty-plus.dev",
+  "managedRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-25T06-38-35-518Z-27087/ty-plus",
+  "realManagedRoot": "/Applications/Adobe After Effects 2027/ty-plus",
+  "sandbox": {
+    "enabled": true,
+    "sandboxRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-25T06-38-35-518Z-27087/ty-plus",
+    "integrity": {
+      "realRoot": "/Applications/Adobe After Effects 2027/ty-plus",
+      "checkedAt": "2026-11-25T06:39:29.158Z",
+      "driftBeforeRepair": {
+        "changed": 4,
+        "added": 0,
+        "removed": 0
+      },
+      "filesRepaired": [
+        "cache/layout-undo/panel-2/stack.json",
+        "cache/layout-undo/panel-5/stack.json",
+        "cache/layout-undo/panel-3/stack.json",
+        "cache/layout-undo/panel-1/stack.json"
+      ],
+      "cleanAfterRepair": true
+    }
+  },
+  "totals": {
+    "PASS": 0,
+    "FAIL": 1,
+    "BLOCKED": 0,
+    "SKIP": 1
+  },
+  "results": [
+    {
+      "uc": "UC-G02",
+      "title": "debug console reopen replays previously logged messages",
+      "status": "FAIL",
+      "detail": "console did not open",
+      "checks": [
+        {
+          "name": "debug console opens",
+          "ok": false,
+          "detail": "not live"
+        }
+      ],
+      "evidence": [],
+      "durationMs": 22815
+    },
+    {
+      "uc": "UC-G03",
+      "title": "operation worker verify: spawn → accept → result → exit",
+      "status": "SKIP",
+      "detail": "dev-only probe absent (requires development-unsigned build)",
+      "checks": [],
+      "evidence": [],
+      "durationMs": 5
+    }
+  ]
+}

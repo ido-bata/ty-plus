@@ -5,12 +5,7 @@
  */
 
 import { openCepDialogSurface } from "@/management/ae/cep/transport";
-import { storeRequest as storeDialogRequest } from "@/management/dialog/bridge";
-import {
-	TY_PLUS_DIALOG_EXTENSION,
-	type ToolDialogKind,
-} from "@/management/dialog/ids";
-import { createProbeId as createDialogProbeId } from "@/management/dialog/probe/session";
+import type { ToolDialogKind } from "@/management/dialog/ids";
 import { planWorkspaceShellToolDialogOpen } from "@/management/dialog/workspace-shell-tool-open";
 import { allocatePresetAddToolExtensionId } from "@/management/preset/add-dialog-pool";
 import { writePresetToolHandoff } from "@/management/preset/tool-handoff-file";
@@ -122,20 +117,3 @@ export const openPresetToolSurface = async (
 	});
 };
 
-/**
- * Opens the CEP dialog probe surface.
- */
-export const openDialogProbe = async (
-	payload: { title?: string; message?: string } = {},
-	isCep: boolean,
-	panelId: string,
-	win: Window,
-): Promise<void> => {
-	if (!isCep) return;
-	const dialogId = createDialogProbeId();
-	await storeDialogRequest(win, dialogId, payload);
-	openCepDialogSurface(win, {
-		extensionId: TY_PLUS_DIALOG_EXTENSION.probe,
-		params: { openerSurfaceId: panelId, dialogId },
-	});
-};

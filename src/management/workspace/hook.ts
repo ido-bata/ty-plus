@@ -193,7 +193,6 @@ import {
 import { initLayoutUndoCache } from "@/management/workspace/undo/layout-undo-cache";
 import { css } from "@/styled-system/css";
 import {
-	openDialogProbe,
 	requestOpenBackgroundPanel,
 	requestOpenWorkspaceShellTool,
 } from "./hooks/dialogs";
@@ -1570,9 +1569,6 @@ export function useWorkspaceRuntime(root: Element | null): {
 
 		enqueueLayoutReload(false);
 
-		// ── Dialog helpers (F8) ─────────────────────────────────────────────────
-		// openDialogProbe extracted to hooks/dialogs.ts
-
 		// ── Debug console (browser mode only) ─────────────────────────────────
 		const debugConsole = isCep ? null : new DebugConsole();
 
@@ -2441,21 +2437,6 @@ export function useWorkspaceRuntime(root: Element | null): {
 				case CTX_MENU_IDS.reloadPresets:
 					enqueueLayoutReload(false, lastPersistenceManagedRoot ?? undefined);
 					void refreshPresets();
-					return;
-				case CTX_MENU_IDS.probeOpenDebug:
-					void openDialogProbe(
-						{
-							title: i18n.t("workspace:debugProbe.title", {
-								defaultValue: "Dialog Probe",
-							}),
-							message: i18n.t("workspace:debugProbe.message", {
-								defaultValue: "Panel -> Dialog bridge check",
-							}),
-						},
-						isCep,
-						panelId,
-						window,
-					);
 					return;
 				case CTX_MENU_IDS.resetWorkspace: {
 					void (async () => {

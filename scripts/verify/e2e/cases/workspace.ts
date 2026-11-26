@@ -21,15 +21,20 @@ import type { E2EContext } from "../ctx";
 import { check, type E2ECase } from "../report";
 import type { LiveSurface } from "../surfaces";
 import { listLiveSurfaces } from "../surfaces";
+import { resolveLocaleKey, surfaceLang } from "./i18n";
 import {
 	aeUserDataDir,
+	catalogRunButtonState,
+	clickButtonByLabels,
 	clickFirst,
 	e2eFixtureDir,
+	fillPresetAddDialog,
 	findLive,
+	findPresetAddDialog,
 	openPresetCatalog,
+	presetCreateLabels,
 	readMarker,
 	runPresetFromCatalog,
-	setInputValue,
 	waitForFile,
 	writeFixtureScript,
 } from "./journey";
@@ -96,6 +101,14 @@ const widgetInstanceIds = (doc: WidgetRecordsFile | null): string[] =>
 /** Open the Add Widget dialog and wait for the catalog to mount. */
 const openAddWidgetDialog = async (ctx: E2EContext): Promise<LiveSurface> => {
 	const panel = await ctx.requireSurface({ surfaceId: "panel-1" });
+	// The toolbar button can exist in the DOM before React attaches its
+	// delegated handler (post-reload hydration); wait for it, then click.
+	await waitForDom(
+		ctx,
+		panel,
+		`Boolean(document.querySelector('[data-ws-action="ty.ctx.add-widget"]'))`,
+		30_000,
+	);
 	const clicked = await clickFirst(
 		ctx,
 		panel,
@@ -169,7 +182,15 @@ export const addWidgetViaDialog = async (
 	// Poll: the dialog closes on success; while open, click the footer Add
 	// button once it is enabled (it reads "Adding…" while busy). Stop as
 	// soon as a new widget record lands — a lingering dialog plus a second
-	// Add click would double-add the widget.
+	// Add click would double-add the widget. Button labels are localized
+	// (`widgets:selector.add` / `.adding`), resolved for the dialog locale.
+	const addLabels: string[] = [];
+	const widgetLang = await surfaceLang(ctx, dialog);
+	for (const key of ["widgets:selector.add", "widgets:selector.adding"]) {
+		const value = await resolveLocaleKey(widgetLang, key);
+		if (value) addLabels.push(value);
+	}
+	if (addLabels.length === 0) addLabels.push("Add");
 	const beforeIdsForPoll = beforeIds;
 	const addDeadline = Date.now() + 20_000;
 	while (Date.now() < addDeadline) {
@@ -180,18 +201,7 @@ export const addWidgetViaDialog = async (
 		if (widgetInstanceIds(added).some((id) => !beforeIdsForPoll.has(id))) {
 			break;
 		}
-		await ctx
-			.evalJs(
-				open,
-				`(() => {
-					const btn = [...document.querySelectorAll("button")].find(
-						(b) => (b.textContent || "").trim() === "Add" && !b.disabled);
-					if (!btn) return "none";
-					btn.click();
-					return "clicked";
-				})()`,
-			)
-			.catch(() => "err");
+		await clickButtonByLabels(ctx, open, addLabels).catch(() => "err");
 		await sleep(800);
 	}
 
@@ -214,6 +224,12 @@ export const createFilePresetViaDialog = async (
 	title: string,
 ): Promise<string> => {
 	const panel = await ctx.requireSurface({ surfaceId: "panel-1" });
+	await waitForDom(
+		ctx,
+		panel,
+		`Boolean(document.querySelector('[data-ws-action="ty.ctx.create-file-preset"]'))`,
+		30_000,
+	);
 	const opened = await clickFirst(
 		ctx,
 		panel,
@@ -222,41 +238,28 @@ export const createFilePresetViaDialog = async (
 	if (opened !== "clicked") {
 		throw new Error(`create-file-preset not found: ${String(opened)}`);
 	}
-	const addDialog = await findLive(
-		ctx,
-		(s) => s.surfaceId.startsWith("dialog-preset-add"),
-		30_000,
-	);
+	const addDialog = await findPresetAddDialog(ctx, 30_000);
 	if (!addDialog) throw new Error("preset-add dialog did not open");
-	await waitForDom(
+	const { pathSet, nameSet } = await fillPresetAddDialog(
 		ctx,
 		addDialog,
-		`Boolean(document.querySelector("[data-path-field] input"))`,
-		30_000,
-	);
-	await setInputValue(ctx, addDialog, "[data-path-field] input", filePath);
-	await setInputValue(
-		ctx,
-		addDialog,
-		'input[placeholder="Enter name..."]',
+		filePath,
 		title,
 	);
+	if (String(pathSet) !== filePath || String(nameSet) !== title) {
+		throw new Error(
+			`preset dialog fields not filled: path=${String(pathSet)} name=${String(nameSet)}`,
+		);
+	}
 	// The Create button enables only after React validates path+title;
 	// on a busy host a single click attempt can land while it is still
-	// disabled. Poll for an enabled button, then click.
-	let created: unknown = "missing-button:Create";
+	// disabled. Poll for an enabled button, then click. Labels are
+	// localized (`common:actions.create` / `presets:catalogAdd.creating`).
+	const createLabels = await presetCreateLabels(ctx, addDialog);
+	let created: unknown = "missing-button";
 	const createDeadline = Date.now() + 20_000;
 	while (Date.now() < createDeadline) {
-		created = await ctx.evalJs(
-			addDialog,
-			`(() => {
-				const btn = [...document.querySelectorAll("button")].find(
-					(b) => (b.textContent || "").trim() === "Create" && !b.disabled);
-				if (!btn) return "missing-or-disabled";
-				btn.click();
-				return "clicked";
-			})()`,
-		);
+		created = await clickButtonByLabels(ctx, addDialog, createLabels);
 		if (created === "clicked") break;
 		await sleep(800);
 	}
@@ -610,6 +613,15 @@ export const workspaceCases: E2ECase[] = [
 				"marker.txt",
 			);
 			const panel = await ctx.requireSurface({ surfaceId: "panel-1" });
+			// The quick-actions tile hydrates asynchronously after panel
+			// mount/reload; without this wait the first focus eval races it
+			// and reports missing-input while the palette rows appear later.
+			await waitForDom(
+				ctx,
+				panel,
+				`Boolean(document.querySelector('[data-widget-quick-actions] [data-ws-action="search"]'))`,
+				30_000,
+			);
 
 			// Focus the quick-actions search input to open the palette.
 			// React's onFocus listens for focusin, so dispatch it explicitly —
@@ -844,35 +856,29 @@ export const workspaceCases: E2ECase[] = [
 				await reloadPanel1(ctx, 45_000);
 
 				const dialog = await openPresetCatalog(ctx);
-				const rowInfo = await waitForDom(
+				const rowSeen = await waitForDom(
 					ctx,
 					dialog,
-					`(() => {
-						const row = document.querySelector(
-							${JSON.stringify(`[data-preset-id="${presetId}"]`)});
-						if (!row) return null;
-						const btn = row.querySelector('button[aria-label^="Run"]');
-						return {
-							hasRun: Boolean(btn),
-							disabled: btn ? Boolean(btn.disabled) : null,
-						};
-					})()`,
+					`Boolean(document.querySelector('[data-preset-id="${presetId}"]'))`,
 					20_000,
 				);
-				const info = rowInfo as {
-					hasRun?: boolean;
-					disabled?: boolean | null;
-				} | null;
+				const info = rowSeen
+					? ((await catalogRunButtonState(ctx, dialog, presetId)) as {
+							disabled?: boolean;
+							aria?: string;
+						} | null)
+					: null;
+				const hasRun = info !== null && info !== undefined;
 				checks.push(
 					check(
 						"catalog row present for stale preset",
-						Boolean(info),
+						Boolean(rowSeen),
 						JSON.stringify(info ?? null),
 					),
 				);
 
 				let clicked = "skipped-disabled";
-				if (info?.hasRun && info.disabled !== true) {
+				if (hasRun && info?.disabled !== true) {
 					clicked = String(await runPresetFromCatalog(ctx, dialog, presetId));
 				}
 				checks.push(

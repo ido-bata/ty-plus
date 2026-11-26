@@ -1,0 +1,122 @@
+import type { Decorator, Meta, StoryObj } from "@storybook/react";
+import type { JSX } from "react";
+import { expect, waitFor } from "storybook/test";
+
+import { OnlineServicesBoundary } from "@/storybook/online-services";
+import {
+	assertRendered,
+	expectCanvasLayout,
+	measureBox,
+} from "@/storybook/quality/layout";
+import { css } from "@/styled-system/css";
+
+import { WorkspaceBackgroundDialog } from "./Dialog";
+
+/*
+ * Whole-dialog story (issue #610): renders the real workspace background
+ * panel dialog (`dialog-background-panel`) — layer list + layer editor +
+ * live preview + footer actions.
+ *
+ * Layer state is loaded from the `workspaceBg` persistence key
+ * (`workspaces/background/background-{panel}.json`) through
+ * `readJsonText`, so stories seed raw JSON text per panel id.
+ *
+ * `<dialog open>` is absolutely positioned, so it needs a positioned,
+ * fixed-size frame (same contract as `Preset/Dialog/Footage`, #514).
+ */
+const frameClass = css({
+	position: "relative",
+	height: "44rem",
+	width: "52rem",
+});
+
+const LAYERS_JSON = JSON.stringify({
+	layers: [
+		{
+			id: "layer-color-1",
+			type: "color",
+			enabled: true,
+			opacity: 1,
+			color: "#1e1e2e",
+		},
+		{
+			id: "layer-pattern-1",
+			type: "pattern",
+			enabled: true,
+			opacity: 0.6,
+			patternType: "dots",
+		},
+	],
+});
+
+const withSeed =
+	(seed: Record<string, string>): Decorator =>
+	(Story): JSX.Element => (
+		<OnlineServicesBoundary persistenceSeed={seed}>
+			<div className={frameClass}>
+				<Story />
+			</div>
+		</OnlineServicesBoundary>
+	);
+
+const meta = {
+	title: "Workspace/Dialog/Background",
+	render: () => <WorkspaceBackgroundDialog panelId={1} />,
+} satisfies Meta;
+
+export default meta;
+type Story = StoryObj;
+
+const expectShell = (canvasElement: HTMLElement): HTMLElement => {
+	const shell = canvasElement.querySelector<HTMLElement>("[data-dialog-shell]");
+	if (!shell) throw new Error("dialog shell not found");
+	assertRendered(shell, { label: "background dialog shell" });
+	expect(shell.getAttribute("data-surface-id")).toBe("dialog-background-panel");
+	const frame = shell.parentElement;
+	if (!frame) throw new Error("dialog frame not found");
+	const shellBox = measureBox(shell);
+	const frameBox = measureBox(frame);
+	expect(shellBox.x).toBeGreaterThanOrEqual(frameBox.x - 1);
+	expect(shellBox.y).toBeGreaterThanOrEqual(frameBox.y - 1);
+	expect(shellBox.x + shellBox.width).toBeLessThanOrEqual(
+		frameBox.x + frameBox.width + 1,
+	);
+	expect(shellBox.y + shellBox.height).toBeLessThanOrEqual(
+		frameBox.y + frameBox.height + 1,
+	);
+	return shell;
+};
+
+export const Empty: Story = {
+	decorators: [withSeed({})],
+	play: async ({ canvasElement }) => {
+		expectCanvasLayout(canvasElement);
+		const shell = expectShell(canvasElement);
+		await waitFor(() => {
+			expect(canvasElement.textContent).toContain("Background layer - Panel 1");
+		});
+		const footer = shell.querySelector("footer");
+		if (!footer) throw new Error("dialog footer not found");
+		const labels = Array.from(footer.querySelectorAll("button")).map((button) =>
+			button.textContent?.trim(),
+		);
+		expect(labels).toContain("Clear all");
+		expect(labels).toContain("Cancel");
+		expect(labels).toContain("Save");
+	},
+};
+
+export const WithLayers: Story = {
+	decorators: [withSeed({ "workspaceBg:1": LAYERS_JSON })],
+	play: async ({ canvasElement }) => {
+		expectCanvasLayout(canvasElement);
+		expectShell(canvasElement);
+		// The seeded color + pattern layers render in the layer list once
+		// the async persistence read resolves — the pattern layer's type
+		// label ("Dots") is the observable signal.
+		await waitFor(() => {
+			expect(canvasElement.textContent).toContain("Dots");
+		});
+		expect(canvasElement.textContent).toContain("Color");
+	},
+};

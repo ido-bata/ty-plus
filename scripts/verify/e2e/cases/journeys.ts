@@ -18,11 +18,16 @@ import { rm } from "node:fs/promises";
 import path from "node:path";
 
 import type { E2EContext } from "../ctx";
+import { dismissHostConfirmDialog } from "../host-dialog";
+import { scanRealPresetPack } from "../real-preset-pack";
 import { check, type E2ECase } from "../report";
 import type { LiveSurface } from "../surfaces";
 import { listLiveSurfaces } from "../surfaces";
+import { resolveLocaleKey, surfaceLang } from "./i18n";
 import {
 	aeUserDataDir,
+	clickButtonByLabels,
+	clickCatalogRowAction,
 	e2eFixtureDir,
 	findLive,
 	openPresetCatalog,
@@ -118,21 +123,31 @@ const openBackupSection = async (ctx: E2EContext): Promise<LiveSurface> => {
 	return dialog;
 };
 
+/**
+ * Resolve the localized labels for i18n keys on a surface (drops keys the
+ * locale does not define). Used for button text that `i18n.t()` renders.
+ */
+const labelsFor = async (
+	ctx: E2EContext,
+	surface: LiveSurface,
+	keys: readonly string[],
+): Promise<string[]> => {
+	const lang = await surfaceLang(ctx, surface);
+	const out: string[] = [];
+	for (const key of keys) {
+		const value = await resolveLocaleKey(lang, key);
+		if (value) out.push(value);
+	}
+	return out;
+};
+
 /** Click Export in the backup section; returns the bundle JSON text. */
 const exportBackupBundle = async (
 	ctx: E2EContext,
 	dialog: LiveSurface,
 ): Promise<string> => {
-	const clicked = await ctx.evalJs(
-		dialog,
-		`(() => {
-			const btn = [...document.querySelectorAll("button")].find(
-				(b) => (b.textContent || "").trim() === "Export" && !b.disabled);
-			if (!btn) return "missing-export";
-			btn.click();
-			return "clicked";
-		})()`,
-	);
+	const labels = await labelsFor(ctx, dialog, ["common:actions.export"]);
+	const clicked = await clickButtonByLabels(ctx, dialog, labels);
 	if (clicked !== "clicked") {
 		throw new Error(`backup Export not clickable: ${String(clicked)}`);
 	}
@@ -180,25 +195,22 @@ const importBackupBundle = async (
 	}
 	// React state flushes async; give the Import button a beat to enable.
 	await sleep(800);
-	const clicked = await ctx.evalJs(
-		dialog,
-		`(() => {
-			const btn = [...document.querySelectorAll("button")].find(
-				(b) => (b.textContent || "").trim() === "Import" && !b.disabled);
-			if (!btn) return "missing-import";
-			btn.click();
-			return "clicked";
-		})()`,
-	);
+	const labels = await labelsFor(ctx, dialog, ["common:actions.import"]);
+	const clicked = await clickButtonByLabels(ctx, dialog, labels);
 	if (clicked !== "clicked") {
 		throw new Error(`backup Import not clickable: ${String(clicked)}`);
 	}
-	// Import writes files async; wait for the status line.
+	// Import writes files async; wait for the localized status line
+	// (`settings:workspaceBackupSection.statusImported` / `statusInvalid`).
+	const statusLabels = await labelsFor(ctx, dialog, [
+		"settings:workspaceBackupSection.statusImported",
+		"settings:workspaceBackupSection.statusInvalid",
+	]);
 	await waitForDom(
 		ctx,
 		dialog,
 		`[...document.querySelectorAll("p")].some(
-			(p) => /imported|invalid/i.test(p.textContent || ""))`,
+			(p) => ${JSON.stringify(statusLabels)}.includes((p.textContent || "").trim()))`,
 		20_000,
 	);
 };
@@ -208,8 +220,16 @@ const typeQuickActionsQuery = async (
 	ctx: E2EContext,
 	panel: LiveSurface,
 	query: string,
-): Promise<unknown> =>
-	ctx.evalJs(
+): Promise<unknown> => {
+	// The tile hydrates asynchronously; wait for the input before typing
+	// so a slow mount does not surface as "missing-input".
+	await waitForDom(
+		ctx,
+		panel,
+		`Boolean(document.querySelector('[data-widget-quick-actions] [data-ws-action="search"]'))`,
+		30_000,
+	);
+	return ctx.evalJs(
 		panel,
 		`(() => {
 			const host = document.querySelector("[data-widget-quick-actions]");
@@ -227,13 +247,25 @@ const typeQuickActionsQuery = async (
 				: "not-focused";
 		})()`,
 	);
+};
 
 const clickPaletteRun = async (
 	ctx: E2EContext,
 	panel: LiveSurface,
 	presetId: string,
-): Promise<unknown> =>
-	ctx.evalJs(
+): Promise<unknown> => {
+	// Palette rows render asynchronously after the query lands (candidate
+	// snapshot + scoring); a fixed sleep races that on a busy host. Wait
+	// for the run affordance itself, then click it.
+	const seen = await waitForDom(
+		ctx,
+		panel,
+		`Boolean(document.querySelector(
+			'button[data-ws-action="run-preset"][data-preset-id="${presetId}"]'))`,
+		20_000,
+	);
+	if (!seen) return "missing-run";
+	return ctx.evalJs(
 		panel,
 		`(() => {
 			const btn = document.querySelector(
@@ -243,6 +275,7 @@ const clickPaletteRun = async (
 			return "clicked";
 		})()`,
 	);
+};
 
 // ---------------------------------------------------------------------------
 // cases
@@ -322,18 +355,12 @@ export const journeySuiteCases: E2ECase[] = [
 						`Boolean(document.querySelector('[data-preset-id="${presetId}"]'))`,
 						20_000,
 					);
-					const editClicked = await ctx.evalJs(
+					const editClicked = await clickCatalogRowAction(
+						ctx,
 						dialog,
-						`(() => {
-						const row = document.querySelector(
-							${JSON.stringify(`[data-preset-id="${presetId}"]`)});
-						if (!row) return "missing-row";
-						const btn = row.querySelector('[aria-label="Edit preset"]')
-							|| row.querySelector('[aria-label="Edit"]');
-						if (!btn) return "missing-edit";
-						btn.click();
-						return "clicked";
-					})()`,
+						presetId,
+						["presets:listDialog.editPresetAria", "common:actions.edit"],
+						1,
 					);
 					checks.push(
 						check(
@@ -373,15 +400,14 @@ export const journeySuiteCases: E2ECase[] = [
 						})()`,
 						);
 						await sleep(600);
-						const saved = await ctx.evalJs(
+						const saveLabels = await labelsFor(ctx, editDialog, [
+							"presets:edit.save",
+							"presets:edit.status.saving",
+						]);
+						const saved = await clickButtonByLabels(
+							ctx,
 							editDialog,
-							`(() => {
-							const btn = [...document.querySelectorAll("button")].find(
-								(b) => (b.textContent || "").trim() === "Save" && !b.disabled);
-							if (!btn) return "missing-save";
-							btn.click();
-							return "clicked";
-						})()`,
+							saveLabels,
 						);
 						checks.push(
 							check("edit Save clicked", saved === "clicked", String(saved)),
@@ -421,19 +447,31 @@ export const journeySuiteCases: E2ECase[] = [
 						`Boolean(document.querySelector('[data-preset-id="${presetId}"]'))`,
 						20_000,
 					);
-					const delClicked = await ctx.evalJs(
+					// The delete click synchronously enters the host
+					// ExtendScript confirm(), which freezes the surface's JS
+					// thread — awaiting the click eval before dismissing the
+					// dialog would deadlock until the CDP timeout. Fire the
+					// click without awaiting, dismiss the native modal, then
+					// collect the click result.
+					let delClicked: unknown = "pending";
+					const clickPromise = clickCatalogRowAction(
+						ctx,
 						catalog2,
-						`(() => {
-						const row = document.querySelector(
-							${JSON.stringify(`[data-preset-id="${presetId}"]`)});
-						if (!row) return "missing-row";
-						const btn = row.querySelector('[aria-label="Delete preset"]')
-							|| row.querySelector('[aria-label="Delete"]');
-						if (!btn) return "missing-delete";
-						btn.click();
-						return "clicked";
-					})()`,
-					);
+						presetId,
+						["presets:listDialog.deletePresetAria", "common:actions.delete"],
+						2,
+					)
+						.then((value) => {
+							delClicked = value;
+						})
+						.catch((error: unknown) => {
+							delClicked = `eval-error:${String(error)}`;
+						});
+					// Answer the native confirm with the negative response so
+					// the preset is retained (the gate stays non-destructive)
+					// and the surface's JS thread unfreezes.
+					const dismissal = await dismissHostConfirmDialog(ctx);
+					await clickPromise;
 					checks.push(
 						check(
 							"catalog Delete clicked",
@@ -441,7 +479,13 @@ export const journeySuiteCases: E2ECase[] = [
 							String(delClicked),
 						),
 					);
-					await sleep(3_000);
+					checks.push(
+						check(
+							"host confirm dialog dismissed (cancel)",
+							dismissal.dismissed,
+							dismissal.button ?? dismissal.reason ?? "no dialog",
+						),
+					);
 					const stillThere = await ctx.readManagedJson<{
 						presets?: { id?: string }[];
 					}>("presets", "presets.json");
@@ -616,7 +660,15 @@ export const journeySuiteCases: E2ECase[] = [
 				const ws = (app.workspace ?? {}) as Record<string, unknown>;
 				const grid = (ws.grid ?? {}) as Record<string, unknown>;
 				app.ui = { ...ui, accentColor: ACCENT, language: "ja" };
-				app.workspace = { ...ws, grid: { ...grid, cellSize: 120 } };
+				// The settings dialog always persists the full grid triple
+				// (cellSize+gap+radius, defaults 48/4/2); `gridSettingsFrom-
+				// SettingsJson` treats a partial section as unusable and the
+				// boot reconcile then REMOVES the grid theme tokens. Write the
+				// same shape the dialog writes or the projection never lands.
+				app.workspace = {
+					...ws,
+					grid: { gap: 4, radius: 2, ...grid, cellSize: 120 },
+				};
 				await writeManagedFile(
 					ctx,
 					["settings", "app.json"],
@@ -639,28 +691,45 @@ export const journeySuiteCases: E2ECase[] = [
 					),
 				);
 
-				const accent = await ctx.evalJs(
+				// theme.css is re-projected from app.json by the async
+				// boot-time reconcile (theme-reconcile.ts, Issue #112) — it
+				// lands a few seconds AFTER reload completes, so sampling the
+				// computed tokens immediately races it and reads the stale
+				// sandbox sentinel (#e2b701) / defaults. Poll for convergence.
+				const accent = await waitForDom(
+					ctx,
 					panel,
-					`getComputedStyle(document.documentElement)
-						.getPropertyValue("--color-ty-accent")`,
+					`(() => {
+						const v = getComputedStyle(document.documentElement)
+							.getPropertyValue("--color-ty-accent") || "";
+						return v.toLowerCase().includes("336699") ? v.trim() : null;
+					})()`,
+					30_000,
 				);
 				checks.push(
 					check(
 						"accent color reached theme.css token",
-						String(accent).toLowerCase().includes("336699"),
+						String(accent ?? "")
+							.toLowerCase()
+							.includes("336699"),
 						`accent=${String(accent).trim()}`,
 					),
 				);
 
-				const cell = await ctx.evalJs(
+				const cell = await waitForDom(
+					ctx,
 					panel,
-					`getComputedStyle(document.documentElement)
-						.getPropertyValue("--ty-ws-cell")`,
+					`(() => {
+						const v = getComputedStyle(document.documentElement)
+							.getPropertyValue("--ty-ws-cell") || "";
+						return v.includes("120") ? v.trim() : null;
+					})()`,
+					30_000,
 				);
 				checks.push(
 					check(
 						"grid cell size reached panel CSS var",
-						String(cell).includes("120"),
+						String(cell ?? "").includes("120"),
 						`cell=${String(cell).trim()}`,
 					),
 				);
@@ -987,6 +1056,178 @@ export const journeySuiteCases: E2ECase[] = [
 				detail: `consecutive quick-action runs: script marker + ffx effects=${fx}`,
 				checks,
 				evidence: marker ? [markerPath] : [],
+			};
+		},
+	},
+	{
+		uc: "UC-J08",
+		title:
+			"real preset pack: grouped catalog, sibling thumbnails, .ffx execution",
+		precondition: async () => {
+			const scan = await scanRealPresetPack();
+			return scan.presetPaths.length > 0
+				? null
+				: "real preset pack not found (TY_PLUS_E2E_PRESET_PACK / ../ty-plus-e2e-assets)";
+		},
+		async run(ctx: E2EContext) {
+			const checks: ReturnType<typeof check>[] = [];
+
+			// Run candidates: EN "Background" .ffx presets apply render
+			// effects that succeed on a plain solid layer (text/object
+			// presets would need specialized layers).
+			const catalogJson = await ctx.readManagedJson<{
+				presets?: { id?: string; filePath?: string }[];
+			}>("presets", "presets.json");
+			const runCandidates = (catalogJson?.presets ?? [])
+				.filter(
+					(p) =>
+						typeof p.id === "string" &&
+						p.id.startsWith("mvfx-") &&
+						typeof p.filePath === "string" &&
+						/[\\/]Background[\\/]/.test(p.filePath) &&
+						p.filePath.toLowerCase().endsWith(".ffx"),
+				)
+				.map((p) => p.id as string)
+				.slice(0, 3);
+			checks.push(
+				check(
+					"real preset pack seeded into sandbox catalog",
+					runCandidates.length > 0,
+					`candidates=${runCandidates.join(",")}`,
+				),
+			);
+			if (runCandidates.length === 0) {
+				return { detail: "mvfx presets missing from catalog", checks };
+			}
+
+			const dialog = await openPresetCatalog(ctx);
+
+			// Folder hierarchy: every pack directory became a group tile.
+			const groupCount = Number(
+				await ctx.evalJs(
+					dialog,
+					`document.querySelectorAll('[data-preset-group-id^="mvfx-grp-"]').length`,
+				),
+			);
+			checks.push(
+				check(
+					"catalog lists real-pack group tiles",
+					groupCount >= 10,
+					`groups=${groupCount}`,
+				),
+			);
+
+			// Drill into the EN Background group (title unique vs JP 背景).
+			// List view renders groups as collapsible rows: the `<li>` itself
+			// has no click handler — expansion goes through the chevron
+			// (`button[aria-expanded]`) or the title button. Icon view opens a
+			// group via double-click on the tile hit area instead.
+			const opened = await ctx.evalJs(
+				dialog,
+				`(() => {
+					const els = [...document.querySelectorAll('[data-preset-group-id^="mvfx-grp-"]')];
+					const el = els.find((e) => (e.textContent || "").includes("Background"));
+					if (!el) return "missing-group:" + els.length;
+					const toggle = el.querySelector("button[aria-expanded]");
+					if (toggle) {
+						toggle.click();
+						return "clicked-toggle";
+					}
+					const hit = el.querySelector("button");
+					if (!hit) return "missing-open-control";
+					hit.dispatchEvent(new MouseEvent("dblclick", { bubbles: true }));
+					return "dblclicked";
+				})()`,
+			);
+			checks.push(
+				check(
+					"Background group opened",
+					opened === "clicked-toggle" || opened === "dblclicked",
+					String(opened),
+				),
+			);
+			const rowSeen = await waitForDom(
+				ctx,
+				dialog,
+				`document.querySelectorAll('[data-preset-id^="mvfx-"]').length > 0`,
+				20_000,
+			);
+			checks.push(check("group view lists member presets", Boolean(rowSeen)));
+
+			// Sibling .gif thumbnails resolve through the same-stem lookup.
+			const thumbSeen = await waitForDom(
+				ctx,
+				dialog,
+				`Boolean(document.querySelector('[data-preset-id^="mvfx-"] [data-glyph-cached-image]'))`,
+				20_000,
+			);
+			checks.push(
+				check(
+					"sibling .gif thumbnail rendered on preset row",
+					Boolean(thumbSeen),
+					String(thumbSeen).slice(0, 120),
+				),
+			);
+
+			// AE-side execution: comp + solid layer, then Run from catalog.
+			await ctx.evalScriptOnPanel1(`(function(){
+				var comp = null;
+				for (var i = 1; i <= app.project.numItems; i++) {
+					var it = app.project.item(i);
+					if (it instanceof CompItem && it.name === "TYPlus E2E MVFX Comp") { comp = it; break; }
+				}
+				if (!comp) {
+					comp = app.project.items.addComp("TYPlus E2E MVFX Comp", 320, 240, 1, 10, 30);
+					comp.layers.addSolid([0.5, 0.5, 0.5], "E2E MVFX Solid", 320, 240, 1, 10);
+				}
+				try { comp.openInViewer(); } catch (e) {}
+				for (var j = 1; j <= comp.numLayers; j++) comp.layer(j).selected = (j === 1);
+				return "ready";
+			})()`);
+
+			const countEffects = `(function() {
+				for (var i = 1; i <= app.project.numItems; i++) {
+					var it = app.project.item(i);
+					if (it instanceof CompItem && it.name === "TYPlus E2E MVFX Comp") {
+						return String(it.numLayers > 0 ? it.layer(1).Effects.numProperties : -1);
+					}
+				}
+				return "no-comp";
+			})()`;
+
+			let ranId: string | null = null;
+			let effects = "0";
+			for (const id of runCandidates) {
+				const ran = await runPresetFromCatalog(ctx, dialog, id);
+				if (ran !== "clicked") continue;
+				await sleep(2000);
+				effects = String(await ctx.evalScriptOnPanel1(countEffects));
+				if (Number(effects) > 0) {
+					ranId = id;
+					break;
+				}
+			}
+			checks.push(
+				check(
+					"real .ffx preset applied effects in AE",
+					ranId !== null,
+					`preset=${ranId} effects=${effects}`,
+				),
+			);
+
+			await ctx.evalScriptOnPanel1(`(function(){
+				for (var i = app.project.numItems; i >= 1; i--) {
+					var it = app.project.item(i);
+					if (it instanceof CompItem && it.name === "TYPlus E2E MVFX Comp") it.remove();
+					else if (it.name === "E2E MVFX Solid") it.remove();
+				}
+				return "cleaned";
+			})()`);
+			await closeDialogById(ctx, "dialog-presets");
+
+			return {
+				detail: `real pack: ${groupCount} groups, thumb=${Boolean(thumbSeen)}, ran=${ranId} effects=${effects}`,
+				checks,
 			};
 		},
 	},

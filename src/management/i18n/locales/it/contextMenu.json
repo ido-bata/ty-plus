@@ -55,8 +55,7 @@
 		"debugConsole": "Console di debug",
 		"updateCompInfo": "Aggiorna info comp",
 		"probe": {
-			"logToConsole": "Test: registra nella console",
-			"openDebugConsole": "Test: apri console di debug"
+			"logToConsole": "Test: registra nella console"
 		},
 		"hideCategory": "Nascondi categoria \"{{cat}}\"",
 		"showCategory": "Mostra categoria \"{{cat}}\"",

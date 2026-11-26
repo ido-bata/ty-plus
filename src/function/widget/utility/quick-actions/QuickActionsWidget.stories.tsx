@@ -1,171 +1,116 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { expect, waitFor } from "storybook/test";
 
-// QuickActionsWidget pulls in `@/management/storage/candidates-cache/runtime`,
-// `canUseCepNodeFileBrowser` (which inspects `window.__adobe_cep__`), and
-// `@/management/preset` (via `WorkspacePresetGlyph`). The `@/management/preset`
-// barrel re-exports `editor/textmate.ts`, which requires the CEP-only
-// inline-oniguruma-wasm Vite plugin (see `.storybook/main.ts`). Storybook
-// strips that plugin so the WASM resolves to an empty module. We render a
-// structural stub that mirrors QuickActionsWidget's visual surface for
-// design review and prop inspection.
+import type { Preset } from "@/management/preset/contract";
+import { presetIconText } from "@/management/preset/contract";
+import {
+	createInitialSurfaceState,
+	type SurfaceState,
+} from "@/management/workspace/core/state";
+import type {
+	GridSettings,
+	Layout,
+} from "@/management/workspace/layout/grid-document";
+import { css } from "@/styled-system/css";
+
+import { QuickActionsWidget } from "./QuickActionsWidget";
+
+// QuickActionsWidget renders the real production component. Palette rows
+// come from `state.presets` (the CEP Node file browser is absent under
+// Storybook, so `canUseCepNodeFileBrowser` returns false and the
+// root-file / plugin-effect indexes stay empty — the same code path the
+// widget takes before the candidates cache boots). The dropdown portals
+// to `document.body`, so plays assert against `document`, not the canvas.
 
 type Args = {
-	query: string;
-	rowCount: number;
-	hasResults: boolean;
-	open: boolean;
+	catalog: "sample" | "empty";
 };
 
-const surfaceStyle = {
-	display: "flex" as const,
-	flexDirection: "column" as const,
-	width: 320,
-	minHeight: 220,
-	padding: 0,
-	borderRadius: 6,
-	border: "1px solid var(--color-ty-widget-border, #3a3a3a)",
-	background: "var(--color-ty-surface-panel, #252525)",
-	color: "var(--color-ty-text-primary, #e8e8ec)",
-	fontFamily: "sans-serif",
-	fontSize: 12,
+const layout: Layout = {
+	id: "quick-actions-story",
+	widgetType: "quick-actions",
+	x: 0,
+	y: 0,
+	width: 6,
+	height: 3,
 };
 
-const inputStyle = {
-	flex: 1,
-	border: "none",
-	background: "transparent",
-	color: "var(--color-ty-text-primary, #e8e8ec)",
-	fontSize: 12,
-	padding: "4px 0",
-	outline: "none",
+const grid: GridSettings = {
+	cellSize: 64,
+	gap: 4,
+	radius: 4,
 };
 
-const rowStyle = {
-	display: "flex" as const,
-	alignItems: "center" as const,
-	gap: 6,
-	padding: "8px 10px",
-	borderBottom: "1px solid rgba(255,255,255,0.05)",
-};
+const makePreset = (
+	id: string,
+	title: string,
+	type: Preset["type"],
+): Preset => ({
+	id,
+	type,
+	title,
+	filePath: `C:/presets/${id}.${type === "script" ? "jsx" : type === "plugin" ? "aex" : "ffx"}`,
+	icon: presetIconText(title.slice(0, 2).toUpperCase()),
+});
 
-const buildRows = (args: Args) => {
-	if (!args.hasResults) return [];
-	return Array.from({ length: args.rowCount }).map((_, i) => ({
-		title: i === 0 ? "Glow preset" : `Sample row ${i + 1}`,
-		kind: i === 0 ? "preset" : i % 2 === 0 ? "script" : "plugin",
-	}));
+const SAMPLE_PRESETS: Preset[] = [
+	makePreset("preset-glow", "Glow preset", "preset"),
+	makePreset("script-grade", "Film grade script", "script"),
+	makePreset("plugin-blur", "Blur suite", "plugin"),
+	makePreset("preset-chroma", "Chroma key", "preset"),
+];
+
+const buildState = (catalog: Args["catalog"]): SurfaceState => {
+	const base = createInitialSurfaceState({ mode: "live" });
+	return {
+		...base,
+		presets: catalog === "sample" ? SAMPLE_PRESETS : [],
+	};
 };
 
 const baseArgs: Args = {
-	query: "",
-	rowCount: 4,
-	hasResults: true,
-	open: false,
+	catalog: "sample",
 };
 
-const QuickActionsStub = (args: Args) => {
-	const rows = buildRows(args);
-	return (
-		<div style={surfaceStyle} data-quick-actions>
-			<div
-				style={{
-					display: "flex",
-					alignItems: "stretch",
-					gap: 6,
-					padding: "6px 10px",
-					borderBottom: "1px solid var(--color-ty-widget-border, #3a3a3a)",
-				}}
-			>
-				<span aria-hidden style={{ color: "var(--color-ty-text-muted, #888)" }}>
-					⌕
-				</span>
-				<input
-					type="text"
-					defaultValue={args.query}
-					placeholder="Quick actions search"
-					style={inputStyle}
-					readOnly
-				/>
-			</div>
-			{args.open ? (
-				<div
-					style={{
-						maxHeight: 240,
-						overflow: "auto",
-						background: "var(--color-ty-surface-widget, #2c2c2c)",
-					}}
-				>
-					{rows.length === 0 ? (
-						<div
-							style={{
-								padding: 12,
-								color: "var(--color-ty-text-muted, #888)",
-								textAlign: "center" as const,
-							}}
-						>
-							No matches
-						</div>
-					) : (
-						rows.map((row, i) => (
-							<div
-								key={row.title}
-								style={{
-									...rowStyle,
-									background:
-										i === 0
-											? "var(--color-ty-interactive-hover, rgba(255,255,255,0.04))"
-											: undefined,
-								}}
-							>
-								<div
-									style={{
-										width: 36,
-										height: 36,
-										borderRadius: 4,
-										background:
-											"linear-gradient(135deg, rgba(79,172,254,0.3), rgba(255,255,255,0.06))",
-									}}
-								/>
-								<div style={{ flex: 1, minWidth: 0 }}>
-									<div
-										style={{
-											fontWeight: 500,
-											color: "var(--color-ty-text-primary, #fff)",
-											overflow: "hidden",
-											textOverflow: "ellipsis",
-											whiteSpace: "nowrap" as const,
-										}}
-									>
-										{row.title}
-									</div>
-									<div
-										style={{
-											fontSize: 10,
-											color: "var(--color-ty-text-muted, #888)",
-										}}
-									>
-										{row.kind} · /sample/path
-									</div>
-								</div>
-							</div>
-						))
-					)}
-				</div>
-			) : null}
-		</div>
+const SEARCH_PLACEHOLDER =
+	"Search presets, scripts, plugins, effects, and files under roots…";
+
+const findSearchInput = (canvasElement: HTMLElement): HTMLInputElement => {
+	const input = canvasElement.querySelector<HTMLInputElement>(
+		`input[placeholder="${SEARCH_PLACEHOLDER}"]`,
 	);
+	if (!input) throw new Error("quick actions search input not found");
+	return input;
 };
+
+const paletteRows = (): NodeListOf<HTMLElement> =>
+	document.body.querySelectorAll<HTMLElement>("[data-palette-index]");
 
 const meta = {
 	title: "QuickActions/ActionList",
 	args: baseArgs,
 	argTypes: {
-		query: { control: "text" },
-		rowCount: { control: { type: "number", min: 0, max: 12 } },
-		hasResults: { control: "boolean" },
-		open: { control: "boolean" },
+		catalog: {
+			control: { type: "inline-radio" },
+			options: ["sample", "empty"],
+		},
 	},
-	render: QuickActionsStub,
+	render: (args: Args) => (
+		<div
+			className={css({
+				height: "220",
+				width: "320",
+				display: "flex",
+				flexDirection: "column",
+			})}
+		>
+			<QuickActionsWidget
+				state={buildState(args.catalog)}
+				layout={layout}
+				grid={grid}
+			/>
+		</div>
+	),
 } satisfies Meta<Args>;
 
 export default meta;
@@ -173,14 +118,45 @@ type Story = StoryObj<Args>;
 
 export const Closed: Story = {};
 
+// Focusing the search field opens the palette portal with one row per
+// catalog preset (root-file and effect indexes are empty without the CEP
+// Node file browser).
 export const Open: Story = {
-	args: { open: true },
+	play: async ({ canvasElement }) => {
+		const { userEvent } = await import("vitest/browser");
+		const input = findSearchInput(canvasElement);
+		await userEvent.click(input);
+		await waitFor(() => {
+			expect(paletteRows().length).toBe(SAMPLE_PRESETS.length);
+		});
+	},
 };
 
 export const EmptyResults: Story = {
-	args: { open: true, hasResults: false, rowCount: 0 },
+	args: { catalog: "empty" },
+	play: async ({ canvasElement }) => {
+		const { userEvent } = await import("vitest/browser");
+		const input = findSearchInput(canvasElement);
+		await userEvent.click(input);
+		await waitFor(() => {
+			expect(
+				document.body.textContent?.includes("No matching presets or effects."),
+			).toBe(true);
+		});
+		expect(paletteRows().length).toBe(0);
+	},
 };
 
 export const WithQuery: Story = {
-	args: { open: true, query: "glow" },
+	play: async ({ canvasElement }) => {
+		const { userEvent } = await import("vitest/browser");
+		const input = findSearchInput(canvasElement);
+		await userEvent.click(input);
+		await userEvent.keyboard("glow");
+		await waitFor(() => {
+			expect(paletteRows().length).toBe(1);
+		});
+		const row = paletteRows()[0];
+		expect(row?.textContent).toContain("Glow preset");
+	},
 };

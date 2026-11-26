@@ -37,6 +37,12 @@ Issue本文の詳細を伝言・再定義せず、正本Issueを直接参照す�
 
 1 Issue番号だけのbranch → 最初のmeaningful commit → push → すぐPR（activeならDraft）。詳細とlanding権限は `github-delivery` Skillに従う。`main` への統合はrelease PRのみ、merge methodはmerge commitのみ。
 
+### Worker isolation（並列workerの必須契約）
+
+- 実装workerは必ず専用のlinked worktree内で動く。main checkout（このdirectory）をworkerの作業場所にしない。shared checkout上のbranch切替・commit・install・buildは他workerの状態を破壊する。
+- workerは最初のmutation前に `bun run worker:assert`（`scripts/worktree/assert-worker-env.ts`）を自分のworktreeで実行しOKを確認する。linked worktree・`.worktree.env` provision・ticket branchを機械検証し、違反はexit 1。監査等のread-only作業のみ `--read-only`。
+- supervisorはworkerごとにworktree pathとbranchを割り当てpromptへ明記する。worktreeを用意できない場合はshared checkoutでの並列実装を行わず、直列化する。
+
 ## Skill routing
 
 | 能力 | Skill | 使う場面 |

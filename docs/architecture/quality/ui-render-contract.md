@@ -58,7 +58,10 @@
 | アイコン編集 | `Preset/Components/IconEditor` | 全 variant の control 配置 |
 | ディレクトリブラウズ | `DirectoryBrowserIconCard`, `BrowserSearchField`, `FilterToggleButton`, `CollapsibleGroupHeader`, `DirectoryBrowserViewModeToggle` | hover/selected/focus、empty (ZeroCount)、long label |
 | preset 登録 dialog | `Shared/Shell/DialogBody`, `dialog/shell/Layout` | dialog bounds、footer、overflow scroll |
-| widget | `WidgetCore/Easing`, `anchor-point`, `layout-lock`, `menu` | 初期状態、drag 前後の契約 |
+| preset tool dialog（実構成） | `Preset/Dialog/{Footage,LayerComp,Animation}` | `ToolDialog` shell + `renderForm` 複数 section の組み合わせ、shell が frame 内、Create/Cancel footer |
+| preset icon editor | `Preset/Icon/Editor` `NarrowContainer`/`WideContainer` | preview tile が container 幅に依らず 6rem 正方形（#587 型） |
+| preset list row / tile | `Preset/Components/PresetListRow`, `PresetIconTile` | glyph が title より左・非ゼロ box、tile 内に icon 収まり（#582 型） |
+| widget | `WidgetCore/Easing`, `anchor-point`, `layout-lock`, `menu` | 初期状態、drag 前後の契約、mode strip が curve/bounce/elastic のみ（#581 型） |
 | 共通 controls | `Button`, `SegmentedControl`, `Input`, `SearchField`, `PathField`, `Textarea`, `ListSelect` | hover/focus/click-selected + 開いた listbox の clip 検査 |
 | error 状態 | `Shared/Feedback/ErrorBoundary` | fallback render の layout 契約 |
 

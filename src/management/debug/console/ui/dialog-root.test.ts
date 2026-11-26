@@ -24,7 +24,13 @@
 
 import fs from "node:fs";
 import path from "node:path";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import {
+	act,
+	cleanup,
+	fireEvent,
+	render,
+	screen,
+} from "@testing-library/react";
 import { createElement } from "react";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -133,8 +139,8 @@ const subscribeSharedLogsSpy = vi.fn(() => () => {});
 const subscribeSpy = vi.fn(() => () => {});
 const subscribeDebugLogEventsSpy = vi.fn(() => () => {});
 const subscribeLogSpy = vi.fn(() => () => {});
-const cepTransportSubscribeSpy = vi.fn(() => () => {});
-const cepTransportPublishSpy = vi.fn(async () => {});
+const cepTransportSubscribeSpy = vi.fn((_envelope: unknown) => () => {});
+const cepTransportPublishSpy = vi.fn(async (_envelope: unknown) => {});
 // Issue #151 round-7: spies on the three primitives that
 // `handleClear` and the context-menu Clear path now drive directly,
 // in the round-7 reorder order.
@@ -382,5 +388,89 @@ describe("DebugDialogRoot — round-7 dual-clear (Issue #151 acceptance)", () =>
 			clearSharedLogsSpy.mock.invocationCallOrder[0] ?? 0;
 		expect(setOrder).toBeLessThan(clearEntriesOrder);
 		expect(clearEntriesOrder).toBeLessThan(clearSharedLogsOrder);
+	});
+});
+
+// ── Behavioral probe (Issue #655 replay-response union acceptance) ─────────
+//
+// A broadcast replay-request is answered by every live surface, and each
+// responder snapshots only its own in-memory LogBus. The consumer must
+// merge every response that arrives inside the collection window rather
+// than keeping only the first one — otherwise whichever surface happens
+// to answer first determines the visible history.
+
+describe("DebugDialogRoot — replay response union (Issue #655)", () => {
+	beforeEach(() => {
+		cepTransportSubscribeSpy.mockClear();
+		cepTransportPublishSpy.mockClear();
+	});
+
+	afterEach(() => {
+		cleanup();
+		vi.restoreAllMocks();
+	});
+
+	test("merges replay responses from multiple surfaces instead of first-wins", async () => {
+		const { DebugDialogRoot } = await import(
+			"@/management/debug/console/ui/dialog-root"
+		);
+		render(createElement(DebugDialogRoot));
+		await act(async () => {
+			await Promise.resolve();
+			await Promise.resolve();
+		});
+
+		const transportHandler = cepTransportSubscribeSpy.mock.calls[0]?.[0] as
+			| ((envelope: unknown) => void)
+			| undefined;
+		expect(transportHandler).toBeDefined();
+
+		const requestCall = cepTransportPublishSpy.mock.calls.find(
+			(call) =>
+				(call[0] as { payload?: { kind?: string } })?.payload?.kind ===
+				"replay-request",
+		);
+		expect(requestCall).toBeDefined();
+		if (!requestCall) throw new Error("replay-request publish not observed");
+		const correlationId = (requestCall[0] as { correlationId: string })
+			.correlationId;
+
+		const replayResponse = (id: string, text: string) => ({
+			channel: "com.typlus.workspace.debug",
+			kind: "response",
+			correlationId,
+			sourceSurfaceId: `peer-${id}`,
+			payload: {
+				kind: "replay-response",
+				entries: [
+					{
+						v: 1,
+						id,
+						level: "info",
+						text,
+						timestamp: new Date().toISOString(),
+						source: `peer-${id}`,
+					},
+				],
+			},
+		});
+
+		await act(async () => {
+			transportHandler?.(replayResponse("m-1", "first-surface-only-entry"));
+			await Promise.resolve();
+			await Promise.resolve();
+			await Promise.resolve();
+		});
+		expect(screen.queryByText(/first-surface-only-entry/)).not.toBeNull();
+		expect(screen.queryByText(/second-surface-only-entry/)).toBeNull();
+
+		await act(async () => {
+			transportHandler?.(replayResponse("m-2", "second-surface-only-entry"));
+			await Promise.resolve();
+			await Promise.resolve();
+			await Promise.resolve();
+		});
+		expect(screen.queryByText(/first-surface-only-entry/)).not.toBeNull();
+		expect(screen.queryByText(/second-surface-only-entry/)).not.toBeNull();
 	});
 });

@@ -1,7 +1,11 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { expect } from "storybook/test";
 import type { Preset } from "@/management/preset/contract";
-import { expectCanvasLayout } from "@/storybook/quality/layout";
+import {
+	assertRendered,
+	expectCanvasLayout,
+	measureBox,
+} from "@/storybook/quality/layout";
 import { PresetListRow } from "./PresetListRow";
 
 const makePreset = (overrides: Partial<Preset> = {}): Preset => ({
@@ -67,9 +71,40 @@ const expectLegibleKindGlyph = (canvasElement: HTMLElement): void => {
 	}
 };
 
+/**
+ * Issue #582 regression guard: the kind glyph must stay left-positioned
+ * ahead of the title text column, and both must keep non-zero boxes — the
+ * row grid must not collapse the icon into the text or vice versa.
+ */
+const expectIconLeftOfTitle = (canvasElement: HTMLElement): void => {
+	const entry = canvasElement.querySelector<HTMLElement>(
+		"[data-directory-browser-entry][data-entry-kind='preset']",
+	);
+	if (!entry) throw new Error("preset list row entry not found");
+	// The activation button precedes the trailing run IconButton in DOM
+	// order; it is the row surface that owns glyph + title.
+	const button = entry.querySelector("button");
+	if (!button) throw new Error("preset list row button not found");
+	const glyphHost = button.firstElementChild;
+	const textColumn = button.children[1];
+	const title = textColumn?.firstElementChild;
+	if (!glyphHost || !title) {
+		throw new Error("preset list row glyph/title not found");
+	}
+	assertRendered(glyphHost, { label: "preset row glyph" });
+	assertRendered(title, { label: "preset row title" });
+	const glyphBox = measureBox(glyphHost);
+	const titleBox = measureBox(title);
+	expect(glyphBox.width).toBeGreaterThan(0);
+	expect(glyphBox.height).toBeGreaterThan(0);
+	// Glyph column ends before the title column begins (gap tolerance 1px).
+	expect(glyphBox.x + glyphBox.width).toBeLessThanOrEqual(titleBox.x + 1);
+};
+
 export const Default: Story = {
 	play: async ({ canvasElement }) => {
 		expectCanvasLayout(canvasElement);
+		expectIconLeftOfTitle(canvasElement);
 	},
 };
 
@@ -85,6 +120,7 @@ export const ScriptPreset: Story = {
 	play: async ({ canvasElement }) => {
 		expectCanvasLayout(canvasElement);
 		expectLegibleKindGlyph(canvasElement);
+		expectIconLeftOfTitle(canvasElement);
 	},
 };
 
@@ -100,6 +136,7 @@ export const PluginPreset: Story = {
 	play: async ({ canvasElement }) => {
 		expectCanvasLayout(canvasElement);
 		expectLegibleKindGlyph(canvasElement);
+		expectIconLeftOfTitle(canvasElement);
 	},
 };
 
@@ -112,6 +149,7 @@ export const LongTitle: Story = {
 	},
 	play: async ({ canvasElement }) => {
 		expectCanvasLayout(canvasElement);
+		expectIconLeftOfTitle(canvasElement);
 	},
 };
 
@@ -152,5 +190,16 @@ export const AlignedTitles: Story = {
 		);
 		expect(titleBoxes).toHaveLength(2);
 		expect(Math.abs(titleBoxes[0] - titleBoxes[1])).toBeLessThanOrEqual(1);
+		// #582: both rows keep the glyph column left of the aligned titles.
+		for (const li of canvasElement.querySelectorAll("li")) {
+			const scope = li as HTMLElement;
+			const button = scope.querySelector("button");
+			const glyphHost = button?.firstElementChild;
+			const title = button?.children[1]?.firstElementChild;
+			if (!glyphHost || !title) throw new Error("row glyph/title missing");
+			const glyphBox = measureBox(glyphHost);
+			const titleBox = measureBox(title);
+			expect(glyphBox.x + glyphBox.width).toBeLessThanOrEqual(titleBox.x + 1);
+		}
 	},
 };

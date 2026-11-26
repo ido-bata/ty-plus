@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { cx, tileRingClass } from "@ty-plus/ui";
 import type { Preset } from "@/management/preset/contract";
 import { presetIconText } from "@/management/preset/contract";
 import { expectCanvasLayout } from "@/storybook/quality/layout";
@@ -25,9 +26,15 @@ const baseArgs: Args = {
 	label: "My preset",
 };
 
+// Mirror the product tile chrome: in the workspace grid the glyph is
+// wrapped by `WorkspaceTileFrame` (surface.widget fill + gridcell ring),
+// so the story frame must provide the same surface or the capture reads
+// as a blank tile with a floating "ST".
 const decoratorBoxClass = css({
 	height: "8rem",
 	width: "8rem",
+	borderRadius: "shell-sm",
+	backgroundColor: "surface.widget",
 });
 
 const meta = {
@@ -39,7 +46,7 @@ const meta = {
 	},
 	decorators: [
 		(Story) => (
-			<div className={decoratorBoxClass}>
+			<div className={cx(decoratorBoxClass, tileRingClass)}>
 				<Story />
 			</div>
 		),

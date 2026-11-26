@@ -23,6 +23,7 @@ import type { E2EContext } from "../ctx";
 import { check, type E2ECase } from "../report";
 import type { LiveSurface } from "../surfaces";
 import { listLiveSurfaces } from "../surfaces";
+import { resolveLocaleKey, surfaceLang, templateAffixes } from "./i18n";
 import {
 	managedFilePath,
 	reloadPanel1,
@@ -71,17 +72,36 @@ export const clickFirst = async (
 	);
 
 /** Set a React-controlled input value (native setter + input event). */
-export const setInputValue = async (
+const setInputValue = async (
 	ctx: E2EContext,
 	surface: LiveSurface,
 	selector: string,
 	value: string,
 ): Promise<unknown> =>
+	setInputValueByFinder(
+		ctx,
+		surface,
+		`document.querySelector(${JSON.stringify(selector)})`,
+		value,
+		selector,
+	);
+
+/**
+ * Same as `setInputValue` but takes a JS expression that evaluates to the
+ * input element (or null). Used where no stable selector exists.
+ */
+const setInputValueByFinder = async (
+	ctx: E2EContext,
+	surface: LiveSurface,
+	finder: string,
+	value: string,
+	tag = "input",
+): Promise<unknown> =>
 	ctx.evalJs(
 		surface,
 		`(() => {
-			const el = document.querySelector(${JSON.stringify(selector)});
-			if (!el) return "missing:" + ${JSON.stringify(selector)};
+			const el = (${finder});
+			if (!el) return "missing:" + ${JSON.stringify(tag)};
 			const setter = Object.getOwnPropertyDescriptor(
 				window.HTMLInputElement.prototype, "value").set;
 			setter.call(el, ${JSON.stringify(value)});
@@ -91,19 +111,22 @@ export const setInputValue = async (
 		})()`,
 	);
 
-/** Evaluate a selector that picks an element by text content. */
-const clickButtonByText = async (
+/**
+ * Click a `<button>` whose trimmed text equals one of `labels` (already
+ * resolved for the surface locale). Returns "clicked" or a missing tag.
+ */
+export const clickButtonByLabels = async (
 	ctx: E2EContext,
 	surface: LiveSurface,
-	text: string,
+	labels: readonly string[],
 ): Promise<unknown> =>
 	ctx.evalJs(
 		surface,
 		`(() => {
-			const want = ${JSON.stringify(text)};
+			const wants = new Set(${JSON.stringify(labels)});
 			const btn = [...document.querySelectorAll("button")].find(
-				(b) => (b.textContent || "").trim() === want && !b.disabled);
-			if (!btn) return "missing-button:" + want;
+				(b) => wants.has((b.textContent || "").trim()) && !b.disabled);
+			if (!btn) return "missing-button:" + [...wants].join("|");
 			btn.click();
 			return "clicked";
 		})()`,
@@ -135,25 +158,237 @@ export const openPresetCatalog = async (
 	return dialog;
 };
 
-/** Click Run on a catalog row/card for `presetId` inside dialog-presets. */
+/**
+ * Resolve the localized aria-label matchers for a catalog row's Run
+ * affordance (`presets:listDialog.runPresetAria` exact +
+ * `runPresetNamed` `{{name}}` template affixes).
+ */
+const resolveRunAriaMatchers = async (
+	ctx: E2EContext,
+	dialog: LiveSurface,
+): Promise<{ exact: string[]; affixes: { pre: string; post: string }[] }> => {
+	const lang = await surfaceLang(ctx, dialog);
+	const runAria = await resolveLocaleKey(
+		lang,
+		"presets:listDialog.runPresetAria",
+	);
+	const runNamed = await resolveLocaleKey(
+		lang,
+		"presets:listDialog.runPresetNamed",
+	);
+	const affix = templateAffixes(runNamed);
+	return {
+		exact: runAria ? [runAria] : [],
+		affixes: affix ? [affix] : [],
+	};
+};
+
+/** In-page JS: pick the Run button inside a `[data-preset-id]` row. */
+const RUN_BUTTON_PICKER = `((row, exact, affixes) => {
+	const btns = [...row.querySelectorAll("button")];
+	const aria = (b) => b.getAttribute("aria-label") || "";
+	const exactSet = new Set(exact);
+	let btn = btns.find((b) => exactSet.has(aria(b)));
+	if (!btn) {
+		btn = btns.find((b) => {
+			const a = aria(b);
+			return affixes.some(({ pre, post }) =>
+				a.length > pre.length + post.length &&
+				a.startsWith(pre) && a.endsWith(post));
+		});
+	}
+	// Fallback: the run affordance is always the row's first button
+	// (list view: run/edit/delete; icon view: tile run, then edit/delete).
+	if (!btn) btn = btns[0];
+	return btn || null;
+})`;
+
+/**
+ * Click Run on a catalog row/card for `presetId` inside dialog-presets.
+ * Locale-independent: aria-labels are resolved for the dialog's locale,
+ * with a positional fallback (see `RUN_BUTTON_PICKER`).
+ */
 export const runPresetFromCatalog = async (
 	ctx: E2EContext,
 	dialog: LiveSurface,
 	presetId: string,
-): Promise<unknown> =>
-	ctx.evalJs(
+): Promise<unknown> => {
+	const matchers = await resolveRunAriaMatchers(ctx, dialog);
+	return ctx.evalJs(
 		dialog,
 		`(() => {
 			const row = document.querySelector(
 				${JSON.stringify(`[data-preset-id="${presetId}"]`)});
 			if (!row) return "missing-row:" + ${JSON.stringify(presetId)};
-			const btn = row.querySelector('button[aria-label="Run preset"]')
-				|| row.querySelector('button[aria-label^="Run"]');
+			const pick = ${RUN_BUTTON_PICKER};
+			const btn = pick(row, ${JSON.stringify(matchers.exact)}, ${JSON.stringify(matchers.affixes)});
 			if (!btn) return "missing-run-button";
 			btn.click();
 			return "clicked";
 		})()`,
 	);
+};
+
+/**
+ * Inspect (without clicking) the Run button of a catalog row: returns
+ * `{ disabled, aria }` or null when the row/button is absent.
+ */
+export const catalogRunButtonState = async (
+	ctx: E2EContext,
+	dialog: LiveSurface,
+	presetId: string,
+): Promise<unknown> => {
+	const matchers = await resolveRunAriaMatchers(ctx, dialog);
+	return ctx.evalJs(
+		dialog,
+		`(() => {
+			const row = document.querySelector(
+				${JSON.stringify(`[data-preset-id="${presetId}"]`)});
+			if (!row) return null;
+			const pick = ${RUN_BUTTON_PICKER};
+			const btn = pick(row, ${JSON.stringify(matchers.exact)}, ${JSON.stringify(matchers.affixes)});
+			return btn
+				? { disabled: Boolean(btn.disabled), aria: btn.getAttribute("aria-label") || "" }
+				: null;
+		})()`,
+	);
+};
+
+/**
+ * Click an action button inside a catalog `[data-preset-id]` row by its
+ * localized aria-label, falling back to the button at `index` (list and
+ * icon views order actions run/edit/delete identically).
+ */
+export const clickCatalogRowAction = async (
+	ctx: E2EContext,
+	dialog: LiveSurface,
+	presetId: string,
+	i18nKeys: readonly string[],
+	index: number,
+): Promise<unknown> => {
+	const lang = await surfaceLang(ctx, dialog);
+	const labels: string[] = [];
+	for (const key of i18nKeys) {
+		const value = await resolveLocaleKey(lang, key);
+		if (value) labels.push(value);
+	}
+	return ctx.evalJs(
+		dialog,
+		`(() => {
+			const row = document.querySelector(
+				${JSON.stringify(`[data-preset-id="${presetId}"]`)});
+			if (!row) return "missing-row:" + ${JSON.stringify(presetId)};
+			const btns = [...row.querySelectorAll("button")];
+			const wants = new Set(${JSON.stringify(labels)});
+			const btn = btns.find((b) =>
+					wants.has(b.getAttribute("aria-label") || ""))
+				|| btns[${index}];
+			if (!btn) return "missing-action";
+			btn.click();
+			return "clicked";
+		})()`,
+	);
+};
+
+/**
+ * Find the live `dialog-preset-add*` pooled surface that is actually
+ * rendering the PathDialog (contains `[data-path-field]`).
+ *
+ * The `dialog-preset-add(-N)` CEP pool is shared by every preset-tool
+ * dialog: a pooled window opened earlier for e.g. the footage or code
+ * preset dialog keeps its own route until retargeted, so matching on
+ * `surfaceId` alone can return a window that has no path field at all.
+ */
+export const findPresetAddDialog = async (
+	ctx: E2EContext,
+	timeoutMs = 30_000,
+): Promise<LiveSurface | null> => {
+	const deadline = Date.now() + timeoutMs;
+	while (Date.now() < deadline) {
+		const live = await listLiveSurfaces(await ctx.surfaces());
+		for (const s of live) {
+			if (!s.surfaceId.startsWith("dialog-preset-add")) continue;
+			try {
+				const has = await ctx.evalJs(
+					s,
+					`Boolean(document.querySelector("[data-path-field] input"))`,
+					5_000,
+				);
+				if (has) return s;
+			} catch {
+				// mid-navigation — try the next candidate
+			}
+		}
+		await sleep(700);
+	}
+	return null;
+};
+
+/**
+ * JS finder for the PathDialog name `<input>`, independent of locale:
+ * the only text input that is not inside a `[data-path-field]` wrapper
+ * (the file-path and description-image fields both are).
+ */
+const PRESET_NAME_INPUT = `[...document.querySelectorAll("input")].find(
+	(i) => !i.closest("[data-path-field]")
+		&& !["hidden", "checkbox", "file", "password", "submit", "button", "range", "color"]
+			.includes(i.type))`;
+
+/** Localized labels the PathDialog primary (Create) button can show. */
+export const presetCreateLabels = async (
+	ctx: E2EContext,
+	dialog: LiveSurface,
+): Promise<string[]> => {
+	const lang = await surfaceLang(ctx, dialog);
+	const out: string[] = [];
+	for (const key of ["common:actions.create", "presets:catalogAdd.creating"]) {
+		const value = await resolveLocaleKey(lang, key);
+		if (value) out.push(value);
+	}
+	return out.length > 0 ? out : ["Create"];
+};
+
+/**
+ * Fill the PathDialog file-path and name fields. The name input is
+ * located by its localized placeholder first, then by the structural
+ * finder (`PRESET_NAME_INPUT`) — either way it never depends on English.
+ */
+export const fillPresetAddDialog = async (
+	ctx: E2EContext,
+	dialog: LiveSurface,
+	filePath: string,
+	title: string,
+): Promise<{ pathSet: unknown; nameSet: unknown }> => {
+	const pathSet = await setInputValue(
+		ctx,
+		dialog,
+		"[data-path-field] input",
+		filePath,
+	);
+	const placeholder = await resolveLocaleKey(
+		await surfaceLang(ctx, dialog),
+		"presets:catalogAdd.namePlaceholder",
+	);
+	let nameSet: unknown = "missing";
+	if (placeholder) {
+		nameSet = await setInputValue(
+			ctx,
+			dialog,
+			`input[placeholder=${JSON.stringify(placeholder)}]`,
+			title,
+		);
+	}
+	if (String(nameSet).startsWith("missing")) {
+		nameSet = await setInputValueByFinder(
+			ctx,
+			dialog,
+			PRESET_NAME_INPUT,
+			title,
+			"preset-name-input",
+		);
+	}
+	return { pathSet, nameSet };
+};
 
 /** userData dir on the AE host (allowed root for script/preset files). */
 export const aeUserDataDir = async (ctx: E2EContext): Promise<string> => {
@@ -418,6 +653,12 @@ export const journeyCases: E2ECase[] = [
 				const panel = await ctx.requireSurface({ surfaceId: "panel-1" });
 
 				// 1. Open the Local Preset authoring dialog from the toolbar.
+				await waitForDom(
+					ctx,
+					panel,
+					`Boolean(document.querySelector('[data-ws-action="ty.ctx.create-file-preset"]'))`,
+					30_000,
+				);
 				const opened = await clickFirst(
 					ctx,
 					panel,
@@ -430,25 +671,15 @@ export const journeyCases: E2ECase[] = [
 						String(opened),
 					),
 				);
-				const addDialog = await findLive(
-					ctx,
-					(s) => s.surfaceId.startsWith("dialog-preset-add"),
-					30_000,
-				);
+				const addDialog = await findPresetAddDialog(ctx, 30_000);
 				if (!addDialog) throw new Error("preset-add dialog did not open");
-				await waitForDom(
-					ctx,
-					addDialog,
-					`Boolean(document.querySelector("[data-path-field] input"))`,
-					30_000,
-				);
 
 				// 2. Fill path + name, click Create.
-				const pathSet = await setInputValue(
+				const { pathSet, nameSet } = await fillPresetAddDialog(
 					ctx,
 					addDialog,
-					"[data-path-field] input",
 					jsxPath,
+					"E2E Journey Script",
 				);
 				checks.push(
 					check(
@@ -457,12 +688,6 @@ export const journeyCases: E2ECase[] = [
 						String(pathSet),
 					),
 				);
-				const nameSet = await setInputValue(
-					ctx,
-					addDialog,
-					'input[placeholder="Enter name..."]',
-					"E2E Journey Script",
-				);
 				checks.push(
 					check(
 						"preset name field accepts title",
@@ -470,7 +695,11 @@ export const journeyCases: E2ECase[] = [
 						String(nameSet),
 					),
 				);
-				const created = await clickButtonByText(ctx, addDialog, "Create");
+				const created = await clickButtonByLabels(
+					ctx,
+					addDialog,
+					await presetCreateLabels(ctx, addDialog),
+				);
 				checks.push(
 					check("Create submitted", created === "clicked", String(created)),
 				);

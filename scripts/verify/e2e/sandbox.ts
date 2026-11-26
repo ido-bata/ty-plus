@@ -38,6 +38,7 @@ import os from "node:os";
 import path from "node:path";
 import { reloadSurface, sleep } from "./cases/shared";
 import type { E2EContext } from "./ctx";
+import { seedRealPresetPack } from "./real-preset-pack";
 import { listLiveSurfaces } from "./surfaces";
 
 const LOCATOR_NAME = "ty-plus-init.json";
@@ -315,11 +316,7 @@ const FIXTURE_PRESETS = [
 	},
 ] as const;
 
-const seedCatalogFixtures = async (
-	ctx: E2EContext,
-	sandboxRoot: string,
-	realRoot: string,
-): Promise<void> => {
+const aeUserDataDir = async (ctx: E2EContext): Promise<string> => {
 	const panel = await ctx.requireSurface({ surfaceId: "panel-1" });
 	const userData = String(
 		await ctx.evalScript(panel, "Folder.userData.fsName", 15_000),
@@ -327,6 +324,15 @@ const seedCatalogFixtures = async (
 	if (!userData || userData.startsWith("e2e-error")) {
 		throw new Error(`Folder.userData unresolved: ${userData}`);
 	}
+	return userData;
+};
+
+const seedCatalogFixtures = async (
+	ctx: E2EContext,
+	sandboxRoot: string,
+	realRoot: string,
+): Promise<void> => {
+	const userData = await aeUserDataDir(ctx);
 	const fixtureDir = path.join(userData, "ty-plus", "dg-presets");
 	await mkdir(fixtureDir, { recursive: true });
 
@@ -531,6 +537,30 @@ export const prepareSandbox = async (
 		);
 	}
 
+	// 2c. Real preset pack (Issue #633): nested folder groups + sibling
+	//     .gif thumbnails + CJK/symbol paths, mirroring onboarding import.
+	//     Best-effort like the dg-* fixtures — absent pack only warns.
+	//     The pack is staged under Folder.userData because the host only
+	//     executes presets inside its allowed roots (userData / extension
+	//     dir / AE Support Files); records pointing at the source pack
+	//     location would fail `assertAllowedFilePath` on Run.
+	try {
+		const userData = await aeUserDataDir(ctx);
+		const pack = await seedRealPresetPack(
+			sandboxRoot,
+			path.join(userData, "ty-plus", "e2e-real-pack"),
+		);
+		if (pack) {
+			console.log(
+				`sandbox: real preset pack seeded — ${pack.presets} presets, ${pack.groups} groups (${pack.packRoot})`,
+			);
+		}
+	} catch (error) {
+		console.warn(
+			`sandbox: real preset pack seeding skipped — ${error instanceof Error ? error.message : String(error)}`,
+		);
+	}
+
 	// 3. Record recovery state BEFORE touching the locator.
 	const state: SandboxState = {
 		active: true,
@@ -582,10 +612,16 @@ export const prepareSandbox = async (
 				.getPropertyValue("--color-ty-accent") || "";
 			return v.trim().toLowerCase().includes("e2b701") ? "sandbox" : "real:" + v.trim();
 		})()`;
-		const probeDeadline = Date.now() + 20_000;
+		const probeDeadline = Date.now() + 45_000;
 		let probe: unknown = null;
 		while (Date.now() < probeDeadline) {
-			probe = await ctx.evalJs(panel, accentProbe, 15_000);
+			try {
+				probe = await ctx.evalJs(panel, accentProbe, 15_000);
+			} catch {
+				// Transient CDP stall (host under load): keep polling until the
+				// deadline instead of aborting the whole sandbox activation.
+				probe = null;
+			}
 			if (probe === "sandbox") break;
 			await sleep(500);
 		}

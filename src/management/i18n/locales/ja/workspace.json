@@ -80,10 +80,6 @@
 		"widgetTitle": "ウィジェット",
 		"configLoadError": "設定を読み込めませんでした"
 	},
-	"debugProbe": {
-		"title": "ダイアログプローブ",
-		"message": "パネル -> ダイアログブリッジチェック"
-	},
 	"easingCurveColors": {
 		"linear": "リニア",
 		"hold": "ホールド",

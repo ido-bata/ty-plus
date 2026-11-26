@@ -55,8 +55,7 @@
 		"debugConsole": "디버그 콘솔",
 		"updateCompInfo": "컴프 정보 업데이트",
 		"probe": {
-			"logToConsole": "테스트: 콘솔에 기록",
-			"openDebugConsole": "테스트: 디버그 콘솔 열기"
+			"logToConsole": "테스트: 콘솔에 기록"
 		},
 		"hideCategory": "카테고리 \"{{cat}}\" 숨기기",
 		"showCategory": "카테고리 \"{{cat}}\" 표시",

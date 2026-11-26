@@ -29,7 +29,7 @@ comp 上で再配置する。9-position (3×3) グリッドを `data-ws-action="
 ドラッグジェスチャー (`useAnchorGesture`) を受け入れる。ジェスチャー API
 の挙動（segment 計算、recognize threshold、modifier gate、pointer capture、
 action / edge / drag-handle guard）は
-`src/shared/component/interaction/use-anchor-gesture.ts` の冒頭コメントが正典
+`packages/ui/src/interaction/use-anchor-gesture.ts` の冒頭コメントが正典
 である。本ドキュメントでは widget 固有のマップと UX だけを扱う。
 
 ジェスチャーは default で次の legacy alignment guard を有効にしている:
@@ -102,9 +102,9 @@ Issue #77 の背景として「Alt オーバーによる微調整ができない
 ## 検証
 
 - `bun run test -- function/widget/core/anchor-point` — 直接クリック
-  回帰（4 ケース）
-- `bun run test -- shared/component/interaction` — ジェスチャー hook
-  単独テスト（21 ケース）
+  回帰
+- `bun run test -- packages/ui/src/interaction` — ジェスチャー hook
+  単独テスト（`use-anchor-gesture.test.tsx`）
 - Storybook: `WidgetCore/AnchorPoint` に `Default`, `Large`,
   `GesturePreview` の 3 variant
 

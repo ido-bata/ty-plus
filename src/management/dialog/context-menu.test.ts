@@ -145,8 +145,7 @@ describe("unified workspace context menu composition", () => {
 		expect(backgroundDialogSource).not.toContain("generic");
 	});
 
-	test("gives probe and unknown dialogs explicit surface actions", () => {
-		expect(dialogRootSource).toContain("ty.ctx.probe.log-surface");
+	test("gives unknown dialogs explicit surface actions", () => {
 		expect(dialogRootSource).toContain("ty.ctx.unknown-dialog.copy-surface-id");
 		expect(dialogRootSource).toContain("registerCepJsonContextMenuSurface");
 	});

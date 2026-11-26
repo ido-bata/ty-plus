@@ -28,8 +28,8 @@ export interface LayoutBox {
 	readonly height: number;
 }
 
-const boxRight = (box: LayoutBox): number => box.x + box.width;
-const boxBottom = (box: LayoutBox): number => box.y + box.height;
+export const boxRight = (box: LayoutBox): number => box.x + box.width;
+export const boxBottom = (box: LayoutBox): number => box.y + box.height;
 
 /** Positive-area intersection test. Touching edges do not count. */
 export function boxesOverlap(a: LayoutBox, b: LayoutBox): boolean {
@@ -80,7 +80,7 @@ export class LayoutAssertionError extends Error {
 }
 
 /** Short human-readable element locator for failure messages. */
-function describeElement(el: Element): string {
+export function describeElement(el: Element): string {
 	const tag = el.tagName.toLowerCase();
 	const id = el.id ? `#${el.id}` : "";
 	const className =
@@ -110,7 +110,7 @@ export function measureBox(el: Element): LayoutBox {
  * `visibility:hidden/collapse`, and has a non-zero box. `opacity: 0`
  * still counts as rendered — it occupies layout and can receive state.
  */
-function isRendered(el: Element): boolean {
+export function isRendered(el: Element): boolean {
 	const style = getComputedStyle(el);
 	if (
 		style.display === "none" ||
@@ -128,7 +128,7 @@ export interface ViewportSize {
 }
 
 /** Viewport the story iframe is currently pinned to (1280x720 capture). */
-function currentViewport(): ViewportSize {
+export function currentViewport(): ViewportSize {
 	return { width: window.innerWidth, height: window.innerHeight };
 }
 
@@ -164,20 +164,54 @@ export function assertWithinViewport(
 	}
 }
 
+/** The element's border box must lie fully inside `ancestor`'s padding box. */
+export function assertWithinAncestor(
+	el: Element,
+	ancestor: Element,
+	options: AssertOptions = {},
+): void {
+	const tolerance = options.tolerance ?? 0.5;
+	// clientWidth/clientLeft give the padding box, excluding borders —
+	// the region descendants may legitimately occupy.
+	const ancestorRect = ancestor.getBoundingClientRect();
+	const outer: LayoutBox = {
+		x: ancestorRect.x + ancestor.clientLeft,
+		y: ancestorRect.y + ancestor.clientTop,
+		width: ancestor.clientWidth,
+		height: ancestor.clientHeight,
+	};
+	const box = measureBox(el);
+	if (!boxWithin(box, outer, tolerance)) {
+		// i18n-exempt: internal diagnostic — storybook layout assertion, not UI copy
+		throw new LayoutAssertionError(
+			`${nameOf(el, options.label)} escapes its container ${describeElement(ancestor)}: ${describeBox(box)} vs container ${describeBox(outer)}`,
+		);
+	}
+}
+
 const CLIPPING_OVERFLOW = new Set(["hidden", "clip"]);
+const SCROLLING_OVERFLOW = new Set(["auto", "scroll"]);
 
 /**
- * True when `el`'s box is fully inside the visible (non-scroll-clipped)
- * region of every ancestor that uses `overflow: hidden|clip`. Scroll/auto
- * ancestors are ignored: scrolling is their intended clipping mechanism.
- * `text-overflow: ellipsis` ancestors are also ignored because truncated
- * text is an intentional, user-visible affordance.
+ * True when `el`'s *visible* region is cut by an `overflow:hidden|clip`
+ * ancestor before `boundary`. Scroll/auto ancestors are ignored: scrolling
+ * is their intended clipping mechanism. That ownership extends upward —
+ * once a scrollport between `el` and a hidden ancestor bounds what can
+ * paint, the hidden ancestor only clips what remains inside that
+ * scrollport, so the check tracks the visible interval per axis instead of
+ * `el`'s raw border box. `text-overflow: ellipsis` ancestors are ignored
+ * because truncated text is an intentional, user-visible affordance.
  */
-function isClippedByHiddenAncestor(
+export function isClippedByHiddenAncestor(
 	el: Element,
 	boundary: Element = document.body,
 	tolerance = 0.5,
 ): boolean {
+	const box = measureBox(el);
+	let visLeft = box.x;
+	let visTop = box.y;
+	let visRight = boxRight(box);
+	let visBottom = boxBottom(box);
 	for (
 		let ancestor = el.parentElement;
 		ancestor && ancestor !== boundary.parentElement;
@@ -187,8 +221,10 @@ function isClippedByHiddenAncestor(
 		const style = getComputedStyle(ancestor);
 		const clipsX = CLIPPING_OVERFLOW.has(style.overflowX);
 		const clipsY = CLIPPING_OVERFLOW.has(style.overflowY);
-		if (!clipsX && !clipsY) continue;
-		if (style.textOverflow === "ellipsis") continue;
+		const scrollsX = SCROLLING_OVERFLOW.has(style.overflowX);
+		const scrollsY = SCROLLING_OVERFLOW.has(style.overflowY);
+		if (!clipsX && !clipsY && !scrollsX && !scrollsY) continue;
+		if ((clipsX || clipsY) && style.textOverflow === "ellipsis") continue;
 		const rect = ancestor.getBoundingClientRect();
 		const clipBox: LayoutBox = {
 			x: rect.x + ancestor.clientLeft,
@@ -196,16 +232,30 @@ function isClippedByHiddenAncestor(
 			width: ancestor.clientWidth,
 			height: ancestor.clientHeight,
 		};
-		const box = measureBox(el);
-		// Only flag the axis the ancestor actually clips.
+		if (scrollsX || scrollsY) {
+			// The scrollport (padding box) is the clip region for anything
+			// scrolled out of view; shrink the visible interval accordingly.
+			if (scrollsX) {
+				visLeft = Math.max(visLeft, clipBox.x);
+				visRight = Math.min(visRight, boxRight(clipBox));
+			}
+			if (scrollsY) {
+				visTop = Math.max(visTop, clipBox.y);
+				visBottom = Math.min(visBottom, boxBottom(clipBox));
+			}
+			if (visLeft > visRight || visTop > visBottom) return false;
+		}
+		if (!clipsX && !clipsY) continue;
+		// Only flag the axis the ancestor actually clips, and only when the
+		// still-visible region escapes its padding box.
 		const insideX =
 			!clipsX ||
-			(box.x >= clipBox.x - tolerance &&
-				boxRight(box) <= boxRight(clipBox) + tolerance);
+			(visLeft >= clipBox.x - tolerance &&
+				visRight <= boxRight(clipBox) + tolerance);
 		const insideY =
 			!clipsY ||
-			(box.y >= clipBox.y - tolerance &&
-				boxBottom(box) <= boxBottom(clipBox) + tolerance);
+			(visTop >= clipBox.y - tolerance &&
+				visBottom <= boxBottom(clipBox) + tolerance);
 		if (!insideX || !insideY) return true;
 	}
 	return false;
@@ -228,7 +278,7 @@ export function assertNotClipped(
  * True when any ancestor between `el` and `boundary` scrolls on either
  * axis — such elements may legitimately sit outside the viewport.
  */
-function hasScrollableAncestor(
+export function hasScrollableAncestor(
 	el: Element,
 	boundary: Element = document.body,
 ): boolean {
@@ -275,6 +325,16 @@ export function assertNoOverlap(
 	}
 }
 
+/** Element must be rendered (visible, non-zero box). */
+export function assertRendered(el: Element, options: AssertOptions = {}): void {
+	if (!isRendered(el)) {
+		// i18n-exempt: internal diagnostic — storybook layout assertion, not UI copy
+		throw new LayoutAssertionError(
+			`${nameOf(el, options.label)} is not rendered (display/visibility/box)`,
+		);
+	}
+}
+
 // ---------------------------------------------------------------------------
 // Composite canvas audit
 // ---------------------------------------------------------------------------
@@ -302,7 +362,7 @@ export const INTERACTIVE_SELECTOR = [
 	"[role='spinbutton']",
 ].join(", ");
 
-type PageOverflowAxis = "x" | "y" | "both" | false;
+export type PageOverflowAxis = "x" | "y" | "both" | false;
 
 export interface CanvasAuditOptions {
 	/**
@@ -357,7 +417,7 @@ const collect = (
  * Returns a list of violation strings; empty means pass. Use
  * {@link expectCanvasLayout} to turn violations into a test failure.
  */
-function auditCanvas(
+export function auditCanvas(
 	root: ParentNode,
 	options: CanvasAuditOptions = {},
 ): string[] {
@@ -465,4 +525,48 @@ export function captureLayoutError(
 		throw error;
 	}
 	return null;
+}
+
+// ---------------------------------------------------------------------------
+// Interaction settle helpers
+// ---------------------------------------------------------------------------
+
+/** Wait for two animation frames so style/layout from state changes settle. */
+export async function nextPaint(): Promise<void> {
+	await new Promise<void>((resolve) =>
+		requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+	);
+}
+
+/**
+ * `userEvent.hover` plus a `:hover` assertion and a short settle so the
+ * post-hover computed style is measurable. `storybook/test`'s userEvent
+ * does not move the real pointer — import `userEvent` from
+ * `vitest/browser` in the story (see existing play functions).
+ */
+export async function hoverAndAssert(
+	el: Element,
+	opts: { settleMs?: number } = {},
+): Promise<void> {
+	const { userEvent } = await import("vitest/browser");
+	await userEvent.hover(el);
+	if (!el.matches(":hover")) {
+		// i18n-exempt: internal diagnostic — storybook layout assertion, not UI copy
+		throw new LayoutAssertionError(
+			`${describeElement(el)} did not match :hover after userEvent.hover`,
+		);
+	}
+	await new Promise((resolve) => setTimeout(resolve, opts.settleMs ?? 50));
+}
+
+/** Real focus via `vitest/browser` userEvent, then `:focus` assertion. */
+export async function focusAndAssert(el: Element): Promise<void> {
+	const { userEvent } = await import("vitest/browser");
+	await userEvent.click(el);
+	if (!el.matches(":focus")) {
+		// i18n-exempt: internal diagnostic — storybook layout assertion, not UI copy
+		throw new LayoutAssertionError(
+			`${describeElement(el)} did not receive focus`,
+		);
+	}
 }

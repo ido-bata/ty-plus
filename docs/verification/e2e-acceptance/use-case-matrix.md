@@ -145,3 +145,4 @@
 | UC-J05 | トラブルから復旧：破損検知→backup import→動作確認 | I01-I05,E06 | 未実施 |
 | UC-J06 | preset を渡す/受け取る：export→別環境 import→実行 | E06,C10 | 未実施 |
 | UC-J07 | 日常業務：quick-actions/menu から preset 連続実行 | D10,C10 | 未実施 |
+| UC-J08 | 実プリセットpack：階層group・サムネイル・.ffx実行 | C10,C11,B01 | 未実施 |

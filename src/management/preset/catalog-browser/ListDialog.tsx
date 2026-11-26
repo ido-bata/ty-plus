@@ -40,7 +40,6 @@ import type { ShellProps } from "@/management/dialog/shell/Layout";
 import { useDialogClose } from "@/management/dialog/useClose";
 import { i18n } from "@/management/i18n/index";
 import { useGatewayHealth } from "@/management/online/runtime-gateway-health";
-import { resolvePresetToolSurfaceIdForPreset } from "@/management/preset/authoring/request";
 import {
 	ICON_CELL_BASE_REM,
 	ICON_GRID_CLASS,
@@ -67,7 +66,7 @@ import {
 	listPresets,
 	removeLocalPreset,
 } from "@/management/preset/operations";
-import { getPresetToolDialogEntry } from "@/management/preset/registry";
+import type { SiblingListingEntry } from "@/management/preset/sibling-thumbnail";
 import { PresetGlyphById } from "@/management/preset/workspace/glyph/by-id";
 import {
 	glyphBoxCompactClass,
@@ -75,6 +74,7 @@ import {
 	glyphBoxFlushClass,
 	glyphEmojiProminentClass,
 } from "@/management/preset/workspace/glyph/classes";
+import { createSiblingThumbnailLister } from "@/management/storage/file-browser-service";
 import { stripKnownIdPrefixes } from "@/management/storage/ids";
 import { readSettings } from "@/management/storage/workspace/store";
 import { executeWorkspacePresetForWindow } from "@/management/workspace/core/runtime";
@@ -84,6 +84,25 @@ import { useCatalogViewMode } from "@/shared/util/catalog-view-mode";
 import { useIconGridScale } from "@/shared/util/icon-grid-scale";
 import { useTileAspect } from "@/shared/util/tile-aspect";
 import { css } from "@/styled-system/css";
+
+// Sibling thumbnail lookup for preset rows: same-stem images next to the
+// preset file (e.g. pack-shipped .gif previews). Resolved lazily because
+// the CEP node fs bridge only exists inside the panel runtime.
+type SiblingThumbnailLister = (
+	dirPath: string,
+) => Promise<readonly SiblingListingEntry[]>;
+let siblingLister: SiblingThumbnailLister | null | undefined;
+const siblingThumbnailListDirectory = ():
+	| SiblingThumbnailLister
+	| undefined => {
+	if (siblingLister === undefined) {
+		siblingLister =
+			typeof window === "undefined"
+				? null
+				: (createSiblingThumbnailLister(window) ?? null);
+	}
+	return siblingLister ?? undefined;
+};
 
 const folderGlyphClass = css({
 	display: "flex",
@@ -711,6 +730,7 @@ function PresetListTreeItem(props: {
 					preset={preset}
 					surface="framed"
 					boxClass={glyphBoxCompactPadClass}
+					thumbnailListDirectory={siblingThumbnailListDirectory()}
 				/>
 			</div>
 			<div className={presetRowTitleMinWidthClass}>
@@ -1012,6 +1032,7 @@ function IconPresetCard(props: {
 						preset={preset}
 						boxClass={glyphBoxFlushClass}
 						emojiClass={glyphEmojiProminentClass}
+						thumbnailListDirectory={siblingThumbnailListDirectory()}
 					/>
 				</div>
 				<Button
@@ -1527,10 +1548,7 @@ export function PresetsDialog(): JSX.Element {
 				if (!preset) {
 					return;
 				}
-				const toolSurface = resolvePresetToolSurfaceIdForPreset(preset);
-				if (!getPresetToolDialogEntry(toolSurface)) {
-					return;
-				}
+				await openPresetEditSurface(window, PRESETS_DIALOG_SURFACE_ID, id);
 			} catch (error) {
 				console.warn(
 					"preset-list: edit failed",

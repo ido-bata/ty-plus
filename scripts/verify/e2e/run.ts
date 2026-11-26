@@ -14,6 +14,19 @@
  */
 import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
+import {
+	acquireAeLock,
+	aeScopeForManagedRoot,
+	describeOwner,
+	releaseAeLock,
+} from "./ae-lock";
+import {
+	type AeSessionEvidence,
+	type AeSessionHandle,
+	attachAeSession,
+	collectAeDiagnostics,
+	describeAeSession,
+} from "./ae-session";
 import { catalogCases } from "./cases/catalog";
 import { debugCases } from "./cases/debug";
 import { hostCases } from "./cases/host";
@@ -173,10 +186,19 @@ const detectManagedRootForLiveAe = async (
 
 const main = async (): Promise<void> => {
 	const suiteName = option("suite") ?? "smoke";
-	const cases = SUITES[suiteName];
-	if (!cases) {
+	const allCases = SUITES[suiteName];
+	if (!allCases) {
 		throw new Error(
 			`unknown suite "${suiteName}" (available: ${Object.keys(SUITES).join(", ")})`,
+		);
+	}
+	const caseFilter = option("case");
+	const cases = caseFilter
+		? allCases.filter((c) => c.uc === caseFilter)
+		: allCases;
+	if (cases.length === 0) {
+		throw new Error(
+			`no case "${caseFilter}" in suite "${suiteName}" (available: ${allCases.map((c) => c.uc).join(", ")})`,
 		);
 	}
 	const extensionDir = option("extension-dir");
@@ -212,6 +234,87 @@ const main = async (): Promise<void> => {
 		throw new Error("managed root not found — pass --managed-root");
 	}
 
+	// Exclusive AE-instance lock (Issue #641): everything past this point
+	// mutates or drives the host (locator rewrite, panel reloads,
+	// evalScript cases), so it must not overlap another automation —
+	// Aulymo_v04 holds the same lock for its `--owned` runs. Surface
+	// discovery and the read-only version probe above run unlocked by
+	// necessity (the scope needs the managed root first).
+	const aeScope = aeScopeForManagedRoot(realManagedRoot);
+	let aeLock: { lockDir: string; runId: string } | null = null;
+	if (aeScope) {
+		const acquired = acquireAeLock({
+			scope: aeScope,
+			target: `ty-plus-e2e:${suiteName}`,
+		});
+		if (acquired.status === "busy") {
+			const owner = describeOwner(acquired.owner);
+			const alive =
+				acquired.holderAlive === null
+					? "unknown"
+					: acquired.holderAlive
+						? "alive"
+						: "dead";
+			const recoverHint =
+				"bun scripts/verify/e2e/ae-lock.ts --recover " +
+				`--managed-root=${realManagedRoot}`;
+			throw new Error(
+				`AE instance lock is held (${owner}; holder ${alive}). ` +
+					"Wait for the other run to finish. If the holder is dead, " +
+					`confirm After Effects is idle and run \`${recoverHint}\`.`,
+			);
+		}
+		const runId = (
+			JSON.parse(
+				await readFile(path.join(acquired.lockDir, "owner.json"), "utf8"),
+			) as { runId: string }
+		).runId;
+		aeLock = { lockDir: acquired.lockDir, runId };
+		for (const sig of ["SIGINT", "SIGTERM"] as const) {
+			process.once(sig, () => {
+				releaseAeLock(acquired.lockDir, runId);
+				process.exit(130);
+			});
+		}
+		console.log(`ae-lock: acquired ${aeScope.path} (${acquired.lockDir})`);
+	} else {
+		console.warn(
+			`ae-lock: could not derive AE app name from ${realManagedRoot} — running without the shared lock`,
+		);
+	}
+
+	try {
+		// Read-only AE session attach (Issue #657): proves which host process
+		// this run drives and gives failure paths a diagnostics bundle.
+		// Best-effort — never blocks the suite.
+		const aeSession = await attachAeSession(outDir);
+		const aeEvidence = await describeAeSession(aeSession);
+		await runSuites(
+			ctx,
+			suiteName,
+			cases,
+			realManagedRoot,
+			outDir,
+			aeSession,
+			aeEvidence,
+		);
+	} finally {
+		if (aeLock) {
+			releaseAeLock(aeLock.lockDir, aeLock.runId);
+			console.log("ae-lock: released");
+		}
+	}
+};
+
+const runSuites = async (
+	ctx: E2EContext,
+	suiteName: string,
+	cases: E2ECase[],
+	realManagedRoot: string,
+	outDir: string,
+	aeSession: AeSessionHandle | AeSessionEvidence,
+	aeEvidence: AeSessionEvidence,
+): Promise<void> => {
 	// Put the locator back if a previous run died mid-sandbox.
 	const recovery = await recoverInterruptedSandbox(ctx);
 	if (recovery) console.log(`sandbox: ${recovery}`);
@@ -228,13 +331,14 @@ const main = async (): Promise<void> => {
 	if (!sandbox) {
 		ctx.options.managedRoot = realManagedRoot;
 	}
+	ctx.options.realManagedRoot = sandbox?.realRoot ?? realManagedRoot;
 	const managedRoot = ctx.options.managedRoot;
 	if (!managedRoot) {
 		throw new Error("managed root not configured");
 	}
 
 	console.log(`suite=${suiteName} cases=${cases.length}`);
-	console.log(`extensionDir=${extensionDir}`);
+	console.log(`extensionDir=${ctx.options.extensionDir}`);
 	console.log(`managedRoot=${managedRoot}`);
 	if (sandbox) {
 		console.log(`realManagedRoot=${sandbox.realRoot} (untouched)`);
@@ -315,13 +419,27 @@ const main = async (): Promise<void> => {
 		}
 	}
 
+	// Host-side evidence for FAIL/BLOCKED runs (Issue #657): crash reports,
+	// host logs, session trace, supervision + GUI state via ae-a8n.
+	let aeDiagnostics: { dir: string | null; error?: string } | null = null;
+	if (results.some((r) => r.status === "FAIL" || r.status === "BLOCKED")) {
+		aeDiagnostics = await collectAeDiagnostics(aeSession, outDir);
+		if (aeDiagnostics.dir) {
+			console.log(`ae-diagnostics: ${aeDiagnostics.dir}`);
+		} else if (aeDiagnostics.error) {
+			console.warn(`ae-diagnostics: ${aeDiagnostics.error}`);
+		}
+	}
+
 	const summary = {
 		schema: "ty-plus.e2e-run/1",
 		suite: suiteName,
 		capturedAt: new Date().toISOString(),
-		extensionDir,
+		extensionDir: ctx.options.extensionDir,
 		managedRoot,
 		realManagedRoot: sandbox?.realRoot ?? managedRoot,
+		aeSession: aeEvidence,
+		aeDiagnostics,
 		sandbox: sandbox
 			? {
 					enabled: true,
@@ -345,7 +463,10 @@ const main = async (): Promise<void> => {
 	console.log(`evidence: ${outFile}`);
 	await ctx.close();
 	if (summary.totals.FAIL > 0 || summary.totals.BLOCKED > 0) {
-		process.exit(1);
+		// Set exitCode instead of process.exit(): exiting inside runSuites
+		// would skip the caller's finally that releases the AE instance lock
+		// and leave a stale owner.json behind (Issue #645).
+		process.exitCode = 1;
 	}
 };
 

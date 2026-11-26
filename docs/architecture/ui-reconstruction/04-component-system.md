@@ -9,18 +9,18 @@ typography, restrained contrast, and immediate access to work surfaces.
 Avoid marketing layouts, nested cards, oversized hero text, decorative imagery,
 single-hue themes, and explanatory in-app copy.
 
-## Tailwind And Tokens
+## PandaCSS And Tokens
 
-Use Tailwind classes for layout and component composition. Use CSS custom
-properties for theme values. The canonical CSS entry is
-`src/cep-shell/styles/app.css`.
+Style components with PandaCSS `css()` / `styled()` recipes — do not write
+literal class names. The canonical token source is `panda.tokens.ts` and
+`packages/ui/src/tokens/`; the PandaCSS adoption decision is recorded in
+`docs/decisions/2026-09-12-pandacss-adoption.md`.
 
 Token owners:
 
-- `src/cep-shell/styles/theme.css`: actual CSS variables.
-- `src/cep-shell/src/design/design-tokens.ts`: semantic token names.
-- `src/cep-shell/theme/*`: theme persistence and merge utilities.
-- `src/cep-shell/src/inject-cep-styles.ts`: runtime style injection.
+- `panda.tokens.ts`: token definitions (`--ty-*` backed).
+- `packages/ui/src/tokens/`: shared token modules and theme-css bridge.
+- `src/management/style/merge-theme.ts`: runtime theme merge/injection.
 
 Components should use semantic variables such as:
 
@@ -40,22 +40,16 @@ documented token.
 
 Use `@ty-plus/ui` as the base primitive library:
 
-- `Button`
-- `IconButton`
-- `Input`
-- `Textarea`
-- `Select`
-- `Checkbox`
-- `Switch`
-- `RangeInput`
-- `NumericInput`
-- `SegmentedControl`
-- `ColorField`
-- `PathField`
-- `Badge`
-- `Separator`
+The current barrel (`packages/ui/src/index.ts`) exports `Button`,
+`IconButton`, `SegmentedControl`, `ViewModeToggle`, `Input`, `Textarea`,
+`ListSelect`, `Checkbox`, `NumberField`, `RangeField`, `ColorField`,
+`ColorSwatch`, `PathField`, `RegexEditor`, `SearchField`, `Badge`, `Notice`,
+`LoadingSpinner`, `ErrorBoundary`, `FileDropZone`, `AnchoredPopover`,
+`MediaFrame`, `ScrollArea`, `Surface`, `DialogBody`, `Icon`, plus shared
+style-class vocabulary under `styles/`. Feature code must import from the
+`@ty-plus/ui` barrel, not deep paths.
 
-`src/cep-shell/src/components/shared` may wrap primitives for CEP-specific
+`src/management/` feature modules may wrap primitives for CEP-specific
 behavior, icons, tooltips, shell editors, and widget rendering.
 
 ## Interaction Rules

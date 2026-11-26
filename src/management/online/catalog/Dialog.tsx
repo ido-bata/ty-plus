@@ -1454,9 +1454,12 @@ export function PresetLibrary(): JSX.Element {
 		};
 	}, []);
 
-	// Ctrl+Wheel for zoom
+	// Ctrl+Wheel for zoom. `loading` is a dependency because the gallery
+	// grid only mounts after the async catalog fetch resolves — without
+	// it the effect runs once at mount, finds no `[data-preset-gallery]`,
+	// and the listener is never attached.
 	useEffect(() => {
-		if (mode !== "gallery") return;
+		if (mode !== "gallery" || loading) return;
 		const handleWheel = (e: Event): void => {
 			const wheelEvent = e as WheelEvent;
 			if (wheelEvent.ctrlKey || wheelEvent.metaKey) {
@@ -1472,7 +1475,7 @@ export function PresetLibrary(): JSX.Element {
 			} as AddEventListenerOptions);
 			return () => container.removeEventListener("wheel", handleWheel);
 		}
-	}, [mode]);
+	}, [mode, loading]);
 
 	// Get unique categories
 	const categories = useMemo(() => {

@@ -90,11 +90,5 @@
 		"noBodyForSurfaceId": "未找到 surfaceId 对应的对话框主体：",
 		"copySurfaceId": "复制 surface id"
 	},
-	"probe": {
-		"title": "探针",
-		"bodyForSurfaceId": "surfaceId 探针对话框：",
-		"logSurfaceId": "记录 surface id",
-		"copySurfaceId": "复制 surface id"
-	},
 	"loading": "加载中…"
 }

@@ -13,8 +13,8 @@
 
 ## 共有レイヤー
 
-ジェスチャー API など widget 横断の primitive は `src/shared/component/`
-配下に置く。所有関係は [`docs/architecture/repository/source-ownership.md`](../repository/source-ownership.md)
+ジェスチャー API など widget 横断の primitive は `packages/ui`
+（`@ty-plus/ui`）配下に置く。所有関係は [`docs/architecture/repository/source-ownership.md`](../repository/source-ownership.md)
 に従う。
 
 ## ADR

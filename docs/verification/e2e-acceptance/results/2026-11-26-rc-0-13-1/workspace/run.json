@@ -1,0 +1,247 @@
+{
+  "schema": "ty-plus.e2e-run/1",
+  "suite": "workspace",
+  "capturedAt": "2026-11-26T10:44:12.952Z",
+  "extensionDir": "/Users/rebui/Library/Application Support/Adobe/CEP/extensions/app.ty-plus.dev",
+  "managedRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-26T10-42-36-241Z-12245/ty-plus",
+  "realManagedRoot": "/Applications/Adobe After Effects 2027/ty-plus",
+  "sandbox": {
+    "enabled": true,
+    "sandboxRoot": "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-26T10-42-36-241Z-12245/ty-plus",
+    "integrity": {
+      "realRoot": "/Applications/Adobe After Effects 2027/ty-plus",
+      "checkedAt": "2026-11-26T10:44:12.947Z",
+      "driftBeforeRepair": {
+        "changed": 4,
+        "added": 0,
+        "removed": 0
+      },
+      "filesRepaired": [
+        "cache/layout-undo/panel-2/stack.json",
+        "cache/layout-undo/panel-5/stack.json",
+        "cache/layout-undo/panel-4/stack.json",
+        "cache/layout-undo/panel-3/stack.json"
+      ],
+      "cleanAfterRepair": true
+    }
+  },
+  "totals": {
+    "PASS": 5,
+    "FAIL": 0,
+    "BLOCKED": 0,
+    "SKIP": 0
+  },
+  "results": [
+    {
+      "uc": "UC-B02",
+      "title": "Add Widget dialog places an info tile",
+      "status": "PASS",
+      "detail": "widget=390d75ec-8961-4127-a3cc-9cadcedf1f88 cells 7→7",
+      "checks": [
+        {
+          "name": "widgets.json gained info record",
+          "ok": true,
+          "detail": "id=390d75ec-8961-4127-a3cc-9cadcedf1f88"
+        },
+        {
+          "name": "info tile mounted on panel",
+          "ok": true,
+          "detail": "true \"\""
+        },
+        {
+          "name": "workspace-1.json gridCells grew",
+          "ok": true,
+          "detail": "before=7 after=8"
+        },
+        {
+          "name": "layout restored after case",
+          "ok": true,
+          "detail": "before=7 restored=7"
+        }
+      ],
+      "evidence": [
+        "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-26T10-42-36-241Z-12245/ty-plus/widgets/widgets.json",
+        "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-26T10-42-36-241Z-12245/ty-plus/workspaces/workspace-1.json"
+      ],
+      "durationMs": 6164
+    },
+    {
+      "uc": "UC-B05",
+      "title": "layout snapshot save → mutate → restore → delete round-trip",
+      "status": "PASS",
+      "detail": "snapshot=1795689772385 cells 7",
+      "checks": [
+        {
+          "name": "save-snapshot clicked",
+          "ok": true,
+          "detail": "clicked"
+        },
+        {
+          "name": "snapshots.json gained a new entry",
+          "ok": true,
+          "detail": "id=1795689772385"
+        },
+        {
+          "name": "snapshot row rendered in dropdown",
+          "ok": true,
+          "detail": "true"
+        },
+        {
+          "name": "layout mutated (widget tile added)",
+          "ok": true,
+          "detail": "cells 7→8 widget=71184861-6e93-475d-bc80-311077f94d2a"
+        },
+        {
+          "name": "restore-snapshot clicked",
+          "ok": true,
+          "detail": "clicked"
+        },
+        {
+          "name": "gridCells restored to snapshot state",
+          "ok": true,
+          "detail": "before=7 mutated=8 restored=7"
+        },
+        {
+          "name": "added widget tile removed by restore",
+          "ok": true,
+          "detail": "tile=71184861-6e93-475d-bc80-311077f94d2a"
+        },
+        {
+          "name": "delete-snapshot clicked",
+          "ok": true,
+          "detail": "clicked"
+        },
+        {
+          "name": "snapshot removed from snapshots.json",
+          "ok": true,
+          "detail": "snapId=1795689772385"
+        }
+      ],
+      "evidence": [
+        "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-26T10-42-36-241Z-12245/ty-plus/workspaces/history/snapshots.json"
+      ],
+      "durationMs": 12526
+    },
+    {
+      "uc": "UC-D10",
+      "title": "quick-actions palette runs script preset twice consecutively",
+      "status": "PASS",
+      "detail": "quick-actions runs=2 marker=1795689792186|27.0x78",
+      "checks": [
+        {
+          "name": "quick-actions search focused + query typed",
+          "ok": true,
+          "detail": "focused:DG"
+        },
+        {
+          "name": "palette lists dg-script-marker run action",
+          "ok": true,
+          "detail": "true"
+        },
+        {
+          "name": "palette run clicked",
+          "ok": true,
+          "detail": "clicked"
+        },
+        {
+          "name": "run #1 produced AE-side marker",
+          "ok": true,
+          "detail": "1795689790594|27.0x78"
+        },
+        {
+          "name": "run #2 consecutive re-execution produced new marker",
+          "ok": true,
+          "detail": "m1=1795689790594|27.0x78 m2=1795689792186|27.0x78"
+        }
+      ],
+      "evidence": [
+        "/Users/rebui/Library/Application Support/ty-plus/dg-presets/marker.txt"
+      ],
+      "durationMs": 9714
+    },
+    {
+      "uc": "UC-C12",
+      "title": "footage preset (.png) created via dialog → run imports into AE project",
+      "status": "PASS",
+      "detail": "footage preset=6121559f-357b-4b10-954f-7f9f22510d56",
+      "checks": [
+        {
+          "name": "footage preset record persisted",
+          "ok": true,
+          "detail": "id=6121559f-357b-4b10-954f-7f9f22510d56"
+        },
+        {
+          "name": "preset type inferred as footage",
+          "ok": true,
+          "detail": "type=footage"
+        },
+        {
+          "name": "catalog lists footage preset",
+          "ok": true,
+          "detail": "true"
+        },
+        {
+          "name": "catalog Run clicked",
+          "ok": true,
+          "detail": "clicked"
+        },
+        {
+          "name": "AE project gained footage item",
+          "ok": true,
+          "detail": "itemsBefore=1 hits=[\"e2e-footage.png|フッテージ\"]"
+        }
+      ],
+      "evidence": [
+        "/Users/rebui/Library/Application Support/ty-plus-e2e/e2e-footage.png"
+      ],
+      "durationMs": 10936
+    },
+    {
+      "uc": "UC-C14",
+      "title": "run preset with deleted asset fails without blocking modal",
+      "status": "PASS",
+      "detail": "stale preset run handled",
+      "checks": [
+        {
+          "name": "stale-asset preset created",
+          "ok": true,
+          "detail": "id=6718aaa5-7053-46d4-9a2b-24e85f4dfbb8"
+        },
+        {
+          "name": "catalog row present for stale preset",
+          "ok": true,
+          "detail": "{\"disabled\":false,\"aria\":\"プリセットを実行\"}"
+        },
+        {
+          "name": "run attempted or gated by disabled button",
+          "ok": true,
+          "detail": "click=clicked disabled=false"
+        },
+        {
+          "name": "no blocking modal over panel",
+          "ok": true,
+          "detail": "modal=false"
+        },
+        {
+          "name": "panel still responsive",
+          "ok": true,
+          "detail": "eval=2"
+        },
+        {
+          "name": "structured non-modal error surfaced",
+          "ok": true,
+          "detail": "toasts=[\"Ty Plus: Error: Script file not found: /Users/rebui/Library/Application Support/ty-plus-e2e/e2e-stale.jsx line=365 file=~/Library/Application%20Support/Adobe/CEP/extensions/app.ty-plus.dev/jsx/ty-plus-host.jsx\",\"プリセットが失敗しました: Error: Script file not found: /Users/rebui/Library/Application Support/ty-plus-e2e/e2e-stale.jsx line=365 file=~/Library/Application%20Support/Adobe/CEP/extensions/app.ty-plus.dev/jsx/ty-plus-host.jsx\"] gated=false rowMissing=false"
+        },
+        {
+          "name": "no AE-side artifact from stale preset",
+          "ok": true,
+          "detail": "marker absent"
+        }
+      ],
+      "evidence": [
+        "/var/folders/1l/fmlzfnk57zndv1pxwwkw6xrc0000gn/T/ty-plus-e2e-sandbox/2026-11-26T10-42-36-241Z-12245/ty-plus/presets/presets.json"
+      ],
+      "durationMs": 26848
+    }
+  ]
+}

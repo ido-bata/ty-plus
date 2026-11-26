@@ -80,10 +80,6 @@
 		"widgetTitle": "Widget",
 		"configLoadError": "Configuration could not be loaded"
 	},
-	"debugProbe": {
-		"title": "Dialog Probe",
-		"message": "Panel -> Dialog bridge check"
-	},
 	"easingCurveColors": {
 		"linear": "Linear",
 		"hold": "Hold",

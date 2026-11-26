@@ -53,10 +53,20 @@ export const Default: Story = {
 	},
 };
 
+// Without an `onBrowse` handler the browse button stays mounted but
+// disabled — the affordance communicates "no picker in this context"
+// rather than disappearing. Pin that contract.
 export const WithoutBrowse: Story = {
 	args: {
 		browseSlot: BrowseIcon,
 		onBrowse: undefined,
+	},
+	play: async ({ canvasElement }) => {
+		const button = canvasElement.querySelector<HTMLButtonElement>(
+			"[data-path-field] button",
+		);
+		if (!button) throw new Error("browse button not found");
+		expect(button.disabled).toBe(true);
 	},
 };
 
