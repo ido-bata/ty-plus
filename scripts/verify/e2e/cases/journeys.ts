@@ -1185,7 +1185,7 @@ export const journeySuiteCases: E2ECase[] = [
 				return "ready";
 			})()`);
 
-			const countEffects = `(() => {
+			const countEffects = `(function() {
 				for (var i = 1; i <= app.project.numItems; i++) {
 					var it = app.project.item(i);
 					if (it instanceof CompItem && it.name === "TYPlus E2E MVFX Comp") {
