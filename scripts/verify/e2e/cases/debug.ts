@@ -222,7 +222,11 @@ export const debugCases: E2ECase[] = [
 					ctx,
 					first,
 					`(() => { const s = ${consoleState}; return s.hasMarker ? s : null; })()`,
-					15_000,
+					// Replay responses trickle in per-surface and each
+					// responder awaits an ExtendScript tombstone read —
+					// under host memory pressure the union can take
+					// tens of seconds to complete (Issue #655).
+					45_000,
 				)) as { msgCount?: number; hasMarker?: boolean } | null;
 				checks.push(
 					check(
@@ -264,7 +268,7 @@ export const debugCases: E2ECase[] = [
 					ctx,
 					second,
 					`(() => { const s = ${consoleState}; return s.hasMarker ? s : null; })()`,
-					30_000,
+					60_000,
 				)) as { msgCount?: number; hasMarker?: boolean } | null;
 				checks.push(
 					check(
