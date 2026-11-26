@@ -153,8 +153,9 @@ export function MembersSection({
 
 				<div className={columnClass}>
 					{pathLines.map((p, idx) => {
-						const stableKey = `path-${p.length}-${p.slice(0, 16)}`;
+						const stableKey = `path-${idx}`;
 						return (
+							// eslint-disable-next-line react-doctor/no-array-index-as-key -- rows are controlled inputs with no per-row state, so position keys are correct; content-derived keys remount and drop focus on every keystroke
 							<div key={stableKey} className={pathRowClass}>
 								<PathField
 									value={p}
