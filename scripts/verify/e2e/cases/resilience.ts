@@ -189,6 +189,10 @@ export const resilienceCases: E2ECase[] = [
 			await withManagedRootSnapshot(ctx, "uc-i04-theme-css", async () => {
 				await writeManagedFile(ctx, ["styles", "theme.css"], corrupt);
 				const panel = await reloadPanel1(ctx);
+				// The workspace grid mounts asynchronously after boot; every
+				// other corrupt-boot case polls GRID_PROBE via waitForDom, so
+				// do the same here before sampling computed styles once.
+				await waitForDom(ctx, panel, GRID_PROBE, 20_000);
 				const boot = (await ctx.evalJs(
 					panel,
 					`(() => ({
