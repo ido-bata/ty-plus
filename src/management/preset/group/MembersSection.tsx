@@ -153,7 +153,7 @@ export function MembersSection({
 
 				<div className={columnClass}>
 					{pathLines.map((p, idx) => {
-						const stableKey = `path-${p.length}-${p.slice(0, 16)}`;
+						const stableKey = `path-${idx}`;
 						return (
 							<div key={stableKey} className={pathRowClass}>
 								<PathField
