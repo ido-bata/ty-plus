@@ -73,7 +73,7 @@ export const Vertical: Story = {
 	],
 };
 
-/** Collapsed state — renders as the small circular handle only. */
+/** Collapsed state — small circular handle with an expand affordance. */
 export const Collapsed: Story = {
 	args: { panelId: "panel-2" },
 	decorators: [
