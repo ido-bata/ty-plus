@@ -28,6 +28,7 @@
 | #673 | preset type badge の単語途中 wrap 解消 | preset list dialog の glyph が 5 grapheme 名称で 1 行 (h=16px = font-size) に収まることを確認 (`preset-list-badges.png`) |
 | #674 | dialog footer の水平 inset を shell primitive に統一 | settings dialog と preset edit dialog の `footer[data-dialog-footer]` で `padding-inline: 8px` (= `--ty-shell-pad-inline`) を確認 |
 | #681 | preset edit dialog の error kind 区別 | preset edit dialog (31024) が正常系で開き、Cancel/Delete/Save が有効・footer inset 正常 (`preset-edit-dialog.png`)。失敗系 (delete 失敗後の retry) は unit test で担保 |
+| #684 | 折りたたみ時 control panel の展開 affordance | panel2–5 は既定で collapsed 描画。`[data-cp]` に `data-collapsed="true"` + `ty.ctx.cp.toggle-collapse` IconButton (ChevronsUpDown) が存在し、click で 20x20 → 164x38 に展開・6 ボタン表示を確認 |
 
 ## コード・テストで担保し実機未踏の項目
 
@@ -35,7 +36,6 @@
 | --- | --- | --- |
 | #672 | Loop wave の label obstacle sampling (`waveLabelObstacles`) | canvas 描画のため DOM 検査不可。`loop-wave-labels.png` を証跡として保存。配置ロジックは unit test で担保 |
 | #676 | group catalog tile の keyline / count badge | workspace catalog grid に group preset tile が必要で、ローカル catalog に group preset が存在しないため未踏 |
-| #684 | 折りたたみ時 control panel の展開 affordance | collapsed 状態への遷移が native CEP context menu 経由で CDP から駆動できず未踏。`Toolbar.test.tsx` で描画は担保 |
 | #686 | MembersSection の path key 安定化 | group preset 編集面が必要。render 契約は unit test で担保 |
 | #682 | `.debug` port band 修正 | build 時の port 採番であり、今回の build (31010–31031) が ephemeral range (49152+) を避けていることを `.debug` で確認済み |
 
@@ -53,7 +53,7 @@
 
 ## 残件
 
-- 上表「実機未踏」4 件は fixture (group preset / 失敗注入 / native menu)
-  が必要。E2E fixture 整備または Storybook 実描画との照合で補完する。
+- 上表「実機未踏」3 件は fixture (group preset) が必要。E2E fixture
+  整備または Storybook 実描画との照合で補完する。
 - Windows 実機での同項目検証は未実施 (v0.13.1 配布物検証は
   `distributed-0-13-1/` を参照)。
