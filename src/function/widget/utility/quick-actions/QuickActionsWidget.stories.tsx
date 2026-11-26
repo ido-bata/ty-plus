@@ -129,6 +129,17 @@ export const Open: Story = {
 		await waitFor(() => {
 			expect(paletteRows().length).toBe(SAMPLE_PRESETS.length);
 		});
+		// The dropdown anchors to the search field, so its top edge sits a
+		// few pixels below the input — not at the widget's bottom edge
+		// (Issue #668 regression).
+		const dropdown = paletteRows()[0]?.closest(
+			'[role="presentation"]',
+		)?.parentElement;
+		expect(dropdown).not.toBeNull();
+		const inputBottom = input.getBoundingClientRect().bottom;
+		const dropdownTop = dropdown?.getBoundingClientRect().top ?? 0;
+		expect(dropdownTop).toBeGreaterThanOrEqual(inputBottom);
+		expect(dropdownTop - inputBottom).toBeLessThan(24);
 	},
 };
 
