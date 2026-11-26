@@ -11,7 +11,7 @@ export type RangeFieldProps = {
 	min?: number;
 	max?: number;
 	step?: number;
-	/** Appended to the label (e.g. "%"). */
+	/** Appended to the numeric readout (e.g. "%"). */
 	unit?: string;
 	className?: string;
 };
@@ -74,12 +74,10 @@ export function RangeField({
 	unit,
 	className,
 }: RangeFieldProps): JSX.Element {
-	const labelText =
-		label && unit !== undefined
-			? `${label} ${value}${unit}`
-			: label
-				? `${label} ${value}`
-				: undefined;
+	// Issue #679: the label names the control only; the paired NumberField is
+	// the single place that shows the value, with `unit` as its suffix.
+	const labelText = label || undefined;
+	const valueLabel = `${label ?? "Range"} value${unit !== undefined ? ` ${unit}` : ""}`;
 
 	const commit = (next: number): void => {
 		if (!Number.isFinite(next)) {
@@ -100,6 +98,7 @@ export function RangeField({
 					value={value}
 					onChange={(e) => commit(Number(e.target.value))}
 					aria-label={label ?? "Range"}
+					aria-valuetext={unit !== undefined ? `${value}${unit}` : undefined}
 					className={RANGE_INPUT_CLASS}
 				/>
 				<NumberField
@@ -108,7 +107,8 @@ export function RangeField({
 					step={step}
 					value={value}
 					onChange={(v) => commit(Number(v))}
-					aria-label={label ? `${label} value` : "Range value"}
+					unit={unit}
+					aria-label={valueLabel}
 					uiSize="sm"
 					numberSpinners={false}
 					className={css({
