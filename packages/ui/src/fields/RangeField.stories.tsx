@@ -32,6 +32,16 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
 	args: {},
+	// Issue #679: the label names the control only — the value must not be
+	// duplicated into it; the paired numeric input is the single readout.
+	play: async ({ canvasElement }) => {
+		const labels = [...canvasElement.querySelectorAll("div")].filter(
+			(el) => el.textContent === "Volume",
+		);
+		await expect(labels.length).toBe(1);
+		const unit = canvasElement.querySelector("[data-number-field-unit]");
+		await expect(unit?.textContent).toBe("%");
+	},
 };
 
 export const FineStep: Story = {
@@ -45,10 +55,26 @@ export const FineStep: Story = {
 	},
 };
 
+// Issue #679: without a label the readout must still carry its meaning —
+// the unit suffix stays visible and both controls get descriptive
+// aria-labels.
 export const NoLabel: Story = {
 	args: {
 		label: undefined,
-		unit: undefined,
+		unit: "%",
+	},
+	play: async ({ canvasElement }) => {
+		const range = canvasElement.querySelector<HTMLInputElement>(
+			'input[type="range"]',
+		);
+		const number = canvasElement.querySelector<HTMLInputElement>(
+			'input[type="number"]',
+		);
+		await expect(range?.getAttribute("aria-label")).toBe("Range");
+		await expect(range?.getAttribute("aria-valuetext")).toBe("30%");
+		await expect(number?.getAttribute("aria-label")).toBe("Range value %");
+		const unit = canvasElement.querySelector("[data-number-field-unit]");
+		await expect(unit?.textContent).toBe("%");
 	},
 };
 
