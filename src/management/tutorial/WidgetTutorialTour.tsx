@@ -214,7 +214,12 @@ export function WidgetTutorialTour({
 	const isSummaryOnly = steps.length === 0;
 
 	// Resolve the step anchor: the `[data-tutorial-target]` element when the
-	// selector matches inside the tile, otherwise the tile layer itself.
+	// selector matches inside the tile, otherwise the widget body itself.
+	// The layer is `position: absolute; inset: 0`, so without a positioned
+	// ancestor its box can span far more than the widget (e.g. Storybook
+	// embeds) and the fallback bubble lands bottom-center, detached from the
+	// widget (#677). The first element child is the widget root and tracks
+	// the real widget bounds in every host.
 	const findAnchor = useCallback((): {
 		el: Element;
 		isTarget: boolean;
@@ -225,7 +230,7 @@ export function WidgetTutorialTour({
 			const el = layer.querySelector(step.targetSelector);
 			if (el) return { el, isTarget: true };
 		}
-		return { el: layer, isTarget: false };
+		return { el: layer.firstElementChild ?? layer, isTarget: false };
 	}, [layerRef, step?.targetSelector]);
 
 	// Returns false when the bubble or anchor is not measurable yet (e.g. the

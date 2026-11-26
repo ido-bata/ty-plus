@@ -198,4 +198,76 @@ describe("WidgetTutorialLayer coach-mark tour", () => {
 			await screen.findByText("tutorial.test-summary-widget.summary"),
 		).toBeInTheDocument();
 	});
+
+	it("anchors target-less steps to the widget body, not the layer box", async () => {
+		// Issue #677: the layer is `position: absolute; inset: 0` and can span
+		// far more than the widget when no positioned ancestor exists, which
+		// parked the first tooltip bottom-center away from the widget. The
+		// fallback anchor must be the widget body element.
+		const rect = (r: {
+			top: number;
+			left: number;
+			width: number;
+			height: number;
+		}): DOMRect =>
+			({
+				...r,
+				right: r.left + r.width,
+				bottom: r.top + r.height,
+				x: r.left,
+				y: r.top,
+				toJSON: () => ({}),
+			}) as DOMRect;
+		const spy = vi
+			.spyOn(HTMLElement.prototype, "getBoundingClientRect")
+			.mockImplementation(function (this: HTMLElement) {
+				const mock = (
+					this as unknown as { __mockRect?: ReturnType<typeof rect> }
+				).__mockRect;
+				return mock ?? rect({ top: 0, left: 0, width: 0, height: 0 });
+			});
+		try {
+			const { container } = render(
+				<WidgetTutorialLayer widgetType="test-tour-widget">
+					<div data-testid="widget-body">
+						<div data-tutorial-target="step-one">target</div>
+					</div>
+				</WidgetTutorialLayer>,
+			);
+			const layer = container.firstElementChild as HTMLElement;
+			const body = screen.getByTestId("widget-body");
+			// Layer box deliberately huge/different so a layer-anchored
+			// placement cannot accidentally match the expected values.
+			(layer as unknown as { __mockRect: DOMRect }).__mockRect = rect({
+				top: 0,
+				left: 0,
+				width: 1200,
+				height: 900,
+			});
+			(body as unknown as { __mockRect: DOMRect }).__mockRect = rect({
+				top: 120,
+				left: 220,
+				width: 320,
+				height: 160,
+			});
+
+			// Step 1 has a targetSelector; step 2 falls back to the widget body.
+			await screen.findByText("tutorial.test-tour-widget.steps.one.title");
+			fireEvent.click(
+				screen.getByRole("button", { name: "tutorial.chrome.next" }),
+			);
+			await screen.findByText("tutorial.test-tour-widget.steps.two.title");
+
+			const dialog = await screen.findByRole("dialog");
+			// computePlacement: bubble 260x120 (jsdom rect is 0 -> fallback
+			// size), anchor body {top:120,left:220,w:320,h:160} in a
+			// 1024x768 viewport -> top 120+160+8=288, left 220+160-130=250.
+			await waitFor(() => {
+				expect(dialog.style.top).toBe("288px");
+				expect(dialog.style.left).toBe("250px");
+			});
+		} finally {
+			spy.mockRestore();
+		}
+	});
 });
