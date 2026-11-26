@@ -200,6 +200,20 @@ describe("PresetEditDialog", () => {
 				expect(screen.getByText(/load failed/i)).toBeInTheDocument();
 			});
 		});
+
+		it("disables save and delete but keeps cancel enabled when preset is not found", async () => {
+			mockGetPreset.mockResolvedValue(undefined);
+
+			renderDialog("nonexistent");
+
+			await waitFor(() => {
+				expect(screen.getByText(/preset not found/i)).toBeInTheDocument();
+			});
+
+			expect(screen.getByRole("button", { name: /save/i })).toBeDisabled();
+			expect(screen.getByRole("button", { name: /delete/i })).toBeDisabled();
+			expect(screen.getByRole("button", { name: /cancel/i })).toBeEnabled();
+		});
 	});
 
 	describe("preset loaded state", () => {

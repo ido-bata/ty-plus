@@ -1092,6 +1092,7 @@ export function PresetEditDialog(props: PresetEditDialogProps): JSX.Element {
 
 	const isBusy =
 		dialogStatus.phase === "saving" || dialogStatus.phase === "deleting";
+	const canMutate = dialogStatus.phase === "loaded";
 	const _statusMessage =
 		dialogStatus.phase === "loading"
 			? t("edit.status.loading")
@@ -1135,7 +1136,7 @@ export function PresetEditDialog(props: PresetEditDialogProps): JSX.Element {
 						fullWidth
 						start={<Trash2 size={14} />}
 						onClick={() => void handleDelete()}
-						disabled={isBusy}
+						disabled={!canMutate}
 					>
 						{dialogStatus.phase === "deleting"
 							? t("edit.status.deleting")
@@ -1148,7 +1149,7 @@ export function PresetEditDialog(props: PresetEditDialogProps): JSX.Element {
 						fullWidth
 						start={<Save size={14} />}
 						onClick={() => void handleSave()}
-						disabled={isBusy}
+						disabled={!canMutate}
 					>
 						{dialogStatus.phase === "saving"
 							? t("edit.status.saving")
