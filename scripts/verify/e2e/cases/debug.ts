@@ -28,26 +28,30 @@ const findConsole = async (ctx: E2EContext): Promise<LiveSurface | null> => {
 	);
 };
 
-const closeSurface = async (
-	ctx: E2EContext,
-	surface: LiveSurface,
-): Promise<boolean> => {
+const closeSurface = async (ctx: E2EContext): Promise<boolean> => {
 	// CEP surfaces do not all honour the same close path: `Page.close`
 	// works on macOS CEF but leaves the Windows target alive, `window.close()`
 	// is ignored for host-opened windows, and `closeExtension()` is the
 	// CEP-native shutdown the host itself uses. Try each in turn and verify
 	// the target actually disappears before moving on.
-	const attempts: Array<() => Promise<unknown>> = [
-		async () => {
-			const conn = await ctx.cdp(surface);
+	//
+	// Every attempt re-resolves the live console first: `requestOpenExtension`
+	// retries scheduled by the opener can respawn the window as a *new* CDP
+	// target shortly after a successful close, and acting on the stale
+	// `surface` captured at open time would then target a dead socket while
+	// `findConsole` keeps reporting the respawned window as live (observed
+	// as UC-G02 "console did not close" after ~230s).
+	const attempts: Array<(s: LiveSurface) => Promise<unknown>> = [
+		async (s) => {
+			const conn = await ctx.cdp(s);
 			await conn.send("Page.close", {}, 5_000);
 		},
-		async () => {
-			await ctx.evalJs(surface, "window.close()");
+		async (s) => {
+			await ctx.evalJs(s, "window.close()");
 		},
-		async () => {
+		async (s) => {
 			await ctx.evalJs(
-				surface,
+				s,
 				`(() => {
 					try {
 						if (typeof CSInterface === "function") {
@@ -64,9 +68,20 @@ const closeSurface = async (
 		},
 	];
 	for (let round = 0; round < 3; round += 1) {
+		const current = await findConsole(ctx);
+		if (!current) {
+			// Already gone — still confirm it stays gone across the
+			// open-retry window before reporting success.
+			await sleep(3_000);
+			if ((await findConsole(ctx)) === null) return true;
+			continue;
+		}
 		for (const attempt of attempts) {
+			// Re-resolve inside the attempt loop too: a respawn between
+			// attempts swaps the live target again.
+			const target = (await findConsole(ctx)) ?? current;
 			try {
-				await attempt();
+				await attempt(target);
 			} catch {
 				// try the next close path
 			}
@@ -154,7 +169,7 @@ export const debugCases: E2ECase[] = [
 				// Start from a closed console so open/close/reopen is exercised.
 				const preExisting = await findConsole(ctx);
 				if (preExisting) {
-					await closeSurface(ctx, preExisting);
+					await closeSurface(ctx);
 				}
 
 				const first = await openConsole(ctx);
@@ -183,7 +198,7 @@ export const debugCases: E2ECase[] = [
 				);
 				const firstCount = firstState?.msgCount ?? 0;
 
-				const closed = await closeSurface(ctx, first);
+				const closed = await closeSurface(ctx);
 				checks.push(
 					check(
 						"debug console closes",
@@ -238,7 +253,7 @@ export const debugCases: E2ECase[] = [
 				// a pending requestOpenExtension cannot resurrect it.
 				await closeSurfaceSettled(
 					() => findConsole(ctx),
-					(s) => closeSurface(ctx, s),
+					() => closeSurface(ctx),
 				);
 			}
 		},
