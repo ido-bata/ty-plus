@@ -11,15 +11,19 @@ const contentShell = css({
 	gap: "3",
 	overflowX: "hidden",
 	overflowY: "auto",
-	bg: "surface.dialog",
 	paddingInline: "var(--ty-shell-pad-inline)",
 	WebkitOverflowScrolling: "touch",
 	scrollbarGutter: "stable",
 	scrollbarWidth: "thin",
-	scrollbarColor: "transparent transparent",
+	// The scrollbar thumb must be visible at rest — a fully transparent
+	// thumb gives zero overflow affordance (issue #735). It shares the
+	// workspace scrollbar tokens so dialogs and the workspace read the
+	// same.
+	scrollbarColor:
+		"rgba(var(--text-r),var(--text-g),var(--text-b),var(--ty-opacity-ws-scrollbar-thumb-strong)) transparent",
 	_hover: {
 		scrollbarColor:
-			"rgba(var(--text-r),var(--text-g),var(--text-b),0.28) transparent",
+			"rgba(var(--text-r),var(--text-g),var(--text-b),0.4) transparent",
 	},
 });
 
