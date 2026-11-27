@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Check, MoreHorizontal, Plus } from "lucide-react";
 import { expect } from "storybook/test";
+import { expectCanvasLayout } from "@/storybook/quality/layout";
 import { css } from "@/styled-system/css";
 
 import { IconButton } from "./IconButton";
@@ -121,6 +122,37 @@ export const Active: Story = {
 			unpressedStyle.backgroundColor,
 		);
 		expect(pressedStyle.color).not.toBe(unpressedStyle.color);
+	},
+};
+
+// Issue #166: hover-state capture — a real-pointer hover must lift the
+// ghost variant to `interactive.hover` (and brighten the glyph); the
+// post-play state is what the capture pipeline screenshots.
+export const Hovered: Story = {
+	play: async ({ canvasElement }) => {
+		expectCanvasLayout(canvasElement);
+		const button = canvasElement.querySelector("button");
+		if (!button) throw new Error("button not found");
+		const { userEvent } = await import("vitest/browser");
+		const resting = getComputedStyle(button).backgroundColor;
+		await userEvent.hover(button);
+		await expect(button.matches(":hover")).toBe(true);
+		await new Promise((resolve) => setTimeout(resolve, 300));
+		await expect(getComputedStyle(button).backgroundColor).not.toBe(resting);
+		expectCanvasLayout(canvasElement);
+	},
+};
+
+// Issue #166: keyboard focus must reach the button and paint the shared
+// focus ring (`--color-focus-ring` box-shadow under `:focus-visible`).
+export const Focused: Story = {
+	play: async ({ canvasElement }) => {
+		const button = canvasElement.querySelector("button");
+		if (!button) throw new Error("button not found");
+		button.focus();
+		await expect(document.activeElement).toBe(button);
+		await expect(button.matches(":focus")).toBe(true);
+		expectCanvasLayout(canvasElement);
 	},
 };
 

@@ -108,3 +108,24 @@ export const ZeroCount: Story = {
 export const WithToggleHandler: Story = {
 	args: { onToggle: () => undefined, title: "Transitions" },
 };
+
+// Issue #166: the header is a real toggle — a click must flip
+// `aria-expanded`, rotate the chevron, and unmount the panel. The
+// post-play collapsed state is what the capture pipeline screenshots.
+export const ToggleOnClick: Story = {
+	args: { onToggle: () => undefined, title: "Transitions" },
+	play: async ({ canvasElement }) => {
+		const button = canvasElement.querySelector("button");
+		if (!button) throw new Error("group toggle button not found");
+		const group = canvasElement.querySelector<HTMLElement>(
+			"[data-directory-browser-group]",
+		);
+		if (!group) throw new Error("group container not found");
+		await expect(button.getAttribute("aria-expanded")).toBe("true");
+		await expect(group.textContent).toContain("presets in this group");
+		const { userEvent } = await import("vitest/browser");
+		await userEvent.click(button);
+		await expect(button.getAttribute("aria-expanded")).toBe("false");
+		await expect(group.textContent).not.toContain("presets in this group");
+	},
+};

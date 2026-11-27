@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { expect } from "storybook/test";
 
 import { Group, MenuWidget } from "@/function/widget/core/menu/Component";
 import type { SurfaceState } from "@/management/workspace/core/state";
@@ -187,4 +188,50 @@ export const Nested: StoryObj<Args> = {
 			</Group>
 		</div>
 	),
+};
+
+/**
+ * Issue #166 — hover-state capture. Menu rows own the hover fill
+ * (`interactive.hover` on the row div); the bare hit-area Button is a
+ * child, so a real-pointer hover over it must light the parent row.
+ * The post-play hovered row is what the capture pipeline screenshots.
+ */
+export const HoveredItem: StoryObj<Args> = {
+	render: () => (
+		<div
+			role="menu"
+			className={css({
+				padding: "3",
+				display: "flex",
+				flexDirection: "column",
+				gap: "2",
+				minWidth: "20",
+			})}
+		>
+			<Group
+				title="Hover target group"
+				items={[
+					{ action: "h-1", label: "First item" },
+					{ action: "h-2", label: "Second item" },
+					{ action: "h-3", label: "Third item" },
+				]}
+				openerWorkspacePanelId="panel-1"
+				open
+			/>
+		</div>
+	),
+	play: async ({ canvasElement }) => {
+		const hitArea = canvasElement.querySelector<HTMLButtonElement>(
+			'button[role="menuitem"]',
+		);
+		if (!hitArea) throw new Error("menu item hit area not found");
+		const row = hitArea.parentElement;
+		if (!row) throw new Error("menu item row not found");
+		const resting = getComputedStyle(row).backgroundColor;
+		const { userEvent } = await import("vitest/browser");
+		await userEvent.hover(hitArea);
+		await expect(row.matches(":hover")).toBe(true);
+		await new Promise((resolve) => setTimeout(resolve, 300));
+		await expect(getComputedStyle(row).backgroundColor).not.toBe(resting);
+	},
 };

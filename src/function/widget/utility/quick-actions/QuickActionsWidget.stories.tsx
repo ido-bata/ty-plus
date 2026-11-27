@@ -158,6 +158,32 @@ export const EmptyResults: Story = {
 	},
 };
 
+// Issue #166: palette rows select on hover (`onMouseEnter` → `onSelect`)
+// — the selected row repaints to `interactive.hover`. The post-play
+// hovered row is what the capture pipeline screenshots. The dropdown
+// portals to `document.body`, so assertions run against `document`.
+export const RowHoverSelects: Story = {
+	play: async ({ canvasElement }) => {
+		const { userEvent } = await import("vitest/browser");
+		const input = findSearchInput(canvasElement);
+		await userEvent.click(input);
+		await waitFor(() => {
+			expect(paletteRows().length).toBe(SAMPLE_PRESETS.length);
+		});
+		// Row 0 is the default active index, so hover the last row — its
+		// resting surface must differ from the selected `interactive.hover`.
+		const rows = paletteRows();
+		const row = rows[rows.length - 1];
+		const hitArea = row?.querySelector("button");
+		if (!row || !hitArea) throw new Error("palette row not found");
+		const resting = getComputedStyle(row).backgroundColor;
+		await userEvent.hover(hitArea);
+		await waitFor(() => {
+			expect(getComputedStyle(row).backgroundColor).not.toBe(resting);
+		});
+	},
+};
+
 export const WithQuery: Story = {
 	play: async ({ canvasElement }) => {
 		const { userEvent } = await import("vitest/browser");

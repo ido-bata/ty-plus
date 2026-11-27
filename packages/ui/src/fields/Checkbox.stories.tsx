@@ -11,10 +11,16 @@ const meta = {
 		uiSize: { control: "select", options: ["sm", "md"] },
 		disabled: { control: "boolean" },
 		indeterminate: { control: "boolean" },
+		// Static-state fixtures pass `checked` without a handler; a noop
+		// `onChange` keeps React from logging the read-only-field warning
+		// into the capture report's consoleErrors. The `Interactive` story
+		// overrides it with a real state setter.
+		onChange: { control: false },
 	},
 	args: {
 		label: "Select entry",
 		uiSize: "md",
+		onChange: () => undefined,
 	},
 } satisfies Meta<typeof Checkbox>;
 
