@@ -1,5 +1,9 @@
-import { describe, expect, it } from "vitest";
-import { themeReconcilePlanFromSettingsJson } from "./theme-reconcile";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import {
+	reconcileSettingsThemeOverridesWithRetry,
+	type ThemeReconcileResult,
+	themeReconcilePlanFromSettingsJson,
+} from "./theme-reconcile";
 
 /**
  * Issue #112 — boot reconcile plan: app.json `ui.*` / `workspace.grid`
@@ -62,5 +66,66 @@ describe("themeReconcilePlanFromSettingsJson", () => {
 			}),
 		);
 		expect(plan?.grid).toBeNull();
+	});
+});
+
+/**
+ * Issue #713 — the boot reconcile must survive a transient `theme.css`
+ * write-lock timeout under host load: it retries with bounded delays and
+ * only gives up after the last attempt, rethrowing that error.
+ */
+describe("reconcileSettingsThemeOverridesWithRetry", () => {
+	afterEach(() => {
+		vi.useRealTimers();
+	});
+
+	const win = {} as Window;
+	const surface = "panel-1";
+
+	it("returns the first successful result without retrying", async () => {
+		const reconcile = vi
+			.fn<() => Promise<ThemeReconcileResult>>()
+			.mockResolvedValue("written");
+		await expect(
+			reconcileSettingsThemeOverridesWithRetry(win, surface, reconcile),
+		).resolves.toBe("written");
+		expect(reconcile).toHaveBeenCalledTimes(1);
+		expect(reconcile).toHaveBeenCalledWith(win, surface);
+	});
+
+	it("retries after a failure and succeeds on a later attempt", async () => {
+		vi.useFakeTimers();
+		const reconcile = vi
+			.fn<() => Promise<ThemeReconcileResult>>()
+			.mockRejectedValueOnce(new Error("lock timeout"))
+			.mockResolvedValue("skipped");
+		const pending = reconcileSettingsThemeOverridesWithRetry(
+			win,
+			surface,
+			reconcile,
+		);
+		await vi.advanceTimersByTimeAsync(5_000);
+		await expect(pending).resolves.toBe("skipped");
+		expect(reconcile).toHaveBeenCalledTimes(2);
+	});
+
+	it("rethrows the last error after exhausting all attempts", async () => {
+		vi.useFakeTimers();
+		const last = new Error("still locked");
+		const reconcile = vi
+			.fn<() => Promise<ThemeReconcileResult>>()
+			.mockRejectedValueOnce(new Error("first"))
+			.mockRejectedValueOnce(new Error("second"))
+			.mockRejectedValueOnce(last);
+		const pending = reconcileSettingsThemeOverridesWithRetry(
+			win,
+			surface,
+			reconcile,
+		);
+		const assertion = expect(pending).rejects.toBe(last);
+		await vi.advanceTimersByTimeAsync(5_000);
+		await vi.advanceTimersByTimeAsync(15_000);
+		await assertion;
+		expect(reconcile).toHaveBeenCalledTimes(3);
 	});
 });

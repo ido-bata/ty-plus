@@ -80,7 +80,7 @@ import {
 	type WorkspacePresetHoverDetail,
 } from "@/management/preset/workspace/GridCatalogTile";
 import { ensureUiSettingsFile } from "@/management/setting/persistence/workspace-ui-settings-file";
-import { reconcileSettingsThemeOverrides } from "@/management/setting/theme-reconcile";
+import { reconcileSettingsThemeOverridesWithRetry } from "@/management/setting/theme-reconcile";
 import {
 	clearLayoutNJson,
 	clearWorkspacePanelStateFromSettingsJson,
@@ -567,24 +567,45 @@ export function useWorkspaceRuntime(root: Element | null): {
 		// Bug 6: clear the session-scoped layout-undo cache at AE startup so
 		// any state from a prior AE session is dropped. Within a single
 		// session the cache survives panel reloads (F5 / close-reopen).
-		void initLayoutUndoCache(window, panelId);
+		void initLayoutUndoCache(window, panelId).catch(() => {});
 
 		const history = createHistoryManager(panelId, window);
-		void history.init().then(() => {
-			history.push(
-				layoutsFromSurface(
-					getState().surfaceTiles,
-					widgetResolutionFromCatalogContext(getState()),
-				),
-			);
-			void history.listSnapshots().then((snaps) => {
-				setUi({
-					canUndo: history.canUndo(),
-					canRedo: history.canRedo(),
-					snapshots: snaps,
+		// Snapshot-list refresh is best-effort UI state: a failed read
+		// (e.g. a persistence I/O error while the host is loaded, Issue
+		// #713) must not escape as an unhandled rejection — the debug
+		// console surfaces those as bare `unhandled promise rejection`
+		// rows with no stack.
+		const refreshSnapshotListUi = (): void => {
+			void history
+				.listSnapshots()
+				.then((snaps) => {
+					setUi({
+						canUndo: history.canUndo(),
+						canRedo: history.canRedo(),
+						snapshots: snaps,
+					});
+				})
+				.catch((error) => {
+					console.warn("[WorkspaceHistory] snapshot list refresh failed", {
+						panelId,
+						error,
+					});
 				});
+		};
+		void history
+			.init()
+			.then(() => {
+				history.push(
+					layoutsFromSurface(
+						getState().surfaceTiles,
+						widgetResolutionFromCatalogContext(getState()),
+					),
+				);
+				refreshSnapshotListUi();
+			})
+			.catch((error) => {
+				console.warn("[WorkspaceHistory] init failed", { panelId, error });
 			});
-		});
 
 		// ── Persistence (F2) ────────────────────────────────────────────────────
 		let lastSavedSurfaceState = "";
@@ -1030,13 +1051,7 @@ export function useWorkspaceRuntime(root: Element | null): {
 				}),
 			});
 			persistSurfaceState();
-			void history.listSnapshots().then((snaps) => {
-				setUi({
-					canUndo: history.canUndo(),
-					canRedo: history.canRedo(),
-					snapshots: snaps,
-				});
-			});
+			refreshSnapshotListUi();
 		};
 
 		const openWidgetAddUi = (openerPanelKey: string): void => {
@@ -1311,33 +1326,44 @@ export function useWorkspaceRuntime(root: Element | null): {
 					// across surfaces and the write queue is per-window, so a
 					// single surface must own the reconcile. Idempotent — a
 					// converged store writes nothing and broadcasts nothing.
+					// The retry wrapper (Issue #713) keeps a transient
+					// write-lock timeout under host load from permanently
+					// skipping the projection.
 					if (panelSurfaceId === "panel-1") {
-						void reconcileSettingsThemeOverrides(window, panelSurfaceId).catch(
-							(error) => {
-								console.warn("[settings-theme] boot reconcile failed", error);
-							},
-						);
+						void reconcileSettingsThemeOverridesWithRetry(
+							window,
+							panelSurfaceId,
+						).catch((error) => {
+							console.warn("[settings-theme] boot reconcile failed", error);
+						});
 					}
 
 					// Load background from file
-					void readBackgroundJson(window, wsIndex).then((bgJson) => {
-						if (bgJson == null) return;
-						let bg: unknown;
-						try {
-							bg = JSON.parse(bgJson);
-						} catch (e) {
-							console.warn("[WorkspaceBackground] file:parse-failed", {
-								panelId: getState().panelId,
-								error: e,
+					void readBackgroundJson(window, wsIndex)
+						.then((bgJson) => {
+							if (bgJson == null) return;
+							let bg: unknown;
+							try {
+								bg = JSON.parse(bgJson);
+							} catch (e) {
+								console.warn("[WorkspaceBackground] file:parse-failed", {
+									panelId: getState().panelId,
+									error: e,
+								});
+								return;
+							}
+							const cur2 = getState();
+							commit({
+								...cur2,
+								bg: bg as typeof cur2.bg,
 							});
-							return;
-						}
-						const cur2 = getState();
-						commit({
-							...cur2,
-							bg: bg as typeof cur2.bg,
+						})
+						.catch((error) => {
+							console.warn("[WorkspaceBackground] file:read-failed", {
+								panelId: getState().panelId,
+								error,
+							});
 						});
-					});
 				}
 			} catch (error) {
 				// The old version of this catch was bare and its comment claimed
@@ -1602,13 +1628,7 @@ export function useWorkspaceRuntime(root: Element | null): {
 			}
 			commit({ ...cur, ...result });
 			persistSurfaceState();
-			void history.listSnapshots().then((snaps) => {
-				setUi({
-					canUndo: history.canUndo(),
-					canRedo: history.canRedo(),
-					snapshots: snaps,
-				});
-			});
+			refreshSnapshotListUi();
 		};
 
 		// ── Dialog helpers (extracted to hooks/dialogs.ts) ────────────────────────
@@ -2338,12 +2358,12 @@ export function useWorkspaceRuntime(root: Element | null): {
 							),
 						)
 						.then(() => {
-							void history.listSnapshots().then((snaps) => {
-								setUi({
-									canUndo: history.canUndo(),
-									canRedo: history.canRedo(),
-									snapshots: snaps,
-								});
+							refreshSnapshotListUi();
+						})
+						.catch((error) => {
+							console.warn("[WorkspaceHistory] save snapshot failed", {
+								panelId,
+								error,
 							});
 						});
 					return;
@@ -2352,33 +2372,46 @@ export function useWorkspaceRuntime(root: Element | null): {
 						CTX_MENU_IDS.restoreSnapshotPrefix.length,
 					);
 					if (!snapId) return;
-					void history.restoreSnapshot(snapId).then((allPanels) => {
-						if (!allPanels) return;
-						const currentPanelId = cur.panelId;
-						const currentPanelLayout = allPanels[currentPanelId];
-						if (currentPanelLayout) {
-							const result = applyWidgetsFromModule(currentPanelLayout, cur);
-							if (result) {
-								commit({ ...cur, ...result });
+					void history
+						.restoreSnapshot(snapId)
+						.then((allPanels) => {
+							if (!allPanels) return;
+							const currentPanelId = cur.panelId;
+							const currentPanelLayout = allPanels[currentPanelId];
+							if (currentPanelLayout) {
+								const result = applyWidgetsFromModule(currentPanelLayout, cur);
+								if (result) {
+									commit({ ...cur, ...result });
+								}
 							}
-						}
-						void (async () => {
-							await Promise.all(
-								Object.entries(allPanels).map(([panelId, layouts]) => {
-									const idx = indexFromPanelId(panelId);
-									const tiles = layouts.map((w) => ({
-										id: w.id,
-										x: w.x,
-										y: w.y,
-										width: w.width,
-										height: w.height,
-									}));
-									return writeNJson(window, idx, serialize(tiles));
-								}),
-							);
-							persistSurfaceState();
-						})();
-					});
+							void (async () => {
+								await Promise.all(
+									Object.entries(allPanels).map(([panelId, layouts]) => {
+										const idx = indexFromPanelId(panelId);
+										const tiles = layouts.map((w) => ({
+											id: w.id,
+											x: w.x,
+											y: w.y,
+											width: w.width,
+											height: w.height,
+										}));
+										return writeNJson(window, idx, serialize(tiles));
+									}),
+								);
+								persistSurfaceState();
+							})().catch((error) => {
+								console.warn("[WorkspaceHistory] restore write failed", {
+									panelId,
+									error,
+								});
+							});
+						})
+						.catch((error) => {
+							console.warn("[WorkspaceHistory] restore snapshot failed", {
+								panelId,
+								error,
+							});
+						});
 					return;
 				}
 				case CTX_MENU_IDS.openPresets:
@@ -2729,13 +2762,7 @@ export function useWorkspaceRuntime(root: Element | null): {
 						),
 					});
 					persistSurfaceState();
-					void history.listSnapshots().then((snaps) => {
-						setUi({
-							canUndo: history.canUndo(),
-							canRedo: history.canRedo(),
-							snapshots: snaps,
-						});
-					});
+					refreshSnapshotListUi();
 					return;
 				}
 				case CTX_MENU_IDS.deletePreset: {
@@ -3543,24 +3570,12 @@ export function useWorkspaceRuntime(root: Element | null): {
 						lastWidgetsSnapshot = nextWidgetsSnapshot;
 					}
 				}
-				void history.listSnapshots().then((snaps) => {
-					setUi({
-						canUndo: history.canUndo(),
-						canRedo: history.canRedo(),
-						snapshots: snaps,
-					});
-				});
+				refreshSnapshotListUi();
 			},
 			() => {
 				commit({ ...getState() });
 				persistSurfaceState();
-				void history.listSnapshots().then((snaps) => {
-					setUi({
-						canUndo: history.canUndo(),
-						canRedo: history.canRedo(),
-						snapshots: snaps,
-					});
-				});
+				refreshSnapshotListUi();
 			},
 			{
 				hostCode,
@@ -3818,62 +3833,78 @@ export function useWorkspaceRuntime(root: Element | null): {
 						),
 					)
 					.then(() => {
-						void history.listSnapshots().then((snaps) => {
-							setUi({
-								canUndo: history.canUndo(),
-								canRedo: history.canRedo(),
-								snapshots: snaps,
-							});
+						refreshSnapshotListUi();
+					})
+					.catch((error) => {
+						console.warn("[WorkspaceHistory] save snapshot failed", {
+							panelId,
+							error,
 						});
 					});
 			} else if (action === "restore-snapshot") {
 				ev.preventDefault();
 				const id = btn.getAttribute("data-snap-id");
 				if (id) {
-					void history.restoreSnapshot(id).then((allPanels) => {
-						if (!allPanels) return;
-						const cur = getState();
-						const currentPanelId = cur.panelId;
-						const currentPanelLayout = allPanels[currentPanelId];
-						if (currentPanelLayout) {
-							const result = applyWidgetsFromModule(currentPanelLayout, cur);
-							if (result) {
-								commit({ ...cur, ...result });
+					void history
+						.restoreSnapshot(id)
+						.then((allPanels) => {
+							if (!allPanels) return;
+							const cur = getState();
+							const currentPanelId = cur.panelId;
+							const currentPanelLayout = allPanels[currentPanelId];
+							if (currentPanelLayout) {
+								const result = applyWidgetsFromModule(currentPanelLayout, cur);
+								if (result) {
+									commit({ ...cur, ...result });
+								}
 							}
-						}
-						// Write all panel layouts to disk
-						const _persistenceRootArg = lastPersistenceManagedRoot ?? undefined;
-						void (async () => {
-							await Promise.all(
-								Object.entries(allPanels).map(([panelId, layouts]) => {
-									const idx = indexFromPanelId(panelId);
-									const tiles = layouts.map((w) => ({
-										id: w.id,
-										x: w.x,
-										y: w.y,
-										width: w.width,
-										height: w.height,
-									}));
-									return writeNJson(window, idx, serialize(tiles));
-								}),
-							);
-							persistSurfaceState();
-						})();
-					});
+							// Write all panel layouts to disk
+							const _persistenceRootArg =
+								lastPersistenceManagedRoot ?? undefined;
+							void (async () => {
+								await Promise.all(
+									Object.entries(allPanels).map(([panelId, layouts]) => {
+										const idx = indexFromPanelId(panelId);
+										const tiles = layouts.map((w) => ({
+											id: w.id,
+											x: w.x,
+											y: w.y,
+											width: w.width,
+											height: w.height,
+										}));
+										return writeNJson(window, idx, serialize(tiles));
+									}),
+								);
+								persistSurfaceState();
+							})().catch((error) => {
+								console.warn("[WorkspaceHistory] restore write failed", {
+									panelId,
+									error,
+								});
+							});
+						})
+						.catch((error) => {
+							console.warn("[WorkspaceHistory] restore snapshot failed", {
+								panelId,
+								error,
+							});
+						});
 				}
 			} else if (action === "delete-snapshot") {
 				ev.preventDefault();
 				const id = btn.getAttribute("data-snap-id");
 				if (id) {
-					void history.deleteSnapshot(id).then(() => {
-						void history.listSnapshots().then((snaps) => {
-							setUi({
-								canUndo: history.canUndo(),
-								canRedo: history.canRedo(),
-								snapshots: snaps,
+					void history
+						.deleteSnapshot(id)
+						.then(() => {
+							refreshSnapshotListUi();
+						})
+						.catch((error) => {
+							console.warn("[WorkspaceHistory] delete snapshot failed", {
+								panelId,
+								error,
 							});
 						});
-					});
 				}
 			} else if (action === "open-dialog") {
 				ev.preventDefault();
