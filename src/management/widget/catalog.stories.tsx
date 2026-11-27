@@ -70,6 +70,18 @@ export const Default: Story = {};
 /** Pre-filtered query narrowing the catalog to easing-related widgets. */
 export const Filtered: Story = {
 	render: renderCatalog("easing"),
+	// Issue #754: filtering narrows the list but does not select — the
+	// unadorned result is spec, not a missing active style. Selection only
+	// appears after a click (see SelectOnClick).
+	play: async ({ canvasElement }) => {
+		const items = canvasElement.querySelectorAll<HTMLElement>(
+			"[data-add-widget-type]",
+		);
+		expect(items.length).toBeGreaterThan(0);
+		for (const item of items) {
+			expect(item.getAttribute("aria-pressed")).toBe("false");
+		}
+	},
 };
 
 /** Query that matches nothing — empty-results state. */

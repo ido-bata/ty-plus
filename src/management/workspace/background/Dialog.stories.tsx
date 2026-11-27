@@ -103,6 +103,23 @@ export const Empty: Story = {
 		expect(labels).toContain("Clear all");
 		expect(labels).toContain("Cancel");
 		expect(labels).toContain("Save");
+		// Issue #754: the default layer colour (#1e1e1e) is the first preset
+		// swatch — its selection ring must be perceptible (ink-40), not the
+		// near-invisible ink-12 that read as "no selection". Preset swatches
+		// carry `title={color}`; the layer-list chip must not match. The
+		// editor mounts after the async persistence read, so poll for it.
+		await waitFor(() => {
+			const swatch = canvasElement.querySelector<HTMLButtonElement>(
+				'button[title="#1e1e1e"]',
+			);
+			if (!swatch) throw new Error("selected colour swatch not found");
+			const ring = getComputedStyle(swatch).boxShadow;
+			expect(ring).not.toBe("none");
+			const alphaMatch = ring.match(/rgba?\([^)]*,\s*([\d.]+)\)/);
+			expect(alphaMatch ? Number.parseFloat(alphaMatch[1]) : 0).toBeGreaterThan(
+				0.3,
+			);
+		});
 	},
 };
 
@@ -118,5 +135,14 @@ export const WithLayers: Story = {
 			expect(canvasElement.textContent).toContain("Dots");
 		});
 		expect(canvasElement.textContent).toContain("Color");
+		// Issue #754: the seeded pattern layer carries no `patternColor`, so
+		// the preview must still paint the dots gradient — the old
+		// `var(--color-ws-transparent-rgb-*)` fallback invalidated the whole
+		// `background-image` and the box rendered solid.
+		const preview = Array.from(
+			canvasElement.querySelectorAll<HTMLElement>("div"),
+		).find((el) => el.style.backgroundImage.includes("radial-gradient"));
+		if (!preview) throw new Error("background preview gradient not found");
+		expect(preview.style.backgroundImage).not.toContain("ws-transparent-rgb");
 	},
 };

@@ -32,6 +32,10 @@ export function FontViewerSampleRow({
 		>
 			<ListSelect
 				uiSize="sm"
+				// Issue #754: intrinsic width keeps the preset picker on the
+				// same row as the sample Input instead of claiming 100% and
+				// wrapping it to a second line.
+				width="fitContent"
 				className={css({ flexShrink: 0 })}
 				options={[
 					...presets.map((p) => ({

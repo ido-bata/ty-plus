@@ -48,7 +48,11 @@ const presetSwatch = css({
 });
 
 const colorRing = css({
-	boxShadow: "0 0 0 1px var(--color-ty-ink-12)",
+	// Issue #754: ink-12 (white @ 12%) was effectively invisible on the
+	// darkest preset swatch (#1e1e1e) — the selected state read as
+	// unselected. ink-40 keeps the ring quiet but perceptible on every
+	// preset, including the near-black ones.
+	boxShadow: "0 0 0 1px var(--color-ty-ink-40)",
 });
 
 export function LayerIcon({ layer }: { layer: Layer }): JSX.Element {

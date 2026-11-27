@@ -5,26 +5,43 @@ import type {
 	PatternValue,
 } from "@/management/workspace/background/contract";
 
+/*
+ * Fallback colours must be concrete hex, not `var(--color-ws-*)` references:
+ * `hexToRgba` has to bake the layer opacity into an `rgba()` triplet, which
+ * a `var()` cannot provide — the unresolved `var(--color-ws-transparent-rgb-*)`
+ * fallback invalidated the whole `background-image` declaration and the
+ * preview/grid rendered solid (issue #754). Values mirror the
+ * `color-ws-*` tokens in `design-tokens-defaults.ts`.
+ */
 const DEFAULT_GRID_BG = "var(--color-ty-bg-surface)";
-const BG_DEFAULT = "var(--color-ws-bg-default)";
-const PATTERN_FG = "var(--color-ws-pattern-fg)";
-const PATTERN_BG = "var(--color-ws-pattern-bg)";
+const BG_DEFAULT = "#1d1d1d";
+const PATTERN_FG = "#383838";
+const PATTERN_BG = "transparent";
 
 function hexToRgba(hex: string, opacityPct: number): string {
 	if (hex === "transparent") {
 		return "var(--color-ws-transparent)";
 	}
-	const h = hex.startsWith("#") ? hex.slice(1) : hex;
+	const alpha = opacityPct / 100;
+	let h = hex.startsWith("#") ? hex.slice(1) : hex;
+	// `#rgb` shorthand expands to `#rrggbb` before parsing.
+	if (h.length === 3) {
+		h = h
+			.split("")
+			.map((c) => c + c)
+			.join("");
+	}
+	const invalid = `rgba(0, 0, 0, ${alpha})`;
 	if (h.length < 6) {
-		return `rgba(var(--color-ws-transparent-rgb-r), var(--color-ws-transparent-rgb-g), var(--color-ws-transparent-rgb-b), ${opacityPct / 100})`;
+		return invalid;
 	}
 	const r = Number.parseInt(h.slice(0, 2), 16);
 	const g = Number.parseInt(h.slice(2, 4), 16);
 	const b = Number.parseInt(h.slice(4, 6), 16);
 	if ([r, g, b].some((n) => Number.isNaN(n))) {
-		return `rgba(var(--color-ws-transparent-rgb-r), var(--color-ws-transparent-rgb-g), var(--color-ws-transparent-rgb-b), ${opacityPct / 100})`;
+		return invalid;
 	}
-	return `rgba(${r},${g},${b},${opacityPct / 100})`;
+	return `rgba(${r},${g},${b},${alpha})`;
 }
 
 function filePathToCssUrl(path: string): string {

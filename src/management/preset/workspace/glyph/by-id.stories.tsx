@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import type { JSX } from "react";
 import type { Preset } from "@/management/preset/contract";
 import { presetIconText } from "@/management/preset/contract";
+import { WorkspaceTileFrame } from "@/management/workspace/surface/TileFrame";
 import { css } from "@/styled-system/css";
 
 import { PresetGlyphById } from "./by-id";
@@ -54,14 +56,27 @@ const meta = {
 			</div>
 		),
 	],
-	render: (args: Args) => (
-		<PresetGlyphById
-			presetId={args.presetId}
-			preset={makePreset(args.presetId)}
-			boxClass={css({ height: "32", width: "32" })}
-			surface={args.surface}
-		/>
-	),
+	render: (args: Args): JSX.Element => {
+		const glyph = (
+			<PresetGlyphById
+				presetId={args.presetId}
+				preset={makePreset(args.presetId)}
+				boxClass={css({ height: "32", width: "32" })}
+				surface={args.surface}
+			/>
+		);
+		// The `catalog` surface is chromeless by contract — the tile frame
+		// supplies background/border (issue #754: a bare host rendered the
+		// glyph text floating on the panel). `framed` carries its own chrome.
+		if (args.surface === "catalog") {
+			return (
+				<WorkspaceTileFrame className={css({ height: "32", width: "32" })}>
+					{glyph}
+				</WorkspaceTileFrame>
+			);
+		}
+		return glyph;
+	},
 } satisfies Meta<Args>;
 
 export default meta;
