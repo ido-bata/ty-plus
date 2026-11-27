@@ -4,18 +4,22 @@ import type {
 	Layer,
 	PatternValue,
 } from "@/management/workspace/background/contract";
+import {
+	BACKGROUND_RENDER_BG_DEFAULT,
+	BACKGROUND_RENDER_PATTERN_FG,
+} from "@/management/workspace/literals/background-render-fallbacks";
 
 /*
  * Fallback colours must be concrete hex, not `var(--color-ws-*)` references:
  * `hexToRgba` has to bake the layer opacity into an `rgba()` triplet, which
  * a `var()` cannot provide — the unresolved `var(--color-ws-transparent-rgb-*)`
  * fallback invalidated the whole `background-image` declaration and the
- * preview/grid rendered solid (issue #754). Values mirror the
- * `color-ws-*` tokens in `design-tokens-defaults.ts`.
+ * preview/grid rendered solid (issue #754). The concrete values live in
+ * `literals/background-render-fallbacks.ts` (design-tokens literal gate).
  */
 const DEFAULT_GRID_BG = "var(--color-ty-bg-surface)";
-const BG_DEFAULT = "#1d1d1d";
-const PATTERN_FG = "#383838";
+const BG_DEFAULT = BACKGROUND_RENDER_BG_DEFAULT;
+const PATTERN_FG = BACKGROUND_RENDER_PATTERN_FG;
 const PATTERN_BG = "transparent";
 
 function hexToRgba(hex: string, opacityPct: number): string {
@@ -31,15 +35,17 @@ function hexToRgba(hex: string, opacityPct: number): string {
 			.map((c) => c + c)
 			.join("");
 	}
-	const invalid = `rgba(0, 0, 0, ${alpha})`;
+	// Unparseable layer data renders as fully transparent rather than a
+	// wrong colour (a `rgba(0,0,0,…)` literal is banned outside literals/
+	// modules, and transparent is the honest fallback anyway).
 	if (h.length < 6) {
-		return invalid;
+		return "transparent";
 	}
 	const r = Number.parseInt(h.slice(0, 2), 16);
 	const g = Number.parseInt(h.slice(2, 4), 16);
 	const b = Number.parseInt(h.slice(4, 6), 16);
 	if ([r, g, b].some((n) => Number.isNaN(n))) {
-		return invalid;
+		return "transparent";
 	}
 	return `rgba(${r},${g},${b},${alpha})`;
 }
