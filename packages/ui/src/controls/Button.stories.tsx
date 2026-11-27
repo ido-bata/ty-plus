@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { expect } from "storybook/test";
+import { borderTopColor, resolveBorderToken } from "@/storybook/quality/border";
 import { expectCanvasLayout } from "@/storybook/quality/layout";
 import { css } from "@/styled-system/css";
 
@@ -121,6 +122,24 @@ export const AllVariants: Story = {
 			</Button>
 		</div>
 	),
+	play: async ({ canvasElement }) => {
+		expectCanvasLayout(canvasElement);
+		// Issue #722: bordered non-primary variants rest on the
+		// non-assertive `border.subtle` tier — ghost included — while
+		// `border.control` stays reserved for identifiable text fields.
+		const byText = (label: string): HTMLButtonElement => {
+			const el = Array.from(
+				canvasElement.querySelectorAll<HTMLButtonElement>("button"),
+			).find((b) => b.textContent === label);
+			if (!el) throw new Error(`button "${label}" not found`);
+			return el;
+		};
+		for (const label of ["Default", "Secondary", "Ghost", "Danger"]) {
+			const color = borderTopColor(byText(label));
+			expect(color).toBe(resolveBorderToken("subtle"));
+			expect(color).not.toBe(resolveBorderToken("control"));
+		}
+	},
 };
 
 export const AllSizes: Story = {

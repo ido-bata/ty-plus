@@ -28,7 +28,9 @@ const fieldsetClass = css({
 	borderRadius: "shell-sm",
 	borderWidth: "hairline",
 	borderStyle: "solid",
-	borderColor: "border.control",
+	// Issue #722: passive segmented container — resting border uses the
+	// non-assertive `border.subtle` tier, not `border.control`.
+	borderColor: "border.subtle",
 	backgroundColor: "surface.widget",
 	padding: "px",
 });

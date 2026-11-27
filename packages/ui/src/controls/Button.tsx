@@ -164,7 +164,10 @@ const variants: Record<ButtonVariant, string> = {
 	ghost: css({
 		borderWidth: "hairline",
 		borderStyle: "solid",
-		borderColor: "border.control",
+		// Issue #722: ghost rests on the same `border.subtle` tier as the
+		// default/secondary/danger variants; focus escalates to
+		// `interactive.focus` + the shared ring.
+		borderColor: "border.subtle",
 		backgroundColor: "transparent",
 		color: "text.muted",
 		_hover: {

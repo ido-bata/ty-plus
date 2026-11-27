@@ -61,7 +61,9 @@ const triggerBase = css({
 	borderRadius: "shell-sm",
 	borderWidth: "hairline",
 	borderStyle: "solid",
-	borderColor: "border.control",
+	// Issue #722: resting state stays on the non-assertive `border.subtle`
+	// tier; focus escalates to `interactive.focus` + the shared ring.
+	borderColor: "border.subtle",
 	backgroundColor: "surface.widget",
 	textAlign: "left",
 	color: "text.primary",
@@ -85,7 +87,7 @@ const listBox = css({
 	borderRadius: "shell-sm",
 	borderWidth: "hairline",
 	borderStyle: "solid",
-	borderColor: "border.control",
+	borderColor: "border.subtle",
 	backgroundColor: "surface.dialog",
 	paddingBlock: "1",
 	color: "text.primary",

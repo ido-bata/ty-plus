@@ -19,7 +19,10 @@ export const segmentedStripClass = css({
 	borderRadius: "shell-sm",
 	borderWidth: "hairline",
 	borderStyle: "solid",
-	borderColor: "border.control",
+	// Issue #722: the strip is passive chrome — its resting border stays on
+	// the non-assertive `border.subtle` tier; `border.control` is reserved
+	// for controls that must stay identifiable unfocused (text fields).
+	borderColor: "border.subtle",
 	backgroundColor: "surface.panel",
 	padding: "0.5",
 });
