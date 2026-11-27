@@ -17,6 +17,7 @@ import {
 import {
 	CANVAS_FALLBACK_GRID_COLOR,
 	CANVAS_FALLBACK_MUTED_COLOR,
+	CANVAS_FALLBACK_SURFACE_COLOR,
 	CANVAS_FALLBACK_TEXT_COLOR,
 } from "@/function/widget/literals/canvas-colors";
 import type { DragTarget } from "./hit-test";
@@ -27,6 +28,11 @@ const HANDLE_RADIUS = 5;
 const LABEL_HEIGHT = 10;
 const LABEL_MARGIN = 2;
 const LABEL_GAP = 3;
+/** Padding around the label text box for its surface-colored chip. */
+const LABEL_CHIP_PAD_X = 3;
+const LABEL_CHIP_PAD_Y = 2;
+/** Extra radius of the surface-colored halo behind interactive dots. */
+const DOT_HALO_PAD = 1.5;
 /** Max gap between wave samples used as label obstacles (px). */
 const WAVE_OBSTACLE_STEP = 4;
 
@@ -127,6 +133,57 @@ export const placeWaveHandleLabel = (input: {
 	return best;
 };
 
+export type WaveLabelChip = {
+	x: number;
+	y: number;
+	width: number;
+	height: number;
+};
+
+/**
+ * The surface-colored chip that backs a placed handle label. The chip
+ * guarantees legibility even when a dense waveform leaves no obstacle-free
+ * candidate: the stroke is masked behind the label instead of crossing the
+ * glyphs. The rect is clamped inside the canvas.
+ */
+export const waveLabelChipRect = (input: {
+	labelX: number;
+	labelY: number;
+	labelWidth: number;
+	canvasWidth: number;
+	canvasHeight: number;
+}): WaveLabelChip => {
+	const width = Math.min(
+		input.labelWidth + LABEL_CHIP_PAD_X * 2,
+		Math.max(1, input.canvasWidth - LABEL_MARGIN * 2),
+	);
+	const height = Math.min(
+		LABEL_HEIGHT + LABEL_CHIP_PAD_Y * 2,
+		Math.max(1, input.canvasHeight - LABEL_MARGIN * 2),
+	);
+	return {
+		x: Math.min(
+			Math.max(input.labelX - LABEL_CHIP_PAD_X, LABEL_MARGIN),
+			Math.max(LABEL_MARGIN, input.canvasWidth - LABEL_MARGIN - width),
+		),
+		y: Math.min(
+			Math.max(
+				input.labelY - LABEL_HEIGHT / 2 - LABEL_CHIP_PAD_Y,
+				LABEL_MARGIN,
+			),
+			Math.max(LABEL_MARGIN, input.canvasHeight - LABEL_MARGIN - height),
+		),
+		width,
+		height,
+	};
+};
+
+const pointInRect = (x: number, y: number, rect: WaveLabelChip): boolean =>
+	x >= rect.x &&
+	x <= rect.x + rect.width &&
+	y >= rect.y &&
+	y <= rect.y + rect.height;
+
 export type WaveScene = {
 	canvas: HTMLCanvasElement;
 	width: number;
@@ -168,6 +225,9 @@ export function drawWaveScene(
 	const grid =
 		style.getPropertyValue("--ty-border-surface").trim() ||
 		CANVAS_FALLBACK_GRID_COLOR;
+	const surface =
+		style.getPropertyValue("--ty-surface-widget").trim() ||
+		CANVAS_FALLBACK_SURFACE_COLOR;
 	// Cycle boundaries and the segment ends.
 	ctx.strokeStyle = grid;
 	ctx.lineWidth = 1;
@@ -230,6 +290,13 @@ export function drawWaveScene(
 				cam,
 			);
 			const hy = valueToScreen(chordValue(template, point.x) + handle.y, cam);
+			// Surface halo keeps the tangent handle readable where the
+			// waveform passes nearby; the connector is drawn over it so
+			// the handle still reads as attached to its curve point.
+			ctx.fillStyle = surface;
+			ctx.beginPath();
+			ctx.arc(hx, hy, 3 + DOT_HALO_PAD, 0, Math.PI * 2);
+			ctx.fill();
 			ctx.beginPath();
 			ctx.moveTo(px, py);
 			ctx.lineTo(hx, hy);
@@ -260,30 +327,73 @@ export function drawWaveScene(
 	ctx.textAlign = "left";
 	ctx.textBaseline = "middle";
 	const waveObstacles = waveLabelObstacles(waveScreen);
-	for (const handle of handleScreen) {
+	const placedHandles = handleScreen.map((handle) => {
 		const active = hover?.kind === "wave-handle" && hover.handle === handle.key;
-		const radius = active ? HANDLE_RADIUS + 1 : HANDLE_RADIUS;
-		ctx.fillStyle = active ? accent : text;
+		return {
+			...handle,
+			active,
+			radius: active ? HANDLE_RADIUS + 1 : HANDLE_RADIUS,
+		};
+	});
+	const drawHandleDot = (handle: (typeof placedHandles)[number]): void => {
+		// Surface halo separates the dot from the waveform stroke; without
+		// it a dense oscillation merges into the handle silhouette.
+		ctx.fillStyle = surface;
 		ctx.beginPath();
-		ctx.arc(handle.x, handle.y, radius, 0, Math.PI * 2);
+		ctx.arc(handle.x, handle.y, handle.radius + DOT_HALO_PAD, 0, Math.PI * 2);
 		ctx.fill();
-		ctx.fillStyle = active ? accent : muted;
+		ctx.fillStyle = handle.active ? accent : text;
+		ctx.beginPath();
+		ctx.arc(handle.x, handle.y, handle.radius, 0, Math.PI * 2);
+		ctx.fill();
+	};
+	for (const handle of placedHandles) drawHandleDot(handle);
+	const placedLabels = placedHandles.map((handle) => {
 		const labelWidth = ctx.measureText(labels[handle.key]).width;
 		const obstacles = waveObstacles.concat(
-			handleScreen.flatMap((other) =>
+			placedHandles.flatMap((other) =>
 				other.key === handle.key ? [] : [{ x: other.x, y: other.y }],
 			),
 		);
 		const label = placeWaveHandleLabel({
 			handleX: handle.x,
 			handleY: handle.y,
-			handleRadius: radius,
+			handleRadius: handle.radius,
 			labelWidth,
 			canvasWidth: width,
 			canvasHeight: height,
 			obstacles,
 		});
-		ctx.fillText(labels[handle.key], label.x, label.y);
+		return {
+			handle,
+			label,
+			labelWidth,
+			chip: waveLabelChipRect({
+				labelX: label.x,
+				labelY: label.y,
+				labelWidth,
+				canvasWidth: width,
+				canvasHeight: height,
+			}),
+		};
+	});
+	// Chips first, then every label: a chip can overlap a sibling chip but
+	// must never cover another label's glyphs.
+	for (const info of placedLabels) {
+		ctx.fillStyle = surface;
+		ctx.fillRect(info.chip.x, info.chip.y, info.chip.width, info.chip.height);
+	}
+	for (const info of placedLabels) {
+		ctx.fillStyle = info.handle.active ? accent : muted;
+		ctx.fillText(labels[info.handle.key], info.label.x, info.label.y);
+	}
+	// Edge-clamped chips can still cover a sibling handle dot; redraw it.
+	for (const handle of placedHandles) {
+		if (
+			placedLabels.some((info) => pointInRect(handle.x, handle.y, info.chip))
+		) {
+			drawHandleDot(handle);
+		}
 	}
 	// The playhead: the current time and the value at that time.
 	if (previewTime !== null && previewTime !== undefined) {
