@@ -93,6 +93,46 @@ const sameOverrideRecord = (
 
 export type ThemeReconcileResult = "skipped" | "written";
 
+const sleep = (ms: number): Promise<void> =>
+	new Promise((resolve) => {
+		setTimeout(resolve, ms);
+	});
+
+/**
+ * Boot callers run this wrapper instead of the bare reconcile (Issue
+ * #713). The `theme.css` write lock gives each acquisition a bounded
+ * wait; when several surfaces contend on a loaded host, a waiter can
+ * exhaust that budget and the one-shot boot reconcile would skip the
+ * app.json → theme.css projection permanently. The reconcile is
+ * idempotent, so retrying is safe: each attempt gets a fresh
+ * acquisition window after the contenders ahead of it drain, and the
+ * delays keep the retries from stampeding the same evalScript queue.
+ */
+const BOOT_RECONCILE_MAX_ATTEMPTS = 3;
+const BOOT_RECONCILE_RETRY_DELAYS_MS: readonly number[] = [5_000, 15_000];
+
+export const reconcileSettingsThemeOverridesWithRetry = async (
+	win: Window,
+	sourceSurfaceId: string,
+	reconcile: typeof reconcileSettingsThemeOverrides = reconcileSettingsThemeOverrides,
+): Promise<ThemeReconcileResult> => {
+	let lastError: unknown;
+	for (let attempt = 0; attempt < BOOT_RECONCILE_MAX_ATTEMPTS; attempt += 1) {
+		try {
+			return await reconcile(win, sourceSurfaceId);
+		} catch (error) {
+			lastError = error;
+			const delay = BOOT_RECONCILE_RETRY_DELAYS_MS[attempt];
+			if (delay === undefined) {
+				break;
+			}
+			await sleep(delay);
+		}
+	}
+	// i18n-exempt: rethrows the last reconcile error; callers log it.
+	throw lastError;
+};
+
 /**
  * Re-reads app.json inside the write queue so the projection is built
  * from the freshest settings, then converges theme.css onto it.
