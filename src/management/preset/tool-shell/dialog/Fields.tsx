@@ -19,6 +19,17 @@ const fieldColumnClass = css({
 	gap: "1",
 });
 
+// Issue #753: fields rendered as bare siblings relied on whatever parent
+// flex gap happened to wrap them — inside the Fields story (and any
+// non-`ToolDialogForm` host) adjacent fields collapsed to ~0px, tighter
+// than the label→control gap inside each field. Own the rhythm here.
+const fieldsColumnClass = css({
+	display: "flex",
+	minWidth: "0",
+	flexDirection: "column",
+	gap: "3",
+});
+
 const checkboxLabelClass = css({
 	display: "flex",
 	cursor: "pointer",
@@ -48,7 +59,7 @@ export function ToolDialogFields({
 	const idPrefix = useId();
 
 	return (
-		<>
+		<div className={fieldsColumnClass}>
 			{fields.map((field) =>
 				field.kind === "checkbox" ? (
 					<label
@@ -103,7 +114,7 @@ export function ToolDialogFields({
 					/>
 				),
 			)}
-		</>
+		</div>
 	);
 }
 

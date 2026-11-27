@@ -129,7 +129,10 @@ const accordionChevronClass = css({
 	transitionProperty: "transform",
 });
 
-const accordionChevronOpenClass = css({ transform: "rotate-180" });
+// Issue #753: `transform` takes a CSS transform value, not a Panda utility
+// token — `"rotate-180"` compiled to invalid CSS and the chevron never
+// rotated. `rotate(180deg)` is the real declaration.
+const accordionChevronOpenClass = css({ transform: "rotate(180deg)" });
 
 const editorMinHeightClass = css({ minHeight: "160px" });
 

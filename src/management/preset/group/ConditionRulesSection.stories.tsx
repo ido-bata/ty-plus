@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { expect } from "storybook/test";
 import { createPresetIconDraft } from "@/management/preset/icon/editor-state";
 import { css } from "@/styled-system/css";
 import { ConditionRulesSection } from "./ConditionRulesSection";
@@ -66,4 +67,11 @@ export const Default: Story = {};
 
 export const Busy: Story = {
 	args: { busy: true },
+	play: async ({ canvasElement }) => {
+		// Issue #753: busy must surface a spinner/status, not only dim the
+		// section — a slow save used to look like a frozen dialog.
+		const status = canvasElement.querySelector('[role="status"]');
+		if (!status) throw new Error("busy status row not found");
+		expect(status.textContent).toContain("Saving");
+	},
 };

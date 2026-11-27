@@ -72,5 +72,13 @@ export const Default: Story = {
 	play: async ({ canvasElement }) => {
 		expectCanvasLayout(canvasElement);
 		expectDialogComposition(canvasElement);
+		// Issue #753: the scan-path box must stay LTR — the old
+		// `direction: rtl` bidi trick rendered Windows paths as `\:C…`.
+		// It is the only mono-font block in the idle dialog.
+		const pathBox = Array.from(canvasElement.querySelectorAll("div")).find(
+			(el) => getComputedStyle(el).fontFamily.includes("mono"),
+		);
+		if (!pathBox) throw new Error("scan path box not found");
+		expect(getComputedStyle(pathBox).direction).toBe("ltr");
 	},
 };

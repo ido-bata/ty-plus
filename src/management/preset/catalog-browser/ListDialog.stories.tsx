@@ -174,6 +174,12 @@ export const LoadError: Story = {
 		});
 		expect(canvasElement.querySelector("[role='alert']")).not.toBeNull();
 		expect(shell.textContent).not.toContain("No presets saved locally yet");
+		// Issue #753: the search trailing shows the localized failure label,
+		// not the raw parser error string (which stays in the body detail).
+		const searchSlot = canvasElement.querySelector("[data-preset-list-search]");
+		if (!searchSlot) throw new Error("search slot not found");
+		expect(searchSlot.textContent).toContain("Failed to load");
+		expect(searchSlot.textContent).not.toContain("Unexpected token");
 	},
 };
 

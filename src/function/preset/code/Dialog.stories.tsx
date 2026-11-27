@@ -100,6 +100,15 @@ export const ExpressionType: Story = {
 		await waitFor(() => {
 			expect(canvasElement.textContent).not.toContain("Script code (.jsx)");
 		});
+		// Issue #753: the untouched defaults follow the type switch — the
+		// icon text field and glyph preview move CODE → EXPR instead of
+		// staying on the script preset's icon.
+		await waitFor(() => {
+			const iconText = canvasElement.querySelector<HTMLInputElement>(
+				'input[aria-label="Icon text"]',
+			);
+			expect(iconText?.value).toBe("EXPR");
+		});
 		expect(canvasElement.textContent).toContain("Save location");
 		expectFooterActions(shell);
 	},

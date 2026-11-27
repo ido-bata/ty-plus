@@ -54,6 +54,18 @@ import { css } from "@/styled-system/css";
 type CodeType = "extendscript" | "expression";
 type PresetStatus = "idle" | "saving" | "success" | "error";
 
+// Untouched starter content per code type. Switching the segment only
+// swaps these defaults — user-edited code and custom icon text are kept.
+const DEFAULT_CODE: Record<CodeType, string> = {
+	extendscript: "// Write your script here\n",
+	expression: "// Write your expression here\n",
+};
+
+const DEFAULT_ICON_TEXT: Record<CodeType, string> = {
+	extendscript: "CODE",
+	expression: "EXPR",
+};
+
 const bannerTitleClass = css({
 	fontWeight: "semibold",
 });
@@ -406,10 +418,10 @@ export function Dialog(): JSX.Element {
 	const { t } = useTranslation("presets");
 	const [name, setName] = useState(() => t("presetTool.code.defaultName"));
 	const [codeType, setCodeType] = useState<CodeType>("extendscript");
-	const [code, setCode] = useState("// Write your script here\n");
+	const [code, setCode] = useState(DEFAULT_CODE.extendscript);
 	const [saveDir, setSaveDir] = useState("");
 	const [iconDraft, setIconDraft] = useState(() =>
-		createPresetIconDraft(codeType === "expression" ? "EXPR" : "CODE"),
+		createPresetIconDraft(DEFAULT_ICON_TEXT.extendscript),
 	);
 	const [description, setDescription] = useState("");
 	const [descriptionImage, setDescriptionImage] = useState("");
@@ -458,6 +470,25 @@ export function Dialog(): JSX.Element {
 				if (folder) setSaveDir(folder);
 			},
 		);
+	};
+
+	// Issue #753: switching Script ↔ Expression used to leave the script
+	// placeholder in the editor and the "CODE" icon text/preview behind.
+	// Swap the per-type defaults, but only while the field still holds the
+	// previous type's untouched default — typed code and custom icon text
+	// survive the switch.
+	const handleCodeTypeChange = (next: CodeType): void => {
+		if (next === codeType) return;
+		if (code === DEFAULT_CODE[codeType]) {
+			setCode(DEFAULT_CODE[next]);
+		}
+		if (
+			iconDraft.type === "text" &&
+			iconDraft.text === DEFAULT_ICON_TEXT[codeType]
+		) {
+			setIconDraft({ ...iconDraft, text: DEFAULT_ICON_TEXT[next] });
+		}
+		setCodeType(next);
 	};
 
 	return (
@@ -550,7 +581,7 @@ export function Dialog(): JSX.Element {
 					>
 						<AuthoringSegment
 							value={codeType}
-							onChange={(v) => setCodeType(v as CodeType)}
+							onChange={(v) => handleCodeTypeChange(v as CodeType)}
 							options={[
 								{
 									value: "extendscript",

@@ -93,3 +93,31 @@ const playLabelsConsistent = async ({
 export const LabelsConsistent: Story = {
 	play: playLabelsConsistent,
 };
+
+// Issue #753: inter-field spacing must exceed the label→control spacing
+// inside a field — fields used to render as bare siblings and collapsed
+// to ~0px wherever no parent flex gap wrapped them.
+const playFieldRhythm = async ({
+	canvasElement,
+}: {
+	canvasElement: HTMLElement;
+}): Promise<void> => {
+	const canvas = within(canvasElement);
+	const titleLabel = canvas.getByText("Title");
+	const modeLabel = canvas.getByText("Mode");
+	const titleInput = canvasElement.querySelector<HTMLInputElement>(
+		"input[aria-label='Title']",
+	);
+	if (!titleInput) throw new Error("title input not found");
+	const labelControlGap =
+		titleInput.getBoundingClientRect().top -
+		titleLabel.getBoundingClientRect().bottom;
+	const fieldGap =
+		modeLabel.getBoundingClientRect().top -
+		titleInput.getBoundingClientRect().bottom;
+	expect(fieldGap).toBeGreaterThan(labelControlGap);
+};
+
+export const FieldRhythm: Story = {
+	play: playFieldRhythm,
+};

@@ -60,6 +60,13 @@ const fullWidthMinHeightClass = css({
 	minHeight: "24",
 });
 
+// Issue #753: the filter-type strip must claim the row's remaining width
+// (minus the remove button) instead of sizing to its labels.
+const filterSegmentHostClass = css({
+	minWidth: "0",
+	flex: "1",
+});
+
 export function ConditionRuleCard({
 	rule,
 	candidatePresets,
@@ -80,27 +87,29 @@ export function ConditionRuleCard({
 	return (
 		<div className={cardClass}>
 			<div className={rowClass}>
-				<AuthoringSegment
-					value={r.filterType}
-					onChange={(v) => {
-						onChange({
-							...r,
-							filterType: v as ConditionRule["filterType"],
-						});
-					}}
-					options={[
-						{ value: "name", label: i18n.t("presets:group.rule.filterName") },
-						{ value: "path", label: i18n.t("presets:group.rule.filterPath") },
-						{
-							value: "preset",
-							label: i18n.t("presets:group.rule.filterPresetId"),
-						},
-						{
-							value: "presetType",
-							label: i18n.t("presets:group.rule.filterPresetType"),
-						},
-					]}
-				/>
+				<div className={filterSegmentHostClass}>
+					<AuthoringSegment
+						value={r.filterType}
+						onChange={(v) => {
+							onChange({
+								...r,
+								filterType: v as ConditionRule["filterType"],
+							});
+						}}
+						options={[
+							{ value: "name", label: i18n.t("presets:group.rule.filterName") },
+							{ value: "path", label: i18n.t("presets:group.rule.filterPath") },
+							{
+								value: "preset",
+								label: i18n.t("presets:group.rule.filterPresetId"),
+							},
+							{
+								value: "presetType",
+								label: i18n.t("presets:group.rule.filterPresetType"),
+							},
+						]}
+					/>
+				</div>
 				<Button
 					variant="ghost"
 					aria-label={i18n.t("presets:group.rule.removeRule")}
@@ -271,10 +280,10 @@ export function ConditionRuleCard({
 											});
 										}}
 										selectedSummary={{ files: 0, folders: 0 }}
-										viewMode="list"
-										onViewModeChange={() => {}}
-										scale={1}
-										aspect="square"
+										// Issue #753: the rule card is list-only — a
+										// no-op `onViewModeChange` still rendered the
+										// list/icons toggle in the list footer.
+										showViewToggle={false}
 										loadingLabel=""
 										emptyLabel={
 											candidatePresets.length === 0
