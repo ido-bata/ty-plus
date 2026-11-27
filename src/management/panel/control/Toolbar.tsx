@@ -112,16 +112,10 @@ const expandedShell = css({
 	gap: "0.5",
 });
 
-const iconBtnSize = css({
-	height: "6",
-	width: "6",
-});
-
-const collapsedBtnSize = css({
-	height: "6",
-	width: "6",
-});
-
+// Issue #752: IconButton metrics must come from the `size` prop alone.
+// `size="xs"` is the 6x6 (24px) box the toolbar needs; pairing `size="sm"`
+// with a className height/width override let Panda resolve height and
+// width to different winners and paint 24x28 non-square buttons.
 export const Toolbar = memo(function ToolbarImpl(
 	props: ToolbarProps,
 ): React.ReactElement {
@@ -185,7 +179,6 @@ export const Toolbar = memo(function ToolbarImpl(
 					aria-label={i18n.t("workspace:controlPanel.collapseExpand", {
 						defaultValue: "Collapse/Expand",
 					})}
-					className={collapsedBtnSize}
 				>
 					<Icon icon={ChevronsUpDown} size={3} />
 				</IconButton>
@@ -193,10 +186,9 @@ export const Toolbar = memo(function ToolbarImpl(
 				CP_BUTTONS.map((b) => (
 					<IconButton
 						key={b.id}
-						size="sm"
+						size="xs"
 						data-ws-action={b.action}
 						title={i18n.t(b.titleKey, { defaultValue: b.titleFallback })}
-						className={iconBtnSize}
 					>
 						<Icon icon={b.icon} size={3} />
 					</IconButton>

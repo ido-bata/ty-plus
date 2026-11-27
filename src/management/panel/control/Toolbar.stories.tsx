@@ -37,6 +37,28 @@ const withCpState =
 		return <Story />;
 	};
 
+/**
+ * Issue #752: every toolbar IconButton must render as a square target.
+ * `size="sm"` (7x7) and the local `iconBtnSize` class (6x6) both set
+ * height/width; if Panda's atomic ordering ever resolves the two
+ * properties to different winners the button paints non-square.
+ */
+const expectSquareTargets = (canvasElement: HTMLElement): void => {
+	const buttons = canvasElement.querySelectorAll<HTMLElement>(
+		".ty-control-panel button",
+	);
+	expect(buttons.length).toBeGreaterThan(0);
+	for (const button of buttons) {
+		const rect = button.getBoundingClientRect();
+		expect(
+			Math.abs(rect.width - rect.height),
+			`toolbar button is not square: ${rect.width}x${rect.height}`,
+		).toBeLessThanOrEqual(0.5);
+		expect(rect.width).toBeGreaterThanOrEqual(24);
+		expect(rect.height).toBeGreaterThanOrEqual(24);
+	}
+};
+
 const meta = {
 	title: "Management/Panel/ControlToolbar",
 	args: {
@@ -61,6 +83,9 @@ export const Expanded: Story = {
 			collapsed: false,
 		}),
 	],
+	play: async ({ canvasElement }) => {
+		expectSquareTargets(canvasElement);
+	},
 };
 
 /** Vertical orientation — preset/widget buttons stack in a column. */
@@ -72,6 +97,9 @@ export const Vertical: Story = {
 			collapsed: false,
 		}),
 	],
+	play: async ({ canvasElement }) => {
+		expectSquareTargets(canvasElement);
+	},
 };
 
 /** Collapsed state — small circular handle with an expand affordance. */
@@ -97,5 +125,27 @@ export const Collapsed: Story = {
 		const rect = toggle.getBoundingClientRect();
 		expect(rect.width).toBeGreaterThanOrEqual(24);
 		expect(rect.height).toBeGreaterThanOrEqual(24);
+
+		// Issue #752: the collapsed handle must paint its expand icon —
+		// a blank dot means the svg lost size, color, or visibility.
+		const icon = toggle.querySelector("svg");
+		if (!icon) throw new Error("collapsed toggle icon not found");
+		const iconRect = icon.getBoundingClientRect();
+		expect(iconRect.width).toBeGreaterThanOrEqual(8);
+		expect(iconRect.height).toBeGreaterThanOrEqual(8);
+		const iconStyle = getComputedStyle(icon);
+		expect(iconStyle.visibility).not.toBe("hidden");
+		expect(iconStyle.display).not.toBe("none");
+		expect(Number(iconStyle.opacity)).toBeGreaterThan(0);
+		// The icon must be the topmost paint at its own center — catches
+		// a same-color icon on the shell or an occluding layer.
+		const hit = document.elementFromPoint(
+			iconRect.left + iconRect.width / 2,
+			iconRect.top + iconRect.height / 2,
+		);
+		expect(
+			hit === icon || icon.contains(hit) || hit?.contains(icon),
+			"collapsed toggle icon is not the topmost painted element",
+		).toBe(true);
 	},
 };

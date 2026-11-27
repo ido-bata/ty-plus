@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { expect } from "storybook/test";
 
 import { DebugDialogRoot } from "./dialog-root";
 
@@ -40,7 +41,24 @@ const meta = {
 export default meta;
 type Story = StoryObj<Args>;
 
-export const Default: Story = {};
+export const Default: Story = {
+	play: async ({ canvasElement }) => {
+		// Issue #752: the embedded console panel keeps every segmented
+		// filter strip on a single row (nowrap + scroll contract).
+		const strips =
+			canvasElement.querySelectorAll<HTMLElement>('[role="toolbar"]');
+		expect(strips.length).toBeGreaterThan(0);
+		for (const strip of strips) {
+			const buttons = strip.querySelectorAll("button");
+			const tops = new Set(
+				[...buttons].map((b) => Math.round(b.getBoundingClientRect().top)),
+			);
+			expect(tops.size, `segmented strip wrapped into ${tops.size} rows`).toBe(
+				1,
+			);
+		}
+	},
+};
 
 export const CepMode: Story = {
 	args: { isCep: true, hostCode: "AE-host" },

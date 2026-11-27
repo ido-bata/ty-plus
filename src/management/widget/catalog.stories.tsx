@@ -65,7 +65,35 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 /** Full catalog, icon (card) view — the default view mode. */
-export const Default: Story = {};
+export const Default: Story = {
+	play: async ({ canvasElement }) => {
+		// Issue #752: the listbox is a scroll container — cards past the
+		// fold are clipped by design, but every card must stay reachable
+		// by scrolling and paint fully inside the listbox once revealed.
+		const listbox = canvasElement.querySelector<HTMLElement>(
+			"[data-add-widget-listbox]",
+		);
+		if (!listbox) throw new Error("widget catalog listbox not found");
+		const cards = listbox.querySelectorAll<HTMLElement>(
+			"[data-add-widget-type]",
+		);
+		expect(cards.length).toBeGreaterThan(0);
+		listbox.scrollTop = listbox.scrollHeight;
+		await new Promise((resolve) => setTimeout(resolve, 50));
+		const lastCard = cards[cards.length - 1].parentElement;
+		if (!lastCard) throw new Error("last catalog card not found");
+		const cardRect = lastCard.getBoundingClientRect();
+		const boxRect = listbox.getBoundingClientRect();
+		expect(
+			cardRect.bottom,
+			"last catalog card is clipped below the listbox after scrolling to the end",
+		).toBeLessThanOrEqual(boxRect.bottom + 1);
+		expect(
+			cardRect.top,
+			"last catalog card is clipped above the listbox after scrolling to the end",
+		).toBeGreaterThanOrEqual(boxRect.top - 1);
+	},
+};
 
 /** Pre-filtered query narrowing the catalog to easing-related widgets. */
 export const Filtered: Story = {
