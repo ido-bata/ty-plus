@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { expect } from "storybook/test";
+import { borderTopColor, resolveBorderToken } from "@/storybook/quality/border";
 import { assertContrast } from "@/storybook/quality/color";
 import { expectCanvasLayout } from "@/storybook/quality/layout";
 import { css } from "@/styled-system/css";
@@ -67,6 +68,10 @@ const playViewMode =
 		// at least 3:1 contrast against their effective background.
 		if (!fieldset) throw new Error("view mode toggle fieldset not found");
 		expect(getComputedStyle(fieldset).opacity).toBe("1");
+		// Issue #722: the fieldset is passive segmented chrome — its resting
+		// border uses `border.subtle`, not the brighter `border.control`.
+		expect(borderTopColor(fieldset)).toBe(resolveBorderToken("subtle"));
+		expect(borderTopColor(fieldset)).not.toBe(resolveBorderToken("control"));
 		const activeButton = expected === "list" ? listButton : iconButton;
 		const inactiveButton = expected === "list" ? iconButton : listButton;
 		const activeBg = getComputedStyle(activeButton).backgroundColor;

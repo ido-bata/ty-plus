@@ -80,7 +80,9 @@ const browseButton = css({
 	flexShrink: 0,
 	borderWidth: "hairline",
 	borderStyle: "solid",
-	borderColor: "border.control",
+	// Issue #722: bordered ghost icon button — resting border uses the
+	// non-assertive `border.subtle` tier like every other ghost surface.
+	borderColor: "border.subtle",
 	backgroundColor: "surface.widget",
 	_hover: {
 		backgroundColor: "interactive.hover",

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { expect } from "storybook/test";
-
+import { resolveBorderToken } from "@/storybook/quality/border";
 import { expectCanvasLayout } from "@/storybook/quality/layout";
 
 import { Input } from "./Input";
@@ -61,7 +61,12 @@ export const Focused: Story = {
 		expectCanvasLayout(canvasElement);
 		const input = canvasElement.querySelector<HTMLInputElement>("input");
 		if (!input) throw new Error("input not found");
+		// Issue #722: genuine text entry keeps the identifiable
+		// `border.control` resting border — only passive chrome demoted to
+		// `border.subtle`. Focus must still move off the resting color.
 		const restingBorderColor = getComputedStyle(input).borderTopColor;
+		expect(restingBorderColor).toBe(resolveBorderToken("control"));
+		expect(restingBorderColor).not.toBe(resolveBorderToken("subtle"));
 		input.focus();
 		await expect(document.activeElement).toBe(input);
 		await expect(input.matches(":focus")).toBe(true);

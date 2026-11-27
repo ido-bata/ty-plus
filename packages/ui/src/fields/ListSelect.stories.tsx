@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 import { expect } from "storybook/test";
+import { borderTopColor, resolveBorderToken } from "@/storybook/quality/border";
 import { ListSelect } from "./ListSelect";
 
 const sampleOptions = [
@@ -93,10 +94,18 @@ export const OpenAndSelect: Story = {
 			'button[aria-haspopup="listbox"]',
 		);
 		if (!trigger) throw new Error("listbox trigger not found");
+		// Issue #722: resting trigger border sits on the non-assertive
+		// `border.subtle` tier; `border.control` is reserved for text fields.
+		expect(borderTopColor(trigger)).toBe(resolveBorderToken("subtle"));
+		expect(borderTopColor(trigger)).not.toBe(resolveBorderToken("control"));
 		await expect(trigger.getAttribute("aria-expanded")).toBe("false");
 		await userEvent.click(trigger);
 		await expect(trigger.getAttribute("aria-expanded")).toBe("true");
-		// The listbox is portaled to document.body by AnchoredPopover.
+		// The listbox is portaled to document.body by AnchoredPopover; its
+		// resting border uses the same `border.subtle` tier.
+		const listbox = document.querySelector('[role="listbox"]');
+		if (!listbox) throw new Error("listbox not found");
+		expect(borderTopColor(listbox)).toBe(resolveBorderToken("subtle"));
 		const optionByText = Array.from(
 			document.querySelectorAll<HTMLButtonElement>('button[role="option"]'),
 		).find((el) => el.textContent === "Deutsch");

@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 import { expect } from "storybook/test";
+import { borderTopColor, resolveBorderToken } from "@/storybook/quality/border";
 import { expectCanvasLayout } from "@/storybook/quality/layout";
 import { css } from "@/styled-system/css";
 
@@ -109,6 +110,12 @@ export const HoveredSegment: Story = {
 	render: (args) => <ControlledSegmentedControl {...args} />,
 	play: async ({ canvasElement }) => {
 		expectCanvasLayout(canvasElement);
+		// Issue #722: the strip is passive chrome — its resting border must
+		// sit on the non-assertive `border.subtle` tier, not `border.control`.
+		const strip = canvasElement.querySelector('[role="toolbar"]');
+		if (!strip) throw new Error("segmented strip not found");
+		expect(borderTopColor(strip)).toBe(resolveBorderToken("subtle"));
+		expect(borderTopColor(strip)).not.toBe(resolveBorderToken("control"));
 		const buttons = Array.from(
 			canvasElement.querySelectorAll<HTMLButtonElement>("button"),
 		);
