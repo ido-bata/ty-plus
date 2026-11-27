@@ -250,9 +250,26 @@
 			"debugConsole": "调试控制台",
 			"console": "控制台"
 		},
+		"sourcesCompact": {
+			"all": "所有",
+			"panel": "面板",
+			"modeless": "无模式",
+			"hostBridge": "桥接",
+			"online": "在线",
+			"preset": "预设",
+			"opWorker": "工作器",
+			"workspace": "工作区",
+			"boot": "启动",
+			"debugConsole": "调试",
+			"console": "控制台"
+		},
 		"scopes": {
 			"allHistory": "全部历史",
 			"thisSession": "本次会话"
+		},
+		"scopesCompact": {
+			"allHistory": "历史",
+			"thisSession": "会话"
 		},
 		"contextMenu": {
 			"copyMessage": "复制消息",

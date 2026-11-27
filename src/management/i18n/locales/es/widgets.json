@@ -46,6 +46,11 @@
 			"bounce": "Rebote",
 			"elastic": "Elástico"
 		},
+		"modeCompact": {
+			"curve": "C",
+			"bounce": "R",
+			"elastic": "E"
+		},
 		"options": {
 			"mode": "Modo",
 			"grid": "Cuadrícula",

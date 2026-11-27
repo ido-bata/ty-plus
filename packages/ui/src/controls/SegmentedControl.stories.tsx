@@ -133,6 +133,98 @@ export const HoveredSegment: Story = {
 	},
 };
 
+// Issue #723: the strip must stay on a single row at every width. When
+// full labels no longer fit, options with `compactLabel` swap to their
+// short form; the accessible name remains the full label.
+const adaptiveOptions = [
+	{ value: "curve", label: "Comfortable curve", compactLabel: "Cv" },
+	{ value: "bounce", label: "Springy bounce", compactLabel: "Bo" },
+	{ value: "elastic", label: "Wobbly elastic", compactLabel: "El" },
+];
+
+const settleLabels = () => new Promise((resolve) => setTimeout(resolve, 80));
+
+const singleRowTops = (toolbar: Element): number =>
+	new Set(
+		Array.from(toolbar.querySelectorAll("button")).map((button) =>
+			Math.round(button.getBoundingClientRect().top),
+		),
+	).size;
+
+export const AdaptiveLabels: Story = {
+	args: {
+		options: adaptiveOptions,
+		"aria-label": "Easing mode",
+	},
+	render: (args) => (
+		<div className={css({ display: "flex", gap: "4", padding: "4" })}>
+			<div style={{ width: 380 }}>
+				<ControlledSegmentedControl {...args} />
+			</div>
+			<div style={{ width: 120 }}>
+				<ControlledSegmentedControl {...args} value="bounce" />
+			</div>
+		</div>
+	),
+	play: async ({ canvasElement }) => {
+		expectCanvasLayout(canvasElement);
+		await settleLabels();
+		const toolbars = Array.from(
+			canvasElement.querySelectorAll<HTMLElement>('[role="toolbar"]'),
+		);
+		expect(toolbars).toHaveLength(2);
+		const [wide, narrow] = toolbars;
+		if (!wide || !narrow) throw new Error("expected two strips");
+
+		// Wide strip keeps the full labels; narrow strip switches to the
+		// compact forms — the label *content* adapts, it is not truncated.
+		expect(wide.textContent).toContain("Comfortable curve");
+		expect(narrow.textContent).toContain("Cv");
+		expect(narrow.textContent).not.toContain("Comfortable curve");
+
+		// Both strips stay on a single row and nothing is clipped inside
+		// a segment.
+		for (const toolbar of toolbars) {
+			expect(singleRowTops(toolbar)).toBe(1);
+			for (const button of toolbar.querySelectorAll("button")) {
+				expect(button.scrollWidth).toBeLessThanOrEqual(button.clientWidth + 1);
+			}
+		}
+		expectCanvasLayout(canvasElement);
+	},
+};
+
+// Issue #723: when even compact labels cannot fit — or none are provided —
+// the strip scrolls horizontally instead of wrapping to a second row.
+export const OverflowScrollsHorizontally: Story = {
+	args: {
+		options: Array.from({ length: 11 }, (_, index) => ({
+			value: `source-${index}`,
+			label: `Source filter number ${index}`,
+		})),
+		"aria-label": "Filter by source",
+	},
+	render: (args) => (
+		<div style={{ width: 220, padding: 8 }}>
+			<ControlledSegmentedControl {...args} />
+		</div>
+	),
+	play: async ({ canvasElement }) => {
+		expectCanvasLayout(canvasElement);
+		await settleLabels();
+		const toolbar =
+			canvasElement.querySelector<HTMLElement>('[role="toolbar"]');
+		if (!toolbar) throw new Error("strip not found");
+		expect(toolbar.querySelectorAll("button")).toHaveLength(11);
+		// Single row, and the excess width is reachable by scrolling —
+		// no segment is dropped to a second line or clipped.
+		expect(singleRowTops(toolbar)).toBe(1);
+		expect(getComputedStyle(toolbar).overflowX).toBe("auto");
+		expect(toolbar.scrollWidth).toBeGreaterThan(toolbar.clientWidth);
+		expectCanvasLayout(canvasElement);
+	},
+};
+
 // Issue #166: clicking a segment selects it — `aria-pressed` flips and the
 // selected surface replaces the unselected one.
 export const SelectedOnClick: Story = {

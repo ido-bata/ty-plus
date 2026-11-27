@@ -350,6 +350,14 @@ function SourceFilterTabs({
 				options={SOURCE_FILTERS.map((f) => ({
 					value: f.value,
 					label: i18n.t(f.labelKey, { defaultValue: f.labelFallback }),
+					// Compact labels live under `sourcesCompact.*`; the strip
+					// switches to them when the full labels no longer fit on
+					// one row (issue #723). Missing keys degrade to the full
+					// label via `defaultValue`.
+					compactLabel: i18n.t(
+						f.labelKey.replace("sources.", "sourcesCompact."),
+						{ defaultValue: f.labelFallback },
+					),
 				}))}
 				value={sourceFilter}
 				onChange={(v) => onChange(v as FilterSource)}
@@ -405,6 +413,10 @@ function ScopeFilterTabs({
 				options={SCOPES.map((f) => ({
 					value: f.value,
 					label: i18n.t(f.labelKey, { defaultValue: f.labelFallback }),
+					compactLabel: i18n.t(
+						f.labelKey.replace("scopes.", "scopesCompact."),
+						{ defaultValue: f.labelFallback },
+					),
 				}))}
 				value={scope}
 				onChange={(v) => onChange(v as FilterScope)}

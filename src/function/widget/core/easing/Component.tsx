@@ -473,7 +473,7 @@ function EasingModeToolbar({
 	onModeChange,
 	t,
 }: {
-	modeButtons: Array<{ mode: Mode; label: string }>;
+	modeButtons: Array<{ mode: Mode; label: string; compactLabel: string }>;
 	mode: Mode;
 	onModeChange: (value: Mode) => void;
 	t: TFunction;
@@ -496,10 +496,12 @@ function EasingModeToolbar({
 				options={modeButtons.map((button) => ({
 					value: button.mode,
 					label: button.label,
+					compactLabel: button.compactLabel,
 				}))}
-				// No fixed height: the strip wraps whole segments onto a
-				// second row at compact widths, and a fixed height clipped
-				// the wrapped row (Bounce truncated, Elastic hidden).
+				// The strip never wraps (issue #723): when the tile is too
+				// narrow for the full mode names, SegmentedControl switches
+				// to the compact labels; if even those overflow, the strip
+				// scrolls horizontally rather than clipping a segment.
 				buttonClassName={css({
 					height: "6",
 					fontSize: "text-2xs",
@@ -2066,10 +2068,26 @@ export function EasingWidget({ layout }: { layout: Layout }): JSX.Element {
 		};
 	}, [host]);
 
-	const modeButtons: Array<{ mode: Mode; label: string }> = [
-		{ mode: "curve", label: t("easing.mode.curve") },
-		{ mode: "bounce", label: t("easing.mode.bounce") },
-		{ mode: "elastic", label: t("easing.mode.elastic") },
+	const modeButtons: Array<{
+		mode: Mode;
+		label: string;
+		compactLabel: string;
+	}> = [
+		{
+			mode: "curve",
+			label: t("easing.mode.curve"),
+			compactLabel: t("easing.modeCompact.curve"),
+		},
+		{
+			mode: "bounce",
+			label: t("easing.mode.bounce"),
+			compactLabel: t("easing.modeCompact.bounce"),
+		},
+		{
+			mode: "elastic",
+			label: t("easing.mode.elastic"),
+			compactLabel: t("easing.modeCompact.elastic"),
+		},
 	];
 	const applyLabel =
 		status === "busy"

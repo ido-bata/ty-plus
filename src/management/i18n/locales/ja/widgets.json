@@ -46,6 +46,11 @@
 			"bounce": "バウンス",
 			"elastic": "エラスティック"
 		},
+		"modeCompact": {
+			"curve": "カ",
+			"bounce": "バ",
+			"elastic": "エ"
+		},
 		"options": {
 			"mode": "モード",
 			"grid": "グリッド",

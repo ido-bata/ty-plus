@@ -70,9 +70,9 @@ export const Default: Story = {
 export const Compact: Story = {
 	args: { widthPx: 180, heightPx: 220 },
 	play: async ({ canvasElement }) => {
-		// Issue #473: at compact widths the mode strip wraps onto a second
-		// row. A fixed-height strip used to clip that row (Bounce truncated,
-		// Elastic hidden) — every segment must stay inside the toolbar box.
+		// Issue #473 / #723: at compact widths the mode strip must stay on a
+		// single row — it adapts to compact labels and scrolls rather than
+		// wrapping, so every segment remains reachable inside the toolbar.
 		const toolbar =
 			canvasElement.querySelector<HTMLElement>("[role='toolbar']");
 		if (!toolbar) throw new Error("mode toolbar not found");

@@ -250,9 +250,26 @@
 			"debugConsole": "Debug console",
 			"console": "Console"
 		},
+		"sourcesCompact": {
+			"all": "All",
+			"panel": "Panel",
+			"modeless": "Modeless",
+			"hostBridge": "Host",
+			"online": "Online",
+			"preset": "Preset",
+			"opWorker": "Worker",
+			"workspace": "Workspace",
+			"boot": "Boot",
+			"debugConsole": "Debug",
+			"console": "Console"
+		},
 		"scopes": {
 			"allHistory": "All history",
 			"thisSession": "This session"
+		},
+		"scopesCompact": {
+			"allHistory": "All",
+			"thisSession": "Session"
 		},
 		"contextMenu": {
 			"copyMessage": "Copy message",

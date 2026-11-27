@@ -46,6 +46,11 @@
 			"bounce": "Rimbalzo",
 			"elastic": "Elastico"
 		},
+		"modeCompact": {
+			"curve": "C",
+			"bounce": "R",
+			"elastic": "E"
+		},
 		"options": {
 			"mode": "Modalità",
 			"grid": "Griglia",

@@ -250,9 +250,26 @@
 			"debugConsole": "デバッグコンソール",
 			"console": "コンソール"
 		},
+		"sourcesCompact": {
+			"all": "すべて",
+			"panel": "パネル",
+			"modeless": "モードレス",
+			"hostBridge": "ブリッジ",
+			"online": "オンライン",
+			"preset": "プリセット",
+			"opWorker": "ワーカー",
+			"workspace": "領域",
+			"boot": "起動",
+			"debugConsole": "デバッグ",
+			"console": "コンソール"
+		},
 		"scopes": {
 			"allHistory": "すべての履歴",
 			"thisSession": "このセッション"
+		},
+		"scopesCompact": {
+			"allHistory": "すべて",
+			"thisSession": "セッション"
 		},
 		"contextMenu": {
 			"copyMessage": "メッセージをコピー",

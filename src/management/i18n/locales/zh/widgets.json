@@ -46,6 +46,11 @@
 			"bounce": "弹跳",
 			"elastic": "弹性"
 		},
+		"modeCompact": {
+			"curve": "曲",
+			"bounce": "跳",
+			"elastic": "性"
+		},
 		"options": {
 			"mode": "模式",
 			"grid": "网格",

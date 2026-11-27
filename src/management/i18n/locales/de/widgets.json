@@ -46,6 +46,11 @@
 			"bounce": "Bounce",
 			"elastic": "Elastisch"
 		},
+		"modeCompact": {
+			"curve": "K",
+			"bounce": "B",
+			"elastic": "E"
+		},
 		"options": {
 			"mode": "Modus",
 			"grid": "Raster",

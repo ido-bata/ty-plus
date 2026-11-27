@@ -250,9 +250,26 @@
 			"debugConsole": "Консоль отладки",
 			"console": "Консоль"
 		},
+		"sourcesCompact": {
+			"all": "Все",
+			"panel": "Панель",
+			"modeless": "Без окна",
+			"hostBridge": "Мост",
+			"online": "Онлайн",
+			"preset": "Пресет",
+			"opWorker": "Воркер",
+			"workspace": "Область",
+			"boot": "Старт",
+			"debugConsole": "Отладка",
+			"console": "Консоль"
+		},
 		"scopes": {
 			"allHistory": "Вся история",
 			"thisSession": "Этот сеанс"
+		},
+		"scopesCompact": {
+			"allHistory": "История",
+			"thisSession": "Сеанс"
 		},
 		"contextMenu": {
 			"copyMessage": "Копировать сообщение",
