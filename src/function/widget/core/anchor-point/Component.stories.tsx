@@ -143,3 +143,52 @@ export const DragToTopLeft: Story = {
 		expectCanvasLayout(canvasElement);
 	},
 };
+
+/**
+ * Issue #724: the legacy `anchor-point-widget.scss` brightened each cell's
+ * crosshair on hover — idle lines stepped text @0.35 → 0.75 and the
+ * selected accent line stepped to full opacity — with rounded line caps
+ * and a 150ms colour fade. The React port dropped that feedback; this
+ * story pins the restored contract on computed styles.
+ */
+export const HoverFeedback: Story = {
+	args: { widthPx: 280 },
+	play: async ({ canvasElement }) => {
+		expectCanvasLayout(canvasElement);
+		const hitAreaOf = (pos: string): HTMLElement => {
+			const el = canvasElement.querySelector<HTMLElement>(
+				`[data-anchor='${pos}']`,
+			);
+			if (!el) throw new Error(`hit area for ${pos} not found`);
+			return el;
+		};
+		const lineOf = (pos: string): CSSStyleDeclaration => {
+			const line = hitAreaOf(pos).parentElement?.querySelector<HTMLElement>(
+				":scope > span > span",
+			);
+			if (!line) throw new Error(`anchor line for ${pos} not found`);
+			return getComputedStyle(line);
+		};
+
+		// Resting contract: idle lines sit at the `ws-anchor-grid-line`
+		// alpha (0.35); the default-selected `center` cell uses the accent
+		// channel at `ws-anchor-center-line` (0.9).
+		expect(lineOf("top-left").backgroundColor).toContain("0.35");
+		expect(lineOf("center").backgroundColor).toContain("0.9");
+
+		const { hoverAndAssert } = await import("@/storybook/quality/layout");
+		// Hover an idle cell → its crosshair steps to the hover alpha. The
+		// settle must outlast the restored 150ms colour transition.
+		await hoverAndAssert(hitAreaOf("top-left"), { settleMs: 300 });
+		const hoveredIdle = lineOf("top-left").backgroundColor;
+		expect(hoveredIdle).toContain("0.75");
+		expect(hoveredIdle).not.toContain("0.35");
+
+		// Hover the selected center cell → the accent line steps to full
+		// opacity (the legacy `--color-accent-hover` step).
+		await hoverAndAssert(hitAreaOf("center"), { settleMs: 300 });
+		const hoveredSelected = lineOf("center").backgroundColor;
+		expect(hoveredSelected).toContain("88, 166, 255");
+		expect(hoveredSelected).not.toContain("0.9");
+	},
+};
