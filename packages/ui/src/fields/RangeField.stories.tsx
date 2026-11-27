@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 import { expect } from "storybook/test";
+import { css } from "@/styled-system/css";
 import { RangeField } from "./RangeField";
 
 const meta = {
@@ -100,9 +101,20 @@ export const Interactive: Story = {
 
 // Issue #448: extreme values must not be clipped inside the paired numeric
 // input — the field used to fix the wrapper at 56px, cutting off digits.
+// Issue #736: stacked fields need a real layout gap — a bare block container
+// collapses the space between the first control and the next label to the
+// label's own line-box leading (~3px), tighter than the internal
+// label-to-control gap.
+const stackedFields = css({
+	display: "flex",
+	width: "320px",
+	flexDirection: "column",
+	gap: "3",
+});
+
 export const ExtremeValues: Story = {
 	render: () => (
-		<div style={{ width: 320 }}>
+		<div className={stackedFields}>
 			<RangeField
 				label="Scale"
 				value={-2000}
@@ -132,6 +144,39 @@ export const ExtremeValues: Story = {
 				input.clientWidth + 1,
 			);
 		}
+		// The gap from the first field's control to the second field's label
+		// must not be tighter than that field's own label-to-control gap.
+		const labels = [...canvasElement.querySelectorAll("div")].filter(
+			(el) => el.children.length === 0 && el.textContent === "Scale",
+		);
+		const secondLabel = labels[1];
+		const row = secondLabel?.nextElementSibling;
+		if (!secondLabel || !row) throw new Error("stacked labels not found");
+		const stackedGap =
+			secondLabel.getBoundingClientRect().top -
+			inputs[0].getBoundingClientRect().bottom;
+		const internalGap =
+			row.getBoundingClientRect().top -
+			secondLabel.getBoundingClientRect().bottom;
+		await expect(stackedGap).toBeGreaterThanOrEqual(internalGap - 1);
+	},
+};
+
+// Issue #736: keyboard focus must paint the shared `--color-focus-ring`
+// instead of WebKit's native blue outline on the range input.
+export const Focused: Story = {
+	args: {},
+	play: async ({ canvasElement }) => {
+		const range = canvasElement.querySelector<HTMLInputElement>(
+			'input[type="range"]',
+		);
+		if (!range) throw new Error("range input not found");
+		range.focus();
+		await expect(document.activeElement).toBe(range);
+		await new Promise((resolve) => setTimeout(resolve, 300));
+		const style = getComputedStyle(range);
+		await expect(style.boxShadow).not.toBe("none");
+		await expect(style.outlineStyle).toBe("none");
 	},
 };
 
