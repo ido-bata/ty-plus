@@ -143,6 +143,45 @@ export const Open: Story = {
 	},
 };
 
+// Issue #721: the palette-search wrapper must keep tracking the widget's
+// width. PR #668's `flexShrink: 0` (no grow, no explicit width) collapsed
+// the wrapper to content width on CEP/CEF, so the search input rendered
+// fixed-size instead of following the widget. Assert the full-width
+// contract (Panda emits readable atomic classes) and that the wrapper
+// width tracks a container resize. `flexGrow` must stay 0 — growing the
+// wrapper vertically would re-break the #668 palette anchoring.
+export const SearchFieldTracksWidgetWidth: Story = {
+	play: async ({ canvasElement }) => {
+		const input = findSearchInput(canvasElement);
+		const widgetRoot = canvasElement.querySelector<HTMLElement>(
+			"[data-widget-quick-actions]",
+		);
+		if (!widgetRoot) throw new Error("quick actions widget root not found");
+		// input → SearchField root → palette-search anchor wrapper.
+		const wrapper = input.parentElement?.parentElement;
+		if (!wrapper) throw new Error("palette search wrapper not found");
+		const frame = widgetRoot.parentElement;
+		if (!(frame instanceof HTMLElement)) {
+			throw new Error("widget frame not found");
+		}
+		const widgetWidth = (): number => widgetRoot.getBoundingClientRect().width;
+		const wrapperWidth = (): number => wrapper.getBoundingClientRect().width;
+		expect(Math.abs(wrapperWidth() - widgetWidth())).toBeLessThanOrEqual(1);
+		expect(wrapper.className.split(/\s+/)).toContain("w_full");
+		expect(Number.parseFloat(getComputedStyle(wrapper).flexGrow)).toBe(0);
+		const originalWidth = frame.style.width;
+		frame.style.width = "180px";
+		try {
+			await waitFor(() => {
+				expect(widgetWidth()).toBeLessThan(250);
+				expect(Math.abs(wrapperWidth() - widgetWidth())).toBeLessThanOrEqual(1);
+			});
+		} finally {
+			frame.style.width = originalWidth;
+		}
+	},
+};
+
 export const EmptyResults: Story = {
 	args: { catalog: "empty" },
 	play: async ({ canvasElement }) => {
