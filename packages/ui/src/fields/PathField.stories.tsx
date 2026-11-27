@@ -4,6 +4,7 @@ import { FolderOpen } from "lucide-react";
 import { useState } from "react";
 import { expect } from "storybook/test";
 
+import { borderTopColor, resolveBorderToken } from "@/storybook/quality/border";
 import { expectCanvasLayout } from "@/storybook/quality/layout";
 
 import { PathField } from "./PathField";
@@ -50,6 +51,16 @@ export const Default: Story = {
 		// The enabled browse button must not carry the disabled dim: it once
 		// rendered at opacity 0.5 and looked identical to the disabled state.
 		expect(getComputedStyle(button).opacity).toBe("1");
+		// The browse button sits flush (gap 1.5) against the path input, so
+		// its resting border must resolve to the same `border.control` tier
+		// as the input's `border.input` — not the weaker `border.subtle`.
+		const input = canvasElement.querySelector<HTMLInputElement>(
+			"[data-path-field] input",
+		);
+		if (!input) throw new Error("path input not found");
+		expect(borderTopColor(button)).toBe(borderTopColor(input));
+		expect(borderTopColor(button)).toBe(resolveBorderToken("control"));
+		expect(borderTopColor(button)).not.toBe(resolveBorderToken("subtle"));
 	},
 };
 
