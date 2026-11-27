@@ -250,9 +250,26 @@
 			"debugConsole": "디버그 콘솔",
 			"console": "콘솔"
 		},
+		"sourcesCompact": {
+			"all": "모든",
+			"panel": "패널",
+			"modeless": "모드리스",
+			"hostBridge": "브리지",
+			"online": "온라인",
+			"preset": "프리셋",
+			"opWorker": "워커",
+			"workspace": "영역",
+			"boot": "부팅",
+			"debugConsole": "디버그",
+			"console": "콘솔"
+		},
 		"scopes": {
 			"allHistory": "전체 기록",
 			"thisSession": "이번 세션"
+		},
+		"scopesCompact": {
+			"allHistory": "기록",
+			"thisSession": "세션"
 		},
 		"contextMenu": {
 			"copyMessage": "메시지 복사",

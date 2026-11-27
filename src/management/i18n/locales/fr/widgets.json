@@ -46,6 +46,11 @@
 			"bounce": "Rebond",
 			"elastic": "Élastique"
 		},
+		"modeCompact": {
+			"curve": "C",
+			"bounce": "R",
+			"elastic": "É"
+		},
 		"options": {
 			"mode": "Mode",
 			"grid": "Grille",

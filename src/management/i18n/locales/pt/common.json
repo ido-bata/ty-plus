@@ -250,9 +250,26 @@
 			"debugConsole": "Console de depuração",
 			"console": "Console"
 		},
+		"sourcesCompact": {
+			"all": "Todas",
+			"panel": "Painel",
+			"modeless": "Sem janela",
+			"hostBridge": "Ponte",
+			"online": "Online",
+			"preset": "Preset",
+			"opWorker": "Worker",
+			"workspace": "Área",
+			"boot": "Boot",
+			"debugConsole": "Debug",
+			"console": "Console"
+		},
 		"scopes": {
 			"allHistory": "Todo o histórico",
 			"thisSession": "Esta sessão"
+		},
+		"scopesCompact": {
+			"allHistory": "Histórico",
+			"thisSession": "Sessão"
 		},
 		"contextMenu": {
 			"copyMessage": "Copiar mensagem",

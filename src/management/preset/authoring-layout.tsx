@@ -110,7 +110,11 @@ export function AuthoringSegment({
 }: {
 	value: string;
 	onChange: (value: string) => void;
-	options: readonly { value: string; label: string }[];
+	options: readonly {
+		value: string;
+		label: string;
+		compactLabel?: string;
+	}[];
 	/** Accessible name for the group. */
 	ariaLabel?: string;
 }): JSX.Element {

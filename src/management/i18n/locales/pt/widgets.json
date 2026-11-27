@@ -46,6 +46,11 @@
 			"bounce": "Quicar",
 			"elastic": "Elástico"
 		},
+		"modeCompact": {
+			"curve": "C",
+			"bounce": "Q",
+			"elastic": "E"
+		},
 		"options": {
 			"mode": "Modo",
 			"grid": "Grelha",

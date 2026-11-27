@@ -46,6 +46,11 @@
 			"bounce": "바운스",
 			"elastic": "엘라스틱"
 		},
+		"modeCompact": {
+			"curve": "커",
+			"bounce": "바",
+			"elastic": "엘"
+		},
 		"options": {
 			"mode": "모드",
 			"grid": "그리드",

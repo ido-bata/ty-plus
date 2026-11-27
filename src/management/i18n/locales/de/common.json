@@ -250,9 +250,26 @@
 			"debugConsole": "Debug-Konsole",
 			"console": "Konsole"
 		},
+		"sourcesCompact": {
+			"all": "Alle",
+			"panel": "Panel",
+			"modeless": "Modellos",
+			"hostBridge": "Host",
+			"online": "Online",
+			"preset": "Preset",
+			"opWorker": "Worker",
+			"workspace": "Bereich",
+			"boot": "Start",
+			"debugConsole": "Debug",
+			"console": "Konsole"
+		},
 		"scopes": {
 			"allHistory": "Gesamter Verlauf",
 			"thisSession": "Diese Sitzung"
+		},
+		"scopesCompact": {
+			"allHistory": "Alle",
+			"thisSession": "Sitzung"
 		},
 		"contextMenu": {
 			"copyMessage": "Nachricht kopieren",

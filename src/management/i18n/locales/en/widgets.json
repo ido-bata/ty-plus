@@ -46,6 +46,11 @@
 			"bounce": "Bounce",
 			"elastic": "Elastic"
 		},
+		"modeCompact": {
+			"curve": "C",
+			"bounce": "B",
+			"elastic": "E"
+		},
 		"options": {
 			"mode": "Mode",
 			"grid": "Grid",

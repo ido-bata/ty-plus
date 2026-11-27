@@ -46,6 +46,11 @@
 			"bounce": "Отскок",
 			"elastic": "Эластичный"
 		},
+		"modeCompact": {
+			"curve": "К",
+			"bounce": "О",
+			"elastic": "Э"
+		},
 		"options": {
 			"mode": "Режим",
 			"grid": "Сетка",
