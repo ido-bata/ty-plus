@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { type JSX, useRef, useState } from "react";
+import { expect } from "storybook/test";
 import { css } from "@/styled-system/css";
 
 import {
@@ -74,4 +75,26 @@ export const Filtered: Story = {
 /** Query that matches nothing — empty-results state. */
 export const EmptyResults: Story = {
 	render: renderCatalog("zzz-no-such-widget"),
+};
+
+// Issue #166: the catalog card is a real selection control — a click on
+// the hit-area button must flip `aria-pressed` and repaint the card to
+// the active surface. The post-play selected state is what capture
+// screenshots.
+export const SelectOnClick: Story = {
+	play: async ({ canvasElement }) => {
+		const hitArea = canvasElement.querySelector<HTMLButtonElement>(
+			"button[data-add-widget-type]",
+		);
+		if (!hitArea) throw new Error("catalog item hit area not found");
+		const card = hitArea.parentElement;
+		if (!card) throw new Error("catalog card not found");
+		const restingBg = getComputedStyle(card).backgroundColor;
+		await expect(hitArea.getAttribute("aria-pressed")).toBe("false");
+		const { userEvent } = await import("vitest/browser");
+		await userEvent.click(hitArea);
+		await expect(hitArea.getAttribute("aria-pressed")).toBe("true");
+		await new Promise((resolve) => setTimeout(resolve, 300));
+		await expect(getComputedStyle(card).backgroundColor).not.toBe(restingBg);
+	},
 };
