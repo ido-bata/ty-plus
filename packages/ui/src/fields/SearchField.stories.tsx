@@ -3,6 +3,10 @@ import { Search } from "lucide-react";
 import { useState } from "react";
 import { expect } from "storybook/test";
 
+import {
+	assertMatchesWidth,
+	expectContainerWidthTracking,
+} from "@/storybook/quality/fit";
 import { expectCanvasLayout } from "@/storybook/quality/layout";
 
 import { SearchField } from "./SearchField";
@@ -84,6 +88,38 @@ export const FocusVisible: Story = {
 
 		const wrapperStyle = getComputedStyle(wrapper);
 		expect(wrapperStyle.borderTopColor).not.toBe(restingBorderColor);
+		expectCanvasLayout(canvasElement);
+	},
+};
+
+// Issue #726 / #721 shape: the field root must fill its container and keep
+// tracking it across resizes — the regression class where `flexShrink: 0`
+// (no grow, no explicit width) collapsed the wrapper to content width on
+// CEP/CEF. `expectContainerWidthTracking` probes a real resize; the static
+// half asserts the fills-width contract up front.
+export const TracksContainerWidth: Story = {
+	render: () => (
+		<div data-testid="search-field-frame" style={{ width: 320 }}>
+			<SearchField icon={Search} placeholder="Search…" aria-label="Search" />
+		</div>
+	),
+	play: async ({ canvasElement }) => {
+		expectCanvasLayout(canvasElement);
+		const input = canvasElement.querySelector<HTMLInputElement>("input");
+		if (!input) throw new Error("search input not found");
+		// input → SearchField root (the width-tracking element).
+		const field = input.parentElement;
+		const frame = canvasElement.querySelector<HTMLElement>(
+			"[data-testid='search-field-frame']",
+		);
+		if (!field || !frame) throw new Error("search field frame not found");
+		assertMatchesWidth(field, frame);
+		await expectContainerWidthTracking(frame, field, {
+			resizeTo: "160px",
+			expectedRatio: 1,
+		});
+		// The probe restores the original width; the contract still holds.
+		assertMatchesWidth(field, frame);
 		expectCanvasLayout(canvasElement);
 	},
 };

@@ -1,6 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { expect } from "storybook/test";
-import { borderTopColor, resolveBorderToken } from "@/storybook/quality/border";
+import {
+	assertBorderToken,
+	borderTopColor,
+	resolveBorderToken,
+} from "@/storybook/quality/border";
 import { expectCanvasLayout } from "@/storybook/quality/layout";
 import { css } from "@/styled-system/css";
 
@@ -135,9 +139,9 @@ export const AllVariants: Story = {
 			return el;
 		};
 		for (const label of ["Default", "Secondary", "Ghost", "Danger"]) {
-			const color = borderTopColor(byText(label));
-			expect(color).toBe(resolveBorderToken("subtle"));
-			expect(color).not.toBe(resolveBorderToken("control"));
+			const el = byText(label);
+			assertBorderToken(el, "subtle");
+			expect(borderTopColor(el)).not.toBe(resolveBorderToken("control"));
 		}
 	},
 };

@@ -1,7 +1,12 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 import { expect } from "storybook/test";
-import { borderTopColor, resolveBorderToken } from "@/storybook/quality/border";
+import {
+	assertBorderToken,
+	borderTopColor,
+	resolveBorderToken,
+} from "@/storybook/quality/border";
+import { assertSingleRow } from "@/storybook/quality/fit";
 import { expectCanvasLayout } from "@/storybook/quality/layout";
 import { css } from "@/styled-system/css";
 
@@ -114,7 +119,9 @@ export const HoveredSegment: Story = {
 		// sit on the non-assertive `border.subtle` tier, not `border.control`.
 		const strip = canvasElement.querySelector('[role="toolbar"]');
 		if (!strip) throw new Error("segmented strip not found");
-		expect(borderTopColor(strip)).toBe(resolveBorderToken("subtle"));
+		// Issue #722/#726: passive chrome rests on `border.subtle`, never
+		// `border.control`.
+		assertBorderToken(strip, "subtle");
 		expect(borderTopColor(strip)).not.toBe(resolveBorderToken("control"));
 		const buttons = Array.from(
 			canvasElement.querySelectorAll<HTMLButtonElement>("button"),
@@ -151,13 +158,6 @@ const adaptiveOptions = [
 
 const settleLabels = () => new Promise((resolve) => setTimeout(resolve, 80));
 
-const singleRowTops = (toolbar: Element): number =>
-	new Set(
-		Array.from(toolbar.querySelectorAll("button")).map((button) =>
-			Math.round(button.getBoundingClientRect().top),
-		),
-	).size;
-
 export const AdaptiveLabels: Story = {
 	args: {
 		options: adaptiveOptions,
@@ -189,10 +189,10 @@ export const AdaptiveLabels: Story = {
 		expect(narrow.textContent).toContain("Cv");
 		expect(narrow.textContent).not.toContain("Comfortable curve");
 
-		// Both strips stay on a single row and nothing is clipped inside
-		// a segment.
+		// Both strips stay on a single row (Issue #726 shared contract) and
+		// nothing is clipped inside a segment.
 		for (const toolbar of toolbars) {
-			expect(singleRowTops(toolbar)).toBe(1);
+			assertSingleRow(toolbar, { itemSelector: "button" });
 			for (const button of toolbar.querySelectorAll("button")) {
 				expect(button.scrollWidth).toBeLessThanOrEqual(button.clientWidth + 1);
 			}
@@ -225,7 +225,7 @@ export const OverflowScrollsHorizontally: Story = {
 		expect(toolbar.querySelectorAll("button")).toHaveLength(11);
 		// Single row, and the excess width is reachable by scrolling —
 		// no segment is dropped to a second line or clipped.
-		expect(singleRowTops(toolbar)).toBe(1);
+		assertSingleRow(toolbar, { itemSelector: "button" });
 		expect(getComputedStyle(toolbar).overflowX).toBe("auto");
 		expect(toolbar.scrollWidth).toBeGreaterThan(toolbar.clientWidth);
 		expectCanvasLayout(canvasElement);

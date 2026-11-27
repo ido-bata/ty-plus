@@ -1,5 +1,7 @@
 import { css } from "@/styled-system/css";
 
+import { describeElement, LayoutAssertionError } from "./layout";
+
 /**
  * Border-token probes for Storybook `play()` assertions (Issue #722).
  *
@@ -61,4 +63,33 @@ export function resolveBorderToken(name: BorderTokenProbe): string {
 /** Computed `border-top-color` of a rendered element. */
 export function borderTopColor(el: Element): string {
 	return getComputedStyle(el).borderTopColor;
+}
+
+/**
+ * Assert a rendered element's resting border resolves to the contracted
+ * token — the state-based border contract of Issue #726. `token` is a
+ * {@link BorderTokenProbe} name (`subtle` / `control` / `input` /
+ * `focus`); the comparison goes through {@link resolveBorderToken} so a
+ * token *value* change never breaks the mapping assertion.
+ *
+ * For state transitions (hover/focus/selected/disabled) capture
+ * {@link borderTopColor} before and after the interaction and assert the
+ * values differ, or — where the contract names the target state token —
+ * call this helper while the element is in that state (e.g. after
+ * `focusAndAssert` for the `focus` token).
+ */
+export function assertBorderToken(
+	el: Element,
+	token: BorderTokenProbe,
+	options: { label?: string } = {},
+): void {
+	const actual = borderTopColor(el);
+	const expected = resolveBorderToken(token);
+	const label = options.label ?? describeElement(el);
+	if (actual !== expected) {
+		// i18n-exempt: internal diagnostic — storybook border assertion, not UI copy
+		throw new LayoutAssertionError(
+			`${label}: border-top-color ${actual} ≠ contracted token "${token}" (${expected})`,
+		);
+	}
 }
