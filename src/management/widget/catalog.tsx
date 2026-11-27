@@ -719,7 +719,7 @@ export function AddWidgetCatalogPanel({
 				</div>
 			</div>
 			<p className={hintStyle}>{hintShortcuts}</p>
-			<div id={listboxId} className={listboxStyle}>
+			<div id={listboxId} data-add-widget-listbox className={listboxStyle}>
 				<WidgetCatalogResults
 					linearItems={linearItems}
 					viewMode={viewMode}

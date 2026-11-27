@@ -121,10 +121,10 @@ const actionGroup = css({
 	gap: "0.5",
 });
 
-const iconBtnSize = css({
-	height: "6",
-	width: "6",
-});
+// Issue #752: IconButton metrics come from the `size` prop alone —
+// `size="xs"` is the 6x6 (24px) box the status bar needs. Pairing
+// `size="sm"` with a className height/width override let Panda resolve
+// height and width to different winners (24x28 non-square buttons).
 
 const snapshotsWrap = css({
 	position: "relative",
@@ -261,8 +261,7 @@ export const StatusBar = memo(function StatusBarImpl(
 						defaultValue: "Undo (Ctrl+Z)",
 					})}
 					disabled={!props.canUndo}
-					size="sm"
-					className={iconBtnSize}
+					size="xs"
 				>
 					<Icon icon={Undo2} size={3} />
 				</IconButton>
@@ -275,8 +274,7 @@ export const StatusBar = memo(function StatusBarImpl(
 						defaultValue: "Redo (Ctrl+Y)",
 					})}
 					disabled={!props.canRedo}
-					size="sm"
-					className={iconBtnSize}
+					size="xs"
 				>
 					<Icon icon={Redo2} size={3} />
 				</IconButton>
@@ -288,8 +286,7 @@ export const StatusBar = memo(function StatusBarImpl(
 					aria-label={i18n.t("workspace:statusBar.saveSnapshotTitle", {
 						defaultValue: "Save layout snapshot",
 					})}
-					size="sm"
-					className={iconBtnSize}
+					size="xs"
 				>
 					<Icon icon={Save} size={3} />
 				</IconButton>
@@ -318,8 +315,7 @@ export const StatusBar = memo(function StatusBarImpl(
 											defaultValue: "Saved layouts ({{count}})",
 										})
 							}
-							size="sm"
-							className={iconBtnSize}
+							size="xs"
 							onClick={() => setSnapshotsOpen((v) => !v)}
 						>
 							<Icon icon={Layers} size={3} />
@@ -371,8 +367,7 @@ export const StatusBar = memo(function StatusBarImpl(
 												data-snap-id={snp.id}
 												title={i18n.t("common:buttons.delete")}
 												aria-label={i18n.t("common:buttons.delete")}
-												size="sm"
-												className={iconBtnSize}
+												size="xs"
 											>
 												<Icon icon={Trash2} size={3} />
 											</IconButton>
@@ -392,8 +387,7 @@ export const StatusBar = memo(function StatusBarImpl(
 					aria-label={i18n.t("workspace:controlPanel.buttons.localPreset", {
 						defaultValue: "Local Preset",
 					})}
-					size="sm"
-					className={iconBtnSize}
+					size="xs"
 				>
 					<Icon icon={Library} size={3} />
 				</IconButton>
@@ -406,8 +400,7 @@ export const StatusBar = memo(function StatusBarImpl(
 					aria-label={i18n.t("workspace:statusBar.presetLibraryTitle", {
 						defaultValue: "Preset Library (Online)",
 					})}
-					size="sm"
-					className={iconBtnSize}
+					size="xs"
 				>
 					<Icon icon={Cloud} size={3} />
 				</IconButton>
@@ -420,8 +413,7 @@ export const StatusBar = memo(function StatusBarImpl(
 						aria-label={i18n.t("workspace:statusBar.debugConsoleTitle", {
 							defaultValue: "Debug console (Ctrl+`)",
 						})}
-						size="sm"
-						className={iconBtnSize}
+						size="xs"
 					>
 						<Icon icon={Terminal} size={3} />
 					</IconButton>
@@ -433,8 +425,7 @@ export const StatusBar = memo(function StatusBarImpl(
 						data-dialog-kind="messages"
 						title={i18n.t("common:statusBar.message")}
 						aria-label={i18n.t("common:statusBar.message")}
-						size="sm"
-						className={iconBtnSize}
+						size="xs"
 					>
 						<Icon icon={MessageSquare} size={3} />
 					</IconButton>
@@ -445,8 +436,7 @@ export const StatusBar = memo(function StatusBarImpl(
 					data-dialog-kind="settings"
 					title={i18n.t("common:statusBar.settings")}
 					aria-label={i18n.t("common:statusBar.settings")}
-					size="sm"
-					className={iconBtnSize}
+					size="xs"
 				>
 					<Icon icon={Settings} size={3} />
 				</IconButton>

@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { expect } from "storybook/test";
 
 import type { LogMessage } from "@/management/debug/console/types";
 
@@ -75,7 +76,44 @@ const meta = {
 export default meta;
 type Story = StoryObj<Args>;
 
-export const Default: Story = {};
+export const Default: Story = {
+	play: async ({ canvasElement }) => {
+		// Issue #752 / #723 contract: every segmented strip stays on one
+		// row — nowrap + horizontal scroll/compact labels, never wrapped
+		// segments. Three strips (level / source / scope) share the panel.
+		const strips =
+			canvasElement.querySelectorAll<HTMLElement>('[role="toolbar"]');
+		expect(strips.length).toBe(3);
+		for (const strip of strips) {
+			const style = getComputedStyle(strip);
+			expect(style.flexWrap).toBe("nowrap");
+			expect(["auto", "scroll"]).toContain(style.overflowX);
+			const buttons = strip.querySelectorAll("button");
+			expect(buttons.length).toBeGreaterThan(0);
+			const tops = new Set(
+				[...buttons].map((b) => Math.round(b.getBoundingClientRect().top)),
+			);
+			expect(tops.size, `segmented strip wrapped into ${tops.size} rows`).toBe(
+				1,
+			);
+		}
+		// Issue #752 (minor): the three filter strips must not consume
+		// half the panel — assert the chrome stays under 50% of the 320px
+		// story frame so the message list keeps the majority.
+		const panel = canvasElement.firstElementChild as HTMLElement | null;
+		if (panel) {
+			let stripsHeight = 0;
+			for (const strip of strips) {
+				stripsHeight += strip.parentElement?.offsetHeight ?? 0;
+			}
+			const ratio = stripsHeight / panel.clientHeight;
+			expect(
+				ratio,
+				`filter strips consume ${(ratio * 100).toFixed(0)}% of panel height`,
+			).toBeLessThan(0.5);
+		}
+	},
+};
 
 export const ErrorsOnly: Story = {
 	args: { filter: "error", messageCount: 5 },

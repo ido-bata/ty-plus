@@ -15,14 +15,14 @@
 	},
 	{
 		"file": "packages/ui/src/controls/ViewModeToggle.tsx",
-		"line": 91,
+		"line": 93,
 		"rule": "ui-override",
 		"message": "<IconButton> is a shared @ty-plus/ui component; height, width, borderRadius, borderWidth, padding must come from its variant/size/tone props, not className",
 		"reason": "the toggle's flush segmented-cell chrome predates the ui-override gate (it was previously hidden inside an unresolvable cx() call); migrate it into a shared IconButton variant when the segmented control family is consolidated"
 	},
 	{
 		"file": "packages/ui/src/controls/ViewModeToggle.tsx",
-		"line": 107,
+		"line": 109,
 		"rule": "ui-override",
 		"message": "<IconButton> is a shared @ty-plus/ui component; height, width, borderRadius, borderWidth, padding must come from its variant/size/tone props, not className",
 		"reason": "the toggle's flush segmented-cell chrome predates the ui-override gate (it was previously hidden inside an unresolvable cx() call); migrate it into a shared IconButton variant when the segmented control family is consolidated"
@@ -64,70 +64,70 @@
 	},
 	{
 		"file": "src/management/dialog/Root.tsx",
-		"line": 83,
+		"line": 72,
 		"rule": "inline-style",
 		"message": "inline style sets fontSize — appearance must come from css() and the token system",
 		"reason": "inline style sets appearance; move it into css() and the token system"
 	},
 	{
 		"file": "src/management/dialog/Root.tsx",
-		"line": 88,
+		"line": 77,
 		"rule": "inline-style",
 		"message": "inline style sets color — appearance must come from css() and the token system",
 		"reason": "inline style sets appearance; move it into css() and the token system"
 	},
 	{
 		"file": "src/management/dialog/Root.tsx",
-		"line": 93,
-		"rule": "inline-style",
-		"message": "inline style sets background — appearance must come from css() and the token system",
-		"reason": "inline style sets appearance; move it into css() and the token system"
-	},
-	{
-		"file": "src/management/dialog/Root.tsx",
-		"line": 146,
-		"rule": "inline-style",
-		"message": "inline style sets fontSize — appearance must come from css() and the token system",
-		"reason": "inline style sets appearance; move it into css() and the token system"
-	},
-	{
-		"file": "src/management/dialog/Root.tsx",
-		"line": 149,
-		"rule": "inline-style",
-		"message": "inline style sets color — appearance must come from css() and the token system",
-		"reason": "inline style sets appearance; move it into css() and the token system"
-	},
-	{
-		"file": "src/management/dialog/Root.tsx",
-		"line": 154,
+		"line": 82,
 		"rule": "inline-style",
 		"message": "inline style sets background — appearance must come from css() and the token system",
 		"reason": "inline style sets appearance; move it into css() and the token system"
 	},
 	{
 		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 792,
+		"line": 777,
 		"rule": "ui-override",
 		"message": "<IconButton> is a shared @ty-plus/ui component; height, width, borderWidth, borderStyle, borderColor must come from its variant/size/tone props, not className",
 		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
 	},
 	{
 		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 869,
+		"line": 857,
 		"rule": "ui-override",
 		"message": "<IconButton> is a shared @ty-plus/ui component; borderWidth, borderStyle, borderColor must come from its variant/size/tone props, not className",
 		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
 	},
 	{
 		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 1266,
+		"line": 973,
+		"rule": "ui-override",
+		"message": "<IconButton> is a shared @ty-plus/ui component; height, width, borderRadius, borderWidth, padding must come from its variant/size/tone props, not className",
+		"reason": "the shared control is re-skinned locally (strip-cell metrics were previously masked inside the dynamic viewModeBtnClass() call); move the appearance into a shared variant/size/tone prop when the segmented control family is consolidated"
+	},
+	{
+		"file": "src/management/online/catalog/Dialog.tsx",
+		"line": 987,
+		"rule": "ui-override",
+		"message": "<IconButton> is a shared @ty-plus/ui component; height, width, borderRadius, borderWidth, padding must come from its variant/size/tone props, not className",
+		"reason": "the shared control is re-skinned locally (strip-cell metrics were previously masked inside the dynamic viewModeBtnClass() call); move the appearance into a shared variant/size/tone prop when the segmented control family is consolidated"
+	},
+	{
+		"file": "src/management/online/catalog/Dialog.tsx",
+		"line": 1001,
+		"rule": "ui-override",
+		"message": "<IconButton> is a shared @ty-plus/ui component; height, width, borderRadius, borderWidth, padding must come from its variant/size/tone props, not className",
+		"reason": "the shared control is re-skinned locally (strip-cell metrics were previously masked inside the dynamic viewModeBtnClass() call); move the appearance into a shared variant/size/tone prop when the segmented control family is consolidated"
+	},
+	{
+		"file": "src/management/online/catalog/Dialog.tsx",
+		"line": 1245,
 		"rule": "ui-override",
 		"message": "<IconButton> is a shared @ty-plus/ui component; borderWidth, borderStyle, borderColor must come from its variant/size/tone props, not className",
 		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
 	},
 	{
 		"file": "src/management/online/catalog/DownloadProgressIconButton.tsx",
-		"line": 184,
+		"line": 196,
 		"rule": "raw-svg",
 		"message": "raw <svg> is banned; use `Icon` with a lucide icon",
 		"reason": "hand-drawn icon predates the shared design system; replace it with `Icon` and a lucide icon"
@@ -154,83 +154,6 @@
 		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
 	},
 	{
-		"file": "src/management/panel/control/status-bar/Main.tsx",
-		"line": 203,
-		"rule": "ui-override",
-		"message": "<IconButton> is a shared @ty-plus/ui component; height, width must come from its variant/size/tone props, not className",
-		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
-	},
-	{
-		"file": "src/management/panel/control/status-bar/Main.tsx",
-		"line": 214,
-		"rule": "ui-override",
-		"message": "<IconButton> is a shared @ty-plus/ui component; height, width must come from its variant/size/tone props, not className",
-		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
-	},
-	{
-		"file": "src/management/panel/control/status-bar/Main.tsx",
-		"line": 224,
-		"rule": "ui-override",
-		"message": "<IconButton> is a shared @ty-plus/ui component; height, width must come from its variant/size/tone props, not className",
-		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
-	},
-	{
-		"file": "src/management/panel/control/status-bar/Main.tsx",
-		"line": 243,
-		"rule": "ui-override",
-		"message": "<IconButton> is a shared @ty-plus/ui component; height, width must come from its variant/size/tone props, not className",
-		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
-	},
-	{
-		"file": "src/management/panel/control/status-bar/Main.tsx",
-		"line": 293,
-		"rule": "ui-override",
-		"message": "<IconButton> is a shared @ty-plus/ui component; height, width must come from its variant/size/tone props, not className",
-		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
-	},
-	{
-		"file": "src/management/panel/control/status-bar/Main.tsx",
-		"line": 311,
-		"rule": "ui-override",
-		"message": "<IconButton> is a shared @ty-plus/ui component; height, width must come from its variant/size/tone props, not className",
-		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
-	},
-	{
-		"file": "src/management/panel/control/status-bar/Main.tsx",
-		"line": 322,
-		"rule": "ui-override",
-		"message": "<IconButton> is a shared @ty-plus/ui component; height, width must come from its variant/size/tone props, not className",
-		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
-	},
-	{
-		"file": "src/management/panel/control/status-bar/Main.tsx",
-		"line": 332,
-		"rule": "ui-override",
-		"message": "<IconButton> is a shared @ty-plus/ui component; height, width must come from its variant/size/tone props, not className",
-		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
-	},
-	{
-		"file": "src/management/panel/control/status-bar/Main.tsx",
-		"line": 341,
-		"rule": "ui-override",
-		"message": "<IconButton> is a shared @ty-plus/ui component; height, width must come from its variant/size/tone props, not className",
-		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
-	},
-	{
-		"file": "src/management/panel/control/status-bar/Main.tsx",
-		"line": 350,
-		"rule": "ui-override",
-		"message": "<IconButton> is a shared @ty-plus/ui component; height, width must come from its variant/size/tone props, not className",
-		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
-	},
-	{
-		"file": "src/management/panel/control/Toolbar.tsx",
-		"line": 177,
-		"rule": "ui-override",
-		"message": "<IconButton> is a shared @ty-plus/ui component; height, width must come from its variant/size/tone props, not className",
-		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
-	},
-	{
 		"file": "src/management/preset/catalog-browser/PresetsDialogHeader.tsx",
 		"line": 244,
 		"rule": "ui-override",
@@ -239,14 +162,14 @@
 	},
 	{
 		"file": "src/management/preset/group/Panel.tsx",
-		"line": 127,
+		"line": 132,
 		"rule": "inline-style",
 		"message": "inline style sets backgroundColor — appearance must come from css() and the token system",
 		"reason": "inline style sets appearance; move it into css() and the token system"
 	},
 	{
 		"file": "src/management/preset/group/Panel.tsx",
-		"line": 156,
+		"line": 161,
 		"rule": "inline-style",
 		"message": "inline style sets opacity — appearance must come from css() and the token system",
 		"reason": "inline style sets appearance; move it into css() and the token system"
@@ -260,14 +183,14 @@
 	},
 	{
 		"file": "src/management/workspace/background/Fields.tsx",
-		"line": 72,
+		"line": 98,
 		"rule": "ui-override",
 		"message": "<Input> is a shared @ty-plus/ui component; borderRadius, borderWidth, borderStyle, borderColor, backgroundColor must come from its variant/size/tone props, not className",
 		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
 	},
 	{
 		"file": "src/management/workspace/background/Fields.tsx",
-		"line": 81,
+		"line": 115,
 		"rule": "ui-override",
 		"message": "<Input> is a shared @ty-plus/ui component; borderColor must come from its variant/size/tone props, not className",
 		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
@@ -288,7 +211,7 @@
 	},
 	{
 		"file": "src/management/workspace/background/LayerEditor.tsx",
-		"line": 103,
+		"line": 107,
 		"rule": "inline-style",
 		"message": "inline style sets backgroundColor — appearance must come from css() and the token system",
 		"reason": "inline style sets appearance; move it into css() and the token system"
@@ -320,12 +243,5 @@
 		"rule": "raw-svg",
 		"message": "raw <svg> is banned; use `Icon` with a lucide icon",
 		"reason": "hand-drawn icon predates the shared design system; replace it with `Icon` and a lucide icon"
-	},
-	{
-		"file": "src/management/online/catalog/Dialog.tsx",
-		"line": 973,
-		"rule": "ui-override",
-		"message": "<IconButton> is a shared @ty-plus/ui component; height, width, borderRadius, borderWidth, padding must come from its variant/size/tone props, not className",
-		"reason": "the shared control is re-skinned locally (strip-cell metrics were previously masked inside the dynamic viewModeBtnClass() call); move the appearance into a shared variant/size/tone prop when the segmented control family is consolidated"
 	}
 ]
