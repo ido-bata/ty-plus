@@ -123,13 +123,24 @@ const galleryThumbWrapClass = css({
 	aspectRatio: "square",
 	flexShrink: 0,
 });
-const galleryOverlayClass = css({
-	position: "absolute",
-	insetInline: 0,
-	bottom: 0,
-	zIndex: "var(--ty-z-overlay)",
-	backgroundColor: "surface.panel",
-	padding: "2",
+const galleryInfoClass = css({
+	display: "flex",
+	flexDirection: "column",
+	gap: "1",
+	minWidth: 0,
+	minHeight: 0,
+	paddingInline: "2",
+	paddingBlock: "1.5",
+	borderTopWidth: "hairline",
+	borderTopStyle: "solid",
+	borderTopColor: "border.subtle",
+});
+const galleryInfoHeaderClass = css({
+	display: "flex",
+	alignItems: "center",
+	justifyContent: "space-between",
+	gap: "1",
+	minWidth: 0,
 });
 const galleryTitleClass = css({
 	fontSize: "xs",
@@ -137,12 +148,8 @@ const galleryTitleClass = css({
 	color: "text.primary",
 	lineHeight: "tight",
 	truncate: true,
-	width: "full",
-	marginBottom: "0.5",
-});
-const galleryDescriptionSlotClass = css({
-	height: "8",
-	marginBottom: "1",
+	flex: "1",
+	minWidth: 0,
 });
 const galleryDescriptionClass = css({
 	fontSize: "2xs",
@@ -268,14 +275,6 @@ const viewModeBtnBaseClass = css({
 	borderWidth: 0,
 	padding: "0",
 });
-const viewModeBtnActiveClass = css({
-	backgroundColor: "surface.widget",
-	color: "text.primary",
-	boxShadow: "sm",
-});
-const viewModeBtnInactiveClass = css({
-	color: "text.muted",
-});
 const viewModeDividerClass = css({
 	width: "px",
 	flexShrink: 0,
@@ -303,10 +302,6 @@ const sidePanelHeaderRowClass = css({
 	borderBottomWidth: "hairline",
 	borderBottomStyle: "solid",
 	borderBottomColor: "border.default",
-});
-const sidePanelSearchWrapperClass = css({
-	flex: "1",
-	minWidth: 0,
 });
 const sidePanelSectionClass = css({
 	display: "flex",
@@ -612,13 +607,6 @@ const resultsAreaClass = css({
 const gridGalleryClass = css({ display: "grid", gap: "2" });
 const gridCardsClass = css({ display: "grid", gap: "2" });
 
-function viewModeBtnClass(active: boolean): string {
-	return cx(
-		viewModeBtnBaseClass,
-		active ? viewModeBtnActiveClass : viewModeBtnInactiveClass,
-	);
-}
-
 function categoryBtnClass(active: boolean, truncate = false): string {
 	return cx(
 		sidePanelCategoryBtnBaseClass,
@@ -757,17 +745,14 @@ function GalleryCard(props: {
 			onMouseEnter={props.onMouseEnter}
 			onMouseLeave={props.onMouseLeave}
 		>
-			{/* Thumbnail with info overlay */}
+			{/* Thumbnail — fully visible; metadata lives in the in-flow
+			    footer below so the artwork is never occluded. */}
 			<div className={galleryThumbWrapClass}>
 				<PresetMarketThumb item={item} size="gallery" />
-				{/* Bottom overlay: solid bg with name, description, action buttons */}
-				<div className={galleryOverlayClass}>
+			</div>
+			<div className={galleryInfoClass}>
+				<div className={galleryInfoHeaderClass}>
 					<h3 className={galleryTitleClass}>{item.name}</h3>
-					<div className={galleryDescriptionSlotClass}>
-						{hasDescription ? (
-							<p className={galleryDescriptionClass}>{item.description}</p>
-						) : null}
-					</div>
 					<div className={galleryActionsClass}>
 						<DownloadProgressIconButton
 							iconSize={9}
@@ -796,6 +781,9 @@ function GalleryCard(props: {
 						) : null}
 					</div>
 				</div>
+				{hasDescription ? (
+					<p className={galleryDescriptionClass}>{item.description}</p>
+				) : null}
 			</div>
 		</article>
 	);
@@ -978,10 +966,11 @@ function ViewModeToggle(props: {
 				variant="ghost"
 				size="sm"
 				type="button"
+				active={mode === "gallery"}
 				aria-pressed={mode === "gallery"}
 				aria-label={i18n.t("online:catalog.viewGallery")}
 				title={i18n.t("online:catalog.viewGalleryTitle")}
-				className={viewModeBtnClass(mode === "gallery")}
+				className={viewModeBtnBaseClass}
 				onClick={() => onModeChange("gallery")}
 			>
 				<Icon icon={Grid3x3} size={12} />
@@ -991,10 +980,11 @@ function ViewModeToggle(props: {
 				variant="ghost"
 				size="sm"
 				type="button"
+				active={mode === "cards"}
 				aria-pressed={mode === "cards"}
 				aria-label={i18n.t("online:catalog.viewCards")}
 				title={i18n.t("online:catalog.viewCardsLabel")}
-				className={viewModeBtnClass(mode === "cards")}
+				className={viewModeBtnBaseClass}
 				onClick={() => onModeChange("cards")}
 			>
 				<Icon icon={LayoutGrid} size={12} />
@@ -1004,10 +994,11 @@ function ViewModeToggle(props: {
 				variant="ghost"
 				size="sm"
 				type="button"
+				active={mode === "list"}
 				aria-pressed={mode === "list"}
 				aria-label={i18n.t("online:catalog.viewList")}
 				title={i18n.t("online:catalog.viewListLabel")}
-				className={viewModeBtnClass(mode === "list")}
+				className={viewModeBtnBaseClass}
 				onClick={() => onModeChange("list")}
 			>
 				<Icon icon={List} size={12} />
@@ -1018,14 +1009,15 @@ function ViewModeToggle(props: {
 
 function SidePanel(props: {
 	showSidePanel: boolean;
-	query: string;
+	/** Whether the toolbar search query is non-empty (query itself is owned
+	 *  by the main content area; the panel only needs it for the
+	 *  clear-all-filters affordance). */
+	hasActiveQuery: boolean;
 	categories: string[];
 	selectedCategory: string;
 	allTags: string[];
 	selectedTags: Set<string>;
 	onTogglePanel: () => void;
-	onQueryChange: (q: string) => void;
-	onClearQuery: () => void;
 	onCategoryChange: (cat: string) => void;
 	onTagToggle: (tag: string) => void;
 	onClearAllTags: () => void;
@@ -1033,14 +1025,12 @@ function SidePanel(props: {
 }): JSX.Element | null {
 	const {
 		showSidePanel,
-		query,
+		hasActiveQuery,
 		categories,
 		selectedCategory,
 		allTags,
 		selectedTags,
 		onTogglePanel,
-		onQueryChange,
-		onClearQuery,
 		onCategoryChange,
 		onTagToggle,
 		onClearAllTags,
@@ -1052,12 +1042,13 @@ function SidePanel(props: {
 	if (!showSidePanel) return null;
 
 	const hasFilters = Boolean(
-		query || selectedCategory || selectedTags.size > 0,
+		hasActiveQuery || selectedCategory || selectedTags.size > 0,
 	);
 
 	return (
 		<aside className={sidePanelClass}>
-			{/* Side panel header with toggle */}
+			{/* Side panel header with toggle. Text search lives in the main
+			    toolbar search row — the panel only owns filter facets. */}
 			<div className={sidePanelHeaderRowClass}>
 				<IconButton
 					size="sm"
@@ -1067,18 +1058,6 @@ function SidePanel(props: {
 				>
 					<Icon icon={PanelLeftClose} size={12} />
 				</IconButton>
-				<div className={sidePanelSearchWrapperClass}>
-					<SearchField
-						icon={Search}
-						placeholder={i18n.t("online:catalog.filterPlaceholder")}
-						value={query}
-						onChange={(e) => onQueryChange(e.currentTarget.value)}
-						onClear={onClearQuery}
-						showClearButton
-						inputClassName={css({ fontSize: "xs" })}
-						className={css({ height: "6" })}
-					/>
-				</div>
 			</div>
 
 			{/* Category filter */}
@@ -1876,14 +1855,12 @@ export function PresetLibrary(): JSX.Element {
 			{/* Side panel */}
 			<SidePanel
 				showSidePanel={showSidePanel}
-				query={query}
+				hasActiveQuery={query.trim().length > 0}
 				categories={categories}
 				selectedCategory={selectedCategory}
 				allTags={allTags}
 				selectedTags={selectedTags}
 				onTogglePanel={() => setShowSidePanel(false)}
-				onQueryChange={setQuery}
-				onClearQuery={handleClearQuery}
 				onCategoryChange={setSelectedCategory}
 				onTagToggle={handleTagToggle}
 				onClearAllTags={handleClearAllTags}
