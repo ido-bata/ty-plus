@@ -39,8 +39,16 @@ const RANGE_INPUT_CLASS = cx(
 		flex: 1,
 		cursor: "pointer",
 		appearance: "none",
+		// Issue #736: WebKit paints its own blue rectangle on a focused
+		// range input — suppress it and paint the shared focus ring
+		// instead, like Input/Textarea do.
+		outline: "none",
+		borderRadius: "shell-sm",
 		backgroundColor: "transparent",
 		accentColor: "text.primary",
+		_focus: {
+			boxShadow: "var(--color-focus-ring)",
+		},
 		"&::-webkit-slider-runnable-track": {
 			height: "1",
 			borderRadius: "full",
