@@ -85,8 +85,9 @@ const pathBoxClass = css({
 	backgroundColor: "surface.widget",
 	paddingInline: "2",
 	paddingBlock: "1",
-	direction: "rtl",
-	textAlign: "left",
+	// Issue #753: keep the scan path in LTR. The old `direction: rtl` +
+	// `text-align: left` bidi trick rendered Windows paths reversed
+	// (`C:\dir` → `\:C dir`); #724 removed the same trick from `PathField`.
 });
 
 const headerRowClass = css({

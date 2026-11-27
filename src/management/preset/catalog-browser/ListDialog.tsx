@@ -975,7 +975,12 @@ function IconCatalogGroupCard(props: {
 					{memberCount}
 				</span>
 			</div>
-			<div className={iconGroupTitleWrapperClass}>
+			<div
+				className={iconGroupTitleWrapperClass}
+				// Issue #753: the title ellipsizes in narrow cells — keep the
+				// full name reachable on hover, same as the preset tile.
+				title={`${group.title?.trim() || group.id} · ${memberCount}`}
+			>
 				<div className={iconGroupTitleClass}>
 					{group.title?.trim() || group.id}
 				</div>

@@ -131,7 +131,10 @@ const memberMissingLabelClass = css({
 
 const memberRowClass = css({
 	display: "grid",
-	gridTemplateColumns: "2.25rem 2rem minmax(0,1fr) auto",
+	// Issue #753: the leading 2.25rem column only held an empty spacer
+	// ("align with catalog list"), leaving a dead gutter that pushed every
+	// member icon off the list edge. Catalog rows have no such column.
+	gridTemplateColumns: "2rem minmax(0,1fr) auto",
 	alignItems: "center",
 	gap: "0.5",
 	columnGap: "2",
@@ -503,8 +506,6 @@ const GroupMemberItem = ({
 
 	return (
 		<li className={memberRowClass} data-preset-id={member.id}>
-			{/* Spacer to align with catalog list */}
-			<div aria-hidden />
 			{/* Icon */}
 			<div className={memberIconCenterClass}>
 				<FramedPresetGlyph preset={member} boxClass={glyphBoxCompactPadClass} />

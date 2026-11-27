@@ -63,6 +63,15 @@ const expectContentField = async ({
 }): Promise<void> => {
 	const field = canvasElement.querySelector("textarea, input[type='text']");
 	expect(field).not.toBeNull();
+	// Issue #753: the open accordion chevron must render rotated — the
+	// shared `ArchiveDetailsSection` class used an invalid transform value.
+	const trigger = canvasElement.querySelector<HTMLElement>(
+		"[data-archive-details-trigger]",
+	);
+	if (!trigger) throw new Error("accordion trigger not found");
+	const chevron = trigger.parentElement?.querySelector("svg");
+	if (!chevron) throw new Error("accordion chevron not found");
+	expect(getComputedStyle(chevron).transform).not.toBe("none");
 };
 
 export const WithDescription: Story = {

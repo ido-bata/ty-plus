@@ -47,9 +47,11 @@ export function BaseIconCard({
 				<PresetIconEditor
 					draft={baseIconDraft}
 					onChange={onBaseIconDraftChange}
-					label={i18n.t("presets:group.baseIcon.label")}
 					browseDir={readUserHomeOrFallback()}
-					framed={true}
+					// Issue #753: this card already supplies the heading and the
+					// outer frame — a framed+labelled editor nested a second
+					// "Base icon" header and a card-in-card border inside it.
+					framed={false}
 					preview={
 						<FramedPresetGlyph
 							preset={

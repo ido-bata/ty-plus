@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { expect } from "storybook/test";
 import { createPresetIconDraft } from "@/management/preset/icon/editor-state";
 import { css } from "@/styled-system/css";
 import { BaseIconCard } from "./BaseIconCard";
@@ -42,7 +43,17 @@ const meta = {
 export default meta;
 type Story = StoryObj<Args>;
 
-export const Default: Story = {};
+export const Default: Story = {
+	play: async ({ canvasElement }) => {
+		// Issue #753: the card supplies the "Base icon (default…)" heading —
+		// the nested editor must not repeat a "Base icon" label or draw a
+		// second frame inside the card.
+		const headings = Array.from(canvasElement.querySelectorAll("span")).filter(
+			(el) => el.textContent?.trim() === "Base icon",
+		);
+		expect(headings).toHaveLength(0);
+	},
+};
 
 export const Emoji: Story = {
 	render: () => (

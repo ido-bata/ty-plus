@@ -144,9 +144,15 @@ function SearchStatusBar(props: SearchStatusBarProps): ReactNode {
 		);
 	}
 	if (loadPhase === "error") {
+		// Issue #753: the trailing slot is one truncated line — a raw parser
+		// error ("Unexpected token…") reads as noise there. Show the localized
+		// failure label; the full `loadError` stays on `title` for hover.
 		return (
-			<span className={errorTextClass} title={loadError ?? undefined}>
-				{loadError ?? i18n.t("common:status.error")}
+			<span
+				className={errorTextClass}
+				title={loadError ?? i18n.t("presets:edit.status.loadFailed")}
+			>
+				{i18n.t("presets:edit.status.loadFailed")}
 			</span>
 		);
 	}

@@ -78,5 +78,15 @@ export const WithContent: Story = {
 		// behind the collapsed header.
 		const field = canvasElement.querySelector("textarea, input[type='text']");
 		expect(field).not.toBeNull();
+		// Issue #753: the open chevron must actually rotate — the class used
+		// `transform: "rotate-180"` (a Panda token where a CSS value was
+		// required), which compiled to invalid CSS and never rotated.
+		const trigger = canvasElement.querySelector<HTMLElement>(
+			"[data-archive-details-trigger]",
+		);
+		if (!trigger) throw new Error("accordion trigger not found");
+		const chevron = trigger.parentElement?.querySelector("svg");
+		if (!chevron) throw new Error("accordion chevron not found");
+		expect(getComputedStyle(chevron).transform).not.toBe("none");
 	},
 };
