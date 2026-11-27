@@ -320,5 +320,12 @@
 		"rule": "raw-svg",
 		"message": "raw <svg> is banned; use `Icon` with a lucide icon",
 		"reason": "hand-drawn icon predates the shared design system; replace it with `Icon` and a lucide icon"
+	},
+	{
+		"file": "src/management/online/catalog/Dialog.tsx",
+		"line": 973,
+		"rule": "ui-override",
+		"message": "<IconButton> is a shared @ty-plus/ui component; height, width, borderRadius, borderWidth, padding must come from its variant/size/tone props, not className",
+		"reason": "the shared control is re-skinned locally (strip-cell metrics were previously masked inside the dynamic viewModeBtnClass() call); move the appearance into a shared variant/size/tone prop when the segmented control family is consolidated"
 	}
 ]

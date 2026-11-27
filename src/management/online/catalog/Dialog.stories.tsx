@@ -139,10 +139,96 @@ const waitForCards = async (canvasElement: HTMLElement): Promise<void> => {
 	});
 };
 
+const boundingRect = (el: Element): DOMRect => el.getBoundingClientRect();
+
+/**
+ * Issue #734 regression guards for the catalog dialog captures:
+ * - exactly one search field (the toolbar one; the side panel must not
+ *   duplicate it),
+ * - the active view-mode button carries the shared `data-active` selected
+ *   surface instead of a cascade-losing class override,
+ * - gallery card thumbnails are never occluded by metadata (the info
+ *   footer is in-flow below the thumb, not an overlay),
+ * - zoom never produces horizontal clipping in the results area,
+ * - facet "Clear" buttons are disabled while their facet is inactive.
+ */
+const assertSingleSearchField = (canvasElement: HTMLElement): void => {
+	const inputs = canvasElement.querySelectorAll("input[type='search']");
+	expect(inputs).toHaveLength(1);
+	expect(inputs[0]?.getAttribute("placeholder")).toBe(
+		"Filter by name, ID, description, category, tag",
+	);
+};
+
+const assertViewToggleActive = (
+	canvasElement: HTMLElement,
+	activeLabel: string,
+	inactiveLabel: string,
+): void => {
+	const active = canvasElement.querySelector<HTMLButtonElement>(
+		`button[aria-label="${activeLabel}"]`,
+	);
+	const inactive = canvasElement.querySelector<HTMLButtonElement>(
+		`button[aria-label="${inactiveLabel}"]`,
+	);
+	expect(active).not.toBeNull();
+	expect(inactive).not.toBeNull();
+	// The shared IconButton `active` contract renders `data-active`, which
+	// the attribute-scoped rule turns into a visible selected surface.
+	expect(active?.hasAttribute("data-active")).toBe(true);
+	expect(inactive?.hasAttribute("data-active")).toBe(false);
+	const activeBg = getComputedStyle(active as HTMLElement).backgroundColor;
+	const inactiveBg = getComputedStyle(inactive as HTMLElement).backgroundColor;
+	expect(activeBg).not.toBe("rgba(0, 0, 0, 0)");
+	expect(activeBg).not.toBe(inactiveBg);
+};
+
+const assertGalleryThumbVisible = (canvasElement: HTMLElement): void => {
+	const card = canvasElement.querySelector("[data-ws-preset-card]");
+	expect(card).not.toBeNull();
+	const thumb = card?.querySelector("[data-ws-preset-thumb]");
+	expect(thumb).not.toBeNull();
+	const thumbRect = boundingRect(thumb as Element);
+	expect(thumbRect.width).toBeGreaterThan(0);
+	expect(thumbRect.height).toBeGreaterThan(0);
+	// The info footer is the last in-flow child of the card; the thumb must
+	// end at or above it — no overlay may cover the artwork.
+	const info = card?.lastElementChild;
+	expect(info).not.toBeNull();
+	const infoRect = boundingRect(info as Element);
+	expect(thumbRect.bottom).toBeLessThanOrEqual(infoRect.top + 0.5);
+};
+
+const assertNoHorizontalClip = (canvasElement: HTMLElement): void => {
+	const gallery = canvasElement.querySelector<HTMLElement>(
+		"[data-preset-gallery]",
+	);
+	const results = gallery?.parentElement;
+	expect(results).not.toBeNull();
+	expect(results?.scrollWidth).toBeLessThanOrEqual(
+		(results?.clientWidth ?? 0) + 1,
+	);
+};
+
+const assertFacetClearsDisabled = (canvasElement: HTMLElement): void => {
+	const clears = Array.from(canvasElement.querySelectorAll("button")).filter(
+		(b) => b.textContent?.trim() === "Clear",
+	);
+	expect(clears.length).toBeGreaterThan(0);
+	for (const btn of clears) {
+		expect((btn as HTMLButtonElement).disabled).toBe(true);
+	}
+};
+
 export const Default: Story = {
 	play: async ({ canvasElement }) => {
 		await waitForCards(canvasElement);
 		expect(canvasElement.querySelector("[data-preset-gallery]")).not.toBeNull();
+		assertSingleSearchField(canvasElement);
+		assertViewToggleActive(canvasElement, "Gallery view", "Cards view");
+		assertGalleryThumbVisible(canvasElement);
+		assertNoHorizontalClip(canvasElement);
+		assertFacetClearsDisabled(canvasElement);
 	},
 };
 
@@ -158,6 +244,7 @@ export const ListView: Story = {
 		await waitFor(() => {
 			expect(canvasElement.querySelector("table")).not.toBeNull();
 		});
+		assertViewToggleActive(canvasElement, "List view", "Gallery view");
 	},
 };
 
@@ -175,6 +262,7 @@ export const CardsView: Story = {
 		});
 		const firstCard = canvasElement.querySelector("[data-ws-preset-card]");
 		expect(firstCard).not.toBeNull();
+		assertViewToggleActive(canvasElement, "Cards view", "Gallery view");
 	},
 };
 
@@ -192,6 +280,8 @@ export const SidePanelHidden: Story = {
 				canvasElement.querySelector('button[title="Show filters"]'),
 			).not.toBeNull();
 		});
+		// The single toolbar search field must survive panel collapse.
+		assertSingleSearchField(canvasElement);
 	},
 };
 
@@ -254,6 +344,8 @@ export const GalleryZoomedIn: Story = {
 		await waitFor(() => {
 			expect(canvasElement.textContent).toContain("Ctrl+Wheel: 110%");
 		});
+		assertNoHorizontalClip(canvasElement);
+		assertGalleryThumbVisible(canvasElement);
 	},
 };
 
@@ -270,5 +362,9 @@ export const GalleryZoomedOut: Story = {
 		await waitFor(() => {
 			expect(canvasElement.textContent).toContain("Ctrl+Wheel: 90%");
 		});
+		// Zoomed-out tiles must still show the thumbnail above the info
+		// footer and must not introduce horizontal clipping.
+		assertGalleryThumbVisible(canvasElement);
+		assertNoHorizontalClip(canvasElement);
 	},
 };
