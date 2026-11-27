@@ -68,7 +68,7 @@ export function ConditionRulesSection({
 				<div className={busyRowClass} role="status">
 					<Icon
 						icon={LoaderCircle}
-						size={14}
+						size={16}
 						className={busySpinnerClass}
 						aria-hidden
 					/>
