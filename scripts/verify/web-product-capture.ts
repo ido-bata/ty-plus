@@ -446,8 +446,7 @@ await withManagedRootSnapshot(ctx, "web-product-capture", async () => {
 		// The card's source label is localized and capitalized in English
 		// ("Hover"/"ホバー", "Selection"/"選択"), so match case-insensitively
 		// across the shipped locales instead of the raw source token.
-		const sourceNeedle =
-			source === "hover" ? "hover|ホバー" : "selection|選択";
+		const sourceNeedle = source === "hover" ? "hover|ホバー" : "selection|選択";
 		return waitForDom(
 			ctx,
 			panel,
