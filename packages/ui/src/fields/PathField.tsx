@@ -61,7 +61,7 @@ const inputClass = css({
 	backgroundColor: "surface.widget",
 	color: "text.primary",
 	outline: "none",
-	transitionProperty: "colors",
+	transitionProperty: "color, background-color, border-color",
 	_focus: {
 		borderColor: "interactive.focus",
 		boxShadow: "var(--color-focus-ring)",

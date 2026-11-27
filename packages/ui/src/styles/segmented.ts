@@ -89,7 +89,7 @@ export const segmentedButtonClass = css({
 	paddingInline: "2",
 	fontSize: "shell-text-sm",
 	lineHeight: "tight",
-	transitionProperty: "colors",
+	transitionProperty: "color, background-color, border-color",
 });
 
 /**
@@ -109,7 +109,7 @@ export const segmentedColumnButtonClass = css({
 	fontSize: "shell-text-sm",
 	lineHeight: "tight",
 	textAlign: "start",
-	transitionProperty: "colors",
+	transitionProperty: "color, background-color, border-color",
 });
 
 export const segmentedButtonQuietClass = css({

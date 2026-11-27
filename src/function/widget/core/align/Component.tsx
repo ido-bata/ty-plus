@@ -100,7 +100,7 @@ const ALIGN_BTN_CLASS = css({
 	minHeight: "32px",
 	width: "full",
 	boxSizing: "border-box",
-	transitionProperty: "colors",
+	transitionProperty: "color, background-color, border-color",
 	transitionDuration: "100",
 	_hover: {
 		backgroundColor:
@@ -279,7 +279,7 @@ function TargetSelectorRow({
 				paddingInline: "1",
 				paddingBlock: "1.5",
 				minHeight: "32px",
-				transitionProperty: "colors",
+				transitionProperty: "color, background-color, border-color",
 				transitionDuration: "100",
 				minWidth: 0,
 				_hover: {

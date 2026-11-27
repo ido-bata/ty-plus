@@ -23,7 +23,7 @@ const swatch = css({
 	borderColor: "border.control",
 	backgroundColor: "surface.widget",
 	padding: 0,
-	transitionProperty: "colors",
+	transitionProperty: "color, background-color, border-color",
 	"&::-webkit-color-swatch-wrapper": {
 		padding: "0.5",
 	},

@@ -67,7 +67,7 @@ const base = css({
 	lineHeight: "tight",
 	fontWeight: "medium",
 	outline: "none",
-	transitionProperty: "colors",
+	transitionProperty: "color, background-color, border-color",
 	_disabled: {
 		opacity: 0.5,
 		pointerEvents: "none",

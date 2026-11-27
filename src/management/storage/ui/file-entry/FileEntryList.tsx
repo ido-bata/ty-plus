@@ -501,7 +501,7 @@ const upTileClass = css({
 	borderStyle: "solid",
 	borderColor: "border.default",
 	backgroundColor: "surface.dialog",
-	transitionProperty: "colors",
+	transitionProperty: "color, background-color, border-color",
 	_hover: { backgroundColor: "interactive.hover" },
 	minWidth: 0,
 	maxWidth: "full",

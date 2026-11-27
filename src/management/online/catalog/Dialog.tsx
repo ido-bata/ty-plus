@@ -114,7 +114,7 @@ const galleryCardClass = css({
 	borderColor: "border.default",
 	backgroundColor: "surface.panel",
 	overflow: "hidden",
-	transitionProperty: "colors",
+	transitionProperty: "color, background-color, border-color",
 	_hover: { backgroundColor: "surface.overlay" },
 });
 const galleryThumbWrapClass = css({
@@ -172,7 +172,7 @@ const itemCardClass = css({
 	borderColor: "border.default",
 	backgroundColor: "surface.panel",
 	overflow: "hidden",
-	transitionProperty: "colors",
+	transitionProperty: "color, background-color, border-color",
 	_hover: { backgroundColor: "surface.overlay" },
 });
 const itemThumbClass = css({
@@ -338,7 +338,7 @@ const sidePanelCategoryBtnBaseClass = css({
 	paddingInline: "2",
 	paddingBlock: "1",
 	borderRadius: "sm",
-	transitionProperty: "colors",
+	transitionProperty: "color, background-color, border-color",
 });
 const sidePanelCategoryBtnActiveClass = css({
 	backgroundColor: "surface.widget",
@@ -395,7 +395,7 @@ const sidePanelTagLabelBaseClass = css({
 	paddingInline: "2",
 	paddingBlock: "1",
 	borderRadius: "sm",
-	transitionProperty: "colors",
+	transitionProperty: "color, background-color, border-color",
 	cursor: "pointer",
 });
 const sidePanelTagLabelActiveClass = css({

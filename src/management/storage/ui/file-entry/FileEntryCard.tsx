@@ -41,7 +41,7 @@ const cardBaseClass = css({
 	borderRadius: "shell-sm",
 	borderWidth: "hairline",
 	borderStyle: "solid",
-	transitionProperty: "colors",
+	transitionProperty: "color, background-color, border-color",
 	minWidth: 0,
 	maxWidth: "full",
 });

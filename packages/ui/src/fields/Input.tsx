@@ -42,7 +42,7 @@ const base = css({
 	paddingInline: "2.5",
 	color: "text.primary",
 	outline: "none",
-	transitionProperty: "colors",
+	transitionProperty: "color, background-color, border-color",
 	_disabled: { opacity: 0.5 },
 });
 
