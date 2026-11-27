@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { expect } from "storybook/test";
 import { css } from "@/styled-system/css";
 
 import { ScrollArea } from "./ScrollArea";
@@ -64,7 +65,25 @@ const meta = {
 export default meta;
 type Story = StoryObj<Args>;
 
-export const Default: Story = {};
+export const Default: Story = {
+	play: async ({ canvasElement }) => {
+		const area = canvasElement.querySelector<HTMLElement>(".ty-scroll-area");
+		expect(area).not.toBeNull();
+		if (!area) return;
+
+		// The frame must actually overflow so the scrollbar contract is
+		// exercised.
+		expect(area.scrollHeight).toBeGreaterThan(area.clientHeight);
+
+		// Issue #741: the scrollbar thumb must be visible at rest — a fully
+		// transparent thumb gives zero overflow affordance. `scrollbar-color`
+		// computes to "<thumb> <track>"; assert the thumb alpha is non-zero.
+		const scrollbarColor = getComputedStyle(area).scrollbarColor;
+		const thumbMatch = scrollbarColor.match(/rgba?\([^)]*,\s*([\d.]+)\)/);
+		expect(thumbMatch).not.toBeNull();
+		expect(Number.parseFloat(thumbMatch?.[1] ?? "0")).toBeGreaterThan(0);
+	},
+};
 
 export const NoGutter: Story = {
 	args: { gutterStable: false },

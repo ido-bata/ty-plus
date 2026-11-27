@@ -19,6 +19,17 @@ const base = css({
 	minHeight: 0,
 	overflowX: "hidden",
 	overflowY: "auto",
+	scrollbarWidth: "thin",
+	// The scrollbar thumb must be visible at rest — a fully transparent
+	// thumb gives zero overflow affordance (issue #735). It shares the
+	// workspace scrollbar tokens so scroll areas and dialogs read the
+	// same. `scrollbar-color` degrades gracefully on older CEF.
+	scrollbarColor:
+		"rgba(var(--text-r),var(--text-g),var(--text-b),var(--ty-opacity-ws-scrollbar-thumb-strong)) transparent",
+	_hover: {
+		scrollbarColor:
+			"rgba(var(--text-r),var(--text-g),var(--text-b),0.4) transparent",
+	},
 });
 
 const gutterStable = css({
