@@ -66,12 +66,14 @@ export const Empty: Story = {
 		// Issue #522: the missing-preset "?" must stay legible — the text
 		// glyph floor is 8px (WorkspaceGlyph), and the placeholder used a
 		// stale 4px floor that rendered it at ~4px in small cells.
+		// Issue #751 raised the MissingGlyph floor to 12px; assert the
+		// raised bound so small cells can't regress to the 8px speck.
 		const mark = canvasElement.querySelector<HTMLElement>(
 			"[data-ws-preset-text-fit] span",
 		);
 		if (!mark) throw new Error("placeholder mark not found");
 		expect(parseFloat(getComputedStyle(mark).fontSize)).toBeGreaterThanOrEqual(
-			8,
+			10,
 		);
 	},
 };

@@ -74,6 +74,17 @@ const expectSingleLineKindGlyph = (canvasElement: HTMLElement): void => {
 		const line = lines[0];
 		expect(getComputedStyle(line).whiteSpace).toBe("nowrap");
 		expect(line.scrollWidth).toBeLessThanOrEqual(line.clientWidth + 1);
+		// Issue #751: the effective glyph size (painted fontPx × scale)
+		// must stay at the legibility floor — 5–6 grapheme badges used to
+		// collapse to ~4.7px inside the framed box.
+		const style = getComputedStyle(glyph);
+		const fontPx = Number.parseFloat(
+			style.getPropertyValue("--ws-glyph-text-font-px"),
+		);
+		const scale = Number.parseFloat(
+			style.getPropertyValue("--ws-glyph-text-scale"),
+		);
+		expect(fontPx * scale).toBeGreaterThanOrEqual(7);
 	}
 };
 

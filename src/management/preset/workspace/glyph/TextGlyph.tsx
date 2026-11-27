@@ -79,15 +79,16 @@ export function TextGlyph({ visual }: { visual: TextVisual }): JSX.Element {
 
 		// `preferredPct` is the preferred size as a percentage of the
 		// frame's inline size — the same proportion the old `NNcqi`
-		// font-size declarations expressed. Minimum floors preserve
-		// legibility: 8px keeps single-line marks readable inside the
-		// ~28px list-row frame (the previous 4px floor rendered
-		// dot-sized glyphs), and five- and six-grapheme badges
-		// (PLUGIN / SCRIPT / IMPORT / PRESET) cannot hold 8px on one
-		// line inside that frame, so their floor drops to 5px — still
-		// above the dot-collapse range.
+		// font-size declarations expressed. The 8px floor preserves
+		// legibility: the fit applies it softly (`floorWithinFit`), so a
+		// frame too small for 8px degrades to the largest size that
+		// still fits instead of clipping (#751). Five- and six-grapheme
+		// badges (PLUGIN / SCRIPT / IMPORT / PRESET) cannot hold 8px on
+		// one line inside the ~28px list-row frame, but the soft floor
+		// still lifts them from the ~4.7px preferred size to the fit
+		// cap (~6.4px) — the biggest badge the frame can show.
 		const preferredPct = lines.length >= 3 ? 10 : lines.length >= 2 ? 13 : 18;
-		const minFontPx = badgeLength && ch > 4 ? 5 : 8;
+		const minFontPx = 8;
 		return { lines, preferredPct, minFontPx };
 	}, [raw]);
 

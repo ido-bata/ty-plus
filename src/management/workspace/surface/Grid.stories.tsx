@@ -166,6 +166,19 @@ export const MixedTiles: Story = {
 		expect(
 			canvasElement.querySelectorAll("[data-workspace-group-tile]"),
 		).toHaveLength(1);
+		// Issue #751: the orphan row renders the missing-preset "?" — its
+		// font must stay at the raised legibility floor (12px) inside the
+		// 48px cell instead of collapsing to an 8px speck.
+		const orphan = canvasElement.querySelector<HTMLElement>(
+			"[data-workspace-surface-index='3']",
+		);
+		const mark = orphan?.querySelector<HTMLElement>(
+			".ws-preset-icon--text > span",
+		);
+		if (!mark) throw new Error("missing-preset glyph mark not found");
+		expect(
+			Number.parseFloat(getComputedStyle(mark).fontSize),
+		).toBeGreaterThanOrEqual(10);
 	},
 };
 
