@@ -245,9 +245,12 @@ header に inline で書いてある。
 - `core/easing/Component.stories.tsx`, `core/align/Component.stories.tsx` —
   `useWidgetRuntime` が noop に fallback するため storage 連携は無効
   (Wave 4.3)。
-- `workspace/surface/GridTile.stories.tsx` — `Widget` →
-  `renderDescriptor` の依存ツリーが Storybook decorator chain に未供給
-  (Wave 4.1)。
+- `workspace/surface/GridTile.stories.tsx` — 解消済み (Issue #719)。
+  `Widget → renderDescriptor` は実 widget registry (`import.meta.glob`
+  eager aggregation) と既存 decorator chain (`PanelStateProvider` /
+  `useWidgetRuntime` noop fallback) でそのまま render できるため、
+  追加の seam は不要だった。preset / widget (menu, align) / missing-row /
+  selected / menu-open / hover の story を実 component でカバー。
 - `preset/group/{WorkspaceCatalogTileBody,WorkspaceLayer,PanelOverlay}.stories.tsx` —
   `PanelContext` 未供給 (Wave 4.2)。
 
