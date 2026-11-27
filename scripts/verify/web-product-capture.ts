@@ -442,18 +442,23 @@ await withManagedRootSnapshot(ctx, "web-product-capture", async () => {
 	const infoCardShows = async (
 		title: string,
 		source: "hover" | "selection",
-	): Promise<boolean> =>
-		waitForDom(
+	): Promise<boolean> => {
+		// The card's source label is localized and capitalized in English
+		// ("Hover"/"ホバー", "Selection"/"選択"), so match case-insensitively
+		// across the shipped locales instead of the raw source token.
+		const sourceNeedle = source === "hover" ? "hover|ホバー" : "selection|選択";
+		return waitForDom(
 			ctx,
 			panel,
 			`(() => {
 				const card = document.querySelector('[data-mode="single"]');
 				if (!card) return false;
 				const text = card.innerText || "";
-				return text.includes(${JSON.stringify(title)}) && text.includes(${JSON.stringify(source)});
+				return text.includes(${JSON.stringify(title)}) && new RegExp(${JSON.stringify(sourceNeedle)}, "i").test(text);
 			})()`,
 			15_000,
 		);
+	};
 	if (hoverTarget) {
 		const c = await centerOf(
 			panel,
