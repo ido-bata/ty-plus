@@ -478,7 +478,7 @@ export function MenuWidget({
 				borderColor: "border.default",
 				backgroundColor: "surface.panel",
 				color: "text.muted",
-				transitionProperty: "colors",
+				transitionProperty: "color, background-color, border-color",
 				transitionDuration: "100",
 				_hover: {
 					backgroundColor: "interactive.hover",

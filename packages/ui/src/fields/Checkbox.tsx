@@ -37,7 +37,7 @@ const box = css({
 	backgroundColor: "surface.widget",
 	outline: "none",
 	position: "relative",
-	transitionProperty: "colors",
+	transitionProperty: "color, background-color, border-color",
 	cursor: "pointer",
 	_checked: {
 		borderColor: "text.accent",

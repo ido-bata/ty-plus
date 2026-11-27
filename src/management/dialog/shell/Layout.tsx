@@ -24,7 +24,7 @@ const rootShellBase = css({
 	overflow: "hidden",
 	boxSizing: "border-box",
 	bg: "surface.dialog",
-	transitionProperty: "colors",
+	transitionProperty: "color, background-color, border-color",
 });
 
 /** Visual feedback when a droppable surface is being dragged over. */

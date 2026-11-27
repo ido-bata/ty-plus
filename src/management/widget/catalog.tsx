@@ -117,7 +117,7 @@ const itemBaseStyle = css({
 	paddingInline: "2",
 	paddingBlock: "2",
 	textAlign: "left",
-	transitionProperty: "colors",
+	transitionProperty: "color, background-color, border-color",
 });
 
 const itemActiveStyle = css({
@@ -210,7 +210,7 @@ const iconItemBaseStyle = css({
 	paddingInline: "2",
 	paddingBlock: "2",
 	textAlign: "left",
-	transitionProperty: "colors",
+	transitionProperty: "color, background-color, border-color",
 });
 
 /**

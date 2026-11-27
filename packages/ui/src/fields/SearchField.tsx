@@ -117,7 +117,7 @@ const clearButton = css({
 	padding: "0.5",
 	color: "text.muted",
 	outline: "none",
-	transitionProperty: "colors",
+	transitionProperty: "color, background-color, border-color",
 	_hover: {
 		backgroundColor: "interactive.hover",
 		color: "text.primary",

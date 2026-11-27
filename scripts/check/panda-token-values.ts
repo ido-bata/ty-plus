@@ -24,6 +24,12 @@
  *     collapses to a single column and every row stacks (observed:
  *     preset list icons centered in a broken row, #582). Write the value
  *     as a plain space-separated string instead.
+ *   - `transitionProperty` must not contain the `colors` token. There is
+ *     no such CSS property (it was a Tailwind-ism); the declaration is
+ *     silently dropped and the transition never runs (observed: ~20
+ *     hover/focus fades dead across the widget and management UI, #730).
+ *     Write the explicit property list instead, e.g.
+ *     `"color, background-color, border-color"`.
  *
  * Exit codes:
  *   0 - All checks pass
@@ -82,6 +88,44 @@ const colorMixHasUnderscore = (call: string): boolean => {
 const BRACKET_UNDERSCORE_VALUE =
 	/\b[A-Za-z_$][\w$]*\s*:\s*["'](\[[^\]"']*_[^\]"']*\][^"']*)["']/g;
 
+/**
+ * Matches `transitionProperty:` followed by a string literal. The value is
+ * a comma-separated list of CSS property names (or `all` / `none`).
+ */
+const TRANSITION_PROPERTY_VALUE =
+	/transitionProperty\s*:\s*(?:"([^"]*)"|'([^']*)')/g;
+
+/**
+ * CSS-wide keywords and the only non-property values `transition-property`
+ * accepts. Any other comma-separated token must look like a real CSS
+ * property name (lowercase kebab-case identifier).
+ */
+const TRANSITION_KEYWORDS = new Set([
+	"all",
+	"none",
+	"inherit",
+	"initial",
+	"unset",
+	"revert",
+	"revert-layer",
+]);
+
+const INVALID_TRANSITION_TOKENS = new Set(["colors"]);
+
+const invalidTransitionTokens = (raw: string): string[] => {
+	return raw
+		.split(",")
+		.map((token) => token.trim().toLowerCase())
+		.filter(
+			(token) =>
+				INVALID_TRANSITION_TOKENS.has(token) ||
+				(!TRANSITION_KEYWORDS.has(token) &&
+					!/^[a-z-]+$/.test(token) &&
+					!token.startsWith("--") &&
+					!token.startsWith("var(")),
+		);
+};
+
 const isUnitlessMultiplier = (raw: string): boolean => {
 	if (!/^[0-9]+(?:\.[0-9]+)?$/.test(raw)) return false;
 	return Number(raw) >= 3;
@@ -109,7 +153,11 @@ const collectFiles = (dir: string): string[] => {
 const violations: {
 	file: string;
 	line: number;
-	kind: "lineHeight" | "color-mix" | "bracket-underscore";
+	kind:
+		| "lineHeight"
+		| "color-mix"
+		| "bracket-underscore"
+		| "transition-property";
 	value: string;
 }[] = [];
 
@@ -119,6 +167,7 @@ for (const dir of SCAN_DIRS) {
 		if (
 			!text.includes("lineHeight") &&
 			!text.includes("color-mix(") &&
+			!text.includes("transitionProperty") &&
 			!text.includes("[")
 		)
 			continue;
@@ -169,6 +218,23 @@ for (const dir of SCAN_DIRS) {
 					value: m[1] ?? m[0],
 				});
 			}
+			TRANSITION_PROPERTY_VALUE.lastIndex = 0;
+			for (
+				let m = TRANSITION_PROPERTY_VALUE.exec(line);
+				m !== null;
+				m = TRANSITION_PROPERTY_VALUE.exec(line)
+			) {
+				const raw = m[1] ?? m[2] ?? "";
+				const bad = invalidTransitionTokens(raw);
+				if (bad.length > 0) {
+					violations.push({
+						file: file.slice(REPO_ROOT.length + 1),
+						line: i + 1,
+						kind: "transition-property",
+						value: `${raw} (invalid: ${bad.join(", ")})`,
+					});
+				}
+			}
 		}
 	}
 }
@@ -177,6 +243,9 @@ if (violations.length > 0) {
 	const lineHeightHits = violations.filter((v) => v.kind === "lineHeight");
 	const colorMixHits = violations.filter((v) => v.kind === "color-mix");
 	const bracketHits = violations.filter((v) => v.kind === "bracket-underscore");
+	const transitionHits = violations.filter(
+		(v) => v.kind === "transition-property",
+	);
 	if (lineHeightHits.length > 0) {
 		console.error(
 			"panda-token-values: unitless lineHeight >= 3 detected (spacing-token confusion?):",
@@ -201,8 +270,16 @@ if (violations.length > 0) {
 			console.error(`  ${v.file}:${v.line}  "${v.value}"`);
 		}
 	}
+	if (transitionHits.length > 0) {
+		console.error(
+			"panda-token-values: invalid transitionProperty value (not a real CSS property; the transition silently never runs):",
+		);
+		for (const v of transitionHits) {
+			console.error(`  ${v.file}:${v.line}  transitionProperty: "${v.value}"`);
+		}
+	}
 	console.error(
-		"\nUse a rem/px value or named token for lineHeight; write color-mix() arguments and bracket arbitrary values as valid CSS with real spaces.",
+		'\nUse a rem/px value or named token for lineHeight; write color-mix() arguments and bracket arbitrary values as valid CSS with real spaces; list real CSS property names in transitionProperty (e.g. "color, background-color, border-color").',
 	);
 	process.exit(1);
 }

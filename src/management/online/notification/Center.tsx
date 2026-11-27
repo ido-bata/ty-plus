@@ -160,7 +160,7 @@ const listItemButtonBaseClass = css({
 	borderStyle: "solid",
 	padding: "3",
 	cursor: "pointer",
-	transitionProperty: "colors",
+	transitionProperty: "color, background-color, border-color",
 });
 const listItemButtonUnreadClass = css({
 	borderColor: "border.strong",
