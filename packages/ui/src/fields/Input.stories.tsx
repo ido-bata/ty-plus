@@ -1,6 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { expect } from "storybook/test";
-import { resolveBorderToken } from "@/storybook/quality/border";
+import {
+	assertBorderToken,
+	resolveBorderToken,
+} from "@/storybook/quality/border";
 import { expectCanvasLayout } from "@/storybook/quality/layout";
 
 import { Input } from "./Input";
@@ -75,6 +78,9 @@ export const Focused: Story = {
 		await expect(getComputedStyle(input).borderTopColor).not.toBe(
 			restingBorderColor,
 		);
+		// Issue #726: the focused state must resolve to the contracted
+		// `interactive.focus` token — not just "a different color".
+		assertBorderToken(input, "focus");
 		expectCanvasLayout(canvasElement);
 	},
 };

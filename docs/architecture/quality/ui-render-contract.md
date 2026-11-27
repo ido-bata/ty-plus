@@ -21,6 +21,8 @@
 | DOM adapter | `measureBox` / `isRendered` / `assertWithinViewport` / `assertWithinAncestor` / `assertNotClipped` / `assertNoOverlap` / `assertRendered` | `storybook` browser project のみ |
 | 複合監査 | `auditCanvas` / `expectCanvasLayout` | 同上 |
 | 操作 settle | `hoverAndAssert` / `focusAndAssert` / `nextPaint` | 同上 |
+| 描画 fit（#726） | `fit.ts` の `expectContainerWidthTracking` / `assertMatchesWidth` / `assertSingleRow` / `assertIconAspect` / `assertScrollbarThumbVisible` | 同上 |
+| 状態別 border（#726） | `border.ts` の `assertBorderToken`（`resolveBorderToken` probe 経由） | 同上 |
 | negative 証明 | `captureLayoutError` + `contract.stories.tsx` | 同上 |
 
 ### `expectCanvasLayout(root, options)` が検査するもの
@@ -99,6 +101,27 @@
 - `InteractiveStates`: hover/focus/ARIA selected の参照実装。
 
 geometry 層は `layout.test.ts`（unit project）で境界値を固定する。
+
+## 描画結果契約（Issue #726）
+
+#721–#724 / #730–#736 / #741 の退行は全て「共有スタイル/トークンを使って
+いる」ことを品質とみなした結果、最終描画結果の契約違反を検出できな
+かった。`fit.ts` はその層の共有 vocabulary で、computed style ではなく
+**実測値**（`getBoundingClientRect` / `clientWidth` / `scrollHeight`）を
+assert する。CEF99 は container query 非対応（#700）のため、全て px 実測。
+
+| 契約 | helper | consumer 例 |
+| --- | --- | --- |
+| コンテナ幅追従 | `expectContainerWidthTracking` + `assertMatchesWidth` | `SearchField/TracksContainerWidth`, `QuickActions/ActionList/SearchFieldTracksWidgetWidth` |
+| strip 単一行 | `assertSingleRow` | `SegmentedControl/AdaptiveLabels`, `OverflowScrollsHorizontally` |
+| 状態別 border token | `assertBorderToken` | `Button/AllVariants`, `SegmentedControl/HoveredSegment`, `Input/Focused`（focus→`interactive.focus`） |
+| アイコン比率 | `assertIconAspect` | `Icon/KeepsAspectRatio` |
+| scroll affordance | `assertScrollbarThumbVisible` | `ScrollArea/Default` |
+
+機械判定できない境界（helper の doc comment にも明記）: アイコンの
+グリフ品質・ストロークの見た目、`scrollbar-color` を解釈しない環境での
+thumb 描画、ラベル内容の「読みやすさ」（幾何と文字列差し替えは検査するが
+可読性は人間受入）。
 
 ## 既知の限界
 

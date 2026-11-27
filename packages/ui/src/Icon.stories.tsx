@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Library, Save, Settings, X } from "lucide-react";
+import { assertIconAspect } from "@/storybook/quality/fit";
 import { css } from "@/styled-system/css";
 
 import { Icon } from "./Icon";
@@ -78,4 +79,16 @@ export const Size12: Story = {
 
 export const Size24: Story = {
 	args: { size: 24 },
+};
+
+// Issue #726: the rendered icon box must keep its aspect ratio at real
+// sizes — the regression class where flex sizing squashes the glyph.
+// Lucide icons are square viewBoxes, so the box must be square.
+export const KeepsAspectRatio: Story = {
+	args: { size: 20 },
+	play: async ({ canvasElement }) => {
+		const svg = canvasElement.querySelector("svg");
+		if (!svg) throw new Error("icon svg not found");
+		assertIconAspect(svg);
+	},
 };

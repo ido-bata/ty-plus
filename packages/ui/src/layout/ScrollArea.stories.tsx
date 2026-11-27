@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { expect } from "storybook/test";
+import { assertScrollbarThumbVisible } from "@/storybook/quality/fit";
 import { css } from "@/styled-system/css";
 
 import { ScrollArea } from "./ScrollArea";
@@ -75,13 +76,10 @@ export const Default: Story = {
 		// exercised.
 		expect(area.scrollHeight).toBeGreaterThan(area.clientHeight);
 
-		// Issue #741: the scrollbar thumb must be visible at rest — a fully
-		// transparent thumb gives zero overflow affordance. `scrollbar-color`
-		// computes to "<thumb> <track>"; assert the thumb alpha is non-zero.
-		const scrollbarColor = getComputedStyle(area).scrollbarColor;
-		const thumbMatch = scrollbarColor.match(/rgba?\([^)]*,\s*([\d.]+)\)/);
-		expect(thumbMatch).not.toBeNull();
-		expect(Number.parseFloat(thumbMatch?.[1] ?? "0")).toBeGreaterThan(0);
+		// Issue #741 / #726: the scrollbar thumb must be visible at rest —
+		// a fully transparent thumb gives zero overflow affordance. The
+		// shared helper asserts both the overflow and the thumb alpha.
+		assertScrollbarThumbVisible(area);
 	},
 };
 

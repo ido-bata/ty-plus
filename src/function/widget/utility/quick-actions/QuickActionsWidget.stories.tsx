@@ -11,6 +11,10 @@ import type {
 	GridSettings,
 	Layout,
 } from "@/management/workspace/layout/grid-document";
+import {
+	assertMatchesWidth,
+	expectContainerWidthTracking,
+} from "@/storybook/quality/fit";
 import { css } from "@/styled-system/css";
 
 import { QuickActionsWidget } from "./QuickActionsWidget";
@@ -164,21 +168,17 @@ export const SearchFieldTracksWidgetWidth: Story = {
 		if (!(frame instanceof HTMLElement)) {
 			throw new Error("widget frame not found");
 		}
-		const widgetWidth = (): number => widgetRoot.getBoundingClientRect().width;
-		const wrapperWidth = (): number => wrapper.getBoundingClientRect().width;
-		expect(Math.abs(wrapperWidth() - widgetWidth())).toBeLessThanOrEqual(1);
+		// Issue #726: the shared rendered-fit contract owns the
+		// width-equality and resize-tracking halves of this check.
+		assertMatchesWidth(wrapper, widgetRoot);
 		expect(wrapper.className.split(/\s+/)).toContain("w_full");
 		expect(Number.parseFloat(getComputedStyle(wrapper).flexGrow)).toBe(0);
-		const originalWidth = frame.style.width;
-		frame.style.width = "180px";
-		try {
-			await waitFor(() => {
-				expect(widgetWidth()).toBeLessThan(250);
-				expect(Math.abs(wrapperWidth() - widgetWidth())).toBeLessThanOrEqual(1);
-			});
-		} finally {
-			frame.style.width = originalWidth;
-		}
+		// The wrapper tracks the widget, which itself fills the frame —
+		// preserve whatever ratio the resting layout establishes.
+		await expectContainerWidthTracking(frame, wrapper, {
+			resizeTo: "180px",
+			tolerance: 2,
+		});
 	},
 };
 
