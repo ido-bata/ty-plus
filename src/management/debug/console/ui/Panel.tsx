@@ -567,6 +567,17 @@ export function Panel({
 					size="sm"
 					onClick={() => onAutoScrollChange(!autoScroll)}
 					className={autoScroll ? "" : autoScrollDimStyle}
+					aria-label={i18n.t(
+						autoScroll
+							? "common:debugConsole.contextMenu.disableAutoScroll"
+							: "common:debugConsole.contextMenu.enableAutoScroll",
+						{
+							defaultValue: autoScroll
+								? "Disable auto-scroll"
+								: "Enable auto-scroll",
+						},
+					)}
+					aria-pressed={autoScroll}
 				>
 					<ArrowDownToLine size={14} />
 				</IconButton>
