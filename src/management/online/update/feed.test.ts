@@ -1,9 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { acceptsReleaseChannel } from "./channel";
+import { acceptsReleaseChannel, type ReleaseChannel } from "./channel";
 import {
 	checkForUpdate,
 	compareVersions,
 	DEFAULT_UPDATE_FEED_URL,
+	installableZipAsset,
+	isInstallableUpdate,
 	parseGitHubRelease,
 } from "./feed";
 
@@ -16,28 +18,36 @@ const release = (
 		prerelease?: boolean;
 		platform?: "windows" | "macos";
 		digest?: string;
+		publishedAt?: string;
+		zip?: boolean;
 	} = {},
 ) => {
 	const platform = options.platform ?? "windows";
-	const name = `ty-plus-${tag}-${platform}.zxp`;
+	const assetFor = (extension: "zxp" | "zip") => {
+		const name = `ty-plus-${tag}-${platform}.${extension}`;
+		return {
+			name,
+			state: "uploaded",
+			browser_download_url:
+				"https://github.com/ido-bata/ty-plus/releases/download/" +
+				tag +
+				"/" +
+				name,
+			digest: options.digest ?? `sha256:${digest}`,
+		};
+	};
 	return {
 		tag_name: tag,
 		name: tag,
 		draft: options.draft ?? false,
 		prerelease: options.prerelease ?? tag.includes("-"),
-		published_at: "2026-11-12T00:00:00Z",
+		published_at: options.publishedAt ?? "2026-11-12T00:00:00Z",
 		html_url: `https://github.com/ido-bata/ty-plus/releases/tag/${tag}`,
 		assets: [
-			{
-				name,
-				state: "uploaded",
-				browser_download_url:
-					"https://github.com/ido-bata/ty-plus/releases/download/" +
-					tag +
-					"/" +
-					name,
-				digest: options.digest ?? `sha256:${digest}`,
-			},
+			assetFor("zxp"),
+			// The in-app installer consumes the platform ZIP; releases that
+			// ship it carry both archives (Issue #135/#590).
+			...(options.zip === true ? [assetFor("zip")] : []),
 		],
 	};
 };
@@ -55,6 +65,11 @@ describe("GitHub update version ordering", () => {
 		["0.11.0", "0.10.9", 1],
 		["1.0.0", "0.99.99", 1],
 		["0.11.0", "0.11.0", 0],
+		// Prerelease sequences compare numerically, not lexicographically
+		// (Issue #590): `.10` must outrank `.9`.
+		["0.11.0-insider.10", "0.11.0-insider.9", 1],
+		["0.11.0-beta.10", "0.11.0-beta.9", 1],
+		["0.11.0-insider.9", "0.11.0-insider.10", -1],
 	])("orders %s against %s (%i)", (a, b, expected) => {
 		expect(compareVersions(a, b)).toBe(expected);
 	});
@@ -377,5 +392,181 @@ describe("checkForUpdate via GitHub Releases API", () => {
 		expect(checked.status).toBe("unavailable");
 		expect(called).toBe(false);
 		expect(DEFAULT_UPDATE_FEED_URL).toContain("api.github.com");
+	});
+});
+
+/**
+ * Issue #590 acceptance table: subscription eligibility and SemVer ordering
+ * vs the installed version are separate decisions. The candidate is the
+ * maximum strictly-newer eligible release — never decided by publish date,
+ * the GitHub latest flag, or a channel-name match alone.
+ */
+describe("Issue #590 channel-crossing SemVer contract", () => {
+	const cases: ReadonlyArray<{
+		channel: ReleaseChannel;
+		current: string;
+		tags: readonly string[];
+		expected: "update-available" | "up-to-date";
+		expectedVersion?: string;
+	}> = [
+		// [subscription, installed, candidates, expected, expectedVersion?]
+		{
+			channel: "insider",
+			current: "1.2.0-insider.3",
+			tags: ["v1.2.0"],
+			expected: "update-available",
+			expectedVersion: "1.2.0",
+		},
+		{
+			channel: "beta",
+			current: "1.2.0-beta.3",
+			tags: ["v1.2.0"],
+			expected: "update-available",
+			expectedVersion: "1.2.0",
+		},
+		{
+			channel: "insider",
+			current: "1.2.0-insider.3",
+			tags: ["v1.2.0-insider.4"],
+			expected: "update-available",
+			expectedVersion: "1.2.0-insider.4",
+		},
+		{
+			channel: "insider",
+			current: "1.2.0",
+			tags: ["v1.3.0-insider.1"],
+			expected: "update-available",
+			expectedVersion: "1.3.0-insider.1",
+		},
+		{
+			channel: "beta",
+			current: "1.2.0",
+			tags: ["v1.3.0-beta.1"],
+			expected: "update-available",
+			expectedVersion: "1.3.0-beta.1",
+		},
+		// Ineligible channels are filtered before ordering; the remaining
+		// eligible release equals the installed version, so no update.
+		{
+			channel: "stable",
+			current: "1.2.0",
+			tags: ["v1.2.0", "v1.3.0-insider.1", "v1.3.0-beta.1"],
+			expected: "up-to-date",
+		},
+		{
+			channel: "beta",
+			current: "1.2.0",
+			tags: ["v1.2.0", "v1.3.0-insider.1"],
+			expected: "up-to-date",
+		},
+		// An older stable release never supersedes a newer prerelease, and a
+		// prerelease of the same numeric base never supersedes the stable.
+		{
+			channel: "insider",
+			current: "1.3.0-insider.1",
+			tags: ["v1.2.1"],
+			expected: "up-to-date",
+		},
+		{
+			channel: "insider",
+			current: "1.3.0",
+			tags: ["v1.3.0", "v1.3.0-insider.5"],
+			expected: "up-to-date",
+		},
+		{
+			channel: "insider",
+			current: "1.3.0",
+			tags: ["v1.3.0"],
+			expected: "up-to-date",
+		},
+	];
+	it.each(cases)(
+		"subscription $channel on $current offers $expected",
+		async ({ channel, current, tags, expected, expectedVersion }) => {
+			const checked = await checkForUpdate({
+				currentVersion: current,
+				channel,
+				fetchFeedText: fetchReleases(tags.map((tag) => release(tag))),
+			});
+			expect(checked.status).toBe(expected);
+			if (checked.status === "update-available" && expectedVersion) {
+				expect(checked.feed.version).toBe(expectedVersion);
+			}
+		},
+	);
+
+	it("picks the maximum eligible release across mixed channels and reversed publish order", async () => {
+		const checked = await checkForUpdate({
+			currentVersion: "1.2.0-insider.8",
+			channel: "insider",
+			fetchFeedText: fetchReleases([
+				// Published most recently but numerically older.
+				release("v1.1.0", { publishedAt: "2026-11-20T00:00:00Z" }),
+				release("v1.2.0-insider.9", {
+					publishedAt: "2026-11-10T00:00:00Z",
+				}),
+				release("v1.2.0-insider.10", {
+					publishedAt: "2026-11-01T00:00:00Z",
+				}),
+				release("v1.2.0-beta.20", {
+					publishedAt: "2026-11-15T00:00:00Z",
+				}),
+			]),
+		});
+		expect(checked.status).toBe("update-available");
+		if (checked.status === "update-available") {
+			expect(checked.feed.version).toBe("1.2.0-insider.10");
+		}
+	});
+
+	it("keeps the feed → installer contract: a stable feed selected for an insider subscription is installable", async () => {
+		const checked = await checkForUpdate({
+			currentVersion: "1.2.0-insider.3",
+			channel: "insider",
+			platform: "windows",
+			fetchFeedText: fetchReleases([release("v1.2.0", { zip: true })]),
+		});
+		expect(checked.status).toBe("update-available");
+		if (checked.status !== "update-available") return;
+		// Installability follows the feed, not the subscription channel.
+		expect(isInstallableUpdate(checked.feed)).toBe(true);
+		const asset = installableZipAsset(checked.feed, "windows");
+		expect(asset).toEqual({
+			url: "https://github.com/ido-bata/ty-plus/releases/download/v1.2.0/ty-plus-v1.2.0-windows.zip",
+			fileName: "ty-plus-v1.2.0-windows.zip",
+			sha256: digest,
+		});
+		// The worker validates tag === `v${release_version}` with a numeric
+		// core; a stable feed satisfies it, a prerelease feed cannot.
+		expect(`v${checked.feed.version}`).toBe("v1.2.0");
+	});
+
+	it("keeps prerelease feeds release-notes-only for every subscription channel", async () => {
+		// Only the insider subscription sees the prerelease candidate at all;
+		// stable/beta filter it out during eligibility, before ordering.
+		for (const channel of ["stable", "beta"] as const) {
+			const checked = await checkForUpdate({
+				currentVersion: "1.2.0",
+				channel,
+				fetchFeedText: fetchReleases([
+					release("v1.2.0"),
+					release("v1.3.0-insider.1", { zip: true }),
+				]),
+			});
+			expect(checked.status).toBe("up-to-date");
+		}
+		const checked = await checkForUpdate({
+			currentVersion: "1.2.0",
+			channel: "insider",
+			fetchFeedText: fetchReleases([
+				release("v1.2.0"),
+				release("v1.3.0-insider.1", { zip: true }),
+			]),
+		});
+		expect(checked.status).toBe("update-available");
+		if (checked.status === "update-available") {
+			expect(checked.feed.channel).toBe("insider");
+			expect(isInstallableUpdate(checked.feed)).toBe(false);
+		}
 	});
 });
