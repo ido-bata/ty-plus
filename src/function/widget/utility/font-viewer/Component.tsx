@@ -220,7 +220,10 @@ function FontNavigateUpCard(props: {
 			<div
 				className={css({ marginTop: "0.5", minWidth: 0, paddingInline: "0.5" })}
 			>
-				<div className={cx(rowLabelClass, css({ truncate: true }))}>
+				<div
+					className={cx(rowLabelClass, css({ truncate: true }))}
+					title={backLabel}
+				>
 					{backLabel}
 				</div>
 			</div>
@@ -293,6 +296,7 @@ function FontIconCatalogTile(props: {
 						lineHeight: "tight",
 						color: "text.primary",
 					})}
+					title={primaryLabel}
 				>
 					{primaryLabel}
 				</div>
@@ -425,10 +429,16 @@ function FontListTreeRow(props: {
 						gap: "0.5",
 					})}
 				>
-					<div className={cx(rowLabelClass, css({ truncate: true }))}>
+					<div
+						className={cx(rowLabelClass, css({ truncate: true }))}
+						title={family}
+					>
 						{family}
 					</div>
-					<div className={monoFamilyNameClass}>
+					<div
+						className={monoFamilyNameClass}
+						title={row.postscriptName || row.fullName}
+					>
 						{row.postscriptName || row.fullName}
 					</div>
 				</div>
@@ -618,6 +628,7 @@ function FontListTreeFamilyGroup(props: {
 									rowLabelClass,
 									css({ minWidth: 0, truncate: true }),
 								)}
+								title={family}
 							>
 								{family}
 							</span>
@@ -698,10 +709,16 @@ function FontListTreeFamilyGroup(props: {
 										gap: "0.5",
 									})}
 								>
-									<div className={cx(fieldLabelClass, css({ truncate: true }))}>
+									<div
+										className={cx(fieldLabelClass, css({ truncate: true }))}
+										title={row.style || undefined}
+									>
 										{row.style || "—"}
 									</div>
-									<div className={monoFamilyNameClass}>
+									<div
+										className={monoFamilyNameClass}
+										title={row.postscriptName || row.fullName}
+									>
 										{row.postscriptName || row.fullName}
 									</div>
 								</div>
@@ -956,10 +973,14 @@ function FontIconFamilyContent(props: {
 								fontWeight: "medium",
 								color: "text.primary",
 							})}
+							title={row.style || undefined}
 						>
 							{row.style || "—"}
 						</div>
-						<div className={monoFamilyNameClass}>
+						<div
+							className={monoFamilyNameClass}
+							title={row.postscriptName || row.fullName}
+						>
 							{row.postscriptName || row.fullName}
 						</div>
 					</div>
