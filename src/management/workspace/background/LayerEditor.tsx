@@ -36,7 +36,11 @@ const presetGrid = css({
 });
 
 const presetSwatch = css({
+	// `uiSize="content"` on the Button leaves sizing to this class; the
+	// explicit height/minHeight keep aspectRatio authoritative even if the
+	// size class ordering ever changes.
 	aspectRatio: "1 / 1",
+	height: "auto",
 	minHeight: "0",
 	paddingInline: "0",
 	borderColor: "var(--color-ty-widget-border)",
@@ -94,7 +98,7 @@ export function LayerEditor(props: {
 								key={color}
 								type="button"
 								variant="default"
-								uiSize="sm"
+								uiSize="content"
 								fullWidth
 								className={cx(
 									presetSwatch,

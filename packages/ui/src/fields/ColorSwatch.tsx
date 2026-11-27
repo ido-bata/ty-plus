@@ -43,6 +43,13 @@ const swatch = css({
 	},
 });
 
+// Known limitation (issue #748): `<input type="color">` cannot represent
+// alpha, so non-hex values such as `"transparent"` silently render as the
+// opaque `COLOR_INPUT_FALLBACK_HEX` chip even though the stored value is
+// fully transparent. Callers that accept non-hex colours should layer
+// their own transparent-state affordance on top (see
+// `src/management/workspace/background/Fields.tsx`); a dedicated swatch
+// component with alpha support is deferred as real scope.
 function normalizeHexForColorInput(value: string): string {
 	const trimmed = value.trim();
 	if (trimmed.startsWith("#") && trimmed.length >= 4) {

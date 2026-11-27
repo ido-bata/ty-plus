@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { expect } from "storybook/test";
 import type { Layer } from "@/management/workspace/background/contract";
 import {
 	LayerEditor,
@@ -105,7 +106,20 @@ const meta = {
 export default meta;
 type Story = StoryObj<Args>;
 
-export const Color: Story = {};
+export const Color: Story = {
+	play: async ({ canvasElement }) => {
+		// Issue #748: preset swatches must stay square — the Button's fixed
+		// size height used to stretch them into wide rectangles.
+		const swatches =
+			canvasElement.querySelectorAll<HTMLButtonElement>('button[title^="#"]');
+		expect(swatches.length).toBeGreaterThan(0);
+		for (const swatch of swatches) {
+			expect(
+				Math.abs(swatch.offsetWidth - swatch.offsetHeight),
+			).toBeLessThanOrEqual(1);
+		}
+	},
+};
 
 export const Pattern: Story = {
 	args: { layerType: "pattern" },
