@@ -16,6 +16,7 @@ import {
 	type CepMenuPayload,
 	registerCepJsonContextMenuSurface,
 } from "@/management/dialog/context-menu";
+import { DialogFooterActions } from "@/management/dialog/shell/Footer";
 import { useDialogClose } from "@/management/dialog/useClose";
 import { i18n } from "@/management/i18n/index";
 import { AddWidgetCatalogPanel } from "@/management/widget/catalog";
@@ -59,16 +60,9 @@ const footerClassName = css({
 	paddingBottom: "3",
 });
 
-const footerRowStyle = css({
-	display: "grid",
-	width: "full",
-	gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-	alignItems: "center",
-	gap: "2",
-});
-
 const footerHintStyle = css({
 	minWidth: 0,
+	flex: "1",
 	fontSize: "shell-text-xs",
 	lineHeight: "snug",
 	color: "text.muted",
@@ -77,6 +71,22 @@ const footerHintStyle = css({
 const footerPanelStyle = css({
 	fontFamily: "mono",
 	color: "text.primary",
+});
+
+const footerStackStyle = css({
+	display: "flex",
+	width: "full",
+	minWidth: 0,
+	flexDirection: "column",
+	gap: "2",
+});
+
+const footerRowStyle = css({
+	display: "flex",
+	width: "full",
+	minWidth: 0,
+	alignItems: "center",
+	gap: "2",
 });
 
 const catalogClass = css({
@@ -402,7 +412,7 @@ function AddWidgetFooter(props: {
 }): JSX.Element {
 	const { addFailure, targetPanelId, busy, canAdd, onCancel, onAdd } = props;
 	return (
-		<div>
+		<div className={footerStackStyle}>
 			{addFailure ? (
 				<p className={footerErrorStyle} role="alert">
 					{addFailure}
@@ -418,31 +428,33 @@ function AddWidgetFooter(props: {
 						defaultValue: "at the bottom of the grid.",
 					})}
 				</p>
-				<Button
-					variant="default"
-					uiSize="sm"
-					type="button"
-					fullWidth
-					onClick={onCancel}
-				>
-					{i18n.t("common:buttons.cancel")}
-				</Button>
-				<Button
-					variant="primary"
-					uiSize="sm"
-					type="button"
-					fullWidth
-					disabled={!canAdd || busy}
-					onClick={onAdd}
-				>
-					{busy
-						? i18n.t("widgets:selector.adding", {
-								defaultValue: "Adding…",
-							})
-						: i18n.t("widgets:selector.add", {
-								defaultValue: "Add",
-							})}
-				</Button>
+				<DialogFooterActions>
+					<Button
+						variant="ghost"
+						uiSize="sm"
+						type="button"
+						fullWidth
+						onClick={onCancel}
+					>
+						{i18n.t("common:buttons.cancel")}
+					</Button>
+					<Button
+						variant="primary"
+						uiSize="sm"
+						type="button"
+						fullWidth
+						disabled={!canAdd || busy}
+						onClick={onAdd}
+					>
+						{busy
+							? i18n.t("widgets:selector.adding", {
+									defaultValue: "Adding…",
+								})
+							: i18n.t("widgets:selector.add", {
+									defaultValue: "Add",
+								})}
+					</Button>
+				</DialogFooterActions>
 			</div>
 		</div>
 	);

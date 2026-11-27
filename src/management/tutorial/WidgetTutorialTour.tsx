@@ -389,7 +389,12 @@ export function WidgetTutorialTour({
 						</span>
 						<div className={bubbleActions}>
 							{stepIndex > 0 ? (
-								<Button variant="outline" uiSize="sm" onClick={goBack}>
+								// `default`, not `outline`: outline rests on
+								// `border.strong` (#0e0e0e), a dark-on-dark
+								// hairline that reads *dimmer* than the ghost
+								// Skip's `border.subtle` — inverting the
+								// intended Back > Skip hierarchy (#755).
+								<Button variant="default" uiSize="sm" onClick={goBack}>
 									{t("tutorial.chrome.back", { defaultValue: "Back" })}
 								</Button>
 							) : null}

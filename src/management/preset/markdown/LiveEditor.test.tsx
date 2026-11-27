@@ -46,6 +46,29 @@ describe("MarkdownLiveEditor", () => {
 		expect(screen.getByText("Type here...")).toBeInTheDocument();
 	});
 
+	it("renders fenced code lines literally instead of parsing them as markdown (#755)", () => {
+		const { container } = render(
+			<MarkdownLiveEditor
+				value={"# Title\n\n```ts\n# not a heading\nconst x = 1;\n```"}
+				onChange={() => {}}
+			/>,
+		);
+		// Only the real heading parses; the `#` inside the fence stays text.
+		const headings = container.querySelectorAll("h1");
+		expect(headings).toHaveLength(1);
+		expect(headings[0]?.textContent).toBe("Title");
+		const codeLines = container.querySelectorAll('[data-fence-kind="code"]');
+		expect(codeLines).toHaveLength(2);
+		expect(codeLines[0]?.textContent).toBe("# not a heading");
+		expect(codeLines[1]?.textContent).toBe("const x = 1;");
+		// Delimiter lines render as muted fence markers, not stray backticks
+		// parsed into empty inline-code tokens.
+		expect(
+			container.querySelectorAll('[data-fence-kind="fence"]'),
+		).toHaveLength(2);
+		expect(container.querySelectorAll("code")).toHaveLength(0);
+	});
+
 	it("applies input-style border and surface background to match other fields", () => {
 		const { container } = render(
 			<MarkdownLiveEditor value="hello" onChange={() => {}} />,

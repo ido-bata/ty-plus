@@ -190,12 +190,50 @@ const stepNavClass = css({
 	borderTopColor: "border.default",
 });
 
+/**
+ * Fullscreen variant of `stepNavClass`: the modal's equal 1fr columns
+ * stretch Back/Next to ~half the viewport each on a 1280px panel. In
+ * fullscreen the buttons keep their natural width and hug the edges.
+ * This is a standalone class rather than a `cx` override because the
+ * two layouts disagree on `display` — atomic classes cannot be layered.
+ */
+const stepNavFullscreenClass = css({
+	display: "flex",
+	justifyContent: "space-between",
+	alignItems: "center",
+	gap: "2",
+	paddingBlock: "3",
+	paddingInline: "5",
+	borderTopWidth: "hairline",
+	borderTopStyle: "solid",
+	borderTopColor: "border.default",
+});
+
 const stepBodyClass = css({
+	display: "flex",
+	flexDirection: "column",
+	gap: "3",
+	minHeight: 0,
+});
+
+/**
+ * Fullscreen step column: caps the wizard content at the canonical shell
+ * content width and centers it horizontally, then centers the (now
+ * auto-height) step bodies vertically inside the tall dialog body.
+ * `safe center` falls back to top alignment when the content would
+ * overflow, so tall steps (subfolders, file pickers handled separately)
+ * never lose their top edge.
+ */
+const fullscreenBodyColumnClass = css({
 	display: "flex",
 	flexDirection: "column",
 	gap: "3",
 	flex: "1",
 	minHeight: 0,
+	width: "full",
+	maxWidth: "var(--ty-shell-content-max-width)",
+	marginInline: "auto",
+	justifyContent: "safe center",
 });
 
 const animationSlotClass = css({
@@ -441,6 +479,7 @@ function StepNavigation({
 	stepIndex,
 	stepValidationError,
 	saving,
+	fullscreen,
 	onBack,
 	onNext,
 	onFinish,
@@ -449,13 +488,14 @@ function StepNavigation({
 	stepIndex: number;
 	stepValidationError: string | null;
 	saving: boolean;
+	fullscreen: boolean;
 	onBack: () => void;
 	onNext: () => void;
 	onFinish: () => void;
 }): JSX.Element {
 	const { t } = useTranslation("onboarding");
 	return (
-		<div className={stepNavClass}>
+		<div className={fullscreen ? stepNavFullscreenClass : stepNavClass}>
 			<Button
 				type="button"
 				variant="ghost"
@@ -1644,20 +1684,36 @@ export function View({ onCompleted }: ViewProps = {}): JSX.Element {
 					</div>
 				</div>
 				<div className={dialogBodyClass}>
-					<ErrorBanner error={error} />
-					<FinishErrorPanel
-						finishError={finishError}
-						onRetryWithElevation={() => {
-							void handleRetryWithElevation();
-						}}
-					/>
-					{renderBody()}
+					{isFullscreen ? (
+						<div className={fullscreenBodyColumnClass}>
+							<ErrorBanner error={error} />
+							<FinishErrorPanel
+								finishError={finishError}
+								onRetryWithElevation={() => {
+									void handleRetryWithElevation();
+								}}
+							/>
+							{renderBody()}
+						</div>
+					) : (
+						<>
+							<ErrorBanner error={error} />
+							<FinishErrorPanel
+								finishError={finishError}
+								onRetryWithElevation={() => {
+									void handleRetryWithElevation();
+								}}
+							/>
+							{renderBody()}
+						</>
+					)}
 				</div>
 				<StepNavigation
 					activeStep={activeStep}
 					stepIndex={stepIndex}
 					stepValidationError={stepValidationError}
 					saving={saving}
+					fullscreen={isFullscreen}
 					onBack={prevStep}
 					onNext={() => {
 						if (activeStep !== "finish") void nextStep();

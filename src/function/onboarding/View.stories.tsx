@@ -186,5 +186,19 @@ export const Fullscreen: Story = {
 		expect(dialogRect.top).toBeGreaterThanOrEqual(frameRect.top - 0.5);
 		expect(dialogRect.right).toBeLessThanOrEqual(frameRect.right + 0.5);
 		expect(dialogRect.bottom).toBeLessThanOrEqual(frameRect.bottom + 0.5);
+
+		// #755: in fullscreen the step nav must not stretch Back/Next to
+		// half the viewport each — the buttons keep natural width.
+		const navButton = (label: string): HTMLElement => {
+			const el = Array.from(
+				canvasElement.querySelectorAll<HTMLElement>("button"),
+			).find((b) => b.textContent?.trim() === label);
+			if (!el) throw new Error(`nav button "${label}" not found`);
+			return el;
+		};
+		for (const label of ["Back", "Next"]) {
+			const width = navButton(label).getBoundingClientRect().width;
+			expect(width).toBeLessThan(320);
+		}
 	},
 };

@@ -61,12 +61,11 @@ export function SetupRequired(): JSX.Element {
 		window.location.reload();
 	}, []);
 
-	const {
-		open: openManual,
-		status,
-		url: manualUrl,
-	} = usePublicLink("user-manual");
-	const manualDisabled = manualUrl == null && status === "loading";
+	const { open: openManual, url: manualUrl } = usePublicLink("user-manual");
+	// The manual action is only live once a URL resolved — while the link is
+	// loading, errored, or unresolved the button must read as unavailable
+	// (disabled), not as an active action that silently no-ops on click.
+	const manualDisabled = manualUrl == null;
 
 	// Surface for the SetupRequired view provides a ty-plus-controlled right
 	// click with the actions that matter in this state: open the manual
