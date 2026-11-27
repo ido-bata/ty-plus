@@ -92,7 +92,12 @@ export function PresetListRow({
 						presetId={p.id}
 						preset={p}
 						surface="framed"
-						boxClass={css({ height: "7", width: "7", flexShrink: 0 })}
+						// Wider-than-tall badge box (#751): single-line kind
+						// badges (FFX / SCRIPT / PLUGIN / MEDIA) are bound by
+						// inline size, not height — the extra width lets the
+						// fit reach the 8px legibility floor instead of
+						// collapsing to ~5px inside a square frame.
+						boxClass={css({ height: "7", width: "9", flexShrink: 0 })}
 						{...presetGlyphSiblingProps}
 					/>
 					<div className={css({ minWidth: 0, flex: "1", textAlign: "left" })}>

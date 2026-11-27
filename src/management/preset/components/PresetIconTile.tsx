@@ -64,8 +64,16 @@ export function PresetIconTile({
 				backgroundColor: "surface.dialog",
 				// The tile is one composite surface: the container owns the
 				// border, the fill and the hover. The inner button is
-				// `bare`, so it has no hover of its own.
-				_hover: { backgroundColor: "interactive.hover" },
+				// `bare`, so it has no hover of its own. The media well
+				// paints its own opaque `surface.widget` fill, so the
+				// container hover alone was invisible across ~80% of the
+				// tile (#751) — the descendant rule lifts it too.
+				_hover: {
+					backgroundColor: "interactive.hover",
+					"& [data-preset-tile-media]": {
+						backgroundColor: "interactive.hover",
+					},
+				},
 			})}
 			data-directory-browser-entry
 			data-entry-kind="preset"
@@ -97,6 +105,7 @@ export function PresetIconTile({
 				title={p.filePath}
 			>
 				<div
+					data-preset-tile-media
 					className={cx(iconTileMediaClass(iconTileAspect), widgetSurfaceClass)}
 				>
 					<div

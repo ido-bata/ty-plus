@@ -45,10 +45,13 @@ function MissingGlyph(): JSX.Element {
 	const shellRef = useRef<HTMLSpanElement>(null);
 	const metrics = useFrameMetrics(shellRef);
 	// Old `clamp(8px, 10cqi, 96px)`: 10% of the frame's inline size,
-	// floored at 8px for legibility (Issue #522) and capped at 96px.
+	// floored for legibility (Issue #522) and capped at 96px. The floor
+	// rises to 12px (#751): at the floor the old 8px rendered a speck-
+	// sized "?" inside 48px grid cells — 12px keeps the missing-state
+	// mark readable while large frames keep the 10% proportion.
 	const fontPx = metrics
-		? Math.min(96, Math.max(8, metrics.boxWidth * 0.1))
-		: 8;
+		? Math.min(96, Math.max(12, metrics.boxWidth * 0.1))
+		: 12;
 	return (
 		<span
 			ref={shellRef}

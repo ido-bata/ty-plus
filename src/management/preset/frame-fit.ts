@@ -205,6 +205,13 @@ export type FitTextFontOptions = {
 	 */
 	preferredPct: number;
 	minFontPx: number;
+	/**
+	 * When true, `minFontPx` only applies up to the largest size that
+	 * still fits the frame: the floor can never push the text past the
+	 * fit cap, so cramped frames degrade to "largest fitting size"
+	 * instead of clipping (#751).
+	 */
+	floorWithinFit?: boolean;
 	maxFontPx?: number;
 	fontFamily?: string;
 	fontWeight?: string;
@@ -242,16 +249,24 @@ export function fitTextFontPx(opts: FitTextFontOptions): number {
 	}
 	// `widest` is the advance at a 100px font; scale linearly to the size
 	// that exactly fills the content width, with a small safety margin.
+	// `fitCap` tracks the tightest shrink bound so a soft floor can never
+	// exceed what actually fits.
+	let fitCap = Number.POSITIVE_INFINITY;
 	if (widest > 0 && opts.contentWidth > 0) {
-		px = Math.min(px, (opts.contentWidth * 0.98 * 100) / widest);
+		const cap = (opts.contentWidth * 0.98 * 100) / widest;
+		px = Math.min(px, cap);
+		fitCap = Math.min(fitCap, cap);
 	}
 	if (opts.lines.length > 0 && opts.contentHeight > 0) {
-		px = Math.min(
-			px,
-			(opts.contentHeight * 0.96) / (opts.lines.length * lineHeightFactor),
-		);
+		const cap =
+			(opts.contentHeight * 0.96) / (opts.lines.length * lineHeightFactor);
+		px = Math.min(px, cap);
+		fitCap = Math.min(fitCap, cap);
 	}
-	return Math.min(Math.max(px, opts.minFontPx), maxFontPx);
+	const floorPx = opts.floorWithinFit
+		? Math.min(opts.minFontPx, fitCap)
+		: opts.minFontPx;
+	return Math.min(Math.max(px, floorPx), maxFontPx);
 }
 
 export type TextFitSpec = {
@@ -261,13 +276,6 @@ export type TextFitSpec = {
 	preferredPct: number;
 	minFontPx: number;
 };
-
-/**
- * The smallest font size the fit will ever request. Below this the glyph
- * degrades to an unreadable smudge anyway, so clipping is preferred over
- * rendering dust.
- */
-const GLYPH_ABS_MIN_FONT_PX = 2;
 
 /**
  * Smallest `font-size` the CEP host actually paints. CEF clamps any
@@ -306,12 +314,15 @@ export function resolveFittedTextFont(desiredPx: number): FittedTextFont {
  * metrics and the element's computed font. Returns `null` until the first
  * measurement so callers can keep their CSS/inline fallback.
  *
- * The legibility `minFontPx` floor is deliberately soft here: when the
- * frame is too small for even that size, the fit keeps shrinking down to
- * {@link GLYPH_ABS_MIN_FONT_PX} — a complete tiny badge beats a clipped
- * one. Because the host clamps painted font-size at ~10px, sizes below
- * that are expressed as `fontPx = 10` + `scale = desired / 10`, which
- * renders identically on CEF and on hosts without the floor.
+ * The legibility `minFontPx` floor is soft here: it applies only up to
+ * the largest size that still fits the frame (`floorWithinFit`), so a
+ * cramped frame degrades to the biggest non-clipping glyph instead of
+ * clipping — while normal frames finally honor the floor the spec
+ * declares (e.g. the 5px/8px badge floors from #673, which the old
+ * absolute-2px floor silently bypassed, #751). Because the host clamps
+ * painted font-size at ~10px, sizes below that are expressed as
+ * `fontPx = 10` + `scale = desired / 10`, which renders identically on
+ * CEF and on hosts without the floor.
  *
  * Derived during render (not in an effect) because the value is a pure
  * function of `metrics` + `fit` + the already-mounted element — the same
@@ -322,7 +333,7 @@ export function resolveFittedTextFont(desiredPx: number): FittedTextFont {
 export function useFittedTextFontPx(
 	shellRef: RefObject<HTMLElement | null>,
 	metrics: FrameMetrics | null,
-	fit: Pick<TextFitSpec, "lines" | "preferredPct">,
+	fit: Pick<TextFitSpec, "lines" | "preferredPct" | "minFontPx">,
 ): FittedTextFont | null {
 	return useMemo(() => {
 		const el = shellRef.current;
@@ -334,7 +345,8 @@ export function useFittedTextFontPx(
 			contentWidth: metrics.contentWidth,
 			contentHeight: metrics.contentHeight,
 			preferredPct: fit.preferredPct,
-			minFontPx: GLYPH_ABS_MIN_FONT_PX,
+			minFontPx: fit.minFontPx,
+			floorWithinFit: true,
 			fontFamily: style.fontFamily,
 			fontWeight: style.fontWeight,
 			fontStyle: style.fontStyle,

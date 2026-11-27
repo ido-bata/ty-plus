@@ -153,14 +153,23 @@ export const Hover: Story = {
 		// `bare` button inside it.
 		const tile = canvasElement.querySelector<HTMLElement>("[data-preset-id]");
 		if (!tile) throw new Error("preset icon tile not found");
+		const media = tile.querySelector<HTMLElement>("[data-preset-tile-media]");
+		if (!media) throw new Error("preset icon tile media well not found");
 		const { userEvent } = await import("vitest/browser");
 		const resting = getComputedStyle(tile).backgroundColor;
+		const mediaResting = getComputedStyle(media).backgroundColor;
 		await userEvent.hover(tile);
 		await expect(tile.matches(":hover")).toBe(true);
 		// The button transitions colors — wait for it to settle before
 		// comparing computed styles.
 		await new Promise((resolve) => setTimeout(resolve, 300));
 		await expect(getComputedStyle(tile).backgroundColor).not.toBe(resting);
+		// Issue #751: the media well paints its own opaque fill, so the
+		// hover must lift it too — otherwise ~80% of the tile shows no
+		// state change and hover reads as indistinguishable.
+		await expect(getComputedStyle(media).backgroundColor).not.toBe(
+			mediaResting,
+		);
 		expectCanvasLayout(canvasElement);
 	},
 };

@@ -63,6 +63,41 @@ describe("fitTextFontPx", () => {
 		expect(px).toBeLessThanOrEqual(9.61);
 	});
 
+	it("lifts the preferred size to the floor when floorWithinFit still fits", () => {
+		// Issue #751: "AB" preferred = 18% × 40px = 7.2px, below the 8px
+		// floor — but the width/height caps (~32px / ~36px) leave room,
+		// so the soft floor lifts the result to 8px instead of rendering
+		// the sub-floor preferred size.
+		const px = fitTextFontPx({
+			...base,
+			lines: ["AB"],
+			boxWidth: 40,
+			contentWidth: 38,
+			contentHeight: 38,
+			preferredPct: 18,
+			minFontPx: 8,
+			floorWithinFit: true,
+		});
+		expect(px).toBe(8);
+	});
+
+	it("caps the floor at the fit size when floorWithinFit is set", () => {
+		// Same cramped case as the hard-floor test above: the width cap
+		// is ~3.43px, so an 8px floor must yield to the cap — the result
+		// is the largest fitting size, never a clipped 8px.
+		const px = fitTextFontPx({
+			...base,
+			lines: ["フェードイン"],
+			boxWidth: 22,
+			contentWidth: 21,
+			contentHeight: 21,
+			preferredPct: 18,
+			minFontPx: 8,
+			floorWithinFit: true,
+		});
+		expect(px).toBeCloseTo(3.43, 1);
+	});
+
 	it("applies the minimum floor and the 96px cap like clamp()", () => {
 		expect(fitTextFontPx({ ...base, boxWidth: 10, contentWidth: 9 })).toBe(8);
 		expect(
