@@ -25,6 +25,12 @@
  *
  * 4+ action buttons are forbidden — split into an overflow menu.
  *
+ * The action group is compact and right-anchored: each implicit column
+ * is capped at 10rem, so three actions occupy ~30rem regardless of the
+ * dialog width instead of stretching to equal thirds of a full-panel
+ * dialog. `maxWidth: "100%"` lets the columns shrink proportionally on
+ * narrow surfaces.
+ *
  * The footer band owns the canonical horizontal inset
  * (`--ty-shell-pad-inline`), matching `Header` and `Content`, so footer
  * actions never sit flush against the dialog edge regardless of the
@@ -50,12 +56,21 @@ const footerShell = css({
 	flexShrink: 0,
 });
 
-/** Equal-width action grid that anchors right; `Button fullWidth` fills each cell. */
+/**
+ * Equal-width action grid anchored to the footer's right edge. Implicit
+ * columns are capped at 10rem so the group stays compact on wide
+ * dialogs; `Button fullWidth` fills each cell. `marginInlineStart:
+ * "auto"` keeps the group right-anchored even when the footer has no
+ * leading status content (the shell's `space-between` would otherwise
+ * park a lone group on the left).
+ */
 const footerActions = css({
 	display: "grid",
-	width: "100%",
+	width: "max-content",
+	maxWidth: "100%",
+	marginInlineStart: "auto",
 	gap: "2",
-	gridAutoColumns: "minmax(0, 1fr)",
+	gridAutoColumns: "minmax(0, 10rem)",
 	gridAutoFlow: "column",
 	justifyContent: "end",
 });

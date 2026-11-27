@@ -35,6 +35,13 @@ interface TokenCategory {
 		key: string;
 		labelKey: string;
 		type: "color" | "text" | "opacity" | "number";
+		/**
+		 * Grid span inside the 6-column `SettingsGrid`. Defaults to 3
+		 * (two fields per row). Channel tokens use 2 so each RGB
+		 * triplet (Text R/G/B, Accent R/G/B) occupies its own row
+		 * instead of straddling a row boundary mid-family.
+		 */
+		span?: 2 | 3;
 	}[];
 }
 
@@ -76,31 +83,37 @@ const TOKEN_CATEGORIES: TokenCategory[] = [
 				key: "text-r",
 				labelKey: "settings:tokensSection.tokens.textRedChannel",
 				type: "text",
+				span: 2,
 			},
 			{
 				key: "text-g",
 				labelKey: "settings:tokensSection.tokens.textGreenChannel",
 				type: "text",
+				span: 2,
 			},
 			{
 				key: "text-b",
 				labelKey: "settings:tokensSection.tokens.textBlueChannel",
 				type: "text",
+				span: 2,
 			},
 			{
 				key: "accent-r",
 				labelKey: "settings:tokensSection.tokens.accentRedChannel",
 				type: "text",
+				span: 2,
 			},
 			{
 				key: "accent-g",
 				labelKey: "settings:tokensSection.tokens.accentGreenChannel",
 				type: "text",
+				span: 2,
 			},
 			{
 				key: "accent-b",
 				labelKey: "settings:tokensSection.tokens.accentBlueChannel",
 				type: "text",
+				span: 2,
 			},
 		],
 	},
@@ -464,7 +477,7 @@ export function TokensSection(): JSX.Element {
 						{i18n.t(category.nameKey)}
 					</SettingsSectionHeading>
 					{category.tokens.map((token) => (
-						<SettingsField key={token.key} span={3}>
+						<SettingsField key={token.key} span={token.span ?? 3}>
 							<div data-design-token-key={token.key}>
 								{token.type === "color" ? (
 									<ColorTokenEditor

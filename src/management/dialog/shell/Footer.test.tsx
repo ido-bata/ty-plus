@@ -39,4 +39,20 @@ describe("DialogFooterActions", () => {
 		};
 		expect(props.className).toBe("");
 	});
+
+	// Issue #732: the action grid must stay compact and right-anchored —
+	// a `width: "100%"` + `1fr` track layout stretched the buttons to
+	// equal thirds of the full dialog width.
+	it("source: action grid is bounded and right-anchored", () => {
+		const actionsBlock = FOOTER_SOURCE.match(
+			/footerActions\s*=\s*css\(\{[\s\S]*?\}\)/,
+		);
+		expect(actionsBlock).not.toBeNull();
+		const block = actionsBlock?.[0] ?? "";
+		expect(block).toContain('width: "max-content"');
+		expect(block).toContain('maxWidth: "100%"');
+		expect(block).toContain('marginInlineStart: "auto"');
+		expect(block).not.toContain('width: "100%"');
+		expect(block).not.toContain("minmax(0, 1fr)");
+	});
 });

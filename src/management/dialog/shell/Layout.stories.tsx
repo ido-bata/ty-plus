@@ -145,7 +145,7 @@ export const WithFooter: Story = {
 		const lastButton = actions?.querySelector("button:last-child");
 		expect(footer).not.toBeNull();
 		expect(lastButton).not.toBeNull();
-		if (!footer || !lastButton) return;
+		if (!footer || !lastButton || !actions) return;
 		// Issue #674: the footer band owns the canonical inline inset, so the
 		// last action sits one `padding-inline` inside the footer edge — the
 		// same inset `Content` applies to the body.
@@ -164,6 +164,18 @@ export const WithFooter: Story = {
 					lastButton.getBoundingClientRect().right,
 			),
 		).toBeLessThanOrEqual(1);
+		// Issue #732: the action group is compact — bounded equal columns
+		// anchored right, never stretched to the full footer width.
+		const actionsRect = actions.getBoundingClientRect();
+		const footerRect = footer.getBoundingClientRect();
+		expect(actionsRect.width).toBeLessThan(footerRect.width * 0.9);
+		const buttons = Array.from(actions.querySelectorAll("button"));
+		expect(buttons.length).toBeGreaterThan(0);
+		const widths = buttons.map((b) => b.getBoundingClientRect().width);
+		const firstWidth = widths[0] ?? 0;
+		for (const w of widths) {
+			expect(Math.abs(w - firstWidth)).toBeLessThanOrEqual(1);
+		}
 	},
 };
 
