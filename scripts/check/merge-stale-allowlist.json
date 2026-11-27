@@ -84,6 +84,16 @@
 			"paths": [
 				"src/management/preset/catalog-browser/list-dialog.render-contract.test.tsx"
 			]
+		},
+		{
+			"commit": "99095d239f5d5d102996ffb06272180b26adc3d7",
+			"pr": 740,
+			"issue": 735,
+			"reason": "PR #740 (#735) reconciles a same-defect collision with PR #739 (#732): both PRs rewrote DialogFooterActions width contract. #739's 10rem column cap starved status labels in narrow footers (storybook assertion failure, verified locally), so #740's fit-content + minmax(min-content,1fr) contract was kept deliberately; reviewed intentional divergence",
+			"paths": [
+				"src/management/dialog/shell/Footer.tsx",
+				"src/management/dialog/shell/Footer.test.tsx"
+			]
 		}
 	]
 }
