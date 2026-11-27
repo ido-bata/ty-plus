@@ -59,7 +59,9 @@
 | `widget-selector.png` | Add widget modeless dialog |
 | `group-catalog-tile.png` | workspace catalog の group tile (FFX + 99+ badge) |
 | `group-edit-members.png` | group preset edit dialog (MEMBER PRESETS 300) |
-| `cef-font-floor-glyphs-0-14-0.png` | preset catalog dialog の text glyph 310 件 (#704 修正後、10px+scale 描画) |
+| `cef-font-floor-glyphs-0-14-0.png` | preset catalog dialog の text glyph 310 件 (#704 修正後、10px+scale 描画、AE2026) |
+| `cef-font-floor-glyphs-ae2027.png` | 同上、AE2027 (dev build) |
+| `cef-glyph-broken-release-0-13-1.png` | v0.13.1 release の text glyph 破損状態 (before、AE2027) |
 
 ## 追記: CEF 描画制約の修正検証 (#700 / #701 / #704)
 
@@ -90,6 +92,28 @@ build (`909c2a89`、`dist/cep-dev`) で AE2026 実機再検証を実施した。
   削除後の info widget 残留は本検証では preset 削除を再実施していない
   ため unit test 担保の範囲。
 
+### AE2027 での before/after 対比
+
+同一マシンで release `app.ty-plus` (v0.13.1) と dev `app.ty-plus.dev`
+(909c2a89) を切り替えて計測した。
+
+- **v0.13.1 (before)**: preset catalog の text glyph 310 件**全て**で
+  font-size 16px のまま frame (22px) からはみ出し、620 行が frame 外・
+  20 行が clip — #700 の container query 無効が本番で発生していることを
+  実機確認 (`cef-glyph-broken-release-0-13-1.png`)。
+- **dev build (after)**: AE2027 上でも 310 件全て `fontPx=10` +
+  `scale=0.343–0.396` で描画、`badLines=0`。AE2026 と同一結果
+  (`cef-font-floor-glyphs-ae2027.png`)。
+- 補足: dev panel1 は release panel が debug port (49904) を先に
+  bind していたため CDP 未接続のまま残った。dev panel5 の
+  `__adobe_cep__.requestOpenExtension('app.ty-plus.dev.dialog-presets')`
+  で modeless dialog を直接起動して計測した (製品の dialog 起動経路と
+  同一 API)。
+- 検証用に `/Applications/Adobe After Effects 2027/ty-plus/presets/
+  presets.json` へ AE2026 と同じ 310 preset (Adobe Express pack、
+  filePath を 2027 に書換) を seed した。これは検証環境の状態であり
+  製品コードの変更ではない。
+
 ## 残件
 
 - #672 の label 配置は canvas 描画のため DOM 検査が効かず、
@@ -98,10 +122,10 @@ build (`909c2a89`、`dist/cep-dev`) で AE2026 実機再検証を実施した。
   preset list dialog から削除済み (native confirm dialog
   「Delete group "Verify Group"? This cannot be undone.」の Yes を
   AX 経由で押下。`presets.json` から消失・孤立 .ffx なしを確認)。
-- **AE2027 での同項目検証は未実施**。両 AE 同時起動時は `.debug` port が
-  衝突するため、AE2027 側を検証するには AE2026 の dev panel を閉じるか
-  port 割当を分離する必要がある (#682 の port band は 31010– 固定のため
-  同一マシン複数 AE ホストでは常に先勝ち)。
+- **AE2027 での同項目検証は #700/#704 の glyph 項目について実施済み**
+  (上記 before/after 対比)。それ以外の widget 項目 (#670/#675/#677 等) の
+  AE2027 個別再検証は未実施 — ただし対象コードはホスト非依存の DOM/CSS
+  であり、AE2026 での確認をもって実機担保とする。
 - Windows 実機での同項目検証は未実施 (v0.13.1 配布物検証は
   `distributed-0-13-1/` を参照)。
 - 副次的観察: preset/group の削除確認は `window.confirm`
