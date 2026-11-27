@@ -95,9 +95,11 @@ const vertOrientation = css({
 });
 
 const collapsedShell = css({
-	height: "5",
-	width: "5",
+	height: "7",
+	width: "7",
 	flexShrink: 0,
+	alignItems: "center",
+	justifyContent: "center",
 	borderRadius: "full",
 	padding: "0",
 	gap: "0",
@@ -116,8 +118,8 @@ const iconBtnSize = css({
 });
 
 const collapsedBtnSize = css({
-	height: "4",
-	width: "4",
+	height: "6",
+	width: "6",
 });
 
 export const Toolbar = memo(function ToolbarImpl(

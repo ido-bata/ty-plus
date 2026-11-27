@@ -1,5 +1,6 @@
 import type { Decorator, Meta, StoryObj } from "@storybook/react";
 import type { JSX } from "react";
+import { expect } from "storybook/test";
 import {
 	type CpPersistedState,
 	initCpStateCache,
@@ -86,4 +87,15 @@ export const Collapsed: Story = {
 			"panel-2",
 		),
 	],
+	play: async ({ canvasElement }) => {
+		// Issue #708: the expand affordance must stay a usable pointer
+		// target — WCAG 2.5.8 minimum is 24x24 CSS px.
+		const toggle = canvasElement.querySelector<HTMLElement>(
+			'[data-ws-action="ty.ctx.cp.toggle-collapse"]',
+		);
+		if (!toggle) throw new Error("collapsed toggle not found");
+		const rect = toggle.getBoundingClientRect();
+		expect(rect.width).toBeGreaterThanOrEqual(24);
+		expect(rect.height).toBeGreaterThanOrEqual(24);
+	},
 };
