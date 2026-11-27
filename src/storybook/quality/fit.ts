@@ -162,22 +162,6 @@ export function assertMatchesWidth(
 // ---------------------------------------------------------------------------
 
 /**
- * Count the distinct vertical rows occupied by `container`'s rendered
- * children. Children sharing a `top` (within `tolerance` px) count as one
- * row; children with `display:none` or zero-area boxes are ignored.
- */
-export function rowCount(container: Element, tolerance = 1): number {
-	const tops = new Set<number>();
-	for (const child of Array.from(container.children)) {
-		const box = measureBox(child);
-		if (box.width <= 0 || box.height <= 0) continue;
-		const rounded = Math.round(box.y / tolerance) * tolerance;
-		tops.add(rounded);
-	}
-	return tops.size;
-}
-
-/**
  * Assert a horizontal strip (tab bar, segmented control, toolbar) never
  * wraps: every rendered child shares one row AND the container's content
  * does not exceed its client height (no second line is painted).
