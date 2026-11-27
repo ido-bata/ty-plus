@@ -204,6 +204,42 @@ export const parseGitHubRelease = (raw: unknown): UpdateFeed | null => {
 	};
 };
 
+export type UpdateInstallAsset = {
+	url: string;
+	fileName: string;
+	sha256: string;
+};
+
+/**
+ * Whether the selected feed can be installed in-app. The operation worker
+ * accepts only stable `vX.Y.Z` tags (`update_install.rs` rejects prerelease
+ * tags), so installability is a property of the *feed*, never of the
+ * subscription channel: an Insider subscriber offered a stable release
+ * installs it, while a prerelease feed stays release-notes-only (Issue #590).
+ */
+export const isInstallableUpdate = (feed: UpdateFeed): boolean =>
+	feed.channel === "stable";
+
+/**
+ * Pick the platform ZIP asset the worker installer consumes. The feed
+ * carries both `.zip` and `.zxp` entries per platform; only the ZIP is
+ * installable in-app (the ZXP remains the manual fallback).
+ */
+export const installableZipAsset = (
+	feed: UpdateFeed,
+	platform: UpdatePlatform | undefined,
+): UpdateInstallAsset | null => {
+	if (platform === undefined) return null;
+	const tag = `v${feed.version}`;
+	for (const asset of feed.assets) {
+		if (asset.platform !== platform || !asset.url.endsWith(".zip")) continue;
+		const fileName = asset.url.split("/").pop() ?? "";
+		if (fileName !== `ty-plus-${tag}-${platform}.zip`) continue;
+		return { url: asset.url, fileName, sha256: asset.sha256 };
+	}
+	return null;
+};
+
 export type FetchFeedText = (url: string, timeoutMs: number) => Promise<string>;
 
 /**
