@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { expect } from "storybook/test";
 import { css } from "@/styled-system/css";
 
 import { ColorField, FieldLabel, NumberField } from "./Fields";
@@ -64,7 +65,16 @@ const meta = {
 export default meta;
 type Story = StoryObj<Args>;
 
-export const Default: Story = {};
+export const Default: Story = {
+	play: async ({ canvasElement }) => {
+		// Hex colours render a plain swatch — no transparent badge.
+		expect(
+			canvasElement.querySelector(
+				'[data-testid="color-field-transparent-badge"]',
+			),
+		).toBeNull();
+	},
+};
 
 export const NoLabels: Story = {
 	args: { noLabel: true },
@@ -72,4 +82,14 @@ export const NoLabels: Story = {
 
 export const TransparentColor: Story = {
 	args: { color: "transparent" },
+	play: async ({ canvasElement }) => {
+		// Issue #748: `"transparent"` cannot be shown by `<input type="color">`,
+		// so the field must paint the checkerboard badge instead of an
+		// opaque fallback chip.
+		expect(
+			canvasElement.querySelector(
+				'[data-testid="color-field-transparent-badge"]',
+			),
+		).not.toBeNull();
+	},
 };

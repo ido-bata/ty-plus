@@ -78,7 +78,7 @@ export function PatternLayerEditor({
 				}
 			/>
 			<NumberField
-				label={t("workspaceShell.backgroundPanel.opacity")}
+				label={t("workspaceShell.backgroundPanel.patternColorOpacity")}
 				value={layer.patternColorOpacity ?? 100}
 				min={0}
 				max={100}
@@ -92,7 +92,7 @@ export function PatternLayerEditor({
 				}
 			/>
 			<NumberField
-				label={t("workspaceShell.backgroundPanel.opacity")}
+				label={t("workspaceShell.backgroundPanel.patternBgOpacity")}
 				value={layer.patternBgOpacity ?? 100}
 				min={0}
 				max={100}
