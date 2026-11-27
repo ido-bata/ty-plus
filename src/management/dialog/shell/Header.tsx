@@ -30,7 +30,6 @@ export function Header({
 					gap: "3",
 					py: "2.5",
 					paddingInline: "var(--ty-shell-pad-inline)",
-					bg: "surface.dialog",
 				}),
 				className,
 				chromeClassName,
