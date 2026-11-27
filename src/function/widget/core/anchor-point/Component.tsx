@@ -1,4 +1,4 @@
-import { Button, type GesturePoint, useAnchorGesture } from "@ty-plus/ui";
+import { Button, cx, type GesturePoint, useAnchorGesture } from "@ty-plus/ui";
 import React, { type JSX } from "react";
 import type { WidgetRenderProps } from "@/function/widget/define";
 import { i18n } from "@/management/i18n/index";
@@ -139,6 +139,83 @@ const anchorHitAreaClass = css({
 	},
 });
 
+/**
+ * Grid cell surface: owns the hover/active fill. The literal `group` class
+ * (added at the call site via `cx`) arms Panda's `_groupHover` descendant
+ * rules so hovering the cell — or the hit-area Button covering it —
+ * brightens the crosshair lines, matching the legacy
+ * `.widget-anchor-point-btn:hover::before` contract.
+ */
+const anchorCellClass = css({
+	position: "relative",
+	cursor: "pointer",
+	padding: 0,
+	transitionProperty: "background-color",
+	transitionDuration: "150ms",
+	_hover: {
+		backgroundColor:
+			"rgba(var(--text-r),var(--text-g),var(--text-b),var(--ty-opacity-ws-anchor-hover))",
+	},
+	_active: {
+		backgroundColor:
+			"rgba(var(--text-r),var(--text-g),var(--text-b),var(--ty-opacity-ws-anchor-active))",
+	},
+});
+
+const anchorLineHorizontal = css({
+	position: "absolute",
+	left: 0,
+	right: 0,
+	display: "block",
+	height: "2px",
+	width: "full",
+});
+
+const anchorLineVertical = css({
+	position: "absolute",
+	top: 0,
+	bottom: 0,
+	display: "block",
+	height: "full",
+	width: "2px",
+});
+
+/*
+ * Crosshair line treatment (Issue #724). Colours ride the dedicated
+ * `ty-opacity-ws-anchor-*` channel tokens — the same alphas the legacy
+ * `anchor-point-widget.scss` hardcoded — and `_groupHover` restores the
+ * legacy hover brightening the React port dropped: idle lines step
+ * 0.35 → 0.75 on hover, while the selected accent line steps to full
+ * opacity (the legacy `--color-accent-hover` step). `borderRadius: full`
+ * restores the rounded line caps the legacy `border-radius: 3px` produced
+ * on the 2px strokes, and the transition restores the legacy
+ * `transition: background 0.15s` fade (the old `transitionProperty:
+ * "colors"` value was not a real CSS property and never animated).
+ */
+const anchorLinePaint = css({
+	borderRadius: "full",
+	transitionProperty: "background-color",
+	transitionDuration: "150ms",
+});
+
+const anchorLineIdle = css({
+	backgroundColor:
+		"rgba(var(--text-r),var(--text-g),var(--text-b),var(--ty-opacity-ws-anchor-grid-line))",
+	_groupHover: {
+		backgroundColor:
+			"rgba(var(--text-r),var(--text-g),var(--text-b),var(--ty-opacity-ws-anchor-grid-line-hover))",
+	},
+});
+
+const anchorLineSelected = css({
+	backgroundColor:
+		"rgba(var(--accent-r),var(--accent-g),var(--accent-b),var(--ty-opacity-ws-anchor-center-line))",
+	_groupHover: {
+		backgroundColor:
+			"rgba(var(--accent-r),var(--accent-g),var(--accent-b),var(--ty-opacity-action-primary))",
+	},
+});
+
 export function AnchorPointWidget(_props: WidgetRenderProps): JSX.Element {
 	const [currentAnchor, setCurrentAnchor] = React.useState<string>("center");
 
@@ -209,53 +286,24 @@ export function AnchorPointWidget(_props: WidgetRenderProps): JSX.Element {
 				{ANCHOR_POSITIONS.map(([pos, xPct, yPct]) => {
 					const isSelected = pos === currentAnchor;
 					return (
-						<div
-							key={pos}
-							className={css({
-								position: "relative",
-								cursor: "pointer",
-								padding: 0,
-								transitionProperty: "colors",
-								transitionDuration: "150",
-								_hover: {
-									backgroundColor:
-										"rgba(var(--text-r),var(--text-g),var(--text-b),0.03)",
-								},
-								_active: {
-									backgroundColor:
-										"rgba(var(--text-r),var(--text-g),var(--text-b),0.06)",
-								},
-							})}
-						>
+						<div key={pos} className={cx("group", anchorCellClass)}>
 							<span className={css({ position: "absolute", inset: "10%" })}>
 								{/* Horizontal line */}
 								<span
-									className={css({
-										position: "absolute",
-										left: 0,
-										right: 0,
-										display: "block",
-										height: "2px",
-										width: "full",
-										backgroundColor: isSelected
-											? "rgba(var(--accent-r),var(--accent-g),var(--accent-b),0.9)"
-											: "rgba(var(--text-r),var(--text-g),var(--text-b),0.35)",
-									})}
+									className={cx(
+										anchorLineHorizontal,
+										anchorLinePaint,
+										isSelected ? anchorLineSelected : anchorLineIdle,
+									)}
 									style={{ top: yPct }}
 								/>
 								{/* Vertical line */}
 								<span
-									className={css({
-										position: "absolute",
-										top: 0,
-										bottom: 0,
-										display: "block",
-										height: "full",
-										width: "2px",
-										backgroundColor: isSelected
-											? "rgba(var(--accent-r),var(--accent-g),var(--accent-b),0.9)"
-											: "rgba(var(--text-r),var(--text-g),var(--text-b),0.35)",
-									})}
+									className={cx(
+										anchorLineVertical,
+										anchorLinePaint,
+										isSelected ? anchorLineSelected : anchorLineIdle,
+									)}
 									style={{ left: xPct }}
 								/>
 							</span>
