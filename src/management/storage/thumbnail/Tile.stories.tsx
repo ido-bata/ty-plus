@@ -148,4 +148,17 @@ export const OffscreenIntersection: Story = {
 			</div>
 		),
 	],
+	play: async ({ canvasElement }) => {
+		// #755: the capture shows an empty frame because the tile is
+		// translated 200px below a 96px `overflow: hidden` clip — every
+		// pixel of the tile (placeholder included) is clipped away, so a
+		// blank region is the *expected* render, not a missing placeholder.
+		// The behavioral contract is that the IntersectionObserver-gated
+		// thumbnail stays idle: no `<img>` ever mounts while off-screen.
+		await new Promise((resolve) => setTimeout(resolve, 500));
+		expect(canvasElement.querySelector("img")).toBeNull();
+		expect(
+			canvasElement.querySelector("[aria-label='offscreen.png']"),
+		).not.toBeNull();
+	},
 };

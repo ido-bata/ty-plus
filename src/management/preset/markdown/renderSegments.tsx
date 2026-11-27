@@ -7,6 +7,69 @@ export function renderLineToReact(line: string): ReactNode {
 	return renderSegmentsToReact(renderMarkdown(line));
 }
 
+/**
+ * Per-line fenced-code classification for the live editor (#755).
+ *
+ * The editor renders one `div[data-line]` per source line and parses each
+ * non-cursor line independently, so a multi-line ``` fence used to leak
+ * into the inline tokenizer: the delimiter rendered as stray backticks
+ * and fence content was parsed as markdown (headings, emphasis) instead
+ * of literal code.
+ *
+ * `"fence"` marks the delimiter lines (``` / ~~~, opening and closing);
+ * `"code"` marks the literal lines between them; `"normal"` is everything
+ * else. An unclosed fence keeps the rest of the document in `"code"`,
+ * matching CommonMark behaviour.
+ */
+export type FenceLineKind = "normal" | "fence" | "code";
+
+const FENCE_OPEN_RE = /^\s*(`{3,}|~{3,})/;
+const FENCE_CLOSE_RE = /^\s*(`{3,}|~{3,})\s*$/;
+
+const fenceRun = (line: string): string | null => {
+	const m = FENCE_OPEN_RE.exec(line);
+	return m ? m[1] : null;
+};
+
+const isFenceClose = (
+	line: string,
+	openChar: string,
+	openLen: number,
+): boolean => {
+	const m = FENCE_CLOSE_RE.exec(line);
+	if (!m) return false;
+	const run = m[1];
+	return run[0] === openChar && run.length >= openLen;
+};
+
+export function computeFenceLineKinds(
+	lines: readonly string[],
+): FenceLineKind[] {
+	const kinds: FenceLineKind[] = new Array(lines.length).fill("normal");
+	let openChar: string | null = null;
+	let openLen = 0;
+	for (let i = 0; i < lines.length; i++) {
+		const line = lines[i] ?? "";
+		const run = fenceRun(line);
+		if (openChar === null) {
+			if (run) {
+				kinds[i] = "fence";
+				openChar = run[0];
+				openLen = run.length;
+			}
+			continue;
+		}
+		if (isFenceClose(line, openChar, openLen)) {
+			kinds[i] = "fence";
+			openChar = null;
+			openLen = 0;
+			continue;
+		}
+		kinds[i] = "code";
+	}
+	return kinds;
+}
+
 const ulListClass = css({
 	listStyleType: "disc",
 	paddingLeft: "5",

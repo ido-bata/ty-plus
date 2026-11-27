@@ -2,6 +2,12 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { useRef, useState } from "react";
 import { expect, userEvent, within } from "storybook/test";
 import { getWidgetDescriptor } from "@/management/widget/registry";
+import { borderTopColor } from "@/storybook/quality/border";
+import {
+	flattenOver,
+	parseCssColor,
+	relativeLuminance,
+} from "@/storybook/quality/color";
 import { css } from "@/styled-system/css";
 import { WidgetTutorialTour } from "./WidgetTutorialTour";
 
@@ -147,5 +153,25 @@ export const AnchoredSteps: Story = {
 			expect(Math.abs(hr.width - (br.width + 8))).toBeLessThanOrEqual(1);
 			expect(Math.abs(hr.height - (br.height + 8))).toBeLessThanOrEqual(1);
 		}
+
+		// #755: the ghost Skip must not rest on a brighter border than its
+		// sibling Back — `outline` once used `border.strong` (#0e0e0e), a
+		// dark-on-dark hairline dimmer than ghost's `border.subtle`. Compare
+		// effective border luminance flattened over the bubble surface.
+		const backButton = within(dialog).getByRole("button", {
+			name: /back|戻る|zurück/i,
+		});
+		const skipButton = within(dialog).getByRole("button", {
+			name: /skip|スキップ|überspringen/i,
+		});
+		const bubbleBg = parseCssColor(getComputedStyle(dialog).backgroundColor);
+		const luminance = (el: Element): number => {
+			const border = parseCssColor(borderTopColor(el));
+			expect(border).toBeTruthy();
+			expect(bubbleBg).toBeTruthy();
+			if (!border || !bubbleBg) return 0;
+			return relativeLuminance(flattenOver(border, bubbleBg));
+		};
+		expect(luminance(backButton)).toBeGreaterThanOrEqual(luminance(skipButton));
 	},
 };

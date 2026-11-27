@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import type { JSX } from "react";
-import { expect } from "storybook/test";
+import { expect, within } from "storybook/test";
 import { SetupRequired } from "./SetupRequired";
 
 // #451: `SetupRequired` is `position: fixed; inset: 0` in production.
@@ -58,6 +58,13 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
 	play: async ({ canvasElement }) => {
 		expectOverlayInsideFrame(canvasElement);
+		// #755: with no resolvable manual URL the action must render
+		// disabled — an enabled "unavailable" button is an active-looking
+		// dead control.
+		const unavailable = await within(canvasElement).findByRole("button", {
+			name: /manual link unavailable/i,
+		});
+		expect(unavailable).toBeDisabled();
 	},
 };
 

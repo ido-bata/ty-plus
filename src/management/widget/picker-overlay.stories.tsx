@@ -30,6 +30,13 @@ function OverlayHarness(): JSX.Element {
 				borderStyle: "solid",
 				borderColor: "border.default",
 				backgroundColor: "surface.panel",
+				// `position: fixed` on the overlay backdrop resolves against
+				// the nearest transformed ancestor. Without this the overlay
+				// escapes the 720px harness and pins to the Storybook
+				// viewport, which is what produced the flush-left /
+				// protruding-border captures in the visual review (#755).
+				// Same containing-block trick as the onboarding stories (#451).
+				transform: "translateZ(0)",
 			})}
 		>
 			{eventRoot ? (

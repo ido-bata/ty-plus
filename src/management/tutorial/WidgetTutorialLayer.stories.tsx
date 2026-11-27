@@ -121,7 +121,7 @@ type Story = StoryObj<typeof meta>;
  * state store is empty, so the coach-mark tour opens on mount.
  */
 export const AutoTourOpens: Story = {
-	play: async () => {
+	play: async ({ canvasElement }) => {
 		// The tour opens after an async tutorial-state read and portals a
 		// `<dialog>` bubble to document.body — poll until it appears.
 		await waitFor(() => {
@@ -129,6 +129,31 @@ export const AutoTourOpens: Story = {
 				within(document.body).queryAllByRole("dialog").length,
 			).toBeGreaterThan(0);
 		});
+
+		// #755: the coach-mark must stay anchored to the widget — a stale
+		// capture once showed it flung to the viewport bottom-center,
+		// detached from its caret target. Measure both boxes: the bubble is
+		// placed just below (or above) the anchor with an 8px gap, so its
+		// top must sit near the widget's vertical span, not near the
+		// viewport bottom.
+		const dialog = await within(document.body).findByRole("dialog");
+		const canvas = canvasElement.querySelector<HTMLElement>(
+			'[data-tutorial-target="easing-canvas"]',
+		);
+		// The tutorial target sits inside the mock widget root, which is
+		// the layer's first element child the tour anchors to.
+		const widget = canvas?.parentElement ?? null;
+		expect(widget).toBeTruthy();
+		const dr = dialog.getBoundingClientRect();
+		const wr = widget?.getBoundingClientRect();
+		expect(wr).toBeTruthy();
+		if (wr) {
+			expect(dr.top).toBeGreaterThan(wr.top - wr.height);
+			expect(dr.top).toBeLessThan(wr.bottom + 160);
+			expect(
+				Math.abs(dr.left + dr.width / 2 - (wr.left + wr.width / 2)),
+			).toBeLessThan(240);
+		}
 	},
 };
 

@@ -8,6 +8,7 @@ import {
 	type SurfaceState,
 } from "@/management/workspace/core/state";
 import { DEFAULT_GRID } from "@/management/workspace/layout/default";
+import { getTileRect } from "@/management/workspace/layout/engine";
 import type { Layout } from "@/management/workspace/layout/grid-document";
 import { css } from "@/styled-system/css";
 
@@ -39,21 +40,32 @@ const makeLayout = (
 	height,
 });
 
-const frameStyle = css({
-	display: "flex",
-	padding: "2",
-	backgroundColor: "surface.panel",
-});
-
 const meta = {
 	title: "Management/Widget/TileContent",
 	parameters: { layout: "fullscreen" },
 	decorators: [
-		(Story) => (
-			<div className={frameStyle}>
-				<Story />
-			</div>
-		),
+		// The production tile box comes from `GridTile`'s absolute
+		// `placementStyle` (Grid.tsx); `Widget` itself has no intrinsic
+		// size, so the story must bound it to the tile rect or the widget
+		// stretches to the full Storybook viewport (#755).
+		(Story, context) => {
+			const rect = getTileRect(
+				(context.args as { layout: Layout }).layout,
+				DEFAULT_GRID,
+			);
+			return (
+				<div
+					className={css({
+						display: "flex",
+						padding: "2",
+						backgroundColor: "surface.panel",
+					})}
+					style={{ width: rect.width + 16, height: rect.height + 16 }}
+				>
+					<Story />
+				</div>
+			);
+		},
 	],
 	render: (args: { layout: Layout }): JSX.Element => (
 		<Widget layout={args.layout} state={state} grid={grid} />

@@ -8,7 +8,7 @@
  * @vitest-environment jsdom
  */
 
-import { render } from "@testing-library/react";
+import { render, within } from "@testing-library/react";
 import {
 	afterAll,
 	afterEach,
@@ -182,6 +182,24 @@ describe("SetupRequired", () => {
 			id: "ty.ctx.setup-required.refresh",
 			label: i18n.t("common:actions.refresh"),
 		});
+	});
+
+	it("disables the Manual button while the public link is unresolved (#755)", () => {
+		mocks.manualUrl.value = null;
+
+		// Scope to this render: the suite does not auto-cleanup between
+		// tests, so `screen` would match buttons from earlier renders.
+		const { container } = render(<SetupRequired />);
+
+		const manualButton = within(container).getByRole("button", {
+			name: "secondaryPanel.linkUnavailable",
+		});
+		expect(manualButton).toBeDisabled();
+		expect(
+			within(container).getByRole("button", {
+				name: "secondaryPanel.openMainPanel",
+			}),
+		).toBeEnabled();
 	});
 
 	it("disables Open Manual when the public link is not resolved", () => {
