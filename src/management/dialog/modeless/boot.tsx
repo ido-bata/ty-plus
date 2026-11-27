@@ -1,3 +1,4 @@
+import { useEffect, useReducer } from "react";
 import { createRoot } from "react-dom/client";
 
 import { PanelRoot } from "@/management/ae/cep/entry/PanelRoot";
@@ -39,6 +40,37 @@ import { ToolHost } from "@/management/preset/modeless/ToolHost";
 import { resolveOpenerWorkspacePanelId } from "@/management/workspace/surface/opener-panel-id";
 
 const modelessLog = createLogger("modeless");
+
+/**
+ * Issue #710: `DebugDialogRoot` reads `i18n.t` directly during render, so it
+ * does not react to i18n init finishing after the first paint. Re-render once
+ * the shared init promise settles; a rejected init keeps the previous
+ * empty-label behaviour.
+ */
+function DebugConsoleI18nGate({
+	i18nReady,
+	surfaceId,
+}: {
+	i18nReady: Promise<unknown>;
+	surfaceId: string;
+}) {
+	const [, bump] = useReducer((count: number) => count + 1, 0);
+	useEffect(() => {
+		let live = true;
+		void i18nReady.then(
+			() => {
+				if (live) {
+					bump();
+				}
+			},
+			() => {},
+		);
+		return () => {
+			live = false;
+		};
+	}, [i18nReady]);
+	return <DebugDialogRoot surfaceId={surfaceId} />;
+}
 
 /** CEP Modeless HTML entry (`modeless/index.html` → `entry/dialog.tsx` shim). */
 export async function bootTyPlusModelessDialog(): Promise<void> {
@@ -84,6 +116,17 @@ export async function bootTyPlusModelessDialog(): Promise<void> {
 		context: { surfaceId, isPresetToolPool },
 	});
 
+	// Issue #710: start i18n init concurrently for every surface. The
+	// debug-console path renders before this resolves so it can surface boot
+	// failures, but Panel reads `i18n.t` non-reactively — the gate below
+	// re-renders once init settles so labels populate.
+	const i18nInit = initializeI18n(window);
+	i18nInit.catch((error) => {
+		modelessLog.warn("[modeless] boot: i18n init failed", {
+			context: { error: String(error) },
+		});
+	});
+
 	if (surfaceId === "debug-console") {
 		void initializeLogRetention(window).catch((error) => {
 			modelessLog.warn("[debug-console] log retention unavailable", {
@@ -117,13 +160,13 @@ export async function bootTyPlusModelessDialog(): Promise<void> {
 		});
 		createRoot(mount).render(
 			<ErrorBoundary name={surfaceId || "debug-console"}>
-				<DebugDialogRoot surfaceId={surfaceId} />
+				<DebugConsoleI18nGate i18nReady={i18nInit} surfaceId={surfaceId} />
 			</ErrorBoundary>,
 		);
 		return;
 	}
 
-	await initializeI18n(window);
+	await i18nInit;
 
 	const contextMenuSurfaceKey =
 		isPresetToolPool && extensionId.trim().length > 0 ? extensionId : surfaceId;
