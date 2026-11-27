@@ -94,15 +94,17 @@ export const OpenAndSelect: Story = {
 			'button[aria-haspopup="listbox"]',
 		);
 		if (!trigger) throw new Error("listbox trigger not found");
-		// Issue #722: resting trigger border sits on the non-assertive
-		// `border.subtle` tier; `border.control` is reserved for text fields.
-		expect(borderTopColor(trigger)).toBe(resolveBorderToken("subtle"));
-		expect(borderTopColor(trigger)).not.toBe(resolveBorderToken("control"));
+		// Issue #754: the trigger is an identifiable control, so its resting
+		// border sits on `border.control` — the same tier as Input/Textarea/
+		// Checkbox — not the passive-chrome `border.subtle`.
+		expect(borderTopColor(trigger)).toBe(resolveBorderToken("control"));
+		expect(borderTopColor(trigger)).not.toBe(resolveBorderToken("subtle"));
 		await expect(trigger.getAttribute("aria-expanded")).toBe("false");
 		await userEvent.click(trigger);
 		await expect(trigger.getAttribute("aria-expanded")).toBe("true");
 		// The listbox is portaled to document.body by AnchoredPopover; its
-		// resting border uses the same `border.subtle` tier.
+		// resting border stays on the passive-chrome `border.subtle` tier —
+		// only the interactive trigger escalated to `border.control`.
 		const listbox = document.querySelector('[role="listbox"]');
 		if (!listbox) throw new Error("listbox not found");
 		expect(borderTopColor(listbox)).toBe(resolveBorderToken("subtle"));

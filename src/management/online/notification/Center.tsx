@@ -6,6 +6,7 @@ import {
 	Icon,
 	IconButton,
 	listItemTitleClass,
+	ScrollArea,
 } from "@ty-plus/ui";
 import { ArrowLeft, Check, LoaderCircle, Mail, RefreshCw } from "lucide-react";
 import {
@@ -723,7 +724,7 @@ function NotificationDetailView(props: {
 			</div>
 
 			{/* Summary + content */}
-			<div className={detailBodyClass}>
+			<ScrollArea className={detailBodyClass}>
 				{selected.summary && (
 					<p className={detailSummaryClass}>{selected.summary}</p>
 				)}
@@ -737,7 +738,7 @@ function NotificationDetailView(props: {
 				) : (
 					<BlockList blocks={blocks} />
 				)}
-			</div>
+			</ScrollArea>
 		</div>
 	);
 }
@@ -1053,7 +1054,7 @@ function NotificationListView(props: {
 			</header>
 
 			{/* List */}
-			<div className={listBodyClass}>
+			<ScrollArea className={listBodyClass}>
 				{loading && items.length === 0 ? (
 					<div className={emptyStateClass}>
 						<Icon icon={LoaderCircle} size={20} className={spinningIconClass} />
@@ -1081,7 +1082,7 @@ function NotificationListView(props: {
 						))}
 					</ul>
 				)}
-			</div>
+			</ScrollArea>
 		</div>
 	);
 }

@@ -61,3 +61,51 @@ describe("toStyle default grid background", () => {
 		expect(String(result.backgroundColor)).not.toContain("color-ty-surface-00");
 	});
 });
+
+describe("toStyle layer colour fallbacks (issue #754)", () => {
+	it("renders the dots pattern for a pattern layer without patternColor", () => {
+		const result = toStyle({
+			layers: [
+				{
+					id: "p1",
+					type: "pattern",
+					enabled: true,
+					opacity: 60,
+					patternType: "dots",
+				},
+			],
+		});
+		const image = String(result.backgroundImage);
+		expect(image).toContain("radial-gradient");
+		// The old fallback referenced undefined `--color-ws-transparent-rgb-*`
+		// vars, which invalidated the whole background-image declaration.
+		expect(image).not.toContain("ws-transparent-rgb");
+		expect(image).not.toContain("var(--color-ws-pattern-fg)");
+	});
+
+	it("renders a color layer without an explicit color", () => {
+		const result = toStyle({
+			layers: [{ id: "c1", type: "color", enabled: true, opacity: 100 }],
+		});
+		const image = String(result.backgroundImage);
+		expect(image).toContain("linear-gradient");
+		expect(image).not.toContain("ws-transparent-rgb");
+	});
+
+	it("expands #rgb shorthand instead of emitting an invalid colour", () => {
+		const result = toStyle({
+			layers: [
+				{
+					id: "c2",
+					type: "color",
+					enabled: true,
+					opacity: 100,
+					color: "#fff",
+				},
+			],
+		});
+		const image = String(result.backgroundImage);
+		expect(image).toContain("rgba(255,255,255,1)");
+		expect(image).not.toContain("ws-transparent-rgb");
+	});
+});

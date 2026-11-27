@@ -7,6 +7,7 @@ import type {
 } from "@/management/online/contract";
 import { createStorybookCloudGateway } from "@/storybook/cloud-gateway-fixture";
 import { OnlineServicesBoundary } from "@/storybook/online-services";
+import { assertScrollbarThumbVisible } from "@/storybook/quality/fit";
 
 import { NotificationCenter } from "./Center";
 
@@ -248,6 +249,13 @@ export const LongList: Story = {
 		await waitFor(() => {
 			expect(notificationCards(canvasElement)).toHaveLength(10);
 		});
+		// Issue #754: the overflowing list must use the shared ScrollArea so
+		// the scrollbar thumb is visible at rest — a clipped 4th item with
+		// no affordance was the reported defect.
+		const scroller =
+			canvasElement.querySelector<HTMLElement>(".ty-scroll-area");
+		if (!scroller) throw new Error("notification list scroller not found");
+		assertScrollbarThumbVisible(scroller);
 	},
 };
 

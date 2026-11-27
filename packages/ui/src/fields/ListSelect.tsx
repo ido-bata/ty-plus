@@ -7,7 +7,18 @@ import { css } from "@/styled-system/css";
 
 type ListSelectOption = { value: string; label: string };
 
-const root = css({ width: "full", minWidth: 0 });
+const rootFull = css({ width: "full", minWidth: 0 });
+
+/*
+ * Intrinsic-width variant for compact picker rows (e.g. the font viewer
+ * sample row): the trigger shrink-wraps its label instead of claiming the
+ * full flex line and wrapping sibling controls (issue #754).
+ */
+const rootFitContent = css({
+	width: "fit-content",
+	maxWidth: "full",
+	minWidth: 0,
+});
 
 const optionBase = css({
 	display: "flex",
@@ -61,9 +72,11 @@ const triggerBase = css({
 	borderRadius: "shell-sm",
 	borderWidth: "hairline",
 	borderStyle: "solid",
-	// Issue #722: resting state stays on the non-assertive `border.subtle`
-	// tier; focus escalates to `interactive.focus` + the shared ring.
-	borderColor: "border.subtle",
+	// Issue #754: the trigger is an identifiable control (clickable select),
+	// so per the `ty-border-control` contract it rests on `border.control`
+	// like Input/Textarea/Checkbox — not the passive-chrome `border.subtle`.
+	// Focus still escalates to `interactive.focus` + the shared ring.
+	borderColor: "border.control",
 	backgroundColor: "surface.widget",
 	textAlign: "left",
 	color: "text.primary",
@@ -115,6 +128,12 @@ export type ListSelectProps = {
 	className?: string;
 	/** Extra classes on the trigger button (height, padding, typography). */
 	triggerClassName?: string;
+	/**
+	 * `full` (default) stretches the trigger across the container — the
+	 * form-row contract. `fitContent` shrink-wraps the trigger to its
+	 * label for compact picker rows.
+	 */
+	width?: "full" | "fitContent";
 	id?: string;
 	"aria-label"?: string;
 	disabled?: boolean;
@@ -131,6 +150,7 @@ export function ListSelect(props: ListSelectProps): ReactElement {
 		uiSize = "md",
 		className,
 		triggerClassName,
+		width = "full",
 		id: idProp,
 		"aria-label": ariaLabel,
 		disabled = false,
@@ -149,7 +169,12 @@ export function ListSelect(props: ListSelectProps): ReactElement {
 	const triggerSize = uiSize === "sm" ? triggerSm : triggerMd;
 
 	return (
-		<div className={cx(root, className)}>
+		<div
+			className={cx(
+				width === "fitContent" ? rootFitContent : rootFull,
+				className,
+			)}
+		>
 			<button
 				ref={triggerRef}
 				id={id}
