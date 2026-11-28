@@ -78,7 +78,7 @@ describe("MarkdownLiveEditor", () => {
 		) as HTMLElement;
 		expect(wrapper).toBeTruthy();
 		expect(wrapper.className).toContain("bdr_shell-sm");
-		expect(wrapper.className).toContain("bd-c_border.default");
+		expect(wrapper.className).toContain("bd-c_border.control");
 		expect(wrapper.className).toContain("bg-c_surface.widget");
 		expect(wrapper.className).toContain("focusWithin:bd-c_interactive.focus");
 	});

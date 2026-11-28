@@ -353,7 +353,7 @@
 		"pathPlaceholderCurrentFolder": "Current folder shown — pick a file or browse",
 		"pathPlaceholderSelectFile": "Select a file…",
 		"browser": {
-			"cepNodeRequired": "File browser requires CEP Node",
+			"cepNodeRequired": "File browser requires CEP Node — enter a path manually or use Browse.",
 			"noPresetsFolder": "No presets folder configured",
 			"noScriptsFolder": "No scripts folder configured",
 			"noPluginsFolder": "No plugins folder configured",
@@ -368,6 +368,12 @@
 			"image": "Image",
 			"canvas": "Canvas"
 		},
+		"tabsCompact": {
+			"text": "Txt",
+			"emoji": "Emo",
+			"image": "Img",
+			"canvas": "Cvs"
+		},
 		"emojiPicker": "Emoji picker",
 		"selectImage": "Select icon image",
 		"browseImage": "Browse icon image",
@@ -377,7 +383,9 @@
 		"previewAria": "Icon preview",
 		"tabsAria": "Icon type",
 		"swatchBackground": "Background color",
-		"swatchText": "Text color"
+		"swatchText": "Text color",
+		"swatchStroke": "Stroke",
+		"swatchStrokeColor": "Stroke Color"
 	},
 	"catalogBrowser": {
 		"loading": "Loading",

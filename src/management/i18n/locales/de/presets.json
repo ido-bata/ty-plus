@@ -353,7 +353,7 @@
 		"pathPlaceholderCurrentFolder": "Aktueller Ordner wird angezeigt — Datei wählen oder durchsuchen",
 		"pathPlaceholderSelectFile": "Datei auswählen…",
 		"browser": {
-			"cepNodeRequired": "Dateibrowser erfordert CEP Node",
+			"cepNodeRequired": "Dateibrowser erfordert CEP Node — Pfad manuell eingeben oder „Durchsuchen“ verwenden.",
 			"noPresetsFolder": "Kein Preset-Ordner konfiguriert",
 			"noScriptsFolder": "Kein Skript-Ordner konfiguriert",
 			"noPluginsFolder": "Kein Plug-in-Ordner konfiguriert",
@@ -368,6 +368,12 @@
 			"image": "Bild",
 			"canvas": "Canvas"
 		},
+		"tabsCompact": {
+			"text": "Tex",
+			"emoji": "Emo",
+			"image": "Bild",
+			"canvas": "Cvs"
+		},
 		"emojiPicker": "Emoji-Auswahl",
 		"selectImage": "Symbolbild auswählen",
 		"browseImage": "Symbolbild durchsuchen",
@@ -377,7 +383,9 @@
 		"previewAria": "Symbolvorschau",
 		"tabsAria": "Symboltyp",
 		"swatchBackground": "Hintergrundfarbe",
-		"swatchText": "Textfarbe"
+		"swatchText": "Textfarbe",
+		"swatchStroke": "Strich",
+		"swatchStrokeColor": "Strichfarbe"
 	},
 	"catalogBrowser": {
 		"loading": "Wird geladen",

@@ -59,7 +59,10 @@ export function ToolDialogFields({
 	const idPrefix = useId();
 
 	return (
-		<div className={fieldsColumnClass}>
+		// Issue #793: `aria-busy` marks the group as in-progress for AT —
+		// the per-control `disabled` dim alone gave no reason for the
+		// frozen state in the busy capture.
+		<div className={fieldsColumnClass} aria-busy={busy || undefined}>
 			{fields.map((field) =>
 				field.kind === "checkbox" ? (
 					<label

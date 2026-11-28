@@ -4,6 +4,7 @@ import { PresetIconEditor } from "@/management/preset/icon/Editor";
 import type { PresetIconEditorDraft } from "@/management/preset/icon/editor-state";
 import { FramedPresetGlyph } from "@/management/preset/workspace/glyph/WorkspaceGlyph";
 import { css } from "@/styled-system/css";
+import { shellFieldLabelClass } from "../preset-tool-helpers";
 
 const areaClass = css({ minWidth: "0" });
 
@@ -34,6 +35,10 @@ export function ToolDialogIconSection({
 				onChange={onIconDraftChange}
 				browseDir={browseDir}
 				label={label}
+				// Issue #793: match the `shellFieldLabelClass` labels used by
+				// the sibling fields — the editor's default `sectionLabelClass`
+				// (10px) read smaller than File Path / Strategy (12px).
+				labelClassName={shellFieldLabelClass}
 				preview={
 					<FramedPresetGlyph
 						preset={previewPreset}

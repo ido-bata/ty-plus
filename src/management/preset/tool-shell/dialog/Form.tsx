@@ -1,6 +1,7 @@
 import { Input } from "@ty-plus/ui";
 import type { JSX } from "react";
 import { css } from "@/styled-system/css";
+import { shellFieldLabelClass } from "../preset-tool-helpers";
 
 import type { PresetToolDialogProps } from "./ToolDialog";
 
@@ -8,6 +9,13 @@ const formColumnClass = css({
 	display: "flex",
 	flexDirection: "column",
 	gap: "3",
+});
+
+const nameFieldClass = css({
+	display: "flex",
+	minWidth: "0",
+	flexDirection: "column",
+	gap: "1",
 });
 
 const leadClass = css({
@@ -50,13 +58,20 @@ export function ToolDialogForm({
 			<p className={leadClass}>{description}</p>
 			{leadingSlots}
 			{renderLeadingSlots?.({ values, setValue, busy })}
-			<Input
-				label={nameLabel}
-				value={name}
-				onChange={(event) => setName(event.currentTarget.value)}
-				uiSize="md"
-				disabled={busy}
-			/>
+			{/* Issue #793: the name label used `Input`'s built-in label
+			    (10px), reading smaller than the `shellFieldLabelClass`
+			    labels on every sibling field — render the shared shell
+			    label here like `ToolDialogFields` does. */}
+			<div className={nameFieldClass}>
+				<span className={shellFieldLabelClass}>{nameLabel}</span>
+				<Input
+					aria-label={nameLabel}
+					value={name}
+					onChange={(event) => setName(event.currentTarget.value)}
+					uiSize="md"
+					disabled={busy}
+				/>
+			</div>
 			{fields}
 			{details}
 			{icon}

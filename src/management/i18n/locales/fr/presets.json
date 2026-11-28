@@ -357,7 +357,7 @@
 		"pathPlaceholderCurrentFolder": "Dossier actuel affiché — choisissez un fichier ou parcourez",
 		"pathPlaceholderSelectFile": "Sélectionner un fichier…",
 		"browser": {
-			"cepNodeRequired": "L'explorateur de fichiers nécessite CEP Node",
+			"cepNodeRequired": "L'explorateur de fichiers nécessite CEP Node — saisissez un chemin manuellement ou utilisez Parcourir.",
 			"noPresetsFolder": "Aucun dossier de presets configuré",
 			"noScriptsFolder": "Aucun dossier de scripts configuré",
 			"noPluginsFolder": "Aucun dossier de plug-ins configuré",
@@ -372,6 +372,12 @@
 			"image": "Image",
 			"canvas": "Canevas"
 		},
+		"tabsCompact": {
+			"text": "Txt",
+			"emoji": "Emo",
+			"image": "Img",
+			"canvas": "Cnv"
+		},
 		"emojiPicker": "Sélecteur d'emoji",
 		"selectImage": "Sélectionner l'image de l'icône",
 		"browseImage": "Parcourir l'image de l'icône",
@@ -381,7 +387,9 @@
 		"previewAria": "Aperçu de l'icône",
 		"tabsAria": "Type d'icône",
 		"swatchBackground": "Couleur d'arrière-plan",
-		"swatchText": "Couleur du texte"
+		"swatchText": "Couleur du texte",
+		"swatchStroke": "Trait",
+		"swatchStrokeColor": "Couleur du trait"
 	},
 	"catalogBrowser": {
 		"loading": "Chargement",

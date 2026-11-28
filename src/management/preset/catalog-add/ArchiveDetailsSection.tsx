@@ -145,7 +145,9 @@ const accordionChevronClass = css({
 // rotated. `rotate(180deg)` is the real declaration.
 const accordionChevronOpenClass = css({ transform: "rotate(180deg)" });
 
-const editorMinHeightClass = css({ minHeight: "160px" });
+// Issue #793: matches `MarkdownLiveEditor`'s own 8rem floor — the
+// description field no longer reserves ~7 empty lines for one sentence.
+const editorMinHeightClass = css({ minHeight: "8rem" });
 
 /**
  * Detailed preset copy + hero image — collapsed into an accordion so add dialogs

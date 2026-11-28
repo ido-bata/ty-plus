@@ -2,7 +2,11 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { expect } from "storybook/test";
 import type { Preset } from "@/management/preset/contract";
 import { presetIconText } from "@/management/preset/contract";
-import { createPresetIconDraft } from "@/management/preset/icon/editor-state";
+import {
+	createPresetIconDraft,
+	presetIconDraftToPresetIcon,
+} from "@/management/preset/icon/editor-state";
+import { FramedPresetGlyph } from "@/management/preset/workspace/glyph/WorkspaceGlyph";
 import {
 	assertRendered,
 	expectCanvasLayout,
@@ -41,16 +45,6 @@ const decoratorBoxClass = css({
 const previewBoxClass = css({
 	height: "full",
 	width: "full",
-});
-
-const previewLabelClass = css({
-	display: "grid",
-	height: "full",
-	width: "full",
-	placeItems: "center",
-	backgroundColor: "surface.widget",
-	color: "text.primary",
-	fontSize: "sm",
 });
 
 /**
@@ -103,15 +97,30 @@ const meta = {
 		const draft = createPresetIconDraft("PR");
 		if (args.iconType === "emoji") draft.emoji = "✨";
 		if (args.iconType === "image") draft.imagePath = "https://placehold.co/120";
+		draft.type = args.iconType;
+		// Issue #793: render the same `FramedPresetGlyph` production callers
+		// pass — a bare "Preview" placeholder hid the actual icon tile from
+		// review captures and made every preview finding unverifiable.
 		return (
 			<IconEditor
-				draft={{ ...draft, type: args.iconType }}
+				draft={draft}
 				onChange={() => undefined}
 				browseDir="/preset/root"
 				preview={
-					<div className={previewBoxClass}>
-						<div className={previewLabelClass}>Preview</div>
-					</div>
+					<FramedPresetGlyph
+						preset={{
+							id: "icon-preview",
+							type: "preset",
+							// i18n-exempt: synthetic preset record title for the glyph preview, never rendered as a label
+							title: "Preview",
+							filePath: "ty-plus://icon-preview",
+							icon: presetIconDraftToPresetIcon(draft) ?? {
+								type: "text",
+								param: { text: "?" },
+							},
+						}}
+						boxClass={previewBoxClass}
+					/>
 				}
 			/>
 		);
@@ -187,12 +196,26 @@ export const WithPresetPreview: Story = {
 	play: async ({ canvasElement }) => {
 		expectCanvasLayout(canvasElement);
 	},
-	render: () => (
-		<IconEditor
-			draft={createPresetIconDraft("HD")}
-			onChange={() => undefined}
-			browseDir="/preset/root"
-			preview={<div className={previewLabelClass}>{basePreset.id}</div>}
-		/>
-	),
+	render: () => {
+		const draft = createPresetIconDraft("HD");
+		return (
+			<IconEditor
+				draft={draft}
+				onChange={() => undefined}
+				browseDir="/preset/root"
+				preview={
+					<FramedPresetGlyph
+						preset={{
+							...basePreset,
+							icon: presetIconDraftToPresetIcon(draft) ?? {
+								type: "text",
+								param: { text: "?" },
+							},
+						}}
+						boxClass={previewBoxClass}
+					/>
+				}
+			/>
+		);
+	},
 };
