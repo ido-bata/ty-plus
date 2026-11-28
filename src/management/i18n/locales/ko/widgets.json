@@ -351,7 +351,8 @@
 		"loadAllSystemFonts": "시스템 글꼴 모두 로드…",
 		"hintNoLocalApi": "이 Chromium 빌드에서는 queryLocalFonts를 제공하지 않습니다 — document.fonts에 등록된 글꼴만 표시됩니다.",
 		"localAccessErrorPrefix": "로컬 글꼴 액세스:",
-		"emptyList": "아직 로드된 글꼴이 없습니다. 가능하면 “시스템 글꼴 모두 로드”를 사용하거나, 패널이 스타일 로드를 마친 후 다시 로드하세요."
+		"emptyListTitle": "아직 로드된 글꼴이 없습니다.",
+		"emptyListHint": "가능하면 “시스템 글꼴 모두 로드”를 사용하거나, 패널이 스타일 로드를 마친 후 다시 로드하세요."
 	},
 	"folderDirectoryPicker": {
 		"label": "폴더 탐색기",

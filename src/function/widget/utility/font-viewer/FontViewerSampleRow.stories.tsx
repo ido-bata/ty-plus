@@ -46,6 +46,12 @@ const expectSampleRowLayout = ({
 	// Same row: the Input's top edge starts before the select's bottom edge
 	// (a wrapped Input would begin a full row + gap below it).
 	expect(inputBox.y).toBeLessThanOrEqual(selectBox.y + selectBox.height + 1);
+	// Issue #797: the two controls share one vertical centerline — the
+	// ListSelect `sm` trigger is taller than the `sm` Input, so bottom or
+	// top alignment leaves one control visibly off-keyline.
+	const selectCenter = selectBox.y + selectBox.height / 2;
+	const inputCenter = inputBox.y + inputBox.height / 2;
+	expect(Math.abs(selectCenter - inputCenter)).toBeLessThanOrEqual(1);
 	// The picker shrink-wraps its label — it must not claim the row width.
 	const row = selectRoot.parentElement;
 	if (row) {

@@ -351,7 +351,8 @@
 		"loadAllSystemFonts": "Alle Systemschriften laden…",
 		"hintNoLocalApi": "Dieser Chromium-Build stellt queryLocalFonts nicht bereit — es werden nur in document.fonts registrierte Schriften aufgelistet.",
 		"localAccessErrorPrefix": "Lokaler Schriftzugriff:",
-		"emptyList": "Noch keine Schriften geladen. Verwenden Sie „Alle Systemschriften laden“, falls verfügbar, oder laden Sie neu, nachdem das Panel das Laden der Stile abgeschlossen hat."
+		"emptyListTitle": "Noch keine Schriften geladen.",
+		"emptyListHint": "Verwenden Sie „Alle Systemschriften laden“, falls verfügbar, oder laden Sie neu, nachdem das Panel das Laden der Stile abgeschlossen hat."
 	},
 	"folderDirectoryPicker": {
 		"label": "Ordner-Browser",

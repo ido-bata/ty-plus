@@ -1249,6 +1249,7 @@ export function FontViewerWidget({
 				<FontViewerLoadHint
 					loading={loading}
 					via={via}
+					catalogEmpty={!loading && rows.length === 0}
 					onLoadAllSystemFonts={() => {
 						void load({ tryLocalAccess: true });
 					}}

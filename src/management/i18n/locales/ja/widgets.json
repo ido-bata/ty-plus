@@ -365,7 +365,8 @@
 		"loadAllSystemFonts": "システムの全フォントを読み込む…",
 		"hintNoLocalApi": "この Chromium では queryLocalFonts が使えません。document.fonts に登録されたフォントのみ表示されます。",
 		"localAccessErrorPrefix": "ローカルフォントアクセス:",
-		"emptyList": "まだフォントがありません。利用可能なら「システムの全フォントを読み込む」を押すか、スタイル読み込み後に再読み込みしてください。"
+		"emptyListTitle": "まだフォントがありません。",
+		"emptyListHint": "利用可能なら「システムの全フォントを読み込む」を押すか、スタイル読み込み後に再読み込みしてください。"
 	},
 	"viewModeToggle": {
 		"listView": "リスト表示",

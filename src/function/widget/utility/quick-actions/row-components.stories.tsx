@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react";
-
+import { expect } from "storybook/test";
 import type { PresetType } from "@/management/preset/contract";
 import { storyT } from "@/storybook/i18n-story-t";
+import { measureBox } from "@/storybook/quality/layout";
 import { EffectRow, PresetRow, RootFileRow } from "./row-components";
 import type { PluginEffectIndexRow, QuickActionRootFileRow } from "./types";
 
@@ -125,4 +126,23 @@ export const Preset: Story = {
 
 export const Selected: Story = {
 	args: { selected: true },
+	play: ({ canvasElement }) => {
+		/*
+		 * Issue #797: the selected-state fill must span the full row
+		 * container — a highlight that stops mid-container reads as a
+		 * truncated selection.
+		 */
+		const row = canvasElement.querySelector("[data-palette-index]");
+		const container = row?.parentElement;
+		if (!row || !container) throw new Error("palette row not found");
+		// The decorator pads its content box — compare against the
+		// container's content width, not its border box.
+		const containerStyle = getComputedStyle(container);
+		const contentWidth =
+			container.clientWidth -
+			Number.parseFloat(containerStyle.paddingLeft) -
+			Number.parseFloat(containerStyle.paddingRight);
+		const rowWidth = measureBox(row).width;
+		expect(Math.abs(rowWidth - contentWidth)).toBeLessThanOrEqual(1);
+	},
 };

@@ -351,7 +351,8 @@
 		"loadAllSystemFonts": "Carregar todas as fontes do sistema…",
 		"hintNoLocalApi": "Esta compilação do Chromium não expõe queryLocalFonts — apenas as fontes registadas em document.fonts são listadas.",
 		"localAccessErrorPrefix": "Acesso a fontes locais:",
-		"emptyList": "Ainda não há fontes carregadas. Use «Carregar todas as fontes do sistema» se disponível, ou recarregue depois que o painel terminar de carregar os estilos."
+		"emptyListTitle": "Ainda não há fontes carregadas.",
+		"emptyListHint": "Use «Carregar todas as fontes do sistema» se disponível, ou recarregue depois que o painel terminar de carregar os estilos."
 	},
 	"folderDirectoryPicker": {
 		"label": "Explorador de pastas",

@@ -351,7 +351,8 @@
 		"loadAllSystemFonts": "加载所有系统字体…",
 		"hintNoLocalApi": "此 Chromium 版本未暴露 queryLocalFonts — 仅列出已在 document.fonts 中注册的字体。",
 		"localAccessErrorPrefix": "本地字体访问：",
-		"emptyList": "尚未加载字体。如可用，请使用“加载所有系统字体”，或在面板完成样式加载后重新加载。"
+		"emptyListTitle": "尚未加载字体。",
+		"emptyListHint": "如可用，请使用“加载所有系统字体”，或在面板完成样式加载后重新加载。"
 	},
 	"folderDirectoryPicker": {
 		"label": "文件夹浏览器",

@@ -264,6 +264,10 @@ const previewBoxClass = css({
 	width: "6rem",
 	aspectRatio: "1/1",
 	flexShrink: "0",
+	// The tile centers against the fields column while the column itself
+	// stays top-aligned (issue #797) — keeps the preview optically
+	// centered without moving the tab strip between icon modes.
+	alignSelf: "center",
 	overflow: "hidden",
 	borderRadius: "shell-sm",
 	backgroundColor: "surface.widget",
