@@ -51,6 +51,8 @@ const meta = {
 			]}
 			candidateDirs={["/preset/header"]}
 			detectCandidates={async () => undefined}
+			detectState="done"
+			detectCounts={{ presets: 1, dirs: 1 }}
 			onPickPreset={() => undefined}
 		/>
 	),

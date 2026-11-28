@@ -133,5 +133,11 @@ export const DetectCandidates: Story = {
 		await waitFor(() => {
 			expect(canvasElement.textContent).toContain("Alpha Glow");
 		});
+		// Issue #766 (critical): detection results render below the fold,
+		// so the button row must announce the outcome inline — without
+		// this status line the click gave zero visible feedback.
+		await waitFor(() => {
+			expect(canvasElement.textContent).toContain("preset detected");
+		});
 	},
 };
