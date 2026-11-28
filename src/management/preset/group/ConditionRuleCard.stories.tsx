@@ -132,9 +132,7 @@ export const PresetFilter: Story = {
 		const listHostHeight = listHost.getBoundingClientRect().height;
 		expect(listHostHeight).toBeLessThan(160);
 		// …and it must still render the candidate row, not collapse.
-		const entryRow = browser.querySelector<HTMLElement>(
-			"[data-entry-path]",
-		);
+		const entryRow = browser.querySelector<HTMLElement>("[data-entry-path]");
 		if (!entryRow) throw new Error("candidate entry row not found");
 		expect(entryRow.getBoundingClientRect().height).toBeGreaterThan(10);
 	},
