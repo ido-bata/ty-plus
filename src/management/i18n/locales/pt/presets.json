@@ -259,10 +259,11 @@
 			"presetNamePlaceholder": "Digite o nome do preset"
 		},
 		"titleForType": {
-			"preset": "Predefinição",
+			"preset": "Editar predefinição",
 			"script": "Preset de script",
 			"plugin": "Preset de plugin",
-			"footage": "Preset de footage"
+			"footage": "Preset de footage",
+			"group": "Preset de grupo"
 		},
 		"memberLoading": "A carregar…",
 		"memberNotFound": "Membro não encontrado: {{id}}",
@@ -368,6 +369,8 @@
 		"browseImage": "Procurar imagem do ícone",
 		"imagePlaceholder": "Caminho ou URL da imagem",
 		"iconTextAria": "Texto do ícone",
+		"backgroundColorAria": "Cor de fundo",
+		"foregroundColorAria": "Cor de primeiro plano",
 		"textPlaceholder": "2 a 6 caracteres",
 		"previewAria": "Pré-visualização do ícone",
 		"tabsAria": "Tipo de ícone"
@@ -404,6 +407,10 @@
 		"emptyCatalogHint": "As predefinições adicionadas a partir de uma pasta ou caminho de ficheiro aparecem aqui.",
 		"addPresets": "Adicionar predefinições",
 		"noMatches": "Sem predefinições correspondentes",
+		"groupItems_one": "Grupo · {{count}} item",
+		"groupItems_other": "Grupo · {{count}} itens",
+		"groupItems_many": "Grupo · {{count}} itens",
+		"errorDetails": "Detalhes técnicos",
 		"cloudOffline": "Nuvem offline",
 		"cloudDegradedDetail": "{{message}} — a mostrar apenas o catálogo local.",
 		"cloudOfflineDetail": "As funções cloud não estão ativas nesta sessão — a mostrar apenas o catálogo local.",

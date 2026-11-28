@@ -11,7 +11,7 @@ import {
 	rowTitleClass,
 	sectionLabelClass,
 } from "@ty-plus/ui";
-import { FileSearch, Pencil, Play, Save, Trash2 } from "lucide-react";
+import { FileSearch, Pencil, Play, Trash2 } from "lucide-react";
 import {
 	type JSX,
 	useCallback,
@@ -198,6 +198,10 @@ const editorHostClass = css({
 
 const emptyStateClass = css({
 	display: "flex",
+	// Fills the DialogBody sheet (min-height: 100%) so short states like
+	// "Preset not found" center vertically instead of pinning to the top.
+	flexGrow: "1",
+	minHeight: "0",
 	alignItems: "center",
 	justifyContent: "center",
 	padding: "8",
@@ -1111,21 +1115,47 @@ export function PresetEditDialog(props: PresetEditDialogProps): JSX.Element {
 						? dialogStatus.message
 						: "";
 
-	const presetType =
-		dialogStatus.phase === "loaded" ? dialogStatus.preset.type : undefined;
+	const loadedPreset =
+		dialogStatus.phase === "loaded" ? dialogStatus.preset : undefined;
+	const presetType = loadedPreset?.type;
+	// Group containers synthesize as `type: "preset"`, so the type-keyed
+	// title alone cannot distinguish them — check the group marker first.
+	const isGroupPreset = loadedPreset
+		? isGroupCatalogPreset(loadedPreset)
+		: false;
+	// A load failure leaves nothing to mutate: Delete/Save would render
+	// permanently disabled, so the footer collapses to Cancel only.
+	const showMutatingActions = dialogStatus.phase !== "error";
 
 	return (
 		<DialogShell
 			title={
-				presetType
-					? t(`edit.titleForType.${presetType}`, t("edit.title"))
-					: t("edit.title")
+				isGroupPreset
+					? t("edit.titleForType.group", t("edit.title"))
+					: presetType
+						? t(`edit.titleForType.${presetType}`, t("edit.title"))
+						: t("edit.title")
 			}
 			surfaceId="dialog-preset-edit"
 			contentClassName={dialogContentClass}
 			footerClassName={dialogFooterClass}
 			footer={
 				<DialogFooterActions>
+					{showMutatingActions ? (
+						<Button
+							type="button"
+							variant="danger"
+							uiSize="sm"
+							fullWidth
+							start={<Trash2 size={14} />}
+							onClick={() => void handleDelete()}
+							disabled={!canMutate}
+						>
+							{dialogStatus.phase === "deleting"
+								? t("edit.status.deleting")
+								: t("edit.delete")}
+						</Button>
+					) : null}
 					<Button
 						type="button"
 						variant="ghost"
@@ -1136,32 +1166,20 @@ export function PresetEditDialog(props: PresetEditDialogProps): JSX.Element {
 					>
 						{t("common:buttons.cancel")}
 					</Button>
-					<Button
-						type="button"
-						variant="danger"
-						uiSize="sm"
-						fullWidth
-						start={<Trash2 size={14} />}
-						onClick={() => void handleDelete()}
-						disabled={!canMutate}
-					>
-						{dialogStatus.phase === "deleting"
-							? t("edit.status.deleting")
-							: t("edit.delete")}
-					</Button>
-					<Button
-						type="button"
-						variant="primary"
-						uiSize="sm"
-						fullWidth
-						start={<Save size={14} />}
-						onClick={() => void handleSave()}
-						disabled={!canMutate}
-					>
-						{dialogStatus.phase === "saving"
-							? t("edit.status.saving")
-							: t("edit.save")}
-					</Button>
+					{showMutatingActions ? (
+						<Button
+							type="button"
+							variant="primary"
+							uiSize="sm"
+							fullWidth
+							onClick={() => void handleSave()}
+							disabled={!canMutate}
+						>
+							{dialogStatus.phase === "saving"
+								? t("edit.status.saving")
+								: t("edit.save")}
+						</Button>
+					) : null}
 				</DialogFooterActions>
 			}
 		>

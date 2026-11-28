@@ -214,6 +214,8 @@ function DefaultEmojiFields({ draft, set, disabled }: EditorApi): JSX.Element {
 					value={draft.bgColor}
 					onChange={(v) => set({ bgColor: v })}
 					disabled={disabled}
+					aria-label={i18n.t("presets:iconEditor.backgroundColorAria")}
+					title={i18n.t("presets:iconEditor.backgroundColorAria")}
 				/>
 			</div>
 			{emojiPickerOpen ? (
@@ -287,11 +289,15 @@ function DefaultTextFields({
 				value={draft.bgColor}
 				onChange={(v) => set({ bgColor: v })}
 				disabled={disabled}
+				aria-label={i18n.t("presets:iconEditor.backgroundColorAria")}
+				title={i18n.t("presets:iconEditor.backgroundColorAria")}
 			/>
 			<ColorSwatch
 				value={draft.color}
 				onChange={(v) => set({ color: v })}
 				disabled={disabled}
+				aria-label={i18n.t("presets:iconEditor.foregroundColorAria")}
+				title={i18n.t("presets:iconEditor.foregroundColorAria")}
 			/>
 		</div>
 	);
@@ -351,11 +357,15 @@ export function IconEditor({
 						value={draft.bgColor}
 						onChange={(v) => set({ bgColor: v })}
 						disabled={disabled}
+						aria-label={i18n.t("presets:iconEditor.backgroundColorAria")}
+						title={i18n.t("presets:iconEditor.backgroundColorAria")}
 					/>
 					<ColorSwatch
 						value={draft.color}
 						onChange={(v) => set({ color: v })}
 						disabled={disabled}
+						aria-label={i18n.t("presets:iconEditor.foregroundColorAria")}
+						title={i18n.t("presets:iconEditor.foregroundColorAria")}
 					/>
 				</div>
 			) : null}
