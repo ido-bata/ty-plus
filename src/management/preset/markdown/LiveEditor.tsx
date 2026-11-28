@@ -43,11 +43,11 @@ const editorBaseClass = css({
 	borderRadius: "shell-sm",
 	borderWidth: "hairline",
 	borderStyle: "solid",
-	// Issue #797: this is an identifiable editable control, so per the
-	// `ty-border-control` contract (same tier as Input/Textarea) it rests
-	// on `border.control`. `border.default` resolves to the near-black
-	// `--ty-border-surface`, which was invisible against the panel and
-	// made the editable area hard to identify.
+	// Issue #793: `border.default` (#0e0e0e) is darker than the panel, so
+	// the editable surface was nearly invisible next to the
+	// `border.control` fields (PathField / Textarea / Input) around it.
+	// An editable field is an identifiable control — it rests on
+	// `border.control` per the shared border contract (#754/#761).
 	borderColor: "border.control",
 	backgroundColor: "surface.widget",
 	paddingInline: "3",
@@ -63,9 +63,9 @@ const editorBaseClass = css({
 	},
 });
 
-// Issue #797: ~5 rendered lines is enough for a description field — the
-// old 160px floor left most of the box empty for one-line content and
-// pushed the sibling image controls far down the form.
+// Issue #793: 160px reserved ~7 lines for a field that usually holds one
+// sentence — the empty area pushed the image controls and preview a third
+// of the accordion down. 8rem still shows ~4 lines of context.
 const editorMinHeightClass = css({ minHeight: "8rem" });
 
 const findLineElement = (

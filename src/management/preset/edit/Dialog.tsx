@@ -7,7 +7,6 @@ import {
 	IconButton,
 	Input,
 	PathField,
-	rowMetaClass,
 	rowTitleClass,
 	sectionLabelClass,
 } from "@ty-plus/ui";
@@ -160,7 +159,23 @@ const memberActionsClass = css({
 	display: "flex",
 	flexShrink: "0",
 	alignItems: "center",
-	gap: "0.5",
+	// Issue #793: 2px between three 24px icon buttons packed the destructive
+	// trash action against Edit — 4px matches the row's internal rhythm.
+	gap: "1",
+});
+
+/**
+ * Issue #793: `rowMetaClass` renders at Panda's `xs` (12px) — LARGER than
+ * `rowTitleClass` (`shell-text-sm`, 11px), inverting the row hierarchy the
+ * catalog list rows keep (title 11px / meta `text-xs` 10px). Member rows
+ * mirror the catalog, so the meta line drops to `text-xs`.
+ */
+const memberMetaClass = css({
+	overflow: "hidden",
+	textOverflow: "ellipsis",
+	whiteSpace: "nowrap",
+	color: "text.muted",
+	fontSize: "text-xs",
 });
 
 const stackClass = css({
@@ -519,7 +534,7 @@ const GroupMemberItem = ({
 				<div className={rowTitleClass}>
 					{member.title || member.filePath.split(/[\\/]/).pop() || member.id}
 				</div>
-				<div className={rowMetaClass}>{member.type}</div>
+				<div className={memberMetaClass}>{member.type}</div>
 			</div>
 			{/* Run + Edit + Delete actions */}
 			<div className={memberActionsClass}>

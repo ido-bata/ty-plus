@@ -25,6 +25,16 @@ const contentShell = css({
 		scrollbarColor:
 			"rgba(var(--text-r),var(--text-g),var(--text-b),0.4) transparent",
 	},
+	// CEF 99 ignores `scrollbar-color` and falls back to `::-webkit-scrollbar`
+	// styling, where the global chrome hides the thumb until hover
+	// (`*:hover::-webkit-scrollbar-thumb` in panda.config.ts). Without this
+	// override an overflowing dialog body — e.g. the expanded preset-group
+	// Rules section (issue #793) — showed clipped content with zero rest-state
+	// scroll affordance. Same fix `ScrollArea` carries for issue #766;
+	// utilities layer beats the `base`-layer hover rule.
+	"&::-webkit-scrollbar-thumb": {
+		visibility: "visible",
+	},
 });
 
 export type ContentProps = {

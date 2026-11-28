@@ -357,7 +357,7 @@
 		"pathPlaceholderCurrentFolder": "Pasta atual visível — escolha um ficheiro ou procure",
 		"pathPlaceholderSelectFile": "Selecionar um ficheiro…",
 		"browser": {
-			"cepNodeRequired": "O navegador de ficheiros requer CEP Node",
+			"cepNodeRequired": "O navegador de ficheiros requer CEP Node — introduza um caminho manualmente ou use Procurar.",
 			"noPresetsFolder": "Nenhuma pasta de predefinições configurada",
 			"noScriptsFolder": "Nenhuma pasta de scripts configurada",
 			"noPluginsFolder": "Nenhuma pasta de plug-ins configurada",
@@ -372,6 +372,12 @@
 			"image": "Imagem",
 			"canvas": "Tela"
 		},
+		"tabsCompact": {
+			"text": "Txt",
+			"emoji": "Emo",
+			"image": "Img",
+			"canvas": "Tel"
+		},
 		"emojiPicker": "Seletor de emoji",
 		"selectImage": "Selecionar imagem do ícone",
 		"browseImage": "Procurar imagem do ícone",
@@ -381,7 +387,9 @@
 		"previewAria": "Pré-visualização do ícone",
 		"tabsAria": "Tipo de ícone",
 		"swatchBackground": "Cor de fundo",
-		"swatchText": "Cor do texto"
+		"swatchText": "Cor do texto",
+		"swatchStroke": "Traço",
+		"swatchStrokeColor": "Cor do traço"
 	},
 	"catalogBrowser": {
 		"loading": "A carregar",

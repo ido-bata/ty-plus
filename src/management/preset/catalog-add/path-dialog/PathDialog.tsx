@@ -73,12 +73,29 @@ const rootPathForTab = (
 
 const browserContainerClass = css({
 	display: "flex",
-	height: "52",
-	minHeight: "48",
 	width: "full",
 	minWidth: "0",
 	flexShrink: "0",
 	flexDirection: "column",
+});
+
+/**
+ * Issue #793: the file list keeps its fixed 208px browsing area, but the
+ * empty states (no CEP Node / no configured root) are single-line
+ * messages — reserving the full height pushed Details and Icon a third
+ * of the dialog down for no content. The empty well collapses to a
+ * compact strip instead.
+ */
+const browserListAreaClass = css({
+	height: "52",
+	minHeight: "48",
+});
+
+const browserEmptyAreaClass = css({
+	display: "flex",
+	width: "full",
+	minWidth: "0",
+	minHeight: "12",
 });
 
 const formColumnClass = css({
@@ -132,40 +149,42 @@ function BrowserContent(props: {
 
 	return (
 		<div className={browserContainerClass}>
-			{!cepBrowser ? (
-				<div className={browserEmptyClass}>
-					<span>{i18n.t("presets:catalogAdd.browser.cepNodeRequired")}</span>
-				</div>
-			) : emptyConfigured ? (
-				<div className={browserEmptyClass}>
-					<span>
-						{activeTab === "presets"
-							? i18n.t("presets:catalogAdd.browser.noPresetsFolder")
-							: activeTab === "scripts"
-								? i18n.t("presets:catalogAdd.browser.noScriptsFolder")
-								: i18n.t("presets:catalogAdd.browser.noPluginsFolder")}
-					</span>
+			{!cepBrowser || emptyConfigured ? (
+				<div className={browserEmptyAreaClass}>
+					<div className={browserEmptyClass}>
+						<span>
+							{!cepBrowser
+								? i18n.t("presets:catalogAdd.browser.cepNodeRequired")
+								: activeTab === "presets"
+									? i18n.t("presets:catalogAdd.browser.noPresetsFolder")
+									: activeTab === "scripts"
+										? i18n.t("presets:catalogAdd.browser.noScriptsFolder")
+										: i18n.t("presets:catalogAdd.browser.noPluginsFolder")}
+						</span>
+					</div>
 				</div>
 			) : (
-				<FileEntryList
-					selectionMode="files"
-					entries={browserEntries}
-					loading={loadingFiles}
-					canGoUp={canGoUp}
-					onGoUp={() => void onGoUp()}
-					onEntryClick={onEntryClick}
-					onEntryActivate={onEntryActivate}
-					isSelected={(p) => p === selectedPath.trim()}
-					onToggleSelected={onToggleFileSelected}
-					selectedSummary={{
-						files: selectedPath.trim() ? 1 : 0,
-						folders: 0,
-					}}
-					showSelectedSummary={Boolean(selectedPath.trim())}
-					loadingLabel={i18n.t("widgets:folderDirectoryPicker.loading")}
-					emptyLabel={i18n.t("presets:catalogAdd.browser.noFiles")}
-					upLabel={i18n.t("widgets:folderDirectoryPicker.goUp")}
-				/>
+				<div className={browserListAreaClass}>
+					<FileEntryList
+						selectionMode="files"
+						entries={browserEntries}
+						loading={loadingFiles}
+						canGoUp={canGoUp}
+						onGoUp={() => void onGoUp()}
+						onEntryClick={onEntryClick}
+						onEntryActivate={onEntryActivate}
+						isSelected={(p) => p === selectedPath.trim()}
+						onToggleSelected={onToggleFileSelected}
+						selectedSummary={{
+							files: selectedPath.trim() ? 1 : 0,
+							folders: 0,
+						}}
+						showSelectedSummary={Boolean(selectedPath.trim())}
+						loadingLabel={i18n.t("widgets:folderDirectoryPicker.loading")}
+						emptyLabel={i18n.t("presets:catalogAdd.browser.noFiles")}
+						upLabel={i18n.t("widgets:folderDirectoryPicker.goUp")}
+					/>
+				</div>
 			)}
 		</div>
 	);

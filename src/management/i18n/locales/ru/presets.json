@@ -361,7 +361,7 @@
 		"pathPlaceholderCurrentFolder": "Показана текущая папка — выберите файл или выполните обзор",
 		"pathPlaceholderSelectFile": "Выберите файл…",
 		"browser": {
-			"cepNodeRequired": "Для файлового браузера требуется CEP Node",
+			"cepNodeRequired": "Для файлового браузера требуется CEP Node — введите путь вручную или нажмите «Обзор».",
 			"noPresetsFolder": "Папка пресетов не настроена",
 			"noScriptsFolder": "Папка скриптов не настроена",
 			"noPluginsFolder": "Папка плагинов не настроена",
@@ -376,6 +376,12 @@
 			"image": "Изображение",
 			"canvas": "Холст"
 		},
+		"tabsCompact": {
+			"text": "Тек",
+			"emoji": "Эмод",
+			"image": "Рис",
+			"canvas": "Хол"
+		},
 		"emojiPicker": "Выбор эмодзи",
 		"selectImage": "Выбрать изображение значка",
 		"browseImage": "Обзор изображения значка",
@@ -385,7 +391,9 @@
 		"previewAria": "Предпросмотр значка",
 		"tabsAria": "Тип значка",
 		"swatchBackground": "Цвет фона",
-		"swatchText": "Цвет текста"
+		"swatchText": "Цвет текста",
+		"swatchStroke": "Линия",
+		"swatchStrokeColor": "Цвет линии"
 	},
 	"catalogBrowser": {
 		"loading": "Загрузка",

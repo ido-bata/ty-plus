@@ -153,7 +153,7 @@ export function StyleSection(): JSX.Element {
 						onChange={handleWidgetBgColorChange}
 					/>
 					<RangeField
-						label={i18n.t("settings:opacity")}
+						label={i18n.t("common:settings.labels.widgetOpacity")}
 						unit="%"
 						min={0}
 						max={100}
@@ -170,7 +170,7 @@ export function StyleSection(): JSX.Element {
 						onChange={handlePanelBgColorChange}
 					/>
 					<RangeField
-						label={i18n.t("settings:opacity")}
+						label={i18n.t("common:settings.labels.panelOpacity")}
 						unit="%"
 						min={0}
 						max={100}

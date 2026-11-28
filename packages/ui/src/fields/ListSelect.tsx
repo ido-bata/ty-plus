@@ -1,5 +1,7 @@
+import { Icon } from "@ty-plus/ui/Icon";
 import { AnchoredPopover } from "@ty-plus/ui/interaction/AnchoredPopover";
 import { cx } from "@ty-plus/ui/util/cx";
+import { ChevronDown } from "lucide-react";
 import type { ReactElement } from "react";
 import { useId, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -110,8 +112,9 @@ const listBox = css({
 const triggerLabel = css({ minWidth: 0, flex: 1, truncate: true });
 
 const triggerCaret = css({
+	display: "inline-flex",
 	flexShrink: 0,
-	fontSize: "text-xs",
+	alignItems: "center",
 	color: "text.muted",
 });
 
@@ -188,8 +191,11 @@ export function ListSelect(props: ListSelectProps): ReactElement {
 				onClick={() => !disabled && setOpen((o) => !o)}
 			>
 				<span className={triggerLabel}>{label}</span>
+				{/* Issue #793: the text-glyph "▾" caret was a few px wide at
+				    low contrast — an identifiable-control affordance needs the
+				    shared 16px chevron (same icon the accordion triggers use). */}
 				<span className={triggerCaret} aria-hidden>
-					▾
+					<Icon icon={ChevronDown} size={16} aria-hidden />
 				</span>
 			</button>
 			<AnchoredPopover

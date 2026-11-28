@@ -239,6 +239,19 @@ export const DataPaths: Story = {
 /** データ → ComponentPreview. Hash = #component-preview. */
 export const DataComponentPreview: Story = {
 	render: renderDialog("component-preview"),
+	play: async ({ canvasElement }) => {
+		expectShellInsideFrame(canvasElement);
+		// Issue #791 (jobs6): a capture read the RangeField numeric box as
+		// clipped at the section's right edge. The section body clips
+		// horizontally (`overflow-x: hidden`), so any escaping control
+		// would be a real overflow — assert none exists.
+		const section = canvasElement.querySelector<HTMLElement>(
+			"[data-settings-sidebar-body]",
+		);
+		expect(section).not.toBeNull();
+		if (!section) return;
+		expect(section.scrollWidth).toBeLessThanOrEqual(section.clientWidth + 1);
+	},
 };
 
 /** データ → DesignTokens. Hash = #design-tokens. */
@@ -248,6 +261,16 @@ export const DataDesignTokens: Story = {
 		expectShellInsideFrame(canvasElement);
 		expectFooterActionsCompact(canvasElement);
 		expectSectionBodyScrolls(canvasElement);
+		// Issue #791 (jobs6): the TEXT ALPHA category must render a control
+		// for every token — a capture showed orphan labels with no inputs.
+		// Every token field wrapper must contain a focusable control.
+		const tokenFields = canvasElement.querySelectorAll(
+			"[data-design-token-key]",
+		);
+		expect(tokenFields.length).toBeGreaterThan(0);
+		for (const field of tokenFields) {
+			expect(field.querySelector("input")).not.toBeNull();
+		}
 	},
 };
 

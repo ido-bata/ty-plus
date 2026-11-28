@@ -132,6 +132,15 @@ export const BusyWidthStable: Story = {
 		const defaultButtons = defaultRow.querySelectorAll("button");
 		const busyButtons = busyRow.querySelectorAll("button");
 		for (let i = 0; i < 2; i++) {
+			// eslint-disable-next-line no-console
+			console.log(
+				"[dbg]",
+				i,
+				measureBox(defaultButtons[i]).width,
+				measureBox(busyButtons[i]).width,
+				defaultButtons[i].className,
+				busyButtons[i].className,
+			);
 			expect(
 				Math.abs(
 					measureBox(defaultButtons[i]).width -

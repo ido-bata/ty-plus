@@ -352,7 +352,7 @@
 		"pathPlaceholderCurrentFolder": "現在のフォルダーを表示中 — ファイルを選択するか参照してください",
 		"pathPlaceholderSelectFile": "ファイルを選択…",
 		"browser": {
-			"cepNodeRequired": "ファイルブラウザーには CEP Node が必要です",
+			"cepNodeRequired": "ファイルブラウザーには CEP Node が必要です。パスを直接入力するか「参照」を使用してください。",
 			"noPresetsFolder": "プリセットフォルダーが設定されていません",
 			"noScriptsFolder": "スクリプトフォルダーが設定されていません",
 			"noPluginsFolder": "プラグインフォルダーが設定されていません",
@@ -367,6 +367,12 @@
 			"image": "画像",
 			"canvas": "キャンバス"
 		},
+		"tabsCompact": {
+			"text": "文",
+			"emoji": "絵",
+			"image": "画",
+			"canvas": "曲"
+		},
 		"emojiPicker": "絵文字ピッカー",
 		"selectImage": "アイコン画像を選択",
 		"browseImage": "アイコン画像を参照",
@@ -376,7 +382,9 @@
 		"previewAria": "アイコンプレビュー",
 		"tabsAria": "アイコンタイプ",
 		"swatchBackground": "背景色",
-		"swatchText": "文字色"
+		"swatchText": "文字色",
+		"swatchStroke": "線",
+		"swatchStrokeColor": "線の色"
 	},
 	"catalogBrowser": {
 		"loading": "読み込み中",
