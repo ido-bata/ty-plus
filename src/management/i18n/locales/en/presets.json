@@ -373,8 +373,6 @@
 		"browseImage": "Browse icon image",
 		"imagePlaceholder": "Image path or URL",
 		"iconTextAria": "Icon text",
-		"backgroundColorAria": "Background color",
-		"foregroundColorAria": "Foreground color",
 		"textPlaceholder": "2-6 characters",
 		"previewAria": "Icon preview",
 		"tabsAria": "Icon type"

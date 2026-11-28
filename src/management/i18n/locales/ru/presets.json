@@ -381,8 +381,6 @@
 		"browseImage": "Обзор изображения значка",
 		"imagePlaceholder": "Путь или URL изображения",
 		"iconTextAria": "Текст значка",
-		"backgroundColorAria": "Цвет фона",
-		"foregroundColorAria": "Цвет переднего плана",
 		"textPlaceholder": "2–6 символов",
 		"previewAria": "Предпросмотр значка",
 		"tabsAria": "Тип значка"

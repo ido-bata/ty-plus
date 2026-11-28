@@ -373,8 +373,6 @@
 		"browseImage": "Symbolbild durchsuchen",
 		"imagePlaceholder": "Bildpfad oder URL",
 		"iconTextAria": "Symboltext",
-		"backgroundColorAria": "Hintergrundfarbe",
-		"foregroundColorAria": "Vordergrundfarbe",
 		"textPlaceholder": "2–6 Zeichen",
 		"previewAria": "Symbolvorschau",
 		"tabsAria": "Symboltyp"

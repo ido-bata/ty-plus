@@ -372,8 +372,6 @@
 		"browseImage": "アイコン画像を参照",
 		"imagePlaceholder": "画像パスまたはURL",
 		"iconTextAria": "アイコンテキスト",
-		"backgroundColorAria": "背景色",
-		"foregroundColorAria": "前景色",
 		"textPlaceholder": "2〜6文字",
 		"previewAria": "アイコンプレビュー",
 		"tabsAria": "アイコンタイプ"

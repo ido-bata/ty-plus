@@ -372,8 +372,6 @@
 		"browseImage": "浏览图标图片",
 		"imagePlaceholder": "图片路径或 URL",
 		"iconTextAria": "图标文本",
-		"backgroundColorAria": "背景颜色",
-		"foregroundColorAria": "前景颜色",
 		"textPlaceholder": "2–6 个字符",
 		"previewAria": "图标预览",
 		"tabsAria": "图标类型"

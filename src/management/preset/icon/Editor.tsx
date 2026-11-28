@@ -228,8 +228,8 @@ function DefaultEmojiFields({ draft, set, disabled }: EditorApi): JSX.Element {
 					value={draft.bgColor}
 					onChange={(v) => set({ bgColor: v })}
 					disabled={disabled}
-					aria-label={i18n.t("presets:iconEditor.backgroundColorAria")}
-					title={i18n.t("presets:iconEditor.backgroundColorAria")}
+					aria-label={i18n.t("common:settings.labels.backgroundColor")}
+					title={i18n.t("common:settings.labels.backgroundColor")}
 				/>
 			</div>
 			{emojiPickerOpen ? (
@@ -303,15 +303,15 @@ function DefaultTextFields({
 				value={draft.bgColor}
 				onChange={(v) => set({ bgColor: v })}
 				disabled={disabled}
-				aria-label={i18n.t("presets:iconEditor.backgroundColorAria")}
-				title={i18n.t("presets:iconEditor.backgroundColorAria")}
+				aria-label={i18n.t("common:settings.labels.backgroundColor")}
+				title={i18n.t("common:settings.labels.backgroundColor")}
 			/>
 			<ColorSwatch
 				value={draft.color}
 				onChange={(v) => set({ color: v })}
 				disabled={disabled}
-				aria-label={i18n.t("presets:iconEditor.foregroundColorAria")}
-				title={i18n.t("presets:iconEditor.foregroundColorAria")}
+				aria-label={i18n.t("common:settings.labels.textColor")}
+				title={i18n.t("common:settings.labels.textColor")}
 			/>
 		</div>
 	);
@@ -371,15 +371,15 @@ export function IconEditor({
 						value={draft.bgColor}
 						onChange={(v) => set({ bgColor: v })}
 						disabled={disabled}
-						aria-label={i18n.t("presets:iconEditor.backgroundColorAria")}
-						title={i18n.t("presets:iconEditor.backgroundColorAria")}
+						aria-label={i18n.t("common:settings.labels.backgroundColor")}
+						title={i18n.t("common:settings.labels.backgroundColor")}
 					/>
 					<ColorSwatch
 						value={draft.color}
 						onChange={(v) => set({ color: v })}
 						disabled={disabled}
-						aria-label={i18n.t("presets:iconEditor.foregroundColorAria")}
-						title={i18n.t("presets:iconEditor.foregroundColorAria")}
+						aria-label={i18n.t("common:settings.labels.textColor")}
+						title={i18n.t("common:settings.labels.textColor")}
 					/>
 				</div>
 			) : null}

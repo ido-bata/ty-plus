@@ -377,8 +377,6 @@
 		"browseImage": "Sfoglia immagine icona",
 		"imagePlaceholder": "Percorso o URL immagine",
 		"iconTextAria": "Testo icona",
-		"backgroundColorAria": "Colore di sfondo",
-		"foregroundColorAria": "Colore di primo piano",
 		"textPlaceholder": "2-6 caratteri",
 		"previewAria": "Anteprima icona",
 		"tabsAria": "Tipo di icona"

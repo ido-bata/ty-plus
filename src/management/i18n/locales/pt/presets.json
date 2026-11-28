@@ -377,8 +377,6 @@
 		"browseImage": "Procurar imagem do ícone",
 		"imagePlaceholder": "Caminho ou URL da imagem",
 		"iconTextAria": "Texto do ícone",
-		"backgroundColorAria": "Cor de fundo",
-		"foregroundColorAria": "Cor de primeiro plano",
 		"textPlaceholder": "2 a 6 caracteres",
 		"previewAria": "Pré-visualização do ícone",
 		"tabsAria": "Tipo de ícone"
