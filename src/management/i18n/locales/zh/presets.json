@@ -257,10 +257,11 @@
 			"presetNamePlaceholder": "输入预设名称"
 		},
 		"titleForType": {
-			"preset": "预设",
+			"preset": "编辑预设",
 			"script": "脚本预设",
 			"plugin": "插件预设",
-			"footage": "素材预设"
+			"footage": "素材预设",
+			"group": "组预设"
 		},
 		"memberLoading": "加载中…",
 		"memberNotFound": "未找到成员：{{id}}",
@@ -406,6 +407,9 @@
 		"emptyCatalogHint": "从文件夹或文件路径添加的预设将显示在这里。",
 		"addPresets": "添加预设",
 		"noMatches": "没有匹配的预设",
+		"groupItems_one": "组 · {{count}} 项",
+		"groupItems_other": "组 · {{count}} 项",
+		"errorDetails": "技术详情",
 		"cloudOffline": "云端离线",
 		"cloudDegradedDetail": "{{message}} — 仅显示本地目录。",
 		"cloudOfflineDetail": "此会话中云端功能未激活 — 仅显示本地目录。",

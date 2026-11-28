@@ -102,12 +102,21 @@ const expectShell = (canvasElement: HTMLElement): HTMLElement => {
 };
 
 const expectFooterActions = (shell: HTMLElement): void => {
-	const labels = Array.from(shell.querySelectorAll("button")).map(
-		(button) => button.textContent?.trim() ?? "",
-	);
-	expect(labels).toContain("Cancel");
-	expect(labels).toContain("Delete");
-	expect(labels).toContain("Save");
+	const row = shell.querySelector<HTMLElement>("[data-dialog-footer-actions]");
+	if (!row) throw new Error("dialog footer actions not found");
+	const buttons = Array.from(row.querySelectorAll("button"));
+	// Canonical slot order: [Secondary/Destructive] [Cancel] [Primary].
+	expect(buttons.map((button) => button.textContent?.trim() ?? "")).toEqual([
+		"Delete",
+		"Cancel",
+		"Save",
+	]);
+	const byLabel = (label: string) =>
+		buttons.find((button) => button.textContent?.trim() === label);
+	// Icon policy: only the destructive action carries a leading icon;
+	// the primary confirm renders text only.
+	expect(byLabel("Save")?.querySelector("svg")).toBeNull();
+	expect(byLabel("Delete")?.querySelector("svg")).not.toBeNull();
 };
 
 export const Default: Story = {
@@ -134,6 +143,9 @@ export const GroupPreset: Story = {
 		await waitFor(() => {
 			expect(canvasElement.textContent).toContain("Member presets (2)");
 		});
+		// Group containers get their own dialog title, not the generic
+		// "Preset"/"Edit Preset" type label.
+		expect(canvasElement.textContent).toContain("Group Preset");
 		expect(canvasElement.textContent).toContain("Alpha Glow");
 		expect(canvasElement.textContent).toContain("Beta Shake");
 		expectFooterActions(shell);
@@ -148,12 +160,16 @@ export const NotFound: Story = {
 		await waitFor(() => {
 			expect(canvasElement.textContent).toContain("Preset not found");
 		});
-		expectFooterActions(shell);
+		// A load failure leaves nothing to mutate: the footer collapses to
+		// Cancel only — disabled Delete/Save buttons would be dead chrome.
 		const buttons = Array.from(shell.querySelectorAll("button"));
-		const byLabel = (label: string) =>
-			buttons.find((button) => button.textContent?.trim() === label);
-		expect(byLabel("Save")?.disabled).toBe(true);
-		expect(byLabel("Delete")?.disabled).toBe(true);
-		expect(byLabel("Cancel")?.disabled).toBe(false);
+		const labels = buttons.map((button) => button.textContent?.trim());
+		expect(labels).toContain("Cancel");
+		expect(labels).not.toContain("Save");
+		expect(labels).not.toContain("Delete");
+		const cancel = buttons.find(
+			(button) => button.textContent?.trim() === "Cancel",
+		);
+		expect(cancel?.disabled).toBe(false);
 	},
 };

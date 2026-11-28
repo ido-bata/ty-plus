@@ -11,6 +11,10 @@ const dialogScrollArea = css({
 
 const sheet = css({
 	display: "flex",
+	// Fills the scrollport when content is short so `flexGrow` children
+	// (empty/error states) can center vertically; inert when content
+	// overflows since the scroll area still sizes to content.
+	minHeight: "100%",
 	minWidth: 0,
 	flexDirection: "column",
 	gap: "var(--ty-shell-space)",
