@@ -145,8 +145,6 @@ const accordionChevronClass = css({
 // rotated. `rotate(180deg)` is the real declaration.
 const accordionChevronOpenClass = css({ transform: "rotate(180deg)" });
 
-const editorMinHeightClass = css({ minHeight: "160px" });
-
 /**
  * Detailed preset copy + hero image — collapsed into an accordion so add dialogs
  * stay compact, and opened by default in the edit dialog.
@@ -181,7 +179,6 @@ export const ArchiveDetailsSection = forwardRef<
 				value={props.description}
 				onChange={props.onDescriptionChange}
 				placeholder={t("presetTool.form.descriptionPlaceholder")}
-				className={editorMinHeightClass}
 				aria-label={t("presetTool.form.description")}
 				aria-labelledby="archive-details-description"
 			/>

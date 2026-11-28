@@ -365,7 +365,8 @@
 		"loadAllSystemFonts": "Load all system fonts…",
 		"hintNoLocalApi": "This Chromium build does not expose queryLocalFonts — only fonts registered on document.fonts are listed.",
 		"localAccessErrorPrefix": "Local font access:",
-		"emptyList": "No fonts loaded yet. Use “Load all system fonts” if available, or reload after the panel finishes loading styles."
+		"emptyListTitle": "No fonts loaded yet.",
+		"emptyListHint": "Use “Load all system fonts” if available, or reload after the panel finishes loading styles."
 	},
 	"viewModeToggle": {
 		"listView": "List view",

@@ -14,6 +14,7 @@ type Args = {
 	hintLoading: boolean;
 	hintVia: FontLoadVia | null;
 	hintHasLocalApi: boolean;
+	catalogEmpty: boolean;
 	phase: "ae-host" | "browser" | null;
 	localError: string;
 	loadError: string;
@@ -54,6 +55,7 @@ const baseArgs: Args = {
 	hintLoading: false,
 	hintVia: null,
 	hintHasLocalApi: true,
+	catalogEmpty: false,
 	phase: null,
 	localError: "User denied access",
 	loadError: "Could not enumerate fonts",
@@ -70,6 +72,7 @@ const meta = {
 			options: [null, "after-effects", "queryLocalFonts", "documentFonts"],
 		},
 		hintHasLocalApi: { control: "boolean" },
+		catalogEmpty: { control: "boolean" },
 		phase: {
 			control: { type: "inline-radio" },
 			options: [null, "ae-host", "browser"],
@@ -98,6 +101,7 @@ const meta = {
 				<FontViewerLoadHint
 					loading={args.hintLoading}
 					via={args.hintVia}
+					catalogEmpty={args.catalogEmpty}
 					onLoadAllSystemFonts={noop}
 				/>
 				<FontViewerLoadPhase loadPhase={args.phase} />
@@ -119,6 +123,9 @@ type Story = StoryObj<Args>;
 export const Default: Story = {
 	args: {
 		hintVia: "after-effects",
+		// Issue #797: an empty AE-sourced catalog must still surface the
+		// "Load all system fonts" recovery CTA next to the empty state.
+		catalogEmpty: true,
 		phase: null,
 		localError: "",
 		loadError: "",
@@ -127,6 +134,11 @@ export const Default: Story = {
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		await canvas.findByText(/No fonts loaded yet/);
+		// The empty state names a recovery action — the CTA must be on
+		// screen, not just referenced by the copy.
+		await canvas.findByRole("button", {
+			name: /Load all system fonts/,
+		});
 		expect(canvas.queryByText(/Local font access:/)).toBeNull();
 		expect(canvas.queryByText(/Could not load fonts/)).toBeNull();
 	},

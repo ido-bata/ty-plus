@@ -78,7 +78,10 @@ describe("MarkdownLiveEditor", () => {
 		) as HTMLElement;
 		expect(wrapper).toBeTruthy();
 		expect(wrapper.className).toContain("bdr_shell-sm");
-		expect(wrapper.className).toContain("bd-c_border.default");
+		// Issue #797: the editor rests on the identifiable-control border
+		// tier (`border.control`, same as Input/Textarea) — `border.default`
+		// resolved to the near-black surface border and was invisible.
+		expect(wrapper.className).toContain("bd-c_border.control");
 		expect(wrapper.className).toContain("bg-c_surface.widget");
 		expect(wrapper.className).toContain("focusWithin:bd-c_interactive.focus");
 	});

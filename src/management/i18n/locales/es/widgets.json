@@ -365,7 +365,8 @@
 		"loadAllSystemFonts": "Cargar todas las fuentes del sistema…",
 		"hintNoLocalApi": "Esta compilación de Chromium no expone queryLocalFonts — solo se listan las fuentes registradas en document.fonts.",
 		"localAccessErrorPrefix": "Acceso a fuentes locales:",
-		"emptyList": "Aún no hay fuentes cargadas. Usa «Cargar todas las fuentes del sistema» si está disponible, o recarga cuando el panel termine de cargar los estilos."
+		"emptyListTitle": "Aún no hay fuentes cargadas.",
+		"emptyListHint": "Usa «Cargar todas las fuentes del sistema» si está disponible, o recarga cuando el panel termine de cargar los estilos."
 	},
 	"viewModeToggle": {
 		"listView": "Vista de lista",

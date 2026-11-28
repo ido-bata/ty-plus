@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { expect } from "storybook/test";
 import { assertContrast } from "@/storybook/quality/color";
+import { measureBox } from "@/storybook/quality/layout";
 
 import { FontViewerStatusLine } from "./FontViewerStatusLine";
 import type { FontLoadVia } from "./use-font-catalog";
@@ -70,6 +71,23 @@ const expectStatusLineContrast = (canvasElement: HTMLElement): void => {
 	}
 };
 
+/*
+ * Issue #797: the stats text and the provenance label must share one row —
+ * previously the longer stats line pushed the `via` label onto a second
+ * row, dropping the divider and making the status block a line taller
+ * than the loading variant.
+ */
+const expectSingleStatusRow = (canvasElement: HTMLElement): void => {
+	const spans = Array.from(canvasElement.querySelectorAll("span"));
+	// `via: null` renders only the stats span — the single-row contract
+	// only applies when the provenance label is present.
+	if (spans.length < 2) return;
+	const tops = spans.map((span) => measureBox(span).y);
+	for (const top of tops) {
+		expect(Math.abs(top - tops[0])).toBeLessThanOrEqual(1);
+	}
+};
+
 export default meta;
 type Story = StoryObj<Args>;
 
@@ -77,6 +95,7 @@ export const Default: Story = {
 	play: async ({ canvasElement }) => {
 		await expectOpaqueStatusLine(canvasElement);
 		expectStatusLineContrast(canvasElement);
+		expectSingleStatusRow(canvasElement);
 	},
 };
 
@@ -85,6 +104,7 @@ export const Loading: Story = {
 	play: async ({ canvasElement }) => {
 		await expectOpaqueStatusLine(canvasElement);
 		expectStatusLineContrast(canvasElement);
+		expectSingleStatusRow(canvasElement);
 	},
 };
 
@@ -93,6 +113,7 @@ export const Empty: Story = {
 	play: async ({ canvasElement }) => {
 		await expectOpaqueStatusLine(canvasElement);
 		expectStatusLineContrast(canvasElement);
+		expectSingleStatusRow(canvasElement);
 	},
 };
 
@@ -101,5 +122,6 @@ export const LocalApi: Story = {
 	play: async ({ canvasElement }) => {
 		await expectOpaqueStatusLine(canvasElement);
 		expectStatusLineContrast(canvasElement);
+		expectSingleStatusRow(canvasElement);
 	},
 };

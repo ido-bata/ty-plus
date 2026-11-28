@@ -40,7 +40,12 @@ export function FontViewerStatusLine({
 				color: "text.muted",
 			})}
 		>
-			<span className={css({ minWidth: 0 })}>
+			{/* Issue #797: `flex: 1` gives the stats span a 0% flex basis, so
+			    the wrap decision no longer depends on the (longer) stats
+			    text — the provenance label stays on the same row and the
+			    stats truncate with an ellipsis instead of pushing it to a
+			    second line. */}
+			<span className={css({ minWidth: 0, flex: "1", truncate: true })}>
 				{loading
 					? t("fontViewer.loading", { defaultValue: "Loading…" })
 					: t("fontViewer.statsLine", {

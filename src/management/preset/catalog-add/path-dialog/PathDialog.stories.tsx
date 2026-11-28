@@ -1,5 +1,5 @@
 import type { Decorator, Meta, StoryObj } from "@storybook/react";
-import { expect, waitFor } from "storybook/test";
+import { expect, waitFor, within } from "storybook/test";
 
 import { OnlineServicesBoundary } from "@/storybook/online-services";
 import {
@@ -88,11 +88,13 @@ export const Default: Story = {
 				"File browser requires CEP Node",
 			);
 		});
-		const labels = Array.from(shell.querySelectorAll("button")).map(
-			(button) => button.textContent?.trim() ?? "",
-		);
-		expect(labels).toContain("Cancel");
-		expect(labels).toContain("Create");
+		// Issue #797: the primary button stacks its idle/busy labels in one
+		// grid cell (width-stable footer), so raw `textContent` reads
+		// "CreateCreating…". Assert the accessible name instead — hidden
+		// labels are excluded from it.
+		const footer = within(shell);
+		expect(footer.getByRole("button", { name: "Cancel" })).toBeTruthy();
+		expect(footer.getByRole("button", { name: "Create" })).toBeTruthy();
 	},
 };
 
@@ -109,10 +111,8 @@ export const NoRootsConfigured: Story = {
 				"File browser requires CEP Node",
 			);
 		});
-		const labels = Array.from(shell.querySelectorAll("button")).map(
-			(button) => button.textContent?.trim() ?? "",
-		);
-		expect(labels).toContain("Cancel");
-		expect(labels).toContain("Create");
+		const footer = within(shell);
+		expect(footer.getByRole("button", { name: "Cancel" })).toBeTruthy();
+		expect(footer.getByRole("button", { name: "Create" })).toBeTruthy();
 	},
 };

@@ -43,7 +43,12 @@ const editorBaseClass = css({
 	borderRadius: "shell-sm",
 	borderWidth: "hairline",
 	borderStyle: "solid",
-	borderColor: "border.default",
+	// Issue #797: this is an identifiable editable control, so per the
+	// `ty-border-control` contract (same tier as Input/Textarea) it rests
+	// on `border.control`. `border.default` resolves to the near-black
+	// `--ty-border-surface`, which was invisible against the panel and
+	// made the editable area hard to identify.
+	borderColor: "border.control",
 	backgroundColor: "surface.widget",
 	paddingInline: "3",
 	paddingBlock: "3",
@@ -58,7 +63,10 @@ const editorBaseClass = css({
 	},
 });
 
-const editorMinHeightClass = css({ minHeight: "160px" });
+// Issue #797: ~5 rendered lines is enough for a description field — the
+// old 160px floor left most of the box empty for one-line content and
+// pushed the sibling image controls far down the form.
+const editorMinHeightClass = css({ minHeight: "8rem" });
 
 const findLineElement = (
 	node: Node | null,

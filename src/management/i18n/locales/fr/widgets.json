@@ -351,7 +351,8 @@
 		"loadAllSystemFonts": "Charger toutes les polices système…",
 		"hintNoLocalApi": "Cette version de Chromium n'expose pas queryLocalFonts — seules les polices enregistrées sur document.fonts sont listées.",
 		"localAccessErrorPrefix": "Accès aux polices locales :",
-		"emptyList": "Aucune police chargée pour le moment. Utilisez « Charger toutes les polices système » si disponible, ou rechargez une fois que le panneau a fini de charger les styles."
+		"emptyListTitle": "Aucune police chargée pour le moment.",
+		"emptyListHint": "Utilisez « Charger toutes les polices système » si disponible, ou rechargez une fois que le panneau a fini de charger les styles."
 	},
 	"folderDirectoryPicker": {
 		"label": "Explorateur de dossiers",

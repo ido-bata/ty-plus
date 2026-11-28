@@ -26,7 +26,12 @@ export function FontViewerSampleRow({
 				display: "flex",
 				flexShrink: 0,
 				flexWrap: "wrap",
-				alignItems: "flex-end",
+				// Issue #797: `flex-end` bottom-aligned the controls, but the
+				// ListSelect `sm` trigger is one step taller than the `sm`
+				// Input, so the input's top edge sat ~4px lower. Center
+				// alignment keeps the control midlines on one keyline
+				// regardless of the two components' height tiers.
+				alignItems: "center",
 				gap: "2",
 			})}
 		>
@@ -71,6 +76,10 @@ export function FontViewerSampleRow({
 					fontFamily: "mono",
 				})}
 				value={sample}
+				// Issue #797: the single-line field scrolls long samples
+				// horizontally; `title` keeps the full text reachable on
+				// hover instead of clipping mid-word with no affordance.
+				title={sample}
 				onChange={(e: ChangeEvent<HTMLInputElement>) => {
 					onSampleChange(e.target.value);
 					onPresetChoiceChange("custom");

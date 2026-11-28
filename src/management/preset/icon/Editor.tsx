@@ -61,7 +61,10 @@ const emojiAnchorRowClass = css({
 	display: "flex",
 	minWidth: "0",
 	flexWrap: "wrap",
-	alignItems: "center",
+	// Issue #797: `flex-end` bottom-aligns the row so the swatch chip —
+	// the bottom element of its labeled field — shares a baseline with
+	// the picker button instead of sitting ~10px lower under `center`.
+	alignItems: "flex-end",
 	// Match the sibling control rows (`textFieldsRowClass`,
 	// `canvasFieldsRowClass`) — an 8px gap, not 12px.
 	gap: "2",
@@ -97,7 +100,10 @@ const textFieldsRowClass = css({
 	// swatches were — let the trailing field wrap below instead of
 	// crushing the text input at narrow widths.
 	flexWrap: "wrap",
-	alignItems: "center",
+	// Issue #797: `flex-end` aligns the swatch chips (bottom element of
+	// each labeled field) with the text input's bottom edge — under
+	// `center` the label row pushed every chip ~10px below the input.
+	alignItems: "flex-end",
 	gap: "2",
 });
 
@@ -182,7 +188,10 @@ const fieldsWrapperClass = css({
 const bodyPreviewRowClass = css({
 	display: "flex",
 	minWidth: "0",
-	alignItems: "center",
+	// Issue #797: `flex-start` keeps the tabs row on the same top keyline
+	// in every icon mode — under `center` the shorter image-mode fields
+	// column pulled the whole column (tabs included) ~9px lower.
+	alignItems: "flex-start",
 	gap: "2",
 });
 
@@ -204,6 +213,10 @@ const previewBoxClass = css({
 	width: "6rem",
 	aspectRatio: "1/1",
 	flexShrink: "0",
+	// The tile centers against the fields column while the column itself
+	// stays top-aligned (issue #797) — keeps the preview optically
+	// centered without moving the tab strip between icon modes.
+	alignSelf: "center",
 	overflow: "hidden",
 	borderRadius: "shell-sm",
 	backgroundColor: "surface.widget",
@@ -215,6 +228,9 @@ const previewInnerClass = css({
 	height: "full",
 	width: "full",
 	overflow: "hidden",
+	// Issue #797: a small inset keeps wide glyphs (emoji, edge-to-edge
+	// images) from touching the tile edges.
+	padding: "1",
 	"& > *": {
 		height: "full",
 		width: "full",

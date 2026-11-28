@@ -365,7 +365,8 @@
 		"loadAllSystemFonts": "Carica tutti i font di sistema…",
 		"hintNoLocalApi": "Questa build di Chromium non espone queryLocalFonts — vengono elencati solo i font registrati su document.fonts.",
 		"localAccessErrorPrefix": "Accesso ai font locali:",
-		"emptyList": "Nessun font ancora caricato. Usa «Carica tutti i font di sistema» se disponibile, oppure ricarica dopo che il pannello ha finito di caricare gli stili."
+		"emptyListTitle": "Nessun font ancora caricato.",
+		"emptyListHint": "Usa «Carica tutti i font di sistema» se disponibile, oppure ricarica dopo che il pannello ha finito di caricare gli stili."
 	},
 	"viewModeToggle": {
 		"listView": "Vista elenco",
