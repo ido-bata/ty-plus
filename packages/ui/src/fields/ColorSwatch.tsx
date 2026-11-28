@@ -9,6 +9,8 @@ export type ColorSwatchProps = {
 	disabled?: boolean;
 	className?: string;
 	"aria-label"?: string;
+	/** Tooltip shown on hover — pair with `aria-label` when two swatches sit side by side. */
+	title?: string;
 };
 
 const swatch = css({
@@ -67,6 +69,7 @@ export function ColorSwatch({
 	disabled,
 	className,
 	"aria-label": ariaLabel,
+	title,
 }: ColorSwatchProps): JSX.Element {
 	const swatchColor = normalizeHexForColorInput(value);
 
@@ -76,6 +79,7 @@ export function ColorSwatch({
 			value={swatchColor}
 			onChange={(e) => onChange(e.target.value)}
 			aria-label={ariaLabel ?? "Color"}
+			title={title}
 			className={cx(swatch, className)}
 			disabled={disabled}
 		/>

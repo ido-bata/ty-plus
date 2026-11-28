@@ -7,7 +7,6 @@ import {
 	Icon,
 	IconButton,
 	isIMEComposing,
-	rowMetaClass,
 	rowTitleClass,
 	widgetSurfaceClass,
 } from "@ty-plus/ui";
@@ -126,6 +125,10 @@ const folderIconClass = css({
 
 const actionsRowClass = css({
 	display: "flex",
+	// The actions column is a fixed width (LIST_ROW_GRID) shared by group
+	// rows (2 buttons) and preset rows (3 buttons); right-aligning keeps
+	// the row metadata's right edge on the same x for every row.
+	justifyContent: "flex-end",
 	flexShrink: "0",
 	alignItems: "center",
 	gap: "0.5",
@@ -375,6 +378,11 @@ const iconGroupTitleClass = css({
 	fontWeight: "medium",
 	lineHeight: "tight",
 	color: "text.primary",
+	// Reserve the floating action row's width while it is visible so the
+	// title ellipsizes before reaching the buttons instead of being
+	// overprinted by them.
+	_groupHover: { paddingRight: "14" },
+	_groupFocusWithin: { paddingRight: "14" },
 });
 
 const iconGroupActionsClass = css({
@@ -386,8 +394,19 @@ const iconGroupActionsClass = css({
 	justifyContent: "flex-end",
 	gap: "0.5",
 	opacity: "0",
+	// Plate behind the floating actions: without it the control borders
+	// collide with the title text they overlay, and keyboard focus could
+	// land on an invisible (opacity:0) button — `_groupFocusWithin`
+	// reveals them for the tab path too.
+	borderRadius: "shell-sm",
+	backgroundColor: "surface.dialog/95",
+	padding: "0.5",
 	transitionProperty: "opacity",
 	_groupHover: {
+		pointerEvents: "auto",
+		opacity: "1",
+	},
+	_groupFocusWithin: {
 		pointerEvents: "auto",
 		opacity: "1",
 	},
@@ -441,6 +460,14 @@ const iconPresetTitleClass = css({
 	fontWeight: "medium",
 	lineHeight: "tight",
 	color: "text.primary",
+	// Same reservation as `iconGroupTitleClass` — see the comment there.
+	_groupHover: { paddingRight: "14" },
+	_groupFocusWithin: { paddingRight: "14" },
+});
+
+const noticeSeparatorClass = css({
+	flexShrink: "0",
+	color: "border.default",
 });
 
 /**
@@ -470,8 +497,13 @@ const cloudNoticeClass = css({
  */
 const errorStateClass = css({
 	display: "flex",
+	// Fills the remaining body height (the shell's outer pad is
+	// min-height:100%) so the failure block centers vertically.
+	flexGrow: "1",
+	minHeight: "0",
 	flexDirection: "column",
 	alignItems: "center",
+	justifyContent: "center",
 	gap: "2",
 	paddingBlock: "8",
 	paddingInline: "4",
@@ -493,9 +525,30 @@ const errorDetailClass = css({
 
 const emptyCatalogClass = css({
 	display: "flex",
+	// Same vertical centering as `errorStateClass`.
+	flexGrow: "1",
+	minHeight: "0",
 	flexDirection: "column",
 	alignItems: "center",
+	justifyContent: "center",
 	gap: "2",
+});
+
+const emptyBodyFillClass = css({
+	display: "flex",
+	flexGrow: "1",
+	minHeight: "0",
+	alignItems: "center",
+	justifyContent: "center",
+});
+
+const errorDetailsClass = css({
+	fontSize: "xs",
+	color: "text.muted",
+});
+
+const errorDetailsSummaryClass = css({
+	cursor: "pointer",
 });
 
 const emptyCatalogHintClass = css({
@@ -813,10 +866,19 @@ function PresetGroupListBlock(props: {
 					onClick={() => onToggle(group.id)}
 				>
 					<div className={rowTitleClass}>{group.title?.trim() || group.id}</div>
-					<div className={rowMetaClass}>
-						Group · {members.length} items
-						<span className={groupSubtitleDividerClass}>|</span>
-						{groupWorkspaceSummary(group, groupPlacement)}
+					{/* Same meta layout as preset rows: description flexes,
+					    workspace summary pins to the column's right edge so
+					    every row's metadata ends at the same x. */}
+					<div className={presetRowMetaClass}>
+						<span className={presetRowSourceClass}>
+							{i18n.t("presets:listDialog.groupItems", {
+								count: members.length,
+							})}
+							<span className={groupSubtitleDividerClass}>|</span>
+						</span>
+						<span className={presetRowWorkspaceClass}>
+							{groupWorkspaceSummary(group, groupPlacement)}
+						</span>
 					</div>
 				</Button>
 				<GroupRowActions
@@ -1948,7 +2010,15 @@ export function PresetsDialog(): JSX.Element {
 					<div className={errorTitleClass}>
 						{i18n.t("presets:listDialog.loadFailedTitle")}
 					</div>
-					<div className={errorDetailClass}>{loadError}</div>
+					{/* Raw parser/storage messages stay available for
+					    diagnosis but behind a disclosure — the headline
+					    above already carries the user-facing explanation. */}
+					<details className={errorDetailsClass}>
+						<summary className={errorDetailsSummaryClass}>
+							{i18n.t("presets:listDialog.errorDetails")}
+						</summary>
+						<div className={errorDetailClass}>{loadError}</div>
+					</details>
 					<Button uiSize="sm" onClick={() => void loadEverything()}>
 						{i18n.t("presets:listDialog.tryAgain")}
 					</Button>
@@ -1957,9 +2027,11 @@ export function PresetsDialog(): JSX.Element {
 		}
 		if (loadPhase === "idle" || loadPhase === "reading") {
 			return (
-				<p className={emptyStateClass}>
-					{i18n.t("presets:listDialog.loadingCatalog")}
-				</p>
+				<div className={emptyBodyFillClass}>
+					<p className={emptyStateClass}>
+						{i18n.t("presets:listDialog.loadingCatalog")}
+					</p>
+				</div>
 			);
 		}
 		if (loadPhase !== "loaded") {
@@ -1990,9 +2062,11 @@ export function PresetsDialog(): JSX.Element {
 			);
 		}
 		return (
-			<p className={emptyStateClass}>
-				{i18n.t("presets:listDialog.noMatches")}
-			</p>
+			<div className={emptyBodyFillClass}>
+				<p className={emptyStateClass}>
+					{i18n.t("presets:listDialog.noMatches")}
+				</p>
+			</div>
 		);
 	};
 
@@ -2001,6 +2075,9 @@ export function PresetsDialog(): JSX.Element {
 			<p className={cloudNoticeClass} data-preset-list-cloud-notice>
 				<span className={css({ fontWeight: "medium", flexShrink: "0" })}>
 					{i18n.t("presets:listDialog.cloudOffline")}
+				</span>
+				<span aria-hidden className={noticeSeparatorClass}>
+					·
 				</span>
 				<span>
 					{gatewayHealth.state === "degraded"
@@ -2019,6 +2096,9 @@ export function PresetsDialog(): JSX.Element {
 		<p className={cloudNoticeClass} data-preset-list-groups-notice>
 			<span className={css({ fontWeight: "medium", flexShrink: "0" })}>
 				{i18n.t("presets:listDialog.groupsUnavailable")}
+			</span>
+			<span aria-hidden className={noticeSeparatorClass}>
+				·
 			</span>
 			<span>
 				{i18n.t("presets:listDialog.groupsErrorDetail", {

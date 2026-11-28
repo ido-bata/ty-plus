@@ -257,10 +257,11 @@
 			"presetNamePlaceholder": "프리셋 이름 입력"
 		},
 		"titleForType": {
-			"preset": "프리셋",
+			"preset": "프리셋 편집",
 			"script": "스크립트 프리셋",
 			"plugin": "플러그인 프리셋",
-			"footage": "푸트에이지 프리셋"
+			"footage": "푸트에이지 프리셋",
+			"group": "그룹 프리셋"
 		},
 		"memberLoading": "로드 중…",
 		"memberNotFound": "멤버를 찾을 수 없음: {{id}}",
@@ -406,6 +407,9 @@
 		"emptyCatalogHint": "폴더나 파일 경로에서 추가한 프리셋이 여기에 표시됩니다.",
 		"addPresets": "프리셋 추가",
 		"noMatches": "일치하는 프리셋이 없습니다",
+		"groupItems_one": "그룹 · 항목 {{count}}개",
+		"groupItems_other": "그룹 · 항목 {{count}}개",
+		"errorDetails": "기술 세부 정보",
 		"cloudOffline": "클라우드 오프라인",
 		"cloudDegradedDetail": "{{message}} — 로컬 카탈로그만 표시합니다.",
 		"cloudOfflineDetail": "이 세션에서는 클라우드 기능이 활성화되지 않았습니다 — 로컬 카탈로그만 표시합니다.",

@@ -20,7 +20,9 @@ const directoryBrowserOuterClass = css({
 
 const presetListOuterClass = css({
 	display: "flex",
-	minHeight: "0",
+	// Fills the scrollport when the catalog is short so empty states can
+	// center in the visible area instead of hugging the top.
+	minHeight: "100%",
 	minWidth: "0",
 	flex: "1",
 	flexDirection: "column",

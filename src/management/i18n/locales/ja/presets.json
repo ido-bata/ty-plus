@@ -257,10 +257,11 @@
 			"presetNamePlaceholder": "プリセット名を入力"
 		},
 		"titleForType": {
-			"preset": "プリセット",
+			"preset": "プリセットを編集",
 			"script": "スクリプト・プリセット",
 			"plugin": "プラグイン・プリセット",
-			"footage": "フッテージ・プリセット"
+			"footage": "フッテージ・プリセット",
+			"group": "グループ・プリセット"
 		},
 		"memberLoading": "読み込み中…",
 		"memberNotFound": "メンバーが見つかりません: {{id}}",
@@ -406,6 +407,9 @@
 		"emptyCatalogHint": "フォルダやファイルパスから追加したプリセットがここに表示されます。",
 		"addPresets": "プリセットを追加",
 		"noMatches": "一致するプリセットがありません",
+		"groupItems_one": "グループ · {{count}} 件",
+		"groupItems_other": "グループ · {{count}} 件",
+		"errorDetails": "技術的な詳細",
 		"cloudOffline": "クラウドオフライン",
 		"cloudDegradedDetail": "{{message}} — ローカルカタログのみを表示しています。",
 		"cloudOfflineDetail": "このセッションではクラウド機能は有効ではありません — ローカルカタログのみを表示しています。",

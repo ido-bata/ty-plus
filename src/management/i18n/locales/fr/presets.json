@@ -259,10 +259,11 @@
 			"presetNamePlaceholder": "Saisissez le nom du preset"
 		},
 		"titleForType": {
-			"preset": "Preset",
+			"preset": "Modifier le préréglage",
 			"script": "Preset de script",
 			"plugin": "Preset de plugin",
-			"footage": "Preset de footage"
+			"footage": "Preset de footage",
+			"group": "Preset de groupe"
 		},
 		"memberLoading": "Chargement…",
 		"memberNotFound": "Membre introuvable : {{id}}",
@@ -412,6 +413,10 @@
 		"emptyCatalogHint": "Les presets ajoutés depuis un dossier ou un chemin de fichier apparaissent ici.",
 		"addPresets": "Ajouter des presets",
 		"noMatches": "Aucun preset correspondant",
+		"groupItems_one": "Groupe · {{count}} élément",
+		"groupItems_other": "Groupe · {{count}} éléments",
+		"groupItems_many": "Groupe · {{count}} éléments",
+		"errorDetails": "Détails techniques",
 		"cloudOffline": "Cloud hors ligne",
 		"cloudDegradedDetail": "{{message}} — affichage du catalogue local uniquement.",
 		"cloudOfflineDetail": "Les fonctions cloud ne sont pas actives dans cette session — affichage du catalogue local uniquement.",
