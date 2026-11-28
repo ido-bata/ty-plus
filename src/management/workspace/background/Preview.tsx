@@ -1,5 +1,5 @@
 import type { CSSProperties, JSX } from "react";
-import { FIELD_LABEL_CLASS } from "@/management/workspace/background/constants";
+import { SECTION_LABEL_CLASS } from "@/management/workspace/background/constants";
 import { css } from "@/styled-system/css";
 
 const root = css({
@@ -52,7 +52,7 @@ export function BackgroundPreview(props: {
 	return (
 		<div className={root}>
 			<div className={headerRow}>
-				<span className={FIELD_LABEL_CLASS}>
+				<span className={SECTION_LABEL_CLASS}>
 					{t("workspaceShell.backgroundPanel.preview")}
 				</span>
 				<span className={statusText}>{status}</span>

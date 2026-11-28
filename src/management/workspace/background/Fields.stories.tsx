@@ -55,9 +55,20 @@ const meta = {
 				value={args.color}
 				onColorChange={noopColor}
 			/>
-			<div className={css({ display: "flex", alignItems: "center", gap: "2" })}>
-				<FieldLabel>Field label only</FieldLabel>
-			</div>
+			{/* Issue #768: the bare-label demo only makes sense alongside
+			 * labelled fields — in the no-labels story it rendered as an
+			 * orphaned "FIELD LABEL ONLY" caption. */}
+			{args.noLabel ? null : (
+				<div
+					className={css({
+						display: "flex",
+						alignItems: "center",
+						gap: "2",
+					})}
+				>
+					<FieldLabel>Field label only</FieldLabel>
+				</div>
+			)}
 		</div>
 	),
 } satisfies Meta<Args>;
@@ -73,6 +84,22 @@ export const Default: Story = {
 				'[data-testid="color-field-transparent-badge"]',
 			),
 		).toBeNull();
+		// Issue #768: sibling field labels must share one typographic
+		// treatment — "Opacity" (RangeField) and "Color" (ColorField) used
+		// to disagree (sentence-case primary vs uppercase muted).
+		const labelByText = (text: string): Element | undefined =>
+			Array.from(canvasElement.querySelectorAll("*")).find(
+				(el) => el.children.length === 0 && el.textContent?.trim() === text,
+			);
+		const opacityLabel = labelByText("Opacity");
+		const colorLabel = labelByText("Color");
+		if (!opacityLabel || !colorLabel) {
+			throw new Error("field labels not found");
+		}
+		const a = getComputedStyle(opacityLabel);
+		const b = getComputedStyle(colorLabel);
+		expect(b.textTransform).toBe(a.textTransform);
+		expect(b.color).toBe(a.color);
 	},
 };
 
@@ -86,10 +113,15 @@ export const TransparentColor: Story = {
 		// Issue #748: `"transparent"` cannot be shown by `<input type="color">`,
 		// so the field must paint the checkerboard badge instead of an
 		// opaque fallback chip.
-		expect(
-			canvasElement.querySelector(
-				'[data-testid="color-field-transparent-badge"]',
-			),
-		).not.toBeNull();
+		const badge = canvasElement.querySelector<HTMLElement>(
+			'[data-testid="color-field-transparent-badge"]',
+		);
+		expect(badge).not.toBeNull();
+		// Issue #768: the checkerboard badge overlays the swatch edge-to-edge
+		// and must carry the same perimeter border — otherwise the pattern
+		// bleeds into the canvas with no bounding stroke.
+		if (!badge) throw new Error("transparent badge not found");
+		const badgeBorder = getComputedStyle(badge).borderTopWidth;
+		expect(badgeBorder).not.toBe("0px");
 	},
 };

@@ -24,6 +24,13 @@ const editorRoot = css({
 	gap: "3",
 });
 
+// Issue #768: a disabled layer used to render its editor at full
+// brightness — indistinguishable from an enabled layer. Dim the whole
+// column like the shared controls' disabled treatment (opacity 0.5);
+// the fields stay editable so the layer can be configured before it is
+// re-enabled via the list checkbox.
+const editorDimmed = css({ opacity: "0.5" });
+
 const colorEditor = css({
 	display: "grid",
 	gap: "2",
@@ -80,7 +87,11 @@ export function LayerEditor(props: {
 	};
 
 	return (
-		<div className={editorRoot}>
+		<div
+			className={cx(editorRoot, layer.enabled ? "" : editorDimmed)}
+			data-layer-editor=""
+			data-layer-enabled={layer.enabled ? "true" : "false"}
+		>
 			<NumberField
 				label={t("workspaceShell.backgroundPanel.opacity")}
 				value={layer.opacity}
