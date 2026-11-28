@@ -1,5 +1,5 @@
 import type { Decorator, Meta, StoryObj } from "@storybook/react";
-import { expect, waitFor } from "storybook/test";
+import { expect, waitFor, within } from "storybook/test";
 
 import { OnlineServicesBoundary } from "@/storybook/online-services";
 import {
@@ -104,9 +104,9 @@ export const ExpressionType: Story = {
 		// icon text field and glyph preview move CODE → EXPR instead of
 		// staying on the script preset's icon.
 		await waitFor(() => {
-			const iconText = canvasElement.querySelector<HTMLInputElement>(
-				'input[aria-label="Icon text"]',
-			);
+			const iconText = within(canvasElement).queryByRole("textbox", {
+				name: "Icon text",
+			}) as HTMLInputElement | null;
 			expect(iconText?.value).toBe("EXPR");
 		});
 		expect(canvasElement.textContent).toContain("Save location");
