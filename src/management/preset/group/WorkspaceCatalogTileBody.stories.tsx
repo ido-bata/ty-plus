@@ -1,4 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { cx, tileRingClass } from "@ty-plus/ui";
+import { expect, waitFor } from "storybook/test";
 import type { Preset } from "@/management/preset/contract";
 import { presetIconText } from "@/management/preset/contract";
 import type { GroupEntry } from "@/management/preset/group/catalog";
@@ -41,13 +43,19 @@ const buildState = (): SurfaceState => ({
 	widgetInstanceTypes: {},
 });
 
-const tileBox = css({
-	height: "32",
-	width: "32",
-	borderRadius: "shell-sm",
-	backgroundColor: "surface.widget",
-	display: "flex",
-});
+// Issue #767: mirror the production `WorkspaceTileFrame` chrome — in the
+// real grid the tile sits inside the shared placement ring, so a bare
+// `surface.widget` box made the tile boundary invisible in captures.
+const tileBox = cx(
+	css({
+		height: "32",
+		width: "32",
+		borderRadius: "shell-sm",
+		backgroundColor: "surface.widget",
+		display: "flex",
+	}),
+	tileRingClass,
+);
 
 type Args = {
 	tileId: string;
@@ -93,4 +101,20 @@ export const GroupTile: Story = {
 /** Unresolvable tile id — falls back to the "?" glyph tile. */
 export const UnknownTile: Story = {
 	args: { tileId: "missing-ref", label: "missing-ref" },
+	play: async ({ canvasElement }) => {
+		// Issue #767: the missing-state "?" is the tile's only content — it
+		// must render at a readable size, not a speck. The 128px story tile
+		// resolves to a ~19px glyph (15% of frame width, 12px floor).
+		const shell = canvasElement.querySelector<HTMLElement>(
+			"[data-ws-preset-text-fit='scale']",
+		);
+		const mark = shell?.firstElementChild;
+		if (!mark) throw new Error("missing glyph mark not found");
+		// The frame metrics arrive via ResizeObserver after first paint —
+		// the pre-measure fallback is the 12px floor, so poll for the fit.
+		await waitFor(() => {
+			const fontPx = Number.parseFloat(getComputedStyle(mark).fontSize);
+			expect(fontPx).toBeGreaterThanOrEqual(16);
+		});
+	},
 };

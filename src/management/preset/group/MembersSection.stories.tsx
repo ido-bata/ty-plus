@@ -71,9 +71,39 @@ const expectEnglishChrome = (canvasElement: HTMLElement): void => {
 	expect(text).not.toMatch(/[぀-ヿ一-鿿]/);
 };
 
+// Issue #767 layout contract for the members section:
+// - "Add path" must not stretch across the button row (it used to take
+//   ~75% via `fullWidth` while "Detect candidates" stayed intrinsic),
+// - the per-path remove action is a square IconButton matching the
+//   PathField browse button, not a text-padded Button rectangle.
+const expectButtonRowLayout = (canvasElement: HTMLElement): void => {
+	const addPath = Array.from(canvasElement.querySelectorAll("button")).find(
+		(b) => b.textContent?.includes("Add path"),
+	);
+	const detect = Array.from(canvasElement.querySelectorAll("button")).find(
+		(b) => b.textContent?.includes("Detect candidates"),
+	);
+	if (!addPath || !detect) throw new Error("member action buttons not found");
+	const row = addPath.parentElement;
+	if (!row) throw new Error("button row not found");
+	const addBox = addPath.getBoundingClientRect();
+	const rowBox = row.getBoundingClientRect();
+	expect(addBox.width).toBeLessThan(rowBox.width * 0.5);
+
+	const removeButtons = canvasElement.querySelectorAll<HTMLButtonElement>(
+		'button[aria-label="Remove path"]',
+	);
+	expect(removeButtons.length).toBeGreaterThan(0);
+	for (const btn of removeButtons) {
+		const box = btn.getBoundingClientRect();
+		expect(Math.abs(box.width - box.height)).toBeLessThanOrEqual(1);
+	}
+};
+
 export const Default: Story = {
 	play: async ({ canvasElement }) => {
 		expectEnglishChrome(canvasElement);
+		expectButtonRowLayout(canvasElement);
 	},
 };
 
@@ -81,5 +111,6 @@ export const Busy: Story = {
 	args: { busy: true },
 	play: async ({ canvasElement }) => {
 		expectEnglishChrome(canvasElement);
+		expectButtonRowLayout(canvasElement);
 	},
 };

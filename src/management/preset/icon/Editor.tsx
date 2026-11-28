@@ -53,6 +53,9 @@ const emojiAnchorClass = css({
 	gap: "2",
 });
 
+// Issue #767: match the text-mode controls row (`textFieldsRowClass`,
+// gap 2 = 8px) so the emoji picker's trailing swatch aligns with the
+// color swatches under the other tabs.
 const emojiAnchorRowClass = css({
 	display: "flex",
 	minWidth: "0",

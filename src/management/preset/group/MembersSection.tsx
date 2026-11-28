@@ -1,4 +1,4 @@
-import { Button, Icon, PathField } from "@ty-plus/ui";
+import { Button, Icon, IconButton, PathField } from "@ty-plus/ui";
 import { FolderOpen, Plus, ScanSearch, Trash2 } from "lucide-react";
 import type { JSX, ReactNode } from "react";
 import { i18n } from "@/management/i18n/index";
@@ -26,6 +26,12 @@ const pathRowClass = css({
 	display: "flex",
 	alignItems: "flex-start",
 	gap: "2",
+});
+
+// `IconButton` does not set `flex-shrink`, so in a tight path row the
+// square metrics collapsed to a ~30px-wide rectangle — pin it.
+const removePathButtonClass = css({
+	flexShrink: "0",
 });
 
 const detectStatusClass = css({
@@ -141,10 +147,12 @@ export function MembersSection({
 				/>
 
 				<div className={buttonRowClass}>
+					{/* Issue #767: `fullWidth` here stretched "Add path" across
+					    ~75% of the row while "Detect candidates" stayed intrinsic —
+					    both actions now size to their labels. */}
 					<Button
 						type="button"
 						variant="outline"
-						fullWidth
 						disabled={ctx.busy}
 						onClick={addPath}
 					>
@@ -192,14 +200,20 @@ export function MembersSection({
 									uiSize="md"
 									disabled={ctx.busy}
 								/>
-								<Button
+								{/* Issue #767: a text-padded Button next to the
+								    square PathField browse IconButton read as a
+								    mismatched rectangle — use the same square
+								    IconButton metrics. */}
+								<IconButton
 									variant="ghost"
+									size="md"
+									className={removePathButtonClass}
 									aria-label={i18n.t("presets:group.removePath")}
 									disabled={ctx.busy}
 									onClick={() => removePath(idx)}
 								>
 									<Trash2 size={16} />
-								</Button>
+								</IconButton>
 							</div>
 						);
 					})}
