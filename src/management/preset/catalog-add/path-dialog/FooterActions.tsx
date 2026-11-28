@@ -1,5 +1,4 @@
 import { Button } from "@ty-plus/ui";
-import { Save } from "lucide-react";
 import type { JSX } from "react";
 import { DialogFooterActions } from "@/management/dialog/shell/Footer";
 import { i18n } from "@/management/i18n/index";
@@ -32,7 +31,6 @@ export function PathDialogFooterActions({
 				variant="primary"
 				uiSize="sm"
 				fullWidth
-				start={<Save size={14} />}
 				disabled={!canAdd}
 				onClick={() => void handleAdd()}
 			>

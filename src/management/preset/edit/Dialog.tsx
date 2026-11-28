@@ -11,7 +11,7 @@ import {
 	rowTitleClass,
 	sectionLabelClass,
 } from "@ty-plus/ui";
-import { FileSearch, Pencil, Play, Save, Trash2 } from "lucide-react";
+import { FileSearch, Pencil, Play, Trash2 } from "lucide-react";
 import {
 	type JSX,
 	useCallback,
@@ -1141,7 +1141,7 @@ export function PresetEditDialog(props: PresetEditDialogProps): JSX.Element {
 						variant="danger"
 						uiSize="sm"
 						fullWidth
-						start={<Trash2 size={14} />}
+						start={<Trash2 size={16} />}
 						onClick={() => void handleDelete()}
 						disabled={!canMutate}
 					>
@@ -1154,7 +1154,6 @@ export function PresetEditDialog(props: PresetEditDialogProps): JSX.Element {
 						variant="primary"
 						uiSize="sm"
 						fullWidth
-						start={<Save size={14} />}
 						onClick={() => void handleSave()}
 						disabled={!canMutate}
 					>

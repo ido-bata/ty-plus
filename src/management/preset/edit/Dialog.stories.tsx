@@ -108,6 +108,19 @@ const expectFooterActions = (shell: HTMLElement): void => {
 	expect(labels).toContain("Cancel");
 	expect(labels).toContain("Delete");
 	expect(labels).toContain("Save");
+	// Issue #777: footer contract — the primary Save action is text-only
+	// (no leading svg); the danger Delete action keeps its icon.
+	const footer = shell.querySelector("footer");
+	if (!footer) throw new Error("dialog footer not found");
+	const footerButton = (label: string): HTMLButtonElement => {
+		const button = Array.from(
+			footer.querySelectorAll<HTMLButtonElement>("button"),
+		).find((el) => el.textContent?.trim() === label);
+		if (!button) throw new Error(`footer button "${label}" not found`);
+		return button;
+	};
+	expect(footerButton("Save").querySelector("svg")).toBeNull();
+	expect(footerButton("Delete").querySelector("svg")).not.toBeNull();
 };
 
 export const Default: Story = {

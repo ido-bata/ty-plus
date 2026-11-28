@@ -66,6 +66,19 @@ const expectDialogComposition = (canvasElement: HTMLElement): void => {
 	);
 	expect(labels).toContain("Create");
 	expect(labels).toContain("Cancel");
+	// Issue #777: footer contract — primary actions are text-only. The
+	// step-3 "Save Animation Preset" button is the dialog's primary
+	// action and the footer Create/Cancel pair must render no icons.
+	const footer = shell.querySelector("footer");
+	if (!footer) throw new Error("dialog footer not found");
+	for (const button of footer.querySelectorAll("button")) {
+		expect(button.querySelector("svg")).toBeNull();
+	}
+	const detectButton = Array.from(
+		shell.querySelectorAll<HTMLButtonElement>("button"),
+	).find((button) => button.textContent?.includes("Save Animation Preset"));
+	if (!detectButton) throw new Error("step-3 detect button not found");
+	expect(detectButton.querySelector("svg")).toBeNull();
 };
 
 export const Default: Story = {

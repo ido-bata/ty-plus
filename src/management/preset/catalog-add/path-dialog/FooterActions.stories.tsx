@@ -46,7 +46,19 @@ const meta = {
 export default meta;
 type Story = StoryObj<Args>;
 
-export const Default: Story = {};
+export const Default: Story = {
+	play: async ({ canvasElement }) => {
+		// Issue #777: footer contract — the primary action is text-only;
+		// no footer button may render a leading icon here.
+		const actions = canvasElement.querySelector("[data-dialog-footer-actions]");
+		if (!actions) throw new Error("footer actions not found");
+		const buttons = actions.querySelectorAll("button");
+		expect(buttons.length).toBeGreaterThan(0);
+		for (const button of buttons) {
+			expect(button.querySelector("svg")).toBeNull();
+		}
+	},
+};
 
 export const Disabled: Story = {
 	args: { canAdd: false },
