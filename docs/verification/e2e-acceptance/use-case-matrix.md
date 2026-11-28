@@ -34,14 +34,14 @@
 
 | ID | ユースケース | 主な確認対象 | 自動化 | OS | 状態 | 証跡/Issue |
 | --- | --- | --- | --- | --- | --- | --- |
-| UC-C01 | Local preset 作成（path 指定）→ presets.json + tile | presets.json record、dialog 閉鎖、tile 配置 | semi | both | 未実施 | |
-| UC-C02 | Group preset 作成（folder 走査・icon rules）| groups.json/presets.json、group tile、メンバー展開 | semi | both | 未実施 | |
-| UC-C03 | Animation preset 作成（`.ffx` + AE save dialog）| .ffx ファイル生成、presets.json、tile | semi | both | 未実施 | |
-| UC-C04 | Code preset 作成（Script/Expression）| .jsx 生成、presets.json | semi | both | 未実施 | |
-| UC-C05 | Layer/Comp preset 作成 | scriptRoot 配下ファイル、presets.json（失敗時の壊れた record 非残留も確認）| semi | both | 未実施 | guide既知: macOS で作成失敗事例あり |
-| UC-C06 | Footage/Import preset 作成・実行 | presets.json、AE への footage 追加 | semi | both | 未実施 | |
-| UC-C07 | Easing preset 作成（カーブ→`.jsx`）| .jsx 生成、presets.json | semi | both | 未実施 | |
-| UC-C08 | preset 編集（名前/説明/icon/メンバー）| presets.json 更新、tile/一覧反映 | semi | both | 未実施 | |
+| UC-C01 | Local preset 作成（path 指定）→ presets.json + tile | presets.json record、dialog 閉鎖、tile 配置 | semi | both | 未実施 | #785 / preset-create suite (scripts/verify/e2e/cases/preset-create.ts)・case実装済未実行 |
+| UC-C02 | Group preset 作成（folder 走査・icon rules） | groups.json/presets.json、group tile、メンバー展開 | semi | both | 未実施 | #785 / preset-create suite (scripts/verify/e2e/cases/preset-create.ts)・case実装済未実行 |
+| UC-C03 | Animation preset 作成（`.ffx` + AE save dialog） | .ffx ファイル生成、presets.json、tile | semi | both | 未実施 | #785 / preset-create suite (scripts/verify/e2e/cases/preset-create.ts)・case実装済未実行 |
+| UC-C04 | Code preset 作成（Script/Expression） | .jsx 生成、presets.json | semi | both | 未実施 | #785 / preset-create suite (scripts/verify/e2e/cases/preset-create.ts)・case実装済未実行 |
+| UC-C05 | Layer/Comp preset 作成 | scriptRoot 配下ファイル、presets.json（失敗時の壊れた record 非残留も確認） | semi | both | 未実施 | guide既知: macOS で作成失敗事例あり / #785 / preset-create suite (scripts/verify/e2e/cases/preset-create.ts)・case実装済未実行 |
+| UC-C06 | Footage/Import preset 作成・実行 | presets.json、AE への footage 追加 | semi | both | 未実施 | #785 / preset-create suite (scripts/verify/e2e/cases/preset-create.ts)・case実装済未実行 |
+| UC-C07 | Easing preset 作成（カーブ→`.jsx`） | .jsx 生成、presets.json | semi | both | 未実施 | #785 / preset-create suite (scripts/verify/e2e/cases/preset-create.ts)・case実装済未実行 |
+| UC-C08 | preset 編集（名前/説明/icon/メンバー） | presets.json 更新、tile/一覧反映 | semi | both | 未実施 | #785 / preset-create suite (scripts/verify/e2e/cases/preset-create.ts)・case実装済未実行 |
 | UC-C09 | preset 複製・削除 | presets.json、workspace/group/search から消える | semi | both | 未実施 | |
 | UC-C10 | `.ffx` preset を選択レイヤーへ実行 | AE Effect Controls/レイヤーに効果適用 | semi | both | mac:自動PASS / win:未実施 | #10 D-06 / results/2026-11-15-device-macos-ae2026-dev-journey/run.json |
 | UC-C11 | `.jsx` script preset 実行 | AE 側の実行結果（例: レイヤー/テキスト変化）| semi | both | mac:自動PASS / win:未実施 | #10 D-05 / results/2026-11-15-device-macos-ae2026-dev-journey/run.json |
