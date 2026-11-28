@@ -49,40 +49,45 @@ export function ConditionRulesSection({
 	onAddRule: () => void;
 }): JSX.Element {
 	return (
-		<div className={cx(columnClass, busy && authoringBusyClass)} inert={busy}>
+		<div className={columnClass}>
+			{/* Issue #794: keep the status row outside the dimmed/inert
+			    container so the spinner and "Saving…" label stay at full
+			    contrast while the controls freeze. */}
 			{busy ? <AuthoringBusyStatus /> : null}
-			<BaseIconCard
-				baseIconDraft={baseIconDraft}
-				onBaseIconDraftChange={onBaseIconDraftChange}
-			/>
-			<AccordionSection
-				title={i18n.t("presets:group.rules")}
-				defaultOpen={true}
-			>
-				<div className={rulesColumnClass}>
-					{conditionRules.map((r, i) => (
-						<ConditionRuleCard
-							key={r.id}
-							rule={r}
-							index={i}
-							candidatePresets={candidatePresets}
-							candidateDirs={candidateDirs}
-							busy={busy}
-							onChange={(next) => onChangeRule(i, next)}
-							onRemove={() => onRemoveRule(i)}
-						/>
-					))}
-					<Button
-						type="button"
-						variant="outline"
-						fullWidth
-						disabled={busy}
-						onClick={onAddRule}
-					>
-						<Plus size={16} /> {i18n.t("presets:group.addRule")}
-					</Button>
-				</div>
-			</AccordionSection>
+			<div className={cx(columnClass, busy && authoringBusyClass)} inert={busy}>
+				<BaseIconCard
+					baseIconDraft={baseIconDraft}
+					onBaseIconDraftChange={onBaseIconDraftChange}
+				/>
+				<AccordionSection
+					title={i18n.t("presets:group.rules")}
+					defaultOpen={true}
+				>
+					<div className={rulesColumnClass}>
+						{conditionRules.map((r, i) => (
+							<ConditionRuleCard
+								key={r.id}
+								rule={r}
+								index={i}
+								candidatePresets={candidatePresets}
+								candidateDirs={candidateDirs}
+								busy={busy}
+								onChange={(next) => onChangeRule(i, next)}
+								onRemove={() => onRemoveRule(i)}
+							/>
+						))}
+						<Button
+							type="button"
+							variant="outline"
+							fullWidth
+							disabled={busy}
+							onClick={onAddRule}
+						>
+							<Plus size={16} /> {i18n.t("presets:group.addRule")}
+						</Button>
+					</div>
+				</AccordionSection>
+			</div>
 		</div>
 	);
 }

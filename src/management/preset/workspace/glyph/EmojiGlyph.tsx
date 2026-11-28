@@ -41,7 +41,11 @@ export function EmojiGlyph({ visual }: { visual: EmojiVisual }): JSX.Element {
 	// Old `clamp(4px, 100cqi, 96px)`: the emoji fills the frame's inline
 	// size. CEF 99 has no container units, so the shell's own border-box
 	// width — the same reference `cqi` resolved against — drives the size.
-	const fontPx = metrics ? Math.min(96, Math.max(4, metrics.boxWidth)) : null;
+	// Issue #794: at 100% the glyph ink (e.g. ✨) touched the tile edges;
+	// 85% keeps a consistent inset inside the colored frame.
+	const fontPx = metrics
+		? Math.min(96, Math.max(4, metrics.boxWidth * 0.85))
+		: null;
 	return (
 		<span
 			ref={shellRef}

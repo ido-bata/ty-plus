@@ -1,6 +1,10 @@
 import { type JSX, memo } from "react";
 import { GroupContainerCatalogTile } from "@/management/preset/group/ContainerCatalogTile";
 import { findGroupEntry } from "@/management/preset/group/catalog-helpers";
+import {
+	catalogTileFrameClass,
+	catalogTileSurfaceClass,
+} from "@/management/preset/group/catalog-tile-surface";
 import { synthesizeGroupPresetForTile } from "@/management/preset/group/synthesize";
 import { GridCatalogTile } from "@/management/preset/workspace/GridCatalogTile";
 import { presetRecordForCatalogRef } from "@/management/workspace/placement/resolve";
@@ -43,6 +47,17 @@ export const WorkspaceCatalogTileBody = memo(
 			(tileId.length > 28 ? `${tileId.slice(0, 14)}…` : tileId) ||
 			"Preset";
 
-		return <GridCatalogTile preset={preset} label={label} />;
+		// Issue #794: preset/unknown tiles used to render the bare glyph
+		// with no surface of their own — on the dark canvas the tile
+		// perimeter all but disappeared (the group branch already paints
+		// the catalog keyline via `GroupContainerCatalogTile`). Give this
+		// branch the same frame + keyline surface.
+		return (
+			<div className={catalogTileFrameClass}>
+				<div className={catalogTileSurfaceClass}>
+					<GridCatalogTile preset={preset} label={label} />
+				</div>
+			</div>
+		);
 	},
 );
