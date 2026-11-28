@@ -17,10 +17,26 @@ import { i18n } from "@/management/i18n/index";
 import type { PresetIconEditorDraft } from "@/management/preset/icon/editor-state";
 import { css, cx } from "@/styled-system/css";
 
-const ICON_TABS: { id: "text" | "emoji" | "image"; labelKey: string }[] = [
-	{ id: "text", labelKey: "presets:iconEditor.tabs.text" },
-	{ id: "emoji", labelKey: "presets:iconEditor.tabs.emoji" },
-	{ id: "image", labelKey: "presets:iconEditor.tabs.image" },
+const ICON_TABS: {
+	id: "text" | "emoji" | "image";
+	labelKey: string;
+	compactLabelKey: string;
+}[] = [
+	{
+		id: "text",
+		labelKey: "presets:iconEditor.tabs.text",
+		compactLabelKey: "presets:iconEditor.tabsCompact.text",
+	},
+	{
+		id: "emoji",
+		labelKey: "presets:iconEditor.tabs.emoji",
+		compactLabelKey: "presets:iconEditor.tabsCompact.emoji",
+	},
+	{
+		id: "image",
+		labelKey: "presets:iconEditor.tabs.image",
+		compactLabelKey: "presets:iconEditor.tabsCompact.image",
+	},
 ];
 
 type EditorApi = {
@@ -40,6 +56,13 @@ export type PresetIconEditorProps = {
 	browseDir?: string;
 	/** Label shown above the editor content (only used when preview is provided) */
 	label?: string;
+	/**
+	 * Typography for `label`. Defaults to `sectionLabelClass`; hosts whose
+	 * sibling field labels use a different treatment (e.g. the tool-shell
+	 * dialog's `shellFieldLabelClass`) pass it here so the icon label does
+	 * not read smaller than the rest (issue #793).
+	 */
+	labelClassName?: string;
 	/** When true, renders with outer frame (border + background). Default: true */
 	framed?: boolean;
 	/** When true, shows the Canvas tab (for easing presets). Default: false */
@@ -61,7 +84,10 @@ const emojiAnchorRowClass = css({
 	display: "flex",
 	minWidth: "0",
 	flexWrap: "wrap",
-	alignItems: "center",
+	// Issue #793: bottom-align so the picker button shares the swatch
+	// chip's band — the labeled swatch column is taller (label + chip),
+	// and center alignment used to drop the chip ~10px below the button.
+	alignItems: "flex-end",
 	// Match the sibling control rows (`textFieldsRowClass`,
 	// `canvasFieldsRowClass`) — an 8px gap, not 12px.
 	gap: "2",
@@ -97,7 +123,12 @@ const textFieldsRowClass = css({
 	// swatches were — let the trailing field wrap below instead of
 	// crushing the text input at narrow widths.
 	flexWrap: "wrap",
-	alignItems: "center",
+	// Issue #793: bottom-align — the labeled swatch columns are taller
+	// than the bare input/button, so `center` left the input's center
+	// ~10px above the swatch chips' center (staggered control edges).
+	// Bottom alignment puts the input and the chips on the same band;
+	// the field labels stay in the row's top strip above their chips.
+	alignItems: "flex-end",
 	gap: "2",
 });
 
@@ -112,7 +143,8 @@ const canvasFieldsRowClass = css({
 	display: "flex",
 	minWidth: "0",
 	flexWrap: "wrap",
-	alignItems: "center",
+	// Same bottom-alignment contract as `textFieldsRowClass` (issue #793).
+	alignItems: "flex-end",
 	gap: "2",
 });
 
@@ -129,7 +161,11 @@ const swatchFieldClass = css({
 	minWidth: "0",
 	flexShrink: "0",
 	flexDirection: "column",
-	alignItems: "center",
+	// Issue #793: right-align label and chip inside the field so the
+	// chip's right edge lands on the row's right key line (the "Image"
+	// segment / picker button edge above) instead of indenting under a
+	// label wider than the 32px swatch.
+	alignItems: "flex-end",
 	gap: "1",
 });
 
@@ -215,6 +251,9 @@ const previewInnerClass = css({
 	height: "full",
 	width: "full",
 	overflow: "hidden",
+	// Issue #793: glyphs (canvas curve, emoji) painted edge-to-edge with no
+	// clearance — a 4px inset keeps the mark off the tile's inner edges.
+	padding: "1",
 	"& > *": {
 		height: "full",
 		width: "full",
@@ -387,6 +426,7 @@ export function IconEditor({
 	preview,
 	browseDir,
 	label,
+	labelClassName,
 	framed = true,
 	showCanvasTab = false,
 }: PresetIconEditorProps): JSX.Element {
@@ -397,10 +437,15 @@ export function IconEditor({
 	const visibleTabs: {
 		id: "text" | "emoji" | "image" | "canvas";
 		labelKey: string;
+		compactLabelKey: string;
 	}[] = showCanvasTab
 		? [
 				...ICON_TABS,
-				{ id: "canvas" as const, labelKey: "presets:iconEditor.tabs.canvas" },
+				{
+					id: "canvas" as const,
+					labelKey: "presets:iconEditor.tabs.canvas",
+					compactLabelKey: "presets:iconEditor.tabsCompact.canvas",
+				},
 			]
 		: ICON_TABS;
 
@@ -411,6 +456,10 @@ export function IconEditor({
 			options={visibleTabs.map((tab) => ({
 				value: tab.id,
 				label: i18n.t(tab.labelKey),
+				// Issue #793: at narrow container widths the full labels
+				// clipped the trailing segment — compact labels keep every
+				// option reachable without horizontal scrolling.
+				compactLabel: i18n.t(tab.compactLabelKey),
 				disabled,
 			}))}
 			onChange={(next) => {
@@ -438,11 +487,13 @@ export function IconEditor({
 					/>
 					<LabeledColorSwatch
 						field="text"
-						label={i18n.t("presets:iconEditor.swatchText")}
+						// Issue #793: the canvas tab edits a curve, not text —
+						// "Text" mislabeled the stroke color swatch.
+						label={i18n.t("presets:iconEditor.swatchStroke")}
 						value={draft.color}
 						onChange={(v) => set({ color: v })}
 						disabled={disabled}
-						ariaLabel={i18n.t("common:settings.labels.textColor")}
+						ariaLabel={i18n.t("presets:iconEditor.swatchStrokeColor")}
 					/>
 				</div>
 			) : null}
@@ -469,10 +520,12 @@ export function IconEditor({
 		</div>
 	);
 
+	const resolvedLabelClass = labelClassName ?? sectionLabelClass;
+
 	if (!framed) {
 		return (
 			<>
-				{label ? <span className={sectionLabelClass}>{label}</span> : null}
+				{label ? <span className={resolvedLabelClass}>{label}</span> : null}
 				<div className={cx(unframedBodyClass, className)}>{body}</div>
 			</>
 		);
@@ -480,7 +533,7 @@ export function IconEditor({
 
 	return (
 		<>
-			{label ? <span className={sectionLabelClass}>{label}</span> : null}
+			{label ? <span className={resolvedLabelClass}>{label}</span> : null}
 			<div className={cx(framedBodyClass, className)}>{body}</div>
 		</>
 	);

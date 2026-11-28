@@ -372,6 +372,12 @@
 			"image": "Immagine",
 			"canvas": "Area disegno"
 		},
+		"tabsCompact": {
+			"text": "Txt",
+			"emoji": "Emo",
+			"image": "Img",
+			"canvas": "Diseg"
+		},
 		"emojiPicker": "Selettore emoji",
 		"selectImage": "Seleziona immagine icona",
 		"browseImage": "Sfoglia immagine icona",
@@ -381,7 +387,9 @@
 		"previewAria": "Anteprima icona",
 		"tabsAria": "Tipo di icona",
 		"swatchBackground": "Sfondo",
-		"swatchText": "Testo"
+		"swatchText": "Testo",
+		"swatchStroke": "Tratto",
+		"swatchStrokeColor": "Colore del tratto"
 	},
 	"catalogBrowser": {
 		"loading": "Caricamento",

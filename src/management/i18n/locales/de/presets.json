@@ -368,6 +368,12 @@
 			"image": "Bild",
 			"canvas": "Canvas"
 		},
+		"tabsCompact": {
+			"text": "Tex",
+			"emoji": "Emo",
+			"image": "Bild",
+			"canvas": "Cvs"
+		},
 		"emojiPicker": "Emoji-Auswahl",
 		"selectImage": "Symbolbild auswählen",
 		"browseImage": "Symbolbild durchsuchen",
@@ -377,7 +383,9 @@
 		"previewAria": "Symbolvorschau",
 		"tabsAria": "Symboltyp",
 		"swatchBackground": "Hintergrund",
-		"swatchText": "Text"
+		"swatchText": "Text",
+		"swatchStroke": "Strich",
+		"swatchStrokeColor": "Strichfarbe"
 	},
 	"catalogBrowser": {
 		"loading": "Wird geladen",

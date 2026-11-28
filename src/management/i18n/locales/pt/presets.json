@@ -372,6 +372,12 @@
 			"image": "Imagem",
 			"canvas": "Tela"
 		},
+		"tabsCompact": {
+			"text": "Txt",
+			"emoji": "Emo",
+			"image": "Img",
+			"canvas": "Tel"
+		},
 		"emojiPicker": "Seletor de emoji",
 		"selectImage": "Selecionar imagem do ícone",
 		"browseImage": "Procurar imagem do ícone",
@@ -381,7 +387,9 @@
 		"previewAria": "Pré-visualização do ícone",
 		"tabsAria": "Tipo de ícone",
 		"swatchBackground": "Fundo",
-		"swatchText": "Texto"
+		"swatchText": "Texto",
+		"swatchStroke": "Traço",
+		"swatchStrokeColor": "Cor do traço"
 	},
 	"catalogBrowser": {
 		"loading": "A carregar",

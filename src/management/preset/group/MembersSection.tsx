@@ -36,6 +36,10 @@ const removePathButtonClass = css({
 });
 
 const detectStatusClass = css({
+	// Issue #793: the status line moved into the button row — as its own
+	// row it consumed ~26px and pushed the path fields below the fold.
+	marginInlineStart: "auto",
+	minWidth: "0",
 	fontSize: "xs",
 	color: "text.muted",
 });
@@ -154,7 +158,11 @@ export function MembersSection({
 				<div className={buttonRowClass}>
 					{/* Issue #767: `fullWidth` here stretched "Add path" across
 					    ~75% of the row while "Detect candidates" stayed intrinsic —
-					    both actions now size to their labels. */}
+					    both actions now size to their labels. Issue #793: the
+					    Detect button still carried `fullWidth`, so the muted
+					    ghost spanned nearly the whole row and read as a
+					    disabled-looking dominant control — it is now an
+					    intrinsic `default` button next to Add path. */}
 					<Button
 						type="button"
 						variant="outline"
@@ -165,8 +173,7 @@ export function MembersSection({
 					</Button>
 					<Button
 						type="button"
-						variant="ghost"
-						fullWidth
+						variant="default"
 						disabled={ctx.busy}
 						onClick={detect}
 					>
@@ -174,20 +181,21 @@ export function MembersSection({
 						    dropdown/disclosure, not a scan action (issue #766). */}
 						<ScanSearch size={16} /> {i18n.t("presets:group.detectCandidates")}
 					</Button>
+					{/* Detection feedback (issue #766): candidates and the
+					    auto-added rule render below the fold, so the result
+					    count must be announced next to the action. Issue #793:
+					    it sits inline at the row's end instead of claiming a
+					    full row of its own. */}
+					{detectState !== "idle" ? (
+						<div className={detectStatusClass} role="status">
+							{detectState === "running"
+								? i18n.t("presets:group.detecting")
+								: detectCounts.presets + detectCounts.dirs === 0
+									? i18n.t("presets:group.detectNone")
+									: `${i18n.t("presets:group.detectPresets", { count: detectCounts.presets })} · ${i18n.t("presets:group.detectDirs", { count: detectCounts.dirs })}`}
+						</div>
+					) : null}
 				</div>
-
-				{/* Detection feedback (issue #766): candidates and the
-				    auto-added rule render below the fold, so the result
-				    count must be announced next to the action. */}
-				{detectState !== "idle" ? (
-					<div className={detectStatusClass} role="status">
-						{detectState === "running"
-							? i18n.t("presets:group.detecting")
-							: detectCounts.presets + detectCounts.dirs === 0
-								? i18n.t("presets:group.detectNone")
-								: `${i18n.t("presets:group.detectPresets", { count: detectCounts.presets })} · ${i18n.t("presets:group.detectDirs", { count: detectCounts.dirs })}`}
-					</div>
-				) : null}
 
 				<div className={columnClass}>
 					{pathLines.map((p, idx) => {

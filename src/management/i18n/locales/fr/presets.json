@@ -372,6 +372,12 @@
 			"image": "Image",
 			"canvas": "Canevas"
 		},
+		"tabsCompact": {
+			"text": "Txt",
+			"emoji": "Emo",
+			"image": "Img",
+			"canvas": "Cnv"
+		},
 		"emojiPicker": "Sélecteur d'emoji",
 		"selectImage": "Sélectionner l'image de l'icône",
 		"browseImage": "Parcourir l'image de l'icône",
@@ -381,7 +387,9 @@
 		"previewAria": "Aperçu de l'icône",
 		"tabsAria": "Type d'icône",
 		"swatchBackground": "Arrière-plan",
-		"swatchText": "Texte"
+		"swatchText": "Texte",
+		"swatchStroke": "Trait",
+		"swatchStrokeColor": "Couleur du trait"
 	},
 	"catalogBrowser": {
 		"loading": "Chargement",

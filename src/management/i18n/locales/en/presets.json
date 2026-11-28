@@ -368,6 +368,12 @@
 			"image": "Image",
 			"canvas": "Canvas"
 		},
+		"tabsCompact": {
+			"text": "Txt",
+			"emoji": "Emo",
+			"image": "Img",
+			"canvas": "Cvs"
+		},
 		"emojiPicker": "Emoji picker",
 		"selectImage": "Select icon image",
 		"browseImage": "Browse icon image",
@@ -377,7 +383,9 @@
 		"previewAria": "Icon preview",
 		"tabsAria": "Icon type",
 		"swatchBackground": "Background",
-		"swatchText": "Text"
+		"swatchText": "Text",
+		"swatchStroke": "Stroke",
+		"swatchStrokeColor": "Stroke Color"
 	},
 	"catalogBrowser": {
 		"loading": "Loading",

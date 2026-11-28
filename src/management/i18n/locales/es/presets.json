@@ -372,6 +372,12 @@
 			"image": "Imagen",
 			"canvas": "Lienzo"
 		},
+		"tabsCompact": {
+			"text": "Txt",
+			"emoji": "Emo",
+			"image": "Img",
+			"canvas": "Lien"
+		},
 		"emojiPicker": "Selector de emoji",
 		"selectImage": "Seleccionar imagen del icono",
 		"browseImage": "Examinar imagen del icono",
@@ -381,7 +387,9 @@
 		"previewAria": "Vista previa del icono",
 		"tabsAria": "Tipo de icono",
 		"swatchBackground": "Fondo",
-		"swatchText": "Texto"
+		"swatchText": "Texto",
+		"swatchStroke": "Trazo",
+		"swatchStrokeColor": "Color del trazo"
 	},
 	"catalogBrowser": {
 		"loading": "Cargando",

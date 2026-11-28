@@ -367,6 +367,12 @@
 			"image": "이미지",
 			"canvas": "캔버스"
 		},
+		"tabsCompact": {
+			"text": "텍",
+			"emoji": "이모",
+			"image": "이미",
+			"canvas": "캔"
+		},
 		"emojiPicker": "이모지 선택기",
 		"selectImage": "아이콘 이미지 선택",
 		"browseImage": "아이콘 이미지 찾아보기",
@@ -376,7 +382,9 @@
 		"previewAria": "아이콘 미리보기",
 		"tabsAria": "아이콘 유형",
 		"swatchBackground": "배경",
-		"swatchText": "텍스트"
+		"swatchText": "텍스트",
+		"swatchStroke": "선",
+		"swatchStrokeColor": "선 색상"
 	},
 	"catalogBrowser": {
 		"loading": "로드 중",

@@ -367,6 +367,12 @@
 			"image": "图片",
 			"canvas": "画布"
 		},
+		"tabsCompact": {
+			"text": "文",
+			"emoji": "表",
+			"image": "图",
+			"canvas": "画"
+		},
 		"emojiPicker": "表情选择器",
 		"selectImage": "选择图标图片",
 		"browseImage": "浏览图标图片",
@@ -376,7 +382,9 @@
 		"previewAria": "图标预览",
 		"tabsAria": "图标类型",
 		"swatchBackground": "背景",
-		"swatchText": "文字"
+		"swatchText": "文字",
+		"swatchStroke": "描边",
+		"swatchStrokeColor": "描边颜色"
 	},
 	"catalogBrowser": {
 		"loading": "加载中",

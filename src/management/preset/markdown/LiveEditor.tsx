@@ -43,7 +43,12 @@ const editorBaseClass = css({
 	borderRadius: "shell-sm",
 	borderWidth: "hairline",
 	borderStyle: "solid",
-	borderColor: "border.default",
+	// Issue #793: `border.default` (#0e0e0e) is darker than the panel, so
+	// the editable surface was nearly invisible next to the
+	// `border.control` fields (PathField / Textarea / Input) around it.
+	// An editable field is an identifiable control — it rests on
+	// `border.control` per the shared border contract (#754/#761).
+	borderColor: "border.control",
 	backgroundColor: "surface.widget",
 	paddingInline: "3",
 	paddingBlock: "3",
@@ -58,7 +63,10 @@ const editorBaseClass = css({
 	},
 });
 
-const editorMinHeightClass = css({ minHeight: "160px" });
+// Issue #793: 160px reserved ~7 lines for a field that usually holds one
+// sentence — the empty area pushed the image controls and preview a third
+// of the accordion down. 8rem still shows ~4 lines of context.
+const editorMinHeightClass = css({ minHeight: "8rem" });
 
 const findLineElement = (
 	node: Node | null,
