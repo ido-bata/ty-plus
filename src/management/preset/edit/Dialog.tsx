@@ -900,23 +900,26 @@ const initialFormState: FormState = {
 };
 
 const EditDialogFooter = ({
-	phase,
+	status,
 	canMutate,
 	onDelete,
 	onSave,
 	onCancel,
 }: {
-	phase: DialogStatus["phase"];
+	status: DialogStatus;
 	canMutate: boolean;
 	onDelete: () => void;
 	onSave: () => void;
 	onCancel: () => void;
 }): JSX.Element => {
 	const { t } = useTranslation("presets");
+	const phase = status.phase;
 	const isBusy = phase === "saving" || phase === "deleting";
-	// A load failure leaves nothing to mutate: Delete/Save would render
-	// permanently disabled, so the footer collapses to Cancel only.
-	const showMutatingActions = phase !== "error";
+	// Only a load failure leaves nothing to mutate: Delete/Save would
+	// render permanently disabled, so the footer collapses to Cancel
+	// only. Save/delete errors keep the actions so the user can retry.
+	const showMutatingActions =
+		status.phase !== "error" || status.kind !== "load";
 	return (
 		<DialogFooterActions>
 			{showMutatingActions ? (
@@ -1196,7 +1199,7 @@ export function PresetEditDialog(props: PresetEditDialogProps): JSX.Element {
 			footerClassName={dialogFooterClass}
 			footer={
 				<EditDialogFooter
-					phase={dialogStatus.phase}
+					status={dialogStatus}
 					canMutate={canMutate}
 					onDelete={() => void handleDelete()}
 					onSave={() => void handleSave()}
