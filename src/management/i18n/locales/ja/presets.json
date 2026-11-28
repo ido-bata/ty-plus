@@ -373,7 +373,9 @@
 		"iconTextAria": "アイコンテキスト",
 		"textPlaceholder": "2〜6文字",
 		"previewAria": "アイコンプレビュー",
-		"tabsAria": "アイコンタイプ"
+		"tabsAria": "アイコンタイプ",
+		"swatchBackground": "背景",
+		"swatchText": "文字"
 	},
 	"catalogBrowser": {
 		"loading": "読み込み中",

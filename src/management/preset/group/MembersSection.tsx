@@ -3,6 +3,7 @@ import { FolderOpen, Plus, ScanSearch, Trash2 } from "lucide-react";
 import type { JSX, ReactNode } from "react";
 import { i18n } from "@/management/i18n/index";
 import {
+	AuthoringBusyStatus,
 	AuthoringSection,
 	authoringBusyClass,
 } from "@/management/preset/authoring-layout";
@@ -128,6 +129,10 @@ export function MembersSection({
 				className={cx(columnClass, ctx.busy && authoringBusyClass)}
 				inert={ctx.busy}
 			>
+				{/* Issue #778: the dim-only busy state read as a disabled
+				    form — show the same spinner + status row the rules
+				    section uses while a save is in flight. */}
+				{ctx.busy ? <AuthoringBusyStatus /> : null}
 				<FolderScanDepthSelector
 					recursive={ctx.values.recursive ?? "false"}
 					onRecursiveChange={(v) =>

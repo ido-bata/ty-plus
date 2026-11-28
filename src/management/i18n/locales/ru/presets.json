@@ -382,7 +382,9 @@
 		"iconTextAria": "Текст значка",
 		"textPlaceholder": "2–6 символов",
 		"previewAria": "Предпросмотр значка",
-		"tabsAria": "Тип значка"
+		"tabsAria": "Тип значка",
+		"swatchBackground": "Фон",
+		"swatchText": "Текст"
 	},
 	"catalogBrowser": {
 		"loading": "Загрузка",

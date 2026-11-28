@@ -378,7 +378,9 @@
 		"iconTextAria": "Texte de l'icône",
 		"textPlaceholder": "2 à 6 caractères",
 		"previewAria": "Aperçu de l'icône",
-		"tabsAria": "Type d'icône"
+		"tabsAria": "Type d'icône",
+		"swatchBackground": "Arrière-plan",
+		"swatchText": "Texte"
 	},
 	"catalogBrowser": {
 		"loading": "Chargement",

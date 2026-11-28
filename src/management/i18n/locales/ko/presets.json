@@ -373,7 +373,9 @@
 		"iconTextAria": "아이콘 텍스트",
 		"textPlaceholder": "2~6자",
 		"previewAria": "아이콘 미리보기",
-		"tabsAria": "아이콘 유형"
+		"tabsAria": "아이콘 유형",
+		"swatchBackground": "배경",
+		"swatchText": "텍스트"
 	},
 	"catalogBrowser": {
 		"loading": "로드 중",

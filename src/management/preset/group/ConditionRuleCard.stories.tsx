@@ -120,6 +120,23 @@ export const PresetFilter: Story = {
 		expect(Math.abs(stripBox.width - hostBox.width)).toBeLessThanOrEqual(1);
 		// ~28rem decorator minus card padding and the remove button.
 		expect(hostBox.width).toBeGreaterThan(300);
+		// Issue #778: the candidate host is content-adaptive with a 12rem
+		// cap — with a single candidate it must shrink instead of keeping
+		// the old fixed 12rem dead space (192px).
+		const browser = canvasElement.querySelector<HTMLElement>(
+			".ty-shell-directory-browser",
+		);
+		if (!browser) throw new Error("directory browser not found");
+		const listHost = browser.parentElement;
+		if (!listHost) throw new Error("directory host not found");
+		const listHostHeight = listHost.getBoundingClientRect().height;
+		expect(listHostHeight).toBeLessThan(160);
+		// …and it must still render the candidate row, not collapse.
+		const entryRow = browser.querySelector<HTMLElement>(
+			"[data-entry-path]",
+		);
+		if (!entryRow) throw new Error("candidate entry row not found");
+		expect(entryRow.getBoundingClientRect().height).toBeGreaterThan(10);
 	},
 };
 

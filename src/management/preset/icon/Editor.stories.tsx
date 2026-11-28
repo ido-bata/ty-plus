@@ -126,6 +126,20 @@ export const Default: Story = {
 	// must sit inside the viewport unclipped.
 	play: async ({ canvasElement }) => {
 		expectCanvasLayout(canvasElement);
+		// Issue #778: the bg/text color swatches are identical chips — each
+		// must carry a visible field label so users can tell which draft
+		// color it edits (aria-label alone was not enough).
+		const bg = canvasElement.querySelector<HTMLElement>(
+			'[data-icon-swatch-field="background"]',
+		);
+		const fg = canvasElement.querySelector<HTMLElement>(
+			'[data-icon-swatch-field="text"]',
+		);
+		if (!bg || !fg) throw new Error("labeled color swatch fields not found");
+		expect(bg.textContent).toContain("Background");
+		expect(fg.textContent).toContain("Text");
+		expect(bg.querySelector('input[type="color"]')).not.toBeNull();
+		expect(fg.querySelector('input[type="color"]')).not.toBeNull();
 	},
 };
 

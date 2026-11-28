@@ -577,6 +577,11 @@ const emptyLabelClass = css({
 const listBodyClass = css({
 	display: "flex",
 	minWidth: 0,
+	// Issue #778: allow the body to shrink below its content height when an
+	// owner wraps the list in an auto-height / max-height host (e.g. the
+	// condition-rule card's 12rem cap) so the ScrollArea keeps scrolling
+	// instead of the host clipping dead space.
+	minHeight: 0,
 	flexDirection: "column",
 	borderRadius: "md",
 	borderWidth: "hairline",
