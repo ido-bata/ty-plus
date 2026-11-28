@@ -87,7 +87,7 @@ const managedRootOf = (supportRoot: string): string =>
  * managed root, so a stale sibling locator can never be picked by
  * accident.
  */
-export const findLocator = async (
+const findLocator = async (
 	managedRoot: string,
 ): Promise<{ initPath: string; raw: string } | null> => {
 	const root = normalizeSlashes(managedRoot).replace(/\/+$/, "");

@@ -49,7 +49,7 @@ import {
  * delegated handler, so the click is re-issued until the pooled surface
  * mounts.
  */
-export const openWorkspaceToolDialog = async (
+const openWorkspaceToolDialog = async (
 	ctx: E2EContext,
 	kind: string,
 	surfaceId: string,
