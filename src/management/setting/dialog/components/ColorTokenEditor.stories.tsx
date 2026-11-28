@@ -46,7 +46,17 @@ const meta = {
 export default meta;
 type Story = StoryObj<Args>;
 
-export const Default: Story = {};
+export const Default: Story = {
+	play: async ({ canvasElement }) => {
+		// Issue #791 (jobs6): the hex value input must show the complete
+		// #RRGGBB value — a capture read "#4afce" (5 digits), which would
+		// mean the input dropped a character.
+		const input =
+			canvasElement.querySelector<HTMLInputElement>("input[type='text']");
+		expect(input).not.toBeNull();
+		expect(input?.value).toBe("#4facfe");
+	},
+};
 
 export const Neutral: Story = {
 	args: {
