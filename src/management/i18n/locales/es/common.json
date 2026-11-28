@@ -231,6 +231,9 @@
 		"filterLevelAria": "Filtrar mensajes de la consola",
 		"filterSourceAria": "Filtrar mensajes por origen",
 		"filterScopeAria": "Filtrar mensajes por ámbito de sesión",
+		"filterLevelLabel": "Nivel",
+		"filterSourceLabel": "Origen",
+		"filterScopeLabel": "Ámbito",
 		"levels": {
 			"all": "Todos",
 			"log": "Registro",

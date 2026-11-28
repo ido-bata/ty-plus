@@ -50,6 +50,20 @@ function hexToRgba(hex: string, opacityPct: number): string {
 	return `rgba(${r},${g},${b},${alpha})`;
 }
 
+/**
+ * Whether a colour string actually consumes an opacity value (issue #795).
+ * `hexToRgba` renders `#rgb`/`#rrggbb`/longer-hex literals with the paired
+ * opacity, but anything else — `"transparent"` or an unparseable value —
+ * renders fully transparent, so its opacity control is dead and callers
+ * should park it in the disabled state.
+ */
+export function colorConsumesOpacity(value: string): boolean {
+	// Mirrors `hexToRgba`: `#rgb` expands to 6 digits; any hex literal of
+	// 6+ digits parses its first 6; 4–5 digit literals fall through to
+	// `transparent` like non-hex strings.
+	return /^#(?:[0-9a-f]{3}|[0-9a-f]{6,})$/i.test(value.trim());
+}
+
 function filePathToCssUrl(path: string): string {
 	const trimmed = path.trim();
 	if (!trimmed) {

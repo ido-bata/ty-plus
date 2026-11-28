@@ -44,23 +44,17 @@ const fileIcon = css({
 	width: "4",
 });
 
-const pathFieldOverrides = css({
-	"& button": { borderColor: "var(--color-ty-widget-border)" },
-	"& input": { borderColor: "var(--color-ty-widget-border)" },
-});
-
-const segmentedOverrides = css({
-	borderColor: "var(--color-ty-widget-border)",
-});
-
-const unselected = css({
-	backgroundColor: "surface.widget",
-	color: "text.muted",
-	_hover: {
-		backgroundColor: "var(--color-ty-ink-04)",
-		color: "text.primary",
-	},
-});
+/*
+ * Issue #795: the previous `pathFieldOverrides` / `segmentedOverrides`
+ * forced `--color-ty-widget-border` (#0e0e0e — invisible on the dark
+ * dialog) onto the path input, browse button, and segmented strip, so
+ * they read as unstyled next to the `border.control` number fields.
+ * `PathField` already defaults to `border.input` (= `border.control`)
+ * and `segmentedStripClass` to `border.subtle`; the shared defaults are
+ * the contract, so the overrides are gone. The redundant
+ * `unselectedClassName` duplicated `segmentedButtonInactiveClass` and
+ * was dropped for the same reason.
+ */
 
 const isUrlImagePath = (value: string): boolean =>
 	/^(https?:|data:image\/)/i.test(value.trim());
@@ -103,7 +97,6 @@ export function ImageLayerEditor({
 					browseSlot={<FileSearch className={fileIcon} />}
 					placeholder={t("workspaceShell.backgroundPanel.imagePathPlaceholder")}
 					uiSize="md"
-					className={pathFieldOverrides}
 				/>
 			</div>
 			<div className={fieldGroup}>
@@ -118,10 +111,8 @@ export function ImageLayerEditor({
 						value: fit,
 						label: t(`workspaceShell.backgroundPanel.imageFits.${fit}`),
 					}))}
-					className={segmentedOverrides}
 					buttonClassName={segmentedButtonQuietClass}
 					selectedClassName={QUIET_SELECTED_CLASS}
-					unselectedClassName={unselected}
 				/>
 			</div>
 			<div className={fieldGroup}>
@@ -140,10 +131,8 @@ export function ImageLayerEditor({
 						value: repeat,
 						label: t(`workspaceShell.backgroundPanel.imageRepeats.${repeat}`),
 					}))}
-					className={segmentedOverrides}
 					buttonClassName={segmentedButtonQuietClass}
 					selectedClassName={QUIET_SELECTED_CLASS}
-					unselectedClassName={unselected}
 				/>
 			</div>
 			{(layer.imageFit ?? "cover") === "auto" ? (

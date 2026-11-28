@@ -381,8 +381,8 @@
 		"textPlaceholder": "2〜6文字",
 		"previewAria": "アイコンプレビュー",
 		"tabsAria": "アイコンタイプ",
-		"swatchBackground": "背景",
-		"swatchText": "文字",
+		"swatchBackground": "背景色",
+		"swatchText": "文字色",
 		"swatchStroke": "線",
 		"swatchStrokeColor": "線の色"
 	},

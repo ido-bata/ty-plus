@@ -231,6 +231,9 @@
 		"filterLevelAria": "콘솔 메시지 필터링",
 		"filterSourceAria": "소스별 콘솔 메시지 필터링",
 		"filterScopeAria": "세션 범위별 콘솔 메시지 필터링",
+		"filterLevelLabel": "레벨",
+		"filterSourceLabel": "소스",
+		"filterScopeLabel": "범위",
 		"levels": {
 			"all": "전체",
 			"log": "로그",

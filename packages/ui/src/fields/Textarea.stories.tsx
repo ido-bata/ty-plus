@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 import { expect } from "storybook/test";
 
+import { assertBorderToken } from "@/storybook/quality/border";
 import { expectCanvasLayout } from "@/storybook/quality/layout";
 
 import { Textarea } from "./Textarea";
@@ -40,6 +41,13 @@ export const Disabled: Story = {
 	args: {
 		disabled: true,
 		defaultValue: "Read-only content here.",
+	},
+	play: async ({ canvasElement }) => {
+		const textarea = canvasElement.querySelector("textarea");
+		if (!textarea) throw new Error("textarea not found");
+		// Issue #798: disabled chrome drops to the passive `border.subtle`
+		// tier, matching Input/SearchField (#768 contract).
+		assertBorderToken(textarea, "subtle");
 	},
 };
 

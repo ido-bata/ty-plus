@@ -45,6 +45,20 @@ export const WithoutLabel: Story = {
 
 export const Disabled: Story = {
 	args: { checked: true, disabled: true },
+	play: async ({ canvasElement }) => {
+		const input = canvasElement.querySelector<HTMLInputElement>("input");
+		if (!input) throw new Error("input not found");
+		// Issue #798: the label is part of the control — it must dim and
+		// stop promising interaction together with the box. It once stayed
+		// at full opacity with a pointer cursor, so the disabled row read
+		// as enabled.
+		const label = canvasElement.querySelector("label");
+		if (!label) throw new Error("label not found");
+		expect(getComputedStyle(label).cursor).toBe("not-allowed");
+		const text = label.querySelector("span");
+		if (!text) throw new Error("label text not found");
+		expect(getComputedStyle(text).opacity).toBe("0.5");
+	},
 };
 
 export const SmallSize: Story = {

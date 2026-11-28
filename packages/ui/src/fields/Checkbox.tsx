@@ -102,6 +102,17 @@ const labelClass = css({
 	cursor: "pointer",
 });
 
+/*
+ * Issue #798: the label is part of the control's hit area, so it must
+ * dim and stop promising interaction together with the box. It once
+ * stayed at full opacity with a pointer cursor while the box dimmed to
+ * 0.5, so a disabled checked row read as an enabled one. The dim lands
+ * on the text span only — putting it on the `<label>` would double-dim
+ * the already-dimmed input inside.
+ */
+const labelDisabledClass = css({ cursor: "not-allowed" });
+const labelTextDisabledClass = css({ opacity: 0.5 });
+
 export function Checkbox({
 	indeterminate = false,
 	label,
@@ -141,10 +152,16 @@ export function Checkbox({
 		return control;
 	}
 
+	const disabled = props.disabled === true;
 	return (
-		<label className={labelClass} htmlFor={id}>
+		<label
+			className={cx(labelClass, disabled ? labelDisabledClass : "")}
+			htmlFor={id}
+		>
 			{control}
-			<span>{label}</span>
+			<span className={disabled ? labelTextDisabledClass : undefined}>
+				{label}
+			</span>
 		</label>
 	);
 }

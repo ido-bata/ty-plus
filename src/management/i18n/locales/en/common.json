@@ -231,6 +231,9 @@
 		"filterLevelAria": "Filter console messages",
 		"filterSourceAria": "Filter console messages by source",
 		"filterScopeAria": "Filter console messages by session scope",
+		"filterLevelLabel": "Level",
+		"filterSourceLabel": "Source",
+		"filterScopeLabel": "Scope",
 		"levels": {
 			"all": "All",
 			"log": "Log",

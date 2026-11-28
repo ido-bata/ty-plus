@@ -382,8 +382,8 @@
 		"textPlaceholder": "2-6 characters",
 		"previewAria": "Icon preview",
 		"tabsAria": "Icon type",
-		"swatchBackground": "Background",
-		"swatchText": "Text",
+		"swatchBackground": "Background color",
+		"swatchText": "Text color",
 		"swatchStroke": "Stroke",
 		"swatchStrokeColor": "Stroke Color"
 	},

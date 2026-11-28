@@ -118,6 +118,22 @@ export const Color: Story = {
 				Math.abs(swatch.offsetWidth - swatch.offsetHeight),
 			).toBeLessThanOrEqual(1);
 		}
+		// Issue #795: the capped 3rem preset tracks used to leave a dead
+		// strip on the right — `justify-content: space-between` now lands
+		// the last swatch flush with the hex field's right edge.
+		const hexInput = Array.from(
+			canvasElement.querySelectorAll<HTMLInputElement>("input"),
+		).find((el) => el.type === "text" && el.value.startsWith("#"));
+		const lastSwatch = swatches[swatches.length - 1];
+		if (!hexInput || !lastSwatch) {
+			throw new Error("hex input or preset swatches not found");
+		}
+		expect(
+			Math.abs(
+				lastSwatch.getBoundingClientRect().right -
+					hexInput.getBoundingClientRect().right,
+			),
+		).toBeLessThanOrEqual(2);
 	},
 };
 

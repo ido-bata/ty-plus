@@ -1,11 +1,23 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Decorator, Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 import { expect } from "storybook/test";
+import { borderTopColor, resolveBorderToken } from "@/storybook/quality/border";
 import { NumberField } from "./NumberField";
+
+// Issue #798: `width: "full"` is the form-row contract, but the bare
+// canvas stretched the field ~1260px while `Interactive` sat in a 240px
+// column — captures read as different components. Same field-column
+// fixture as ListSelect/RangeField (#768).
+const fieldColumn: Decorator = (Story) => (
+	<div style={{ width: 280 }}>
+		<Story />
+	</div>
+);
 
 const meta = {
 	title: "Shared/Fields/NumberField",
 	component: NumberField,
+	decorators: [fieldColumn],
 	argTypes: {
 		label: { control: "text" },
 		value: { control: "number" },
@@ -75,6 +87,15 @@ export const WithBoundedRange: Story = {
 export const Disabled: Story = {
 	args: {
 		disabled: true,
+	},
+	play: async ({ canvasElement }) => {
+		const input = canvasElement.querySelector<HTMLInputElement>("input");
+		if (!input) throw new Error("number input not found");
+		// Issue #798: disabled text-entry chrome drops to the passive
+		// `border.subtle` tier (the #768 contract) — `border.control` at
+		// the 0.5 dim still read as an enabled field.
+		expect(borderTopColor(input)).toBe(resolveBorderToken("subtle"));
+		expect(borderTopColor(input)).not.toBe(resolveBorderToken("control"));
 	},
 };
 

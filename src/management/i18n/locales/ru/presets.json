@@ -390,8 +390,8 @@
 		"textPlaceholder": "2–6 символов",
 		"previewAria": "Предпросмотр значка",
 		"tabsAria": "Тип значка",
-		"swatchBackground": "Фон",
-		"swatchText": "Текст",
+		"swatchBackground": "Цвет фона",
+		"swatchText": "Цвет текста",
 		"swatchStroke": "Линия",
 		"swatchStrokeColor": "Цвет линии"
 	},

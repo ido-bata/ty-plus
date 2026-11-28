@@ -44,6 +44,12 @@ const presetGrid = css({
 	// swatches stay a sane picker size; narrower columns still shrink
 	// evenly via the `0` minimum.
 	gridTemplateColumns: "repeat(5, minmax(0, var(--ty-space-12)))",
+	// Issue #795: the capped 3rem tracks left ~80px of dead strip on the
+	// right of wide editors while the hex field below ran full width.
+	// `space-between` distributes that slack as gap so the last swatch
+	// lands flush with the field's right edge; narrow columns still
+	// shrink the tracks via the `0` minimum.
+	justifyContent: "space-between",
 	gap: "1",
 });
 
@@ -55,8 +61,12 @@ const presetSwatch = css({
 	height: "auto",
 	minHeight: "0",
 	paddingInline: "0",
-	borderColor: "var(--color-ty-widget-border)",
-	_hover: { borderColor: "var(--color-ty-widget-border-strong)" },
+	// Issue #795: every preset is a near-black swatch — the old
+	// `--color-ty-widget-border` (#0e0e0e) outline was invisible against
+	// both the panel and the swatches themselves. `border.control` is the
+	// identifiable-control tier the shared `ColorSwatch` already uses.
+	borderColor: "border.control",
+	_hover: { borderColor: "interactive.focus" },
 });
 
 const colorRing = css({

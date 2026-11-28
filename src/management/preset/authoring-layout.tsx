@@ -104,12 +104,22 @@ export function AuthoringGrid({
 export function AuthoringField({
 	children,
 	span = 6,
+	className,
+	inert = false,
 }: {
 	children: ReactNode;
 	span?: 2 | 3 | 4 | 6;
+	/** Extra classes on the field wrapper (e.g. `authoringBusyClass`). */
+	className?: string;
+	/** Blocks interaction while keeping the field visible (busy states). */
+	inert?: boolean;
 }): JSX.Element {
 	const spanClass = spanClassBy[span];
-	return <div className={cx(fieldBaseClass, spanClass)}>{children}</div>;
+	return (
+		<div className={cx(fieldBaseClass, spanClass, className)} inert={inert}>
+			{children}
+		</div>
+	);
 }
 
 export function AuthoringSection({

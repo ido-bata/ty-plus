@@ -154,11 +154,19 @@ const galleryTitleClass = css({
 	// the header row. Two clamped lines keep the full title readable at
 	// every gallery zoom level.
 	lineClamp: 2,
+	// jobs6 (#792): reserve the two-line box even when the title fits on
+	// one line, so every card's description starts at the same offset —
+	// a wrapped title no longer drops its description below the
+	// neighbors' baseline. xs(12px) × tight(1.25) × 2 lines = 30px.
+	minHeight: "7.5",
 	flex: "1",
 	minWidth: 0,
 });
 const galleryDescriptionClass = css({
-	fontSize: "2xs",
+	// jobs6 (#792): `2xs` resolves to 0.5rem (8px) — below the legibility
+	// floor for secondary copy. `xs` (12px) keeps the description
+	// subordinate to the title without going unreadable at gallery zoom.
+	fontSize: "xs",
 	color: "text.muted",
 	lineHeight: "relaxed",
 	lineClamp: 2,
@@ -189,8 +197,11 @@ const itemCardClass = css({
 	_hover: { backgroundColor: "surface.overlay" },
 });
 const itemThumbClass = css({
-	width: "24",
-	height: "24",
+	// jobs6 (#792): the 96px (24) thumb forced every card row to ~100px
+	// for ~50px of text, leaving most of the results area empty. 64px
+	// (16) still reads as a preview and lets ~40% more rows fit.
+	width: "16",
+	height: "16",
 	flexShrink: 0,
 });
 const itemBodyClass = css({
@@ -207,7 +218,10 @@ const itemHeaderClass = css({
 	justifyContent: "space-between",
 	gap: "2",
 	minWidth: 0,
-	flex: "1",
+	// jobs6 (#792): `flex: 1` let this row absorb the card's spare height,
+	// pinning the description row to the card bottom and leaving a large
+	// dead gap under the title. The body now packs top-down; the thumb
+	// owns the row height.
 });
 const itemTitleClass = css({
 	fontSize: "sm",
@@ -372,6 +386,9 @@ const sidePanelTagSectionClass = css({
 	gap: "1",
 	paddingInline: "3",
 	paddingBlock: "2",
+	// jobs6 (#792): the last visible tag row sat flush against the
+	// clear-filters divider; a deeper bottom inset restores breathing room.
+	paddingBottom: "3",
 	borderTopWidth: "hairline",
 	borderTopStyle: "solid",
 	borderTopColor: "border.default",
@@ -533,7 +550,9 @@ const footerTextClass = css({
 	color: "text.muted",
 });
 const footerZoomTextClass = css({
-	fontSize: "2xs",
+	// jobs6 (#792): `2xs` is 8px — below the legibility floor; match the
+	// counter's `xs`.
+	fontSize: "xs",
 	color: "text.muted",
 });
 
@@ -751,18 +770,9 @@ function GalleryCard(props: {
 				<div className={galleryInfoHeaderClass}>
 					<h3 className={galleryTitleClass}>{item.name}</h3>
 					<div className={galleryActionsClass}>
-						<DownloadProgressIconButton
-							iconSize={9}
-							onClick={onDownload}
-							isDownloaded={isDownloaded}
-							isComplete={isComplete}
-							stage={isDownloading ? downloadState?.stage : undefined}
-							bytesLoaded={
-								isDownloading ? downloadState?.bytesLoaded : undefined
-							}
-							bytesTotal={isDownloading ? downloadState?.bytesTotal : undefined}
-							className={iconSquareSmallClass}
-						/>
+						{/* jobs6 (#792): the download action is pinned rightmost
+						    so its slot does not shift left on cards that also
+						    carry a Notion link. */}
 						{item.notionPageUrl ? (
 							<IconButton
 								size="sm"
@@ -776,6 +786,18 @@ function GalleryCard(props: {
 								<Icon icon={ExternalLink} size={12} />
 							</IconButton>
 						) : null}
+						<DownloadProgressIconButton
+							iconSize={9}
+							onClick={onDownload}
+							isDownloaded={isDownloaded}
+							isComplete={isComplete}
+							stage={isDownloading ? downloadState?.stage : undefined}
+							bytesLoaded={
+								isDownloading ? downloadState?.bytesLoaded : undefined
+							}
+							bytesTotal={isDownloading ? downloadState?.bytesTotal : undefined}
+							className={iconSquareSmallClass}
+						/>
 					</div>
 				</div>
 				{hasDescription ? (
@@ -831,18 +853,7 @@ function CardItem(props: {
 				<div className={itemDescriptionRowClass}>
 					<p className={itemDescriptionClass}>{item.description ?? ""}</p>
 					<div className={itemActionsClass}>
-						<DownloadProgressIconButton
-							iconSize={10}
-							onClick={onDownload}
-							isDownloaded={isDownloaded}
-							isComplete={isComplete}
-							stage={isDownloading ? downloadState?.stage : undefined}
-							bytesLoaded={
-								isDownloading ? downloadState?.bytesLoaded : undefined
-							}
-							bytesTotal={isDownloading ? downloadState?.bytesTotal : undefined}
-							className={borderedButtonClass}
-						/>
+						{/* jobs6 (#792): download pinned rightmost (see GalleryCard). */}
 						{item.notionPageUrl ? (
 							<IconButton
 								size="sm"
@@ -856,6 +867,18 @@ function CardItem(props: {
 								<Icon icon={ExternalLink} size={12} />
 							</IconButton>
 						) : null}
+						<DownloadProgressIconButton
+							iconSize={10}
+							onClick={onDownload}
+							isDownloaded={isDownloaded}
+							isComplete={isComplete}
+							stage={isDownloading ? downloadState?.stage : undefined}
+							bytesLoaded={
+								isDownloading ? downloadState?.bytesLoaded : undefined
+							}
+							bytesTotal={isDownloading ? downloadState?.bytesTotal : undefined}
+							className={borderedButtonClass}
+						/>
 					</div>
 				</div>
 			</div>
@@ -885,7 +908,17 @@ function EmptyState(props: {
 		disconnectedReason,
 		disconnectedReasonTag,
 	} = props;
-	if (loading) return null;
+	if (loading) {
+		// jobs6 (#792): a bare `null` left the results area completely
+		// blank during the catalog fetch — indistinguishable from an
+		// empty catalog. Show a muted loading label instead (no
+		// `data-online-preset-empty` marker: this is not an empty state).
+		return (
+			<div className={emptyStateClass} data-online-preset-loading>
+				<p className={emptyStateTextClass}>{i18n.t("common:app.loading")}</p>
+			</div>
+		);
+	}
 	if (disconnected) {
 		const retry = gatewayRetryAffordance(disconnectedReasonTag);
 		return (
@@ -1233,6 +1266,20 @@ function ListTableView(props: {
 							</td>
 							<td className={listTableCellClass}>
 								<div className={listTableActionsClass}>
+									{/* jobs6 (#792): download pinned rightmost (see GalleryCard). */}
+									{item.notionPageUrl ? (
+										<IconButton
+											size="sm"
+											variant="ghost"
+											title={i18n.t("online:catalog.openNotion")}
+											onClick={() =>
+												openUrlInDefaultBrowser(item.notionPageUrl ?? "")
+											}
+											className={borderedButtonClass}
+										>
+											<Icon icon={ExternalLink} size={12} />
+										</IconButton>
+									) : null}
 									<DownloadProgressIconButton
 										iconSize={10}
 										onClick={() => void onDownload(item.presetId)}
@@ -1255,19 +1302,6 @@ function ListTableView(props: {
 										}
 										className={borderedButtonClass}
 									/>
-									{item.notionPageUrl ? (
-										<IconButton
-											size="sm"
-											variant="ghost"
-											title={i18n.t("online:catalog.openNotion")}
-											onClick={() =>
-												openUrlInDefaultBrowser(item.notionPageUrl ?? "")
-											}
-											className={borderedButtonClass}
-										>
-											<Icon icon={ExternalLink} size={12} />
-										</IconButton>
-									) : null}
 								</div>
 							</td>
 						</tr>
@@ -1803,7 +1837,13 @@ export function PresetLibrary(): JSX.Element {
 				className={gridGalleryClass}
 				data-preset-gallery
 				style={{
-					gridTemplateColumns: `repeat(auto-fill, minmax(${140 * scale}px, 1fr))`,
+					// jobs6 (#792): scaling only the column minimum left the
+					// `1fr` tracks at full width, so 90%/110% zoom painted
+					// pixel-identical cards. `zoom` reflows the whole grid —
+					// card size, type and thumbnail all scale like a real
+					// zoom, and the column count follows the effective width.
+					zoom: scale,
+					gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))",
 				}}
 			>
 				{filtered.map((item) => (

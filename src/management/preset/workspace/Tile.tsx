@@ -22,7 +22,10 @@ const missingIconClass = css({
 	overflow: "hidden",
 	padding: "0.5px",
 	fontWeight: "medium",
-	color: "text.primary",
+	// Issue #794: the missing-state "?" used the same bright `text.primary`
+	// as a live preset glyph, so an unavailable tile read as fully
+	// active. Muted ink marks it as a placeholder state.
+	color: "text.muted",
 });
 
 const missingLabelClass = css({
@@ -33,7 +36,7 @@ const missingLabelClass = css({
 	whiteSpace: "nowrap",
 	textAlign: "center",
 	lineHeight: "none",
-	color: "text.primary",
+	color: "text.muted",
 	fontSize: "var(--missing-glyph-font-px)",
 });
 

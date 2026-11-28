@@ -1,5 +1,5 @@
-import { Icon, IconButton, listItemTitleClass } from "@ty-plus/ui";
-import { RefreshCw, X } from "lucide-react";
+import { Button, Icon, listItemTitleClass } from "@ty-plus/ui";
+import { FilterX, RefreshCw } from "lucide-react";
 import type { JSX } from "react";
 import { i18n } from "@/management/i18n/index";
 import { gatewayRetryAffordance } from "@/management/online/catalog/gateway-retry";
@@ -62,7 +62,17 @@ export function PresetLibraryEmptyState(
 		disconnectedReason,
 		disconnectedReasonTag,
 	} = props;
-	if (loading) return null;
+	if (loading) {
+		// jobs6 (#792): a bare `null` left the panel completely blank during
+		// the catalog fetch. Show a muted loading label — deliberately
+		// without the `data-online-preset-empty` marker, since this is not
+		// an empty state.
+		return (
+			<div className={emptyClass} data-online-preset-loading>
+				<p className={emptyTextClass}>{i18n.t("common:app.loading")}</p>
+			</div>
+		);
+	}
 	if (disconnected) {
 		const retry = gatewayRetryAffordance(disconnectedReasonTag);
 		return (
@@ -77,15 +87,19 @@ export function PresetLibraryEmptyState(
 				{disconnectedReason ? (
 					<p className={disconnectedReasonClass}>{disconnectedReason}</p>
 				) : null}
-				<IconButton
-					size="sm"
-					variant="ghost"
+				{/* jobs6 (#792): a bare icon button gave no visible
+				    affordance — the retry action carries its label, same
+				    contract as the catalog dialog's EmptyState (#767). */}
+				<Button
+					variant="outline"
+					uiSize="sm"
 					title={retry.title}
 					disabled={retry.disabled}
 					onClick={onRefresh}
 				>
-					<Icon icon={RefreshCw} size={16} />
-				</IconButton>
+					<Icon icon={RefreshCw} size={16} />{" "}
+					{i18n.t("online:catalog.refreshCatalog")}
+				</Button>
 			</div>
 		);
 	}
@@ -95,14 +109,15 @@ export function PresetLibraryEmptyState(
 				<p className={emptyTextClass}>
 					{i18n.t("online:catalog.emptyNoCatalog")}
 				</p>
-				<IconButton
-					size="sm"
-					variant="ghost"
+				<Button
+					variant="outline"
+					uiSize="sm"
 					title={i18n.t("online:catalog.refreshCatalog")}
 					onClick={onRefresh}
 				>
-					<Icon icon={RefreshCw} size={16} />
-				</IconButton>
+					<Icon icon={RefreshCw} size={16} />{" "}
+					{i18n.t("online:catalog.refreshCatalog")}
+				</Button>
 			</div>
 		);
 	}
@@ -112,14 +127,17 @@ export function PresetLibraryEmptyState(
 				<p className={emptyTextClass}>
 					{i18n.t("online:catalog.emptyNoMatch")}
 				</p>
-				<IconButton
-					size="sm"
-					variant="ghost"
+				{/* jobs6 (#792): labelled clear-filters action — a bare "×"
+				    was indistinguishable from a dismiss control. */}
+				<Button
+					variant="outline"
+					uiSize="sm"
 					title={i18n.t("online:catalog.clearAllFilters")}
 					onClick={onClearFilters}
 				>
-					<Icon icon={X} size={12} />
-				</IconButton>
+					<Icon icon={FilterX} size={16} />{" "}
+					{i18n.t("online:catalog.clearAllFilters")}
+				</Button>
 			</div>
 		);
 	}
