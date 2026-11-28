@@ -17,7 +17,7 @@ import {
 	type FileEntrySelectionMode,
 } from "@/management/storage/ui/file-entry/FileEntryList";
 import { readSettings } from "@/management/workspace/persistence/store";
-import { css } from "@/styled-system/css";
+import { css, cx } from "@/styled-system/css";
 
 type RootKind = "presets" | "scripts" | "plugins" | "other";
 
@@ -47,6 +47,21 @@ const browserContainerClass = css({
 	width: "full",
 	minWidth: "0",
 	flexDirection: "column",
+});
+
+/**
+ * The 256px `browserContainerClass` height exists for the live
+ * `FileEntryList`. The CEP-Node fallback is a single line of text — keeping
+ * the fixed height there produced ~200px of dead space that pushed every
+ * control below it off-screen (issue #766).
+ */
+const browserFallbackClass = css({
+	display: "flex",
+	paddingBlock: "2",
+});
+
+const browserFallbackBodyClass = css({
+	minHeight: "12",
 });
 
 const browserInnerClass = css({
@@ -207,53 +222,51 @@ export function FolderDirectoryPicker({
 				}}
 			/>
 
-			<div className={browserContainerClass}>
-				{cepBrowser ? (
-					<>
-						<div className={browserInnerClass}>
-							<FileEntryList
-								selectionMode={selectionMode}
-								entries={entries}
-								loading={loading}
-								canGoUp={canGoUp}
-								onGoUp={() => {
-									const service = createCepNodeFileBrowserService({
-										win: window,
-									});
-									const parent = service.getParentDirectory(currentPath);
-									if (parent && parent !== currentPath) setCurrentPath(parent);
-								}}
-								onEntryClick={(entry) => {
-									if (entry.isDirectory) {
-										setCurrentPath(entry.path);
-									}
-								}}
-								onEntryActivate={(entry) => {
-									if (entry.isDirectory) setCurrentPath(entry.path);
-								}}
-								isSelected={(entryPath) =>
-									selectedPathsLocal.includes(entryPath)
+			{cepBrowser ? (
+				<div className={browserContainerClass}>
+					<div className={browserInnerClass}>
+						<FileEntryList
+							selectionMode={selectionMode}
+							entries={entries}
+							loading={loading}
+							canGoUp={canGoUp}
+							onGoUp={() => {
+								const service = createCepNodeFileBrowserService({
+									win: window,
+								});
+								const parent = service.getParentDirectory(currentPath);
+								if (parent && parent !== currentPath) setCurrentPath(parent);
+							}}
+							onEntryClick={(entry) => {
+								if (entry.isDirectory) {
+									setCurrentPath(entry.path);
 								}
-								onToggleSelected={(entryPath) => toggleSelected(entryPath)}
-								selectedSummary={selectedSummary}
-								loadingLabel={t("folderDirectoryPicker.loading")}
-								emptyLabel={
-									selectionMode === "folders"
-										? t("folderDirectoryPicker.emptyFolders")
-										: t("folderDirectoryPicker.emptyItems")
-								}
-								upLabel={t("folderDirectoryPicker.goUp")}
-							/>
-						</div>
+							}}
+							onEntryActivate={(entry) => {
+								if (entry.isDirectory) setCurrentPath(entry.path);
+							}}
+							isSelected={(entryPath) => selectedPathsLocal.includes(entryPath)}
+							onToggleSelected={(entryPath) => toggleSelected(entryPath)}
+							selectedSummary={selectedSummary}
+							loadingLabel={t("folderDirectoryPicker.loading")}
+							emptyLabel={
+								selectionMode === "folders"
+									? t("folderDirectoryPicker.emptyFolders")
+									: t("folderDirectoryPicker.emptyItems")
+							}
+							upLabel={t("folderDirectoryPicker.goUp")}
+						/>
+					</div>
 
-						{/* candidatePresets kept for rule auto-pick behavior; do not render a detected list here */}
-					</>
-				) : (
-					<div className={browserEmptyClass}>
+					{/* candidatePresets kept for rule auto-pick behavior; do not render a detected list here */}
+				</div>
+			) : (
+				<div className={browserFallbackClass}>
+					<div className={cx(browserEmptyClass, browserFallbackBodyClass)}>
 						<span>{t("folderDirectoryPicker.cepNodeRequired")}</span>
 					</div>
-				)}
-			</div>
+				</div>
+			)}
 		</div>
 	);
 }

@@ -58,7 +58,9 @@ const emojiAnchorRowClass = css({
 	minWidth: "0",
 	flexWrap: "wrap",
 	alignItems: "center",
-	gap: "3",
+	// Match the sibling control rows (`textFieldsRowClass`,
+	// `canvasFieldsRowClass`) — an 8px gap, not 12px.
+	gap: "2",
 });
 
 const emojiPickerBtnLayoutClass = css({
@@ -107,31 +109,40 @@ const fieldsWrapperClass = css({
 	minWidth: "0",
 });
 
-const bodyPreviewGridClass = css({
-	display: "grid",
+/**
+ * Preview + controls row. This used to be a two-row grid with the preview
+ * tile spanning both rows: an `auto`-sized grid distributes a spanning
+ * item's extra height across its tracks, so the 6rem tile stretched the
+ * two `auto` rows and pushed ~20px of dead space between the segmented
+ * tabs and the fields row (issue #766). A flex row cannot redistribute
+ * height into its children, so the rows keep their content height and the
+ * tile simply centers against the column.
+ */
+const bodyPreviewRowClass = css({
+	display: "flex",
 	minWidth: "0",
-	gridTemplateColumns: "auto minmax(0,1fr)",
-	gridTemplateRows: "auto auto",
-	columnGap: "2",
-	rowGap: "1",
+	alignItems: "center",
+	gap: "2",
+});
+
+const bodyPreviewColumnClass = css({
+	display: "flex",
+	minWidth: "0",
+	flex: "1",
+	flexDirection: "column",
+	gap: "1",
 });
 
 /**
  * Fixed-size preview tile. The preview must not stretch with the right
- * column's content height: `alignSelf: "center"` keeps the grid item from
- * stretching across the two auto rows, and the fixed `width` + square
- * `aspectRatio` pin the tile size regardless of the fields column.
+ * column's content height: the fixed `width` + square `aspectRatio` pin
+ * the tile size regardless of the fields column.
  */
 const previewBoxClass = css({
-	gridRow: "span 2",
-	display: "grid",
+	display: "flex",
 	width: "6rem",
 	aspectRatio: "1/1",
 	flexShrink: "0",
-	gridTemplateColumns: "minmax(0, 1fr)",
-	gridTemplateRows: "minmax(0, 1fr)",
-	justifySelf: "start",
-	alignSelf: "center",
 	overflow: "hidden",
 	borderRadius: "shell-sm",
 	backgroundColor: "surface.widget",
@@ -214,6 +225,7 @@ function DefaultEmojiFields({ draft, set, disabled }: EditorApi): JSX.Element {
 					value={draft.bgColor}
 					onChange={(v) => set({ bgColor: v })}
 					disabled={disabled}
+					aria-label={i18n.t("common:settings.labels.backgroundColor")}
 				/>
 			</div>
 			{emojiPickerOpen ? (
@@ -287,11 +299,13 @@ function DefaultTextFields({
 				value={draft.bgColor}
 				onChange={(v) => set({ bgColor: v })}
 				disabled={disabled}
+				aria-label={i18n.t("common:settings.labels.backgroundColor")}
 			/>
 			<ColorSwatch
 				value={draft.color}
 				onChange={(v) => set({ color: v })}
 				disabled={disabled}
+				aria-label={i18n.t("common:settings.labels.textColor")}
 			/>
 		</div>
 	);
@@ -351,11 +365,13 @@ export function IconEditor({
 						value={draft.bgColor}
 						onChange={(v) => set({ bgColor: v })}
 						disabled={disabled}
+						aria-label={i18n.t("common:settings.labels.backgroundColor")}
 					/>
 					<ColorSwatch
 						value={draft.color}
 						onChange={(v) => set({ color: v })}
 						disabled={disabled}
+						aria-label={i18n.t("common:settings.labels.textColor")}
 					/>
 				</div>
 			) : null}
@@ -363,15 +379,17 @@ export function IconEditor({
 	);
 
 	const body = preview ? (
-		<div className={bodyPreviewGridClass}>
+		<div className={bodyPreviewRowClass}>
 			<div
 				aria-label={i18n.t("presets:iconEditor.previewAria")}
 				className={previewBoxClass}
 			>
 				<div className={previewInnerClass}>{preview}</div>
 			</div>
-			<div className={fieldsWrapperClass}>{tabs}</div>
-			<div className={fieldsWrapperClass}>{fields}</div>
+			<div className={bodyPreviewColumnClass}>
+				<div className={fieldsWrapperClass}>{tabs}</div>
+				{fields}
+			</div>
 		</div>
 	) : (
 		<div className={stackedBodyClass}>

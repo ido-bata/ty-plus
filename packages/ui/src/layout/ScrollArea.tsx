@@ -30,6 +30,15 @@ const base = css({
 		scrollbarColor:
 			"rgba(var(--text-r),var(--text-g),var(--text-b),0.4) transparent",
 	},
+	// CEF 99 ignores `scrollbar-color` entirely and falls back to
+	// `::-webkit-scrollbar` styling — where `app.css` hides the thumb until
+	// hover (`*:hover::-webkit-scrollbar-thumb`). Without this override a
+	// scrollable dialog body shows zero overflow affordance at rest, which
+	// is exactly the defect `scrollbar-color` was added to prevent
+	// (issue #766). Utilities layer beats the `base`-layer hover rule.
+	"&::-webkit-scrollbar-thumb": {
+		visibility: "visible",
+	},
 });
 
 const gutterStable = css({
