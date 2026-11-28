@@ -231,6 +231,9 @@
 		"filterLevelAria": "Фильтровать сообщения консоли",
 		"filterSourceAria": "Фильтровать сообщения консоли по источнику",
 		"filterScopeAria": "Фильтровать сообщения консоли по области сеанса",
+		"filterLevelLabel": "Уровень",
+		"filterSourceLabel": "Источник",
+		"filterScopeLabel": "Область",
 		"levels": {
 			"all": "Все",
 			"log": "Журнал",

@@ -231,6 +231,9 @@
 		"filterLevelAria": "コンソールメッセージをフィルター",
 		"filterSourceAria": "ソース別にコンソールメッセージをフィルター",
 		"filterScopeAria": "セッション範囲でコンソールメッセージをフィルター",
+		"filterLevelLabel": "レベル",
+		"filterSourceLabel": "ソース",
+		"filterScopeLabel": "範囲",
 		"levels": {
 			"all": "すべて",
 			"log": "ログ",

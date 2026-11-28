@@ -231,6 +231,9 @@
 		"filterLevelAria": "Konsolennachrichten filtern",
 		"filterSourceAria": "Konsolennachrichten nach Quelle filtern",
 		"filterScopeAria": "Konsolennachrichten nach Sitzungsbereich filtern",
+		"filterLevelLabel": "Stufe",
+		"filterSourceLabel": "Quelle",
+		"filterScopeLabel": "Bereich",
 		"levels": {
 			"all": "Alle",
 			"log": "Protokoll",
