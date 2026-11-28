@@ -32,6 +32,8 @@ import { debugCases } from "./cases/debug";
 import { hostCases } from "./cases/host";
 import { journeyCases } from "./cases/journey";
 import { journeySuiteCases } from "./cases/journeys";
+import { onboardingCases } from "./cases/onboarding";
+import { onlineCases } from "./cases/online";
 import { presetCreateCases } from "./cases/preset-create";
 import { resilienceCases } from "./cases/resilience";
 import { settingsCases } from "./cases/settings";
@@ -66,6 +68,8 @@ const SUITES: Record<string, E2ECase[]> = {
 	host: hostCases,
 	journey: journeyCases,
 	journeys: journeySuiteCases,
+	online: onlineCases,
+	onboarding: onboardingCases,
 	"preset-create": presetCreateCases,
 	workspace: workspaceCases,
 };
