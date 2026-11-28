@@ -4,7 +4,11 @@ import { FolderOpen } from "lucide-react";
 import { useState } from "react";
 import { expect } from "storybook/test";
 
-import { borderTopColor, resolveBorderToken } from "@/storybook/quality/border";
+import {
+	assertBorderToken,
+	borderTopColor,
+	resolveBorderToken,
+} from "@/storybook/quality/border";
 import { expectCanvasLayout } from "@/storybook/quality/layout";
 
 import { PathField } from "./PathField";
@@ -85,6 +89,19 @@ export const Disabled: Story = {
 	args: {
 		browseSlot: BrowseIcon,
 		disabled: true,
+	},
+	play: async ({ canvasElement }) => {
+		// Issue #798: the whole disabled field — path input AND the flush
+		// browse button — rests on the passive `border.subtle` tier.
+		const input = canvasElement.querySelector<HTMLInputElement>(
+			"[data-path-field] input",
+		);
+		const button = canvasElement.querySelector<HTMLButtonElement>(
+			"[data-path-field] button",
+		);
+		if (!input || !button) throw new Error("path field parts not found");
+		assertBorderToken(input, "subtle");
+		assertBorderToken(button, "subtle");
 	},
 };
 

@@ -62,6 +62,13 @@ const defaultState = css({
 		borderColor: "interactive.focus",
 		boxShadow: "var(--color-focus-ring)",
 	},
+	// Issue #798: disabled text-entry chrome drops to the passive
+	// `border.subtle` tier — the same contract SearchField's wrapper
+	// adopted in #768. `border.control` at the 0.5 element dim still
+	// read as an enabled field (number-field disabled capture). It lives
+	// on the default state only, so a disabled field with an `error`
+	// keeps its `status.error` signal.
+	_disabled: { borderColor: "border.subtle" },
 });
 
 const numberSpinnerHidden = css({

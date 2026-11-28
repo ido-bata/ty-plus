@@ -123,13 +123,18 @@ const inlineTrailingCls = css({
 	color: "text.muted",
 });
 
+// jobs6 (#792): a 12px icon with 2px padding gave a ~16px hit target —
+// well under the ~24px comfortable minimum. Bump the padding to get a
+// 24px target and pull the extra footprint back with a matching negative
+// margin so the field's layout width is unchanged.
 const clearButton = css({
 	display: "inline-flex",
 	flexShrink: 0,
 	alignItems: "center",
 	justifyContent: "center",
 	borderRadius: "shell-sm",
-	padding: "0.5",
+	padding: "1.5",
+	margin: "-1",
 	color: "text.muted",
 	outline: "none",
 	transitionProperty: "color, background-color, border-color",

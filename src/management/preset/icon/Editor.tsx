@@ -11,7 +11,14 @@ import {
 	sectionLabelClass,
 } from "@ty-plus/ui";
 import { FileSearch, Smile } from "lucide-react";
-import { type JSX, type ReactNode, useEffect, useRef, useState } from "react";
+import {
+	type JSX,
+	type ReactNode,
+	useEffect,
+	useId,
+	useRef,
+	useState,
+} from "react";
 import { selectFile } from "@/management/ae/cep/dialog-shim/bolt";
 import { i18n } from "@/management/i18n/index";
 import type { PresetIconEditorDraft } from "@/management/preset/icon/editor-state";
@@ -70,8 +77,7 @@ const emojiAnchorRowClass = css({
 	gap: "2",
 });
 
-const emojiPickerBtnLayoutClass = css({
-	minWidth: "0",
+const emojiPickerFieldClass = css({
 	flex: "1",
 });
 
@@ -139,7 +145,20 @@ const swatchFieldClass = css({
 	gap: "1",
 });
 
-const swatchLabelClass = css({
+/**
+ * Every control in a fields row carries the same label-over-control
+ * structure (issue #794): the text input and the emoji picker button used
+ * to sit ~10px higher than the labeled swatches because only the swatches
+ * had a label row, leaving the 32px controls on staggered baselines.
+ */
+const labeledControlClass = css({
+	display: "flex",
+	minWidth: "0",
+	flexDirection: "column",
+	gap: "1",
+});
+
+const controlLabelClass = css({
 	whiteSpace: "nowrap",
 });
 
@@ -161,7 +180,7 @@ function LabeledColorSwatch({
 }): JSX.Element {
 	return (
 		<div className={swatchFieldClass} data-icon-swatch-field={field}>
-			<span className={cx(fieldLabelClass, swatchLabelClass)}>{label}</span>
+			<span className={cx(fieldLabelClass, controlLabelClass)}>{label}</span>
 			<ColorSwatch
 				value={value}
 				onChange={onChange}
@@ -264,7 +283,10 @@ const framedBodyClass = css({
 	borderRadius: "shell-sm",
 	borderWidth: "hairline",
 	borderStyle: "solid",
-	borderColor: "border.default",
+	// Issue #794: this frame is the innermost of three nested borders
+	// (rules panel → rule card → icon editor) — a quieter keyline keeps
+	// the levels distinguishable instead of reading as one heavy box.
+	borderColor: "border.subtle",
 	backgroundColor: "surface.widget",
 	padding: "2",
 });
@@ -288,16 +310,24 @@ function DefaultEmojiFields({ draft, set, disabled }: EditorApi): JSX.Element {
 	return (
 		<div ref={emojiAnchorRef} className={emojiAnchorClass}>
 			<div className={emojiAnchorRowClass}>
-				<Button
-					variant="default"
-					uiSize="md"
-					className={emojiPickerBtnLayoutClass}
-					onClick={() => setEmojiPickerOpen((open) => !open)}
-					disabled={disabled}
-					start={<Smile size={16} aria-hidden />}
-				>
-					{i18n.t("presets:iconEditor.emojiPicker")}
-				</Button>
+				{/* Issue #794: the picker button carries the same
+				    label-over-control structure as the swatch fields so the
+				    32px controls share one baseline instead of staggering. */}
+				<div className={cx(labeledControlClass, emojiPickerFieldClass)}>
+					<span className={cx(fieldLabelClass, controlLabelClass)}>
+						{i18n.t("presets:iconEditor.tabs.emoji")}
+					</span>
+					<Button
+						variant="default"
+						uiSize="md"
+						fullWidth
+						onClick={() => setEmojiPickerOpen((open) => !open)}
+						disabled={disabled}
+						start={<Smile size={16} aria-hidden />}
+					>
+						{i18n.t("presets:iconEditor.emojiPicker")}
+					</Button>
+				</div>
 				<LabeledColorSwatch
 					field="background"
 					label={i18n.t("presets:iconEditor.swatchBackground")}
@@ -360,11 +390,21 @@ function DefaultTextFields({
 	disabled,
 	textMaxLength,
 }: EditorApi): JSX.Element {
+	const inputId = useId();
 	return (
 		<div className={textFieldsRowClass}>
-			<div className={textInputWrapperClass}>
+			{/* Issue #794: the input joins the same label-over-control
+			    structure as the swatch fields — without a label row its
+			    32px box sat ~10px above the swatch baselines. */}
+			<div className={cx(labeledControlClass, textInputWrapperClass)}>
+				<label
+					className={cx(fieldLabelClass, controlLabelClass)}
+					htmlFor={inputId}
+				>
+					{i18n.t("presets:iconEditor.iconTextAria")}
+				</label>
 				<Input
-					aria-label={i18n.t("presets:iconEditor.iconTextAria")}
+					id={inputId}
 					value={draft.text}
 					maxLength={textMaxLength}
 					onChange={(e) => set({ text: e.target.value })}

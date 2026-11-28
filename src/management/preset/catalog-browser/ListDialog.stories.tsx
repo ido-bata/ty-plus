@@ -243,6 +243,18 @@ export const ListGroupExpand: Story = {
 		await waitFor(() => {
 			expect(canvasElement.querySelectorAll("[data-preset-id]").length).toBe(2);
 		});
+		// jobs6 (#792): leave the story in the expanded end-state — the
+		// screenshot pipeline captures the post-play render, and ending
+		// collapsed made the capture indistinguishable from `Default`.
+		const reExpand = canvasElement.querySelector<HTMLButtonElement>(
+			'button[aria-label="Expand group"]',
+		);
+		if (!reExpand) throw new Error("group expand toggle not found");
+		await userEvent.click(reExpand);
+		await waitFor(() => {
+			expect(canvasElement.querySelectorAll("[data-preset-id]").length).toBe(4);
+		});
+		expect(canvasElement.textContent).toContain("Alpha Glow");
 	},
 };
 
@@ -325,6 +337,22 @@ export const IconGroupDrilldown: Story = {
 		await userEvent.click(back);
 		await waitFor(() => {
 			expect(canvasElement.textContent).toContain("Delta Keyer");
+		});
+		// jobs6 (#792): re-enter the group so the captured end-state shows
+		// the drilldown contents — ending on the root page made this
+		// capture identical to `IconsView`.
+		const reopenGroup = canvasElement.querySelector<HTMLButtonElement>(
+			'button[aria-label="Open group Favourites"]',
+		);
+		if (!reopenGroup) throw new Error("group open button not found");
+		// Double-click opens the group directly (same `onOpen` path as the
+		// Enter keydown verified above) — one interaction instead of two,
+		// which keeps the story inside the 30s per-test budget.
+		await userEvent.dblClick(reopenGroup);
+		await waitFor(() => {
+			expect(canvasElement.textContent).toContain("All presets");
+			expect(canvasElement.textContent).toContain("Alpha Glow");
+			expect(canvasElement.textContent).toContain("Beta Shake");
 		});
 	},
 };

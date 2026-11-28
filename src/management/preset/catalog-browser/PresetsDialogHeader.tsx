@@ -1,4 +1,4 @@
-import { Icon, IconButton, SearchField, ViewModeToggle } from "@ty-plus/ui";
+import { cx, Icon, IconButton, SearchField, ViewModeToggle } from "@ty-plus/ui";
 import { LoaderCircle, RefreshCw, Search } from "lucide-react";
 import type { JSX, ReactNode } from "react";
 import { i18n } from "@/management/i18n/index";
@@ -45,20 +45,14 @@ const searchFieldClass = css({
 	paddingBlock: "0",
 });
 
+// jobs6 (#792): the reload control used to re-skin `IconButton` with a
+// local border/background recipe (allowlisted ui-override). The shared
+// `default` variant already paints the bordered toolbar look, so the
+// button now rides the variant/size contract — `md` (32px) is exactly the
+// toolbar slot height, which also fixes the ~4px-short button that sat
+// above the neighbors' centerline.
 const reloadButtonClass = css({
-	height: "full",
-	minHeight: "0",
-	width: "8",
 	flexShrink: "0",
-	alignSelf: "stretch",
-	borderRadius: "shell-sm",
-	borderWidth: "hairline",
-	borderStyle: "solid",
-	borderColor: "border.default",
-	backgroundColor: "surface.widget/50",
-	padding: "0",
-	color: "text.muted",
-	_hover: { color: "text.primary" },
 });
 
 const loadingInlineClass = css({
@@ -80,7 +74,10 @@ const loadingTextClass = css({ truncate: true });
 
 const errorTextClass = css({
 	truncate: true,
-	color: "status.error",
+	// jobs6 (#792): `status.error` red inside the search field read as a
+	// field-validation error, not a catalog-load failure. The body error
+	// block carries the alert semantics; the trailing slot stays muted.
+	color: "text.muted",
 });
 
 const streamInfoRowClass = css({
@@ -112,6 +109,14 @@ const progressFillClass = css({
 });
 
 const countClass = css({ flexShrink: "0", fontVariantNumeric: "tabular-nums" });
+
+// jobs6 (#792): "20/50" and "20 items" rendered identically, so the live
+// stream fraction was indistinguishable from the settled count. The
+// fraction is the progressing readout — give it primary weight.
+const streamFractionClass = css({
+	color: "text.primary",
+	fontWeight: "medium",
+});
 
 type SearchStatusBarProps = {
 	loadPhase: HeaderLoadPhase;
@@ -171,7 +176,7 @@ function SearchStatusBar(props: SearchStatusBarProps): ReactNode {
 							}}
 						/>
 					</span>
-					<span className={countClass}>
+					<span className={cx(countClass, streamFractionClass)}>
 						{presetsLength}/{streamTotal}
 					</span>
 				</>
@@ -245,8 +250,8 @@ export function PresetsDialogHeader(
 					onEnterIconView={onEnterIconView}
 				/>
 				<IconButton
-					variant="ghost"
-					size="sm"
+					variant="default"
+					size="md"
 					className={reloadButtonClass}
 					aria-label={i18n.t("presets:catalogBrowser.reload")}
 					title={i18n.t("presets:catalogBrowser.reload")}

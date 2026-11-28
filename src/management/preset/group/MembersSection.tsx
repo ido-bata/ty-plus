@@ -125,14 +125,14 @@ export function MembersSection({
 
 	return (
 		<AuthoringSection title="" span={6}>
+			{/* Issue #794: the status row must sit OUTSIDE the dimmed/inert
+			    container — inside it the spinner and "Saving…" label were
+			    dimmed to 50% along with the controls and nearly invisible. */}
+			{ctx.busy ? <AuthoringBusyStatus /> : null}
 			<div
 				className={cx(columnClass, ctx.busy && authoringBusyClass)}
 				inert={ctx.busy}
 			>
-				{/* Issue #778: the dim-only busy state read as a disabled
-				    form — show the same spinner + status row the rules
-				    section uses while a save is in flight. */}
-				{ctx.busy ? <AuthoringBusyStatus /> : null}
 				<FolderScanDepthSelector
 					recursive={ctx.values.recursive ?? "false"}
 					onRecursiveChange={(v) =>

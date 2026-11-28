@@ -164,53 +164,82 @@ const rowBaseStyle = css({
 	textAlign: "left",
 	cursor: "text",
 	fontFamily: "mono",
-	fontSize: "text-2xs",
+	// Issue #796: rows rendered at `text-2xs` (9px) — below comfortable
+	// scan size for a log surface. `text-xs` (10px) is the floor for
+	// dense mono chrome; the meta columns below get the same size with
+	// a stronger color mix instead of a smaller size.
+	fontSize: "text-xs",
 	lineHeight: "relaxed",
 	userSelect: "text",
 });
 
+// Issue #796: warn/error rows were two nearly identical gray washes
+// (`dbg.warn-bg` 4% vs `dbg.error-bg` 6%). Tint them with the shared
+// status hues so severity reads at a glance; the level chip below uses
+// the same hues for its text.
 const rowWarnStyle = css({
-	backgroundColor: "dbg.warn-bg",
+	backgroundColor:
+		"color-mix(in srgb, var(--color-status-warning) 12%, transparent)",
 });
 
 const rowErrorStyle = css({
-	backgroundColor: "dbg.error-bg",
+	backgroundColor:
+		"color-mix(in srgb, var(--color-status-error) 14%, transparent)",
 });
 
+// Meta columns (timestamp, source chip) stay quieter than the message
+// text but must remain scannable on the dark panel — `text.muted` at
+// 9px was the readability complaint in the jobs6 review. Panda's static
+// extraction needs the literal inside each `css()` call, so the value is
+// repeated rather than shared through a const.
 const sourceStyle = css({
 	flexShrink: 0,
 	paddingInline: "1",
 	borderRadius: "md",
-	fontSize: "text-2xs",
-	color: "text.muted",
-	backgroundColor: "colorMix(in srgb, surface.widget 50%, transparent)",
+	fontSize: "text-xs",
+	color: "color-mix(in srgb, var(--color-ty-dbg-text) 72%, transparent)",
+	// `colorMix(...)` (camelCase, unresolved token path) compiled to an
+	// invalid declaration the browser dropped, leaving the chip with no
+	// background at all — use the real `color-mix()` + `var()` form.
+	backgroundColor:
+		"color-mix(in srgb, var(--color-surface-widget) 50%, transparent)",
 	maxWidth: "10rem",
 	truncate: true,
 });
 
 const timeStyle = css({
 	flexShrink: 0,
-	color: "text.muted",
+	color: "color-mix(in srgb, var(--color-ty-dbg-text) 72%, transparent)",
 	minWidth: "14.5",
-	fontSize: "text-2xs",
+	fontSize: "text-xs",
 });
 
 const levelChipStyle = css({
 	flexShrink: 0,
+	// Minimum-width column so the message text starts at the same x on
+	// every row — "LOG" and "ERROR" have different intrinsic widths and
+	// previously shifted the message column (issue #796). `minWidth`,
+	// not `width`: longer localized labels (e.g. "Avertissement",
+	// "Предупреждение") grow the chip instead of clipping.
+	minWidth: "12",
+	display: "inline-flex",
+	alignItems: "center",
+	justifyContent: "center",
 	paddingInline: "1",
 	borderRadius: "md",
-	fontSize: "text-2xs",
+	fontSize: "text-xs",
 	fontWeight: "semibold",
 	textTransform: "uppercase",
 	letterSpacing: "wider",
-	backgroundColor: "colorMix(in srgb, surface.widget 50%, transparent)",
+	backgroundColor:
+		"color-mix(in srgb, var(--color-surface-widget) 50%, transparent)",
 });
 
 const levelLogStyle = css({ color: "dbg.debug" });
 const levelDebugStyle = css({ color: "dbg.debug" });
 const levelInfoStyle = css({ color: "dbg.info-level" });
-const levelWarnStyle = css({ color: "dbg.warn-level" });
-const levelErrorStyle = css({ color: "dbg.error-level" });
+const levelWarnStyle = css({ color: "status.warning" });
+const levelErrorStyle = css({ color: "status.error" });
 
 const textLogStyle = css({ color: "dbg.log-text" });
 const textDebugStyle = css({ color: "dbg.log-text" });
@@ -307,15 +336,46 @@ interface FilterTabsProps {
 	onChange: (f: FilterLevel) => void;
 }
 
-const filterTabsStyle = css({
+const filterRowStyle = css({
+	display: "flex",
+	alignItems: "center",
+	gap: "2",
 	paddingInline: "2",
 	paddingBlock: "1.5",
 });
 
+// Issue #796: the three filter strips stacked identical-looking rows of
+// chips — two of them showed a selected "All" at once and read as one
+// duplicated control. A small group caption gives each strip its axis
+// (level / source / scope) at a glance.
+const filterGroupLabelStyle = css({
+	flexShrink: 0,
+	fontSize: "text-3xs",
+	fontWeight: "medium",
+	letterSpacing: "wider",
+	textTransform: "uppercase",
+	color: "text.muted",
+	userSelect: "none",
+});
+
+// The strip keeps its own `minWidth: 0` + `overflow-x: auto`, so it
+// absorbs the remaining row width and scrolls instead of pushing the
+// caption out.
+const filterStripStyle = css({
+	flex: "1",
+	minWidth: "0",
+});
+
 function FilterTabs({ filter, onChange }: FilterTabsProps): JSX.Element {
 	return (
-		<div className={filterTabsStyle}>
+		<div className={filterRowStyle}>
+			<span className={filterGroupLabelStyle}>
+				{i18n.t("common:debugConsole.filterLevelLabel", {
+					defaultValue: "Level",
+				})}
+			</span>
 			<SegmentedControl
+				className={filterStripStyle}
 				options={FILTERS.map((f) => ({
 					value: f.value,
 					label: i18n.t(f.labelKey, { defaultValue: f.labelFallback }),
@@ -335,18 +395,19 @@ interface SourceFilterTabsProps {
 	onChange: (s: FilterSource) => void;
 }
 
-const sourceFilterStyle = css({
-	paddingInline: "2",
-	paddingBlock: "1.5",
-});
-
 function SourceFilterTabs({
 	sourceFilter,
 	onChange,
 }: SourceFilterTabsProps): JSX.Element {
 	return (
-		<div className={sourceFilterStyle}>
+		<div className={filterRowStyle}>
+			<span className={filterGroupLabelStyle}>
+				{i18n.t("common:debugConsole.filterSourceLabel", {
+					defaultValue: "Source",
+				})}
+			</span>
 			<SegmentedControl
+				className={filterStripStyle}
 				options={SOURCE_FILTERS.map((f) => ({
 					value: f.value,
 					label: i18n.t(f.labelKey, { defaultValue: f.labelFallback }),
@@ -408,8 +469,14 @@ function ScopeFilterTabs({
 	onChange,
 }: ScopeFilterTabsProps): JSX.Element {
 	return (
-		<div className={filterTabsStyle}>
+		<div className={filterRowStyle}>
+			<span className={filterGroupLabelStyle}>
+				{i18n.t("common:debugConsole.filterScopeLabel", {
+					defaultValue: "Scope",
+				})}
+			</span>
 			<SegmentedControl
+				className={filterStripStyle}
 				options={SCOPES.map((f) => ({
 					value: f.value,
 					label: i18n.t(f.labelKey, { defaultValue: f.labelFallback }),
@@ -460,10 +527,6 @@ const titleStyle = css({
 	color: "text.primary",
 });
 
-const autoScrollDimStyle = css({
-	opacity: 0.4,
-});
-
 const messagesContainerStyle = css({
 	flex: "1",
 	minHeight: 0,
@@ -474,8 +537,11 @@ const messagesContainerStyle = css({
 const emptyStateStyle = css({
 	padding: "4",
 	textAlign: "center",
-	fontSize: "text-2xs",
-	color: "text.muted",
+	// Issue #796: "No messages" at 9px muted was easy to miss in the blank
+	// log area — match the row type size and lift it slightly above
+	// `text.muted`.
+	fontSize: "text-xs",
+	color: "color-mix(in srgb, var(--color-ty-dbg-text) 60%, transparent)",
 	userSelect: "none",
 });
 
@@ -591,7 +657,6 @@ export function Panel({
 					// Clear button.
 					active={autoScroll}
 					onClick={() => onAutoScrollChange(!autoScroll)}
-					className={autoScroll ? "" : autoScrollDimStyle}
 					aria-label={i18n.t(
 						autoScroll
 							? "common:debugConsole.contextMenu.disableAutoScroll"

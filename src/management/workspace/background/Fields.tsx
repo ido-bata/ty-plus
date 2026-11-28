@@ -41,9 +41,25 @@ const colorSwatch = css({
 	borderRadius: "shell-sm",
 	borderWidth: "hairline",
 	borderStyle: "solid",
-	borderColor: "var(--color-ty-widget-border)",
+	// Issue #795: the swatch is an identifiable control — it rests on the
+	// `border.control` tier like the shared `ColorSwatch`, not the
+	// near-invisible `--color-ty-widget-border` (#0e0e0e) that let dark
+	// colours bleed into the panel.
+	borderColor: "border.control",
 	backgroundColor: "surface.widget",
+	// `padding`/`paddingInline` must all be zeroed: the `md` size class
+	// still applies `paddingInline: 2.5`, which inset the native colour
+	// chip while the transparent badge painted edge-to-edge — the two
+	// states read as different controls (jobs6 finding).
 	padding: "0",
+	paddingInline: "0",
+	paddingBlock: "0",
+	// Paint the chip to the full content box, matching the badge bounds.
+	"&::-webkit-color-swatch-wrapper": { padding: "0" },
+	"&::-webkit-color-swatch": {
+		borderRadius: "shell-sm",
+		border: 0,
+	},
 });
 
 /**
@@ -59,10 +75,12 @@ const transparentBadge = css({
 	// Issue #768: the badge overlays the swatch edge-to-edge, so it must
 	// carry the same perimeter border the `<input type="color">` swatch
 	// has — otherwise the checkerboard bleeds into the canvas with no
-	// bounding stroke.
+	// bounding stroke. Issue #795: match the swatch's `border.control`
+	// tier so the border does not change between the hex and transparent
+	// states.
 	borderWidth: "hairline",
 	borderStyle: "solid",
-	borderColor: "var(--color-ty-widget-border)",
+	borderColor: "border.control",
 	backgroundColor: "surface.panel",
 	backgroundImage:
 		"linear-gradient(45deg, var(--color-ty-ink-08) 25%, transparent 25%, transparent 75%, var(--color-ty-ink-08) 75%), linear-gradient(45deg, var(--color-ty-ink-08) 25%, transparent 25%, transparent 75%, var(--color-ty-ink-08) 75%)",
@@ -71,16 +89,18 @@ const transparentBadge = css({
 	pointerEvents: "none",
 });
 
-const colorText = css({
-	borderColor: "var(--color-ty-widget-border)",
-});
-
 export function NumberField(props: {
 	label: string;
 	value: number;
 	min: number;
 	max: number;
 	onValueChange: (value: number) => void;
+	/**
+	 * Issue #795: lets callers park a dead control (e.g. a pattern opacity
+	 * whose colour is `"transparent"`) in the shared disabled treatment
+	 * instead of leaving a live-looking no-op.
+	 */
+	disabled?: boolean;
 }): JSX.Element {
 	return (
 		<RangeField
@@ -89,6 +109,7 @@ export function NumberField(props: {
 			min={props.min}
 			max={props.max}
 			onChange={props.onValueChange}
+			disabled={props.disabled}
 			// Issue #768: the readout sits beside `md` colour/text controls
 			// in these editors — match their height tier.
 			numberUiSize="md"
@@ -130,7 +151,6 @@ export function ColorField(props: {
 					value={props.value}
 					onChange={(e) => props.onColorChange(e.currentTarget.value)}
 					uiSize="md"
-					className={colorText}
 				/>
 			</div>
 		</div>

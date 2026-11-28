@@ -11,7 +11,11 @@ type Args = {
 };
 
 const baseArgs: Args = {
-	status: "3 layers · 1920x1080",
+	// Issue #795: the status slot mirrors the dialog's real states
+	// (save/load feedback), which never include comp dimensions — the old
+	// "3 layers · 1920x1080" fixture implied a 16:9 frame the thumbnail
+	// does not have and got flagged as an aspect defect.
+	status: "Saved",
 	background: "#1e1e1e",
 	withPattern: false,
 };

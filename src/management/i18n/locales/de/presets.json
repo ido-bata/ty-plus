@@ -376,8 +376,8 @@
 		"textPlaceholder": "2–6 Zeichen",
 		"previewAria": "Symbolvorschau",
 		"tabsAria": "Symboltyp",
-		"swatchBackground": "Hintergrund",
-		"swatchText": "Text"
+		"swatchBackground": "Hintergrundfarbe",
+		"swatchText": "Textfarbe"
 	},
 	"catalogBrowser": {
 		"loading": "Wird geladen",
