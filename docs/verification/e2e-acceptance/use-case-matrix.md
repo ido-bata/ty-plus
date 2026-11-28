@@ -8,7 +8,7 @@
 
 | ID | ユースケース | 主な確認対象 | 自動化 | OS | 状態 | 証跡/Issue |
 | --- | --- | --- | --- | --- | --- | --- |
-| UC-A01 | 初回起動 → onboarding 10 ステップ完了 → workspace 表示 | managed root 生成、`settings/app.json`、`workspaces/workspace-1.json`、`presets.json`、panel DOM | semi | both | 未実施 | |
+| UC-A01 | 初回起動 → onboarding 10 ステップ完了 → workspace 表示 | managed root 生成、`settings/app.json`、`workspaces/workspace-1.json`、`presets.json`、panel DOM | semi | both | 未実施 | #784 |
 | UC-A02 | 既存データでの起動 → layout/settings/theme 復元 | workspace-N.json・app.json・theme.css の内容が起動後 UI に反映 | auto | both | win:自動PASS / mac:自動PASS | results/2026-11-15-device-windows-ae2027-dev-smoke-run.json / results/macos-ae2026-dev/run.json / results/2026-11-15-device-windows-ae2027-dev-extended/smoke/run.json |
 | UC-A03 | panel-1〜5 の開閉と独立性 | 各 panel が別 surface として応答、layout が panel 毎に独立 | auto | both | win:自動PASS / mac:自動PASS | results/2026-11-15-device-windows-ae2027-dev-smoke-run.json / results/macos-ae2026-dev/run.json / results/2026-11-15-device-windows-ae2027-dev-extended/smoke/run.json |
 | UC-A04 | AE 再起動をまたぐ host bundle 常駐/self-heal | `$.global.__TY_PLUS_HOST__` contract、worker verify ok | auto | both | mac:自動PASS / win:自動PASS | results/2026-11-15-device-macos-ae2026-dev-extended.md / results/2026-11-15-device-windows-ae2027-dev-extended/host/run.json / #107修正済(PR #116) |
@@ -64,7 +64,7 @@
 | UC-D06 | anchor-point：9 方向 + apply all/comp | AE anchor point/position 変化 | semi | both | 未実施 | |
 | UC-D07 | info widget：comp/project 情報表示 | DOM 内容が AE 状態と一致 | auto | both | 未実施 | |
 | UC-D08 | font-viewer：フォント一覧・選択テキストへ適用 | font 一覧取得、AE text font 変化 | semi | both | 未実施 | |
-| UC-D09 | directory-browser：遷移・filter・選択・preset 実行 | DOM、選択ファイルの preset 実行 | semi | both | 未実施 | |
+| UC-D09 | directory-browser：遷移・filter・選択・preset 実行 | DOM、選択ファイルの preset 実行 | semi | both | 未実施 | #784 |
 | UC-D10 | menu/quick-actions：クイック実行 | preset 実行結果 | semi | both | mac:自動PASS(sandbox, 連続2回でAE marker確認) / win:未実施 | #125修正済 / results/2026-11-16-device-macos-ae2026-dev-workspace-sandbox/run.json |
 | UC-D11 | widget state 永続化（widgets/state/*.json）| reload 後の widget 状態復元 | auto | both | mac:自動PASS / win:自動PASS | results/2026-11-15-device-macos-ae2026-dev-extended.md / results/2026-11-15-device-windows-ae2027-dev-rerun/widgets/run.json |
 | UC-D12 | 破損 widgets.json で起動・編集 | 既存 record 非破壊 | auto | both | mac:自動PASS / win:未実施 | results/2026-11-15-device-macos-ae2026-dev-extended.md（UC-I02 と同一ファイル・同一契約） |
@@ -79,7 +79,7 @@
 | UC-E04 | support root 変更 → relocation/copy/delete → 全パネル reload | app.json paths、managed root 移動、layout 復元 | semi | both | 未実施 | |
 | UC-E05 | preset/script/plugin root 変更 | app.json paths、preset scan 反映 | semi | both | 未実施 | |
 | UC-E06 | workspace backup export → 別状態で import | bundle JSON、settings/presets/theme/layouts/backgrounds 復元 | semi | both | 未実施 | |
-| UC-E07 | update channel 変更 + check now | app.json、releases 参照、UI 表示 | semi | both | 未実施 | |
+| UC-E07 | update channel 変更 + check now | app.json、releases 参照、UI 表示 | semi | both | 未実施 | #784 |
 | UC-E08 | feedback 送信 | GitHub issue URL が事前入力で開く | manual | both | 未実施 | |
 | UC-E09 | inputs toggle（anchor/alignment gesture）| app.json gestures、gesture 動作 | semi | both | 未実施 | |
 | UC-E10 | settings 保存失敗 → dialog alert 表示・データ非破壊 | role=alert、app.json byte-identical | auto | both | 未実施 | #96, #10 D-12 |
@@ -89,11 +89,11 @@
 
 | ID | ユースケース | 主な確認対象 | 自動化 | OS | 状態 | 証跡/Issue |
 | --- | --- | --- | --- | --- | --- | --- |
-| UC-F01 | preset library：検索・view 切替・download → local catalog | catalog DOM、download 完了、presets.json 反映 | semi | both | 未実施 | guide既知: 「Download complete」だが file 未保存の報告あり |
-| UC-F02 | notification center：list/detail/既読/sync | cache/notifications.json、DOM | semi | both | 未実施 | |
+| UC-F01 | preset library：検索・view 切替・download → local catalog | catalog DOM、download 完了、presets.json 反映 | semi | both | 未実施 | guide既知: 「Download complete」だが file 未保存の報告あり, #784 |
+| UC-F02 | notification center：list/detail/既読/sync | cache/notifications.json、DOM | semi | both | 未実施 | #784 |
 | UC-F03 | offline/degraded → core 機能継続 | gateway なしで workspace/preset が動く | semi | both | 未実施 | #10 D-15, online-degraded.feature |
-| UC-F04 | update feed 確認 | releases API 結果表示 | semi | both | 未実施 | #10 D-13 |
-| UC-F05 | notification feed 確認 | 公式通知表示 | semi | both | 未実施 | #10 D-14 |
+| UC-F04 | update feed 確認 | releases API 結果表示 | semi | both | 未実施 | #10 D-13, #784 |
+| UC-F05 | notification feed 確認 | 公式通知表示 | semi | both | 未実施 | #10 D-14, #784 |
 
 ## G. デバッグ・診断
 
