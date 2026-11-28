@@ -153,7 +153,12 @@ const variants: Record<ButtonVariant, string> = {
 		color: "text.primary",
 		borderWidth: "hairline",
 		borderStyle: "solid",
-		borderColor: "border.strong",
+		// Issue #761: `border.strong` (#0e0e0e) is darker than the dark
+		// canvas, so the outline frame was effectively invisible. The
+		// outline variant IS the identifiable-control border, so it rests
+		// on `border.control` (text-derived α0.38) — visible on both
+		// light and dark surfaces.
+		borderColor: "border.control",
 		_hover: { backgroundColor: "interactive.hover" },
 		_active: { backgroundColor: "interactive.active" },
 		_focusVisible: {

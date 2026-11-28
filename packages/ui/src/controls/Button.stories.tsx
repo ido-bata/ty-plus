@@ -129,8 +129,11 @@ export const AllVariants: Story = {
 	play: async ({ canvasElement }) => {
 		expectCanvasLayout(canvasElement);
 		// Issue #722: bordered non-primary variants rest on the
-		// non-assertive `border.subtle` tier — ghost included — while
-		// `border.control` stays reserved for identifiable text fields.
+		// non-assertive `border.subtle` tier — ghost included.
+		// Issue #761: `outline` is the exception — its whole purpose is a
+		// visible frame on a transparent surface, so it rests on
+		// `border.control` (the old `border.strong` #0e0e0e was darker than
+		// the dark canvas and rendered the frame invisible).
 		const byText = (label: string): HTMLButtonElement => {
 			const el = Array.from(
 				canvasElement.querySelectorAll<HTMLButtonElement>("button"),
@@ -143,6 +146,8 @@ export const AllVariants: Story = {
 			assertBorderToken(el, "subtle");
 			expect(borderTopColor(el)).not.toBe(resolveBorderToken("control"));
 		}
+		const outline = byText("Outline");
+		assertBorderToken(outline, "control");
 	},
 };
 

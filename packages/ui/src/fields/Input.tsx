@@ -47,8 +47,10 @@ const base = css({
 });
 
 const errorState = css({
+	// Issue #761: the error signal is the `status.error` border plus the
+	// error label — dimming the whole control to 0.6 washed out the text
+	// and background, so the "active" error state read as disabled-ish.
 	borderColor: "status.error",
-	opacity: 0.6,
 	_focus: { borderColor: "status.error" },
 });
 
