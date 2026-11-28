@@ -263,7 +263,9 @@ export function FontViewerEmptyState({
 						margin: 0,
 						overflowWrap: "anywhere",
 						fontFamily: "mono",
-						fontSize: "text-2xs",
+						// Issue #797: match the sibling banners' `text-xs` so
+						// the host failure does not read as fine print.
+						fontSize: "text-xs",
 						// Issue #763: an active host failure must not read as
 						// secondary copy — same warning tier as the sibling
 						// error banners.
