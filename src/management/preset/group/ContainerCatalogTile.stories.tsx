@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { expect } from "storybook/test";
 import type { Preset } from "@/management/preset/contract";
 import { presetIconText } from "@/management/preset/contract";
 import { css } from "@/styled-system/css";
@@ -61,16 +62,35 @@ const meta = {
 export default meta;
 type Story = StoryObj<Args>;
 
-export const Default: Story = {};
+// Issue #767: the member-count badge must center its count vertically —
+// the bare `minHeight` pill used to pin the digits against the top edge.
+const playBadgeCentered: Story["play"] = async ({ canvasElement }) => {
+	const badge = canvasElement.querySelector<HTMLElement>(
+		"[data-member-count-badge]",
+	);
+	if (!badge) throw new Error("member count badge not found");
+	const range = document.createRange();
+	range.selectNodeContents(badge);
+	const textBox = range.getBoundingClientRect();
+	const badgeBox = badge.getBoundingClientRect();
+	const textCenter = (textBox.top + textBox.bottom) / 2;
+	const badgeCenter = (badgeBox.top + badgeBox.bottom) / 2;
+	expect(Math.abs(textCenter - badgeCenter)).toBeLessThanOrEqual(1);
+};
+
+export const Default: Story = { play: playBadgeCentered };
 
 export const Many: Story = {
 	args: { members: 25 },
+	play: playBadgeCentered,
 };
 
 export const Overflow: Story = {
 	args: { members: 150 },
+	play: playBadgeCentered,
 };
 
 export const Empty: Story = {
 	args: { members: 0 },
+	play: playBadgeCentered,
 };

@@ -30,7 +30,10 @@ export function LanguageSection(): JSX.Element {
 
 	return (
 		<SettingsGrid>
-			<SettingsField span={6}>
+			{/* Issue #763: a short single-value picker must not stretch
+			    across all six columns — half the row reads as a form
+			    control instead of a banner. */}
+			<SettingsField span={3}>
 				<SettingsFieldLabel>
 					{i18n.t("settings:languageSection.displayLanguage")}
 				</SettingsFieldLabel>

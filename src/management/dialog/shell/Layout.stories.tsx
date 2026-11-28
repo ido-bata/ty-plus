@@ -13,7 +13,15 @@ import { Shell } from "./Layout";
  * tested is "a modifier class reaches the shell root and changes its
  * appearance".
  */
-const modifierDemoClass = css({ bg: "surface.panel" });
+// Issue #769: the demo modifier also carries a hairline border — a bare
+// `surface.panel` fill is indistinguishable from the dark canvas, leaving
+// the shell boundary invisible in the snapshot.
+const modifierDemoClass = css({
+	bg: "surface.panel",
+	borderWidth: "hairline",
+	borderStyle: "solid",
+	borderColor: "border.default",
+});
 
 type Args = {
 	title: string;

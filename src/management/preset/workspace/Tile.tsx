@@ -49,8 +49,11 @@ function MissingGlyph(): JSX.Element {
 	// rises to 12px (#751): at the floor the old 8px rendered a speck-
 	// sized "?" inside 48px grid cells — 12px keeps the missing-state
 	// mark readable while large frames keep the 10% proportion.
+	// Issue #767: 10% still read as a ~9px speck inside a 128px catalog
+	// tile, so the proportion rises to 15% — the "?" is the tile's only
+	// content and must carry the whole signifier.
 	const fontPx = metrics
-		? Math.min(96, Math.max(12, metrics.boxWidth * 0.1))
+		? Math.min(96, Math.max(12, metrics.boxWidth * 0.15))
 		: 12;
 	return (
 		<span

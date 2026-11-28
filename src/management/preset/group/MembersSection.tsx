@@ -1,5 +1,5 @@
-import { Button, Icon, PathField } from "@ty-plus/ui";
-import { ChevronDown, FolderOpen, Plus, Trash2 } from "lucide-react";
+import { Button, Icon, IconButton, PathField } from "@ty-plus/ui";
+import { FolderOpen, Plus, ScanSearch, Trash2 } from "lucide-react";
 import type { JSX, ReactNode } from "react";
 import { i18n } from "@/management/i18n/index";
 import {
@@ -28,6 +28,17 @@ const pathRowClass = css({
 	gap: "2",
 });
 
+// `IconButton` does not set `flex-shrink`, so in a tight path row the
+// square metrics collapsed to a ~30px-wide rectangle — pin it.
+const removePathButtonClass = css({
+	flexShrink: "0",
+});
+
+const detectStatusClass = css({
+	fontSize: "xs",
+	color: "text.muted",
+});
+
 type CandidatePreset = { id: string; title: string; filePath: string };
 
 export type DialogFormContext = {
@@ -47,12 +58,16 @@ export function MembersSection({
 	candidatePresets,
 	candidateDirs,
 	detectCandidates,
+	detectState,
+	detectCounts,
 	onPickPreset,
 }: {
 	ctx: DialogFormContext;
 	candidatePresets: CandidatePreset[];
 	candidateDirs: string[];
 	detectCandidates: (paths: readonly string[]) => Promise<void>;
+	detectState: "idle" | "running" | "done";
+	detectCounts: { presets: number; dirs: number };
 	onPickPreset: (id: string) => void;
 }): JSX.Element {
 	const pathLines = (ctx.values.paths ?? "")
@@ -132,10 +147,12 @@ export function MembersSection({
 				/>
 
 				<div className={buttonRowClass}>
+					{/* Issue #767: `fullWidth` here stretched "Add path" across
+					    ~75% of the row while "Detect candidates" stayed intrinsic —
+					    both actions now size to their labels. */}
 					<Button
 						type="button"
 						variant="outline"
-						fullWidth
 						disabled={ctx.busy}
 						onClick={addPath}
 					>
@@ -144,12 +161,28 @@ export function MembersSection({
 					<Button
 						type="button"
 						variant="ghost"
+						fullWidth
 						disabled={ctx.busy}
 						onClick={detect}
 					>
-						<ChevronDown size={14} /> {i18n.t("presets:group.detectCandidates")}
+						{/* ScanSearch, not ChevronDown — a chevron reads as a
+						    dropdown/disclosure, not a scan action (issue #766). */}
+						<ScanSearch size={16} /> {i18n.t("presets:group.detectCandidates")}
 					</Button>
 				</div>
+
+				{/* Detection feedback (issue #766): candidates and the
+				    auto-added rule render below the fold, so the result
+				    count must be announced next to the action. */}
+				{detectState !== "idle" ? (
+					<div className={detectStatusClass} role="status">
+						{detectState === "running"
+							? i18n.t("presets:group.detecting")
+							: detectCounts.presets + detectCounts.dirs === 0
+								? i18n.t("presets:group.detectNone")
+								: `${i18n.t("presets:group.detectPresets", { count: detectCounts.presets })} · ${i18n.t("presets:group.detectDirs", { count: detectCounts.dirs })}`}
+					</div>
+				) : null}
 
 				<div className={columnClass}>
 					{pathLines.map((p, idx) => {
@@ -167,14 +200,20 @@ export function MembersSection({
 									uiSize="md"
 									disabled={ctx.busy}
 								/>
-								<Button
+								{/* Issue #767: a text-padded Button next to the
+								    square PathField browse IconButton read as a
+								    mismatched rectangle — use the same square
+								    IconButton metrics. */}
+								<IconButton
 									variant="ghost"
+									size="md"
+									className={removePathButtonClass}
 									aria-label={i18n.t("presets:group.removePath")}
 									disabled={ctx.busy}
 									onClick={() => removePath(idx)}
 								>
 									<Trash2 size={16} />
-								</Button>
+								</IconButton>
 							</div>
 						);
 					})}

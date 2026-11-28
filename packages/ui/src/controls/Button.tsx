@@ -128,6 +128,15 @@ const variants: Record<ButtonVariant, string> = {
 	primary: css({
 		backgroundColor: "text.accent",
 		color: "surface.panel",
+		// Issue #763: a disabled primary must drop the accent fill — at
+		// rest-opacity 0.5 it still read as an active CTA (settings
+		// feedback submit, background editor). It rests on the same muted
+		// surface as every other disabled control; the base `_disabled`
+		// dim still applies on top.
+		_disabled: {
+			backgroundColor: "surface.widget",
+			color: "text.muted",
+		},
 		_hover: { opacity: 0.9 },
 		_active: { opacity: 0.85 },
 		_focusVisible: {

@@ -27,7 +27,14 @@ const presetListOuterClass = css({
 	flex: "1",
 	flexDirection: "column",
 	gap: "2",
-	paddingBlock: "shell-space",
+	// Issue #767: the preset-list shell had block padding only, so the
+	// header, counter and row items rendered flush against the dialog
+	// edges while the directory-browser shell kept a horizontal inset.
+	// (`"shell-space"` was never a Panda token — it compiled to the invalid
+	// `padding-*: shell-space` declaration the browser dropped, so the
+	// block padding never applied either.)
+	paddingInline: "shell",
+	paddingBlock: "shell",
 	backgroundColor: "surface.dialog",
 });
 

@@ -9,11 +9,13 @@ import {
 } from "@ty-plus/ui";
 import {
 	ExternalLink,
+	FilterX,
 	Grid3x3,
 	LayoutGrid,
 	List,
 	LoaderCircle,
 	PanelLeftClose,
+	PanelLeftOpen,
 	RefreshCw,
 	Search,
 	X,
@@ -147,7 +149,11 @@ const galleryTitleClass = css({
 	fontWeight: "semibold",
 	color: "text.primary",
 	lineHeight: "tight",
-	truncate: true,
+	// Issue #767: a single-line `truncate` clipped card titles to
+	// "Glow Esse..." because the download/notion actions own the rest of
+	// the header row. Two clamped lines keep the full title readable at
+	// every gallery zoom level.
+	lineClamp: 2,
 	flex: "1",
 	minWidth: 0,
 });
@@ -484,15 +490,6 @@ const listTableCellClass = css({
 	borderBottomStyle: "solid",
 	borderBottomColor: "border.default",
 	verticalAlign: "middle",
-});
-const listTableCellRightClass = css({
-	paddingInline: "2",
-	paddingBlock: "2",
-	borderBottomWidth: "hairline",
-	borderBottomStyle: "solid",
-	borderBottomColor: "border.default",
-	verticalAlign: "middle",
-	textAlign: "right",
 });
 const listTableInfoColumnClass = css({
 	display: "flex",
@@ -903,15 +900,17 @@ function EmptyState(props: {
 				{disconnectedReason ? (
 					<p className={emptyStateTextClass}>{disconnectedReason}</p>
 				) : null}
-				<IconButton
-					size="sm"
-					variant="ghost"
+				{/* Issue #767: a bare icon button gave no visible affordance —
+				    the empty-state action carries its label. */}
+				<Button
+					variant="outline"
+					uiSize="sm"
 					title={retry.title}
 					disabled={retry.disabled}
 					onClick={onRefresh}
 				>
-					<Icon icon={RefreshCw} size={16} />
-				</IconButton>
+					<RefreshCw size={16} /> {i18n.t("online:catalog.refreshCatalog")}
+				</Button>
 			</div>
 		);
 	}
@@ -921,14 +920,14 @@ function EmptyState(props: {
 				<p className={emptyStateTextClass}>
 					{i18n.t("online:catalog.emptyNoCatalog")}
 				</p>
-				<IconButton
-					size="sm"
-					variant="ghost"
+				<Button
+					variant="outline"
+					uiSize="sm"
 					title={i18n.t("online:catalog.refreshCatalog")}
 					onClick={onRefresh}
 				>
-					<Icon icon={RefreshCw} size={16} />
-				</IconButton>
+					<RefreshCw size={16} /> {i18n.t("online:catalog.refreshCatalog")}
+				</Button>
 			</div>
 		);
 	}
@@ -938,14 +937,14 @@ function EmptyState(props: {
 				<p className={emptyStateTextClass}>
 					{i18n.t("online:catalog.emptyNoMatch")}
 				</p>
-				<IconButton
-					size="sm"
-					variant="ghost"
+				<Button
+					variant="outline"
+					uiSize="sm"
 					title={i18n.t("online:catalog.clearAllFilters")}
 					onClick={onClearFilters}
 				>
-					<Icon icon={X} size={12} />
-				</IconButton>
+					<FilterX size={16} /> {i18n.t("online:catalog.clearAllFilters")}
+				</Button>
 			</div>
 		);
 	}
@@ -1198,7 +1197,7 @@ function ListTableView(props: {
 						<th className={listTableHeaderCellClass}>
 							{i18n.t("online:catalog.tableNameId")}
 						</th>
-						<th className={listTableActionsHeaderClass}>
+						<th className={listTableHeaderCellClass}>
 							{i18n.t("online:catalog.category")}
 						</th>
 						<th className={listTableActionsHeaderClass}>
@@ -1225,7 +1224,7 @@ function ListTableView(props: {
 									</span>
 								</div>
 							</td>
-							<td className={listTableCellRightClass}>
+							<td className={listTableCellClass}>
 								{item.category ? (
 									<CategoryBadge category={item.category} />
 								) : (
@@ -1234,19 +1233,6 @@ function ListTableView(props: {
 							</td>
 							<td className={listTableCellClass}>
 								<div className={listTableActionsClass}>
-									{item.notionPageUrl ? (
-										<IconButton
-											size="sm"
-											variant="ghost"
-											title={i18n.t("online:catalog.openNotion")}
-											onClick={() =>
-												openUrlInDefaultBrowser(item.notionPageUrl ?? "")
-											}
-											className={borderedButtonClass}
-										>
-											<Icon icon={ExternalLink} size={12} />
-										</IconButton>
-									) : null}
 									<DownloadProgressIconButton
 										iconSize={10}
 										onClick={() => void onDownload(item.presetId)}
@@ -1269,6 +1255,19 @@ function ListTableView(props: {
 										}
 										className={borderedButtonClass}
 									/>
+									{item.notionPageUrl ? (
+										<IconButton
+											size="sm"
+											variant="ghost"
+											title={i18n.t("online:catalog.openNotion")}
+											onClick={() =>
+												openUrlInDefaultBrowser(item.notionPageUrl ?? "")
+											}
+											className={borderedButtonClass}
+										>
+											<Icon icon={ExternalLink} size={12} />
+										</IconButton>
+									) : null}
 								</div>
 							</td>
 						</tr>
@@ -1298,7 +1297,10 @@ function LibraryFooter({
 					catalog,
 				})}
 			</span>
-			{mode === "gallery" && (
+			{/* Issue #767: the zoom hint only matters while a zoomable gallery
+			    is actually showing results — an empty catalog has nothing to
+			    zoom, so the footer drops the dead control hint there. */}
+			{mode === "gallery" && filtered > 0 && (
 				<span className={footerZoomTextClass}>
 					{i18n.t("online:catalog.footerZoom", {
 						percent: Math.round(scale * 100),
@@ -1878,7 +1880,9 @@ export function PresetLibrary(): JSX.Element {
 							title={i18n.t("online:catalog.showFilters")}
 							onClick={() => setShowSidePanel(true)}
 						>
-							<Icon icon={PanelLeftClose} size={12} />
+							{/* Issue #767: PanelLeftClose reads as "close" while the
+							    panel is already hidden — the affordance must open it. */}
+							<Icon icon={PanelLeftOpen} size={12} />
 						</IconButton>
 					)}
 					<h1 className={cx(heading3Class, css({ truncate: true }))}>

@@ -1,7 +1,9 @@
 import { sectionLabelClass } from "@ty-plus/ui";
 import { css } from "@/styled-system/css";
 
-export const FIELD_LABEL_CLASS = sectionLabelClass;
+// Section-band headers only (e.g. the preview label). Field-level labels
+// use `fieldLabelClass` — see Fields.tsx (issue #768).
+export const SECTION_LABEL_CLASS = sectionLabelClass;
 
 export const QUIET_CONTROL_CLASS = css({
 	borderColor: "var(--color-ty-widget-border)",

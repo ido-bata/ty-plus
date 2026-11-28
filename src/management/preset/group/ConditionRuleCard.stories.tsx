@@ -70,7 +70,28 @@ const meta = {
 export default meta;
 type Story = StoryObj<Args>;
 
-export const Default: Story = {};
+export const Default: Story = {
+	play: async ({ canvasElement }) => {
+		// Issue #767: the RULE ICON type tabs must claim the full width of
+		// the editor's right column, matching the input/swatch rows below —
+		// a content-sized strip left a dead gap on the right.
+		const strip = canvasElement.querySelector<HTMLElement>(
+			'div[role="toolbar"][aria-label="Icon type"]',
+		);
+		if (!strip) throw new Error("icon type strip not found");
+		const host = strip.parentElement;
+		if (!host) throw new Error("icon type strip host not found");
+		const stripBox = strip.getBoundingClientRect();
+		const hostBox = host.getBoundingClientRect();
+		expect(Math.abs(stripBox.width - hostBox.width)).toBeLessThanOrEqual(1);
+		// …and that column is the same width as the fields column under it.
+		const fields = host.nextElementSibling;
+		if (!fields) throw new Error("icon editor fields column not found");
+		expect(
+			Math.abs(hostBox.width - fields.getBoundingClientRect().width),
+		).toBeLessThanOrEqual(1);
+	},
+};
 
 export const PathFilter: Story = {
 	args: { filterType: "path", pattern: "" },

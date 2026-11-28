@@ -131,4 +131,15 @@ export const Image: Story = {
 
 export const Disabled: Story = {
 	args: { enabled: false, opacity: 30 },
+	play: async ({ canvasElement }) => {
+		// Issue #768: a disabled layer must read as disabled — the editor
+		// column dims like the shared controls' disabled treatment
+		// (opacity 0.5) instead of rendering at full brightness.
+		const editor = canvasElement.querySelector<HTMLElement>(
+			"[data-layer-editor]",
+		);
+		if (!editor) throw new Error("layer editor not found");
+		expect(editor.dataset.layerEnabled).toBe("false");
+		expect(getComputedStyle(editor).opacity).toBe("0.5");
+	},
 };

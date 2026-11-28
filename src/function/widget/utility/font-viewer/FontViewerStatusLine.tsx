@@ -32,7 +32,10 @@ export function FontViewerStatusLine({
 				borderBottomStyle: "solid",
 				borderColor: "border.default",
 				paddingInline: "0.5",
-				paddingBottom: "1",
+				// Issue #763: when the provenance label wraps to a second
+				// row it must not sit flush against the hairline — keep a
+				// little air under the wrapped content.
+				paddingBottom: "1.5",
 				fontSize: "text-xs",
 				color: "text.muted",
 			})}

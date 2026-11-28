@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Decorator, Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 import { expect } from "storybook/test";
 import { borderTopColor, resolveBorderToken } from "@/storybook/quality/border";
@@ -12,9 +12,19 @@ const sampleOptions = [
 	{ value: "ko", label: "한국어" },
 ];
 
+// Issue #768: `width: "full"` is the form-row contract, but the bare
+// canvas stretched triggers ~1260px wide — capture stories inside a
+// realistic field column instead.
+const fieldColumn: Decorator = (Story) => (
+	<div style={{ width: 280 }}>
+		<Story />
+	</div>
+);
+
 const meta = {
 	title: "Shared/Fields/ListSelect",
 	component: ListSelect,
+	decorators: [fieldColumn],
 	argTypes: {
 		value: { control: "text" },
 		placeholder: { control: "text" },

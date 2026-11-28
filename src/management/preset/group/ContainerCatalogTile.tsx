@@ -35,8 +35,11 @@ const badgeClass = css({
 	right: "0.5",
 	zIndex: "var(--ty-z-overlay)",
 	boxSizing: "border-box",
+	display: "flex",
 	minHeight: "3.5",
 	minWidth: "3.5",
+	alignItems: "center",
+	justifyContent: "center",
 	borderRadius: "full",
 	borderWidth: "hairline",
 	borderStyle: "solid",
@@ -63,7 +66,7 @@ export function GroupContainerCatalogTile(props: {
 		<div className={tileClass}>
 			<div className={tileSurfaceClass}>
 				<GridCatalogTile preset={props.preset} label={props.label} />
-				<span className={badgeClass} aria-hidden>
+				<span className={badgeClass} aria-hidden data-member-count-badge>
 					{count > 99 ? "99+" : String(count)}
 				</span>
 			</div>

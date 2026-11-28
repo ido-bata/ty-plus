@@ -210,6 +210,19 @@ const assertNoHorizontalClip = (canvasElement: HTMLElement): void => {
 	);
 };
 
+// Issue #767: gallery card titles wrap to two clamped lines instead of
+// truncating to "Glow Esse..." — the title box must never clip
+// horizontally against the action buttons.
+const assertGalleryTitleNotClipped = (canvasElement: HTMLElement): void => {
+	const title = canvasElement.querySelector<HTMLElement>(
+		"[data-ws-preset-card] h3",
+	);
+	expect(title).not.toBeNull();
+	expect(title?.scrollWidth ?? 0).toBeLessThanOrEqual(
+		(title?.clientWidth ?? 0) + 1,
+	);
+};
+
 const assertFacetClearsDisabled = (canvasElement: HTMLElement): void => {
 	const clears = Array.from(canvasElement.querySelectorAll("button")).filter(
 		(b) => b.textContent?.trim() === "Clear",
@@ -229,6 +242,7 @@ export const Default: Story = {
 		assertGalleryThumbVisible(canvasElement);
 		assertNoHorizontalClip(canvasElement);
 		assertFacetClearsDisabled(canvasElement);
+		assertGalleryTitleNotClipped(canvasElement);
 	},
 };
 
@@ -312,6 +326,14 @@ export const NoCatalog: Story = {
 			).not.toBeNull();
 		});
 		expect(canvasElement.textContent).toContain("No online catalog.");
+		// Issue #767: the refresh affordance is a labelled button, not a
+		// bare icon — and the footer must not advertise zoom for an
+		// empty (non-zoomable) catalog.
+		const refresh = Array.from(canvasElement.querySelectorAll("button")).find(
+			(b) => b.textContent?.includes("Refresh catalog"),
+		);
+		expect(refresh).not.toBeNull();
+		expect(canvasElement.textContent).not.toContain("Ctrl+Wheel:");
 	},
 };
 
@@ -328,6 +350,14 @@ export const NoMatches: Story = {
 		await waitFor(() => {
 			expect(canvasElement.textContent).toContain("No presets match filter.");
 		});
+		// Issue #767: the clear-filters action carries a visible label (a
+		// bare "x" icon read as a dismiss control), and the dead zoom hint
+		// stays out of the footer while nothing zoomable is shown.
+		const clearFilters = Array.from(
+			canvasElement.querySelectorAll("button"),
+		).find((b) => b.textContent?.includes("Clear all filters"));
+		expect(clearFilters).not.toBeNull();
+		expect(canvasElement.textContent).not.toContain("Ctrl+Wheel:");
 	},
 };
 

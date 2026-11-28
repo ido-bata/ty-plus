@@ -1,5 +1,4 @@
 import { Button, cx, ScrollArea } from "@ty-plus/ui";
-import { RotateCcw, Save } from "lucide-react";
 import { type JSX, useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { createCepSurfaceTransport } from "@/management/ae/cep/transport";
@@ -542,12 +541,14 @@ export function WorkspaceBackgroundDialog(
 			footerClassName={footerClass}
 			footer={
 				<DialogFooterActions>
+					{/* Issue #768: footer contract (dialog/shell/Footer.tsx) —
+					 * non-destructive actions are text-only and a reset action
+					 * uses `variant="default"`, not ghost + leading icon. */}
 					<Button
 						type="button"
-						variant="ghost"
+						variant="default"
 						uiSize="sm"
 						fullWidth
-						start={<RotateCcw />}
 						onClick={handleReset}
 						disabled={saving}
 					>
@@ -568,7 +569,6 @@ export function WorkspaceBackgroundDialog(
 						variant="primary"
 						uiSize="sm"
 						fullWidth
-						start={<Save />}
 						onClick={() => void handleSave()}
 						disabled={saving}
 					>

@@ -190,7 +190,7 @@
 	},
 	"quickActions": {
 		"name": "Quick actions",
-		"palettePlaceholder": "Search presets, scripts, plugins, effects, and files under roots…",
+		"palettePlaceholder": "Search presets, effects, and files…",
 		"paletteEmpty": "No matching presets or effects.",
 		"effectRowKind": "Effect",
 		"rootFileRowKind": "Disk"
