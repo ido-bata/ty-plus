@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { type JSX, type ReactElement, useMemo } from "react";
+import { expect } from "storybook/test";
 import { SettingsContext } from "@/management/setting/context";
 import {
 	DEFAULT_SETTINGS,
@@ -119,4 +120,15 @@ export const AlignmentOff: Story = {
 /** Both gesture toggles disabled — every widget falls back to direct clicks. */
 export const BothOff: Story = {
 	args: { anchorPoint: false, alignment: false },
+	play: async ({ canvasElement }) => {
+		// Issue #791 (jobs6): unchecked gesture labels must keep the same
+		// text color as checked ones — an enabled off-state option must not
+		// read as disabled.
+		const labels = Array.from(
+			canvasElement.querySelectorAll<HTMLElement>("label > span"),
+		);
+		expect(labels.length).toBeGreaterThanOrEqual(2);
+		const colors = new Set(labels.map((el) => getComputedStyle(el).color));
+		expect(colors.size).toBe(1);
+	},
 };
