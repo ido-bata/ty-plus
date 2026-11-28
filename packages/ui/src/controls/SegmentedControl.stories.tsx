@@ -228,6 +228,11 @@ export const OverflowScrollsHorizontally: Story = {
 		assertSingleRow(toolbar, { itemSelector: "button" });
 		expect(getComputedStyle(toolbar).overflowX).toBe("auto");
 		expect(toolbar.scrollWidth).toBeGreaterThan(toolbar.clientWidth);
+		// Issue #764: horizontal overflow is only acceptable with a
+		// rest-state scroll affordance — the global chrome hides scrollbar
+		// thumbs until hover, so the strip keeps its thumb visible.
+		const thumb = getComputedStyle(toolbar, "::-webkit-scrollbar-thumb");
+		expect(thumb.visibility).toBe("visible");
 		expectCanvasLayout(canvasElement);
 	},
 };

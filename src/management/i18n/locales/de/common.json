@@ -224,6 +224,7 @@
 	"debugConsole": {
 		"title": "Konsole",
 		"clear": "Leeren",
+		"empty": "Keine Meldungen",
 		"evaluateAria": "JavaScript auswerten",
 		"evaluatePlaceholder": "JavaScript auswerten…",
 		"rowContextHint": "Rechtsklicken zum Kopieren",

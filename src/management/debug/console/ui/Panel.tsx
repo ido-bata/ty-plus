@@ -471,6 +471,14 @@ const messagesContainerStyle = css({
 	overflowX: "hidden",
 });
 
+const emptyStateStyle = css({
+	padding: "4",
+	textAlign: "center",
+	fontSize: "text-2xs",
+	color: "text.muted",
+	userSelect: "none",
+});
+
 const inputRowStyle = css({
 	display: "flex",
 	alignItems: "center",
@@ -577,6 +585,11 @@ export function Panel({
 				</Button>
 				<IconButton
 					size="sm"
+					// Issue #764: this is a toggle (`aria-pressed`), so it must
+					// use the shared selected surface — without `active` the
+					// on state was a passive-looking icon next to the bordered
+					// Clear button.
+					active={autoScroll}
 					onClick={() => onAutoScrollChange(!autoScroll)}
 					className={autoScroll ? "" : autoScrollDimStyle}
 					aria-label={i18n.t(
@@ -619,6 +632,16 @@ export function Panel({
 						onContextMenu={handleMessageContextMenu}
 					/>
 				))}
+				{filtered.length === 0 ? (
+					// Issue #764: an empty log area read as a dead region —
+					// show a muted placeholder so the console state is
+					// explicit (also covers "filters match nothing").
+					<div className={emptyStateStyle} data-debug-empty>
+						{i18n.t("common:debugConsole.empty", {
+							defaultValue: "No messages",
+						})}
+					</div>
+				) : null}
 			</div>
 
 			{/* Input row */}

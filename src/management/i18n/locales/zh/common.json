@@ -224,6 +224,7 @@
 	"debugConsole": {
 		"title": "控制台",
 		"clear": "清除",
+		"empty": "暂无消息",
 		"evaluateAria": "评估 JavaScript",
 		"evaluatePlaceholder": "评估 JavaScript…",
 		"rowContextHint": "右键点击以复制",
