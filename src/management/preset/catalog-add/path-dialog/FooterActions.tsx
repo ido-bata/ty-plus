@@ -26,11 +26,13 @@ const busyLabelHiddenClass = css({
 });
 
 /*
- * Same busy contract as `ToolDialogFooter` (#455 follow-up): `disabled`
- * would drop the primary to the shared 50% opacity and the "Creating…"
- * label read as subdued as the disabled Cancel — no progress cue at all.
- * `aria-disabled` + a progress cursor keep full accent contrast while the
- * click guard carries the semantics.
+ * Same busy contract as `ToolDialogFooter` (#793/#455 follow-up):
+ * `aria-disabled` is NOT usable here — Panda's `_disabled` condition
+ * matches `[aria-disabled=true]`, so the button would take the muted
+ * disabled-primary treatment AND gain the hairline frame, resizing the
+ * footer by 2px. `aria-busy` is the correct in-progress semantic: the
+ * accent fill stays, the progress cursor + "Creating…" label carry the
+ * state visually, and the click guard blocks re-entry.
  */
 const busyPrimaryClass = css({
 	cursor: "progress",
@@ -67,7 +69,7 @@ export function PathDialogFooterActions({
 				uiSize="sm"
 				fullWidth
 				disabled={!busy && !canAdd}
-				aria-disabled={busy || undefined}
+				aria-busy={busy || undefined}
 				className={busy ? busyPrimaryClass : undefined}
 				onClick={() => {
 					if (!busy) void handleAdd();

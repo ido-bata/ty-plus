@@ -72,11 +72,13 @@ export const Busy: Story = {
 		const buttons = canvasElement.querySelectorAll("button");
 		expect(buttons).toHaveLength(2);
 		// Issue #797: Cancel is disabled while the primary keeps full
-		// contrast — `aria-disabled` + a click guard carry the busy
-		// semantics so "Creating…" reads as progress, not disabled.
+		// contrast — `aria-busy` + a click guard carry the busy semantics
+		// so "Creating…" reads as progress, not disabled. (`aria-disabled`
+		// would trip Panda's `_disabled` paint: muted colors + hairline
+		// frame + 50% opacity — see ToolDialogFooter / Issue #793.)
 		expect(buttons[0]).toBeDisabled();
 		expect(buttons[1]).not.toBeDisabled();
-		expect(buttons[1]?.getAttribute("aria-disabled")).toBe("true");
+		expect(buttons[1]?.getAttribute("aria-busy")).toBe("true");
 		expect(buttons[1]?.textContent).toContain("Creating");
 	},
 };
@@ -132,15 +134,6 @@ export const BusyWidthStable: Story = {
 		const defaultButtons = defaultRow.querySelectorAll("button");
 		const busyButtons = busyRow.querySelectorAll("button");
 		for (let i = 0; i < 2; i++) {
-			// eslint-disable-next-line no-console
-			console.log(
-				"[dbg]",
-				i,
-				measureBox(defaultButtons[i]).width,
-				measureBox(busyButtons[i]).width,
-				defaultButtons[i].className,
-				busyButtons[i].className,
-			);
 			expect(
 				Math.abs(
 					measureBox(defaultButtons[i]).width -
