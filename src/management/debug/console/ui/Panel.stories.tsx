@@ -107,6 +107,14 @@ export const Default: Story = {
 					thumb.visibility,
 					"overflowing segmented strip hides its scrollbar thumb at rest",
 				).toBe("visible");
+				// Issue #796: the default 4px muted thumb still read as "no
+				// scroll cue" — the strip opts into a taller scrollbar so
+				// overflow stays discoverable at rest.
+				const bar = getComputedStyle(strip, "::-webkit-scrollbar");
+				expect(
+					parseFloat(bar.height),
+					"overflowing segmented strip keeps the default 4px scrollbar",
+				).toBeGreaterThanOrEqual(6);
 			}
 		}
 		// Issue #752 (minor): the three filter strips must not consume

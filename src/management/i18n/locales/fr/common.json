@@ -231,6 +231,9 @@
 		"filterLevelAria": "Filtrer les messages de la console",
 		"filterSourceAria": "Filtrer les messages par source",
 		"filterScopeAria": "Filtrer les messages par portée de session",
+		"filterLevelLabel": "Niveau",
+		"filterSourceLabel": "Source",
+		"filterScopeLabel": "Portée",
 		"levels": {
 			"all": "Tous",
 			"log": "Journal",

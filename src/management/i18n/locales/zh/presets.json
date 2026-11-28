@@ -375,8 +375,8 @@
 		"textPlaceholder": "2–6 个字符",
 		"previewAria": "图标预览",
 		"tabsAria": "图标类型",
-		"swatchBackground": "背景",
-		"swatchText": "文字"
+		"swatchBackground": "背景颜色",
+		"swatchText": "文字颜色"
 	},
 	"catalogBrowser": {
 		"loading": "加载中",

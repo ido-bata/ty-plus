@@ -1,53 +1,37 @@
 import type { JSX } from "react";
 import type { Preset } from "@/management/preset/contract";
+import {
+	catalogTileFrameClass,
+	catalogTileSurfaceClass,
+} from "@/management/preset/group/catalog-tile-surface";
 import { memberCountFromGroupPreset } from "@/management/preset/group/synthesize";
 import { GridCatalogTile } from "@/management/preset/workspace/GridCatalogTile";
 import { css } from "@/styled-system/css";
 
-const tileClass = css({
-	position: "relative",
-	height: "full",
-	minHeight: "0",
-	width: "full",
-	minWidth: "0",
-});
-
-// The shared placement ring (`ws.gridcell-ring-border`) is darker than
-// `surface.widget`, so on the dark canvas the tile edge all but disappears.
-// Paint the catalog tile's own keyline one hairline inside that ring; the
-// ring stays the selection/hover chrome, this line keeps the tile readable
-// when the frame is absent (stories, host-free surfaces).
-const tileSurfaceClass = css({
-	position: "absolute",
-	inset: "px",
-	overflow: "hidden",
-	borderRadius: "shell-sm",
-	borderWidth: "hairline",
-	borderStyle: "solid",
-	borderColor: "border.subtle",
-	backgroundColor: "surface.widget",
-});
-
 const badgeClass = css({
 	pointerEvents: "none",
 	position: "absolute",
-	bottom: "0.5",
-	right: "0.5",
+	// Issue #794: the badge used to hug the tile corner (2px inset) at
+	// 10px type — unreadable at capture size and crowded against the
+	// tile border. A 4px inset, 12px tabular type and a slightly wider
+	// pill keep "0"/"5"/"99+" legible.
+	bottom: "1",
+	right: "1",
 	zIndex: "var(--ty-z-overlay)",
 	boxSizing: "border-box",
 	display: "flex",
-	minHeight: "3.5",
-	minWidth: "3.5",
+	minHeight: "4",
+	minWidth: "4",
 	alignItems: "center",
 	justifyContent: "center",
 	borderRadius: "full",
 	borderWidth: "hairline",
 	borderStyle: "solid",
-	borderColor: "border.subtle",
+	borderColor: "border.default",
 	backgroundColor: "surface.dialog",
-	paddingInline: "0.5",
+	paddingInline: "1",
 	textAlign: "center",
-	fontSize: "2xs",
+	fontSize: "xs",
 	fontWeight: "semibold",
 	lineHeight: "1",
 	color: "text.primary",
@@ -63,8 +47,8 @@ export function GroupContainerCatalogTile(props: {
 }): JSX.Element {
 	const count = memberCountFromGroupPreset(props.preset);
 	return (
-		<div className={tileClass}>
-			<div className={tileSurfaceClass}>
+		<div className={catalogTileFrameClass}>
+			<div className={catalogTileSurfaceClass}>
 				<GridCatalogTile preset={props.preset} label={props.label} />
 				<span className={badgeClass} aria-hidden data-member-count-badge>
 					{count > 99 ? "99+" : String(count)}

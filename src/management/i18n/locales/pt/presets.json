@@ -380,8 +380,8 @@
 		"textPlaceholder": "2 a 6 caracteres",
 		"previewAria": "Pré-visualização do ícone",
 		"tabsAria": "Tipo de ícone",
-		"swatchBackground": "Fundo",
-		"swatchText": "Texto"
+		"swatchBackground": "Cor de fundo",
+		"swatchText": "Cor do texto"
 	},
 	"catalogBrowser": {
 		"loading": "A carregar",

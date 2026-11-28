@@ -47,6 +47,18 @@ export const segmentedStripClass = css({
 	// must be discoverable at rest, so the thumb stays visible. It only
 	// paints while the strip actually overflows — `overflow-x: auto`
 	// renders no scrollbar otherwise.
+	//
+	// Issue #796: the 4px muted thumb still read as "no scroll cue" in
+	// the debug-console captures — the right edge clipped a label with
+	// nothing visibly scrollable. Give the strip's horizontal scrollbar
+	// a taller track (6px) so the affordance survives downscaled
+	// captures and low-contrast panels.
+	"&::-webkit-scrollbar": {
+		height: "6px",
+	},
+	"&::-webkit-scrollbar-track": {
+		background: "var(--color-surface-widget)",
+	},
 	"&::-webkit-scrollbar-thumb": {
 		visibility: "visible",
 		transition: "none",

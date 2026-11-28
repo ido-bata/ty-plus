@@ -231,6 +231,9 @@
 		"filterLevelAria": "筛选控制台消息",
 		"filterSourceAria": "按来源筛选控制台消息",
 		"filterScopeAria": "按会话范围筛选控制台消息",
+		"filterLevelLabel": "级别",
+		"filterSourceLabel": "来源",
+		"filterScopeLabel": "范围",
 		"levels": {
 			"all": "全部",
 			"log": "日志",

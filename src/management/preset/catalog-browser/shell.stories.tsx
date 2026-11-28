@@ -20,7 +20,12 @@ const headerRow = (
 			justifyContent: "space-between",
 			paddingBlock: "2",
 			color: "text.primary",
-			fontSize: "shell-text-sm",
+			// jobs6 (#792): the header rendered at the same size, weight and
+			// brightness as the row labels, so the heading did not read as a
+			// heading. One step up in size plus medium weight restores the
+			// hierarchy the capture flagged.
+			fontSize: "shell-text",
+			fontWeight: "medium",
 		})}
 	>
 		<span>Catalog header</span>
