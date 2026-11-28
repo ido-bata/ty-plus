@@ -190,7 +190,7 @@
 	},
 	"quickActions": {
 		"name": "Quick actions",
-		"palettePlaceholder": "Pesquisar predefinições, scripts, plugins, efeitos e arquivos nas raízes…",
+		"palettePlaceholder": "Pesquisar predefinições, efeitos e arquivos…",
 		"paletteEmpty": "Nenhuma predefinição ou efeito correspondente.",
 		"effectRowKind": "Efeito",
 		"rootFileRowKind": "Disco"

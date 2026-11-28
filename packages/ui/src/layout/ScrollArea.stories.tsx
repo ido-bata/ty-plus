@@ -7,10 +7,12 @@ import { ScrollArea } from "./ScrollArea";
 
 type Args = {
 	gutterStable: boolean;
+	itemCount: number;
 };
 
 const baseArgs: Args = {
 	gutterStable: true,
+	itemCount: 12,
 };
 
 const renderScroll = (args: Args) => (
@@ -26,7 +28,7 @@ const renderScroll = (args: Args) => (
 				p: "2",
 			})}
 		>
-			{Array.from({ length: 12 }).map((_, i) => (
+			{Array.from({ length: args.itemCount }).map((_, i) => (
 				<div
 					key={i}
 					className={css({
@@ -52,6 +54,7 @@ const meta = {
 	args: baseArgs,
 	argTypes: {
 		gutterStable: { control: "boolean" },
+		itemCount: { control: { type: "number", min: 1, max: 24 } },
 	},
 	decorators: [
 		(Story) => (
@@ -84,5 +87,16 @@ export const Default: Story = {
 };
 
 export const NoGutter: Story = {
-	args: { gutterStable: false },
+	// Issue #769: with overflowing content the scrollbar allocates its own
+	// gutter regardless of `gutterStable`, so the prop is invisible. Use a
+	// non-overflowing row count — `stable` still reserves the gutter track
+	// while `gutterStable={false}` does not.
+	args: { gutterStable: false, itemCount: 3 },
+	play: async ({ canvasElement }) => {
+		const area = canvasElement.querySelector<HTMLElement>(".ty-scroll-area");
+		expect(area).not.toBeNull();
+		if (!area) return;
+		expect(area.scrollHeight).toBeLessThanOrEqual(area.clientHeight + 1);
+		expect(getComputedStyle(area).scrollbarGutter).toBe("auto");
+	},
 };

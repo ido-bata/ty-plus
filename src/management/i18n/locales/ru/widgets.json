@@ -190,7 +190,7 @@
 	},
 	"quickActions": {
 		"name": "Quick actions",
-		"palettePlaceholder": "Поиск пресетов, скриптов, плагинов, эффектов и файлов в корневых папках…",
+		"palettePlaceholder": "Поиск пресетов, эффектов и файлов…",
 		"paletteEmpty": "Нет подходящих пресетов или эффектов.",
 		"effectRowKind": "Эффект",
 		"rootFileRowKind": "Диск"

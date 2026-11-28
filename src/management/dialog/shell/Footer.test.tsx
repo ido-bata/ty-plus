@@ -29,6 +29,17 @@ describe("Footer", () => {
 			'paddingInline: "var(--ty-shell-pad-inline)"',
 		);
 	});
+
+	// Issue #769: the footer band must own block padding as well — with
+	// zero block spacing the action buttons collided with the dialog's
+	// top/bottom edges while `Header` keeps `py: 2.5`.
+	it("source: footer shell declares block padding", () => {
+		const footerShellBlock = FOOTER_SOURCE.match(
+			/footerShell\s*=\s*css\(\{[\s\S]*?\}\)/,
+		);
+		expect(footerShellBlock).not.toBeNull();
+		expect(footerShellBlock?.[0]).toContain("paddingBlock:");
+	});
 });
 
 describe("DialogFooterActions", () => {

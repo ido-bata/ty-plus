@@ -51,6 +51,10 @@ const footerShell = css({
 	justifyContent: "space-between",
 	gap: "2",
 	minHeight: "7",
+	// Issue #769: the band owns block padding too — without it the action
+	// buttons sat flush against the dialog's top/bottom edges (0px block
+	// spacing) while `Header` keeps `py: 2.5`.
+	paddingBlock: "var(--ty-shell-space)",
 	paddingInline: "var(--ty-shell-pad-inline)",
 	fontSize: "xs",
 	color: "text.muted",

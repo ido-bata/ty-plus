@@ -190,7 +190,7 @@
 	},
 	"quickActions": {
 		"name": "Quick actions",
-		"palettePlaceholder": "Presets, Skripte, Plugins, Effekte und Dateien unter den Stammverzeichnissen suchen…",
+		"palettePlaceholder": "Presets, Effekte und Dateien suchen…",
 		"paletteEmpty": "Keine passenden Presets oder Effekte.",
 		"effectRowKind": "Effekt",
 		"rootFileRowKind": "Festplatte"

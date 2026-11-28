@@ -76,8 +76,10 @@ const baseArgs: Args = {
 	catalog: "sample",
 };
 
-const SEARCH_PLACEHOLDER =
-	"Search presets, scripts, plugins, effects, and files under roots…";
+// Keep in sync with `quickActions.palettePlaceholder` (en locale) — the
+// placeholder was shortened in #769 so it no longer clips mid-word in the
+// 320px widget frame.
+const SEARCH_PLACEHOLDER = "Search presets, effects, and files…";
 
 const findSearchInput = (canvasElement: HTMLElement): HTMLInputElement => {
 	const input = canvasElement.querySelector<HTMLInputElement>(
