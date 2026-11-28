@@ -1,11 +1,19 @@
-import { Input, RangeField } from "@ty-plus/ui";
+import { fieldLabelClass, Input, RangeField } from "@ty-plus/ui";
 import type { JSX } from "react";
-import { FIELD_LABEL_CLASS } from "@/management/workspace/background/constants";
 import { DEFAULT_LAYER_COLOR } from "@/management/workspace/literals/layer-colors";
 import { css } from "@/styled-system/css";
 
+/*
+ * Issue #768: field-level labels in the background editors share the
+ * `fieldLabelClass` treatment (sentence case, primary text) that
+ * `RangeField` already applies to its own label — the previous
+ * `sectionLabelClass` (uppercase, muted, wide-tracked) made sibling
+ * labels like "Opacity" and "COLOR" read as two different hierarchies.
+ * `SECTION_LABEL_CLASS` in constants.ts remains for true section
+ * headers (e.g. the preview band).
+ */
 export function FieldLabel(props: { children: string }): JSX.Element {
-	return <span className={FIELD_LABEL_CLASS}>{props.children}</span>;
+	return <span className={fieldLabelClass}>{props.children}</span>;
 }
 
 const colorRow = css({
@@ -48,6 +56,13 @@ const transparentBadge = css({
 	position: "absolute",
 	inset: "0",
 	borderRadius: "shell-sm",
+	// Issue #768: the badge overlays the swatch edge-to-edge, so it must
+	// carry the same perimeter border the `<input type="color">` swatch
+	// has — otherwise the checkerboard bleeds into the canvas with no
+	// bounding stroke.
+	borderWidth: "hairline",
+	borderStyle: "solid",
+	borderColor: "var(--color-ty-widget-border)",
 	backgroundColor: "surface.panel",
 	backgroundImage:
 		"linear-gradient(45deg, var(--color-ty-ink-08) 25%, transparent 25%, transparent 75%, var(--color-ty-ink-08) 75%), linear-gradient(45deg, var(--color-ty-ink-08) 25%, transparent 25%, transparent 75%, var(--color-ty-ink-08) 75%)",
@@ -74,6 +89,9 @@ export function NumberField(props: {
 			min={props.min}
 			max={props.max}
 			onChange={props.onValueChange}
+			// Issue #768: the readout sits beside `md` colour/text controls
+			// in these editors — match their height tier.
+			numberUiSize="md"
 		/>
 	);
 }
@@ -90,7 +108,7 @@ export function ColorField(props: {
 	const colorValue = isHexColor ? props.value : DEFAULT_LAYER_COLOR;
 	return (
 		<div className={colorRow}>
-			<span className={FIELD_LABEL_CLASS}>{props.label}</span>
+			<span className={fieldLabelClass}>{props.label}</span>
 			<div className={colorControls}>
 				<div className={colorSwatchWrap}>
 					<Input

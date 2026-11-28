@@ -106,6 +106,12 @@ export const Empty: Story = {
 		expect(labels).toContain("Clear all");
 		expect(labels).toContain("Cancel");
 		expect(labels).toContain("Save");
+		// Issue #768: the footer contract (dialog/shell/Footer.tsx) allows
+		// leading icons on destructive actions only — none of these
+		// non-destructive buttons may render one.
+		for (const button of footer.querySelectorAll("button")) {
+			expect(button.querySelector("svg")).toBeNull();
+		}
 		// Issue #754: the default layer colour (#1e1e1e) is the first preset
 		// swatch — its selection ring must be perceptible (ink-40), not the
 		// near-invisible ink-12 that read as "no selection". Preset swatches

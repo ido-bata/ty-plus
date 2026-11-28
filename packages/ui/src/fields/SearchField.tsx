@@ -63,9 +63,24 @@ const root = css({
 		borderColor: "interactive.focus",
 		boxShadow: "var(--color-focus-ring)",
 	},
+	// Issue #768: disabled drops the wrapper to the passive `border.subtle`
+	// tier. The attribute selector outranks the resting `border.control`
+	// utility regardless of atomic-class ordering.
+	"&[data-disabled='true']": {
+		borderColor: "border.subtle",
+	},
 });
 
 const iconSlot = css({ flexShrink: 0, color: "text.muted" });
+
+/*
+ * Issue #768: the inner `<input>` already dims itself via Input's
+ * `_disabled` rule, but the wrapper border, background and leading icon
+ * used to stay at full resting strength — a disabled SearchField read as
+ * enabled at a glance. The wrapper drops to the passive `border.subtle`
+ * tier and the icon dims to match; the input keeps its own 0.5 dim.
+ */
+const iconDisabled = css({ opacity: 0.5 });
 
 const sizeMap: Record<NonNullable<SearchFieldProps["uiSize"]>, string> = {
 	sm: css({ height: "7", minHeight: "7", paddingBlock: 0 }),
@@ -142,6 +157,7 @@ export function SearchField({
 	onClear,
 	value,
 	onChange,
+	disabled = false,
 	...rest
 }: SearchFieldProps): JSX.Element {
 	const { t } = useTranslation();
@@ -154,7 +170,8 @@ export function SearchField({
 			: value == null
 				? ""
 				: String(value);
-	const showClear = Boolean(showClearButton && str.length > 0);
+	// A disabled field must not offer a clear action.
+	const showClear = Boolean(showClearButton && str.length > 0 && !disabled);
 
 	const handleClear = (): void => {
 		if (onClear) {
@@ -172,11 +189,20 @@ export function SearchField({
 	};
 
 	return (
-		<div className={cx(root, sizeMap[uiSize], className)}>
-			<Icon icon={icon} size={12} className={iconSlot} aria-hidden />
+		<div
+			data-disabled={disabled ? "true" : undefined}
+			className={cx(root, sizeMap[uiSize], className)}
+		>
+			<Icon
+				icon={icon}
+				size={12}
+				className={cx(iconSlot, disabled ? iconDisabled : "")}
+				aria-hidden
+			/>
 			<Input
 				ref={inputRef}
 				type="search"
+				disabled={disabled}
 				{...(uncontrolled
 					? { defaultValue: rest.defaultValue, onChange }
 					: { value, onChange })}

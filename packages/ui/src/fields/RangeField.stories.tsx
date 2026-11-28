@@ -1,12 +1,22 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Decorator, Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 import { expect } from "storybook/test";
 import { css } from "@/styled-system/css";
 import { RangeField } from "./RangeField";
 
+// Issue #768: `width: "full"` is the form-row contract, but the bare
+// canvas stretched the slider ~1180px and parked the numeric readout at
+// the far edge — capture stories inside a realistic field column.
+const fieldColumn: Decorator = (Story) => (
+	<div style={{ width: 320 }}>
+		<Story />
+	</div>
+);
+
 const meta = {
 	title: "Shared/Fields/RangeField",
 	component: RangeField,
+	decorators: [fieldColumn],
 	argTypes: {
 		label: { control: "text" },
 		value: { control: "number" },
@@ -14,6 +24,7 @@ const meta = {
 		max: { control: "number" },
 		step: { control: "number" },
 		unit: { control: "text" },
+		numberUiSize: { control: "select", options: ["sm", "md", "lg"] },
 		className: { control: "text" },
 		onChange: { action: "changed" },
 	},
