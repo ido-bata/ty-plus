@@ -73,8 +73,8 @@
 
 | ID | ユースケース | 主な確認対象 | 自動化 | OS | 状態 | 証跡/Issue |
 | --- | --- | --- | --- | --- | --- | --- |
-| UC-E01 | 言語切替 → 全 surface 反映 → reload 後維持 | ui.json locale、`documentElement.lang`、文言 DOM | auto | both | mac:自動PASS / win:自動PASS（#121 修正・#122 merge 後の build で確認）| results/2026-11-15-device-macos-ae2026-dev-extended.md / results/2026-11-15-device-windows-ae2027-dev-rerun3/settings/run.json |
-| UC-E02 | 外観色変更（accent/text/widget/panel）→ live → reload 維持 | app.json `ui.*`、theme.css token、computed style | auto | both | win:自動PASS / mac:自動PASS(#112修正済) | #94 / results/2026-11-15-device-windows-ae2027-dev-smoke-run.json / results/macos-ae2026-dev/run.json / results/2026-11-15-device-windows-ae2027-dev-extended/smoke/run.json |
+| UC-E01 | 言語切替 → 全 surface 反映 → reload 後維持 | ui.json locale、`documentElement.lang`、文言 DOM | auto | both | mac:自動PASS / win:自動PASS（#121 修正・#122 merge 後の build で確認）| results/2026-11-15-device-macos-ae2026-dev-extended.md / results/2026-11-15-device-windows-ae2027-dev-rerun3/settings/run.json ; Settings dialog ListSelect UI経路case追加(#783・実機未実施) |
+| UC-E02 | 外観色変更（accent/text/widget/panel）→ live → reload 維持 | app.json `ui.*`、theme.css token、computed style | auto | both | win:自動PASS / mac:自動PASS(#112修正済) | #94 / results/2026-11-15-device-windows-ae2027-dev-smoke-run.json / results/macos-ae2026-dev/run.json / results/2026-11-15-device-windows-ae2027-dev-extended/smoke/run.json ; Settings dialog ColorField/RangeField UI経路case追加(#783・実機未実施) |
 | UC-E03 | theme tokens 編集（Apply/Export/Import/reset）| theme.css、export/import round-trip | semi | both | 未実施 | #91 |
 | UC-E04 | support root 変更 → relocation/copy/delete → 全パネル reload | app.json paths、managed root 移動、layout 復元 | semi | both | 未実施 | |
 | UC-E05 | preset/script/plugin root 変更 | app.json paths、preset scan 反映 | semi | both | 未実施 | |
@@ -82,7 +82,7 @@
 | UC-E07 | update channel 変更 + check now | app.json、releases 参照、UI 表示 | semi | both | 未実施 | |
 | UC-E08 | feedback 送信 | GitHub issue URL が事前入力で開く | manual | both | 未実施 | |
 | UC-E09 | inputs toggle（anchor/alignment gesture）| app.json gestures、gesture 動作 | semi | both | 未実施 | |
-| UC-E10 | settings 保存失敗 → dialog alert 表示・データ非破壊 | role=alert、app.json byte-identical | auto | both | 未実施 | #96, #10 D-12 |
+| UC-E10 | settings 保存失敗 → dialog alert 表示・データ非破壊 | role=alert、app.json byte-identical | auto | both | case追加(#783)・実機未実施 | #96, #10 D-12, #783 |
 | UC-E11 | theme.css surface 間同時書込の直列化 | 最終 theme.css が両変更を含む | semi | both | 未実施 | #106 |
 
 ## F. オンライン/通知
