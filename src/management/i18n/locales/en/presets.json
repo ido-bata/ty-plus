@@ -353,7 +353,7 @@
 		"pathPlaceholderCurrentFolder": "Current folder shown — pick a file or browse",
 		"pathPlaceholderSelectFile": "Select a file…",
 		"browser": {
-			"cepNodeRequired": "File browser requires CEP Node",
+			"cepNodeRequired": "File browser requires CEP Node — enter a path manually or use Browse.",
 			"noPresetsFolder": "No presets folder configured",
 			"noScriptsFolder": "No scripts folder configured",
 			"noPluginsFolder": "No plugins folder configured",

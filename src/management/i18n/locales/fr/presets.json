@@ -357,7 +357,7 @@
 		"pathPlaceholderCurrentFolder": "Dossier actuel affiché — choisissez un fichier ou parcourez",
 		"pathPlaceholderSelectFile": "Sélectionner un fichier…",
 		"browser": {
-			"cepNodeRequired": "L'explorateur de fichiers nécessite CEP Node",
+			"cepNodeRequired": "L'explorateur de fichiers nécessite CEP Node — saisissez un chemin manuellement ou utilisez Parcourir.",
 			"noPresetsFolder": "Aucun dossier de presets configuré",
 			"noScriptsFolder": "Aucun dossier de scripts configuré",
 			"noPluginsFolder": "Aucun dossier de plug-ins configuré",

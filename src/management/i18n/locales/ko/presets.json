@@ -352,7 +352,7 @@
 		"pathPlaceholderCurrentFolder": "현재 폴더 표시 중 — 파일을 선택하거나 찾아보세요",
 		"pathPlaceholderSelectFile": "파일 선택…",
 		"browser": {
-			"cepNodeRequired": "파일 브라우저에는 CEP Node가 필요합니다",
+			"cepNodeRequired": "파일 브라우저에는 CEP Node가 필요합니다. 경로를 직접 입력하거나 찾아보기를 사용하세요.",
 			"noPresetsFolder": "프리셋 폴더가 구성되지 않았습니다",
 			"noScriptsFolder": "스크립트 폴더가 구성되지 않았습니다",
 			"noPluginsFolder": "플러그인 폴더가 구성되지 않았습니다",

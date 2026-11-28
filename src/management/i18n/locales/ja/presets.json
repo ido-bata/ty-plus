@@ -352,7 +352,7 @@
 		"pathPlaceholderCurrentFolder": "現在のフォルダーを表示中 — ファイルを選択するか参照してください",
 		"pathPlaceholderSelectFile": "ファイルを選択…",
 		"browser": {
-			"cepNodeRequired": "ファイルブラウザーには CEP Node が必要です",
+			"cepNodeRequired": "ファイルブラウザーには CEP Node が必要です。パスを直接入力するか「参照」を使用してください。",
 			"noPresetsFolder": "プリセットフォルダーが設定されていません",
 			"noScriptsFolder": "スクリプトフォルダーが設定されていません",
 			"noPluginsFolder": "プラグインフォルダーが設定されていません",

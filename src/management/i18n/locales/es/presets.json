@@ -357,7 +357,7 @@
 		"pathPlaceholderCurrentFolder": "Carpeta actual mostrada — elige un archivo o examina",
 		"pathPlaceholderSelectFile": "Selecciona un archivo…",
 		"browser": {
-			"cepNodeRequired": "El explorador de archivos requiere CEP Node",
+			"cepNodeRequired": "El explorador de archivos requiere CEP Node — introduce una ruta manualmente o usa Explorar.",
 			"noPresetsFolder": "No hay carpeta de presets configurada",
 			"noScriptsFolder": "No hay carpeta de scripts configurada",
 			"noPluginsFolder": "No hay carpeta de plug-ins configurada",

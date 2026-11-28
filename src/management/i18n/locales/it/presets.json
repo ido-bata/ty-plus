@@ -357,7 +357,7 @@
 		"pathPlaceholderCurrentFolder": "Cartella corrente mostrata — scegli un file o sfoglia",
 		"pathPlaceholderSelectFile": "Seleziona un file…",
 		"browser": {
-			"cepNodeRequired": "Il browser dei file richiede CEP Node",
+			"cepNodeRequired": "Il browser dei file richiede CEP Node — inserisci un percorso manualmente o usa Sfoglia.",
 			"noPresetsFolder": "Nessuna cartella di preset configurata",
 			"noScriptsFolder": "Nessuna cartella di script configurata",
 			"noPluginsFolder": "Nessuna cartella di plug-in configurata",

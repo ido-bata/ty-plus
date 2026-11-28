@@ -212,13 +212,16 @@ const fieldsWrapperClass = css({
  * item's extra height across its tracks, so the 6rem tile stretched the
  * two `auto` rows and pushed ~20px of dead space between the segmented
  * tabs and the fields row (issue #766). A flex row cannot redistribute
- * height into its children, so the rows keep their content height and the
- * tile simply centers against the column.
+ * height into its children, so the rows keep their content height.
  */
 const bodyPreviewRowClass = css({
 	display: "flex",
 	minWidth: "0",
-	alignItems: "center",
+	// Issue #793: `center` let the fields column float vertically — the
+	// segmented tabs sat ~9px lower on the Image tab (shorter fields) than
+	// on Text/Emoji, so the same control moved between icon types. Top
+	// alignment pins the tabs and the preview's top edge to one key line.
+	alignItems: "flex-start",
 	gap: "2",
 });
 
@@ -227,7 +230,9 @@ const bodyPreviewColumnClass = css({
 	minWidth: "0",
 	flex: "1",
 	flexDirection: "column",
-	gap: "1",
+	// Issue #793: 4px left the swatch field labels crowding the segmented
+	// control's bottom border — 8px matches the row gap.
+	gap: "2",
 });
 
 /**

@@ -357,7 +357,7 @@
 		"pathPlaceholderCurrentFolder": "Pasta atual visível — escolha um ficheiro ou procure",
 		"pathPlaceholderSelectFile": "Selecionar um ficheiro…",
 		"browser": {
-			"cepNodeRequired": "O navegador de ficheiros requer CEP Node",
+			"cepNodeRequired": "O navegador de ficheiros requer CEP Node — introduza um caminho manualmente ou use Procurar.",
 			"noPresetsFolder": "Nenhuma pasta de predefinições configurada",
 			"noScriptsFolder": "Nenhuma pasta de scripts configurada",
 			"noPluginsFolder": "Nenhuma pasta de plug-ins configurada",

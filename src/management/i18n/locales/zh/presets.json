@@ -352,7 +352,7 @@
 		"pathPlaceholderCurrentFolder": "当前显示文件夹 — 请选择文件或浏览",
 		"pathPlaceholderSelectFile": "选择文件…",
 		"browser": {
-			"cepNodeRequired": "文件浏览器需要 CEP Node",
+			"cepNodeRequired": "文件浏览器需要 CEP Node — 请手动输入路径或使用“浏览”。",
 			"noPresetsFolder": "未配置预设文件夹",
 			"noScriptsFolder": "未配置脚本文件夹",
 			"noPluginsFolder": "未配置插件文件夹",
