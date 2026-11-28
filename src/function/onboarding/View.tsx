@@ -511,7 +511,7 @@ function StepNavigation({
 				uiSize="sm"
 				start={
 					saving && activeStep === "finish" ? (
-						<LoaderCircle className={css({ animation: "spin" })} />
+						<LoaderCircle size={16} className={css({ animation: "spin" })} />
 					) : undefined
 				}
 				aria-busy={saving && activeStep === "finish"}
