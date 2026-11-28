@@ -39,7 +39,11 @@ const previewBox = css({
 	borderRadius: "shell-sm",
 	borderWidth: "hairline",
 	borderStyle: "solid",
-	borderColor: "var(--color-ty-widget-border)",
+	// Issue #795: passive chrome rests on `border.subtle`; the previous
+	// `--color-ty-widget-border` (#0e0e0e) was darker than the dialog
+	// surface, so the preview bounds dissolved into the panel — worst when
+	// the composed background itself was near-black.
+	borderColor: "border.subtle",
 	backgroundColor: "surface.panel",
 });
 

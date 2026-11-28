@@ -20,6 +20,12 @@ export type RangeFieldProps = {
 	 * (issue #768).
 	 */
 	numberUiSize?: "sm" | "md" | "lg";
+	/**
+	 * Disables both the slider and the paired numeric readout (issue #795 —
+	 * callers need to park controls that have no effect, e.g. an opacity
+	 * slider for a fully transparent colour).
+	 */
+	disabled?: boolean;
 	className?: string;
 };
 
@@ -73,6 +79,10 @@ const RANGE_INPUT_CLASS = cx(
 			borderColor: "border.control",
 			backgroundColor: "text.primary",
 		},
+		_disabled: {
+			opacity: 0.5,
+			cursor: "not-allowed",
+		},
 	}),
 );
 
@@ -88,6 +98,7 @@ export function RangeField({
 	step = 1,
 	unit,
 	numberUiSize = "sm",
+	disabled,
 	className,
 }: RangeFieldProps): JSX.Element {
 	// Issue #679: the label names the control only; the paired NumberField is
@@ -112,6 +123,7 @@ export function RangeField({
 					max={max}
 					step={step}
 					value={value}
+					disabled={disabled}
 					onChange={(e) => commit(Number(e.target.value))}
 					aria-label={label ?? "Range"}
 					aria-valuetext={unit !== undefined ? `${value}${unit}` : undefined}
@@ -124,6 +136,7 @@ export function RangeField({
 					value={value}
 					onChange={(v) => commit(Number(v))}
 					unit={unit}
+					disabled={disabled}
 					aria-label={valueLabel}
 					uiSize={numberUiSize}
 					numberSpinners={false}
