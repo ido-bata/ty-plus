@@ -19,7 +19,14 @@ describe("PresetLibraryEmptyState — Issue #128 disconnected state", () => {
 				onClearFilters={() => {}}
 			/>,
 		);
-		expect(container.textContent).toBe(i18n.t("online:catalog.emptyNoCatalog"));
+		// jobs6 (#792): the retry action is a labelled button now, so the
+		// copy is asserted with `toContain` rather than exact equality.
+		expect(container.textContent).toContain(
+			i18n.t("online:catalog.emptyNoCatalog"),
+		);
+		expect(container.textContent).toContain(
+			i18n.t("online:catalog.refreshCatalog"),
+		);
 		expect(container.querySelector("[data-gateway-boot-reason]")).toBeNull();
 	});
 
@@ -99,7 +106,7 @@ describe("PresetLibraryEmptyState — Issue #128 disconnected state", () => {
 		expect(onRefresh).toHaveBeenCalledTimes(1);
 	});
 
-	it("returns null while loading and does not flash the empty copy", () => {
+	it("shows a loading label instead of the empty copy while loading", () => {
 		const { container } = render(
 			<PresetLibraryEmptyState
 				loading
@@ -110,6 +117,12 @@ describe("PresetLibraryEmptyState — Issue #128 disconnected state", () => {
 			/>,
 		);
 		expect(container.querySelector("[data-online-preset-empty]")).toBeNull();
+		// jobs6 (#792): a bare `null` left the panel blank — the loading
+		// branch must paint a status, without the empty-state marker.
+		expect(
+			container.querySelector("[data-online-preset-loading]"),
+		).not.toBeNull();
+		expect(container.textContent).toContain(i18n.t("common:app.loading"));
 	});
 
 	it("shows the 'no presets match filter' copy on the filter-miss branch", () => {
@@ -122,6 +135,13 @@ describe("PresetLibraryEmptyState — Issue #128 disconnected state", () => {
 				onClearFilters={() => {}}
 			/>,
 		);
-		expect(container.textContent).toBe(i18n.t("online:catalog.emptyNoMatch"));
+		// jobs6 (#792): labelled clear-filters button — assert the copy,
+		// not exact textContent (the button carries its own label).
+		expect(container.textContent).toContain(
+			i18n.t("online:catalog.emptyNoMatch"),
+		);
+		expect(container.textContent).toContain(
+			i18n.t("online:catalog.clearAllFilters"),
+		);
 	});
 });

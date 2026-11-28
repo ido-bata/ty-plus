@@ -46,6 +46,13 @@ const terminalStateClass = css({
 	},
 });
 
+// jobs6 (#792): the ghost variant paints every glyph `text.muted` — at
+// icon sizes 9–12px the AlertCircle "!" all but disappeared. Errors get
+// the status colour so the glyph reads at a glance.
+const errorIconClass = css({
+	color: "status.error",
+});
+
 // Easing per tick: the displayed percent moves 20% of the remaining
 // distance toward the target on every tick. With a 16ms tick that
 // settles in ~10 ticks (~160ms) — fast enough to feel responsive,
@@ -170,13 +177,15 @@ export function DownloadProgressIconButton(
 	// without forcing a render tick on the per-frame animated ref.
 	const title = isActive
 		? formatStageLabel(stage, Math.round(targetPercent))
-		: isDownloaded
-			? "Already downloaded"
-			: "Download";
+		: isError
+			? "Download failed"
+			: isDownloaded
+				? "Already downloaded"
+				: "Download";
 
 	const disabled = isDownloaded || isComplete;
 	const innerIcon = isError ? (
-		<Icon icon={AlertCircle} size={iconSize} />
+		<Icon icon={AlertCircle} size={iconSize} className={errorIconClass} />
 	) : isComplete || isDownloaded ? (
 		<Icon icon={Check} size={iconSize} />
 	) : (

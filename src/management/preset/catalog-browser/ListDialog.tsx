@@ -212,11 +212,6 @@ const groupTitleButtonClass = css({
 	textAlign: "left",
 });
 
-const groupSubtitleDividerClass = css({
-	marginInline: "1.5",
-	color: "border.default",
-});
-
 const groupMembersListClass = css({
 	borderTopWidth: "hairline",
 	borderTopStyle: "solid",
@@ -355,16 +350,26 @@ const iconGroupBadgeClass = css({
 	backgroundColor: "surface.dialog/95",
 	paddingInline: "1",
 	paddingBlock: "px",
-	fontSize: "2xs",
+	// jobs6 (#792): `2xs` + muted read as decoration, not a count. `xs` at
+	// primary weight keeps the numeral legible at tile scale.
+	fontSize: "xs",
 	lineHeight: "1",
 	fontWeight: "medium",
 	fontVariantNumeric: "tabular-nums",
-	color: "text.muted",
+	color: "text.primary",
 	boxShadow: "sm",
 });
 
+// jobs6 (#792): the hover/focus action row is 28px tall (24px `xs` button
+// + 4px plate padding) but the title line is ~18px, so the floating
+// buttons used to protrude below the tile's bottom border and squeeze the
+// title into a faint sliver. Reserve the action row's height and center
+// the title inside it — the overlay stays put, nothing spills.
 const iconGroupTitleWrapperClass = css({
 	position: "relative",
+	display: "flex",
+	minHeight: "7",
+	alignItems: "center",
 	marginTop: "0.5",
 	paddingInline: "0.5",
 });
@@ -445,8 +450,12 @@ const iconPresetButtonInnerClass = css({
 	padding: "0.5",
 });
 
+// Same reservation as `iconGroupTitleWrapperClass` — see the comment there.
 const iconPresetTitleWrapperClass = css({
 	position: "relative",
+	display: "flex",
+	minHeight: "7",
+	alignItems: "center",
 	marginTop: "0.5",
 	paddingInline: "0.5",
 });
@@ -521,6 +530,18 @@ const errorDetailClass = css({
 	fontSize: "xs",
 	color: "text.muted",
 	overflowWrap: "anywhere",
+});
+
+const emptyCatalogTitleClass = css({
+	// jobs6 (#792): the shared `emptyStateClass` is a muted `sm` paragraph
+	// with `paddingBlock: 8` — as the heading it rendered smaller and
+	// dimmer than its own supporting sentence, and the padding opened a
+	// ~55px hole between heading and hint. The heading needs primary
+	// weight at heading size with normal rhythm.
+	fontSize: "sm",
+	fontWeight: "medium",
+	lineHeight: "tight",
+	color: "text.primary",
 });
 
 const emptyCatalogClass = css({
@@ -874,7 +895,6 @@ function PresetGroupListBlock(props: {
 							{i18n.t("presets:listDialog.groupItems", {
 								count: members.length,
 							})}
-							<span className={groupSubtitleDividerClass}>|</span>
 						</span>
 						<span className={presetRowWorkspaceClass}>
 							{groupWorkspaceSummary(group, groupPlacement)}
@@ -2040,7 +2060,7 @@ export function PresetsDialog(): JSX.Element {
 		if (presets.length === 0) {
 			return (
 				<div className={emptyCatalogClass}>
-					<p className={emptyStateClass}>
+					<p className={emptyCatalogTitleClass}>
 						{i18n.t("presets:listDialog.emptyCatalog")}
 					</p>
 					<p className={emptyCatalogHintClass}>
@@ -2071,7 +2091,11 @@ export function PresetsDialog(): JSX.Element {
 	};
 
 	const cloudNotice =
-		gatewayHealth.state === "live" ? null : (
+		// jobs6 (#792): the notice claims the panel is "showing the local
+		// catalog" — when the local catalog itself failed to load
+		// (`loadPhase === "error"`) that claim directly contradicts the
+		// body error, so the strip is suppressed for that state only.
+		gatewayHealth.state === "live" || loadPhase === "error" ? null : (
 			<p className={cloudNoticeClass} data-preset-list-cloud-notice>
 				<span className={css({ fontWeight: "medium", flexShrink: "0" })}>
 					{i18n.t("presets:listDialog.cloudOffline")}
