@@ -241,3 +241,137 @@ export const corruptJsonBytes = (prefix: string): Buffer =>
 export const tileCountExpression = `document.querySelectorAll(
 	"[data-workspace-preset-tile], [data-workspace-widget-tile], [data-workspace-group-tile]"
 ).length`;
+
+// ---------------------------------------------------------------------------
+// Workspace tile geometry + widget lookup (Issue #786)
+// ---------------------------------------------------------------------------
+
+export const WORKSPACE_1_JSON = ["workspaces", "workspace-1.json"] as const;
+const WIDGET_RECORDS_JSON = ["widgets", "widgets.json"] as const;
+
+export type GridCell = {
+	id?: string;
+	x?: number;
+	y?: number;
+	width?: number;
+	height?: number;
+};
+
+/** `gridCells` rows of `workspaces/workspace-1.json` ([] when unreadable). */
+export const readGridCells = async (ctx: E2EContext): Promise<GridCell[]> => {
+	const doc = await ctx.readManagedJson<{ gridCells?: GridCell[] }>(
+		...WORKSPACE_1_JSON,
+	);
+	return Array.isArray(doc?.gridCells) ? doc.gridCells : [];
+};
+
+export const gridCellForId = (
+	cells: readonly GridCell[],
+	id: string,
+): GridCell | null => cells.find((c) => c?.id === id) ?? null;
+
+/** First widget record id of `type` in `widgets/widgets.json` (or null). */
+export const findWidgetInstanceIdByType = async (
+	ctx: E2EContext,
+	type: string,
+): Promise<string | null> => {
+	const doc = await ctx.readManagedJson<{
+		widgets?: { id?: string; type?: string }[];
+	}>(...WIDGET_RECORDS_JSON);
+	const record = (doc?.widgets ?? []).find((w) => w?.type === type);
+	const id = typeof record?.id === "string" ? record.id.trim() : "";
+	return id || null;
+};
+
+/** First widget record id of any type (deterministic file order). */
+export const findAnyWidgetInstanceId = async (
+	ctx: E2EContext,
+): Promise<string | null> => {
+	const doc = await ctx.readManagedJson<{
+		widgets?: { id?: string; type?: string }[];
+	}>(...WIDGET_RECORDS_JSON);
+	for (const w of doc?.widgets ?? []) {
+		const id = typeof w?.id === "string" ? w.id.trim() : "";
+		if (id) return id;
+	}
+	return null;
+};
+
+/**
+ * Selector for a widget tile shell. For widget tiles the shell itself
+ * carries both `data-workspace-surface-index` (placement index) and
+ * `data-widget-instance-id`, so this element is also the drag/resize
+ * target used by `setupInteractionEvents`.
+ */
+export const widgetTileSelector = (instanceId: string): string =>
+	`[data-widget-instance-id="${instanceId}"]`;
+
+/**
+ * In-page async expression that performs a real pointer gesture on a tile
+ * shell: `pointerdown` → `pointermove`(s) → `pointerup`, exactly the event
+ * sequence `setupInteractionEvents` consumes (container capture
+ * `pointerdown`, bubble `pointermove`/`pointerup`, plus the document-level
+ * move/up listeners — the same dispatched event object is deduplicated by
+ * the handler's WeakSet).
+ *
+ * - `mode: "move"` uses Ctrl/Cmd+left-drag (`isMoveClick`), which moves a
+ *   tile regardless of selection state.
+ * - `mode: "resize-e"|"resize-w"|"resize-s"|"resize-n"` uses a plain
+ *   left-drag starting inside the RESIZE_MARGIN (12px) edge band.
+ *
+ * `deltaCells` is expressed in grid cells; the px delta is derived from the
+ * live `--ty-ws-cell`/`--ty-ws-grid-gap` custom properties so it tracks the
+ * persisted grid settings. Returns a small result object; never throws —
+ * failures come back as `{ ok:false, reason }`.
+ */
+export const tileGestureExpression = (args: {
+	tileSelector: string;
+	mode: "move" | "resize-e" | "resize-w" | "resize-s" | "resize-n";
+	deltaCells: number;
+}): string => {
+	const { tileSelector, mode, deltaCells } = args;
+	const isResize = mode !== "move";
+	const edge = isResize ? mode.slice("resize-".length) : "";
+	return `(async () => {
+		const el = document.querySelector(${JSON.stringify(tileSelector)});
+		if (!el) return { ok: false, reason: "no-tile" };
+		const r = el.getBoundingClientRect();
+		if (r.width < 4 || r.height < 4) return { ok: false, reason: "no-rect", rect: { w: r.width, h: r.height } };
+		const cs = getComputedStyle(document.documentElement);
+		const cellPx = parseFloat(cs.getPropertyValue("--ty-ws-cell")) || 48;
+		const gapPx = parseFloat(cs.getPropertyValue("--ty-ws-grid-gap")) || 0;
+		const step = cellPx + gapPx;
+		const delta = ${deltaCells} * step;
+		const mk = (type, x, y, init) => new PointerEvent(type, Object.assign(
+			{ bubbles: true, cancelable: true, clientX: x, clientY: y, pointerId: 1, isPrimary: true, buttons: 1 },
+			init));
+		let sx, sy, ex, ey, downInit, moveInit;
+		if (${JSON.stringify(isResize)}) {
+			// Grab inside the 12px edge band on the requested side, vertically
+			// (or horizontally) centered so no corner is hit accidentally.
+			const edgeInset = 4;
+			if (${JSON.stringify(edge)} === "e") { sx = r.right - edgeInset; sy = r.top + r.height / 2; }
+			else if (${JSON.stringify(edge)} === "w") { sx = r.left + edgeInset; sy = r.top + r.height / 2; }
+			else if (${JSON.stringify(edge)} === "s") { sx = r.left + r.width / 2; sy = r.bottom - edgeInset; }
+			else { sx = r.left + r.width / 2; sy = r.top + edgeInset; }
+			ex = sx + (${JSON.stringify(edge)} === "e" ? delta : ${JSON.stringify(edge)} === "w" ? -delta : 0);
+			ey = sy + (${JSON.stringify(edge)} === "s" ? delta : ${JSON.stringify(edge)} === "n" ? -delta : 0);
+			downInit = { button: 0 };
+			moveInit = { button: 0 };
+		} else {
+			sx = r.left + r.width / 2; sy = r.top + r.height / 2;
+			ex = sx + delta; ey = sy;
+			// Ctrl/Cmd+left = workspace move gesture (isMoveClick).
+			downInit = { button: 0, ctrlKey: true, metaKey: true };
+			moveInit = { button: 0, ctrlKey: true, metaKey: true };
+		}
+		const before = { left: r.left, top: r.top, width: r.width, height: r.height };
+		el.dispatchEvent(mk("pointerdown", sx, sy, downInit));
+		for (const f of [0.4, 0.7, 1]) {
+			el.dispatchEvent(mk("pointermove", sx + (ex - sx) * f, sy + (ey - sy) * f, moveInit));
+			await new Promise((res) => setTimeout(res, 40));
+		}
+		document.dispatchEvent(mk("pointerup", ex, ey, { button: 0, buttons: 0 }));
+		return { ok: true, before, target: { x: ex, y: ey }, step };
+	})()`;
+};
