@@ -61,6 +61,49 @@ export const Disabled: Story = {
 	args: { disabled: true },
 };
 
+/*
+ * Issue #763: a disabled `primary` button must not keep the accent fill —
+ * review captures showed the settings "Open GitHub issue" / "Open panel
+ * editor" CTAs reading as active steel-blue buttons. The resting fill
+ * must match the muted `surface.widget` tier every other disabled
+ * control uses, probed through the same Panda token (not a literal).
+ */
+export const DisabledPrimary: Story = {
+	args: { variant: "primary", disabled: true },
+	render: (args) => (
+		<div className={css({ display: "flex", gap: "2" })}>
+			<Button {...args}>Disabled primary</Button>
+			<Button {...args} disabled={false}>
+				Enabled primary
+			</Button>
+		</div>
+	),
+	play: async ({ canvasElement }) => {
+		const buttons = Array.from(
+			canvasElement.querySelectorAll<HTMLButtonElement>("button"),
+		);
+		const disabledBtn = buttons.find((b) => b.disabled);
+		const enabledBtn = buttons.find((b) => !b.disabled);
+		if (!disabledBtn || !enabledBtn) {
+			throw new Error("disabled/enabled primary buttons not found");
+		}
+		const probe = document.createElement("div");
+		probe.className = css({ backgroundColor: "surface.widget" });
+		document.body.appendChild(probe);
+		try {
+			expect(getComputedStyle(disabledBtn).backgroundColor).toBe(
+				getComputedStyle(probe).backgroundColor,
+			);
+		} finally {
+			probe.remove();
+		}
+		// And it must differ from the enabled accent fill.
+		expect(getComputedStyle(disabledBtn).backgroundColor).not.toBe(
+			getComputedStyle(enabledBtn).backgroundColor,
+		);
+	},
+};
+
 // Issue #146: hover-state capture — a real-pointer hover must lift the
 // button to `interactive.hover`; the post-play state is screenshotted.
 export const Hovered: Story = {

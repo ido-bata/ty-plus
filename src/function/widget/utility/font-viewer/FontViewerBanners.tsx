@@ -45,13 +45,26 @@ export function FontViewerLoadHint({
 					color: "text.muted",
 				})}
 			>
-				<p className={css({ margin: 0, lineHeight: "snug" })}>
+				<p
+					className={css({
+						// Issue #763: the paragraph absorbs the shrink so the
+						// CTA below stays inside the visible banner box at
+						// compact heights instead of being pushed out of view.
+						// `flexGrow` (not `flex: 1`) keeps the auto basis so
+						// the text still sizes to content at tall heights.
+						flexGrow: "1",
+						minHeight: "0",
+						overflowY: "auto",
+						margin: 0,
+						lineHeight: "snug",
+					})}
+				>
 					{t("fontViewer.hintNeedUserGesture", {
 						defaultValue:
 							"Installed fonts need a button click (Chromium Local Font Access). Until then, this catalog lists only fonts already registered on document.fonts for this panel.",
 					})}
 				</p>
-				<div>
+				<div className={css({ flexShrink: "0" })}>
 					<Button
 						type="button"
 						variant="primary"
@@ -224,7 +237,10 @@ export function FontViewerEmptyState({
 						overflowWrap: "anywhere",
 						fontFamily: "mono",
 						fontSize: "text-2xs",
-						color: "text.muted",
+						// Issue #763: an active host failure must not read as
+						// secondary copy — same warning tier as the sibling
+						// error banners.
+						color: "status.warning",
 					})}
 				>
 					<span className={css({ fontFamily: "sans" })}>

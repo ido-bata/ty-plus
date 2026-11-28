@@ -199,6 +199,9 @@ export const DisplayLanguage: Story = {
 		const selectRect = select.getBoundingClientRect();
 		expect(selectRect.left).toBeGreaterThanOrEqual(bodyRect.left - 1);
 		expect(selectRect.right).toBeLessThanOrEqual(bodyRect.right + 1);
+		// Issue #763: a short single-value picker must not stretch across
+		// the whole section — it occupies half the 6-column grid.
+		expect(selectRect.width).toBeLessThan(bodyRect.width * 0.75);
 	},
 };
 
