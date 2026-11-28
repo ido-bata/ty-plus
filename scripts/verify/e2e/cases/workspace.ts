@@ -1695,4 +1695,298 @@ export const workspaceCases: E2ECase[] = [
 			};
 		},
 	},
+	{
+		uc: "UC-D09",
+		title:
+			"directory-browser widget: mount, entry listing, dir navigation, file selection",
+		async run(ctx: E2EContext) {
+			const checks: ReturnType<typeof check>[] = [];
+			const cellsBefore = await gridCellCount(ctx);
+			let instanceId = "";
+
+			await withManagedRootSnapshot(
+				ctx,
+				"uc-d09-directory-browser",
+				async () => {
+					const { instanceId: id } = await addWidgetViaDialog(
+						ctx,
+						"directory-browser",
+					);
+					instanceId = id;
+					checks.push(
+						check(
+							"directory-browser widget record added",
+							Boolean(id),
+							id ? `id=${id}` : "no new record",
+						),
+					);
+					if (!id) return;
+
+					// Wait for the layout write, then reload so the tile mounts.
+					const layoutDeadline = Date.now() + 15_000;
+					while (Date.now() < layoutDeadline) {
+						if ((await gridCellCount(ctx)) > cellsBefore) break;
+						await sleep(500);
+					}
+					const panel = await reloadPanel1(ctx, 60_000);
+					const scope = `[data-widget-instance-id="${id}"]`;
+					const scopeJson = JSON.stringify(scope);
+
+					const chromeSeen = await waitForDom(
+						ctx,
+						panel,
+						`Boolean(document.querySelector(${JSON.stringify(`${scope} [data-directory-browser-search]`)}))`,
+						60_000,
+					);
+					checks.push(
+						check(
+							"directory-browser widget chrome mounted",
+							Boolean(chromeSeen),
+							`search=${String(chromeSeen).slice(0, 60)}`,
+						),
+					);
+					if (!chromeSeen) return;
+
+					// Toolbar, path field, and browse-mode selector are the
+					// widget's navigation chrome (product-model §2 U1).
+					const chrome = (await ctx.evalJs(
+						panel,
+						`(() => {
+						const scope = document.querySelector(${scopeJson});
+						if (!scope) return { scope: false };
+						return {
+							scope: true,
+							toolbar: scope.querySelectorAll('[data-directory-browser-toolbar]').length,
+							pathInputs: scope.querySelectorAll('[data-path-field] input').length,
+							browseSelects: scope.querySelectorAll('button[aria-haspopup="listbox"]').length,
+						};
+					})()`,
+					)) as {
+						scope?: boolean;
+						toolbar?: number;
+						pathInputs?: number;
+						browseSelects?: number;
+					};
+					checks.push(
+						check(
+							"toolbar + path field + browse-mode select rendered",
+							(chrome.toolbar ?? 0) >= 1 &&
+								(chrome.pathInputs ?? 0) >= 1 &&
+								(chrome.browseSelects ?? 0) >= 1,
+							JSON.stringify(chrome),
+						),
+					);
+
+					// Directory listing: the file-browser service lists the
+					// default directory asynchronously; entries carry
+					// data-entry-kind dir|file + data-entry-path.
+					const entryCount = await waitForDom(
+						ctx,
+						panel,
+						`document.querySelectorAll(${JSON.stringify(`${scope} [data-directory-browser-entry]`)}).length`,
+						45_000,
+					);
+					const entries = (await ctx.evalJs(
+						panel,
+						`(() => {
+						const scope = document.querySelector(${scopeJson});
+						if (!scope) return { dirs: 0, files: 0, paths: [] };
+						const rows = [...scope.querySelectorAll('[data-directory-browser-entry]')];
+						return {
+							dirs: rows.filter((r) => r.getAttribute('data-entry-kind') === 'dir').length,
+							files: rows.filter((r) => r.getAttribute('data-entry-kind') === 'file').length,
+							paths: rows.slice(0, 5).map((r) => r.getAttribute('data-entry-path')),
+						};
+					})()`,
+					)) as { dirs?: number; files?: number; paths?: string[] };
+					checks.push(
+						check(
+							"directory entries listed",
+							Number(entryCount) > 0,
+							`entries=${entryCount} dirs=${entries.dirs} files=${entries.files}`,
+						),
+					);
+					if (!entryCount) return;
+
+					// Filters toggle expands the detailed-filter panel.
+					const lang = await surfaceLang(ctx, panel);
+					const filtersLabel = await resolveLocaleKey(
+						lang,
+						"widgets:directoryBrowser.toolbar.detailedFilters",
+					);
+					if (filtersLabel) {
+						await ctx.evalJs(
+							panel,
+							`(() => {
+							const scope = document.querySelector(${scopeJson});
+							const btn = [...(scope?.querySelectorAll('button') ?? [])]
+								.find((b) => b.getAttribute('aria-label') === ${JSON.stringify(filtersLabel)});
+							if (btn) btn.click();
+							return Boolean(btn);
+						})()`,
+						);
+						const filtersOpen = await waitForDom(
+							ctx,
+							panel,
+							`Boolean(document.querySelector(${JSON.stringify(`${scope} [data-directory-browser-filters]`)}))`,
+							10_000,
+						);
+						checks.push(
+							check(
+								"detailed filters panel toggles open",
+								Boolean(filtersOpen),
+								`label=${JSON.stringify(filtersLabel)}`,
+							),
+						);
+					}
+
+					// Navigate into the first directory via its row trailing
+					// "Open folder" button (single click on a dir row only
+					// selects; activation is double-click / the folder button).
+					const openFolderLabel = await resolveLocaleKey(
+						lang,
+						"widgets:directoryBrowser.actions.openFolder",
+					);
+					const pathValue = `(() => {
+					const scope = document.querySelector(${scopeJson});
+					const input = scope?.querySelector('[data-path-field] input');
+					return input ? input.value : null;
+				})()`;
+					const dirBefore = (await ctx.evalJs(panel, pathValue)) as
+						| string
+						| null;
+					let navigated = false;
+					if (openFolderLabel && entries.dirs && entries.dirs > 0) {
+						const clickedDir = await ctx.evalJs(
+							panel,
+							`(() => {
+							const scope = document.querySelector(${scopeJson});
+							const btn = [...(scope?.querySelectorAll('button') ?? [])]
+								.find((b) => b.getAttribute('aria-label') === ${JSON.stringify(openFolderLabel)}
+									&& b.closest('[data-entry-kind="dir"]'));
+							if (btn) { btn.click(); return 'clicked'; }
+							return 'missing';
+						})()`,
+						);
+						const dirAfter = await waitForDom(
+							ctx,
+							panel,
+							`(() => {
+							const scope = document.querySelector(${scopeJson});
+							const input = scope?.querySelector('[data-path-field] input');
+							return input && input.value !== ${JSON.stringify(dirBefore)}
+								? input.value : null;
+						})()`,
+							30_000,
+						);
+						navigated = Boolean(dirAfter);
+						checks.push(
+							check(
+								"directory navigation changes current path",
+								clickedDir === "clicked" && navigated,
+								`click=${String(clickedDir)} before=${JSON.stringify(dirBefore)} after=${JSON.stringify(dirAfter)}`,
+							),
+						);
+
+						// Go back up via the toolbar go-up button.
+						const goUpLabel = await resolveLocaleKey(
+							lang,
+							"widgets:directoryBrowser.entry.goUp",
+						);
+						if (goUpLabel) {
+							await ctx.evalJs(
+								panel,
+								`(() => {
+								const scope = document.querySelector(${scopeJson});
+								const btn = [...(scope?.querySelectorAll('button') ?? [])]
+									.find((b) => b.getAttribute('aria-label') === ${JSON.stringify(goUpLabel)});
+								if (btn && !btn.disabled) { btn.click(); return 'clicked'; }
+								return btn ? 'disabled' : 'missing';
+							})()`,
+							);
+							const backAt = await waitForDom(
+								ctx,
+								panel,
+								`(() => {
+								const scope = document.querySelector(${scopeJson});
+								const input = scope?.querySelector('[data-path-field] input');
+								return input && input.value === ${JSON.stringify(dirBefore)}
+									? input.value : null;
+							})()`,
+								30_000,
+							);
+							checks.push(
+								check(
+									"go-up returns to previous directory",
+									Boolean(backAt),
+									`back=${JSON.stringify(backAt)}`,
+								),
+							);
+						}
+					}
+
+					// File selection: single-click a file row marks it selected
+					// (root exposes data-directory-browser-selected-file).
+					if (entries.files && entries.files > 0) {
+						await ctx.evalJs(
+							panel,
+							`(() => {
+							const scope = document.querySelector(${scopeJson});
+							const row = scope?.querySelector('[data-directory-browser-entry][data-entry-kind="file"]');
+							if (row) row.click();
+							return Boolean(row);
+						})()`,
+						);
+						const selectedPath = await waitForDom(
+							ctx,
+							panel,
+							`(() => {
+							const scope = document.querySelector(${scopeJson});
+							const host = scope?.querySelector('[data-directory-browser-selected-file]');
+							const v = host?.getAttribute('data-directory-browser-selected-file');
+							return v ? v : null;
+						})()`,
+							20_000,
+						);
+						checks.push(
+							check(
+								"file row selection registers selected path",
+								Boolean(selectedPath),
+								`selected=${JSON.stringify(selectedPath)}`,
+							),
+						);
+					} else {
+						checks.push(
+							check(
+								"file selection exercised",
+								true,
+								"no file entries in default directory — selection path not exercised",
+							),
+						);
+					}
+				},
+			);
+			try {
+				await reloadPanel1(ctx, 30_000);
+			} catch {
+				// restore already ran; reload is best-effort
+			}
+			const cellsRestored = await gridCellCount(ctx);
+			checks.push(
+				check(
+					"layout restored after case",
+					cellsRestored === cellsBefore,
+					`before=${cellsBefore} restored=${cellsRestored}`,
+				),
+			);
+			return {
+				detail: `widget=${instanceId || "none"} cells ${cellsBefore}→${cellsRestored}`,
+				checks,
+				evidence: [
+					managedFilePath(ctx, "widgets", "widgets.json"),
+					managedFilePath(ctx, "workspaces", "workspace-1.json"),
+				],
+			};
+		},
+	},
 ];

@@ -39,11 +39,15 @@ const parseMatrix = (markdown: string): Map<string, MatrixEntry> => {
 		const match = line.match(UC_ROW);
 		if (!match) continue;
 		const id = match[1] as string;
-		const automation = (match[4] ?? "").trim();
-		// Journey rows (section J) have no 自動化 column; only rows whose
-		// fourth cell is a known automation level count as matrix entries.
-		if (!AUTOMATION.has(automation)) continue;
-		entries.set(id, { id, automation });
+		const fourth = (match[4] ?? "").trim();
+		// Journey rows (section J) have a 状態 column where 自動化 would be,
+		// so their fourth cell is never a known automation level. They still
+		// count as known UC ids — cases reference them — but stay out of the
+		// automatable set.
+		entries.set(id, {
+			id,
+			automation: AUTOMATION.has(fourth) ? fourth : "",
+		});
 	}
 	return entries;
 };
@@ -85,7 +89,7 @@ const main = async (): Promise<void> => {
 	const uncovered = automatable.filter((e) => !caseRefs.has(e.id));
 	const covered = automatable.filter((e) => caseRefs.has(e.id));
 
-	console.log(`matrix UCs (auto/semi/manual): ${matrix.size}`);
+	console.log(`matrix UC rows: ${matrix.size}`);
 	console.log(
 		`automatable (auto+semi): ${automatable.length} — covered: ${covered.length}, uncovered: ${uncovered.length}`,
 	);
