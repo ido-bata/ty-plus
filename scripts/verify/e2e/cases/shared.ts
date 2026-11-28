@@ -247,7 +247,7 @@ export const tileCountExpression = `document.querySelectorAll(
 // ---------------------------------------------------------------------------
 
 export const WORKSPACE_1_JSON = ["workspaces", "workspace-1.json"] as const;
-export const WIDGET_RECORDS_JSON = ["widgets", "widgets.json"] as const;
+const WIDGET_RECORDS_JSON = ["widgets", "widgets.json"] as const;
 
 export type GridCell = {
 	id?: string;
