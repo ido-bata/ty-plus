@@ -39,10 +39,18 @@ import {
 	writeFixtureScript,
 } from "./journey";
 import {
+	findAnyWidgetInstanceId,
+	findWidgetInstanceIdByType,
+	type GridCell,
+	gridCellForId,
 	managedFilePath,
+	readGridCells,
 	reloadPanel1,
 	sleep,
+	tileGestureExpression,
+	WORKSPACE_1_JSON,
 	waitForDom,
+	widgetTileSelector,
 	withManagedRootSnapshot,
 } from "./shared";
 
@@ -984,6 +992,706 @@ export const workspaceCases: E2ECase[] = [
 				detail: `stale preset run handled`,
 				checks,
 				evidence: [managedFilePath(ctx, "presets", "presets.json")],
+			};
+		},
+	},
+	// -------------------------------------------------------------------
+	// Issue #786 — workspace tile operations
+	// -------------------------------------------------------------------
+	{
+		uc: "UC-B03",
+		title:
+			"widget tile move + resize via pointer gestures persist to workspace-1.json",
+		precondition: async (ctx) => {
+			const typed = ctx as E2EContext;
+			try {
+				const instanceId =
+					(await findWidgetInstanceIdByType(typed, "info")) ??
+					(await findAnyWidgetInstanceId(typed));
+				if (!instanceId) return "no widget record in widgets/widgets.json";
+				const cells = await readGridCells(typed);
+				if (!gridCellForId(cells, instanceId)) {
+					return `no gridCell for widget ${instanceId}`;
+				}
+				const panel = await typed.requireSurface({ surfaceId: "panel-1" });
+				const mounted = await typed.evalJs(
+					panel,
+					`Boolean(document.querySelector(${JSON.stringify(widgetTileSelector(instanceId))}))`,
+				);
+				return mounted ? null : `widget tile ${instanceId} not mounted`;
+			} catch (error) {
+				return `precondition failed: ${error instanceof Error ? error.message : String(error)}`;
+			}
+		},
+		async run(ctx: E2EContext) {
+			const checks: ReturnType<typeof check>[] = [];
+			const instanceId = ((await findWidgetInstanceIdByType(ctx, "info")) ??
+				(await findAnyWidgetInstanceId(ctx))) as string;
+			const selector = widgetTileSelector(instanceId);
+			const cellBefore = gridCellForId(await readGridCells(ctx), instanceId);
+			const sameCell = (a: GridCell | null, b: GridCell | null): boolean =>
+				Boolean(
+					a &&
+						b &&
+						a.x === b.x &&
+						a.y === b.y &&
+						a.width === b.width &&
+						a.height === b.height,
+				);
+
+			await withManagedRootSnapshot(ctx, "uc-b03-tile-gesture", async () => {
+				const panel = await ctx.requireSurface({ surfaceId: "panel-1" });
+				await waitForDom(
+					ctx,
+					panel,
+					`Boolean(document.querySelector(${JSON.stringify(selector)}))`,
+					30_000,
+				);
+
+				// ── Move: Ctrl/Cmd+drag moves the tile without needing a
+				//    prior selection (isMoveClick in events/handler.ts).
+				const moveResult = (await ctx.evalJs(
+					panel,
+					tileGestureExpression({
+						tileSelector: selector,
+						mode: "move",
+						deltaCells: 3,
+					}),
+				)) as { ok?: boolean; reason?: string };
+				checks.push(
+					check(
+						"move gesture dispatched on tile",
+						moveResult?.ok === true,
+						JSON.stringify(moveResult).slice(0, 160),
+					),
+				);
+				let moved: GridCell | null = null;
+				const moveDeadline = Date.now() + 20_000;
+				while (Date.now() < moveDeadline) {
+					const now = gridCellForId(await readGridCells(ctx), instanceId);
+					if (now && cellBefore && !sameCell(now, cellBefore)) {
+						moved = now;
+						break;
+					}
+					await sleep(600);
+				}
+				checks.push(
+					check(
+						"move persisted to workspace-1.json gridCells",
+						Boolean(moved),
+						moved
+							? `cell ${JSON.stringify(cellBefore)} → ${JSON.stringify(moved)}`
+							: `cell unchanged: ${JSON.stringify(cellBefore)}`,
+					),
+				);
+
+				// ── Resize: plain left-drag inside the 12px east edge band.
+				const resizeResult = (await ctx.evalJs(
+					panel,
+					tileGestureExpression({
+						tileSelector: selector,
+						mode: "resize-e",
+						deltaCells: 2,
+					}),
+				)) as { ok?: boolean; reason?: string };
+				checks.push(
+					check(
+						"resize gesture dispatched on tile edge",
+						resizeResult?.ok === true,
+						JSON.stringify(resizeResult).slice(0, 160),
+					),
+				);
+				let resized: GridCell | null = null;
+				const resizeDeadline = Date.now() + 20_000;
+				while (Date.now() < resizeDeadline) {
+					const now = gridCellForId(await readGridCells(ctx), instanceId);
+					if (now && moved && now.width !== moved.width) {
+						resized = now;
+						break;
+					}
+					await sleep(600);
+				}
+				checks.push(
+					check(
+						"resize persisted to workspace-1.json gridCells",
+						Boolean(resized),
+						resized
+							? `width ${moved?.width} → ${resized.width}`
+							: `width unchanged after move=${JSON.stringify(moved)}`,
+					),
+				);
+			});
+			return {
+				detail: `widget=${instanceId} move+resize gesture`,
+				checks,
+				evidence: [managedFilePath(ctx, ...WORKSPACE_1_JSON)],
+			};
+		},
+	},
+	{
+		uc: "UC-B06",
+		title: "widget tile move is undoable/redoable via status bar buttons",
+		precondition: async (ctx) => {
+			const typed = ctx as E2EContext;
+			try {
+				const instanceId =
+					(await findWidgetInstanceIdByType(typed, "info")) ??
+					(await findAnyWidgetInstanceId(typed));
+				if (!instanceId) return "no widget record in widgets/widgets.json";
+				const panel = await typed.requireSurface({ surfaceId: "panel-1" });
+				const mounted = await typed.evalJs(
+					panel,
+					`Boolean(document.querySelector(${JSON.stringify(widgetTileSelector(instanceId))}))`,
+				);
+				return mounted ? null : `widget tile ${instanceId} not mounted`;
+			} catch (error) {
+				return `precondition failed: ${error instanceof Error ? error.message : String(error)}`;
+			}
+		},
+		async run(ctx: E2EContext) {
+			const checks: ReturnType<typeof check>[] = [];
+			const instanceId = ((await findWidgetInstanceIdByType(ctx, "info")) ??
+				(await findAnyWidgetInstanceId(ctx))) as string;
+			const selector = widgetTileSelector(instanceId);
+			const cellBefore = gridCellForId(await readGridCells(ctx), instanceId);
+			const sameCell = (a: GridCell | null, b: GridCell | null): boolean =>
+				Boolean(
+					a &&
+						b &&
+						a.x === b.x &&
+						a.y === b.y &&
+						a.width === b.width &&
+						a.height === b.height,
+				);
+			const waitCell = async (
+				want: GridCell | null,
+				negate: GridCell | null,
+				timeoutMs: number,
+			): Promise<GridCell | null> => {
+				const deadline = Date.now() + timeoutMs;
+				while (Date.now() < deadline) {
+					const now = gridCellForId(await readGridCells(ctx), instanceId);
+					if (now && want && sameCell(now, want)) return now;
+					if (now && negate && !sameCell(now, negate)) return now;
+					await sleep(600);
+				}
+				return gridCellForId(await readGridCells(ctx), instanceId);
+			};
+
+			await withManagedRootSnapshot(ctx, "uc-b06-undo-redo", async () => {
+				const panel = await ctx.requireSurface({ surfaceId: "panel-1" });
+				await waitForDom(
+					ctx,
+					panel,
+					`Boolean(document.querySelector(${JSON.stringify(selector)}))`,
+					30_000,
+				);
+				// Status-bar undo/redo must exist (disabled state is
+				// session-history dependent, so only presence is asserted).
+				const buttonsMounted = await waitForDom(
+					ctx,
+					panel,
+					`Boolean(document.querySelector('[data-ws-action="undo"]')) &&
+					 Boolean(document.querySelector('[data-ws-action="redo"]'))`,
+					30_000,
+				);
+				checks.push(
+					check(
+						"undo/redo status bar buttons mounted",
+						Boolean(buttonsMounted),
+						String(buttonsMounted).slice(0, 80),
+					),
+				);
+
+				const moveResult = (await ctx.evalJs(
+					panel,
+					tileGestureExpression({
+						tileSelector: selector,
+						mode: "move",
+						deltaCells: 2,
+					}),
+				)) as { ok?: boolean };
+				const moved = await waitCell(null, cellBefore, 20_000);
+				checks.push(
+					check(
+						"move gesture changed persisted cell",
+						moveResult?.ok === true &&
+							Boolean(moved) &&
+							!sameCell(moved, cellBefore),
+						`gesture=${JSON.stringify(moveResult).slice(0, 80)} moved=${JSON.stringify(moved)}`,
+					),
+				);
+				if (!moved || sameCell(moved, cellBefore)) return;
+
+				// Undo → the widget tile returns to its pre-move cell.
+				const undoClicked = await clickFirst(
+					ctx,
+					panel,
+					'[data-ws-action="undo"]',
+				);
+				const undone = await waitCell(cellBefore, moved, 20_000);
+				checks.push(
+					check(
+						"undo restored pre-move gridCell",
+						undoClicked === "clicked" && sameCell(undone, cellBefore),
+						`click=${String(undoClicked)} cell=${JSON.stringify(undone)}`,
+					),
+				);
+
+				// Redo → the moved cell is reapplied.
+				const redoClicked = await clickFirst(
+					ctx,
+					panel,
+					'[data-ws-action="redo"]',
+				);
+				const redone = await waitCell(moved, cellBefore, 20_000);
+				checks.push(
+					check(
+						"redo reapplied moved gridCell",
+						redoClicked === "clicked" && sameCell(redone, moved),
+						`click=${String(redoClicked)} cell=${JSON.stringify(redone)}`,
+					),
+				);
+			});
+			return {
+				detail: `widget=${instanceId} undo/redo round-trip`,
+				checks,
+				evidence: [managedFilePath(ctx, ...WORKSPACE_1_JSON)],
+			};
+		},
+	},
+	{
+		uc: "UC-B09",
+		title: "ControlPanel collapse toggle persists to panels/panel-1.json",
+		async run(ctx: E2EContext) {
+			const checks: ReturnType<typeof check>[] = [];
+			const PANEL_CHROME = ["panels", "panel-1.json"] as const;
+			const cpCollapsed = async (): Promise<boolean | null> => {
+				const doc = await ctx.readManagedJson<{
+					controlPanel?: { collapsed?: boolean };
+				}>(...PANEL_CHROME);
+				return doc?.controlPanel &&
+					typeof doc.controlPanel.collapsed === "boolean"
+					? doc.controlPanel.collapsed
+					: null;
+			};
+			const domCollapsed = async (panel: LiveSurface): Promise<string> =>
+				String(
+					(await ctx.evalJs(
+						panel,
+						`(() => {
+							const cp = document.querySelector("[data-cp]");
+							if (!cp) return "no-cp";
+							return cp.getAttribute("data-collapsed") ?? "expanded";
+						})()`,
+					)) ?? "eval-failed",
+				);
+
+			await withManagedRootSnapshot(ctx, "uc-b09-cp-collapse", async () => {
+				const panel = await ctx.requireSurface({ surfaceId: "panel-1" });
+				const cpSeen = await waitForDom(
+					ctx,
+					panel,
+					`Boolean(document.querySelector('[data-cp] [data-ws-action="ty.ctx.cp.toggle-collapse"]'))`,
+					30_000,
+				);
+				checks.push(
+					check(
+						"control panel + collapse toggle mounted",
+						Boolean(cpSeen),
+						String(cpSeen).slice(0, 80),
+					),
+				);
+				if (!cpSeen) return;
+
+				// Ensure we start expanded: panel-1 defaults to expanded, but a
+				// prior run may have persisted collapsed=true.
+				if ((await domCollapsed(panel)) === "true") {
+					await clickFirst(
+						ctx,
+						panel,
+						'[data-cp] [data-ws-action="ty.ctx.cp.toggle-collapse"]',
+					);
+					await sleep(800);
+				}
+
+				// Collapse → data-collapsed + persisted chrome file.
+				const collapseClicked = await clickFirst(
+					ctx,
+					panel,
+					'[data-cp] [data-ws-action="ty.ctx.cp.toggle-collapse"]',
+				);
+				checks.push(
+					check(
+						"collapse toggle clicked",
+						collapseClicked === "clicked",
+						String(collapseClicked),
+					),
+				);
+				const collapsedDom = await waitForDom(
+					ctx,
+					panel,
+					`(() => {
+						const cp = document.querySelector("[data-cp]");
+						return cp && cp.getAttribute("data-collapsed") === "true";
+					})()`,
+					10_000,
+				);
+				checks.push(
+					check(
+						"data-collapsed=true after collapse",
+						Boolean(collapsedDom),
+						await domCollapsed(panel),
+					),
+				);
+				let fileCollapsed: boolean | null = null;
+				const fileDeadline = Date.now() + 15_000;
+				while (Date.now() < fileDeadline) {
+					fileCollapsed = await cpCollapsed();
+					if (fileCollapsed === true) break;
+					await sleep(700);
+				}
+				checks.push(
+					check(
+						"panels/panel-1.json controlPanel.collapsed persisted",
+						fileCollapsed === true,
+						`collapsed=${fileCollapsed}`,
+					),
+				);
+
+				// Expand again → attribute cleared + file flipped back.
+				await clickFirst(
+					ctx,
+					panel,
+					'[data-cp] [data-ws-action="ty.ctx.cp.toggle-collapse"]',
+				);
+				const expandedDom = await waitForDom(
+					ctx,
+					panel,
+					`(() => {
+						const cp = document.querySelector("[data-cp]");
+						return cp && cp.getAttribute("data-collapsed") !== "true";
+					})()`,
+					10_000,
+				);
+				checks.push(
+					check(
+						"expand restores expanded control panel",
+						Boolean(expandedDom),
+						await domCollapsed(panel),
+					),
+				);
+				const expandDeadline = Date.now() + 15_000;
+				let fileExpanded: boolean | null = null;
+				while (Date.now() < expandDeadline) {
+					fileExpanded = await cpCollapsed();
+					if (fileExpanded === false) break;
+					await sleep(700);
+				}
+				checks.push(
+					check(
+						"panels/panel-1.json collapsed=false persisted",
+						fileExpanded === false,
+						`collapsed=${fileExpanded}`,
+					),
+				);
+			});
+			return {
+				detail: "control panel collapse round-trip",
+				checks,
+				evidence: [managedFilePath(ctx, ...PANEL_CHROME)],
+			};
+		},
+	},
+	{
+		uc: "UC-B10",
+		title: "Layout Lock widget blocks tile move gestures until unlocked",
+		precondition: async (ctx) => {
+			const typed = ctx as E2EContext;
+			try {
+				const instanceId =
+					(await findWidgetInstanceIdByType(typed, "info")) ??
+					(await findAnyWidgetInstanceId(typed));
+				if (!instanceId) return "no widget record in widgets/widgets.json";
+				const lockId = await findWidgetInstanceIdByType(typed, "layout-lock");
+				if (!lockId) return "no layout-lock widget record";
+				const panel = await typed.requireSurface({ surfaceId: "panel-1" });
+				const mounted = await typed.evalJs(
+					panel,
+					`Boolean(document.querySelector(${JSON.stringify(widgetTileSelector(instanceId))})) &&
+					 Boolean(document.querySelector('[data-ws-action="toggle-lock"]'))`,
+				);
+				return mounted ? null : "widget tile or lock button not mounted";
+			} catch (error) {
+				return `precondition failed: ${error instanceof Error ? error.message : String(error)}`;
+			}
+		},
+		async run(ctx: E2EContext) {
+			const checks: ReturnType<typeof check>[] = [];
+			const instanceId = ((await findWidgetInstanceIdByType(ctx, "info")) ??
+				(await findAnyWidgetInstanceId(ctx))) as string;
+			const selector = widgetTileSelector(instanceId);
+			const cellBefore = gridCellForId(await readGridCells(ctx), instanceId);
+			const sameCell = (a: GridCell | null, b: GridCell | null): boolean =>
+				Boolean(
+					a &&
+						b &&
+						a.x === b.x &&
+						a.y === b.y &&
+						a.width === b.width &&
+						a.height === b.height,
+				);
+			const lockTitle = async (panel: LiveSurface): Promise<string> =>
+				String(
+					(await ctx.evalJs(
+						panel,
+						`(() => {
+							const btn = document.querySelector('[data-ws-action="toggle-lock"]');
+							return btn ? (btn.getAttribute("title") || "") : "missing";
+						})()`,
+					)) ?? "",
+				);
+
+			await withManagedRootSnapshot(ctx, "uc-b10-layout-lock", async () => {
+				const panel = await ctx.requireSurface({ surfaceId: "panel-1" });
+				await waitForDom(
+					ctx,
+					panel,
+					`Boolean(document.querySelector(${JSON.stringify(selector)}))`,
+					30_000,
+				);
+				// Start unlocked (title "Lock Layout"); toggle if needed.
+				if ((await lockTitle(panel)) !== "Lock Layout") {
+					await clickFirst(ctx, panel, '[data-ws-action="toggle-lock"]');
+					await sleep(800);
+				}
+				checks.push(
+					check(
+						"layout starts unlocked",
+						(await lockTitle(panel)) === "Lock Layout",
+						await lockTitle(panel),
+					),
+				);
+
+				// Lock → title flips to "Unlock Layout".
+				const lockClicked = await clickFirst(
+					ctx,
+					panel,
+					'[data-ws-action="toggle-lock"]',
+				);
+				const lockedTitle = await waitForDom(
+					ctx,
+					panel,
+					`(() => {
+						const btn = document.querySelector('[data-ws-action="toggle-lock"]');
+						return btn && btn.getAttribute("title") === "Unlock Layout";
+					})()`,
+					10_000,
+				);
+				checks.push(
+					check(
+						"lock engaged (title=Unlock Layout)",
+						lockClicked === "clicked" && Boolean(lockedTitle),
+						`click=${String(lockClicked)} title=${await lockTitle(panel)}`,
+					),
+				);
+
+				// Same move gesture that works unlocked must now be a no-op:
+				// pointerdown returns early on layoutLocked, so no op starts.
+				const blocked = (await ctx.evalJs(
+					panel,
+					tileGestureExpression({
+						tileSelector: selector,
+						mode: "move",
+						deltaCells: 3,
+					}),
+				)) as { ok?: boolean };
+				await sleep(2500);
+				const cellWhileLocked = gridCellForId(
+					await readGridCells(ctx),
+					instanceId,
+				);
+				checks.push(
+					check(
+						"move gesture blocked while locked",
+						blocked?.ok === true && sameCell(cellWhileLocked, cellBefore),
+						`gesture=${JSON.stringify(blocked).slice(0, 80)} cell=${JSON.stringify(cellWhileLocked)}`,
+					),
+				);
+
+				// Unlock → the identical gesture moves the tile again, proving
+				// the lock (not a broken gesture path) blocked the first try.
+				await clickFirst(ctx, panel, '[data-ws-action="toggle-lock"]');
+				await waitForDom(
+					ctx,
+					panel,
+					`(() => {
+						const btn = document.querySelector('[data-ws-action="toggle-lock"]');
+						return btn && btn.getAttribute("title") === "Lock Layout";
+					})()`,
+					10_000,
+				);
+				const afterUnlock = (await ctx.evalJs(
+					panel,
+					tileGestureExpression({
+						tileSelector: selector,
+						mode: "move",
+						deltaCells: 3,
+					}),
+				)) as { ok?: boolean };
+				let movedAfterUnlock: GridCell | null = null;
+				const unlockDeadline = Date.now() + 20_000;
+				while (Date.now() < unlockDeadline) {
+					const now = gridCellForId(await readGridCells(ctx), instanceId);
+					if (now && !sameCell(now, cellBefore)) {
+						movedAfterUnlock = now;
+						break;
+					}
+					await sleep(600);
+				}
+				checks.push(
+					check(
+						"same gesture moves tile after unlock",
+						afterUnlock?.ok === true && Boolean(movedAfterUnlock),
+						`gesture=${JSON.stringify(afterUnlock).slice(0, 80)} cell=${JSON.stringify(movedAfterUnlock)}`,
+					),
+				);
+			});
+			return {
+				detail: `widget=${instanceId} layout lock gesture gate`,
+				checks,
+				evidence: [managedFilePath(ctx, ...WORKSPACE_1_JSON)],
+			};
+		},
+	},
+	{
+		uc: "UC-D10",
+		title: "menu widget flyout lists workspace actions and toggles layout lock",
+		precondition: async (ctx) => {
+			const typed = ctx as E2EContext;
+			try {
+				const menuId = await findWidgetInstanceIdByType(typed, "menu");
+				if (!menuId) return "no menu widget record";
+				const panel = await typed.requireSurface({ surfaceId: "panel-1" });
+				const mounted = await typed.evalJs(
+					panel,
+					`Boolean(document.querySelector(${JSON.stringify(
+						`${widgetTileSelector(menuId)} [data-ws-action="open-widget-menu-context"]`,
+					)}))`,
+				);
+				return mounted ? null : "menu widget opener not mounted";
+			} catch (error) {
+				return `precondition failed: ${error instanceof Error ? error.message : String(error)}`;
+			}
+		},
+		async run(ctx: E2EContext) {
+			const checks: ReturnType<typeof check>[] = [];
+			const menuId = (await findWidgetInstanceIdByType(ctx, "menu")) as string;
+			const openerSel = `${widgetTileSelector(menuId)} [data-ws-action="open-widget-menu-context"]`;
+
+			await withManagedRootSnapshot(ctx, "uc-d10-menu-widget", async () => {
+				const panel = await ctx.requireSurface({ surfaceId: "panel-1" });
+				await waitForDom(
+					ctx,
+					panel,
+					`Boolean(document.querySelector(${JSON.stringify(openerSel)}))`,
+					30_000,
+				);
+
+				// Open the React flyout (portal menu, DOM-accessible — unlike
+				// the CEP-native context menu).
+				const opened = await ctx.evalJs(
+					panel,
+					`(() => {
+						const btn = document.querySelector(${JSON.stringify(openerSel)});
+						if (!btn) return "missing";
+						btn.click();
+						return "clicked";
+					})()`,
+				);
+				checks.push(
+					check("menu opener clicked", opened === "clicked", String(opened)),
+				);
+				const menuSeen = await waitForDom(
+					ctx,
+					panel,
+					`Boolean(document.querySelector('[role="menu"]'))`,
+					10_000,
+				);
+				checks.push(
+					check("menu flyout rendered", Boolean(menuSeen), String(menuSeen)),
+				);
+				const items = (await ctx.evalJs(
+					panel,
+					`(() => [...document.querySelectorAll('[role="menu"] [role="menuitem"], [role="menu"] [data-ws-action]')]
+						.map((b) => b.getAttribute("data-ws-action") || ""))()`,
+				)) as string[];
+				const itemList = Array.isArray(items) ? items : [];
+				for (const expected of [
+					"ty.ctx.undo",
+					"ty.ctx.redo",
+					"ty.ctx.toggle-layout-lock",
+					"ty.ctx.save-snapshot",
+				]) {
+					checks.push(
+						check(
+							`menu lists ${expected}`,
+							itemList.includes(expected),
+							`items=${itemList.length}`,
+						),
+					);
+				}
+
+				// Activate "Lock layout" through the flyout → routed via the
+				// portaled data-ws-action delegate to handleUnifiedCtxSelect.
+				const lockItemSel =
+					'[role="menu"] [data-ws-action="ty.ctx.toggle-layout-lock"]';
+				const itemClicked = await ctx.evalJs(
+					panel,
+					`(() => {
+						const btn = document.querySelector(${JSON.stringify(lockItemSel)});
+						if (!btn) return "missing";
+						btn.click();
+						return "clicked";
+					})()`,
+				);
+				checks.push(
+					check(
+						"layout-lock menu item clicked",
+						itemClicked === "clicked",
+						String(itemClicked),
+					),
+				);
+				const locked = await waitForDom(
+					ctx,
+					panel,
+					`(() => {
+						const btn = document.querySelector('[data-ws-action="toggle-lock"]');
+						return btn && btn.getAttribute("title") === "Unlock Layout";
+					})()`,
+					10_000,
+				);
+				checks.push(
+					check(
+						"menu item toggled layout lock",
+						Boolean(locked),
+						`locked=${String(locked).slice(0, 60)}`,
+					),
+				);
+				// Restore unlocked state for later suites (snapshot restore
+				// only covers files; layoutLocked is session state).
+				await ctx.evalJs(
+					panel,
+					`(() => {
+						const btn = document.querySelector('[data-ws-action="toggle-lock"]');
+						if (btn && btn.getAttribute("title") === "Unlock Layout") btn.click();
+						return "restored";
+					})()`,
+				);
+			});
+			return {
+				detail: `menu widget=${menuId} flyout + lock toggle`,
+				checks,
 			};
 		},
 	},

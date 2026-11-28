@@ -20,14 +20,14 @@
 | --- | --- | --- | --- | --- | --- | --- |
 | UC-B01 | preset を tile として配置（toolbar/catalog/drag）| workspace-N.json の gridCells に追加、tile DOM | auto | both | mac:自動PASS（作成dialog経路のみ。catalog/drag は未カバー） / win:未実施 | results/2026-11-15-device-macos-ae2026-dev-journey/run.json |
 | UC-B02 | widget を Add Widget dialog から追加 | widgets.json record、tile 描画、layout reload | auto | both | mac:自動PASS(sandbox) / win:未実施 | results/2026-11-16-device-macos-ae2026-dev-workspace-sandbox/run.json |
-| UC-B03 | tile 移動・リサイズ・削除・複製 | workspace-N.json の座標/サイズ更新、DOM 反映 | semi | both | 未実施 | |
+| UC-B03 | tile 移動・リサイズ・削除・複製 | workspace-N.json の座標/サイズ更新、DOM 反映 | semi | both | 未実施（ケース追加済） | #786 |
 | UC-B04 | grid 設定（cell/gap/radius）変更 → live 反映 → reload 後維持 | theme.css `--ty-ws-*`、app.json `workspace.grid`、computed style、実セルサイズ | auto | both | win:自動PASS / mac:自動PASS(#112修正済) | #95 / results/2026-11-15-device-windows-ae2027-dev-smoke-run.json / results/macos-ae2026-dev/run.json / results/2026-11-15-device-windows-ae2027-dev-extended/smoke/run.json |
 | UC-B05 | レイアウトスナップショット保存→変更→復元→削除 | snapshots.json、全パネル layout 復元 | auto | both | mac:自動PASS(sandbox, 単一run完走) / win:未実施 | results/2026-11-16-device-macos-ae2026-dev-workspace-sandbox/run.json |
-| UC-B06 | Undo/Redo | 操作の巻き戻し/やり直しが layout に反映 | semi | both | 未実施 | |
+| UC-B06 | Undo/Redo | 操作の巻き戻し/やり直しが layout に反映 | semi | both | 未実施（ケース追加済） | #786 |
 | UC-B07 | 複数パネル間の preset 配置移動 | workspacePanels roster、対象 panel の tile | semi | both | 未実施 | |
 | UC-B08 | 背景エディタで color/pattern/image レイヤー編集 | background-N.json、panel 背景描画 | semi | both | 未実施 | |
-| UC-B09 | ControlPanel collapse/向き/位置変更 → reload 後維持 | panels/panel-N.json | auto | both | 未実施 | |
-| UC-B10 | Layout Lock widget で編集ロック | gesture が効かないこと、widget state | semi | both | 未実施 | |
+| UC-B09 | ControlPanel collapse/向き/位置変更 → reload 後維持 | panels/panel-N.json | auto | both | 未実施（ケース追加済） | #786 |
+| UC-B10 | Layout Lock widget で編集ロック | gesture が効かないこと、widget state | semi | both | 未実施（ケース追加済） | #786 |
 | UC-B11 | 破損 workspace-N.json で起動・編集 | 既存データを消さない、空 layout 化しない | auto | both | mac:自動PASS / win:未実施 | results/2026-11-15-device-macos-ae2026-dev-extended.md（起動側のみ。編集 gesture は未カバー） |
 
 ## C. プリセット
@@ -57,15 +57,15 @@
 | ID | ユースケース | 主な確認対象 | 自動化 | OS | 状態 | 証跡/Issue |
 | --- | --- | --- | --- | --- | --- | --- |
 | UC-D01 | Add Widget dialog：検索・カテゴリ・view 切替・追加 | widgets.json、対象 panel の tile | auto | both | 未実施 | |
-| UC-D02 | easing：カーブ編集 → AE 選択キーフレームへ apply | AE keyframe influence/speed 変化 | semi | both | 未実施 | |
+| UC-D02 | easing：カーブ編集 → AE 選択キーフレームへ apply | AE keyframe influence/speed 変化 | semi | both | 未実施（ケース追加済・空選択 notice 経路） | #786 |
 | UC-D03 | easing：loop mode・複数セグメント・label colors | AE keyframe/label 変化 | semi | both | 未実施 | |
 | UC-D04 | easing：clipboard（copy/paste keyframe values）| clipboard.json、AE 値反映 | semi | both | 未実施 | |
-| UC-D05 | align：選択レイヤー整列/分布 | AE レイヤー位置変化 | semi | both | 未実施 | |
-| UC-D06 | anchor-point：9 方向 + apply all/comp | AE anchor point/position 変化 | semi | both | 未実施 | |
-| UC-D07 | info widget：comp/project 情報表示 | DOM 内容が AE 状態と一致 | auto | both | 未実施 | |
-| UC-D08 | font-viewer：フォント一覧・選択テキストへ適用 | font 一覧取得、AE text font 変化 | semi | both | 未実施 | |
-| UC-D09 | directory-browser：遷移・filter・選択・preset 実行 | DOM、選択ファイルの preset 実行 | semi | both | 未実施 | #784 |
-| UC-D10 | menu/quick-actions：クイック実行 | preset 実行結果 | semi | both | mac:自動PASS(sandbox, 連続2回でAE marker確認) / win:未実施 | #125修正済 / results/2026-11-16-device-macos-ae2026-dev-workspace-sandbox/run.json |
+| UC-D05 | align：選択レイヤー整列/分布 | AE レイヤー位置変化 | semi | both | 未実施（ケース追加済） | #786 |
+| UC-D06 | anchor-point：9 方向 + apply all/comp | AE anchor point/position 変化 | semi | both | 未実施（ケース追加済） | #786 |
+| UC-D07 | info widget：comp/project 情報表示 | DOM 内容が AE 状態と一致 | auto | both | 未実施（ケース追加済・preset 選択経路） | #786 |
+| UC-D08 | font-viewer：フォント一覧・選択テキストへ適用 | font 一覧取得、AE text font 変化 | semi | both | 未実施（ケース追加済・一覧/search 経路） | #786 |
+| UC-D09 | directory-browser：遷移・filter・選択・preset 実行 | DOM、選択ファイルの preset 実行 | semi | both | 未実施（ケース追加済・open/search/遷移経路） | #784 / #786 |
+| UC-D10 | menu/quick-actions：クイック実行 | preset 実行結果 | semi | both | mac:自動PASS(sandbox, 連続2回でAE marker確認) / win:未実施 | #125修正済 / #786ケース追加 / results/2026-11-16-device-macos-ae2026-dev-workspace-sandbox/run.json |
 | UC-D11 | widget state 永続化（widgets/state/*.json）| reload 後の widget 状態復元 | auto | both | mac:自動PASS / win:自動PASS | results/2026-11-15-device-macos-ae2026-dev-extended.md / results/2026-11-15-device-windows-ae2027-dev-rerun/widgets/run.json |
 | UC-D12 | 破損 widgets.json で起動・編集 | 既存 record 非破壊 | auto | both | mac:自動PASS / win:未実施 | results/2026-11-15-device-macos-ae2026-dev-extended.md（UC-I02 と同一ファイル・同一契約） |
 
@@ -99,7 +99,7 @@
 
 | ID | ユースケース | 主な確認対象 | 自動化 | OS | 状態 | 証跡/Issue |
 | --- | --- | --- | --- | --- | --- | --- |
-| UC-G01 | debug console：ログ集約・filter・eval・clear | debug-console DOM、eval 結果、clear 同期 | auto | both | win:自動PASS / mac:自動PASS | #10 D-07, W-03 / results/2026-11-15-device-windows-ae2027-dev-smoke-run.json / results/macos-ae2026-dev/run.json / results/2026-11-15-device-windows-ae2027-dev-extended/smoke/run.json |
+| UC-G01 | debug console：ログ集約・filter・eval・clear | debug-console DOM、eval 結果、clear 同期 | auto | both | win:自動PASS / mac:自動PASS | #10 D-07, W-03 / #786 eval/filter/clear拡張 / results/2026-11-15-device-windows-ae2027-dev-smoke-run.json / results/macos-ae2026-dev/run.json / results/2026-11-15-device-windows-ae2027-dev-extended/smoke/run.json |
 | UC-G02 | console reopen で replay | 過去ログ表示 | auto | both | mac:自動PASS / win:自動PASS | results/2026-11-15-device-macos-ae2026-dev-extended.md / results/2026-11-15-device-windows-ae2027-dev-rerun/debug/run.json |
 | UC-G03 | operation worker verify（spawn→accept→result→exit）| verify JSON（rowCount/exit code）| auto | both | mac:自動PASS / win:自動PASS | results/2026-11-15-device-macos-ae2026-dev-extended.md / results/2026-11-15-device-windows-ae2027-dev-extended/debug/run.json |
 | UC-G04 | panel surface の unhandled error が console に出る | #71/#69/#67 系の回帰観測 | auto | both | 未実施 | #71,#69,#67 |
