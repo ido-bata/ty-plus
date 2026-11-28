@@ -359,7 +359,7 @@
 		"exportImport": "내보내기 / 가져오기",
 		"exportToClipboard": "클립보드로 내보내기",
 		"importFromText": "텍스트에서 가져오기",
-		"intro": "Tailwind CSS 디자인 토큰을 사용자 지정합니다. 구성을 공유하려면 내보내기/가져오기를 사용하세요.",
+		"intro": "디자인 토큰을 사용자 지정합니다. 구성을 공유하려면 내보내기/가져오기를 사용하세요.",
 		"jsonPlaceholder": "내보낸 후 JSON 구성이 여기에 표시됩니다",
 		"statusApplied": "토큰을 theme.css에 적용하고 저장했습니다.",
 		"statusApplyFailed": "토큰을 저장하지 못했습니다. theme.css를 쓸 수 없습니다.",
