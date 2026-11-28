@@ -224,6 +224,7 @@
 	"debugConsole": {
 		"title": "콘솔",
 		"clear": "지우기",
+		"empty": "메시지 없음",
 		"evaluateAria": "JavaScript 평가",
 		"evaluatePlaceholder": "JavaScript 평가…",
 		"rowContextHint": "오른쪽 클릭으로 복사",
