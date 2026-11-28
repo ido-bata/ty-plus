@@ -899,6 +899,65 @@ const initialFormState: FormState = {
 	dirty: false,
 };
 
+const EditDialogFooter = ({
+	phase,
+	canMutate,
+	onDelete,
+	onSave,
+	onCancel,
+}: {
+	phase: DialogStatus["phase"];
+	canMutate: boolean;
+	onDelete: () => void;
+	onSave: () => void;
+	onCancel: () => void;
+}): JSX.Element => {
+	const { t } = useTranslation("presets");
+	const isBusy = phase === "saving" || phase === "deleting";
+	// A load failure leaves nothing to mutate: Delete/Save would render
+	// permanently disabled, so the footer collapses to Cancel only.
+	const showMutatingActions = phase !== "error";
+	return (
+		<DialogFooterActions>
+			{showMutatingActions ? (
+				<Button
+					type="button"
+					variant="danger"
+					uiSize="sm"
+					fullWidth
+					start={<Trash2 size={14} />}
+					onClick={onDelete}
+					disabled={!canMutate}
+				>
+					{phase === "deleting" ? t("edit.status.deleting") : t("edit.delete")}
+				</Button>
+			) : null}
+			<Button
+				type="button"
+				variant="ghost"
+				uiSize="sm"
+				fullWidth
+				onClick={onCancel}
+				disabled={isBusy}
+			>
+				{t("common:buttons.cancel")}
+			</Button>
+			{showMutatingActions ? (
+				<Button
+					type="button"
+					variant="primary"
+					uiSize="sm"
+					fullWidth
+					onClick={onSave}
+					disabled={!canMutate}
+				>
+					{phase === "saving" ? t("edit.status.saving") : t("edit.save")}
+				</Button>
+			) : null}
+		</DialogFooterActions>
+	);
+};
+
 export function PresetEditDialog(props: PresetEditDialogProps): JSX.Element {
 	const { presetId, onSaved, onDeleted } = props;
 	const { t } = useTranslation("presets");
@@ -1123,10 +1182,6 @@ export function PresetEditDialog(props: PresetEditDialogProps): JSX.Element {
 	const isGroupPreset = loadedPreset
 		? isGroupCatalogPreset(loadedPreset)
 		: false;
-	// A load failure leaves nothing to mutate: Delete/Save would render
-	// permanently disabled, so the footer collapses to Cancel only.
-	const showMutatingActions = dialogStatus.phase !== "error";
-
 	return (
 		<DialogShell
 			title={
@@ -1140,47 +1195,13 @@ export function PresetEditDialog(props: PresetEditDialogProps): JSX.Element {
 			contentClassName={dialogContentClass}
 			footerClassName={dialogFooterClass}
 			footer={
-				<DialogFooterActions>
-					{showMutatingActions ? (
-						<Button
-							type="button"
-							variant="danger"
-							uiSize="sm"
-							fullWidth
-							start={<Trash2 size={14} />}
-							onClick={() => void handleDelete()}
-							disabled={!canMutate}
-						>
-							{dialogStatus.phase === "deleting"
-								? t("edit.status.deleting")
-								: t("edit.delete")}
-						</Button>
-					) : null}
-					<Button
-						type="button"
-						variant="ghost"
-						uiSize="sm"
-						fullWidth
-						onClick={() => close()}
-						disabled={isBusy}
-					>
-						{t("common:buttons.cancel")}
-					</Button>
-					{showMutatingActions ? (
-						<Button
-							type="button"
-							variant="primary"
-							uiSize="sm"
-							fullWidth
-							onClick={() => void handleSave()}
-							disabled={!canMutate}
-						>
-							{dialogStatus.phase === "saving"
-								? t("edit.status.saving")
-								: t("edit.save")}
-						</Button>
-					) : null}
-				</DialogFooterActions>
+				<EditDialogFooter
+					phase={dialogStatus.phase}
+					canMutate={canMutate}
+					onDelete={() => void handleDelete()}
+					onSave={() => void handleSave()}
+					onCancel={() => close()}
+				/>
 			}
 		>
 			<DialogBody>
