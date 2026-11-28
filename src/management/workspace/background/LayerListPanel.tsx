@@ -43,7 +43,10 @@ const cardClass = css({
 	borderRadius: "shell-sm",
 	borderWidth: "hairline",
 	borderStyle: "solid",
-	borderColor: "var(--color-ty-widget-border)",
+	// Issue #795: passive chrome rests on `border.subtle`; the previous
+	// `--color-ty-widget-border` (#0e0e0e) was darker than the dialog
+	// surface and left the card effectively borderless.
+	borderColor: "border.subtle",
 });
 
 const addBar = css({
@@ -116,15 +119,22 @@ const iconBtn = css({
 	"&&": { height: "6", width: "full" },
 	borderWidth: "hairline",
 	borderStyle: "solid",
-	borderColor: "var(--color-ty-widget-border)",
+	// Issue #795: `border.subtle` resting border + `text.primary` icons —
+	// the ghost variant's `text.muted` at 55% alpha sat too close to the
+	// 50%-dimmed disabled state, so an enabled "move down" read as
+	// disabled. Primary ink keeps enabled vs disabled unambiguous.
+	borderColor: "border.subtle",
 	backgroundColor: "transparent",
+	color: "text.primary",
 	padding: "0",
 	"& svg": { width: "3", height: "3" },
 	_hover: { backgroundColor: "var(--color-ty-ink-04)" },
 });
 
 const iconBtnDanger = css({
-	color: "status.error",
+	// `&&` keeps the error ink authoritative over `iconBtn`'s `text.primary`
+	// regardless of stylesheet order (same trick as the size override above).
+	"&&": { color: "status.error" },
 });
 
 export function LayerListPanel(props: {
@@ -168,6 +178,7 @@ export function LayerListPanel(props: {
 						fullWidth
 						className={QUIET_CONTROL_CLASS}
 						title={t("workspaceShell.backgroundPanel.tooltips.addColor")}
+						aria-label={t("workspaceShell.backgroundPanel.tooltips.addColor")}
 						onClick={() => onAddLayer("color")}
 					>
 						<Palette />
@@ -179,6 +190,7 @@ export function LayerListPanel(props: {
 						fullWidth
 						className={QUIET_CONTROL_CLASS}
 						title={t("workspaceShell.backgroundPanel.tooltips.addPattern")}
+						aria-label={t("workspaceShell.backgroundPanel.tooltips.addPattern")}
 						onClick={() => onAddLayer("pattern")}
 					>
 						<Grid2X2 />
@@ -190,6 +202,7 @@ export function LayerListPanel(props: {
 						fullWidth
 						className={QUIET_CONTROL_CLASS}
 						title={t("workspaceShell.backgroundPanel.tooltips.addImage")}
+						aria-label={t("workspaceShell.backgroundPanel.tooltips.addImage")}
 						onClick={() => onAddLayer("image")}
 					>
 						<Image />
@@ -246,6 +259,7 @@ export function LayerListPanel(props: {
 						size="sm"
 						className={iconBtn}
 						title={t("workspaceShell.backgroundPanel.moveUp")}
+						aria-label={t("workspaceShell.backgroundPanel.moveUp")}
 						onClick={() =>
 							selectedLayer ? onMoveLayer(selectedLayer.id, "up") : undefined
 						}
@@ -259,6 +273,7 @@ export function LayerListPanel(props: {
 						size="sm"
 						className={iconBtn}
 						title={t("workspaceShell.backgroundPanel.moveDown")}
+						aria-label={t("workspaceShell.backgroundPanel.moveDown")}
 						onClick={() =>
 							selectedLayer ? onMoveLayer(selectedLayer.id, "down") : undefined
 						}
@@ -272,6 +287,7 @@ export function LayerListPanel(props: {
 						size="sm"
 						className={cx(iconBtn, iconBtnDanger)}
 						title={t("workspaceShell.backgroundPanel.remove")}
+						aria-label={t("workspaceShell.backgroundPanel.remove")}
 						onClick={() =>
 							selectedLayer ? onRemoveLayer(selectedLayer.id) : undefined
 						}

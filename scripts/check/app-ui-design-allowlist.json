@@ -189,27 +189,6 @@
 		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
 	},
 	{
-		"file": "src/management/workspace/background/Fields.tsx",
-		"line": 115,
-		"rule": "ui-override",
-		"message": "<Input> is a shared @ty-plus/ui component; borderColor must come from its variant/size/tone props, not className",
-		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
-	},
-	{
-		"file": "src/management/workspace/background/ImageLayerEditor.tsx",
-		"line": 121,
-		"rule": "ui-override",
-		"message": "<SegmentedControl> is a shared @ty-plus/ui component; borderColor must come from its variant/size/tone props, not className",
-		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
-	},
-	{
-		"file": "src/management/workspace/background/ImageLayerEditor.tsx",
-		"line": 143,
-		"rule": "ui-override",
-		"message": "<SegmentedControl> is a shared @ty-plus/ui component; borderColor must come from its variant/size/tone props, not className",
-		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
-	},
-	{
 		"file": "src/management/workspace/background/LayerEditor.tsx",
 		"line": 107,
 		"rule": "inline-style",
@@ -218,23 +197,16 @@
 	},
 	{
 		"file": "src/management/workspace/background/LayerListPanel.tsx",
-		"line": 235,
+		"line": 260,
 		"rule": "ui-override",
-		"message": "<IconButton> is a shared @ty-plus/ui component; borderWidth, borderStyle, borderColor, backgroundColor, padding must come from its variant/size/tone props, not className",
+		"message": "<IconButton> is a shared @ty-plus/ui component; borderWidth, borderStyle, borderColor, backgroundColor, color, padding must come from its variant/size/tone props, not className",
 		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
 	},
 	{
 		"file": "src/management/workspace/background/LayerListPanel.tsx",
-		"line": 248,
+		"line": 274,
 		"rule": "ui-override",
-		"message": "<IconButton> is a shared @ty-plus/ui component; borderWidth, borderStyle, borderColor, backgroundColor, padding must come from its variant/size/tone props, not className",
-		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
-	},
-	{
-		"file": "src/management/workspace/background/PatternLayerEditor.tsx",
-		"line": 60,
-		"rule": "ui-override",
-		"message": "<SegmentedControl> is a shared @ty-plus/ui component; borderColor must come from its variant/size/tone props, not className",
+		"message": "<IconButton> is a shared @ty-plus/ui component; borderWidth, borderStyle, borderColor, backgroundColor, color, padding must come from its variant/size/tone props, not className",
 		"reason": "the shared control is re-skinned locally; move the appearance into a shared variant/size/tone prop"
 	},
 	{

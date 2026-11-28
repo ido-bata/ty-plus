@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { expect } from "storybook/test";
+import { borderTopColor, resolveBorderToken } from "@/storybook/quality/border";
 import { css } from "@/styled-system/css";
 
 import { ColorField, FieldLabel, NumberField } from "./Fields";
@@ -100,6 +101,22 @@ export const Default: Story = {
 		const b = getComputedStyle(colorLabel);
 		expect(b.textTransform).toBe(a.textTransform);
 		expect(b.color).toBe(a.color);
+		// Issue #795: the hex text input and the numeric readout are sibling
+		// identifiable controls — both must rest on the `border.control`
+		// tier. The hex input used to be forced onto the invisible
+		// `--color-ty-widget-border` and read as static text.
+		const inputs = Array.from(
+			canvasElement.querySelectorAll<HTMLInputElement>("input"),
+		);
+		const hexInput = inputs.find(
+			(el) => el.type === "text" && el.value.startsWith("#"),
+		);
+		const numberInput = inputs.find((el) => el.type === "number");
+		if (!hexInput || !numberInput) {
+			throw new Error("hex/number inputs not found");
+		}
+		expect(borderTopColor(hexInput)).toBe(resolveBorderToken("control"));
+		expect(borderTopColor(numberInput)).toBe(resolveBorderToken("control"));
 	},
 };
 

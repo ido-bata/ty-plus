@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { expect } from "storybook/test";
 import type { Layer } from "@/management/workspace/background/contract";
 import { PatternLayerEditor } from "@/management/workspace/background/PatternLayerEditor";
 import { storyT } from "@/storybook/i18n-story-t";
@@ -62,7 +63,26 @@ const meta = {
 export default meta;
 type Story = StoryObj<Args>;
 
-export const Default: Story = {};
+export const Default: Story = {
+	play: async ({ canvasElement }) => {
+		// Issue #795: `patternBgColor: "transparent"` consumes no opacity —
+		// its RangeField (slider + numeric readout) must render disabled
+		// while the foreground pair (hex colour) stays enabled. DOM order:
+		// patternSize, foreground opacity, background opacity.
+		const sliders = canvasElement.querySelectorAll<HTMLInputElement>(
+			'input[type="range"]',
+		);
+		expect(sliders).toHaveLength(3);
+		expect(sliders[0]?.disabled).toBe(false);
+		expect(sliders[1]?.disabled).toBe(false);
+		expect(sliders[2]?.disabled).toBe(true);
+		const readouts = canvasElement.querySelectorAll<HTMLInputElement>(
+			'input[type="number"]',
+		);
+		expect(readouts).toHaveLength(3);
+		expect(readouts[2]?.disabled).toBe(true);
+	},
+};
 
 export const Grid: Story = {
 	args: { patternType: "grid" },
