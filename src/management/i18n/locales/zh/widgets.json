@@ -190,7 +190,7 @@
 	},
 	"quickActions": {
 		"name": "Quick actions",
-		"palettePlaceholder": "搜索根目录下的预设、脚本、插件、效果和文件…",
+		"palettePlaceholder": "搜索预设、效果和文件…",
 		"paletteEmpty": "没有匹配的预设或效果。",
 		"effectRowKind": "效果",
 		"rootFileRowKind": "磁盘"

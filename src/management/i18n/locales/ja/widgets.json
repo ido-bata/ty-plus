@@ -190,7 +190,7 @@
 	},
 	"quickActions": {
 		"name": "クイックアクション",
-		"palettePlaceholder": "プリセット・スクリプト・プラグイン・エフェクト・ルート配下のファイルを検索…",
+		"palettePlaceholder": "プリセット・エフェクト・ファイルを検索…",
 		"paletteEmpty": "一致するプリセットやエフェクトがありません。",
 		"effectRowKind": "エフェクト",
 		"rootFileRowKind": "ディスク"

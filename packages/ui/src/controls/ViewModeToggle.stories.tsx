@@ -68,6 +68,11 @@ const playViewMode =
 		// at least 3:1 contrast against their effective background.
 		if (!fieldset) throw new Error("view mode toggle fieldset not found");
 		expect(getComputedStyle(fieldset).opacity).toBe("1");
+		// Issue #769: the fieldset shrink-wraps its two segments — it must
+		// never stretch to the full container width and leave a
+		// hairline-bordered dead region.
+		const fieldsetWidth = fieldset.getBoundingClientRect().width;
+		expect(fieldsetWidth).toBeLessThan(canvasElement.clientWidth * 0.5);
 		// Issue #722: the fieldset is passive segmented chrome — its resting
 		// border uses `border.subtle`, not the brighter `border.control`.
 		expect(borderTopColor(fieldset)).toBe(resolveBorderToken("subtle"));

@@ -190,7 +190,7 @@
 	},
 	"quickActions": {
 		"name": "빠른 작업",
-		"palettePlaceholder": "루트 아래의 프리셋, 스크립트, 플러그인, 이펙트, 파일 검색…",
+		"palettePlaceholder": "프리셋, 이펙트, 파일 검색…",
 		"paletteEmpty": "일치하는 프리셋이나 이펙트가 없습니다.",
 		"effectRowKind": "이펙트",
 		"rootFileRowKind": "디스크"
