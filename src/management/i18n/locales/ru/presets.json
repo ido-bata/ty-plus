@@ -260,10 +260,11 @@
 			"presetNamePlaceholder": "Введите имя пресета"
 		},
 		"titleForType": {
-			"preset": "Пресет",
+			"preset": "Редактировать пресет",
 			"script": "Скрипт-пресет",
 			"plugin": "Плагин-пресет",
-			"footage": "Футаж-пресет"
+			"footage": "Футаж-пресет",
+			"group": "Групповой пресет"
 		},
 		"memberLoading": "Загрузка…",
 		"memberNotFound": "Участник не найден: {{id}}",
@@ -419,6 +420,11 @@
 		"emptyCatalogHint": "Пресеты, добавленные из папки или пути к файлу, появятся здесь.",
 		"addPresets": "Добавить пресеты",
 		"noMatches": "Подходящих пресетов нет",
+		"groupItems_one": "Группа · {{count}} элемент",
+		"groupItems_few": "Группа · {{count}} элемента",
+		"groupItems_many": "Группа · {{count}} элементов",
+		"groupItems_other": "Группа · {{count}} элемента",
+		"errorDetails": "Технические детали",
 		"cloudOffline": "Облако недоступно",
 		"cloudDegradedDetail": "{{message}} — показан только локальный каталог.",
 		"cloudOfflineDetail": "Облачные функции не активны в этом сеансе — показан только локальный каталог.",

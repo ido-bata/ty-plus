@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { expect } from "storybook/test";
 import { storyT } from "@/storybook/i18n-story-t";
 import { css } from "@/styled-system/css";
 
@@ -43,7 +44,19 @@ const meta = {
 export default meta;
 type Story = StoryObj<Args>;
 
-export const Default: Story = {};
+export const Default: Story = {
+	play: async ({ canvasElement }) => {
+		// Issue #777: footer contract — primary (and ghost cancel) actions
+		// are text-only; neither footer button may render an icon.
+		const actions = canvasElement.querySelector("[data-dialog-footer-actions]");
+		if (!actions) throw new Error("footer actions not found");
+		const buttons = actions.querySelectorAll("button");
+		expect(buttons).toHaveLength(2);
+		for (const button of buttons) {
+			expect(button.querySelector("svg")).toBeNull();
+		}
+	},
+};
 
 export const Saving: Story = {
 	args: { busy: true },

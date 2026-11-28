@@ -1,5 +1,4 @@
 import { Button } from "@ty-plus/ui";
-import { Save } from "lucide-react";
 import type { JSX } from "react";
 import { DialogFooterActions } from "@/management/dialog/shell/Footer";
 import { css } from "@/styled-system/css";
@@ -44,7 +43,6 @@ export function ToolDialogFooter({
 				variant="primary"
 				uiSize="sm"
 				fullWidth
-				start={<Save size={14} />}
 				aria-disabled={busy || undefined}
 				className={busy ? savingButtonClass : undefined}
 				onClick={() => {

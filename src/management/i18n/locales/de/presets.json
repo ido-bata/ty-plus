@@ -258,10 +258,11 @@
 			"presetNamePlaceholder": "Preset-Name eingeben"
 		},
 		"titleForType": {
-			"preset": "Preset",
+			"preset": "Preset bearbeiten",
 			"script": "Skript-Preset",
 			"plugin": "Plugin-Preset",
-			"footage": "Footage-Preset"
+			"footage": "Footage-Preset",
+			"group": "Gruppen-Preset"
 		},
 		"memberLoading": "Wird geladen…",
 		"memberNotFound": "Mitglied nicht gefunden: {{id}}",
@@ -409,6 +410,9 @@
 		"emptyCatalogHint": "Presets, die Sie aus einem Ordner oder Dateipfad hinzufügen, erscheinen hier.",
 		"addPresets": "Presets hinzufügen",
 		"noMatches": "Keine passenden Presets",
+		"groupItems_one": "Gruppe · {{count}} Element",
+		"groupItems_other": "Gruppe · {{count}} Elemente",
+		"errorDetails": "Technische Details",
 		"cloudOffline": "Cloud offline",
 		"cloudDegradedDetail": "{{message}} — es wird nur der lokale Katalog angezeigt.",
 		"cloudOfflineDetail": "Cloud-Funktionen sind in dieser Sitzung nicht aktiv — es wird nur der lokale Katalog angezeigt.",

@@ -230,10 +230,11 @@
 	"edit": {
 		"title": "Edit Preset",
 		"titleForType": {
-			"preset": "Preset",
+			"preset": "Edit Preset",
 			"script": "Script Preset",
 			"plugin": "Plugin Preset",
-			"footage": "Footage Preset"
+			"footage": "Footage Preset",
+			"group": "Group Preset"
 		},
 		"delete": "Delete",
 		"save": "Save",
@@ -409,6 +410,9 @@
 		"emptyCatalogHint": "Presets you add from a folder or file path appear here.",
 		"addPresets": "Add presets",
 		"noMatches": "No matching presets",
+		"groupItems_one": "Group · {{count}} item",
+		"groupItems_other": "Group · {{count}} items",
+		"errorDetails": "Technical details",
 		"cloudOffline": "Cloud offline",
 		"cloudDegradedDetail": "{{message}} — showing the local catalog only.",
 		"cloudOfflineDetail": "Cloud features are not active in this session — showing the local catalog only.",

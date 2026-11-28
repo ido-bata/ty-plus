@@ -201,7 +201,7 @@ describe("PresetEditDialog", () => {
 			});
 		});
 
-		it("disables save and delete but keeps cancel enabled when preset is not found", async () => {
+		it("collapses the footer to cancel only when preset is not found", async () => {
 			mockGetPreset.mockResolvedValue(undefined);
 
 			renderDialog("nonexistent");
@@ -210,8 +210,14 @@ describe("PresetEditDialog", () => {
 				expect(screen.getByText(/preset not found/i)).toBeInTheDocument();
 			});
 
-			expect(screen.getByRole("button", { name: /save/i })).toBeDisabled();
-			expect(screen.getByRole("button", { name: /delete/i })).toBeDisabled();
+			// A load failure leaves nothing to mutate, so Save/Delete are
+			// not rendered at all rather than shown permanently disabled.
+			expect(
+				screen.queryByRole("button", { name: /save/i }),
+			).not.toBeInTheDocument();
+			expect(
+				screen.queryByRole("button", { name: /delete/i }),
+			).not.toBeInTheDocument();
 			expect(screen.getByRole("button", { name: /cancel/i })).toBeEnabled();
 		});
 	});

@@ -259,10 +259,11 @@
 			"presetNamePlaceholder": "Introduce el nombre del preset"
 		},
 		"titleForType": {
-			"preset": "Preset",
+			"preset": "Editar preset",
 			"script": "Preset de script",
 			"plugin": "Preset de plugin",
-			"footage": "Preset de footage"
+			"footage": "Preset de footage",
+			"group": "Preset de grupo"
 		},
 		"memberLoading": "Cargando…",
 		"memberNotFound": "Miembro no encontrado: {{id}}",
@@ -414,6 +415,10 @@
 		"emptyCatalogHint": "Los presets que añadas desde una carpeta o ruta de archivo aparecen aquí.",
 		"addPresets": "Añadir presets",
 		"noMatches": "No hay presets coincidentes",
+		"groupItems_one": "Grupo · {{count}} elemento",
+		"groupItems_other": "Grupo · {{count}} elementos",
+		"groupItems_many": "Grupo · {{count}} elementos",
+		"errorDetails": "Detalles técnicos",
 		"cloudOffline": "Nube sin conexión",
 		"cloudDegradedDetail": "{{message}} — mostrando solo el catálogo local.",
 		"cloudOfflineDetail": "Las funciones en la nube no están activas en esta sesión — mostrando solo el catálogo local.",
