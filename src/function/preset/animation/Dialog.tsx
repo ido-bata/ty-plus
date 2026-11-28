@@ -14,9 +14,7 @@ import {
 	CheckCircle,
 	Copy,
 	FolderOpen,
-	Loader,
 	MousePointerClick,
-	Save,
 	Timer,
 } from "lucide-react";
 import {
@@ -326,13 +324,6 @@ function AnimationStatusSection({
 						variant="primary"
 						disabled={busy || !displayPath}
 						onClick={onOpenSaveDialog}
-						start={
-							busy ? (
-								<Icon icon={Loader} size={16} aria-hidden />
-							) : (
-								<Icon icon={Save} size={16} aria-hidden />
-							)
-						}
 						className={busy ? busyButtonClass : ""}
 					>
 						{busy
