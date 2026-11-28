@@ -224,6 +224,7 @@
 	"debugConsole": {
 		"title": "Консоль",
 		"clear": "Очистить",
+		"empty": "Нет сообщений",
 		"evaluateAria": "Вычислить JavaScript",
 		"evaluatePlaceholder": "Вычислить JavaScript…",
 		"rowContextHint": "Щелчок правой кнопкой для копирования",

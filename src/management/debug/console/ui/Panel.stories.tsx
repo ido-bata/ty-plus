@@ -96,6 +96,18 @@ export const Default: Story = {
 			expect(tops.size, `segmented strip wrapped into ${tops.size} rows`).toBe(
 				1,
 			);
+			// Issue #764: when a strip overflows, the edge clips the last
+			// visible segment — that is only acceptable because the strip
+			// scrolls, and the scroll affordance must be visible at rest.
+			// The global scrollbar chrome hides thumbs until hover, so the
+			// segmented strip opts its thumb back in.
+			if (strip.scrollWidth > strip.clientWidth + 1) {
+				const thumb = getComputedStyle(strip, "::-webkit-scrollbar-thumb");
+				expect(
+					thumb.visibility,
+					"overflowing segmented strip hides its scrollbar thumb at rest",
+				).toBe("visible");
+			}
 		}
 		// Issue #752 (minor): the three filter strips must not consume
 		// half the panel — assert the chrome stays under 50% of the 320px
@@ -112,6 +124,14 @@ export const Default: Story = {
 				`filter strips consume ${(ratio * 100).toFixed(0)}% of panel height`,
 			).toBeLessThan(0.5);
 		}
+		// Issue #764: the autoscroll toggle is a pressed-state button —
+		// with autoScroll on it must expose the shared `data-active`
+		// surface so the on state is not a passive-looking icon.
+		const toggle = canvasElement.querySelector("button[data-active]");
+		expect(
+			toggle,
+			"auto-scroll toggle missing its active/pressed surface",
+		).not.toBeNull();
 	},
 };
 
@@ -121,8 +141,24 @@ export const ErrorsOnly: Story = {
 
 export const Empty: Story = {
 	args: { messageCount: 0 },
+	play: async ({ canvasElement }) => {
+		// Issue #764: an empty console must show an explicit placeholder,
+		// not a dead region.
+		const empty = canvasElement.querySelector("[data-debug-empty]");
+		expect(empty, "empty-state placeholder not rendered").not.toBeNull();
+		expect(empty?.textContent?.trim().length).toBeGreaterThan(0);
+	},
 };
 
 export const AutoscrollOff: Story = {
 	args: { autoScroll: false },
+	play: async ({ canvasElement }) => {
+		// Companion to Default: with autoScroll off the toggle must NOT
+		// carry the active surface.
+		const toggle = canvasElement.querySelector("button[data-active]");
+		expect(
+			toggle,
+			"auto-scroll toggle shows the active surface while disabled",
+		).toBeNull();
+	},
 };

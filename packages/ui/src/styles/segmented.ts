@@ -40,6 +40,17 @@ export const segmentedStripClass = css({
 	// scrolls horizontally instead of clipping a segment or reflowing.
 	overflowX: "auto",
 	overscrollBehaviorX: "contain",
+	// Issue #764: the global scrollbar chrome hides thumbs until hover
+	// (`*:hover::-webkit-scrollbar-thumb` in panda.config.ts), so an
+	// overflowing strip showed edge-clipped labels with no rest-state
+	// scroll affordance. Filter strips are narrow chrome where overflow
+	// must be discoverable at rest, so the thumb stays visible. It only
+	// paints while the strip actually overflows — `overflow-x: auto`
+	// renders no scrollbar otherwise.
+	"&::-webkit-scrollbar-thumb": {
+		visibility: "visible",
+		transition: "none",
+	},
 });
 
 /**

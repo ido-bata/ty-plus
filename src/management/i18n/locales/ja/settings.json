@@ -359,7 +359,7 @@
 		"exportImport": "エクスポート / インポート",
 		"exportToClipboard": "クリップボードにエクスポート",
 		"importFromText": "テキストからインポート",
-		"intro": "Tailwind CSS のデザイントークンをカスタマイズします。設定を共有するにはエクスポート/インポートを使用します。",
+		"intro": "デザイントークンをカスタマイズします。設定を共有するにはエクスポート/インポートを使用します。",
 		"jsonPlaceholder": "エクスポート後、JSON 設定がここに表示されます",
 		"statusApplied": "トークンを theme.css に適用して保存しました。",
 		"statusApplyFailed": "トークンを保存できませんでした：theme.css に書き込めませんでした。",

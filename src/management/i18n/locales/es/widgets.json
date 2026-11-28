@@ -190,7 +190,7 @@
 	},
 	"quickActions": {
 		"name": "Quick actions",
-		"palettePlaceholder": "Buscar presets, scripts, plugins, efectos y archivos en las raíces…",
+		"palettePlaceholder": "Buscar presets, efectos y archivos…",
 		"paletteEmpty": "No hay presets ni efectos coincidentes.",
 		"effectRowKind": "Efecto",
 		"rootFileRowKind": "Disco"

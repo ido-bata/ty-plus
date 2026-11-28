@@ -13,6 +13,13 @@ export type RangeFieldProps = {
 	step?: number;
 	/** Appended to the numeric readout (e.g. "%"). */
 	unit?: string;
+	/**
+	 * Height tier of the paired numeric readout. Defaults to `"sm"` — the
+	 * compact readout that keeps slider rows dense. Pass `"md"` when the
+	 * field sits beside `md` text inputs so sibling control heights match
+	 * (issue #768).
+	 */
+	numberUiSize?: "sm" | "md" | "lg";
 	className?: string;
 };
 
@@ -80,6 +87,7 @@ export function RangeField({
 	max = 100,
 	step = 1,
 	unit,
+	numberUiSize = "sm",
 	className,
 }: RangeFieldProps): JSX.Element {
 	// Issue #679: the label names the control only; the paired NumberField is
@@ -117,7 +125,7 @@ export function RangeField({
 					onChange={(v) => commit(Number(v))}
 					unit={unit}
 					aria-label={valueLabel}
-					uiSize="sm"
+					uiSize={numberUiSize}
 					numberSpinners={false}
 					className={css({
 						// Issue #448: 14 (56px) clipped multi-digit values such as

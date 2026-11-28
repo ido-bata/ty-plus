@@ -224,6 +224,7 @@
 	"debugConsole": {
 		"title": "コンソール",
 		"clear": "クリア",
+		"empty": "メッセージはありません",
 		"evaluateAria": "JavaScriptを評価",
 		"evaluatePlaceholder": "JavaScriptを評価…",
 		"rowContextHint": "右クリックでコピー",

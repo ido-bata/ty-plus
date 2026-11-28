@@ -224,6 +224,7 @@
 	"debugConsole": {
 		"title": "Console",
 		"clear": "Clear",
+		"empty": "No messages",
 		"evaluateAria": "Evaluate JavaScript",
 		"evaluatePlaceholder": "Evaluate JavaScript...",
 		"rowContextHint": "Right-click to copy",

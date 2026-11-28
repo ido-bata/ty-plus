@@ -22,6 +22,11 @@ const fieldsetClass = css({
 	margin: "0",
 	display: "flex",
 	height: "full",
+	// Issue #769: shrink-wrap to the two segments. As a plain flex column
+	// item the fieldset stretched to the full container width, leaving a
+	// hairline-bordered dead region next to the ~65px of actual controls.
+	width: "fit-content",
+	maxWidth: "full",
 	minWidth: "0",
 	flexShrink: "0",
 	overflow: "hidden",

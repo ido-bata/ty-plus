@@ -359,7 +359,7 @@
 		"exportImport": "Exporter / Importer",
 		"exportToClipboard": "Exporter vers le presse-papiers",
 		"importFromText": "Importer depuis le texte",
-		"intro": "Personnalisez les jetons de design Tailwind CSS. Exportez/importez pour partager des configurations.",
+		"intro": "Personnalisez les jetons de design. Exportez/importez pour partager des configurations.",
 		"jsonPlaceholder": "La configuration JSON apparaîtra ici après l'export",
 		"statusApplied": "Jetons appliqués et enregistrés dans theme.css.",
 		"statusApplyFailed": "Échec de l'enregistrement des jetons : theme.css n'a pas pu être écrit.",

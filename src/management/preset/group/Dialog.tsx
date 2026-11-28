@@ -50,15 +50,26 @@ export function GroupDialog(): JSX.Element {
 	>([]);
 	const [candidateDirs, setCandidateDirs] = useState<string[]>([]);
 
+	// Detection feedback (issue #766): results render far below the fold,
+	// so the button row needs an inline status line or "Detect
+	// candidates" gives zero visible confirmation.
+	const [detectState, setDetectState] = useState<"idle" | "running" | "done">(
+		"idle",
+	);
+	const [detectCounts, setDetectCounts] = useState({ presets: 0, dirs: 0 });
+
 	const _prevPathsRef = useRef<string | null>(null);
 	const lastDetectKeyRef = useRef<string | null>(null);
 
 	// Triggered by user action to detect candidates from current paths
 	const detectCandidates = async (paths: readonly string[]) => {
+		setDetectState("running");
 		const execDetectCandidates = async () => {
 			if (paths.length === 0) {
 				setCandidatePresets([]);
 				setCandidateDirs([]);
+				setDetectCounts({ presets: 0, dirs: 0 });
+				setDetectState("done");
 				return;
 			}
 			const catalog = await listPresets();
@@ -100,6 +111,8 @@ export function GroupDialog(): JSX.Element {
 			}
 			setCandidatePresets(presets);
 			setCandidateDirs(Array.from(dirsSet));
+			setDetectCounts({ presets: presets.length, dirs: dirsSet.size });
+			setDetectState("done");
 
 			// Auto-add a preset-type rule when presets detected, but avoid duplicates
 			const idsKey = presets
@@ -140,6 +153,8 @@ export function GroupDialog(): JSX.Element {
 		} catch {
 			setCandidatePresets([]);
 			setCandidateDirs([]);
+			setDetectCounts({ presets: 0, dirs: 0 });
+			setDetectState("done");
 		}
 	};
 
@@ -203,6 +218,8 @@ export function GroupDialog(): JSX.Element {
 						candidatePresets={candidatePresets}
 						candidateDirs={candidateDirs}
 						detectCandidates={detectCandidates}
+						detectState={detectState}
+						detectCounts={detectCounts}
 						onPickPreset={pickPreset}
 					/>
 					{/* 3. Icon Rules (Additive) */}

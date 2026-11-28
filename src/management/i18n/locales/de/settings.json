@@ -359,7 +359,7 @@
 		"exportImport": "Export / Import",
 		"exportToClipboard": "In Zwischenablage exportieren",
 		"importFromText": "Aus Text importieren",
-		"intro": "Tailwind-CSS-Design-Tokens anpassen. Export/Import zum Teilen von Konfigurationen.",
+		"intro": "Design-Tokens anpassen. Export/Import zum Teilen von Konfigurationen.",
 		"jsonPlaceholder": "JSON-Konfiguration erscheint hier nach dem Export",
 		"statusApplied": "Tokens in theme.css angewendet und gespeichert.",
 		"statusApplyFailed": "Tokens konnten nicht gespeichert werden: theme.css konnte nicht geschrieben werden.",

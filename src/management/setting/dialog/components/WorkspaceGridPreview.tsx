@@ -22,6 +22,10 @@ const gridStyle = css({
 	display: "grid",
 	width: "full",
 	minWidth: 0,
+	// Issue #763: the card spans the full section width while the fixed
+	// cell-size columns only fill the left edge — center the track so the
+	// preview reads balanced instead of leaving ~60% dead space.
+	justifyContent: "center",
 });
 
 const cellStyle = css({

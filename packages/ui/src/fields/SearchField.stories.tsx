@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { Search } from "lucide-react";
 import { useState } from "react";
 import { expect } from "storybook/test";
-
+import { borderTopColor, resolveBorderToken } from "@/storybook/quality/border";
 import {
 	assertMatchesWidth,
 	expectContainerWidthTracking,
@@ -56,6 +56,21 @@ export const WithInlineTrailing: Story = {
 export const Disabled: Story = {
 	args: {
 		disabled: true,
+	},
+	play: async ({ canvasElement }) => {
+		// Issue #768: disabled must dim the whole control, not just the
+		// inner input's text — the wrapper border drops to the passive
+		// `border.subtle` tier and the leading icon dims with it.
+		const input = canvasElement.querySelector<HTMLInputElement>("input");
+		if (!input) throw new Error("search input not found");
+		const wrapper = input.parentElement;
+		if (!wrapper) throw new Error("search field wrapper not found");
+		expect(borderTopColor(wrapper)).toBe(resolveBorderToken("subtle"));
+		expect(borderTopColor(wrapper)).not.toBe(resolveBorderToken("control"));
+		// `Icon` applies its className to the svg itself.
+		const icon = wrapper.querySelector("svg");
+		if (!icon) throw new Error("search field icon not found");
+		expect(getComputedStyle(icon).opacity).toBe("0.5");
 	},
 };
 

@@ -99,6 +99,13 @@ const accordionTriggerClass = css({
  * trigger div owns the chrome (border, hover fill); this bare Button only
  * provides semantics, the shared focus ring and the disabled treatment.
  */
+const accordionTriggerOpenClass = css({
+	// Issue #766: while expanded the trigger meets the panel's straight
+	// side borders — keeping its rounded bottom corners notched the seam.
+	borderBottomLeftRadius: 0,
+	borderBottomRightRadius: 0,
+});
+
 const accordionHitAreaClass = css({
 	position: "absolute",
 	inset: "0",
@@ -118,6 +125,10 @@ const accordionPanelClass = css({
 	borderBottomWidth: "hairline",
 	borderStyle: "solid",
 	borderColor: "border.default",
+	// The panel is the bottom-most element of the open accordion, so it
+	// owns the bottom rounding the trigger gives up (issue #766).
+	borderBottomLeftRadius: "shell-sm",
+	borderBottomRightRadius: "shell-sm",
 	backgroundColor: "surface.widget",
 	paddingInline: "3",
 	paddingBlock: "3",
@@ -221,7 +232,12 @@ export const ArchiveDetailsSection = forwardRef<
 
 	return (
 		<div className={containerAccordionClass}>
-			<div className={accordionTriggerClass}>
+			<div
+				className={cx(
+					accordionTriggerClass,
+					isOpen ? accordionTriggerOpenClass : "",
+				)}
+			>
 				<span>{t("presetTool.form.details")}</span>
 				<Icon
 					icon={ChevronDown}

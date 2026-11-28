@@ -148,7 +148,10 @@ export function FeedbackSection(): JSX.Element {
 
 	return (
 		<SettingsGrid>
-			<SettingsField span={6}>
+			{/* Issue #763: pair the two short fields on one row instead of
+			    stacking every control full-width — the short Preset ID
+			    ("TY-001") does not need a whole 6-column line. */}
+			<SettingsField span={3}>
 				<SettingsFieldLabel>
 					{i18n.t("common:settings.labels.category")}
 				</SettingsFieldLabel>
@@ -162,6 +165,24 @@ export function FeedbackSection(): JSX.Element {
 						dispatch({ type: "SET_FIELD", field: "category", value: v })
 					}
 					placeholder={i18n.t("settings:feedbackSection.selectCategory")}
+				/>
+			</SettingsField>
+
+			<SettingsField span={3}>
+				<SettingsFieldLabel>
+					{i18n.t("common:settings.labels.presetId")}
+				</SettingsFieldLabel>
+				<Input
+					type="text"
+					value={presetId}
+					onChange={(e) =>
+						dispatch({
+							type: "SET_FIELD",
+							field: "presetId",
+							value: e.target.value,
+						})
+					}
+					placeholder={i18n.t("settings:feedbackSection.presetIdPlaceholder")}
 				/>
 			</SettingsField>
 
@@ -180,24 +201,6 @@ export function FeedbackSection(): JSX.Element {
 						})
 					}
 					placeholder={i18n.t("settings:feedbackSection.subjectPlaceholder")}
-				/>
-			</SettingsField>
-
-			<SettingsField span={6}>
-				<SettingsFieldLabel>
-					{i18n.t("common:settings.labels.presetId")}
-				</SettingsFieldLabel>
-				<Input
-					type="text"
-					value={presetId}
-					onChange={(e) =>
-						dispatch({
-							type: "SET_FIELD",
-							field: "presetId",
-							value: e.target.value,
-						})
-					}
-					placeholder={i18n.t("settings:feedbackSection.presetIdPlaceholder")}
 				/>
 			</SettingsField>
 

@@ -101,7 +101,11 @@ const actionBar = css({
 	borderTopWidth: "hairline",
 	borderTopStyle: "solid",
 	borderTopColor: "var(--color-ty-widget-border)",
-	padding: "1",
+	// Issue #768: the add bar above uses `padding: "2"` — the action bar
+	// must share its horizontal inset so the two 3-column button rows
+	// keep aligned key-lines inside the card.
+	paddingInline: "2",
+	paddingBlock: "1",
 });
 
 const iconBtn = css({
@@ -144,6 +148,14 @@ export function LayerListPanel(props: {
 		t,
 	} = props;
 	const selectedLayer = layers.find((layer) => layer.id === selectedLayerId);
+	// Issue #768: reorder buttons must disable at the list boundaries —
+	// previously they stayed visually enabled (only `!selectedLayer`
+	// dimmed them), so "move up" on the top layer looked actionable.
+	const selectedIndex = layers.findIndex(
+		(layer) => layer.id === selectedLayerId,
+	);
+	const canMoveUp = selectedIndex > 0;
+	const canMoveDown = selectedIndex >= 0 && selectedIndex < layers.length - 1;
 
 	return (
 		<section className={sectionClass}>
@@ -237,7 +249,7 @@ export function LayerListPanel(props: {
 						onClick={() =>
 							selectedLayer ? onMoveLayer(selectedLayer.id, "up") : undefined
 						}
-						disabled={!selectedLayer}
+						disabled={!canMoveUp}
 					>
 						<ArrowUp />
 					</IconButton>
@@ -250,7 +262,7 @@ export function LayerListPanel(props: {
 						onClick={() =>
 							selectedLayer ? onMoveLayer(selectedLayer.id, "down") : undefined
 						}
-						disabled={!selectedLayer}
+						disabled={!canMoveDown}
 					>
 						<ArrowDown />
 					</IconButton>
