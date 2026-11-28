@@ -9,7 +9,7 @@ import {
 } from "@/management/preset/contract";
 import { expectFirstImageLoaded } from "@/storybook/await-image";
 import { css } from "@/styled-system/css";
-import { WorkspacePresetGlyph } from "./WorkspaceGlyph";
+import { FramedPresetGlyph, WorkspacePresetGlyph } from "./WorkspaceGlyph";
 
 const makePreset = (id: string, icon: Preset["icon"]): Preset => ({
 	id,
@@ -84,6 +84,17 @@ export const LongText: Story = {
 // fit instead of wrapping mid-word ("PLUGIN" → "PLU"/"GIN").
 export const KindBadge: Story = {
 	args: { preset: makePreset("badge", presetIconText("PLUGIN")) },
+	// Issue #794: the bare glyph is chromeless by contract (the tile frame
+	// supplies chrome in product), so a raw capture read "PLUGIN" as
+	// floating text. Render it inside the framed glyph box — the same
+	// chrome `PresetGlyphById surface="framed"` uses — to show the badge
+	// in its intended container.
+	render: (args) => (
+		<FramedPresetGlyph
+			preset={args.preset}
+			boxClass={css({ height: "32", width: "32" })}
+		/>
+	),
 	play: async ({ canvasElement }) => {
 		const frame = canvasElement.querySelector<HTMLElement>(
 			"[data-ws-preset-text-fit]",

@@ -375,8 +375,8 @@
 		"textPlaceholder": "2~6자",
 		"previewAria": "아이콘 미리보기",
 		"tabsAria": "아이콘 유형",
-		"swatchBackground": "배경",
-		"swatchText": "텍스트"
+		"swatchBackground": "배경색",
+		"swatchText": "텍스트 색상"
 	},
 	"catalogBrowser": {
 		"loading": "로드 중",
