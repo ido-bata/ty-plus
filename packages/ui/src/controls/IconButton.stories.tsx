@@ -86,6 +86,17 @@ export const VariantsAndSizes: Story = {
 			</IconButton>
 		</div>
 	),
+	// Issue #798: the story name promises a size range — pin that the
+	// rendered control heights actually differ (sm/md/lg tiers), so a
+	// capture cannot silently collapse back to one size.
+	play: async ({ canvasElement }) => {
+		const heights = new Set(
+			Array.from(canvasElement.querySelectorAll("button")).map(
+				(el) => el.getBoundingClientRect().height,
+			),
+		);
+		expect(heights.size).toBeGreaterThanOrEqual(3);
+	},
 };
 
 export const Active: Story = {

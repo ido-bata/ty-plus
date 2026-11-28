@@ -23,7 +23,13 @@ const base = css({
 		boxShadow: "var(--color-focus-ring)",
 		outline: "none",
 	},
-	_disabled: { opacity: 0.5, cursor: "not-allowed" },
+	// Issue #798: same disabled contract as Input — the resting
+	// `border.control` frame drops to the passive `border.subtle` tier.
+	_disabled: {
+		opacity: 0.5,
+		cursor: "not-allowed",
+		borderColor: "border.subtle",
+	},
 });
 
 const sizeSm = css({

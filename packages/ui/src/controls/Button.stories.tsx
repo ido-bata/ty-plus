@@ -101,6 +101,11 @@ export const DisabledPrimary: Story = {
 		expect(getComputedStyle(disabledBtn).backgroundColor).not.toBe(
 			getComputedStyle(enabledBtn).backgroundColor,
 		);
+		// Issue #798: the disabled primary must keep the disabled-control
+		// chrome — a hairline `border.subtle` frame like every other
+		// disabled variant — not render as chromeless text.
+		expect(getComputedStyle(disabledBtn).borderTopWidth).not.toBe("0px");
+		expect(borderTopColor(disabledBtn)).toBe(resolveBorderToken("subtle"));
 	},
 };
 
@@ -208,4 +213,20 @@ export const AllSizes: Story = {
 			</Button>
 		</div>
 	),
+	// Issue #798: the size story must vary ONLY the size tier — a review
+	// capture read the large button as a different variant. Pin the
+	// shared variant chrome (fill + border) across all three.
+	play: async ({ canvasElement }) => {
+		const buttons = Array.from(
+			canvasElement.querySelectorAll<HTMLButtonElement>("button"),
+		);
+		expect(buttons).toHaveLength(3);
+		const [first, ...rest] = buttons;
+		for (const el of rest) {
+			expect(getComputedStyle(el).backgroundColor).toBe(
+				getComputedStyle(first).backgroundColor,
+			);
+			expect(borderTopColor(el)).toBe(borderTopColor(first));
+		}
+	},
 };

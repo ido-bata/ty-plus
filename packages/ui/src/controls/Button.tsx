@@ -133,9 +133,17 @@ const variants: Record<ButtonVariant, string> = {
 		// feedback submit, background editor). It rests on the same muted
 		// surface as every other disabled control; the base `_disabled`
 		// dim still applies on top.
+		// Issue #798: it must also keep the disabled-control chrome —
+		// every other variant retains its hairline `border.subtle` frame
+		// when disabled, so a chromeless disabled primary read as a bare
+		// label next to its enabled sibling. The enabled primary stays
+		// chromeless; only the disabled state gains the frame.
 		_disabled: {
 			backgroundColor: "surface.widget",
 			color: "text.muted",
+			borderWidth: "hairline",
+			borderStyle: "solid",
+			borderColor: "border.subtle",
 		},
 		_hover: { opacity: 0.9 },
 		_active: { opacity: 0.85 },

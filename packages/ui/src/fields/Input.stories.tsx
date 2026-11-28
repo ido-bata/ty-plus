@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { expect } from "storybook/test";
 import {
 	assertBorderToken,
+	borderTopColor,
 	resolveBorderToken,
 } from "@/storybook/quality/border";
 import { expectCanvasLayout } from "@/storybook/quality/layout";
@@ -54,6 +55,22 @@ export const LargeSize: Story = {
 	args: {
 		uiSize: "lg",
 		placeholder: "Large input",
+	},
+};
+
+// Issue #798: disabled text-entry chrome rests on the passive
+// `border.subtle` tier — the #768 contract SearchField's wrapper already
+// follows. `border.control` at the 0.5 element dim read as enabled.
+export const Disabled: Story = {
+	args: {
+		disabled: true,
+		defaultValue: "Locked value",
+	},
+	play: async ({ canvasElement }) => {
+		const input = canvasElement.querySelector<HTMLInputElement>("input");
+		if (!input) throw new Error("input not found");
+		assertBorderToken(input, "subtle");
+		expect(borderTopColor(input)).not.toBe(resolveBorderToken("control"));
 	},
 };
 

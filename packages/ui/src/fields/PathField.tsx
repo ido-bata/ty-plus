@@ -66,7 +66,9 @@ const inputClass = css({
 		borderColor: "interactive.focus",
 		boxShadow: "var(--color-focus-ring)",
 	},
-	_disabled: { opacity: 0.5 },
+	// Issue #798: disabled text-entry chrome drops to the passive
+	// `border.subtle` tier — the same contract Input/SearchField follow.
+	_disabled: { opacity: 0.5, borderColor: "border.subtle" },
 });
 
 const wrapper = css({
@@ -74,6 +76,12 @@ const wrapper = css({
 	width: "full",
 	alignItems: "center",
 	gap: "1.5",
+	// Issue #798: the browse button sits flush against the path input, so
+	// when the whole field is disabled its frame must drop to the same
+	// passive `border.subtle` tier instead of staying at `border.control`.
+	"&[data-disabled='true'] button": {
+		borderColor: "border.subtle",
+	},
 });
 
 const browseButton = css({
@@ -120,7 +128,11 @@ export function PathField(props: PathFieldProps): ReactElement {
 	}, [value]);
 
 	return (
-		<div className={cx(wrapper, className)} data-path-field>
+		<div
+			className={cx(wrapper, className)}
+			data-path-field
+			data-disabled={disabled ? "true" : undefined}
+		>
 			<input
 				ref={inputRef}
 				type="text"

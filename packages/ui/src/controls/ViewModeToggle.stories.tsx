@@ -17,6 +17,67 @@ const baseArgs: Args = {
 
 const decoratorBoxClass = css({ padding: "2" });
 
+/*
+ * Issue #798: the toggle's whole purpose is switching the content below
+ * it, but the bare stories rendered only the control — the icon-view and
+ * list-view captures were pixel-near-identical and read as an empty
+ * canvas. Each story now shows a small mock panel in the mode it names
+ * so the capture demonstrates the state it claims.
+ */
+const storyRowClass = css({
+	display: "flex",
+	gap: "3",
+	alignItems: "flex-start",
+});
+const mockPanelClass = css({
+	width: "56",
+	flexShrink: 0,
+	borderRadius: "shell-sm",
+	borderWidth: "hairline",
+	borderStyle: "solid",
+	borderColor: "border.subtle",
+	backgroundColor: "surface.panel",
+	padding: "2",
+});
+const mockGridClass = css({
+	display: "grid",
+	gridTemplateColumns: "repeat(3, 1fr)",
+	gap: "1.5",
+});
+const mockTileClass = css({
+	aspectRatio: "1 / 1",
+	borderRadius: "shell-sm",
+	borderWidth: "hairline",
+	borderStyle: "solid",
+	borderColor: "border.subtle",
+	backgroundColor: "surface.widget",
+});
+const mockListClass = css({
+	display: "flex",
+	flexDirection: "column",
+	gap: "1.5",
+});
+const mockRowClass = css({
+	display: "flex",
+	alignItems: "center",
+	gap: "1.5",
+});
+const mockGlyphClass = css({
+	width: "4",
+	height: "4",
+	flexShrink: 0,
+	borderRadius: "shell-sm",
+	backgroundColor: "surface.widget",
+	borderWidth: "hairline",
+	borderStyle: "solid",
+	borderColor: "border.subtle",
+});
+const mockLineClass = css({
+	height: "1.5",
+	borderRadius: "full",
+	backgroundColor: "border.subtle",
+});
+
 const meta = {
 	title: "Shared/Controls/ViewModeToggle",
 	args: baseArgs,
@@ -34,11 +95,42 @@ const meta = {
 		),
 	],
 	render: (args: Args) => (
-		<ViewModeToggle
-			viewMode={args.viewMode}
-			onViewModeChange={() => undefined}
-			onEnterIconView={() => undefined}
-		/>
+		<div className={storyRowClass}>
+			<ViewModeToggle
+				viewMode={args.viewMode}
+				onViewModeChange={() => undefined}
+				onEnterIconView={() => undefined}
+			/>
+			<div className={mockPanelClass} aria-hidden="true">
+				{args.viewMode === "icons" ? (
+					<div className={mockGridClass}>
+						{Array.from({ length: 6 }, (_, index) => (
+							<div key={index} className={mockTileClass} />
+						))}
+					</div>
+				) : (
+					<div className={mockListClass}>
+						{Array.from({ length: 4 }, (_, index) => (
+							<div key={index} className={mockRowClass}>
+								<div className={mockGlyphClass} />
+								<div
+									className={css({
+										flex: 1,
+										minWidth: 0,
+										display: "flex",
+										flexDirection: "column",
+										gap: "1",
+									})}
+								>
+									<div className={mockLineClass} style={{ width: "70%" }} />
+									<div className={mockLineClass} style={{ width: "45%" }} />
+								</div>
+							</div>
+						))}
+					</div>
+				)}
+			</div>
+		</div>
 	),
 } satisfies Meta<Args>;
 
