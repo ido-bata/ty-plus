@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { expect } from "storybook/test";
 import { css } from "@/styled-system/css";
 
 import { CatalogBrowserShell } from "./shell";
@@ -96,7 +97,29 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 /** Preset list dialog layout — header and rows share one scroll area. */
-export const PresetList: Story = {};
+export const PresetList: Story = {
+	play: async ({ canvasElement }) => {
+		// Issue #767: the preset-list shell must keep a horizontal inset —
+		// the header and rows previously rendered flush against the dialog
+		// edges (the directory-browser shell already padded both axes).
+		const body = canvasElement.querySelector<HTMLElement>(
+			"[data-preset-list-body]",
+		);
+		if (!body) throw new Error("preset-list body not found");
+		const bodyBox = body.getBoundingClientRect();
+		const header = Array.from(body.querySelectorAll("span")).find(
+			(el) => el.textContent === "Catalog header",
+		);
+		const counter = Array.from(body.querySelectorAll("span")).find(
+			(el) => el.textContent === "12 items",
+		);
+		if (!header || !counter) throw new Error("shell header rows not found");
+		const headerBox = header.getBoundingClientRect();
+		const counterBox = counter.getBoundingClientRect();
+		expect(headerBox.x - bodyBox.x).toBeGreaterThanOrEqual(4);
+		expect(bodyBox.right - counterBox.right).toBeGreaterThanOrEqual(4);
+	},
+};
 
 /** Directory-browser layout — fixed header, list-only scroll. */
 export const DirectoryBrowser: Story = {
