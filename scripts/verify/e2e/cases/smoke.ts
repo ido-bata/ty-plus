@@ -7,6 +7,7 @@ import { DEFAULT_SETTINGS } from "../../../../src/management/setting/models/sett
 import type { E2EContext } from "../ctx";
 import { check, type E2ECase } from "../report";
 import { type LiveSurface, listLiveSurfaces } from "../surfaces";
+import { resolveLocaleKey, surfaceLang } from "./i18n";
 import {
 	clickDebugConsoleToggle,
 	closeLiveSurface,
@@ -351,7 +352,178 @@ export const smokeCases: E2ECase[] = [
 						`body=${state?.bodyLength} msgs=${state?.msgCount}`,
 					),
 				);
-				return { detail: "debug console", checks };
+				if (!mounted || !state) {
+					return { detail: "debug console", checks };
+				}
+
+				// ── UC-G01 real coverage (Issue #786) ──────────────────────────
+				// 1. REPL evaluate: type an expression into the console input
+				//    and press Enter. `executeCommand` evals it and pipes the
+				//    result back through console.log → a new message row.
+				const lang = await surfaceLang(ctx, consoleSurface);
+				const evalAria =
+					(await resolveLocaleKey(lang, "common:debugConsole.evaluateAria")) ??
+					"Evaluate JavaScript";
+				const evalExpr = `"e2e-g01-" + (6 * 7)`;
+				const evalSent = await ctx.evalJs(
+					consoleSurface,
+					`(() => {
+						const label = ${JSON.stringify(evalAria)};
+						const inputs = [...document.querySelectorAll("input")];
+						const input = inputs.find((i) =>
+							(i.getAttribute("aria-label") || "") === label) ??
+							inputs[inputs.length - 1];
+						if (!input) return "no-input";
+						const setter = Object.getOwnPropertyDescriptor(
+							window.HTMLInputElement.prototype, "value").set;
+						setter.call(input, ${JSON.stringify(evalExpr)});
+						input.dispatchEvent(new KeyboardEvent("keydown", {
+							key: "Enter", bubbles: true, cancelable: true }));
+						return "sent:" + input.value;
+					})()`,
+				);
+				checks.push(
+					check(
+						"console REPL input accepted expression",
+						String(evalSent).startsWith("sent:"),
+						String(evalSent),
+					),
+				);
+				const resultSeen = await waitForDom(
+					ctx,
+					consoleSurface,
+					`(() => [...document.querySelectorAll("[data-debug-msg-id]")]
+						.some((r) => (r.textContent || "").includes("e2e-g01-42")))()`,
+					20_000,
+				);
+				checks.push(
+					check(
+						"evaluated result logged as console message",
+						Boolean(resultSeen),
+						`rowWithResult=${String(resultSeen).slice(0, 80)}`,
+					),
+				);
+
+				// 2. Error path: an expression that throws must surface as an
+				//    error-level row (executeCommand → console.error).
+				await ctx.evalJs(
+					consoleSurface,
+					`(() => {
+						const inputs = [...document.querySelectorAll("input")];
+						const input = inputs[inputs.length - 1];
+						if (!input) return "no-input";
+						const setter = Object.getOwnPropertyDescriptor(
+							window.HTMLInputElement.prototype, "value").set;
+						setter.call(input, 'throw new Error("e2e-g01-err")');
+						input.dispatchEvent(new KeyboardEvent("keydown", {
+							key: "Enter", bubbles: true, cancelable: true }));
+						return "sent";
+					})()`,
+				);
+				const errSeen = await waitForDom(
+					ctx,
+					consoleSurface,
+					`(() => [...document.querySelectorAll("[data-debug-msg-id]")]
+						.some((r) => (r.textContent || "").includes("e2e-g01-err")))()`,
+					20_000,
+				);
+				checks.push(
+					check(
+						"throwing expression logged as error row",
+						Boolean(errSeen),
+						`rowWithError=${String(errSeen).slice(0, 80)}`,
+					),
+				);
+
+				// 3. Level filter: pick the level SegmentedControl (the toolbar
+				//    with exactly 5 options: all/log/info/warn/error) and
+				//    activate "error". Every rendered row must then be
+				//    error-level — the level chip is the row's 2nd child.
+				const filterProbe = `(() => {
+					const toolbars = [...document.querySelectorAll('[role="toolbar"]')];
+					const levelBar = toolbars.find((tb) =>
+						tb.querySelectorAll('button[aria-pressed]').length === 5);
+					if (!levelBar) return { ok: false, reason: "no-level-toolbar" };
+					const buttons = [...levelBar.querySelectorAll('button[aria-pressed]')];
+					const errorBtn = buttons[4]; // FILTERS order: all,log,info,warn,error
+					if (!errorBtn) return { ok: false, reason: "no-error-option" };
+					errorBtn.click();
+					return { ok: true, pressed: errorBtn.getAttribute("aria-pressed") };
+				})()`;
+				const filterClicked = await ctx.evalJs(consoleSurface, filterProbe);
+				await sleep(800);
+				const filteredState = (await ctx.evalJs(
+					consoleSurface,
+					`(() => {
+						const rows = [...document.querySelectorAll("[data-debug-msg-id]")];
+						const nonError = rows.filter((r) =>
+							((r.children[1] && r.children[1].textContent) || "")
+								.trim().toLowerCase() !== "error");
+						return {
+							rows: rows.length,
+							nonError: nonError.length,
+							hasErrMarker: rows.some((r) =>
+								(r.textContent || "").includes("e2e-g01-err")),
+							empty: Boolean(document.querySelector("[data-debug-empty]")),
+						};
+					})()`,
+				)) as {
+					rows?: number;
+					nonError?: number;
+					hasErrMarker?: boolean;
+					empty?: boolean;
+				};
+				checks.push(
+					check(
+						"level filter isolates error rows",
+						(filterClicked as { ok?: boolean })?.ok === true &&
+							(filteredState.rows ?? 0) > 0 &&
+							(filteredState.nonError ?? 1) === 0 &&
+							filteredState.hasErrMarker === true,
+						`click=${JSON.stringify(filterClicked)} rows=${filteredState.rows} nonError=${filteredState.nonError} marker=${filteredState.hasErrMarker}`,
+					),
+				);
+
+				// 4. Clear: the header Clear button wipes the buffer; poll
+				//    until the row count reaches zero (or the empty marker
+				//    renders) — the wipe is async across the log bus.
+				const clearLabel =
+					(await resolveLocaleKey(lang, "common:debugConsole.clear")) ??
+					"Clear";
+				const clearClicked = await ctx.evalJs(
+					consoleSurface,
+					`(() => {
+						const label = ${JSON.stringify(clearLabel)};
+						const btn = [...document.querySelectorAll("button")].find((b) =>
+							(b.textContent || "").trim() === label);
+						if (!btn) return "no-clear";
+						btn.click();
+						return "clicked";
+					})()`,
+				);
+				let cleared = false;
+				let lastCount = -1;
+				const clearDeadline = Date.now() + 12_000;
+				while (Date.now() < clearDeadline && !cleared) {
+					await sleep(600);
+					const probe = (await ctx.evalJs(
+						consoleSurface,
+						`(() => ({
+							rows: document.querySelectorAll("[data-debug-msg-id]").length,
+							empty: Boolean(document.querySelector("[data-debug-empty]")),
+						}))()`,
+					)) as { rows?: number; empty?: boolean };
+					lastCount = probe.rows ?? -1;
+					cleared = lastCount === 0 || probe.empty === true;
+				}
+				checks.push(
+					check(
+						"clear empties the console buffer",
+						clearClicked === "clicked" && cleared,
+						`click=${String(clearClicked)} lastRows=${lastCount}`,
+					),
+				);
+				return { detail: "debug console eval/filter/clear", checks };
 			} finally {
 				// Never leak an open console into later suites — a leftover
 				// surface becomes the next run's `preExisting` and skews open
