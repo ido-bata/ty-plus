@@ -375,7 +375,9 @@
 		"iconTextAria": "Icon text",
 		"textPlaceholder": "2-6 characters",
 		"previewAria": "Icon preview",
-		"tabsAria": "Icon type"
+		"tabsAria": "Icon type",
+		"swatchBackground": "Background",
+		"swatchText": "Text"
 	},
 	"catalogBrowser": {
 		"loading": "Loading",

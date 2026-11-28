@@ -45,8 +45,16 @@ const matchModeGridClass = css({
 	gap: "1",
 });
 
+// Issue #778: the host must size to its content up to the cap instead of
+// pinning a fixed 12rem — with few candidates the fixed height left a dead
+// gap, while long lists still scroll inside FileEntryList's ScrollArea.
+// The host is a column flex container so the list body can shrink below
+// its content height (minHeight:0 on the kit body) and hand the overflow
+// to the ScrollArea once the max-height cap kicks in.
 const directoryHostClass = css({
-	height: "12rem",
+	display: "flex",
+	flexDirection: "column",
+	maxHeight: "12rem",
 	minHeight: "0",
 	overflow: "hidden",
 });

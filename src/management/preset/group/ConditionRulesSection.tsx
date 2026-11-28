@@ -1,8 +1,11 @@
-import { Button, Icon } from "@ty-plus/ui";
-import { LoaderCircle, Plus } from "lucide-react";
+import { Button } from "@ty-plus/ui";
+import { Plus } from "lucide-react";
 import type { JSX } from "react";
 import { i18n } from "@/management/i18n/index";
-import { authoringBusyClass } from "@/management/preset/authoring-layout";
+import {
+	AuthoringBusyStatus,
+	authoringBusyClass,
+} from "@/management/preset/authoring-layout";
 import type { PresetIconEditorDraft } from "@/management/preset/icon/editor-state";
 import { AccordionSection } from "@/management/setting/dialog/sections/AccordionSection";
 import { css, cx } from "@/styled-system/css";
@@ -20,23 +23,6 @@ const rulesColumnClass = css({
 	display: "flex",
 	flexDirection: "column",
 	gap: "2",
-});
-
-// Issue #753: busy used to be a bare 50% dim — no spinner or status text,
-// so a slow save read as a frozen dialog.
-const busyRowClass = css({
-	display: "flex",
-	alignItems: "center",
-	gap: "2",
-	fontSize: "shell-text-sm",
-	color: "text.muted",
-});
-
-const busySpinnerClass = css({
-	height: "3.5",
-	width: "3.5",
-	flexShrink: 0,
-	animation: "spin",
 });
 
 type CandidatePreset = { id: string; title: string; filePath: string };
@@ -64,17 +50,7 @@ export function ConditionRulesSection({
 }): JSX.Element {
 	return (
 		<div className={cx(columnClass, busy && authoringBusyClass)} inert={busy}>
-			{busy ? (
-				<div className={busyRowClass} role="status">
-					<Icon
-						icon={LoaderCircle}
-						size={16}
-						className={busySpinnerClass}
-						aria-hidden
-					/>
-					<span>{i18n.t("common:status.saving")}</span>
-				</div>
-			) : null}
+			{busy ? <AuthoringBusyStatus /> : null}
 			<BaseIconCard
 				baseIconDraft={baseIconDraft}
 				onBaseIconDraftChange={onBaseIconDraftChange}

@@ -82,16 +82,28 @@ export const Compact: Story = {
 		for (const button of buttons) {
 			expect(boxWithin(measureBox(button), toolbarBox, 1)).toBe(true);
 		}
+		// Issue #778: no segment may be clipped mid-label — when the strip
+		// is too narrow for full labels the compact labels must engage
+		// *before* the strip has to scroll. `scrollWidth > clientWidth`
+		// here would mean a partially-visible tab at the scroll edge.
+		expect(toolbar.scrollWidth).toBeLessThanOrEqual(toolbar.clientWidth + 1);
 		// The preset "+" button must remain inside the action bar next to
 		// the Apply control — `fullWidth` on Apply used to push it out.
 		const bar = canvasElement.querySelector<HTMLElement>(
 			"[data-ws-easing-action-bar]",
 		);
-		const plus = canvasElement.querySelector<HTMLElement>(
-			"[data-ws-action='open-preset-tool-dialog']",
-		);
-		if (!bar || !plus) throw new Error("action bar or preset button missing");
-		expect(boxWithin(measureBox(plus), measureBox(bar), 1)).toBe(true);
+		if (!bar) throw new Error("action bar not found");
+		const barBox = measureBox(bar);
+		// Only the four visible controls — the bar also hosts a visually
+		// hidden preset-button cluster (`easing-preset`) whose boxes
+		// legitimately overflow the 1px clip host.
+		for (const action of bar.querySelectorAll<HTMLElement>(
+			"[data-ws-action='easing-copy-from-selection'], [data-ws-action='easing-reverse-curve'], [data-ws-action='easing-apply-current'], [data-ws-action='open-preset-tool-dialog']",
+		)) {
+			// Issue #778: every action-bar control must fit — a sliced
+			// trailing control read as a broken button in the review.
+			expect(boxWithin(measureBox(action), barBox, 1)).toBe(true);
+		}
 	},
 };
 

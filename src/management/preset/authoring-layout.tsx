@@ -1,5 +1,7 @@
-import { SegmentedControl, sectionTitleClass } from "@ty-plus/ui";
+import { Icon, SegmentedControl, sectionTitleClass } from "@ty-plus/ui";
+import { LoaderCircle } from "lucide-react";
 import type { JSX, ReactNode } from "react";
+import { i18n } from "@/management/i18n/index";
 import { css, cx } from "@/styled-system/css";
 
 const gridClass = css({
@@ -56,6 +58,40 @@ const sectionDescriptionClass = css({
 export const authoringBusyClass = css({
 	opacity: "0.5",
 });
+
+// Issue #778: the dim + `inert` pair tells sighted users nothing about
+// *why* the section is frozen — pair it with this visible status row
+// (spinner + label, `role="status"`) so a slow save does not read as a
+// disabled form. Shared by every authoring section that uses
+// `authoringBusyClass`.
+const busyRowClass = css({
+	display: "flex",
+	alignItems: "center",
+	gap: "2",
+	fontSize: "shell-text-sm",
+	color: "text.muted",
+});
+
+const busySpinnerClass = css({
+	height: "3.5",
+	width: "3.5",
+	flexShrink: 0,
+	animation: "spin",
+});
+
+export function AuthoringBusyStatus(): JSX.Element {
+	return (
+		<div className={busyRowClass} role="status">
+			<Icon
+				icon={LoaderCircle}
+				size={16}
+				className={busySpinnerClass}
+				aria-hidden
+			/>
+			<span>{i18n.t("common:status.saving")}</span>
+		</div>
+	);
+}
 
 export function AuthoringGrid({
 	children,

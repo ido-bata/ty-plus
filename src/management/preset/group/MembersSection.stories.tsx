@@ -112,5 +112,11 @@ export const Busy: Story = {
 	play: async ({ canvasElement }) => {
 		expectEnglishChrome(canvasElement);
 		expectButtonRowLayout(canvasElement);
+		// Issue #778: busy must surface a visible spinner/status row, not
+		// only the dimmed (`authoringBusyClass`) treatment — same contract
+		// as ConditionRulesSection's busy story.
+		const status = canvasElement.querySelector('[role="status"]');
+		if (!status) throw new Error("busy status row not found");
+		expect(status.textContent).toContain("Saving");
 	},
 };

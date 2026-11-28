@@ -38,7 +38,12 @@ const colorEditor = css({
 
 const presetGrid = css({
 	display: "grid",
-	gridTemplateColumns: "repeat(5, minmax(0, 1fr))",
+	// Issue #778: `1fr` tracks let each square swatch grow with the editor
+	// column — on wide dialogs the two preset rows ballooned (~250px) and
+	// squeezed the preview band. Cap the track at a space token so
+	// swatches stay a sane picker size; narrower columns still shrink
+	// evenly via the `0` minimum.
+	gridTemplateColumns: "repeat(5, minmax(0, var(--ty-space-12)))",
 	gap: "1",
 });
 

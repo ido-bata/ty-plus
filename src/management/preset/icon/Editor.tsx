@@ -3,6 +3,7 @@ import Picker from "@emoji-mart/react";
 import {
 	Button,
 	ColorSwatch,
+	fieldLabelClass,
 	Icon,
 	Input,
 	PathField,
@@ -92,21 +93,78 @@ const emojiPickerPopoverClass = css({
 const textFieldsRowClass = css({
 	display: "flex",
 	minWidth: "0",
+	// Issue #778: the labeled swatch fields are wider than the bare
+	// swatches were — let the trailing field wrap below instead of
+	// crushing the text input at narrow widths.
+	flexWrap: "wrap",
 	alignItems: "center",
 	gap: "2",
 });
 
 const textInputWrapperClass = css({
-	minWidth: "0",
+	// Keep a usable floor for the text input so the swatch fields wrap
+	// below it rather than squeezing it to a sliver (issue #778).
 	flex: "1",
+	minWidth: "12",
 });
 
 const canvasFieldsRowClass = css({
 	display: "flex",
 	minWidth: "0",
+	flexWrap: "wrap",
 	alignItems: "center",
 	gap: "2",
 });
+
+/**
+ * Issue #778: the background/foreground swatches are identical square
+ * chips — aria-labels alone left no visible cue for which chip controls
+ * what. Each swatch now carries a small field label (same treatment as
+ * `fieldLabelClass`) so the pair reads as two labeled fields. The label
+ * stays single-line; at very narrow widths the row wraps the second
+ * field below instead of truncating it.
+ */
+const swatchFieldClass = css({
+	display: "flex",
+	minWidth: "0",
+	flexShrink: "0",
+	flexDirection: "column",
+	alignItems: "center",
+	gap: "1",
+});
+
+const swatchLabelClass = css({
+	whiteSpace: "nowrap",
+});
+
+function LabeledColorSwatch({
+	label,
+	field,
+	value,
+	onChange,
+	disabled,
+	ariaLabel,
+}: {
+	label: string;
+	/** Stable hook for tests/stories — which draft color this swatch edits. */
+	field: "background" | "text";
+	value: string;
+	onChange: (value: string) => void;
+	disabled: boolean;
+	ariaLabel: string;
+}): JSX.Element {
+	return (
+		<div className={swatchFieldClass} data-icon-swatch-field={field}>
+			<span className={cx(fieldLabelClass, swatchLabelClass)}>{label}</span>
+			<ColorSwatch
+				value={value}
+				onChange={onChange}
+				disabled={disabled}
+				aria-label={ariaLabel}
+			/>
+		</div>
+	);
+}
 
 const fieldsWrapperClass = css({
 	minWidth: "0",
@@ -224,12 +282,13 @@ function DefaultEmojiFields({ draft, set, disabled }: EditorApi): JSX.Element {
 				>
 					{i18n.t("presets:iconEditor.emojiPicker")}
 				</Button>
-				<ColorSwatch
+				<LabeledColorSwatch
+					field="background"
+					label={i18n.t("presets:iconEditor.swatchBackground")}
 					value={draft.bgColor}
 					onChange={(v) => set({ bgColor: v })}
 					disabled={disabled}
-					aria-label={i18n.t("common:settings.labels.backgroundColor")}
-					title={i18n.t("common:settings.labels.backgroundColor")}
+					ariaLabel={i18n.t("common:settings.labels.backgroundColor")}
 				/>
 			</div>
 			{emojiPickerOpen ? (
@@ -299,19 +358,21 @@ function DefaultTextFields({
 				/>
 			</div>
 
-			<ColorSwatch
+			<LabeledColorSwatch
+				field="background"
+				label={i18n.t("presets:iconEditor.swatchBackground")}
 				value={draft.bgColor}
 				onChange={(v) => set({ bgColor: v })}
 				disabled={disabled}
-				aria-label={i18n.t("common:settings.labels.backgroundColor")}
-				title={i18n.t("common:settings.labels.backgroundColor")}
+				ariaLabel={i18n.t("common:settings.labels.backgroundColor")}
 			/>
-			<ColorSwatch
+			<LabeledColorSwatch
+				field="text"
+				label={i18n.t("presets:iconEditor.swatchText")}
 				value={draft.color}
 				onChange={(v) => set({ color: v })}
 				disabled={disabled}
-				aria-label={i18n.t("common:settings.labels.textColor")}
-				title={i18n.t("common:settings.labels.textColor")}
+				ariaLabel={i18n.t("common:settings.labels.textColor")}
 			/>
 		</div>
 	);
@@ -367,19 +428,21 @@ export function IconEditor({
 			) : null}
 			{draft.type === "canvas" ? (
 				<div className={canvasFieldsRowClass}>
-					<ColorSwatch
+					<LabeledColorSwatch
+						field="background"
+						label={i18n.t("presets:iconEditor.swatchBackground")}
 						value={draft.bgColor}
 						onChange={(v) => set({ bgColor: v })}
 						disabled={disabled}
-						aria-label={i18n.t("common:settings.labels.backgroundColor")}
-						title={i18n.t("common:settings.labels.backgroundColor")}
+						ariaLabel={i18n.t("common:settings.labels.backgroundColor")}
 					/>
-					<ColorSwatch
+					<LabeledColorSwatch
+						field="text"
+						label={i18n.t("presets:iconEditor.swatchText")}
 						value={draft.color}
 						onChange={(v) => set({ color: v })}
 						disabled={disabled}
-						aria-label={i18n.t("common:settings.labels.textColor")}
-						title={i18n.t("common:settings.labels.textColor")}
+						ariaLabel={i18n.t("common:settings.labels.textColor")}
 					/>
 				</div>
 			) : null}

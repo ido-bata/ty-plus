@@ -379,7 +379,9 @@
 		"iconTextAria": "Texto do ícone",
 		"textPlaceholder": "2 a 6 caracteres",
 		"previewAria": "Pré-visualização do ícone",
-		"tabsAria": "Tipo de ícone"
+		"tabsAria": "Tipo de ícone",
+		"swatchBackground": "Fundo",
+		"swatchText": "Texto"
 	},
 	"catalogBrowser": {
 		"loading": "A carregar",

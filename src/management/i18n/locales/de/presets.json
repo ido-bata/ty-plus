@@ -375,7 +375,9 @@
 		"iconTextAria": "Symboltext",
 		"textPlaceholder": "2–6 Zeichen",
 		"previewAria": "Symbolvorschau",
-		"tabsAria": "Symboltyp"
+		"tabsAria": "Symboltyp",
+		"swatchBackground": "Hintergrund",
+		"swatchText": "Text"
 	},
 	"catalogBrowser": {
 		"loading": "Wird geladen",
