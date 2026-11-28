@@ -36,14 +36,17 @@ const LAYERS_JSON = JSON.stringify({
 			id: "layer-color-1",
 			type: "color",
 			enabled: true,
-			opacity: 1,
+			// Issue #761: layer opacity contract is 0-100 (layer-factory
+			// default 100, LayerEditor clamps 0-100, style.ts divides by
+			// 100). `opacity: 1` rendered as 1% and blanked the preview.
+			opacity: 100,
 			color: "#1e1e2e",
 		},
 		{
 			id: "layer-pattern-1",
 			type: "pattern",
 			enabled: true,
-			opacity: 0.6,
+			opacity: 60,
 			patternType: "dots",
 		},
 	],
@@ -144,5 +147,14 @@ export const WithLayers: Story = {
 		).find((el) => el.style.backgroundImage.includes("radial-gradient"));
 		if (!preview) throw new Error("background preview gradient not found");
 		expect(preview.style.backgroundImage).not.toContain("ws-transparent-rgb");
+		// Issue #761: layer opacity is a 0-100 contract — the seeded color
+		// layer (opacity 100) must bake alpha 1 and the pattern layer
+		// (opacity 60) alpha 0.6 into the rendered gradients. A 0-1 fixture
+		// produced ~1%/0.6% alphas and a blank preview.
+		// Note: the DOM serializes alpha-1 `rgba()` as `rgb()`, and
+		// comma-separated channels gain spaces.
+		expect(preview.style.backgroundImage).toContain("rgb(30, 30, 46)");
+		expect(preview.style.backgroundImage).toContain("rgba(56, 56, 56, 0.6)");
+		expect(preview.style.backgroundImage).not.toContain("0.01");
 	},
 };

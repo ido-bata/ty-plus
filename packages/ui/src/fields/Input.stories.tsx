@@ -38,6 +38,16 @@ export const WithError: Story = {
 		defaultValue: "not-an-email",
 		error: "Must be a valid email address.",
 	},
+	play: async ({ canvasElement }) => {
+		const input = canvasElement.querySelector<HTMLInputElement>("input");
+		if (!input) throw new Error("input not found");
+		// Issue #761: the error signal is the `status.error` border plus the
+		// error label — the control itself must stay fully opaque. The old
+		// `opacity: 0.6` error state washed out text and background, reading
+		// as a disabled-ish field instead of an active error.
+		expect(getComputedStyle(input).opacity).toBe("1");
+		assertBorderToken(input, "error");
+	},
 };
 
 export const LargeSize: Story = {

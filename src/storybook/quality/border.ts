@@ -7,12 +7,12 @@ import { describeElement, LayoutAssertionError } from "./layout";
  *
  * The border contract is semantic: a surface's resting border must equal
  * the token its role maps to (`border.subtle` for passive chrome,
- * `border.control`/`border.input` for identifiable controls), and state
- * changes (hover/focus/error) must move off that resting value. Comparing
- * raw `getComputedStyle` strings against a hardcoded color would freeze
- * today's literals; probing a throwaway element styled with the same
- * Panda token asserts the *mapping* instead, so token value changes do
- * not break the contract.
+ * `border.control`/`border.input` for identifiable controls, `status.error`
+ * for invalid state), and state changes (hover/focus/error) must move off
+ * that resting value. Comparing raw `getComputedStyle` strings against a
+ * hardcoded color would freeze today's literals; probing a throwaway
+ * element styled with the same Panda token asserts the *mapping* instead,
+ * so token value changes do not break the contract.
  *
  * DOM-facing only — runs inside the `storybook` browser project, like
  * `layout.ts` / `color.ts`.
@@ -38,6 +38,11 @@ const probeClasses = {
 		borderWidth: "hairline",
 		borderStyle: "solid",
 		borderColor: "interactive.focus",
+	}),
+	error: css({
+		borderWidth: "hairline",
+		borderStyle: "solid",
+		borderColor: "status.error",
 	}),
 } as const;
 
